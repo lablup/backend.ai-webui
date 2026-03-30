@@ -2,13 +2,15 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { MyKeypairManagementModalIssueMyKeypairMutation } from '../__generated__/MyKeypairManagementModalIssueMyKeypairMutation.graphql';
 import {
   MyKeypairManagementModalQuery,
   MyKeypairManagementModalQuery$data,
 } from '../__generated__/MyKeypairManagementModalQuery.graphql';
 import BAIRadioGroup from './BAIRadioGroup';
-import { Alert, Empty, Tag, theme } from 'antd';
+import { Alert, App, Empty, Tag, theme } from 'antd';
 import {
+  BAIButton,
   BAIFetchKeyButton,
   BAIFlex,
   BAIModal,
@@ -18,13 +20,20 @@ import {
   filterOutEmpty,
   filterOutNullAndUndefined,
   INITIAL_FETCH_KEY,
+  useBAILogger,
+  useErrorMessageResolver,
   useFetchKey,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
-import { KeyRoundIcon } from 'lucide-react';
+import {
+  DownloadIcon,
+  KeyRoundIcon,
+  PlusIcon,
+  TriangleAlertIcon,
+} from 'lucide-react';
 import { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery } from 'react-relay';
+import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 
 type ActiveFilter = 'active' | 'inactive';
 
@@ -32,9 +41,35 @@ type KeypairNode = NonNullable<
   NonNullable<MyKeypairManagementModalQuery$data['myKeypairs']>['edges'][number]
 >['node'];
 
+interface KeypairCredential {
+  accessKey: string;
+  secretKey: string;
+  sshPublicKey: string;
+}
+
 interface MyKeypairManagementModalProps extends BAIModalProps {
   onRequestClose: () => void;
 }
+
+const downloadCredentialCSV = (credential: KeypairCredential) => {
+  const header = 'access_key,secret_key,ssh_public_key';
+  const row = [
+    credential.accessKey,
+    credential.secretKey,
+    credential.sshPublicKey,
+  ]
+    .map((v) => `"${v.replace(/"/g, '""')}"`)
+    .join(',');
+
+  const csvContent = `${header}\n${row}\n`;
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `keypair_${credential.accessKey}.csv`;
+  link.click();
+  URL.revokeObjectURL(url);
+};
 
 const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
   onRequestClose,
@@ -44,9 +79,28 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
 
   const { t } = useTranslation();
   const { token } = theme.useToken();
+  const { message } = App.useApp();
+  const { logger } = useBAILogger();
+  const { getErrorMessage } = useErrorMessageResolver();
 
   const [activeFilter, setActiveFilter] = useState<ActiveFilter>('active');
   const [fetchKey, updateFetchKey] = useFetchKey();
+  const [credentialResult, setCredentialResult] =
+    useState<KeypairCredential | null>(null);
+  const [isCredentialModalOpen, setIsCredentialModalOpen] = useState(false);
+
+  const [issueMyKeypair] =
+    useMutation<MyKeypairManagementModalIssueMyKeypairMutation>(graphql`
+      mutation MyKeypairManagementModalIssueMyKeypairMutation {
+        issueMyKeypair {
+          keypair {
+            accessKey
+            sshPublicKey
+          }
+          secretKey
+        }
+      }
+    `);
 
   const queryVariables = {
     filter: {
@@ -72,7 +126,7 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
           orderBy: $orderBy
           limit: $limit
           offset: $offset
-        ) @since(version: "26.4.0") {
+        ) {
           edges {
             node {
               id
@@ -110,138 +164,241 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
     data.myKeypairs?.edges?.map((edge) => edge?.node),
   );
 
+  const handleIssueKeypair = () => {
+    issueMyKeypair({
+      variables: {},
+      onCompleted: (
+        result: MyKeypairManagementModalIssueMyKeypairMutation['response'],
+      ) => {
+        const payload = result.issueMyKeypair;
+        setCredentialResult({
+          accessKey: payload.keypair.accessKey,
+          secretKey: payload.secretKey,
+          sshPublicKey: payload.keypair.sshPublicKey ?? '',
+        });
+        setIsCredentialModalOpen(true);
+        setActiveFilter('active');
+        updateFetchKey();
+        message.success(t('credential.KeypairCreated'));
+      },
+      onError: (error) => {
+        logger.error(error);
+        message.error(getErrorMessage(error));
+      },
+    });
+  };
+
   return (
-    <BAIModal
-      {...baiModalProps}
-      title={t('credential.MyKeypairManagement')}
-      centered
-      onCancel={onRequestClose}
-      destroyOnHidden
-      width={900}
-      footer={null}
-    >
-      <BAIFlex direction="column" align="stretch" gap="sm">
-        {mainAccessKey && (
-          <Alert
-            type="info"
-            showIcon
-            icon={
-              <KeyRoundIcon
-                style={{ width: token.fontSizeLG, height: token.fontSizeLG }}
+    <>
+      <BAIModal
+        {...baiModalProps}
+        title={t('credential.MyKeypairManagement')}
+        centered
+        onCancel={onRequestClose}
+        destroyOnHidden
+        width={900}
+        footer={null}
+      >
+        <BAIFlex direction="column" align="stretch" gap="sm">
+          {mainAccessKey && (
+            <Alert
+              type="info"
+              showIcon
+              icon={
+                <KeyRoundIcon
+                  style={{
+                    width: token.fontSizeLG,
+                    height: token.fontSizeLG,
+                  }}
+                />
+              }
+              title={
+                <BAIFlex gap="xs" align="center">
+                  <BAIText>{t('credential.MainAccessKey')}:</BAIText>
+                  <BAIText monospace copyable>
+                    {mainAccessKey}
+                  </BAIText>
+                </BAIFlex>
+              }
+            />
+          )}
+          <BAIFlex justify="between" align="start" gap="xs" wrap="wrap">
+            <BAIRadioGroup
+              value={activeFilter}
+              onChange={(e) => {
+                setActiveFilter(e.target.value);
+              }}
+              optionType="button"
+              options={[
+                {
+                  label: t('general.Active'),
+                  value: 'active',
+                },
+                {
+                  label: t('general.Inactive'),
+                  value: 'inactive',
+                },
+              ]}
+            />
+            <BAIFlex gap="xs">
+              <BAIButton
+                type="primary"
+                icon={<PlusIcon />}
+                onClick={handleIssueKeypair}
+              >
+                {t('credential.IssueNewKeypair')}
+              </BAIButton>
+              <BAIFetchKeyButton
+                loading={
+                  deferredQueryVariables !== queryVariables ||
+                  deferredFetchKey !== fetchKey
+                }
+                value={fetchKey}
+                onChange={(newFetchKey) => {
+                  updateFetchKey(newFetchKey);
+                }}
               />
-            }
-            title={
-              <BAIFlex gap="xs" align="center">
-                <BAIText>{t('credential.MainAccessKey')}:</BAIText>
-                <BAIText monospace copyable>
-                  {mainAccessKey}
-                </BAIText>
-              </BAIFlex>
-            }
-          />
-        )}
-        <BAIFlex justify="between" align="start" gap="xs" wrap="wrap">
-          <BAIRadioGroup
-            value={activeFilter}
-            onChange={(e) => {
-              setActiveFilter(e.target.value);
+            </BAIFlex>
+          </BAIFlex>
+          <BAITable<KeypairNode>
+            rowKey="id"
+            scroll={{ x: 'max-content' }}
+            loading={deferredQueryVariables !== queryVariables}
+            dataSource={keypairNodes}
+            columns={filterOutEmpty([
+              {
+                key: 'accessKey',
+                title: t('credential.AccessKey'),
+                dataIndex: 'accessKey',
+                sorter: true,
+                render: (value: string) => (
+                  <BAIFlex gap="xs" align="center">
+                    <BAIText monospace copyable>
+                      {value}
+                    </BAIText>
+                    {value === mainAccessKey && (
+                      <Tag color="red">{t('credential.MainAccessKey')}</Tag>
+                    )}
+                  </BAIFlex>
+                ),
+              },
+              {
+                key: 'resourcePolicy',
+                title: t('credential.ResourcePolicy'),
+                dataIndex: 'resourcePolicy',
+                sorter: true,
+              },
+              {
+                key: 'createdAt',
+                title: t('credential.CreatedAt'),
+                dataIndex: 'createdAt',
+                sorter: true,
+                render: (value: string) =>
+                  value ? dayjs(value).format('lll') : '-',
+              },
+              {
+                key: 'lastUsed',
+                title: t('credential.LastUsed'),
+                dataIndex: 'lastUsed',
+                sorter: true,
+                render: (value: string) =>
+                  value ? dayjs(value).format('lll') : '-',
+              },
+              {
+                key: 'modifiedAt',
+                title: t('credential.ModifiedAt'),
+                dataIndex: 'modifiedAt',
+                sorter: true,
+                render: (value: string) =>
+                  value ? dayjs(value).format('lll') : '-',
+              },
+            ])}
+            showSorterTooltip={false}
+            locale={{
+              emptyText: (
+                <Empty
+                  image={Empty.PRESENTED_IMAGE_SIMPLE}
+                  description={
+                    activeFilter === 'active'
+                      ? t('credential.NoActiveKeypairs')
+                      : t('credential.NoInactiveKeypairs')
+                  }
+                />
+              ),
             }}
-            optionType="button"
-            options={[
-              {
-                label: t('general.Active'),
-                value: 'active',
-              },
-              {
-                label: t('general.Inactive'),
-                value: 'inactive',
-              },
-            ]}
-          />
-          <BAIFetchKeyButton
-            loading={
-              deferredQueryVariables !== queryVariables ||
-              deferredFetchKey !== fetchKey
-            }
-            value={fetchKey}
-            onChange={(newFetchKey) => {
-              updateFetchKey(newFetchKey);
+            pagination={{
+              pageSize: 10,
+              total: data.myKeypairs?.count ?? 0,
             }}
           />
         </BAIFlex>
-        <BAITable<KeypairNode>
-          rowKey="id"
-          scroll={{ x: 'max-content' }}
-          loading={deferredQueryVariables !== queryVariables}
-          dataSource={keypairNodes}
-          columns={filterOutEmpty([
-            {
-              key: 'accessKey',
-              title: t('credential.AccessKey'),
-              dataIndex: 'accessKey',
-              sorter: true,
-              render: (value: string) => (
-                <BAIFlex gap="xs" align="center">
-                  <BAIText monospace copyable>
-                    {value}
-                  </BAIText>
-                  {value === mainAccessKey && (
-                    <Tag color="red">{t('credential.MainAccessKey')}</Tag>
-                  )}
-                </BAIFlex>
-              ),
-            },
-            {
-              key: 'resourcePolicy',
-              title: t('credential.ResourcePolicy'),
-              dataIndex: 'resourcePolicy',
-              sorter: true,
-            },
-            {
-              key: 'createdAt',
-              title: t('credential.CreatedAt'),
-              dataIndex: 'createdAt',
-              sorter: true,
-              render: (value: string) =>
-                value ? dayjs(value).format('lll') : '-',
-            },
-            {
-              key: 'lastUsed',
-              title: t('credential.LastUsed'),
-              dataIndex: 'lastUsed',
-              sorter: true,
-              render: (value: string) =>
-                value ? dayjs(value).format('lll') : '-',
-            },
-            {
-              key: 'modifiedAt',
-              title: t('credential.ModifiedAt'),
-              dataIndex: 'modifiedAt',
-              sorter: true,
-              render: (value: string) =>
-                value ? dayjs(value).format('lll') : '-',
-            },
-          ])}
-          showSorterTooltip={false}
-          locale={{
-            emptyText: (
-              <Empty
-                image={Empty.PRESENTED_IMAGE_SIMPLE}
-                description={
-                  activeFilter === 'active'
-                    ? t('credential.NoActiveKeypairs')
-                    : t('credential.NoInactiveKeypairs')
+      </BAIModal>
+      <BAIModal
+        open={isCredentialModalOpen}
+        title={t('credential.KeypairCredentialInfo')}
+        keyboard={false}
+        onCancel={() => {
+          setIsCredentialModalOpen(false);
+          setCredentialResult(null);
+        }}
+        destroyOnHidden
+        width={640}
+        footer={
+          <BAIFlex justify="end">
+            <BAIButton
+              type="primary"
+              icon={<DownloadIcon />}
+              onClick={() => {
+                if (credentialResult) {
+                  downloadCredentialCSV(credentialResult);
                 }
+              }}
+            >
+              {t('credential.DownloadCSV')}
+            </BAIButton>
+          </BAIFlex>
+        }
+      >
+        <BAIFlex direction="column" gap="sm">
+          <Alert
+            type="warning"
+            showIcon
+            icon={
+              <TriangleAlertIcon
+                style={{
+                  width: token.fontSizeLG,
+                  height: token.fontSizeLG,
+                }}
               />
-            ),
-          }}
-          pagination={{
-            pageSize: 10,
-            total: data.myKeypairs?.count ?? 0,
-          }}
-        />
-      </BAIFlex>
-    </BAIModal>
+            }
+            title={t('credential.CannotViewAgainWarning')}
+            style={{ width: '100%' }}
+          />
+          <BAIFlex direction="column" gap="xs">
+            <BAIText type="secondary">{t('credential.AccessKey')}</BAIText>
+            <BAIText copyable code ellipsis={{ tooltip: true }}>
+              {credentialResult?.accessKey}
+            </BAIText>
+          </BAIFlex>
+          <BAIFlex direction="column" gap="xs">
+            <BAIText type="secondary">{t('credential.SecretKey')}</BAIText>
+            <BAIText copyable code ellipsis={{ tooltip: true }}>
+              {credentialResult?.secretKey}
+            </BAIText>
+          </BAIFlex>
+          <BAIFlex
+            direction="column"
+            gap="xs"
+            style={{ overflow: 'hidden', width: '100%' }}
+          >
+            <BAIText type="secondary">{t('credential.SSHPublicKey')}</BAIText>
+            <BAIText copyable code ellipsis={{ tooltip: true }}>
+              {credentialResult?.sshPublicKey}
+            </BAIText>
+          </BAIFlex>
+        </BAIFlex>
+      </BAIModal>
+    </>
   );
 };
 
