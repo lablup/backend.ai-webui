@@ -1,8 +1,9 @@
+// TODO: Remove after 27.4.0 (legacy compatibility for backends < 26.4.0)
 /**
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { MyKeypairInfoModalQuery } from '../__generated__/MyKeypairInfoModalQuery.graphql';
+import { MyKeypairInfoModalLegacyQuery } from '../__generated__/MyKeypairInfoModalLegacyQuery.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanQuery } from '../hooks/reactQueryAlias';
@@ -12,11 +13,11 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-interface MyKeypairInfoModalProps extends BAIModalProps {
+interface MyKeypairInfoModalLegacyProps extends BAIModalProps {
   onRequestClose: () => void;
 }
 
-const MyKeypairInfoModal: React.FC<MyKeypairInfoModalProps> = ({
+const MyKeypairInfoModalLegacy: React.FC<MyKeypairInfoModalLegacyProps> = ({
   onRequestClose,
   ...baiModalProps
 }) => {
@@ -39,9 +40,9 @@ const MyKeypairInfoModal: React.FC<MyKeypairInfoModalProps> = ({
     staleTime: 0,
   });
 
-  const { user } = useLazyLoadQuery<MyKeypairInfoModalQuery>(
+  const { user } = useLazyLoadQuery<MyKeypairInfoModalLegacyQuery>(
     graphql`
-      query MyKeypairInfoModalQuery($email: String) {
+      query MyKeypairInfoModalLegacyQuery($email: String) {
         user(email: $email) {
           email
           main_access_key @since(version: "23.09.7")
@@ -110,4 +111,4 @@ const MyKeypairInfoModal: React.FC<MyKeypairInfoModalProps> = ({
   );
 };
 
-export default MyKeypairInfoModal;
+export default MyKeypairInfoModalLegacy;

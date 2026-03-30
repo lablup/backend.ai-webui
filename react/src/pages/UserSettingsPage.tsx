@@ -3,10 +3,12 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import ErrorLogList from '../components/ErrorLogList';
-import MyKeypairInfoModal from '../components/MyKeypairInfoModal';
+import MyKeypairInfoModalLegacy from '../components/MyKeypairInfoModalLegacy';
+import MyKeypairManagementModal from '../components/MyKeypairManagementModal';
 import SSHKeypairManagementModal from '../components/SSHKeypairManagementModal';
 import SettingList, { SettingGroup } from '../components/SettingList';
 import ShellScriptEditModal from '../components/ShellScriptEditModal';
+import { useSuspendedBackendaiClient } from '../hooks';
 import {
   useBAISettingGeneralState,
   useBAISettingUserState,
@@ -33,6 +35,7 @@ const UserPreferencesPage = () => {
 
   const { t } = useTranslation();
   const { message } = App.useApp();
+  const baiClient = useSuspendedBackendaiClient();
   const [curTabKey, setCurTabKey] = useQueryParam('tab', tabParam);
 
   const { themeMode, setThemeMode } = useThemeMode();
@@ -396,10 +399,17 @@ const UserPreferencesPage = () => {
           )}
         </Suspense>
       </Card>
-      <MyKeypairInfoModal
-        open={isOpenSSHKeypairInfoModal}
-        onRequestClose={toggleSSHKeypairInfoModal}
-      />
+      {baiClient?.supports('my-keypairs') ? (
+        <MyKeypairManagementModal
+          open={isOpenSSHKeypairInfoModal}
+          onRequestClose={toggleSSHKeypairInfoModal}
+        />
+      ) : (
+        <MyKeypairInfoModalLegacy
+          open={isOpenSSHKeypairInfoModal}
+          onRequestClose={toggleSSHKeypairInfoModal}
+        />
+      )}
       <SSHKeypairManagementModal
         open={isOpenSSHKeypairManagementModal}
         onRequestClose={toggleSSHKeypairManagementModal}

@@ -895,6 +895,7 @@ class Client {
     }
     if (this.isManagerVersionCompatibleWith('26.4.0')) {
       this._features['update-user-v2'] = true;
+      this._features['my-keypairs'] = true;
     }
   }
 
