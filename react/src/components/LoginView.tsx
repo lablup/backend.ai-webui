@@ -36,7 +36,12 @@ import { pluginApiEndpointState } from '../hooks/useWebUIPluginState';
 import { jotaiStore } from './DefaultProviders';
 import LoginFormPanel from './LoginFormPanel';
 import { App, Button, Form, type MenuProps } from 'antd';
-import { BAIModal, BAIFlex, BAIConfigProvider } from 'backend.ai-ui';
+import {
+  BAIModal,
+  BAIFlex,
+  BAIConfigProvider,
+  useBAILogger,
+} from 'backend.ai-ui';
 import { useAtomValue, useSetAtom } from 'jotai';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -58,6 +63,7 @@ const LoginView: React.FC = () => {
 
   const { t } = useTranslation();
   const { modal } = App.useApp();
+  const { logger } = useBAILogger();
 
   // Initialize config from config.toml (replaces Lit shell's _parseConfig + loadConfig)
   const {
@@ -124,7 +130,16 @@ const LoginView: React.FC = () => {
   // Remembers that the user approved force-login (concurrent session override).
   // Persists across retries (e.g., TOTP expiration after force approval) so
   // the next login attempt automatically includes force=true.
+  // Reset when credentials or endpoint change to prevent unintended force-login
+  // against a different user/endpoint.
   const forceLoginApprovedRef = useRef(false);
+
+  // Reset force-login approval when credentials or endpoint change
+  const watchedUserId = Form.useWatch('user_id', form);
+  const watchedPassword = Form.useWatch('password', form);
+  useEffect(() => {
+    forceLoginApprovedRef.current = false;
+  }, [apiEndpoint, watchedUserId, watchedPassword]);
 
   // Trigger config loading on mount
   useEffect(() => {
@@ -420,7 +435,7 @@ const LoginView: React.FC = () => {
       // `data.type` for classification; server errors carry `isError: true`
       // with structured info from _wrapWithPromise.
       try {
-        await client.login(otp);
+        await client.login(otp, forceLoginApprovedRef.current);
         await doGQLConnect(client);
         return;
       } catch (err: unknown) {
@@ -442,6 +457,7 @@ const LoginView: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [apiEndpoint, form, endpoints, doGQLConnect, block, open, notification, t],
   );
+  connectUsingSessionRef.current = connectUsingSession;
 
   /**
    * Unified login error handler. Classifies errors from client.login() and
@@ -512,15 +528,26 @@ const LoginView: React.FC = () => {
             return 'reopen';
 
           case 'active-login-session-exists':
-            // TODO(needs-backend): Add force login confirmation dialog that
-            // calls client.login(otp, true) to override the existing session.
-            // The `force` parameter is already supported by the backend API
-            // and client.login(). See FR-2377 for details.
-            if (showError) {
-              notification(
-                t('login.ActiveSessionExists'),
-                t('login.ActiveSessionExistsDescription'),
+            if (forceLoginApprovedRef.current) {
+              // Force-login was already approved but server still returned 409.
+              logger.error(
+                'Force login failed: server returned 409 after force approval',
               );
+            }
+            if (showError) {
+              modal.confirm({
+                title: t('login.ConcurrentSessionTitle'),
+                content: t('login.ConcurrentSessionDetected'),
+                okText: t('login.Login'),
+                cancelText: t('button.Cancel'),
+                centered: true,
+                zIndex: 10001,
+                onOk: () => {
+                  forceLoginApprovedRef.current = true;
+                  setIsLoading(true);
+                  connectUsingSessionRef.current?.();
+                },
+              });
             }
             return 'reopen';
 
@@ -640,7 +667,7 @@ const LoginView: React.FC = () => {
       }
       return 'reopen';
     },
-    [notification, t, otpRequired, form],
+    [notification, t, otpRequired, form, modal, logger],
   );
 
   const handleGQLError = useCallback(
