@@ -269,6 +269,7 @@
     "SelectFolder": "Pilih Folder"
   },
   "comp:FileExplorer": {
+    "ArchiveDownloadStarted": "Muat turun untuk {{count}} item telah bermula.",
     "ChangeFileExtension": "Tukar Sambungan Fail",
     "ChangeFileExtensionDesc": "Menukar sambungan fail boleh menyebabkan fail menjadi tidak dapat digunakan atau dibuka dengan tidak betul. \nAdakah anda mahu meneruskan?",
     "Controls": "Kawalan",
@@ -279,6 +280,7 @@
     "CreatedAt": "Dicipta di",
     "DeleteSelectedItemDesc": "Fail dan folder yang dipadam tidak boleh dipulihkan. \nAdakah anda mahu meneruskan?",
     "DeleteSelectedItemsDialog": "Padam pengesahan",
+    "DownloadSelected": "Muat turun",
     "DownloadStarted": "Fail \"{{fileName}}\" Muat turun telah bermula.",
     "DragAndDropDesc": "Seret dan lepaskan fail ke kawasan ini untuk dimuat naik.",
     "DuplicatedFiles": "Pengesahan Pengesahan",

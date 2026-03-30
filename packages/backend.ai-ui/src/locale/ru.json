@@ -269,6 +269,7 @@
     "SelectFolder": "Выбрать папку"
   },
   "comp:FileExplorer": {
+    "ArchiveDownloadStarted": "Началась загрузка {{count}} элементов.",
     "ChangeFileExtension": "Изменить расширение файла",
     "ChangeFileExtensionDesc": "Изменение расширения файла может привести к тому, что файл станет непригодным для использования или неверно открытым. \nВы хотите продолжить?",
     "Controls": "Управление",
@@ -279,6 +280,7 @@
     "CreatedAt": "Создан в",
     "DeleteSelectedItemDesc": "Удаленные файлы и папки не могут быть восстановлены. \nВы хотите продолжить?",
     "DeleteSelectedItemsDialog": "Удалить подтверждение",
+    "DownloadSelected": "Скачать",
     "DownloadStarted": "Файл \"{{fileName}}\" Загрузка началась.",
     "DragAndDropDesc": "Перетащите файлы в эту область, чтобы загрузить.",
     "DuplicatedFiles": "Перезаписать подтверждение",

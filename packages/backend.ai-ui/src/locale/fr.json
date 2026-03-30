@@ -269,6 +269,7 @@
     "SelectFolder": "Sélectionner un dossier"
   },
   "comp:FileExplorer": {
+    "ArchiveDownloadStarted": "Le téléchargement de {{count}} élément(s) a commencé.",
     "ChangeFileExtension": "Modifier l'extension du fichier",
     "ChangeFileExtensionDesc": "La modification de l'extension du fichier peut faire en sorte que le fichier devienne inutilisable ou s'ouvre incorrectement. \nVoulez-vous continuer?",
     "Controls": "Commandes",
@@ -279,6 +280,7 @@
     "CreatedAt": "Créé à",
     "DeleteSelectedItemDesc": "Les fichiers et les dossiers supprimés ne peuvent pas être restaurés. \nVoulez-vous continuer?",
     "DeleteSelectedItemsDialog": "Supprimer la confirmation",
+    "DownloadSelected": "Télécharger",
     "DownloadStarted": "Fichier \"{{fileName}}\" Le téléchargement a commencé.",
     "DragAndDropDesc": "Faites glisser et déposez les fichiers dans cette zone pour télécharger.",
     "DuplicatedFiles": "Écran de confirmation",

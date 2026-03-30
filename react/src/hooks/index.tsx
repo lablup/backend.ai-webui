@@ -173,6 +173,11 @@ export type BackendAIClient = {
       name: string,
       archive?: boolean,
     ) => Promise<any>;
+    request_download_archive: (
+      files: Array<string>,
+      name: string,
+      filename?: string,
+    ) => Promise<any>;
     create_upload_session: (
       path: string,
       fs: object,

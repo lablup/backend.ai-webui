@@ -460,3 +460,37 @@ export const useSemanticColorMap = (): Record<SemanticColor, string> => {
     default: token.colorBorder,
   };
 };
+
+/**
+ * Initiate a file download from a URL with a custom filename.
+ * Handles iOS Safari separately by opening a new window.
+ */
+export const initiateDownload = async (
+  downloadURL: string,
+  fileName: string,
+): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    try {
+      // @ts-ignore - iOS Safari
+      if (globalThis.iOSSafari) {
+        const newWindow = window.open(downloadURL, '_blank');
+        newWindow && resolve();
+      } else {
+        const downloadLink = document.createElement('a');
+        downloadLink.style.display = 'none';
+        downloadLink.href = downloadURL;
+        downloadLink.download = fileName;
+        downloadLink.addEventListener('click', (e) => {
+          e.stopPropagation();
+        });
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+
+        resolve();
+      }
+    } catch (error) {
+      reject(error);
+    }
+  });
+};

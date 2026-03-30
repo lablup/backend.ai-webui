@@ -269,6 +269,7 @@
     "SelectFolder": "Chọn thư mục"
   },
   "comp:FileExplorer": {
+    "ArchiveDownloadStarted": "Đã bắt đầu tải xuống {{count}} mục.",
     "ChangeFileExtension": "Thay đổi phần mở rộng tệp",
     "ChangeFileExtensionDesc": "Thay đổi tiện ích mở rộng tệp có thể khiến tệp trở nên không thể sử dụng hoặc mở không chính xác. \nBạn có muốn tiếp tục không?",
     "Controls": "Kiểm soát",
@@ -279,6 +280,7 @@
     "CreatedAt": "Được tạo ra tại",
     "DeleteSelectedItemDesc": "Các tệp và thư mục đã xóa không thể được khôi phục. \nBạn có muốn tiếp tục không?",
     "DeleteSelectedItemsDialog": "Xóa xác nhận",
+    "DownloadSelected": "Tải xuống",
     "DownloadStarted": "Tệp \"{{fileName}}\" đã bắt đầu.",
     "DragAndDropDesc": "Kéo và thả các tập tin vào khu vực này để tải lên.",
     "DuplicatedFiles": "Ghi đè xác nhận",

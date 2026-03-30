@@ -269,6 +269,7 @@
     "SelectFolder": "フォルダを選択"
   },
   "comp:FileExplorer": {
+    "ArchiveDownloadStarted": "{{count}}件のダウンロードが開始されました。",
     "ChangeFileExtension": "ファイル拡張子を変更します",
     "ChangeFileExtensionDesc": "ファイル拡張子を変更すると、ファイルが使用できなくなったり、誤って開いたりすることがあります。\n先に進みたいですか？",
     "Controls": "コントロール",
@@ -279,6 +280,7 @@
     "CreatedAt": "で作成されました",
     "DeleteSelectedItemDesc": "削除されたファイルとフォルダーを復元できません。\n先に進みたいですか？",
     "DeleteSelectedItemsDialog": "確認を削除します",
+    "DownloadSelected": "ダウンロード",
     "DownloadStarted": "ファイル \"{{fileName}}\"ダウンロードが開始されました。",
     "DragAndDropDesc": "このエリアにファイルをドラッグアンドドロップしてアップロードします。",
     "DuplicatedFiles": "確認の上書き",
