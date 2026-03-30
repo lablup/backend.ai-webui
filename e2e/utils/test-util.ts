@@ -681,15 +681,13 @@ export async function deleteSession(page: Page, sessionName: string) {
  */
 
 /**
- * Convert a config object to TOML string that is compatible with markty-toml parser.
+ * Convert a config object to TOML string that is compatible with the app's TOML parser.
  *
- * markty-toml has a known bug where it parses empty strings `""` as literal `""`
- * (with quote characters included in the value). This causes the app's _preprocessToml
- * to crash when it tries JSON.parse on the malformed value, which silently fails
- * due to .catch(() => undefined), resulting in an empty config object.
+ * The app's preprocessToml processes apiEndpointText with JSON.parse, which keeps
+ * the original value on failure (try/catch with no-op catch).
  *
- * Additionally, markty-toml parses underscore-separated numbers (e.g., 4_294_967_296)
- * as strings instead of numbers.
+ * Additionally, some TOML serializers emit underscore-separated numbers
+ * (e.g., 4_294_967_296) which may be parsed as strings instead of numbers.
  *
  * This function uses @iarna/toml stringify and post-processes the output to:
  * 1. Remove lines with empty string values (the app treats missing keys as empty)
@@ -699,12 +697,11 @@ function tomlStringifyCompatible(config: any): string {
   let tomlStr = TOML.stringify(config);
 
   // Fix 1: Remove lines with empty string values `= ""`
-  // markty-toml parses `key = ""` as key: '""' instead of key: ''
   // The app treats undefined/missing the same as empty string for most fields
   tomlStr = tomlStr.replace(/^.+ = ""\s*$/gm, '');
 
   // Fix 2: Remove underscore separators from large numbers
-  // markty-toml parses `4_294_967_296` as a string instead of a number
+  // Some serializers emit `4_294_967_296` which may be parsed as a string
   tomlStr = tomlStr.replace(
     /^(.+ = )(\d[\d_]+\d)\s*$/gm,
     (_match, prefix, num) => {

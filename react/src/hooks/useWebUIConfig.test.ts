@@ -179,7 +179,7 @@ page = ""
   it('returns null for empty TOML body', async () => {
     mockFetch(200, '');
     const result = await fetchAndParseConfig('/config.toml');
-    // markty-toml parses empty string to an empty object, not null
+    // smol-toml parses empty string to an empty object, not null
     // The config should be a non-null object (empty)
     expect(result).not.toBeNull();
     expect(typeof result).toBe('object');

@@ -27,7 +27,7 @@ import { parse as toml } from 'smol-toml';
 
 /**
  * The raw parsed TOML config object (before field-level interpretation).
- * This mirrors the shape returned by markty-toml for config.toml.
+ * This mirrors the shape returned by smol-toml for config.toml.
  */
 export interface RawTomlConfig {
   general?: Record<string, unknown>;

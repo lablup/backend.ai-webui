@@ -27,7 +27,7 @@ if (isDev()) {
 }
 const url = require('url');
 const path = require('path');
-const toml = require('markty-toml');
+const { parse: toml } = require('smol-toml');
 const nfs = require('fs');
 const fs = require('fs').promises;
 const mime = require('mime-types');
