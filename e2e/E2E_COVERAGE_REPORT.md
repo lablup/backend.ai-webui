@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-03-24
+> **Last Updated:** 2026-03-31
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -20,8 +20,8 @@
 | Change Password | `/change-password` | 9 | 9 | ✅ 100% |
 | Start Page | `/start` | 8 | 6 | 🔶 75% |
 | Dashboard | `/dashboard` | 9 | 7 | 🔶 78% |
-| Session List | `/session` | 20 | 12 | 🔶 60% |
-| Session Launcher | `/session/start` | 12 | 2 | 🔶 17% |
+| Session List | `/session` | 22 | 14 | 🔶 64% |
+| Session Launcher | `/session/start` | 14 | 3 | 🔶 21% |
 | Serving | `/serving` | 7 | 0 | ❌ 0% |
 | Endpoint Detail | `/serving/:serviceId` | 20 | 9 | 🔶 45% |
 | Service Launcher | `/service/start` | 5 | 0 | ❌ 0% |
@@ -45,7 +45,7 @@
 | App Launcher | (modal) | 18 | 10 | 🔶 56% |
 | Chat | `/chat/:id?` | 6 | 6 | ✅ 100% |
 | Plugin System | (config-based) | 12 | 12 | ✅ 100% |
-| **Total** | | **335** | **182** | **54%** |
+| **Total** | | **335** | **181** | **54%** |
 
 ---
 
@@ -157,7 +157,7 @@
 
 ### 4. Session List (`/session`)
 
-**Test files:** [`e2e/session/session-creation.spec.ts`](session/session-creation.spec.ts), [`e2e/session/session-lifecycle.spec.ts`](session/session-lifecycle.spec.ts), [`e2e/session/session-scheduling-history-modal.spec.ts`](session/session-scheduling-history-modal.spec.ts)
+**Test files:** [`e2e/session/session-creation.spec.ts`](session/session-creation.spec.ts), [`e2e/session/session-lifecycle.spec.ts`](session/session-lifecycle.spec.ts), [`e2e/session/session-scheduling-history-modal.spec.ts`](session/session-scheduling-history-modal.spec.ts), [`e2e/session/session-dependency.spec.ts`](session/session-dependency.spec.ts)
 
 **Tabs:** `all` | `interactive` | `batch` | `inference` | `system`
 **Sub-tabs:** Running | Finished
@@ -177,23 +177,24 @@
 | Bulk terminate disabled for terminated | ✅ | `Cannot select terminated sessions for bulk operations` |
 | Sensitive env vars cleared on reload | ✅ | `Sensitive environment variables are cleared` |
 | Scheduling history modal | ✅ | `Session Scheduling History Modal` (via mocked GraphQL) |
+| Session name click → SessionDetailDrawer | ✅ | `Session detail drawer renders correctly and can show dependency info` |
+| Dependencies column toggle | ✅ | `Dependencies column can be enabled via table settings` |
 | Session type filtering (interactive/batch/inference) | ❌ | - |
 | Running/Finished status toggle | ❌ | - |
 | Property filtering (name, resource group, agent) | ❌ | - |
 | Session table sorting | ❌ | - |
 | Pagination | ❌ | - |
 | Batch terminate → TerminateSessionModal | ❌ | - |
-| Session name click → SessionDetailDrawer | ❌ | - |
 | Scheduling history modal → SessionSchedulingHistoryModal | ✅ | `Admin can see the scheduling history button` + 18 more tests |
 | Resource policy warnings | 🚧 | Skipped: `superadmin to modify keypair resource policy` |
 
-**Coverage: 🔶 12/20 features**
+**Coverage: 🔶 14/22 features**
 
 ---
 
 ### 5. Session Launcher (`/session/start`)
 
-**Test files:** Covered indirectly via [`e2e/session/session-creation.spec.ts`](session/session-creation.spec.ts), [`e2e/session/session-template-modal.spec.ts`](session/session-template-modal.spec.ts), [`e2e/session/session-cluster-mode.spec.ts`](session/session-cluster-mode.spec.ts)
+**Test files:** Covered indirectly via [`e2e/session/session-creation.spec.ts`](session/session-creation.spec.ts), [`e2e/session/session-template-modal.spec.ts`](session/session-template-modal.spec.ts), [`e2e/session/session-cluster-mode.spec.ts`](session/session-cluster-mode.spec.ts), [`e2e/session/session-dependency.spec.ts`](session/session-dependency.spec.ts)
 
 **Steps:** 1.Session Type → 2.Environments & Resource → 3.Data & Storage → 4.Network → 5.Confirm
 **Modals:** `SessionTemplateModal` (recent history)
@@ -209,12 +210,13 @@
 | VFolder mounting (Step 3) | ❌ | - |
 | Port configuration (Step 4) | ❌ | - |
 | Batch schedule/timeout options | ❌ | - |
+| Session dependency via useStartSession | ✅ | `Creates batch session, then interactive session with dependency, and verifies dependency display` |
 | Session owner selection (admin) | ❌ | - |
 | Form validation errors | ❌ | - |
 | Cluster mode warning (multi-node x1) | 🔶 | `session-cluster-mode.spec.ts` (11 tests: 2 pass, 7 fixme pending FR-2381, 2 skip) |
 | Session history → SessionTemplateModal | ✅ | `session-template-modal.spec.ts` (7 tests) |
 
-**Coverage: 🔶 3/13 features (most only indirectly tested)**
+**Coverage: 🔶 3/14 features (most only indirectly tested)**
 
 ---
 
@@ -993,6 +995,7 @@ These are core user workflows that affect the largest number of users.
 | ------------------- | -------------------------------------------------------- | ---------------------------------------- |
 | `test-util.ts` | [`e2e/utils/test-util.ts`](utils/test-util.ts) | Login, config modification, TOML helpers |
 | `test-util-antd.ts` | [`e2e/utils/test-util-antd.ts`](utils/test-util-antd.ts) | Ant Design component interaction helpers |
+| `SessionAPIHelper` | [`e2e/utils/classes/session/SessionAPIHelper.ts`](utils/classes/session/SessionAPIHelper.ts) | Create and manage sessions via Backend.AI API |
 
 ### Page Object Models Needed
 
