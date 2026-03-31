@@ -542,7 +542,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
 /**
  * Inline ResetPasswordRequired with direct props (no WebComponent context).
  */
-const passwordPattern = /^(?=.*\d)(?=.*[a-zA-Z])(?=.*[_\W]).{8,}$/;
+export const passwordPattern = /^(?=.*\d)(?=.*[a-zA-Z])(?=.*[_\W]).{8,}$/;
 
 const ResetPasswordRequiredInline: React.FC<{
   open: boolean;

@@ -3,20 +3,16 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { RelayEnvironment } from '../RelayEnvironment';
-// @ts-ignore
-import rawFixAntCss from '../fix_antd.css?raw';
 import { backendaiOptions } from '../global-stores';
 import { buiLanguages } from '../helper/bui-language';
-import { ReactWebComponentProps } from '../helper/react-to-webcomponent';
 import {
   backendaiClientPromise,
   createAnonymousBackendaiClient,
 } from '../hooks';
 import { useCustomThemeConfig } from '../hooks/useCustomThemeConfig';
-import { ThemeModeProvider, useThemeMode } from '../hooks/useThemeMode';
+import { useThemeMode } from '../hooks/useThemeMode';
 // @ts-ignore
 import indexCss from '../index.css?raw';
-import { StyleProvider, createCache } from '@ant-design/cssinjs';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useUpdateEffect } from 'ahooks';
 import { App, type AppProps, theme } from 'antd';
@@ -51,20 +47,18 @@ import utc from 'dayjs/plugin/utc';
 import weekday from 'dayjs/plugin/weekday';
 import i18n from 'i18next';
 import Backend from 'i18next-http-backend';
-import { createStore, Provider as JotaiProvider } from 'jotai';
-import _ from 'lodash';
+import { createStore } from 'jotai';
 import { GlobeIcon } from 'lucide-react';
 import React, {
   ReactNode,
   Suspense,
   useEffect,
   useLayoutEffect,
-  useMemo,
   useState,
 } from 'react';
 import { useTranslation, initReactI18next } from 'react-i18next';
 import { RelayEnvironmentProvider } from 'react-relay/hooks';
-import { BrowserRouter, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useDeviceMetaData } from 'src/hooks/backendai';
 import { QueryParamProvider } from 'use-query-params';
 import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
@@ -78,29 +72,6 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(duration);
 
-interface WebComponentContextType {
-  value?: ReactWebComponentProps['value'];
-  parsedValue?: any;
-  dispatchEvent: ReactWebComponentProps['dispatchEvent'];
-  moveTo: (
-    path: string,
-    params?: {
-      [key in string]?: boolean | string | number;
-    },
-  ) => void;
-}
-
-const WebComponentContext = React.createContext<WebComponentContextType>(null!);
-const ShadowRootContext = React.createContext<ShadowRoot>(null!);
-export const useShadowRoot = () => React.useContext(ShadowRootContext);
-export const useWebComponentInfo = <ParsedType,>() => {
-  const context = React.useContext(WebComponentContext);
-  return {
-    ...context,
-    parsedValue: context.parsedValue as ParsedType,
-  };
-};
-
 // Create a client
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -110,10 +81,6 @@ const queryClient = new QueryClient({
     },
   },
 });
-
-export interface DefaultProvidersProps extends ReactWebComponentProps {
-  children?: React.ReactNode;
-}
 
 if (typeof window !== 'undefined') {
   window.switchLanguage = (lang: string) => {
@@ -217,131 +184,6 @@ const BAIMetaDataWrapper = ({ children }: { children: ReactNode }) => {
   );
 };
 
-const DefaultProvidersForWebComponent: React.FC<DefaultProvidersProps> = ({
-  children,
-  value,
-  styles,
-  shadowRoot,
-  dispatchEvent,
-}) => {
-  const cache = useMemo(() => createCache(), []);
-  const [lang] = useCurrentLanguage();
-  const { t } = useTranslation();
-  const { token } = theme.useToken();
-
-  const themeConfig = useCustomThemeConfig();
-
-  const { isDarkMode } = useThemeMode();
-
-  const componentValues = useMemo(() => {
-    let parsedValue: any;
-    try {
-      parsedValue = JSON.parse(value || '');
-    } catch {
-      parsedValue = {};
-    }
-    return {
-      value,
-      parsedValue,
-      dispatchEvent,
-      moveTo: (path, params) => {
-        dispatchEvent('moveTo', { path, params: params });
-      },
-    } as WebComponentContextType;
-  }, [value, dispatchEvent]);
-  return (
-    <JotaiProvider store={jotaiStore}>
-      {RelayEnvironment && (
-        <RelayEnvironmentProvider environment={RelayEnvironment}>
-          <React.StrictMode>
-            <style>
-              {styles}
-              {rawFixAntCss}
-              {indexCss}
-            </style>
-            <QueryClientProvider client={queryClient}>
-              <ShadowRootContext.Provider value={shadowRoot}>
-                <ThemeModeProvider>
-                  <WebComponentContext.Provider value={componentValues}>
-                    <BAIConfigProvider
-                      locale={
-                        buiLanguages[lang as keyof typeof buiLanguages] ??
-                        buiLanguages['en']
-                      }
-                      // @ts-ignore
-                      getPopupContainer={(triggerNode) => {
-                        return triggerNode?.parentNode || shadowRoot;
-                      }}
-                      theme={{
-                        ...(isDarkMode
-                          ? { ...themeConfig?.dark }
-                          : { ...themeConfig?.light }),
-                        algorithm: isDarkMode
-                          ? theme.darkAlgorithm
-                          : theme.defaultAlgorithm,
-                      }}
-                      clientPromise={backendaiClientPromise}
-                      modal={{
-                        mask: {
-                          blur: false,
-                        },
-                      }}
-                      drawer={{
-                        mask: {
-                          blur: false,
-                        },
-                      }}
-                      form={{
-                        requiredMark: (label, { required }) => (
-                          <>
-                            {label}
-                            {!required && (
-                              <BAIText
-                                type="secondary"
-                                style={{
-                                  marginLeft: token.marginXXS,
-                                  wordBreak: 'keep-all',
-                                }}
-                              >
-                                ({t('general.Optional')})
-                              </BAIText>
-                            )}
-                          </>
-                        ),
-                      }}
-                      tag={{
-                        variant: 'outlined',
-                      }}
-                      anonymousClientFactory={createAnonymousBackendaiClient}
-                    >
-                      <BAIMetaDataWrapper>
-                        <App {...commonAppProps}>
-                          <StyleProvider container={shadowRoot} cache={cache}>
-                            <Suspense fallback="">
-                              <BrowserRouter>
-                                <QueryParamProvider
-                                  adapter={ReactRouter6Adapter}
-                                >
-                                  <RoutingEventHandler />
-                                  {children}
-                                </QueryParamProvider>
-                              </BrowserRouter>
-                            </Suspense>
-                          </StyleProvider>
-                        </App>
-                      </BAIMetaDataWrapper>
-                    </BAIConfigProvider>
-                  </WebComponentContext.Provider>
-                </ThemeModeProvider>
-              </ShadowRootContext.Provider>
-            </QueryClientProvider>
-          </React.StrictMode>
-        </RelayEnvironmentProvider>
-      )}
-    </JotaiProvider>
-  );
-};
-
 export const RoutingEventHandler = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -368,19 +210,9 @@ export const RoutingEventHandler = () => {
   return null;
 };
 
-const DefaultProviders: React.FC<DefaultProvidersProps> = (props) => {
-  return (
-    <ThemeModeProvider>
-      <DefaultProvidersForWebComponent {...props} />
-    </ThemeModeProvider>
-  );
-};
-
-export default DefaultProviders;
-
-export const DefaultProvidersForReactRoot: React.FC<
-  Partial<DefaultProvidersProps>
-> = ({ children }) => {
+export const DefaultProvidersForReactRoot: React.FC<{
+  children?: React.ReactNode;
+}> = ({ children }) => {
   const [lang] = useCurrentLanguage();
   const { t } = useTranslation();
   const { token } = theme.useToken();
