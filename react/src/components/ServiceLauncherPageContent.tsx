@@ -278,6 +278,16 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
     allValues: ServiceLauncherFormValue,
   ) => {
     if (changedValues.runtimeVariant) {
+      // Reset environment selection when runtime variant changes
+      // as the previous selection may not be compatible with the new runtime
+      form.setFieldsValue({
+        environments: {
+          environment: undefined,
+          version: undefined,
+          image: undefined,
+          customizedTag: undefined,
+        },
+      });
       setEnvironmentVariablesForRuntimeVariant(
         changedValues.runtimeVariant,
         allValues,
@@ -1209,17 +1219,53 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                             disabled={hasAutoScalingRules}
                           />
                         </Form.Item>
-                        <ImageEnvironmentSelectFormItems
-                        // //TODO: test with real inference images
-                        // filter={(image) => {
-                        //   return !!_.find(image?.labels, (label) => {
-                        //     return (
-                        //       label?.key === "ai.backend.role" &&
-                        //       label.value === "INFERENCE" //['COMPUTE', 'INFERENCE', 'SYSTEM']
-                        //     );
-                        //   });
-                        // }}
-                        />
+                        <Form.Item noStyle dependencies={['runtimeVariant']}>
+                          {({ getFieldValue }) => {
+                            const runtimeVariant =
+                              getFieldValue('runtimeVariant');
+                            const isVllm = runtimeVariant === 'vllm';
+                            return (
+                              <ImageEnvironmentSelectFormItems
+                                filter={
+                                  isVllm
+                                    ? (image) => {
+                                        const fullName = [
+                                          image?.registry,
+                                          image?.namespace,
+                                          image?.base_image_name,
+                                          image?.name,
+                                        ]
+                                          .filter(Boolean)
+                                          .join('/')
+                                          .toLowerCase();
+                                        const hasVllmLabel = _.some(
+                                          image?.labels,
+                                          (label) =>
+                                            label?.value
+                                              ?.toLowerCase()
+                                              .includes('vllm') ||
+                                            label?.key
+                                              ?.toLowerCase()
+                                              .includes('vllm'),
+                                        );
+                                        return (
+                                          fullName.includes('vllm') ||
+                                          hasVllmLabel
+                                        );
+                                      }
+                                    : undefined
+                                }
+                                extra={
+                                  isVllm
+                                    ? t(
+                                        'modelService.OnlyVllmCompatibleEnvironmentsShown',
+                                      )
+                                    : undefined
+                                }
+                              />
+                            );
+                          }}
+                        </Form.Item>
                         {endpoint && !wantToChangeResource ? (
                           <Form.Item
                             label={

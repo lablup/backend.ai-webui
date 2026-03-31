@@ -65,6 +65,7 @@ export type ImageEnvironmentFormInput = {
 interface ImageEnvironmentSelectFormItemsProps {
   filter?: (image: Image) => boolean;
   showPrivate?: boolean;
+  extra?: React.ReactNode;
 }
 
 function compareVersions(version1: string, version2: string): number {
@@ -96,7 +97,7 @@ const isPrivateImage = (image: Image) => {
 
 const ImageEnvironmentSelectFormItems: React.FC<
   ImageEnvironmentSelectFormItemsProps
-> = ({ filter, showPrivate }) => {
+> = ({ filter, showPrivate, extra }) => {
   const form = Form.useFormInstance<ImageEnvironmentFormInput>();
   const environments = Form.useWatch('environments', { form, preserve: true });
   const baiClient = useSuspendedBackendaiClient();
@@ -418,6 +419,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
           },
         ]}
         style={{ marginBottom: 10 }}
+        extra={extra}
       >
         <BAISelect
           ref={envSelectRef}
