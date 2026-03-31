@@ -274,6 +274,7 @@ const BAIModal: React.FC<BAIModalProps> = ({
   windowActions,
   onWindowStateChange,
   minimizedPlacement = 'bottomRight',
+  maskClosable,
   ...modalProps
 }) => {
   'use memo';
@@ -508,13 +509,12 @@ const BAIModal: React.FC<BAIModalProps> = ({
             ? {
                 blur: false,
                 ...modalProps.mask,
-                closable:
-                  modalProps.mask?.closable ?? modalProps.maskClosable ?? true,
+                closable: modalProps.mask?.closable ?? maskClosable ?? true,
               }
             : {
                 blur: false,
                 enabled: modalProps.mask ?? true,
-                closable: modalProps.maskClosable ?? true,
+                closable: maskClosable ?? true,
               }
       }
       styles={{

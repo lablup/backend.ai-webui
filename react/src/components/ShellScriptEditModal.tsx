@@ -6,8 +6,8 @@ import { useBaiSignedRequestWithPromise } from '../helper';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { ShellScriptType } from '../pages/UserSettingsPage';
 import BAICodeEditor from './BAICodeEditor';
-import { DeleteOutlined } from '@ant-design/icons';
-import { App, Button, Dropdown, Form, Select, Typography } from 'antd';
+import { DeleteOutlined, DownOutlined } from '@ant-design/icons';
+import { App, Button, Dropdown, Form, Select, Space, Typography } from 'antd';
 import {
   BAIModal,
   BAIModalProps,
@@ -94,13 +94,22 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
 
   const fetchScript = () => {
     if (shellInfo === 'bootstrap') {
-      (
-        baiRequestWithPromise({
-          method: 'GET',
-          url: '/user-config/bootstrap-script',
-        }) as Promise<string>
-      ).then((response: string) => {
-        setScript(response);
+      baiRequestWithPromise({
+        method: 'GET',
+        url: '/user-config/bootstrap-script',
+      }).then((response: unknown) => {
+        if (typeof response === 'string') {
+          setScript(response);
+        } else if (
+          response !== null &&
+          typeof response === 'object' &&
+          'script' in response &&
+          typeof (response as { script: unknown }).script === 'string'
+        ) {
+          setScript((response as { script: string }).script);
+        } else {
+          setScript('');
+        }
       });
     }
     if (shellInfo === 'userconfig') {
@@ -218,48 +227,48 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
       footer={
         <BAIFlex justify="between" style={{ width: '100%' }}>
           <BAIFlex>
-            <Dropdown.Button
-              type="default"
-              danger
-              style={{ width: 'fit-content' }}
-              menu={{
-                items: [
-                  {
-                    key: 'reset',
-                    label: t('button.Reset'),
-                    onClick: () => {
-                      modal.confirm({
-                        title: t('dialog.title.LetsDouble-Check'),
-                        content: t('dialog.ask.DoYouWantToResetChanges'),
-                        onOk: () => {
-                          if (shellInfo === 'bootstrap') {
+            <Space.Compact>
+              <Button
+                type="default"
+                danger
+                onClick={() => {
+                  modal.confirm({
+                    title: t('dialog.title.LetsDouble-Check'),
+                    content: t('dialog.ask.DoYouWantToDeleteSomething', {
+                      name:
+                        shellInfo === 'bootstrap'
+                          ? t('session.launcher.BootstrapScriptDetail')
+                          : rcfileNames,
+                    }),
+                    onOk: deleteScript,
+                  });
+                }}
+              >
+                <DeleteOutlined />
+              </Button>
+              <Dropdown
+                menu={{
+                  items: [
+                    {
+                      key: 'reset',
+                      label: t('button.Reset'),
+                      onClick: () => {
+                        modal.confirm({
+                          title: t('dialog.title.LetsDouble-Check'),
+                          content: t('dialog.ask.DoYouWantToResetChanges'),
+                          onOk: () => {
                             setScript('');
-                          }
-                          if (shellInfo === 'userconfig') {
-                            setScript('');
-                          }
-                        },
-                      });
+                          },
+                        });
+                      },
+                      danger: true,
                     },
-                    danger: true,
-                  },
-                ],
-              }}
-              onClick={() => {
-                modal.confirm({
-                  title: t('dialog.title.LetsDouble-Check'),
-                  content: t('dialog.ask.DoYouWantToDeleteSomething', {
-                    name:
-                      shellInfo === 'bootstrap'
-                        ? 'Bootstrap script'
-                        : `${rcfileNames}`,
-                  }),
-                  onOk: deleteScript,
-                });
-              }}
-            >
-              <DeleteOutlined />
-            </Dropdown.Button>
+                  ],
+                }}
+              >
+                <Button type="default" danger icon={<DownOutlined />} />
+              </Dropdown>
+            </Space.Compact>
           </BAIFlex>
           <BAIFlex gap={'sm'}>
             <Button
@@ -269,25 +278,30 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
             >
               {t('button.Cancel')}
             </Button>
-            <Dropdown.Button
-              key="submit"
-              type="primary"
-              onClick={() => {
-                saveScript();
-              }}
-              style={{ width: 'fit-content' }}
-              menu={{
-                items: [
-                  {
-                    key: 'save',
-                    label: t('button.SaveWithoutClose'),
-                    onClick: () => saveScript({ closeAfter: false }),
-                  },
-                ],
-              }}
-            >
-              {t('button.SaveAndClose')}
-            </Dropdown.Button>
+            <Space.Compact>
+              <Button
+                key="submit"
+                type="primary"
+                onClick={() => {
+                  saveScript();
+                }}
+              >
+                {t('button.SaveAndClose')}
+              </Button>
+              <Dropdown
+                menu={{
+                  items: [
+                    {
+                      key: 'save',
+                      label: t('button.SaveWithoutClose'),
+                      onClick: () => saveScript({ closeAfter: false }),
+                    },
+                  ],
+                }}
+              >
+                <Button type="primary" icon={<DownOutlined />} />
+              </Dropdown>
+            </Space.Compact>
           </BAIFlex>
         </BAIFlex>
       }

@@ -35,7 +35,8 @@ const BAICodeEditor: React.FC<BAICodeEditorProps> = ({
     value,
     onChange,
   });
-  const extensions = [loadLanguage(language)!];
+  const languageExtension = loadLanguage(language);
+  const extensions = languageExtension ? [languageExtension] : [];
 
   return (
     <CodeMirror
