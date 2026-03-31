@@ -7,10 +7,8 @@ import {
   useBackendAIImageMetaData,
   useSuspendedBackendaiClient,
 } from '../hooks';
-import { useModelCardMetadata } from '../hooks/useModelCardMetadata';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
-import ModelCardChat from './ModelCardChat';
 import ModelCloneModal from './ModelCloneModal';
 import ModelTryContentButton from './ModelTryContentButton';
 import VFolderNodeIdenticon from './VFolderNodeIdenticon';
@@ -65,7 +63,6 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
   const { generateFolderPath } = useFolderExplorerOpener();
 
   const screen = Grid.useBreakpoint();
-  const { models: modelMetadataList } = useModelCardMetadata();
   const userRole = useCurrentUserRole();
 
   const model_card = useFragment(
@@ -105,10 +102,6 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
       }
     `,
     modelCardModalFrgmt,
-  );
-
-  const model = modelMetadataList.find(
-    (item) => model_card?.name === item.name,
   );
 
   return (
@@ -187,11 +180,6 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
           gap={'sm'}
           style={{ width: '100%' }}
         >
-          {modelMetadataList.some((item) => item.name === model_card?.name) && (
-            <BAIFlex direction="row" wrap="wrap" align="center" gap={'sm'}>
-              <ModelCardChat modelName={model?.serviceName} />
-            </BAIFlex>
-          )}
           <BAIFlex
             direction="column"
             wrap="wrap"
