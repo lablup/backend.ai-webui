@@ -242,7 +242,7 @@ const CreatePermissionModal: React.FC<CreatePermissionModalProps> = ({
   const watchedScopeId = Form.useWatch('scopeId', form);
   const watchedEntityType = Form.useWatch('entityType', form);
 
-  const { rbacScopeEntityCombinations } =
+  const { rbacScopeEntityCombinations, rbacEntityOperationCombinations } =
     useLazyLoadQuery<CreatePermissionModalCombinationsQuery>(
       graphql`
         query CreatePermissionModalCombinationsQuery {
@@ -250,23 +250,49 @@ const CreatePermissionModal: React.FC<CreatePermissionModalProps> = ({
             scopeType
             validEntityTypes
           }
+          rbacEntityOperationCombinations {
+            entityType
+            operations {
+              requiredPermission
+            }
+          }
         }
       `,
       {},
       { fetchPolicy: 'store-and-network' },
     );
 
-  // Scope types available: intersection of UI-supported types and backend-reported types
-  const availableScopeTypes = RBAC_ELEMENT_TYPES.filter((type) =>
-    rbacScopeEntityCombinations?.some((c) => c.scopeType === type),
+  // Valid operations per entity type
+  const entityOperationMap = new Map(
+    rbacEntityOperationCombinations?.map((c) => [
+      c.entityType,
+      c.operations.map((op) => op.requiredPermission),
+    ]) ?? [],
   );
+
+  // Scope types available: intersection of UI-supported types and backend-reported types
+  const availableScopeTypes = RBAC_ELEMENT_TYPES.filter((type) => {
+    const combination = rbacScopeEntityCombinations?.find(
+      (c) => c.scopeType === type,
+    );
+    if (!combination) return false;
+    return combination.validEntityTypes.some(
+      (et) => (entityOperationMap.get(et)?.length ?? 0) > 0,
+    );
+  });
 
   // Entity types valid for the currently selected scope type
   const validEntityTypes = watchedScopeType
-    ? (rbacScopeEntityCombinations?.find(
-        (c) => c.scopeType === watchedScopeType,
-      )?.validEntityTypes ?? [])
+    ? (rbacScopeEntityCombinations
+        ?.find((c) => c.scopeType === watchedScopeType)
+        ?.validEntityTypes.filter(
+          (et) => (entityOperationMap.get(et)?.length ?? 0) > 0,
+        ) ?? [])
     : [];
+
+  const validOperations = watchedEntityType
+    ? new Set(entityOperationMap.get(watchedEntityType) ?? [])
+    : new Set<OperationType>();
 
   const [commitCreatePermission, isCreateInFlight] =
     useMutation<CreatePermissionModalCreateMutation>(graphql`
@@ -495,19 +521,23 @@ const CreatePermissionModal: React.FC<CreatePermissionModalProps> = ({
             options={[
               {
                 label: t('rbac.operationGroups.Direct'),
-                options: DIRECT_OPERATIONS.map((type) => ({
+                options: DIRECT_OPERATIONS.filter((op) =>
+                  validOperations.has(op),
+                ).map((type) => ({
                   value: type,
                   label: t(`rbac.operations.${type}`, { defaultValue: type }),
                 })),
               },
               {
                 label: t('rbac.operationGroups.Delegate'),
-                options: DELEGATE_OPERATIONS.map((type) => ({
+                options: DELEGATE_OPERATIONS.filter((op) =>
+                  validOperations.has(op),
+                ).map((type) => ({
                   value: type,
                   label: t(`rbac.operations.${type}`, { defaultValue: type }),
                 })),
               },
-            ]}
+            ].filter((group) => group.options.length > 0)}
           />
         </Form.Item>
       </Form>

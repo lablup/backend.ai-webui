@@ -890,12 +890,12 @@ class Client {
     }
     if (this.isManagerVersionCompatibleWith('26.3.0')) {
       this._features['session-scheduling-history'] = true;
-      this._features['rbac'] = true;
-      this._features['bulk-purge-users'] = true;
     }
     if (this.isManagerVersionCompatibleWith('26.4.0')) {
       this._features['update-user-v2'] = true;
       this._features['my-keypairs'] = true;
+      this._features['rbac'] = true;
+      this._features['bulk-purge-users'] = true;
     }
   }
 
