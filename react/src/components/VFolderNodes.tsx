@@ -10,38 +10,33 @@ import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
+import { useStartServiceFromFolder } from '../hooks/useModelServiceLauncher';
 import { isDeletedCategory } from '../pages/VFolderNodeListPage';
-import EditableVFolderName from './EditableVFolderName';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import InviteFolderSettingModal from './InviteFolderSettingModal';
 import SharedFolderPermissionInfoModal from './SharedFolderPermissionInfoModal';
 import VFolderNodeIdenticon from './VFolderNodeIdenticon';
 import VFolderPermissionCell from './VFolderPermissionCell';
 import { UserOutlined } from '@ant-design/icons';
-import {
-  Alert,
-  App,
-  Button,
-  Popconfirm,
-  theme,
-  Tooltip,
-  Typography,
-} from 'antd';
+import { Alert, App, theme, Typography } from 'antd';
 import {
   filterOutNullAndUndefined,
+  BAIEndpointsIcon,
   BAIRestoreIcon,
   BAIShareAltIcon,
+  BAITrashBinIcon,
   BAIUserUnionIcon,
   BAITable,
   BAITableProps,
   BAIFlex,
+  BAINameActionCell,
   toLocalId,
   useErrorMessageResolver,
   BAILink,
   BAIConfirmModalWithInput,
-  BAIVFolderDeleteButton,
   BAITag,
 } from 'backend.ai-ui';
+import type { BAINameActionCellAction } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -63,6 +58,119 @@ export const statusTagColor = {
 };
 
 export type VFolderNodeInList = NonNullable<VFolderNodesFragment$data[number]>;
+
+interface VFolderNameCellProps {
+  vfolder: VFolderNodeInList;
+  onShare: () => void;
+  onDelete: () => void;
+  onRestore: () => void;
+  onDeleteForever: () => void;
+}
+
+const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
+  vfolder,
+  onShare,
+  onDelete,
+  onRestore,
+  onDeleteForever,
+}) => {
+  'use memo';
+  const { t } = useTranslation();
+  const { token } = theme.useToken();
+  const navigate = useWebUINavigate();
+  const { generateFolderPath } = useFolderExplorerOpener();
+
+  const isPipelineFolder = vfolder?.usage_mode === 'data';
+  const isModelFolder = vfolder?.usage_mode === 'model';
+  const isDeleted = isDeletedCategory(vfolder?.status);
+  const hasDeletePermission = _.includes(
+    vfolder?.permissions,
+    'delete_vfolder',
+  );
+
+  const vfolderId = toLocalId(vfolder.id ?? '');
+
+  const { start } = useStartServiceFromFolder({
+    modelName: vfolder.name ?? '',
+    vfolderId,
+    navigate,
+  });
+
+  const actions: BAINameActionCellAction[] = filterOutNullAndUndefined([
+    // Start Service (model folders only, active only)
+    isModelFolder && !isDeleted
+      ? {
+          key: 'start-service',
+          title: t('modelService.StartModelService'),
+          icon: <BAIEndpointsIcon />,
+          onClick: () => start(),
+        }
+      : null,
+    // Share (active folders only)
+    !isDeleted
+      ? {
+          key: 'share',
+          title: t('button.Share'),
+          icon: <BAIShareAltIcon />,
+          onClick: onShare,
+        }
+      : null,
+    // Move to trash (active folders only)
+    !isDeleted
+      ? {
+          key: 'delete',
+          title: t('data.folders.MoveToTrash'),
+          icon: <BAITrashBinIcon />,
+          type: 'danger' as const,
+          disabled: !hasDeletePermission || isPipelineFolder,
+          disabledReason: isPipelineFolder
+            ? t('data.folders.CannotDeletePipelineFolder')
+            : t('data.folders.NoDeletePermission'),
+          onClick: onDelete,
+        }
+      : null,
+    // Restore (deleted folders only)
+    isDeleted
+      ? {
+          key: 'restore',
+          title: t('data.folders.Restore'),
+          icon: <BAIRestoreIcon />,
+          disabled: vfolder?.status !== 'delete-pending' || isPipelineFolder,
+          disabledReason: isPipelineFolder
+            ? t('data.folders.CannotRestorePipelineFolder')
+            : undefined,
+          onClick: onRestore,
+        }
+      : null,
+    // Delete from trash bin (deleted folders only)
+    isDeleted
+      ? {
+          key: 'delete-forever',
+          title: t('data.folders.Delete'),
+          icon: <BAITrashBinIcon />,
+          type: 'danger' as const,
+          disabled: vfolder?.status !== 'delete-pending',
+          onClick: onDeleteForever,
+        }
+      : null,
+  ]);
+
+  return (
+    <BAINameActionCell
+      icon={
+        <VFolderNodeIdenticon
+          vfolderNodeIdenticonFrgmt={vfolder}
+          style={{ fontSize: token.fontSizeHeading5 }}
+        />
+      }
+      title={vfolder.name}
+      to={generateFolderPath(vfolderId)}
+      actions={actions}
+      showActions="always"
+    />
+  );
+};
+
 interface VFolderNodesProps extends Omit<
   BAITableProps<VFolderNodeInList>,
   'dataSource' | 'columns'
@@ -79,14 +187,11 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { message } = App.useApp();
+  const { message, modal } = App.useApp();
   const baiClient = useSuspendedBackendaiClient();
   const [currentUser] = useCurrentUserInfo();
-  const [hoveredColumn, setHoveredColumn] = useState<string | null>();
-  const [editingColumn, setEditingColumn] = useState<string | null>(null);
   const [inviteFolderId, setInviteFolderId] = useState<string | null>(null);
   const { upsertNotification } = useSetBAINotification();
-  const { generateFolderPath } = useFolderExplorerOpener();
   const { getErrorMessage } = useErrorMessageResolver();
   const navigate = useWebUINavigate();
 
@@ -110,10 +215,8 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
         usage_mode
         permissions @since(version: "24.09.0")
         ...VFolderPermissionCellFragment
-        ...EditableVFolderNameFragment
         ...VFolderNodeIdenticonFragment
         ...SharedFolderPermissionInfoModalFragment
-        ...BAIVFolderDeleteButtonFragment
         ...BAINodeNotificationItemFragment
       }
     `,
@@ -157,147 +260,20 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
             required: true,
             render: (_name, vfolder) => {
               return (
-                <BAIFlex align="center" gap="xs">
-                  <VFolderNodeIdenticon
-                    vfolderNodeIdenticonFrgmt={vfolder}
-                    style={{
-                      fontSize: token.fontSizeHeading5,
-                    }}
-                  />
-                  {vfolder?.id === hoveredColumn ? (
-                    <EditableVFolderName
-                      vfolderFrgmt={vfolder}
-                      style={{ color: token.colorLink }}
-                      editable={
-                        !isDeletedCategory(vfolder?.status) &&
-                        vfolder?.id !== editingColumn &&
-                        _.includes(vfolder?.permissions, 'update_attribute')
-                      }
-                      onEditEnd={() => {
-                        setEditingColumn(null);
-                      }}
-                      onEditStart={() => {
-                        setEditingColumn(vfolder?.id);
-                      }}
-                    />
-                  ) : (
-                    <BAILink
-                      type="hover"
-                      to={generateFolderPath(toLocalId(vfolder?.id))}
-                    >
-                      {vfolder.name}
-                    </BAILink>
-                  )}
-                </BAIFlex>
-              );
-            },
-            onCell: (vfolder) => {
-              return {
-                onMouseEnter: () => {
-                  if (!editingColumn) {
-                    setHoveredColumn(vfolder?.id);
-                  }
-                },
-                onMouseLeave: () => {
-                  if (!editingColumn) {
-                    setHoveredColumn(null);
-                  }
-                },
-                // onClick: () => {
-                //   setEditingColumn(vfolder?.id);
-                // },
-              };
-            },
-            sorter: true,
-          },
-          {
-            key: 'controls',
-            title: t('data.folders.Control'),
-            render: (__, vfolder) => {
-              const isPipelineFolder = vfolder?.usage_mode === 'data';
-              const hasDeletePermission = _.includes(
-                vfolder?.permissions,
-                'delete_vfolder',
-              );
-              return (
-                <BAIFlex gap={'xs'}>
-                  {/* Share */}
-                  {!isDeletedCategory(vfolder?.status) && (
-                    <Tooltip title={t('button.Share')} placement="left">
-                      <Button
-                        size="small"
-                        type="text"
-                        icon={<BAIShareAltIcon />}
-                        style={{
-                          color: token.colorInfo,
-                          background: token.colorInfoBg,
-                        }}
-                        onClick={() => {
-                          vfolder?.user === currentUser?.uuid
-                            ? setInviteFolderId(toLocalId(vfolder?.id ?? null))
-                            : setCurrentSharedVFolder(vfolder);
-                        }}
-                      />
-                    </Tooltip>
-                  )}
-                  {/* Restore */}
-                  {isDeletedCategory(vfolder?.status) && (
-                    <Tooltip
-                      title={
-                        isPipelineFolder
-                          ? t('data.folders.CannotRestorePipelineFolder')
-                          : t('data.folders.Restore')
-                      }
-                      placement="left"
-                    >
-                      <Button
-                        size="small"
-                        type="text"
-                        icon={<BAIRestoreIcon />}
-                        style={{
-                          color:
-                            vfolder?.status !== 'delete-pending' ||
-                            isPipelineFolder
-                              ? token.colorTextDisabled
-                              : token.colorInfo,
-                          background:
-                            vfolder?.status !== 'delete-pending' ||
-                            isPipelineFolder
-                              ? token.colorBgContainerDisabled
-                              : token.colorInfoBg,
-                        }}
-                        disabled={
-                          vfolder?.status !== 'delete-pending' ||
-                          isPipelineFolder
-                        }
-                        onClick={() => {
-                          restoreMutation.mutate(vfolder?.id, {
-                            onSuccess: (_result, vfolderId) => {
-                              onRemoveRow?.(vfolderId);
-                              message.success(
-                                t('data.folders.FolderRestored', {
-                                  folderName: vfolder?.name,
-                                }),
-                              );
-                            },
-                            onError: (error) => {
-                              upsertNotification({
-                                key: `vfolder-error-${vfolder?.id}`,
-                                node: vfolder,
-                                description: getErrorMessage(error),
-                                open: true,
-                              });
-                            },
-                          });
-                        }}
-                      />
-                    </Tooltip>
-                  )}
-                  {/* Move to trash bin */}
-                  {!isDeletedCategory(vfolder?.status) && (
-                    <Popconfirm
-                      title={t('data.folders.MoveToTrash')}
-                      onConfirm={() => {
+                <VFolderNameCell
+                  vfolder={vfolder}
+                  onShare={() => {
+                    vfolder?.user === currentUser?.uuid
+                      ? setInviteFolderId(toLocalId(vfolder?.id ?? null))
+                      : setCurrentSharedVFolder(vfolder);
+                  }}
+                  onDelete={() => {
+                    modal.confirm({
+                      title: t('data.folders.MoveToTrash'),
+                      content: vfolder?.name,
+                      okText: t('button.Confirm'),
+                      okButtonProps: { danger: true },
+                      onOk: () => {
                         deleteMutation.mutate(vfolder?.id, {
                           onSuccess: (_result, variables) => {
                             onRemoveRow?.(variables);
@@ -334,9 +310,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
                                   {_.map(occupiedSession, (sessionId) => (
                                     <BAILink
                                       key={sessionId}
-                                      style={{
-                                        fontWeight: 'normal',
-                                      }}
+                                      style={{ fontWeight: 'normal' }}
                                       onClick={() => {
                                         navigate({
                                           pathname: '/session',
@@ -354,47 +328,36 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
                             });
                           },
                         });
-                      }}
-                      okText={t('button.Move')}
-                      okButtonProps={{ danger: true }}
-                      disabled={!hasDeletePermission || isPipelineFolder}
-                    >
-                      <Tooltip
-                        title={
-                          isPipelineFolder
-                            ? t('data.folders.CannotDeletePipelineFolder')
-                            : hasDeletePermission
-                              ? t('data.folders.MoveToTrash')
-                              : t('data.folders.NoDeletePermission')
-                        }
-                        placement="right"
-                      >
-                        <BAIVFolderDeleteButton
-                          vfolderFrgmt={[vfolder]}
-                          size="small"
-                          type="text"
-                          disabled={!hasDeletePermission || isPipelineFolder}
-                        />
-                      </Tooltip>
-                    </Popconfirm>
-                  )}
-                  {/* Delete from trash bin & Disabled delete button */}
-                  {isDeletedCategory(vfolder?.status) && (
-                    <Tooltip title={t('data.folders.Delete')} placement="right">
-                      <BAIVFolderDeleteButton
-                        vfolderFrgmt={[vfolder]}
-                        size="small"
-                        type="text"
-                        disabled={vfolder?.status !== 'delete-pending'}
-                        onClick={() => {
-                          setDeletingVFolder(vfolder ?? null);
-                        }}
-                      />
-                    </Tooltip>
-                  )}
-                </BAIFlex>
+                      },
+                    });
+                  }}
+                  onRestore={() => {
+                    restoreMutation.mutate(vfolder?.id, {
+                      onSuccess: (_result, vfolderId) => {
+                        onRemoveRow?.(vfolderId);
+                        message.success(
+                          t('data.folders.FolderRestored', {
+                            folderName: vfolder?.name,
+                          }),
+                        );
+                      },
+                      onError: (error) => {
+                        upsertNotification({
+                          key: `vfolder-error-${vfolder?.id}`,
+                          node: vfolder,
+                          description: getErrorMessage(error),
+                          open: true,
+                        });
+                      },
+                    });
+                  }}
+                  onDeleteForever={() => {
+                    setDeletingVFolder(vfolder ?? null);
+                  }}
+                />
               );
             },
+            sorter: true,
           },
           {
             key: 'status',
