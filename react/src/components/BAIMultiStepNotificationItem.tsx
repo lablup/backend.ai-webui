@@ -9,6 +9,7 @@ import {
   ClockCircleOutlined,
   CloseCircleOutlined,
   DownOutlined,
+  ExclamationCircleOutlined,
   LoadingOutlined,
   MinusCircleOutlined,
 } from '@ant-design/icons';
@@ -112,6 +113,13 @@ const StepIcon: React.FC<{
       />
     );
   }
+  if (status === 'warned') {
+    return (
+      <ExclamationCircleOutlined
+        style={{ color: token.colorWarning, fontSize: size }}
+      />
+    );
+  }
   if (status === 'pending') {
     return animated ? (
       <LoadingOutlined style={{ color: token.colorInfo, fontSize: size }} />
@@ -204,6 +212,8 @@ const BAIMultiStepNotificationItem: React.FC<{
       <CheckCircleOutlined style={{ color: token.colorSuccess }} />
     ) : overallStatus === 'failed' ? (
       <CloseCircleOutlined style={{ color: token.colorError }} />
+    ) : overallStatus === 'warned' ? (
+      <ExclamationCircleOutlined style={{ color: token.colorWarning }} />
     ) : overallStatus === 'cancelled' ? (
       <MinusCircleOutlined style={{ color: token.colorTextDisabled }} />
     ) : (
@@ -215,23 +225,27 @@ const BAIMultiStepNotificationItem: React.FC<{
       ? t('notification.AllStepsCompleted')
       : overallStatus === 'failed'
         ? t('notification.StepFailed')
-        : overallStatus === 'cancelled'
-          ? t('notification.Cancelled')
-          : currentStepDef
-            ? t('notification.StepProgress', {
-                current: currentStep + 1,
-                total: totalSteps,
-                label: currentStepDef.label,
-              })
-            : t('notification.StepProgress', {
-                current: currentStep + 1,
-                total: totalSteps,
-                label: '',
-              });
+        : overallStatus === 'warned'
+          ? t('notification.StepWarning')
+          : overallStatus === 'cancelled'
+            ? t('notification.Cancelled')
+            : currentStepDef
+              ? t('notification.StepProgress', {
+                  current: currentStep + 1,
+                  total: totalSteps,
+                  label: currentStepDef.label,
+                })
+              : t('notification.StepProgress', {
+                  current: currentStep + 1,
+                  total: totalSteps,
+                  label: '',
+                });
 
   const currentStepProgress = currentStepDef?.progress;
 
-  const showRetry = onRetry != null && overallStatus === 'failed';
+  const showRetry =
+    onRetry != null &&
+    (overallStatus === 'failed' || overallStatus === 'warned');
   const showCancel = onCancel != null && overallStatus === 'running';
   const actionButton = notification.extraData?.actionButton as
     | { label: string; onClick: () => void }
@@ -243,6 +257,7 @@ const BAIMultiStepNotificationItem: React.FC<{
   const isTerminal =
     overallStatus === 'completed' ||
     overallStatus === 'failed' ||
+    overallStatus === 'warned' ||
     overallStatus === 'cancelled';
 
   const incomingStepDef = steps[incoming];
@@ -272,18 +287,20 @@ const BAIMultiStepNotificationItem: React.FC<{
           className={isDetailView ? styles.expandToggle : undefined}
           onClick={isDetailView ? () => setExpanded((v) => !v) : undefined}
         >
-          <StepIcon
-            status={
-              isTerminal
-                ? overallStatus === 'completed'
-                  ? 'resolved'
-                  : overallStatus === 'failed'
-                    ? 'rejected'
-                    : 'cancelled'
-                : (incomingStepDef?.status ?? 'idle')
-            }
-            animated={!isTerminal}
-          />
+          {overallStatus !== 'warned' && (
+            <StepIcon
+              status={
+                isTerminal
+                  ? overallStatus === 'completed'
+                    ? 'resolved'
+                    : overallStatus === 'failed'
+                      ? 'rejected'
+                      : 'cancelled'
+                  : (incomingStepDef?.status ?? 'idle')
+              }
+              animated={!isTerminal}
+            />
+          )}
           {!isTerminal && (
             <Typography.Text
               style={{ fontSize: token.fontSizeSM, whiteSpace: 'nowrap' }}
@@ -378,6 +395,23 @@ const BAIMultiStepNotificationItem: React.FC<{
               ))}
             </BAIFlex>
           </div>
+        )}
+
+        {/* Description: shown on failure/cancellation with detail message */}
+        {isTerminal && notification.description && (
+          <Typography.Text
+            style={{
+              fontSize: token.fontSizeSM,
+              color:
+                overallStatus === 'failed'
+                  ? token.colorError
+                  : overallStatus === 'warned'
+                    ? token.colorWarning
+                    : token.colorTextSecondary,
+            }}
+          >
+            {notification.description}
+          </Typography.Text>
         )}
 
         {/* Buttons: retry / cancel / action */}

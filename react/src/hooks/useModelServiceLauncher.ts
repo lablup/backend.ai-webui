@@ -14,8 +14,15 @@ import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useCurrentResourceGroupValue } from '../hooks/useCurrentProject';
+import {
+  MultiStepNotificationConfig,
+  StepDefinition,
+  StepWarning,
+  useMultiStepNotification,
+} from '../hooks/useMultiStepNotification';
 import { ESMClientErrorResponse, generateRandomString } from 'backend.ai-ui';
 import _ from 'lodash';
+import { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
 // Re-export for consumers who need only these types
@@ -262,4 +269,159 @@ export function useModelServiceLauncher() {
     isClonePending: mutationToClone.isPending,
     isCreatePending: mutationToCreateService.isPending,
   };
+}
+
+interface DefinitionCheckResult {
+  hasModelDefinition: boolean;
+  hasServiceDefinition: boolean;
+}
+
+/**
+ * Hook that provides a multi-step notification based service launch flow
+ * for starting a service directly from an existing model folder (no clone).
+ *
+ * Steps:
+ *   1. "Checking definition files..." — validate model-definition.yaml & service-definition.toml
+ *   2. "Creating service..." — POST /services
+ *   3. "Waiting for service to be ready..." — poll GET /services/:id
+ *
+ * On completion: auto-navigates to service detail page
+ * On step 1 failure: navigates to folder page or service launcher depending on missing files
+ * Supports cancel and retry via useMultiStepNotification.
+ */
+export function useStartServiceFromFolder(options: {
+  modelName: string;
+  vfolderId: string;
+  navigate: (path: string) => void;
+}) {
+  'use memo';
+  const { modelName, vfolderId, navigate } = options;
+  const { t } = useTranslation();
+  const baiClient = useSuspendedBackendaiClient();
+  const currentDomain = useCurrentDomainValue();
+  const currentResourceGroupByProject = useCurrentResourceGroupValue();
+
+  // Store the endpoint_id from step 2 so step 3 and action buttons can reference it
+  const endpointIdRef = useRef('');
+
+  const config: MultiStepNotificationConfig = useMemo(() => {
+    const steps: StepDefinition[] = [
+      {
+        label: t('modelService.CheckingDefinitionFiles'),
+        type: 'promise',
+        executor: async (): Promise<DefinitionCheckResult> => {
+          const res = await baiClient.vfolder.list_files('.', vfolderId);
+          const files: Array<{ name: string }> = res?.items ?? [];
+          const hasModelDefinition = files.some(
+            (f) =>
+              f.name === 'model-definition.yaml' ||
+              f.name === 'model-definition.yml',
+          );
+          const hasServiceDefinition = files.some(
+            (f) => f.name === 'service-definition.toml',
+          );
+
+          if (!hasModelDefinition) {
+            throw new Error(t('modelService.ModelDefinitionRequired'));
+          }
+
+          if (!hasServiceDefinition) {
+            throw new StepWarning(t('modelService.ServiceDefinitionMissing'));
+          }
+
+          return { hasModelDefinition, hasServiceDefinition };
+        },
+        onRejected: (error) => {
+          if (error instanceof StepWarning) {
+            const vfolderIdNoDash = vfolderId.replaceAll('-', '');
+            navigate(
+              `/service/start?formValues=${encodeURIComponent(JSON.stringify({ vFolderID: vfolderIdNoDash }))}`,
+            );
+          }
+        },
+        actionButtons: {
+          rejected: {
+            label: t('modelService.OpenFolder'),
+            onClick: () => {
+              navigate(`/data?folder=${vfolderId}`);
+            },
+          },
+        },
+      },
+      {
+        label: t('modelService.CreatingService'),
+        type: 'promise',
+        executor: async () => {
+          const input = createServiceInput(
+            modelName,
+            vfolderId,
+            currentResourceGroupByProject ?? '',
+          );
+          const environ: { [key: string]: string } = {};
+          if (input.envvars) {
+            input.envvars.forEach((v) => (environ[v.variable] = v.value));
+          }
+          const body: ServiceCreateType = {
+            name: input.serviceName,
+            desired_session_count: input.replicas,
+            runtime_variant: input.runtimeVariant,
+            group: baiClient.current_group,
+            domain: currentDomain,
+            cluster_size: input.cluster_size,
+            cluster_mode: input.cluster_mode,
+            open_to_public: input.openToPublic,
+            config: {
+              model: input.vFolderID,
+              model_version: 1,
+              model_mount_destination: '/models',
+              environ,
+              scaling_group: currentResourceGroupByProject ?? '',
+              resources: {},
+            },
+          };
+          const result: ServiceResult = await baiSignedRequestWithPromise({
+            method: 'POST',
+            url: '/services',
+            body,
+            client: baiClient,
+          });
+          endpointIdRef.current = result?.endpoint_id ?? '';
+          return result;
+        },
+        onChange: {
+          rejected: t('modelService.FailedToStartService'),
+        },
+      },
+    ];
+
+    return {
+      key: `start-service-${vfolderId}-${Date.now()}`,
+      message: t('modelService.StartModelServiceWithName', {
+        name: modelName,
+      }),
+      steps,
+      onAllCompleted: {
+        message: t('modelService.StartingModelService'),
+        actionButtons: {
+          primary: {
+            label: t('modelService.GoToServiceDetailPage'),
+            onClick: () => {
+              navigate(`/serving/${endpointIdRef.current}`);
+            },
+          },
+        },
+        callback: (stepResults) => {
+          const serviceResult = stepResults[1] as ServiceResult | undefined;
+          const endpointId =
+            serviceResult?.endpoint_id ?? endpointIdRef.current;
+          if (endpointId) {
+            navigate(`/serving/${endpointId}`);
+          }
+        },
+      },
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [modelName, vfolderId, currentResourceGroupByProject]);
+
+  return useMultiStepNotification(config);
 }

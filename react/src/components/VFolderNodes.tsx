@@ -10,6 +10,7 @@ import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
+import { useStartServiceFromFolder } from '../hooks/useModelServiceLauncher';
 import { isDeletedCategory } from '../pages/VFolderNodeListPage';
 import EditableVFolderName from './EditableVFolderName';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
@@ -29,6 +30,7 @@ import {
 } from 'antd';
 import {
   filterOutNullAndUndefined,
+  BAIEndpointsIcon,
   BAIRestoreIcon,
   BAIShareAltIcon,
   BAIUserUnionIcon,
@@ -63,6 +65,49 @@ export const statusTagColor = {
 };
 
 export type VFolderNodeInList = NonNullable<VFolderNodesFragment$data[number]>;
+
+interface VFolderStartServiceButtonProps {
+  vfolder: VFolderNodeInList;
+}
+
+/**
+ * Button component for starting a model service from a model-type vfolder.
+ * Validates that model-definition.yaml and service-definition.toml exist
+ * before attempting to create the service via multi-step notification.
+ */
+const VFolderStartServiceButton: React.FC<VFolderStartServiceButtonProps> = ({
+  vfolder,
+}) => {
+  'use memo';
+  const { t } = useTranslation();
+  const { token } = theme.useToken();
+  const navigate = useWebUINavigate();
+
+  const vfolderId = toLocalId(vfolder.id ?? '');
+
+  const { start, state } = useStartServiceFromFolder({
+    modelName: vfolder.name ?? '',
+    vfolderId,
+    navigate,
+  });
+
+  return (
+    <Tooltip title={t('modelService.StartModelService')} placement="left">
+      <Button
+        size="small"
+        type="text"
+        icon={<BAIEndpointsIcon />}
+        style={{
+          color: token.colorInfo,
+          background: token.colorInfoBg,
+        }}
+        loading={state.overallStatus === 'running'}
+        onClick={() => start()}
+      />
+    </Tooltip>
+  );
+};
+
 interface VFolderNodesProps extends Omit<
   BAITableProps<VFolderNodeInList>,
   'dataSource' | 'columns'
@@ -215,15 +260,20 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
             title: t('data.folders.Control'),
             render: (__, vfolder) => {
               const isPipelineFolder = vfolder?.usage_mode === 'data';
+              const isModelFolder = vfolder?.usage_mode === 'model';
               const hasDeletePermission = _.includes(
                 vfolder?.permissions,
                 'delete_vfolder',
               );
               return (
                 <BAIFlex gap={'xs'}>
+                  {/* Start Service (model folders only) */}
+                  {isModelFolder && !isDeletedCategory(vfolder?.status) && (
+                    <VFolderStartServiceButton vfolder={vfolder} />
+                  )}
                   {/* Share */}
                   {!isDeletedCategory(vfolder?.status) && (
-                    <Tooltip title={t('button.Share')} placement="left">
+                    <Tooltip title={t('button.Share')} placement="right">
                       <Button
                         size="small"
                         type="text"
