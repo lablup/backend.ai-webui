@@ -1,4 +1,6 @@
 export { default as BAITable } from './BAITable';
+export { default as BAINameActionCell } from './BAINameActionCell';
+export type { BAINameActionCellAction } from './BAINameActionCell';
 export type {
   BAITableProps,
   BAIColumnType,
