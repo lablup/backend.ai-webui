@@ -45,9 +45,13 @@ const SessionSlotCell: React.FC<OccupiedSlotViewProps> = ({
 
   const { liveStat } = useSessionLiveStat(session);
 
+  const parsedOccupiedSlots = JSON.parse(session.occupied_slots || '{}');
   const occupiedSlots: {
     [key in ResourceSlotName]?: string;
-  } = JSON.parse(session.occupied_slots || '{}');
+  } =
+    Object.keys(parsedOccupiedSlots).length > 0
+      ? parsedOccupiedSlots
+      : JSON.parse(session.requested_slots || '{}');
 
   if (type === 'cpu') {
     const CPUOccupiedSlot = parseFloat(occupiedSlots.cpu ?? '1');
