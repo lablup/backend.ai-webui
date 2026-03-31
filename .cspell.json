@@ -76,7 +76,11 @@
     "webcomponent",
     "webui",
     "wsproxy",
-    "lookback"
+    "lookback",
+    "rcfile",
+    "Renviron",
+    "userconfig",
+    "vimrc"
   ],
   "flagWords": [
     "데이터레이크",

@@ -4426,13 +4426,11 @@ class UserConfig {
    * @param {string} path - path of script dotfile.
    */
   async delete(path: string) {
-    let params = {
-      path: path,
-    };
+    const queryParams = new URLSearchParams({ path });
     const rqst = this.client.newSignedRequest(
       'DELETE',
-      '/user-config/dotfiles',
-      params,
+      `/user-config/dotfiles?${queryParams.toString()}`,
+      null,
     );
     return this.client._wrapWithPromise(rqst);
   }

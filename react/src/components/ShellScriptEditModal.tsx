@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useBaiSignedRequestWithPromise } from '../helper';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { ShellScriptType } from '../pages/UserSettingsPage';
 import BAICodeEditor from './BAICodeEditor';
@@ -44,81 +44,44 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
   const [userConfigScript, setUserConfigScript] = useState<
     Array<UserConfigScript>
   >([]);
-  const baiRequestWithPromise = useBaiSignedRequestWithPromise();
+  const baiClient = useSuspendedBackendaiClient();
   const updateBootStrapScriptMutation = useTanMutation({
     mutationFn: (script: string) => {
-      return baiRequestWithPromise({
-        method: 'POST',
-        url: '/user-config/bootstrap-script',
-        body: { script },
-      });
+      return baiClient.userConfig.update_bootstrap_script(script);
     },
   });
   const updateUserConfigScriptMutation = useTanMutation({
     mutationFn: (script: string) => {
-      return baiRequestWithPromise({
-        method: 'PATCH',
-        url: '/user-config/dotfiles',
-        body: {
-          data: script,
-          path: rcfileNames,
-          permission: '644',
-        },
-      });
+      return baiClient.userConfig.update(script, rcfileNames);
     },
   });
   const createUserConfigScriptMutation = useTanMutation({
     mutationFn: (script: string) => {
-      return baiRequestWithPromise({
-        method: 'POST',
-        url: '/user-config/dotfiles',
-        body: {
-          path: rcfileNames,
-          data: script,
-          permission: '644',
-        },
-      });
+      return baiClient.userConfig.create(script, rcfileNames);
     },
   });
   const deleteUserConfigScriptMutation = useTanMutation({
     mutationFn: () => {
-      return baiRequestWithPromise({
-        method: 'DELETE',
-        url: '/user-config/dotfiles',
-        body: {
-          path: rcfileNames,
-        },
-      });
+      return baiClient.userConfig.delete(rcfileNames);
     },
   });
 
   const fetchScript = () => {
     if (shellInfo === 'bootstrap') {
-      baiRequestWithPromise({
-        method: 'GET',
-        url: '/user-config/bootstrap-script',
-      }).then((response: unknown) => {
-        if (typeof response === 'string') {
-          setScript(response);
-        } else if (
-          response !== null &&
-          typeof response === 'object' &&
-          'script' in response &&
-          typeof (response as { script: unknown }).script === 'string'
-        ) {
-          setScript((response as { script: string }).script);
-        } else {
-          setScript('');
-        }
-      });
+      baiClient.userConfig
+        .get_bootstrap_script()
+        .then((response: string | { script: string } | null) => {
+          if (typeof response === 'string') {
+            setScript(response);
+          } else if (response?.script && typeof response.script === 'string') {
+            setScript(response.script);
+          } else {
+            setScript('');
+          }
+        });
     }
     if (shellInfo === 'userconfig') {
-      (
-        baiRequestWithPromise({
-          method: 'GET',
-          url: '/user-config/dotfiles',
-        }) as Promise<Array<UserConfigScript>>
-      ).then((response) => {
+      baiClient.userConfig.get().then((response: Array<UserConfigScript>) => {
         const defaultScript = _.find(response, { path: rcfileNames });
         setScript(defaultScript?.data || '');
         setUserConfigScript(response);
