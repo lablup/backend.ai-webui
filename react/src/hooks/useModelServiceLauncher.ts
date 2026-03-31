@@ -24,6 +24,7 @@ import { ESMClientErrorResponse, generateRandomString } from 'backend.ai-ui';
 import _ from 'lodash';
 import { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { parse as parseToml } from 'smol-toml';
 
 // Re-export for consumers who need only these types
 export type { ServiceCreateType, ServiceLauncherFormValue };
@@ -272,8 +273,7 @@ export function useModelServiceLauncher() {
 }
 
 interface DefinitionCheckResult {
-  hasModelDefinition: boolean;
-  hasServiceDefinition: boolean;
+  runtimeVariant: string;
 }
 
 /**
@@ -321,17 +321,89 @@ export function useStartServiceFromFolder(options: {
             (f) => f.name === 'service-definition.toml',
           );
 
-          if (!hasModelDefinition) {
-            throw new Error(t('modelService.ModelDefinitionRequired'));
-          }
-
+          // No service-definition → redirect to service start page
           if (!hasServiceDefinition) {
             throw new StepWarning(t('modelService.ServiceDefinitionMissing'));
           }
 
-          return { hasModelDefinition, hasServiceDefinition };
+          // Download and parse service-definition.toml
+          let text: string;
+          try {
+            const tokenResponse =
+              await baiClient.vfolder.request_download_token(
+                'service-definition.toml',
+                vfolderId,
+                false,
+              );
+            const downloadUrl = `${tokenResponse.url}?token=${tokenResponse.token}&archive=false`;
+            const response = await fetch(downloadUrl);
+            if (!response.ok) {
+              throw new Error(`HTTP ${response.status}`);
+            }
+            text = await response.text();
+          } catch {
+            throw new Error(t('modelService.ServiceDefinitionDownloadError'));
+          }
+
+          let parsed: Record<string, unknown>;
+          try {
+            parsed = parseToml(text);
+          } catch {
+            throw new Error(t('modelService.ServiceDefinitionParseError'));
+          }
+
+          // Check runtime_variants field
+          const rawVariants = parsed.runtime_variants;
+
+          // runtime_variants not specified → user must choose manually
+          if (rawVariants === undefined || rawVariants === null) {
+            throw new StepWarning(t('modelService.RuntimeVariantNotSpecified'));
+          }
+
+          let runtimeVariant: string;
+
+          if (typeof rawVariants === 'string') {
+            const trimmed = rawVariants.trim();
+            if (!trimmed) {
+              throw new StepWarning(
+                t('modelService.RuntimeVariantNotSpecified'),
+              );
+            }
+            runtimeVariant = trimmed;
+          } else if (Array.isArray(rawVariants)) {
+            if (rawVariants.length === 0) {
+              throw new StepWarning(
+                t('modelService.RuntimeVariantNotSpecified'),
+              );
+            }
+            if (rawVariants.length > 1) {
+              throw new StepWarning(
+                t('modelService.RuntimeVariantSelectionRequired'),
+              );
+            }
+            const only = rawVariants[0];
+            if (typeof only !== 'string' || !only.trim()) {
+              throw new StepWarning(
+                t('modelService.RuntimeVariantNotSpecified'),
+              );
+            }
+            runtimeVariant = only.trim();
+          } else {
+            // Unsupported type (number, object, etc.) → treat as not specified
+            throw new StepWarning(t('modelService.RuntimeVariantNotSpecified'));
+          }
+
+          // runtime_variant is "custom" → model-definition is required
+          if (runtimeVariant === 'custom') {
+            if (!hasModelDefinition) {
+              throw new Error(t('modelService.ModelDefinitionRequired'));
+            }
+          }
+
+          return { runtimeVariant };
         },
         onRejected: (error) => {
+          // For warnings (StepWarning), redirect to service start page
           if (error instanceof StepWarning) {
             const vfolderIdNoDash = vfolderId.replaceAll('-', '');
             navigate(
@@ -351,7 +423,9 @@ export function useStartServiceFromFolder(options: {
       {
         label: t('modelService.CreatingService'),
         type: 'promise',
-        executor: async () => {
+        executor: async (prevResult) => {
+          const definitionResult = prevResult as DefinitionCheckResult;
+          const runtimeVariant = definitionResult.runtimeVariant;
           const input = createServiceInput(
             modelName,
             vfolderId,
@@ -364,7 +438,7 @@ export function useStartServiceFromFolder(options: {
           const body: ServiceCreateType = {
             name: input.serviceName,
             desired_session_count: input.replicas,
-            runtime_variant: input.runtimeVariant,
+            runtime_variant: runtimeVariant,
             group: baiClient.current_group,
             domain: currentDomain,
             cluster_size: input.cluster_size,

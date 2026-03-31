@@ -134,9 +134,18 @@
 
 ### 대상 유스케이스 (FR-2382 기반)
 
-1. **Model folder 서비스 런칭**: model definition 확인 → service definition 확인 → 결과 액션 (3단계)
-2. **Model Store clone & start**: clone → model definition 확인 → service definition 확인 → 결과 액션 (4단계)
-3. **HuggingFace 모델 import**: 다운로드 → definition 생성 → 완료 (3단계, 향후)
+1. **Model folder 서비스 런칭** (구현됨, FR-2406):
+   - Step 1: service-definition.toml 다운로드 및 파싱 → `runtime_variants` 확인
+     - `runtime_variants` 단일 값 → 해당 값으로 서비스 생성 진행
+     - `runtime_variants = "custom"` → model-definition.yaml 존재 확인 (없으면 Error + "폴더 열기")
+     - `runtime_variants` 복수 또는 미지정 → StepWarning으로 서비스 시작 페이지 리다이렉트
+     - 파싱 에러 → Error + "폴더 열기" 버튼
+     - service-definition.toml 없음 → StepWarning으로 서비스 시작 페이지 리다이렉트
+   - Step 2: 서비스 생성 (Step 1에서 결정된 `runtime_variant` 사용)
+   - 완료 시 서비스 상세 페이지로 자동 네비게이션
+   - `StepWarning` 활용: warning 시 `onRejected`에서 `instanceof StepWarning` 분기로 서비스 시작 페이지 자동 리다이렉트, error 시 "폴더 열기" 액션 버튼 표시
+2. **Model Store clone & start**: clone → definition 확인 → 서비스 생성 → 결과 액션 (향후)
+3. **HuggingFace 모델 import**: 다운로드 → definition 생성 → 완료 (향후)
 
 ## 관련 이슈
 
