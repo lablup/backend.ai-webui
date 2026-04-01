@@ -2594,7 +2594,7 @@
     "SSHKeypairEnterManually": "SSH Anahtar Çifti",
     "SSHKeypairEnterManuallyFinished": "SSH Anahtar Çifti başarıyla kaydedildi.",
     "SSHKeypairGeneration": "SSH Anahtar Çifti Oluşturma",
-    "SSHKeypairGenerationWarning": "Kolaylık açısından özel anahtarı şimdi kaydetmenizi öneririz. Daha sonra bir oturum başlattıktan sonra /home/work/id_container dosyasından alabilirsiniz.",
+    "SSHKeypairGenerationWarning": "Bu modal kapatıldıktan sonra özel anahtara tekrar erişemeyeceksiniz.",
     "SSHKeypairManagement": "SSH Anahtar Çifti Yönetimi",
     "SessionTerminationDialog": "Oturum sonlandırma geri alınamaz. Oturumu sonlandırmak için devam etmek istiyor musunuz?",
     "ShellEnvironments": "Kabuk Ortamları",

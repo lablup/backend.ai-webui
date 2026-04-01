@@ -2598,7 +2598,7 @@
     "SSHKeypairEnterManually": "SSH 密钥对",
     "SSHKeypairEnterManuallyFinished": "SSH 密钥对已成功注册。",
     "SSHKeypairGeneration": "SSH 密鑰對生成",
-    "SSHKeypairGenerationWarning": "建議您現在儲存私鑰以便使用。之後可以在啟動會話後從 /home/work/id_container 取得。",
+    "SSHKeypairGenerationWarning": "關閉此視窗後，您將無法再次存取私鑰。",
     "SSHKeypairManagement": "SSH 密鑰對管理",
     "SessionTerminationDialog": "會話終止無法撤消。您要繼續終止會話嗎？",
     "ShellEnvironments": "外殼環境",

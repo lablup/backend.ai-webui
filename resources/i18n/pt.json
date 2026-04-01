@@ -2596,7 +2596,7 @@
     "SSHKeypairEnterManually": "Par de chaves SSH",
     "SSHKeypairEnterManuallyFinished": "O par de chaves SSH foi registado com sucesso.",
     "SSHKeypairGeneration": "Geração de par de chaves SSH",
-    "SSHKeypairGenerationWarning": "Recomendamos guardar a chave privada agora por conveniência. Pode recuperá-la mais tarde a partir de /home/work/id_container após iniciar uma sessão.",
+    "SSHKeypairGenerationWarning": "Não poderá aceder à chave privada novamente após fechar esta janela.",
     "SSHKeypairManagement": "Gerenciamento de par de chaves SSH",
     "SessionTerminationDialog": "O encerramento da sessão não pode ser desfeito. Você deseja prosseguir para encerrar a sessão?",
     "ShellEnvironments": "Ambientes Shell",

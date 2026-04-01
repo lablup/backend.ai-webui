@@ -2594,7 +2594,7 @@
     "SSHKeypairEnterManually": "Para kluczy SSH",
     "SSHKeypairEnterManuallyFinished": "Para kluczy SSH została pomyślnie zarejestrowana.",
     "SSHKeypairGeneration": "Generowanie par kluczy SSH",
-    "SSHKeypairGenerationWarning": "Zalecamy zapisanie klucza prywatnego teraz dla wygody. Można go później pobrać z /home/work/id_container po uruchomieniu sesji.",
+    "SSHKeypairGenerationWarning": "Po zamknięciu tego okna nie będzie można uzyskać ponownego dostępu do klucza prywatnego.",
     "SSHKeypairManagement": "Zarządzanie parami kluczy SSH",
     "SessionTerminationDialog": "Zakończenia sesji nie można cofnąć. Czy chcesz kontynuować, aby zakończyć sesję?",
     "ShellEnvironments": "Środowiska powłoki",

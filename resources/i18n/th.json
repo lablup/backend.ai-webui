@@ -2596,7 +2596,7 @@
     "SSHKeypairEnterManually": "คู่คีย์ SSH",
     "SSHKeypairEnterManuallyFinished": "ลงทะเบียนคู่คีย์ SSH สำเร็จแล้ว",
     "SSHKeypairGeneration": "การสร้างคู่คีย์ SSH",
-    "SSHKeypairGenerationWarning": "แนะนำให้บันทึกคีย์ส่วนตัวไว้ตอนนี้เพื่อความสะดวก สามารถดึงมาได้ในภายหลังจาก /home/work/id_container หลังจากเริ่มเซสชัน",
+    "SSHKeypairGenerationWarning": "คุณจะไม่สามารถเข้าถึงคีย์ส่วนตัวได้อีกหลังจากปิดหน้าต่างนี้",
     "SSHKeypairManagement": "การจัดการคู่คีย์ SSH",
     "SessionTerminationDialog": "การยุติเซสชันไม่สามารถยกเลิกได้ คุณต้องการดำเนินการต่อเพื่อยุติเซสชันหรือไม่?",
     "ShellEnvironments": "สภาพแวดล้อมเชลล์",

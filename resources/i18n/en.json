@@ -2604,7 +2604,7 @@
     "SSHKeypairEnterManually": "SSH Keypair",
     "SSHKeypairEnterManuallyFinished": "SSH Keypair has been successfully registered.",
     "SSHKeypairGeneration": "SSH Keypair Generation",
-    "SSHKeypairGenerationWarning": "We recommend saving the private key now for convenience. You can retrieve it later from /home/work/id_container after starting a session.",
+    "SSHKeypairGenerationWarning": "You will not be able to access the private key again after closing this modal.",
     "SSHKeypairManagement": "SSH Keypair Management",
     "SessionTerminationDialog": "Session termination cannot be undone. Do you want to proceed to terminate the session?",
     "ShellEnvironments": "Shell Environments",

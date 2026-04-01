@@ -2594,7 +2594,7 @@
     "SSHKeypairEnterManually": "Пара ключей SSH",
     "SSHKeypairEnterManuallyFinished": "Пара ключей SSH успешно зарегистрирована.",
     "SSHKeypairGeneration": "Создание пары ключей SSH",
-    "SSHKeypairGenerationWarning": "Рекомендуем сохранить закрытый ключ сейчас для удобства. Позже его можно получить из /home/work/id_container после запуска сессии.",
+    "SSHKeypairGenerationWarning": "После закрытия этого окна вы не сможете получить доступ к закрытому ключу повторно.",
     "SSHKeypairManagement": "Управление парой ключей SSH",
     "SessionTerminationDialog": "Завершение сеанса нельзя отменить. Вы хотите продолжить, чтобы завершить сеанс?",
     "ShellEnvironments": "Оболочка среды",

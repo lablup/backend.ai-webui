@@ -2596,7 +2596,7 @@
     "SSHKeypairEnterManually": "SSH товчлуурын хослол",
     "SSHKeypairEnterManuallyFinished": "SSH Keypair амжилттай бүртгэгдлээ.",
     "SSHKeypairGeneration": "SSH товчлуурын үе",
-    "SSHKeypairGenerationWarning": "Тухтай байхын тулд хувийн түлхүүрийг одоо хадгалахыг зөвлөж байна. Сессийг эхлүүлсний дараа /home/work/id_container файлаас дараа нь авах боломжтой.",
+    "SSHKeypairGenerationWarning": "Энэ цонхыг хаасны дараа хувийн түлхүүрт дахин хандах боломжгүй болно.",
     "SSHKeypairManagement": "SSH товчлуурын менежмент",
     "SessionTerminationDialog": "Session дуусахыг цуцлах боломжгүй. Та хуралдааныг зогсоохыг хүсч байна уу?",
     "ShellEnvironments": "Shell Environments",
