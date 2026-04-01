@@ -10,7 +10,9 @@ export interface BAIBoardItemTitleProps {
   style?: React.CSSProperties;
 }
 
-const Z_INDEX_IN_BAI_BOARD_ITEM_TITLE = 5;
+// Z-index for sticky title in BAIBoardItem. Should be higher than antd table fixed columns
+// (dynamically calculated based on column count) but lower than MainLayout header (z-index: 100).
+const Z_INDEX_IN_BAI_BOARD_ITEM_TITLE = 50;
 
 const BAIBoardItemTitle: React.FC<BAIBoardItemTitleProps> = ({
   title,

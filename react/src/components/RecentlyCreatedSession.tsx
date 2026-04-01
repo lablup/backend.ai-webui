@@ -107,6 +107,7 @@ const RecentlyCreatedSession: React.FC<RecentlyCreatedSessionProps> = ({
             flex: 1,
             overflowY: 'auto',
             overflowX: 'hidden',
+            marginBottom: token.margin,
           }}
         >
           <SessionNodes
@@ -118,6 +119,7 @@ const RecentlyCreatedSession: React.FC<RecentlyCreatedSessionProps> = ({
             }}
             pagination={false}
             disableSorter
+            style={{ overflowY: 'hidden' }}
           />
         </BAIFlex>
       </BAIFlex>

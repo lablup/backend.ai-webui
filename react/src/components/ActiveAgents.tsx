@@ -63,6 +63,7 @@ const ActiveAgents: React.FC<ActiveAgentsProps> = ({
           flex: 1,
           overflowY: 'auto',
           overflowX: 'hidden',
+          marginBottom: token.margin,
         }}
       >
         <AgentList
