@@ -7,16 +7,14 @@ import { convertToBinaryUnit } from '../../helper';
 import { ResourceSlotName } from '../../hooks/backendai';
 import { useSessionLiveStat } from '../../hooks/useSessionNodeLiveStat';
 import { displayMemoryUsage } from '../SessionUsageMonitor';
+import { Divider, Tooltip, TooltipProps, Typography } from 'antd';
+import type { SemanticColor } from 'backend.ai-ui';
 import {
-  Badge,
-  BadgeProps,
-  Divider,
-  theme,
-  Tooltip,
-  TooltipProps,
-  Typography,
-} from 'antd';
-import { BAIFlex, useResourceSlotsDetails } from 'backend.ai-ui';
+  BAIBadge,
+  BAIBadgeProps,
+  BAIFlex,
+  useResourceSlotsDetails,
+} from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';
 import { graphql, useFragment } from 'react-relay';
@@ -141,7 +139,16 @@ const SessionSlotCell: React.FC<OccupiedSlotViewProps> = ({
   }
 };
 
-interface UsageBadgeProps extends Omit<BadgeProps, 'color' | 'status'> {
+const percentToSemantic = (
+  percent: number,
+): { color?: SemanticColor; processing?: boolean } => {
+  if (!percent) return {};
+  if (percent < 50) return { color: 'default' };
+  if (percent < 80) return { color: 'warning' };
+  return { color: 'error', processing: true };
+};
+
+interface UsageBadgeProps extends Omit<BAIBadgeProps, 'color' | 'processing'> {
   percent: number;
   tooltip?: TooltipProps;
 }
@@ -150,35 +157,11 @@ const UsageBadge: React.FC<UsageBadgeProps> = ({
   percent,
   ...badgeProps
 }) => {
-  const { token } = theme.useToken();
-  const extraProps: Pick<BadgeProps, 'status' | 'color' | 'styles'> = !percent
-    ? {
-        status: 'default',
-        styles: {
-          indicator: {
-            border: '1px solid',
-            borderColor: token.colorTextDisabled,
-            backgroundColor: 'transparent',
-            flexWrap: 'nowrap',
-          },
-        },
-      }
-    : percent < 50
-      ? {
-          status: 'default',
-        }
-      : percent < 80
-        ? {
-            status: 'warning',
-          }
-        : {
-            status: 'processing',
-            color: 'red',
-          };
+  const { color, processing } = percentToSemantic(percent);
   return (
     <Tooltip {...tooltip}>
       <div>
-        <Badge {...badgeProps} {...extraProps} />
+        <BAIBadge {...badgeProps} color={color} processing={processing} />
       </div>
     </Tooltip>
   );

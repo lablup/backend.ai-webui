@@ -2,13 +2,17 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { usageIndicatorColor } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import useControllableState_deprecated from '../hooks/useControllableState';
 import TextHighlighter from './TextHighlighter';
-import { Badge, Tooltip } from 'antd';
-import { BAIFlex, BAISelect, BAISelectProps } from 'backend.ai-ui';
+import { Tooltip } from 'antd';
+import {
+  BAIFlex,
+  BAISelect,
+  BAISelectProps,
+  StorageUsageBadge,
+} from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -128,10 +132,8 @@ const StorageSelect: React.FC<Props> = ({
                       : t('data.usage.Insufficient')
                 }`}
               >
-                <Badge
-                  color={usageIndicatorColor(
-                    vhostInfo?.volume_info[host]?.usage?.percentage,
-                  )}
+                <StorageUsageBadge
+                  percent={vhostInfo?.volume_info[host]?.usage?.percentage}
                 />
                 {/* Use &nbsp; instead of Flex gap to fix Tooltip  */}
                 &nbsp;&nbsp;

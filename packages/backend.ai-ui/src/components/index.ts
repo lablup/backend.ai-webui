@@ -1,3 +1,5 @@
+export { default as BAIBadge } from './BAIBadge';
+export type { BAIBadgeProps } from './BAIBadge';
 export { default as BAIBoardItemTitle } from './BAIBoardItemTitle';
 export type { BAIBoardItemTitleProps } from './BAIBoardItemTitle';
 export { default as BAIBulkEditFormItem } from './BAIBulkEditFormItem';
@@ -93,6 +95,8 @@ export type {
   BAISchedulingResultBadgeProps,
   SchedulingResult,
 } from './BAISchedulingResultBadge';
+export { default as StorageUsageBadge } from './StorageUsageBadge';
+export type { StorageUsageBadgeProps } from './StorageUsageBadge';
 export { default as BAIBoardItemErrorBoundary } from './BAIBoardItemErrorBoundary';
 export * from './Table';
 export * from './fragments';

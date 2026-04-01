@@ -1,12 +1,14 @@
 import { BAIAllowedVfolderHostsWithPermissionFromGroupFragment$key } from '../../__generated__/BAIAllowedVfolderHostsWithPermissionFromGroupFragment.graphql';
 import { BAIAllowedVfolderHostsWithPermissionFromKeyPairResourcePolicyFragment$key } from '../../__generated__/BAIAllowedVfolderHostsWithPermissionFromKeyPairResourcePolicyFragment.graphql';
 import { BAIAllowedVfolderHostsWithPermissionQuery } from '../../__generated__/BAIAllowedVfolderHostsWithPermissionQuery.graphql';
+import { SemanticColor } from '../../helper';
+import BAIBadge from '../BAIBadge';
 import BAIFlex from '../BAIFlex';
 import BAILink from '../BAILink';
 import BAIModal from '../BAIModal';
 import { BAITable } from '../Table';
 import { CheckCircleFilled, StopFilled } from '@ant-design/icons';
-import { Badge, theme } from 'antd';
+import { theme } from 'antd';
 import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -70,18 +72,18 @@ const BAIAllowedVfolderHostsWithPermission: React.FC<
       {},
     );
 
-  const getColor = (vfolderHost: string) => {
+  const getColor = (vfolderHost: string): SemanticColor => {
     if (
       _.isEqual(
         new Set(allowedVfolderHosts[vfolderHost]),
         new Set(vfolder_host_permissions?.vfolder_host_permission_list || null),
       )
     ) {
-      return 'green';
+      return 'success';
     } else if (allowedVfolderHosts[vfolderHost]?.length > 0) {
-      return 'gold';
+      return 'warning';
     } else {
-      return 'red';
+      return 'error';
     }
   };
 
@@ -96,8 +98,7 @@ const BAIAllowedVfolderHostsWithPermission: React.FC<
             }}
             type="hover"
           >
-            <Badge color={getColor(storageHost)} />
-            &nbsp;{storageHost}
+            <BAIBadge color={getColor(storageHost)} text={storageHost} />
           </BAILink>
         ))}
       </BAIFlex>

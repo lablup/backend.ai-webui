@@ -1,6 +1,5 @@
-import { SemanticColor, useSemanticColorMap } from '../helper';
-import BAIFlex from './BAIFlex';
-import { Badge, BadgeProps } from 'antd';
+import { SemanticColor } from '../helper';
+import BAIBadge, { BAIBadgeProps } from './BAIBadge';
 import _ from 'lodash';
 
 export type SchedulingResult =
@@ -13,7 +12,7 @@ export type SchedulingResult =
   | 'SKIPPED';
 
 export interface BAISchedulingResultBadgeProps extends Omit<
-  BadgeProps,
+  BAIBadgeProps,
   'text' | 'color'
 > {
   result: SchedulingResult | null;
@@ -34,18 +33,9 @@ const BAISchedulingResultBadge = ({
   ...badgeProps
 }: BAISchedulingResultBadgeProps) => {
   'use memo';
-  const semanticColorMap = useSemanticColorMap();
   const semanticColor = result ? _.get(resultSemanticMap, result) : undefined;
 
-  return (
-    <BAIFlex gap={'xs'} wrap="nowrap" align="center">
-      <Badge
-        {...badgeProps}
-        color={semanticColor ? semanticColorMap[semanticColor] : undefined}
-      />
-      &nbsp;{result}
-    </BAIFlex>
-  );
+  return <BAIBadge {...badgeProps} color={semanticColor} text={result} />;
 };
 
 export default BAISchedulingResultBadge;
