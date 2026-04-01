@@ -898,6 +898,9 @@ class Client {
       this._features['bulk-purge-users'] = true;
       this._features['route-health-status'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('26.5.0')) {
+      this._features['model-card-v2'] = true;
+    }
   }
 
   /**

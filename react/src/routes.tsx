@@ -101,8 +101,9 @@ const BrandingPage = React.lazy(() => import('./pages/BrandingPage'));
 const RBACManagementPage = React.lazy(
   () => import('./pages/RBACManagementPage'),
 );
-const AdminSessionPage = React.lazy(
-  () => import('./pages/AdminSessionPage'),
+const AdminSessionPage = React.lazy(() => import('./pages/AdminSessionPage'));
+const AdminModelCardListPage = React.lazy(
+  () => import('./pages/AdminModelCardListPage'),
 );
 const AdminServingPage = React.lazy(() => import('./pages/AdminServingPage'));
 const AdminVFolderNodeListPage = React.lazy(
@@ -380,6 +381,22 @@ export const mainLayoutChildRoutes: RouteObject[] = [
     path: '/admin-session',
     handle: { labelKey: 'webui.menu.Sessions' },
     Component: AdminSessionPage,
+  },
+  {
+    path: '/admin-model-store',
+    handle: { labelKey: 'webui.menu.ModelStore' },
+    Component: () => {
+      const { t } = useTranslation();
+      return (
+        <BAIErrorBoundary>
+          <Suspense
+            fallback={<BAICard title={t('webui.menu.ModelStore')} loading />}
+          >
+            <AdminModelCardListPage />
+          </Suspense>
+        </BAIErrorBoundary>
+      );
+    },
   },
   {
     path: '/admin-serving',

@@ -100,6 +100,7 @@ export const VALID_MENU_KEYS = [
   'scheduler',
   'resource-policy',
   'reservoir',
+  'admin-model-store',
   'admin-serving',
   'admin-dashboard',
   'admin-data',
@@ -124,6 +125,7 @@ const ALL_ADMIN_PAGE_KEYS: ReadonlySet<string> = new Set([
   'scheduler',
   'resource-policy',
   'reservoir',
+  'admin-model-store',
   'admin-serving',
   'admin-dashboard',
   'admin-data',
@@ -139,6 +141,7 @@ const ALL_ADMIN_PAGE_KEYS: ReadonlySet<string> = new Set([
 
 // Page keys that additionally require superadmin role
 const SUPERADMIN_ONLY_PAGE_KEYS: ReadonlySet<string> = new Set([
+  'admin-model-store',
   'admin-serving',
   'admin-dashboard',
   'admin-data',
@@ -345,6 +348,16 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       ),
       icon: <BAISessionsIcon style={{ color: token.colorInfo }} />,
       key: 'admin-session' as MenuKeys,
+      group: 'superadmin-operations' as AdminMenuGroupName,
+    },
+    isSuperAdmin && {
+      label: (
+        <WebUILink to="/admin-model-store">
+          {t('webui.menu.ModelStore')}
+        </WebUILink>
+      ),
+      icon: <BAIModelStoreIcon style={{ color: token.colorInfo }} />,
+      key: 'admin-model-store' as MenuKeys,
       group: 'superadmin-operations' as AdminMenuGroupName,
     },
     isSuperAdmin && {
