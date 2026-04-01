@@ -4,6 +4,7 @@
  */
 import { useSuspendedBackendaiClient } from '.';
 import { useCurrentUserRole } from './backendai';
+import { useDiagnosticsBadgeSeverity } from './useAutoDiagnostics';
 import { useBAISettingUserState } from './useBAISetting';
 import { useCustomThemeConfig } from './useCustomThemeConfig';
 import {
@@ -29,7 +30,7 @@ import {
   SafetyCertificateOutlined,
 } from '@ant-design/icons';
 import { useSessionStorageState } from 'ahooks';
-import { theme, Typography } from 'antd';
+import { Badge, theme, Typography } from 'antd';
 import { GetProp } from 'antd/lib';
 import { MenuItemType } from 'antd/lib/menu/interface';
 import {
@@ -206,6 +207,8 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
   const [isThemePreviewMode] = useSessionStorageState('isThemePreviewMode', {
     defaultValue: false,
   });
+
+  const diagnosticsBadgeSeverity = useDiagnosticsBadgeSeverity();
 
   // Helper to create menu item with labelText reused in label
   const createMenuItem = (
@@ -412,7 +415,22 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       label: (
         <WebUILink to="/diagnostics">{t('webui.menu.Diagnostics')}</WebUILink>
       ),
-      icon: <Activity style={{ color: token.colorInfo }} />,
+      icon: (
+        <Badge
+          dot
+          offset={[-2, 2]}
+          color={
+            diagnosticsBadgeSeverity === 'critical'
+              ? token.colorError
+              : diagnosticsBadgeSeverity === 'warning'
+                ? token.colorWarning
+                : undefined
+          }
+          count={diagnosticsBadgeSeverity ? 1 : 0}
+        >
+          <Activity style={{ color: token.colorInfo }} />
+        </Badge>
+      ),
       key: 'diagnostics' as MenuKeys,
       group: 'superadmin-infrastructure' as AdminMenuGroupName,
     },

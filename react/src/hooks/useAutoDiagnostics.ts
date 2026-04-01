@@ -3,31 +3,46 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useSuspendedBackendaiClient } from '.';
-import type { DiagnosticResult } from '../types/diagnostics';
-import { useSetBAINotification } from './useBAINotification';
+import type {
+  DiagnosticResult,
+  DiagnosticSeverity,
+} from '../types/diagnostics';
 import { useCspDiagnostics } from './useCspDiagnostics';
 import { useEndpointDiagnostics } from './useEndpointDiagnostics';
 import { useStorageProxyDiagnostics } from './useStorageProxyDiagnostics';
 import { useWebServerConfigDiagnostics } from './useWebServerConfigDiagnostics';
+import { atom, useAtomValue, useSetAtom } from 'jotai';
 import { useEffect, useEffectEvent } from 'react';
-import { useTranslation } from 'react-i18next';
 
-const AUTO_DIAGNOSTICS_DISMISSED_KEY = 'bai-auto-diagnostics-dismissed';
+/**
+ * Atom that holds the highest severity level from auto-diagnostics results.
+ * - `null` means no issues detected or diagnostics haven't run yet.
+ * - `'warning'` means at least one warning was found.
+ * - `'critical'` means at least one critical issue was found.
+ */
+export const diagnosticsBadgeSeverityAtom = atom<DiagnosticSeverity | null>(
+  null,
+);
+
+/**
+ * Hook to read the current diagnostics badge severity from the sidebar.
+ */
+export function useDiagnosticsBadgeSeverity(): DiagnosticSeverity | null {
+  return useAtomValue(diagnosticsBadgeSeverityAtom);
+}
 
 /**
  * Hook that runs a subset of critical diagnostic checks after login
- * and shows a notification if any critical issue is found.
+ * and exposes the highest severity via a Jotai atom for the sidebar badge.
  *
  * - Only runs for superadmin users.
- * - Uses sessionStorage to avoid re-showing the notification within the same session.
  * - Runs asynchronously and does NOT block the login flow.
  * - Reuses the existing diagnostics hooks for consistency with the diagnostics page.
  */
 export function useAutoDiagnostics(): void {
   'use memo';
 
-  const { t } = useTranslation();
-  const { upsertNotification } = useSetBAINotification();
+  const setDiagnosticsBadgeSeverity = useSetAtom(diagnosticsBadgeSeverityAtom);
   const baiClient = useSuspendedBackendaiClient();
 
   const isSuperAdmin: boolean = !!baiClient?.is_superadmin;
@@ -54,37 +69,26 @@ export function useAutoDiagnostics(): void {
     );
   })();
 
-  // useEffectEvent captures the latest callback values without making
-  // them dependencies of the useEffect below.
-  const showDiagnosticsNotification = useEffectEvent(() => {
-    upsertNotification({
-      key: 'auto-diagnostics-warning',
-      title: t('diagnostics.AutoDiagnosticsTitle'),
-      message: t('diagnostics.AutoDiagnosticsDesc'),
-      duration: 0,
-      open: true,
-      to: '/diagnostics',
-      toTextKey: t('diagnostics.ViewDiagnostics'),
-    });
-    try {
-      sessionStorage.setItem(AUTO_DIAGNOSTICS_DISMISSED_KEY, '1');
-    } catch {
-      // sessionStorage write may fail in restrictive environments
+  // Determine the highest severity: critical > warning > null
+  const highestSeverity: DiagnosticSeverity | null = (() => {
+    if (criticalResults.some((r) => r.severity === 'critical')) {
+      return 'critical';
     }
+    if (criticalResults.some((r) => r.severity === 'warning')) {
+      return 'warning';
+    }
+    return null;
+  })();
+
+  const updateBadgeSeverity = useEffectEvent(() => {
+    setDiagnosticsBadgeSeverity(highestSeverity);
   });
 
   useEffect(() => {
-    if (!isSuperAdmin) return;
-    if (criticalResults.length === 0) return;
-
-    // Check sessionStorage dismissal flag
-    try {
-      if (sessionStorage.getItem(AUTO_DIAGNOSTICS_DISMISSED_KEY)) return;
-    } catch {
-      // sessionStorage may be unavailable (e.g., iframe sandbox)
+    if (!isSuperAdmin) {
+      setDiagnosticsBadgeSeverity(null);
       return;
     }
-
-    showDiagnosticsNotification();
-  }, [isSuperAdmin, criticalResults]);
+    updateBadgeSeverity();
+  }, [isSuperAdmin, criticalResults, setDiagnosticsBadgeSeverity]);
 }
