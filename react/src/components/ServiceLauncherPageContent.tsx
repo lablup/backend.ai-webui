@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { RecentServiceSpecsFragment$key } from '../__generated__/RecentServiceSpecsFragment.graphql';
 import { ServiceLauncherPageContentFragment$key } from '../__generated__/ServiceLauncherPageContentFragment.graphql';
 import { ServiceLauncherPageContentModifyMutation } from '../__generated__/ServiceLauncherPageContentModifyMutation.graphql';
 import { ServiceLauncherPageContent_AutoScalingRulesQuery } from '../__generated__/ServiceLauncherPageContent_AutoScalingRulesQuery.graphql';
@@ -50,6 +51,9 @@ import ImageEnvironmentSelectFormItems, {
   ImageEnvironmentFormInput,
 } from './ImageEnvironmentSelectFormItems';
 import InputNumberWithSlider from './InputNumberWithSlider';
+import RecentServiceSpecs, {
+  ServiceSpecFromEndpoint,
+} from './RecentServiceSpecs';
 import RuntimeParameterFormSection, {
   RuntimeParameterValues,
 } from './RuntimeParameterFormSection';
@@ -213,11 +217,13 @@ interface InitialModelDef {
 interface ServiceLauncherPageContentProps {
   endpointFrgmt?: ServiceLauncherPageContentFragment$key | null;
   initialModelDef?: InitialModelDef | null;
+  recentServiceSpecsQueryRef?: RecentServiceSpecsFragment$key | null;
 }
 
 const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
   endpointFrgmt = null,
   initialModelDef,
+  recentServiceSpecsQueryRef = null,
 }) => {
   'use memo';
   const { logger } = useBAILogger();
@@ -429,7 +435,6 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
     },
     { wait: 400 },
   );
-
   // Helper function to set environment variables based on runtime variant
   const setEnvironmentVariablesForRuntimeVariant = (
     runtimeVariant: string,
@@ -1555,6 +1560,14 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                 type="warning"
                 showIcon
                 style={{ marginBottom: token.marginMD }}
+              />
+            )}
+            {!endpoint && recentServiceSpecsQueryRef && (
+              <RecentServiceSpecs
+                queryRef={recentServiceSpecsQueryRef}
+                onSelectSpec={(spec: ServiceSpecFromEndpoint) => {
+                  form.setFieldsValue(spec);
+                }}
               />
             )}
             <Form.Provider
