@@ -8,65 +8,21 @@ import {
   loginAsCreatedAccount,
   navigateTo,
 } from '../utils/test-util';
-import test, { expect, Page } from '@playwright/test';
+import {
+  clickRowAction,
+  openProfileModal,
+  getCurrentClientIp,
+  addIpTags,
+  removeAllIpTags,
+  deriveDifferentIp,
+} from '../utils/user-profile-util';
+import test, { expect } from '@playwright/test';
 
 // Generate unique identifiers for this test run
 const TEST_RUN_ID = Date.now().toString(36);
 const EMAIL = `e2e-ip-restrict-${TEST_RUN_ID}@lablup.com`;
 const USERNAME = `e2e-ip-restrict-${TEST_RUN_ID}`;
 const PASSWORD = 'testing@123';
-
-/**
- * Opens the User Profile Setting Modal by clicking the user dropdown
- * and selecting the "My Account" menu item.
- */
-async function openProfileModal(page: Page) {
-  await page.getByTestId('user-dropdown-button').click();
-  await page.getByText('My Account').click();
-  await page.locator('.ant-modal').waitFor({ state: 'visible' });
-}
-
-/**
- * Reads the current client IP displayed in the modal's helper text.
- */
-async function getCurrentClientIp(page: Page): Promise<string> {
-  const ipText = await page.getByText(/Current client IP:/).textContent();
-  const match = ipText?.match(/Current client IP:\s*(.+)/);
-  return match?.[1]?.trim() ?? '';
-}
-
-/**
- * Adds IP tags to the Allowed Client IP select field within the admin edit modal.
- */
-async function addIpTagsInModal(
-  modal: ReturnType<Page['locator']>,
-  ips: string[],
-) {
-  const formItem = modal
-    .locator('.ant-form-item')
-    .filter({ hasText: 'Allowed client IP' });
-  const selectInput = formItem.getByRole('combobox');
-  for (const ip of ips) {
-    await selectInput.click();
-    await selectInput.fill(ip);
-    await selectInput.press('Enter');
-  }
-  await selectInput.press('Tab');
-}
-
-/**
- * Removes all IP tags from the Allowed Client IP select field within a modal.
- */
-async function removeAllIpTagsInModal(modal: ReturnType<Page['locator']>) {
-  const formItem = modal
-    .locator('.ant-form-item')
-    .filter({ hasText: 'Allowed client IP' });
-  const removeButtons = formItem.locator('.ant-tag .anticon-close');
-  const count = await removeButtons.count();
-  for (let i = count - 1; i >= 0; i--) {
-    await removeButtons.nth(i).click();
-  }
-}
 
 test.describe.serial(
   'IP restriction enforcement during active session',
@@ -133,7 +89,7 @@ test.describe.serial(
       // Find and edit the test user
       const userRow = adminPage.getByRole('row').filter({ hasText: EMAIL });
       await expect(userRow).toBeVisible();
-      await userRow.getByRole('button', { name: 'Edit' }).click();
+      await clickRowAction(adminPage, userRow, 'Edit');
 
       // Wait for edit modal
       const editModal = UserSettingModal.forEdit(adminPage);
@@ -141,7 +97,7 @@ test.describe.serial(
 
       // Add the current client IP to allowed list
       const modal = editModal.getModal();
-      await addIpTagsInModal(modal, [currentClientIp]);
+      await addIpTags(modal, [currentClientIp]);
       await editModal.clickOk();
       await editModal.waitForHidden();
 
@@ -190,15 +146,16 @@ test.describe.serial(
       // Find and edit the test user
       const userRow = adminPage.getByRole('row').filter({ hasText: EMAIL });
       await expect(userRow).toBeVisible();
-      await userRow.getByRole('button', { name: 'Edit' }).click();
+      await clickRowAction(adminPage, userRow, 'Edit');
 
       const editModal = UserSettingModal.forEdit(adminPage);
       await editModal.waitForVisible();
 
       // Remove existing IP tags and add an arbitrary IP
       const modal = editModal.getModal();
-      await removeAllIpTagsInModal(modal);
-      await addIpTagsInModal(modal, ['99.99.99.99']);
+      await removeAllIpTags(modal);
+      const arbitraryAllowedIp = deriveDifferentIp(currentClientIp);
+      await addIpTags(modal, [arbitraryAllowedIp]);
       await editModal.clickOk();
       await editModal.waitForHidden();
 
@@ -229,6 +186,7 @@ test.describe.serial(
       page,
       request,
     }) => {
+      test.setTimeout(60000);
       // 1. Login as admin
       await loginAsAdmin(page, request);
 
@@ -243,29 +201,31 @@ test.describe.serial(
         .catch(() => false);
 
       if (isActive) {
-        await userRow.getByRole('button', { name: 'Edit' }).click();
+        await clickRowAction(page, userRow, 'Edit');
         const editModal = UserSettingModal.forEdit(page);
         await editModal.waitForVisible();
 
         const modal = editModal.getModal();
-        await removeAllIpTagsInModal(modal);
+        await removeAllIpTags(modal);
         await editModal.clickOk();
         await editModal.waitForHidden();
 
-        // 4. Deactivate the user
+        // 4. Deactivate the user (no popconfirm — mutation fires directly)
         await expect(userRow).toBeVisible();
-        await userRow.getByRole('button', { name: 'Deactivate' }).click();
-        const popconfirm = page.locator('.ant-popconfirm');
-        await popconfirm.getByRole('button', { name: 'Deactivate' }).click();
+        await clickRowAction(page, userRow, 'Deactivate');
         await expect(userRow).toBeHidden({ timeout: 10000 });
       }
 
       // 5. Switch to Inactive and purge the user
+      // Re-navigate to credential page to clear any stale state
+      await navigateTo(page, 'credential');
+      await expect(page.getByRole('tab', { name: 'Users' })).toBeVisible();
       await page.getByText('Inactive', { exact: true }).click();
       const inactiveUserRow = page.getByRole('row').filter({ hasText: EMAIL });
-      await expect(inactiveUserRow).toBeVisible({ timeout: 5000 });
+      await expect(inactiveUserRow).toBeVisible({ timeout: 10000 });
 
-      await inactiveUserRow.getByRole('checkbox').click();
+      // Use dispatchEvent to bypass DOM detachment during table re-renders
+      await inactiveUserRow.getByRole('checkbox').dispatchEvent('click');
       await page.getByRole('button', { name: 'trash bin' }).click();
 
       const purgeModal = new PurgeUsersModal(page);

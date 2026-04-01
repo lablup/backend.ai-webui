@@ -1,67 +1,13 @@
 // spec: e2e/.agent-output/test-plan-user-profile-allowed-client-ip.md
 import { loginAsAdmin } from '../utils/test-util';
+import {
+  openProfileModal,
+  getCurrentClientIp,
+  getAllowedClientIpFormItem,
+  addIpTags,
+  removeAllIpTags,
+} from '../utils/user-profile-util';
 import test, { expect } from '@playwright/test';
-
-/**
- * Opens the User Profile Setting Modal by clicking the user dropdown
- * and selecting the "My Account" menu item.
- */
-async function openProfileModal(page: import('@playwright/test').Page) {
-  await page.getByTestId('user-dropdown-button').click();
-  await page.getByText('My Account').click();
-  // Wait for modal to be visible
-  await page.locator('.ant-modal').waitFor({ state: 'visible' });
-}
-
-/**
- * Reads the current client IP displayed in the modal's helper text.
- */
-async function getCurrentClientIp(
-  page: import('@playwright/test').Page,
-): Promise<string> {
-  const ipText = await page.getByText(/Current client IP:/).textContent();
-  // Extract IP from "Current client IP: x.x.x.x"
-  const match = ipText?.match(/Current client IP:\s*(.+)/);
-  return match?.[1]?.trim() ?? '';
-}
-
-/**
- * Gets the Allowed Client IP form item container within the modal.
- */
-function getAllowedClientIpFormItem(page: import('@playwright/test').Page) {
-  return page
-    .locator('.ant-modal')
-    .locator('.ant-form-item')
-    .filter({ hasText: 'Allowed client IPs' });
-}
-
-/**
- * Adds IP tags to the Allowed Client IP select field.
- */
-async function addIpTags(page: import('@playwright/test').Page, ips: string[]) {
-  const formItem = getAllowedClientIpFormItem(page);
-  const selectInput = formItem.getByRole('combobox');
-  for (const ip of ips) {
-    await selectInput.click();
-    await selectInput.fill(ip);
-    await selectInput.press('Enter');
-  }
-  // Blur the combobox so the Update/Cancel buttons become clickable
-  await selectInput.press('Tab');
-}
-
-/**
- * Removes all IP tags from the Allowed Client IP select field.
- */
-async function removeAllIpTags(page: import('@playwright/test').Page) {
-  const formItem = getAllowedClientIpFormItem(page);
-  const removeButtons = formItem.locator('.ant-tag .anticon-close');
-  const count = await removeButtons.count();
-  // Remove from last to first to avoid index shifting
-  for (let i = count - 1; i >= 0; i--) {
-    await removeButtons.nth(i).click();
-  }
-}
 
 test.describe(
   'User Profile Setting Modal',
@@ -103,9 +49,12 @@ test.describe(
         await loginAsAdmin(page, request);
         await openProfileModal(page);
 
-        const formItem = getAllowedClientIpFormItem(page);
+        const formItem = getAllowedClientIpFormItem(page.locator('.ant-modal'));
 
-        await addIpTags(page, ['192.168.1.1', '10.0.0.1']);
+        await addIpTags(page.locator('.ant-modal'), [
+          '192.168.1.1',
+          '10.0.0.1',
+        ]);
 
         // Verify tags are created
         await expect(
@@ -128,9 +77,12 @@ test.describe(
         await loginAsAdmin(page, request);
         await openProfileModal(page);
 
-        const formItem = getAllowedClientIpFormItem(page);
+        const formItem = getAllowedClientIpFormItem(page.locator('.ant-modal'));
 
-        await addIpTags(page, ['10.20.30.0/24', '192.168.0.0/16']);
+        await addIpTags(page.locator('.ant-modal'), [
+          '10.20.30.0/24',
+          '192.168.0.0/16',
+        ]);
 
         await expect(
           formItem.locator('.ant-tag').filter({ hasText: '10.20.30.0/24' }),
@@ -152,9 +104,9 @@ test.describe(
         await loginAsAdmin(page, request);
         await openProfileModal(page);
 
-        const formItem = getAllowedClientIpFormItem(page);
+        const formItem = getAllowedClientIpFormItem(page.locator('.ant-modal'));
 
-        await addIpTags(page, ['not-an-ip']);
+        await addIpTags(page.locator('.ant-modal'), ['not-an-ip']);
 
         const redTag = formItem
           .locator('.ant-tag')
@@ -175,9 +127,13 @@ test.describe(
         await loginAsAdmin(page, request);
         await openProfileModal(page);
 
-        const formItem = getAllowedClientIpFormItem(page);
+        const formItem = getAllowedClientIpFormItem(page.locator('.ant-modal'));
 
-        await addIpTags(page, ['192.168.1.1', 'invalid-ip', '10.0.0.0/8']);
+        await addIpTags(page.locator('.ant-modal'), [
+          '192.168.1.1',
+          'invalid-ip',
+          '10.0.0.0/8',
+        ]);
 
         const validTag = formItem
           .locator('.ant-tag')
@@ -207,9 +163,9 @@ test.describe(
         await loginAsAdmin(page, request);
         await openProfileModal(page);
 
-        const formItem = getAllowedClientIpFormItem(page);
+        const formItem = getAllowedClientIpFormItem(page.locator('.ant-modal'));
 
-        await addIpTags(page, ['192.168.1.1']);
+        await addIpTags(page.locator('.ant-modal'), ['192.168.1.1']);
 
         const tag = formItem
           .locator('.ant-tag')
@@ -237,7 +193,7 @@ test.describe(
         const currentIp = await getCurrentClientIp(page);
 
         const fakeIp = currentIp === '10.0.0.1' ? '10.0.0.2' : '10.0.0.1';
-        await addIpTags(page, [fakeIp]);
+        await addIpTags(page.locator('.ant-modal'), [fakeIp]);
 
         await modal.getByRole('button', { name: 'Update' }).click();
 
@@ -258,7 +214,7 @@ test.describe(
         const modal = page.locator('.ant-modal');
         const currentIp = await getCurrentClientIp(page);
 
-        await addIpTags(page, [currentIp]);
+        await addIpTags(page.locator('.ant-modal'), [currentIp]);
 
         await modal.getByRole('button', { name: 'Update' }).click();
 
@@ -268,7 +224,7 @@ test.describe(
 
         // Cleanup: clear allowed IPs
         await openProfileModal(page);
-        await removeAllIpTags(page);
+        await removeAllIpTags(page.locator('.ant-modal'));
         await page
           .locator('.ant-modal')
           .getByRole('button', { name: 'Update' })
@@ -291,7 +247,7 @@ test.describe(
         const ipParts = currentIp.split('.');
         const cidrRange = `${ipParts[0]}.${ipParts[1]}.${ipParts[2]}.0/24`;
 
-        await addIpTags(page, [cidrRange]);
+        await addIpTags(page.locator('.ant-modal'), [cidrRange]);
 
         await modal.getByRole('button', { name: 'Update' }).click();
 
@@ -301,7 +257,7 @@ test.describe(
 
         // Cleanup: clear allowed IPs
         await openProfileModal(page);
-        await removeAllIpTags(page);
+        await removeAllIpTags(page.locator('.ant-modal'));
         await page
           .locator('.ant-modal')
           .getByRole('button', { name: 'Update' })
@@ -322,7 +278,7 @@ test.describe(
         const currentIp = await getCurrentClientIp(page);
 
         // First, set an IP
-        await addIpTags(page, [currentIp]);
+        await addIpTags(page.locator('.ant-modal'), [currentIp]);
         await modal.getByRole('button', { name: 'Update' }).click();
         await expect(
           page.getByText('Profile has been successfully updated.'),
@@ -330,7 +286,7 @@ test.describe(
 
         // Reopen and remove all IPs
         await openProfileModal(page);
-        await removeAllIpTags(page);
+        await removeAllIpTags(page.locator('.ant-modal'));
         await page
           .locator('.ant-modal')
           .getByRole('button', { name: 'Update' })
@@ -341,7 +297,7 @@ test.describe(
 
         // Verify IPs are cleared
         await openProfileModal(page);
-        const formItem = getAllowedClientIpFormItem(page);
+        const formItem = getAllowedClientIpFormItem(page.locator('.ant-modal'));
         await expect(formItem.locator('.ant-tag')).toHaveCount(0);
 
         await page
@@ -417,7 +373,7 @@ test.describe(
         await fullNameInput.clear();
         await fullNameInput.fill(testName);
 
-        await addIpTags(page, [currentIp]);
+        await addIpTags(page.locator('.ant-modal'), [currentIp]);
 
         await modal.getByRole('button', { name: 'Update' }).click();
 
@@ -433,7 +389,9 @@ test.describe(
           .inputValue();
         expect(savedName).toBe(testName);
 
-        const savedFormItem = getAllowedClientIpFormItem(page);
+        const savedFormItem = getAllowedClientIpFormItem(
+          page.locator('.ant-modal'),
+        );
         await expect(
           savedFormItem.locator('.ant-tag').filter({ hasText: currentIp }),
         ).toBeVisible();
@@ -444,7 +402,7 @@ test.describe(
           .locator('.ant-modal')
           .locator('input#full_name')
           .fill(originalName);
-        await removeAllIpTags(page);
+        await removeAllIpTags(page.locator('.ant-modal'));
         await page
           .locator('.ant-modal')
           .getByRole('button', { name: 'Update' })
@@ -562,7 +520,7 @@ test.describe(
 
         await fullNameInput.clear();
         await fullNameInput.fill('Should Not Be Saved');
-        await addIpTags(page, ['10.0.0.1']);
+        await addIpTags(page.locator('.ant-modal'), ['10.0.0.1']);
 
         await modal.getByRole('button', { name: 'Cancel' }).click();
         await page.locator('.ant-modal').waitFor({ state: 'hidden' });
@@ -575,7 +533,7 @@ test.describe(
           .inputValue();
         expect(restoredName).toBe(originalName);
 
-        const formItem = getAllowedClientIpFormItem(page);
+        const formItem = getAllowedClientIpFormItem(page.locator('.ant-modal'));
         await expect(
           formItem.locator('.ant-tag').filter({ hasText: '10.0.0.1' }),
         ).toHaveCount(0);
