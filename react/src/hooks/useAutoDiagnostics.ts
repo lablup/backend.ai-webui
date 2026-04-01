@@ -3,16 +3,15 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useSuspendedBackendaiClient } from '.';
-import type {
-  DiagnosticResult,
-  DiagnosticSeverity,
-} from '../types/diagnostics';
+import type { DiagnosticResult } from '../types/diagnostics';
 import { useCspDiagnostics } from './useCspDiagnostics';
 import { useEndpointDiagnostics } from './useEndpointDiagnostics';
 import { useStorageProxyDiagnostics } from './useStorageProxyDiagnostics';
 import { useWebServerConfigDiagnostics } from './useWebServerConfigDiagnostics';
 import { atom, useAtomValue, useSetAtom } from 'jotai';
-import { useEffect, useEffectEvent } from 'react';
+import { useEffect } from 'react';
+
+type BadgeSeverity = 'critical' | 'warning' | null;
 
 /**
  * Atom that holds the highest severity level from auto-diagnostics results.
@@ -20,14 +19,12 @@ import { useEffect, useEffectEvent } from 'react';
  * - `'warning'` means at least one warning was found.
  * - `'critical'` means at least one critical issue was found.
  */
-export const diagnosticsBadgeSeverityAtom = atom<DiagnosticSeverity | null>(
-  null,
-);
+export const diagnosticsBadgeSeverityAtom = atom<BadgeSeverity>(null);
 
 /**
  * Hook to read the current diagnostics badge severity from the sidebar.
  */
-export function useDiagnosticsBadgeSeverity(): DiagnosticSeverity | null {
+export function useDiagnosticsBadgeSeverity(): BadgeSeverity {
   return useAtomValue(diagnosticsBadgeSeverityAtom);
 }
 
@@ -70,7 +67,7 @@ export function useAutoDiagnostics(): void {
   })();
 
   // Determine the highest severity: critical > warning > null
-  const highestSeverity: DiagnosticSeverity | null = (() => {
+  const highestSeverity: BadgeSeverity = (() => {
     if (criticalResults.some((r) => r.severity === 'critical')) {
       return 'critical';
     }
@@ -80,15 +77,11 @@ export function useAutoDiagnostics(): void {
     return null;
   })();
 
-  const updateBadgeSeverity = useEffectEvent(() => {
-    setDiagnosticsBadgeSeverity(highestSeverity);
-  });
-
   useEffect(() => {
     if (!isSuperAdmin) {
       setDiagnosticsBadgeSeverity(null);
       return;
     }
-    updateBadgeSeverity();
-  }, [isSuperAdmin, criticalResults, setDiagnosticsBadgeSeverity]);
+    setDiagnosticsBadgeSeverity(highestSeverity);
+  }, [isSuperAdmin, highestSeverity, setDiagnosticsBadgeSeverity]);
 }
