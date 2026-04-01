@@ -415,21 +415,20 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       label: (
         <WebUILink to="/diagnostics">{t('webui.menu.Diagnostics')}</WebUILink>
       ),
-      icon: (
+      icon: diagnosticsBadgeSeverity ? (
         <Badge
           dot
           offset={[-2, 2]}
           color={
             diagnosticsBadgeSeverity === 'critical'
               ? token.colorError
-              : diagnosticsBadgeSeverity === 'warning'
-                ? token.colorWarning
-                : undefined
+              : token.colorWarning
           }
-          count={diagnosticsBadgeSeverity ? 1 : 0}
         >
           <Activity style={{ color: token.colorInfo }} />
         </Badge>
+      ) : (
+        <Activity style={{ color: token.colorInfo }} />
       ),
       key: 'diagnostics' as MenuKeys,
       group: 'superadmin-infrastructure' as AdminMenuGroupName,
