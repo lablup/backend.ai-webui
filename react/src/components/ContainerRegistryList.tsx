@@ -198,7 +198,15 @@ const ContainerRegistryList: React.FC<{
   const [deletingConfirmText, setDeletingConfirmText] = useState('');
   const [isNewModalOpen, setIsNewModalOpen] = useState(false);
 
-  const [inFlightHostName, setInFlightHostName] = useState<string>();
+  // Track per-row optimistic enabled state.
+  // Stores [fetchKeyAtTimeOfToggle, Map<recordId, optimisticEnabledValue>].
+  // When deferredFetchKey changes (fresh data arrived), the map is
+  // considered stale and treated as empty.
+  const [inFlightState, setInFlightState] = useState<
+    [string, Map<string, boolean>]
+  >([deferredFetchKey, new Map()]);
+  const inFlightRegistries =
+    inFlightState[0] === deferredFetchKey ? inFlightState[1] : new Map();
 
   const rescanImage = async (
     registry_name: string,
@@ -314,17 +322,17 @@ const ContainerRegistryList: React.FC<{
           domain?.allowed_docker_registries,
           record.registry_name,
         );
+        const isRowInFlight = inFlightRegistries.has(record.id);
+        const displayEnabled = isRowInFlight
+          ? inFlightRegistries.get(record.id)!
+          : isEnabled;
         return (
           <Switch
-            checked={
-              inFlightHostName === record.id + deferredFetchKey
-                ? !isEnabled
-                : isEnabled
-            }
+            checked={displayEnabled}
             disabled={deferredFetchKey !== fetchKey || isInFlightDomainMutation}
             loading={
               (deferredFetchKey !== fetchKey || isInFlightDomainMutation) &&
-              inFlightHostName === record.id + deferredFetchKey
+              isRowInFlight
             }
             onChange={(isOn) => {
               if (!_.isString(record.registry_name)) return;
@@ -340,7 +348,13 @@ const ContainerRegistryList: React.FC<{
                 );
               }
 
-              setInFlightHostName(record.id + deferredFetchKey);
+              setInFlightState(([prevKey, prevMap]) => {
+                const next = new Map(
+                  prevKey === deferredFetchKey ? prevMap : undefined,
+                );
+                next.set(record.id, isOn);
+                return [deferredFetchKey, next];
+              });
               commitDomainMutation({
                 variables: {
                   domain: baiClient._config.domainName,
