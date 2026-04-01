@@ -8,6 +8,7 @@ import { RoleAssignmentTabFragment$key } from '../__generated__/RoleAssignmentTa
 import { RoleAssignmentOrderBy } from '../__generated__/RoleAssignmentTabRefetchQuery.graphql';
 import { convertToOrderBy } from '../helper';
 import AssignRoleModal from './AssignRoleModal';
+import BAIDeleteConfirmContent from './BAIDeleteConfirmContent';
 import { App, Tooltip, theme } from 'antd';
 import {
   BAIButton,
@@ -239,12 +240,24 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
   };
 
   const handleBulkRevoke = (userIds: string[]) => {
+    const userNames = assignments
+      .filter((a) => userIds.includes(a?.userId ?? ''))
+      .map(
+        (a) =>
+          a?.user?.basicInfo?.email ||
+          a?.user?.basicInfo?.fullName ||
+          a?.userId ||
+          '',
+      )
+      .filter(Boolean);
     modal.confirm({
       title: t('rbac.DeleteUser'),
-      content:
-        userIds.length > 1
-          ? t('rbac.ConfirmBulkRevoke', { count: userIds.length })
-          : t('rbac.ConfirmRevoke'),
+      content: (
+        <BAIDeleteConfirmContent
+          description={t('rbac.ConfirmRevokeWithName')}
+          itemNames={userNames}
+        />
+      ),
       okText: t('button.Delete'),
       okButtonProps: { danger: true, type: 'primary' },
       onOk: () =>

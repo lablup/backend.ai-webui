@@ -193,7 +193,9 @@ const AIAgentPage: React.FC = () => {
   const handleDelete = (agent: AIAgent) => {
     modal.confirm({
       title: t('aiAgent.DeleteConfirmTitle'),
-      content: t('aiAgent.DeleteConfirmDescription'),
+      content: t('aiAgent.DeleteConfirmDescriptionWithName', {
+        name: agent.meta.title,
+      }),
       okButtonProps: { danger: true },
       okText: t('button.Delete'),
       onOk: () => deleteAgent(agent.id),

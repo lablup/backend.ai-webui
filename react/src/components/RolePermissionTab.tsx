@@ -6,6 +6,7 @@ import { RolePermissionTabDeleteMutation } from '../__generated__/RolePermission
 import { RolePermissionTabFragment$key } from '../__generated__/RolePermissionTabFragment.graphql';
 import { PermissionOrderBy } from '../__generated__/RolePermissionTabRefetchQuery.graphql';
 import { convertToOrderBy } from '../helper';
+import BAIDeleteConfirmContent from './BAIDeleteConfirmContent';
 import CreatePermissionModal from './CreatePermissionModal';
 import { App, Tag } from 'antd';
 import {
@@ -218,14 +219,25 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
     });
   };
 
-  const handleDelete = (permissionId: string) => {
+  const handleDelete = (record: {
+    id: string;
+    entityType: string;
+    operation: string;
+    scopeType: string;
+  }) => {
+    const permissionLabel = `${t(`rbac.types.${record.entityType}`, { defaultValue: record.entityType })} - ${t(`rbac.operations.${record.operation}`, { defaultValue: record.operation })} (${t(`rbac.types.${record.scopeType}`, { defaultValue: record.scopeType })})`;
     modal.confirm({
       title: t('rbac.DeletePermission'),
-      content: t('rbac.ConfirmDeletePermission'),
+      content: (
+        <BAIDeleteConfirmContent
+          description={t('rbac.ConfirmDeletePermissionWithDetail')}
+          itemNames={[permissionLabel]}
+        />
+      ),
       okText: t('button.Delete'),
       okButtonProps: { danger: true, type: 'primary' },
       onOk: () =>
-        mutateDeletePermission({ input: { id: permissionId } })
+        mutateDeletePermission({ input: { id: toLocalId(record.id) } })
           .then(() => {
             message.success(t('rbac.PermissionDeleted'));
             handleRefresh();
@@ -393,7 +405,7 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
                       title: t('rbac.DeletePermission'),
                       icon: <BAITrashBinIcon />,
                       type: 'danger',
-                      onClick: () => handleDelete(toLocalId(record?.id)),
+                      onClick: () => handleDelete(record),
                     },
                   ]}
                 />
