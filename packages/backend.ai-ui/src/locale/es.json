@@ -187,7 +187,7 @@
     "Domain": "Dominio",
     "FailedToDeactivateProject": "No se pudo desactivar el proyecto.",
     "FailedToPurgeProject": "No se pudo purgar el proyecto.",
-    "IntegrationID": "ID de integración",
+    "IntegrationName": "Nombre de integración",
     "IsActive": "Activo",
     "Name": "Nombre",
     "Project": "Proyecto",

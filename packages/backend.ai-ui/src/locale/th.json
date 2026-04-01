@@ -187,7 +187,7 @@
     "Domain": "โดเมน",
     "FailedToDeactivateProject": "ไม่สามารถปิดใช้งานโปรเจ็กต์ได้",
     "FailedToPurgeProject": "ไม่สามารถล้างโปรเจกต์ได้",
-    "IntegrationID": "รหัสการผสานระบบ",
+    "IntegrationName": "ชื่อการผสานระบบ",
     "IsActive": "ใช้งาน",
     "Name": "ชื่อ",
     "Project": "โปรเจ็กต์",

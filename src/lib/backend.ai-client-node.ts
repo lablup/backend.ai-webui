@@ -3604,7 +3604,7 @@ class Domain {
    * Get domain information.
    * @param {string} domain_name - domain name of group
    * @param {array} fields - fields to query.  Default fields are: ['name', 'description', 'is_active', 'created_at', 'modified_at', 'total_resource_slots', 'allowed_vfolder_hosts',
-   'allowed_docker_registries', 'integration_id', 'scaling_groups']
+   'allowed_docker_registries', 'integration_name', 'scaling_groups']
    * {
    *   'name': String,          // Group name.
    *   'description': String,   // Description for group.
@@ -3614,7 +3614,7 @@ class Domain {
    *   'total_resource_slots': JSOONString,   // Total resource slots
    *   'allowed_vfolder_hosts': [String],   // Allowed virtual folder hosts
    *   'allowed_docker_registries': [String],   // Allowed docker registry lists
-   *   'integration_id': [String],   // Integration ids
+   *   'integration_name': [String],   // Integration ids
    *   'scaling_groups': [String],   // Scaling groups
    * };
    */
@@ -3629,7 +3629,7 @@ class Domain {
       'total_resource_slots',
       'allowed_vfolder_hosts',
       'allowed_docker_registries',
-      'integration_id',
+      'integration_name',
       'scaling_groups',
     ],
   ) {
@@ -3653,7 +3653,7 @@ class Domain {
       'total_resource_slots',
       'allowed_vfolder_hosts',
       'allowed_docker_registries',
-      'integration_id',
+      'integration_name',
     ],
   ) {
     let q = `query {` + ` domains { ${fields.join(' ')} }` + `}`;
@@ -3677,13 +3677,13 @@ class Domain {
    *   'total_resource_slots': JSONString,   // Total resource slots
    *   'allowed_vfolder_hosts': [String],   // Allowed virtual folder hosts
    *   'allowed_docker_registries': [String],   // Allowed docker registry lists
-   *   'integration_id': [String],   // Integration ids
+   *   'integration_name': [String],   // Integration ids
    *   'scaling_groups': [String],   // Scaling groups
    * };
    */
   async update(domain_name = false, input) {
     //let fields = ['name', 'description', 'is_active', 'created_at', 'modified_at', 'total_resource_slots', 'allowed_vfolder_hosts',
-    //  'allowed_docker_registries', 'integration_id', 'scaling_groups'];
+    //  'allowed_docker_registries', 'integration_name', 'scaling_groups'];
     if (this.client.is_superadmin === true) {
       let q =
         `mutation($name: String!, $input: ModifyDomainInput!) {` +

@@ -76,7 +76,7 @@ const BAIProjectTable = ({
         is_active
         created_at
         total_resource_slots
-        integration_id
+        integration_name
         resource_policy
         type
         container_registry
@@ -379,9 +379,9 @@ const BAIProjectTable = ({
       sorter: isEnableSorter('id'),
     },
     {
-      key: 'integration_id',
-      title: t('comp:BAIProjectTable.IntegrationID'),
-      dataIndex: 'integration_id',
+      key: 'integration_name',
+      title: t('comp:BAIProjectTable.IntegrationName'),
+      dataIndex: 'integration_name',
       render: (value) => value || '-',
     },
   ];

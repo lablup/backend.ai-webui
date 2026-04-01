@@ -187,7 +187,7 @@
     "Domain": "網域",
     "FailedToDeactivateProject": "無法停用專案。",
     "FailedToPurgeProject": "無法清除專案。",
-    "IntegrationID": "整合識別碼",
+    "IntegrationName": "整合名稱",
     "IsActive": "啟用",
     "Name": "名稱",
     "Project": "專案",

@@ -50,7 +50,7 @@ interface FormValues {
   domain_name: string;
   total_resource_slots?: string;
   allowed_vfolder_hosts?: string;
-  integration_id?: string;
+  integration_name?: string;
   resource_policy?: string;
   container_registry?: string;
   scaling_groups?: string[];
@@ -85,7 +85,7 @@ const BAIProjectSettingModal = ({
         domain_name
         total_resource_slots
         allowed_vfolder_hosts
-        integration_id
+        integration_name
         resource_policy
         type
         container_registry

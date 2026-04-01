@@ -190,7 +190,7 @@
     "Domain": "Domain",
     "FailedToDeactivateProject": "Failed to deactivate the project.",
     "FailedToPurgeProject": "Failed to purge the project.",
-    "IntegrationID": "Integration ID",
+    "IntegrationName": "Integration Name",
     "IsActive": "Active",
     "Name": "Name",
     "Project": "Project",

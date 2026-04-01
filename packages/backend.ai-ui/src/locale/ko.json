@@ -190,7 +190,7 @@
     "Domain": "도메인",
     "FailedToDeactivateProject": "프로젝트 비활성화에 실패했습니다.",
     "FailedToPurgeProject": "프로젝트 삭제에 실패했습니다.",
-    "IntegrationID": "통합 ID",
+    "IntegrationName": "통합 이름",
     "IsActive": "활성",
     "Name": "이름",
     "Project": "프로젝트",

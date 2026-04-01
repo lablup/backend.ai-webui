@@ -187,7 +187,7 @@
     "Domain": "域",
     "FailedToDeactivateProject": "无法停用该项目。",
     "FailedToPurgeProject": "无法清除该项目。",
-    "IntegrationID": "集成 ID",
+    "IntegrationName": "集成名称",
     "IsActive": "活跃",
     "Name": "名称",
     "Project": "项目",

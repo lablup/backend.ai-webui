@@ -187,7 +187,7 @@
     "Domain": "Домен",
     "FailedToDeactivateProject": "Не удалось деактивировать проект.",
     "FailedToPurgeProject": "Не удалось очистить проект.",
-    "IntegrationID": "ID интеграции",
+    "IntegrationName": "Имя интеграции",
     "IsActive": "Активный",
     "Name": "Имя",
     "Project": "Проект",

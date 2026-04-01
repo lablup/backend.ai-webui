@@ -187,7 +187,7 @@
     "Domain": "Домен",
     "FailedToDeactivateProject": "Төслийг идэвхгүй болгоход амжилтгүй боллоо.",
     "FailedToPurgeProject": "Төслийг бүрмөсөн устгахад амжилтгүй боллоо.",
-    "IntegrationID": "Интеграцийн ID",
+    "IntegrationName": "Интеграцийн нэр",
     "IsActive": "Идэвхтэй",
     "Name": "Нэр",
     "Project": "Төсөл",

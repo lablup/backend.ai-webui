@@ -62,7 +62,7 @@ const meta: Meta<typeof BAIProjectTable> = {
 - **Scaling Groups**: Associated scaling groups
 - **Container Registry**: Registry and project details
 - **Project ID**: Global ID (sortable, copyable)
-- **Integration ID**: External integration ID
+- **Integration Name**: External integration name
 
 For other props (loading, pagination, etc.), refer to [BAITable](?path=/docs/table-baitable--docs).
         `,
@@ -199,7 +199,7 @@ const generateMockProject = (id: number, overrides = {}) => ({
     mem: `${(id + 1) * 8}g`,
     'cuda.device': `${id % 3}`,
   }),
-  integration_id: id % 2 === 0 ? `integration-${id}` : null,
+  integration_name: id % 2 === 0 ? `integration-${id}` : null,
   resource_policy: `user-policy-${id}`,
   type: id % 5 === 0 ? 'MODEL_STORE' : 'GENERAL',
   container_registry: JSON.stringify({

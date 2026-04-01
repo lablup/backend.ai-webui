@@ -187,7 +187,7 @@
     "Domain": "Domain",
     "FailedToDeactivateProject": "Gagal menonaktifkan proyek.",
     "FailedToPurgeProject": "Gagal menghapus proyek secara permanen.",
-    "IntegrationID": "ID Integrasi",
+    "IntegrationName": "Nama Integrasi",
     "IsActive": "Aktif",
     "Name": "Nama",
     "Project": "Proyek",

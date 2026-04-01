@@ -187,7 +187,7 @@
     "Domain": "Etki Alanı",
     "FailedToDeactivateProject": "Proje devre dışı bırakılamadı.",
     "FailedToPurgeProject": "Proje temizlenemedi.",
-    "IntegrationID": "Entegrasyon Kimliği",
+    "IntegrationName": "Entegrasyon Adı",
     "IsActive": "Aktif",
     "Name": "Ad",
     "Project": "Proje",

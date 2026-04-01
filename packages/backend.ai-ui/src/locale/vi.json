@@ -187,7 +187,7 @@
     "Domain": "Miền",
     "FailedToDeactivateProject": "Không thể vô hiệu hóa dự án.",
     "FailedToPurgeProject": "Không thể xóa hoàn toàn dự án.",
-    "IntegrationID": "ID tích hợp",
+    "IntegrationName": "Tên tích hợp",
     "IsActive": "Hoạt động",
     "Name": "Tên",
     "Project": "Dự án",

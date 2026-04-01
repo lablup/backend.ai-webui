@@ -187,7 +187,7 @@
     "Domain": "Domena",
     "FailedToDeactivateProject": "Nie udało się dezaktywować projektu.",
     "FailedToPurgeProject": "Nie udało się trwale usunąć projektu.",
-    "IntegrationID": "ID integracji",
+    "IntegrationName": "Nazwa integracji",
     "IsActive": "Aktywny",
     "Name": "Nazwa",
     "Project": "Projekt",

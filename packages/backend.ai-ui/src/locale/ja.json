@@ -187,7 +187,7 @@
     "Domain": "ドメイン",
     "FailedToDeactivateProject": "プロジェクトの無効化に失敗しました。",
     "FailedToPurgeProject": "プロジェクトの完全削除に失敗しました。",
-    "IntegrationID": "連携ID",
+    "IntegrationName": "連携名",
     "IsActive": "アクティブ",
     "Name": "名前",
     "Project": "プロジェクト",

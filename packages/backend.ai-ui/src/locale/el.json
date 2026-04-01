@@ -187,7 +187,7 @@
     "Domain": "Τομέας",
     "FailedToDeactivateProject": "Η απενεργοποίηση του έργου απέτυχε.",
     "FailedToPurgeProject": "Αποτυχία εκκαθάρισης του έργου.",
-    "IntegrationID": "ID ενσωμάτωσης",
+    "IntegrationName": "Όνομα ενσωμάτωσης",
     "IsActive": "Ενεργό",
     "Name": "Όνομα",
     "Project": "Έργο",
