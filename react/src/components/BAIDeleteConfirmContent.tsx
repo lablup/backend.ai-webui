@@ -12,13 +12,11 @@ const MAX_VISIBLE_ITEMS = 5;
 interface BAIDeleteConfirmContentProps {
   description?: React.ReactNode;
   itemNames: string[];
-  warningMessage?: React.ReactNode;
 }
 
 const BAIDeleteConfirmContent: React.FC<BAIDeleteConfirmContentProps> = ({
   description,
   itemNames,
-  warningMessage,
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -60,9 +58,6 @@ const BAIDeleteConfirmContent: React.FC<BAIDeleteConfirmContentProps> = ({
           </ul>
         </>
       ) : null}
-      {warningMessage && (
-        <Typography.Text type="danger">{warningMessage}</Typography.Text>
-      )}
     </BAIFlex>
   );
 };

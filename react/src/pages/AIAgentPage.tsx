@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import AgentEditorModal from '../components/AgentEditorModal';
+import BAIDeleteConfirmContent from '../components/BAIDeleteConfirmContent';
 import { FluentEmojiIcon } from '../components/FluentEmojiIcon';
 import { useWebUINavigate } from '../hooks';
 import { AIAgent, useAIAgent } from '../hooks/useAIAgent';
@@ -193,9 +194,12 @@ const AIAgentPage: React.FC = () => {
   const handleDelete = (agent: AIAgent) => {
     modal.confirm({
       title: t('aiAgent.DeleteConfirmTitle'),
-      content: t('aiAgent.DeleteConfirmDescriptionWithName', {
-        name: agent.meta.title,
-      }),
+      content: (
+        <BAIDeleteConfirmContent
+          description={t('aiAgent.DeleteConfirmDescription')}
+          itemNames={[agent.meta.title]}
+        />
+      ),
       okButtonProps: { danger: true },
       okText: t('button.Delete'),
       onOk: () => deleteAgent(agent.id),
