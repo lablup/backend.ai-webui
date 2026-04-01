@@ -22,7 +22,12 @@ import {
   Tag,
   Typography,
 } from 'antd';
-import { BAIModal, BAISelect, useErrorMessageResolver } from 'backend.ai-ui';
+import {
+  BAIModal,
+  BAISelect,
+  BAIText,
+  useErrorMessageResolver,
+} from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -284,11 +289,16 @@ const UserProfileSettingModal: React.FC<Props> = ({
                     {t('credential.AllowedClientIPHint')}
                   </Typography.Text>
                   <br />
-                  <Typography.Text type="secondary">
+                  <BAIText
+                    type="secondary"
+                    copyable={
+                      currentClientIp ? { text: currentClientIp } : false
+                    }
+                  >
                     {t('credential.CurrentClientIp', {
                       ip: currentClientIp,
                     })}
-                  </Typography.Text>
+                  </BAIText>
                 </>
               }
               rules={[
