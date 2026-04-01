@@ -7,6 +7,9 @@ import { ModelStoreListPageQuery } from '../__generated__/ModelStoreListPageQuer
 import ModelBrandIcon from '../components/ModelBrandIcon';
 import ModelCardModal from '../components/ModelCardModal';
 import TextHighlighter from '../components/TextHighlighter';
+import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { useMergedAllowedStorageHostPermission } from '../hooks/useMergedAllowedStorageHostPermission';
 import { ReloadOutlined, SearchOutlined } from '@ant-design/icons';
 import {
   Alert,
@@ -40,6 +43,19 @@ const ModelStoreListPage: React.FC = () => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
 
+  const baiClient = useSuspendedBackendaiClient();
+  const currentDomain = useCurrentDomainValue();
+  const currentProject = useCurrentProjectValue();
+  if (!currentProject.id) {
+    throw new Error('Project ID is required for ModelStoreListPage');
+  }
+  const { unitedAllowedPermissionByVolume } =
+    useMergedAllowedStorageHostPermission(
+      currentDomain,
+      currentProject.id,
+      baiClient?._config?.accessKey,
+    );
+
   const [search, setSearch] = useState<string>();
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedTasks, setSelectedTasks] = useState<string[]>([]);
@@ -65,6 +81,10 @@ const ModelStoreListPage: React.FC = () => {
               label
               modified_at
               error_msg
+              vfolder_node {
+                cloneable
+                host
+              }
               ...ModelCardModalFragment
             }
           }
@@ -185,6 +205,18 @@ const ModelStoreListPage: React.FC = () => {
           model_cards?.edges
             ?.map((edge) => edge?.node)
             .filter((info) => {
+              // Filter by cloneable vfolder with MOUNT_IN_SESSION permission
+              if (!info?.vfolder_node?.cloneable) return false;
+              const host = info?.vfolder_node?.host;
+              if (
+                !host ||
+                !_.includes(
+                  unitedAllowedPermissionByVolume[host],
+                  'mount-in-session',
+                )
+              )
+                return false;
+
               let passSearchFilter = true;
               if (search) {
                 const searchLower = search.toLowerCase();
