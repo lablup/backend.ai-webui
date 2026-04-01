@@ -2,7 +2,6 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { KeypairResourcePolicyInfoModalFragment$key } from '../__generated__/KeypairResourcePolicyInfoModalFragment.graphql';
 import { KeypairResourcePolicyListMutation } from '../__generated__/KeypairResourcePolicyListMutation.graphql';
 import {
   KeypairResourcePolicyListQuery,
@@ -13,12 +12,10 @@ import { localeCompare, numberSorterWithInfinityValue } from '../helper';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { exportCSVWithFormattingRules } from '../helper/csv-util';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
-import KeypairResourcePolicyInfoModal from './KeypairResourcePolicyInfoModal';
 import KeypairResourcePolicySettingModal from './KeypairResourcePolicySettingModal';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
 import {
   DeleteOutlined,
-  InfoCircleOutlined,
   PlusOutlined,
   ReloadOutlined,
   SettingOutlined,
@@ -62,10 +59,6 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
   const [isCreatingPolicySetting, setIsCreatingPolicySetting] = useState(false);
   const [editingKeypairResourcePolicy, setEditingKeypairResourcePolicy] =
     useState<KeypairResourcePolicySettingModalFragment$key | null>();
-  const [currentResourcePolicy, setCurrentResourcePolicy] =
-    useState<KeypairResourcePolicyInfoModalFragment$key | null>(null);
-  const [isPendingInfoModalOpen, startInfoModalOpenTransition] =
-    useTransition();
 
   const { keypair_resource_policies } =
     useLazyLoadQuery<KeypairResourcePolicyListQuery>(
@@ -82,7 +75,6 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
             max_pending_session_count @since(version: "24.03.4")
             max_concurrent_sftp_sessions @since(version: "24.03.4")
             ...KeypairResourcePolicySettingModalFragment
-            ...KeypairResourcePolicyInfoModalFragment
             ...BAIAllowedVfolderHostsWithPermissionFromKeyPairResourcePolicyFragment
           }
         }
@@ -118,16 +110,6 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
           title={name}
           showActions="always"
           actions={[
-            {
-              key: 'info',
-              title: t('button.Info'),
-              icon: <InfoCircleOutlined />,
-              onClick: () => {
-                startInfoModalOpenTransition(() => {
-                  setCurrentResourcePolicy(row || null);
-                });
-              },
-            },
             {
               key: 'settings',
               title: t('button.Settings'),
@@ -463,14 +445,6 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
           }}
         />
       </Suspense>
-      <KeypairResourcePolicyInfoModal
-        open={!!currentResourcePolicy || isPendingInfoModalOpen}
-        onRequestClose={() => {
-          setCurrentResourcePolicy(null);
-        }}
-        loading={isPendingInfoModalOpen}
-        resourcePolicyFrgmt={currentResourcePolicy || null}
-      />
     </BAIFlex>
   );
 };
