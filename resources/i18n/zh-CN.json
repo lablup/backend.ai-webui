@@ -1772,7 +1772,7 @@
     "PolicyName": "政策名称",
     "PolicyNameEmpty": "策略名称不应为空。",
     "Project": "项目",
-    "ProjectResourcePolicy": "项目资源政策",
+    "ProjectResourcePolicy": "项目资源策略",
     "ResourcePolicy": "资源政策",
     "ResourcePolicyNameAlreadyExists": "资源策略名称已存在。\n请更改名称以添加。",
     "Resources": "资源",

@@ -1752,7 +1752,7 @@
     "IdleTimeout": "Tiempo de inactividad",
     "IdleTimeoutSec": "Tiempo de espera (seg.)",
     "Keypair": "Par de claves",
-    "KeypairResourcePolicy": "Política de recursos de par de claves",
+    "KeypairResourcePolicy": "Política de recursos de Keypair",
     "MaxConcurrentSFTPSessions": "Sesiones SFTP concurrentes máximas",
     "MaxCustomizedImageCount": "Número máximo de imágenes personalizadas",
     "MaxFolderCount": "Número máximo de carpetas",
@@ -1770,7 +1770,7 @@
     "PolicyName": "Nombre de la póliza",
     "PolicyNameEmpty": "El nombre de la política no debe estar vacío.",
     "Project": "Proyecto",
-    "ProjectResourcePolicy": "Política de recursos del proyecto",
+    "ProjectResourcePolicy": "Política de recursos de proyecto",
     "ResourcePolicy": "Política de recursos",
     "ResourcePolicyNameAlreadyExists": "El nombre de la política de recursos ya existe. \nCambie el nombre para agregarlo.",
     "Resources": "Recursos",
@@ -1783,7 +1783,7 @@
     "Unlimited": "Sin límites",
     "UpdateResourcePolicy": "Actualizar la política de recursos",
     "User": "Usuario",
-    "UserResourcePolicy": "Política de recursos del usuario"
+    "UserResourcePolicy": "Política de recursos de usuario"
   },
   "resourcePreset": {
     "AboutToDeletePreset": "Está a punto de borrar este preajuste:",

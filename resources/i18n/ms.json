@@ -1752,7 +1752,7 @@
     "IdleTimeout": "Tamat Masa Terbiar",
     "IdleTimeoutSec": "Tamat waktu tunggu (sek.)",
     "Keypair": "Pasangan kekunci",
-    "KeypairResourcePolicy": "Dasar Sumber Pasangan Kunci",
+    "KeypairResourcePolicy": "Dasar Sumber Keypair",
     "MaxConcurrentSFTPSessions": "Sesi SFTP bersamaan Max",
     "MaxCustomizedImageCount": "Kiraan Imej Tersuai Maks",
     "MaxFolderCount": "Kiraan Folder Maks",

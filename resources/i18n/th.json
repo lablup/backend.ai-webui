@@ -1754,7 +1754,7 @@
     "IdleTimeout": "หมดเวลาเมื่อไม่มีการใช้งาน",
     "IdleTimeoutSec": "หมดเวลาเมื่อไม่มีการใช้งาน (วินาที)",
     "Keypair": "คู่คีย์",
-    "KeypairResourcePolicy": "นโยบายทรัพยากรคู่คีย์",
+    "KeypairResourcePolicy": "นโยบายทรัพยากร Keypair",
     "MaxConcurrentSFTPSessions": "เซสชัน SFTP ที่เกิดขึ้นพร้อมกันสูงสุด",
     "MaxCustomizedImageCount": "จำนวนอิมเมจที่กำหนดเองสูงสุด",
     "MaxFolderCount": "จำนวนโฟลเดอร์สูงสุด",

@@ -1752,7 +1752,7 @@
     "IdleTimeout": "Boşta Kalma Zaman Aşımı",
     "IdleTimeoutSec": "Boşta kalma zaman aşımı (sn.)",
     "Keypair": "Anahtar çifti",
-    "KeypairResourcePolicy": "Anahtar Çifti Kaynak Politikası",
+    "KeypairResourcePolicy": "Keypair Kaynak Politikası",
     "MaxConcurrentSFTPSessions": "Maksimum eşzamanlı SFTP oturumları",
     "MaxCustomizedImageCount": "Maksimum Özelleştirilmiş Görüntü Sayısı",
     "MaxFolderCount": "Maksimum Klasör Sayısı",
@@ -1783,7 +1783,7 @@
     "Unlimited": "Sınırsız",
     "UpdateResourcePolicy": "Kaynak Politikasını Güncelle",
     "User": "Kullanıcı",
-    "UserResourcePolicy": "Kullanıcı Kaynağı Politikası"
+    "UserResourcePolicy": "Kullanıcı Kaynak Politikası"
   },
   "resourcePreset": {
     "AboutToDeletePreset": "Bu ön ayarı silmek üzeresiniz:",

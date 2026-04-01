@@ -1752,7 +1752,7 @@
     "IdleTimeout": "Délai d'inactivité",
     "IdleTimeoutSec": "Délai d'inactivité (sec.)",
     "Keypair": "Paire de clés",
-    "KeypairResourcePolicy": "Politique de ressources de paires de clés",
+    "KeypairResourcePolicy": "Politique de ressources Keypair",
     "MaxConcurrentSFTPSessions": "Sessions SFTP max simultanées",
     "MaxCustomizedImageCount": "Nombre maximal d'images personnalisées",
     "MaxFolderCount": "Nombre maximum de dossiers",
@@ -1770,7 +1770,7 @@
     "PolicyName": "Nom de la politique",
     "PolicyNameEmpty": "Le nom de la stratégie ne doit pas être vide.",
     "Project": "Projet",
-    "ProjectResourcePolicy": "Politique des ressources du projet",
+    "ProjectResourcePolicy": "Politique de ressources projet",
     "ResourcePolicy": "Politique de ressources",
     "ResourcePolicyNameAlreadyExists": "Le nom de la stratégie de ressources existe déjà. \nVeuillez modifier le nom à ajouter.",
     "Resources": "Ressources",
@@ -1783,7 +1783,7 @@
     "Unlimited": "Illimité",
     "UpdateResourcePolicy": "Mettre à jour la politique de ressources",
     "User": "Utilisateur",
-    "UserResourcePolicy": "Politique des ressources utilisateur"
+    "UserResourcePolicy": "Politique de ressources utilisateur"
   },
   "resourcePreset": {
     "AboutToDeletePreset": "Vous êtes sur le point de supprimer ce préréglage :",

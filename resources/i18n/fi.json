@@ -1770,7 +1770,7 @@
     "PolicyName": "Politiikan nimi",
     "PolicyNameEmpty": "Käytännön nimi ei saa olla tyhjä.",
     "Project": "Projekti",
-    "ProjectResourcePolicy": "Projektin resurssipolitiikka",
+    "ProjectResourcePolicy": "Projektin resurssikäytäntö",
     "ResourcePolicy": "Resurssipolitiikka",
     "ResourcePolicyNameAlreadyExists": "Resurssikäytännön nimi on jo olemassa. \nMuuta lisättävä nimi.",
     "Resources": "Resurssit",
@@ -1783,7 +1783,7 @@
     "Unlimited": "Rajoittamaton",
     "UpdateResourcePolicy": "Resurssipolitiikan päivittäminen",
     "User": "Käyttäjä",
-    "UserResourcePolicy": "Käyttäjäresurssikäytäntö"
+    "UserResourcePolicy": "Käyttäjän resurssikäytäntö"
   },
   "resourcePreset": {
     "AboutToDeletePreset": "Olet poistamassa tätä esiasetusta:",
