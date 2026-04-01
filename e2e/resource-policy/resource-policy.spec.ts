@@ -8,6 +8,8 @@ async function cleanupPolicy(page: Page, policyName: string) {
   const row = page.getByRole('row').filter({ hasText: policyName });
   const isVisible = await row.isVisible({ timeout: 2000 }).catch(() => false);
   if (isVisible) {
+    // Hover over the name cell to reveal BAINameActionCell actions
+    await row.getByRole('cell').first().hover();
     await row.getByRole('button', { name: 'delete' }).click();
     await page.getByRole('button', { name: 'Delete', exact: true }).click();
     await expect(row).toBeHidden({ timeout: 10000 });
@@ -42,9 +44,6 @@ test.describe(
         ).toBeVisible();
         await expect(
           page.getByRole('columnheader', { name: 'Cluster Size' }),
-        ).toBeVisible();
-        await expect(
-          page.getByRole('columnheader', { name: 'Control' }),
         ).toBeVisible();
 
         // Verify default policy row exists
@@ -81,7 +80,7 @@ test.describe(
 
         // Verify new policy appears in the table
         await expect(
-          page.getByRole('cell', { name: KEYPAIR_POLICY_NAME, exact: true }),
+          page.getByRole('row').filter({ hasText: KEYPAIR_POLICY_NAME }),
         ).toBeVisible({ timeout: 10000 });
       });
 
@@ -89,11 +88,12 @@ test.describe(
         await loginAsAdmin(page, request);
         await navigateTo(page, 'resource-policy');
 
-        // Find the test policy row and click setting
+        // Find the test policy row, hover to reveal actions, and click setting
         const policyRow = page
           .getByRole('row')
           .filter({ hasText: KEYPAIR_POLICY_NAME });
         await expect(policyRow).toBeVisible();
+        await policyRow.getByRole('cell').first().hover();
         await policyRow.getByRole('button', { name: 'setting' }).click();
 
         // Verify Update dialog appears
@@ -131,10 +131,11 @@ test.describe(
           .filter({ hasText: KEYPAIR_POLICY_NAME });
         await expect(policyRow).toBeVisible();
 
-        // Click delete button
+        // Hover to reveal actions, then click delete button
+        await policyRow.getByRole('cell').first().hover();
         await policyRow.getByRole('button', { name: 'delete' }).click();
 
-        // Confirm deletion in popconfirm
+        // Confirm deletion in modal
         await page.getByRole('button', { name: 'Delete', exact: true }).click();
 
         // Verify the policy is removed
@@ -163,9 +164,6 @@ test.describe(
         ).toBeVisible();
         await expect(
           page.getByRole('columnheader', { name: 'Max Folder Count' }),
-        ).toBeVisible();
-        await expect(
-          page.getByRole('columnheader', { name: 'Control' }),
         ).toBeVisible();
 
         // Verify default policy row exists
@@ -215,7 +213,7 @@ test.describe(
 
         // Verify new policy appears
         await expect(
-          page.getByRole('cell', { name: USER_POLICY_NAME, exact: true }),
+          page.getByRole('row').filter({ hasText: USER_POLICY_NAME }),
         ).toBeVisible({ timeout: 10000 });
       });
 
@@ -231,9 +229,10 @@ test.describe(
           .getByRole('row')
           .filter({ hasText: USER_POLICY_NAME });
         await expect(policyRow).toBeVisible();
+        await policyRow.getByRole('cell').first().hover();
         await policyRow.getByRole('button', { name: 'delete' }).click();
 
-        // Confirm deletion in popconfirm
+        // Confirm deletion in modal
         await page.getByRole('button', { name: 'Delete', exact: true }).click();
 
         // Verify removal
@@ -262,9 +261,6 @@ test.describe(
         ).toBeVisible();
         await expect(
           page.getByRole('columnheader', { name: 'Max Folder Count' }),
-        ).toBeVisible();
-        await expect(
-          page.getByRole('columnheader', { name: 'Control' }),
         ).toBeVisible();
 
         // Verify default policy row
@@ -302,7 +298,7 @@ test.describe(
 
         // Verify new policy appears
         await expect(
-          page.getByRole('cell', { name: PROJECT_POLICY_NAME, exact: true }),
+          page.getByRole('row').filter({ hasText: PROJECT_POLICY_NAME }),
         ).toBeVisible({ timeout: 10000 });
       });
 
@@ -318,9 +314,10 @@ test.describe(
           .getByRole('row')
           .filter({ hasText: PROJECT_POLICY_NAME });
         await expect(policyRow).toBeVisible();
+        await policyRow.getByRole('cell').first().hover();
         await policyRow.getByRole('button', { name: 'delete' }).click();
 
-        // Confirm deletion in popconfirm
+        // Confirm deletion in modal
         await page.getByRole('button', { name: 'Delete', exact: true }).click();
 
         // Verify removal

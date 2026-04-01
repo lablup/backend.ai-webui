@@ -14,6 +14,7 @@ import {
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
+  BAINameActionCell,
   BAITable,
   BAIText,
   BAITrashBinIcon,
@@ -366,23 +367,23 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
             key: 'email',
             dataIndex: 'email',
             title: t('credential.UserID'),
-            render: (_, record) => record?.user?.basicInfo?.email || '-',
-            sorter: true,
-          },
-          {
-            key: 'control',
-            title: t('general.Control'),
-            width: 60,
+            fixed: 'left',
             render: (_, record) => (
-              <BAIButton
-                type="text"
-                danger
-                icon={<BAITrashBinIcon />}
-                size="small"
-                title={t('rbac.DeleteUser')}
-                onClick={() => handleBulkRevoke([record?.userId])}
+              <BAINameActionCell
+                title={record?.user?.basicInfo?.email || '-'}
+                showActions="always"
+                actions={[
+                  {
+                    key: 'delete',
+                    title: t('rbac.DeleteUser'),
+                    icon: <BAITrashBinIcon />,
+                    type: 'danger',
+                    onClick: () => handleBulkRevoke([record?.userId]),
+                  },
+                ]}
               />
             ),
+            sorter: true,
           },
           {
             key: 'username',

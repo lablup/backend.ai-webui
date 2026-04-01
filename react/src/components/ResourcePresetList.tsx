@@ -17,14 +17,7 @@ import {
   SettingOutlined,
   DeleteOutlined,
 } from '@ant-design/icons';
-import {
-  Tooltip,
-  Button,
-  theme,
-  App,
-  Typography,
-  TableColumnsType,
-} from 'antd';
+import { Tooltip, Button, App, Typography, TableColumnsType } from 'antd';
 import {
   filterOutEmpty,
   filterOutNullAndUndefined,
@@ -33,6 +26,7 @@ import {
   BAINumberWithUnit,
   useUpdatableState,
   BAIResourceNumberWithIcon,
+  BAINameActionCell,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { Suspense, useState, useTransition } from 'react';
@@ -47,13 +41,10 @@ interface ResourcePresetListProps {}
 
 const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const { modal, message } = App.useApp();
   const [isRefetchPending, startRefetchTransition] = useTransition();
   const [resourcePresetsFetchKey, updateResourcePresetsFetchKey] =
     useUpdatableState('initial-fetch');
-  const [inFlightResourcePresetName, setInFlightResourcePresetName] =
-    useState<string>();
   const [editingResourcePreset, setEditingResourcePreset] =
     useState<ResourcePresetSettingModalFragment$key | null>(null);
   const [isCreating, setIsCreating] = useState(false);
@@ -81,21 +72,92 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
     },
   );
 
-  const [commitDelete, isInflightDelete] =
-    useMutation<ResourcePresetListDeleteMutation>(graphql`
-      mutation ResourcePresetListDeleteMutation($name: String!) {
-        delete_resource_preset(name: $name) {
-          ok
-          msg
-        }
+  const [commitDelete] = useMutation<ResourcePresetListDeleteMutation>(graphql`
+    mutation ResourcePresetListDeleteMutation($name: String!) {
+      delete_resource_preset(name: $name) {
+        ok
+        msg
       }
-    `);
+    }
+  `);
 
   const columns: TableColumnsType<ResourcePreset> = filterOutEmpty([
     {
       title: t('resourcePreset.Name'),
       dataIndex: 'name',
       sorter: (a, b) => localeCompare(a?.name, b?.name),
+      render: (name: string, record) => (
+        <BAINameActionCell
+          title={name}
+          showActions="always"
+          actions={[
+            {
+              key: 'edit',
+              title: t('button.Edit'),
+              icon: <SettingOutlined />,
+              onClick: () => {
+                if (record) {
+                  setEditingResourcePreset(record);
+                }
+              },
+            },
+            {
+              key: 'delete',
+              title: t('button.Delete'),
+              icon: <DeleteOutlined />,
+              type: 'danger',
+              onClick: () => {
+                modal.confirm({
+                  title: t('resourcePreset.DeleteResourcePreset'),
+                  content: (
+                    <>
+                      {t('resourcePreset.AboutToDeletePreset')}{' '}
+                      <Typography.Text strong>{record?.name}</Typography.Text>
+                    </>
+                  ),
+                  onOk: () => {
+                    return new Promise<void>((resolve) => {
+                      commitDelete({
+                        variables: {
+                          name: record?.name ?? '',
+                        },
+                        onCompleted: (res, errors) => {
+                          if (!res?.delete_resource_preset?.ok) {
+                            message.error(res?.delete_resource_preset?.msg);
+                          } else if (errors && errors?.length > 0) {
+                            const errorMsgList = _.map(
+                              errors,
+                              (err) => err?.message,
+                            );
+                            _.forEach(errorMsgList, (err) =>
+                              message.error(err),
+                            );
+                          } else {
+                            message.success(t('resourcePreset.Deleted'));
+                            startRefetchTransition(() => {
+                              updateResourcePresetsFetchKey();
+                            });
+                          }
+                          resolve();
+                        },
+                        onError: (error) => {
+                          message.error(error?.message);
+                          resolve();
+                        },
+                      });
+                    });
+                  },
+                  okText: t('button.Delete'),
+                  okType: 'primary',
+                  okButtonProps: {
+                    danger: true,
+                  },
+                });
+              },
+            },
+          ]}
+        />
+      ),
     },
     {
       title: t('resourcePreset.Resources'),
@@ -132,96 +194,6 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
       sorter: (a, b) =>
         localeCompare(a?.scaling_group_name, b?.scaling_group_name),
       render: (text) => text ?? '-',
-    },
-    {
-      title: t('general.Control'),
-      key: 'control',
-      fixed: 'right',
-      render: (_text, record) => (
-        <BAIFlex align="stretch">
-          <Tooltip title={t('button.Edit')}>
-            <Button
-              type="text"
-              icon={<SettingOutlined />}
-              style={{
-                color: token.colorInfo,
-              }}
-              onClick={() => {
-                if (record) {
-                  setEditingResourcePreset(record);
-                }
-              }}
-            />
-          </Tooltip>
-          <Tooltip title={t('button.Delete')}>
-            <Button
-              type="text"
-              icon={
-                <DeleteOutlined
-                  style={{
-                    color: token.colorError,
-                  }}
-                />
-              }
-              loading={
-                isInflightDelete &&
-                inFlightResourcePresetName ===
-                  record?.name + resourcePresetsFetchKey
-              }
-              disabled={
-                isInflightDelete &&
-                inFlightResourcePresetName !==
-                  record?.name + resourcePresetsFetchKey
-              }
-              onClick={() => {
-                modal.confirm({
-                  title: t('resourcePreset.DeleteResourcePreset'),
-                  content: (
-                    <>
-                      {t('resourcePreset.AboutToDeletePreset')}{' '}
-                      <Typography.Text strong>{record?.name}</Typography.Text>
-                    </>
-                  ),
-                  onOk: () => {
-                    setInFlightResourcePresetName(
-                      record?.name + resourcePresetsFetchKey,
-                    );
-                    commitDelete({
-                      variables: {
-                        name: record?.name ?? '',
-                      },
-                      onCompleted: (res, errors) => {
-                        if (!res?.delete_resource_preset?.ok) {
-                          message.error(res?.delete_resource_preset?.msg);
-                        } else if (errors && errors?.length > 0) {
-                          const errorMsgList = _.map(
-                            errors,
-                            (err) => err?.message,
-                          );
-                          _.forEach(errorMsgList, (err) => message.error(err));
-                        } else {
-                          message.success(t('resourcePreset.Deleted'));
-                          startRefetchTransition(() => {
-                            updateResourcePresetsFetchKey();
-                          });
-                        }
-                      },
-                      onError: (error) => {
-                        message.error(error?.message);
-                      },
-                    });
-                  },
-                  okText: t('button.Delete'),
-                  okType: 'primary',
-                  okButtonProps: {
-                    danger: true,
-                  },
-                });
-              }}
-            />
-          </Tooltip>
-        </BAIFlex>
-      ),
     },
   ]);
 

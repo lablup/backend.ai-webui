@@ -279,6 +279,8 @@ async function terminateService(
     return;
   }
 
+  // Hover over the name cell to reveal BAINameActionCell actions
+  await serviceRow.getByRole('cell').first().hover();
   const deleteButton = serviceRow
     .getByRole('button', { name: 'delete' })
     .first();

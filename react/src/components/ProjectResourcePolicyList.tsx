@@ -25,7 +25,7 @@ import {
   SettingOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { Button, Dropdown, message, Popconfirm, theme, Tooltip } from 'antd';
+import { App, Button, Dropdown, Tooltip } from 'antd';
 import type { ColumnType } from 'antd/es/table';
 import {
   filterOutEmpty,
@@ -33,6 +33,7 @@ import {
   BAITable,
   BAIFlex,
   useUpdatableState,
+  BAINameActionCell,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
@@ -52,16 +53,14 @@ interface ProjectResourcePolicyListProps {}
 const ProjectResourcePolicyList: React.FC<
   ProjectResourcePolicyListProps
 > = () => {
-  const { token } = theme.useToken();
   const { t } = useTranslation();
+  const { message, modal } = App.useApp();
   const [isRefetchPending, startRefetchTransition] = useTransition();
   const [projectResourcePolicyFetchKey, updateProjectResourcePolicyFetchKey] =
     useUpdatableState('initial-fetch');
   const [isCreatingPolicySetting, setIsCreatingPolicySetting] = useState(false);
   const [visibleColumnSettingModal, { toggle: toggleColumnSettingModal }] =
     useToggle();
-  const [inFlightResourcePolicyName, setInFlightResourcePolicyName] =
-    useState<string>();
   const [editingProjectResourcePolicy, setEditingProjectResourcePolicy] =
     useState<ProjectResourcePolicySettingModalFragment$key | null>();
 
@@ -96,15 +95,14 @@ const ProjectResourcePolicyList: React.FC<
       },
     );
 
-  const [commitDelete, isInflightDelete] =
-    useMutation<ProjectResourcePolicyListMutation>(graphql`
-      mutation ProjectResourcePolicyListMutation($name: String!) {
-        delete_project_resource_policy(name: $name) {
-          ok
-          msg
-        }
+  const [commitDelete] = useMutation<ProjectResourcePolicyListMutation>(graphql`
+    mutation ProjectResourcePolicyListMutation($name: String!) {
+      delete_project_resource_policy(name: $name) {
+        ok
+        msg
       }
-    `);
+    }
+  `);
 
   const columns = filterOutEmpty<ColumnType<ProjectResourcePolicies>>([
     {
@@ -113,6 +111,77 @@ const ProjectResourcePolicyList: React.FC<
       key: 'name',
       fixed: 'left',
       sorter: (a, b) => localeCompare(a?.name, b?.name),
+      render: (name: string, row: ProjectResourcePolicies) => (
+        <BAINameActionCell
+          title={name}
+          showActions="always"
+          actions={[
+            {
+              key: 'settings',
+              title: t('button.Settings'),
+              icon: <SettingOutlined />,
+              onClick: () => {
+                setEditingProjectResourcePolicy(row);
+              },
+            },
+            {
+              key: 'delete',
+              title: t('button.Delete'),
+              icon: <DeleteOutlined />,
+              type: 'danger',
+              onClick: () => {
+                modal.confirm({
+                  title: t('dialog.ask.DoYouWantToProceed'),
+                  content: t('dialog.warning.CannotBeUndone'),
+                  okType: 'danger',
+                  okText: t('button.Delete'),
+                  onOk: () => {
+                    if (row?.name) {
+                      return new Promise<void>((resolve) => {
+                        commitDelete({
+                          variables: {
+                            name: row.name,
+                          },
+                          onCompleted: (res, errors) => {
+                            if (!res?.delete_project_resource_policy?.ok) {
+                              message.error(
+                                res?.delete_project_resource_policy?.msg,
+                              );
+                              resolve();
+                              return;
+                            }
+                            if (errors && errors?.length > 0) {
+                              const errorMsgList = _.map(
+                                errors,
+                                (error) => error.message,
+                              );
+                              for (const error of errorMsgList) {
+                                message.error(error);
+                              }
+                            } else {
+                              startRefetchTransition(() =>
+                                updateProjectResourcePolicyFetchKey(),
+                              );
+                              message.success(
+                                t('resourcePolicy.SuccessfullyDeleted'),
+                              );
+                            }
+                            resolve();
+                          },
+                          onError(err) {
+                            message.error(err?.message);
+                            resolve();
+                          },
+                        });
+                      });
+                    }
+                  },
+                });
+              },
+            },
+          ]}
+        />
+      ),
     },
     {
       title: t('resourcePolicy.MaxVFolderCount'),
@@ -161,87 +230,6 @@ const ProjectResourcePolicyList: React.FC<
       render: (text) => dayjs(text).format('lll'),
       sorter: (a, b) => localeCompare(a?.created_at, b?.created_at),
     },
-    {
-      title: t('general.Control'),
-      fixed: 'right',
-      key: 'control',
-      render: (_text: any, row: ProjectResourcePolicies) => (
-        <BAIFlex direction="row" align="stretch">
-          <Button
-            type="text"
-            icon={<SettingOutlined />}
-            style={{
-              color: token.colorInfo,
-            }}
-            onClick={() => {
-              setEditingProjectResourcePolicy(row);
-            }}
-          />
-          <Popconfirm
-            title={t('dialog.ask.DoYouWantToProceed')}
-            description={t('dialog.warning.CannotBeUndone')}
-            okType="danger"
-            okText={t('button.Delete')}
-            onConfirm={() => {
-              if (row?.name) {
-                setInFlightResourcePolicyName(
-                  row.name + projectResourcePolicyFetchKey,
-                );
-                commitDelete({
-                  variables: {
-                    name: row.name,
-                  },
-                  onCompleted: (res, errors) => {
-                    if (!res?.delete_project_resource_policy?.ok) {
-                      message.error(res?.delete_project_resource_policy?.msg);
-                      return;
-                    }
-                    if (errors && errors?.length > 0) {
-                      const errorMsgList = _.map(
-                        errors,
-                        (error) => error.message,
-                      );
-                      for (const error of errorMsgList) {
-                        message.error(error);
-                      }
-                    } else {
-                      startRefetchTransition(() =>
-                        updateProjectResourcePolicyFetchKey(),
-                      );
-                      message.success(t('resourcePolicy.SuccessfullyDeleted'));
-                    }
-                  },
-                  onError(err) {
-                    message.error(err?.message);
-                  },
-                });
-              }
-            }}
-          >
-            <Button
-              type="text"
-              icon={
-                <DeleteOutlined
-                  style={{
-                    color: token.colorError,
-                  }}
-                />
-              }
-              loading={
-                isInflightDelete &&
-                inFlightResourcePolicyName ===
-                  row?.name + projectResourcePolicyFetchKey
-              }
-              disabled={
-                isInflightDelete &&
-                inFlightResourcePolicyName !==
-                  row?.name + projectResourcePolicyFetchKey
-              }
-            />
-          </Popconfirm>
-        </BAIFlex>
-      ),
-    },
   ]);
 
   const [hiddenColumnKeys, setHiddenColumnKeys] = useHiddenColumnKeysSetting(
@@ -254,10 +242,7 @@ const ProjectResourcePolicyList: React.FC<
       return;
     }
 
-    const columnkeys = _.without(
-      _.map(columns, (column) => _.toString(column.key)),
-      'control',
-    );
+    const columnkeys = _.map(columns, (column) => _.toString(column.key));
     const responseData = _.map(project_resource_policies, (policy) => {
       return _.pick(
         policy,

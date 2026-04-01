@@ -20,15 +20,7 @@ import {
   SettingOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import {
-  Alert,
-  App,
-  Button,
-  Popconfirm,
-  Tooltip,
-  Typography,
-  theme,
-} from 'antd';
+import { Alert, App, Button, Typography, theme } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import {
   useUpdatableState,
@@ -38,6 +30,7 @@ import {
   BAIFlex,
   BAIConfirmModalWithInput,
   BAIFetchKeyButton,
+  BAINameActionCell,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { BanIcon, UndoIcon } from 'lucide-react';
@@ -64,7 +57,7 @@ type ResourceGroup = NonNullable<
 const ResourceGroupList: React.FC = () => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { message } = App.useApp();
+  const { message, modal } = App.useApp();
   const [activeType, setActiveType] = useState<'active' | 'inactive'>('active');
   const [openCreateModal, { toggle: toggleOpenCreateModal }] = useToggle(false);
   const [openInfoModal, { toggle: toggleOpenInfoModal }] = useToggle(false);
@@ -102,7 +95,7 @@ const ResourceGroupList: React.FC = () => {
     },
   );
 
-  const [commitUpdateResourceGroup, isInflightCommitUpdateResourceGroup] =
+  const [commitUpdateResourceGroup] =
     useMutation<ResourceGroupListUpdateMutation>(graphql`
       mutation ResourceGroupListUpdateMutation(
         $name: String!
@@ -130,6 +123,105 @@ const ResourceGroupList: React.FC = () => {
       key: 'name',
       title: t('resourceGroup.Name'),
       dataIndex: 'name',
+      render: (name: string, record: ResourceGroup) => (
+        <BAINameActionCell
+          title={name}
+          showActions="always"
+          actions={[
+            {
+              key: 'info',
+              title: t('button.Info'),
+              icon: <InfoCircleOutlined />,
+              onClick: () => {
+                setSelectedResourceGroup(record);
+                toggleOpenInfoModal();
+              },
+            },
+            {
+              key: 'settings',
+              title: t('button.Settings'),
+              icon: <SettingOutlined />,
+              onClick: () => {
+                setSelectedResourceGroup(record);
+                toggleOpenCreateModal();
+              },
+            },
+            {
+              key: 'activate-deactivate',
+              title: record.is_active
+                ? t('resourceGroup.Deactivate')
+                : t('resourceGroup.Activate'),
+              icon: record.is_active ? <BanIcon /> : <UndoIcon />,
+              type: record.is_active ? 'danger' : 'default',
+              onClick: () => {
+                modal.confirm({
+                  title: record.is_active
+                    ? t('resourceGroup.DeactivateResourceGroup')
+                    : t('resourceGroup.ActivateResourceGroup'),
+                  content: record?.name,
+                  okType: record.is_active ? 'danger' : 'primary',
+                  okText: record.is_active
+                    ? t('resourceGroup.Deactivate')
+                    : t('resourceGroup.Activate'),
+                  onOk: () => {
+                    return new Promise<void>((resolve) => {
+                      commitUpdateResourceGroup({
+                        variables: {
+                          name: record.name ?? '',
+                          input: {
+                            is_active: !record.is_active,
+                          },
+                        },
+                        onCompleted: (
+                          { modify_scaling_group: res },
+                          errors,
+                        ) => {
+                          if (!res?.ok) {
+                            message.error(res?.msg);
+                            resolve();
+                            return;
+                          }
+                          if (errors && errors.length > 0) {
+                            const errorMsgList = _.map(
+                              errors,
+                              (error: PayloadError) => error.message,
+                            );
+                            for (const error of errorMsgList) {
+                              message.error(error);
+                            }
+                            resolve();
+                            return;
+                          }
+                          message.success(
+                            t('resourceGroup.ResourceGroupModified'),
+                          );
+                          startRefetchTransition(() => {
+                            updateFetchKey();
+                          });
+                          resolve();
+                        },
+                        onError: (err) => {
+                          message.error(err.message);
+                          resolve();
+                        },
+                      });
+                    });
+                  },
+                });
+              },
+            },
+            {
+              key: 'delete',
+              title: t('button.Delete'),
+              icon: <DeleteOutlined />,
+              type: 'danger',
+              onClick: () => {
+                setSelectedResourceGroupName(record?.name || '');
+              },
+            },
+          ]}
+        />
+      ),
     },
     {
       key: 'description',
@@ -165,115 +257,6 @@ const ResourceGroupList: React.FC = () => {
       title: t('resourceGroup.WsproxyAddress'),
       dataIndex: 'wsproxy_addr',
       render: (value) => value || '-',
-    },
-    {
-      key: 'controls',
-      title: t('general.Control'),
-      fixed: 'right',
-      render: (_, record) => {
-        return (
-          <BAIFlex>
-            <Button
-              type="text"
-              icon={<InfoCircleOutlined />}
-              style={{ color: token.colorSuccess }}
-              onClick={() => {
-                setSelectedResourceGroup(record);
-                toggleOpenInfoModal();
-              }}
-            />
-            <Button
-              type="text"
-              icon={<SettingOutlined />}
-              style={{
-                color: token.colorInfo,
-              }}
-              onClick={() => {
-                setSelectedResourceGroup(record);
-                toggleOpenCreateModal();
-              }}
-            />
-            <Tooltip
-              title={
-                record.is_active
-                  ? t('resourceGroup.Deactivate')
-                  : t('resourceGroup.Activate')
-              }
-            >
-              <Popconfirm
-                title={
-                  record.is_active
-                    ? t('resourceGroup.DeactivateResourceGroup')
-                    : t('resourceGroup.ActivateResourceGroup')
-                }
-                placement="left"
-                okType={record.is_active ? 'danger' : 'primary'}
-                okText={
-                  record.is_active
-                    ? t('resourceGroup.Deactivate')
-                    : t('resourceGroup.Activate')
-                }
-                description={record?.name}
-                onConfirm={() => {
-                  commitUpdateResourceGroup({
-                    variables: {
-                      name: record.name ?? '',
-                      input: {
-                        is_active: !record.is_active,
-                      },
-                    },
-                    onCompleted: ({ modify_scaling_group: res }, errors) => {
-                      if (!res?.ok) {
-                        message.error(res?.msg);
-                        return;
-                      }
-                      if (errors && errors.length > 0) {
-                        const errorMsgList = _.map(
-                          errors,
-                          (error: PayloadError) => error.message,
-                        );
-                        for (const error of errorMsgList) {
-                          message.error(error);
-                        }
-                        return;
-                      }
-                      message.success(t('resourceGroup.ResourceGroupModified'));
-                      startRefetchTransition(() => {
-                        updateFetchKey();
-                      });
-                    },
-                    onError: (err) => {
-                      message.error(err.message);
-                    },
-                  });
-                }}
-              >
-                <Button
-                  type="text"
-                  danger={!!record.is_active}
-                  icon={record.is_active ? <BanIcon /> : <UndoIcon />}
-                  loading={isInflightCommitUpdateResourceGroup}
-                />
-              </Popconfirm>
-            </Tooltip>
-            <Tooltip title={t('button.Delete')}>
-              <Button
-                type="text"
-                icon={
-                  <DeleteOutlined
-                    style={{
-                      color: token.colorError,
-                    }}
-                  />
-                }
-                onClick={() => {
-                  setSelectedResourceGroupName(record?.name || '');
-                }}
-              />
-            </Tooltip>
-          </BAIFlex>
-        );
-      },
     },
   ]);
 

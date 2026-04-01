@@ -24,7 +24,7 @@ import {
   SettingOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { App, Button, Dropdown, Popconfirm, theme, Tooltip } from 'antd';
+import { App, Button, Dropdown, Tooltip } from 'antd';
 import type { ColumnType } from 'antd/es/table';
 import {
   useUpdatableState,
@@ -32,6 +32,7 @@ import {
   filterOutNullAndUndefined,
   BAITable,
   BAIFlex,
+  BAINameActionCell,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
@@ -49,9 +50,8 @@ type UserResourcePolicies = NonNullable<
 interface UserResourcePolicyListProps {}
 
 const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
-  const { token } = theme.useToken();
   const { t } = useTranslation();
-  const { message } = App.useApp();
+  const { message, modal } = App.useApp();
 
   const [isRefetchPending, startRefetchTransition] = useTransition();
   const [userResourcePolicyFetchKey, updateUserResourcePolicyFetchKey] =
@@ -59,8 +59,6 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
   const [isCreatingPolicySetting, setIsCreatingPolicySetting] = useState(false);
   const [visibleColumnSettingModal, { toggle: toggleColumnSettingModal }] =
     useToggle();
-  const [inFlightResourcePolicyName, setInFlightResourcePolicyName] =
-    useState<string>();
   const [editingUserResourcePolicy, setEditingUserResourcePolicy] =
     useState<UserResourcePolicySettingModalFragment$key | null>();
 
@@ -92,15 +90,14 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
         fetchKey: userResourcePolicyFetchKey,
       },
     );
-  const [commitDelete, isInflightDelete] =
-    useMutation<UserResourcePolicyListMutation>(graphql`
-      mutation UserResourcePolicyListMutation($name: String!) {
-        delete_user_resource_policy(name: $name) {
-          ok
-          msg
-        }
+  const [commitDelete] = useMutation<UserResourcePolicyListMutation>(graphql`
+    mutation UserResourcePolicyListMutation($name: String!) {
+      delete_user_resource_policy(name: $name) {
+        ok
+        msg
       }
-    `);
+    }
+  `);
 
   const columns = filterOutEmpty<ColumnType<UserResourcePolicies>>([
     {
@@ -109,6 +106,77 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
       key: 'name',
       fixed: 'left',
       sorter: (a, b) => localeCompare(a?.name, b?.name),
+      render: (name: string, row: UserResourcePolicies) => (
+        <BAINameActionCell
+          title={name}
+          showActions="always"
+          actions={[
+            {
+              key: 'settings',
+              title: t('button.Settings'),
+              icon: <SettingOutlined />,
+              onClick: () => {
+                setEditingUserResourcePolicy(row);
+              },
+            },
+            {
+              key: 'delete',
+              title: t('button.Delete'),
+              icon: <DeleteOutlined />,
+              type: 'danger',
+              onClick: () => {
+                modal.confirm({
+                  title: t('dialog.ask.DoYouWantToProceed'),
+                  content: t('dialog.warning.CannotBeUndone'),
+                  okType: 'danger',
+                  okText: t('button.Delete'),
+                  onOk: () => {
+                    if (row?.name) {
+                      return new Promise<void>((resolve) => {
+                        commitDelete({
+                          variables: {
+                            name: row.name,
+                          },
+                          onCompleted: (res, errors) => {
+                            if (!res?.delete_user_resource_policy?.ok) {
+                              message.error(
+                                res?.delete_user_resource_policy?.msg,
+                              );
+                              resolve();
+                              return;
+                            }
+                            if (errors && errors.length > 0) {
+                              const errorMsgList = errors.map(
+                                (error) => error.message,
+                              );
+                              for (const error of errorMsgList) {
+                                message.error(error);
+                              }
+                              resolve();
+                              return;
+                            }
+                            startRefetchTransition(() =>
+                              updateUserResourcePolicyFetchKey(),
+                            );
+                            message.success(
+                              t('resourcePolicy.SuccessfullyDeleted'),
+                            );
+                            resolve();
+                          },
+                          onError(err) {
+                            message.error(err?.message);
+                            resolve();
+                          },
+                        });
+                      });
+                    }
+                  },
+                });
+              },
+            },
+          ]}
+        />
+      ),
     },
     {
       title: t('resourcePolicy.MaxVFolderCount'),
@@ -163,84 +231,6 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
       render: (text) => dayjs(text).format('lll'),
       sorter: (a, b) => localeCompare(a?.created_at, b?.created_at),
     },
-    {
-      title: t('general.Control'),
-      fixed: 'right',
-      key: 'control',
-      render: (_text: any, row: UserResourcePolicies) => (
-        <BAIFlex direction="row" align="stretch">
-          <Button
-            type="text"
-            icon={<SettingOutlined />}
-            style={{
-              color: token.colorInfo,
-            }}
-            onClick={() => {
-              setEditingUserResourcePolicy(row);
-            }}
-          />
-          <Popconfirm
-            title={t('dialog.ask.DoYouWantToProceed')}
-            description={t('dialog.warning.CannotBeUndone')}
-            okType="danger"
-            okText={t('button.Delete')}
-            onConfirm={() => {
-              if (row?.name) {
-                setInFlightResourcePolicyName(
-                  row.name + userResourcePolicyFetchKey,
-                );
-                commitDelete({
-                  variables: {
-                    name: row.name,
-                  },
-                  onCompleted: (res, errors) => {
-                    if (!res?.delete_user_resource_policy?.ok) {
-                      message.error(res?.delete_user_resource_policy?.msg);
-                      return;
-                    }
-                    if (errors && errors.length > 0) {
-                      const errorMsgList = errors.map((error) => error.message);
-                      for (const error of errorMsgList) {
-                        message.error(error);
-                      }
-                      return;
-                    }
-                    startRefetchTransition(() =>
-                      updateUserResourcePolicyFetchKey(),
-                    );
-                    message.success(t('resourcePolicy.SuccessfullyDeleted'));
-                  },
-                  onError(err) {
-                    message.error(err?.message);
-                  },
-                });
-              }
-            }}
-          >
-            <Button
-              type="text"
-              icon={
-                <DeleteOutlined
-                  style={{
-                    color: token.colorError,
-                  }}
-                />
-              }
-              loading={
-                isInflightDelete &&
-                inFlightResourcePolicyName ===
-                  row?.name + userResourcePolicyFetchKey
-              }
-              disabled={
-                isInflightDelete &&
-                inFlightResourcePolicyName !==
-                  row?.name + userResourcePolicyFetchKey
-              }
-            />
-          </Popconfirm>
-        </BAIFlex>
-      ),
-    },
   ]);
 
   const [hiddenColumnKeys, setHiddenColumnKeys] = useHiddenColumnKeysSetting(
@@ -256,10 +246,7 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
       return;
     }
 
-    const columnKeys = _.without(
-      _.map(columns, (column) => _.toString(column.key)),
-      'control',
-    );
+    const columnKeys = _.map(columns, (column) => _.toString(column.key));
     const responseData = _.map(user_resource_policies, (policy) => {
       return _.pick(
         policy,

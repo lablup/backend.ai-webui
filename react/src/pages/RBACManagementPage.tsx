@@ -18,15 +18,16 @@ import RoleNodes, {
 } from '../components/RoleNodes';
 import { convertToOrderBy } from '../helper';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
-import { App, Popconfirm, theme } from 'antd';
+import { App } from 'antd';
 import {
   BAIButton,
   BAICard,
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
-  BAILink,
+  BAINameActionCell,
   BAITrashBinIcon,
+  filterOutEmpty,
   type GraphQLFilter,
   INITIAL_FETCH_KEY,
   toLocalId,
@@ -50,8 +51,6 @@ const RBACManagementPage: React.FC = () => {
   'use memo';
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
-
   const {
     baiPaginationOption,
     tablePaginationOption,
@@ -321,78 +320,59 @@ const RBACManagementPage: React.FC = () => {
           customizeColumns={(columns) => {
             const isDeletedFilter =
               deferredQueryVariables.filter.status?.in?.[0] === 'DELETED';
-            return [
-              ...columns.map((col) =>
-                col.key === 'name'
-                  ? {
-                      ...col,
-                      render: (name: string, role: RoleNodeInList) => (
-                        <BAILink
-                          type="hover"
-                          onClick={() =>
-                            setRoleDetailParam({ roleDetail: role.id })
-                          }
-                        >
-                          {name}
-                        </BAILink>
-                      ),
-                    }
-                  : col,
-              ),
-              {
-                key: 'control',
-                title: t('general.Control'),
-                fixed: 'left',
-                width: 100,
-                render: (_: unknown, role: RoleNodeInList) => (
-                  <BAIFlex gap={token.marginXXS}>
-                    {isDeletedFilter ? (
-                      <>
-                        <Popconfirm
-                          title={t('rbac.ActivateRole')}
-                          description={role.name}
-                          okText={t('rbac.Activate')}
-                          placement="left"
-                          onConfirm={() => handleActivateRole(role)}
-                        >
-                          <BAIButton
-                            type="text"
-                            title={t('rbac.Activate')}
-                            icon={<UndoIcon />}
-                            size="small"
-                          />
-                        </Popconfirm>
-                        <BAIButton
-                          type="text"
-                          danger
-                          title={t('rbac.PurgeRole')}
-                          icon={<BAITrashBinIcon />}
-                          size="small"
-                          onClick={() => handlePurgeRole(role)}
-                        />
-                      </>
-                    ) : (
-                      <Popconfirm
-                        title={t('rbac.DeactivateRole')}
-                        description={role.name}
-                        okType="danger"
-                        okText={t('rbac.Deactivate')}
-                        placement="left"
-                        onConfirm={() => handleDeactivateRole(role)}
-                      >
-                        <BAIButton
-                          type="text"
-                          danger
-                          title={t('rbac.Deactivate')}
-                          icon={<BanIcon />}
-                          size="small"
-                        />
-                      </Popconfirm>
-                    )}
-                  </BAIFlex>
-                ),
-              },
-            ];
+            return columns.map((col) =>
+              col.key === 'name'
+                ? {
+                    ...col,
+                    render: (name: string, role: RoleNodeInList) => (
+                      <BAINameActionCell
+                        title={name}
+                        showActions="always"
+                        onTitleClick={() =>
+                          setRoleDetailParam({ roleDetail: role.id })
+                        }
+                        actions={filterOutEmpty(
+                          isDeletedFilter
+                            ? [
+                                {
+                                  key: 'activate',
+                                  title: t('rbac.Activate'),
+                                  icon: <UndoIcon />,
+                                  onClick: () => {
+                                    return new Promise<void>((resolve) => {
+                                      handleActivateRole(role);
+                                      resolve();
+                                    });
+                                  },
+                                },
+                                {
+                                  key: 'purge',
+                                  title: t('rbac.PurgeRole'),
+                                  icon: <BAITrashBinIcon />,
+                                  type: 'danger' as const,
+                                  onClick: () => handlePurgeRole(role),
+                                },
+                              ]
+                            : [
+                                {
+                                  key: 'deactivate',
+                                  title: t('rbac.Deactivate'),
+                                  icon: <BanIcon />,
+                                  type: 'danger' as const,
+                                  onClick: () => {
+                                    return new Promise<void>((resolve) => {
+                                      handleDeactivateRole(role);
+                                      resolve();
+                                    });
+                                  },
+                                },
+                              ],
+                        )}
+                      />
+                    ),
+                  }
+                : col,
+            );
           }}
           pagination={{
             pageSize: tablePaginationOption.pageSize,

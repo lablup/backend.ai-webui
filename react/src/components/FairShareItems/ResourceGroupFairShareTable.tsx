@@ -5,11 +5,11 @@
 import QuestionIconWithTooltip from '../QuestionIconWithTooltip';
 import ResourceGroupFairShareSettingModal from './ResourceGroupFairShareSettingModal';
 import { SettingOutlined } from '@ant-design/icons';
-import { Button, Divider, theme, Typography } from 'antd';
+import { Divider, theme, Typography } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import {
   BAIFlex,
-  BAILink,
+  BAINameActionCell,
   BAITable,
   BAITableProps,
   BAIUnmountAfterClose,
@@ -18,7 +18,6 @@ import {
   useResourceSlotsDetails,
 } from 'backend.ai-ui';
 import _ from 'lodash';
-import { ChevronRight } from 'lucide-react';
 import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -120,29 +119,20 @@ const ResourceGroupFairShareTable: React.FC<
       fixed: 'left',
       dataIndex: 'name',
       sorter: isEnableSorter('name'),
-      render: (name) => (
-        <BAIFlex gap="xxs" align="center">
-          <BAILink
-            icon={<ChevronRight />}
-            onClick={() => onClickGroupName?.(name)}
-          >
-            {name}
-          </BAILink>
-        </BAIFlex>
-      ),
-    },
-    {
-      title: t('general.Control'),
-      key: 'control',
-      fixed: 'left',
-      render: (_text, record) => (
-        <BAIFlex direction="row" gap="xxs">
-          <Button
-            type="text"
-            icon={<SettingOutlined style={{ color: token.colorInfo }} />}
-            onClick={() => setSelectedResourceGroup(record)}
-          />
-        </BAIFlex>
+      render: (name, record) => (
+        <BAINameActionCell
+          title={name}
+          onTitleClick={() => onClickGroupName?.(name)}
+          showActions="always"
+          actions={[
+            {
+              key: 'settings',
+              title: t('button.Settings'),
+              icon: <SettingOutlined />,
+              onClick: () => setSelectedResourceGroup(record),
+            },
+          ]}
+        />
       ),
     },
     {

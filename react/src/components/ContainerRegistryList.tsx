@@ -43,6 +43,7 @@ import {
   BAIFlex,
   BAIPropertyFilter,
   BAIModal,
+  BAINameActionCell,
   useBAILogger,
   useFetchKey,
   INITIAL_FETCH_KEY,
@@ -277,6 +278,41 @@ const ContainerRegistryList: React.FC<{
       title: t('registry.RegistryName'),
       dataIndex: 'registry_name',
       sorter: true,
+      fixed: 'left',
+      render: (name: string, record) => (
+        <BAINameActionCell
+          title={name}
+          showActions="always"
+          actions={[
+            {
+              key: 'edit',
+              title: t('button.Edit'),
+              icon: <SettingOutlined />,
+              onClick: () => {
+                setEditingRegistry(record);
+              },
+            },
+            {
+              key: 'delete',
+              title: t('button.Delete'),
+              icon: <DeleteOutlined />,
+              type: 'danger',
+              onClick: () => {
+                setDeletingRegistry(record);
+              },
+            },
+            {
+              key: 'rescan',
+              title: t('maintenance.RescanImages'),
+              icon: <SyncOutlined />,
+              onClick: () => {
+                record.registry_name &&
+                  rescanImage(record.registry_name, record.project);
+              },
+            },
+          ]}
+        />
+      ),
     },
     {
       key: 'url',
@@ -373,51 +409,6 @@ const ContainerRegistryList: React.FC<{
               });
             }}
           />
-        );
-      },
-    },
-    {
-      title: t('general.Control'),
-      fixed: 'right',
-      render(_value, record) {
-        return (
-          <BAIFlex>
-            <Tooltip title={t('button.Edit')}>
-              <Button
-                style={{
-                  color: token.colorInfo,
-                }}
-                type="text"
-                icon={<SettingOutlined />}
-                onClick={() => {
-                  setEditingRegistry(record);
-                }}
-              />
-            </Tooltip>
-            <Tooltip title={t('button.Delete')}>
-              <Button
-                danger
-                type="text"
-                icon={<DeleteOutlined />}
-                onClick={() => {
-                  setDeletingRegistry(record);
-                }}
-              />
-            </Tooltip>
-            <Tooltip title={t('maintenance.RescanImages')}>
-              <Button
-                type="text"
-                icon={
-                  <SyncOutlined
-                    onClick={() => {
-                      record.registry_name &&
-                        rescanImage(record.registry_name, record.project);
-                    }}
-                  />
-                }
-              />
-            </Tooltip>
-          </BAIFlex>
         );
       },
     },

@@ -20,13 +20,14 @@ import {
   ReloadOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
-import { App, Button, Popconfirm, Tag, Tooltip, Typography, theme } from 'antd';
+import { App, Button, Tag, Tooltip, Typography, theme } from 'antd';
 import {
   filterOutEmpty,
   filterOutNullAndUndefined,
   BAITable,
   BAIFlex,
   BAIPropertyFilter,
+  BAINameActionCell,
   useBAILogger,
   useUpdatableState,
   BAIText,
@@ -141,8 +142,8 @@ const UserCredentialList: React.FC = () => {
     },
   );
 
-  const [commitModifyKeypair, isInFlightCommitModifyKeypair] =
-    useMutation<UserCredentialListModifyMutation>(graphql`
+  const [commitModifyKeypair] = useMutation<UserCredentialListModifyMutation>(
+    graphql`
       mutation UserCredentialListModifyMutation(
         $access_key: String!
         $props: ModifyKeyPairInput!
@@ -152,17 +153,19 @@ const UserCredentialList: React.FC = () => {
           msg
         }
       }
-    `);
+    `,
+  );
 
-  const [commitDeleteKeypair, isInFlightCommitDeleteKeypair] =
-    useMutation<UserCredentialListDeleteMutation>(graphql`
+  const [commitDeleteKeypair] = useMutation<UserCredentialListDeleteMutation>(
+    graphql`
       mutation UserCredentialListDeleteMutation($access_key: String!) {
         delete_keypair(access_key: $access_key) {
           ok
           msg
         }
       }
-    `);
+    `,
+  );
 
   useEffect(() => {
     if (action === 'add') {
@@ -282,170 +285,192 @@ const UserCredentialList: React.FC = () => {
             sorter: true,
             // TODO: user_id field in keypair_list is used as user's email, but sorting is done by email field
             render: (_value, record) => {
-              return record.user_id;
-            },
-          },
-          {
-            key: 'control',
-            title: t('general.Control'),
-            fixed: 'left',
-            render: (_value, record) => {
+              const actions = [
+                {
+                  key: 'info',
+                  title: t('button.Info'),
+                  icon: <InfoCircleOutlined />,
+                  onClick: () => {
+                    startInfoModalOpenTransition(() => {
+                      setKeypairInfoModalFrgmt(record);
+                    });
+                  },
+                },
+                {
+                  key: 'settings',
+                  title: t('button.Settings'),
+                  icon: <SettingOutlined />,
+                  onClick: () => {
+                    startSettingModalOpenTransition(() => {
+                      setKeypairSettingModalFrgmt(record);
+                    });
+                  },
+                },
+                ...(queryParams.activeType === 'inactive'
+                  ? [
+                      {
+                        key: 'activate',
+                        title: t('credential.Activate'),
+                        icon: <UndoIcon />,
+                        onClick: () => {
+                          modal.confirm({
+                            title: t('credential.ActivateCredential'),
+                            content: record.user_id,
+                            okText: t('credential.Activate'),
+                            onOk: () => {
+                              return new Promise<void>((resolve) => {
+                                commitModifyKeypair({
+                                  variables: {
+                                    access_key: record.access_key ?? '',
+                                    props: {
+                                      is_active: true,
+                                    },
+                                  },
+                                  onCompleted: (res, errors) => {
+                                    if (!res?.modify_keypair?.ok || errors) {
+                                      message.error(res?.modify_keypair?.msg);
+                                      resolve();
+                                      return;
+                                    }
+                                    message.success(
+                                      t(
+                                        'credential.KeypairStatusUpdatedSuccessfully',
+                                      ),
+                                    );
+                                    updateFetchKey();
+                                    resolve();
+                                  },
+                                  onError: (error) => {
+                                    message.error(error?.message);
+                                    logger.error(error);
+                                    resolve();
+                                  },
+                                });
+                              });
+                            },
+                          });
+                        },
+                      },
+                    ]
+                  : []),
+                ...(queryParams.activeType === 'active'
+                  ? [
+                      {
+                        key: 'deactivate',
+                        title: t('credential.Deactivate'),
+                        icon: <BanIcon />,
+                        type: 'danger' as const,
+                        onClick: () => {
+                          modal.confirm({
+                            title: t('credential.DeactivateCredential'),
+                            content: record.user_id,
+                            okButtonProps: {
+                              danger: true,
+                            },
+                            okText: t('credential.Deactivate'),
+                            onOk: () => {
+                              return new Promise<void>((resolve) => {
+                                commitModifyKeypair({
+                                  variables: {
+                                    access_key: record.access_key ?? '',
+                                    props: {
+                                      is_active: false,
+                                    },
+                                  },
+                                  onCompleted: (res, errors) => {
+                                    if (!res?.modify_keypair?.ok || errors) {
+                                      message.error(res?.modify_keypair?.msg);
+                                      resolve();
+                                      return;
+                                    }
+                                    message.success(
+                                      t(
+                                        'credential.KeypairStatusUpdatedSuccessfully',
+                                      ),
+                                    );
+                                    updateFetchKey();
+                                    resolve();
+                                  },
+                                  onError: (error) => {
+                                    message.error(error?.message);
+                                    logger.error(error);
+                                    resolve();
+                                  },
+                                });
+                              });
+                            },
+                          });
+                        },
+                      },
+                    ]
+                  : [
+                      {
+                        key: 'delete',
+                        title: t('button.Delete'),
+                        icon: <DeleteOutlined />,
+                        type: 'danger' as const,
+                        onClick: () => {
+                          modal.confirm({
+                            title: t('credential.DeleteCredential'),
+                            content: (
+                              <BAIFlex direction="column" align="stretch">
+                                <Typography.Text>
+                                  {t(
+                                    'credential.YouAreAboutToDeleteCredential',
+                                  )}
+                                </Typography.Text>
+                                <Typography.Text strong>
+                                  {record.user_id}
+                                </Typography.Text>
+                                <br />
+                                <Typography.Text type="danger">
+                                  {t('dialog.warning.CannotBeUndone')}
+                                </Typography.Text>
+                              </BAIFlex>
+                            ),
+                            onOk: () => {
+                              return new Promise<void>((resolve) => {
+                                commitDeleteKeypair({
+                                  variables: {
+                                    access_key: record.access_key ?? '',
+                                  },
+                                  onCompleted: (res, errors) => {
+                                    if (!res?.delete_keypair?.ok || errors) {
+                                      message.error(res?.delete_keypair?.msg);
+                                      resolve();
+                                      return;
+                                    }
+                                    message.success(
+                                      t(
+                                        'credential.KeypairSuccessfullyDeleted',
+                                      ),
+                                    );
+                                    updateFetchKey();
+                                    resolve();
+                                  },
+                                  onError: (error) => {
+                                    message.error(error?.message);
+                                    logger.error(error);
+                                    resolve();
+                                  },
+                                });
+                              });
+                            },
+                            okButtonProps: {
+                              danger: true,
+                            },
+                            okText: t('button.Delete'),
+                          });
+                        },
+                      },
+                    ]),
+              ];
               return (
-                <BAIFlex gap={token.marginXS}>
-                  <Button
-                    type="text"
-                    icon={
-                      <InfoCircleOutlined style={{ color: token.colorInfo }} />
-                    }
-                    onClick={() => {
-                      startInfoModalOpenTransition(() => {
-                        setKeypairInfoModalFrgmt(record);
-                      });
-                    }}
-                  />
-                  <Button
-                    type="text"
-                    icon={
-                      <SettingOutlined style={{ color: token.colorInfo }} />
-                    }
-                    onClick={() => {
-                      startSettingModalOpenTransition(() => {
-                        setKeypairSettingModalFrgmt(record);
-                      });
-                    }}
-                  />
-                  {queryParams.activeType === 'inactive' && (
-                    <Tooltip title={t('credential.Activate')}>
-                      <Popconfirm
-                        title={t('credential.ActivateCredential')}
-                        description={record.user_id}
-                        okText={t('credential.Activate')}
-                        placement="left"
-                        onConfirm={() => {
-                          commitModifyKeypair({
-                            variables: {
-                              access_key: record.access_key ?? '',
-                              props: {
-                                is_active: true,
-                              },
-                            },
-                            onCompleted: (res, errors) => {
-                              if (!res?.modify_keypair?.ok || errors) {
-                                message.error(res?.modify_keypair?.msg);
-                                return;
-                              }
-                              message.success(
-                                t(
-                                  'credential.KeypairStatusUpdatedSuccessfully',
-                                ),
-                              );
-                              updateFetchKey();
-                            },
-                            onError: (error) => {
-                              message.error(error?.message);
-                              logger.error(error);
-                            },
-                          });
-                        }}
-                      >
-                        <Button type="text" icon={<UndoIcon />} />
-                      </Popconfirm>
-                    </Tooltip>
-                  )}
-                  {queryParams.activeType === 'active' ? (
-                    <Tooltip title={t('credential.Deactivate')}>
-                      <Popconfirm
-                        title={t('credential.DeactivateCredential')}
-                        description={record.user_id}
-                        okButtonProps={{
-                          loading: isInFlightCommitModifyKeypair,
-                        }}
-                        okType="danger"
-                        okText={t('credential.Deactivate')}
-                        placement="left"
-                        onConfirm={() => {
-                          commitModifyKeypair({
-                            variables: {
-                              access_key: record.access_key ?? '',
-                              props: {
-                                is_active: false,
-                              },
-                            },
-                            onCompleted: (res, errors) => {
-                              if (!res?.modify_keypair?.ok || errors) {
-                                message.error(res?.modify_keypair?.msg);
-                                return;
-                              }
-                              message.success(
-                                t(
-                                  'credential.KeypairStatusUpdatedSuccessfully',
-                                ),
-                              );
-                              updateFetchKey();
-                            },
-                            onError: (error) => {
-                              message.error(error?.message);
-                              logger.error(error);
-                            },
-                          });
-                        }}
-                      >
-                        <Button type="text" danger icon={<BanIcon />} />
-                      </Popconfirm>
-                    </Tooltip>
-                  ) : (
-                    <Button
-                      type="text"
-                      danger
-                      icon={<DeleteOutlined />}
-                      loading={isInFlightCommitDeleteKeypair}
-                      onClick={() => {
-                        modal.confirm({
-                          title: t('credential.DeleteCredential'),
-                          content: (
-                            <BAIFlex direction="column" align="stretch">
-                              <Typography.Text>
-                                {t('credential.YouAreAboutToDeleteCredential')}
-                              </Typography.Text>
-                              <Typography.Text strong>
-                                {record.user_id}
-                              </Typography.Text>
-                              <br />
-                              <Typography.Text type="danger">
-                                {t('dialog.warning.CannotBeUndone')}
-                              </Typography.Text>
-                            </BAIFlex>
-                          ),
-                          onOk: () => {
-                            commitDeleteKeypair({
-                              variables: {
-                                access_key: record.access_key ?? '',
-                              },
-                              onCompleted: (res, errors) => {
-                                if (!res?.delete_keypair?.ok || errors) {
-                                  message.error(res?.delete_keypair?.msg);
-                                  return;
-                                }
-                                message.success(
-                                  t('credential.KeypairSuccessfullyDeleted'),
-                                );
-                                updateFetchKey();
-                              },
-                              onError: (error) => {
-                                message.error(error?.message);
-                                logger.error(error);
-                              },
-                            });
-                          },
-                          okButtonProps: {
-                            danger: true,
-                          },
-                          okText: t('button.Delete'),
-                        });
-                      }}
-                    />
-                  )}
-                </BAIFlex>
+                <BAINameActionCell
+                  title={record.user_id}
+                  showActions="always"
+                  actions={actions}
+                />
               );
             },
           },

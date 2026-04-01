@@ -6,9 +6,9 @@ import QuestionIconWithTooltip from '../QuestionIconWithTooltip';
 import { SettingOutlined } from '@ant-design/icons';
 import { Divider, theme, Typography } from 'antd';
 import {
-  BAIButton,
   BAIColumnsType,
   BAIFlex,
+  BAINameActionCell,
   BAIResourceNumberWithIcon,
   BAITable,
   BAITableProps,
@@ -117,7 +117,22 @@ const UserFairShareTable: React.FC<UserFairShareTableProps> = ({
       key: 'email',
       fixed: 'left',
       dataIndex: 'userEmail',
-      render: (_text, record) => record?.user?.basicInfo.email,
+      render: (_text, record) => (
+        <BAINameActionCell
+          title={record?.user?.basicInfo.email}
+          showActions="always"
+          actions={[
+            {
+              key: 'settings',
+              title: t('button.Settings'),
+              icon: <SettingOutlined />,
+              onClick: () => {
+                onOpenWeightSetting?.(record);
+              },
+            },
+          ]}
+        />
+      ),
       sorter: isEnableSorter('email'),
     },
     {
@@ -127,22 +142,6 @@ const UserFairShareTable: React.FC<UserFairShareTableProps> = ({
       dataIndex: 'userUsername',
       render: (_text, record) => record?.user?.basicInfo.username,
       sorter: isEnableSorter('username'),
-    },
-    {
-      title: t('general.Control'),
-      key: 'control',
-      fixed: 'left',
-      render: (_text, record) => (
-        <BAIFlex direction="row" gap="xxs">
-          <BAIButton
-            type="text"
-            icon={<SettingOutlined style={{ color: token.colorInfo }} />}
-            onClick={() => {
-              onOpenWeightSetting?.(record);
-            }}
-          />
-        </BAIFlex>
-      ),
     },
     {
       title: (

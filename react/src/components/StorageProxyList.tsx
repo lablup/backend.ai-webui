@@ -8,14 +8,15 @@ import {
   convertUnitValue,
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
+import { useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
 import { InfoCircleOutlined, SettingOutlined } from '@ant-design/icons';
-import { Button, type TableColumnsType, Tag, theme, Typography } from 'antd';
+import { type TableColumnsType, Tag, theme, Typography } from 'antd';
 import {
   filterOutNullAndUndefined,
   BAICephIcon,
   BAIFlex,
-  BAILink,
+  BAINameActionCell,
   BAIPureStorageIcon,
   BAITable,
   BAIFetchKeyButton,
@@ -78,6 +79,7 @@ type StorageVolume = NonNullable<
 const StorageProxyList = () => {
   const { token } = theme.useToken();
   const { t } = useTranslation();
+  const webuiNavigate = useWebUINavigate();
   const {
     baiPaginationOption,
     tablePaginationOption,
@@ -128,12 +130,54 @@ const StorageProxyList = () => {
       title: <>ID / {t('agent.Endpoint')}</>,
       key: 'id',
       dataIndex: 'id',
+      fixed: 'left',
       render: (value, record) => {
+        let perfMetricDisabled;
+        try {
+          const performanceMetric = JSON.parse(
+            record.performance_metric || '{}',
+          );
+          perfMetricDisabled = _.isEmpty(performanceMetric);
+        } catch {
+          perfMetricDisabled = true;
+        }
         return (
-          <BAIFlex direction="column" align="start">
-            <Typography.Text>{value}</Typography.Text>
-            <Typography.Text type="secondary">{record.path}</Typography.Text>
-          </BAIFlex>
+          <BAINameActionCell
+            title={
+              <BAIFlex direction="column" align="start">
+                <Typography.Text>{value}</Typography.Text>
+                <Typography.Text type="secondary">
+                  {record.path}
+                </Typography.Text>
+              </BAIFlex>
+            }
+            showActions="always"
+            actions={[
+              {
+                key: 'info',
+                title: t('button.Info'),
+                icon: <InfoCircleOutlined />,
+                disabled: perfMetricDisabled,
+                onClick: () => {
+                  const event = new CustomEvent(
+                    'backend-ai-selected-storage-proxy',
+                    {
+                      detail: record.id,
+                    },
+                  );
+                  document.dispatchEvent(event);
+                },
+              },
+              {
+                key: 'settings',
+                title: t('button.Settings'),
+                icon: <SettingOutlined />,
+                onClick: () => {
+                  webuiNavigate(`/storage-settings/${record.id}`);
+                },
+              },
+            ]}
+          />
         );
       },
     },
@@ -219,56 +263,6 @@ const StorageProxyList = () => {
               </Tag>
             ))}
           </BAIFlex>
-        );
-      },
-    },
-    {
-      title: t('general.Control'),
-      key: 'control',
-      width: 100,
-      fixed: 'right',
-      render: (_value, record) => {
-        let perfMetricDisabled;
-        try {
-          const performanceMetric = JSON.parse(
-            record.performance_metric || '{}',
-          );
-          perfMetricDisabled = _.isEmpty(performanceMetric);
-        } catch {
-          perfMetricDisabled = true;
-        }
-        return (
-          <>
-            <Button
-              disabled={perfMetricDisabled}
-              style={{
-                color: perfMetricDisabled
-                  ? token.colorTextDisabled
-                  : token.colorSuccess,
-              }}
-              icon={<InfoCircleOutlined />}
-              onClick={() => {
-                // This event is being listened to by the plugin
-                const event = new CustomEvent(
-                  'backend-ai-selected-storage-proxy',
-                  {
-                    detail: record.id,
-                  },
-                );
-                document.dispatchEvent(event);
-              }}
-              type="text"
-            />
-            <BAILink to={`/storage-settings/${record.id}`}>
-              <Button
-                style={{
-                  color: token.colorInfo,
-                }}
-                icon={<SettingOutlined />}
-                type="text"
-              />
-            </BAILink>
-          </>
         );
       },
     },

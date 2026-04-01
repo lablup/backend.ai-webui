@@ -7,10 +7,9 @@ import DomainResourceGroupWarningIcon from './DomainResourceGroupWarningIcon';
 import { SettingOutlined } from '@ant-design/icons';
 import { Divider, theme, Typography } from 'antd';
 import {
-  BAIButton,
   BAIColumnsType,
   BAIFlex,
-  BAILink,
+  BAINameActionCell,
   BAIResourceNumberWithIcon,
   BAITable,
   BAITableProps,
@@ -18,7 +17,6 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
-import { ChevronRight } from 'lucide-react';
 import { parseAsStringLiteral, useQueryStates } from 'nuqs';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -125,33 +123,26 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
       dataIndex: 'domainName',
       sorter: isEnableSorter('domainName'),
       render: (_name, record) => (
-        <BAIFlex gap="xxs" align="center">
-          <DomainResourceGroupWarningIcon domainFairShareFrgmt={record} />
-          <BAILink
-            icon={<ChevronRight />}
-            onClick={() =>
-              onClickDomainName?.(record?.domain?.basicInfo?.name || '')
-            }
-          >
-            {record?.domain?.basicInfo?.name || '-'}
-          </BAILink>
-        </BAIFlex>
-      ),
-    },
-    {
-      title: t('general.Control'),
-      key: 'control',
-      fixed: 'left',
-      render: (_text, record) => (
-        <BAIFlex direction="row" gap="xxs">
-          <BAIButton
-            type="text"
-            icon={<SettingOutlined style={{ color: token.colorInfo }} />}
-            onClick={() => {
-              onOpenWeightSetting?.(record);
-            }}
-          />
-        </BAIFlex>
+        <BAINameActionCell
+          icon={
+            <DomainResourceGroupWarningIcon domainFairShareFrgmt={record} />
+          }
+          title={record?.domain?.basicInfo?.name || '-'}
+          onTitleClick={() =>
+            onClickDomainName?.(record?.domain?.basicInfo?.name || '')
+          }
+          showActions="always"
+          actions={[
+            {
+              key: 'settings',
+              title: t('button.Settings'),
+              icon: <SettingOutlined />,
+              onClick: () => {
+                onOpenWeightSetting?.(record);
+              },
+            },
+          ]}
+        />
       ),
     },
     {

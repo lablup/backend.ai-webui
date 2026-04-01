@@ -7,12 +7,13 @@ import { RolePermissionTabFragment$key } from '../__generated__/RolePermissionTa
 import { PermissionOrderBy } from '../__generated__/RolePermissionTabRefetchQuery.graphql';
 import { convertToOrderBy } from '../helper';
 import CreatePermissionModal from './CreatePermissionModal';
-import { App, Tag, Tooltip, Typography, theme } from 'antd';
+import { App, Tag } from 'antd';
 import {
   BAIButton,
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
+  BAINameActionCell,
   BAITable,
   BAITrashBinIcon,
   type GraphQLFilter,
@@ -54,7 +55,6 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const { modal, message } = App.useApp();
   const { logger } = useBAILogger();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -378,11 +378,25 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
               }
               const displayValue = label || value || '-';
               return (
-                <Tooltip title={displayValue} placement="topLeft">
-                  <Typography.Text ellipsis style={{ maxWidth: 200 }}>
-                    {displayValue}
-                  </Typography.Text>
-                </Tooltip>
+                <BAINameActionCell
+                  title={displayValue}
+                  showActions="always"
+                  actions={[
+                    {
+                      key: 'edit',
+                      title: t('button.Edit'),
+                      icon: <EditIcon />,
+                      onClick: () => handleEdit(record),
+                    },
+                    {
+                      key: 'delete',
+                      title: t('rbac.DeletePermission'),
+                      icon: <BAITrashBinIcon />,
+                      type: 'danger',
+                      onClick: () => handleDelete(toLocalId(record?.id)),
+                    },
+                  ]}
+                />
               );
             },
           },
@@ -403,29 +417,6 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
               <Tag color="blue">
                 {t(`rbac.operations.${value}`, { defaultValue: value })}
               </Tag>
-            ),
-          },
-          {
-            key: 'control',
-            title: t('general.Control'),
-            width: 90,
-            render: (_, record) => (
-              <BAIFlex gap="xxs">
-                <BAIButton
-                  type="text"
-                  icon={<EditIcon style={{ color: token.colorInfo }} />}
-                  size="small"
-                  onClick={() => handleEdit(record)}
-                />
-                <BAIButton
-                  type="text"
-                  danger
-                  icon={<BAITrashBinIcon />}
-                  size="small"
-                  title={t('rbac.DeletePermission')}
-                  onClick={() => handleDelete(toLocalId(record?.id))}
-                />
-              </BAIFlex>
             ),
           },
         ]}

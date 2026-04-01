@@ -7,10 +7,9 @@ import ProjectResourceGroupWarningIcon from './ProjectResourceGroupWarningIcon';
 import { SettingOutlined } from '@ant-design/icons';
 import { Divider, theme, Typography } from 'antd';
 import {
-  BAIButton,
   BAIColumnsType,
   BAIFlex,
-  BAILink,
+  BAINameActionCell,
   BAIResourceNumberWithIcon,
   BAITable,
   BAITableProps,
@@ -18,7 +17,6 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
-import { ChevronRight } from 'lucide-react';
 import { parseAsStringLiteral, useQueryStates } from 'nuqs';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -121,31 +119,24 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
       dataIndex: 'projectName',
       sorter: isEnableSorter('projectName'),
       render: (_name, record) => (
-        <BAIFlex gap="xxs" align="center">
-          <ProjectResourceGroupWarningIcon projectFairShareFrgmt={record} />
-          <BAILink
-            icon={<ChevronRight />}
-            onClick={() => onClickProjectName?.(record?.projectId)}
-          >
-            {record?.project?.basicInfo?.name}
-          </BAILink>
-        </BAIFlex>
-      ),
-    },
-    {
-      title: t('general.Control'),
-      key: 'control',
-      fixed: 'left',
-      render: (_text, record) => (
-        <BAIFlex direction="row" gap="xxs">
-          <BAIButton
-            type="text"
-            icon={<SettingOutlined style={{ color: token.colorInfo }} />}
-            onClick={() => {
-              onOpenWeightSetting?.(record);
-            }}
-          />
-        </BAIFlex>
+        <BAINameActionCell
+          icon={
+            <ProjectResourceGroupWarningIcon projectFairShareFrgmt={record} />
+          }
+          title={record?.project?.basicInfo?.name}
+          onTitleClick={() => onClickProjectName?.(record?.projectId)}
+          showActions="always"
+          actions={[
+            {
+              key: 'settings',
+              title: t('button.Settings'),
+              icon: <SettingOutlined />,
+              onClick: () => {
+                onOpenWeightSetting?.(record);
+              },
+            },
+          ]}
+        />
       ),
     },
     {

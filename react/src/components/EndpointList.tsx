@@ -18,21 +18,20 @@ import {
   DeleteOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
-import { Button, Typography, theme, App, TablePaginationConfig } from 'antd';
+import { Typography, theme, App, TablePaginationConfig } from 'antd';
 import type { ColumnType } from 'antd/lib/table';
 import {
   filterOutEmpty,
   filterOutNullAndUndefined,
   BAITable,
   BAITableProps,
-  BAIFlex,
+  BAINameActionCell,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
-import React, { useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
-import { Link } from 'react-router-dom';
 
 type Endpoint = EndpointListFragment$data[number];
 
@@ -77,7 +76,6 @@ const EndpointList: React.FC<EndpointListProps> = ({
   const { message, modal } = App.useApp();
   const [currentUser] = useCurrentUserInfo();
   const baiClient = useSuspendedBackendaiClient();
-  const [optimisticDeletingId, setOptimisticDeletingId] = useState<string>();
   const webuiNavigate = useWebUINavigate();
 
   const endpoints = useFragment(
@@ -121,11 +119,75 @@ const EndpointList: React.FC<EndpointListProps> = ({
       dataIndex: 'name',
       fixed: 'left',
       render: (name, row) => (
-        <Link
+        <BAINameActionCell
+          title={name}
+          showActions="always"
           to={(isAdminMode ? '/admin-serving/' : '/serving/') + row.endpoint_id}
-        >
-          {name}
-        </Link>
+          actions={[
+            {
+              key: 'settings',
+              title: t('button.Settings'),
+              icon: <SettingOutlined />,
+              disabled:
+                isEndpointInDestroyingCategory(row) ||
+                (!isAdminMode &&
+                  !!row.created_user_email &&
+                  row.created_user_email !== currentUser.email),
+              onClick: () => {
+                webuiNavigate('/service/update/' + row.endpoint_id);
+              },
+            },
+            {
+              key: 'delete',
+              title: t('button.Delete'),
+              icon: <DeleteOutlined />,
+              type: 'danger',
+              disabled: isEndpointInDestroyingCategory(row),
+              onClick: () => {
+                modal.confirm({
+                  title: t('dialog.ask.DoYouWantToDeleteSomething', {
+                    name: row.name,
+                  }),
+                  content: t('dialog.warning.CannotBeUndone'),
+                  okText: t('button.Delete'),
+                  okButtonProps: {
+                    danger: true,
+                    type: 'primary',
+                  },
+                  onOk: () => {
+                    if (row.endpoint_id) {
+                      return new Promise<void>((resolve) => {
+                        terminateModelServiceMutation.mutate(row.endpoint_id!, {
+                          onSuccess: (res) => {
+                            onDeleted?.(row);
+                            if (res.success) {
+                              message.success(
+                                t('modelService.ServiceTerminated', {
+                                  name: row?.name,
+                                }),
+                              );
+                            } else {
+                              message.error(
+                                t('modelService.FailedToTerminateService'),
+                              );
+                            }
+                            resolve();
+                          },
+                          onError: () => {
+                            message.error(
+                              t('modelService.FailedToTerminateService'),
+                            );
+                            resolve();
+                          },
+                        });
+                      });
+                    }
+                  },
+                });
+              },
+            },
+          ]}
+        />
       ),
       sorter: true,
     },
@@ -156,99 +218,6 @@ const EndpointList: React.FC<EndpointListProps> = ({
         ) : (
           '-'
         ),
-    },
-    {
-      title: t('modelService.Controls'),
-      dataIndex: 'controls',
-      key: 'controls',
-      render: (_text, row) => (
-        <BAIFlex direction="row" align="stretch">
-          <Button
-            type="text"
-            icon={<SettingOutlined />}
-            style={
-              isEndpointInDestroyingCategory(row) ||
-              (!isAdminMode &&
-                !!row.created_user_email &&
-                row.created_user_email !== currentUser.email)
-                ? {
-                    color: token.colorTextDisabled,
-                  }
-                : {
-                    color: token.colorInfo,
-                  }
-            }
-            disabled={
-              isEndpointInDestroyingCategory(row) ||
-              (!isAdminMode &&
-                !!row.created_user_email &&
-                row.created_user_email !== currentUser.email)
-            }
-            onClick={() => {
-              webuiNavigate('/service/update/' + row.endpoint_id);
-            }}
-          />
-          <Button
-            type="text"
-            icon={
-              <DeleteOutlined
-                style={
-                  isEndpointInDestroyingCategory(row)
-                    ? undefined
-                    : {
-                        color: token.colorError,
-                      }
-                }
-              />
-            }
-            loading={
-              terminateModelServiceMutation.isPending &&
-              optimisticDeletingId === row.endpoint_id
-            }
-            disabled={isEndpointInDestroyingCategory(row)}
-            onClick={() => {
-              modal.confirm({
-                title: t('dialog.ask.DoYouWantToDeleteSomething', {
-                  name: row.name,
-                }),
-                content: t('dialog.warning.CannotBeUndone'),
-                okText: t('button.Delete'),
-                okButtonProps: {
-                  danger: true,
-                  type: 'primary',
-                },
-                onOk: () => {
-                  setOptimisticDeletingId(row?.endpoint_id || undefined);
-                  // FIXME: any better idea for handling result?
-                  row.endpoint_id &&
-                    terminateModelServiceMutation.mutate(row?.endpoint_id, {
-                      onSuccess: (res) => {
-                        onDeleted?.(row);
-                        // FIXME: temporally refer to mutate input to message
-                        if (res.success) {
-                          message.success(
-                            t('modelService.ServiceTerminated', {
-                              name: row?.name,
-                            }),
-                          );
-                        } else {
-                          message.error(
-                            t('modelService.FailedToTerminateService'),
-                          );
-                        }
-                      },
-                      onError: () => {
-                        message.error(
-                          t('modelService.FailedToTerminateService'),
-                        );
-                      },
-                    });
-                },
-              });
-            }}
-          />
-        </BAIFlex>
-      ),
     },
     {
       title: t('modelService.Status'),

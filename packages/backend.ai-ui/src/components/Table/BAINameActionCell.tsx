@@ -66,7 +66,6 @@ const useStyles = createStyles(({ css, token }) => ({
     gap: ${token.marginXS}px;
     width: 100%;
     min-width: 0;
-    overflow: hidden;
     position: relative;
   `,
   titleArea: css`
@@ -75,7 +74,6 @@ const useStyles = createStyles(({ css, token }) => ({
     display: flex;
     align-items: center;
     gap: ${token.marginXXS}px;
-    overflow: hidden;
   `,
   titleIcon: css`
     flex-shrink: 0;

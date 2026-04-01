@@ -24,7 +24,7 @@ import {
   SettingOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { App, Button, Dropdown, theme, Tooltip, Typography } from 'antd';
+import { App, Button, Dropdown, Tooltip, Typography } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
 import type { ColumnsType, ColumnType } from 'antd/es/table';
 import {
@@ -34,6 +34,7 @@ import {
   BAIFlex,
   BAIAllowedVfolderHostsWithPermission,
   BAIResourceNumberWithIcon,
+  BAINameActionCell,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { EllipsisIcon } from 'lucide-react';
@@ -50,7 +51,6 @@ interface KeypairResourcePolicyListProps {}
 const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
   props,
 ) => {
-  const { token } = theme.useToken();
   const { t } = useTranslation();
   const { message, modal } = App.useApp();
 
@@ -60,8 +60,6 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
   const [visibleColumnSettingModal, { toggle: toggleColumnSettingModal }] =
     useToggle();
   const [isCreatingPolicySetting, setIsCreatingPolicySetting] = useState(false);
-  const [inFlightResourcePolicyName, setInFlightResourcePolicyName] =
-    useState<string>();
   const [editingKeypairResourcePolicy, setEditingKeypairResourcePolicy] =
     useState<KeypairResourcePolicySettingModalFragment$key | null>();
   const [currentResourcePolicy, setCurrentResourcePolicy] =
@@ -99,15 +97,14 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
       },
     );
 
-  const [commitDelete, isInflightDelete] =
-    useMutation<KeypairResourcePolicyListMutation>(graphql`
-      mutation KeypairResourcePolicyListMutation($name: String!) {
-        delete_keypair_resource_policy(name: $name) {
-          ok
-          msg
-        }
+  const [commitDelete] = useMutation<KeypairResourcePolicyListMutation>(graphql`
+    mutation KeypairResourcePolicyListMutation($name: String!) {
+      delete_keypair_resource_policy(name: $name) {
+        ok
+        msg
       }
-    `);
+    }
+  `);
 
   const columns: ColumnsType<KeypairResourcePolicies> = filterOutEmpty([
     {
@@ -116,6 +113,102 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
       key: 'name',
       fixed: 'left',
       sorter: (a, b) => localeCompare(a?.name, b?.name),
+      render: (name: string, row: KeypairResourcePolicies) => (
+        <BAINameActionCell
+          title={name}
+          showActions="always"
+          actions={[
+            {
+              key: 'info',
+              title: t('button.Info'),
+              icon: <InfoCircleOutlined />,
+              onClick: () => {
+                startInfoModalOpenTransition(() => {
+                  setCurrentResourcePolicy(row || null);
+                });
+              },
+            },
+            {
+              key: 'settings',
+              title: t('button.Settings'),
+              icon: <SettingOutlined />,
+              onClick: () => {
+                setEditingKeypairResourcePolicy(row);
+              },
+            },
+            {
+              key: 'delete',
+              title: t('button.Delete'),
+              icon: <DeleteOutlined />,
+              type: 'danger',
+              onClick: () => {
+                modal.confirm({
+                  title: t('resourcePolicy.DeletePolicy'),
+                  content: (
+                    <BAIFlex direction="column" align="stretch">
+                      <BAIFlex gap={'xxs'}>
+                        <Typography.Text>
+                          {t('resourcePolicy.DeletePolicyDescription')}
+                        </Typography.Text>
+                        <Typography.Text strong>{row?.name}</Typography.Text>
+                      </BAIFlex>
+                      <br />
+                      <Typography.Text type="danger">
+                        {t('dialog.warning.CannotBeUndone')}
+                      </Typography.Text>
+                    </BAIFlex>
+                  ),
+                  okButtonProps: {
+                    danger: true,
+                  },
+                  okText: t('button.Delete'),
+                  onOk: () => {
+                    if (row?.name) {
+                      return new Promise<void>((resolve) => {
+                        commitDelete({
+                          variables: {
+                            name: row.name!,
+                          },
+                          onCompleted: (res, errors) => {
+                            if (!res?.delete_keypair_resource_policy?.ok) {
+                              message.error(
+                                res?.delete_keypair_resource_policy?.msg,
+                              );
+                              resolve();
+                              return;
+                            }
+                            if (errors && errors?.length > 0) {
+                              const errorMsgList = _.map(
+                                errors,
+                                (error) => error.message,
+                              );
+                              for (const error of errorMsgList) {
+                                message.error(error);
+                              }
+                            } else {
+                              startRefetchTransition(() =>
+                                updateKeypairResourcePolicyFetchKey(),
+                              );
+                              message.success(
+                                t('resourcePolicy.SuccessfullyDeleted'),
+                              );
+                            }
+                            resolve();
+                          },
+                          onError(err) {
+                            message.error(err?.message);
+                            resolve();
+                          },
+                        });
+                      });
+                    }
+                  },
+                });
+              },
+            },
+          ]}
+        />
+      ),
     },
     {
       title: t('resourcePolicy.ResourcePolicy'),
@@ -225,116 +318,6 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
         ),
       render: (text) => (text ? text : '∞'),
     },
-    {
-      title: t('general.Control'),
-      key: 'control',
-      fixed: 'right',
-      render: (_text, row) => (
-        <BAIFlex direction="row" align="stretch">
-          <Button
-            type="text"
-            icon={<InfoCircleOutlined style={{ color: token.colorInfo }} />}
-            onClick={() => {
-              startInfoModalOpenTransition(() => {
-                setCurrentResourcePolicy(row || null);
-              });
-            }}
-          />
-          <Button
-            type="text"
-            icon={<SettingOutlined />}
-            style={{
-              color: token.colorInfo,
-            }}
-            onClick={() => {
-              setEditingKeypairResourcePolicy(row);
-            }}
-          />
-          <Button
-            type="text"
-            icon={
-              <DeleteOutlined
-                style={{
-                  color: token.colorError,
-                }}
-              />
-            }
-            loading={
-              isInflightDelete &&
-              inFlightResourcePolicyName ===
-                row?.name + keypairResourcePolicyFetchKey
-            }
-            disabled={
-              isInflightDelete &&
-              inFlightResourcePolicyName !==
-                row?.name + keypairResourcePolicyFetchKey
-            }
-            onClick={() => {
-              modal.confirm({
-                title: t('resourcePolicy.DeletePolicy'),
-                content: (
-                  <BAIFlex direction="column" align="stretch">
-                    <BAIFlex gap={'xxs'}>
-                      <Typography.Text>
-                        {t('resourcePolicy.DeletePolicyDescription')}
-                      </Typography.Text>
-                      <Typography.Text strong>{row?.name}</Typography.Text>
-                    </BAIFlex>
-                    <br />
-                    <Typography.Text type="danger">
-                      {t('dialog.warning.CannotBeUndone')}
-                    </Typography.Text>
-                  </BAIFlex>
-                ),
-                okButtonProps: {
-                  danger: true,
-                },
-                okText: t('button.Delete'),
-                onOk: () => {
-                  if (row?.name) {
-                    setInFlightResourcePolicyName(
-                      row.name + keypairResourcePolicyFetchKey,
-                    );
-                    commitDelete({
-                      variables: {
-                        name: row.name,
-                      },
-                      onCompleted: (res, errors) => {
-                        if (!res?.delete_keypair_resource_policy?.ok) {
-                          message.error(
-                            res?.delete_keypair_resource_policy?.msg,
-                          );
-                          return;
-                        }
-                        if (errors && errors?.length > 0) {
-                          const errorMsgList = _.map(
-                            errors,
-                            (error) => error.message,
-                          );
-                          for (const error of errorMsgList) {
-                            message.error(error);
-                          }
-                        } else {
-                          startRefetchTransition(() =>
-                            updateKeypairResourcePolicyFetchKey(),
-                          );
-                          message.success(
-                            t('resourcePolicy.SuccessfullyDeleted'),
-                          );
-                        }
-                      },
-                      onError(err) {
-                        message.error(err?.message);
-                      },
-                    });
-                  }
-                },
-              });
-            }}
-          />
-        </BAIFlex>
-      ),
-    },
   ]);
 
   const [hiddenColumnKeys, setHiddenColumnKeys] = useHiddenColumnKeysSetting(
@@ -347,10 +330,7 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
       return;
     }
 
-    const columnKeys = _.without(
-      _.map(columns, (column) => _.toString(column.key)),
-      'control',
-    );
+    const columnKeys = _.map(columns, (column) => _.toString(column.key));
     const responseData = _.map(keypair_resource_policies, (policy) => {
       return _.pick(
         policy,
