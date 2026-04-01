@@ -7,10 +7,8 @@ import {
   useBackendAIImageMetaData,
   useSuspendedBackendaiClient,
 } from '../hooks';
-import { useModelCardMetadata } from '../hooks/useModelCardMetadata';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
-import ModelCardChat from './ModelCardChat';
 import ModelCloneModal from './ModelCloneModal';
 import ModelTryContentButton from './ModelTryContentButton';
 import VFolderNodeIdenticon from './VFolderNodeIdenticon';
@@ -44,7 +42,6 @@ import Markdown from 'markdown-to-jsx';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
-import { useCurrentUserRole } from 'src/hooks/backendai';
 
 interface ModelCardModalProps extends BAIModalProps {
   modelCardModalFrgmt?: ModelCardModalFragment$key | null;
@@ -65,14 +62,10 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
   const { generateFolderPath } = useFolderExplorerOpener();
 
   const screen = Grid.useBreakpoint();
-  const { models: modelMetadataList } = useModelCardMetadata();
-  const userRole = useCurrentUserRole();
-
   const model_card = useFragment(
     graphql`
       fragment ModelCardModalFragment on ModelCard {
         id
-        row_id @since(version: "24.03.7")
         name
         author
         title
@@ -88,27 +81,18 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
         license
         readme
         min_resource
-        architecture
-        framework
-        vfolder {
-          cloneable
-          host
-        }
-        vfolder_node @since(version: "24.09.*") {
+        vfolder_node {
           id
           name
+          cloneable
           ...ModelCloneModalVFolderFragment
           ...ModelTryContentButtonVFolderFragment
           ...VFolderNodeIdenticonFragment
         }
-        error_msg @since(version: "24.03.7")
+        error_msg
       }
     `,
     modelCardModalFrgmt,
-  );
-
-  const model = modelMetadataList.find(
-    (item) => model_card?.name === item.name,
   );
 
   return (
@@ -162,7 +146,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
           type="primary"
           ghost
           icon={<CopyOutlined />}
-          disabled={!model_card?.vfolder?.cloneable}
+          disabled={!model_card?.vfolder_node?.cloneable}
           onClick={() => {
             setVisibleCloneModal(true);
           }}
@@ -187,11 +171,6 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
           gap={'sm'}
           style={{ width: '100%' }}
         >
-          {modelMetadataList.some((item) => item.name === model_card?.name) && (
-            <BAIFlex direction="row" wrap="wrap" align="center" gap={'sm'}>
-              <ModelCardChat modelName={model?.serviceName} />
-            </BAIFlex>
-          )}
           <BAIFlex
             direction="column"
             wrap="wrap"
@@ -263,7 +242,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
                     size="small"
                     bordered
                     items={filterOutEmpty([
-                      userRole === 'superadmin' && {
+                      {
                         key: 'vfolder.id',
                         label: t('modelStore.ModelFolder'),
                         children: model_card?.vfolder_node?.id ? (
