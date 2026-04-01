@@ -26,6 +26,7 @@ export interface UserSettings {
   selected_language?: string;
   recentSessionHistory?: Array<SessionHistory>;
   pinnedSessionHistory?: Array<SessionHistory>;
+  pinnedServiceEndpointIds?: Array<string>;
   start_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
   start_page_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
   experimental_ai_agents?: boolean;
