@@ -55,6 +55,8 @@ export interface BAINameActionCellProps {
   showActions?: 'hover' | 'always';
   /** Minimum number of action buttons to keep visible before overflow. Default: 0 */
   minVisibleActions?: number;
+  /** Show a copy-to-clipboard icon on hover next to the title text */
+  copyable?: boolean;
   style?: React.CSSProperties;
   className?: string;
 }
@@ -132,6 +134,15 @@ const useStyles = createStyles(({ css, token }) => ({
     color: ${token.colorTextDisabled};
     background-color: ${token.colorBgContainerDisabled};
   `,
+  copyableHover: css`
+    .ant-typography-copy {
+      opacity: 0;
+      transition: opacity 0.15s ease;
+    }
+    &:hover .ant-typography-copy {
+      opacity: 1;
+    }
+  `,
 }));
 
 // Estimated width per action button (icon button small size)
@@ -147,6 +158,7 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
   actions,
   showActions = 'hover',
   minVisibleActions = 0,
+  copyable,
   style,
   className,
 }) => {
@@ -271,30 +283,50 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
   const renderTitle = () => {
     if (to) {
       return (
-        <BAILink
-          to={to}
-          type="hover"
-          style={{
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-            display: 'block',
-            minWidth: 0,
-          }}
-        >
-          {title}
-        </BAILink>
+        <>
+          <BAILink
+            to={to}
+            type="hover"
+            style={{
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              display: 'block',
+              minWidth: 0,
+            }}
+          >
+            {title}
+          </BAILink>
+          {copyable && (
+            <BAIText
+              copyable={{ text: String(title) }}
+              style={{ flexShrink: 0 }}
+            />
+          )}
+        </>
       );
     }
     if (onTitleClick) {
       return (
-        <BAILink type="hover" onClick={onTitleClick} ellipsis>
-          {title}
-        </BAILink>
+        <>
+          <BAILink type="hover" onClick={onTitleClick} ellipsis>
+            {title}
+          </BAILink>
+          {copyable && (
+            <BAIText
+              copyable={{ text: String(title) }}
+              style={{ flexShrink: 0 }}
+            />
+          )}
+        </>
       );
     }
     return (
-      <BAIText ellipsis={{ tooltip: true }} style={{ flex: 1, minWidth: 0 }}>
+      <BAIText
+        ellipsis={{ tooltip: true }}
+        copyable={copyable ? { text: String(title) } : undefined}
+        style={{ flex: 1, minWidth: 0 }}
+      >
         {title}
       </BAIText>
     );
@@ -310,7 +342,10 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
       )}
       style={style}
     >
-      <div ref={titleAreaRef} className={styles.titleArea}>
+      <div
+        ref={titleAreaRef}
+        className={cx(styles.titleArea, copyable && styles.copyableHover)}
+      >
         {icon && (
           <span
             className={cx(styles.titleIcon, 'bai-name-action-cell-title-icon')}
