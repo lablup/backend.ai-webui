@@ -209,21 +209,6 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
       <BAICard
         variant="borderless"
         title={t('data.Folders')}
-        extra={
-          <BAIFlex gap={'xs'}>
-            <BAIFetchKeyButton
-              loading={
-                deferredQueryVariables !== queryVariables ||
-                deferredFetchKey !== fetchKey
-              }
-              autoUpdateDelay={15_000}
-              value={fetchKey}
-              onChange={(newFetchKey) => {
-                updateFetchKey(newFetchKey);
-              }}
-            />
-          </BAIFlex>
-        }
         styles={{
           header: {
             borderBottom: 'none',
@@ -440,6 +425,17 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                     </Tooltip>
                   </>
                 )}
+              <BAIFetchKeyButton
+                loading={
+                  deferredQueryVariables !== queryVariables ||
+                  deferredFetchKey !== fetchKey
+                }
+                autoUpdateDelay={15_000}
+                value={fetchKey}
+                onChange={(newFetchKey) => {
+                  updateFetchKey(newFetchKey);
+                }}
+              />
             </BAIFlex>
           </BAIFlex>
           <VFolderNodes

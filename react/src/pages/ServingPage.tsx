@@ -107,25 +107,6 @@ const ServingPage: React.FC = () => {
     <BAIFlex direction="column" align="stretch" gap={'md'}>
       <BAICard
         title={t('webui.menu.Serving')}
-        extra={
-          <BAIFlex gap={'xs'}>
-            <BAIFetchKeyButton
-              value={fetchKey}
-              onChange={updateFetchKey}
-              autoUpdateDelay={7_000}
-              loading={
-                deferredQueryVariables !== queryVariables ||
-                deferredFetchKey !== fetchKey
-              }
-            />
-            <Button
-              type="primary"
-              onClick={() => webuiNavigate('/service/start')}
-            >
-              {t('modelService.StartService')}
-            </Button>
-          </BAIFlex>
-        }
         styles={{
           body: {
             padding: 0,
@@ -191,6 +172,23 @@ const ServingPage: React.FC = () => {
                   setTablePaginationOption({ current: 1 });
                 }}
               />
+            </BAIFlex>
+            <BAIFlex gap={'xs'}>
+              <BAIFetchKeyButton
+                value={fetchKey}
+                onChange={updateFetchKey}
+                autoUpdateDelay={7_000}
+                loading={
+                  deferredQueryVariables !== queryVariables ||
+                  deferredFetchKey !== fetchKey
+                }
+              />
+              <Button
+                type="primary"
+                onClick={() => webuiNavigate('/service/start')}
+              >
+                {t('modelService.StartService')}
+              </Button>
             </BAIFlex>
           </BAIFlex>
           <Suspense fallback={<Skeleton active />}>

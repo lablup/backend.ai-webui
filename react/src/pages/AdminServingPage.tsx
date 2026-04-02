@@ -105,17 +105,6 @@ const AdminServingPage: React.FC = () => {
     <BAIFlex direction="column" align="stretch" gap={'md'}>
       <BAICard
         title={t('webui.menu.Serving')}
-        extra={
-          <BAIFetchKeyButton
-            value={fetchKey}
-            onChange={updateFetchKey}
-            autoUpdateDelay={7_000}
-            loading={
-              deferredQueryVariables !== queryVariables ||
-              deferredFetchKey !== fetchKey
-            }
-          />
-        }
         styles={{
           body: {
             padding: 0,
@@ -181,6 +170,15 @@ const AdminServingPage: React.FC = () => {
                 }}
               />
             </BAIFlex>
+            <BAIFetchKeyButton
+              value={fetchKey}
+              onChange={updateFetchKey}
+              autoUpdateDelay={7_000}
+              loading={
+                deferredQueryVariables !== queryVariables ||
+                deferredFetchKey !== fetchKey
+              }
+            />
           </BAIFlex>
           <Suspense fallback={<Skeleton active />}>
             <EndpointList
