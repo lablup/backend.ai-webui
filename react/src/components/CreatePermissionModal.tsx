@@ -2,13 +2,13 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { CreatePermissionModalCombinationsQuery } from '../__generated__/CreatePermissionModalCombinationsQuery.graphql';
 import {
   CreatePermissionModalCreateMutation,
   type OperationType,
   type RBACElementType,
 } from '../__generated__/CreatePermissionModalCreateMutation.graphql';
 import { CreatePermissionModalDomainQuery } from '../__generated__/CreatePermissionModalDomainQuery.graphql';
+import { CreatePermissionModalPermissionMatrixQuery } from '../__generated__/CreatePermissionModalPermissionMatrixQuery.graphql';
 import { CreatePermissionModalResourceGroupQuery } from '../__generated__/CreatePermissionModalResourceGroupQuery.graphql';
 import { CreatePermissionModalUpdateMutation } from '../__generated__/CreatePermissionModalUpdateMutation.graphql';
 import { App, Form, type SelectProps } from 'antd';
@@ -242,18 +242,17 @@ const CreatePermissionModal: React.FC<CreatePermissionModalProps> = ({
   const watchedScopeId = Form.useWatch('scopeId', form);
   const watchedEntityType = Form.useWatch('entityType', form);
 
-  const { rbacScopeEntityCombinations, rbacEntityOperationCombinations } =
-    useLazyLoadQuery<CreatePermissionModalCombinationsQuery>(
+  const { rbacPermissionMatrix } =
+    useLazyLoadQuery<CreatePermissionModalPermissionMatrixQuery>(
       graphql`
-        query CreatePermissionModalCombinationsQuery {
-          rbacScopeEntityCombinations {
+        query CreatePermissionModalPermissionMatrixQuery {
+          rbacPermissionMatrix {
             scopeType
-            validEntityTypes
-          }
-          rbacEntityOperationCombinations {
-            entityType
-            operations {
-              requiredPermission
+            entities {
+              entityType
+              actions {
+                requiredPermission
+              }
             }
           }
         }
@@ -262,37 +261,33 @@ const CreatePermissionModal: React.FC<CreatePermissionModalProps> = ({
       { fetchPolicy: 'store-and-network' },
     );
 
-  // Valid operations per entity type
-  const entityOperationMap = new Map(
-    rbacEntityOperationCombinations?.map((c) => [
-      c.entityType,
-      c.operations.map((op) => op.requiredPermission),
-    ]) ?? [],
-  );
-
   // Scope types available: intersection of UI-supported types and backend-reported types
   const availableScopeTypes = RBAC_ELEMENT_TYPES.filter((type) => {
-    const combination = rbacScopeEntityCombinations?.find(
-      (c) => c.scopeType === type,
-    );
-    if (!combination) return false;
-    return combination.validEntityTypes.some(
-      (et) => (entityOperationMap.get(et)?.length ?? 0) > 0,
-    );
+    const entry = rbacPermissionMatrix?.find((c) => c.scopeType === type);
+    if (!entry) return false;
+    return entry.entities.some((e) => e.actions.length > 0);
   });
 
   // Entity types valid for the currently selected scope type
-  const validEntityTypes = watchedScopeType
-    ? (rbacScopeEntityCombinations
-        ?.find((c) => c.scopeType === watchedScopeType)
-        ?.validEntityTypes.filter(
-          (et) => (entityOperationMap.get(et)?.length ?? 0) > 0,
-        ) ?? [])
+  const selectedScopeEntry = watchedScopeType
+    ? rbacPermissionMatrix?.find((c) => c.scopeType === watchedScopeType)
+    : undefined;
+
+  const validEntityTypes = selectedScopeEntry
+    ? selectedScopeEntry.entities
+        .filter((e) => e.actions.length > 0)
+        .map((e) => e.entityType)
     : [];
 
-  const validOperations = watchedEntityType
-    ? new Set(entityOperationMap.get(watchedEntityType) ?? [])
-    : new Set<OperationType>();
+  // Valid operations for the selected (scope, entity) pair
+  const validOperations =
+    watchedEntityType && selectedScopeEntry
+      ? new Set(
+          selectedScopeEntry.entities
+            .find((e) => e.entityType === watchedEntityType)
+            ?.actions.map((a) => a.requiredPermission) ?? [],
+        )
+      : new Set<OperationType>();
 
   const [commitCreatePermission, isCreateInFlight] =
     useMutation<CreatePermissionModalCreateMutation>(graphql`
