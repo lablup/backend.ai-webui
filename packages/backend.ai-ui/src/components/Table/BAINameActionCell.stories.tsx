@@ -430,6 +430,24 @@ export const CopyableNameWithLink: Story = {
   },
 };
 
+export const CopyableNameWithAlwaysVisibleActions: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Copyable name with action buttons always visible (not hover-only). Verifies copy icon positioning alongside persistent actions.',
+      },
+    },
+  },
+  args: {
+    icon: <FolderOutlined />,
+    title: 'Copyable With Always Actions',
+    actions: sampleActions.slice(0, 2),
+    copyable: true,
+    showActions: 'always',
+  },
+};
+
 export const TitleOnly: Story = {
   parameters: {
     docs: {

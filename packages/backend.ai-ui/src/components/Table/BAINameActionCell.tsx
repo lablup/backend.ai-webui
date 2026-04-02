@@ -134,15 +134,6 @@ const useStyles = createStyles(({ css, token }) => ({
     color: ${token.colorTextDisabled};
     background-color: ${token.colorBgContainerDisabled};
   `,
-  copyableHover: css`
-    .ant-typography-copy {
-      opacity: 0;
-      transition: opacity 0.15s ease;
-    }
-    &:hover .ant-typography-copy {
-      opacity: 1;
-    }
-  `,
 }));
 
 // Estimated width per action button (icon button small size)
@@ -280,10 +271,14 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
     ...menuOnlyActions.map(toMenuItem),
   ];
 
+  const copyableConfig = copyable
+    ? { text: typeof title === 'string' ? title : '' }
+    : undefined;
+
   const renderTitle = () => {
     if (to) {
       return (
-        <>
+        <BAIText copyable={copyableConfig} ellipsis={{ tooltip: true }}>
           <BAILink
             to={to}
             type="hover"
@@ -297,35 +292,23 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
           >
             {title}
           </BAILink>
-          {copyable && (
-            <BAIText
-              copyable={{ text: String(title) }}
-              style={{ flexShrink: 0 }}
-            />
-          )}
-        </>
+        </BAIText>
       );
     }
     if (onTitleClick) {
       return (
-        <>
+        <BAIText copyable={copyableConfig} ellipsis={{ tooltip: true }}>
           <BAILink type="hover" onClick={onTitleClick} ellipsis>
             {title}
           </BAILink>
-          {copyable && (
-            <BAIText
-              copyable={{ text: String(title) }}
-              style={{ flexShrink: 0 }}
-            />
-          )}
-        </>
+        </BAIText>
       );
     }
     return (
       <BAIText
         ellipsis={{ tooltip: true }}
-        copyable={copyable ? { text: String(title) } : undefined}
-        style={{ flex: 1, minWidth: 0 }}
+        copyable={copyableConfig}
+        style={{ minWidth: 0 }}
       >
         {title}
       </BAIText>
@@ -342,10 +325,7 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
       )}
       style={style}
     >
-      <div
-        ref={titleAreaRef}
-        className={cx(styles.titleArea, copyable && styles.copyableHover)}
-      >
+      <div ref={titleAreaRef} className={styles.titleArea}>
         {icon && (
           <span
             className={cx(styles.titleIcon, 'bai-name-action-cell-title-icon')}
