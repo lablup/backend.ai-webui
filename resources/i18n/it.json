@@ -1345,6 +1345,7 @@
     "GenerateToken": "Generare il gettone",
     "GeneratedTokens": "Gettoni generati",
     "GoToServiceDetailPage": "Vai alla pagina dei dettagli del servizio",
+    "HealthStatus": "Stato di salute",
     "Image": "Immagine",
     "ModelDefinitionPath": "Percorso del file di definizione del modello",
     "ModelDefinitionRequired": "È necessario il file Model-Definition.yaml.",

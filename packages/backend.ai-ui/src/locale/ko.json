@@ -224,9 +224,10 @@
   },
   "comp:BAIRouteNodes": {
     "CreatedAt": "생성일",
+    "HealthStatus": "상태 확인 결과",
     "RouteId": "라우트 ID",
     "SessionId": "세션 ID",
-    "Status": "상태",
+    "Status": "라우트 상태",
     "TrafficRatio": "트래픽 비율",
     "TrafficStatus": "트래픽 상태"
   },

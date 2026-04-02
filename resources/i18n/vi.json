@@ -1347,6 +1347,7 @@
     "GenerateToken": "Tạo mã thông báo",
     "GeneratedTokens": "Mã thông báo được tạo",
     "GoToServiceDetailPage": "Đi đến trang chi tiết dịch vụ",
+    "HealthStatus": "Trạng thái hoạt động",
     "Image": "Hình ảnh",
     "ModelDefinitionPath": "Đường dẫn tệp định nghĩa mô hình",
     "ModelDefinitionRequired": "Cần định nghĩa mô hình.YAML.",

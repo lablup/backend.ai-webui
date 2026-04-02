@@ -1349,6 +1349,7 @@
     "GenerateToken": "生成令牌",
     "GeneratedTokens": "生成令牌",
     "GoToServiceDetailPage": "轉到服務詳細信息頁面",
+    "HealthStatus": "健康狀態",
     "Image": "图片",
     "ModelDefinitionPath": "模型定義檔路徑",
     "ModelDefinitionRequired": "需要model-definition.yaml文件。",

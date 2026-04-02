@@ -221,6 +221,7 @@
   },
   "comp:BAIRouteNodes": {
     "CreatedAt": "Ngày tạo",
+    "HealthStatus": "Trạng thái sức khỏe",
     "RouteId": "ID tuyến",
     "SessionId": "ID phiên",
     "Status": "Trạng thái",

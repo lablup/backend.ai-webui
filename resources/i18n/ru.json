@@ -1345,6 +1345,7 @@
     "GenerateToken": "Сгенерировать токен",
     "GeneratedTokens": "Сгенерированные токены",
     "GoToServiceDetailPage": "Перейти на страницу сведений об обслуживании",
+    "HealthStatus": "Статус здоровья",
     "Image": "Изображение",
     "ModelDefinitionPath": "Путь к файлу определения модели",
     "ModelDefinitionRequired": "Необходим файл модели.",

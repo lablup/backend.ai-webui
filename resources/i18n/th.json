@@ -1347,6 +1347,7 @@
     "GenerateToken": "สร้างโทเคน",
     "GeneratedTokens": "โทเคนที่สร้างขึ้น",
     "GoToServiceDetailPage": "ไปที่หน้ารายละเอียดบริการ",
+    "HealthStatus": "สถานะระบบ",
     "Image": "อิมเมจ",
     "ModelDefinitionPath": "เส้นทางไฟล์กำหนดโมเดล",
     "ModelDefinitionRequired": "จำเป็นต้องใช้ไฟล์ model-definition.yaml",

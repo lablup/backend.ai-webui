@@ -1345,6 +1345,7 @@
     "GenerateToken": "Générer un jeton",
     "GeneratedTokens": "Jetons générés",
     "GoToServiceDetailPage": "Aller à la page de détail du service",
+    "HealthStatus": "État de santé",
     "Image": "Image",
     "ModelDefinitionPath": "Chemin du fichier de définition du modèle",
     "ModelDefinitionRequired": "Le fichier modèle-définition.yaml est nécessaire.",

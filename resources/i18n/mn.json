@@ -1346,6 +1346,7 @@
     "GenerateToken": "Токен үүсгэх",
     "GeneratedTokens": "Үүсгэсэн токенууд",
     "GoToServiceDetailPage": "Үйлчилгээний дэлгэрэнгүй хуудсанд очно уу",
+    "HealthStatus": "Эрүүл байдлын төлөв",
     "Image": "Зураг",
     "ModelDefinitionPath": "Загварын тодорхойлолтын файлын зам",
     "ModelDefinitionRequired": "Загвар-тодорхойлолт ..yaml файл шаардлагатай байна.",

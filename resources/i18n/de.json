@@ -1347,6 +1347,7 @@
     "GenerateToken": "Token generieren",
     "GeneratedTokens": "Generierte Token",
     "GoToServiceDetailPage": "Gehen Sie zur Service -Detail -Seite",
+    "HealthStatus": "Systemgesundheit",
     "Image": "Bild",
     "ModelDefinitionPath": "Pfad der Modelldefinitionsdatei",
     "ModelDefinitionRequired": "Modelldefinition.yaml-Datei ist erforderlich.",

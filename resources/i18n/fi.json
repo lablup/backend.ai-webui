@@ -1345,6 +1345,7 @@
     "GenerateToken": "Luo tunniste",
     "GeneratedTokens": "Generoidut tunnukset",
     "GoToServiceDetailPage": "Siirry Service Detail -sivulle",
+    "HealthStatus": "Terveydentila",
     "Image": "Kuva",
     "ModelDefinitionPath": "Mallin määritelmän tiedostopolku",
     "ModelDefinitionRequired": "Malli-definition.yaml-tiedosto tarvitaan.",

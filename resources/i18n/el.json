@@ -1345,6 +1345,7 @@
     "GenerateToken": "Δημιουργία Token",
     "GeneratedTokens": "Παραγόμενα Tokens",
     "GoToServiceDetailPage": "Μεταβείτε στη σελίδα λεπτομερειών υπηρεσίας",
+    "HealthStatus": "Κατάσταση υγείας",
     "Image": "Εικόνα",
     "ModelDefinitionPath": "Διαδρομή αρχείου ορισμού μοντέλου",
     "ModelDefinitionRequired": "Απαιτείται αρχείο μοντέλου-definition.yaml.",

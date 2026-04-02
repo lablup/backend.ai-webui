@@ -1347,6 +1347,7 @@
     "GenerateToken": "トークン生成",
     "GeneratedTokens": "生成されたトークン一覧",
     "GoToServiceDetailPage": "サービスの詳細ページに移動します",
+    "HealthStatus": "ヘルスステータス",
     "Image": "イメージ",
     "ModelDefinitionPath": "モデル定義ファイルのパス",
     "ModelDefinitionRequired": "model-definition.yamlファイルが必要です。",

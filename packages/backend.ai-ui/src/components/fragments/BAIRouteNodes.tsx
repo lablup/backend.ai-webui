@@ -44,11 +44,18 @@ const isEnableSorter = (key: string) => {
 };
 
 const routeStatusSemanticMap: Record<string, SemanticColor> = {
-  HEALTHY: 'success',
   PROVISIONING: 'info',
+  RUNNING: 'success',
+  TERMINATING: 'warning',
+  TERMINATED: 'default',
+  FAILED_TO_START: 'error',
+};
+
+const routeHealthStatusSemanticMap: Record<string, SemanticColor> = {
+  HEALTHY: 'success',
   UNHEALTHY: 'warning',
   DEGRADED: 'warning',
-  FAILED_TO_START: 'error',
+  NOT_CHECKED: 'default',
 };
 
 const trafficStatusSemanticMap: Record<string, SemanticColor> = {
@@ -90,6 +97,7 @@ const BAIRouteNodes = ({
       fragment BAIRouteNodesFragment on Route @relay(plural: true) {
         id
         status
+        healthStatus
         trafficRatio
         createdAt
         errorData
@@ -160,6 +168,24 @@ const BAIRouteNodes = ({
               style={{ marginRight: 0 }}
             >
               {status}
+            </BAITag>
+          ) : null,
+      },
+      {
+        title: t('comp:BAIRouteNodes.HealthStatus'),
+        dataIndex: 'healthStatus',
+        key: 'healthStatus',
+        render: (healthStatus) =>
+          healthStatus && healthStatus !== '%future added value' ? (
+            <BAITag
+              color={
+                semanticColorMap[
+                  routeHealthStatusSemanticMap[healthStatus] ?? 'default'
+                ]
+              }
+              style={{ marginRight: 0 }}
+            >
+              {healthStatus}
             </BAITag>
           ) : null,
       },
