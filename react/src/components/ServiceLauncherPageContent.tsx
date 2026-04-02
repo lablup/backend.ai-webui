@@ -13,6 +13,7 @@ import {
   convertToBinaryUnit,
   useBaiSignedRequestWithPromise,
 } from '../helper';
+import { parseCliCommand } from '../helper/parseCliCommand';
 import {
   useCurrentDomainValue,
   useSuspendedBackendaiClient,
@@ -52,6 +53,8 @@ import {
   Checkbox,
   Form,
   Input,
+  InputNumber,
+  Segmented,
   Skeleton,
   Select,
   theme,
@@ -136,6 +139,8 @@ export interface ServiceCreateType {
   open_to_public: boolean;
   config: ServiceCreateConfigType;
 }
+export type CustomDefinitionMode = 'command' | 'file';
+
 interface ServiceLauncherInput extends ImageEnvironmentFormInput {
   serviceName: string;
   vFolderID: string;
@@ -147,6 +152,12 @@ interface ServiceLauncherInput extends ImageEnvironmentFormInput {
   mount_ids?: Array<string>;
   envvars: EnvVarFormListValue[];
   runtimeVariant: string;
+  // "Paste Your Command" fields
+  customDefinitionMode?: CustomDefinitionMode;
+  startCommand?: string;
+  commandPort?: number;
+  commandHealthCheck?: string;
+  commandModelMount?: string;
 }
 
 export type ServiceLauncherFormValue = ServiceLauncherInput &
@@ -190,6 +201,43 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
   const { getErrorMessage } = useErrorMessageResolver();
   const RUNTIME_ENV_VAR_CONFIGS = useRuntimeEnvVarConfigs();
   const currentProject = useCurrentProjectValue();
+
+  // "Paste Your Command" — GPU hint from parsed CLI command
+  const [gpuHint, setGpuHint] = useState<number | null>(null);
+
+  // Debounced CLI command parser for auto-filling port/health/mount fields
+  const { run: parseCommandWithDebounce } = useDebounceFn(
+    (command: string) => {
+      const parsed = parseCliCommand(command);
+
+      // Auto-fill port, health check, model mount
+      form.setFieldsValue({
+        commandPort: parsed.port,
+        commandHealthCheck: parsed.healthCheckPath,
+        commandModelMount: parsed.modelMountDestination,
+      });
+
+      // Update GPU hint
+      setGpuHint(parsed.gpuHint);
+
+      // Auto-add docker env vars to envvars list
+      if (parsed.envVars.length > 0) {
+        const currentEnvVars = form.getFieldValue('envvars') || [];
+        const existingKeys = new Set(
+          currentEnvVars
+            .filter((e: EnvVarFormListValue) => e?.variable)
+            .map((e: EnvVarFormListValue) => e.variable),
+        );
+        const newEnvVars = parsed.envVars.filter(
+          (e) => !existingKeys.has(e.variable),
+        );
+        if (newEnvVars.length > 0) {
+          form.setFieldValue('envvars', [...currentEnvVars, ...newEnvVars]);
+        }
+      }
+    },
+    { wait: 400 },
+  );
 
   // Helper function to set environment variables based on runtime variant
   const setEnvironmentVariablesForRuntimeVariant = (
@@ -1040,7 +1088,9 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                         </Form.Item>
                         <Form.Item dependencies={['runtimeVariant']} noStyle>
                           {({ getFieldValue }) =>
-                            getFieldValue('runtimeVariant') === 'custom' && (
+                            getFieldValue('runtimeVariant') === 'custom' &&
+                            (endpoint ? (
+                              // Edit mode: keep existing UI (no Segmented, D7)
                               <BAIFlex
                                 direction="row"
                                 gap={'xxs'}
@@ -1084,7 +1134,167 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                                   />
                                 </Form.Item>
                               </BAIFlex>
-                            )
+                            ) : (
+                              // Create mode: Segmented "Enter Command" / "Use Config File"
+                              <Card
+                                size="small"
+                                title={t('modelService.ModelDefinition')}
+                                style={{
+                                  marginBottom: token.marginMD,
+                                }}
+                              >
+                                <Form.Item
+                                  name="customDefinitionMode"
+                                  initialValue="command"
+                                  noStyle
+                                >
+                                  <Segmented
+                                    options={[
+                                      {
+                                        label: t('modelService.EnterCommand'),
+                                        value: 'command',
+                                      },
+                                      {
+                                        label: t('modelService.UseConfigFile'),
+                                        value: 'file',
+                                      },
+                                    ]}
+                                    style={{
+                                      marginBottom: token.marginMD,
+                                    }}
+                                  />
+                                </Form.Item>
+                                <Form.Item
+                                  dependencies={['customDefinitionMode']}
+                                  noStyle
+                                >
+                                  {({ getFieldValue: getField }) =>
+                                    getField('customDefinitionMode') ===
+                                    'command' ? (
+                                      <>
+                                        <Form.Item
+                                          name="startCommand"
+                                          label={t('modelService.StartCommand')}
+                                          rules={[{ required: true }]}
+                                        >
+                                          <Input.TextArea
+                                            placeholder={t(
+                                              'modelService.StartCommandPlaceholder',
+                                            )}
+                                            autoSize={{
+                                              minRows: 2,
+                                              maxRows: 6,
+                                            }}
+                                            onChange={(e) => {
+                                              parseCommandWithDebounce(
+                                                e.target.value,
+                                              );
+                                            }}
+                                          />
+                                        </Form.Item>
+                                        {gpuHint !== null && gpuHint > 0 && (
+                                          <Alert
+                                            type="info"
+                                            showIcon
+                                            message={t('modelService.GpuHint', {
+                                              count: gpuHint,
+                                            })}
+                                            style={{
+                                              marginBottom: token.marginMD,
+                                            }}
+                                          />
+                                        )}
+                                        <BAIFlex
+                                          direction="row"
+                                          gap="xs"
+                                          align="start"
+                                        >
+                                          <Form.Item
+                                            name="commandPort"
+                                            label={t('modelService.Port')}
+                                            initialValue={8000}
+                                            style={{ flex: 1 }}
+                                          >
+                                            <InputNumber
+                                              min={1}
+                                              max={65535}
+                                              style={{ width: '100%' }}
+                                            />
+                                          </Form.Item>
+                                          <Form.Item
+                                            name="commandHealthCheck"
+                                            label={t(
+                                              'modelService.HealthCheckPath',
+                                            )}
+                                            initialValue="/health"
+                                            style={{ flex: 1 }}
+                                          >
+                                            <Input placeholder="/health" />
+                                          </Form.Item>
+                                          <Form.Item
+                                            name="commandModelMount"
+                                            label={t(
+                                              'modelService.ModelMountPath',
+                                            )}
+                                            initialValue="/models"
+                                            style={{ flex: 1 }}
+                                          >
+                                            <Input placeholder="/models" />
+                                          </Form.Item>
+                                        </BAIFlex>
+                                      </>
+                                    ) : (
+                                      <BAIFlex
+                                        direction="row"
+                                        gap={'xxs'}
+                                        align="stretch"
+                                        justify="between"
+                                      >
+                                        <Form.Item
+                                          name={'modelMountDestination'}
+                                          label={t(
+                                            'modelService.ModelMountDestination',
+                                          )}
+                                          style={{ width: '50%' }}
+                                          labelCol={{
+                                            style: { flex: 1 },
+                                          }}
+                                        >
+                                          <Input
+                                            allowClear
+                                            placeholder={'/models'}
+                                          />
+                                        </Form.Item>
+                                        <MinusOutlined
+                                          style={{
+                                            fontSize: token.fontSizeXL,
+                                            color: token.colorTextDisabled,
+                                          }}
+                                          rotate={290}
+                                        />
+                                        <Form.Item
+                                          name={'modelDefinitionPath'}
+                                          label={t(
+                                            'modelService.ModelDefinitionPath',
+                                          )}
+                                          style={{ width: '50%' }}
+                                          labelCol={{
+                                            style: { flex: 1 },
+                                          }}
+                                        >
+                                          <Input
+                                            allowClear
+                                            placeholder={
+                                              'model-definition.yaml'
+                                            }
+                                          />
+                                        </Form.Item>
+                                      </BAIFlex>
+                                    )
+                                  }
+                                </Form.Item>
+                              </Card>
+                            ))
                           }
                         </Form.Item>
                         <Form.Item dependencies={['runtimeVariant']} noStyle>
