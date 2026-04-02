@@ -1226,6 +1226,8 @@
     "ChangePassword": "Vaihda salasana",
     "ClickToUseIAM": "Klikkaa käyttääksesi IAM:ää",
     "ClickToUseID": "Klikkaa käyttääksesi ID:tä",
+    "ConcurrentSessionDetected": "Olet jo kirjautunut sisään toisessa paikassa. Haluatko lopettaa nykyisen istunnon ja kirjautua sisään täällä?",
+    "ConcurrentSessionTitle": "Kirjautunut muualta",
     "ConnectingToCluster": "Yhteyden muodostaminen Backend.AI-klusteriin...",
     "DescChangePasswordEmail": "Jos haluat lähettää sähköpostiviestin salasanasi vaihtamiseksi, kirjoita sähköpostiosoitteesi ja paina SEND-painiketta.",
     "DescConfirmLeave": "Vahvistaaksesi, kirjoita sähköpostiosoitteesi ja salasanasi uudelleen.",

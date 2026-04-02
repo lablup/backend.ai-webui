@@ -1228,6 +1228,8 @@
     "ChangePassword": "Ganti kata sandi",
     "ClickToUseIAM": "Klik untuk Menggunakan IAM",
     "ClickToUseID": "Klik untuk Menggunakan ID",
+    "ConcurrentSessionDetected": "Anda sudah masuk di tempat lain. Ingin mengakhiri sesi yang ada dan masuk di sini?",
+    "ConcurrentSessionTitle": "Sedang masuk di tempat lain",
     "ConnectingToCluster": "Menghubungkan ke Kluster Backend.AI...",
     "DescChangePasswordEmail": "Untuk mengirim email untuk mengubah kata sandi Anda, ketikkan E-mail Anda dan tekan tombol KIRIM.",
     "DescConfirmLeave": "Untuk konfirmasi, silakan ketik kembali e-mail dan password Anda.",

@@ -1228,6 +1228,8 @@
     "ChangePassword": "Kennwort ändern",
     "ClickToUseIAM": "Klicken Sie hier, um IAM zu verwenden",
     "ClickToUseID": "Klicken Sie hier, um die ID zu verwenden",
+    "ConcurrentSessionDetected": "Sie sind bereits an einem anderen Ort angemeldet. Möchten Sie die bestehende Anmeldung beenden und sich hier anmelden?",
+    "ConcurrentSessionTitle": "An anderer Stelle angemeldet",
     "ConnectingToCluster": "Verbindung zum Backend.AI-Cluster...",
     "DescChangePasswordEmail": "Um eine E-Mail zum Ändern Ihres Passworts zu senden, geben Sie bitte Ihre E-Mail ein und klicken Sie auf die Schaltfläche SENDEN.",
     "DescConfirmLeave": "Bitte geben Sie zur Bestätigung Ihre E-Mail und Ihr Passwort erneut ein.",

@@ -1226,6 +1226,8 @@
     "ChangePassword": "Zmień hasło",
     "ClickToUseIAM": "Kliknij, aby użyć uprawnień",
     "ClickToUseID": "Kliknij, aby użyć identyfikatora",
+    "ConcurrentSessionDetected": "Jesteś już zalogowany gdzie indziej. Zakończyć poprzednią sesję i zalogować się tutaj?",
+    "ConcurrentSessionTitle": "Zalogowano gdzie indziej",
     "ConnectingToCluster": "Łączenie z klastrem Backend.AI...",
     "DescChangePasswordEmail": "Aby wysłać wiadomość e-mail w celu zmiany hasła, wpisz swój adres e-mail i naciśnij przycisk WYŚLIJ.",
     "DescConfirmLeave": "Aby potwierdzić, wpisz ponownie swój adres e-mail i hasło.",

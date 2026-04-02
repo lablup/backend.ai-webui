@@ -1228,6 +1228,8 @@
     "ChangePassword": "Đổi mật khẩu",
     "ClickToUseIAM": "Nhấp để sử dụng IAM",
     "ClickToUseID": "Nhấp để sử dụng ID",
+    "ConcurrentSessionDetected": "Bạn đã đăng nhập ở nơi khác. Bạn có muốn kết thúc phiên đăng nhập hiện tại và đăng nhập ở đây không?",
+    "ConcurrentSessionTitle": "Đang đăng nhập ở nơi khác",
     "ConnectingToCluster": "Đang kết nối với Backend.AI Cluster ...",
     "DescChangePasswordEmail": "Để gửi email thay đổi mật khẩu của bạn, vui lòng nhập E-mail của bạn và nhấn nút GỬI.",
     "DescConfirmLeave": "Để xác nhận, vui lòng nhập lại E-mail và mật khẩu của bạn.",

@@ -1228,6 +1228,8 @@
     "ChangePassword": "更改密码",
     "ClickToUseIAM": "单击以使用 IAM",
     "ClickToUseID": "单击以使用 ID",
+    "ConcurrentSessionDetected": "您已在其他地方登录。要结束现有会话并在此登录吗？",
+    "ConcurrentSessionTitle": "已在其他地方登录",
     "ConnectingToCluster": "连接到 Backend.AI 集群...",
     "DescChangePasswordEmail": "要发送更改密码的电子邮件，请输入您的电子邮件并按发送按钮。",
     "DescConfirmLeave": "要确认，请再次输入您的电子邮件和密码。",

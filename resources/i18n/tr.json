@@ -1226,6 +1226,8 @@
     "ChangePassword": "Şifre değiştir",
     "ClickToUseIAM": "IAM'yi Kullanmak İçin Tıklayın",
     "ClickToUseID": "Kimliği Kullanmak İçin Tıklayın",
+    "ConcurrentSessionDetected": "Başka bir yerde zaten oturum açılmış. Mevcut oturumu sonlandırıp burada oturum açmak ister misiniz?",
+    "ConcurrentSessionTitle": "Başka bir yerden giriş yapılıyor",
     "ConnectingToCluster": "Backend.AI Cluster'a bağlanılıyor...",
     "DescChangePasswordEmail": "Şifrenizi değiştirmek için bir e-posta göndermek için lütfen E-postanızı yazın ve GÖNDER düğmesine basın.",
     "DescConfirmLeave": "Onaylamak için lütfen E-posta adresinizi ve şifrenizi tekrar giriniz.",

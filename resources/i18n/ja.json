@@ -1228,6 +1228,8 @@
     "ChangePassword": "パスワードを変更する",
     "ClickToUseIAM": "クリックしてIAMを使用する",
     "ClickToUseID": "クリックしてIDを使用",
+    "ConcurrentSessionDetected": "別の場所で既にログインしています。既存のログインを終了して、こちらでログインしますか？",
+    "ConcurrentSessionTitle": "別の場所でログイン中",
     "ConnectingToCluster": "Backend.AIクラスターに接続しています...",
     "DescChangePasswordEmail": "パスワード変更のメールを送信するには、メールを入力して送信ボタンを押してください。",
     "DescConfirmLeave": "確認するには、メールアドレスとパスワードをもう一度入力してください。",

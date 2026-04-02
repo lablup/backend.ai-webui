@@ -1226,6 +1226,8 @@
     "ChangePassword": "Changer le mot de passe",
     "ClickToUseIAM": "Cliquez pour utiliser IAM",
     "ClickToUseID": "Cliquez pour utiliser l'identifiant",
+    "ConcurrentSessionDetected": "Vous êtes déjà connecté ailleurs. Voulez-vous déconnecter la session existante et vous connecter ici ?",
+    "ConcurrentSessionTitle": "Connecté ailleurs",
     "ConnectingToCluster": "Connexion au cluster Backend.AI...",
     "DescChangePasswordEmail": "Pour envoyer un e-mail pour changer votre mot de passe, veuillez saisir votre e-mail et appuyez sur le bouton ENVOYER.",
     "DescConfirmLeave": "Pour confirmer, veuillez saisir à nouveau votre e-mail et votre mot de passe.",

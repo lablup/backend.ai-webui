@@ -1229,6 +1229,8 @@
     "ChangePassword": "更改密碼",
     "ClickToUseIAM": "單擊以使用 IAM",
     "ClickToUseID": "單擊以使用 ID",
+    "ConcurrentSessionDetected": "您已在其他地方登入。是否要終止現有登入並在此登入？",
+    "ConcurrentSessionTitle": "已在其他地方登入",
     "ConnectingToCluster": "連接到後端.AI 集群...",
     "DescChangePasswordEmail": "要發送更改密碼的電子郵件，請輸入您的電子郵件並按發送按鈕。",
     "DescConfirmLeave": "要確認，請再次輸入您的電子郵件和密碼。",
