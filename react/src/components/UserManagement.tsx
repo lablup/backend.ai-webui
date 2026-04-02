@@ -34,7 +34,6 @@ import {
   BAIButton,
   BAISelectionLabel,
   BAITrashBinIcon,
-  BAIText,
   BAINameActionCell,
   BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,

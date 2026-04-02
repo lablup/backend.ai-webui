@@ -483,7 +483,9 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
             });
           });
           if (!confirmed) {
-            return;
+            // Throw a cancellation error instead of returning void,
+            // so TanStack Query does not trigger onSuccess.
+            throw new DOMException('User cancelled overwrite', 'AbortError');
           }
         }
 
@@ -882,6 +884,13 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
               webuiNavigate('/serving');
             },
             onError: (error) => {
+              // Ignore user-initiated cancellation (e.g., overwrite confirmation dismissed)
+              if (
+                error instanceof DOMException &&
+                error.name === 'AbortError'
+              ) {
+                return;
+              }
               const defaultErrorMessage = endpoint
                 ? t('modelService.FailedToUpdateService')
                 : t('modelService.FailedToStartService');
@@ -1306,6 +1315,9 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                                             )}
                                             initialValue={8000}
                                             style={{ flex: 1 }}
+                                            labelCol={{
+                                              style: { width: '100%' },
+                                            }}
                                           >
                                             <InputNumber
                                               min={1}
@@ -1323,6 +1335,9 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                                             )}
                                             initialValue="/health"
                                             style={{ flex: 1 }}
+                                            labelCol={{
+                                              style: { width: '100%' },
+                                            }}
                                           >
                                             <Input placeholder="/health" />
                                           </Form.Item>
@@ -1342,6 +1357,9 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                                             )}
                                             initialValue={5.0}
                                             style={{ flex: 1 }}
+                                            labelCol={{
+                                              style: { width: '100%' },
+                                            }}
                                           >
                                             <InputNumber
                                               min={0}
@@ -1357,6 +1375,9 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                                             )}
                                             initialValue={10}
                                             style={{ flex: 1 }}
+                                            labelCol={{
+                                              style: { width: '100%' },
+                                            }}
                                           >
                                             <InputNumber
                                               min={0}
