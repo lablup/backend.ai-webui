@@ -61,9 +61,9 @@ test.describe(
         // Click Create button
         await page.getByRole('button', { name: 'Create' }).click();
 
-        // Verify Create Resource Policy dialog appears
+        // Verify Create Keypair Resource Policy dialog appears
         const modal = page.getByRole('dialog', {
-          name: 'Create Resource Policy',
+          name: 'Create Keypair Resource Policy',
         });
         await expect(modal).toBeVisible();
 
@@ -186,7 +186,7 @@ test.describe(
 
         // Verify dialog appears
         const modal = page.getByRole('dialog', {
-          name: 'Create Resource Policy',
+          name: 'Create User Resource Policy',
         });
         await expect(modal).toBeVisible();
 
