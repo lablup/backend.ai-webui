@@ -15,7 +15,11 @@ import {
 } from '@ant-design/icons';
 import { App, Button, Card, Dropdown, List, Skeleton, Tag, theme } from 'antd';
 import { createStyles } from 'antd-style';
-import { BAIFlex, BAIUnmountAfterClose } from 'backend.ai-ui';
+import {
+  BAIDeleteConfirmModal,
+  BAIFlex,
+  BAIUnmountAfterClose,
+} from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -182,6 +186,7 @@ const AIAgentPage: React.FC = () => {
 
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [editingAgent, setEditingAgent] = useState<AIAgent | undefined>();
+  const [deletingAgent, setDeletingAgent] = useState<AIAgent | null>(null);
 
   const builtInIds = new Set(builtInAgents.map((a) => a.id));
 
@@ -191,15 +196,7 @@ const AIAgentPage: React.FC = () => {
   };
 
   const handleDelete = (agent: AIAgent) => {
-    modal.confirm({
-      title: t('aiAgent.DeleteConfirmTitle'),
-      content: t('aiAgent.DeleteConfirmDescriptionWithName', {
-        name: agent.meta.title,
-      }),
-      okButtonProps: { danger: true },
-      okText: t('button.Delete'),
-      onOk: () => deleteAgent(agent.id),
-    });
+    setDeletingAgent(agent);
   };
 
   const handleReset = (agent: AIAgent) => {
@@ -273,6 +270,28 @@ const AIAgentPage: React.FC = () => {
             }}
           />
         </BAIUnmountAfterClose>
+        <BAIDeleteConfirmModal
+          open={!!deletingAgent}
+          items={
+            deletingAgent
+              ? [
+                  {
+                    key: deletingAgent.id,
+                    label: deletingAgent.meta.title,
+                  },
+                ]
+              : []
+          }
+          title={t('aiAgent.DeleteConfirmTitle')}
+          description={t('aiAgent.DeleteConfirmDescription')}
+          onOk={() => {
+            if (deletingAgent) {
+              deleteAgent(deletingAgent.id);
+              setDeletingAgent(null);
+            }
+          }}
+          onCancel={() => setDeletingAgent(null)}
+        />
       </BAIFlex>
     </Suspense>
   );

@@ -6,11 +6,11 @@ import { RolePermissionTabDeleteMutation } from '../__generated__/RolePermission
 import { RolePermissionTabFragment$key } from '../__generated__/RolePermissionTabFragment.graphql';
 import { PermissionOrderBy } from '../__generated__/RolePermissionTabRefetchQuery.graphql';
 import { convertToOrderBy } from '../helper';
-import BAIDeleteConfirmContent from './BAIDeleteConfirmContent';
 import CreatePermissionModal from './CreatePermissionModal';
 import { App, Tag } from 'antd';
 import {
   BAIButton,
+  BAIDeleteConfirmModal,
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
@@ -56,11 +56,15 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { modal, message } = App.useApp();
+  const { message } = App.useApp();
   const { logger } = useBAILogger();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [editingPermission, setEditingPermission] =
     useState<EditingPermission | null>(null);
+  const [deletingPermission, setDeletingPermission] = useState<{
+    id: string;
+    label: string;
+  } | null>(null);
   const [isPendingRefetch, startRefetchTransition] = useTransition();
 
   const [queryParams, setQueryParams] = useQueryStates(
@@ -226,28 +230,7 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
     scopeType: string;
   }) => {
     const permissionLabel = `${t(`rbac.types.${record.entityType}`, { defaultValue: record.entityType })} - ${t(`rbac.operations.${record.operation}`, { defaultValue: record.operation })} (${t(`rbac.types.${record.scopeType}`, { defaultValue: record.scopeType })})`;
-    modal.confirm({
-      title: t('rbac.DeletePermission'),
-      content: (
-        <BAIDeleteConfirmContent
-          description={t('rbac.ConfirmDeletePermissionWithDetail')}
-          itemNames={[permissionLabel]}
-        />
-      ),
-      okText: t('button.Delete'),
-      okButtonProps: { danger: true, type: 'primary' },
-      onOk: () =>
-        mutateDeletePermission({ input: { id: toLocalId(record.id) } })
-          .then(() => {
-            message.success(t('rbac.PermissionDeleted'));
-            handleRefresh();
-            onPermissionChange?.();
-          })
-          .catch((error) => {
-            logger.error('Failed to delete permission', error);
-            message.error(error?.message || t('general.ErrorOccurred'));
-          }),
-    });
+    setDeletingPermission({ id: toLocalId(record.id), label: permissionLabel });
   };
 
   return (
@@ -445,6 +428,40 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
             onPermissionChange?.();
           }
         }}
+      />
+      <BAIDeleteConfirmModal
+        open={!!deletingPermission}
+        items={
+          deletingPermission
+            ? [
+                {
+                  key: deletingPermission.id,
+                  label: deletingPermission.label,
+                },
+              ]
+            : []
+        }
+        title={t('rbac.DeletePermission')}
+        description={t('rbac.ConfirmDeletePermissionWithDetail')}
+        onOk={() => {
+          if (deletingPermission) {
+            return mutateDeletePermission({
+              input: { id: deletingPermission.id },
+            })
+              .then(() => {
+                message.success(t('rbac.PermissionDeleted'));
+                handleRefresh();
+                onPermissionChange?.();
+                setDeletingPermission(null);
+              })
+              .catch((error) => {
+                logger.error('Failed to delete permission', error);
+                message.error(error?.message || t('general.ErrorOccurred'));
+                setDeletingPermission(null);
+              });
+          }
+        }}
+        onCancel={() => setDeletingPermission(null)}
       />
     </>
   );
