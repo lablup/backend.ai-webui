@@ -242,7 +242,7 @@ const ModelStoreListPage: React.FC = () => {
             })
             .sort((a, b) => localeCompare(a?.name, b?.name)) as Array<ModelCard>
         )?.map((item) => (
-          <Col key={item?.id} xs={24} sm={24} md={24} lg={12}>
+          <Col key={item?.id} xs={24} sm={24} md={24} lg={24} xl={12} xxl={8}>
             <Card
               hoverable
               style={{ height: '100%' }}
