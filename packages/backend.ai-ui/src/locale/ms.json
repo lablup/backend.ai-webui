@@ -88,6 +88,13 @@
     "SuccessFullyRemoved": "Berjaya dikeluarkan {{count}} versi.",
     "Version": "Versi"
   },
+  "comp:BAIDeleteConfirmModal": {
+    "AreYouSureToDelete": "Adakah anda pasti mahu memadam?",
+    "CannotBeUndone": "Tindakan ini tidak dapat dibatalkan.",
+    "DeleteItem": "Padam",
+    "DeleteNItems": "Padam {{count}} item",
+    "TypeToConfirm": "Taip <code>{{confirmText}}</code> untuk mengesahkan."
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Pilih Penggunaan"
   },

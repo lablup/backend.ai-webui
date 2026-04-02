@@ -54,6 +54,11 @@ export { default as BAIModal } from './BAIModal';
 export type { BAIModalProps } from './BAIModal';
 export { default as BAIConfirmModalWithInput } from './BAIConfirmModalWithInput';
 export type { BAIConfirmModalWithInputProps } from './BAIConfirmModalWithInput';
+export { default as BAIDeleteConfirmModal } from './BAIDeleteConfirmModal';
+export type {
+  BAIDeleteConfirmModalProps,
+  BAIDeleteConfirmModalItem,
+} from './BAIDeleteConfirmModal';
 export { default as BAIButton } from './BAIButton';
 export type { BAIButtonProps } from './BAIButton';
 export { default as BAIFetchKeyButton } from './BAIFetchKeyButton';

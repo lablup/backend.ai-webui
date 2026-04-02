@@ -88,6 +88,13 @@
     "SuccessFullyRemoved": "Poistettu onnistuneesti {{count}} versiot.",
     "Version": "Versio"
   },
+  "comp:BAIDeleteConfirmModal": {
+    "AreYouSureToDelete": "Haluatko varmasti poistaa?",
+    "CannotBeUndone": "Tätä toimintoa ei voi peruuttaa.",
+    "DeleteItem": "Poista",
+    "DeleteNItems": "Poista {{count}} kohdetta",
+    "TypeToConfirm": "Kirjoita <code>{{confirmText}}</code> vahvistaaksesi."
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Valitse käyttöönotto"
   },

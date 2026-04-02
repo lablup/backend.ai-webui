@@ -88,6 +88,13 @@
     "SuccessFullyRemoved": "Κατάργηση επιτυχώς {{count}} εκδόσεις.",
     "Version": "Εκδοχή"
   },
+  "comp:BAIDeleteConfirmModal": {
+    "AreYouSureToDelete": "Είστε σίγουροι ότι θέλετε να διαγράψετε;",
+    "CannotBeUndone": "Αυτή η ενέργεια δεν μπορεί να αναιρεθεί.",
+    "DeleteItem": "Διαγραφή",
+    "DeleteNItems": "Διαγραφή {{count}} στοιχείων",
+    "TypeToConfirm": "Πληκτρολογήστε <code>{{confirmText}}</code> για επιβεβαίωση."
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Επιλέξτε ανάπτυξη"
   },

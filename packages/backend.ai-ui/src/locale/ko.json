@@ -91,6 +91,13 @@
     "SuccessFullyRemoved": "{{count}}개 버전을 성공적으로 제거했습니다.",
     "Version": "버전"
   },
+  "comp:BAIDeleteConfirmModal": {
+    "AreYouSureToDelete": "정말 삭제하시겠습니까?",
+    "CannotBeUndone": "이 작업은 되돌릴 수 없습니다.",
+    "DeleteItem": "삭제",
+    "DeleteNItems": "{{count}}개 항목 삭제",
+    "TypeToConfirm": "<code>{{confirmText}}</code>을(를) 입력하여 확인하세요."
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "배포를 선택해주세요"
   },

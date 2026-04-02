@@ -88,6 +88,13 @@
     "SuccessFullyRemoved": "Успешно удалено {{count}} версии.",
     "Version": "Версия"
   },
+  "comp:BAIDeleteConfirmModal": {
+    "AreYouSureToDelete": "Вы уверены, что хотите удалить?",
+    "CannotBeUndone": "Это действие нельзя отменить.",
+    "DeleteItem": "Удалить",
+    "DeleteNItems": "Удалить {{count}} элементов",
+    "TypeToConfirm": "Введите <code>{{confirmText}}</code> для подтверждения."
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Выберите развёртывание"
   },

@@ -88,6 +88,13 @@
     "SuccessFullyRemoved": "{{count}} sürümlerini başarıyla kaldırdı.",
     "Version": "Versiyon"
   },
+  "comp:BAIDeleteConfirmModal": {
+    "AreYouSureToDelete": "Silmek istediğinizden emin misiniz?",
+    "CannotBeUndone": "Bu işlem geri alınamaz.",
+    "DeleteItem": "Sil",
+    "DeleteNItems": "{{count}} öğeyi sil",
+    "TypeToConfirm": "Onaylamak için <code>{{confirmText}}</code> yazın."
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Dağıtım seçin"
   },
