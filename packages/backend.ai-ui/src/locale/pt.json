@@ -88,6 +88,13 @@
     "SuccessFullyRemoved": "Removido com sucesso {{count}} versões.",
     "Version": "Versão"
   },
+  "comp:BAIDeleteConfirmModal": {
+    "AreYouSureToDelete": "Tem a certeza de que pretende eliminar?",
+    "CannotBeUndone": "Esta ação não pode ser anulada.",
+    "DeleteItem": "Eliminar",
+    "DeleteNItems": "Eliminar {{count}} itens",
+    "TypeToConfirm": "Escreva <code>{{confirmText}}</code> para confirmar."
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Selecionar implantação"
   },

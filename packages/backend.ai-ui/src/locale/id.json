@@ -88,6 +88,13 @@
     "SuccessFullyRemoved": "Berhasil menghapus {{count}} versi.",
     "Version": "Versi"
   },
+  "comp:BAIDeleteConfirmModal": {
+    "AreYouSureToDelete": "Apakah Anda yakin ingin menghapus?",
+    "CannotBeUndone": "Tindakan ini tidak dapat dibatalkan.",
+    "DeleteItem": "Hapus",
+    "DeleteNItems": "Hapus {{count}} item",
+    "TypeToConfirm": "Ketik <code>{{confirmText}}</code> untuk mengonfirmasi."
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Pilih Deployment"
   },

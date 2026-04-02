@@ -88,6 +88,13 @@
     "SuccessFullyRemoved": "ลบเวอร์ชัน {{count}} สำเร็จ",
     "Version": "รุ่น"
   },
+  "comp:BAIDeleteConfirmModal": {
+    "AreYouSureToDelete": "คุณแน่ใจหรือไม่ว่าต้องการลบ?",
+    "CannotBeUndone": "การกระทำนี้ไม่สามารถยกเลิกได้",
+    "DeleteItem": "ลบ",
+    "DeleteNItems": "ลบ {{count}} รายการ",
+    "TypeToConfirm": "พิมพ์ <code>{{confirmText}}</code> เพื่อยืนยัน"
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "เลือกการปรับใช้"
   },

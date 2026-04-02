@@ -88,6 +88,13 @@
     "SuccessFullyRemoved": "{{count}}バージョンを正常に削除しました。",
     "Version": "バージョン"
   },
+  "comp:BAIDeleteConfirmModal": {
+    "AreYouSureToDelete": "本当に削除しますか？",
+    "CannotBeUndone": "この操作は元に戻せません。",
+    "DeleteItem": "削除",
+    "DeleteNItems": "{{count}} 件を削除",
+    "TypeToConfirm": "<code>{{confirmText}}</code> と入力して確認してください。"
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "デプロイメントを選択"
   },

@@ -88,6 +88,13 @@
     "SuccessFullyRemoved": "Đã loại bỏ thành công các phiên bản {{count}}.",
     "Version": "Phiên bản"
   },
+  "comp:BAIDeleteConfirmModal": {
+    "AreYouSureToDelete": "Bạn có chắc chắn muốn xóa không?",
+    "CannotBeUndone": "Hành động này không thể hoàn tác.",
+    "DeleteItem": "Xóa",
+    "DeleteNItems": "Xóa {{count}} mục",
+    "TypeToConfirm": "Nhập <code>{{confirmText}}</code> để xác nhận."
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Chọn triển khai"
   },

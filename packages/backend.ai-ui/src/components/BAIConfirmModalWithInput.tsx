@@ -7,8 +7,10 @@ import { useTranslation } from 'react-i18next';
 
 const { Text } = Typography;
 
-export interface BAIConfirmModalWithInputProps
-  extends Omit<BAIModalProps, 'icon' | 'okButtonProps'> {
+export interface BAIConfirmModalWithInputProps extends Omit<
+  BAIModalProps,
+  'icon' | 'okButtonProps'
+> {
   confirmText: string;
   content: React.ReactNode;
   title: React.ReactNode;
@@ -64,7 +66,7 @@ const BAIConfirmModalWithInput: React.FC<BAIConfirmModalWithInputProps> = ({
         danger: true,
       }}
     >
-      <BAIFlex direction="column" justify="start" align="stretch">
+      <BAIFlex direction="column" justify="start" align="stretch" gap={'sm'}>
         {content}
         <Form form={form} style={{ width: '100%' }} preserve={false}>
           <Form.Item

@@ -88,6 +88,13 @@
     "SuccessFullyRemoved": "成功删除了{{count}}版本。",
     "Version": "版本"
   },
+  "comp:BAIDeleteConfirmModal": {
+    "AreYouSureToDelete": "您确定要删除吗？",
+    "CannotBeUndone": "此操作无法撤销。",
+    "DeleteItem": "删除",
+    "DeleteNItems": "删除 {{count}} 个项目",
+    "TypeToConfirm": "输入 <code>{{confirmText}}</code> 以确认。"
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "选择部署"
   },

@@ -88,6 +88,13 @@
     "SuccessFullyRemoved": "Suppression avec succès des versions {{count}}.",
     "Version": "Version"
   },
+  "comp:BAIDeleteConfirmModal": {
+    "AreYouSureToDelete": "Êtes-vous sûr de vouloir supprimer ?",
+    "CannotBeUndone": "Cette action est irréversible.",
+    "DeleteItem": "Supprimer",
+    "DeleteNItems": "Supprimer {{count}} éléments",
+    "TypeToConfirm": "Saisissez <code>{{confirmText}}</code> pour confirmer."
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Sélectionner un déploiement"
   },

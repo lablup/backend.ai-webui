@@ -24,7 +24,7 @@ import {
   SettingOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { App, Button, Dropdown, Tooltip, Typography } from 'antd';
+import { App, Button, Dropdown, Tooltip } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
 import type { ColumnsType, ColumnType } from 'antd/es/table';
 import {
@@ -35,6 +35,7 @@ import {
   BAIAllowedVfolderHostsWithPermission,
   BAIResourceNumberWithIcon,
   BAINameActionCell,
+  BAIDeleteConfirmModal,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { EllipsisIcon } from 'lucide-react';
@@ -52,7 +53,7 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
   props,
 ) => {
   const { t } = useTranslation();
-  const { message, modal } = App.useApp();
+  const { message } = App.useApp();
 
   const [keypairResourcePolicyFetchKey, updateKeypairResourcePolicyFetchKey] =
     useUpdatableState('initial-fetch');
@@ -64,6 +65,9 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
     useState<KeypairResourcePolicySettingModalFragment$key | null>();
   const [currentResourcePolicy, setCurrentResourcePolicy] =
     useState<KeypairResourcePolicyInfoModalFragment$key | null>(null);
+  const [deletingPolicyName, setDeletingPolicyName] = useState<string | null>(
+    null,
+  );
   const [isPendingInfoModalOpen, startInfoModalOpenTransition] =
     useTransition();
 
@@ -142,68 +146,7 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
               icon: <DeleteOutlined />,
               type: 'danger',
               onClick: () => {
-                modal.confirm({
-                  title: t('resourcePolicy.DeletePolicy'),
-                  content: (
-                    <BAIFlex direction="column" align="stretch">
-                      <BAIFlex gap={'xxs'}>
-                        <Typography.Text>
-                          {t('resourcePolicy.DeletePolicyDescription')}
-                        </Typography.Text>
-                        <Typography.Text strong>{row?.name}</Typography.Text>
-                      </BAIFlex>
-                      <br />
-                      <Typography.Text type="danger">
-                        {t('dialog.warning.CannotBeUndone')}
-                      </Typography.Text>
-                    </BAIFlex>
-                  ),
-                  okButtonProps: {
-                    danger: true,
-                  },
-                  okText: t('button.Delete'),
-                  onOk: () => {
-                    if (row?.name) {
-                      return new Promise<void>((resolve) => {
-                        commitDelete({
-                          variables: {
-                            name: row.name!,
-                          },
-                          onCompleted: (res, errors) => {
-                            if (!res?.delete_keypair_resource_policy?.ok) {
-                              message.error(
-                                res?.delete_keypair_resource_policy?.msg,
-                              );
-                              resolve();
-                              return;
-                            }
-                            if (errors && errors?.length > 0) {
-                              const errorMsgList = _.map(
-                                errors,
-                                (error) => error.message,
-                              );
-                              for (const error of errorMsgList) {
-                                message.error(error);
-                              }
-                            } else {
-                              startRefetchTransition(() =>
-                                updateKeypairResourcePolicyFetchKey(),
-                              );
-                              message.success(
-                                t('resourcePolicy.SuccessfullyDeleted'),
-                              );
-                            }
-                            resolve();
-                          },
-                          onError(err) {
-                            message.error(err?.message);
-                            resolve();
-                          },
-                        });
-                      });
-                    }
-                  },
-                });
+                setDeletingPolicyName(row?.name ?? null);
               },
             },
           ]}
@@ -470,6 +413,50 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
         }}
         loading={isPendingInfoModalOpen}
         resourcePolicyFrgmt={currentResourcePolicy || null}
+      />
+      <BAIDeleteConfirmModal
+        open={!!deletingPolicyName}
+        items={
+          deletingPolicyName
+            ? [{ key: deletingPolicyName, label: deletingPolicyName }]
+            : []
+        }
+        title={t('resourcePolicy.DeletePolicy')}
+        description={t('resourcePolicy.DeletePolicyDescription')}
+        onOk={() => {
+          if (deletingPolicyName) {
+            return new Promise<void>((resolve) => {
+              commitDelete({
+                variables: { name: deletingPolicyName },
+                onCompleted: (res, errors) => {
+                  if (!res?.delete_keypair_resource_policy?.ok) {
+                    message.error(res?.delete_keypair_resource_policy?.msg);
+                    resolve();
+                    return;
+                  }
+                  if (errors && errors?.length > 0) {
+                    for (const error of errors) {
+                      message.error(error.message);
+                    }
+                  } else {
+                    startRefetchTransition(() =>
+                      updateKeypairResourcePolicyFetchKey(),
+                    );
+                    message.success(t('resourcePolicy.SuccessfullyDeleted'));
+                  }
+                  setDeletingPolicyName(null);
+                  resolve();
+                },
+                onError(err) {
+                  message.error(err?.message);
+                  setDeletingPolicyName(null);
+                  resolve();
+                },
+              });
+            });
+          }
+        }}
+        onCancel={() => setDeletingPolicyName(null)}
       />
     </BAIFlex>
   );

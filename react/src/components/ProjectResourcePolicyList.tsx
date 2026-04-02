@@ -34,6 +34,7 @@ import {
   BAIFlex,
   useUpdatableState,
   BAINameActionCell,
+  BAIDeleteConfirmModal,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
@@ -54,7 +55,7 @@ const ProjectResourcePolicyList: React.FC<
   ProjectResourcePolicyListProps
 > = () => {
   const { t } = useTranslation();
-  const { message, modal } = App.useApp();
+  const { message } = App.useApp();
   const [isRefetchPending, startRefetchTransition] = useTransition();
   const [projectResourcePolicyFetchKey, updateProjectResourcePolicyFetchKey] =
     useUpdatableState('initial-fetch');
@@ -63,6 +64,9 @@ const ProjectResourcePolicyList: React.FC<
     useToggle();
   const [editingProjectResourcePolicy, setEditingProjectResourcePolicy] =
     useState<ProjectResourcePolicySettingModalFragment$key | null>();
+  const [deletingPolicyName, setDeletingPolicyName] = useState<string | null>(
+    null,
+  );
 
   const baiClient = useSuspendedBackendaiClient();
   const supportMaxNetworkCount = baiClient?.supports('max_network_count');
@@ -130,53 +134,7 @@ const ProjectResourcePolicyList: React.FC<
               icon: <DeleteOutlined />,
               type: 'danger',
               onClick: () => {
-                modal.confirm({
-                  title: t('dialog.ask.DoYouWantToProceed'),
-                  content: t('dialog.warning.CannotBeUndone'),
-                  okType: 'danger',
-                  okText: t('button.Delete'),
-                  onOk: () => {
-                    if (row?.name) {
-                      return new Promise<void>((resolve) => {
-                        commitDelete({
-                          variables: {
-                            name: row.name,
-                          },
-                          onCompleted: (res, errors) => {
-                            if (!res?.delete_project_resource_policy?.ok) {
-                              message.error(
-                                res?.delete_project_resource_policy?.msg,
-                              );
-                              resolve();
-                              return;
-                            }
-                            if (errors && errors?.length > 0) {
-                              const errorMsgList = _.map(
-                                errors,
-                                (error) => error.message,
-                              );
-                              for (const error of errorMsgList) {
-                                message.error(error);
-                              }
-                            } else {
-                              startRefetchTransition(() =>
-                                updateProjectResourcePolicyFetchKey(),
-                              );
-                              message.success(
-                                t('resourcePolicy.SuccessfullyDeleted'),
-                              );
-                            }
-                            resolve();
-                          },
-                          onError(err) {
-                            message.error(err?.message);
-                            resolve();
-                          },
-                        });
-                      });
-                    }
-                  },
-                });
+                setDeletingPolicyName(row?.name ?? null);
               },
             },
           ]}
@@ -356,6 +314,50 @@ const ProjectResourcePolicyList: React.FC<
           setEditingProjectResourcePolicy(null);
           setIsCreatingPolicySetting(false);
         }}
+      />
+      <BAIDeleteConfirmModal
+        open={!!deletingPolicyName}
+        items={
+          deletingPolicyName
+            ? [{ key: deletingPolicyName, label: deletingPolicyName }]
+            : []
+        }
+        title={t('resourcePolicy.DeletePolicy')}
+        description={t('resourcePolicy.DeletePolicyDescription')}
+        onOk={() => {
+          if (deletingPolicyName) {
+            return new Promise<void>((resolve) => {
+              commitDelete({
+                variables: { name: deletingPolicyName },
+                onCompleted: (res, errors) => {
+                  if (!res?.delete_project_resource_policy?.ok) {
+                    message.error(res?.delete_project_resource_policy?.msg);
+                    resolve();
+                    return;
+                  }
+                  if (errors && errors?.length > 0) {
+                    for (const error of errors) {
+                      message.error(error.message);
+                    }
+                  } else {
+                    startRefetchTransition(() =>
+                      updateProjectResourcePolicyFetchKey(),
+                    );
+                    message.success(t('resourcePolicy.SuccessfullyDeleted'));
+                  }
+                  setDeletingPolicyName(null);
+                  resolve();
+                },
+                onError(err) {
+                  message.error(err?.message);
+                  setDeletingPolicyName(null);
+                  resolve();
+                },
+              });
+            });
+          }
+        }}
+        onCancel={() => setDeletingPolicyName(null)}
       />
     </BAIFlex>
   );
