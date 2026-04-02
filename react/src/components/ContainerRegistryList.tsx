@@ -336,17 +336,30 @@ const ContainerRegistryList: React.FC<{
             }
             onChange={(isOn) => {
               if (!_.isString(record.registry_name)) return;
-              let newAllowedDockerRegistries = _.clone(
-                domain?.allowed_docker_registries || [],
-              ) as string[];
-              if (isOn) {
-                newAllowedDockerRegistries.push(record.registry_name);
-              } else {
-                newAllowedDockerRegistries = _.without(
-                  newAllowedDockerRegistries,
-                  record.registry_name,
-                );
-              }
+              // Build the effective allowed list by applying all pending
+              // optimistic changes from inFlightRegistries on top of the
+              // server-side allowed_docker_registries. This prevents stale
+              // Relay store data from overriding switches that were toggled
+              // but whose mutations have not yet round-tripped.
+              let newAllowedDockerRegistries = _.filter(
+                containerRegistries,
+                (reg) => {
+                  if (!_.isString(reg?.registry_name)) return false;
+                  if (reg?.id === record.id) {
+                    // Use the current toggle value for the row being changed
+                    return isOn;
+                  }
+                  if (inFlightRegistries.has(reg!.id)) {
+                    // Use optimistic state for other in-flight rows
+                    return inFlightRegistries.get(reg!.id)!;
+                  }
+                  // Fall back to server state for stable rows
+                  return _.includes(
+                    domain?.allowed_docker_registries,
+                    reg?.registry_name,
+                  );
+                },
+              ).map((reg) => reg!.registry_name as string);
 
               setInFlightState(([prevKey, prevMap]) => {
                 const next = new Map(
