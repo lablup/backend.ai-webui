@@ -969,12 +969,13 @@ class Client {
    * Login into webserver with given ID/Password. This requires additional webserver package.
    *
    */
-  async login(otp?: string) {
-    let body = {
+  async login(otp?: string, force?: boolean) {
+    let body: Record<string, unknown> = {
       username: this._config.userId,
       password: this._config.password,
     };
     if (otp) body['otp'] = otp;
+    if (force) body['force'] = true;
     let rqst = this.newSignedRequest('POST', `/server/login`, body, '', true);
     let result;
     try {
@@ -984,47 +985,59 @@ class Client {
           password: '********',
         }),
       });
-      if (result.authenticated === true) {
-        if (result.data.role === 'monitor') {
-          await this.logout();
-          return Promise.resolve({
-            fail_reason: 'Monitor user does not allow to login.',
-          });
-        }
-        await this.get_manager_version();
-        if (this._loginSessionId !== null && this._loginSessionId !== '') {
-          localStorage.setItem(
-            'backendaiwebui.sessionid',
-            this._loginSessionId,
-          );
-        }
-        return this.check_login();
-      } else if (result.authenticated === false) {
-        // Authentication failed.
-        localStorage.removeItem('backendaiwebui.sessionid');
-        if (result.data && result.data.details) {
-          return Promise.resolve({fail_reason: result.data.details, data: result.data });
-        } else {
-          return Promise.resolve(false);
-        }
-      }
     } catch (err) {
-      // Manager / webserver down.
-      if ('statusCode' in err && err.statusCode === 429) {
+      // _wrapWithPromise throws on non-2xx responses. For 401 responses,
+      // the web proxy wraps the error in an envelope { authenticated: false,
+      // data: { type, title, details } }. Recover that envelope and throw
+      // it as a login error so the caller can classify by data.type.
+      const responseBody = err?.response;
+      if (
+        responseBody &&
+        typeof responseBody === 'object' &&
+        'authenticated' in responseBody &&
+        responseBody.data
+      ) {
+        localStorage.removeItem('backendaiwebui.sessionid');
         throw {
-          title: err.description,
-          message: 'Too many failed login attempts.',
-        };
-      } else {
-        throw {
-          title: 'No manager found at API Endpoint.',
-          message:
-            'Authentication failed. Check information and manager status.',
+          isLoginError: true,
+          data: responseBody.data,
+          title: responseBody.data.title,
+          message: responseBody.data.details,
         };
       }
-      //console.log(err);
-      //return false;
+      // Non-envelope errors (429, 502, 503, network, etc.): re-throw as-is.
+      // The caller can use err.type, err.title, err.statusCode, etc.
+      throw err;
     }
+
+    if (result.authenticated === true) {
+      if (result.data.role === 'monitor') {
+        await this.logout();
+        throw {
+          isLoginError: true,
+          data: {
+            type: 'monitor-role-login-forbidden',
+          },
+        };
+      }
+      await this.get_manager_version();
+      if (this._loginSessionId !== null && this._loginSessionId !== '') {
+        localStorage.setItem(
+          'backendaiwebui.sessionid',
+          this._loginSessionId,
+        );
+      }
+      return this.check_login();
+    }
+
+    // HTTP 200 but authenticated === false (TOTP required, etc.)
+    localStorage.removeItem('backendaiwebui.sessionid');
+    throw {
+      isLoginError: true,
+      data: result.data || {},
+      title: result.data?.title,
+      message: result.data?.details,
+    };
   }
 
   /**
