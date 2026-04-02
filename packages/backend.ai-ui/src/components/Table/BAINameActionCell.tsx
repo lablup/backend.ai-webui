@@ -55,6 +55,8 @@ export interface BAINameActionCellProps {
   showActions?: 'hover' | 'always';
   /** Minimum number of action buttons to keep visible before overflow. Default: 0 */
   minVisibleActions?: number;
+  /** Show a copy-to-clipboard icon on hover next to the title text */
+  copyable?: boolean;
   style?: React.CSSProperties;
   className?: string;
 }
@@ -147,6 +149,7 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
   actions,
   showActions = 'hover',
   minVisibleActions = 0,
+  copyable,
   style,
   className,
 }) => {
@@ -268,33 +271,45 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
     ...menuOnlyActions.map(toMenuItem),
   ];
 
+  const copyableConfig = copyable
+    ? { text: typeof title === 'string' ? title : '' }
+    : undefined;
+
   const renderTitle = () => {
     if (to) {
       return (
-        <BAILink
-          to={to}
-          type="hover"
-          style={{
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-            display: 'block',
-            minWidth: 0,
-          }}
-        >
-          {title}
-        </BAILink>
+        <BAIText copyable={copyableConfig} ellipsis={{ tooltip: true }}>
+          <BAILink
+            to={to}
+            type="hover"
+            style={{
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              display: 'block',
+              minWidth: 0,
+            }}
+          >
+            {title}
+          </BAILink>
+        </BAIText>
       );
     }
     if (onTitleClick) {
       return (
-        <BAILink type="hover" onClick={onTitleClick} ellipsis>
-          {title}
-        </BAILink>
+        <BAIText copyable={copyableConfig} ellipsis={{ tooltip: true }}>
+          <BAILink type="hover" onClick={onTitleClick} ellipsis>
+            {title}
+          </BAILink>
+        </BAIText>
       );
     }
     return (
-      <BAIText ellipsis={{ tooltip: true }} style={{ flex: 1, minWidth: 0 }}>
+      <BAIText
+        ellipsis={{ tooltip: true }}
+        copyable={copyableConfig}
+        style={{ minWidth: 0 }}
+      >
         {title}
       </BAIText>
     );

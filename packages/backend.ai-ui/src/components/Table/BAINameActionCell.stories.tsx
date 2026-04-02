@@ -92,6 +92,15 @@ BAINameActionCell is a reusable table cell layout component that combines a titl
         defaultValue: { summary: '0' },
       },
     },
+    copyable: {
+      control: { type: 'boolean' },
+      description:
+        'Show a copy-to-clipboard icon on hover next to the title text.',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+      },
+    },
     icon: {
       control: false,
       description: 'Optional icon rendered before the title.',
@@ -382,6 +391,59 @@ export const MenuOnlyActions: Story = {
         onClick: () => console.log('Delete clicked'),
       },
     ],
+    showActions: 'always',
+  },
+};
+
+export const CopyableName: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'A copy-to-clipboard icon appears on hover next to the title text. Works with plain text, links, and clickable titles.',
+      },
+    },
+  },
+  args: {
+    icon: <FolderOutlined />,
+    title: 'Copyable Folder Name',
+    actions: sampleActions.slice(0, 2),
+    copyable: true,
+  },
+};
+
+export const CopyableNameWithLink: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Copyable name combined with a navigable title link. The copy icon appears on hover.',
+      },
+    },
+  },
+  args: {
+    icon: <FolderOutlined />,
+    title: 'Navigable Copyable Folder',
+    to: '/folders/123',
+    actions: sampleActions.slice(0, 2),
+    copyable: true,
+  },
+};
+
+export const CopyableNameWithAlwaysVisibleActions: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Copyable name with action buttons always visible (not hover-only). Verifies copy icon positioning alongside persistent actions.',
+      },
+    },
+  },
+  args: {
+    icon: <FolderOutlined />,
+    title: 'Copyable With Always Actions',
+    actions: sampleActions.slice(0, 2),
+    copyable: true,
     showActions: 'always',
   },
 };
