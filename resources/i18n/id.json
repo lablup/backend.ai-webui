@@ -1754,7 +1754,7 @@
     "IdleTimeout": "Batas Waktu Diam",
     "IdleTimeoutSec": "Waktu tunggu menganggur (dtk.)",
     "Keypair": "pasangan kunci",
-    "KeypairResourcePolicy": "Kebijakan Sumber Daya Pasangan Kunci",
+    "KeypairResourcePolicy": "Kebijakan Sumber Daya Keypair",
     "MaxConcurrentSFTPSessions": "Sesi SFTP Max Concurrent",
     "MaxCustomizedImageCount": "Jumlah Gambar Khusus Maksimum",
     "MaxFolderCount": "Jumlah Folder Maks",

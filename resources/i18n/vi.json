@@ -1754,7 +1754,7 @@
     "IdleTimeout": "Hết thời gian chờ",
     "IdleTimeoutSec": "Thời gian chờ không hoạt động (giây)",
     "Keypair": "Cặp khóa",
-    "KeypairResourcePolicy": "Chính sách tài nguyên cặp khóa",
+    "KeypairResourcePolicy": "Chính sách tài nguyên Keypair",
     "MaxConcurrentSFTPSessions": "Phiên SFTP đồng thời tối đa",
     "MaxCustomizedImageCount": "Số lượng hình ảnh tùy chỉnh tối đa",
     "MaxFolderCount": "Số lượng thư mục tối đa",

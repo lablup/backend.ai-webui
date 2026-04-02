@@ -1772,7 +1772,7 @@
     "PolicyName": "Versicherungsname",
     "PolicyNameEmpty": "Der Richtlinienname darf nicht leer sein.",
     "Project": "Projekt",
-    "ProjectResourcePolicy": "Projektressourcenrichtlinie",
+    "ProjectResourcePolicy": "Projekt-Ressourcenrichtlinie",
     "ResourcePolicy": "Ressourcenrichtlinie",
     "ResourcePolicyNameAlreadyExists": "Der Name der Ressourcenrichtlinie ist bereits vorhanden. \nBitte ändern Sie den hinzuzufügenden Namen.",
     "Resources": "Ressourcen",
@@ -1785,7 +1785,7 @@
     "Unlimited": "Unbegrenzt",
     "UpdateResourcePolicy": "Ressourcenrichtlinie aktualisieren",
     "User": "Benutzer",
-    "UserResourcePolicy": "Benutzerressourcenrichtlinie"
+    "UserResourcePolicy": "Benutzer-Ressourcenrichtlinie"
   },
   "resourcePreset": {
     "AboutToDeletePreset": "Sie sind dabei, diese Voreinstellung zu löschen:",

@@ -1754,7 +1754,7 @@
     "IdleTimeout": "アイドルタイムアウト",
     "IdleTimeoutSec": "アイドルタイムアウト（秒）",
     "Keypair": "キーペア",
-    "KeypairResourcePolicy": "キーペアのリソースポリシー",
+    "KeypairResourcePolicy": "キーペアリソースポリシー",
     "MaxConcurrentSFTPSessions": "Max Concurrent SFTPセッション",
     "MaxCustomizedImageCount": "カスタマイズされた画像の最大数",
     "MaxFolderCount": "最大フォルダ数",

@@ -1752,7 +1752,7 @@
     "IdleTimeout": "Χρονικό όριο αδράνειας",
     "IdleTimeoutSec": "Χρονικό όριο αδράνειας (δευτ.)",
     "Keypair": "Keypair",
-    "KeypairResourcePolicy": "Πολιτική πόρων ζεύγους κλειδιών",
+    "KeypairResourcePolicy": "Πολιτική πόρων Keypair",
     "MaxConcurrentSFTPSessions": "Max ταυτόχρονες συνεδρίες SFTP",
     "MaxCustomizedImageCount": "Μέγιστος προσαρμοσμένος αριθμός εικόνων",
     "MaxFolderCount": "Μέγιστος αριθμός φακέλων",

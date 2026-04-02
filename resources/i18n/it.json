@@ -1752,7 +1752,7 @@
     "IdleTimeout": "Timeout di inattività",
     "IdleTimeoutSec": "Timeout di inattività (sec.)",
     "Keypair": "Coppia di chiavi",
-    "KeypairResourcePolicy": "Politica delle risorse per la coppia di chiavi",
+    "KeypairResourcePolicy": "Policy risorse Keypair",
     "MaxConcurrentSFTPSessions": "Sessioni SFTP con contenitori massimi",
     "MaxCustomizedImageCount": "Conteggio massimo di immagini personalizzate",
     "MaxFolderCount": "Conteggio massimo cartelle",
@@ -1770,7 +1770,7 @@
     "PolicyName": "Nome criterio Policy",
     "PolicyNameEmpty": "Il nome del criterio non deve essere vuoto.",
     "Project": "Progetto",
-    "ProjectResourcePolicy": "Criterio risorse del progetto",
+    "ProjectResourcePolicy": "Policy risorse progetto",
     "ResourcePolicy": "Politica delle risorse",
     "ResourcePolicyNameAlreadyExists": "Il nome della policy delle risorse esiste già. \nSi prega di modificare il nome da aggiungere.",
     "Resources": "risorse",
@@ -1783,7 +1783,7 @@
     "Unlimited": "Illimitato",
     "UpdateResourcePolicy": "Aggiorna la politica delle risorse",
     "User": "Utente",
-    "UserResourcePolicy": "Politica sulle risorse utente"
+    "UserResourcePolicy": "Policy risorse utente"
   },
   "resourcePreset": {
     "AboutToDeletePreset": "Stai per eliminare questo preset:",

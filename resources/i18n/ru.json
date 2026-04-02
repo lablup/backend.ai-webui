@@ -1752,7 +1752,7 @@
     "IdleTimeout": "Тайм-аут простоя",
     "IdleTimeoutSec": "Тайм-аут простоя (сек.)",
     "Keypair": "Ключевая пара",
-    "KeypairResourcePolicy": "Политика ресурсов пары ключей",
+    "KeypairResourcePolicy": "Политика ресурсов Keypair",
     "MaxConcurrentSFTPSessions": "Максимальные параллельные сеансы SFTP",
     "MaxCustomizedImageCount": "Максимальное количество индивидуальных изображений",
     "MaxFolderCount": "Максимальное количество папок",
@@ -1770,7 +1770,7 @@
     "PolicyName": "Название политики",
     "PolicyNameEmpty": "Имя политики не должно быть пустым.",
     "Project": "Проект",
-    "ProjectResourcePolicy": "Ресурсная политика проекта",
+    "ProjectResourcePolicy": "Политика ресурсов проекта",
     "ResourcePolicy": "Политика ресурсов",
     "ResourcePolicyNameAlreadyExists": "Название политики ресурсов уже существует. \nПожалуйста, измените имя, чтобы добавить.",
     "Resources": "Ресурсы",
@@ -1783,7 +1783,7 @@
     "Unlimited": "Безлимитный",
     "UpdateResourcePolicy": "Обновить политику ресурсов",
     "User": "Пользователь",
-    "UserResourcePolicy": "Политика пользовательских ресурсов"
+    "UserResourcePolicy": "Политика ресурсов пользователя"
   },
   "resourcePreset": {
     "AboutToDeletePreset": "Вы собираетесь удалить этот пресет:",

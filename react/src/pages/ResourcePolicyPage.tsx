@@ -42,15 +42,15 @@ const ResourcePolicyPage: React.FC<ResourcePolicyPageProps> = () => {
       tabList={filterOutEmpty([
         {
           key: 'keypair',
-          label: t('resourcePolicy.Keypair'),
+          label: t('resourcePolicy.KeypairResourcePolicy'),
         },
         {
           key: 'user',
-          label: t('resourcePolicy.User'),
+          label: t('resourcePolicy.UserResourcePolicy'),
         },
         {
           key: 'project',
-          label: t('resourcePolicy.Project'),
+          label: t('resourcePolicy.ProjectResourcePolicy'),
         },
       ])}
     >

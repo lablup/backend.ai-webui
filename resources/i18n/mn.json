@@ -1753,7 +1753,7 @@
     "IdleTimeout": "Сул зогсолтын хугацаа",
     "IdleTimeoutSec": "Сул зогсолт (сек.)",
     "Keypair": "Товчлуур",
-    "KeypairResourcePolicy": "Түлхүүрийн нөөцийн бодлого",
+    "KeypairResourcePolicy": "Keypair нөөцийн бодлого",
     "MaxConcurrentSFTPSessions": "Макс тохиролцсон SFTP хуралдаанууд",
     "MaxCustomizedImageCount": "Хамгийн их тохируулсан зургийн тоо",
     "MaxFolderCount": "Хамгийн их хавтасны тоо",

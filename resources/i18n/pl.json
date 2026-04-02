@@ -1752,7 +1752,7 @@
     "IdleTimeout": "Limit czasu bezczynności",
     "IdleTimeoutSec": "Limit czasu bezczynności (sek.)",
     "Keypair": "Para kluczy",
-    "KeypairResourcePolicy": "Polityka zasobów pary kluczy",
+    "KeypairResourcePolicy": "Polityka zasobów Keypair",
     "MaxConcurrentSFTPSessions": "Max równoległe sesje SFTP",
     "MaxCustomizedImageCount": "Maksymalna dostosowana liczba obrazów",
     "MaxFolderCount": "Maksymalna liczba folderów",
