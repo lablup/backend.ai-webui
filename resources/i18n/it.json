@@ -1023,6 +1023,7 @@
     "Cores": "core",
     "CreatedAt": "Data di creazione",
     "Days": "{{num}} giorni",
+    "DeselectAll": "Deseleziona tutto",
     "Disabled": "Disabili",
     "E-Mail": "E-mail",
     "Enable": "Abilita",

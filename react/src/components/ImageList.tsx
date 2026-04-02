@@ -30,6 +30,7 @@ import {
   filterOutNullAndUndefined,
   BAIFlex,
   BAIPropertyFilter,
+  BAISelectionLabel,
   BAITable,
   BAIResourceNumberWithIcon,
   useFetchKey,
@@ -397,11 +398,10 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
           />
           <BAIFlex gap={'xs'}>
             {selectedRows.length > 0 ? (
-              <Typography.Text>
-                {t('general.NSelected', {
-                  count: selectedRows.length,
-                })}
-              </Typography.Text>
+              <BAISelectionLabel
+                count={selectedRows.length}
+                onClearSelection={() => setSelectedRows([])}
+              />
             ) : null}
             <Tooltip title={t('button.Refresh')}>
               <Button

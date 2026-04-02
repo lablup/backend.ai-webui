@@ -1025,6 +1025,7 @@
     "Cores": "core",
     "CreatedAt": "Tanggal dibuat",
     "Days": "{{num}} hari",
+    "DeselectAll": "Batalkan semua pilihan",
     "Disabled": "Dinonaktifkan",
     "E-Mail": "E-Mail",
     "Enable": "Aktifkan",

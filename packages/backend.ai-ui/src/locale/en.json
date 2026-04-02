@@ -365,6 +365,7 @@
     "UnknownError": "An unknown error occurred. Please try again."
   },
   "general": {
+    "DeselectAll": "Deselect all",
     "NSelected": "{{count}} selected",
     "Optional": "Optional",
     "TotalItems": "Total {{total}} items",

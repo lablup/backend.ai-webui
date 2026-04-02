@@ -359,6 +359,7 @@
     "UnknownError": "Terjadi kesalahan yang tidak diketahui. \nTolong coba lagi."
   },
   "general": {
+    "DeselectAll": "Batalkan semua pilihan",
     "NSelected": "{{count}} dipilih",
     "Optional": "Opsional",
     "TotalItems": "Total {{total}} item",

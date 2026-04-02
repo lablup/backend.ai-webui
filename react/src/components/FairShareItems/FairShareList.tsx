@@ -31,6 +31,7 @@ import {
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
+  BAISelectionLabel,
   BAIText,
   BAIUnmountAfterClose,
   filterOutEmpty,
@@ -622,9 +623,10 @@ const FairShareList: React.FC = () => {
           <BAIFlex gap="xs">
             {selectedRows?.length > 0 && (
               <>
-                {t('general.NSelected', {
-                  count: selectedRows.length,
-                })}
+                <BAISelectionLabel
+                  count={selectedRows.length}
+                  onClearSelection={() => setSelectedRows([])}
+                />
                 <Tooltip
                   title={t('general.ShowUsageGraph')}
                   placement="topLeft"

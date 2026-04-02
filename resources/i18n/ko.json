@@ -1026,6 +1026,7 @@
     "Cores": "코어",
     "CreatedAt": "생성일",
     "Days": "{{ num }}일",
+    "DeselectAll": "선택 취소",
     "Disabled": "비활성화",
     "E-Mail": "이메일",
     "Enable": "활성화",

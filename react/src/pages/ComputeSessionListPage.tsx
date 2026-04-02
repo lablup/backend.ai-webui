@@ -39,6 +39,7 @@ import {
   BAIFlex,
   BAILink,
   BAIPropertyFilter,
+  BAISelectionLabel,
   BAISessionsIcon,
   filterOutEmpty,
   filterOutNullAndUndefined,
@@ -462,9 +463,10 @@ const ComputeSessionListPage = () => {
             <BAIFlex gap={'sm'}>
               {selectedSessionList.length > 0 && (
                 <>
-                  {t('general.NSelected', {
-                    count: selectedSessionList.length,
-                  })}
+                  <BAISelectionLabel
+                    count={selectedSessionList.length}
+                    onClearSelection={() => setSelectedSessionList([])}
+                  />
                   <Tooltip
                     title={t('session.TerminateSession')}
                     placement="topLeft"

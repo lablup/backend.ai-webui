@@ -1025,6 +1025,7 @@
     "Cores": "Kerne",
     "CreatedAt": "Erstellungsdatum",
     "Days": "{{num}} Tage",
+    "DeselectAll": "Alle abwählen",
     "Disabled": "Behinderte",
     "E-Mail": "Email",
     "Enable": "Aktivieren",

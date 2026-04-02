@@ -359,6 +359,7 @@
     "UnknownError": "เกิดข้อผิดพลาดที่ไม่รู้จัก \nโปรดลองอีกครั้ง"
   },
   "general": {
+    "DeselectAll": "ยกเลิกการเลือกทั้งหมด",
     "NSelected": "{{count}} เลือก",
     "Optional": "ไม่บังคับ",
     "TotalItems": "รวม {{total}} รายการ",

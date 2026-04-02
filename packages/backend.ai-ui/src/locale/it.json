@@ -359,6 +359,7 @@
     "UnknownError": "Si è verificato un errore sconosciuto. \nPer favore riprova."
   },
   "general": {
+    "DeselectAll": "Deseleziona tutto",
     "NSelected": "{{count}} selezionato",
     "Optional": "Opzionale",
     "TotalItems": "Totali {{total}} elementi",

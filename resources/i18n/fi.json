@@ -1023,6 +1023,7 @@
     "Cores": "ytimet",
     "CreatedAt": "Luontipäivä",
     "Days": "{{num}} päivää",
+    "DeselectAll": "Poista kaikki valinnat",
     "Disabled": "Vammaiset",
     "E-Mail": "Sähköposti",
     "Enable": "Ota käyttöön",

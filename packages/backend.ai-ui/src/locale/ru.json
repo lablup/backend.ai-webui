@@ -359,6 +359,7 @@
     "UnknownError": "Произошла неизвестная ошибка. \nПожалуйста, попробуйте еще раз."
   },
   "general": {
+    "DeselectAll": "Снять выделение",
     "NSelected": "{{count}} выбрал",
     "Optional": "Необязательно",
     "TotalItems": "Total {{total}} элементы",
