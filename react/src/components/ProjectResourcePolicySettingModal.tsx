@@ -204,8 +204,8 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
     <BAIModal
       title={
         projectResourcePolicy === null
-          ? t('resourcePolicy.CreateResourcePolicy')
-          : t('resourcePolicy.UpdateResourcePolicy')
+          ? t('resourcePolicy.CreateProjectResourcePolicy')
+          : t('resourcePolicy.UpdateProjectResourcePolicy')
       }
       onOk={handleOk}
       onCancel={() => onRequestClose()}

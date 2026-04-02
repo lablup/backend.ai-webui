@@ -294,8 +294,8 @@ const KeypairResourcePolicySettingModal: React.FC<
       width={800}
       title={
         keypairResourcePolicy === null
-          ? t('resourcePolicy.CreateResourcePolicy')
-          : t('resourcePolicy.UpdateResourcePolicy')
+          ? t('resourcePolicy.CreateKeypairResourcePolicy')
+          : t('resourcePolicy.UpdateKeypairResourcePolicy')
       }
       onOk={handleOk}
       onCancel={() => onRequestClose()}

@@ -199,8 +199,8 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
     <BAIModal
       title={
         userResourcePolicy === null
-          ? t('resourcePolicy.CreateResourcePolicy')
-          : t('resourcePolicy.UpdateResourcePolicy')
+          ? t('resourcePolicy.CreateUserResourcePolicy')
+          : t('resourcePolicy.UpdateUserResourcePolicy')
       }
       onOk={handleOk}
       onCancel={() => onRequestClose()}
