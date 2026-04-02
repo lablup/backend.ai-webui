@@ -324,6 +324,11 @@ const ComputeSessionListPage = () => {
       <BAICard
         variant="borderless"
         title={t('webui.menu.Sessions')}
+        extra={
+          <BAILink to={'/session/start'}>
+            <Button type="primary">{t('start.button.StartSession')}</Button>
+          </BAILink>
+        }
         styles={{
           header: {
             borderBottom: 'none',
@@ -485,9 +490,6 @@ const ComputeSessionListPage = () => {
                   updateFetchKey(newFetchKey);
                 }}
               />
-              <BAILink to={'/session/start'}>
-                <Button type="primary">{t('start.button.StartSession')}</Button>
-              </BAILink>
             </BAIFlex>
           </BAIFlex>
           {computeSessionNodeResult.ok ? (

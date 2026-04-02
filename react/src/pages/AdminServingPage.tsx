@@ -6,7 +6,7 @@ import { AdminServingPageQuery } from '../__generated__/AdminServingPageQuery.gr
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import EndpointList from '../components/EndpointList';
 import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
-import { Skeleton, theme } from 'antd';
+import { Skeleton } from 'antd';
 import {
   BAICard,
   BAIFetchKeyButton,
@@ -25,8 +25,6 @@ import { StringParam, useQueryParams, withDefault } from 'use-query-params';
 const AdminServingPage: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
-
   const [queryParams, setQuery] = useQueryParams({
     order: withDefault(StringParam, '-created_at'),
     filter: StringParam,
@@ -104,21 +102,18 @@ const AdminServingPage: React.FC = () => {
   return (
     <BAIFlex direction="column" align="stretch" gap={'md'}>
       <BAICard
+        variant="borderless"
         title={t('webui.menu.Serving')}
         styles={{
+          header: {
+            borderBottom: 'none',
+          },
           body: {
-            padding: 0,
-            paddingTop: 1,
-            overflow: 'hidden',
+            paddingTop: 0,
           },
         }}
       >
-        <BAIFlex
-          direction="column"
-          align="stretch"
-          gap={'sm'}
-          style={{ padding: token.paddingMD }}
-        >
+        <BAIFlex direction="column" align="stretch" gap={'sm'}>
           <BAIFlex direction="row" justify="between" wrap="wrap" gap={'sm'}>
             <BAIFlex
               gap={'sm'}
@@ -170,15 +165,17 @@ const AdminServingPage: React.FC = () => {
                 }}
               />
             </BAIFlex>
-            <BAIFetchKeyButton
-              value={fetchKey}
-              onChange={updateFetchKey}
-              autoUpdateDelay={7_000}
-              loading={
-                deferredQueryVariables !== queryVariables ||
-                deferredFetchKey !== fetchKey
-              }
-            />
+            <BAIFlex gap={'xs'}>
+              <BAIFetchKeyButton
+                value={fetchKey}
+                onChange={updateFetchKey}
+                autoUpdateDelay={7_000}
+                loading={
+                  deferredQueryVariables !== queryVariables ||
+                  deferredFetchKey !== fetchKey
+                }
+              />
+            </BAIFlex>
           </BAIFlex>
           <Suspense fallback={<Skeleton active />}>
             <EndpointList

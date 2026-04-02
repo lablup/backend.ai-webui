@@ -393,6 +393,16 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
       <BAICard
         variant="borderless"
         title={t('data.Folders')}
+        extra={
+          <Button
+            type="primary"
+            onClick={() => {
+              toggleCreateModal();
+            }}
+          >
+            {t('data.CreateFolder')}
+          </Button>
+        }
         styles={{
           header: {
             borderBottom: 'none',
@@ -620,14 +630,6 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                   updateFetchKey(newFetchKey);
                 }}
               />
-              <Button
-                type="primary"
-                onClick={() => {
-                  toggleCreateModal();
-                }}
-              >
-                {t('data.CreateFolder')}
-              </Button>
             </BAIFlex>
           </BAIFlex>
           <VFolderNodes
