@@ -359,6 +359,7 @@
     "UnknownError": "Một lỗi không xác định xảy ra. \nHãy thử lại."
   },
   "general": {
+    "DeselectAll": "Bỏ chọn tất cả",
     "NSelected": "{{count}} Đã chọn",
     "Optional": "Không bắt buộc",
     "TotalItems": "Tổng số {{total}} các mục",

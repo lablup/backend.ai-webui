@@ -32,6 +32,7 @@ import {
   isValidUUID,
   BAIUserNodes,
   BAIButton,
+  BAISelectionLabel,
   BAITrashBinIcon,
   BAIText,
   BAINameActionCell,
@@ -376,9 +377,10 @@ const UserManagement: React.FC<UserManagementProps> = () => {
         <BAIFlex gap="xs">
           {selectedUserList.length > 0 && (
             <BAIFlex gap="xs">
-              <BAIText>
-                {t('general.NSelected', { count: selectedUserList.length })}
-              </BAIText>
+              <BAISelectionLabel
+                count={selectedUserList.length}
+                onClearSelection={() => setSelectedUserList([])}
+              />
               <BAIButton
                 icon={<EditIcon style={{ color: token.colorInfo }} />}
                 style={{

@@ -1024,6 +1024,7 @@
     "Cores": "cores",
     "CreatedAt": "Created At",
     "Days": "{{ num }} Days",
+    "DeselectAll": "Deselect all",
     "Disabled": "Disabled",
     "E-Mail": "Email",
     "Enable": "Enable",

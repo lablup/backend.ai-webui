@@ -359,6 +359,7 @@
     "UnknownError": "Үл мэдэгдэх алдаа гарлаа. \nДахин оролдоно уу."
   },
   "general": {
+    "DeselectAll": "Бүгдийг сонголтоос хасах",
     "NSelected": "{{count}} сонгогдсон",
     "Optional": "Заавал биш",
     "TotalItems": "Нийт {{total}} зүйлүүд",

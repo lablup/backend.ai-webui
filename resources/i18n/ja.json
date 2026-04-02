@@ -1025,6 +1025,7 @@
     "Cores": "コア",
     "CreatedAt": "作成日",
     "Days": "{{num}}日",
+    "DeselectAll": "すべて選択解除",
     "Disabled": "無効",
     "E-Mail": "Eメール",
     "Enable": "有効にする",

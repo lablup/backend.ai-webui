@@ -359,6 +359,7 @@
     "UnknownError": "不明なエラーが発生しました。\nもう一度やり直してください。"
   },
   "general": {
+    "DeselectAll": "すべて選択解除",
     "NSelected": "{{count}}選択",
     "Optional": "任意",
     "TotalItems": "Total {{total}}アイテム",

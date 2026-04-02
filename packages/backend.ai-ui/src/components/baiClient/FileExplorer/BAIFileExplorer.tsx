@@ -317,6 +317,7 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
             enableWrite={enableWrite}
             onUpload={(files, currentPath) => onUpload(files, currentPath)}
             onDeleteFilesInBackground={onDeleteFilesInBackground}
+            onClearSelection={() => setSelectedItems([])}
             onRequestClose={(
               success: boolean,
               modifiedItems?: Array<VFolderFile>,

@@ -1023,6 +1023,7 @@
     "Cores": "çekirdek",
     "CreatedAt": "Oluşturulma tarihi",
     "Days": "{{num}} günler",
+    "DeselectAll": "Tüm seçimi kaldır",
     "Disabled": "Engelli",
     "E-Mail": "E-Posta",
     "Enable": "Etkinleştir",

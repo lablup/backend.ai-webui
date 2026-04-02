@@ -1023,6 +1023,7 @@
     "Cores": "rdzenie",
     "CreatedAt": "Data utworzenia",
     "Days": "{{num}} dni",
+    "DeselectAll": "Odznacz wszystko",
     "Disabled": "Wyłączony",
     "E-Mail": "E-mail",
     "Enable": "Włącz",

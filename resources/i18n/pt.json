@@ -1025,6 +1025,7 @@
     "Cores": "núcleos",
     "CreatedAt": "Data de criação",
     "Days": "{{num}} dias",
+    "DeselectAll": "Desmarcar tudo",
     "Disabled": "Desativado",
     "E-Mail": "O email",
     "Enable": "Ativar",

@@ -38,6 +38,7 @@ import {
   BAINewFolderIcon,
   BAIPropertyFilter,
   BAIRestoreIcon,
+  BAISelectionLabel,
   BAIVFolderDeleteButton,
   filterOutEmpty,
   filterOutNullAndUndefined,
@@ -579,9 +580,10 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
               {selectedFolderList.length > 0 &&
                 queryParams.statusCategory === 'active' && (
                   <>
-                    {t('general.NSelected', {
-                      count: selectedFolderList.length,
-                    })}
+                    <BAISelectionLabel
+                      count={selectedFolderList.length}
+                      onClearSelection={() => setSelectedFolderList([])}
+                    />
                     <Tooltip title={t('data.folders.MoveToTrash')}>
                       <BAIVFolderDeleteButton
                         vfolderFrgmt={selectedFolderList}
@@ -600,9 +602,10 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
               {selectedFolderList.length > 0 &&
                 queryParams.statusCategory === 'deleted' && (
                   <>
-                    {t('general.NSelected', {
-                      count: selectedFolderList.length,
-                    })}
+                    <BAISelectionLabel
+                      count={selectedFolderList.length}
+                      onClearSelection={() => setSelectedFolderList([])}
+                    />
                     <Tooltip title={t('data.folders.Restore')}>
                       <Button
                         style={{

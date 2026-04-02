@@ -359,6 +359,7 @@
     "UnknownError": "Tapahtui tuntematon virhe. \nYritä uudelleen."
   },
   "general": {
+    "DeselectAll": "Poista kaikki valinnat",
     "NSelected": "{{count}} valittu",
     "Optional": "Valinnainen",
     "TotalItems": "Yhteensä {{total}} kohteet",

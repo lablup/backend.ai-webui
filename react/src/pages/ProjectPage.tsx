@@ -15,7 +15,7 @@ import {
   BAIProjectSettingModal,
   BAIProjectTable,
   BAIPropertyFilter,
-  BAIText,
+  BAISelectionLabel,
   filterOutEmpty,
   INITIAL_FETCH_KEY,
   isValidUUID,
@@ -181,11 +181,10 @@ const ProjectPage = () => {
           <BAIFlex gap="xs">
             {selectedProjectList.length > 0 && (
               <>
-                <BAIText>
-                  {t('general.NSelected', {
-                    count: selectedProjectList.length,
-                  })}
-                </BAIText>
+                <BAISelectionLabel
+                  count={selectedProjectList.length}
+                  onClearSelection={() => setSelectedProjectList([])}
+                />
                 <BAIButton onClick={toggleBulkEditModal}>
                   {t('project.BulkEdit')}
                 </BAIButton>

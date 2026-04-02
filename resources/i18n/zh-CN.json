@@ -1025,6 +1025,7 @@
     "Cores": "核心",
     "CreatedAt": "创建日期",
     "Days": "{{num}}天",
+    "DeselectAll": "取消全选",
     "Disabled": "残疾",
     "E-Mail": "电子邮件",
     "Enable": "启用",

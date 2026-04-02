@@ -359,6 +359,7 @@
     "UnknownError": "Une erreur inconnue s'est produite. \nVeuillez réessayer."
   },
   "general": {
+    "DeselectAll": "Tout désélectionner",
     "NSelected": "{{count}} sélectionné",
     "Optional": "Facultatif",
     "TotalItems": "Éléments totaux {{total}}",

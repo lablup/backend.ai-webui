@@ -4,16 +4,7 @@
  */
 import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
 import { useToggle } from 'ahooks';
-import {
-  theme,
-  Col,
-  Row,
-  Statistic,
-  Card,
-  Button,
-  Tooltip,
-  Typography,
-} from 'antd';
+import { theme, Col, Row, Statistic, Card, Button, Tooltip } from 'antd';
 import {
   BAIActivateArtifactsModal,
   BAIActivateArtifactsModalArtifactsFragmentKey,
@@ -29,6 +20,7 @@ import {
   BAIImportArtifactModal,
   BAIImportArtifactModalArtifactFragmentKey,
   BAIImportArtifactModalArtifactRevisionFragmentKey,
+  BAISelectionLabel,
   INITIAL_FETCH_KEY,
   filterOutEmpty,
   toLocalId,
@@ -359,11 +351,10 @@ const ReservoirPage: React.FC = () => {
             <BAIFlex gap={'sm'} align="center">
               {selectedArtifactIdList.length > 0 && (
                 <BAIFlex gap="xs">
-                  <Typography.Text>
-                    {t('general.NSelected', {
-                      count: selectedArtifactIdList.length,
-                    })}
-                  </Typography.Text>
+                  <BAISelectionLabel
+                    count={selectedArtifactIdList.length}
+                    onClearSelection={() => setSelectedArtifactIdList([])}
+                  />
                   <Tooltip
                     title={
                       mode === 'ALIVE'
@@ -527,9 +518,9 @@ const ReservoirPage: React.FC = () => {
                 current: tablePaginationOption.current,
                 total: filteredAuditLogs.length,
                 showTotal: (total) => (
-                  <Typography.Text type="secondary">
+                  <BAIText type="secondary">
                     {t('general.TotalItems', { total: total })}
-                  </Typography.Text>
+                  </BAIText>
                 ),
                 onChange: (current, pageSize) => {
                   if (_.isNumber(current) && _.isNumber(pageSize)) {

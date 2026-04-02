@@ -359,6 +359,7 @@
     "UnknownError": "發生了未知錯誤。請重試。"
   },
   "general": {
+    "DeselectAll": "取消全選",
     "NSelected": "{{count}}選擇",
     "Optional": "選填",
     "TotalItems": "總計{{total}}項目",

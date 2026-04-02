@@ -359,6 +359,7 @@
     "UnknownError": "Παρουσιάστηκε ένα άγνωστο σφάλμα. \nΔοκιμάστε ξανά."
   },
   "general": {
+    "DeselectAll": "Αποεπιλογή όλων",
     "NSelected": "{{count}} Επιλεγμένη",
     "Optional": "Προαιρετικό",
     "TotalItems": "Σύνολο {{total}} στοιχεία",

@@ -359,6 +359,7 @@
     "UnknownError": "Ein unbekannter Fehler ist aufgetreten. \nBitte versuchen Sie es erneut."
   },
   "general": {
+    "DeselectAll": "Alle abwählen",
     "NSelected": "{{count}} ausgewählt",
     "Optional": "Optional",
     "TotalItems": "Total {{total}} Elemente",

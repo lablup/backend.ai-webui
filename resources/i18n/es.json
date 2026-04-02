@@ -1023,6 +1023,7 @@
     "Cores": "núcleos",
     "CreatedAt": "Fecha de creación",
     "Days": "{{num}} días",
+    "DeselectAll": "Deseleccionar todo",
     "Disabled": "Discapacitados",
     "E-Mail": "Correo electrónico",
     "Enable": "Activar",

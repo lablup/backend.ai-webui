@@ -359,6 +359,7 @@
     "UnknownError": "Wystąpił nieznany błąd. \nSpróbuj ponownie."
   },
   "general": {
+    "DeselectAll": "Odznacz wszystko",
     "NSelected": "{{count}}",
     "Optional": "Opcjonalne",
     "TotalItems": "Total {{total}}",

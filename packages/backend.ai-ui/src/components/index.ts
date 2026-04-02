@@ -61,6 +61,8 @@ export type {
 } from './BAIDeleteConfirmModal';
 export { default as BAIButton } from './BAIButton';
 export type { BAIButtonProps } from './BAIButton';
+export { default as BAISelectionLabel } from './BAISelectionLabel';
+export type { BAISelectionLabelProps } from './BAISelectionLabel';
 export { default as BAIFetchKeyButton } from './BAIFetchKeyButton';
 export {
   default as BAIResourceNumberWithIcon,

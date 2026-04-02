@@ -1,5 +1,6 @@
 import { BAITrashBinIcon } from '../../../icons';
 import BAIFlex from '../../BAIFlex';
+import BAISelectionLabel from '../../BAISelectionLabel';
 import { VFolderFile } from '../../provider/BAIClientProvider/types';
 import CreateDirectoryModal from './CreateDirectoryModal';
 import CreateFileModal from './CreateFileModal';
@@ -40,6 +41,7 @@ interface ExplorerActionControlsProps {
   ) => void;
   onUpload: (files: Array<RcFile>, currentPath: string) => void;
   onDeleteFilesInBackground: DeleteSelectedItemsModalProps['onDeleteFilesInBackground'];
+  onClearSelection?: () => void;
   enableDelete?: boolean;
   enableWrite?: boolean;
   // onClickRefresh?: (key: string) => void;
@@ -51,6 +53,7 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
   onRequestClose,
   onUpload,
   onDeleteFilesInBackground,
+  onClearSelection,
   enableDelete = false,
   enableWrite = false,
   extra,
@@ -73,9 +76,10 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
       <BAIFlex gap={'sm'}>
         {selectedFiles.length > 0 && (
           <>
-            {t('general.NSelected', {
-              count: selectedFiles.length,
-            })}
+            <BAISelectionLabel
+              count={selectedFiles.length}
+              onClearSelection={onClearSelection}
+            />
             <Tooltip title={t('general.button.Delete')} placement="topLeft">
               <Button
                 disabled={!enableDelete}

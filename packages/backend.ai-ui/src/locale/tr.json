@@ -354,6 +354,7 @@
     "UnknownError": "Bilinmeyen bir hata oluştu. \nLütfen tekrar deneyin."
   },
   "general": {
+    "DeselectAll": "Tüm seçimi kaldır",
     "NSelected": "{{count}} seçildi",
     "Optional": "İsteğe bağlı",
     "TotalItems": "Total {{total}} öğeleri",

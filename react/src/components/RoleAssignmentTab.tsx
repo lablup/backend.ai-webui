@@ -15,8 +15,8 @@ import {
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAINameActionCell,
+  BAISelectionLabel,
   BAITable,
-  BAIText,
   BAITrashBinIcon,
   type GraphQLFilter,
   useBAILogger,
@@ -299,9 +299,10 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
         <BAIFlex gap="xs">
           {selectedRowKeys.length > 0 && (
             <BAIFlex gap="xs" align="center">
-              <BAIText>
-                {t('general.NSelected', { count: selectedRowKeys.length })}
-              </BAIText>
+              <BAISelectionLabel
+                count={selectedRowKeys.length}
+                onClearSelection={() => setSelectedRowKeys([])}
+              />
               <Tooltip title={t('rbac.DeleteUser')}>
                 <BAIButton
                   danger
