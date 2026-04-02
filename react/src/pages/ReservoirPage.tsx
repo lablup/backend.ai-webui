@@ -518,9 +518,9 @@ const ReservoirPage: React.FC = () => {
                 current: tablePaginationOption.current,
                 total: filteredAuditLogs.length,
                 showTotal: (total) => (
-                  <span style={{ color: token.colorTextSecondary }}>
+                  <BAIText type="secondary">
                     {t('general.TotalItems', { total: total })}
-                  </span>
+                  </BAIText>
                 ),
                 onChange: (current, pageSize) => {
                   if (_.isNumber(current) && _.isNumber(pageSize)) {

@@ -20,12 +20,15 @@ const BAISelectionLabel: React.FC<BAISelectionLabelProps> = ({
   if (count <= 0) return null;
 
   return (
-    <>
+    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
       <Typography.Text>{t('general.NSelected', { count })}</Typography.Text>
       {onClearSelection && (
         <Tooltip title={t('general.DeselectAll')}>
           <CircleXIcon
             size={16}
+            tabIndex={0}
+            role="button"
+            aria-label={t('general.DeselectAll')}
             style={{
               cursor: 'pointer',
               color: token.colorTextSecondary,
@@ -35,7 +38,7 @@ const BAISelectionLabel: React.FC<BAISelectionLabelProps> = ({
           />
         </Tooltip>
       )}
-    </>
+    </span>
   );
 };
 
