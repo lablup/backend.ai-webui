@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-04-01
+> **Last Updated:** 2026-04-02
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -12,11 +12,11 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 236 / 393 features covered (60%)**
+**Overall (in-scope routes): 245 / 402 features covered (61%)**
 
 | Page | Route | Features | Covered | Status |
 |------|-------|:--------:|:-------:|:------:|
-| Authentication | `/interactive-login` | 28 | 26 | 🔶 93% |
+| Authentication | `/interactive-login` | 37 | 35 | 🔶 95% |
 | Change Password | `/change-password` | 9 | 9 | ✅ 100% |
 | Start Page | `/start` | 8 | 6 | 🔶 75% |
 | Dashboard | `/dashboard` | 9 | 7 | 🔶 78% |
@@ -45,7 +45,7 @@
 | App Launcher | (modal) | 18 | 10 | 🔶 56% |
 | Chat | `/chat/:id?` | 6 | 6 | ✅ 100% |
 | Plugin System | (config-based) | 12 | 12 | ✅ 100% |
-| **Total** | | **340** | **186** | **55%** |
+| **Total** | | **349** | **195** | **56%** |
 
 ---
 
@@ -64,7 +64,7 @@
 
 ### 1. Authentication (`/interactive-login`)
 
-**Test files:** [`e2e/auth/login.spec.ts`](auth/login.spec.ts), [`e2e/auth/password-expiry.spec.ts`](auth/password-expiry.spec.ts), [`e2e/auth/forgot-password.spec.ts`](auth/forgot-password.spec.ts), [`e2e/auth/concurrent-login-guard.spec.ts`](auth/concurrent-login-guard.spec.ts)
+**Test files:** [`e2e/auth/login.spec.ts`](auth/login.spec.ts), [`e2e/auth/password-expiry.spec.ts`](auth/password-expiry.spec.ts), [`e2e/auth/forgot-password.spec.ts`](auth/forgot-password.spec.ts), [`e2e/auth/concurrent-login-guard.spec.ts`](auth/concurrent-login-guard.spec.ts), [`e2e/auth/login-error-messages.spec.ts`](auth/login-error-messages.spec.ts)
 
 | Feature | Status | Test |
 |---------|--------|------|
@@ -92,10 +92,19 @@
 | Force login (force=true) | ✅ | `clicking Proceed to Login sends a second login request with force=true` |
 | Force login + TOTP persistence | ✅ | `TOTP is required after force login approval — force flag persists when submitting OTP` |
 | Silent re-login skips concurrent modal | ✅ | `page refresh does not show concurrent session modal for silent re-login attempts` |
+| Invalid API params error (missing username) | ✅ | `invalid API params (missing username) shows login failed notification` |
+| Invalid API params error (missing password) | ✅ | `invalid API params (missing password) shows login failed notification` |
+| Brute-force block (too many failures) | ✅ | `too many login failures shows brute-force block notification` |
+| Auth failed — credential mismatch | ✅ | `credential mismatch shows login information mismatch notification` |
+| Auth failed — inactive account | ✅ | `inactive account shows login information mismatch notification` |
+| Auth failed — email verification required | ✅ | `email verification required shows email verification notification` |
+| Auth failed — missing keypair | ✅ | `missing keypair shows login information mismatch notification` |
+| Active login session exists notification | ✅ | `active login session exists shows session exists notification` |
+| Monitor role login forbidden | ✅ | `monitor role user sees login forbidden notification` |
 | OAuth/SSO login flow | ❌ | - |
 | Session persistence | ❌ | - |
 
-**Coverage: 🔶 26/28 features**
+**Coverage: 🔶 35/37 features**
 
 ---
 
