@@ -394,27 +394,14 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
         variant="borderless"
         title={t('data.Folders')}
         extra={
-          <BAIFlex gap={'xs'}>
-            <BAIFetchKeyButton
-              loading={
-                deferredQueryVariables !== queryVariables ||
-                deferredFetchKey !== fetchKey
-              }
-              autoUpdateDelay={15_000}
-              value={fetchKey}
-              onChange={(newFetchKey) => {
-                updateFetchKey(newFetchKey);
-              }}
-            />
-            <Button
-              type="primary"
-              onClick={() => {
-                toggleCreateModal();
-              }}
-            >
-              {t('data.CreateFolder')}
-            </Button>
-          </BAIFlex>
+          <Button
+            type="primary"
+            onClick={() => {
+              toggleCreateModal();
+            }}
+          >
+            {t('data.CreateFolder')}
+          </Button>
         }
         styles={{
           header: {
@@ -632,6 +619,17 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                     </Tooltip>
                   </>
                 )}
+              <BAIFetchKeyButton
+                loading={
+                  deferredQueryVariables !== queryVariables ||
+                  deferredFetchKey !== fetchKey
+                }
+                autoUpdateDelay={15_000}
+                value={fetchKey}
+                onChange={(newFetchKey) => {
+                  updateFetchKey(newFetchKey);
+                }}
+              />
             </BAIFlex>
           </BAIFlex>
           <VFolderNodes

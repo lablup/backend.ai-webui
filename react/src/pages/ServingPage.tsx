@@ -9,7 +9,7 @@ import { useWebUINavigate } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import { Button, Skeleton, theme } from 'antd';
+import { Button, Skeleton } from 'antd';
 import {
   BAICard,
   BAIFetchKeyButton,
@@ -27,7 +27,6 @@ import { StringParam, useQueryParams, withDefault } from 'use-query-params';
 
 const ServingPage: React.FC = () => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const currentUserRole = useCurrentUserRole();
   const webuiNavigate = useWebUINavigate();
   const currentProject = useCurrentProjectValue();
@@ -106,40 +105,26 @@ const ServingPage: React.FC = () => {
   return (
     <BAIFlex direction="column" align="stretch" gap={'md'}>
       <BAICard
+        variant="borderless"
         title={t('webui.menu.Serving')}
         extra={
-          <BAIFlex gap={'xs'}>
-            <BAIFetchKeyButton
-              value={fetchKey}
-              onChange={updateFetchKey}
-              autoUpdateDelay={7_000}
-              loading={
-                deferredQueryVariables !== queryVariables ||
-                deferredFetchKey !== fetchKey
-              }
-            />
-            <Button
-              type="primary"
-              onClick={() => webuiNavigate('/service/start')}
-            >
-              {t('modelService.StartService')}
-            </Button>
-          </BAIFlex>
+          <Button
+            type="primary"
+            onClick={() => webuiNavigate('/service/start')}
+          >
+            {t('modelService.StartService')}
+          </Button>
         }
         styles={{
+          header: {
+            borderBottom: 'none',
+          },
           body: {
-            padding: 0,
-            paddingTop: 1,
-            overflow: 'hidden',
+            paddingTop: 0,
           },
         }}
       >
-        <BAIFlex
-          direction="column"
-          align="stretch"
-          gap={'sm'}
-          style={{ padding: token.paddingMD }}
-        >
+        <BAIFlex direction="column" align="stretch" gap={'sm'}>
           <BAIFlex direction="row" justify="between" wrap="wrap" gap={'sm'}>
             <BAIFlex
               gap={'sm'}
@@ -192,6 +177,15 @@ const ServingPage: React.FC = () => {
                 }}
               />
             </BAIFlex>
+            <BAIFetchKeyButton
+              value={fetchKey}
+              onChange={updateFetchKey}
+              autoUpdateDelay={7_000}
+              loading={
+                deferredQueryVariables !== queryVariables ||
+                deferredFetchKey !== fetchKey
+              }
+            />
           </BAIFlex>
           <Suspense fallback={<Skeleton active />}>
             <EndpointList

@@ -325,23 +325,9 @@ const ComputeSessionListPage = () => {
         variant="borderless"
         title={t('webui.menu.Sessions')}
         extra={
-          <BAIFlex gap={'xs'}>
-            <BAIFetchKeyButton
-              loading={
-                deferredQueryVariables !== queryVariables ||
-                deferredFetchKey !== fetchKey
-              }
-              autoUpdateDelay={15_000}
-              // showLastLoadTime
-              value={fetchKey}
-              onChange={(newFetchKey) => {
-                updateFetchKey(newFetchKey);
-              }}
-            />
-            <BAILink to={'/session/start'}>
-              <Button type="primary">{t('start.button.StartSession')}</Button>
-            </BAILink>
-          </BAIFlex>
+          <BAILink to={'/session/start'}>
+            <Button type="primary">{t('start.button.StartSession')}</Button>
+          </BAILink>
         }
         styles={{
           header: {
@@ -492,6 +478,18 @@ const ComputeSessionListPage = () => {
                   </Tooltip>
                 </>
               )}
+              <BAIFetchKeyButton
+                loading={
+                  deferredQueryVariables !== queryVariables ||
+                  deferredFetchKey !== fetchKey
+                }
+                autoUpdateDelay={15_000}
+                // showLastLoadTime
+                value={fetchKey}
+                onChange={(newFetchKey) => {
+                  updateFetchKey(newFetchKey);
+                }}
+              />
             </BAIFlex>
           </BAIFlex>
           {computeSessionNodeResult.ok ? (
