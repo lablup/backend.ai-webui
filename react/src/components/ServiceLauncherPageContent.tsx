@@ -13,6 +13,7 @@ import {
   convertToBinaryUnit,
   useBaiSignedRequestWithPromise,
 } from '../helper';
+import { generateModelDefinitionYaml } from '../helper/generateModelDefinitionYaml';
 import { parseCliCommand } from '../helper/parseCliCommand';
 import {
   useCurrentDomainValue,
@@ -158,6 +159,8 @@ interface ServiceLauncherInput extends ImageEnvironmentFormInput {
   commandPort?: number;
   commandHealthCheck?: string;
   commandModelMount?: string;
+  commandInitialDelay?: number;
+  commandMaxRetries?: number;
 }
 
 export type ServiceLauncherFormValue = ServiceLauncherInput &
@@ -174,7 +177,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
   'use memo';
   const { logger } = useBAILogger();
   const { token } = theme.useToken();
-  const { message } = App.useApp();
+  const { message, modal } = App.useApp();
   const { t } = useTranslation();
 
   // Setup query parameters for URL synchronization
@@ -450,7 +453,75 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
     ESMClientErrorResponse | undefined,
     ServiceLauncherFormValue
   >({
-    mutationFn: (values) => {
+    mutationFn: async (values) => {
+      const isCommandMode =
+        values.runtimeVariant === 'custom' &&
+        values.customDefinitionMode === 'command' &&
+        values.startCommand;
+
+      // "Paste Your Command": generate and upload model-definition.yaml before creating service
+      if (isCommandMode) {
+        // Check if model-definition.yaml already exists in the vfolder
+        const filesRes = await baiClient.vfolder.list_files(
+          '.',
+          values.vFolderID,
+        );
+        const existingFiles: Array<{ name: string }> = filesRes?.items ?? [];
+        const hasExistingYaml = existingFiles.some(
+          (f) => f.name === 'model-definition.yaml',
+        );
+
+        if (hasExistingYaml) {
+          const confirmed = await new Promise<boolean>((resolve) => {
+            modal.confirm({
+              title: t('modelService.OverwriteYamlTitle'),
+              content: t('modelService.OverwriteYamlContent'),
+              okText: t('button.Overwrite'),
+              cancelText: t('button.Cancel'),
+              onOk: () => resolve(true),
+              onCancel: () => resolve(false),
+            });
+          });
+          if (!confirmed) {
+            return;
+          }
+        }
+
+        const yamlContent = generateModelDefinitionYaml({
+          startCommand: values.startCommand!,
+          port: values.commandPort ?? 8000,
+          healthCheckPath: values.commandHealthCheck ?? '/health',
+          modelMountDestination: values.commandModelMount ?? '/models',
+          initialDelay: values.commandInitialDelay ?? 5.0,
+          maxRetries: values.commandMaxRetries ?? 10,
+        });
+
+        const blob = new Blob([yamlContent], { type: 'text/yaml' });
+        const file = new File([blob], 'model-definition.yaml', {
+          type: 'text/yaml',
+        });
+
+        const uploadUrl: string = await baiClient.vfolder.create_upload_session(
+          'model-definition.yaml',
+          file,
+          values.vFolderID,
+        );
+
+        const response = await fetch(uploadUrl, {
+          method: 'PATCH',
+          headers: {
+            'Upload-Offset': '0',
+            'Content-Type': 'application/offset+octet-stream',
+            'Tus-Resumable': '1.0.0',
+          },
+          body: blob,
+        });
+
+        if (!response.ok) {
+          throw new Error(t('modelService.YamlUploadFailed'));
+        }
+      }
+
       const environ: { [key: string]: string } = {};
       if (values.envvars) {
         values.envvars
@@ -461,6 +532,22 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
             environ[v.variable] = v.value;
           });
       }
+
+      // In command mode: force runtime_variant to 'custom', auto-set definition path and mount
+      const normalizePath = (
+        value: string | undefined | null,
+        fallback: string,
+      ) => {
+        const trimmed = value?.trim();
+        return trimmed && trimmed.length > 0 ? trimmed : fallback;
+      };
+      const modelDefinitionPath = isCommandMode
+        ? 'model-definition.yaml'
+        : normalizePath(values.modelDefinitionPath, 'model-definition.yaml');
+      const modelMountDestination = isCommandMode
+        ? normalizePath(values.commandModelMount, '/models')
+        : normalizePath(values.modelMountDestination, '/models');
+
       const body: ServiceCreateType = {
         name: values.serviceName,
         // REST API does not support `replicas` field. To use `replicas` field, we need `create_endpoint` mutation.
@@ -472,7 +559,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
           ),
           values,
         ),
-        runtime_variant: values.runtimeVariant,
+        runtime_variant: isCommandMode ? 'custom' : values.runtimeVariant,
         group: baiClient.current_group, // current Project Group,
         domain: currentDomain, // current Domain Group,
         cluster_size: values.cluster_size,
@@ -494,11 +581,8 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
             },
             {} as Record<string, MountOptionType>,
           ),
-          model_definition_path: values.modelDefinitionPath,
-          model_mount_destination:
-            values.modelMountDestination !== ''
-              ? values.modelMountDestination
-              : '/models',
+          model_definition_path: modelDefinitionPath,
+          model_mount_destination: modelMountDestination,
           environ, // FIXME: hardcoded. change it with option later
           scaling_group: values.resourceGroup,
           resources: {
@@ -1175,7 +1259,15 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                                         <Form.Item
                                           name="startCommand"
                                           label={t('modelService.StartCommand')}
-                                          rules={[{ required: true }]}
+                                          tooltip={t(
+                                            'modelService.StartCommandTooltip',
+                                          )}
+                                          rules={[
+                                            {
+                                              required: true,
+                                              whitespace: true,
+                                            },
+                                          ]}
                                         >
                                           <Input.TextArea
                                             placeholder={t(
@@ -1183,7 +1275,6 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                                             )}
                                             autoSize={{
                                               minRows: 2,
-                                              maxRows: 6,
                                             }}
                                             onChange={(e) => {
                                               parseCommandWithDebounce(
@@ -1192,26 +1283,27 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                                             }}
                                           />
                                         </Form.Item>
-                                        {gpuHint !== null && gpuHint > 0 && (
-                                          <Alert
-                                            type="info"
-                                            showIcon
-                                            message={t('modelService.GpuHint', {
-                                              count: gpuHint,
-                                            })}
-                                            style={{
-                                              marginBottom: token.marginMD,
-                                            }}
-                                          />
-                                        )}
+                                        <Form.Item
+                                          name="commandModelMount"
+                                          label={t('modelService.ModelMount')}
+                                          tooltip={t(
+                                            'modelService.ModelMountTooltip',
+                                          )}
+                                          initialValue="/models"
+                                        >
+                                          <Input placeholder="/models" />
+                                        </Form.Item>
                                         <BAIFlex
                                           direction="row"
-                                          gap="xs"
-                                          align="start"
+                                          gap="sm"
+                                          align="end"
                                         >
                                           <Form.Item
                                             name="commandPort"
                                             label={t('modelService.Port')}
+                                            tooltip={t(
+                                              'modelService.PortTooltip',
+                                            )}
                                             initialValue={8000}
                                             style={{ flex: 1 }}
                                           >
@@ -1224,63 +1316,73 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                                           <Form.Item
                                             name="commandHealthCheck"
                                             label={t(
-                                              'modelService.HealthCheckPath',
+                                              'modelService.HealthCheck',
+                                            )}
+                                            tooltip={t(
+                                              'modelService.HealthCheckTooltip',
                                             )}
                                             initialValue="/health"
                                             style={{ flex: 1 }}
                                           >
                                             <Input placeholder="/health" />
                                           </Form.Item>
+                                        </BAIFlex>
+                                        <BAIFlex
+                                          direction="row"
+                                          gap="sm"
+                                          align="end"
+                                        >
                                           <Form.Item
-                                            name="commandModelMount"
+                                            name="commandInitialDelay"
                                             label={t(
-                                              'modelService.ModelMountPath',
+                                              'modelService.InitialDelay',
                                             )}
-                                            initialValue="/models"
+                                            tooltip={t(
+                                              'modelService.InitialDelayTooltip',
+                                            )}
+                                            initialValue={5.0}
                                             style={{ flex: 1 }}
                                           >
-                                            <Input placeholder="/models" />
+                                            <InputNumber
+                                              min={0}
+                                              step={0.5}
+                                              style={{ width: '100%' }}
+                                            />
+                                          </Form.Item>
+                                          <Form.Item
+                                            name="commandMaxRetries"
+                                            label={t('modelService.MaxRetries')}
+                                            tooltip={t(
+                                              'modelService.MaxRetriesTooltip',
+                                            )}
+                                            initialValue={10}
+                                            style={{ flex: 1 }}
+                                          >
+                                            <InputNumber
+                                              min={0}
+                                              style={{ width: '100%' }}
+                                            />
                                           </Form.Item>
                                         </BAIFlex>
                                       </>
                                     ) : (
-                                      <BAIFlex
-                                        direction="row"
-                                        gap={'xxs'}
-                                        align="stretch"
-                                        justify="between"
-                                      >
+                                      <>
                                         <Form.Item
                                           name={'modelMountDestination'}
                                           label={t(
                                             'modelService.ModelMountDestination',
                                           )}
-                                          style={{ width: '50%' }}
-                                          labelCol={{
-                                            style: { flex: 1 },
-                                          }}
                                         >
                                           <Input
                                             allowClear
                                             placeholder={'/models'}
                                           />
                                         </Form.Item>
-                                        <MinusOutlined
-                                          style={{
-                                            fontSize: token.fontSizeXL,
-                                            color: token.colorTextDisabled,
-                                          }}
-                                          rotate={290}
-                                        />
                                         <Form.Item
                                           name={'modelDefinitionPath'}
                                           label={t(
                                             'modelService.ModelDefinitionPath',
                                           )}
-                                          style={{ width: '50%' }}
-                                          labelCol={{
-                                            style: { flex: 1 },
-                                          }}
                                         >
                                           <Input
                                             allowClear
@@ -1289,7 +1391,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                                             }
                                           />
                                         </Form.Item>
-                                      </BAIFlex>
+                                      </>
                                     )
                                   }
                                 </Form.Item>
@@ -1472,7 +1574,35 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                             </BAIFlex>
                           </Form.Item>
                         ) : (
-                          <ResourceAllocationFormItems enableResourcePresets />
+                          <ResourceAllocationFormItems
+                            enableResourcePresets
+                            extraAcceleratorRules={
+                              gpuHint
+                                ? [
+                                    {
+                                      warningOnly: true,
+                                      validator: async (
+                                        _rule: unknown,
+                                        value: number,
+                                      ) => {
+                                        if (
+                                          gpuHint &&
+                                          value > 0 &&
+                                          value < gpuHint
+                                        ) {
+                                          return Promise.reject(
+                                            t('modelService.GpuHint', {
+                                              count: gpuHint,
+                                            }),
+                                          );
+                                        }
+                                        return Promise.resolve();
+                                      },
+                                    },
+                                  ]
+                                : undefined
+                            }
+                          />
                         )}
                       </>
                     )}
