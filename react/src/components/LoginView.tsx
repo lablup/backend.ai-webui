@@ -43,6 +43,16 @@ import { useTranslation } from 'react-i18next';
 
 type ConnectionMode = 'SESSION' | 'API';
 
+/**
+ * Extract the error type suffix from a Backend.AI problem type URL.
+ * e.g., "https://api.backend.ai/probs/auth-failed" → "auth-failed"
+ */
+const extractErrorType = (typeUrl?: string): string => {
+  if (!typeUrl) return '';
+  const parts = typeUrl.split('/');
+  return parts[parts.length - 1] || '';
+};
+
 const LoginView: React.FC = () => {
   'use memo';
 
@@ -345,7 +355,7 @@ const LoginView: React.FC = () => {
         open();
         setIsLoading(false);
         if (showError) {
-          notification(t('error.NetworkConnectionFailed'));
+          notification(t('error.CannotConnectToServer'));
         }
         return;
       }
@@ -395,47 +405,23 @@ const LoginView: React.FC = () => {
       }
 
       // Do session login
+      // client.login() returns only on success (authenticated === true).
+      // All failure cases throw: login errors carry `isLoginError: true` with
+      // `data.type` for classification; server errors carry `isError: true`
+      // with structured info from _wrapWithPromise.
       try {
-        const { fail_reason, data } = await client.login(otp);
-        if (fail_reason) {
-          const shouldOpenLoginPanel = handleLoginFailReason(
-            fail_reason,
-            data,
-            showError,
-          );
-          if (!shouldOpenLoginPanel) {
-            // Don't close the login panel — its BAIModal uses destroyOnHidden,
-            // which would destroy the Form and clear field values needed by
-            // child modals (e.g., ResetPasswordRequiredInline reads username
-            // and currentPassword from form). Just dismiss the block overlay
-            // and let the child modal (zIndex=1002) appear above the login
-            // panel (zIndex=1001).
-            //
-            // Capture credentials explicitly for the password reset modal.
-            // Reading form values via form.getFieldValue() at render time is
-            // unreliable because React Compiler's memoization may cache the
-            // result based on the stable form reference.
-            expiredCredentialsRef.current = {
-              username: userId,
-              password,
-            };
-            setIsBlockPanelOpen(false);
-            setIsLoading(false);
-            return;
-          }
-        } else {
-          await doGQLConnect(client);
-          return;
-        }
+        await client.login(otp);
+        await doGQLConnect(client);
+        return;
       } catch (err: unknown) {
         setIsBlockPanelOpen(false);
-        if (showError) {
-          const e = err as { title?: string; message?: string };
-          if (e.message) {
-            notification(e.title || t('error.LoginFailed'), e.message);
-          } else {
-            notification(t('error.LoginInformationMismatch'));
-          }
+
+        const handled = handleLoginError(err, showError, userId, password);
+        if (handled === 'keep-open') {
+          // A dedicated modal (password reset, TOTP registration) was opened.
+          // Keep the login panel open to preserve form values for child modals.
+          setIsLoading(false);
+          return;
         }
       }
 
@@ -447,59 +433,202 @@ const LoginView: React.FC = () => {
     [apiEndpoint, form, endpoints, doGQLConnect, block, open, notification, t],
   );
 
-  // Returns false when the fail reason triggers a dedicated modal (password
-  // reset, TOTP registration) so the caller keeps the login panel open (to
-  // preserve form values) instead of reopening it.
-  const handleLoginFailReason = useCallback(
+  /**
+   * Unified login error handler. Classifies errors from client.login() and
+   * shows the appropriate notification or opens a dedicated modal.
+   *
+   * Returns 'keep-open' when a child modal (password reset, TOTP registration)
+   * needs the login panel to stay open (to preserve form values). Returns
+   * 'reopen' for all other cases so the caller reopens the login panel.
+   */
+  const handleLoginError = useCallback(
     (
-      failReason: string,
-      data: Record<string, unknown>,
+      err: unknown,
       showError: boolean,
-    ): boolean => {
-      if (failReason.includes('User credential mismatch.')) {
+      userId: string,
+      password: string,
+    ): 'keep-open' | 'reopen' => {
+      const e = err as {
+        isLoginError?: boolean;
+        isError?: boolean;
+        type?: string;
+        title?: string;
+        message?: string;
+        description?: string;
+        statusCode?: number;
+        data?: Record<string, unknown>;
+      };
+
+      // --- Login errors (envelope responses from /server/login) ---
+      if (e.isLoginError && e.data) {
+        const errorType = extractErrorType(e.data.type as string);
+        const details = ((e.data.details as string) || '') as string;
+
+        switch (errorType) {
+          case 'password-expired':
+            expiredCredentialsRef.current = { username: userId, password };
+            setNeedToResetPassword(true);
+            return 'keep-open';
+
+          case 'require-totp-registration':
+            setTotpRegistrationToken(
+              e.data.two_factor_registration_token as string,
+            );
+            setNeedsOtpRegistration(true);
+            return 'keep-open';
+
+          case 'require-totp-authentication':
+            if (showError && otpRequired) {
+              notification(t('login.PleaseInputOTPCode'));
+            }
+            setOtpRequired(true);
+            setIsLoading(false);
+            return 'reopen';
+
+          case 'rejected-by-hook':
+            if (
+              details.includes('Invalid TOTP code provided') ||
+              details.includes('Failed to validate OTP')
+            ) {
+              setOtpRequired(true);
+              form.setFieldValue('otp', '');
+              setIsLoading(false);
+              if (showError) {
+                notification(t('totp.InvalidTotpCode'));
+              }
+            } else if (showError) {
+              notification(t('error.LoginFailed'), details);
+            }
+            return 'reopen';
+
+          case 'active-login-session-exists':
+            // TODO(needs-backend): Add force login confirmation dialog that
+            // calls client.login(otp, true) to override the existing session.
+            // The `force` parameter is already supported by the backend API
+            // and client.login(). See FR-2377 for details.
+            if (showError) {
+              notification(
+                t('login.ActiveSessionExists'),
+                t('login.ActiveSessionExistsDescription'),
+              );
+            }
+            return 'reopen';
+
+          case 'login-session-expired':
+            if (showError) {
+              notification(t('login.SessionExpired'));
+            }
+            return 'reopen';
+
+          case 'auth-failed':
+            if (showError) {
+              if (details.toLowerCase().includes('email verification')) {
+                notification(t('login.EmailVerificationRequired'));
+              } else {
+                notification(t('error.LoginInformationMismatch'));
+              }
+            }
+            return 'reopen';
+
+          case 'monitor-role-login-forbidden':
+            if (showError) {
+              notification(t('login.MonitorRoleLoginForbidden'));
+            }
+            return 'reopen';
+
+          default:
+            // Legacy string-based fallbacks for backward compatibility
+            // with older backends that may not send a `type` field.
+            if (details.includes('User credential mismatch.')) {
+              if (showError) {
+                notification(t('error.LoginInformationMismatch'));
+              }
+            } else if (
+              details.includes('You must register Two-Factor Authentication.')
+            ) {
+              setTotpRegistrationToken(
+                e.data.two_factor_registration_token as string,
+              );
+              setNeedsOtpRegistration(true);
+              return 'keep-open';
+            } else if (
+              details.includes(
+                'You must authenticate using Two-Factor Authentication.',
+              ) ||
+              details.includes('OTP not provided')
+            ) {
+              if (showError && otpRequired) {
+                notification(t('login.PleaseInputOTPCode'));
+              }
+              setOtpRequired(true);
+              setIsLoading(false);
+              return 'reopen';
+            } else if (
+              details.includes('Invalid TOTP code provided') ||
+              details.includes('Failed to validate OTP')
+            ) {
+              setOtpRequired(true);
+              form.setFieldValue('otp', '');
+              setIsLoading(false);
+              if (showError) {
+                notification(t('totp.InvalidTotpCode'));
+              }
+              return 'reopen';
+            } else if (details.indexOf('Password expired on ') === 0) {
+              expiredCredentialsRef.current = { username: userId, password };
+              setNeedToResetPassword(true);
+              return 'keep-open';
+            } else if (showError) {
+              const fallbackMessage =
+                (typeof e.title === 'string' && e.title.trim()) ||
+                (typeof e.message === 'string' && e.message.trim()) ||
+                t('error.UnknownError');
+              notification(fallbackMessage);
+            }
+            return 'reopen';
+        }
+      }
+
+      // --- Server errors (429, 502, 503, etc. from _wrapWithPromise) ---
+      if (e.isError && e.type) {
+        const errorType = extractErrorType(e.type);
         if (showError) {
+          switch (errorType) {
+            case 'login-blocked':
+            case 'too-many-requests':
+            case 'rate-limit-exceeded':
+              notification(t('error.TooManyLoginFailures'));
+              break;
+            case 'server-frozen':
+              notification(t('login.ServerMaintenance'));
+              break;
+            case 'bad-gateway':
+              notification(t('login.ServerUnreachable'));
+              break;
+            case 'invalid-api-params':
+            case 'generic-bad-request':
+              notification(e.title || t('error.LoginFailed'));
+              break;
+            default:
+              notification(
+                e.title || t('error.LoginFailed'),
+                e.description || e.message,
+              );
+              break;
+          }
+        }
+        return 'reopen';
+      }
+
+      // --- Unstructured errors (network failures, etc.) ---
+      if (showError) {
+        if (e.message) {
+          notification(e.title || t('error.LoginFailed'), e.message);
+        } else {
           notification(t('error.LoginInformationMismatch'));
         }
-        return true;
       }
-      if (failReason.includes('You must register Two-Factor Authentication.')) {
-        setTotpRegistrationToken(data.two_factor_registration_token as string);
-        setNeedsOtpRegistration(true);
-        return false;
-      }
-      if (
-        failReason.includes(
-          'You must authenticate using Two-Factor Authentication.',
-        ) ||
-        failReason.includes('OTP not provided')
-      ) {
-        if (showError && otpRequired) {
-          notification(t('login.PleaseInputOTPCode'));
-        }
-        setOtpRequired(true);
-        setIsLoading(false);
-        return true;
-      }
-      if (
-        failReason.includes('Invalid TOTP code provided') ||
-        failReason.includes('Failed to validate OTP')
-      ) {
-        setOtpRequired(true);
-        form.setFieldValue('otp', '');
-        setIsLoading(false);
-        if (showError) {
-          notification(t('totp.InvalidTotpCode'));
-        }
-        return true;
-      }
-      if (failReason.indexOf('Password expired on ') === 0) {
-        setNeedToResetPassword(true);
-        return false;
-      }
-      if (showError) {
-        notification(t('error.UnknownError'));
-      }
-      return true;
+      return 'reopen';
     },
     [notification, t, otpRequired, form],
   );
@@ -546,7 +675,7 @@ const LoginView: React.FC = () => {
         await client.get_manager_version();
         await doGQLConnect(client);
       } catch {
-        notification(t('error.NetworkConnectionFailed'));
+        notification(t('error.CannotConnectToServer'));
         setIsLoading(false);
       }
     },
