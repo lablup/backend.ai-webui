@@ -897,6 +897,9 @@ class Client {
       this._features['rbac'] = true;
       this._features['bulk-purge-users'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('26.5.0')) {
+      this._features['model-card-v2'] = true;
+    }
   }
 
   /**
