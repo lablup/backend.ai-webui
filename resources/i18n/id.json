@@ -2084,6 +2084,7 @@
       "Accelerator": "Akselerator",
       "AddEnvironmentVariable": "Menambahkan variabel lingkungan",
       "AddingKernelToSocketQueue": "Menambahkan kernel ke antrian soket...",
+      "AdvancedSettings": "Pengaturan Lanjutan",
       "AgentNode": "Agen",
       "AllocateNode": "Modus klaster",
       "ApplicationMemory": "Application MEM {{value}}",

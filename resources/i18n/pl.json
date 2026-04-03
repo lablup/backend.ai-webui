@@ -2082,6 +2082,7 @@
       "Accelerator": "Akcelerator",
       "AddEnvironmentVariable": "Dodaj zmienne środowiskowe",
       "AddingKernelToSocketQueue": "Dodawanie jądra do kolejki gniazda...",
+      "AdvancedSettings": "Ustawienia zaawansowane",
       "AgentNode": "Agent",
       "AllocateNode": "Tryb klastra",
       "ApplicationMemory": "Application MEM {{value}}",

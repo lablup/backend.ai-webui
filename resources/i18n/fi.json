@@ -2082,6 +2082,7 @@
       "Accelerator": "Kiihdytin",
       "AddEnvironmentVariable": "Lisää ympäristömuuttujia",
       "AddingKernelToSocketQueue": "Ytimen lisääminen socket-jonoon...",
+      "AdvancedSettings": "Lisäasetukset",
       "AgentNode": "Agentti",
       "AllocateNode": "Cluster-tila",
       "ApplicationMemory": "Application MEM {{value}}",

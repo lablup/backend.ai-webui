@@ -70,6 +70,7 @@ import {
   Segmented,
   Skeleton,
   Select,
+  Switch,
   theme,
   Tooltip,
   Tag,
@@ -95,6 +96,7 @@ import {
   useMutation,
 } from 'react-relay';
 import {
+  BooleanParam,
   JsonParam,
   StringParam,
   useQueryParams,
@@ -194,11 +196,14 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
 
   // Setup query parameters for URL synchronization
   const FormValuesParam = withDefault(JsonParam, {});
-  const [{ model, formValues: formValuesFromQueryParams }, setQuery] =
-    useQueryParams({
-      model: StringParam,
-      formValues: FormValuesParam,
-    });
+  const [
+    { model, formValues: formValuesFromQueryParams, advancedMode },
+    setQuery,
+  ] = useQueryParams({
+    model: StringParam,
+    formValues: FormValuesParam,
+    advancedMode: withDefault(BooleanParam, false),
+  });
 
   const webuiNavigate = useWebUINavigate();
   const baiClient = useSuspendedBackendaiClient();
@@ -1547,62 +1552,6 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                             ))
                           }
                         </Form.Item>
-                        <Form.Item dependencies={['runtimeVariant']} noStyle>
-                          {({ getFieldValue }) => {
-                            const runtimeVariant =
-                              getFieldValue('runtimeVariant');
-                            const runtimeVariantConfig = runtimeVariant
-                              ? RUNTIME_ENV_VAR_CONFIGS[runtimeVariant]
-                              : null;
-
-                            return (
-                              <Form.Item
-                                label={t(
-                                  'session.launcher.EnvironmentVariable',
-                                )}
-                              >
-                                <EnvVarFormList
-                                  name={'envvars'}
-                                  requiredEnvVars={
-                                    runtimeVariantConfig?.requiredEnvVars
-                                  }
-                                  optionalEnvVars={
-                                    runtimeVariantConfig?.optionalEnvVars
-                                  }
-                                  formItemProps={{
-                                    validateTrigger: ['onChange', 'onBlur'],
-                                    rules: [
-                                      {
-                                        warningOnly: true,
-                                        validator: async (
-                                          _rule,
-                                          value: string,
-                                        ) => {
-                                          if (!value) {
-                                            return Promise.resolve();
-                                          }
-
-                                          if (
-                                            !validateVariable(
-                                              runtimeVariant,
-                                              value,
-                                            )
-                                          ) {
-                                            throw t(
-                                              'session.launcher.EnvironmentVariableNotForRuntime',
-                                            );
-                                          } else {
-                                            return Promise.resolve();
-                                          }
-                                        },
-                                      },
-                                    ],
-                                  }}
-                                />
-                              </Form.Item>
-                            );
-                          }}
-                        </Form.Item>
                         <Form.Item noStyle dependencies={['vFolderID']}>
                           {({ getFieldValue }) => {
                             return (
@@ -1754,6 +1703,83 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                         )}
                       </>
                     )}
+                  </Card>
+                  <Card
+                    title={t('session.launcher.AdvancedSettings')}
+                    extra={
+                      <Switch
+                        checked={advancedMode}
+                        onChange={(checked) => {
+                          setQuery(
+                            { advancedMode: checked || undefined },
+                            'replaceIn',
+                          );
+                        }}
+                      />
+                    }
+                    styles={
+                      advancedMode
+                        ? undefined
+                        : {
+                            header: {
+                              borderBottom: 'none',
+                            },
+                            body: {
+                              display: 'none',
+                            },
+                          }
+                    }
+                  >
+                    <Form.Item dependencies={['runtimeVariant']} noStyle>
+                      {({ getFieldValue }) => {
+                        const runtimeVariant = getFieldValue('runtimeVariant');
+                        const runtimeVariantConfig = runtimeVariant
+                          ? RUNTIME_ENV_VAR_CONFIGS[runtimeVariant]
+                          : null;
+
+                        return (
+                          <Form.Item
+                            label={t('session.launcher.EnvironmentVariable')}
+                          >
+                            <EnvVarFormList
+                              name={'envvars'}
+                              requiredEnvVars={
+                                runtimeVariantConfig?.requiredEnvVars
+                              }
+                              optionalEnvVars={
+                                runtimeVariantConfig?.optionalEnvVars
+                              }
+                              formItemProps={{
+                                validateTrigger: ['onChange', 'onBlur'],
+                                rules: [
+                                  {
+                                    warningOnly: true,
+                                    validator: async (_rule, value: string) => {
+                                      if (!value) {
+                                        return Promise.resolve();
+                                      }
+
+                                      if (
+                                        !validateVariable(runtimeVariant, value)
+                                      ) {
+                                        throw t(
+                                          'session.launcher.EnvironmentVariableNotForRuntime',
+                                        );
+                                      } else {
+                                        return Promise.resolve();
+                                      }
+                                    },
+                                  },
+                                ],
+                              }}
+                            />
+                          </Form.Item>
+                        );
+                      }}
+                    </Form.Item>
+                    {/* TODO(FR-2444): Extract cluster mode from ResourceAllocationFormItems
+                        into a standalone component so it can be placed in the Advanced Card
+                        with all original logic (disable conditions, max limit, onChange, remaining warnings). */}
                   </Card>
                   <BAIFlex
                     direction="row"

@@ -2082,6 +2082,7 @@
       "Accelerator": "Accélérateur",
       "AddEnvironmentVariable": "Ajouter des variables d'environnement",
       "AddingKernelToSocketQueue": "Ajout du noyau à la file d'attente des sockets...",
+      "AdvancedSettings": "Paramètres avancés",
       "AgentNode": "Agent",
       "AllocateNode": "Mode cluster",
       "ApplicationMemory": "Application MEM {{value}}",

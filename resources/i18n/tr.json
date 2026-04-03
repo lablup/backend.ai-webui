@@ -2082,6 +2082,7 @@
       "Accelerator": "Gaz pedalı",
       "AddEnvironmentVariable": "Ortam değişkenleri ekleme",
       "AddingKernelToSocketQueue": "Soket kuyruğuna çekirdek ekleniyor...",
+      "AdvancedSettings": "Gelişmiş Ayarlar",
       "AgentNode": "Ajan",
       "AllocateNode": "küme modu",
       "ApplicationMemory": "Application MEM {{value}}",

@@ -2084,6 +2084,7 @@
       "Accelerator": "Máy gia tốc",
       "AddEnvironmentVariable": "Thêm biến môi trường",
       "AddingKernelToSocketQueue": "Thêm hạt nhân vào hàng đợi socket ...",
+      "AdvancedSettings": "Cài đặt nâng cao",
       "AgentNode": "Đại lý",
       "AllocateNode": "Chế độ cụm",
       "ApplicationMemory": "Application MEM {{value}}",

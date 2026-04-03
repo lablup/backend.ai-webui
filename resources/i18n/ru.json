@@ -2082,6 +2082,7 @@
       "Accelerator": "Ускоритель",
       "AddEnvironmentVariable": "Добавьте переменные окружения",
       "AddingKernelToSocketQueue": "Добавление ядра в очередь сокетов ...",
+      "AdvancedSettings": "Расширенные настройки",
       "AgentNode": "Агент",
       "AllocateNode": "Кластерный режим",
       "ApplicationMemory": "Application MEM {{value}}",
