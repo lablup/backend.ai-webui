@@ -35,8 +35,10 @@ import {
   BAILink,
   BAIConfirmModalWithInput,
   BAITag,
+  bytesToGB,
 } from 'backend.ai-ui';
 import type { BAINameActionCellAction } from 'backend.ai-ui';
+import dayjs from 'dayjs';
 import _ from 'lodash';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -207,12 +209,20 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
         status
         name
         host
+        quota_scope_id
         ownership_type
         user
         user_email
         group
         group_name
         usage_mode
+        max_files
+        max_size
+        created_at
+        last_used
+        num_files
+        cur_size
+        cloneable
         permissions @since(version: "24.09.0")
         ...VFolderPermissionCellFragment
         ...VFolderNodeIdenticonFragment
@@ -420,6 +430,107 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
               vfolder.ownership_type === 'user'
                 ? vfolder?.user_email
                 : vfolder?.group_name,
+          },
+          {
+            key: 'usage_mode',
+            title: t('data.UsageMode'),
+            dataIndex: 'usage_mode',
+            defaultHidden: true,
+            sorter: true,
+            filters: [
+              { text: t('data.General'), value: 'general' },
+              { text: t('webui.menu.Data'), value: 'data' },
+              { text: t('data.Models'), value: 'model' },
+            ],
+            onFilter: (value, record) => record.usage_mode === value,
+            render: (mode: string) => {
+              switch (mode) {
+                case 'general':
+                  return t('data.General');
+                case 'data':
+                  return t('webui.menu.Data');
+                case 'model':
+                  return t('data.Models');
+                default:
+                  return mode;
+              }
+            },
+          },
+          {
+            key: 'num_files',
+            title: t('data.folders.NumberOfFiles'),
+            dataIndex: 'num_files',
+            defaultHidden: true,
+            sorter: true,
+            render: (value: number) =>
+              value != null ? value.toLocaleString() : '-',
+          },
+          {
+            key: 'cur_size',
+            title: t('data.folders.FolderUsage'),
+            dataIndex: 'cur_size',
+            defaultHidden: true,
+            sorter: true,
+            render: (value: string) =>
+              value != null ? `${bytesToGB(Number(value))} GB` : '-',
+          },
+          {
+            key: 'max_files',
+            title: t('data.folders.MaxFolderQuota'),
+            dataIndex: 'max_files',
+            defaultHidden: true,
+            sorter: true,
+            render: (value: number) =>
+              value != null && value > 0 ? value.toLocaleString() : '-',
+          },
+          {
+            key: 'max_size',
+            title: t('data.folders.MaxSize'),
+            dataIndex: 'max_size',
+            defaultHidden: true,
+            sorter: true,
+            render: (value: string) =>
+              value != null && Number(value) > 0
+                ? `${bytesToGB(Number(value))} GB`
+                : '-',
+          },
+          {
+            key: 'cloneable',
+            title: t('data.folders.Cloneable'),
+            dataIndex: 'cloneable',
+            defaultHidden: true,
+            filters: [
+              { text: t('button.Yes'), value: true },
+              { text: t('button.No'), value: false },
+            ],
+            onFilter: (value, record) => record.cloneable === value,
+            render: (value: boolean) =>
+              value ? t('button.Yes') : t('button.No'),
+          },
+          {
+            key: 'quota_scope_id',
+            title: t('data.QuotaScopeId'),
+            dataIndex: 'quota_scope_id',
+            defaultHidden: true,
+            sorter: true,
+          },
+          {
+            key: 'last_used',
+            title: t('credential.LastUsed'),
+            dataIndex: 'last_used',
+            defaultHidden: true,
+            sorter: true,
+            render: (value: string) =>
+              value ? dayjs(value).format('ll LT') : '-',
+          },
+          {
+            key: 'created_at',
+            title: t('data.folders.CreatedAt'),
+            dataIndex: 'created_at',
+            defaultHidden: true,
+            sorter: true,
+            render: (value: string) =>
+              value ? dayjs(value).format('ll LT') : '-',
           },
         ]}
         {...tableProps}

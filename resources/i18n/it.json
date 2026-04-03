@@ -423,6 +423,7 @@
     "ProjectFolder": "Cartella del progetto",
     "ProjectFolders": "Cartelle di progetto",
     "QuotaPerStorageVolume": "Quota per volume di archiviazione",
+    "QuotaScopeId": "ID ambito quota",
     "ReadOnly": "Solo lettura",
     "ReadWrite": "Leggi e scrivi",
     "SearchByName": "Ricerca per nome",

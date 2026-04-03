@@ -424,6 +424,7 @@
     "ProjectFolder": "프로젝트 폴더",
     "ProjectFolders": "프로젝트 폴더",
     "QuotaPerStorageVolume": "스토리지 볼륨별 가용량",
+    "QuotaScopeId": "가용량 범위 ID",
     "ReadOnly": "읽기 전용",
     "ReadWrite": "읽기 및 쓰기",
     "SearchByName": "이름으로 검색",

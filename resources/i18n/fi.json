@@ -423,6 +423,7 @@
     "ProjectFolder": "Projektikansio",
     "ProjectFolders": "Projektikansiot",
     "QuotaPerStorageVolume": "Kiintiö tallennustilavuutta kohti",
+    "QuotaScopeId": "Kiintiön laajuuden ID",
     "ReadOnly": "Vain lue",
     "ReadWrite": "Lue ja kirjoita",
     "SearchByName": "Hae nimellä",

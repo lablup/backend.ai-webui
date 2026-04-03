@@ -423,6 +423,7 @@
     "ProjectFolder": "Pasta de projeto",
     "ProjectFolders": "Pastas de projeto",
     "QuotaPerStorageVolume": "Quota por volume de armazenamento",
+    "QuotaScopeId": "ID do âmbito do contingente",
     "ReadOnly": "Somente leitura",
     "ReadWrite": "Leia e escreva",
     "SearchByName": "Procura por nome",

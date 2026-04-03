@@ -423,6 +423,7 @@
     "ProjectFolder": "プロジェクトフォルダ",
     "ProjectFolders": "プロジェクトフォルダー",
     "QuotaPerStorageVolume": "ストレージボリュームごとの利用可能量",
+    "QuotaScopeId": "可用量範囲ID",
     "ReadOnly": "読み取り専用",
     "ReadWrite": "読み書き可能",
     "SearchByName": "名前で検索",

@@ -423,6 +423,7 @@
     "ProjectFolder": "Thư mục dự án",
     "ProjectFolders": "Thư mục dự án",
     "QuotaPerStorageVolume": "Hạn ngạch cho mỗi dung lượng lưu trữ",
+    "QuotaScopeId": "ID phạm vi hạn ngạch",
     "ReadOnly": "Chỉ đọc",
     "ReadWrite": "Đọc và viết",
     "SearchByName": "Tìm kiếm theo tên",

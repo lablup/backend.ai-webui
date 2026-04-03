@@ -423,6 +423,7 @@
     "ProjectFolder": "Папка проекта",
     "ProjectFolders": "Проектные папки",
     "QuotaPerStorageVolume": "Квота на один том хранения",
+    "QuotaScopeId": "Идентификатор области квотирования",
     "ReadOnly": "Читать только",
     "ReadWrite": "Читать и написать",
     "SearchByName": "Поиск по имени",
