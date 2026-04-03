@@ -1,0 +1,306 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+import {
+  RuntimeParameterDef,
+  RuntimeParameterCategory,
+} from '../constants/runtimeParameterFallbacks';
+import {
+  mergeExtraArgs,
+  reverseMapExtraArgs,
+} from '../helper/runtimeExtraArgsParser';
+import {
+  RuntimeParameterGroup,
+  useRuntimeParameterSchema,
+  buildDefaultsMap,
+  buildSchemaKeySet,
+} from '../hooks/useRuntimeParameterSchema';
+import InputNumberWithSlider from './InputNumberWithSlider';
+import { InfoCircleOutlined } from '@ant-design/icons';
+import {
+  Checkbox,
+  Collapse,
+  Form,
+  InputNumber,
+  Select,
+  Input,
+  Tooltip,
+  Typography,
+  theme,
+} from 'antd';
+import { BAIFlex } from 'backend.ai-ui';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+
+const { Text } = Typography;
+
+const CATEGORY_LABELS: Record<RuntimeParameterCategory, string> = {
+  sampling: 'runtimeParam.categorySampling',
+  context: 'runtimeParam.categoryContext',
+  advanced: 'runtimeParam.categoryAdvanced',
+};
+
+export interface RuntimeParameterValues {
+  [key: string]: string;
+}
+
+interface RuntimeParameterFormSectionProps {
+  runtimeVariant: string;
+  value?: RuntimeParameterValues;
+  onChange?: (values: RuntimeParameterValues) => void;
+  /** Extra args text from manual input field (for merge preview) */
+  manualExtraArgs?: string;
+  /** Existing extra args string for edit mode reverse-mapping */
+  initialExtraArgs?: string;
+}
+
+/**
+ * Dynamic form section for runtime parameters (vLLM/SGLang).
+ * Renders slider/input/select/checkbox controls based on parameter schema.
+ */
+const RuntimeParameterFormSection: React.FC<
+  RuntimeParameterFormSectionProps
+> = ({
+  runtimeVariant,
+  value: controlledValue,
+  onChange,
+  initialExtraArgs,
+}) => {
+  'use memo';
+  const { t } = useTranslation();
+  const { token } = theme.useToken();
+  const groups = useRuntimeParameterSchema(runtimeVariant);
+
+  // Internal state for uncontrolled usage
+  const [internalValues, setInternalValues] = useState<RuntimeParameterValues>(
+    {},
+  );
+  const values = controlledValue ?? internalValues;
+
+  const setValues = useCallback(
+    (newValues: RuntimeParameterValues) => {
+      if (onChange) {
+        onChange(newValues);
+      } else {
+        setInternalValues(newValues);
+      }
+    },
+    [onChange],
+  );
+
+  // Initialize from defaults or reverse-map from existing extra args
+  useEffect(() => {
+    if (!groups) return;
+
+    const defaults = buildDefaultsMap(groups);
+
+    if (initialExtraArgs) {
+      const schemaKeys = buildSchemaKeySet(groups);
+      const { mappedArgs } = reverseMapExtraArgs(initialExtraArgs, schemaKeys);
+      // Merge mapped values with defaults for any missing keys
+      setValues({ ...defaults, ...mappedArgs });
+    } else {
+      setValues(defaults);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [runtimeVariant]);
+
+  const handleParamChange = useCallback(
+    (key: string, newValue: string) => {
+      const updated = { ...values, [key]: newValue };
+      setValues(updated);
+    },
+    [values, setValues],
+  );
+
+  if (!groups) return null;
+
+  return (
+    <BAIFlex direction="column" gap="xs">
+      <Text strong style={{ marginBottom: token.marginXS }}>
+        {t('runtimeParam.title')}
+      </Text>
+      {groups.map((group) => {
+        if (group.category === 'advanced') {
+          return (
+            <Collapse
+              key={group.category}
+              ghost
+              size="small"
+              items={[
+                {
+                  key: 'advanced',
+                  label: (
+                    <Text type="secondary">
+                      {t(CATEGORY_LABELS[group.category])}
+                    </Text>
+                  ),
+                  children: (
+                    <ParameterGroupContent
+                      group={group}
+                      values={values}
+                      onParamChange={handleParamChange}
+                    />
+                  ),
+                },
+              ]}
+            />
+          );
+        }
+        return (
+          <BAIFlex key={group.category} direction="column" gap="xxs">
+            <Text type="secondary" style={{ fontSize: token.fontSizeSM }}>
+              {t(CATEGORY_LABELS[group.category])}
+            </Text>
+            <ParameterGroupContent
+              group={group}
+              values={values}
+              onParamChange={handleParamChange}
+            />
+          </BAIFlex>
+        );
+      })}
+    </BAIFlex>
+  );
+};
+
+interface ParameterGroupContentProps {
+  group: RuntimeParameterGroup;
+  values: RuntimeParameterValues;
+  onParamChange: (key: string, value: string) => void;
+}
+
+const ParameterGroupContent: React.FC<ParameterGroupContentProps> = ({
+  group,
+  values,
+  onParamChange,
+}) => {
+  return (
+    <BAIFlex direction="column" gap="xxs">
+      {group.params.map((param) => (
+        <ParameterControl
+          key={param.key}
+          param={param}
+          value={values[param.key] ?? param.defaultValue}
+          onChange={(val) => onParamChange(param.key, val)}
+        />
+      ))}
+    </BAIFlex>
+  );
+};
+
+interface ParameterControlProps {
+  param: RuntimeParameterDef;
+  value: string;
+  onChange: (value: string) => void;
+}
+
+const ParameterControl: React.FC<ParameterControlProps> = ({
+  param,
+  value,
+  onChange,
+}) => {
+  'use memo';
+  const { t } = useTranslation();
+  const { token } = theme.useToken();
+
+  const label = (
+    <BAIFlex direction="row" gap="xxs" align="center">
+      <span>{t(param.name)}</span>
+      <Tooltip title={t(param.description)}>
+        <InfoCircleOutlined
+          style={{
+            color: token.colorTextSecondary,
+            fontSize: token.fontSizeSM,
+          }}
+        />
+      </Tooltip>
+    </BAIFlex>
+  );
+
+  switch (param.uiType) {
+    case 'slider':
+      return (
+        <Form.Item label={label} style={{ marginBottom: token.marginXS }}>
+          <InputNumberWithSlider
+            min={param.min}
+            max={param.max}
+            step={param.step}
+            value={parseFloat(value)}
+            onChange={(v) => onChange(String(v))}
+            inputContainerMinWidth={150}
+          />
+        </Form.Item>
+      );
+
+    case 'number_input':
+      return (
+        <Form.Item label={label} style={{ marginBottom: token.marginXS }}>
+          <InputNumber
+            min={param.min}
+            max={param.max}
+            step={param.step}
+            value={
+              param.valueType === 'int'
+                ? parseInt(value, 10)
+                : parseFloat(value)
+            }
+            onChange={(v) => {
+              if (v !== null) onChange(String(v));
+            }}
+            style={{ width: '100%' }}
+          />
+        </Form.Item>
+      );
+
+    case 'select':
+      return (
+        <Form.Item label={label} style={{ marginBottom: token.marginXS }}>
+          <Select
+            value={value}
+            onChange={onChange}
+            options={param.options?.map((opt) => ({
+              value: opt.value,
+              label: opt.label,
+            }))}
+          />
+        </Form.Item>
+      );
+
+    case 'checkbox':
+      return (
+        <Form.Item style={{ marginBottom: token.marginXS }}>
+          <Checkbox
+            checked={value === 'true'}
+            onChange={(e) => onChange(e.target.checked ? 'true' : 'false')}
+          >
+            {label}
+          </Checkbox>
+        </Form.Item>
+      );
+
+    case 'text_input':
+    default:
+      return (
+        <Form.Item label={label} style={{ marginBottom: token.marginXS }}>
+          <Input value={value} onChange={(e) => onChange(e.target.value)} />
+        </Form.Item>
+      );
+  }
+};
+
+export default RuntimeParameterFormSection;
+
+/**
+ * Helper to generate the final EXTRA_ARGS string from runtime parameter values.
+ * This is used by the parent form when submitting.
+ */
+export function buildExtraArgsString(
+  paramValues: RuntimeParameterValues,
+  manualExtraArgs: string,
+  groups: RuntimeParameterGroup[],
+): string {
+  const defaults = buildDefaultsMap(groups);
+  return mergeExtraArgs(paramValues, manualExtraArgs, defaults);
+}
