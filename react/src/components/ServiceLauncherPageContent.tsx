@@ -8,6 +8,11 @@ import { ServiceLauncherPageContent_AutoScalingRulesQuery } from '../__generated
 import { ServiceLauncherPageContent_UserInfoQuery } from '../__generated__/ServiceLauncherPageContent_UserInfoQuery.graphql';
 import { ServiceLauncherPageContent_UserResourcePolicyQuery } from '../__generated__/ServiceLauncherPageContent_UserResourcePolicyQuery.graphql';
 import {
+  getAllExtraArgsEnvVars,
+  getExtraArgsEnvVar,
+  RUNTIME_PARAMETER_FALLBACKS,
+} from '../constants/runtimeParameterFallbacks';
+import {
   baiSignedRequestWithPromise,
   compareNumberWithUnits,
   convertToBinaryUnit,
@@ -15,6 +20,10 @@ import {
 } from '../helper';
 import { generateModelDefinitionYaml } from '../helper/generateModelDefinitionYaml';
 import { parseCliCommand } from '../helper/parseCliCommand';
+import {
+  mergeExtraArgs,
+  reverseMapExtraArgs,
+} from '../helper/runtimeExtraArgsParser';
 import {
   useCurrentDomainValue,
   useSuspendedBackendaiClient,
@@ -36,6 +45,9 @@ import ImageEnvironmentSelectFormItems, {
   ImageEnvironmentFormInput,
 } from './ImageEnvironmentSelectFormItems';
 import InputNumberWithSlider from './InputNumberWithSlider';
+import RuntimeParameterFormSection, {
+  RuntimeParameterValues,
+} from './RuntimeParameterFormSection';
 import ResourceAllocationFormItems, {
   AUTOMATIC_DEFAULT_SHMEM,
   RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
@@ -204,6 +216,10 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
   const { getErrorMessage } = useErrorMessageResolver();
   const RUNTIME_ENV_VAR_CONFIGS = useRuntimeEnvVarConfigs();
   const currentProject = useCurrentProjectValue();
+
+  // Runtime parameter UI state
+  const [runtimeParamValues, setRuntimeParamValues] =
+    useState<RuntimeParameterValues>({});
 
   // "Paste Your Command" — GPU hint from parsed CLI command
   const [gpuHint, setGpuHint] = useState<number | null>(null);
@@ -535,6 +551,36 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
           });
       }
 
+      // Remove stale EXTRA_ARGS env vars from other runtime variants
+      const extraArgsEnvVar = getExtraArgsEnvVar(values.runtimeVariant);
+      for (const envName of getAllExtraArgsEnvVars()) {
+        if (envName !== extraArgsEnvVar) {
+          delete environ[envName];
+        }
+      }
+
+      // Merge runtime parameter UI values into EXTRA_ARGS env var
+      if (extraArgsEnvVar && Object.keys(runtimeParamValues).length > 0) {
+        const paramGroups = RUNTIME_PARAMETER_FALLBACKS[values.runtimeVariant];
+        if (paramGroups) {
+          const defaults: Record<string, string> = {};
+          for (const p of paramGroups) {
+            defaults[p.key] = p.defaultValue;
+          }
+          const manualArgs = environ[extraArgsEnvVar] ?? '';
+          const merged = mergeExtraArgs(
+            runtimeParamValues,
+            manualArgs,
+            defaults,
+          );
+          if (merged) {
+            environ[extraArgsEnvVar] = merged;
+          } else {
+            delete environ[extraArgsEnvVar];
+          }
+        }
+      }
+
       // In command mode: force runtime_variant to 'custom', auto-set definition path and mount
       const normalizePath = (
         value: string | undefined | null,
@@ -839,6 +885,34 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                 newEnvirons[v.variable] = v.value;
               });
           }
+
+          // Remove stale EXTRA_ARGS env vars from other runtime variants
+          const extraArgsKey = getExtraArgsEnvVar(values.runtimeVariant);
+          for (const envName of getAllExtraArgsEnvVars()) {
+            if (envName !== extraArgsKey) {
+              delete newEnvirons[envName];
+            }
+          }
+
+          // Merge runtime parameter UI values into EXTRA_ARGS env var
+          if (extraArgsKey && Object.keys(runtimeParamValues).length > 0) {
+            const paramDefs =
+              RUNTIME_PARAMETER_FALLBACKS[values.runtimeVariant];
+            if (paramDefs) {
+              const defs: Record<string, string> = {};
+              for (const p of paramDefs) {
+                defs[p.key] = p.defaultValue;
+              }
+              const manual = newEnvirons[extraArgsKey] ?? '';
+              const merged = mergeExtraArgs(runtimeParamValues, manual, defs);
+              if (merged) {
+                newEnvirons[extraArgsKey] = merged;
+              } else {
+                delete newEnvirons[extraArgsKey];
+              }
+            }
+          }
+
           mutationVariables.props.environ = JSON.stringify(newEnvirons);
           commitModifyEndpoint({
             variables: mutationVariables,
@@ -1007,10 +1081,33 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
         modelMountDestination: endpoint?.model_mount_destination,
         modelDefinitionPath: endpoint?.model_definition_path,
         runtimeVariant: endpoint?.runtime_variant?.name,
-        envvars: _.map(
-          JSON.parse(endpoint?.environ || '{}'),
-          (value, variable) => ({ variable, value }),
-        ),
+        envvars: (() => {
+          const parsed = JSON.parse(endpoint?.environ || '{}') as Record<
+            string,
+            string
+          >;
+          // In edit mode, strip slider-managed keys from EXTRA_ARGS so that
+          // the manual input only contains unmapped args (prevents manual input
+          // from overriding slider changes on submit).
+          const variant = endpoint?.runtime_variant?.name;
+          if (variant) {
+            const envKey = getExtraArgsEnvVar(variant);
+            const params = RUNTIME_PARAMETER_FALLBACKS[variant];
+            if (envKey && parsed[envKey] && params) {
+              const schemaKeys = new Set(params.map((p) => p.key));
+              const { unmappedText } = reverseMapExtraArgs(
+                parsed[envKey],
+                schemaKeys,
+              );
+              if (unmappedText) {
+                parsed[envKey] = unmappedText;
+              } else {
+                delete parsed[envKey];
+              }
+            }
+          }
+          return _.map(parsed, (value, variable) => ({ variable, value }));
+        })(),
       }
     : {
         replicas: 1,
@@ -1178,6 +1275,33 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                               });
                             }}
                           />
+                        </Form.Item>
+                        <Form.Item dependencies={['runtimeVariant']} noStyle>
+                          {({ getFieldValue }) => {
+                            const variant = getFieldValue('runtimeVariant');
+                            if (variant !== 'vllm' && variant !== 'sglang')
+                              return null;
+
+                            // Extract existing EXTRA_ARGS for edit mode reverse-mapping
+                            const extraArgsEnvName =
+                              getExtraArgsEnvVar(variant);
+                            const existingExtraArgs = endpoint
+                              ? ((
+                                  JSON.parse(
+                                    endpoint?.environ || '{}',
+                                  ) as Record<string, string>
+                                )[extraArgsEnvName ?? ''] ?? '')
+                              : '';
+
+                            return (
+                              <RuntimeParameterFormSection
+                                runtimeVariant={variant}
+                                value={runtimeParamValues}
+                                onChange={setRuntimeParamValues}
+                                initialExtraArgs={existingExtraArgs}
+                              />
+                            );
+                          }}
                         </Form.Item>
                         <Form.Item dependencies={['runtimeVariant']} noStyle>
                           {({ getFieldValue }) =>
