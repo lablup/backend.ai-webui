@@ -14,8 +14,8 @@
 
 ### 필수 (Must Have)
 
-- [ ] 런처 폼의 첫 번째 Card(서비스 설정 카드) 하단에 Advanced 모드 토글 버튼 추가
-- [ ] Advanced 섹션은 `SessionOwnerSetterCard`와 동일한 패턴으로 구현: Card + 토글 버튼 + `display: none/block`으로 내용 표시/숨김 (DOM에 항상 존재하여 Form validation이 접힌 상태에서도 동작)
+- [ ] Advanced 옵션을 별도의 collapsible Card 컴포넌트로 구현하여 서비스 런처 폼 하위에 배치 (세션 런처의 `SessionOwnerSetterCard`와 동일한 패턴: 독립 Card + Switch 토글 + `styles.body.display: none/block`으로 내용 표시/숨김)
+- [ ] 모든 Advanced 옵션을 이 하나의 Card 안에 모아서 표시 (DOM에 항상 존재하여 Form validation이 접힌 상태에서도 동작)
 - [ ] 새 서비스 생성 시 Advanced 모드는 기본적으로 접힌(off) 상태
 - [ ] **환경 변수** (`EnvVarFormList`, 런타임 variant의 필수 환경 변수 포함)를 Advanced 섹션으로 이동
 - [ ] **추가 마운트** (현재 `VFolderTableFormItem`)를 Advanced 섹션으로 이동하고, `BAIVFolderSelect` multi-select 모드로 교체
@@ -41,8 +41,8 @@
 
 ### Advanced 모드 토글
 
-- [ ] 서비스 설정 카드 하단에 토글 버튼 렌더링
-- [ ] 토글 클릭 시 Advanced 섹션 표시/숨김 (`display: none/block` 패턴, `SessionOwnerSetterCard`와 동일 — DOM에 항상 유지하여 validation 보장)
+- [ ] 서비스 런처 폼 하위에 별도의 collapsible Card 컴포넌트로 렌더링 (`SessionOwnerSetterCard`와 동일 패턴: Card title에 "Advanced" 표시, `extra` 영역에 Switch 토글)
+- [ ] Switch 토글로 Card body 표시/숨김 (`styles.body.display: none/block` 패턴 — DOM에 항상 유지하여 validation 보장)
 - [ ] 토글 상태를 URL 쿼리 파라미터에 동기화 (예: `advancedMode=true`)
 - [ ] 페이지 로드 시 URL에 `advancedMode=true`가 있으면 Advanced 섹션 펼침
 
