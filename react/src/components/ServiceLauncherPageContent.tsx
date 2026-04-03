@@ -81,7 +81,7 @@ import {
   BAIVFolderSelect,
   ESMClientErrorResponse,
   filterOutNullAndUndefined,
-  convertToUUID,
+  toLocalId,
   mergeFilterValues,
   useErrorMessageResolver,
   useBAILogger,
@@ -381,6 +381,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
           human_readable_name
         }
         extra_mounts @since(version: "24.03.4") {
+          id
           row_id
           name
         }
@@ -626,9 +627,10 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
           extra_mounts: _.reduce(
             values.mount_ids,
             (acc, key: string) => {
-              acc[key] = {
-                ...(values.mount_id_map[key] && {
-                  mount_destination: values.mount_id_map[key],
+              const localId = toLocalId(key);
+              acc[localId] = {
+                ...(values.mount_id_map[localId] && {
+                  mount_destination: values.mount_id_map[localId],
                 }),
                 type: 'bind', // FIXME: hardcoded. change it with option later
               };
@@ -868,10 +870,11 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                   values,
                 ),
                 extra_mounts: _.map(values.mount_ids, (vfolder) => {
+                  const localId = toLocalId(vfolder);
                   return {
-                    vfolder_id: vfolder,
-                    ...(values.mount_id_map[vfolder] && {
-                      mount_destination: values.mount_id_map[vfolder],
+                    vfolder_id: localId,
+                    ...(values.mount_id_map[localId] && {
+                      mount_destination: values.mount_id_map[localId],
                     }),
                   };
                 }),
@@ -1081,7 +1084,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
           image: endpoint?.image_object,
         },
         vFolderID: endpoint?.model,
-        mount_ids: _.map(endpoint?.extra_mounts, (item) => item?.row_id),
+        mount_ids: _.map(endpoint?.extra_mounts, (item) => item?.id),
         // TODO: implement mount_id_map. Now, it's impossible to get mount_destination from backend
         modelMountDestination: endpoint?.model_mount_destination,
         modelDefinitionPath: endpoint?.model_definition_path,
@@ -1711,30 +1714,39 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                           }
                     }
                   >
+                    <Form.Item name={'mount_id_map'} initialValue={{}} hidden>
+                      <Input />
+                    </Form.Item>
                     <Form.Item noStyle dependencies={['vFolderID']}>
                       {({ getFieldValue }) => {
                         const vFolderID = getFieldValue('vFolderID');
                         const excludeModelFilter = vFolderID
-                          ? `row_id != "${convertToUUID(vFolderID)}"`
+                          ? `id != "${vFolderID}"`
                           : null;
                         return (
                           <Form.Item
                             name={'mount_ids'}
                             label={t('modelService.AdditionalMounts')}
                           >
-                            <BAIVFolderSelect
-                              mode="multiple"
-                              valuePropName="row_id"
-                              currentProjectId={currentProject.id ?? undefined}
-                              filter={
-                                mergeFilterValues([
-                                  'status == "ready"',
-                                  'usage_mode != "model"',
-                                  'name !ilike ".%"',
-                                  excludeModelFilter,
-                                ]) ?? undefined
-                              }
-                            />
+                            <Suspense
+                              fallback={<Skeleton.Input active block />}
+                            >
+                              <BAIVFolderSelect
+                                mode="multiple"
+                                allowClear
+                                currentProjectId={
+                                  currentProject.id ?? undefined
+                                }
+                                filter={
+                                  mergeFilterValues([
+                                    'status == "ready"',
+                                    'usage_mode != "model"',
+                                    '(! name ilike ".%")',
+                                    excludeModelFilter,
+                                  ]) ?? undefined
+                                }
+                              />
+                            </Suspense>
                           </Form.Item>
                         );
                       }}
@@ -1783,6 +1795,33 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                               }}
                             />
                           </Form.Item>
+                        );
+                      }}
+                    </Form.Item>
+                    <Form.Item dependencies={['runtimeVariant']} noStyle>
+                      {({ getFieldValue }) => {
+                        const variant = getFieldValue('runtimeVariant');
+                        if (variant !== 'vllm' && variant !== 'sglang')
+                          return null;
+
+                        const extraArgsEnvName = getExtraArgsEnvVar(variant);
+                        const existingExtraArgs = endpoint
+                          ? ((
+                              JSON.parse(endpoint?.environ || '{}') as Record<
+                                string,
+                                string
+                              >
+                            )[extraArgsEnvName ?? ''] ?? '')
+                          : '';
+
+                        return (
+                          <RuntimeParameterFormSection
+                            runtimeVariant={variant}
+                            value={runtimeParamValues}
+                            onChange={setRuntimeParamValues}
+                            initialExtraArgs={existingExtraArgs}
+                            categories={['advanced']}
+                          />
                         );
                       }}
                     </Form.Item>
