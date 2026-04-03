@@ -71,7 +71,7 @@
     "concurrently": "^8.2.2",
     "cors": "^2.8.6",
     "crypto-es": "^2.1.0",
-    "electron": "^35.7.5",
+    "electron": "^39.8.5",
     "eslint": "catalog:",
     "eslint-config-bai": "workspace:*",
     "eslint-config-google": "^0.14.0",
