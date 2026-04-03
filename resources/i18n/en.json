@@ -1377,6 +1377,8 @@
     "Processing": "Processing...",
     "Public": "Public",
     "Ready": "Ready",
+    "RecentServices": "Recent Services",
+    "RecentServicesTooltip": "Shows the {{count}} most recently created services. Click to apply the spec to the form.",
     "ReplicaCountDisabledByAutoScalingRules": "Replica count cannot be changed manually while autoscaling rules are active.",
     "Resources": "Resources",
     "Result": "Result",
