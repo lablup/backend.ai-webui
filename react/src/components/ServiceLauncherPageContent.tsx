@@ -56,7 +56,6 @@ import ResourceAllocationFormItems, {
 import SwitchToProjectButton from './SwitchToProjectButton';
 import VFolderLazyView from './VFolderLazyView';
 import VFolderSelect from './VFolderSelect';
-import VFolderTableFormItem from './VFolderTableFormItem';
 import { MinusOutlined } from '@ant-design/icons';
 import { useDebounceFn } from 'ahooks';
 import {
@@ -79,8 +78,11 @@ import {
 import {
   BAIModal,
   BAIFlex,
+  BAIVFolderSelect,
   ESMClientErrorResponse,
   filterOutNullAndUndefined,
+  convertToUUID,
+  mergeFilterValues,
   useErrorMessageResolver,
   useBAILogger,
   BAIResourceNumberWithIcon,
@@ -1079,9 +1081,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
           image: endpoint?.image_object,
         },
         vFolderID: endpoint?.model,
-        mount_ids: _.map(endpoint?.extra_mounts, (item) =>
-          item?.row_id?.replaceAll('-', ''),
-        ),
+        mount_ids: _.map(endpoint?.extra_mounts, (item) => item?.row_id),
         // TODO: implement mount_id_map. Now, it's impossible to get mount_destination from backend
         modelMountDestination: endpoint?.model_mount_destination,
         modelDefinitionPath: endpoint?.model_definition_path,
@@ -1552,25 +1552,6 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                             ))
                           }
                         </Form.Item>
-                        <Form.Item noStyle dependencies={['vFolderID']}>
-                          {({ getFieldValue }) => {
-                            return (
-                              <VFolderTableFormItem
-                                rowKey={'id'}
-                                label={t('modelService.AdditionalMounts')}
-                                rowFilter={(vf) =>
-                                  vf.id !== getFieldValue('vFolderID') &&
-                                  vf.status === 'ready' &&
-                                  vf.usage_mode !== 'model' &&
-                                  !vf.name?.startsWith('.')
-                                }
-                                tableProps={{
-                                  size: 'small',
-                                }}
-                              />
-                            );
-                          }}
-                        </Form.Item>
                       </>
                     )}
                   </Card>
@@ -1730,6 +1711,34 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                           }
                     }
                   >
+                    <Form.Item noStyle dependencies={['vFolderID']}>
+                      {({ getFieldValue }) => {
+                        const vFolderID = getFieldValue('vFolderID');
+                        const excludeModelFilter = vFolderID
+                          ? `row_id != "${convertToUUID(vFolderID)}"`
+                          : null;
+                        return (
+                          <Form.Item
+                            name={'mount_ids'}
+                            label={t('modelService.AdditionalMounts')}
+                          >
+                            <BAIVFolderSelect
+                              mode="multiple"
+                              valuePropName="row_id"
+                              currentProjectId={currentProject.id ?? undefined}
+                              filter={
+                                mergeFilterValues([
+                                  'status == "ready"',
+                                  'usage_mode != "model"',
+                                  'name !ilike ".%"',
+                                  excludeModelFilter,
+                                ]) ?? undefined
+                              }
+                            />
+                          </Form.Item>
+                        );
+                      }}
+                    </Form.Item>
                     <Form.Item dependencies={['runtimeVariant']} noStyle>
                       {({ getFieldValue }) => {
                         const runtimeVariant = getFieldValue('runtimeVariant');
