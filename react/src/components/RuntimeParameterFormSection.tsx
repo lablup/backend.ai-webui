@@ -273,12 +273,17 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
 
     case 'checkbox':
       return (
-        <Form.Item tooltip={tooltip} style={{ marginBottom: token.marginXS }}>
+        <Form.Item
+          label={label}
+          tooltip={tooltip}
+          style={{ marginBottom: token.marginXS }}
+        >
           <Checkbox
             checked={value === 'true'}
             onChange={(e) => onChange(e.target.checked ? 'true' : 'false')}
+            aria-label={label}
           >
-            {label}
+            {t('general.Enable')}
           </Checkbox>
         </Form.Item>
       );
