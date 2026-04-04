@@ -1404,7 +1404,7 @@
     "RunThisModel": "このモデルを実行します",
     "RuntimeParamAdditionalArgs": "追加引数",
     "RuntimeParamAdditionalArgsPlaceholder": "上記のコントロールでは対応していない追加のCLI引数",
-    "RuntimeParamCategoryAdvanced": "詳細設定",
+    "RuntimeParamCategoryAdvanced": "その他",
     "RuntimeParamCategoryContext": "コンテキスト / Engine",
     "RuntimeParamCategorySampling": "サンプリング",
     "RuntimeParamContextLength": "コンテキスト長",

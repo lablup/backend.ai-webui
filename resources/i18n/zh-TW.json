@@ -1406,7 +1406,7 @@
     "RunThisModel": "運行此模型",
     "RuntimeParamAdditionalArgs": "附加參數",
     "RuntimeParamAdditionalArgsPlaceholder": "上述控制項未涵蓋的其他 CLI 參數",
-    "RuntimeParamCategoryAdvanced": "進階",
+    "RuntimeParamCategoryAdvanced": "其他",
     "RuntimeParamCategoryContext": "上下文 / Engine",
     "RuntimeParamCategorySampling": "取樣",
     "RuntimeParamContextLength": "上下文長度",

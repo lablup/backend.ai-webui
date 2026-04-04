@@ -1402,7 +1402,7 @@
     "RunThisModel": "Запустите эту модель",
     "RuntimeParamAdditionalArgs": "Дополнительные Аргументы",
     "RuntimeParamAdditionalArgsPlaceholder": "Дополнительные аргументы CLI, не охваченные элементами управления выше",
-    "RuntimeParamCategoryAdvanced": "Расширенные",
+    "RuntimeParamCategoryAdvanced": "Другое",
     "RuntimeParamCategoryContext": "Контекст / Engine",
     "RuntimeParamCategorySampling": "Сэмплирование",
     "RuntimeParamContextLength": "Длина Контекста",

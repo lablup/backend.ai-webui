@@ -1402,7 +1402,7 @@
     "RunThisModel": "Exécuter ce modèle",
     "RuntimeParamAdditionalArgs": "Arguments Supplémentaires",
     "RuntimeParamAdditionalArgsPlaceholder": "Arguments CLI supplémentaires non couverts par les contrôles ci-dessus",
-    "RuntimeParamCategoryAdvanced": "Avancé",
+    "RuntimeParamCategoryAdvanced": "Autres",
     "RuntimeParamCategoryContext": "Contexte / Engine",
     "RuntimeParamCategorySampling": "Échantillonnage",
     "RuntimeParamContextLength": "Longueur de Contexte",

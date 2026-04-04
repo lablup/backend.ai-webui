@@ -1404,7 +1404,7 @@
     "RunThisModel": "Chạy mô hình này",
     "RuntimeParamAdditionalArgs": "Đối Số Bổ Sung",
     "RuntimeParamAdditionalArgsPlaceholder": "Các đối số CLI bổ sung không được bao gồm trong các điều khiển ở trên",
-    "RuntimeParamCategoryAdvanced": "Nâng Cao",
+    "RuntimeParamCategoryAdvanced": "Khác",
     "RuntimeParamCategoryContext": "Ngữ Cảnh / Engine",
     "RuntimeParamCategorySampling": "Lấy Mẫu",
     "RuntimeParamContextLength": "Độ Dài Ngữ Cảnh",

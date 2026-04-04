@@ -1402,7 +1402,7 @@
     "RunThisModel": "Jalankan model ini",
     "RuntimeParamAdditionalArgs": "Argumen Tambahan",
     "RuntimeParamAdditionalArgsPlaceholder": "Argumen CLI tambahan yang tidak diliputi oleh kawalan di atas",
-    "RuntimeParamCategoryAdvanced": "Lanjutan",
+    "RuntimeParamCategoryAdvanced": "Lain-lain",
     "RuntimeParamCategoryContext": "Konteks / Engine",
     "RuntimeParamCategorySampling": "Pensampelan",
     "RuntimeParamContextLength": "Panjang Konteks",

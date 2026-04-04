@@ -1402,7 +1402,7 @@
     "RunThisModel": "Εκτελέστε αυτό το μοντέλο",
     "RuntimeParamAdditionalArgs": "Πρόσθετα Ορίσματα",
     "RuntimeParamAdditionalArgsPlaceholder": "Πρόσθετα ορίσματα CLI που δεν καλύπτονται από τα παραπάνω στοιχεία ελέγχου",
-    "RuntimeParamCategoryAdvanced": "Προηγμένα",
+    "RuntimeParamCategoryAdvanced": "Άλλα",
     "RuntimeParamCategoryContext": "Πλαίσιο / Engine",
     "RuntimeParamCategorySampling": "Δειγματοληψία",
     "RuntimeParamContextLength": "Μήκος Πλαισίου",
