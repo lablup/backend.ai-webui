@@ -57,6 +57,7 @@ import ResourceAllocationFormItems, {
 } from './SessionFormItems/ResourceAllocationFormItems';
 import SwitchToProjectButton from './SwitchToProjectButton';
 import VFolderLazyView from './VFolderLazyView';
+import VFolderMountFormItem from './VFolderMountFormItem';
 import VFolderSelect from './VFolderSelect';
 import { MinusOutlined } from '@ant-design/icons';
 import { useDebounceFn } from 'ahooks';
@@ -80,7 +81,6 @@ import {
 import {
   BAIModal,
   BAIFlex,
-  BAIVFolderSelect,
   ESMClientErrorResponse,
   filterOutNullAndUndefined,
   toLocalId,
@@ -1733,9 +1733,6 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                       </>
                     )}
                   </Card>
-                  <Form.Item name={'mount_id_map'} initialValue={{}} hidden>
-                    <Input />
-                  </Form.Item>
                   <Collapse
                     activeKey={advancedMode ? ['advanced'] : []}
                     onChange={(keys) => {
@@ -1764,34 +1761,22 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                                   ? `id != "${vFolderID}"`
                                   : null;
                                 return (
-                                  <Form.Item
-                                    name={'mount_ids'}
+                                  <VFolderMountFormItem
                                     label={t(
                                       'modelService.AdditionalMounts',
                                     )}
-                                  >
-                                    <Suspense
-                                      fallback={
-                                        <Skeleton.Input active block />
-                                      }
-                                    >
-                                      <BAIVFolderSelect
-                                        mode="multiple"
-                                        allowClear
-                                        currentProjectId={
-                                          currentProject.id ?? undefined
-                                        }
-                                        filter={
-                                          mergeFilterValues([
-                                            'status == "ready"',
-                                            'usage_mode != "model"',
-                                            '(! name ilike ".%")',
-                                            excludeModelFilter,
-                                          ]) ?? undefined
-                                        }
-                                      />
-                                    </Suspense>
-                                  </Form.Item>
+                                    filter={
+                                      mergeFilterValues([
+                                        'status == "ready"',
+                                        'usage_mode != "model"',
+                                        '(! name ilike ".%")',
+                                        excludeModelFilter,
+                                      ]) ?? undefined
+                                    }
+                                    currentProjectId={
+                                      currentProject.id ?? undefined
+                                    }
+                                  />
                                 );
                               }}
                             </Form.Item>
