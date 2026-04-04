@@ -120,7 +120,13 @@ export function useModelServiceLauncher() {
         group: baiClient.current_group,
         domain: currentDomain,
         cluster_size: values.cluster_size,
-        cluster_mode: values.cluster_mode,
+        // Convert multi-node x1 to single-node x1 since they are functionally
+        // equivalent but multi-node requires overlay network which may not be
+        // configured in all-in-one environments (FR-2381)
+        cluster_mode:
+          values.cluster_mode === 'multi-node' && values.cluster_size === 1
+            ? 'single-node'
+            : values.cluster_mode,
         open_to_public: values.openToPublic,
         config: {
           model: values.vFolderID,

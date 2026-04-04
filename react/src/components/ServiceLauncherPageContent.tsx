@@ -48,6 +48,7 @@ import InputNumberWithSlider from './InputNumberWithSlider';
 import RuntimeParameterFormSection, {
   RuntimeParameterValues,
 } from './RuntimeParameterFormSection';
+import ClusterModeFormItems from './SessionFormItems/ClusterModeFormItems';
 import ResourceAllocationFormItems, {
   AUTOMATIC_DEFAULT_SHMEM,
   RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
@@ -630,7 +631,13 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
         group: baiClient.current_group, // current Project Group,
         domain: currentDomain, // current Domain Group,
         cluster_size: values.cluster_size,
-        cluster_mode: values.cluster_mode,
+        // Convert multi-node x1 to single-node x1 since they are functionally
+        // equivalent but multi-node requires overlay network which may not be
+        // configured in all-in-one environments (FR-2381)
+        cluster_mode:
+          values.cluster_mode === 'multi-node' && values.cluster_size === 1
+            ? 'single-node'
+            : values.cluster_mode,
         open_to_public: values.openToPublic,
         config: {
           model: values.vFolderID,
@@ -863,8 +870,11 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                     })
                   : endpoint.resource_opts,
                 // FIXME: temporarily convert cluster mode string according to server-side type
+                // Also convert multi-node x1 to single-node x1 (FR-2381)
                 cluster_mode:
-                  'single-node' === values.cluster_mode
+                  values.cluster_mode === 'single-node' ||
+                  (values.cluster_mode === 'multi-node' &&
+                    values.cluster_size === 1)
                     ? 'SINGLE_NODE'
                     : 'MULTI_NODE',
                 cluster_size: values.cluster_size,
@@ -1674,6 +1684,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                         ) : (
                           <ResourceAllocationFormItems
                             enableResourcePresets
+                            hideClusterFormItems
                             extraAcceleratorRules={
                               gpuHint
                                 ? [
@@ -1855,9 +1866,13 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                         );
                       }}
                     </Form.Item>
-                    {/* TODO(FR-2444): Extract cluster mode from ResourceAllocationFormItems
-                        into a standalone component so it can be placed in the Advanced Card
-                        with all original logic (disable conditions, max limit, onChange, remaining warnings). */}
+                    <ClusterModeFormItems
+                      remaining={{
+                        cpu: undefined,
+                        mem: undefined,
+                        accelerators: {},
+                      }}
+                    />
                   </Card>
                   <BAIFlex
                     direction="row"
