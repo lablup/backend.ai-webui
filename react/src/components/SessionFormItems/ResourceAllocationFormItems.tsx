@@ -91,6 +91,10 @@ interface ResourceAllocationFormItemsProps {
   enableResourcePresets?: boolean;
   showRemainingWarning?: boolean;
   forceImageMinValues?: boolean;
+  extraAcceleratorRules?: Array<{
+    warningOnly?: boolean;
+    validator: (rule: unknown, value: number) => Promise<void>;
+  }>;
 }
 
 const ResourceAllocationFormItems: React.FC<
@@ -101,6 +105,7 @@ const ResourceAllocationFormItems: React.FC<
   enableResourcePresets,
   forceImageMinValues = false,
   showRemainingWarning = false,
+  extraAcceleratorRules,
 }) => {
   const form = Form.useFormInstance<MergedResourceAllocationFormValue>();
   const { t } = useTranslation();
@@ -1094,6 +1099,7 @@ const ResourceAllocationFormItems: React.FC<
                               return Promise.resolve();
                             },
                           },
+                          ...(extraAcceleratorRules ?? []),
                         ]}
                       >
                         <InputNumberWithSlider

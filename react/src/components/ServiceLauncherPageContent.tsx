@@ -13,6 +13,8 @@ import {
   convertToBinaryUnit,
   useBaiSignedRequestWithPromise,
 } from '../helper';
+import { generateModelDefinitionYaml } from '../helper/generateModelDefinitionYaml';
+import { parseCliCommand } from '../helper/parseCliCommand';
 import {
   useCurrentDomainValue,
   useSuspendedBackendaiClient,
@@ -52,6 +54,8 @@ import {
   Checkbox,
   Form,
   Input,
+  InputNumber,
+  Segmented,
   Skeleton,
   Select,
   theme,
@@ -136,6 +140,8 @@ export interface ServiceCreateType {
   open_to_public: boolean;
   config: ServiceCreateConfigType;
 }
+export type CustomDefinitionMode = 'command' | 'file';
+
 interface ServiceLauncherInput extends ImageEnvironmentFormInput {
   serviceName: string;
   vFolderID: string;
@@ -147,6 +153,14 @@ interface ServiceLauncherInput extends ImageEnvironmentFormInput {
   mount_ids?: Array<string>;
   envvars: EnvVarFormListValue[];
   runtimeVariant: string;
+  // "Paste Your Command" fields
+  customDefinitionMode?: CustomDefinitionMode;
+  startCommand?: string;
+  commandPort?: number;
+  commandHealthCheck?: string;
+  commandModelMount?: string;
+  commandInitialDelay?: number;
+  commandMaxRetries?: number;
 }
 
 export type ServiceLauncherFormValue = ServiceLauncherInput &
@@ -163,7 +177,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
   'use memo';
   const { logger } = useBAILogger();
   const { token } = theme.useToken();
-  const { message } = App.useApp();
+  const { message, modal } = App.useApp();
   const { t } = useTranslation();
 
   // Setup query parameters for URL synchronization
@@ -190,6 +204,43 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
   const { getErrorMessage } = useErrorMessageResolver();
   const RUNTIME_ENV_VAR_CONFIGS = useRuntimeEnvVarConfigs();
   const currentProject = useCurrentProjectValue();
+
+  // "Paste Your Command" — GPU hint from parsed CLI command
+  const [gpuHint, setGpuHint] = useState<number | null>(null);
+
+  // Debounced CLI command parser for auto-filling port/health/mount fields
+  const { run: parseCommandWithDebounce } = useDebounceFn(
+    (command: string) => {
+      const parsed = parseCliCommand(command);
+
+      // Auto-fill port, health check, model mount
+      form.setFieldsValue({
+        commandPort: parsed.port,
+        commandHealthCheck: parsed.healthCheckPath,
+        commandModelMount: parsed.modelMountDestination,
+      });
+
+      // Update GPU hint
+      setGpuHint(parsed.gpuHint);
+
+      // Auto-add docker env vars to envvars list
+      if (parsed.envVars.length > 0) {
+        const currentEnvVars = form.getFieldValue('envvars') || [];
+        const existingKeys = new Set(
+          currentEnvVars
+            .filter((e: EnvVarFormListValue) => e?.variable)
+            .map((e: EnvVarFormListValue) => e.variable),
+        );
+        const newEnvVars = parsed.envVars.filter(
+          (e) => !existingKeys.has(e.variable),
+        );
+        if (newEnvVars.length > 0) {
+          form.setFieldValue('envvars', [...currentEnvVars, ...newEnvVars]);
+        }
+      }
+    },
+    { wait: 400 },
+  );
 
   // Helper function to set environment variables based on runtime variant
   const setEnvironmentVariablesForRuntimeVariant = (
@@ -402,7 +453,77 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
     ESMClientErrorResponse | undefined,
     ServiceLauncherFormValue
   >({
-    mutationFn: (values) => {
+    mutationFn: async (values) => {
+      const isCommandMode =
+        values.runtimeVariant === 'custom' &&
+        values.customDefinitionMode === 'command' &&
+        values.startCommand;
+
+      // "Paste Your Command": generate and upload model-definition.yaml before creating service
+      if (isCommandMode) {
+        // Check if model-definition.yaml already exists in the vfolder
+        const filesRes = await baiClient.vfolder.list_files(
+          '.',
+          values.vFolderID,
+        );
+        const existingFiles: Array<{ name: string }> = filesRes?.items ?? [];
+        const hasExistingYaml = existingFiles.some(
+          (f) => f.name === 'model-definition.yaml',
+        );
+
+        if (hasExistingYaml) {
+          const confirmed = await new Promise<boolean>((resolve) => {
+            modal.confirm({
+              title: t('modelService.OverwriteYamlTitle'),
+              content: t('modelService.OverwriteYamlContent'),
+              okText: t('button.Overwrite'),
+              cancelText: t('button.Cancel'),
+              onOk: () => resolve(true),
+              onCancel: () => resolve(false),
+            });
+          });
+          if (!confirmed) {
+            // Throw a cancellation error instead of returning void,
+            // so TanStack Query does not trigger onSuccess.
+            throw new DOMException('User cancelled overwrite', 'AbortError');
+          }
+        }
+
+        const yamlContent = generateModelDefinitionYaml({
+          startCommand: values.startCommand!,
+          port: values.commandPort ?? 8000,
+          healthCheckPath: values.commandHealthCheck ?? '/health',
+          modelMountDestination: values.commandModelMount ?? '/models',
+          initialDelay: values.commandInitialDelay ?? 5.0,
+          maxRetries: values.commandMaxRetries ?? 10,
+        });
+
+        const blob = new Blob([yamlContent], { type: 'text/yaml' });
+        const file = new File([blob], 'model-definition.yaml', {
+          type: 'text/yaml',
+        });
+
+        const uploadUrl: string = await baiClient.vfolder.create_upload_session(
+          'model-definition.yaml',
+          file,
+          values.vFolderID,
+        );
+
+        const response = await fetch(uploadUrl, {
+          method: 'PATCH',
+          headers: {
+            'Upload-Offset': '0',
+            'Content-Type': 'application/offset+octet-stream',
+            'Tus-Resumable': '1.0.0',
+          },
+          body: blob,
+        });
+
+        if (!response.ok) {
+          throw new Error(t('modelService.YamlUploadFailed'));
+        }
+      }
+
       const environ: { [key: string]: string } = {};
       if (values.envvars) {
         values.envvars
@@ -413,6 +534,22 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
             environ[v.variable] = v.value;
           });
       }
+
+      // In command mode: force runtime_variant to 'custom', auto-set definition path and mount
+      const normalizePath = (
+        value: string | undefined | null,
+        fallback: string,
+      ) => {
+        const trimmed = value?.trim();
+        return trimmed && trimmed.length > 0 ? trimmed : fallback;
+      };
+      const modelDefinitionPath = isCommandMode
+        ? 'model-definition.yaml'
+        : normalizePath(values.modelDefinitionPath, 'model-definition.yaml');
+      const modelMountDestination = isCommandMode
+        ? normalizePath(values.commandModelMount, '/models')
+        : normalizePath(values.modelMountDestination, '/models');
+
       const body: ServiceCreateType = {
         name: values.serviceName,
         // REST API does not support `replicas` field. To use `replicas` field, we need `create_endpoint` mutation.
@@ -424,7 +561,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
           ),
           values,
         ),
-        runtime_variant: values.runtimeVariant,
+        runtime_variant: isCommandMode ? 'custom' : values.runtimeVariant,
         group: baiClient.current_group, // current Project Group,
         domain: currentDomain, // current Domain Group,
         cluster_size: values.cluster_size,
@@ -446,11 +583,8 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
             },
             {} as Record<string, MountOptionType>,
           ),
-          model_definition_path: values.modelDefinitionPath,
-          model_mount_destination:
-            values.modelMountDestination !== ''
-              ? values.modelMountDestination
-              : '/models',
+          model_definition_path: modelDefinitionPath,
+          model_mount_destination: modelMountDestination,
           environ, // FIXME: hardcoded. change it with option later
           scaling_group: values.resourceGroup,
           resources: {
@@ -750,6 +884,13 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
               webuiNavigate('/serving');
             },
             onError: (error) => {
+              // Ignore user-initiated cancellation (e.g., overwrite confirmation dismissed)
+              if (
+                error instanceof DOMException &&
+                error.name === 'AbortError'
+              ) {
+                return;
+              }
               const defaultErrorMessage = endpoint
                 ? t('modelService.FailedToUpdateService')
                 : t('modelService.FailedToStartService');
@@ -1040,7 +1181,12 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                         </Form.Item>
                         <Form.Item dependencies={['runtimeVariant']} noStyle>
                           {({ getFieldValue }) =>
-                            getFieldValue('runtimeVariant') === 'custom' && (
+                            getFieldValue('runtimeVariant') === 'custom' &&
+                            (endpoint ? (
+                              // TODO(FR-2440): Support "Enter Command" Segmented UI in edit mode.
+                              // - Read existing model-definition.yaml from vfolder and reverse-map to command fields
+                              // - Show overwrite confirmation modal only when user actually modifies the command
+                              // Edit mode: keep existing UI (no Segmented)
                               <BAIFlex
                                 direction="row"
                                 gap={'xxs'}
@@ -1084,7 +1230,197 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                                   />
                                 </Form.Item>
                               </BAIFlex>
-                            )
+                            ) : (
+                              // Create mode: Segmented "Enter Command" / "Use Config File"
+                              <Card
+                                size="small"
+                                title={t('modelService.ModelDefinition')}
+                                style={{
+                                  marginBottom: token.marginMD,
+                                }}
+                              >
+                                <Form.Item
+                                  name="customDefinitionMode"
+                                  initialValue="command"
+                                  noStyle
+                                >
+                                  <Segmented
+                                    options={[
+                                      {
+                                        label: t('modelService.EnterCommand'),
+                                        value: 'command',
+                                      },
+                                      {
+                                        label: t('modelService.UseConfigFile'),
+                                        value: 'file',
+                                      },
+                                    ]}
+                                    style={{
+                                      marginBottom: token.marginMD,
+                                    }}
+                                  />
+                                </Form.Item>
+                                <Form.Item
+                                  dependencies={['customDefinitionMode']}
+                                  noStyle
+                                >
+                                  {({ getFieldValue: getField }) =>
+                                    getField('customDefinitionMode') ===
+                                    'command' ? (
+                                      <>
+                                        <Form.Item
+                                          name="startCommand"
+                                          label={t('modelService.StartCommand')}
+                                          tooltip={t(
+                                            'modelService.StartCommandTooltip',
+                                          )}
+                                          rules={[
+                                            {
+                                              required: true,
+                                              whitespace: true,
+                                            },
+                                          ]}
+                                        >
+                                          <Input.TextArea
+                                            placeholder={t(
+                                              'modelService.StartCommandPlaceholder',
+                                            )}
+                                            autoSize={{
+                                              minRows: 2,
+                                            }}
+                                            onChange={(e) => {
+                                              parseCommandWithDebounce(
+                                                e.target.value,
+                                              );
+                                            }}
+                                          />
+                                        </Form.Item>
+                                        <Form.Item
+                                          name="commandModelMount"
+                                          label={t('modelService.ModelMount')}
+                                          tooltip={t(
+                                            'modelService.ModelMountTooltip',
+                                          )}
+                                          initialValue="/models"
+                                        >
+                                          <Input placeholder="/models" />
+                                        </Form.Item>
+                                        <BAIFlex
+                                          direction="row"
+                                          gap="sm"
+                                          align="end"
+                                        >
+                                          <Form.Item
+                                            name="commandPort"
+                                            label={t('modelService.Port')}
+                                            tooltip={t(
+                                              'modelService.PortTooltip',
+                                            )}
+                                            initialValue={8000}
+                                            style={{ flex: 1 }}
+                                            labelCol={{
+                                              style: { width: '100%' },
+                                            }}
+                                          >
+                                            <InputNumber
+                                              min={1}
+                                              max={65535}
+                                              style={{ width: '100%' }}
+                                            />
+                                          </Form.Item>
+                                          <Form.Item
+                                            name="commandHealthCheck"
+                                            label={t(
+                                              'modelService.HealthCheck',
+                                            )}
+                                            tooltip={t(
+                                              'modelService.HealthCheckTooltip',
+                                            )}
+                                            initialValue="/health"
+                                            style={{ flex: 1 }}
+                                            labelCol={{
+                                              style: { width: '100%' },
+                                            }}
+                                          >
+                                            <Input placeholder="/health" />
+                                          </Form.Item>
+                                        </BAIFlex>
+                                        <BAIFlex
+                                          direction="row"
+                                          gap="sm"
+                                          align="end"
+                                        >
+                                          <Form.Item
+                                            name="commandInitialDelay"
+                                            label={t(
+                                              'modelService.InitialDelay',
+                                            )}
+                                            tooltip={t(
+                                              'modelService.InitialDelayTooltip',
+                                            )}
+                                            initialValue={5.0}
+                                            style={{ flex: 1 }}
+                                            labelCol={{
+                                              style: { width: '100%' },
+                                            }}
+                                          >
+                                            <InputNumber
+                                              min={0}
+                                              step={0.5}
+                                              style={{ width: '100%' }}
+                                            />
+                                          </Form.Item>
+                                          <Form.Item
+                                            name="commandMaxRetries"
+                                            label={t('modelService.MaxRetries')}
+                                            tooltip={t(
+                                              'modelService.MaxRetriesTooltip',
+                                            )}
+                                            initialValue={10}
+                                            style={{ flex: 1 }}
+                                            labelCol={{
+                                              style: { width: '100%' },
+                                            }}
+                                          >
+                                            <InputNumber
+                                              min={0}
+                                              style={{ width: '100%' }}
+                                            />
+                                          </Form.Item>
+                                        </BAIFlex>
+                                      </>
+                                    ) : (
+                                      <>
+                                        <Form.Item
+                                          name={'modelMountDestination'}
+                                          label={t(
+                                            'modelService.ModelMountDestination',
+                                          )}
+                                        >
+                                          <Input
+                                            allowClear
+                                            placeholder={'/models'}
+                                          />
+                                        </Form.Item>
+                                        <Form.Item
+                                          name={'modelDefinitionPath'}
+                                          label={t(
+                                            'modelService.ModelDefinitionPath',
+                                          )}
+                                        >
+                                          <Input
+                                            allowClear
+                                            placeholder={
+                                              'model-definition.yaml'
+                                            }
+                                          />
+                                        </Form.Item>
+                                      </>
+                                    )
+                                  }
+                                </Form.Item>
+                              </Card>
+                            ))
                           }
                         </Form.Item>
                         <Form.Item dependencies={['runtimeVariant']} noStyle>
@@ -1262,7 +1598,35 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                             </BAIFlex>
                           </Form.Item>
                         ) : (
-                          <ResourceAllocationFormItems enableResourcePresets />
+                          <ResourceAllocationFormItems
+                            enableResourcePresets
+                            extraAcceleratorRules={
+                              gpuHint
+                                ? [
+                                    {
+                                      warningOnly: true,
+                                      validator: async (
+                                        _rule: unknown,
+                                        value: number,
+                                      ) => {
+                                        if (
+                                          gpuHint &&
+                                          value > 0 &&
+                                          value < gpuHint
+                                        ) {
+                                          return Promise.reject(
+                                            t('modelService.GpuHint', {
+                                              count: gpuHint,
+                                            }),
+                                          );
+                                        }
+                                        return Promise.resolve();
+                                      },
+                                    },
+                                  ]
+                                : undefined
+                            }
+                          />
                         )}
                       </>
                     )}
