@@ -1402,7 +1402,7 @@
     "RunThisModel": "Suorita tämä malli",
     "RuntimeParamAdditionalArgs": "Lisäargumentit",
     "RuntimeParamAdditionalArgsPlaceholder": "Lisä CLI-argumentit, joita yllä olevat ohjauselementit eivät kata",
-    "RuntimeParamCategoryAdvanced": "Lisäasetukset",
+    "RuntimeParamCategoryAdvanced": "Muut",
     "RuntimeParamCategoryContext": "Konteksti / Engine",
     "RuntimeParamCategorySampling": "Näytteenotto",
     "RuntimeParamContextLength": "Kontekstin Pituus",

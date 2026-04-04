@@ -1402,7 +1402,7 @@
     "RunThisModel": "Bu modeli çalıştır",
     "RuntimeParamAdditionalArgs": "Ek Argümanlar",
     "RuntimeParamAdditionalArgsPlaceholder": "Yukarıdaki kontroller tarafından kapsanmayan ek CLI argümanları",
-    "RuntimeParamCategoryAdvanced": "Gelişmiş",
+    "RuntimeParamCategoryAdvanced": "Diğer",
     "RuntimeParamCategoryContext": "Bağlam / Engine",
     "RuntimeParamCategorySampling": "Örnekleme",
     "RuntimeParamContextLength": "Bağlam Uzunluğu",

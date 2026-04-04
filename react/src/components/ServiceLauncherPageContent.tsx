@@ -48,6 +48,7 @@ import InputNumberWithSlider from './InputNumberWithSlider';
 import RuntimeParameterFormSection, {
   RuntimeParameterValues,
 } from './RuntimeParameterFormSection';
+import ClusterModeFormItems from './SessionFormItems/ClusterModeFormItems';
 import ResourceAllocationFormItems, {
   AUTOMATIC_DEFAULT_SHMEM,
   RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
@@ -1674,6 +1675,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                         ) : (
                           <ResourceAllocationFormItems
                             enableResourcePresets
+                            hideClusterFormItems
                             extraAcceleratorRules={
                               gpuHint
                                 ? [
@@ -1711,12 +1713,23 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                         direction="row"
                         align="center"
                         justify="between"
+                        role="button"
+                        tabIndex={0}
                         style={{ cursor: 'pointer' }}
                         onClick={() => {
                           setQuery(
                             { advancedMode: !advancedMode || undefined },
                             'replaceIn',
                           );
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            setQuery(
+                              { advancedMode: !advancedMode || undefined },
+                              'replaceIn',
+                            );
+                          }
                         }}
                       >
                         {t('session.launcher.AdvancedSettings')}

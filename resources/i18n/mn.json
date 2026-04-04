@@ -1403,7 +1403,7 @@
     "RunThisModel": "Энэ загварыг ажиллуул",
     "RuntimeParamAdditionalArgs": "Нэмэлт Аргументууд",
     "RuntimeParamAdditionalArgsPlaceholder": "Дээрх удирдлагуудаар хамрагдаагүй нэмэлт CLI аргументууд",
-    "RuntimeParamCategoryAdvanced": "Дэвшилтэт",
+    "RuntimeParamCategoryAdvanced": "Бусад",
     "RuntimeParamCategoryContext": "Контекст / Engine",
     "RuntimeParamCategorySampling": "Дээж авалт",
     "RuntimeParamContextLength": "Контекстийн Урт",

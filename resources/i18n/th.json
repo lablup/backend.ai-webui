@@ -1404,7 +1404,7 @@
     "RunThisModel": "เรียกใช้รุ่นนี้",
     "RuntimeParamAdditionalArgs": "อาร์กิวเมนต์เพิ่มเติม",
     "RuntimeParamAdditionalArgsPlaceholder": "อาร์กิวเมนต์ CLI เพิ่มเติมที่ไม่ครอบคลุมโดยตัวควบคุมด้านบน",
-    "RuntimeParamCategoryAdvanced": "ขั้นสูง",
+    "RuntimeParamCategoryAdvanced": "อื่นๆ",
     "RuntimeParamCategoryContext": "บริบท / Engine",
     "RuntimeParamCategorySampling": "การสุ่มตัวอย่าง",
     "RuntimeParamContextLength": "ความยาวบริบท",

@@ -1404,7 +1404,7 @@
     "RunThisModel": "Führen Sie dieses Modell aus",
     "RuntimeParamAdditionalArgs": "Zusätzliche Argumente",
     "RuntimeParamAdditionalArgsPlaceholder": "Zusätzliche CLI-Argumente, die nicht von den obigen Steuerelementen abgedeckt werden",
-    "RuntimeParamCategoryAdvanced": "Erweitert",
+    "RuntimeParamCategoryAdvanced": "Andere",
     "RuntimeParamCategoryContext": "Kontext / Engine",
     "RuntimeParamCategorySampling": "Sampling",
     "RuntimeParamContextLength": "Kontextlänge",
