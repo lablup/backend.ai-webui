@@ -17,20 +17,10 @@ import {
   buildSchemaKeySet,
 } from '../hooks/useRuntimeParameterSchema';
 import InputNumberWithSlider from './InputNumberWithSlider';
-import {
-  Checkbox,
-  Form,
-  InputNumber,
-  Select,
-  Input,
-  Typography,
-  theme,
-} from 'antd';
+import { Alert, Checkbox, Form, InputNumber, Select, Input, theme } from 'antd';
 import { BAICard, BAIFlex } from 'backend.ai-ui';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-
-const { Text } = Typography;
 
 const CATEGORY_LABELS: Record<RuntimeParameterCategory, string> = {
   sampling: 'modelService.RuntimeParamCategorySampling',
@@ -132,16 +122,12 @@ const RuntimeParameterFormSection: React.FC<
         activeTabKey={effectiveActiveTab}
         onTabChange={(key) => setActiveTab(key as RuntimeParameterCategory)}
       >
-        <Text
-          type="secondary"
-          style={{
-            display: 'block',
-            fontSize: token.fontSizeSM,
-            marginBottom: token.marginSM,
-          }}
-        >
-          {t('modelService.RuntimeParamUnchangedHint')}
-        </Text>
+        <Alert
+          type="info"
+          showIcon
+          title={t('modelService.RuntimeParamUnchangedHint')}
+          style={{ marginBottom: token.marginSM }}
+        />
         {activeGroup && (
           <ParameterGroupContent
             group={activeGroup}
