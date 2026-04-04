@@ -17,14 +17,12 @@ import {
   buildSchemaKeySet,
 } from '../hooks/useRuntimeParameterSchema';
 import InputNumberWithSlider from './InputNumberWithSlider';
-import { InfoCircleOutlined } from '@ant-design/icons';
 import {
   Checkbox,
   Form,
   InputNumber,
   Select,
   Input,
-  Tooltip,
   Typography,
   theme,
 } from 'antd';
@@ -205,24 +203,17 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
   const { t } = useTranslation();
   const { token } = theme.useToken();
 
-  const label = (
-    <BAIFlex direction="row" gap="xxs" align="center">
-      <span>{t(param.name)}</span>
-      <Tooltip title={t(param.description)}>
-        <InfoCircleOutlined
-          style={{
-            color: token.colorTextSecondary,
-            fontSize: token.fontSizeSM,
-          }}
-        />
-      </Tooltip>
-    </BAIFlex>
-  );
+  const label = t(param.name);
+  const tooltip = t(param.description);
 
   switch (param.uiType) {
     case 'slider':
       return (
-        <Form.Item label={label} style={{ marginBottom: token.marginXS }}>
+        <Form.Item
+          label={label}
+          tooltip={tooltip}
+          style={{ marginBottom: token.marginXS }}
+        >
           <InputNumberWithSlider
             min={param.min}
             max={param.max}
@@ -249,7 +240,11 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
 
     case 'number_input':
       return (
-        <Form.Item label={label} style={{ marginBottom: token.marginXS }}>
+        <Form.Item
+          label={label}
+          tooltip={tooltip}
+          style={{ marginBottom: token.marginXS }}
+        >
           <InputNumber
             min={param.min}
             max={param.max}
@@ -269,7 +264,11 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
 
     case 'select':
       return (
-        <Form.Item label={label} style={{ marginBottom: token.marginXS }}>
+        <Form.Item
+          label={label}
+          tooltip={tooltip}
+          style={{ marginBottom: token.marginXS }}
+        >
           <Select
             value={value}
             onChange={onChange}
@@ -283,7 +282,7 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
 
     case 'checkbox':
       return (
-        <Form.Item style={{ marginBottom: token.marginXS }}>
+        <Form.Item tooltip={tooltip} style={{ marginBottom: token.marginXS }}>
           <Checkbox
             checked={value === 'true'}
             onChange={(e) => onChange(e.target.checked ? 'true' : 'false')}
@@ -296,7 +295,11 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
     case 'text_input':
     default:
       return (
-        <Form.Item label={label} style={{ marginBottom: token.marginXS }}>
+        <Form.Item
+          label={label}
+          tooltip={tooltip}
+          style={{ marginBottom: token.marginXS }}
+        >
           <Input value={value} onChange={(e) => onChange(e.target.value)} />
         </Form.Item>
       );
