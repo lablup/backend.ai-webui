@@ -657,6 +657,8 @@
     "AutoDiagnosticsTitle": "Wykryto problemy diagnostyczne",
     "BlocklistValid": "Wpisy listy blokowania są prawidłowe",
     "BlocklistValidDesc": "Wszystkie {{count}} wpis(y/ów) listy blokowania odpowiada(ją) znanym kluczom menu.",
+    "ConfigParseError": "Błąd parsowania config.toml",
+    "ConfigParseErrorDesc": "Nie udało się przetworzyć pliku config.toml. Aplikacja działa z domyślnymi wartościami konfiguracji.",
     "ConfigSslMatchPassed": "Protokół SSL konfiguracji jest spójny",
     "ConfigSslMatchPassedDesc": "Punkt końcowy API i adres URL serwera proxy używają tego samego protokołu.",
     "ConfigSslMismatch": "Niezgodność protokołu SSL konfiguracji",

@@ -657,6 +657,8 @@
     "AutoDiagnosticsTitle": "診断の問題が検出されました",
     "BlocklistValid": "ブロックリストエントリが有効",
     "BlocklistValidDesc": "すべての{{count}}件のブロックリストエントリが既知のメニューキーと一致します。",
+    "ConfigParseError": "config.toml 解析エラー",
+    "ConfigParseErrorDesc": "config.toml の解析に失敗しました。アプリケーションはデフォルトの設定値で実行されています。",
     "ConfigSslMatchPassed": "設定SSLプロトコルが一致",
     "ConfigSslMatchPassedDesc": "APIエンドポイントとプロキシURLが同じプロトコルを使用しています。",
     "ConfigSslMismatch": "設定SSLプロトコルの不一致",

@@ -657,6 +657,8 @@
     "AutoDiagnosticsTitle": "检测到诊断问题",
     "BlocklistValid": "屏蔽列表条目有效",
     "BlocklistValidDesc": "全部 {{count}} 条屏蔽列表条目均与已知菜单键匹配。",
+    "ConfigParseError": "config.toml 解析错误",
+    "ConfigParseErrorDesc": "解析 config.toml 失败。应用程序正在使用默认配置值运行。",
     "ConfigSslMatchPassed": "配置 SSL 协议一致",
     "ConfigSslMatchPassedDesc": "API 端点和代理 URL 使用相同的协议。",
     "ConfigSslMismatch": "配置 SSL 协议不匹配",

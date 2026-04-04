@@ -16,7 +16,11 @@ import {
   isPlaceholder,
 } from '../diagnostics/rules/configRules';
 import type { DiagnosticResult } from '../types/diagnostics';
-import { useProxyUrl, useRawConfig } from './useWebUIConfig';
+import {
+  useConfigParseError,
+  useProxyUrl,
+  useRawConfig,
+} from './useWebUIConfig';
 import { VALID_MENU_KEYS } from './useWebUIMenuItems';
 
 /**
@@ -32,8 +36,28 @@ export function useWebServerConfigDiagnostics(
   const baiClient = useSuspendedBackendaiClient();
   const rawConfig = useRawConfig();
   const proxyUrl = useProxyUrl();
+  const configParseError = useConfigParseError();
 
   const results: DiagnosticResult[] = [];
+
+  // --- config.toml parse failure (e.g. duplicate keys) ---
+  if (configParseError) {
+    results.push({
+      id: 'config-parse-error',
+      severity: 'critical',
+      category: 'config',
+      titleKey: 'diagnostics.ConfigParseError',
+      descriptionKey: 'diagnostics.ConfigParseErrorDesc',
+      interpolationValues: {
+        errorMessage:
+          configParseError instanceof Error
+            ? configParseError.message
+            : String(configParseError),
+      },
+    });
+    return results;
+  }
+
   const apiEndpoint: string = baiClient?._config?.endpoint ?? '';
   const blockList: string[] = baiClient?._config?.blockList ?? [];
 

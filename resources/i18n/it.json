@@ -657,6 +657,8 @@
     "AutoDiagnosticsTitle": "Problemi di diagnostica rilevati",
     "BlocklistValid": "Voci della lista di blocco valide",
     "BlocklistValidDesc": "Tutte le {{count}} voce/voci della lista di blocco corrispondono a chiavi di menu note.",
+    "ConfigParseError": "Errore di analisi config.toml",
+    "ConfigParseErrorDesc": "Impossibile analizzare config.toml. L'applicazione è in esecuzione con i valori di configurazione predefiniti.",
     "ConfigSslMatchPassed": "Protocollo SSL configurazione coerente",
     "ConfigSslMatchPassedDesc": "L'endpoint API e l'URL del proxy utilizzano lo stesso protocollo.",
     "ConfigSslMismatch": "Mancata corrispondenza del protocollo SSL configurazione",

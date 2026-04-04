@@ -657,6 +657,8 @@
     "AutoDiagnosticsTitle": "Tanılama Sorunları Algılandı",
     "BlocklistValid": "Engelleme Listesi Girişleri Geçerli",
     "BlocklistValidDesc": "{{count}} engelleme listesi girişinin tamamı bilinen menü anahtarlarıyla eşleşiyor.",
+    "ConfigParseError": "config.toml Ayrıştırma Hatası",
+    "ConfigParseErrorDesc": "config.toml ayrıştırılamadı. Uygulama varsayılan yapılandırma değerleriyle çalışıyor.",
     "ConfigSslMatchPassed": "Yapılandırma SSL Protokolü Tutarlı",
     "ConfigSslMatchPassedDesc": "API uç noktası ve proxy URL'si aynı protokolü kullanıyor.",
     "ConfigSslMismatch": "Yapılandırma SSL Protokolü Uyuşmazlığı",

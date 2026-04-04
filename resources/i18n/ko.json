@@ -658,6 +658,8 @@
     "AutoDiagnosticsTitle": "진단 문제 감지됨",
     "BlocklistValid": "차단 목록 항목 유효",
     "BlocklistValidDesc": "모든 {{count}}개의 차단 목록 항목이 알려진 메뉴 키와 일치합니다.",
+    "ConfigParseError": "config.toml 파싱 오류",
+    "ConfigParseErrorDesc": "config.toml 파싱에 실패했습니다. 애플리케이션이 기본 설정값으로 실행 중입니다.",
     "ConfigSslMatchPassed": "설정 SSL 프로토콜 일치",
     "ConfigSslMatchPassedDesc": "API 엔드포인트와 프록시 URL이 동일한 프로토콜을 사용합니다.",
     "ConfigSslMismatch": "설정 SSL 프로토콜 불일치",
