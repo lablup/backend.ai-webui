@@ -2084,6 +2084,7 @@
       "Accelerator": "アクセル",
       "AddEnvironmentVariable": "環境変数の追加",
       "AddingKernelToSocketQueue": "カーネルをソケットキューに追加しています...",
+      "AdvancedSettings": "詳細設定",
       "AgentNode": "エージェント",
       "AllocateNode": "クラスターモード",
       "ApplicationMemory": "アプリケーションメモリ {{value}}",

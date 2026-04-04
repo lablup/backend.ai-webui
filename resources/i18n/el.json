@@ -2082,6 +2082,7 @@
       "Accelerator": "Επιταχυντής",
       "AddEnvironmentVariable": "Προσθήκη μεταβλητών περιβάλλοντος",
       "AddingKernelToSocketQueue": "Προσθήκη πυρήνα στην ουρά υποδοχής ...",
+      "AdvancedSettings": "Σύνθετες ρυθμίσεις",
       "AgentNode": "Μέσο",
       "AllocateNode": "Λειτουργία συμπλέγματος",
       "ApplicationMemory": "Application MEM {{value}}",

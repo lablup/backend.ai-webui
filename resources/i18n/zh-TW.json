@@ -2086,6 +2086,7 @@
       "Accelerator": "加速器",
       "AddEnvironmentVariable": "添加环境变量",
       "AddingKernelToSocketQueue": "將內核添加到套接字隊列...",
+      "AdvancedSettings": "進階設定",
       "AgentNode": "代理人",
       "AllocateNode": "集群模式",
       "ApplicationMemory": "Application MEM {{value}}",

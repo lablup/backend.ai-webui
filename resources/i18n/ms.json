@@ -2082,6 +2082,7 @@
       "Accelerator": "Pemecut",
       "AddEnvironmentVariable": "Tambah pembolehubah persekitaran",
       "AddingKernelToSocketQueue": "Menambah kernel ke soket barisan ...",
+      "AdvancedSettings": "Tetapan Lanjutan",
       "AgentNode": "ejen",
       "AllocateNode": "Mod kluster",
       "ApplicationMemory": "Application MEM {{value}}",

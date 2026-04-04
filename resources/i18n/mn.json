@@ -2083,6 +2083,7 @@
       "Accelerator": "Хурдасгагч",
       "AddEnvironmentVariable": "Орчны хувьсагчдыг нэмнэ үү",
       "AddingKernelToSocketQueue": "Цөмийг сокет дараалалд нэмж оруулах ...",
+      "AdvancedSettings": "Нарийвчилсан тохиргоо",
       "AgentNode": "Агент",
       "AllocateNode": "Кластер горим",
       "ApplicationMemory": "Application MEM {{value}}",

@@ -2095,6 +2095,7 @@
       "Accelerator": "가속기",
       "AddEnvironmentVariable": "환경 변수 추가",
       "AddingKernelToSocketQueue": "커널을 소켓 큐에 추가합니다...",
+      "AdvancedSettings": "고급 설정",
       "AgentNode": "에이전트",
       "AllocateNode": "배치",
       "ApplicationMemory": "Application MEM {{value}}",

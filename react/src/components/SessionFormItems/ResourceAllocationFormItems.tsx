@@ -27,7 +27,7 @@ import ResourcePresetSelect from '../ResourcePresetSelect';
 import SharedMemoryFormItems from './SharedMemoryFormItems';
 import {
   CaretDownOutlined,
-  InfoCircleOutlined,
+  QuestionCircleOutlined,
   ReloadOutlined,
 } from '@ant-design/icons';
 import { Button, Card, Col, Form, Radio, Row, Tooltip, theme } from 'antd';
@@ -1376,7 +1376,7 @@ const ResourceAllocationFormItems: React.FC<
                             <Trans i18nKey={'session.launcher.DescMultiNode'} />
                           }
                         >
-                          <InfoCircleOutlined
+                          <QuestionCircleOutlined
                             style={{ marginLeft: token.marginXXS }}
                           />
                         </Tooltip>
@@ -1390,7 +1390,7 @@ const ResourceAllocationFormItems: React.FC<
                             />
                           }
                         >
-                          <InfoCircleOutlined
+                          <QuestionCircleOutlined
                             style={{ marginLeft: token.marginXXS }}
                           />
                         </Tooltip>
