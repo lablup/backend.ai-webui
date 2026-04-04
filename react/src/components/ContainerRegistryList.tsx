@@ -199,7 +199,15 @@ const ContainerRegistryList: React.FC<{
   const [deletingConfirmText, setDeletingConfirmText] = useState('');
   const [isNewModalOpen, setIsNewModalOpen] = useState(false);
 
-  const [inFlightHostName, setInFlightHostName] = useState<string>();
+  // Track per-row optimistic enabled state.
+  // Stores [fetchKeyAtTimeOfToggle, Map<recordId, optimisticEnabledValue>].
+  // When deferredFetchKey changes (fresh data arrived), the map is
+  // considered stale and treated as empty.
+  const [inFlightState, setInFlightState] = useState<
+    [string, Map<string, boolean>]
+  >([deferredFetchKey, new Map()]);
+  const inFlightRegistries =
+    inFlightState[0] === deferredFetchKey ? inFlightState[1] : new Map();
 
   const rescanImage = async (
     registry_name: string,
@@ -350,33 +358,52 @@ const ContainerRegistryList: React.FC<{
           domain?.allowed_docker_registries,
           record.registry_name,
         );
+        const isRowInFlight = inFlightRegistries.has(record.id);
+        const displayEnabled = isRowInFlight
+          ? inFlightRegistries.get(record.id)!
+          : isEnabled;
         return (
           <Switch
-            checked={
-              inFlightHostName === record.id + deferredFetchKey
-                ? !isEnabled
-                : isEnabled
-            }
+            checked={displayEnabled}
             disabled={deferredFetchKey !== fetchKey || isInFlightDomainMutation}
             loading={
               (deferredFetchKey !== fetchKey || isInFlightDomainMutation) &&
-              inFlightHostName === record.id + deferredFetchKey
+              isRowInFlight
             }
             onChange={(isOn) => {
               if (!_.isString(record.registry_name)) return;
-              let newAllowedDockerRegistries = _.clone(
-                domain?.allowed_docker_registries || [],
-              ) as string[];
-              if (isOn) {
-                newAllowedDockerRegistries.push(record.registry_name);
-              } else {
-                newAllowedDockerRegistries = _.without(
-                  newAllowedDockerRegistries,
-                  record.registry_name,
-                );
-              }
+              // Build the effective allowed list by applying all pending
+              // optimistic changes from inFlightRegistries on top of the
+              // server-side allowed_docker_registries. This prevents stale
+              // Relay store data from overriding switches that were toggled
+              // but whose mutations have not yet round-tripped.
+              let newAllowedDockerRegistries = _.filter(
+                containerRegistries,
+                (reg) => {
+                  if (!_.isString(reg?.registry_name)) return false;
+                  if (reg?.id === record.id) {
+                    // Use the current toggle value for the row being changed
+                    return isOn;
+                  }
+                  if (inFlightRegistries.has(reg!.id)) {
+                    // Use optimistic state for other in-flight rows
+                    return inFlightRegistries.get(reg!.id)!;
+                  }
+                  // Fall back to server state for stable rows
+                  return _.includes(
+                    domain?.allowed_docker_registries,
+                    reg?.registry_name,
+                  );
+                },
+              ).map((reg) => reg!.registry_name as string);
 
-              setInFlightHostName(record.id + deferredFetchKey);
+              setInFlightState(([prevKey, prevMap]) => {
+                const next = new Map(
+                  prevKey === deferredFetchKey ? prevMap : undefined,
+                );
+                next.set(record.id, isOn);
+                return [deferredFetchKey, next];
+              });
               commitDomainMutation({
                 variables: {
                   domain: baiClient._config.domainName,
