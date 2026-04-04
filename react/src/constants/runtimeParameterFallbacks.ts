@@ -52,8 +52,8 @@ export interface RuntimeParameterDef {
 // TODO(needs-backend): FR-2446
 const VLLM_SAMPLING_PARAMS: RuntimeParameterDef[] = [
   {
-    name: 'runtimeParam.temperature',
-    description: 'runtimeParam.temperatureDesc',
+    name: 'modelService.RuntimeParamTemperature',
+    description: 'modelService.RuntimeParamTemperatureDesc',
     category: 'sampling',
     uiType: 'slider',
     valueType: 'float',
@@ -65,8 +65,8 @@ const VLLM_SAMPLING_PARAMS: RuntimeParameterDef[] = [
     rank: 1,
   },
   {
-    name: 'runtimeParam.topP',
-    description: 'runtimeParam.topPDesc',
+    name: 'modelService.RuntimeParamTopP',
+    description: 'modelService.RuntimeParamTopPDesc',
     category: 'sampling',
     uiType: 'slider',
     valueType: 'float',
@@ -78,8 +78,8 @@ const VLLM_SAMPLING_PARAMS: RuntimeParameterDef[] = [
     rank: 2,
   },
   {
-    name: 'runtimeParam.topK',
-    description: 'runtimeParam.topKDesc',
+    name: 'modelService.RuntimeParamTopK',
+    description: 'modelService.RuntimeParamTopKDesc',
     category: 'sampling',
     uiType: 'slider',
     valueType: 'int',
@@ -91,8 +91,8 @@ const VLLM_SAMPLING_PARAMS: RuntimeParameterDef[] = [
     rank: 3,
   },
   {
-    name: 'runtimeParam.minP',
-    description: 'runtimeParam.minPDesc',
+    name: 'modelService.RuntimeParamMinP',
+    description: 'modelService.RuntimeParamMinPDesc',
     category: 'sampling',
     uiType: 'slider',
     valueType: 'float',
@@ -104,8 +104,8 @@ const VLLM_SAMPLING_PARAMS: RuntimeParameterDef[] = [
     rank: 4,
   },
   {
-    name: 'runtimeParam.frequencyPenalty',
-    description: 'runtimeParam.frequencyPenaltyDesc',
+    name: 'modelService.RuntimeParamFrequencyPenalty',
+    description: 'modelService.RuntimeParamFrequencyPenaltyDesc',
     category: 'sampling',
     uiType: 'slider',
     valueType: 'float',
@@ -117,8 +117,8 @@ const VLLM_SAMPLING_PARAMS: RuntimeParameterDef[] = [
     rank: 5,
   },
   {
-    name: 'runtimeParam.presencePenalty',
-    description: 'runtimeParam.presencePenaltyDesc',
+    name: 'modelService.RuntimeParamPresencePenalty',
+    description: 'modelService.RuntimeParamPresencePenaltyDesc',
     category: 'sampling',
     uiType: 'slider',
     valueType: 'float',
@@ -130,8 +130,8 @@ const VLLM_SAMPLING_PARAMS: RuntimeParameterDef[] = [
     rank: 6,
   },
   {
-    name: 'runtimeParam.repetitionPenalty',
-    description: 'runtimeParam.repetitionPenaltyDesc',
+    name: 'modelService.RuntimeParamRepetitionPenalty',
+    description: 'modelService.RuntimeParamRepetitionPenaltyDesc',
     category: 'sampling',
     uiType: 'slider',
     valueType: 'float',
@@ -143,8 +143,8 @@ const VLLM_SAMPLING_PARAMS: RuntimeParameterDef[] = [
     rank: 7,
   },
   {
-    name: 'runtimeParam.seed',
-    description: 'runtimeParam.seedDesc',
+    name: 'modelService.RuntimeParamSeed',
+    description: 'modelService.RuntimeParamSeedDesc',
     category: 'sampling',
     uiType: 'number_input',
     valueType: 'int',
@@ -160,8 +160,8 @@ const VLLM_SAMPLING_PARAMS: RuntimeParameterDef[] = [
 // TODO(needs-backend): FR-2446
 const VLLM_CONTEXT_PARAMS: RuntimeParameterDef[] = [
   {
-    name: 'runtimeParam.maxModelLen',
-    description: 'runtimeParam.maxModelLenDesc',
+    name: 'modelService.RuntimeParamMaxModelLen',
+    description: 'modelService.RuntimeParamMaxModelLenDesc',
     category: 'context',
     uiType: 'slider',
     valueType: 'int',
@@ -173,8 +173,8 @@ const VLLM_CONTEXT_PARAMS: RuntimeParameterDef[] = [
     rank: 1,
   },
   {
-    name: 'runtimeParam.gpuMemoryUtilization',
-    description: 'runtimeParam.gpuMemoryUtilizationDesc',
+    name: 'modelService.RuntimeParamGpuMemoryUtilization',
+    description: 'modelService.RuntimeParamGpuMemoryUtilizationDesc',
     category: 'context',
     uiType: 'slider',
     valueType: 'float',
@@ -190,8 +190,8 @@ const VLLM_CONTEXT_PARAMS: RuntimeParameterDef[] = [
 // TODO(needs-backend): FR-2446
 const VLLM_ADVANCED_PARAMS: RuntimeParameterDef[] = [
   {
-    name: 'runtimeParam.enforceEager',
-    description: 'runtimeParam.enforceEagerDesc',
+    name: 'modelService.RuntimeParamEnforceEager',
+    description: 'modelService.RuntimeParamEnforceEagerDesc',
     category: 'advanced',
     uiType: 'checkbox',
     valueType: 'bool',
@@ -200,8 +200,8 @@ const VLLM_ADVANCED_PARAMS: RuntimeParameterDef[] = [
     rank: 1,
   },
   {
-    name: 'runtimeParam.dtype',
-    description: 'runtimeParam.dtypeDesc',
+    name: 'modelService.RuntimeParamDtype',
+    description: 'modelService.RuntimeParamDtypeDesc',
     category: 'advanced',
     uiType: 'select',
     valueType: 'str',
@@ -216,8 +216,8 @@ const VLLM_ADVANCED_PARAMS: RuntimeParameterDef[] = [
     rank: 2,
   },
   {
-    name: 'runtimeParam.kvCacheDtype',
-    description: 'runtimeParam.kvCacheDtypeDesc',
+    name: 'modelService.RuntimeParamKvCacheDtype',
+    description: 'modelService.RuntimeParamKvCacheDtypeDesc',
     category: 'advanced',
     uiType: 'select',
     valueType: 'str',
@@ -237,8 +237,8 @@ const VLLM_ADVANCED_PARAMS: RuntimeParameterDef[] = [
     rank: 3,
   },
   {
-    name: 'runtimeParam.trustRemoteCode',
-    description: 'runtimeParam.trustRemoteCodeDesc',
+    name: 'modelService.RuntimeParamTrustRemoteCode',
+    description: 'modelService.RuntimeParamTrustRemoteCodeDesc',
     category: 'advanced',
     uiType: 'checkbox',
     valueType: 'bool',
@@ -256,8 +256,8 @@ const SGLANG_SAMPLING_PARAMS: RuntimeParameterDef[] = VLLM_SAMPLING_PARAMS.map(
 // TODO(needs-backend): FR-2446
 const SGLANG_CONTEXT_PARAMS: RuntimeParameterDef[] = [
   {
-    name: 'runtimeParam.contextLength',
-    description: 'runtimeParam.maxModelLenDesc',
+    name: 'modelService.RuntimeParamContextLength',
+    description: 'modelService.RuntimeParamMaxModelLenDesc',
     category: 'context',
     uiType: 'slider',
     valueType: 'int',
@@ -269,8 +269,8 @@ const SGLANG_CONTEXT_PARAMS: RuntimeParameterDef[] = [
     rank: 1,
   },
   {
-    name: 'runtimeParam.memFractionStatic',
-    description: 'runtimeParam.gpuMemoryUtilizationDesc',
+    name: 'modelService.RuntimeParamMemFractionStatic',
+    description: 'modelService.RuntimeParamGpuMemoryUtilizationDesc',
     category: 'context',
     uiType: 'slider',
     valueType: 'float',
@@ -286,8 +286,8 @@ const SGLANG_CONTEXT_PARAMS: RuntimeParameterDef[] = [
 // TODO(needs-backend): FR-2446
 const SGLANG_ADVANCED_PARAMS: RuntimeParameterDef[] = [
   {
-    name: 'runtimeParam.disableCudaGraph',
-    description: 'runtimeParam.disableCudaGraphDesc',
+    name: 'modelService.RuntimeParamDisableCudaGraph',
+    description: 'modelService.RuntimeParamDisableCudaGraphDesc',
     category: 'advanced',
     uiType: 'checkbox',
     valueType: 'bool',
@@ -296,8 +296,8 @@ const SGLANG_ADVANCED_PARAMS: RuntimeParameterDef[] = [
     rank: 1,
   },
   {
-    name: 'runtimeParam.dtype',
-    description: 'runtimeParam.dtypeDesc',
+    name: 'modelService.RuntimeParamDtype',
+    description: 'modelService.RuntimeParamDtypeDesc',
     category: 'advanced',
     uiType: 'select',
     valueType: 'str',
@@ -312,8 +312,8 @@ const SGLANG_ADVANCED_PARAMS: RuntimeParameterDef[] = [
     rank: 2,
   },
   {
-    name: 'runtimeParam.kvCacheDtype',
-    description: 'runtimeParam.kvCacheDtypeDesc',
+    name: 'modelService.RuntimeParamKvCacheDtype',
+    description: 'modelService.RuntimeParamKvCacheDtypeDesc',
     category: 'advanced',
     uiType: 'select',
     valueType: 'str',
@@ -333,8 +333,8 @@ const SGLANG_ADVANCED_PARAMS: RuntimeParameterDef[] = [
     rank: 3,
   },
   {
-    name: 'runtimeParam.trustRemoteCode',
-    description: 'runtimeParam.trustRemoteCodeDesc',
+    name: 'modelService.RuntimeParamTrustRemoteCode',
+    description: 'modelService.RuntimeParamTrustRemoteCodeDesc',
     category: 'advanced',
     uiType: 'checkbox',
     valueType: 'bool',
@@ -368,10 +368,19 @@ export const RUNTIME_PARAMETER_FALLBACKS: Record<
 /**
  * Get the extra args environment variable name for a given runtime variant.
  */
+const EXTRA_ARGS_ENV_MAP: Record<string, string> = {
+  vllm: 'VLLM_EXTRA_ARGS',
+  sglang: 'SGLANG_EXTRA_ARGS',
+};
+
 export function getExtraArgsEnvVar(runtimeVariant: string): string | undefined {
-  const mapping: Record<string, string> = {
-    vllm: 'VLLM_EXTRA_ARGS',
-    sglang: 'SGLANG_EXTRA_ARGS',
-  };
-  return mapping[runtimeVariant];
+  return EXTRA_ARGS_ENV_MAP[runtimeVariant];
+}
+
+/**
+ * Returns all known EXTRA_ARGS env var names.
+ * Used to clean up stale env vars when switching runtime variants.
+ */
+export function getAllExtraArgsEnvVars(): string[] {
+  return Object.values(EXTRA_ARGS_ENV_MAP);
 }

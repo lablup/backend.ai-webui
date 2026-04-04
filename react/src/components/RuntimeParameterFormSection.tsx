@@ -20,7 +20,6 @@ import InputNumberWithSlider from './InputNumberWithSlider';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import {
   Checkbox,
-  Collapse,
   Form,
   InputNumber,
   Select,
@@ -36,9 +35,9 @@ import { useTranslation } from 'react-i18next';
 const { Text } = Typography;
 
 const CATEGORY_LABELS: Record<RuntimeParameterCategory, string> = {
-  sampling: 'runtimeParam.categorySampling',
-  context: 'runtimeParam.categoryContext',
-  advanced: 'runtimeParam.categoryAdvanced',
+  sampling: 'modelService.RuntimeParamCategorySampling',
+  context: 'modelService.RuntimeParamCategoryContext',
+  advanced: 'modelService.RuntimeParamCategoryAdvanced',
 };
 
 export interface RuntimeParameterValues {
@@ -53,6 +52,8 @@ interface RuntimeParameterFormSectionProps {
   manualExtraArgs?: string;
   /** Existing extra args string for edit mode reverse-mapping */
   initialExtraArgs?: string;
+  /** Filter to only render specific categories. If omitted, renders sampling + context (excludes advanced). */
+  categories?: RuntimeParameterCategory[];
 }
 
 /**
@@ -66,6 +67,7 @@ const RuntimeParameterFormSection: React.FC<
   value: controlledValue,
   onChange,
   initialExtraArgs,
+  categories,
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -116,42 +118,41 @@ const RuntimeParameterFormSection: React.FC<
 
   if (!groups) return null;
 
+  const defaultCategories: RuntimeParameterCategory[] = ['sampling', 'context'];
+  const visibleCategories = categories ?? defaultCategories;
+  const isDefaultView = !categories;
+
   return (
-    <BAIFlex direction="column" gap="xs">
-      <Text strong style={{ marginBottom: token.marginXS }}>
-        {t('runtimeParam.title')}
-      </Text>
-      {groups.map((group) => {
-        if (group.category === 'advanced') {
-          return (
-            <Collapse
-              key={group.category}
-              ghost
-              size="small"
-              items={[
-                {
-                  key: 'advanced',
-                  label: (
-                    <Text type="secondary">
-                      {t(CATEGORY_LABELS[group.category])}
-                    </Text>
-                  ),
-                  children: (
-                    <ParameterGroupContent
-                      group={group}
-                      values={values}
-                      onParamChange={handleParamChange}
-                    />
-                  ),
-                },
-              ]}
-            />
-          );
-        }
-        return (
-          <BAIFlex key={group.category} direction="column" gap="xxs">
+    <BAIFlex direction="column" gap="xs" align="stretch">
+      {isDefaultView && (
+        <>
+          <Text strong style={{ marginBottom: token.marginXS }}>
+            {t('modelService.RuntimeParamTitle')}
+          </Text>
+          <Text
+            type="secondary"
+            style={{
+              fontSize: token.fontSizeSM,
+              marginBottom: token.marginXS,
+            }}
+          >
+            {t('modelService.RuntimeParamUnchangedHint')}
+          </Text>
+        </>
+      )}
+      {groups
+        .filter((group) => visibleCategories.includes(group.category))
+        .map((group) => (
+          <BAIFlex
+            key={group.category}
+            direction="column"
+            gap="xxs"
+            align="stretch"
+          >
             <Text type="secondary" style={{ fontSize: token.fontSizeSM }}>
-              {t(CATEGORY_LABELS[group.category])}
+              {isDefaultView
+                ? t(CATEGORY_LABELS[group.category])
+                : t('modelService.RuntimeParamTitle')}
             </Text>
             <ParameterGroupContent
               group={group}
@@ -159,8 +160,7 @@ const RuntimeParameterFormSection: React.FC<
               onParamChange={handleParamChange}
             />
           </BAIFlex>
-        );
-      })}
+        ))}
     </BAIFlex>
   );
 };
@@ -177,7 +177,7 @@ const ParameterGroupContent: React.FC<ParameterGroupContentProps> = ({
   onParamChange,
 }) => {
   return (
-    <BAIFlex direction="column" gap="xxs">
+    <BAIFlex direction="column" gap="xxs" align="stretch">
       {group.params.map((param) => (
         <ParameterControl
           key={param.key}
@@ -229,7 +229,20 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
             step={param.step}
             value={parseFloat(value)}
             onChange={(v) => onChange(String(v))}
-            inputContainerMinWidth={150}
+            inputContainerMinWidth={190}
+            sliderProps={{
+              marks: {
+                ...(param.min !== undefined ? { [param.min]: param.min } : {}),
+                ...(param.max !== undefined
+                  ? {
+                      [param.max]: {
+                        style: { color: token.colorTextSecondary },
+                        label: param.max,
+                      },
+                    }
+                  : {}),
+              },
+            }}
           />
         </Form.Item>
       );

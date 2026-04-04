@@ -320,7 +320,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
         }
         healthyRoutes: routes(
           deploymentId: $deploymentId
-          filter: { status: [HEALTHY] }
+          filter: { healthStatus: [HEALTHY] }
         ) @skipOnClient(if: $skipRouteNodes) {
           count
         }
@@ -342,13 +342,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
       routeFilter: {
         status:
           deferredRouteStatusCategory === 'running'
-            ? [
-                'PROVISIONING',
-                'HEALTHY',
-                'UNHEALTHY',
-                'DEGRADED',
-                'TERMINATING',
-              ]
+            ? ['PROVISIONING', 'RUNNING', 'TERMINATING']
             : ['TERMINATED', 'FAILED_TO_START'],
         ...(deferredRoutePropertyFilter?.trafficStatus
           ? {
