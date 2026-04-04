@@ -56,7 +56,7 @@ import ResourceAllocationFormItems, {
 import SwitchToProjectButton from './SwitchToProjectButton';
 import VFolderLazyView from './VFolderLazyView';
 import VFolderSelect from './VFolderSelect';
-import { MinusOutlined } from '@ant-design/icons';
+import { MinusOutlined, RightOutlined } from '@ant-design/icons';
 import { useDebounceFn } from 'ahooks';
 import {
   App,
@@ -69,7 +69,6 @@ import {
   Segmented,
   Skeleton,
   Select,
-  Switch,
   theme,
   Tooltip,
   Tag,
@@ -89,7 +88,7 @@ import {
   BAIButton,
 } from 'backend.ai-ui';
 import _ from 'lodash';
-import React, { Suspense, useState } from 'react';
+import React, { Suspense, useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   graphql,
@@ -224,9 +223,18 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
   const RUNTIME_ENV_VAR_CONFIGS = useRuntimeEnvVarConfigs();
   const currentProject = useCurrentProjectValue();
 
-  // Runtime parameter UI state
-  const [runtimeParamValues, setRuntimeParamValues] =
-    useState<RuntimeParameterValues>({});
+  // Runtime parameter values stored in a ref to avoid re-rendering the entire
+  // page on every slider change. Values are read at submit time only.
+  const runtimeParamValuesRef = useRef<RuntimeParameterValues>({});
+  const handleRuntimeParamChange = useCallback(
+    (values: RuntimeParameterValues) => {
+      runtimeParamValuesRef.current = {
+        ...runtimeParamValuesRef.current,
+        ...values,
+      };
+    },
+    [],
+  );
 
   // "Paste Your Command" — GPU hint from parsed CLI command
   const [gpuHint, setGpuHint] = useState<number | null>(null);
@@ -568,7 +576,10 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
       }
 
       // Merge runtime parameter UI values into EXTRA_ARGS env var
-      if (extraArgsEnvVar && Object.keys(runtimeParamValues).length > 0) {
+      if (
+        extraArgsEnvVar &&
+        Object.keys(runtimeParamValuesRef.current).length > 0
+      ) {
         const paramGroups = RUNTIME_PARAMETER_FALLBACKS[values.runtimeVariant];
         if (paramGroups) {
           const defaults: Record<string, string> = {};
@@ -577,7 +588,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
           }
           const manualArgs = environ[extraArgsEnvVar] ?? '';
           const merged = mergeExtraArgs(
-            runtimeParamValues,
+            runtimeParamValuesRef.current,
             manualArgs,
             defaults,
           );
@@ -905,7 +916,10 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
           }
 
           // Merge runtime parameter UI values into EXTRA_ARGS env var
-          if (extraArgsKey && Object.keys(runtimeParamValues).length > 0) {
+          if (
+            extraArgsKey &&
+            Object.keys(runtimeParamValuesRef.current).length > 0
+          ) {
             const paramDefs =
               RUNTIME_PARAMETER_FALLBACKS[values.runtimeVariant];
             if (paramDefs) {
@@ -914,7 +928,11 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                 defs[p.key] = p.defaultValue;
               }
               const manual = newEnvirons[extraArgsKey] ?? '';
-              const merged = mergeExtraArgs(runtimeParamValues, manual, defs);
+              const merged = mergeExtraArgs(
+                runtimeParamValuesRef.current,
+                manual,
+                defs,
+              );
               if (merged) {
                 newEnvirons[extraArgsKey] = merged;
               } else {
@@ -1304,8 +1322,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                             return (
                               <RuntimeParameterFormSection
                                 runtimeVariant={variant}
-                                value={runtimeParamValues}
-                                onChange={setRuntimeParamValues}
+                                onChange={handleRuntimeParamChange}
                                 initialExtraArgs={existingExtraArgs}
                               />
                             );
@@ -1689,24 +1706,38 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                     )}
                   </Card>
                   <Card
-                    title={t('session.launcher.AdvancedSettings')}
-                    extra={
-                      <Switch
-                        checked={advancedMode}
-                        onChange={(checked) => {
+                    title={
+                      <BAIFlex
+                        direction="row"
+                        align="center"
+                        justify="between"
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => {
                           setQuery(
-                            { advancedMode: checked || undefined },
+                            { advancedMode: !advancedMode || undefined },
                             'replaceIn',
                           );
                         }}
-                      />
+                      >
+                        {t('session.launcher.AdvancedSettings')}
+                        <RightOutlined
+                          style={{
+                            fontSize: token.fontSizeSM,
+                            transition: `transform ${token.motionDurationMid}`,
+                            transform: advancedMode
+                              ? 'rotate(90deg)'
+                              : 'rotate(0deg)',
+                          }}
+                        />
+                      </BAIFlex>
                     }
                     styles={
                       advancedMode
-                        ? undefined
+                        ? { header: { paddingInlineEnd: 0 } }
                         : {
                             header: {
                               borderBottom: 'none',
+                              paddingInlineEnd: 0,
                             },
                             body: {
                               display: 'none',
@@ -1817,8 +1848,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                         return (
                           <RuntimeParameterFormSection
                             runtimeVariant={variant}
-                            value={runtimeParamValues}
-                            onChange={setRuntimeParamValues}
+                            onChange={handleRuntimeParamChange}
                             initialExtraArgs={existingExtraArgs}
                             categories={['advanced']}
                           />
