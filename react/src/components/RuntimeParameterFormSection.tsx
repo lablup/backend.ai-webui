@@ -50,10 +50,7 @@ export interface RuntimeParameterValues {
 
 interface RuntimeParameterFormSectionProps {
   runtimeVariant: string;
-  value?: RuntimeParameterValues;
   onChange?: (values: RuntimeParameterValues) => void;
-  /** Extra args text from manual input field (for merge preview) */
-  manualExtraArgs?: string;
   /** Existing extra args string for edit mode reverse-mapping */
   initialExtraArgs?: string;
 }
@@ -64,32 +61,23 @@ interface RuntimeParameterFormSectionProps {
  */
 const RuntimeParameterFormSection: React.FC<
   RuntimeParameterFormSectionProps
-> = ({
-  runtimeVariant,
-  value: controlledValue,
-  onChange,
-  initialExtraArgs,
-}) => {
+> = ({ runtimeVariant, onChange, initialExtraArgs }) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const groups = useRuntimeParameterSchema(runtimeVariant);
 
-  // Internal state for uncontrolled usage
   const [internalValues, setInternalValues] = useState<RuntimeParameterValues>(
     {},
   );
-  const values = controlledValue ?? internalValues;
+  const values = internalValues;
 
   const [activeTab, setActiveTab] = useState<string>('sampling');
 
   const setValues = useCallback(
     (newValues: RuntimeParameterValues) => {
-      if (onChange) {
-        onChange(newValues);
-      } else {
-        setInternalValues(newValues);
-      }
+      setInternalValues(newValues);
+      onChange?.(newValues);
     },
     [onChange],
   );
@@ -109,7 +97,7 @@ const RuntimeParameterFormSection: React.FC<
       setValues(defaults);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [runtimeVariant]);
+  }, [runtimeVariant, initialExtraArgs]);
 
   const handleParamChange = useCallback(
     (key: string, newValue: string) => {
@@ -130,14 +118,20 @@ const RuntimeParameterFormSection: React.FC<
     label: t(CATEGORY_LABELS[cat]),
   }));
 
-  const activeGroup = groups.find((g) => g.category === activeTab);
+  // Fall back to first available tab if current tab doesn't exist for this variant
+  const effectiveActiveTab = availableCategories.includes(
+    activeTab as RuntimeParameterCategory,
+  )
+    ? activeTab
+    : (availableCategories[0] ?? 'sampling');
+  const activeGroup = groups.find((g) => g.category === effectiveActiveTab);
 
   return (
     <Form.Item label={t('modelService.RuntimeParamTitle')}>
       <BAICard
         size="small"
         tabList={tabList}
-        activeTabKey={activeTab}
+        activeTabKey={effectiveActiveTab}
         onTabChange={setActiveTab}
       >
         <Text
@@ -281,13 +275,15 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
 
     case 'checkbox':
       return (
-        <Form.Item tooltip={tooltip} style={{ marginBottom: token.marginXS }}>
+        <Form.Item
+          label={label}
+          tooltip={tooltip}
+          style={{ marginBottom: token.marginXS }}
+        >
           <Checkbox
             checked={value === 'true'}
             onChange={(e) => onChange(e.target.checked ? 'true' : 'false')}
-          >
-            {label}
-          </Checkbox>
+          />
         </Form.Item>
       );
 

@@ -57,13 +57,14 @@ import ResourceAllocationFormItems, {
 import SwitchToProjectButton from './SwitchToProjectButton';
 import VFolderLazyView from './VFolderLazyView';
 import VFolderSelect from './VFolderSelect';
-import { MinusOutlined, RightOutlined } from '@ant-design/icons';
+import { MinusOutlined } from '@ant-design/icons';
 import { useDebounceFn } from 'ahooks';
 import {
   App,
   Button,
   Card,
   Checkbox,
+  Collapse,
   Form,
   Input,
   InputNumber,
@@ -1716,138 +1717,125 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                       </>
                     )}
                   </Card>
-                  <Card
-                    title={
-                      <BAIFlex
-                        direction="row"
-                        align="center"
-                        justify="between"
-                        style={{ cursor: 'pointer' }}
-                        onClick={() => {
-                          setQuery(
-                            { advancedMode: !advancedMode || undefined },
-                            'replaceIn',
-                          );
-                        }}
-                      >
-                        {t('session.launcher.AdvancedSettings')}
-                        <RightOutlined
-                          style={{
-                            fontSize: token.fontSizeSM,
-                            transition: `transform ${token.motionDurationMid}`,
-                            transform: advancedMode
-                              ? 'rotate(90deg)'
-                              : 'rotate(0deg)',
-                          }}
-                        />
-                      </BAIFlex>
-                    }
-                    styles={
-                      advancedMode
-                        ? { header: { paddingInlineEnd: 0 } }
-                        : {
-                            header: {
-                              borderBottom: 'none',
-                              paddingInlineEnd: 0,
-                            },
-                            body: {
-                              display: 'none',
-                            },
-                          }
-                    }
-                  >
-                    <Form.Item name={'mount_id_map'} initialValue={{}} hidden>
-                      <Input />
-                    </Form.Item>
-                    <Form.Item noStyle dependencies={['vFolderID']}>
-                      {({ getFieldValue }) => {
-                        const vFolderID = getFieldValue('vFolderID');
-                        const excludeModelFilter = vFolderID
-                          ? `id != "${vFolderID}"`
-                          : null;
-                        return (
-                          <Form.Item
-                            name={'mount_ids'}
-                            label={t('modelService.AdditionalMounts')}
-                          >
-                            <Suspense
-                              fallback={<Skeleton.Input active block />}
-                            >
-                              <BAIVFolderSelect
-                                mode="multiple"
-                                allowClear
-                                currentProjectId={
-                                  currentProject.id ?? undefined
-                                }
-                                filter={
-                                  mergeFilterValues([
-                                    'status == "ready"',
-                                    'usage_mode != "model"',
-                                    '(! name ilike ".%")',
-                                    excludeModelFilter,
-                                  ]) ?? undefined
-                                }
-                              />
-                            </Suspense>
-                          </Form.Item>
-                        );
-                      }}
-                    </Form.Item>
-                    <Form.Item dependencies={['runtimeVariant']} noStyle>
-                      {({ getFieldValue }) => {
-                        const runtimeVariant = getFieldValue('runtimeVariant');
-                        const runtimeVariantConfig = runtimeVariant
-                          ? RUNTIME_ENV_VAR_CONFIGS[runtimeVariant]
-                          : null;
-
-                        return (
-                          <Form.Item
-                            label={t('session.launcher.EnvironmentVariable')}
-                          >
-                            <EnvVarFormList
-                              name={'envvars'}
-                              requiredEnvVars={
-                                runtimeVariantConfig?.requiredEnvVars
-                              }
-                              optionalEnvVars={
-                                runtimeVariantConfig?.optionalEnvVars
-                              }
-                              formItemProps={{
-                                validateTrigger: ['onChange', 'onBlur'],
-                                rules: [
-                                  {
-                                    warningOnly: true,
-                                    validator: async (_rule, value: string) => {
-                                      if (!value) {
-                                        return Promise.resolve();
-                                      }
-
-                                      if (
-                                        !validateVariable(runtimeVariant, value)
-                                      ) {
-                                        throw t(
-                                          'session.launcher.EnvironmentVariableNotForRuntime',
-                                        );
-                                      } else {
-                                        return Promise.resolve();
-                                      }
-                                    },
-                                  },
-                                ],
+                  <Form.Item name={'mount_id_map'} initialValue={{}} hidden>
+                    <Input />
+                  </Form.Item>
+                  <Collapse
+                    activeKey={advancedMode ? ['advanced'] : []}
+                    onChange={(keys) => {
+                      setQuery(
+                        {
+                          advancedMode: keys.includes('advanced') || undefined,
+                        },
+                        'replaceIn',
+                      );
+                    }}
+                    items={[
+                      {
+                        key: 'advanced',
+                        label: t('session.launcher.AdvancedSettings'),
+                        forceRender: true,
+                        children: (
+                          <>
+                            <Form.Item noStyle dependencies={['vFolderID']}>
+                              {({ getFieldValue }) => {
+                                const vFolderID = getFieldValue('vFolderID');
+                                const excludeModelFilter = vFolderID
+                                  ? `id != "${vFolderID}"`
+                                  : null;
+                                return (
+                                  <Form.Item
+                                    name={'mount_ids'}
+                                    label={t('modelService.AdditionalMounts')}
+                                  >
+                                    <Suspense
+                                      fallback={<Skeleton.Input active block />}
+                                    >
+                                      <BAIVFolderSelect
+                                        mode="multiple"
+                                        allowClear
+                                        currentProjectId={
+                                          currentProject.id ?? undefined
+                                        }
+                                        filter={
+                                          mergeFilterValues([
+                                            'status == "ready"',
+                                            'usage_mode != "model"',
+                                            '(! name ilike ".%")',
+                                            excludeModelFilter,
+                                          ]) ?? undefined
+                                        }
+                                      />
+                                    </Suspense>
+                                  </Form.Item>
+                                );
                               }}
-                            />
-                          </Form.Item>
-                        );
-                      }}
-                    </Form.Item>
-                    <ClusterModeFormItems
-                      remaining={{
-                        cpu: undefined,
-                        mem: undefined,
-                        accelerators: {},
-                      }}
-                    />
-                  </Card>
+                            </Form.Item>
+                            <Form.Item
+                              dependencies={['runtimeVariant']}
+                              noStyle
+                            >
+                              {({ getFieldValue }) => {
+                                const runtimeVariant =
+                                  getFieldValue('runtimeVariant');
+                                const runtimeVariantConfig = runtimeVariant
+                                  ? RUNTIME_ENV_VAR_CONFIGS[runtimeVariant]
+                                  : null;
+
+                                return (
+                                  <Form.Item
+                                    label={t(
+                                      'session.launcher.EnvironmentVariable',
+                                    )}
+                                  >
+                                    <EnvVarFormList
+                                      name={'envvars'}
+                                      requiredEnvVars={
+                                        runtimeVariantConfig?.requiredEnvVars
+                                      }
+                                      optionalEnvVars={
+                                        runtimeVariantConfig?.optionalEnvVars
+                                      }
+                                      formItemProps={{
+                                        validateTrigger: ['onChange', 'onBlur'],
+                                        rules: [
+                                          {
+                                            warningOnly: true,
+                                            validator: async (
+                                              _rule,
+                                              value: string,
+                                            ) => {
+                                              if (!value) {
+                                                return Promise.resolve();
+                                              }
+
+                                              if (
+                                                !validateVariable(
+                                                  runtimeVariant,
+                                                  value,
+                                                )
+                                              ) {
+                                                throw t(
+                                                  'session.launcher.EnvironmentVariableNotForRuntime',
+                                                );
+                                              } else {
+                                                return Promise.resolve();
+                                              }
+                                            },
+                                          },
+                                        ],
+                                      }}
+                                    />
+                                  </Form.Item>
+                                );
+                              }}
+                            </Form.Item>
+                            <ClusterModeFormItems />
+                          </>
+                        ),
+                      },
+                    ]}
+                  />
                   <BAIFlex
                     direction="row"
                     justify="between"

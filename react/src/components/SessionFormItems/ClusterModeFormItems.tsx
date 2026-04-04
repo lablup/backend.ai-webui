@@ -15,12 +15,18 @@ import React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 interface ClusterModeFormItemsProps {
-  remaining: RemainingSlots;
+  remaining?: RemainingSlots;
   showRemainingWarning?: boolean;
 }
 
+const DEFAULT_REMAINING: RemainingSlots = {
+  cpu: undefined,
+  mem: undefined,
+  accelerators: {},
+};
+
 const ClusterModeFormItems: React.FC<ClusterModeFormItemsProps> = ({
-  remaining,
+  remaining = DEFAULT_REMAINING,
   showRemainingWarning = false,
 }) => {
   'use memo';
