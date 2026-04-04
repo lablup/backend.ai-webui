@@ -26,7 +26,7 @@ import {
   Typography,
   theme,
 } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAICard, BAIFlex } from 'backend.ai-ui';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -37,6 +37,12 @@ const CATEGORY_LABELS: Record<RuntimeParameterCategory, string> = {
   context: 'modelService.RuntimeParamCategoryContext',
   advanced: 'modelService.RuntimeParamCategoryAdvanced',
 };
+
+const ALL_CATEGORIES: RuntimeParameterCategory[] = [
+  'sampling',
+  'context',
+  'advanced',
+];
 
 export interface RuntimeParameterValues {
   [key: string]: string;
@@ -50,8 +56,6 @@ interface RuntimeParameterFormSectionProps {
   manualExtraArgs?: string;
   /** Existing extra args string for edit mode reverse-mapping */
   initialExtraArgs?: string;
-  /** Filter to only render specific categories. If omitted, renders sampling + context (excludes advanced). */
-  categories?: RuntimeParameterCategory[];
 }
 
 /**
@@ -65,7 +69,6 @@ const RuntimeParameterFormSection: React.FC<
   value: controlledValue,
   onChange,
   initialExtraArgs,
-  categories,
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -77,6 +80,8 @@ const RuntimeParameterFormSection: React.FC<
     {},
   );
   const values = controlledValue ?? internalValues;
+
+  const [activeTab, setActiveTab] = useState<string>('sampling');
 
   const setValues = useCallback(
     (newValues: RuntimeParameterValues) => {
@@ -116,50 +121,44 @@ const RuntimeParameterFormSection: React.FC<
 
   if (!groups) return null;
 
-  const defaultCategories: RuntimeParameterCategory[] = ['sampling', 'context'];
-  const visibleCategories = categories ?? defaultCategories;
-  const isDefaultView = !categories;
+  // Build tab list from available categories
+  const availableCategories = ALL_CATEGORIES.filter((cat) =>
+    groups.some((g) => g.category === cat),
+  );
+  const tabList = availableCategories.map((cat) => ({
+    key: cat,
+    label: t(CATEGORY_LABELS[cat]),
+  }));
+
+  const activeGroup = groups.find((g) => g.category === activeTab);
 
   return (
-    <BAIFlex direction="column" gap="xs" align="stretch">
-      {isDefaultView && (
-        <>
-          <Text strong style={{ marginBottom: token.marginXS }}>
-            {t('modelService.RuntimeParamTitle')}
-          </Text>
-          <Text
-            type="secondary"
-            style={{
-              fontSize: token.fontSizeSM,
-              marginBottom: token.marginXS,
-            }}
-          >
-            {t('modelService.RuntimeParamUnchangedHint')}
-          </Text>
-        </>
-      )}
-      {groups
-        .filter((group) => visibleCategories.includes(group.category))
-        .map((group) => (
-          <BAIFlex
-            key={group.category}
-            direction="column"
-            gap="xxs"
-            align="stretch"
-          >
-            <Text type="secondary" style={{ fontSize: token.fontSizeSM }}>
-              {isDefaultView
-                ? t(CATEGORY_LABELS[group.category])
-                : t('modelService.RuntimeParamTitle')}
-            </Text>
-            <ParameterGroupContent
-              group={group}
-              values={values}
-              onParamChange={handleParamChange}
-            />
-          </BAIFlex>
-        ))}
-    </BAIFlex>
+    <Form.Item label={t('modelService.RuntimeParamTitle')}>
+      <BAICard
+        size="small"
+        tabList={tabList}
+        activeTabKey={activeTab}
+        onTabChange={setActiveTab}
+      >
+        <Text
+          type="secondary"
+          style={{
+            display: 'block',
+            fontSize: token.fontSizeSM,
+            marginBottom: token.marginSM,
+          }}
+        >
+          {t('modelService.RuntimeParamUnchangedHint')}
+        </Text>
+        {activeGroup && (
+          <ParameterGroupContent
+            group={activeGroup}
+            values={values}
+            onParamChange={handleParamChange}
+          />
+        )}
+      </BAICard>
+    </Form.Item>
   );
 };
 

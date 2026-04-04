@@ -1405,7 +1405,7 @@
     "RunThisModel": "이 모델로 서비스 만들기",
     "RuntimeParamAdditionalArgs": "추가 인자",
     "RuntimeParamAdditionalArgsPlaceholder": "위 컨트롤에서 다루지 않는 추가 CLI 인자",
-    "RuntimeParamCategoryAdvanced": "고급",
+    "RuntimeParamCategoryAdvanced": "기타",
     "RuntimeParamCategoryContext": "컨텍스트 / 엔진",
     "RuntimeParamCategorySampling": "샘플링",
     "RuntimeParamContextLength": "컨텍스트 길이",

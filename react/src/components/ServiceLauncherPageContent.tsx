@@ -1829,35 +1829,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                         );
                       }}
                     </Form.Item>
-                    <Form.Item dependencies={['runtimeVariant']} noStyle>
-                      {({ getFieldValue }) => {
-                        const variant = getFieldValue('runtimeVariant');
-                        if (variant !== 'vllm' && variant !== 'sglang')
-                          return null;
-
-                        const extraArgsEnvName = getExtraArgsEnvVar(variant);
-                        const existingExtraArgs = endpoint
-                          ? ((
-                              JSON.parse(endpoint?.environ || '{}') as Record<
-                                string,
-                                string
-                              >
-                            )[extraArgsEnvName ?? ''] ?? '')
-                          : '';
-
-                        return (
-                          <RuntimeParameterFormSection
-                            runtimeVariant={variant}
-                            onChange={handleRuntimeParamChange}
-                            initialExtraArgs={existingExtraArgs}
-                            categories={['advanced']}
-                          />
-                        );
-                      }}
-                    </Form.Item>
-                    {/* TODO(FR-2444): Extract cluster mode from ResourceAllocationFormItems
-                        into a standalone component so it can be placed in the Advanced Card
-                        with all original logic (disable conditions, max limit, onChange, remaining warnings). */}
+                    <ClusterModeFormItems />
                   </Card>
                   <BAIFlex
                     direction="row"
