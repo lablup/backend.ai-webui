@@ -424,6 +424,7 @@
     "ProjectFolder": "Projekt-Ordner",
     "ProjectFolders": "Projektordner",
     "QuotaPerStorageVolume": "Kontingent pro Speichervolumen",
+    "QuotaScopeId": "ID des Kontingentsbereichs",
     "ReadOnly": "Nur lesen",
     "ReadWrite": "Lesen und schreiben",
     "SearchByName": "Suche mit Name",

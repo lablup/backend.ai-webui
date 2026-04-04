@@ -424,6 +424,7 @@
     "ProjectFolder": "โฟลเดอร์โครงการ",
     "ProjectFolders": "โฟลเดอร์โครงการ",
     "QuotaPerStorageVolume": "โควตาต่อปริมาณการจัดเก็บ",
+    "QuotaScopeId": "รหัสขอบเขตโควตา",
     "ReadOnly": "อ่านเท่านั้น",
     "ReadWrite": "อ่านและเขียน",
     "SearchByName": "ค้นหาตามชื่อ",

@@ -424,6 +424,7 @@
     "ProjectFolder": "Φάκελος έργου",
     "ProjectFolders": "Φακέλοι έργου",
     "QuotaPerStorageVolume": "Ποσοστό ανά τόμο αποθήκευσης",
+    "QuotaScopeId": "Αναγνωριστικό πεδίου ποσόστωσης",
     "ReadOnly": "Μόνο διαβάστε",
     "ReadWrite": "Διαβάστε και γράψτε",
     "SearchByName": "Αναζήτηση με όνομα",

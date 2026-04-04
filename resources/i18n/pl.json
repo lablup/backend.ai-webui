@@ -424,6 +424,7 @@
     "ProjectFolder": "Folder projektu",
     "ProjectFolders": "Foldery projektu",
     "QuotaPerStorageVolume": "Limit na wolumin pamięci masowej",
+    "QuotaScopeId": "Identyfikator zakresu kwot",
     "ReadOnly": "Czytaj tylko",
     "ReadWrite": "Przeczytaj i napisz",
     "SearchByName": "Szukaj według nazwy",

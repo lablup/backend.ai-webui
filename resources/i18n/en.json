@@ -425,6 +425,7 @@
     "ProjectFolder": "Project Folder",
     "ProjectFolders": "Project Folders",
     "QuotaPerStorageVolume": "Quota per storage volume",
+    "QuotaScopeId": "Quota Scope ID",
     "ReadOnly": "Read only",
     "ReadWrite": "Read & Write",
     "SearchByName": "Search by name",
