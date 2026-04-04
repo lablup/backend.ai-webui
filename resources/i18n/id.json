@@ -356,6 +356,7 @@
     "WrongEmail": "Alamat email tidak valid",
     "YouAreAboutToDeleteCredential": "Anda akan menghapus kredensial pengguna ini:",
     "validation": {
+      "MaxUserCount": "Jumlah maksimum pengguna yang dapat dibuat sekaligus adalah {{count}}.",
       "PleaseEnterPositiveAndUnder2_31": "Silakan masukkan nilai positif kurang dari 2^31",
       "PleaseEnterPositiveInteger": "Harap masukkan nilai positif.",
       "PleaseEnterUniqueNumbers": "Silakan masukkan angka yang unik",

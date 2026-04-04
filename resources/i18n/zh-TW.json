@@ -356,6 +356,7 @@
     "WrongEmail": "無效的電子郵件地址",
     "YouAreAboutToDeleteCredential": "您將要刪除該使用者的憑證：",
     "validation": {
+      "MaxUserCount": "一次最多可建立 {{count}} 個使用者。",
       "PleaseEnterPositiveAndUnder2_31": "請輸入小於 2^31 的正數",
       "PleaseEnterPositiveInteger": "請輸入正數。",
       "PleaseEnterUniqueNumbers": "請輸入不重複的數字",
