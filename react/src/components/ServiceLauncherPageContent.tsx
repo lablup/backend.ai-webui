@@ -1840,32 +1840,6 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                         );
                       }}
                     </Form.Item>
-                    <Form.Item dependencies={['runtimeVariant']} noStyle>
-                      {({ getFieldValue }) => {
-                        const variant = getFieldValue('runtimeVariant');
-                        if (variant !== 'vllm' && variant !== 'sglang')
-                          return null;
-
-                        const extraArgsEnvName = getExtraArgsEnvVar(variant);
-                        const existingExtraArgs = endpoint
-                          ? ((
-                              JSON.parse(endpoint?.environ || '{}') as Record<
-                                string,
-                                string
-                              >
-                            )[extraArgsEnvName ?? ''] ?? '')
-                          : '';
-
-                        return (
-                          <RuntimeParameterFormSection
-                            runtimeVariant={variant}
-                            onChange={handleRuntimeParamChange}
-                            initialExtraArgs={existingExtraArgs}
-                            categories={['advanced']}
-                          />
-                        );
-                      }}
-                    </Form.Item>
                     <ClusterModeFormItems
                       remaining={{
                         cpu: undefined,
