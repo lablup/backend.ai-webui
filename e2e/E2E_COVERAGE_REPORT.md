@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-03-31
+> **Last Updated:** 2026-04-01
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -33,7 +33,7 @@
 | Configurations | `/settings` | 10 | 8 | 🔶 80% |
 | Resources | `/agent-summary`, `/agent` | 10 | 3 | 🔶 30% |
 | Resource Policy | `/resource-policy` | 13 | 10 | 🔶 77% |
-| User Credentials | `/credential` | 19 | 12 | 🔶 63% |
+| User Credentials | `/credential` | 20 | 13 | 🔶 65% |
 | Maintenance | `/maintenance` | 3 | 2 | 🔶 67% |
 | User Settings | `/usersettings` | 10 | 0 | ❌ 0% |
 | Project | `/project` | 6 | 5 | 🔶 83% |
@@ -584,7 +584,7 @@
 
 ### 17. User Credentials (`/credential`)
 
-**Test files:** [`e2e/user/user-crud.spec.ts`](user/user-crud.spec.ts), [`e2e/user/bulk-user-creation.spec.ts`](user/bulk-user-creation.spec.ts), [`e2e/credential/credential-keypair.spec.ts`](credential/credential-keypair.spec.ts)
+**Test files:** [`e2e/user/user-crud.spec.ts`](user/user-crud.spec.ts), [`e2e/user/bulk-user-creation.spec.ts`](user/bulk-user-creation.spec.ts), [`e2e/credential/credential-keypair.spec.ts`](credential/credential-keypair.spec.ts), [`e2e/user-profile/user-ip-restriction-enforcement.spec.ts`](user-profile/user-ip-restriction-enforcement.spec.ts)
 
 **Tabs:** Users | Credentials
 
@@ -607,6 +607,7 @@
 | Reactivate user | ✅ | `Admin can reactivate an inactive user` |
 | Purge user → PurgeUsersModal | ✅ | `Admin can deactivate and permanently delete` |
 | Deleted user login blocked | ✅ | `Deleted user cannot log in` |
+| Allowed IP restriction enforcement (active session) | ✅ | `User can access pages when their current IP is in the allowed list` / `User is denied access after admin revokes their IP` |
 | User name click → UserInfoModal | ❌ | - |
 | Bulk edit → UpdateUsersModal | ❌ | - |
 | User table filtering | ❌ | - |
@@ -627,7 +628,7 @@
 | Edit keypair → KeypairSettingModal | ❌ | - |
 | SSH key management → SSHKeypairManagementModal | ❌ | - |
 
-**Coverage: 🔶 12/19 features**
+**Coverage: 🔶 13/20 features**
 
 ---
 
