@@ -855,6 +855,7 @@
     "PortMustBeInRange": "ポートは0から65534の間でなければなりません",
     "PortMustBeUnique": "ポートはアプリごとに一意である必要があります",
     "PortReservedForInternalUse": "ポート2000〜2003、2200、および7681は内部使用のために予約されています",
+    "Private": "プライベート",
     "ProblemOccurred": "問題が発生しました",
     "Protocol": "プロトコル",
     "ProtocolMustBeOneOfSupported": "プロトコルは、「http」、「tcp」、「preopen」、「pty」のいずれかである必要があります",

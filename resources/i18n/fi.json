@@ -855,6 +855,7 @@
     "PortMustBeInRange": "Portin on oltava välillä 0-65534",
     "PortMustBeUnique": "Portin on oltava yksilöllinen jokaisessa sovelluksessa",
     "PortReservedForInternalUse": "Portit 2000-2003, 2200 ja 7681 on varattu sisäiseen käyttöön.",
+    "Private": "Yksityinen",
     "ProblemOccurred": "Ongelma ilmeni",
     "Protocol": "Pöytäkirja",
     "ProtocolMustBeOneOfSupported": "Protokollan on oltava jokin seuraavista: 'http', 'tcp', 'preopen' ja 'pty'.",

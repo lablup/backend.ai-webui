@@ -13,6 +13,7 @@ import {
   preserveDotStartCase,
   removeArchitectureFromImageFullName,
 } from '../helper';
+import { isPrivateImage } from '../helper/image';
 import {
   useBackendAIImageMetaData,
   useSuspendedBackendaiClient,
@@ -84,15 +85,6 @@ function compareVersions(version1: string, version2: string): number {
 
   return 0;
 }
-
-const isPrivateImage = (image: Image) => {
-  return _.some(image?.labels, (label) => {
-    return (
-      label?.key === 'ai.backend.features' &&
-      label?.value?.split(' ').includes('private')
-    );
-  });
-};
 
 const ImageEnvironmentSelectFormItems: React.FC<
   ImageEnvironmentSelectFormItemsProps
