@@ -57,13 +57,14 @@ import ResourceAllocationFormItems, {
 import SwitchToProjectButton from './SwitchToProjectButton';
 import VFolderLazyView from './VFolderLazyView';
 import VFolderSelect from './VFolderSelect';
-import { MinusOutlined, RightOutlined } from '@ant-design/icons';
+import { MinusOutlined } from '@ant-design/icons';
 import { useDebounceFn } from 'ahooks';
 import {
   App,
   Button,
   Card,
   Checkbox,
+  Collapse,
   Form,
   Input,
   InputNumber,
@@ -631,7 +632,13 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
         group: baiClient.current_group, // current Project Group,
         domain: currentDomain, // current Domain Group,
         cluster_size: values.cluster_size,
-        cluster_mode: values.cluster_mode,
+        // Convert multi-node x1 to single-node x1 since they are functionally
+        // equivalent but multi-node requires overlay network which may not be
+        // configured in all-in-one environments (FR-2381)
+        cluster_mode:
+          values.cluster_mode === 'multi-node' && values.cluster_size === 1
+            ? 'single-node'
+            : values.cluster_mode,
         open_to_public: values.openToPublic,
         config: {
           model: values.vFolderID,
@@ -864,8 +871,11 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                     })
                   : endpoint.resource_opts,
                 // FIXME: temporarily convert cluster mode string according to server-side type
+                // Also convert multi-node x1 to single-node x1 (FR-2381)
                 cluster_mode:
-                  'single-node' === values.cluster_mode
+                  values.cluster_mode === 'single-node' ||
+                  (values.cluster_mode === 'multi-node' &&
+                    values.cluster_size === 1)
                     ? 'SINGLE_NODE'
                     : 'MULTI_NODE',
                 cluster_size: values.cluster_size,
@@ -1707,143 +1717,139 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                       </>
                     )}
                   </Card>
-                  <Card
-                    title={
-                      <BAIFlex
-                        direction="row"
-                        align="center"
-                        justify="between"
-                        role="button"
-                        tabIndex={0}
-                        style={{ cursor: 'pointer' }}
-                        onClick={() => {
-                          setQuery(
-                            { advancedMode: !advancedMode || undefined },
-                            'replaceIn',
-                          );
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter' || e.key === ' ') {
-                            e.preventDefault();
-                            setQuery(
-                              { advancedMode: !advancedMode || undefined },
-                              'replaceIn',
-                            );
-                          }
-                        }}
-                      >
-                        {t('session.launcher.AdvancedSettings')}
-                        <RightOutlined
-                          style={{
-                            fontSize: token.fontSizeSM,
-                            transition: `transform ${token.motionDurationMid}`,
-                            transform: advancedMode
-                              ? 'rotate(90deg)'
-                              : 'rotate(0deg)',
-                          }}
-                        />
-                      </BAIFlex>
-                    }
-                    styles={
-                      advancedMode
-                        ? { header: { paddingInlineEnd: 0 } }
-                        : {
-                            header: {
-                              borderBottom: 'none',
-                              paddingInlineEnd: 0,
-                            },
-                            body: {
-                              display: 'none',
-                            },
-                          }
-                    }
-                  >
-                    <Form.Item name={'mount_id_map'} initialValue={{}} hidden>
-                      <Input />
-                    </Form.Item>
-                    <Form.Item noStyle dependencies={['vFolderID']}>
-                      {({ getFieldValue }) => {
-                        const vFolderID = getFieldValue('vFolderID');
-                        const excludeModelFilter = vFolderID
-                          ? `id != "${vFolderID}"`
-                          : null;
-                        return (
-                          <Form.Item
-                            name={'mount_ids'}
-                            label={t('modelService.AdditionalMounts')}
-                          >
-                            <Suspense
-                              fallback={<Skeleton.Input active block />}
+                  <Form.Item name={'mount_id_map'} initialValue={{}} hidden>
+                    <Input />
+                  </Form.Item>
+                  <Collapse
+                    activeKey={advancedMode ? ['advanced'] : []}
+                    onChange={(keys) => {
+                      setQuery(
+                        {
+                          advancedMode:
+                            keys.includes('advanced') || undefined,
+                        },
+                        'replaceIn',
+                      );
+                    }}
+                    items={[
+                      {
+                        key: 'advanced',
+                        label: t('session.launcher.AdvancedSettings'),
+                        children: (
+                          <>
+                            <Form.Item
+                              noStyle
+                              dependencies={['vFolderID']}
                             >
-                              <BAIVFolderSelect
-                                mode="multiple"
-                                allowClear
-                                currentProjectId={
-                                  currentProject.id ?? undefined
-                                }
-                                filter={
-                                  mergeFilterValues([
-                                    'status == "ready"',
-                                    'usage_mode != "model"',
-                                    '(! name ilike ".%")',
-                                    excludeModelFilter,
-                                  ]) ?? undefined
-                                }
-                              />
-                            </Suspense>
-                          </Form.Item>
-                        );
-                      }}
-                    </Form.Item>
-                    <Form.Item dependencies={['runtimeVariant']} noStyle>
-                      {({ getFieldValue }) => {
-                        const runtimeVariant = getFieldValue('runtimeVariant');
-                        const runtimeVariantConfig = runtimeVariant
-                          ? RUNTIME_ENV_VAR_CONFIGS[runtimeVariant]
-                          : null;
-
-                        return (
-                          <Form.Item
-                            label={t('session.launcher.EnvironmentVariable')}
-                          >
-                            <EnvVarFormList
-                              name={'envvars'}
-                              requiredEnvVars={
-                                runtimeVariantConfig?.requiredEnvVars
-                              }
-                              optionalEnvVars={
-                                runtimeVariantConfig?.optionalEnvVars
-                              }
-                              formItemProps={{
-                                validateTrigger: ['onChange', 'onBlur'],
-                                rules: [
-                                  {
-                                    warningOnly: true,
-                                    validator: async (_rule, value: string) => {
-                                      if (!value) {
-                                        return Promise.resolve();
+                              {({ getFieldValue }) => {
+                                const vFolderID =
+                                  getFieldValue('vFolderID');
+                                const excludeModelFilter = vFolderID
+                                  ? `id != "${vFolderID}"`
+                                  : null;
+                                return (
+                                  <Form.Item
+                                    name={'mount_ids'}
+                                    label={t(
+                                      'modelService.AdditionalMounts',
+                                    )}
+                                  >
+                                    <Suspense
+                                      fallback={
+                                        <Skeleton.Input active block />
                                       }
-
-                                      if (
-                                        !validateVariable(runtimeVariant, value)
-                                      ) {
-                                        throw t(
-                                          'session.launcher.EnvironmentVariableNotForRuntime',
-                                        );
-                                      } else {
-                                        return Promise.resolve();
-                                      }
-                                    },
-                                  },
-                                ],
+                                    >
+                                      <BAIVFolderSelect
+                                        mode="multiple"
+                                        allowClear
+                                        currentProjectId={
+                                          currentProject.id ?? undefined
+                                        }
+                                        filter={
+                                          mergeFilterValues([
+                                            'status == "ready"',
+                                            'usage_mode != "model"',
+                                            '(! name ilike ".%")',
+                                            excludeModelFilter,
+                                          ]) ?? undefined
+                                        }
+                                      />
+                                    </Suspense>
+                                  </Form.Item>
+                                );
                               }}
-                            />
-                          </Form.Item>
-                        );
-                      }}
-                    </Form.Item>
-                    <ClusterModeFormItems />
-                  </Card>
+                            </Form.Item>
+                            <Form.Item
+                              dependencies={['runtimeVariant']}
+                              noStyle
+                            >
+                              {({ getFieldValue }) => {
+                                const runtimeVariant =
+                                  getFieldValue('runtimeVariant');
+                                const runtimeVariantConfig =
+                                  runtimeVariant
+                                    ? RUNTIME_ENV_VAR_CONFIGS[
+                                        runtimeVariant
+                                      ]
+                                    : null;
+
+                                return (
+                                  <Form.Item
+                                    label={t(
+                                      'session.launcher.EnvironmentVariable',
+                                    )}
+                                  >
+                                    <EnvVarFormList
+                                      name={'envvars'}
+                                      requiredEnvVars={
+                                        runtimeVariantConfig?.requiredEnvVars
+                                      }
+                                      optionalEnvVars={
+                                        runtimeVariantConfig?.optionalEnvVars
+                                      }
+                                      formItemProps={{
+                                        validateTrigger: [
+                                          'onChange',
+                                          'onBlur',
+                                        ],
+                                        rules: [
+                                          {
+                                            warningOnly: true,
+                                            validator: async (
+                                              _rule,
+                                              value: string,
+                                            ) => {
+                                              if (!value) {
+                                                return Promise.resolve();
+                                              }
+
+                                              if (
+                                                !validateVariable(
+                                                  runtimeVariant,
+                                                  value,
+                                                )
+                                              ) {
+                                                throw t(
+                                                  'session.launcher.EnvironmentVariableNotForRuntime',
+                                                );
+                                              } else {
+                                                return Promise.resolve();
+                                              }
+                                            },
+                                          },
+                                        ],
+                                      }}
+                                    />
+                                  </Form.Item>
+                                );
+                              }}
+                            </Form.Item>
+                            <ClusterModeFormItems />
+                          </>
+                        ),
+                      },
+                    ]}
+                  />
                   <BAIFlex
                     direction="row"
                     justify="between"
