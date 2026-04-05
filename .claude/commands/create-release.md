@@ -54,7 +54,14 @@ Create a branch named `MAJOR.MINOR` (e.g., `26.4`) from `main`:
 git checkout -b 26.4
 ```
 
-If the branch already exists, check it out instead and confirm with the user.
+If the branch already exists, check it out and merge `main` into it:
+
+```bash
+git checkout 26.4
+git merge main -m "chore: merge main into 26.4 for v{VERSION} release"
+```
+
+If the merge has conflicts, warn the user and stop — do not force-resolve conflicts automatically.
 
 ### 3. Update Version in package.json
 
@@ -168,7 +175,7 @@ User: /create-release 26.4.0
 User: /create-release 26.4.0-beta.0
 
 1. Validates main branch is clean
-2. Creates branch 26.4
+2. Branch 26.4 already exists → checks it out and merges main into 26.4
 3. Updates package.json to 26.4.0-beta.0
 4. Runs make versiontag
 5. Commits: "release: v26.4.0-beta.0"
