@@ -1282,7 +1282,9 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                                     type="primary"
                                     ghost
                                     onClick={() => {
-                                      openFolderExplorer(endpoint!.model!);
+                                      if (endpoint?.model) {
+                                        openFolderExplorer(endpoint.model);
+                                      }
                                     }}
                                   />
                                 </Tooltip>
