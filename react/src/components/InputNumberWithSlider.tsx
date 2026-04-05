@@ -28,6 +28,7 @@ interface InputNumberWithSliderProps {
   onChange?: (value: number) => void;
   inputNumberProps?: OmitControlledProps<InputNumberProps>;
   inputContainerMinWidth?: number;
+  style?: React.CSSProperties;
   sliderProps?:
     | OmitControlledProps<SliderSingleProps>
     | OmitControlledProps<SliderRangeProps>;
@@ -41,6 +42,7 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
   sliderProps,
   allowNegative,
   inputContainerMinWidth,
+  style,
   ...otherProps
 }) => {
   const [value, setValue] = useControllableState_deprecated(otherProps);
@@ -67,7 +69,7 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
   }, []);
 
   return (
-    <BAIFlex direction="row" gap={'md'}>
+    <BAIFlex direction="row" gap={'md'} style={style}>
       <BAIFlex
         style={{ flex: 2, minWidth: inputContainerMinWidth }}
         align="stretch"

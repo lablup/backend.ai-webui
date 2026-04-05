@@ -41,7 +41,6 @@ import EnvVarFormList, {
   sanitizeSensitiveEnv,
   EnvVarFormListValue,
 } from './EnvVarFormList';
-import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import ImageEnvironmentSelectFormItems, {
   ImageEnvironmentFormInput,
 } from './ImageEnvironmentSelectFormItems';
@@ -89,7 +88,6 @@ import {
   BAIButton,
 } from 'backend.ai-ui';
 import _ from 'lodash';
-import { FolderOpenIcon } from 'lucide-react';
 import React, { Suspense, useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -222,13 +220,13 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
     useCurrentResourceGroupState();
 
   const { getErrorMessage } = useErrorMessageResolver();
-  const { open: openFolderExplorer } = useFolderExplorerOpener();
   const RUNTIME_ENV_VAR_CONFIGS = useRuntimeEnvVarConfigs();
   const currentProject = useCurrentProjectValue();
 
   // Runtime parameter values stored in a ref to avoid re-rendering the entire
   // page on every slider change. Values are read at submit time only.
   const runtimeParamValuesRef = useRef<RuntimeParameterValues>({});
+  const runtimeParamTouchedKeysRef = useRef<Set<string>>(new Set());
   const handleRuntimeParamChange = useCallback(
     (values: RuntimeParameterValues) => {
       runtimeParamValuesRef.current = {
@@ -238,6 +236,18 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
     },
     [],
   );
+  const handleTouchedKeysChange = useCallback((keys: Set<string>) => {
+    runtimeParamTouchedKeysRef.current = keys;
+  }, []);
+  const getTouchedRuntimeValues = useCallback(() => {
+    const result: Record<string, string> = {};
+    for (const [key, val] of Object.entries(runtimeParamValuesRef.current)) {
+      if (runtimeParamTouchedKeysRef.current.has(key)) {
+        result[key] = val;
+      }
+    }
+    return result;
+  }, []);
 
   // "Paste Your Command" — GPU hint from parsed CLI command
   const [gpuHint, setGpuHint] = useState<number | null>(null);
@@ -578,23 +588,16 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
         }
       }
 
-      // Merge runtime parameter UI values into EXTRA_ARGS env var
+      // Merge runtime parameter UI values into EXTRA_ARGS env var.
+      // Only include parameters the user has explicitly touched (interacted with).
       if (
         extraArgsEnvVar &&
         Object.keys(runtimeParamValuesRef.current).length > 0
       ) {
         const paramGroups = RUNTIME_PARAMETER_FALLBACKS[values.runtimeVariant];
         if (paramGroups) {
-          const defaults: Record<string, string> = {};
-          for (const p of paramGroups) {
-            defaults[p.key] = p.defaultValue;
-          }
           const manualArgs = environ[extraArgsEnvVar] ?? '';
-          const merged = mergeExtraArgs(
-            runtimeParamValuesRef.current,
-            manualArgs,
-            defaults,
-          );
+          const merged = mergeExtraArgs(getTouchedRuntimeValues(), manualArgs);
           if (merged) {
             environ[extraArgsEnvVar] = merged;
           } else {
@@ -925,7 +928,8 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
             }
           }
 
-          // Merge runtime parameter UI values into EXTRA_ARGS env var
+          // Merge runtime parameter UI values into EXTRA_ARGS env var.
+          // Only include parameters the user has explicitly touched.
           if (
             extraArgsKey &&
             Object.keys(runtimeParamValuesRef.current).length > 0
@@ -933,16 +937,8 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
             const paramDefs =
               RUNTIME_PARAMETER_FALLBACKS[values.runtimeVariant];
             if (paramDefs) {
-              const defs: Record<string, string> = {};
-              for (const p of paramDefs) {
-                defs[p.key] = p.defaultValue;
-              }
               const manual = newEnvirons[extraArgsKey] ?? '';
-              const merged = mergeExtraArgs(
-                runtimeParamValuesRef.current,
-                manual,
-                defs,
-              );
+              const merged = mergeExtraArgs(getTouchedRuntimeValues(), manual);
               if (merged) {
                 newEnvirons[extraArgsKey] = merged;
               } else {
@@ -1279,20 +1275,11 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                             >
                               <BAIFlex gap="xs" align="center">
                                 <Suspense fallback={<Skeleton.Input active />}>
-                                  <VFolderLazyView uuid={endpoint?.model} />
-                                </Suspense>
-                                <Tooltip title={t('modelService.OpenFolder')}>
-                                  <Button
-                                    icon={<FolderOpenIcon />}
-                                    type="primary"
-                                    ghost
-                                    onClick={() => {
-                                      if (endpoint?.model) {
-                                        openFolderExplorer(endpoint.model);
-                                      }
-                                    }}
+                                  <VFolderLazyView
+                                    uuid={endpoint?.model}
+                                    clickable
                                   />
-                                </Tooltip>
+                                </Suspense>
                               </BAIFlex>
                             </Form.Item>
                           )
@@ -1365,6 +1352,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                               <RuntimeParameterFormSection
                                 runtimeVariant={variant}
                                 onChange={handleRuntimeParamChange}
+                                onTouchedKeysChange={handleTouchedKeysChange}
                                 initialExtraArgs={existingExtraArgs}
                               />
                             );

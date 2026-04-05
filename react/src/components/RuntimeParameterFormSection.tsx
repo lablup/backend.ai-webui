@@ -6,10 +6,7 @@ import {
   RuntimeParameterDef,
   RuntimeParameterCategory,
 } from '../constants/runtimeParameterFallbacks';
-import {
-  mergeExtraArgs,
-  reverseMapExtraArgs,
-} from '../helper/runtimeExtraArgsParser';
+import { reverseMapExtraArgs } from '../helper/runtimeExtraArgsParser';
 import {
   RuntimeParameterGroup,
   useRuntimeParameterSchema,
@@ -17,8 +14,8 @@ import {
   buildSchemaKeySet,
 } from '../hooks/useRuntimeParameterSchema';
 import InputNumberWithSlider from './InputNumberWithSlider';
-import { Alert, Checkbox, Form, InputNumber, Select, Input, theme } from 'antd';
-import { BAICard, BAIFlex } from 'backend.ai-ui';
+import { Checkbox, Form, InputNumber, Select, Input, theme } from 'antd';
+import { BAIAlert, BAICard, BAIFlex } from 'backend.ai-ui';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -41,6 +38,8 @@ export interface RuntimeParameterValues {
 interface RuntimeParameterFormSectionProps {
   runtimeVariant: string;
   onChange?: (values: RuntimeParameterValues) => void;
+  /** Called when the set of touched parameter keys changes */
+  onTouchedKeysChange?: (touchedKeys: Set<string>) => void;
   /** Existing extra args string for edit mode reverse-mapping */
   initialExtraArgs?: string;
 }
@@ -51,7 +50,7 @@ interface RuntimeParameterFormSectionProps {
  */
 const RuntimeParameterFormSection: React.FC<
   RuntimeParameterFormSectionProps
-> = ({ runtimeVariant, onChange, initialExtraArgs }) => {
+> = ({ runtimeVariant, onChange, onTouchedKeysChange, initialExtraArgs }) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -61,6 +60,10 @@ const RuntimeParameterFormSection: React.FC<
     {},
   );
   const values = internalValues;
+
+  // Track which parameter keys the user has explicitly interacted with.
+  // In edit mode, keys already present in the endpoint's env vars are pre-marked.
+  const [touchedKeys, setTouchedKeys] = useState<Set<string>>(new Set());
 
   const [activeTab, setActiveTab] =
     useState<RuntimeParameterCategory>('sampling');
@@ -83,18 +86,36 @@ const RuntimeParameterFormSection: React.FC<
       const schemaKeys = buildSchemaKeySet(groups);
       const { mappedArgs } = reverseMapExtraArgs(initialExtraArgs, schemaKeys);
       setValues({ ...defaults, ...mappedArgs });
+      // Pre-mark keys from existing env vars as touched
+      const initialTouched = new Set(Object.keys(mappedArgs));
+      setTouchedKeys(initialTouched);
+      onTouchedKeysChange?.(initialTouched);
     } else {
       setValues(defaults);
+      setTouchedKeys(new Set());
+      onTouchedKeysChange?.(new Set());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [runtimeVariant, initialExtraArgs]);
 
   const handleParamChange = useCallback(
     (key: string, newValue: string) => {
-      const updated = { ...values, [key]: newValue };
-      setValues(updated);
+      setInternalValues((prev) => {
+        const updated = { ...prev, [key]: newValue };
+        // Notify parent outside updater to keep it pure
+        queueMicrotask(() => onChange?.(updated));
+        return updated;
+      });
+      setTouchedKeys((prev) => {
+        if (prev.has(key)) return prev;
+        const next = new Set(prev);
+        next.add(key);
+        // Notify parent outside updater to keep it pure
+        queueMicrotask(() => onTouchedKeysChange?.(next));
+        return next;
+      });
     },
-    [values, setValues],
+    [onChange, onTouchedKeysChange],
   );
 
   if (!groups) return null;
@@ -122,7 +143,7 @@ const RuntimeParameterFormSection: React.FC<
         activeTabKey={effectiveActiveTab}
         onTabChange={(key) => setActiveTab(key as RuntimeParameterCategory)}
       >
-        <Alert
+        <BAIAlert
           type="info"
           showIcon
           title={t('modelService.RuntimeParamUnchangedHint')}
@@ -132,6 +153,7 @@ const RuntimeParameterFormSection: React.FC<
           <ParameterGroupContent
             group={activeGroup}
             values={values}
+            touchedKeys={touchedKeys}
             onParamChange={handleParamChange}
           />
         )}
@@ -143,12 +165,14 @@ const RuntimeParameterFormSection: React.FC<
 interface ParameterGroupContentProps {
   group: RuntimeParameterGroup;
   values: RuntimeParameterValues;
+  touchedKeys: Set<string>;
   onParamChange: (key: string, value: string) => void;
 }
 
 const ParameterGroupContent: React.FC<ParameterGroupContentProps> = ({
   group,
   values,
+  touchedKeys,
   onParamChange,
 }) => {
   return (
@@ -158,6 +182,7 @@ const ParameterGroupContent: React.FC<ParameterGroupContentProps> = ({
           key={param.key}
           param={param}
           value={values[param.key] ?? param.defaultValue}
+          touched={touchedKeys.has(param.key)}
           onChange={(val) => onParamChange(param.key, val)}
         />
       ))}
@@ -168,12 +193,14 @@ const ParameterGroupContent: React.FC<ParameterGroupContentProps> = ({
 interface ParameterControlProps {
   param: RuntimeParameterDef;
   value: string;
+  touched: boolean;
   onChange: (value: string) => void;
 }
 
 const ParameterControl: React.FC<ParameterControlProps> = ({
   param,
   value,
+  touched,
   onChange,
 }) => {
   'use memo';
@@ -182,6 +209,11 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
 
   const label = t(param.name);
   const tooltip = t(param.description);
+  const formItemStyle = {
+    marginBottom: token.marginXS,
+  };
+  const controlOpacity = touched ? undefined : 0.45;
+  const controlTransition = 'opacity 0.2s';
 
   switch (param.uiType) {
     case 'slider':
@@ -189,7 +221,8 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
         <Form.Item
           label={label}
           tooltip={tooltip}
-          style={{ marginBottom: token.marginXS }}
+          style={formItemStyle}
+          required
         >
           <InputNumberWithSlider
             min={param.min}
@@ -198,6 +231,7 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
             value={parseFloat(value)}
             onChange={(v) => onChange(String(v))}
             inputContainerMinWidth={190}
+            style={{ opacity: controlOpacity, transition: controlTransition }}
             sliderProps={{
               marks: {
                 ...(param.min !== undefined ? { [param.min]: param.min } : {}),
@@ -220,7 +254,8 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
         <Form.Item
           label={label}
           tooltip={tooltip}
-          style={{ marginBottom: token.marginXS }}
+          style={formItemStyle}
+          required
         >
           <InputNumber
             min={param.min}
@@ -234,7 +269,11 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
             onChange={(v) => {
               if (v !== null) onChange(String(v));
             }}
-            style={{ width: '100%' }}
+            style={{
+              width: '100%',
+              opacity: controlOpacity,
+              transition: controlTransition,
+            }}
           />
         </Form.Item>
       );
@@ -244,11 +283,13 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
         <Form.Item
           label={label}
           tooltip={tooltip}
-          style={{ marginBottom: token.marginXS }}
+          style={formItemStyle}
+          required
         >
           <Select
             value={value}
             onChange={onChange}
+            style={{ opacity: controlOpacity, transition: controlTransition }}
             options={param.options?.map((opt) => ({
               value: opt.value,
               label: opt.label,
@@ -262,12 +303,14 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
         <Form.Item
           label={label}
           tooltip={tooltip}
-          style={{ marginBottom: token.marginXS }}
+          style={formItemStyle}
+          required
         >
           <Checkbox
             checked={value === 'true'}
             onChange={(e) => onChange(e.target.checked ? 'true' : 'false')}
             aria-label={label}
+            style={{ opacity: controlOpacity, transition: controlTransition }}
           >
             {t('general.Enable')}
           </Checkbox>
@@ -280,25 +323,17 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
         <Form.Item
           label={label}
           tooltip={tooltip}
-          style={{ marginBottom: token.marginXS }}
+          style={formItemStyle}
+          required
         >
-          <Input value={value} onChange={(e) => onChange(e.target.value)} />
+          <Input
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            style={{ opacity: controlOpacity, transition: controlTransition }}
+          />
         </Form.Item>
       );
   }
 };
 
 export default RuntimeParameterFormSection;
-
-/**
- * Helper to generate the final EXTRA_ARGS string from runtime parameter values.
- * This is used by the parent form when submitting.
- */
-export function buildExtraArgsString(
-  paramValues: RuntimeParameterValues,
-  manualExtraArgs: string,
-  groups: RuntimeParameterGroup[],
-): string {
-  const defaults = buildDefaultsMap(groups);
-  return mergeExtraArgs(paramValues, manualExtraArgs, defaults);
-}
