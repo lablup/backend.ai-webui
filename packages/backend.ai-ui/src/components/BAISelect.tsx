@@ -45,33 +45,30 @@ const useStyles = createStyles(({ css, token }) => ({
     }
   `,
   customStyle: css`
+    /* Hide selected value content (except search input) when the user is typing a search query.
+       Matches antd's approach of using color: transparent instead of display: none.
+       Uses opacity: 0 with transition: none to avoid delay from antd Tag's default transition. */
+    .ant-select-content-has-search-value img,
+    .ant-select-content-has-search-value .ant-divider,
+    .ant-select-content-has-search-value .ant-badge,
+    .ant-select-content-has-search-value span.ant-tag {
+      opacity: 0 !important;
+      transition: none;
+    }
+
     /* Change the opacity of images and tags in the select option when the dropdown is open */
-    &.ant-select-open .ant-select-content .ant-select-content-value .ant-badge,
-    &.ant-select-open .ant-select-content .ant-select-content-value img,
-    &.ant-select-open
-      .ant-select-content
-      .ant-select-content-value
-      span.ant-tag {
+    &.ant-select-open .ant-select-content .ant-badge,
+    &.ant-select-open .ant-select-content img,
+    &.ant-select-open .ant-select-content .ant-divider,
+    &.ant-select-open .ant-select-content span.ant-tag {
       opacity: 0.5;
     }
 
     /* Change the color of secondary/success/warning/danger text to placeholder color when the dropdown is open */
-    &.ant-select-open
-      .ant-select-content
-      .ant-select-content-value
-      .ant-typography-secondary,
-    &.ant-select-open
-      .ant-select-content
-      .ant-select-content-value
-      .ant-typography-success,
-    &.ant-select-open
-      .ant-select-content
-      .ant-select-content-value
-      .ant-typography-warning,
-    &.ant-select-open
-      .ant-select-content
-      .ant-select-content-value
-      .ant-typography-danger {
+    &.ant-select-open .ant-select-content .ant-typography-secondary,
+    &.ant-select-open .ant-select-content .ant-typography-success,
+    &.ant-select-open .ant-select-content .ant-typography-warning,
+    &.ant-select-open .ant-select-content .ant-typography-danger {
       color: ${token.colorTextPlaceholder};
     }
 
