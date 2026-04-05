@@ -58,6 +58,7 @@ import ResourceAllocationFormItems, {
 import SwitchToProjectButton from './SwitchToProjectButton';
 import VFolderLazyView from './VFolderLazyView';
 import VFolderSelect from './VFolderSelect';
+import VFolderTableFormItem from './VFolderTableFormItem';
 import { MinusOutlined } from '@ant-design/icons';
 import { useDebounceFn } from 'ahooks';
 import {
@@ -80,11 +81,8 @@ import {
 import {
   BAIModal,
   BAIFlex,
-  BAIVFolderSelect,
   ESMClientErrorResponse,
   filterOutNullAndUndefined,
-  toLocalId,
-  mergeFilterValues,
   useErrorMessageResolver,
   useBAILogger,
   BAIResourceNumberWithIcon,
@@ -649,10 +647,9 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
           extra_mounts: _.reduce(
             values.mount_ids,
             (acc, key: string) => {
-              const localId = toLocalId(key);
-              acc[localId] = {
-                ...(values.mount_id_map[localId] && {
-                  mount_destination: values.mount_id_map[localId],
+              acc[key] = {
+                ...(values.mount_id_map?.[key] && {
+                  mount_destination: values.mount_id_map[key],
                 }),
                 type: 'bind', // FIXME: hardcoded. change it with option later
               };
@@ -895,11 +892,10 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                   values,
                 ),
                 extra_mounts: _.map(values.mount_ids, (vfolder) => {
-                  const localId = toLocalId(vfolder);
                   return {
-                    vfolder_id: localId,
-                    ...(values.mount_id_map[localId] && {
-                      mount_destination: values.mount_id_map[localId],
+                    vfolder_id: vfolder,
+                    ...(values.mount_id_map?.[vfolder] && {
+                      mount_destination: values.mount_id_map[vfolder],
                     }),
                   };
                 }),
@@ -1163,6 +1159,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
           : _.get(formValuesFromQueryParams, 'vFolderID') || undefined,
         resourceGroup: currentGlobalResourceGroup,
         allocationPreset: 'auto-select',
+        customDefinitionMode: 'command' as CustomDefinitionMode,
         // Initialize empty mount configuration for new services
         mount_ids: [],
         mount_id_map: {},
@@ -1329,6 +1326,17 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                             }}
                           />
                         </Form.Item>
+                        <ImageEnvironmentSelectFormItems
+                        // //TODO: test with real inference images
+                        // filter={(image) => {
+                        //   return !!_.find(image?.labels, (label) => {
+                        //     return (
+                        //       label?.key === "ai.backend.role" &&
+                        //       label.value === "INFERENCE" //['COMPUTE', 'INFERENCE', 'SYSTEM']
+                        //     );
+                        //   });
+                        // }}
+                        />
                         <Form.Item dependencies={['runtimeVariant']} noStyle>
                           {({ getFieldValue }) => {
                             const variant = getFieldValue('runtimeVariant');
@@ -1415,11 +1423,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                                   marginBottom: token.marginMD,
                                 }}
                               >
-                                <Form.Item
-                                  name="customDefinitionMode"
-                                  initialValue="command"
-                                  noStyle
-                                >
+                                <Form.Item name="customDefinitionMode" noStyle>
                                   <Segmented
                                     options={[
                                       {
@@ -1646,17 +1650,6 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                             disabled={hasAutoScalingRules}
                           />
                         </Form.Item>
-                        <ImageEnvironmentSelectFormItems
-                        // //TODO: test with real inference images
-                        // filter={(image) => {
-                        //   return !!_.find(image?.labels, (label) => {
-                        //     return (
-                        //       label?.key === "ai.backend.role" &&
-                        //       label.value === "INFERENCE" //['COMPUTE', 'INFERENCE', 'SYSTEM']
-                        //     );
-                        //   });
-                        // }}
-                        />
                         {endpoint && !wantToChangeResource ? (
                           <Form.Item
                             label={
@@ -1733,16 +1726,12 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                       </>
                     )}
                   </Card>
-                  <Form.Item name={'mount_id_map'} initialValue={{}} hidden>
-                    <Input />
-                  </Form.Item>
                   <Collapse
                     activeKey={advancedMode ? ['advanced'] : []}
                     onChange={(keys) => {
                       setQuery(
                         {
-                          advancedMode:
-                            keys.includes('advanced') || undefined,
+                          advancedMode: keys.includes('advanced') || undefined,
                         },
                         'replaceIn',
                       );
@@ -1753,48 +1742,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                         label: t('session.launcher.AdvancedSettings'),
                         children: (
                           <>
-                            <Form.Item
-                              noStyle
-                              dependencies={['vFolderID']}
-                            >
-                              {({ getFieldValue }) => {
-                                const vFolderID =
-                                  getFieldValue('vFolderID');
-                                const excludeModelFilter = vFolderID
-                                  ? `id != "${vFolderID}"`
-                                  : null;
-                                return (
-                                  <Form.Item
-                                    name={'mount_ids'}
-                                    label={t(
-                                      'modelService.AdditionalMounts',
-                                    )}
-                                  >
-                                    <Suspense
-                                      fallback={
-                                        <Skeleton.Input active block />
-                                      }
-                                    >
-                                      <BAIVFolderSelect
-                                        mode="multiple"
-                                        allowClear
-                                        currentProjectId={
-                                          currentProject.id ?? undefined
-                                        }
-                                        filter={
-                                          mergeFilterValues([
-                                            'status == "ready"',
-                                            'usage_mode != "model"',
-                                            '(! name ilike ".%")',
-                                            excludeModelFilter,
-                                          ]) ?? undefined
-                                        }
-                                      />
-                                    </Suspense>
-                                  </Form.Item>
-                                );
-                              }}
-                            </Form.Item>
+                            <ClusterModeFormItems />
                             <Form.Item
                               dependencies={['runtimeVariant']}
                               noStyle
@@ -1802,12 +1750,9 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                               {({ getFieldValue }) => {
                                 const runtimeVariant =
                                   getFieldValue('runtimeVariant');
-                                const runtimeVariantConfig =
-                                  runtimeVariant
-                                    ? RUNTIME_ENV_VAR_CONFIGS[
-                                        runtimeVariant
-                                      ]
-                                    : null;
+                                const runtimeVariantConfig = runtimeVariant
+                                  ? RUNTIME_ENV_VAR_CONFIGS[runtimeVariant]
+                                  : null;
 
                                 return (
                                   <Form.Item
@@ -1824,10 +1769,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                                         runtimeVariantConfig?.optionalEnvVars
                                       }
                                       formItemProps={{
-                                        validateTrigger: [
-                                          'onChange',
-                                          'onBlur',
-                                        ],
+                                        validateTrigger: ['onChange', 'onBlur'],
                                         rules: [
                                           {
                                             warningOnly: true,
@@ -1860,7 +1802,26 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                                 );
                               }}
                             </Form.Item>
-                            <ClusterModeFormItems />
+                            <Form.Item noStyle dependencies={['vFolderID']}>
+                              {({ getFieldValue }) => {
+                                const vFolderID = getFieldValue('vFolderID');
+                                return (
+                                  <VFolderTableFormItem
+                                    label={t('modelService.AdditionalMounts')}
+                                    rowKey="id"
+                                    tableProps={{
+                                      scroll: { x: 'max-content', y: 300 },
+                                    }}
+                                    rowFilter={(vfolder) =>
+                                      vfolder.usage_mode !== 'model' &&
+                                      vfolder.status === 'ready' &&
+                                      !vfolder.name?.startsWith('.') &&
+                                      vfolder.id !== vFolderID
+                                    }
+                                  />
+                                );
+                              }}
+                            </Form.Item>
                           </>
                         ),
                       },
