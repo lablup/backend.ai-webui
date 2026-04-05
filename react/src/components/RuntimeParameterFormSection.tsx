@@ -14,8 +14,8 @@ import {
   buildSchemaKeySet,
 } from '../hooks/useRuntimeParameterSchema';
 import InputNumberWithSlider from './InputNumberWithSlider';
-import { Checkbox, Form, InputNumber, Select, Input, theme } from 'antd';
-import { BAIAlert, BAICard, BAIFlex } from 'backend.ai-ui';
+import { Checkbox, Form, InputNumber, Select, Input, theme, Alert } from 'antd';
+import { BAICard, BAIFlex } from 'backend.ai-ui';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -143,8 +143,8 @@ const RuntimeParameterFormSection: React.FC<
         activeTabKey={effectiveActiveTab}
         onTabChange={(key) => setActiveTab(key as RuntimeParameterCategory)}
       >
-        <BAIAlert
-          type="info"
+        <Alert
+          type="warning"
           showIcon
           title={t('modelService.RuntimeParamUnchangedHint')}
           style={{ marginBottom: token.marginSM }}

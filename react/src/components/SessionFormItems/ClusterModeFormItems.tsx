@@ -9,7 +9,7 @@ import { RemainingSlots } from '../../hooks/useResourceLimitAndRemaining';
 import InputNumberWithSlider from '../InputNumberWithSlider';
 import RemainingMark from './RemainingMark';
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import { Card, Form, Radio, Tooltip, theme } from 'antd';
+import { Form, Radio, Tooltip, theme } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
 import React from 'react';
@@ -46,21 +46,12 @@ const ClusterModeFormItems: React.FC<ClusterModeFormItemsProps> = ({
       label={t('session.launcher.ClusterMode')}
       required
       dependencies={['agent']}
-      noStyle
     >
       {({ getFieldValue }) => {
         return (
-          <Card
-            style={{
-              marginBottom: token.margin,
-            }}
-          >
+          <>
             <BAIFlex direction="column" align="stretch">
-              <Form.Item
-                name={'cluster_mode'}
-                required
-                style={{ marginBottom: 0 }}
-              >
+              <Form.Item name={'cluster_mode'} required noStyle>
                 <Radio.Group
                   onChange={() => {
                     form.validateFields().catch(() => undefined);
@@ -174,6 +165,7 @@ const ClusterModeFormItems: React.FC<ClusterModeFormItemsProps> = ({
                       name={'cluster_size'}
                       label={t('session.launcher.ClusterSize')}
                       required
+                      noStyle
                       dependencies={[
                         ['resource', 'cpu'],
                         ['resource', 'mem'],
@@ -277,7 +269,7 @@ const ClusterModeFormItems: React.FC<ClusterModeFormItemsProps> = ({
                 }}
               </Form.Item>
             </BAIFlex>
-          </Card>
+          </>
         );
       }}
     </Form.Item>

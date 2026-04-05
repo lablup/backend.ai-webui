@@ -1349,15 +1349,11 @@ const ResourceAllocationFormItems: React.FC<
         >
           {({ getFieldValue }) => {
             return (
-              <Card
-                style={{
-                  marginBottom: token.margin,
-                }}
-              >
+              <>
                 <Row gutter={token.marginMD}>
                   <Col xs={24}>
                     {/* <Col xs={24} lg={12}> */}
-                    <Form.Item name={'cluster_mode'} required>
+                    <Form.Item name={'cluster_mode'} required noStyle>
                       <Radio.Group
                         onChange={() => {
                           form.validateFields().catch(() => {});
@@ -1482,7 +1478,7 @@ const ResourceAllocationFormItems: React.FC<
                         return (
                           <Form.Item
                             name={'cluster_size'}
-                            label={t('session.launcher.ClusterSize')}
+                            noStyle
                             required
                             dependencies={[
                               ['resource', 'cpu'],
@@ -1591,7 +1587,7 @@ const ResourceAllocationFormItems: React.FC<
                     </Form.Item>
                   </Col>
                 </Row>
-              </Card>
+              </>
             );
           }}
         </Form.Item>
