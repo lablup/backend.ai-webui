@@ -1147,7 +1147,12 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
       }
     : {
         replicas: 1,
-        runtimeVariant: 'custom',
+        runtimeVariant: 'vllm',
+        commandModelMount: '/models',
+        commandPort: 8000,
+        commandHealthCheck: '/health',
+        commandInitialDelay: 5.0,
+        commandMaxRetries: 10,
         ...RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
         ...(baiClient._config?.default_session_environment && {
           environments: {
@@ -1224,7 +1229,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                 scrollToFirstError
               >
                 <BAIFlex direction="column" gap={'md'} align="stretch">
-                  <Card>
+                  <Card title={t('modelService.ModelAndServingConfiguration')}>
                     {(baiClient.supports('modify-endpoint') || !endpoint) && (
                       <>
                         <Form.Item
@@ -1483,7 +1488,6 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                                           tooltip={t(
                                             'modelService.ModelMountTooltip',
                                           )}
-                                          initialValue="/models"
                                         >
                                           <Input placeholder="/models" />
                                         </Form.Item>
@@ -1498,7 +1502,6 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                                             tooltip={t(
                                               'modelService.PortTooltip',
                                             )}
-                                            initialValue={8000}
                                             style={{ flex: 1 }}
                                             labelCol={{
                                               style: { width: '100%' },
@@ -1518,7 +1521,6 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                                             tooltip={t(
                                               'modelService.HealthCheckTooltip',
                                             )}
-                                            initialValue="/health"
                                             style={{ flex: 1 }}
                                             labelCol={{
                                               style: { width: '100%' },
@@ -1540,7 +1542,6 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                                             tooltip={t(
                                               'modelService.InitialDelayTooltip',
                                             )}
-                                            initialValue={5.0}
                                             style={{ flex: 1 }}
                                             labelCol={{
                                               style: { width: '100%' },
@@ -1558,7 +1559,6 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                                             tooltip={t(
                                               'modelService.MaxRetriesTooltip',
                                             )}
-                                            initialValue={10}
                                             style={{ flex: 1 }}
                                             labelCol={{
                                               style: { width: '100%' },
@@ -1608,7 +1608,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                       </>
                     )}
                   </Card>
-                  <Card>
+                  <Card title={t('modelService.ReplicasAndResources')}>
                     {(baiClient.supports('modify-endpoint') || !endpoint) && (
                       <>
                         <Form.Item
