@@ -1260,8 +1260,9 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                                 !model && !formValuesFromQueryParams.vFolderID
                               }
                               disabled={!!endpoint}
-                              allowFolderExplorer
-                              allowCreateFolder
+                              showOpenButton
+                              showCreateButton
+                              showRefreshButton
                             />
                           </Form.Item>
                         ) : (
