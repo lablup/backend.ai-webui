@@ -34,7 +34,6 @@ export interface EnvVarFormListValue {
   variable: string;
   value: string;
 }
-// TODO: validation rule for duplicate variable name
 const EnvVarFormList: React.FC<EnvVarFormListProps> = ({
   formItemProps,
   requiredEnvVars,
@@ -42,6 +41,7 @@ const EnvVarFormList: React.FC<EnvVarFormListProps> = ({
   ...props
 }) => {
   'use memo';
+  const { rules: externalRules, ...restFormItemProps } = formItemProps || {};
   const inputRef = useRef<InputRef>(null);
   const { t } = useTranslation();
   const form = Form.useFormInstance();
@@ -144,7 +144,7 @@ const EnvVarFormList: React.FC<EnvVarFormListProps> = ({
                   style={{ marginBottom: 0, flex: 1 }}
                   name={[name, 'variable']}
                   rules={[
-                    ...(formItemProps?.rules || []),
+                    ...(externalRules || []),
                     {
                       required: true,
                       message: t('session.launcher.EnterEnvironmentVariable'),
@@ -180,7 +180,7 @@ const EnvVarFormList: React.FC<EnvVarFormListProps> = ({
                       },
                     }),
                   ]}
-                  {...formItemProps}
+                  {...restFormItemProps}
                 >
                   {optionalEnvVars && getAutoCompleteOptions().length > 0 ? (
                     <AutoComplete

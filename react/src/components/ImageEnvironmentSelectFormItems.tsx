@@ -65,6 +65,7 @@ export type ImageEnvironmentFormInput = {
 interface ImageEnvironmentSelectFormItemsProps {
   filter?: (image: Image) => boolean;
   showPrivate?: boolean;
+  searchPrefill?: string;
 }
 
 function compareVersions(version1: string, version2: string): number {
@@ -96,7 +97,7 @@ const isPrivateImage = (image: Image) => {
 
 const ImageEnvironmentSelectFormItems: React.FC<
   ImageEnvironmentSelectFormItemsProps
-> = ({ filter, showPrivate }) => {
+> = ({ filter, showPrivate, searchPrefill }) => {
   const form = Form.useFormInstance<ImageEnvironmentFormInput>();
   const environments = Form.useWatch('environments', { form, preserve: true });
   const baiClient = useSuspendedBackendaiClient();
@@ -112,6 +113,25 @@ const ImageEnvironmentSelectFormItems: React.FC<
 
   const envSelectRef = useRef<RefSelectProps>(null);
   const versionSelectRef = useRef<RefSelectProps>(null);
+  const [envSelectOpen, setEnvSelectOpen] = useState<boolean | undefined>(
+    undefined,
+  );
+
+  useEffect(() => {
+    if (!searchPrefill) {
+      setEnvironmentSearch('');
+      setEnvSelectOpen(undefined);
+      return;
+    }
+
+    setEnvironmentSearch(searchPrefill);
+    // Force open the dropdown and focus the select
+    setEnvSelectOpen(true);
+    queueMicrotask(() => {
+      envSelectRef.current?.focus();
+    });
+  }, [searchPrefill]);
+
   const imageEnvironmentSelectFormItemsVariables = baiClient?._config
     ?.showNonInstalledImages
     ? {}
@@ -421,6 +441,13 @@ const ImageEnvironmentSelectFormItems: React.FC<
       >
         <BAISelect
           ref={envSelectRef}
+          open={envSelectOpen}
+          onDropdownVisibleChange={(visible) => {
+            // Return to uncontrolled mode once the user interacts
+            if (!visible) {
+              setEnvSelectOpen(undefined);
+            }
+          }}
           showSearch={{
             searchValue: environmentSearch,
             onSearch: setEnvironmentSearch,

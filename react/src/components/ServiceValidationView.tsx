@@ -22,6 +22,7 @@ import { App, Tag, theme } from 'antd';
 import {
   BAIFlex,
   ESMClientErrorResponse,
+  toLocalId,
   useErrorMessageResolver,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
@@ -91,9 +92,10 @@ const ServiceValidationView: React.FC<ServiceValidationModalProps> = ({
           extra_mounts: _.reduce(
             values.mount_ids,
             (acc, key: string) => {
-              acc[key] = {
-                ...(values.mount_id_map[key] && {
-                  mount_destination: values.mount_id_map[key],
+              const localId = toLocalId(key);
+              acc[localId] = {
+                ...(values.mount_id_map[localId] && {
+                  mount_destination: values.mount_id_map[localId],
                 }),
                 type: 'bind', // FIXME: hardcoded. change it with option later
               };

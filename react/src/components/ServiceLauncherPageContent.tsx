@@ -8,11 +8,22 @@ import { ServiceLauncherPageContent_AutoScalingRulesQuery } from '../__generated
 import { ServiceLauncherPageContent_UserInfoQuery } from '../__generated__/ServiceLauncherPageContent_UserInfoQuery.graphql';
 import { ServiceLauncherPageContent_UserResourcePolicyQuery } from '../__generated__/ServiceLauncherPageContent_UserResourcePolicyQuery.graphql';
 import {
+  getAllExtraArgsEnvVars,
+  getExtraArgsEnvVar,
+  RUNTIME_PARAMETER_FALLBACKS,
+} from '../constants/runtimeParameterFallbacks';
+import {
   baiSignedRequestWithPromise,
   compareNumberWithUnits,
   convertToBinaryUnit,
   useBaiSignedRequestWithPromise,
 } from '../helper';
+import { generateModelDefinitionYaml } from '../helper/generateModelDefinitionYaml';
+import { parseCliCommand } from '../helper/parseCliCommand';
+import {
+  mergeExtraArgs,
+  reverseMapExtraArgs,
+} from '../helper/runtimeExtraArgsParser';
 import {
   useCurrentDomainValue,
   useSuspendedBackendaiClient,
@@ -34,6 +45,10 @@ import ImageEnvironmentSelectFormItems, {
   ImageEnvironmentFormInput,
 } from './ImageEnvironmentSelectFormItems';
 import InputNumberWithSlider from './InputNumberWithSlider';
+import RuntimeParameterFormSection, {
+  RuntimeParameterValues,
+} from './RuntimeParameterFormSection';
+import ClusterModeFormItems from './SessionFormItems/ClusterModeFormItems';
 import ResourceAllocationFormItems, {
   AUTOMATIC_DEFAULT_SHMEM,
   RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
@@ -50,8 +65,11 @@ import {
   Button,
   Card,
   Checkbox,
+  Collapse,
   Form,
   Input,
+  InputNumber,
+  Segmented,
   Skeleton,
   Select,
   theme,
@@ -70,7 +88,7 @@ import {
   BAIButton,
 } from 'backend.ai-ui';
 import _ from 'lodash';
-import React, { Suspense, useState } from 'react';
+import React, { Suspense, useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   graphql,
@@ -79,6 +97,7 @@ import {
   useMutation,
 } from 'react-relay';
 import {
+  BooleanParam,
   JsonParam,
   StringParam,
   useQueryParams,
@@ -136,6 +155,8 @@ export interface ServiceCreateType {
   open_to_public: boolean;
   config: ServiceCreateConfigType;
 }
+export type CustomDefinitionMode = 'command' | 'file';
+
 interface ServiceLauncherInput extends ImageEnvironmentFormInput {
   serviceName: string;
   vFolderID: string;
@@ -147,6 +168,14 @@ interface ServiceLauncherInput extends ImageEnvironmentFormInput {
   mount_ids?: Array<string>;
   envvars: EnvVarFormListValue[];
   runtimeVariant: string;
+  // "Paste Your Command" fields
+  customDefinitionMode?: CustomDefinitionMode;
+  startCommand?: string;
+  commandPort?: number;
+  commandHealthCheck?: string;
+  commandModelMount?: string;
+  commandInitialDelay?: number;
+  commandMaxRetries?: number;
 }
 
 export type ServiceLauncherFormValue = ServiceLauncherInput &
@@ -163,16 +192,19 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
   'use memo';
   const { logger } = useBAILogger();
   const { token } = theme.useToken();
-  const { message } = App.useApp();
+  const { message, modal } = App.useApp();
   const { t } = useTranslation();
 
   // Setup query parameters for URL synchronization
   const FormValuesParam = withDefault(JsonParam, {});
-  const [{ model, formValues: formValuesFromQueryParams }, setQuery] =
-    useQueryParams({
-      model: StringParam,
-      formValues: FormValuesParam,
-    });
+  const [
+    { model, formValues: formValuesFromQueryParams, advancedMode },
+    setQuery,
+  ] = useQueryParams({
+    model: StringParam,
+    formValues: FormValuesParam,
+    advancedMode: withDefault(BooleanParam, false),
+  });
 
   const webuiNavigate = useWebUINavigate();
   const baiClient = useSuspendedBackendaiClient();
@@ -190,6 +222,78 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
   const { getErrorMessage } = useErrorMessageResolver();
   const RUNTIME_ENV_VAR_CONFIGS = useRuntimeEnvVarConfigs();
   const currentProject = useCurrentProjectValue();
+
+  // Runtime parameter values stored in a ref to avoid re-rendering the entire
+  // page on every slider change. Values are read at submit time only.
+  const runtimeParamValuesRef = useRef<RuntimeParameterValues>({});
+  const runtimeParamTouchedKeysRef = useRef<Set<string>>(new Set());
+  const handleRuntimeParamChange = useCallback(
+    (values: RuntimeParameterValues) => {
+      runtimeParamValuesRef.current = {
+        ...runtimeParamValuesRef.current,
+        ...values,
+      };
+    },
+    [],
+  );
+  const handleTouchedKeysChange = useCallback((keys: Set<string>) => {
+    runtimeParamTouchedKeysRef.current = keys;
+  }, []);
+  const getTouchedRuntimeValues = useCallback(() => {
+    const result: Record<string, string> = {};
+    for (const [key, val] of Object.entries(runtimeParamValuesRef.current)) {
+      if (runtimeParamTouchedKeysRef.current.has(key)) {
+        result[key] = val;
+      }
+    }
+    return result;
+  }, []);
+
+  // Environment search prefill keyword driven by runtime variant selection
+  const RUNTIME_SEARCH_KEYWORD_MAP: Partial<Record<string, string>> = {
+    vllm: 'vllm',
+    sglang: 'sglang',
+    'modular-max': 'max',
+    nim: 'nim',
+  };
+  const [envSearchPrefill, setEnvSearchPrefill] = useState<string>();
+
+  // "Paste Your Command" — GPU hint from parsed CLI command
+  const [gpuHint, setGpuHint] = useState<number | null>(null);
+
+  // Debounced CLI command parser for auto-filling port/health/mount fields
+  const { run: parseCommandWithDebounce } = useDebounceFn(
+    (command: string) => {
+      const parsed = parseCliCommand(command);
+
+      // Auto-fill port, health check, model mount
+      form.setFieldsValue({
+        commandPort: parsed.port,
+        commandHealthCheck: parsed.healthCheckPath,
+        commandModelMount: parsed.modelMountDestination,
+      });
+
+      // Update GPU hint
+      setGpuHint(parsed.gpuHint);
+
+      // Auto-add docker env vars to envvars list
+      if (parsed.envVars.length > 0) {
+        const currentEnvVars = form.getFieldValue('envvars') || [];
+        const existingKeys = new Set(
+          currentEnvVars
+            .filter((e: EnvVarFormListValue) => e?.variable)
+            .map((e: EnvVarFormListValue) => e.variable),
+        );
+        const newEnvVars = parsed.envVars.filter(
+          (e) => !existingKeys.has(e.variable),
+        );
+        if (newEnvVars.length > 0) {
+          form.setFieldValue('envvars', [...currentEnvVars, ...newEnvVars]);
+        }
+      }
+    },
+    { wait: 400 },
+  );
 
   // Helper function to set environment variables based on runtime variant
   const setEnvironmentVariablesForRuntimeVariant = (
@@ -307,6 +411,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
           human_readable_name
         }
         extra_mounts @since(version: "24.03.4") {
+          id
           row_id
           name
         }
@@ -402,7 +507,77 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
     ESMClientErrorResponse | undefined,
     ServiceLauncherFormValue
   >({
-    mutationFn: (values) => {
+    mutationFn: async (values) => {
+      const isCommandMode =
+        values.runtimeVariant === 'custom' &&
+        values.customDefinitionMode === 'command' &&
+        values.startCommand;
+
+      // "Paste Your Command": generate and upload model-definition.yaml before creating service
+      if (isCommandMode) {
+        // Check if model-definition.yaml already exists in the vfolder
+        const filesRes = await baiClient.vfolder.list_files(
+          '.',
+          values.vFolderID,
+        );
+        const existingFiles: Array<{ name: string }> = filesRes?.items ?? [];
+        const hasExistingYaml = existingFiles.some(
+          (f) => f.name === 'model-definition.yaml',
+        );
+
+        if (hasExistingYaml) {
+          const confirmed = await new Promise<boolean>((resolve) => {
+            modal.confirm({
+              title: t('modelService.OverwriteYamlTitle'),
+              content: t('modelService.OverwriteYamlContent'),
+              okText: t('button.Overwrite'),
+              cancelText: t('button.Cancel'),
+              onOk: () => resolve(true),
+              onCancel: () => resolve(false),
+            });
+          });
+          if (!confirmed) {
+            // Throw a cancellation error instead of returning void,
+            // so TanStack Query does not trigger onSuccess.
+            throw new DOMException('User cancelled overwrite', 'AbortError');
+          }
+        }
+
+        const yamlContent = generateModelDefinitionYaml({
+          startCommand: values.startCommand!,
+          port: values.commandPort ?? 8000,
+          healthCheckPath: values.commandHealthCheck ?? '/health',
+          modelMountDestination: values.commandModelMount ?? '/models',
+          initialDelay: values.commandInitialDelay ?? 5.0,
+          maxRetries: values.commandMaxRetries ?? 10,
+        });
+
+        const blob = new Blob([yamlContent], { type: 'text/yaml' });
+        const file = new File([blob], 'model-definition.yaml', {
+          type: 'text/yaml',
+        });
+
+        const uploadUrl: string = await baiClient.vfolder.create_upload_session(
+          'model-definition.yaml',
+          file,
+          values.vFolderID,
+        );
+
+        const response = await fetch(uploadUrl, {
+          method: 'PATCH',
+          headers: {
+            'Upload-Offset': '0',
+            'Content-Type': 'application/offset+octet-stream',
+            'Tus-Resumable': '1.0.0',
+          },
+          body: blob,
+        });
+
+        if (!response.ok) {
+          throw new Error(t('modelService.YamlUploadFailed'));
+        }
+      }
+
       const environ: { [key: string]: string } = {};
       if (values.envvars) {
         values.envvars
@@ -413,6 +588,48 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
             environ[v.variable] = v.value;
           });
       }
+
+      // Remove stale EXTRA_ARGS env vars from other runtime variants
+      const extraArgsEnvVar = getExtraArgsEnvVar(values.runtimeVariant);
+      for (const envName of getAllExtraArgsEnvVars()) {
+        if (envName !== extraArgsEnvVar) {
+          delete environ[envName];
+        }
+      }
+
+      // Merge runtime parameter UI values into EXTRA_ARGS env var.
+      // Only include parameters the user has explicitly touched (interacted with).
+      if (
+        extraArgsEnvVar &&
+        Object.keys(runtimeParamValuesRef.current).length > 0
+      ) {
+        const paramGroups = RUNTIME_PARAMETER_FALLBACKS[values.runtimeVariant];
+        if (paramGroups) {
+          const manualArgs = environ[extraArgsEnvVar] ?? '';
+          const merged = mergeExtraArgs(getTouchedRuntimeValues(), manualArgs);
+          if (merged) {
+            environ[extraArgsEnvVar] = merged;
+          } else {
+            delete environ[extraArgsEnvVar];
+          }
+        }
+      }
+
+      // In command mode: force runtime_variant to 'custom', auto-set definition path and mount
+      const normalizePath = (
+        value: string | undefined | null,
+        fallback: string,
+      ) => {
+        const trimmed = value?.trim();
+        return trimmed && trimmed.length > 0 ? trimmed : fallback;
+      };
+      const modelDefinitionPath = isCommandMode
+        ? 'model-definition.yaml'
+        : normalizePath(values.modelDefinitionPath, 'model-definition.yaml');
+      const modelMountDestination = isCommandMode
+        ? normalizePath(values.commandModelMount, '/models')
+        : normalizePath(values.modelMountDestination, '/models');
+
       const body: ServiceCreateType = {
         name: values.serviceName,
         // REST API does not support `replicas` field. To use `replicas` field, we need `create_endpoint` mutation.
@@ -424,11 +641,17 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
           ),
           values,
         ),
-        runtime_variant: values.runtimeVariant,
+        runtime_variant: isCommandMode ? 'custom' : values.runtimeVariant,
         group: baiClient.current_group, // current Project Group,
         domain: currentDomain, // current Domain Group,
         cluster_size: values.cluster_size,
-        cluster_mode: values.cluster_mode,
+        // Convert multi-node x1 to single-node x1 since they are functionally
+        // equivalent but multi-node requires overlay network which may not be
+        // configured in all-in-one environments (FR-2381)
+        cluster_mode:
+          values.cluster_mode === 'multi-node' && values.cluster_size === 1
+            ? 'single-node'
+            : values.cluster_mode,
         open_to_public: values.openToPublic,
         config: {
           model: values.vFolderID,
@@ -437,7 +660,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
             values.mount_ids,
             (acc, key: string) => {
               acc[key] = {
-                ...(values.mount_id_map[key] && {
+                ...(values.mount_id_map?.[key] && {
                   mount_destination: values.mount_id_map[key],
                 }),
                 type: 'bind', // FIXME: hardcoded. change it with option later
@@ -446,11 +669,8 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
             },
             {} as Record<string, MountOptionType>,
           ),
-          model_definition_path: values.modelDefinitionPath,
-          model_mount_destination:
-            values.modelMountDestination !== ''
-              ? values.modelMountDestination
-              : '/models',
+          model_definition_path: modelDefinitionPath,
+          model_mount_destination: modelMountDestination,
           environ, // FIXME: hardcoded. change it with option later
           scaling_group: values.resourceGroup,
           resources: {
@@ -663,8 +883,11 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                     })
                   : endpoint.resource_opts,
                 // FIXME: temporarily convert cluster mode string according to server-side type
+                // Also convert multi-node x1 to single-node x1 (FR-2381)
                 cluster_mode:
-                  'single-node' === values.cluster_mode
+                  values.cluster_mode === 'single-node' ||
+                  (values.cluster_mode === 'multi-node' &&
+                    values.cluster_size === 1)
                     ? 'SINGLE_NODE'
                     : 'MULTI_NODE',
                 cluster_size: values.cluster_size,
@@ -683,7 +906,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                 extra_mounts: _.map(values.mount_ids, (vfolder) => {
                   return {
                     vfolder_id: vfolder,
-                    ...(values.mount_id_map[vfolder] && {
+                    ...(values.mount_id_map?.[vfolder] && {
                       mount_destination: values.mount_id_map[vfolder],
                     }),
                   };
@@ -705,6 +928,34 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                 newEnvirons[v.variable] = v.value;
               });
           }
+
+          // Remove stale EXTRA_ARGS env vars from other runtime variants
+          const extraArgsKey = getExtraArgsEnvVar(values.runtimeVariant);
+          for (const envName of getAllExtraArgsEnvVars()) {
+            if (envName !== extraArgsKey) {
+              delete newEnvirons[envName];
+            }
+          }
+
+          // Merge runtime parameter UI values into EXTRA_ARGS env var.
+          // Only include parameters the user has explicitly touched.
+          if (
+            extraArgsKey &&
+            Object.keys(runtimeParamValuesRef.current).length > 0
+          ) {
+            const paramDefs =
+              RUNTIME_PARAMETER_FALLBACKS[values.runtimeVariant];
+            if (paramDefs) {
+              const manual = newEnvirons[extraArgsKey] ?? '';
+              const merged = mergeExtraArgs(getTouchedRuntimeValues(), manual);
+              if (merged) {
+                newEnvirons[extraArgsKey] = merged;
+              } else {
+                delete newEnvirons[extraArgsKey];
+              }
+            }
+          }
+
           mutationVariables.props.environ = JSON.stringify(newEnvirons);
           commitModifyEndpoint({
             variables: mutationVariables,
@@ -750,6 +1001,13 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
               webuiNavigate('/serving');
             },
             onError: (error) => {
+              // Ignore user-initiated cancellation (e.g., overwrite confirmation dismissed)
+              if (
+                error instanceof DOMException &&
+                error.name === 'AbortError'
+              ) {
+                return;
+              }
               const defaultErrorMessage = endpoint
                 ? t('modelService.FailedToUpdateService')
                 : t('modelService.FailedToStartService');
@@ -859,21 +1117,47 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
           image: endpoint?.image_object,
         },
         vFolderID: endpoint?.model,
-        mount_ids: _.map(endpoint?.extra_mounts, (item) =>
-          item?.row_id?.replaceAll('-', ''),
-        ),
+        mount_ids: _.map(endpoint?.extra_mounts, (item) => item?.id),
         // TODO: implement mount_id_map. Now, it's impossible to get mount_destination from backend
         modelMountDestination: endpoint?.model_mount_destination,
         modelDefinitionPath: endpoint?.model_definition_path,
         runtimeVariant: endpoint?.runtime_variant?.name,
-        envvars: _.map(
-          JSON.parse(endpoint?.environ || '{}'),
-          (value, variable) => ({ variable, value }),
-        ),
+        envvars: (() => {
+          const parsed = JSON.parse(endpoint?.environ || '{}') as Record<
+            string,
+            string
+          >;
+          // In edit mode, strip slider-managed keys from EXTRA_ARGS so that
+          // the manual input only contains unmapped args (prevents manual input
+          // from overriding slider changes on submit).
+          const variant = endpoint?.runtime_variant?.name;
+          if (variant) {
+            const envKey = getExtraArgsEnvVar(variant);
+            const params = RUNTIME_PARAMETER_FALLBACKS[variant];
+            if (envKey && parsed[envKey] && params) {
+              const schemaKeys = new Set(params.map((p) => p.key));
+              const { unmappedText } = reverseMapExtraArgs(
+                parsed[envKey],
+                schemaKeys,
+              );
+              if (unmappedText) {
+                parsed[envKey] = unmappedText;
+              } else {
+                delete parsed[envKey];
+              }
+            }
+          }
+          return _.map(parsed, (value, variable) => ({ variable, value }));
+        })(),
       }
     : {
         replicas: 1,
-        runtimeVariant: 'custom',
+        runtimeVariant: 'vllm',
+        commandModelMount: '/models',
+        commandPort: 8000,
+        commandHealthCheck: '/health',
+        commandInitialDelay: 5.0,
+        commandMaxRetries: 10,
         ...RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
         ...(baiClient._config?.default_session_environment && {
           environments: {
@@ -885,6 +1169,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
           : _.get(formValuesFromQueryParams, 'vFolderID') || undefined,
         resourceGroup: currentGlobalResourceGroup,
         allocationPreset: 'auto-select',
+        customDefinitionMode: 'command' as CustomDefinitionMode,
         // Initialize empty mount configuration for new services
         mount_ids: [],
         mount_id_map: {},
@@ -949,7 +1234,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                 scrollToFirstError
               >
                 <BAIFlex direction="column" gap={'md'} align="stretch">
-                  <Card>
+                  <Card title={t('modelService.ModelAndServingConfiguration')}>
                     {(baiClient.supports('modify-endpoint') || !endpoint) && (
                       <>
                         <Form.Item
@@ -985,8 +1270,9 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                                 !model && !formValuesFromQueryParams.vFolderID
                               }
                               disabled={!!endpoint}
-                              allowFolderExplorer
-                              allowCreateFolder
+                              showOpenButton
+                              showCreateButton
+                              showRefreshButton
                             />
                           </Form.Item>
                         ) : (
@@ -996,9 +1282,14 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                               label={t('session.launcher.ModelStorageToMount')}
                               required
                             >
-                              <Suspense fallback={<Skeleton.Input active />}>
-                                <VFolderLazyView uuid={endpoint?.model} />
-                              </Suspense>
+                              <BAIFlex gap="xs" align="center">
+                                <Suspense fallback={<Skeleton.Input active />}>
+                                  <VFolderLazyView
+                                    uuid={endpoint?.model}
+                                    clickable
+                                  />
+                                </Suspense>
+                              </BAIFlex>
                             </Form.Item>
                           )
                         )}
@@ -1019,7 +1310,11 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                                 };
                               },
                             )}
-                            onChange={() => {
+                            onChange={(value) => {
+                              // Prefill the environment search with the runtime variant keyword
+                              const keyword = RUNTIME_SEARCH_KEYWORD_MAP[value];
+                              setEnvSearchPrefill(keyword);
+
                               // Force re-validation of all environment variable fields after form state updates
                               queueMicrotask(() => {
                                 const envvars =
@@ -1038,9 +1333,53 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                             }}
                           />
                         </Form.Item>
+                        <ImageEnvironmentSelectFormItems
+                          searchPrefill={envSearchPrefill}
+                          // //TODO: test with real inference images
+                          // filter={(image) => {
+                          //   return !!_.find(image?.labels, (label) => {
+                          //     return (
+                          //       label?.key === "ai.backend.role" &&
+                          //       label.value === "INFERENCE" //['COMPUTE', 'INFERENCE', 'SYSTEM']
+                          //     );
+                          //   });
+                          // }}
+                        />
+                        <Form.Item dependencies={['runtimeVariant']} noStyle>
+                          {({ getFieldValue }) => {
+                            const variant = getFieldValue('runtimeVariant');
+                            if (variant !== 'vllm' && variant !== 'sglang')
+                              return null;
+
+                            // Extract existing EXTRA_ARGS for edit mode reverse-mapping
+                            const extraArgsEnvName =
+                              getExtraArgsEnvVar(variant);
+                            const existingExtraArgs = endpoint
+                              ? ((
+                                  JSON.parse(
+                                    endpoint?.environ || '{}',
+                                  ) as Record<string, string>
+                                )[extraArgsEnvName ?? ''] ?? '')
+                              : '';
+
+                            return (
+                              <RuntimeParameterFormSection
+                                runtimeVariant={variant}
+                                onChange={handleRuntimeParamChange}
+                                onTouchedKeysChange={handleTouchedKeysChange}
+                                initialExtraArgs={existingExtraArgs}
+                              />
+                            );
+                          }}
+                        </Form.Item>
                         <Form.Item dependencies={['runtimeVariant']} noStyle>
                           {({ getFieldValue }) =>
-                            getFieldValue('runtimeVariant') === 'custom' && (
+                            getFieldValue('runtimeVariant') === 'custom' &&
+                            (endpoint ? (
+                              // TODO(FR-2440): Support "Enter Command" Segmented UI in edit mode.
+                              // - Read existing model-definition.yaml from vfolder and reverse-map to command fields
+                              // - Show overwrite confirmation modal only when user actually modifies the command
+                              // Edit mode: keep existing UI (no Segmented)
                               <BAIFlex
                                 direction="row"
                                 gap={'xxs'}
@@ -1084,88 +1423,194 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                                   />
                                 </Form.Item>
                               </BAIFlex>
-                            )
-                          }
-                        </Form.Item>
-                        <Form.Item dependencies={['runtimeVariant']} noStyle>
-                          {({ getFieldValue }) => {
-                            const runtimeVariant =
-                              getFieldValue('runtimeVariant');
-                            const runtimeVariantConfig = runtimeVariant
-                              ? RUNTIME_ENV_VAR_CONFIGS[runtimeVariant]
-                              : null;
-
-                            return (
-                              <Form.Item
-                                label={t(
-                                  'session.launcher.EnvironmentVariable',
-                                )}
-                              >
-                                <EnvVarFormList
-                                  name={'envvars'}
-                                  requiredEnvVars={
-                                    runtimeVariantConfig?.requiredEnvVars
-                                  }
-                                  optionalEnvVars={
-                                    runtimeVariantConfig?.optionalEnvVars
-                                  }
-                                  formItemProps={{
-                                    validateTrigger: ['onChange', 'onBlur'],
-                                    rules: [
-                                      {
-                                        warningOnly: true,
-                                        validator: async (
-                                          _rule,
-                                          value: string,
-                                        ) => {
-                                          if (!value) {
-                                            return Promise.resolve();
-                                          }
-
-                                          if (
-                                            !validateVariable(
-                                              runtimeVariant,
-                                              value,
-                                            )
-                                          ) {
-                                            throw t(
-                                              'session.launcher.EnvironmentVariableNotForRuntime',
-                                            );
-                                          } else {
-                                            return Promise.resolve();
-                                          }
-                                        },
-                                      },
-                                    ],
-                                  }}
-                                />
-                              </Form.Item>
-                            );
-                          }}
-                        </Form.Item>
-                        <Form.Item noStyle dependencies={['vFolderID']}>
-                          {({ getFieldValue }) => {
-                            return (
-                              <VFolderTableFormItem
-                                rowKey={'id'}
-                                label={t('modelService.AdditionalMounts')}
-                                rowFilter={(vf) =>
-                                  vf.id !== getFieldValue('vFolderID') &&
-                                  vf.status === 'ready' &&
-                                  vf.usage_mode !== 'model' &&
-                                  !vf.name?.startsWith('.')
-                                }
-                                tableProps={{
-                                  size: 'small',
+                            ) : (
+                              // Create mode: Segmented "Enter Command" / "Use Config File"
+                              <Card
+                                size="small"
+                                title={t('modelService.ModelDefinition')}
+                                style={{
+                                  marginBottom: token.marginMD,
                                 }}
-                              />
-                            );
-                          }}
+                              >
+                                <Form.Item name="customDefinitionMode" noStyle>
+                                  <Segmented
+                                    options={[
+                                      {
+                                        label: t('modelService.EnterCommand'),
+                                        value: 'command',
+                                      },
+                                      {
+                                        label: t('modelService.UseConfigFile'),
+                                        value: 'file',
+                                      },
+                                    ]}
+                                    style={{
+                                      marginBottom: token.marginMD,
+                                    }}
+                                  />
+                                </Form.Item>
+                                <Form.Item
+                                  dependencies={['customDefinitionMode']}
+                                  noStyle
+                                >
+                                  {({ getFieldValue: getField }) =>
+                                    getField('customDefinitionMode') ===
+                                    'command' ? (
+                                      <>
+                                        <Form.Item
+                                          name="startCommand"
+                                          label={t('modelService.StartCommand')}
+                                          tooltip={t(
+                                            'modelService.StartCommandTooltip',
+                                          )}
+                                          rules={[
+                                            {
+                                              required: true,
+                                              whitespace: true,
+                                            },
+                                          ]}
+                                        >
+                                          <Input.TextArea
+                                            placeholder={t(
+                                              'modelService.StartCommandPlaceholder',
+                                            )}
+                                            autoSize={{
+                                              minRows: 2,
+                                            }}
+                                            onChange={(e) => {
+                                              parseCommandWithDebounce(
+                                                e.target.value,
+                                              );
+                                            }}
+                                          />
+                                        </Form.Item>
+                                        <Form.Item
+                                          name="commandModelMount"
+                                          label={t('modelService.ModelMount')}
+                                          tooltip={t(
+                                            'modelService.ModelMountTooltip',
+                                          )}
+                                        >
+                                          <Input placeholder="/models" />
+                                        </Form.Item>
+                                        <BAIFlex
+                                          direction="row"
+                                          gap="sm"
+                                          align="end"
+                                        >
+                                          <Form.Item
+                                            name="commandPort"
+                                            label={t('modelService.Port')}
+                                            tooltip={t(
+                                              'modelService.PortTooltip',
+                                            )}
+                                            style={{ flex: 1 }}
+                                            labelCol={{
+                                              style: { width: '100%' },
+                                            }}
+                                          >
+                                            <InputNumber
+                                              min={1}
+                                              max={65535}
+                                              style={{ width: '100%' }}
+                                            />
+                                          </Form.Item>
+                                          <Form.Item
+                                            name="commandHealthCheck"
+                                            label={t(
+                                              'modelService.HealthCheck',
+                                            )}
+                                            tooltip={t(
+                                              'modelService.HealthCheckTooltip',
+                                            )}
+                                            style={{ flex: 1 }}
+                                            labelCol={{
+                                              style: { width: '100%' },
+                                            }}
+                                          >
+                                            <Input placeholder="/health" />
+                                          </Form.Item>
+                                        </BAIFlex>
+                                        <BAIFlex
+                                          direction="row"
+                                          gap="sm"
+                                          align="end"
+                                        >
+                                          <Form.Item
+                                            name="commandInitialDelay"
+                                            label={t(
+                                              'modelService.InitialDelay',
+                                            )}
+                                            tooltip={t(
+                                              'modelService.InitialDelayTooltip',
+                                            )}
+                                            style={{ flex: 1 }}
+                                            labelCol={{
+                                              style: { width: '100%' },
+                                            }}
+                                          >
+                                            <InputNumber
+                                              min={0}
+                                              step={0.5}
+                                              style={{ width: '100%' }}
+                                            />
+                                          </Form.Item>
+                                          <Form.Item
+                                            name="commandMaxRetries"
+                                            label={t('modelService.MaxRetries')}
+                                            tooltip={t(
+                                              'modelService.MaxRetriesTooltip',
+                                            )}
+                                            style={{ flex: 1 }}
+                                            labelCol={{
+                                              style: { width: '100%' },
+                                            }}
+                                          >
+                                            <InputNumber
+                                              min={0}
+                                              style={{ width: '100%' }}
+                                            />
+                                          </Form.Item>
+                                        </BAIFlex>
+                                      </>
+                                    ) : (
+                                      <>
+                                        <Form.Item
+                                          name={'modelMountDestination'}
+                                          label={t(
+                                            'modelService.ModelMountDestination',
+                                          )}
+                                        >
+                                          <Input
+                                            allowClear
+                                            placeholder={'/models'}
+                                          />
+                                        </Form.Item>
+                                        <Form.Item
+                                          name={'modelDefinitionPath'}
+                                          label={t(
+                                            'modelService.ModelDefinitionPath',
+                                          )}
+                                        >
+                                          <Input
+                                            allowClear
+                                            placeholder={
+                                              'model-definition.yaml'
+                                            }
+                                          />
+                                        </Form.Item>
+                                      </>
+                                    )
+                                  }
+                                </Form.Item>
+                              </Card>
+                            ))
+                          }
                         </Form.Item>
                       </>
                     )}
                   </Card>
-                  <Card>
+                  <Card title={t('modelService.ReplicasAndResources')}>
                     {(baiClient.supports('modify-endpoint') || !endpoint) && (
                       <>
                         <Form.Item
@@ -1209,17 +1654,6 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                             disabled={hasAutoScalingRules}
                           />
                         </Form.Item>
-                        <ImageEnvironmentSelectFormItems
-                        // //TODO: test with real inference images
-                        // filter={(image) => {
-                        //   return !!_.find(image?.labels, (label) => {
-                        //     return (
-                        //       label?.key === "ai.backend.role" &&
-                        //       label.value === "INFERENCE" //['COMPUTE', 'INFERENCE', 'SYSTEM']
-                        //     );
-                        //   });
-                        // }}
-                        />
                         {endpoint && !wantToChangeResource ? (
                           <Form.Item
                             label={
@@ -1262,11 +1696,141 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                             </BAIFlex>
                           </Form.Item>
                         ) : (
-                          <ResourceAllocationFormItems enableResourcePresets />
+                          <ResourceAllocationFormItems
+                            enableResourcePresets
+                            hideClusterFormItems
+                            extraAcceleratorRules={
+                              gpuHint
+                                ? [
+                                    {
+                                      warningOnly: true,
+                                      validator: async (
+                                        _rule: unknown,
+                                        value: number,
+                                      ) => {
+                                        if (
+                                          gpuHint &&
+                                          value > 0 &&
+                                          value < gpuHint
+                                        ) {
+                                          return Promise.reject(
+                                            t('modelService.GpuHint', {
+                                              count: gpuHint,
+                                            }),
+                                          );
+                                        }
+                                        return Promise.resolve();
+                                      },
+                                    },
+                                  ]
+                                : undefined
+                            }
+                          />
                         )}
                       </>
                     )}
                   </Card>
+                  <Collapse
+                    activeKey={advancedMode ? ['advanced'] : []}
+                    onChange={(keys) => {
+                      setQuery(
+                        {
+                          advancedMode: keys.includes('advanced') || undefined,
+                        },
+                        'replaceIn',
+                      );
+                    }}
+                    items={[
+                      {
+                        key: 'advanced',
+                        label: t('session.launcher.AdvancedSettings'),
+                        children: (
+                          <>
+                            <ClusterModeFormItems />
+                            <Form.Item
+                              dependencies={['runtimeVariant']}
+                              noStyle
+                            >
+                              {({ getFieldValue }) => {
+                                const runtimeVariant =
+                                  getFieldValue('runtimeVariant');
+                                const runtimeVariantConfig = runtimeVariant
+                                  ? RUNTIME_ENV_VAR_CONFIGS[runtimeVariant]
+                                  : null;
+
+                                return (
+                                  <Form.Item
+                                    label={t(
+                                      'session.launcher.EnvironmentVariable',
+                                    )}
+                                  >
+                                    <EnvVarFormList
+                                      name={'envvars'}
+                                      requiredEnvVars={
+                                        runtimeVariantConfig?.requiredEnvVars
+                                      }
+                                      optionalEnvVars={
+                                        runtimeVariantConfig?.optionalEnvVars
+                                      }
+                                      formItemProps={{
+                                        validateTrigger: ['onChange', 'onBlur'],
+                                        rules: [
+                                          {
+                                            warningOnly: true,
+                                            validator: async (
+                                              _rule,
+                                              value: string,
+                                            ) => {
+                                              if (!value) {
+                                                return Promise.resolve();
+                                              }
+
+                                              if (
+                                                !validateVariable(
+                                                  runtimeVariant,
+                                                  value,
+                                                )
+                                              ) {
+                                                throw t(
+                                                  'session.launcher.EnvironmentVariableNotForRuntime',
+                                                );
+                                              } else {
+                                                return Promise.resolve();
+                                              }
+                                            },
+                                          },
+                                        ],
+                                      }}
+                                    />
+                                  </Form.Item>
+                                );
+                              }}
+                            </Form.Item>
+                            <Form.Item noStyle dependencies={['vFolderID']}>
+                              {({ getFieldValue }) => {
+                                const vFolderID = getFieldValue('vFolderID');
+                                return (
+                                  <VFolderTableFormItem
+                                    label={t('modelService.AdditionalMounts')}
+                                    rowKey="id"
+                                    tableProps={{
+                                      scroll: { x: 'max-content', y: 300 },
+                                    }}
+                                    rowFilter={(vfolder) =>
+                                      vfolder.usage_mode !== 'model' &&
+                                      vfolder.status === 'ready' &&
+                                      !vfolder.name?.startsWith('.') &&
+                                      vfolder.id !== vFolderID
+                                    }
+                                  />
+                                );
+                              }}
+                            </Form.Item>
+                          </>
+                        ),
+                      },
+                    ]}
+                  />
                   <BAIFlex
                     direction="row"
                     justify="between"

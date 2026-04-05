@@ -14,6 +14,7 @@ import { GetRef, Skeleton } from 'antd';
 import _ from 'lodash';
 import {
   useDeferredValue,
+  useEffect,
   useImperativeHandle,
   useOptimistic,
   useRef,
@@ -42,6 +43,7 @@ export interface BAIVFolderSelectProps extends Omit<
   filter?: string;
   valuePropName?: 'id' | 'row_id';
   excludeDeleted?: boolean;
+  onResolvedNamesChange?: (nameMap: Record<string, string>) => void;
   ref?: React.Ref<BAIVFolderSelectRef>;
 }
 
@@ -56,6 +58,7 @@ const BAIVFolderSelect: React.FC<BAIVFolderSelectProps> = ({
   filter,
   excludeDeleted,
   valuePropName = 'id',
+  onResolvedNamesChange,
   ref,
   ...selectProps
 }) => {
@@ -207,6 +210,22 @@ const BAIVFolderSelect: React.FC<BAIVFolderSelectProps> = ({
     }),
     [updateFetchKey, startRefetchTransition],
   );
+
+  // Notify parent of resolved id→name mapping when selected nodes are loaded
+  useEffect(() => {
+    if (onResolvedNamesChange && selectedVFolderNodes?.edges) {
+      const nameMap: Record<string, string> = {};
+      selectedVFolderNodes.edges.forEach((edge) => {
+        const key = edge?.node?.[valuePropName];
+        const name = edge?.node?.name;
+        if (key && name) {
+          nameMap[key] = name;
+        }
+      });
+      onResolvedNamesChange(nameMap);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedVFolderNodes]);
 
   const availableOptions = _.map(paginationData, (item) => ({
     label: item?.name,

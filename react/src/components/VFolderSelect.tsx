@@ -8,10 +8,10 @@ import useControllableState_deprecated from '../hooks/useControllableState';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import FolderCreateModal from './FolderCreateModal';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
-import { Button, Select, type SelectProps, Tooltip } from 'antd';
-import { useUpdatableState, BAIFlex, BAILink } from 'backend.ai-ui';
+import { Button, Select, type SelectProps, Space, Tooltip } from 'antd';
+import { useUpdatableState, BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
-import { PlusIcon } from 'lucide-react';
+import { FolderOpenIcon, PlusIcon, RefreshCwIcon } from 'lucide-react';
 import React, { startTransition, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -40,23 +40,25 @@ export type VFolder = {
 
 interface VFolderSelectProps extends SelectProps {
   autoSelectDefault?: boolean;
-  allowFolderExplorer?: boolean;
-  allowCreateFolder?: boolean;
+  showOpenButton?: boolean;
+  showCreateButton?: boolean;
+  showRefreshButton?: boolean;
   valuePropName?: 'id' | 'name';
   filter?: (vFolder: VFolder) => boolean;
 }
 
 const VFolderSelect: React.FC<VFolderSelectProps> = ({
   autoSelectDefault,
-  allowFolderExplorer,
-  allowCreateFolder,
+  showOpenButton,
+  showCreateButton,
+  showRefreshButton,
   valuePropName = 'name',
   filter,
   ...selectProps
 }) => {
   const currentProject = useCurrentProjectValue();
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
-  const { generateFolderPath } = useFolderExplorerOpener();
+  const { open: openFolderExplorer } = useFolderExplorerOpener();
   const { t } = useTranslation();
   const [value, setValue] = useControllableState_deprecated(selectProps);
   const [key, checkUpdate] = useUpdatableState('first');
@@ -124,32 +126,13 @@ const VFolderSelect: React.FC<VFolderSelectProps> = ({
   }, [autoSelectDefault]);
 
   return (
-    <BAIFlex gap="xs">
+    <BAIFlex direction="row" gap={'xxs'}>
       <Select
         showSearch={{
           optionFilterProp: 'label',
         }}
         {...selectProps}
         value={value}
-        labelRender={({ label, value }) =>
-          allowFolderExplorer ? (
-            <BAILink
-              type="hover"
-              to={generateFolderPath(_.toString(value))}
-              onClick={(e: React.MouseEvent<HTMLSpanElement>) => {
-                e.stopPropagation();
-              }}
-              onMouseDown={(e: React.MouseEvent<HTMLSpanElement>) => {
-                e.preventDefault();
-                e.stopPropagation();
-              }}
-            >
-              {label}
-            </BAILink>
-          ) : (
-            label
-          )
-        }
         onChange={setValue}
         onOpenChange={(open) => {
           if (open) {
@@ -165,18 +148,43 @@ const VFolderSelect: React.FC<VFolderSelectProps> = ({
           };
         })}
       />
-      {allowCreateFolder ? (
-        <Tooltip title={t('data.CreateANewStorageFolder')}>
-          <Button
-            icon={<PlusIcon />}
-            type="primary"
-            ghost
-            onClick={() => {
-              setIsOpenCreateModal(true);
-            }}
-          />
-        </Tooltip>
-      ) : null}
+      <Space.Compact>
+        {showOpenButton ? (
+          <Tooltip title={t('modelService.OpenFolder')}>
+            <Button
+              icon={<FolderOpenIcon />}
+              disabled={!value}
+              onClick={() => {
+                openFolderExplorer(_.toString(value));
+              }}
+            />
+          </Tooltip>
+        ) : null}
+        {showCreateButton ? (
+          <Tooltip title={t('data.CreateANewStorageFolder')}>
+            <Button
+              icon={<PlusIcon />}
+              variant="text"
+              onClick={() => {
+                setIsOpenCreateModal(true);
+              }}
+            />
+          </Tooltip>
+        ) : null}
+        {showRefreshButton ? (
+          <Tooltip title={t('button.Refresh')}>
+            <Button
+              icon={<RefreshCwIcon />}
+              variant="text"
+              onClick={() => {
+                startTransition(() => {
+                  checkUpdate();
+                });
+              }}
+            />
+          </Tooltip>
+        ) : null}
+      </Space.Compact>
       <FolderCreateModal
         open={isOpenCreateModal}
         initialValues={{ usage_mode: 'model' }}

@@ -24,6 +24,7 @@ import {
   Descriptions,
   Form,
   Input,
+  Space,
   TableProps,
   Tag,
   theme,
@@ -398,6 +399,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
         </BAIFlex>
       ),
       dataIndex: 'name',
+      ellipsis: true,
       sorter: (a, b) => a.name.localeCompare(b.name),
       render: (value, record) => {
         const isCurrentRowSelected = selectedRowKeys.includes(
@@ -413,11 +415,22 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
               showAliasInput && isCurrentRowSelected
                 ? { display: 'inline-flex', height: 70, width: '100%' }
                 : {
-                    maxWidth: 200,
+                    overflow: 'hidden',
+                    width: '100%',
                   }
             }
           >
-            <BAILink type="hover" to={generateFolderPath(record.id)}>
+            <BAILink
+              type="hover"
+              to={generateFolderPath(record.id)}
+              style={{
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                maxWidth: '100%',
+                display: 'block',
+              }}
+            >
               <TextHighlighter keyword={searchKey}>{value}</TextHighlighter>
             </BAILink>
             {showAliasInput && isCurrentRowSelected && (
@@ -622,27 +635,27 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
           allowClear
           placeholder={t('data.SearchByName')}
         />
-        <Tooltip title={t('button.Refresh')}>
-          <Button
-            loading={isPendingRefetch}
-            icon={<ReloadOutlined />}
-            onClick={() => {
-              startRefetchTransition(() => {
-                updateFetchKey();
-              });
-            }}
-          />
-        </Tooltip>
-        <Tooltip title={t('data.CreateANewStorageFolder')}>
-          <Button
-            icon={<PlusIcon />}
-            type="primary"
-            ghost
-            onClick={() => {
-              setIsOpenCreateModal(true);
-            }}
-          />
-        </Tooltip>
+        <Space.Compact>
+          <Tooltip title={t('data.CreateANewStorageFolder')}>
+            <Button
+              icon={<PlusIcon />}
+              onClick={() => {
+                setIsOpenCreateModal(true);
+              }}
+            />
+          </Tooltip>
+          <Tooltip title={t('button.Refresh')}>
+            <Button
+              loading={isPendingRefetch}
+              icon={<ReloadOutlined />}
+              onClick={() => {
+                startRefetchTransition(() => {
+                  updateFetchKey();
+                });
+              }}
+            />
+          </Tooltip>
+        </Space.Compact>
       </BAIFlex>
       <Form form={internalForm} component={false} preserve={false}>
         <BAITable
