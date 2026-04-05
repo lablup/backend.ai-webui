@@ -51,6 +51,7 @@ const useStyles = createStyles(({ css, token }) => ({
     .ant-select-content-has-search-value img,
     .ant-select-content-has-search-value .ant-divider,
     .ant-select-content-has-search-value .ant-badge,
+    .ant-select-content-has-search-value span.text-high-lighter,
     .ant-select-content-has-search-value span.ant-tag {
       opacity: 0 !important;
       transition: none;

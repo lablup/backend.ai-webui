@@ -249,6 +249,15 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
     return result;
   }, []);
 
+  // Environment search prefill keyword driven by runtime variant selection
+  const RUNTIME_SEARCH_KEYWORD_MAP: Partial<Record<string, string>> = {
+    vllm: 'vllm',
+    sglang: 'sglang',
+    'modular-max': 'max',
+    nim: 'nim',
+  };
+  const [envSearchPrefill, setEnvSearchPrefill] = useState<string>();
+
   // "Paste Your Command" — GPU hint from parsed CLI command
   const [gpuHint, setGpuHint] = useState<number | null>(null);
 
@@ -1301,7 +1310,11 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                                 };
                               },
                             )}
-                            onChange={() => {
+                            onChange={(value) => {
+                              // Prefill the environment search with the runtime variant keyword
+                              const keyword = RUNTIME_SEARCH_KEYWORD_MAP[value];
+                              setEnvSearchPrefill(keyword);
+
                               // Force re-validation of all environment variable fields after form state updates
                               queueMicrotask(() => {
                                 const envvars =
@@ -1321,15 +1334,16 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                           />
                         </Form.Item>
                         <ImageEnvironmentSelectFormItems
-                        // //TODO: test with real inference images
-                        // filter={(image) => {
-                        //   return !!_.find(image?.labels, (label) => {
-                        //     return (
-                        //       label?.key === "ai.backend.role" &&
-                        //       label.value === "INFERENCE" //['COMPUTE', 'INFERENCE', 'SYSTEM']
-                        //     );
-                        //   });
-                        // }}
+                          searchPrefill={envSearchPrefill}
+                          // //TODO: test with real inference images
+                          // filter={(image) => {
+                          //   return !!_.find(image?.labels, (label) => {
+                          //     return (
+                          //       label?.key === "ai.backend.role" &&
+                          //       label.value === "INFERENCE" //['COMPUTE', 'INFERENCE', 'SYSTEM']
+                          //     );
+                          //   });
+                          // }}
                         />
                         <Form.Item dependencies={['runtimeVariant']} noStyle>
                           {({ getFieldValue }) => {
