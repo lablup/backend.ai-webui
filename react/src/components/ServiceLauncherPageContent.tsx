@@ -41,6 +41,7 @@ import EnvVarFormList, {
   sanitizeSensitiveEnv,
   EnvVarFormListValue,
 } from './EnvVarFormList';
+import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import ImageEnvironmentSelectFormItems, {
   ImageEnvironmentFormInput,
 } from './ImageEnvironmentSelectFormItems';
@@ -90,6 +91,7 @@ import {
   BAIButton,
 } from 'backend.ai-ui';
 import _ from 'lodash';
+import { FolderOpenIcon } from 'lucide-react';
 import React, { Suspense, useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -222,6 +224,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
     useCurrentResourceGroupState();
 
   const { getErrorMessage } = useErrorMessageResolver();
+  const { open: openFolderExplorer } = useFolderExplorerOpener();
   const RUNTIME_ENV_VAR_CONFIGS = useRuntimeEnvVarConfigs();
   const currentProject = useCurrentProjectValue();
 
@@ -1272,9 +1275,21 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                               label={t('session.launcher.ModelStorageToMount')}
                               required
                             >
-                              <Suspense fallback={<Skeleton.Input active />}>
-                                <VFolderLazyView uuid={endpoint?.model} />
-                              </Suspense>
+                              <BAIFlex gap="xs" align="center">
+                                <Suspense fallback={<Skeleton.Input active />}>
+                                  <VFolderLazyView uuid={endpoint?.model} />
+                                </Suspense>
+                                <Tooltip title={t('modelService.OpenFolder')}>
+                                  <Button
+                                    icon={<FolderOpenIcon />}
+                                    type="primary"
+                                    ghost
+                                    onClick={() => {
+                                      openFolderExplorer(endpoint!.model!);
+                                    }}
+                                  />
+                                </Tooltip>
+                              </BAIFlex>
                             </Form.Item>
                           )
                         )}
