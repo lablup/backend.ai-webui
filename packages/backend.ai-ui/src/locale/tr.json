@@ -228,6 +228,7 @@
   },
   "comp:BAIRouteNodes": {
     "CreatedAt": "Oluşturulma tarihi",
+    "HealthStatus": "Sağlık Durumu",
     "RouteId": "Rota Kimliği",
     "SessionId": "Oturum Kimliği",
     "Status": "Durum",

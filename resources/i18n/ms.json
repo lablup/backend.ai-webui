@@ -1361,6 +1361,7 @@
     "GpuHint": "Berdasarkan perintah, {{count}} GPU atau lebih disyorkan.",
     "HealthCheck": "URL pemeriksaan kesihatan",
     "HealthCheckTooltip": "Laluan URL yang digunakan untuk memeriksa sama ada perkhidmatan sedang berjalan (cth. /health).",
+    "HealthStatus": "Status Kesihatan",
     "Image": "Gambar",
     "InitialDelay": "Kelewatan Awal",
     "InitialDelayTooltip": "Saat untuk menunggu sebelum semakan kesihatan pertama selepas perkhidmatan dimulakan.",

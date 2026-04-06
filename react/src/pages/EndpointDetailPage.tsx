@@ -7,6 +7,9 @@ import { EndpointDetailPageAutoScalingRuleDeleteMutation } from '../__generated_
 import {
   EndpointDetailPageQuery,
   EndpointDetailPageQuery$data,
+  RouteFilter,
+  RouteHealthStatus,
+  RouteStatus,
   RouteTrafficStatus,
 } from '../__generated__/EndpointDetailPageQuery.graphql';
 import { InferenceSessionErrorModalFragment$key } from '../__generated__/InferenceSessionErrorModalFragment.graphql';
@@ -165,6 +168,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
   const { open } = useFolderExplorerOpener();
   const [selectedSessionId, setSelectedSessionId] = useState<string>();
   const isSupportAutoScalingRule = baiClient.supports('auto-scaling-rule');
+  const isSupportRouteHealthStatus = baiClient.supports('route-health-status');
   const [errorDataForJSONModal, setErrorDataForJSONModal] = useState<string>();
   const {
     endpoint,
@@ -189,6 +193,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
         $skipScalingRules: Boolean!
         $deploymentId: ID!
         $routeFilter: RouteFilter
+        $healthyRouteFilter: RouteFilter
         $routeOrderBy: [RouteOrderBy!]
         $routeLimit: Int
         $routeOffset: Int
@@ -320,7 +325,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
         }
         healthyRoutes: routes(
           deploymentId: $deploymentId
-          filter: { healthStatus: [HEALTHY] }
+          filter: $healthyRouteFilter
         ) @skipOnClient(if: $skipRouteNodes) {
           count
         }
@@ -340,10 +345,25 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
       skipScalingRules: !isSupportAutoScalingRule,
       deploymentId: toGlobalId('ModelDeployment', serviceId || ''),
       routeFilter: {
-        status:
-          deferredRouteStatusCategory === 'running'
+        status: (deferredRouteStatusCategory === 'running'
+          ? isSupportRouteHealthStatus
             ? ['PROVISIONING', 'RUNNING', 'TERMINATING']
-            : ['TERMINATED', 'FAILED_TO_START'],
+            : [
+                'PROVISIONING',
+                'HEALTHY',
+                'UNHEALTHY',
+                'DEGRADED',
+                'TERMINATING',
+              ]
+          : ['TERMINATED', 'FAILED_TO_START']) as RouteStatus[],
+        ...(isSupportRouteHealthStatus &&
+        deferredRoutePropertyFilter?.healthStatus
+          ? {
+              healthStatus: [
+                deferredRoutePropertyFilter.healthStatus as RouteHealthStatus,
+              ],
+            }
+          : {}),
         ...(deferredRoutePropertyFilter?.trafficStatus
           ? {
               trafficStatus: [
@@ -352,6 +372,9 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
             }
           : {}),
       },
+      healthyRouteFilter: (isSupportRouteHealthStatus
+        ? { healthStatus: ['HEALTHY'] }
+        : { status: ['HEALTHY'] }) as RouteFilter,
       routeOrderBy: convertToOrderBy(deferredRouteOrder) ?? undefined,
       routeLimit: deferredRoutePagination.pageSize,
       routeOffset:
@@ -1042,6 +1065,24 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
                   setRoutePagination({ current: 1, pageSize: 10 });
                 }}
                 filterProperties={[
+                  ...(isSupportRouteHealthStatus
+                    ? [
+                        {
+                          key: 'healthStatus',
+                          propertyLabel: t('modelService.HealthStatus'),
+                          type: 'enum' as const,
+                          valueMode: 'scalar' as const,
+                          fixedOperator: 'equals' as const,
+                          strictSelection: true,
+                          options: [
+                            { label: 'HEALTHY', value: 'HEALTHY' },
+                            { label: 'UNHEALTHY', value: 'UNHEALTHY' },
+                            { label: 'DEGRADED', value: 'DEGRADED' },
+                            { label: 'NOT_CHECKED', value: 'NOT_CHECKED' },
+                          ],
+                        },
+                      ]
+                    : []),
                   {
                     key: 'trafficStatus',
                     propertyLabel: t('modelService.TrafficStatus'),

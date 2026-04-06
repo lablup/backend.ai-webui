@@ -1364,6 +1364,7 @@
     "GpuHint": "명령어 기준 GPU {{count}}개 이상 권장",
     "HealthCheck": "상태 확인 URL",
     "HealthCheckTooltip": "서비스가 정상 작동 중인지 확인하는 URL 경로입니다 (예: /health).",
+    "HealthStatus": "상태 확인 결과",
     "Image": "이미지",
     "InitialDelay": "초기 지연 시간",
     "InitialDelayTooltip": "서비스 시작 후 첫 번째 건강 체크까지 대기하는 시간(초)입니다.",

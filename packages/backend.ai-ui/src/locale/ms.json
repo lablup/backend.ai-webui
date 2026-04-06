@@ -228,6 +228,7 @@
   },
   "comp:BAIRouteNodes": {
     "CreatedAt": "Dicipta pada",
+    "HealthStatus": "Status Kesihatan",
     "RouteId": "ID Laluan",
     "SessionId": "ID Sesi",
     "Status": "Status",

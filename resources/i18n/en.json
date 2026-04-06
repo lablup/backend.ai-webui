@@ -1362,6 +1362,7 @@
     "GpuHint": "Based on the command, {{count}} or more GPUs are recommended.",
     "HealthCheck": "Health Check URL",
     "HealthCheckTooltip": "The URL path used to check if the service is running (e.g., /health).",
+    "HealthStatus": "Health Status",
     "Image": "Image",
     "InitialDelay": "Initial Delay",
     "InitialDelayTooltip": "Seconds to wait before the first health check after the service starts.",

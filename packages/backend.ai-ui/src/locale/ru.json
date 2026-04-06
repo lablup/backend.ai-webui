@@ -228,6 +228,7 @@
   },
   "comp:BAIRouteNodes": {
     "CreatedAt": "Дата создания",
+    "HealthStatus": "Состояние системы",
     "RouteId": "ID маршрута",
     "SessionId": "ID сессии",
     "Status": "Статус",

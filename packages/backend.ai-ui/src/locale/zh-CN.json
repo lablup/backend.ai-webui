@@ -228,6 +228,7 @@
   },
   "comp:BAIRouteNodes": {
     "CreatedAt": "创建时间",
+    "HealthStatus": "健康状态",
     "RouteId": "路由 ID",
     "SessionId": "会话 ID",
     "Status": "状态",

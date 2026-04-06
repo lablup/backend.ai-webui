@@ -1363,6 +1363,7 @@
     "GpuHint": "Basierend auf dem Befehl werden {{count}} oder mehr GPUs empfohlen.",
     "HealthCheck": "Gesundheitscheck-URL",
     "HealthCheckTooltip": "Der URL-Pfad, der verwendet wird, um zu überprüfen, ob der Dienst läuft (z. B. /health).",
+    "HealthStatus": "Systemgesundheit",
     "Image": "Bild",
     "InitialDelay": "Anfängliche Verzögerung",
     "InitialDelayTooltip": "Sekunden, die nach dem Start des Dienstes gewartet werden, bevor der erste Gesundheitscheck durchgeführt wird.",

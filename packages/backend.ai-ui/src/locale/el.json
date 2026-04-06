@@ -228,6 +228,7 @@
   },
   "comp:BAIRouteNodes": {
     "CreatedAt": "Δημιουργήθηκε",
+    "HealthStatus": "Κατάσταση υγείας",
     "RouteId": "ID διαδρομής",
     "SessionId": "ID συνεδρίας",
     "Status": "Κατάσταση",
