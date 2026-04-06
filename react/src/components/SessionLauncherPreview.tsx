@@ -123,6 +123,7 @@ const SessionLauncherPreview: React.FC<{
                   },
                   content: {
                     overflow: 'auto',
+                    display: 'flex',
                   },
                 }}
               >
@@ -385,17 +386,20 @@ const SessionLauncherPreview: React.FC<{
           {form.getFieldValue('envvars')?.length > 0 && (
             <Descriptions.Item
               label={t('session.launcher.EnvironmentVariable')}
+              styles={{
+                content: {
+                  display: 'flex',
+                },
+              }}
             >
               {form.getFieldValue('envvars')?.length ? (
-                <BAIFlex align="stretch" direction="column">
-                  <SourceCodeView language={'shell'}>
-                    {_.map(
-                      form.getFieldValue('envvars'),
-                      (v: { variable: string; value: string }) =>
-                        `${v?.variable || ''}="${v?.value || ''}"`,
-                    ).join('\n')}
-                  </SourceCodeView>
-                </BAIFlex>
+                <SourceCodeView language={'shell'}>
+                  {_.map(
+                    form.getFieldValue('envvars'),
+                    (v: { variable: string; value: string }) =>
+                      `${v?.variable || ''}="${v?.value || ''}"`,
+                  ).join('\n')}
+                </SourceCodeView>
               ) : (
                 <Typography.Text type="secondary">-</Typography.Text>
               )}

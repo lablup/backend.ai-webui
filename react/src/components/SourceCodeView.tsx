@@ -11,6 +11,7 @@ import { BAIFlex, BAIText } from 'backend.ai-ui';
 interface SourceCodeViewProps {
   children: string;
   language: string;
+  style?: React.CSSProperties;
 }
 
 const useStyles = createStyles(({ token }) => ({
@@ -23,9 +24,9 @@ const useStyles = createStyles(({ token }) => ({
       margin: '0 !important',
       padding: `${token.paddingSM}px !important`,
     },
-    '& div[dir="ltr"]': {
-      display: 'table',
-      minWidth: '100%',
+    '& pre': {
+      whiteSpace: 'pre-wrap',
+      wordBreak: 'break-all',
     },
   },
 }));
@@ -71,21 +72,23 @@ const CodeHead = ({
 const SourceCodeView: React.FC<SourceCodeViewProps> = ({
   children,
   language,
+  style,
 }) => {
   'use memo';
   const { styles } = useStyles();
   const { token } = theme.useToken();
 
   return (
-    <BAIFlex
-      direction="column"
+    <div
       style={{
         border: `1px solid ${token.colorBorderSecondary}`,
         margin: 0,
         padding: 0,
         borderRadius: token.borderRadiusLG,
         overflow: 'hidden',
-        width: '100%',
+        flex: 1,
+        minWidth: 0,
+        ...style,
       }}
     >
       <CodeHead
@@ -100,18 +103,17 @@ const SourceCodeView: React.FC<SourceCodeViewProps> = ({
           />
         }
       />
-      <BAIFlex
+      <div
         className={styles.codeBlock}
         style={{
-          width: '100%',
           paddingTop: 0,
           borderRadius: `0 0 ${token.borderRadiusLG}px ${token.borderRadiusLG}px`,
           overflow: 'auto',
         }}
       >
         <SyntaxHighlighter language={language}>{children}</SyntaxHighlighter>
-      </BAIFlex>
-    </BAIFlex>
+      </div>
+    </div>
   );
 };
 
