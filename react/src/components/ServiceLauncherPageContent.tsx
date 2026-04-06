@@ -88,7 +88,14 @@ import {
   BAIButton,
 } from 'backend.ai-ui';
 import _ from 'lodash';
-import React, { Suspense, useCallback, useRef, useState } from 'react';
+import React, {
+  Suspense,
+  useCallback,
+  useEffect,
+  useEffectEvent,
+  useRef,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   graphql,
@@ -1117,7 +1124,9 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
           image: endpoint?.image_object,
         },
         vFolderID: endpoint?.model,
-        mount_ids: _.map(endpoint?.extra_mounts, (item) => item?.id),
+        mount_ids: _.map(endpoint?.extra_mounts, (item) =>
+          item?.row_id?.replaceAll('-', ''),
+        ),
         // TODO: implement mount_id_map. Now, it's impossible to get mount_destination from backend
         modelMountDestination: endpoint?.model_mount_destination,
         modelDefinitionPath: endpoint?.model_definition_path,
@@ -1180,6 +1189,30 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
     INITIAL_FORM_VALUES,
     formValuesFromQueryParams,
   );
+
+  const validateEffectEvent = useEffectEvent(() => {
+    form.validateFields(['cluster_size']).catch(() => {});
+  });
+  useEffect(() => {
+    validateEffectEvent();
+  }, []);
+
+  // Sync mount_ids from endpoint data to form.
+  // initialValues is only applied on first Form mount, but with
+  // fetchPolicy: 'store-and-network', the endpoint data may arrive after the
+  // Form has already mounted with empty mount_ids.
+  useEffect(() => {
+    if (endpoint?.extra_mounts) {
+      const mountIds = _.compact(
+        _.map(endpoint.extra_mounts, (item) =>
+          item?.row_id?.replaceAll('-', ''),
+        ),
+      );
+      if (mountIds.length > 0) {
+        form.setFieldsValue({ mount_ids: mountIds });
+      }
+    }
+  }, [endpoint?.extra_mounts, form]);
 
   return (
     <>
@@ -1744,6 +1777,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                       {
                         key: 'advanced',
                         label: t('session.launcher.AdvancedSettings'),
+                        forceRender: true,
                         children: (
                           <>
                             <ClusterModeFormItems />
@@ -1806,26 +1840,28 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                                 );
                               }}
                             </Form.Item>
-                            <Form.Item noStyle dependencies={['vFolderID']}>
-                              {({ getFieldValue }) => {
-                                const vFolderID = getFieldValue('vFolderID');
-                                return (
-                                  <VFolderTableFormItem
-                                    label={t('modelService.AdditionalMounts')}
-                                    rowKey="id"
-                                    tableProps={{
-                                      scroll: { x: 'max-content', y: 300 },
-                                    }}
-                                    rowFilter={(vfolder) =>
-                                      vfolder.usage_mode !== 'model' &&
-                                      vfolder.status === 'ready' &&
-                                      !vfolder.name?.startsWith('.') &&
-                                      vfolder.id !== vFolderID
-                                    }
-                                  />
-                                );
-                              }}
-                            </Form.Item>
+                            <Suspense fallback={<Skeleton active />}>
+                              <Form.Item noStyle dependencies={['vFolderID']}>
+                                {({ getFieldValue }) => {
+                                  const vFolderID = getFieldValue('vFolderID');
+                                  return (
+                                    <VFolderTableFormItem
+                                      label={t('modelService.AdditionalMounts')}
+                                      rowKey="id"
+                                      tableProps={{
+                                        scroll: { x: 'max-content', y: 300 },
+                                      }}
+                                      rowFilter={(vfolder) =>
+                                        vfolder.usage_mode !== 'model' &&
+                                        vfolder.status === 'ready' &&
+                                        !vfolder.name?.startsWith('.') &&
+                                        vfolder.id !== vFolderID
+                                      }
+                                    />
+                                  );
+                                }}
+                              </Form.Item>
+                            </Suspense>
                           </>
                         ),
                       },
