@@ -88,7 +88,7 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
       'Backend.AI Web UI.',
     );
     const configPath = g.isElectron ? './config.toml' : '../../config.toml';
-    const tomlConfig = await fetchAndParseConfig(configPath);
+    const { config: tomlConfig } = await fetchAndParseConfig(configPath);
     if (tomlConfig?.wsproxy?.proxyURL) {
       g.backendaiclient._config._proxyURL = tomlConfig.wsproxy.proxyURL;
     }

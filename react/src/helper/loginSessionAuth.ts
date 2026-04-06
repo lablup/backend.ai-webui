@@ -204,7 +204,7 @@ export async function loadConfigFromWebServer(
       return;
     }
     const webserverConfigURL = new URL('./config.toml', apiEndpoint).href;
-    const config = await fetchAndParseConfig(webserverConfigURL);
+    const { config } = await fetchAndParseConfig(webserverConfigURL);
     if (!config) return;
 
     const backendaiutils = (globalThis as Record<string, any>).backendaiutils;

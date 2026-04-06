@@ -658,6 +658,8 @@
     "AutoDiagnosticsTitle": "Problemas de diagnóstico detetados",
     "BlocklistValid": "Entradas da lista de bloqueio válidas",
     "BlocklistValidDesc": "Todas as {{count}} entrada(s) da lista de bloqueio correspondem a chaves de menu conhecidas.",
+    "ConfigParseError": "Erro de análise do config.toml",
+    "ConfigParseErrorDesc": "Falha ao analisar o config.toml. A aplicação está a ser executada com os valores de configuração predefinidos.",
     "ConfigSslMatchPassed": "Protocolo SSL da configuração consistente",
     "ConfigSslMatchPassedDesc": "O endpoint da API e o URL do proxy utilizam o mesmo protocolo.",
     "ConfigSslMismatch": "Inconsistência do protocolo SSL da configuração",

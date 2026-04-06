@@ -658,6 +658,8 @@
     "AutoDiagnosticsTitle": "Оношлогооны асуудлууд илэрлээ",
     "BlocklistValid": "Хориглох жагсаалтын оруулгууд хүчинтэй",
     "BlocklistValidDesc": "{{count}} хориглох жагсаалтын бүх оруулга нь мэдэгдэж буй цэсний түлхүүртэй таарч байна.",
+    "ConfigParseError": "config.toml Задлан Шинжлэх Алдаа",
+    "ConfigParseErrorDesc": "config.toml файлыг задлан шинжлэхэд алдаа гарлаа. Програм нь анхдагч тохиргооны утгуудаар ажиллаж байна.",
     "ConfigSslMatchPassed": "Тохиргооны SSL протокол нийцтэй",
     "ConfigSslMatchPassedDesc": "API эцсийн цэг болон прокси URL нь ижил протоколыг ашиглаж байна.",
     "ConfigSslMismatch": "Тохиргооны SSL протокол таарахгүй байна",

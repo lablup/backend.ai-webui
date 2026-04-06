@@ -22,7 +22,7 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
 
 export type ModelServiceNode = NonNullable<
   NonNullable<
-    BAIAdminModelServiceSelectPaginatedQuery['response']['deployments']
+    BAIAdminModelServiceSelectPaginatedQuery['response']['adminDeployments']
   >['edges'][number]
 >['node'];
 
@@ -116,7 +116,7 @@ const BAIAdminModelServiceSelect: React.FC<BAIAdminModelServiceSelectProps> = ({
           $limit: Int!
           $filter: DeploymentFilter
         ) {
-          deployments(offset: $offset, limit: $limit, filter: $filter) {
+          adminDeployments(offset: $offset, limit: $limit, filter: $filter) {
             count
             edges {
               node {
@@ -140,9 +140,9 @@ const BAIAdminModelServiceSelect: React.FC<BAIAdminModelServiceSelectProps> = ({
         fetchKey: deferredFetchKey,
       },
       {
-        getTotal: (result) => result.deployments?.count ?? undefined,
+        getTotal: (result) => result.adminDeployments?.count ?? undefined,
         getItem: (result) =>
-          result.deployments?.edges?.map((edge) => edge?.node),
+          result.adminDeployments?.edges?.map((edge) => edge?.node),
         getId: (item) => (item?.id ? toLocalId(item.id) : item?.id),
       },
     );
@@ -252,11 +252,11 @@ const BAIAdminModelServiceSelect: React.FC<BAIAdminModelServiceSelectProps> = ({
         ) : undefined
       }
       footer={
-        _.isNumber(result.deployments?.count) &&
-        result.deployments.count > 0 ? (
+        _.isNumber(result.adminDeployments?.count) &&
+        result.adminDeployments.count > 0 ? (
           <TotalFooter
             loading={isLoadingNext}
-            total={result.deployments.count}
+            total={result.adminDeployments.count}
           />
         ) : undefined
       }

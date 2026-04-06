@@ -658,6 +658,8 @@
     "AutoDiagnosticsTitle": "Phát hiện sự cố chẩn đoán",
     "BlocklistValid": "Mục danh sách chặn hợp lệ",
     "BlocklistValidDesc": "Tất cả {{count}} mục danh sách chặn khớp với các khóa menu đã biết.",
+    "ConfigParseError": "Lỗi phân tích config.toml",
+    "ConfigParseErrorDesc": "Không thể phân tích config.toml. Ứng dụng đang chạy với các giá trị cấu hình mặc định.",
     "ConfigSslMatchPassed": "Giao thức SSL cấu hình nhất quán",
     "ConfigSslMatchPassedDesc": "Điểm cuối API và URL proxy sử dụng cùng một giao thức.",
     "ConfigSslMismatch": "Không khớp giao thức SSL cấu hình",

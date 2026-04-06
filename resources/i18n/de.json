@@ -658,6 +658,8 @@
     "AutoDiagnosticsTitle": "Diagnoseprobleme erkannt",
     "BlocklistValid": "Sperrlisten-Einträge gültig",
     "BlocklistValidDesc": "Alle {{count}} Sperrlisten-Einträge stimmen mit bekannten Menüschlüsseln überein.",
+    "ConfigParseError": "config.toml Parse-Fehler",
+    "ConfigParseErrorDesc": "Fehler beim Parsen von config.toml. Die Anwendung wird mit Standardkonfigurationswerten ausgeführt.",
     "ConfigSslMatchPassed": "SSL-Protokoll der Konfiguration konsistent",
     "ConfigSslMatchPassedDesc": "API-Endpunkt und Proxy-URL verwenden dasselbe Protokoll.",
     "ConfigSslMismatch": "SSL-Protokoll der Konfiguration inkonsistent",

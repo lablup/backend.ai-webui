@@ -658,6 +658,8 @@
     "AutoDiagnosticsTitle": "Masalah Diagnostik Dikesan",
     "BlocklistValid": "Entri Senarai Sekat Sah",
     "BlocklistValidDesc": "Semua {{count}} entri senarai sekat sepadan dengan kunci menu yang diketahui.",
+    "ConfigParseError": "Ralat Penghuraian config.toml",
+    "ConfigParseErrorDesc": "Gagal menghurai config.toml. Aplikasi berjalan dengan nilai konfigurasi lalai.",
     "ConfigSslMatchPassed": "Protokol SSL Konfigurasi Konsisten",
     "ConfigSslMatchPassedDesc": "Titik akhir API dan URL proksi menggunakan protokol yang sama.",
     "ConfigSslMismatch": "Ketidakpadanan Protokol SSL Konfigurasi",

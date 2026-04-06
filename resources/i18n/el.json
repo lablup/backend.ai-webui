@@ -658,6 +658,8 @@
     "AutoDiagnosticsTitle": "Εντοπίστηκαν προβλήματα διαγνωστικών",
     "BlocklistValid": "Εγγραφές αποκλεισμένης λίστας έγκυρες",
     "BlocklistValidDesc": "Όλες οι {{count}} εγγραφές της αποκλεισμένης λίστας αντιστοιχούν σε γνωστά κλειδιά μενού.",
+    "ConfigParseError": "Σφάλμα ανάλυσης config.toml",
+    "ConfigParseErrorDesc": "Αποτυχία ανάλυσης του config.toml. Η εφαρμογή εκτελείται με τιμές διαμόρφωσης προεπιλογής.",
     "ConfigSslMatchPassed": "Συνέπεια πρωτοκόλλου SSL διαμόρφωσης",
     "ConfigSslMatchPassedDesc": "Το API endpoint και η διεύθυνση URL του proxy χρησιμοποιούν το ίδιο πρωτόκολλο.",
     "ConfigSslMismatch": "Ασυμφωνία πρωτοκόλλου SSL διαμόρφωσης",

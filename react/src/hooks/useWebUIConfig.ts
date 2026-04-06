@@ -17,6 +17,7 @@ import {
   refreshConfigFromToml,
   type LoginConfigState,
 } from '../helper/loginConfig';
+import { useBAILogger } from 'backend.ai-ui';
 import { atom, useAtomValue, useSetAtom } from 'jotai';
 import { useCallback, useEffect } from 'react';
 import { parse as toml } from 'smol-toml';
@@ -73,6 +74,12 @@ export const loginConfigState = atom<LoginConfigState | null>(null);
 export const configLoadedState = atom<boolean>(false);
 
 /**
+ * Holds the config.toml parse error, if any.
+ * Set when fetch succeeds but TOML parsing fails (e.g. duplicate keys).
+ */
+export const configParseErrorState = atom<unknown | null>(null);
+
+/**
  * Holds the auto_logout flag extracted from config.
  */
 export const autoLogoutState = atom<boolean>(false);
@@ -114,31 +121,50 @@ function preprocessToml(config: RawTomlConfig): void {
 }
 
 /**
+ * Result of fetching and parsing config.toml.
+ * - Fetch failure (network error, non-200, SPA fallback): `{ config: null }` — no error.
+ * - Parse failure (invalid TOML after fetch succeeds): `{ config: null, error }`.
+ */
+interface ConfigFetchResult {
+  config: RawTomlConfig | null;
+  error?: unknown;
+}
+
+/**
  * Fetch and parse config.toml from the given path.
- * Returns the parsed TOML object, or null on failure.
+ * Returns the parsed config and any parse error for diagnostic logging.
  */
 export async function fetchAndParseConfig(
   configPath: string,
-): Promise<RawTomlConfig | null> {
+): Promise<ConfigFetchResult> {
+  let res: Response;
   try {
-    const res = await fetch(configPath);
-    if (res.status !== 200) {
-      return null;
-    }
-    // When config.toml is missing, the dev server's SPA fallback
-    // (historyApiFallback) serves index.html with status 200.  Detect this
-    // by checking the Content-Type header — a real TOML file is served as
-    // text/plain or application/octet-stream, never text/html.
-    const contentType = res.headers.get('content-type') ?? '';
-    if (contentType.includes('text/html')) {
-      return null;
-    }
+    res = await fetch(configPath);
+  } catch {
+    // Network / fetch error — treat as missing config (no error field).
+    return { config: null };
+  }
+
+  if (res.status !== 200) {
+    return { config: null };
+  }
+  // When config.toml is missing, the dev server's SPA fallback
+  // (historyApiFallback) serves index.html with status 200.  Detect this
+  // by checking the Content-Type header — a real TOML file is served as
+  // text/plain or application/octet-stream, never text/html.
+  const contentType = res.headers.get('content-type') ?? '';
+  if (contentType.includes('text/html')) {
+    return { config: null };
+  }
+
+  try {
     const text = await res.text();
     const parsed = toml(text) as RawTomlConfig;
     preprocessToml(parsed);
-    return parsed;
-  } catch {
-    return null;
+    return { config: parsed };
+  } catch (error) {
+    // Parse error — config was fetched but TOML is invalid.
+    return { config: null, error };
   }
 }
 
@@ -233,6 +259,8 @@ export function useInitializeConfig(): {
   const setAutoLogout = useSetAtom(autoLogoutState);
   const setProxyUrl = useSetAtom(proxyUrlState);
   const setLoginPlugin = useSetAtom(loginPluginState);
+  const setConfigParseError = useSetAtom(configParseErrorState);
+  const { logger } = useBAILogger();
 
   const isLoaded = useAtomValue(configLoadedState);
   const rawConfig = useAtomValue(rawConfigState);
@@ -252,10 +280,10 @@ export function useInitializeConfig(): {
       ? 'es6://config.toml'
       : '../../config.toml';
 
-    const parsed = await fetchAndParseConfig(configPath);
+    const result = await fetchAndParseConfig(configPath);
 
-    if (!parsed) {
-      // config.toml is missing or failed to load — apply defaults so the app
+    if (!result.config) {
+      // config.toml is missing or failed to parse — apply defaults so the app
       // remains functional (login page renders with empty API endpoint field).
       const defaultConfig = getDefaultLoginConfig();
       setLoginConfig(defaultConfig);
@@ -273,15 +301,23 @@ export function useInitializeConfig(): {
         globalScope.packageValidUntil = '';
       }
 
-      // eslint-disable-next-line no-console
-      console.warn('config.toml not found — using default configuration');
+      if (result.error) {
+        setConfigParseError(result.error);
+        logger.error(
+          '[config.toml] Failed to parse — using default configuration:',
+          result.error,
+        );
+      } else {
+        logger.warn('[config.toml] Not found — using default configuration');
+      }
       return;
     }
 
-    setRawConfig(parsed);
+    setRawConfig(result.config);
 
-    const { autoLogout, proxyUrl, loginPlugin, loginConfig } =
-      processConfig(parsed);
+    const { autoLogout, proxyUrl, loginPlugin, loginConfig } = processConfig(
+      result.config,
+    );
 
     setLoginConfig(loginConfig);
     setAutoLogout(autoLogout);
@@ -296,6 +332,8 @@ export function useInitializeConfig(): {
     setAutoLogout,
     setProxyUrl,
     setLoginPlugin,
+    setConfigParseError,
+    logger,
   ]);
 
   return {
@@ -339,6 +377,13 @@ export function useAutoLogout(): boolean {
  */
 export function useProxyUrl(): string {
   return useAtomValue(proxyUrlState);
+}
+
+/**
+ * Hook to access the config.toml parse error, if any.
+ */
+export function useConfigParseError(): unknown | null {
+  return useAtomValue(configParseErrorState);
 }
 
 /**
