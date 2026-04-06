@@ -26,6 +26,7 @@ import { useFolderExplorerOpener } from '../components/FolderExplorerOpener';
 import ImageNodeSimpleTag from '../components/ImageNodeSimpleTag';
 import InferenceSessionErrorModal from '../components/InferenceSessionErrorModal';
 import SessionDetailDrawer from '../components/SessionDetailDrawer';
+import SourceCodeView from '../components/SourceCodeView';
 import SwitchToProjectButton from '../components/SwitchToProjectButton';
 import VFolderLazyView from '../components/VFolderLazyView';
 import { baiSignedRequestWithPromise, convertToOrderBy } from '../helper';
@@ -576,15 +577,14 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
     },
     {
       label: t('session.launcher.EnvironmentVariable'),
-      children: (
-        <Typography.Text
-          style={{ fontFamily: 'monospace', wordBreak: 'break-all' }}
-        >
-          {_.isEmpty(JSON.parse(endpoint?.environ || '{}'))
-            ? '-'
-            : endpoint?.environ}
-        </Typography.Text>
-      ),
+      children: (() => {
+        const envObj = JSON.parse(endpoint?.environ || '{}');
+        if (_.isEmpty(envObj)) return '-';
+        const envText = _.map(envObj, (value, key) => `${key}="${value}"`).join(
+          '\n',
+        );
+        return <SourceCodeView language="shell">{envText}</SourceCodeView>;
+      })(),
       span: {
         sm: 1,
       },
