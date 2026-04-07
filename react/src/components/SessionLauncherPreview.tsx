@@ -424,8 +424,8 @@ const SessionLauncherPreview: React.FC<{
           onClickEditStep('environment');
         }}
       >
-        <BAIFlex direction="column" align="stretch">
-          {(_.some(
+        <BAIFlex direction="column" align="stretch" gap="sm">
+          {_.some(
             form.getFieldValue('resource'),
             (_v, key: keyof SessionLauncherFormValue['resource']) => {
               return (
@@ -433,13 +433,21 @@ const SessionLauncherPreview: React.FC<{
                   .length > 0
               );
             },
-          ) ||
-            (form.getFieldWarning(['cluster_size'] as any) as any[]).length >
-              0) && (
+          ) && (
             <Alert
               type="warning"
               showIcon
               title={t('session.launcher.EnqueueComputeSessionWarning')}
+            />
+          )}
+          {(form.getFieldWarning(['cluster_size'] as any) as any[]).length >
+            0 && (
+            <Alert
+              type="warning"
+              showIcon
+              title={
+                (form.getFieldWarning(['cluster_size'] as any) as string[])[0]
+              }
             />
           )}
 
