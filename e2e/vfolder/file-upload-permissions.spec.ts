@@ -35,6 +35,9 @@ test.describe.serial(
     });
 
     test.afterAll(async ({ browser, request }) => {
+      // Use an extended timeout for cleanup since deleteForeverAndVerifyFromTrash
+      // waits up to 15s per folder for the delete button to be enabled
+      test.setTimeout(120_000);
       const context = await browser.newContext();
       const page = await context.newPage();
       await loginAsUser(page, request);
