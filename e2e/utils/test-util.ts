@@ -50,6 +50,70 @@ function mergeWithUndefined<T extends object>(target: T, source: object): T {
   return result;
 }
 
+/**
+ * Remove duplicate keys within the same TOML section.
+ * Keeps the last occurrence of each key per section.
+ */
+function deduplicateTomlKeys(toml: string): string {
+  const lines = toml.split('\n');
+  const result: string[] = [];
+  const seenKeys = new Set<string>();
+  let currentSection = '';
+
+  // First pass: track last occurrence of each key per section
+  const lastOccurrence = new Map<string, number>();
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (line.startsWith('[')) {
+      currentSection = line;
+      seenKeys.clear();
+    } else if (line && !line.startsWith('#')) {
+      const eqIndex = line.indexOf('=');
+      if (eqIndex > 0) {
+        const key = `${currentSection}::${line.substring(0, eqIndex).trim()}`;
+        lastOccurrence.set(key, i);
+      }
+    }
+  }
+
+  // Second pass: only keep the last occurrence of duplicate keys
+  currentSection = '';
+  const keyLineIndices = new Map<string, number[]>();
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (line.startsWith('[')) {
+      currentSection = line;
+    } else if (line && !line.startsWith('#')) {
+      const eqIndex = line.indexOf('=');
+      if (eqIndex > 0) {
+        const key = `${currentSection}::${line.substring(0, eqIndex).trim()}`;
+        if (!keyLineIndices.has(key)) {
+          keyLineIndices.set(key, []);
+        }
+        keyLineIndices.get(key)!.push(i);
+      }
+    }
+  }
+
+  const skipLines = new Set<number>();
+  for (const [, indices] of keyLineIndices) {
+    if (indices.length > 1) {
+      // Skip all but the last occurrence
+      for (let j = 0; j < indices.length - 1; j++) {
+        skipLines.add(indices[j]);
+      }
+    }
+  }
+
+  for (let i = 0; i < lines.length; i++) {
+    if (!skipLines.has(i)) {
+      result.push(lines[i]);
+    }
+  }
+
+  return result.join('\n');
+}
+
 // Theme configuration types based on theme.schema.json
 type ThemeLogoConfig = {
   src?: string;
@@ -751,7 +815,11 @@ export async function modifyConfigToml(
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
           return res.text();
         });
-        config = TOML.parse(configToml);
+        // Pre-process TOML to remove duplicate keys before parsing.
+        // Some server configurations may have duplicate keys (e.g., debug = true
+        // appearing twice under [general]) which strict TOML parsers reject.
+        const deduplicatedToml = deduplicateTomlKeys(configToml);
+        config = TOML.parse(deduplicatedToml);
         break; // Success, exit retry loop
       } catch (error) {
         lastError = error;

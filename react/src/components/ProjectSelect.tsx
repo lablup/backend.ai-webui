@@ -25,6 +25,7 @@ export interface ProjectSelectProps extends BAISelectProps {
   autoSelectDefault?: boolean;
   disableDefaultFilter?: boolean;
   lockedProjectTypes?: string[];
+  fetchKey?: string;
 }
 
 const ProjectSelect: React.FC<ProjectSelectProps> = ({
@@ -32,6 +33,7 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
   domain,
   disableDefaultFilter,
   lockedProjectTypes,
+  fetchKey,
   ...selectProps
 }) => {
   const { t } = useTranslation();
@@ -74,6 +76,7 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
     },
     {
       fetchPolicy: 'store-and-network',
+      fetchKey: fetchKey,
     },
   );
 
