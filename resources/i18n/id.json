@@ -767,6 +767,7 @@
   "dialog": {
     "ErrorOccurred": "Terjadi Galat",
     "PleaseTypeToConfirm": "Harap ketik {{confirmText}} untuk mengonfirmasi.",
+    "TypeNameToConfirmDeletion": "Ketik nama untuk mengonfirmasi penghapusan.",
     "ask": {
       "DoYouWantToDelete": "Apakah Anda yakin ingin menghapus?",
       "DoYouWantToDeleteSomething": "Apakah Anda yakin ingin menghapus \"{{ nama }}\"?",

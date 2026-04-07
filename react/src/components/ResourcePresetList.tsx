@@ -17,7 +17,15 @@ import {
   SettingOutlined,
   DeleteOutlined,
 } from '@ant-design/icons';
-import { Tooltip, Button, App, Typography, TableColumnsType } from 'antd';
+import {
+  Tooltip,
+  Button,
+  App,
+  Typography,
+  TableColumnsType,
+  Alert,
+  theme,
+} from 'antd';
 import {
   filterOutEmpty,
   filterOutNullAndUndefined,
@@ -27,6 +35,7 @@ import {
   useUpdatableState,
   BAIResourceNumberWithIcon,
   BAINameActionCell,
+  BAIConfirmModalWithInput,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { Suspense, useState, useTransition } from 'react';
@@ -41,13 +50,17 @@ interface ResourcePresetListProps {}
 
 const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
   const { t } = useTranslation();
-  const { modal, message } = App.useApp();
+  const { token } = theme.useToken();
+  const { message } = App.useApp();
   const [isRefetchPending, startRefetchTransition] = useTransition();
   const [resourcePresetsFetchKey, updateResourcePresetsFetchKey] =
     useUpdatableState('initial-fetch');
   const [editingResourcePreset, setEditingResourcePreset] =
     useState<ResourcePresetSettingModalFragment$key | null>(null);
   const [isCreating, setIsCreating] = useState(false);
+  const [deletingPresetName, setDeletingPresetName] = useState<string | null>(
+    null,
+  );
   const baiClient = useSuspendedBackendaiClient();
 
   const { resource_presets } = useLazyLoadQuery<ResourcePresetListQuery>(
@@ -72,14 +85,15 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
     },
   );
 
-  const [commitDelete] = useMutation<ResourcePresetListDeleteMutation>(graphql`
-    mutation ResourcePresetListDeleteMutation($name: String!) {
-      delete_resource_preset(name: $name) {
-        ok
-        msg
+  const [commitDelete, isDeleteInFlight] =
+    useMutation<ResourcePresetListDeleteMutation>(graphql`
+      mutation ResourcePresetListDeleteMutation($name: String!) {
+        delete_resource_preset(name: $name) {
+          ok
+          msg
+        }
       }
-    }
-  `);
+    `);
 
   const columns: TableColumnsType<ResourcePreset> = filterOutEmpty([
     {
@@ -107,52 +121,7 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
               icon: <DeleteOutlined />,
               type: 'danger',
               onClick: () => {
-                modal.confirm({
-                  title: t('resourcePreset.DeleteResourcePreset'),
-                  content: (
-                    <>
-                      {t('resourcePreset.AboutToDeletePreset')}{' '}
-                      <Typography.Text strong>{record?.name}</Typography.Text>
-                    </>
-                  ),
-                  onOk: () => {
-                    return new Promise<void>((resolve) => {
-                      commitDelete({
-                        variables: {
-                          name: record?.name ?? '',
-                        },
-                        onCompleted: (res, errors) => {
-                          if (!res?.delete_resource_preset?.ok) {
-                            message.error(res?.delete_resource_preset?.msg);
-                          } else if (errors && errors?.length > 0) {
-                            const errorMsgList = _.map(
-                              errors,
-                              (err) => err?.message,
-                            );
-                            _.forEach(errorMsgList, (err) =>
-                              message.error(err),
-                            );
-                          } else {
-                            message.success(t('resourcePreset.Deleted'));
-                            startRefetchTransition(() => {
-                              updateResourcePresetsFetchKey();
-                            });
-                          }
-                          resolve();
-                        },
-                        onError: (error) => {
-                          message.error(error?.message);
-                          resolve();
-                        },
-                      });
-                    });
-                  },
-                  okText: t('button.Delete'),
-                  okType: 'primary',
-                  okButtonProps: {
-                    danger: true,
-                  },
-                });
+                setDeletingPresetName(record?.name ?? null);
               },
             },
           ]}
@@ -234,6 +203,51 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
         scroll={{ x: 'max-content' }}
         showSorterTooltip={false}
         columns={columns}
+      />
+      <BAIConfirmModalWithInput
+        open={!!deletingPresetName}
+        title={t('resourcePreset.DeleteResourcePreset')}
+        content={
+          <BAIFlex direction="column" gap="md" align="stretch">
+            <Alert type="warning" title={t('dialog.warning.CannotBeUndone')} />
+            <BAIFlex>
+              <Typography.Text style={{ marginRight: token.marginXXS }}>
+                {t('dialog.TypeNameToConfirmDeletion')}
+              </Typography.Text>
+              (<Typography.Text code>{deletingPresetName}</Typography.Text>)
+            </BAIFlex>
+          </BAIFlex>
+        }
+        confirmText={deletingPresetName ?? ''}
+        inputProps={{ placeholder: deletingPresetName ?? '' }}
+        okText={t('button.Delete')}
+        okButtonProps={{ loading: isDeleteInFlight }}
+        onOk={() => {
+          commitDelete({
+            variables: {
+              name: deletingPresetName ?? '',
+            },
+            onCompleted: (res, errors) => {
+              if (!res?.delete_resource_preset?.ok) {
+                message.error(res?.delete_resource_preset?.msg);
+              } else if (errors && errors?.length > 0) {
+                const errorMsgList = _.map(errors, (err) => err?.message);
+                _.forEach(errorMsgList, (err) => message.error(err));
+              } else {
+                message.success(t('resourcePreset.Deleted'));
+                startRefetchTransition(() => {
+                  updateResourcePresetsFetchKey();
+                });
+              }
+              setDeletingPresetName(null);
+            },
+            onError: (error) => {
+              message.error(error?.message);
+              setDeletingPresetName(null);
+            },
+          });
+        }}
+        onCancel={() => setDeletingPresetName(null)}
       />
       <Suspense fallback={null}>
         <ResourcePresetSettingModal

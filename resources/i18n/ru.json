@@ -767,6 +767,7 @@
   "dialog": {
     "ErrorOccurred": "Возникла ошибка",
     "PleaseTypeToConfirm": "Пожалуйста, введите {{confirmText}}, чтобы подтвердить.",
+    "TypeNameToConfirmDeletion": "Введите имя для подтверждения удаления.",
     "ask": {
       "DoYouWantToDelete": "Вы уверены, что хотите удалить?",
       "DoYouWantToDeleteSomething": "Вы уверены, что хотите удалить \"{{ имя }}\"?",

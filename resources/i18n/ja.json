@@ -767,6 +767,7 @@
   "dialog": {
     "ErrorOccurred": "エラーが発生しました",
     "PleaseTypeToConfirm": "確認するには{{confirmText}}を入力してください。",
+    "TypeNameToConfirmDeletion": "削除を確認するために名前を入力してください。",
     "ask": {
       "DoYouWantToDelete": "本当に削除しますか？",
       "DoYouWantToDeleteSomething": "本当に\"{{ name }}\"を削除しますか？",
