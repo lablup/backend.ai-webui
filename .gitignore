@@ -90,8 +90,6 @@ config.ini
 config.toml
 configs/*.toml
 
-# model card metadata
-resources/model_card_metadata.json
 
 # webpack
 dist

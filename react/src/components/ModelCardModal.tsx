@@ -62,6 +62,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
   const { generateFolderPath } = useFolderExplorerOpener();
 
   const screen = Grid.useBreakpoint();
+
   const model_card = useFragment(
     graphql`
       fragment ModelCardModalFragment on ModelCard {
