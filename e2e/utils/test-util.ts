@@ -715,6 +715,57 @@ function tomlStringifyCompatible(config: any): string {
   return tomlStr;
 }
 
+/**
+ * Pre-process a TOML string to remove duplicate keys within each section.
+ * Some server configurations may have duplicate keys (e.g., `debug = true`
+ * duplicated keys (e.g., `debug = true` appearing twice under [general]).
+ * @returns A deduplicated TOML string safe for strict parsers
+ */
+function deduplicateTomlKeys(tomlStr: string): string {
+  const lines = tomlStr.split('\n');
+  // Collect lines per section, tracking the last definition of each key
+  type SectionEntry = { key: string; lineIndex: number };
+  const sections: { header: string; entries: SectionEntry[] }[] = [
+    { header: '', entries: [] },
+  ];
+
+  let currentSection = sections[0];
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const trimmed = line.trim();
+
+    // New section header
+    if (trimmed.startsWith('[') && !trimmed.startsWith('[[')) {
+      currentSection = { header: trimmed, entries: [] };
+      sections.push(currentSection);
+      continue;
+    }
+
+    // Skip comments and empty lines — they don't need deduplication
+    if (!trimmed || trimmed.startsWith('#')) {
+      continue;
+    }
+
+    // Extract the key part (before the first '=')
+    const eqIdx = trimmed.indexOf('=');
+    if (eqIdx === -1) continue;
+    const key = trimmed.substring(0, eqIdx).trim();
+
+    // Track the last line index seen for this key
+    const existing = currentSection.entries.find((e) => e.key === key);
+    if (existing) {
+      // Mark previous occurrence for removal
+      lines[existing.lineIndex] = null as unknown as string;
+      existing.lineIndex = i;
+    } else {
+      currentSection.entries.push({ key, lineIndex: i });
+    }
+  }
+
+  return lines.filter((l) => l !== null).join('\n');
+}
+
 // Store the accumulated config modifications in a WeakMap keyed by page
 const configCache = new WeakMap<Page, any>();
 
@@ -751,7 +802,11 @@ export async function modifyConfigToml(
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
           return res.text();
         });
-        config = TOML.parse(configToml);
+        // Pre-process TOML to remove duplicate keys before parsing.
+        // Some server configurations may have duplicate keys (e.g., debug = true
+        // appearing twice under [general]) which strict TOML parsers reject.
+        const deduplicatedToml = deduplicateTomlKeys(configToml);
+        config = TOML.parse(deduplicatedToml);
         break; // Success, exit retry loop
       } catch (error) {
         lastError = error;
