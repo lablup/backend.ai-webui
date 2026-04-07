@@ -160,10 +160,14 @@ const SessionMetricGraph: React.FC<PrometheusMetricGraphProps> = ({
   );
 
   const resourceSlotKey = useMemo(() => {
-    const [key] = _.split(metricName, '_');
+    const parts = _.split(metricName, '_');
+    const devicePrefix =
+      parts.length > 1 ? parts.slice(0, -1).join('-') : parts[0];
     return (
-      _.find(_.keys(mergedResourceSlots), (slotKey) =>
-        _.startsWith(slotKey, key),
+      _.find(
+        _.keys(mergedResourceSlots),
+        (slotKey) =>
+          _.startsWith(slotKey, devicePrefix + '.') || slotKey === devicePrefix,
       ) ?? ''
     );
   }, [mergedResourceSlots, metricName]);

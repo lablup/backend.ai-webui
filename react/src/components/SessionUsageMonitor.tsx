@@ -141,9 +141,10 @@ const SessionUsageMonitor: React.FC<SessionUsageMonitorProps> = ({
     ..._.map(
       _.omit(sortedLiveStat, 'cpu_util', 'cpu_used', 'mem'),
       (value, key) => {
-        const deviceName = _.split(key, '_')[0];
-        let deviceKey = _.find(resourceSlotNames, (name) =>
-          _.includes(name, deviceName),
+        const deviceName = _.split(key, '_').slice(0, -1).join('-');
+        let deviceKey = _.find(
+          resourceSlotNames,
+          (name) => _.startsWith(name, deviceName + '.') || name === deviceName,
         );
 
         if (size === 'small' && !key?.endsWith('mem')) {
