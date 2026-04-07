@@ -1005,7 +1005,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
               message.success(
                 t('modelService.ServiceCreated', { name: values.serviceName }),
               );
-              webuiNavigate('/serving');
+              webuiNavigate('/serving', { state: { refreshTable: true } });
             },
             onError: (error) => {
               // Ignore user-initiated cancellation (e.g., overwrite confirmation dismissed)

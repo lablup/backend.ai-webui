@@ -20,9 +20,10 @@ import {
   useUpdatableState,
 } from 'backend.ai-ui';
 import _ from 'lodash';
-import React, { Suspense, useDeferredValue, useMemo } from 'react';
+import React, { Suspense, useDeferredValue, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
+import { useLocation } from 'react-router-dom';
 import { StringParam, useQueryParams, withDefault } from 'use-query-params';
 
 const ServingPage: React.FC = () => {
@@ -47,6 +48,29 @@ const ServingPage: React.FC = () => {
   });
 
   const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
+
+  const location = useLocation();
+  const locationState = location.state as
+    | { refreshTable?: boolean }
+    | undefined;
+
+  useEffect(() => {
+    if (locationState?.refreshTable) {
+      updateFetchKey();
+      // Clear the state to prevent re-triggering on back navigation
+      webuiNavigate(`${location.pathname}${location.search}${location.hash}`, {
+        replace: true,
+        state: null,
+      });
+    }
+  }, [
+    location.hash,
+    location.pathname,
+    location.search,
+    locationState?.refreshTable,
+    updateFetchKey,
+    webuiNavigate,
+  ]);
 
   const lifecycleStageFilter =
     queryParams.lifecycleStage === 'active'
