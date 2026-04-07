@@ -19,8 +19,15 @@ import {
   useErrorMessageResolver,
   BAIText,
   BAIAlert,
+  BAIButton,
 } from 'backend.ai-ui';
-import React, { Suspense, useRef } from 'react';
+import React, {
+  Suspense,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 
 const MonacoEditor = React.lazy(() =>
@@ -57,6 +64,26 @@ const detectLanguageAndMimeType = (monaco: Monaco, fileName: string) => {
   return { detectedLanguage: 'plaintext', detectedMimeType: 'text/plain' };
 };
 
+type SchemaMapping = {
+  schemaUrl: string;
+  type: 'yaml' | 'toml';
+};
+
+const definitionSchemaMap: Record<string, SchemaMapping> = {
+  'model-definition.yaml': {
+    schemaUrl: '/resources/model-definition.schema.json',
+    type: 'yaml',
+  },
+  'model-definition.yml': {
+    schemaUrl: '/resources/model-definition.schema.json',
+    type: 'yaml',
+  },
+  'service-definition.toml': {
+    schemaUrl: '/resources/service-definition.schema.json',
+    type: 'toml',
+  },
+};
+
 const VFolderTextFileEditorModal: React.FC<VFolderTextFileEditorModalProps> = ({
   targetVFolderId,
   currentPath,
@@ -69,7 +96,7 @@ const VFolderTextFileEditorModal: React.FC<VFolderTextFileEditorModalProps> = ({
 
   const { t } = useTranslation();
   const { isDarkMode } = useThemeMode();
-  const { message } = App.useApp();
+  const { message, modal } = App.useApp();
   const baiClient = useConnectedBAIClient();
   const { getErrorMessage } = useErrorMessageResolver();
   const { token } = theme.useToken();
@@ -78,6 +105,18 @@ const VFolderTextFileEditorModal: React.FC<VFolderTextFileEditorModalProps> = ({
   const queryClient = useQueryClient();
   const editorRef = useRef<Parameters<OnMount>[0] | null>(null);
   const detectedMimeTypeRef = useRef<string>('text/plain');
+  const abortControllerRef = useRef<AbortController | null>(null);
+  const disposablesRef = useRef<{ dispose(): void }[]>([]);
+  const [isDirty, setIsDirty] = useState(false);
+
+  useEffect(() => {
+    return () => {
+      abortControllerRef.current?.abort();
+      disposablesRef.current.forEach((d) => d.dispose());
+      disposablesRef.current = [];
+    };
+  }, []);
+
   const filePath =
     currentPath === '.'
       ? fileInfo?.name
@@ -182,6 +221,39 @@ const VFolderTextFileEditorModal: React.FC<VFolderTextFileEditorModalProps> = ({
     },
   });
 
+  const handleRequestClose = useCallback(() => {
+    if (!isDirty) {
+      onRequestClose();
+      return;
+    }
+    const confirmInstance = modal.confirm({
+      title: t('data.explorer.EditFileUnsavedChangesTitle', {
+        fileName: fileInfo?.name,
+      }),
+      content: t('data.explorer.EditFileUnsavedChangesDescription'),
+      icon: null,
+      okText: t('button.Save'),
+      cancelText: t('button.Cancel'),
+      footer: (_, { OkBtn, CancelBtn }) => (
+        <BAIFlex justify="end" gap="xs">
+          <CancelBtn />
+          <BAIButton
+            onClick={() => {
+              confirmInstance.destroy();
+              onRequestClose();
+            }}
+          >
+            {t('button.DontSave')}
+          </BAIButton>
+          <OkBtn />
+        </BAIFlex>
+      ),
+      onOk: () => {
+        saveMutation.mutate();
+      },
+    });
+  }, [isDirty, modal, t, fileInfo?.name, onRequestClose, saveMutation]);
+
   const skeletonWithPadding = (
     <Skeleton
       active
@@ -198,6 +270,7 @@ const VFolderTextFileEditorModal: React.FC<VFolderTextFileEditorModalProps> = ({
       destroyOnHidden
       okText={t('button.Save')}
       cancelText={t('button.Cancel')}
+      keyboard={false}
       {...modalProps}
       title={
         <>
@@ -211,7 +284,7 @@ const VFolderTextFileEditorModal: React.FC<VFolderTextFileEditorModalProps> = ({
           )}
         </>
       }
-      onCancel={() => onRequestClose()}
+      onCancel={() => handleRequestClose()}
       onOk={() => saveMutation.mutate()}
       confirmLoading={saveMutation.isPending}
       okButtonProps={{ disabled: !!loadError }}
@@ -240,6 +313,10 @@ const VFolderTextFileEditorModal: React.FC<VFolderTextFileEditorModalProps> = ({
           ) : (
             <MonacoEditor
               defaultValue={fileContent ?? ''}
+              defaultPath={fileInfo?.name}
+              onChange={() => {
+                setIsDirty(true);
+              }}
               beforeMount={(monaco) => {
                 if (fileInfo?.name) {
                   const { detectedMimeType } = detectLanguageAndMimeType(
@@ -259,6 +336,58 @@ const VFolderTextFileEditorModal: React.FC<VFolderTextFileEditorModalProps> = ({
                   const model = editor.getModel();
                   if (model) {
                     monaco.editor.setModelLanguage(model, detectedLanguage);
+                  }
+
+                  const mapping = definitionSchemaMap[fileInfo.name];
+                  if (mapping) {
+                    const abortController = new AbortController();
+                    abortControllerRef.current = abortController;
+                    fetch(mapping.schemaUrl, {
+                      signal: abortController.signal,
+                    })
+                      .then((res) => (res.ok ? res.json() : undefined))
+                      .then(async (schema) => {
+                        if (!schema || abortController.signal.aborted || !model)
+                          return;
+
+                        if (mapping.type === 'yaml') {
+                          const { createYamlValidator } =
+                            await import('../helper/monacoYamlValidator');
+                          disposablesRef.current.push(
+                            createYamlValidator(monaco, model, schema),
+                          );
+
+                          const { createYamlCompletionProvider } =
+                            await import('../helper/monacoYamlCompletion');
+                          disposablesRef.current.push(
+                            createYamlCompletionProvider(monaco, model, schema),
+                          );
+                        } else if (mapping.type === 'toml') {
+                          const { registerTomlLanguage } =
+                            await import('../helper/monacoTomlLanguage');
+                          registerTomlLanguage(monaco);
+                          monaco.editor.setModelLanguage(model, 'toml');
+
+                          const { createTomlValidator } =
+                            await import('../helper/monacoTomlValidator');
+                          const disposable = createTomlValidator(
+                            monaco,
+                            model,
+                            schema,
+                          );
+                          disposablesRef.current.push(disposable);
+                        }
+                      })
+                      .catch((e) => {
+                        if (
+                          e instanceof DOMException &&
+                          e.name === 'AbortError'
+                        )
+                          return;
+                        // Log unexpected errors (schema fetch, import, or init failure)
+                        // eslint-disable-next-line no-console
+                        console.warn('Schema validation setup failed:', e);
+                      });
                   }
                 }
               }}
