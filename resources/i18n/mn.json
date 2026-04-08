@@ -909,6 +909,7 @@
     "PleaseReload": "Хэсэг хугацааны дараа дахин ачааллана уу.",
     "PreparingSession": "Session бэлтгэж байна",
     "QueryingExistingComputeSession": "Одоо байгаа тооцоолох session-ээс асууж байна ...",
+    "RefreshPage": "Хуудсыг шинэчлэх",
     "RefreshToRetry": "Дахин оролдохын тулд хуудсыг шинэчилнэ үү.",
     "ResourceExhausted": "Session үүсгэхэд хангалттай нөөц байхгүй байна.",
     "ServicePortNotAvailable": "Хүссэн апп энэ session-д эхлүүлэх боломжгүй байна.",

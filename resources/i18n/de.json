@@ -909,6 +909,7 @@
     "PleaseReload": "Bitte nach einiger Zeit neu laden.",
     "PreparingSession": "Sitzung wird vorbereitet",
     "QueryingExistingComputeSession": "Vorhandene Compute-Sitzung wird abgefragt...",
+    "RefreshPage": "Seite aktualisieren",
     "RefreshToRetry": "Laden Sie die Seite neu, um es erneut zu versuchen.",
     "ResourceExhausted": "Nicht genügend Ressourcen zum Erstellen der Sitzung.",
     "ServicePortNotAvailable": "Die angeforderte App kann in dieser Sitzung nicht gestartet werden.",

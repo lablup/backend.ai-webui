@@ -909,6 +909,7 @@
     "PleaseReload": "กรุณาโหลดใหม่หลังจากผ่านไปสักครู่",
     "PreparingSession": "กำลังเตรียมเซสชัน",
     "QueryingExistingComputeSession": "กำลังสอบถามเซสชันการคำนวณที่มีอยู่ ...",
+    "RefreshPage": "รีเฟรชหน้า",
     "RefreshToRetry": "รีเฟรชหน้าเพื่อลองอีกครั้ง",
     "ResourceExhausted": "ทรัพยากรไม่เพียงพอในการสร้างเซสชัน",
     "ServicePortNotAvailable": "ไม่สามารถเปิดใช้งานแอปที่ร้องขอในเซสชันนี้ได้",

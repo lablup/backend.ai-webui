@@ -11,16 +11,9 @@
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useBackendAIAppLauncher } from '../hooks/useBackendAIAppLauncher';
 import { fetchAndParseConfig } from '../hooks/useWebUIConfig';
-import { useMemoizedFn } from 'ahooks';
-import { Alert, Steps } from 'antd';
+import { Alert, Button, Steps, Typography } from 'antd';
 import { BAICard, BAIFlex, toGlobalId, useBAILogger } from 'backend.ai-ui';
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { useEffect, useEffectEvent, useRef, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -113,30 +106,9 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
   /**
    * Surface a user-facing notification via the React notification system
    * using `useSetBAINotification` on the EduAppLauncher page.
-   */
-  const notify = useCallback(
-    (
-      message: string,
-      detail?: string,
-      persistent = false,
-      log?: Record<string, unknown>,
-    ) => {
-      const shouldSaveLog = log && Object.keys(log).length !== 0;
-      upsertNotification({
-        open: true,
-        type: shouldSaveLog ? 'error' : undefined,
-        message,
-        description: message === detail ? undefined : detail,
-        duration: persistent ? 0 : undefined,
-      });
-    },
-    [upsertNotification],
-  );
-
-  /**
-   * Transition helper for the internal state machine. The state is not
-   * rendered yet (FR-2487 will consume it); debug logs trace transitions
-   * so the migration is observable until the Card UI lands.
+   *
+   * No `useCallback`: `'use memo'` directive at the top lets the React
+   * Compiler memoize this callback automatically.
    */
   const notify = (
     message: string,
@@ -293,23 +265,21 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
 
   /**
    * Handle API errors and show notification messages.
+   * No `useCallback` — `'use memo'` directive memoizes automatically.
    */
-  const _handleError = useCallback(
-    (err: any) => {
-      if (err?.message) {
-        const message = err.description ?? err.message;
-        notify(message, err.message, true, err);
-      } else if (err?.title) {
-        notify(err.title, undefined, true, err);
-      }
-    },
-    [notify],
-  );
+  const _handleError = (err: any) => {
+    if (err?.message) {
+      const message = err.description ?? err.message;
+      notify(message, err.message, true, err);
+    } else if (err?.title) {
+      notify(err.title, undefined, true, err);
+    }
+  };
 
   /**
    * Transition the state machine to the launch error state and surface
-   * the error via the React notification system. FR-2487 will render
-   * this state in the Card UI.
+   * the error via the React notification system. FR-2487 renders this
+   * state in the Card UI.
    *
    * Not wrapped in `useCallback`: the outer component uses `'use memo'`
    * so the React Compiler handles memoization. This avoids the stale-dep
@@ -614,15 +584,17 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
         // and fall back to sensible defaults so the generic session
         // creation still proceeds.
 
-        if (!projects) {
-          transition({
-            name: 'error',
-            step: 'session',
-            category: 'other',
-            message: t('eduapi.EmptyProject'),
-          });
-          notify(t('eduapi.EmptyProject'));
-          return;
+        // 4a. mounts: fall back to no additional mounts
+        let mounts: Record<string, unknown> | undefined;
+        try {
+          mounts = await g.backendaiclient.eduApp.get_mount_folders();
+          logger.info('[_createEduSession] step 4a result', { mounts });
+        } catch (err) {
+          logger.warn(
+            '[_createEduSession] step 4a: eduApp.get_mount_folders not available, using default (no extra mounts)',
+            err,
+          );
+          mounts = undefined;
         }
 
         // 4b. projects: fall back to `current_group` that
@@ -756,6 +728,11 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
       // The Relay loader child mounts on the 'session' stage, fetches
       // the ComputeSessionNode fragment, and transitions to 'launching'.
       // EduAppSessionLauncher then drives useBackendAIAppLauncher.
+    } else {
+      logger.warn(
+        '[_createEduSession] reached end without sessionId — flow stalled',
+        { launchNewSession },
+      );
     }
   };
 
@@ -849,6 +826,28 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
     }
   };
 
+  // The launch sequence is the meaningful side effect tied to
+  // `(active, apiEndpoint)`. We wrap the body in a `useEffectEvent` so
+  // the effect's reactive deps stay precisely `[active, apiEndpoint]`
+  // and any other identity (logger, _launch closure, etc.) does not
+  // re-trigger the launch flow.
+  //
+  // Placed after `_launch` is declared so the reference lives in the
+  // temporal-safe zone (see `.claude/rules/use-effect-event.md`).
+  const onLaunchEffect = useEffectEvent(() => {
+    logger.info('[EduAppLauncher] launch effect', {
+      active,
+      hasLaunchedRef: hasLaunchedRef.current,
+      apiEndpoint,
+    });
+    if (!active || hasLaunchedRef.current) return;
+    hasLaunchedRef.current = true;
+    _launch(apiEndpoint);
+  });
+  useEffect(() => {
+    onLaunchEffect();
+  }, [active, apiEndpoint]);
+
   // Map the state machine stage to the visual Steps component:
   //   step 0 = Authentication
   //   step 1 = Session (lookup or create)
@@ -858,50 +857,49 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
   //   and the error step matches.
   // - Stages after the current step are 'wait'.
   // - On 'done', all three steps are 'finish'.
-  const { currentStep, stepStatuses } = useMemo(() => {
-    const STEP_AUTH = 0;
-    const STEP_SESSION = 1;
-    const STEP_LAUNCH = 2;
-    let current = STEP_AUTH;
-    let statuses: Array<'wait' | 'process' | 'finish' | 'error'> = [
-      'wait',
-      'wait',
-      'wait',
-    ];
-    switch (stage.name) {
-      case 'idle':
-      case 'auth':
-        current = STEP_AUTH;
-        statuses = ['process', 'wait', 'wait'];
-        break;
-      case 'session':
-        current = STEP_SESSION;
-        statuses = ['finish', 'process', 'wait'];
-        break;
-      case 'launching':
-        current = STEP_LAUNCH;
-        statuses = ['finish', 'finish', 'process'];
-        break;
-      case 'done':
-        current = STEP_LAUNCH;
-        statuses = ['finish', 'finish', 'finish'];
-        break;
-      case 'error': {
-        if (stage.step === 'auth') {
-          current = STEP_AUTH;
-          statuses = ['error', 'wait', 'wait'];
-        } else if (stage.step === 'session') {
-          current = STEP_SESSION;
-          statuses = ['finish', 'error', 'wait'];
-        } else {
-          current = STEP_LAUNCH;
-          statuses = ['finish', 'finish', 'error'];
-        }
-        break;
+  // No `useMemo` needed: `'use memo'` directive at the top of this
+  // component lets the React Compiler memoize derived values automatically.
+  const STEP_AUTH = 0;
+  const STEP_SESSION = 1;
+  const STEP_LAUNCH = 2;
+  let currentStep = STEP_AUTH;
+  let stepStatuses: Array<'wait' | 'process' | 'finish' | 'error'> = [
+    'wait',
+    'wait',
+    'wait',
+  ];
+  switch (stage.name) {
+    case 'idle':
+    case 'auth':
+      currentStep = STEP_AUTH;
+      stepStatuses = ['process', 'wait', 'wait'];
+      break;
+    case 'session':
+      currentStep = STEP_SESSION;
+      stepStatuses = ['finish', 'process', 'wait'];
+      break;
+    case 'launching':
+      currentStep = STEP_LAUNCH;
+      stepStatuses = ['finish', 'finish', 'process'];
+      break;
+    case 'done':
+      currentStep = STEP_LAUNCH;
+      stepStatuses = ['finish', 'finish', 'finish'];
+      break;
+    case 'error': {
+      if (stage.step === 'auth') {
+        currentStep = STEP_AUTH;
+        stepStatuses = ['error', 'wait', 'wait'];
+      } else if (stage.step === 'session') {
+        currentStep = STEP_SESSION;
+        stepStatuses = ['finish', 'error', 'wait'];
+      } else {
+        currentStep = STEP_LAUNCH;
+        stepStatuses = ['finish', 'finish', 'error'];
       }
+      break;
     }
-    return { currentStep: current, stepStatuses: statuses };
-  }, [stage]);
+  }
 
   // Compute the user-facing Alert title and description for the error
   // stage. For the `session` step, switch on `stage.category` so the five
@@ -915,14 +913,11 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
   // The Alert description shows the underlying technical `stage.message`
   // (when it adds information) plus the `RefreshToRetry` hint so power
   // users can still see the raw API error detail.
-  const { errorTitle, errorDetail } = useMemo(() => {
-    if (stage.name !== 'error') {
-      return {
-        errorTitle: null as string | null,
-        errorDetail: null as string | null,
-      };
-    }
-
+  // No `useMemo`: `'use memo'` directive at the top lets React Compiler
+  // memoize this derived value automatically.
+  let errorTitle: string | null = null;
+  let errorDetail: string | null = null;
+  if (stage.name === 'error') {
     let title: string;
     if (stage.step === 'session') {
       switch (stage.category) {
@@ -962,10 +957,9 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
         ? stage.message
         : null;
     const refreshHint = t('eduapi.RefreshToRetry');
-    const detail = rawMessage ? `${rawMessage}\n${refreshHint}` : refreshHint;
-
-    return { errorTitle: title, errorDetail: detail };
-  }, [stage, t]);
+    errorTitle = title;
+    errorDetail = rawMessage ? `${rawMessage}\n${refreshHint}` : refreshHint;
+  }
 
   if (!active) {
     return null;
@@ -1013,6 +1007,15 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
             description={
               <span style={{ whiteSpace: 'pre-line' }}>{errorDetail}</span>
             }
+            action={
+              <Button
+                size="small"
+                danger
+                onClick={() => window.location.reload()}
+              >
+                {t('eduapi.RefreshPage')}
+              </Button>
+            }
           />
         ) : null}
         {stage.name === 'done' ? (
@@ -1021,6 +1024,21 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
             type="success"
             showIcon
             title={t('eduapi.LaunchCompleted')}
+            description={
+              // Always render a clickable link to the app URL. The
+              // best-effort `window.open` in `handleLaunchSuccess` may have
+              // been blocked by the browser's popup blocker (the call is
+              // not directly tied to a user gesture); a single click on
+              // this link is a fresh user gesture and is guaranteed to
+              // open the new tab.
+              <Typography.Link
+                href={stage.appConnectUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {t('eduapi.OpenAppInNewWindow')}
+              </Typography.Link>
+            }
           />
         ) : null}
       </BAICard>
