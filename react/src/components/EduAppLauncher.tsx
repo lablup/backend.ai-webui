@@ -63,19 +63,19 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
 
   /**
    * Initialize the backend.ai client with session-based auth mode.
+   *
+   * The caller (`EduAppLauncherPage`) is responsible for providing a
+   * non-empty endpoint via `useEduAppApiEndpoint()`, which reads from
+   * `config.toml` and suspends until resolved. If the endpoint is still
+   * empty here, client initialization will be rejected and the outer
+   * catch in `_launch` will surface the error via notification.
    */
   const _initClient = async (endpoint: string) => {
-    let resolvedEndpoint = endpoint;
+    const resolvedEndpoint = endpoint.trim();
 
-    if (resolvedEndpoint === '') {
-      const storedEndpoint = localStorage.getItem(
-        'backendaiwebui.api_endpoint',
-      );
-      if (storedEndpoint != null) {
-        resolvedEndpoint = storedEndpoint.replace(/^"+|"+$/g, '');
-      }
+    if (!resolvedEndpoint) {
+      throw new Error('API endpoint is empty; cannot initialize client.');
     }
-    resolvedEndpoint = resolvedEndpoint.trim();
 
     const clientConfig = new g.BackendAIClientConfig(
       '',

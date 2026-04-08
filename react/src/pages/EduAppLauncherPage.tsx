@@ -6,7 +6,7 @@ import {
   CSSTokenVariables,
   NotificationForAnonymous,
 } from '../components/MainLayout/MainLayout';
-import { useApiEndpoint } from '../hooks/useApiEndpoint';
+import { useEduAppApiEndpoint } from '../hooks/useEduAppApiEndpoint';
 import React, { Suspense } from 'react';
 
 const EduAppLauncherLazy = React.lazy(
@@ -16,7 +16,14 @@ const EduAppLauncherLazy = React.lazy(
 /**
  * Standalone page for education app launcher.
  * Renders outside MainLayout (no sidebar).
- * Gets apiEndpoint from localStorage or config.
+ *
+ * Because this page is entered via a token URL and never goes through
+ * LoginView, it resolves the API endpoint directly from `config.toml`
+ * via `useEduAppApiEndpoint()`. The Suspense boundary below gates
+ * EduAppLauncher rendering until endpoint resolution completes; the
+ * resolved value may still be an empty string if every fallback source
+ * is unavailable, in which case `EduAppLauncher._initClient` throws and
+ * surfaces the error via notification.
  */
 const EduAppLauncherPage: React.FC = () => {
   return (
@@ -32,7 +39,7 @@ const EduAppLauncherPage: React.FC = () => {
 
 const EduAppLauncherPageContent: React.FC = () => {
   'use memo';
-  const apiEndpoint = useApiEndpoint();
+  const apiEndpoint = useEduAppApiEndpoint();
 
   return <EduAppLauncherLazy apiEndpoint={apiEndpoint} active={true} />;
 };
