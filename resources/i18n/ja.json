@@ -874,6 +874,7 @@
     "PleaseReload": "しばらくしてからリロードしてください。",
     "PreparingSession": "セッションを準備中",
     "QueryingExistingComputeSession": "既存の計算セッションのクエリ..。",
+    "RefreshPage": "ページを更新",
     "RefreshToRetry": "ページを更新して再試行してください。",
     "ResourceExhausted": "セッションを作成するためのリソースが不足しています。",
     "ServicePortNotAvailable": "リクエストされたアプリはこのセッションでは起動できません。",
