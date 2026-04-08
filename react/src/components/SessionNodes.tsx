@@ -7,10 +7,12 @@ import {
   SessionNodesFragment$key,
 } from '../__generated__/SessionNodesFragment.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { useCurrentUserRole } from '../hooks/backendai';
+import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
+import AppLauncherModal from './ComputeSessionNodeItems/AppLauncherModal';
 import SessionReservation from './ComputeSessionNodeItems/SessionReservation';
 import SessionSlotCell from './ComputeSessionNodeItems/SessionSlotCell';
 import SessionStatusTag from './ComputeSessionNodeItems/SessionStatusTag';
+import TerminateSessionModal from './ComputeSessionNodeItems/TerminateSessionModal';
 import ImageNodeSimpleTag from './ImageNodeSimpleTag';
 import { Tooltip } from 'antd';
 import {
@@ -21,14 +23,17 @@ import {
   BAITable,
   BAITableProps,
   BAISessionAgentIds,
-  BAILink,
+  BAIAppIcon,
+  BAINameActionCell,
   BAISessionTypeTag,
   BAISessionClusterMode,
   BAITag,
+  BAIUnmountAfterClose,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
-import React from 'react';
+import { PowerOffIcon } from 'lucide-react';
+import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
@@ -75,6 +80,11 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
   const { t } = useTranslation();
   const userRole = useCurrentUserRole();
   const baiClient = useSuspendedBackendaiClient();
+  const [userInfo] = useCurrentUserInfo();
+  const [terminateTarget, setTerminateTarget] =
+    useState<SessionNodeInList | null>(null);
+  const [appLauncherTarget, setAppLauncherTarget] =
+    useState<SessionNodeInList | null>(null);
 
   const sessions = useFragment(
     graphql`
@@ -84,6 +94,8 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         name
         status
         type
+        service_ports
+        user_id
         agent_ids
         ...SessionStatusTagFragment
         ...SessionReservationFragment
@@ -93,6 +105,8 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         ...BAISessionAgentIdsFragment
         ...BAISessionTypeTagFragment
         ...BAISessionClusterModeFragment
+        ...AppLauncherModalFragment
+        ...TerminateSessionModalFragment
         kernel_nodes {
           edges {
             node {
@@ -140,17 +154,44 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         title: t('session.SessionName'),
         dataIndex: 'name',
         render: (name: string, session) => {
-          return onClickSessionName ? (
-            <BAILink
-              type="hover"
-              onClick={() => {
-                onClickSessionName(session);
-              }}
-            >
-              {name}
-            </BAILink>
-          ) : (
-            name
+          const isActive =
+            session.type === 'system'
+              ? session.status === 'RUNNING'
+              : !['TERMINATED', 'CANCELLED', 'TERMINATING'].includes(
+                  session.status || '',
+                );
+          const isAppSupported =
+            ['batch', 'interactive', 'inference', 'system', 'running'].includes(
+              session.type || '',
+            ) && !_.isEmpty(JSON.parse(session.service_ports ?? '{}'));
+          const isOwner = userInfo?.uuid === session.user_id;
+          return (
+            <BAINameActionCell
+              title={name}
+              showActions="always"
+              onTitleClick={
+                onClickSessionName
+                  ? () => onClickSessionName(session)
+                  : undefined
+              }
+              actions={filterOutEmpty([
+                session.type !== 'system' && {
+                  key: 'appLauncher',
+                  title: t('session.SeeAppDialog'),
+                  icon: <BAIAppIcon />,
+                  disabled: !isAppSupported || !isActive || !isOwner,
+                  onClick: () => setAppLauncherTarget(session),
+                },
+                {
+                  key: 'terminate',
+                  title: t('session.TerminateSession'),
+                  icon: <PowerOffIcon />,
+                  type: 'danger' as const,
+                  disabled: !isActive,
+                  onClick: () => setTerminateTarget(session),
+                },
+              ])}
+            />
           );
         },
         sorter: isEnableSorter('name'),
@@ -352,6 +393,20 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
           );
         }}
         {...tableProps}
+      />
+      <Suspense fallback={null}>
+        <BAIUnmountAfterClose>
+          <AppLauncherModal
+            sessionFrgmt={appLauncherTarget}
+            open={!!appLauncherTarget}
+            onRequestClose={() => setAppLauncherTarget(null)}
+          />
+        </BAIUnmountAfterClose>
+      </Suspense>
+      <TerminateSessionModal
+        sessionFrgmts={terminateTarget ? [terminateTarget] : []}
+        open={!!terminateTarget}
+        onRequestClose={() => setTerminateTarget(null)}
       />
     </>
   );
