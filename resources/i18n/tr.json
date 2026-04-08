@@ -860,7 +860,6 @@
     "PleaseReload": "Lütfen bir süre sonra yeniden yükleyin.",
     "PreparingSession": "Oturum hazırlanıyor",
     "QueryingExistingComputeSession": "Mevcut bilgi işlem oturumu sorgulanıyor...",
-    "RefreshPage": "Sayfayı yenile",
     "RefreshToRetry": "Yeniden denemek için sayfayı yenileyin.",
     "ResourceExhausted": "Oturumu oluşturmak için yeterli kaynak yok.",
     "ServicePortNotAvailable": "İstenen uygulama bu oturumda başlatılamıyor.",
