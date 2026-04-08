@@ -8,6 +8,7 @@
  * Handles token-based authentication, session management, and app launching
  * for education-specific use cases.
  */
+import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useBackendAIAppLauncher } from '../hooks/useBackendAIAppLauncher';
 import { fetchAndParseConfig } from '../hooks/useWebUIConfig';
 import { useMemoizedFn } from 'ahooks';
@@ -90,29 +91,6 @@ const classifySessionError = (err: any): EduAppSessionErrorCategory => {
 
 const g = globalThis as any;
 
-/**
- * Dispatch a notification event to the React notification system.
- */
-const _dispatchNotification = (
-  message: string,
-  detail?: string,
-  persistent = false,
-  log?: Record<string, unknown>,
-) => {
-  const shouldSaveLog = log && Object.keys(log).length !== 0;
-  document.dispatchEvent(
-    new CustomEvent('add-bai-notification', {
-      detail: {
-        open: true,
-        type: shouldSaveLog ? 'error' : undefined,
-        message,
-        description: message === detail ? undefined : detail,
-        duration: persistent ? 0 : undefined,
-      },
-    }),
-  );
-};
-
 const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
   apiEndpoint,
   active,
@@ -121,8 +99,32 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
 
   const { t } = useTranslation();
   const { logger } = useBAILogger();
+  const { upsertNotification } = useSetBAINotification();
   const hasLaunchedRef = useRef(false);
   const [stage, setStage] = useState<EduAppLaunchStage>({ name: 'idle' });
+
+  /**
+   * Surface a user-facing notification via the React notification system
+   * using `useSetBAINotification` on the EduAppLauncher page.
+   */
+  const notify = useCallback(
+    (
+      message: string,
+      detail?: string,
+      persistent = false,
+      log?: Record<string, unknown>,
+    ) => {
+      const shouldSaveLog = log && Object.keys(log).length !== 0;
+      upsertNotification({
+        open: true,
+        type: shouldSaveLog ? 'error' : undefined,
+        message,
+        description: message === detail ? undefined : detail,
+        duration: persistent ? 0 : undefined,
+      });
+    },
+    [upsertNotification],
+  );
 
   /**
    * Transition helper for the internal state machine. The state is not
@@ -235,14 +237,14 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
           extraParams,
         );
         if (!loginSuccess) {
-          _dispatchNotification(t('eduapi.CannotAuthorizeSessionByToken'));
+          notify(t('eduapi.CannotAuthorizeSessionByToken'));
           return false;
         }
       }
       return true;
     } catch (err) {
       logger.error('Token login failed:', err);
-      _dispatchNotification(t('eduapi.CannotAuthorizeSessionByToken'));
+      notify(t('eduapi.CannotAuthorizeSessionByToken'));
       return false;
     }
   };
@@ -275,9 +277,23 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
   };
 
   /**
+   * Handle API errors and show notification messages.
+   */
+  const _handleError = useCallback(
+    (err: any) => {
+      if (err?.message) {
+        const message = err.description ?? err.message;
+        notify(message, err.message, true, err);
+      } else if (err?.title) {
+        notify(err.title, undefined, true, err);
+      }
+    },
+    [notify],
+  );
+
+  /**
    * Transition the state machine to the launch error state and surface
-   * the error via the legacy notification path. FR-2486 will migrate the
-   * notification call to `useSetBAINotification`; FR-2487 will render
+   * the error via the React notification system. FR-2487 will render
    * this state in the Card UI.
    *
    * Not wrapped in `useCallback`: the outer component uses `'use memo'`
@@ -412,7 +428,7 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
         category: 'template-missing',
         message: t('eduapi.NoSessionTemplate'),
       });
-      _dispatchNotification(t('eduapi.NoSessionTemplate'), undefined, true);
+      notify(t('eduapi.NoSessionTemplate'), undefined, true);
       return;
     }
 
@@ -441,7 +457,7 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
             category: 'duplicate-image',
             message: t('eduapi.CannotCreateSessionWithDifferentImage'),
           });
-          _dispatchNotification(
+          notify(
             t('eduapi.CannotCreateSessionWithDifferentImage'),
             undefined,
             true,
@@ -458,7 +474,7 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
               status: sessionStatus,
             }),
           });
-          _dispatchNotification(
+          notify(
             t('eduapi.SessionStatusIsWithReload', { status: sessionStatus }),
             undefined,
             true,
@@ -497,7 +513,7 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
             category: 'other',
             message: t('eduapi.EmptyProject'),
           });
-          _dispatchNotification(t('eduapi.EmptyProject'));
+          notify(t('eduapi.EmptyProject'));
           return;
         }
 
@@ -542,12 +558,7 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
             category: 'timeout',
             message: err.message ?? t('eduapi.SessionStillPreparing'),
           });
-          _dispatchNotification(
-            t('eduapi.SessionStillPreparing'),
-            err.message,
-            true,
-            err,
-          );
+          notify(t('eduapi.SessionStillPreparing'), err.message, true, err);
         } else {
           transition({
             name: 'error',
@@ -576,18 +587,6 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
   };
 
   /**
-   * Handle API errors and show notification messages.
-   */
-  const _handleError = (err: any) => {
-    if (err?.message) {
-      const message = err.description ?? err.message;
-      _dispatchNotification(message, err.message, true, err);
-    } else if (err?.title) {
-      _dispatchNotification(err.title, undefined, true, err);
-    }
-  };
-
-  /**
    * Main launch sequence: init client, token login, prepare project,
    * then start or reuse session and launch the app.
    */
@@ -602,11 +601,7 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
         step: 'auth',
         message: t('eduapi.CannotInitializeClient'),
       });
-      _dispatchNotification(
-        t('eduapi.CannotInitializeClient'),
-        undefined,
-        true,
-      );
+      notify(t('eduapi.CannotInitializeClient'), undefined, true);
       return;
     }
 
