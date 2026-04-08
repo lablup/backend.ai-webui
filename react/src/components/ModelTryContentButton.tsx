@@ -173,7 +173,7 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
       key: notificationKey,
       open: true,
       message: t('modelService.StartingModelService'),
-      description: null,
+      description: '', // Clear any stale error from previous attempt
       duration: 0,
       backgroundTask: {
         promise: new Promise<void>((resolve, reject) => {
@@ -223,7 +223,7 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
         onChange: {
           pending: {
             message: t('modelService.StartingModelService'),
-            description: null,
+            description: '',
           },
           resolved: {
             duration: 0,
@@ -234,7 +234,7 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
               percent: 100,
             },
             message: t('modelService.StartingModelService'),
-            description: null,
+            description: '',
             to: `/chat?${new URLSearchParams({
               endpointId: result?.endpoint_id ?? '',
               modelId: modelId,
@@ -249,7 +249,7 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
               percent: 99,
             },
             message: t('modelService.StartingModelService'),
-            description: null,
+            description: '',
             to: `/serving/${result?.endpoint_id}`,
             toText: t('modelService.GoToServiceDetailPage'),
           },
@@ -533,6 +533,7 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
               key: `modelStore.clone.${randomTargetName}`,
               open: true,
               message: t('data.folders.FolderClonePending'),
+              description: '', // Clear any stale error from previous attempt
               onClose: () => {
                 upsertNotification({
                   key: `modelStore.clone.${randomTargetName}`,
@@ -554,7 +555,7 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
                   resolved: {
                     key: `modelStore.clone.${randomTargetName}`,
                     message: t('data.folders.FolderCloned'),
-                    description: null,
+                    description: '',
                     open: true,
                     duration: 0,
                     backgroundTask: {
