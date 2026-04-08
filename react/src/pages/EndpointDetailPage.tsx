@@ -572,7 +572,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
                   {vfolder?.name}
                 </BAIFlex>
               </Typography.Link>
-            );
+            ) : null;
           })}
         </BAIFlex>
       ),
