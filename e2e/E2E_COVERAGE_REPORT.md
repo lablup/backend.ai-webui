@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-04-01
+> **Last Updated:** 2026-04-07
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -177,7 +177,7 @@
 | Bulk terminate disabled for terminated | ✅ | `Cannot select terminated sessions for bulk operations` |
 | Sensitive env vars cleared on reload | ✅ | `Sensitive environment variables are cleared` |
 | Scheduling history modal | ✅ | `Session Scheduling History Modal` (via mocked GraphQL) |
-| Session name click → SessionDetailDrawer | ✅ | `Session detail drawer renders correctly and can show dependency info` |
+| Session name click → SessionDetailDrawer | 🚧 | `Session detail drawer renders correctly and can show dependency info` (fixme: requires running agent) |
 | Dependencies column toggle | ✅ | `Dependencies column can be enabled via table settings` |
 | Session type filtering (interactive/batch/inference) | ❌ | - |
 | Running/Finished status toggle | ❌ | - |
@@ -210,10 +210,10 @@
 | VFolder mounting (Step 3) | ❌ | - |
 | Port configuration (Step 4) | ❌ | - |
 | Batch schedule/timeout options | ❌ | - |
-| Session dependency via useStartSession | ✅ | `Creates batch session, then interactive session with dependency, and verifies dependency display` |
+| Session dependency via useStartSession | 🚧 | `Creates batch + interactive session with dependency` (fixme: requires running agent) |
 | Session owner selection (admin) | ❌ | - |
 | Form validation errors | ❌ | - |
-| Cluster mode warning (multi-node x1) | 🔶 | `session-cluster-mode.spec.ts` (11 tests: 2 pass, 7 fixme pending FR-2381, 2 skip) |
+| Cluster mode warning (multi-node x1) | 🔶 | `session-cluster-mode.spec.ts` (6 tests: 4 active with version-aware skip logic, 5 skip pending agent availability) |
 | Session history → SessionTemplateModal | ✅ | `session-template-modal.spec.ts` (7 tests) |
 
 **Coverage: 🔶 3/14 features (most only indirectly tested)**
