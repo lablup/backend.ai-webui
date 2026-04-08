@@ -874,6 +874,7 @@
     "PleaseReload": "Załaduj ponownie po pewnym czasie.",
     "PreparingSession": "Przygotowywanie sesji",
     "QueryingExistingComputeSession": "Wysyłam zapytanie do istniejącej sesji obliczeniowej...",
+    "RefreshPage": "Odśwież stronę",
     "RefreshToRetry": "Odśwież stronę, aby spróbować ponownie.",
     "ResourceExhausted": "Niewystarczające zasoby do utworzenia sesji.",
     "ServicePortNotAvailable": "Żądana aplikacja nie może zostać uruchomiona w tej sesji.",
