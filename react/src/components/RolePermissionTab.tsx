@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { CreatePermissionModal_roleScopeFragment$key } from '../__generated__/CreatePermissionModal_roleScopeFragment.graphql';
 import { RolePermissionTabDeleteMutation } from '../__generated__/RolePermissionTabDeleteMutation.graphql';
 import { RolePermissionTabFragment$key } from '../__generated__/RolePermissionTabFragment.graphql';
 import { PermissionOrderBy } from '../__generated__/RolePermissionTabRefetchQuery.graphql';
@@ -46,12 +47,14 @@ const permissionOrderValues = ['ENTITY_TYPE_ASC', 'ENTITY_TYPE_DESC'] as const;
 interface RolePermissionTabProps {
   queryRef: RolePermissionTabFragment$key;
   roleId: string;
+  roleScopeFrgmt?: CreatePermissionModal_roleScopeFragment$key | null;
   onPermissionChange?: () => void;
 }
 
 const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
   queryRef,
   roleId,
+  roleScopeFrgmt,
   onPermissionChange,
 }) => {
   'use memo';
@@ -419,6 +422,7 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
       <CreatePermissionModal
         open={isCreateModalOpen || !!editingPermission}
         roleId={roleId}
+        roleScopeFrgmt={roleScopeFrgmt}
         editingPermission={editingPermission}
         onRequestClose={(success) => {
           setIsCreateModalOpen(false);

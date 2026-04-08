@@ -6,6 +6,7 @@ import { RoleAssignmentTabBulkAssignMutation } from '../__generated__/RoleAssign
 import { RoleAssignmentTabBulkRevokeMutation } from '../__generated__/RoleAssignmentTabBulkRevokeMutation.graphql';
 import { RoleAssignmentTabFragment$key } from '../__generated__/RoleAssignmentTabFragment.graphql';
 import { RoleAssignmentOrderBy } from '../__generated__/RoleAssignmentTabRefetchQuery.graphql';
+import { RoleAssignmentTab_roleScopeFragment$key } from '../__generated__/RoleAssignmentTab_roleScopeFragment.graphql';
 import { convertToOrderBy } from '../helper';
 import AssignRoleModal from './AssignRoleModal';
 import { App, Tooltip, theme } from 'antd';
@@ -34,7 +35,12 @@ import {
 } from 'nuqs';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useRefetchableFragment, useMutation } from 'react-relay';
+import {
+  graphql,
+  useFragment,
+  useRefetchableFragment,
+  useMutation,
+} from 'react-relay';
 import { useSetBAINotification } from 'src/hooks/useBAINotification';
 
 const assignmentOrderValues = [
@@ -49,12 +55,14 @@ const assignmentOrderValues = [
 interface RoleAssignmentTabProps {
   queryRef: RoleAssignmentTabFragment$key;
   roleId: string;
+  roleScopeFrgmt?: RoleAssignmentTab_roleScopeFragment$key | null;
   onAssignmentChange?: () => void;
 }
 
 const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
   queryRef,
   roleId,
+  roleScopeFrgmt,
   onAssignmentChange,
 }) => {
   'use memo';
@@ -67,6 +75,27 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [revokingUserIds, setRevokingUserIds] = useState<string[] | null>(null);
   const [isPendingRefetch, startRefetchTransition] = useTransition();
+
+  const roleScope = useFragment(
+    graphql`
+      fragment RoleAssignmentTab_roleScopeFragment on Role {
+        scopes(first: 1) {
+          edges {
+            node {
+              scopeType
+              scopeId
+            }
+          }
+        }
+      }
+    `,
+    roleScopeFrgmt ?? null,
+  );
+
+  const projectScopeId =
+    roleScope?.scopes?.edges?.[0]?.node?.scopeType === 'PROJECT'
+      ? roleScope.scopes.edges[0].node.scopeId
+      : undefined;
 
   const [queryParams, setQueryParams] = useQueryStates(
     {
@@ -207,7 +236,13 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
 
   const handleBulkAssign = (userIds: string[]) => {
     commitBulkAssignRole({
-      variables: { input: { userIds, roleId } },
+      variables: {
+        input: {
+          userIds,
+          roleId,
+          ...(projectScopeId ? { projectId: projectScopeId } : {}),
+        },
+      },
       onCompleted: (data, errors) => {
         if (errors && errors.length > 0) {
           logger.error(errors[0]);

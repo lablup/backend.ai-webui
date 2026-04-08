@@ -60,6 +60,21 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
         status
         createdAt
         updatedAt
+        scopes(first: 1) {
+          edges {
+            node {
+              scopeType
+              scopeId
+              entity {
+                ... on ProjectV2 {
+                  basicInfo {
+                    projectName: name
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     `,
     rolesFrgmt,
@@ -84,6 +99,17 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
           </Typography.Text>
         </Tooltip>
       ),
+    },
+    {
+      key: 'project',
+      title: t('general.Project'),
+      render: (_, record: RoleNodeInList) => {
+        const scopeNode = record.scopes?.edges?.[0]?.node;
+        if (scopeNode?.scopeType === 'PROJECT') {
+          return scopeNode.entity?.basicInfo?.projectName ?? scopeNode.scopeId;
+        }
+        return '-';
+      },
     },
     {
       key: 'source',

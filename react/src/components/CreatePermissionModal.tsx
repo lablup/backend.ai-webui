@@ -11,6 +11,7 @@ import { CreatePermissionModalDomainQuery } from '../__generated__/CreatePermiss
 import { CreatePermissionModalPermissionMatrixQuery } from '../__generated__/CreatePermissionModalPermissionMatrixQuery.graphql';
 import { CreatePermissionModalResourceGroupQuery } from '../__generated__/CreatePermissionModalResourceGroupQuery.graphql';
 import { CreatePermissionModalUpdateMutation } from '../__generated__/CreatePermissionModalUpdateMutation.graphql';
+import { CreatePermissionModal_roleScopeFragment$key } from '../__generated__/CreatePermissionModal_roleScopeFragment.graphql';
 import { App, Form, type SelectProps } from 'antd';
 import {
   BAIAdminResourceGroupSelect,
@@ -27,9 +28,14 @@ import {
   BAIVFolderSelect,
   useBAILogger,
 } from 'backend.ai-ui';
-import React, { Suspense } from 'react';
+import React, { Suspense, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
+import {
+  graphql,
+  useFragment,
+  useLazyLoadQuery,
+  useMutation,
+} from 'react-relay';
 
 const RBAC_ELEMENT_TYPES: ReadonlyArray<RBACElementType> = [
   // Scope ID select implemented
@@ -222,12 +228,14 @@ interface EditingPermission {
 
 interface CreatePermissionModalProps extends BAIModalProps {
   roleId: string;
+  roleScopeFrgmt?: CreatePermissionModal_roleScopeFragment$key | null;
   editingPermission?: EditingPermission | null;
   onRequestClose: (success: boolean) => void;
 }
 
 const CreatePermissionModal: React.FC<CreatePermissionModalProps> = ({
   roleId,
+  roleScopeFrgmt,
   editingPermission,
   onRequestClose,
   ...baiModalProps
@@ -241,6 +249,40 @@ const CreatePermissionModal: React.FC<CreatePermissionModalProps> = ({
   const watchedScopeType = Form.useWatch('scopeType', form);
   const watchedScopeId = Form.useWatch('scopeId', form);
   const watchedEntityType = Form.useWatch('entityType', form);
+
+  const roleScope = useFragment(
+    graphql`
+      fragment CreatePermissionModal_roleScopeFragment on Role {
+        scopes(first: 1) {
+          edges {
+            node {
+              scopeType
+              scopeId
+            }
+          }
+        }
+      }
+    `,
+    roleScopeFrgmt ?? null,
+  );
+
+  const roleProjectScopeId =
+    roleScope?.scopes?.edges?.[0]?.node?.scopeType === 'PROJECT'
+      ? roleScope.scopes.edges[0].node.scopeId
+      : undefined;
+
+  // When role has project scope and user selects PROJECT scopeType,
+  // auto-fill the scopeId with the role's project.
+  // This also restores the value in edit mode when another form change clears it.
+  useEffect(() => {
+    if (
+      roleProjectScopeId &&
+      watchedScopeType === 'PROJECT' &&
+      !watchedScopeId
+    ) {
+      form.setFieldsValue({ scopeId: roleProjectScopeId });
+    }
+  }, [roleProjectScopeId, watchedScopeType, watchedScopeId, form]);
 
   const { rbacPermissionMatrix } =
     useLazyLoadQuery<CreatePermissionModalPermissionMatrixQuery>(
@@ -473,6 +515,7 @@ const CreatePermissionModal: React.FC<CreatePermissionModalProps> = ({
           <ScopeIdSelect
             scopeType={watchedScopeType}
             placeholder={t('rbac.ScopeId')}
+            disabled={!!(roleProjectScopeId && watchedScopeType === 'PROJECT')}
           />
         </Form.Item>
         <Form.Item
@@ -494,6 +537,10 @@ const CreatePermissionModal: React.FC<CreatePermissionModalProps> = ({
             options={validEntityTypes.map((type) => ({
               value: type,
               label: t(`rbac.types.${type}`, { defaultValue: type }),
+              disabled:
+                !roleProjectScopeId &&
+                watchedScopeType === 'PROJECT' &&
+                type === 'USER',
             }))}
           />
         </Form.Item>

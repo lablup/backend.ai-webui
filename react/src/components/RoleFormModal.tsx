@@ -7,12 +7,14 @@ import { RoleFormModalFragment$key } from '../__generated__/RoleFormModalFragmen
 import { RoleFormModalUpdateMutation } from '../__generated__/RoleFormModalUpdateMutation.graphql';
 import { App, Form, Input } from 'antd';
 import {
+  BAIAdminProjectSelect,
   BAIModal,
   BAIModalProps,
+  BAISelect,
   toLocalId,
   useBAILogger,
 } from 'backend.ai-ui';
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
@@ -147,6 +149,16 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
               input: {
                 name: values.name,
                 description: values.description || null,
+                ...(values.projectId
+                  ? {
+                      scopes: [
+                        {
+                          scopeType: 'PROJECT',
+                          scopeId: values.projectId,
+                        },
+                      ],
+                    }
+                  : {}),
               },
             },
             onCompleted: (_data, errors) => {
@@ -219,6 +231,17 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
         >
           <Input autoFocus />
         </Form.Item>
+        {!isEditMode && (
+          <Suspense fallback={<BAISelect disabled loading />}>
+            <Form.Item
+              name="projectId"
+              label={t('general.Project')}
+              tooltip={t('rbac.ProjectScopeTooltip')}
+            >
+              <BAIAdminProjectSelect allowClear />
+            </Form.Item>
+          </Suspense>
+        )}
         <Form.Item name="description" label={t('rbac.RoleDescription')}>
           <Input.TextArea rows={3} />
         </Form.Item>
