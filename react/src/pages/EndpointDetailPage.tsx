@@ -563,13 +563,14 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
           {_.map(endpoint?.extra_mounts, (vfolder) => {
             return vfolder ? (
               <Typography.Link
+                key={vfolder.row_id}
                 onClick={() => {
-                  vfolder?.row_id && open(vfolder?.row_id);
+                  vfolder.row_id && open(vfolder.row_id);
                 }}
               >
-                <BAIFlex direction="row" gap={'xs'} key={vfolder?.row_id}>
+                <BAIFlex direction="row" gap={'xs'}>
                   <VFolderNodeIdenticon vfolderNodeIdenticonFrgmt={vfolder} />{' '}
-                  {vfolder?.name}
+                  {vfolder.name}
                 </BAIFlex>
               </Typography.Link>
             ) : null;

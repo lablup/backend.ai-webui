@@ -11,6 +11,7 @@ import AssignRoleModal from './AssignRoleModal';
 import { App, Tooltip, theme } from 'antd';
 import {
   BAIButton,
+  BAIDeleteConfirmModal,
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
@@ -59,11 +60,12 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { modal, message } = App.useApp();
+  const { message } = App.useApp();
   const { logger } = useBAILogger();
   const { upsertNotification } = useSetBAINotification();
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [revokingUserIds, setRevokingUserIds] = useState<string[] | null>(null);
   const [isPendingRefetch, startRefetchTransition] = useTransition();
 
   const [queryParams, setQueryParams] = useQueryStates(
@@ -239,37 +241,19 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
   };
 
   const handleBulkRevoke = (userIds: string[]) => {
-    modal.confirm({
-      title: t('rbac.DeleteUser'),
-      content:
-        userIds.length > 1
-          ? t('rbac.ConfirmBulkRevoke', { count: userIds.length })
-          : t('rbac.ConfirmRevoke'),
-      okText: t('button.Delete'),
-      okButtonProps: { danger: true, type: 'primary' },
-      onOk: () =>
-        mutateBulkRevokeRole({ input: { userIds, roleId } })
-          .then((data) => {
-            const failed = data.adminBulkRevokeRole?.failed ?? [];
-            if (failed.length > 0) {
-              message.warning(
-                t('rbac.BulkRevokePartialFailure', {
-                  count: failed.length,
-                }),
-              );
-            } else {
-              message.success(t('rbac.UserRevoked'));
-            }
-            setSelectedRowKeys([]);
-            handleRefresh();
-            onAssignmentChange?.();
-          })
-          .catch((error) => {
-            logger.error('Failed to bulk revoke role', error);
-            message.error(error?.message || t('general.ErrorOccurred'));
-          }),
-    });
+    setRevokingUserIds(userIds);
   };
+
+  const revokingItems = (revokingUserIds ?? [])
+    .map((userId) => {
+      const assignment = assignments.find((a) => a?.userId === userId);
+      const label =
+        assignment?.user?.basicInfo?.email ||
+        assignment?.user?.basicInfo?.fullName ||
+        userId;
+      return { key: userId, label };
+    })
+    .filter((item) => !!item.label);
 
   return (
     <>
@@ -415,6 +399,41 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
             setIsAssignModalOpen(false);
           }
         }}
+      />
+      <BAIDeleteConfirmModal
+        open={!!revokingUserIds}
+        items={revokingItems}
+        title={t('rbac.DeleteUser')}
+        description={t('rbac.ConfirmRevokeWithName')}
+        onOk={() => {
+          if (revokingUserIds) {
+            return mutateBulkRevokeRole({
+              input: { userIds: revokingUserIds, roleId },
+            })
+              .then((data) => {
+                const failed = data.adminBulkRevokeRole?.failed ?? [];
+                if (failed.length > 0) {
+                  message.warning(
+                    t('rbac.BulkRevokePartialFailure', {
+                      count: failed.length,
+                    }),
+                  );
+                } else {
+                  message.success(t('rbac.UserRevoked'));
+                }
+                setSelectedRowKeys([]);
+                handleRefresh();
+                onAssignmentChange?.();
+                setRevokingUserIds(null);
+              })
+              .catch((error) => {
+                logger.error('Failed to bulk revoke role', error);
+                message.error(error?.message || t('general.ErrorOccurred'));
+                setRevokingUserIds(null);
+              });
+          }
+        }}
+        onCancel={() => setRevokingUserIds(null)}
       />
     </>
   );
