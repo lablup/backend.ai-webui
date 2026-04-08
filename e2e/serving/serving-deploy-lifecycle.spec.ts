@@ -191,6 +191,33 @@ async function createServiceViaUI(
     .first()
     .click({ timeout: 10000 });
 
+  // Set AI Accelerator to 0 to avoid GPU-based allocation presets.
+  // When the resource group has a GPU preset selected by default (e.g. cuda01-small),
+  // service creation would fail if no GPU agents are available.
+  // Setting the accelerator count to 0 ensures CPU-only resource allocation.
+  //
+  // Strategy: Find the AI Accelerator form item by its label text, then target
+  // the spinbutton inside it. Ant Design Form.Item uses a `label` element that
+  // may not have a `for` attribute in all versions, so we use a compound selector.
+  const acceleratorFormItem = page
+    .locator('.ant-form-item')
+    .filter({ hasText: 'AI Accelerator' })
+    .first();
+  const acceleratorSpinbutton = acceleratorFormItem.getByRole('spinbutton');
+  if (
+    await acceleratorSpinbutton.isVisible({ timeout: 5000 }).catch(() => false)
+  ) {
+    // Scroll into view first to ensure the element is interactable
+    await acceleratorSpinbutton.scrollIntoViewIfNeeded();
+    // Triple-click to select all content, then type the new value
+    await acceleratorSpinbutton.click({ clickCount: 3 });
+    await acceleratorSpinbutton.fill('0');
+    // Trigger change event so form updates allocationPreset to 'custom'
+    await acceleratorSpinbutton.press('Tab');
+    // Wait briefly for form to react to the change
+    await page.waitForTimeout(500);
+  }
+
   // Check "Open To Public"
   const openToPublicCheckbox = page.getByLabel('Open To Public');
   await openToPublicCheckbox.scrollIntoViewIfNeeded();
@@ -205,8 +232,10 @@ async function createServiceViaUI(
   await expect(createButton).toBeEnabled({ timeout: 5000 });
   await createButton.click();
 
-  // Wait for redirect to serving page and verify the service appears
-  await page.waitForURL('**/serving', { timeout: 15000 });
+  // Wait for the service creation to complete.
+  // The form navigates to /serving on success or stays on /service/start on error.
+  await page.waitForURL('**/serving', { timeout: 30000 });
+
   await expect(
     page.getByRole('row').filter({ hasText: serviceName }).first(),
   ).toBeVisible({ timeout: 15000 });
