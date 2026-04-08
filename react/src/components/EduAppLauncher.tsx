@@ -106,9 +106,30 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
   /**
    * Surface a user-facing notification via the React notification system
    * using `useSetBAINotification` on the EduAppLauncher page.
-   *
-   * No `useCallback`: `'use memo'` directive at the top lets the React
-   * Compiler memoize this callback automatically.
+   */
+  const notify = useCallback(
+    (
+      message: string,
+      detail?: string,
+      persistent = false,
+      log?: Record<string, unknown>,
+    ) => {
+      const shouldSaveLog = log && Object.keys(log).length !== 0;
+      upsertNotification({
+        open: true,
+        type: shouldSaveLog ? 'error' : undefined,
+        message,
+        description: message === detail ? undefined : detail,
+        duration: persistent ? 0 : undefined,
+      });
+    },
+    [upsertNotification],
+  );
+
+  /**
+   * Transition helper for the internal state machine. The state is not
+   * rendered yet (FR-2487 will consume it); debug logs trace transitions
+   * so the migration is observable until the Card UI lands.
    */
   const notify = (
     message: string,
@@ -265,21 +286,23 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
 
   /**
    * Handle API errors and show notification messages.
-   * No `useCallback` — `'use memo'` directive memoizes automatically.
    */
-  const _handleError = (err: any) => {
-    if (err?.message) {
-      const message = err.description ?? err.message;
-      notify(message, err.message, true, err);
-    } else if (err?.title) {
-      notify(err.title, undefined, true, err);
-    }
-  };
+  const _handleError = useCallback(
+    (err: any) => {
+      if (err?.message) {
+        const message = err.description ?? err.message;
+        notify(message, err.message, true, err);
+      } else if (err?.title) {
+        notify(err.title, undefined, true, err);
+      }
+    },
+    [notify],
+  );
 
   /**
    * Transition the state machine to the launch error state and surface
-   * the error via the React notification system. FR-2487 renders this
-   * state in the Card UI.
+   * the error via the React notification system. FR-2487 will render
+   * this state in the Card UI.
    *
    * Not wrapped in `useCallback`: the outer component uses `'use memo'`
    * so the React Compiler handles memoization. This avoids the stale-dep
@@ -584,17 +607,15 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
         // and fall back to sensible defaults so the generic session
         // creation still proceeds.
 
-        // 4a. mounts: fall back to no additional mounts
-        let mounts: Record<string, unknown> | undefined;
-        try {
-          mounts = await g.backendaiclient.eduApp.get_mount_folders();
-          logger.info('[_createEduSession] step 4a result', { mounts });
-        } catch (err) {
-          logger.warn(
-            '[_createEduSession] step 4a: eduApp.get_mount_folders not available, using default (no extra mounts)',
-            err,
-          );
-          mounts = undefined;
+        if (!projects) {
+          transition({
+            name: 'error',
+            step: 'session',
+            category: 'other',
+            message: t('eduapi.EmptyProject'),
+          });
+          notify(t('eduapi.EmptyProject'));
+          return;
         }
 
         // 4b. projects: fall back to `current_group` that
@@ -728,11 +749,6 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
       // The Relay loader child mounts on the 'session' stage, fetches
       // the ComputeSessionNode fragment, and transitions to 'launching'.
       // EduAppSessionLauncher then drives useBackendAIAppLauncher.
-    } else {
-      logger.warn(
-        '[_createEduSession] reached end without sessionId — flow stalled',
-        { launchNewSession },
-      );
     }
   };
 
