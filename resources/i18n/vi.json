@@ -811,6 +811,7 @@
     "PleaseReload": "Vui lòng tải lại sau một thời gian.",
     "PreparingSession": "Đang chuẩn bị phiên",
     "QueryingExistingComputeSession": "Đang truy vấn phiên tính toán hiện có ...",
+    "RefreshPage": "Làm mới trang",
     "RefreshToRetry": "Làm mới trang để thử lại.",
     "ResourceExhausted": "Không đủ tài nguyên để tạo phiên.",
     "ServicePortNotAvailable": "Ứng dụng được yêu cầu không thể khởi chạy trong phiên này.",
