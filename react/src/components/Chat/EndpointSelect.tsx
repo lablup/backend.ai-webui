@@ -7,14 +7,21 @@ import {
   EndpointSelectQuery$data,
 } from '../../__generated__/EndpointSelectQuery.graphql';
 import { EndpointSelectValueQuery } from '../../__generated__/EndpointSelectValueQuery.graphql';
-import { useSuspendedBackendaiClient } from '../../hooks';
+import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
 import { useLazyPaginatedQuery } from '../../hooks/usePaginatedQuery';
 import TotalFooter from '../TotalFooter';
 import { useControllableValue } from 'ahooks';
-import { type GetRef, type SelectProps, Skeleton, Tooltip } from 'antd';
-import { BAIFlex, BAILink, BAISelect } from 'backend.ai-ui';
+import {
+  Button,
+  type GetRef,
+  type SelectProps,
+  Skeleton,
+  Space,
+  Tooltip,
+} from 'antd';
+import { BAIFlex, BAISelect } from 'backend.ai-ui';
 import _ from 'lodash';
-import { InfoIcon } from 'lucide-react';
+import { ExternalLinkIcon } from 'lucide-react';
 import React, { useDeferredValue, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -29,6 +36,7 @@ export interface EndpointSelectProps extends Omit<
 > {
   fetchKey?: string;
   lifecycleStageFilter?: LifecycleStage[];
+  showInfoButton?: boolean;
 }
 
 type LifecycleStage =
@@ -42,6 +50,7 @@ type LifecycleStage =
 const EndpointSelect: React.FC<EndpointSelectProps> = ({
   fetchKey,
   lifecycleStageFilter = ['ready', 'created'],
+  showInfoButton,
   loading,
   ...selectPropsWithoutLoading
 }) => {
@@ -171,6 +180,8 @@ const EndpointSelect: React.FC<EndpointSelectProps> = ({
         : controllableValue,
   );
 
+  const webuiNavigate = useWebUINavigate();
+
   const isValueMatched = searchStr === deferredSearchStr;
   useEffect(() => {
     if (isValueMatched) {
@@ -180,68 +191,69 @@ const EndpointSelect: React.FC<EndpointSelectProps> = ({
     }
   }, [isValueMatched]);
   return (
-    <BAISelect
-      ref={selectRef}
-      placeholder={t('chatui.SelectEndpoint')}
-      style={{
-        minWidth: 100,
-        fontWeight: 'normal',
-      }}
-      showSearch={{
-        searchValue: searchStr,
-        onSearch: (v) => {
-          setSearchStr(v);
-        },
-        autoClearSearchValue: true,
-        filterOption: false,
-      }}
-      labelRender={({ label }: { label: React.ReactNode }) => {
-        return label ? (
-          <BAIFlex gap="xxs">
-            {label}
-            <Tooltip title={t('general.NavigateToDetailPage')}>
-              <BAILink to={`/serving/${selectedEndpoint?.endpoint_id}`}>
-                <InfoIcon />
-              </BAILink>
-            </Tooltip>
-          </BAIFlex>
-        ) : (
-          label
-        );
-      }}
-      // TODO: Need to make it work properly when autoClearSearchValue is not specified
-      loading={searchStr !== deferredSearchStr || loading}
-      options={selectOptions}
-      {...selectPropsWithoutLoading}
-      // override value and onChange
-      labelInValue // use labelInValue to display the selected option label
-      value={optimisticValueWithLabel}
-      onChange={(v, option) => {
-        setOptimisticValueWithLabel(v);
-        setControllableValue(v.value, _.castArray(option)?.[0].endpoint);
-        selectPropsWithoutLoading.onChange?.(v.value || '', option);
-      }}
-      endReached={() => {
-        loadNext();
-      }}
-      open={controllableOpen}
-      onOpenChange={setControllableOpen}
-      notFoundContent={
-        _.isUndefined(paginationData) ? (
-          // For the first loading options
-          <Skeleton.Input active size="small" block />
-        ) : undefined
-      }
-      footer={
-        _.isNumber(endpoint_list?.total_count) &&
-        endpoint_list.total_count > 0 ? (
-          <TotalFooter
-            loading={isLoadingNext}
-            total={endpoint_list?.total_count}
-          />
-        ) : undefined
-      }
-    />
+    <BAIFlex direction="row" gap="xs">
+      <BAISelect
+        ref={selectRef}
+        placeholder={t('chatui.SelectEndpoint')}
+        style={{
+          minWidth: 100,
+          fontWeight: 'normal',
+        }}
+        showSearch={{
+          searchValue: searchStr,
+          onSearch: (v) => {
+            setSearchStr(v);
+          },
+          autoClearSearchValue: true,
+          filterOption: false,
+        }}
+        // TODO: Need to make it work properly when autoClearSearchValue is not specified
+        loading={searchStr !== deferredSearchStr || loading}
+        options={selectOptions}
+        {...selectPropsWithoutLoading}
+        // override value and onChange
+        labelInValue // use labelInValue to display the selected option label
+        value={optimisticValueWithLabel}
+        onChange={(v, option) => {
+          setOptimisticValueWithLabel(v);
+          setControllableValue(v.value, _.castArray(option)?.[0].endpoint);
+          selectPropsWithoutLoading.onChange?.(v.value || '', option);
+        }}
+        endReached={() => {
+          loadNext();
+        }}
+        open={controllableOpen}
+        onOpenChange={setControllableOpen}
+        notFoundContent={
+          _.isUndefined(paginationData) ? (
+            // For the first loading options
+            <Skeleton.Input active size="small" block />
+          ) : undefined
+        }
+        footer={
+          _.isNumber(endpoint_list?.total_count) &&
+          endpoint_list.total_count > 0 ? (
+            <TotalFooter
+              loading={isLoadingNext}
+              total={endpoint_list?.total_count}
+            />
+          ) : undefined
+        }
+      />
+      <Space.Compact>
+        {showInfoButton ? (
+          <Tooltip title={t('general.NavigateToDetailPage')}>
+            <Button
+              icon={<ExternalLinkIcon />}
+              disabled={!controllableValue}
+              onClick={() => {
+                webuiNavigate(`/serving/${controllableValue}`);
+              }}
+            />
+          </Tooltip>
+        ) : null}
+      </Space.Compact>
+    </BAIFlex>
   );
 };
 
