@@ -909,7 +909,6 @@
     "PleaseReload": "请过一段时间重新加载。",
     "PreparingSession": "正在准备会话",
     "QueryingExistingComputeSession": "正在查询现有计算会话...",
-    "RefreshPage": "刷新页面",
     "RefreshToRetry": "刷新页面以重试。",
     "ResourceExhausted": "资源不足，无法创建会话。",
     "ServicePortNotAvailable": "所请求的应用无法在此会话中启动。",

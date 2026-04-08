@@ -910,7 +910,6 @@
     "PleaseReload": "Please reload after some time.",
     "PreparingSession": "Preparing session",
     "QueryingExistingComputeSession": "Querying existing compute session ...",
-    "RefreshPage": "Refresh page",
     "RefreshToRetry": "Refresh the page to retry.",
     "ResourceExhausted": "Insufficient resources to create the session.",
     "ServicePortNotAvailable": "The requested app cannot be launched in this session.",

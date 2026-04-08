@@ -909,7 +909,6 @@
     "PleaseReload": "Lataa uudelleen jonkin ajan kuluttua.",
     "PreparingSession": "Valmistellaan istuntoa",
     "QueryingExistingComputeSession": "Olemassa olevan laskenta-istunnon kysely ...",
-    "RefreshPage": "Päivitä sivu",
     "RefreshToRetry": "Lataa sivu uudelleen yrittääksesi uudelleen.",
     "ResourceExhausted": "Resurssit eivät riitä istunnon luomiseen.",
     "ServicePortNotAvailable": "Pyydettyä sovellusta ei voi käynnistää tässä istunnossa.",
