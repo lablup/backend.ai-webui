@@ -812,7 +812,6 @@
     "PleaseReload": "잠시 후에 다시 시도해 보십시오.",
     "PreparingSession": "세션 확인/생성",
     "QueryingExistingComputeSession": "기존 연산 세션 조회 중 ...",
-    "RefreshPage": "새로고침",
     "RefreshToRetry": "페이지를 새로고침하여 다시 시도하세요.",
     "ResourceExhausted": "세션을 생성할 자원이 부족합니다.",
     "ServicePortNotAvailable": "요청한 앱을 이 세션에서 실행할 수 없습니다.",
