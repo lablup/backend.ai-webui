@@ -66,19 +66,44 @@ export const useBackendAIAppLauncher = (
   };
 
   const getWSProxyVersion = async (): Promise<'v1' | 'v2'> => {
+    logger.info('[wsproxy] getWSProxyVersion() called', {
+      scaling_group: session?.scaling_group,
+      project_id: session?.project_id,
+      isElectron: globalThis.isElectron,
+      // @ts-ignore
+      debug: globalThis?.backendaiwebui?.debug,
+      forceUseV1Proxy: debugOptions?.forceUseV1Proxy,
+      forceUseV2Proxy: debugOptions?.forceUseV2Proxy,
+    });
     // @ts-ignore
     if (globalThis?.backendaiwebui?.debug === true) {
-      if (debugOptions?.forceUseV1Proxy) return 'v1';
-      else if (debugOptions?.forceUseV2Proxy) return 'v2';
+      if (debugOptions?.forceUseV1Proxy) {
+        logger.info('[wsproxy] forced v1 via debugOptions');
+        return 'v1';
+      } else if (debugOptions?.forceUseV2Proxy) {
+        logger.info('[wsproxy] forced v2 via debugOptions');
+        return 'v2';
+      }
     }
     if (globalThis.isElectron) {
+      logger.info('[wsproxy] Electron environment → v1');
       return 'v1';
     }
-    return baiClient.scalingGroup
-      .getWsproxyVersion(session?.scaling_group, session?.project_id)
-      .then((result: { wsproxy_version: 'v1' | 'v2' }) => {
-        return result.wsproxy_version;
-      });
+    try {
+      const result: { wsproxy_version: 'v1' | 'v2' } =
+        await baiClient.scalingGroup.getWsproxyVersion(
+          session?.scaling_group,
+          session?.project_id,
+        );
+      logger.info('[wsproxy] backend reported version:', result);
+      return result.wsproxy_version;
+    } catch (err) {
+      logger.error(
+        '[wsproxy] getWsproxyVersion() failed; defaulting to v1',
+        err,
+      );
+      return 'v1';
+    }
   };
 
   /**
@@ -95,13 +120,19 @@ export const useBackendAIAppLauncher = (
    */
   const getProxyURL = async (wsproxyVersion: string) => {
     let url = 'http://127.0.0.1:5050/';
+    // Truthy check covers undefined, null, and empty string. The
+    // Backend.AI client initializes `_config._proxyURL = null` by default,
+    // and `config.toml` can ship `wsproxy.proxyURL = ""` for environments
+    // that rely on the local default. Both cases must fall through to the
+    // default URL above instead of overwriting it with a non-string value
+    // (which would later crash on `url.endsWith(...)`).
     if (
       // @ts-ignore
-      globalThis.__local_proxy?.url !== undefined
+      globalThis.__local_proxy?.url
     ) {
       // @ts-ignore
       url = globalThis.__local_proxy.url;
-    } else if (baiClient._config.proxyURL !== undefined) {
+    } else if (baiClient._config.proxyURL) {
       url = baiClient._config.proxyURL;
     }
     // Normalize base URL (remove trailing slash if exists)
@@ -390,19 +421,36 @@ export const useBackendAIAppLauncher = (
     allowedClientIps?: Array<string>;
     onProgress?: (progress: { percent: number; stage: string }) => void;
   }) => {
+    logger.info('[_launchApp] start', {
+      app,
+      port,
+      session_row_id: session?.row_id,
+      session_name: session?.name,
+      scaling_group: session?.scaling_group,
+      project_id: session?.project_id,
+      service_ports_raw: session?.service_ports,
+    });
+
     // vscode-desktop uses sshd service internally
     // Legacy implementation: sendAppName = 'sshd' when app === 'vscode-desktop'
     const serviceAppName = app === 'vscode-desktop' ? 'sshd' : app;
 
     // Stage 1: Detecting proxy version (0-20%)
     const proxyVersion = await getWSProxyVersion();
+    logger.info('[_launchApp] resolved proxyVersion:', proxyVersion);
 
     // Stage 2: Getting proxy URL (20-40%)
     onProgress?.({ percent: 20, stage: 'configuring' });
     const proxyURL = await getProxyURL(proxyVersion);
+    logger.info('[_launchApp] resolved proxyURL:', proxyURL);
 
     // Stage 3: Adding to socket queue (40-60%)
     onProgress?.({ percent: 40, stage: 'connecting' });
+    logger.info('[_launchApp] calling _open_wsproxy...', {
+      app: serviceAppName,
+      proxyVersion,
+      proxyURL,
+    });
     const response = await _open_wsproxy({
       app: serviceAppName, // Use actual service name for API call
       port, // Pass as-is (undefined becomes null in _open_wsproxy)
@@ -413,18 +461,42 @@ export const useBackendAIAppLauncher = (
       proxyVersion,
       proxyURL,
     });
+    // Log only a narrow summary of the proxy response. The full payload
+    // may contain sensitive fields (proxy tokens, permit keys, internal
+    // URLs) that should not land in browser logs.
+    logger.debug('[_launchApp] _open_wsproxy returned summary:', {
+      url: response && typeof response === 'object' ? response.url : undefined,
+      port:
+        response && typeof response === 'object' ? response.port : undefined,
+      reused:
+        response && typeof response === 'object' ? response.reused : undefined,
+      reuse:
+        response && typeof response === 'object' ? response.reuse : undefined,
+      status:
+        response && typeof response === 'object' ? response.status : undefined,
+    });
 
     if (!response || typeof response === 'boolean') {
+      logger.error(
+        '[_launchApp] _open_wsproxy returned falsy/boolean — throwing AppLaunchError',
+        response,
+      );
       throw new AppLaunchError('Failed to configure proxy', 'configuring');
     }
 
     // Stage 4: Connecting to proxy worker (60-100%)
     onProgress?.({ percent: 60, stage: 'connecting' });
+    logger.info('[_launchApp] calling _connectToProxyWorker...', response.url);
     const { appConnectUrl, reused, redirectUrl } = await _connectToProxyWorker(
       response.url,
       '',
       !TCP_APPS.includes(app) || globalThis.isElectron, // Enable direct TCP for non-TCP apps, or when running in Electron
     );
+    logger.info('[_launchApp] _connectToProxyWorker returned:', {
+      appConnectUrl: appConnectUrl?.href,
+      reused,
+      redirectUrl,
+    });
 
     // Initialize TCP connection info variables
     let tcpHost: string | null = null;
@@ -524,7 +596,7 @@ export const useBackendAIAppLauncher = (
 
     onProgress?.({ percent: 100, stage: 'connected' });
 
-    return {
+    const result = {
       appConnectUrl,
       reused,
       redirectUrl,
@@ -532,6 +604,15 @@ export const useBackendAIAppLauncher = (
       tcpPort,
       directTCPSupported,
     };
+    logger.info('[_launchApp] resolved final workInfo:', {
+      appConnectUrl: appConnectUrl?.href,
+      reused,
+      redirectUrl,
+      tcpHost,
+      tcpPort,
+      directTCPSupported,
+    });
+    return result;
   };
 
   /**

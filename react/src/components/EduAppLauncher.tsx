@@ -11,16 +11,9 @@
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useBackendAIAppLauncher } from '../hooks/useBackendAIAppLauncher';
 import { fetchAndParseConfig } from '../hooks/useWebUIConfig';
-import { useMemoizedFn } from 'ahooks';
-import { Alert, Steps } from 'antd';
+import { Alert, Button, Steps, Typography } from 'antd';
 import { BAICard, BAIFlex, toGlobalId, useBAILogger } from 'backend.ai-ui';
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { useEffect, useEffectEvent, useRef, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -68,7 +61,7 @@ export type EduAppLaunchStage =
       requestedApp: string;
       sessionFrgmt: useBackendAIAppLauncherFragment$key;
     }
-  | { name: 'done' }
+  | { name: 'done'; appConnectUrl: string }
   | {
       name: 'error';
       step: 'auth' | 'session' | 'launch';
@@ -113,75 +106,62 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
   /**
    * Surface a user-facing notification via the React notification system
    * using `useSetBAINotification` on the EduAppLauncher page.
+   *
+   * No `useCallback`: `'use memo'` directive at the top lets the React
+   * Compiler memoize this callback automatically.
    */
-  const notify = useCallback(
-    (
-      message: string,
-      detail?: string,
-      persistent = false,
-      log?: Record<string, unknown>,
-    ) => {
-      const shouldSaveLog = log && Object.keys(log).length !== 0;
-      upsertNotification({
-        open: true,
-        type: shouldSaveLog ? 'error' : undefined,
-        message,
-        description: message === detail ? undefined : detail,
-        duration: persistent ? 0 : undefined,
-      });
-    },
-    [upsertNotification],
-  );
+  const notify = (
+    message: string,
+    detail?: string,
+    persistent = false,
+    log?: Record<string, unknown>,
+  ) => {
+    const shouldSaveLog = log && Object.keys(log).length !== 0;
+    upsertNotification({
+      open: true,
+      type: shouldSaveLog ? 'error' : undefined,
+      message,
+      description: message === detail ? undefined : detail,
+      duration: persistent ? 0 : undefined,
+    });
+  };
 
   /**
-   * Transition helper for the internal state machine. The state is not
-   * rendered yet (FR-2487 will consume it); debug logs trace transitions
-   * so the migration is observable until the Card UI lands.
+   * Transition helper for the internal state machine. Debug logs trace
+   * transitions so the lifecycle is observable from the console.
    */
-  const transition = useCallback(
-    (next: EduAppLaunchStage) => {
-      logger.debug('[EduAppLauncher] stage transition:', next);
-      setStage(next);
-    },
-    [logger],
-  );
+  const transition = (next: EduAppLaunchStage) => {
+    logger.info('[EduAppLauncher] stage transition:', next);
+    setStage(next);
+  };
 
   /**
    * Called by EduAppSessionRelayLoader once the Relay query for the
-   * resolved session resolves. This hands the `ComputeSessionNode`
-   * fragment ref to the state machine so FR-2485 can later feed it into
+   * resolved session resolves. Hands the `ComputeSessionNode` fragment
+   * ref to the state machine so the launching child can feed it into
    * `useBackendAIAppLauncher`.
    */
-  const handleSessionFragmentLoaded = useCallback(
-    (sessionFrgmt: useBackendAIAppLauncherFragment$key) => {
-      setStage((prev) => {
-        if (prev.name !== 'session') {
-          // Defensive guard: a stale Relay load resolved after the parent
-          // already transitioned away from the 'session' stage. Log it
-          // so orphaned loads are visible during debugging (Minor #11).
-          logger.debug(
-            '[EduAppLauncher] dropping stale session fragment; current stage:',
-            prev.name,
-          );
-          return prev;
-        }
-        return {
-          name: 'launching',
-          sessionRowId: prev.sessionRowId,
-          requestedApp: prev.requestedApp,
-          sessionFrgmt,
-        };
-      });
-    },
-    [logger],
-  );
-
-  useEffect(() => {
-    if (!active || hasLaunchedRef.current) return;
-    hasLaunchedRef.current = true;
-    _launch(apiEndpoint);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [active, apiEndpoint]);
+  const handleSessionFragmentLoaded = (
+    sessionFrgmt: useBackendAIAppLauncherFragment$key,
+  ) => {
+    setStage((prev) => {
+      if (prev.name !== 'session') {
+        // Defensive guard: a stale Relay load resolved after the parent
+        // already transitioned away from the 'session' stage.
+        logger.info(
+          '[EduAppLauncher] dropping stale session fragment; current stage:',
+          prev.name,
+        );
+        return prev;
+      }
+      return {
+        name: 'launching',
+        sessionRowId: prev.sessionRowId,
+        requestedApp: prev.requestedApp,
+        sessionFrgmt,
+      };
+    });
+  };
 
   /**
    * Initialize the backend.ai client with session-based auth mode.
@@ -285,23 +265,21 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
 
   /**
    * Handle API errors and show notification messages.
+   * No `useCallback` — `'use memo'` directive memoizes automatically.
    */
-  const _handleError = useCallback(
-    (err: any) => {
-      if (err?.message) {
-        const message = err.description ?? err.message;
-        notify(message, err.message, true, err);
-      } else if (err?.title) {
-        notify(err.title, undefined, true, err);
-      }
-    },
-    [notify],
-  );
+  const _handleError = (err: any) => {
+    if (err?.message) {
+      const message = err.description ?? err.message;
+      notify(message, err.message, true, err);
+    } else if (err?.title) {
+      notify(err.title, undefined, true, err);
+    }
+  };
 
   /**
    * Transition the state machine to the launch error state and surface
-   * the error via the React notification system. FR-2487 will render
-   * this state in the Card UI.
+   * the error via the React notification system. FR-2487 renders this
+   * state in the Card UI.
    *
    * Not wrapped in `useCallback`: the outer component uses `'use memo'`
    * so the React Compiler handles memoization. This avoids the stale-dep
@@ -330,15 +308,23 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
    * opened document (it cannot navigate `window.opener`).
    */
   const handleLaunchSuccess = (appConnectUrl: string) => {
-    const newWindow = window.open(
-      appConnectUrl,
-      '_blank',
-      'noopener,noreferrer',
-    );
-    if (!newWindow) {
-      window.location.assign(appConnectUrl);
+    logger.info('[EduAppLauncher] handleLaunchSuccess', { appConnectUrl });
+    // Best-effort auto-open. Browsers block `window.open` when the call
+    // is too far removed from a user gesture, which is exactly our case
+    // (the call originates from an async chain following a useEffect).
+    // The success card below renders a clickable link as a fallback so
+    // a single user click guarantees the new tab. `noopener,noreferrer`
+    // prevents reverse-tabnabbing via the opened document.
+    const popup = window.open(appConnectUrl, '_blank', 'noopener,noreferrer');
+    if (!popup) {
+      logger.warn(
+        '[EduAppLauncher] window.open returned null — likely blocked by popup blocker; user must click the link in the success card',
+        { appConnectUrl },
+      );
+    } else {
+      logger.info('[EduAppLauncher] window.open succeeded', { appConnectUrl });
     }
-    transition({ name: 'done' });
+    transition({ name: 'done', appConnectUrl });
   };
 
   /**
@@ -348,6 +334,8 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
   const _createEduSession = async (
     resources: Record<string, string | null>,
   ) => {
+    logger.info('[_createEduSession] start', { resources });
+
     const eduAppNamePrefix = g.backendaiclient._config.eduAppNamePrefix || '';
 
     const statusList = [
@@ -372,6 +360,7 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
       'session_id',
       'name',
       'access_key',
+      'image',
       'status',
       'status_info',
       'service_ports',
@@ -379,6 +368,9 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
     ];
     const accessKey = g.backendaiclient._config.accessKey;
 
+    logger.info('[_createEduSession] step 1: computeSession.list', {
+      statusList,
+    });
     let sessions: any;
     try {
       sessions = await g.backendaiclient.computeSession.list(
@@ -388,7 +380,12 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
         30,
         0,
       );
+      logger.info('[_createEduSession] step 1 result', {
+        total_count: sessions?.compute_session_list?.total_count,
+        items_len: sessions?.compute_session_list?.items?.length,
+      });
     } catch (err) {
+      logger.error('[_createEduSession] step 1 FAILED', err);
       transition({
         name: 'error',
         step: 'session',
@@ -410,14 +407,35 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
     if (eduAppNamePrefix !== '' && requestedApp.startsWith(eduAppNamePrefix)) {
       parsedAppName = requestedApp.slice(eduAppNamePrefix.length);
     }
+    logger.info('[_createEduSession] parsed url params', {
+      requestedApp,
+      parsedAppName,
+      sessionTemplateName,
+      eduAppNamePrefix,
+    });
 
+    logger.info('[_createEduSession] step 2: sessionTemplate.list');
     let sessionTemplates: any[];
     try {
       const allTemplates = await g.backendaiclient.sessionTemplate.list(false);
       sessionTemplates = allTemplates.filter(
         (tmpl: any) => tmpl.name === sessionTemplateName,
       );
+      logger.info('[_createEduSession] step 2 result', {
+        all_templates_count: allTemplates.length,
+        looking_for: sessionTemplateName,
+        matched_templates_count: sessionTemplates.length,
+        matched_template_names: sessionTemplates.map((tmpl: any) => tmpl.name),
+      });
+      logger.debug('[_createEduSession] step 2 templates', {
+        templates: allTemplates.map((t: any) => ({
+          id: t.id,
+          name: t.name,
+          kernel_image: t?.template?.spec?.kernel?.image,
+        })),
+      });
     } catch (err) {
+      logger.error('[_createEduSession] step 2 FAILED', err);
       transition({
         name: 'error',
         step: 'session',
@@ -429,6 +447,10 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
     }
 
     if (sessionTemplates.length < 1) {
+      logger.warn(
+        '[_createEduSession] no template matched name:',
+        sessionTemplateName,
+      );
       transition({
         name: 'error',
         step: 'session',
@@ -440,24 +462,57 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
     }
 
     const requestedSessionTemplate = sessionTemplates[0];
+    logger.info('[_createEduSession] selected template', {
+      id: requestedSessionTemplate?.id,
+      name: requestedSessionTemplate?.name,
+      kernel_image: requestedSessionTemplate?.template?.spec?.kernel?.image,
+    });
     let launchNewSession = true;
     let sessionId: string | null = null;
 
+    logger.info('[_createEduSession] step 3: try matching existing session', {
+      existing_count: sessions.compute_session_list.total_count,
+    });
     if (sessions.compute_session_list.total_count > 0) {
       let matchedSession: Record<string, unknown> | null = null;
+
+      // Strip the `@<arch>` suffix (Backend.AI convention) from both sides
+      // before comparing. The compute_session list returns the base image
+      // name (e.g. `cr.backend.ai/stable/python:3.9-ubuntu20.04`) while
+      // session templates store the fully qualified form including the
+      // architecture (e.g. `...ubuntu20.04@x86_64`). Comparing them as-is
+      // would always classify a same-image session as duplicate-image.
+      const normalizeImageName = (img: string | undefined | null): string =>
+        (img ?? '').split('@')[0];
+      const templateImageRaw =
+        requestedSessionTemplate?.template?.spec?.kernel?.image;
+      const templateImageNorm = normalizeImageName(templateImageRaw);
 
       for (let i = 0; i < sessions.compute_session_list.items.length; i++) {
         const sess = sessions.compute_session_list.items[i];
         const sessionImage = sess.image;
+        const sessionImageNorm = normalizeImageName(sessionImage);
         const servicePorts = JSON.parse(sess.service_ports || '{}');
         const services: string[] =
           Object.keys(servicePorts).map((s: string) => servicePorts[s].name) ||
           [];
         const sessionStatus = sess.status;
+        logger.info(`[_createEduSession] step 3: inspecting session #${i}`, {
+          session_id: sess.session_id,
+          name: sess.name,
+          status: sessionStatus,
+          image_raw: sessionImage,
+          image_normalized: sessionImageNorm,
+          template_kernel_image_raw: templateImageRaw,
+          template_kernel_image_normalized: templateImageNorm,
+          services_joined: services.join(' | '),
+          services,
+          looking_for_app: parsedAppName,
+          image_match: sessionImageNorm === templateImageNorm,
+          app_in_services: services.includes(parsedAppName),
+        });
 
-        if (
-          sessionImage !== requestedSessionTemplate.template.spec.kernel.image
-        ) {
+        if (sessionImageNorm !== templateImageNorm) {
           transition({
             name: 'error',
             step: 'session',
@@ -501,42 +556,109 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
           'session_id' in matchedSession
             ? (matchedSession.session_id as string)
             : null;
+        logger.info('[_createEduSession] step 3: REUSING existing session', {
+          sessionId,
+        });
       } else {
         launchNewSession = true;
+        logger.info(
+          '[_createEduSession] step 3: no existing session matched the requested app — will create new',
+        );
       }
+    } else {
+      logger.info(
+        '[_createEduSession] step 3: no existing sessions at all — will create new',
+      );
     }
 
     if (launchNewSession) {
       const templateId = requestedSessionTemplate.id;
+      logger.info('[_createEduSession] step 4: creating new session', {
+        templateId,
+      });
 
       try {
-        const mounts = await g.backendaiclient.eduApp.get_mount_folders();
-        const projects = await g.backendaiclient.eduApp.get_user_projects();
+        // The `eduApp.*` API surface is only implemented by specific
+        // customer deployments. In environments that do not ship it each
+        // call rejects (typically 404 or similar). Treat each as optional
+        // and fall back to sensible defaults so the generic session
+        // creation still proceeds.
 
-        if (!projects) {
-          transition({
-            name: 'error',
-            step: 'session',
-            category: 'other',
-            message: t('eduapi.EmptyProject'),
-          });
-          notify(t('eduapi.EmptyProject'));
-          return;
+        // 4a. mounts: fall back to no additional mounts
+        let mounts: Record<string, unknown> | undefined;
+        try {
+          mounts = await g.backendaiclient.eduApp.get_mount_folders();
+          logger.info('[_createEduSession] step 4a result', { mounts });
+        } catch (err) {
+          logger.warn(
+            '[_createEduSession] step 4a: eduApp.get_mount_folders not available, using default (no extra mounts)',
+            err,
+          );
+          mounts = undefined;
         }
 
+        // 4b. projects: fall back to `current_group` that
+        // `_prepareProjectInformation` already set on the backend client.
+        let projects: Array<{ name: string }> | undefined;
+        try {
+          projects = await g.backendaiclient.eduApp.get_user_projects();
+          logger.info('[_createEduSession] step 4b result', { projects });
+        } catch (err) {
+          logger.warn(
+            '[_createEduSession] step 4b: eduApp.get_user_projects not available, using default (current_group)',
+            err,
+          );
+          projects = undefined;
+        }
+
+        const groupName: string | undefined =
+          projects?.[0]?.name ?? g.backendaiclient.current_group;
+        logger.info('[_createEduSession] step 4b resolved group_name', {
+          groupName,
+          from_eduapp: !!projects?.[0]?.name,
+        });
+
+        // 4c. credential bootstrap script (only when an sToken is present
+        // AND the customer-specific endpoint is available).
         const sToken = urlParams.get('sToken') || urlParams.get('stoken');
-        const credentialScript = sToken
-          ? (await g.backendaiclient.eduApp.get_user_credential(sToken))[
-              'script'
-            ]
-          : undefined;
+        logger.info('[_createEduSession] step 4c: get_user_credential', {
+          has_sToken: !!sToken,
+        });
+        let credentialScript: string | undefined;
+        if (sToken) {
+          try {
+            const credResponse =
+              await g.backendaiclient.eduApp.get_user_credential(sToken);
+            credentialScript = credResponse?.['script'];
+            logger.info('[_createEduSession] step 4c result', {
+              has_credential_script: !!credentialScript,
+              credential_script_length: credentialScript?.length,
+            });
+          } catch (err) {
+            logger.warn(
+              '[_createEduSession] step 4c: eduApp.get_user_credential not available, using default (no bootstrap script)',
+              err,
+            );
+            credentialScript = undefined;
+          }
+        }
 
         const sessionResources = {
           ...resources,
-          group_name: projects[0]['name'],
+          ...(groupName ? { group_name: groupName } : {}),
           ...(mounts && Object.keys(mounts).length > 0 ? { mounts } : {}),
           ...(credentialScript ? { bootstrap_script: credentialScript } : {}),
         };
+        logger.info('[_createEduSession] step 4d: createSessionFromTemplate', {
+          templateId,
+          sessionResources: {
+            ...sessionResources,
+            // Avoid logging the full bootstrap script body
+            bootstrap_script: sessionResources.bootstrap_script
+              ? `<${(sessionResources.bootstrap_script as string).length} chars>`
+              : undefined,
+          },
+        });
 
         try {
           const response = await g.backendaiclient.createSessionFromTemplate(
@@ -547,7 +669,15 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
             20000,
           );
           sessionId = response.sessionId;
+          logger.info('[_createEduSession] step 4d result', {
+            sessionId,
+            response,
+          });
         } catch (err: any) {
+          logger.error(
+            '[_createEduSession] step 4d FAILED createSessionFromTemplate',
+            err,
+          );
           transition({
             name: 'error',
             step: 'session',
@@ -558,6 +688,10 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
           return;
         }
       } catch (err: any) {
+        logger.error(
+          '[_createEduSession] step 4 outer FAILED (mounts/projects/credential)',
+          err,
+        );
         if (err?.message && 'statusCode' in err && err.statusCode === 408) {
           transition({
             name: 'error',
@@ -580,6 +714,10 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
     }
 
     if (sessionId) {
+      logger.info(
+        '[_createEduSession] step 5: transitioning to session stage',
+        { sessionId, parsedAppName, launchNewSession },
+      );
       // Move the state machine to the 'session' stage so the Relay loader
       // child mounts and fetches the ComputeSessionNode fragment.
       transition({
@@ -590,6 +728,11 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
       // The Relay loader child mounts on the 'session' stage, fetches
       // the ComputeSessionNode fragment, and transitions to 'launching'.
       // EduAppSessionLauncher then drives useBackendAIAppLauncher.
+    } else {
+      logger.warn(
+        '[_createEduSession] reached end without sessionId — flow stalled',
+        { launchNewSession },
+      );
     }
   };
 
@@ -598,6 +741,7 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
    * then start or reuse session and launch the app.
    */
   const _launch = async (endpoint: string) => {
+    logger.info('[EduAppLauncher] _launch() start', { endpoint });
     transition({ name: 'auth' });
     try {
       await _initClient(endpoint);
@@ -631,6 +775,21 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
       return;
     }
 
+    // Dispatch `backend-ai-connected` so any descendant component using
+    // `useSuspendedBackendaiClient()` (e.g. `useBackendAIAppLauncher` deep
+    // inside `EduAppSessionLauncher`) can resolve. The shared
+    // `backendaiClientPromise` is created at module load time and only
+    // resolves on this event — `LoginView` dispatches it after a normal
+    // login, but the EduAppLauncher token-login flow bypasses LoginView
+    // entirely, so we have to dispatch it ourselves once the client is
+    // authenticated and ready.
+    logger.info('[EduAppLauncher] dispatching backend-ai-connected');
+    document.dispatchEvent(
+      new CustomEvent('backend-ai-connected', {
+        detail: g.backendaiclient,
+      }),
+    );
+
     try {
       await _prepareProjectInformation();
     } catch (err) {
@@ -646,6 +805,9 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
 
     const sessionId = urlParams.get('session_id') || null;
     if (sessionId) {
+      logger.info('[EduAppLauncher] _launch: Path A (session_id provided)', {
+        sessionId,
+      });
       const requestedApp = urlParams.get('app') || 'jupyter';
       transition({
         name: 'session',
@@ -656,9 +818,35 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
       // the ComputeSessionNode fragment, and transitions to 'launching'.
       // EduAppSessionLauncher then drives useBackendAIAppLauncher.
     } else {
+      logger.info(
+        '[EduAppLauncher] _launch: Path B (no session_id, will create or reuse)',
+        { resources },
+      );
       await _createEduSession(resources);
     }
   };
+
+  // The launch sequence is the meaningful side effect tied to
+  // `(active, apiEndpoint)`. We wrap the body in a `useEffectEvent` so
+  // the effect's reactive deps stay precisely `[active, apiEndpoint]`
+  // and any other identity (logger, _launch closure, etc.) does not
+  // re-trigger the launch flow.
+  //
+  // Placed after `_launch` is declared so the reference lives in the
+  // temporal-safe zone (see `.claude/rules/use-effect-event.md`).
+  const onLaunchEffect = useEffectEvent(() => {
+    logger.info('[EduAppLauncher] launch effect', {
+      active,
+      hasLaunchedRef: hasLaunchedRef.current,
+      apiEndpoint,
+    });
+    if (!active || hasLaunchedRef.current) return;
+    hasLaunchedRef.current = true;
+    _launch(apiEndpoint);
+  });
+  useEffect(() => {
+    onLaunchEffect();
+  }, [active, apiEndpoint]);
 
   // Map the state machine stage to the visual Steps component:
   //   step 0 = Authentication
@@ -669,50 +857,49 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
   //   and the error step matches.
   // - Stages after the current step are 'wait'.
   // - On 'done', all three steps are 'finish'.
-  const { currentStep, stepStatuses } = useMemo(() => {
-    const STEP_AUTH = 0;
-    const STEP_SESSION = 1;
-    const STEP_LAUNCH = 2;
-    let current = STEP_AUTH;
-    let statuses: Array<'wait' | 'process' | 'finish' | 'error'> = [
-      'wait',
-      'wait',
-      'wait',
-    ];
-    switch (stage.name) {
-      case 'idle':
-      case 'auth':
-        current = STEP_AUTH;
-        statuses = ['process', 'wait', 'wait'];
-        break;
-      case 'session':
-        current = STEP_SESSION;
-        statuses = ['finish', 'process', 'wait'];
-        break;
-      case 'launching':
-        current = STEP_LAUNCH;
-        statuses = ['finish', 'finish', 'process'];
-        break;
-      case 'done':
-        current = STEP_LAUNCH;
-        statuses = ['finish', 'finish', 'finish'];
-        break;
-      case 'error': {
-        if (stage.step === 'auth') {
-          current = STEP_AUTH;
-          statuses = ['error', 'wait', 'wait'];
-        } else if (stage.step === 'session') {
-          current = STEP_SESSION;
-          statuses = ['finish', 'error', 'wait'];
-        } else {
-          current = STEP_LAUNCH;
-          statuses = ['finish', 'finish', 'error'];
-        }
-        break;
+  // No `useMemo` needed: `'use memo'` directive at the top of this
+  // component lets the React Compiler memoize derived values automatically.
+  const STEP_AUTH = 0;
+  const STEP_SESSION = 1;
+  const STEP_LAUNCH = 2;
+  let currentStep = STEP_AUTH;
+  let stepStatuses: Array<'wait' | 'process' | 'finish' | 'error'> = [
+    'wait',
+    'wait',
+    'wait',
+  ];
+  switch (stage.name) {
+    case 'idle':
+    case 'auth':
+      currentStep = STEP_AUTH;
+      stepStatuses = ['process', 'wait', 'wait'];
+      break;
+    case 'session':
+      currentStep = STEP_SESSION;
+      stepStatuses = ['finish', 'process', 'wait'];
+      break;
+    case 'launching':
+      currentStep = STEP_LAUNCH;
+      stepStatuses = ['finish', 'finish', 'process'];
+      break;
+    case 'done':
+      currentStep = STEP_LAUNCH;
+      stepStatuses = ['finish', 'finish', 'finish'];
+      break;
+    case 'error': {
+      if (stage.step === 'auth') {
+        currentStep = STEP_AUTH;
+        stepStatuses = ['error', 'wait', 'wait'];
+      } else if (stage.step === 'session') {
+        currentStep = STEP_SESSION;
+        stepStatuses = ['finish', 'error', 'wait'];
+      } else {
+        currentStep = STEP_LAUNCH;
+        stepStatuses = ['finish', 'finish', 'error'];
       }
+      break;
     }
-    return { currentStep: current, stepStatuses: statuses };
-  }, [stage]);
+  }
 
   // Compute the user-facing Alert title and description for the error
   // stage. For the `session` step, switch on `stage.category` so the five
@@ -726,14 +913,11 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
   // The Alert description shows the underlying technical `stage.message`
   // (when it adds information) plus the `RefreshToRetry` hint so power
   // users can still see the raw API error detail.
-  const { errorTitle, errorDetail } = useMemo(() => {
-    if (stage.name !== 'error') {
-      return {
-        errorTitle: null as string | null,
-        errorDetail: null as string | null,
-      };
-    }
-
+  // No `useMemo`: `'use memo'` directive at the top lets React Compiler
+  // memoize this derived value automatically.
+  let errorTitle: string | null = null;
+  let errorDetail: string | null = null;
+  if (stage.name === 'error') {
     let title: string;
     if (stage.step === 'session') {
       switch (stage.category) {
@@ -773,10 +957,9 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
         ? stage.message
         : null;
     const refreshHint = t('eduapi.RefreshToRetry');
-    const detail = rawMessage ? `${rawMessage}\n${refreshHint}` : refreshHint;
-
-    return { errorTitle: title, errorDetail: detail };
-  }, [stage, t]);
+    errorTitle = title;
+    errorDetail = rawMessage ? `${rawMessage}\n${refreshHint}` : refreshHint;
+  }
 
   if (!active) {
     return null;
@@ -824,6 +1007,15 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
             description={
               <span style={{ whiteSpace: 'pre-line' }}>{errorDetail}</span>
             }
+            action={
+              <Button
+                size="small"
+                danger
+                onClick={() => window.location.reload()}
+              >
+                {t('eduapi.RefreshPage')}
+              </Button>
+            }
           />
         ) : null}
         {stage.name === 'done' ? (
@@ -832,6 +1024,21 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
             type="success"
             showIcon
             title={t('eduapi.LaunchCompleted')}
+            description={
+              // Always render a clickable link to the app URL. The
+              // best-effort `window.open` in `handleLaunchSuccess` may have
+              // been blocked by the browser's popup blocker (the call is
+              // not directly tied to a user gesture); a single click on
+              // this link is a fresh user gesture and is guaranteed to
+              // open the new tab.
+              <Typography.Link
+                href={stage.appConnectUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {t('eduapi.OpenAppInNewWindow')}
+              </Typography.Link>
+            }
           />
         ) : null}
       </BAICard>
@@ -902,13 +1109,6 @@ const EduAppSessionRelayLoader: React.FC<{
 
   const { logger } = useBAILogger();
 
-  // Stabilize parent callbacks so the effect below only reacts to the
-  // query result itself, not to identity changes from parent re-renders.
-  // This avoids re-invoking the callbacks whenever the parent state
-  // updates (e.g., during transitions through the stage machine).
-  const stableOnLoaded = useMemoizedFn(onLoaded);
-  const stableOnError = useMemoizedFn(onError);
-
   const data = useLazyLoadQuery<EduAppLauncherSessionQuery>(
     graphql`
       query EduAppLauncherSessionQuery($id: GlobalIDField!) {
@@ -928,17 +1128,24 @@ const EduAppSessionRelayLoader: React.FC<{
     { fetchPolicy: 'store-or-network' },
   );
 
-  useEffect(() => {
+  // The effect only reacts to the query result. `useEffectEvent` reads
+  // the latest parent callbacks (`onLoaded`/`onError`) without forcing
+  // them into the dep array — so identity churn from parent re-renders
+  // does not re-invoke the effect.
+  const onResolved = useEffectEvent(() => {
     if (data?.compute_session_node) {
-      stableOnLoaded(data.compute_session_node);
+      onLoaded(data.compute_session_node);
     } else {
       const err = new Error(
         `ComputeSessionNode not found for id: ${sessionRowId}`,
       );
       logger.error('[EduAppLauncher] Relay session lookup returned null', err);
-      stableOnError(err);
+      onError(err);
     }
-  }, [data, sessionRowId, stableOnLoaded, stableOnError, logger]);
+  });
+  useEffect(() => {
+    onResolved();
+  }, [data, sessionRowId]);
 
   return null;
 };
@@ -968,29 +1175,51 @@ const EduAppSessionLauncher: React.FC<{
 }> = ({ sessionFrgmt, requestedApp, onLaunched, onError }) => {
   'use memo';
 
+  const { logger } = useBAILogger();
   const { launchApp } = useBackendAIAppLauncher(sessionFrgmt);
+  // React.StrictMode in development invokes the empty-dep effect below
+  // twice on mount. `launchApp` is not idempotent — a duplicate call
+  // would allocate a second wsproxy connection and open a second
+  // window — so this ref guards against the second invocation.
+  const hasLaunchedRef = useRef(false);
 
-  // Stabilize parent callbacks so the effect below only fires once per
-  // mount key (`${requestedApp}:${sessionRowId}` on the parent JSX) and
-  // is not re-triggered by parent re-renders (e.g., stage transitions
-  // that recreate the `onLaunched` / `onError` identities).
-  const stableOnLaunched = useMemoizedFn(onLaunched);
-  const stableOnError = useMemoizedFn(onError);
-
-  useEffect(() => {
+  // The effect should fire once per mount (the parent re-mounts this
+  // child whenever `requestedApp:sessionRowId` changes via the `key`
+  // prop on the JSX). `useEffectEvent` reads the latest closures for
+  // `launchApp`, `onLaunched`, `onError`, and `requestedApp` without
+  // forcing them into the dep array.
+  const onMount = useEffectEvent(() => {
+    if (hasLaunchedRef.current) return;
+    hasLaunchedRef.current = true;
+    logger.info('[EduAppSessionLauncher] effect: calling launchApp', {
+      requestedApp,
+    });
     launchApp({ app: requestedApp })
       .then((workInfo) => {
+        logger.info('[EduAppSessionLauncher] launchApp resolved', {
+          appConnectUrl: workInfo?.appConnectUrl?.href,
+          reused: workInfo?.reused,
+          redirectUrl: workInfo?.redirectUrl,
+        });
         const url = workInfo?.appConnectUrl?.href;
         if (!url) {
-          stableOnError(new Error('Resolved app connect URL is empty.'));
+          logger.error(
+            '[EduAppSessionLauncher] resolved appConnectUrl is empty',
+            workInfo,
+          );
+          onError(new Error('Resolved app connect URL is empty.'));
           return;
         }
-        stableOnLaunched(url);
+        onLaunched(url);
       })
       .catch((err) => {
-        stableOnError(err);
+        logger.error('[EduAppSessionLauncher] launchApp rejected', err);
+        onError(err);
       });
-  }, [launchApp, requestedApp, stableOnLaunched, stableOnError]);
+  });
+  useEffect(() => {
+    onMount();
+  }, []);
 
   return null;
 };
