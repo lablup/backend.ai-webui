@@ -26,6 +26,7 @@ import { useFolderExplorerOpener } from '../components/FolderExplorerOpener';
 import ImageNodeSimpleTag from '../components/ImageNodeSimpleTag';
 import InferenceSessionErrorModal from '../components/InferenceSessionErrorModal';
 import SessionDetailDrawer from '../components/SessionDetailDrawer';
+import SourceCodeView from '../components/SourceCodeView';
 import SwitchToProjectButton from '../components/SwitchToProjectButton';
 import VFolderLazyView from '../components/VFolderLazyView';
 import { baiSignedRequestWithPromise, convertToOrderBy } from '../helper';
@@ -40,7 +41,6 @@ import {
   CloseOutlined,
   DeleteOutlined,
   ExclamationCircleOutlined,
-  FolderOutlined,
   LoadingOutlined,
   PlusOutlined,
   SettingOutlined,
@@ -95,6 +95,7 @@ import React, {
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 import { useParams } from 'react-router-dom';
+import VFolderNodeIdenticon from 'src/components/VFolderNodeIdenticon';
 
 interface RoutingInfo {
   route_id: string;
@@ -242,6 +243,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
           extra_mounts {
             row_id
             name
+            ...VFolderNodeIdenticonFragment
           }
           environ
           resource_group
@@ -560,15 +562,16 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
         <BAIFlex direction="column" align="start">
           {_.map(endpoint?.extra_mounts, (vfolder) => {
             return (
-              <BAIFlex direction="row" gap={'xxs'} key={vfolder?.row_id}>
-                <Typography.Link
-                  onClick={() => {
-                    vfolder?.row_id && open(vfolder?.row_id);
-                  }}
-                >
-                  <FolderOutlined /> {vfolder?.name}
-                </Typography.Link>
-              </BAIFlex>
+              <Typography.Link
+                onClick={() => {
+                  vfolder?.row_id && open(vfolder?.row_id);
+                }}
+              >
+                <BAIFlex direction="row" gap={'xs'} key={vfolder?.row_id}>
+                  <VFolderNodeIdenticon vfolderNodeIdenticonFrgmt={vfolder} />{' '}
+                  {vfolder?.name}
+                </BAIFlex>
+              </Typography.Link>
             );
           })}
         </BAIFlex>
@@ -576,15 +579,19 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
     },
     {
       label: t('session.launcher.EnvironmentVariable'),
-      children: (
-        <Typography.Text
-          style={{ fontFamily: 'monospace', wordBreak: 'break-all' }}
-        >
-          {_.isEmpty(JSON.parse(endpoint?.environ || '{}'))
-            ? '-'
-            : endpoint?.environ}
-        </Typography.Text>
-      ),
+      children: (() => {
+        let envObj: Record<string, string> = {};
+        try {
+          envObj = JSON.parse(endpoint?.environ || '{}');
+        } catch {
+          return '-';
+        }
+        if (_.isEmpty(envObj)) return '-';
+        const envText = _.map(envObj, (value, key) => `${key}="${value}"`).join(
+          '\n',
+        );
+        return <SourceCodeView language="shell">{envText}</SourceCodeView>;
+      })(),
       span: {
         sm: 1,
       },
@@ -687,7 +694,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
       >
         <Descriptions
           bordered
-          column={{ xxl: 3, xl: 3, lg: 2, md: 1, sm: 1, xs: 1 }}
+          column={{ xxl: 3, xl: 2, lg: 2, md: 1, sm: 1, xs: 1 }}
           style={{
             backgroundColor: token.colorBgBase,
           }}
