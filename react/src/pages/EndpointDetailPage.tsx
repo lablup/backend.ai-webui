@@ -561,7 +561,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
       children: (
         <BAIFlex direction="column" align="start">
           {_.map(endpoint?.extra_mounts, (vfolder) => {
-            return (
+            return vfolder ? (
               <Typography.Link
                 onClick={() => {
                   vfolder?.row_id && open(vfolder?.row_id);
@@ -572,7 +572,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
                   {vfolder?.name}
                 </BAIFlex>
               </Typography.Link>
-            );
+            ) : null;
           })}
         </BAIFlex>
       ),
