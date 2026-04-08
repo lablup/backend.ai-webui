@@ -875,7 +875,6 @@
     "PleaseReload": "請過一段時間重新加載。",
     "PreparingSession": "正在準備工作階段",
     "QueryingExistingComputeSession": "正在查詢現有計算會話...",
-    "RefreshPage": "重新整理頁面",
     "RefreshToRetry": "重新整理頁面以重試。",
     "ResourceExhausted": "資源不足，無法建立工作階段。",
     "ServicePortNotAvailable": "所請求的應用程式無法在此工作階段中啟動。",
