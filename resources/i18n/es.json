@@ -874,7 +874,6 @@
     "PleaseReload": "Por favor, vuelva a cargar después de algún tiempo.",
     "PreparingSession": "Preparando sesión",
     "QueryingExistingComputeSession": "Consulta de la sesión de cálculo existente ...",
-    "RefreshPage": "Actualizar página",
     "RefreshToRetry": "Actualice la página para volver a intentarlo.",
     "ResourceExhausted": "Recursos insuficientes para crear la sesión.",
     "ServicePortNotAvailable": "La aplicación solicitada no se puede iniciar en esta sesión.",

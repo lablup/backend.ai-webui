@@ -11,9 +11,16 @@
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useBackendAIAppLauncher } from '../hooks/useBackendAIAppLauncher';
 import { fetchAndParseConfig } from '../hooks/useWebUIConfig';
-import { Alert, Button, Steps, Typography } from 'antd';
+import { useMemoizedFn } from 'ahooks';
+import { Alert, Steps } from 'antd';
 import { BAICard, BAIFlex, toGlobalId, useBAILogger } from 'backend.ai-ui';
-import React, { useEffect, useEffectEvent, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -842,28 +849,6 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
     }
   };
 
-  // The launch sequence is the meaningful side effect tied to
-  // `(active, apiEndpoint)`. We wrap the body in a `useEffectEvent` so
-  // the effect's reactive deps stay precisely `[active, apiEndpoint]`
-  // and any other identity (logger, _launch closure, etc.) does not
-  // re-trigger the launch flow.
-  //
-  // Placed after `_launch` is declared so the reference lives in the
-  // temporal-safe zone (see `.claude/rules/use-effect-event.md`).
-  const onLaunchEffect = useEffectEvent(() => {
-    logger.info('[EduAppLauncher] launch effect', {
-      active,
-      hasLaunchedRef: hasLaunchedRef.current,
-      apiEndpoint,
-    });
-    if (!active || hasLaunchedRef.current) return;
-    hasLaunchedRef.current = true;
-    _launch(apiEndpoint);
-  });
-  useEffect(() => {
-    onLaunchEffect();
-  }, [active, apiEndpoint]);
-
   // Map the state machine stage to the visual Steps component:
   //   step 0 = Authentication
   //   step 1 = Session (lookup or create)
@@ -873,49 +858,50 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
   //   and the error step matches.
   // - Stages after the current step are 'wait'.
   // - On 'done', all three steps are 'finish'.
-  // No `useMemo` needed: `'use memo'` directive at the top of this
-  // component lets the React Compiler memoize derived values automatically.
-  const STEP_AUTH = 0;
-  const STEP_SESSION = 1;
-  const STEP_LAUNCH = 2;
-  let currentStep = STEP_AUTH;
-  let stepStatuses: Array<'wait' | 'process' | 'finish' | 'error'> = [
-    'wait',
-    'wait',
-    'wait',
-  ];
-  switch (stage.name) {
-    case 'idle':
-    case 'auth':
-      currentStep = STEP_AUTH;
-      stepStatuses = ['process', 'wait', 'wait'];
-      break;
-    case 'session':
-      currentStep = STEP_SESSION;
-      stepStatuses = ['finish', 'process', 'wait'];
-      break;
-    case 'launching':
-      currentStep = STEP_LAUNCH;
-      stepStatuses = ['finish', 'finish', 'process'];
-      break;
-    case 'done':
-      currentStep = STEP_LAUNCH;
-      stepStatuses = ['finish', 'finish', 'finish'];
-      break;
-    case 'error': {
-      if (stage.step === 'auth') {
-        currentStep = STEP_AUTH;
-        stepStatuses = ['error', 'wait', 'wait'];
-      } else if (stage.step === 'session') {
-        currentStep = STEP_SESSION;
-        stepStatuses = ['finish', 'error', 'wait'];
-      } else {
-        currentStep = STEP_LAUNCH;
-        stepStatuses = ['finish', 'finish', 'error'];
+  const { currentStep, stepStatuses } = useMemo(() => {
+    const STEP_AUTH = 0;
+    const STEP_SESSION = 1;
+    const STEP_LAUNCH = 2;
+    let current = STEP_AUTH;
+    let statuses: Array<'wait' | 'process' | 'finish' | 'error'> = [
+      'wait',
+      'wait',
+      'wait',
+    ];
+    switch (stage.name) {
+      case 'idle':
+      case 'auth':
+        current = STEP_AUTH;
+        statuses = ['process', 'wait', 'wait'];
+        break;
+      case 'session':
+        current = STEP_SESSION;
+        statuses = ['finish', 'process', 'wait'];
+        break;
+      case 'launching':
+        current = STEP_LAUNCH;
+        statuses = ['finish', 'finish', 'process'];
+        break;
+      case 'done':
+        current = STEP_LAUNCH;
+        statuses = ['finish', 'finish', 'finish'];
+        break;
+      case 'error': {
+        if (stage.step === 'auth') {
+          current = STEP_AUTH;
+          statuses = ['error', 'wait', 'wait'];
+        } else if (stage.step === 'session') {
+          current = STEP_SESSION;
+          statuses = ['finish', 'error', 'wait'];
+        } else {
+          current = STEP_LAUNCH;
+          statuses = ['finish', 'finish', 'error'];
+        }
+        break;
       }
-      break;
     }
-  }
+    return { currentStep: current, stepStatuses: statuses };
+  }, [stage]);
 
   // Compute the user-facing Alert title and description for the error
   // stage. For the `session` step, switch on `stage.category` so the five
@@ -929,11 +915,14 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
   // The Alert description shows the underlying technical `stage.message`
   // (when it adds information) plus the `RefreshToRetry` hint so power
   // users can still see the raw API error detail.
-  // No `useMemo`: `'use memo'` directive at the top lets React Compiler
-  // memoize this derived value automatically.
-  let errorTitle: string | null = null;
-  let errorDetail: string | null = null;
-  if (stage.name === 'error') {
+  const { errorTitle, errorDetail } = useMemo(() => {
+    if (stage.name !== 'error') {
+      return {
+        errorTitle: null as string | null,
+        errorDetail: null as string | null,
+      };
+    }
+
     let title: string;
     if (stage.step === 'session') {
       switch (stage.category) {
@@ -973,9 +962,10 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
         ? stage.message
         : null;
     const refreshHint = t('eduapi.RefreshToRetry');
-    errorTitle = title;
-    errorDetail = rawMessage ? `${rawMessage}\n${refreshHint}` : refreshHint;
-  }
+    const detail = rawMessage ? `${rawMessage}\n${refreshHint}` : refreshHint;
+
+    return { errorTitle: title, errorDetail: detail };
+  }, [stage, t]);
 
   if (!active) {
     return null;
@@ -1023,15 +1013,6 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
             description={
               <span style={{ whiteSpace: 'pre-line' }}>{errorDetail}</span>
             }
-            action={
-              <Button
-                size="small"
-                danger
-                onClick={() => window.location.reload()}
-              >
-                {t('eduapi.RefreshPage')}
-              </Button>
-            }
           />
         ) : null}
         {stage.name === 'done' ? (
@@ -1040,21 +1021,6 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
             type="success"
             showIcon
             title={t('eduapi.LaunchCompleted')}
-            description={
-              // Always render a clickable link to the app URL. The
-              // best-effort `window.open` in `handleLaunchSuccess` may have
-              // been blocked by the browser's popup blocker (the call is
-              // not directly tied to a user gesture); a single click on
-              // this link is a fresh user gesture and is guaranteed to
-              // open the new tab.
-              <Typography.Link
-                href={stage.appConnectUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {t('eduapi.OpenAppInNewWindow')}
-              </Typography.Link>
-            }
           />
         ) : null}
       </BAICard>
