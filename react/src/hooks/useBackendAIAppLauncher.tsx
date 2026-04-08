@@ -855,6 +855,18 @@ export const useBackendAIAppLauncher = (
      */
     launchAppWithNotification,
     /**
+     * Lower-level launch API that returns the resolved work info via promise
+     * without going through the notification lifecycle. Use this from contexts
+     * where the BAI notification drawer is not mounted (e.g. anonymous pages
+     * outside `MainLayout`), since `launchAppWithNotification`'s `onPrepared`
+     * callback only fires when `useBAINotificationEffect` is subscribed to the
+     * background task promise.
+     *
+     * Throws `AppLaunchError` for known failure stages (e.g. service port
+     * missing → stage `'configuring'`).
+     */
+    launchApp: _launchApp,
+    /**
      * Close wsproxy connection for a specific app.
      * Used when re-launching apps like tensorboard that need to be restarted with different args.
      */

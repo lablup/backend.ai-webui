@@ -8,7 +8,7 @@
  * Handles token-based authentication, session management, and app launching
  * for education-specific use cases.
  */
-import { openWsproxy, connectToProxyWorker } from '../helper/appLauncherProxy';
+import { useBackendAIAppLauncher } from '../hooks/useBackendAIAppLauncher';
 import { fetchAndParseConfig } from '../hooks/useWebUIConfig';
 import { useMemoizedFn } from 'ahooks';
 import { toGlobalId, useBAILogger } from 'backend.ai-ui';
@@ -275,47 +275,47 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
   };
 
   /**
-   * Open a service app for an existing session using standalone proxy utilities.
+   * Transition the state machine to the launch error state and surface
+   * the error via the legacy notification path. FR-2486 will migrate the
+   * notification call to `useSetBAINotification`; FR-2487 will render
+   * this state in the Card UI.
    *
-   * NOTE(FR-2484): The legacy proxy path is still used here to preserve the
-   * end-to-end flow while the component is being migrated. FR-2485 will
-   * replace this with `useBackendAIAppLauncher().launchAppWithNotification`
-   * consuming the Relay fragment ref produced by `EduAppSessionRelayLoader`.
+   * Not wrapped in `useCallback`: the outer component uses `'use memo'`
+   * so the React Compiler handles memoization. This avoids the stale-dep
+   * hazard flagged by reviewers (closes over `_handleError`, which is
+   * declared lower in the body and would otherwise be TDZ-unsafe in a
+   * useCallback deps array).
    */
-  const _openServiceApp = async (sessionId: string, requestedApp: string) => {
-    try {
-      const resp = await openWsproxy(
-        g.backendaiclient,
-        sessionId,
-        requestedApp,
-      );
-      if (resp?.url) {
-        const appRespUrl = await connectToProxyWorker(resp.url, '');
-        const appConnectUrl = appRespUrl?.appConnectUrl
-          ? String(appRespUrl.appConnectUrl)
-          : resp.url;
-        if (!appConnectUrl) {
-          _dispatchNotification(
-            t('session.appLauncher.ConnectUrlIsNotValid'),
-            undefined,
-            true,
-          );
-          return;
-        }
-        setTimeout(() => {
-          g.open(appConnectUrl, '_self');
-        });
-        transition({ name: 'done' });
-      }
-    } catch (err) {
-      logger.error('Failed to open service app:', err);
-      transition({
-        name: 'error',
-        step: 'launch',
-        message: (err as any)?.message ?? String(err),
-      });
-      _handleError(err);
+  const handleLaunchError = (err: unknown) => {
+    logger.error('Failed to launch app:', err);
+    const message = (err as any)?.message ?? String(err);
+    transition({
+      name: 'error',
+      step: 'launch',
+      message,
+    });
+    _handleError(err);
+  };
+
+  /**
+   * Called by the launching child once `useBackendAIAppLauncher` has
+   * resolved the proxy connection. Opens the app URL in a new window
+   * (per spec) and moves the state machine to `done`. If a popup blocker
+   * prevents `window.open` (the launch is not user-gesture driven), fall
+   * back to same-tab navigation so the user still reaches the app.
+   * `noopener,noreferrer` is passed to prevent reverse-tabnabbing via the
+   * opened document (it cannot navigate `window.opener`).
+   */
+  const handleLaunchSuccess = (appConnectUrl: string) => {
+    const newWindow = window.open(
+      appConnectUrl,
+      '_blank',
+      'noopener,noreferrer',
+    );
+    if (!newWindow) {
+      window.location.assign(appConnectUrl);
     }
+    transition({ name: 'done' });
   };
 
   /**
@@ -569,7 +569,9 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
         sessionRowId: sessionId,
         requestedApp: parsedAppName,
       });
-      _openServiceApp(sessionId, parsedAppName);
+      // The Relay loader child mounts on the 'session' stage, fetches
+      // the ComputeSessionNode fragment, and transitions to 'launching'.
+      // EduAppSessionLauncher then drives useBackendAIAppLauncher.
     }
   };
 
@@ -648,7 +650,9 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
         sessionRowId: sessionId,
         requestedApp,
       });
-      _openServiceApp(sessionId, requestedApp);
+      // The Relay loader child mounts on the 'session' stage, fetches
+      // the ComputeSessionNode fragment, and transitions to 'launching'.
+      // EduAppSessionLauncher then drives useBackendAIAppLauncher.
     } else {
       await _createEduSession(resources);
     }
@@ -701,6 +705,17 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
             />
           </React.Suspense>
         </ErrorBoundary>
+      ) : null}
+      {stage.name === 'launching' ? (
+        <React.Suspense fallback={null}>
+          <EduAppSessionLauncher
+            key={`${stage.requestedApp}:${stage.sessionRowId}`}
+            sessionFrgmt={stage.sessionFrgmt}
+            requestedApp={stage.requestedApp}
+            onLaunched={handleLaunchSuccess}
+            onError={handleLaunchError}
+          />
+        </React.Suspense>
       ) : null}
     </>
   );
@@ -759,6 +774,58 @@ const EduAppSessionRelayLoader: React.FC<{
       stableOnError(err);
     }
   }, [data, sessionRowId, stableOnLoaded, stableOnError, logger]);
+
+  return null;
+};
+
+/**
+ * Headless child that drives `useBackendAIAppLauncher` against the
+ * resolved `ComputeSessionNode` fragment. Mounted only when the parent
+ * state machine reaches the `launching` stage so that the hook (which
+ * suspends on `useSuspendedBackendaiClient` and reads a `useFragment`)
+ * can be called unconditionally per the Rules of Hooks.
+ *
+ * Calls `launchApp` directly (not `launchAppWithNotification`) because
+ * the EduAppLauncher page renders outside `MainLayout` and therefore
+ * has no `useBAINotificationEffect` subscriber attached to drive the
+ * notification's `backgroundTask.promise` lifecycle. The card UI
+ * already shows per-step progress, so the notification surface is not
+ * needed here. The promise resolves with the work info containing the
+ * `appConnectUrl`, which is forwarded to `onLaunched`. `AppLaunchError`
+ * (e.g. service port missing → stage `'configuring'`) is forwarded to
+ * `onError`.
+ */
+const EduAppSessionLauncher: React.FC<{
+  sessionFrgmt: useBackendAIAppLauncherFragment$key;
+  requestedApp: string;
+  onLaunched: (appConnectUrl: string) => void;
+  onError: (err: unknown) => void;
+}> = ({ sessionFrgmt, requestedApp, onLaunched, onError }) => {
+  'use memo';
+
+  const { launchApp } = useBackendAIAppLauncher(sessionFrgmt);
+
+  // Stabilize parent callbacks so the effect below only fires once per
+  // mount key (`${requestedApp}:${sessionRowId}` on the parent JSX) and
+  // is not re-triggered by parent re-renders (e.g., stage transitions
+  // that recreate the `onLaunched` / `onError` identities).
+  const stableOnLaunched = useMemoizedFn(onLaunched);
+  const stableOnError = useMemoizedFn(onError);
+
+  useEffect(() => {
+    launchApp({ app: requestedApp })
+      .then((workInfo) => {
+        const url = workInfo?.appConnectUrl?.href;
+        if (!url) {
+          stableOnError(new Error('Resolved app connect URL is empty.'));
+          return;
+        }
+        stableOnLaunched(url);
+      })
+      .catch((err) => {
+        stableOnError(err);
+      });
+  }, [launchApp, requestedApp, stableOnLaunched, stableOnError]);
 
   return null;
 };
