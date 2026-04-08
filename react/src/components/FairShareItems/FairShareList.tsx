@@ -873,8 +873,8 @@ const FairShareList: React.FC = () => {
           onRequestClose={(success) => {
             if (success) {
               updateFetchKey();
+              setSelectedRows([]);
             }
-            setSelectedRows([]);
             setSelectedSingleRow(null);
             setOpenWeightSettingModal(false);
           }}
