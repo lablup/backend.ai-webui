@@ -123,6 +123,7 @@ const SessionLauncherPreview: React.FC<{
                   },
                   content: {
                     overflow: 'auto',
+                    display: 'flex',
                   },
                 }}
               >
@@ -385,17 +386,20 @@ const SessionLauncherPreview: React.FC<{
           {form.getFieldValue('envvars')?.length > 0 && (
             <Descriptions.Item
               label={t('session.launcher.EnvironmentVariable')}
+              styles={{
+                content: {
+                  display: 'flex',
+                },
+              }}
             >
               {form.getFieldValue('envvars')?.length ? (
-                <BAIFlex align="stretch" direction="column">
-                  <SourceCodeView language={'shell'}>
-                    {_.map(
-                      form.getFieldValue('envvars'),
-                      (v: { variable: string; value: string }) =>
-                        `${v?.variable || ''}="${v?.value || ''}"`,
-                    ).join('\n')}
-                  </SourceCodeView>
-                </BAIFlex>
+                <SourceCodeView language={'shell'}>
+                  {_.map(
+                    form.getFieldValue('envvars'),
+                    (v: { variable: string; value: string }) =>
+                      `${v?.variable || ''}="${v?.value || ''}"`,
+                  ).join('\n')}
+                </SourceCodeView>
               ) : (
                 <Typography.Text type="secondary">-</Typography.Text>
               )}
@@ -424,8 +428,8 @@ const SessionLauncherPreview: React.FC<{
           onClickEditStep('environment');
         }}
       >
-        <BAIFlex direction="column" align="stretch">
-          {(_.some(
+        <BAIFlex direction="column" align="stretch" gap="sm">
+          {_.some(
             form.getFieldValue('resource'),
             (_v, key: keyof SessionLauncherFormValue['resource']) => {
               return (
@@ -433,13 +437,21 @@ const SessionLauncherPreview: React.FC<{
                   .length > 0
               );
             },
-          ) ||
-            (form.getFieldWarning(['cluster_size'] as any) as any[]).length >
-              0) && (
+          ) && (
             <Alert
               type="warning"
               showIcon
               title={t('session.launcher.EnqueueComputeSessionWarning')}
+            />
+          )}
+          {(form.getFieldWarning(['cluster_size'] as any) as any[]).length >
+            0 && (
+            <Alert
+              type="warning"
+              showIcon
+              title={
+                (form.getFieldWarning(['cluster_size'] as any) as string[])[0]
+              }
             />
           )}
 

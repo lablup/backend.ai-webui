@@ -101,9 +101,7 @@ const BrandingPage = React.lazy(() => import('./pages/BrandingPage'));
 const RBACManagementPage = React.lazy(
   () => import('./pages/RBACManagementPage'),
 );
-const AdminSessionPage = React.lazy(
-  () => import('./pages/AdminSessionPage'),
-);
+const AdminSessionPage = React.lazy(() => import('./pages/AdminSessionPage'));
 const AdminServingPage = React.lazy(() => import('./pages/AdminServingPage'));
 const AdminVFolderNodeListPage = React.lazy(
   () => import('./pages/AdminVFolderNodeListPage'),
@@ -625,6 +623,9 @@ export const routes: RouteObject[] = [
     element: (
       <BAIErrorBoundary>
         <DefaultProvidersForReactRoot>
+          <Suspense>
+            <LoginView />
+          </Suspense>
           <LogoutEventHandler />
           <InteractiveLoginPage />
         </DefaultProvidersForReactRoot>

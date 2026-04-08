@@ -6,11 +6,13 @@ import { RoleAssignmentTabBulkAssignMutation } from '../__generated__/RoleAssign
 import { RoleAssignmentTabBulkRevokeMutation } from '../__generated__/RoleAssignmentTabBulkRevokeMutation.graphql';
 import { RoleAssignmentTabFragment$key } from '../__generated__/RoleAssignmentTabFragment.graphql';
 import { RoleAssignmentOrderBy } from '../__generated__/RoleAssignmentTabRefetchQuery.graphql';
+import { RoleAssignmentTab_roleScopeFragment$key } from '../__generated__/RoleAssignmentTab_roleScopeFragment.graphql';
 import { convertToOrderBy } from '../helper';
 import AssignRoleModal from './AssignRoleModal';
 import { App, Tooltip, theme } from 'antd';
 import {
   BAIButton,
+  BAIDeleteConfirmModal,
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
@@ -33,7 +35,12 @@ import {
 } from 'nuqs';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useRefetchableFragment, useMutation } from 'react-relay';
+import {
+  graphql,
+  useFragment,
+  useRefetchableFragment,
+  useMutation,
+} from 'react-relay';
 import { useSetBAINotification } from 'src/hooks/useBAINotification';
 
 const assignmentOrderValues = [
@@ -48,23 +55,47 @@ const assignmentOrderValues = [
 interface RoleAssignmentTabProps {
   queryRef: RoleAssignmentTabFragment$key;
   roleId: string;
+  roleScopeFrgmt?: RoleAssignmentTab_roleScopeFragment$key | null;
   onAssignmentChange?: () => void;
 }
 
 const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
   queryRef,
   roleId,
+  roleScopeFrgmt,
   onAssignmentChange,
 }) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { modal, message } = App.useApp();
+  const { message } = App.useApp();
   const { logger } = useBAILogger();
   const { upsertNotification } = useSetBAINotification();
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [revokingUserIds, setRevokingUserIds] = useState<string[] | null>(null);
   const [isPendingRefetch, startRefetchTransition] = useTransition();
+
+  const roleScope = useFragment(
+    graphql`
+      fragment RoleAssignmentTab_roleScopeFragment on Role {
+        scopes(first: 1) {
+          edges {
+            node {
+              scopeType
+              scopeId
+            }
+          }
+        }
+      }
+    `,
+    roleScopeFrgmt ?? null,
+  );
+
+  const projectScopeId =
+    roleScope?.scopes?.edges?.[0]?.node?.scopeType === 'PROJECT'
+      ? roleScope.scopes.edges[0].node.scopeId
+      : undefined;
 
   const [queryParams, setQueryParams] = useQueryStates(
     {
@@ -205,7 +236,13 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
 
   const handleBulkAssign = (userIds: string[]) => {
     commitBulkAssignRole({
-      variables: { input: { userIds, roleId } },
+      variables: {
+        input: {
+          userIds,
+          roleId,
+          ...(projectScopeId ? { projectId: projectScopeId } : {}),
+        },
+      },
       onCompleted: (data, errors) => {
         if (errors && errors.length > 0) {
           logger.error(errors[0]);
@@ -239,37 +276,19 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
   };
 
   const handleBulkRevoke = (userIds: string[]) => {
-    modal.confirm({
-      title: t('rbac.DeleteUser'),
-      content:
-        userIds.length > 1
-          ? t('rbac.ConfirmBulkRevoke', { count: userIds.length })
-          : t('rbac.ConfirmRevoke'),
-      okText: t('button.Delete'),
-      okButtonProps: { danger: true, type: 'primary' },
-      onOk: () =>
-        mutateBulkRevokeRole({ input: { userIds, roleId } })
-          .then((data) => {
-            const failed = data.adminBulkRevokeRole?.failed ?? [];
-            if (failed.length > 0) {
-              message.warning(
-                t('rbac.BulkRevokePartialFailure', {
-                  count: failed.length,
-                }),
-              );
-            } else {
-              message.success(t('rbac.UserRevoked'));
-            }
-            setSelectedRowKeys([]);
-            handleRefresh();
-            onAssignmentChange?.();
-          })
-          .catch((error) => {
-            logger.error('Failed to bulk revoke role', error);
-            message.error(error?.message || t('general.ErrorOccurred'));
-          }),
-    });
+    setRevokingUserIds(userIds);
   };
+
+  const revokingItems = (revokingUserIds ?? [])
+    .map((userId) => {
+      const assignment = assignments.find((a) => a?.userId === userId);
+      const label =
+        assignment?.user?.basicInfo?.email ||
+        assignment?.user?.basicInfo?.fullName ||
+        userId;
+      return { key: userId, label };
+    })
+    .filter((item) => !!item.label);
 
   return (
     <>
@@ -415,6 +434,41 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
             setIsAssignModalOpen(false);
           }
         }}
+      />
+      <BAIDeleteConfirmModal
+        open={!!revokingUserIds}
+        items={revokingItems}
+        title={t('rbac.DeleteUser')}
+        description={t('rbac.ConfirmRevokeWithName')}
+        onOk={() => {
+          if (revokingUserIds) {
+            return mutateBulkRevokeRole({
+              input: { userIds: revokingUserIds, roleId },
+            })
+              .then((data) => {
+                const failed = data.adminBulkRevokeRole?.failed ?? [];
+                if (failed.length > 0) {
+                  message.warning(
+                    t('rbac.BulkRevokePartialFailure', {
+                      count: failed.length,
+                    }),
+                  );
+                } else {
+                  message.success(t('rbac.UserRevoked'));
+                }
+                setSelectedRowKeys([]);
+                handleRefresh();
+                onAssignmentChange?.();
+                setRevokingUserIds(null);
+              })
+              .catch((error) => {
+                logger.error('Failed to bulk revoke role', error);
+                message.error(error?.message || t('general.ErrorOccurred'));
+                setRevokingUserIds(null);
+              });
+          }
+        }}
+        onCancel={() => setRevokingUserIds(null)}
       />
     </>
   );

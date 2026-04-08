@@ -248,7 +248,7 @@ export const useStartSession = () => {
             },
           }),
           scaling_group: values.owner?.enabled
-            ? values.owner.project
+            ? values.owner.resourceGroup
             : values.resourceGroup,
           ...(values?.resource && {
             resource_opts: {

@@ -49,32 +49,42 @@ describe('fetchAndParseConfig', () => {
     jest.restoreAllMocks();
   });
 
-  it('returns null when fetch response status is not 200', async () => {
+  it('returns null config when fetch response status is not 200', async () => {
     mockFetch(404, '');
     const result = await fetchAndParseConfig('/config.toml');
-    expect(result).toBeNull();
+    expect(result.config).toBeNull();
+    expect(result.error).toBeUndefined();
   });
 
-  it('returns null when fetch throws an error', async () => {
+  it('returns null config without error when fetch throws (network failure)', async () => {
     global.fetch = jest.fn().mockRejectedValue(new Error('Network error'));
     const result = await fetchAndParseConfig('/config.toml');
-    expect(result).toBeNull();
+    expect(result.config).toBeNull();
+    expect(result.error).toBeUndefined();
   });
 
-  it('returns null for HTTP 500 (server error)', async () => {
+  it('returns null config with error when TOML parsing fails', async () => {
+    // Invalid TOML that will cause a parse error
+    mockFetch(200, '[general]\ninvalid toml = = =');
+    const result = await fetchAndParseConfig('/config.toml');
+    expect(result.config).toBeNull();
+    expect(result.error).toBeDefined();
+  });
+
+  it('returns null config for HTTP 500 (server error)', async () => {
     mockFetch(500, 'Internal Server Error');
     const result = await fetchAndParseConfig('/config.toml');
-    expect(result).toBeNull();
+    expect(result.config).toBeNull();
   });
 
-  it('returns null when response Content-Type is text/html (SPA fallback)', async () => {
+  it('returns null config when response Content-Type is text/html (SPA fallback)', async () => {
     // When config.toml is missing, the dev server's historyApiFallback
     // serves index.html with status 200 and Content-Type: text/html.
     const html =
       '<!DOCTYPE html><html><head><title>App</title></head><body></body></html>';
     mockFetch(200, html, 'text/html; charset=utf-8');
     const result = await fetchAndParseConfig('/config.toml');
-    expect(result).toBeNull();
+    expect(result.config).toBeNull();
   });
 
   it('returns parsed config object for valid TOML', async () => {
@@ -84,9 +94,9 @@ apiEndpoint = "https://api.example.com"
 `;
     mockFetch(200, tomlContent);
     const result = await fetchAndParseConfig('/config.toml');
-    expect(result).not.toBeNull();
-    expect(result?.general).toBeDefined();
-    expect(result?.general?.apiEndpoint).toBe('https://api.example.com');
+    expect(result.config).not.toBeNull();
+    expect(result.config?.general).toBeDefined();
+    expect(result.config?.general?.apiEndpoint).toBe('https://api.example.com');
   });
 
   it('parses license section from TOML', async () => {
@@ -97,9 +107,9 @@ validUntil = "2030-12-31"
 `;
     mockFetch(200, tomlContent);
     const result = await fetchAndParseConfig('/config.toml');
-    expect(result).not.toBeNull();
-    expect(result?.license?.edition).toBe('Enterprise');
-    expect(result?.license?.validUntil).toBe('2030-12-31');
+    expect(result.config).not.toBeNull();
+    expect(result.config?.license?.edition).toBe('Enterprise');
+    expect(result.config?.license?.validUntil).toBe('2030-12-31');
   });
 
   it('parses wsproxy section from TOML', async () => {
@@ -109,8 +119,8 @@ proxyURL = "http://127.0.0.1:5050/"
 `;
     mockFetch(200, tomlContent);
     const result = await fetchAndParseConfig('/config.toml');
-    expect(result).not.toBeNull();
-    expect(result?.wsproxy?.proxyURL).toBe('http://127.0.0.1:5050/');
+    expect(result.config).not.toBeNull();
+    expect(result.config?.wsproxy?.proxyURL).toBe('http://127.0.0.1:5050/');
   });
 
   it('parses plugin section from TOML', async () => {
@@ -121,9 +131,9 @@ page = "custom-pages"
 `;
     mockFetch(200, tomlContent);
     const result = await fetchAndParseConfig('/config.toml');
-    expect(result).not.toBeNull();
-    expect(result?.plugin?.login).toBe('custom-login');
-    expect(result?.plugin?.page).toBe('custom-pages');
+    expect(result.config).not.toBeNull();
+    expect(result.config?.plugin?.login).toBe('custom-login');
+    expect(result.config?.plugin?.page).toBe('custom-pages');
   });
 
   it('preprocesses apiEndpointText escape sequences', async () => {
@@ -135,9 +145,9 @@ apiEndpointText = "Line1\\nLine2"
 `;
     mockFetch(200, tomlContent);
     const result = await fetchAndParseConfig('/config.toml');
-    expect(result).not.toBeNull();
+    expect(result.config).not.toBeNull();
     // After preprocessing, the string should contain an actual newline
-    expect(result?.general?.apiEndpointText).toBe('Line1\nLine2');
+    expect(result.config?.general?.apiEndpointText).toBe('Line1\nLine2');
   });
 
   it('keeps original apiEndpointText when preprocessing fails', async () => {
@@ -148,9 +158,9 @@ apiEndpointText = "valid text"
 `;
     mockFetch(200, tomlContent);
     const result = await fetchAndParseConfig('/config.toml');
-    expect(result).not.toBeNull();
+    expect(result.config).not.toBeNull();
     // Regular text without escape sequences should be preserved
-    expect(result?.general?.apiEndpointText).toBe('valid text');
+    expect(result.config?.general?.apiEndpointText).toBe('valid text');
   });
 
   it('handles TOML with multiple sections', async () => {
@@ -170,19 +180,32 @@ page = ""
 `;
     mockFetch(200, tomlContent);
     const result = await fetchAndParseConfig('/config.toml');
-    expect(result).not.toBeNull();
-    expect(result?.general?.apiEndpoint).toBe('https://api.example.com');
-    expect(result?.license?.edition).toBe('Community');
-    expect(result?.wsproxy?.proxyURL).toBe('http://localhost:5050');
+    expect(result.config).not.toBeNull();
+    expect(result.config?.general?.apiEndpoint).toBe('https://api.example.com');
+    expect(result.config?.license?.edition).toBe('Community');
+    expect(result.config?.wsproxy?.proxyURL).toBe('http://localhost:5050');
   });
 
-  it('returns null for empty TOML body', async () => {
+  it('returns non-null config for empty TOML body', async () => {
     mockFetch(200, '');
     const result = await fetchAndParseConfig('/config.toml');
     // smol-toml parses empty string to an empty object, not null
     // The config should be a non-null object (empty)
-    expect(result).not.toBeNull();
-    expect(typeof result).toBe('object');
+    expect(result.config).not.toBeNull();
+    expect(typeof result.config).toBe('object');
+  });
+
+  it('returns error when TOML has duplicate keys', async () => {
+    const tomlContent = `
+[general]
+debug = false
+apiEndpoint = "https://api.example.com"
+debug = true
+`;
+    mockFetch(200, tomlContent);
+    const result = await fetchAndParseConfig('/config.toml');
+    expect(result.config).toBeNull();
+    expect(result.error).toBeDefined();
   });
 
   it('calls fetch with the provided config path', async () => {
@@ -216,7 +239,7 @@ edition = "Open Source"
 `;
     mockFetch(200, tomlContent);
     const result = await fetchAndParseConfig('/config.toml');
-    expect(result?.general).toBeUndefined();
+    expect(result.config?.general).toBeUndefined();
   });
 
   it('does not modify config when apiEndpointText is absent', async () => {
@@ -226,8 +249,8 @@ apiEndpoint = "https://example.com"
 `;
     mockFetch(200, tomlContent);
     const result = await fetchAndParseConfig('/config.toml');
-    expect(result?.general?.apiEndpoint).toBe('https://example.com');
-    expect(result?.general?.apiEndpointText).toBeUndefined();
+    expect(result.config?.general?.apiEndpoint).toBe('https://example.com');
+    expect(result.config?.general?.apiEndpointText).toBeUndefined();
   });
 
   it('handles tab escape sequence in apiEndpointText', async () => {
@@ -237,7 +260,7 @@ apiEndpointText = "Column1\\tColumn2"
 `;
     mockFetch(200, tomlContent);
     const result = await fetchAndParseConfig('/config.toml');
-    expect(result?.general?.apiEndpointText).toBe('Column1\tColumn2');
+    expect(result.config?.general?.apiEndpointText).toBe('Column1\tColumn2');
   });
 });
 

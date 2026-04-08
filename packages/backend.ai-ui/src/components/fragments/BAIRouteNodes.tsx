@@ -19,6 +19,7 @@ import {
   BAITable,
   BAITableProps,
 } from '../Table';
+import useConnectedBAIClient from '../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { theme } from 'antd';
 import dayjs from 'dayjs';
@@ -44,11 +45,22 @@ const isEnableSorter = (key: string) => {
 };
 
 const routeStatusSemanticMap: Record<string, SemanticColor> = {
-  HEALTHY: 'success',
   PROVISIONING: 'info',
+  RUNNING: 'success',
+  TERMINATING: 'warning',
+  TERMINATED: 'default',
+  FAILED_TO_START: 'error',
+  // Pre-26.4.0: health states were part of RouteStatus
+  HEALTHY: 'success',
   UNHEALTHY: 'warning',
   DEGRADED: 'warning',
-  FAILED_TO_START: 'error',
+};
+
+const routeHealthStatusSemanticMap: Record<string, SemanticColor> = {
+  HEALTHY: 'success',
+  UNHEALTHY: 'warning',
+  DEGRADED: 'warning',
+  NOT_CHECKED: 'default',
 };
 
 const trafficStatusSemanticMap: Record<string, SemanticColor> = {
@@ -84,12 +96,15 @@ const BAIRouteNodes = ({
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const semanticColorMap = useSemanticColorMap();
+  const baiClient = useConnectedBAIClient();
+  const isSupportRouteHealthStatus = baiClient.supports('route-health-status');
 
   const routes = useFragment<BAIRouteNodesFragment$key>(
     graphql`
       fragment BAIRouteNodesFragment on Route @relay(plural: true) {
         id
         status
+        healthStatus @since(version: "26.4.0")
         trafficRatio
         createdAt
         errorData
@@ -163,6 +178,26 @@ const BAIRouteNodes = ({
             </BAITag>
           ) : null,
       },
+      isSupportRouteHealthStatus
+        ? {
+            title: t('comp:BAIRouteNodes.HealthStatus'),
+            dataIndex: 'healthStatus',
+            key: 'healthStatus',
+            render: (healthStatus) =>
+              healthStatus && healthStatus !== '%future added value' ? (
+                <BAITag
+                  color={
+                    semanticColorMap[
+                      routeHealthStatusSemanticMap[healthStatus] ?? 'default'
+                    ]
+                  }
+                  style={{ marginRight: 0 }}
+                >
+                  {healthStatus}
+                </BAITag>
+              ) : null,
+          }
+        : undefined,
       {
         title: t('comp:BAIRouteNodes.TrafficStatus'),
         dataIndex: 'trafficStatus',

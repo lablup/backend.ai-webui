@@ -228,6 +228,7 @@
   },
   "comp:BAIRouteNodes": {
     "CreatedAt": "Үүсгэсэн огноо",
+    "HealthStatus": "Эрүүл мэндийн төлөв",
     "RouteId": "Маршрутын ID",
     "SessionId": "Сессийн ID",
     "Status": "Төлөв",

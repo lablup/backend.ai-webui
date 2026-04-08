@@ -4,6 +4,7 @@
  */
 import { RoleAssignmentTabFragment$key } from '../__generated__/RoleAssignmentTabFragment.graphql';
 import { RoleDetailDrawerContentFragment$key } from '../__generated__/RoleDetailDrawerContentFragment.graphql';
+import { RoleDetailDrawerContentProjectQuery } from '../__generated__/RoleDetailDrawerContentProjectQuery.graphql';
 import { RolePermissionTabFragment$key } from '../__generated__/RolePermissionTabFragment.graphql';
 import RoleAssignmentTab from './RoleAssignmentTab';
 import RolePermissionTab from './RolePermissionTab';
@@ -12,7 +13,7 @@ import { toLocalId } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useFragment } from 'react-relay';
+import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 
 interface RoleDetailDrawerContentProps {
   roleDetailFrgmt: RoleDetailDrawerContentFragment$key;
@@ -44,12 +45,52 @@ const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
         createdAt
         updatedAt
         deletedAt
+        scopes(first: 1) {
+          edges {
+            node {
+              scopeType
+              scopeId
+            }
+          }
+        }
+        ...RoleAssignmentTab_roleScopeFragment
+        ...CreatePermissionModal_roleScopeFragment
       }
     `,
     roleDetailFrgmt,
   );
 
   const roleId = toLocalId(role.id);
+
+  const scopeNode = role.scopes?.edges?.[0]?.node;
+  const projectScopeId =
+    scopeNode?.scopeType === 'PROJECT' ? scopeNode.scopeId : undefined;
+
+  const projectData = useLazyLoadQuery<RoleDetailDrawerContentProjectQuery>(
+    graphql`
+      query RoleDetailDrawerContentProjectQuery(
+        $projectId: UUID!
+        $skip: Boolean!
+      ) {
+        projectV2(projectId: $projectId) @skip(if: $skip) {
+          basicInfo {
+            name
+          }
+        }
+      }
+    `,
+    {
+      projectId: projectScopeId ?? '',
+      skip: !projectScopeId,
+    },
+    {
+      fetchPolicy: projectScopeId ? 'store-or-network' : 'store-only',
+    },
+  );
+
+  const projectName = projectScopeId
+    ? (projectData.projectV2?.basicInfo?.name ?? projectScopeId)
+    : null;
 
   const source = role.source ?? 'CUSTOM';
   const status = role.status ?? 'ACTIVE';
@@ -94,6 +135,9 @@ const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
             ? dayjs(role.updatedAt).format('YYYY-MM-DD HH:mm:ss')
             : '-'}
         </Descriptions.Item>
+        <Descriptions.Item label={t('general.Project')} span={2}>
+          {projectName ?? '-'}
+        </Descriptions.Item>
         <Descriptions.Item label={t('rbac.RoleDescription')} span={2}>
           {role.description || '-'}
         </Descriptions.Item>
@@ -110,6 +154,7 @@ const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
                 <RoleAssignmentTab
                   queryRef={assignmentQueryRef}
                   roleId={roleId}
+                  roleScopeFrgmt={role}
                   onAssignmentChange={onDataChange}
                 />
               </Suspense>
@@ -123,6 +168,7 @@ const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
                 <RolePermissionTab
                   queryRef={permissionQueryRef}
                   roleId={roleId}
+                  roleScopeFrgmt={role}
                   onPermissionChange={onDataChange}
                 />
               </Suspense>

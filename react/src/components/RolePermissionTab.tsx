@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { CreatePermissionModal_roleScopeFragment$key } from '../__generated__/CreatePermissionModal_roleScopeFragment.graphql';
 import { RolePermissionTabDeleteMutation } from '../__generated__/RolePermissionTabDeleteMutation.graphql';
 import { RolePermissionTabFragment$key } from '../__generated__/RolePermissionTabFragment.graphql';
 import { PermissionOrderBy } from '../__generated__/RolePermissionTabRefetchQuery.graphql';
@@ -10,6 +11,7 @@ import CreatePermissionModal from './CreatePermissionModal';
 import { App, Tag } from 'antd';
 import {
   BAIButton,
+  BAIDeleteConfirmModal,
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
@@ -45,21 +47,27 @@ const permissionOrderValues = ['ENTITY_TYPE_ASC', 'ENTITY_TYPE_DESC'] as const;
 interface RolePermissionTabProps {
   queryRef: RolePermissionTabFragment$key;
   roleId: string;
+  roleScopeFrgmt?: CreatePermissionModal_roleScopeFragment$key | null;
   onPermissionChange?: () => void;
 }
 
 const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
   queryRef,
   roleId,
+  roleScopeFrgmt,
   onPermissionChange,
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { modal, message } = App.useApp();
+  const { message } = App.useApp();
   const { logger } = useBAILogger();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [editingPermission, setEditingPermission] =
     useState<EditingPermission | null>(null);
+  const [deletingPermission, setDeletingPermission] = useState<{
+    id: string;
+    label: string;
+  } | null>(null);
   const [isPendingRefetch, startRefetchTransition] = useTransition();
 
   const [queryParams, setQueryParams] = useQueryStates(
@@ -218,24 +226,14 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
     });
   };
 
-  const handleDelete = (permissionId: string) => {
-    modal.confirm({
-      title: t('rbac.DeletePermission'),
-      content: t('rbac.ConfirmDeletePermission'),
-      okText: t('button.Delete'),
-      okButtonProps: { danger: true, type: 'primary' },
-      onOk: () =>
-        mutateDeletePermission({ input: { id: permissionId } })
-          .then(() => {
-            message.success(t('rbac.PermissionDeleted'));
-            handleRefresh();
-            onPermissionChange?.();
-          })
-          .catch((error) => {
-            logger.error('Failed to delete permission', error);
-            message.error(error?.message || t('general.ErrorOccurred'));
-          }),
-    });
+  const handleDelete = (record: {
+    id: string;
+    entityType: string;
+    operation: string;
+    scopeType: string;
+  }) => {
+    const permissionLabel = `${t(`rbac.types.${record.entityType}`, { defaultValue: record.entityType })} - ${t(`rbac.operations.${record.operation}`, { defaultValue: record.operation })} (${t(`rbac.types.${record.scopeType}`, { defaultValue: record.scopeType })})`;
+    setDeletingPermission({ id: toLocalId(record.id), label: permissionLabel });
   };
 
   return (
@@ -393,7 +391,7 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
                       title: t('rbac.DeletePermission'),
                       icon: <BAITrashBinIcon />,
                       type: 'danger',
-                      onClick: () => handleDelete(toLocalId(record?.id)),
+                      onClick: () => handleDelete(record),
                     },
                   ]}
                 />
@@ -424,6 +422,7 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
       <CreatePermissionModal
         open={isCreateModalOpen || !!editingPermission}
         roleId={roleId}
+        roleScopeFrgmt={roleScopeFrgmt}
         editingPermission={editingPermission}
         onRequestClose={(success) => {
           setIsCreateModalOpen(false);
@@ -433,6 +432,40 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
             onPermissionChange?.();
           }
         }}
+      />
+      <BAIDeleteConfirmModal
+        open={!!deletingPermission}
+        items={
+          deletingPermission
+            ? [
+                {
+                  key: deletingPermission.id,
+                  label: deletingPermission.label,
+                },
+              ]
+            : []
+        }
+        title={t('rbac.DeletePermission')}
+        description={t('rbac.ConfirmDeletePermissionWithDetail')}
+        onOk={() => {
+          if (deletingPermission) {
+            return mutateDeletePermission({
+              input: { id: deletingPermission.id },
+            })
+              .then(() => {
+                message.success(t('rbac.PermissionDeleted'));
+                handleRefresh();
+                onPermissionChange?.();
+                setDeletingPermission(null);
+              })
+              .catch((error) => {
+                logger.error('Failed to delete permission', error);
+                message.error(error?.message || t('general.ErrorOccurred'));
+                setDeletingPermission(null);
+              });
+          }
+        }}
+        onCancel={() => setDeletingPermission(null)}
       />
     </>
   );

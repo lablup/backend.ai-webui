@@ -21,7 +21,7 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
 
 export type DeploymentNode = NonNullable<
   NonNullable<
-    BAIDeploymentSelectPaginatedQuery['response']['deployments']
+    BAIDeploymentSelectPaginatedQuery['response']['adminDeployments']
   >['edges'][number]
 >['node'];
 
@@ -106,7 +106,7 @@ const BAIDeploymentSelect: React.FC<BAIDeploymentSelectProps> = ({
           $limit: Int!
           $filter: DeploymentFilter
         ) {
-          deployments(offset: $offset, limit: $limit, filter: $filter) {
+          adminDeployments(offset: $offset, limit: $limit, filter: $filter) {
             count
             edges {
               node {
@@ -130,9 +130,9 @@ const BAIDeploymentSelect: React.FC<BAIDeploymentSelectProps> = ({
         fetchKey: deferredFetchKey,
       },
       {
-        getTotal: (result) => result.deployments?.count ?? undefined,
+        getTotal: (result) => result.adminDeployments?.count ?? undefined,
         getItem: (result) =>
-          result.deployments?.edges?.map((edge) => edge?.node),
+          result.adminDeployments?.edges?.map((edge) => edge?.node),
         getId: (item) => item?.id,
       },
     );
@@ -238,11 +238,11 @@ const BAIDeploymentSelect: React.FC<BAIDeploymentSelectProps> = ({
         ) : undefined
       }
       footer={
-        _.isNumber(result.deployments?.count) &&
-        result.deployments.count > 0 ? (
+        _.isNumber(result.adminDeployments?.count) &&
+        result.adminDeployments.count > 0 ? (
           <TotalFooter
             loading={isLoadingNext}
-            total={result.deployments.count}
+            total={result.adminDeployments.count}
           />
         ) : undefined
       }

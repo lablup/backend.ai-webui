@@ -228,6 +228,7 @@
   },
   "comp:BAIRouteNodes": {
     "CreatedAt": "作成日時",
+    "HealthStatus": "ヘルスステータス",
     "RouteId": "ルートID",
     "SessionId": "セッションID",
     "Status": "ステータス",

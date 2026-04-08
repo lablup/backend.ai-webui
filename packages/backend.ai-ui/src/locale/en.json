@@ -234,6 +234,7 @@
   },
   "comp:BAIRouteNodes": {
     "CreatedAt": "Created At",
+    "HealthStatus": "Health Status",
     "RouteId": "Route ID",
     "SessionId": "Session ID",
     "Status": "Status",

@@ -294,7 +294,8 @@ const AgentResources: React.FC<AgentResourcesProps> = ({ agentNodeFrgmt }) => {
                 return null;
               }
               if (_.includes(statKey, '_util')) {
-                const deviceName = _.split(statKey, '_')[0] + '.device';
+                const deviceName =
+                  _.split(statKey, '_').slice(0, -1).join('-') + '.device';
                 const current = _.toFinite(
                   parsedLiveStat?.node?.[statKey]?.current,
                 );
@@ -313,7 +314,8 @@ const AgentResources: React.FC<AgentResourcesProps> = ({ agentNodeFrgmt }) => {
                 );
               }
               if (_.includes(statKey, '_mem')) {
-                const deviceName = _.split(statKey, '_')[0] + '.device';
+                const deviceName =
+                  _.split(statKey, '_').slice(0, -1).join('-') + '.device';
                 const current = _.toFinite(
                   parsedLiveStat?.node?.[statKey]?.current,
                 );
@@ -356,7 +358,7 @@ const AgentResources: React.FC<AgentResourcesProps> = ({ agentNodeFrgmt }) => {
               }
               if (_.includes(statKey, '_temperature')) {
                 const deviceName =
-                  _.split(statKey, '_').slice(0, -1).join('_') + '.device';
+                  _.split(statKey, '_').slice(0, -1).join('-') + '.device';
                 const humanReadableName =
                   mergedResourceSlots?.[deviceName]?.human_readable_name;
                 return (

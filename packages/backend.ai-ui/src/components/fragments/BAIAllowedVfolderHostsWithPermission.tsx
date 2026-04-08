@@ -2,7 +2,6 @@ import { BAIAllowedVfolderHostsWithPermissionFromGroupFragment$key } from '../..
 import { BAIAllowedVfolderHostsWithPermissionFromKeyPairResourcePolicyFragment$key } from '../../__generated__/BAIAllowedVfolderHostsWithPermissionFromKeyPairResourcePolicyFragment.graphql';
 import { BAIAllowedVfolderHostsWithPermissionQuery } from '../../__generated__/BAIAllowedVfolderHostsWithPermissionQuery.graphql';
 import { SemanticColor } from '../../helper';
-import BAIBadge from '../BAIBadge';
 import BAIFlex from '../BAIFlex';
 import BAILink from '../BAILink';
 import BAIModal from '../BAIModal';
@@ -10,6 +9,7 @@ import { BAITable } from '../Table';
 import { CheckCircleFilled, StopFilled } from '@ant-design/icons';
 import { theme } from 'antd';
 import _ from 'lodash';
+import { LockIcon, LockOpenIcon } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
@@ -90,17 +90,42 @@ const BAIAllowedVfolderHostsWithPermission: React.FC<
   return (
     <>
       <BAIFlex gap="xs" wrap="wrap">
-        {_.map(_.keys(allowedVfolderHosts), (storageHost) => (
-          <BAILink
-            key={storageHost}
-            onClick={() => {
-              setStorageHost(storageHost);
-            }}
-            type="hover"
-          >
-            <BAIBadge color={getColor(storageHost)} text={storageHost} />
-          </BAILink>
-        ))}
+        {_.map(_.keys(allowedVfolderHosts), (storageHost) => {
+          const color = getColor(storageHost);
+          return (
+            <BAILink
+              key={storageHost}
+              onClick={() => {
+                setStorageHost(storageHost);
+              }}
+              type="hover"
+            >
+              <BAIFlex gap="xxs" align="center">
+                {color === 'error' ? (
+                  <LockIcon
+                    size={14}
+                    aria-hidden="true"
+                    focusable={false}
+                    style={{ color: token.colorError }}
+                  />
+                ) : (
+                  <LockOpenIcon
+                    size={14}
+                    aria-hidden="true"
+                    focusable={false}
+                    style={{
+                      color:
+                        color === 'success'
+                          ? token.colorSuccess
+                          : token.colorWarning,
+                    }}
+                  />
+                )}
+                {storageHost}
+              </BAIFlex>
+            </BAILink>
+          );
+        })}
       </BAIFlex>
       <BAIModal
         centered

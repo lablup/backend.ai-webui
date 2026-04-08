@@ -228,6 +228,7 @@
   },
   "comp:BAIRouteNodes": {
     "CreatedAt": "Luotu",
+    "HealthStatus": "Terveystila",
     "RouteId": "Reitti-ID",
     "SessionId": "Istunnon tunnus",
     "Status": "Tila",

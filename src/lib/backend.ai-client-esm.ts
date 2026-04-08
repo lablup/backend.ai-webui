@@ -896,6 +896,7 @@ class Client {
       this._features['my-keypairs'] = true;
       this._features['rbac'] = true;
       this._features['bulk-purge-users'] = true;
+      this._features['route-health-status'] = true;
     }
   }
 

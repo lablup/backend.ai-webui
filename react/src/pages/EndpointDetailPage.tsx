@@ -7,6 +7,9 @@ import { EndpointDetailPageAutoScalingRuleDeleteMutation } from '../__generated_
 import {
   EndpointDetailPageQuery,
   EndpointDetailPageQuery$data,
+  RouteFilter,
+  RouteHealthStatus,
+  RouteStatus,
   RouteTrafficStatus,
 } from '../__generated__/EndpointDetailPageQuery.graphql';
 import { InferenceSessionErrorModalFragment$key } from '../__generated__/InferenceSessionErrorModalFragment.graphql';
@@ -23,6 +26,7 @@ import { useFolderExplorerOpener } from '../components/FolderExplorerOpener';
 import ImageNodeSimpleTag from '../components/ImageNodeSimpleTag';
 import InferenceSessionErrorModal from '../components/InferenceSessionErrorModal';
 import SessionDetailDrawer from '../components/SessionDetailDrawer';
+import SourceCodeView from '../components/SourceCodeView';
 import SwitchToProjectButton from '../components/SwitchToProjectButton';
 import VFolderLazyView from '../components/VFolderLazyView';
 import { baiSignedRequestWithPromise, convertToOrderBy } from '../helper';
@@ -37,7 +41,6 @@ import {
   CloseOutlined,
   DeleteOutlined,
   ExclamationCircleOutlined,
-  FolderOutlined,
   LoadingOutlined,
   PlusOutlined,
   SettingOutlined,
@@ -92,6 +95,7 @@ import React, {
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 import { useParams } from 'react-router-dom';
+import VFolderNodeIdenticon from 'src/components/VFolderNodeIdenticon';
 
 interface RoutingInfo {
   route_id: string;
@@ -165,6 +169,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
   const { open } = useFolderExplorerOpener();
   const [selectedSessionId, setSelectedSessionId] = useState<string>();
   const isSupportAutoScalingRule = baiClient.supports('auto-scaling-rule');
+  const isSupportRouteHealthStatus = baiClient.supports('route-health-status');
   const [errorDataForJSONModal, setErrorDataForJSONModal] = useState<string>();
   const {
     endpoint,
@@ -189,6 +194,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
         $skipScalingRules: Boolean!
         $deploymentId: ID!
         $routeFilter: RouteFilter
+        $healthyRouteFilter: RouteFilter
         $routeOrderBy: [RouteOrderBy!]
         $routeLimit: Int
         $routeOffset: Int
@@ -237,6 +243,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
           extra_mounts {
             row_id
             name
+            ...VFolderNodeIdenticonFragment
           }
           environ
           resource_group
@@ -320,7 +327,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
         }
         healthyRoutes: routes(
           deploymentId: $deploymentId
-          filter: { healthStatus: [HEALTHY] }
+          filter: $healthyRouteFilter
         ) @skipOnClient(if: $skipRouteNodes) {
           count
         }
@@ -340,10 +347,25 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
       skipScalingRules: !isSupportAutoScalingRule,
       deploymentId: toGlobalId('ModelDeployment', serviceId || ''),
       routeFilter: {
-        status:
-          deferredRouteStatusCategory === 'running'
+        status: (deferredRouteStatusCategory === 'running'
+          ? isSupportRouteHealthStatus
             ? ['PROVISIONING', 'RUNNING', 'TERMINATING']
-            : ['TERMINATED', 'FAILED_TO_START'],
+            : [
+                'PROVISIONING',
+                'HEALTHY',
+                'UNHEALTHY',
+                'DEGRADED',
+                'TERMINATING',
+              ]
+          : ['TERMINATED', 'FAILED_TO_START']) as RouteStatus[],
+        ...(isSupportRouteHealthStatus &&
+        deferredRoutePropertyFilter?.healthStatus
+          ? {
+              healthStatus: [
+                deferredRoutePropertyFilter.healthStatus as RouteHealthStatus,
+              ],
+            }
+          : {}),
         ...(deferredRoutePropertyFilter?.trafficStatus
           ? {
               trafficStatus: [
@@ -352,6 +374,9 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
             }
           : {}),
       },
+      healthyRouteFilter: (isSupportRouteHealthStatus
+        ? { healthStatus: ['HEALTHY'] }
+        : { status: ['HEALTHY'] }) as RouteFilter,
       routeOrderBy: convertToOrderBy(deferredRouteOrder) ?? undefined,
       routeLimit: deferredRoutePagination.pageSize,
       routeOffset:
@@ -536,32 +561,38 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
       children: (
         <BAIFlex direction="column" align="start">
           {_.map(endpoint?.extra_mounts, (vfolder) => {
-            return (
-              <BAIFlex direction="row" gap={'xxs'} key={vfolder?.row_id}>
-                <Typography.Link
-                  onClick={() => {
-                    vfolder?.row_id && open(vfolder?.row_id);
-                  }}
-                >
-                  <FolderOutlined /> {vfolder?.name}
-                </Typography.Link>
-              </BAIFlex>
-            );
+            return vfolder ? (
+              <Typography.Link
+                key={vfolder.row_id}
+                onClick={() => {
+                  vfolder.row_id && open(vfolder.row_id);
+                }}
+              >
+                <BAIFlex direction="row" gap={'xs'}>
+                  <VFolderNodeIdenticon vfolderNodeIdenticonFrgmt={vfolder} />{' '}
+                  {vfolder.name}
+                </BAIFlex>
+              </Typography.Link>
+            ) : null;
           })}
         </BAIFlex>
       ),
     },
     {
       label: t('session.launcher.EnvironmentVariable'),
-      children: (
-        <Typography.Text
-          style={{ fontFamily: 'monospace', wordBreak: 'break-all' }}
-        >
-          {_.isEmpty(JSON.parse(endpoint?.environ || '{}'))
-            ? '-'
-            : endpoint?.environ}
-        </Typography.Text>
-      ),
+      children: (() => {
+        let envObj: Record<string, string> = {};
+        try {
+          envObj = JSON.parse(endpoint?.environ || '{}');
+        } catch {
+          return '-';
+        }
+        if (_.isEmpty(envObj)) return '-';
+        const envText = _.map(envObj, (value, key) => `${key}="${value}"`).join(
+          '\n',
+        );
+        return <SourceCodeView language="shell">{envText}</SourceCodeView>;
+      })(),
       span: {
         sm: 1,
       },
@@ -664,7 +695,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
       >
         <Descriptions
           bordered
-          column={{ xxl: 3, xl: 3, lg: 2, md: 1, sm: 1, xs: 1 }}
+          column={{ xxl: 3, xl: 2, lg: 2, md: 1, sm: 1, xs: 1 }}
           style={{
             backgroundColor: token.colorBgBase,
           }}
@@ -1042,6 +1073,24 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
                   setRoutePagination({ current: 1, pageSize: 10 });
                 }}
                 filterProperties={[
+                  ...(isSupportRouteHealthStatus
+                    ? [
+                        {
+                          key: 'healthStatus',
+                          propertyLabel: t('modelService.HealthStatus'),
+                          type: 'enum' as const,
+                          valueMode: 'scalar' as const,
+                          fixedOperator: 'equals' as const,
+                          strictSelection: true,
+                          options: [
+                            { label: 'HEALTHY', value: 'HEALTHY' },
+                            { label: 'UNHEALTHY', value: 'UNHEALTHY' },
+                            { label: 'DEGRADED', value: 'DEGRADED' },
+                            { label: 'NOT_CHECKED', value: 'NOT_CHECKED' },
+                          ],
+                        },
+                      ]
+                    : []),
                   {
                     key: 'trafficStatus',
                     propertyLabel: t('modelService.TrafficStatus'),

@@ -22,6 +22,7 @@ import { App } from 'antd';
 import {
   BAIButton,
   BAICard,
+  BAIDeleteConfirmModal,
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
@@ -33,6 +34,7 @@ import {
   toLocalId,
   useBAILogger,
   useFetchKey,
+  useMutationWithPromise,
 } from 'backend.ai-ui';
 import { BanIcon, PlusIcon, UndoIcon } from 'lucide-react';
 import {
@@ -120,7 +122,7 @@ const RBACManagementPage: React.FC = () => {
     },
   );
 
-  const { modal, message } = App.useApp();
+  const { message } = App.useApp();
   const { logger } = useBAILogger();
 
   const [commitDeactivateRole] =
@@ -146,17 +148,17 @@ const RBACManagementPage: React.FC = () => {
       }
     `);
 
-  const [commitPurgeRole] = useMutation<RBACManagementPagePurgeRoleMutation>(
-    graphql`
+  const mutatePurgeRole =
+    useMutationWithPromise<RBACManagementPagePurgeRoleMutation>(graphql`
       mutation RBACManagementPagePurgeRoleMutation($input: PurgeRoleInput!) {
         adminPurgeRole(input: $input) {
           id
         }
       }
-    `,
-  );
+    `);
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [purgingRole, setPurgingRole] = useState<RoleNodeInList | null>(null);
   const [{ roleDetail: selectedRoleId }, setRoleDetailParam] = useQueryStates(
     {
       roleDetail: parseAsString,
@@ -206,30 +208,7 @@ const RBACManagementPage: React.FC = () => {
   };
 
   const handlePurgeRole = (role: RoleNodeInList) => {
-    modal.confirm({
-      title: t('rbac.PurgeRole'),
-      content: t('rbac.ConfirmPurge', { name: role.name }),
-      okText: t('button.Delete'),
-      okButtonProps: { danger: true, type: 'primary' },
-      onOk: () => {
-        commitPurgeRole({
-          variables: { input: { id: toLocalId(role.id) } },
-          onCompleted: (_data, errors) => {
-            if (errors && errors.length > 0) {
-              logger.error(errors[0]);
-              message.error(errors[0]?.message || t('general.ErrorOccurred'));
-              return;
-            }
-            message.success(t('rbac.RolePurged'));
-            updateFetchKey();
-          },
-          onError: (error) => {
-            logger.error(error);
-            message.error(error?.message || t('general.ErrorOccurred'));
-          },
-        });
-      },
-    });
+    setPurgingRole(role);
   };
 
   const roleNodes = queryRef.adminRoles?.edges?.map((edge) => edge?.node) ?? [];
@@ -397,6 +376,34 @@ const RBACManagementPage: React.FC = () => {
         open={!!selectedRoleId}
         roleId={selectedRoleId || undefined}
         onClose={() => setRoleDetailParam({ roleDetail: null })}
+      />
+      <BAIDeleteConfirmModal
+        open={!!purgingRole}
+        items={
+          purgingRole
+            ? [{ key: purgingRole.id, label: purgingRole.name ?? '' }]
+            : []
+        }
+        title={t('rbac.PurgeRole')}
+        description={t('rbac.ConfirmPurge')}
+        onOk={() => {
+          if (purgingRole) {
+            return mutatePurgeRole({
+              input: { id: toLocalId(purgingRole.id) },
+            })
+              .then(() => {
+                message.success(t('rbac.RolePurged'));
+                updateFetchKey();
+                setPurgingRole(null);
+              })
+              .catch((error) => {
+                logger.error('Failed to purge role', error);
+                message.error(error?.message || t('general.ErrorOccurred'));
+                setPurgingRole(null);
+              });
+          }
+        }}
+        onCancel={() => setPurgingRole(null)}
       />
     </BAICard>
   );

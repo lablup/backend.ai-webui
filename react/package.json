@@ -30,6 +30,7 @@
     "@uiw/react-codemirror": "^4.25.8",
     "ahooks": "catalog:",
     "ai": "^5.0.150",
+    "ajv": "^8.18.0",
     "ansi_up": "^6.0.6",
     "antd": "catalog:",
     "antd-style": "catalog:",
@@ -81,6 +82,7 @@
     "use-query-params": "^2.2.2",
     "uuid": "catalog:",
     "web-vitals": "^3.5.2",
+    "yaml": "^2.8.3",
     "zod": "^4.3.6"
   },
   "scripts": {
@@ -131,7 +133,6 @@
     "@types/relay-runtime": "catalog:",
     "@types/relay-test-utils": "catalog:",
     "@types/uuid": "^11.0.0",
-    "ajv": "^8.18.0",
     "babel-jest": "catalog:",
     "babel-plugin-react-compiler": "catalog:",
     "babel-plugin-relay": "^20.1.1",

@@ -8,10 +8,11 @@ import useControllableState_deprecated from '../hooks/useControllableState';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import FolderCreateModal from './FolderCreateModal';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
+import { ReloadOutlined } from '@ant-design/icons';
 import { Button, Select, type SelectProps, Space, Tooltip } from 'antd';
 import { useUpdatableState, BAIFlex } from 'backend.ai-ui';
 import _ from 'lodash';
-import { FolderOpenIcon, PlusIcon, RefreshCwIcon } from 'lucide-react';
+import { FolderOpenIcon, PlusIcon } from 'lucide-react';
 import React, { startTransition, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -126,7 +127,7 @@ const VFolderSelect: React.FC<VFolderSelectProps> = ({
   }, [autoSelectDefault]);
 
   return (
-    <BAIFlex direction="row" gap={'xxs'}>
+    <BAIFlex direction="row" gap={'xs'}>
       <Select
         showSearch={{
           optionFilterProp: 'label',
@@ -174,7 +175,7 @@ const VFolderSelect: React.FC<VFolderSelectProps> = ({
         {showRefreshButton ? (
           <Tooltip title={t('button.Refresh')}>
             <Button
-              icon={<RefreshCwIcon />}
+              icon={<ReloadOutlined />}
               variant="text"
               onClick={() => {
                 startTransition(() => {

@@ -208,7 +208,8 @@ const SessionIdleChecks: React.FC<SessionIdleChecksProps> = ({
                       {_.map(value.extra?.resources, (resource, key) => {
                         const deviceName = ['cpu_util', 'mem'].includes(key)
                           ? _.split(key, '_')[0]
-                          : _.split(key, '_')[0] + '.device';
+                          : _.split(key, '_').slice(0, -1).join('-') +
+                            '.device';
                         const [utilization, threshold] = resource;
                         return (
                           <BAIFlex key={key} gap={'xs'}>

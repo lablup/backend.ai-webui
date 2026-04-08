@@ -152,7 +152,8 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
             if (['cpu_util', 'mem', 'disk', 'net_rx', 'net_tx'].includes(key)) {
               return null;
             } else if (_.includes(key, '_util')) {
-              const deviceName = _.split(key, '_')[0] + '.device';
+              const deviceName =
+                _.split(key, '_').slice(0, -1).join('-') + '.device';
               return (
                 <Col xs={24} sm={12}>
                   <BAIFlex direction="column" gap="xxs" align="stretch">
@@ -191,7 +192,8 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
                 </Col>
               );
             } else if (_.includes(key, '_mem')) {
-              const deviceName = _.split(key, '_')[0] + '.device';
+              const deviceName =
+                _.split(key, '_').slice(0, -1).join('-') + '.device';
               return (
                 <Col xs={24} sm={12}>
                   <BAIFlex direction="column" gap="xxs" align="stretch">

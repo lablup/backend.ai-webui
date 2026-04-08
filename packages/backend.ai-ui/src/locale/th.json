@@ -228,6 +228,7 @@
   },
   "comp:BAIRouteNodes": {
     "CreatedAt": "สร้างเมื่อ",
+    "HealthStatus": "สถานะระบบ",
     "RouteId": "รหัสเส้นทาง",
     "SessionId": "รหัสเซสชัน",
     "Status": "สถานะ",

@@ -4,6 +4,7 @@
  */
 import type { DiagnosticResult } from '../types/diagnostics';
 import { Alert, Skeleton, theme, Typography } from 'antd';
+import Paragraph from 'antd/lib/typography/Paragraph';
 import { BAIFlex } from 'backend.ai-ui';
 import { CheckCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -54,6 +55,11 @@ const DiagnosticResultList: React.FC<DiagnosticResultListProps> = ({
               <span>
                 {t(result.descriptionKey, result.interpolationValues)}
               </span>
+              {result.interpolationValues?.errorMessage && (
+                <Paragraph>
+                  <pre>{result.interpolationValues.errorMessage}</pre>
+                </Paragraph>
+              )}
               {result.remediationKey && (
                 <span style={{ fontStyle: 'italic' }}>
                   {t(result.remediationKey, result.interpolationValues)}
