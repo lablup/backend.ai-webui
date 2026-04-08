@@ -12,8 +12,15 @@ import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useBackendAIAppLauncher } from '../hooks/useBackendAIAppLauncher';
 import { fetchAndParseConfig } from '../hooks/useWebUIConfig';
 import { useMemoizedFn } from 'ahooks';
-import { toGlobalId, useBAILogger } from 'backend.ai-ui';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { Alert, Steps } from 'antd';
+import { BAICard, BAIFlex, toGlobalId, useBAILogger } from 'backend.ai-ui';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -653,18 +660,181 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
     }
   };
 
+  // Map the state machine stage to the visual Steps component:
+  //   step 0 = Authentication
+  //   step 1 = Session (lookup or create)
+  //   step 2 = Launch (proxy + window.open)
+  // - Stages strictly before the current step are 'finish'.
+  // - The current step is 'process', or 'error' when stage.name === 'error'
+  //   and the error step matches.
+  // - Stages after the current step are 'wait'.
+  // - On 'done', all three steps are 'finish'.
+  const { currentStep, stepStatuses } = useMemo(() => {
+    const STEP_AUTH = 0;
+    const STEP_SESSION = 1;
+    const STEP_LAUNCH = 2;
+    let current = STEP_AUTH;
+    let statuses: Array<'wait' | 'process' | 'finish' | 'error'> = [
+      'wait',
+      'wait',
+      'wait',
+    ];
+    switch (stage.name) {
+      case 'idle':
+      case 'auth':
+        current = STEP_AUTH;
+        statuses = ['process', 'wait', 'wait'];
+        break;
+      case 'session':
+        current = STEP_SESSION;
+        statuses = ['finish', 'process', 'wait'];
+        break;
+      case 'launching':
+        current = STEP_LAUNCH;
+        statuses = ['finish', 'finish', 'process'];
+        break;
+      case 'done':
+        current = STEP_LAUNCH;
+        statuses = ['finish', 'finish', 'finish'];
+        break;
+      case 'error': {
+        if (stage.step === 'auth') {
+          current = STEP_AUTH;
+          statuses = ['error', 'wait', 'wait'];
+        } else if (stage.step === 'session') {
+          current = STEP_SESSION;
+          statuses = ['finish', 'error', 'wait'];
+        } else {
+          current = STEP_LAUNCH;
+          statuses = ['finish', 'finish', 'error'];
+        }
+        break;
+      }
+    }
+    return { currentStep: current, stepStatuses: statuses };
+  }, [stage]);
+
+  // Compute the user-facing Alert title and description for the error
+  // stage. For the `session` step, switch on `stage.category` so the five
+  // classified error kinds (resource-exhausted, template-missing, timeout,
+  // duplicate-image, other) each surface a distinct, translated message —
+  // this is the contract from the spec's 인수 조건. For the `launch` step,
+  // specialize the "Service port not found" case thrown by
+  // `useBackendAIAppLauncher`. In all other cases, fall through to the
+  // raw `stage.message`.
+  //
+  // The Alert description shows the underlying technical `stage.message`
+  // (when it adds information) plus the `RefreshToRetry` hint so power
+  // users can still see the raw API error detail.
+  const { errorTitle, errorDetail } = useMemo(() => {
+    if (stage.name !== 'error') {
+      return {
+        errorTitle: null as string | null,
+        errorDetail: null as string | null,
+      };
+    }
+
+    let title: string;
+    if (stage.step === 'session') {
+      switch (stage.category) {
+        case 'resource-exhausted':
+          title = t('eduapi.ResourceExhausted');
+          break;
+        case 'template-missing':
+          title = t('eduapi.NoSessionTemplate');
+          break;
+        case 'timeout':
+          title = t('eduapi.SessionStillPreparing');
+          break;
+        case 'duplicate-image':
+          title = t('eduapi.CannotCreateSessionWithDifferentImage');
+          break;
+        case 'other':
+        default:
+          title = t('eduapi.SessionCreationFailed');
+          break;
+      }
+    } else if (
+      stage.step === 'launch' &&
+      typeof stage.message === 'string' &&
+      stage.message.toLowerCase().includes('service port')
+    ) {
+      title = t('eduapi.ServicePortNotAvailable');
+    } else {
+      title = stage.message;
+    }
+
+    // Only include the raw technical message in the description when it
+    // adds information beyond the user-facing title, to avoid duplication.
+    const rawMessage =
+      typeof stage.message === 'string' &&
+      stage.message &&
+      stage.message !== title
+        ? stage.message
+        : null;
+    const refreshHint = t('eduapi.RefreshToRetry');
+    const detail = rawMessage ? `${rawMessage}\n${refreshHint}` : refreshHint;
+
+    return { errorTitle: title, errorDetail: detail };
+  }, [stage, t]);
+
   if (!active) {
     return null;
   }
 
-  // Mount the Relay loader child only once the session stage has a
-  // resolved session row id. The loader does not render any UI; it
-  // produces a `ComputeSessionNode` fragment ref via useLazyLoadQuery and
-  // hands it back to the parent state machine through onLoaded. The
-  // resulting `sessionFrgmt` in the `launching` stage is what FR-2485
-  // will feed into `useBackendAIAppLauncher`.
+  // Render the Step-based card UI. The headless Relay loader and
+  // launcher children mount alongside the card when their respective
+  // stages are active — the card visualizes progress; the children drive
+  // the data flow.
   return (
-    <>
+    <BAIFlex
+      direction="column"
+      align="center"
+      justify="center"
+      style={{ minHeight: '100vh', padding: 24 }}
+    >
+      <BAICard
+        title={t('eduapi.AppLaunch')}
+        style={{ width: '100%', maxWidth: 560 }}
+      >
+        <Steps
+          orientation="vertical"
+          current={currentStep}
+          items={[
+            {
+              title: t('eduapi.CheckingAuthentication'),
+              status: stepStatuses[0],
+            },
+            {
+              title: t('eduapi.PreparingSession'),
+              status: stepStatuses[1],
+            },
+            {
+              title: t('eduapi.LaunchingAppStep'),
+              status: stepStatuses[2],
+            },
+          ]}
+        />
+        {stage.name === 'error' && errorTitle ? (
+          <Alert
+            style={{ marginTop: 16 }}
+            type="error"
+            showIcon
+            title={errorTitle}
+            description={
+              <span style={{ whiteSpace: 'pre-line' }}>{errorDetail}</span>
+            }
+          />
+        ) : null}
+        {stage.name === 'done' ? (
+          <Alert
+            style={{ marginTop: 16 }}
+            type="success"
+            showIcon
+            title={t('eduapi.LaunchCompleted')}
+          />
+        ) : null}
+      </BAICard>
       {stage.name === 'session' ? (
         // `useLazyLoadQuery` throws network/GraphQL errors to the nearest
         // ErrorBoundary instead of surfacing them via the `onError` prop
@@ -712,7 +882,7 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
           />
         </React.Suspense>
       ) : null}
-    </>
+    </BAIFlex>
   );
 };
 
