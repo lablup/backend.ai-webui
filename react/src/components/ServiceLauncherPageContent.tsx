@@ -1780,7 +1780,9 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                         forceRender: true,
                         children: (
                           <>
-                            <ClusterModeFormItems />
+                            <Suspense fallback={<Skeleton active />}>
+                              <ClusterModeFormItems />
+                            </Suspense>
                             <Form.Item
                               dependencies={['runtimeVariant']}
                               noStyle
