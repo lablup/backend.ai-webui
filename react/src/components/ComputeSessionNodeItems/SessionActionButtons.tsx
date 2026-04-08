@@ -329,7 +329,7 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
           >
             <Button
               size={size}
-              disabled={!isActive(session) || !isOwner}
+              disabled={session?.status !== 'RUNNING' || !isOwner}
               icon={<BAIContainerCommitIcon />}
               onClick={() => {
                 onAction?.('containerCommit');
