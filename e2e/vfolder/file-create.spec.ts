@@ -41,6 +41,8 @@ test.describe(
     });
 
     test.afterAll(async ({ browser, request }) => {
+      // Use an extended timeout to allow for delete-forever operation completion
+      test.setTimeout(90_000);
       const context = await browser.newContext();
       const page = await context.newPage();
       await loginAsUser(page, request);

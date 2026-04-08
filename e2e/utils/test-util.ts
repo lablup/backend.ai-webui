@@ -396,7 +396,8 @@ export async function verifyVFolder(
   folderName: string,
   statusTab: 'Active' | 'Trash' = 'Active',
 ) {
-  await page.getByRole('link', { name: 'Data' }).click();
+  // Use navigateTo for reliable navigation regardless of current page state
+  await navigateTo(page, 'data');
   await page.getByRole('tab', { name: statusTab }).click();
   await selectPropertyFilter(page, 'Name', folderName);
   await expect(
@@ -449,7 +450,9 @@ export async function createVFolderAndVerify(
 }
 
 export async function moveToTrashAndVerify(page: Page, folderName: string) {
-  await page.getByRole('link', { name: 'Data' }).click();
+  // Use navigateTo to ensure a clean navigation to the data page regardless of current state
+  await navigateTo(page, 'data');
+  await page.getByRole('tab', { name: 'Active' }).click();
   await selectPropertyFilter(page, 'Name', folderName);
 
   await page
@@ -467,7 +470,8 @@ export async function deleteForeverAndVerifyFromTrash(
   page: Page,
   folderName: string,
 ) {
-  await page.getByRole('link', { name: 'Data' }).click();
+  // Use navigateTo to ensure a clean navigation to the data page regardless of current state
+  await navigateTo(page, 'data');
   await page.getByRole('tab', { name: 'Trash' }).click();
 
   // Clear any existing filters before searching for the folder to delete
@@ -483,29 +487,35 @@ export async function deleteForeverAndVerifyFromTrash(
 
   await expect(folderRowToDelete).toBeVisible({ timeout: 5000 });
 
-  // Delete forever
-  await folderRowToDelete.getByRole('button').nth(1).click();
+  // Wait for the "Delete forever" button to be enabled (status must be 'delete-pending').
+  // After moving to trash, the folder may briefly show other statuses before becoming delete-pending.
+  const deleteForeverButton = folderRowToDelete.getByRole('button').nth(1);
+  await expect(deleteForeverButton).toBeEnabled({ timeout: 15000 });
+
+  // Click the delete forever button
+  await deleteForeverButton.click();
+
+  // Wait for confirmation modal to appear before interacting with it
+  await page.waitForSelector('#confirmText', { state: 'visible' });
   await page.locator('#confirmText').click();
   await page.locator('#confirmText').fill(folderName);
   await page.getByRole('button', { name: 'Delete forever' }).click();
 
-  // Wait for the deletion notification to appear and disappear
-  // This ensures the backend has completed the deletion before verification
+  // Wait for the deletion success notification to appear.
+  // This confirms the backend accepted the delete request.
   const deletionNotification = page.getByRole('alert').filter({
     hasText: /deleted forever/i,
   });
   await expect(deletionNotification).toBeVisible({ timeout: 15000 });
   await expect(deletionNotification).toBeHidden({ timeout: 15000 });
 
-  // Verify deletion - clear filters again and search
+  // After the notification is hidden, verify the folder row is gone
   await clearAllFilters(page);
   await selectPropertyFilter(page, 'Name', folderName);
-
-  // Verify the folder is either deleted (not visible) or in DELETE-ONGOING status
   const folderRowAfterDelete = page.getByRole('row').filter({
     has: page.getByRole('cell', { name: `VFolder Identicon ${folderName}` }),
   });
-  await expect(folderRowAfterDelete).toBeHidden();
+  await expect(folderRowAfterDelete).toBeHidden({ timeout: 10000 });
 
   // Clean up the search filter
   await removeSearchButton(page, folderName);
@@ -517,25 +527,22 @@ export async function shareVFolderAndVerify(
   invitedUser: string,
 ) {
   await navigateTo(page, 'data');
+  await selectPropertyFilter(page, 'Name', folderName);
 
-  const searchInput = page.locator('input[type="search"].ant-input');
-  await searchInput.fill(folderName);
-  await page.getByRole('button', { name: 'search' }).click();
+  // Click the share button (first action button) in the folder row
+  const folderRow = page.getByRole('row', {
+    name: `VFolder Identicon ${folderName}`,
+  });
+  await expect(folderRow).toBeVisible({ timeout: 10000 });
+  await folderRow.locator('td').nth(2).getByRole('button').nth(0).click();
 
-  // share folder
-  await page
-    .locator('.ant-table-row')
-    .locator('td')
-    .nth(2)
-    .getByRole('button')
-    .nth(0)
-    .click();
-  await page.locator('.ant-modal').getByRole('textbox').fill(invitedUser);
-  await page.getByRole('button', { name: 'Add' }).click();
-  await page
-    .locator('.ant-modal')
-    .getByRole('button', { name: 'close' })
-    .click();
+  // Fill in invited user's email in the share modal
+  const shareModal = page.locator('.ant-modal');
+  await expect(shareModal).toBeVisible();
+  await shareModal.getByRole('textbox').fill(invitedUser);
+  await shareModal.getByRole('button', { name: 'Add' }).click();
+  await shareModal.getByRole('button', { name: 'close' }).click();
+
   await removeSearchButton(page, folderName);
 }
 
@@ -543,13 +550,15 @@ export async function acceptAllInvitationAndVerifySpecificFolder(
   page: Page,
   folderName: string,
 ) {
-  await page
+  // Wait for and click on the invitation notification to see the folder sharing details
+  const notificationLink = page
     .locator('.ant-notification-notice')
-    .getByText('See Detail')
-    .click();
+    .getByText('See Detail');
+  await expect(notificationLink).toBeVisible({ timeout: 15000 });
+  await notificationLink.click();
 
   await page.waitForLoadState('networkidle');
-  // Accept all invitations one by one
+  // Accept all pending invitations one by one
   const acceptButtons = await page
     .getByRole('button', { name: 'Accept' })
     .all();
@@ -558,29 +567,31 @@ export async function acceptAllInvitationAndVerifySpecificFolder(
   }
   await page.waitForLoadState('networkidle');
 
+  // Verify the shared folder appears in the user's data page
   await navigateTo(page, 'data');
-  // Select the search input - use type="search" with ant-input class for the folder search
-  const searchInput = page.locator('input.ant-input[type="search"]');
-  await searchInput.fill(folderName);
-  await page.getByRole('button', { name: 'search' }).click();
-  expect(
-    page.locator('.ant-table-row').locator('td').nth(1).getByText(folderName),
-  );
+  await page.getByRole('tab', { name: 'Active' }).click();
+  await selectPropertyFilter(page, 'Name', folderName);
+  // Shared folders appear as a row in the table - look for the folder name in any table cell
+  await expect(
+    page.locator('tbody tr').filter({ hasText: folderName }),
+  ).toBeVisible({ timeout: 15000 });
+  await removeSearchButton(page, folderName);
 }
 
 export async function restoreVFolderAndVerify(page: Page, folderName: string) {
-  await page.getByRole('link', { name: 'Data' }).click();
+  await navigateTo(page, 'data');
   await page.getByRole('tab', { name: 'Trash' }).click();
-  await page.locator('#react-root').getByTitle('Name').click();
-  await page.getByRole('option', { name: 'Name' }).locator('div').click();
-  const searchInput = page.locator('input[type="search"].ant-input');
-  await searchInput.fill(folderName);
-  // Restore
-  await page
-    .getByRole('row', { name: 'VFolder Identicon e2e-test-' })
-    .getByRole('button')
-    .first()
-    .click();
+
+  // Clear any existing filters before searching
+  await clearAllFilters(page);
+  await selectPropertyFilter(page, 'Name', folderName);
+
+  // Find the folder row and click the Restore button (first action button)
+  const folderRowToRestore = page.getByRole('row', {
+    name: `VFolder Identicon ${folderName}`,
+  });
+  await expect(folderRowToRestore).toBeVisible({ timeout: 10000 });
+  await folderRowToRestore.getByRole('button').first().click();
   await verifyVFolder(page, folderName, 'Active');
 }
 
@@ -715,6 +726,48 @@ function tomlStringifyCompatible(config: any): string {
   return tomlStr;
 }
 
+/**
+ * Deduplicate keys within each TOML section.
+ *
+ * @iarna/toml throws on duplicate keys, but config.toml files in some
+ * environments contain duplicate keys (e.g., `debug = true` appearing twice).
+ * This function removes earlier occurrences, keeping the last value for each key
+ * within each section, matching the last-wins behavior of most TOML parsers.
+ */
+function deduplicateTomlKeys(tomlStr: string): string {
+  const lines = tomlStr.split('\n');
+  const sections: string[][] = [];
+  let currentSection: string[] = [];
+
+  // Split the TOML content into sections delimited by [header] lines
+  for (const line of lines) {
+    if (/^\[/.test(line.trim())) {
+      sections.push(currentSection);
+      currentSection = [line];
+    } else {
+      currentSection.push(line);
+    }
+  }
+  sections.push(currentSection);
+
+  // Deduplicate keys within each section, keeping the last occurrence
+  const deduped = sections.map((sectionLines) => {
+    const seenKeys = new Set<string>();
+    const reversed = [...sectionLines].reverse();
+    const kept = reversed.filter((line) => {
+      const match = /^(\w[\w-]*)(\s*=)/.exec(line.trim());
+      if (!match) return true; // Keep non-key lines (headers, comments, blanks)
+      const key = match[1];
+      if (seenKeys.has(key)) return false; // Duplicate – drop this earlier occurrence
+      seenKeys.add(key);
+      return true;
+    });
+    return kept.reverse().join('\n');
+  });
+
+  return deduped.join('\n');
+}
+
 // Store the accumulated config modifications in a WeakMap keyed by page
 const configCache = new WeakMap<Page, any>();
 
@@ -751,7 +804,11 @@ export async function modifyConfigToml(
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
           return res.text();
         });
-        config = TOML.parse(configToml);
+        // Deduplicate keys within each TOML section before parsing.
+        // @iarna/toml throws on duplicate keys; the production app (smol-toml) may not.
+        // When duplicate keys exist in config.toml, keep the last occurrence of each key.
+        const deduplicatedToml = deduplicateTomlKeys(configToml);
+        config = TOML.parse(deduplicatedToml);
         break; // Success, exit retry loop
       } catch (error) {
         lastError = error;

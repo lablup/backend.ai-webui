@@ -155,6 +155,7 @@ test.describe(
     });
 
     test.afterAll(async ({ browser, request }) => {
+      test.setTimeout(90_000);
       // Create a new context and page for cleanup
       const context = await browser.newContext();
       const page = await context.newPage();

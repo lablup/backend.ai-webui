@@ -52,6 +52,7 @@ test.describe.serial(
     });
 
     test.afterAll(async ({ browser, request }) => {
+      test.setTimeout(90_000);
       // Cleanup: delete VFolder
       const context = await browser.newContext();
       const page = await context.newPage();
