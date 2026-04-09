@@ -277,6 +277,7 @@
     "SelectFolder": "Wybierz folder"
   },
   "comp:FileExplorer": {
+    "ArchiveDownloadStarted": "Rozpoczęto pobieranie {{count}} elementów.",
     "ChangeFileExtension": "Zmień rozszerzenie pliku",
     "ChangeFileExtensionDesc": "Zmiana rozszerzenia pliku może spowodować, że plik staje się bezużyteczny lub nieprawidłowo otwierać. \nChcesz kontynuować?",
     "Controls": "Sterownica",
@@ -287,6 +288,7 @@
     "CreatedAt": "Utworzony w",
     "DeleteSelectedItemDesc": "Usuniętych plików i folderów nie można przywrócić. \nChcesz kontynuować?",
     "DeleteSelectedItemsDialog": "Usuń potwierdzenie",
+    "DownloadSelected": "Pobierz",
     "DownloadStarted": "Plik „{{fileName}}” rozpoczęło się pobieranie.",
     "DragAndDropDesc": "Przeciągnij i upuść pliki do tego obszaru, aby przesłać.",
     "DuplicatedFiles": "Nadpisz potwierdzenie",

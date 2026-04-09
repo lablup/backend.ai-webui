@@ -277,6 +277,7 @@
     "SelectFolder": "เลือกโฟลเดอร์"
   },
   "comp:FileExplorer": {
+    "ArchiveDownloadStarted": "การดาวน์โหลด {{count}} รายการเริ่มแล้ว",
     "ChangeFileExtension": "เปลี่ยนนามสกุลไฟล์",
     "ChangeFileExtensionDesc": "การเปลี่ยนนามสกุลไฟล์อาจทำให้ไฟล์ไม่สามารถใช้งานได้หรือเปิดไม่ถูกต้อง \nคุณต้องการดำเนินการต่อหรือไม่?",
     "Controls": "การควบคุม",
@@ -287,6 +288,7 @@
     "CreatedAt": "สร้างขึ้นที่",
     "DeleteSelectedItemDesc": "ไม่สามารถกู้คืนไฟล์และโฟลเดอร์ที่ถูกลบได้ \nคุณต้องการดำเนินการต่อหรือไม่?",
     "DeleteSelectedItemsDialog": "ลบการยืนยัน",
+    "DownloadSelected": "ดาวน์โหลด",
     "DownloadStarted": "การดาวน์โหลดไฟล์ \"{{fileName}}\" เริ่มต้นแล้ว",
     "DragAndDropDesc": "ลากและวางไฟล์ไปยังพื้นที่นี้เพื่ออัปโหลด",
     "DuplicatedFiles": "การยืนยันการเขียนทับ",

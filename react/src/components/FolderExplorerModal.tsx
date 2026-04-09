@@ -164,6 +164,7 @@ const FolderExplorerModal: React.FC<FolderExplorerProps> = ({
     <BAIFileExplorer
       ref={fileExplorerRef}
       targetVFolderId={vfolderID}
+      targetVFolderName={vfolder_node?.name ?? 'folder'}
       deletingFilePaths={deletingFilePaths}
       fetchKey={fetchKey}
       onUpload={(files: RcFile[], currentPath: string) => {
