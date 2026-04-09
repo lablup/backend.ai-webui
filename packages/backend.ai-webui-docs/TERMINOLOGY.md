@@ -138,6 +138,19 @@ Backend.AI's GPU virtualization technology that allows sharing a single physical
 
 **Do NOT use** "container" and "kernel" interchangeably. They refer to different concepts.
 
+### RBAC (Role-Based Access Control)
+
+| Term | EN | KO | JA | TH | Description |
+|------|----|----|----|----|-------------|
+| RBAC | RBAC | RBAC | RBAC | RBAC | Keep as abbreviation across all languages |
+| Role | role | 권한 | ロール | บทบาท | A named set of permissions assignable to users |
+| Permission | permission | 세부 권한 | 権限 | สิทธิ์ | A fine-grained access rule within a role |
+| Role Assignment | role assignment | 권한 할당 | ロール割り当て | การมอบหมายบทบาท | The association of a user to a role |
+| Scope Type | scope type | 적용 범위 타입 | スコープタイプ | ประเภทขอบเขต | The level at which a permission applies |
+| Permission Type | permission type | 권한 타입 | 権限タイプ | ประเภทสิทธิ์ | The category of resource a permission controls |
+
+**Note**: The Korean i18n uses "권한" for both "Role" and "Permission" in different contexts. "세부 권한" is used specifically for fine-grained permissions within a role. Always check `resources/i18n/ko.json` for the exact UI labels.
+
 ## User Roles
 
 | Role | EN | KO | JA | Scope |
@@ -158,6 +171,7 @@ These terms match sidebar menu items. Keep documentation references consistent w
 | Model Serving | 모델 서빙 | モデルサービス | model_serving/model_serving.md |
 | Statistics | 통계 | 統計 | statistics/statistics.md |
 | User Settings | 사용자 설정 | ユーザー設定 | user_settings/user_settings.md |
+| RBAC Management | RBAC 관리 | RBAC管理 | rbac_management/rbac_management.md |
 
 **Important**: Always check `resources/i18n/{lang}.json` in the main project for current UI label translations. The i18n files are the source of truth for UI labels.
 

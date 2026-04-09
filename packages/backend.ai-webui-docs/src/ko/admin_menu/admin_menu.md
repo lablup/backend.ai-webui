@@ -992,3 +992,15 @@ Information 페이지에서 각 기능의 여러 상세 정보와 상태를 볼 
 :::
 
 ![](../images/information_page.png)
+
+<a id="rbac-management"></a>
+
+## RBAC 관리
+
+RBAC(역할 기반 접근 제어) 관리를 통해 슈퍼관리자는 세분화된 권한이 포함된 역할을 정의하고 사용자에게 할당할 수 있습니다. Backend.AI 시스템 전반에서 특정 사용자가 다양한 리소스에 대해 수행할 수 있는 작업을 제어할 수 있습니다.
+
+:::note
+RBAC 관리는 슈퍼관리자만 사용할 수 있으며, Backend.AI Manager 25.3.0 이상 버전이 필요합니다.
+:::
+
+역할, 권한 및 사용자 할당 관리에 대한 자세한 정보는 [RBAC 관리](#rbac-management) 페이지를 참고하세요.
