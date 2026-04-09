@@ -1,3 +1,5 @@
+<a id="rbac-management"></a>
+
 # RBAC Management
 
 RBAC (Role-Based Access Control) Management allows superadmins to define roles with fine-grained permissions and assign them to users. With RBAC, you can control which actions specific users are allowed to perform on various resources throughout the Backend.AI system.
