@@ -3,7 +3,7 @@
 RBAC (Role-Based Access Control) Management allows superadmins to define roles with fine-grained permissions and assign them to users. With RBAC, you can control which actions specific users are allowed to perform on various resources throughout the Backend.AI system.
 
 :::note
-RBAC Management is only available to superadmins and requires Backend.AI Manager version 25.3.0 or later.
+RBAC Management is only available to superadmins and requires Backend.AI Manager version 25.4.0 or later.
 :::
 
 To access the RBAC Management page, click **RBAC Management** in the Administration section of the sidebar menu.
@@ -33,7 +33,7 @@ You can sort the table by clicking the **Role Name**, **Created At**, or **Updat
 
 Roles are categorized into two source types:
 
-- **System**: Pre-defined roles provided by Backend.AI. You cannot edit their name or description, but you can manage their user assignments and permissions.
+- **System**: Automatically generated roles. You cannot edit their name or description, but you can manage their user assignments and permissions.
 - **Custom**: Roles created by superadmins. These are fully editable, including name, description, assignments, and permissions.
 
 ## Create a Role
@@ -44,8 +44,12 @@ To create a new custom role:
 2. In the creation modal, fill in the following fields:
    - **Role Name** (required): Enter a unique name for the role
    - **Description** (optional): Enter a description of the role's purpose
-   - **Project** (optional): Select a project to scope the role to a specific project. Leave empty for a global role
+   - **Project** (optional): Select the project to which the role's permissions will apply. This field is only required when scoping permissions to a specific project.
 3. Click **OK** to create the role
+
+:::info
+In a future version, the project selector will be removed from the role creation modal. Project-scoped permissions will be configurable directly in the permission settings without requiring a project to be selected during role creation.
+:::
 
 ![](images/rbac_create_role_modal.png)
 
@@ -115,6 +119,8 @@ The **Role Assignments** tab in the role detail drawer shows which users are ass
 1. In the **Role Assignments** tab, click the **Delete** button next to the user you want to remove
 2. Confirm the removal in the confirmation dialog
 
+![](images/rbac_remove_user_dialog.png)
+
 ## Manage Permissions
 
 The **Permissions** tab in the role detail drawer shows the fine-grained permissions configured for the role.
@@ -128,9 +134,20 @@ Each permission consists of four components:
 - **Scope Type**: The type of resource that the permission targets (e.g., Domain, Project, User, Folder, Resource Group, Session, Model Service, Container Registry, Storage Host, Keypair)
 - **Target**: The specific entity within the scope type (e.g., a specific domain name, a specific project)
 - **Permission Type**: The category of resource the permission controls, filtered based on the selected scope type
-- **Permission**: The operation allowed on the resource. Operations are grouped into two categories:
+- **Permission**: The operation allowed on the resource. Only valid operations for the selected permission type are shown. Operations are grouped into two categories:
    * **Direct**: Create, Read, Update, Soft Delete, Hard Delete
    * **Delegate to Others**: Delegate All, Delegate Read, Delegate Update, Delegate Soft Delete, Delegate Hard Delete
+
+### Permission Examples
+
+Here are some common permission configurations to help you understand how the four components work together:
+
+| Scenario | Scope Type | Target | Permission Type | Permission |
+|----------|-----------|--------|----------------|------------|
+| Allow a user to create storage folders in a specific project | Project | my-project | VFolder | Create |
+| Allow a user to view all sessions in a domain | Domain | default | Session | Read |
+| Allow a user to manage model serving endpoints | Domain | default | Endpoint | Create, Read, Update |
+| Allow a user to delete container images | Domain | default | Image | Soft Delete |
 
 ### Add a Permission
 

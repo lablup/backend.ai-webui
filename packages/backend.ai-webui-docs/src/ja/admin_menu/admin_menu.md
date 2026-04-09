@@ -1137,7 +1137,7 @@ This page is only for showing current information.
 RBAC（ロールベースアクセス制御）管理では、スーパー管理者がきめ細かい権限を持つロールを定義し、ユーザーに割り当てることができます。Backend.AIシステム全体で特定のユーザーがさまざまなリソースに対して実行できる操作を制御できます。
 
 :::note
-RBAC管理はスーパー管理者のみが利用でき、Backend.AI Managerバージョン25.3.0以降が必要です。
+RBAC管理はスーパー管理者のみが利用でき、Backend.AI Managerバージョン25.4.0以降が必要です。
 :::
 
-ロール、権限、ユーザー割り当ての管理の詳細については、[RBAC管理](#rbac-management)ページを参照してください。
+ロール、権限、ユーザー割り当ての管理の詳細については、[RBAC管理](../rbac_management/rbac_management.md)ページを参照してください。
