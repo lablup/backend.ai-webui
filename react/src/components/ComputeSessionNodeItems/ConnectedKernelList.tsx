@@ -8,6 +8,7 @@ import {
 } from '../../__generated__/ConnectedKernelListFragment.graphql';
 import { ContainerLogModalFragment$key } from '../../__generated__/ContainerLogModalFragment.graphql';
 // import BAIPropertyFilter from '../BAIPropertyFilter';
+import { localeCompare } from '../../helper';
 import ContainerLogModal from './ContainerLogModal';
 import { Button, Tag, theme, Tooltip, Typography } from 'antd';
 import type { ColumnType } from 'antd/lib/table';
@@ -85,8 +86,7 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
     {
       title: t('kernel.Hostname'),
       dataIndex: 'cluster_hostname',
-      sorter: (a, b) =>
-        (a?.cluster_hostname ?? '').localeCompare(b?.cluster_hostname ?? ''),
+      sorter: (a, b) => localeCompare(a?.cluster_hostname, b?.cluster_hostname),
       render: (hostname, record) => {
         return (
           <>
@@ -113,7 +113,7 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
     {
       title: t('kernel.Status'),
       dataIndex: 'status',
-      sorter: (a, b) => (a?.status ?? '').localeCompare(b?.status ?? ''),
+      sorter: (a, b) => localeCompare(a?.status, b?.status),
       render: (status, record) => {
         return (
           <>
@@ -140,7 +140,7 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
     {
       title: t('kernel.AgentId'),
       dataIndex: 'agent_id',
-      sorter: (a, b) => (a?.agent_id ?? '').localeCompare(b?.agent_id ?? ''),
+      sorter: (a, b) => localeCompare(a?.agent_id, b?.agent_id),
       render: (id) =>
         _.isEmpty(id) ? '-' : <Typography.Text copyable>{id}</Typography.Text>,
     },
