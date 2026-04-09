@@ -6,7 +6,7 @@ RBAC (Role-Based Access Control) Management allows superadmins to define roles w
 RBAC Management is only available to superadmins and requires Backend.AI Manager version 25.4.0 or later.
 :::
 
-To access the RBAC Management page, click **RBAC Management** in the Administration section of the sidebar menu.
+To access the RBAC Management page, click **RBAC Management** in the **Admin Settings** section of the sidebar menu.
 
 ![](images/rbac_role_list_page.png)
 
