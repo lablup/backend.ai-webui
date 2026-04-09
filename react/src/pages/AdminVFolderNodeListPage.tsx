@@ -136,6 +136,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
       usageModeFilter,
     ]),
     order: queryParams.order,
+    permission: 'read_attribute',
     filterForActiveCount: FILTER_BY_STATUS_CATEGORY['active'],
     filterForDeletedCount: FILTER_BY_STATUS_CATEGORY['deleted'],
     scope_id: `domain:${domainName}`,
@@ -151,6 +152,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
           $first: Int
           $filter: String
           $order: String
+          $permission: VFolderPermissionValueField
           $filterForActiveCount: String
           $filterForDeletedCount: String
           $scope_id: ScopeField
@@ -160,6 +162,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
             first: $first
             filter: $filter
             order: $order
+            permission: $permission
             scope_id: $scope_id
           ) {
             edges @required(action: THROW) {
@@ -182,6 +185,8 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
             first: 0
             offset: 0
             filter: $filterForActiveCount
+            permission: $permission
+            scope_id: $scope_id
           ) {
             count
           }
@@ -189,6 +194,8 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
             first: 0
             offset: 0
             filter: $filterForDeletedCount
+            permission: $permission
+            scope_id: $scope_id
           ) {
             count
           }
