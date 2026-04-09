@@ -85,6 +85,8 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
     {
       title: t('kernel.Hostname'),
       dataIndex: 'cluster_hostname',
+      sorter: (a, b) =>
+        (a?.cluster_hostname ?? '').localeCompare(b?.cluster_hostname ?? ''),
       render: (hostname, record) => {
         return (
           <>
@@ -111,6 +113,7 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
     {
       title: t('kernel.Status'),
       dataIndex: 'status',
+      sorter: (a, b) => (a?.status ?? '').localeCompare(b?.status ?? ''),
       render: (status, record) => {
         return (
           <>
@@ -137,6 +140,7 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
     {
       title: t('kernel.AgentId'),
       dataIndex: 'agent_id',
+      sorter: (a, b) => (a?.agent_id ?? '').localeCompare(b?.agent_id ?? ''),
       render: (id) =>
         _.isEmpty(id) ? '-' : <Typography.Text copyable>{id}</Typography.Text>,
     },
