@@ -16,6 +16,7 @@ import {
   useBAILogger,
   useErrorMessageResolver,
   useMutationWithPromise,
+  useUpdatableState,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import { Suspense, useRef, useState } from 'react';
@@ -50,6 +51,7 @@ const UpdateUsersModal = ({
   'use memo';
   const formRef = useRef<FormInstance<UpdateUsersFormValues>>(null);
   const [isPending, setIsPending] = useState(false);
+  const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
   const { token } = theme.useToken();
   const { t } = useTranslation();
   const { message } = App.useApp();
@@ -88,6 +90,12 @@ const UpdateUsersModal = ({
       okText={t('button.Update')}
       confirmLoading={isPending}
       {...modalProps}
+      afterOpenChange={(open) => {
+        if (open) {
+          updateFetchKey();
+        }
+        modalProps.afterOpenChange?.(open);
+      }}
       onOk={(e) => {
         formRef.current
           ?.validateFields()
@@ -232,6 +240,7 @@ const UpdateUsersModal = ({
                     domain={getFieldValue('domain_name')}
                     disableDefaultFilter
                     disabled={!getFieldValue('domain_name')}
+                    fetchKey={fetchKey}
                   />
                 </Form.Item>
               )}

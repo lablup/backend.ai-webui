@@ -874,6 +874,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                     domain={getFieldValue('domain_name')}
                     disableDefaultFilter
                     lockedProjectTypes={!user ? ['MODEL_STORE'] : undefined}
+                    fetchKey={fetchKey}
                   />
                 </Form.Item>
               )}
