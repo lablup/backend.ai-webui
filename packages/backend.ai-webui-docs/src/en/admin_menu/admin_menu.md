@@ -998,6 +998,13 @@ when creating a compute session. If available resources are less
 than the amount of resources defined in the preset, the corresponding preset
 would not be shown.
 
+The resource preset dialog includes:
+
+- **Preset Name**: A unique name for the preset (only alphanumeric characters, periods, hyphens, and underscores allowed).
+- **Resource Group**: (Conditional) Associate the preset with a specific resource group.
+- **Resource Preset**: Dynamic fields for each available resource type (CPU, Memory, GPU, etc.). Memory fields support dynamic unit input (`MiB`, `GiB`, `TiB`, `PiB`).
+- **Shared Memory**: The amount of shared memory allocated for the preset. This value must be less than the **Memory** value.
+
 ![](../images/modify_resource_preset_dialog.png)
 
 Also you can create resource preset by Clicking '+ Create Presets' button in the
