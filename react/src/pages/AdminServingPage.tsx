@@ -3,8 +3,11 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { AdminServingPageQuery } from '../__generated__/AdminServingPageQuery.graphql';
+import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import EndpointList from '../components/EndpointList';
+import { useWebUINavigate } from '../hooks';
+import { useCurrentUserRole } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
 import { Skeleton } from 'antd';
 import {
@@ -17,19 +20,31 @@ import {
   useUpdatableState,
 } from 'backend.ai-ui';
 import _ from 'lodash';
+import { parseAsString, useQueryStates } from 'nuqs';
 import React, { Suspense, useDeferredValue, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-import { StringParam, useQueryParams, withDefault } from 'use-query-params';
+
+const AdminModelCardListPage = React.lazy(
+  () => import('./AdminModelCardListPage'),
+);
 
 const AdminServingPage: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
-  const [queryParams, setQuery] = useQueryParams({
-    order: withDefault(StringParam, '-created_at'),
-    filter: StringParam,
-    lifecycleStage: withDefault(StringParam, 'active'),
-  });
+  const currentUserRole = useCurrentUserRole();
+  const webUINavigate = useWebUINavigate();
+  const isSuperAdmin = currentUserRole === 'superadmin';
+
+  const [queryParam, setQueryParam] = useQueryStates(
+    {
+      tab: parseAsString.withDefault('serving'),
+      order: parseAsString,
+      filter: parseAsString,
+      lifecycleStage: parseAsString.withDefault('active'),
+    },
+    { history: 'push' },
+  );
 
   const {
     baiPaginationOption,
@@ -44,9 +59,9 @@ const AdminServingPage: React.FC = () => {
 
   const allowedLifecycleStages = ['active', 'destroyed'] as const;
   const lifecycleStage = allowedLifecycleStages.includes(
-    queryParams.lifecycleStage as (typeof allowedLifecycleStages)[number],
+    queryParam.lifecycleStage as (typeof allowedLifecycleStages)[number],
   )
-    ? queryParams.lifecycleStage
+    ? queryParam.lifecycleStage
     : 'active';
 
   const lifecycleStageFilter =
@@ -58,10 +73,10 @@ const AdminServingPage: React.FC = () => {
     () => ({
       offset: baiPaginationOption.offset,
       limit: baiPaginationOption.limit,
-      filter: mergeFilterValues([lifecycleStageFilter, queryParams.filter]),
-      order: queryParams.order,
+      filter: mergeFilterValues([lifecycleStageFilter, queryParam.filter]),
+      order: queryParam.order,
     }),
-    [baiPaginationOption, lifecycleStageFilter, queryParams],
+    [baiPaginationOption, lifecycleStageFilter, queryParam],
   );
 
   const deferredQueryVariables = useDeferredValue(queryVariables);
@@ -100,114 +115,138 @@ const AdminServingPage: React.FC = () => {
   );
 
   return (
-    <BAIFlex direction="column" align="stretch" gap={'md'}>
-      <BAICard
-        variant="borderless"
-        title={t('webui.menu.Serving')}
-        styles={{
-          header: {
-            borderBottom: 'none',
+    <BAICard
+      activeTabKey={queryParam.tab}
+      onTabChange={(key) => {
+        webUINavigate(
+          {
+            pathname: '/admin-serving',
+            search: new URLSearchParams({
+              tab: key,
+            }).toString(),
           },
-          body: {
-            paddingTop: 0,
+          {
+            params: {
+              tab: key,
+            },
           },
-        }}
-      >
-        <BAIFlex direction="column" align="stretch" gap={'sm'}>
-          <BAIFlex direction="row" justify="between" wrap="wrap" gap={'sm'}>
-            <BAIFlex
-              gap={'sm'}
-              align="start"
-              wrap="wrap"
-              style={{ flexShrink: 1 }}
-            >
-              <BAIRadioGroup
-                value={lifecycleStage}
-                onChange={(e) => {
-                  setQuery({ lifecycleStage: e.target.value }, 'replaceIn');
-                  setTablePaginationOption({ current: 1 });
-                }}
-                optionType="button"
-                buttonStyle="solid"
-                options={[
-                  {
-                    label: t('modelService.Active'),
-                    value: 'active',
-                  },
-                  {
-                    label: t('modelService.Destroyed'),
-                    value: 'destroyed',
-                  },
-                ]}
-              />
-              <BAIPropertyFilter
-                filterProperties={filterOutEmpty([
-                  {
-                    key: 'name',
-                    type: 'string',
-                    propertyLabel: t('modelService.EndpointName'),
-                  },
-                  {
-                    key: 'url',
-                    type: 'string',
-                    propertyLabel: t('modelService.ServiceEndpoint'),
-                  },
-                  {
-                    key: 'created_user_email',
-                    type: 'string',
-                    propertyLabel: t('modelService.Owner'),
-                  },
-                ])}
-                value={queryParams.filter || undefined}
-                onChange={(value) => {
-                  setQuery({ filter: value }, 'replaceIn');
-                  setTablePaginationOption({ current: 1 });
-                }}
-              />
+        );
+        setQueryParam({ tab: key });
+      }}
+      tabList={filterOutEmpty([
+        {
+          key: 'serving',
+          label: t('webui.menu.Serving'),
+        },
+        isSuperAdmin && {
+          key: 'model-store',
+          label: t('adminModelCard.ModelStoreManagement'),
+        },
+      ])}
+    >
+      <Suspense fallback={<Skeleton active />}>
+        {queryParam.tab === 'serving' && (
+          <BAIFlex direction="column" align="stretch" gap={'sm'}>
+            <BAIFlex direction="row" justify="between" wrap="wrap" gap={'sm'}>
+              <BAIFlex
+                gap={'sm'}
+                align="start"
+                wrap="wrap"
+                style={{ flexShrink: 1 }}
+              >
+                <BAIRadioGroup
+                  value={lifecycleStage}
+                  onChange={(e) => {
+                    setQueryParam({ lifecycleStage: e.target.value });
+                    setTablePaginationOption({ current: 1 });
+                  }}
+                  optionType="button"
+                  buttonStyle="solid"
+                  options={[
+                    {
+                      label: t('modelService.Active'),
+                      value: 'active',
+                    },
+                    {
+                      label: t('modelService.Destroyed'),
+                      value: 'destroyed',
+                    },
+                  ]}
+                />
+                <BAIPropertyFilter
+                  filterProperties={filterOutEmpty([
+                    {
+                      key: 'name',
+                      type: 'string',
+                      propertyLabel: t('modelService.EndpointName'),
+                    },
+                    {
+                      key: 'url',
+                      type: 'string',
+                      propertyLabel: t('modelService.ServiceEndpoint'),
+                    },
+                    {
+                      key: 'created_user_email',
+                      type: 'string',
+                      propertyLabel: t('modelService.Owner'),
+                    },
+                  ])}
+                  value={queryParam.filter || undefined}
+                  onChange={(value) => {
+                    setQueryParam({ filter: value ?? null });
+                    setTablePaginationOption({ current: 1 });
+                  }}
+                />
+              </BAIFlex>
+              <BAIFlex gap={'xs'}>
+                <BAIFetchKeyButton
+                  value={fetchKey}
+                  onChange={updateFetchKey}
+                  autoUpdateDelay={7_000}
+                  loading={
+                    deferredQueryVariables !== queryVariables ||
+                    deferredFetchKey !== fetchKey
+                  }
+                />
+              </BAIFlex>
             </BAIFlex>
-            <BAIFlex gap={'xs'}>
-              <BAIFetchKeyButton
-                value={fetchKey}
-                onChange={updateFetchKey}
-                autoUpdateDelay={7_000}
+            <Suspense fallback={<Skeleton active />}>
+              <EndpointList
+                // @ts-expect-error - Relay fragment type mismatch
+                endpointsFrgmt={endpoint_list?.items}
+                pagination={{
+                  pageSize: tablePaginationOption.pageSize,
+                  current: tablePaginationOption.current,
+                  total: endpoint_list?.total_count,
+                  onChange(current, pageSize) {
+                    if (_.isNumber(current) && _.isNumber(pageSize)) {
+                      setTablePaginationOption({ current, pageSize });
+                    }
+                  },
+                }}
+                order={queryParam.order}
                 loading={
                   deferredQueryVariables !== queryVariables ||
                   deferredFetchKey !== fetchKey
                 }
+                onChangeOrder={(order) => {
+                  setQueryParam({ order });
+                }}
+                onDeleted={() => {
+                  updateFetchKey();
+                }}
+                isAdminMode
               />
-            </BAIFlex>
+            </Suspense>
           </BAIFlex>
-          <Suspense fallback={<Skeleton active />}>
-            <EndpointList
-              // @ts-expect-error - Relay fragment type mismatch
-              endpointsFrgmt={endpoint_list?.items}
-              pagination={{
-                pageSize: tablePaginationOption.pageSize,
-                current: tablePaginationOption.current,
-                total: endpoint_list?.total_count,
-                onChange(current, pageSize) {
-                  if (_.isNumber(current) && _.isNumber(pageSize)) {
-                    setTablePaginationOption({ current, pageSize });
-                  }
-                },
-              }}
-              order={queryParams.order}
-              loading={
-                deferredQueryVariables !== queryVariables ||
-                deferredFetchKey !== fetchKey
-              }
-              onChangeOrder={(order) => {
-                setQuery({ order }, 'replaceIn');
-              }}
-              onDeleted={() => {
-                updateFetchKey();
-              }}
-              isAdminMode
-            />
-          </Suspense>
-        </BAIFlex>
-      </BAICard>
-    </BAIFlex>
+        )}
+        {queryParam.tab === 'model-store' && isSuperAdmin && (
+          <BAIErrorBoundary>
+            <AdminModelCardListPage />
+          </BAIErrorBoundary>
+        )}
+      </Suspense>
+    </BAICard>
   );
 };
 

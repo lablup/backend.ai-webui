@@ -4,6 +4,26 @@
     "ActiveAgents": "Active Agents",
     "ActiveAgentsTooltip": "Shows an at-a-glance overview of all agents currently running in the system."
   },
+  "adminModelCard": {
+    "AccessLevel": "Access Level",
+    "ConfirmDelete": "Are you sure you want to delete the model card \"{{name}}\"?",
+    "DeleteModelCard": "Delete Model Card",
+    "Domain": "Domain",
+    "EnterProjectId": "Enter project ID",
+    "Internal": "Internal",
+    "ModelCardDeleted": "Model card has been deleted.",
+    "ModelCards": "Model Cards",
+    "ModelStoreManagement": "Model Store Management",
+    "Name": "Name",
+    "Project": "Project",
+    "ProjectId": "Project ID",
+    "ProjectIdRequired": "Project ID is required.",
+    "Public": "Public",
+    "Scan": "Scan",
+    "ScanCompleted": "Scan completed: {{created}} created, {{updated}} updated.",
+    "ScanProjectModelCards": "Scan Project Model Cards",
+    "Title": "Title"
+  },
   "adminSession": {
     "PendingSessions": "Pending Sessions",
     "PendingSessionsScopedToResourceGroup": "Showing pending sessions for the selected resource group only. Switch resource groups to view sessions in other groups."
