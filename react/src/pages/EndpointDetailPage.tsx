@@ -149,7 +149,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
   const { serviceId } = useParams<{
     serviceId: string;
   }>();
-  const [fetchKey, updateFetchKey, INITIAL_FETCH_KEY] = useFetchKey();
+  const [fetchKey, updateFetchKey] = useFetchKey();
   const [isPendingRefetch, startRefetchTransition] = useTransition();
   const [isPendingClearError, startClearErrorTransition] = useTransition();
   const [selectedSessionErrorForModal, setSelectedSessionErrorForModal] =
@@ -386,8 +386,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
       skipRoutings: baiClient.supports('route-node'),
     },
     {
-      fetchPolicy:
-        fetchKey === INITIAL_FETCH_KEY ? 'store-and-network' : 'network-only',
+      fetchPolicy: 'network-only',
       fetchKey,
     },
   );

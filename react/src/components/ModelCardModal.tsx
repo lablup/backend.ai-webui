@@ -120,9 +120,9 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
       destroyOnHidden
       width={
         _.isEmpty(model_card?.readme) || _.isEmpty(model_card?.description)
-          ? 800
+          ? 1000
           : screen.xxl
-            ? '75%'
+            ? '80%'
             : '90%'
       }
       footer={[
