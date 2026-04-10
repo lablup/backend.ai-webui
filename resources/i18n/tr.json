@@ -872,6 +872,7 @@
     "PortMustBeInRange": "Bağlantı noktası 0 ile 65534 arasında olmalıdır",
     "PortMustBeUnique": "Bağlantı noktası her uygulama için benzersiz olmalıdır",
     "PortReservedForInternalUse": "2000 - 2003, 2200 ve 7681 numaralı bağlantı noktaları dahili kullanım için ayrılmıştır",
+    "Private": "Özel",
     "ProblemOccurred": "Sorun oluştu",
     "Protocol": "Protokol",
     "ProtocolMustBeOneOfSupported": "Protokol 'http', 'tcp', 'preopen' ve 'pty'den biri olmalıdır",

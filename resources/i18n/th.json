@@ -872,6 +872,7 @@
     "PortMustBeInRange": "พอร์ตต้องอยู่ระหว่าง 0 ถึง 65534",
     "PortMustBeUnique": "พอร์ตต้องไม่ซ้ำกันสำหรับแต่ละแอป",
     "PortReservedForInternalUse": "พอร์ต 2000 ถึง 2003, 2200 และ 7681 สงวนไว้สำหรับการใช้งานภายใน",
+    "Private": "ส่วนตัว",
     "ProblemOccurred": "เกิดปัญหา",
     "Protocol": "โปรโตคอล",
     "ProtocolMustBeOneOfSupported": "โปรโตคอลต้องเป็นหนึ่งใน 'http', 'tcp', 'preopen' และ 'pty'",

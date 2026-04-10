@@ -872,6 +872,7 @@
     "PortMustBeInRange": "Η θύρα πρέπει να είναι μεταξύ 0 και 65534",
     "PortMustBeUnique": "Η θύρα πρέπει να είναι μοναδική για κάθε εφαρμογή",
     "PortReservedForInternalUse": "Οι θύρες 2000 έως 2003, 2200 και 7681 προορίζονται για εσωτερική χρήση",
+    "Private": "Ιδιωτικό",
     "ProblemOccurred": "Παρουσιάστηκε πρόβλημα",
     "Protocol": "Πρωτόκολλο",
     "ProtocolMustBeOneOfSupported": "Το πρωτόκολλο πρέπει να είναι ένα από τα \"http\", \"tcp\", \"preopen\" και \"pty\"",

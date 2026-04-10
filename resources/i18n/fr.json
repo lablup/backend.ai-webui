@@ -872,6 +872,7 @@
     "PortMustBeInRange": "Le port doit être compris entre 0 et 65534",
     "PortMustBeUnique": "Le port doit être unique pour chaque application",
     "PortReservedForInternalUse": "Les ports 2000 à 2003, 2200 et 7681 sont réservés à un usage interne",
+    "Private": "Privé",
     "ProblemOccurred": "Un problème est survenu",
     "Protocol": "Protocole",
     "ProtocolMustBeOneOfSupported": "Le protocole doit être l'un des 'http', 'tcp', 'preopen' et 'pty'",
