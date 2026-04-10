@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { ModelCardDrawerFragment$key } from '../__generated__/ModelCardDrawerFragment.graphql';
 import {
   ModelCardV2Filter,
   ModelStoreListPageV2Query,
@@ -9,6 +10,7 @@ import {
 import { ModelStoreListPageV2_ModelCardV2Fragment$key } from '../__generated__/ModelStoreListPageV2_ModelCardV2Fragment.graphql';
 import AuthorIcon from '../components/AuthorIcon';
 import ModelBrandIcon from '../components/ModelBrandIcon';
+import ModelCardDrawer from '../components/ModelCardDrawer';
 import TextHighlighter from '../components/TextHighlighter';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useModelStoreProject } from '../hooks/useModelStoreProject';
@@ -36,7 +38,12 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { parseAsStringLiteral, useQueryStates } from 'nuqs';
-import React, { Suspense, useDeferredValue } from 'react';
+import React, {
+  Suspense,
+  useDeferredValue,
+  useEffectEvent,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 
@@ -60,7 +67,8 @@ const parseSortValue = (value: string) => {
 const ModelCardV2Card: React.FC<{
   modelCardV2Frgmt: ModelStoreListPageV2_ModelCardV2Fragment$key;
   searchKeyword?: string;
-}> = ({ modelCardV2Frgmt, searchKeyword }) => {
+  onClick?: () => void;
+}> = ({ modelCardV2Frgmt, searchKeyword, onClick }) => {
   'use memo';
 
   const { t } = useTranslation();
@@ -77,14 +85,25 @@ const ModelCardV2Card: React.FC<{
         }
         updatedAt
         createdAt
+        availablePresets(limit: 1) {
+          count
+        }
       }
     `,
     modelCardV2Frgmt,
   );
 
+  const hasNoPresets = modelCard.availablePresets?.count === 0;
+
   return (
     <Card
-      style={{ height: '100%' }}
+      hoverable
+      onClick={onClick}
+      style={{
+        height: '100%',
+        cursor: 'pointer',
+        opacity: hasNoPresets ? 0.5 : 1,
+      }}
       styles={{ body: { padding: token.paddingSM } }}
     >
       <BAIFlex direction="column" align="stretch" gap="xs">
@@ -147,6 +166,7 @@ const ModelCardV2Grid: React.FC<{
   pageSize: number;
   offset: number;
   onTotalChange: (total: number) => void;
+  onCardClick?: (frgmt: ModelCardDrawerFragment$key) => void;
 }> = ({
   projectId,
   filter,
@@ -157,6 +177,7 @@ const ModelCardV2Grid: React.FC<{
   pageSize,
   offset,
   onTotalChange,
+  onCardClick,
 }) => {
   'use memo';
 
@@ -183,6 +204,7 @@ const ModelCardV2Grid: React.FC<{
             node {
               id
               ...ModelStoreListPageV2_ModelCardV2Fragment
+              ...ModelCardDrawerFragment
             }
           }
         }
@@ -204,9 +226,13 @@ const ModelCardV2Grid: React.FC<{
   const items = result.projectModelCardsV2?.edges ?? [];
   const total = result.projectModelCardsV2?.count ?? 0;
 
-  React.useEffect(() => {
+  const onTotalChanged = useEffectEvent(() => {
     onTotalChange(total);
-  }, [total, onTotalChange]);
+  });
+
+  React.useEffect(() => {
+    onTotalChanged();
+  }, [total]);
 
   if (items.length === 0) {
     return (
@@ -227,6 +253,7 @@ const ModelCardV2Grid: React.FC<{
             <ModelCardV2Card
               modelCardV2Frgmt={item}
               searchKeyword={searchKeyword}
+              onClick={() => onCardClick?.(item)}
             />
           </Col>
         );
@@ -254,6 +281,9 @@ const ModelStoreListPageV2: React.FC = () => {
   const { field: sortField, direction: sortDirection } = parseSortValue(
     queryParams.sort,
   );
+
+  const [selectedModelCard, setSelectedModelCard] =
+    useState<ModelCardDrawerFragment$key | null>(null);
 
   const [filter, setFilter] = React.useState<GraphQLFilter | undefined>(
     undefined,
@@ -381,6 +411,7 @@ const ModelStoreListPageV2: React.FC = () => {
             pageSize={deferredLimit}
             offset={deferredOffset}
             onTotalChange={setTotal}
+            onCardClick={(frgmt) => setSelectedModelCard(frgmt)}
           />
         </div>
       </Suspense>
@@ -418,6 +449,11 @@ const ModelStoreListPageV2: React.FC = () => {
           </BAIFlex>
         </ConfigProvider>
       )}
+      <ModelCardDrawer
+        modelCardDrawerFrgmt={selectedModelCard}
+        open={!!selectedModelCard}
+        onClose={() => setSelectedModelCard(null)}
+      />
     </BAIFlex>
   );
 };

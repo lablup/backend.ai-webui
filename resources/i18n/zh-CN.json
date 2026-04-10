@@ -1579,6 +1579,7 @@
     "YamlUploadFailed": "model-definition.yaml 上传失败。"
   },
   "modelStore": {
+    "Architecture": "Architecture",
     "Author": "作者",
     "Category": "类别",
     "CheckingSettings": "检查设置...",
@@ -1588,6 +1589,7 @@
     "CloneSuccess": "克隆请求已成功发送。",
     "CloneToFolder": "克隆到文件夹",
     "Created": "已创建",
+    "Deploy": "Deploy",
     "Description": "描述",
     "FilterByName": "按名称过滤",
     "FinetuneModel": "微调模型",
@@ -1605,6 +1607,7 @@
     "ModelName": "模型名称",
     "ModelNameIsRequired": "创建服务时需要模型名称",
     "ModelPath": "模型路径",
+    "NoCompatiblePresets": "No compatible presets available. This model cannot be deployed.",
     "NoModelsFound": "未找到模型",
     "Path": "小路",
     "Port": "端口",

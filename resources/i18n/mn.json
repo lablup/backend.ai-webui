@@ -1578,6 +1578,7 @@
     "YamlUploadFailed": "model-definition.yaml байршуулж чадсангүй."
   },
   "modelStore": {
+    "Architecture": "Architecture",
     "Author": "Зохиогч",
     "Category": "ангилал",
     "CheckingSettings": "Тохиргоог шалгах ...",
@@ -1587,6 +1588,7 @@
     "CloneSuccess": "Хувилах хүсэлтийг амжилттай илгээлээ.",
     "CloneToFolder": "Хавтас руу клон хийх",
     "Created": "Үүсгэсэн",
+    "Deploy": "Deploy",
     "Description": "Тодорхойлолт",
     "FilterByName": "Нэрээр нь шүүх",
     "FinetuneModel": "Finetune загвар",
@@ -1604,6 +1606,7 @@
     "ModelName": "Моделийн нэр",
     "ModelNameIsRequired": "Үйлчилгээ үүсгэхийн тулд загварын нэр шаардлагатай",
     "ModelPath": "Загварын зам",
+    "NoCompatiblePresets": "No compatible presets available. This model cannot be deployed.",
     "NoModelsFound": "Загвар олдсонгүй",
     "Path": "Зам",
     "Port": "Порт",

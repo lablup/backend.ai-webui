@@ -1577,6 +1577,7 @@
     "YamlUploadFailed": "Falha ao enviar model-definition.yaml."
   },
   "modelStore": {
+    "Architecture": "Architecture",
     "Author": "Autor",
     "Category": "Categoria",
     "CheckingSettings": "Verificando as configurações ...",
@@ -1586,6 +1587,7 @@
     "CloneSuccess": "O pedido de clone foi enviado com sucesso.",
     "CloneToFolder": "Clonar para uma pasta",
     "Created": "Criada",
+    "Deploy": "Deploy",
     "Description": "Descrição",
     "FilterByName": "Filtrar por nome",
     "FinetuneModel": "Modelo de ajuste fino",
@@ -1603,6 +1605,7 @@
     "ModelName": "Nome do modelo",
     "ModelNameIsRequired": "O nome do modelo é obrigatório para criar um serviço",
     "ModelPath": "Caminho do modelo",
+    "NoCompatiblePresets": "No compatible presets available. This model cannot be deployed.",
     "NoModelsFound": "Nenhum modelo encontrado",
     "Path": "Caminho",
     "Port": "Porta",

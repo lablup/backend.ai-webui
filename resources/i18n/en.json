@@ -1579,6 +1579,7 @@
     "YamlUploadFailed": "Failed to upload model-definition.yaml. Please try again."
   },
   "modelStore": {
+    "Architecture": "Architecture",
     "Author": "Author",
     "Category": "Category",
     "CheckingSettings": "Checking settings...",
@@ -1588,6 +1589,7 @@
     "CloneSuccess": "The clone request has been sent successfully.",
     "CloneToFolder": "Clone to a folder",
     "Created": "Created",
+    "Deploy": "Deploy",
     "Description": "Description",
     "FilterByName": "Filter By Name",
     "FinetuneModel": "Finetune Model",
@@ -1605,6 +1607,7 @@
     "ModelName": "Model Name",
     "ModelNameIsRequired": "Model name is required to create a service",
     "ModelPath": "Model Path",
+    "NoCompatiblePresets": "No compatible presets available. This model cannot be deployed.",
     "NoModelsFound": "No models found",
     "Path": "Path",
     "Port": "Port",

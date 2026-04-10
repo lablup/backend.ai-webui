@@ -1579,6 +1579,7 @@
     "YamlUploadFailed": "Gagal mengunggah model-definition.yaml."
   },
   "modelStore": {
+    "Architecture": "Architecture",
     "Author": "Pengarang",
     "Category": "Kategori",
     "CheckingSettings": "Memeriksa Pengaturan ...",
@@ -1588,6 +1589,7 @@
     "CloneSuccess": "Permintaan kloning telah berhasil dikirim.",
     "CloneToFolder": "Mengkloning ke folder",
     "Created": "Dibuat",
+    "Deploy": "Deploy",
     "Description": "Keterangan",
     "FilterByName": "Filter Berdasarkan Nama",
     "FinetuneModel": "Penyempurnaan Model",
@@ -1605,6 +1607,7 @@
     "ModelName": "Nama Model",
     "ModelNameIsRequired": "Nama model diperlukan untuk membuat layanan",
     "ModelPath": "Jalur Model",
+    "NoCompatiblePresets": "No compatible presets available. This model cannot be deployed.",
     "NoModelsFound": "Model tidak ditemukan",
     "Path": "Jalur",
     "Port": "Pelabuhan",

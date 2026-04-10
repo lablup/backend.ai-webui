@@ -1577,6 +1577,7 @@
     "YamlUploadFailed": "model-definition.yaml-tiedoston lataaminen epäonnistui."
   },
   "modelStore": {
+    "Architecture": "Architecture",
     "Author": "Tekijä",
     "Category": "Kategoria",
     "CheckingSettings": "Asetukset ...",
@@ -1586,6 +1587,7 @@
     "CloneSuccess": "Kloonipyyntö on lähetetty onnistuneesti.",
     "CloneToFolder": "Kloonaa kansioon",
     "Created": "Luotu",
+    "Deploy": "Deploy",
     "Description": "Kuvaus",
     "FilterByName": "Suodata nimen mukaan",
     "FinetuneModel": "Finetune malli",
@@ -1603,6 +1605,7 @@
     "ModelName": "Mallin nimi",
     "ModelNameIsRequired": "Mallin nimi vaaditaan palvelun luomiseen",
     "ModelPath": "Mallin polku",
+    "NoCompatiblePresets": "No compatible presets available. This model cannot be deployed.",
     "NoModelsFound": "Malleja ei löytynyt",
     "Path": "Polku",
     "Port": "Portti",

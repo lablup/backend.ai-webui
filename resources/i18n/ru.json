@@ -1577,6 +1577,7 @@
     "YamlUploadFailed": "Не удалось загрузить model-definition.yaml."
   },
   "modelStore": {
+    "Architecture": "Architecture",
     "Author": "Автор",
     "Category": "Категория",
     "CheckingSettings": "Проверка настроек ...",
@@ -1586,6 +1587,7 @@
     "CloneSuccess": "Запрос на клонирование успешно отправлен.",
     "CloneToFolder": "Клонирование в папку",
     "Created": "Созданный",
+    "Deploy": "Deploy",
     "Description": "Описание",
     "FilterByName": "Фильтровать по имени",
     "FinetuneModel": "Точная настройка модели",
@@ -1603,6 +1605,7 @@
     "ModelName": "Название модели",
     "ModelNameIsRequired": "Для создания службы необходимо имя модели.",
     "ModelPath": "Путь модели",
+    "NoCompatiblePresets": "No compatible presets available. This model cannot be deployed.",
     "NoModelsFound": "Модели не найдены",
     "Path": "Путь",
     "Port": "Порт",

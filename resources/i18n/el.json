@@ -1577,6 +1577,7 @@
     "YamlUploadFailed": "Αποτυχία αποστολής model-definition.yaml."
   },
   "modelStore": {
+    "Architecture": "Architecture",
     "Author": "Συγγραφέας",
     "Category": "Κατηγορίες",
     "CheckingSettings": "Ρυθμίσεις ελέγχου ...",
@@ -1586,6 +1587,7 @@
     "CloneSuccess": "Η αίτηση κλωνοποίησης έχει σταλεί με επιτυχία.",
     "CloneToFolder": "Κλωνοποίηση σε φάκελο",
     "Created": "Δημιουργήθηκε",
+    "Deploy": "Deploy",
     "Description": "Περιγραφή",
     "FilterByName": "Φιλτράρισμα κατά όνομα",
     "FinetuneModel": "Μοντέλο Finetune",
@@ -1603,6 +1605,7 @@
     "ModelName": "Όνομα μοντέλου",
     "ModelNameIsRequired": "Το όνομα μοντέλου απαιτείται για τη δημιουργία μιας υπηρεσίας",
     "ModelPath": "Μοντέλο Μονοπάτι",
+    "NoCompatiblePresets": "No compatible presets available. This model cannot be deployed.",
     "NoModelsFound": "Δεν βρέθηκαν μοντέλα",
     "Path": "Μονοπάτι",
     "Port": "Θύρα",

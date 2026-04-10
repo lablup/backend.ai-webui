@@ -1581,6 +1581,7 @@
     "YamlUploadFailed": "model-definition.yaml 업로드에 실패했습니다. 다시 시도해 주세요."
   },
   "modelStore": {
+    "Architecture": "Architecture",
     "Author": "작가",
     "Category": "카테고리",
     "CheckingSettings": "설정 확인중...",
@@ -1590,6 +1591,7 @@
     "CloneSuccess": "복제 요청을 보냈습니다.",
     "CloneToFolder": "폴더로 복제",
     "Created": "생성",
+    "Deploy": "Deploy",
     "Description": "설명",
     "FilterByName": "이름으로 필터링",
     "FinetuneModel": "모델 파인튜닝",
@@ -1607,6 +1609,7 @@
     "ModelName": "모델 이름",
     "ModelNameIsRequired": "서비스를 만들려면 모델 이름이 필요합니다.",
     "ModelPath": "모델 경로",
+    "NoCompatiblePresets": "No compatible presets available. This model cannot be deployed.",
     "NoModelsFound": "모델을 찾을 수 없습니다",
     "Path": "길",
     "Port": "포트",

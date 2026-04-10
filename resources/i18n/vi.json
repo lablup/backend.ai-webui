@@ -1579,6 +1579,7 @@
     "YamlUploadFailed": "Tải lên model-definition.yaml thất bại."
   },
   "modelStore": {
+    "Architecture": "Architecture",
     "Author": "Tác giả",
     "Category": "Loại",
     "CheckingSettings": "Kiểm tra cài đặt ...",
@@ -1588,6 +1589,7 @@
     "CloneSuccess": "Yêu cầu nhân bản đã được gửi thành công.",
     "CloneToFolder": "Sao chép vào một thư mục",
     "Created": "Tạo",
+    "Deploy": "Deploy",
     "Description": "Sự miêu tả",
     "FilterByName": "Lọc theo tên",
     "FinetuneModel": "Mô hình Finetune",
@@ -1605,6 +1607,7 @@
     "ModelName": "Tên mô hình",
     "ModelNameIsRequired": "Cần có tên mẫu để tạo dịch vụ",
     "ModelPath": "Đường dẫn mẫu",
+    "NoCompatiblePresets": "No compatible presets available. This model cannot be deployed.",
     "NoModelsFound": "Không tìm thấy mô hình",
     "Path": "Con đường",
     "Port": "Cổng",

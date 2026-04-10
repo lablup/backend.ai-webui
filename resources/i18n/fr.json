@@ -1577,6 +1577,7 @@
     "YamlUploadFailed": "Échec du téléchargement de model-definition.yaml."
   },
   "modelStore": {
+    "Architecture": "Architecture",
     "Author": "Auteur",
     "Category": "Catégories",
     "CheckingSettings": "Paramètres de vérification ...",
@@ -1586,6 +1587,7 @@
     "CloneSuccess": "La demande de clone a été envoyée avec succès.",
     "CloneToFolder": "Cloner dans un dossier",
     "Created": "Créé",
+    "Deploy": "Deploy",
     "Description": "Description",
     "FilterByName": "Filtrer par nom",
     "FinetuneModel": "Modèle de réglage fin",
@@ -1603,6 +1605,7 @@
     "ModelName": "Nom du modèle",
     "ModelNameIsRequired": "Le nom du modèle est requis pour créer un service",
     "ModelPath": "Chemin du modèle",
+    "NoCompatiblePresets": "No compatible presets available. This model cannot be deployed.",
     "NoModelsFound": "Aucun modèle trouvé",
     "Path": "Chemin",
     "Port": "Port",

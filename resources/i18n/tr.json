@@ -1577,6 +1577,7 @@
     "YamlUploadFailed": "model-definition.yaml yüklenemedi."
   },
   "modelStore": {
+    "Architecture": "Architecture",
     "Author": "Yazar",
     "Category": "Kategori",
     "CheckingSettings": "Ayarları kontrol etme ...",
@@ -1586,6 +1587,7 @@
     "CloneSuccess": "Klonlama isteği başarıyla gönderildi.",
     "CloneToFolder": "Bir klasöre klonlama",
     "Created": "Oluşturuldu",
+    "Deploy": "Deploy",
     "Description": "Tanım",
     "FilterByName": "Ada Göre Filtrele",
     "FinetuneModel": "İnce Ayar Modeli",
@@ -1603,6 +1605,7 @@
     "ModelName": "Model Adı",
     "ModelNameIsRequired": "Hizmet oluşturmak için model adı gereklidir",
     "ModelPath": "Model Yolu",
+    "NoCompatiblePresets": "No compatible presets available. This model cannot be deployed.",
     "NoModelsFound": "Model bulunamadı",
     "Path": "Yol",
     "Port": "Liman",

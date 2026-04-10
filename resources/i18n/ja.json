@@ -1579,6 +1579,7 @@
     "YamlUploadFailed": "model-definition.yaml のアップロードに失敗しました。"
   },
   "modelStore": {
+    "Architecture": "Architecture",
     "Author": "著者",
     "Category": "カテゴリー",
     "CheckingSettings": "設定の確認...",
@@ -1588,6 +1589,7 @@
     "CloneSuccess": "クローン要求は正常に送信された。",
     "CloneToFolder": "フォルダへのクローン",
     "Created": "作成した",
+    "Deploy": "Deploy",
     "Description": "説明",
     "FilterByName": "名前でフィルタリングする",
     "FinetuneModel": "ファインチューンモデル",
@@ -1605,6 +1607,7 @@
     "ModelName": "モデル名",
     "ModelNameIsRequired": "サービスを作成するにはモデル名が必要です",
     "ModelPath": "モデルパス",
+    "NoCompatiblePresets": "No compatible presets available. This model cannot be deployed.",
     "NoModelsFound": "モデルが見つかりません",
     "Path": "パス",
     "Port": "ポート",

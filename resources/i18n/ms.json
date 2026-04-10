@@ -1577,6 +1577,7 @@
     "YamlUploadFailed": "Gagal memuat naik model-definition.yaml."
   },
   "modelStore": {
+    "Architecture": "Architecture",
     "Author": "Pengarang",
     "Category": "kategori",
     "CheckingSettings": "Memeriksa tetapan ...",
@@ -1586,6 +1587,7 @@
     "CloneSuccess": "Permintaan klon telah berjaya dihantar.",
     "CloneToFolder": "Klon ke folder",
     "Created": "Dicipta",
+    "Deploy": "Deploy",
     "Description": "Penerangan",
     "FilterByName": "Tapis Mengikut Nama",
     "FinetuneModel": "Model Finetune",
@@ -1603,6 +1605,7 @@
     "ModelName": "Nama Model",
     "ModelNameIsRequired": "Nama model diperlukan untuk membuat perkhidmatan",
     "ModelPath": "Laluan Model",
+    "NoCompatiblePresets": "No compatible presets available. This model cannot be deployed.",
     "NoModelsFound": "Tiada model ditemui",
     "Path": "Laluan",
     "Port": "Pelabuhan",

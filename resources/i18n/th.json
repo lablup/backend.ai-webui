@@ -1579,6 +1579,7 @@
     "YamlUploadFailed": "ไม่สามารถอัปโหลด model-definition.yaml ได้"
   },
   "modelStore": {
+    "Architecture": "Architecture",
     "Author": "ผู้เขียน",
     "Category": "หมวดหมู่",
     "CheckingSettings": "ตรวจสอบการตั้งค่า ...",
@@ -1588,6 +1589,7 @@
     "CloneSuccess": "ส่งคำขอโคลนสำเร็จแล้ว",
     "CloneToFolder": "โคลนไปยังโฟลเดอร์",
     "Created": "สร้างเมื่อ",
+    "Deploy": "Deploy",
     "Description": "คำอธิบาย",
     "FilterByName": "กรองตามชื่อ",
     "FinetuneModel": "ปรับแต่งโมเดล",
@@ -1605,6 +1607,7 @@
     "ModelName": "ชื่อโมเดล",
     "ModelNameIsRequired": "ต้องระบุชื่อรุ่นเพื่อสร้างบริการ",
     "ModelPath": "เส้นทางโมเดล",
+    "NoCompatiblePresets": "No compatible presets available. This model cannot be deployed.",
     "NoModelsFound": "ไม่พบโมเดล",
     "Path": "เส้นทาง",
     "Port": "พอร์ต",
