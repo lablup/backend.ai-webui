@@ -1,15 +1,15 @@
 # นำเข้าและรันโน้ตบุ๊คและที่เก็บ Git แบบเว็บ
 
 
-ในหน้า 'นำเข้าและรัน' Backend.AI รองรับการรันไฟล์ Jupyter notebook และการนำเข้าคลัง Git ที่เป็นเว็บ เช่น GitHub และ GitLab ได้อย่างทันที คุณไม่จำเป็นต้องสร้างหรือดาวน์โหลดไปยังที่เก็บข้อมูลในเครื่องแล้วอัปโหลดอีกครั้ง สิ่งที่คุณต้องทำคือป้อน URL ที่ถูกต้องที่คุณต้องการรันหรือนำเข้า และคลิกที่ปุ่มด้านขวา
+On the 'Import & Run' page, Backend.AI รองรับการรันไฟล์ Jupyter notebook และการนำเข้าคลัง Git ที่เป็นเว็บ เช่น GitHub และ GitLab ได้อย่างทันที คุณไม่จำเป็นต้องสร้างหรือดาวน์โหลดไปยังที่เก็บข้อมูลในเครื่องแล้วอัปโหลดอีกครั้ง สิ่งที่คุณต้องทำคือป้อน URL ที่ถูกต้องที่คุณต้องการรันหรือ นำเข้า และคลิกที่ปุ่มด้านขวา
 
 <a id="import-and-run-jupyter-notebooks"></a>
 
 ## นำเข้าและรันสมุดบันทึก Jupyter
 
-ในการนำเข้าและรัน Jupyter notebook คุณต้องมี URL ที่ถูกต้องของไฟล์ notebook
-ตัวอย่างเช่น หากคุณต้องการรัน Jupyter notebook ที่อยู่บน GitHub คุณสามารถคัดลอกและวาง
-URL แล้วคลิกปุ่ม 'นำเข้าและรัน'
+To import Jupyter notebooks and run, you need one thing, the valid URL for the notebook file.
+For example, if you want execute Jupyter notebook that's in github, you can copy and paste
+the URL and click 'IMPORT & RUN' button.
 
 
 :::note
@@ -18,62 +18,73 @@ URL แล้วคลิกปุ่ม 'นำเข้าและรัน'
 
 ![](../images/import_run_notebook.png)
 
-หลังจากคลิกปุ่ม กล่องโต้ตอบจะปรากฏขึ้น นี่คือกล่องโต้ตอบตัวเปิดเซสชัน เหมือนกับเมื่อคุณเริ่มเซสชันจากหน้าเซสชันหรือหน้าสรุป ความแตกต่างระหว่างการนำเข้า notebook กับการเริ่มเซสชันใหม่คือ การนำเข้า notebook จะนำเข้า Jupyter notebook จาก URL โดยอัตโนมัติ ส่วนที่เหลือเหมือนกัน ตั้งค่าสภาพแวดล้อมและการจัดสรรทรัพยากรตามต้องการ แล้วคลิกปุ่ม 'เริ่ม'
+After clicking the button, the dialog appears. This is a session launcher dialog same as
+when you starts the session at Sessions page or Summary page. Difference between import notebook
+and starting a new session is that import notebook automatically imports Jupyter notebook in the
+URL, but simple starting a new session doesn't do that. the rest is same. Click 'LAUNCH' button to
+the notebook after setting the environments and resource allocation as needed.
 
 :::note
-ต้องปิดตัวบล็อกป๊อปอัพก่อนคลิกปุ่ม 'เริ่ม' เพื่อดูหน้าต่าง notebook ที่กำลังทำงานทันที นอกจากนี้ หากไม่มีทรัพยากรเพียงพอในการรันเซสชัน Jupyter notebook ที่นำเข้าจะไม่ทำงาน
+The pop-up blocker must be turned off before clicking 'LAUNCH' button to immediately
+see the running notebook window. Also, if there's not enough resources to execute the session,
+imported Jupyter notebook will not run.
 :::
 
 ![](../images/session_launcher_in_importing_notebook.png)
 
-คุณจะเห็นว่าการนำเข้าเสร็จสมบูรณ์ในหน้าเซสชัน
+You can see the importing operation is successfully completed in Sessions page.
 
 ![](../images/sessions_page_with_imported_notebook.png)
 
 <a id="create-executable-jupyter-notebook-button"></a>
 
-## สร้างปุ่ม Jupyter notebook ที่สามารถรันได้
+## Create executable Jupyter notebook button
 
-คุณยังสามารถสร้าง badge HTML หรือ Markdown สำหรับ URL ของ Jupyter notebook ได้
-ป้อน URL ของ Jupyter notebook ที่ถูกต้อง แล้วคลิกปุ่มคัดลอก 'รหัสป้ายกำกับโน้ตบุ๊ก (HTML)' หรือ
-'รหัสป้ายกำกับโน้ตบุ๊ก (Markdown)' เพื่อคัดลอกรหัส badge ไปยังคลิปบอร์ด
-รหัส badge จะสร้างลิงก์ที่เปิดเซสชันพร้อมกับ notebook โดยตรง
-คุณสามารถใช้รหัส badge โดยแทรกลงใน GitHub repositories หรือที่ใดก็ตามที่รองรับ HTML หรือ Markdown
+You can also create HTML or Markdown button about Jupyter notebook URL, too.
+Input a valid Jupyter notebook URL and click 'CREATE' button. It will show code blocks that directly
+links to creating a session with notebook. You can see the badge code working by inserting it in
+the GitHub repositories or where it supports html or markdown.
+
 
 :::note
-บัญชีของคุณต้องเข้าสู่ระบบก่อนคลิกปุ่ม มิฉะนั้นคุณต้องเข้าสู่ระบบก่อน
+your account must be logined before clicking the button. Otherwise, you have to login first.
 :::
 
 ![](../images/create_notebook_button.png)
 
 <a id="importing-github-repositories"></a>
 
-## การนำเข้า GitHub Repositories
+## Importing GitHub Repositories
 
-การนำเข้า GitHub repository คล้ายกับการนำเข้าและรัน Jupyter notebook
-สิ่งที่คุณต้องทำคือกรอก URL ของ GitHub repository เลือกโฮสต์จัดเก็บจากเมนู
-'โฮสต์ที่เก็บข้อมูล' แล้วคลิกปุ่ม 'นำเข้าไปยังโฟลเดอร์'
+Importing a GitHub repository is similar to import and running Jupyter notebook.
+All you have to do is to fill out with github repository URL and click 'GET TO
+FOLDER' button. If you can access to more than one storage host, you can select one from the list.
 
 ![](../images/import_github_repository.png)
 
 :::note
-หากไม่มีทรัพยากรเพียงพอในการเริ่มเซสชันหรือจำนวนโฟลเดอร์ถึงขีดจำกัด การนำเข้า repository จะล้มเหลว กรุณาตรวจสอบแผงสถิติทรัพยากรและหน้าข้อมูล & ที่จัดเก็บก่อนนำเข้า repository
+If there are not enough resources to start a session or folder count is at
+the limit, then importing repository will fail. Please check resource
+statistics panel and Data & Storage page before importing the repository.
 :::
 
-คุณจะเห็นว่า repository ถูกนำเข้าเป็นโฟลเดอร์จัดเก็บพร้อมชื่อของมันสำเร็จแล้ว
+You can see the repository is successfully imported as a data folder with its
+name.
 
 ![](../images/import_github_repository_result.png)
 
 <a id="importing-gitlab-repositories"></a>
 
-## การนำเข้า GitLab Repositories
+## Importing GitLab Repositories
 
-ตั้งแต่เวอร์ชัน 22.03 Backend.AI รองรับการนำเข้าจาก GitLab ซึ่งเกือบเหมือนกับ
-[การนำเข้า GitHub Repositories](#importing-github-repositories)
-แต่คุณต้องตั้งค่าชื่อ branch ที่จะนำเข้าอย่างชัดเจน
+From 22.03, Backend.AI supports importing from GitLab. It's almost the same as
+[Importing GitHub Repositories](#importing-github-repositories),
+but you need to explicitly set the branch name to import.
 
 ![](../images/import_gitlab_repository.png)
 
+
 :::note
-หากมีโฟลเดอร์จัดเก็บที่มีชื่อเดียวกันอยู่แล้ว ระบบจะเพิ่ม `_` (ขีดล่าง) และตัวเลขในชื่อโฟลเดอร์ repository ที่นำเข้า
+If there's data folder that has the same name already, the system will append
+`_` (underscore) and number in the imported repository folder.
 :::
