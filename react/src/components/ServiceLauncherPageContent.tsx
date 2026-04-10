@@ -630,9 +630,11 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
         const trimmed = value?.trim();
         return trimmed && trimmed.length > 0 ? trimmed : fallback;
       };
+      // If user leaves modelDefinitionPath empty, send undefined instead of
+      // hardcoding 'model-definition.yaml' so the server can infer the value.
       const modelDefinitionPath = isCommandMode
         ? 'model-definition.yaml'
-        : normalizePath(values.modelDefinitionPath, 'model-definition.yaml');
+        : values.modelDefinitionPath?.trim() || undefined;
       const modelMountDestination = isCommandMode
         ? normalizePath(values.commandModelMount, '/models')
         : normalizePath(values.modelMountDestination, '/models');
@@ -920,7 +922,9 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                 }),
                 name: values.serviceName,
                 resource_group: values.resourceGroup,
-                model_definition_path: values.modelDefinitionPath,
+                // If empty, let the server infer the value instead of hardcoding
+                model_definition_path:
+                  values.modelDefinitionPath?.trim() || undefined,
                 runtime_variant: values.runtimeVariant,
               },
             };
