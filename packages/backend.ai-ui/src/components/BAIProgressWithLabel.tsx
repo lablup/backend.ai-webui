@@ -1,10 +1,12 @@
 import BAIFlex from './BAIFlex';
 import { Typography, theme, type ProgressProps } from 'antd';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React from 'react';
 
-export interface BAIProgressWithLabelProps
-  extends Omit<ProgressProps, 'width' | 'size'> {
+export interface BAIProgressWithLabelProps extends Omit<
+  ProgressProps,
+  'width' | 'size'
+> {
   title?: React.ReactNode;
   valueLabel?: React.ReactNode;
   percent?: number;

@@ -1,19 +1,17 @@
 import { theme } from 'antd';
 import { SorterResult } from 'antd/es/table/interface';
 import Big from 'big.js';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 
 export function transformSorterToOrderString<T = any>(
   sorter: SorterResult<T> | Array<SorterResult<T>>,
 ) {
   if (Array.isArray(sorter)) {
-    return _.chain(sorter)
-      .map((s) =>
+    return _.compact(
+      _.map(sorter, (s) =>
         s.order ? `${s.order === 'descend' ? '-' : ''}${s.field}` : undefined,
-      )
-      .compact()
-      .join(',')
-      .value();
+      ),
+    ).join(',');
   } else {
     return sorter.order
       ? `${sorter.order === 'descend' ? '-' : ''}${sorter.field}`

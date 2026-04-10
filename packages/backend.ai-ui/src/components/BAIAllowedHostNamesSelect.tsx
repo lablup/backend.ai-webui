@@ -1,6 +1,6 @@
 import { useAllowedHostNames } from '../hooks';
 import { Select, type SelectProps } from 'antd';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React from 'react';
 
 interface AllowedHostNamesSelectProps extends SelectProps {}

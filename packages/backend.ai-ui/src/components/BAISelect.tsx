@@ -11,7 +11,7 @@ import { createStyles } from 'antd-style';
 import type { BaseOptionType, DefaultOptionType } from 'antd/es/select';
 import type { GetRef } from 'antd/lib';
 import classNames from 'classnames';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React, { useLayoutEffect, useRef, useTransition } from 'react';
 
 const useStyles = createStyles(({ css, token }) => ({

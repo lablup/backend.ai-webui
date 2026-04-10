@@ -491,20 +491,14 @@ export const useBackendAIImageMetaData = () => {
         return architecture;
       },
       tagAlias: (tag: string) => {
-        return (
-          metadata?.tagAlias[tag] ??
-          _.chain(metadata.tagReplace)
-            .toPairs()
-            .find(([regExpStr]) => new RegExp(regExpStr).test(tag))
-            .thru((pair) => {
-              if (pair) {
-                const [regExpStr, replaceStr] = pair;
-                return _.replace(tag, new RegExp(regExpStr), replaceStr);
-              }
-            })
-            .value() ??
-          preserveDotStartCase(tag)
+        const matchedPair = _.find(
+          _.toPairs(metadata.tagReplace),
+          ([regExpStr]) => new RegExp(regExpStr).test(tag),
         );
+        const replaced = matchedPair
+          ? _.replace(tag, new RegExp(matchedPair[0]), matchedPair[1] as string)
+          : undefined;
+        return metadata?.tagAlias[tag] ?? replaced ?? preserveDotStartCase(tag);
       },
       ...imageParser,
     },

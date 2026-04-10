@@ -281,10 +281,10 @@ export const useStartSession = () => {
           !_.isEqual(_.castArray(values.agent), ['auto'])
             ? {
                 // Filter out undefined values
-                agent_list: _.chain(values.agent)
-                  .castArray()
-                  .filter((agent): agent is string => !!agent)
-                  .value(),
+                agent_list: _.filter(
+                  _.castArray(values.agent),
+                  (agent): agent is string => !!agent,
+                ),
               }
             : undefined),
         },

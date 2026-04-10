@@ -1,5 +1,5 @@
 import { theme } from 'antd';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React from 'react';
 
 interface BAITextHighlighterProps {

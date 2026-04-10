@@ -384,10 +384,9 @@ const KeypairResourcePolicySettingModal: React.FC<
         </Form.Item>
         <Form.Item label={t('resourcePolicy.ResourcePolicy')} required>
           <Card>
-            {_.chain(resourceSlots)
-              .keys()
-              .chunk(3)
-              .map((resourceSlotKeys, index) => (
+            {_.map(
+              _.chunk(_.keys(resourceSlots), 3),
+              (resourceSlotKeys, index) => (
                 <Row gutter={[24, 16]} key={index}>
                   {_.map(resourceSlotKeys, (resourceSlotKey) => (
                     <Col
@@ -452,8 +451,8 @@ const KeypairResourcePolicySettingModal: React.FC<
                     </Col>
                   ))}
                 </Row>
-              ))
-              .value()}
+              ),
+            )}
           </Card>
         </Form.Item>
         <Form.Item label={t('resourcePolicy.Sessions')} required>

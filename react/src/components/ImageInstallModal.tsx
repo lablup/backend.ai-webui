@@ -105,14 +105,10 @@ const ImageInstallModal: React.FC<ImageInstallModalInterface> = ({
 
       const resourceSlots = await baiClient.get_resource_slots();
 
-      const keysToRemove = _.chain([
-        'cuda.device',
-        'cuda.shares',
-        'gpu',
-        'fgpu',
-      ])
-        .filter((key) => !(key in resourceSlots))
-        .value();
+      const keysToRemove = _.filter(
+        ['cuda.device', 'cuda.shares', 'gpu', 'fgpu'],
+        (key) => !(key in resourceSlots),
+      );
 
       // Remove keys that are not available in the resource slots
       if (imageResource.config) {

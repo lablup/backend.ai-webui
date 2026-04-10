@@ -93,9 +93,7 @@ const SessionTemplateModal: React.FC<SessionTemplateModalProps> = ({
       ...parseToFormValues(history, true),
     }));
 
-    return _.chain([...pinned, ...recent])
-      .unionBy('id')
-      .value();
+    return _.unionBy([...pinned, ...recent], 'id');
   }, [sessionHistory, pinnedSessionHistory]);
 
   return (

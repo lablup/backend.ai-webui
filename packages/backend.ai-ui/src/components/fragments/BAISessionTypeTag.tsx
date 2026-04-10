@@ -1,6 +1,6 @@
 import { BAISessionTypeTagFragment$key } from '../../__generated__/BAISessionTypeTagFragment.graphql';
 import { Tag } from 'antd';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React from 'react';
 import { useFragment, graphql } from 'react-relay';
 

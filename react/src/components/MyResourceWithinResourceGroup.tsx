@@ -131,49 +131,51 @@ const MyResourceWithinResourceGroup: React.FC<
           }
         : null;
 
-    const accelerators = _.chain(resourceSlotsDetails?.resourceSlotsInRG)
-      .omit(['cpu', 'mem'])
-      .map((resourceSlot, key) => {
-        if (
-          !resourceSlot ||
-          _.isUndefined(
+    const accelerators = _.compact(
+      _.map(
+        _.omit(resourceSlotsDetails?.resourceSlotsInRG, ['cpu', 'mem']),
+        (resourceSlot, key) => {
+          if (
+            !resourceSlot ||
+            _.isUndefined(
+              checkPresetInfo?.scaling_groups?.[deferredCurrentResourceGroup]
+                ?.using?.[key as ResourceSlotName],
+            )
+          )
+            return null;
+
+          // TODO: convertToNumber should not handle `undefined` as Infinity.
+          const usingCurrent = convertToNumber(
             checkPresetInfo?.scaling_groups?.[deferredCurrentResourceGroup]
               ?.using?.[key as ResourceSlotName],
-          )
-        )
-          return null;
+          );
+          const remainingCurrent = convertToNumber(
+            checkPresetInfo?.scaling_groups?.[deferredCurrentResourceGroup]
+              ?.remaining?.[key as ResourceSlotName],
+          );
 
-        // TODO: convertToNumber should not handle `undefined` as Infinity.
-        const usingCurrent = convertToNumber(
-          checkPresetInfo?.scaling_groups?.[deferredCurrentResourceGroup]
-            ?.using?.[key as ResourceSlotName],
-        );
-        const remainingCurrent = convertToNumber(
-          checkPresetInfo?.scaling_groups?.[deferredCurrentResourceGroup]
-            ?.remaining?.[key as ResourceSlotName],
-        );
+          // Skip displaying if both used and free are not finite numbers
+          if (!isFinite(usingCurrent) && !isFinite(remainingCurrent))
+            return null;
 
-        // Skip displaying if both used and free are not finite numbers
-        if (!isFinite(usingCurrent) && !isFinite(remainingCurrent)) return null;
-
-        return {
-          key,
-          used: {
-            current: usingCurrent,
-            total: undefined,
-          },
-          free: {
-            current: remainingCurrent,
-            total: undefined,
-          },
-          metadata: {
-            title: resourceSlot.human_readable_name,
-            displayUnit: resourceSlot.display_unit,
-          },
-        };
-      })
-      .compact()
-      .value();
+          return {
+            key,
+            used: {
+              current: usingCurrent,
+              total: undefined,
+            },
+            free: {
+              current: remainingCurrent,
+              total: undefined,
+            },
+            metadata: {
+              title: resourceSlot.human_readable_name,
+              displayUnit: resourceSlot.display_unit,
+            },
+          };
+        },
+      ),
+    );
 
     return { cpu: cpuData, memory: memoryData, accelerators };
   }, [checkPresetInfo, resourceSlotsDetails, deferredCurrentResourceGroup]);

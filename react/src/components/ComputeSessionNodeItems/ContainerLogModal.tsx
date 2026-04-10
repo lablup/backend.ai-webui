@@ -172,9 +172,12 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
               resetPreviousLineNumber();
             }}
             autoSelectOption
-            options={_.chain(session?.kernel_nodes?.edges)
-              .sortBy((e) => `${e?.node?.cluster_role} ${e?.node?.cluster_idx}`)
-              .map((e) => {
+            options={_.map(
+              _.sortBy(
+                session?.kernel_nodes?.edges,
+                (e) => `${e?.node?.cluster_role} ${e?.node?.cluster_idx}`,
+              ),
+              (e) => {
                 return {
                   label: (
                     <>
@@ -192,8 +195,8 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
                   ),
                   value: e?.node?.row_id,
                 };
-              })
-              .value()}
+              },
+            )}
           />
           <Divider type="vertical" />
           <Tooltip title={t('button.Download')}>

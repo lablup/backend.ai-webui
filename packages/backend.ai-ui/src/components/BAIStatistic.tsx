@@ -1,6 +1,6 @@
 import BAIFlex from './BAIFlex';
 import { theme, Typography, Tooltip, Progress } from 'antd';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React, { type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 

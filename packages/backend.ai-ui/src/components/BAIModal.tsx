@@ -12,7 +12,7 @@ import {
 import { Button, Modal, Tooltip, theme, type ModalProps } from 'antd';
 import { createStyles } from 'antd-style';
 import classNames from 'classnames';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React, { useState, useRef, useEffect } from 'react';
 import Draggable, {
   type DraggableData,

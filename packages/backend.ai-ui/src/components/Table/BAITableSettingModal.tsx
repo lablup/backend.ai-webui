@@ -26,7 +26,7 @@ import {
 } from 'antd';
 import type { TableColumnsType } from 'antd';
 import { FormInstance } from 'antd/lib';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React, {
   useRef,
   useState,

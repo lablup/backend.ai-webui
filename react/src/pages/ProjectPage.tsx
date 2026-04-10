@@ -259,11 +259,10 @@ const ProjectPage = () => {
                 return;
               }
               setSelectedProjectList(
-                _.chain(group_nodes.edges)
-                  .map((e) => e?.node)
-                  .compact()
-                  .filter((node) => keys.includes(node.id))
-                  .value(),
+                _.filter(
+                  _.compact(_.map(group_nodes.edges, (e) => e?.node)),
+                  (node) => keys.includes(node.id),
+                ),
               );
             },
             selectedRowKeys: _.map(selectedProjectList, 'id'),

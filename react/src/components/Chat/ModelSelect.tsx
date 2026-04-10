@@ -24,19 +24,18 @@ const ModelSelect: React.FC<ModelSelectProps> = ({
         fontWeight: 'normal',
       }}
       showSearch
-      options={_.chain(models)
-        .groupBy('group')
-        .mapValues((ms) =>
+      options={_.map(
+        _.mapValues(_.groupBy(models, 'group'), (ms) =>
           _.map(ms, ({ name }) => ({
             label: name,
             value: name,
           })),
-        )
-        .map((v, k) => ({
+        ),
+        (v, k) => ({
           label: k === 'undefined' ? 'Others' : k,
           options: v,
-        }))
-        .value()}
+        }),
+      )}
       popupMatchSelectWidth={false}
       {...selectProps}
     />

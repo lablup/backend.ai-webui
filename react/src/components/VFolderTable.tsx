@@ -289,10 +289,13 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
 
   const autoMountedFolderNames = useMemo(
     () =>
-      _.chain(mountableFoldersByPermission)
-        .filter((vf) => vf.status === 'ready' && vf.name?.startsWith('.'))
-        .map((vf) => vf.name)
-        .value(),
+      _.map(
+        _.filter(
+          mountableFoldersByPermission,
+          (vf) => vf.status === 'ready' && vf.name?.startsWith('.'),
+        ),
+        (vf) => vf.name,
+      ),
     [mountableFoldersByPermission],
   );
 
@@ -314,20 +317,18 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
 
   const [searchKey, setSearchKey] = useState('');
   const displayingFolders = useMemo(() => {
-    return _.chain(mountableFoldersByPermission)
-      .filter((vf) => {
-        // Apply external filter for display
-        if (rowFilter && !rowFilter(vf)) {
-          return false;
-        }
-        // Always show selected items
-        if (selectedRowKeys.includes(getRowKey(vf))) {
-          return true;
-        }
-        // Apply search filter
-        return !searchKey || vf.name.includes(searchKey);
-      })
-      .value();
+    return _.filter(mountableFoldersByPermission, (vf) => {
+      // Apply external filter for display
+      if (rowFilter && !rowFilter(vf)) {
+        return false;
+      }
+      // Always show selected items
+      if (selectedRowKeys.includes(getRowKey(vf))) {
+        return true;
+      }
+      // Apply search filter
+      return !searchKey || vf.name.includes(searchKey);
+    });
   }, [
     mountableFoldersByPermission,
     rowFilter,

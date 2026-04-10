@@ -362,10 +362,9 @@ const AutoMountFolderSection: React.FC<{ currentProjectId: string }> = ({
       },
     );
 
-  const autoMountNames = _.chain(vfolder_nodes?.edges)
-    .map((edge) => edge?.node?.name)
-    .compact()
-    .value();
+  const autoMountNames = _.compact(
+    _.map(vfolder_nodes?.edges, (edge) => edge?.node?.name),
+  );
 
   if (autoMountNames.length === 0) return null;
 

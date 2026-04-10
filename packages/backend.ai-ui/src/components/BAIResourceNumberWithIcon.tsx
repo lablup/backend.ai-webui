@@ -12,7 +12,7 @@ import NumberWithUnit from './BAINumberWithUnit';
 import BAIText from './BAIText';
 import { ResourceSlotName, useBAIDeviceMetaData } from './provider';
 import { theme, Tooltip, TooltipProps } from 'antd';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { CpuIcon, MemoryStickIcon, MicrochipIcon } from 'lucide-react';
 import type { ReactNode } from 'react';
 

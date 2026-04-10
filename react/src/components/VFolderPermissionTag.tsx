@@ -40,22 +40,24 @@ const VFolderPermissionTag: React.FC<VFolderPermissionTagProps> = ({
     `,
     vFolderFrgmt,
   );
-  const tagValues: DoubleTagObjectValue[] = _.chain({
-    r: 'green',
-    w: 'blue',
-    d: 'red',
-  })
-    .map((color, perm) => {
-      if (hasPermission(vFolder?.permission || permission, perm)) {
-        return {
-          label: perm.toUpperCase(),
-          color,
-        };
-      }
-      return undefined;
-    })
-    .compact()
-    .value();
+  const tagValues: DoubleTagObjectValue[] = _.compact(
+    _.map(
+      {
+        r: 'green',
+        w: 'blue',
+        d: 'red',
+      },
+      (color, perm) => {
+        if (hasPermission(vFolder?.permission || permission, perm)) {
+          return {
+            label: perm.toUpperCase(),
+            color,
+          };
+        }
+        return undefined;
+      },
+    ),
+  );
 
   return <BAIDoubleTag values={tagValues} />;
 };

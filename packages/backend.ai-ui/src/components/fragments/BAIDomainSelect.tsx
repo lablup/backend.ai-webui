@@ -1,7 +1,7 @@
 import { BAIDomainSelectQuery } from '../../__generated__/BAIDomainSelectQuery.graphql';
 import { useControllableValue } from 'ahooks';
 import { Select, type SelectProps } from 'antd';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';

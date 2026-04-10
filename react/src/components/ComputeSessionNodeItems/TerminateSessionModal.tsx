@@ -16,7 +16,7 @@ import { Card, Checkbox, type ModalProps, Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import { filterOutEmpty, BAIFlex, BAIModal } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   graphql,
@@ -337,16 +337,20 @@ const TerminateSessionModal: React.FC<TerminateSessionModalProps> = ({
             {userRole === 'superadmin' && (
               <>
                 <Card type="inner" title={t('session.ContainerToCleanUp')}>
-                  {_.chain(sessions)
-                    .map((s) => s?.kernel_nodes?.edges)
-                    .map((edges) => edges?.map((e) => e?.node))
-                    .flatten()
-                    .groupBy('agent_id')
-                    .map((kernels: Array<KernelType>, agentId: string) => {
+                  {_.map(
+                    _.groupBy(
+                      _.compact(
+                        _.map(sessions, (s) => s?.kernel_nodes?.edges)
+                          .map((edges) => edges?.map((e) => e?.node))
+                          .flat(),
+                      ),
+                      'agent_id',
+                    ),
+                    (kernels: Array<KernelType>, agentId: string) => {
                       return (
-                        <>
+                        <React.Fragment key={agentId}>
                           {agentId}
-                          <ul key={agentId}>
+                          <ul>
                             {kernels.map((k) => (
                               <li key={k.container_id}>
                                 <Typography.Text copyable>
@@ -355,10 +359,10 @@ const TerminateSessionModal: React.FC<TerminateSessionModalProps> = ({
                               </li>
                             ))}
                           </ul>
-                        </>
+                        </React.Fragment>
                       );
-                    })
-                    .value()}
+                    },
+                  )}
                 </Card>
               </>
             )}

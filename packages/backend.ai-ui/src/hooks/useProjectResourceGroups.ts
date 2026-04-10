@@ -1,6 +1,6 @@
 import { useSuspenseTanQuery } from '../helper/reactQueryAlias';
 import { useBAISignedRequestWithPromise } from './useBAISignedRequestWithPromise';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 
 export interface ScalingGroupItem {
   name: string;

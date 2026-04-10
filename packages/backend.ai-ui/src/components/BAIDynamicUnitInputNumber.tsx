@@ -7,7 +7,7 @@ import {
   Typography,
   type InputNumberProps,
 } from 'antd';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React, { RefObject, useEffect, useRef } from 'react';
 
 export interface BAIDynamicUnitInputNumberProps extends Omit<

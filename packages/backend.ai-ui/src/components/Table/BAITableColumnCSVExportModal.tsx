@@ -4,7 +4,7 @@ import { BAIColumnsType } from './BAITable';
 import { SearchOutlined } from '@ant-design/icons';
 import { Input, theme, Form, Table, Checkbox, Typography } from 'antd';
 import type { TableColumnsType } from 'antd';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 

@@ -2,11 +2,13 @@ import { BAIArtifactRevisionDeleteButtonFragment$key } from '../../__generated__
 import { BAITrashBinIcon } from '../../icons';
 import BAIButton, { BAIButtonProps } from '../BAIButton';
 import { theme } from 'antd';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { graphql, useFragment } from 'react-relay';
 
-export interface BAIArtifactRevisionDeleteButtonProps
-  extends Omit<BAIButtonProps, 'icon'> {
+export interface BAIArtifactRevisionDeleteButtonProps extends Omit<
+  BAIButtonProps,
+  'icon'
+> {
   revisionsFrgmt: BAIArtifactRevisionDeleteButtonFragment$key;
   loading?: boolean;
 }

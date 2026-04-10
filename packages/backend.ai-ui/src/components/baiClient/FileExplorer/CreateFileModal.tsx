@@ -3,7 +3,7 @@ import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useCon
 import { FolderInfoContext } from './BAIFileExplorer';
 import { useMutation } from '@tanstack/react-query';
 import { App, Form, Input, type FormInstance } from 'antd';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React, { use, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 

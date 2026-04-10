@@ -4,12 +4,14 @@ import { ReloadOutlined } from '@ant-design/icons';
 import { useControllableValue } from 'ahooks';
 import { Button, Tooltip, type ButtonProps } from 'antd';
 import dayjs from 'dayjs';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React, { useEffect, useLayoutEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-interface BAIFetchKeyButtonProps
-  extends Omit<ButtonProps, 'value' | 'onChange' | 'loading'> {
+interface BAIFetchKeyButtonProps extends Omit<
+  ButtonProps,
+  'value' | 'onChange' | 'loading'
+> {
   value: string;
   loading?: boolean;
   lastLoadTime?: Date;

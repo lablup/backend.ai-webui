@@ -2,7 +2,7 @@ import { BAISessionAgentIdsFragment$key } from '../../__generated__/BAISessionAg
 import BAIFlex from '../BAIFlex';
 import { CopyOutlined } from '@ant-design/icons';
 import { Popover, Typography, Button, theme } from 'antd';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React, { useMemo } from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { useTranslation } from 'react-i18next';

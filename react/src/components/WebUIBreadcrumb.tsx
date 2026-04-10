@@ -41,16 +41,16 @@ const WebUIBreadcrumb: React.FC<WebUIBreadcrumbProps> = (props) => {
           // lineHeight: he,
         }}
         items={[
-          ..._.chain(matches)
-            .filter((match) => {
+          ..._.map(
+            _.filter(matches, (match) => {
               return (
                 // @ts-ignore
                 !_.isEmpty(match?.handle?.labelKey) ||
                 // @ts-ignore
                 !_.isEmpty(match?.handle?.title)
               );
-            })
-            .map((match) => {
+            }),
+            (match) => {
               return {
                 key: match.id,
                 href:
@@ -60,17 +60,9 @@ const WebUIBreadcrumb: React.FC<WebUIBreadcrumbProps> = (props) => {
                       match?.handle?.altPath || match.pathname,
                 //@ts-ignore
                 title: match?.handle?.title || t(match?.handle?.labelKey),
-                // onClick:
-                //   _.last(matches) === match
-                //     ? undefined
-                //     : (e: any) => {
-                //         e.preventDefault();
-                //         // @ts-ignore
-                //         navigate(match?.handle?.altPath || match.pathname);
-                // },
               };
-            })
-            .value(),
+            },
+          ),
           {
             // Add dummy tail to add a `/` at the end of the breadcrumb
             key: 'dummy_tail',

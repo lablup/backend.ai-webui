@@ -1,6 +1,6 @@
 import { BAISessionClusterModeFragment$key } from '../../__generated__/BAISessionClusterModeFragment.graphql';
 import { Tag, theme, Typography } from 'antd';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFragment, graphql } from 'react-relay';

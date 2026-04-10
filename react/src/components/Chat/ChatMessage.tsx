@@ -45,17 +45,15 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
   const [isHovered, setIsHovered] = useState(false);
 
   // Extract content and reasoning from parts array
-  const content = _.chain(message.parts)
-    .filter((part) => part.type === 'text')
-    .map((part) => part.text)
-    .join('')
-    .value();
+  const content = _.map(
+    _.filter(message.parts, (part) => part.type === 'text'),
+    (part) => part.text,
+  ).join('');
 
-  const reasoningText = _.chain(message.parts)
-    .filter((part) => part.type === 'reasoning')
-    .map((part) => part.text)
-    .join('')
-    .value();
+  const reasoningText = _.map(
+    _.filter(message.parts, (part) => part.type === 'reasoning'),
+    (part) => part.text,
+  ).join('');
 
   // Filter file parts from the message parts array
   const fileParts = _.filter(message.parts, (part) => part.type === 'file');

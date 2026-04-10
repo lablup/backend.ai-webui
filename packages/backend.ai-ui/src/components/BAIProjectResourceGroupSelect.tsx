@@ -2,7 +2,7 @@ import { useProjectResourceGroups } from '../hooks';
 import BAISelect, { BAISelectProps } from './BAISelect';
 import BAITextHighlighter from './BAITextHighlighter';
 import { useControllableValue } from 'ahooks';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React, { useEffect, useState, useTransition } from 'react';
 
 interface BAIProjectResourceGroupSelectProps extends BAISelectProps {

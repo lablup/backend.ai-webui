@@ -21,7 +21,7 @@ import { Breadcrumb, Skeleton, theme, type TableColumnsType } from 'antd';
 import type { ItemType } from 'antd/es/breadcrumb/Breadcrumb';
 import type { RcFile } from 'antd/es/upload';
 import dayjs from 'dayjs';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { HouseIcon } from 'lucide-react';
 import {
   createContext,

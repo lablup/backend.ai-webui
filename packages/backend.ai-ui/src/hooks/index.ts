@@ -6,7 +6,7 @@ import {
 import { useSuspenseTanQuery, useTanQuery } from '../helper/reactQueryAlias';
 import { useBAISignedRequestWithPromise } from './useBAISignedRequestWithPromise';
 import { useEventNotStable } from './useEventNotStable';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { useMemo, useState } from 'react';
 import { useRelayEnvironment } from 'react-relay';
 import {

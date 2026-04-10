@@ -86,11 +86,14 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
 
   const lockedProjectIds = !lockedProjectTypes?.length
     ? []
-    : (_.chain(accessibleProjects)
-        .filter((p) => lockedProjectTypes.includes(p?.type ?? ''))
-        .map('id')
-        .compact()
-        .value() as string[]);
+    : (_.compact(
+        _.map(
+          _.filter(accessibleProjects, (p) =>
+            lockedProjectTypes.includes(p?.type ?? ''),
+          ),
+          'id',
+        ),
+      ) as string[]);
 
   // Auto-select locked projects when they become available
   const autoSelectLockedProjects = useEffectEvent(() => {
@@ -114,28 +117,25 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
       MODEL_STORE: t('data.ModelStore'),
     })[key] || key;
 
-  const groupOptions = _.chain(accessibleProjects)
-    .groupBy('type')
-    .map((value, key) => {
+  const groupOptions = _.map(
+    _.groupBy(accessibleProjects, 'type'),
+    (value, key) => {
       return {
         label: getLabel(key),
         title: key,
-        options: _.chain(value)
-          .sortBy('name')
-          .map((project) => {
-            return {
-              label: project?.name,
-              value: project?.id,
-              projectId: project?.id,
-              projectResourcePolicy: project?.resource_policy,
-              projectName: project?.name,
-              disabled: lockedProjectIds.includes(project?.id ?? ''),
-            };
-          })
-          .value(),
+        options: _.map(_.sortBy(value, 'name'), (project) => {
+          return {
+            label: project?.name,
+            value: project?.id,
+            projectId: project?.id,
+            projectResourcePolicy: project?.resource_policy,
+            projectName: project?.name,
+            disabled: lockedProjectIds.includes(project?.id ?? ''),
+          };
+        }),
       };
-    })
-    .value();
+    },
+  );
 
   return (
     <BAISelect
