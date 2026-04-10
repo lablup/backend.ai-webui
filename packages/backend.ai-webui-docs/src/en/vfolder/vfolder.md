@@ -65,7 +65,7 @@ The meaning of each field in the creation dialog is as follows.
 - Location: Select the NFS host where the folder will be created. If there are multiple hosts, choose one. An indicator will show if there is enough available space.
 - Type: Determines the type of folder to be created. It can be set as User or Project. The User folder is a folder that users can create and use alone and the Project folder is a folder created by admin and shared by users in the project.
 - Project: Shown only when you select project type. Designates the project to which the folder belongs when creating a new project folder. Project folders must belong to a project. However, it does not play any role when creating a user folder.
-- Permission: Set permission of a project folder for project members. If this is set to "Read-Only", project members cannot write to this folder inside their compute session.
+- Permission: Set permission of a project folder for project members. If this is set to "Read only", project members cannot write to this folder inside their compute session.
 - Cloneable: Shown only when you select usage model to "Model". Select whether the vfolder you are creating should be cloneable.
 
 The folders created here can be [mounted](../mount_vfolder/mount_vfolder.md#session-mounts) when creating a compute session. Folders are mounted
@@ -169,14 +169,14 @@ session. Therefore, the following conditions are required to launch it.
 
 You can access FileBrowser in two ways.
 
-- Execute FileBrowser from file explorer dialog of a data folder.
+- Execute FileBrowser from file explorer dialog of a storage folder.
 - Launch a compute session directly from a FileBrowser image on Sessions page.
 
 
 ### Execute FileBrowser from folder explorer dialog
 
 Go to the Data page and open the file explorer dialog of target
-data folder. Click the folder name to open the file explorer.
+storage folder. Click the folder name to open the file explorer.
 
 ![](../images/click_folder_name.png)
 
@@ -185,7 +185,7 @@ Click 'Execute filebrowser' button in the upper-right corner of the explorer.
 ![](../images/folder_explorer.png)
 
 You can see the FileBrowser is opened in a new window. You can also see that the
-data folder you opened the explorer dialog becomes the root directory. From the
+storage folder you opened the explorer dialog becomes the root directory. From the
 FileBrowser window, you can freely upload, modify, and delete any directories
 and files.
 
@@ -206,7 +206,7 @@ FileBrowser compute session.
 
 ![](../images/app_dialog_with_filebrowser.png)
 
-When you click 'EXECUTE FILEBROWSER' button again in the data folder
+When you click 'EXECUTE FILEBROWSER' button again in the storage folder
 explorer, a new compute session will be created and a total of two
 FileBrowser sessions will appear.
 :::
@@ -214,14 +214,14 @@ FileBrowser sessions will appear.
 ### Create a compute session with FileBrowser image
 
 You can directly create a compute session with FileBrowser supported images.
-You need to mount at least one or more data folders to access them. You can use
-FileBrowser without a problem even if you do not mount any data folder, but
+You need to mount at least one or more storage folders to access them. You can use
+FileBrowser without a problem even if you do not mount any storage folder, but
 every uploaded/updated files will be lost after the session is terminated.
 
 
 :::note
 The root directory of FileBrowser will be `/home/work`. Therefore, you
-can access any mounted data folders for the compute session.
+can access any mounted storage folders for the compute session.
 :::
 
 ### Basic usage examples of FileBrowser
@@ -264,7 +264,7 @@ You can also upload local files and directories by drag and drop.
 
 **Move files or directories to another directory**
 
-Moving files or directories in data folder is also possible from FileBrowser.
+Moving files or directories in storage folder is also possible from FileBrowser.
 You can move files or directories by following steps below.
 
 1. Select directories or files from FileBrowser.
@@ -307,7 +307,7 @@ be allowed.
 
 ### Execute SFTP server from folder explorer dialog in Data page
 
-Go to the Data page and open the file explorer dialog of target data folder.
+Go to the Data page and open the file explorer dialog of target storage folder.
 Click the folder button or the folder name to open the file explorer.
 
 Click 'Run SFTP server' button in the upper-right corner of the explorer.
@@ -323,7 +323,7 @@ For the connection, click 'Download SSH Key' button to download the SSH private 
 (`id_container`). Also, remember the host and port number. Then, you can copy your
 files to the session using the Connection Example code written in the dialog, or
 referring to the following guide: [SFTP Connection Guide](../sftp_to_container/sftp_to_container.md#for-linux-mac).
-To preserve the files, you need to transfer the files to the data folder. Also,
+To preserve the files, you need to transfer the files to the storage folder. Also,
 the session will be terminated when there is no transfer for some time.
 
 
