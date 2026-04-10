@@ -5,15 +5,17 @@
 import { ModelCardDeployModalEndpointPollQuery } from '../__generated__/ModelCardDeployModalEndpointPollQuery.graphql';
 import { ModelCardDeployModalMutation } from '../__generated__/ModelCardDeployModalMutation.graphql';
 import { ModelCardDeployModalQuery } from '../__generated__/ModelCardDeployModalQuery.graphql';
-import { useModelStoreProject } from '../hooks/useModelStoreProject';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { App, Form } from 'antd';
 import type { DefaultOptionType } from 'antd/es/select';
 import {
   BAIButton,
   BAIFlex,
   BAIModal,
+  BAIProjectResourceGroupSelect,
   BAISelect,
   toLocalId,
+  useProjectResourceGroups,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, {
@@ -72,29 +74,31 @@ const ModelCardDeployModalContent: React.FC<
   const { t } = useTranslation();
   const { message } = App.useApp();
   const navigate = useNavigate();
-  const { id: projectId } = useModelStoreProject();
+  const { id: projectId, name: projectName } = useCurrentProjectValue();
   const relayEnvironment = useRelayEnvironment();
 
-  const { runtimeVariants, scaling_groups } =
-    useLazyLoadQuery<ModelCardDeployModalQuery>(
-      graphql`
-        query ModelCardDeployModalQuery {
-          runtimeVariants {
-            edges {
-              node {
-                id
-                name
-              }
+  // Fetch resource groups accessible to the current project. Uses the same
+  // React Query cache as BAIProjectResourceGroupSelect below, so no duplicate
+  // network request is made — we only need the count here to decide whether
+  // to render the selection UI or auto-deploy.
+  const { resourceGroups } = useProjectResourceGroups(projectName ?? '');
+
+  const { runtimeVariants } = useLazyLoadQuery<ModelCardDeployModalQuery>(
+    graphql`
+      query ModelCardDeployModalQuery {
+        runtimeVariants {
+          edges {
+            node {
+              id
+              name
             }
           }
-          scaling_groups {
-            name
-          }
         }
-      `,
-      {},
-      {},
-    );
+      }
+    `,
+    {},
+    {},
+  );
 
   const [commitDeploy] = useMutation<ModelCardDeployModalMutation>(graphql`
     mutation ModelCardDeployModalMutation(
@@ -180,19 +184,6 @@ const ModelCardDeployModalContent: React.FC<
       })),
     }));
   }, [availablePresets, runtimeVariantNameMap]);
-
-  // Get unique resource groups, filtering out null/undefined entries
-  const resourceGroups = useMemo(
-    () =>
-      _.uniqBy(
-        (scaling_groups ?? []).filter(
-          (sg): sg is NonNullable<typeof sg> & { name: string } =>
-            sg != null && !!sg.name,
-        ),
-        'name',
-      ),
-    [scaling_groups],
-  );
 
   // Determine scenario: auto-deploy (scenario 2) vs selection (scenario 3)
   const isAutoDeployScenario =
@@ -303,13 +294,10 @@ const ModelCardDeployModalContent: React.FC<
           />
         </Form.Item>
         <Form.Item label={t('modelStore.ResourceGroup')} required>
-          <BAISelect
+          <BAIProjectResourceGroupSelect
+            projectName={projectName ?? ''}
             value={effectiveResourceGroup}
             onChange={(value: string) => setUserSelectedResourceGroup(value)}
-            options={resourceGroups.map((sg) => ({
-              label: sg.name,
-              value: sg.name,
-            }))}
             style={{ width: '100%' }}
           />
         </Form.Item>

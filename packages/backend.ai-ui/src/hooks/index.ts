@@ -4,6 +4,7 @@ import {
   useConnectedBAIClient,
 } from '../components';
 import { useSuspenseTanQuery, useTanQuery } from '../helper/reactQueryAlias';
+import { useBAISignedRequestWithPromise } from './useBAISignedRequestWithPromise';
 import { useEventNotStable } from './useEventNotStable';
 import _ from 'lodash';
 import { useMemo, useState } from 'react';
@@ -149,39 +150,10 @@ export function useMutationWithPromise<T extends MutationParameters>(
     });
   };
 }
-export const baiSignedRequestWithPromise = ({
-  method,
-  url,
-  body = null,
-  client,
-}: {
-  method: string;
-  url: string;
-  body?: any;
-  client: any;
-}) => {
-  const request = client?.newSignedRequest(method, url, body, null);
-  return client?._wrapWithPromise(request);
-};
-
-export const useBAISignedRequestWithPromise = () => {
-  const baliClient = useConnectedBAIClient();
-  return ({
-    method,
-    url,
-    body = null,
-  }: {
-    method: string;
-    url: string;
-    body?: any;
-  }) =>
-    baiSignedRequestWithPromise({
-      method,
-      url,
-      body,
-      client: baliClient,
-    });
-};
+export {
+  baiSignedRequestWithPromise,
+  useBAISignedRequestWithPromise,
+} from './useBAISignedRequestWithPromise';
 
 export { default as useErrorMessageResolver } from './useErrorMessageResolver';
 export { default as useViewer } from './useViewer';
@@ -196,3 +168,5 @@ export {
 } from './useBAILogger';
 export type { LoggerPlugin, LogContext, BAILogger } from './useBAILogger';
 export { useEventNotStable } from './useEventNotStable';
+export { useProjectResourceGroups } from './useProjectResourceGroups';
+export type { ScalingGroupItem } from './useProjectResourceGroups';
