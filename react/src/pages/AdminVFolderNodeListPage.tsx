@@ -13,7 +13,7 @@ import DeleteVFolderModal from '../components/DeleteVFolderModal';
 import RestoreVFolderModal from '../components/RestoreVFolderModal';
 import VFolderNodes, { VFolderNodeInList } from '../components/VFolderNodes';
 import { handleRowSelectionChange } from '../helper';
-import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { isDeletedCategory } from './VFolderNodeListPage';
 import { useToggle } from 'ahooks';
 import { Badge, Button, theme, Tooltip } from 'antd';
@@ -66,7 +66,6 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
-  const domainName = useCurrentDomainValue();
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
     'table_column_overrides.AdminVFolderNodeListPage',
@@ -124,6 +123,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
 
   const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
 
+  // scope_id is intentionally omitted so superadmin sees all vfolders across all projects/domains
   const queryVariables: AdminVFolderNodeListPageQuery$variables = {
     offset: baiPaginationOption.offset,
     first: baiPaginationOption.first,
@@ -139,7 +139,6 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
     permission: 'read_attribute',
     filterForActiveCount: FILTER_BY_STATUS_CATEGORY['active'],
     filterForDeletedCount: FILTER_BY_STATUS_CATEGORY['deleted'],
-    scope_id: `domain:${domainName}`,
   };
   const deferredQueryVariables = useDeferredValue(queryVariables);
   const deferredFetchKey = useDeferredValue(fetchKey);
@@ -155,7 +154,6 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
           $permission: VFolderPermissionValueField
           $filterForActiveCount: String
           $filterForDeletedCount: String
-          $scope_id: ScopeField
         ) {
           vfolder_nodes(
             offset: $offset
@@ -163,7 +161,6 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
             filter: $filter
             order: $order
             permission: $permission
-            scope_id: $scope_id
           ) {
             edges @required(action: THROW) {
               node @required(action: THROW) {
@@ -186,7 +183,6 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
             offset: 0
             filter: $filterForActiveCount
             permission: $permission
-            scope_id: $scope_id
           ) {
             count
           }
@@ -195,7 +191,6 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
             offset: 0
             filter: $filterForDeletedCount
             permission: $permission
-            scope_id: $scope_id
           ) {
             count
           }
