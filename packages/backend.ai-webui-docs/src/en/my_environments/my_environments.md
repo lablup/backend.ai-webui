@@ -1,3 +1,5 @@
+<a id="my-environments"></a>
+
 # My Environments
 
 From 24.03, a new \"My Environments\" page for users has been introduced.
@@ -19,7 +21,7 @@ After deletion, you will not be able to create a new session using that image.
 ![](../images/my_environments.png)
 
 You can also copy the image name and create a session with a manual image.
-Click the copy icon next to the image name in the Full Image Path column to copy it to
+Click the copy icon next to the image name in the Full image path column to copy it to
 your clipboard. Then go to the Sessions page and create a session.
 Fill in the manual image input field by pasting the image name that you copied.
 
