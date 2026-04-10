@@ -23,7 +23,6 @@ import {
   Empty,
   Pagination,
   Row,
-  Skeleton,
   Tag,
   Typography,
   theme,
@@ -38,12 +37,7 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
-import React, {
-  Suspense,
-  useDeferredValue,
-  useEffectEvent,
-  useState,
-} from 'react';
+import React, { useDeferredValue, useEffectEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 
@@ -415,33 +409,31 @@ const ModelStoreListPageV2: React.FC = () => {
           }}
         />
       </BAIFlex>
-      <Suspense fallback={<Skeleton active />}>
-        <div
-          style={{
-            opacity: isPending ? 0.5 : 1,
-            transition: 'opacity 0.2s',
-            pointerEvents: isPending ? 'none' : undefined,
+      <div
+        style={{
+          opacity: isPending ? 0.5 : 1,
+          transition: 'opacity 0.2s',
+          pointerEvents: isPending ? 'none' : undefined,
+        }}
+      >
+        <ModelCardV2Grid
+          projectId={modelStoreProject.id}
+          filter={deferredFilter}
+          sortField={deferredSortField}
+          sortDirection={deferredSortDirection}
+          fetchKey={deferredFetchKey}
+          searchKeyword={searchKeyword}
+          pageSize={deferredLimit}
+          offset={deferredOffset}
+          onTotalChange={setTotal}
+          selectedModelCardId={queryParams.modelCard}
+          onSelectedModelCardFound={(frgmt) => setSelectedModelCard(frgmt)}
+          onCardClick={(id, frgmt) => {
+            setSelectedModelCard(frgmt);
+            setQueryParams({ modelCard: id });
           }}
-        >
-          <ModelCardV2Grid
-            projectId={modelStoreProject.id}
-            filter={deferredFilter}
-            sortField={deferredSortField}
-            sortDirection={deferredSortDirection}
-            fetchKey={deferredFetchKey}
-            searchKeyword={searchKeyword}
-            pageSize={deferredLimit}
-            offset={deferredOffset}
-            onTotalChange={setTotal}
-            selectedModelCardId={queryParams.modelCard}
-            onSelectedModelCardFound={(frgmt) => setSelectedModelCard(frgmt)}
-            onCardClick={(id, frgmt) => {
-              setSelectedModelCard(frgmt);
-              setQueryParams({ modelCard: id });
-            }}
-          />
-        </div>
-      </Suspense>
+        />
+      </div>
       {total > 0 && (
         <ConfigProvider
           theme={{
@@ -476,6 +468,7 @@ const ModelStoreListPageV2: React.FC = () => {
           </BAIFlex>
         </ConfigProvider>
       )}
+
       <ModelCardDrawer
         modelCardDrawerFrgmt={selectedModelCard}
         open={!!queryParams.modelCard && !!selectedModelCard}

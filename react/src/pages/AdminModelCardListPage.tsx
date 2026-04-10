@@ -281,7 +281,7 @@ const AdminModelCardListPage: React.FC = () => {
         <BAITag color={accessLevel === 'PUBLIC' ? 'green' : 'default'}>
           {accessLevel === 'PUBLIC'
             ? t('adminModelCard.Public')
-            : t('adminModelCard.Internal')}
+            : t('adminModelCard.Private')}
         </BAITag>
       ),
     },
