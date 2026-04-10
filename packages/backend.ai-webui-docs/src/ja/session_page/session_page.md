@@ -25,7 +25,7 @@ For more detailed information about resource panels and their metrics, please re
 ## Session list
 
 The 'セッション' section displays a list of all active and completed compute sessions.
-You can filter sessions by type — `All`, `Interactive`, `Batch`, `Inference`, or `System` — and switch between
+You can filter sessions by type — `All`, `Interactive`, `Batch`, `Inference`, or `Upload Sessions` — and switch between
 `Running` and `Finished` tabs to manage sessions.
 
 By default, you can view the following columns: session name, status, allocated resources (AI Accelerators, CPU, Memory),
