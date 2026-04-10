@@ -2,36 +2,47 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import type { AdminModelCardListPageBulkDeleteMutation } from '../__generated__/AdminModelCardListPageBulkDeleteMutation.graphql';
 import type { AdminModelCardListPageDeleteMutation } from '../__generated__/AdminModelCardListPageDeleteMutation.graphql';
 import type {
   AdminModelCardListPageQuery,
   AdminModelCardListPageQuery$data,
+  ModelCardV2Filter,
   ModelCardV2OrderBy,
 } from '../__generated__/AdminModelCardListPageQuery.graphql';
-import type { AdminModelCardListPageScanMutation } from '../__generated__/AdminModelCardListPageScanMutation.graphql';
-import { convertToOrderBy } from '../helper';
+import AdminModelCardSettingModal from '../components/AdminModelCardSettingModal';
+import { convertToOrderBy, handleRowSelectionChange } from '../helper';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
-import { App, Form, Input, Typography } from 'antd';
+import { useBAISettingUserState } from '../hooks/useBAISetting';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { SettingOutlined } from '@ant-design/icons';
+import { App, Typography } from 'antd';
 import {
   BAIButton,
-  BAICard,
   BAIColumnType,
+  BAIDeleteConfirmModal,
   BAIFetchKeyButton,
   BAIFlex,
+  BAIGraphQLPropertyFilter,
   BAINameActionCell,
+  BAISelectionLabel,
   BAITable,
   BAITag,
   BAITrashBinIcon,
   BAIUnmountAfterClose,
   filterOutEmpty,
+  filterOutNullAndUndefined,
+  type GraphQLFilter,
   INITIAL_FETCH_KEY,
+  toLocalId,
   useBAILogger,
   useFetchKey,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
-import { ScanSearchIcon, SearchIcon } from 'lucide-react';
-import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
-import React, { useDeferredValue, useMemo } from 'react';
+import _ from 'lodash';
+import { PlusIcon } from 'lucide-react';
+import { parseAsJson, parseAsString, useQueryStates } from 'nuqs';
+import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 
@@ -39,7 +50,7 @@ type ModelCardNode = NonNullableNodeOnEdges<
   AdminModelCardListPageQuery$data['adminModelCardsV2']
 >;
 
-const availableModelCardSorterKeys = ['name', 'createdAt'] as const;
+const availableModelCardSorterKeys = ['name', 'created_at'] as const;
 
 export const availableModelCardSorterValues = [
   ...availableModelCardSorterKeys,
@@ -50,9 +61,23 @@ const AdminModelCardListPage: React.FC = () => {
   'use memo';
 
   const { t } = useTranslation();
-  const { modal, message } = App.useApp();
+  const { message } = App.useApp();
   const { logger } = useBAILogger();
+  const currentProject = useCurrentProjectValue();
+  const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
+    'table_column_overrides.AdminModelCardListPage',
+  );
 
+  const [isSettingModalOpen, setIsSettingModalOpen] = useState(false);
+  const [editingModelCardId, setEditingModelCardId] = useState<string | null>(
+    null,
+  );
+  const [selectedModelCards, setSelectedModelCards] = useState<ModelCardNode[]>(
+    [],
+  );
+  const [deletingModelCard, setDeletingModelCard] =
+    useState<ModelCardNode | null>(null);
+  const [isBulkDeleteOpen, setIsBulkDeleteOpen] = useState(false);
   const {
     baiPaginationOption,
     tablePaginationOption,
@@ -64,8 +89,8 @@ const AdminModelCardListPage: React.FC = () => {
 
   const [queryParams, setQueryParams] = useQueryStates(
     {
-      order: parseAsStringLiteral(availableModelCardSorterValues),
-      nameFilter: parseAsString,
+      order: parseAsString,
+      filter: parseAsJson<GraphQLFilter>((value) => value as GraphQLFilter),
     },
     {
       history: 'replace',
@@ -74,19 +99,26 @@ const AdminModelCardListPage: React.FC = () => {
 
   const [fetchKey, updateFetchKey] = useFetchKey();
 
-  // TODO: Add domainName and projectId filters per spec requirements
-  const filter = useMemo(() => {
-    if (!queryParams.nameFilter) return undefined;
-    return {
-      name: { iContains: queryParams.nameFilter },
-    };
-  }, [queryParams.nameFilter]);
+  // Helper to flatten AND/OR wrappers since ModelCardV2Filter doesn't support them
+  const flattenGraphQLFilter = (
+    filter: GraphQLFilter | undefined,
+  ): ModelCardV2Filter | undefined => {
+    if (!filter) return undefined;
+    if (filter.AND && Array.isArray(filter.AND)) {
+      return Object.assign({}, ...filter.AND) as ModelCardV2Filter;
+    }
+    if (filter.OR && Array.isArray(filter.OR)) {
+      return Object.assign({}, ...filter.OR) as ModelCardV2Filter;
+    }
+    return filter as ModelCardV2Filter;
+  };
 
   const queryVariables = {
-    filter,
+    filter: flattenGraphQLFilter(queryParams.filter ?? undefined),
     orderBy: convertToOrderBy<ModelCardV2OrderBy>(queryParams.order),
     limit: baiPaginationOption.limit,
     offset: baiPaginationOption.offset,
+    currentProjectId: currentProject.id!,
   };
 
   const deferredQueryVariables = useDeferredValue(queryVariables);
@@ -99,6 +131,7 @@ const AdminModelCardListPage: React.FC = () => {
         $orderBy: [ModelCardV2OrderBy!]
         $limit: Int
         $offset: Int
+        $currentProjectId: UUID!
       ) {
         adminModelCardsV2(
           filter: $filter
@@ -110,7 +143,6 @@ const AdminModelCardListPage: React.FC = () => {
           edges {
             node {
               id
-              rowId
               name
               domainName
               projectId
@@ -121,8 +153,16 @@ const AdminModelCardListPage: React.FC = () => {
                 category
                 task
               }
+              ...AdminModelCardSettingModalFragment
             }
           }
+        }
+        group(id: $currentProjectId) {
+          type @since(version: "24.03.0")
+        }
+        groups(is_active: true, type: ["MODEL_STORE"]) {
+          id
+          name
         }
       }
     `,
@@ -145,109 +185,42 @@ const AdminModelCardListPage: React.FC = () => {
       }
     `);
 
-  const [commitScanProjectModelCards, isScanInFlight] =
-    useMutation<AdminModelCardListPageScanMutation>(graphql`
-      mutation AdminModelCardListPageScanMutation($projectId: UUID!) {
-        scanProjectModelCardsV2(projectId: $projectId) {
-          createdCount
-          updatedCount
-          errors
+  const [commitBulkDeleteModelCards, isBulkDeleteInFlight] =
+    useMutation<AdminModelCardListPageBulkDeleteMutation>(graphql`
+      mutation AdminModelCardListPageBulkDeleteMutation(
+        $input: DeleteModelCardsV2Input!
+      ) {
+        adminDeleteModelCardsV2(input: $input) {
+          deletedCount
         }
       }
     `);
 
   const handleDeleteModelCard = (modelCard: ModelCardNode) => {
-    modal.confirm({
-      title: t('adminModelCard.DeleteModelCard'),
-      content: t('adminModelCard.ConfirmDelete', { name: modelCard.name }),
-      okText: t('button.Delete'),
-      okButtonProps: { danger: true, type: 'primary' },
-      onOk: () => {
-        return new Promise<void>((resolve, reject) => {
-          commitDeleteModelCard({
-            variables: { id: modelCard.rowId },
-            onCompleted: (_data, errors) => {
-              if (errors && errors.length > 0) {
-                logger.error(errors[0]);
-                message.error(errors[0]?.message || t('general.ErrorOccurred'));
-                reject();
-                return;
-              }
-              message.success(t('adminModelCard.ModelCardDeleted'));
-              updateFetchKey();
-              resolve();
-            },
-            onError: (error) => {
-              logger.error(error);
-              message.error(error?.message || t('general.ErrorOccurred'));
-              reject();
-            },
-          });
-        });
-      },
-    });
+    setDeletingModelCard(modelCard);
   };
 
-  const handleScanProjectModelCards = () => {
-    let projectIdValue = '';
-    modal.confirm({
-      title: t('adminModelCard.ScanProjectModelCards'),
-      content: (
-        <Form layout="vertical" style={{ marginTop: 16 }}>
-          <Form.Item label={t('adminModelCard.ProjectId')} required>
-            <Input
-              placeholder={t('adminModelCard.EnterProjectId')}
-              onChange={(e) => {
-                projectIdValue = e.target.value;
-              }}
-            />
-          </Form.Item>
-        </Form>
-      ),
-      okText: t('adminModelCard.Scan'),
-      onOk: () => {
-        if (!projectIdValue.trim()) {
-          message.error(t('adminModelCard.ProjectIdRequired'));
-          return Promise.reject();
-        }
-        return new Promise<void>((resolve, reject) => {
-          commitScanProjectModelCards({
-            variables: { projectId: projectIdValue.trim() },
-            onCompleted: (data, errors) => {
-              if (errors && errors.length > 0) {
-                logger.error(errors[0]);
-                message.error(errors[0]?.message || t('general.ErrorOccurred'));
-                reject();
-                return;
-              }
-              const result = data.scanProjectModelCardsV2;
-              message.success(
-                t('adminModelCard.ScanCompleted', {
-                  created: result.createdCount,
-                  updated: result.updatedCount,
-                }),
-              );
-              if (result.errors.length > 0) {
-                result.errors.forEach((error) => {
-                  message.warning(error);
-                });
-              }
-              updateFetchKey();
-              resolve();
-            },
-            onError: (error) => {
-              logger.error(error);
-              message.error(error?.message || t('general.ErrorOccurred'));
-              reject();
-            },
-          });
-        });
-      },
-    });
+  const handleBulkDelete = () => {
+    if (selectedModelCards.length === 0) return;
+    setIsBulkDeleteOpen(true);
+  };
+
+  const handleOpenEditModal = (modelCard: ModelCardNode) => {
+    setEditingModelCardId(modelCard.id);
+    setIsSettingModalOpen(true);
+  };
+
+  const handleOpenCreateModal = () => {
+    setEditingModelCardId(null);
+    setIsSettingModalOpen(true);
   };
 
   const modelCards =
     queryRef.adminModelCardsV2?.edges?.map((edge) => edge?.node) ?? [];
+
+  const editingModelCard = editingModelCardId
+    ? modelCards.find((mc) => mc?.id === editingModelCardId)
+    : null;
 
   const columns: BAIColumnType<ModelCardNode>[] = filterOutEmpty([
     {
@@ -261,6 +234,12 @@ const AdminModelCardListPage: React.FC = () => {
           title={name}
           showActions="always"
           actions={[
+            {
+              key: 'edit',
+              title: t('button.Edit'),
+              icon: <SettingOutlined />,
+              onClick: () => handleOpenEditModal(modelCard),
+            },
             {
               key: 'delete',
               title: t('button.Delete'),
@@ -306,6 +285,7 @@ const AdminModelCardListPage: React.FC = () => {
         </BAITag>
       ),
     },
+    // TODO(needs-backend): FR-2417 - Add minResource column when ModelCardV2Metadata includes minResource field
     {
       key: 'domainName',
       title: t('adminModelCard.Domain'),
@@ -332,82 +312,197 @@ const AdminModelCardListPage: React.FC = () => {
   ]);
 
   return (
-    <BAICard
-      title={t('adminModelCard.ModelCards')}
-      styles={{
-        header: {
-          borderBottom: 'none',
-        },
-        body: {
-          paddingTop: 0,
-        },
-      }}
-    >
-      <BAIFlex direction="column" align="stretch" gap={'sm'}>
-        <BAIFlex justify="between" wrap="wrap" gap={'sm'}>
-          <BAIFlex
-            gap={'sm'}
-            align="start"
-            wrap="wrap"
-            style={{ flexShrink: 1 }}
-          >
-            <Input
-              prefix={<SearchIcon size={14} />}
-              placeholder={t('modelStore.SearchModels')}
-              allowClear
-              value={queryParams.nameFilter ?? ''}
-              onChange={(e) => {
-                setQueryParams({ nameFilter: e.target.value || null });
-                setTablePaginationOption({ current: 1 });
-              }}
-              style={{ width: 220 }}
-            />
-          </BAIFlex>
-          <BAIFlex gap={'xs'}>
-            <BAIButton
-              icon={<ScanSearchIcon />}
-              onClick={handleScanProjectModelCards}
-              loading={isScanInFlight}
-            >
-              {t('adminModelCard.ScanProjectModelCards')}
-            </BAIButton>
-            <BAIFetchKeyButton
-              loading={
-                deferredQueryVariables !== queryVariables ||
-                deferredFetchKey !== fetchKey
-              }
-              value={fetchKey}
-              onChange={(newFetchKey) => {
-                updateFetchKey(newFetchKey);
-              }}
-            />
-          </BAIFlex>
+    <BAIFlex direction="column" align="stretch" gap={'sm'}>
+      <BAIFlex justify="between" wrap="wrap" gap={'sm'}>
+        <BAIFlex gap={'sm'} align="start" wrap="wrap" style={{ flexShrink: 1 }}>
+          <BAIGraphQLPropertyFilter
+            filterProperties={[
+              {
+                key: 'name',
+                propertyLabel: t('adminModelCard.Name'),
+                type: 'string',
+              },
+            ]}
+            value={queryParams.filter ?? undefined}
+            onChange={(value) => {
+              setQueryParams({ filter: value ?? null });
+              setTablePaginationOption({ current: 1 });
+            }}
+          />
         </BAIFlex>
-        <BAITable<ModelCardNode>
-          rowKey="id"
-          dataSource={modelCards as ModelCardNode[]}
-          columns={columns}
-          scroll={{ x: 'max-content' }}
-          loading={deferredQueryVariables !== queryVariables}
-          order={queryParams.order ?? undefined}
-          onChangeOrder={(order) => {
-            setQueryParams({
-              order:
-                (order as (typeof availableModelCardSorterValues)[number]) ||
-                null,
-            });
-          }}
-          pagination={{
-            pageSize: tablePaginationOption.pageSize,
-            current: tablePaginationOption.current,
-            total: queryRef.adminModelCardsV2?.count ?? 0,
-            onChange: (current, pageSize) => {
-              setTablePaginationOption({ current, pageSize });
-            },
+        <BAIFlex gap={'sm'}>
+          {selectedModelCards.length > 0 && (
+            <>
+              <BAISelectionLabel
+                count={selectedModelCards.length}
+                onClearSelection={() => setSelectedModelCards([])}
+              />
+              <BAIButton
+                danger
+                icon={<BAITrashBinIcon />}
+                onClick={handleBulkDelete}
+                loading={isBulkDeleteInFlight}
+              />
+            </>
+          )}
+          <BAIButton
+            type="primary"
+            icon={<PlusIcon size={16} />}
+            onClick={handleOpenCreateModal}
+          >
+            {t('adminModelCard.CreateModelCard')}
+          </BAIButton>
+          <BAIFetchKeyButton
+            loading={
+              deferredQueryVariables !== queryVariables ||
+              deferredFetchKey !== fetchKey
+            }
+            value={fetchKey}
+            onChange={(newFetchKey) => {
+              updateFetchKey(newFetchKey);
+            }}
+          />
+        </BAIFlex>
+      </BAIFlex>
+      <BAITable<ModelCardNode>
+        rowKey="id"
+        dataSource={modelCards as ModelCardNode[]}
+        columns={columns}
+        scroll={{ x: 'max-content' }}
+        loading={deferredQueryVariables !== queryVariables}
+        rowSelection={{
+          type: 'checkbox',
+          preserveSelectedRowKeys: true,
+          onChange: (selectedRowKeys) => {
+            handleRowSelectionChange(
+              selectedRowKeys,
+              filterOutNullAndUndefined(modelCards),
+              setSelectedModelCards,
+            );
+          },
+          selectedRowKeys: _.map(selectedModelCards, (i) => i.id),
+        }}
+        onChangeOrder={(order) => {
+          setQueryParams({
+            order:
+              (order as (typeof availableModelCardSorterValues)[number]) ||
+              null,
+          });
+        }}
+        tableSettings={{
+          columnOverrides: columnOverrides,
+          onColumnOverridesChange: setColumnOverrides,
+        }}
+        pagination={{
+          pageSize: tablePaginationOption.pageSize,
+          current: tablePaginationOption.current,
+          total: queryRef.adminModelCardsV2?.count ?? 0,
+          onChange: (current, pageSize) => {
+            setTablePaginationOption({ current, pageSize });
+          },
+        }}
+      />
+      <BAIUnmountAfterClose>
+        <AdminModelCardSettingModal
+          open={isSettingModalOpen}
+          modelCardFrgmt={editingModelCard ?? null}
+          isModelStoreProject={queryRef.group?.type === 'MODEL_STORE'}
+          modelStoreProject={queryRef.groups?.[0] ?? null}
+          onRequestClose={(success) => {
+            setIsSettingModalOpen(false);
+            setEditingModelCardId(null);
+            if (success) {
+              updateFetchKey();
+            }
           }}
         />
-      </BAIFlex>
-    </BAICard>
+      </BAIUnmountAfterClose>
+      <BAIDeleteConfirmModal
+        open={!!deletingModelCard}
+        items={
+          deletingModelCard
+            ? [{ key: deletingModelCard.id, label: deletingModelCard.name }]
+            : []
+        }
+        title={t('adminModelCard.DeleteModelCard')}
+        description={t('adminModelCard.ConfirmDelete', {
+          name: deletingModelCard?.name,
+        })}
+        onOk={() => {
+          if (deletingModelCard) {
+            return new Promise<void>((resolve, reject) => {
+              commitDeleteModelCard({
+                variables: { id: toLocalId(deletingModelCard.id) },
+                onCompleted: (_data, errors) => {
+                  if (errors && errors.length > 0) {
+                    logger.error(errors[0]);
+                    message.error(
+                      errors[0]?.message || t('general.ErrorOccurred'),
+                    );
+                    reject();
+                    return;
+                  }
+                  message.success(t('adminModelCard.ModelCardDeleted'));
+                  setDeletingModelCard(null);
+                  updateFetchKey();
+                  resolve();
+                },
+                onError: (error) => {
+                  logger.error(error);
+                  message.error(error?.message || t('general.ErrorOccurred'));
+                  reject();
+                },
+              });
+            });
+          }
+        }}
+        onCancel={() => setDeletingModelCard(null)}
+      />
+      <BAIDeleteConfirmModal
+        open={isBulkDeleteOpen}
+        items={selectedModelCards.map((mc) => ({
+          key: mc.id,
+          label: mc.name,
+        }))}
+        title={t('adminModelCard.BulkDeleteModelCards')}
+        description={t('adminModelCard.ConfirmBulkDelete', {
+          count: selectedModelCards.length,
+        })}
+        onOk={() => {
+          const ids = selectedModelCards.map((mc) => toLocalId(mc.id));
+          return new Promise<void>((resolve, reject) => {
+            commitBulkDeleteModelCards({
+              variables: { input: { ids } },
+              onCompleted: (data, errors) => {
+                if (errors && errors.length > 0) {
+                  logger.error(errors[0]);
+                  message.error(
+                    errors[0]?.message || t('general.ErrorOccurred'),
+                  );
+                  reject();
+                  return;
+                }
+                message.success(
+                  t('adminModelCard.BulkDeleteCompleted', {
+                    count: data.adminDeleteModelCardsV2.deletedCount,
+                  }),
+                );
+                setSelectedModelCards([]);
+                setIsBulkDeleteOpen(false);
+                updateFetchKey();
+                resolve();
+              },
+              onError: (error) => {
+                logger.error(error);
+                message.error(error?.message || t('general.ErrorOccurred'));
+                reject();
+              },
+            });
+          });
+        }}
+        onCancel={() => setIsBulkDeleteOpen(false)}
+      />
+    </BAIFlex>
   );
 };
 

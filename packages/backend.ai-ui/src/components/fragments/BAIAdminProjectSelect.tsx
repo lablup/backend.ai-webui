@@ -34,11 +34,15 @@ export interface BAIAdminProjectSelectProps extends Omit<
   BAISelectProps,
   'options' | 'labelInValue' | 'ref'
 > {
+  filter?: {
+    type?: { equals?: 'GENERAL' | 'MODEL_STORE' };
+  };
   ref?: React.Ref<BAIAdminProjectSelectRef>;
 }
 
 const BAIAdminProjectSelect: React.FC<BAIAdminProjectSelectProps> = ({
   loading,
+  filter: filterFromProps,
   ref,
   ...selectProps
 }) => {
@@ -131,9 +135,12 @@ const BAIAdminProjectSelect: React.FC<BAIAdminProjectSelectProps> = ({
       `,
       { limit: 10 },
       {
-        filter: debouncedDeferredValue
-          ? { name: { contains: debouncedDeferredValue } }
-          : null,
+        filter: {
+          ...(filterFromProps ?? {}),
+          ...(debouncedDeferredValue
+            ? { name: { contains: debouncedDeferredValue } }
+            : {}),
+        },
       },
       {
         fetchPolicy: deferredOpen ? 'network-only' : 'store-only',
