@@ -1,0 +1,7 @@
+{
+  "epic": "FR-2449",
+  "specTask": "FR-2450",
+  "slug": "model-store-v2-migration",
+  "title": "User Model Store page migration to modelCardV2 API",
+  "language": "ko"
+}
