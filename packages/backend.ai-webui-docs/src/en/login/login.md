@@ -10,7 +10,7 @@ yet, click the `Sign up` link at the bottom of the dialog.
 ![](../images/login_dialog.png)
 
 Enter the required information, read and agree to the Terms of Service /
-Privacy Policy, and click the SIGNUP button. Depending on your system settings,
+Privacy Policy, and click the `Signup` button. Depending on your system settings,
 you may need to enter an invitation token to sign up. A verification email may
 be sent to verify that the email is yours. If the verification email is sent, you
 will need to read the email and click the link inside to pass verification
