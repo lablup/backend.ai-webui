@@ -1218,7 +1218,7 @@ Please note that a file name can have up to 255 characters.
 
 ## System settings
 
-In the Configuration page, you can see main settings of Backend.AI server.
+In the Configurations page, you can see main settings of Backend.AI server.
 Currently, it provides several controls which can change and list settings.
 
 You can change image auto install and update rule by selecting one option from
@@ -1233,9 +1233,65 @@ Don't change rule selection unless you completely understand the meaning of each
 
 ![](../images/system_setting_about_image.png)
 
-You can also change settings for scaling, plugins and enterprise features.
+The Configurations page also displays the status of plugins and enterprise features:
+
+**Plugins:**
+
+- **Open Source CUDA GPU support**: Status of CUDA GPU support.
+- **ROCm GPU support**: Status of ROCm GPU support.
+
+**Enterprise Features:**
+
+- **Fractional GPU**: Fractional GPU (fGPU) virtualization for sharing GPUs across sessions.
+
+Backend.AI supports a wide range of AI accelerators across multiple vendors:
+
+- **NVIDIA**
+  - Spark (GB10)
+  - Blackwell (B300, B200, RTX Pro 6000, etc.)
+  - Hopper (H200, H100 NVL, etc.)
+  - Grace Superchip (GB300, GB200, GH200, etc.)
+  - Turing (Titan RTX, RTX 8000, T4)
+  - Ampere (A100, A40, A10, etc.)
+  - Ada Lovelace (L40S, L4)
+  - Jetson (TX, Xavier, Orin, Thor, etc.)
+- **Intel**
+  - Gaudi 3
+  - Gaudi 2
+  - Gaudi 1
+  - Arc
+- **AMD**
+  - Instinct MI Series (including MI300X)
+  - MI300A
+  - MI250
+- **Rebellions**
+  - ATOM Max
+  - ATOM+
+  - REBEL
+- **FuriosaAI**
+  - RNGD
+- **Tenstorrent**
+  - Wormhole n150s
+  - Wormhole n300s
+- **Google**
+  - TPU v7 (Ironwood)
+  - Coral TPU v5p
+  - Coral TPU v5e
+  - TPU v4
+- **Graphcore**
+  - C600 IPU
+  - Bow IPU
+- **HyperAccel**
+  - LPU
+- **Groq**
+  - LPU
+- **Cerebras**
+  - WSE-3
+- **SambaNova**
+  - SN40L
 
 ![](../images/system_setting_about_scaling_plugins.png)
+
 
 When a user launches a multi-node cluster session, which is introduced at
 version 20.09, Backend.AI will dynamically create an overlay network to support

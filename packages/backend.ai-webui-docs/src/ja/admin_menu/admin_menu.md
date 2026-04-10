@@ -1165,7 +1165,62 @@ Don't change rule selection unless you completely understand the meaning of each
 
 ![](../images/system_setting_about_image.png)
 
-You can also change settings for scaling, plugins and enterprise features.
+Configurationsページでは、プラグインとエンタープライズ機能のステータスも表示されます：
+
+**プラグイン：**
+
+- **オープンソース CUDA GPU サポート**: CUDA GPUサポートのステータス。
+- **ROCm GPU サポート**: ROCm GPUサポートのステータス。
+
+**エンタープライズ機能：**
+
+- **Fractional GPU**: セッション間でGPUを共有するためのフラクショナルGPU (fGPU) 仮想化。
+
+Backend.AIは、複数のベンダーにわたる幅広いAIアクセラレータをサポートしています：
+
+- **NVIDIA**
+  - Spark (GB10)
+  - Blackwell (B300、B200、RTX Pro 6000など)
+  - Hopper (H200、H100 NVLなど)
+  - Grace Superchip (GB300、GB200、GH200など)
+  - Turing (Titan RTX、RTX 8000、T4)
+  - Ampere (A100、A40、A10など)
+  - Ada Lovelace (L40S、L4)
+  - Jetson (TX、Xavier、Orin、Thorなど)
+- **Intel**
+  - Gaudi 3
+  - Gaudi 2
+  - Gaudi 1
+  - Arc
+- **AMD**
+  - Instinct MIシリーズ (MI300Xを含む)
+  - MI300A
+  - MI250
+- **Rebellions**
+  - ATOM Max
+  - ATOM+
+  - REBEL
+- **FuriosaAI**
+  - RNGD
+- **Tenstorrent**
+  - Wormhole n150s
+  - Wormhole n300s
+- **Google**
+  - TPU v7 (Ironwood)
+  - Coral TPU v5p
+  - Coral TPU v5e
+  - TPU v4
+- **Graphcore**
+  - C600 IPU
+  - Bow IPU
+- **HyperAccel**
+  - LPU
+- **Groq**
+  - LPU
+- **Cerebras**
+  - WSE-3
+- **SambaNova**
+  - SN40L
 
 ![](../images/system_setting_about_scaling_plugins.png)
 

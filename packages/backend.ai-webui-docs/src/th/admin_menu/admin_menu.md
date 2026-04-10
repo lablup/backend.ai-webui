@@ -1153,7 +1153,62 @@ Don't change rule selection unless you completely understand the meaning of each
 
 ![](../images/system_setting_about_image.png)
 
-You can also change settings for scaling, plugins and enterprise features.
+หน้าการกำหนดค่ายังแสดงสถานะของปลั๊กอินและฟีเจอร์ระดับองค์กร:
+
+**ปลั๊กอิน:**
+
+- **การรองรับ Open-source CUDA GPU**: สถานะการรองรับ CUDA GPU
+- **การรองรับ ROCm GPU**: สถานะการรองรับ ROCm GPU
+
+**ฟีเจอร์ระดับองค์กร:**
+
+- **Fractional GPU**: การจำลอง Fractional GPU (fGPU) สำหรับแชร์ GPU ระหว่างเซสชัน
+
+Backend.AI รองรับตัวเร่งความเร็ว AI ที่หลากหลายจากผู้ผลิตหลายราย:
+
+- **NVIDIA**
+  - Spark (GB10)
+  - Blackwell (B300, B200, RTX Pro 6000 เป็นต้น)
+  - Hopper (H200, H100 NVL เป็นต้น)
+  - Grace Superchip (GB300, GB200, GH200 เป็นต้น)
+  - Turing (Titan RTX, RTX 8000, T4)
+  - Ampere (A100, A40, A10 เป็นต้น)
+  - Ada Lovelace (L40S, L4)
+  - Jetson (TX, Xavier, Orin, Thor เป็นต้น)
+- **Intel**
+  - Gaudi 3
+  - Gaudi 2
+  - Gaudi 1
+  - Arc
+- **AMD**
+  - Instinct MI Series (รวมถึง MI300X)
+  - MI300A
+  - MI250
+- **Rebellions**
+  - ATOM Max
+  - ATOM+
+  - REBEL
+- **FuriosaAI**
+  - RNGD
+- **Tenstorrent**
+  - Wormhole n150s
+  - Wormhole n300s
+- **Google**
+  - TPU v7 (Ironwood)
+  - Coral TPU v5p
+  - Coral TPU v5e
+  - TPU v4
+- **Graphcore**
+  - C600 IPU
+  - Bow IPU
+- **HyperAccel**
+  - LPU
+- **Groq**
+  - LPU
+- **Cerebras**
+  - WSE-3
+- **SambaNova**
+  - SN40L
 
 ![](../images/system_setting_about_scaling_plugins.png)
 
