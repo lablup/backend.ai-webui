@@ -366,7 +366,7 @@ const LoginView: React.FC = () => {
         return;
       }
 
-      const userId = form.getFieldValue('user_id') || '';
+      const userId = (form.getFieldValue('user_id') || '').trim();
       const password = form.getFieldValue('password') || '';
       const otp = form.getFieldValue('otp') || '';
 
