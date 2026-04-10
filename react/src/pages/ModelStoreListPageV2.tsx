@@ -37,7 +37,7 @@ import {
   useUpdatableState,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
-import { parseAsStringLiteral, useQueryStates } from 'nuqs';
+import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import React, {
   Suspense,
   useDeferredValue,
@@ -166,7 +166,9 @@ const ModelCardV2Grid: React.FC<{
   pageSize: number;
   offset: number;
   onTotalChange: (total: number) => void;
-  onCardClick?: (frgmt: ModelCardDrawerFragment$key) => void;
+  onCardClick?: (id: string, frgmt: ModelCardDrawerFragment$key) => void;
+  selectedModelCardId?: string | null;
+  onSelectedModelCardFound?: (frgmt: ModelCardDrawerFragment$key) => void;
 }> = ({
   projectId,
   filter,
@@ -178,6 +180,8 @@ const ModelCardV2Grid: React.FC<{
   offset,
   onTotalChange,
   onCardClick,
+  selectedModelCardId,
+  onSelectedModelCardFound,
 }) => {
   'use memo';
 
@@ -234,6 +238,23 @@ const ModelCardV2Grid: React.FC<{
     onTotalChanged();
   }, [total]);
 
+  // When items load and a selectedModelCardId is set (e.g. after refresh),
+  // find the matching fragment and report it to the parent.
+  const onResolveSelectedModelCard = useEffectEvent(() => {
+    if (selectedModelCardId) {
+      const match = items.find(
+        (edge) => edge?.node?.id === selectedModelCardId,
+      );
+      if (match?.node) {
+        onSelectedModelCardFound?.(match.node);
+      }
+    }
+  });
+
+  React.useEffect(() => {
+    onResolveSelectedModelCard();
+  }, [selectedModelCardId, result]);
+
   if (items.length === 0) {
     return (
       <Empty
@@ -253,7 +274,7 @@ const ModelCardV2Grid: React.FC<{
             <ModelCardV2Card
               modelCardV2Frgmt={item}
               searchKeyword={searchKeyword}
-              onClick={() => onCardClick?.(item)}
+              onClick={() => onCardClick?.(item.id, item)}
             />
           </Col>
         );
@@ -274,6 +295,7 @@ const ModelStoreListPageV2: React.FC = () => {
   const [queryParams, setQueryParams] = useQueryStates(
     {
       sort: parseAsStringLiteral(SORT_VALUES).withDefault('CREATED_AT_DESC'),
+      modelCard: parseAsString,
     },
     { history: 'replace' },
   );
@@ -411,7 +433,12 @@ const ModelStoreListPageV2: React.FC = () => {
             pageSize={deferredLimit}
             offset={deferredOffset}
             onTotalChange={setTotal}
-            onCardClick={(frgmt) => setSelectedModelCard(frgmt)}
+            selectedModelCardId={queryParams.modelCard}
+            onSelectedModelCardFound={(frgmt) => setSelectedModelCard(frgmt)}
+            onCardClick={(id, frgmt) => {
+              setSelectedModelCard(frgmt);
+              setQueryParams({ modelCard: id });
+            }}
           />
         </div>
       </Suspense>
@@ -451,8 +478,11 @@ const ModelStoreListPageV2: React.FC = () => {
       )}
       <ModelCardDrawer
         modelCardDrawerFrgmt={selectedModelCard}
-        open={!!selectedModelCard}
-        onClose={() => setSelectedModelCard(null)}
+        open={!!queryParams.modelCard && !!selectedModelCard}
+        onClose={() => {
+          setSelectedModelCard(null);
+          setQueryParams({ modelCard: null });
+        }}
       />
     </BAIFlex>
   );
