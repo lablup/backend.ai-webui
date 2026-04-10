@@ -18,9 +18,10 @@ After deletion, you will not be able to create a new session using that image.
 
 ![](../images/my_environments.png)
 
-You can also copy the my environment image and create session with manual image.
-Click 'Copy' button in the control column, and go to sessions page and create a session.
-Fill the input of manual image by pasting the image that you copied.
+You can also copy the image name and create a session with a manual image.
+Click the copy icon next to the image name in the Full Image Path column to copy it to
+your clipboard. Then go to the Sessions page and create a session.
+Fill in the manual image input field by pasting the image name that you copied.
 
 ![](../images/copy_image_name_manual.png)
 
