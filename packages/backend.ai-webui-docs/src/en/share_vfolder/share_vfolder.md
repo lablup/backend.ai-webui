@@ -95,7 +95,7 @@ your Backend.AI email account.
 
 :::note
 Backend.AI also provides sharing project folder to project members.
-To See the detail, go to [sharing a project storage folder with project members](#share-project-storage-folders-with-project-members).
+To see the detail, go to [sharing a project storage folder with project members](#share-project-storage-folders-with-project-members).
 :::
 
 
@@ -106,8 +106,8 @@ To See the detail, go to [sharing a project storage folder with project members]
 You can modify the permissions of a shared user from the folder sharing modal.
 Click Select permission to set the sharing permission.
 
-- Read only: The invited user has read-only access to the folder.
-- Read & Write: The invited user has read and write access to the folder.
+- **Read only**: The invited user has read-only access to the folder.
+- **Read & Write**: The invited user has read and write access to the folder.
   The user cannot delete folders or files.
 
 ![](../images/modify_perm.png)
