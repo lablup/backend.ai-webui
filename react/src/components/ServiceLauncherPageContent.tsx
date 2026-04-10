@@ -82,6 +82,7 @@ import {
   BAIFlex,
   ESMClientErrorResponse,
   filterOutNullAndUndefined,
+  toLocalId,
   useErrorMessageResolver,
   useBAILogger,
   BAIResourceNumberWithIcon,
@@ -401,8 +402,8 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
       fragment ServiceLauncherPageContentFragment on Endpoint {
         endpoint_id
         project
-        desired_session_count @deprecatedSince(version: "24.12.0")
-        replicas @since(version: "24.12.0")
+        desired_session_count
+        replicas
         resource_group
         resource_slots
         resource_opts
@@ -410,21 +411,22 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
         cluster_size
         open_to_public
         model
-        model_mount_destination @since(version: "24.03.4")
-        model_definition_path @since(version: "24.03.4")
+        model_mount_destination
+        model_definition_path
         environ
-        runtime_variant @since(version: "24.03.5") {
+        runtime_variant {
           name
           human_readable_name
         }
-        extra_mounts @since(version: "24.03.4") {
+        extra_mounts {
           id
           row_id
           name
         }
-        image_object @since(version: "23.09.9") {
-          name @deprecatedSince(version: "24.12.0")
-          namespace @since(version: "24.12.0")
+        image_object {
+          id
+          name
+          namespace
           humanized_name
           tag
           registry
@@ -723,7 +725,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
         user(domain_name: $domain_name, email: $email) {
           id
           # https://github.com/lablup/backend.ai/pull/1354
-          resource_policy @since(version: "23.09.0")
+          resource_policy
         }
       }
     `,
@@ -739,7 +741,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
         query ServiceLauncherPageContent_UserResourcePolicyQuery(
           $user_RP_name: String
         ) {
-          user_resource_policy(name: $user_RP_name) @since(version: "23.09.6") {
+          user_resource_policy(name: $user_RP_name) {
             max_session_count_per_model_session
           }
         }
@@ -797,8 +799,8 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
         msg
         endpoint {
           endpoint_id
-          desired_session_count @deprecatedSince(version: "24.12.0")
-          replicas @since(version: "24.12.0")
+          desired_session_count
+          replicas
           resource_group
           resource_slots
           resource_opts
@@ -806,9 +808,9 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
           cluster_size
           open_to_public
           model
-          image_object @since(version: "23.09.9") {
-            name @deprecatedSince(version: "24.12.0")
-            namespace @since(version: "24.12.0")
+          image_object {
+            name
+            namespace
             humanized_name
             tag
             registry
@@ -828,9 +830,9 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
             supported_accelerators
           }
           name
-          model_definition_path @since(version: "24.03.4")
-          model_mount_destination @since(version: "24.03.4")
-          extra_mounts @since(version: "24.03.4") {
+          model_definition_path
+          model_mount_destination
+          extra_mounts {
             id
             host
             quota_scope_id
@@ -853,7 +855,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
             cloneable
             status
           }
-          runtime_variant @since(version: "24.03.5") {
+          runtime_variant {
             name
             human_readable_name
           }
@@ -968,17 +970,129 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
           }
 
           mutationVariables.props.environ = JSON.stringify(newEnvirons);
+
+          // After modify_endpoint updates endpoint metadata, create and
+          // auto-activate a new revision so the running service actually
+          // picks up the new configuration. Without this, modify_endpoint
+          // only mutates metadata — existing routing sessions keep the
+          // previous revision and ignore model-definition.yaml changes.
+          const createRevisionForUpdatedEndpoint = async (): Promise<void> => {
+            // `values.environments.image.id` comes from the legacy `images`
+            // GraphQL field whose `id` is a plain UUID — already REST-ready.
+            // The endpoint's `image_object` is an `ImageNode`, so its `id`
+            // is a Relay global id and must go through `toLocalId`.
+            const selectedImageLocalId = (
+              values.environments?.image as { id?: string | null } | undefined
+            )?.id;
+            const fallbackImageGlobalId = endpoint?.image_object?.id;
+            const fallbackImageLocalId = fallbackImageGlobalId
+              ? toLocalId(fallbackImageGlobalId)
+              : undefined;
+            const imageLocalId =
+              selectedImageLocalId ?? fallbackImageLocalId ?? undefined;
+
+            if (!imageLocalId) {
+              // Manual image edit path — no resolvable image id. Keep the
+              // modify_endpoint result as the final state and log the reason
+              // so the user knows why the rollout didn't happen.
+              logger.warn(
+                'ServiceLauncherPageContent: skipping revision creation; image id is unavailable (manual image path)',
+                values.environments?.manual,
+              );
+              return;
+            }
+
+            // When the user did not click "Change" on resources,
+            // `ResourceAllocationFormItems` is not mounted, so the form does
+            // not register `resourceGroup` / `resource.*`. In that case, fall
+            // back to the endpoint's existing snapshot.
+            const revisionResourceGroup =
+              values.resourceGroup ?? endpoint?.resource_group ?? undefined;
+            const revisionResourceSlots = mutationVariables.props.resource_slots
+              ? JSON.parse(mutationVariables.props.resource_slots as string)
+              : JSON.parse(endpoint?.resource_slots || '{}');
+            const revisionResourceOpts = mutationVariables.props.resource_opts
+              ? JSON.parse(mutationVariables.props.resource_opts as string)
+              : endpoint?.resource_opts
+                ? JSON.parse(endpoint.resource_opts)
+                : undefined;
+            const revisionClusterMode: 'single-node' | 'multi-node' =
+              mutationVariables.props.cluster_mode === 'SINGLE_NODE'
+                ? 'single-node'
+                : 'multi-node';
+            const revisionExtraMounts = _.chain(values.mount_ids)
+              .map((vfolder) => ({ vfolder_id: vfolder }))
+              .filter((m) => !!m.vfolder_id)
+              .value();
+            const revisionMountDestination =
+              values.modelMountDestination?.trim() || '/models';
+            const revisionDefinitionPath =
+              values.modelDefinitionPath?.trim() || 'model-definition.yaml';
+
+            const revisionBody = {
+              revision: {
+                cluster_config: {
+                  mode: revisionClusterMode,
+                  size: values.cluster_size,
+                },
+                resource_config: {
+                  ...(revisionResourceGroup
+                    ? { resource_group: revisionResourceGroup }
+                    : {}),
+                  resource_slots: revisionResourceSlots,
+                  ...(revisionResourceOpts && !_.isEmpty(revisionResourceOpts)
+                    ? { resource_opts: revisionResourceOpts }
+                    : {}),
+                },
+                image: {
+                  id: imageLocalId,
+                },
+                model_runtime_config: {
+                  runtime_variant: values.runtimeVariant,
+                  ...(!_.isEmpty(newEnvirons) ? { environ: newEnvirons } : {}),
+                },
+                model_mount_config: {
+                  vfolder_id: values.vFolderID,
+                  mount_destination: revisionMountDestination,
+                  definition_path: revisionDefinitionPath,
+                },
+                ...(revisionExtraMounts.length > 0
+                  ? { extra_mounts: revisionExtraMounts }
+                  : {}),
+                auto_activate: true,
+              },
+            };
+
+            await baiSignedRequestWithPromise({
+              method: 'POST',
+              url: `/deployments/${endpoint?.endpoint_id}/revisions`,
+              body: revisionBody,
+              client: baiClient,
+            });
+          };
+
           commitModifyEndpoint({
             variables: mutationVariables,
             onCompleted: (res, errors) => {
               if (res.modify_endpoint?.ok) {
                 const updatedEndpoint = res.modify_endpoint?.endpoint;
-                message.success(
-                  t('modelService.ServiceUpdated', {
-                    name: updatedEndpoint?.name,
-                  }),
-                );
-                webuiNavigate(`/serving/${endpoint?.endpoint_id}`);
+                createRevisionForUpdatedEndpoint()
+                  .then(() => {
+                    message.success(
+                      t('modelService.ServiceUpdated', {
+                        name: updatedEndpoint?.name,
+                      }),
+                    );
+                    webuiNavigate(`/serving/${endpoint?.endpoint_id}`);
+                  })
+                  .catch((error) => {
+                    message.error(
+                      getErrorMessage(
+                        error,
+                        t('modelService.FailedToUpdateService'),
+                      ),
+                    );
+                  });
                 return;
               }
 
