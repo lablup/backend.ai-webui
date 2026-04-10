@@ -96,6 +96,9 @@ const ReservoirArtifactDetailPage = React.lazy(
   () => import('./pages/ReservoirArtifactDetailPage'),
 );
 
+const ModelStoreListPageV2 = React.lazy(
+  () => import('./pages/ModelStoreListPageV2'),
+);
 const SchedulerPage = React.lazy(() => import('./pages/SchedulerPage'));
 const BrandingPage = React.lazy(() => import('./pages/BrandingPage'));
 const RBACManagementPage = React.lazy(
@@ -311,17 +314,24 @@ export const mainLayoutChildRoutes: RouteObject[] = [
   {
     path: '/model-store',
     handle: { labelKey: 'data.ModelStore' },
-    element: (
-      <Suspense
-        fallback={
-          <BAIFlex direction="column" style={{ maxWidth: 700 }}>
-            <Skeleton active />
-          </BAIFlex>
-        }
-      >
-        <LegacyModelStoreListPage />
-      </Suspense>
-    ),
+    Component: () => {
+      const baiClient = useSuspendedBackendaiClient();
+      return (
+        <Suspense
+          fallback={
+            <BAIFlex direction="column" style={{ maxWidth: 700 }}>
+              <Skeleton active />
+            </BAIFlex>
+          }
+        >
+          {baiClient?.supports('model-card-v2') ? (
+            <ModelStoreListPageV2 />
+          ) : (
+            <LegacyModelStoreListPage />
+          )}
+        </Suspense>
+      );
+    },
   },
   // Redirect paths for backward compatibility
   {
