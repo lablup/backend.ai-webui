@@ -1066,34 +1066,30 @@ possible in Resource Group tab of the Resource page.
 
 You can edit a resource group by clicking the 'Setting (Gear)' in the Control
 panel. In the Select scheduler field, you can choose the scheduling method for
-creating a compute session. Currently, there are three types: `FIFO`, `LIFO`, and
-`DRF`. `FIFO` and `LIFO` are scheduling methods creating the first- or the
+creating a compute session. Currently, there are four types: `FIFO`, `LIFO`,
+`DRF`, and `FAIR_SHARE`. `FIFO` and `LIFO` are scheduling methods creating the first- or the
 last-enqueued compute session in the job queue. `DRF` stands for Dominant Resource
 Fairness, and it aims to provide resources as fair as possible for each user.
+`FAIR_SHARE` allocates compute resources based on historical usage patterns. For
+more details, refer to the [Fair Share Scheduler](#fair-share-scheduler) section.
 You can deactivate a resource policy by turning off Active Status.
 
 ![](../images/modify_resource_group.png)
 
-WSProxy Server Address sets the WSProxy address for the resource group's Agents
-to use. If you set a URL in this field, WSProxy will relay the traffic of an app
-like Jupyter directly to the compute session via Agent bypassing Manager (v2
-API). By enabling the v2 API, you can lower the Manager's burden when using app
-services. This also achieves the better efficiency and scalability in deploying
-the services. If a direct connection from WSProxy to the Agent node is not
-available, however, please leave this field blank to fall back to the v1 API,
-which relays the traffic through Manager in a traditional way.
 
-The resource group has further Scheduler Options. The details are described below.
+The resource group edit dialog contains the following additional fields:
 
-- Allowed session types:
-  Since user can choose the type of session, resource group can allow certain type of session.
-  You should allow at lest one session types. The allowed session types are Interactive, Batch, and Inference.
-- Pending timeout:
+- **Allowed session types**: Since users can choose the type of session, the resource group can allow certain types. You should allow at least one session type. The allowed session types are Interactive, Batch, Inference, and System.
+- **WSProxy Server Address**: Sets the WSProxy address for the resource group's Agents to use. If you set a URL in this field, WSProxy will relay the traffic of an app like Jupyter directly to the compute session via Agent bypassing Manager (v2 API). By enabling the v2 API, you can lower the Manager's burden when using app services. If a direct connection from WSProxy to the Agent node is not available, leave this field blank to fall back to the v1 API.
+- **WSProxy API Token**: The API token for authenticating with the WSProxy server.
+- **Active**: Toggle the active status of the resource group.
+- **Public**: When enabled, the resource group is visible to all users.
+- **Pending timeout**:
   A compute session will be canceled if it stays `PENDING` status for longer
   than the Pending timeout. When you wish to prevent a session from remaining
   PENDING indefinitely, set this time. Set this value to zero (0) if you do not
   want to apply the pending timeout feature.
-- Retries to skip pending session:
+- **Retries to skip pending session**:
   The number of retries the scheduler tries before skipping a PENDING session.
   It can be configured to prevent the situation where one PENDING session blocks
   the scheduling of the subsequent sessions indefinitely (Head-of-line blocking,
