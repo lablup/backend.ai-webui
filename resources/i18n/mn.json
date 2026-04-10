@@ -1633,8 +1633,10 @@
     "Path": "Зам",
     "Port": "Порт",
     "PreStartActions": "Эхлэхийн өмнөх үйлдлүүд",
+    "PresetTooltip": "Урьдчилсан тохиргоо нь энэ загварыг үйлчилгээ болгон ажиллуулахад ашиглах нөөцийн тохиргоог (CPU, санах ой, GPU) тодорхойлдог.",
     "ProjectNotFound": "Модел дэлгүүрийн төсөл олдсонгүй",
     "ProjectNotFoundDescription": "MODEL_STORE төсөл олдсонгүй. Админтай холбогдоно уу.",
+    "ResourceGroupTooltip": "Сонгосон нөөцийн бүлэгт үйлчилгээ ажиллана.",
     "SearchModels": "Загвар хайх",
     "ServiceDetails": "Үйлчилгээний дэлгэрэнгүй мэдээлэл",
     "Sort": "Эрэмбэлэх",
@@ -1644,7 +1646,7 @@
     "SortByNameDesc": "Нэр (Я→А)",
     "StartCommand": "Эхлэх тушаал",
     "Task": "Даалгавар",
-    "Updated": "Шинэчлэгдсэн {{time}}",
+    "Updated": "{{time}}",
     "Version": "Хувилбар"
   },
   "notification": {

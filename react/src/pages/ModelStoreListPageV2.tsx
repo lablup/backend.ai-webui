@@ -290,6 +290,7 @@ const ModelStoreListPageV2: React.FC = () => {
     {
       sort: parseAsStringLiteral(SORT_VALUES).withDefault('CREATED_AT_DESC'),
       modelCard: parseAsString,
+      search: parseAsString,
     },
     { history: 'replace' },
   );
@@ -301,9 +302,9 @@ const ModelStoreListPageV2: React.FC = () => {
   const [selectedModelCard, setSelectedModelCard] =
     useState<ModelCardDrawerFragment$key | null>(null);
 
-  const [filter, setFilter] = React.useState<GraphQLFilter | undefined>(
-    undefined,
-  );
+  const filter: GraphQLFilter | undefined = queryParams.search
+    ? ({ name: { iContains: queryParams.search } } as GraphQLFilter)
+    : undefined;
   const deferredFilter = useDeferredValue(filter);
   const deferredSortField = useDeferredValue(sortField);
   const deferredSortDirection = useDeferredValue(sortDirection);
@@ -361,9 +362,7 @@ const ModelStoreListPageV2: React.FC = () => {
     );
   }
 
-  // Extract name filter value for search keyword highlighting
-  const searchKeyword =
-    (filter?.name as { iContains?: string } | undefined)?.iContains ?? '';
+  const searchKeyword = queryParams.search ?? '';
 
   return (
     <BAIFlex direction="column" align="stretch" justify="center" gap="lg">
@@ -373,7 +372,10 @@ const ModelStoreListPageV2: React.FC = () => {
             combinationMode="AND"
             value={filter}
             onChange={(value) => {
-              setFilter(value);
+              const search =
+                (value?.name as { iContains?: string } | undefined)
+                  ?.iContains || null;
+              setQueryParams({ search });
               setTablePaginationOption({ current: 1 });
             }}
             filterProperties={[
