@@ -1619,8 +1619,10 @@
     "Path": "Путь",
     "Port": "Порт",
     "PreStartActions": "Предстартовые действия",
+    "PresetTooltip": "Пресет определяет конфигурацию ресурсов (ЦП, память, GPU), используемую для запуска этой модели в качестве сервиса.",
     "ProjectNotFound": "Проект Model Store не найден",
     "ProjectNotFoundDescription": "Проект MODEL_STORE не найден. Обратитесь к администратору.",
+    "ResourceGroupTooltip": "Сервис будет запущен в выбранной группе ресурсов.",
     "SearchModels": "Поиск моделей",
     "ServiceDetails": "Детали услуги",
     "Sort": "Сортировка",
@@ -1630,7 +1632,7 @@
     "SortByNameDesc": "Имя (Я→А)",
     "StartCommand": "Запустить команду",
     "Task": "Задание",
-    "Updated": "Обновлено {{time}}",
+    "Updated": "{{time}}",
     "Version": "Версия"
   },
   "notification": {

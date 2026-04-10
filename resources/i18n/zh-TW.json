@@ -1623,8 +1623,10 @@
     "Path": "小路",
     "Port": "連接埠",
     "PreStartActions": "開始前的行動",
+    "PresetTooltip": "預設定義了將此模型作為服務運行時使用的資源配置（CPU、記憶體、GPU）。",
     "ProjectNotFound": "找不到模型商店專案",
     "ProjectNotFoundDescription": "找不到 MODEL_STORE 專案。請聯絡管理員。",
+    "ResourceGroupTooltip": "服務將在所選資源群組中運行。",
     "SearchModels": "搜尋型號",
     "ServiceDetails": "服務詳情",
     "Sort": "排序",
@@ -1634,7 +1636,7 @@
     "SortByNameDesc": "名稱 (Z→A)",
     "StartCommand": "啟動命令",
     "Task": "任务",
-    "Updated": "更新於 {{time}}",
+    "Updated": "{{time}}",
     "Version": "版本"
   },
   "notification": {

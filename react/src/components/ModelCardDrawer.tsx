@@ -91,6 +91,7 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
             node {
               id
               name
+              description
               rank
               runtimeVariantId
             }
@@ -114,6 +115,7 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
         ): node is {
           readonly id: string;
           readonly name: string;
+          readonly description: string | null;
           readonly rank: number;
           readonly runtimeVariantId: string;
         } => node != null,
@@ -167,20 +169,16 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
             <BAIFlex direction="row" wrap="wrap" gap="xs">
               {modelCard.metadata?.task && <Tag>{modelCard.metadata.task}</Tag>}
               {modelCard.metadata?.category && (
-                <Tag style={{ marginRight: 0 }}>
-                  {modelCard.metadata.category}
-                </Tag>
+                <Tag>{modelCard.metadata.category}</Tag>
               )}
               {modelCard.metadata?.label &&
                 _.map(modelCard.metadata.label, (label) => (
-                  <Tag key={label} style={{ marginRight: 0 }} variant="filled">
+                  <Tag key={label} variant="filled">
                     {label}
                   </Tag>
                 ))}
               {modelCard.metadata?.license && (
-                <Tag icon={<BankOutlined />} style={{ marginRight: 0 }}>
-                  {modelCard.metadata.license}
-                </Tag>
+                <Tag icon={<BankOutlined />}>{modelCard.metadata.license}</Tag>
               )}
             </BAIFlex>
 

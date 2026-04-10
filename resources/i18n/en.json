@@ -1622,9 +1622,11 @@
     "Port": "Port",
     "PreStartActions": "Pre Start Actions",
     "Preset": "Preset",
+    "PresetTooltip": "A preset defines the resource configuration (CPU, memory, GPU) used to run this model as a service.",
     "ProjectNotFound": "Model Store project not found",
     "ProjectNotFoundDescription": "The MODEL_STORE project could not be found. Please contact your administrator.",
     "ResourceGroup": "Resource Group",
+    "ResourceGroupTooltip": "The service will run in the selected resource group.",
     "Runtime": "Runtime",
     "SearchModels": "Search Models",
     "ServiceDetails": "Service Details",
@@ -1635,7 +1637,7 @@
     "SortByNameDesc": "Name (Z→A)",
     "StartCommand": "Start Command",
     "Task": "Task",
-    "Updated": "Updated {{time}}",
+    "Updated": "{{time}}",
     "Version": "Version"
   },
   "notification": {

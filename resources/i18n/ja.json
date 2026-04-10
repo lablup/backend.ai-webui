@@ -1621,8 +1621,10 @@
     "Path": "パス",
     "Port": "ポート",
     "PreStartActions": "開始前のアクション",
+    "PresetTooltip": "プリセットは、このモデルをサービスとして実行するために使用されるリソース構成（CPU、メモリ、GPU）を定義します。",
     "ProjectNotFound": "モデルストアプロジェクトが見つかりません",
     "ProjectNotFoundDescription": "MODEL_STOREプロジェクトが見つかりませんでした。管理者にお問い合わせください。",
+    "ResourceGroupTooltip": "選択したリソースグループでサービスが実行されます。",
     "SearchModels": "モデルの検索",
     "ServiceDetails": "サービス内容",
     "Sort": "並べ替え",
@@ -1632,7 +1634,7 @@
     "SortByNameDesc": "名前 (Z→A)",
     "StartCommand": "開始コマンド",
     "Task": "タスク",
-    "Updated": "更新 {{time}}",
+    "Updated": "{{time}}",
     "Version": "バージョン"
   },
   "notification": {
