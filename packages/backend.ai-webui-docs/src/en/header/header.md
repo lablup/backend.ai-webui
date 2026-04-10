@@ -22,7 +22,7 @@ When login session management is enabled, the top bar displays the remaining
 time until automatic logout along with an extend button. The timer shows the
 time in `HH:mm:ss` format (or includes a day count if longer than 24 hours).
 
-Click the extend button (refresh icon) next to the timer to reset the session
+Click the extend button (repeat icon) next to the timer to reset the session
 expiration and extend your login session.
 
 :::note
@@ -107,7 +107,7 @@ information.
   input contents.
 - **New password**: New password (8 characters or more containing at least 1
   alphabet, number, and symbol). Click the right view button to see the input
-  contents. Ensure this is the same as the Original password.
+  contents.
 - **2FA Enabled**: 2FA activation. The user needs to enter the OTP code when logging in if it is checked.
 
 
@@ -119,6 +119,7 @@ In that case, please contact the administrator of your system.
 <a id="2fa-setup"></a>
 
 ### 2FA Setup
+
 If you activate the `2FA Enabled` switch, the following dialog appears.
 
 ![](../images/2fa_setup.png)
