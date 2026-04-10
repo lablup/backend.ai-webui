@@ -85,7 +85,7 @@ const ModelCardV2Card: React.FC<{
         }
         updatedAt
         createdAt
-        availablePresets(limit: 1) {
+        availablePresets(orderBy: [{ field: RANK, direction: "ASC" }]) {
           count
         }
       }

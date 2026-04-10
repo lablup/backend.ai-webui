@@ -83,8 +83,8 @@ modelCardAvailablePresets(
   - [ ] 배포 성공 시 `/serving/${deploymentId}` (`EndpointDetailPage`)로 바로 이동
 - [ ] 호환 preset 기반 3가지 배포 시나리오 구현
   - [ ] **시나리오 1 — 호환 preset 없음**: `ModelCardV2.availablePresets { count }` fragment로 목록 조회 시 호환 preset 유무 파악. count === 0인 카드는 목록에서 opacity 처리하여 시각적으로 구분 (클릭하여 Drawer 열기는 가능). Drawer 열림 시 "호환 가능한 preset이 없어 배포할 수 없습니다" error Alert 표시
-  - [ ] **시나리오 2 — 단일 preset + 단일 리소스 그룹**: 배포 버튼 클릭 시 선택 없이 바로 `deployModelCardV2` 호출 (자동 결정)
-  - [ ] **시나리오 3 — 복수 preset 또는 복수 리소스 그룹**: 배포 버튼 클릭 시 선택 모달 표시
+  - [ ] **시나리오 2 — 단일 preset + 단일 리소스 그룹**: 배포 버튼 클릭 시 모달 없이 바로 `deployModelCardV2` 호출 (자동 결정). 확인 대화 상자 없이 즉시 배포.
+  - [ ] **시나리오 3 — 복수 preset 또는 (1개 이상 preset + 복수 리소스 그룹)**: 배포 버튼 클릭 시 선택 모달 표시. preset 개수가 핵심 기준. preset이 0개이면 리소스 그룹 수와 무관하게 모달 표시하지 않음 (시나리오 1).
 - [ ] 배포 선택 모달 (시나리오 3)
   - [ ] Runtime 드롭다운: `runtimeVariants` query로 RuntimeVariant 목록 조회
   - [ ] Preset 드롭다운: `ModelCardV2.availablePresets(filter: { runtimeVariantId })` 또는 `modelCardAvailablePresets` 쿼리로 호환 preset 조회
@@ -138,10 +138,10 @@ modelCardAvailablePresets(
 
 ### 배포 — 시나리오 2 (단일 preset + 단일 리소스 그룹)
 
-- [ ] 배포 버튼 클릭 시 선택 모달 없이 바로 `deployModelCardV2` mutation 호출
+- [ ] 배포 버튼 클릭 시 모달 없이 즉시 `deployModelCardV2` mutation 호출 (확인 대화 상자 없음)
 - [ ] 배포 성공 시 `/serving/${deploymentId}` 페이지로 바로 이동
 
-### 배포 — 시나리오 3 (복수 preset 또는 복수 리소스 그룹)
+### 배포 — 시나리오 3 (복수 preset 또는 1개 이상 preset + 복수 리소스 그룹)
 
 - [ ] 배포 버튼 클릭 시 선택 모달이 열림
 - [ ] Runtime 드롭다운에서 해당 모델 카드의 호환 preset이 있는 런타임 목록이 표시됨
