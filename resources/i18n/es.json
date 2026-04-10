@@ -1635,6 +1635,7 @@
     "PresetTooltip": "Un preset define la configuración de recursos (CPU, memoria, GPU) utilizada para ejecutar este modelo como servicio.",
     "ProjectNotFound": "Proyecto de Model Store no encontrado",
     "ProjectNotFoundDescription": "No se pudo encontrar el proyecto MODEL_STORE. Contacte a su administrador.",
+    "RelativeTime": "{{time}}",
     "ResourceGroupTooltip": "El servicio se ejecutará en el grupo de recursos seleccionado.",
     "SearchModels": "Buscar modelos",
     "ServiceDetails": "Detalles del servicio",
@@ -1645,7 +1646,6 @@
     "SortByNameDesc": "Nombre (Z→A)",
     "StartCommand": "Comando de inicio",
     "Task": "Tarea",
-    "Updated": "{{time}}",
     "Version": "Versión"
   },
   "notification": {

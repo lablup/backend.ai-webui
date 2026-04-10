@@ -1637,6 +1637,7 @@
     "PresetTooltip": "Preset xác định cấu hình tài nguyên (CPU, bộ nhớ, GPU) được sử dụng để chạy mô hình này dưới dạng dịch vụ.",
     "ProjectNotFound": "Không tìm thấy dự án Model Store",
     "ProjectNotFoundDescription": "Không tìm thấy dự án MODEL_STORE. Vui lòng liên hệ quản trị viên.",
+    "RelativeTime": "{{time}}",
     "ResourceGroupTooltip": "Dịch vụ sẽ chạy trong nhóm tài nguyên đã chọn.",
     "SearchModels": "Tìm kiếm mô hình",
     "ServiceDetails": "Chi tiết dịch vụ",
@@ -1647,7 +1648,6 @@
     "SortByNameDesc": "Tên (Z→A)",
     "StartCommand": "Bắt đầu lệnh",
     "Task": "Nhiệm vụ",
-    "Updated": "{{time}}",
     "Version": "Phiên bản"
   },
   "notification": {

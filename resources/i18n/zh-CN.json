@@ -1637,6 +1637,7 @@
     "PresetTooltip": "预设定义了将此模型作为服务运行时使用的资源配置（CPU、内存、GPU）。",
     "ProjectNotFound": "未找到模型商店项目",
     "ProjectNotFoundDescription": "未找到 MODEL_STORE 项目。请联系管理员。",
+    "RelativeTime": "{{time}}",
     "ResourceGroupTooltip": "服务将在所选资源组中运行。",
     "SearchModels": "搜索型号",
     "ServiceDetails": "服务详情",
@@ -1647,7 +1648,6 @@
     "SortByNameDesc": "名称 (Z→A)",
     "StartCommand": "启动命令",
     "Task": "任务",
-    "Updated": "{{time}}",
     "Version": "版本"
   },
   "notification": {

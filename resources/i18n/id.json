@@ -1638,6 +1638,7 @@
     "PresetTooltip": "Preset menentukan konfigurasi sumber daya (CPU, memori, GPU) yang digunakan untuk menjalankan model ini sebagai layanan.",
     "ProjectNotFound": "Proyek Model Store tidak ditemukan",
     "ProjectNotFoundDescription": "Proyek MODEL_STORE tidak dapat ditemukan. Silakan hubungi administrator Anda.",
+    "RelativeTime": "{{time}}",
     "ResourceGroupTooltip": "Layanan akan berjalan di grup sumber daya yang dipilih.",
     "SearchModels": "Model Pencarian",
     "ServiceDetails": "Detail Layanan",
@@ -1648,7 +1649,6 @@
     "SortByNameDesc": "Nama (Z→A)",
     "StartCommand": "Mulai Perintah",
     "Task": "Tugas",
-    "Updated": "{{time}}",
     "Version": "Versi: kapan"
   },
   "notification": {

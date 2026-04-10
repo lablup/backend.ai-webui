@@ -1635,6 +1635,7 @@
     "PresetTooltip": "Bir ön ayar, bu modeli hizmet olarak çalıştırmak için kullanılan kaynak yapılandırmasını (CPU, bellek, GPU) tanımlar.",
     "ProjectNotFound": "Model Store projesi bulunamadı",
     "ProjectNotFoundDescription": "MODEL_STORE projesi bulunamadı. Lütfen yöneticinizle iletişime geçin.",
+    "RelativeTime": "{{time}}",
     "ResourceGroupTooltip": "Hizmet, seçilen kaynak grubunda çalışacaktır.",
     "SearchModels": "Modelleri Ara",
     "ServiceDetails": "Hizmet Detayları",
@@ -1645,7 +1646,6 @@
     "SortByNameDesc": "Ad (Z→A)",
     "StartCommand": "Komutu Başlat",
     "Task": "Görev",
-    "Updated": "{{time}}",
     "Version": "Sürüm"
   },
   "notification": {

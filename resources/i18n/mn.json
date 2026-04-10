@@ -1636,6 +1636,7 @@
     "PresetTooltip": "Урьдчилсан тохиргоо нь энэ загварыг үйлчилгээ болгон ажиллуулахад ашиглах нөөцийн тохиргоог (CPU, санах ой, GPU) тодорхойлдог.",
     "ProjectNotFound": "Модел дэлгүүрийн төсөл олдсонгүй",
     "ProjectNotFoundDescription": "MODEL_STORE төсөл олдсонгүй. Админтай холбогдоно уу.",
+    "RelativeTime": "{{time}}",
     "ResourceGroupTooltip": "Сонгосон нөөцийн бүлэгт үйлчилгээ ажиллана.",
     "SearchModels": "Загвар хайх",
     "ServiceDetails": "Үйлчилгээний дэлгэрэнгүй мэдээлэл",
@@ -1646,7 +1647,6 @@
     "SortByNameDesc": "Нэр (Я→А)",
     "StartCommand": "Эхлэх тушаал",
     "Task": "Даалгавар",
-    "Updated": "{{time}}",
     "Version": "Хувилбар"
   },
   "notification": {

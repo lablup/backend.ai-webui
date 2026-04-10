@@ -6,7 +6,7 @@ import { ModelCardDeployModalEndpointPollQuery } from '../__generated__/ModelCar
 import { ModelCardDeployModalMutation } from '../__generated__/ModelCardDeployModalMutation.graphql';
 import { ModelCardDeployModalQuery } from '../__generated__/ModelCardDeployModalQuery.graphql';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import { App, Form, Typography } from 'antd';
+import { App, Form, Typography, theme } from 'antd';
 import type { DefaultOptionType } from 'antd/es/select';
 import {
   BAIButton,
@@ -73,6 +73,7 @@ const ModelCardDeployModalContent: React.FC<
   'use memo';
 
   const { t } = useTranslation();
+  const { token } = theme.useToken();
   const { message } = App.useApp();
   const navigate = useNavigate();
   const { id: projectId, name: projectName } = useCurrentProjectValue();
@@ -296,12 +297,12 @@ const ModelCardDeployModalContent: React.FC<
             onChange={(value: string) => setUserSelectedPresetId(value)}
             options={presetOptions}
             optionRender={(option) => (
-              <BAIFlex direction="column">
-                <span>{option.label}</span>
+              <BAIFlex direction="column" align="start">
+                {option.label}
                 {option.data.description && (
                   <Typography.Text
                     type="secondary"
-                    style={{ fontSize: 12 }}
+                    style={{ fontSize: token.fontSizeSM }}
                     ellipsis
                   >
                     {option.data.description}

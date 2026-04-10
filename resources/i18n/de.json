@@ -1637,6 +1637,7 @@
     "PresetTooltip": "Ein Preset definiert die Ressourcenkonfiguration (CPU, Speicher, GPU), die zum Ausführen dieses Modells als Dienst verwendet wird.",
     "ProjectNotFound": "Modellspeicher-Projekt nicht gefunden",
     "ProjectNotFoundDescription": "Das MODEL_STORE-Projekt konnte nicht gefunden werden. Bitte wenden Sie sich an Ihren Administrator.",
+    "RelativeTime": "{{time}}",
     "ResourceGroupTooltip": "Der Dienst wird in der ausgewählten Ressourcengruppe ausgeführt.",
     "SearchModels": "Modelle suchen",
     "ServiceDetails": "Servicedetails",
@@ -1647,7 +1648,6 @@
     "SortByNameDesc": "Name (Z→A)",
     "StartCommand": "Befehl starten",
     "Task": "Aufgabe",
-    "Updated": "{{time}}",
     "Version": "Ausführung"
   },
   "notification": {

@@ -1638,6 +1638,7 @@
     "PresetTooltip": "Preset definiuje konfigurację zasobów (CPU, pamięć, GPU) używaną do uruchomienia tego modelu jako usługi.",
     "ProjectNotFound": "Nie znaleziono projektu Model Store",
     "ProjectNotFoundDescription": "Nie można znaleźć projektu MODEL_STORE. Skontaktuj się z administratorem.",
+    "RelativeTime": "{{time}}",
     "ResourceGroupTooltip": "Usługa będzie działać w wybranej grupie zasobów.",
     "SearchModels": "Wyszukaj modele",
     "ServiceDetails": "Szczegóły usługi",
@@ -1648,7 +1649,6 @@
     "SortByNameDesc": "Nazwa (Z→A)",
     "StartCommand": "Uruchom polecenie",
     "Task": "Zadanie",
-    "Updated": "{{time}}",
     "Version": "Wersja"
   },
   "notification": {

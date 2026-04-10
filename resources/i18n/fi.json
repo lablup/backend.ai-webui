@@ -1635,6 +1635,7 @@
     "PresetTooltip": "Esiasetus määrittää resurssikokoonpanon (CPU, muisti, GPU), jota käytetään tämän mallin palveluna suorittamiseen.",
     "ProjectNotFound": "Model Store -projektia ei löydy",
     "ProjectNotFoundDescription": "MODEL_STORE-projektia ei löytynyt. Ota yhteyttä järjestelmänvalvojaan.",
+    "RelativeTime": "{{time}}",
     "ResourceGroupTooltip": "Palvelu suoritetaan valitussa resurssiryhmässä.",
     "SearchModels": "Hae malleja",
     "ServiceDetails": "Palvelun tiedot",
@@ -1645,7 +1646,6 @@
     "SortByNameDesc": "Nimi (Ö→A)",
     "StartCommand": "Käynnistä komento",
     "Task": "Tehtävä",
-    "Updated": "{{time}}",
     "Version": "Versio"
   },
   "notification": {

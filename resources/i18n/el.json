@@ -1635,6 +1635,7 @@
     "PresetTooltip": "Ένα preset ορίζει τη διαμόρφωση πόρων (CPU, μνήμη, GPU) που χρησιμοποιείται για την εκτέλεση αυτού του μοντέλου ως υπηρεσία.",
     "ProjectNotFound": "Το έργο Model Store δεν βρέθηκε",
     "ProjectNotFoundDescription": "Το έργο MODEL_STORE δεν βρέθηκε. Επικοινωνήστε με τον διαχειριστή σας.",
+    "RelativeTime": "{{time}}",
     "ResourceGroupTooltip": "Η υπηρεσία θα εκτελεστεί στην επιλεγμένη ομάδα πόρων.",
     "SearchModels": "Αναζήτηση μοντέλων",
     "ServiceDetails": "Στοιχεία υπηρεσίας",
@@ -1645,7 +1646,6 @@
     "SortByNameDesc": "Όνομα (Ω→Α)",
     "StartCommand": "Εκκίνηση Εντολή",
     "Task": "Εργασία",
-    "Updated": "{{time}}",
     "Version": "Εκδοχή"
   },
   "notification": {
