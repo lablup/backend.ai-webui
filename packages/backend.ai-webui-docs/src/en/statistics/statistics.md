@@ -1,6 +1,6 @@
 # Statistics Page
 
-## Allocation history
+## Allocation History
 
 On the Statistics page, under the Allocation History tab, you can check simple statistics related to the use of
 compute sessions via a graph. You can check the statistics for a day or a week by selecting the usage period
@@ -10,7 +10,7 @@ from the select period menu on the upper left. Displayed items are as follows.
 - CPU: The number of CPU cores allocated to the compute sessions.
 - Memory: The amount of memory allocated to the compute sessions.
 - GPU: The number of GPU units allocated to the compute sessions.
-  If the Fractional GPU feature is enabled, it may not match the physics GPU.
+  If the Fractional GPU feature is enabled, it may not match the physical GPU.
 - IO-Read: The amount of data read from the storage.
 - IO-Write: The amount of data written to the storage.
 
@@ -20,7 +20,7 @@ longer than a week.
 
 ![](../images/usage_panel.png)
 
-## User session history
+## User Session History
 
 In the User Session History tab of the Statistics page, users can view statistics on various resources used by sessions through graphs.
 Users can check the statistics for a selected period using the date range picker at the upper left. The displayed items are as follows.
