@@ -1632,8 +1632,11 @@
     "Path": "Sentiero",
     "Port": "Porta",
     "PreStartActions": "Azioni pre-avvio",
+    "PresetTooltip": "Un preset definisce la configurazione delle risorse (CPU, memoria, GPU) utilizzata per eseguire questo modello come servizio.",
     "ProjectNotFound": "Progetto Model Store non trovato",
     "ProjectNotFoundDescription": "Impossibile trovare il progetto MODEL_STORE. Contattare l'amministratore.",
+    "RelativeTime": "{{time}}",
+    "ResourceGroupTooltip": "Il servizio verrà eseguito nel gruppo di risorse selezionato.",
     "SearchModels": "Cerca modelli",
     "ServiceDetails": "Dettagli del servizio",
     "Sort": "Ordina",
@@ -1643,7 +1646,6 @@
     "SortByNameDesc": "Nome (Z→A)",
     "StartCommand": "Avvia comando",
     "Task": "Compito",
-    "Updated": "Aggiornato {{time}}",
     "Version": "Versione"
   },
   "notification": {

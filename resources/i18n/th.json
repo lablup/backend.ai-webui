@@ -1634,8 +1634,11 @@
     "Path": "เส้นทาง",
     "Port": "พอร์ต",
     "PreStartActions": "การกระทำก่อนเริ่ม",
+    "PresetTooltip": "พรีเซ็ตกำหนดค่าการกำหนดทรัพยากร (CPU, หน่วยความจำ, GPU) ที่ใช้ในการรันโมเดลนี้เป็นบริการ",
     "ProjectNotFound": "ไม่พบโปรเจกต์ Model Store",
     "ProjectNotFoundDescription": "ไม่พบโปรเจกต์ MODEL_STORE กรุณาติดต่อผู้ดูแลระบบ",
+    "RelativeTime": "{{time}}",
+    "ResourceGroupTooltip": "บริการจะทำงานในกลุ่มทรัพยากรที่เลือก",
     "SearchModels": "ค้นหาโมเดล",
     "ServiceDetails": "รายละเอียดบริการ",
     "Sort": "เรียงลำดับ",
@@ -1645,7 +1648,6 @@
     "SortByNameDesc": "ชื่อ (Z→A)",
     "StartCommand": "คำสั่งเริ่มต้น",
     "Task": "งาน",
-    "Updated": "อัปเดต {{time}}",
     "Version": "เวอร์ชัน"
   },
   "notification": {
