@@ -587,45 +587,34 @@ clicking the 'Setting (Gear)' button at the bottom right of the table.
 
 <a id="project-resource-policy"></a>
 
-#### Project Resource Policy
+#### プロジェクトリソースポリシー
 
-Starting from version 24.03, Backend.AI supports project resource policy management. Project
-resource policies manage storage space (quota) and folder-related limitations for projects.
+バージョン24.03から、Backend.AIはプロジェクトリソースポリシーの管理をサポートしています。プロジェクトリソースポリシーは、プロジェクトのストレージ容量（クォータ）やフォルダ関連の制限を管理します。
 
-When clicking the Project tab of the Resource Policies page, you can see the list of project
-resource policy.
+「リソースポリシー」ページの「プロジェクト」タブをクリックすると、プロジェクトリソースポリシーのリストが表示されます。
 
 ![](../images/project_resource_policy_list.png)
 
-To create a new project resource policy, click the '+ Create' button at the top right of the table.
+新しいプロジェクトリソースポリシーを作成するには、テーブルの右上にある「+ 作成」ボタンをクリックします。
 
 ![](../images/create_project_resource_policy.png)
 
-- Name: The name of the project resource policy.
-- Max Folder Count: The maximum number of project folders that an administrator can create.
-  If the project folder count exceeds this value, the administrator will not be able to create
-  a new project folder. If set to Unlimited, it will be displayed as "∞".
-- Max Folder Size: The maximum size of the project's storage space. If the project's storage
-  space exceeds this value, the administrator cannot create a new project folder. If set to
-  Unlimited, it is displayed as "∞".
-- Max Network Count: The maximum number of networks that can be created for the project since Backend.AI version 24.12. If set to Unlimited, it is displayed as "∞".
+- **名前**: プロジェクトリソースポリシーの名前。
+- **最大フォルダ数**: 管理者が作成できるプロジェクトフォルダの最大数。プロジェクトフォルダ数がこの値を超えると、管理者は新しいプロジェクトフォルダを作成できません。Unlimitedに設定すると「∞」と表示されます。
+- **最大フォルダサイズ**: プロジェクトのストレージ容量の上限。プロジェクトのストレージ容量がこの値を超えると、管理者は新しいプロジェクトフォルダを作成できません。Unlimitedに設定すると「∞」と表示されます。
+- **最大ネットワーク数**: Backend.AIバージョン24.12以降、プロジェクトに作成できるネットワークの最大数。Unlimitedに設定すると「∞」と表示されます。
 
-The meaning of each field is similar to the user resource policy. The difference is that the
-project resource policy is applied to the project folders, while the user resource policy is
-applied to the user folders.
+各フィールドの意味はユーザーリソースポリシーと類似しています。違いは、プロジェクトリソースポリシーがプロジェクトフォルダに適用され、ユーザーリソースポリシーがユーザーフォルダに適用される点です。
 
-If you want to make changes, click the 'Setting (Gear)' button in the control column. Resource policy
-names cannot be edited. Deletion can be done by clicking the trash can icon button.
+変更するには、「コントロール」列の「設定」ボタンをクリックします。リソースポリシー名は編集できません。削除はゴミ箱アイコンボタンをクリックして行えます。
 
 :::note
-Changing a resource policy may affect all users who use that policy,
-so use it with caution.
+リソースポリシーの変更はそのポリシーを使用するすべてのユーザーに影響を与える可能性があるため、慎重に使用してください。
 :::
 
-You can select and display only the columns you want by clicking the 'Setting (Gear)' button at the
-bottom right of the table.
+テーブルの右下にある「設定」ボタンをクリックして、表示するカラムのみを選択できます。
 
-To save the current resource policy as a file, click on the 'Tools' menu located at the top left of each tab. Once you click the menu, download dialog will appear.
+現在のリソースポリシーをファイルとして保存するには、各タブ右上の「もっと見る」ボタンをクリックし、「CSVをエクスポート」メニューを選択します。
 
 ![](../images/keypair_export.png)
 

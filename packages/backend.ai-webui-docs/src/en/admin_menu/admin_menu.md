@@ -603,29 +603,29 @@ clicking the 'Setting (Gear)' button at the bottom right of the table.
 Starting from version 24.03, Backend.AI supports project resource policy management. Project
 resource policies manage storage space (quota) and folder-related limitations for projects.
 
-When clicking the Project tab of the Resource Policies page, you can see the list of project
+When clicking the `Project` tab of the `Resource Policies` page, you can see the list of project
 resource policy.
 
 ![](../images/project_resource_policy_list.png)
 
-To create a new project resource policy, click the '+ Create' button at the top right of the table.
+To create a new project resource policy, click the `+ Create` button at the top right of the table.
 
 ![](../images/create_project_resource_policy.png)
 
-- Name: The name of the project resource policy.
-- Max Folder Count: The maximum number of project folders that an administrator can create.
+- **Name**: The name of the project resource policy.
+- **Max Folder Count**: The maximum number of project folders that an administrator can create.
   If the project folder count exceeds this value, the administrator will not be able to create
   a new project folder. If set to Unlimited, it will be displayed as "∞".
-- Max Folder Size: The maximum size of the project's storage space. If the project's storage
+- **Max Folder Size**: The maximum size of the project's storage space. If the project's storage
   space exceeds this value, the administrator cannot create a new project folder. If set to
   Unlimited, it is displayed as "∞".
-- Max Network Count: The maximum number of networks that can be created for the project since Backend.AI version 24.12. If set to Unlimited, it is displayed as "∞".
+- **Max Network Count**: The maximum number of networks that can be created for the project since Backend.AI version 24.12. If set to Unlimited, it is displayed as "∞".
 
 The meaning of each field is similar to the user resource policy. The difference is that the
 project resource policy is applied to the project folders, while the user resource policy is
 applied to the user folders.
 
-If you want to make changes, click the 'Setting (Gear)' button in the control column. Resource policy
+If you want to make changes, click the `Setting (Gear)` button in the control column. Resource policy
 names cannot be edited. Deletion can be done by clicking the trash can icon button.
 
 :::note
@@ -633,10 +633,10 @@ Changing a resource policy may affect all users who use that policy,
 so use it with caution.
 :::
 
-You can select and display only the columns you want by clicking the 'Setting (Gear)' button at the
+You can select and display only the columns you want by clicking the `Setting (Gear)` button at the
 bottom right of the table.
 
-To save the current resource policy as a file, click on the 'Tools' menu located at the top left of each tab. Once you click the menu, download dialog will appear.
+To save the current resource policy as a file, click the 'more' button in the upper right of each tab and select the 'Export CSV' menu item.
 
 ![](../images/keypair_export.png)
 

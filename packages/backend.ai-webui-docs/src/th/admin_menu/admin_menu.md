@@ -586,45 +586,34 @@ clicking the 'Setting (Gear)' button at the bottom right of the table.
 
 <a id="project-resource-policy"></a>
 
-#### Project Resource Policy
+#### นโยบายทรัพยากรโปรเจกต์
 
-Starting from version 24.03, Backend.AI supports project resource policy management. Project
-resource policies manage storage space (quota) and folder-related limitations for projects.
+ตั้งแต่เวอร์ชัน 24.03 Backend.AI รองรับการจัดการนโยบายทรัพยากรโปรเจกต์ นโยบายทรัพยากรโปรเจกต์จัดการพื้นที่จัดเก็บ (โควตา) และข้อจำกัดที่เกี่ยวข้องกับโฟลเดอร์สำหรับโปรเจกต์
 
-When clicking the Project tab of the Resource Policies page, you can see the list of project
-resource policy.
+เมื่อคลิกแท็บ 'โปรเจกต์' ของหน้า 'นโยบายทรัพยากร' คุณจะเห็นรายการนโยบายทรัพยากรโปรเจกต์
 
 ![](../images/project_resource_policy_list.png)
 
-To create a new project resource policy, click the '+ Create' button at the top right of the table.
+หากต้องการสร้างนโยบายทรัพยากรโปรเจกต์ใหม่ ให้คลิกปุ่ม '+ สร้าง' ที่มุมบนขวาของตาราง
 
 ![](../images/create_project_resource_policy.png)
 
-- Name: The name of the project resource policy.
-- Max Folder Count: The maximum number of project folders that an administrator can create.
-  If the project folder count exceeds this value, the administrator will not be able to create
-  a new project folder. If set to Unlimited, it will be displayed as "∞".
-- Max Folder Size: The maximum size of the project's storage space. If the project's storage
-  space exceeds this value, the administrator cannot create a new project folder. If set to
-  Unlimited, it is displayed as "∞".
-- Max Network Count: The maximum number of networks that can be created for the project since Backend.AI version 24.12. If set to Unlimited, it is displayed as "∞".
+- **ชื่อ**: ชื่อของนโยบายทรัพยากรโปรเจกต์
+- **จำนวนโฟลเดอร์สูงสุด**: จำนวนโฟลเดอร์โปรเจกต์สูงสุดที่ผู้ดูแลระบบสามารถสร้างได้ หากจำนวนโฟลเดอร์โปรเจกต์เกินค่านี้ ผู้ดูแลระบบจะไม่สามารถสร้างโฟลเดอร์โปรเจกต์ใหม่ได้ หากตั้งค่าเป็น Unlimited จะแสดงเป็น "∞"
+- **ขนาดโฟลเดอร์สูงสุด**: ขนาดสูงสุดของพื้นที่จัดเก็บโปรเจกต์ หากพื้นที่จัดเก็บเกินค่านี้ ผู้ดูแลระบบจะไม่สามารถสร้างโฟลเดอร์โปรเจกต์ใหม่ได้ หากตั้งค่าเป็น Unlimited จะแสดงเป็น "∞"
+- **จำนวนเครือข่ายสูงสุด**: จำนวนเครือข่ายสูงสุดที่สามารถสร้างสำหรับโปรเจกต์ได้ตั้งแต่ Backend.AI เวอร์ชัน 24.12 หากตั้งค่าเป็น Unlimited จะแสดงเป็น "∞"
 
-The meaning of each field is similar to the user resource policy. The difference is that the
-project resource policy is applied to the project folders, while the user resource policy is
-applied to the user folders.
+ความหมายของแต่ละฟิลด์คล้ายกับนโยบายทรัพยากรผู้ใช้ ความแตกต่างคือนโยบายทรัพยากรโปรเจกต์จะใช้กับโฟลเดอร์โปรเจกต์ ในขณะที่นโยบายทรัพยากรผู้ใช้จะใช้กับโฟลเดอร์ผู้ใช้
 
-If you want to make changes, click the 'Setting (Gear)' button in the control column. Resource policy
-names cannot be edited. Deletion can be done by clicking the trash can icon button.
+หากต้องการเปลี่ยนแปลง ให้คลิกปุ่ม 'การตั้งค่า' ในคอลัมน์ 'การควบคุม' ชื่อนโยบายทรัพยากรไม่สามารถแก้ไขได้ การลบสามารถทำได้โดยคลิกปุ่มไอคอนถังขยะ
 
 :::note
-Changing a resource policy may affect all users who use that policy,
-so use it with caution.
+การเปลี่ยนนโยบายทรัพยากรอาจส่งผลกระทบต่อผู้ใช้ทั้งหมดที่ใช้นโยบายนั้น ดังนั้นควรใช้ด้วยความระมัดระวัง
 :::
 
-You can select and display only the columns you want by clicking the 'Setting (Gear)' button at the
-bottom right of the table.
+คุณสามารถเลือกและแสดงเฉพาะคอลัมน์ที่ต้องการโดยคลิกปุ่ม 'การตั้งค่า' ที่มุมล่างขวาของตาราง
 
-To save the current resource policy as a file, click on the 'Tools' menu located at the top left of each tab. Once you click the menu, download dialog will appear.
+หากต้องการบันทึกนโยบายทรัพยากรปัจจุบันเป็นไฟล์ ให้คลิกปุ่ม 'เพิ่มเติม' ที่มุมบนขวาของแต่ละแท็บ และเลือกเมนู 'ส่งออก CSV'
 
 ![](../images/keypair_export.png)
 
