@@ -31,13 +31,13 @@ If a folder named `tests` already exists in User B's account, User A's
 `tests` folder cannot be shared with User B.
 :::
 
-Back to User A's account,click the 'share' button in the Control column on the
+Back to User A's account, click the 'share' button in the Control column on the
 'tests' folder in the list.
 
 ![](../images/share_button_on_list.png)
 
 In the 'Invite User' section of the modal, enter User B's email address and
-select the desired permission level. If you choose 'Read Only', User B will be
+select the desired permission level. If you choose 'Read only', User B will be
 able to only view the folder but not modify it. If you select 'Read & Write',
 User B will be able to both view and modify the folder.
 
@@ -69,7 +69,7 @@ that you checked in the User A's account again.
 ![](../images/folder_explorer_in_B.png)
 
 Let's create a compute session
-by mounting this storge folder with the User B's account.
+by mounting this storage folder with the User B's account.
 
 ![](../images/launch_session_with_test_mounted_B.png)
 
@@ -106,16 +106,16 @@ To See the detail, go to [sharing a project storage folder with project members]
 You can modify the permissions of a shared user from the folder sharing modal.
 Click Select permission to set the sharing permission.
 
-- View: The invited user has read-only access to the folder.
-- Edit: The invited user has read and write access to the folder. The user
-  cannot delete folders or files.
+- Read only: The invited user has read-only access to the folder.
+- Read & Write: The invited user has read and write access to the folder.
+  The user cannot delete folders or files.
 
 ![](../images/modify_perm.png)
 
 
 :::note
 Renaming folder itself is available only for the owner, even if the user has granted
-Edit permission. Please note that Edit permission does not provide
+Read & Write permission. Please note that Read & Write permission does not provide
 renaming folder.
 :::
 
