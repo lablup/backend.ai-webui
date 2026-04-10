@@ -642,6 +642,8 @@ To save the current resource policy as a file, click on the 'Tools' menu located
 
 <a id="manage-images"></a>
 
+<a id="fair-share-scheduler"></a>
+
 ## ตัวจัดตาราง Fair Share
 
 ตั้งแต่ Backend.AI core เวอร์ชัน 26.2.0 เป็นต้นไป หน้า Fair Share Scheduler จะพร้อมใช้งาน
@@ -887,39 +889,141 @@ You need to reinstall the image after changing the managed app.
 
 <a id="manage-docker-registry"></a>
 
-## Manage docker registry
+## การจัดการ Docker Registry
 
-You can click on the Registries tab in Environments page to see the information
-of the docker registry that are currently connected. `cr.backend.ai` is
-registered by default, and it is a registry provided by Harbor.
+คุณสามารถคลิกแท็บ Registries ในหน้า Environments เพื่อดูข้อมูลของ Docker registry ที่เชื่อมต่ออยู่ในปัจจุบัน `cr.backend.ai` ถูกลงทะเบียนเป็นค่าเริ่มต้น ซึ่งเป็น registry ที่ให้บริการโดย Harbor
 
 :::note
-In the offline environment, the default registry is not accessible, so
-click the trash icon on the right to delete it.
+ในสภาพแวดล้อมแบบออฟไลน์ ไม่สามารถเข้าถึง registry เริ่มต้นได้ ให้คลิกไอคอนถังขยะทางขวาเพื่อลบออก
 :::
 
-Click the refresh icon in Controls to update image metadata for Backend.AI from
-the connected registry. Image information which does not have labels for
-Backend.AI among the images stored in the registry is not updated.
+คลิกไอคอนรีเฟรชในคอลัมน์ 'การควบคุม' เพื่ออัปเดตข้อมูลเมตาอิมเมจสำหรับ Backend.AI จาก registry ที่เชื่อมต่อ ข้อมูลอิมเมจที่ไม่มีเลเบลสำหรับ Backend.AI จะไม่ถูกอัปเดต
 
 ![](../images/image_registries_page.png)
 
-You can add your own private docker registry by clicking the '+ Add Registry'
-button. Note that Registry Name and Registry URL address must be set
-identically, and in the case of Registry URL, a scheme such as `http://__PROTECTED_10__https://__PROTECTED_11__api_endpoint__PROTECTED_12__https://registry.gitlab.com__PROTECTED_13__{"api_endpoint": "https://gitlab.com"}__PROTECTED_14__https://registry.example.com__PROTECTED_15__{"api_endpoint": "https://gitlab.example.com"}__PROTECTED_16__api_endpoint__PROTECTED_17__namespace/project-name__PROTECTED_18__read_registry__PROTECTED_19__read_api__PROTECTED_20__read_api__PROTECTED_21__FIFO__PROTECTED_22__LIFO__PROTECTED_23__DRF__PROTECTED_24__FIFO__PROTECTED_25__LIFO__PROTECTED_26__DRF__PROTECTED_27__PENDING__PROTECTED_28__num
-  retries to skip`, default three times).
+คลิกปุ่ม '+ Add Registry' เพื่อเพิ่ม Docker registry ส่วนตัวของคุณ กล่องโต้ตอบสร้าง registry มีฟิลด์ต่อไปนี้:
+
+- **ชื่อรีจิสทรี**: ชื่อเฉพาะของ registry (สูงสุด 50 ตัวอักษร) ต้องตรงกับคำนำหน้าที่ใช้ในชื่ออิมเมจที่จัดเก็บใน registry
+- **URL ทะเบียน**: URL ของ registry ต้องมี scheme เช่น `http://` หรือ `https://` อย่างชัดเจน
+- **ชื่อผู้ใช้**: ตัวเลือก กรอกหากมีการตั้งค่าการยืนยันตัวตนแยกต่างหากใน registry
+- **รหัสผ่าน**: ตัวเลือก เมื่อแก้ไข registry ที่มีอยู่ ให้เลือกช่องทำเครื่องหมาย `Change Password` เพื่อเปลี่ยน
+- **ประเภททะเบียน**: เลือกประเภทของ registry ประเภทที่รองรับ: `docker`, `harbor`, `harbor2`, `github`, `gitlab`, `ecr`, `ecr-public`
+- **ชื่อโครงการ**: โปรเจกต์หรือ namespace ใน registry (จำเป็น) สำหรับ GitLab registry ให้ใช้เส้นทางเต็มรวม namespace และชื่อโปรเจกต์
+- **ข้อมูลเพิ่มเติม**: สตริง JSON สำหรับการกำหนดค่าเพิ่มเติมที่จำเป็นสำหรับแต่ละประเภท registry ฟิลด์นี้ใช้ได้ตั้งแต่เวอร์ชัน 24.09.3
+
+![](../images/add_registry_dialog.png)
+
+
+<a id="gitlab-container-registry-configuration"></a>
+
+### การกำหนดค่า GitLab Container Registry
+
+เมื่อเพิ่ม GitLab container registry คุณต้องระบุ `api_endpoint` ในฟิลด์ Extra Information เนื่องจาก GitLab ใช้ endpoint แยกสำหรับ container registry และ GitLab API
+
+สำหรับ **GitLab.com (public instance)**:
+
+- Registry URL: `https://registry.gitlab.com`
+- Extra Information: `{"api_endpoint": "https://gitlab.com"}`
+
+สำหรับ **self-hosted (on-premise) GitLab**:
+
+- Registry URL: URL ของ GitLab registry ของคุณ (เช่น `https://registry.example.com`)
+- Extra Information: `{"api_endpoint": "https://gitlab.example.com"}`
+
+:::note
+`api_endpoint` ควรชี้ไปที่ URL ของ GitLab instance ของคุณ ไม่ใช่ URL ของ registry
+:::
+
+หมายเหตุการกำหนดค่าเพิ่มเติม:
+
+- **รูปแบบเส้นทางโปรเจกต์**: เมื่อระบุโปรเจกต์ ให้ใช้เส้นทางเต็มรวม namespace และชื่อโปรเจกต์ (เช่น `namespace/project-name`) ทั้งสองส่วนจำเป็นสำหรับให้ registry ทำงานได้อย่างถูกต้อง
+
+- **สิทธิ์ของ access token**: access token ที่ใช้สำหรับ registry ต้องมีทั้ง scope `read_registry` และ `read_api` scope `read_api` จำเป็นสำหรับ Backend.AI เพื่อสอบถาม GitLab API สำหรับข้อมูลเมตาอิมเมจระหว่างการ rescan
+
+คุณยังสามารถอัปเดตข้อมูลของ registry ที่มีอยู่ได้ ยกเว้นชื่อรีจิสทรี
+
+หลังจากสร้าง registry และอัปเดตข้อมูลเมตาอิมเมจแล้ว ผู้ใช้ยังไม่สามารถใช้อิมเมจได้ทันที คุณต้องเปิดใช้งาน registry โดยสลับสวิตช์ Enabled ในรายการ registry เพื่ออนุญาตให้ผู้ใช้เข้าถึงอิมเมจจาก registry
+
+<a id="manage-resource-preset"></a>
+
+## การจัดการ Resource Preset
+
+Resource preset ที่กำหนดไว้ล่วงหน้าจะแสดงในแผง Resource allocation เมื่อสร้างเซสชันการคำนวณ Superadmin สามารถจัดการ resource preset เหล่านี้ได้
+
+![](../images/resource_presets_in_resource_monitor.png)
+
+ไปที่แท็บ Resource Presets ในหน้า Environment คุณสามารถตรวจสอบรายการ resource preset ที่กำหนดไว้ในปัจจุบัน
+
+![](../images/resource_preset_list.png)
+
+คุณสามารถตั้งค่าทรัพยากรเช่น CPU, RAM, fGPU เป็นต้น ที่จะให้บริการโดย resource preset ได้โดยคลิกปุ่ม 'การตั้งค่า' ในคอลัมน์ 'การควบคุม' โมดัลสร้างหรือแก้ไข Resource Preset จะแสดงฟิลด์ของทรัพยากรที่มีอยู่ในปัจจุบัน ขึ้นอยู่กับการตั้งค่าเซิร์ฟเวอร์ ทรัพยากรบางอย่างอาจไม่แสดง หลังจากตั้งค่าทรัพยากรตามต้องการ ให้บันทึกและตรวจสอบว่า preset ที่สอดคล้องกันจะแสดงเมื่อสร้างเซสชันการคำนวณ หากทรัพยากรที่มีน้อยกว่าปริมาณทรัพยากรที่กำหนดใน preset ที่สอดคล้องกัน preset จะไม่แสดง
+
+![](../images/modify_resource_preset_dialog.png)
+
+คุณยังสามารถสร้าง resource preset ได้โดยคลิกปุ่ม '+ สร้างค่าที่กำหนดไว้ล่วงหน้า' ที่มุมบนขวาของแท็บ Resource Presets คุณไม่สามารถสร้าง resource preset ที่มีชื่อเดียวกันกับที่มีอยู่แล้วได้ เนื่องจากเป็นค่าคีย์สำหรับแยกแยะแต่ละ resource preset
+
+![](../images/create_resource_preset_dialog.png)
+
+<a id="manage-agent-nodes"></a>
+
+## การจัดการโหนดเอเจนต์
+
+Superadmin สามารถดูรายการโหนดเอเจนต์ที่เชื่อมต่อกับ Backend.AI อยู่ในปัจจุบันได้โดยไปที่หน้า Resources คุณสามารถตรวจสอบ IP ของโหนดเอเจนต์ เวลาที่เชื่อมต่อ ทรัพยากรที่ใช้งานจริงอยู่ในปัจจุบัน เป็นต้น WebUI ไม่มีฟังก์ชันในการจัดการโหนดเอเจนต์
+
+<a id="query-agent-nodes"></a>
+
+#### สอบถามโหนดเอเจนต์
+
+![](../images/agent_list.png)
+
+คุณยังสามารถดูการใช้ทรัพยากรที่แน่นอนในโหนดเอเจนต์ได้โดยคลิกไอคอนโน้ตในคอลัมน์ 'การควบคุม'
+
+![](../images/detailed_agent_node_usage_information.png)
+
+ในแท็บ Terminated คุณสามารถตรวจสอบข้อมูลของเอเจนต์ที่เคยเชื่อมต่อแล้วถูกยกเลิกหรือตัดการเชื่อมต่อ สามารถใช้เป็นข้อมูลอ้างอิงสำหรับการจัดการโหนด หากรายการว่างเปล่า หมายความว่าไม่มีการตัดการเชื่อมต่อหรือการยกเลิกเกิดขึ้น
+
+![](../images/terminated_agent_list.png)
+
+<a id="set-schedulable-status-of-agent-nodes"></a>
+
+#### ตั้งค่าสถานะ Schedulable ของโหนดเอเจนต์
+
+คุณอาจต้องการป้องกันไม่ให้เซสชันการคำนวณใหม่ถูกจัดตารางไปยังบริการ Agent โดยไม่ต้องหยุดบริการ ในกรณีนี้ คุณสามารถปิดใช้งานสถานะ Schedulable ของ Agent จากนั้นคุณสามารถบล็อกการสร้างเซสชันใหม่ในขณะที่รักษาเซสชันที่มีอยู่บน Agent
+
+![](../images/agent_settings.png)
+
+<a id="manage-resource-group"></a>
+
+## การจัดการกลุ่มทรัพยากร
+
+เอเจนต์สามารถจัดกลุ่มเป็นหน่วยที่เรียกว่ากลุ่มทรัพยากร ตัวอย่างเช่น สมมติว่ามีเอเจนต์ 3 ตัวที่มี GPU V100 และเอเจนต์ 2 ตัวที่มี GPU P100 หากคุณต้องการแยก GPU สองประเภทให้ผู้ใช้เห็นแยกกัน คุณสามารถจัดกลุ่มเอเจนต์ V100 สามตัวเป็นกลุ่มทรัพยากรหนึ่ง และเอเจนต์ P100 สองตัวที่เหลือเป็นอีกกลุ่มทรัพยากรหนึ่ง
+
+การเพิ่มเอเจนต์เฉพาะเข้ากลุ่มทรัพยากรเฉพาะยังไม่ได้จัดการใน WebUI ในปัจจุบัน สามารถทำได้โดยแก้ไขไฟล์ config ของเอเจนต์จากตำแหน่งที่ติดตั้งและรีสตาร์ท agent daemon การจัดการกลุ่มทรัพยากรสามารถทำได้ในแท็บ Resource Group ของหน้า Resource
+
+![](../images/resource_group_page.png)
 
 <a id="scheduling-methods"></a>
 
-You can create a new resource policy by clicking the '+ Create' button.
-Likewise other creating options, you cannot create a resource policy with the name
-that already exists, since name is the key value.
+คุณสามารถแก้ไขกลุ่มทรัพยากรได้โดยคลิกปุ่ม 'การตั้งค่า' ในคอลัมน์ 'การควบคุม' ในฟิลด์ 'ตัวจัดกำหนดการ' คุณสามารถเลือกวิธีการจัดตารางสำหรับการสร้างเซสชันการคำนวณ ปัจจุบันมีสี่ประเภท: `FIFO`, `LIFO`, `DRF` และ `FAIR_SHARE` `FIFO` และ `LIFO` เป็นวิธีการจัดตารางที่สร้างเซสชันที่เข้าคิวเป็นลำดับแรกหรือลำดับสุดท้ายในคิวงาน `DRF` ย่อมาจาก Dominant Resource Fairness มีเป้าหมายเพื่อจัดสรรทรัพยากรอย่างเท่าเทียมที่สุดสำหรับแต่ละผู้ใช้ `FAIR_SHARE` จัดสรรทรัพยากรตามรูปแบบการใช้งานในอดีต สำหรับรายละเอียดเพิ่มเติม โปรดดูที่ส่วน [Fair Share Scheduler](#fair-share-scheduler) คุณสามารถปิดใช้งานนโยบายทรัพยากรได้โดยปิดสถานะ 'ใช้งาน'
+
+![](../images/modify_resource_group.png)
+
+กลุ่มทรัพยากรมีตัวเลือกเพิ่มเติมดังนี้:
+
+- **Allowed session types**: ผู้ใช้สามารถเลือกประเภทของเซสชันได้ กลุ่มทรัพยากรสามารถอนุญาตประเภทเซสชันบางประเภท ประเภทเซสชันที่อนุญาต ได้แก่ Interactive, Batch, Inference และ System
+- **WSProxy Server Address**: ตั้งค่าที่อยู่ WSProxy สำหรับเอเจนต์ของกลุ่มทรัพยากร
+- **WSProxy API Token**: โทเค็น API สำหรับการยืนยันตัวตนกับ WSProxy
+- **Public**: เปิดเผยกลุ่มทรัพยากรให้ผู้ใช้ทุกคนเห็น
+- **Pending timeout**: เซสชันการคำนวณจะถูกยกเลิกหากอยู่ในสถานะ `PENDING` นานกว่า pending timeout ตั้งค่าเป็นศูนย์ (0) หากไม่ต้องการใช้ฟีเจอร์นี้
+- **Retries to skip pending session**: จำนวนครั้งที่ scheduler พยายามก่อนข้ามเซสชัน PENDING
+
+คุณสามารถสร้างกลุ่มทรัพยากรใหม่ได้โดยคลิกปุ่ม '+ สร้าง' เช่นเดียวกับตัวเลือกการสร้างอื่นๆ คุณไม่สามารถสร้างกลุ่มทรัพยากรที่มีชื่อเดียวกันกับที่มีอยู่แล้วได้ เนื่องจากชื่อเป็นค่าคีย์
 
 ![](../images/create_resource_group.png)
 
 <a id="storages"></a>
 
-## Storages
+## การจัดเก็บข้อมูล
 
 On STORAGES tab, you can see what kind of mount volumes (usually NFS) exist.
 From 23.03 version, We provide per-user/per-project quota setting on storage that supports quota management.

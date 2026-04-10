@@ -922,16 +922,20 @@ Backend.AI among the images stored in the registry is not updated.
 ![](../images/image_registries_page.png)
 
 You can add your own private docker registry by clicking the '+ Add Registry'
-button. Note that Registry Name and Registry URL address must be set
-identically, and in the case of Registry URL, a scheme such as `http://` or
-`https://` must be explicitly attached. Also, images stored in the registry
-must have a name prefixed with Registry Name. Username and Password are
-optional and can be filled in if you set separate authentication settings in the
-registry. In Extra Information, you can pass additional information needed for each registry type as a JSON string.
+button. The registry creation dialog contains the following fields:
+
+- **Registry Name**: A unique name for the registry (up to 50 characters). Must match the prefix used in image names stored in the registry.
+- **Registry URL**: The URL of the registry. A scheme such as `http://` or `https://` must be explicitly included.
+- **Username**: Optional. Fill in if you have separate authentication settings in the registry.
+- **Password**: Optional. When editing an existing registry, check the "Change Password" checkbox to modify it.
+- **Registry Type**: Select the type of registry. Supported types include: `docker`, `harbor`, `harbor2`, `github`, `gitlab`, `ecr`, and `ecr-public`.
+- **Project Name**: The project or namespace in the registry (required). Use the full path including namespace and project name for GitLab registries.
+- **Extra Information**: A JSON string for additional configuration needed for each registry type. This field is available from version 24.09.3.
 
 ![](../images/add_registry_dialog.png)
 
-#### GitLab Container Registry Configuration
+
+### GitLab Container Registry Configuration
 
 When adding a GitLab container registry, you must specify the `api_endpoint`
 in the Extra Information field. This is required because GitLab uses separate
