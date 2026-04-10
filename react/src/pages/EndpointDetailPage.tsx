@@ -560,21 +560,23 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
       label: t('modelService.AdditionalMounts'),
       children: (
         <BAIFlex direction="column" align="start">
-          {_.map(endpoint?.extra_mounts, (vfolder) => {
-            return vfolder ? (
-              <Typography.Link
-                key={vfolder.row_id}
-                onClick={() => {
-                  vfolder.row_id && open(vfolder.row_id);
-                }}
-              >
-                <BAIFlex direction="row" gap={'xs'}>
-                  <VFolderNodeIdenticon vfolderNodeIdenticonFrgmt={vfolder} />{' '}
-                  {vfolder.name}
-                </BAIFlex>
-              </Typography.Link>
-            ) : null;
-          })}
+          {_.map(
+            filterOutNullAndUndefined(endpoint?.extra_mounts),
+            (vfolder) => {
+              return (
+                <Typography.Link
+                  onClick={() => {
+                    vfolder?.row_id && open(vfolder?.row_id);
+                  }}
+                >
+                  <BAIFlex direction="row" gap={'xs'} key={vfolder?.row_id}>
+                    <VFolderNodeIdenticon vfolderNodeIdenticonFrgmt={vfolder} />{' '}
+                    {vfolder?.name}
+                  </BAIFlex>
+                </Typography.Link>
+              );
+            },
+          )}
         </BAIFlex>
       ),
     },

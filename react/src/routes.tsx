@@ -18,6 +18,12 @@ import { useAutoDiagnostics } from './hooks/useAutoDiagnostics';
 import { useBAISettingUserState } from './hooks/useBAISetting';
 import { LogoutEventHandler } from './hooks/useLogout';
 import { useWebUIMenuItems } from './hooks/useWebUIMenuItems';
+// High priority to import the component
+import ComputeSessionListPage from './pages/ComputeSessionListPage';
+import LegacyModelStoreListPage from './pages/LegacyModelStoreListPage';
+import Page404 from './pages/Page404';
+import ServingPage from './pages/ServingPage';
+import VFolderNodeListPage from './pages/VFolderNodeListPage';
 import { Skeleton, theme } from 'antd';
 import { BAIFlex, BAICard } from 'backend.ai-ui';
 import React, { Suspense } from 'react';
@@ -25,17 +31,6 @@ import { useTranslation } from 'react-i18next';
 import { RouteObject, useLocation } from 'react-router-dom';
 
 const LoginViewLazy = React.lazy(() => import('./components/LoginView'));
-const ComputeSessionListPage = React.lazy(
-  () => import('./pages/ComputeSessionListPage'),
-);
-const ModelStoreListPage = React.lazy(
-  () => import('./pages/ModelStoreListPage'),
-);
-const Page404 = React.lazy(() => import('./pages/Page404'));
-const ServingPage = React.lazy(() => import('./pages/ServingPage'));
-const VFolderNodeListPage = React.lazy(
-  () => import('./pages/VFolderNodeListPage'),
-);
 
 const Information = React.lazy(() => import('./components/Information'));
 const EndpointDetailPage = React.lazy(
@@ -324,7 +319,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
           </BAIFlex>
         }
       >
-        <ModelStoreListPage />
+        <LegacyModelStoreListPage />
       </Suspense>
     ),
   },
