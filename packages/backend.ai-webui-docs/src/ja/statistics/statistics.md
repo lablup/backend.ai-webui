@@ -1,15 +1,13 @@
 # 統計ページ
 
-## Allocation history
+## 割り当て履歴
 
-On the 統計 page, under the Allocation History tab, you can check simple statistics related to the use of
-compute sessions via a graph. You can check the statistics for a day or a week by selecting the usage period
-from the select period menu on the upper left. Displayed items are as follows.
+統計ページの割り当て履歴タブでは、コンピュートセッションの使用に関する簡単な統計をグラフで確認できます。左上の期間選択メニューから利用期間を選択して、1日または1週間の統計を確認できます。表示される項目は以下のとおりです。
 
 - セッション: 作成されたコンピュートセッションの数。
 - CPU: コンピュートセッションに割り当てられたCPUコアの数。
 - メモリ: コンピュートセッションに割り当てられたメモリの量。
-- GPU: コンピュートセッションに割り当てられたGPUユニットの数。Fractional GPU機能が有効になっている場合、物理的なGPUと一致しないことがあります。
+- GPU: コンピュートセッションに割り当てられたGPUユニットの数。フラクショナルGPU機能が有効になっている場合、物理的なGPUと一致しないことがあります。
 - IO-Read: ストレージから読み取られたデータの量。
 - IO-Write: ストレージに書き込まれたデータの量。
 
@@ -17,19 +15,18 @@ from the select period menu on the upper left. Displayed items are as follows.
 
 ![](../images/usage_panel.png)
 
-## User session history
+## ユーザーセッション履歴
 
-In the User Session History tab of the 統計 page, ユーザーs can view statistics on various resources used by sessions through graphs.
-Users can check the statistics for a selected period using the Select Period menu at the upper left. The displayed items are as follows.
+統計ページのユーザーセッション履歴タブでは、セッションが使用したさまざまなリソースに関する統計をグラフで確認できます。左上の日付範囲ピッカーを使用して、選択した期間の統計を確認できます。表示される項目は以下のとおりです。
 
-- CPU Util: The amount of CPU time used by the sessions.
-- Memory: The amount of memory used by the sessions.
-- Net Rx: The rate at which the container is receiving network data.
-- Net Tx: The rate at which the container is sending network data.
-- IO Read: The amount of data read from the storage by the sessions.
-- IO Write: The amount of data written to the storage by the sessions.
+- CPU Util: セッションが使用したCPU時間の量。
+- Memory: セッションが使用したメモリの量。
+- Net Rx: コンテナがネットワークデータを受信している速度。
+- Net Tx: コンテナがネットワークデータを送信している速度。
+- IO Read: セッションによってストレージから読み取られたデータの量。
+- IO Write: セッションによってストレージに書き込まれたデータの量。
 
-In addition, depending on the available resources, additional items such as CUDA-capable GPU Util and CUDA-capable GPU Mem may be displayed.
+さらに、利用可能なリソースに応じて、CUDA-capable GPU UtilやCUDA-capable GPU Memなどの追加項目が表示される場合があります。
 
 より詳細な統計情報は、管理者専用のコントロールパネルに表示されます。
 

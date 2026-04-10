@@ -23,7 +23,7 @@ longer than a week.
 ## User session history
 
 In the User Session History tab of the Statistics page, users can view statistics on various resources used by sessions through graphs.
-Users can check the statistics for a selected period using the Select Period menu at the upper left. The displayed items are as follows.
+Users can check the statistics for a selected period using the date range picker at the upper left. The displayed items are as follows.
 
 - CPU Util: The amount of CPU time used by the sessions.
 - Memory: The amount of memory used by the sessions.
