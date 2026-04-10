@@ -63,7 +63,7 @@ The meaning of each field in the creation dialog is as follows.
 - Location: Select the NFS host where the folder will be created. If there are multiple hosts, choose one. An indicator will show if there is enough available space.
 - ประเภท: กำหนดประเภทของโฟลเดอร์ที่จะสร้าง สามารถตั้งค่าเป็นผู้ใช้หรือโครงการ โฟลเดอร์ผู้ใช้คือโฟลเดอร์ที่ผู้ใช้สามารถสร้างและใช้งานได้เพียงคนเดียว และโฟลเดอร์โครงการคือโฟลเดอร์ที่สร้างโดยผู้ดูแลระบบและแชร์โดยผู้ใช้ในโครงการ
 - Project: Shown only when you select project type. Designates the project to which the folder belongs when creating a new project folder. Project folders must belong to a project. However, it does not play any role when creating a ผู้ใช้ folder.
-- สิทธิ์: กำหนดสิทธิ์ของโฟลเดอร์โปรเจกต์สำหรับสมาชิกโปรเจกต์ หากตั้งค่าเป็น "อ่านเท่านั้น" สมาชิกโปรเจกต์จะไม่สามารถเขียนลงในโฟลเดอร์นี้ภายในเซสชันการคำนวณของพวกเขาได้
+- สิทธิ์: กำหนดสิทธิ์ของโฟลเดอร์โปรเจกต์สำหรับสมาชิกโปรเจกต์ หากตั้งค่าเป็น "อ่านอย่างเดียว" สมาชิกโปรเจกต์จะไม่สามารถเขียนลงในโฟลเดอร์นี้ภายในเซสชันการคอมพิวเตอร์ของพวกเขาได้
 - Cloneable: Shown only when you select usage model to "Model". Select whether the vfolder you are creating should be cloneable.
 
 The folders created here can be [mounted](../mount_vfolder/mount_vfolder.md#session-mounts) when creating a compute session. โฟลเดอร์ are mounted
