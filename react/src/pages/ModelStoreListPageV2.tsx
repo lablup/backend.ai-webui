@@ -125,7 +125,7 @@ const ModelCardV2Card: React.FC<{
                 type="secondary"
                 style={{ fontSize: token.fontSizeSM }}
               >
-                {t('modelStore.Updated', {
+                {t('modelStore.RelativeTime', {
                   time: dayjs(
                     modelCard.updatedAt ?? modelCard.createdAt,
                   ).fromNow(),

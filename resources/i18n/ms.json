@@ -1622,6 +1622,7 @@
     "PresetTooltip": "Pratetap mentakrifkan konfigurasi sumber (CPU, memori, GPU) yang digunakan untuk menjalankan model ini sebagai perkhidmatan.",
     "ProjectNotFound": "Projek Model Store tidak ditemui",
     "ProjectNotFoundDescription": "Projek MODEL_STORE tidak dapat ditemui. Sila hubungi pentadbir anda.",
+    "RelativeTime": "{{time}}",
     "ResourceGroupTooltip": "Perkhidmatan akan berjalan di kumpulan sumber yang dipilih.",
     "SearchModels": "Cari Model",
     "ServiceDetails": "Butiran Perkhidmatan",
@@ -1632,7 +1633,6 @@
     "SortByNameDesc": "Nama (Z→A)",
     "StartCommand": "Mulakan Perintah",
     "Task": "Tugasan",
-    "Updated": "{{time}}",
     "Version": "Versi"
   },
   "notification": {
