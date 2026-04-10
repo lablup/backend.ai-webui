@@ -26,7 +26,7 @@
 | Endpoint Detail | `/serving/:serviceId` | 20 | 9 | 🔶 45% |
 | Service Launcher | `/service/start` | 5 | 0 | ❌ 0% |
 | VFolder / Data | `/data` | 45 | 32 | 🔶 71% |
-| Model Store | `/model-store` | 6 | 0 | ❌ 0% |
+| Model Store | `/model-store` | 6 | 6 | ✅ 100% |
 | Admin Model Store | `/admin-model-store` | 22 | 22 | ✅ 100% |
 | Storage Host | `/storage-settings/:hostname` | 3 | 0 | ❌ 0% |
 | My Environment | `/my-environment` | 2 | 2 | ✅ 100% |
@@ -361,20 +361,20 @@
 
 ### 10. Model Store (`/model-store`)
 
-**Test files:** None
+**Test files:** [`e2e/serving/model-card-drawer.spec.ts`](serving/model-card-drawer.spec.ts)
 
-**Modal:** `ModelCardModal` (card click)
+**Drawer:** `ModelCardDrawer` (card click), **Modal:** `ModelCardDeployModal` (deploy)
 
 | Feature | Status | Test |
 | --------------------------------- | ------ | ---- |
-| Model card list rendering | ❌ | - |
-| Search by title/description | ❌ | - |
-| Category filtering | ❌ | - |
-| Task filtering | ❌ | - |
-| Label filtering | ❌ | - |
-| Model card click → ModelCardModal | ❌ | - |
+| Model card list rendering | ✅ | `admin can open model card drawer by clicking a card` |
+| Model card drawer metadata | ✅ | `admin can see model description / metadata tags / metadata table / README content in the drawer` |
+| Deploy button disabled (no presets) | ✅ | `admin cannot deploy when model card has no presets` |
+| Deploy modal (multi-preset) | ✅ | `admin can open the Deploy Model modal / see preset options grouped by runtime variant / deploy after selection` |
+| Auto-deploy (single preset + RG) | ✅ | `admin can auto-deploy when single preset and resource group available` |
+| Post-deploy alerts | ✅ | `admin can see "Preparing your service" / "Service Ready" alerts on EndpointDetailPage` |
 
-**Coverage: ❌ 0/6 features**
+**Coverage: ✅ 6/6 features**
 
 ---
 
