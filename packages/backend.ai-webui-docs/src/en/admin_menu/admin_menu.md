@@ -848,9 +848,9 @@ The modal displays the following:
 Admins can manage images, which are used in creating a compute session, in the
 Images tab of the Environments page. In the tab, meta information of all images
 currently in the Backend.AI server is displayed. You can check information such
-as registry, namespace, image name, image's based OS, digest, and minimum
+as registry, architecture, namespace, image name, digest, and minimum
 resources required for each image. For images downloaded to one or more agent
-nodes, there will be a `installed` tag in each Status column.
+nodes, there will be an `installed` tag in the Status column.
 
 :::note
 The feature to install images by selecting specific agents is currently
@@ -858,6 +858,17 @@ under development.
 :::
 
 ![](../images/image_list_page.png)
+
+
+The image list displays additional columns for more detailed image information:
+
+- **Architecture**: The CPU architecture of the image (e.g., x86_64, aarch64).
+- **Namespace**: The namespace of the image within the registry.
+- **Base Image Name**: The base name of the image, with alias tags for easier identification.
+- **Version**: The version tag of the image.
+- **Tags**: Detailed tags associated with the image, displayed as double tags with aliases.
+
+You can select multiple uninstalled images and click the `Install` button to install them on available agent nodes in bulk.
 
 You can change the minimum resource requirements for each image by clicking the
 'Setting (Gear)' in the Controls panel. Each image has hardware and resource

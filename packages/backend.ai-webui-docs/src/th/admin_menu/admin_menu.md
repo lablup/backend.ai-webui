@@ -832,21 +832,26 @@ modal จะแสดงข้อมูลต่อไปนี้:
 
 <a id="manage-images"></a>
 
-## Manage Images
+## การจัดการอิมเมจ
 
-Admins can manage images, which are used in creating a compute session, in the
-Images tab of the Environments page. In the tab, meta information of all images
-currently in the Backend.AI server is displayed. You can check information such
-as registry, namespace, image name, image's based OS, digest, and minimum
-resources required for each image. For images downloaded to one or more agent
-nodes, there will be a `installed` tag in each Status column.
+ผู้ดูแลระบบสามารถจัดการอิมเมจที่ใช้ในการสร้างเซสชันการคำนวณได้ในแท็บ Images ของหน้า Environments ในแท็บนี้จะแสดงข้อมูลเมตาของอิมเมจทั้งหมดที่อยู่ในเซิร์ฟเวอร์ Backend.AI ในปัจจุบัน คุณสามารถตรวจสอบข้อมูลต่างๆ เช่น registry, สถาปัตยกรรม, namespace, ชื่ออิมเมจ, digest และทรัพยากรขั้นต่ำที่จำเป็นสำหรับแต่ละอิมเมจ สำหรับอิมเมจที่ดาวน์โหลดไปยังโหนดเอเจนต์หนึ่งรายการขึ้นไป จะมีแท็ก `installed` ในคอลัมน์ Status
 
 :::note
-The feature to install images by selecting specific agents is currently
-under development.
+ฟีเจอร์การติดตั้งอิมเมจโดยเลือกเอเจนต์เฉพาะกำลังอยู่ระหว่างการพัฒนา
 :::
 
 ![](../images/image_list_page.png)
+
+
+รายการอิมเมจจะแสดงคอลัมน์เพิ่มเติมสำหรับข้อมูลอิมเมจที่ละเอียดยิ่งขึ้น:
+
+- **สถาปัตยกรรม**: สถาปัตยกรรม CPU ของอิมเมจ (เช่น x86_64, aarch64)
+- **เนมสเปซ**: เนมสเปซของอิมเมจภายในรีจิสทรี
+- **ชื่อภาพฐาน**: ชื่อพื้นฐานของอิมเมจ พร้อมแท็กนามแฝงเพื่อให้ระบุตัวตนได้ง่ายขึ้น
+- **เวอร์ชัน**: แท็กเวอร์ชันของอิมเมจ
+- **แท็ก**: แท็กรายละเอียดที่เกี่ยวข้องกับอิมเมจ แสดงเป็นแท็กคู่พร้อมนามแฝง
+
+คุณสามารถเลือกอิมเมจที่ยังไม่ได้ติดตั้งหลายรายการ แล้วคลิกปุ่ม `ติดตั้ง` เพื่อติดตั้งบนโหนดเอเจนต์ที่มีอยู่พร้อมกัน
 
 You can change the minimum resource requirements for each image by clicking the
 'Setting (Gear)' in the Controls panel. Each image has hardware and resource
