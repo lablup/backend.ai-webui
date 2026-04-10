@@ -475,6 +475,7 @@
     "ProjectFolder": "项目文件夹",
     "ProjectFolders": "項目文件夾",
     "QuotaPerStorageVolume": "每个存储容量的配额",
+    "QuotaScopeId": "配额范围 ID",
     "ReadOnly": "只讀",
     "ReadWrite": "讀寫",
     "SearchByName": "按名稱搜尋",

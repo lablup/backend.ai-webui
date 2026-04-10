@@ -475,6 +475,7 @@
     "ProjectFolder": "Folder Proyek",
     "ProjectFolders": "Folder Proyek",
     "QuotaPerStorageVolume": "Kuota per volume penyimpanan",
+    "QuotaScopeId": "ID Cakupan Kuota",
     "ReadOnly": "Baca saja",
     "ReadWrite": "Baca dan tulis",
     "SearchByName": "Cari berdasarkan nama",

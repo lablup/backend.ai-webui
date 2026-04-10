@@ -567,6 +567,16 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                       },
                     ],
                   },
+                  {
+                    key: 'cloneable',
+                    propertyLabel: t('data.folders.Cloneable'),
+                    type: 'boolean',
+                  },
+                  {
+                    key: 'quota_scope_id',
+                    propertyLabel: t('data.QuotaScopeId'),
+                    type: 'string',
+                  },
                 ]}
                 value={queryParams.filter || undefined}
                 onChange={(value) => {

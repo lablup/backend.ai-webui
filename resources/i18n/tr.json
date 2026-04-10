@@ -475,6 +475,7 @@
     "ProjectFolder": "Proje Klasörü",
     "ProjectFolders": "Proje Klasörleri",
     "QuotaPerStorageVolume": "Depolama birimi başına kota",
+    "QuotaScopeId": "Kota Kapsam Kimliği",
     "ReadOnly": "Sadece oku",
     "ReadWrite": "Oku ve Yaz",
     "SearchByName": "Ada göre ara",

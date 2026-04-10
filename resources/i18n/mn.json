@@ -475,6 +475,7 @@
     "ProjectFolder": "Төслийн хавтас",
     "ProjectFolders": "Төслийн хавтас",
     "QuotaPerStorageVolume": "Хадгалах хэмжээ тус бүрийн квот",
+    "QuotaScopeId": "Квотын хамрах хүрээ ID",
     "ReadOnly": "Зөвхөн унших",
     "ReadWrite": "Уншаад бичнэ үү",
     "SearchByName": "Нэрээр нь хайх",

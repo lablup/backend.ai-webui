@@ -475,6 +475,7 @@
     "ProjectFolder": "Carpeta de proyectos",
     "ProjectFolders": "Carpetas de proyectos",
     "QuotaPerStorageVolume": "Cuota por volumen de almacenamiento",
+    "QuotaScopeId": "ID del ámbito de cuotas",
     "ReadOnly": "Solo lectura",
     "ReadWrite": "Leer y escribir",
     "SearchByName": "Buscar por nombre",

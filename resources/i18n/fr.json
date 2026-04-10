@@ -475,6 +475,7 @@
     "ProjectFolder": "Dossier de projet",
     "ProjectFolders": "Dossiers de projet",
     "QuotaPerStorageVolume": "Quota par volume de stockage",
+    "QuotaScopeId": "ID de l'étendue du quota",
     "ReadOnly": "Lire uniquement",
     "ReadWrite": "Lire et écrire",
     "SearchByName": "Rechercher par nom",
