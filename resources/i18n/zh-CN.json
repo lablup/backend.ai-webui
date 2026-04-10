@@ -817,6 +817,7 @@
   "dialog": {
     "ErrorOccurred": "错误发生",
     "PleaseTypeToConfirm": "请键入{{confirmText}}以确认。",
+    "TypeNameToConfirmDeletion": "请输入名称以确认删除。",
     "ask": {
       "DoYouWantToDelete": "您确定要删除吗？",
       "DoYouWantToDeleteSomething": "您确定要删除\"{{ 名称 }}}\"吗？",

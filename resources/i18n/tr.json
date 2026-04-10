@@ -817,6 +817,7 @@
   "dialog": {
     "ErrorOccurred": "Hata oluştu",
     "PleaseTypeToConfirm": "Onaylamak için lütfen {{confirmText}} yazın.",
+    "TypeNameToConfirmDeletion": "Silme işlemini onaylamak için adı yazın.",
     "ask": {
       "DoYouWantToDelete": "Silmek istediğinizden emin misiniz?",
       "DoYouWantToDeleteSomething": "\"{{ name }}\" silmek istediğinizden emin misiniz?",

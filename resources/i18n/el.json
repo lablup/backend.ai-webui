@@ -817,6 +817,7 @@
   "dialog": {
     "ErrorOccurred": "Προέκυψε σφάλμα",
     "PleaseTypeToConfirm": "Πληκτρολογήστε {{confirmText}} για επιβεβαίωση.",
+    "TypeNameToConfirmDeletion": "Πληκτρολογήστε το όνομα για να επιβεβαιώσετε τη διαγραφή.",
     "ask": {
       "DoYouWantToDelete": "Είστε σίγουροι ότι θέλετε να διαγράψετε;",
       "DoYouWantToDeleteSomething": "Είστε σίγουροι ότι θέλετε να διαγράψετε το \"{{ name }}\";",
