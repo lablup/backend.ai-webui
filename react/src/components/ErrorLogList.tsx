@@ -24,7 +24,7 @@ import {
   BAIUnmountAfterClose,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React, { useState, useMemo, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 

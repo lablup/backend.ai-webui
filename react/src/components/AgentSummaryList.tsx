@@ -38,7 +38,7 @@ import {
   useFetchKey,
   INITIAL_FETCH_KEY,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React, { useDeferredValue, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';

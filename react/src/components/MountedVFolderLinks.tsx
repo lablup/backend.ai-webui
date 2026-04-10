@@ -8,7 +8,7 @@ import { MountedVFolderLinksQuery } from '../__generated__/MountedVFolderLinksQu
 import { useSuspendedBackendaiClient } from '../hooks';
 import FolderLink from './FolderLink';
 import { Skeleton } from 'antd';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React, { Suspense } from 'react';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 

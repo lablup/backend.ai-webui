@@ -23,7 +23,7 @@ import {
   BAINewFolderIcon,
   BAIAlert,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { useEffect, useState, useMemo, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';

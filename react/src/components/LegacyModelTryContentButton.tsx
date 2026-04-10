@@ -2,8 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { ModelTryContentButtonVFolderFragment$key } from '../__generated__/ModelTryContentButtonVFolderFragment.graphql';
-import { ModelTryContentButtonVFolderNodeListQuery } from '../__generated__/ModelTryContentButtonVFolderNodeListQuery.graphql';
+import { LegacyModelTryContentButtonVFolderFragment$key } from '../__generated__/LegacyModelTryContentButtonVFolderFragment.graphql';
+import { LegacyModelTryContentButtonVFolderNodeListQuery } from '../__generated__/LegacyModelTryContentButtonVFolderNodeListQuery.graphql';
 import {
   baiSignedRequestWithPromise,
   useBaiSignedRequestWithPromise,
@@ -29,14 +29,14 @@ import {
   useUpdatableState,
   INITIAL_FETCH_KEY,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React, { useRef, useEffect } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 import { useCurrentUserInfo, useCurrentUserRole } from 'src/hooks/backendai';
 
-interface ModelTryContentButtonProps {
-  vfolderNode: ModelTryContentButtonVFolderFragment$key | null;
+interface LegacyModelTryContentButtonProps {
+  vfolderNode: LegacyModelTryContentButtonVFolderFragment$key | null;
 }
 
 interface CloneVFolderInput {
@@ -89,9 +89,9 @@ function createServiceInput(
   };
 }
 
-const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
-  vfolderNode,
-}) => {
+const LegacyModelTryContentButton: React.FC<
+  LegacyModelTryContentButtonProps
+> = ({ vfolderNode }) => {
   'use memo';
   const { t } = useTranslation();
   const { modal } = App.useApp();
@@ -106,9 +106,9 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
   const [notifications] = useBAINotificationState();
 
   const modelStoreVFolder =
-    useFragment<ModelTryContentButtonVFolderFragment$key>(
+    useFragment<LegacyModelTryContentButtonVFolderFragment$key>(
       graphql`
-        fragment ModelTryContentButtonVFolderFragment on VirtualFolderNode {
+        fragment LegacyModelTryContentButtonVFolderFragment on VirtualFolderNode {
           id
           row_id
           name
@@ -173,7 +173,7 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
       key: notificationKey,
       open: true,
       message: t('modelService.StartingModelService'),
-      description: null,
+      description: '', // Clear any stale error from previous attempt
       duration: 0,
       backgroundTask: {
         promise: new Promise<void>((resolve, reject) => {
@@ -223,7 +223,7 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
         onChange: {
           pending: {
             message: t('modelService.StartingModelService'),
-            description: null,
+            description: '',
           },
           resolved: {
             duration: 0,
@@ -234,7 +234,7 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
               percent: 100,
             },
             message: t('modelService.StartingModelService'),
-            description: null,
+            description: '',
             to: `/chat?${new URLSearchParams({
               endpointId: result?.endpoint_id ?? '',
               modelId: modelId,
@@ -249,7 +249,7 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
               percent: 99,
             },
             message: t('modelService.StartingModelService'),
-            description: null,
+            description: '',
             to: `/serving/${result?.endpoint_id}`,
             toText: t('modelService.GoToServiceDetailPage'),
           },
@@ -330,9 +330,9 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
   }, [notifications, folderName, currentResourceGroupByProject]);
 
   const { modelStoreFolderNodes, currentUserFolderNodes } =
-    useLazyLoadQuery<ModelTryContentButtonVFolderNodeListQuery>(
+    useLazyLoadQuery<LegacyModelTryContentButtonVFolderNodeListQuery>(
       graphql`
-        query ModelTryContentButtonVFolderNodeListQuery(
+        query LegacyModelTryContentButtonVFolderNodeListQuery(
           $modelStoreScopeId: ScopeField
           $modelStoreScopeFilter: String
           $permission: VFolderPermissionValueField
@@ -533,6 +533,7 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
               key: `modelStore.clone.${randomTargetName}`,
               open: true,
               message: t('data.folders.FolderClonePending'),
+              description: '', // Clear any stale error from previous attempt
               onClose: () => {
                 upsertNotification({
                   key: `modelStore.clone.${randomTargetName}`,
@@ -554,7 +555,7 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
                   resolved: {
                     key: `modelStore.clone.${randomTargetName}`,
                     message: t('data.folders.FolderCloned'),
-                    description: null,
+                    description: '',
                     open: true,
                     duration: 0,
                     backgroundTask: {
@@ -666,4 +667,4 @@ const ModelTryContentButton: React.FC<ModelTryContentButtonProps> = ({
   );
 };
 
-export default ModelTryContentButton;
+export default LegacyModelTryContentButton;

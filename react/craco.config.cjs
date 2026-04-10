@@ -173,6 +173,20 @@ module.exports = {
     // When you change the this value, you might need to clear cache restart the dev server.
     // you can use `rm -rf node_modules/.cache` to clear cache.
     configure: (webpackConfig, { env, paths }) => {
+      // Override lodash-es's `sideEffects: false` package.json flag.
+      // lodash-es/lodash.default.js attaches chain sequence methods (groupBy,
+      // map, flatten, ...) onto the `lodash` wrapper prototype at module init.
+      // With sideEffects: false, webpack tree-shakes this file away when only
+      // named exports are used (e.g. `import * as _ from 'lodash-es'` +
+      // `_.chain(x).groupBy(...)`), which breaks chain sequences at runtime
+      // with `...default(...).groupBy is not a function`. Marking these two
+      // files as having side effects forces webpack to evaluate them so the
+      // mixin runs.
+      webpackConfig.module.rules.unshift({
+        test: /[\\/]node_modules[\\/]lodash-es[\\/]lodash(\.default)?\.js$/,
+        sideEffects: true,
+      });
+
       // `some.file?raw` will be treated as `asset/source`
       const { isFound, match } = getAssetModule(webpackConfig, (rule) => {
         return rule.oneOf;

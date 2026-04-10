@@ -10,7 +10,7 @@ import { SessionResources } from '../pages/SessionLauncherPage';
 import { EnvironmentImage } from './ImageList';
 import { List, Typography } from 'antd';
 import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { Dispatch, SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -105,14 +105,10 @@ const ImageInstallModal: React.FC<ImageInstallModalInterface> = ({
 
       const resourceSlots = await baiClient.get_resource_slots();
 
-      const keysToRemove = _.chain([
-        'cuda.device',
-        'cuda.shares',
-        'gpu',
-        'fgpu',
-      ])
-        .filter((key) => !(key in resourceSlots))
-        .value();
+      const keysToRemove = _.filter(
+        ['cuda.device', 'cuda.shares', 'gpu', 'fgpu'],
+        (key) => !(key in resourceSlots),
+      );
 
       // Remove keys that are not available in the resource slots
       if (imageResource.config) {

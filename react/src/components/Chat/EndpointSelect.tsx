@@ -20,7 +20,7 @@ import {
   Tooltip,
 } from 'antd';
 import { BAIFlex, BAISelect } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { ExternalLinkIcon } from 'lucide-react';
 import React, { useDeferredValue, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';

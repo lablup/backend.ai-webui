@@ -33,7 +33,7 @@ import {
   Typography,
 } from 'antd';
 import { BAIDoubleTag, BAIFlex, BAISelect } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -321,68 +321,71 @@ const ImageEnvironmentSelectFormItems: React.FC<
 
   const imageGroups: ImageGroup[] = useMemo(
     () =>
-      _.chain(images)
-        .filter((image) => {
-          return (
-            (showPrivate ? true : !isPrivateImage(image)) &&
-            (filter ? filter(image) : true)
-          );
-        })
-        .groupBy((image) => {
-          // group by using `group` property of image info
-          return (
-            metadata?.imageInfo[getImageMeta(getImageFullName(image) || '').key]
-              ?.group || 'Custom Environments'
-          );
-        })
-        .map((images, groupName) => {
-          return {
-            groupName,
-            groupSortKey: metadata?.groupSortKeyMap?.[groupName] || groupName,
-            environmentGroups: _.chain(images)
-              // sub group by using (environment) `name` property of image info
-              .groupBy((image) => {
-                return (
-                  // metadata?.imageInfo[
-                  //   getImageMeta(getImageFullName(image) || "").key
-                  // ]?.name || image?.name
-                  `${image?.registry}/${
-                    supportExtendedImageInfo ? image?.namespace : image?.name
-                  }`
-                );
-              })
-              .map((images, environmentName) => {
-                const imageKey = environmentName.split('/')?.[2];
-                const displayName =
-                  (imageKey && metadata?.imageInfo[imageKey]?.name) ||
-                  (_.last(environmentName.split('/')) as string);
+      _.sortBy(
+        _.map(
+          _.groupBy(
+            _.filter(images, (image) => {
+              return (
+                (showPrivate ? true : !isPrivateImage(image)) &&
+                (filter ? filter(image) : true)
+              );
+            }),
+            (image) => {
+              // group by using `group` property of image info
+              return (
+                metadata?.imageInfo[
+                  getImageMeta(getImageFullName(image) || '').key
+                ]?.group || 'Custom Environments'
+              );
+            },
+          ),
+          (images, groupName) => {
+            return {
+              groupName,
+              groupSortKey: metadata?.groupSortKeyMap?.[groupName] || groupName,
+              environmentGroups: _.sortBy(
+                _.map(
+                  // sub group by using (environment) `name` property of image info
+                  _.groupBy(images, (image) => {
+                    return (
+                      // metadata?.imageInfo[
+                      //   getImageMeta(getImageFullName(image) || "").key
+                      // ]?.name || image?.name
+                      `${image?.registry}/${
+                        supportExtendedImageInfo
+                          ? image?.namespace
+                          : image?.name
+                      }`
+                    );
+                  }),
+                  (images, environmentName) => {
+                    const imageKey = environmentName.split('/')?.[2];
+                    const displayName =
+                      (imageKey && metadata?.imageInfo[imageKey]?.name) ||
+                      (_.last(environmentName.split('/')) as string);
 
-                return {
-                  environmentName,
-                  displayName,
-                  prefix: _.chain(environmentName)
-                    .split('/')
-                    .drop(1)
-                    .dropRight(1)
-                    .join('/')
-                    .value(),
-                  images: images.sort(
-                    (a, b) =>
-                      compareVersions(
-                        // latest version comes first
-                        b?.tag?.split('-')?.[0] ?? '',
-                        a?.tag?.split('-')?.[0] ?? '',
-                      ) || localeCompare(a?.architecture, b?.architecture),
-                  ),
-                };
-              })
-
-              .sortBy((item) => item.displayName)
-              .value(),
-          };
-        })
-        .sortBy((item) => item.groupSortKey)
-        .value(),
+                    return {
+                      environmentName,
+                      displayName,
+                      prefix: environmentName.split('/').slice(1, -1).join('/'),
+                      images: images.sort(
+                        (a, b) =>
+                          compareVersions(
+                            // latest version comes first
+                            b?.tag?.split('-')?.[0] ?? '',
+                            a?.tag?.split('-')?.[0] ?? '',
+                          ) || localeCompare(a?.architecture, b?.architecture),
+                      ),
+                    };
+                  },
+                ),
+                (item) => item.displayName,
+              ),
+            };
+          },
+        ),
+        (item) => item.groupSortKey,
+      ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [images, metadata, filter, showPrivate],
   );
@@ -394,17 +397,15 @@ const ImageEnvironmentSelectFormItems: React.FC<
       | ImageGroup['environmentGroups'][0]
       | undefined;
     if (environmentSearch.length) {
-      _.chain(
-        imageGroups
-          .flatMap((group) => group.environmentGroups)
-          .find((envGroup) => {
-            fullNameMatchedImageGroup = envGroup;
-            fullNameMatchedImage = _.find(envGroup.images, (image) => {
-              return getImageFullName(image) === environmentSearch;
-            });
-            return !!fullNameMatchedImage;
-          }),
-      ).value();
+      imageGroups
+        .flatMap((group) => group.environmentGroups)
+        .find((envGroup) => {
+          fullNameMatchedImageGroup = envGroup;
+          fullNameMatchedImage = _.find(envGroup.images, (image) => {
+            return getImageFullName(image) === environmentSearch;
+          });
+          return !!fullNameMatchedImage;
+        });
     }
     return {
       fullNameMatchedImage,
@@ -716,11 +717,12 @@ const ImageEnvironmentSelectFormItems: React.FC<
                     }
 
                     const extraFilterValues: string[] = [];
-                    const requirementTags = _.chain(requirements)
-                      .filter(
+                    const requirementTags = _.map(
+                      _.filter(
+                        requirements,
                         (requirement) => !requirement.startsWith('customized_'),
-                      )
-                      .map((requirement, idx) => (
+                      ),
+                      (requirement, idx) => (
                         <BAIDoubleTag
                           key={idx}
                           values={_.split(
@@ -734,8 +736,8 @@ const ImageEnvironmentSelectFormItems: React.FC<
                             };
                           })}
                         />
-                      ))
-                      .value();
+                      ),
+                    );
                     const imageLabels = image?.labels;
                     if (imageLabels) {
                       const customizedImageNameLabelIdx = _.findIndex(

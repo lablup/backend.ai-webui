@@ -12,7 +12,7 @@ import CopyableCodeText from './CopyableCodeText';
 import ImageMetaIcon from './ImageMetaIcon';
 import { Divider, Tag, Typography, theme } from 'antd';
 import { BAIDoubleTag, BAIFlex } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React from 'react';
 import { graphql, useFragment } from 'react-relay';
 

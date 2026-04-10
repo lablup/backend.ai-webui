@@ -89,8 +89,10 @@ const QueryResolver = ({ disabled = false, onClick }: QueryResolverProps) => {
   const { vfolder_nodes } =
     useLazyLoadQuery<BAIVFolderDeleteButtonStoriesQuery>(
       graphql`
-        query BAIVFolderDeleteButtonStoriesQuery {
-          vfolder_nodes(offset: 0, first: 10) {
+        query BAIVFolderDeleteButtonStoriesQuery(
+          $permission: VFolderPermissionValueField
+        ) {
+          vfolder_nodes(offset: 0, first: 10, permission: $permission) {
             edges {
               node {
                 ...BAIVFolderDeleteButtonFragment
@@ -99,7 +101,7 @@ const QueryResolver = ({ disabled = false, onClick }: QueryResolverProps) => {
           }
         }
       `,
-      {},
+      { permission: 'read_attribute' },
     );
 
   const vfolders = vfolder_nodes?.edges?.map((edge: any) => edge.node);

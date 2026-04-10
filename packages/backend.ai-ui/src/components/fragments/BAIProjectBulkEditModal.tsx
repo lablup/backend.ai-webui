@@ -7,7 +7,7 @@ import BAIModal, { BAIModalProps } from '../BAIModal';
 import BAISelect from '../BAISelect';
 import BAIProjectResourcePolicySelect from './BAIProjectResourcePolicySelect';
 import { Form, theme } from 'antd';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -58,18 +58,17 @@ const BAIProjectBulkEditModal = ({
         form
           .validateFields()
           .then((values) => {
-            const promises = _.chain(selectedProjects)
-              .map((project) => project.row_id)
-              .compact()
-              .map((id) => {
+            const promises = _.map(
+              _.compact(_.map(selectedProjects, (project) => project.row_id)),
+              (id) => {
                 return mutateProjectWithPromise({
                   gid: id,
                   props: {
                     resource_policy: values.resource_policy,
                   },
                 });
-              })
-              .value();
+              },
+            );
 
             return Promise.all(promises).then(() => tableProps.onOk?.(e));
           })

@@ -5,7 +5,7 @@
 import { useSuspendedBackendaiClient } from '../hooks';
 import { Form, type FormItemProps, Select, Tag } from 'antd';
 import { TagProps } from 'antd/lib';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 

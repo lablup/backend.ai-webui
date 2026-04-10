@@ -27,7 +27,7 @@ import {
   BAITerminateIcon,
   BAIUnmountAfterClose,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -329,7 +329,7 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
           >
             <Button
               size={size}
-              disabled={!isActive(session) || !isOwner}
+              disabled={session?.status !== 'RUNNING' || !isOwner}
               icon={<BAIContainerCommitIcon />}
               onClick={() => {
                 onAction?.('containerCommit');

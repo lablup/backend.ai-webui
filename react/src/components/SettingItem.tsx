@@ -17,7 +17,7 @@ import {
 import { createStyles } from 'antd-style';
 import { BAIButton, BAIFlex, BAIModal, BAISelectProps } from 'backend.ai-ui';
 import { t } from 'i18next';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React, { ReactElement, ReactNode, useState } from 'react';
 
 type BaseSettingItemProps = {

@@ -6,7 +6,7 @@ import { useVirtualFolderNodePathFragment$key } from '../../__generated__/useVir
 import { useVirtualFolderPath } from '../../hooks/useVirtualFolderNodePath';
 import { theme } from 'antd';
 import { BAIFlex, BAIText } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React from 'react';
 
 interface VirtualFolderPathProps {

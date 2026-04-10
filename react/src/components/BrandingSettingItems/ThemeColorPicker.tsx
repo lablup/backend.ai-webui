@@ -6,7 +6,7 @@ import { Col, ColorPicker, type ColorPickerProps, Row, theme } from 'antd';
 import { ComponentTokenMap } from 'antd/es/theme/interface';
 import { AliasToken } from 'antd/lib/theme/internal';
 import { BAIFlex } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import { useUserCustomThemeConfig } from 'src/hooks/useUserCustomThemeConfig';
 

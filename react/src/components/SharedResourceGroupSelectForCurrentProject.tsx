@@ -10,7 +10,7 @@ import {
 } from '../hooks/useCurrentProject';
 import TextHighlighter from './TextHighlighter';
 import { BAISelect, BAISelectProps } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React, { useState, useTransition } from 'react';
 
 interface ResourceGroupSelectForCurrentProjectProps extends Omit<

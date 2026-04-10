@@ -1,11 +1,13 @@
 import { BAIResourceGroupSelectQuery } from '../../__generated__/BAIResourceGroupSelectQuery.graphql';
 import BAISelect, { BAISelectProps } from '../BAISelect';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-export interface BAIResourceGroupSelectProps
-  extends Omit<BAISelectProps, 'options'> {}
+export interface BAIResourceGroupSelectProps extends Omit<
+  BAISelectProps,
+  'options'
+> {}
 
 const BAIResourceGroupSelect = ({
   ...selectProps

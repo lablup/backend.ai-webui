@@ -4,7 +4,7 @@
  */
 import { type FormItemProps } from 'antd';
 import type { RuleObject } from 'antd/es/form';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 
 export const useValidateServiceName = (): Exclude<

@@ -19,7 +19,7 @@ import { SyncOutlined } from '@ant-design/icons';
 import { Button, theme, Typography } from 'antd';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { Package, Container, Brain, BanIcon, UndoIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -73,8 +73,10 @@ export const getTypeIcon = (type: string, size: number = 16) => {
 export type Artifact =
   NonNullable<BAIArtifactTableArtifactFragment$data>[number];
 
-export interface BAIArtifactTableProps
-  extends Omit<BAITableProps<Artifact>, 'dataSource' | 'columns' | 'rowKey'> {
+export interface BAIArtifactTableProps extends Omit<
+  BAITableProps<Artifact>,
+  'dataSource' | 'columns' | 'rowKey'
+> {
   artifactFragment: BAIArtifactTableArtifactFragment$key;
   onClickPull: (artifactId: string, revisionId: string) => void;
   onClickDelete: (artifactId: string) => void;

@@ -5,7 +5,7 @@
 import { useSuspendedBackendaiClient, useWebUINavigate } from '.';
 import { useSetBAINotification } from './useBAINotification';
 import { BAILink, useBAILogger, useErrorMessageResolver } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 import { useBackendAIAppLauncherFragment$key } from 'src/__generated__/useBackendAIAppLauncherFragment.graphql';

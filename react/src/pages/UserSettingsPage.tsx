@@ -19,7 +19,7 @@ import { useToggle } from 'ahooks';
 import { App, Button, Skeleton, Typography } from 'antd';
 import Card from 'antd/es/card/Card';
 import { filterOutEmpty } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { Suspense, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import BAIErrorBoundary from 'src/components/BAIErrorBoundary';

@@ -1,7 +1,7 @@
 import BAIFlex from './BAIFlex';
 import { CheckOutlined, CopyOutlined } from '@ant-design/icons';
 import { Button, Popover, Tag, theme, Typography } from 'antd';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React, { ReactNode, useState } from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { useTranslation } from 'react-i18next';

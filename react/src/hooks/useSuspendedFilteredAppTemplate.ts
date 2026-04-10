@@ -4,7 +4,7 @@
  */
 import { useSuspendedBackendaiClient } from '.';
 import { useSuspenseTanQuery } from './reactQueryAlias';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 
 export type TemplateItem = {
   category: string;
@@ -71,8 +71,8 @@ export const useSuspendedFilteredAppTemplate = (
     (app) =>
       !_.includes(preOpenAppList, app) && !_.includes(inferenceAppList, app),
   );
-  const baseAppTemplate = _.chain(baseAppList)
-    .map((app) => {
+  const baseAppTemplate = _.compact(
+    _.map(baseAppList, (app) => {
       const template = _.find(
         _.flatten(Object.values(appTemplate)),
         (item) => item.name === app.name,
@@ -92,9 +92,8 @@ export const useSuspendedFilteredAppTemplate = (
         };
       }
       return null;
-    })
-    .filter(Boolean)
-    .value();
+    }),
+  );
 
   if (!_.some(baseAppList, { name: 'ttyd' })) {
     baseAppTemplate.push({
@@ -115,10 +114,10 @@ export const useSuspendedFilteredAppTemplate = (
       src: './resources/icons/vscode.svg',
     });
   }
-  const groupedBaseAppTemplate = _.chain(baseAppTemplate)
-    .sortBy('category')
-    .groupBy('category')
-    .value();
+  const groupedBaseAppTemplate = _.groupBy(
+    _.sortBy(baseAppTemplate, 'category'),
+    'category',
+  );
 
   return {
     appTemplate,

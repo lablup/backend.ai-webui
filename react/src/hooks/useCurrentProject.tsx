@@ -6,7 +6,7 @@ import { useSuspendedBackendaiClient } from '.';
 import { useRecentProjectGroup } from './backendai';
 import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { atomWithDefault } from 'jotai/utils';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { useCallback, useEffect } from 'react';
 
 interface ScalingGroupItem {

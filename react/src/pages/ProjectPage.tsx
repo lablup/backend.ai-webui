@@ -22,7 +22,7 @@ import {
   useBAILogger,
   useUpdatableState,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -259,11 +259,10 @@ const ProjectPage = () => {
                 return;
               }
               setSelectedProjectList(
-                _.chain(group_nodes.edges)
-                  .map((e) => e?.node)
-                  .compact()
-                  .filter((node) => keys.includes(node.id))
-                  .value(),
+                _.filter(
+                  _.compact(_.map(group_nodes.edges, (e) => e?.node)),
+                  (node) => keys.includes(node.id),
+                ),
               );
             },
             selectedRowKeys: _.map(selectedProjectList, 'id'),

@@ -2,7 +2,7 @@ import { BAIVFolderDeleteButtonFragment$key } from '../../__generated__/BAIVFold
 import { BAITrashBinIcon } from '../../icons';
 import BAIButton from '../BAIButton';
 import { theme, type ButtonProps } from 'antd';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { graphql, useFragment } from 'react-relay';
 
 export interface BAIVFolderDeleteButtonProps extends ButtonProps {

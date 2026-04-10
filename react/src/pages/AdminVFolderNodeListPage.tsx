@@ -13,7 +13,7 @@ import DeleteVFolderModal from '../components/DeleteVFolderModal';
 import RestoreVFolderModal from '../components/RestoreVFolderModal';
 import VFolderNodes, { VFolderNodeInList } from '../components/VFolderNodes';
 import { handleRowSelectionChange } from '../helper';
-import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { isDeletedCategory } from './VFolderNodeListPage';
 import { useToggle } from 'ahooks';
 import { Badge, Button, theme, Tooltip } from 'antd';
@@ -30,7 +30,7 @@ import {
   mergeFilterValues,
   useUpdatableState,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React, { useDeferredValue, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -66,7 +66,6 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
-  const domainName = useCurrentDomainValue();
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
     'table_column_overrides.AdminVFolderNodeListPage',
@@ -124,6 +123,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
 
   const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
 
+  // scope_id is intentionally omitted so superadmin sees all vfolders across all projects/domains
   const queryVariables: AdminVFolderNodeListPageQuery$variables = {
     offset: baiPaginationOption.offset,
     first: baiPaginationOption.first,
@@ -136,9 +136,9 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
       usageModeFilter,
     ]),
     order: queryParams.order,
+    permission: 'read_attribute',
     filterForActiveCount: FILTER_BY_STATUS_CATEGORY['active'],
     filterForDeletedCount: FILTER_BY_STATUS_CATEGORY['deleted'],
-    scope_id: `domain:${domainName}`,
   };
   const deferredQueryVariables = useDeferredValue(queryVariables);
   const deferredFetchKey = useDeferredValue(fetchKey);
@@ -151,16 +151,16 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
           $first: Int
           $filter: String
           $order: String
+          $permission: VFolderPermissionValueField
           $filterForActiveCount: String
           $filterForDeletedCount: String
-          $scope_id: ScopeField
         ) {
           vfolder_nodes(
             offset: $offset
             first: $first
             filter: $filter
             order: $order
-            scope_id: $scope_id
+            permission: $permission
           ) {
             edges @required(action: THROW) {
               node @required(action: THROW) {
@@ -182,6 +182,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
             first: 0
             offset: 0
             filter: $filterForActiveCount
+            permission: $permission
           ) {
             count
           }
@@ -189,6 +190,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
             first: 0
             offset: 0
             filter: $filterForDeletedCount
+            permission: $permission
           ) {
             count
           }

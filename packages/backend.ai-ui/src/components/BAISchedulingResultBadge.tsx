@@ -1,6 +1,6 @@
 import { SemanticColor } from '../helper';
 import BAIBadge, { BAIBadgeProps } from './BAIBadge';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 
 export type SchedulingResult =
   | 'SUCCESS'

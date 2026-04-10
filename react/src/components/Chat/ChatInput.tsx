@@ -10,7 +10,7 @@ import type { AttachmentsProps } from '@ant-design/x';
 import { theme } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import { atom, useAtom } from 'jotai';
-import { isEmpty, isEqual, isUndefined } from 'lodash';
+import { isEmpty, isEqual, isUndefined } from 'lodash-es';
 import React, {
   CSSProperties,
   useCallback,

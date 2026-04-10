@@ -5,7 +5,7 @@
 import { useBAISettingUserState } from './useBAISetting';
 import { useCustomThemeConfig } from './useCustomThemeConfig';
 import { App } from 'antd';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { useEffectEvent, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 

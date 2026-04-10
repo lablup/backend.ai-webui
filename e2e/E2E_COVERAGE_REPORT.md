@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-04-01
+> **Last Updated:** 2026-04-09
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -12,7 +12,7 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 231 / 388 features covered (60%)**
+**Overall (in-scope routes): 253 / 410 features covered (62%)**
 
 | Page | Route | Features | Covered | Status |
 |------|-------|:--------:|:-------:|:------:|
@@ -26,7 +26,8 @@
 | Endpoint Detail | `/serving/:serviceId` | 20 | 9 | 🔶 45% |
 | Service Launcher | `/service/start` | 5 | 0 | ❌ 0% |
 | VFolder / Data | `/data` | 45 | 32 | 🔶 71% |
-| Model Store | `/model-store` | 6 | 0 | ❌ 0% |
+| Model Store | `/model-store` | 6 | 6 | ✅ 100% |
+| Admin Model Store | `/admin-model-store` | 22 | 22 | ✅ 100% |
 | Storage Host | `/storage-settings/:hostname` | 3 | 0 | ❌ 0% |
 | My Environment | `/my-environment` | 2 | 2 | ✅ 100% |
 | Environment | `/environment` | 27 | 21 | 🔶 78% |
@@ -45,7 +46,7 @@
 | App Launcher | (modal) | 18 | 10 | 🔶 56% |
 | Chat | `/chat/:id?` | 6 | 6 | ✅ 100% |
 | Plugin System | (config-based) | 12 | 12 | ✅ 100% |
-| **Total** | | **335** | **181** | **54%** |
+| **Total** | | **357** | **203** | **57%** |
 
 ---
 
@@ -360,20 +361,58 @@
 
 ### 10. Model Store (`/model-store`)
 
-**Test files:** None
+**Test files:** [`e2e/serving/model-card-drawer.spec.ts`](serving/model-card-drawer.spec.ts)
 
-**Modal:** `ModelCardModal` (card click)
+**Drawer:** `ModelCardDrawer` (card click), **Modal:** `ModelCardDeployModal` (deploy)
 
 | Feature | Status | Test |
 | --------------------------------- | ------ | ---- |
-| Model card list rendering | ❌ | - |
-| Search by title/description | ❌ | - |
-| Category filtering | ❌ | - |
-| Task filtering | ❌ | - |
-| Label filtering | ❌ | - |
-| Model card click → ModelCardModal | ❌ | - |
+| Model card list rendering | ✅ | `admin can open model card drawer by clicking a card` |
+| Model card drawer metadata | ✅ | `admin can see model description / metadata tags / metadata table / README content in the drawer` |
+| Deploy button disabled (no presets) | ✅ | `admin cannot deploy when model card has no presets` |
+| Deploy modal (multi-preset) | ✅ | `admin can open the Deploy Model modal / see preset options grouped by runtime variant / deploy after selection` |
+| Auto-deploy (single preset + RG) | ✅ | `admin can auto-deploy when single preset and resource group available` |
+| Post-deploy alerts | ✅ | `admin can see "Preparing your service" / "Service Ready" alerts on EndpointDetailPage` |
 
-**Coverage: ❌ 0/6 features**
+**Coverage: ✅ 6/6 features**
+
+---
+
+### 10b. Admin Model Store (`/admin-model-store`)
+
+**Test files:** [`e2e/admin-model-card/admin-model-card-page-load.spec.ts`](admin-model-card/admin-model-card-page-load.spec.ts), [`e2e/admin-model-card/admin-model-card-filter.spec.ts`](admin-model-card/admin-model-card-filter.spec.ts), [`e2e/admin-model-card/admin-model-card-create.spec.ts`](admin-model-card/admin-model-card-create.spec.ts), [`e2e/admin-model-card/admin-model-card-edit.spec.ts`](admin-model-card/admin-model-card-edit.spec.ts), [`e2e/admin-model-card/admin-model-card-delete.spec.ts`](admin-model-card/admin-model-card-delete.spec.ts), [`e2e/admin-model-card/admin-model-card-access-control.spec.ts`](admin-model-card/admin-model-card-access-control.spec.ts), [`e2e/admin-model-card/admin-model-card-sort-refresh.spec.ts`](admin-model-card/admin-model-card-sort-refresh.spec.ts), [`e2e/admin-model-card/admin-model-card-url-state.spec.ts`](admin-model-card/admin-model-card-url-state.spec.ts)
+
+**Requires:** Superadmin login
+**Primary action:** "Create Model Card" → modal
+**Row actions:** Edit (setting icon), Delete (trash icon)
+**Bulk actions:** Bulk delete via header checkbox selection
+
+| Feature | Status | Test |
+|---------|--------|------|
+| Page load and table rendering | ✅ | `admin-model-card-page-load.spec.ts` |
+| Column visibility and pagination | ✅ | `admin-model-card-page-load.spec.ts` |
+| Name filter search | ✅ | `admin-model-card-filter.spec.ts` |
+| Filter clear and empty state | ✅ | `admin-model-card-filter.spec.ts` |
+| Open create modal | ✅ | `admin-model-card-create.spec.ts` |
+| Create with required fields only | ✅ | `admin-model-card-create.spec.ts` |
+| Create with all fields | ✅ | `admin-model-card-create.spec.ts` |
+| Create validation (name required) | ✅ | `admin-model-card-create.spec.ts` |
+| Create validation (VFolder required) | ✅ | `admin-model-card-create.spec.ts` |
+| Cancel create modal | ✅ | `admin-model-card-create.spec.ts` |
+| Open edit modal | ✅ | `admin-model-card-edit.spec.ts` |
+| Update model card fields | ✅ | `admin-model-card-edit.spec.ts` |
+| Edit validation | ✅ | `admin-model-card-edit.spec.ts` |
+| Cancel edit modal | ✅ | `admin-model-card-edit.spec.ts` |
+| Single delete with confirmation | ✅ | `admin-model-card-delete.spec.ts` |
+| Cancel single delete | ✅ | `admin-model-card-delete.spec.ts` |
+| Bulk select and delete | ✅ | `admin-model-card-delete.spec.ts` |
+| Cancel bulk delete | ✅ | `admin-model-card-delete.spec.ts` |
+| Clear selection | ✅ | `admin-model-card-delete.spec.ts` |
+| Select all via header checkbox | ✅ | `admin-model-card-delete.spec.ts` |
+| Non-admin access blocked | ✅ | `admin-model-card-access-control.spec.ts` |
+| URL state persistence (filter/sort/pagination) | ✅ | `admin-model-card-url-state.spec.ts` |
+
+**Coverage: ✅ 22/22 features**
 
 ---
 

@@ -17,7 +17,7 @@ import {
   useResourceSlotsDetails,
   useFetchKey,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { ReactNode, useTransition } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
@@ -108,37 +108,38 @@ const MyResource: React.FC<MyResourceProps> = ({
         }
       : null;
 
-    const accelerators = _.chain(resourceSlotsDetails?.resourceSlotsInRG)
-      .omit(['cpu', 'mem'])
-      .map((resourceSlot, key) => {
-        if (!resourceSlot) return null;
+    const accelerators = _.compact(
+      _.map(
+        _.omit(resourceSlotsDetails?.resourceSlotsInRG, ['cpu', 'mem']),
+        (resourceSlot, key) => {
+          if (!resourceSlot) return null;
 
-        return {
-          key,
-          used: {
-            current: convertToNumber(
-              checkPresetInfo?.keypair_using[key as ResourceSlotName],
-            ),
-            total: convertToNumber(
-              resourceLimitsWithoutResourceGroup.accelerators[key]?.max,
-            ),
-          },
-          free: {
-            current: convertToNumber(
-              remainingWithoutResourceGroup.accelerators[key],
-            ),
-            total: convertToNumber(
-              resourceLimitsWithoutResourceGroup.accelerators[key]?.max,
-            ),
-          },
-          metadata: {
-            title: resourceSlot.human_readable_name,
-            displayUnit: resourceSlot.display_unit,
-          },
-        };
-      })
-      .compact()
-      .value();
+          return {
+            key,
+            used: {
+              current: convertToNumber(
+                checkPresetInfo?.keypair_using[key as ResourceSlotName],
+              ),
+              total: convertToNumber(
+                resourceLimitsWithoutResourceGroup.accelerators[key]?.max,
+              ),
+            },
+            free: {
+              current: convertToNumber(
+                remainingWithoutResourceGroup.accelerators[key],
+              ),
+              total: convertToNumber(
+                resourceLimitsWithoutResourceGroup.accelerators[key]?.max,
+              ),
+            },
+            metadata: {
+              title: resourceSlot.human_readable_name,
+              displayUnit: resourceSlot.display_unit,
+            },
+          };
+        },
+      ),
+    );
 
     return { cpu: cpuData, memory: memoryData, accelerators };
   })();

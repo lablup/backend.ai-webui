@@ -4,7 +4,7 @@
  */
 import type { RuleObject } from 'antd/es/form';
 import { FormItemProps } from 'antd/lib';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 
 export const useValidateSessionName = (

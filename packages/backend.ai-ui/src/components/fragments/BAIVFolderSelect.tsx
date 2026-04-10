@@ -11,7 +11,7 @@ import BAIText from '../BAIText';
 import TotalFooter from '../TotalFooter';
 import { useControllableValue } from 'ahooks';
 import { GetRef, Skeleton } from 'antd';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import {
   useDeferredValue,
   useEffect,

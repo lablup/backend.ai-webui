@@ -32,7 +32,7 @@ import {
   useBAILogger,
   useErrorMessageResolver,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { TriangleAlertIcon } from 'lucide-react';
 import { Suspense, useRef } from 'react';
 import { useTranslation } from 'react-i18next';

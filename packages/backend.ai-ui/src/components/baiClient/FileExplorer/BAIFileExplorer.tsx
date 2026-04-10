@@ -21,7 +21,7 @@ import { Breadcrumb, Skeleton, theme, type TableColumnsType } from 'antd';
 import type { ItemType } from 'antd/es/breadcrumb/Breadcrumb';
 import type { RcFile } from 'antd/es/upload';
 import dayjs from 'dayjs';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { HouseIcon } from 'lucide-react';
 import {
   createContext,
@@ -35,9 +35,11 @@ import { useTranslation } from 'react-i18next';
 
 export const FolderInfoContext = createContext<{
   targetVFolderId: string;
+  targetVFolderName: string;
   currentPath: string;
 }>({
   targetVFolderId: '',
+  targetVFolderName: '',
   currentPath: '.',
 });
 
@@ -47,6 +49,7 @@ export interface BAIFileExplorerRef {
 
 export interface BAIFileExplorerProps {
   targetVFolderId: string;
+  targetVFolderName?: string;
   fetchKey?: string;
   onUpload: (files: Array<RcFile>, currentPath: string) => void;
   tableProps?: Partial<BAITableProps<VFolderFile>>;
@@ -70,6 +73,7 @@ export interface BAIFileExplorerProps {
 
 const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
   targetVFolderId,
+  targetVFolderName,
   fetchKey,
   onUpload,
   tableProps,
@@ -290,7 +294,13 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
   }, []);
 
   return (
-    <FolderInfoContext.Provider value={{ targetVFolderId, currentPath }}>
+    <FolderInfoContext.Provider
+      value={{
+        targetVFolderId,
+        targetVFolderName: targetVFolderName ?? '',
+        currentPath,
+      }}
+    >
       {isDragMode && (
         <DragAndDrop
           portalContainer={fileDropContainerRef?.current || undefined}
@@ -313,6 +323,7 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
           />
           <ExplorerActionControls
             selectedFiles={selectedItems}
+            enableDownload={enableDownload}
             enableDelete={enableDelete}
             enableWrite={enableWrite}
             onUpload={(files, currentPath) => onUpload(files, currentPath)}

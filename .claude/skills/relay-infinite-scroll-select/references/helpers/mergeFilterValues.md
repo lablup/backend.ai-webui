@@ -51,7 +51,7 @@ const filter = mergeFilterValues([null, undefined, '']);
 ## Implementation
 
 ```typescript
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { filterOutEmpty } from '../../helper';
 
 export function mergeFilterValues(

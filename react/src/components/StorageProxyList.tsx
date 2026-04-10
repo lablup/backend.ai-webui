@@ -25,7 +25,7 @@ import {
   INITIAL_FETCH_KEY,
   useFetchKey,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { Server } from 'lucide-react';
 import { useDeferredValue, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';

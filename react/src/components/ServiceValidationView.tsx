@@ -27,7 +27,7 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import DOMPurify from 'dompurify';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React, { Suspense, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 

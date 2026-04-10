@@ -12,7 +12,7 @@ import {
   mergeFilterValues,
   BAIResourceNumberWithIcon,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React, {
   useDeferredValue,
   useEffect,
@@ -98,15 +98,13 @@ const AgentSelect: React.FC<Props> = ({
     } = JSON.parse(agent?.occupied_slots ?? '{}');
     const remainingSlotsInfo: {
       [key in string]: number;
-    } = _.chain(availableSlotsInfo)
-      .mapValues((value, key) => {
-        if (key.endsWith('.shares')) {
-          return parseFloat(value) - parseFloat(occupiedSlotsInfo[key] ?? 0);
-        } else {
-          return parseInt(value) - parseInt(occupiedSlotsInfo[key] ?? 0);
-        }
-      })
-      .value();
+    } = _.mapValues(availableSlotsInfo, (value, key) => {
+      if (key.endsWith('.shares')) {
+        return parseFloat(value) - parseFloat(occupiedSlotsInfo[key] ?? 0);
+      } else {
+        return parseInt(value) - parseInt(occupiedSlotsInfo[key] ?? 0);
+      }
+    });
 
     return {
       label: (

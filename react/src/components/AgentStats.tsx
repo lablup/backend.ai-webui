@@ -14,7 +14,7 @@ import {
   processMemoryValue,
   ResourceStatistics,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { useTransition, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useRefetchableFragment } from 'react-relay';
@@ -118,34 +118,37 @@ const AgentStats: React.FC<AgentStatsProps> = ({
         }
       : null;
 
-    const accelerators = _.chain(resourceSlotsDetails?.resourceSlotsInRG)
-      .omit(['cpu', 'mem'])
-      .map((resourceSlot, key) => {
-        if (!resourceSlot) return null;
+    const accelerators = _.filter(
+      _.compact(
+        _.map(
+          _.omit(resourceSlotsDetails?.resourceSlotsInRG, ['cpu', 'mem']),
+          (resourceSlot, key) => {
+            if (!resourceSlot) return null;
 
-        const freeValue = free[key] || 0;
-        const usedValue = used[key] || 0;
-        const capacityValue = capacity[key] || 0;
+            const freeValue = free[key] || 0;
+            const usedValue = used[key] || 0;
+            const capacityValue = capacity[key] || 0;
 
-        return {
-          key,
-          used: {
-            current: convertToNumber(usedValue),
-            total: convertToNumber(capacityValue),
+            return {
+              key,
+              used: {
+                current: convertToNumber(usedValue),
+                total: convertToNumber(capacityValue),
+              },
+              free: {
+                current: convertToNumber(freeValue),
+                total: convertToNumber(capacityValue),
+              },
+              metadata: {
+                title: resourceSlot.human_readable_name,
+                displayUnit: resourceSlot.display_unit,
+              },
+            };
           },
-          free: {
-            current: convertToNumber(freeValue),
-            total: convertToNumber(capacityValue),
-          },
-          metadata: {
-            title: resourceSlot.human_readable_name,
-            displayUnit: resourceSlot.display_unit,
-          },
-        };
-      })
-      .compact()
-      .filter((item) => !!(item.used.current || item.used.total))
-      .value();
+        ),
+      ),
+      (item) => !!(item.used.current || item.used.total),
+    );
 
     return { cpu: cpuData, memory: memoryData, accelerators };
   })();

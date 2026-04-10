@@ -2,10 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { ModelCardModalFragment$key } from '../__generated__/ModelCardModalFragment.graphql';
-import { ModelStoreListPageQuery } from '../__generated__/ModelStoreListPageQuery.graphql';
+import { LegacyModelCardModalFragment$key } from '../__generated__/LegacyModelCardModalFragment.graphql';
+import { LegacyModelStoreListPageQuery } from '../__generated__/LegacyModelStoreListPageQuery.graphql';
+import LegacyModelCardModal from '../components/LegacyModelCardModal';
 import ModelBrandIcon from '../components/ModelBrandIcon';
-import ModelCardModal from '../components/ModelCardModal';
 import TextHighlighter from '../components/TextHighlighter';
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
@@ -25,18 +25,18 @@ import {
 } from 'antd';
 import { useUpdatableState, BAIFlex, localeCompare } from 'backend.ai-ui';
 import dayjs from 'dayjs';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 type ModelCard = NonNullable<
   NonNullable<
-    ModelStoreListPageQuery['response']['model_cards']
+    LegacyModelStoreListPageQuery['response']['model_cards']
   >['edges'][number]
 >['node'];
 
-const ModelStoreListPage: React.FC = () => {
+const LegacyModelStoreListPage: React.FC = () => {
   'use memo';
 
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
@@ -47,7 +47,7 @@ const ModelStoreListPage: React.FC = () => {
   const currentDomain = useCurrentDomainValue();
   const currentProject = useCurrentProjectValue();
   if (!currentProject.id) {
-    throw new Error('Project ID is required for ModelStoreListPage');
+    throw new Error('Project ID is required for LegacyModelStoreListPage');
   }
   const { unitedAllowedPermissionByVolume } =
     useMergedAllowedStorageHostPermission(
@@ -61,13 +61,13 @@ const ModelStoreListPage: React.FC = () => {
   const [selectedTasks, setSelectedTasks] = useState<string[]>([]);
   const [selectedLabels, setSelectedLabels] = useState<string[]>([]);
   const [currentModelInfo, setCurrentModelInfo] =
-    useState<ModelCardModalFragment$key | null>();
+    useState<LegacyModelCardModalFragment$key | null>();
 
   const [isPendingRefetching, startRefetchingTransition] = useTransition();
 
-  const { model_cards } = useLazyLoadQuery<ModelStoreListPageQuery>(
+  const { model_cards } = useLazyLoadQuery<LegacyModelStoreListPageQuery>(
     graphql`
-      query ModelStoreListPageQuery($filter: String) {
+      query LegacyModelStoreListPageQuery($filter: String) {
         # TODO: Implement pagination for model_cards
         model_cards(filter: $filter, first: 200) {
           edges {
@@ -85,7 +85,7 @@ const ModelStoreListPage: React.FC = () => {
                 cloneable
                 host
               }
-              ...ModelCardModalFragment
+              ...LegacyModelCardModalFragment
             }
           }
         }
@@ -304,7 +304,7 @@ const ModelStoreListPage: React.FC = () => {
           </Col>
         ))}
       </Row>
-      <ModelCardModal
+      <LegacyModelCardModal
         modelCardModalFrgmt={currentModelInfo}
         open={!!currentModelInfo}
         onRequestClose={() => {
@@ -315,4 +315,4 @@ const ModelStoreListPage: React.FC = () => {
   );
 };
 
-export default ModelStoreListPage;
+export default LegacyModelStoreListPage;

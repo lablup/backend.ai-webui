@@ -42,7 +42,7 @@ import {
   BAISessionsIcon,
   filterOutEmpty,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import {
   Activity,
   BotMessageSquare,
@@ -536,9 +536,9 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
     ),
     'superadmin-system': t('webui.menu.groupName.superadmin.System'),
   };
-  const groupedGeneralMenu = _.chain(generalMenu)
-    .groupBy('group')
-    .map((items, group) => {
+  const groupedGeneralMenu = _.map(
+    _.groupBy(generalMenu, 'group'),
+    (items, group) => {
       if (group === 'none') {
         return items;
       }
@@ -560,8 +560,9 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
         ),
         children: items,
       };
-    })
-    .flatten()
+    },
+  )
+    .flat()
     .sort((a, b) => {
       const groupOrder: Array<MenuGroupName | undefined> = [
         undefined,
@@ -583,41 +584,37 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       };
 
       return getWeight(a) - getWeight(b);
-    })
-    .value();
+    });
 
   const buildGroupedMenu = <T extends AdminMenuGroupName>(
     menu: Array<{ group?: T; key?: MenuKeys; [key: string]: any }>,
     groupNameMap: Record<T, string>,
     groupOrder: Array<T | undefined>,
   ) => {
-    return _.chain(menu)
-      .groupBy('group')
-      .map((items, group) => {
-        if (group === 'none' || !group) {
-          return items;
-        }
-        return {
-          type: 'group',
-          name: group,
-          label: (
-            <BAIFlex
-              style={{
-                borderBottom: `1px solid ${token.colorBorder}`,
-              }}
-            >
-              {!hideGroupName && (
-                <Typography.Text type="secondary" ellipsis>
-                  {groupNameMap[group as T] ?? group}
-                </Typography.Text>
-              )}
-            </BAIFlex>
-          ),
-          children: items,
-        };
-      })
-      .flatten()
-      .value()
+    return _.map(_.groupBy(menu, 'group'), (items, group) => {
+      if (group === 'none' || !group) {
+        return items;
+      }
+      return {
+        type: 'group',
+        name: group,
+        label: (
+          <BAIFlex
+            style={{
+              borderBottom: `1px solid ${token.colorBorder}`,
+            }}
+          >
+            {!hideGroupName && (
+              <Typography.Text type="secondary" ellipsis>
+                {groupNameMap[group as T] ?? group}
+              </Typography.Text>
+            )}
+          </BAIFlex>
+        ),
+        children: items,
+      };
+    })
+      .flat()
       .filter((item: any) => {
         // Filter out empty groups (e.g. when all children removed by blockList)
         if (item?.type === 'group' && 'children' in item) {

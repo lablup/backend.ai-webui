@@ -10,7 +10,7 @@ import {
   type ChatMessage,
 } from './ChatModel';
 import { useBAILogger } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { customAlphabet } from 'nanoid/non-secure';
 import { useEffect, useCallback, useState } from 'react';
 

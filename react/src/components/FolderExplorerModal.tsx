@@ -23,7 +23,7 @@ import {
   useInterval,
   VFolderFile,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { Suspense, useDeferredValue, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -164,6 +164,7 @@ const FolderExplorerModal: React.FC<FolderExplorerProps> = ({
     <BAIFileExplorer
       ref={fileExplorerRef}
       targetVFolderId={vfolderID}
+      targetVFolderName={vfolder_node?.name ?? 'folder'}
       deletingFilePaths={deletingFilePaths}
       fetchKey={fetchKey}
       onUpload={(files: RcFile[], currentPath: string) => {

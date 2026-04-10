@@ -11,7 +11,7 @@ import BAIFlex from './BAIFlex';
 import { useControllableValue } from 'ahooks';
 import { Slider, theme } from 'antd';
 import type { SliderMarks } from 'antd/es/slider';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React, { useEffect, useMemo } from 'react';
 
 export interface BAIDynamicUnitInputNumberWithSliderProps extends BAIDynamicUnitInputNumberProps {

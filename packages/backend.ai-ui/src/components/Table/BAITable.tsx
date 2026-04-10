@@ -24,7 +24,7 @@ import { createStyles } from 'antd-style';
 import type { AnyObject, GetProps } from 'antd/es/_util/type';
 import type { ColumnType, ColumnsType } from 'antd/es/table';
 import classNames from 'classnames';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Resizable, type ResizeCallbackData } from 'react-resizable';

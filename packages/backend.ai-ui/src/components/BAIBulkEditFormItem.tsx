@@ -3,7 +3,7 @@ import { DownOutlined } from '@ant-design/icons';
 import { useControllableValue } from 'ahooks';
 import { Form, FormItemProps, Input, theme, Typography } from 'antd';
 import type { RuleObject, RuleRender } from 'antd/es/form';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React, {
   cloneElement,
   ReactElement,
@@ -29,8 +29,10 @@ type BulkEditMode = 'keep' | 'edit' | 'clear';
  */
 type RuleWithoutRequired = Omit<RuleObject, 'required'> | RuleRender;
 
-export interface BAIBulkEditFormItemProps
-  extends Omit<FormItemProps, 'required' | 'rules'> {
+export interface BAIBulkEditFormItemProps extends Omit<
+  FormItemProps,
+  'required' | 'rules'
+> {
   /**
    * Whether this field is optional (allows clearing).
    * When true, shows the "Clear" link in keep mode.

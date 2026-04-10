@@ -4,7 +4,7 @@ import BAISelect, { BAISelectProps } from '../BAISelect';
 import TotalFooter from '../TotalFooter';
 import { Skeleton } from 'antd';
 import { GetRef } from 'antd/lib';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePaginationFragment } from 'react-relay';

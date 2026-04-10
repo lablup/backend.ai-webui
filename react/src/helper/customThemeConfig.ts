@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { type ThemeConfig } from 'antd';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 
 export type LogoConfig = {
   src: string;

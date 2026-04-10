@@ -20,7 +20,7 @@ import {
   BAIFetchKeyButton,
   useResourceSlotsDetails,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import {
   useMemo,
   useTransition,
@@ -228,42 +228,45 @@ const TotalResourceWithinResourceGroup: React.FC<
         }
       : null;
 
-    const accelerators = _.chain(resourceSlotsDetails?.resourceSlotsInRG)
-      .omit(['cpu', 'mem'])
-      .map((resourceSlot, key) => {
-        if (!resourceSlot) return null;
+    const accelerators = _.filter(
+      _.compact(
+        _.map(
+          _.omit(resourceSlotsDetails?.resourceSlotsInRG, ['cpu', 'mem']),
+          (resourceSlot, key) => {
+            if (!resourceSlot) return null;
 
-        const processAcceleratorValue = (value: any): number => {
-          return convertToNumber(value);
-        };
+            const processAcceleratorValue = (value: any): number => {
+              return convertToNumber(value);
+            };
 
-        const occupied = totalOccupiedSlots[key] || 0;
-        const available = totalAvailableSlots[key] || 0;
-        const remaining = subNumberWithUnits(
-          _.toString(available),
-          _.toString(occupied),
-          '',
-        );
+            const occupied = totalOccupiedSlots[key] || 0;
+            const available = totalAvailableSlots[key] || 0;
+            const remaining = subNumberWithUnits(
+              _.toString(available),
+              _.toString(occupied),
+              '',
+            );
 
-        return {
-          key,
-          used: {
-            current: processAcceleratorValue(occupied),
-            total: processAcceleratorValue(available),
+            return {
+              key,
+              used: {
+                current: processAcceleratorValue(occupied),
+                total: processAcceleratorValue(available),
+              },
+              free: {
+                current: processAcceleratorValue(remaining),
+                total: processAcceleratorValue(available),
+              },
+              metadata: {
+                title: resourceSlot.human_readable_name,
+                displayUnit: resourceSlot.display_unit,
+              },
+            };
           },
-          free: {
-            current: processAcceleratorValue(remaining),
-            total: processAcceleratorValue(available),
-          },
-          metadata: {
-            title: resourceSlot.human_readable_name,
-            displayUnit: resourceSlot.display_unit,
-          },
-        };
-      })
-      .compact()
-      .filter((item) => !!(item.used.current || item.used.total))
-      .value();
+        ),
+      ),
+      (item) => !!(item.used.current || item.used.total),
+    );
 
     return { cpu: cpuData, memory: memoryData, accelerators };
   }, [agent_nodes, agent_summary_list, resourceSlotsDetails]);

@@ -39,7 +39,7 @@ import {
   BAIModalProps,
   useResourceSlotsDetails,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React, { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -384,10 +384,9 @@ const KeypairResourcePolicySettingModal: React.FC<
         </Form.Item>
         <Form.Item label={t('resourcePolicy.ResourcePolicy')} required>
           <Card>
-            {_.chain(resourceSlots)
-              .keys()
-              .chunk(3)
-              .map((resourceSlotKeys, index) => (
+            {_.map(
+              _.chunk(_.keys(resourceSlots), 3),
+              (resourceSlotKeys, index) => (
                 <Row gutter={[24, 16]} key={index}>
                   {_.map(resourceSlotKeys, (resourceSlotKey) => (
                     <Col
@@ -452,8 +451,8 @@ const KeypairResourcePolicySettingModal: React.FC<
                     </Col>
                   ))}
                 </Row>
-              ))
-              .value()}
+              ),
+            )}
           </Card>
         </Form.Item>
         <Form.Item label={t('resourcePolicy.Sessions')} required>

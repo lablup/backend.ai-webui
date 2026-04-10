@@ -12,7 +12,7 @@ import {
   BAINumberWithUnit,
   useResourceSlotsDetails,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { CpuIcon, MemoryStickIcon, MicrochipIcon } from 'lucide-react';
 import React, { ReactElement } from 'react';
 

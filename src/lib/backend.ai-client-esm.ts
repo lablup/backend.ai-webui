@@ -890,6 +890,7 @@ class Client {
     }
     if (this.isManagerVersionCompatibleWith('26.3.0')) {
       this._features['session-scheduling-history'] = true;
+      this._features['download-archive'] = true;
     }
     if (this.isManagerVersionCompatibleWith('26.4.0')) {
       this._features['update-user-v2'] = true;
@@ -897,6 +898,7 @@ class Client {
       this._features['rbac'] = true;
       this._features['bulk-purge-users'] = true;
       this._features['route-health-status'] = true;
+      this._features['model-card-v2'] = true;
     }
   }
 
@@ -2566,6 +2568,28 @@ class VFolder {
       })}`;
       return fetch(downloadUrl);
     }
+  }
+
+  /**
+   * Request a download archive token for multiple files/directories.
+   *
+   * @param {Array<string>} files - List of relative file paths from vfolder root to archive.
+   * @param {string} name - Virtual folder name.
+   * @param {string} [filename] - Custom filename for the downloaded ZIP archive.
+   * @returns {Promise<{token: string, url: string}>} Token and URL for downloading the archive.
+   */
+  async request_download_archive(
+    files: Array<string>,
+    name: string,
+    filename?: string,
+  ): Promise<any> {
+    const body: Record<string, any> = { files };
+    if (filename) {
+      body.filename = filename;
+    }
+    const rqstUrl = `${this.urlPrefix}/${name}/request-download-archive`;
+    const rqst = this.client.newSignedRequest('POST', rqstUrl, body);
+    return this.client._wrapWithPromise(rqst);
   }
 
   /**

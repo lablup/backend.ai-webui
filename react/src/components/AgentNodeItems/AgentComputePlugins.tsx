@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { BAIDoubleTag, BAITag } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { graphql, useFragment } from 'react-relay';
 import { AgentComputePluginsFragment$key } from 'src/__generated__/AgentComputePluginsFragment.graphql';
 

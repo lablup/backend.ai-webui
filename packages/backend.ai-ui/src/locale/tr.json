@@ -277,6 +277,7 @@
     "SelectFolder": "Klasör Seç"
   },
   "comp:FileExplorer": {
+    "ArchiveDownloadStarted": "{{count}} öğe indirilmeye başlandı.",
     "Controls": "Kontroller",
     "CreateANewFile": "Create a new file",
     "CreateANewFolder": "Yeni bir klasör oluşturun",
@@ -285,6 +286,7 @@
     "CreatedAt": "Yaratılmış",
     "DeleteSelectedItemDesc": "Silinen dosyalar ve klasörler geri yüklenemez. \nDevam etmek ister misin?",
     "DeleteSelectedItemsDialog": "Onay Sil",
+    "DownloadSelected": "İndir",
     "DownloadStarted": "Dosya \"{{fileName}}\" indirme başlatıldı.",
     "DragAndDropDesc": "Yüklemek için dosyaları bu alana sürükleyin ve bırakın.",
     "DuplicatedFiles": "Üzerine Yazın Onay",

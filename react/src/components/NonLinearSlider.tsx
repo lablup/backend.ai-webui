@@ -4,7 +4,7 @@
  */
 import useControllableState_deprecated from '../hooks/useControllableState';
 import { Slider, type SliderSingleProps } from 'antd';
-import _, { isNumber } from 'lodash';
+import * as _ from 'lodash-es';
 import React from 'react';
 
 export type StepType =
@@ -66,7 +66,7 @@ const NonLinearSlider: React.FC<NonLinearSliderProps> = ({
       min={0}
       tooltip={{
         formatter(value) {
-          if (isNumber(value)) {
+          if (_.isNumber(value)) {
             return normalizedSteps[value]?.label;
           }
         },

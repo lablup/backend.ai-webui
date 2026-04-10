@@ -35,7 +35,7 @@ import {
   BAIFlex,
   useErrorMessageResolver,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { CheckIcon } from 'lucide-react';
 import Markdown from 'markdown-to-jsx';
 import React, {

@@ -1,11 +1,13 @@
 import useControllableState_deprecated from '../../../../react/src/hooks/useControllableState';
 import { useUpdatableState } from '../hooks';
 import { InputNumber, InputNumberProps } from 'antd';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React, { useEffect } from 'react';
 
-export interface BAIDynamicStepInputNumberProps
-  extends Omit<InputNumberProps, 'step' | 'value' | 'onChange'> {
+export interface BAIDynamicStepInputNumberProps extends Omit<
+  InputNumberProps,
+  'step' | 'value' | 'onChange'
+> {
   dynamicSteps?: number[];
   value: number;
   onChange: (value: number) => void;

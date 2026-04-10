@@ -7,7 +7,7 @@ import { ScalingGroupOpts } from './ResourceGroupList';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { Descriptions, Tag, Typography, theme } from 'antd';
 import { BAIModal, BAIModalProps, BAIFlex } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';

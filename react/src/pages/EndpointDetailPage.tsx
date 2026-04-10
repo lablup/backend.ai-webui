@@ -80,7 +80,7 @@ import {
   BAIFetchKeyButton,
 } from 'backend.ai-ui';
 import { default as dayjs } from 'dayjs';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import {
   BotMessageSquareIcon,
   CircleArrowDownIcon,
@@ -177,6 +177,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
     endpoint_auto_scaling_rules,
     routes,
     healthyRoutes,
+    deploymentScopedSchedulingHistories,
   } = useLazyLoadQuery<EndpointDetailPageQuery>(
     graphql`
       query EndpointDetailPageQuery(
@@ -200,10 +201,14 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
         $routeOffset: Int
         $skipRouteNodes: Boolean!
         $skipRoutings: Boolean!
+        $schedulingHistoryScope: DeploymentScope!
+        $schedulingHistoryFilter: DeploymentHistoryFilter
+        $skipSchedulingHistories: Boolean!
       ) {
         endpoint(endpoint_id: $endpointId) {
           name
           status
+          lifecycle_stage
           endpoint_id
           project
           image_object {
@@ -331,6 +336,13 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
         ) @skipOnClient(if: $skipRouteNodes) {
           count
         }
+        deploymentScopedSchedulingHistories(
+          scope: $schedulingHistoryScope
+          filter: $schedulingHistoryFilter
+          limit: 1
+        ) @skipOnClient(if: $skipSchedulingHistories) {
+          count
+        }
       }
     `,
     {
@@ -384,6 +396,9 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
         deferredRoutePagination.pageSize,
       skipRouteNodes: !baiClient.supports('route-node'),
       skipRoutings: baiClient.supports('route-node'),
+      schedulingHistoryScope: { deploymentId: serviceId || '' },
+      schedulingHistoryFilter: { toStatus: ['READY'] },
+      skipSchedulingHistories: !baiClient.supports('model-card-v2'),
     },
     {
       fetchPolicy:
@@ -400,6 +415,8 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
   const hasAnyHealthyRoute = baiClient.supports('route-node')
     ? (healthyRoutes?.count ?? 0) > 0
     : endpoint?.status === 'HEALTHY';
+
+  const hasReachedReady = (deploymentScopedSchedulingHistories?.count ?? 0) > 0;
 
   const mutationToClearError = useTanMutation({
     mutationFn: () => {
@@ -560,21 +577,23 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
       label: t('modelService.AdditionalMounts'),
       children: (
         <BAIFlex direction="column" align="start">
-          {_.map(endpoint?.extra_mounts, (vfolder) => {
-            return vfolder ? (
-              <Typography.Link
-                key={vfolder.row_id}
-                onClick={() => {
-                  vfolder.row_id && open(vfolder.row_id);
-                }}
-              >
-                <BAIFlex direction="row" gap={'xs'}>
-                  <VFolderNodeIdenticon vfolderNodeIdenticonFrgmt={vfolder} />{' '}
-                  {vfolder.name}
-                </BAIFlex>
-              </Typography.Link>
-            ) : null;
-          })}
+          {_.map(
+            filterOutNullAndUndefined(endpoint?.extra_mounts),
+            (vfolder) => {
+              return (
+                <Typography.Link
+                  onClick={() => {
+                    vfolder?.row_id && open(vfolder?.row_id);
+                  }}
+                >
+                  <BAIFlex direction="row" gap={'xs'} key={vfolder?.row_id}>
+                    <VFolderNodeIdenticon vfolderNodeIdenticonFrgmt={vfolder} />{' '}
+                    {vfolder?.name}
+                  </BAIFlex>
+                </Typography.Link>
+              );
+            },
+          )}
         </BAIFlex>
       ),
     },
@@ -664,6 +683,47 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
           </BAIFetchKeyButton>
         </BAIFlex>
       </BAIFlex>
+      {!hasReachedReady &&
+        !hasAnyHealthyRoute &&
+        !isEndpointInDestroyingCategory(endpoint) &&
+        endpoint?.replicas !== 0 && (
+          <Alert
+            type="info"
+            showIcon
+            icon={<LoadingOutlined />}
+            title={t('modelService.PreparingService')}
+            description={t('modelService.PreparingServiceDescription')}
+            style={{ marginBottom: token.marginSM }}
+          />
+        )}
+      {hasAnyHealthyRoute &&
+        !isEndpointInDestroyingCategory(endpoint) &&
+        !_.includes(blockList, 'chat') && (
+          <Alert
+            type="success"
+            showIcon
+            title={t('modelService.ServiceReady')}
+            description={t('modelService.ServiceReadyDescription')}
+            style={{ marginBottom: token.marginSM }}
+            action={
+              <Button
+                type="primary"
+                size="small"
+                icon={<BotMessageSquareIcon size={14} />}
+                onClick={() => {
+                  webuiNavigate({
+                    pathname: '/chat',
+                    search: new URLSearchParams({
+                      endpointId: endpoint?.endpoint_id ?? '',
+                    }).toString(),
+                  });
+                }}
+              >
+                {t('modelService.StartChat')}
+              </Button>
+            }
+          />
+        )}
       {isProjectMismatch && endpoint?.project && (
         <Alert
           title={t('modelService.NotInProject')}

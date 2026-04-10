@@ -277,6 +277,7 @@
     "SelectFolder": "Seleziona cartella"
   },
   "comp:FileExplorer": {
+    "ArchiveDownloadStarted": "Download di {{count}} elemento(i) avviato.",
     "ChangeFileExtension": "Modificare l'estensione del file",
     "ChangeFileExtensionDesc": "La modifica dell'estensione del file può far sì che il file diventi inutilizzabile o si aprirà in modo errato. \nVuoi procedere?",
     "Controls": "Controlli",
@@ -287,6 +288,7 @@
     "CreatedAt": "Creato a",
     "DeleteSelectedItemDesc": "I file e le cartelle cancellati non possono essere ripristinati. \nVuoi procedere?",
     "DeleteSelectedItemsDialog": "Elimina la conferma",
+    "DownloadSelected": "Scarica",
     "DownloadStarted": "File \"{{fileName}}\" è stato avviato il download.",
     "DragAndDropDesc": "Trascina i file in quest'area da caricare.",
     "DuplicatedFiles": "Sovrascrivere la conferma",

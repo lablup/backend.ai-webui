@@ -7,7 +7,7 @@ import { FileOutlined, FolderOutlined } from '@ant-design/icons';
 import { useMutation } from '@tanstack/react-query';
 import { App, Form, Input, theme, Typography, type GetProps } from 'antd';
 import { createStyles } from 'antd-style';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { CornerDownLeftIcon } from 'lucide-react';
 import { use, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';

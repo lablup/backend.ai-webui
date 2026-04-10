@@ -2,15 +2,15 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { ModelCardModalFragment$key } from '../__generated__/ModelCardModalFragment.graphql';
+import { LegacyModelCardModalFragment$key } from '../__generated__/LegacyModelCardModalFragment.graphql';
 import {
   useBackendAIImageMetaData,
   useSuspendedBackendaiClient,
 } from '../hooks';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
+import LegacyModelTryContentButton from './LegacyModelTryContentButton';
 import ModelCloneModal from './ModelCloneModal';
-import ModelTryContentButton from './ModelTryContentButton';
 import VFolderNodeIdenticon from './VFolderNodeIdenticon';
 import { BankOutlined, FileOutlined, CopyOutlined } from '@ant-design/icons';
 import {
@@ -36,18 +36,18 @@ import {
   toLocalId,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { FolderX } from 'lucide-react';
 import Markdown from 'markdown-to-jsx';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
-interface ModelCardModalProps extends BAIModalProps {
-  modelCardModalFrgmt?: ModelCardModalFragment$key | null;
+interface LegacyModelCardModalProps extends BAIModalProps {
+  modelCardModalFrgmt?: LegacyModelCardModalFragment$key | null;
   onRequestClose: () => void;
 }
-const ModelCardModal: React.FC<ModelCardModalProps> = ({
+const LegacyModelCardModal: React.FC<LegacyModelCardModalProps> = ({
   modelCardModalFrgmt = null,
   onRequestClose,
   ...props
@@ -65,7 +65,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
 
   const model_card = useFragment(
     graphql`
-      fragment ModelCardModalFragment on ModelCard {
+      fragment LegacyModelCardModalFragment on ModelCard {
         id
         name
         author
@@ -87,7 +87,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
           name
           cloneable
           ...ModelCloneModalVFolderFragment
-          ...ModelTryContentButtonVFolderFragment
+          ...LegacyModelTryContentButtonVFolderFragment
           ...VFolderNodeIdenticonFragment
         }
         error_msg
@@ -136,7 +136,7 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
                 </Tooltip>
               }
             >
-              <ModelTryContentButton
+              <LegacyModelTryContentButton
                 vfolderNode={model_card?.vfolder_node || null}
               />
             </Suspense>
@@ -411,4 +411,4 @@ const ModelCardModal: React.FC<ModelCardModalProps> = ({
   );
 };
 
-export default ModelCardModal;
+export default LegacyModelCardModal;

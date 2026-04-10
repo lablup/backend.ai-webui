@@ -2,7 +2,7 @@ import BAIFlex from './BAIFlex';
 import BAIText from './BAIText';
 import BAITextHighlighter from './BAITextHighlighter';
 import { Tag } from 'antd';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React from 'react';
 
 export type DoubleTagObjectValue = {

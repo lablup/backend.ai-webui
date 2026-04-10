@@ -45,7 +45,7 @@ import {
   mergeFilterValues,
   useUpdatableState,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React, {
   Suspense,
   useDeferredValue,
@@ -566,6 +566,16 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                         value: 'rw',
                       },
                     ],
+                  },
+                  {
+                    key: 'cloneable',
+                    propertyLabel: t('data.folders.Cloneable'),
+                    type: 'boolean',
+                  },
+                  {
+                    key: 'quota_scope_id',
+                    propertyLabel: t('data.QuotaScopeId'),
+                    type: 'string',
                   },
                 ]}
                 value={queryParams.filter || undefined}

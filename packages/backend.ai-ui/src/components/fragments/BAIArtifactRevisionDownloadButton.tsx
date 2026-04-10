@@ -1,12 +1,14 @@
 import { BAIArtifactRevisionDownloadButtonFragment$key } from '../../__generated__/BAIArtifactRevisionDownloadButtonFragment.graphql';
 import BAIButton, { BAIButtonProps } from '../BAIButton';
 import { theme } from 'antd';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { Download } from 'lucide-react';
 import { graphql, useFragment } from 'react-relay';
 
-export interface BAIArtifactRevisionDownloadButtonProps
-  extends Omit<BAIButtonProps, 'icon'> {
+export interface BAIArtifactRevisionDownloadButtonProps extends Omit<
+  BAIButtonProps,
+  'icon'
+> {
   loading?: boolean;
   revisionsFrgmt: BAIArtifactRevisionDownloadButtonFragment$key;
 }

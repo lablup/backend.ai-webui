@@ -1,10 +1,12 @@
 import { BAIProjectResourcePolicySelectQuery } from '../../__generated__/BAIProjectResourcePolicySelectQuery.graphql';
 import BAISelect, { BAISelectProps } from '../BAISelect';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-export interface BAIProjectResourcePolicySelectProps
-  extends Omit<BAISelectProps, 'options'> {}
+export interface BAIProjectResourcePolicySelectProps extends Omit<
+  BAISelectProps,
+  'options'
+> {}
 
 const BAIProjectResourcePolicySelect = ({
   ...selectProps

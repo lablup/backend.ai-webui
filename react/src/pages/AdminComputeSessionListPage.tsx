@@ -30,7 +30,7 @@ import {
   useBAILogger,
   useFetchKey,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { PowerOffIcon } from 'lucide-react';
 import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import { useDeferredValue, useEffect, useRef, useState } from 'react';

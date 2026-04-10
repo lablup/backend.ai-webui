@@ -10,7 +10,7 @@ import { statusInfoTagColor } from './SessionStatusDetailModal';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Tag, Tooltip, theme } from 'antd';
 import { BAIFlex, BAITag } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { CircleAlertIcon } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';

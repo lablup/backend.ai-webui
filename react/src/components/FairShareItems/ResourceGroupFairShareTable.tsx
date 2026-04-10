@@ -17,7 +17,7 @@ import {
   ResourceTypeIcon,
   useResourceSlotsDetails,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';

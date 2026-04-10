@@ -29,7 +29,7 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { Download } from 'lucide-react';
 import { useDeferredValue, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';

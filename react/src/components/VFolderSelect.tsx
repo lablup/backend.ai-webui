@@ -11,7 +11,7 @@ import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import { ReloadOutlined } from '@ant-design/icons';
 import { Button, Select, type SelectProps, Space, Tooltip } from 'antd';
 import { useUpdatableState, BAIFlex } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { FolderOpenIcon, PlusIcon } from 'lucide-react';
 import React, { startTransition, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';

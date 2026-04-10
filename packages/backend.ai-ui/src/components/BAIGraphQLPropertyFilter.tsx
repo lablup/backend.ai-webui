@@ -14,7 +14,7 @@ import {
 } from 'antd';
 import type { AutoCompleteProps, GetRef } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React, {
   useEffect,
   useEffectEvent,

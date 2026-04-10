@@ -5,7 +5,7 @@
 import { useTanQuery } from './reactQueryAlias';
 import { useBAISettingUserState } from './useBAISetting';
 import { useEventNotStable, useUpdatableState } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { useCallback, useMemo } from 'react';
 
 export interface AIAgentMeta {

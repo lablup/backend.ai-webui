@@ -26,7 +26,7 @@ import {
   toLocalId,
   useUpdatableState,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { BanIcon, Brain, UndoIcon } from 'lucide-react';
 import React, { useMemo, useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';

@@ -1,28 +1,14 @@
-import { useSuspenseTanQuery } from '../helper/reactQueryAlias';
-import { useBAISignedRequestWithPromise, useUpdatableState } from '../hooks';
+import { useProjectResourceGroups } from '../hooks';
 import BAISelect, { BAISelectProps } from './BAISelect';
 import BAITextHighlighter from './BAITextHighlighter';
 import { useControllableValue } from 'ahooks';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React, { useEffect, useState, useTransition } from 'react';
-
-interface ScalingGroupItem {
-  name: string;
-}
-
-interface VolumeInfo {
-  backend: string;
-  capabilities: string[];
-  usage: {
-    percentage: number;
-  };
-  sftp_scaling_groups?: string[];
-}
 
 interface BAIProjectResourceGroupSelectProps extends BAISelectProps {
   projectName: string;
   autoSelectDefault?: boolean;
-  filter?: (projectName: string) => boolean;
+  filter?: (resourceGroupName: string) => boolean;
 }
 
 const BAIProjectResourceGroupSelect: React.FC<
@@ -35,8 +21,6 @@ const BAIProjectResourceGroupSelect: React.FC<
   loading,
   ...selectProps
 }) => {
-  const baiRequestWithPromise = useBAISignedRequestWithPromise();
-  const [fetchKey] = useUpdatableState('first');
   const [controllableSearchValue, setControllableSearchValue] =
     useControllableValue<string>({
       value:
@@ -60,57 +44,7 @@ const BAIProjectResourceGroupSelect: React.FC<
     [startChangeTransition, setControllableValueDoNotUseWithoutTransition],
   );
 
-  const { data: resourceGroupSelectQueryResult } = useSuspenseTanQuery<
-    | [
-        {
-          scaling_groups: ScalingGroupItem[];
-        },
-        {
-          allowed: string[];
-          default: string;
-          volume_info: {
-            [key: string]: VolumeInfo;
-          };
-        },
-      ]
-    | null
-  >({
-    queryKey: ['ResourceGroupSelectQuery', projectName],
-    queryFn: () => {
-      const search = new URLSearchParams();
-      search.set('group', projectName);
-      return Promise.all([
-        baiRequestWithPromise({
-          method: 'GET',
-          url: `/scaling-groups?${search.toString()}`,
-        }),
-        baiRequestWithPromise({
-          method: 'GET',
-          url: `/folders/_/hosts`,
-        }),
-      ]);
-    },
-    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
-    fetchKey: fetchKey,
-  });
-
-  const sftpResourceGroups = _.flatMap(
-    resourceGroupSelectQueryResult?.[1]?.volume_info,
-    (item) => item?.sftp_scaling_groups ?? [],
-  );
-
-  const resourceGroups = _.filter(
-    resourceGroupSelectQueryResult?.[0]?.scaling_groups,
-    (item: ScalingGroupItem) => {
-      if (_.includes(sftpResourceGroups, item.name)) {
-        return false;
-      }
-      if (filter) {
-        return filter(item.name);
-      }
-      return true;
-    },
-  );
+  const { resourceGroups } = useProjectResourceGroups(projectName, { filter });
 
   // If the current selected value is not in the resourceGroups, reset the value to undefined
   useEffect(() => {

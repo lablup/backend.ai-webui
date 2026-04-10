@@ -65,7 +65,7 @@
     "classnames": "catalog:",
     "dayjs": "catalog:",
     "i18next": "catalog:",
-    "lodash": "catalog:",
+    "lodash-es": "catalog:",
     "lucide-react": "catalog:",
     "react-copy-to-clipboard": "catalog:",
     "react-draggable": "^4.5.0",
@@ -85,7 +85,7 @@
     "@testing-library/user-event": "catalog:",
     "@trivago/prettier-plugin-sort-imports": "catalog:",
     "@types/big.js": "catalog:",
-    "@types/lodash": "catalog:",
+    "@types/lodash-es": "catalog:",
     "@types/react": "catalog:",
     "@types/react-copy-to-clipboard": "catalog:",
     "@types/react-dom": "catalog:",
@@ -137,8 +137,25 @@
           }
         }
       ],
-      "^.+\\.(js|jsx|ts|tsx)$": "babel-jest"
+      "^.+\\.(js|jsx)$": [
+        "babel-jest",
+        {
+          "presets": [
+            [
+              "@babel/preset-env",
+              {
+                "targets": {
+                  "node": "current"
+                }
+              }
+            ]
+          ]
+        }
+      ]
     },
+    "transformIgnorePatterns": [
+      "node_modules/(?!(\\.pnpm/.+?/node_modules/lodash-es/|lodash-es/))"
+    ],
     "setupFilesAfterEnv": [
       "./setupTests.ts"
     ],

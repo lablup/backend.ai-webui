@@ -34,7 +34,7 @@ import {
   INITIAL_FETCH_KEY,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { BanIcon, PlusIcon, UndoIcon } from 'lucide-react';
 import { useDeferredValue, useEffect, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';

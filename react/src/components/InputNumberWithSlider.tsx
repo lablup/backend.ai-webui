@@ -13,7 +13,7 @@ import {
 } from 'antd';
 import { SliderRangeProps } from 'antd/es/slider';
 import { useUpdatableState, BAIFlex } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React, { useEffect } from 'react';
 
 type OmitControlledProps<T> = Omit<T, 'value' | 'onChange'>;

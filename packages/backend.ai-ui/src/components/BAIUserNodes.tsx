@@ -13,7 +13,7 @@ import {
   BAIUserNodesFragment$key,
 } from '../__generated__/BAIUserNodesFragment.graphql';
 import dayjs from 'dayjs';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import { useFragment } from 'react-relay';
 import { graphql } from 'relay-runtime';

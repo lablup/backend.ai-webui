@@ -1,5 +1,5 @@
 import { useEventNotStable } from './useEventNotStable';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { useState, useTransition, useMemo, useRef, useEffect } from 'react';
 import { GraphQLTaggedNode, useLazyLoadQuery } from 'react-relay';
 import { OperationType } from 'relay-runtime';

@@ -11,7 +11,7 @@ import VFolderTable, {
 } from './VFolderTable';
 import { App, Form, type FormItemProps, Input } from 'antd';
 import { useEventNotStable } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -48,13 +48,16 @@ const VFolderTableFormItem: React.FC<VFolderTableFormItemProps> = ({
         rules={[
           {
             validator(_rule, map) {
-              const arr = _.chain(form.getFieldValue('mount_ids'))
-                .reduce((result, name) => {
-                  result[name] = map[name] || '/home/work/' + name;
-                  return result;
-                }, {} as AliasMap)
-                .values()
-                .value();
+              const arr = _.values(
+                _.reduce(
+                  form.getFieldValue('mount_ids'),
+                  (result, name) => {
+                    result[name] = map[name] || '/home/work/' + name;
+                    return result;
+                  },
+                  {} as AliasMap,
+                ),
+              );
               if (_.uniq(arr).length !== arr.length) {
                 return Promise.reject(
                   t('session.launcher.FolderAliasOverlapping'),

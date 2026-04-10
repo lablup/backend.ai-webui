@@ -11,7 +11,7 @@ import { useUpdateEffect } from 'ahooks';
 import { Badge, theme, Tooltip, Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import { BAICard, BAICardProps, BAIRowWrapWithDividers } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React, { useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';

@@ -4,7 +4,7 @@ import { FolderInfoContext } from './BAIFileExplorer';
 import { useQuery } from '@tanstack/react-query';
 import { App } from 'antd';
 import { RcFile } from 'antd/es/upload';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { use, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 

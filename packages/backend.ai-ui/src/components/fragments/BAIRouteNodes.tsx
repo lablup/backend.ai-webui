@@ -23,7 +23,7 @@ import useConnectedBAIClient from '../provider/BAIClientProvider/hooks/useConnec
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { theme } from 'antd';
 import dayjs from 'dayjs';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 

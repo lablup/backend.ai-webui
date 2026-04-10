@@ -106,6 +106,8 @@ const ModelCloneModal: React.FC<ModelCloneModalProps> = ({
                     upsertNotification({
                       key: 'modelStore.clone.' + vfolder.id,
                       open: true,
+                      description: '', // Clear any stale error from previous attempt
+                      extraDescription: '',
                       backgroundTask: {
                         status: 'pending',
                         percent: 0,

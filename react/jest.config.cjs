@@ -22,7 +22,7 @@ module.exports = {
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
   },
   transformIgnorePatterns: [
-    'node_modules/(?!(\\.pnpm/.+?/node_modules/(backend\\.ai-ui|nuqs)/|backend\\.ai-ui/|nuqs/))',
+    'node_modules/(?!(\\.pnpm/.+?/node_modules/(backend\\.ai-ui|nuqs|lodash-es)/|backend\\.ai-ui/|nuqs/|lodash-es/))',
     `!${path.resolve(__dirname, '../packages/backend.ai-ui/src')}`,
   ],
   transform: {

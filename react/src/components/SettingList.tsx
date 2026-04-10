@@ -17,7 +17,7 @@ import {
 } from 'antd';
 import { createStyles } from 'antd-style';
 import { BAIModal, BAIFlex, BAIButton } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React, { useState, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -145,7 +145,7 @@ const SettingList: React.FC<SettingPageProps> = ({
   const [activeTabKey, setActiveTabKey] = useState('all');
 
   const searchedItemFilter = (item: SettingItemProps) => {
-    return _([item.title, item.description])
+    return [item.title, item.description]
       .map((val) => (typeof val === 'string' ? val.toLowerCase() : ''))
       .some((val) => val.includes(searchValue.toLowerCase()));
   };

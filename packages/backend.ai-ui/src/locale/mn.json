@@ -277,6 +277,7 @@
     "SelectFolder": "Хавтас сонгох"
   },
   "comp:FileExplorer": {
+    "ArchiveDownloadStarted": "{{count}} зүйлийн таталт эхэллээ.",
     "ChangeFileExtension": "Файлын өргөтгөлийг өөрчлөх",
     "ChangeFileExtensionDesc": "Файлын өргөтгөлийг өөрчлөх нь файлыг ашиглах боломжгүй эсвэл буруу нээхэд хүргэж болзошгүй юм. \nТа үргэлжлүүлэхийг хүсч байна уу?",
     "Controls": "Удирдлага",
@@ -287,6 +288,7 @@
     "CreatedAt": "Бүтэмж дээр бүтсэн",
     "DeleteSelectedItemDesc": "Устгасан файлууд, хавтасыг сэргээх боломжгүй байна. \nТа үргэлжлүүлэхийг хүсч байна уу?",
     "DeleteSelectedItemsDialog": "Баталгаажуулалтыг устгах",
+    "DownloadSelected": "Татаж авах",
     "DownloadStarted": "Файл \"{{fileName}} нь\" Татаж авах ажил эхэллээ.",
     "DragAndDropDesc": "Байршуулахын тулд энэ газарт файлуудыг чирч, буулгана уу.",
     "DuplicatedFiles": "Баталгаажуулалтыг дарж бичих",

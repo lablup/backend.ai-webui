@@ -277,6 +277,7 @@
     "SelectFolder": "Valitse kansio"
   },
   "comp:FileExplorer": {
+    "ArchiveDownloadStarted": "Lataus aloitettu: {{count}} kohdetta.",
     "ChangeFileExtension": "Vaihda tiedoston laajennus",
     "ChangeFileExtensionDesc": "Tiedoston laajennuksen muuttaminen voi aiheuttaa tiedoston käyttökelvottoman tai avoimen väärin. \nHaluatko edetä?",
     "Controls": "Hallintalaitteet",
@@ -287,6 +288,7 @@
     "CreatedAt": "Luotu jhk",
     "DeleteSelectedItemDesc": "Poistettuja tiedostoja ja kansioita ei voida palauttaa. \nHaluatko edetä?",
     "DeleteSelectedItemsDialog": "Poista vahvistus",
+    "DownloadSelected": "Lataa",
     "DownloadStarted": "Tiedosto \"{{fileName}}\" lataus on alkanut.",
     "DragAndDropDesc": "Vedä ja pudota tiedostoja tälle alueelle ladataksesi.",
     "DuplicatedFiles": "Korvata vahvistus",

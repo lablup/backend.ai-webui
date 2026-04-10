@@ -33,6 +33,11 @@ export interface BAIClient {
       name: string,
       archive?: boolean,
     ) => Promise<VFolderDownloadToken>;
+    request_download_archive: (
+      files: Array<string>,
+      name: string,
+      filename?: string,
+    ) => Promise<VFolderDownloadToken>;
     create_upload_session: (
       path: string,
       fs: object,

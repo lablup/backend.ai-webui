@@ -27,7 +27,7 @@ import {
   type MenuProps,
 } from 'antd';
 import { filterOutEmpty, BAIFlex } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { ArrowLeftIcon, SettingsIcon } from 'lucide-react';
 import React, { useContext, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';

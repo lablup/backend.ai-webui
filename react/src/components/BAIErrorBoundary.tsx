@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { useActiveErrorBoundaryControl } from '../hooks/useActiveErrorBoundary';
 import { isLoginSessionExpiredState } from './LoginSessionExtendButton';
 import { ReloadOutlined } from '@ant-design/icons';
 import { Alert, Button, Result, theme, Typography } from 'antd';
@@ -76,9 +77,22 @@ const BAIErrorBoundary: React.FC<BAIErrorBoundaryProps> = ({
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const isExpiredLoginSession = useAtomValue(isLoginSessionExpiredState);
+  const { markTriggered, markReset } = useActiveErrorBoundaryControl();
   return (
     <ErrorBoundary
       {...props}
+      onError={(error, info) => {
+        // Increment the active error boundary count so navigation links
+        // (e.g. WebUILink) know that the React tree is in an inconsistent
+        // state and should fall back to a full page reload instead of SPA
+        // navigation.
+        markTriggered();
+        props.onError?.(error, info);
+      }}
+      onReset={(details) => {
+        markReset();
+        props.onReset?.(details);
+      }}
       fallbackRender={({ error, resetErrorBoundary }) => {
         const isLoginSessionExpiredError =
           isExpiredLoginSession ||

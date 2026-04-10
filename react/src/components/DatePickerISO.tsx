@@ -7,7 +7,7 @@ import { DatePicker } from 'antd';
 import { PickerProps } from 'antd/es/date-picker/generatePicker';
 import { GetRef } from 'antd/lib';
 import dayjs, { Dayjs } from 'dayjs';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React from 'react';
 
 export interface DatePickerISOProps extends Omit<

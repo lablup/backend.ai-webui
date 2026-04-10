@@ -20,7 +20,7 @@ import {
   BAIFlex,
   BAIUnmountAfterClose,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { Fullscreen } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';

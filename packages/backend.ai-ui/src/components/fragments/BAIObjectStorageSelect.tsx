@@ -6,12 +6,14 @@ import TotalFooter from '../TotalFooter';
 import { useControllableValue } from 'ahooks';
 import { Skeleton } from 'antd';
 import { GetRef } from 'antd/lib';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { useDeferredValue, useEffect, useRef, useState } from 'react';
 import { graphql } from 'relay-runtime';
 
-export interface BAIObjectStorageSelectProps
-  extends Omit<BAISelectProps, 'options' | 'labelInValue'> {
+export interface BAIObjectStorageSelectProps extends Omit<
+  BAISelectProps,
+  'options' | 'labelInValue'
+> {
   fetchKey?: string;
 }
 

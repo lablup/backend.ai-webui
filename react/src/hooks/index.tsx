@@ -5,7 +5,7 @@
 import { getOS, preserveDotStartCase } from '../helper';
 import { useSuspenseTanQuery } from './reactQueryAlias';
 import { MenuKeys } from './useWebUIMenuItems';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { useEffect, useMemo, useState } from 'react';
 import { NavigateOptions, To, useNavigate } from 'react-router-dom';
 
@@ -172,6 +172,11 @@ export type BackendAIClient = {
       file: string,
       name: string,
       archive?: boolean,
+    ) => Promise<any>;
+    request_download_archive: (
+      files: Array<string>,
+      name: string,
+      filename?: string,
     ) => Promise<any>;
     create_upload_session: (
       path: string,
@@ -486,20 +491,14 @@ export const useBackendAIImageMetaData = () => {
         return architecture;
       },
       tagAlias: (tag: string) => {
-        return (
-          metadata?.tagAlias[tag] ??
-          _.chain(metadata.tagReplace)
-            .toPairs()
-            .find(([regExpStr]) => new RegExp(regExpStr).test(tag))
-            .thru((pair) => {
-              if (pair) {
-                const [regExpStr, replaceStr] = pair;
-                return _.replace(tag, new RegExp(regExpStr), replaceStr);
-              }
-            })
-            .value() ??
-          preserveDotStartCase(tag)
+        const matchedPair = _.find(
+          _.toPairs(metadata.tagReplace),
+          ([regExpStr]) => new RegExp(regExpStr).test(tag),
         );
+        const replaced = matchedPair
+          ? _.replace(tag, new RegExp(matchedPair[0]), matchedPair[1] as string)
+          : undefined;
+        return metadata?.tagAlias[tag] ?? replaced ?? preserveDotStartCase(tag);
       },
       ...imageParser,
     },

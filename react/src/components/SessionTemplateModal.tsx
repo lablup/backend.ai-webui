@@ -25,7 +25,7 @@ import {
   BAITag,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { PinIcon } from 'lucide-react';
 import React, { Key, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -93,9 +93,7 @@ const SessionTemplateModal: React.FC<SessionTemplateModalProps> = ({
       ...parseToFormValues(history, true),
     }));
 
-    return _.chain([...pinned, ...recent])
-      .unionBy('id')
-      .value();
+    return _.unionBy([...pinned, ...recent], 'id');
   }, [sessionHistory, pinnedSessionHistory]);
 
   return (

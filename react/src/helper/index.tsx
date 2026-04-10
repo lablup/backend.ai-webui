@@ -12,7 +12,7 @@ import Big from 'big.js';
 import dayjs from 'dayjs';
 import { Duration } from 'dayjs/plugin/duration';
 import { TFunction } from 'i18next';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 
 export const newLineToBrElement = (
   text: string,

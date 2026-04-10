@@ -16,7 +16,7 @@ import AllowedVfolderHostsWithPermission from './BAIAllowedVfolderHostsWithPermi
 import { DeleteOutlined, SettingOutlined } from '@ant-design/icons';
 import { App, Popconfirm, Tag, theme } from 'antd';
 import dayjs from 'dayjs';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { BanIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';

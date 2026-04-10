@@ -5,7 +5,7 @@
 import { useSessionNodeLiveStatSessionFragment$key } from '../__generated__/useSessionNodeLiveStatSessionFragment.graphql';
 import { useBAILogger } from 'backend.ai-ui';
 import { Big } from 'big.js';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { useMemo } from 'react';
 import { graphql, useFragment } from 'react-relay';
 

@@ -12,7 +12,7 @@ import BAIArtifactStatusTag from './BAIArtifactStatusTag';
 import { Tag } from 'antd';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
@@ -22,11 +22,10 @@ export type ArtifactRevision = NonNullable<
   NonNullable<BAIArtifactRevisionTableArtifactRevisionFragment$data>[number]
 >;
 
-export interface BAIArtifactRevisionTableProps
-  extends Omit<
-    BAITableProps<ArtifactRevision>,
-    'dataSource' | 'columns' | 'rowKey'
-  > {
+export interface BAIArtifactRevisionTableProps extends Omit<
+  BAITableProps<ArtifactRevision>,
+  'dataSource' | 'columns' | 'rowKey'
+> {
   artifactRevisionFrgmt: BAIArtifactRevisionTableArtifactRevisionFragment$key;
   latestRevisionFrgmt:
     | BAIArtifactRevisionTableLatestRevisionFragment$key

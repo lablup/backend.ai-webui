@@ -39,7 +39,7 @@ import {
   INITIAL_FETCH_KEY,
   useFetchKey,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { BanIcon, EditIcon, PlusIcon, UndoIcon } from 'lucide-react';
 import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import React, { useState, useTransition, useDeferredValue } from 'react';
@@ -464,7 +464,7 @@ const UserManagement: React.FC<UserManagementProps> = () => {
         rowSelection={{
           type: 'checkbox',
           onChange: (keys) => {
-            const userNodes = _.chain(user_nodes?.edges).compact().value();
+            const userNodes = _.compact(user_nodes?.edges);
             setSelectedUserList(() => {
               return userNodes.filter(
                 (edge) => edge.node && keys.includes(edge?.node.id),

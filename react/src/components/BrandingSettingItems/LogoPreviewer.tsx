@@ -6,7 +6,7 @@ import { App, Image, Space, Tooltip, Typography, Upload } from 'antd';
 import { createStyles } from 'antd-style';
 import { BAIButton, BAIFlex, BAIUncontrolledInput } from 'backend.ai-ui';
 import { t } from 'i18next';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { ImagePlus } from 'lucide-react';
 import { useCustomThemeConfig } from 'src/hooks/useCustomThemeConfig';
 import { useUserCustomThemeConfig } from 'src/hooks/useUserCustomThemeConfig';

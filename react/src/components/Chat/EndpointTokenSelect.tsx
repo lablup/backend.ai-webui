@@ -10,7 +10,7 @@ import { useControllableValue } from 'ahooks';
 import { Input, Select } from 'antd';
 import type { SelectProps } from 'antd';
 import dayjs from 'dayjs';
-import { castArray, sortBy } from 'lodash';
+import { castArray, sortBy } from 'lodash-es';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';

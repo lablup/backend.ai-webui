@@ -38,7 +38,7 @@ import {
   INITIAL_FETCH_KEY,
   useFetchKey,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { Ban, ChartNoAxesCombined } from 'lucide-react';
 import {
   parseAsJson,
@@ -873,8 +873,8 @@ const FairShareList: React.FC = () => {
           onRequestClose={(success) => {
             if (success) {
               updateFetchKey();
+              setSelectedRows([]);
             }
-            setSelectedRows([]);
             setSelectedSingleRow(null);
             setOpenWeightSettingModal(false);
           }}
