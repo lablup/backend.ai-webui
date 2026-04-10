@@ -634,7 +634,7 @@ export const routes: RouteObject[] = [
       <BAIErrorBoundary>
         <DefaultProvidersForReactRoot>
           <Suspense>
-            <LoginView />
+            <LoginView waitForMainLayout={false} />
           </Suspense>
           <LogoutEventHandler />
           <InteractiveLoginPage />
