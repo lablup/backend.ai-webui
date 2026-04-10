@@ -11,7 +11,7 @@ import {
   Typography,
 } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React from 'react';
 
 const { Text } = Typography;

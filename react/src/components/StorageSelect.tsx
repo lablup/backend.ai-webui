@@ -13,7 +13,7 @@ import {
   BAISelectProps,
   StorageUsageBadge,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 

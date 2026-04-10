@@ -15,7 +15,7 @@ import {
   useErrorMessageResolver,
   useBAILogger,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { useEffect, useEffectEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 

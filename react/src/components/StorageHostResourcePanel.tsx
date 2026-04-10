@@ -6,7 +6,7 @@ import { StorageHostResourcePanelFragment$key } from '../__generated__/StorageHo
 import { convertToDecimalUnit, usageIndicatorColor } from '../helper/index';
 import { Progress, Descriptions, Typography, Tag } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 

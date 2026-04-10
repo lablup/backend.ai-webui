@@ -7,7 +7,7 @@ import { preserveDotStartCase } from '../helper';
 import { useBackendAIImageMetaData } from '../hooks';
 import { Tag } from 'antd';
 import { BAIDoubleTag, BAIFlex, DoubleTagObjectValue } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React from 'react';
 import { graphql, useFragment } from 'react-relay';
 

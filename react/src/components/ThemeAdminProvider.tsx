@@ -10,7 +10,7 @@ import {
   type ConfigProviderProps,
   type ThemeConfig,
 } from 'antd';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React, { useContext } from 'react';
 
 const ThemeAdminProvider: React.FC<ConfigProviderProps> = ({ ...props }) => {

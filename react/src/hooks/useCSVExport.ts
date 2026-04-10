@@ -6,7 +6,7 @@ import {
   useBAISignedRequestWithPromise,
   useErrorMessageResolver,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 
 type SupportedNodeKeys = 'sessions' | 'users' | 'projects' | 'audit-logs';

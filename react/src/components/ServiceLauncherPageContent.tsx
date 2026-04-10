@@ -87,7 +87,7 @@ import {
   BAIResourceNumberWithIcon,
   BAIButton,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React, {
   Suspense,
   useCallback,

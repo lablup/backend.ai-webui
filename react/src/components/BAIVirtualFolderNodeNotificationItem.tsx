@@ -7,7 +7,7 @@ import { useToggle } from 'ahooks';
 import { Card, List, theme, Typography } from 'antd';
 import { BAIFlex, BAILink, BAINotificationItem, BAIText } from 'backend.ai-ui';
 import dayjs from 'dayjs';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 import { useNavigate } from 'react-router-dom';

@@ -36,7 +36,7 @@ import {
   useUpdatableState,
 } from 'backend.ai-ui';
 import classNames from 'classnames';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React, {
   memo,
   useEffect,

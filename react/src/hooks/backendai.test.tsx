@@ -11,7 +11,7 @@ import {
   baseResourceSlotNames,
 } from './backendai';
 import Ajv from 'ajv';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 
 const ajv = new Ajv();
 

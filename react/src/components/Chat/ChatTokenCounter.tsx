@@ -8,7 +8,7 @@ import { UIMessage } from 'ai';
 import { Typography, Tag, Divider } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import { t } from 'i18next';
-import { map, last } from 'lodash';
+import { map, last } from 'lodash-es';
 import React, { useMemo } from 'react';
 
 interface ChatTokenCounterProps {

@@ -10,7 +10,7 @@ import SFTPServerButton from './SFTPServerButton';
 import VFolderNodeIdenticon from './VFolderNodeIdenticon';
 import { theme, Typography, Skeleton, Grid } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React, { Suspense } from 'react';
 import { graphql, useFragment } from 'react-relay';
 

@@ -4,7 +4,7 @@
  */
 import { useSuspendedBackendaiClient } from '.';
 import { useSuspenseTanQuery } from './reactQueryAlias';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 
 export type TemplateItem = {
   category: string;

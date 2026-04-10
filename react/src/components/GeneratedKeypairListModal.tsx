@@ -12,7 +12,7 @@ import {
   BAITable,
   BAIText,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { DownloadIcon } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';

@@ -7,7 +7,7 @@ import { hooksUsingRelay_KeyPairQuery } from '../__generated__/hooksUsingRelay_K
 import { hooksUsingRelay_KeyPairResourcePolicyQuery } from '../__generated__/hooksUsingRelay_KeyPairResourcePolicyQuery.graphql';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { useUpdatableState } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { useCallback } from 'react';
 import { graphql, FetchPolicy, useLazyLoadQuery } from 'react-relay';
 

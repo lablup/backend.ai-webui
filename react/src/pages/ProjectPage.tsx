@@ -22,7 +22,7 @@ import {
   useBAILogger,
   useUpdatableState,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';

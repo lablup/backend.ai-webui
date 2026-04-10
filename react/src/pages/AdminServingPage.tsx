@@ -19,7 +19,7 @@ import {
   mergeFilterValues,
   useUpdatableState,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { parseAsString, useQueryStates } from 'nuqs';
 import React, { Suspense, useDeferredValue, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';

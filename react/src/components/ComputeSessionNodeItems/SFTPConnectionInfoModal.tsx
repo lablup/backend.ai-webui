@@ -6,7 +6,7 @@ import SourceCodeView from '../SourceCodeView';
 import { Alert, Descriptions } from 'antd';
 import { createStyles } from 'antd-style';
 import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { useTranslation, Trans } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 import { SFTPConnectionInfoModalFragment$key } from 'src/__generated__/SFTPConnectionInfoModalFragment.graphql';

@@ -14,7 +14,7 @@ import {
   processMemoryValue,
   ResourceStatistics,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { useTransition, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useRefetchableFragment } from 'react-relay';

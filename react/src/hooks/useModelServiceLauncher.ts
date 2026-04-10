@@ -21,7 +21,7 @@ import {
   useMultiStepNotification,
 } from '../hooks/useMultiStepNotification';
 import { ESMClientErrorResponse, generateRandomString } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { parse as parseToml } from 'smol-toml';

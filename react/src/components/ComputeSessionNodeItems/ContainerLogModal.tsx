@@ -20,7 +20,7 @@ import {
   Typography,
 } from 'antd';
 import { BAIFlex, BAIModal, BAIModalProps, BAISelect } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { DownloadIcon } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';

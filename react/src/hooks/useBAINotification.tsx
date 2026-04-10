@@ -11,7 +11,7 @@ import { App } from 'antd';
 import { createStyles } from 'antd-style';
 import { ArgsProps } from 'antd/lib/notification';
 import { atom, useAtomValue, useSetAtom } from 'jotai';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React, { Key, ReactNode, useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { To, createPath } from 'react-router-dom';

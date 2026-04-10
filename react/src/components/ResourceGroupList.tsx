@@ -32,7 +32,7 @@ import {
   BAIFetchKeyButton,
   BAINameActionCell,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { BanIcon, UndoIcon } from 'lucide-react';
 import { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';

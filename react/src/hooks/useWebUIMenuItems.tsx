@@ -42,7 +42,7 @@ import {
   BAISessionsIcon,
   filterOutEmpty,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import {
   Activity,
   BotMessageSquare,

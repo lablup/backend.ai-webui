@@ -28,7 +28,7 @@ import { App, ConfigProvider, Layout, type LayoutProps, theme } from 'antd';
 import { createStyles } from 'antd-style';
 import { BAIFlex } from 'backend.ai-ui';
 import { atom, useSetAtom } from 'jotai';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React, {
   Suspense,
   useEffect,

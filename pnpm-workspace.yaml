@@ -20,6 +20,7 @@ catalog:
   '@types/big.js': ^6.2.2
   '@types/jest': ^30.0.0
   '@types/lodash': ^4.17.24
+  '@types/lodash-es': ^4.17.12
   '@types/node': ^22.19.15
   '@types/react': ^19.2.14
   '@types/react-copy-to-clipboard': ^5.0.7
@@ -48,6 +49,7 @@ catalog:
   jest-environment-jsdom: ^30.2.0
   jsonc-eslint-parser: ^2.4.2
   lodash: ^4.17.23
+  lodash-es: ^4.17.21
   lucide-react: ^0.552.0
   marked: ^16.4.2
   prettier: ^3.8.1

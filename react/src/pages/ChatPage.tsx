@@ -17,7 +17,7 @@ import { createStyles } from 'antd-style';
 import { BAIFlex, BAICard, BAITable } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { t } from 'i18next';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { HistoryIcon, PlusIcon, TrashIcon } from 'lucide-react';
 import { Suspense, useState } from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';

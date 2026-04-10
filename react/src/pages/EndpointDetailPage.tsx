@@ -80,7 +80,7 @@ import {
   BAIFetchKeyButton,
 } from 'backend.ai-ui';
 import { default as dayjs } from 'dayjs';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import {
   BotMessageSquareIcon,
   CircleArrowDownIcon,

@@ -12,7 +12,7 @@ import { UIMessage } from '@ai-sdk/react';
 import { FileCard } from '@ant-design/x';
 import { theme, Image, Collapse, Typography, Spin } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React, { memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 

@@ -26,7 +26,7 @@ import {
   BAISelect,
   BAIProjectResourceGroupSelect,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { CheckIcon } from 'lucide-react';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';

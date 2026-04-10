@@ -19,7 +19,7 @@ import {
   BAIDynamicUnitInputNumberProps,
   BAIFlex,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 

@@ -22,7 +22,7 @@ import {
   useResourceSlotsDetails,
   useFetchKey,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { ReactNode, useDeferredValue, useMemo, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 

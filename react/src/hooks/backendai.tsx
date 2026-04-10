@@ -15,7 +15,7 @@ import {
   useUpdatableState,
   useViewer,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { useEffect, useState } from 'react';
 
 export const baseResourceSlotNames = ['cpu', 'mem'] as const;

@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useSuspendedBackendaiClient } from '../hooks';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React, { useEffect } from 'react';
 import { Navigate, NavigateProps } from 'react-router-dom';
 

@@ -15,7 +15,7 @@ import { usePromiseTracker } from '../../usePromiseTracker';
 import { Card, Checkbox, type ModalProps, Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import { filterOutEmpty, BAIFlex, BAIModal } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {

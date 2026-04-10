@@ -26,7 +26,7 @@ import {
   BAIVFolderSelectRef,
   toLocalId,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { FolderOpenIcon, PlusIcon, RefreshCwIcon, XIcon } from 'lucide-react';
 import React, {
   Suspense,
@@ -180,8 +180,7 @@ const VFolderMountFormItem: React.FC<VFolderMountFormItemProps> = ({
                       icon={<FolderOpenIcon />}
                       disabled={_.isEmpty(form.getFieldValue('mount_ids'))}
                       onClick={() => {
-                        const mountIds =
-                          form.getFieldValue('mount_ids') || [];
+                        const mountIds = form.getFieldValue('mount_ids') || [];
                         if (mountIds.length > 0) {
                           openFolderExplorer(toLocalId(mountIds[0]));
                         }

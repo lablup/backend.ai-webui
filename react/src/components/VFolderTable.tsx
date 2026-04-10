@@ -41,7 +41,7 @@ import {
   useUpdatableState,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { PlusIcon } from 'lucide-react';
 import React, {
   useCallback,
@@ -442,8 +442,9 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
                 }
               >
                 {() => {
-                  const allAliasPathMap = _(selectedRowKeys).reduce(
-                    (result, name) => {
+                  const allAliasPathMap = _.reduce(
+                    selectedRowKeys,
+                    (result: AliasMap, name) => {
                       result[name] =
                         aliasMap?.[name] || inputToAliasPath(name, undefined);
 

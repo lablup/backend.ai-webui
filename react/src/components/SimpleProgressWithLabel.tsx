@@ -8,7 +8,7 @@ import {
   BAIProgressWithLabel,
   toFixedFloorWithoutTrailingZeros,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 
 interface SimpleProgressWithLabelProps {
   size: 'small' | 'default';

@@ -5,7 +5,7 @@
 import ChatMessage, { ChatMessageProps } from './ChatMessage';
 import CopyButton from './CopyButton';
 import Compact from 'antd/es/space/Compact';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 
 export const AssistantChatMessage: React.FC<ChatMessageProps> = ({
   message,

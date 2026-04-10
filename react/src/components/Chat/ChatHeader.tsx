@@ -25,7 +25,7 @@ import {
   Tooltip,
 } from 'antd';
 import { filterOutEmpty, BAIFlex } from 'backend.ai-ui';
-import { isEmpty } from 'lodash';
+import { isEmpty } from 'lodash-es';
 import {
   ScaleIcon,
   EraserIcon,

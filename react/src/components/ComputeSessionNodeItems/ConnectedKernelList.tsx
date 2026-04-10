@@ -18,7 +18,7 @@ import {
   BAIUnmountAfterClose,
   BAIDoubleTag,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { ScrollTextIcon } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';

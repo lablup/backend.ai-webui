@@ -37,7 +37,7 @@ import {
   BAINameActionCell,
   BAIDeleteConfirmModal,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { EllipsisIcon } from 'lucide-react';
 import React, { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';

@@ -25,7 +25,7 @@ import {
   toLocalId,
   mergeFilterValues,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { PlusIcon } from 'lucide-react';
 import { startTransition, useRef } from 'react';
 import { useTranslation } from 'react-i18next';

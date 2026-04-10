@@ -5,7 +5,7 @@
 import { ImportArtifactRevisionToFolderButtonFragment$key } from '../__generated__/ImportArtifactRevisionToFolderButtonFragment.graphql';
 import { theme } from 'antd';
 import { BAIButton, BAIButtonProps } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { FolderInput } from 'lucide-react';
 import React from 'react';
 import { graphql, useFragment } from 'react-relay';

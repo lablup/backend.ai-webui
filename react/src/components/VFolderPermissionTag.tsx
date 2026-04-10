@@ -4,7 +4,7 @@
  */
 import { VFolderPermissionTag_VFolder$key } from '../__generated__/VFolderPermissionTag_VFolder.graphql';
 import { BAIDoubleTag, DoubleTagObjectValue } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React from 'react';
 import { graphql, useFragment } from 'react-relay';
 

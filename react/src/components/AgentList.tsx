@@ -27,7 +27,7 @@ import {
   BAIAgentTable,
   BAIUnmountAfterClose,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { parseAsString, useQueryStates } from 'nuqs';
 import React, { useState, useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';

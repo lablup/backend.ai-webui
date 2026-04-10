@@ -11,7 +11,7 @@ import TotalResourceWithinResourceGroup, {
 import { SettingOutlined } from '@ant-design/icons';
 import { Button, Dropdown, type MenuProps, Skeleton, theme } from 'antd';
 import { filterOutEmpty, BAICard, BAICardProps } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React, { Suspense, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';

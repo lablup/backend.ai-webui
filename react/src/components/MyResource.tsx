@@ -17,7 +17,7 @@ import {
   useResourceSlotsDetails,
   useFetchKey,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { ReactNode, useTransition } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 

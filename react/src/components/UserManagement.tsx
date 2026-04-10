@@ -39,7 +39,7 @@ import {
   INITIAL_FETCH_KEY,
   useFetchKey,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { BanIcon, EditIcon, PlusIcon, UndoIcon } from 'lucide-react';
 import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import React, { useState, useTransition, useDeferredValue } from 'react';

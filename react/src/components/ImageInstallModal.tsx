@@ -10,7 +10,7 @@ import { SessionResources } from '../pages/SessionLauncherPage';
 import { EnvironmentImage } from './ImageList';
 import { List, Typography } from 'antd';
 import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { Dispatch, SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
 

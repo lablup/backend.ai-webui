@@ -5,7 +5,7 @@
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Button, Result, Skeleton, theme, Tooltip } from 'antd';
 import { BAICard, BAIFlex } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { parseAsString, useQueryStates } from 'nuqs';
 import { Suspense } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';

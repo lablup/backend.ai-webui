@@ -20,7 +20,7 @@ import {
   InputProps,
 } from 'antd';
 import { BAILink, toLocalId, useErrorMessageResolver } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { CornerDownLeftIcon } from 'lucide-react';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';

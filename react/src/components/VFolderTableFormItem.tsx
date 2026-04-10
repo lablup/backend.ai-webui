@@ -11,7 +11,7 @@ import VFolderTable, {
 } from './VFolderTable';
 import { App, Form, type FormItemProps, Input } from 'antd';
 import { useEventNotStable } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 

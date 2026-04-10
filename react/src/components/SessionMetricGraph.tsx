@@ -16,7 +16,7 @@ import { Empty, Typography, theme } from 'antd';
 import { createStyles } from 'antd-style';
 import { useResourceSlotsDetails, BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { useMemo } from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import {

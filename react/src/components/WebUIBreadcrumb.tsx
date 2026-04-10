@@ -5,7 +5,7 @@
 import WebUILink from './WebUILink';
 import { Breadcrumb, theme } from 'antd';
 import { BAIFlex, BAIFlexProps } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMatches } from 'react-router-dom';

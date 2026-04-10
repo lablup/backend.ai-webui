@@ -13,7 +13,7 @@ import { Badge, Button, Tooltip, Typography, type ButtonProps } from 'antd';
 import { BAIText } from 'backend.ai-ui';
 import { t } from 'i18next';
 import { atom, useAtom } from 'jotai';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React, { useEffect } from 'react';
 import useKeyboardShortcut from 'src/hooks/useKeyboardShortcut';
 

@@ -5,7 +5,7 @@
 import { getOS, preserveDotStartCase } from '../helper';
 import { useSuspenseTanQuery } from './reactQueryAlias';
 import { MenuKeys } from './useWebUIMenuItems';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { useEffect, useMemo, useState } from 'react';
 import { NavigateOptions, To, useNavigate } from 'react-router-dom';
 

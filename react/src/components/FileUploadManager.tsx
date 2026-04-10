@@ -14,7 +14,7 @@ import {
 } from 'backend.ai-ui';
 import { atom, useAtom, useSetAtom } from 'jotai';
 import { atomFamily } from 'jotai-family';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import PQueue from 'p-queue';
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';

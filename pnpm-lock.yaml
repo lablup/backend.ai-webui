@@ -48,6 +48,9 @@ catalogs:
     '@types/lodash':
       specifier: ^4.17.24
       version: 4.17.24
+    '@types/lodash-es':
+      specifier: ^4.17.12
+      version: 4.17.12
     '@types/node':
       specifier: ^22.19.15
       version: 22.19.15
@@ -131,6 +134,9 @@ catalogs:
       version: 2.4.2
     lodash:
       specifier: ^4.17.23
+      version: 4.17.23
+    lodash-es:
+      specifier: ^4.17.21
       version: 4.17.23
     lucide-react:
       specifier: ^0.552.0
@@ -828,6 +834,9 @@ importers:
       lodash:
         specifier: 'catalog:'
         version: 4.17.23
+      lodash-es:
+        specifier: 'catalog:'
+        version: 4.17.23
       lucide-react:
         specifier: 'catalog:'
         version: 0.552.0(react@19.2.4)
@@ -967,6 +976,9 @@ importers:
       '@types/lodash':
         specifier: 'catalog:'
         version: 4.17.24
+      '@types/lodash-es':
+        specifier: 'catalog:'
+        version: 4.17.12
       '@types/node':
         specifier: 'catalog:'
         version: 22.19.15
@@ -5410,6 +5422,9 @@ packages:
 
   '@types/keyv@3.1.4':
     resolution: {integrity: sha512-BQ5aZNSCpj7D6K2ksrRCTmKRLEpnPvWDiLPfoGyhZ++8YtiK9d/3DBKPJgry359X/P1PfruyYwvnvwFjuEiEIg==}
+
+  '@types/lodash-es@4.17.12':
+    resolution: {integrity: sha512-0NgftHUcV4v34VhXm8QBSftKVXtbkBG3ViCjs6+eJ5a6y6Mi/jiFGPc1sC7QK+9BFhWrURE3EOggmWaSxL9OzQ==}
 
   '@types/lodash@4.17.24':
     resolution: {integrity: sha512-gIW7lQLZbue7lRSWEFql49QJJWThrTFFeIMJdp3eH4tKoxm1OvEPg02rm4wCCSHS0cL3/Fizimb35b7k8atwsQ==}
@@ -17949,7 +17964,7 @@ snapshots:
       antd: 6.3.3(date-fns@3.6.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       antd-style: 3.7.1(@types/react@19.2.14)(antd@6.3.3(date-fns@3.6.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       emoji-regex: 10.6.0
-      lodash-es: 4.17.21
+      lodash-es: 4.17.23
       lucide-react: 0.469.0(react@19.2.4)
       react: 19.2.4
       react-dom: 19.2.4(react@19.2.4)
@@ -20184,6 +20199,10 @@ snapshots:
   '@types/keyv@3.1.4':
     dependencies:
       '@types/node': 25.3.5
+
+  '@types/lodash-es@4.17.12':
+    dependencies:
+      '@types/lodash': 4.17.24
 
   '@types/lodash@4.17.24': {}
 

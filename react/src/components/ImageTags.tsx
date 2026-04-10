@@ -9,7 +9,7 @@ import ImageMetaIcon from './ImageMetaIcon';
 import TextHighlighter from './TextHighlighter';
 import { Tag, type TagProps, theme } from 'antd';
 import { BAIDoubleTag, BAIFlex, DoubleTagObjectValue } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 

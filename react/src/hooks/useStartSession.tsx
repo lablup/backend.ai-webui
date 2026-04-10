@@ -9,7 +9,7 @@ import {
   useCurrentResourceGroupState,
 } from './useCurrentProject';
 import { generateRandomString, toGlobalId } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import { fetchQuery, graphql, useRelayEnvironment } from 'react-relay';
 import { useStartSessionCreationQuery } from 'src/__generated__/useStartSessionCreationQuery.graphql';

@@ -5,7 +5,7 @@
 import { backendaiClientPromise } from '.';
 import { atom, useAtom } from 'jotai';
 import { atomWithDefault } from 'jotai/utils';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { useEffect, useEffectEvent } from 'react';
 import { fetchQuery, graphql, useRelayEnvironment } from 'react-relay';
 import {

@@ -4,7 +4,7 @@
  */
 import type { ChatModel } from './ChatModel';
 import { Select, type SelectProps } from 'antd';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 
 interface ModelSelectProps extends SelectProps {

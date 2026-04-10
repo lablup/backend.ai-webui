@@ -6,7 +6,7 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import { theme } from 'antd';
 import { BAIAlert, BAIAlertProps } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import Markdown from 'markdown-to-jsx';
 import React from 'react';
 

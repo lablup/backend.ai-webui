@@ -38,7 +38,7 @@ import {
   INITIAL_FETCH_KEY,
   useFetchKey,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { Ban, ChartNoAxesCombined } from 'lucide-react';
 import {
   parseAsJson,

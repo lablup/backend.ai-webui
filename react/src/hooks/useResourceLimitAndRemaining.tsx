@@ -10,7 +10,7 @@ import { addNumberWithUnits, convertToBinaryUnit } from '../helper';
 import { ResourceSlotName, useResourceSlots } from '../hooks/backendai';
 import { useSuspenseTanQuery } from './reactQueryAlias';
 import { useResourceGroupsForCurrentProject } from './useCurrentProject';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { useMemo } from 'react';
 import { graphql, useFragment } from 'react-relay';
 

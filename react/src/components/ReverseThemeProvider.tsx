@@ -4,7 +4,7 @@
  */
 import { useCustomThemeConfig } from '../hooks/useCustomThemeConfig';
 import { theme, ConfigProvider, type ConfigProviderProps } from 'antd';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React, { useContext } from 'react';
 
 interface ReverseThemeProviderProps extends ConfigProviderProps {

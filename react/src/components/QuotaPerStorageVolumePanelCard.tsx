@@ -13,7 +13,7 @@ import StorageSelect from './StorageSelect';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Col, Empty, Row, theme, Tooltip, Typography } from 'antd';
 import { BAICard, BAICardProps, BAIFlex } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';

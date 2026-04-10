@@ -36,7 +36,7 @@ import {
   toLocalId,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { FolderX } from 'lucide-react';
 import Markdown from 'markdown-to-jsx';
 import React, { Suspense, useState } from 'react';
