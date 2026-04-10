@@ -15,54 +15,49 @@ search box on each column header.
 
 ## ユーザーの作成と更新
 
-A ユーザー can be created by clicking the '+Create User' button. Note that the password
-must be longer or equal to 8 characters and at least 1 alphabet/special
-character/ number should be included. The maximum length allowed for E-Mail and Username is 64.
+「+ ユーザーを作成」ボタンをクリックしてユーザーを作成できます。パスワードは8文字以上で、アルファベット、特殊文字、数字をそれぞれ1つ以上含む必要があります。メールアドレス、ユーザー名、フルネームの最大長は64文字です。
 
 同じメールアドレスまたはユーザー名のユーザーが既に存在する場合、ユーザーアカウントを作成することはできません。他のメールアドレスとユーザー名を試してください。
 
 ![](../images/create_user_dialog.png)
 
-Check if the user is created.
+
+ユーザーが作成されたことを確認します。
 
 ![](../images/check_if_user_created.png)
 
-Click the green button in the Controls panel for more detailed user
-information. You can also check the domain and project information where the
-user belongs.
+「コントロール」列の緑色のボタンをクリックすると、より詳細なユーザー情報を確認できます。ユーザーが所属するドメインやプロジェクトの情報も確認できます。
 
 ![](../images/user_detail_dialog.png)
 
-Click the 'Setting (Gear)' in the Controls panel to update information of a user who
-already exists. User's name, password, activation state, etc. can be changed. User ID cannot be changed.
+「コントロール」列の「設定」ボタンをクリックすると、既存のユーザー情報を更新できます。ユーザー名、パスワード、有効化状態などを変更できます。ユーザーID（メールアドレス）は変更できません。
 
 ![](../images/user_update_dialog.png)
 
-Each of the five items at the bottom of the dialog has the following functions.
 
-- User Status: Indicates the user's status. Inactive users cannot log
-  in. Before Verification is a status indicates that a user needs an additional
-  step to activate the account such as email verification or an approval from an
-  admin. Note that the inactive users are listed in the Inactive tab separately.
+ユーザー作成/更新ダイアログには、以下のフィールドが含まれています。
+
+- **Eメール**: ユーザーのメールアドレスで、ログインIDとして使用されます。作成後は変更できません。
+- **ユーザー名**: ユーザーの一意の識別子です（最大64文字）。
+- **フルネーム**: ユーザーの表示名です（最大64文字）。
+- **パスワード**: 8文字以上で、アルファベット、特殊文字、数字をそれぞれ1つ以上含む必要があります。
+- **説明**: ユーザーに関するオプションの説明です（最大500文字）。
+- **ユーザーステータス**: ユーザーの状態を示します。Inactiveユーザーはログインできません。Before Verificationは、メール認証や管理者の承認など、アカウントを有効化するための追加手順が必要な状態を示します。Inactiveユーザーは別途Inactiveタブに表示されます。
 
   ![](../images/active_user_selection.png)
 
-- Require password change?: If the admin has chosen random passwords while
-  creating users in batches, this field can be set to ON to indicate that
-  password change is required. The users will see the top bar that notify user
-  to update their password, but this is a kind of descriptive flag which has no
-  effect on actual use.
-- Enable sudo session: Allow the user to use sudo in the compute session.
-  This is useful when the user needs to install packages or run commands that
-  require root privileges. However, it is not recommended to enable this option
-  for all users, as it may cause security issues.
-- 2FA Enabled: A flag indicating whether the user uses two-factor authentication.
-  When using two-factor authentication, users are additionally required to enter an
-  OTP code when logging in. Administrators can only disable two-factor authentication
-  for other users.
-- Resource Policy: From Backend.AI version 24.09, you can select the user resource policy
-  to which the user belongs. For more information about user resource policies, please
-  refer [user resource policy](#user-resource-policy) section.
+- **役割**: ユーザーの役割（user、admin、superadmin）。現在のユーザーの権限によって選択可能なオプションが異なります。
+- **ドメイン**: ユーザーが所属するドメインです。ユーザーの作成時と更新時の両方で設定できます。
+- **プロジェクト**: ユーザーが所属するプロジェクトを1つ以上選択します。選択したドメインによって利用可能なプロジェクトが異なります。
+- **パスワードの変更が必要**: 管理者がユーザーを一括作成する際にランダムパスワードを選択した場合、このフィールドをONに設定してパスワード変更が必要であることを示せます。ユーザーにはパスワードの更新を促すトップバーが表示されますが、これは説明的なフラグであり、実際の使用には影響しません。
+- **sudoセッションを有効にする**: ユーザーがコンピュートセッションでsudoを使用できるようにします。ユーザーがroot権限を必要とするパッケージのインストールやコマンドの実行時に便利です。ただし、セキュリティ上の問題を引き起こす可能性があるため、すべてのユーザーに対してこのオプションを有効にすることは推奨されません。
+- **2要素認証が有効**: ユーザーが二要素認証を使用しているかどうかを示すフラグです。二要素認証を使用している場合、ユーザーはログイン時に追加でOTPコードの入力が必要です。管理者は他のユーザーの二要素認証のみを無効化できます。
+- **リソースポリシー**: Backend.AIバージョン24.09から、ユーザーが所属するユーザーリソースポリシーを選択できます。ユーザーリソースポリシーの詳細については、[ユーザーリソースポリシー](#user-resource-policy)セクションを参照してください。
+- **許可されたクライアントIP**: このユーザーアカウントでシステムにアクセスできるIPアドレスを制限します。IPアドレスまたはCIDR表記で入力します（例：`10.20.30.40`、`10.20.30.0/24`）。空の場合、すべてのIPからのアクセスが許可されます。
+- **コンテナUID**: コンテナ内のプロセスに割り当てられる数値ユーザーIDです。ファイル権限の目的でコンテナが特定のUIDと一致する必要がある場合に便利です。
+- **コンテナGID**: コンテナ内のプロセスに割り当てられるデフォルトの数値グループIDです。
+- **補助GID**: コンテナプロセスに割り当てられる追加の数値グループIDです。複数のGIDをカンマで区切って入力します。
+- **メインアクセスキー**: （編集時のみ）ユーザーのキーペアの中からAPI認証に使用するメインアクセスキーを選択します。
 
 <a id="bulk-create-users"></a>
 

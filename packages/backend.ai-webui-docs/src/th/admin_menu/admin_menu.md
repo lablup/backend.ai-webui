@@ -15,54 +15,49 @@ search box on each column header.
 
 ## สร้างและปรับปรุงผู้ใช้
 
-A ผู้ใช้ can be created by clicking the '+Create User' button. Note that the password
-must be longer or equal to 8 characters and at least 1 alphabet/special
-character/ number should be included. The maximum length allowed for E-Mail and Username is 64.
+สามารถสร้างผู้ใช้ได้โดยคลิกปุ่ม '+ สร้างผู้ใช้' โปรดทราบว่ารหัสผ่านต้องมีความยาว 8 ตัวอักษรขึ้นไป และต้องมีตัวอักษร ตัวอักขระพิเศษ และตัวเลขอย่างน้อยอย่างละ 1 ตัว ความยาวสูงสุดที่อนุญาตสำหรับ E-Mail, Username และชื่อเต็ม คือ 64 ตัวอักษร
 
 หากผู้ใช้ที่มีอีเมลหรือชื่อผู้ใช้งานเดียวกันมีอยู่แล้ว จะไม่สามารถสร้างบัญชีผู้ใช้ได้ กรุณาลองใช้อีเมลและชื่อผู้ใช้งานอื่น
 
 ![](../images/create_user_dialog.png)
 
-Check if the user is created.
+
+ตรวจสอบว่าผู้ใช้ถูกสร้างแล้ว
 
 ![](../images/check_if_user_created.png)
 
-Click the green button in the Controls panel for more detailed user
-information. You can also check the domain and project information where the
-user belongs.
+คลิกปุ่มสีเขียวในคอลัมน์ 'การควบคุม' เพื่อดูข้อมูลผู้ใช้โดยละเอียด คุณยังสามารถตรวจสอบข้อมูลโดเมนและโปรเจกต์ที่ผู้ใช้สังกัดอยู่ได้
 
 ![](../images/user_detail_dialog.png)
 
-Click the 'Setting (Gear)' in the Controls panel to update information of a user who
-already exists. User's name, password, activation state, etc. can be changed. User ID cannot be changed.
+คลิกปุ่ม 'การตั้งค่า' ในคอลัมน์ 'การควบคุม' เพื่ออัปเดตข้อมูลของผู้ใช้ที่มีอยู่แล้ว สามารถเปลี่ยนชื่อผู้ใช้ รหัสผ่าน สถานะการเปิดใช้งาน เป็นต้น User ID (อีเมล) ไม่สามารถเปลี่ยนแปลงได้
 
 ![](../images/user_update_dialog.png)
 
-Each of the five items at the bottom of the dialog has the following functions.
 
-- User Status: Indicates the user's status. Inactive users cannot log
-  in. Before Verification is a status indicates that a user needs an additional
-  step to activate the account such as email verification or an approval from an
-  admin. Note that the inactive users are listed in the Inactive tab separately.
+กล่องโต้ตอบสร้าง/อัปเดตผู้ใช้ประกอบด้วยฟิลด์ต่อไปนี้:
+
+- **อีเมล**: ที่อยู่อีเมลของผู้ใช้ ใช้เป็น ID สำหรับเข้าสู่ระบบ ไม่สามารถเปลี่ยนแปลงได้หลังจากสร้างแล้ว
+- **ชื่อผู้ใช้**: ตัวระบุเฉพาะของผู้ใช้ (สูงสุด 64 ตัวอักษร)
+- **ชื่อเต็ม**: ชื่อที่แสดงของผู้ใช้ (สูงสุด 64 ตัวอักษร)
+- **รหัสผ่าน**: ต้องมีอย่างน้อย 8 ตัวอักษร และมีตัวอักษร ตัวอักขระพิเศษ และตัวเลขอย่างน้อยอย่างละ 1 ตัว
+- **คำอธิบาย**: คำอธิบายเพิ่มเติมสำหรับผู้ใช้ (สูงสุด 500 ตัวอักษร)
+- **สถานะผู้ใช้**: แสดงสถานะของผู้ใช้ ผู้ใช้ Inactive ไม่สามารถเข้าสู่ระบบได้ Before Verification เป็นสถานะที่บ่งบอกว่าผู้ใช้ต้องดำเนินการเพิ่มเติมเพื่อเปิดใช้งานบัญชี เช่น การยืนยันอีเมลหรือการอนุมัติจากผู้ดูแลระบบ ผู้ใช้ Inactive จะแสดงแยกในแท็บ Inactive
 
   ![](../images/active_user_selection.png)
 
-- Require password change?: If the admin has chosen random passwords while
-  creating users in batches, this field can be set to ON to indicate that
-  password change is required. The users will see the top bar that notify user
-  to update their password, but this is a kind of descriptive flag which has no
-  effect on actual use.
-- Enable sudo session: Allow the user to use sudo in the compute session.
-  This is useful when the user needs to install packages or run commands that
-  require root privileges. However, it is not recommended to enable this option
-  for all users, as it may cause security issues.
-- 2FA Enabled: A flag indicating whether the user uses two-factor authentication.
-  When using two-factor authentication, users are additionally required to enter an
-  OTP code when logging in. Administrators can only disable two-factor authentication
-  for other users.
-- Resource Policy: From Backend.AI version 24.09, you can select the user resource policy
-  to which the user belongs. For more information about user resource policies, please
-  refer [user resource policy](#user-resource-policy) section.
+- **บทบาท**: บทบาทของผู้ใช้ (user, admin, superadmin) ตัวเลือกที่มีจะขึ้นอยู่กับสิทธิ์ของผู้ใช้ปัจจุบัน
+- **โดเมน**: โดเมนที่ผู้ใช้สังกัด สามารถกำหนดหรือแก้ไขได้ทั้งขณะสร้างผู้ใช้ใหม่และแก้ไขผู้ใช้
+- **โปรเจกต์**: เลือกโปรเจกต์หนึ่งรายการขึ้นไปที่ผู้ใช้จะสังกัด โปรเจกต์ที่มีจะขึ้นอยู่กับโดเมนที่เลือก
+- **ต้องเปลี่ยนรหัสผ่าน**: หากผู้ดูแลระบบเลือกรหัสผ่านแบบสุ่มขณะสร้างผู้ใช้เป็นกลุ่ม ฟิลด์นี้สามารถตั้งค่าเป็น ON เพื่อบ่งบอกว่าจำเป็นต้องเปลี่ยนรหัสผ่าน ผู้ใช้จะเห็นแถบด้านบนที่แจ้งให้อัปเดตรหัสผ่าน แต่นี่เป็นเพียงแฟล็กอธิบายซึ่งไม่มีผลต่อการใช้งานจริง
+- **เปิดใช้งานเซสชัน sudo**: อนุญาตให้ผู้ใช้ใช้ sudo ในเซสชันการคำนวณ สิ่งนี้มีประโยชน์เมื่อผู้ใช้ต้องติดตั้งแพ็กเกจหรือรันคำสั่งที่ต้องใช้สิทธิ์ root อย่างไรก็ตาม ไม่แนะนำให้เปิดใช้ตัวเลือกนี้สำหรับผู้ใช้ทุกคน เนื่องจากอาจทำให้เกิดปัญหาด้านความปลอดภัย
+- **2FA Enabled**: แฟล็กที่บ่งบอกว่าผู้ใช้ใช้การยืนยันตัวตนแบบสองปัจจัยหรือไม่ เมื่อใช้การยืนยันตัวตนแบบสองปัจจัย ผู้ใช้จะต้องกรอกรหัส OTP เพิ่มเติมเมื่อเข้าสู่ระบบ ผู้ดูแลระบบสามารถปิดการยืนยันตัวตนแบบสองปัจจัยของผู้ใช้อื่นได้เท่านั้น
+- **นโยบายทรัพยากร**: ตั้งแต่ Backend.AI เวอร์ชัน 24.09 คุณสามารถเลือกนโยบายทรัพยากรผู้ใช้ที่ผู้ใช้สังกัดได้ สำหรับข้อมูลเพิ่มเติมเกี่ยวกับนโยบายทรัพยากรผู้ใช้ โปรดดูที่ส่วน [นโยบายทรัพยากรผู้ใช้](#user-resource-policy)
+- **IP ไคลเอนต์ที่อนุญาต**: จำกัดที่อยู่ IP ที่สามารถเข้าถึงระบบโดยใช้บัญชีผู้ใช้นี้ ป้อนที่อยู่ IP หรือ CIDR (เช่น `10.20.30.40`, `10.20.30.0/24`) หากเว้นว่างไว้ อนุญาตให้เข้าถึงจาก IP ใดก็ได้
+- **UID คอนเทนเนอร์**: User ID ตัวเลขที่กำหนดให้กับกระบวนการภายในคอนเทนเนอร์ มีประโยชน์เมื่อคอนเทนเนอร์ต้องตรงกับ UID เฉพาะสำหรับวัตถุประสงค์ด้านสิทธิ์ไฟล์
+- **GID คอนเทนเนอร์**: Group ID ตัวเลขเริ่มต้นที่กำหนดให้กับกระบวนการภายในคอนเทนเนอร์
+- **GID เสริม**: Group ID ตัวเลขเพิ่มเติมที่กำหนดให้กับกระบวนการคอนเทนเนอร์ ป้อน GID หลายตัวโดยคั่นด้วยเครื่องหมายจุลภาค
+- **คีย์การเข้าถึงหลัก**: (แก้ไขเท่านั้น) เลือกคีย์การเข้าถึงหลักที่ใช้สำหรับการยืนยันตัวตน API จากคีย์แพร์ของผู้ใช้
 
 <a id="bulk-create-users"></a>
 

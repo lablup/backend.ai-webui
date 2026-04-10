@@ -15,12 +15,13 @@ search box on each column header.
 
 A user can be created by clicking the '+Create User' button. Note that the password
 must be longer or equal to 8 characters and at least 1 alphabet/special
-character/ number should be included. The maximum length allowed for E-Mail and Username is 64.
+character/number should be included. The maximum length allowed for E-Mail, User Name, and Full Name is 64 characters.
 
 If a user with the same email or username already exists, it is not possible to
 create a user account. Please try other email and username.
 
 ![](../images/create_user_dialog.png)
+
 
 Check if the user is created.
 
@@ -33,35 +34,49 @@ user belongs.
 ![](../images/user_detail_dialog.png)
 
 Click the 'Setting (Gear)' in the Controls panel to update information of a user who
-already exists. User's name, password, activation state, etc. can be changed. User ID cannot be changed.
+already exists. User's name, password, activation state, etc. can be changed. User ID (email) cannot be changed.
 
 ![](../images/user_update_dialog.png)
 
-Each of the five items at the bottom of the dialog has the following functions.
 
-- User Status: Indicates the user's status. Inactive users cannot log
-  in. Before Verification is a status indicates that a user needs an additional
+The user create/update dialog contains the following fields:
+
+- **E-Mail**: The user's email address, used as the login ID. Cannot be changed after creation.
+- **Username**: A unique identifier for the user (up to 64 characters).
+- **Full Name**: The user's display name (up to 64 characters).
+- **Password**: Must be at least 8 characters and include at least 1 alphabet, 1 special character, and 1 number.
+- **Description**: An optional description for the user (up to 500 characters).
+- **User Status**: Indicates the user's status. Inactive users cannot log
+  in. Before Verification is a status that indicates a user needs an additional
   step to activate the account such as email verification or an approval from an
   admin. Note that the inactive users are listed in the Inactive tab separately.
 
   ![](../images/active_user_selection.png)
 
-- Require password change?: If the admin has chosen random passwords while
+- **Role**: The user's role (user, admin, superadmin). Available options depend on the current user's permissions.
+- **Domain**: The domain to which the user belongs. This field is shown in both the create and update dialogs.
+- **Projects**: Select one or more projects for the user to belong to. The available projects depend on the domain shown in the dialog.
+- **Require password change?**: If the admin has chosen random passwords while
   creating users in batches, this field can be set to ON to indicate that
   password change is required. The users will see the top bar that notify user
   to update their password, but this is a kind of descriptive flag which has no
   effect on actual use.
-- Enable sudo session: Allow the user to use sudo in the compute session.
+- **Enable sudo session**: Allow the user to use sudo in the compute session.
   This is useful when the user needs to install packages or run commands that
   require root privileges. However, it is not recommended to enable this option
   for all users, as it may cause security issues.
-- 2FA Enabled: A flag indicating whether the user uses two-factor authentication.
+- **2FA Enabled**: A flag indicating whether the user uses two-factor authentication.
   When using two-factor authentication, users are additionally required to enter an
   OTP code when logging in. Administrators can only disable two-factor authentication
   for other users.
-- Resource Policy: From Backend.AI version 24.09, you can select the user resource policy
+- **Resource Policy**: From Backend.AI version 24.09, you can select the user resource policy
   to which the user belongs. For more information about user resource policies, please
-  refer [user resource policy](#user-resource-policy) section.
+  refer to the [user resource policy](#user-resource-policy) section.
+- **Allowed Client IPs**: Restrict which IP addresses can access the system using this user account. Enter IP addresses or CIDR notation (e.g., `10.20.30.40`, `10.20.30.0/24`). If left empty, access from any IP is allowed.
+- **Container UID**: The numeric User ID assigned to processes inside the container. This is useful when the container needs to match a specific UID for file permission purposes.
+- **Container GID**: The default numeric Group ID assigned to processes inside the container.
+- **Supplementary GID**: Additional numeric Group IDs assigned to container processes. Enter multiple GIDs separated by commas.
+- **Main Access Key**: (Edit only) Select the main access key used for API authentication among the user's keypairs.
 
 <a id="bulk-create-users"></a>
 
