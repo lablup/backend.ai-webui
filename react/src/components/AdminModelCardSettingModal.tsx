@@ -190,7 +190,9 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
         readme: modelCard.readme || undefined,
         accessLevel: modelCard.accessLevel,
       }
-    : {};
+    : {
+        accessLevel: 'INTERNAL',
+      };
 
   const buildMetadataInput = (values: FormInputType) => ({
     name: values.name,
@@ -287,11 +289,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
         onOk={handleOk}
         {...modalProps}
       >
-        <Form
-          ref={formRef}
-          layout="vertical"
-          initialValues={initialValues}
-        >
+        <Form ref={formRef} layout="vertical" initialValues={initialValues}>
           <Form.Item
             name="name"
             label={t('adminModelCard.Name')}
