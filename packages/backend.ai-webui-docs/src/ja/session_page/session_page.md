@@ -1,39 +1,37 @@
-# Session Page
+# セッションページ
 
-In Backend.AI, a `session` represents an isolated compute environment where ユーザーs can run code, train models, or perform data analysis using allocated resources.
-Each session is created based on ユーザー-defined configurations such as runtime image, resource size, and environment settings.
-Once started, the session provides access to interactive applications, terminals, and logs, allowing ユーザーs to manage and monitor their workloads efficiently.
+Backend.AIにおける`セッション`は、ユーザーが割り当てられたリソースを使用してコードを実行したり、モデルをトレーニングしたり、データ分析を行ったりできる、隔離されたコンピュート環境を意味します。
+各セッションは、ランタイムイメージ、リソースサイズ、環境設定など、ユーザーが定義した構成に基づいて作成されます。
+セッションが開始されると、インタラクティブアプリケーション、ターミナル、ログにアクセスでき、ワークロードを効率的に管理・監視できます。
 
 ![](../images/sessions_page.png)
 
 
 <a id="resource-summary-panels"></a>
 
-## Resource サマリー Panels
+## リソースサマリーパネル
 
-At the top of the 'セッション' page, you can find panels displaying your available computing resources such as CPU, RAM, and AI Accelerators.
-Different panel views — 'My Total Resources Limit', 'My Resources in Resource Group', and 'Total Resources in Resource Group' — can be selected depending on
-the information needed. Use the 'Settings' button to change which panel is displayed.
+「セッション」ページの上部には、CPU、RAM、AIアクセラレータなど、利用可能なコンピューティングリソースを表示するパネルがあります。
+必要な情報に応じて、「My Total Resources Limit」、「My Resources in Resource Group」、「Total Resources in Resource Group」など、さまざまなパネルビューを選択できます。表示するパネルを変更するには、「設定」ボタンを使用してください。
 
 ![](../images/panel_settings.png)
 
-For more detailed information about resource panels and their metrics, please refer to the [dashboard](#dashboard) page.
+リソースパネルとその指標に関する詳細については、[ダッシュボード](#dashboard)ページを参照してください。
 
 
 <a id="session-list"></a>
 
-## Session list
+## セッション一覧
 
-The 'セッション' section displays a list of all active and completed compute sessions.
-You can filter sessions by type — `All`, `Interactive`, `Batch`, `Inference`, or `Upload Sessions` — and switch between
-`Running` and `Finished` tabs to manage sessions.
+「セッション」セクションには、すべてのアクティブおよび完了したコンピュートセッションの一覧が表示されます。
+`全体`、`インタラクティブ`、`バッチ`、`INFERENCE`、または`アップロードセッション`のタイプ別にセッションをフィルタリングでき、
+`実行中`タブと`終了セッション`タブを切り替えてセッションを管理できます。
 
-By default, you can view the following columns: session name, status, allocated resources (AI Accelerators, CPU, Memory),
-elapsed time, and for super 管理者s, agent and owner email.
-Additional columns can be shown or specific ones hidden by clicking the 'Settings' button at the bottom right of the table to customize the view.
+デフォルトでは、セッション名、ステータス、割り当てられたリソース（AIアクセラレータ、CPU、メモリ）、経過時間を確認できます。スーパー管理者の場合は、エージェントおよびオーナーのメールアドレスも表示されます。
+テーブル右下の「設定」ボタンをクリックすると、追加のカラムを表示したり、特定のカラムを非表示にしたりして、ビューをカスタマイズできます。
 
 ![](../images/session_table_settings.png)
 
 :::tip
-Backend.AI Manager v26.2.0以降では、セッション詳細パネルから各セッションの詳細なスケジュール履歴を確認できます。これにより、スケジューリングの決定、遅延、失敗の原因を把握できます。詳細については、[セッションのスケジュール履歴](#session-scheduling-history)を参照してください。
+Backend.AI Manager v26.2.0以降では、セッション詳細パネルから各セッションの詳細なスケジューリング履歴を確認できます。これにより、スケジューリングの決定、遅延、失敗の原因を把握できます。詳細については、[セッションスケジューリング履歴](#session-scheduling-history)を参照してください。
 :::
