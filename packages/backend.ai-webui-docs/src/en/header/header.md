@@ -22,7 +22,7 @@ When login session management is enabled, the top bar displays the remaining
 time until automatic logout along with an extend button. The timer shows the
 time in `HH:mm:ss` format (or includes a day count if longer than 24 hours).
 
-Click the extend button (refresh icon) next to the timer to reset the session
+Click the extend button (repeat icon) next to the timer to reset the session
 expiration and extend your login session.
 
 :::note
@@ -77,29 +77,37 @@ small screens.
 
 
 Click the user icon on the right side of the top bar to see the user menu.
-Each menu item has the following functions.
 
 ![](../images/user_drop_down.png)
 
-- **About Backend.AI**: Displays information such as the version of Backend.AI WebUI,
+At the top of the dropdown, the following user information is displayed for
+reference. These items are not clickable.
+
+- **Full name**: The current user's full name.
+- **Email**: The current user's email address.
+- **Role**: The current user's role (e.g., user, domain admin, superadmin).
+
+Below the user information, the following action items are available.
+
+- `About Backend.AI`: Displays information such as the version of Backend.AI WebUI,
   license type, etc.
-- **My Account**: Check and update information of the current logged-in user.
-- **Preferences**: Go to the user settings page.
-- **Logs / Errors**: Go to the logs tab in the user settings page. You can check
+- `My Account`: Check and update information of the current logged-in user.
+- `Preferences`: Go to the user settings page.
+- `Logs / Errors`: Go to the logs tab in the user settings page. You can check
   the log and error history recorded on the client side.
-- **Download Desktop App**: Download the stand-alone WebUI app for your platform.
+- `Download Desktop App`: Download the stand-alone WebUI app for your platform.
   This option is only visible when enabled by the administrator.
-- **Log Out**: Log out of the WebUI.
+- `Log Out`: Log out of the WebUI.
 
 <a id="my-account"></a>
 
 ### My Account
 
-If you click My Account, the following dialog appears.
+If you click `My Account`, the following dialog appears.
 
 ![](../images/my_account_information.png)
 
-Each item has the following meaning. Enter the desired value and click the UPDATE button to update the user
+Each item has the following meaning. Enter the desired value and click the `UPDATE` button to update the user
 information.
 
 - **Full Name**: User's name (up to 64 characters).
@@ -107,7 +115,7 @@ information.
   input contents.
 - **New password**: New password (8 characters or more containing at least 1
   alphabet, number, and symbol). Click the right view button to see the input
-  contents. Ensure this is the same as the Original password.
+  contents.
 - **2FA Enabled**: 2FA activation. The user needs to enter the OTP code when logging in if it is checked.
 
 
@@ -119,6 +127,7 @@ In that case, please contact the administrator of your system.
 <a id="2fa-setup"></a>
 
 ### 2FA Setup
+
 If you activate the `2FA Enabled` switch, the following dialog appears.
 
 ![](../images/2fa_setup.png)
@@ -128,7 +137,7 @@ code. There are many 2FA-enabled applications, such as Google Authenticator, 2ST
 and Bitwarden.
 
 Then enter the 6-digit code from the item added to your 2FA application into the dialog above.
-2FA is activated when you press the CONFIRM button.
+2FA is activated when you press the `CONFIRM` button.
 
 When you log in later, if you enter an email and password, an additional field appears asking
 for the OTP code.
