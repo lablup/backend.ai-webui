@@ -7,12 +7,28 @@ The top bar includes various features that support use of the WebUI.
 
 <a id="project-selector"></a>
 
-## Project selector
+## Project Selector
 
 
 Users can switch between projects using the project selector provided in the top bar.
-By default, the project that user currently belongs to is selected.
+By default, the project that the user currently belongs to is selected.
 Since each project may have different resource policies, switching projects may also change the available resource policies.
+
+<a id="login-session-timer"></a>
+
+## Login Session Timer
+
+When login session management is enabled, the top bar displays the remaining
+time until automatic logout along with an extend button. The timer shows the
+time in `HH:mm:ss` format (or includes a day count if longer than 24 hours).
+
+Click the extend button (refresh icon) next to the timer to reset the session
+expiration and extend your login session.
+
+:::note
+The login session timer is only visible when the server supports login session
+extension and it has been enabled in the system configuration.
+:::
 
 <a id="notification"></a>
 
@@ -22,14 +38,14 @@ Since each project may have different resource policies, switching projects may 
 The bell shape button is the event notification button.
 Events that need to be recorded during WebUI operation are displayed here.
 When background tasks are running, such as creating a compute session,
-you can check the jobs here. When the background task is finished.
+you can check the jobs here.
 Press the shortcut key (`]`) to open and close the notification area.
 
 ![](../images/notification_collapse.png)
 
 <a id="theme-mode"></a>
 
-## Theme mode
+## Theme Mode
 
 
 You can change the theme mode of the WebUI via the dark mode button on the
@@ -42,27 +58,38 @@ right side of the header.
 ## Help
 
 
-Click question mark button to access the web version of this guide document.
+Click the question mark button to access the web version of this guide document.
 You will be directed to the appropriate documentation based on the page you are currently on.
+
+<a id="responsive-layout"></a>
+
+## Responsive Layout
+
+On smaller screens, the top bar adjusts its layout for better usability. When
+the screen width is narrow, the sidebar toggle is replaced with a menu icon
+button in the top bar. The user's display name may also be hidden, showing only
+the avatar icon for the user menu. The project label text is hidden on very
+small screens.
 
 <a id="user-menu"></a>
 
 ## User Menu
 
 
-Click the person button on the right side of the top bar to see the user menu.
+Click the user icon on the right side of the top bar to see the user menu.
 Each menu item has the following functions.
 
 ![](../images/user_drop_down.png)
 
-- About Backend.AI: Displays information such as version of Backend.AI WebUI,
+- **About Backend.AI**: Displays information such as the version of Backend.AI WebUI,
   license type, etc.
-- My Account: Check / Update information of current login user.
-- Preferences: Go to user settings page.
-- Logs / Errors: Go to the log page. You can check the log and error history
-  recorded on the client side.
-- Download Desktop App: Download the stand-alone WebUI app for your platform.
-- Log Out: Log out of the WebUI.
+- **My Account**: Check and update information of the current logged-in user.
+- **Preferences**: Go to the user settings page.
+- **Logs / Errors**: Go to the logs tab in the user settings page. You can check
+  the log and error history recorded on the client side.
+- **Download Desktop App**: Download the stand-alone WebUI app for your platform.
+  This option is only visible when enabled by the administrator.
+- **Log Out**: Log out of the WebUI.
 
 <a id="my-account"></a>
 
@@ -75,18 +102,18 @@ If you click My Account, the following dialog appears.
 Each item has the following meaning. Enter the desired value and click the UPDATE button to update the user
 information.
 
-- Full Name: User's name (up to 64 characters).
-- Original password: Original password. Click the right view button to see the
+- **Full Name**: User's name (up to 64 characters).
+- **Original password**: Original password. Click the right view button to see the
   input contents.
-- New password: New password (8 characters or more containing at least 1
+- **New password**: New password (8 characters or more containing at least 1
   alphabet, number, and symbol). Click the right view button to see the input
   contents. Ensure this is the same as the Original password.
-- 2FA Enabled: 2FA activation. The user needs to enter the OTP code when logging in if it is checked.
+- **2FA Enabled**: 2FA activation. The user needs to enter the OTP code when logging in if it is checked.
 
 
 :::note
 Depending on the plugin settings, the `2FA Enabled` column might be invisible.
-In that case, please contact administrator of your system.
+In that case, please contact the administrator of your system.
 :::
 
 <a id="2fa-setup"></a>
