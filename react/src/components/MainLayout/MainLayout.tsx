@@ -11,10 +11,8 @@ import Page401 from '../../pages/Page401';
 import Page404 from '../../pages/Page404';
 import BAIContentWithDrawerArea from '../BAIContentWithDrawerArea';
 import BAIErrorBoundary from '../BAIErrorBoundary';
-import BAISider from '../BAISider';
 import ErrorBoundaryWithNullFallback from '../ErrorBoundaryWithNullFallback';
 import ForceTOTPChecker from '../ForceTOTPChecker';
-import LoadingCurtain from '../LoadingCurtain';
 import NetworkStatusBanner from '../NetworkStatusBanner';
 import NoResourceGroupAlert from '../NoResourceGroupAlert';
 import PasswordChangeRequestAlert from '../PasswordChangeRequestAlert';
@@ -125,9 +123,10 @@ function MainLayout() {
     };
   }, [navigate]);
 
+  const headerHeight = Number(token.Layout?.headerHeight) || 60;
+
   return (
     <LayoutWithPageTestId>
-      <LoadingCurtain />
       <CSSTokenVariables />
       <style>
         {`
@@ -154,14 +153,9 @@ function MainLayout() {
           }
         `}
       </style>
-      <Suspense
-        fallback={
-          <>
-            <BAISider style={{ visibility: 'hidden' }} />
-            <NotificationForAnonymous />
-          </>
-        }
-      >
+      <NotificationForAnonymous />
+      <Suspense fallback={null}>
+        <DismissSplashOnMount />
         <WebUISider
           collapsed={sideCollapsed}
           onBreakpoint={(broken) => {
@@ -175,35 +169,25 @@ function MainLayout() {
             type === 'clickTrigger' && setSideCollapsed(collapsed);
           }}
         />
-      </Suspense>
-      <Layout
-        style={{
-          backgroundColor: 'transparent',
-        }}
-      >
-        <BAIContentWithDrawerArea drawerWidth={DRAWER_WIDTH}>
-          <BAIFlex
-            ref={contentScrollFlexRef}
-            direction="column"
-            align="stretch"
-            style={{
-              paddingLeft: token.paddingContentHorizontalLG,
-              paddingRight: token.paddingContentHorizontalLG,
-              paddingBottom: token.paddingContentVertical,
-              height: '100vh',
-              overflow: 'auto',
-            }}
-          >
-            <BAIErrorBoundary>
-              <Suspense
-                fallback={
-                  <div>
-                    <Layout.Header
-                      style={{ visibility: 'hidden', height: 62 }}
-                    />
-                  </div>
-                }
-              >
+        <Layout
+          style={{
+            backgroundColor: 'transparent',
+          }}
+        >
+          <BAIContentWithDrawerArea drawerWidth={DRAWER_WIDTH}>
+            <BAIFlex
+              ref={contentScrollFlexRef}
+              direction="column"
+              align="stretch"
+              style={{
+                paddingLeft: token.paddingContentHorizontalLG,
+                paddingRight: token.paddingContentHorizontalLG,
+                paddingBottom: token.paddingContentVertical,
+                height: '100vh',
+                overflow: 'auto',
+              }}
+            >
+              <BAIErrorBoundary>
                 <div
                   style={{
                     margin: `0 -${token.paddingContentHorizontalLG}px 0 -${token.paddingContentHorizontalLG}px`,
@@ -212,9 +196,20 @@ function MainLayout() {
                     zIndex: HEADER_Z_INDEX_IN_MAIN_LAYOUT,
                   }}
                 >
-                  <WebUIHeader
-                    onClickMenuIcon={() => setSideCollapsed((v) => !v)}
-                  />
+                  <Suspense
+                    fallback={
+                      <div
+                        style={{
+                          height: headerHeight,
+                          backgroundColor: token.Layout?.headerBg,
+                        }}
+                      />
+                    }
+                  >
+                    <WebUIHeader
+                      onClickMenuIcon={() => setSideCollapsed((v) => !v)}
+                    />
+                  </Suspense>
                   {/* sticky Alert components with banner props */}
                   <ErrorBoundaryWithNullFallback>
                     <Suspense fallback={null}>
@@ -222,73 +217,73 @@ function MainLayout() {
                     </Suspense>
                   </ErrorBoundaryWithNullFallback>
                 </div>
-              </Suspense>
-              {/* Non sticky Alert components */}
-              <Suspense fallback={<div style={{ minHeight: '0px' }} />}>
-                <BAIFlex
-                  direction="column"
-                  gap={'sm'}
-                  align="stretch"
-                  className={styles.alertWrapper}
-                >
-                  <ErrorBoundaryWithNullFallback>
-                    <ThemePreviewModeAlert />
-                  </ErrorBoundaryWithNullFallback>
-                  <ErrorBoundaryWithNullFallback>
-                    <NoResourceGroupAlert />
-                  </ErrorBoundaryWithNullFallback>
-                  <ErrorBoundaryWithNullFallback>
-                    <PasswordChangeRequestAlert
-                      showIcon
-                      icon={undefined}
-                      banner={false}
-                      closable
-                    />
-                  </ErrorBoundaryWithNullFallback>
-                </BAIFlex>
-              </Suspense>
-              <Suspense>
-                <ErrorBoundaryWithNullFallback>
-                  {/* ForceTOTPChecker is a component for previous version of manager which don't support TOTP registration before login.  */}
-                  {/* https://github.com/lablup/backend.ai/pull/4354 */}
-                  <ForceTOTPChecker />
-                </ErrorBoundaryWithNullFallback>
-              </Suspense>
-              <Suspense>
-                <ErrorBoundaryWithNullFallback>
-                  <PageAccessGuard emptyErrorPage>
-                    {isHiddenBreadcrumb ? (
-                      <div
-                        style={{
-                          marginBottom: token.marginMD,
-                        }}
+                {/* Non sticky Alert components */}
+                <Suspense fallback={<div style={{ minHeight: '0px' }} />}>
+                  <BAIFlex
+                    direction="column"
+                    gap={'sm'}
+                    align="stretch"
+                    className={styles.alertWrapper}
+                  >
+                    <ErrorBoundaryWithNullFallback>
+                      <ThemePreviewModeAlert />
+                    </ErrorBoundaryWithNullFallback>
+                    <ErrorBoundaryWithNullFallback>
+                      <NoResourceGroupAlert />
+                    </ErrorBoundaryWithNullFallback>
+                    <ErrorBoundaryWithNullFallback>
+                      <PasswordChangeRequestAlert
+                        showIcon
+                        icon={undefined}
+                        banner={false}
+                        closable
                       />
-                    ) : (
-                      <WebUIBreadcrumb
-                        style={{
-                          marginBottom: token.marginMD,
-                          marginLeft: token.paddingContentHorizontalLG * -1,
-                          marginRight: token.paddingContentHorizontalLG * -1,
-                        }}
-                      />
-                    )}
-                  </PageAccessGuard>
-                </ErrorBoundaryWithNullFallback>
-                <BAIErrorBoundary>
-                  <AutoAdminPrimaryColorProvider>
-                    <PageAccessGuard>
-                      <Outlet />
+                    </ErrorBoundaryWithNullFallback>
+                  </BAIFlex>
+                </Suspense>
+                <Suspense>
+                  <ErrorBoundaryWithNullFallback>
+                    {/* ForceTOTPChecker is a component for previous version of manager which don't support TOTP registration before login.  */}
+                    {/* https://github.com/lablup/backend.ai/pull/4354 */}
+                    <ForceTOTPChecker />
+                  </ErrorBoundaryWithNullFallback>
+                </Suspense>
+                <Suspense>
+                  <ErrorBoundaryWithNullFallback>
+                    <PageAccessGuard emptyErrorPage>
+                      {isHiddenBreadcrumb ? (
+                        <div
+                          style={{
+                            marginBottom: token.marginMD,
+                          }}
+                        />
+                      ) : (
+                        <WebUIBreadcrumb
+                          style={{
+                            marginBottom: token.marginMD,
+                            marginLeft: token.paddingContentHorizontalLG * -1,
+                            marginRight: token.paddingContentHorizontalLG * -1,
+                          }}
+                        />
+                      )}
                     </PageAccessGuard>
-                  </AutoAdminPrimaryColorProvider>
-                </BAIErrorBoundary>
-              </Suspense>
-              <ErrorBoundaryWithNullFallback>
-                <PluginLoader />
-              </ErrorBoundaryWithNullFallback>
-            </BAIErrorBoundary>
-          </BAIFlex>
-        </BAIContentWithDrawerArea>
-      </Layout>
+                  </ErrorBoundaryWithNullFallback>
+                  <BAIErrorBoundary>
+                    <AutoAdminPrimaryColorProvider>
+                      <PageAccessGuard>
+                        <Outlet />
+                      </PageAccessGuard>
+                    </AutoAdminPrimaryColorProvider>
+                  </BAIErrorBoundary>
+                </Suspense>
+                <ErrorBoundaryWithNullFallback>
+                  <PluginLoader />
+                </ErrorBoundaryWithNullFallback>
+              </BAIErrorBoundary>
+            </BAIFlex>
+          </BAIContentWithDrawerArea>
+        </Layout>
+      </Suspense>
     </LayoutWithPageTestId>
   );
 }
@@ -413,6 +408,23 @@ ${Object.entries(token)
       `}
     </style>
   );
+};
+
+/**
+ * Dismisses the HTML splash overlay when mounted.
+ * Placed inside the outer Suspense boundary so it only fires after
+ * the layout (sider, header) has actually rendered.
+ */
+const DismissSplashOnMount = () => {
+  useEffect(() => {
+    (globalThis as any).__dismissSplash?.();
+    (globalThis as any).__mainLayoutReady = true;
+    document.dispatchEvent(new CustomEvent('main-layout-ready'));
+    return () => {
+      (globalThis as any).__mainLayoutReady = false;
+    };
+  }, []);
+  return null;
 };
 
 export default MainLayout;
