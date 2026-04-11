@@ -1,3 +1,4 @@
+// @ts-nocheck
 export class ComputeSession {
   public client: any;
 

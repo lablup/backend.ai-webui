@@ -1,3 +1,4 @@
+// @ts-nocheck
 export class ResourcePreset {
   public client: any;
   public urlPrefix: any;

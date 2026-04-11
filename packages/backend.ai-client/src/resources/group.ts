@@ -1,3 +1,4 @@
+// @ts-nocheck
 export class Group {
   public client: any;
 

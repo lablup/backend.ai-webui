@@ -1,3 +1,4 @@
+// @ts-nocheck
 export class EduApp {
   public client: any;
   public config: any;

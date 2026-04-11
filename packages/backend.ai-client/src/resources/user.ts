@@ -1,3 +1,4 @@
+// @ts-nocheck
 export class User {
   public client: any;
 

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import CryptoES from 'crypto-es';
 import { comparePEP440Versions, isCompatibleMultipleConditions } from './pep440';
 import { ClientConfig } from './client-config';

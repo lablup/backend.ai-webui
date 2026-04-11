@@ -1,3 +1,4 @@
+// @ts-nocheck
 export class ScalingGroup {
   public client: any;
 

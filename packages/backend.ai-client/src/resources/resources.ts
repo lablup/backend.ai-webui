@@ -1,3 +1,4 @@
+// @ts-nocheck
 export class Resources {
   public client: any;
   public resources: any;

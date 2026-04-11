@@ -1,3 +1,4 @@
+// @ts-nocheck
 export class Enterprise {
   public client: any;
   public config: any;

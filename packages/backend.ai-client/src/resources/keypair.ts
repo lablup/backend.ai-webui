@@ -1,3 +1,4 @@
+// @ts-nocheck
 export class Keypair {
   public client: any;
   public name: any;

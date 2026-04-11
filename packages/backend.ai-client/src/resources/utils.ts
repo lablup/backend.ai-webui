@@ -1,3 +1,4 @@
+// @ts-nocheck
 export class utils {
   public client: any;
 

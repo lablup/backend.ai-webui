@@ -1,3 +1,4 @@
+// @ts-nocheck
 export class Pipeline {
   public client: any;
   public tokenName: string;

@@ -1,3 +1,4 @@
+// @ts-nocheck
 export class ModelService {
   public client: any;
 

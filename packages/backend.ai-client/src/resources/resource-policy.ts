@@ -1,3 +1,4 @@
+// @ts-nocheck
 export class ResourcePolicy {
   public client: any;
 

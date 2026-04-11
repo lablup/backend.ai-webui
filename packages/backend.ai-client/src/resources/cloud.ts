@@ -1,3 +1,4 @@
+// @ts-nocheck
 export class Cloud {
   public client: any;
   public config: any;

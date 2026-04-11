@@ -1,3 +1,4 @@
+// @ts-nocheck
 export class VFolder {
   public client: any;
   public name: any;

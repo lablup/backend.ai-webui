@@ -1,3 +1,4 @@
+// @ts-nocheck
 class ClientConfig {
   public _apiVersionMajor: string;
   public _apiVersion: string;

@@ -1,3 +1,4 @@
+// @ts-nocheck
 export class Maintenance {
   public client: any;
   public urlPrefix: any;

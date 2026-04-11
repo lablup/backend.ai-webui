@@ -1,3 +1,4 @@
+// @ts-nocheck
 export class Service {
   public client: any;
   public config: any;

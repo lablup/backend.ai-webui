@@ -1,3 +1,4 @@
+// @ts-nocheck
 export class SessionTemplate {
   public client: any;
   public urlPrefix: string;

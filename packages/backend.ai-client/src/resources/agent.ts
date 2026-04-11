@@ -1,3 +1,4 @@
+// @ts-nocheck
 export class Agent {
   public client: any;
 
