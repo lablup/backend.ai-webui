@@ -28,17 +28,31 @@ The page is composed of several main panels:
     Summarizes the overall used and free resources in the selected resource group.
     The data is aggregated from all agents that belong to the group.
 
+:::note
+The **Total Resources in Resource Group** panel may not be visible depending on your
+system configuration.
+:::
+
 - **Recently Created Sessions**:
     Lists the most recently created active sessions within the current project.
     Provides session details such as name, status, CPU/memory usage, environment, resource group,
     session type, and creation time.
     By default, the latest 5 active sessions are displayed.
 
+When you are logged in as a superadmin, the Dashboard page also displays
+**Agent Statistics** and **Active Agents** panels alongside the standard user panels.
+See the [Superadmin Dashboard](#superadmin-dashboard) section for details on these panels.
+
 ## Auto-Refresh
 
-The Dashboard automatically refreshes all panel data every 15 seconds. This
+The Dashboard automatically refreshes all panel data every **15 seconds**. This
 ensures that the displayed information stays up to date without requiring manual
 interaction.
+
+:::note
+The superadmin dashboard uses a **30-second** refresh interval instead.
+See the [Superadmin Dashboard](#superadmin-dashboard) section for more information.
+:::
 
 ## Customizing the Dashboard Layout
 
@@ -53,22 +67,54 @@ Your customized layout is automatically saved and persists across browser
 sessions. The layout is stored per user, so each user can have their own
 preferred arrangement.
 
+:::tip
+When the WebUI is updated with new dashboard panels, those panels will
+automatically appear on your dashboard even if you have a saved custom layout.
+:::
+
+:::note
+The user dashboard and the superadmin dashboard maintain separate saved layouts.
+Customizing the layout on one does not affect the other.
+:::
+
 ## Superadmin Dashboard
 
-For superadmins, additional panels are available.
+The superadmin dashboard is a separate page available to superadmin users. It
+provides system-wide monitoring panels with a different set of panels from the
+user dashboard.
 
 ![](../images/admin_dashboard.png)
 
-Except for **Active Sessions**, **Agent Statistics**, and **Active Agents**, the remaining panels
-display the same information as the user dashboard.
+The superadmin dashboard includes the following panels:
 
 - **Active Sessions**:
     Shows the total number of active sessions across current projects,
     categorized by session type.
 
+- **Total Resources in Resource Group**:
+    Summarizes the overall used and free resources in the selected resource group,
+    aggregated from all agents. This panel may not be visible depending on the
+    system configuration.
+
 - **Agent Statistics**:
     Provides all used resources across all agents in the system.
     The values represent the total used resources by all active sessions.
 
+:::note
+The **Agent Statistics** panel requires backend support for the agent-stats
+feature and may not appear in all deployments.
+:::
+
 - **Active Agents**:
     Lists all currently active agents in the system.
+
+- **Recently Created Sessions**:
+    Lists the most recently created active sessions within the current project.
+
+:::note
+Unlike the user dashboard, the superadmin dashboard does **not** include the
+**My Total Resources Limit** or **My Resources in Resource Group** panels.
+:::
+
+The superadmin dashboard refreshes all panel data every **30 seconds**, compared
+to the user dashboard's 15-second interval.
