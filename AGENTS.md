@@ -167,7 +167,7 @@ Production build (`pnpm run build`) runs these steps sequentially:
 - Use `make clean` before building if encountering issues
 - Electron app requires special build process with `make dep`
 - React components use Relay; ensure GraphQL schema in `/data/` is up to date
-- Backend.AI client library (`src/lib/backend.ai-client-esm.ts`) is aliased in Craco config
+- Backend.AI client library is a workspace package at `packages/backend.ai-client/` (built with tsup)
 
 ## Core Guidelines
 

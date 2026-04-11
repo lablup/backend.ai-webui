@@ -1,0 +1,48 @@
+{
+  "name": "backend.ai-client",
+  "version": "26.4.0-alpha.0",
+  "description": "Backend.AI API client library for JavaScript/TypeScript",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lablup/backend.ai-webui/tree/main/packages/backend.ai-client"
+  },
+  "bugs": {
+    "url": "https://github.com/lablup/backend.ai-webui/issues"
+  },
+  "author": "Lablup Inc. <contact@lablup.com>",
+  "license": "LGPL-3.0-or-later",
+  "keywords": [
+    "backend.ai",
+    "client",
+    "sdk",
+    "api"
+  ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "tsup --watch",
+    "build": "tsup",
+    "test": "echo \"no tests yet\"",
+    "lint": "eslint ./src --max-warnings=0",
+    "prepublishOnly": "pnpm lint && pnpm test && pnpm build"
+  },
+  "dependencies": {
+    "crypto-es": "^2.1.0"
+  },
+  "devDependencies": {
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.3"
+  },
+  "type": "module"
+}

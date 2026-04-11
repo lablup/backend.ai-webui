@@ -1,3 +1,4 @@
+// @ts-nocheck
 export function normalizePEP440Version(version: string) {
   // Replace -, _, and whitespace with .
   let normalizedVersion = version?.replace(/[-_\s]/g, '.');
