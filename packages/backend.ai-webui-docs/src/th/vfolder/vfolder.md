@@ -53,18 +53,18 @@ the creation dialog as follows:
 
 The meaning of each field in the creation dialog is as follows.
 
-- Usage Mode: Set the purpose of the folder.
+- **Usage Mode**: Set the purpose of the folder.
 
    * General: Defines a folder for storing various data in a general-purpose manner.
    * โมเดลส์: Defines a folder specialized for model serving and management. If this mode is selected, it is also possible to toggle the folder's copy availability.
    * Auto Mount: โฟลเดอร์ automatically mounted when a session is created. If selected, the folder name must start with a dot ('.').
 
-- Folder name: The name of the folder (up to 64 characters).
-- Location: Select the NFS host where the folder will be created. If there are multiple hosts, choose one. An indicator will show if there is enough available space.
-- ประเภท: กำหนดประเภทของโฟลเดอร์ที่จะสร้าง สามารถตั้งค่าเป็นผู้ใช้หรือโครงการ โฟลเดอร์ผู้ใช้คือโฟลเดอร์ที่ผู้ใช้สามารถสร้างและใช้งานได้เพียงคนเดียว และโฟลเดอร์โครงการคือโฟลเดอร์ที่สร้างโดยผู้ดูแลระบบและแชร์โดยผู้ใช้ในโครงการ
-- Project: Shown only when you select project type. Designates the project to which the folder belongs when creating a new project folder. Project folders must belong to a project. However, it does not play any role when creating a ผู้ใช้ folder.
-- สิทธิ์: กำหนดสิทธิ์ของโฟลเดอร์โปรเจกต์สำหรับสมาชิกโปรเจกต์ หากตั้งค่าเป็น "อ่านเท่านั้น" สมาชิกโปรเจกต์จะไม่สามารถเขียนลงในโฟลเดอร์นี้ภายในเซสชันการคำนวณของพวกเขาได้
-- Cloneable: Shown only when you select usage model to "Model". Select whether the vfolder you are creating should be cloneable.
+- **Folder name**: The name of the folder (up to 64 characters).
+- **Location**: Select the NFS host where the folder will be created. If there are multiple hosts, choose one. An indicator will show if there is enough available space.
+- **ประเภท**: กำหนดประเภทของโฟลเดอร์ที่จะสร้าง สามารถตั้งค่าเป็นผู้ใช้หรือโครงการ โฟลเดอร์ผู้ใช้คือโฟลเดอร์ที่ผู้ใช้สามารถสร้างและใช้งานได้เพียงคนเดียว และโฟลเดอร์โครงการคือโฟลเดอร์ที่สร้างโดยผู้ดูแลระบบและแชร์โดยผู้ใช้ในโครงการ
+- **Project**: Shown only when you select project type. Designates the project to which the folder belongs when creating a new project folder. Project folders must belong to a project. However, it does not play any role when creating a ผู้ใช้ folder.
+- **สิทธิ์**: กำหนดสิทธิ์ของโฟลเดอร์โปรเจกต์สำหรับสมาชิกโปรเจกต์ หากตั้งค่าเป็น "อ่านเท่านั้น" สมาชิกโปรเจกต์จะไม่สามารถเขียนลงในโฟลเดอร์นี้ภายในเซสชันการคำนวณของพวกเขาได้
+- **Cloneable**: Shown only when you select usage model to "Model". Select whether the vfolder you are creating should be cloneable.
 
 The folders created here can be [mounted](../mount_vfolder/mount_vfolder.md#session-mounts) when creating a compute session. โฟลเดอร์ are mounted
 under the ผู้ใช้'s default working directory, `/home/work/`, and the file stored in the mounted
@@ -154,14 +154,14 @@ the ผู้ใช้'s local machine.
 
 คุณสามารถเข้าถึง FileBrowser ได้สองวิธี
 
-- Execute FileBrowser from file explorer dialog of a data folder.
+- Execute FileBrowser from file explorer dialog of a storage folder.
 - เริ่มเซสชันการคอมพิวเตอร์โดยตรงจากภาพ FileBrowser ในหน้าเซสชัน
 
 
 ### Execute FileBrowser from folder explorer dialog
 
 Go to the Data page and open the file explorer dialog of target
-data folder. Click the folder name to open the file explorer.
+storage folder. Click the folder name to open the file explorer.
 
 ![](../images/click_folder_name.png)
 
@@ -193,7 +193,7 @@ Click 'Execute filebrowser' button in the upper-right corner of the explorer.
 
 :::note
 The root directory of FileBrowser will be `/home/work`. Therefore, you
-can access any mounted data folders for the compute session.
+can access any mounted storage folders for the compute session.
 :::
 
 ### ตัวอย่างการใช้งานพื้นฐานของ FileBrowser
@@ -232,7 +232,7 @@ You can also upload local files and directories by drag and drop.
 
 **Move files or directories to another directory**
 
-Moving files or directories in data folder is also possible from FileBrowser.
+Moving files or directories in storage folder is also possible from FileBrowser.
 You can move files or directories by following steps below.
 
 1. Select directories or files from FileBrowser.
@@ -275,7 +275,7 @@ be allowed.
 
 ### Execute SFTP server from folder explorer dialog in Data page
 
-Go to the Data page and open the file explorer dialog of target data folder.
+Go to the Data page and open the file explorer dialog of target storage folder.
 Click the folder button or the folder name to open the file explorer.
 
 Click 'Run SFTP server' button in the upper-right corner of the explorer.
@@ -291,7 +291,7 @@ For the connection, click 'Download SSH Key' button to download the SSH private 
 (`id_container`). Also, remember the host and port number. Then, you can copy your
 files to the session using the Connection Example code written in the dialog, or
 referring to the following guide: [SFTP Connection Guide](../sftp_to_container/sftp_to_container.md#for-linux-mac).
-To preserve the files, you need to transfer the files to the data folder. Also,
+To preserve the files, you need to transfer the files to the storage folder. Also,
 the session will be terminated when there is no transfer for some time.
 
 

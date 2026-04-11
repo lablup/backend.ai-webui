@@ -45,7 +45,7 @@ to the [Quota Setting Panel](#quota-setting-panel) section.
 <a id="create-storage-folder"></a>
 <a id="create_storage_folder"></a>
 
-## Create storage folder
+## Create Storage Folder
 
 
 To create a new folder, click 'Create Folder' on the Data page. Fill in the fields in
@@ -55,18 +55,18 @@ the creation dialog as follows:
 
 The meaning of each field in the creation dialog is as follows.
 
-- Usage Mode: Set the purpose of the folder.
+- **Usage Mode**: Set the purpose of the folder.
 
    * General: Defines a folder for storing various data in a general-purpose manner.
    * Models: Defines a folder specialized for model serving and management. If this mode is selected, it is also possible to toggle the folder's copy availability.
    * Auto Mount: Folders automatically mounted when a session is created. If selected, the folder name must start with a dot ('.').
 
-- Folder name: The name of the folder (up to 64 characters).
-- Location: Select the NFS host where the folder will be created. If there are multiple hosts, choose one. An indicator will show if there is enough available space.
-- Type: Determines the type of folder to be created. It can be set as User or Project. The User folder is a folder that users can create and use alone and the Project folder is a folder created by admin and shared by users in the project.
-- Project: Shown only when you select project type. Designates the project to which the folder belongs when creating a new project folder. Project folders must belong to a project. However, it does not play any role when creating a user folder.
-- Permission: Set permission of a project folder for project members. If this is set to "Read only", project members cannot write to this folder inside their compute session.
-- Cloneable: Shown only when you select usage model to "Model". Select whether the vfolder you are creating should be cloneable.
+- **Folder name**: The name of the folder (up to 64 characters).
+- **Location**: Select the NFS host where the folder will be created. If there are multiple hosts, choose one. An indicator will show if there is enough available space.
+- **Type**: Determines the type of folder to be created. It can be set as User or Project. The User folder is a folder that users can create and use alone and the Project folder is a folder created by admin and shared by users in the project.
+- **Project**: Shown only when you select project type. Designates the project to which the folder belongs when creating a new project folder. Project folders must belong to a project. However, it does not play any role when creating a user folder.
+- **Permission**: Set permission of a project folder for project members. If this is set to "Read only", project members cannot write to this folder inside their compute session.
+- **Cloneable**: Shown only when you select usage model to "Model". Select whether the vfolder you are creating should be cloneable.
 
 The folders created here can be [mounted](../mount_vfolder/mount_vfolder.md#session-mounts) when creating a compute session. Folders are mounted
 under the user's default working directory, `/home/work/`, and the file stored in the mounted
@@ -75,7 +75,7 @@ directory will not be deleted when the compute session is terminated.
 
 <a id="explore-folder"></a>
 
-## Explore folder
+## Explore Folder
 
 
 Click the folder name to open a file explorer and view the contents of the folder.
@@ -124,7 +124,7 @@ The editor supports both light and dark themes matching your UI preferences. You
 The Edit File button is only available when you have write_content permission on the storage folder. If the file fails to load, an error message will be displayed.
 :::
 
-## Rename folder
+## Rename Folder
 
 
 If you have permission to rename the storage folder, you can rename it by
@@ -133,7 +133,7 @@ clicking the edit button.
 ![](../images/rename_vfolder.png)
 
 
-## Delete folder
+## Delete Folder
 
 
 If you have permission to delete the storage folder, you can send the folder to the 'Trash'
@@ -173,7 +173,7 @@ You can access FileBrowser in two ways.
 - Launch a compute session directly from a FileBrowser image on Sessions page.
 
 
-### Execute FileBrowser from folder explorer dialog
+### Execute FileBrowser From Folder Explorer Dialog
 
 Go to the Data page and open the file explorer dialog of target
 storage folder. Click the folder name to open the file explorer.
@@ -211,7 +211,7 @@ explorer, a new compute session will be created and a total of two
 FileBrowser sessions will appear.
 :::
 
-### Create a compute session with FileBrowser image
+### Create a Compute Session With FileBrowser Image
 
 You can directly create a compute session with FileBrowser supported images.
 You need to mount at least one or more storage folders to access them. You can use
@@ -224,7 +224,7 @@ The root directory of FileBrowser will be `/home/work`. Therefore, you
 can access any mounted storage folders for the compute session.
 :::
 
-### Basic usage examples of FileBrowser
+### Basic Usage Examples of FileBrowser
 
 Here, we present some basic usage examples of FileBrowser in Backend.AI. Most
 of the FileBrowser operations are intuitive, but if you need more detailed
@@ -305,7 +305,7 @@ Depending on the system settings, running SFTP server from the file dialog may n
 be allowed.
 :::
 
-### Execute SFTP server from folder explorer dialog in Data page
+### Execute SFTP Server From Folder Explorer Dialog in Data Page
 
 Go to the Data page and open the file explorer dialog of target storage folder.
 Click the folder button or the folder name to open the file explorer.
@@ -337,7 +337,7 @@ want to connect via SSH to your container. Please refer to
 ## Folder Categories
 
 
-## Pipeline folders
+## Pipeline Folders
 
 This tab shows the list of folders that are automatically created when executing a
 pipeline in FastTrack. When a pipeline is created, a new folder is created and mounted
@@ -345,7 +345,7 @@ under `/pipeline` for each instance of work (computing session).
 
 <a id="automount-folder"></a>
 
-## Automount folders
+## Automount Folders
 
 
 Data page has an Automount Folders tab. Click this tab to see a
