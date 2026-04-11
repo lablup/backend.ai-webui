@@ -77,29 +77,37 @@ small screens.
 
 
 Click the user icon on the right side of the top bar to see the user menu.
-Each menu item has the following functions.
 
 ![](../images/user_drop_down.png)
 
-- **About Backend.AI**: Displays information such as the version of Backend.AI WebUI,
+At the top of the dropdown, the following user information is displayed for
+reference. These items are not clickable.
+
+- **Full name**: The current user's full name.
+- **Email**: The current user's email address.
+- **Role**: The current user's role (e.g., user, domain admin, superadmin).
+
+Below the user information, the following action items are available.
+
+- `About Backend.AI`: Displays information such as the version of Backend.AI WebUI,
   license type, etc.
-- **My Account**: Check and update information of the current logged-in user.
-- **Preferences**: Go to the user settings page.
-- **Logs / Errors**: Go to the logs tab in the user settings page. You can check
+- `My Account`: Check and update information of the current logged-in user.
+- `Preferences`: Go to the user settings page.
+- `Logs / Errors`: Go to the logs tab in the user settings page. You can check
   the log and error history recorded on the client side.
-- **Download Desktop App**: Download the stand-alone WebUI app for your platform.
+- `Download Desktop App`: Download the stand-alone WebUI app for your platform.
   This option is only visible when enabled by the administrator.
-- **Log Out**: Log out of the WebUI.
+- `Log Out`: Log out of the WebUI.
 
 <a id="my-account"></a>
 
 ### My Account
 
-If you click My Account, the following dialog appears.
+If you click `My Account`, the following dialog appears.
 
 ![](../images/my_account_information.png)
 
-Each item has the following meaning. Enter the desired value and click the UPDATE button to update the user
+Each item has the following meaning. Enter the desired value and click the `UPDATE` button to update the user
 information.
 
 - **Full Name**: User's name (up to 64 characters).
@@ -129,7 +137,7 @@ code. There are many 2FA-enabled applications, such as Google Authenticator, 2ST
 and Bitwarden.
 
 Then enter the 6-digit code from the item added to your 2FA application into the dialog above.
-2FA is activated when you press the CONFIRM button.
+2FA is activated when you press the `CONFIRM` button.
 
 When you log in later, if you enter an email and password, an additional field appears asking
 for the OTP code.
