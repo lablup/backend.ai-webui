@@ -280,17 +280,27 @@ module.exports = {
             __dirname,
             '../packages/backend.ai-ui/src',
           );
+          const backendAiClientPath = path.resolve(
+            __dirname,
+            '../packages/backend.ai-client/src',
+          );
           if (tsMatch.loader.include) {
             if (Array.isArray(tsMatch.loader.include)) {
               tsMatch.loader.include.push(backendAiUiPath);
+              tsMatch.loader.include.push(backendAiClientPath);
             } else {
               tsMatch.loader.include = [
                 tsMatch.loader.include,
                 backendAiUiPath,
+                backendAiClientPath,
               ];
             }
           } else {
-            tsMatch.loader.include = [paths.appSrc, backendAiUiPath];
+            tsMatch.loader.include = [
+              paths.appSrc,
+              backendAiUiPath,
+              backendAiClientPath,
+            ];
           }
         }
       }

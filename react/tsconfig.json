@@ -17,6 +17,7 @@
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
+      "backend.ai-client": ["../packages/backend.ai-client/dist/index.d.ts"],
       "backend.ai-ui": ["../packages/backend.ai-ui/src/index.ts"],
       "backend.ai-ui/*": ["../packages/backend.ai-ui/src/*"],
       "backend.ai-ui/dist/locale/*": ["../packages/backend.ai-ui/src/locale/*"]
