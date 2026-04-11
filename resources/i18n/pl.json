@@ -420,6 +420,7 @@
     "WrongEmail": "Nieprawidłowy adres e-mail",
     "YouAreAboutToDeleteCredential": "Zamierzasz usunąć dane uwierzytelniające tego użytkownika:",
     "validation": {
+      "MaxUserCount": "Maksymalna liczba użytkowników, których można utworzyć jednocześnie, wynosi {{count}}.",
       "PleaseEnterPositiveAndUnder2_31": "Wprowadź dodatnią wartość mniejszą niż 2^31",
       "PleaseEnterPositiveInteger": "Wprowadź wartość dodatnią.",
       "PleaseEnterUniqueNumbers": "Proszę wprowadzić unikalne liczby",

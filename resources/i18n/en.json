@@ -420,7 +420,7 @@
     "WrongEmail": "Invalid email address",
     "YouAreAboutToDeleteCredential": "You are about to delete this user's credential:",
     "validation": {
-      "MaxUserCount": "Maximum number of users is {{count}}.",
+      "MaxUserCount": "The maximum number of users that can be created at once is {{count}}.",
       "PleaseEnterPositiveAndUnder2_31": "Please enter a positive value less than 2^31",
       "PleaseEnterPositiveInteger": "Please enter a positive value.",
       "PleaseEnterUniqueNumbers": "Enter a unique number.",
