@@ -21,20 +21,23 @@ it will be regarded as invalid. You have to input a URL which is not starting fr
 
 ![](../images/import_run_notebook.png)
 
-After clicking the button, the session launcher dialog appears. This is the same dialog as
-when you start a session from the Sessions page or Summary page. The difference between importing a notebook
-and starting a new session is that importing a notebook automatically imports the Jupyter notebook from the
-URL. The rest is the same. Set the environment and resource allocation as needed, then click the `Launch` button.
+After clicking the `Import & Run` button, a session is created directly with default settings.
+You do not need to configure the session launcher manually. The notebook file is automatically
+downloaded into the session via the URL you provided.
+
+If you want to customize the environment or resource allocation before launching, click the
+dropdown button next to `Import & Run` and select `Start with options`. This opens the full
+session launcher page where you can adjust settings before starting the session.
 
 :::note
-The pop-up blocker must be turned off before clicking the `Launch` button to immediately
-see the running notebook window. Also, if there's not enough resources to execute the session,
-imported Jupyter notebook will not run.
+The pop-up blocker must be turned off to immediately see the running notebook window.
+Also, if there are not enough resources to execute the session, the imported Jupyter
+notebook will not run.
 :::
 
 ![](../images/session_launcher_in_importing_notebook.png)
 
-You can see the importing operation is successfully completed in Sessions page.
+You can see the importing operation is successfully completed in the Sessions page.
 
 ![](../images/sessions_page_with_imported_notebook.png)
 
@@ -62,11 +65,14 @@ Importing a GitHub repository is similar to importing and running a Jupyter note
 All you have to do is fill in the GitHub repository URL, select a storage host from the
 `Storage Host` dropdown, and click the `Get To Folder` button.
 
+Clicking `Get To Folder` automatically creates a storage folder with the repository name
+and starts a batch session to download and extract the repository contents into it.
+
 ![](../images/import_github_repository.png)
 
 :::note
 If there are not enough resources to start a session or folder count is at
-the limit, then importing repository will fail. Please check resource
+the limit, then importing the repository will fail. Please check the resource
 statistics panel and Data & Storage page before importing the repository.
 :::
 
