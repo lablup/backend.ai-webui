@@ -349,7 +349,7 @@ module.exports = {
 
       // Configure webpack's own file watcher to ignore files that are not
       // part of the webpack module graph. When webpack resolves aliases
-      // outside react/ (e.g. backend.ai-client-esm → ../dist/lib/...),
+      // outside react/ (e.g. backend.ai-client → ../packages/backend.ai-client/...),
       // enhanced-resolve walks up the directory tree and adds the project
       // root as a context dependency. This causes webpack to watch ALL files
       // in the project root, triggering unnecessary rebuilds when config
@@ -367,7 +367,7 @@ module.exports = {
       //    editor temp files like .config.toml.XXXXX, etc.)
       //
       // NOT ignored (must remain watched):
-      // - dist/lib/backend.ai-client-esm.js (webpack alias, needs HMR)
+      // - packages/backend.ai-client/src/** (workspace package, dev alias)
       // - packages/backend.ai-ui/src/** (workspace package, dev alias)
       if (env === 'development') {
         const escapedRoot = path
@@ -390,7 +390,7 @@ module.exports = {
       }
 
       // Remove ModuleScopePlugin to allow imports outside react/src.
-      // Needed for: backend.ai-ui package, backend.ai-client-esm (via alias to dist/lib/)
+      // Needed for: backend.ai-ui package, backend.ai-client package
       webpackConfig.resolve.plugins = webpackConfig.resolve.plugins.filter(
         (plugin) =>
           !(
@@ -419,10 +419,10 @@ module.exports = {
           ...webpackConfig.resolve,
           alias: {
             ...webpackConfig.resolve.alias,
-            // Backend.AI client ESM library (used by global-stores.ts to set globalThis classes)
-            'backend.ai-client-esm': path.resolve(
+            // Backend.AI client SDK package
+            'backend.ai-client': path.resolve(
               __dirname,
-              '../dist/lib/backend.ai-client-esm.js',
+              '../packages/backend.ai-client/dist/index.js',
             ),
             ...whenDev(
               () => ({
@@ -433,6 +433,10 @@ module.exports = {
                 'backend.ai-ui': path.resolve(
                   __dirname,
                   '../packages/backend.ai-ui/src',
+                ),
+                'backend.ai-client': path.resolve(
+                  __dirname,
+                  '../packages/backend.ai-client/src',
                 ),
               }),
               {},

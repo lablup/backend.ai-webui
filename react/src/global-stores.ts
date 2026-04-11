@@ -22,7 +22,7 @@
 // Must be available before any component calls createBackendAIClient().
 // ---------------------------------------------------------------------------
 import { generateUUID } from './helper/uuid';
-import * as ai from 'backend.ai-client-esm';
+import * as ai from 'backend.ai-client';
 
 (globalThis as any).BackendAIClient = ai.backend.Client;
 (globalThis as any).BackendAIClientConfig = ai.backend.ClientConfig;
