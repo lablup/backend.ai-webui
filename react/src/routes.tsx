@@ -149,7 +149,11 @@ export const mainLayoutChildRoutes: RouteObject[] = [
   },
   {
     path: '/start',
-    element: <StartPage />,
+    element: (
+      <Suspense fallback={<Skeleton active />}>
+        <StartPage />
+      </Suspense>
+    ),
     handle: { labelKey: 'webui.menu.Start' },
   },
   {
@@ -358,12 +362,20 @@ export const mainLayoutChildRoutes: RouteObject[] = [
   },
   {
     path: '/my-environment',
-    element: <MyEnvironmentPage />,
+    element: (
+      <Suspense fallback={<Skeleton active />}>
+        <MyEnvironmentPage />
+      </Suspense>
+    ),
     handle: { labelKey: 'webui.menu.MyEnvironments' },
   },
   {
     path: '/agent-summary',
-    element: <AgentSummaryPage />,
+    element: (
+      <Suspense fallback={<Skeleton active />}>
+        <AgentSummaryPage />
+      </Suspense>
+    ),
     handle: { labelKey: 'webui.menu.AgentSummary' },
   },
   {
@@ -387,7 +399,11 @@ export const mainLayoutChildRoutes: RouteObject[] = [
   {
     path: '/admin-session',
     handle: { labelKey: 'webui.menu.Sessions' },
-    Component: AdminSessionPage,
+    element: (
+      <Suspense fallback={<Skeleton active />}>
+        <AdminSessionPage />
+      </Suspense>
+    ),
   },
   {
     path: '/admin-serving',
@@ -434,7 +450,11 @@ export const mainLayoutChildRoutes: RouteObject[] = [
   {
     path: '/environment',
     handle: { labelKey: 'webui.menu.Environments' },
-    Component: EnvironmentPage,
+    element: (
+      <Suspense fallback={<Skeleton active />}>
+        <EnvironmentPage />
+      </Suspense>
+    ),
   },
   {
     path: '/scheduler',
@@ -454,12 +474,20 @@ export const mainLayoutChildRoutes: RouteObject[] = [
   {
     path: '/agent',
     handle: { labelKey: 'webui.menu.Resources' },
-    Component: ResourcesPage,
+    element: (
+      <Suspense fallback={<Skeleton active />}>
+        <ResourcesPage />
+      </Suspense>
+    ),
   },
   {
     path: '/resource-policy',
     handle: { labelKey: 'webui.menu.ResourcePolicies' },
-    Component: ResourcePolicyPage,
+    element: (
+      <Suspense fallback={<Skeleton active />}>
+        <ResourcePolicyPage />
+      </Suspense>
+    ),
   },
   {
     path: '/reservoir',
@@ -502,17 +530,29 @@ export const mainLayoutChildRoutes: RouteObject[] = [
   },
   {
     path: '/settings',
-    element: <ConfigurationsPage />,
+    element: (
+      <Suspense fallback={<Skeleton active />}>
+        <ConfigurationsPage />
+      </Suspense>
+    ),
     handle: { labelKey: 'webui.menu.Configurations' },
   },
   {
     path: '/maintenance',
-    element: <MaintenancePage />,
+    element: (
+      <Suspense fallback={<Skeleton active />}>
+        <MaintenancePage />
+      </Suspense>
+    ),
     handle: { labelKey: 'webui.menu.Maintenance' },
   },
   {
     path: '/diagnostics',
-    element: <DiagnosticsPage />,
+    element: (
+      <Suspense fallback={<Skeleton active />}>
+        <DiagnosticsPage />
+      </Suspense>
+    ),
     handle: { labelKey: 'webui.menu.Diagnostics' },
   },
   {
@@ -531,7 +571,11 @@ export const mainLayoutChildRoutes: RouteObject[] = [
   },
   {
     path: '/branding',
-    element: <BrandingPage />,
+    element: (
+      <Suspense fallback={<Skeleton active />}>
+        <BrandingPage />
+      </Suspense>
+    ),
     handle: { labelKey: 'webui.menu.Branding' },
   },
   {
@@ -548,17 +592,29 @@ export const mainLayoutChildRoutes: RouteObject[] = [
   {
     path: '/storage-settings/:hostname',
     handle: { labelKey: 'storageHost.StorageSetting' },
-    Component: StorageHostSettingPage,
+    element: (
+      <Suspense fallback={<Skeleton active />}>
+        <StorageHostSettingPage />
+      </Suspense>
+    ),
   },
   {
     path: '/information',
     handle: { labelKey: 'webui.menu.Information' },
-    Component: Information,
+    element: (
+      <Suspense fallback={<Skeleton active />}>
+        <Information />
+      </Suspense>
+    ),
   },
   {
     path: '/usersettings',
     handle: { labelKey: 'webui.menu.Settings&Logs' },
-    Component: UserSettingsPage,
+    element: (
+      <Suspense fallback={<Skeleton active />}>
+        <UserSettingsPage />
+      </Suspense>
+    ),
   },
   {
     path: '/admin-dashboard',
@@ -576,7 +632,11 @@ export const mainLayoutChildRoutes: RouteObject[] = [
   {
     path: '/credential',
     handle: { labelKey: 'webui.menu.UserCredentials&Policies' },
-    Component: UserCredentialsPage,
+    element: (
+      <Suspense fallback={<Skeleton active />}>
+        <UserCredentialsPage />
+      </Suspense>
+    ),
   },
   {
     path: '/logs',
@@ -637,7 +697,9 @@ export const routes: RouteObject[] = [
             <LoginView />
           </Suspense>
           <LogoutEventHandler />
-          <InteractiveLoginPage />
+          <Suspense fallback={<Skeleton active />}>
+            <InteractiveLoginPage />
+          </Suspense>
         </DefaultProvidersForReactRoot>
       </BAIErrorBoundary>
     ),
@@ -648,7 +710,9 @@ export const routes: RouteObject[] = [
     element: (
       <BAIErrorBoundary>
         <DefaultProvidersForReactRoot>
-          <EmailVerificationPage />
+          <Suspense fallback={<Skeleton active />}>
+            <EmailVerificationPage />
+          </Suspense>
         </DefaultProvidersForReactRoot>
       </BAIErrorBoundary>
     ),
@@ -659,7 +723,9 @@ export const routes: RouteObject[] = [
     element: (
       <BAIErrorBoundary>
         <DefaultProvidersForReactRoot>
-          <ChangePasswordPage />
+          <Suspense fallback={<Skeleton active />}>
+            <ChangePasswordPage />
+          </Suspense>
         </DefaultProvidersForReactRoot>
       </BAIErrorBoundary>
     ),
@@ -670,7 +736,9 @@ export const routes: RouteObject[] = [
     element: (
       <BAIErrorBoundary>
         <DefaultProvidersForReactRoot>
-          <EduAppLauncherPage />
+          <Suspense fallback={<Skeleton active />}>
+            <EduAppLauncherPage />
+          </Suspense>
         </DefaultProvidersForReactRoot>
       </BAIErrorBoundary>
     ),
@@ -681,7 +749,9 @@ export const routes: RouteObject[] = [
     element: (
       <BAIErrorBoundary>
         <DefaultProvidersForReactRoot>
-          <EduAppLauncherPage />
+          <Suspense fallback={<Skeleton active />}>
+            <EduAppLauncherPage />
+          </Suspense>
         </DefaultProvidersForReactRoot>
       </BAIErrorBoundary>
     ),
