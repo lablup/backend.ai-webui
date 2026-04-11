@@ -44,7 +44,6 @@ import {
 } from 'antd';
 import Title from 'antd/es/typography/Title';
 import {
-  filterOutNullAndUndefined,
   BAISessionTypeTag,
   toGlobalId,
   UNSAFELazyUserEmailView,
@@ -160,13 +159,14 @@ const SessionDetailContent: React.FC<{
         type
         startup_command
 
+        ...ConnectedKernelListSessionFragment
+        ...ContainerLogModalFragment
         kernel_nodes {
           edges {
             node {
               image {
                 ...ImageNodeSimpleTagFragment
               }
-              ...ConnectedKernelListFragment
             }
           }
         }
@@ -513,9 +513,7 @@ const SessionDetailContent: React.FC<{
             {t('kernel.Kernels')}
           </Typography.Title>
           <ConnectedKernelList
-            kernelsFrgmt={filterOutNullAndUndefined(
-              session.kernel_nodes?.edges.map((e) => e?.node),
-            )}
+            sessionFrgmt={session}
             sessionFrgmtForLogModal={session}
           />
         </BAIFlex>
