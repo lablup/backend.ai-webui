@@ -53,18 +53,18 @@ the creation dialog as follows:
 
 The meaning of each field in the creation dialog is as follows.
 
-- Usage Mode: Set the purpose of the folder.
+- **Usage Mode**: Set the purpose of the folder.
 
    * General: Defines a folder for storing various data in a general-purpose manner.
    * モデル一覧: Defines a folder specialized for model serving and management. If this mode is selected, it is also possible to toggle the folder's copy availability.
    * Auto Mount: フォルダー automatically mounted when a session is created. If selected, the folder name must start with a dot ('.').
 
-- Folder name: The name of the folder (up to 64 characters).
-- Location: Select the NFS host where the folder will be created. If there are multiple hosts, choose one. An indicator will show if there is enough available space.
-- 種類: 作成するフォルダーの種類を決定します。ユーザーまたはプロジェクトとして設定できます。ユーザーフォルダーは、ユーザーが自身で作成して使用できるフォルダーであり、プロジェクトフォルダーは管理者によって作成され、プロジェクト内のユーザーと共有されるフォルダーです。
-- プロジェクト：プロジェクトタイプを選択したときにのみ表示されます。新しいプロジェクトフォルダを作成するときに、フォルダが属するプロジェクトを指定します。プロジェクトフォルダは、プロジェクトに属する必要があります。ただし、ユーザーフォルダを作成する際には、役割を果たしません。
-- パーミッション: プロジェクトフォルダのプロジェクトメンバーに対するパーミッションを設定します。「読み取り専用」に設定されている場合、プロジェクトメンバーはコンピュートセッション内でこのフォルダに書き込みを行うことができません。
-- Cloneable: Shown only when you select usage model to "Model". Select whether the vfolder you are creating should be cloneable.
+- **Folder name**: The name of the folder (up to 64 characters).
+- **Location**: Select the NFS host where the folder will be created. If there are multiple hosts, choose one. An indicator will show if there is enough available space.
+- **種類**: 作成するフォルダーの種類を決定します。ユーザーまたはプロジェクトとして設定できます。ユーザーフォルダーは、ユーザーが自身で作成して使用できるフォルダーであり、プロジェクトフォルダーは管理者によって作成され、プロジェクト内のユーザーと共有されるフォルダーです。
+- **プロジェクト**：プロジェクトタイプを選択したときにのみ表示されます。新しいプロジェクトフォルダを作成するときに、フォルダが属するプロジェクトを指定します。プロジェクトフォルダは、プロジェクトに属する必要があります。ただし、ユーザーフォルダを作成する際には、役割を果たしません。
+- **パーミッション**: プロジェクトフォルダのプロジェクトメンバーに対するパーミッションを設定します。「読み取り専用」に設定されている場合、プロジェクトメンバーはコンピュートセッション内でこのフォルダに書き込みを行うことができません。
+- **Cloneable**: Shown only when you select usage model to "Model". Select whether the vfolder you are creating should be cloneable.
 
 The folders created here can be [mounted](../mount_vfolder/mount_vfolder.md#session-mounts) when creating a compute session. フォルダー are mounted
 under the ユーザー's default working directory, `/home/work/`, and the file stored in the mounted
@@ -151,14 +151,14 @@ the ユーザー's local machine.
 
 ファイルブラウザには2つの方法でアクセスできます。
 
-- Execute FileBrowser from file explorer dialog of a data folder.
+- Execute FileBrowser from file explorer dialog of a storage folder.
 - セッションページのFileBrowserイメージから直接コンピュートセッションを起動します。
 
 
 ### Execute FileBrowser from folder explorer dialog
 
 Go to the Data page and open the file explorer dialog of target
-data folder. Click the folder name to open the file explorer.
+storage folder. Click the folder name to open the file explorer.
 
 ![](../images/click_folder_name.png)
 
@@ -190,7 +190,7 @@ FileBrowser対応のイメージを使用して直接コンピュートセッシ
 
 :::note
 The root directory of FileBrowser will be `/home/work`. Therefore, you
-can access any mounted data folders for the compute session.
+can access any mounted storage folders for the compute session.
 :::
 
 ### FileBrowserの基本的な使用例
@@ -229,7 +229,7 @@ You can also upload local files and directories by drag and drop.
 
 **Move files or directories to another directory**
 
-Moving files or directories in data folder is also possible from FileBrowser.
+Moving files or directories in storage folder is also possible from FileBrowser.
 You can move files or directories by following steps below.
 
 1. Select directories or files from FileBrowser.
@@ -272,7 +272,7 @@ be allowed.
 
 ### Execute SFTP server from folder explorer dialog in Data page
 
-Go to the Data page and open the file explorer dialog of target data folder.
+Go to the Data page and open the file explorer dialog of target storage folder.
 Click the folder button or the folder name to open the file explorer.
 
 Click 'Run SFTP server' button in the upper-right corner of the explorer.
@@ -288,7 +288,7 @@ For the connection, click 'Download SSH Key' button to download the SSH private 
 (`id_container`). Also, remember the host and port number. Then, you can copy your
 files to the session using the Connection Example code written in the dialog, or
 referring to the following guide: [SFTP Connection Guide](../sftp_to_container/sftp_to_container.md#for-linux-mac).
-To preserve the files, you need to transfer the files to the data folder. Also,
+To preserve the files, you need to transfer the files to the storage folder. Also,
 the session will be terminated when there is no transfer for some time.
 
 
