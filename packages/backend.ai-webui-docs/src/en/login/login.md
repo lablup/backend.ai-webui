@@ -35,7 +35,7 @@ character(s).
 
 ## Log in
 
-Enter your email (or username) and password, then click the **Login** button.
+Enter your email (or username) and password, then click the `Login` button.
 
 ![](../images/login_dialog.png)
 
@@ -44,7 +44,7 @@ Enter your email (or username) and password, then click the **Login** button.
 ### Connection Mode
 
 If enabled by your administrator, a mode selector appears at the top of the
-login dialog allowing you to choose between **Session** mode and **API** mode.
+login dialog allowing you to choose between `Session` mode and `API` mode.
 
 - **Session**: The standard login mode. Enter your email/username and password
   to authenticate. This is the default mode for most users.
@@ -55,7 +55,7 @@ login dialog allowing you to choose between **Session** mode and **API** mode.
 
 ### API Endpoint
 
-Click the **Advanced** link to expand the endpoint configuration section. In the
+Click the `Advanced` link to expand the endpoint configuration section. In the
 API Endpoint field, enter the URL of the Backend.AI Webserver that relays
 requests to the Manager.
 
@@ -75,7 +75,7 @@ know the user's password.
 ### SSO Login (SAML / OpenID)
 
 If your administrator has configured Single Sign-On (SSO), additional login
-buttons may appear below the standard **Login** button:
+buttons may appear below the standard `Login` button:
 
 - **Login with SAML**: Authenticate using your organization's SAML identity
   provider.
@@ -119,21 +119,43 @@ For more details about enabling or disabling 2FA from your account settings,
 refer to the [2FA Setup](#2fa-setup) section in Top Bar Features.
 :::
 
+<a id="concurrent-session-detection"></a>
+
+### Concurrent Session Detection
+
+If you attempt to log in while your account is already logged in from another
+browser or device, a confirmation dialog will appear informing you that an
+existing session is active. You can choose to end the existing session and
+proceed with the new login, or cancel to keep the existing session.
+
+:::note
+This feature helps prevent unintended concurrent access to your account. If you
+see this dialog unexpectedly, it may indicate that someone else is using your
+credentials. In that case, proceed with the login to terminate the other session
+and consider changing your password.
+:::
+
 After logging in, you can check the information of the current resource usage on
 the Start page.
 
 By clicking the user icon in the upper-right corner, you will see the user menu.
-You can log out by selecting the **Log Out** menu item.
+You can log out by selecting the `Log Out` menu item.
 
 ![](../images/signout_button.png)
+
+:::note
+If your system has a login session timer enabled, you will be automatically
+logged out when the timer expires. For details, see the
+[Login Session Timer](#login-session-timer) section in Top Bar Features.
+:::
 
 
 <a id="when-you-forgot-your-password"></a>
 
 ## When You Forgot Your Password
 
-If you have forgotten your password, click the **Forgot password?** text and
-then the **Change** link on the login panel. A dialog will appear where you can
+If you have forgotten your password, click the `Forgot password?` text and
+then the `Change` link on the login panel. A dialog will appear where you can
 enter your email address to receive a password change link. Follow the
 instructions in the email to reset your password.
 
