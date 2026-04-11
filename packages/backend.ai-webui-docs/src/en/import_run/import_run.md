@@ -1,47 +1,46 @@
-# Import & Run notebooks and web based Git repositories
+# Import & Run Notebooks and Web-Based Git Repositories
 
 
-On the 'Import & Run' page, Backend.AI supports executing Jupyter notebook files and importing web based Git repositories
+On the Import & Run page, Backend.AI supports executing Jupyter notebook files and importing web-based Git repositories
 such as GitHub and GitLab on the fly. You don't need to create or download into your local storage
 and re-upload it. The only thing you have to do is input a valid URL you want to execute or import,
 and click the button on the right side.
 
 <a id="import-and-run-jupyter-notebooks"></a>
 
-## Import and run Jupyter notebooks
+## Import and Run Jupyter Notebooks
 
-To import Jupyter notebooks and run, you need one thing, the valid URL for the notebook file.
-For example, if you want execute Jupyter notebook that's in github, you can copy and paste
-the URL and click the 'Import & Run' button.
+To import and run Jupyter notebooks, you need the valid URL for the notebook file.
+For example, if you want to execute a Jupyter notebook on GitHub, you can copy and paste
+the URL and click the `Import & Run` button.
 
 :::note
 When you try to import and run a Jupyter notebook file with a local address,
-It will be regarded as invalid. You have to input URL which is not starting from localhost.
+it will be regarded as invalid. You must input a URL that does not start with localhost.
 :::
 
 ![](../images/import_run_notebook.png)
 
-After clicking the button, the dialog appears. This is a session launcher dialog same as
-when you starts the session at Sessions page or Summary page. Difference between import notebook
-and starting a new session is that import notebook automatically imports Jupyter notebook in the
-URL, but simple starting a new session doesn't do that. the rest is same. Click 'LAUNCH' button to
-the notebook after setting the environments and resource allocation as needed.
+After clicking the button, a dialog appears. This is the same session launcher dialog that appears
+when you start a session from the Sessions page or Summary page. The difference between importing a notebook
+and starting a new session is that importing a notebook automatically imports the Jupyter notebook from the
+URL. The rest is the same. Set the environment and resource allocation as needed, then click the `Launch` button.
 
 :::note
-The pop-up blocker must be turned off before clicking 'LAUNCH' button to immediately
-see the running notebook window. Also, if there's not enough resources to execute the session,
-imported Jupyter notebook will not run.
+The pop-up blocker must be turned off before clicking the `Launch` button to immediately
+see the running notebook window. Also, if there are not enough resources to execute the session,
+the imported Jupyter notebook will not run.
 :::
 
 ![](../images/session_launcher_in_importing_notebook.png)
 
-You can see the importing operation is successfully completed in Sessions page.
+You can see the importing operation is successfully completed in the Sessions page.
 
 ![](../images/sessions_page_with_imported_notebook.png)
 
 <a id="create-executable-jupyter-notebook-button"></a>
 
-## Create executable Jupyter notebook button
+## Create Executable Jupyter Notebook Button
 
 You can also create an HTML or Markdown badge for a Jupyter notebook URL.
 Input a valid Jupyter notebook URL and click the `Notebook Badge Code (HTML)` or
@@ -59,15 +58,15 @@ Your account must be logged in before clicking the button. Otherwise, you have t
 
 ## Importing GitHub Repositories
 
-Importing a GitHub repository is similar to import and running Jupyter notebook.
+Importing a GitHub repository is similar to importing and running a Jupyter notebook.
 All you have to do is fill in the GitHub repository URL, select a storage host from the
 `Storage Host` dropdown, and click the `Get To Folder` button.
 
 ![](../images/import_github_repository.png)
 
 :::note
-If there are not enough resources to start a session or folder count is at
-the limit, then importing repository will fail. Please check resource
+If there are not enough resources to start a session or the folder count is at
+the limit, then importing the repository will fail. Please check the resource
 statistics panel and Data & Storage page before importing the repository.
 :::
 
@@ -87,6 +86,6 @@ but you need to explicitly set the branch name to import.
 ![](../images/import_gitlab_repository.png)
 
 :::note
-If there's a storage folder that has the same name already, the system will append
-`_` (underscore) and number in the imported repository folder.
+If there is a storage folder that has the same name already, the system will append
+`_` (underscore) and a number to the imported repository folder name.
 :::
