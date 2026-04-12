@@ -730,14 +730,12 @@ Click on a model card to view its details in a modal. The model card modal displ
 - A link to the model storage folder
 
 ![](../images/model_card_detail_modal.png)
-<!-- TODO: Capture screenshot of model card detail modal -->
 
 ### Cloning a Model
 
 Click the `Clone to a folder` button on the model card to clone the model folder to your own storage. A confirmation dialog will appear where you can specify the destination folder name.
 
 ![](../images/model_clone_dialog.png)
-<!-- TODO: Capture screenshot of clone confirmation dialog -->
 
 ### Running a Model from Model Store
 
