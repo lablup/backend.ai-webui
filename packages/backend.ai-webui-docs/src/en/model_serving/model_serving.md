@@ -351,7 +351,6 @@ Model Serving page.
 The Serving page displays a list of all model service endpoints in the current project. You can access it by clicking **Model Serving** in the sidebar menu.
 
 ![](../images/serving_list_page.png)
-<!-- TODO: Capture screenshot of updated serving list page with lifecycle filter -->
 
 At the top of the page, you can filter endpoints by lifecycle stage:
 
@@ -377,12 +376,10 @@ First, provide a service name. The following fields are available:
 - **Inference Runtime Variant**: Selects the runtime variant for the model service. The available variants are dynamically loaded from the backend and may include `vLLM`, `SGLang`, `NVIDIA NIM`, `Modular MAX`, `Custom`, and others depending on your installation.
 
 ![](../images/service_launcher1.png)
-<!-- TODO: Capture screenshot of updated service launcher step 1 -->
 
 For runtime variants such as `vLLM`, `SGLang`, `NVIDIA NIM`, or `Modular MAX`, there is no need to configure a `model-definition` file in your model folder. Instead, the system handles the model configuration automatically based on the selected variant.
 
 ![](../images/service_launcher_runtime_variant.png)
-<!-- TODO: Capture screenshot of updated runtime variant dropdown -->
 
 #### Model Definition Mode (Custom Runtime Only)
 
@@ -403,7 +400,6 @@ The system automatically parses the command and fills in the following fields:
 - **Model mount path**: Auto-detected from the command.
 
 ![](../images/service_launcher_command_mode.png)
-<!-- TODO: Capture screenshot of Enter Command mode UI -->
 
 You can also configure:
 
@@ -424,14 +420,12 @@ Select `Use Config File` to use the traditional `model-definition.yaml` approach
 - **Additional Mounts**: You can mount additional storage folders. Note that only general/data usage mode folders can be mounted, not additional model folders.
 
 ![](../images/service_launcher2.png)
-<!-- TODO: Capture screenshot of updated Use Config File mode -->
 
 #### Runtime Parameters (vLLM / SGLang)
 
 When you select the `vLLM` or `SGLang` runtime variant, a **Runtime Parameters** section appears. This section lets you fine-tune the model serving behavior without manually editing configuration files.
 
 ![](../images/service_launcher_runtime_params.png)
-<!-- TODO: Capture screenshot of runtime parameters panel -->
 
 The parameters are organized into categories:
 
@@ -472,7 +466,6 @@ Set the number of replicas and select the environment and resource group.
 - **Environment / Version**: Configure the execution environment for the model service. Selecting a runtime variant such as vLLM automatically filters the environment images to show relevant ones.
 
 ![](../images/service_launcher3.png)
-<!-- TODO: Capture screenshot of updated environment/version step -->
 
 - **Resource Presets**: Select the amount of resources to allocate. Resources include CPU, RAM, and AI accelerator (GPU).
 
@@ -715,7 +708,6 @@ To use the model, you will need the following information:
 The Model Store provides a card-based gallery of pre-configured models that you can browse, search, and deploy. You can access the Model Store from the sidebar menu.
 
 ![](../images/model_store_page.png)
-<!-- TODO: Capture screenshot of model store page overview -->
 
 ### Browsing and Searching Models
 
@@ -767,7 +759,6 @@ service later through the Serving page.
 Administrators and superadmins can access the Admin Serving page, which provides a cross-project view of all endpoints. This page shows the **Project** column in addition to the standard endpoint list columns, allowing admins to manage services across all projects.
 
 ![](../images/admin_serving_page.png)
-<!-- TODO: Capture screenshot of admin serving page -->
 
 The Admin Serving page has two tabs:
 
@@ -779,7 +770,6 @@ The Admin Serving page has two tabs:
 Superadmins can manage model cards through the **Model Store Management** tab on the Admin Serving page. This tab provides a table view of all model cards with the following columns: **Name**, **Title**, **Task**, **Category**, **Labels**, **Created At**, and **Controls**.
 
 ![](../images/admin_model_card_list.png)
-<!-- TODO: Capture screenshot of admin model card list page -->
 
 #### Creating a Model Card
 
@@ -803,7 +793,6 @@ Click the `Create Model Card` button to open the creation modal. Fill in the fol
 - **Access Level**: Set to `Internal` (visible within the domain) or `Public` (visible to all).
 
 ![](../images/admin_model_card_modal.png)
-<!-- TODO: Capture screenshot of create/edit model card modal -->
 
 #### Editing a Model Card
 
