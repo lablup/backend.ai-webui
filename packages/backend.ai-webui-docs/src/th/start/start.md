@@ -46,7 +46,6 @@
 ### นำเข้าโน้ตบุ๊ก
 
 ![](../images/start_from_url_notebook.png)
-<!-- TODO: Capture screenshot of the Start From URL modal showing the Import Notebook tab -->
 
 1. ป้อน URL ของ Jupyter Notebook (ต้องลงท้ายด้วย `.ipynb`) ในฟิลด์
    **URL โน้ตบุ๊ก**
@@ -61,7 +60,6 @@
 ### นำเข้าพื้นที่เก็บข้อมูล GitHub
 
 ![](../images/start_from_url_github.png)
-<!-- TODO: Capture screenshot of the Start From URL modal showing the Import GitHub Repository tab -->
 
 1. ป้อน URL พื้นที่เก็บข้อมูล GitHub ที่ถูกต้องในฟิลด์ **URL GitHub**
 2. เลือก **โฮสต์ที่เก็บข้อมูล** ที่จะบันทึกพื้นที่เก็บข้อมูล
@@ -75,7 +73,6 @@
 ### นำเข้าพื้นที่เก็บข้อมูล GitLab
 
 ![](../images/start_from_url_gitlab.png)
-<!-- TODO: Capture screenshot of the Start From URL modal showing the Import GitLab Repository tab -->
 
 1. ป้อน URL พื้นที่เก็บข้อมูล GitLab ที่ถูกต้องในฟิลด์ **URL GitLab**
 2. ระบุ **ชื่อ Branch GitLab** ตามต้องการ (ค่าเริ่มต้น: `master`)

@@ -47,7 +47,6 @@
 ### ノートブック取り込み
 
 ![](../images/start_from_url_notebook.png)
-<!-- TODO: Capture screenshot of the Start From URL modal showing the Import Notebook tab -->
 
 1. **ノートブックのURL**フィールドにJupyter Notebook URL（`.ipynb`で終わる）を
    入力します
@@ -64,7 +63,6 @@ Markdownのバッジコードをコピーして、プロジェクトのドキュ
 ### GitHubリポジトリをインポートする
 
 ![](../images/start_from_url_github.png)
-<!-- TODO: Capture screenshot of the Start From URL modal showing the Import GitHub Repository tab -->
 
 1. **GitHubのURL**フィールドに有効なGitHubリポジトリURLを入力します
 2. リポジトリを保存する**ストレージホスト**を選択します
@@ -78,7 +76,6 @@ Markdownのバッジコードをコピーして、プロジェクトのドキュ
 ### GitLabリポジトリ取り込み
 
 ![](../images/start_from_url_gitlab.png)
-<!-- TODO: Capture screenshot of the Start From URL modal showing the Import GitLab Repository tab -->
 
 1. **GitLabアドレス**フィールドに有効なGitLabリポジトリURLを入力します
 2. 必要に応じて**GitLab ブランチ名**を指定します（デフォルト: `master`）

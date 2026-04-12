@@ -48,7 +48,6 @@ external sources. Clicking the card opens a dialog with three tabs.
 ### Import Notebook
 
 ![](../images/start_from_url_notebook.png)
-<!-- TODO: Capture screenshot of the Start From URL modal showing the Import Notebook tab -->
 
 1. Enter a Jupyter Notebook URL (must end with `.ipynb`) in the **Notebook URL**
    field
@@ -65,7 +64,6 @@ project documentation.
 ### Import GitHub Repository
 
 ![](../images/start_from_url_github.png)
-<!-- TODO: Capture screenshot of the Start From URL modal showing the Import GitHub Repository tab -->
 
 1. Enter a valid GitHub repository URL in the **GitHub URL** field
 2. Select a **Storage Host** where the repository will be saved
@@ -78,7 +76,6 @@ when starting a session.
 ### Import GitLab Repository
 
 ![](../images/start_from_url_gitlab.png)
-<!-- TODO: Capture screenshot of the Start From URL modal showing the Import GitLab Repository tab -->
 
 1. Enter a valid GitLab repository URL in the **GitLab URL** field
 2. Optionally specify a **GitLab Branch Name** (defaults to `master`)
