@@ -13,7 +13,6 @@
 중요한 안내를 포함할 수 있습니다. 닫기 아이콘을 클릭하여 배너를 닫을 수 있습니다.
 
 ![](../images/start_announcement_banner.png)
-<!-- TODO: Capture screenshot of the announcement banner with sample content -->
 
 ## 액션 카드
 

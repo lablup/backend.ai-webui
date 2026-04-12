@@ -15,7 +15,6 @@
 โดยคลิกไอคอนปิด
 
 ![](../images/start_announcement_banner.png)
-<!-- TODO: Capture screenshot of the announcement banner with sample content -->
 
 ## การ์ดการดำเนินการ
 

@@ -15,7 +15,6 @@ formatting and may contain important notices about system maintenance, updates,
 or usage guidelines. You can dismiss the banner by clicking the close icon.
 
 ![](../images/start_announcement_banner.png)
-<!-- TODO: Capture screenshot of the announcement banner with sample content -->
 
 ## Action Cards
 
