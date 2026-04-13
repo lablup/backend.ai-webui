@@ -6,6 +6,7 @@ import { AutoScalingRuleListDeleteMutation } from '../__generated__/AutoScalingR
 import { AutoScalingRuleListPresetsQuery } from '../__generated__/AutoScalingRuleListPresetsQuery.graphql';
 import { AutoScalingRuleListQuery } from '../__generated__/AutoScalingRuleListQuery.graphql';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
+import AutoScalingRuleEditorModal from './AutoScalingRuleEditorModal';
 import {
   DeleteOutlined,
   PlusOutlined,
@@ -105,8 +106,8 @@ const AutoScalingRuleList: React.FC<AutoScalingRuleListProps> = ({
   const [_isPendingRefetch, startRefetchTransition] = useTransition();
   const [fetchKey, updateFetchKey] = useFetchKey();
 
-  const [_editingRuleId, setEditingRuleId] = useState<string | null>(null);
-  const [_isOpenEditorModal, setIsOpenEditorModal] = useState(false);
+  const [editingRuleId, setEditingRuleId] = useState<string | null>(null);
+  const [isOpenEditorModal, setIsOpenEditorModal] = useState(false);
 
   const {
     baiPaginationOption,
@@ -138,6 +139,7 @@ const AutoScalingRuleList: React.FC<AutoScalingRuleListProps> = ({
                 prometheusQueryPresetId
                 createdAt
                 lastTriggeredAt
+                ...AutoScalingRuleEditorModalFragment
               }
             }
           }
@@ -401,7 +403,24 @@ const AutoScalingRuleList: React.FC<AutoScalingRuleListProps> = ({
           dataSource={autoScalingRules}
         />
       </Card>
-      {/* TODO(FR-2494): AutoScalingRuleEditorModal (Strawberry) integrated in Sub-task 3 */}
+      <AutoScalingRuleEditorModal
+        key={editingRuleId ?? 'create'}
+        open={isOpenEditorModal}
+        modelDeploymentId={toLocalId(deploymentId)}
+        autoScalingRuleFrgmt={
+          editingRuleId
+            ? (autoScalingRules.find((r) => r.id === editingRuleId) ?? null)
+            : null
+        }
+        onRequestClose={(success) => {
+          setIsOpenEditorModal(false);
+          setEditingRuleId(null);
+          if (success) {
+            handleRefetch();
+          }
+        }}
+        onComplete={handleRefetch}
+      />
     </>
   );
 };
