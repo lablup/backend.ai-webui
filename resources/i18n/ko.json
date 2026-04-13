@@ -1683,6 +1683,9 @@
     "ProjectIDFilterRuleMessage": "잘못된 UUID입니다.",
     "ResourcePolicy": "자원 정책"
   },
+  "projectSelect": {
+    "ProjectAdminBadge": "프로젝트 관리자"
+  },
   "rbac": {
     "Activate": "활성화",
     "ActivateRole": "권한 활성화",
