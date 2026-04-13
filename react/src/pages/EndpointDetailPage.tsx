@@ -11,6 +11,7 @@ import {
   RouteTrafficStatus,
 } from '../__generated__/EndpointDetailPageQuery.graphql';
 import { InferenceSessionErrorModalFragment$key } from '../__generated__/InferenceSessionErrorModalFragment.graphql';
+import AutoScalingRuleList from '../components/AutoScalingRuleList';
 import AutoScalingRuleListLegacy from '../components/AutoScalingRuleListLegacy';
 import BAIJSONViewerModal from '../components/BAIJSONViewerModal';
 import BAIRadioGroup from '../components/BAIRadioGroup';
@@ -741,8 +742,19 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
         ></Descriptions>
       </Card>
       {isSupportAutoScalingRule &&
-        (isSupportPrometheusAutoScalingRule ? // TODO(FR-2494): Render Strawberry-based AutoScalingRuleList when >=26.4.0
-        null : (
+        (isSupportPrometheusAutoScalingRule ? (
+          <AutoScalingRuleList
+            deploymentId={toGlobalId(
+              'ModelDeployment',
+              endpoint?.endpoint_id || '',
+            )}
+            isEndpointDestroying={isEndpointInDestroyingCategory(endpoint)}
+            isOwnedByCurrentUser={
+              !endpoint?.created_user_email ||
+              endpoint?.created_user_email === currentUser.email
+            }
+          />
+        ) : (
           <AutoScalingRuleListLegacy
             endpoint_id={endpoint?.endpoint_id as string}
             autoScalingRules={autoScalingRules}
