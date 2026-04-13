@@ -164,6 +164,7 @@
     "MetricName": "Metric Name",
     "MetricSource": "Metric Source",
     "MinReplicas": "Min Replicas",
+    "PrometheusPreset": "Prometheus Preset",
     "ScaleIn": "Scale In",
     "ScaleOut": "Scale Out",
     "ScalingType": "Type",
@@ -171,7 +172,8 @@
     "SuccessfullyCreated": "Auto scaling rule has been successfully created.",
     "SuccessfullyDeleted": "Auto scaling rule has been successfuly deleted.",
     "SuccessfullyUpdated": "Auto scaling rule has been successfully updated.",
-    "Threshold": "Threshold"
+    "Threshold": "Threshold",
+    "TimeWindow": "Time Window"
   },
   "button": {
     "Add": "Add",
