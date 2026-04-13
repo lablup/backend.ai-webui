@@ -5,11 +5,11 @@
 import {
   AutoScalingMetricComparator,
   AutoScalingMetricSource,
-  AutoScalingRuleEditorModalCreateMutation,
+  AutoScalingRuleEditorModalLegacyCreateMutation,
   EndpointAutoScalingRuleInput,
-} from '../__generated__/AutoScalingRuleEditorModalCreateMutation.graphql';
-import { AutoScalingRuleEditorModalFragment$key } from '../__generated__/AutoScalingRuleEditorModalFragment.graphql';
-import { AutoScalingRuleEditorModalModifyMutation } from '../__generated__/AutoScalingRuleEditorModalModifyMutation.graphql';
+} from '../__generated__/AutoScalingRuleEditorModalLegacyCreateMutation.graphql';
+import { AutoScalingRuleEditorModalLegacyFragment$key } from '../__generated__/AutoScalingRuleEditorModalLegacyFragment.graphql';
+import { AutoScalingRuleEditorModalLegacyModifyMutation } from '../__generated__/AutoScalingRuleEditorModalLegacyModifyMutation.graphql';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import {
   App,
@@ -29,12 +29,12 @@ import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
-interface AutoScalingRuleEditorModalProps extends Omit<
+interface AutoScalingRuleEditorModalLegacyProps extends Omit<
   BAIModalProps,
   'onOk' | 'onClose' | 'onCancel'
 > {
   endpoint_id: string;
-  autoScalingRuleFrgmt?: AutoScalingRuleEditorModalFragment$key | null;
+  autoScalingRuleFrgmt?: AutoScalingRuleEditorModalLegacyFragment$key | null;
   onRequestClose: (success?: boolean) => void;
 }
 
@@ -50,11 +50,9 @@ type AutoScalingRuleInput = {
   max_replicas: number;
 };
 
-export const COMPARATOR_LABELS = {
+export const COMPARATOR_LABELS: Record<string, string> = {
   LESS_THAN: '<',
-  LESS_THAN_OR_EQUAL: '≤',
   GREATER_THAN: '>',
-  GREATER_THAN_OR_EQUAL: '≥',
 };
 
 const METRIC_NAMES_MAP: Partial<{
@@ -64,12 +62,15 @@ const METRIC_NAMES_MAP: Partial<{
   INFERENCE_FRAMEWORK: [],
 };
 
-const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
+const AutoScalingRuleEditorModalLegacy: React.FC<
+  AutoScalingRuleEditorModalLegacyProps
+> = ({
   onRequestClose,
   endpoint_id,
   autoScalingRuleFrgmt,
   ...baiModalProps
 }) => {
+  'use memo';
   const { t } = useTranslation();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
@@ -80,7 +81,7 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
 
   const autoScalingRule = useFragment(
     graphql`
-      fragment AutoScalingRuleEditorModalFragment on EndpointAutoScalingRuleNode {
+      fragment AutoScalingRuleEditorModalLegacyFragment on EndpointAutoScalingRuleNode {
         id
         endpoint
         metric_name
@@ -99,8 +100,8 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
   const formRef = useRef<FormInstance<AutoScalingRuleInput>>(null);
 
   const [commitAddAutoScalingRule, isInflightAddAutoScalingRule] =
-    useMutation<AutoScalingRuleEditorModalCreateMutation>(graphql`
-      mutation AutoScalingRuleEditorModalCreateMutation(
+    useMutation<AutoScalingRuleEditorModalLegacyCreateMutation>(graphql`
+      mutation AutoScalingRuleEditorModalLegacyCreateMutation(
         $endpoint: String!
         $props: EndpointAutoScalingRuleInput!
       ) {
@@ -125,8 +126,8 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
     `);
 
   const [commitModifyAutoScalingRule, isInflightModifyAutoScalingRule] =
-    useMutation<AutoScalingRuleEditorModalModifyMutation>(graphql`
-      mutation AutoScalingRuleEditorModalModifyMutation(
+    useMutation<AutoScalingRuleEditorModalLegacyModifyMutation>(graphql`
+      mutation AutoScalingRuleEditorModalLegacyModifyMutation(
         $id: String!
         $props: ModifyEndpointAutoScalingRuleInput!
       ) {
@@ -525,4 +526,4 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
   );
 };
 
-export default AutoScalingRuleEditorModal;
+export default AutoScalingRuleEditorModalLegacy;
