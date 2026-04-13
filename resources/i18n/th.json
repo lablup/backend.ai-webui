@@ -1681,6 +1681,17 @@
     "ProjectIDFilterRuleMessage": "UUID ไม่ถูกต้อง.",
     "ResourcePolicy": "นโยบายทรัพยากร"
   },
+  "projectMembers": {
+    "Email": "อีเมล",
+    "Name": "ชื่อ",
+    "PageTitle": "สมาชิกโครงการ",
+    "Role": "บทบาท",
+    "RoleAdmin": "ผู้ดูแล",
+    "RoleMember": "สมาชิก"
+  },
+  "projectSelect": {
+    "ProjectAdminBadge": "ผู้ดูแลโครงการ"
+  },
   "rbac": {
     "Active": "ใช้งานอยู่",
     "Assign": "มอบหมาย",
@@ -2947,6 +2958,7 @@
       "PrivacyPolicy": "นโยบายความเป็นส่วนตัว",
       "ProfileUpdated": "อัปเดตโปรไฟล์สำเร็จแล้ว",
       "Project": "โครงการ",
+      "ProjectMembers": "สมาชิกโครงการ",
       "Projects": "โครงการ",
       "RBACManagement": "การจัดการ RBAC",
       "Remaining": "ที่เหลืออยู่",

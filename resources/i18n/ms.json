@@ -1679,6 +1679,17 @@
     "ProjectIDFilterRuleMessage": "UUID tidak sah.",
     "ResourcePolicy": "Dasar Sumber"
   },
+  "projectMembers": {
+    "Email": "E-mel",
+    "Name": "Nama",
+    "PageTitle": "Ahli Projek",
+    "Role": "Peranan",
+    "RoleAdmin": "Pentadbir",
+    "RoleMember": "Ahli"
+  },
+  "projectSelect": {
+    "ProjectAdminBadge": "Pentadbir Projek"
+  },
   "rbac": {
     "Active": "Aktif",
     "Assign": "Tugaskan",
@@ -2945,6 +2956,7 @@
       "PrivacyPolicy": "Dasar Privasi",
       "ProfileUpdated": "Profil telah berjaya dikemas kini.",
       "Project": "Projek",
+      "ProjectMembers": "Ahli Projek",
       "Projects": "Projek",
       "RBACManagement": "Pengurusan RBAC",
       "Remaining": "Tinggal",

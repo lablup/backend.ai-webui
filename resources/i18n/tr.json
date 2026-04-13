@@ -1679,6 +1679,17 @@
     "ProjectIDFilterRuleMessage": "Geçersiz UUID.",
     "ResourcePolicy": "Kaynak Politikası"
   },
+  "projectMembers": {
+    "Email": "E-posta",
+    "Name": "Ad",
+    "PageTitle": "Proje Üyeleri",
+    "Role": "Rol",
+    "RoleAdmin": "Yönetici",
+    "RoleMember": "Üye"
+  },
+  "projectSelect": {
+    "ProjectAdminBadge": "Proje Yöneticisi"
+  },
   "rbac": {
     "Active": "Aktif",
     "Assign": "Ata",
@@ -2945,6 +2956,7 @@
       "PrivacyPolicy": "Gizlilik Politikası",
       "ProfileUpdated": "Profil başarıyla güncellendi.",
       "Project": "Proje",
+      "ProjectMembers": "Proje Üyeleri",
       "Projects": "Projeler",
       "RBACManagement": "RBAC Yönetimi",
       "Remaining": "Geriye kalan",

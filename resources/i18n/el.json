@@ -1679,6 +1679,17 @@
     "ProjectIDFilterRuleMessage": "Μη έγκυρο UUID.",
     "ResourcePolicy": "Πολιτική πόρων"
   },
+  "projectMembers": {
+    "Email": "Email",
+    "Name": "Όνομα",
+    "PageTitle": "Μέλη Έργου",
+    "Role": "Ρόλος",
+    "RoleAdmin": "Διαχειριστής",
+    "RoleMember": "Μέλος"
+  },
+  "projectSelect": {
+    "ProjectAdminBadge": "Διαχειριστής Έργου"
+  },
   "rbac": {
     "Active": "Ενεργός",
     "Assign": "Ανάθεση",
@@ -2945,6 +2956,7 @@
       "PrivacyPolicy": "Πολιτική απορρήτου",
       "ProfileUpdated": "Το προφίλ ενημερώθηκε με επιτυχία.",
       "Project": "Έργο",
+      "ProjectMembers": "Μέλη Έργου",
       "Projects": "Έργα",
       "RBACManagement": "Διαχείριση RBAC",
       "Remaining": "Παραμένων",

@@ -1683,6 +1683,17 @@
     "ProjectIDFilterRuleMessage": "無效的 UUID。",
     "ResourcePolicy": "資源策略"
   },
+  "projectMembers": {
+    "Email": "電子郵件",
+    "Name": "姓名",
+    "PageTitle": "專案成員",
+    "Role": "角色",
+    "RoleAdmin": "管理員",
+    "RoleMember": "成員"
+  },
+  "projectSelect": {
+    "ProjectAdminBadge": "專案管理員"
+  },
   "rbac": {
     "Active": "活躍",
     "Assign": "分配",
@@ -2949,6 +2960,7 @@
       "PrivacyPolicy": "隱私政策",
       "ProfileUpdated": "個人資料已成功更新。",
       "Project": "項目",
+      "ProjectMembers": "專案成員",
       "Projects": "項目",
       "RBACManagement": "RBAC管理",
       "Remaining": "其餘的",

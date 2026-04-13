@@ -1679,6 +1679,17 @@
     "ProjectIDFilterRuleMessage": "Неверный UUID.",
     "ResourcePolicy": "Политика ресурсов"
   },
+  "projectMembers": {
+    "Email": "Эл. почта",
+    "Name": "Имя",
+    "PageTitle": "Участники проекта",
+    "Role": "Роль",
+    "RoleAdmin": "Администратор",
+    "RoleMember": "Участник"
+  },
+  "projectSelect": {
+    "ProjectAdminBadge": "Администратор проекта"
+  },
   "rbac": {
     "Active": "Активный",
     "Assign": "Назначить",
@@ -2945,6 +2956,7 @@
       "PrivacyPolicy": "Политика конфиденциальности",
       "ProfileUpdated": "Профиль успешно обновлён.",
       "Project": "Проект",
+      "ProjectMembers": "Участники проекта",
       "Projects": "Проекты",
       "RBACManagement": "Управление RBAC",
       "Remaining": "Оставшийся",

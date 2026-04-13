@@ -1681,6 +1681,17 @@
     "ProjectIDFilterRuleMessage": "無効なUUIDです。",
     "ResourcePolicy": "リソースポリシー"
   },
+  "projectMembers": {
+    "Email": "メール",
+    "Name": "名前",
+    "PageTitle": "プロジェクトメンバー",
+    "Role": "役割",
+    "RoleAdmin": "管理者",
+    "RoleMember": "メンバー"
+  },
+  "projectSelect": {
+    "ProjectAdminBadge": "プロジェクト管理者"
+  },
   "rbac": {
     "Active": "アクティブ",
     "Assign": "割り当て",
@@ -2947,6 +2958,7 @@
       "PrivacyPolicy": "個人情報保護方針",
       "ProfileUpdated": "プロフィールが正常に更新されました。",
       "Project": "プロジェクト",
+      "ProjectMembers": "プロジェクトメンバー",
       "Projects": "プロジェクト",
       "RBACManagement": "RBAC管理",
       "Remaining": "残り",

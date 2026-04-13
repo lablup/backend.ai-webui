@@ -1681,6 +1681,17 @@
     "ProjectIDFilterRuleMessage": "UUID không hợp lệ.",
     "ResourcePolicy": "Chính sách tài nguyên"
   },
+  "projectMembers": {
+    "Email": "Email",
+    "Name": "Tên",
+    "PageTitle": "Thành viên dự án",
+    "Role": "Vai trò",
+    "RoleAdmin": "Quản trị viên",
+    "RoleMember": "Thành viên"
+  },
+  "projectSelect": {
+    "ProjectAdminBadge": "Quản trị viên dự án"
+  },
   "rbac": {
     "Active": "Hoạt động",
     "Assign": "Phân công",
@@ -2947,6 +2958,7 @@
       "PrivacyPolicy": "Chính sách bảo mật",
       "ProfileUpdated": "Hồ sơ đã được cập nhật thành công.",
       "Project": "Dự án",
+      "ProjectMembers": "Thành viên dự án",
       "Projects": "Dự án",
       "RBACManagement": "Quản lý RBAC",
       "Remaining": "Còn lại",

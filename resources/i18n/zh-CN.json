@@ -1681,6 +1681,17 @@
     "ProjectIDFilterRuleMessage": "无效的 UUID。",
     "ResourcePolicy": "资源策略"
   },
+  "projectMembers": {
+    "Email": "邮箱",
+    "Name": "姓名",
+    "PageTitle": "项目成员",
+    "Role": "角色",
+    "RoleAdmin": "管理员",
+    "RoleMember": "成员"
+  },
+  "projectSelect": {
+    "ProjectAdminBadge": "项目管理员"
+  },
   "rbac": {
     "Active": "活跃",
     "Assign": "分配",
@@ -2947,6 +2958,7 @@
       "PrivacyPolicy": "隐私政策",
       "ProfileUpdated": "个人资料已成功更新。",
       "Project": "项目",
+      "ProjectMembers": "项目成员",
       "Projects": "项目",
       "RBACManagement": "RBAC管理",
       "Remaining": "其余的",

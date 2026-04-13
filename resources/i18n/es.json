@@ -1679,6 +1679,17 @@
     "ProjectIDFilterRuleMessage": "UUID no válido.",
     "ResourcePolicy": "Política de recursos"
   },
+  "projectMembers": {
+    "Email": "Correo electrónico",
+    "Name": "Nombre",
+    "PageTitle": "Miembros del proyecto",
+    "Role": "Rol",
+    "RoleAdmin": "Administrador",
+    "RoleMember": "Miembro"
+  },
+  "projectSelect": {
+    "ProjectAdminBadge": "Administrador del proyecto"
+  },
   "rbac": {
     "Active": "Activo",
     "Assign": "Asignar",
@@ -2945,6 +2956,7 @@
       "PrivacyPolicy": "Política de privacidad",
       "ProfileUpdated": "El perfil se ha actualizado correctamente.",
       "Project": "Proyecto",
+      "ProjectMembers": "Miembros del proyecto",
       "Projects": "Proyectos",
       "RBACManagement": "Gestión RBAC",
       "Remaining": "Restante",

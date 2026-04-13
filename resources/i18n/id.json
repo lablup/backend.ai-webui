@@ -1682,6 +1682,17 @@
     "ProjectIDFilterRuleMessage": "UUID tidak valid.",
     "ResourcePolicy": "Kebijakan Sumber Daya"
   },
+  "projectMembers": {
+    "Email": "Email",
+    "Name": "Nama",
+    "PageTitle": "Anggota Proyek",
+    "Role": "Peran",
+    "RoleAdmin": "Admin",
+    "RoleMember": "Anggota"
+  },
+  "projectSelect": {
+    "ProjectAdminBadge": "Admin Proyek"
+  },
   "rbac": {
     "Active": "Aktif",
     "Assign": "Tetapkan",
@@ -2949,6 +2960,7 @@
       "PrivacyPolicy": "Kebijakan Privasi",
       "ProfileUpdated": "Profil berhasil diperbarui.",
       "Project": "Proyek",
+      "ProjectMembers": "Anggota Proyek",
       "Projects": "Proyek",
       "RBACManagement": "Manajemen RBAC",
       "Remaining": "Tersisa",
