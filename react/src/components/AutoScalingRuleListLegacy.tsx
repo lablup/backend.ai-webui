@@ -65,7 +65,7 @@ const renderCondition = (row: any) => {
       <BAIFlex gap={'xs'}>
         {threshold}
         {suffix}
-        {comparator ? <Tooltip title={comparator}>{'<'}</Tooltip> : '-'}
+        <Tooltip title={comparator}>{'<'}</Tooltip>
         <Tag>{metricName}</Tag>
       </BAIFlex>
     );
@@ -77,7 +77,8 @@ const renderCondition = (row: any) => {
       <Tag>{metricName}</Tag>
       {comparator ? (
         <Tooltip title={comparator}>
-          {COMPARATOR_LABELS[comparator] || comparator}
+          {COMPARATOR_LABELS[comparator as keyof typeof COMPARATOR_LABELS] ||
+            comparator}
         </Tooltip>
       ) : (
         '-'

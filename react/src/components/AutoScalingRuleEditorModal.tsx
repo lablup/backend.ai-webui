@@ -309,6 +309,14 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
     `);
 
   const handleOk = () => {
+    // Manual validation for Prometheus preset (Form.Item has no name, so
+    // Ant Design form validation does not cover it automatically)
+    const currentMetricSource = formRef.current?.getFieldValue('metricSource');
+    if (currentMetricSource === 'PROMETHEUS' && !selectedPresetId) {
+      message.error(t('autoScalingRule.PrometheusPresetRequired'));
+      return;
+    }
+
     return formRef.current
       ?.validateFields()
       .then((values) => {
@@ -512,12 +520,18 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
               }
             }}
             options={[
-              { label: 'Kernel', value: 'KERNEL' },
               {
-                label: 'Inference Framework',
+                label: t('autoScalingRule.MetricSourceKernel'),
+                value: 'KERNEL',
+              },
+              {
+                label: t('autoScalingRule.MetricSourceInferenceFramework'),
                 value: 'INFERENCE_FRAMEWORK',
               },
-              { label: 'Prometheus', value: 'PROMETHEUS' },
+              {
+                label: t('autoScalingRule.MetricSourcePrometheus'),
+                value: 'PROMETHEUS',
+              },
             ]}
           />
         </Form.Item>
@@ -606,19 +620,17 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
               <Form.Item
                 label={t('autoScalingRule.QueryTemplate')}
                 extra={
-                  selectedPresetId ? (
-                    <ErrorBoundaryWithNullFallback>
-                      <React.Suspense
-                        fallback={
-                          <Spin size="small" style={{ marginRight: 8 }} />
-                        }
-                      >
-                        <PrometheusPresetPreview
-                          presetGlobalId={selectedPresetId}
-                        />
-                      </React.Suspense>
-                    </ErrorBoundaryWithNullFallback>
-                  ) : undefined
+                  <ErrorBoundaryWithNullFallback>
+                    <React.Suspense
+                      fallback={
+                        <Spin size="small" style={{ marginRight: 8 }} />
+                      }
+                    >
+                      <PrometheusPresetPreview
+                        presetGlobalId={selectedPreset.id}
+                      />
+                    </React.Suspense>
+                  </ErrorBoundaryWithNullFallback>
                 }
               >
                 <Typography.Text
