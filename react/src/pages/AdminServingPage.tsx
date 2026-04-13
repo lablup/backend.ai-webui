@@ -29,16 +29,12 @@ const AdminModelCardListPage = React.lazy(
   () => import('./AdminModelCardListPage'),
 );
 
-const AdminServingPage: React.FC = () => {
+const ServingTabContent: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
-  const currentUserRole = useCurrentUserRole();
-  const webUINavigate = useWebUINavigate();
-  const isSuperAdmin = currentUserRole === 'superadmin';
 
   const [queryParam, setQueryParam] = useQueryStates(
     {
-      tab: parseAsString.withDefault('serving'),
       order: parseAsString,
       filter: parseAsString,
       lifecycleStage: parseAsString.withDefault('active'),
@@ -115,6 +111,112 @@ const AdminServingPage: React.FC = () => {
   );
 
   return (
+    <BAIFlex direction="column" align="stretch" gap={'sm'}>
+      <BAIFlex direction="row" justify="between" wrap="wrap" gap={'sm'}>
+        <BAIFlex gap={'sm'} align="start" wrap="wrap" style={{ flexShrink: 1 }}>
+          <BAIRadioGroup
+            value={lifecycleStage}
+            onChange={(e) => {
+              setQueryParam({ lifecycleStage: e.target.value });
+              setTablePaginationOption({ current: 1 });
+            }}
+            optionType="button"
+            buttonStyle="solid"
+            options={[
+              {
+                label: t('modelService.Active'),
+                value: 'active',
+              },
+              {
+                label: t('modelService.Destroyed'),
+                value: 'destroyed',
+              },
+            ]}
+          />
+          <BAIPropertyFilter
+            filterProperties={filterOutEmpty([
+              {
+                key: 'name',
+                type: 'string',
+                propertyLabel: t('modelService.EndpointName'),
+              },
+              {
+                key: 'url',
+                type: 'string',
+                propertyLabel: t('modelService.ServiceEndpoint'),
+              },
+              {
+                key: 'created_user_email',
+                type: 'string',
+                propertyLabel: t('modelService.Owner'),
+              },
+            ])}
+            value={queryParam.filter || undefined}
+            onChange={(value) => {
+              setQueryParam({ filter: value ?? null });
+              setTablePaginationOption({ current: 1 });
+            }}
+          />
+        </BAIFlex>
+        <BAIFlex gap={'xs'}>
+          <BAIFetchKeyButton
+            value={fetchKey}
+            onChange={updateFetchKey}
+            autoUpdateDelay={7_000}
+            loading={
+              deferredQueryVariables !== queryVariables ||
+              deferredFetchKey !== fetchKey
+            }
+          />
+        </BAIFlex>
+      </BAIFlex>
+      <Suspense fallback={<Skeleton active />}>
+        <EndpointList
+          // @ts-expect-error - Relay fragment type mismatch
+          endpointsFrgmt={endpoint_list?.items}
+          pagination={{
+            pageSize: tablePaginationOption.pageSize,
+            current: tablePaginationOption.current,
+            total: endpoint_list?.total_count,
+            onChange(current, pageSize) {
+              if (_.isNumber(current) && _.isNumber(pageSize)) {
+                setTablePaginationOption({ current, pageSize });
+              }
+            },
+          }}
+          order={queryParam.order}
+          loading={
+            deferredQueryVariables !== queryVariables ||
+            deferredFetchKey !== fetchKey
+          }
+          onChangeOrder={(order) => {
+            setQueryParam({ order });
+          }}
+          onDeleted={() => {
+            updateFetchKey();
+          }}
+          isAdminMode
+        />
+      </Suspense>
+    </BAIFlex>
+  );
+};
+
+const AdminServingPage: React.FC = () => {
+  'use memo';
+  const { t } = useTranslation();
+  const currentUserRole = useCurrentUserRole();
+  const webUINavigate = useWebUINavigate();
+  const isSuperAdmin = currentUserRole === 'superadmin';
+
+  const [queryParam, setQueryParam] = useQueryStates(
+    {
+      tab: parseAsString.withDefault('serving'),
+    },
+    { history: 'push' },
+  );
+
+  return (
     <BAICard
       activeTabKey={queryParam.tab}
       onTabChange={(key) => {
@@ -145,101 +247,7 @@ const AdminServingPage: React.FC = () => {
       ])}
     >
       <Suspense fallback={<Skeleton active />}>
-        {queryParam.tab === 'serving' && (
-          <BAIFlex direction="column" align="stretch" gap={'sm'}>
-            <BAIFlex direction="row" justify="between" wrap="wrap" gap={'sm'}>
-              <BAIFlex
-                gap={'sm'}
-                align="start"
-                wrap="wrap"
-                style={{ flexShrink: 1 }}
-              >
-                <BAIRadioGroup
-                  value={lifecycleStage}
-                  onChange={(e) => {
-                    setQueryParam({ lifecycleStage: e.target.value });
-                    setTablePaginationOption({ current: 1 });
-                  }}
-                  optionType="button"
-                  buttonStyle="solid"
-                  options={[
-                    {
-                      label: t('modelService.Active'),
-                      value: 'active',
-                    },
-                    {
-                      label: t('modelService.Destroyed'),
-                      value: 'destroyed',
-                    },
-                  ]}
-                />
-                <BAIPropertyFilter
-                  filterProperties={filterOutEmpty([
-                    {
-                      key: 'name',
-                      type: 'string',
-                      propertyLabel: t('modelService.EndpointName'),
-                    },
-                    {
-                      key: 'url',
-                      type: 'string',
-                      propertyLabel: t('modelService.ServiceEndpoint'),
-                    },
-                    {
-                      key: 'created_user_email',
-                      type: 'string',
-                      propertyLabel: t('modelService.Owner'),
-                    },
-                  ])}
-                  value={queryParam.filter || undefined}
-                  onChange={(value) => {
-                    setQueryParam({ filter: value ?? null });
-                    setTablePaginationOption({ current: 1 });
-                  }}
-                />
-              </BAIFlex>
-              <BAIFlex gap={'xs'}>
-                <BAIFetchKeyButton
-                  value={fetchKey}
-                  onChange={updateFetchKey}
-                  autoUpdateDelay={7_000}
-                  loading={
-                    deferredQueryVariables !== queryVariables ||
-                    deferredFetchKey !== fetchKey
-                  }
-                />
-              </BAIFlex>
-            </BAIFlex>
-            <Suspense fallback={<Skeleton active />}>
-              <EndpointList
-                // @ts-expect-error - Relay fragment type mismatch
-                endpointsFrgmt={endpoint_list?.items}
-                pagination={{
-                  pageSize: tablePaginationOption.pageSize,
-                  current: tablePaginationOption.current,
-                  total: endpoint_list?.total_count,
-                  onChange(current, pageSize) {
-                    if (_.isNumber(current) && _.isNumber(pageSize)) {
-                      setTablePaginationOption({ current, pageSize });
-                    }
-                  },
-                }}
-                order={queryParam.order}
-                loading={
-                  deferredQueryVariables !== queryVariables ||
-                  deferredFetchKey !== fetchKey
-                }
-                onChangeOrder={(order) => {
-                  setQueryParam({ order });
-                }}
-                onDeleted={() => {
-                  updateFetchKey();
-                }}
-                isAdminMode
-              />
-            </Suspense>
-          </BAIFlex>
-        )}
+        {queryParam.tab === 'serving' && <ServingTabContent />}
         {queryParam.tab === 'model-store' && isSuperAdmin && (
           <BAIErrorBoundary>
             <AdminModelCardListPage />

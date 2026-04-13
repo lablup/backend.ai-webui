@@ -33,6 +33,7 @@ import {
   loginConfigState,
 } from '../hooks/useWebUIConfig';
 import { pluginApiEndpointState } from '../hooks/useWebUIPluginState';
+import { preloadPostLoginChunks } from '../preload';
 import { jotaiStore } from './DefaultProviders';
 import LoginFormPanel from './LoginFormPanel';
 import { App, Button, Form, type MenuProps } from 'antd';
@@ -58,12 +59,27 @@ const extractErrorType = (typeUrl?: string): string => {
   return parts[parts.length - 1] || '';
 };
 
-const LoginView: React.FC = () => {
+const LoginView: React.FC<{
+  /**
+   * When true, delays closing the login panel until MainLayout signals
+   * readiness (`main-layout-ready` event) to prevent a blank screen flash.
+   * Set to false for routes without MainLayout (e.g. /interactive-login).
+   * @default true
+   */
+  waitForMainLayout?: boolean;
+}> = ({ waitForMainLayout = true }) => {
   'use memo';
 
   const { t } = useTranslation();
   const { modal } = App.useApp();
   const { logger } = useBAILogger();
+
+  // Preload commonly needed lazy chunks while the user is on the login screen.
+  // This runs during browser idle time so the JS bundles are already cached
+  // by the time login completes and MainLayout renders.
+  useEffect(() => {
+    preloadPostLoginChunks();
+  }, []);
 
   // Initialize config from config.toml (replaces Lit shell's _parseConfig + loadConfig)
   const {
@@ -261,6 +277,8 @@ const LoginView: React.FC = () => {
     }
     setIsLoginPanelOpen(true);
     setIsBlockPanelOpen(false);
+    // Dismiss splash when login form becomes visible (logged-out state)
+    (globalThis as any).__dismissSplash?.();
 
     const urlParams = new URLSearchParams(window.location.search);
     const tokenParam = urlParams.get('token');
@@ -341,7 +359,17 @@ const LoginView: React.FC = () => {
         detail: client,
       });
       document.dispatchEvent(event);
-      close();
+      // Delay closing the login panel until MainLayout has rendered to avoid
+      // a blank screen flash between the login modal and the main UI.
+      // Routes without MainLayout (e.g. /interactive-login) pass
+      // waitForMainLayout={false} so the panel closes immediately.
+      if (!waitForMainLayout || (globalThis as any).__mainLayoutReady) {
+        close();
+      } else {
+        document.addEventListener('main-layout-ready', () => close(), {
+          once: true,
+        });
+      }
       forceLoginApprovedRef.current = false;
       clearSavedLoginInfo();
       // Read the endpoint from the connected client to avoid stale closure
@@ -354,7 +382,14 @@ const LoginView: React.FC = () => {
       localStorage.setItem('backendaiwebui.api_endpoint', connectedEndpoint);
       setPluginApiEndpoint(connectedEndpoint);
     },
-    [endpoints, close, clearSavedLoginInfo, apiEndpoint, setPluginApiEndpoint],
+    [
+      endpoints,
+      close,
+      clearSavedLoginInfo,
+      apiEndpoint,
+      setPluginApiEndpoint,
+      waitForMainLayout,
+    ],
   );
 
   const connectUsingSession = useCallback(
@@ -366,7 +401,7 @@ const LoginView: React.FC = () => {
         return;
       }
 
-      const userId = form.getFieldValue('user_id') || '';
+      const userId = (form.getFieldValue('user_id') || '').trim();
       const password = form.getFieldValue('password') || '';
       const otp = form.getFieldValue('otp') || '';
 
@@ -996,7 +1031,7 @@ const LoginView: React.FC = () => {
     loginWithOpenID(client);
   }, [apiEndpoint]);
 
-  // Wrapper creates a stacking context above LoadingCurtain (z-index 9999).
+  // Wrapper creates a stacking context above the splash overlay (z-index 10001 > splash 10000).
   // Zero-sized so it doesn't intercept pointer events. Child modals use
   // position:fixed internally so they are visible and interactive.
   return (
@@ -1017,7 +1052,7 @@ const LoginView: React.FC = () => {
             left: 0,
             width: 0,
             height: 0,
-            zIndex: 10000,
+            zIndex: 10001,
             overflow: 'visible',
           }}
         >

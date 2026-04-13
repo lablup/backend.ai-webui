@@ -23,7 +23,6 @@ import {
   Empty,
   Pagination,
   Row,
-  Skeleton,
   Tag,
   Typography,
   theme,
@@ -37,13 +36,13 @@ import {
   useUpdatableState,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
-import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
-import React, {
-  Suspense,
-  useDeferredValue,
-  useEffectEvent,
-  useState,
-} from 'react';
+import {
+  parseAsJson,
+  parseAsString,
+  parseAsStringLiteral,
+  useQueryStates,
+} from 'nuqs';
+import React, { useDeferredValue, useEffectEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 
@@ -62,6 +61,27 @@ const parseSortValue = (value: string) => {
   const direction = parts.pop() as SortDirection;
   const field = parts.join('_') as SortField;
   return { field, direction };
+};
+
+// Walk the filter tree (including AND/OR branches) and return the first
+// `name.iContains` value found, for use as a highlight keyword.
+const extractFirstNameKeyword = (filter: GraphQLFilter | undefined): string => {
+  if (!filter) return '';
+  const name = (filter as { name?: { iContains?: string | null } }).name;
+  if (name?.iContains) return name.iContains;
+  const branches = [
+    (filter as { AND?: GraphQLFilter | GraphQLFilter[] }).AND,
+    (filter as { OR?: GraphQLFilter | GraphQLFilter[] }).OR,
+  ];
+  for (const branch of branches) {
+    if (!branch) continue;
+    const items = Array.isArray(branch) ? branch : [branch];
+    for (const item of items) {
+      const found = extractFirstNameKeyword(item);
+      if (found) return found;
+    }
+  }
+  return '';
 };
 
 const ModelCardV2Card: React.FC<{
@@ -125,7 +145,7 @@ const ModelCardV2Card: React.FC<{
                 type="secondary"
                 style={{ fontSize: token.fontSizeSM }}
               >
-                {t('modelStore.Updated', {
+                {t('modelStore.RelativeTime', {
                   time: dayjs(
                     modelCard.updatedAt ?? modelCard.createdAt,
                   ).fromNow(),
@@ -296,6 +316,7 @@ const ModelStoreListPageV2: React.FC = () => {
     {
       sort: parseAsStringLiteral(SORT_VALUES).withDefault('CREATED_AT_DESC'),
       modelCard: parseAsString,
+      filter: parseAsJson<GraphQLFilter>((value) => value as GraphQLFilter),
     },
     { history: 'replace' },
   );
@@ -307,9 +328,7 @@ const ModelStoreListPageV2: React.FC = () => {
   const [selectedModelCard, setSelectedModelCard] =
     useState<ModelCardDrawerFragment$key | null>(null);
 
-  const [filter, setFilter] = React.useState<GraphQLFilter | undefined>(
-    undefined,
-  );
+  const filter: GraphQLFilter | undefined = queryParams.filter ?? undefined;
   const deferredFilter = useDeferredValue(filter);
   const deferredSortField = useDeferredValue(sortField);
   const deferredSortDirection = useDeferredValue(sortDirection);
@@ -367,9 +386,7 @@ const ModelStoreListPageV2: React.FC = () => {
     );
   }
 
-  // Extract name filter value for search keyword highlighting
-  const searchKeyword =
-    (filter?.name as { iContains?: string } | undefined)?.iContains ?? '';
+  const searchKeyword = extractFirstNameKeyword(filter);
 
   return (
     <BAIFlex direction="column" align="stretch" justify="center" gap="lg">
@@ -379,7 +396,7 @@ const ModelStoreListPageV2: React.FC = () => {
             combinationMode="AND"
             value={filter}
             onChange={(value) => {
-              setFilter(value);
+              setQueryParams({ filter: value ?? null });
               setTablePaginationOption({ current: 1 });
             }}
             filterProperties={[
@@ -415,33 +432,31 @@ const ModelStoreListPageV2: React.FC = () => {
           }}
         />
       </BAIFlex>
-      <Suspense fallback={<Skeleton active />}>
-        <div
-          style={{
-            opacity: isPending ? 0.5 : 1,
-            transition: 'opacity 0.2s',
-            pointerEvents: isPending ? 'none' : undefined,
+      <div
+        style={{
+          opacity: isPending ? 0.5 : 1,
+          transition: 'opacity 0.2s',
+          pointerEvents: isPending ? 'none' : undefined,
+        }}
+      >
+        <ModelCardV2Grid
+          projectId={modelStoreProject.id}
+          filter={deferredFilter}
+          sortField={deferredSortField}
+          sortDirection={deferredSortDirection}
+          fetchKey={deferredFetchKey}
+          searchKeyword={searchKeyword}
+          pageSize={deferredLimit}
+          offset={deferredOffset}
+          onTotalChange={setTotal}
+          selectedModelCardId={queryParams.modelCard}
+          onSelectedModelCardFound={(frgmt) => setSelectedModelCard(frgmt)}
+          onCardClick={(id, frgmt) => {
+            setSelectedModelCard(frgmt);
+            setQueryParams({ modelCard: id });
           }}
-        >
-          <ModelCardV2Grid
-            projectId={modelStoreProject.id}
-            filter={deferredFilter}
-            sortField={deferredSortField}
-            sortDirection={deferredSortDirection}
-            fetchKey={deferredFetchKey}
-            searchKeyword={searchKeyword}
-            pageSize={deferredLimit}
-            offset={deferredOffset}
-            onTotalChange={setTotal}
-            selectedModelCardId={queryParams.modelCard}
-            onSelectedModelCardFound={(frgmt) => setSelectedModelCard(frgmt)}
-            onCardClick={(id, frgmt) => {
-              setSelectedModelCard(frgmt);
-              setQueryParams({ modelCard: id });
-            }}
-          />
-        </div>
-      </Suspense>
+        />
+      </div>
       {total > 0 && (
         <ConfigProvider
           theme={{
@@ -476,6 +491,7 @@ const ModelStoreListPageV2: React.FC = () => {
           </BAIFlex>
         </ConfigProvider>
       )}
+
       <ModelCardDrawer
         modelCardDrawerFrgmt={selectedModelCard}
         open={!!queryParams.modelCard && !!selectedModelCard}

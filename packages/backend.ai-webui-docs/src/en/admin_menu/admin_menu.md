@@ -15,12 +15,13 @@ search box on each column header.
 
 A user can be created by clicking the '+Create User' button. Note that the password
 must be longer or equal to 8 characters and at least 1 alphabet/special
-character/ number should be included. The maximum length allowed for E-Mail and Username is 64.
+character/number should be included. The maximum length allowed for E-Mail, User Name, and Full Name is 64 characters.
 
 If a user with the same email or username already exists, it is not possible to
 create a user account. Please try other email and username.
 
 ![](../images/create_user_dialog.png)
+
 
 Check if the user is created.
 
@@ -33,35 +34,49 @@ user belongs.
 ![](../images/user_detail_dialog.png)
 
 Click the 'Setting (Gear)' in the Controls panel to update information of a user who
-already exists. User's name, password, activation state, etc. can be changed. User ID cannot be changed.
+already exists. User's name, password, activation state, etc. can be changed. User ID (email) cannot be changed.
 
 ![](../images/user_update_dialog.png)
 
-Each of the five items at the bottom of the dialog has the following functions.
 
-- User Status: Indicates the user's status. Inactive users cannot log
-  in. Before Verification is a status indicates that a user needs an additional
+The user create/update dialog contains the following fields:
+
+- **E-Mail**: The user's email address, used as the login ID. Cannot be changed after creation.
+- **Username**: A unique identifier for the user (up to 64 characters).
+- **Full Name**: The user's display name (up to 64 characters).
+- **Password**: Must be at least 8 characters and include at least 1 alphabet, 1 special character, and 1 number.
+- **Description**: An optional description for the user (up to 500 characters).
+- **User Status**: Indicates the user's status. Inactive users cannot log
+  in. Before Verification is a status that indicates a user needs an additional
   step to activate the account such as email verification or an approval from an
   admin. Note that the inactive users are listed in the Inactive tab separately.
 
   ![](../images/active_user_selection.png)
 
-- Require password change?: If the admin has chosen random passwords while
+- **Role**: The user's role (user, admin, superadmin). Available options depend on the current user's permissions.
+- **Domain**: The domain to which the user belongs. This field is shown in both the create and update dialogs.
+- **Projects**: Select one or more projects for the user to belong to. The available projects depend on the domain shown in the dialog.
+- **Require password change?**: If the admin has chosen random passwords while
   creating users in batches, this field can be set to ON to indicate that
   password change is required. The users will see the top bar that notify user
   to update their password, but this is a kind of descriptive flag which has no
   effect on actual use.
-- Enable sudo session: Allow the user to use sudo in the compute session.
+- **Enable sudo session**: Allow the user to use sudo in the compute session.
   This is useful when the user needs to install packages or run commands that
   require root privileges. However, it is not recommended to enable this option
   for all users, as it may cause security issues.
-- 2FA Enabled: A flag indicating whether the user uses two-factor authentication.
+- **2FA Enabled**: A flag indicating whether the user uses two-factor authentication.
   When using two-factor authentication, users are additionally required to enter an
   OTP code when logging in. Administrators can only disable two-factor authentication
   for other users.
-- Resource Policy: From Backend.AI version 24.09, you can select the user resource policy
+- **Resource Policy**: From Backend.AI version 24.09, you can select the user resource policy
   to which the user belongs. For more information about user resource policies, please
-  refer [user resource policy](#user-resource-policy) section.
+  refer to the [user resource policy](#user-resource-policy) section.
+- **Allowed Client IPs**: Restrict which IP addresses can access the system using this user account. Enter IP addresses or CIDR notation (e.g., `10.20.30.40`, `10.20.30.0/24`). If left empty, access from any IP is allowed.
+- **Container UID**: The numeric User ID assigned to processes inside the container. This is useful when the container needs to match a specific UID for file permission purposes.
+- **Container GID**: The default numeric Group ID assigned to processes inside the container.
+- **Supplementary GID**: Additional numeric Group IDs assigned to container processes. Enter multiple GIDs separated by commas.
+- **Main Access Key**: (Edit only) Select the main access key used for API authentication among the user's keypairs.
 
 <a id="bulk-create-users"></a>
 
@@ -588,29 +603,29 @@ clicking the 'Setting (Gear)' button at the bottom right of the table.
 Starting from version 24.03, Backend.AI supports project resource policy management. Project
 resource policies manage storage space (quota) and folder-related limitations for projects.
 
-When clicking the Project tab of the Resource Policies page, you can see the list of project
+When clicking the `Project` tab of the `Resource Policies` page, you can see the list of project
 resource policy.
 
 ![](../images/project_resource_policy_list.png)
 
-To create a new project resource policy, click the '+ Create' button at the top right of the table.
+To create a new project resource policy, click the `+ Create` button at the top right of the table.
 
 ![](../images/create_project_resource_policy.png)
 
-- Name: The name of the project resource policy.
-- Max Folder Count: The maximum number of project folders that an administrator can create.
+- **Name**: The name of the project resource policy.
+- **Max Folder Count**: The maximum number of project folders that an administrator can create.
   If the project folder count exceeds this value, the administrator will not be able to create
   a new project folder. If set to Unlimited, it will be displayed as "∞".
-- Max Folder Size: The maximum size of the project's storage space. If the project's storage
+- **Max Folder Size**: The maximum size of the project's storage space. If the project's storage
   space exceeds this value, the administrator cannot create a new project folder. If set to
   Unlimited, it is displayed as "∞".
-- Max Network Count: The maximum number of networks that can be created for the project since Backend.AI version 24.12. If set to Unlimited, it is displayed as "∞".
+- **Max Network Count**: The maximum number of networks that can be created for the project since Backend.AI version 24.12. If set to Unlimited, it is displayed as "∞".
 
 The meaning of each field is similar to the user resource policy. The difference is that the
 project resource policy is applied to the project folders, while the user resource policy is
 applied to the user folders.
 
-If you want to make changes, click the 'Setting (Gear)' button in the control column. Resource policy
+If you want to make changes, click the `Setting (Gear)` button in the control column. Resource policy
 names cannot be edited. Deletion can be done by clicking the trash can icon button.
 
 :::note
@@ -618,10 +633,10 @@ Changing a resource policy may affect all users who use that policy,
 so use it with caution.
 :::
 
-You can select and display only the columns you want by clicking the 'Setting (Gear)' button at the
+You can select and display only the columns you want by clicking the `Setting (Gear)` button at the
 bottom right of the table.
 
-To save the current resource policy as a file, click on the 'Tools' menu located at the top left of each tab. Once you click the menu, download dialog will appear.
+To save the current resource policy as a file, click the 'more' button in the upper right of each tab and select the 'Export CSV' menu item.
 
 ![](../images/keypair_export.png)
 
@@ -833,9 +848,9 @@ The modal displays the following:
 Admins can manage images, which are used in creating a compute session, in the
 Images tab of the Environments page. In the tab, meta information of all images
 currently in the Backend.AI server is displayed. You can check information such
-as registry, namespace, image name, image's based OS, digest, and minimum
+as registry, architecture, namespace, image name, digest, and minimum
 resources required for each image. For images downloaded to one or more agent
-nodes, there will be a `installed` tag in each Status column.
+nodes, there will be an `installed` tag in the Status column.
 
 :::note
 The feature to install images by selecting specific agents is currently
@@ -843,6 +858,17 @@ under development.
 :::
 
 ![](../images/image_list_page.png)
+
+
+The image list displays additional columns for more detailed image information:
+
+- **Architecture**: The CPU architecture of the image (e.g., x86_64, aarch64).
+- **Namespace**: The namespace of the image within the registry.
+- **Base Image Name**: The base name of the image, with alias tags for easier identification.
+- **Version**: The version tag of the image.
+- **Tags**: Detailed tags associated with the image, displayed as double tags with aliases.
+
+You can select multiple uninstalled images and click the `Install` button to install them on available agent nodes in bulk.
 
 You can change the minimum resource requirements for each image by clicking the
 'Setting (Gear)' in the Controls panel. Each image has hardware and resource
@@ -896,16 +922,20 @@ Backend.AI among the images stored in the registry is not updated.
 ![](../images/image_registries_page.png)
 
 You can add your own private docker registry by clicking the '+ Add Registry'
-button. Note that Registry Name and Registry URL address must be set
-identically, and in the case of Registry URL, a scheme such as `http://` or
-`https://` must be explicitly attached. Also, images stored in the registry
-must have a name prefixed with Registry Name. Username and Password are
-optional and can be filled in if you set separate authentication settings in the
-registry. In Extra Information, you can pass additional information needed for each registry type as a JSON string.
+button. The registry creation dialog contains the following fields:
+
+- **Registry Name**: A unique name for the registry (up to 50 characters). Must match the prefix used in image names stored in the registry.
+- **Registry URL**: The URL of the registry. A scheme such as `http://` or `https://` must be explicitly included.
+- **Username**: Optional. Fill in if you have separate authentication settings in the registry.
+- **Password**: Optional. When editing an existing registry, check the "Change Password" checkbox to modify it.
+- **Registry Type**: Select the type of registry. Supported types include: `docker`, `harbor`, `harbor2`, `github`, `gitlab`, `ecr`, and `ecr-public`.
+- **Project Name**: The project or namespace in the registry (required). Use the full path including namespace and project name for GitLab registries.
+- **Extra Information**: A JSON string for additional configuration needed for each registry type. This field is available from version 24.09.3.
 
 ![](../images/add_registry_dialog.png)
 
-#### GitLab Container Registry Configuration
+
+### GitLab Container Registry Configuration
 
 When adding a GitLab container registry, you must specify the `api_endpoint`
 in the Extra Information field. This is required because GitLab uses separate
@@ -967,6 +997,13 @@ After setting the resources with the desired values, save it and check if the co
 when creating a compute session. If available resources are less
 than the amount of resources defined in the preset, the corresponding preset
 would not be shown.
+
+The resource preset dialog includes:
+
+- **Preset Name**: A unique name for the preset (only alphanumeric characters, periods, hyphens, and underscores allowed).
+- **Resource Group**: (Conditional) Associate the preset with a specific resource group.
+- **Resource Preset**: Dynamic fields for each available resource type (CPU, Memory, GPU, etc.). Memory fields support dynamic unit input (`MiB`, `GiB`, `TiB`, `PiB`).
+- **Shared Memory**: The amount of shared memory allocated for the preset. This value must be less than the **Memory** value.
 
 ![](../images/modify_resource_preset_dialog.png)
 
@@ -1036,34 +1073,30 @@ possible in Resource Group tab of the Resource page.
 
 You can edit a resource group by clicking the 'Setting (Gear)' in the Control
 panel. In the Select scheduler field, you can choose the scheduling method for
-creating a compute session. Currently, there are three types: `FIFO`, `LIFO`, and
-`DRF`. `FIFO` and `LIFO` are scheduling methods creating the first- or the
+creating a compute session. Currently, there are four types: `FIFO`, `LIFO`,
+`DRF`, and `FAIR_SHARE`. `FIFO` and `LIFO` are scheduling methods creating the first- or the
 last-enqueued compute session in the job queue. `DRF` stands for Dominant Resource
 Fairness, and it aims to provide resources as fair as possible for each user.
+`FAIR_SHARE` allocates compute resources based on historical usage patterns. For
+more details, refer to the [Fair Share Scheduler](#fair-share-scheduler) section.
 You can deactivate a resource policy by turning off Active Status.
 
 ![](../images/modify_resource_group.png)
 
-WSProxy Server Address sets the WSProxy address for the resource group's Agents
-to use. If you set a URL in this field, WSProxy will relay the traffic of an app
-like Jupyter directly to the compute session via Agent bypassing Manager (v2
-API). By enabling the v2 API, you can lower the Manager's burden when using app
-services. This also achieves the better efficiency and scalability in deploying
-the services. If a direct connection from WSProxy to the Agent node is not
-available, however, please leave this field blank to fall back to the v1 API,
-which relays the traffic through Manager in a traditional way.
 
-The resource group has further Scheduler Options. The details are described below.
+The resource group edit dialog contains the following additional fields:
 
-- Allowed session types:
-  Since user can choose the type of session, resource group can allow certain type of session.
-  You should allow at lest one session types. The allowed session types are Interactive, Batch, and Inference.
-- Pending timeout:
+- **Allowed session types**: Since users can choose the type of session, the resource group can allow certain types. You should allow at least one session type. The allowed session types are Interactive, Batch, Inference, and System.
+- **WSProxy Server Address**: Sets the WSProxy address for the resource group's Agents to use. If you set a URL in this field, WSProxy will relay the traffic of an app like Jupyter directly to the compute session via Agent bypassing Manager (v2 API). By enabling the v2 API, you can lower the Manager's burden when using app services. If a direct connection from WSProxy to the Agent node is not available, leave this field blank to fall back to the v1 API.
+- **WSProxy API Token**: The API token for authenticating with the WSProxy server.
+- **Active**: Toggle the active status of the resource group.
+- **Public**: When enabled, the resource group is visible to all users.
+- **Pending timeout**:
   A compute session will be canceled if it stays `PENDING` status for longer
   than the Pending timeout. When you wish to prevent a session from remaining
   PENDING indefinitely, set this time. Set this value to zero (0) if you do not
   want to apply the pending timeout feature.
-- Retries to skip pending session:
+- **Retries to skip pending session**:
   The number of retries the scheduler tries before skipping a PENDING session.
   It can be configured to prevent the situation where one PENDING session blocks
   the scheduling of the subsequent sessions indefinitely (Head-of-line blocking,
@@ -1192,7 +1225,7 @@ Please note that a file name can have up to 255 characters.
 
 ## System settings
 
-In the Configuration page, you can see main settings of Backend.AI server.
+In the Configurations page, you can see main settings of Backend.AI server.
 Currently, it provides several controls which can change and list settings.
 
 You can change image auto install and update rule by selecting one option from
@@ -1207,9 +1240,65 @@ Don't change rule selection unless you completely understand the meaning of each
 
 ![](../images/system_setting_about_image.png)
 
-You can also change settings for scaling, plugins and enterprise features.
+The Configurations page also displays the status of plugins and enterprise features:
+
+**Plugins:**
+
+- **Open Source CUDA GPU support**: Status of CUDA GPU support.
+- **ROCm GPU support**: Status of ROCm GPU support.
+
+**Enterprise Features:**
+
+- **Fractional GPU**: Fractional GPU (fGPU) virtualization for sharing GPUs across sessions.
+
+Backend.AI supports a wide range of AI accelerators across multiple vendors:
+
+- **NVIDIA**
+  - Spark (GB10)
+  - Blackwell (B300, B200, RTX Pro 6000, etc.)
+  - Hopper (H200, H100 NVL, etc.)
+  - Grace Superchip (GB300, GB200, GH200, etc.)
+  - Turing (Titan RTX, RTX 8000, T4)
+  - Ampere (A100, A40, A10, etc.)
+  - Ada Lovelace (L40S, L4)
+  - Jetson (TX, Xavier, Orin, Thor, etc.)
+- **Intel**
+  - Gaudi 3
+  - Gaudi 2
+  - Gaudi 1
+  - Arc
+- **AMD**
+  - Instinct MI Series (including MI300X)
+  - MI300A
+  - MI250
+- **Rebellions**
+  - ATOM Max
+  - ATOM+
+  - REBEL
+- **FuriosaAI**
+  - RNGD
+- **Tenstorrent**
+  - Wormhole n150s
+  - Wormhole n300s
+- **Google**
+  - TPU v7 (Ironwood)
+  - Coral TPU v5p
+  - Coral TPU v5e
+  - TPU v4
+- **Graphcore**
+  - C600 IPU
+  - Bow IPU
+- **HyperAccel**
+  - LPU
+- **Groq**
+  - LPU
+- **Cerebras**
+  - WSE-3
+- **SambaNova**
+  - SN40L
 
 ![](../images/system_setting_about_scaling_plugins.png)
+
 
 When a user launches a multi-node cluster session, which is introduced at
 version 20.09, Backend.AI will dynamically create an overlay network to support
@@ -1282,3 +1371,13 @@ This page is only for showing current information.
 :::
 
 ![](../images/information_page.png)
+
+## RBAC Management
+
+RBAC (Role-Based Access Control) Management allows superadmins to define roles with fine-grained permissions and assign them to users. You can control which actions specific users are allowed to perform on various resources throughout the Backend.AI system.
+
+:::note
+RBAC Management is only available to superadmins and requires Backend.AI Manager version 25.4.0 or later.
+:::
+
+For detailed information about managing roles, permissions, and user assignments, refer to the dedicated [RBAC Management](#rbac-management) page.

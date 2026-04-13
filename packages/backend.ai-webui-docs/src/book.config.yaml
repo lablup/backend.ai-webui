@@ -57,6 +57,8 @@ navigation:
       path: user_settings/user_settings.md
     - title: Cluster Session
       path: cluster_session/cluster_session.md
+    - title: RBAC Management
+      path: rbac_management/rbac_management.md
     - title: Admin Menu
       path: admin_menu/admin_menu.md
     - title: Trouble Shooting
@@ -114,6 +116,8 @@ navigation:
       path: user_settings/user_settings.md
     - title: クラスターセッション
       path: cluster_session/cluster_session.md
+    - title: RBAC管理
+      path: rbac_management/rbac_management.md
     - title: 管理者メニュー
       path: admin_menu/admin_menu.md
     - title: FAQ＆トラブルシューティング
@@ -171,6 +175,8 @@ navigation:
       path: user_settings/user_settings.md
     - title: 클러스터 세션
       path: cluster_session/cluster_session.md
+    - title: RBAC 관리
+      path: rbac_management/rbac_management.md
     - title: 관리자 메뉴
       path: admin_menu/admin_menu.md
     - title: FAQ 및 문제 해결
@@ -228,6 +234,8 @@ navigation:
       path: user_settings/user_settings.md
     - title: เซสชันคลัสเตอร์
       path: cluster_session/cluster_session.md
+    - title: การจัดการ RBAC
+      path: rbac_management/rbac_management.md
     - title: เมนูผู้ดูแลระบบ
       path: admin_menu/admin_menu.md
     - title: FAQ และการแก้ไขปัญหา

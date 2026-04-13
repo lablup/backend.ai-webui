@@ -189,3 +189,4 @@ achieves more intuitive use.
 | Configurations* | X | O |
 | Maintenance* | X | O |
 | Information* | X | O |
+| RBAC Management* | X | O (superadmin) |

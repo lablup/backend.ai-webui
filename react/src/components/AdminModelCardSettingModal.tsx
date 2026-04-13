@@ -190,7 +190,9 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
         readme: modelCard.readme || undefined,
         accessLevel: modelCard.accessLevel,
       }
-    : {};
+    : {
+        accessLevel: 'INTERNAL',
+      };
 
   const buildMetadataInput = (values: FormInputType) => ({
     name: values.name,
@@ -287,14 +289,11 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
         onOk={handleOk}
         {...modalProps}
       >
-        <Form
-          ref={formRef}
-          layout="vertical"
-          initialValues={initialValues}
-        >
+        <Form ref={formRef} layout="vertical" initialValues={initialValues}>
           <Form.Item
             name="name"
             label={t('adminModelCard.Name')}
+            tooltip={t('adminModelCard.NameTooltip')}
             rules={[
               {
                 required: true,
@@ -417,41 +416,67 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
             </Suspense>
           )}
 
-          <Form.Item name="author" label={t('adminModelCard.Author')}>
+          <Form.Item
+            name="author"
+            label={t('adminModelCard.Author')}
+            tooltip={t('adminModelCard.AuthorTooltip')}
+          >
             <Input />
           </Form.Item>
 
-          <Form.Item name="title" label={t('adminModelCard.Title')}>
+          <Form.Item
+            name="title"
+            label={t('adminModelCard.Title')}
+            tooltip={t('adminModelCard.TitleTooltip')}
+          >
             <Input />
           </Form.Item>
 
           <Form.Item
             name="modelVersion"
             label={t('adminModelCard.ModelVersion')}
+            tooltip={t('adminModelCard.ModelVersionTooltip')}
           >
             <Input />
           </Form.Item>
 
-          <Form.Item name="description" label={t('adminModelCard.Description')}>
+          <Form.Item
+            name="description"
+            label={t('adminModelCard.Description')}
+            tooltip={t('adminModelCard.DescriptionTooltip')}
+          >
             <Input.TextArea rows={3} />
           </Form.Item>
 
-          <Form.Item name="task" label={t('adminModelCard.Task')}>
+          <Form.Item
+            name="task"
+            label={t('adminModelCard.Task')}
+            tooltip={t('adminModelCard.TaskTooltip')}
+          >
             <Input placeholder={t('adminModelCard.TaskPlaceholder')} />
           </Form.Item>
 
-          <Form.Item name="category" label={t('adminModelCard.Category')}>
+          <Form.Item
+            name="category"
+            label={t('adminModelCard.Category')}
+            tooltip={t('adminModelCard.CategoryTooltip')}
+          >
             <Input placeholder={t('adminModelCard.CategoryPlaceholder')} />
           </Form.Item>
 
           <Form.Item
             name="architecture"
             label={t('adminModelCard.Architecture')}
+            tooltip={t('adminModelCard.ArchitectureTooltip')}
           >
             <Input />
           </Form.Item>
 
-          <Form.Item name="framework" label={t('adminModelCard.Framework')}>
+          <Form.Item
+            name="framework"
+            label={t('adminModelCard.Framework')}
+            tooltip={t('adminModelCard.FrameworkTooltip')}
+          >
             <Select
               mode="tags"
               placeholder={t('adminModelCard.AddFramework')}
@@ -459,7 +484,11 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
             />
           </Form.Item>
 
-          <Form.Item name="label" label={t('adminModelCard.Label')}>
+          <Form.Item
+            name="label"
+            label={t('adminModelCard.Label')}
+            tooltip={t('adminModelCard.LabelTooltip')}
+          >
             <Select
               mode="tags"
               placeholder={t('adminModelCard.AddLabel')}
@@ -467,17 +496,26 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
             />
           </Form.Item>
 
-          <Form.Item name="license" label={t('adminModelCard.License')}>
+          <Form.Item
+            name="license"
+            label={t('adminModelCard.License')}
+            tooltip={t('adminModelCard.LicenseTooltip')}
+          >
             <Input />
           </Form.Item>
 
-          <Form.Item name="readme" label="README.md">
+          <Form.Item
+            name="readme"
+            label={t('adminModelCard.Readme')}
+            tooltip={t('adminModelCard.ReadmeTooltip')}
+          >
             <Input.TextArea rows={6} />
           </Form.Item>
 
           <Form.Item
             name="accessLevel"
             label={t('adminModelCard.AccessLevel')}
+            tooltip={t('adminModelCard.AccessLevelTooltip')}
             rules={[
               {
                 required: true,
@@ -489,7 +527,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
               options={[
                 {
                   value: 'INTERNAL',
-                  label: t('adminModelCard.Internal'),
+                  label: t('adminModelCard.Private'),
                 },
                 {
                   value: 'PUBLIC',

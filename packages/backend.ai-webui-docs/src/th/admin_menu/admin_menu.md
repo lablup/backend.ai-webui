@@ -15,54 +15,49 @@ search box on each column header.
 
 ## สร้างและปรับปรุงผู้ใช้
 
-A ผู้ใช้ can be created by clicking the '+Create User' button. Note that the password
-must be longer or equal to 8 characters and at least 1 alphabet/special
-character/ number should be included. The maximum length allowed for E-Mail and Username is 64.
+สามารถสร้างผู้ใช้ได้โดยคลิกปุ่ม '+ สร้างผู้ใช้' โปรดทราบว่ารหัสผ่านต้องมีความยาว 8 ตัวอักษรขึ้นไป และต้องมีตัวอักษร ตัวอักขระพิเศษ และตัวเลขอย่างน้อยอย่างละ 1 ตัว ความยาวสูงสุดที่อนุญาตสำหรับ E-Mail, Username และชื่อเต็ม คือ 64 ตัวอักษร
 
 หากผู้ใช้ที่มีอีเมลหรือชื่อผู้ใช้งานเดียวกันมีอยู่แล้ว จะไม่สามารถสร้างบัญชีผู้ใช้ได้ กรุณาลองใช้อีเมลและชื่อผู้ใช้งานอื่น
 
 ![](../images/create_user_dialog.png)
 
-Check if the user is created.
+
+ตรวจสอบว่าผู้ใช้ถูกสร้างแล้ว
 
 ![](../images/check_if_user_created.png)
 
-Click the green button in the Controls panel for more detailed user
-information. You can also check the domain and project information where the
-user belongs.
+คลิกปุ่มสีเขียวในคอลัมน์ 'การควบคุม' เพื่อดูข้อมูลผู้ใช้โดยละเอียด คุณยังสามารถตรวจสอบข้อมูลโดเมนและโปรเจกต์ที่ผู้ใช้สังกัดอยู่ได้
 
 ![](../images/user_detail_dialog.png)
 
-Click the 'Setting (Gear)' in the Controls panel to update information of a user who
-already exists. User's name, password, activation state, etc. can be changed. User ID cannot be changed.
+คลิกปุ่ม 'การตั้งค่า' ในคอลัมน์ 'การควบคุม' เพื่ออัปเดตข้อมูลของผู้ใช้ที่มีอยู่แล้ว สามารถเปลี่ยนชื่อผู้ใช้ รหัสผ่าน สถานะการเปิดใช้งาน เป็นต้น User ID (อีเมล) ไม่สามารถเปลี่ยนแปลงได้
 
 ![](../images/user_update_dialog.png)
 
-Each of the five items at the bottom of the dialog has the following functions.
 
-- User Status: Indicates the user's status. Inactive users cannot log
-  in. Before Verification is a status indicates that a user needs an additional
-  step to activate the account such as email verification or an approval from an
-  admin. Note that the inactive users are listed in the Inactive tab separately.
+กล่องโต้ตอบสร้าง/อัปเดตผู้ใช้ประกอบด้วยฟิลด์ต่อไปนี้:
+
+- **อีเมล**: ที่อยู่อีเมลของผู้ใช้ ใช้เป็น ID สำหรับเข้าสู่ระบบ ไม่สามารถเปลี่ยนแปลงได้หลังจากสร้างแล้ว
+- **ชื่อผู้ใช้**: ตัวระบุเฉพาะของผู้ใช้ (สูงสุด 64 ตัวอักษร)
+- **ชื่อเต็ม**: ชื่อที่แสดงของผู้ใช้ (สูงสุด 64 ตัวอักษร)
+- **รหัสผ่าน**: ต้องมีอย่างน้อย 8 ตัวอักษร และมีตัวอักษร ตัวอักขระพิเศษ และตัวเลขอย่างน้อยอย่างละ 1 ตัว
+- **คำอธิบาย**: คำอธิบายเพิ่มเติมสำหรับผู้ใช้ (สูงสุด 500 ตัวอักษร)
+- **สถานะผู้ใช้**: แสดงสถานะของผู้ใช้ ผู้ใช้ Inactive ไม่สามารถเข้าสู่ระบบได้ Before Verification เป็นสถานะที่บ่งบอกว่าผู้ใช้ต้องดำเนินการเพิ่มเติมเพื่อเปิดใช้งานบัญชี เช่น การยืนยันอีเมลหรือการอนุมัติจากผู้ดูแลระบบ ผู้ใช้ Inactive จะแสดงแยกในแท็บ Inactive
 
   ![](../images/active_user_selection.png)
 
-- Require password change?: If the admin has chosen random passwords while
-  creating users in batches, this field can be set to ON to indicate that
-  password change is required. The users will see the top bar that notify user
-  to update their password, but this is a kind of descriptive flag which has no
-  effect on actual use.
-- Enable sudo session: Allow the user to use sudo in the compute session.
-  This is useful when the user needs to install packages or run commands that
-  require root privileges. However, it is not recommended to enable this option
-  for all users, as it may cause security issues.
-- 2FA Enabled: A flag indicating whether the user uses two-factor authentication.
-  When using two-factor authentication, users are additionally required to enter an
-  OTP code when logging in. Administrators can only disable two-factor authentication
-  for other users.
-- Resource Policy: From Backend.AI version 24.09, you can select the user resource policy
-  to which the user belongs. For more information about user resource policies, please
-  refer [user resource policy](#user-resource-policy) section.
+- **บทบาท**: บทบาทของผู้ใช้ (user, admin, superadmin) ตัวเลือกที่มีจะขึ้นอยู่กับสิทธิ์ของผู้ใช้ปัจจุบัน
+- **โดเมน**: โดเมนที่ผู้ใช้สังกัด สามารถกำหนดหรือแก้ไขได้ทั้งขณะสร้างผู้ใช้ใหม่และแก้ไขผู้ใช้
+- **โปรเจกต์**: เลือกโปรเจกต์หนึ่งรายการขึ้นไปที่ผู้ใช้จะสังกัด โปรเจกต์ที่มีจะขึ้นอยู่กับโดเมนที่เลือก
+- **ต้องเปลี่ยนรหัสผ่าน**: หากผู้ดูแลระบบเลือกรหัสผ่านแบบสุ่มขณะสร้างผู้ใช้เป็นกลุ่ม ฟิลด์นี้สามารถตั้งค่าเป็น ON เพื่อบ่งบอกว่าจำเป็นต้องเปลี่ยนรหัสผ่าน ผู้ใช้จะเห็นแถบด้านบนที่แจ้งให้อัปเดตรหัสผ่าน แต่นี่เป็นเพียงแฟล็กอธิบายซึ่งไม่มีผลต่อการใช้งานจริง
+- **เปิดใช้งานเซสชัน sudo**: อนุญาตให้ผู้ใช้ใช้ sudo ในเซสชันการคำนวณ สิ่งนี้มีประโยชน์เมื่อผู้ใช้ต้องติดตั้งแพ็กเกจหรือรันคำสั่งที่ต้องใช้สิทธิ์ root อย่างไรก็ตาม ไม่แนะนำให้เปิดใช้ตัวเลือกนี้สำหรับผู้ใช้ทุกคน เนื่องจากอาจทำให้เกิดปัญหาด้านความปลอดภัย
+- **2FA Enabled**: แฟล็กที่บ่งบอกว่าผู้ใช้ใช้การยืนยันตัวตนแบบสองปัจจัยหรือไม่ เมื่อใช้การยืนยันตัวตนแบบสองปัจจัย ผู้ใช้จะต้องกรอกรหัส OTP เพิ่มเติมเมื่อเข้าสู่ระบบ ผู้ดูแลระบบสามารถปิดการยืนยันตัวตนแบบสองปัจจัยของผู้ใช้อื่นได้เท่านั้น
+- **นโยบายทรัพยากร**: ตั้งแต่ Backend.AI เวอร์ชัน 24.09 คุณสามารถเลือกนโยบายทรัพยากรผู้ใช้ที่ผู้ใช้สังกัดได้ สำหรับข้อมูลเพิ่มเติมเกี่ยวกับนโยบายทรัพยากรผู้ใช้ โปรดดูที่ส่วน [นโยบายทรัพยากรผู้ใช้](#user-resource-policy)
+- **IP ไคลเอนต์ที่อนุญาต**: จำกัดที่อยู่ IP ที่สามารถเข้าถึงระบบโดยใช้บัญชีผู้ใช้นี้ ป้อนที่อยู่ IP หรือ CIDR (เช่น `10.20.30.40`, `10.20.30.0/24`) หากเว้นว่างไว้ อนุญาตให้เข้าถึงจาก IP ใดก็ได้
+- **UID คอนเทนเนอร์**: User ID ตัวเลขที่กำหนดให้กับกระบวนการภายในคอนเทนเนอร์ มีประโยชน์เมื่อคอนเทนเนอร์ต้องตรงกับ UID เฉพาะสำหรับวัตถุประสงค์ด้านสิทธิ์ไฟล์
+- **GID คอนเทนเนอร์**: Group ID ตัวเลขเริ่มต้นที่กำหนดให้กับกระบวนการภายในคอนเทนเนอร์
+- **GID เสริม**: Group ID ตัวเลขเพิ่มเติมที่กำหนดให้กับกระบวนการคอนเทนเนอร์ ป้อน GID หลายตัวโดยคั่นด้วยเครื่องหมายจุลภาค
+- **คีย์การเข้าถึงหลัก**: (แก้ไขเท่านั้น) เลือกคีย์การเข้าถึงหลักที่ใช้สำหรับการยืนยันตัวตน API จากคีย์แพร์ของผู้ใช้
 
 <a id="bulk-create-users"></a>
 
@@ -591,45 +586,34 @@ clicking the 'Setting (Gear)' button at the bottom right of the table.
 
 <a id="project-resource-policy"></a>
 
-#### Project Resource Policy
+#### นโยบายทรัพยากรโปรเจกต์
 
-Starting from version 24.03, Backend.AI supports project resource policy management. Project
-resource policies manage storage space (quota) and folder-related limitations for projects.
+ตั้งแต่เวอร์ชัน 24.03 Backend.AI รองรับการจัดการนโยบายทรัพยากรโปรเจกต์ นโยบายทรัพยากรโปรเจกต์จัดการพื้นที่จัดเก็บ (โควตา) และข้อจำกัดที่เกี่ยวข้องกับโฟลเดอร์สำหรับโปรเจกต์
 
-When clicking the Project tab of the Resource Policies page, you can see the list of project
-resource policy.
+เมื่อคลิกแท็บ 'โปรเจกต์' ของหน้า 'นโยบายทรัพยากร' คุณจะเห็นรายการนโยบายทรัพยากรโปรเจกต์
 
 ![](../images/project_resource_policy_list.png)
 
-To create a new project resource policy, click the '+ Create' button at the top right of the table.
+หากต้องการสร้างนโยบายทรัพยากรโปรเจกต์ใหม่ ให้คลิกปุ่ม '+ สร้าง' ที่มุมบนขวาของตาราง
 
 ![](../images/create_project_resource_policy.png)
 
-- Name: The name of the project resource policy.
-- Max Folder Count: The maximum number of project folders that an administrator can create.
-  If the project folder count exceeds this value, the administrator will not be able to create
-  a new project folder. If set to Unlimited, it will be displayed as "∞".
-- Max Folder Size: The maximum size of the project's storage space. If the project's storage
-  space exceeds this value, the administrator cannot create a new project folder. If set to
-  Unlimited, it is displayed as "∞".
-- Max Network Count: The maximum number of networks that can be created for the project since Backend.AI version 24.12. If set to Unlimited, it is displayed as "∞".
+- **ชื่อ**: ชื่อของนโยบายทรัพยากรโปรเจกต์
+- **จำนวนโฟลเดอร์สูงสุด**: จำนวนโฟลเดอร์โปรเจกต์สูงสุดที่ผู้ดูแลระบบสามารถสร้างได้ หากจำนวนโฟลเดอร์โปรเจกต์เกินค่านี้ ผู้ดูแลระบบจะไม่สามารถสร้างโฟลเดอร์โปรเจกต์ใหม่ได้ หากตั้งค่าเป็น Unlimited จะแสดงเป็น "∞"
+- **ขนาดโฟลเดอร์สูงสุด**: ขนาดสูงสุดของพื้นที่จัดเก็บโปรเจกต์ หากพื้นที่จัดเก็บเกินค่านี้ ผู้ดูแลระบบจะไม่สามารถสร้างโฟลเดอร์โปรเจกต์ใหม่ได้ หากตั้งค่าเป็น Unlimited จะแสดงเป็น "∞"
+- **จำนวนเครือข่ายสูงสุด**: จำนวนเครือข่ายสูงสุดที่สามารถสร้างสำหรับโปรเจกต์ได้ตั้งแต่ Backend.AI เวอร์ชัน 24.12 หากตั้งค่าเป็น Unlimited จะแสดงเป็น "∞"
 
-The meaning of each field is similar to the user resource policy. The difference is that the
-project resource policy is applied to the project folders, while the user resource policy is
-applied to the user folders.
+ความหมายของแต่ละฟิลด์คล้ายกับนโยบายทรัพยากรผู้ใช้ ความแตกต่างคือนโยบายทรัพยากรโปรเจกต์จะใช้กับโฟลเดอร์โปรเจกต์ ในขณะที่นโยบายทรัพยากรผู้ใช้จะใช้กับโฟลเดอร์ผู้ใช้
 
-If you want to make changes, click the 'Setting (Gear)' button in the control column. Resource policy
-names cannot be edited. Deletion can be done by clicking the trash can icon button.
+หากต้องการเปลี่ยนแปลง ให้คลิกปุ่ม 'การตั้งค่า' ในคอลัมน์ 'การควบคุม' ชื่อนโยบายทรัพยากรไม่สามารถแก้ไขได้ การลบสามารถทำได้โดยคลิกปุ่มไอคอนถังขยะ
 
 :::note
-Changing a resource policy may affect all users who use that policy,
-so use it with caution.
+การเปลี่ยนนโยบายทรัพยากรอาจส่งผลกระทบต่อผู้ใช้ทั้งหมดที่ใช้นโยบายนั้น ดังนั้นควรใช้ด้วยความระมัดระวัง
 :::
 
-You can select and display only the columns you want by clicking the 'Setting (Gear)' button at the
-bottom right of the table.
+คุณสามารถเลือกและแสดงเฉพาะคอลัมน์ที่ต้องการโดยคลิกปุ่ม 'การตั้งค่า' ที่มุมล่างขวาของตาราง
 
-To save the current resource policy as a file, click on the 'Tools' menu located at the top left of each tab. Once you click the menu, download dialog will appear.
+หากต้องการบันทึกนโยบายทรัพยากรปัจจุบันเป็นไฟล์ ให้คลิกปุ่ม 'เพิ่มเติม' ที่มุมบนขวาของแต่ละแท็บ และเลือกเมนู 'ส่งออก CSV'
 
 ![](../images/keypair_export.png)
 
@@ -646,6 +630,8 @@ To save the current resource policy as a file, click on the 'Tools' menu located
 ข้อมูลรายละเอียดเกี่ยวกับเซสชันได้
 
 <a id="manage-images"></a>
+
+<a id="fair-share-scheduler"></a>
 
 ## ตัวจัดตาราง Fair Share
 
@@ -837,21 +823,26 @@ modal จะแสดงข้อมูลต่อไปนี้:
 
 <a id="manage-images"></a>
 
-## Manage Images
+## การจัดการอิมเมจ
 
-Admins can manage images, which are used in creating a compute session, in the
-Images tab of the Environments page. In the tab, meta information of all images
-currently in the Backend.AI server is displayed. You can check information such
-as registry, namespace, image name, image's based OS, digest, and minimum
-resources required for each image. For images downloaded to one or more agent
-nodes, there will be a `installed` tag in each Status column.
+ผู้ดูแลระบบสามารถจัดการอิมเมจที่ใช้ในการสร้างเซสชันการคำนวณได้ในแท็บ Images ของหน้า Environments ในแท็บนี้จะแสดงข้อมูลเมตาของอิมเมจทั้งหมดที่อยู่ในเซิร์ฟเวอร์ Backend.AI ในปัจจุบัน คุณสามารถตรวจสอบข้อมูลต่างๆ เช่น registry, สถาปัตยกรรม, namespace, ชื่ออิมเมจ, digest และทรัพยากรขั้นต่ำที่จำเป็นสำหรับแต่ละอิมเมจ สำหรับอิมเมจที่ดาวน์โหลดไปยังโหนดเอเจนต์หนึ่งรายการขึ้นไป จะมีแท็ก `installed` ในคอลัมน์ Status
 
 :::note
-The feature to install images by selecting specific agents is currently
-under development.
+ฟีเจอร์การติดตั้งอิมเมจโดยเลือกเอเจนต์เฉพาะกำลังอยู่ระหว่างการพัฒนา
 :::
 
 ![](../images/image_list_page.png)
+
+
+รายการอิมเมจจะแสดงคอลัมน์เพิ่มเติมสำหรับข้อมูลอิมเมจที่ละเอียดยิ่งขึ้น:
+
+- **สถาปัตยกรรม**: สถาปัตยกรรม CPU ของอิมเมจ (เช่น x86_64, aarch64)
+- **เนมสเปซ**: เนมสเปซของอิมเมจภายในรีจิสทรี
+- **ชื่อภาพฐาน**: ชื่อพื้นฐานของอิมเมจ พร้อมแท็กนามแฝงเพื่อให้ระบุตัวตนได้ง่ายขึ้น
+- **เวอร์ชัน**: แท็กเวอร์ชันของอิมเมจ
+- **แท็ก**: แท็กรายละเอียดที่เกี่ยวข้องกับอิมเมจ แสดงเป็นแท็กคู่พร้อมนามแฝง
+
+คุณสามารถเลือกอิมเมจที่ยังไม่ได้ติดตั้งหลายรายการ แล้วคลิกปุ่ม `ติดตั้ง` เพื่อติดตั้งบนโหนดเอเจนต์ที่มีอยู่พร้อมกัน
 
 You can change the minimum resource requirements for each image by clicking the
 'Setting (Gear)' in the Controls panel. Each image has hardware and resource
@@ -887,39 +878,149 @@ You need to reinstall the image after changing the managed app.
 
 <a id="manage-docker-registry"></a>
 
-## Manage docker registry
+## การจัดการ Docker Registry
 
-You can click on the Registries tab in Environments page to see the information
-of the docker registry that are currently connected. `cr.backend.ai` is
-registered by default, and it is a registry provided by Harbor.
+คุณสามารถคลิกแท็บ Registries ในหน้า Environments เพื่อดูข้อมูลของ Docker registry ที่เชื่อมต่ออยู่ในปัจจุบัน `cr.backend.ai` ถูกลงทะเบียนเป็นค่าเริ่มต้น ซึ่งเป็น registry ที่ให้บริการโดย Harbor
 
 :::note
-In the offline environment, the default registry is not accessible, so
-click the trash icon on the right to delete it.
+ในสภาพแวดล้อมแบบออฟไลน์ ไม่สามารถเข้าถึง registry เริ่มต้นได้ ให้คลิกไอคอนถังขยะทางขวาเพื่อลบออก
 :::
 
-Click the refresh icon in Controls to update image metadata for Backend.AI from
-the connected registry. Image information which does not have labels for
-Backend.AI among the images stored in the registry is not updated.
+คลิกไอคอนรีเฟรชในคอลัมน์ 'การควบคุม' เพื่ออัปเดตข้อมูลเมตาอิมเมจสำหรับ Backend.AI จาก registry ที่เชื่อมต่อ ข้อมูลอิมเมจที่ไม่มีเลเบลสำหรับ Backend.AI จะไม่ถูกอัปเดต
 
 ![](../images/image_registries_page.png)
 
-You can add your own private docker registry by clicking the '+ Add Registry'
-button. Note that Registry Name and Registry URL address must be set
-identically, and in the case of Registry URL, a scheme such as `http://__PROTECTED_10__https://__PROTECTED_11__api_endpoint__PROTECTED_12__https://registry.gitlab.com__PROTECTED_13__{"api_endpoint": "https://gitlab.com"}__PROTECTED_14__https://registry.example.com__PROTECTED_15__{"api_endpoint": "https://gitlab.example.com"}__PROTECTED_16__api_endpoint__PROTECTED_17__namespace/project-name__PROTECTED_18__read_registry__PROTECTED_19__read_api__PROTECTED_20__read_api__PROTECTED_21__FIFO__PROTECTED_22__LIFO__PROTECTED_23__DRF__PROTECTED_24__FIFO__PROTECTED_25__LIFO__PROTECTED_26__DRF__PROTECTED_27__PENDING__PROTECTED_28__num
-  retries to skip`, default three times).
+คลิกปุ่ม '+ Add Registry' เพื่อเพิ่ม Docker registry ส่วนตัวของคุณ กล่องโต้ตอบสร้าง registry มีฟิลด์ต่อไปนี้:
+
+- **ชื่อรีจิสทรี**: ชื่อเฉพาะของ registry (สูงสุด 50 ตัวอักษร) ต้องตรงกับคำนำหน้าที่ใช้ในชื่ออิมเมจที่จัดเก็บใน registry
+- **URL ทะเบียน**: URL ของ registry ต้องมี scheme เช่น `http://` หรือ `https://` อย่างชัดเจน
+- **ชื่อผู้ใช้**: ตัวเลือก กรอกหากมีการตั้งค่าการยืนยันตัวตนแยกต่างหากใน registry
+- **รหัสผ่าน**: ตัวเลือก เมื่อแก้ไข registry ที่มีอยู่ ให้เลือกช่องทำเครื่องหมาย `Change Password` เพื่อเปลี่ยน
+- **ประเภททะเบียน**: เลือกประเภทของ registry ประเภทที่รองรับ: `docker`, `harbor`, `harbor2`, `github`, `gitlab`, `ecr`, `ecr-public`
+- **ชื่อโครงการ**: โปรเจกต์หรือ namespace ใน registry (จำเป็น) สำหรับ GitLab registry ให้ใช้เส้นทางเต็มรวม namespace และชื่อโปรเจกต์
+- **ข้อมูลเพิ่มเติม**: สตริง JSON สำหรับการกำหนดค่าเพิ่มเติมที่จำเป็นสำหรับแต่ละประเภท registry ฟิลด์นี้ใช้ได้ตั้งแต่เวอร์ชัน 24.09.3
+
+![](../images/add_registry_dialog.png)
+
+
+<a id="gitlab-container-registry-configuration"></a>
+
+### การกำหนดค่า GitLab Container Registry
+
+เมื่อเพิ่ม GitLab container registry คุณต้องระบุ `api_endpoint` ในฟิลด์ Extra Information เนื่องจาก GitLab ใช้ endpoint แยกสำหรับ container registry และ GitLab API
+
+สำหรับ **GitLab.com (public instance)**:
+
+- Registry URL: `https://registry.gitlab.com`
+- Extra Information: `{"api_endpoint": "https://gitlab.com"}`
+
+สำหรับ **self-hosted (on-premise) GitLab**:
+
+- Registry URL: URL ของ GitLab registry ของคุณ (เช่น `https://registry.example.com`)
+- Extra Information: `{"api_endpoint": "https://gitlab.example.com"}`
+
+:::note
+`api_endpoint` ควรชี้ไปที่ URL ของ GitLab instance ของคุณ ไม่ใช่ URL ของ registry
+:::
+
+หมายเหตุการกำหนดค่าเพิ่มเติม:
+
+- **รูปแบบเส้นทางโปรเจกต์**: เมื่อระบุโปรเจกต์ ให้ใช้เส้นทางเต็มรวม namespace และชื่อโปรเจกต์ (เช่น `namespace/project-name`) ทั้งสองส่วนจำเป็นสำหรับให้ registry ทำงานได้อย่างถูกต้อง
+
+- **สิทธิ์ของ access token**: access token ที่ใช้สำหรับ registry ต้องมีทั้ง scope `read_registry` และ `read_api` scope `read_api` จำเป็นสำหรับ Backend.AI เพื่อสอบถาม GitLab API สำหรับข้อมูลเมตาอิมเมจระหว่างการ rescan
+
+คุณยังสามารถอัปเดตข้อมูลของ registry ที่มีอยู่ได้ ยกเว้นชื่อรีจิสทรี
+
+หลังจากสร้าง registry และอัปเดตข้อมูลเมตาอิมเมจแล้ว ผู้ใช้ยังไม่สามารถใช้อิมเมจได้ทันที คุณต้องเปิดใช้งาน registry โดยสลับสวิตช์ Enabled ในรายการ registry เพื่ออนุญาตให้ผู้ใช้เข้าถึงอิมเมจจาก registry
+
+<a id="manage-resource-preset"></a>
+
+## การจัดการ Resource Preset
+
+Resource preset ที่กำหนดไว้ล่วงหน้าจะแสดงในแผง Resource allocation เมื่อสร้างเซสชันการคำนวณ Superadmin สามารถจัดการ resource preset เหล่านี้ได้
+
+![](../images/resource_presets_in_resource_monitor.png)
+
+ไปที่แท็บ Resource Presets ในหน้า Environment คุณสามารถตรวจสอบรายการ resource preset ที่กำหนดไว้ในปัจจุบัน
+
+![](../images/resource_preset_list.png)
+
+คุณสามารถตั้งค่าทรัพยากรเช่น CPU, RAM, fGPU เป็นต้น ที่จะให้บริการโดย resource preset ได้โดยคลิกปุ่ม 'การตั้งค่า' ในคอลัมน์ 'การควบคุม' โมดัลสร้างหรือแก้ไข Resource Preset จะแสดงฟิลด์ของทรัพยากรที่มีอยู่ในปัจจุบัน ขึ้นอยู่กับการตั้งค่าเซิร์ฟเวอร์ ทรัพยากรบางอย่างอาจไม่แสดง หลังจากตั้งค่าทรัพยากรตามต้องการ ให้บันทึกและตรวจสอบว่า preset ที่สอดคล้องกันจะแสดงเมื่อสร้างเซสชันการคำนวณ หากทรัพยากรที่มีน้อยกว่าปริมาณทรัพยากรที่กำหนดใน preset ที่สอดคล้องกัน preset จะไม่แสดง
+
+ไดอะล็อกค่าที่กำหนดไว้ล่วงหน้าของทรัพยากรประกอบด้วย:
+
+- **ชื่อค่าที่กำหนดไว้ล่วงหน้า**: ชื่อเฉพาะสำหรับค่าที่กำหนดไว้ล่วงหน้า (อนุญาตเฉพาะตัวอักษรและตัวเลข, จุด, ขีดกลาง และขีดล่าง)
+- **กลุ่มทรัพยากร**: (แบบมีเงื่อนไข) เชื่อมโยง preset กับกลุ่มทรัพยากรเฉพาะ
+- **ค่าที่กำหนดไว้ล่วงหน้าของทรัพยากร**: ฟิลด์แบบไดนามิกสำหรับทรัพยากรแต่ละประเภทที่มี (CPU, หน่วยความจำ, GPU เป็นต้น) ฟิลด์หน่วยความจำรองรับการป้อนหน่วยแบบไดนามิก (MiB, GiB, TiB, PiB)
+- **หน่วยความจำที่ใช้ร่วมกัน**: ปริมาณหน่วยความจำที่ใช้ร่วมกันที่จัดสรรให้กับค่าที่กำหนดไว้ล่วงหน้า ค่านี้ต้องน้อยกว่าค่า**หน่วยความจำ**
+
+![](../images/modify_resource_preset_dialog.png)
+
+คุณยังสามารถสร้าง resource preset ได้โดยคลิกปุ่ม '+ สร้างค่าที่กำหนดไว้ล่วงหน้า' ที่มุมบนขวาของแท็บ Resource Presets คุณไม่สามารถสร้าง resource preset ที่มีชื่อเดียวกันกับที่มีอยู่แล้วได้ เนื่องจากเป็นค่าคีย์สำหรับแยกแยะแต่ละ resource preset
+
+![](../images/create_resource_preset_dialog.png)
+
+<a id="manage-agent-nodes"></a>
+
+## การจัดการโหนดเอเจนต์
+
+Superadmin สามารถดูรายการโหนดเอเจนต์ที่เชื่อมต่อกับ Backend.AI อยู่ในปัจจุบันได้โดยไปที่หน้า Resources คุณสามารถตรวจสอบ IP ของโหนดเอเจนต์ เวลาที่เชื่อมต่อ ทรัพยากรที่ใช้งานจริงอยู่ในปัจจุบัน เป็นต้น WebUI ไม่มีฟังก์ชันในการจัดการโหนดเอเจนต์
+
+<a id="query-agent-nodes"></a>
+
+#### สอบถามโหนดเอเจนต์
+
+![](../images/agent_list.png)
+
+คุณยังสามารถดูการใช้ทรัพยากรที่แน่นอนในโหนดเอเจนต์ได้โดยคลิกไอคอนโน้ตในคอลัมน์ 'การควบคุม'
+
+![](../images/detailed_agent_node_usage_information.png)
+
+ในแท็บ Terminated คุณสามารถตรวจสอบข้อมูลของเอเจนต์ที่เคยเชื่อมต่อแล้วถูกยกเลิกหรือตัดการเชื่อมต่อ สามารถใช้เป็นข้อมูลอ้างอิงสำหรับการจัดการโหนด หากรายการว่างเปล่า หมายความว่าไม่มีการตัดการเชื่อมต่อหรือการยกเลิกเกิดขึ้น
+
+![](../images/terminated_agent_list.png)
+
+<a id="set-schedulable-status-of-agent-nodes"></a>
+
+#### ตั้งค่าสถานะ Schedulable ของโหนดเอเจนต์
+
+คุณอาจต้องการป้องกันไม่ให้เซสชันการคำนวณใหม่ถูกจัดตารางไปยังบริการ Agent โดยไม่ต้องหยุดบริการ ในกรณีนี้ คุณสามารถปิดใช้งานสถานะ Schedulable ของ Agent จากนั้นคุณสามารถบล็อกการสร้างเซสชันใหม่ในขณะที่รักษาเซสชันที่มีอยู่บน Agent
+
+![](../images/agent_settings.png)
+
+<a id="manage-resource-group"></a>
+
+## การจัดการกลุ่มทรัพยากร
+
+เอเจนต์สามารถจัดกลุ่มเป็นหน่วยที่เรียกว่ากลุ่มทรัพยากร ตัวอย่างเช่น สมมติว่ามีเอเจนต์ 3 ตัวที่มี GPU V100 และเอเจนต์ 2 ตัวที่มี GPU P100 หากคุณต้องการแยก GPU สองประเภทให้ผู้ใช้เห็นแยกกัน คุณสามารถจัดกลุ่มเอเจนต์ V100 สามตัวเป็นกลุ่มทรัพยากรหนึ่ง และเอเจนต์ P100 สองตัวที่เหลือเป็นอีกกลุ่มทรัพยากรหนึ่ง
+
+การเพิ่มเอเจนต์เฉพาะเข้ากลุ่มทรัพยากรเฉพาะยังไม่ได้จัดการใน WebUI ในปัจจุบัน สามารถทำได้โดยแก้ไขไฟล์ config ของเอเจนต์จากตำแหน่งที่ติดตั้งและรีสตาร์ท agent daemon การจัดการกลุ่มทรัพยากรสามารถทำได้ในแท็บ Resource Group ของหน้า Resource
+
+![](../images/resource_group_page.png)
 
 <a id="scheduling-methods"></a>
 
-You can create a new resource policy by clicking the '+ Create' button.
-Likewise other creating options, you cannot create a resource policy with the name
-that already exists, since name is the key value.
+คุณสามารถแก้ไขกลุ่มทรัพยากรได้โดยคลิกปุ่ม 'การตั้งค่า' ในคอลัมน์ 'การควบคุม' ในฟิลด์ 'ตัวจัดกำหนดการ' คุณสามารถเลือกวิธีการจัดตารางสำหรับการสร้างเซสชันการคำนวณ ปัจจุบันมีสี่ประเภท: `FIFO`, `LIFO`, `DRF` และ `FAIR_SHARE` `FIFO` และ `LIFO` เป็นวิธีการจัดตารางที่สร้างเซสชันที่เข้าคิวเป็นลำดับแรกหรือลำดับสุดท้ายในคิวงาน `DRF` ย่อมาจาก Dominant Resource Fairness มีเป้าหมายเพื่อจัดสรรทรัพยากรอย่างเท่าเทียมที่สุดสำหรับแต่ละผู้ใช้ `FAIR_SHARE` จัดสรรทรัพยากรตามรูปแบบการใช้งานในอดีต สำหรับรายละเอียดเพิ่มเติม โปรดดูที่ส่วน [Fair Share Scheduler](#fair-share-scheduler) คุณสามารถปิดใช้งานนโยบายทรัพยากรได้โดยปิดสถานะ 'ใช้งาน'
+
+![](../images/modify_resource_group.png)
+
+กลุ่มทรัพยากรมีตัวเลือกเพิ่มเติมดังนี้:
+
+- **ประเภทเซสชันที่อนุญาต**: ผู้ใช้สามารถเลือกประเภทของเซสชันได้ กลุ่มทรัพยากรสามารถอนุญาตประเภทเซสชันบางประเภท ประเภทเซสชันที่อนุญาต ได้แก่ Interactive, Batch, Inference และ System
+- **ที่อยู่เซิร์ฟเวอร์ WSProxy**: ตั้งค่าที่อยู่ WSProxy สำหรับเอเจนต์ของกลุ่มทรัพยากร
+- **โทเค็น API ของ WSProxy**: โทเค็น API สำหรับการยืนยันตัวตนกับ WSProxy
+- **ใช้งาน**: เปิด/ปิดสถานะการใช้งานของกลุ่มทรัพยากร
+- **สาธารณะ**: เปิดเผยกลุ่มทรัพยากรให้ผู้ใช้ทุกคนเห็น
+- **การหมดเวลาที่รออยู่**: เซสชันการคำนวณจะถูกยกเลิกหากอยู่ในสถานะ `PENDING` นานกว่าการหมดเวลาที่รออยู่ ตั้งค่าเป็นศูนย์ (0) หากไม่ต้องการใช้ฟีเจอร์นี้
+- **จำนวนครั้งที่พยายามข้ามเซสชันที่รออยู่**: จำนวนครั้งที่ scheduler พยายามก่อนข้ามเซสชัน PENDING
+
+คุณสามารถสร้างกลุ่มทรัพยากรใหม่ได้โดยคลิกปุ่ม '+ สร้าง' เช่นเดียวกับตัวเลือกการสร้างอื่นๆ คุณไม่สามารถสร้างกลุ่มทรัพยากรที่มีชื่อเดียวกันกับที่มีอยู่แล้วได้ เนื่องจากชื่อเป็นค่าคีย์
 
 ![](../images/create_resource_group.png)
 
 <a id="storages"></a>
 
-## Storages
+## การจัดเก็บข้อมูล
 
 On STORAGES tab, you can see what kind of mount volumes (usually NFS) exist.
 From 23.03 version, We provide per-user/per-project quota setting on storage that supports quota management.
@@ -1048,7 +1149,62 @@ Don't change rule selection unless you completely understand the meaning of each
 
 ![](../images/system_setting_about_image.png)
 
-You can also change settings for scaling, plugins and enterprise features.
+หน้าการกำหนดค่ายังแสดงสถานะของปลั๊กอินและฟีเจอร์ระดับองค์กร:
+
+**ปลั๊กอิน:**
+
+- **การรองรับ Open-source CUDA GPU**: สถานะการรองรับ CUDA GPU
+- **การรองรับ ROCm GPU**: สถานะการรองรับ ROCm GPU
+
+**ฟีเจอร์ระดับองค์กร:**
+
+- **Fractional GPU**: การจำลอง Fractional GPU (fGPU) สำหรับแชร์ GPU ระหว่างเซสชัน
+
+Backend.AI รองรับตัวเร่งความเร็ว AI ที่หลากหลายจากผู้ผลิตหลายราย:
+
+- **NVIDIA**
+  - Spark (GB10)
+  - Blackwell (B300, B200, RTX Pro 6000 เป็นต้น)
+  - Hopper (H200, H100 NVL เป็นต้น)
+  - Grace Superchip (GB300, GB200, GH200 เป็นต้น)
+  - Turing (Titan RTX, RTX 8000, T4)
+  - Ampere (A100, A40, A10 เป็นต้น)
+  - Ada Lovelace (L40S, L4)
+  - Jetson (TX, Xavier, Orin, Thor เป็นต้น)
+- **Intel**
+  - Gaudi 3
+  - Gaudi 2
+  - Gaudi 1
+  - Arc
+- **AMD**
+  - Instinct MI Series (รวมถึง MI300X)
+  - MI300A
+  - MI250
+- **Rebellions**
+  - ATOM Max
+  - ATOM+
+  - REBEL
+- **FuriosaAI**
+  - RNGD
+- **Tenstorrent**
+  - Wormhole n150s
+  - Wormhole n300s
+- **Google**
+  - TPU v7 (Ironwood)
+  - Coral TPU v5p
+  - Coral TPU v5e
+  - TPU v4
+- **Graphcore**
+  - C600 IPU
+  - Bow IPU
+- **HyperAccel**
+  - LPU
+- **Groq**
+  - LPU
+- **Cerebras**
+  - WSE-3
+- **SambaNova**
+  - SN40L
 
 ![](../images/system_setting_about_scaling_plugins.png)
 
@@ -1123,3 +1279,13 @@ This page is only for showing current information.
 :::
 
 ![](../images/information_page.png)
+
+## การจัดการ RBAC
+
+การจัดการ RBAC (Role-Based Access Control) ช่วยให้ผู้ดูแลระบบระดับสูงสามารถกำหนดบทบาทที่มีสิทธิ์แบบละเอียดและมอบหมายให้กับผู้ใช้ได้ คุณสามารถควบคุมการดำเนินการที่ผู้ใช้เฉพาะสามารถทำได้กับทรัพยากรต่าง ๆ ในระบบ Backend.AI
+
+:::note
+การจัดการ RBAC ใช้ได้เฉพาะผู้ดูแลระบบระดับสูงเท่านั้น และต้องใช้ Backend.AI Manager เวอร์ชัน 25.4.0 ขึ้นไป
+:::
+
+สำหรับข้อมูลรายละเอียดเกี่ยวกับการจัดการบทบาท สิทธิ์ และการมอบหมายผู้ใช้ โปรดดูที่หน้า[การจัดการ RBAC](#rbac-management)
