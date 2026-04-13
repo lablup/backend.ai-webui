@@ -7,17 +7,22 @@ import {
   AutoScalingRuleEditorModalFragment$data,
   AutoScalingRuleEditorModalFragment$key,
 } from '../__generated__/AutoScalingRuleEditorModalFragment.graphql';
+import { AutoScalingRuleEditorModalPresetResultQuery } from '../__generated__/AutoScalingRuleEditorModalPresetResultQuery.graphql';
 import { AutoScalingRuleEditorModalPresetsQuery } from '../__generated__/AutoScalingRuleEditorModalPresetsQuery.graphql';
 import { AutoScalingRuleEditorModalUpdateMutation } from '../__generated__/AutoScalingRuleEditorModalUpdateMutation.graphql';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
+import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
+import { ReloadOutlined } from '@ant-design/icons';
 import {
   App,
   AutoComplete,
+  Button,
   Form,
   FormInstance,
   InputNumber,
   Segmented,
   Select,
+  Spin,
   Typography,
 } from 'antd';
 import {
@@ -69,6 +74,92 @@ const METRIC_NAMES_MAP: Partial<
 > = {
   KERNEL: ['cpu_util', 'mem', 'net_rx', 'net_tx'],
   INFERENCE_FRAMEWORK: [],
+};
+
+/**
+ * Inline preview component that fetches and displays the current Prometheus
+ * metric value for a selected preset. Uses useLazyLoadQuery with fetchKey
+ * to support manual refresh without useEffect + setState.
+ */
+const PrometheusPresetPreview: React.FC<{
+  presetGlobalId: string;
+}> = ({ presetGlobalId }) => {
+  'use memo';
+  const { t } = useTranslation();
+  const [fetchKey, setFetchKey] = useState(0);
+
+  const presetRawId = toLocalId(presetGlobalId);
+
+  const data = useLazyLoadQuery<AutoScalingRuleEditorModalPresetResultQuery>(
+    graphql`
+      query AutoScalingRuleEditorModalPresetResultQuery(
+        $id: ID!
+        $options: ExecuteQueryDefinitionOptionsInput
+      ) {
+        prometheusQueryPresetResult(id: $id, options: $options) {
+          status
+          resultType
+          result {
+            metric {
+              key
+              value
+            }
+            values {
+              timestamp
+              value
+            }
+          }
+        }
+      }
+    `,
+    {
+      id: presetRawId,
+      options: {
+        filterLabels: [],
+        groupLabels: [],
+      },
+    },
+    { fetchPolicy: 'network-only', fetchKey: `preview-${fetchKey}` },
+  );
+
+  const results = data.prometheusQueryPresetResult.result;
+
+  let displayValue: string | null = null;
+  if (results.length === 0) {
+    displayValue = null;
+  } else if (results.length === 1) {
+    const values = results[0].values;
+    displayValue = values.length > 0 ? values[values.length - 1].value : null;
+  } else {
+    const firstValues = results[0].values;
+    const latestValue =
+      firstValues.length > 0 ? firstValues[firstValues.length - 1].value : null;
+    displayValue =
+      latestValue != null
+        ? t('autoScalingRule.MultipleSeriesResult', {
+            count: results.length,
+            value: latestValue,
+          })
+        : null;
+  }
+
+  return (
+    <span>
+      <Typography.Text type="secondary" style={{ marginRight: 4 }}>
+        {t('autoScalingRule.CurrentValue')}:{' '}
+      </Typography.Text>
+      <Typography.Text strong>
+        {displayValue ?? t('autoScalingRule.NoDataAvailable')}
+      </Typography.Text>
+      <Button
+        type="link"
+        size="small"
+        icon={<ReloadOutlined />}
+        onClick={() => setFetchKey((k) => k + 1)}
+        title={t('autoScalingRule.RefreshPreview')}
+      />
+    </span>
+  );
 };
 
 /**
@@ -512,7 +603,24 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
               />
             </Form.Item>
             {selectedPreset && (
-              <Form.Item label={t('autoScalingRule.QueryTemplate')}>
+              <Form.Item
+                label={t('autoScalingRule.QueryTemplate')}
+                extra={
+                  selectedPresetId ? (
+                    <ErrorBoundaryWithNullFallback>
+                      <React.Suspense
+                        fallback={
+                          <Spin size="small" style={{ marginRight: 8 }} />
+                        }
+                      >
+                        <PrometheusPresetPreview
+                          presetGlobalId={selectedPresetId}
+                        />
+                      </React.Suspense>
+                    </ErrorBoundaryWithNullFallback>
+                  ) : undefined
+                }
+              >
                 <Typography.Text
                   code
                   style={{
