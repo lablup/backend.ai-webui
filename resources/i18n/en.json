@@ -1684,6 +1684,9 @@
     "ProjectIDFilterRuleMessage": "Invalid UUID.",
     "ResourcePolicy": "Resource Policy"
   },
+  "projectSelect": {
+    "ProjectAdminBadge": "Project Admin"
+  },
   "rbac": {
     "Activate": "Activate",
     "ActivateRole": "Activate Role",

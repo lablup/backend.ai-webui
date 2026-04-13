@@ -6,6 +6,7 @@ import { useSuspendedBackendaiClient } from '.';
 import { useCurrentUserRole } from './backendai';
 import { useDiagnosticsBadgeSeverity } from './useAutoDiagnostics';
 import { useBAISettingUserState } from './useBAISetting';
+import { useEffectiveAdminRole } from './useCurrentUserProjectRoles';
 import { useCustomThemeConfig } from './useCustomThemeConfig';
 import {
   PluginPage,
@@ -137,6 +138,22 @@ const ALL_ADMIN_PAGE_KEYS: ReadonlySet<string> = new Set([
   'information',
 ]);
 
+// Admin-category page keys reachable by a project admin (3-tier admin gating).
+// Project admins see Sessions, Serving, Data (vfolders) and Members within the
+// admin category. Other admin pages remain visible only to domain admins or
+// superadmins. Kept as a plain array so it can be exported and reused (e.g. for
+// per-page route gating in follow-up PRs).
+export const PROJECT_ADMIN_PAGE_KEYS = [
+  'admin-session',
+  'admin-serving',
+  'admin-data',
+  'admin-members',
+] as const;
+
+const PROJECT_ADMIN_PAGE_KEY_SET: ReadonlySet<string> = new Set(
+  PROJECT_ADMIN_PAGE_KEYS,
+);
+
 // Page keys that additionally require superadmin role
 const SUPERADMIN_ONLY_PAGE_KEYS: ReadonlySet<string> = new Set([
   'admin-serving',
@@ -190,6 +207,7 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
   const plugins = useWebUIPluginValue();
   const isPluginLoaded = useWebUIPluginLoadedValue();
   const currentUserRole = useCurrentUserRole();
+  const effectiveAdminRole = useEffectiveAdminRole();
 
   const location = useLocation();
   const { t } = useTranslation();
@@ -319,7 +337,7 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
 
   const isSuperAdmin = currentUserRole === 'superadmin';
 
-  const adminMenu: Array<WebUIAdminMenuItemType> = filterOutEmpty([
+  const fullAdminMenu: Array<WebUIAdminMenuItemType> = filterOutEmpty([
     // --- Operations group ---
     {
       label: <WebUILink to="/credential">{t('webui.menu.Users')}</WebUILink>,
@@ -459,6 +477,20 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       group: 'superadmin-system' as AdminMenuGroupName,
     },
   ]);
+
+  // 3-tier admin gating:
+  // - 'none': no admin items
+  // - 'projectAdmin': only PROJECT_ADMIN_PAGE_KEYS
+  // - 'domainAdmin' / 'superadmin': existing behavior preserved by fullAdminMenu
+  //   (which already applies isSuperAdmin gating per item)
+  const adminMenu: Array<WebUIAdminMenuItemType> =
+    effectiveAdminRole === 'none'
+      ? []
+      : effectiveAdminRole === 'projectAdmin'
+        ? fullAdminMenu.filter((item) =>
+            PROJECT_ADMIN_PAGE_KEY_SET.has(item.key as string),
+          )
+        : fullAdminMenu;
 
   const pluginMap: Record<string, MenuItem[]> = {
     'menuitem-user': generalMenu as unknown as MenuItem[],
