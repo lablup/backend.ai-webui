@@ -104,6 +104,7 @@ export const VALID_MENU_KEYS = [
   'admin-serving',
   'admin-dashboard',
   'admin-data',
+  'admin-members',
   'agent',
   'project',
   'settings',
@@ -128,6 +129,7 @@ const ALL_ADMIN_PAGE_KEYS: ReadonlySet<string> = new Set([
   'admin-serving',
   'admin-dashboard',
   'admin-data',
+  'admin-members',
   'agent',
   'project',
   'settings',
@@ -394,6 +396,16 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       label: <WebUILink to="/scheduler">{t('webui.menu.Scheduler')}</WebUILink>,
       icon: <ClipboardClock style={{ color: token.colorInfo }} />,
       key: 'scheduler' as MenuKeys,
+      group: 'superadmin-operations' as AdminMenuGroupName,
+    },
+    {
+      label: (
+        <WebUILink to="/admin-members">
+          {t('webui.menu.ProjectMembers')}
+        </WebUILink>
+      ),
+      icon: <TeamOutlined style={{ color: token.colorInfo }} />,
+      key: 'admin-members' as MenuKeys,
       group: 'superadmin-operations' as AdminMenuGroupName,
     },
     {

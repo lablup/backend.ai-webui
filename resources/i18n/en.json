@@ -1684,6 +1684,14 @@
     "ProjectIDFilterRuleMessage": "Invalid UUID.",
     "ResourcePolicy": "Resource Policy"
   },
+  "projectMembers": {
+    "Email": "Email",
+    "Name": "Name",
+    "PageTitle": "Project Members",
+    "Role": "Role",
+    "RoleAdmin": "Admin",
+    "RoleMember": "Member"
+  },
   "projectSelect": {
     "ProjectAdminBadge": "Project Admin"
   },
@@ -2960,6 +2968,7 @@
       "PrivacyPolicy": "Privacy Policy",
       "ProfileUpdated": "Profile has been successfully updated.",
       "Project": "Project",
+      "ProjectMembers": "Project Members",
       "Projects": "Projects",
       "RBACManagement": "RBAC Management",
       "Remaining": "Remaining",

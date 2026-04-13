@@ -1683,6 +1683,14 @@
     "ProjectIDFilterRuleMessage": "잘못된 UUID입니다.",
     "ResourcePolicy": "자원 정책"
   },
+  "projectMembers": {
+    "Email": "이메일",
+    "Name": "이름",
+    "PageTitle": "프로젝트 구성원",
+    "Role": "역할",
+    "RoleAdmin": "관리자",
+    "RoleMember": "구성원"
+  },
   "projectSelect": {
     "ProjectAdminBadge": "프로젝트 관리자"
   },
@@ -2962,6 +2970,7 @@
       "PrivacyPolicy": "개인정보 보호",
       "ProfileUpdated": "프로필이 성공적으로 업데이트되었습니다.",
       "Project": "프로젝트",
+      "ProjectMembers": "프로젝트 구성원",
       "Projects": "프로젝트",
       "RBACManagement": "RBAC 관리",
       "Remaining": "가용량",
