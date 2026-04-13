@@ -217,7 +217,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
             }}
             value={endpoint?.endpoint_id}
             popupMatchSelectWidth={false}
-            showInfoButton
+            showDetailPageButton
           />
         )}
         {!isEmpty(models) && (
