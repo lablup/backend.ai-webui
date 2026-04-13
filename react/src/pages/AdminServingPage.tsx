@@ -9,6 +9,8 @@ import EndpointList from '../components/EndpointList';
 import { useWebUINavigate } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { useEffectiveAdminRole } from '../hooks/useCurrentUserProjectRoles';
 import { Skeleton } from 'antd';
 import {
   BAICard,
@@ -32,6 +34,16 @@ const AdminModelCardListPage = React.lazy(
 const ServingTabContent: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
+  const effectiveRole = useEffectiveAdminRole();
+  const currentProject = useCurrentProjectValue();
+
+  // Path B (interim): legacy `endpoint_list(project: UUID)` for project admins.
+  // Domain-admin scope cannot be precisely matched via the current schema —
+  // `endpoint_list` has no `scope_id` argument and there is no `endpoint_nodes`
+  // Relay node. Leave unfiltered for domainAdmin until backend support lands.
+  // TODO(needs-backend): FR-2313 — domain-scope RBAC for endpoint_list
+  const projectFilter =
+    effectiveRole === 'projectAdmin' ? (currentProject.id ?? null) : null;
 
   const [queryParam, setQueryParam] = useQueryStates(
     {
@@ -71,8 +83,9 @@ const ServingTabContent: React.FC = () => {
       limit: baiPaginationOption.limit,
       filter: mergeFilterValues([lifecycleStageFilter, queryParam.filter]),
       order: queryParam.order,
+      project: projectFilter,
     }),
-    [baiPaginationOption, lifecycleStageFilter, queryParam],
+    [baiPaginationOption, lifecycleStageFilter, queryParam, projectFilter],
   );
 
   const deferredQueryVariables = useDeferredValue(queryVariables);
@@ -85,12 +98,14 @@ const ServingTabContent: React.FC = () => {
         $limit: Int!
         $filter: String
         $order: String
+        $project: UUID
       ) {
         endpoint_list(
           offset: $offset
           limit: $limit
           filter: $filter
           order: $order
+          project: $project
         ) {
           total_count
           items {
