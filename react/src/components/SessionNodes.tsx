@@ -8,6 +8,7 @@ import {
 } from '../__generated__/SessionNodesFragment.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
+import { useEffectiveAdminRole } from '../hooks/useCurrentUserProjectRoles';
 import AppLauncherModal from './ComputeSessionNodeItems/AppLauncherModal';
 import SessionReservation from './ComputeSessionNodeItems/SessionReservation';
 import SessionSlotCell from './ComputeSessionNodeItems/SessionSlotCell';
@@ -79,6 +80,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
   'use memo';
   const { t } = useTranslation();
   const userRole = useCurrentUserRole();
+  const effectiveAdminRole = useEffectiveAdminRole();
   const baiClient = useSuspendedBackendaiClient();
   const [userInfo] = useCurrentUserInfo();
   const [terminateTarget, setTerminateTarget] =
@@ -364,7 +366,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         sorter: isEnableSorter('agent_ids'),
         render: (__, session) => <BAISessionAgentIds sessionFrgmt={session} />,
       },
-      userRole === 'superadmin' &&
+      effectiveAdminRole !== 'none' &&
         baiClient.isManagerVersionCompatibleWith('25.13.0') && {
           key: 'owner',
           title: t('session.launcher.OwnerEmail'),

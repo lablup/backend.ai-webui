@@ -17,6 +17,8 @@ import { handleRowSelectionChange } from '../helper';
 import { ExtractResultValue } from '../helper/resultTypes';
 import { useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { useEffectiveAdminRole } from '../hooks/useCurrentUserProjectRoles';
 import { Alert, App, Badge, Button, theme, Tooltip } from 'antd';
 import {
   BAIFetchKeyButton,
@@ -61,6 +63,19 @@ const AdminComputeSessionListPage = () => {
   'use memo';
 
   const userRole = useCurrentUserRole();
+  const effectiveAdminRole = useEffectiveAdminRole();
+  const currentProject = useCurrentProjectValue();
+
+  // Scope the admin session list by the user's effective admin role.
+  // - superadmin: no scope → global view across all projects/domains (unchanged)
+  // - domainAdmin: no scope as interim (see TODO below); backend support tracked in FR-2313
+  // - projectAdmin: scope to the currently selected project
+  // - none: defensive fallback; admin page should not be reachable in this case
+  // TODO(needs-backend): FR-2313 — domain scope for compute_session_nodes
+  const scopeId: string | undefined =
+    effectiveAdminRole === 'projectAdmin' && currentProject.id
+      ? `project:${currentProject.id}`
+      : undefined;
 
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -133,8 +148,12 @@ const AdminComputeSessionListPage = () => {
 
   const [fetchKey, updateFetchKey] = useFetchKey();
 
-  // scopeId is intentionally omitted so superadmin sees all sessions across all projects/domains
+  // scopeId is derived from the user's effective admin role:
+  // - superadmin → undefined (global view across all projects/domains)
+  // - projectAdmin → `project:<uuid>` (scoped to current project)
+  // - domainAdmin → undefined (interim; domain scope tracked in FR-2313)
   const queryVariables: AdminComputeSessionListPageQuery$variables = {
+    scopeId,
     offset: baiPaginationOption.offset,
     first: baiPaginationOption.first,
     filter: mergeFilterValues([statusFilter, queryParams.filter, typeFilter]),
@@ -147,12 +166,14 @@ const AdminComputeSessionListPage = () => {
   const queryRef = useLazyLoadQuery<AdminComputeSessionListPageQuery>(
     graphql`
         query AdminComputeSessionListPageQuery(
+          $scopeId: ScopeField
           $first: Int = 20
           $offset: Int = 0
           $filter: String
           $order: String
         ) {
           computeSessionNodeResult: compute_session_nodes(
+            scope_id: $scopeId
             first: $first
             offset: $offset
             filter: $filter
@@ -169,6 +190,7 @@ const AdminComputeSessionListPage = () => {
             count
           }
           all: compute_session_nodes(
+            scope_id: $scopeId
             first: 0
             offset: 0
             filter: "status != \"TERMINATED\" & status != \"CANCELLED\""
@@ -176,6 +198,7 @@ const AdminComputeSessionListPage = () => {
             count
           }
           interactive: compute_session_nodes(
+            scope_id: $scopeId
             first: 0
             offset: 0
             filter: "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"interactive\""
@@ -183,6 +206,7 @@ const AdminComputeSessionListPage = () => {
             count
           }
           inference: compute_session_nodes(
+            scope_id: $scopeId
             first: 0
             offset: 0
             filter: "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"inference\""
@@ -190,6 +214,7 @@ const AdminComputeSessionListPage = () => {
             count
           }
           batch: compute_session_nodes(
+            scope_id: $scopeId
             first: 0
             offset: 0
             filter: "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"batch\""
@@ -197,6 +222,7 @@ const AdminComputeSessionListPage = () => {
             count
           }
           system: compute_session_nodes(
+            scope_id: $scopeId
             first: 0
             offset: 0
             filter: "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"system\""
