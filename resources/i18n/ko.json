@@ -1636,8 +1636,11 @@
     "Path": "길",
     "Port": "포트",
     "PreStartActions": "시작 전 작업",
+    "PresetTooltip": "프리셋은 이 모델을 서비스로 실행하는 데 사용되는 리소스 구성(CPU, 메모리, GPU)을 정의합니다.",
     "ProjectNotFound": "모델 스토어 프로젝트를 찾을 수 없습니다",
     "ProjectNotFoundDescription": "MODEL_STORE 프로젝트를 찾을 수 없습니다. 관리자에게 문의해 주세요.",
+    "RelativeTime": "{{time}}",
+    "ResourceGroupTooltip": "선택한 자원 그룹에서 서비스가 실행됩니다.",
     "SearchModels": "모델 검색",
     "ServiceDetails": "서비스 내용",
     "Sort": "정렬",
@@ -1647,7 +1650,6 @@
     "SortByNameDesc": "이름 (Z→A)",
     "StartCommand": "시작 명령",
     "Task": "작업",
-    "Updated": "업데이트 {{time}}",
     "Version": "버전"
   },
   "notification": {

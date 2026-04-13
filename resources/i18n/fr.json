@@ -1635,8 +1635,11 @@
     "Port": "Port",
     "PreStartActions": "Actions préalables au démarrage",
     "Preset": "Preset",
+    "PresetTooltip": "Un preset définit la configuration des ressources (CPU, mémoire, GPU) utilisée pour exécuter ce modèle en tant que service.",
     "ProjectNotFound": "Projet Model Store introuvable",
     "ProjectNotFoundDescription": "Le projet MODEL_STORE est introuvable. Veuillez contacter votre administrateur.",
+    "RelativeTime": "{{time}}",
+    "ResourceGroupTooltip": "Le service s'exécutera dans le groupe de ressources sélectionné.",
     "SearchModels": "Rechercher des modèles",
     "ServiceDetails": "Détails des services",
     "Sort": "Trier",
@@ -1646,7 +1649,6 @@
     "SortByNameDesc": "Nom (Z→A)",
     "StartCommand": "Démarrer la commande",
     "Task": "Tâche",
-    "Updated": "Mis à jour {{time}}",
     "Version": "Version"
   },
   "notification": {

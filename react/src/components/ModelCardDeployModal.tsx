@@ -6,7 +6,7 @@ import { ModelCardDeployModalEndpointPollQuery } from '../__generated__/ModelCar
 import { ModelCardDeployModalMutation } from '../__generated__/ModelCardDeployModalMutation.graphql';
 import { ModelCardDeployModalQuery } from '../__generated__/ModelCardDeployModalQuery.graphql';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import { App, Form } from 'antd';
+import { App, Form, Typography, theme } from 'antd';
 import type { DefaultOptionType } from 'antd/es/select';
 import {
   BAIButton,
@@ -52,6 +52,7 @@ const ENDPOINT_POLL_MAX_ATTEMPTS = 10;
 interface AvailablePreset {
   readonly id: string;
   readonly name: string;
+  readonly description: string | null;
   readonly rank: number;
   readonly runtimeVariantId: string;
 }
@@ -72,6 +73,7 @@ const ModelCardDeployModalContent: React.FC<
   'use memo';
 
   const { t } = useTranslation();
+  const { token } = theme.useToken();
   const { message } = App.useApp();
   const navigate = useNavigate();
   const { id: projectId, name: projectName } = useCurrentProjectValue();
@@ -167,21 +169,21 @@ const ModelCardDeployModalContent: React.FC<
     const grouped = _.groupBy(availablePresets, 'runtimeVariantId');
     const variantIds = Object.keys(grouped);
 
+    const toOption = (p: AvailablePreset) => ({
+      label: p.name,
+      value: toLocalId(p.id),
+      description: p.description,
+    });
+
     // If all presets belong to the same runtime variant, show flat list
     if (variantIds.length <= 1) {
-      return availablePresets.map((p) => ({
-        label: p.name,
-        value: toLocalId(p.id),
-      }));
+      return availablePresets.map(toOption);
     }
 
     // Multiple runtime variants: show grouped options
     return variantIds.map((variantId) => ({
       label: runtimeVariantNameMap.get(variantId) ?? variantId,
-      options: grouped[variantId].map((p) => ({
-        label: p.name,
-        value: toLocalId(p.id),
-      })),
+      options: grouped[variantId].map(toOption),
     }));
   }, [availablePresets, runtimeVariantNameMap]);
 
@@ -285,15 +287,37 @@ const ModelCardDeployModalContent: React.FC<
       width={480}
     >
       <Form layout="vertical">
-        <Form.Item label={t('modelStore.Preset')} required>
+        <Form.Item
+          label={t('modelStore.Preset')}
+          tooltip={t('modelStore.PresetTooltip')}
+          required
+        >
           <BAISelect
             value={effectivePresetId}
             onChange={(value: string) => setUserSelectedPresetId(value)}
             options={presetOptions}
+            optionRender={(option) => (
+              <BAIFlex direction="column" align="start">
+                {option.label}
+                {option.data.description && (
+                  <Typography.Text
+                    type="secondary"
+                    style={{ fontSize: token.fontSizeSM }}
+                    ellipsis
+                  >
+                    {option.data.description}
+                  </Typography.Text>
+                )}
+              </BAIFlex>
+            )}
             style={{ width: '100%' }}
           />
         </Form.Item>
-        <Form.Item label={t('modelStore.ResourceGroup')} required>
+        <Form.Item
+          label={t('modelStore.ResourceGroup')}
+          tooltip={t('modelStore.ResourceGroupTooltip')}
+          required
+        >
           <BAIProjectResourceGroupSelect
             projectName={projectName ?? ''}
             value={effectiveResourceGroup}
