@@ -16,23 +16,23 @@ import { ReloadOutlined } from '@ant-design/icons';
 import {
   App,
   AutoComplete,
-  Button,
   Form,
   FormInstance,
   InputNumber,
   Segmented,
   Select,
-  Spin,
   Typography,
+  theme,
 } from 'antd';
 import {
+  BAIButton,
   BAIModal,
   BAIModalProps,
   toLocalId,
   useBAILogger,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   graphql,
@@ -77,18 +77,16 @@ const METRIC_NAMES_MAP: Partial<
 };
 
 /**
- * Inline preview component that fetches and displays the current Prometheus
- * metric value for a selected preset. Uses useLazyLoadQuery with fetchKey
- * to support manual refresh without useEffect + setState.
+ * Inner component: fetches and renders only the metric value text.
+ * Isolated so that React.Suspense covers just this text node during refresh,
+ * leaving the "Current value:" label and refresh button always visible.
  */
-const PrometheusPresetPreview: React.FC<{
-  presetGlobalId: string;
-}> = ({ presetGlobalId }) => {
+const PreviewValue: React.FC<{
+  presetRawId: string;
+  fetchKey: number;
+}> = ({ presetRawId, fetchKey }) => {
   'use memo';
   const { t } = useTranslation();
-  const [fetchKey, setFetchKey] = useState(0);
-
-  const presetRawId = toLocalId(presetGlobalId);
 
   const data = useLazyLoadQuery<AutoScalingRuleEditorModalPresetResultQuery>(
     graphql`
@@ -124,13 +122,17 @@ const PrometheusPresetPreview: React.FC<{
 
   const results = data.prometheusQueryPresetResult.result;
 
+  const formatValue = (raw: string) => {
+    const num = parseFloat(raw);
+    return isNaN(num) ? raw : (Math.round(num * 100) / 100).toString();
+  };
+
   let displayValue: string | null = null;
-  if (results.length === 0) {
-    displayValue = null;
-  } else if (results.length === 1) {
+  if (results.length === 1) {
     const values = results[0].values;
-    displayValue = values.length > 0 ? values[values.length - 1].value : null;
-  } else {
+    const raw = values.length > 0 ? values[values.length - 1].value : null;
+    displayValue = raw != null ? formatValue(raw) : null;
+  } else if (results.length > 1) {
     const firstValues = results[0].values;
     const latestValue =
       firstValues.length > 0 ? firstValues[firstValues.length - 1].value : null;
@@ -138,25 +140,59 @@ const PrometheusPresetPreview: React.FC<{
       latestValue != null
         ? t('autoScalingRule.MultipleSeriesResult', {
             count: results.length,
-            value: latestValue,
+            value: formatValue(latestValue),
           })
         : null;
   }
 
+  return displayValue != null ? (
+    <Typography.Text type="secondary">{displayValue}</Typography.Text>
+  ) : (
+    <Typography.Text type="secondary">
+      {t('autoScalingRule.NoDataAvailable')}
+    </Typography.Text>
+  );
+};
+
+/**
+ * Inline preview component for a selected Prometheus preset.
+ * The label and refresh button are always visible; only the value area
+ * shows a loading spinner during fetch/refresh.
+ */
+const PrometheusPresetPreview: React.FC<{
+  presetGlobalId: string;
+}> = ({ presetGlobalId }) => {
+  'use memo';
+  const { t } = useTranslation();
+  const { token } = theme.useToken();
+  const [fetchKey, setFetchKey] = useState(0);
+  const [isPending, startTransition] = useTransition();
+  const presetRawId = toLocalId(presetGlobalId);
+
   return (
     <span>
-      <Typography.Text type="secondary" style={{ marginRight: 4 }}>
+      <Typography.Text
+        type="secondary"
+        style={{ marginRight: token.marginXXS }}
+      >
         {t('autoScalingRule.CurrentValue')}:{' '}
       </Typography.Text>
-      <Typography.Text strong>
-        {displayValue ?? t('autoScalingRule.NoDataAvailable')}
-      </Typography.Text>
-      <Button
+      <ErrorBoundaryWithNullFallback>
+        {/* null fallback: initial load shows nothing until data arrives.
+            On refresh via startTransition, React keeps the previous value
+            visible and never commits this fallback. */}
+        <React.Suspense fallback={null}>
+          <PreviewValue presetRawId={presetRawId} fetchKey={fetchKey} />
+        </React.Suspense>
+      </ErrorBoundaryWithNullFallback>
+      <BAIButton
         type="link"
         size="small"
         icon={<ReloadOutlined />}
-        onClick={() => setFetchKey((k) => k + 1)}
+        loading={isPending}
+        onClick={() => startTransition(() => setFetchKey((k) => k + 1))}
         title={t('autoScalingRule.RefreshPreview')}
+        aria-label={t('autoScalingRule.RefreshPreview')}
       />
     </span>
   );
@@ -189,6 +225,7 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
+  const { token } = theme.useToken();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
 
@@ -353,7 +390,7 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
           commitUpdateMutation({
             variables: {
               input: {
-                id: autoScalingRule.id,
+                id: toLocalId(autoScalingRule.id),
                 metricSource: values.metricSource,
                 metricName,
                 minThreshold:
@@ -395,9 +432,9 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
                 metricSource: values.metricSource,
                 metricName,
                 minThreshold:
-                  minThreshold != null ? String(minThreshold) : undefined,
+                  minThreshold != null ? String(minThreshold) : null,
                 maxThreshold:
-                  maxThreshold != null ? String(maxThreshold) : undefined,
+                  maxThreshold != null ? String(maxThreshold) : null,
                 stepSize: values.stepSize,
                 timeWindow: values.timeWindow,
                 minReplicas: values.minReplicas,
@@ -585,6 +622,11 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
                   },
                 },
               ]}
+              extra={
+                selectedPreset ? (
+                  <PrometheusPresetPreview presetGlobalId={selectedPreset.id} />
+                ) : undefined
+              }
             >
               <Select
                 value={selectedPresetId}
@@ -616,35 +658,6 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
                 onClear={() => setSelectedPresetId(undefined)}
               />
             </Form.Item>
-            {selectedPreset && (
-              <Form.Item
-                label={t('autoScalingRule.QueryTemplate')}
-                extra={
-                  <ErrorBoundaryWithNullFallback>
-                    <React.Suspense
-                      fallback={
-                        <Spin size="small" style={{ marginRight: 8 }} />
-                      }
-                    >
-                      <PrometheusPresetPreview
-                        presetGlobalId={selectedPreset.id}
-                      />
-                    </React.Suspense>
-                  </ErrorBoundaryWithNullFallback>
-                }
-              >
-                <Typography.Text
-                  code
-                  style={{
-                    display: 'block',
-                    whiteSpace: 'pre-wrap',
-                    wordBreak: 'break-all',
-                  }}
-                >
-                  {selectedPreset.queryTemplate}
-                </Typography.Text>
-              </Form.Item>
-            )}
           </>
         )}
 
@@ -669,26 +682,32 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
               onChange={(value) => {
                 setConditionMode(value as ConditionMode);
               }}
-              style={{ marginBottom: 12 }}
+              style={{ marginBottom: token.marginSM }}
             />
           </Form.Item>
 
           {conditionMode === 'single' ? (
-            <div style={{ display: 'flex', gap: 8, alignItems: 'start' }}>
+            <div
+              style={{
+                display: 'flex',
+                gap: token.marginXS,
+                alignItems: 'center',
+              }}
+            >
               <Form.Item
                 name={'direction'}
                 noStyle
                 rules={[{ required: true }]}
               >
                 <Select
-                  style={{ width: 120 }}
+                  style={{ width: 100 }}
                   options={[
                     {
-                      label: t('autoScalingRule.Upper'),
+                      label: 'Metric >',
                       value: 'upper',
                     },
                     {
-                      label: t('autoScalingRule.Lower'),
+                      label: 'Metric <',
                       value: 'lower',
                     },
                   ]}
@@ -705,7 +724,7 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
                   {
                     type: 'number',
                     min: 0,
-                    message: t('autoScalingRule.ThresholdMustBePositive'),
+                    message: t('autoScalingRule.ThresholdMustBeNonNegative'),
                   },
                 ]}
               >
@@ -717,7 +736,13 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
               </Form.Item>
             </div>
           ) : (
-            <div style={{ display: 'flex', gap: 8, alignItems: 'start' }}>
+            <div
+              style={{
+                display: 'flex',
+                gap: token.marginXS,
+                alignItems: 'center',
+              }}
+            >
               <Form.Item
                 name={'minThreshold'}
                 noStyle
@@ -729,7 +754,7 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
                   {
                     type: 'number',
                     min: 0,
-                    message: t('autoScalingRule.ThresholdMustBePositive'),
+                    message: t('autoScalingRule.ThresholdMustBeNonNegative'),
                   },
                 ]}
               >
@@ -739,8 +764,8 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
                   min={0}
                 />
               </Form.Item>
-              <Typography.Text style={{ lineHeight: '32px', flexShrink: 0 }}>
-                {'<'} metric {'<'}
+              <Typography.Text style={{ flexShrink: 0 }}>
+                {'<'} Metric {'<'}
               </Typography.Text>
               <Form.Item
                 name={'maxThreshold'}
@@ -754,7 +779,7 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
                   {
                     type: 'number',
                     min: 0,
-                    message: t('autoScalingRule.ThresholdMustBePositive'),
+                    message: t('autoScalingRule.ThresholdMustBeNonNegative'),
                   },
                   ({ getFieldValue }) => ({
                     validator(_, value) {

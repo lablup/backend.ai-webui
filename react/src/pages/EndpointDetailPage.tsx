@@ -443,9 +443,8 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
   };
   const semanticColorMap = useSemanticColorMap();
 
-  const autoScalingRules = _.map(
-    endpoint_auto_scaling_rules?.edges,
-    (edge) => edge?.node,
+  const autoScalingRules = filterOutNullAndUndefined(
+    _.map(endpoint_auto_scaling_rules?.edges, (edge) => edge?.node),
   );
 
   const resource_opts = JSON.parse(endpoint?.resource_opts || '{}');
