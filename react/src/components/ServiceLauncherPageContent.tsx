@@ -2,7 +2,6 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { RecentServiceSpecsFragment$key } from '../__generated__/RecentServiceSpecsFragment.graphql';
 import { ServiceLauncherPageContentFragment$key } from '../__generated__/ServiceLauncherPageContentFragment.graphql';
 import { ServiceLauncherPageContentModifyMutation } from '../__generated__/ServiceLauncherPageContentModifyMutation.graphql';
 import { ServiceLauncherPageContent_AutoScalingRulesQuery } from '../__generated__/ServiceLauncherPageContent_AutoScalingRulesQuery.graphql';
@@ -33,6 +32,7 @@ import {
   useCurrentResourceGroupState,
   useCurrentProjectValue,
 } from '../hooks/useCurrentProject';
+import { useRecentServiceHistory } from '../hooks/useRecentServiceHistory';
 import {
   getExtraArgsEnvVarName,
   getAllExtraArgsEnvVarNames,
@@ -51,12 +51,10 @@ import ImageEnvironmentSelectFormItems, {
   ImageEnvironmentFormInput,
 } from './ImageEnvironmentSelectFormItems';
 import InputNumberWithSlider from './InputNumberWithSlider';
-import RecentServiceSpecs, {
-  ServiceSpecFromEndpoint,
-} from './RecentServiceSpecs';
 import RuntimeParameterFormSection, {
   RuntimeParameterValues,
 } from './RuntimeParameterFormSection';
+import ServiceTemplateModal from './ServiceTemplateModal';
 import ClusterModeFormItems from './SessionFormItems/ClusterModeFormItems';
 import ResourceAllocationFormItems, {
   AUTOMATIC_DEFAULT_SHMEM,
@@ -65,9 +63,12 @@ import ResourceAllocationFormItems, {
 } from './SessionFormItems/ResourceAllocationFormItems';
 import SwitchToProjectButton from './SwitchToProjectButton';
 import VFolderLazyView from './VFolderLazyView';
+import type { VFolder } from './VFolderSelect';
 import VFolderSelect from './VFolderSelect';
 import VFolderTableFormItem from './VFolderTableFormItem';
-import { useDebounceFn } from 'ahooks';
+import { MinusOutlined } from '@ant-design/icons';
+import { useQueryClient } from '@tanstack/react-query';
+import { useToggle, useDebounceFn } from 'ahooks';
 import {
   App,
   Button,
@@ -83,6 +84,7 @@ import {
   theme,
   Tooltip,
   Tag,
+  Typography,
   Alert,
 } from 'antd';
 import {
@@ -114,6 +116,7 @@ import {
   useMutation,
   useRelayEnvironment,
 } from 'react-relay';
+import { useLocation } from 'react-router-dom';
 import {
   BooleanParam,
   JsonParam,
@@ -217,13 +220,11 @@ interface InitialModelDef {
 interface ServiceLauncherPageContentProps {
   endpointFrgmt?: ServiceLauncherPageContentFragment$key | null;
   initialModelDef?: InitialModelDef | null;
-  recentServiceSpecsQueryRef?: RecentServiceSpecsFragment$key | null;
 }
 
 const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
   endpointFrgmt = null,
   initialModelDef,
-  recentServiceSpecsQueryRef = null,
 }) => {
   'use memo';
   const { logger } = useBAILogger();
@@ -252,6 +253,11 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
     useState(false);
 
   const [form] = Form.useForm<ServiceLauncherFormValue>();
+  const { search } = useLocation();
+  const [isOpenTemplateModal, { toggle: toggleIsOpenTemplateModal }] =
+    useToggle();
+  const [, { push: pushServiceHistory }] = useRecentServiceHistory();
+  const queryClient = useQueryClient();
   const [wantToChangeResource, setWantToChangeResource] = useState(false);
   const [currentGlobalResourceGroup, setCurrentGlobalResourceGroup] =
     useCurrentResourceGroupState();
@@ -1167,10 +1173,27 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
           });
         } else {
           // create service
+          const usedSearchParams = search;
           mutationToCreateService.mutate(values, {
             onSuccess: () => {
               // After creating service, navigate to serving page and set current resource group
               setCurrentGlobalResourceGroup(values.resourceGroup);
+              // Resolve vFolder name from VFolderSelect's React Query cache
+              // (the user just selected the folder, so it is in cache).
+              const cachedFolders = queryClient
+                .getQueriesData<VFolder[]>({
+                  queryKey: ['VFolderSelectQuery'],
+                })
+                .flatMap(([, data]) => data || []);
+              const vFolderName = _.find(
+                cachedFolders,
+                (f) => f.id === values.vFolderID,
+              )?.name;
+              pushServiceHistory({
+                params: usedSearchParams,
+                name: values.serviceName,
+                vFolderName,
+              });
               // FIXME: temporally refer to mutate input to message
               message.success(
                 t('modelService.ServiceCreated', { name: values.serviceName }),
@@ -1542,6 +1565,22 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
             style={{ flex: 1, maxWidth: 700 }}
             wrap="nowrap"
           >
+            {!endpoint && (
+              <BAIFlex direction="row" justify="between">
+                <Typography.Title level={4} style={{ marginTop: 0 }}>
+                  {t('modelService.StartNewService')}
+                </Typography.Title>
+                <BAIFlex direction="row" gap={'sm'}>
+                  <Button
+                    type="link"
+                    style={{ paddingRight: 0, paddingLeft: 0 }}
+                    onClick={() => toggleIsOpenTemplateModal()}
+                  >
+                    {t('modelService.RecentHistory')}
+                  </Button>
+                </BAIFlex>
+              </BAIFlex>
+            )}
             {isProjectMismatch && endpoint?.project && (
               <Alert
                 title={t('modelService.NotInProject')}
@@ -1560,14 +1599,6 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                 type="warning"
                 showIcon
                 style={{ marginBottom: token.marginMD }}
-              />
-            )}
-            {!endpoint && recentServiceSpecsQueryRef && (
-              <RecentServiceSpecs
-                queryRef={recentServiceSpecsQueryRef}
-                onSelectSpec={(spec: ServiceSpecFromEndpoint) => {
-                  form.setFieldsValue(spec);
-                }}
               />
             )}
             <Form.Provider
@@ -2220,6 +2251,17 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
       >
         <ServiceValidationView serviceData={validateServiceData} />
       </BAIModal>
+      <ServiceTemplateModal
+        onRequestClose={(formValue) => {
+          if (formValue) {
+            setQuery({ formValues: formValue }, 'replaceIn');
+            form.setFieldsValue(formValue);
+            form.validateFields().catch(() => {});
+          }
+          toggleIsOpenTemplateModal();
+        }}
+        open={isOpenTemplateModal}
+      />
     </>
   );
 };

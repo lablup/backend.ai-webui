@@ -1524,6 +1524,7 @@
     "Processing": "Wird bearbeitet...",
     "Public": "Öffentlich",
     "Ready": "Bereit",
+    "RecentHistory": "Neuester Verlauf",
     "ReplicaCountDisabledByAutoScalingRules": "Die Anzahl der Replikate kann nicht manuell geändert werden, solange Autoskalierungsregeln aktiv sind.",
     "ReplicasAndResources": "Replikate & Ressourcen",
     "Resources": "Ressourcen",
@@ -1616,7 +1617,6 @@
     "StartModelService": "Dienst aus Modellordner starten",
     "StartModelServiceWithName": "Dienst aus Modellordner starten: {{name}}",
     "StartNewService": "Neuen Dienst starten",
-    "StartNewServing": "Neue Portion starten",
     "StartService": "Dienst starten",
     "StartingModelService": "Startmodellservice ...",
     "Status": "Status",
@@ -1644,7 +1644,8 @@
     "VllmQuantization": "z. B. awq, gptq, fp8",
     "VllmTpSize": "Tensor-Parallelgröße (z. B. 2, 4, 8)",
     "WaitingForServiceReady": "Waiting for service to be ready...",
-    "YamlUploadFailed": "Hochladen von model-definition.yaml fehlgeschlagen."
+    "YamlUploadFailed": "Hochladen von model-definition.yaml fehlgeschlagen.",
+    "YouCanStartWithHistory": "Dies sind Ihre zuletzt erstellten Diensteinträge. Klicken Sie auf einen Dienstnamen, um einen neuen Dienst zu erstellen."
   },
   "modelStore": {
     "Architecture": "Architektur",

@@ -1523,8 +1523,7 @@
     "Processing": "Processing...",
     "Public": "Public",
     "Ready": "Ready",
-    "RecentServices": "Recent Services",
-    "RecentServicesTooltip": "Shows the {{count}} most recently created services. Click to apply the spec to the form.",
+    "RecentHistory": "Recent History",
     "ReplicaCountDisabledByAutoScalingRules": "Replica count cannot be changed manually while autoscaling rules are active.",
     "ReplicasAndResources": "Replicas & Resources",
     "Resources": "Resources",
@@ -1617,7 +1616,6 @@
     "StartModelService": "Start Service from Model Folder",
     "StartModelServiceWithName": "Start Service from Model Folder: {{name}}",
     "StartNewService": "Start New Service",
-    "StartNewServing": "Start new serving",
     "StartService": "Start Service",
     "StartingModelService": "Starting model service...",
     "Status": "Status",
@@ -1645,7 +1643,8 @@
     "VllmQuantization": "e.g., awq, gptq, fp8",
     "VllmTpSize": "Tensor parallel size (e.g., 2, 4, 8)",
     "WaitingForServiceReady": "Waiting for service to be ready...",
-    "YamlUploadFailed": "Failed to upload model-definition.yaml. Please try again."
+    "YamlUploadFailed": "Failed to upload model-definition.yaml. Please try again.",
+    "YouCanStartWithHistory": "These are your recently created service records. Click a service name to start creating a new service."
   },
   "modelStore": {
     "Architecture": "Architecture",

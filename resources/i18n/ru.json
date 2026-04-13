@@ -1522,6 +1522,7 @@
     "Processing": "Обработка...",
     "Public": "Публичный",
     "Ready": "Готовый",
+    "RecentHistory": "Последняя история",
     "ReplicaCountDisabledByAutoScalingRules": "Количество реплик нельзя изменить вручную, пока активны правила автоматического масштабирования.",
     "ReplicasAndResources": "Реплики и ресурсы",
     "Resources": "Ресурсы",
@@ -1614,7 +1615,6 @@
     "StartModelService": "Запустить сервис из папки модели",
     "StartModelServiceWithName": "Запустить сервис из папки модели: {{name}}",
     "StartNewService": "Запустить новую услугу",
-    "StartNewServing": "Запуск новой порции",
     "StartService": "Начало обслуживания",
     "StartingModelService": "Служба начала модели ...",
     "Status": "Статус",
@@ -1642,7 +1642,8 @@
     "VllmQuantization": "например, awq, gptq, fp8",
     "VllmTpSize": "Размер тензорного параллелизма (например 2, 4, 8)",
     "WaitingForServiceReady": "Waiting for service to be ready...",
-    "YamlUploadFailed": "Не удалось загрузить model-definition.yaml."
+    "YamlUploadFailed": "Не удалось загрузить model-definition.yaml.",
+    "YouCanStartWithHistory": "Это ваши последние созданные записи сервисов. Нажмите на имя сервиса, чтобы начать создание нового сервиса."
   },
   "modelStore": {
     "Architecture": "Архитектура",

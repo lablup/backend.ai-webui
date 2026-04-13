@@ -4,43 +4,39 @@
  */
 import { ServiceLauncherPageQuery } from '../__generated__/ServiceLauncherPageQuery.graphql';
 import ServiceLauncherPageContent from '../components/ServiceLauncherPageContent';
-import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { toGlobalId } from 'backend.ai-ui';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useParams } from 'react-router-dom';
 
 const ServiceLauncherPage: React.FC = () => {
   const { endpointId } = useParams<{ endpointId: string }>();
-  const currentProject = useCurrentProjectValue();
-  const queryResult = useLazyLoadQuery<ServiceLauncherPageQuery>(
-    graphql`
-      query ServiceLauncherPageQuery(
-        $endpointId: UUID!
-        $deploymentId: ID!
-        $project: UUID
-      ) {
-        endpoint(endpoint_id: $endpointId) {
-          runtime_variant @since(version: "24.03.5") {
-            name
+  const { endpoint, modelDeployment } =
+    useLazyLoadQuery<ServiceLauncherPageQuery>(
+      graphql`
+        query ServiceLauncherPageQuery($endpointId: UUID!, $deploymentId: ID!) {
+          endpoint(endpoint_id: $endpointId) {
+            runtime_variant @since(version: "24.03.5") {
+              name
+            }
+            ...ServiceLauncherPageContentFragment
           }
-          ...ServiceLauncherPageContentFragment
-        }
-        modelDeployment: deployment(id: $deploymentId) {
-          revisionHistory(
-            limit: 1
-            orderBy: [{ field: CREATED_AT, direction: DESC }]
-          ) {
-            edges {
-              node {
-                modelDefinition {
-                  models {
-                    service {
-                      startCommand
-                      port
-                      healthCheck {
-                        path
-                        initialDelay
-                        maxRetries
+          modelDeployment: deployment(id: $deploymentId) {
+            revisionHistory(
+              limit: 1
+              orderBy: [{ field: CREATED_AT, direction: DESC }]
+            ) {
+              edges {
+                node {
+                  modelDefinition {
+                    models {
+                      service {
+                        startCommand
+                        port
+                        healthCheck {
+                          path
+                          initialDelay
+                          maxRetries
+                        }
                       }
                     }
                   }
@@ -49,20 +45,15 @@ const ServiceLauncherPage: React.FC = () => {
             }
           }
         }
-        ...RecentServiceSpecsFragment @arguments(project: $project)
-      }
-    `,
-    {
-      endpointId: endpointId || '',
-      deploymentId: toGlobalId('ModelDeployment', endpointId || ''),
-      project: currentProject.id,
-    },
-    {
-      fetchPolicy: 'store-and-network',
-    },
-  );
-
-  const { endpoint, modelDeployment } = queryResult;
+      `,
+      {
+        endpointId: endpointId || '',
+        deploymentId: toGlobalId('ModelDeployment', endpointId || ''),
+      },
+      {
+        fetchPolicy: 'store-and-network',
+      },
+    );
 
   const latestModelDef =
     endpoint?.runtime_variant?.name === 'custom'
@@ -73,7 +64,6 @@ const ServiceLauncherPage: React.FC = () => {
     <ServiceLauncherPageContent
       endpointFrgmt={endpoint}
       initialModelDef={latestModelDef}
-      recentServiceSpecsQueryRef={queryResult}
     />
   );
 };

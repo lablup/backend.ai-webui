@@ -1522,6 +1522,7 @@
     "Processing": "İşleme...",
     "Public": "Kamu",
     "Ready": "Hazır",
+    "RecentHistory": "Son Geçmiş",
     "ReplicaCountDisabledByAutoScalingRules": "Otomatik ölçeklendirme kuralları etkinken kopya sayısı manuel olarak değiştirilemez.",
     "ReplicasAndResources": "Kopyalar ve kaynaklar",
     "Resources": "Kaynaklar",
@@ -1614,7 +1615,6 @@
     "StartModelService": "Model Klasöründen Hizmet Başlat",
     "StartModelServiceWithName": "Model Klasöründen Hizmet Başlat: {{name}}",
     "StartNewService": "Yeni Hizmeti Başlat",
-    "StartNewServing": "Yeni servis başlatın",
     "StartService": "Hizmeti Başlat",
     "StartingModelService": "Başlangıç Model Hizmeti ...",
     "Status": "Durum",
@@ -1642,7 +1642,8 @@
     "VllmQuantization": "örn., awq, gptq, fp8",
     "VllmTpSize": "Tensör paralel boyutu (örn. 2, 4, 8)",
     "WaitingForServiceReady": "Waiting for service to be ready...",
-    "YamlUploadFailed": "model-definition.yaml yüklenemedi."
+    "YamlUploadFailed": "model-definition.yaml yüklenemedi.",
+    "YouCanStartWithHistory": "Bunlar son oluşturduğunuz hizmet kayıtlarınız. Yeni bir hizmet oluşturmaya başlamak için hizmet adına tıklayın."
   },
   "modelStore": {
     "Architecture": "Mimari",

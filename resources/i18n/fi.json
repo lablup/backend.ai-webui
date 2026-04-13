@@ -1522,6 +1522,7 @@
     "Processing": "Käsitellään...",
     "Public": "Julkinen",
     "Ready": "Valmis",
+    "RecentHistory": "Viimeisin historia",
     "ReplicaCountDisabledByAutoScalingRules": "Kopioiden määrää ei voi muuttaa manuaalisesti, kun automaattisen skaalauksen säännöt ovat aktiivisia.",
     "ReplicasAndResources": "Replikat & resurssit",
     "Resources": "Resurssit",
@@ -1614,7 +1615,6 @@
     "StartModelService": "Start Service from Model Folder",
     "StartModelServiceWithName": "Start Service from Model Folder: {{name}}",
     "StartNewService": "Aloita uusi palvelu",
-    "StartNewServing": "Aloita uusi annos",
     "StartService": "Käynnistä palvelu",
     "StartingModelService": "Aloitusmallipalvelu ...",
     "Status": "Tila",
@@ -1642,7 +1642,8 @@
     "VllmQuantization": "esim. awq, gptq, fp8",
     "VllmTpSize": "Tensorin rinnakkaiskoko (esim. 2, 4, 8)",
     "WaitingForServiceReady": "Waiting for service to be ready...",
-    "YamlUploadFailed": "model-definition.yaml-tiedoston lataaminen epäonnistui."
+    "YamlUploadFailed": "model-definition.yaml-tiedoston lataaminen epäonnistui.",
+    "YouCanStartWithHistory": "Nämä ovat viimeksi luomiasi palvelumerkintöjä. Napsauta palvelun nimeä aloittaaksesi uuden palvelun luomisen."
   },
   "modelStore": {
     "Architecture": "Arkkitehtuuri",

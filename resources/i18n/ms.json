@@ -1522,6 +1522,7 @@
     "Processing": "Memproses...",
     "Public": "Awam",
     "Ready": "sedia",
+    "RecentHistory": "Sejarah Terkini",
     "ReplicaCountDisabledByAutoScalingRules": "Bilangan replika tidak boleh diubah secara manual semasa peraturan penskalaan automatik aktif.",
     "ReplicasAndResources": "Replika & Sumber",
     "Resources": "Sumber",
@@ -1614,7 +1615,6 @@
     "StartModelService": "Mulakan Perkhidmatan dari Folder Model",
     "StartModelServiceWithName": "Mulakan Perkhidmatan dari Folder Model: {{name}}",
     "StartNewService": "Mulakan Perkhidmatan Baharu",
-    "StartNewServing": "Mulakan hidangan baharu",
     "StartService": "Mulakan Perkhidmatan",
     "StartingModelService": "Perkhidmatan Model Memulakan ...",
     "Status": "Status",
@@ -1642,7 +1642,8 @@
     "VllmQuantization": "contohnya, awq, gptq, fp8",
     "VllmTpSize": "Saiz selari tensor (contoh: 2, 4, 8)",
     "WaitingForServiceReady": "Waiting for service to be ready...",
-    "YamlUploadFailed": "Gagal memuat naik model-definition.yaml."
+    "YamlUploadFailed": "Gagal memuat naik model-definition.yaml.",
+    "YouCanStartWithHistory": "Ini adalah rekod perkhidmatan yang baru anda cipta. Klik nama perkhidmatan untuk mula mencipta perkhidmatan baharu."
   },
   "modelStore": {
     "Architecture": "Seni Bina",

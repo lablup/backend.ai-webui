@@ -1524,6 +1524,7 @@
     "Processing": "加工...",
     "Public": "公众",
     "Ready": "准备好",
+    "RecentHistory": "近期记录",
     "ReplicaCountDisabledByAutoScalingRules": "当自动扩缩容规则处于活动状态时，无法手动更改副本数量。",
     "ReplicasAndResources": "副本与资源",
     "Resources": "资源",
@@ -1616,7 +1617,6 @@
     "StartModelService": "从模型文件夹启动服务",
     "StartModelServiceWithName": "从模型文件夹启动服务：{{name}}",
     "StartNewService": "开始新服务",
-    "StartNewServing": "开始新服务",
     "StartService": "启动服务",
     "StartingModelService": "启动型号服务...",
     "Status": "现状",
@@ -1644,7 +1644,8 @@
     "VllmQuantization": "例如：awq、gptq、fp8",
     "VllmTpSize": "张量并行度（例如：2、4、8）",
     "WaitingForServiceReady": "Waiting for service to be ready...",
-    "YamlUploadFailed": "model-definition.yaml 上传失败。"
+    "YamlUploadFailed": "model-definition.yaml 上传失败。",
+    "YouCanStartWithHistory": "这些是您最近创建的服务记录。点击服务名称即可开始创建新服务。"
   },
   "modelStore": {
     "Architecture": "架构",

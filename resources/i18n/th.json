@@ -1524,6 +1524,7 @@
     "Processing": "กำลังประมวลผล...",
     "Public": "สาธารณะ",
     "Ready": "พร้อม",
+    "RecentHistory": "ประวัติล่าสุด",
     "ReplicaCountDisabledByAutoScalingRules": "ไม่สามารถเปลี่ยนแปลงจำนวนแบบจำลองด้วยตนเองได้ขณะที่กฎการปรับขนาดอัตโนมัติกำลังทำงานอยู่",
     "ReplicasAndResources": "แบบจำลองและทรัพยากร",
     "Resources": "ทรัพยากร",
@@ -1616,7 +1617,6 @@
     "StartModelService": "Start Service from Model Folder",
     "StartModelServiceWithName": "Start Service from Model Folder: {{name}}",
     "StartNewService": "เริ่มบริการใหม่",
-    "StartNewServing": "เริ่มการให้บริการใหม่",
     "StartService": "เริ่มบริการ",
     "StartingModelService": "บริการรุ่นเริ่มต้น ...",
     "Status": "สถานะ",
@@ -1644,7 +1644,8 @@
     "VllmQuantization": "เช่น awq, gptq, fp8",
     "VllmTpSize": "ขนาดการขนานของเทนเซอร์ (เช่น 2, 4, 8)",
     "WaitingForServiceReady": "Waiting for service to be ready...",
-    "YamlUploadFailed": "ไม่สามารถอัปโหลด model-definition.yaml ได้"
+    "YamlUploadFailed": "ไม่สามารถอัปโหลด model-definition.yaml ได้",
+    "YouCanStartWithHistory": "นี่คือบันทึกบริการที่คุณสร้างล่าสุด คลิกชื่อบริการเพื่อเริ่มสร้างบริการใหม่"
   },
   "modelStore": {
     "Architecture": "สถาปัตยกรรม",

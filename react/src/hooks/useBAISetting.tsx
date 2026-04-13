@@ -26,7 +26,8 @@ export interface UserSettings {
   selected_language?: string;
   recentSessionHistory?: Array<SessionHistory>;
   pinnedSessionHistory?: Array<SessionHistory>;
-  pinnedServiceEndpointIds?: Array<string>;
+  recentServiceHistory?: Array<ServiceHistory>;
+  pinnedServiceHistory?: Array<ServiceHistory>;
   start_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
   start_page_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
   experimental_ai_agents?: boolean;
@@ -53,6 +54,14 @@ export type SessionHistory = {
   name?: string;
   params: string;
   createdAt: string;
+};
+
+export type ServiceHistory = {
+  id: string;
+  name?: string;
+  params: string;
+  createdAt: string;
+  vFolderName?: string;
 };
 
 interface GeneralSettings {

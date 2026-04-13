@@ -459,35 +459,39 @@ const BAITable = <RecordType extends object = any>({
           }
         />
       </BAIConfigProvider>
-      {tableProps.pagination !== false && (
+      {(tableProps.pagination !== false || tableSettings || exportSettings) && (
         <BAIFlex justify="end" gap={'xs'}>
-          <Pagination
-            size={tableProps.pagination?.size || 'small'}
-            align="end"
-            pageSizeOptions={['10', '20', '50']}
-            showSizeChanger={true}
-            showTotal={(total, range) => (
-              <BAIPaginationInfoText
-                start={range[0]}
-                end={range[1]}
-                total={total}
-              />
-            )}
-            {...tableProps.pagination}
-            // override props for controlled values
-            total={
-              tableProps.pagination?.total || tableProps.dataSource?.length || 0
-            }
-            onChange={(page, pageSize) => {
-              setCurrentPage(page);
-              setCurrentPageSize(pageSize);
-              if (tableProps.pagination) {
-                tableProps.pagination.onChange?.(page, pageSize);
+          {tableProps.pagination !== false && (
+            <Pagination
+              size={tableProps.pagination?.size || 'small'}
+              align="end"
+              pageSizeOptions={['10', '20', '50']}
+              showSizeChanger={true}
+              showTotal={(total, range) => (
+                <BAIPaginationInfoText
+                  start={range[0]}
+                  end={range[1]}
+                  total={total}
+                />
+              )}
+              {...tableProps.pagination}
+              // override props for controlled values
+              total={
+                tableProps.pagination?.total ||
+                tableProps.dataSource?.length ||
+                0
               }
-            }}
-            current={currentPage}
-            pageSize={currentPageSize}
-          ></Pagination>
+              onChange={(page, pageSize) => {
+                setCurrentPage(page);
+                setCurrentPageSize(pageSize);
+                if (tableProps.pagination) {
+                  tableProps.pagination.onChange?.(page, pageSize);
+                }
+              }}
+              current={currentPage}
+              pageSize={currentPageSize}
+            ></Pagination>
+          )}
           <BAIFlex>
             {tableSettings && (
               <BAIButton
@@ -533,10 +537,15 @@ const BAITable = <RecordType extends object = any>({
                 const newOverrides: Record<string, BAITableColumnOverrideItem> =
                   {};
 
-                // Only store in overrides when different from default values
+                // Only store in overrides when different from default values.
+                // Columns without an extractable string label (e.g. icon-only
+                // headers) are excluded from the settings modal, so skip them
+                // here to avoid persisting a phantom `hidden: true` override.
                 columns?.forEach((col) => {
                   const key = col.key?.toString();
-                  if (key) {
+                  const hasStringLabel =
+                    typeof col.title === 'string' && col.title.length > 0;
+                  if (key && hasStringLabel) {
                     const shouldBeVisible = selectedKeys.includes(key);
                     const defaultVisible = !col.defaultHidden;
 

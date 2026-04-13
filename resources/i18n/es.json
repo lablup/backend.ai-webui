@@ -1522,6 +1522,7 @@
     "Processing": "Procesando...",
     "Public": "Público",
     "Ready": "Listo",
+    "RecentHistory": "Historial reciente",
     "ReplicaCountDisabledByAutoScalingRules": "El número de réplicas no se puede cambiar manualmente mientras las reglas de autoescalado estén activas.",
     "ReplicasAndResources": "Réplicas y recursos",
     "Resources": "Recursos",
@@ -1614,7 +1615,6 @@
     "StartModelService": "Iniciar servicio desde la carpeta del modelo",
     "StartModelServiceWithName": "Iniciar servicio desde la carpeta del modelo: {{name}}",
     "StartNewService": "Iniciar nuevo servicio",
-    "StartNewServing": "Iniciar nuevo servicio",
     "StartService": "Iniciar servicio",
     "StartingModelService": "Servicio de modelo inicial ...",
     "Status": "Estado",
@@ -1642,7 +1642,8 @@
     "VllmQuantization": "p. ej., awq, gptq, fp8",
     "VllmTpSize": "Tamaño de paralelismo de tensores (p. ej., 2, 4, 8)",
     "WaitingForServiceReady": "Waiting for service to be ready...",
-    "YamlUploadFailed": "Error al subir model-definition.yaml."
+    "YamlUploadFailed": "Error al subir model-definition.yaml.",
+    "YouCanStartWithHistory": "Estos son sus registros de servicios creados recientemente. Haga clic en el nombre de un servicio para comenzar a crear uno nuevo."
   },
   "modelStore": {
     "Architecture": "Arquitectura",

@@ -1522,6 +1522,7 @@
     "Processing": "Επεξεργασία...",
     "Public": "Δημόσιο",
     "Ready": "Ετοιμος",
+    "RecentHistory": "Πρόσφατο Ιστορικό",
     "ReplicaCountDisabledByAutoScalingRules": "Ο αριθμός αντιγράφων δεν μπορεί να αλλαχθεί χειροκίνητα ενώ οι κανόνες αυτόματης κλιμάκωσης είναι ενεργοί.",
     "ReplicasAndResources": "Αντίγραφα & Πόροι",
     "Resources": "Πόροι",
@@ -1614,7 +1615,6 @@
     "StartModelService": "Εκκίνηση υπηρεσίας από τον φάκελο μοντέλου",
     "StartModelServiceWithName": "Εκκίνηση υπηρεσίας από τον φάκελο μοντέλου: {{name}}",
     "StartNewService": "Ξεκινήστε τη Νέα Υπηρεσία",
-    "StartNewServing": "Έναρξη νέου σερβιρίσματος",
     "StartService": "Έναρξη υπηρεσίας",
     "StartingModelService": "Εκκίνηση της υπηρεσίας μοντέλου ...",
     "Status": "Κατάσταση",
@@ -1642,7 +1642,8 @@
     "VllmQuantization": "π.χ., awq, gptq, fp8",
     "VllmTpSize": "Μέγεθος παράλληλης επεξεργασίας tensor (π.χ. 2, 4, 8)",
     "WaitingForServiceReady": "Waiting for service to be ready...",
-    "YamlUploadFailed": "Αποτυχία αποστολής model-definition.yaml."
+    "YamlUploadFailed": "Αποτυχία αποστολής model-definition.yaml.",
+    "YouCanStartWithHistory": "Αυτές είναι οι πρόσφατα δημιουργημένες εγγραφές υπηρεσιών σας. Κάντε κλικ σε ένα όνομα υπηρεσίας για να ξεκινήσετε τη δημιουργία μιας νέας υπηρεσίας."
   },
   "modelStore": {
     "Architecture": "Αρχιτεκτονική",

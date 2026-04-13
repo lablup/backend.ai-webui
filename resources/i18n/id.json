@@ -1525,6 +1525,7 @@
     "Processing": "Pengolahan...",
     "Public": "Publik",
     "Ready": "Siap",
+    "RecentHistory": "Riwayat Terbaru",
     "ReplicaCountDisabledByAutoScalingRules": "Jumlah replika tidak dapat diubah secara manual saat aturan penskalaan otomatis aktif.",
     "ReplicasAndResources": "Replika & Sumber Daya",
     "Resources": "Sumber daya",
@@ -1617,7 +1618,6 @@
     "StartModelService": "Mulai Layanan dari Folder Model",
     "StartModelServiceWithName": "Mulai Layanan dari Folder Model: {{name}}",
     "StartNewService": "Mulai Layanan Baru",
-    "StartNewServing": "Memulai sajian baru",
     "StartService": "Mulai Layanan",
     "StartingModelService": "Mulai Layanan Model ...",
     "Status": "Status",
@@ -1645,7 +1645,8 @@
     "VllmQuantization": "misalnya, awq, gptq, fp8",
     "VllmTpSize": "Ukuran tensor paralel (mis. 2, 4, 8)",
     "WaitingForServiceReady": "Waiting for service to be ready...",
-    "YamlUploadFailed": "Gagal mengunggah model-definition.yaml."
+    "YamlUploadFailed": "Gagal mengunggah model-definition.yaml.",
+    "YouCanStartWithHistory": "Ini adalah catatan layanan Anda yang baru-baru ini dibuat. Klik nama layanan untuk mulai membuat layanan baru."
   },
   "modelStore": {
     "Architecture": "Arsitektur",

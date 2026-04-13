@@ -1524,6 +1524,7 @@
     "Processing": "処理...",
     "Public": "公開",
     "Ready": "準備ができて",
+    "RecentHistory": "最近の履歴",
     "ReplicaCountDisabledByAutoScalingRules": "オートスケーリングルールが有効な間は、レプリカ数を手動で変更できません。",
     "ReplicasAndResources": "レプリカ & リソース",
     "Resources": "リソース",
@@ -1616,7 +1617,6 @@
     "StartModelService": "モデルフォルダからサービスを開始",
     "StartModelServiceWithName": "モデルフォルダからサービスを開始: {{name}}",
     "StartNewService": "新規サービス作成",
-    "StartNewServing": "新サービス開始",
     "StartService": "サービス開始",
     "StartingModelService": "モデルサービスの開始...",
     "Status": "ステータス",
@@ -1644,7 +1644,8 @@
     "VllmQuantization": "例：awq、gptq、fp8",
     "VllmTpSize": "テンソル並列サイズ（例：2、4、8）",
     "WaitingForServiceReady": "Waiting for service to be ready...",
-    "YamlUploadFailed": "model-definition.yaml のアップロードに失敗しました。"
+    "YamlUploadFailed": "model-definition.yaml のアップロードに失敗しました。",
+    "YouCanStartWithHistory": "最近作成したサービスの記録です。サービス名をクリックすると、新しいサービスの作成を開始できます。"
   },
   "modelStore": {
     "Architecture": "アーキテクチャ",

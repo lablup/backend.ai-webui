@@ -219,29 +219,34 @@ const BAITableSettingModal: React.FC<TableSettingProps> = ({
   };
 
   const columnOptions = useMemo(() => {
-    return _.map(columns, (column) => {
-      let label: string;
-      if (typeof column.title === 'string') {
-        label = column.title;
-      } else if (typeof column.title === 'object' && 'props' in column.title!) {
-        label = onChangeTitleToString(column.title);
-      } else {
-        label = '';
-      }
+    return columns
+      .map((column) => {
+        let label: string;
+        if (typeof column.title === 'string') {
+          label = column.title;
+        } else if (
+          typeof column.title === 'object' &&
+          'props' in column.title!
+        ) {
+          label = onChangeTitleToString(column.title);
+        } else {
+          label = '';
+        }
 
-      const key = _.toString(column.key);
-      const visible = column
-        ? isColumnVisible(column, key, columnOverrides)
-        : true;
-      const required = column?.required || false;
+        const key = _.toString(column.key);
+        const visible = column
+          ? isColumnVisible(column, key, columnOverrides)
+          : true;
+        const required = column?.required || false;
 
-      return {
-        key,
-        label,
-        visible,
-        required,
-      };
-    });
+        return {
+          key,
+          label,
+          visible,
+          required,
+        };
+      })
+      .filter((option) => !_.isEmpty(option.label));
   }, [columns, columnOverrides]);
 
   const [dataSource, setDataSource] = useState<ColumnDataType[]>(() => {

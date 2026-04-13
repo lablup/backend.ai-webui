@@ -1523,6 +1523,7 @@
     "Processing": "Боловсруулж байна...",
     "Public": "Олон нийтийн",
     "Ready": "Бэлэн",
+    "RecentHistory": "Сүүлийн үеийн түүх",
     "ReplicaCountDisabledByAutoScalingRules": "Автомат масштаблалтын дүрмүүд идэвхтэй байх үед хуулбаруудын тоог гараар өөрчлөх боломжгүй.",
     "ReplicasAndResources": "Хуулбарууд & Нөөц",
     "Resources": "Нөөц",
@@ -1615,7 +1616,6 @@
     "StartModelService": "Загварын хавтаснаас үйлчилгээ эхлүүлэх",
     "StartModelServiceWithName": "Загварын хавтаснаас үйлчилгээ эхлүүлэх: {{name}}",
     "StartNewService": "Шинэ үйлчилгээг эхлүүлэх",
-    "StartNewServing": "Шинээр үйлчилж эхлэх",
     "StartService": "Үйлчилгээг эхлүүлэх",
     "StartingModelService": "Загварын үйлчилгээг эхлүүлэх ...",
     "Status": "Статус",
@@ -1643,7 +1643,8 @@
     "VllmQuantization": "жишээ нь, awq, gptq, fp8",
     "VllmTpSize": "Тензорын параллель хэмжээ (жишээ: 2, 4, 8)",
     "WaitingForServiceReady": "Waiting for service to be ready...",
-    "YamlUploadFailed": "model-definition.yaml байршуулж чадсангүй."
+    "YamlUploadFailed": "model-definition.yaml байршуулж чадсангүй.",
+    "YouCanStartWithHistory": "Эдгээр нь таны сүүлд үүсгэсэн үйлчилгээний бичлэгүүд юм. Шинэ үйлчилгээ үүсгэхийн тулд үйлчилгээний нэр дээр дарна уу."
   },
   "modelStore": {
     "Architecture": "Архитектур",

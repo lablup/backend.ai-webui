@@ -1524,6 +1524,7 @@
     "Processing": "Xử lý...",
     "Public": "Công cộng",
     "Ready": "Sẵn sàng",
+    "RecentHistory": "Lịch sử gần đây",
     "ReplicaCountDisabledByAutoScalingRules": "Không thể thay đổi số lượng bản sao thủ công khi các quy tắc tự động mở rộng đang hoạt động.",
     "ReplicasAndResources": "Bản sao & tài nguyên",
     "Resources": "Tài nguyên",
@@ -1616,7 +1617,6 @@
     "StartModelService": "Khởi động dịch vụ từ thư mục mô hình",
     "StartModelServiceWithName": "Khởi động dịch vụ từ thư mục mô hình: {{name}}",
     "StartNewService": "Bắt đầu dịch vụ mới",
-    "StartNewServing": "Bắt đầu phân phát mới",
     "StartService": "Bắt đầu dịch vụ",
     "StartingModelService": "Bắt đầu dịch vụ mô hình ...",
     "Status": "Trạng thái",
@@ -1644,7 +1644,8 @@
     "VllmQuantization": "ví dụ: awq, gptq, fp8",
     "VllmTpSize": "Kích thước tensor song song (ví dụ: 2, 4, 8)",
     "WaitingForServiceReady": "Waiting for service to be ready...",
-    "YamlUploadFailed": "Tải lên model-definition.yaml thất bại."
+    "YamlUploadFailed": "Tải lên model-definition.yaml thất bại.",
+    "YouCanStartWithHistory": "Đây là các bản ghi dịch vụ bạn đã tạo gần đây. Nhấp vào tên dịch vụ để bắt đầu tạo dịch vụ mới."
   },
   "modelStore": {
     "Architecture": "Kiến trúc",

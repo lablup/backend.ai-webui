@@ -1524,6 +1524,7 @@
     "Processing": "Przetwarzanie...",
     "Public": "Publiczny",
     "Ready": "Gotowy",
+    "RecentHistory": "Ostatnia historia",
     "ReplicaCountDisabledByAutoScalingRules": "Liczba replik nie może być zmieniona ręcznie, gdy zasady automatycznego skalowania są aktywne.",
     "ReplicasAndResources": "Repliki i zasoby",
     "Resources": "Zasoby",
@@ -1616,7 +1617,6 @@
     "StartModelService": "Uruchom usługę z folderu modelu",
     "StartModelServiceWithName": "Uruchom usługę z folderu modelu: {{name}}",
     "StartNewService": "Uruchom nową usługę",
-    "StartNewServing": "Rozpocznij nową porcję",
     "StartService": "Rozpoczęcie usługi",
     "StartingModelService": "Uruchomienie modelu początkowego ...",
     "Status": "Status",
@@ -1644,7 +1644,8 @@
     "VllmQuantization": "np. awq, gptq, fp8",
     "VllmTpSize": "Rozmiar paralelizmu tensorowego (np. 2, 4, 8)",
     "WaitingForServiceReady": "Waiting for service to be ready...",
-    "YamlUploadFailed": "Nie udało się przesłać model-definition.yaml."
+    "YamlUploadFailed": "Nie udało się przesłać model-definition.yaml.",
+    "YouCanStartWithHistory": "Oto Twoje ostatnio utworzone rekordy usług. Kliknij nazwę usługi, aby rozpocząć tworzenie nowej usługi."
   },
   "modelStore": {
     "Architecture": "Architektura",
