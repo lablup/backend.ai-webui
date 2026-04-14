@@ -1,5 +1,6 @@
 import {
-  BAIDeviceMetaDataContext,
+  BAIMetaDataContext,
+  BAIMetaDataContextValue,
   BAIImageMetaDataContext,
   BAIImagePathContext,
 } from './context';
@@ -15,6 +16,10 @@ export interface BAIMetaDataProviderProps {
    * never bundles or resolves app asset paths on its own.
    */
   imagePath?: string;
+  resourceSlotsInRG?: DeviceMetaData;
+  mergedResourceSlots?: DeviceMetaData;
+  refresh?: () => void;
+  isLoading?: boolean;
   children?: ReactNode;
 }
 
@@ -22,16 +27,28 @@ const BAIMetaDataProvider = ({
   deviceMetaData,
   imageMetaData,
   imagePath,
+  resourceSlotsInRG,
+  mergedResourceSlots,
+  refresh = () => {},
+  isLoading = false,
   children,
 }: BAIMetaDataProviderProps) => {
+  'use memo';
+  const value: BAIMetaDataContextValue = {
+    deviceMetaData,
+    resourceSlotsInRG,
+    mergedResourceSlots,
+    refresh,
+    isLoading,
+  };
   return (
-    <BAIDeviceMetaDataContext.Provider value={deviceMetaData}>
+    <BAIMetaDataContext.Provider value={value}>
       <BAIImageMetaDataContext.Provider value={imageMetaData}>
         <BAIImagePathContext.Provider value={imagePath}>
           {children}
         </BAIImagePathContext.Provider>
       </BAIImageMetaDataContext.Provider>
-    </BAIDeviceMetaDataContext.Provider>
+    </BAIMetaDataContext.Provider>
   );
 };
 

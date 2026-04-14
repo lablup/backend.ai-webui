@@ -14,9 +14,10 @@ import { BAIProjectSettingModalFragment$key } from '../../__generated__/BAIProje
 import { BAIProjectSettingModalModifyMutation } from '../../__generated__/BAIProjectSettingModalModifyMutation.graphql';
 import { BAIProjectSettingModalQuery } from '../../__generated__/BAIProjectSettingModalQuery.graphql';
 import { convertToBinaryUnit } from '../../helper';
-import { useErrorMessageResolver, useResourceSlotsDetails } from '../../hooks';
+import { useErrorMessageResolver } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIModal, { BAIModalProps } from '../BAIModal';
+import useBAIMetaData from '../provider/BAIMetaDataProvider/hooks/useBAIMetaData';
 import {
   App,
   Checkbox,
@@ -66,10 +67,11 @@ const BAIProjectSettingModal = ({
   projectFragment,
   ...modalProps
 }: BAIProjectSettingModalProps) => {
+  'use memo';
   const { token } = theme.useToken();
   const { t } = useBAIi18n();
   const deferredOpen = useDeferredValue(modalProps.open);
-  const { resourceSlotsInRG, deviceMetaData } = useResourceSlotsDetails();
+  const { resourceSlotsInRG, deviceMetaData } = useBAIMetaData();
   const form = useRef<FormInstance<FormValues>>(null);
   const { message } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();

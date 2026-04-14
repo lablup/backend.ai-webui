@@ -8,6 +8,7 @@ import {
 } from '../__generated__/ManageImageResourceLimitModalMutation.graphql';
 import { ManageImageResourceLimitModal_image$key } from '../__generated__/ManageImageResourceLimitModal_image.graphql';
 import { compareNumberWithUnits } from '../helper';
+import { useResourceSlotsDetails } from '../hooks/backendai';
 import {
   Form,
   type FormInstance,
@@ -19,7 +20,6 @@ import {
   theme,
 } from 'antd';
 import {
-  useResourceSlotsDetails,
   BAIModal,
   BAIModalProps,
   BAIDynamicUnitInputNumber,
@@ -41,6 +41,7 @@ interface ManageImageResourceLimitModalProps extends BAIModalProps {
 const ManageImageResourceLimitModal: React.FC<
   ManageImageResourceLimitModalProps
 > = ({ imageFrgmt, open, onRequestClose, ...BAIModalProps }) => {
+  'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const formRef = useRef<FormInstance>(null);
