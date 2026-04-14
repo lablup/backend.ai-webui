@@ -130,7 +130,7 @@ jobs:
       - continue-on-error: true
         id: e2e-tests
         name: Run E2E tests
-        run: pnpm playwright test e2e/auth/login.spec.ts --reporter=html,json --output=test-results
+        run: pnpm playwright test e2e/ --grep-invert @visual --reporter=html,json --output=test-results
       - name: Save test results
         run: |
           mkdir -p /tmp/gh-aw/e2e-results
@@ -631,8 +631,13 @@ jobs:
                - Related PRs if applicable (link to PR numbers)
                - Repro command
              - Attach key log snippets; avoid uploading large artifacts directly to the issue body.
-          4) Healing attempt (temporarily disabled; uncomment when ready):
-          
+          4) Healing attempt:
+             - Only attempt healing for failures categorized as **WebUI change** (not Backend or Server issues).
+             - Scope fixes to failing specs only. Avoid touching snapshots unless required.
+             - Create branch from `main` named `e2e-healer/<yyyy-mm-dd>-<shortsha>`.
+             - Use Playwright planner to reason about fixes, edit code, and rerun only the previously failing specs, then the full `pnpm playwright test e2e/ --grep-invert @visual` if fixes look stable.
+             - If fixes pass, use `safe-outputs.create-pull-request` to open a **draft** PR against `main` with title prefix `e2e-healer:`. Reference the issue, include failing cases, applied changes, and rerun results. Exclude generated reports/artifacts from the branch.
+             - If not fixed, leave a concise comment on the issue (via `safe-outputs.add-comment`) with diagnostics and next hints.
           5) Housekeeping: keep diffs minimal, avoid unrelated refactors, and ensure branch/PR cleanup instructions are clear in the PR body.
           
           ## Output expectations
@@ -811,7 +816,7 @@ jobs:
         # --allow-tool shell(wc)
         # --allow-tool shell(yq)
         # --allow-tool write
-        timeout-minutes: 120
+        timeout-minutes: 180
         run: |
           set -o pipefail
           sudo -E awf --env-all --container-workdir "${GITHUB_WORKSPACE}" --mount /tmp:/tmp:rw --mount "${GITHUB_WORKSPACE}:${GITHUB_WORKSPACE}:rw" --mount /usr/bin/date:/usr/bin/date:ro --mount /usr/bin/gh:/usr/bin/gh:ro --mount /usr/bin/yq:/usr/bin/yq:ro --mount /usr/local/bin/copilot:/usr/local/bin/copilot:ro --mount /home/runner/.copilot:/home/runner/.copilot:rw --allow-domains api.business.githubcopilot.com,api.enterprise.githubcopilot.com,api.github.com,api.githubcopilot.com,api.individual.githubcopilot.com,api.npms.io,bun.sh,cdn.playwright.dev,deb.nodesource.com,deno.land,get.pnpm.io,github.com,host.docker.internal,nodejs.org,npm,npm.pkg.github.com,npmjs.com,npmjs.org,playwright.download.prss.microsoft.com,raw.githubusercontent.com,registry.bower.io,registry.npmjs.com,registry.npmjs.org,registry.yarnpkg.com,repo.yarnpkg.com,skimdb.npmjs.com,www.npmjs.com,www.npmjs.org,yarnpkg.com --log-level info --proxy-logs-dir /tmp/gh-aw/sandbox/firewall/logs --image-tag 0.7.0 \
