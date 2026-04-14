@@ -23,25 +23,19 @@ timeout-minutes: 120
 
 engine: copilot
 
+strict: false
+
 env:
-  # Endpoints
+  # Endpoints (non-secret vars — safe to expose to agent)
   E2E_WEBUI_ENDPOINT: ${{ vars.E2E_WEBUI_ENDPOINT }}
   E2E_WEBSERVER_ENDPOINT: ${{ vars.E2E_WEBSERVER_ENDPOINT }}
-  # Admin credentials
+  # Account emails (non-secret vars)
   E2E_ADMIN_EMAIL: ${{ vars.E2E_ADMIN_EMAIL }}
-  E2E_ADMIN_PASSWORD: ${{ secrets.E2E_ADMIN_PASSWORD }}
-  # User credentials
   E2E_USER_EMAIL: ${{ vars.E2E_USER_EMAIL }}
-  E2E_USER_PASSWORD: ${{ secrets.E2E_USER_PASSWORD }}
-  # User2 credentials
   E2E_USER2_EMAIL: ${{ vars.E2E_USER2_EMAIL }}
-  E2E_USER2_PASSWORD: ${{ secrets.E2E_USER2_PASSWORD }}
-  # Monitor credentials
   E2E_MONITOR_EMAIL: ${{ vars.E2E_MONITOR_EMAIL }}
-  E2E_MONITOR_PASSWORD: ${{ secrets.E2E_MONITOR_PASSWORD }}
-  # Domain admin credentials
   E2E_DOMAIN_ADMIN_EMAIL: ${{ vars.E2E_DOMAIN_ADMIN_EMAIL }}
-  E2E_DOMAIN_ADMIN_PASSWORD: ${{ secrets.E2E_DOMAIN_ADMIN_PASSWORD }}
+  # Note: password secrets are scoped to the 'Run E2E tests' step only
 
 network:
   allowed:
@@ -84,23 +78,36 @@ steps:
     run: pnpm exec playwright install --with-deps chromium
   - name: Determine test filter
     id: test-filter
+    env:
+      INPUT_TEST_FILTER: ${{ inputs.test_filter }}
     run: |
-      FILTER="${{ inputs.test_filter || '' }}"
-      if [ -n "$FILTER" ]; then
-        echo "args=--grep $FILTER" >> $GITHUB_OUTPUT
+      if [ -n "$INPUT_TEST_FILTER" ]; then
+        echo "args=--grep $INPUT_TEST_FILTER" >> $GITHUB_OUTPUT
       else
         echo "args=--grep-invert @visual" >> $GITHUB_OUTPUT
       fi
   - name: Run E2E tests
     id: e2e-tests
     continue-on-error: true
-    run: pnpm playwright test e2e/ ${{ steps.test-filter.outputs.args }} --reporter=html,json --output=test-results
+    env:
+      TEST_ARGS: ${{ steps.test-filter.outputs.args }}
+      # Password secrets scoped to this step only (not exposed to agent)
+      E2E_ADMIN_PASSWORD: ${{ secrets.E2E_ADMIN_PASSWORD }}
+      E2E_USER_PASSWORD: ${{ secrets.E2E_USER_PASSWORD }}
+      E2E_USER2_PASSWORD: ${{ secrets.E2E_USER2_PASSWORD }}
+      E2E_MONITOR_PASSWORD: ${{ secrets.E2E_MONITOR_PASSWORD }}
+      E2E_DOMAIN_ADMIN_PASSWORD: ${{ secrets.E2E_DOMAIN_ADMIN_PASSWORD }}
+    run: pnpm playwright test e2e/ $TEST_ARGS --reporter=html,json --output=test-results
   - name: Save test results
+    env:
+      E2E_OUTCOME: ${{ steps.e2e-tests.outcome }}
     run: |
       mkdir -p /tmp/gh-aw/e2e-results
       cp -r playwright-report /tmp/gh-aw/e2e-results/ 2>/dev/null || true
       cp -r test-results /tmp/gh-aw/e2e-results/ 2>/dev/null || true
-      echo "TEST_EXIT_CODE=${{ steps.e2e-tests.outcome == 'success' && '0' || '1' }}" >> /tmp/gh-aw/e2e-results/summary.env
+      TEST_EXIT_CODE=0
+      [ "$E2E_OUTCOME" != "success" ] && TEST_EXIT_CODE=1
+      echo "TEST_EXIT_CODE=${TEST_EXIT_CODE}" >> /tmp/gh-aw/e2e-results/summary.env
   - uses: actions/upload-artifact@v4
     if: always()
     with:
@@ -112,6 +119,8 @@ steps:
   - name: Parse Playwright JSON results
     id: parse-results
     if: always()
+    env:
+      E2E_OUTCOME: ${{ steps.e2e-tests.outcome }}
     run: |
       JSON_REPORT=""
       # Playwright JSON reporter outputs to the current directory
@@ -129,7 +138,8 @@ steps:
         echo "passed=0" >> $GITHUB_OUTPUT
         echo "failed=0" >> $GITHUB_OUTPUT
         echo "skipped=0" >> $GITHUB_OUTPUT
-        echo "status=${{ steps.e2e-tests.outcome == 'success' && 'pass' || 'fail' }}" >> $GITHUB_OUTPUT
+        FALLBACK_STATUS="fail"; [ "$E2E_OUTCOME" = "success" ] && FALLBACK_STATUS="pass"
+        echo "status=${FALLBACK_STATUS}" >> $GITHUB_OUTPUT
         echo "duration=0" >> $GITHUB_OUTPUT
         echo "failed_tests=[]" >> $GITHUB_OUTPUT
         exit 0
@@ -196,21 +206,32 @@ steps:
     if: always() && (inputs.notify_teams != 'false')
     env:
       TEAMS_WEBHOOK_URL: ${{ secrets.TEAMS_WEBHOOK_URL }}
+      PARSE_STATUS: ${{ steps.parse-results.outputs.status }}
+      PARSE_TOTAL: ${{ steps.parse-results.outputs.total }}
+      PARSE_PASSED: ${{ steps.parse-results.outputs.passed }}
+      PARSE_FAILED: ${{ steps.parse-results.outputs.failed }}
+      PARSE_SKIPPED: ${{ steps.parse-results.outputs.skipped }}
+      PARSE_DURATION: ${{ steps.parse-results.outputs.duration }}
+      PARSE_FAILED_TESTS: ${{ steps.parse-results.outputs.failed_tests }}
+      GH_SERVER_URL: ${{ github.server_url }}
+      GH_REPOSITORY: ${{ github.repository }}
+      GH_RUN_ID: ${{ github.run_id }}
+      GH_EVENT_NAME: ${{ github.event_name }}
     run: |
       if [ -z "$TEAMS_WEBHOOK_URL" ]; then
         echo "::notice::TEAMS_WEBHOOK_URL secret not configured, skipping Teams notification"
         exit 0
       fi
 
-      STATUS="${{ steps.parse-results.outputs.status }}"
-      TOTAL="${{ steps.parse-results.outputs.total }}"
-      PASSED="${{ steps.parse-results.outputs.passed }}"
-      FAILED="${{ steps.parse-results.outputs.failed }}"
-      SKIPPED="${{ steps.parse-results.outputs.skipped }}"
-      DURATION="${{ steps.parse-results.outputs.duration }}"
-      RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+      STATUS="$PARSE_STATUS"
+      TOTAL="$PARSE_TOTAL"
+      PASSED="$PARSE_PASSED"
+      FAILED="$PARSE_FAILED"
+      SKIPPED="$PARSE_SKIPPED"
+      DURATION="$PARSE_DURATION"
+      RUN_URL="${GH_SERVER_URL}/${GH_REPOSITORY}/actions/runs/${GH_RUN_ID}"
       DATE=$(date -u +"%Y-%m-%d")
-      TRIGGER="${{ github.event_name }}"
+      TRIGGER="$GH_EVENT_NAME"
 
       if [ "$STATUS" = "pass" ]; then
         STATUS_EMOJI="✅"
@@ -223,7 +244,7 @@ steps:
       fi
 
       # Build failed test list for the card
-      FAILED_TESTS='${{ steps.parse-results.outputs.failed_tests }}'
+      FAILED_TESTS="$PARSE_FAILED_TESTS"
       FAILED_LIST=""
       if [ "$FAILED" != "0" ] && [ -n "$FAILED_TESTS" ] && [ "$FAILED_TESTS" != "[]" ]; then
         FAILED_LIST=$(node -e "
@@ -317,6 +338,14 @@ steps:
       ATLASSIAN_API_TOKEN: ${{ secrets.ATLASSIAN_API_TOKEN }}
       JIRA_SITE: ${{ vars.JIRA_SITE || 'lablup.atlassian.net' }}
       JIRA_PROJECT: ${{ vars.JIRA_PROJECT || 'FR' }}
+      PARSE_FAILED: ${{ steps.parse-results.outputs.failed }}
+      PARSE_TOTAL: ${{ steps.parse-results.outputs.total }}
+      PARSE_PASSED: ${{ steps.parse-results.outputs.passed }}
+      PARSE_FAILED_TESTS: ${{ steps.parse-results.outputs.failed_tests }}
+      GH_SERVER_URL: ${{ github.server_url }}
+      GH_REPOSITORY: ${{ github.repository }}
+      GH_RUN_ID: ${{ github.run_id }}
+      GH_SHA: ${{ github.sha }}
     run: |
       if [ -z "$ATLASSIAN_EMAIL" ] || [ -z "$ATLASSIAN_API_TOKEN" ]; then
         echo "::notice::Jira credentials not configured, skipping Jira integration"
@@ -326,13 +355,13 @@ steps:
       JIRA_BASE="https://${JIRA_SITE}/rest/api/3"
       AUTH=$(echo -n "${ATLASSIAN_EMAIL}:${ATLASSIAN_API_TOKEN}" | base64)
       DATE=$(date -u +"%Y-%m-%d")
-      RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-      FAILED="${{ steps.parse-results.outputs.failed }}"
-      TOTAL="${{ steps.parse-results.outputs.total }}"
-      PASSED="${{ steps.parse-results.outputs.passed }}"
+      RUN_URL="${GH_SERVER_URL}/${GH_REPOSITORY}/actions/runs/${GH_RUN_ID}"
+      FAILED="$PARSE_FAILED"
+      TOTAL="$PARSE_TOTAL"
+      PASSED="$PARSE_PASSED"
 
       # Build description (ADF format via Markdown-like content)
-      FAILED_TESTS='${{ steps.parse-results.outputs.failed_tests }}'
+      FAILED_TESTS="$PARSE_FAILED_TESTS"
       FAILED_SECTION=""
       if [ -n "$FAILED_TESTS" ] && [ "$FAILED_TESTS" != "[]" ]; then
         FAILED_SECTION=$(node -e "
@@ -343,16 +372,8 @@ steps:
         " "$FAILED_TESTS")
       fi
 
-      DESC="## E2E Test Failure Report — ${DATE}
-
-**Results:** ${FAILED} failed / ${PASSED} passed / ${TOTAL} total
-
-### Failed Tests
-${FAILED_SECTION}
-
-### Links
-- [GitHub Actions Run](${RUN_URL})
-- Commit: \`${{ github.sha }}\`"
+      DESC=$(printf 'E2E Test Failure Report — %s\n\nResults: %s failed / %s passed / %s total\n\nFailed Tests:\n%s\n\nLinks:\n- GitHub Actions Run: %s\n- Commit: %s' \
+        "${DATE}" "${FAILED}" "${PASSED}" "${TOTAL}" "${FAILED_SECTION}" "${RUN_URL}" "${GH_SHA}")
 
       # Search for existing open e2e-failure issue
       JQL="project = ${JIRA_PROJECT} AND labels = e2e-failure AND labels = automated AND resolution = Unresolved"
@@ -441,6 +462,9 @@ ${FAILED_SECTION}
       ATLASSIAN_API_TOKEN: ${{ secrets.ATLASSIAN_API_TOKEN }}
       JIRA_SITE: ${{ vars.JIRA_SITE || 'lablup.atlassian.net' }}
       JIRA_PROJECT: ${{ vars.JIRA_PROJECT || 'FR' }}
+      GH_SERVER_URL: ${{ github.server_url }}
+      GH_REPOSITORY: ${{ github.repository }}
+      GH_RUN_ID: ${{ github.run_id }}
     run: |
       if [ -z "$ATLASSIAN_EMAIL" ] || [ -z "$ATLASSIAN_API_TOKEN" ]; then
         exit 0
@@ -449,7 +473,7 @@ ${FAILED_SECTION}
       JIRA_BASE="https://${JIRA_SITE}/rest/api/3"
       AUTH=$(echo -n "${ATLASSIAN_EMAIL}:${ATLASSIAN_API_TOKEN}" | base64)
       DATE=$(date -u +"%Y-%m-%d")
-      RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+      RUN_URL="${GH_SERVER_URL}/${GH_REPOSITORY}/actions/runs/${GH_RUN_ID}"
 
       # Search for existing open e2e-failure issue
       JQL="project = ${JIRA_PROJECT} AND labels = e2e-failure AND labels = automated AND resolution = Unresolved"
