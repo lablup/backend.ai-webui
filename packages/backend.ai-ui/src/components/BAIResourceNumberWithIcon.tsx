@@ -8,9 +8,11 @@ import BAIRocmIcon from '../icons/BAIRocmIcon';
 import BAITenstorrentIcon from '../icons/BAITenstorrentIcon';
 import BAITpuIcon from '../icons/BAITpuIcon';
 import BAIFlex from './BAIFlex';
+import BAIImageWithFallback from './BAIImageWithFallback';
 import NumberWithUnit from './BAINumberWithUnit';
 import BAIText from './BAIText';
-import { ResourceSlotName, useBAIDeviceMetaData } from './provider';
+import { ResourceSlotName } from './provider';
+import useBAIMetaData from './provider/BAIMetaDataProvider/hooks/useBAIMetaData';
 import { theme, Tooltip, TooltipProps } from 'antd';
 import * as _ from 'lodash-es';
 import { CpuIcon, MemoryStickIcon, MicrochipIcon } from 'lucide-react';
@@ -50,7 +52,7 @@ const BAIResourceNumberWithIcon = ({
 }: BAIResourceNumberWithIconProps) => {
   'use memo';
 
-  const deviceMetaData = useBAIDeviceMetaData();
+  const { mergedResourceSlots: deviceMetaData } = useBAIMetaData();
   const { token } = theme.useToken();
 
   const formatAmount = (amount: string) => {
@@ -137,7 +139,8 @@ export const ResourceTypeIcon = ({
 }: ResourceTypeIconProps) => {
   'use memo';
 
-  const deviceMetaData = useBAIDeviceMetaData();
+  const { mergedResourceSlots: deviceMetaData } = useBAIMetaData();
+  const displayIcon = deviceMetaData[type]?.display_icon;
 
   const getIconContent = () => {
     if (type === 'cpu') {
@@ -155,11 +158,26 @@ export const ResourceTypeIcon = ({
       );
     }
 
-    const displayIcon = deviceMetaData[type]?.display_icon;
-
     if (displayIcon && _.keys(knownDeviceIcons).includes(displayIcon)) {
       return (
         knownDeviceIcons[displayIcon as keyof typeof knownDeviceIcons] ?? null
+      );
+    }
+
+    if (displayIcon) {
+      return (
+        <BAIImageWithFallback
+          src={`/resources/icons/${displayIcon}.svg`}
+          alt={type}
+          width={size}
+          height={size}
+          style={{ alignSelf: 'center' }}
+          fallbackIcon={
+            <BAIFlex style={{ width: size, height: size }}>
+              <MicrochipIcon />
+            </BAIFlex>
+          }
+        />
       );
     }
 
