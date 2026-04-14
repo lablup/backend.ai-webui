@@ -1153,6 +1153,10 @@
       "ValidationFailed": "Баталгаажуулалт амжилтгүй боллоо"
     }
   },
+  "header": {
+    "SwitchOutOfAdminConfirmContent": "\"{{projectName}}\" төсөлд администраторын эрх байхгүй байна. Шилжихэд админ горим дуусгавар болно.",
+    "SwitchOutOfAdminConfirmTitle": "Админ горимоос гарах уу?"
+  },
   "import": {
     "CleanUpImportTask": "Импортын ажлыг цэвэрлэх ...",
     "CouldNotCopyText": "Текстийг хуулж чадсангүй:",

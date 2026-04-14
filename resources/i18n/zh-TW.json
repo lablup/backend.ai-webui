@@ -1155,6 +1155,10 @@
       "ValidationFailed": "驗證失敗"
     }
   },
+  "header": {
+    "SwitchOutOfAdminConfirmContent": "您沒有「{{projectName}}」專案的管理員權限。切換後將離開管理員模式。",
+    "SwitchOutOfAdminConfirmTitle": "離開管理員模式？"
+  },
   "import": {
     "CleanUpImportTask": "清理導入任務...",
     "CouldNotCopyText": "無法複製文本：",

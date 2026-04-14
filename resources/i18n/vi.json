@@ -1154,6 +1154,10 @@
       "ValidationFailed": "Xác nhận không thành công"
     }
   },
+  "header": {
+    "SwitchOutOfAdminConfirmContent": "Bạn không có quyền quản trị cho dự án \"{{projectName}}\". Việc chuyển đổi sẽ thoát khỏi chế độ quản trị.",
+    "SwitchOutOfAdminConfirmTitle": "Thoát khỏi chế độ quản trị?"
+  },
   "import": {
     "CleanUpImportTask": "Tác vụ nhập dọn dẹp ...",
     "CouldNotCopyText": "Không thể sao chép văn bản:",

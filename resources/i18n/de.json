@@ -1154,6 +1154,10 @@
       "ValidationFailed": "Validierung fehlgeschlagen"
     }
   },
+  "header": {
+    "SwitchOutOfAdminConfirmContent": "Sie haben keine Administratorrechte für das Projekt \"{{projectName}}\". Durch den Wechsel wird der Administratormodus beendet.",
+    "SwitchOutOfAdminConfirmTitle": "Administratormodus verlassen?"
+  },
   "import": {
     "CleanUpImportTask": "Importaufgabe bereinigen...",
     "CouldNotCopyText": "Text konnte nicht kopiert werden:",

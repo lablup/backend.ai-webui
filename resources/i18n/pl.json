@@ -1153,6 +1153,10 @@
       "ValidationFailed": "Walidacja nie powiodła się"
     }
   },
+  "header": {
+    "SwitchOutOfAdminConfirmContent": "Nie masz uprawnień administratora do projektu \"{{projectName}}\". Przełączenie spowoduje wyjście z trybu administratora.",
+    "SwitchOutOfAdminConfirmTitle": "Opuścić tryb administratora?"
+  },
   "import": {
     "CleanUpImportTask": "Oczyść zadanie importowania...",
     "CouldNotCopyText": "Nie udało się skopiować tekstu:",

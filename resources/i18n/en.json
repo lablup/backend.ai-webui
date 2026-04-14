@@ -1153,6 +1153,10 @@
       "ValidationFailed": "Validation failed"
     }
   },
+  "header": {
+    "SwitchOutOfAdminConfirmContent": "You don't have admin rights for the \"{{projectName}}\" project. Switching will exit admin mode.",
+    "SwitchOutOfAdminConfirmTitle": "Leave admin mode?"
+  },
   "import": {
     "CleanUpImportTask": "Cleanup import task...",
     "CouldNotCopyText": "Could not copy text: ",

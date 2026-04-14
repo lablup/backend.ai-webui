@@ -731,6 +731,20 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       return false;
     }) || 'storage-settings' === location.pathname.split('/')[1];
 
+  // Role-independent variant: true when the current path is *any* admin
+  // category page, regardless of whether the current user's effective role
+  // can reach it. Callers that track "last visited general (non-admin) page"
+  // must use this flag rather than `isSelectedAdminCategoryMenu`, which is
+  // role-filtered and would otherwise classify an admin page as "general"
+  // when the user's role excludes it from the admin menu (e.g. superadmin on
+  // `/project-admin-users`, or a user switched into a project where they
+  // lack admin rights).
+  const currentPathFirstSegment = location.pathname.split('/')[1] || '';
+  const isCurrentPathAdminCategory =
+    ALL_ADMIN_PAGE_KEYS.has(currentPathFirstSegment) ||
+    PROJECT_ADMIN_PAGE_KEY_SET.has(currentPathFirstSegment) ||
+    currentPathFirstSegment === 'storage-settings';
+
   // Get the first available menu item from groupedGeneralMenu
   // (after blocklist filtering, excluding disabled/inactive items)
   // This reflects the actual order shown in the UI
@@ -877,6 +891,7 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
     groupedGeneralMenu,
     groupedAdminMenu,
     isSelectedAdminCategoryMenu,
+    isCurrentPathAdminCategory,
     firstAvailableMenuItem,
     firstAvailableAdminMenuItem,
     defaultMenuPath,

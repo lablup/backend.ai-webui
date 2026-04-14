@@ -1152,6 +1152,10 @@
       "ValidationFailed": "Doğrulama başarısız oldu"
     }
   },
+  "header": {
+    "SwitchOutOfAdminConfirmContent": "\"{{projectName}}\" projesi için yönetici haklarınız yok. Değiştirmek yönetici modundan çıkacak.",
+    "SwitchOutOfAdminConfirmTitle": "Yönetici modundan çıkılsın mı?"
+  },
   "import": {
     "CleanUpImportTask": "İçe aktarma görevini temizle...",
     "CouldNotCopyText": "Metin kopyalanamadı:",

@@ -1152,6 +1152,10 @@
       "ValidationFailed": "Validointi epäonnistui"
     }
   },
+  "header": {
+    "SwitchOutOfAdminConfirmContent": "Sinulla ei ole ylläpitäjäoikeuksia projektiin \"{{projectName}}\". Vaihtaminen poistuu ylläpitäjätilasta.",
+    "SwitchOutOfAdminConfirmTitle": "Poistutaanko ylläpitäjätilasta?"
+  },
   "import": {
     "CleanUpImportTask": "Tuontitehtävän siivous...",
     "CouldNotCopyText": "Tekstiä ei voitu kopioida:",

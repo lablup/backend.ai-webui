@@ -1155,6 +1155,10 @@
       "ValidationFailed": "Validasi gagal"
     }
   },
+  "header": {
+    "SwitchOutOfAdminConfirmContent": "Anda tidak memiliki hak admin untuk proyek \"{{projectName}}\". Beralih akan keluar dari mode admin.",
+    "SwitchOutOfAdminConfirmTitle": "Keluar dari mode admin?"
+  },
   "import": {
     "CleanUpImportTask": "Membersihkan tugas impor...",
     "CouldNotCopyText": "Tidak dapat menyalin teks: ",

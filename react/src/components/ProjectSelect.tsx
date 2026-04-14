@@ -6,10 +6,7 @@ import { ProjectSelectorQuery } from '../__generated__/ProjectSelectorQuery.grap
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
 import useControllableState_deprecated from '../hooks/useControllableState';
-import {
-  isProjectAdminForId,
-  useCurrentUserProjectRoles,
-} from '../hooks/useCurrentUserProjectRoles';
+import { useCurrentUserProjectRoles } from '../hooks/useCurrentUserProjectRoles';
 import { theme, Tooltip } from 'antd';
 import { BAIFlex, BAISelect, BAISelectProps } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -132,7 +129,8 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
         label: getLabel(key),
         title: key,
         options: _.map(_.sortBy(value, 'name'), (project) => {
-          const showBadge = isProjectAdminForId(project?.id, projectAdminIds);
+          const showBadge =
+            !!project?.id && projectAdminIds.includes(project.id);
           return {
             label: showBadge ? (
               <BAIFlex gap={token.marginXS} align="center">

@@ -1152,6 +1152,10 @@
       "ValidationFailed": "Η επικύρωση απέτυχε"
     }
   },
+  "header": {
+    "SwitchOutOfAdminConfirmContent": "Δεν έχετε δικαιώματα διαχειριστή για το έργο \"{{projectName}}\". Η εναλλαγή θα τερματίσει τη λειτουργία διαχειριστή.",
+    "SwitchOutOfAdminConfirmTitle": "Έξοδος από τη λειτουργία διαχειριστή;"
+  },
   "import": {
     "CleanUpImportTask": "Εργασία εισαγωγής καθαρισμού ...",
     "CouldNotCopyText": "Δεν ήταν δυνατή η αντιγραφή κειμένου:",

@@ -1154,6 +1154,10 @@
       "ValidationFailed": "验证失败"
     }
   },
+  "header": {
+    "SwitchOutOfAdminConfirmContent": "您没有\"{{projectName}}\"项目的管理员权限。切换后将退出管理员模式。",
+    "SwitchOutOfAdminConfirmTitle": "退出管理员模式？"
+  },
   "import": {
     "CleanUpImportTask": "清理导入任务...",
     "CouldNotCopyText": "无法复制文本：",

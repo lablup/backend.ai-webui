@@ -1152,6 +1152,10 @@
       "ValidationFailed": "Проверка не удалась"
     }
   },
+  "header": {
+    "SwitchOutOfAdminConfirmContent": "У вас нет прав администратора для проекта \"{{projectName}}\". Переключение завершит режим администратора.",
+    "SwitchOutOfAdminConfirmTitle": "Выйти из режима администратора?"
+  },
   "import": {
     "CleanUpImportTask": "Очистить задачу импорта ...",
     "CouldNotCopyText": "Не удалось скопировать текст:",

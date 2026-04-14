@@ -1154,6 +1154,10 @@
       "ValidationFailed": "การตรวจสอบล้มเหลว"
     }
   },
+  "header": {
+    "SwitchOutOfAdminConfirmContent": "คุณไม่มีสิทธิ์ผู้ดูแลระบบสำหรับโปรเจกต์ \"{{projectName}}\" การเปลี่ยนจะออกจากโหมดผู้ดูแลระบบ",
+    "SwitchOutOfAdminConfirmTitle": "ออกจากโหมดผู้ดูแลระบบ?"
+  },
   "import": {
     "CleanUpImportTask": "กำลังทำความสะอาดงานนำเข้า...",
     "CouldNotCopyText": "ไม่สามารถคัดลอกข้อความ: ",

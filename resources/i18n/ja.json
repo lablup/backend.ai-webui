@@ -1154,6 +1154,10 @@
       "ValidationFailed": "検証に失敗しました"
     }
   },
+  "header": {
+    "SwitchOutOfAdminConfirmContent": "\"{{projectName}}\" プロジェクトの管理者権限がありません。切り替えると管理者モードが終了します。",
+    "SwitchOutOfAdminConfirmTitle": "管理者モードを終了しますか？"
+  },
   "import": {
     "CleanUpImportTask": "インポートタスクのクリーンアップ...",
     "CouldNotCopyText": "テキストをコピーできませんでした：",

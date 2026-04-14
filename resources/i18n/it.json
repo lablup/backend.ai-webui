@@ -1152,6 +1152,10 @@
       "ValidationFailed": "Convalida non riuscita"
     }
   },
+  "header": {
+    "SwitchOutOfAdminConfirmContent": "Non hai i diritti di amministratore per il progetto \"{{projectName}}\". Il passaggio uscirà dalla modalità amministratore.",
+    "SwitchOutOfAdminConfirmTitle": "Uscire dalla modalità amministratore?"
+  },
   "import": {
     "CleanUpImportTask": "Attività di importazione di pulizia...",
     "CouldNotCopyText": "Impossibile copiare il testo:",

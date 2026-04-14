@@ -1155,6 +1155,10 @@
       "ValidationFailed": "인증에 실패했습니다."
     }
   },
+  "header": {
+    "SwitchOutOfAdminConfirmContent": "\"{{projectName}}\" 프로젝트에 대한 관리자 권한이 없습니다. 전환하면 관리자 모드에서 나갑니다.",
+    "SwitchOutOfAdminConfirmTitle": "관리자 모드에서 나가시겠습니까?"
+  },
   "import": {
     "CleanUpImportTask": "가져오기를 완료하는 중...",
     "CouldNotCopyText": "다음 텍스트 복사에 실패했습니다 : ",

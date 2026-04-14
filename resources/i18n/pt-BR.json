@@ -1152,6 +1152,10 @@
       "ValidationFailed": "A validação falhou"
     }
   },
+  "header": {
+    "SwitchOutOfAdminConfirmContent": "Você não tem direitos de administrador no projeto \"{{projectName}}\". Trocar sairá do modo administrador.",
+    "SwitchOutOfAdminConfirmTitle": "Sair do modo administrador?"
+  },
   "import": {
     "CleanUpImportTask": "Limpar tarefa de importação ...",
     "CouldNotCopyText": "Não foi possível copiar o texto:",

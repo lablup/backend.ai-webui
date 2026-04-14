@@ -1152,6 +1152,10 @@
       "ValidationFailed": "Pengesahan gagal"
     }
   },
+  "header": {
+    "SwitchOutOfAdminConfirmContent": "Anda tidak mempunyai hak admin untuk projek \"{{projectName}}\". Penukaran akan keluar dari mod admin.",
+    "SwitchOutOfAdminConfirmTitle": "Keluar dari mod admin?"
+  },
   "import": {
     "CleanUpImportTask": "Tugas import pembersihan ...",
     "CouldNotCopyText": "Tidak dapat menyalin teks:",
