@@ -12,6 +12,7 @@ import {
 import { useBAISettingUserState, UserSettings } from './useBAISetting';
 import {
   ResourceSlotDetail,
+  useBAISignedRequestWithPromise,
   useUpdatableState,
   useViewer,
 } from 'backend.ai-ui';
@@ -82,6 +83,44 @@ export const useDeviceMetaData = (key = 'first') => {
     },
     staleTime: 1000 * 60 * 60 * 24,
   });
+};
+
+/**
+ * Fetches resource slot details from the server API and merges them with
+ * static device metadata. When `resourceGroupName` is provided, the API
+ * call is scoped to that specific resource group (for per-group accelerator availability).
+ *
+ * This is the webui-side hook that performs actual API calls. BUI components
+ * read the merged results from context (populated by BAIMetaDataWrapper).
+ */
+export const useResourceSlotsDetails = (resourceGroupName?: string) => {
+  'use memo';
+  const [key, checkUpdate] = useUpdatableState('first');
+  const baiRequestWithPromise = useBAISignedRequestWithPromise();
+  const { data: deviceMetaData } = useDeviceMetaData();
+  const { data: resourceSlotsInRG, isLoading } = useTanQuery<{
+    [key: string]: ResourceSlotDetail | undefined;
+  }>({
+    queryKey: ['useResourceSlots', resourceGroupName, key],
+    queryFn: () => {
+      const search = new URLSearchParams();
+      resourceGroupName && search.set('sgroup', resourceGroupName);
+      const searchParamString = search.toString();
+      return baiRequestWithPromise({
+        method: 'GET',
+        url: `/config/resource-slots/details${searchParamString ? '?' + search.toString() : ''}`,
+      });
+    },
+    staleTime: 3000,
+  });
+
+  return {
+    resourceSlotsInRG,
+    deviceMetaData,
+    mergedResourceSlots: _.merge({}, deviceMetaData, resourceSlotsInRG),
+    refresh: checkUpdate,
+    isLoading,
+  };
 };
 
 interface UserInfo {

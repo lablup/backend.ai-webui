@@ -61,6 +61,7 @@ import React, {
 import { useTranslation, initReactI18next } from 'react-i18next';
 import { RelayEnvironmentProvider } from 'react-relay/hooks';
 import { useLocation } from 'react-router-dom';
+import { useResourceSlotsDetails } from 'src/hooks/backendai';
 import { QueryParamProvider } from 'use-query-params';
 import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
 
@@ -220,11 +221,26 @@ const commonAppProps: AppProps = {
   },
 };
 
-const BAIMetaDataWrapper = ({ children }: { children: ReactNode }) => {
-  const { data } = useDeviceMetaData();
+export const BAIMetaDataWrapper = ({ children }: { children: ReactNode }) => {
+  'use memo';
+  const {
+    deviceMetaData,
+    resourceSlotsInRG,
+    mergedResourceSlots,
+    refresh,
+    isLoading,
+  } = useResourceSlotsDetails();
 
   return (
-    <BAIMetaDataProvider deviceMetaData={data}>{children}</BAIMetaDataProvider>
+    <BAIMetaDataProvider
+      deviceMetaData={deviceMetaData}
+      resourceSlotsInRG={resourceSlotsInRG}
+      mergedResourceSlots={mergedResourceSlots}
+      refresh={refresh}
+      isLoading={isLoading}
+    >
+      {children}
+    </BAIMetaDataProvider>
   );
 };
 
@@ -324,20 +340,18 @@ export const DefaultProvidersForReactRoot: React.FC<{
                 variant: 'outlined',
               }}
             >
-              <BAIMetaDataWrapper>
-                <QueryParamProvider adapter={ReactRouter6Adapter}>
-                  <App {...commonAppProps}>
-                    {/* <StyleProvider container={shadowRoot} cache={cache}> */}
-                    <Suspense>
-                      {/* <BrowserRouter> */}
-                      {/* <RoutingEventHandler /> */}
-                      {children}
-                      {/* </BrowserRouter> */}
-                    </Suspense>
-                    {/* </StyleProvider> */}
-                  </App>
-                </QueryParamProvider>
-              </BAIMetaDataWrapper>
+              <QueryParamProvider adapter={ReactRouter6Adapter}>
+                <App {...commonAppProps}>
+                  {/* <StyleProvider container={shadowRoot} cache={cache}> */}
+                  <Suspense>
+                    {/* <BrowserRouter> */}
+                    {/* <RoutingEventHandler /> */}
+                    {children}
+                    {/* </BrowserRouter> */}
+                  </Suspense>
+                  {/* </StyleProvider> */}
+                </App>
+              </QueryParamProvider>
             </BAIConfigProvider>
           </QueryClientProvider>
         </RelayEnvironmentProvider>
