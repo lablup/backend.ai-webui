@@ -6,6 +6,7 @@ import { useSuspendedBackendaiClient } from '.';
 import { useCurrentUserRole } from './backendai';
 import { useDiagnosticsBadgeSeverity } from './useAutoDiagnostics';
 import { useBAISettingUserState } from './useBAISetting';
+import { useEffectiveAdminRole } from './useCurrentUserProjectRoles';
 import { useCustomThemeConfig } from './useCustomThemeConfig';
 import {
   PluginPage,
@@ -137,6 +138,22 @@ const ALL_ADMIN_PAGE_KEYS: ReadonlySet<string> = new Set([
   'information',
 ]);
 
+// Admin-category page keys reachable by a project admin (3-tier admin gating).
+// Project admins see Sessions, Serving, Data (vfolders) and Members within the
+// admin category. Other admin pages remain visible only to domain admins or
+// superadmins. Kept as a plain array so it can be exported and reused (e.g. for
+// per-page route gating in follow-up PRs).
+export const PROJECT_ADMIN_PAGE_KEYS = [
+  'admin-session',
+  'admin-serving',
+  'admin-data',
+  'admin-members',
+] as const;
+
+const PROJECT_ADMIN_PAGE_KEY_SET: ReadonlySet<string> = new Set(
+  PROJECT_ADMIN_PAGE_KEYS,
+);
+
 // Page keys that additionally require superadmin role
 const SUPERADMIN_ONLY_PAGE_KEYS: ReadonlySet<string> = new Set([
   'admin-serving',
@@ -190,6 +207,7 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
   const plugins = useWebUIPluginValue();
   const isPluginLoaded = useWebUIPluginLoadedValue();
   const currentUserRole = useCurrentUserRole();
+  const effectiveAdminRole = useEffectiveAdminRole();
 
   const location = useLocation();
   const { t } = useTranslation();
@@ -319,7 +337,7 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
 
   const isSuperAdmin = currentUserRole === 'superadmin';
 
-  const adminMenu: Array<WebUIAdminMenuItemType> = filterOutEmpty([
+  const fullAdminMenu: Array<WebUIAdminMenuItemType> = filterOutEmpty([
     // --- Operations group ---
     {
       label: <WebUILink to="/credential">{t('webui.menu.Users')}</WebUILink>,
@@ -459,6 +477,20 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       group: 'superadmin-system' as AdminMenuGroupName,
     },
   ]);
+
+  // 3-tier admin gating:
+  // - 'none': no admin items
+  // - 'projectAdmin': only PROJECT_ADMIN_PAGE_KEYS
+  // - 'domainAdmin' / 'superadmin': existing behavior preserved by fullAdminMenu
+  //   (which already applies isSuperAdmin gating per item)
+  const adminMenu: Array<WebUIAdminMenuItemType> =
+    effectiveAdminRole === 'none'
+      ? []
+      : effectiveAdminRole === 'projectAdmin'
+        ? fullAdminMenu.filter((item) =>
+            PROJECT_ADMIN_PAGE_KEY_SET.has(item.key as string),
+          )
+        : fullAdminMenu;
 
   const pluginMap: Record<string, MenuItem[]> = {
     'menuitem-user': generalMenu as unknown as MenuItem[],
@@ -770,29 +802,43 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
     return true;
   })();
 
-  // Check if current page requires higher permission than user has
+  // Check if current page requires higher permission than user has.
   // Uses static key sets (not role-filtered adminMenu) to ensure correct 401 responses.
+  // Gating is driven by the user's effective admin role (super/domain/project/none)
+  // rather than the legacy `currentUserRole` string, so that project admins can reach
+  // the subset of admin pages listed in PROJECT_ADMIN_PAGE_KEYS.
   const isCurrentPageUnauthorized = (() => {
     if (currentPathKey === '') return false;
 
-    // Regular users (not admin, not superadmin) cannot access any admin page
+    const isAdminPage =
+      ALL_ADMIN_PAGE_KEYS.has(currentMenuKey) ||
+      PROJECT_ADMIN_PAGE_KEY_SET.has(currentMenuKey);
+
+    if (!isAdminPage) return false;
+
+    // superadmin and domain admin can reach every admin page.
     if (
-      currentUserRole !== 'admin' &&
-      currentUserRole !== 'superadmin' &&
-      ALL_ADMIN_PAGE_KEYS.has(currentMenuKey)
+      effectiveAdminRole === 'superadmin' ||
+      effectiveAdminRole === 'domainAdmin'
     ) {
-      return true;
+      // Domain admin still cannot reach superadmin-only pages.
+      if (
+        effectiveAdminRole === 'domainAdmin' &&
+        SUPERADMIN_ONLY_PAGE_KEYS.has(currentMenuKey) &&
+        !PROJECT_ADMIN_PAGE_KEY_SET.has(currentMenuKey)
+      ) {
+        return true;
+      }
+      return false;
     }
 
-    // Admin users cannot access superadmin-only pages
-    if (
-      currentUserRole === 'admin' &&
-      SUPERADMIN_ONLY_PAGE_KEYS.has(currentMenuKey)
-    ) {
-      return true;
+    // Project admin: allow only pages explicitly reachable by project admins.
+    if (effectiveAdminRole === 'projectAdmin') {
+      return !PROJECT_ADMIN_PAGE_KEY_SET.has(currentMenuKey);
     }
 
-    return false;
+    // No admin role at all: all admin pages are unauthorized.
+    return true;
   })();
 
   // Get theme config for custom logo href
