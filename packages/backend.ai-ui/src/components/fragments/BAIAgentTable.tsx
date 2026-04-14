@@ -8,7 +8,7 @@ import {
   convertUnitValue,
   toFixedFloorWithoutTrailingZeros,
 } from '../../helper';
-import { useResourceSlotsDetails } from '../../hooks';
+import { useBAIMetaData } from '../../hooks';
 import BAIDoubleTag from '../BAIDoubleTag';
 import BAIFlex from '../BAIFlex';
 import BAIIntervalView from '../BAIIntervalView';
@@ -68,11 +68,12 @@ const BAIAgentTable: React.FC<BAIAgentTableProps> = ({
   customizeColumns,
   ...tableProps
 }) => {
+  'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const baiClient = useConnectedBAIClient();
 
-  const { mergedResourceSlots } = useResourceSlotsDetails();
+  const { mergedResourceSlots } = useBAIMetaData();
 
   const agents = useFragment(
     graphql`

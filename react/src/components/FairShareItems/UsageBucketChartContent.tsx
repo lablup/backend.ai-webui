@@ -2,13 +2,13 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { useResourceSlotsDetails } from '../../hooks/backendai';
 import { presetPalettes } from '@ant-design/colors';
 import { Empty, Tabs, Typography, theme } from 'antd';
 import { createStyles } from 'antd-style';
 import {
   convertToBinaryUnit,
   INITIAL_FETCH_KEY,
-  useResourceSlotsDetails,
   toFixedFloorWithoutTrailingZeros,
   BAIFlex,
 } from 'backend.ai-ui';

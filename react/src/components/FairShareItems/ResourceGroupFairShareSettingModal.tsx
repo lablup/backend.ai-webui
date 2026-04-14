@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { useResourceSlotsDetails } from '../../hooks/backendai';
 import QuestionIconWithTooltip from '../QuestionIconWithTooltip';
 import { App, Col, Form, Input, InputNumber, Row, theme } from 'antd';
 import { FormInstance } from 'antd/lib';
@@ -12,7 +13,6 @@ import {
   BAIModal,
   BAIModalProps,
   useBAILogger,
-  useResourceSlotsDetails,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { useRef } from 'react';

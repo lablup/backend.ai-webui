@@ -14,7 +14,7 @@ import { BAIProjectSettingModalFragment$key } from '../../__generated__/BAIProje
 import { BAIProjectSettingModalModifyMutation } from '../../__generated__/BAIProjectSettingModalModifyMutation.graphql';
 import { BAIProjectSettingModalQuery } from '../../__generated__/BAIProjectSettingModalQuery.graphql';
 import { convertToBinaryUnit } from '../../helper';
-import { useErrorMessageResolver, useResourceSlotsDetails } from '../../hooks';
+import { useErrorMessageResolver, useBAIMetaData } from '../../hooks';
 import BAIModal, { BAIModalProps } from '../BAIModal';
 import {
   App,
@@ -66,10 +66,11 @@ const BAIProjectSettingModal = ({
   projectFragment,
   ...modalProps
 }: BAIProjectSettingModalProps) => {
+  'use memo';
   const { token } = theme.useToken();
   const { t } = useTranslation();
   const deferredOpen = useDeferredValue(modalProps.open);
-  const { resourceSlotsInRG, deviceMetaData } = useResourceSlotsDetails();
+  const { resourceSlotsInRG, deviceMetaData } = useBAIMetaData();
   const form = useRef<FormInstance<FormValues>>(null);
   const { message } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();

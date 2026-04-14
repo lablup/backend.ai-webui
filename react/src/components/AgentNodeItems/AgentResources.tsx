@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { useResourceSlotsDetails } from '../../hooks/backendai';
 import AgentDetailModal from '../AgentDetailModal';
 import SimpleProgressWithLabel from '../SimpleProgressWithLabel';
 import { InfoCircleOutlined } from '@ant-design/icons';
@@ -16,7 +17,6 @@ import {
   ResourceSlotName,
   ResourceTypeIcon,
   toFixedFloorWithoutTrailingZeros,
-  useResourceSlotsDetails,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { useState } from 'react';

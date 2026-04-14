@@ -3,14 +3,13 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { convertToBinaryUnit } from '../helper';
-import { ResourceSlotName } from '../hooks/backendai';
+import { ResourceSlotName, useResourceSlotsDetails } from '../hooks/backendai';
 import { useCurrentResourceGroupValue } from '../hooks/useCurrentProject';
-import ImageWithFallback from './ImageWithFallback';
 import { Tooltip, Typography, theme } from 'antd';
 import {
   BAIFlex,
+  BAIImageWithFallback,
   BAINumberWithUnit,
-  useResourceSlotsDetails,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { CpuIcon, MemoryStickIcon, MicrochipIcon } from 'lucide-react';
@@ -140,7 +139,7 @@ export const ResourceTypeIcon: React.FC<AccTypeIconProps> = ({
     const displayIcon = mergedResourceSlots[type]?.display_icon;
     if (displayIcon) {
       return (
-        <ImageWithFallback
+        <BAIImageWithFallback
           {...props}
           style={{
             width: size,
