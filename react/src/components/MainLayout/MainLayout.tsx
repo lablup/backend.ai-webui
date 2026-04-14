@@ -11,6 +11,7 @@ import Page401 from '../../pages/Page401';
 import Page404 from '../../pages/Page404';
 import BAIContentWithDrawerArea from '../BAIContentWithDrawerArea';
 import BAIErrorBoundary from '../BAIErrorBoundary';
+import { BAIMetaDataWrapper } from '../DefaultProviders';
 import ErrorBoundaryWithNullFallback from '../ErrorBoundaryWithNullFallback';
 import ForceTOTPChecker from '../ForceTOTPChecker';
 import NetworkStatusBanner from '../NetworkStatusBanner';
@@ -270,9 +271,11 @@ function MainLayout() {
                   </ErrorBoundaryWithNullFallback>
                   <BAIErrorBoundary>
                     <AutoAdminPrimaryColorProvider>
-                      <PageAccessGuard>
-                        <Outlet />
-                      </PageAccessGuard>
+                      <BAIMetaDataWrapper>
+                        <PageAccessGuard>
+                          <Outlet />
+                        </PageAccessGuard>
+                      </BAIMetaDataWrapper>
                     </AutoAdminPrimaryColorProvider>
                   </BAIErrorBoundary>
                 </Suspense>

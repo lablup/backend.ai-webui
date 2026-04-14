@@ -8,6 +8,7 @@ import {
 } from '../__generated__/ManageImageResourceLimitModalMutation.graphql';
 import { ManageImageResourceLimitModal_image$key } from '../__generated__/ManageImageResourceLimitModal_image.graphql';
 import { compareNumberWithUnits } from '../helper';
+import { useResourceSlotsDetails } from '../hooks/backendai';
 import {
   App,
   Form,
@@ -18,7 +19,6 @@ import {
   Col,
 } from 'antd';
 import {
-  useResourceSlotsDetails,
   BAIModal,
   BAIModalProps,
   BAIDynamicUnitInputNumber,

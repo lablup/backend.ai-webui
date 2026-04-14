@@ -4,7 +4,7 @@
  */
 import React, { useState } from 'react';
 
-interface ImageWithFallbackProps extends Omit<
+export interface BAIImageWithFallbackProps extends Omit<
   React.ImgHTMLAttributes<HTMLImageElement>,
   'onError'
 > {
@@ -13,23 +13,21 @@ interface ImageWithFallbackProps extends Omit<
   alt: string;
 }
 
-const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
+const BAIImageWithFallback: React.FC<BAIImageWithFallbackProps> = ({
   src,
-  fallbackIcon: fallback,
+  fallbackIcon,
   alt,
   ...props
 }) => {
   const [hasError, setHasError] = useState(false);
 
-  const handleError = () => {
-    setHasError(true);
-  };
-
   if (hasError) {
-    return <>{fallback}</>;
+    return <>{fallbackIcon}</>;
   }
 
-  return <img {...props} src={src} alt={alt} onError={handleError} />;
+  return (
+    <img {...props} src={src} alt={alt} onError={() => setHasError(true)} />
+  );
 };
 
-export default ImageWithFallback;
+export default BAIImageWithFallback;

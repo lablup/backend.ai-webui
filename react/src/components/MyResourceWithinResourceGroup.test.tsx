@@ -135,20 +135,23 @@ jest.mock('../hooks/useResourceLimitAndRemaining', () => ({
   ]),
 }));
 
+jest.mock('../hooks/backendai', () => ({
+  useResourceSlotsDetails: () => ({
+    isLoading: false,
+    resourceSlotsInRG: {
+      cpu: { human_readable_name: 'CPU', display_unit: 'Core' },
+      mem: { human_readable_name: 'Memory', display_unit: 'GiB' },
+      'cuda.device': {
+        human_readable_name: 'CUDA GPU',
+        display_unit: 'GPU',
+      },
+    },
+  }),
+}));
+
 jest.mock('backend.ai-ui', () => {
   const isoDate = new Date().toISOString();
   return {
-    useResourceSlotsDetails: () => ({
-      isLoading: false,
-      resourceSlotsInRG: {
-        cpu: { human_readable_name: 'CPU', display_unit: 'Core' },
-        mem: { human_readable_name: 'Memory', display_unit: 'GiB' },
-        'cuda.device': {
-          human_readable_name: 'CUDA GPU',
-          display_unit: 'GPU',
-        },
-      },
-    }),
     useFetchKey: () => [isoDate, jest.fn(), isoDate],
     convertToNumber: (value: any) => parseFloat(value) || 0,
     processMemoryValue: (value: any) => {

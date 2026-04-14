@@ -14,7 +14,7 @@ import {
 import { convertToBinaryUnit } from '../helper';
 import { MAX_CPU_QUOTA, SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { useResourceSlots } from '../hooks/backendai';
+import { useResourceSlots, useResourceSlotsDetails } from '../hooks/backendai';
 import FormItemWithUnlimited from './FormItemWithUnlimited';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import {
@@ -37,7 +37,6 @@ import {
   BAIFlex,
   BAIModal,
   BAIModalProps,
-  useResourceSlotsDetails,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useMemo, useRef } from 'react';

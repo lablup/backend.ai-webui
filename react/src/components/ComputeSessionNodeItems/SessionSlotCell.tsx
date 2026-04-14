@@ -4,17 +4,15 @@
  */
 import { SessionSlotCellFragment$key } from '../../__generated__/SessionSlotCellFragment.graphql';
 import { convertToBinaryUnit } from '../../helper';
-import { ResourceSlotName } from '../../hooks/backendai';
+import {
+  ResourceSlotName,
+  useResourceSlotsDetails,
+} from '../../hooks/backendai';
 import { useSessionLiveStat } from '../../hooks/useSessionNodeLiveStat';
 import { displayMemoryUsage } from '../SessionUsageMonitor';
 import { Divider, Tooltip, TooltipProps, Typography } from 'antd';
 import type { SemanticColor } from 'backend.ai-ui';
-import {
-  BAIBadge,
-  BAIBadgeProps,
-  BAIFlex,
-  useResourceSlotsDetails,
-} from 'backend.ai-ui';
+import { BAIBadge, BAIBadgeProps, BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React from 'react';
 import { graphql, useFragment } from 'react-relay';

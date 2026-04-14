@@ -11,7 +11,7 @@ import {
   convertToBinaryUnit,
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
-import { ResourceSlotName } from '../hooks/backendai';
+import { ResourceSlotName, useResourceSlotsDetails } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
 import { useResourceGroupsForCurrentProject } from '../hooks/useCurrentProject';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
@@ -33,7 +33,6 @@ import {
   BAIPropertyFilter,
   mergeFilterValues,
   ResourceTypeIcon,
-  useResourceSlotsDetails,
   BAIProgressWithLabel,
   useFetchKey,
   INITIAL_FETCH_KEY,
