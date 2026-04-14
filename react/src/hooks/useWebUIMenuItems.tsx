@@ -105,6 +105,7 @@ export const VALID_MENU_KEYS = [
   'admin-dashboard',
   'admin-data',
   'project-admin-users',
+  'project-admin-sessions',
   'agent',
   'project',
   'settings',
@@ -130,6 +131,7 @@ const ALL_ADMIN_PAGE_KEYS: ReadonlySet<string> = new Set([
   'admin-dashboard',
   'admin-data',
   'project-admin-users',
+  'project-admin-sessions',
   'agent',
   'project',
   'settings',
@@ -150,6 +152,7 @@ export const PROJECT_ADMIN_PAGE_KEYS = [
   // 'admin-serving',
   // 'admin-data',
   'project-admin-users',
+  'project-admin-sessions',
 ] as const;
 
 const PROJECT_ADMIN_PAGE_KEY_SET: ReadonlySet<string> = new Set(
@@ -375,6 +378,16 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       ),
       icon: <BAISessionsIcon style={{ color: token.colorInfo }} />,
       key: 'admin-session' as MenuKeys,
+      group: 'admin-operations' as AdminMenuGroupName,
+    },
+    {
+      label: (
+        <WebUILink to="/project-admin-sessions">
+          {t('webui.menu.ProjectSessions')}
+        </WebUILink>
+      ),
+      icon: <BAISessionsIcon style={{ color: token.colorInfo }} />,
+      key: 'project-admin-sessions' as MenuKeys,
       group: 'admin-operations' as AdminMenuGroupName,
     },
     isSuperAdmin && {
