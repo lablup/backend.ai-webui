@@ -52,12 +52,15 @@ export const isEndpointInDestroyingCategory = (
   endpoint?: {
     replicas: number | null | undefined;
     status: string | null | undefined;
+    lifecycle_stage?: string | null | undefined;
   } | null,
 ) => {
   const count = endpoint?.replicas;
   const status = endpoint?.status;
   return (
-    (count ?? 0) < 0 || _.includes(['DESTROYED', 'DESTROYING'], status ?? '')
+    (count ?? 0) < 0 ||
+    _.includes(['DESTROYED', 'DESTROYING'], status ?? '') ||
+    endpoint?.lifecycle_stage?.toUpperCase().includes('DESTROYED')
   );
 };
 
@@ -84,6 +87,7 @@ const EndpointList: React.FC<EndpointListProps> = ({
         name
         endpoint_id
         status
+        lifecycle_stage
         url
         open_to_public
         created_at
