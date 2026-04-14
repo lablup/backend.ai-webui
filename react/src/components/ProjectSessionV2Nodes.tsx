@@ -14,6 +14,7 @@ import {
   filterOutNullAndUndefined,
   BAIColumnType,
   BAIFlex,
+  BAIIntervalView,
   BAINameActionCell,
   BAITable,
   BAITableProps,
@@ -197,8 +198,7 @@ const ProjectSessionV2Nodes: React.FC<ProjectSessionV2NodesProps> = ({
           const name = session.metadata?.name ?? '-';
           const status = session.lifecycle?.status;
           const isTerminated =
-            !!status &&
-            _.includes(TERMINATED_STATUSES, status as SessionV2Status);
+            !!status && _.includes(TERMINATED_STATUSES, status);
           return (
             <BAINameActionCell
               title={name}
@@ -283,11 +283,22 @@ const ProjectSessionV2Nodes: React.FC<ProjectSessionV2NodesProps> = ({
       {
         key: 'elapsedTime',
         title: t('session.ElapsedTime'),
-        render: (__, session) =>
-          formatElapsedTime(
-            session.lifecycle?.createdAt,
-            session.lifecycle?.terminatedAt,
-          ),
+        render: (__, session) => {
+          const createdAt = session.lifecycle?.createdAt;
+          const terminatedAt = session.lifecycle?.terminatedAt;
+          // If the session has already terminated, the elapsed time is fixed
+          // and there is no point in re-running the timer every second.
+          if (terminatedAt) {
+            return formatElapsedTime(createdAt, terminatedAt);
+          }
+          return (
+            <BAIIntervalView
+              key={session.id}
+              callback={() => formatElapsedTime(createdAt, terminatedAt)}
+              delay={1000}
+            />
+          );
+        },
       },
       {
         key: 'environment',

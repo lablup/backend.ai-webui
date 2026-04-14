@@ -467,6 +467,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
       return (
         <Suspense fallback={<Skeleton active />}>
           <ProjectAdminSessionsPage />
+          <SessionDetailAndContainerLogOpenerLegacy />
         </Suspense>
       );
     },

@@ -26,6 +26,7 @@ import {
   BAIGraphQLPropertyFilter,
   GraphQLFilter,
   INITIAL_FETCH_KEY,
+  toLocalId,
   useFetchKey,
 } from 'backend.ai-ui';
 import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
@@ -185,7 +186,7 @@ const ProjectAdminSessionsContent: React.FC<
           commitTerminate({
             variables: {
               scope: { projectId },
-              sessionIds: [session.id],
+              sessionIds: [toLocalId(session.id)],
               forced: false,
             },
             onCompleted: () => {
@@ -266,12 +267,11 @@ const ProjectAdminSessionsContent: React.FC<
           setQueryParams({ order });
         }}
         onClickSessionName={(session) => {
-          // SessionDetailDrawer currently consumes the v1 (ComputeSessionNode)
-          // fragment. We still navigate via sessionDetail search param here for
-          // parity; fully wiring the drawer to v2 sessions is out of scope
-          // for FR-2576.
+          // SessionDetailDrawer consumes the v1 (ComputeSessionNode) fragment
+          // which keys off the row UUID, so convert the v2 global ID here.
+          // Fully wiring the drawer to v2 sessions is out of scope for FR-2576.
           const newSearchParams = new URLSearchParams(location.search);
-          newSearchParams.set('sessionDetail', session.id);
+          newSearchParams.set('sessionDetail', toLocalId(session.id));
           webUINavigate({
             pathname: location.pathname,
             hash: location.hash,
