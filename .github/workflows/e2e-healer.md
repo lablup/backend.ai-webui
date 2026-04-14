@@ -14,7 +14,7 @@ on:
 
 permissions: read-all
 
-timeout-minutes: 120
+timeout-minutes: 180
 
 engine: copilot
 
@@ -84,9 +84,7 @@ steps:
   - name: Run E2E tests
     id: e2e-tests
     continue-on-error: true
-    # TODO: Remove single test restriction after environment validation
-    # Full test: pnpm playwright test e2e/ --grep-invert @visual --reporter=html,json --output=test-results
-    run: pnpm playwright test e2e/auth/login.spec.ts --reporter=html,json --output=test-results
+    run: pnpm playwright test e2e/ --grep-invert @visual --reporter=html,json --output=test-results
   - name: Save test results
     run: |
       mkdir -p /tmp/gh-aw/e2e-results
@@ -120,6 +118,7 @@ You are an AI ops engineer for `${{ github.repository }}`. Run weekday Playwrigh
 - E2E tests have already been executed in the `steps` phase before the agent starts.
 - Test results are available at `/tmp/gh-aw/e2e-results/` directory.
 - Tests run against the deployed endpoint: `E2E_WEBUI_ENDPOINT` (set via repository variables).
+- The full E2E test suite runs (excluding `@visual` tests), not just a single test file.
 
 ## CRITICAL: Secret Protection Rules
 **NEVER include any of the following in issues, PRs, comments, or logs:**
@@ -150,14 +149,13 @@ You are an AI ops engineer for `${{ github.repository }}`. Run weekday Playwrigh
      - Related PRs if applicable (link to PR numbers)
      - Repro command
    - Attach key log snippets; avoid uploading large artifacts directly to the issue body.
-4) Healing attempt (temporarily disabled; uncomment when ready):
-<!--
-  - Scope fixes to failing specs only. Avoid touching snapshots unless required.
-  - Create branch from `main` named `e2e-healer/<yyyy-mm-dd>-<shortsha>`.
-  - Use Playwright planner to reason about fixes, edit code, and rerun only the previously failing specs, then the full `pnpm playwright test e2e/ --grep-invert @visual` if fixes look stable.
-  - If fixes pass, use `safe-outputs.create-pull-request` to open a **draft** PR against `main` with title prefix `e2e-healer:`. Reference the issue, include failing cases, applied changes, and rerun results. Exclude generated reports/artifacts from the branch.
-  - If not fixed, leave a concise comment on the issue (via `safe-outputs.add-comment`) with diagnostics and next hints.
--->
+4) Healing attempt:
+   - Only attempt healing for failures categorized as **WebUI change** (not Backend or Server issues).
+   - Scope fixes to failing specs only. Avoid touching snapshots unless required.
+   - Create branch from `main` named `e2e-healer/<yyyy-mm-dd>-<shortsha>`.
+   - Use Playwright planner to reason about fixes, edit code, and rerun only the previously failing specs, then the full `pnpm playwright test e2e/ --grep-invert @visual` if fixes look stable.
+   - If fixes pass, use `safe-outputs.create-pull-request` to open a **draft** PR against `main` with title prefix `e2e-healer:`. Reference the issue, include failing cases, applied changes, and rerun results. Exclude generated reports/artifacts from the branch.
+   - If not fixed, leave a concise comment on the issue (via `safe-outputs.add-comment`) with diagnostics and next hints.
 5) Housekeeping: keep diffs minimal, avoid unrelated refactors, and ensure branch/PR cleanup instructions are clear in the PR body.
 
 ## Output expectations
