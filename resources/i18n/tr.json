@@ -1135,6 +1135,7 @@
     "SecretKey": "Gizli anahtar",
     "Session": "Oturum",
     "ShowUsageGraph": "Kullanımı göster",
+    "Status": "Durum",
     "StorageProxies": "Depolar",
     "TotalItems": "Toplam {{total}} öğe",
     "UpdatedAt": "Güncellenme Tarihi",
@@ -1678,6 +1679,17 @@
     "ProjectID": "Proje Kimliği",
     "ProjectIDFilterRuleMessage": "Geçersiz UUID.",
     "ResourcePolicy": "Kaynak Politikası"
+  },
+  "projectMembers": {
+    "Email": "E-posta",
+    "Name": "Ad",
+    "PageTitle": "Proje üyeleri",
+    "Role": "Rol",
+    "RoleAdmin": "Yönetici",
+    "RoleMember": "Üye"
+  },
+  "projectSelect": {
+    "ProjectAdminBadge": "Proje Yöneticisi"
   },
   "rbac": {
     "Active": "Aktif",
@@ -2945,6 +2957,7 @@
       "PrivacyPolicy": "Gizlilik Politikası",
       "ProfileUpdated": "Profil başarıyla güncellendi.",
       "Project": "Proje",
+      "ProjectMembers": "Kullanıcılar",
       "Projects": "Projeler",
       "RBACManagement": "RBAC Yönetimi",
       "Remaining": "Geriye kalan",

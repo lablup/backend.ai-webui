@@ -350,6 +350,7 @@
     "Email": "이메일",
     "Enabled": "활성화",
     "FullName": "전체 이름",
+    "IntegrationName": "외부 연동 이름",
     "ModifiedAt": "수정일",
     "NeedPasswordChange": "비밀번호 변경 필요",
     "Project": "프로젝트",
@@ -359,6 +360,7 @@
     "StatusInfo": "상태 정보",
     "SudoSessionEnabled": "Sudo 세션 활성화",
     "TwoFA": "2단계 인증",
+    "UserID": "사용자 ID",
     "Username": "사용자 이름"
   },
   "error": {

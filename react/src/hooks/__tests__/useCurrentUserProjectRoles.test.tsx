@@ -73,10 +73,12 @@ describe('deriveProjectAdminIds', () => {
         ),
       ]),
     ];
-    expect(deriveProjectAdminIds(assignments)).toEqual(['abcd1234']);
+    expect(deriveProjectAdminIds(assignments)).toEqual([
+      'abcd1234-5678-90ab-cdef-000000000000',
+    ]);
   });
 
-  it('strips hyphens from UUID scopeId and uses the first 8 hex chars', () => {
+  it('preserves the full UUID scopeId from the primary signal', () => {
     const assignments = [
       makeAssignment('ignored-name', [
         makePermissionEdge(
@@ -86,17 +88,19 @@ describe('deriveProjectAdminIds', () => {
         ),
       ]),
     ];
-    expect(deriveProjectAdminIds(assignments)).toEqual(['1234abcd']);
+    expect(deriveProjectAdminIds(assignments)).toEqual([
+      '1234abcd-ef01-2345-6789-0abcdef01234',
+    ]);
   });
 
-  it('falls back to role-name regex when permission signal is missing', () => {
+  it('falls back to role-name regex (8-hex prefix) when permission signal is missing', () => {
     const assignments = [makeAssignment('role_project_deadbeef_admin', [])];
     expect(deriveProjectAdminIds(assignments)).toEqual(['deadbeef']);
   });
 
   it('prefers permission signal over role-name regex when both are present', () => {
-    // Permission indicates project `aabbccdd`, but role name says `deadbeef`.
-    // The primary signal must win.
+    // Permission indicates project `aabbccdd...`, but role name says `deadbeef`.
+    // The primary signal must win, and emits the full UUID (not the 8-hex prefix).
     const assignments = [
       makeAssignment('role_project_deadbeef_admin', [
         makePermissionEdge(
@@ -106,7 +110,9 @@ describe('deriveProjectAdminIds', () => {
         ),
       ]),
     ];
-    expect(deriveProjectAdminIds(assignments)).toEqual(['aabbccdd']);
+    expect(deriveProjectAdminIds(assignments)).toEqual([
+      'aabbccdd-0000-0000-0000-000000000000',
+    ]);
   });
 
   it('deduplicates project IDs across multiple assignments', () => {
@@ -126,7 +132,9 @@ describe('deriveProjectAdminIds', () => {
         ),
       ]),
     ];
-    expect(deriveProjectAdminIds(assignments)).toEqual(['aabbccdd']);
+    expect(deriveProjectAdminIds(assignments)).toEqual([
+      'aabbccdd-0000-0000-0000-000000000000',
+    ]);
   });
 
   it('mixed case: reports project-admin IDs even when super/domain admin perms are also present', () => {
@@ -144,7 +152,9 @@ describe('deriveProjectAdminIds', () => {
         ),
       ]),
     ];
-    expect(deriveProjectAdminIds(assignments)).toEqual(['abcd1234']);
+    expect(deriveProjectAdminIds(assignments)).toEqual([
+      'abcd1234-0000-0000-0000-000000000000',
+    ]);
   });
 
   it('ignores PROJECT scope entries for non-PROJECT_ADMIN_PAGE entity types', () => {

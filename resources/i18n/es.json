@@ -1135,6 +1135,7 @@
     "SecretKey": "Clave secreta",
     "Session": "Sesión",
     "ShowUsageGraph": "Mostrar uso",
+    "Status": "Estado",
     "StorageProxies": "Almacenes",
     "TotalItems": "Total {{total}} artículos",
     "UpdatedAt": "Actualizado el",
@@ -1678,6 +1679,17 @@
     "ProjectID": "ID del proyecto",
     "ProjectIDFilterRuleMessage": "UUID no válido.",
     "ResourcePolicy": "Política de recursos"
+  },
+  "projectMembers": {
+    "Email": "Correo electrónico",
+    "Name": "Nombre",
+    "PageTitle": "Miembros del proyecto",
+    "Role": "Rol",
+    "RoleAdmin": "Administrador",
+    "RoleMember": "Miembro"
+  },
+  "projectSelect": {
+    "ProjectAdminBadge": "Administrador del proyecto"
   },
   "rbac": {
     "Active": "Activo",
@@ -2945,6 +2957,7 @@
       "PrivacyPolicy": "Política de privacidad",
       "ProfileUpdated": "El perfil se ha actualizado correctamente.",
       "Project": "Proyecto",
+      "ProjectMembers": "Usuarios",
       "Projects": "Proyectos",
       "RBACManagement": "Gestión RBAC",
       "Remaining": "Restante",

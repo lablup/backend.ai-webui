@@ -347,6 +347,7 @@
     "Email": "メールアドレス",
     "Enabled": "有効",
     "FullName": "フルネーム",
+    "IntegrationName": "統合名",
     "ModifiedAt": "更新日時",
     "NeedPasswordChange": "パスワード変更が必要",
     "Project": "プロジェクト",
@@ -356,6 +357,7 @@
     "StatusInfo": "ステータス情報",
     "SudoSessionEnabled": "Sudoセッション有効",
     "TwoFA": "2段階認証",
+    "UserID": "ユーザーID",
     "Username": "ユーザー名"
   },
   "error": {

@@ -3,7 +3,6 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
-import { useEffectiveAdminRole } from '../../hooks/useCurrentUserProjectRoles';
 import { useCustomThemeConfig } from '../../hooks/useCustomThemeConfig';
 import usePrimaryColors from '../../hooks/usePrimaryColors';
 import AboutBackendAIModal from '../AboutBackendAIModal';
@@ -52,10 +51,6 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   const currentSiderTheme =
     config.theme?.algorithm === theme.darkAlgorithm ? 'dark' : 'light';
 
-  // 3-tier admin category visibility: super, domain, or project admin all show
-  // the Admin Settings entry. Project admins see a reduced set of pages
-  // (gated inside `useWebUIMenuItems`).
-  const hasAdminCategoryRole = useEffectiveAdminRole() !== 'none';
   const webuiNavigate = useWebUINavigate();
   const location = useLocation();
   const baiClient = useSuspendedBackendaiClient();
@@ -218,24 +213,23 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
             ]}
             // @ts-ignore
             items={filterOutEmpty([
-              hasAdminCategoryRole &&
-                firstAvailableAdminMenuItem && {
-                  // Go to first page of admin setting pages.
-                  label: (
-                    <WebUILink
-                      to={getPathFromMenuKey(firstAvailableAdminMenuItem.key)}
-                    >
-                      {t('webui.menu.AdminSettings')}
-                    </WebUILink>
-                  ),
-                  icon: <SettingsIcon style={{ color: token.colorInfo }} />,
-                  key: 'admin-settings',
-                },
+              firstAvailableAdminMenuItem && {
+                // Go to first page of admin setting pages.
+                label: (
+                  <WebUILink
+                    to={getPathFromMenuKey(firstAvailableAdminMenuItem.key)}
+                  >
+                    {t('webui.menu.AdminSettings')}
+                  </WebUILink>
+                ),
+                icon: <SettingsIcon style={{ color: token.colorInfo }} />,
+                key: 'admin-settings',
+              },
               ...groupedGeneralMenu,
             ])}
           />
         )}
-        {hasAdminCategoryRole && isSelectedAdminCategoryMenu && (
+        {firstAvailableAdminMenuItem && isSelectedAdminCategoryMenu && (
           <ConfigProvider
             theme={{
               token: {

@@ -70,9 +70,9 @@ export type MenuGroupName =
 
 export type AdminMenuGroupName =
   | 'none'
-  | 'superadmin-operations'
-  | 'superadmin-infrastructure'
-  | 'superadmin-system';
+  | 'admin-operations'
+  | 'admin-infrastructure'
+  | 'admin-system';
 
 /**
  * Single source of truth for all valid menu keys.
@@ -104,6 +104,7 @@ export const VALID_MENU_KEYS = [
   'admin-serving',
   'admin-dashboard',
   'admin-data',
+  'project-admin-users',
   'agent',
   'project',
   'settings',
@@ -128,6 +129,7 @@ const ALL_ADMIN_PAGE_KEYS: ReadonlySet<string> = new Set([
   'admin-serving',
   'admin-dashboard',
   'admin-data',
+  'project-admin-users',
   'agent',
   'project',
   'settings',
@@ -144,10 +146,10 @@ const ALL_ADMIN_PAGE_KEYS: ReadonlySet<string> = new Set([
 // superadmins. Kept as a plain array so it can be exported and reused (e.g. for
 // per-page route gating in follow-up PRs).
 export const PROJECT_ADMIN_PAGE_KEYS = [
-  'admin-session',
-  'admin-serving',
-  'admin-data',
-  'admin-members',
+  // 'admin-session',
+  // 'admin-serving',
+  // 'admin-data',
+  'project-admin-users',
 ] as const;
 
 const PROJECT_ADMIN_PAGE_KEY_SET: ReadonlySet<string> = new Set(
@@ -343,19 +345,29 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       label: <WebUILink to="/credential">{t('webui.menu.Users')}</WebUILink>,
       icon: <UserOutlined style={{ color: token.colorInfo }} />,
       key: 'credential' as MenuKeys,
-      group: 'superadmin-operations' as AdminMenuGroupName,
+      group: 'admin-operations' as AdminMenuGroupName,
+    },
+    {
+      label: (
+        <WebUILink to="/project-admin-users">
+          {t('webui.menu.ProjectMembers')}
+        </WebUILink>
+      ),
+      icon: <TeamOutlined style={{ color: token.colorInfo }} />,
+      key: 'project-admin-users' as MenuKeys,
+      group: 'admin-operations' as AdminMenuGroupName,
     },
     isSuperAdmin && {
       label: <WebUILink to="/project">{t('webui.menu.Projects')}</WebUILink>,
       icon: <TeamOutlined style={{ color: token.colorInfo }} />,
       key: 'project' as MenuKeys,
-      group: 'superadmin-operations' as AdminMenuGroupName,
+      group: 'admin-operations' as AdminMenuGroupName,
     },
     isSuperAdmin && {
       label: <WebUILink to="/admin-data">{t('webui.menu.Data')}</WebUILink>,
       icon: <CloudUploadOutlined style={{ color: token.colorInfo }} />,
       key: 'admin-data' as MenuKeys,
-      group: 'superadmin-operations' as AdminMenuGroupName,
+      group: 'admin-operations' as AdminMenuGroupName,
     },
     {
       label: (
@@ -363,7 +375,7 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       ),
       icon: <BAISessionsIcon style={{ color: token.colorInfo }} />,
       key: 'admin-session' as MenuKeys,
-      group: 'superadmin-operations' as AdminMenuGroupName,
+      group: 'admin-operations' as AdminMenuGroupName,
     },
     isSuperAdmin && {
       label: (
@@ -371,7 +383,7 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       ),
       icon: <BAIEndpointsIcon style={{ color: token.colorInfo }} />,
       key: 'admin-serving' as MenuKeys,
-      group: 'superadmin-operations' as AdminMenuGroupName,
+      group: 'admin-operations' as AdminMenuGroupName,
     },
     {
       label: (
@@ -379,7 +391,7 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       ),
       icon: <FileDoneOutlined style={{ color: token.colorInfo }} />,
       key: 'environment' as MenuKeys,
-      group: 'superadmin-operations' as AdminMenuGroupName,
+      group: 'admin-operations' as AdminMenuGroupName,
     },
     baiClient?.supports('reservoir') &&
       baiClient?._config.enableReservoir && {
@@ -388,13 +400,13 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
         ),
         icon: <PackagePlus style={{ color: token.colorInfo }} />,
         key: 'reservoir' as MenuKeys,
-        group: 'superadmin-operations' as AdminMenuGroupName,
+        group: 'admin-operations' as AdminMenuGroupName,
       },
     baiClient?.supports('fair-share-scheduling') && {
       label: <WebUILink to="/scheduler">{t('webui.menu.Scheduler')}</WebUILink>,
       icon: <ClipboardClock style={{ color: token.colorInfo }} />,
       key: 'scheduler' as MenuKeys,
-      group: 'superadmin-operations' as AdminMenuGroupName,
+      group: 'admin-operations' as AdminMenuGroupName,
     },
     {
       label: (
@@ -404,14 +416,14 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       ),
       icon: <SolutionOutlined style={{ color: token.colorInfo }} />,
       key: 'resource-policy' as MenuKeys,
-      group: 'superadmin-operations' as AdminMenuGroupName,
+      group: 'admin-operations' as AdminMenuGroupName,
     },
     // --- Infrastructure group (superadmin only) ---
     isSuperAdmin && {
       label: <WebUILink to="/agent">{t('webui.menu.Resources')}</WebUILink>,
       icon: <HddOutlined style={{ color: token.colorInfo }} />,
       key: 'agent' as MenuKeys,
-      group: 'superadmin-infrastructure' as AdminMenuGroupName,
+      group: 'admin-infrastructure' as AdminMenuGroupName,
     },
     isSuperAdmin && {
       label: (
@@ -419,7 +431,7 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       ),
       icon: <ControlOutlined style={{ color: token.colorInfo }} />,
       key: 'settings' as MenuKeys,
-      group: 'superadmin-infrastructure' as AdminMenuGroupName,
+      group: 'admin-infrastructure' as AdminMenuGroupName,
     },
     isSuperAdmin && {
       label: (
@@ -427,7 +439,7 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       ),
       icon: <ToolOutlined style={{ color: token.colorInfo }} />,
       key: 'maintenance' as MenuKeys,
-      group: 'superadmin-infrastructure' as AdminMenuGroupName,
+      group: 'admin-infrastructure' as AdminMenuGroupName,
     },
     isSuperAdmin && {
       label: (
@@ -449,7 +461,7 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
         <Activity style={{ color: token.colorInfo }} />
       ),
       key: 'diagnostics' as MenuKeys,
-      group: 'superadmin-infrastructure' as AdminMenuGroupName,
+      group: 'admin-infrastructure' as AdminMenuGroupName,
     },
     // --- System group (superadmin only) ---
     isSuperAdmin &&
@@ -459,14 +471,14 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
         ),
         icon: <SafetyCertificateOutlined style={{ color: token.colorInfo }} />,
         key: 'rbac' as MenuKeys,
-        group: 'superadmin-system' as AdminMenuGroupName,
+        group: 'admin-system' as AdminMenuGroupName,
       },
     isSuperAdmin &&
       !isThemePreviewMode && {
         label: <WebUILink to="/branding">{t('webui.menu.Branding')}</WebUILink>,
         icon: <Palette style={{ color: token.colorInfo }} />,
         key: 'branding' as MenuKeys,
-        group: 'superadmin-system' as AdminMenuGroupName,
+        group: 'admin-system' as AdminMenuGroupName,
       },
     isSuperAdmin && {
       label: (
@@ -474,23 +486,27 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       ),
       icon: <InfoCircleOutlined style={{ color: token.colorInfo }} />,
       key: 'information' as MenuKeys,
-      group: 'superadmin-system' as AdminMenuGroupName,
+      group: 'admin-system' as AdminMenuGroupName,
     },
   ]);
 
   // 3-tier admin gating:
   // - 'none': no admin items
-  // - 'projectAdmin': only PROJECT_ADMIN_PAGE_KEYS
-  // - 'domainAdmin' / 'superadmin': existing behavior preserved by fullAdminMenu
-  //   (which already applies isSuperAdmin gating per item)
+  // - 'currentProjectAdmin': only PROJECT_ADMIN_PAGE_KEYS
+  // - 'domainAdmin' / 'superadmin': full admin menu MINUS project-admin-only
+  //   pages. Higher-tier admins have broader equivalents (e.g. `credential`
+  //   covers users across the domain/system), so per-project admin pages would
+  //   be redundant and confusing to show.
   const adminMenu: Array<WebUIAdminMenuItemType> =
     effectiveAdminRole === 'none'
       ? []
-      : effectiveAdminRole === 'projectAdmin'
+      : effectiveAdminRole === 'currentProjectAdmin'
         ? fullAdminMenu.filter((item) =>
             PROJECT_ADMIN_PAGE_KEY_SET.has(item.key as string),
           )
-        : fullAdminMenu;
+        : fullAdminMenu.filter(
+            (item) => !PROJECT_ADMIN_PAGE_KEY_SET.has(item.key as string),
+          );
 
   const pluginMap: Record<string, MenuItem[]> = {
     'menuitem-user': generalMenu as unknown as MenuItem[],
@@ -562,11 +578,9 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
     [key in AdminMenuGroupName]: string;
   } = {
     none: '',
-    'superadmin-operations': t('webui.menu.groupName.superadmin.Operations'),
-    'superadmin-infrastructure': t(
-      'webui.menu.groupName.superadmin.Infrastructure',
-    ),
-    'superadmin-system': t('webui.menu.groupName.superadmin.System'),
+    'admin-operations': t('webui.menu.groupName.superadmin.Operations'),
+    'admin-infrastructure': t('webui.menu.groupName.superadmin.Infrastructure'),
+    'admin-system': t('webui.menu.groupName.superadmin.System'),
   };
   const groupedGeneralMenu = _.map(
     _.groupBy(generalMenu, 'group'),
@@ -667,9 +681,9 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
   const adminGroupOrder: Array<AdminMenuGroupName | undefined> = [
     undefined,
     'none',
-    'superadmin-operations',
-    'superadmin-infrastructure',
-    'superadmin-system',
+    'admin-operations',
+    'admin-infrastructure',
+    'admin-system',
   ];
 
   const groupedAdminMenu = buildGroupedMenu(
@@ -678,7 +692,12 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
     adminGroupOrder,
   );
 
-  // Get the first available admin menu item (after blocklist filtering)
+  // First admin menu item reachable by the current user, after role filtering
+  // (`adminMenu` is already narrowed by `effectiveAdminRole`) and blocklist /
+  // inactive-list filtering. Treat this as the single source of truth for
+  // "does the current user have any admin category page to enter?" — callers
+  // should NOT combine this with a separate role check; a `null` value already
+  // means the admin category is unreachable for this user.
   const firstAvailableAdminMenuItem = (() => {
     for (const item of groupedAdminMenu) {
       // Non-group item (direct menu item)
@@ -833,7 +852,7 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
     }
 
     // Project admin: allow only pages explicitly reachable by project admins.
-    if (effectiveAdminRole === 'projectAdmin') {
+    if (effectiveAdminRole === 'currentProjectAdmin') {
       return !PROJECT_ADMIN_PAGE_KEY_SET.has(currentMenuKey);
     }
 

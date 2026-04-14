@@ -353,6 +353,7 @@
     "Email": "E-Mail",
     "Enabled": "Enabled",
     "FullName": "Full Name",
+    "IntegrationName": "Integration Name",
     "ModifiedAt": "Modified At",
     "NeedPasswordChange": "Need Password Change",
     "Project": "Project",
@@ -362,6 +363,7 @@
     "StatusInfo": "Status Info",
     "SudoSessionEnabled": "Sudo Session Enabled",
     "TwoFA": "2FA",
+    "UserID": "User ID",
     "Username": "Username"
   },
   "error": {

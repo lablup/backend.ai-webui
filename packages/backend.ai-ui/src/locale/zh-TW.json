@@ -347,6 +347,7 @@
     "Email": "電子郵件",
     "Enabled": "已啟用",
     "FullName": "全名",
+    "IntegrationName": "整合名稱",
     "ModifiedAt": "修改時間",
     "NeedPasswordChange": "需要變更密碼",
     "Project": "專案",
@@ -356,6 +357,7 @@
     "StatusInfo": "狀態資訊",
     "SudoSessionEnabled": "Sudo工作階段已啟用",
     "TwoFA": "雙重驗證",
+    "UserID": "使用者 ID",
     "Username": "使用者名稱"
   },
   "error": {

@@ -342,6 +342,7 @@
     "Email": "E-posta",
     "Enabled": "Etkin",
     "FullName": "Tam Ad",
+    "IntegrationName": "Entegrasyon adı",
     "ModifiedAt": "Değiştirilme",
     "NeedPasswordChange": "Şifre Değişikliği Gerekli",
     "Project": "Proje",
@@ -351,6 +352,7 @@
     "StatusInfo": "Durum Bilgisi",
     "SudoSessionEnabled": "Sudo Oturumu Etkin",
     "TwoFA": "İki Faktörlü Kimlik Doğrulama",
+    "UserID": "Kullanıcı Kimliği",
     "Username": "Kullanıcı Adı"
   },
   "error": {

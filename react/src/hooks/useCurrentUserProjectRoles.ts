@@ -4,6 +4,7 @@
  */
 import { useSuspendedBackendaiClient } from '.';
 import { useCurrentUserProjectRolesQuery } from '../__generated__/useCurrentUserProjectRolesQuery.graphql';
+import { useCurrentProjectValue } from './useCurrentProject';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 /**
@@ -42,14 +43,19 @@ export interface CurrentUserProjectRolesResult {
   /** Domain names the user has domain-admin rights over (derived from baiClient for now). */
   domainAdminDomains: string[];
   /**
-   * Short project IDs (first 8 hex chars of the UUID, hyphens stripped) the user
-   * has project-admin rights over.
+   * Project identifiers the user has project-admin rights over.
    *
    * Primary signal: permissions where `scopeType === 'PROJECT'` and
-   * `entityType === 'PROJECT_ADMIN_PAGE'`.
-   * Fallback: role name regex `role_project_<8-hex>_admin` (only used when
-   * the primary signal returned nothing, for older cores that don't yet grant
-   * the `PROJECT_ADMIN_PAGE` permission).
+   * `entityType === 'PROJECT_ADMIN_PAGE'` — these carry the full project UUID
+   * (`scopeId`), stored here as-is.
+   * Fallback: role name regex `role_project_<8-hex>_admin` (only used when the
+   * primary signal returned nothing, for older cores that don't yet grant the
+   * `PROJECT_ADMIN_PAGE` permission). In that case only the 8-hex prefix of the
+   * project UUID is available.
+   *
+   * Because the two signals use different representations, use
+   * {@link isProjectAdminForId} to check membership instead of
+   * `Array.includes` directly.
    */
   projectAdminIds: string[];
   /** Raw list of role-assignment nodes, exposed for advanced consumers. */
@@ -90,10 +96,12 @@ export const deriveProjectAdminIds = (
       if (!node) continue;
       if (
         node.scopeType === 'PROJECT' &&
-        node.entityType === 'PROJECT_ADMIN_PAGE'
+        node.entityType === 'PROJECT_ADMIN_PAGE' &&
+        node.scopeId
       ) {
-        const shortId = toShortProjectId(node.scopeId);
-        if (shortId) fromPermissions.add(shortId);
+        // Preserve the full project UUID as returned by the backend so callers
+        // can match directly against `useCurrentProject().id`.
+        fromPermissions.add(node.scopeId);
       }
     }
 
@@ -111,6 +119,22 @@ export const deriveProjectAdminIds = (
     return Array.from(fromPermissions).sort();
   }
   return Array.from(fromRoleNames).sort();
+};
+
+/**
+ * Check whether a given project UUID is in the admin list returned by
+ * {@link useCurrentUserProjectRoles}. Handles both representations emitted by
+ * {@link deriveProjectAdminIds}: full UUIDs (primary signal) and 8-hex
+ * prefixes (fallback from legacy role names).
+ */
+export const isProjectAdminForId = (
+  projectId: string | null | undefined,
+  projectAdminIds: ReadonlyArray<string>,
+): boolean => {
+  if (!projectId || projectAdminIds.length === 0) return false;
+  if (projectAdminIds.includes(projectId)) return true;
+  const shortId = toShortProjectId(projectId);
+  return !!shortId && projectAdminIds.includes(shortId);
 };
 
 /**
@@ -194,7 +218,7 @@ export const useCurrentUserProjectRoles = (): CurrentUserProjectRolesResult => {
 export type EffectiveAdminRole =
   | 'superadmin'
   | 'domainAdmin'
-  | 'projectAdmin'
+  | 'currentProjectAdmin'
   | 'none';
 
 /**
@@ -204,8 +228,11 @@ export type EffectiveAdminRole =
 export const useEffectiveAdminRole = (): EffectiveAdminRole => {
   const { isSuperAdmin, domainAdminDomains, projectAdminIds } =
     useCurrentUserProjectRoles();
+
+  const currentProjectId = useCurrentProjectValue()?.id;
   if (isSuperAdmin) return 'superadmin';
   if (domainAdminDomains.length > 0) return 'domainAdmin';
-  if (projectAdminIds.length > 0) return 'projectAdmin';
+  if (isProjectAdminForId(currentProjectId, projectAdminIds))
+    return 'currentProjectAdmin';
   return 'none';
 };

@@ -347,6 +347,7 @@
     "Email": "Email",
     "Enabled": "Aktif",
     "FullName": "Nama Lengkap",
+    "IntegrationName": "Nama integrasi",
     "ModifiedAt": "Dimodifikasi pada",
     "NeedPasswordChange": "Perlu Ganti Kata Sandi",
     "Project": "Proyek",
@@ -356,6 +357,7 @@
     "StatusInfo": "Info Status",
     "SudoSessionEnabled": "Sesi Sudo Diaktifkan",
     "TwoFA": "Autentikasi Dua Faktor",
+    "UserID": "ID Pengguna",
     "Username": "Nama Pengguna"
   },
   "error": {

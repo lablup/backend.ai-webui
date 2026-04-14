@@ -347,6 +347,7 @@
     "Email": "Электронная почта",
     "Enabled": "Включено",
     "FullName": "Полное имя",
+    "IntegrationName": "Имя интеграции",
     "ModifiedAt": "Изменено",
     "NeedPasswordChange": "Требуется смена пароля",
     "Project": "Проект",
@@ -356,6 +357,7 @@
     "StatusInfo": "Информация о статусе",
     "SudoSessionEnabled": "Сеанс Sudo включен",
     "TwoFA": "Двухфакторная аутентификация",
+    "UserID": "ID пользователя",
     "Username": "Имя пользователя"
   },
   "error": {

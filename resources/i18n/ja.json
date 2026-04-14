@@ -1137,6 +1137,7 @@
     "SecretKey": "シークレットキー",
     "Session": "セッション",
     "ShowUsageGraph": "使用状況を表示",
+    "Status": "状態",
     "StorageProxies": "ストレージ",
     "TotalItems": "合計{{total}}項目",
     "UpdatedAt": "更新日時",
@@ -1680,6 +1681,17 @@
     "ProjectID": "プロジェクトID",
     "ProjectIDFilterRuleMessage": "無効なUUIDです。",
     "ResourcePolicy": "リソースポリシー"
+  },
+  "projectMembers": {
+    "Email": "メール",
+    "Name": "名前",
+    "PageTitle": "プロジェクトメンバー",
+    "Role": "役割",
+    "RoleAdmin": "管理者",
+    "RoleMember": "メンバー"
+  },
+  "projectSelect": {
+    "ProjectAdminBadge": "プロジェクト管理者"
   },
   "rbac": {
     "Active": "アクティブ",
@@ -2947,6 +2959,7 @@
       "PrivacyPolicy": "個人情報保護方針",
       "ProfileUpdated": "プロフィールが正常に更新されました。",
       "Project": "プロジェクト",
+      "ProjectMembers": "ユーザー",
       "Projects": "プロジェクト",
       "RBACManagement": "RBAC管理",
       "Remaining": "残り",

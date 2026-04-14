@@ -1135,6 +1135,7 @@
     "SecretKey": "Salainen avain",
     "Session": "Istunto",
     "ShowUsageGraph": "Näytä käyttö",
+    "Status": "Tila",
     "StorageProxies": "Varastot",
     "TotalItems": "Yhteensä {{total}} kohteita",
     "UpdatedAt": "Päivitetty",
@@ -1678,6 +1679,17 @@
     "ProjectID": "Projektin tunnus",
     "ProjectIDFilterRuleMessage": "Virheellinen UUID.",
     "ResourcePolicy": "Resurssipolitiikka"
+  },
+  "projectMembers": {
+    "Email": "Sähköposti",
+    "Name": "Nimi",
+    "PageTitle": "Projektin jäsenet",
+    "Role": "Rooli",
+    "RoleAdmin": "Ylläpitäjä",
+    "RoleMember": "Jäsen"
+  },
+  "projectSelect": {
+    "ProjectAdminBadge": "Projektin ylläpitäjä"
   },
   "rbac": {
     "Active": "Aktiivinen",
@@ -2946,6 +2958,7 @@
       "PrivacyPolicy": "Tietosuojakäytäntö",
       "ProfileUpdated": "Profiili on päivitetty onnistuneesti.",
       "Project": "Hanke",
+      "ProjectMembers": "Käyttäjät",
       "Projects": "Hankkeet",
       "RBACManagement": "RBAC-hallinta",
       "Remaining": "Jäljellä oleva",

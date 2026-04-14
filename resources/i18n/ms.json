@@ -1135,6 +1135,7 @@
     "SecretKey": "Kunci Rahsia",
     "Session": "Sesi",
     "ShowUsageGraph": "Tunjukkan Penggunaan",
+    "Status": "Status",
     "StorageProxies": "Stor",
     "TotalItems": "Jumlah {{total}} item",
     "UpdatedAt": "Dikemas kini Pada",
@@ -1678,6 +1679,17 @@
     "ProjectID": "ID Projek",
     "ProjectIDFilterRuleMessage": "UUID tidak sah.",
     "ResourcePolicy": "Dasar Sumber"
+  },
+  "projectMembers": {
+    "Email": "E-mel",
+    "Name": "Nama",
+    "PageTitle": "Ahli projek",
+    "Role": "Peranan",
+    "RoleAdmin": "Pentadbir",
+    "RoleMember": "Ahli"
+  },
+  "projectSelect": {
+    "ProjectAdminBadge": "Pentadbir Projek"
   },
   "rbac": {
     "Active": "Aktif",
@@ -2945,6 +2957,7 @@
       "PrivacyPolicy": "Dasar Privasi",
       "ProfileUpdated": "Profil telah berjaya dikemas kini.",
       "Project": "Projek",
+      "ProjectMembers": "Pengguna",
       "Projects": "Projek",
       "RBACManagement": "Pengurusan RBAC",
       "Remaining": "Tinggal",

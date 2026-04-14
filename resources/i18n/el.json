@@ -1135,6 +1135,7 @@
     "SecretKey": "Μυστικό κλειδί",
     "Session": "Σύνοδος",
     "ShowUsageGraph": "Προβολή χρήσης",
+    "Status": "Κατάσταση",
     "StorageProxies": "Αποθήκες",
     "TotalItems": "Σύνολο {{total}} στοιχείων",
     "UpdatedAt": "Ενημερώθηκε στις",
@@ -1678,6 +1679,17 @@
     "ProjectID": "ID έργου",
     "ProjectIDFilterRuleMessage": "Μη έγκυρο UUID.",
     "ResourcePolicy": "Πολιτική πόρων"
+  },
+  "projectMembers": {
+    "Email": "Email",
+    "Name": "Όνομα",
+    "PageTitle": "Μέλη έργου",
+    "Role": "Ρόλος",
+    "RoleAdmin": "Διαχειριστής",
+    "RoleMember": "Μέλος"
+  },
+  "projectSelect": {
+    "ProjectAdminBadge": "Διαχειριστής έργου"
   },
   "rbac": {
     "Active": "Ενεργός",
@@ -2945,6 +2957,7 @@
       "PrivacyPolicy": "Πολιτική απορρήτου",
       "ProfileUpdated": "Το προφίλ ενημερώθηκε με επιτυχία.",
       "Project": "Έργο",
+      "ProjectMembers": "Χρήστες",
       "Projects": "Έργα",
       "RBACManagement": "Διαχείριση RBAC",
       "Remaining": "Παραμένων",

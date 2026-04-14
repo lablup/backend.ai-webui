@@ -1135,6 +1135,7 @@
     "SecretKey": "Секретный ключ",
     "Session": "Сессия",
     "ShowUsageGraph": "Показать использование",
+    "Status": "Статус",
     "StorageProxies": "Хранилища данных",
     "TotalItems": "Всего {{total}} предметов",
     "UpdatedAt": "Обновлено",
@@ -1678,6 +1679,17 @@
     "ProjectID": "ID проекта",
     "ProjectIDFilterRuleMessage": "Неверный UUID.",
     "ResourcePolicy": "Политика ресурсов"
+  },
+  "projectMembers": {
+    "Email": "Электронная почта",
+    "Name": "Имя",
+    "PageTitle": "Участники проекта",
+    "Role": "Роль",
+    "RoleAdmin": "Администратор",
+    "RoleMember": "Участник"
+  },
+  "projectSelect": {
+    "ProjectAdminBadge": "Администратор проекта"
   },
   "rbac": {
     "Active": "Активный",
@@ -2945,6 +2957,7 @@
       "PrivacyPolicy": "Политика конфиденциальности",
       "ProfileUpdated": "Профиль успешно обновлён.",
       "Project": "Проект",
+      "ProjectMembers": "Пользователи",
       "Projects": "Проекты",
       "RBACManagement": "Управление RBAC",
       "Remaining": "Оставшийся",

@@ -1136,6 +1136,7 @@
     "SecretKey": "Нууц түлхүүр",
     "Session": "Сессия",
     "ShowUsageGraph": "Хэрэглээг харуулах",
+    "Status": "Статус",
     "StorageProxies": "Хадгалах сан",
     "TotalItems": "Нийт {{total}} зүйл",
     "UpdatedAt": "Шинэчлэгдсэн огноо",
@@ -1679,6 +1680,17 @@
     "ProjectID": "Төслийн ID",
     "ProjectIDFilterRuleMessage": "UUID хүчин төгөлдөргүй.",
     "ResourcePolicy": "Ресурсийн бодлого"
+  },
+  "projectMembers": {
+    "Email": "Имэйл",
+    "Name": "Нэр",
+    "PageTitle": "Төслийн гишүүд",
+    "Role": "Үүрэг",
+    "RoleAdmin": "Админ",
+    "RoleMember": "Гишүүн"
+  },
+  "projectSelect": {
+    "ProjectAdminBadge": "Төслийн администратор"
   },
   "rbac": {
     "Active": "Идэвхтэй",
@@ -2947,6 +2959,7 @@
       "PrivacyPolicy": "Нууцлалын бодлого",
       "ProfileUpdated": "Профайл амжилттай шинэчлэгдлээ.",
       "Project": "Төсөл",
+      "ProjectMembers": "Хэрэглэгчид",
       "Projects": "Төслүүд",
       "RBACManagement": "RBAC удирдлага",
       "Remaining": "Үлдсэн",

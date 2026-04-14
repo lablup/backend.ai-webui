@@ -1137,6 +1137,7 @@
     "SecretKey": "คีย์ลับ",
     "Session": "เซสชัน",
     "ShowUsageGraph": "ดูการใช้งาน",
+    "Status": "สถานะ",
     "StorageProxies": "ที่เก็บข้อมูล",
     "TotalItems": "รวม {{total}} รายการ",
     "UpdatedAt": "อัปเดตเมื่อ",
@@ -1680,6 +1681,17 @@
     "ProjectID": "รหัสโครงการ",
     "ProjectIDFilterRuleMessage": "UUID ไม่ถูกต้อง.",
     "ResourcePolicy": "นโยบายทรัพยากร"
+  },
+  "projectMembers": {
+    "Email": "อีเมล",
+    "Name": "ชื่อ",
+    "PageTitle": "สมาชิกโครงการ",
+    "Role": "บทบาท",
+    "RoleAdmin": "ผู้ดูแลระบบ",
+    "RoleMember": "สมาชิก"
+  },
+  "projectSelect": {
+    "ProjectAdminBadge": "ผู้ดูแลโปรเจกต์"
   },
   "rbac": {
     "Active": "ใช้งานอยู่",
@@ -2947,6 +2959,7 @@
       "PrivacyPolicy": "นโยบายความเป็นส่วนตัว",
       "ProfileUpdated": "อัปเดตโปรไฟล์สำเร็จแล้ว",
       "Project": "โครงการ",
+      "ProjectMembers": "ผู้ใช้",
       "Projects": "โครงการ",
       "RBACManagement": "การจัดการ RBAC",
       "Remaining": "ที่เหลืออยู่",

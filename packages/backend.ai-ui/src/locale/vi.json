@@ -347,6 +347,7 @@
     "Email": "Email",
     "Enabled": "Đã bật",
     "FullName": "Họ và tên",
+    "IntegrationName": "Tên tích hợp",
     "ModifiedAt": "Sửa lúc",
     "NeedPasswordChange": "Cần đổi mật khẩu",
     "Project": "Dự án",
@@ -356,6 +357,7 @@
     "StatusInfo": "Thông tin trạng thái",
     "SudoSessionEnabled": "Phiên Sudo đã bật",
     "TwoFA": "Xác thực hai yếu tố",
+    "UserID": "ID người dùng",
     "Username": "Tên người dùng"
   },
   "error": {

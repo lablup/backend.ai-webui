@@ -7,12 +7,13 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
 import useControllableState_deprecated from '../hooks/useControllableState';
 import {
+  isProjectAdminForId,
   useCurrentUserProjectRoles,
-  useEffectiveAdminRole,
 } from '../hooks/useCurrentUserProjectRoles';
-import { Tag, theme } from 'antd';
+import { theme, Tooltip } from 'antd';
 import { BAIFlex, BAISelect, BAISelectProps } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { ShieldUser } from 'lucide-react';
 import React, { useEffect, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -48,20 +49,6 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
   const [value, setValue] = useControllableState_deprecated(selectProps);
   const userRole = useCurrentUserRole();
   const { projectAdminIds } = useCurrentUserProjectRoles();
-  const effectiveAdminRole = useEffectiveAdminRole();
-  // Only show the per-project "Project Admin" badge when the user's effective
-  // admin role is exactly 'projectAdmin'. Super and domain admins have broader
-  // authority over every project, so a per-project badge would be noise.
-  const shouldShowProjectAdminBadge = effectiveAdminRole === 'projectAdmin';
-  const projectAdminIdSet = new Set(projectAdminIds);
-  // Project IDs returned by the GraphQL `groups` query are full UUIDs (with
-  // hyphens). `useCurrentUserProjectRoles` exposes short 8-hex IDs. Convert on
-  // compare.
-  const isProjectAdmin = (projectId: string | null | undefined): boolean => {
-    if (!projectId) return false;
-    const short = projectId.replace(/-/g, '').slice(0, 8).toLowerCase();
-    return projectAdminIdSet.has(short);
-  };
   const { groups, user } = useLazyLoadQuery<ProjectSelectorQuery>(
     graphql`
       query ProjectSelectorQuery(
@@ -145,18 +132,14 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
         label: getLabel(key),
         title: key,
         options: _.map(_.sortBy(value, 'name'), (project) => {
-          const showBadge =
-            shouldShowProjectAdminBadge && isProjectAdmin(project?.id);
+          const showBadge = isProjectAdminForId(project?.id, projectAdminIds);
           return {
             label: showBadge ? (
               <BAIFlex gap={token.marginXS} align="center">
                 <span>{project?.name}</span>
-                <Tag
-                  color="processing"
-                  style={{ marginInlineEnd: 0, fontSize: token.fontSizeSM }}
-                >
-                  {t('projectSelect.ProjectAdminBadge')}
-                </Tag>
+                <Tooltip title={t('projectSelect.ProjectAdminBadge')}>
+                  <ShieldUser />
+                </Tooltip>
               </BAIFlex>
             ) : (
               project?.name

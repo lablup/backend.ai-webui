@@ -1137,6 +1137,7 @@
     "SecretKey": "Chìa khoá bí mật",
     "Session": "Phiên họp",
     "ShowUsageGraph": "Hiển thị mức sử dụng",
+    "Status": "Trạng thái",
     "StorageProxies": "Kho lưu trữ",
     "TotalItems": "Tổng số {{total}} mặt hàng",
     "UpdatedAt": "Cập nhật lúc",
@@ -1680,6 +1681,17 @@
     "ProjectID": "ID dự án",
     "ProjectIDFilterRuleMessage": "UUID không hợp lệ.",
     "ResourcePolicy": "Chính sách tài nguyên"
+  },
+  "projectMembers": {
+    "Email": "Email",
+    "Name": "Tên",
+    "PageTitle": "Thành viên dự án",
+    "Role": "Vai trò",
+    "RoleAdmin": "Quản trị viên",
+    "RoleMember": "Thành viên"
+  },
+  "projectSelect": {
+    "ProjectAdminBadge": "Quản trị dự án"
   },
   "rbac": {
     "Active": "Hoạt động",
@@ -2947,6 +2959,7 @@
       "PrivacyPolicy": "Chính sách bảo mật",
       "ProfileUpdated": "Hồ sơ đã được cập nhật thành công.",
       "Project": "Dự án",
+      "ProjectMembers": "Người dùng",
       "Projects": "Dự án",
       "RBACManagement": "Quản lý RBAC",
       "Remaining": "Còn lại",

@@ -87,6 +87,11 @@ export {
   availableUserSorterValues,
 } from './BAIUserNodes';
 export type { UserNodeInList } from './BAIUserNodes';
+export {
+  default as BAIUserV2Nodes,
+  availableUserV2SorterValues,
+} from './BAIUserV2Nodes';
+export type { UserV2InList } from './BAIUserV2Nodes';
 export type { BAIUncontrolledInputProps } from './BAIUncontrolledInput';
 export { default as BAIUncontrolledInput } from './BAIUncontrolledInput';
 export { default as BAITag } from './BAITag';

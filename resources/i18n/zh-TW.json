@@ -1138,6 +1138,7 @@
     "SecretKey": "密鑰",
     "Session": "會話",
     "ShowUsageGraph": "顯示使用量",
+    "Status": "狀態",
     "StorageProxies": "存儲",
     "TotalItems": "共 {{total}} 個項目",
     "UpdatedAt": "更新時間",
@@ -1682,6 +1683,17 @@
     "ProjectID": "專案 ID",
     "ProjectIDFilterRuleMessage": "無效的 UUID。",
     "ResourcePolicy": "資源策略"
+  },
+  "projectMembers": {
+    "Email": "電子郵件",
+    "Name": "名稱",
+    "PageTitle": "專案成員",
+    "Role": "角色",
+    "RoleAdmin": "管理員",
+    "RoleMember": "成員"
+  },
+  "projectSelect": {
+    "ProjectAdminBadge": "專案管理員"
   },
   "rbac": {
     "Active": "活躍",
@@ -2949,6 +2961,7 @@
       "PrivacyPolicy": "隱私政策",
       "ProfileUpdated": "個人資料已成功更新。",
       "Project": "項目",
+      "ProjectMembers": "使用者",
       "Projects": "項目",
       "RBACManagement": "RBAC管理",
       "Remaining": "其餘的",
