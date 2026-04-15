@@ -8,7 +8,8 @@ import {
   RuntimeParameterGroup,
   useRuntimeParameterSchema,
   buildDefaultsMap,
-  buildSchemaKeySet,
+  buildArgsSchemaKeySet,
+  buildEnvPresetKeySet,
 } from '../hooks/useRuntimeParameterSchema';
 import InputNumberWithSlider from './InputNumberWithSlider';
 import { Checkbox, Form, InputNumber, Select, Input, theme, Alert } from 'antd';
@@ -34,8 +35,12 @@ interface RuntimeParameterFormSectionProps {
   onChange?: (values: RuntimeParameterValues) => void;
   /** Called when the set of touched parameter keys changes */
   onTouchedKeysChange?: (touchedKeys: Set<string>) => void;
-  /** Existing extra args string for edit mode reverse-mapping */
+  /** Called when preset groups are loaded from the API */
+  onGroupsLoaded?: (groups: RuntimeParameterGroup[] | null) => void;
+  /** Existing extra args string for edit mode reverse-mapping (ARGS-type presets) */
   initialExtraArgs?: string;
+  /** Existing environ for edit mode reverse-mapping (ENV-type presets) */
+  initialEnvVars?: Record<string, string>;
 }
 
 /**
@@ -44,11 +49,23 @@ interface RuntimeParameterFormSectionProps {
  */
 const RuntimeParameterFormSection: React.FC<
   RuntimeParameterFormSectionProps
-> = ({ runtimeVariant, onChange, onTouchedKeysChange, initialExtraArgs }) => {
+> = ({
+  runtimeVariant,
+  onChange,
+  onTouchedKeysChange,
+  onGroupsLoaded,
+  initialExtraArgs,
+  initialEnvVars,
+}) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const groups = useRuntimeParameterSchema(runtimeVariant);
+
+  // Notify parent when groups change (for serialization at submit time)
+  useEffect(() => {
+    onGroupsLoaded?.(groups);
+  }, [groups, onGroupsLoaded]);
 
   const [internalValues, setInternalValues] = useState<RuntimeParameterValues>(
     {},
@@ -69,18 +86,41 @@ const RuntimeParameterFormSection: React.FC<
     [onChange],
   );
 
-  // Initialize from defaults or reverse-map from existing extra args
+  // Initialize from defaults or reverse-map from existing extra args / env vars
   useEffect(() => {
     if (!groups) return;
 
     const defaults = buildDefaultsMap(groups);
+    const hasInitialData = !!initialExtraArgs || !!initialEnvVars;
 
-    if (initialExtraArgs) {
-      const schemaKeys = buildSchemaKeySet(groups);
-      const { mappedArgs } = reverseMapExtraArgs(initialExtraArgs, schemaKeys);
-      setValues({ ...defaults, ...mappedArgs });
+    if (hasInitialData) {
+      let mappedFromArgs: Record<string, string> = {};
+      let mappedFromEnv: Record<string, string> = {};
+
+      // Reverse-map ARGS-type presets from EXTRA_ARGS string
+      if (initialExtraArgs) {
+        const argsSchemaKeys = buildArgsSchemaKeySet(groups);
+        const { mappedArgs } = reverseMapExtraArgs(
+          initialExtraArgs,
+          argsSchemaKeys,
+        );
+        mappedFromArgs = mappedArgs;
+      }
+
+      // Reverse-map ENV-type presets from individual env vars
+      if (initialEnvVars) {
+        const envPresetKeys = buildEnvPresetKeySet(groups);
+        for (const envKey of envPresetKeys) {
+          if (initialEnvVars[envKey] !== undefined) {
+            mappedFromEnv[envKey] = initialEnvVars[envKey];
+          }
+        }
+      }
+
+      const allMapped = { ...mappedFromArgs, ...mappedFromEnv };
+      setValues({ ...defaults, ...allMapped });
       // Pre-mark keys from existing env vars as touched
-      const initialTouched = new Set(Object.keys(mappedArgs));
+      const initialTouched = new Set(Object.keys(allMapped));
       setTouchedKeys(initialTouched);
       onTouchedKeysChange?.(initialTouched);
     } else {
@@ -89,7 +129,7 @@ const RuntimeParameterFormSection: React.FC<
       onTouchedKeysChange?.(new Set());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [runtimeVariant, initialExtraArgs]);
+  }, [runtimeVariant, initialExtraArgs, initialEnvVars]);
 
   const handleParamChange = useCallback(
     (key: string, newValue: string) => {

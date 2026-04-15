@@ -269,3 +269,70 @@ export function buildSchemaKeySet(
   }
   return keys;
 }
+
+/**
+ * Build a set of known ARGS-type schema keys from parameter definitions.
+ * Used for reverse-mapping existing EXTRA_ARGS to UI controls (only ARGS presets).
+ */
+export function buildArgsSchemaKeySet(
+  groups: RuntimeParameterGroup[],
+): Set<string> {
+  const keys = new Set<string>();
+  for (const group of groups) {
+    for (const param of group.params) {
+      if (param.presetTarget === 'ARGS') {
+        keys.add(param.key);
+      }
+    }
+  }
+  return keys;
+}
+
+/**
+ * Build a set of known ENV-type preset keys from parameter definitions.
+ * Used for extracting individual env vars in edit mode.
+ */
+export function buildEnvPresetKeySet(
+  groups: RuntimeParameterGroup[],
+): Set<string> {
+  const keys = new Set<string>();
+  for (const group of groups) {
+    for (const param of group.params) {
+      if (param.presetTarget === 'ENV') {
+        keys.add(param.key);
+      }
+    }
+  }
+  return keys;
+}
+
+/**
+ * Derive the EXTRA_ARGS environment variable name for a given runtime variant.
+ * Convention: `{VARIANT_UPPER}_EXTRA_ARGS` (e.g., vllm → VLLM_EXTRA_ARGS).
+ */
+export function getExtraArgsEnvVarName(runtimeVariant: string): string {
+  return `${runtimeVariant.toUpperCase()}_EXTRA_ARGS`;
+}
+
+/**
+ * Known runtime variant names that have EXTRA_ARGS env vars.
+ * Used to clean up stale env vars when switching runtime variants.
+ */
+const KNOWN_EXTRA_ARGS_VARIANTS = ['vllm', 'sglang'];
+
+/**
+ * Returns all known EXTRA_ARGS env var names.
+ * Used to clean up stale env vars when switching runtime variants.
+ */
+export function getAllExtraArgsEnvVarNames(): string[] {
+  return KNOWN_EXTRA_ARGS_VARIANTS.map(getExtraArgsEnvVarName);
+}
+
+/**
+ * Flatten all preset definitions from groups into a single array.
+ */
+export function flattenPresets(
+  groups: RuntimeParameterGroup[],
+): RuntimeVariantPresetDef[] {
+  return groups.flatMap((g) => g.params);
+}
