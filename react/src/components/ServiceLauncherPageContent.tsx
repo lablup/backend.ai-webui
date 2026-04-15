@@ -1379,7 +1379,11 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                               (runtime) => {
                                 return {
                                   value: runtime.name,
-                                  label: runtime.human_readable_name,
+                                  label:
+                                    runtime.human_readable_name?.replace(
+                                      /\s*\(default\)\s*/i,
+                                      '',
+                                    ) || runtime.name,
                                 };
                               },
                             )}
