@@ -36,6 +36,7 @@ import {
   flattenPresets,
   buildArgsSchemaKeySet,
   buildEnvPresetKeySet,
+  buildDefaultsMap,
   type RuntimeParameterGroup,
 } from '../hooks/useRuntimeParameterSchema';
 import { useValidateServiceName } from '../hooks/useValidateServiceName';
@@ -291,13 +292,15 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
 
       const touchedValues = getTouchedRuntimeValues();
       const presets = flattenPresets(groups);
+      const presetMap = new Map(presets.map((p) => [p.key, p]));
+      const defaults = buildDefaultsMap(groups);
 
       // Separate touched values by presetTarget
       const argsValues: Record<string, string> = {};
       const envValues: Record<string, string> = {};
 
       for (const [key, val] of Object.entries(touchedValues)) {
-        const preset = presets.find((p) => p.key === key);
+        const preset = presetMap.get(key);
         if (!preset) continue;
 
         if (preset.presetTarget === 'ENV') {
@@ -333,7 +336,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
       // Merge ARGS-type values into EXTRA_ARGS env var
       if (Object.keys(argsValues).length > 0) {
         const manualArgs = environ[extraArgsEnvVar] ?? '';
-        const merged = mergeExtraArgs(argsValues, manualArgs);
+        const merged = mergeExtraArgs(argsValues, manualArgs, defaults);
         if (merged) {
           environ[extraArgsEnvVar] = merged;
         } else {
@@ -343,10 +346,9 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
 
       // Set ENV-type values as individual env vars
       for (const [key, val] of Object.entries(envValues)) {
-        // Find preset to check if value matches default (skip if so)
-        const preset = presets.find((p) => p.key === key);
+        // Skip if value matches default
+        const preset = presetMap.get(key);
         if (preset?.defaultValue !== null && preset?.defaultValue === val) {
-          // Don't send default values
           continue;
         }
         environ[key] = val;

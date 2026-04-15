@@ -481,6 +481,12 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
       children: <EndpointStatusTag endpointFrgmt={endpoint} />,
     },
     {
+      label: t('modelService.RuntimeVariant'),
+      children: endpoint?.runtime_variant?.human_readable_name || (
+        <Typography.Text type="secondary">-</Typography.Text>
+      ),
+    },
+    {
       label: t('modelService.EndpointId'),
       children: endpoint?.endpoint_id,
     },

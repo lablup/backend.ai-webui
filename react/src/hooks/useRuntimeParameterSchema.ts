@@ -255,22 +255,6 @@ export function buildDefaultsMap(
 }
 
 /**
- * Build a set of known schema keys from parameter definitions.
- * Used for reverse-mapping existing EXTRA_ARGS to UI controls.
- */
-export function buildSchemaKeySet(
-  groups: RuntimeParameterGroup[],
-): Set<string> {
-  const keys = new Set<string>();
-  for (const group of groups) {
-    for (const param of group.params) {
-      keys.add(param.key);
-    }
-  }
-  return keys;
-}
-
-/**
  * Build a set of known ARGS-type schema keys from parameter definitions.
  * Used for reverse-mapping existing EXTRA_ARGS to UI controls (only ARGS presets).
  */
