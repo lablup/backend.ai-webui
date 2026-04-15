@@ -316,31 +316,27 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
         }
       }
 
-      // Strip managed ARGS keys from existing EXTRA_ARGS before merging
-      // Only when there are touched ARGS values to merge
-      if (Object.keys(argsValues).length > 0) {
-        const argsSchemaKeys = buildArgsSchemaKeySet(groups);
-        if (environ[extraArgsEnvVar] && argsSchemaKeys.size > 0) {
-          const { unmappedText } = reverseMapExtraArgs(
-            environ[extraArgsEnvVar],
-            argsSchemaKeys,
-          );
-          if (unmappedText) {
-            environ[extraArgsEnvVar] = unmappedText;
-          } else {
-            delete environ[extraArgsEnvVar];
-          }
+      // Always strip managed ARGS keys from existing EXTRA_ARGS.
+      // This ensures reset (empty touchedKeys) properly cleans up previously set values.
+      const argsSchemaKeys = buildArgsSchemaKeySet(groups);
+      if (environ[extraArgsEnvVar] && argsSchemaKeys.size > 0) {
+        const { unmappedText } = reverseMapExtraArgs(
+          environ[extraArgsEnvVar],
+          argsSchemaKeys,
+        );
+        if (unmappedText) {
+          environ[extraArgsEnvVar] = unmappedText;
+        } else {
+          delete environ[extraArgsEnvVar];
         }
       }
 
-      // Strip only touched ENV-preset keys from environ before re-adding
-      // (prevents erasing user-provided env vars that happen to share preset keys)
-      const touchedEnvKeys = Object.keys(touchedValues).filter((key) => {
-        const preset = presetMap.get(key);
-        return preset?.presetTarget === 'ENV';
-      });
-      for (const envKey of touchedEnvKeys) {
-        delete environ[envKey];
+      // Always strip all ENV-preset keys from environ.
+      // This ensures reset (empty touchedKeys) properly cleans up previously set values.
+      for (const preset of presets) {
+        if (preset.presetTarget === 'ENV') {
+          delete environ[preset.key];
+        }
       }
 
       // Merge ARGS-type values into EXTRA_ARGS env var
