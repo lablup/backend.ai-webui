@@ -1165,7 +1165,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
       }
     : {
         replicas: 1,
-        runtimeVariant: 'vllm',
+        runtimeVariant: 'custom',
         commandModelMount: '/models',
         commandPort: 8000,
         commandHealthCheck: '/health',
