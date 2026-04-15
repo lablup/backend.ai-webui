@@ -202,9 +202,9 @@
     "Threshold": "기준값",
     "ThresholdMustBeNonNegative": "기준값은 음수가 아닌 숫자여야 합니다.",
     "ThresholdRequired": "기준값은 필수입니다.",
-    "TimeWindow": "시간 창",
+    "TimeWindow": "타임 윈도우",
     "TimeWindowSeconds": "{{value}}초",
-    "TimeWindowTooltip": "스케일링 지표를 평가하기 위한 시간 창(초 단위).",
+    "TimeWindowTooltip": "스케일링 지표를 평가하기 위한 타임 윈도우(초 단위).",
     "Upper": "상한"
   },
   "button": {

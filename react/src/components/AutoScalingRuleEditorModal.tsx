@@ -573,12 +573,23 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
           <Select
             onChange={(value) => {
               setSelectedMetricSource(value);
+              // Clear metricName whenever source changes (issue: stale name from previous source)
+              formRef.current?.setFieldsValue({ metricName: undefined });
               if (value !== 'PROMETHEUS') {
                 setNameOptions(
                   METRIC_NAMES_MAP[value as keyof typeof METRIC_NAMES_MAP] ||
                     [],
                 );
                 setSelectedPresetId(undefined);
+              } else {
+                // Restore selectedPresetId state from form value when switching back to PROMETHEUS,
+                // otherwise the preview won't appear even after a preset was previously chosen.
+                const existingPresetId = formRef.current?.getFieldValue(
+                  'prometheusQueryPresetId',
+                );
+                if (existingPresetId) {
+                  setSelectedPresetId(existingPresetId);
+                }
               }
             }}
             options={[
