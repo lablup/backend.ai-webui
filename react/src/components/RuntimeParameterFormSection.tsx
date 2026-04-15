@@ -12,8 +12,20 @@ import {
   buildEnvPresetKeySet,
 } from '../hooks/useRuntimeParameterSchema';
 import InputNumberWithSlider from './InputNumberWithSlider';
-import { Checkbox, Form, InputNumber, Select, Input, theme, Alert } from 'antd';
-import { BAICard, BAIFlex } from 'backend.ai-ui';
+import { UndoOutlined } from '@ant-design/icons';
+import {
+  Checkbox,
+  Collapse,
+  Form,
+  InputNumber,
+  Select,
+  Input,
+  Tooltip,
+  theme,
+  Alert,
+  Tabs,
+} from 'antd';
+import { BAIButton, BAIFlex } from 'backend.ai-ui';
 import React, { useCallback, useEffect, useEffectEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -141,9 +153,12 @@ const RuntimeParameterFormSection: React.FC<
     }
   });
 
+  // Initialize only when runtimeVariant or groups change — NOT when initialExtraArgs/initialEnvVars
+  // change (e.g., due to Relay store updates after mutation). The initial* props are read inside
+  // initializeValues via useEffectEvent, so they always reflect the latest closure.
   useEffect(() => {
     initializeValues();
-  }, [runtimeVariant, initialExtraArgs, initialEnvVars, groups]);
+  }, [runtimeVariant, groups]);
 
   const handleParamChange = useCallback(
     (key: string, newValue: string) => {
@@ -165,6 +180,14 @@ const RuntimeParameterFormSection: React.FC<
     [onChange, onTouchedKeysChange],
   );
 
+  const handleReset = useCallback(() => {
+    if (!groups) return;
+    const defaults = buildDefaultsMap(groups);
+    setValues(defaults);
+    setTouchedKeys(new Set());
+    onTouchedKeysChange?.(new Set());
+  }, [groups, setValues, onTouchedKeysChange]);
+
   if (!groups) return null;
 
   // Build tab list from available categories (dynamically from API)
@@ -178,32 +201,70 @@ const RuntimeParameterFormSection: React.FC<
   const effectiveActiveTab = availableCategories.includes(activeTab)
     ? activeTab
     : (availableCategories[0] ?? '');
-  const activeGroup = groups.find((g) => g.category === effectiveActiveTab);
 
   return (
-    <Form.Item label={t('modelService.RuntimeParamTitle')}>
-      <BAICard
-        size="small"
-        tabList={tabList}
-        activeTabKey={effectiveActiveTab}
-        onTabChange={(key) => setActiveTab(key)}
-      >
-        <Alert
-          type="warning"
-          showIcon
-          title={t('modelService.RuntimeParamUnchangedHint')}
-          style={{ marginBottom: token.marginSM }}
-        />
-        {activeGroup && (
-          <ParameterGroupContent
-            group={activeGroup}
-            values={values}
-            touchedKeys={touchedKeys}
-            onParamChange={handleParamChange}
-          />
-        )}
-      </BAICard>
-    </Form.Item>
+    <Collapse
+      size="small"
+      defaultActiveKey={['runtime-params']}
+      items={[
+        {
+          key: 'runtime-params',
+          label: (
+            <BAIFlex justify="between" align="center" style={{ flex: 1 }}>
+              <span>
+                {t('modelService.RuntimeParamTitle')}{' '}
+                <span style={{ color: token.colorTextSecondary }}>
+                  ({t('general.Optional')})
+                </span>
+              </span>
+              <Tooltip title={t('button.Reset')}>
+                <BAIButton
+                  type="link"
+                  size="small"
+                  icon={<UndoOutlined />}
+                  aria-label={t('button.Reset')}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleReset();
+                  }}
+                  disabled={touchedKeys.size === 0}
+                />
+              </Tooltip>
+            </BAIFlex>
+          ),
+          children: (
+            <>
+              <Alert
+                type="warning"
+                showIcon
+                title={t('modelService.RuntimeParamUnchangedHint')}
+                style={{ marginBottom: token.marginSM }}
+              />
+              <Tabs
+                size="small"
+                activeKey={effectiveActiveTab}
+                onChange={(key) => setActiveTab(key)}
+                items={tabList.map((tab) => {
+                  const group = groups.find((g) => g.category === tab.key);
+                  return {
+                    key: tab.key,
+                    label: tab.label,
+                    children: group ? (
+                      <ParameterGroupContent
+                        group={group}
+                        values={values}
+                        touchedKeys={touchedKeys}
+                        onParamChange={handleParamChange}
+                      />
+                    ) : null,
+                  };
+                })}
+              />
+            </>
+          ),
+        },
+      ]}
+    />
   );
 };
 
