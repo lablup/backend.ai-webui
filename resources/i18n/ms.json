@@ -1532,6 +1532,7 @@
     "RuntimeParamCategorySampling": "Pensampelan",
     "RuntimeParamContextLength": "Panjang Konteks",
     "RuntimeParamDisableCudaGraph": "Lumpuhkan CUDA Graph",
+    "RuntimeParamDisableCudaGraphDesc": "Lumpuhkan penangkapan CUDA graph untuk SGLang. Mungkin mengurangkan prestasi tetapi berguna untuk penyahpepijatan.",
     "RuntimeParamDtype": "Jenis Data",
     "RuntimeParamDtypeDesc": "Jenis data untuk berat model dan pengiraan.",
     "RuntimeParamEnforceEager": "Paksa Mod Eager",

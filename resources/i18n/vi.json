@@ -1534,6 +1534,7 @@
     "RuntimeParamCategorySampling": "Lấy Mẫu",
     "RuntimeParamContextLength": "Độ Dài Ngữ Cảnh",
     "RuntimeParamDisableCudaGraph": "Vô Hiệu Hóa CUDA Graph",
+    "RuntimeParamDisableCudaGraphDesc": "Vô hiệu hóa chụp CUDA graph cho SGLang. Có thể làm giảm hiệu suất nhưng hữu ích để gỡ lỗi.",
     "RuntimeParamDtype": "Kiểu Dữ Liệu",
     "RuntimeParamDtypeDesc": "Kiểu dữ liệu cho trọng số mô hình và tính toán.",
     "RuntimeParamEnforceEager": "Bắt Buộc Chế Độ Eager",

@@ -1532,6 +1532,7 @@
     "RuntimeParamCategorySampling": "Näytteenotto",
     "RuntimeParamContextLength": "Kontekstin Pituus",
     "RuntimeParamDisableCudaGraph": "Poista CUDA Graph käytöstä",
+    "RuntimeParamDisableCudaGraphDesc": "Poistaa CUDA graph -tallennuksen käytöstä SGLang:lle. Saattaa heikentää suorituskykyä, mutta on hyödyllinen virheenkorjauksessa.",
     "RuntimeParamDtype": "Tietotyyppi",
     "RuntimeParamDtypeDesc": "Tietotyyppi mallin painoille ja laskelmille.",
     "RuntimeParamEnforceEager": "Pakota Eager-tila",

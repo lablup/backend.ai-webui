@@ -1532,6 +1532,7 @@
     "RuntimeParamCategorySampling": "Δειγματοληψία",
     "RuntimeParamContextLength": "Μήκος Πλαισίου",
     "RuntimeParamDisableCudaGraph": "Απενεργοποίηση CUDA Graph",
+    "RuntimeParamDisableCudaGraphDesc": "Απενεργοποίηση της σύλληψης CUDA graph για SGLang. Ενδέχεται να μειώσει την απόδοση, αλλά είναι χρήσιμο για αποσφαλμάτωση.",
     "RuntimeParamDtype": "Τύπος Δεδομένων",
     "RuntimeParamDtypeDesc": "Τύπος δεδομένων για τα βάρη και τους υπολογισμούς του μοντέλου.",
     "RuntimeParamEnforceEager": "Επιβολή Eager Mode",

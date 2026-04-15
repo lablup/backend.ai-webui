@@ -1534,6 +1534,7 @@
     "RuntimeParamCategorySampling": "サンプリング",
     "RuntimeParamContextLength": "コンテキスト長",
     "RuntimeParamDisableCudaGraph": "CUDA Graphを無効にする",
+    "RuntimeParamDisableCudaGraphDesc": "SGLang の CUDA graph キャプチャを無効にします。パフォーマンスが低下する可能性がありますが、デバッグに役立ちます。",
     "RuntimeParamDtype": "データ型",
     "RuntimeParamDtypeDesc": "モデルの重みと計算のデータ型。",
     "RuntimeParamEnforceEager": "Eagerモードを強制",

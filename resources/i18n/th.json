@@ -1534,6 +1534,7 @@
     "RuntimeParamCategorySampling": "การสุ่มตัวอย่าง",
     "RuntimeParamContextLength": "ความยาวบริบท",
     "RuntimeParamDisableCudaGraph": "ปิดใช้งาน CUDA Graph",
+    "RuntimeParamDisableCudaGraphDesc": "ปิดใช้งานการจับภาพ CUDA graph สำหรับ SGLang อาจลดประสิทธิภาพ แต่มีประโยชน์สำหรับการดีบัก",
     "RuntimeParamDtype": "ประเภทข้อมูล",
     "RuntimeParamDtypeDesc": "ประเภทข้อมูลสำหรับน้ำหนักโมเดลและการคำนวณ",
     "RuntimeParamEnforceEager": "บังคับใช้โหมด Eager",

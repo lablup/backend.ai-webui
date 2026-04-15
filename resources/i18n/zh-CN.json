@@ -1534,6 +1534,7 @@
     "RuntimeParamCategorySampling": "采样",
     "RuntimeParamContextLength": "上下文长度",
     "RuntimeParamDisableCudaGraph": "禁用 CUDA Graph",
+    "RuntimeParamDisableCudaGraphDesc": "为 SGLang 禁用 CUDA graph 捕获。可能降低性能，但有助于调试。",
     "RuntimeParamDtype": "数据类型",
     "RuntimeParamDtypeDesc": "模型权重和计算的数据类型。",
     "RuntimeParamEnforceEager": "强制 Eager 模式",

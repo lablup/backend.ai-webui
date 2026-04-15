@@ -1532,6 +1532,7 @@
     "RuntimeParamCategorySampling": "Örnekleme",
     "RuntimeParamContextLength": "Bağlam Uzunluğu",
     "RuntimeParamDisableCudaGraph": "CUDA Graph'ı Devre Dışı Bırak",
+    "RuntimeParamDisableCudaGraphDesc": "SGLang için CUDA graph yakalamayı devre dışı bırakır. Performansı düşürebilir ancak hata ayıklama için kullanışlıdır.",
     "RuntimeParamDtype": "Veri Türü",
     "RuntimeParamDtypeDesc": "Model ağırlıkları ve hesaplama için veri türü.",
     "RuntimeParamEnforceEager": "Eager Modunu Zorla",

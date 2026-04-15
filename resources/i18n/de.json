@@ -1534,6 +1534,7 @@
     "RuntimeParamCategorySampling": "Sampling",
     "RuntimeParamContextLength": "Kontextlänge",
     "RuntimeParamDisableCudaGraph": "CUDA Graph deaktivieren",
+    "RuntimeParamDisableCudaGraphDesc": "CUDA graph capture für SGLang deaktivieren. Kann die Leistung reduzieren, ist aber nützlich für das Debugging.",
     "RuntimeParamDtype": "Datentyp",
     "RuntimeParamDtypeDesc": "Datentyp für Modellgewichte und Berechnungen.",
     "RuntimeParamEnforceEager": "Eager-Modus erzwingen",

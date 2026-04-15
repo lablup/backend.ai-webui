@@ -1533,6 +1533,7 @@
     "RuntimeParamCategorySampling": "Дээж авалт",
     "RuntimeParamContextLength": "Контекстийн Урт",
     "RuntimeParamDisableCudaGraph": "CUDA Graph-г идэвхгүй болгох",
+    "RuntimeParamDisableCudaGraphDesc": "SGLang-д зориулсан CUDA graph дүрслэлийг идэвхгүй болгоно. Гүйцэтгэлийг бууруулж болох боловч дебаглахад тустай.",
     "RuntimeParamDtype": "Өгөгдлийн Төрөл",
     "RuntimeParamDtypeDesc": "Загварын жин болон тооцоололд зориулсан өгөгдлийн төрөл.",
     "RuntimeParamEnforceEager": "Eager горимыг хэрэгжүүлэх",
