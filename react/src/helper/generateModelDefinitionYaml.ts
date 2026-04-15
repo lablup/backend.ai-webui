@@ -78,7 +78,7 @@ ${startCommandLines}
       port: ${input.port}
       health_check:
         path: "${escapeYamlString(input.healthCheckPath)}"
-        initial_delay: ${input.initialDelay ?? 5.0}
+        initial_delay: ${input.initialDelay ?? 60}
         max_retries: ${input.maxRetries ?? 10}
 `;
 }
