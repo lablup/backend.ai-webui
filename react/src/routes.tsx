@@ -23,7 +23,7 @@ import ComputeSessionListPage from './pages/ComputeSessionListPage';
 import LegacyModelStoreListPage from './pages/LegacyModelStoreListPage';
 import Page404 from './pages/Page404';
 import ServingPage from './pages/ServingPage';
-import VFolderNodeListPage from './pages/VFolderNodeListPage';
+import VFolderListPage from './pages/VFolderListPage';
 import { Skeleton, theme } from 'antd';
 import { BAIFlex, BAICard } from 'backend.ai-ui';
 import React, { Suspense } from 'react';
@@ -106,8 +106,8 @@ const RBACManagementPage = React.lazy(
 );
 const AdminSessionPage = React.lazy(() => import('./pages/AdminSessionPage'));
 const AdminServingPage = React.lazy(() => import('./pages/AdminServingPage'));
-const AdminVFolderNodeListPage = React.lazy(
-  () => import('./pages/AdminVFolderNodeListPage'),
+const AdminVFolderListPage = React.lazy(
+  () => import('./pages/AdminVFolderListPage'),
 );
 const ProjectAdminUsersPage = React.lazy(
   () => import('./pages/ProjectAdminUsersPage'),
@@ -354,7 +354,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
     path: '/data',
     handle: { labelKey: 'webui.menu.Data' },
     Component: () => {
-      return <VFolderNodeListPage />;
+      return <VFolderListPage />;
     },
   },
   {
@@ -439,7 +439,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
       useSuspendedBackendaiClient();
       return (
         <Suspense fallback={<Skeleton active />}>
-          <AdminVFolderNodeListPage />
+          <AdminVFolderListPage />
         </Suspense>
       );
     },
