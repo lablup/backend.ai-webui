@@ -78,7 +78,7 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
           : ['GENERAL', 'MODEL_STORE'],
     },
     {
-      fetchPolicy: 'store-and-network',
+      fetchPolicy: 'network-only',
     },
   );
 
