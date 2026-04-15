@@ -43,6 +43,8 @@ export { default as BAIBackButton } from './BAIBackButton';
 export type { BAIBackButtonProps } from './BAIBackButton';
 export { default as BAIText } from './BAIText';
 export type { BAITextProps } from './BAIText';
+export { default as BAIId } from './BAIId';
+export type { BAIIdProps } from './BAIId';
 export { default as BAISelect } from './BAISelect';
 export type { BAISelectProps } from './BAISelect';
 export { default as BAINotificationItem } from './BAINotificationItem';
