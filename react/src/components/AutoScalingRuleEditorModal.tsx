@@ -21,6 +21,7 @@ import {
   InputNumber,
   Segmented,
   Select,
+  Tooltip,
   Typography,
   theme,
 } from 'antd';
@@ -712,20 +713,23 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
                 alignItems: 'center',
               }}
             >
+              <Typography.Text style={{ flexShrink: 0 }}>
+                {t('autoScalingRule.Metric')}
+              </Typography.Text>
               <Form.Item
                 name={'direction'}
                 noStyle
                 rules={[{ required: true }]}
               >
                 <Select
-                  style={{ width: 100 }}
+                  style={{ width: 60 }}
                   options={[
                     {
-                      label: 'Metric >',
+                      label: '>',
                       value: 'upper',
                     },
                     {
-                      label: 'Metric <',
+                      label: '<',
                       value: 'lower',
                     },
                   ]}
@@ -783,7 +787,7 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
                 />
               </Form.Item>
               <Typography.Text style={{ flexShrink: 0 }}>
-                {'<'} Metric {'<'}
+                {'<'} {t('autoScalingRule.Metric')} {'<'}
               </Typography.Text>
               <Form.Item
                 name={'maxThreshold'}
@@ -826,6 +830,7 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
         <Form.Item
           label={t('autoScalingRule.StepSize')}
           name={'stepSize'}
+          tooltip={t('autoScalingRule.StepSizeTooltip')}
           rules={[
             { required: true },
             {
@@ -875,7 +880,7 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
             min={1}
             step={1}
             style={{ width: '100%' }}
-            addonAfter="s"
+            addonAfter={t('autoScalingRule.Seconds')}
           />
         </Form.Item>
 
@@ -883,6 +888,7 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
         <Form.Item
           label={t('autoScalingRule.MinReplicas')}
           name={'minReplicas'}
+          tooltip={t('autoScalingRule.MinReplicasTooltip')}
           rules={[
             {
               min: 0,
@@ -912,6 +918,7 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
         <Form.Item
           label={t('autoScalingRule.MaxReplicas')}
           name={'maxReplicas'}
+          tooltip={t('autoScalingRule.MaxReplicasTooltip')}
           rules={[
             {
               min: 0,
