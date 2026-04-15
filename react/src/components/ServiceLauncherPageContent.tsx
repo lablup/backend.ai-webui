@@ -1831,7 +1831,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                                   type="link"
                                   action={async () => {
                                     form.setFieldsValue({
-                                      allocationPreset: 'auto-select',
+                                      allocationPreset: 'custom',
                                     });
                                     setWantToChangeResource(true);
                                   }}
