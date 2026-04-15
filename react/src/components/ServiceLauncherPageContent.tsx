@@ -1413,9 +1413,6 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                           {({ getFieldValue }) =>
                             getFieldValue('runtimeVariant') === 'custom' &&
                             (endpoint ? (
-                              // TODO(FR-2440): Support "Enter Command" Segmented UI in edit mode.
-                              // - Read existing model-definition.yaml from vfolder and reverse-map to command fields
-                              // - Show overwrite confirmation modal only when user actually modifies the command
                               // Edit mode: keep existing UI (no Segmented)
                               <BAIFlex
                                 direction="row"
