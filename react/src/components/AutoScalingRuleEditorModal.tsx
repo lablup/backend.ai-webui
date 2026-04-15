@@ -901,7 +901,7 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
             min={1}
             step={1}
             style={{ width: '100%' }}
-            addonAfter={t('autoScalingRule.Seconds')}
+            suffix={t('autoScalingRule.Seconds')}
           />
         </Form.Item>
 
