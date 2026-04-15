@@ -26,6 +26,7 @@ import {
 } from 'antd';
 import {
   BAIButton,
+  BAIFlex,
   BAIModal,
   BAIModalProps,
   toLocalId,
@@ -257,6 +258,9 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
               node {
                 id
                 name
+                description
+                rank
+                categoryId
                 metricName
                 queryTemplate
                 timeWindow
@@ -299,6 +303,24 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
     () => presetNodes.find((p) => p.id === selectedPresetId),
     [presetNodes, selectedPresetId],
   );
+
+  type PresetOption = {
+    label: string;
+    value: string;
+    description?: string | null;
+  };
+
+  // TODO(needs-backend): group by categoryId with human-readable category names
+  // once the backend exposes a QueryDefinitionCategory type/query.
+  const presetOptions: PresetOption[] = _.orderBy(
+    presetNodes,
+    ['rank'],
+    ['asc'],
+  ).map((preset) => ({
+    label: preset.name,
+    value: preset.id,
+    description: preset.description,
+  }));
 
   const formRef = useRef<FormInstance<AutoScalingRuleFormValues>>(null);
 
@@ -635,10 +657,21 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
                   }
                 }}
                 placeholder={t('autoScalingRule.SelectPrometheusPreset')}
-                options={_.map(presetNodes, (preset) => ({
-                  label: preset.name,
-                  value: preset.id,
-                }))}
+                options={presetOptions}
+                optionRender={(option) => (
+                  <BAIFlex direction="column" align="start">
+                    {option.label}
+                    {option.data.description && (
+                      <Typography.Text
+                        type="secondary"
+                        style={{ fontSize: token.fontSizeSM }}
+                        ellipsis
+                      >
+                        {option.data.description}
+                      </Typography.Text>
+                    )}
+                  </BAIFlex>
+                )}
                 allowClear
                 onClear={() => setSelectedPresetId(undefined)}
               />
