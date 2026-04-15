@@ -747,7 +747,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               'ModelDeployment',
               endpoint?.endpoint_id || '',
             )}
-            isEndpointDestroying={isEndpointInDestroyingCategory(endpoint)}
+            isEndpointDestroying={!!isEndpointInDestroyingCategory(endpoint)}
             isOwnedByCurrentUser={
               !endpoint?.created_user_email ||
               endpoint?.created_user_email === currentUser.email
@@ -757,7 +757,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
           <AutoScalingRuleListLegacy
             endpoint_id={endpoint?.endpoint_id as string}
             autoScalingRules={autoScalingRules}
-            isEndpointDestroying={isEndpointInDestroyingCategory(endpoint)}
+            isEndpointDestroying={!!isEndpointInDestroyingCategory(endpoint)}
             isOwnedByCurrentUser={
               !endpoint?.created_user_email ||
               endpoint?.created_user_email === currentUser.email

@@ -5,27 +5,33 @@
 import { AutoScalingRuleListDeleteMutation } from '../__generated__/AutoScalingRuleListDeleteMutation.graphql';
 import { AutoScalingRuleListPresetsQuery } from '../__generated__/AutoScalingRuleListPresetsQuery.graphql';
 import { AutoScalingRuleListQuery } from '../__generated__/AutoScalingRuleListQuery.graphql';
-import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
+import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
+import { useBAISettingUserState } from '../hooks/useBAISetting';
 import AutoScalingRuleEditorModal from './AutoScalingRuleEditorModal';
 import {
   DeleteOutlined,
   PlusOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
-import { App, Button, Card, Tag, Tooltip, Typography } from 'antd';
+import { App, Button, Card, Tag, Tooltip, Typography, theme } from 'antd';
 import {
   BAIFlex,
+  BAIGraphQLPropertyFilter,
   BAINameActionCell,
   BAITable,
   toLocalId,
   useFetchKey,
 } from 'backend.ai-ui';
+import type { GraphQLFilter } from 'backend.ai-ui';
 import { default as dayjs } from 'dayjs';
 import * as _ from 'lodash-es';
 import { CircleArrowDownIcon, CircleArrowUpIcon } from 'lucide-react';
-import React, { useState, useTransition } from 'react';
+import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
+import React, { useDeferredValue, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
+
+type DateTimeFilter = { before?: string | null; after?: string | null };
 
 interface AutoScalingRuleListProps {
   deploymentId: string; // Relay global ID (e.g., toGlobalId('ModelDeployment', uuid))
@@ -95,6 +101,31 @@ const renderCondition = (
   return '-';
 };
 
+type AutoScalingRuleFilterInput = {
+  createdAt?: DateTimeFilter | null;
+  lastTriggeredAt?: DateTimeFilter | null;
+  AND?: AutoScalingRuleFilterInput[];
+  OR?: AutoScalingRuleFilterInput[];
+  NOT?: AutoScalingRuleFilterInput[];
+};
+
+/** Maps BAIGraphQLPropertyFilter output → AutoScalingRuleFilter, preserving AND/OR/NOT. */
+const toAutoScalingRuleFilter = (
+  filter: GraphQLFilter,
+): AutoScalingRuleFilterInput => {
+  const result: AutoScalingRuleFilterInput = {};
+  if (filter.createdAt) result.createdAt = filter.createdAt as DateTimeFilter;
+  if (filter.lastTriggeredAt)
+    result.lastTriggeredAt = filter.lastTriggeredAt as DateTimeFilter;
+  if (Array.isArray(filter.AND))
+    result.AND = filter.AND.map(toAutoScalingRuleFilter);
+  if (Array.isArray(filter.OR))
+    result.OR = filter.OR.map(toAutoScalingRuleFilter);
+  if (Array.isArray(filter.NOT))
+    result.NOT = filter.NOT.map(toAutoScalingRuleFilter);
+  return result;
+};
+
 const AutoScalingRuleList: React.FC<AutoScalingRuleListProps> = ({
   deploymentId,
   isEndpointDestroying,
@@ -102,18 +133,47 @@ const AutoScalingRuleList: React.FC<AutoScalingRuleListProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
+  const { token } = theme.useToken();
   const { message, modal } = App.useApp();
-  const [_isPendingRefetch, startRefetchTransition] = useTransition();
+  const [isPendingRefetch, startRefetchTransition] = useTransition();
   const [fetchKey, updateFetchKey] = useFetchKey();
 
   const [editingRuleId, setEditingRuleId] = useState<string | null>(null);
   const [isOpenEditorModal, setIsOpenEditorModal] = useState(false);
 
+  const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
+    'table_column_overrides.AutoScalingRuleList',
+  );
+
+  // BAITable order string: "createdAt" (ASC) | "-createdAt" (DESC)
+  const [queryParams, setQueryParams] = useQueryStates(
+    {
+      order: parseAsStringLiteral([
+        'createdAt',
+        '-createdAt',
+      ] as const).withDefault('-createdAt'),
+      filter: parseAsJson<GraphQLFilter>((value) => value as GraphQLFilter),
+    },
+    { history: 'replace' },
+  );
+
+  const orderString = queryParams.order;
+  const graphQLFilter = queryParams.filter ?? undefined;
+
   const {
     baiPaginationOption,
     tablePaginationOption,
     setTablePaginationOption,
-  } = useBAIPaginationOptionState({ current: 1, pageSize: 10 });
+  } = useBAIPaginationOptionStateOnSearchParam({ current: 1, pageSize: 10 });
+
+  const filterInput = React.useMemo(() => {
+    if (!graphQLFilter) return null;
+    return toAutoScalingRuleFilter(graphQLFilter);
+  }, [graphQLFilter]);
+
+  const deferredOrderString = useDeferredValue(orderString);
+  const deferredFilterInput = useDeferredValue(filterInput);
+  const deferredBaiPaginationOption = useDeferredValue(baiPaginationOption);
 
   const data = useLazyLoadQuery<AutoScalingRuleListQuery>(
     graphql`
@@ -121,9 +181,16 @@ const AutoScalingRuleList: React.FC<AutoScalingRuleListProps> = ({
         $deploymentId: ID!
         $offset: Int
         $limit: Int
+        $orderBy: [AutoScalingRuleOrderBy!]
+        $filter: AutoScalingRuleFilter
       ) {
         deployment(id: $deploymentId) {
-          autoScalingRules(offset: $offset, limit: $limit) {
+          autoScalingRules(
+            offset: $offset
+            limit: $limit
+            orderBy: $orderBy
+            filter: $filter
+          ) {
             count
             edges {
               node {
@@ -148,8 +215,15 @@ const AutoScalingRuleList: React.FC<AutoScalingRuleListProps> = ({
     `,
     {
       deploymentId,
-      offset: baiPaginationOption.offset,
-      limit: baiPaginationOption.limit,
+      offset: deferredBaiPaginationOption.offset,
+      limit: deferredBaiPaginationOption.limit,
+      orderBy: [
+        {
+          field: 'CREATED_AT',
+          direction: deferredOrderString.startsWith('-') ? 'DESC' : 'ASC',
+        },
+      ],
+      filter: deferredFilterInput,
     },
     {
       fetchPolicy: 'store-and-network',
@@ -228,16 +302,62 @@ const AutoScalingRuleList: React.FC<AutoScalingRuleListProps> = ({
           </Button>
         }
       >
+        <BAIGraphQLPropertyFilter
+          style={{ marginBottom: token.marginMD }}
+          filterProperties={[
+            {
+              key: 'createdAt',
+              propertyLabel: t('autoScalingRule.CreatedAt'),
+              type: 'datetime',
+              operators: ['after', 'before'],
+              defaultOperator: 'after',
+            },
+            {
+              key: 'lastTriggeredAt',
+              propertyLabel: t('autoScalingRule.LastTriggered'),
+              type: 'datetime',
+              operators: ['after', 'before'],
+              defaultOperator: 'after',
+            },
+          ]}
+          value={graphQLFilter}
+          onChange={(filter) => {
+            startRefetchTransition(() => {
+              setQueryParams({ filter: filter ?? null });
+              setTablePaginationOption({ current: 1 });
+            });
+          }}
+        />
         <BAITable<AutoScalingRuleNode>
           scroll={{ x: 'max-content' }}
           rowKey={'id'}
+          order={orderString}
+          loading={
+            isPendingRefetch ||
+            deferredOrderString !== orderString ||
+            deferredFilterInput !== filterInput ||
+            deferredBaiPaginationOption !== baiPaginationOption
+          }
+          tableSettings={{
+            columnOverrides: columnOverrides,
+            onColumnOverridesChange: setColumnOverrides,
+          }}
+          onChangeOrder={(order) => {
+            startRefetchTransition(() => {
+              setQueryParams({
+                order: order ? (order as 'createdAt' | '-createdAt') : null,
+              });
+            });
+          }}
           columns={[
             {
+              key: 'metricSource',
               title: t('autoScalingRule.MetricSource'),
               dataIndex: 'metricSource',
               fixed: 'left',
             },
             {
+              key: 'condition',
               title: t('autoScalingRule.Condition'),
               fixed: 'left',
               render: (_text, row) => {
@@ -309,6 +429,7 @@ const AutoScalingRuleList: React.FC<AutoScalingRuleListProps> = ({
               },
             },
             {
+              key: 'prometheusPreset',
               title: t('autoScalingRule.PrometheusPreset'),
               render: (_text, row) => {
                 if (
@@ -324,6 +445,7 @@ const AutoScalingRuleList: React.FC<AutoScalingRuleListProps> = ({
               },
             },
             {
+              key: 'timeWindow',
               title: t('autoScalingRule.TimeWindow'),
               dataIndex: 'timeWindow',
               render: (value: number) =>
@@ -332,6 +454,7 @@ const AutoScalingRuleList: React.FC<AutoScalingRuleListProps> = ({
                   : '-',
             },
             {
+              key: 'stepSize',
               title: t('autoScalingRule.StepSize'),
               dataIndex: 'stepSize',
               render: (_text, row) => {
@@ -356,6 +479,7 @@ const AutoScalingRuleList: React.FC<AutoScalingRuleListProps> = ({
               },
             },
             {
+              key: 'minMaxReplicas',
               title: t('autoScalingRule.MIN/MAXReplicas'),
               render: (_text, row) => (
                 <span>
@@ -372,8 +496,11 @@ const AutoScalingRuleList: React.FC<AutoScalingRuleListProps> = ({
               ),
             },
             {
+              key: 'createdAt',
               title: t('autoScalingRule.CreatedAt'),
               dataIndex: 'createdAt',
+              sorter: true,
+              sortDirections: ['descend', 'ascend'],
               render: (_text, row) => (
                 <span>
                   {row?.createdAt ? dayjs(row.createdAt).format('ll LT') : '-'}
@@ -381,6 +508,7 @@ const AutoScalingRuleList: React.FC<AutoScalingRuleListProps> = ({
               ),
             },
             {
+              key: 'lastTriggeredAt',
               title: t('autoScalingRule.LastTriggered'),
               render: (_text, row) => (
                 <span>
