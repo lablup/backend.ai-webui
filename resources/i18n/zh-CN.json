@@ -1492,6 +1492,7 @@
     "ModelAndServingConfiguration": "模型与服务配置",
     "ModelDefinition": "模型定义",
     "ModelDefinitionPath": "模型定义文件路径",
+    "ModelDefinitionPathTooltip": "模型文件夹内模型定义 YAML 文件的相对路径（例如 model-definition.yaml）。如果留空，则默认使用 model-definition.yaml。",
     "ModelDefinitionRequired": "需要模型定义。yaml文件。",
     "ModelMount": "模型挂载",
     "ModelMountDestination": "模型文件夹的安装目标",

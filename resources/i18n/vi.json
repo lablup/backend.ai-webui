@@ -1492,6 +1492,7 @@
     "ModelAndServingConfiguration": "Cấu hình mô hình & phục vụ",
     "ModelDefinition": "Định nghĩa mô hình",
     "ModelDefinitionPath": "Đường dẫn tệp định nghĩa mô hình",
+    "ModelDefinitionPathTooltip": "Đường dẫn tương đối đến file YAML định nghĩa mô hình bên trong thư mục mô hình (ví dụ: model-definition.yaml). Mặc định là model-definition.yaml nếu để trống.",
     "ModelDefinitionRequired": "Cần định nghĩa mô hình.YAML.",
     "ModelMount": "Gắn kết mô hình",
     "ModelMountDestination": "Mount đích cho thư mục mẫu",

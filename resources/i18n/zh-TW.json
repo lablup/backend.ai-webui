@@ -1494,6 +1494,7 @@
     "ModelAndServingConfiguration": "模型與服務配置",
     "ModelDefinition": "模型定義",
     "ModelDefinitionPath": "模型定義檔路徑",
+    "ModelDefinitionPathTooltip": "模型資料夾內模型定義 YAML 檔的相對路徑（例如 model-definition.yaml）。若留空，預設使用 model-definition.yaml。",
     "ModelDefinitionRequired": "需要model-definition.yaml文件。",
     "ModelMount": "模型掛載",
     "ModelMountDestination": "模型資料夾的安裝目標",

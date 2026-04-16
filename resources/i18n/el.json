@@ -1490,6 +1490,7 @@
     "ModelAndServingConfiguration": "Διαμόρφωση μοντέλου & σερβιρίσματος",
     "ModelDefinition": "Ορισμός μοντέλου",
     "ModelDefinitionPath": "Διαδρομή αρχείου ορισμού μοντέλου",
+    "ModelDefinitionPathTooltip": "Σχετική διαδρομή προς το αρχείο YAML ορισμού μοντέλου μέσα στον φάκελο μοντέλου (π.χ. model-definition.yaml). Αν αφεθεί κενό, ορίζεται ως προεπιλογή το model-definition.yaml.",
     "ModelDefinitionRequired": "Απαιτείται αρχείο μοντέλου-definition.yaml.",
     "ModelMount": "Προσάρτηση μοντέλου",
     "ModelMountDestination": "Προσάρτηση προορισμού για φάκελο μοντέλου",

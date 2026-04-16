@@ -15,6 +15,7 @@ import {
 } from '../helper';
 import { generateModelDefinitionYaml } from '../helper/generateModelDefinitionYaml';
 import { parseCliCommand } from '../helper/parseCliCommand';
+import { parseModelDefinitionYaml } from '../helper/parseModelDefinitionYaml';
 import {
   mergeExtraArgs,
   reverseMapExtraArgs,
@@ -61,7 +62,6 @@ import SwitchToProjectButton from './SwitchToProjectButton';
 import VFolderLazyView from './VFolderLazyView';
 import VFolderSelect from './VFolderSelect';
 import VFolderTableFormItem from './VFolderTableFormItem';
-import { MinusOutlined } from '@ant-design/icons';
 import { useDebounceFn } from 'ahooks';
 import {
   App,
@@ -954,8 +954,75 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
   const handleOk = () => {
     form
       .validateFields()
-      .then((values) => {
+      .then(async (values) => {
         if (endpoint) {
+          // In edit mode with custom runtime command mode, upload
+          // the generated model-definition.yaml before modifying.
+          const isCommandMode =
+            values.runtimeVariant === 'custom' &&
+            values.customDefinitionMode === 'command' &&
+            values.startCommand?.trim();
+
+          // Preserve existing definition path in edit mode, default for new
+          const definitionFilePath =
+            endpoint?.model_definition_path || 'model-definition.yaml';
+
+          if (isCommandMode) {
+            // In edit mode, use the endpoint's model_mount_destination
+            const modelMountDestination = endpoint
+              ? (endpoint.model_mount_destination ??
+                values.commandModelMount ??
+                '/models')
+              : (values.commandModelMount ?? '/models');
+
+            try {
+              const yamlContent = generateModelDefinitionYaml({
+                startCommand: values.startCommand!.trim(),
+                port: values.commandPort ?? 8000,
+                healthCheckPath: values.commandHealthCheck ?? '/health',
+                modelMountDestination,
+                initialDelay: values.commandInitialDelay ?? 60,
+                maxRetries: values.commandMaxRetries ?? 10,
+              });
+
+              const blob = new Blob([yamlContent], { type: 'text/yaml' });
+              const file = new File([blob], definitionFilePath, {
+                type: 'text/yaml',
+              });
+
+              const uploadUrl: string =
+                await baiClient.vfolder.create_upload_session(
+                  definitionFilePath,
+                  file,
+                  values.vFolderID,
+                );
+
+              const response = await fetch(uploadUrl, {
+                method: 'PATCH',
+                headers: {
+                  'Upload-Offset': '0',
+                  'Content-Type': 'application/offset+octet-stream',
+                  'Tus-Resumable': '1.0.0',
+                },
+                body: blob,
+              });
+
+              if (!response.ok) {
+                message.error(t('modelService.YamlUploadFailed'));
+                return;
+              }
+            } catch (e) {
+              logger.error('Failed to upload model-definition.yaml:', e);
+              message.error(t('modelService.YamlUploadFailed'));
+              return;
+            }
+          }
+
+          // In command mode, use the preserved definition path
+          const modelDefinitionPath = isCommandMode
+            ? definitionFilePath
+            : values.modelDefinitionPath?.trim() || undefined;
+
           const mutationVariables: ServiceLauncherPageContentModifyMutation['variables'] =
             {
               endpoint_id: endpoint?.endpoint_id || '',
@@ -1010,9 +1077,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                 }),
                 name: values.serviceName,
                 resource_group: values.resourceGroup,
-                // If empty, let the server infer the value instead of hardcoding
-                model_definition_path:
-                  values.modelDefinitionPath?.trim() || undefined,
+                model_definition_path: modelDefinitionPath,
                 runtime_variant: values.runtimeVariant,
               },
             };
@@ -1199,6 +1264,15 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
         modelMountDestination: endpoint?.model_mount_destination,
         modelDefinitionPath: endpoint?.model_definition_path,
         runtimeVariant: endpoint?.runtime_variant?.name,
+        // For custom runtime edit mode, default to 'command' mode with full definition fields
+        ...(endpoint?.runtime_variant?.name === 'custom' && {
+          customDefinitionMode: 'command' as CustomDefinitionMode,
+          commandModelMount: endpoint?.model_mount_destination || '/models',
+          commandPort: 8000,
+          commandHealthCheck: '/health',
+          commandInitialDelay: 60,
+          commandMaxRetries: 10,
+        }),
         // Pass environ as-is; managed keys are stripped at submit time
         // by serializeRuntimeParamsToEnviron after presets load from API.
         envvars: (() => {
@@ -1263,6 +1337,53 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
       }
     }
   }, [endpoint?.extra_mounts, form]);
+
+  // Load model-definition.yaml from the vfolder in edit mode for custom runtime
+  // to pre-populate the command form fields.
+  const loadModelDefinitionForEdit = useEffectEvent(
+    async (vfolderId: string) => {
+      try {
+        const definitionPath =
+          endpoint?.model_definition_path || 'model-definition.yaml';
+        const tokenResponse = await baiClient.vfolder.request_download_token(
+          definitionPath,
+          vfolderId,
+          false,
+        );
+        const downloadUrl = `${tokenResponse.url}?token=${tokenResponse.token}&archive=false`;
+        const response = await fetch(downloadUrl);
+        if (!response.ok) return;
+        const yamlText = await response.text();
+        const parsed = parseModelDefinitionYaml(yamlText);
+        if (parsed) {
+          form.setFieldsValue({
+            startCommand: parsed.startCommand,
+            commandPort: parsed.port,
+            commandHealthCheck: parsed.healthCheckPath,
+            commandModelMount: parsed.modelMountDestination,
+            commandInitialDelay: parsed.initialDelay,
+            commandMaxRetries: parsed.maxRetries,
+            customDefinitionMode: 'command' as CustomDefinitionMode,
+          });
+        }
+      } catch {
+        // If download fails, keep the default values — user can fill manually
+        logger.debug(
+          'Failed to load model-definition.yaml for edit mode pre-population',
+        );
+      }
+    },
+  );
+
+  const endpointId = endpoint?.endpoint_id;
+  const endpointRuntimeVariant = endpoint?.runtime_variant?.name;
+  const endpointModel = endpoint?.model;
+
+  useEffect(() => {
+    if (endpointRuntimeVariant === 'custom' && endpointModel) {
+      loadModelDefinitionForEdit(endpointModel);
+    }
+  }, [endpointId, endpointRuntimeVariant, endpointModel]);
 
   return (
     <>
@@ -1466,54 +1587,8 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                         </Form.Item>
                         <Form.Item dependencies={['runtimeVariant']} noStyle>
                           {({ getFieldValue }) =>
-                            getFieldValue('runtimeVariant') === 'custom' &&
-                            (endpoint ? (
-                              // Edit mode: keep existing UI (no Segmented)
-                              <BAIFlex
-                                direction="row"
-                                gap={'xxs'}
-                                align="stretch"
-                                justify="between"
-                              >
-                                <Form.Item
-                                  name={'modelMountDestination'}
-                                  label={t(
-                                    'modelService.ModelMountDestination',
-                                  )}
-                                  style={{ width: '50%' }}
-                                  labelCol={{ style: { flex: 1 } }}
-                                >
-                                  <Input
-                                    allowClear
-                                    placeholder={'/models'}
-                                    disabled={!!endpoint}
-                                  />
-                                </Form.Item>
-                                <MinusOutlined
-                                  style={{
-                                    fontSize: token.fontSizeXL,
-                                    color: token.colorTextDisabled,
-                                  }}
-                                  rotate={290}
-                                />
-                                <Form.Item
-                                  name={'modelDefinitionPath'}
-                                  label={t('modelService.ModelDefinitionPath')}
-                                  style={{ width: '50%' }}
-                                  labelCol={{ style: { flex: 1 } }}
-                                >
-                                  <Input
-                                    allowClear
-                                    placeholder={
-                                      endpoint?.model_definition_path
-                                        ? endpoint?.model_definition_path
-                                        : 'model-definition.yaml'
-                                    }
-                                  />
-                                </Form.Item>
-                              </BAIFlex>
-                            ) : (
-                              // Create mode: Segmented "Enter Command" / "Use Config File"
+                            getFieldValue('runtimeVariant') === 'custom' && (
+                              // Both create and edit modes: Segmented "Enter Command" / "Use Config File"
                               <Card
                                 size="small"
                                 title={t('modelService.ModelDefinition')}
@@ -1666,13 +1741,15 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                                       <>
                                         <Form.Item
                                           name={'modelMountDestination'}
-                                          label={t(
-                                            'modelService.ModelMountDestination',
+                                          label={t('modelService.ModelMount')}
+                                          tooltip={t(
+                                            'modelService.ModelMountTooltip',
                                           )}
                                         >
                                           <Input
                                             allowClear
                                             placeholder={'/models'}
+                                            disabled={!!endpoint}
                                           />
                                         </Form.Item>
                                         <Form.Item
@@ -1680,11 +1757,16 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                                           label={t(
                                             'modelService.ModelDefinitionPath',
                                           )}
+                                          tooltip={t(
+                                            'modelService.ModelDefinitionPathTooltip',
+                                          )}
                                         >
                                           <Input
                                             allowClear
                                             placeholder={
-                                              'model-definition.yaml'
+                                              endpoint?.model_definition_path
+                                                ? endpoint?.model_definition_path
+                                                : 'model-definition.yaml'
                                             }
                                           />
                                         </Form.Item>
@@ -1693,7 +1775,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                                   }
                                 </Form.Item>
                               </Card>
-                            ))
+                            )
                           }
                         </Form.Item>
                       </>

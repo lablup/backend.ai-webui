@@ -1491,6 +1491,7 @@
     "ModelAndServingConfiguration": "Загвар & Serving тохиргоо",
     "ModelDefinition": "Загварын тодорхойлолт",
     "ModelDefinitionPath": "Загварын тодорхойлолтын файлын зам",
+    "ModelDefinitionPathTooltip": "Загварын хавтас доторх загварын тодорхойлолтын YAML файлын харьцангуй зам (жж. model-definition.yaml). Хоосон үлдвэл анхдагчаар model-definition.yaml ашиглагдана.",
     "ModelDefinitionRequired": "Загвар-тодорхойлолт ..yaml файл шаардлагатай байна.",
     "ModelMount": "Загварын холболт",
     "ModelMountDestination": "Загварын хавтасыг холбох газар",

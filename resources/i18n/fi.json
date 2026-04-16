@@ -1490,6 +1490,7 @@
     "ModelAndServingConfiguration": "Malli- ja palvelukonfiguraatio",
     "ModelDefinition": "Mallin määritelmä",
     "ModelDefinitionPath": "Mallin määritelmän tiedostopolku",
+    "ModelDefinitionPathTooltip": "Suhteellinen polku mallin määritelmän YAML-tiedostoon mallikansiossa (esim. model-definition.yaml). Oletusarvona käytetään model-definition.yaml, jos kenttä jätetään tyhjäksi.",
     "ModelDefinitionRequired": "Malli-definition.yaml-tiedosto tarvitaan.",
     "ModelMount": "Mallin liittäminen",
     "ModelMountDestination": "Kiinnityskohde mallikansioon",

@@ -1492,6 +1492,7 @@
     "ModelAndServingConfiguration": "モデル & サービング設定",
     "ModelDefinition": "モデル定義",
     "ModelDefinitionPath": "モデル定義ファイルのパス",
+    "ModelDefinitionPathTooltip": "モデルフォルダ内にあるモデル定義 YAML ファイルへの相対パスです（例: model-definition.yaml）。空欄のままにするとデフォルトで model-definition.yaml が使用されます。",
     "ModelDefinitionRequired": "model-definition.yamlファイルが必要です。",
     "ModelMount": "モデルマウント",
     "ModelMountDestination": "モデルフォルダーのマウント先",
