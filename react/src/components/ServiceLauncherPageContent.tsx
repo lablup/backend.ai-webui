@@ -5,6 +5,7 @@
 import { ServiceLauncherPageContentFragment$key } from '../__generated__/ServiceLauncherPageContentFragment.graphql';
 import { ServiceLauncherPageContentModifyMutation } from '../__generated__/ServiceLauncherPageContentModifyMutation.graphql';
 import { ServiceLauncherPageContent_AutoScalingRulesQuery } from '../__generated__/ServiceLauncherPageContent_AutoScalingRulesQuery.graphql';
+import { ServiceLauncherPageContent_ModelDefinitionQuery } from '../__generated__/ServiceLauncherPageContent_ModelDefinitionQuery.graphql';
 import { ServiceLauncherPageContent_UserInfoQuery } from '../__generated__/ServiceLauncherPageContent_UserInfoQuery.graphql';
 import { ServiceLauncherPageContent_UserResourcePolicyQuery } from '../__generated__/ServiceLauncherPageContent_UserResourcePolicyQuery.graphql';
 import {
@@ -89,6 +90,7 @@ import {
   useBAILogger,
   BAIResourceNumberWithIcon,
   BAIButton,
+  toGlobalId,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, {
@@ -101,10 +103,12 @@ import React, {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
+  fetchQuery,
   graphql,
   useFragment,
   useLazyLoadQuery,
   useMutation,
+  useRelayEnvironment,
 } from 'react-relay';
 import {
   BooleanParam,
@@ -192,18 +196,35 @@ export type ServiceLauncherFormValue = ServiceLauncherInput &
   ImageEnvironmentFormInput &
   ResourceAllocationFormValue;
 
+interface InitialModelDef {
+  readonly models: ReadonlyArray<{
+    readonly service?: {
+      readonly startCommand: unknown;
+      readonly port?: number | null;
+      readonly healthCheck?: {
+        readonly path?: string | null;
+        readonly initialDelay?: number | null;
+        readonly maxRetries?: number | null;
+      } | null;
+    } | null;
+  } | null> | null;
+}
+
 interface ServiceLauncherPageContentProps {
   endpointFrgmt?: ServiceLauncherPageContentFragment$key | null;
+  initialModelDef?: InitialModelDef | null;
 }
 
 const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
   endpointFrgmt = null,
+  initialModelDef,
 }) => {
   'use memo';
   const { logger } = useBAILogger();
   const { token } = theme.useToken();
   const { message, modal } = App.useApp();
   const { t } = useTranslation();
+  const relayEnv = useRelayEnvironment();
 
   // Setup query parameters for URL synchronization
   const FormValuesParam = withDefault(JsonParam, {});
@@ -964,6 +985,21 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
             endpoint?.model_definition_path || 'model-definition.yaml';
 
           if (isCommandMode) {
+            // Show overwrite confirmation before uploading model-definition.yaml
+            const confirmed = await new Promise<boolean>((resolve) => {
+              modal.confirm({
+                title: t('modelService.OverwriteYamlTitle'),
+                content: t('modelService.OverwriteYamlContent'),
+                okText: t('button.Overwrite'),
+                cancelText: t('button.Cancel'),
+                onOk: () => resolve(true),
+                onCancel: () => resolve(false),
+              });
+            });
+            if (!confirmed) {
+              return;
+            }
+
             // In edit mode, use the endpoint's model_mount_destination
             const modelMountDestination = endpoint
               ? (endpoint.model_mount_destination ??
@@ -1260,15 +1296,36 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
         modelMountDestination: endpoint?.model_mount_destination,
         modelDefinitionPath: endpoint?.model_definition_path,
         runtimeVariant: endpoint?.runtime_variant?.name,
-        // For custom runtime edit mode, default to 'command' mode with full definition fields
-        ...(endpoint?.runtime_variant?.name === 'custom' && {
-          customDefinitionMode: 'command' as CustomDefinitionMode,
-          commandModelMount: endpoint?.model_mount_destination || '/models',
-          commandPort: 8000,
-          commandHealthCheck: '/health',
-          commandInitialDelay: 60,
-          commandMaxRetries: 10,
-        }),
+        // For custom runtime edit mode, pre-populate from latest revision if available,
+        // otherwise fall back to static defaults.
+        ...(endpoint?.runtime_variant?.name === 'custom' &&
+          (() => {
+            const svc = initialModelDef?.models?.[0]?.service;
+            const rawCommand = svc?.startCommand;
+            const startCommand = Array.isArray(rawCommand)
+              ? rawCommand.join(' ')
+              : rawCommand != null
+                ? String(rawCommand)
+                : undefined;
+            return {
+              customDefinitionMode: 'command' as CustomDefinitionMode,
+              commandModelMount: endpoint?.model_mount_destination || '/models',
+              ...(svc
+                ? {
+                    startCommand,
+                    commandPort: svc.port ?? 8000,
+                    commandHealthCheck: svc.healthCheck?.path ?? '/health',
+                    commandInitialDelay: svc.healthCheck?.initialDelay ?? 60,
+                    commandMaxRetries: svc.healthCheck?.maxRetries ?? 10,
+                  }
+                : {
+                    commandPort: 8000,
+                    commandHealthCheck: '/health',
+                    commandInitialDelay: 60,
+                    commandMaxRetries: 10,
+                  }),
+            };
+          })()),
         // Pass environ as-is; managed keys are stripped at submit time
         // by serializeRuntimeParamsToEnviron after presets load from API.
         envvars: (() => {
@@ -1334,10 +1391,85 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
     }
   }, [endpoint?.extra_mounts, form]);
 
-  // Load model-definition.yaml from the vfolder in edit mode for custom runtime
-  // to pre-populate the command form fields.
+  // Load model definition for edit mode via GraphQL (currentRevision.modelDefinition),
+  // falling back to vfolder YAML parsing when GraphQL data is unavailable.
   const loadModelDefinitionForEdit = useEffectEvent(
-    async (vfolderId: string) => {
+    async (endpointId: string, vfolderId: string) => {
+      const modelDefinitionQuery = graphql`
+        query ServiceLauncherPageContent_ModelDefinitionQuery(
+          $deploymentId: ID!
+        ) {
+          deployment(id: $deploymentId) {
+            revisionHistory(
+              limit: 1
+              orderBy: [{ field: CREATED_AT, direction: DESC }]
+            ) {
+              edges {
+                node {
+                  name
+                  modelDefinition {
+                    models {
+                      service {
+                        startCommand
+                        port
+                        healthCheck {
+                          path
+                          initialDelay
+                          maxRetries
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      `;
+
+      // Attempt GraphQL-based load first
+      try {
+        const deploymentId = toGlobalId('ModelDeployment', endpointId);
+        const data =
+          await fetchQuery<ServiceLauncherPageContent_ModelDefinitionQuery>(
+            relayEnv,
+            modelDefinitionQuery,
+            { deploymentId },
+          ).toPromise();
+
+        const modelDef =
+          data?.deployment?.revisionHistory?.edges?.[0]?.node?.modelDefinition;
+        if (modelDef?.models && modelDef.models.length > 0) {
+          const firstModel = modelDef.models[0];
+          const svc = firstModel?.service;
+          if (svc) {
+            const rawCommand = svc.startCommand;
+            const startCommand = Array.isArray(rawCommand)
+              ? rawCommand.join(' ')
+              : rawCommand != null
+                ? String(rawCommand)
+                : undefined;
+            form.setFieldsValue({
+              startCommand,
+              commandPort: svc.port,
+              commandHealthCheck: svc.healthCheck?.path,
+              // commandModelMount is intentionally omitted here — it comes from
+              // endpoint.model_mount_destination in INITIAL_FORM_VALUES, not from modelDefinition.service
+              commandInitialDelay: svc.healthCheck?.initialDelay,
+              commandMaxRetries: svc.healthCheck?.maxRetries,
+              customDefinitionMode: 'command' as CustomDefinitionMode,
+            });
+            return;
+          }
+        }
+      } catch (e) {
+        logger.debug(
+          'GraphQL modelDefinition load failed; falling back to vfolder YAML parsing',
+          e,
+        );
+      }
+
+      // Fallback: download model-definition.yaml from vfolder and parse YAML
       try {
         const definitionPath =
           endpoint?.model_definition_path || 'model-definition.yaml';
@@ -1362,10 +1494,11 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
             customDefinitionMode: 'command' as CustomDefinitionMode,
           });
         }
-      } catch {
-        // If download fails, keep the default values — user can fill manually
+      } catch (e) {
+        // If fallback also fails, keep the default values — user can fill manually
         logger.debug(
           'Failed to load model-definition.yaml for edit mode pre-population',
+          e,
         );
       }
     },
@@ -1375,9 +1508,18 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
   const endpointRuntimeVariant = endpoint?.runtime_variant?.name;
   const endpointModel = endpoint?.model;
 
+  const maybeLoadModelDefinition = useEffectEvent(
+    (id: string, model: string) => {
+      // Skip async load when initialModelDef was already provided synchronously via props
+      if (initialModelDef === undefined) {
+        loadModelDefinitionForEdit(id, model);
+      }
+    },
+  );
+
   useEffect(() => {
-    if (endpointRuntimeVariant === 'custom' && endpointModel) {
-      loadModelDefinitionForEdit(endpointModel);
+    if (endpointRuntimeVariant === 'custom' && endpointId && endpointModel) {
+      maybeLoadModelDefinition(endpointId, endpointModel);
     }
   }, [endpointId, endpointRuntimeVariant, endpointModel]);
 

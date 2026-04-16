@@ -63,10 +63,6 @@ const routeHealthStatusSemanticMap: Record<string, SemanticColor> = {
   NOT_CHECKED: 'default',
 };
 
-const trafficStatusSemanticMap: Record<string, SemanticColor> = {
-  ACTIVE: 'success',
-};
-
 export interface BAIRouteNodesProps extends Omit<
   BAITableProps<RouteNodeInList>,
   'dataSource' | 'onChangeOrder' | 'columns'
@@ -198,24 +194,25 @@ const BAIRouteNodes = ({
               ) : null,
           }
         : undefined,
-      {
-        title: t('comp:BAIRouteNodes.TrafficStatus'),
-        dataIndex: 'trafficStatus',
-        key: 'trafficStatus',
-        render: (trafficStatus) =>
-          trafficStatus && trafficStatus !== '%future added value' ? (
-            <BAITag
-              color={
-                semanticColorMap[
-                  trafficStatusSemanticMap[trafficStatus] ?? 'default'
-                ]
-              }
-              style={{ marginRight: 0 }}
-            >
-              {trafficStatus}
-            </BAITag>
-          ) : null,
-      },
+      // TODO(needs-backend): Unhide when backend interaction for traffic status is supported (FR-2591)
+      // {
+      //   title: t('comp:BAIRouteNodes.TrafficStatus'),
+      //   dataIndex: 'trafficStatus',
+      //   key: 'trafficStatus',
+      //   render: (trafficStatus) =>
+      //     trafficStatus && trafficStatus !== '%future added value' ? (
+      //       <BAITag
+      //         color={
+      //           semanticColorMap[
+      //             trafficStatusSemanticMap[trafficStatus] ?? 'default'
+      //           ]
+      //         }
+      //         style={{ marginRight: 0 }}
+      //       >
+      //         {trafficStatus}
+      //       </BAITag>
+      //     ) : null,
+      // },
       // TODO(needs-backend): Uncomment when the backend supports traffic ratio for routes
       // {
       //   title: t('comp:BAIRouteNodes.TrafficRatio'),
