@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-04-13
+> **Last Updated:** 2026-04-16
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -12,11 +12,11 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 254 / 410 features covered (62%)**
+**Overall (in-scope routes): 256 / 410 features covered (62%)**
 
 | Page | Route | Features | Covered | Status |
 |------|-------|:--------:|:-------:|:------:|
-| Authentication | `/interactive-login` | 23 | 21 | 🔶 91% |
+| Authentication | `/interactive-login` | 23 | 23 | ✅ 100% |
 | Change Password | `/change-password` | 9 | 9 | ✅ 100% |
 | Start Page | `/start` | 8 | 6 | 🔶 75% |
 | Dashboard | `/dashboard` | 9 | 7 | 🔶 78% |
@@ -65,7 +65,7 @@
 
 ### 1. Authentication (`/interactive-login`)
 
-**Test files:** [`e2e/auth/login.spec.ts`](auth/login.spec.ts), [`e2e/auth/password-expiry.spec.ts`](auth/password-expiry.spec.ts), [`e2e/auth/forgot-password.spec.ts`](auth/forgot-password.spec.ts)
+**Test files:** [`e2e/auth/login.spec.ts`](auth/login.spec.ts), [`e2e/auth/password-expiry.spec.ts`](auth/password-expiry.spec.ts), [`e2e/auth/forgot-password.spec.ts`](auth/forgot-password.spec.ts), [`e2e/auth/sso-stoken-login.spec.ts`](auth/sso-stoken-login.spec.ts)
 
 | Feature | Status | Test |
 |---------|--------|------|
@@ -88,10 +88,10 @@
 | Forgot password form validation (empty) | ✅ | `User cannot submit without email` |
 | Forgot password form validation (invalid email) | ✅ | `User cannot submit with invalid email format` |
 | Forgot password link config-driven visibility | ✅ | `"Forgot password?" link is hidden when config is disabled` |
-| OAuth/SSO login flow | ❌ | - |
-| Session persistence | ❌ | - |
+| OAuth/SSO login flow | ✅ | `auto-logs in and strips sToken from URL when navigating to /?sToken=<token>` |
+| Session persistence | ✅ | `persists session after page refresh` |
 
-**Coverage: 🔶 21/23 features**
+**Coverage: ✅ 23/23 features**
 
 ---
 
@@ -1055,7 +1055,7 @@ To efficiently build new E2E tests, these POMs should be created:
 
 | Page Route | Functional Tests | Visual Tests | Priority |
 |------------|:---:|:---:|:---:|
-| `/interactive-login` | 🔶 | ✅ | - |
+| `/interactive-login` | ✅ | ✅ | - |
 | `/change-password` | ✅ | ❌ | - |
 | `/start` | 🔶 | ✅ | - |
 | `/dashboard` | 🔶 | ✅ | - |
