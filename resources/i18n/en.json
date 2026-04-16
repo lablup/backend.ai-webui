@@ -1491,6 +1491,7 @@
     "ModelAndServingConfiguration": "Model & Serving Configuration",
     "ModelDefinition": "Model Definition",
     "ModelDefinitionPath": "Model Definition File Path",
+    "ModelDefinitionPathTooltip": "Relative path to the model definition YAML file inside the model folder (e.g. model-definition.yaml). Defaults to model-definition.yaml if left empty.",
     "ModelDefinitionRequired": "model-definition.yaml is required to start a model service. Please add it to the model folder.",
     "ModelMount": "Model Mount",
     "ModelMountDestination": "Mount Destination For Model Folder",

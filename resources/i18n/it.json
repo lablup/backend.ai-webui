@@ -1490,6 +1490,7 @@
     "ModelAndServingConfiguration": "Configurazione modello e serving",
     "ModelDefinition": "Definizione del modello",
     "ModelDefinitionPath": "Percorso del file di definizione del modello",
+    "ModelDefinitionPathTooltip": "Percorso relativo al file YAML di definizione del modello all'interno della cartella del modello (es. model-definition.yaml). Il valore predefinito è model-definition.yaml se lasciato vuoto.",
     "ModelDefinitionRequired": "È necessario il file Model-Definition.yaml.",
     "ModelMount": "Mount del modello",
     "ModelMountDestination": "Destinazione di montaggio per la cartella del modello",

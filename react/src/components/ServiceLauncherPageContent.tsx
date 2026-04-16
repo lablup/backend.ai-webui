@@ -1757,6 +1757,9 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                                           label={t(
                                             'modelService.ModelDefinitionPath',
                                           )}
+                                          tooltip={t(
+                                            'modelService.ModelDefinitionPathTooltip',
+                                          )}
                                         >
                                           <Input
                                             allowClear

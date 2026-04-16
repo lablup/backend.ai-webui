@@ -1490,6 +1490,7 @@
     "ModelAndServingConfiguration": "Model & Serving Yapılandırması",
     "ModelDefinition": "Model tanımı",
     "ModelDefinitionPath": "Model Tanımı Dosya Yolu",
+    "ModelDefinitionPathTooltip": "Model klasöründeki model tanımı YAML dosyasının göreli yolu (örn. model-definition.yaml). Boş bırakılırsa varsayılan olarak model-definition.yaml kullanılır.",
     "ModelDefinitionRequired": "Model-Definition.YAML dosyası gereklidir.",
     "ModelMount": "Model bağlama",
     "ModelMountDestination": "Model Klasörü İçin Montaj Hedefi",

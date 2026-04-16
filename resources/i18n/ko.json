@@ -1493,6 +1493,7 @@
     "ModelAndServingConfiguration": "모델 & 서빙 구성",
     "ModelDefinition": "모델 정의",
     "ModelDefinitionPath": "모델 정의 파일 경로",
+    "ModelDefinitionPathTooltip": "모델 폴더 내 모델 정의 YAML 파일의 상대 경로입니다 (예: model-definition.yaml). 비워두면 model-definition.yaml이 기본값으로 사용됩니다.",
     "ModelDefinitionRequired": "모델 서비스를 시작하려면 model-definition.yaml이 필요합니다. 모델 폴더에 추가해 주세요.",
     "ModelMount": "모델 마운트",
     "ModelMountDestination": "모델 폴더 마운트할 경로",

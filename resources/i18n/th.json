@@ -1492,6 +1492,7 @@
     "ModelAndServingConfiguration": "การตั้งค่าโมเดลและการบริการ",
     "ModelDefinition": "คำนิยามโมเดล",
     "ModelDefinitionPath": "เส้นทางไฟล์กำหนดโมเดล",
+    "ModelDefinitionPathTooltip": "เส้นทางสัมพัทธ์ไปยังไฟล์ YAML คำนิยามโมเดลภายในโฟลเดอร์โมเดล (เช่น model-definition.yaml) หากเว้นว่างจะใช้ model-definition.yaml เป็นค่าเริ่มต้น",
     "ModelDefinitionRequired": "จำเป็นต้องใช้ไฟล์ model-definition.yaml",
     "ModelMount": "การเมานต์โมเดล",
     "ModelMountDestination": "ปลายทางการเมาท์สำหรับโฟลเดอร์โมเดล",

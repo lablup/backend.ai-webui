@@ -1490,6 +1490,7 @@
     "ModelAndServingConfiguration": "Конфигурация модели и обслуживания",
     "ModelDefinition": "Определение модели",
     "ModelDefinitionPath": "Путь к файлу определения модели",
+    "ModelDefinitionPathTooltip": "Относительный путь к YAML-файлу определения модели внутри папки модели (например, model-definition.yaml). По умолчанию используется model-definition.yaml, если поле оставлено пустым.",
     "ModelDefinitionRequired": "Необходим файл модели.",
     "ModelMount": "Монтирование модели",
     "ModelMountDestination": "Место установки папки модели",

@@ -1493,6 +1493,7 @@
     "ModelAndServingConfiguration": "Konfigurasi Model & Serving",
     "ModelDefinition": "Definisi Model",
     "ModelDefinitionPath": "Jalur File Definisi Model",
+    "ModelDefinitionPathTooltip": "Jalur relatif ke file YAML definisi model di dalam folder model (mis. model-definition.yaml). Default ke model-definition.yaml jika dikosongkan.",
     "ModelDefinitionRequired": "Model-Definition.yaml diperlukan file.",
     "ModelMount": "Mount Model",
     "ModelMountDestination": "Pasang Tujuan Untuk Folder Model",
