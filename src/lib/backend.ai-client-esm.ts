@@ -1079,9 +1079,21 @@ class Client {
       const result = await this._wrapWithPromise(rqst);
       if (result.authenticated === true) {
         await this.get_manager_version();
+        // Persist the login session ID so that the session survives a
+        // page refresh — same as the regular login() path.
+        if (this._loginSessionId !== null && this._loginSessionId !== '') {
+          localStorage.setItem(
+            'backendaiwebui.sessionid',
+            this._loginSessionId,
+          );
+        }
         return this.check_login();
       } else if (result.authenticated === false) {
-        // Authentication failed.
+        // Authentication failed. Clear any stale session id that may have
+        // been persisted by a previous login so that subsequent
+        // check_login() calls don't confuse it with a live session.
+        // Mirrors the regular login() failure-path behavior.
+        localStorage.removeItem('backendaiwebui.sessionid');
         if (result.data && result.data.details) {
           return Promise.resolve({ fail_reason: result.data.details });
         } else {

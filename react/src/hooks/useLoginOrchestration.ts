@@ -204,9 +204,34 @@ export function useLoginOrchestration({
   });
 
   useEffect(() => {
+    // Wait until config is loaded before running the orchestration.
+    //
+    // When apiEndpoint is temporarily empty due to effect ordering
+    // (setApiEndpoint() in LoginView runs in a separate useEffect on the
+    // same render cycle), we want to avoid a premature silent session-login
+    // attempt because connectUsingSession would receive an empty endpoint
+    // and bail out before reaching the sToken check.
+    //
+    // However, an empty api_endpoint can also be intentional: the user may
+    // need to enter it manually in the login UI. In that case the
+    // orchestrator must still run so it can open the login panel.
+    //
+    // Therefore, only defer orchestration for a missing endpoint when a
+    // stored sToken exists (or one arrives via URL) and a silent login or
+    // SSO flow may be attempted. On Electron we still allow an empty
+    // apiEndpoint because the orchestrator falls back to the
+    // localStorage-persisted endpoint.
+    const isElectron = !!(globalThis as Record<string, unknown>).isElectron;
+    const hasStoredSessionToken =
+      typeof window !== 'undefined' &&
+      (window.localStorage.getItem('sToken') !== null ||
+        window.sessionStorage.getItem('sToken') !== null ||
+        new URLSearchParams(window.location.search).has('sToken'));
+
     if (!isConfigLoaded || hasRunRef.current) return;
+    if (!apiEndpoint && !isElectron && hasStoredSessionToken) return;
     hasRunRef.current = true;
 
     doOrchestrate();
-  }, [isConfigLoaded]);
+  }, [isConfigLoaded, apiEndpoint]);
 }
