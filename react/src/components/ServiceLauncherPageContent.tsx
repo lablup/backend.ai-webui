@@ -8,11 +8,6 @@ import { ServiceLauncherPageContent_AutoScalingRulesQuery } from '../__generated
 import { ServiceLauncherPageContent_UserInfoQuery } from '../__generated__/ServiceLauncherPageContent_UserInfoQuery.graphql';
 import { ServiceLauncherPageContent_UserResourcePolicyQuery } from '../__generated__/ServiceLauncherPageContent_UserResourcePolicyQuery.graphql';
 import {
-  getAllExtraArgsEnvVars,
-  getExtraArgsEnvVar,
-  RUNTIME_PARAMETER_FALLBACKS,
-} from '../constants/runtimeParameterFallbacks';
-import {
   baiSignedRequestWithPromise,
   compareNumberWithUnits,
   convertToBinaryUnit,
@@ -35,6 +30,14 @@ import {
   useCurrentResourceGroupState,
   useCurrentProjectValue,
 } from '../hooks/useCurrentProject';
+import {
+  getExtraArgsEnvVarName,
+  getAllExtraArgsEnvVarNames,
+  flattenPresets,
+  buildArgsSchemaKeySet,
+  buildDefaultsMap,
+  type RuntimeParameterGroup,
+} from '../hooks/useRuntimeParameterSchema';
 import { useValidateServiceName } from '../hooks/useValidateServiceName';
 import { useRuntimeEnvVarConfigs } from '../hooks/useVariantConfigs';
 import EnvVarFormList, {
@@ -234,6 +237,14 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
   // page on every slider change. Values are read at submit time only.
   const runtimeParamValuesRef = useRef<RuntimeParameterValues>({});
   const runtimeParamTouchedKeysRef = useRef<Set<string>>(new Set());
+  // Preset groups from the API, stored in a ref for serialization at submit time.
+  const runtimeParamGroupsRef = useRef<RuntimeParameterGroup[] | null>(null);
+  const handleGroupsLoaded = useCallback(
+    (groups: RuntimeParameterGroup[] | null) => {
+      runtimeParamGroupsRef.current = groups;
+    },
+    [],
+  );
   const handleRuntimeParamChange = useCallback(
     (values: RuntimeParameterValues) => {
       runtimeParamValuesRef.current = {
@@ -255,6 +266,106 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
     }
     return result;
   }, []);
+
+  /**
+   * Serialize runtime parameter UI values into environ.
+   * - Removes stale EXTRA_ARGS env vars from other runtime variants.
+   * - For ARGS-type presets: merges touched values into the runtime's EXTRA_ARGS env var.
+   * - For ENV-type presets: sets touched values as individual env vars.
+   */
+  const serializeRuntimeParamsToEnviron = useCallback(
+    (environ: Record<string, string>, runtimeVariant: string) => {
+      const groups = runtimeParamGroupsRef.current;
+
+      // Skip cleanup and serialization when no preset groups are loaded
+      // (e.g., custom runtime — don't erase user-specified EXTRA_ARGS)
+      if (!groups || Object.keys(runtimeParamValuesRef.current).length === 0) {
+        return;
+      }
+
+      const extraArgsEnvVar = getExtraArgsEnvVarName(runtimeVariant);
+
+      // Remove stale EXTRA_ARGS env vars from other runtime variants
+      for (const envName of getAllExtraArgsEnvVarNames()) {
+        if (envName !== extraArgsEnvVar) {
+          delete environ[envName];
+        }
+      }
+
+      const touchedValues = getTouchedRuntimeValues();
+      const presets = flattenPresets(groups);
+      const presetMap = new Map(presets.map((p) => [p.key, p]));
+      const defaults = buildDefaultsMap(groups);
+
+      // Separate touched values by presetTarget
+      const argsValues: Record<string, string> = {};
+      const envValues: Record<string, string> = {};
+
+      for (const [key, val] of Object.entries(touchedValues)) {
+        // Skip empty/cleared values — omit the key entirely
+        if (val === '' || val === undefined) continue;
+
+        const preset = presetMap.get(key);
+        if (!preset) continue;
+
+        if (preset.presetTarget === 'ENV') {
+          envValues[key] = val;
+        } else {
+          // ARGS: use CLI flag key
+          argsValues[key] = val;
+        }
+      }
+
+      // Strip managed ARGS keys from existing EXTRA_ARGS before merging
+      // Only when there are touched ARGS values to merge
+      if (Object.keys(argsValues).length > 0) {
+        const argsSchemaKeys = buildArgsSchemaKeySet(groups);
+        if (environ[extraArgsEnvVar] && argsSchemaKeys.size > 0) {
+          const { unmappedText } = reverseMapExtraArgs(
+            environ[extraArgsEnvVar],
+            argsSchemaKeys,
+          );
+          if (unmappedText) {
+            environ[extraArgsEnvVar] = unmappedText;
+          } else {
+            delete environ[extraArgsEnvVar];
+          }
+        }
+      }
+
+      // Strip only touched ENV-preset keys from environ before re-adding
+      // (prevents erasing user-provided env vars that happen to share preset keys)
+      const touchedEnvKeys = Object.keys(touchedValues).filter((key) => {
+        const preset = presetMap.get(key);
+        return preset?.presetTarget === 'ENV';
+      });
+      for (const envKey of touchedEnvKeys) {
+        delete environ[envKey];
+      }
+
+      // Merge ARGS-type values into EXTRA_ARGS env var
+      if (Object.keys(argsValues).length > 0) {
+        const manualArgs = environ[extraArgsEnvVar] ?? '';
+        const merged = mergeExtraArgs(argsValues, manualArgs, defaults);
+        if (merged) {
+          environ[extraArgsEnvVar] = merged;
+        } else {
+          delete environ[extraArgsEnvVar];
+        }
+      }
+
+      // Set ENV-type values as individual env vars
+      for (const [key, val] of Object.entries(envValues)) {
+        // Skip default values
+        const preset = presetMap.get(key);
+        if (preset?.defaultValue !== null && preset?.defaultValue === val) {
+          continue;
+        }
+        environ[key] = val;
+      }
+    },
+    [getTouchedRuntimeValues],
+  );
 
   // Environment search prefill keyword driven by runtime variant selection
   const RUNTIME_SEARCH_KEYWORD_MAP: Partial<Record<string, string>> = {
@@ -596,31 +707,8 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
           });
       }
 
-      // Remove stale EXTRA_ARGS env vars from other runtime variants
-      const extraArgsEnvVar = getExtraArgsEnvVar(values.runtimeVariant);
-      for (const envName of getAllExtraArgsEnvVars()) {
-        if (envName !== extraArgsEnvVar) {
-          delete environ[envName];
-        }
-      }
-
-      // Merge runtime parameter UI values into EXTRA_ARGS env var.
-      // Only include parameters the user has explicitly touched (interacted with).
-      if (
-        extraArgsEnvVar &&
-        Object.keys(runtimeParamValuesRef.current).length > 0
-      ) {
-        const paramGroups = RUNTIME_PARAMETER_FALLBACKS[values.runtimeVariant];
-        if (paramGroups) {
-          const manualArgs = environ[extraArgsEnvVar] ?? '';
-          const merged = mergeExtraArgs(getTouchedRuntimeValues(), manualArgs);
-          if (merged) {
-            environ[extraArgsEnvVar] = merged;
-          } else {
-            delete environ[extraArgsEnvVar];
-          }
-        }
-      }
+      // Serialize runtime parameter UI values into environ (ENV + ARGS presets)
+      serializeRuntimeParamsToEnviron(environ, values.runtimeVariant);
 
       // In command mode: force runtime_variant to 'custom', auto-set definition path and mount
       const normalizePath = (
@@ -940,32 +1028,8 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
               });
           }
 
-          // Remove stale EXTRA_ARGS env vars from other runtime variants
-          const extraArgsKey = getExtraArgsEnvVar(values.runtimeVariant);
-          for (const envName of getAllExtraArgsEnvVars()) {
-            if (envName !== extraArgsKey) {
-              delete newEnvirons[envName];
-            }
-          }
-
-          // Merge runtime parameter UI values into EXTRA_ARGS env var.
-          // Only include parameters the user has explicitly touched.
-          if (
-            extraArgsKey &&
-            Object.keys(runtimeParamValuesRef.current).length > 0
-          ) {
-            const paramDefs =
-              RUNTIME_PARAMETER_FALLBACKS[values.runtimeVariant];
-            if (paramDefs) {
-              const manual = newEnvirons[extraArgsKey] ?? '';
-              const merged = mergeExtraArgs(getTouchedRuntimeValues(), manual);
-              if (merged) {
-                newEnvirons[extraArgsKey] = merged;
-              } else {
-                delete newEnvirons[extraArgsKey];
-              }
-            }
-          }
+          // Serialize runtime parameter UI values into environ (ENV + ARGS presets)
+          serializeRuntimeParamsToEnviron(newEnvirons, values.runtimeVariant);
 
           mutationVariables.props.environ = JSON.stringify(newEnvirons);
           commitModifyEndpoint({
@@ -1135,31 +1199,13 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
         modelMountDestination: endpoint?.model_mount_destination,
         modelDefinitionPath: endpoint?.model_definition_path,
         runtimeVariant: endpoint?.runtime_variant?.name,
+        // Pass environ as-is; managed keys are stripped at submit time
+        // by serializeRuntimeParamsToEnviron after presets load from API.
         envvars: (() => {
           const parsed = JSON.parse(endpoint?.environ || '{}') as Record<
             string,
             string
           >;
-          // In edit mode, strip slider-managed keys from EXTRA_ARGS so that
-          // the manual input only contains unmapped args (prevents manual input
-          // from overriding slider changes on submit).
-          const variant = endpoint?.runtime_variant?.name;
-          if (variant) {
-            const envKey = getExtraArgsEnvVar(variant);
-            const params = RUNTIME_PARAMETER_FALLBACKS[variant];
-            if (envKey && parsed[envKey] && params) {
-              const schemaKeys = new Set(params.map((p) => p.key));
-              const { unmappedText } = reverseMapExtraArgs(
-                parsed[envKey],
-                schemaKeys,
-              );
-              if (unmappedText) {
-                parsed[envKey] = unmappedText;
-              } else {
-                delete parsed[envKey];
-              }
-            }
-          }
           return _.map(parsed, (value, variable) => ({ variable, value }));
         })(),
       }
@@ -1385,27 +1431,36 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                         <Form.Item dependencies={['runtimeVariant']} noStyle>
                           {({ getFieldValue }) => {
                             const variant = getFieldValue('runtimeVariant');
-                            if (variant !== 'vllm' && variant !== 'sglang')
-                              return null;
+                            if (!variant || variant === 'custom') return null;
 
-                            // Extract existing EXTRA_ARGS for edit mode reverse-mapping
+                            // Extract existing environ for edit mode reverse-mapping
+                            const parsedEnviron = endpoint
+                              ? (JSON.parse(
+                                  endpoint?.environ || '{}',
+                                ) as Record<string, string>)
+                              : {};
                             const extraArgsEnvName =
-                              getExtraArgsEnvVar(variant);
-                            const existingExtraArgs = endpoint
-                              ? ((
-                                  JSON.parse(
-                                    endpoint?.environ || '{}',
-                                  ) as Record<string, string>
-                                )[extraArgsEnvName ?? ''] ?? '')
-                              : '';
+                              getExtraArgsEnvVarName(variant);
+                            const existingExtraArgs =
+                              parsedEnviron[extraArgsEnvName] ?? '';
 
                             return (
-                              <RuntimeParameterFormSection
-                                runtimeVariant={variant}
-                                onChange={handleRuntimeParamChange}
-                                onTouchedKeysChange={handleTouchedKeysChange}
-                                initialExtraArgs={existingExtraArgs}
-                              />
+                              <Suspense
+                                fallback={
+                                  <Skeleton active paragraph={{ rows: 4 }} />
+                                }
+                              >
+                                <RuntimeParameterFormSection
+                                  runtimeVariant={variant}
+                                  onChange={handleRuntimeParamChange}
+                                  onTouchedKeysChange={handleTouchedKeysChange}
+                                  onGroupsLoaded={handleGroupsLoaded}
+                                  initialExtraArgs={existingExtraArgs}
+                                  initialEnvVars={
+                                    endpoint ? parsedEnviron : undefined
+                                  }
+                                />
+                              </Suspense>
                             );
                           }}
                         </Form.Item>
