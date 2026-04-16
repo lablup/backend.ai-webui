@@ -31,7 +31,6 @@ import {
 import type { BAITableProps, GraphQLFilter } from 'backend.ai-ui';
 import { default as dayjs } from 'dayjs';
 import * as _ from 'lodash-es';
-import { CircleArrowDownIcon, CircleArrowUpIcon } from 'lucide-react';
 import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import React, { useDeferredValue, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -48,12 +47,19 @@ type AutoScalingRuleNode = NonNullable<
  * - maxThreshold only → `[metric_name] < [maxThreshold]`
  * - minThreshold only → `[minThreshold] < [metric_name]`
  * - Both set → `[minThreshold] < [metric_name] < [maxThreshold]`
+ *
+ * For PROMETHEUS rules, the tag shows the preset name (from presetMap) instead of
+ * the raw metricName, since users select a preset — not the metric directly.
  */
 const renderCondition = (
   rule: AutoScalingRuleNode,
   t: (key: string) => string,
+  presetMap?: Map<string, string>,
 ) => {
-  const metricName = rule.metricName;
+  const tagLabel =
+    rule.metricSource === 'PROMETHEUS' && rule.prometheusQueryPresetId
+      ? (presetMap?.get(rule.prometheusQueryPresetId) ?? rule.metricName)
+      : rule.metricName;
   const minThreshold = rule.minThreshold;
   const maxThreshold = rule.maxThreshold;
   const suffix = rule.metricSource === 'KERNEL' ? '%' : '';
@@ -64,7 +70,7 @@ const renderCondition = (
         {minThreshold}
         {suffix}
         <Tooltip title={t('autoScalingRule.MinThreshold')}>{'<'}</Tooltip>
-        <Tag>{metricName}</Tag>
+        <Tag>{tagLabel}</Tag>
         <Tooltip title={t('autoScalingRule.MaxThreshold')}>{'<'}</Tooltip>
         {maxThreshold}
         {suffix}
@@ -75,7 +81,7 @@ const renderCondition = (
   if (maxThreshold != null) {
     return (
       <BAIFlex gap={'xs'}>
-        <Tag>{metricName}</Tag>
+        <Tag>{tagLabel}</Tag>
         <Tooltip title={t('autoScalingRule.MaxThreshold')}>{'<'}</Tooltip>
         {maxThreshold}
         {suffix}
@@ -89,7 +95,7 @@ const renderCondition = (
         {minThreshold}
         {suffix}
         <Tooltip title={t('autoScalingRule.MinThreshold')}>{'<'}</Tooltip>
-        <Tag>{metricName}</Tag>
+        <Tag>{tagLabel}</Tag>
       </BAIFlex>
     );
   }
@@ -191,7 +197,7 @@ const AutoScalingRuleListNodes: React.FC<AutoScalingRuleListNodesProps> = ({
             if (!row) return '-';
             return (
               <BAINameActionCell
-                title={renderCondition(row, t)}
+                title={renderCondition(row, t, presetMap)}
                 showActions="always"
                 actions={[
                   {
@@ -215,22 +221,6 @@ const AutoScalingRuleListNodes: React.FC<AutoScalingRuleListNodesProps> = ({
           },
         },
         {
-          key: 'prometheusPreset',
-          title: t('autoScalingRule.PrometheusPreset'),
-          render: (_text, row) => {
-            if (
-              row?.metricSource !== 'PROMETHEUS' ||
-              !row?.prometheusQueryPresetId
-            ) {
-              return '-';
-            }
-            return (
-              presetMap.get(row.prometheusQueryPresetId) ||
-              row.prometheusQueryPresetId
-            );
-          },
-        },
-        {
           key: 'timeWindow',
           title: t('autoScalingRule.TimeWindow'),
           dataIndex: 'timeWindow',
@@ -244,40 +234,56 @@ const AutoScalingRuleListNodes: React.FC<AutoScalingRuleListNodesProps> = ({
           title: t('autoScalingRule.StepSize'),
           dataIndex: 'stepSize',
           render: (_text, row) => {
-            if (row?.stepSize) {
-              return (
-                <BAIFlex gap={'xs'}>
-                  <Typography.Text>
-                    {row.stepSize > 0 ? (
-                      <CircleArrowUpIcon />
-                    ) : (
-                      <CircleArrowDownIcon />
-                    )}
-                  </Typography.Text>
-                  <Typography.Text>{Math.abs(row.stepSize)}</Typography.Text>
-                </BAIFlex>
-              );
-            } else {
-              return '-';
-            }
+            if (!row?.stepSize) return '-';
+            const hasMin = row.minThreshold != null;
+            const hasMax = row.maxThreshold != null;
+            if (!hasMin && !hasMax) return '-';
+            const sign = hasMin && hasMax ? '±' : hasMax ? '+' : '−';
+            return (
+              <BAIFlex gap={'xs'}>
+                <Typography.Text>{sign}</Typography.Text>
+                <Typography.Text>{Math.abs(row.stepSize)}</Typography.Text>
+              </BAIFlex>
+            );
           },
         },
         {
           key: 'minMaxReplicas',
           title: t('autoScalingRule.MIN/MAXReplicas'),
-          render: (_text, row) => (
-            <span>
-              {row?.stepSize
-                ? row.stepSize > 0
-                  ? t('autoScalingRule.MaxReplicasValue', {
-                      value: row?.maxReplicas,
-                    })
-                  : t('autoScalingRule.MinReplicasValue', {
-                      value: row?.minReplicas,
-                    })
-                : '-'}
-            </span>
-          ),
+          render: (_text, row) => {
+            if (!row?.stepSize) return '-';
+            const hasMin = row.minThreshold != null;
+            const hasMax = row.maxThreshold != null;
+            if (hasMin && hasMax) {
+              return (
+                <span>
+                  {t('autoScalingRule.MinReplicasValue', {
+                    value: row?.minReplicas,
+                  })}
+                  {' / '}
+                  {t('autoScalingRule.MaxReplicasValue', {
+                    value: row?.maxReplicas,
+                  })}
+                </span>
+              );
+            }
+            if (hasMax) {
+              return (
+                <span>
+                  {t('autoScalingRule.MaxReplicasValue', {
+                    value: row?.maxReplicas,
+                  })}
+                </span>
+              );
+            }
+            return (
+              <span>
+                {t('autoScalingRule.MinReplicasValue', {
+                  value: row?.minReplicas,
+                })}
+              </span>
+            );
+          },
         },
         {
           key: 'createdAt',

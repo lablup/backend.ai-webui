@@ -21,6 +21,7 @@ import {
   InputNumber,
   Segmented,
   Select,
+  Spin,
   Typography,
   theme,
 } from 'antd';
@@ -180,10 +181,7 @@ const PrometheusPresetPreview: React.FC<{
         {t('autoScalingRule.CurrentValue')}:{' '}
       </Typography.Text>
       <ErrorBoundaryWithNullFallback>
-        {/* null fallback: initial load shows nothing until data arrives.
-            On refresh via startTransition, React keeps the previous value
-            visible and never commits this fallback. */}
-        <React.Suspense fallback={null}>
+        <React.Suspense fallback={<Spin size="small" />}>
           <PreviewValue presetRawId={presetRawId} fetchKey={fetchKey} />
         </React.Suspense>
       </ErrorBoundaryWithNullFallback>
@@ -644,7 +642,7 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
         {isPrometheus && (
           <>
             <Form.Item
-              label={t('autoScalingRule.PrometheusPreset')}
+              label={`${t('autoScalingRule.MetricName')} (${t('autoScalingRule.PrometheusPreset')})`}
               name="prometheusQueryPresetId"
               rules={[
                 {
@@ -680,6 +678,12 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
                   }
                 }}
                 placeholder={t('autoScalingRule.SelectPrometheusPreset')}
+                showSearch
+                filterOption={(input, option) =>
+                  String(option?.label ?? '')
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
                 options={presetOptions}
                 optionRender={(option) => (
                   <BAIFlex direction="column" align="start">
