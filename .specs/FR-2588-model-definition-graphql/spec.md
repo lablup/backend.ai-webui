@@ -1,7 +1,5 @@
 # Model Definition GraphQL 활용 개선
 
-> **Epic**: TODO — Jira Epic 생성 후 업데이트 필요
-
 ## 개요
 
 모델 서비스 상세 페이지(EndpointDetailPage)에 현재 리비전의 model definition 정보를 표시하고, 
