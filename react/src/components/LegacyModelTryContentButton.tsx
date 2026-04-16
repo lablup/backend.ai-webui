@@ -65,7 +65,7 @@ const MAX_RETRIES = 12; // 12 retries * 5 seconds = 1 minute max
 const RETRY_INTERVAL_MS = 5000;
 
 // Helper function to create service input
-// This will be overridden by service-definition.toml values where applicable
+// This will be overridden by deployment-config.yaml values where applicable
 // Set minimal default values
 function createServiceInput(
   modelName: string,
@@ -133,7 +133,7 @@ const LegacyModelTryContentButton: React.FC<
       if (values.envvars) {
         values.envvars.forEach((v) => (environ[v.variable] = v.value));
       }
-      // These fields are replaced with contents from service-definition.toml
+      // These fields are replaced with contents from deployment-config.yaml
       const body: ServiceCreateType = {
         name: values.serviceName,
         desired_session_count: values.replicas,
@@ -404,13 +404,13 @@ const LegacyModelTryContentButton: React.FC<
       file?.name === 'model-definition.yaml' ||
       file?.name === 'model-definition.yml',
   );
-  const hasServiceDefinition = _.some(
+  const hasDeploymentConfig = _.some(
     folderFiles?.items,
-    (file) => file?.name === 'service-definition.toml',
+    (file) => file?.name === 'deployment-config.yaml',
   );
 
   // Both files are required for the button to be enabled
-  const definitionFilesExist = hasModelDefinition && hasServiceDefinition;
+  const definitionFilesExist = hasModelDefinition && hasDeploymentConfig;
 
   /* TODO: Apply if cloning to another host is supported.
   const currentProject = useCurrentProjectValue();
@@ -637,7 +637,7 @@ const LegacyModelTryContentButton: React.FC<
     <Tooltip
       title={
         !definitionFilesExist
-          ? !hasModelDefinition && !hasServiceDefinition
+          ? !hasModelDefinition && !hasDeploymentConfig
             ? t('modelService.BothDefinitionFilesRequired')
             : !hasModelDefinition
               ? t('modelService.ModelDefinitionRequired')

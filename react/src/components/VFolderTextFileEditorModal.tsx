@@ -65,7 +65,7 @@ const detectLanguageAndMimeType = (monaco: Monaco, fileName: string) => {
 };
 
 type SchemaMapping = {
-  schemaUrl: string;
+  schemaUrl?: string;
   type: 'yaml' | 'toml';
 };
 
@@ -78,9 +78,8 @@ const definitionSchemaMap: Record<string, SchemaMapping> = {
     schemaUrl: '/resources/model-definition.schema.json',
     type: 'yaml',
   },
-  'service-definition.toml': {
-    schemaUrl: '/resources/service-definition.schema.json',
-    type: 'toml',
+  'deployment-config.yaml': {
+    type: 'yaml',
   },
 };
 
@@ -339,7 +338,7 @@ const VFolderTextFileEditorModal: React.FC<VFolderTextFileEditorModalProps> = ({
                   }
 
                   const mapping = definitionSchemaMap[fileInfo.name];
-                  if (mapping) {
+                  if (mapping?.schemaUrl) {
                     const abortController = new AbortController();
                     abortControllerRef.current = abortController;
                     fetch(mapping.schemaUrl, {
