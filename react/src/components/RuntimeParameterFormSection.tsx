@@ -2,12 +2,9 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import {
-  RuntimeParameterDef,
-  RuntimeParameterCategory,
-} from '../constants/runtimeParameterFallbacks';
 import { reverseMapExtraArgs } from '../helper/runtimeExtraArgsParser';
 import {
+  RuntimeVariantPresetDef,
   RuntimeParameterGroup,
   useRuntimeParameterSchema,
   buildDefaultsMap,
@@ -19,17 +16,14 @@ import { BAICard, BAIFlex } from 'backend.ai-ui';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-const CATEGORY_LABELS: Record<RuntimeParameterCategory, string> = {
-  sampling: 'modelService.RuntimeParamCategorySampling',
-  context: 'modelService.RuntimeParamCategoryContext',
-  advanced: 'modelService.RuntimeParamCategoryAdvanced',
-};
-
-const ALL_CATEGORIES: RuntimeParameterCategory[] = [
-  'sampling',
-  'context',
-  'advanced',
-];
+/** Convert category slug to a display-friendly label. */
+function formatCategoryLabel(category: string): string {
+  // Convert snake_case to Title Case (e.g., 'model_loading' → 'Model Loading')
+  return category
+    .split('_')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+}
 
 export interface RuntimeParameterValues {
   [key: string]: string;
@@ -45,8 +39,8 @@ interface RuntimeParameterFormSectionProps {
 }
 
 /**
- * Dynamic form section for runtime parameters (vLLM/SGLang).
- * Renders slider/input/select/checkbox controls based on parameter schema.
+ * Dynamic form section for runtime parameters.
+ * Renders slider/input/select/checkbox controls based on API-provided preset schema.
  */
 const RuntimeParameterFormSection: React.FC<
   RuntimeParameterFormSectionProps
@@ -65,8 +59,7 @@ const RuntimeParameterFormSection: React.FC<
   // In edit mode, keys already present in the endpoint's env vars are pre-marked.
   const [touchedKeys, setTouchedKeys] = useState<Set<string>>(new Set());
 
-  const [activeTab, setActiveTab] =
-    useState<RuntimeParameterCategory>('sampling');
+  const [activeTab, setActiveTab] = useState<string>('');
 
   const setValues = useCallback(
     (newValues: RuntimeParameterValues) => {
@@ -120,19 +113,17 @@ const RuntimeParameterFormSection: React.FC<
 
   if (!groups) return null;
 
-  // Build tab list from available categories
-  const availableCategories = ALL_CATEGORIES.filter((cat) =>
-    groups.some((g) => g.category === cat),
-  );
+  // Build tab list from available categories (dynamically from API)
+  const availableCategories = groups.map((g) => g.category);
   const tabList = availableCategories.map((cat) => ({
     key: cat,
-    label: t(CATEGORY_LABELS[cat]),
+    label: formatCategoryLabel(cat),
   }));
 
   // Fall back to first available tab if current tab doesn't exist for this variant
   const effectiveActiveTab = availableCategories.includes(activeTab)
     ? activeTab
-    : (availableCategories[0] ?? 'sampling');
+    : (availableCategories[0] ?? '');
   const activeGroup = groups.find((g) => g.category === effectiveActiveTab);
 
   return (
@@ -141,7 +132,7 @@ const RuntimeParameterFormSection: React.FC<
         size="small"
         tabList={tabList}
         activeTabKey={effectiveActiveTab}
-        onTabChange={(key) => setActiveTab(key as RuntimeParameterCategory)}
+        onTabChange={(key) => setActiveTab(key)}
       >
         <Alert
           type="warning"
@@ -181,7 +172,7 @@ const ParameterGroupContent: React.FC<ParameterGroupContentProps> = ({
         <ParameterControl
           key={param.key}
           param={param}
-          value={values[param.key] ?? param.defaultValue}
+          value={values[param.key] ?? param.defaultValue ?? ''}
           touched={touchedKeys.has(param.key)}
           onChange={(val) => onParamChange(param.key, val)}
         />
@@ -191,7 +182,7 @@ const ParameterGroupContent: React.FC<ParameterGroupContentProps> = ({
 };
 
 interface ParameterControlProps {
-  param: RuntimeParameterDef;
+  param: RuntimeVariantPresetDef;
   value: string;
   touched: boolean;
   onChange: (value: string) => void;
@@ -207,16 +198,21 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
   const { t } = useTranslation();
   const { token } = theme.useToken();
 
-  const label = t(param.name);
-  const tooltip = t(param.description);
+  const label = param.displayName ?? param.name;
+  const tooltip = param.description ?? undefined;
   const formItemStyle = {
     marginBottom: token.marginXS,
   };
   const controlOpacity = touched ? undefined : 0.45;
   const controlTransition = 'opacity 0.2s';
 
-  switch (param.uiType) {
-    case 'slider':
+  const uiType = param.uiType;
+
+  switch (uiType) {
+    case 'slider': {
+      const min = param.slider?.min ?? 0;
+      const max = param.slider?.max ?? 100;
+      const step = param.slider?.step ?? 1;
       return (
         <Form.Item
           label={label}
@@ -225,31 +221,31 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
           required
         >
           <InputNumberWithSlider
-            min={param.min}
-            max={param.max}
-            step={param.step}
-            value={parseFloat(value)}
+            min={min}
+            max={max}
+            step={step}
+            value={value ? parseFloat(value) : min}
             onChange={(v) => onChange(String(v))}
             inputContainerMinWidth={190}
             style={{ opacity: controlOpacity, transition: controlTransition }}
             sliderProps={{
               marks: {
-                ...(param.min !== undefined ? { [param.min]: param.min } : {}),
-                ...(param.max !== undefined
-                  ? {
-                      [param.max]: {
-                        style: { color: token.colorTextSecondary },
-                        label: param.max,
-                      },
-                    }
-                  : {}),
+                [min]: min,
+                [max]: {
+                  style: { color: token.colorTextSecondary },
+                  label: max,
+                },
               },
             }}
           />
         </Form.Item>
       );
+    }
 
-    case 'number_input':
+    case 'number_input': {
+      const min = param.number?.min ?? undefined;
+      const max = param.number?.max ?? undefined;
+      const isInt = param.valueType === 'INT';
       return (
         <Form.Item
           label={label}
@@ -258,13 +254,15 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
           required
         >
           <InputNumber
-            min={param.min}
-            max={param.max}
-            step={param.step}
+            min={min}
+            max={max}
+            step={1}
             value={
-              param.valueType === 'int'
-                ? parseInt(value, 10)
-                : parseFloat(value)
+              value
+                ? isInt
+                  ? parseInt(value, 10)
+                  : parseFloat(value)
+                : undefined
             }
             onChange={(v) => {
               if (v !== null) onChange(String(v));
@@ -277,6 +275,7 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
           />
         </Form.Item>
       );
+    }
 
     case 'select':
       return (
@@ -290,7 +289,7 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
             value={value}
             onChange={onChange}
             style={{ opacity: controlOpacity, transition: controlTransition }}
-            options={param.options?.map((opt) => ({
+            options={param.choices?.items.map((opt) => ({
               value: opt.value,
               label: opt.label,
             }))}
@@ -329,6 +328,7 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
           <Input
             value={value}
             onChange={(e) => onChange(e.target.value)}
+            placeholder={param.text?.placeholder ?? undefined}
             style={{ opacity: controlOpacity, transition: controlTransition }}
           />
         </Form.Item>

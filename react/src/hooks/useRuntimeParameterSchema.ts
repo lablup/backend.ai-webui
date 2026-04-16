@@ -2,65 +2,240 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import {
-  RuntimeParameterDef,
-  RuntimeParameterCategory,
-  RUNTIME_PARAMETER_FALLBACKS,
-} from '../constants/runtimeParameterFallbacks';
+import { useRuntimeParameterSchemaPresetsQuery } from '../__generated__/useRuntimeParameterSchemaPresetsQuery.graphql';
+import { useRuntimeParameterSchemaVariantsQuery } from '../__generated__/useRuntimeParameterSchemaVariantsQuery.graphql';
 import { useMemo } from 'react';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 
+/** Target for how the preset value is applied to the inference container. */
+export type PresetTarget = 'ENV' | 'ARGS';
+
+/** Data type for preset value validation. */
+export type PresetValueType = 'STR' | 'INT' | 'FLOAT' | 'BOOL' | 'FLAG';
+
+/** UI rendering type for the preset control. */
+export type PresetUIType =
+  | 'slider'
+  | 'number_input'
+  | 'select'
+  | 'checkbox'
+  | 'text_input';
+
+export interface SelectOption {
+  value: string;
+  label: string;
+}
+
+/** A single runtime variant preset from the API. */
+export interface RuntimeVariantPresetDef {
+  /** Preset name (unique identifier within the variant). */
+  name: string;
+  /** Human-readable description of the parameter. */
+  description: string | null;
+  /** Display ordering (lower = shown first). */
+  rank: number;
+  /** UI category group (e.g., 'model_loading', 'resource_memory'). */
+  category: string | null;
+  /** Human-readable display label for the UI. */
+  displayName: string | null;
+  /** How the value is applied: ENV or ARGS. */
+  presetTarget: PresetTarget;
+  /** Data type for parsing/serialization. */
+  valueType: PresetValueType;
+  /** Default value (as string). */
+  defaultValue: string | null;
+  /** Env key or CLI flag key (e.g., '--dtype' or 'HF_TOKEN'). */
+  key: string;
+  /** UI rendering type. */
+  uiType: PresetUIType | null;
+  /** Slider config (min/max/step). */
+  slider: { min: number; max: number; step: number } | null;
+  /** Number input config (min/max). */
+  number: { min: number | null; max: number | null } | null;
+  /** Select/radio options. */
+  choices: { items: ReadonlyArray<SelectOption> } | null;
+  /** Text input placeholder. */
+  text: { placeholder: string | null } | null;
+}
+
+/** Group of presets within the same category. */
 export interface RuntimeParameterGroup {
-  category: RuntimeParameterCategory;
-  params: RuntimeParameterDef[];
+  category: string;
+  params: RuntimeVariantPresetDef[];
 }
 
 /**
- * Hook that returns runtime parameter definitions grouped by category.
+ * Hook that fetches runtime variant presets from the API and returns them
+ * grouped by category and sorted by rank.
  *
- * Currently uses fallback metadata only. When the server extends
- * RuntimeVariantPreset.target_spec with ui_type/category/min/max/step fields,
- * this hook should fetch via GraphQL and merge with fallback data.
+ * Uses two Relay queries:
+ * 1. Resolves the runtime variant name to a UUID via `runtimeVariants`
+ * 2. Fetches presets for that variant via `runtimeVariantPresets`
  *
  * @param runtimeVariant - The selected runtime variant name (e.g., "vllm", "sglang")
- * @returns Grouped parameter definitions, or null if the variant has no parameter schema
+ * @returns Grouped preset definitions, or null if the variant has no presets
  */
-// TODO(needs-backend): FR-2446 — Add GraphQL fetch and merge with server schema
 export function useRuntimeParameterSchema(
   runtimeVariant: string | undefined,
 ): RuntimeParameterGroup[] | null {
+  // Step 1: Resolve variant name → UUID
+  const variantData = useLazyLoadQuery<useRuntimeParameterSchemaVariantsQuery>(
+    graphql`
+      query useRuntimeParameterSchemaVariantsQuery(
+        $filter: RuntimeVariantFilter
+      ) {
+        runtimeVariantsResult: runtimeVariants(filter: $filter, first: 1)
+          @catch(to: RESULT) {
+          edges {
+            node {
+              rowId
+              name
+            }
+          }
+        }
+      }
+    `,
+    {
+      filter: runtimeVariant
+        ? { name: { equals: runtimeVariant } }
+        : { name: { equals: '__none__' } },
+    },
+    { fetchPolicy: 'store-or-network' },
+  );
+
+  const variantRowId =
+    variantData.runtimeVariantsResult?.ok === true
+      ? (variantData.runtimeVariantsResult.value?.edges?.[0]?.node?.rowId ??
+        null)
+      : null;
+
+  // Step 2: Fetch presets for the resolved variant
+  const presetsData = useLazyLoadQuery<useRuntimeParameterSchemaPresetsQuery>(
+    graphql`
+      query useRuntimeParameterSchemaPresetsQuery(
+        $filter: RuntimeVariantPresetFilter
+        $orderBy: [RuntimeVariantPresetOrderBy!]
+      ) {
+        runtimeVariantPresetsResult: runtimeVariantPresets(
+          filter: $filter
+          orderBy: $orderBy
+          first: 100
+        ) @catch(to: RESULT) {
+          edges {
+            node {
+              name
+              description
+              rank
+              category
+              displayName
+              targetSpec {
+                presetTarget
+                valueType
+                defaultValue
+                key
+              }
+              uiOption {
+                uiType
+                slider {
+                  min
+                  max
+                  step
+                }
+                number {
+                  min
+                  max
+                }
+                choices {
+                  items {
+                    value
+                    label
+                  }
+                }
+                text {
+                  placeholder
+                }
+              }
+            }
+          }
+        }
+      }
+    `,
+    {
+      filter: variantRowId
+        ? { runtimeVariantId: variantRowId }
+        : // When no variant UUID, use an impossible filter to get 0 results
+          { name: { equals: '__none__' } },
+      orderBy: [{ field: 'RANK', direction: 'ASC' }],
+    },
+    { fetchPolicy: 'store-or-network' },
+  );
+
   return useMemo(() => {
-    if (!runtimeVariant) return null;
+    if (!runtimeVariant || !variantRowId) return null;
 
-    const params = RUNTIME_PARAMETER_FALLBACKS[runtimeVariant];
-    if (!params || params.length === 0) return null;
+    const edges =
+      presetsData.runtimeVariantPresetsResult?.ok === true
+        ? (presetsData.runtimeVariantPresetsResult.value?.edges ?? [])
+        : [];
 
-    // Group by category and sort by rank within each group
-    const grouped = new Map<RuntimeParameterCategory, RuntimeParameterDef[]>();
-    for (const param of params) {
-      const group = grouped.get(param.category) ?? [];
-      group.push(param);
-      grouped.set(param.category, group);
-    }
+    if (edges.length === 0) return null;
 
-    // Sort params within each group by rank
-    for (const group of grouped.values()) {
-      group.sort((a, b) => a.rank - b.rank);
-    }
-
-    // Return in display order: sampling → context → advanced
-    const categoryOrder: RuntimeParameterCategory[] = [
-      'sampling',
-      'context',
-      'advanced',
-    ];
-
-    return categoryOrder
-      .filter((cat) => grouped.has(cat))
-      .map((cat) => ({
-        category: cat,
-        params: grouped.get(cat)!,
+    // Map edges to preset definitions
+    const presets: RuntimeVariantPresetDef[] = edges
+      .map((edge) => edge?.node)
+      .filter(Boolean)
+      .map((node) => ({
+        name: node.name,
+        description: node.description ?? null,
+        rank: node.rank,
+        category: node.category ?? null,
+        displayName: node.displayName ?? null,
+        presetTarget: node.targetSpec.presetTarget as PresetTarget,
+        valueType: node.targetSpec.valueType as PresetValueType,
+        defaultValue: node.targetSpec.defaultValue ?? null,
+        key: node.targetSpec.key,
+        uiType: (node.uiOption?.uiType as PresetUIType) ?? null,
+        slider: node.uiOption?.slider
+          ? {
+              min: node.uiOption.slider.min,
+              max: node.uiOption.slider.max,
+              step: node.uiOption.slider.step,
+            }
+          : null,
+        number: node.uiOption?.number
+          ? {
+              min: node.uiOption.number.min ?? null,
+              max: node.uiOption.number.max ?? null,
+            }
+          : null,
+        choices: node.uiOption?.choices
+          ? {
+              items: node.uiOption.choices.items.map((item) => ({
+                value: item.value,
+                label: item.label,
+              })),
+            }
+          : null,
+        text: node.uiOption?.text
+          ? { placeholder: node.uiOption.text.placeholder ?? null }
+          : null,
       }));
-  }, [runtimeVariant]);
+
+    // Group by category, maintaining rank order (already sorted by API)
+    const grouped = new Map<string, RuntimeVariantPresetDef[]>();
+    for (const preset of presets) {
+      const cat = preset.category ?? 'general';
+      const group = grouped.get(cat) ?? [];
+      group.push(preset);
+      grouped.set(cat, group);
+    }
+
+    // Convert to array preserving insertion order (which follows rank due to API ordering)
+    return Array.from(grouped.entries()).map(([category, params]) => ({
+      category,
+      params,
+    }));
+  }, [runtimeVariant, variantRowId, presetsData]);
 }
 
 /**
@@ -73,7 +248,9 @@ export function buildDefaultsMap(
   const defaults: Record<string, string> = {};
   for (const group of groups) {
     for (const param of group.params) {
-      defaults[param.key] = param.defaultValue;
+      if (param.defaultValue !== null) {
+        defaults[param.key] = param.defaultValue;
+      }
     }
   }
   return defaults;
