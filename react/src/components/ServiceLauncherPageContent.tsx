@@ -666,7 +666,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
           port: values.commandPort ?? 8000,
           healthCheckPath: values.commandHealthCheck ?? '/health',
           modelMountDestination: values.commandModelMount ?? '/models',
-          initialDelay: values.commandInitialDelay ?? 5.0,
+          initialDelay: values.commandInitialDelay ?? 60,
           maxRetries: values.commandMaxRetries ?? 10,
         });
 
@@ -1215,7 +1215,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
         commandModelMount: '/models',
         commandPort: 8000,
         commandHealthCheck: '/health',
-        commandInitialDelay: 5.0,
+        commandInitialDelay: 60,
         commandMaxRetries: 10,
         ...RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
         ...(baiClient._config?.default_session_environment && {
