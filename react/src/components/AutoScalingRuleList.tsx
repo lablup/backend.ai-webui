@@ -23,6 +23,7 @@ import {
   BAIGraphQLPropertyFilter,
   BAINameActionCell,
   BAITable,
+  BAIUnmountAfterClose,
   filterOutNullAndUndefined,
   toLocalId,
   useFetchKey,
@@ -62,18 +63,15 @@ const renderCondition = (
       : rule.metricName;
   const minThreshold = rule.minThreshold;
   const maxThreshold = rule.maxThreshold;
-  const suffix = rule.metricSource === 'KERNEL' ? '%' : '';
 
   if (minThreshold != null && maxThreshold != null) {
     return (
       <BAIFlex gap={'xs'}>
         {minThreshold}
-        {suffix}
         <Tooltip title={t('autoScalingRule.MinThreshold')}>{'<'}</Tooltip>
         <Tag>{tagLabel}</Tag>
         <Tooltip title={t('autoScalingRule.MaxThreshold')}>{'<'}</Tooltip>
         {maxThreshold}
-        {suffix}
       </BAIFlex>
     );
   }
@@ -84,7 +82,6 @@ const renderCondition = (
         <Tag>{tagLabel}</Tag>
         <Tooltip title={t('autoScalingRule.MaxThreshold')}>{'<'}</Tooltip>
         {maxThreshold}
-        {suffix}
       </BAIFlex>
     );
   }
@@ -93,7 +90,6 @@ const renderCondition = (
     return (
       <BAIFlex gap={'xs'}>
         {minThreshold}
-        {suffix}
         <Tooltip title={t('autoScalingRule.MinThreshold')}>{'<'}</Tooltip>
         <Tag>{tagLabel}</Tag>
       </BAIFlex>
@@ -579,23 +575,27 @@ const AutoScalingRuleList: React.FC<AutoScalingRuleListProps> = ({
           onDeleteRule={handleDeleteRule}
         />
       </Card>
-      <AutoScalingRuleEditorModal
-        key={editingRuleId ?? 'create'}
-        open={isOpenEditorModal}
-        modelDeploymentId={toLocalId(deploymentId)}
-        autoScalingRuleFrgmt={
-          editingRuleId
-            ? (autoScalingRuleNodes.find((r) => r.id === editingRuleId) ?? null)
-            : null
-        }
-        onRequestClose={(success) => {
-          setIsOpenEditorModal(false);
-          setEditingRuleId(null);
-          if (success) {
-            handleRefetch();
+      <BAIUnmountAfterClose>
+        <AutoScalingRuleEditorModal
+          open={isOpenEditorModal}
+          modelDeploymentId={toLocalId(deploymentId)}
+          autoScalingRuleFrgmt={
+            editingRuleId
+              ? (autoScalingRuleNodes.find((r) => r.id === editingRuleId) ??
+                null)
+              : null
           }
-        }}
-      />
+          onRequestClose={(success) => {
+            setIsOpenEditorModal(false);
+            if (success) {
+              handleRefetch();
+            }
+          }}
+          afterClose={() => {
+            setEditingRuleId(null);
+          }}
+        />
+      </BAIUnmountAfterClose>
     </>
   );
 };
