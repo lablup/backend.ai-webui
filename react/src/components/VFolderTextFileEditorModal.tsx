@@ -78,9 +78,9 @@ const definitionSchemaMap: Record<string, SchemaMapping> = {
     schemaUrl: '/resources/model-definition.schema.json',
     type: 'yaml',
   },
-  'service-definition.toml': {
-    schemaUrl: '/resources/service-definition.schema.json',
-    type: 'toml',
+  'deployment-config.yaml': {
+    schemaUrl: '/resources/deployment-config.schema.json',
+    type: 'yaml',
   },
 };
 

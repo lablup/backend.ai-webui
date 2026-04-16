@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://www.backend.ai/schemas/service-definition.schema.json",
-  "title": "Backend.AI Service Definition",
-  "description": "Defines a service that can be launched inside a Backend.AI container. Stored as JSON files in /etc/backend.ai/service-defs/.",
+  "$id": "https://www.backend.ai/schemas/deployment-config.schema.json",
+  "title": "Backend.AI Deployment Config",
+  "description": "Defines a service that can be launched inside a Backend.AI container. Stored as deployment-config.yaml in the model VFolder.",
   "type": "object",
   "required": [
     "command"
