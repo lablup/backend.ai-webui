@@ -1,0 +1,9 @@
+{
+  "epicKey": "FR-2588",
+  "epicUrl": "https://lablup.atlassian.net/browse/FR-2588",
+  "slug": "model-definition-graphql",
+  "specTaskKey": "FR-2589",
+  "stories": [],
+  "sourceIssues": ["FR-2581"],
+  "createdAt": "2026-04-16T00:00:00+09:00"
+}
