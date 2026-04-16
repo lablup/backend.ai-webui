@@ -95,6 +95,9 @@ const EndpointList: React.FC<EndpointListProps> = ({
         desired_session_count
         project
         created_user_email
+        runtime_variant {
+          human_readable_name
+        }
         ...EndpointOwnerInfoFragment
         ...EndpointStatusTagFragment
       }
@@ -227,6 +230,14 @@ const EndpointList: React.FC<EndpointListProps> = ({
       title: t('modelService.Status'),
       key: 'status',
       render: (_text, row) => <EndpointStatusTag endpointFrgmt={row} />,
+    },
+    {
+      title: t('modelService.RuntimeVariant'),
+      key: 'runtime_variant',
+      render: (_text, row) =>
+        row.runtime_variant?.human_readable_name
+          ? row.runtime_variant.human_readable_name
+          : '-',
     },
     baiClient.is_admin && {
       title: t('modelService.Owner'),

@@ -14,7 +14,7 @@ import {
 import InputNumberWithSlider from './InputNumberWithSlider';
 import { Checkbox, Form, InputNumber, Select, Input, theme, Alert } from 'antd';
 import { BAICard, BAIFlex } from 'backend.ai-ui';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useEffectEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 /** Convert category slug to a display-friendly label. */
@@ -64,12 +64,19 @@ const RuntimeParameterFormSection: React.FC<
 
   // Notify parent when groups change (for serialization at submit time)
   // Cleanup on unmount to prevent parent from using stale groups
-  useEffect(() => {
+  const onGroupsChanged = useEffectEvent(() => {
     onGroupsLoaded?.(groups);
+  });
+  const onGroupsCleanup = useEffectEvent(() => {
+    onGroupsLoaded?.(null);
+  });
+
+  useEffect(() => {
+    onGroupsChanged();
     return () => {
-      onGroupsLoaded?.(null);
+      onGroupsCleanup();
     };
-  }, [groups, onGroupsLoaded]);
+  }, [groups]);
 
   const [internalValues, setInternalValues] = useState<RuntimeParameterValues>(
     {},
@@ -91,7 +98,7 @@ const RuntimeParameterFormSection: React.FC<
   );
 
   // Initialize from defaults or reverse-map from existing extra args / env vars
-  useEffect(() => {
+  const initializeValues = useEffectEvent(() => {
     if (!groups) return;
 
     const defaults = buildDefaultsMap(groups);
@@ -132,8 +139,11 @@ const RuntimeParameterFormSection: React.FC<
       setTouchedKeys(new Set());
       onTouchedKeysChange?.(new Set());
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [runtimeVariant, initialExtraArgs, initialEnvVars]);
+  });
+
+  useEffect(() => {
+    initializeValues();
+  }, [runtimeVariant, initialExtraArgs, initialEnvVars, groups]);
 
   const handleParamChange = useCallback(
     (key: string, newValue: string) => {
@@ -210,6 +220,7 @@ const ParameterGroupContent: React.FC<ParameterGroupContentProps> = ({
   touchedKeys,
   onParamChange,
 }) => {
+  'use memo';
   return (
     <BAIFlex direction="column" gap="xxs" align="stretch">
       {group.params.map((param) => (
@@ -300,7 +311,7 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
           <InputNumber
             min={min}
             max={max}
-            step={1}
+            step={isInt ? 1 : 0.1}
             value={
               value
                 ? isInt

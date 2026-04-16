@@ -356,7 +356,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
 
       // Set ENV-type values as individual env vars
       for (const [key, val] of Object.entries(envValues)) {
-        // Skip default values
+        // Skip if value matches default
         const preset = presetMap.get(key);
         if (preset?.defaultValue !== null && preset?.defaultValue === val) {
           continue;
