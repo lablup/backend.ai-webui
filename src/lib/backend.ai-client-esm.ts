@@ -899,6 +899,7 @@ class Client {
       this._features['bulk-purge-users'] = true;
       this._features['route-health-status'] = true;
       this._features['model-card-v2'] = true;
+      this._features['my-roles'] = true;
     }
   }
 

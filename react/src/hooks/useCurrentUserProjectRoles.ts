@@ -65,7 +65,9 @@ export const useCurrentUserProjectRoles = (): CurrentUserProjectRolesResult => {
     {},
     {
       // store-or-network keeps the result cached across pages for the session.
-      fetchPolicy: 'store-or-network',
+      fetchPolicy: baiClient.supports('my-roles')
+        ? 'store-or-network'
+        : 'store-only',
     },
   );
 
