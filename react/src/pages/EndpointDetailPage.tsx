@@ -857,7 +857,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
       <Card
         title={t('modelService.RoutesInfo')}
         extra={
-          endpoint?.endpoint_id ? (
+          !isSupportRouteHealthStatus && endpoint?.endpoint_id ? (
             <Button
               icon={<SyncOutlined />}
               loading={mutationToSyncRoutes.isPending}
@@ -959,7 +959,8 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               order={routeOrder}
               onChangeOrder={setRouteOrder}
               loading={
-                mutationToSyncRoutes.isPending ||
+                (!isSupportRouteHealthStatus &&
+                  mutationToSyncRoutes.isPending) ||
                 deferredRoutePagination !== routePagination ||
                 deferredRouteOrder !== routeOrder ||
                 deferredRouteStatusCategory !== routeStatusCategory ||
