@@ -61,35 +61,61 @@ compile_client_node_ts: clean_client_node_ts
 compile_wsproxy: compile_client_node_ts
 	@pnpm -w exec webpack-cli --config src/wsproxy/webpack.config.js
 all: dep
-	@make mac_x64
-	@make mac_arm64
-	@make win_x64
-	@make win_arm64
-	@make linux_x64
-	@make linux_arm64
+	@make compile_all_localproxy
+	@make mac_x64_package
+	@make mac_arm64_package
+	@make win_x64_package
+	@make win_arm64_package
+	@make linux_x64_package
+	@make linux_arm64_package
 	@make bundle
-dep:
+# Build all local proxy binaries in parallel (saves ~3-4 min vs sequential)
+compile_all_localproxy:
+	@printf "$(GREEN)Compiling all local proxy binaries in parallel...$(NC)\n"
+	@make compile_localproxy os=macos arch=x64 local_proxy_postfix= & \
+	 make compile_localproxy os=macos arch=arm64 local_proxy_postfix= & \
+	 make compile_localproxy os=win arch=x64 local_proxy_postfix=.exe & \
+	 make compile_localproxy os=win arch=arm64 local_proxy_postfix=.exe & \
+	 make compile_localproxy os=linux arch=x64 local_proxy_postfix= & \
+	 make compile_localproxy os=linux arch=arm64 local_proxy_postfix= & \
+	 wait
+	@printf "$(YELLOW)All local proxy binaries compiled$(NC)\n"
+# Build only the web bundle (no Electron setup). Used by CI web job.
+# Also ensures src/wsproxy/dist/wsproxy.js exists, since dep_electron copies it.
+dep_web:
 	@if [ ! -f "./config.toml" ]; then \
 		cp config.toml.sample config.toml; \
 	fi
 	@mkdir -p ./app
-	@if [ ! -d "./build/web/" ] || ! grep -q 'es6://static/js/main' react/build/index.html; then \
+	@if [ ! -d "./build/web/" ]; then \
 		make compile; \
-		make compile_wsproxy; \
-		rm -rf build/electron-app; \
-		mkdir -p build/electron-app; \
-		cp -r electron-app/* build/electron-app/;\
-		cp electron-app/.npmrc build/electron-app/;\
-		pnpm i --prefix ./build/electron-app --ignore-workspace;\
-		cp -Rp build/web build/electron-app/app; \
-		cp -Rp build/web/resources build/electron-app; \
-		cp -Rp build/web/manifest build/electron-app; \
-		BUILD_TARGET=electron pnpm run build:react-only; \
-		cp -Rp react/build/* build/electron-app/app/; \
-		mkdir -p ./build/electron-app/app/wsproxy; \
-		cp ./src/wsproxy/dist/wsproxy.js ./build/electron-app/app/wsproxy/wsproxy.js; \
-		cp ./preload.js ./build/electron-app/preload.js; \
 	fi
+	@if [ ! -f "./src/wsproxy/dist/wsproxy.js" ]; then \
+		make compile_wsproxy; \
+	fi
+# Prepare the Electron app directory. Requires dep_web to have run first.
+# Uses publicPath patching instead of a full second React build (~4-8 min savings).
+# Always re-syncs build/web → build/electron-app/app and the wsproxy/preload
+# files so a stale electron-app directory cannot mask a freshly rebuilt web
+# bundle. Node modules are only installed if the directory was newly created.
+dep_electron: dep_web
+	@first_run=0; \
+	if [ ! -d "./build/electron-app" ]; then \
+		first_run=1; \
+		mkdir -p build/electron-app; \
+		cp -r electron-app/* build/electron-app/; \
+		cp electron-app/.npmrc build/electron-app/; \
+		pnpm i --prefix ./build/electron-app --ignore-workspace; \
+	fi; \
+	rm -rf build/electron-app/app build/electron-app/resources build/electron-app/manifest; \
+	cp -Rp build/web build/electron-app/app; \
+	cp -Rp build/web/resources build/electron-app; \
+	cp -Rp build/web/manifest build/electron-app; \
+	node scripts/patch-electron-publicpath.js build/electron-app/app; \
+	mkdir -p ./build/electron-app/app/wsproxy; \
+	cp ./src/wsproxy/dist/wsproxy.js ./build/electron-app/app/wsproxy/wsproxy.js; \
+	cp ./preload.js ./build/electron-app/preload.js
+dep: dep_electron
 web:
 	@if [ ! -d "./build/web/" ];then \
 		make compile; \
@@ -119,17 +145,23 @@ endif  # BAI_APP_SIGN_KEYCHAIN_PASSWORD
 	echo Keychain ${KEYCHAIN_NAME} created for build
 endif  # BAI_APP_SIGN_KEYCHAIN_B64
 endif  # BAI_APP_SIGN_KEYCHAIN
+# Concurrency-safe: each (os, arch) build uses a unique staging directory so
+# multiple invocations can run in parallel without overwriting each other's
+# intermediate file (`backend.ai-local-proxy[.exe]`) packed into the ZIP.
 compile_localproxy:
 	@rm -rf ./app/backend.ai-local-proxy-$(BUILD_VERSION)-$(os)-$(arch)$(local_proxy_postfix)
 	@pnpm exec pkg ./src/wsproxy/local_proxy.js --targets node18-$(os)-$(arch) --output ./app/backend.ai-local-proxy-$(BUILD_VERSION)-$(os)-$(arch)$(local_proxy_postfix) --compress Brotli
-	@rm -rf ./app/backend.ai-local-proxy$(local_proxy_postfix); cp ./app/backend.ai-local-proxy-$(BUILD_VERSION)-$(os)-$(arch)$(local_proxy_postfix) ./app/backend.ai-local-proxy$(local_proxy_postfix)
-	@cd app; zip -r -9 ./backend.ai-local-proxy-$(BUILD_VERSION)-$(os)-$(arch).zip "./backend.ai-local-proxy$(local_proxy_postfix)"
-	@rm -rf ./app/backend.ai-local-proxy$(local_proxy_postfix)
+	@rm -rf ./app/_lp-stage-$(os)-$(arch)
+	@mkdir -p ./app/_lp-stage-$(os)-$(arch)
+	@cp ./app/backend.ai-local-proxy-$(BUILD_VERSION)-$(os)-$(arch)$(local_proxy_postfix) ./app/_lp-stage-$(os)-$(arch)/backend.ai-local-proxy$(local_proxy_postfix)
+	@rm -f ./app/backend.ai-local-proxy-$(BUILD_VERSION)-$(os)-$(arch).zip
+	@cd ./app/_lp-stage-$(os)-$(arch); zip -r -6 ../backend.ai-local-proxy-$(BUILD_VERSION)-$(os)-$(arch).zip "./backend.ai-local-proxy$(local_proxy_postfix)"
+	@rm -rf ./app/_lp-stage-$(os)-$(arch)
 package_zip:
 	@printf "$(GREEN)Packaging as ZIP archive...$(NC)"
 	@cp ./configs/$(site).toml ./build/electron-app/app/config.toml
 	@node ./app-packager.js $(os) $(arch)
-	@cd app; zip -r -9 ./backend.ai-desktop-$(os)-$(arch)-$(BUILD_DATE).zip "./Backend.AI Desktop-$(os_api)-$(arch)"
+	@cd app; zip -r -6 ./backend.ai-desktop-$(os)-$(arch)-$(BUILD_DATE).zip "./Backend.AI Desktop-$(os_api)-$(arch)"
 ifeq ($(site),main)
 	@mv ./app/backend.ai-desktop-$(os)-$(arch)-$(BUILD_DATE).zip ./app/backend.ai-desktop-$(BUILD_VERSION)-$(os)-$(arch).zip
 else
@@ -152,9 +184,10 @@ else
 	@mv ./app/backend.ai-desktop-$(arch)-$(BUILD_DATE).dmg ./app/backend.ai-desktop-$(BUILD_VERSION)-$(site)-$(os)-$(arch).dmg
 endif
 	@printf "$(YELLOW)Finished$(NC)\n"
-bundle: dep
+bundle: dep_web
 	@printf "$(GREEN)Bundling...$(NC)"
-	@cd build/web; zip -r -9 ../../app/backend.ai-webui-bundle-$(BUILD_DATE).zip . > /dev/null
+	@mkdir -p ./app
+	@cd build/web; zip -r -6 ../../app/backend.ai-webui-bundle-$(BUILD_DATE).zip . > /dev/null
 	@mv ./app/backend.ai-webui-bundle-$(BUILD_DATE).zip ./app/backend.ai-webui-bundle-$(BUILD_VERSION).zip
 	@printf "$(YELLOW)Finished$(NC)\n"
 mac: dep
@@ -169,6 +202,16 @@ mac_arm64: os := macos
 mac_arm64: arch := arm64
 mac_arm64: local_proxy_postfix :=
 mac_arm64: dep mac_load_keychain compile_localproxy package_dmg
+	@printf "$(GREEN)Build finished$(NC): macOS arm64\n"
+# Package-only targets: assume dep + compile_all_localproxy already done.
+# Used by `make all` which pre-builds all local proxies in parallel.
+mac_x64_package: os := macos
+mac_x64_package: arch := x64
+mac_x64_package: mac_load_keychain package_dmg
+	@printf "$(GREEN)Build finished$(NC): macOS x64\n"
+mac_arm64_package: os := macos
+mac_arm64_package: arch := arm64
+mac_arm64_package: mac_load_keychain package_dmg
 	@printf "$(GREEN)Build finished$(NC): macOS arm64\n"
 win: dep
 	@make win_x64
@@ -185,6 +228,17 @@ win_arm64: arch := arm64
 win_arm64: local_proxy_postfix := .exe
 win_arm64: dep compile_localproxy package_zip
 	@printf "$(GREEN)Build finished$(NC): Windows arm64\n"
+# Package-only targets for CI parallel jobs
+win_x64_package: os := win
+win_x64_package: os_api := win32
+win_x64_package: arch := x64
+win_x64_package: package_zip
+	@printf "$(GREEN)Build finished$(NC): Windows x64\n"
+win_arm64_package: os := win
+win_arm64_package: os_api := win32
+win_arm64_package: arch := arm64
+win_arm64_package: package_zip
+	@printf "$(GREEN)Build finished$(NC): Windows arm64\n"
 linux: dep
 	@make linux_x64
 	@make linux_arm64
@@ -199,6 +253,17 @@ linux_arm64: os_api := linux
 linux_arm64: arch := arm64
 linux_arm64: local_proxy_postfix :=
 linux_arm64: dep compile_localproxy package_zip
+	@printf "$(GREEN)Build finished$(NC): Linux arm64\n"
+# Package-only targets for CI parallel jobs
+linux_x64_package: os := linux
+linux_x64_package: os_api := linux
+linux_x64_package: arch := x64
+linux_x64_package: package_zip
+	@printf "$(GREEN)Build finished$(NC): Linux x64\n"
+linux_arm64_package: os := linux
+linux_arm64_package: os_api := linux
+linux_arm64_package: arch := arm64
+linux_arm64_package: package_zip
 	@printf "$(GREEN)Build finished$(NC): Linux arm64\n"
 build_docker: compile
 	docker build -t backend.ai-webui:$(BUILD_DATE) .
