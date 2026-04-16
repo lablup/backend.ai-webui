@@ -1123,7 +1123,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
                                 });
                               }
                             },
-                            onError: (error) => {
+                            onError: (error: Error) => {
                               message.error(
                                 error?.message || t('dialog.ErrorOccurred'),
                               );
