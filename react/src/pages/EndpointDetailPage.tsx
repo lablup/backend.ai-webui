@@ -2,6 +2,11 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { AutoScalingRuleEditorModalLegacyFragment$key } from '../__generated__/AutoScalingRuleEditorModalLegacyFragment.graphql';
+import {
+  EndpointDetailPageDeleteAutoScalingRuleMutation,
+  EndpointDetailPageDeleteAutoScalingRuleMutation$data,
+} from '../__generated__/EndpointDetailPageDeleteAutoScalingRuleMutation.graphql';
 import {
   EndpointDetailPageQuery,
   EndpointDetailPageQuery$data,
@@ -11,8 +16,9 @@ import {
   RouteTrafficStatus,
 } from '../__generated__/EndpointDetailPageQuery.graphql';
 import { InferenceSessionErrorModalFragment$key } from '../__generated__/InferenceSessionErrorModalFragment.graphql';
-import AutoScalingRuleList from '../components/AutoScalingRuleList';
-import AutoScalingRuleListLegacy from '../components/AutoScalingRuleListLegacy';
+import AutoScalingRuleEditorModalLegacy, {
+  COMPARATOR_LABELS,
+} from '../components/AutoScalingRuleEditorModalLegacy';
 import BAIJSONViewerModal from '../components/BAIJSONViewerModal';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import { isEndpointInDestroyingCategory } from '../components/EndpointList';
@@ -36,6 +42,7 @@ import {
   ArrowRightOutlined,
   CheckOutlined,
   CloseOutlined,
+  DeleteOutlined,
   ExclamationCircleOutlined,
   LoadingOutlined,
   PlusOutlined,
@@ -79,7 +86,11 @@ import {
 } from 'backend.ai-ui';
 import { default as dayjs } from 'dayjs';
 import * as _ from 'lodash-es';
-import { BotMessageSquareIcon } from 'lucide-react';
+import {
+  BotMessageSquareIcon,
+  CircleArrowDownIcon,
+  CircleArrowUpIcon,
+} from 'lucide-react';
 import React, {
   Suspense,
   useDeferredValue,
@@ -87,7 +98,7 @@ import React, {
   useTransition,
 } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery } from 'react-relay';
+import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 import { useParams } from 'react-router-dom';
 import VFolderNodeIdenticon from 'src/components/VFolderNodeIdenticon';
 
@@ -151,10 +162,23 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
     useState<InferenceSessionErrorModalFragment$key | null>(null);
 
   const [editingAutoScalingRule, setEditingAutoScalingRule] =
-    useState<AutoScalingRuleEditorModalFragment$key | null>(null);
+    useState<AutoScalingRuleEditorModalLegacyFragment$key | null>(null);
+  const [isOpenAutoScalingRuleModal, setIsOpenAutoScalingRuleModal] =
+    useState(false);
   const [revisionSegment, setRevisionSegment] = useState<'current' | 'latest'>(
     'current',
   );
+  const [
+    commitDeleteAutoScalingRuleMutation,
+    isInFlightDeleteAutoScalingRuleMutation,
+  ] = useMutation<EndpointDetailPageDeleteAutoScalingRuleMutation>(graphql`
+    mutation EndpointDetailPageDeleteAutoScalingRuleMutation($id: String!) {
+      delete_endpoint_auto_scaling_rule_node(id: $id) {
+        ok
+        msg
+      }
+    }
+  `);
   const [isOpenTokenGenerationModal, setIsOpenTokenGenerationModal] =
     useState(false);
   const [currentUser] = useCurrentUserInfo();
@@ -1142,7 +1166,10 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
                             variables: {
                               id: row?.id as string,
                             },
-                            onCompleted: (res, errors) => {
+                            onCompleted: (
+                              res: EndpointDetailPageDeleteAutoScalingRuleMutation$data,
+                              errors: readonly Error[] | null,
+                            ) => {
                               if (
                                 !res?.delete_endpoint_auto_scaling_rule_node?.ok
                               ) {
@@ -1172,7 +1199,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
                                 });
                               }
                             },
-                            onError: (error) => {
+                            onError: (error: Error) => {
                               message.error(
                                 error?.message || t('dialog.ErrorOccurred'),
                               );
@@ -1568,6 +1595,22 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
         inferenceSessionErrorFrgmt={selectedSessionErrorForModal}
         onRequestClose={() => setSelectedSessionErrorForModal(null)}
       />
+      <BAIUnmountAfterClose>
+        <AutoScalingRuleEditorModalLegacy
+          open={isOpenAutoScalingRuleModal}
+          endpoint_id={endpoint?.endpoint_id || ''}
+          autoScalingRuleFrgmt={editingAutoScalingRule}
+          onRequestClose={(success) => {
+            setIsOpenAutoScalingRuleModal(false);
+            setEditingAutoScalingRule(null);
+            if (success) {
+              startRefetchTransition(() => {
+                updateFetchKey();
+              });
+            }
+          }}
+        />
+      </BAIUnmountAfterClose>
       <EndpointTokenGenerationModal
         open={isOpenTokenGenerationModal}
         onRequestClose={(success) => {
