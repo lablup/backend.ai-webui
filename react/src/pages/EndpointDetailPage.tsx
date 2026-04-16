@@ -19,6 +19,7 @@ import { InferenceSessionErrorModalFragment$key } from '../__generated__/Inferen
 import AutoScalingRuleEditorModalLegacy, {
   COMPARATOR_LABELS,
 } from '../components/AutoScalingRuleEditorModalLegacy';
+import AutoScalingRuleList from '../components/AutoScalingRuleList';
 import BAIJSONViewerModal from '../components/BAIJSONViewerModal';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import { isEndpointInDestroyingCategory } from '../components/EndpointList';
@@ -1015,6 +1016,17 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
           ]}
         ></Descriptions>
       </BAIModal>
+      {isSupportPrometheusAutoScalingRule && (
+        <AutoScalingRuleList
+          deploymentId={toGlobalId('ModelDeployment', serviceId || '')}
+          isEndpointDestroying={!!isEndpointInDestroyingCategory(endpoint)}
+          isOwnedByCurrentUser={
+            !endpoint?.created_user_email ||
+            endpoint?.created_user_email === currentUser.email
+          }
+          fetchKey={fetchKey}
+        />
+      )}
       {isSupportAutoScalingRule && (
         <Card
           title={t('modelService.AutoScalingRules')}
