@@ -4,6 +4,20 @@
   "slug": "model-definition-graphql",
   "specTaskKey": "FR-2589",
   "stories": [],
+  "tasks": [
+    {
+      "key": "FR-2590",
+      "title": "Display currentRevision.modelDefinition in EndpointDetailPage Service Info",
+      "githubIssue": 6744,
+      "specSection": "Requirement 1"
+    },
+    {
+      "key": "FR-2591",
+      "title": "Replace vfolder YAML parsing with GraphQL query and add overwrite confirmation in edit mode",
+      "githubIssue": 6745,
+      "specSection": "Requirements 2 and 3"
+    }
+  ],
   "sourceIssues": ["FR-2581"],
   "createdAt": "2026-04-16T00:00:00+09:00"
 }

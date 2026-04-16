@@ -116,6 +116,7 @@ const dayDiff = (a: any, b: any) => {
 };
 
 const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
+  'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { message } = App.useApp();
@@ -168,6 +169,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
     routes,
     healthyRoutes,
     deploymentScopedSchedulingHistories,
+    modelDeployment,
   } = useLazyLoadQuery<EndpointDetailPageQuery>(
     graphql`
       query EndpointDetailPageQuery(
@@ -194,6 +196,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
         $schedulingHistoryScope: DeploymentScope!
         $schedulingHistoryFilter: DeploymentHistoryFilter
         $skipSchedulingHistories: Boolean!
+        $skipModelDefinition: Boolean!
       ) {
         endpoint(endpoint_id: $endpointId) {
           name
@@ -333,6 +336,26 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
         ) @skipOnClient(if: $skipSchedulingHistories) {
           count
         }
+        modelDeployment: deployment(id: $deploymentId)
+          @skipOnClient(if: $skipModelDefinition) {
+          currentRevision {
+            modelDefinition {
+              models {
+                name
+                modelPath
+                service {
+                  startCommand
+                  port
+                  healthCheck {
+                    path
+                    initialDelay
+                    maxRetries
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     `,
     {
@@ -390,6 +413,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
       schedulingHistoryScope: { deploymentId: serviceId || '' },
       schedulingHistoryFilter: { toStatus: ['READY'] },
       skipSchedulingHistories: !baiClient.supports('model-card-v2'),
+      skipModelDefinition: !baiClient.supports('model-card-v2'),
     },
     {
       fetchPolicy:
@@ -610,6 +634,82 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
         xl: 3,
       },
     },
+    ...(() => {
+      const models = filterOutNullAndUndefined(
+        modelDeployment?.currentRevision?.modelDefinition?.models,
+      );
+      if (!models || models.length === 0) return [];
+      return models.flatMap((model, idx) => {
+        const prefix = models.length > 1 ? `[${idx}] ` : '';
+        const modelItems: DescriptionsItemType[] = [
+          {
+            key: `model-name-${idx}`,
+            label: `${prefix}${t('modelStore.ModelName')}`,
+            children: model.name || (
+              <Typography.Text type="secondary">-</Typography.Text>
+            ),
+          },
+          {
+            key: `model-path-${idx}`,
+            label: `${prefix}${t('modelStore.ModelPath')}`,
+            children: model.modelPath || (
+              <Typography.Text type="secondary">-</Typography.Text>
+            ),
+          },
+          ...(model.service
+            ? ([
+                {
+                  key: `model-start-command-${idx}`,
+                  label: `${prefix}${t('modelService.StartCommand')}`,
+                  children: model.service.startCommand ? (
+                    <SourceCodeView language="shell">
+                      {typeof model.service.startCommand === 'string'
+                        ? model.service.startCommand
+                        : JSON.stringify(model.service.startCommand, null, 2)}
+                    </SourceCodeView>
+                  ) : (
+                    <Typography.Text type="secondary">-</Typography.Text>
+                  ),
+                  span: { xl: 2 },
+                },
+                {
+                  key: `model-port-${idx}`,
+                  label: `${prefix}${t('modelService.Port')}`,
+                  children: model.service.port ?? (
+                    <Typography.Text type="secondary">-</Typography.Text>
+                  ),
+                },
+                ...(model.service.healthCheck
+                  ? ([
+                      {
+                        key: `model-healthcheck-path-${idx}`,
+                        label: `${prefix}${t('modelService.HealthCheck')}`,
+                        children: model.service.healthCheck.path || (
+                          <Typography.Text type="secondary">-</Typography.Text>
+                        ),
+                      },
+                      {
+                        key: `model-initial-delay-${idx}`,
+                        label: `${prefix}${t('modelService.InitialDelay')}`,
+                        children: model.service.healthCheck.initialDelay ?? (
+                          <Typography.Text type="secondary">-</Typography.Text>
+                        ),
+                      },
+                      {
+                        key: `model-max-retries-${idx}`,
+                        label: `${prefix}${t('modelService.MaxRetries')}`,
+                        children: model.service.healthCheck.maxRetries ?? (
+                          <Typography.Text type="secondary">-</Typography.Text>
+                        ),
+                      },
+                    ] as DescriptionsItemType[])
+                  : []),
+              ] as DescriptionsItemType[])
+            : []),
+        ];
+        return modelItems;
+      });
+    })(),
   ];
 
   // TODO: show current Autoscaling Rule in human-friendly way
