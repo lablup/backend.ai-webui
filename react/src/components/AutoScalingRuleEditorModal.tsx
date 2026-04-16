@@ -202,20 +202,28 @@ const PrometheusPresetPreview: React.FC<{
 
 /**
  * Determines initial condition mode and direction from existing rule data.
+ *
+ * Direction semantics match the list's "normal range" display:
+ *   'lower' ('<'): Metric < maxThreshold — metric should stay BELOW the upper bound.
+ *   'upper' ('>'): Metric > minThreshold — metric should stay ABOVE the lower bound.
+ *
+ * So maxThreshold → 'lower', minThreshold → 'upper' (mirrors the list column).
  */
 const getInitialConditionState = (
   rule: AutoScalingRuleEditorModalFragment$data | null | undefined,
 ): { mode: ConditionMode; direction: ThresholdDirection } => {
   if (!rule) {
-    return { mode: 'single', direction: 'upper' };
+    return { mode: 'single', direction: 'lower' };
   }
   if (rule.minThreshold != null && rule.maxThreshold != null) {
     return { mode: 'range', direction: 'upper' };
   }
+  // minThreshold set → Metric > minThreshold → direction='upper'
   if (rule.minThreshold != null) {
-    return { mode: 'single', direction: 'lower' };
+    return { mode: 'single', direction: 'upper' };
   }
-  return { mode: 'single', direction: 'upper' };
+  // maxThreshold set (or neither) → Metric < maxThreshold → direction='lower'
+  return { mode: 'single', direction: 'lower' };
 };
 
 const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
@@ -380,8 +388,8 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
           minThreshold = values.minThreshold ?? null;
           maxThreshold = values.maxThreshold ?? null;
         } else {
-          // Single mode
-          if (values.direction === 'upper') {
+          // Single mode: 'lower' ('<') → maxThreshold; 'upper' ('>') → minThreshold
+          if (values.direction === 'lower') {
             maxThreshold = values.threshold ?? null;
           } else {
             minThreshold = values.threshold ?? null;
@@ -492,8 +500,9 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
       const condition = getInitialConditionState(autoScalingRule);
       let threshold: number | undefined;
       if (condition.mode === 'single') {
+        // 'lower' ('<') → maxThreshold; 'upper' ('>') → minThreshold
         threshold =
-          condition.direction === 'upper'
+          condition.direction === 'lower'
             ? autoScalingRule.maxThreshold != null
               ? Number(autoScalingRule.maxThreshold)
               : undefined
@@ -526,7 +535,7 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
     return {
       metricSource: 'KERNEL',
       conditionMode: 'single',
-      direction: 'upper',
+      direction: 'lower',
       stepSize: 1,
       timeWindow: 300,
       minReplicas: 0,
@@ -602,15 +611,17 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
                 label: name,
                 value: name,
               }))}
-              onSearch={(text) => {
-                const source = (formRef.current?.getFieldValue(
-                  'metricSource',
-                ) || 'KERNEL') as keyof typeof METRIC_NAMES_MAP;
-                setNameOptions(
-                  _.filter(METRIC_NAMES_MAP[source] || [], (name) =>
-                    name.includes(text),
-                  ),
-                );
+              showSearch={{
+                onSearch: (text) => {
+                  const source = (formRef.current?.getFieldValue(
+                    'metricSource',
+                  ) || 'KERNEL') as keyof typeof METRIC_NAMES_MAP;
+                  setNameOptions(
+                    _.filter(METRIC_NAMES_MAP[source] || [], (name) =>
+                      name.includes(text),
+                    ),
+                  );
+                },
               }}
               allowClear
               popupMatchSelectWidth={false}
@@ -712,20 +723,23 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
                 alignItems: 'center',
               }}
             >
+              <Typography.Text style={{ flexShrink: 0 }}>
+                {t('autoScalingRule.Metric')}
+              </Typography.Text>
               <Form.Item
                 name={'direction'}
                 noStyle
                 rules={[{ required: true }]}
               >
                 <Select
-                  style={{ width: 100 }}
+                  style={{ width: 60 }}
                   options={[
                     {
-                      label: 'Metric >',
+                      label: '>',
                       value: 'upper',
                     },
                     {
-                      label: 'Metric <',
+                      label: '<',
                       value: 'lower',
                     },
                   ]}
@@ -783,7 +797,7 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
                 />
               </Form.Item>
               <Typography.Text style={{ flexShrink: 0 }}>
-                {'<'} Metric {'<'}
+                {'<'} {t('autoScalingRule.Metric')} {'<'}
               </Typography.Text>
               <Form.Item
                 name={'maxThreshold'}
@@ -826,6 +840,7 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
         <Form.Item
           label={t('autoScalingRule.StepSize')}
           name={'stepSize'}
+          tooltip={t('autoScalingRule.StepSizeTooltip')}
           rules={[
             { required: true },
             {
@@ -875,7 +890,7 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
             min={1}
             step={1}
             style={{ width: '100%' }}
-            addonAfter="s"
+            suffix={t('autoScalingRule.Seconds')}
           />
         </Form.Item>
 
@@ -883,6 +898,7 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
         <Form.Item
           label={t('autoScalingRule.MinReplicas')}
           name={'minReplicas'}
+          tooltip={t('autoScalingRule.MinReplicasTooltip')}
           rules={[
             {
               min: 0,
@@ -912,6 +928,7 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
         <Form.Item
           label={t('autoScalingRule.MaxReplicas')}
           name={'maxReplicas'}
+          tooltip={t('autoScalingRule.MaxReplicasTooltip')}
           rules={[
             {
               min: 0,
