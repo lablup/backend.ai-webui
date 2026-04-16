@@ -50,7 +50,7 @@ type AutoScalingRuleInput = {
   max_replicas: number;
 };
 
-export const COMPARATOR_LABELS: Record<string, string> = {
+export const COMPARATOR_LABELS: Record<'LESS_THAN' | 'GREATER_THAN', string> = {
   LESS_THAN: '<',
   GREATER_THAN: '>',
 };

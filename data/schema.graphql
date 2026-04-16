@@ -1538,8 +1538,13 @@ enum AuditLogStatus
 input AuditLogStatusFilter
   @join__type(graph: STRAWBERRY)
 {
+  equals: AuditLogStatus = null
+
   """The in  field."""
   in: [AuditLogStatus!] = null
+
+  """Excludes exact status match."""
+  notEquals: AuditLogStatus = null
   notIn: [AuditLogStatus!] = null
 }
 
@@ -1673,7 +1678,7 @@ type AutoScalingRule implements Node
   """
   prometheusQueryPresetId: ID
   createdAt: DateTime!
-  lastTriggeredAt: DateTime!
+  lastTriggeredAt: DateTime
 }
 
 """Added in 25.19.0. Connection for auto-scaling rules."""
@@ -1704,7 +1709,7 @@ input AutoScalingRuleFilter
   @join__type(graph: STRAWBERRY)
 {
   createdAt: DateTimeFilter = null
-  lastTriggeredAt: DateTimeFilter = null
+  lastTriggeredAt: NullableDateTimeFilter = null
   AND: [AutoScalingRuleFilter!] = null
   OR: [AutoScalingRuleFilter!] = null
   NOT: [AutoScalingRuleFilter!] = null
@@ -4859,8 +4864,6 @@ enum DeploymentStatus
   SCALING @join__enumValue(graph: STRAWBERRY)
   DEPLOYING @join__enumValue(graph: STRAWBERRY)
   READY @join__enumValue(graph: STRAWBERRY)
-  DESTROYING @join__enumValue(graph: STRAWBERRY)
-  DESTROYED @join__enumValue(graph: STRAWBERRY)
   STOPPING @join__enumValue(graph: STRAWBERRY)
   STOPPED @join__enumValue(graph: STRAWBERRY)
 }
@@ -4880,6 +4883,12 @@ input DeploymentStatusFilter
   """The in  field."""
   in: [DeploymentStatus!] = null
   equals: DeploymentStatus = null
+
+  """Excludes statuses in the list."""
+  notIn: [DeploymentStatus!] = null
+
+  """Excludes exact status match."""
+  notEquals: DeploymentStatus = null
 }
 
 """
@@ -6061,6 +6070,11 @@ type EntityRef implements Node
 
   """The resolved entity object."""
   entity: EntityNode
+
+  """
+  Added in UNRELEASED. The resolved scope object in which the entity is registered.
+  """
+  scope: EntityNode
 }
 
 """An edge in a connection."""
@@ -7448,8 +7462,13 @@ enum KernelV2Status
 input KernelV2StatusFilter
   @join__type(graph: STRAWBERRY)
 {
+  equals: KernelV2Status = null
+
   """The in  field."""
   in: [KernelV2Status!] = null
+
+  """Excludes exact status match."""
+  notEquals: KernelV2Status = null
   notIn: [KernelV2Status!] = null
 }
 
@@ -8035,6 +8054,9 @@ input LoginHistoryResultFilter
 
   """The in field."""
   in: [LoginAttemptResult!] = null
+
+  """Excludes exact result match."""
+  notEquals: LoginAttemptResult = null
   notIn: [LoginAttemptResult!] = null
 }
 
@@ -8137,6 +8159,9 @@ input LoginSessionStatusFilter
 
   """The in field."""
   in: [LoginSessionStatus!] = null
+
+  """Excludes exact status match."""
+  notEquals: LoginSessionStatus = null
   notIn: [LoginSessionStatus!] = null
 }
 
@@ -10914,6 +10939,19 @@ input NotificationRuleTypeFilter
 }
 
 """
+Added in UNRELEASED. Filter for nullable datetime fields with IS NULL / IS NOT NULL support.
+"""
+input NullableDateTimeFilter
+  @join__type(graph: STRAWBERRY)
+{
+  before: DateTime = null
+  after: DateTime = null
+  equals: DateTime = null
+  notEquals: DateTime = null
+  isNull: Boolean = null
+}
+
+"""
 Added in 26.3.0. Display number format configuration for a resource slot type.
 """
 type NumberFormat
@@ -13681,6 +13719,12 @@ input ReplicaStatusFilter
   """The in  field."""
   in: [ReplicaStatus!] = null
   equals: ReplicaStatus = null
+
+  """Excludes statuses in the list."""
+  notIn: [ReplicaStatus!] = null
+
+  """Excludes exact status match."""
+  notEquals: ReplicaStatus = null
 }
 
 """Added in 25.4.0."""
@@ -16106,8 +16150,13 @@ enum SessionV2Status
 input SessionV2StatusFilter
   @join__type(graph: STRAWBERRY)
 {
+  equals: SessionV2Status = null
+
   """The in  field."""
   in: [SessionV2Status!] = null
+
+  """Excludes exact status match."""
+  notEquals: SessionV2Status = null
   notIn: [SessionV2Status!] = null
 }
 
@@ -16450,6 +16499,12 @@ input TrafficStatusFilter
   """The in  field."""
   in: [TrafficStatus!] = null
   equals: TrafficStatus = null
+
+  """Excludes traffic statuses in the list."""
+  notIn: [TrafficStatus!] = null
+
+  """Excludes exact traffic status match."""
+  notEquals: TrafficStatus = null
 }
 
 """Added in 26.4.2. UI rendering options."""
@@ -18896,8 +18951,13 @@ Added in 26.4.2. Filter for VFolder operation status enum fields. Supports in an
 input VFolderOperationStatusFilter
   @join__type(graph: STRAWBERRY)
 {
+  equals: VFolderOperationStatus = null
+
   """The in field."""
   in: [VFolderOperationStatus!] = null
+
+  """Excludes exact status match."""
+  notEquals: VFolderOperationStatus = null
 
   """Exclude statuses not in this list."""
   notIn: [VFolderOperationStatus!] = null
@@ -18979,8 +19039,13 @@ Added in 26.4.2. Filter for VFolder usage mode enum fields. Supports in and not_
 input VFolderUsageModeFilter
   @join__type(graph: STRAWBERRY)
 {
+  equals: VFolderUsageMode = null
+
   """The in field."""
   in: [VFolderUsageMode!] = null
+
+  """Excludes exact usage mode match."""
+  notEquals: VFolderUsageMode = null
 
   """Exclude usage modes not in this list."""
   notIn: [VFolderUsageMode!] = null

@@ -419,7 +419,6 @@ const AutoScalingRuleList: React.FC<AutoScalingRuleListProps> = ({
             handleRefetch();
           }
         }}
-        onComplete={handleRefetch}
       />
     </>
   );
