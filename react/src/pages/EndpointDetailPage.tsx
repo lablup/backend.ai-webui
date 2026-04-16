@@ -2,6 +2,11 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { AutoScalingRuleEditorModalLegacyFragment$key } from '../__generated__/AutoScalingRuleEditorModalLegacyFragment.graphql';
+import {
+  EndpointDetailPageDeleteAutoScalingRuleMutation,
+  EndpointDetailPageDeleteAutoScalingRuleMutation$data,
+} from '../__generated__/EndpointDetailPageDeleteAutoScalingRuleMutation.graphql';
 import {
   EndpointDetailPageQuery,
   EndpointDetailPageQuery$data,
@@ -11,8 +16,9 @@ import {
   RouteTrafficStatus,
 } from '../__generated__/EndpointDetailPageQuery.graphql';
 import { InferenceSessionErrorModalFragment$key } from '../__generated__/InferenceSessionErrorModalFragment.graphql';
-import AutoScalingRuleList from '../components/AutoScalingRuleList';
-import AutoScalingRuleListLegacy from '../components/AutoScalingRuleListLegacy';
+import AutoScalingRuleEditorModalLegacy, {
+  COMPARATOR_LABELS,
+} from '../components/AutoScalingRuleEditorModalLegacy';
 import BAIJSONViewerModal from '../components/BAIJSONViewerModal';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import { isEndpointInDestroyingCategory } from '../components/EndpointList';
@@ -34,8 +40,10 @@ import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import {
   ArrowRightOutlined,
+  CheckCircleOutlined,
   CheckOutlined,
   CloseOutlined,
+  DeleteOutlined,
   ExclamationCircleOutlined,
   LoadingOutlined,
   PlusOutlined,
@@ -49,6 +57,7 @@ import {
   Button,
   Card,
   Descriptions,
+  Popconfirm,
   Spin,
   Table,
   Tag,
@@ -60,6 +69,7 @@ import { DescriptionsItemType } from 'antd/es/descriptions';
 import {
   filterOutNullAndUndefined,
   BAIFlex,
+  BAIModal,
   BAIGraphQLPropertyFilter,
   BAIUnmountAfterClose,
   BAIText,
@@ -76,7 +86,11 @@ import {
 } from 'backend.ai-ui';
 import { default as dayjs } from 'dayjs';
 import * as _ from 'lodash-es';
-import { BotMessageSquareIcon } from 'lucide-react';
+import {
+  BotMessageSquareIcon,
+  CircleArrowDownIcon,
+  CircleArrowUpIcon,
+} from 'lucide-react';
 import React, {
   Suspense,
   useDeferredValue,
@@ -84,8 +98,9 @@ import React, {
   useTransition,
 } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery } from 'react-relay';
+import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 import { useParams } from 'react-router-dom';
+import { PayloadError } from 'relay-runtime';
 import VFolderNodeIdenticon from 'src/components/VFolderNodeIdenticon';
 
 interface RoutingInfo {
@@ -116,6 +131,7 @@ const dayDiff = (a: any, b: any) => {
 };
 
 const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
+  'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { message } = App.useApp();
@@ -146,6 +162,23 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
   const [selectedSessionErrorForModal, setSelectedSessionErrorForModal] =
     useState<InferenceSessionErrorModalFragment$key | null>(null);
 
+  const [editingAutoScalingRule, setEditingAutoScalingRule] =
+    useState<AutoScalingRuleEditorModalLegacyFragment$key | null>(null);
+  const [isOpenAutoScalingRuleModal, setIsOpenAutoScalingRuleModal] =
+    useState(false);
+  const [isCurrentRevisionModalOpen, setIsCurrentRevisionModalOpen] =
+    useState(false);
+  const [
+    commitDeleteAutoScalingRuleMutation,
+    isInFlightDeleteAutoScalingRuleMutation,
+  ] = useMutation<EndpointDetailPageDeleteAutoScalingRuleMutation>(graphql`
+    mutation EndpointDetailPageDeleteAutoScalingRuleMutation($id: String!) {
+      delete_endpoint_auto_scaling_rule_node(id: $id) {
+        ok
+        msg
+      }
+    }
+  `);
   const [isOpenTokenGenerationModal, setIsOpenTokenGenerationModal] =
     useState(false);
   const [currentUser] = useCurrentUserInfo();
@@ -167,7 +200,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
     endpoint_auto_scaling_rules,
     routes,
     healthyRoutes,
-    deploymentScopedSchedulingHistories,
+    modelDeployment,
   } = useLazyLoadQuery<EndpointDetailPageQuery>(
     graphql`
       query EndpointDetailPageQuery(
@@ -191,9 +224,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
         $routeOffset: Int
         $skipRouteNodes: Boolean!
         $skipRoutings: Boolean!
-        $schedulingHistoryScope: DeploymentScope!
-        $schedulingHistoryFilter: DeploymentHistoryFilter
-        $skipSchedulingHistories: Boolean!
+        $skipModelDefinition: Boolean!
       ) {
         endpoint(endpoint_id: $endpointId) {
           name
@@ -326,12 +357,56 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
         ) @skipOnClient(if: $skipRouteNodes) {
           count
         }
-        deploymentScopedSchedulingHistories(
-          scope: $schedulingHistoryScope
-          filter: $schedulingHistoryFilter
-          limit: 1
-        ) @skipOnClient(if: $skipSchedulingHistories) {
-          count
+        modelDeployment: deployment(id: $deploymentId)
+          @skipOnClient(if: $skipModelDefinition) {
+          metadata {
+            status
+          }
+          currentRevision {
+            id
+            name
+            modelDefinition {
+              models {
+                name
+                modelPath
+                service {
+                  startCommand
+                  port
+                  healthCheck {
+                    path
+                    initialDelay
+                    maxRetries
+                  }
+                }
+              }
+            }
+          }
+          revisionHistory(
+            limit: 1
+            orderBy: [{ field: CREATED_AT, direction: DESC }]
+          ) {
+            edges {
+              node {
+                id
+                name
+                modelDefinition {
+                  models {
+                    name
+                    modelPath
+                    service {
+                      startCommand
+                      port
+                      healthCheck {
+                        path
+                        initialDelay
+                        maxRetries
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       }
     `,
@@ -387,9 +462,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
         deferredRoutePagination.pageSize,
       skipRouteNodes: !baiClient.supports('route-node'),
       skipRoutings: baiClient.supports('route-node'),
-      schedulingHistoryScope: { deploymentId: serviceId || '' },
-      schedulingHistoryFilter: { toStatus: ['READY'] },
-      skipSchedulingHistories: !baiClient.supports('model-card-v2'),
+      skipModelDefinition: !baiClient.supports('model-card-v2'),
     },
     {
       fetchPolicy:
@@ -403,11 +476,20 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
     ? endpoint.project !== currentProject.id
     : false;
 
-  const hasAnyHealthyRoute = baiClient.supports('route-node')
-    ? (healthyRoutes?.count ?? 0) > 0
-    : endpoint?.status === 'HEALTHY';
+  const deploymentStatus = modelDeployment?.metadata?.status;
 
-  const hasReachedReady = (deploymentScopedSchedulingHistories?.count ?? 0) > 0;
+  // When model-card-v2 is supported, use deployment.metadata.status as the
+  // single source of truth — avoids the mixed-state problem of endpoint.status
+  // and route-count heuristics (which can be stale during rolling updates).
+  const isDeploymentDeploying = baiClient.supports('model-card-v2')
+    ? deploymentStatus === 'DEPLOYING'
+    : endpoint?.lifecycle_stage === 'DEPLOYING';
+
+  const hasAnyHealthyRoute = baiClient.supports('model-card-v2')
+    ? deploymentStatus === 'READY'
+    : baiClient.supports('route-node')
+      ? (healthyRoutes?.count ?? 0) > 0
+      : endpoint?.status === 'HEALTHY';
 
   const mutationToClearError = useTanMutation({
     mutationFn: () => {
@@ -626,6 +708,117 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
   //   ),
   // });
 
+  const buildModelDefinitionItems = (
+    rawModels:
+      | ReadonlyArray<{
+          readonly name: string | null | undefined;
+          readonly modelPath: string | null | undefined;
+          readonly service?: {
+            readonly startCommand: unknown;
+            readonly port: number | null | undefined;
+            readonly healthCheck?: {
+              readonly path: string | null | undefined;
+              readonly initialDelay: number | null | undefined;
+              readonly maxRetries: number | null | undefined;
+            } | null;
+          } | null;
+        } | null>
+      | null
+      | undefined,
+  ): DescriptionsItemType[] => {
+    const models = filterOutNullAndUndefined(rawModels);
+    if (!models || models.length === 0) return [];
+    return models.flatMap((model, idx) => {
+      const prefix = models.length > 1 ? `[${idx}] ` : '';
+      const modelItems: DescriptionsItemType[] = [
+        {
+          key: `model-name-${idx}`,
+          label: `${prefix}${t('modelStore.ModelName')}`,
+          children: model.name || (
+            <Typography.Text type="secondary">-</Typography.Text>
+          ),
+        },
+        {
+          key: `model-path-${idx}`,
+          label: `${prefix}${t('modelStore.ModelPath')}`,
+          children: model.modelPath || (
+            <Typography.Text type="secondary">-</Typography.Text>
+          ),
+        },
+        ...(model.service
+          ? ([
+              {
+                key: `model-start-command-${idx}`,
+                label: `${prefix}${t('modelService.StartCommand')}`,
+                children: model.service.startCommand ? (
+                  <SourceCodeView language="shell">
+                    {typeof model.service.startCommand === 'string'
+                      ? model.service.startCommand
+                      : JSON.stringify(model.service.startCommand, null, 2)}
+                  </SourceCodeView>
+                ) : (
+                  <Typography.Text type="secondary">-</Typography.Text>
+                ),
+                span: { xl: 2 },
+              },
+              {
+                key: `model-port-${idx}`,
+                label: `${prefix}${t('modelService.Port')}`,
+                children: model.service.port ?? (
+                  <Typography.Text type="secondary">-</Typography.Text>
+                ),
+              },
+              ...(model.service.healthCheck
+                ? ([
+                    {
+                      key: `model-healthcheck-path-${idx}`,
+                      label: `${prefix}${t('modelService.HealthCheck')}`,
+                      children: model.service.healthCheck.path || (
+                        <Typography.Text type="secondary">-</Typography.Text>
+                      ),
+                    },
+                    {
+                      key: `model-initial-delay-${idx}`,
+                      label: `${prefix}${t('modelService.InitialDelay')}`,
+                      children: model.service.healthCheck.initialDelay ?? (
+                        <Typography.Text type="secondary">-</Typography.Text>
+                      ),
+                    },
+                    {
+                      key: `model-max-retries-${idx}`,
+                      label: `${prefix}${t('modelService.MaxRetries')}`,
+                      children: model.service.healthCheck.maxRetries ?? (
+                        <Typography.Text type="secondary">-</Typography.Text>
+                      ),
+                    },
+                  ] as DescriptionsItemType[])
+                : []),
+            ] as DescriptionsItemType[])
+          : []),
+      ];
+      return modelItems;
+    });
+  };
+
+  const currentRevisionItems = buildModelDefinitionItems(
+    modelDeployment?.currentRevision?.modelDefinition?.models,
+  );
+  const latestRevisionItems = buildModelDefinitionItems(
+    modelDeployment?.revisionHistory?.edges?.[0]?.node?.modelDefinition?.models,
+  );
+  const currentRevisionName = modelDeployment?.currentRevision?.name;
+  const latestRevisionName =
+    modelDeployment?.revisionHistory?.edges?.[0]?.node?.name;
+  const isRevisionMismatch =
+    modelDeployment?.currentRevision?.id != null &&
+    modelDeployment?.revisionHistory?.edges?.[0]?.node?.id != null &&
+    modelDeployment?.currentRevision?.id !==
+      modelDeployment?.revisionHistory?.edges?.[0]?.node?.id;
+  const displayRevisionItems =
+    latestRevisionItems.length > 0 ? latestRevisionItems : currentRevisionItems;
+  const displayRevisionName =
+    latestRevisionItems.length > 0 ? latestRevisionName : currentRevisionName;
+
   return (
     <BAIFlex direction="column" align="stretch" gap="sm">
       <BAIFlex direction="row" justify="between">
@@ -668,8 +861,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
           </BAIFetchKeyButton>
         </BAIFlex>
       </BAIFlex>
-      {!hasReachedReady &&
-        !hasAnyHealthyRoute &&
+      {isDeploymentDeploying &&
         !isEndpointInDestroyingCategory(endpoint) &&
         endpoint?.replicas !== 0 && (
           <Alert
@@ -721,21 +913,30 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
       <Card
         title={t('modelService.ServiceInfo')}
         extra={
-          <Button
-            type="primary"
-            icon={<SettingOutlined />}
-            disabled={
-              isEndpointInDestroyingCategory(endpoint) ||
-              isProjectMismatch ||
-              (!!endpoint?.created_user_email &&
-                endpoint?.created_user_email !== currentUser.email)
+          <Tooltip
+            title={
+              endpoint?.lifecycle_stage === 'DEPLOYING'
+                ? t('modelService.EditNotAvailableWhileDeploying')
+                : undefined
             }
-            onClick={() => {
-              webuiNavigate('/service/update/' + serviceId);
-            }}
           >
-            {t('button.Edit')}
-          </Button>
+            <Button
+              type="primary"
+              icon={<SettingOutlined />}
+              disabled={
+                endpoint?.lifecycle_stage === 'DEPLOYING' ||
+                isEndpointInDestroyingCategory(endpoint) ||
+                isProjectMismatch ||
+                (!!endpoint?.created_user_email &&
+                  endpoint?.created_user_email !== currentUser.email)
+              }
+              onClick={() => {
+                webuiNavigate('/service/update/' + serviceId);
+              }}
+            >
+              {t('button.Edit')}
+            </Button>
+          </Tooltip>
         }
       >
         <Descriptions
@@ -747,40 +948,309 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
           items={items}
         ></Descriptions>
       </Card>
-      {isSupportAutoScalingRule &&
-        (isSupportPrometheusAutoScalingRule ? (
-          <AutoScalingRuleList
-            deploymentId={toGlobalId(
-              'ModelDeployment',
-              endpoint?.endpoint_id || '',
-            )}
-            isEndpointDestroying={
-              isEndpointInDestroyingCategory(endpoint) ?? false
-            }
-            isOwnedByCurrentUser={
-              !endpoint?.created_user_email ||
-              endpoint?.created_user_email === currentUser.email
-            }
-            fetchKey={fetchKey}
-          />
-        ) : (
-          <AutoScalingRuleListLegacy
-            endpoint_id={endpoint?.endpoint_id as string}
-            autoScalingRules={autoScalingRules}
-            isEndpointDestroying={
-              isEndpointInDestroyingCategory(endpoint) ?? false
-            }
-            isOwnedByCurrentUser={
-              !endpoint?.created_user_email ||
-              endpoint?.created_user_email === currentUser.email
-            }
-            onRefetch={() => {
-              startRefetchTransition(() => {
-                updateFetchKey();
-              });
+      {(latestRevisionItems.length > 0 || currentRevisionItems.length > 0) && (
+        <Card title={t('modelService.RevisionInfo')}>
+          {isRevisionMismatch && (
+            <Alert
+              type="info"
+              icon={<LoadingOutlined spin />}
+              showIcon
+              title={t('modelService.NextRevisionApplying')}
+              action={
+                <Button onClick={() => setIsCurrentRevisionModalOpen(true)}>
+                  {t('modelService.ViewCurrentRevision')}
+                </Button>
+              }
+              style={{ marginBottom: token.marginMD }}
+            />
+          )}
+          <Descriptions
+            bordered
+            column={{ xxl: 3, xl: 2, lg: 2, md: 1, sm: 1, xs: 1 }}
+            style={{
+              backgroundColor: token.colorBgBase,
             }}
-          />
-        ))}
+            items={[
+              {
+                key: 'revision-id',
+                label: t('modelService.RevisionID'),
+                children: displayRevisionName || (
+                  <Typography.Text type="secondary">-</Typography.Text>
+                ),
+              },
+              ...displayRevisionItems,
+            ]}
+          ></Descriptions>
+        </Card>
+      )}
+      <BAIModal
+        open={isCurrentRevisionModalOpen}
+        onCancel={() => setIsCurrentRevisionModalOpen(false)}
+        title={t('modelService.CurrentRevisionTitle')}
+        footer={null}
+        width={800}
+      >
+        <Alert
+          type="info"
+          icon={<CheckCircleOutlined />}
+          showIcon
+          title={t('modelService.CurrentlyApplied')}
+          style={{ marginBottom: token.marginMD }}
+        />
+        <Descriptions
+          bordered
+          column={{ xxl: 3, xl: 2, lg: 2, md: 1, sm: 1, xs: 1 }}
+          style={{
+            backgroundColor: token.colorBgBase,
+          }}
+          items={[
+            {
+              key: 'current-revision-id',
+              label: t('modelService.RevisionID'),
+              children: currentRevisionName || (
+                <Typography.Text type="secondary">-</Typography.Text>
+              ),
+            },
+            ...currentRevisionItems,
+          ]}
+        ></Descriptions>
+      </BAIModal>
+      {isSupportAutoScalingRule && (
+        <Card
+          title={t('modelService.AutoScalingRules')}
+          extra={
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              disabled={isEndpointInDestroyingCategory(endpoint)}
+              onClick={() => {
+                setIsOpenAutoScalingRuleModal(true);
+              }}
+            >
+              {t('modelService.AddRules')}
+            </Button>
+          }
+        >
+          <BAITable
+            scroll={{ x: 'max-content' }}
+            rowKey={'id'}
+            columns={[
+              {
+                title: t('autoScalingRule.ScalingType'),
+                fixed: 'left',
+                render: (_text, row) =>
+                  (row?.step_size || 0) > 0
+                    ? t('autoScalingRule.ScaleOut')
+                    : t('autoScalingRule.ScaleIn'),
+              },
+              {
+                title: t('autoScalingRule.MetricSource'),
+                dataIndex: 'metric_source',
+                // render: (text, row) => <Tag>{row?.metric_source}</Tag>,
+              },
+              {
+                title: t('autoScalingRule.Condition'),
+                dataIndex: 'metric_name',
+                fixed: 'left',
+                render: (_text, row) => (
+                  <BAIFlex gap={'xs'}>
+                    <Tag>{row?.metric_name}</Tag>
+                    {row?.comparator ? (
+                      <Tooltip title={row.comparator}>
+                        {/* @ts-ignore */}
+                        {COMPARATOR_LABELS[row.comparator]}
+                      </Tooltip>
+                    ) : (
+                      '-'
+                    )}
+                    {row?.threshold}
+                    {row?.metric_source === 'KERNEL' ? '%' : ''}
+                  </BAIFlex>
+                ),
+              },
+              {
+                title: t('modelService.Controls'),
+                dataIndex: 'controls',
+                key: 'controls',
+                render: (_text, row) => (
+                  <BAIFlex direction="row" align="stretch">
+                    <Button
+                      type="text"
+                      icon={<SettingOutlined />}
+                      style={
+                        isEndpointInDestroyingCategory(endpoint) ||
+                        (!!endpoint?.created_user_email &&
+                          endpoint?.created_user_email !== currentUser.email)
+                          ? {
+                              color: token.colorTextDisabled,
+                            }
+                          : {
+                              color: token.colorInfo,
+                            }
+                      }
+                      disabled={
+                        isEndpointInDestroyingCategory(endpoint) ||
+                        (!!endpoint?.created_user_email &&
+                          endpoint?.created_user_email !== currentUser.email)
+                      }
+                      onClick={() => {
+                        if (row) {
+                          setEditingAutoScalingRule(row);
+                          setIsOpenAutoScalingRuleModal(true);
+                        }
+                      }}
+                    />
+                    <Popconfirm
+                      title={t('dialog.warning.CannotBeUndone')}
+                      okText={t('button.Delete')}
+                      okButtonProps={{
+                        danger: true,
+                      }}
+                      disabled={isInFlightDeleteAutoScalingRuleMutation}
+                      onConfirm={() => {
+                        if (autoScalingRules) {
+                          commitDeleteAutoScalingRuleMutation({
+                            variables: {
+                              id: row?.id as string,
+                            },
+                            onCompleted: (
+                              res: EndpointDetailPageDeleteAutoScalingRuleMutation$data,
+                              errors: PayloadError[] | null,
+                            ) => {
+                              if (
+                                !res?.delete_endpoint_auto_scaling_rule_node?.ok
+                              ) {
+                                message.error(
+                                  res?.delete_endpoint_auto_scaling_rule_node
+                                    ?.msg,
+                                );
+                              } else if (errors && errors.length > 0) {
+                                const errorMsgList = _.map(
+                                  errors,
+                                  (error) =>
+                                    error.message || t('dialog.ErrorOccurred'),
+                                );
+                                for (const error of errorMsgList) {
+                                  message.error(error);
+                                }
+                              } else {
+                                setEditingAutoScalingRule(null);
+                                startRefetchTransition(() => {
+                                  updateFetchKey();
+                                });
+                                message.success({
+                                  key: 'autoscaling-rule-deleted',
+                                  content: t(
+                                    'autoScalingRule.SuccessfullyDeleted',
+                                  ),
+                                });
+                              }
+                            },
+                            onError: (error) => {
+                              message.error(
+                                error?.message || t('dialog.ErrorOccurred'),
+                              );
+                            },
+                          });
+                        }
+                      }}
+                    >
+                      <Button
+                        type="text"
+                        icon={
+                          <DeleteOutlined
+                            style={
+                              isEndpointInDestroyingCategory(endpoint)
+                                ? undefined
+                                : {
+                                    color: token.colorError,
+                                  }
+                            }
+                          />
+                        }
+                        disabled={false}
+                        onClick={() => {
+                          if (row) {
+                            setEditingAutoScalingRule(row);
+                          }
+                        }}
+                      />
+                    </Popconfirm>
+                  </BAIFlex>
+                ),
+              },
+              {
+                title: t('autoScalingRule.StepSize'),
+                dataIndex: 'step_size',
+                render: (_text, row) => {
+                  if (row?.step_size) {
+                    return (
+                      <BAIFlex gap={'xs'}>
+                        <Typography.Text>
+                          {row?.step_size > 0 ? (
+                            <CircleArrowUpIcon />
+                          ) : (
+                            <CircleArrowDownIcon />
+                          )}
+                        </Typography.Text>
+                        <Typography.Text>
+                          {Math.abs(row?.step_size)}
+                        </Typography.Text>
+                      </BAIFlex>
+                    );
+                  } else {
+                    return '-';
+                  }
+                },
+              },
+              {
+                title: t('autoScalingRule.MIN/MAXReplicas'),
+                render: (_text, row) => (
+                  <span>
+                    {row?.step_size
+                      ? row?.step_size > 0
+                        ? `Max: ${row?.max_replicas}`
+                        : `Min: ${row?.min_replicas}`
+                      : '-'}
+                  </span>
+                ),
+              },
+              {
+                title: t('autoScalingRule.CoolDownSeconds'),
+                dataIndex: 'cooldown_seconds',
+                // render: (text, row) => <span>{row?.cooldown_seconds}</span>,
+              },
+              {
+                title: t('autoScalingRule.LastTriggered'),
+                render: (_text, row) => {
+                  return (
+                    <span>
+                      {row?.last_triggered_at
+                        ? dayjs
+                            .utc(row?.last_triggered_at)
+                            .tz()
+                            .format('ll LTS')
+                        : `-`}
+                    </span>
+                  );
+                },
+                sorter: dayDiff,
+              },
+              {
+                title: t('autoScalingRule.CreatedAt'),
+                dataIndex: 'created_at',
+                render: (_text, row) => (
+                  <span>{dayjs(row?.created_at).format('ll LT')}</span>
+                ),
+                sorter: dayDiff,
+              },
+            ]}
+            pagination={false}
+            showSorterTooltip={false}
+            dataSource={autoScalingRules}
+          ></BAITable>
+        </Card>
+      )}
       <Card
         title={t('modelService.GeneratedTokens')}
         extra={
@@ -937,18 +1407,6 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
                         },
                       ]
                     : []),
-                  {
-                    key: 'trafficStatus',
-                    propertyLabel: t('modelService.TrafficStatus'),
-                    type: 'enum',
-                    valueMode: 'scalar',
-                    fixedOperator: 'equals',
-                    strictSelection: true,
-                    options: [
-                      { label: 'ACTIVE', value: 'ACTIVE' },
-                      { label: 'INACTIVE', value: 'INACTIVE' },
-                    ],
-                  },
                 ]}
               />
             </BAIFlex>
@@ -1084,6 +1542,22 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
         inferenceSessionErrorFrgmt={selectedSessionErrorForModal}
         onRequestClose={() => setSelectedSessionErrorForModal(null)}
       />
+      <BAIUnmountAfterClose>
+        <AutoScalingRuleEditorModalLegacy
+          open={isOpenAutoScalingRuleModal}
+          endpoint_id={endpoint?.endpoint_id || ''}
+          autoScalingRuleFrgmt={editingAutoScalingRule}
+          onRequestClose={(success) => {
+            setIsOpenAutoScalingRuleModal(false);
+            setEditingAutoScalingRule(null);
+            if (success) {
+              startRefetchTransition(() => {
+                updateFetchKey();
+              });
+            }
+          }}
+        />
+      </BAIUnmountAfterClose>
       <EndpointTokenGenerationModal
         open={isOpenTokenGenerationModal}
         onRequestClose={(success) => {
