@@ -6,9 +6,12 @@ import {
   RoleNodesFragment$data,
   RoleNodesFragment$key,
 } from '../__generated__/RoleNodesFragment.graphql';
-import { Tooltip, Typography } from 'antd';
+import { Tag, Tooltip, Typography } from 'antd';
 import {
   BAIColumnType,
+  BAIDoubleTag,
+  BAIFlex,
+  BAIId,
   BAITable,
   BAITableProps,
   BAITag,
@@ -60,15 +63,26 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
         status
         createdAt
         updatedAt
-        scopes(first: 1) {
+        scopes(first: 3) {
+          count
           edges {
             node {
               scopeType
               scopeId
-              entity {
+              scope {
                 ... on ProjectV2 {
                   basicInfo {
                     projectName: name
+                  }
+                }
+                ... on DomainV2 {
+                  basicInfo {
+                    domainName: name
+                  }
+                }
+                ... on UserV2 {
+                  basicInfo {
+                    userEmail: email
                   }
                 }
               }
@@ -101,14 +115,49 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
       ),
     },
     {
-      key: 'project',
-      title: t('general.Project'),
+      key: 'scope',
+      title: t('rbac.ScopeType'),
       render: (_, record: RoleNodeInList) => {
-        const scopeNode = record.scopes?.edges?.[0]?.node;
-        if (scopeNode?.scopeType === 'PROJECT') {
-          return scopeNode.entity?.basicInfo?.projectName ?? scopeNode.scopeId;
-        }
-        return '-';
+        const scopeNodes =
+          record.scopes?.edges?.map((edge) => edge?.node).filter(Boolean) ?? [];
+        const totalCount = record.scopes?.count ?? 0;
+        if (scopeNodes.length === 0) return '-';
+        const first = scopeNodes[0];
+        const scopeTypeLabel = t(`rbac.types.${first?.scopeType}`, {
+          defaultValue: first?.scopeType,
+        });
+        const scopeName =
+          first?.scope?.basicInfo?.projectName ??
+          first?.scope?.basicInfo?.domainName ??
+          first?.scope?.basicInfo?.userEmail ??
+          first?.scopeId;
+        return (
+          <BAIFlex gap="xxs" wrap="wrap" align="center">
+            <BAIDoubleTag
+              values={[
+                { label: scopeTypeLabel, color: 'blue' },
+                { label: scopeName, color: 'default' },
+              ]}
+            />
+            {totalCount > 1 && <Tag color="default">+{totalCount - 1}</Tag>}
+          </BAIFlex>
+        );
+      },
+    },
+    {
+      key: 'scopeId',
+      title: t('rbac.ScopeRawId'),
+      render: (_, record: RoleNodeInList) => {
+        const scopeNodes =
+          record.scopes?.edges?.map((edge) => edge?.node).filter(Boolean) ?? [];
+        const totalCount = record.scopes?.count ?? 0;
+        if (scopeNodes.length === 0) return '-';
+        return (
+          <BAIFlex gap="xxs" wrap="wrap" align="center">
+            <BAIId uuid={scopeNodes[0]?.scopeId} />
+            {totalCount > 1 && <Tag color="default">+{totalCount - 1}</Tag>}
+          </BAIFlex>
+        );
       },
     },
     {

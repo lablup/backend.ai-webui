@@ -7,28 +7,18 @@ import {
   type OperationType,
   type RBACElementType,
 } from '../__generated__/CreatePermissionModalCreateMutation.graphql';
-import { CreatePermissionModalDomainQuery } from '../__generated__/CreatePermissionModalDomainQuery.graphql';
 import { CreatePermissionModalPermissionMatrixQuery } from '../__generated__/CreatePermissionModalPermissionMatrixQuery.graphql';
-import { CreatePermissionModalResourceGroupQuery } from '../__generated__/CreatePermissionModalResourceGroupQuery.graphql';
 import { CreatePermissionModalUpdateMutation } from '../__generated__/CreatePermissionModalUpdateMutation.graphql';
 import { CreatePermissionModal_roleScopeFragment$key } from '../__generated__/CreatePermissionModal_roleScopeFragment.graphql';
-import { App, Form, type SelectProps } from 'antd';
+import { RBAC_ELEMENT_TYPES, ScopeIdSelect } from './RoleFormModal';
+import { App, Form } from 'antd';
 import {
-  BAIAdminResourceGroupSelect,
-  BAIAdminContainerRegistrySelect,
-  BAIAdminModelServiceSelect,
-  BAIAdminProjectSelect,
-  BAIKeypairSelect,
   BAIModal,
   BAIModalProps,
   BAISelect,
-  BAIStorageHostSelect,
-  BAIAdminSessionSelect,
-  BAIUserSelect,
-  BAIVFolderSelect,
   useBAILogger,
 } from 'backend.ai-ui';
-import React, { Suspense, useEffect } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   graphql,
@@ -36,39 +26,6 @@ import {
   useLazyLoadQuery,
   useMutation,
 } from 'react-relay';
-
-const RBAC_ELEMENT_TYPES: ReadonlyArray<RBACElementType> = [
-  // Scope ID select implemented
-  'DOMAIN',
-  'PROJECT',
-  'USER',
-  'VFOLDER',
-  'RESOURCE_GROUP',
-  'SESSION',
-  'MODEL_DEPLOYMENT',
-  'CONTAINER_REGISTRY',
-  'STORAGE_HOST',
-  'KEYPAIR',
-  // TODO: Scope ID select to be implemented in separate stacks
-  // 'IMAGE',
-  // 'ARTIFACT',
-  // 'ARTIFACT_REGISTRY',
-  // 'ARTIFACT_REVISION',
-  // 'RESOURCE_PRESET',
-  // 'USER_RESOURCE_POLICY',
-  // 'KEYPAIR_RESOURCE_POLICY',
-  // 'PROJECT_RESOURCE_POLICY',
-  // 'ROLE',
-  // TODO: No management UI in WebUI yet
-  // 'DEPLOYMENT',
-  // 'NOTIFICATION_CHANNEL',
-  // 'NETWORK',
-  // 'SESSION_TEMPLATE',
-  // 'APP_CONFIG',
-  // 'AUDIT_LOG',
-  // 'EVENT_LOG',
-  // 'NOTIFICATION_RULE',
-];
 
 const DIRECT_OPERATIONS: ReadonlyArray<OperationType> = [
   'CREATE',
@@ -85,138 +42,6 @@ const DELEGATE_OPERATIONS: ReadonlyArray<OperationType> = [
   'GRANT_SOFT_DELETE',
   'GRANT_HARD_DELETE',
 ];
-
-interface ScopeIdSelectProps extends SelectProps {
-  scopeType?: string;
-}
-
-const DomainScopeIdSelect: React.FC<SelectProps> = (props) => {
-  'use memo';
-  const { domains } = useLazyLoadQuery<CreatePermissionModalDomainQuery>(
-    graphql`
-      query CreatePermissionModalDomainQuery($is_active: Boolean) {
-        domains(is_active: $is_active) {
-          name
-        }
-      }
-    `,
-    { is_active: true },
-    { fetchPolicy: 'store-and-network' },
-  );
-  return (
-    <BAISelect
-      showSearch
-      {...props}
-      options={
-        domains?.map((d) => ({ value: d?.name ?? '', label: d?.name })) ?? []
-      }
-    />
-  );
-};
-
-const ResourceGroupScopeIdSelect: React.FC<Omit<SelectProps, 'options'>> = (
-  props,
-) => {
-  'use memo';
-  const queryRef = useLazyLoadQuery<CreatePermissionModalResourceGroupQuery>(
-    graphql`
-      query CreatePermissionModalResourceGroupQuery {
-        ...BAIAdminResourceGroupSelect_resourceGroupsFragment
-      }
-    `,
-    {},
-    { fetchPolicy: 'store-and-network' },
-  );
-  return <BAIAdminResourceGroupSelect queryRef={queryRef} {...props} />;
-};
-
-const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
-  scopeType,
-  ...selectProps
-}) => {
-  'use memo';
-  if (scopeType === 'DOMAIN') {
-    return (
-      <Suspense fallback={<BAISelect {...selectProps} loading disabled />}>
-        <DomainScopeIdSelect {...selectProps} />
-      </Suspense>
-    );
-  }
-  if (scopeType === 'PROJECT') {
-    return (
-      <Suspense fallback={<BAISelect {...selectProps} loading disabled />}>
-        <BAIAdminProjectSelect {...selectProps} />
-      </Suspense>
-    );
-  }
-  if (scopeType === 'USER') {
-    return (
-      <Suspense fallback={<BAISelect {...selectProps} loading disabled />}>
-        <BAIUserSelect {...selectProps} />
-      </Suspense>
-    );
-  }
-  if (scopeType === 'VFOLDER') {
-    return (
-      <Suspense fallback={<BAISelect {...selectProps} loading disabled />}>
-        <BAIVFolderSelect {...selectProps} />
-      </Suspense>
-    );
-  }
-  if (scopeType === 'SESSION') {
-    return (
-      <Suspense fallback={<BAISelect {...selectProps} loading disabled />}>
-        <BAIAdminSessionSelect {...selectProps} />
-      </Suspense>
-    );
-  }
-  if (scopeType === 'MODEL_DEPLOYMENT') {
-    return (
-      <Suspense fallback={<BAISelect {...selectProps} loading disabled />}>
-        <BAIAdminModelServiceSelect {...selectProps} />
-      </Suspense>
-    );
-  }
-  if (scopeType === 'CONTAINER_REGISTRY') {
-    return (
-      <Suspense fallback={<BAISelect {...selectProps} loading disabled />}>
-        <BAIAdminContainerRegistrySelect
-          valuePropName="row_id"
-          {...selectProps}
-        />
-      </Suspense>
-    );
-  }
-  if (scopeType === 'STORAGE_HOST') {
-    return (
-      <Suspense fallback={<BAISelect {...selectProps} loading disabled />}>
-        <BAIStorageHostSelect {...selectProps} />
-      </Suspense>
-    );
-  }
-  if (scopeType === 'KEYPAIR') {
-    return (
-      <Suspense fallback={<BAISelect {...selectProps} loading disabled />}>
-        <BAIKeypairSelect {...selectProps} />
-      </Suspense>
-    );
-  }
-  if (scopeType === 'RESOURCE_GROUP') {
-    return (
-      <Suspense fallback={<BAISelect {...selectProps} loading disabled />}>
-        <ResourceGroupScopeIdSelect {...selectProps} />
-      </Suspense>
-    );
-  }
-  return (
-    <BAISelect
-      showSearch
-      {...selectProps}
-      disabled={!scopeType || selectProps.disabled}
-      options={[]}
-    />
-  );
-};
 
 interface EditingPermission {
   id: string;
@@ -253,7 +78,7 @@ const CreatePermissionModal: React.FC<CreatePermissionModalProps> = ({
   const roleScope = useFragment(
     graphql`
       fragment CreatePermissionModal_roleScopeFragment on Role {
-        scopes(first: 1) {
+        allScopes: scopes(first: 100) {
           edges {
             node {
               scopeType
@@ -266,23 +91,32 @@ const CreatePermissionModal: React.FC<CreatePermissionModalProps> = ({
     roleScopeFrgmt ?? null,
   );
 
-  const roleProjectScopeId =
-    roleScope?.scopes?.edges?.[0]?.node?.scopeType === 'PROJECT'
-      ? roleScope.scopes.edges[0].node.scopeId
-      : undefined;
+  const SCOPE_KEY_SEPARATOR = '|';
+  const makeScopeKey = (scopeType: string, scopeId: string) =>
+    `${scopeType}${SCOPE_KEY_SEPARATOR}${scopeId}`;
+  const parseScopeKey = (
+    key: string | undefined,
+  ): { scopeType?: RBACElementType; scopeId?: string } => {
+    if (!key) return {};
+    const idx = key.indexOf(SCOPE_KEY_SEPARATOR);
+    if (idx === -1) return {};
+    return {
+      scopeType: key.slice(0, idx) as RBACElementType,
+      scopeId: key.slice(idx + 1),
+    };
+  };
 
-  // When role has project scope and user selects PROJECT scopeType,
-  // auto-fill the scopeId with the role's project.
-  // This also restores the value in edit mode when another form change clears it.
-  useEffect(() => {
-    if (
-      roleProjectScopeId &&
-      watchedScopeType === 'PROJECT' &&
-      !watchedScopeId
-    ) {
-      form.setFieldsValue({ scopeId: roleProjectScopeId });
-    }
-  }, [roleProjectScopeId, watchedScopeType, watchedScopeId, form]);
+  const roleScopes = (roleScope?.allScopes?.edges ?? [])
+    .map((e) => e?.node)
+    .filter(
+      (n): n is { scopeType: RBACElementType; scopeId: string } =>
+        !!n && !!n.scopeType && !!n.scopeId,
+    );
+
+  const hasRoleScopes = roleScopes.length > 0;
+  const watchedRoleScopeKey = Form.useWatch('roleScopeKey', form) as
+    | string
+    | undefined;
 
   const { rbacPermissionMatrix } =
     useLazyLoadQuery<CreatePermissionModalPermissionMatrixQuery>(
@@ -303,16 +137,37 @@ const CreatePermissionModal: React.FC<CreatePermissionModalProps> = ({
       { fetchPolicy: 'store-and-network' },
     );
 
-  // Scope types available: intersection of UI-supported types and backend-reported types
+  // Scope types available for the fallback free-pick UI (role has no scopes):
+  // intersection of UI-supported types and backend-reported types with actions.
   const availableScopeTypes = RBAC_ELEMENT_TYPES.filter((type) => {
     const entry = rbacPermissionMatrix?.find((c) => c.scopeType === type);
     if (!entry) return false;
     return entry.entities.some((e) => e.actions.length > 0);
   });
 
+  // Role scopes that actually have at least one actionable entity for permission
+  // creation. Others would produce an empty entity/operation list.
+  const actionableRoleScopes = roleScopes.filter((s) => {
+    const entry = rbacPermissionMatrix?.find(
+      (c) => c.scopeType === s.scopeType,
+    );
+    return entry?.entities.some((e) => e.actions.length > 0) ?? false;
+  });
+
+  // Effective (scopeType, scopeId) driving entity/operation filtering
+  const parsedRoleScope = hasRoleScopes
+    ? parseScopeKey(watchedRoleScopeKey)
+    : {};
+  const effectiveScopeType: RBACElementType | undefined = hasRoleScopes
+    ? parsedRoleScope.scopeType
+    : (watchedScopeType as RBACElementType | undefined);
+  const effectiveScopeId: string | undefined = hasRoleScopes
+    ? parsedRoleScope.scopeId
+    : watchedScopeId;
+
   // Entity types valid for the currently selected scope type
-  const selectedScopeEntry = watchedScopeType
-    ? rbacPermissionMatrix?.find((c) => c.scopeType === watchedScopeType)
+  const selectedScopeEntry = effectiveScopeType
+    ? rbacPermissionMatrix?.find((c) => c.scopeType === effectiveScopeType)
     : undefined;
 
   const validEntityTypes = selectedScopeEntry
@@ -373,13 +228,18 @@ const CreatePermissionModal: React.FC<CreatePermissionModalProps> = ({
     return form
       .validateFields()
       .then((values) => {
+        const submittedScope = hasRoleScopes
+          ? parseScopeKey(values.roleScopeKey)
+          : { scopeType: values.scopeType, scopeId: values.scopeId };
+        const scopeType = submittedScope.scopeType;
+        const scopeId = submittedScope.scopeId;
         if (isEditMode) {
           commitUpdatePermission({
             variables: {
               input: {
                 id: editingPermission.id,
-                scopeType: values.scopeType,
-                scopeId: values.scopeId,
+                scopeType: scopeType as RBACElementType,
+                scopeId: scopeId as string,
                 entityType: values.entityType,
                 operation: values.operation,
               },
@@ -403,8 +263,8 @@ const CreatePermissionModal: React.FC<CreatePermissionModalProps> = ({
             variables: {
               input: {
                 roleId,
-                scopeType: values.scopeType,
-                scopeId: values.scopeId,
+                scopeType: scopeType as RBACElementType,
+                scopeId: scopeId as string,
                 entityType: values.entityType,
                 operation: values.operation,
               },
@@ -457,6 +317,12 @@ const CreatePermissionModal: React.FC<CreatePermissionModalProps> = ({
         initialValues={
           editingPermission
             ? {
+                roleScopeKey: hasRoleScopes
+                  ? makeScopeKey(
+                      editingPermission.scopeType,
+                      editingPermission.scopeId,
+                    )
+                  : undefined,
                 scopeType: editingPermission.scopeType,
                 scopeId: editingPermission.scopeId,
                 entityType: editingPermission.entityType,
@@ -465,7 +331,12 @@ const CreatePermissionModal: React.FC<CreatePermissionModalProps> = ({
             : undefined
         }
         onValuesChange={(changedValues) => {
-          if ('scopeType' in changedValues) {
+          if ('roleScopeKey' in changedValues) {
+            form.setFieldsValue({
+              entityType: undefined,
+              operation: undefined,
+            });
+          } else if ('scopeType' in changedValues) {
             form.setFieldsValue({
               scopeId: undefined,
               entityType: undefined,
@@ -481,43 +352,72 @@ const CreatePermissionModal: React.FC<CreatePermissionModalProps> = ({
           }
         }}
       >
-        <Form.Item
-          name="scopeType"
-          label={t('rbac.ScopeType')}
-          rules={[
-            {
-              required: true,
-              message: t('general.ValueRequired', {
-                name: t('rbac.ScopeType'),
-              }),
-            },
-          ]}
-        >
-          <BAISelect
-            showSearch
-            placeholder={t('rbac.ScopeType')}
-            options={availableScopeTypes.map((type) => ({
-              value: type,
-              label: t(`rbac.types.${type}`, { defaultValue: type }),
-            }))}
-          />
-        </Form.Item>
-        <Form.Item
-          name="scopeId"
-          label={t('rbac.ScopeId')}
-          rules={[
-            {
-              required: true,
-              message: t('general.ValueRequired', { name: t('rbac.ScopeId') }),
-            },
-          ]}
-        >
-          <ScopeIdSelect
-            scopeType={watchedScopeType}
-            placeholder={t('rbac.ScopeId')}
-            disabled={!!(roleProjectScopeId && watchedScopeType === 'PROJECT')}
-          />
-        </Form.Item>
+        {hasRoleScopes ? (
+          <Form.Item
+            name="roleScopeKey"
+            label={t('rbac.ScopeTypeAndId')}
+            rules={[
+              {
+                required: true,
+                message: t('general.ValueRequired', {
+                  name: t('rbac.ScopeTypeAndId'),
+                }),
+              },
+            ]}
+          >
+            <BAISelect
+              showSearch
+              placeholder={t('rbac.ScopeTypeAndId')}
+              options={actionableRoleScopes.map((s) => ({
+                value: makeScopeKey(s.scopeType, s.scopeId),
+                label: `${t(`rbac.types.${s.scopeType}`, {
+                  defaultValue: s.scopeType,
+                })} / ${s.scopeId}`,
+              }))}
+            />
+          </Form.Item>
+        ) : (
+          <>
+            <Form.Item
+              name="scopeType"
+              label={t('rbac.ScopeType')}
+              rules={[
+                {
+                  required: true,
+                  message: t('general.ValueRequired', {
+                    name: t('rbac.ScopeType'),
+                  }),
+                },
+              ]}
+            >
+              <BAISelect
+                showSearch
+                placeholder={t('rbac.ScopeType')}
+                options={availableScopeTypes.map((type) => ({
+                  value: type,
+                  label: t(`rbac.types.${type}`, { defaultValue: type }),
+                }))}
+              />
+            </Form.Item>
+            <Form.Item
+              name="scopeId"
+              label={t('rbac.ScopeId')}
+              rules={[
+                {
+                  required: true,
+                  message: t('general.ValueRequired', {
+                    name: t('rbac.ScopeId'),
+                  }),
+                },
+              ]}
+            >
+              <ScopeIdSelect
+                scopeType={effectiveScopeType}
+                placeholder={t('rbac.ScopeId')}
+              />
+            </Form.Item>
+          </>
+        )}
         <Form.Item
           name="entityType"
           label={t('rbac.EntityType')}
@@ -532,14 +432,14 @@ const CreatePermissionModal: React.FC<CreatePermissionModalProps> = ({
         >
           <BAISelect
             showSearch
-            disabled={!watchedScopeId}
+            disabled={!effectiveScopeId}
             placeholder={t('rbac.EntityType')}
             options={validEntityTypes.map((type) => ({
               value: type,
               label: t(`rbac.types.${type}`, { defaultValue: type }),
               disabled:
-                !roleProjectScopeId &&
-                watchedScopeType === 'PROJECT' &&
+                !hasRoleScopes &&
+                effectiveScopeType === 'PROJECT' &&
                 type === 'USER',
             }))}
           />

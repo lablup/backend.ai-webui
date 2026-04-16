@@ -6,7 +6,6 @@ import { useFetchKey } from '../../hooks';
 import { useLazyPaginatedQuery } from '../../hooks/usePaginatedQuery';
 import { mergeFilterValues } from '../BAIPropertyFilter';
 import BAISelect, { BAISelectProps } from '../BAISelect';
-import BAIText from '../BAIText';
 import TotalFooter from '../TotalFooter';
 import { useControllableValue } from 'ahooks';
 import { GetRef, Skeleton } from 'antd';
@@ -115,7 +114,9 @@ const BAIUserSelect: React.FC<BAIUserSelectProps> = ({
             !_.isEmpty(deferredControllableValue)
               ? mergeFilterValues(
                   _.castArray(deferredControllableValue).map((value) => {
-                    return `email == "${value}"`;
+                    return valuePropName === 'id'
+                      ? `uuid == "${value}"`
+                      : `email == "${value}"`;
                   }),
                   '|',
                 )
@@ -125,8 +126,7 @@ const BAIUserSelect: React.FC<BAIUserSelectProps> = ({
           '&',
         ),
         first: _.castArray(deferredControllableValue).length,
-        skipSelected:
-          _.isEmpty(deferredControllableValue) || valuePropName === 'id',
+        skipSelected: _.isEmpty(deferredControllableValue),
       },
       {
         fetchPolicy: !_.isEmpty(deferredControllableValue)
@@ -200,9 +200,18 @@ const BAIUserSelect: React.FC<BAIUserSelectProps> = ({
     [updateFetchKey, startRefetchTransition],
   );
 
+  const getValueFromNode = (
+    node: { id: string; email?: string | null } | null | undefined,
+  ): string | undefined => {
+    if (!node) return undefined;
+    return valuePropName === 'id'
+      ? toLocalId(node.id)
+      : (node.email ?? undefined);
+  };
+
   const availableOptions = _.map(paginationData, (item) => ({
-    label: item?.[valuePropName],
-    value: item?.[valuePropName],
+    label: item?.email,
+    value: getValueFromNode(item),
   }));
 
   const controllableValueWithLabel = selectedUserNodes?.edges
@@ -210,12 +219,12 @@ const BAIUserSelect: React.FC<BAIUserSelectProps> = ({
       _.castArray(deferredControllableValue)
         .map((value) => {
           const edge = selectedUserNodes.edges.find(
-            (edge) => edge?.node?.[valuePropName] === value,
+            (edge) => getValueFromNode(edge?.node) === value,
           );
           return edge
             ? {
-                label: edge.node?.[valuePropName],
-                value: edge.node?.[valuePropName],
+                label: edge.node?.email,
+                value: getValueFromNode(edge.node),
               }
             : null;
         })
@@ -267,20 +276,8 @@ const BAIUserSelect: React.FC<BAIUserSelectProps> = ({
           : controllableValueWithLabel
       }
       labelInValue
-      labelRender={({ label }) => {
-        return valuePropName === 'id' && _.isString(label) ? (
-          <BAIText monospace>{toLocalId(label)}</BAIText>
-        ) : (
-          label
-        );
-      }}
-      optionRender={({ label }) => {
-        return valuePropName === 'id' && _.isString(label) ? (
-          <BAIText monospace>{toLocalId(label)}</BAIText>
-        ) : (
-          label
-        );
-      }}
+      labelRender={({ label }) => label}
+      optionRender={({ label }) => label}
       onChange={(value, option) => {
         // _.castArray to handle both single and multiple mode uniformly
         const valueArray = _.isEmpty(value) ? [] : _.castArray(value);
@@ -303,9 +300,9 @@ const BAIUserSelect: React.FC<BAIUserSelectProps> = ({
 
         const isMultiple =
           selectProps.mode === 'multiple' || selectProps.mode === 'tags';
-        const emailArray = valueArray.map((v) => _.toString(v.value));
+        const valuesArray = valueArray.map((v) => _.toString(v.value));
         setControllableValue(
-          isMultiple ? emailArray : (emailArray[0] ?? undefined),
+          isMultiple ? valuesArray : (valuesArray[0] ?? undefined),
           option,
         );
       }}
