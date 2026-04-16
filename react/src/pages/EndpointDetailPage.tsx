@@ -19,6 +19,7 @@ import { InferenceSessionErrorModalFragment$key } from '../__generated__/Inferen
 import AutoScalingRuleEditorModalLegacy, {
   COMPARATOR_LABELS,
 } from '../components/AutoScalingRuleEditorModalLegacy';
+import AutoScalingRuleList from '../components/AutoScalingRuleList';
 import BAIJSONViewerModal from '../components/BAIJSONViewerModal';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import { isEndpointInDestroyingCategory } from '../components/EndpointList';
@@ -1015,241 +1016,255 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
           ]}
         ></Descriptions>
       </BAIModal>
-      {isSupportAutoScalingRule && (
-        <Card
-          title={t('modelService.AutoScalingRules')}
-          extra={
-            <Button
-              type="primary"
-              icon={<PlusOutlined />}
-              disabled={isEndpointInDestroyingCategory(endpoint)}
-              onClick={() => {
-                setIsOpenAutoScalingRuleModal(true);
-              }}
-            >
-              {t('modelService.AddRules')}
-            </Button>
+      {isSupportPrometheusAutoScalingRule ? (
+        <AutoScalingRuleList
+          deploymentId={toGlobalId('ModelDeployment', serviceId || '')}
+          isEndpointDestroying={!!isEndpointInDestroyingCategory(endpoint)}
+          isOwnedByCurrentUser={
+            !endpoint?.created_user_email ||
+            endpoint?.created_user_email === currentUser.email
           }
-        >
-          <BAITable
-            scroll={{ x: 'max-content' }}
-            rowKey={'id'}
-            columns={[
-              {
-                title: t('autoScalingRule.ScalingType'),
-                fixed: 'left',
-                render: (_text, row) =>
-                  (row?.step_size || 0) > 0
-                    ? t('autoScalingRule.ScaleOut')
-                    : t('autoScalingRule.ScaleIn'),
-              },
-              {
-                title: t('autoScalingRule.MetricSource'),
-                dataIndex: 'metric_source',
-                // render: (text, row) => <Tag>{row?.metric_source}</Tag>,
-              },
-              {
-                title: t('autoScalingRule.Condition'),
-                dataIndex: 'metric_name',
-                fixed: 'left',
-                render: (_text, row) => (
-                  <BAIFlex gap={'xs'}>
-                    <Tag>{row?.metric_name}</Tag>
-                    {row?.comparator ? (
-                      <Tooltip title={row.comparator}>
-                        {/* @ts-ignore */}
-                        {COMPARATOR_LABELS[row.comparator]}
-                      </Tooltip>
-                    ) : (
-                      '-'
-                    )}
-                    {row?.threshold}
-                    {row?.metric_source === 'KERNEL' ? '%' : ''}
-                  </BAIFlex>
-                ),
-              },
-              {
-                title: t('modelService.Controls'),
-                dataIndex: 'controls',
-                key: 'controls',
-                render: (_text, row) => (
-                  <BAIFlex direction="row" align="stretch">
-                    <Button
-                      type="text"
-                      icon={<SettingOutlined />}
-                      style={
-                        isEndpointInDestroyingCategory(endpoint) ||
-                        (!!endpoint?.created_user_email &&
-                          endpoint?.created_user_email !== currentUser.email)
-                          ? {
-                              color: token.colorTextDisabled,
-                            }
-                          : {
-                              color: token.colorInfo,
-                            }
-                      }
-                      disabled={
-                        isEndpointInDestroyingCategory(endpoint) ||
-                        (!!endpoint?.created_user_email &&
-                          endpoint?.created_user_email !== currentUser.email)
-                      }
-                      onClick={() => {
-                        if (row) {
-                          setEditingAutoScalingRule(row);
-                          setIsOpenAutoScalingRuleModal(true);
-                        }
-                      }}
-                    />
-                    <Popconfirm
-                      title={t('dialog.warning.CannotBeUndone')}
-                      okText={t('button.Delete')}
-                      okButtonProps={{
-                        danger: true,
-                      }}
-                      disabled={isInFlightDeleteAutoScalingRuleMutation}
-                      onConfirm={() => {
-                        if (autoScalingRules) {
-                          commitDeleteAutoScalingRuleMutation({
-                            variables: {
-                              id: row?.id as string,
-                            },
-                            onCompleted: (
-                              res: EndpointDetailPageDeleteAutoScalingRuleMutation$data,
-                              errors: PayloadError[] | null,
-                            ) => {
-                              if (
-                                !res?.delete_endpoint_auto_scaling_rule_node?.ok
-                              ) {
-                                message.error(
-                                  res?.delete_endpoint_auto_scaling_rule_node
-                                    ?.msg,
-                                );
-                              } else if (errors && errors.length > 0) {
-                                const errorMsgList = _.map(
-                                  errors,
-                                  (error) =>
-                                    error.message || t('dialog.ErrorOccurred'),
-                                );
-                                for (const error of errorMsgList) {
-                                  message.error(error);
-                                }
-                              } else {
-                                setEditingAutoScalingRule(null);
-                                startRefetchTransition(() => {
-                                  updateFetchKey();
-                                });
-                                message.success({
-                                  key: 'autoscaling-rule-deleted',
-                                  content: t(
-                                    'autoScalingRule.SuccessfullyDeleted',
-                                  ),
-                                });
-                              }
-                            },
-                            onError: (error) => {
-                              message.error(
-                                error?.message || t('dialog.ErrorOccurred'),
-                              );
-                            },
-                          });
-                        }
-                      }}
-                    >
+          fetchKey={fetchKey}
+        />
+      ) : (
+        isSupportAutoScalingRule && (
+          <Card
+            title={t('modelService.AutoScalingRules')}
+            extra={
+              <Button
+                type="primary"
+                icon={<PlusOutlined />}
+                disabled={isEndpointInDestroyingCategory(endpoint)}
+                onClick={() => {
+                  setIsOpenAutoScalingRuleModal(true);
+                }}
+              >
+                {t('modelService.AddRules')}
+              </Button>
+            }
+          >
+            <BAITable
+              scroll={{ x: 'max-content' }}
+              rowKey={'id'}
+              columns={[
+                {
+                  title: t('autoScalingRule.ScalingType'),
+                  fixed: 'left',
+                  render: (_text, row) =>
+                    (row?.step_size || 0) > 0
+                      ? t('autoScalingRule.ScaleOut')
+                      : t('autoScalingRule.ScaleIn'),
+                },
+                {
+                  title: t('autoScalingRule.MetricSource'),
+                  dataIndex: 'metric_source',
+                  // render: (text, row) => <Tag>{row?.metric_source}</Tag>,
+                },
+                {
+                  title: t('autoScalingRule.Condition'),
+                  dataIndex: 'metric_name',
+                  fixed: 'left',
+                  render: (_text, row) => (
+                    <BAIFlex gap={'xs'}>
+                      <Tag>{row?.metric_name}</Tag>
+                      {row?.comparator ? (
+                        <Tooltip title={row.comparator}>
+                          {/* @ts-ignore */}
+                          {COMPARATOR_LABELS[row.comparator]}
+                        </Tooltip>
+                      ) : (
+                        '-'
+                      )}
+                      {row?.threshold}
+                      {row?.metric_source === 'KERNEL' ? '%' : ''}
+                    </BAIFlex>
+                  ),
+                },
+                {
+                  title: t('modelService.Controls'),
+                  dataIndex: 'controls',
+                  key: 'controls',
+                  render: (_text, row) => (
+                    <BAIFlex direction="row" align="stretch">
                       <Button
                         type="text"
-                        icon={
-                          <DeleteOutlined
-                            style={
-                              isEndpointInDestroyingCategory(endpoint)
-                                ? undefined
-                                : {
-                                    color: token.colorError,
-                                  }
-                            }
-                          />
+                        icon={<SettingOutlined />}
+                        style={
+                          isEndpointInDestroyingCategory(endpoint) ||
+                          (!!endpoint?.created_user_email &&
+                            endpoint?.created_user_email !== currentUser.email)
+                            ? {
+                                color: token.colorTextDisabled,
+                              }
+                            : {
+                                color: token.colorInfo,
+                              }
                         }
-                        disabled={false}
+                        disabled={
+                          isEndpointInDestroyingCategory(endpoint) ||
+                          (!!endpoint?.created_user_email &&
+                            endpoint?.created_user_email !== currentUser.email)
+                        }
                         onClick={() => {
                           if (row) {
                             setEditingAutoScalingRule(row);
+                            setIsOpenAutoScalingRuleModal(true);
                           }
                         }}
                       />
-                    </Popconfirm>
-                  </BAIFlex>
-                ),
-              },
-              {
-                title: t('autoScalingRule.StepSize'),
-                dataIndex: 'step_size',
-                render: (_text, row) => {
-                  if (row?.step_size) {
-                    return (
-                      <BAIFlex gap={'xs'}>
-                        <Typography.Text>
-                          {row?.step_size > 0 ? (
-                            <CircleArrowUpIcon />
-                          ) : (
-                            <CircleArrowDownIcon />
-                          )}
-                        </Typography.Text>
-                        <Typography.Text>
-                          {Math.abs(row?.step_size)}
-                        </Typography.Text>
-                      </BAIFlex>
-                    );
-                  } else {
-                    return '-';
-                  }
+                      <Popconfirm
+                        title={t('dialog.warning.CannotBeUndone')}
+                        okText={t('button.Delete')}
+                        okButtonProps={{
+                          danger: true,
+                        }}
+                        disabled={isInFlightDeleteAutoScalingRuleMutation}
+                        onConfirm={() => {
+                          if (autoScalingRules) {
+                            commitDeleteAutoScalingRuleMutation({
+                              variables: {
+                                id: row?.id as string,
+                              },
+                              onCompleted: (
+                                res: EndpointDetailPageDeleteAutoScalingRuleMutation$data,
+                                errors: PayloadError[] | null,
+                              ) => {
+                                if (
+                                  !res?.delete_endpoint_auto_scaling_rule_node
+                                    ?.ok
+                                ) {
+                                  message.error(
+                                    res?.delete_endpoint_auto_scaling_rule_node
+                                      ?.msg,
+                                  );
+                                } else if (errors && errors.length > 0) {
+                                  const errorMsgList = _.map(
+                                    errors,
+                                    (error) =>
+                                      error.message ||
+                                      t('dialog.ErrorOccurred'),
+                                  );
+                                  for (const error of errorMsgList) {
+                                    message.error(error);
+                                  }
+                                } else {
+                                  setEditingAutoScalingRule(null);
+                                  startRefetchTransition(() => {
+                                    updateFetchKey();
+                                  });
+                                  message.success({
+                                    key: 'autoscaling-rule-deleted',
+                                    content: t(
+                                      'autoScalingRule.SuccessfullyDeleted',
+                                    ),
+                                  });
+                                }
+                              },
+                              onError: (error) => {
+                                message.error(
+                                  error?.message || t('dialog.ErrorOccurred'),
+                                );
+                              },
+                            });
+                          }
+                        }}
+                      >
+                        <Button
+                          type="text"
+                          icon={
+                            <DeleteOutlined
+                              style={
+                                isEndpointInDestroyingCategory(endpoint)
+                                  ? undefined
+                                  : {
+                                      color: token.colorError,
+                                    }
+                              }
+                            />
+                          }
+                          disabled={false}
+                          onClick={() => {
+                            if (row) {
+                              setEditingAutoScalingRule(row);
+                            }
+                          }}
+                        />
+                      </Popconfirm>
+                    </BAIFlex>
+                  ),
                 },
-              },
-              {
-                title: t('autoScalingRule.MIN/MAXReplicas'),
-                render: (_text, row) => (
-                  <span>
-                    {row?.step_size
-                      ? row?.step_size > 0
-                        ? `Max: ${row?.max_replicas}`
-                        : `Min: ${row?.min_replicas}`
-                      : '-'}
-                  </span>
-                ),
-              },
-              {
-                title: t('autoScalingRule.CoolDownSeconds'),
-                dataIndex: 'cooldown_seconds',
-                // render: (text, row) => <span>{row?.cooldown_seconds}</span>,
-              },
-              {
-                title: t('autoScalingRule.LastTriggered'),
-                render: (_text, row) => {
-                  return (
+                {
+                  title: t('autoScalingRule.StepSize'),
+                  dataIndex: 'step_size',
+                  render: (_text, row) => {
+                    if (row?.step_size) {
+                      return (
+                        <BAIFlex gap={'xs'}>
+                          <Typography.Text>
+                            {row?.step_size > 0 ? (
+                              <CircleArrowUpIcon />
+                            ) : (
+                              <CircleArrowDownIcon />
+                            )}
+                          </Typography.Text>
+                          <Typography.Text>
+                            {Math.abs(row?.step_size)}
+                          </Typography.Text>
+                        </BAIFlex>
+                      );
+                    } else {
+                      return '-';
+                    }
+                  },
+                },
+                {
+                  title: t('autoScalingRule.MIN/MAXReplicas'),
+                  render: (_text, row) => (
                     <span>
-                      {row?.last_triggered_at
-                        ? dayjs
-                            .utc(row?.last_triggered_at)
-                            .tz()
-                            .format('ll LTS')
-                        : `-`}
+                      {row?.step_size
+                        ? row?.step_size > 0
+                          ? `Max: ${row?.max_replicas}`
+                          : `Min: ${row?.min_replicas}`
+                        : '-'}
                     </span>
-                  );
+                  ),
                 },
-                sorter: dayDiff,
-              },
-              {
-                title: t('autoScalingRule.CreatedAt'),
-                dataIndex: 'created_at',
-                render: (_text, row) => (
-                  <span>{dayjs(row?.created_at).format('ll LT')}</span>
-                ),
-                sorter: dayDiff,
-              },
-            ]}
-            pagination={false}
-            showSorterTooltip={false}
-            dataSource={autoScalingRules}
-          ></BAITable>
-        </Card>
+                {
+                  title: t('autoScalingRule.CoolDownSeconds'),
+                  dataIndex: 'cooldown_seconds',
+                  // render: (text, row) => <span>{row?.cooldown_seconds}</span>,
+                },
+                {
+                  title: t('autoScalingRule.LastTriggered'),
+                  render: (_text, row) => {
+                    return (
+                      <span>
+                        {row?.last_triggered_at
+                          ? dayjs
+                              .utc(row?.last_triggered_at)
+                              .tz()
+                              .format('ll LTS')
+                          : `-`}
+                      </span>
+                    );
+                  },
+                  sorter: dayDiff,
+                },
+                {
+                  title: t('autoScalingRule.CreatedAt'),
+                  dataIndex: 'created_at',
+                  render: (_text, row) => (
+                    <span>{dayjs(row?.created_at).format('ll LT')}</span>
+                  ),
+                  sorter: dayDiff,
+                },
+              ]}
+              pagination={false}
+              showSorterTooltip={false}
+              dataSource={autoScalingRules}
+            ></BAITable>
+          </Card>
+        )
       )}
       <Card
         title={t('modelService.GeneratedTokens')}
