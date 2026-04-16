@@ -225,7 +225,10 @@ const ResourceAllocationFormItems: React.FC<
   }, [currentImage, acceleratorSlotsInRG, currentEnvironmentManual]);
 
   useEffect(() => {
-    if (!currentResourceValue) {
+    if (
+      !currentResourceValue &&
+      form.getFieldValue('allocationPreset') !== 'custom'
+    ) {
       form.setFieldsValue({
         allocationPreset: 'auto-select',
       });

@@ -1834,7 +1834,10 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                                   type="link"
                                   action={async () => {
                                     form.setFieldsValue({
-                                      allocationPreset: 'auto-select',
+                                      allocationPreset: baiClient._config
+                                        .allowCustomResourceAllocation
+                                        ? 'custom'
+                                        : 'auto-select',
                                     });
                                     setWantToChangeResource(true);
                                   }}
