@@ -205,6 +205,7 @@
     "TimeWindow": "Okno czasowe",
     "TimeWindowSeconds": "{{value}}s",
     "TimeWindowTooltip": "Okno czasowe w sekundach do oceny metryki skalowania.",
+    "TypeMetricNameToDelete": "Wpisz \"{{ metricName }}\", aby potwierdzić usunięcie",
     "Upper": "Górny"
   },
   "button": {

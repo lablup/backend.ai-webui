@@ -205,6 +205,7 @@
     "TimeWindow": "Time Window",
     "TimeWindowSeconds": "{{value}}s",
     "TimeWindowTooltip": "The time window in seconds for evaluating the scaling metric.",
+    "TypeMetricNameToDelete": "Type \"{{ metricName }}\" to confirm deletion",
     "Upper": "Upper"
   },
   "button": {

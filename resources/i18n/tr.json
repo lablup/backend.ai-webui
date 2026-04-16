@@ -205,6 +205,7 @@
     "TimeWindow": "Zaman Penceresi",
     "TimeWindowSeconds": "{{value}}s",
     "TimeWindowTooltip": "Ölçeklendirme metriğini değerlendirmek için saniye cinsinden zaman penceresi.",
+    "TypeMetricNameToDelete": "Silmeyi onaylamak için \"{{ metricName }}\" yazın",
     "Upper": "Üst"
   },
   "button": {

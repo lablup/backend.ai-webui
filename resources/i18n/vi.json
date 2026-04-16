@@ -205,6 +205,7 @@
     "TimeWindow": "Cửa sổ thời gian",
     "TimeWindowSeconds": "{{value}}s",
     "TimeWindowTooltip": "Cửa sổ thời gian tính bằng giây để đánh giá chỉ số mở rộng.",
+    "TypeMetricNameToDelete": "Nhập \"{{ metricName }}\" để xác nhận xóa",
     "Upper": "Trên"
   },
   "button": {

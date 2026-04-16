@@ -205,6 +205,7 @@
     "TimeWindow": "Tetingkap Masa",
     "TimeWindowSeconds": "{{value}}s",
     "TimeWindowTooltip": "Tetingkap masa dalam saat untuk menilai metrik penskalaan.",
+    "TypeMetricNameToDelete": "Taip \"{{ metricName }}\" untuk mengesahkan pemadaman",
     "Upper": "Atas"
   },
   "button": {

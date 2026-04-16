@@ -205,6 +205,7 @@
     "TimeWindow": "Jendela Waktu",
     "TimeWindowSeconds": "{{value}}s",
     "TimeWindowTooltip": "Jendela waktu dalam detik untuk mengevaluasi metrik penskalaan.",
+    "TypeMetricNameToDelete": "Ketik \"{{ metricName }}\" untuk mengonfirmasi penghapusan",
     "Upper": "Atas"
   },
   "button": {

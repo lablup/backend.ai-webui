@@ -205,6 +205,7 @@
     "TimeWindow": "時間視窗",
     "TimeWindowSeconds": "{{value}}s",
     "TimeWindowTooltip": "用於評估擴縮容指標的時間視窗（秒）。",
+    "TypeMetricNameToDelete": "輸入 \"{{ metricName }}\" 以確認刪除",
     "Upper": "上限"
   },
   "button": {

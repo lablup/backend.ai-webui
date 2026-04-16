@@ -434,7 +434,7 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
                 for (const error of errorMsgList) {
                   message.error(error);
                 }
-                onRequestClose(false);
+                // Keep modal open so the user can correct the input and retry
                 return;
               }
               message.success(t('autoScalingRule.SuccessfullyUpdated'));
@@ -443,7 +443,7 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
             },
             onError: (error) => {
               message.error(error.message);
-              onRequestClose(false);
+              // Keep modal open so the user can correct the input and retry
             },
           });
         } else {
@@ -471,7 +471,7 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
                 for (const error of errorMsgList) {
                   message.error(error);
                 }
-                onRequestClose(false);
+                // Keep modal open so the user can correct the input and retry
                 return;
               }
               message.success(t('autoScalingRule.SuccessfullyCreated'));
@@ -480,7 +480,7 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
             },
             onError: (error) => {
               message.error(error.message);
-              onRequestClose(false);
+              // Keep modal open so the user can correct the input and retry
             },
           });
         }
@@ -573,12 +573,23 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
           <Select
             onChange={(value) => {
               setSelectedMetricSource(value);
+              // Clear metricName whenever source changes (issue: stale name from previous source)
+              formRef.current?.setFieldsValue({ metricName: undefined });
               if (value !== 'PROMETHEUS') {
                 setNameOptions(
                   METRIC_NAMES_MAP[value as keyof typeof METRIC_NAMES_MAP] ||
                     [],
                 );
                 setSelectedPresetId(undefined);
+              } else {
+                // Restore selectedPresetId state from form value when switching back to PROMETHEUS,
+                // otherwise the preview won't appear even after a preset was previously chosen.
+                const existingPresetId = formRef.current?.getFieldValue(
+                  'prometheusQueryPresetId',
+                );
+                if (existingPresetId) {
+                  setSelectedPresetId(existingPresetId);
+                }
               }
             }}
             options={[
@@ -656,15 +667,16 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
                     formRef.current?.setFieldsValue({
                       metricName: preset.metricName,
                     });
-                    // Auto-apply timeWindow from preset; always update to avoid
-                    // stale values when switching between presets
+                    // Auto-apply timeWindow from preset only when the preset
+                    // provides a valid value; otherwise keep the existing value
+                    // (e.g. the default 300) to avoid unexpected clearing.
                     const tw =
                       preset.timeWindow != null
                         ? Number(preset.timeWindow)
                         : undefined;
-                    formRef.current?.setFieldsValue({
-                      timeWindow: tw != null && !isNaN(tw) ? tw : undefined,
-                    });
+                    if (tw != null && !isNaN(tw)) {
+                      formRef.current?.setFieldsValue({ timeWindow: tw });
+                    }
                   }
                 }}
                 placeholder={t('autoScalingRule.SelectPrometheusPreset')}

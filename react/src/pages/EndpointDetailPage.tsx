@@ -346,7 +346,8 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
       autoScalingRules_after: undefined,
       autoScalingRules_first: undefined,
       autoScalingRules_last: undefined,
-      skipScalingRules: !isSupportAutoScalingRule,
+      skipScalingRules:
+        !isSupportAutoScalingRule || isSupportPrometheusAutoScalingRule,
       deploymentId: toGlobalId('ModelDeployment', serviceId || ''),
       routeFilter: {
         status: (deferredRouteStatusCategory === 'running'
@@ -754,6 +755,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
               !endpoint?.created_user_email ||
               endpoint?.created_user_email === currentUser.email
             }
+            fetchKey={fetchKey}
           />
         ) : (
           <AutoScalingRuleListLegacy

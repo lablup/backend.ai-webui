@@ -205,6 +205,7 @@
     "TimeWindow": "Janela de tempo",
     "TimeWindowSeconds": "{{value}}s",
     "TimeWindowTooltip": "A janela de tempo em segundos para avaliar a métrica de escalonamento.",
+    "TypeMetricNameToDelete": "Digite \"{{ metricName }}\" para confirmar a exclusão",
     "Upper": "Superior"
   },
   "button": {

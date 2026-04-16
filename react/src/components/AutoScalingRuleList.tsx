@@ -26,6 +26,7 @@ import {
   filterOutNullAndUndefined,
   toLocalId,
   useFetchKey,
+  useMutationWithPromise,
 } from 'backend.ai-ui';
 import type { BAITableProps, GraphQLFilter } from 'backend.ai-ui';
 import { default as dayjs } from 'dayjs';
@@ -34,12 +35,7 @@ import { CircleArrowDownIcon, CircleArrowUpIcon } from 'lucide-react';
 import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import React, { useDeferredValue, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  graphql,
-  useFragment,
-  useLazyLoadQuery,
-  useMutation,
-} from 'react-relay';
+import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 
 type DateTimeFilter = { before?: string | null; after?: string | null };
 
@@ -137,7 +133,7 @@ interface AutoScalingRuleListNodesProps extends Omit<
   isEndpointDestroying: boolean;
   isOwnedByCurrentUser: boolean;
   onEditRule: (id: string) => void;
-  onDeleteRule: (id: string) => void;
+  onDeleteRule: (id: string, metricName: string) => void;
 }
 
 const AutoScalingRuleListNodes: React.FC<AutoScalingRuleListNodesProps> = ({
@@ -211,7 +207,7 @@ const AutoScalingRuleListNodes: React.FC<AutoScalingRuleListNodesProps> = ({
                     icon: <DeleteOutlined />,
                     type: 'danger',
                     disabled: isEndpointDestroying || !isOwnedByCurrentUser,
-                    onClick: () => onDeleteRule(row.id),
+                    onClick: () => onDeleteRule(row.id, row.metricName ?? ''),
                   },
                 ]}
               />
@@ -320,12 +316,14 @@ interface AutoScalingRuleListProps {
   deploymentId: string; // Relay global ID (e.g., toGlobalId('ModelDeployment', uuid))
   isEndpointDestroying: boolean;
   isOwnedByCurrentUser: boolean;
+  fetchKey?: string;
 }
 
 const AutoScalingRuleList: React.FC<AutoScalingRuleListProps> = ({
   deploymentId,
   isEndpointDestroying,
   isOwnedByCurrentUser,
+  fetchKey: parentFetchKey,
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -402,6 +400,7 @@ const AutoScalingRuleList: React.FC<AutoScalingRuleListProps> = ({
             edges {
               node {
                 id
+                metricName
                 ...AutoScalingRuleListNodesFragment
                 ...AutoScalingRuleEditorModalFragment
               }
@@ -413,7 +412,7 @@ const AutoScalingRuleList: React.FC<AutoScalingRuleListProps> = ({
     deferredQueryVariables,
     {
       fetchPolicy: 'store-and-network',
-      fetchKey,
+      fetchKey: parentFetchKey ? `${parentFetchKey}_${fetchKey}` : fetchKey,
     },
   );
 
@@ -452,8 +451,8 @@ const AutoScalingRuleList: React.FC<AutoScalingRuleListProps> = ({
 
   const totalCount = data?.deployment?.autoScalingRules?.count ?? 0;
 
-  const [commitDeleteMutation] = useMutation<AutoScalingRuleListDeleteMutation>(
-    graphql`
+  const commitDeleteMutation =
+    useMutationWithPromise<AutoScalingRuleListDeleteMutation>(graphql`
       mutation AutoScalingRuleListDeleteMutation(
         $input: DeleteAutoScalingRuleInput!
       ) {
@@ -461,8 +460,7 @@ const AutoScalingRuleList: React.FC<AutoScalingRuleListProps> = ({
           id
         }
       }
-    `,
-  );
+    `);
 
   const handleRefetch = () => {
     startRefetchTransition(() => {
@@ -470,33 +468,29 @@ const AutoScalingRuleList: React.FC<AutoScalingRuleListProps> = ({
     });
   };
 
-  const handleDeleteRule = (ruleId: string) => {
+  const handleDeleteRule = (ruleId: string, metricName: string) => {
     modal.confirm({
       title: t('dialog.warning.CannotBeUndone'),
+      content: t('autoScalingRule.ConfirmDeleteAutoScalingRule', {
+        autoScalingRule: metricName,
+      }),
       okText: t('button.Delete'),
       okButtonProps: { danger: true },
-      onOk: () => {
-        commitDeleteMutation({
-          variables: { input: { id: toLocalId(ruleId) } },
-          onCompleted: (_res, errors) => {
-            if (errors && errors.length > 0) {
-              for (const error of errors) {
-                message.error(error.message || t('dialog.ErrorOccurred'));
-              }
-            } else {
-              setEditingRuleId(null);
-              handleRefetch();
-              message.success({
-                key: 'autoscaling-rule-deleted',
-                content: t('autoScalingRule.SuccessfullyDeleted'),
-              });
+      onOk: () =>
+        commitDeleteMutation({ input: { id: toLocalId(ruleId) } })
+          .then(() => {
+            handleRefetch();
+            message.success({
+              key: 'autoscaling-rule-deleted',
+              content: t('autoScalingRule.SuccessfullyDeleted'),
+            });
+          })
+          .catch((error) => {
+            const errors = Array.isArray(error) ? error : [error];
+            for (const err of errors) {
+              message.error(err?.message || t('dialog.ErrorOccurred'));
             }
-          },
-          onError: (error) => {
-            message.error(error?.message || t('dialog.ErrorOccurred'));
-          },
-        });
-      },
+          }),
     });
   };
 

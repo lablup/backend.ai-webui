@@ -220,6 +220,9 @@ export const DefaultProvidersForReactRoot: React.FC<{
 
   const themeConfig = useCustomThemeConfig();
 
+  const currentLocale =
+    buiLanguages[lang as keyof typeof buiLanguages] ?? buiLanguages['en'];
+
   return (
     <>
       <style>{indexCss}</style>
@@ -227,10 +230,7 @@ export const DefaultProvidersForReactRoot: React.FC<{
         <RelayEnvironmentProvider environment={RelayEnvironment}>
           <QueryClientProvider client={queryClient}>
             <BAIConfigProvider
-              locale={
-                buiLanguages[lang as keyof typeof buiLanguages] ??
-                buiLanguages['en']
-              }
+              locale={currentLocale}
               theme={{
                 ...(isDarkMode
                   ? { ...themeConfig?.dark }
@@ -254,6 +254,11 @@ export const DefaultProvidersForReactRoot: React.FC<{
                 },
               }}
               form={{
+                // Explicitly set validateMessages from the antd locale so form
+                // validation errors always appear in the user's selected language
+                // (antd's built-in default falls back to English otherwise).
+                validateMessages:
+                  currentLocale.antdLocale?.Form?.defaultValidateMessages,
                 requiredMark: (label, { required }) => (
                   <>
                     {label}

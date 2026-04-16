@@ -205,6 +205,7 @@
     "TimeWindow": "Zeitfenster",
     "TimeWindowSeconds": "{{value}}s",
     "TimeWindowTooltip": "Das Zeitfenster in Sekunden zur Auswertung der Skalierungsmetrik.",
+    "TypeMetricNameToDelete": "Geben Sie \"{{ metricName }}\" ein, um die Löschung zu bestätigen",
     "Upper": "Oberer"
   },
   "button": {

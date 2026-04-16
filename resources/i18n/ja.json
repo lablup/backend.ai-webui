@@ -205,6 +205,7 @@
     "TimeWindow": "時間ウィンドウ",
     "TimeWindowSeconds": "{{value}}秒",
     "TimeWindowTooltip": "スケーリングメトリックを評価するための時間ウィンドウ（秒単位）。",
+    "TypeMetricNameToDelete": "\"{{ metricName }}\" と入力して削除を確認してください",
     "Upper": "上限"
   },
   "button": {

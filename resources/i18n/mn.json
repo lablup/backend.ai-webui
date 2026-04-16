@@ -205,6 +205,7 @@
     "TimeWindow": "Цагийн Цонх",
     "TimeWindowSeconds": "{{value}}с",
     "TimeWindowTooltip": "Масштабын метрикийг үнэлэхэд зориулсан цагийн цонх (секундээр).",
+    "TypeMetricNameToDelete": "Устгахыг баталгаажуулахын тулд \"{{ metricName }}\" гэж бичнэ үү",
     "Upper": "Дээд"
   },
   "button": {

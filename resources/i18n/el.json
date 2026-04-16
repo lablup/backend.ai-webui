@@ -205,6 +205,7 @@
     "TimeWindow": "Χρονικό Παράθυρο",
     "TimeWindowSeconds": "{{value}}s",
     "TimeWindowTooltip": "Το χρονικό παράθυρο σε δευτερόλεπτα για αξιολόγηση της μετρικής κλιμάκωσης.",
+    "TypeMetricNameToDelete": "Πληκτρολογήστε \"{{ metricName }}\" για να επιβεβαιώσετε τη διαγραφή",
     "Upper": "Άνω"
   },
   "button": {

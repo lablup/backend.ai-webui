@@ -205,6 +205,7 @@
     "TimeWindow": "Finestra temporale",
     "TimeWindowSeconds": "{{value}}s",
     "TimeWindowTooltip": "La finestra temporale in secondi per valutare la metrica di scalabilità.",
+    "TypeMetricNameToDelete": "Digita \"{{ metricName }}\" per confermare l'eliminazione",
     "Upper": "Superiore"
   },
   "button": {

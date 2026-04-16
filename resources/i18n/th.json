@@ -205,6 +205,7 @@
     "TimeWindow": "กรอบเวลา",
     "TimeWindowSeconds": "{{value}}s",
     "TimeWindowTooltip": "กรอบเวลาในหน่วยวินาทีสำหรับการประเมินเมตริกการปรับขนาด",
+    "TypeMetricNameToDelete": "พิมพ์ \"{{ metricName }}\" เพื่อยืนยันการลบ",
     "Upper": "บน"
   },
   "button": {
