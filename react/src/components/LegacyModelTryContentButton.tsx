@@ -75,7 +75,7 @@ function createServiceInput(
   return {
     serviceName: `${modelName}-${generateRandomString(4)}`,
     replicas: 1,
-    runtimeVariant: 'vllm',
+    runtimeVariant: 'custom',
     cluster_size: 1,
     cluster_mode: 'single-node',
     openToPublic: true,
@@ -653,7 +653,7 @@ const LegacyModelTryContentButton: React.FC<
           mutationToCreateService.isPending
         }
         loading={mutationToClone.isPending || mutationToCreateService.isPending}
-        onClick={() => cloneOrCreateModelService('vllm')}
+        onClick={() => cloneOrCreateModelService('custom')}
         style={{
           width: 'auto',
           display:

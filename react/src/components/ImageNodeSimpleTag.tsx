@@ -64,14 +64,14 @@ const ImageNodeSimpleTag: React.FC<ImageNodeSimpleTagProps> = ({
       <ImageMetaIcon image={fullName} />
       <Typography.Text>{tagAlias(image.base_image_name || '')}</Typography.Text>
       <Divider
-        type="vertical"
+        orientation="vertical"
         style={{
           marginInline: 0,
         }}
       />
       <Typography.Text>{image.version}</Typography.Text>
       <Divider
-        type="vertical"
+        orientation="vertical"
         style={{
           marginInline: 0,
         }}
@@ -80,7 +80,7 @@ const ImageNodeSimpleTag: React.FC<ImageNodeSimpleTagProps> = ({
       {withoutTag ? null : (
         <>
           <Divider
-            type="vertical"
+            orientation="vertical"
             style={{
               marginInline: 0,
             }}

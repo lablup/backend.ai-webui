@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-04-09
+> **Last Updated:** 2026-04-13
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -12,7 +12,7 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 253 / 410 features covered (62%)**
+**Overall (in-scope routes): 254 / 410 features covered (62%)**
 
 | Page | Route | Features | Covered | Status |
 |------|-------|:--------:|:-------:|:------:|
@@ -36,7 +36,7 @@
 | Resource Policy | `/resource-policy` | 13 | 10 | 🔶 77% |
 | User Credentials | `/credential` | 20 | 13 | 🔶 65% |
 | Maintenance | `/maintenance` | 3 | 2 | 🔶 67% |
-| User Settings | `/usersettings` | 10 | 0 | ❌ 0% |
+| User Settings | `/usersettings` | 10 | 1 | 🔶 10% |
 | Project | `/project` | 6 | 5 | 🔶 83% |
 | Statistics | `/statistics` | 2 | 2 | ✅ 100% |
 | Scheduler | `/scheduler` | 6 | 0 | ❌ 0% |
@@ -46,7 +46,7 @@
 | App Launcher | (modal) | 18 | 10 | 🔶 56% |
 | Chat | `/chat/:id?` | 6 | 6 | ✅ 100% |
 | Plugin System | (config-based) | 12 | 12 | ✅ 100% |
-| **Total** | | **357** | **203** | **57%** |
+| **Total** | | **357** | **204** | **57%** |
 
 ---
 
@@ -687,13 +687,13 @@
 
 ### 19. User Settings (`/usersettings`)
 
-**Test files:** None
+**Test files:** [`e2e/credential/my-keypair-management.spec.ts`](credential/my-keypair-management.spec.ts)
 
 **Tabs:** General | Logs
 
 #### General Tab
 
-**Modals:** `MyKeypairInfoModal`, `SSHKeypairManagementModal`, `ShellScriptEditModal`
+**Modals:** `MyKeypairManagementModal` (keypair info/management), `SSHKeypairManagementModal`, `ShellScriptEditModal`
 
 | Feature | Status | Test |
 | -------------------------------------------------- | ------ | ---- |
@@ -701,7 +701,7 @@
 | Desktop notifications toggle | ❌ | - |
 | Compact sidebar toggle | ❌ | - |
 | Auto-logout configuration | ❌ | - |
-| SSH keypair info → MyKeypairInfoModal | ❌ | - |
+| My keypair management → MyKeypairManagementModal | ✅ | 25 tests in `my-keypair-management.spec.ts` |
 | SSH keypair management → SSHKeypairManagementModal | ❌ | - |
 | Bootstrap script → ShellScriptEditModal | ❌ | - |
 | User config script → ShellScriptEditModal | ❌ | - |
@@ -713,7 +713,7 @@
 | ----------------- | ------ | ---- |
 | Error log viewing | ❌ | - |
 
-**Coverage: ❌ 0/10 features**
+**Coverage: 🔶 1/10 features**
 
 ---
 
@@ -1078,7 +1078,7 @@ To efficiently build new E2E tests, these POMs should be created:
 | `/maintenance` | 🔶 | ✅ | - |
 | `/project` | 🔶 | ❌ | - |
 | `/statistics` | ✅ | ❌ | - |
-| `/usersettings` | ❌ | ❌ | **P2** |
+| `/usersettings` | 🔶 | ❌ | **P2** |
 | `/scheduler` | ❌ | ❌ | P3 |
 | `/information` | ✅ | ✅ | - |
 | `/reservoir` | ❌ | ❌ | P2 |

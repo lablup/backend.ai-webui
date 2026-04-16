@@ -4,19 +4,22 @@
  */
 import { RoleAssignmentTabFragment$key } from '../__generated__/RoleAssignmentTabFragment.graphql';
 import { RoleDetailDrawerContentFragment$key } from '../__generated__/RoleDetailDrawerContentFragment.graphql';
-import { RoleDetailDrawerContentProjectQuery } from '../__generated__/RoleDetailDrawerContentProjectQuery.graphql';
 import { RolePermissionTabFragment$key } from '../__generated__/RolePermissionTabFragment.graphql';
+import { RoleScopeTabFragment$key } from '../__generated__/RoleScopeTabFragment.graphql';
 import RoleAssignmentTab from './RoleAssignmentTab';
 import RolePermissionTab from './RolePermissionTab';
+import RoleScopeTab from './RoleScopeTab';
 import { Descriptions, Skeleton, Tabs, Tag } from 'antd';
 import { toLocalId } from 'backend.ai-ui';
 import dayjs from 'dayjs';
+import { parseAsString, useQueryStates } from 'nuqs';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
+import { graphql, useFragment } from 'react-relay';
 
 interface RoleDetailDrawerContentProps {
   roleDetailFrgmt: RoleDetailDrawerContentFragment$key;
+  scopeQueryRef: RoleScopeTabFragment$key;
   assignmentQueryRef: RoleAssignmentTabFragment$key;
   permissionQueryRef: RolePermissionTabFragment$key;
   onTabReset?: () => void;
@@ -25,6 +28,7 @@ interface RoleDetailDrawerContentProps {
 
 const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
   roleDetailFrgmt,
+  scopeQueryRef,
   assignmentQueryRef,
   permissionQueryRef,
   onTabReset: _onTabReset,
@@ -32,7 +36,43 @@ const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const [activeTab, setActiveTab] = useState('assignments');
+  const [activeTab, setActiveTab] = useState('scopes');
+
+  const [, resetTabParams] = useQueryStates(
+    {
+      sCurrent: parseAsString,
+      sPageSize: parseAsString,
+      sOrder: parseAsString,
+      sFilter: parseAsString,
+      pCurrent: parseAsString,
+      pPageSize: parseAsString,
+      pOrder: parseAsString,
+      pFilter: parseAsString,
+      aCurrent: parseAsString,
+      aPageSize: parseAsString,
+      aOrder: parseAsString,
+      aFilter: parseAsString,
+    },
+    { history: 'replace' },
+  );
+
+  const handleTabChange = (key: string) => {
+    setActiveTab(key);
+    resetTabParams({
+      sCurrent: null,
+      sPageSize: null,
+      sOrder: null,
+      sFilter: null,
+      pCurrent: null,
+      pPageSize: null,
+      pOrder: null,
+      pFilter: null,
+      aCurrent: null,
+      aPageSize: null,
+      aOrder: null,
+      aFilter: null,
+    });
+  };
 
   const role = useFragment(
     graphql`
@@ -45,14 +85,6 @@ const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
         createdAt
         updatedAt
         deletedAt
-        scopes(first: 1) {
-          edges {
-            node {
-              scopeType
-              scopeId
-            }
-          }
-        }
         ...RoleAssignmentTab_roleScopeFragment
         ...CreatePermissionModal_roleScopeFragment
       }
@@ -61,36 +93,6 @@ const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
   );
 
   const roleId = toLocalId(role.id);
-
-  const scopeNode = role.scopes?.edges?.[0]?.node;
-  const projectScopeId =
-    scopeNode?.scopeType === 'PROJECT' ? scopeNode.scopeId : undefined;
-
-  const projectData = useLazyLoadQuery<RoleDetailDrawerContentProjectQuery>(
-    graphql`
-      query RoleDetailDrawerContentProjectQuery(
-        $projectId: UUID!
-        $skip: Boolean!
-      ) {
-        projectV2(projectId: $projectId) @skip(if: $skip) {
-          basicInfo {
-            name
-          }
-        }
-      }
-    `,
-    {
-      projectId: projectScopeId ?? '',
-      skip: !projectScopeId,
-    },
-    {
-      fetchPolicy: projectScopeId ? 'store-or-network' : 'store-only',
-    },
-  );
-
-  const projectName = projectScopeId
-    ? (projectData.projectV2?.basicInfo?.name ?? projectScopeId)
-    : null;
 
   const source = role.source ?? 'CUSTOM';
   const status = role.status ?? 'ACTIVE';
@@ -120,9 +122,7 @@ const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
               ? t('rbac.Active')
               : status === 'INACTIVE'
                 ? t('rbac.Inactive')
-                : // The backend does not use INACTIVE status; DELETED serves as a
-                  // soft-delete and is displayed as Inactive in the UI.
-                  t('rbac.Inactive')}
+                : t('rbac.Inactive')}
           </Tag>
         </Descriptions.Item>
         <Descriptions.Item label={t('general.CreatedAt')}>
@@ -135,28 +135,20 @@ const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
             ? dayjs(role.updatedAt).format('YYYY-MM-DD HH:mm:ss')
             : '-'}
         </Descriptions.Item>
-        <Descriptions.Item label={t('general.Project')} span={2}>
-          {projectName ?? '-'}
-        </Descriptions.Item>
         <Descriptions.Item label={t('rbac.RoleDescription')} span={2}>
           {role.description || '-'}
         </Descriptions.Item>
       </Descriptions>
       <Tabs
         activeKey={activeTab}
-        onChange={setActiveTab}
+        onChange={handleTabChange}
         items={[
           {
-            key: 'assignments',
-            label: t('rbac.RoleAssignments'),
+            key: 'scopes',
+            label: t('rbac.RoleScopes'),
             children: (
               <Suspense fallback={<Skeleton active />}>
-                <RoleAssignmentTab
-                  queryRef={assignmentQueryRef}
-                  roleId={roleId}
-                  roleScopeFrgmt={role}
-                  onAssignmentChange={onDataChange}
-                />
+                <RoleScopeTab queryRef={scopeQueryRef} />
               </Suspense>
             ),
           },
@@ -170,6 +162,20 @@ const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
                   roleId={roleId}
                   roleScopeFrgmt={role}
                   onPermissionChange={onDataChange}
+                />
+              </Suspense>
+            ),
+          },
+          {
+            key: 'assignments',
+            label: t('rbac.RoleAssignments'),
+            children: (
+              <Suspense fallback={<Skeleton active />}>
+                <RoleAssignmentTab
+                  queryRef={assignmentQueryRef}
+                  roleId={roleId}
+                  roleScopeFrgmt={role}
+                  onAssignmentChange={onDataChange}
                 />
               </Suspense>
             ),

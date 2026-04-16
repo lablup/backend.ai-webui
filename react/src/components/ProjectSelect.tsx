@@ -6,8 +6,11 @@ import { ProjectSelectorQuery } from '../__generated__/ProjectSelectorQuery.grap
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
 import useControllableState_deprecated from '../hooks/useControllableState';
-import { BAISelect, BAISelectProps } from 'backend.ai-ui';
+import { useCurrentUserProjectRoles } from '../hooks/useCurrentUserProjectRoles';
+import { theme, Tooltip } from 'antd';
+import { BAIFlex, BAISelect, BAISelectProps } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { ShieldUser } from 'lucide-react';
 import React, { useEffect, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -35,12 +38,14 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
   ...selectProps
 }) => {
   const { t } = useTranslation();
+  const { token } = theme.useToken();
   const [currentUser] = useCurrentUserInfo();
   const baiClient = useSuspendedBackendaiClient();
   const blockList = baiClient?._config?.blockList ?? null;
 
   const [value, setValue] = useControllableState_deprecated(selectProps);
   const userRole = useCurrentUserRole();
+  const { projectAdminIds } = useCurrentUserProjectRoles();
   const { groups, user } = useLazyLoadQuery<ProjectSelectorQuery>(
     graphql`
       query ProjectSelectorQuery(
@@ -73,7 +78,7 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
           : ['GENERAL', 'MODEL_STORE'],
     },
     {
-      fetchPolicy: 'store-and-network',
+      fetchPolicy: 'network-only',
     },
   );
 
@@ -124,8 +129,19 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
         label: getLabel(key),
         title: key,
         options: _.map(_.sortBy(value, 'name'), (project) => {
+          const showBadge =
+            !!project?.id && projectAdminIds.includes(project.id);
           return {
-            label: project?.name,
+            label: showBadge ? (
+              <BAIFlex gap={token.marginXS} align="center">
+                <span>{project?.name}</span>
+                <Tooltip title={t('projectSelect.ProjectAdminBadge')}>
+                  <ShieldUser />
+                </Tooltip>
+              </BAIFlex>
+            ) : (
+              project?.name
+            ),
             value: project?.id,
             projectId: project?.id,
             projectResourcePolicy: project?.resource_policy,

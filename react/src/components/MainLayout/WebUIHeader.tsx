@@ -5,11 +5,17 @@
 import {
   useCurrentDomainValue,
   useSuspendedBackendaiClient,
+  useWebUINavigate,
 } from '../../hooks';
 import {
   useCurrentProjectValue,
   useSetCurrentProject,
 } from '../../hooks/useCurrentProject';
+import {
+  useCurrentUserProjectRoles,
+  useEffectiveAdminRole,
+} from '../../hooks/useCurrentUserProjectRoles';
+import { useWebUIMenuItems } from '../../hooks/useWebUIMenuItems';
 import BAINotificationButton from '../BAINotificationButton';
 import LoginSessionExtendButton from '../LoginSessionExtendButton';
 import ProjectSelect from '../ProjectSelect';
@@ -17,7 +23,8 @@ import ReverseThemeProvider from '../ReverseThemeProvider';
 import UserDropdownMenu from '../UserDropdownMenu';
 import WEBUIHelpButton from '../WEBUIHelpButton';
 import WebUIThemeToggleButton from '../WebUIThemeToggleButton';
-import { theme, Button, Typography, Grid, Divider } from 'antd';
+import { useSessionStorageState } from 'ahooks';
+import { theme, Button, Modal, Typography, Grid, Divider } from 'antd';
 import { createStyles } from 'antd-style';
 import { BAIFlex, BAIFlexProps } from 'backend.ai-ui';
 import { MenuIcon } from 'lucide-react';
@@ -48,12 +55,43 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
   const setCurrentProject = useSetCurrentProject();
   const baiClient = useSuspendedBackendaiClient();
   const gridBreakpoint = Grid.useBreakpoint();
+  const webuiNavigate = useWebUINavigate();
+  const { isSelectedAdminCategoryMenu, defaultMenuPath } = useWebUIMenuItems();
+  const effectiveAdminRole = useEffectiveAdminRole();
+  const { projectAdminIds } = useCurrentUserProjectRoles();
+
+  // Last visited general page — shared with WebUISider's "go back" button so
+  // that exiting admin mode returns the user to where they were last. See
+  // WebUISider.tsx (`backendaiwebui.last_visited_general_path`).
+  const [goBackPath] = useSessionStorageState<string | undefined>(
+    'backendaiwebui.last_visited_general_path',
+  );
 
   const [isPendingProjectChanged, startProjectChangedTransition] =
     useTransition();
   const [optimisticProjectId, setOptimisticProjectId] = useState(
     currentProject.id,
   );
+  // Tracks whether the admin-exit confirm modal is currently open. While open,
+  // the select optimistically shows the target project and a loading state,
+  // even though we haven't committed the change yet.
+  const [isConfirmingProjectSwitch, setIsConfirmingProjectSwitch] =
+    useState(false);
+  const isProjectChanging =
+    isPendingProjectChanged || isConfirmingProjectSwitch;
+
+  const [modal, modalContextHolder] = Modal.useModal();
+
+  const applyProjectChange = (projectInfo: {
+    projectId: string;
+    projectName: string;
+    projectResourcePolicy: unknown;
+  }) => {
+    setOptimisticProjectId(projectInfo.projectId);
+    startProjectChangedTransition(() => {
+      setCurrentProject(projectInfo);
+    });
+  };
 
   const { styles } = useStyles();
 
@@ -107,19 +145,55 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
               minWidth: 100,
               maxWidth: gridBreakpoint.lg ? undefined : 150,
             }}
-            loading={isPendingProjectChanged}
-            disabled={isPendingProjectChanged}
+            loading={isProjectChanging}
+            disabled={isProjectChanging}
             className="non-draggable"
             showSearch
             domain={currentDomainName}
-            value={
-              isPendingProjectChanged ? optimisticProjectId : currentProject?.id
-            }
+            value={isProjectChanging ? optimisticProjectId : currentProject?.id}
             onSelectProject={(projectInfo) => {
-              setOptimisticProjectId(projectInfo.projectId);
-              startProjectChangedTransition(() => {
-                setCurrentProject(projectInfo);
-              });
+              const isTargetProjectAdmin = projectAdminIds.includes(
+                projectInfo.projectId,
+              );
+
+              // In admin mode, switching to a project the user is NOT a
+              // project-admin of means leaving admin mode. Confirm first so
+              // the user doesn't accidentally lose their admin context.
+              if (
+                isSelectedAdminCategoryMenu &&
+                effectiveAdminRole === 'currentProjectAdmin' &&
+                !isTargetProjectAdmin
+              ) {
+                // Optimistically show the target project (with loading) while
+                // the confirm modal is open, so the user sees where they are
+                // about to switch to.
+                setOptimisticProjectId(projectInfo.projectId);
+                setIsConfirmingProjectSwitch(true);
+                modal.confirm({
+                  title: t('header.SwitchOutOfAdminConfirmTitle'),
+                  content: t('header.SwitchOutOfAdminConfirmContent', {
+                    projectName: projectInfo.projectName,
+                  }),
+                  okText: t('button.Confirm'),
+                  cancelText: t('button.Cancel'),
+                  onOk: () => {
+                    setIsConfirmingProjectSwitch(false);
+                    applyProjectChange(projectInfo);
+                    // Exit admin mode by navigating to the last-visited
+                    // general page (or the default menu path as fallback).
+                    webuiNavigate(goBackPath || defaultMenuPath);
+                  },
+                  onCancel: () => {
+                    // Revert the optimistic selection back to the current
+                    // project so the dropdown reflects the unchanged state.
+                    setIsConfirmingProjectSwitch(false);
+                    setOptimisticProjectId(currentProject.id);
+                  },
+                });
+                return;
+              }
+
+              applyProjectChange(projectInfo);
             }}
           />
         </Suspense>
@@ -163,6 +237,7 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
           }}
         />
       </BAIFlex>
+      {modalContextHolder}
     </BAIFlex>
   );
 };

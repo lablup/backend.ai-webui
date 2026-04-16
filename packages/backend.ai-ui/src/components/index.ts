@@ -43,6 +43,8 @@ export { default as BAIBackButton } from './BAIBackButton';
 export type { BAIBackButtonProps } from './BAIBackButton';
 export { default as BAIText } from './BAIText';
 export type { BAITextProps } from './BAIText';
+export { default as BAIId } from './BAIId';
+export type { BAIIdProps } from './BAIId';
 export { default as BAISelect } from './BAISelect';
 export type { BAISelectProps } from './BAISelect';
 export { default as BAINotificationItem } from './BAINotificationItem';
@@ -87,6 +89,11 @@ export {
   availableUserSorterValues,
 } from './BAIUserNodes';
 export type { UserNodeInList } from './BAIUserNodes';
+export {
+  default as BAIUserV2Nodes,
+  availableUserV2SorterValues,
+} from './BAIUserV2Nodes';
+export type { UserV2InList } from './BAIUserV2Nodes';
 export type { BAIUncontrolledInputProps } from './BAIUncontrolledInput';
 export { default as BAIUncontrolledInput } from './BAIUncontrolledInput';
 export { default as BAITag } from './BAITag';

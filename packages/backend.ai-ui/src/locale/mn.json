@@ -347,6 +347,7 @@
     "Email": "И-мэйл",
     "Enabled": "Идэвхтэй",
     "FullName": "Бүтэн нэр",
+    "IntegrationName": "Нэгтгэлийн нэр",
     "ModifiedAt": "Өөрчилсөн",
     "NeedPasswordChange": "Нууц үг солих шаардлагатай",
     "Project": "Төсөл",
@@ -356,6 +357,7 @@
     "StatusInfo": "Төлөвийн мэдээлэл",
     "SudoSessionEnabled": "Sudo горим идэвхтэй",
     "TwoFA": "Хоёр үе шаттай баталгаажуулалт",
+    "UserID": "Хэрэглэгчийн ID",
     "Username": "Хэрэглэгчийн нэр"
   },
   "error": {

@@ -347,6 +347,7 @@
     "Email": "Correo electrónico",
     "Enabled": "Activado",
     "FullName": "Nombre completo",
+    "IntegrationName": "Nombre de integración",
     "ModifiedAt": "Modificado el",
     "NeedPasswordChange": "Requiere cambio de contraseña",
     "Project": "Proyecto",
@@ -356,6 +357,7 @@
     "StatusInfo": "Información de estado",
     "SudoSessionEnabled": "Sesión Sudo activada",
     "TwoFA": "Autenticación de dos factores",
+    "UserID": "ID de usuario",
     "Username": "Nombre de usuario"
   },
   "error": {

@@ -443,7 +443,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
         <BAISelect
           ref={envSelectRef}
           open={envSelectOpen}
-          onDropdownVisibleChange={(visible) => {
+          onOpenChange={(visible) => {
             // Return to uncontrolled mode once the user interacts
             if (!visible) {
               setEnvSelectOpen(undefined);

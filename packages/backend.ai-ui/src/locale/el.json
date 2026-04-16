@@ -347,6 +347,7 @@
     "Email": "Email",
     "Enabled": "Ενεργοποιημένο",
     "FullName": "Πλήρες όνομα",
+    "IntegrationName": "Όνομα ενσωμάτωσης",
     "ModifiedAt": "Τροποποιήθηκε στις",
     "NeedPasswordChange": "Απαιτείται αλλαγή κωδικού",
     "Project": "Έργο",
@@ -356,6 +357,7 @@
     "StatusInfo": "Πληροφορίες κατάστασης",
     "SudoSessionEnabled": "Συνεδρία Sudo ενεργοποιημένη",
     "TwoFA": "Έλεγχος ταυτότητας δύο παραγόντων",
+    "UserID": "Αναγνωριστικό χρήστη",
     "Username": "Όνομα χρήστη"
   },
   "error": {

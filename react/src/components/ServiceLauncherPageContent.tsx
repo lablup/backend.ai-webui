@@ -5,13 +5,9 @@
 import { ServiceLauncherPageContentFragment$key } from '../__generated__/ServiceLauncherPageContentFragment.graphql';
 import { ServiceLauncherPageContentModifyMutation } from '../__generated__/ServiceLauncherPageContentModifyMutation.graphql';
 import { ServiceLauncherPageContent_AutoScalingRulesQuery } from '../__generated__/ServiceLauncherPageContent_AutoScalingRulesQuery.graphql';
+import { ServiceLauncherPageContent_ModelDefinitionQuery } from '../__generated__/ServiceLauncherPageContent_ModelDefinitionQuery.graphql';
 import { ServiceLauncherPageContent_UserInfoQuery } from '../__generated__/ServiceLauncherPageContent_UserInfoQuery.graphql';
 import { ServiceLauncherPageContent_UserResourcePolicyQuery } from '../__generated__/ServiceLauncherPageContent_UserResourcePolicyQuery.graphql';
-import {
-  getAllExtraArgsEnvVars,
-  getExtraArgsEnvVar,
-  RUNTIME_PARAMETER_FALLBACKS,
-} from '../constants/runtimeParameterFallbacks';
 import {
   baiSignedRequestWithPromise,
   compareNumberWithUnits,
@@ -20,6 +16,7 @@ import {
 } from '../helper';
 import { generateModelDefinitionYaml } from '../helper/generateModelDefinitionYaml';
 import { parseCliCommand } from '../helper/parseCliCommand';
+import { parseModelDefinitionYaml } from '../helper/parseModelDefinitionYaml';
 import {
   mergeExtraArgs,
   reverseMapExtraArgs,
@@ -35,6 +32,14 @@ import {
   useCurrentResourceGroupState,
   useCurrentProjectValue,
 } from '../hooks/useCurrentProject';
+import {
+  getExtraArgsEnvVarName,
+  getAllExtraArgsEnvVarNames,
+  flattenPresets,
+  buildArgsSchemaKeySet,
+  buildDefaultsMap,
+  type RuntimeParameterGroup,
+} from '../hooks/useRuntimeParameterSchema';
 import { useValidateServiceName } from '../hooks/useValidateServiceName';
 import { useRuntimeEnvVarConfigs } from '../hooks/useVariantConfigs';
 import EnvVarFormList, {
@@ -58,7 +63,6 @@ import SwitchToProjectButton from './SwitchToProjectButton';
 import VFolderLazyView from './VFolderLazyView';
 import VFolderSelect from './VFolderSelect';
 import VFolderTableFormItem from './VFolderTableFormItem';
-import { MinusOutlined } from '@ant-design/icons';
 import { useDebounceFn } from 'ahooks';
 import {
   App,
@@ -86,6 +90,7 @@ import {
   useBAILogger,
   BAIResourceNumberWithIcon,
   BAIButton,
+  toGlobalId,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, {
@@ -98,10 +103,12 @@ import React, {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
+  fetchQuery,
   graphql,
   useFragment,
   useLazyLoadQuery,
   useMutation,
+  useRelayEnvironment,
 } from 'react-relay';
 import {
   BooleanParam,
@@ -189,18 +196,35 @@ export type ServiceLauncherFormValue = ServiceLauncherInput &
   ImageEnvironmentFormInput &
   ResourceAllocationFormValue;
 
+interface InitialModelDef {
+  readonly models: ReadonlyArray<{
+    readonly service?: {
+      readonly startCommand: unknown;
+      readonly port?: number | null;
+      readonly healthCheck?: {
+        readonly path?: string | null;
+        readonly initialDelay?: number | null;
+        readonly maxRetries?: number | null;
+      } | null;
+    } | null;
+  } | null> | null;
+}
+
 interface ServiceLauncherPageContentProps {
   endpointFrgmt?: ServiceLauncherPageContentFragment$key | null;
+  initialModelDef?: InitialModelDef | null;
 }
 
 const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
   endpointFrgmt = null,
+  initialModelDef,
 }) => {
   'use memo';
   const { logger } = useBAILogger();
   const { token } = theme.useToken();
   const { message, modal } = App.useApp();
   const { t } = useTranslation();
+  const relayEnv = useRelayEnvironment();
 
   // Setup query parameters for URL synchronization
   const FormValuesParam = withDefault(JsonParam, {});
@@ -234,6 +258,14 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
   // page on every slider change. Values are read at submit time only.
   const runtimeParamValuesRef = useRef<RuntimeParameterValues>({});
   const runtimeParamTouchedKeysRef = useRef<Set<string>>(new Set());
+  // Preset groups from the API, stored in a ref for serialization at submit time.
+  const runtimeParamGroupsRef = useRef<RuntimeParameterGroup[] | null>(null);
+  const handleGroupsLoaded = useCallback(
+    (groups: RuntimeParameterGroup[] | null) => {
+      runtimeParamGroupsRef.current = groups;
+    },
+    [],
+  );
   const handleRuntimeParamChange = useCallback(
     (values: RuntimeParameterValues) => {
       runtimeParamValuesRef.current = {
@@ -255,6 +287,102 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
     }
     return result;
   }, []);
+
+  /**
+   * Serialize runtime parameter UI values into environ.
+   * - Removes stale EXTRA_ARGS env vars from other runtime variants.
+   * - For ARGS-type presets: merges touched values into the runtime's EXTRA_ARGS env var.
+   * - For ENV-type presets: sets touched values as individual env vars.
+   */
+  const serializeRuntimeParamsToEnviron = useCallback(
+    (environ: Record<string, string>, runtimeVariant: string) => {
+      const groups = runtimeParamGroupsRef.current;
+
+      // Skip cleanup and serialization when no preset groups are loaded
+      // (e.g., custom runtime — don't erase user-specified EXTRA_ARGS)
+      if (!groups || Object.keys(runtimeParamValuesRef.current).length === 0) {
+        return;
+      }
+
+      const extraArgsEnvVar = getExtraArgsEnvVarName(runtimeVariant);
+
+      // Remove stale EXTRA_ARGS env vars from other runtime variants
+      for (const envName of getAllExtraArgsEnvVarNames()) {
+        if (envName !== extraArgsEnvVar) {
+          delete environ[envName];
+        }
+      }
+
+      const touchedValues = getTouchedRuntimeValues();
+      const presets = flattenPresets(groups);
+      const presetMap = new Map(presets.map((p) => [p.key, p]));
+      const defaults = buildDefaultsMap(groups);
+
+      // Separate touched values by presetTarget
+      const argsValues: Record<string, string> = {};
+      const envValues: Record<string, string> = {};
+
+      for (const [key, val] of Object.entries(touchedValues)) {
+        // Skip empty/cleared values — omit the key entirely
+        if (val === '' || val === undefined) continue;
+
+        const preset = presetMap.get(key);
+        if (!preset) continue;
+
+        if (preset.presetTarget === 'ENV') {
+          envValues[key] = val;
+        } else {
+          // ARGS: use CLI flag key
+          argsValues[key] = val;
+        }
+      }
+
+      // Always strip managed ARGS keys from existing EXTRA_ARGS.
+      // This ensures reset (empty touchedKeys) properly cleans up previously set values.
+      const argsSchemaKeys = buildArgsSchemaKeySet(groups);
+      if (environ[extraArgsEnvVar] && argsSchemaKeys.size > 0) {
+        const { unmappedText } = reverseMapExtraArgs(
+          environ[extraArgsEnvVar],
+          argsSchemaKeys,
+        );
+        if (unmappedText) {
+          environ[extraArgsEnvVar] = unmappedText;
+        } else {
+          delete environ[extraArgsEnvVar];
+        }
+      }
+
+      // Always strip all ENV-preset keys from environ.
+      // This ensures reset (empty touchedKeys) properly cleans up previously set values.
+      for (const preset of presets) {
+        if (preset.presetTarget === 'ENV') {
+          delete environ[preset.key];
+        }
+      }
+
+      // Merge ARGS-type values into EXTRA_ARGS env var
+      if (Object.keys(argsValues).length > 0) {
+        const manualArgs = environ[extraArgsEnvVar] ?? '';
+        const merged = mergeExtraArgs(argsValues, manualArgs, defaults);
+        if (merged) {
+          environ[extraArgsEnvVar] = merged;
+        } else {
+          delete environ[extraArgsEnvVar];
+        }
+      }
+
+      // Set ENV-type values as individual env vars
+      for (const [key, val] of Object.entries(envValues)) {
+        // Skip if value matches default
+        const preset = presetMap.get(key);
+        if (preset?.defaultValue !== null && preset?.defaultValue === val) {
+          continue;
+        }
+        environ[key] = val;
+      }
+    },
+    [getTouchedRuntimeValues],
+  );
 
   // Environment search prefill keyword driven by runtime variant selection
   const RUNTIME_SEARCH_KEYWORD_MAP: Partial<Record<string, string>> = {
@@ -555,7 +683,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
           port: values.commandPort ?? 8000,
           healthCheckPath: values.commandHealthCheck ?? '/health',
           modelMountDestination: values.commandModelMount ?? '/models',
-          initialDelay: values.commandInitialDelay ?? 5.0,
+          initialDelay: values.commandInitialDelay ?? 60,
           maxRetries: values.commandMaxRetries ?? 10,
         });
 
@@ -596,31 +724,8 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
           });
       }
 
-      // Remove stale EXTRA_ARGS env vars from other runtime variants
-      const extraArgsEnvVar = getExtraArgsEnvVar(values.runtimeVariant);
-      for (const envName of getAllExtraArgsEnvVars()) {
-        if (envName !== extraArgsEnvVar) {
-          delete environ[envName];
-        }
-      }
-
-      // Merge runtime parameter UI values into EXTRA_ARGS env var.
-      // Only include parameters the user has explicitly touched (interacted with).
-      if (
-        extraArgsEnvVar &&
-        Object.keys(runtimeParamValuesRef.current).length > 0
-      ) {
-        const paramGroups = RUNTIME_PARAMETER_FALLBACKS[values.runtimeVariant];
-        if (paramGroups) {
-          const manualArgs = environ[extraArgsEnvVar] ?? '';
-          const merged = mergeExtraArgs(getTouchedRuntimeValues(), manualArgs);
-          if (merged) {
-            environ[extraArgsEnvVar] = merged;
-          } else {
-            delete environ[extraArgsEnvVar];
-          }
-        }
-      }
+      // Serialize runtime parameter UI values into environ (ENV + ARGS presets)
+      serializeRuntimeParamsToEnviron(environ, values.runtimeVariant);
 
       // In command mode: force runtime_variant to 'custom', auto-set definition path and mount
       const normalizePath = (
@@ -866,8 +971,90 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
   const handleOk = () => {
     form
       .validateFields()
-      .then((values) => {
+      .then(async (values) => {
         if (endpoint) {
+          // In edit mode with custom runtime command mode, upload
+          // the generated model-definition.yaml before modifying.
+          const isCommandMode =
+            values.runtimeVariant === 'custom' &&
+            values.customDefinitionMode === 'command' &&
+            values.startCommand?.trim();
+
+          // Preserve existing definition path in edit mode, default for new
+          const definitionFilePath =
+            endpoint?.model_definition_path || 'model-definition.yaml';
+
+          if (isCommandMode) {
+            // Show overwrite confirmation before uploading model-definition.yaml
+            const confirmed = await new Promise<boolean>((resolve) => {
+              modal.confirm({
+                title: t('modelService.OverwriteYamlTitle'),
+                content: t('modelService.OverwriteYamlContent'),
+                okText: t('button.Overwrite'),
+                cancelText: t('button.Cancel'),
+                onOk: () => resolve(true),
+                onCancel: () => resolve(false),
+              });
+            });
+            if (!confirmed) {
+              return;
+            }
+
+            // In edit mode, use the endpoint's model_mount_destination
+            const modelMountDestination = endpoint
+              ? (endpoint.model_mount_destination ??
+                values.commandModelMount ??
+                '/models')
+              : (values.commandModelMount ?? '/models');
+
+            try {
+              const yamlContent = generateModelDefinitionYaml({
+                startCommand: values.startCommand!.trim(),
+                port: values.commandPort ?? 8000,
+                healthCheckPath: values.commandHealthCheck ?? '/health',
+                modelMountDestination,
+                initialDelay: values.commandInitialDelay ?? 60,
+                maxRetries: values.commandMaxRetries ?? 10,
+              });
+
+              const blob = new Blob([yamlContent], { type: 'text/yaml' });
+              const file = new File([blob], definitionFilePath, {
+                type: 'text/yaml',
+              });
+
+              const uploadUrl: string =
+                await baiClient.vfolder.create_upload_session(
+                  definitionFilePath,
+                  file,
+                  values.vFolderID,
+                );
+
+              const response = await fetch(uploadUrl, {
+                method: 'PATCH',
+                headers: {
+                  'Upload-Offset': '0',
+                  'Content-Type': 'application/offset+octet-stream',
+                  'Tus-Resumable': '1.0.0',
+                },
+                body: blob,
+              });
+
+              if (!response.ok) {
+                message.error(t('modelService.YamlUploadFailed'));
+                return;
+              }
+            } catch (e) {
+              logger.error('Failed to upload model-definition.yaml:', e);
+              message.error(t('modelService.YamlUploadFailed'));
+              return;
+            }
+          }
+
+          // In command mode, use the preserved definition path
+          const modelDefinitionPath = isCommandMode
+            ? definitionFilePath
+            : values.modelDefinitionPath?.trim() || undefined;
+
           const mutationVariables: ServiceLauncherPageContentModifyMutation['variables'] =
             {
               endpoint_id: endpoint?.endpoint_id || '',
@@ -922,9 +1109,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                 }),
                 name: values.serviceName,
                 resource_group: values.resourceGroup,
-                // If empty, let the server infer the value instead of hardcoding
-                model_definition_path:
-                  values.modelDefinitionPath?.trim() || undefined,
+                model_definition_path: modelDefinitionPath,
                 runtime_variant: values.runtimeVariant,
               },
             };
@@ -940,32 +1125,8 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
               });
           }
 
-          // Remove stale EXTRA_ARGS env vars from other runtime variants
-          const extraArgsKey = getExtraArgsEnvVar(values.runtimeVariant);
-          for (const envName of getAllExtraArgsEnvVars()) {
-            if (envName !== extraArgsKey) {
-              delete newEnvirons[envName];
-            }
-          }
-
-          // Merge runtime parameter UI values into EXTRA_ARGS env var.
-          // Only include parameters the user has explicitly touched.
-          if (
-            extraArgsKey &&
-            Object.keys(runtimeParamValuesRef.current).length > 0
-          ) {
-            const paramDefs =
-              RUNTIME_PARAMETER_FALLBACKS[values.runtimeVariant];
-            if (paramDefs) {
-              const manual = newEnvirons[extraArgsKey] ?? '';
-              const merged = mergeExtraArgs(getTouchedRuntimeValues(), manual);
-              if (merged) {
-                newEnvirons[extraArgsKey] = merged;
-              } else {
-                delete newEnvirons[extraArgsKey];
-              }
-            }
-          }
+          // Serialize runtime parameter UI values into environ (ENV + ARGS presets)
+          serializeRuntimeParamsToEnviron(newEnvirons, values.runtimeVariant);
 
           mutationVariables.props.environ = JSON.stringify(newEnvirons);
           commitModifyEndpoint({
@@ -1135,41 +1296,53 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
         modelMountDestination: endpoint?.model_mount_destination,
         modelDefinitionPath: endpoint?.model_definition_path,
         runtimeVariant: endpoint?.runtime_variant?.name,
+        // For custom runtime edit mode, pre-populate from latest revision if available,
+        // otherwise fall back to static defaults.
+        ...(endpoint?.runtime_variant?.name === 'custom' &&
+          (() => {
+            const svc = initialModelDef?.models?.[0]?.service;
+            const rawCommand = svc?.startCommand;
+            const startCommand = Array.isArray(rawCommand)
+              ? rawCommand.join(' ')
+              : rawCommand != null
+                ? String(rawCommand)
+                : undefined;
+            return {
+              customDefinitionMode: 'command' as CustomDefinitionMode,
+              commandModelMount: endpoint?.model_mount_destination || '/models',
+              ...(svc
+                ? {
+                    startCommand,
+                    commandPort: svc.port ?? 8000,
+                    commandHealthCheck: svc.healthCheck?.path ?? '/health',
+                    commandInitialDelay: svc.healthCheck?.initialDelay ?? 60,
+                    commandMaxRetries: svc.healthCheck?.maxRetries ?? 10,
+                  }
+                : {
+                    commandPort: 8000,
+                    commandHealthCheck: '/health',
+                    commandInitialDelay: 60,
+                    commandMaxRetries: 10,
+                  }),
+            };
+          })()),
+        // Pass environ as-is; managed keys are stripped at submit time
+        // by serializeRuntimeParamsToEnviron after presets load from API.
         envvars: (() => {
           const parsed = JSON.parse(endpoint?.environ || '{}') as Record<
             string,
             string
           >;
-          // In edit mode, strip slider-managed keys from EXTRA_ARGS so that
-          // the manual input only contains unmapped args (prevents manual input
-          // from overriding slider changes on submit).
-          const variant = endpoint?.runtime_variant?.name;
-          if (variant) {
-            const envKey = getExtraArgsEnvVar(variant);
-            const params = RUNTIME_PARAMETER_FALLBACKS[variant];
-            if (envKey && parsed[envKey] && params) {
-              const schemaKeys = new Set(params.map((p) => p.key));
-              const { unmappedText } = reverseMapExtraArgs(
-                parsed[envKey],
-                schemaKeys,
-              );
-              if (unmappedText) {
-                parsed[envKey] = unmappedText;
-              } else {
-                delete parsed[envKey];
-              }
-            }
-          }
           return _.map(parsed, (value, variable) => ({ variable, value }));
         })(),
       }
     : {
         replicas: 1,
-        runtimeVariant: 'vllm',
+        runtimeVariant: 'custom',
         commandModelMount: '/models',
         commandPort: 8000,
         commandHealthCheck: '/health',
-        commandInitialDelay: 5.0,
+        commandInitialDelay: 60,
         commandMaxRetries: 10,
         ...RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
         ...(baiClient._config?.default_session_environment && {
@@ -1217,6 +1390,138 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
       }
     }
   }, [endpoint?.extra_mounts, form]);
+
+  // Load model definition for edit mode via GraphQL (currentRevision.modelDefinition),
+  // falling back to vfolder YAML parsing when GraphQL data is unavailable.
+  const loadModelDefinitionForEdit = useEffectEvent(
+    async (endpointId: string, vfolderId: string) => {
+      const modelDefinitionQuery = graphql`
+        query ServiceLauncherPageContent_ModelDefinitionQuery(
+          $deploymentId: ID!
+        ) {
+          deployment(id: $deploymentId) {
+            revisionHistory(
+              limit: 1
+              orderBy: [{ field: CREATED_AT, direction: DESC }]
+            ) {
+              edges {
+                node {
+                  name
+                  modelDefinition {
+                    models {
+                      service {
+                        startCommand
+                        port
+                        healthCheck {
+                          path
+                          initialDelay
+                          maxRetries
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      `;
+
+      // Attempt GraphQL-based load first
+      try {
+        const deploymentId = toGlobalId('ModelDeployment', endpointId);
+        const data =
+          await fetchQuery<ServiceLauncherPageContent_ModelDefinitionQuery>(
+            relayEnv,
+            modelDefinitionQuery,
+            { deploymentId },
+          ).toPromise();
+
+        const modelDef =
+          data?.deployment?.revisionHistory?.edges?.[0]?.node?.modelDefinition;
+        if (modelDef?.models && modelDef.models.length > 0) {
+          const firstModel = modelDef.models[0];
+          const svc = firstModel?.service;
+          if (svc) {
+            const rawCommand = svc.startCommand;
+            const startCommand = Array.isArray(rawCommand)
+              ? rawCommand.join(' ')
+              : rawCommand != null
+                ? String(rawCommand)
+                : undefined;
+            form.setFieldsValue({
+              startCommand,
+              commandPort: svc.port,
+              commandHealthCheck: svc.healthCheck?.path,
+              // commandModelMount is intentionally omitted here — it comes from
+              // endpoint.model_mount_destination in INITIAL_FORM_VALUES, not from modelDefinition.service
+              commandInitialDelay: svc.healthCheck?.initialDelay,
+              commandMaxRetries: svc.healthCheck?.maxRetries,
+              customDefinitionMode: 'command' as CustomDefinitionMode,
+            });
+            return;
+          }
+        }
+      } catch (e) {
+        logger.debug(
+          'GraphQL modelDefinition load failed; falling back to vfolder YAML parsing',
+          e,
+        );
+      }
+
+      // Fallback: download model-definition.yaml from vfolder and parse YAML
+      try {
+        const definitionPath =
+          endpoint?.model_definition_path || 'model-definition.yaml';
+        const tokenResponse = await baiClient.vfolder.request_download_token(
+          definitionPath,
+          vfolderId,
+          false,
+        );
+        const downloadUrl = `${tokenResponse.url}?token=${tokenResponse.token}&archive=false`;
+        const response = await fetch(downloadUrl);
+        if (!response.ok) return;
+        const yamlText = await response.text();
+        const parsed = parseModelDefinitionYaml(yamlText);
+        if (parsed) {
+          form.setFieldsValue({
+            startCommand: parsed.startCommand,
+            commandPort: parsed.port,
+            commandHealthCheck: parsed.healthCheckPath,
+            commandModelMount: parsed.modelMountDestination,
+            commandInitialDelay: parsed.initialDelay,
+            commandMaxRetries: parsed.maxRetries,
+            customDefinitionMode: 'command' as CustomDefinitionMode,
+          });
+        }
+      } catch (e) {
+        // If fallback also fails, keep the default values — user can fill manually
+        logger.debug(
+          'Failed to load model-definition.yaml for edit mode pre-population',
+          e,
+        );
+      }
+    },
+  );
+
+  const endpointId = endpoint?.endpoint_id;
+  const endpointRuntimeVariant = endpoint?.runtime_variant?.name;
+  const endpointModel = endpoint?.model;
+
+  const maybeLoadModelDefinition = useEffectEvent(
+    (id: string, model: string) => {
+      // Skip async load when initialModelDef was already provided synchronously via props
+      if (initialModelDef === undefined) {
+        loadModelDefinitionForEdit(id, model);
+      }
+    },
+  );
+
+  useEffect(() => {
+    if (endpointRuntimeVariant === 'custom' && endpointId && endpointModel) {
+      maybeLoadModelDefinition(endpointId, endpointModel);
+    }
+  }, [endpointId, endpointRuntimeVariant, endpointModel]);
 
   return (
     <>
@@ -1385,83 +1690,43 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                         <Form.Item dependencies={['runtimeVariant']} noStyle>
                           {({ getFieldValue }) => {
                             const variant = getFieldValue('runtimeVariant');
-                            if (variant !== 'vllm' && variant !== 'sglang')
-                              return null;
+                            if (!variant || variant === 'custom') return null;
 
-                            // Extract existing EXTRA_ARGS for edit mode reverse-mapping
+                            // Extract existing environ for edit mode reverse-mapping
+                            const parsedEnviron = endpoint
+                              ? (JSON.parse(
+                                  endpoint?.environ || '{}',
+                                ) as Record<string, string>)
+                              : {};
                             const extraArgsEnvName =
-                              getExtraArgsEnvVar(variant);
-                            const existingExtraArgs = endpoint
-                              ? ((
-                                  JSON.parse(
-                                    endpoint?.environ || '{}',
-                                  ) as Record<string, string>
-                                )[extraArgsEnvName ?? ''] ?? '')
-                              : '';
+                              getExtraArgsEnvVarName(variant);
+                            const existingExtraArgs =
+                              parsedEnviron[extraArgsEnvName] ?? '';
 
                             return (
-                              <RuntimeParameterFormSection
-                                runtimeVariant={variant}
-                                onChange={handleRuntimeParamChange}
-                                onTouchedKeysChange={handleTouchedKeysChange}
-                                initialExtraArgs={existingExtraArgs}
-                              />
+                              <Suspense
+                                fallback={
+                                  <Skeleton active paragraph={{ rows: 4 }} />
+                                }
+                              >
+                                <RuntimeParameterFormSection
+                                  runtimeVariant={variant}
+                                  onChange={handleRuntimeParamChange}
+                                  onTouchedKeysChange={handleTouchedKeysChange}
+                                  onGroupsLoaded={handleGroupsLoaded}
+                                  initialExtraArgs={existingExtraArgs}
+                                  initialEnvVars={
+                                    endpoint ? parsedEnviron : undefined
+                                  }
+                                />
+                              </Suspense>
                             );
                           }}
                         </Form.Item>
                         <Form.Item dependencies={['runtimeVariant']} noStyle>
                           {({ getFieldValue }) =>
-                            getFieldValue('runtimeVariant') === 'custom' &&
-                            (endpoint ? (
-                              // TODO(FR-2440): Support "Enter Command" Segmented UI in edit mode.
-                              // - Read existing model-definition.yaml from vfolder and reverse-map to command fields
-                              // - Show overwrite confirmation modal only when user actually modifies the command
-                              // Edit mode: keep existing UI (no Segmented)
-                              <BAIFlex
-                                direction="row"
-                                gap={'xxs'}
-                                align="stretch"
-                                justify="between"
-                              >
-                                <Form.Item
-                                  name={'modelMountDestination'}
-                                  label={t(
-                                    'modelService.ModelMountDestination',
-                                  )}
-                                  style={{ width: '50%' }}
-                                  labelCol={{ style: { flex: 1 } }}
-                                >
-                                  <Input
-                                    allowClear
-                                    placeholder={'/models'}
-                                    disabled={!!endpoint}
-                                  />
-                                </Form.Item>
-                                <MinusOutlined
-                                  style={{
-                                    fontSize: token.fontSizeXL,
-                                    color: token.colorTextDisabled,
-                                  }}
-                                  rotate={290}
-                                />
-                                <Form.Item
-                                  name={'modelDefinitionPath'}
-                                  label={t('modelService.ModelDefinitionPath')}
-                                  style={{ width: '50%' }}
-                                  labelCol={{ style: { flex: 1 } }}
-                                >
-                                  <Input
-                                    allowClear
-                                    placeholder={
-                                      endpoint?.model_definition_path
-                                        ? endpoint?.model_definition_path
-                                        : 'model-definition.yaml'
-                                    }
-                                  />
-                                </Form.Item>
-                              </BAIFlex>
-                            ) : (
-                              // Create mode: Segmented "Enter Command" / "Use Config File"
+                            getFieldValue('runtimeVariant') === 'custom' && (
+                              // Both create and edit modes: Segmented "Enter Command" / "Use Config File"
                               <Card
                                 size="small"
                                 title={t('modelService.ModelDefinition')}
@@ -1614,13 +1879,15 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                                       <>
                                         <Form.Item
                                           name={'modelMountDestination'}
-                                          label={t(
-                                            'modelService.ModelMountDestination',
+                                          label={t('modelService.ModelMount')}
+                                          tooltip={t(
+                                            'modelService.ModelMountTooltip',
                                           )}
                                         >
                                           <Input
                                             allowClear
                                             placeholder={'/models'}
+                                            disabled={!!endpoint}
                                           />
                                         </Form.Item>
                                         <Form.Item
@@ -1628,11 +1895,16 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                                           label={t(
                                             'modelService.ModelDefinitionPath',
                                           )}
+                                          tooltip={t(
+                                            'modelService.ModelDefinitionPathTooltip',
+                                          )}
                                         >
                                           <Input
                                             allowClear
                                             placeholder={
-                                              'model-definition.yaml'
+                                              endpoint?.model_definition_path
+                                                ? endpoint?.model_definition_path
+                                                : 'model-definition.yaml'
                                             }
                                           />
                                         </Form.Item>
@@ -1641,7 +1913,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                                   }
                                 </Form.Item>
                               </Card>
-                            ))
+                            )
                           }
                         </Form.Item>
                       </>
@@ -1700,7 +1972,10 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                                   type="link"
                                   action={async () => {
                                     form.setFieldsValue({
-                                      allocationPreset: 'auto-select',
+                                      allocationPreset: baiClient._config
+                                        .allowCustomResourceAllocation
+                                        ? 'custom'
+                                        : 'auto-select',
                                     });
                                     setWantToChangeResource(true);
                                   }}

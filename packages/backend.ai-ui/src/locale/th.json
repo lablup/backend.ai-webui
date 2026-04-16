@@ -347,6 +347,7 @@
     "Email": "อีเมล",
     "Enabled": "เปิดใช้งาน",
     "FullName": "ชื่อเต็ม",
+    "IntegrationName": "ชื่อการเชื่อมต่อ",
     "ModifiedAt": "แก้ไขเมื่อ",
     "NeedPasswordChange": "ต้องเปลี่ยนรหัสผ่าน",
     "Project": "โครงการ",
@@ -356,6 +357,7 @@
     "StatusInfo": "ข้อมูลสถานะ",
     "SudoSessionEnabled": "เซสชัน Sudo เปิดใช้งาน",
     "TwoFA": "การยืนยันตัวตนสองขั้นตอน",
+    "UserID": "รหัสผู้ใช้",
     "Username": "ชื่อผู้ใช้"
   },
   "error": {

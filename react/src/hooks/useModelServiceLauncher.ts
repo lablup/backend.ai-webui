@@ -66,7 +66,7 @@ export function createServiceInput(
   return {
     serviceName: `${modelName}-${generateRandomString(4)}`,
     replicas: 1,
-    runtimeVariant: 'vllm',
+    runtimeVariant: 'custom',
     cluster_size: 1,
     cluster_mode: 'single-node',
     openToPublic: true,

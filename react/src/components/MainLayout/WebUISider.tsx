@@ -3,7 +3,6 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
-import { useCurrentUserRole } from '../../hooks/backendai';
 import { useCustomThemeConfig } from '../../hooks/useCustomThemeConfig';
 import usePrimaryColors from '../../hooks/usePrimaryColors';
 import AboutBackendAIModal from '../AboutBackendAIModal';
@@ -28,7 +27,7 @@ import {
 } from 'antd';
 import { filterOutEmpty, BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { ArrowLeftIcon, SettingsIcon } from 'lucide-react';
+import { ArrowLeftIcon, ShieldUserIcon } from 'lucide-react';
 import React, { useContext, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
@@ -52,9 +51,6 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   const currentSiderTheme =
     config.theme?.algorithm === theme.darkAlgorithm ? 'dark' : 'light';
 
-  const currentUserRole = useCurrentUserRole();
-  const hasAdminCategoryRole =
-    currentUserRole === 'superadmin' || currentUserRole === 'admin';
   const webuiNavigate = useWebUINavigate();
   const location = useLocation();
   const baiClient = useSuspendedBackendaiClient();
@@ -75,6 +71,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
     groupedGeneralMenu,
     groupedAdminMenu,
     isSelectedAdminCategoryMenu,
+    isCurrentPathAdminCategory,
     isCurrentPageUnauthorized,
     firstAvailableAdminMenuItem,
     defaultMenuPath,
@@ -86,12 +83,19 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
     'backendaiwebui.last_visited_general_path',
   );
 
-  // Store the last visited general menu path when the admin category menu is not selected
+  // Store the last visited general (non-admin) menu path so the admin header's
+  // "go back" button can return the user to where they were. Use the role-
+  // independent `isCurrentPathAdminCategory` instead of
+  // `isSelectedAdminCategoryMenu`: the latter is role-filtered and would
+  // misclassify an admin page as "general" for users whose admin menu
+  // excludes that page (e.g. superadmin on `/project-admin-users`), which
+  // would pollute `goBackPath` with an admin path and make a later go-back
+  // navigate to the same page.
   useEffect(() => {
-    if (isSelectedAdminCategoryMenu === false) {
+    if (!isCurrentPathAdminCategory) {
       setGoBackPath(location.pathname);
     }
-  }, [setGoBackPath, location.pathname, isSelectedAdminCategoryMenu]);
+  }, [setGoBackPath, location.pathname, isCurrentPathAdminCategory]);
 
   const adminHeader = (
     <BAIFlex align="center">
@@ -217,24 +221,23 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
             ]}
             // @ts-ignore
             items={filterOutEmpty([
-              hasAdminCategoryRole &&
-                firstAvailableAdminMenuItem && {
-                  // Go to first page of admin setting pages.
-                  label: (
-                    <WebUILink
-                      to={getPathFromMenuKey(firstAvailableAdminMenuItem.key)}
-                    >
-                      {t('webui.menu.AdminSettings')}
-                    </WebUILink>
-                  ),
-                  icon: <SettingsIcon style={{ color: token.colorInfo }} />,
-                  key: 'admin-settings',
-                },
+              firstAvailableAdminMenuItem && {
+                // Go to first page of admin setting pages.
+                label: (
+                  <WebUILink
+                    to={getPathFromMenuKey(firstAvailableAdminMenuItem.key)}
+                  >
+                    {t('webui.menu.AdminSettings')}
+                  </WebUILink>
+                ),
+                icon: <ShieldUserIcon style={{ color: token.colorInfo }} />,
+                key: 'admin-settings',
+              },
               ...groupedGeneralMenu,
             ])}
           />
         )}
-        {hasAdminCategoryRole && isSelectedAdminCategoryMenu && (
+        {firstAvailableAdminMenuItem && isSelectedAdminCategoryMenu && (
           <ConfigProvider
             theme={{
               token: {

@@ -52,12 +52,15 @@ export const isEndpointInDestroyingCategory = (
   endpoint?: {
     replicas: number | null | undefined;
     status: string | null | undefined;
+    lifecycle_stage?: string | null | undefined;
   } | null,
 ) => {
   const count = endpoint?.replicas;
   const status = endpoint?.status;
   return (
-    (count ?? 0) < 0 || _.includes(['DESTROYED', 'DESTROYING'], status ?? '')
+    (count ?? 0) < 0 ||
+    _.includes(['DESTROYED', 'DESTROYING'], status ?? '') ||
+    endpoint?.lifecycle_stage?.toUpperCase().includes('DESTROYED')
   );
 };
 
@@ -84,6 +87,7 @@ const EndpointList: React.FC<EndpointListProps> = ({
         name
         endpoint_id
         status
+        lifecycle_stage
         url
         open_to_public
         created_at
@@ -91,6 +95,9 @@ const EndpointList: React.FC<EndpointListProps> = ({
         desired_session_count
         project
         created_user_email
+        runtime_variant {
+          human_readable_name
+        }
         ...EndpointOwnerInfoFragment
         ...EndpointStatusTagFragment
       }
@@ -223,6 +230,14 @@ const EndpointList: React.FC<EndpointListProps> = ({
       title: t('modelService.Status'),
       key: 'status',
       render: (_text, row) => <EndpointStatusTag endpointFrgmt={row} />,
+    },
+    {
+      title: t('modelService.RuntimeVariant'),
+      key: 'runtime_variant',
+      render: (_text, row) =>
+        row.runtime_variant?.human_readable_name
+          ? row.runtime_variant.human_readable_name
+          : '-',
     },
     baiClient.is_admin && {
       title: t('modelService.Owner'),

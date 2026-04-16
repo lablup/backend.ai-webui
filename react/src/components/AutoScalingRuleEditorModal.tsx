@@ -2,228 +2,991 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { AutoScalingRuleEditorModalCreateMutation } from '../__generated__/AutoScalingRuleEditorModalCreateMutation.graphql';
 import {
-  AutoScalingMetricComparator,
-  AutoScalingMetricSource,
-  AutoScalingRuleEditorModalCreateMutation,
-  EndpointAutoScalingRuleInput,
-} from '../__generated__/AutoScalingRuleEditorModalCreateMutation.graphql';
-import { AutoScalingRuleEditorModalFragment$key } from '../__generated__/AutoScalingRuleEditorModalFragment.graphql';
-import { AutoScalingRuleEditorModalModifyMutation } from '../__generated__/AutoScalingRuleEditorModalModifyMutation.graphql';
+  AutoScalingRuleEditorModalFragment$data,
+  AutoScalingRuleEditorModalFragment$key,
+} from '../__generated__/AutoScalingRuleEditorModalFragment.graphql';
+import { AutoScalingRuleEditorModalPresetResultQuery } from '../__generated__/AutoScalingRuleEditorModalPresetResultQuery.graphql';
+import { AutoScalingRuleEditorModalPresetsQuery } from '../__generated__/AutoScalingRuleEditorModalPresetsQuery.graphql';
+import { AutoScalingRuleEditorModalUpdateMutation } from '../__generated__/AutoScalingRuleEditorModalUpdateMutation.graphql';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
+import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
+import { ReloadOutlined } from '@ant-design/icons';
 import {
   App,
   AutoComplete,
   Form,
   FormInstance,
-  Input,
   InputNumber,
-  Radio,
+  Segmented,
   Select,
-  Space,
+  Skeleton,
   Typography,
+  theme,
 } from 'antd';
-import { BAIFlex, BAIModal, BAIModalProps, useBAILogger } from 'backend.ai-ui';
+import {
+  BAIButton,
+  BAIFlex,
+  BAIModal,
+  BAIModalProps,
+  INITIAL_FETCH_KEY,
+  toLocalId,
+  useBAILogger,
+  useUpdatableState,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import React, { useRef, useState } from 'react';
+import React, {
+  RefObject,
+  useEffect,
+  useEffectEvent,
+  useRef,
+  useState,
+  useTransition,
+} from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useFragment, useMutation } from 'react-relay';
+import {
+  graphql,
+  useFragment,
+  useLazyLoadQuery,
+  useMutation,
+} from 'react-relay';
+
+type ConditionMode = 'single' | 'range';
+type ThresholdDirection = 'upper' | 'lower';
 
 interface AutoScalingRuleEditorModalProps extends Omit<
   BAIModalProps,
   'onOk' | 'onClose' | 'onCancel'
 > {
-  endpoint_id: string;
+  modelDeploymentId: string; // raw UUID for create mutation
   autoScalingRuleFrgmt?: AutoScalingRuleEditorModalFragment$key | null;
   onRequestClose: (success?: boolean) => void;
+  onComplete?: () => void;
 }
 
-type AutoScalingRuleInput = {
-  type: 'out' | 'in';
-  metric_source: AutoScalingMetricSource;
-  metric_name: string;
-  threshold: string;
-  comparator: AutoScalingMetricComparator;
-  step_size: number;
-  cooldown_seconds: number;
-  min_replicas: number;
-  max_replicas: number;
+type AutoScalingRuleFormValues = {
+  metricSource: 'KERNEL' | 'INFERENCE_FRAMEWORK' | 'PROMETHEUS';
+  metricName: string;
+  prometheusQueryPresetId?: string;
+  conditionMode: ConditionMode;
+  direction: ThresholdDirection;
+  threshold?: number;
+  minThreshold?: number;
+  maxThreshold?: number;
+  stepSize: number;
+  timeWindow: number;
+  minReplicas?: number;
+  maxReplicas?: number;
 };
 
-export const COMPARATOR_LABELS = {
-  LESS_THAN: '<',
-  LESS_THAN_OR_EQUAL: '≤',
-  GREATER_THAN: '>',
-  GREATER_THAN_OR_EQUAL: '≥',
-};
-
-const METRIC_NAMES_MAP: Partial<{
-  [key in AutoScalingMetricSource]: Array<string>;
-}> = {
+const METRIC_NAMES_MAP: Partial<
+  Record<'KERNEL' | 'INFERENCE_FRAMEWORK', Array<string>>
+> = {
   KERNEL: ['cpu_util', 'mem', 'net_rx', 'net_tx'],
   INFERENCE_FRAMEWORK: [],
 };
 
+/**
+ * Inner component: fetches and renders only the metric value text.
+ * Isolated so that React.Suspense covers just this text node during refresh,
+ * leaving the "Current value:" label and refresh button always visible.
+ */
+const PreviewValue: React.FC<{
+  presetRawId: string;
+  fetchKey: string;
+  onLoaded?: () => void;
+}> = ({ presetRawId, fetchKey, onLoaded }) => {
+  'use memo';
+  const { t } = useTranslation();
+
+  const data = useLazyLoadQuery<AutoScalingRuleEditorModalPresetResultQuery>(
+    graphql`
+      query AutoScalingRuleEditorModalPresetResultQuery(
+        $id: ID!
+        $options: ExecuteQueryDefinitionOptionsInput
+      ) {
+        prometheusQueryPresetResult(id: $id, options: $options) {
+          status
+          resultType
+          result {
+            metric {
+              key
+              value
+            }
+            values {
+              timestamp
+              value
+            }
+          }
+        }
+      }
+    `,
+    {
+      id: presetRawId,
+      options: {
+        filterLabels: [],
+        groupLabels: [],
+      },
+    },
+    { fetchPolicy: 'network-only', fetchKey: `preview-${fetchKey}` },
+  );
+
+  const results = data.prometheusQueryPresetResult.result;
+
+  const onLoadedEvent = useEffectEvent(() => {
+    onLoaded?.();
+  });
+  useEffect(() => {
+    onLoadedEvent();
+  }, []);
+
+  const formatValue = (raw: string) => {
+    const num = parseFloat(raw);
+    return isNaN(num) ? raw : (Math.round(num * 100) / 100).toString();
+  };
+
+  let displayValue: string | null = null;
+  if (results.length === 1) {
+    const values = results[0].values;
+    const raw = values.length > 0 ? values[values.length - 1].value : null;
+    displayValue = raw != null ? formatValue(raw) : null;
+  } else if (results.length > 1) {
+    const firstValues = results[0].values;
+    const latestValue =
+      firstValues.length > 0 ? firstValues[firstValues.length - 1].value : null;
+    displayValue =
+      latestValue != null
+        ? t('autoScalingRule.MultipleSeriesResult', {
+            count: results.length,
+            value: formatValue(latestValue),
+          })
+        : null;
+  }
+
+  return displayValue != null ? (
+    <Typography.Text type="secondary">{displayValue}</Typography.Text>
+  ) : (
+    <Typography.Text type="secondary">
+      {t('autoScalingRule.NoDataAvailable')}
+    </Typography.Text>
+  );
+};
+
+/**
+ * Inline preview component for a selected Prometheus preset.
+ * The label and refresh button are always visible; only the value area
+ * shows a loading spinner during fetch/refresh.
+ */
+const PrometheusPresetPreview: React.FC<{
+  presetGlobalId: string;
+}> = ({ presetGlobalId }) => {
+  'use memo';
+  const { t } = useTranslation();
+  const { token } = theme.useToken();
+  const [fetchKey, updateFetchKey] = useUpdatableState(INITIAL_FETCH_KEY);
+  const [isPending, startTransition] = useTransition();
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const presetRawId = toLocalId(presetGlobalId);
+
+  return (
+    <span>
+      <Typography.Text
+        type="secondary"
+        style={{ marginRight: token.marginXXS }}
+      >
+        {t('autoScalingRule.CurrentValue')}:{' '}
+      </Typography.Text>
+      <React.Suspense fallback={null}>
+        <PreviewValue
+          presetRawId={presetRawId}
+          fetchKey={fetchKey}
+          onLoaded={() => setIsInitialLoading(false)}
+        />
+      </React.Suspense>
+      <BAIButton
+        type="link"
+        size="small"
+        icon={<ReloadOutlined />}
+        loading={isPending || isInitialLoading}
+        onClick={() => startTransition(() => updateFetchKey())}
+        title={t('autoScalingRule.RefreshPreview')}
+        aria-label={t('autoScalingRule.RefreshPreview')}
+      />
+    </span>
+  );
+};
+
+/**
+ * Determines initial condition mode and direction from existing rule data.
+ *
+ * Direction semantics match the list's "normal range" display:
+ *   'lower' ('<'): Metric < maxThreshold — metric should stay BELOW the upper bound.
+ *   'upper' ('>'): Metric > minThreshold — metric should stay ABOVE the lower bound.
+ *
+ * So maxThreshold → 'lower', minThreshold → 'upper' (mirrors the list column).
+ */
+const getInitialConditionState = (
+  rule: AutoScalingRuleEditorModalFragment$data | null | undefined,
+): { mode: ConditionMode; direction: ThresholdDirection } => {
+  if (!rule) {
+    return { mode: 'single', direction: 'lower' };
+  }
+  if (rule.minThreshold != null && rule.maxThreshold != null) {
+    return { mode: 'range', direction: 'upper' };
+  }
+  // minThreshold set → Metric > minThreshold → direction='upper'
+  if (rule.minThreshold != null) {
+    return { mode: 'single', direction: 'upper' };
+  }
+  // maxThreshold set (or neither) → Metric < maxThreshold → direction='lower'
+  return { mode: 'single', direction: 'lower' };
+};
+
+/**
+ * Inner form content — contains the presetsQuery (which may suspend on first load)
+ * and all form UI. Wrapped in a Suspense boundary by the outer modal component
+ * so Suspense does not bubble up to the page-level boundary.
+ */
+const AutoScalingRuleEditorModalContent: React.FC<{
+  autoScalingRule: AutoScalingRuleEditorModalFragment$data | null;
+  formRef: RefObject<FormInstance<AutoScalingRuleFormValues>>;
+}> = ({ autoScalingRule, formRef }) => {
+  'use memo';
+  const { t } = useTranslation();
+  const { token } = theme.useToken();
+
+  const { prometheusQueryPresets } =
+    useLazyLoadQuery<AutoScalingRuleEditorModalPresetsQuery>(
+      graphql`
+        query AutoScalingRuleEditorModalPresetsQuery {
+          prometheusQueryPresets {
+            edges {
+              node {
+                id
+                name
+                description
+                rank
+                categoryId
+                metricName
+                queryTemplate
+                timeWindow
+              }
+            }
+          }
+        }
+      `,
+      {},
+    );
+
+  const presetNodes = React.useMemo(
+    () => _.compact(_.map(prometheusQueryPresets?.edges, (edge) => edge?.node)),
+    [prometheusQueryPresets],
+  );
+
+  const initialCondition = getInitialConditionState(autoScalingRule);
+  const [conditionMode, setConditionMode] = useState<ConditionMode>(
+    initialCondition.mode,
+  );
+  const [direction, setDirection] = useState<ThresholdDirection>(
+    initialCondition.direction,
+  );
+  const [selectedMetricSource, setSelectedMetricSource] = useState<string>(
+    autoScalingRule?.metricSource || 'KERNEL',
+  );
+  const [selectedPresetId, setSelectedPresetId] = useState<string | undefined>(
+    autoScalingRule?.prometheusQueryPresetId
+      ? presetNodes.find(
+          (p) => toLocalId(p.id) === autoScalingRule.prometheusQueryPresetId,
+        )?.id
+      : undefined,
+  );
+  const [nameOptions, setNameOptions] = useState<Array<string>>(
+    METRIC_NAMES_MAP[
+      (autoScalingRule?.metricSource as keyof typeof METRIC_NAMES_MAP) ||
+        'KERNEL'
+    ] || [],
+  );
+
+  const selectedPreset = React.useMemo(
+    () => presetNodes.find((p) => p.id === selectedPresetId),
+    [presetNodes, selectedPresetId],
+  );
+
+  type PresetOption = {
+    label: string;
+    value: string;
+    description?: string | null;
+  };
+
+  // TODO(needs-backend): group by categoryId with human-readable category names
+  // once the backend exposes a QueryDefinitionCategory type/query.
+  const presetOptions: PresetOption[] = _.orderBy(
+    presetNodes,
+    ['rank'],
+    ['asc'],
+  ).map((preset) => ({
+    label: preset.name,
+    value: preset.id,
+    description: preset.description,
+  }));
+
+  // Build initial form values from existing rule data
+  const getInitialValues = (): Partial<AutoScalingRuleFormValues> => {
+    if (autoScalingRule) {
+      const condition = getInitialConditionState(autoScalingRule);
+      let threshold: number | undefined;
+      if (condition.mode === 'single') {
+        // 'lower' ('<') → maxThreshold; 'upper' ('>') → minThreshold
+        threshold =
+          condition.direction === 'lower'
+            ? autoScalingRule.maxThreshold != null
+              ? Number(autoScalingRule.maxThreshold)
+              : undefined
+            : autoScalingRule.minThreshold != null
+              ? Number(autoScalingRule.minThreshold)
+              : undefined;
+      }
+      return {
+        metricSource:
+          autoScalingRule.metricSource as AutoScalingRuleFormValues['metricSource'],
+        metricName: autoScalingRule.metricName,
+        prometheusQueryPresetId: selectedPresetId,
+        conditionMode: condition.mode,
+        direction: condition.direction,
+        threshold,
+        minThreshold:
+          autoScalingRule.minThreshold != null
+            ? Number(autoScalingRule.minThreshold)
+            : undefined,
+        maxThreshold:
+          autoScalingRule.maxThreshold != null
+            ? Number(autoScalingRule.maxThreshold)
+            : undefined,
+        stepSize: Math.abs(autoScalingRule.stepSize),
+        timeWindow: autoScalingRule.timeWindow,
+        minReplicas: autoScalingRule.minReplicas ?? undefined,
+        maxReplicas: autoScalingRule.maxReplicas ?? undefined,
+      };
+    }
+    return {
+      metricSource: 'KERNEL',
+      conditionMode: 'single',
+      direction: 'lower',
+      stepSize: 1,
+      timeWindow: 300,
+      minReplicas: 0,
+      maxReplicas: 5,
+    };
+  };
+
+  const isPrometheus = selectedMetricSource === 'PROMETHEUS';
+
+  return (
+    <Form ref={formRef} layout={'vertical'} initialValues={getInitialValues()}>
+      {/* Metric Source */}
+      <Form.Item
+        label={t('autoScalingRule.MetricSource')}
+        name={'metricSource'}
+        rules={[{ required: true }]}
+      >
+        <Select
+          onChange={(value) => {
+            setSelectedMetricSource(value);
+            // Clear metricName whenever source changes (issue: stale name from previous source)
+            formRef.current?.setFieldsValue({ metricName: undefined });
+            if (value !== 'PROMETHEUS') {
+              setNameOptions(
+                METRIC_NAMES_MAP[value as keyof typeof METRIC_NAMES_MAP] || [],
+              );
+              setSelectedPresetId(undefined);
+            } else {
+              // Restore selectedPresetId state from form value when switching back to PROMETHEUS,
+              // otherwise the preview won't appear even after a preset was previously chosen.
+              const existingPresetId = formRef.current?.getFieldValue(
+                'prometheusQueryPresetId',
+              );
+              if (existingPresetId) {
+                setSelectedPresetId(existingPresetId);
+              }
+            }
+          }}
+          options={[
+            {
+              label: t('autoScalingRule.MetricSourceKernel'),
+              value: 'KERNEL',
+            },
+            {
+              label: t('autoScalingRule.MetricSourceInferenceFramework'),
+              value: 'INFERENCE_FRAMEWORK',
+            },
+            {
+              label: t('autoScalingRule.MetricSourcePrometheus'),
+              value: 'PROMETHEUS',
+            },
+          ]}
+        />
+      </Form.Item>
+
+      {/* Metric Name (KERNEL / INFERENCE_FRAMEWORK) — always mounted so validateFields includes it */}
+      <Form.Item
+        label={t('autoScalingRule.MetricName')}
+        name={'metricName'}
+        hidden={isPrometheus}
+        rules={[{ required: !isPrometheus }]}
+      >
+        <AutoComplete
+          placeholder={t('autoScalingRule.MetricName')}
+          options={_.map(nameOptions, (name) => ({
+            label: name,
+            value: name,
+          }))}
+          showSearch={{
+            onSearch: (text) => {
+              const source = (formRef.current?.getFieldValue('metricSource') ||
+                'KERNEL') as keyof typeof METRIC_NAMES_MAP;
+              setNameOptions(
+                _.filter(METRIC_NAMES_MAP[source] || [], (name) =>
+                  name.includes(text),
+                ),
+              );
+            },
+          }}
+          allowClear
+          popupMatchSelectWidth={false}
+        />
+      </Form.Item>
+
+      {/* Prometheus Preset (PROMETHEUS only) */}
+      {isPrometheus && (
+        <>
+          <Form.Item
+            label={`${t('autoScalingRule.MetricName')} (${t('autoScalingRule.PrometheusPreset')})`}
+            name="prometheusQueryPresetId"
+            rules={[
+              {
+                required: true,
+                message: t('autoScalingRule.PrometheusPresetRequired'),
+              },
+            ]}
+            extra={
+              selectedPreset ? (
+                <PrometheusPresetPreview
+                  key={selectedPreset.id}
+                  presetGlobalId={selectedPreset.id}
+                />
+              ) : undefined
+            }
+          >
+            <Select
+              onChange={(value) => {
+                setSelectedPresetId(value);
+                const preset = presetNodes.find((p) => p.id === value);
+                if (preset) {
+                  // Auto-fill metricName
+                  formRef.current?.setFieldsValue({
+                    metricName: preset.metricName,
+                  });
+                  // Auto-apply timeWindow from preset only when the preset
+                  // provides a valid value; otherwise keep the existing value
+                  // (e.g. the default 300) to avoid unexpected clearing.
+                  const tw =
+                    preset.timeWindow != null
+                      ? Number(preset.timeWindow)
+                      : undefined;
+                  if (tw != null && !isNaN(tw)) {
+                    formRef.current?.setFieldsValue({ timeWindow: tw });
+                  }
+                }
+              }}
+              placeholder={t('autoScalingRule.SelectPrometheusPreset')}
+              showSearch={{
+                filterOption: (input, option) =>
+                  String(option?.label ?? '')
+                    .toLowerCase()
+                    .includes(input.toLowerCase()),
+              }}
+              options={presetOptions}
+              optionRender={(option) => (
+                <BAIFlex direction="column" align="start">
+                  {option.label}
+                  {option.data.description && (
+                    <Typography.Text
+                      type="secondary"
+                      style={{ fontSize: token.fontSizeSM }}
+                      ellipsis
+                    >
+                      {option.data.description}
+                    </Typography.Text>
+                  )}
+                </BAIFlex>
+              )}
+              allowClear
+              onClear={() => setSelectedPresetId(undefined)}
+            />
+          </Form.Item>
+        </>
+      )}
+
+      {/* Condition Mode (Single / Range) */}
+      <Form.Item
+        label={t('autoScalingRule.Condition')}
+        required
+        tooltip={t('autoScalingRule.ConditionTooltip')}
+      >
+        <Form.Item name={'conditionMode'} noStyle>
+          <Segmented
+            options={[
+              {
+                label: t('autoScalingRule.Single'),
+                value: 'single',
+              },
+              {
+                label: t('autoScalingRule.Range'),
+                value: 'range',
+              },
+            ]}
+            onChange={(value) => {
+              setConditionMode(value as ConditionMode);
+            }}
+            style={{ marginBottom: token.marginSM }}
+          />
+        </Form.Item>
+
+        {conditionMode === 'single' ? (
+          <div
+            style={{
+              display: 'flex',
+              gap: token.marginXS,
+              alignItems: 'center',
+            }}
+          >
+            <Typography.Text style={{ flexShrink: 0 }}>
+              {t('autoScalingRule.Metric')}
+            </Typography.Text>
+            <Form.Item name={'direction'} noStyle rules={[{ required: true }]}>
+              <Select
+                style={{ width: 60 }}
+                onChange={(value) => setDirection(value as ThresholdDirection)}
+                options={[
+                  {
+                    label: '>',
+                    value: 'upper',
+                  },
+                  {
+                    label: '<',
+                    value: 'lower',
+                  },
+                ]}
+              />
+            </Form.Item>
+            <Form.Item
+              name={'threshold'}
+              noStyle
+              rules={[
+                {
+                  required: true,
+                  message: t('autoScalingRule.ThresholdRequired'),
+                },
+                {
+                  type: 'number',
+                  min: 0,
+                  message: t('autoScalingRule.ThresholdMustBeNonNegative'),
+                },
+              ]}
+            >
+              <InputNumber
+                placeholder={t('autoScalingRule.Threshold')}
+                style={{ flex: 1, width: '100%' }}
+                min={0}
+              />
+            </Form.Item>
+          </div>
+        ) : (
+          <div
+            style={{
+              display: 'flex',
+              gap: token.marginXS,
+              alignItems: 'center',
+            }}
+          >
+            <Form.Item
+              name={'minThreshold'}
+              noStyle
+              rules={[
+                {
+                  required: true,
+                  message: t('autoScalingRule.MinThresholdRequired'),
+                },
+                {
+                  type: 'number',
+                  min: 0,
+                  message: t('autoScalingRule.ThresholdMustBeNonNegative'),
+                },
+              ]}
+            >
+              <InputNumber
+                placeholder={t('autoScalingRule.MinThreshold')}
+                style={{ flex: 1, width: '100%' }}
+                min={0}
+              />
+            </Form.Item>
+            <Typography.Text style={{ flexShrink: 0 }}>
+              {'<'} {t('autoScalingRule.Metric')} {'<'}
+            </Typography.Text>
+            <Form.Item
+              name={'maxThreshold'}
+              noStyle
+              dependencies={['minThreshold']}
+              rules={[
+                {
+                  required: true,
+                  message: t('autoScalingRule.MaxThresholdRequired'),
+                },
+                {
+                  type: 'number',
+                  min: 0,
+                  message: t('autoScalingRule.ThresholdMustBeNonNegative'),
+                },
+                ({ getFieldValue }) => ({
+                  validator(_, value) {
+                    const min = getFieldValue('minThreshold');
+                    if (min != null && value != null && min >= value) {
+                      return Promise.reject(
+                        new Error(t('autoScalingRule.MinMustBeLessThanMax')),
+                      );
+                    }
+                    return Promise.resolve();
+                  },
+                }),
+              ]}
+            >
+              <InputNumber
+                placeholder={t('autoScalingRule.MaxThreshold')}
+                style={{ flex: 1, width: '100%' }}
+                min={0}
+              />
+            </Form.Item>
+          </div>
+        )}
+      </Form.Item>
+
+      {/* Step Size */}
+      <Form.Item
+        label={t('autoScalingRule.StepSize')}
+        name={'stepSize'}
+        tooltip={t('autoScalingRule.StepSizeTooltip')}
+        rules={[
+          { required: true },
+          {
+            type: 'number',
+            min: 1,
+            max: SIGNED_32BIT_MAX_INT,
+          },
+          {
+            validator: (_, value) => {
+              if (value % 1 !== 0) {
+                return Promise.reject(
+                  new Error(t('error.OnlyPositiveIntegersAreAllowed')),
+                );
+              }
+              return Promise.resolve();
+            },
+          },
+        ]}
+      >
+        <InputNumber
+          min={1}
+          step={1}
+          style={{ width: '100%' }}
+          prefix={
+            <Typography.Text type="secondary">
+              {conditionMode === 'range'
+                ? '±'
+                : direction === 'upper'
+                  ? '+'
+                  : '−'}
+            </Typography.Text>
+          }
+        />
+      </Form.Item>
+
+      {/* Time Window (seconds) */}
+      <Form.Item
+        label={t('autoScalingRule.TimeWindow')}
+        name={'timeWindow'}
+        tooltip={t('autoScalingRule.TimeWindowTooltip')}
+        rules={[
+          { required: true },
+          {
+            type: 'number',
+            min: 1,
+          },
+          {
+            validator: (_, value) => {
+              if (value % 1 !== 0) {
+                return Promise.reject(
+                  new Error(t('error.OnlyPositiveIntegersAreAllowed')),
+                );
+              }
+              return Promise.resolve();
+            },
+          },
+        ]}
+      >
+        <InputNumber
+          min={1}
+          step={1}
+          style={{ width: '100%' }}
+          suffix={
+            <Typography.Text type="secondary">
+              {t('autoScalingRule.Seconds')}
+            </Typography.Text>
+          }
+        />
+      </Form.Item>
+
+      {/* Min Replicas */}
+      <Form.Item
+        label={t('autoScalingRule.MinReplicas')}
+        name={'minReplicas'}
+        tooltip={t('autoScalingRule.MinReplicasTooltip')}
+        rules={[
+          {
+            min: 0,
+            max: SIGNED_32BIT_MAX_INT,
+            type: 'number',
+          },
+          {
+            validator: (_, value) => {
+              if (value != null && value % 1 !== 0) {
+                return Promise.reject(
+                  new Error(t('error.OnlyPositiveIntegersAreAllowed')),
+                );
+              }
+              return Promise.resolve();
+            },
+          },
+        ]}
+      >
+        <InputNumber
+          min={0}
+          max={SIGNED_32BIT_MAX_INT}
+          style={{ width: '100%' }}
+        />
+      </Form.Item>
+
+      {/* Max Replicas */}
+      <Form.Item
+        label={t('autoScalingRule.MaxReplicas')}
+        name={'maxReplicas'}
+        tooltip={t('autoScalingRule.MaxReplicasTooltip')}
+        rules={[
+          {
+            min: 0,
+            max: SIGNED_32BIT_MAX_INT,
+            type: 'number',
+          },
+          {
+            validator: (_, value) => {
+              if (value != null && value % 1 !== 0) {
+                return Promise.reject(
+                  new Error(t('error.OnlyPositiveIntegersAreAllowed')),
+                );
+              }
+              return Promise.resolve();
+            },
+          },
+        ]}
+      >
+        <InputNumber
+          min={0}
+          max={SIGNED_32BIT_MAX_INT}
+          style={{ width: '100%' }}
+        />
+      </Form.Item>
+    </Form>
+  );
+};
+
 const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
   onRequestClose,
-  endpoint_id,
+  onComplete,
+  modelDeploymentId,
   autoScalingRuleFrgmt,
   ...baiModalProps
 }) => {
+  'use memo';
   const { t } = useTranslation();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
 
-  const [nameOptions, setNameOptions] = useState<Array<string>>(
-    METRIC_NAMES_MAP.KERNEL || [],
-  );
-
   const autoScalingRule = useFragment(
     graphql`
-      fragment AutoScalingRuleEditorModalFragment on EndpointAutoScalingRuleNode {
+      fragment AutoScalingRuleEditorModalFragment on AutoScalingRule {
         id
-        endpoint
-        metric_name
-        metric_source
-        threshold
-        comparator
-        step_size
-        cooldown_seconds
-        min_replicas
-        max_replicas
+        metricSource
+        metricName
+        minThreshold
+        maxThreshold
+        stepSize
+        timeWindow
+        minReplicas
+        maxReplicas
+        prometheusQueryPresetId
       }
     `,
-    autoScalingRuleFrgmt,
+    autoScalingRuleFrgmt ?? null,
   );
 
-  const formRef = useRef<FormInstance<AutoScalingRuleInput>>(null);
+  const formRef = useRef<FormInstance<AutoScalingRuleFormValues>>(null);
 
-  const [commitAddAutoScalingRule, isInflightAddAutoScalingRule] =
+  const [commitCreateMutation, isInflightCreate] =
     useMutation<AutoScalingRuleEditorModalCreateMutation>(graphql`
       mutation AutoScalingRuleEditorModalCreateMutation(
-        $endpoint: String!
-        $props: EndpointAutoScalingRuleInput!
+        $input: CreateAutoScalingRuleInput!
       ) {
-        create_endpoint_auto_scaling_rule_node(
-          endpoint: $endpoint
-          props: $props
-        ) {
-          ok
-          msg
+        createAutoScalingRule(input: $input) {
           rule {
-            metric_name
-            metric_source
-            threshold
-            comparator
-            step_size
-            cooldown_seconds
-            min_replicas
-            max_replicas
+            id
+            metricSource
+            metricName
+            minThreshold
+            maxThreshold
+            stepSize
+            timeWindow
+            minReplicas
+            maxReplicas
+            prometheusQueryPresetId
           }
         }
       }
     `);
 
-  const [commitModifyAutoScalingRule, isInflightModifyAutoScalingRule] =
-    useMutation<AutoScalingRuleEditorModalModifyMutation>(graphql`
-      mutation AutoScalingRuleEditorModalModifyMutation(
-        $id: String!
-        $props: ModifyEndpointAutoScalingRuleInput!
+  const [commitUpdateMutation, isInflightUpdate] =
+    useMutation<AutoScalingRuleEditorModalUpdateMutation>(graphql`
+      mutation AutoScalingRuleEditorModalUpdateMutation(
+        $input: UpdateAutoScalingRuleInput!
       ) {
-        modify_endpoint_auto_scaling_rule_node(id: $id, props: $props) {
-          ok
-          msg
+        updateAutoScalingRule(input: $input) {
           rule {
-            metric_name
-            metric_source
-            threshold
-            comparator
-            step_size
-            cooldown_seconds
-            min_replicas
-            max_replicas
+            id
+            metricSource
+            metricName
+            minThreshold
+            maxThreshold
+            stepSize
+            timeWindow
+            minReplicas
+            maxReplicas
+            prometheusQueryPresetId
           }
         }
       }
     `);
 
   const handleOk = () => {
-    // TODO: apply mutationToAddAutoScalingRule request
     return formRef.current
       ?.validateFields()
       .then((values) => {
-        const props: EndpointAutoScalingRuleInput = {
-          metric_name: values.metric_name,
-          metric_source: values.metric_source as AutoScalingMetricSource,
-          threshold: values.threshold,
-          comparator: values.comparator,
-          step_size: values.step_size * (values.type === 'out' ? 1 : -1),
-          cooldown_seconds: values.cooldown_seconds,
-          min_replicas: values.min_replicas,
-          max_replicas: values.max_replicas,
-        };
+        // Compute minThreshold / maxThreshold based on condition mode
+        let minThreshold: number | null = null;
+        let maxThreshold: number | null = null;
 
-        // set min and max replicas as same value to avoid validation error
-        if (values.type === 'out') {
-          delete props.min_replicas;
+        if (values.conditionMode === 'range') {
+          minThreshold = values.minThreshold ?? null;
+          maxThreshold = values.maxThreshold ?? null;
         } else {
-          delete props.max_replicas;
+          // Single mode: 'lower' ('<') → maxThreshold; 'upper' ('>') → minThreshold
+          if (values.direction === 'lower') {
+            maxThreshold = values.threshold ?? null;
+          } else {
+            minThreshold = values.threshold ?? null;
+          }
         }
 
+        // metricName is always set in the form (auto-filled for PROMETHEUS presets)
+        const metricName = values.metricName;
+
+        // Determine prometheusQueryPresetId
+        const prometheusQueryPresetId =
+          values.metricSource === 'PROMETHEUS' && values.prometheusQueryPresetId
+            ? toLocalId(values.prometheusQueryPresetId)
+            : null;
+
         if (autoScalingRule) {
-          commitModifyAutoScalingRule({
+          // Update existing rule
+          commitUpdateMutation({
             variables: {
-              id: autoScalingRule.id,
-              props,
+              input: {
+                id: toLocalId(autoScalingRule.id),
+                metricSource: values.metricSource,
+                metricName,
+                minThreshold:
+                  minThreshold != null ? String(minThreshold) : null,
+                maxThreshold:
+                  maxThreshold != null ? String(maxThreshold) : null,
+                stepSize: values.stepSize,
+                timeWindow: values.timeWindow,
+                minReplicas: values.minReplicas,
+                maxReplicas: values.maxReplicas,
+                // Note: null means "no change" (UNSET) for update
+                prometheusQueryPresetId: prometheusQueryPresetId ?? undefined,
+              },
             },
-            onCompleted: (res, errors) => {
-              if (!res?.modify_endpoint_auto_scaling_rule_node?.ok) {
-                message.error(res?.modify_endpoint_auto_scaling_rule_node?.msg);
-                onRequestClose(false);
-                return;
-              }
+            onCompleted: (_res, errors) => {
               if (errors && errors.length > 0) {
                 const errorMsgList = _.map(errors, (error) => error.message);
                 for (const error of errorMsgList) {
                   message.error(error);
                 }
-                onRequestClose(false);
+                // Keep modal open so the user can correct the input and retry
                 return;
               }
               message.success(t('autoScalingRule.SuccessfullyUpdated'));
+              onComplete?.();
               onRequestClose(true);
             },
             onError: (error) => {
               message.error(error.message);
-              onRequestClose(false);
+              // Keep modal open so the user can correct the input and retry
             },
           });
         } else {
-          commitAddAutoScalingRule({
+          // Create new rule
+          commitCreateMutation({
             variables: {
-              endpoint: endpoint_id ?? '',
-              props,
+              input: {
+                modelDeploymentId,
+                metricSource: values.metricSource,
+                metricName,
+                minThreshold:
+                  minThreshold != null ? String(minThreshold) : null,
+                maxThreshold:
+                  maxThreshold != null ? String(maxThreshold) : null,
+                stepSize: values.stepSize,
+                timeWindow: values.timeWindow,
+                minReplicas: values.minReplicas,
+                maxReplicas: values.maxReplicas,
+                prometheusQueryPresetId: prometheusQueryPresetId ?? undefined,
+              },
             },
-            onCompleted: (res, errors) => {
-              if (!res?.create_endpoint_auto_scaling_rule_node?.ok) {
-                message.error(res?.create_endpoint_auto_scaling_rule_node?.msg);
-                onRequestClose(false);
-                return;
-              }
+            onCompleted: (_res, errors) => {
               if (errors && errors.length > 0) {
                 const errorMsgList = _.map(errors, (error) => error.message);
                 for (const error of errorMsgList) {
                   message.error(error);
                 }
-                onRequestClose(false);
+                // Keep modal open so the user can correct the input and retry
                 return;
               }
               message.success(t('autoScalingRule.SuccessfullyCreated'));
+              onComplete?.();
               onRequestClose(true);
             },
             onError: (error) => {
               message.error(error.message);
-              onRequestClose(false);
+              // Keep modal open so the user can correct the input and retry
             },
           });
         }
@@ -240,7 +1003,6 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
   return (
     <BAIModal
       {...baiModalProps}
-      destroyOnHidden
       onOk={handleOk}
       onCancel={handleCancel}
       centered
@@ -249,278 +1011,18 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
           ? t('autoScalingRule.EditAutoScalingRule')
           : t('autoScalingRule.AddAutoScalingRule')
       }
-      confirmLoading={
-        isInflightAddAutoScalingRule || isInflightModifyAutoScalingRule
-      }
+      confirmLoading={isInflightCreate || isInflightUpdate}
     >
-      <Form
-        ref={formRef}
-        layout={'vertical'}
-        initialValues={
-          autoScalingRule
-            ? {
-                ...autoScalingRule,
-                step_size: Math.abs(autoScalingRule.step_size),
-                type: autoScalingRule.step_size >= 0 ? 'out' : 'in',
-              }
-            : {
-                type: 'out',
-                metric_source: 'KERNEL',
-                comparator: 'GREATER_THAN',
-                step_size: 1,
-                cooldown_seconds: 300,
-                min_replicas: 0,
-                max_replicas: 5,
-              }
-        }
-      >
-        <Form.Item
-          label={t('autoScalingRule.ScalingType')}
-          name={'type'}
-          rules={[{ required: true }]}
-        >
-          <Radio.Group
-            options={[
-              {
-                label: (
-                  <BAIFlex gap={'xs'}>{t('autoScalingRule.ScaleOut')}</BAIFlex>
-                ),
-                value: 'out',
-              },
-              {
-                label: (
-                  <BAIFlex gap={'xs'}>{t('autoScalingRule.ScaleIn')}</BAIFlex>
-                ),
-                value: 'in',
-              },
-            ]}
-            onChange={(e) => {
-              e.target.value === 'in'
-                ? formRef.current?.setFieldsValue({ max_replicas: 1 })
-                : formRef.current?.setFieldsValue({ min_replicas: 1 });
-            }}
+      <ErrorBoundaryWithNullFallback>
+        <React.Suspense fallback={<Skeleton active paragraph={{ rows: 6 }} />}>
+          <AutoScalingRuleEditorModalContent
+            autoScalingRule={autoScalingRule ?? null}
+            formRef={
+              formRef as RefObject<FormInstance<AutoScalingRuleFormValues>>
+            }
           />
-        </Form.Item>
-        <Form.Item
-          label={t('autoScalingRule.MetricSource')}
-          name={'metric_source'}
-          rules={[{ required: true }]}
-        >
-          <Select
-            onChange={(value) => {
-              // @ts-ignore
-              setNameOptions(METRIC_NAMES_MAP[value] || []);
-            }}
-            options={[
-              {
-                label: 'Inference Framework',
-                value: 'INFERENCE_FRAMEWORK',
-              },
-              {
-                label: 'Kernel',
-                value: 'KERNEL',
-              },
-            ]}
-          />
-        </Form.Item>
-
-        <Form.Item
-          label={t('autoScalingRule.Condition')}
-          required
-          tooltip={t('autoScalingRule.ConditionTooltip')}
-          dependencies={['metric_source']}
-        >
-          {({ getFieldValue }: FormInstance<AutoScalingRuleInput>) => {
-            return (
-              <Space.Compact
-                style={{
-                  width: '100%',
-                }}
-              >
-                <Form.Item
-                  name={'metric_name'}
-                  rules={[{ required: true }]}
-                  style={{ flex: 1 }}
-                  noStyle
-                >
-                  <AutoComplete
-                    placeholder={t('autoScalingRule.MetricName')}
-                    options={_.map(nameOptions, (name) => ({
-                      label: name,
-                      value: name,
-                    }))}
-                    onSearch={(text) =>
-                      setNameOptions(
-                        _.filter(
-                          // @ts-ignore
-                          METRIC_NAMES_MAP[getFieldValue('metric_source')],
-                          (name) => name.includes(text),
-                        ),
-                      )
-                    }
-                    allowClear
-                    popupMatchSelectWidth={false}
-                  />
-                </Form.Item>
-                <Form.Item
-                  label={t('autoScalingRule.Comparator')}
-                  name={'comparator'}
-                  rules={[{ required: true }]}
-                  noStyle
-                >
-                  <Select
-                    style={{ width: 100 }}
-                    options={_.map(COMPARATOR_LABELS, (label, value) => ({
-                      label: (
-                        <BAIFlex gap={'xs'}>
-                          {label}
-                          <Typography.Text type="secondary">
-                            ({value})
-                          </Typography.Text>
-                        </BAIFlex>
-                      ),
-                      value,
-                      selectedLabel: label,
-                    }))}
-                    optionLabelProp="selectedLabel"
-                    popupMatchSelectWidth={false}
-                  />
-                </Form.Item>
-                <Form.Item
-                  name={'threshold'}
-                  rules={[{ required: true }]}
-                  noStyle
-                >
-                  <Input
-                    suffix={
-                      getFieldValue('metric_source') === 'KERNEL' ? '%' : ''
-                    }
-                    placeholder={t('autoScalingRule.Threshold')}
-                  />
-                </Form.Item>
-              </Space.Compact>
-            );
-          }}
-        </Form.Item>
-        <Form.Item
-          label={t('autoScalingRule.StepSize')}
-          name={'step_size'}
-          rules={[
-            { required: true },
-            {
-              type: 'number',
-              min: 1,
-              max: SIGNED_32BIT_MAX_INT,
-            },
-            {
-              validator: (_, value) => {
-                if (value % 1 !== 0) {
-                  return Promise.reject(
-                    new Error(t('error.OnlyPositiveIntegersAreAllowed')),
-                  );
-                }
-                return Promise.resolve();
-              },
-            },
-          ]}
-        >
-          <InputNumber min={1} step={1} style={{ width: '100%' }} />
-        </Form.Item>
-        <Form.Item noStyle dependencies={['type']}>
-          {({ getFieldValue }) => {
-            return getFieldValue('type') === 'out' ? (
-              <Form.Item
-                label={t('autoScalingRule.MaxReplicas')}
-                name={'max_replicas'}
-                style={{ width: '100%' }}
-                rules={[
-                  {
-                    required: true,
-                  },
-                  {
-                    min: 0,
-                    max: SIGNED_32BIT_MAX_INT,
-                    type: 'number',
-                  },
-                  {
-                    validator: (_, value) => {
-                      if (value % 1 !== 0) {
-                        return Promise.reject(
-                          new Error(t('error.OnlyPositiveIntegersAreAllowed')),
-                        );
-                      }
-                      return Promise.resolve();
-                    },
-                  },
-                ]}
-              >
-                <InputNumber
-                  min={0}
-                  max={SIGNED_32BIT_MAX_INT}
-                  style={{ width: '100%' }}
-                />
-              </Form.Item>
-            ) : (
-              <Form.Item
-                label={t('autoScalingRule.MinReplicas')}
-                name={'min_replicas'}
-                style={{ width: '100%' }}
-                rules={[
-                  {
-                    required: true,
-                  },
-                  {
-                    min: 0,
-                    max: SIGNED_32BIT_MAX_INT,
-                    type: 'number',
-                  },
-                  {
-                    validator: (_, value) => {
-                      if (value % 1 !== 0) {
-                        return Promise.reject(
-                          new Error(t('error.OnlyPositiveIntegersAreAllowed')),
-                        );
-                      }
-                      return Promise.resolve();
-                    },
-                  },
-                ]}
-              >
-                <InputNumber
-                  min={0}
-                  max={SIGNED_32BIT_MAX_INT}
-                  style={{ width: '100%' }}
-                />
-              </Form.Item>
-            );
-          }}
-        </Form.Item>
-        <Form.Item
-          label={t('autoScalingRule.CoolDownSeconds')}
-          name={'cooldown_seconds'}
-          rules={[
-            {
-              required: true,
-            },
-            {
-              min: 0,
-              type: 'number',
-            },
-            {
-              validator: (_, value) => {
-                if (value % 1 !== 0) {
-                  return Promise.reject(
-                    new Error(t('error.OnlyPositiveIntegersAreAllowed')),
-                  );
-                }
-                return Promise.resolve();
-              },
-            },
-          ]}
-        >
-          <InputNumber style={{ width: '100%' }} />
-        </Form.Item>
-      </Form>
+        </React.Suspense>
+      </ErrorBoundaryWithNullFallback>
     </BAIModal>
   );
 };

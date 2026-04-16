@@ -347,6 +347,7 @@
     "Email": "Sähköposti",
     "Enabled": "Käytössä",
     "FullName": "Koko nimi",
+    "IntegrationName": "Integraation nimi",
     "ModifiedAt": "Muokattu",
     "NeedPasswordChange": "Salasanan vaihto vaaditaan",
     "Project": "Projekti",
@@ -356,6 +357,7 @@
     "StatusInfo": "Tilatiedot",
     "SudoSessionEnabled": "Sudo-istunto käytössä",
     "TwoFA": "Kaksivaiheinen todennus",
+    "UserID": "Käyttäjätunnus",
     "Username": "Käyttäjänimi"
   },
   "error": {

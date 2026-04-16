@@ -336,24 +336,19 @@ const LoginView: React.FC<{
     localStorage.removeItem('backendaiwebui.login.password');
   }, []);
 
-  const doGQLConnect = useCallback(
-    async (client: ReturnType<typeof createBackendAIClient>['client']) => {
-      // Read directly from Jotai store to get the latest config synchronously,
-      // including any merged webserver config from loadConfigFromWebServer().
-      // Using configRef.current here would return stale config because React
-      // hasn't re-rendered yet after the Jotai atom update.
-      const cfg = jotaiStore.get(loginConfigState) ?? configRef.current;
+  // Shared post-connection setup used by both the regular session login
+  // (doGQLConnect) and the sToken SSO path. Keeps the two flows consistent:
+  // login_attempt/last_login counters, saved-credentials cleanup, panel
+  // close, connected-event dispatch, and endpoint persistence.
+  const postConnectSetup = useCallback(
+    (client: ReturnType<typeof createBackendAIClient>['client']) => {
       const currentTime = Math.floor(Date.now() / 1000);
-
       (globalThis as any).backendaioptions.set(
         'last_login',
         currentTime,
         'general',
       );
       (globalThis as any).backendaioptions.set('login_attempt', 0, 'general');
-
-      const updatedEndpoints = await connectViaGQL(client, cfg, endpoints);
-      setEndpoints(updatedEndpoints);
 
       const event = new CustomEvent('backend-ai-connected', {
         detail: client,
@@ -374,22 +369,37 @@ const LoginView: React.FC<{
       clearSavedLoginInfo();
       // Read the endpoint from the connected client to avoid stale closure
       // values. When handleLogin calls setApiEndpoint(ep) then immediately
-      // invokes connectUsingSession, the doGQLConnect closure still captures
-      // the OLD apiEndpoint (often "" on first launch). The client object
-      // always has the correct endpoint that was used for the connection.
+      // invokes connectUsingSession, the closure still captures the OLD
+      // apiEndpoint (often "" on first launch). The client object always
+      // has the correct endpoint that was used for the connection.
       const connectedEndpoint =
         (globalThis as any).backendaiclient?._config?.endpoint || apiEndpoint;
       localStorage.setItem('backendaiwebui.api_endpoint', connectedEndpoint);
       setPluginApiEndpoint(connectedEndpoint);
     },
     [
-      endpoints,
       close,
       clearSavedLoginInfo,
       apiEndpoint,
       setPluginApiEndpoint,
       waitForMainLayout,
     ],
+  );
+
+  const doGQLConnect = useCallback(
+    async (client: ReturnType<typeof createBackendAIClient>['client']) => {
+      // Read directly from Jotai store to get the latest config synchronously,
+      // including any merged webserver config from loadConfigFromWebServer().
+      // Using configRef.current here would return stale config because React
+      // hasn't re-rendered yet after the Jotai atom update.
+      const cfg = jotaiStore.get(loginConfigState) ?? configRef.current;
+
+      const updatedEndpoints = await connectViaGQL(client, cfg, endpoints);
+      setEndpoints(updatedEndpoints);
+
+      postConnectSetup(client);
+    },
+    [endpoints, postConnectSetup],
   );
 
   const connectUsingSession = useCallback(
@@ -455,11 +465,26 @@ const LoginView: React.FC<{
             endpoints,
           );
           setEndpoints(updatedEndpoints);
-          window.location.href = '/';
+
+          // tokenLogin already called connectViaGQL internally; reuse the
+          // shared post-connect helper to stay in sync with the regular
+          // session-login path (login_attempt/last_login, clearSavedLoginInfo,
+          // forceLoginApprovedRef reset, panel close, endpoint persistence).
+          postConnectSetup(client);
+
+          // Strip the sToken from the URL so it doesn't leak into browser
+          // history or get re-processed on refresh.
+          window.history.replaceState({}, '', '/');
           return;
-        } catch {
+        } catch (err) {
+          logger.error('tokenLogin failed', err);
           notification(t('eduapi.CannotAuthorizeSessionByToken'));
-          window.location.href = '/';
+          // Previously a hard reload cleared the UI; now we must restore
+          // the login panel ourselves so the user isn't stuck in a loading
+          // or blocked state.
+          setIsBlockPanelOpen(false);
+          open();
+          setIsLoading(false);
           return;
         }
       }

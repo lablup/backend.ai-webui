@@ -205,7 +205,7 @@ const UserProfileSettingModal: React.FC<Props> = ({
             rules={[
               () => ({
                 validator(_, value) {
-                  if (value && value.length < 65) {
+                  if (!value || value.length < 65) {
                     return Promise.resolve();
                   }
                   return Promise.reject(

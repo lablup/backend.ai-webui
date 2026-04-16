@@ -82,10 +82,14 @@ const RoleDetailDrawerInner: React.FC<RoleDetailDrawerInnerProps> = ({
         $id: UUID!
         $assignmentFilter: RoleAssignmentFilter
         $permissionFilter: PermissionFilter
+        $scopeFilter: EntityFilter
+        $scopeOrderBy: [EntityOrderBy!]
         $assignmentLimit: Int
         $assignmentOffset: Int
         $permissionLimit: Int
         $permissionOffset: Int
+        $scopeLimit: Int
+        $scopeOffset: Int
       ) {
         adminRole(id: $id) {
           name
@@ -93,6 +97,14 @@ const RoleDetailDrawerInner: React.FC<RoleDetailDrawerInnerProps> = ({
           ...RoleDetailDrawerContentFragment
           ...RoleFormModalFragment
         }
+        ...RoleScopeTabFragment
+          @arguments(
+            roleId: $id
+            filter: $scopeFilter
+            orderBy: $scopeOrderBy
+            limit: $scopeLimit
+            offset: $scopeOffset
+          )
         ...RoleAssignmentTabFragment
           @arguments(
             filter: $assignmentFilter
@@ -111,10 +123,14 @@ const RoleDetailDrawerInner: React.FC<RoleDetailDrawerInnerProps> = ({
       id: localRoleId,
       assignmentFilter: { roleId: localRoleId },
       permissionFilter: { roleId: localRoleId },
+      scopeFilter: null,
+      scopeOrderBy: null,
       assignmentLimit: 10,
       assignmentOffset: 0,
       permissionLimit: 10,
       permissionOffset: 0,
+      scopeLimit: 10,
+      scopeOffset: 0,
     },
     {
       fetchPolicy: 'network-only',
@@ -158,6 +174,7 @@ const RoleDetailDrawerInner: React.FC<RoleDetailDrawerInnerProps> = ({
       </BAIFlex>
       <RoleDetailDrawerContent
         roleDetailFrgmt={data.adminRole}
+        scopeQueryRef={data}
         assignmentQueryRef={data}
         permissionQueryRef={data}
         onDataChange={onDataChange}

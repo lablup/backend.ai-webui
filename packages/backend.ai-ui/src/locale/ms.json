@@ -347,6 +347,7 @@
     "Email": "E-mel",
     "Enabled": "Didayakan",
     "FullName": "Nama Penuh",
+    "IntegrationName": "Nama integrasi",
     "ModifiedAt": "Diubahsuai Pada",
     "NeedPasswordChange": "Perlu Tukar Kata Laluan",
     "Project": "Projek",
@@ -356,6 +357,7 @@
     "StatusInfo": "Maklumat Status",
     "SudoSessionEnabled": "Sesi Sudo Didayakan",
     "TwoFA": "Pengesahan Dua Faktor",
+    "UserID": "ID Pengguna",
     "Username": "Nama Pengguna"
   },
   "error": {
