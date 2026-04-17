@@ -1111,6 +1111,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                 resource_group: values.resourceGroup,
                 model_definition_path: modelDefinitionPath,
                 runtime_variant: values.runtimeVariant,
+                open_to_public: values.openToPublic,
               },
             };
           const newEnvirons: { [key: string]: string } = {};
@@ -1587,9 +1588,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                           <Input disabled={!!endpoint} />
                         </Form.Item>
                         <Form.Item name="openToPublic" valuePropName="checked">
-                          <Checkbox disabled={!!endpoint}>
-                            {t('modelService.OpenToPublic')}
-                          </Checkbox>
+                          <Checkbox>{t('modelService.OpenToPublic')}</Checkbox>
                         </Form.Item>
                         {!endpoint ? (
                           <Form.Item
