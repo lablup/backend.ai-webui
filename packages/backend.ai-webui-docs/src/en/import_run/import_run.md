@@ -8,15 +8,15 @@ and click the button on the right side.
 
 <a id="import-and-run-jupyter-notebooks"></a>
 
-## Import and Run Jupyter Notebooks
+## Import and run Jupyter notebooks
 
 To import Jupyter notebooks and run, you need one thing, the valid URL for the notebook file.
 For example, if you want execute Jupyter notebook that's in github, you can copy and paste
-the URL and click `Import & Run` button.
+the URL and click 'IMPORT & RUN' button.
 
 :::note
-When you try to import and run a Jupyter notebook file with a local address,
-it will be regarded as invalid. You must input a URL that does not start with `localhost`.
+When you trying to IMPORT & RUN Jupyter notebook file with local address,
+It will be regarded as invalid. You have to input URL which is not starting from localhost.
 :::
 
 ![](../images/import_run_notebook.png)
@@ -35,7 +35,7 @@ imported Jupyter notebook will not run.
 
 ![](../images/session_launcher_in_importing_notebook.png)
 
-You can see the importing operation is successfully completed on the Sessions page.
+You can see the importing operation is successfully completed in Sessions page.
 
 ![](../images/sessions_page_with_imported_notebook.png)
 
@@ -44,12 +44,12 @@ You can see the importing operation is successfully completed on the Sessions pa
 ## Create executable Jupyter notebook button
 
 You can also create HTML or Markdown button about Jupyter notebook URL, too.
-Input a valid Jupyter notebook URL and click `Create` button. It will show code blocks that directly
+Input a valid Jupyter notebook URL and click 'CREATE' button. It will show code blocks that directly
 links to creating a session with notebook. You can see the badge code working by inserting it in
 the GitHub repositories or where it supports html or markdown.
 
 :::note
-Your account must be logged in before clicking the button. Otherwise, you have to log in first.
+your account must be logined before clicking the button. Otherwise, you have to login first.
 :::
 
 ![](../images/create_notebook_button.png)
@@ -59,7 +59,8 @@ Your account must be logged in before clicking the button. Otherwise, you have t
 ## Importing GitHub Repositories
 
 Importing a GitHub repository is similar to import and running Jupyter notebook.
-All you have to do is to fill out with github repository URL and click `Get To Folder` button. If you can access to more than one storage host, you can select one from the list.
+All you have to do is to fill out with github repository URL and click 'GET TO
+FOLDER' button. If you can access to more than one storage host, you can select one from the list.
 
 ![](../images/import_github_repository.png)
 
@@ -69,7 +70,7 @@ the limit, then importing repository will fail. Please check resource
 statistics panel and Data & Storage page before importing the repository.
 :::
 
-You can see the repository is successfully imported as a storage folder with its
+You can see the repository is successfully imported as a data folder with its
 name.
 
 ![](../images/import_github_repository_result.png)
@@ -85,6 +86,6 @@ but you need to explicitly set the branch name to import.
 ![](../images/import_gitlab_repository.png)
 
 :::note
-If there's storage folder that has the same name already, the system will append
+If there's data folder that has the same name already, the system will append
 `_` (underscore) and number in the imported repository folder.
 :::
