@@ -9,6 +9,16 @@ export interface DocMetadata {
   title: string;
   version: string;
   lang: string;
+  note?: string;
+}
+
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/\n/g, '<br>');
 }
 
 function getFormattedDate(lang: string): string {
@@ -52,7 +62,7 @@ function buildCoverHtml(
     <p class="company">${config.company}</p>
     <p class="date">${date}</p>
     <p class="lang">${langLabel}</p>
-  </div>
+  </div>${metadata.note ? `\n  <div class="cover-note">${escapeHtml(metadata.note)}</div>` : ''}
 </section>
 `;
 }
