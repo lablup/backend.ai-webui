@@ -28,6 +28,11 @@ The page is composed of several main panels:
     Summarizes the overall used and free resources in the selected resource group.
     The data is aggregated from all agents that belong to the group.
 
+:::note
+The **Total Resources in Resource Group** panel may not be visible depending on your
+system configuration.
+:::
+
 - **Recently Created Sessions**:
     Lists the most recently created active sessions within the current project.
     Provides session details such as name, status, CPU/memory usage, environment, resource group,
@@ -36,7 +41,7 @@ The page is composed of several main panels:
 
 ## Auto-Refresh
 
-The Dashboard automatically refreshes all panel data every 15 seconds. This
+The Dashboard automatically refreshes all panel data every **15 seconds**. This
 ensures that the displayed information stays up to date without requiring manual
 interaction.
 
@@ -53,22 +58,7 @@ Your customized layout is automatically saved and persists across browser
 sessions. The layout is stored per user, so each user can have their own
 preferred arrangement.
 
-## Superadmin Dashboard
-
-For superadmins, additional panels are available.
-
-![](../images/admin_dashboard.png)
-
-Except for **Active Sessions**, **Agent Statistics**, and **Active Agents**, the remaining panels
-display the same information as the user dashboard.
-
-- **Active Sessions**:
-    Shows the total number of active sessions across current projects,
-    categorized by session type.
-
-- **Agent Statistics**:
-    Provides all used resources across all agents in the system.
-    The values represent the total used resources by all active sessions.
-
-- **Active Agents**:
-    Lists all currently active agents in the system.
+:::tip
+When the WebUI is updated with new dashboard panels, those panels will
+automatically appear on your dashboard even if you have a saved custom layout.
+:::
