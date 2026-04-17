@@ -10,9 +10,11 @@ external URLs.
 ## Announcement Banner
 
 If your system administrator has published an announcement, it appears as a
-banner at the top of the Start page. You can dismiss the banner by clicking the
-close icon. The announcement supports Markdown formatting and may contain
-important notices about system maintenance, updates, or usage guidelines.
+banner at the top of the Start page. The announcement supports Markdown
+formatting and may contain important notices about system maintenance, updates,
+or usage guidelines. You can dismiss the banner by clicking the close icon.
+
+![](../images/start_announcement_banner.png)
 
 ## Action Cards
 
@@ -21,8 +23,8 @@ The Start page displays the following action cards by default:
 - **Create New Storage Folder**: Create a storage folder and upload files. This
   is an essential first step for training models or providing external services.
   Clicking the button opens the folder creation dialog.
-- **Start Interactive Session**: Create an interactive session to train a model.
-  Choose your preferred environment and resources to run your code.
+- **Start Interactive Session**: Create a session to train a model. Choose your
+  preferred environment and resources to run your code.
 - **Start Batch Session**: Create a batch session for predefined files or
   scheduled tasks. Enter the command, set the date and time, and run the session
   on demand.
@@ -40,9 +42,11 @@ system administrator.
 ## Start From URL
 
 The **Start From URL** card allows you to import and run projects directly from
-external sources. Clicking the card opens a dialog with three tabs:
+external sources. Clicking the card opens a dialog with three tabs.
 
 ### Import Notebook
+
+![](../images/start_from_url_notebook.png)
 
 1. Enter a Jupyter Notebook URL (must end with `.ipynb`) in the **Notebook URL**
    field
@@ -58,6 +62,8 @@ project documentation.
 
 ### Import GitHub Repository
 
+![](../images/start_from_url_github.png)
+
 1. Enter a valid GitHub repository URL in the **GitHub URL** field
 2. Select a **Storage Host** where the repository will be saved
 3. Optionally set the **Folder Usage Mode** (General or Models)
@@ -67,6 +73,8 @@ The imported repository is converted to a storage folder that can be mounted
 when starting a session.
 
 ### Import GitLab Repository
+
+![](../images/start_from_url_gitlab.png)
 
 1. Enter a valid GitLab repository URL in the **GitLab URL** field
 2. Optionally specify a **GitLab Branch Name** (defaults to `master`)
