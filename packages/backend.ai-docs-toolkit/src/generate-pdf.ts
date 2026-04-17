@@ -18,6 +18,8 @@ interface BookConfig {
 export interface GeneratePdfOptions {
   lang: string;
   theme: string;
+  chapters?: string[];
+  note?: string;
 }
 
 function parseArgs(argv: string[]): GeneratePdfOptions {
@@ -95,10 +97,44 @@ export async function generatePdf(
     const startTime = Date.now();
     console.log(`[${lang}] Generating PDF...`);
 
-    const navigation = bookConfig.navigation[lang];
+    let navigation = bookConfig.navigation[lang];
     if (!navigation) {
       console.warn(`[${lang}] No navigation found, skipping`);
       continue;
+    }
+
+    // Filter chapters if --chapters option is specified
+    const chapterFilter = args.chapters?.filter((c) => c.length > 0);
+    if (chapterFilter && chapterFilter.length > 0) {
+      const filterSet = new Set(chapterFilter);
+      const filtered = navigation.filter((nav) => {
+        const noExt = nav.path.replace(/\.md$/, '');
+        const segments = noExt.split('/');
+        const pathStem = segments[segments.length - 1];
+        const dirName = segments.length > 1 ? segments[segments.length - 2] : '';
+        return (
+          filterSet.has(nav.path) ||
+          filterSet.has(pathStem) ||
+          (dirName !== '' && filterSet.has(dirName))
+        );
+      });
+      if (filtered.length === 0) {
+        const available = navigation
+          .map((n) => n.path.replace(/\.md$/, '').split('/').pop())
+          .join(', ');
+        console.error(
+          `[${lang}] No chapters matched filter: ${chapterFilter.join(', ')}`,
+        );
+        console.error(
+          `[${lang}] Chapter identifiers can be a full path (e.g. overview/overview.md), directory name, or filename.`,
+        );
+        console.error(`[${lang}] Available chapters: ${available}`);
+        process.exit(1);
+      }
+      navigation = filtered;
+      console.log(
+        `[${lang}] Filtered to ${navigation.length} chapter(s): ${navigation.map((n) => n.title).join(', ')}`,
+      );
     }
 
     // Process markdown files
@@ -115,7 +151,7 @@ export async function generatePdf(
     console.log(`[${lang}] Building HTML...`);
     const html = buildFullDocument(
       chapters,
-      { title, version, lang },
+      { title, version, lang, note: args.note },
       config,
       theme,
     );

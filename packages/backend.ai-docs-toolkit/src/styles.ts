@@ -105,6 +105,19 @@ body {
   border: none;
 }
 
+.cover-note {
+  margin-top: 32px;
+  padding: 12px 20px;
+  border: 1.5px solid ${theme.brandColor};
+  border-radius: 6px;
+  background: #fafafa;
+  color: #444;
+  font-size: 11pt;
+  line-height: 1.5;
+  max-width: 420px;
+  text-align: center;
+}
+
 /* ==========================================================================
    Table of Contents
    ========================================================================== */
