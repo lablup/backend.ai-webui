@@ -101,13 +101,13 @@ async function uploadFixturesToVFolder(
   );
 
   const serviceDefContent = [
-    '[custom.environment]',
-    `image = "${pythonImage}"`,
-    'architecture = "x86_64"',
-    '',
-    '[custom.resource_slots]',
-    'cpu = 1',
-    'mem = "512m"',
+    'custom:',
+    '  environment:',
+    `    image: "${pythonImage}"`,
+    '    architecture: "x86_64"',
+    '  resource_slots:',
+    '    cpu: 1',
+    '    mem: "512m"',
   ].join('\n');
 
   await fileChooser.setFiles([
@@ -122,15 +122,15 @@ async function uploadFixturesToVFolder(
       buffer: Buffer.from(modelDefContent),
     },
     {
-      name: 'service-definition.toml',
-      mimeType: 'application/toml',
+      name: 'deployment-config.yaml',
+      mimeType: 'application/x-yaml',
       buffer: Buffer.from(serviceDefContent),
     },
   ]);
 
   await modal.verifyFileVisible('mock_openai_server.py');
   await modal.verifyFileVisible('model-definition.yaml');
-  await modal.verifyFileVisible('service-definition.toml');
+  await modal.verifyFileVisible('deployment-config.yaml');
 
   await modal.close();
 }
@@ -379,7 +379,7 @@ test.describe(
       await modal.waitForOpen();
       await modal.verifyFileVisible('mock_openai_server.py');
       await modal.verifyFileVisible('model-definition.yaml');
-      await modal.verifyFileVisible('service-definition.toml');
+      await modal.verifyFileVisible('deployment-config.yaml');
       await modal.close();
     });
 

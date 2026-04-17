@@ -24,7 +24,7 @@ import { ESMClientErrorResponse, generateRandomString } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { parse as parseToml } from 'smol-toml';
+import { parse as parseYaml } from 'yaml';
 
 // Re-export for consumers who need only these types
 export type { ServiceCreateType, ServiceLauncherFormValue };
@@ -56,7 +56,7 @@ const RETRY_INTERVAL_MS = 5000;
 
 /**
  * Creates minimal default service input values.
- * Fields will be overridden by service-definition.toml values where applicable.
+ * Fields will be overridden by deployment-config.yaml values where applicable.
  */
 export function createServiceInput(
   modelName: string,
@@ -112,7 +112,7 @@ export function useModelServiceLauncher() {
       if (values.envvars) {
         values.envvars.forEach((v) => (environ[v.variable] = v.value));
       }
-      // These fields are replaced with contents from service-definition.toml
+      // These fields are replaced with contents from deployment-config.yaml
       const body: ServiceCreateType = {
         name: values.serviceName,
         desired_session_count: values.replicas,
@@ -281,7 +281,7 @@ interface DefinitionCheckResult {
  * for starting a service directly from an existing model folder (no clone).
  *
  * Steps:
- *   1. "Checking definition files..." — validate model-definition.yaml & service-definition.toml
+ *   1. "Checking definition files..." — validate model-definition.yaml & deployment-config.yaml
  *   2. "Creating service..." — POST /services
  *   3. "Waiting for service to be ready..." — poll GET /services/:id
  *
@@ -317,21 +317,21 @@ export function useStartServiceFromFolder(options: {
               f.name === 'model-definition.yaml' ||
               f.name === 'model-definition.yml',
           );
-          const hasServiceDefinition = files.some(
-            (f) => f.name === 'service-definition.toml',
+          const hasDeploymentConfig = files.some(
+            (f) => f.name === 'deployment-config.yaml',
           );
 
-          // No service-definition → redirect to service start page
-          if (!hasServiceDefinition) {
-            throw new StepWarning(t('modelService.ServiceDefinitionMissing'));
+          // No deployment-config → redirect to service start page
+          if (!hasDeploymentConfig) {
+            throw new StepWarning(t('modelService.DeploymentConfigMissing'));
           }
 
-          // Download and parse service-definition.toml
+          // Download and parse deployment-config.yaml
           let text: string;
           try {
             const tokenResponse =
               await baiClient.vfolder.request_download_token(
-                'service-definition.toml',
+                'deployment-config.yaml',
                 vfolderId,
                 false,
               );
@@ -342,14 +342,18 @@ export function useStartServiceFromFolder(options: {
             }
             text = await response.text();
           } catch {
-            throw new Error(t('modelService.ServiceDefinitionDownloadError'));
+            throw new Error(t('modelService.DeploymentConfigDownloadError'));
           }
 
           let parsed: Record<string, unknown>;
           try {
-            parsed = parseToml(text);
+            const raw: unknown = parseYaml(text);
+            if (raw == null || typeof raw !== 'object' || Array.isArray(raw)) {
+              throw new Error('Invalid YAML structure');
+            }
+            parsed = raw as Record<string, unknown>;
           } catch {
-            throw new Error(t('modelService.ServiceDefinitionParseError'));
+            throw new Error(t('modelService.DeploymentConfigParseError'));
           }
 
           // Check runtime_variants field
