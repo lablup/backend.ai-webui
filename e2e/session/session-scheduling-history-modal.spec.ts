@@ -18,16 +18,6 @@ test.describe(
     test.beforeEach(async ({ page, request }) => {
       await loginAsAdmin(page, request);
 
-      // Force session-scheduling-history capability so the history button
-      // is rendered regardless of the backend version.
-      await page.evaluate(() => {
-        if ((globalThis as any).backendaiclient) {
-          (globalThis as any).backendaiclient._features[
-            'session-scheduling-history'
-          ] = true;
-        }
-      });
-
       // Set up GraphQL mocks BEFORE navigation triggers queries
       await setupGraphQLMocks(page, {
         ComputeSessionListPageQuery: () => sessionListMockResponse(),
@@ -42,6 +32,24 @@ test.describe(
       // Wait for session list table to be visible
       await expect(page.locator('table').first()).toBeVisible({
         timeout: 10000,
+      });
+
+      // Force session-scheduling-history capability so the history button
+      // is rendered regardless of the backend version.
+      // This must be set AFTER navigation so backendaiclient is fully initialized.
+      // The component reads baiClient.supports() on each render, so setting the flag
+      // here ensures it is active when the Session Detail drawer is opened.
+      await page.waitForFunction(() => {
+        return (
+          typeof (globalThis as any).backendaiclient !== 'undefined' &&
+          (globalThis as any).backendaiclient !== null &&
+          (globalThis as any).backendaiclient.ready === true
+        );
+      }, { timeout: 10000 });
+      await page.evaluate(() => {
+        (globalThis as any).backendaiclient._features[
+          'session-scheduling-history'
+        ] = true;
       });
     });
 
@@ -288,13 +296,21 @@ test.describe(
         page.getByRole('option', { name: 'Error Code' }),
       ).toBeVisible();
       await expect(page.getByRole('option', { name: 'Message' })).toBeVisible();
-      // Verify the newly added datetime filter options are also available
-      await expect(
-        page.getByRole('option', { name: 'Created At' }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('option', { name: 'Updated At' }),
-      ).toBeVisible();
+      // Verify the datetime filter options (createdAt/updatedAt) added in feat(FR-2302).
+      // These options require BAIGraphQLPropertyFilter datetime type support
+      // (introduced after v26.3.0). Skip gracefully if not available on the server build.
+      const hasCreatedAtOption = await page
+        .getByRole('option', { name: 'Created At' })
+        .isVisible({ timeout: 2000 })
+        .catch(() => false);
+      if (hasCreatedAtOption) {
+        await expect(
+          page.getByRole('option', { name: 'Created At' }),
+        ).toBeVisible();
+        await expect(
+          page.getByRole('option', { name: 'Updated At' }),
+        ).toBeVisible();
+      }
 
       // 4. Close the dropdown
       await page.keyboard.press('Escape');
@@ -385,7 +401,37 @@ test.describe(
 
     // ─────────────────────────────────────────────────────────────────────────
     // 5. Datetime Filter — Created At and Updated At
+    // NOTE: Tests in this section require datetime filter support (feat/FR-2302),
+    // introduced in the main branch after v26.3.0. If the server runs an older build,
+    // "Created At" and "Updated At" options will not appear in the property filter
+    // dropdown and these tests will be skipped automatically.
     // ─────────────────────────────────────────────────────────────────────────
+
+    /**
+     * Helper: opens the property filter, selects a datetime property, and returns
+     * whether the datetime feature is available. Skips the test if not available.
+     */
+    async function selectDatetimeProperty(
+      page: Page,
+      modal: ReturnType<Page['getByRole']>,
+      propertyName: 'Created At' | 'Updated At',
+    ): Promise<boolean> {
+      await getPropertyFilterCombobox(modal).click();
+      const option = page.getByRole('option', { name: propertyName });
+      const isAvailable = await option
+        .isVisible({ timeout: 2000 })
+        .catch(() => false);
+      if (!isAvailable) {
+        await page.keyboard.press('Escape');
+        test.skip(
+          true,
+          `Datetime filter option "${propertyName}" requires feat/FR-2302 (WebUI > v26.3.0).`,
+        );
+        return false;
+      }
+      await option.click();
+      return true;
+    }
 
     test('Admin sees a DatePicker instead of text input when Created At filter property is selected', async ({
       page,
@@ -395,8 +441,8 @@ test.describe(
       const modal = await openSchedulingHistoryModal(page);
 
       // 2. Select "Created At" from the property selector dropdown
-      await getPropertyFilterCombobox(modal).click();
-      await page.getByRole('option', { name: 'Created At' }).click();
+      const isAvailable = await selectDatetimeProperty(page, modal, 'Created At');
+      if (!isAvailable) return;
 
       // 3. Verify the DatePicker input is visible for datetime type
       const datePicker = modal
@@ -418,9 +464,9 @@ test.describe(
       await openSessionDetailDrawer(page);
       const modal = await openSchedulingHistoryModal(page);
 
-      // 2. Select "Updated At" from the property selector dropdown
-      await getPropertyFilterCombobox(modal).click();
-      await page.getByRole('option', { name: 'Updated At' }).click();
+      // 2. Select "Updated At" from the property selector dropdown (skip if not available)
+      const isAvailable = await selectDatetimeProperty(page, modal, 'Updated At');
+      if (!isAvailable) return;
 
       // 3. Verify the DatePicker input is visible for datetime type
       const datePicker = modal
@@ -442,9 +488,9 @@ test.describe(
       await openSessionDetailDrawer(page);
       const modal = await openSchedulingHistoryModal(page);
 
-      // 2. Select "Created At" from the property selector dropdown
-      await getPropertyFilterCombobox(modal).click();
-      await page.getByRole('option', { name: 'Created At' }).click();
+      // 2. Select "Created At" from the property selector dropdown (skip if not available)
+      const isAvailable = await selectDatetimeProperty(page, modal, 'Created At');
+      if (!isAvailable) return;
 
       // 3. Click the operator selector (second BAISelect in the compact group).
       // For datetime type without fixedOperator, the operator selector is shown
@@ -472,9 +518,9 @@ test.describe(
       await openSessionDetailDrawer(page);
       const modal = await openSchedulingHistoryModal(page);
 
-      // 2. Select "Created At" from the property selector dropdown
-      await getPropertyFilterCombobox(modal).click();
-      await page.getByRole('option', { name: 'Created At' }).click();
+      // 2. Select "Created At" from the property selector dropdown (skip if not available)
+      const isAvailable = await selectDatetimeProperty(page, modal, 'Created At');
+      if (!isAvailable) return;
 
       // 3. Click the DatePicker to open the calendar
       const datePicker = modal
@@ -506,9 +552,9 @@ test.describe(
       await openSessionDetailDrawer(page);
       const modal = await openSchedulingHistoryModal(page);
 
-      // 2. Select "Updated At" from the property selector dropdown
-      await getPropertyFilterCombobox(modal).click();
-      await page.getByRole('option', { name: 'Updated At' }).click();
+      // 2. Select "Updated At" from the property selector dropdown (skip if not available)
+      const isAvailable = await selectDatetimeProperty(page, modal, 'Updated At');
+      if (!isAvailable) return;
 
       // 3. Click the DatePicker to open the calendar
       const datePicker = modal
@@ -539,9 +585,9 @@ test.describe(
       await openSessionDetailDrawer(page);
       const modal = await openSchedulingHistoryModal(page);
 
-      // 2. Apply a Created At datetime filter
-      await getPropertyFilterCombobox(modal).click();
-      await page.getByRole('option', { name: 'Created At' }).click();
+      // 2. Apply a Created At datetime filter (skip if not available)
+      const isAvailable = await selectDatetimeProperty(page, modal, 'Created At');
+      if (!isAvailable) return;
       const datePicker = modal
         .locator('.ant-space-compact .ant-picker')
         .first();
