@@ -17,7 +17,7 @@ experimental features.
 ![](../images/user_settings_page.png)
 
 The General tab contains all preference settings organized into groups:
-**Preferences**, **Shell Environments**, and **Experimental Features**.
+**Preferences**, **Shell Environments**, and **Experimental features**.
 
 ### Searching and Filtering Settings
 
@@ -65,10 +65,20 @@ the leftmost icon at the top of the header.
 
 ### Language
 
-Set the interface language. Currently, Backend.AI supports more than twenty
-languages including English and Korean. Languages other than English and Korean
-are provided via machine translation. Some UI items may not update their language
-before the page is refreshed.
+Set the interface language. The language selector is a searchable dropdown that
+lists 20 languages: English, 한국어 (Korean), brasileiro (Brazilian Portuguese),
+简体中文 (Simplified Chinese), 繁體中文 (Traditional Chinese), Français (French),
+Suomalainen (Finnish), Deutsch (German), Ελληνική (Greek),
+Bahasa Indonesia (Indonesian), Italiano (Italian), 日本語 (Japanese),
+Монгол (Mongolian), Polski (Polish), Português (Portuguese), русский (Russian),
+Español (Spanish), ภาษาไทย (Thai), Türkçe (Turkish), and
+Tiếng Việt (Vietnamese). You can type in the dropdown to filter and quickly
+find a language.
+
+The language that matches your browser's default is indicated with a "(Default)"
+label next to its name. Languages other than English and Korean are provided via
+machine translation. Some UI items may not update their language before the page
+is refreshed.
 
 :::note
 Some translated items may be marked as `__NOT_TRANSLATED__`, which
@@ -106,6 +116,12 @@ by clicking the Config button. Remember that only one main access keypair exists
 
 ![](../images/my_keypair_information.png)
 
+:::note
+Depending on the server version, the keypair information dialog may display
+a table view with additional management options such as issuing new keypairs,
+deactivating, or revoking existing ones.
+:::
+
 <a id="user-ssh-keypair-management"></a>
 
 ### SSH Keypair Management
@@ -115,7 +131,7 @@ compute session. Once you sign up for Backend.AI, a public keypair is
 provided. If you click the button on the right of the SSH Keypair Management
 section, the following dialog appears. Click the copy button on the right to
 copy the existing SSH public key. You can update the SSH keypair by clicking
-the GENERATE button at the bottom of the dialog. SSH public/private keys are
+the `GENERATE` button at the bottom of the dialog. SSH public/private keys are
 randomly generated and stored as user information. Please note that the secret
 key cannot be checked again unless it is saved manually immediately after
 creation.
@@ -177,10 +193,14 @@ the script.
 
 ### Experimental Features
 
-You can enable or disable experimental features before they are officially
-released. These may change or be removed in future updates.
+Access new experimental features early -- these may change or be removed in
+future updates.
 
 ![](../images/experimental_features.png)
+
+- **AI Agents**: Enable the AI Agents feature, which provides agent-based AI
+  capabilities within the WebUI. When turned on, AI agent functionality becomes
+  available for use in your sessions.
 
 ## Logs Tab
 
