@@ -21,15 +21,18 @@ it will be regarded as invalid. You must input a URL that does not start with `l
 
 ![](../images/import_run_notebook.png)
 
-After clicking the button, a dialog appears. This is the same session launcher dialog that appears
-when you start a session from the Sessions page or Summary page. The difference between importing a notebook
-and starting a new session is that importing a notebook automatically imports the Jupyter notebook from the
-URL. The rest is the same. Set the environment and resource allocation as needed, then click the `Launch` button.
+After clicking the `Import & Run` button, a session is created directly with default settings.
+You do not need to configure the session launcher manually. The notebook file is automatically
+downloaded into the session via the URL you provided.
+
+If you want to customize the environment or resource allocation before launching, click the
+dropdown button next to `Import & Run` and select `Start with options`. This opens the full
+session launcher page where you can adjust settings before starting the session.
 
 :::note
-The pop-up blocker must be turned off before clicking the `Launch` button to immediately
-see the running notebook window. Also, if there are not enough resources to execute the session,
-the imported Jupyter notebook will not run.
+The pop-up blocker must be turned off to immediately see the running notebook window.
+Also, if there are not enough resources to execute the session, the imported Jupyter
+notebook will not run.
 :::
 
 ![](../images/session_launcher_in_importing_notebook.png)
@@ -40,7 +43,7 @@ You can see the importing operation is successfully completed on the Sessions pa
 
 <a id="create-executable-jupyter-notebook-button"></a>
 
-## Create Executable Jupyter Notebook Button
+## Create Executable Jupyter Notebook Badge
 
 You can also create an HTML or Markdown badge for a Jupyter notebook URL.
 Input a valid Jupyter notebook URL and click the `Notebook Badge Code (HTML)` or
@@ -62,10 +65,13 @@ Importing a GitHub repository is similar to importing and running a Jupyter note
 All you have to do is fill in the GitHub repository URL, select a storage host from the
 `Storage Host` dropdown, and click the `Get To Folder` button.
 
+Clicking `Get To Folder` automatically creates a storage folder with the repository name
+and starts a batch session to download and extract the repository contents into it.
+
 ![](../images/import_github_repository.png)
 
 :::note
-If there are not enough resources to start a session or the folder count is at
+If there are not enough resources to start a session or folder count is at
 the limit, then importing the repository will fail. Please check the resource
 statistics panel and Data & Storage page before importing the repository.
 :::
@@ -86,6 +92,6 @@ but you need to explicitly set the branch name to import.
 ![](../images/import_gitlab_repository.png)
 
 :::note
-If there is a storage folder that has the same name already, the system will append
-`_` (underscore) and a number to the imported repository folder name.
+If there's a storage folder that has the same name already, the system will append
+`_` (underscore) and number in the imported repository folder.
 :::
