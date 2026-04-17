@@ -11,6 +11,7 @@ import { AutoScalingRuleEditorModalPresetResultQuery } from '../__generated__/Au
 import { AutoScalingRuleEditorModalPresetsQuery } from '../__generated__/AutoScalingRuleEditorModalPresetsQuery.graphql';
 import { AutoScalingRuleEditorModalUpdateMutation } from '../__generated__/AutoScalingRuleEditorModalUpdateMutation.graphql';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
+import { useSuspendedBackendaiClient } from '../hooks';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import { ReloadOutlined } from '@ant-design/icons';
 import {
@@ -255,6 +256,10 @@ const AutoScalingRuleEditorModalContent: React.FC<{
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
+  const baiClient = useSuspendedBackendaiClient();
+  const isSupportPrometheusAutoScalingRule = baiClient.supports(
+    'prometheus-auto-scaling-rule',
+  );
 
   const { prometheusQueryPresets } =
     useLazyLoadQuery<AutoScalingRuleEditorModalPresetsQuery>(
@@ -416,10 +421,14 @@ const AutoScalingRuleEditorModalContent: React.FC<{
               label: t('autoScalingRule.MetricSourceKernel'),
               value: 'KERNEL',
             },
-            {
-              label: t('autoScalingRule.MetricSourceInferenceFramework'),
-              value: 'INFERENCE_FRAMEWORK',
-            },
+            ...(!isSupportPrometheusAutoScalingRule
+              ? [
+                  {
+                    label: t('autoScalingRule.MetricSourceInferenceFramework'),
+                    value: 'INFERENCE_FRAMEWORK',
+                  },
+                ]
+              : []),
             {
               label: t('autoScalingRule.MetricSourcePrometheus'),
               value: 'PROMETHEUS',
