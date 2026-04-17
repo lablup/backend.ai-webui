@@ -41,6 +41,8 @@ Options:
   pdf:
     --lang <all|en|ko|...>    Language(s) to generate (default: all)
     --theme <name>            Theme name (default: default)
+    --chapters <list>         Comma-separated chapter names to include (default: all)
+    --note <text>             Note displayed on the cover page (e.g. "Draft — internal review")
 
   preview:
     --mode <sample|catalog|document>  Preview mode (default: sample)
@@ -66,6 +68,7 @@ Options:
 Examples:
   docs-toolkit pdf --lang all
   docs-toolkit pdf --lang en
+  docs-toolkit pdf --lang ko --chapters "quickstart,session_page,model_serving"
   docs-toolkit preview
   docs-toolkit preview --mode document --lang ko
   docs-toolkit preview:html --lang en
@@ -89,6 +92,17 @@ function getCommand(argv: string[]): Command | null {
 
 function hasFlag(argv: string[], flag: string): boolean {
   return argv.includes(flag);
+}
+
+function getFlagValue(argv: string[], flag: string): string | undefined {
+  const idx = argv.indexOf(flag);
+  if (idx < 0) return undefined;
+  const value = argv[idx + 1];
+  if (!value || value.startsWith('--')) {
+    console.error(`Error: ${flag} requires a value.`);
+    process.exit(1);
+  }
+  return value;
 }
 
 // ── Init Command ────────────────────────────────────────────────
@@ -343,11 +357,18 @@ async function main(): Promise<void> {
   switch (command) {
     case 'pdf': {
       const { generatePdf } = await import('./generate-pdf.js');
-      const langIdx = argv.indexOf('--lang');
-      const themeIdx = argv.indexOf('--theme');
+      const langArg = getFlagValue(argv, '--lang') ?? 'all';
+      const themeArg = getFlagValue(argv, '--theme') ?? 'default';
+      const chaptersRaw = getFlagValue(argv, '--chapters');
+      const chaptersArg = chaptersRaw
+        ? chaptersRaw.split(',').map((c) => c.trim())
+        : undefined;
+      const noteArg = getFlagValue(argv, '--note');
       await generatePdf(config, {
-        lang: langIdx >= 0 ? argv[langIdx + 1] : 'all',
-        theme: themeIdx >= 0 ? argv[themeIdx + 1] : 'default',
+        lang: langArg,
+        theme: themeArg,
+        chapters: chaptersArg,
+        note: noteArg,
       });
       break;
     }

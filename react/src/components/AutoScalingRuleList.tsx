@@ -218,11 +218,11 @@ const AutoScalingRuleListNodes: React.FC<AutoScalingRuleListNodesProps> = ({
         },
         {
           key: 'timeWindow',
-          title: t('autoScalingRule.TimeWindow'),
+          title: t('autoScalingRule.CoolDownSeconds'),
           dataIndex: 'timeWindow',
           render: (value: number) =>
             value != null
-              ? t('autoScalingRule.TimeWindowSeconds', { value })
+              ? t('autoScalingRule.CoolDownSecondsValue', { value })
               : '-',
         },
         {

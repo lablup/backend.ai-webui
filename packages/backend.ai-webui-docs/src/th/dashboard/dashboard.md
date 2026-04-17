@@ -1,54 +1,44 @@
-# Dashboard
+# แดชบอร์ด
 
-The **Dashboard** provides an at-a-glance summary of your current resource usage,
-available limits, and session information across all your projects and กลุ่มทรัพยากรs.
-It helps you quickly understand how your computing resources are being utilized
-and monitor your recent activities in the system.
-Click the refresh icon in any panel to update the displayed data if it seems outdated.
+**แดชบอร์ด** แสดงภาพรวมการใช้ทรัพยากรปัจจุบัน ขีดจำกัดที่ใช้งานได้ และข้อมูลเซสชันในทุกโปรเจกต์และกลุ่มทรัพยากรของคุณ ช่วยให้คุณเข้าใจสถานะการใช้ทรัพยากรการคำนวณได้อย่างรวดเร็ว และติดตามกิจกรรมล่าสุดในระบบ
 
 ![](../images/dashboard.png)
 
-The page is composed of several main panels:
+หน้านี้ประกอบด้วยแผงหลักดังต่อไปนี้:
 
-- My เซสชัน:
-    Shows the number of active sessions by type,
-    such as *Interactive*, *Batch*, *Inference*, and *Upload*.
-    You can quickly see how many sessions of each type are currently running.
+- **เซสชันของฉัน:**
+    แสดงจำนวนเซสชันที่ใช้งานอยู่ตามประเภท เช่น *Interactive*, *Batch*, *Inference* และ *Upload* คุณสามารถดูจำนวนเซสชันแต่ละประเภทที่กำลังทำงานอยู่ได้อย่างรวดเร็ว
 
-- My Total Resources Limit:
-    Displays the total used and free resources across all your projects and กลุ่มทรัพยากรs.
-    When multiple limits (domain, project, or keypair) apply,
-    the system uses the **most restrictive** available limit to calculate the remaining resources.
+- **ขีดจำกัดทรัพยากรรวมของฉัน:**
+    แสดงทรัพยากรที่ใช้แล้วและว่างทั้งหมดในทุกโปรเจกต์และกลุ่มทรัพยากร เมื่อมีขีดจำกัดหลายรายการ (โดเมน โปรเจกต์ หรือคีย์แพร์) ระบบจะใช้ขีดจำกัด**ที่จำกัดมากที่สุด**ในการคำนวณทรัพยากรที่เหลือ
 
-- My Resources in Resource Group:
-    Shows your current resource usage and remaining capacity
-    within the selected กลุ่มทรัพยากร of your current project.
-    You can switch groups using the dropdown menu.
+- **ทรัพยากรของฉันในกลุ่มทรัพยากร:**
+    แสดงการใช้ทรัพยากรปัจจุบันและความจุที่เหลือภายในกลุ่มทรัพยากรที่เลือกของโปรเจกต์ปัจจุบัน คุณสามารถสลับกลุ่มได้โดยใช้เมนูดรอปดาวน์
 
-- Total Resources in Resource Group:
-    Summarizes the overall used and free resources in the selected กลุ่มทรัพยากร.
-    The data is aggregated from all agents that belong to the group.
+- **ทรัพยากรรวมในกลุ่มทรัพยากร:**
+    สรุปทรัพยากรที่ใช้แล้วและว่างโดยรวมในกลุ่มทรัพยากรที่เลือก ข้อมูลรวบรวมจากเอเจนต์ทั้งหมดที่อยู่ในกลุ่ม
 
-- Recently Created เซสชัน:
-    Lists the most recently created active sessions within the current project.
-    Provides session details such as name, status, CPU/memory usage, environment, กลุ่มทรัพยากร,
-    session type, and creation time.
-    By default, the latest 5 active sessions are displayed.
+:::note
+แผง**ทรัพยากรรวมในกลุ่มทรัพยากร**อาจไม่แสดงขึ้นอยู่กับการกำหนดค่าระบบ
+:::
 
-For super ผู้ดูแลระบบs, additional information is available.
+- **เซสชันที่สร้างล่าสุด:**
+    แสดงรายการเซสชันที่ใช้งานอยู่ที่สร้างล่าสุดภายในโปรเจกต์ปัจจุบัน แสดงรายละเอียดเซสชัน เช่น ชื่อ สถานะ การใช้ CPU/หน่วยความจำ สภาพแวดล้อม กลุ่มทรัพยากร ประเภทเซสชัน และเวลาที่สร้าง โดยค่าเริ่มต้นจะแสดงเซสชันที่ใช้งานอยู่ล่าสุด 5 รายการ
 
-![](../images/admin_dashboard.png)
+## การรีเฟรชอัตโนมัติ
 
-Except for 'Active เซสชัน', 'Agent สถิติ', and 'Active Agents', the remaining panels
-display the same information as the ผู้ใช้ dashboard.
+แดชบอร์ดจะรีเฟรชข้อมูลทุกแผงอัตโนมัติทุก **15 วินาที** เพื่อให้ข้อมูลที่แสดงเป็นปัจจุบันอยู่เสมอโดยไม่ต้องดำเนินการด้วยตนเอง
 
-- Active เซสชัน:
-    Shows the total number of active sessions across current projects,
-    categorized by session type.
+## การปรับแต่งเลย์เอาท์แดชบอร์ด
 
-- Agent สถิติ:
-    Provides all used resources across all agents in the system.
-    The values represent the total used resources by all active sessions.
+คุณสามารถปรับแต่งเลย์เอาท์แดชบอร์ดได้โดยการจัดเรียงและปรับขนาดแผงตามความต้องการ
 
-- Active Agents:
-    Lists all currently active agents in the system.
+- **ย้ายแผง**: ลากส่วนหัวของแผงเพื่อเปลี่ยนตำแหน่งบนบอร์ด
+- **ปรับขนาดแผง**: ลากมุมขวาล่างของแผงเพื่อปรับขนาด แต่ละแผงมีขนาดขั้นต่ำเพื่อให้เนื้อหาอ่านได้ง่าย
+
+เลย์เอาท์ที่ปรับแต่งแล้วจะถูกบันทึกอัตโนมัติและคงอยู่ระหว่างเซสชันของเบราว์เซอร์ เลย์เอาท์จะถูกจัดเก็บตามผู้ใช้ ดังนั้นผู้ใช้แต่ละคนสามารถมีการจัดเรียงที่ต้องการของตนเองได้
+
+:::tip
+เมื่อ WebUI ได้รับการอัปเดตพร้อมแผงแดชบอร์ดใหม่ แผงเหล่านั้นจะปรากฏบนแดชบอร์ด
+ของคุณโดยอัตโนมัติ แม้ว่าคุณจะมีเลย์เอาท์ที่บันทึกไว้แล้วก็ตาม
+:::

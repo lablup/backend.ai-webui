@@ -273,6 +273,26 @@ test.describe(
       });
 
       await page.reload();
+      // After reload, ensure we're on the Environments & Resource step where
+      // envvars are rendered. The page may restore to step 1 first.
+      await page
+        .getByRole('button', { name: '2 Environments & Resource' })
+        .click();
+      // Wait for the envvars Form.List to be restored from query params.
+      await expect(page.locator('#envvars_1_variable')).toHaveValue(
+        'password',
+        {
+          timeout: 10_000,
+        },
+      );
+      await expect(page.locator('#envvars_2_variable')).toHaveValue('api_key');
+      // Sensitive values are cleared on restore. Trigger onBlur validation
+      // explicitly so the required-field message is rendered deterministically
+      // instead of relying on the page's auto-validate timing.
+      await page.locator('#envvars_1_value').focus();
+      await page.locator('#envvars_1_value').blur();
+      await page.locator('#envvars_2_value').focus();
+      await page.locator('#envvars_2_value').blur();
       await expect(
         page
           .locator('#envvars_1_value_help')

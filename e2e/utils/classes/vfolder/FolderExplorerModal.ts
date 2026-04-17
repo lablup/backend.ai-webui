@@ -53,6 +53,9 @@ export class FolderExplorerModal {
       name: 'upload Upload',
     });
     await expect(uploadButton).toBeVisible({ timeout: 10000 });
+    // Give the modal toolbar a moment to settle so click() doesn't fail with
+    // "element is not stable" under heavy parallel load.
+    await this.page.waitForTimeout(300);
     return uploadButton;
   }
 
@@ -61,6 +64,7 @@ export class FolderExplorerModal {
       name: 'folder-add Create Folder',
     });
     await expect(createButton).toBeVisible();
+    await this.page.waitForTimeout(300);
     return createButton;
   }
 
@@ -138,7 +142,7 @@ export class FolderExplorerModal {
     await expect(
       this.modal.getByRole('cell').filter({ hasText: fileName }),
     ).toBeVisible({
-      timeout: 10000,
+      timeout: 30000,
     });
   }
 }

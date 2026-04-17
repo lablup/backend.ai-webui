@@ -1,35 +1,69 @@
 # 統計ページ
 
-## Allocation history
+## 割り当て履歴
 
-On the 統計 page, under the Allocation History tab, you can check simple statistics related to the use of
-compute sessions via a graph. You can check the statistics for a day or a week by selecting the usage period
-from the select period menu on the upper left. Displayed items are as follows.
+統計ページの割り当て履歴タブでは、コンピュートセッションの使用に関する簡単な統計をグラフで
+確認できます。左上の**期間**ドロップダウンを使用して、表示期間を選択できます。選択可能な
+オプションは**1日**と**1週間**です。ドロップダウンの横にある更新ボタンをクリックして、
+統計データを再読み込みすることもできます。表示される項目は以下のとおりです。
 
 - セッション: 作成されたコンピュートセッションの数。
 - CPU: コンピュートセッションに割り当てられたCPUコアの数。
 - メモリ: コンピュートセッションに割り当てられたメモリの量。
-- GPU: コンピュートセッションに割り当てられたGPUユニットの数。Fractional GPU機能が有効になっている場合、物理的なGPUと一致しないことがあります。
+- GPU: コンピュートセッションに割り当てられたGPUユニットの数。フラクショナルGPU（fGPU）
+  機能が有効になっている場合、物理的なGPUと一致しないことがあります。
 - IO-Read: ストレージから読み取られたデータの量。
 - IO-Write: ストレージに書き込まれたデータの量。
 
-ここに表示されている統計は、終了したコンピュートセッションに基づいていることに注意してください。また、アカウントが作成されてから1週間以内のユーザーについては、1週間の統計が表示されない場合があります。
+:::note
+ここに表示されている統計は、終了したコンピュートセッションに基づいています。
+また、アカウントが作成されてから1週間以内のユーザーについては、1週間の統計が表示されない場合があります。
+:::
+
+:::info
+IO-ReadおよびIO-Writeグラフは、バックエンドの構成によっては表示されない場合があります。
+:::
 
 ![](../images/usage_panel.png)
 
-## User session history
+## ユーザーセッション履歴
 
-In the User Session History tab of the 統計 page, ユーザーs can view statistics on various resources used by sessions through graphs.
-Users can check the statistics for a selected period using the Select Period menu at the upper left. The displayed items are as follows.
+:::note
+ユーザーセッション履歴タブは、バックエンドがユーザーメトリクス機能をサポートしている場合にのみ
+利用可能です。このタブが表示されない場合は、管理者にお問い合わせください。
+:::
 
-- CPU Util: The amount of CPU time used by the sessions.
-- Memory: The amount of memory used by the sessions.
-- Net Rx: The rate at which the container is receiving network data.
-- Net Tx: The rate at which the container is sending network data.
-- IO Read: The amount of data read from the storage by the sessions.
-- IO Write: The amount of data written to the storage by the sessions.
+統計ページのユーザーセッション履歴タブでは、セッションが使用したさまざまなリソースに関する
+統計をグラフで確認できます。左上の日付範囲ピッカーを使用して、任意の日付と時間の範囲を指定
+できます。日付範囲ピッカーには、素早く選択するための以下のプリセットオプションも用意されて
+います:
 
-In addition, depending on the available resources, additional items such as CUDA-capable GPU Util and CUDA-capable GPU Mem may be displayed.
+- **今日**
+- **最後の1時間**
+- **最後の3時間**
+- **過去12時間**
+- **最後の1日**
+- **過去7日間**
+
+日付範囲ピッカーの横にある更新ボタンをクリックして、統計データを再読み込みすることもできます。
+
+:::warning
+選択した日付範囲が30日を超えると、使用量が少ない場合に一部の日付のデータが利用できないことが
+あります。データが欠落している場合は、より短い日付範囲で再試行してください。
+:::
+
+表示されるメトリクスグラフは、ご利用環境で利用可能なリソースに基づいてバックエンドによって
+動的に決定されます。一般的に表示されるメトリクスは以下のとおりです:
+
+- CPU Util: セッションが使用したCPU時間の量。
+- Memory: セッションが使用したメモリの量。
+- Net Rx: コンテナがネットワークデータを受信している速度。
+- Net Tx: コンテナがネットワークデータを送信している速度。
+
+利用可能なリソースに応じて、GPU UtilやGPU Memなどの追加メトリクスが表示される場合もあります。
+
+メトリクスグラフカードはドラッグして並べ替えたりサイズを変更したりできるため、お好みの
+レイアウトにカスタマイズできます。
 
 より詳細な統計情報は、管理者専用のコントロールパネルに表示されます。
 

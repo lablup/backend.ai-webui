@@ -1,5 +1,4 @@
 import { navigateTo } from '../../test-util';
-import { getMenuItem } from '../../test-util-antd';
 import { Page, Locator, expect } from '@playwright/test';
 
 /**
@@ -455,8 +454,15 @@ export class SessionLauncher {
    * Navigate to the session list page
    */
   async navigateToSessionList(): Promise<void> {
-    await getMenuItem(this.page, 'Sessions').click();
-    await expect(this.page.locator('.ant-table')).toBeVisible({
+    // Use navigateTo to bypass any open modals that may intercept pointer events
+    // when clicking the menu item directly.
+    await navigateTo(this.page, 'session');
+    // Wait for the session type tab list as a reliable page-ready indicator.
+    // The tablist (All / Interactive / Batch / Inference / Upload Sessions) is
+    // always rendered, even when no sessions exist or the data API returns an
+    // error. Unlike `.ant-table` or the hidden radio inputs, the tablist is
+    // always visible after navigation to the session page.
+    await expect(this.page.getByRole('tablist')).toBeVisible({
       timeout: 10000,
     });
   }

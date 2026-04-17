@@ -178,7 +178,7 @@
 | Bulk terminate disabled for terminated | ✅ | `Cannot select terminated sessions for bulk operations` |
 | Sensitive env vars cleared on reload | ✅ | `Sensitive environment variables are cleared` |
 | Scheduling history modal | ✅ | `Session Scheduling History Modal` (via mocked GraphQL) |
-| Session name click → SessionDetailDrawer | ✅ | `Session detail drawer renders correctly and can show dependency info` |
+| Session name click → SessionDetailDrawer | 🚧 | `Session detail drawer renders correctly and can show dependency info` (fixme: requires running agent) |
 | Dependencies column toggle | ✅ | `Dependencies column can be enabled via table settings` |
 | Session type filtering (interactive/batch/inference) | ❌ | - |
 | Running/Finished status toggle | ❌ | - |
@@ -211,10 +211,10 @@
 | VFolder mounting (Step 3) | ❌ | - |
 | Port configuration (Step 4) | ❌ | - |
 | Batch schedule/timeout options | ❌ | - |
-| Session dependency via useStartSession | ✅ | `Creates batch session, then interactive session with dependency, and verifies dependency display` |
+| Session dependency via useStartSession | 🚧 | `Creates batch + interactive session with dependency` (fixme: requires running agent) |
 | Session owner selection (admin) | ❌ | - |
 | Form validation errors | ❌ | - |
-| Cluster mode warning (multi-node x1) | 🔶 | `session-cluster-mode.spec.ts` (11 tests: 2 pass, 7 fixme pending FR-2381, 2 skip) |
+| Cluster mode warning (multi-node x1) | 🔶 | `session-cluster-mode.spec.ts` (10 tests: 5 active, 5 skipped due to cluster-size limits/capacity constraints) |
 | Session history → SessionTemplateModal | ✅ | `session-template-modal.spec.ts` (7 tests) |
 
 **Coverage: 🔶 3/14 features (most only indirectly tested)**

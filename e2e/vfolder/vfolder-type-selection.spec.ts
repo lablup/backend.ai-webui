@@ -142,12 +142,13 @@ test.describe(
         // and current project is not model-store
         await expect(projectTypeRadio).toBeDisabled();
 
-        // Tooltip warning should be visible when hovering over the project radio label
+        // Hover the project radio label to surface its tooltip. Ant Design's
+        // disabled wrapper intercepts pointer events, so force the hover.
         const typeFormItem = await modal.getTypeFormItem();
         const projectRadioLabel = typeFormItem.locator(
           '[data-testid="project-type"]',
         );
-        await projectRadioLabel.hover();
+        await projectRadioLabel.hover({ force: true });
 
         // Cancel the modal since we're only testing the disabled state
         await (await modal.getCancelButton()).click();

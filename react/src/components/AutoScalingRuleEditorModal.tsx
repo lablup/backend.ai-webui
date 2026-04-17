@@ -11,6 +11,7 @@ import { AutoScalingRuleEditorModalPresetResultQuery } from '../__generated__/Au
 import { AutoScalingRuleEditorModalPresetsQuery } from '../__generated__/AutoScalingRuleEditorModalPresetsQuery.graphql';
 import { AutoScalingRuleEditorModalUpdateMutation } from '../__generated__/AutoScalingRuleEditorModalUpdateMutation.graphql';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
+import { useSuspendedBackendaiClient } from '../hooks';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import { ReloadOutlined } from '@ant-design/icons';
 import {
@@ -25,6 +26,7 @@ import {
   Typography,
   theme,
 } from 'antd';
+import type { DefaultOptionType } from 'antd/es/select';
 import {
   BAIButton,
   BAIFlex,
@@ -255,6 +257,10 @@ const AutoScalingRuleEditorModalContent: React.FC<{
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
+  const baiClient = useSuspendedBackendaiClient();
+  const isSupportPrometheusAutoScalingRule = baiClient.supports(
+    'prometheus-auto-scaling-rule',
+  );
 
   const { prometheusQueryPresets } =
     useLazyLoadQuery<AutoScalingRuleEditorModalPresetsQuery>(
@@ -271,6 +277,10 @@ const AutoScalingRuleEditorModalContent: React.FC<{
                 metricName
                 queryTemplate
                 timeWindow
+                category @since(version: "26.4.3") {
+                  id
+                  name
+                }
               }
             }
           }
@@ -319,17 +329,29 @@ const AutoScalingRuleEditorModalContent: React.FC<{
     description?: string | null;
   };
 
-  // TODO(needs-backend): group by categoryId with human-readable category names
-  // once the backend exposes a QueryDefinitionCategory type/query.
-  const presetOptions: PresetOption[] = _.orderBy(
-    presetNodes,
-    ['rank'],
-    ['asc'],
-  ).map((preset) => ({
-    label: preset.name,
-    value: preset.id,
-    description: preset.description,
-  }));
+  // Group presets by category name for optgroup display.
+  // Presets without a category are shown in a flat list at the end.
+  const presetOptions: DefaultOptionType[] = React.useMemo(() => {
+    const sorted = _.orderBy(presetNodes, ['rank'], ['asc']);
+    const withCategory = sorted.filter((p) => p.category?.name);
+    const withoutCategory = sorted.filter((p) => !p.category?.name);
+
+    const toOption = (preset: (typeof sorted)[number]): PresetOption => ({
+      label: preset.name,
+      value: preset.id,
+      description: preset.description,
+    });
+
+    const grouped = _.groupBy(withCategory, (p) => p.category!.name);
+    const groupOptions = Object.entries(grouped).map(([catName, presets]) => ({
+      label: catName,
+      options: presets.map(toOption),
+    }));
+
+    return withoutCategory.length > 0
+      ? [...groupOptions, ...withoutCategory.map(toOption)]
+      : groupOptions;
+  }, [presetNodes]);
 
   // Build initial form values from existing rule data
   const getInitialValues = (): Partial<AutoScalingRuleFormValues> => {
@@ -416,10 +438,14 @@ const AutoScalingRuleEditorModalContent: React.FC<{
               label: t('autoScalingRule.MetricSourceKernel'),
               value: 'KERNEL',
             },
-            {
-              label: t('autoScalingRule.MetricSourceInferenceFramework'),
-              value: 'INFERENCE_FRAMEWORK',
-            },
+            ...(!isSupportPrometheusAutoScalingRule
+              ? [
+                  {
+                    label: t('autoScalingRule.MetricSourceInferenceFramework'),
+                    value: 'INFERENCE_FRAMEWORK',
+                  },
+                ]
+              : []),
             {
               label: t('autoScalingRule.MetricSourcePrometheus'),
               value: 'PROMETHEUS',
@@ -711,11 +737,11 @@ const AutoScalingRuleEditorModalContent: React.FC<{
         />
       </Form.Item>
 
-      {/* Time Window (seconds) */}
+      {/* Cooldown Sec. */}
       <Form.Item
-        label={t('autoScalingRule.TimeWindow')}
+        label={t('autoScalingRule.CoolDownSeconds')}
         name={'timeWindow'}
-        tooltip={t('autoScalingRule.TimeWindowTooltip')}
+        tooltip={t('autoScalingRule.CoolDownTooltip')}
         rules={[
           { required: true },
           {

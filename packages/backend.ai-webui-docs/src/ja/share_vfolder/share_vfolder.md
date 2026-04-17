@@ -5,128 +5,96 @@
 
 <a id="share-storage-folders-with-other-users"></a>
 
-## 他のユーザーとストレージフォルダーを共有する
+## 他のユーザーとストレージフォルダを共有する
 
-Let's learn how to share your personal Storage folder with other ユーザーs. First,
-log in to User A's account and go to the Data page. There are several
-folders, and we want to share a folder named `tests` to User B.
+個人のストレージフォルダを他のユーザーと共有する方法を学びましょう。まず、ユーザーAのアカウントにログインし、データページに移動します。いくつかのフォルダがあり、`tests`というフォルダをユーザーBに共有したいとします。
 
 ![](../images/list_of_vfolders_A.png)
 
-Inside the `tests` folder you can see files and directories like `hello.txt`
-and `myfolder`.
+`tests`フォルダ内には`hello.txt`や`myfolder`などのファイルやディレクトリがあります。
 
 ![](../images/test_vfolder_explorer_A.png)
 
-Confirm that the `tests` folder is not listed when logging in with User B's
-account.
+ユーザーBのアカウントにログインした際、`tests`フォルダがリストに表示されないことを確認します。
 
 ![](../images/no_test_vfolder_in_B.png)
 
 
 :::note
-If a folder named `tests` already exists in User B's account, User A's
-`tests` folder cannot be shared with User B.
+ユーザーBのアカウントに`tests`という名前のフォルダが既に存在する場合、ユーザーAの`tests`フォルダをユーザーBと共有することはできません。
 :::
 
-Back to User A's account,click the 'share' button in the Control column on the
-'tests' folder in the list.
+ユーザーAのアカウントに戻り、リストの`tests`フォルダの制御列にある共有ボタンをクリックします。
 
 ![](../images/share_button_on_list.png)
 
-In the 'Invite User' section of the modal, enter User B's email address and
-select the desired permission level. If you choose 'Read Only', User B will be
-able to only view the folder but not modify it. If you select 'Read & Write',
-User B will be able to both view and modify the folder.
+フォルダの共有モーダルが開きます。**ユーザーを招待します**セクションでユーザーBのメールアドレスを入力し、**権限**ドロップダウンから希望する権限レベルを選択します。`読み取り専用`を選択すると、ユーザーBはフォルダを閲覧できますが変更はできません。`読み書き可能`を選択すると、ユーザーBはフォルダの閲覧と変更の両方が可能になります。`追加`ボタンをクリックして招待を送信します。
 
 ![](../images/send_vfolder_invitation.png)
 
-Switch back to User B's account and navigate to the Data page.
-The number of invited folders can be checked in the Storage Status panel.
+ユーザーBのアカウントに切り替え、データページに移動します。ストレージステータスパネルで招待されたフォルダの数を確認できます。
 
 ![](../images/pending_invitations.png)
 
-Clicking the badge opens an invitation list modal, where pending folder invitations
-can be accepted or declined.
+バッジをクリックすると招待リストのモーダルが開き、保留中のフォルダ招待を承諾または辞退できます。
 
 ![](../images/invitation_accept.png)
 
-Go to the Data page and check that the `tests` folder is displayed in
-the list. If you don't see it on the list, try refreshing your browser page.
-Since you have accepted the invitation, you can now view the contents of User
-A's `tests` folder in User B account. Unlike folders created by User B,
-shared folders appear without the check icon in the Owner column. You
-can also see the 'Read only' mark displayed in the Mount Permission column.
+データページに移動し、`tests`フォルダがリストに表示されていることを確認します。リストに表示されない場合は、ブラウザページを更新してみてください。招待を承諾したので、ユーザーBのアカウントでユーザーAの`tests`フォルダの内容を確認できるようになりました。ユーザーBが作成したフォルダとは異なり、共有フォルダにはオーナー列にチェックアイコンが表示されません。また、マウント権限列に`読み取り専用`の表示が確認できます。
 
 ![](../images/test_vfolder_listed_in_B.png)
 
-Let's navigate inside the `tests` folder by clicking the folder icon in the
-Control panel of `tests`. You can check the `hello.txt` and `myfolder`
-that you checked in the User A's account again.
+`tests`フォルダの制御パネルにあるフォルダアイコンをクリックして、フォルダ内に移動しましょう。ユーザーAのアカウントで確認した`hello.txt`と`myfolder`を再び確認できます。
 
 ![](../images/folder_explorer_in_B.png)
 
-Let's create a compute session
-by mounting this storge folder with the User B's account.
+ユーザーBのアカウントでこのストレージフォルダをマウントしてコンピュートセッションを作成してみましょう。
 
 ![](../images/launch_session_with_test_mounted_B.png)
 
 
 :::note
-From version 24.09, Backend.AI offers an improved version of the session launcher (NEO)
-as default. If you want to use the previous session launcher, please refer [User Settings](#general-tab)
-section. For instructions on how to use it, please refer to the following [link](https://webui.docs.backend.ai/en/23.09_a/sessions_all/sessions_all.html).
-If you want to know more about the NEO session launcher, please refer [Create Session](#start-a-new-session)
+バージョン24.09以降、Backend.AIはセッションランチャーの改良版（NEO）をデフォルトとして提供しています。以前のセッションランチャーを使用する場合は、[ユーザー設定](#general-tab)セクションを参照してください。使用方法については、次の[リンク](https://webui.docs.backend.ai/en/23.09_a/sessions_all/sessions_all.html)を参照してください。NEOセッションランチャーの詳細については、[セッション作成](#start-a-new-session)を参照してください。
 :::
 
-After creating a session, open the web terminal and check that the `tests`
-folder is mounted in the home folder. The contents of the `tests` folder are
-displayed, but attempts to create or delete files are not allowed. This is
-because User A shared it as read-only. User B can create a file in the `tests`
-folder if it has been shared including write access.
+セッションを作成した後、ウェブターミナルを開き、`tests`フォルダがホームフォルダにマウントされていることを確認します。`tests`フォルダの内容は表示されますが、ファイルの作成や削除は許可されません。これは、ユーザーAが読み取り専用で共有したためです。書き込みアクセスを含む形で共有されている場合、ユーザーBは`tests`フォルダ内にファイルを作成できます。
 
 ![](../images/file_operations_on_shared_test_folder.png)
 
-この方法では、Backend.AIのメールアカウントに基づいて他のユーザーと個人のストレージフォルダを共有することができます。
+この方法で、Backend.AIのメールアカウントに基づいて他のユーザーと個人のストレージフォルダを共有することができます。
 
 
 :::note
-Backend.AI also provides sharing project folder to project members.
-To See the detail, go to [sharing a project storage folder with project members](#share-project-storage-folders-with-project-members).
+Backend.AIはプロジェクトメンバーへのプロジェクトフォルダの共有機能も提供しています。
+詳細については、[プロジェクトメンバーとプロジェクトストレージフォルダを共有する](#share-project-storage-folders-with-project-members)を参照してください。
 :::
 
 
 <a id="adjust-permission-for-shared-folders"></a>
 
-## 共有フォルダーの権限を調整する
+## 共有フォルダの権限を調整する
 
-You can modify the permissions of a shared ユーザー from the folder sharing modal.
-Click Select permission to set the sharing permission.
+フォルダの共有モーダルから共有ユーザーの権限を変更できます。**共有ユーザー**セクションには、招待を承諾したすべてのユーザーがテーブルで表示されます。各行には招待されたユーザーのメールアドレスと権限ドロップダウンが表示されます。ユーザーの行の権限ドロップダウンをクリックして、アクセスレベルを変更します。
 
-- 閲覧: 招待されたユーザーはフォルダーへの読み取り専用アクセス権を持っています。
-- 編集: 招待されたユーザーはフォルダーへの読み書き権限を持っています。ユーザーはフォルダーやファイルを削除することはできません。
+- **読み取り専用**: 招待されたユーザーはフォルダへの読み取り専用アクセス権を持ちます。
+- **読み書き可能**: 招待されたユーザーはフォルダへの読み書き権限を持ちます。ただし、フォルダやファイルを削除することはできません。
 
 ![](../images/modify_perm.png)
 
 
 :::note
-Renaming folder itself is available only for the owner, even if the ユーザー has granted
-Edit permission. Please note that Edit permission does not provide
-renaming folder.
+読み書き可能権限が付与されている場合でも、フォルダ自体の名前変更は所有者のみが行えます。読み書き可能権限にはフォルダの名前変更機能は含まれません。
 :::
 
 
 <a id="stop-sharing-a-folder"></a>
 
-## Stop sharing a folder
+## フォルダの共有を停止する
 
-To stop sharing a folder as the inviter, open the file list and click the 'Share' button in the
-control column for the folder. In the permission settings modal, click the 'Stop sharing' button
-next to the permission selector.
+招待者としてフォルダの共有を停止するには、フォルダリストの制御列にある共有ボタンをクリックして、フォルダの共有モーダルを開きます。**共有ユーザー**テーブルで、アクセスを取り消すユーザーの行にある権限ドロップダウンの横の共有停止アイコン（赤い閉じる円）をクリックします。確認ダイアログが表示されたら、`確認`ボタンをクリックしてそのユーザーのアクセスを取り消します。
 
 ![](../images/modify_permission_and_stop_sharing.png)
 
-If access to a shared folder is no longer needed as an invitee, select the 'Share' button next to
-the folder in the folder list, then click 'Leave the shared folder' to remove access.
+招待されたユーザーとして共有フォルダへのアクセスが不要になった場合は、フォルダリストで該当フォルダの共有ボタンをクリックして、共有フォルダ権限モーダルを開きます。権限テーブルの**制御**列にある退出アイコンをクリックして、共有フォルダから退出します。操作が完了する前に確認ダイアログが表示されます。
 
 ![](../images/leave_shared_folder.png)

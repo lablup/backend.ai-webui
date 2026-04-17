@@ -31,10 +31,13 @@ export class SessionDetailPage extends BasePage {
   }
 
   async verifyPageLoaded(): Promise<void> {
-    // Verify session list table is visible
-    // The session page uses a table element, not vaadin-grid
-    const sessionTable = this.page.locator('table').first();
-    await this.waitForVisible(sessionTable, 10000);
+    // Wait for the session type tab list as a reliable page-ready indicator.
+    // The tablist (All / Interactive / Batch / Inference / Upload Sessions) is
+    // always rendered, even when no sessions exist or the data API returns an
+    // error. Unlike `.ant-table` or the hidden radio inputs, this element is
+    // always visible after navigation to the session page.
+    const tablist = this.page.getByRole('tablist');
+    await this.waitForVisible(tablist, 10000);
   }
 
   /**
