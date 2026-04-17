@@ -628,7 +628,13 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
       children: endpoint?.model ? (
         <Suspense fallback={<Spin indicator={<LoadingOutlined spin />} />}>
           <BAIFlex direction="column" align="start">
-            <VFolderLazyView uuid={endpoint?.model} clickable={true} />
+            <Typography.Link
+              onClick={() => {
+                endpoint?.model && open(endpoint.model);
+              }}
+            >
+              <VFolderLazyView uuid={endpoint?.model} />
+            </Typography.Link>
             {endpoint?.model_mount_destination && (
               <BAIFlex direction="row" align="center" gap={'xxs'}>
                 <ArrowRightOutlined type="secondary" />
