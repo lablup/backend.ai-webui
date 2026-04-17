@@ -10,11 +10,11 @@ import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
-import { useStartServiceFromFolder } from '../hooks/useModelServiceLauncher';
 import { isDeletedCategory } from '../pages/VFolderNodeListPage';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import InviteFolderSettingModal from './InviteFolderSettingModal';
 import SharedFolderPermissionInfoModal from './SharedFolderPermissionInfoModal';
+import VFolderDeployModal from './VFolderDeployModal';
 import VFolderNodeIdenticon from './VFolderNodeIdenticon';
 import VFolderPermissionCell from './VFolderPermissionCell';
 import { UserOutlined } from '@ant-design/icons';
@@ -87,6 +87,13 @@ interface VFolderNameCellProps {
   onDelete: () => void;
   onRestore: () => void;
   onDeleteForever: () => void;
+  /**
+   * Called when the definition-check step on "Start Service" raises a
+   * warning (e.g. missing service-definition.toml or ambiguous runtime
+   * variants). The parent uses this to open the preset-selection modal
+   * (FR-2599) for the given vfolder instead of navigating away.
+   */
+  onStartServiceFallback: (vfolderId: string) => void;
 }
 
 const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
@@ -95,11 +102,11 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
   onDelete,
   onRestore,
   onDeleteForever,
+  onStartServiceFallback,
 }) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const navigate = useWebUINavigate();
   const { generateFolderPath } = useFolderExplorerOpener();
 
   const isPipelineFolder = vfolder?.usage_mode === 'data';
@@ -112,20 +119,14 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
 
   const vfolderId = toLocalId(vfolder.id ?? '');
 
-  const { start } = useStartServiceFromFolder({
-    modelName: vfolder.name ?? '',
-    vfolderId,
-    navigate,
-  });
-
   const actions: BAINameActionCellAction[] = filterOutNullAndUndefined([
     // Start Service (model folders only, active only)
     isModelFolder && !isDeleted
       ? {
           key: 'start-service',
-          title: t('modelService.StartModelService'),
+          title: t('modelService.DeployAsService'),
           icon: <BAIEndpointsIcon />,
-          onClick: () => start(),
+          onClick: () => onStartServiceFallback(vfolderId),
         }
       : null,
     // Share (active folders only)
@@ -221,6 +222,10 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
     useState<VFolderNodeInList | null>(null);
   const [currentSharedVFolder, setCurrentSharedVFolder] =
     useState<VFolderNodeInList | null>(null);
+  // vfolder id whose preset-selection deploy modal (FR-2599) should be open.
+  const [deployFallbackVfolderId, setDeployFallbackVfolderId] = useState<
+    string | null
+  >(null);
 
   const vfolders = useFragment(
     graphql`
@@ -383,6 +388,9 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
                   }}
                   onDeleteForever={() => {
                     setDeletingVFolder(vfolder ?? null);
+                  }}
+                  onStartServiceFallback={(id) => {
+                    setDeployFallbackVfolderId(id);
                   }}
                 />
               );
@@ -613,6 +621,12 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
         onRequestClose={() => {
           setCurrentSharedVFolder(null);
         }}
+      />
+      <VFolderDeployModal
+        open={!!deployFallbackVfolderId}
+        vfolderId={deployFallbackVfolderId ?? undefined}
+        onClose={() => setDeployFallbackVfolderId(null)}
+        onDeployed={() => setDeployFallbackVfolderId(null)}
       />
     </>
   );
