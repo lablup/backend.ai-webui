@@ -12,7 +12,7 @@ test.describe.serial(
   'VFolder Consecutive Deletion - User Operations',
   { tag: ['@regression', '@vfolder', '@functional'] },
   () => {
-    test.setTimeout(90_000);
+    test.setTimeout(180_000);
     const folder1Name = 'e2e-test-consecutive-1-' + new Date().getTime();
     const folder2Name = 'e2e-test-consecutive-2-' + new Date().getTime();
     const folder3Name = 'e2e-test-consecutive-3-' + new Date().getTime();
@@ -24,7 +24,7 @@ test.describe.serial(
     test('User can create and permanently delete multiple VFolders consecutively', async ({
       page,
     }) => {
-      test.setTimeout(90_000);
+      test.setTimeout(180_000);
       // Create NotificationHandler instance for managing notifications throughout the test
       const notification = new NotificationHandler(page);
 

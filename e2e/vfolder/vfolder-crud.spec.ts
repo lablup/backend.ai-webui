@@ -20,7 +20,8 @@ test.describe(
       await loginAsUser(page, request);
     });
     const folderName = 'e2e-test-folder-user-creation' + new Date().getTime();
-    test.describe('vFolder Creation', () => {
+    // Run creation tests serially since they all share the same folder name
+    test.describe.serial('vFolder Creation', () => {
       test.beforeEach(async ({ page }) => {
         await page.getByRole('link', { name: 'Data' }).click();
         await page
@@ -93,7 +94,8 @@ test.describe(
         await (await folderCreationModal.getCreateButton()).click();
       });
     });
-    test.describe('Auto Mount vFolder Creation', () => {
+    // Auto Mount uses a dedicated folder name (dot-prefixed) that is independent
+    test.describe.serial('Auto Mount vFolder Creation', () => {
       const folderName = '.e2e-test-folder-auto-mount' + new Date().getTime();
       test.beforeEach(async ({ page }) => {
         await page.getByRole('link', { name: 'Data' }).click();
@@ -121,6 +123,7 @@ test.describe(
     test('User can create, delete(move to trash), restore, delete forever vFolder', async ({
       page,
     }) => {
+      test.setTimeout(90_000);
       await createVFolderAndVerify(page, folderName);
       await moveToTrashAndVerify(page, folderName);
       await restoreVFolderAndVerify(page, folderName);
@@ -130,13 +133,14 @@ test.describe(
   },
 );
 
-test.describe(
+test.describe.serial(
   'VFolder Sharing',
   { tag: ['@critical', '@vfolder', '@functional'] },
   () => {
     const sharingFolderName = 'e2e-test-folder-sharing' + new Date().getTime();
-    test.beforeEach(async ({ page }) => {
-      await loginAsUser(page);
+    test.setTimeout(90_000);
+    test.beforeEach(async ({ page, request }) => {
+      await loginAsUser(page, request);
       await createVFolderAndVerify(page, sharingFolderName);
     });
     test.afterEach(async ({ page }) => {

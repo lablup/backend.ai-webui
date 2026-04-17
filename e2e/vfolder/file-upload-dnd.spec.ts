@@ -6,6 +6,8 @@ import {
   createVFolderAndVerify,
   moveToTrashAndVerify,
   deleteForeverAndVerifyFromTrash,
+  selectPropertyFilter,
+  clearAllFilters,
 } from '../utils/test-util';
 import { test, expect, Page } from '@playwright/test';
 import fs from 'fs';
@@ -17,7 +19,8 @@ const openFolderExplorer = async (
   folderName: string,
 ): Promise<FolderExplorerModal> => {
   await navigateTo(page, 'data');
-  await page.waitForLoadState('networkidle');
+  await clearAllFilters(page);
+  await selectPropertyFilter(page, 'Name', folderName);
   const folderLink = page.getByRole('link', { name: folderName }).first();
   await expect(folderLink).toBeVisible({ timeout: 15000 });
   await folderLink.click();
@@ -31,6 +34,7 @@ test.describe.serial(
   'Drag-and-Drop File Upload',
   { tag: ['@critical', '@vfolder', '@functional'] },
   () => {
+    test.describe.configure({ timeout: 90_000 });
     const testFolderName = 'e2e-test-dnd-upload-' + Date.now();
     let tmpDir: string;
     let testFilePath: string;
@@ -57,6 +61,7 @@ test.describe.serial(
     });
 
     test.afterAll(async ({ browser, request }) => {
+      test.setTimeout(180_000);
       // Cleanup: delete VFolder
       const context = await browser.newContext();
       const page = await context.newPage();

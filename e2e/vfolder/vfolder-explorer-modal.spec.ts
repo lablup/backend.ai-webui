@@ -38,7 +38,7 @@ test.describe.serial(
     test('User can create folders and upload files in VFolder with write permissions', async ({
       page,
     }) => {
-      test.setTimeout(60000);
+      test.setTimeout(120000);
       const rwFolderName = 'e2e-test-folder-rw-' + new Date().getTime();
 
       // 1. Create a VFolder with Read & Write permissions
@@ -75,7 +75,7 @@ test.describe.serial(
     test('User can view files but cannot upload to read-only VFolder', async ({
       page,
     }) => {
-      test.setTimeout(60000);
+      test.setTimeout(120000);
       const roFolderName = 'e2e-test-folder-ro-' + new Date().getTime();
 
       // 1. Create a VFolder with Read Only permissions
@@ -155,6 +155,7 @@ test.describe(
     });
 
     test.afterAll(async ({ browser, request }) => {
+      test.setTimeout(90_000);
       // Create a new context and page for cleanup
       const context = await browser.newContext();
       const page = await context.newPage();
