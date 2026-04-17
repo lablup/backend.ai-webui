@@ -1,90 +1,69 @@
 # ノートブックとウェブベースのGitリポジトリをインポートして実行
 
 
-On the 'Import & Run' page, Backend.AIは、Jupyterノートブックファイルの実行や、GitHubやGitLabなどのウェブベースのGitリポジトリの即時インポートをサポートしています。ローカルストレージに作成またはダウンロードして再アップロードする必要はありません。実行またはインポートしたい有効なURLを入力し、右側のボタンをクリックするだけです。
+「インポート & 実行」ページでは、Jupyterノートブックファイルをその場で実行したり、GitHubやGitLabなどのウェブベースのGitリポジトリをインポートしたりできます。ローカルストレージで直接作成したり、ダウンロードして再アップロードしたりする必要はありません。有効なURLを入力し、各機能に対応するパネルの右側にあるボタンをクリックするだけです。
 
 <a id="import-and-run-jupyter-notebooks"></a>
 
 ## Jupyterノートブックをインポートして実行する
 
-To import Jupyter notebooks and run, you need one thing, the valid URL for the notebook file.
-For example, if you want execute Jupyter notebook that's in github, you can copy and paste
-the URL and click 'IMPORT & RUN' button.
+Jupyterノートブックファイルをインポートして実行するには、ノートブックファイルの有効なURLが必要です。GitHub上のJupyterノートブックを実行したい場合は、入力フィールドに該当ファイルのURLをコピー＆ペーストし、`インポート & 実行` ボタンをクリックします。
 
 
 :::note
-ローカルアドレスでJupyterノートブックファイルをインポート＆実行しようとする場合、それは無効と見なされます。localhostで始まらないURLを入力する必要があります。
+ローカルアドレスのJupyterノートブックファイルをインポート＆実行しようとする場合、それは無効と見なされます。localhostで始まらないURLを入力してください。
 :::
 
 ![](../images/import_run_notebook.png)
 
-After clicking the button, the dialog appears. This is a session launcher dialog same as
-when you starts the session at Sessions page or Summary page. Difference between import notebook
-and starting a new session is that import notebook automatically imports Jupyter notebook in the
-URL, but simple starting a new session doesn't do that. the rest is same. Click 'LAUNCH' button to
-the notebook after setting the environments and resource allocation as needed.
+ボタンをクリックするとダイアログが表示されます。このダイアログは、セッションページや要約ページでセッションを開始するときと同じセッションランチャーです。ノートブックのインポートと新しいセッションの開始の違いは、ノートブックのインポート時にはURL内のJupyterノートブックが自動的にインポートされる点です。その他は同じです。必要に応じて環境とリソースの割り当てを設定してから、`開始` ボタンをクリックします。
 
 :::note
-The pop-up blocker must be turned off before clicking 'LAUNCH' button to immediately
-see the running notebook window. Also, if there's not enough resources to execute the session,
-imported Jupyter notebook will not run.
+`開始` ボタンをクリックする前にポップアップブロッカーを解除しておくと、実行中のノートブックウィンドウをすぐに確認できます。また、セッションを実行するのに十分なリソースがない場合、インポートされたJupyterノートブックは実行されません。
 :::
 
 ![](../images/session_launcher_in_importing_notebook.png)
 
-You can see the importing operation is successfully completed in Sessions page.
+セッションページでインポート操作が正常に完了したことを確認できます。
 
 ![](../images/sessions_page_with_imported_notebook.png)
 
 <a id="create-executable-jupyter-notebook-button"></a>
 
-## Create executable Jupyter notebook button
+## 実行可能なJupyterノートブックボタンの生成
 
-You can also create HTML or Markdown button about Jupyter notebook URL, too.
-Input a valid Jupyter notebook URL and click 'CREATE' button. It will show code blocks that directly
-links to creating a session with notebook. You can see the badge code working by inserting it in
-the GitHub repositories or where it supports html or markdown.
-
+Jupyter notebook URLに対するHTMLまたはMarkdownボタンを生成することもできます。有効なJupyter notebook URLを入力し、`作成する` ボタンをクリックします。ノートブックでセッションを生成するリンクを含むコードブロックが表示されます。このバッジコードをGitHubリポジトリや、HTMLまたはMarkdownをサポートする場所に挿入して使用できます。
 
 :::note
-your account must be logined before clicking the button. Otherwise, you have to login first.
+ボタンをクリックする前にアカウントにログインしている必要があります。そうでない場合は、まずログインしてください。
 :::
 
 ![](../images/create_notebook_button.png)
 
 <a id="importing-github-repositories"></a>
 
-## Importing GitHub Repositories
+## GitHubリポジトリのインポート
 
-Importing a GitHub repository is similar to import and running Jupyter notebook.
-All you have to do is to fill out with github repository URL and click 'GET TO
-FOLDER' button. If you can access to more than one storage host, you can select one from the list.
+GitHubリポジトリのインポートは、Jupyterノートブックのインポート & 実行と似ています。GitHubリポジトリのURLを入力し、`フォルダに移動` ボタンをクリックするだけです。複数のストレージホストにアクセスできる場合は、リストから1つを選択できます。
 
 ![](../images/import_github_repository.png)
 
 :::note
-If there are not enough resources to start a session or folder count is at
-the limit, then importing repository will fail. Please check resource
-statistics panel and Data & Storage page before importing the repository.
+セッションを開始するのに十分なリソースがない場合やフォルダ数が上限に達している場合、リポジトリのインポートは失敗します。リポジトリをインポートする前に、リソース統計パネルとデータ & ストレージページを確認してください。
 :::
 
-You can see the repository is successfully imported as a data folder with its
-name.
+リポジトリがその名前のストレージフォルダとして正常にインポートされたことを確認できます。
 
 ![](../images/import_github_repository_result.png)
 
 <a id="importing-gitlab-repositories"></a>
 
-## Importing GitLab Repositories
+## GitLabリポジトリのインポート
 
-From 22.03, Backend.AI supports importing from GitLab. It's almost the same as
-[Importing GitHub Repositories](#importing-github-repositories),
-but you need to explicitly set the branch name to import.
+22.03 バージョンから、Backend.AIはGitLabからのインポートをサポートします。[GitHubリポジトリのインポート](#importing-github-repositories) とほぼ同じですが、インポートするブランチ名を明示的に設定する必要があります。
 
 ![](../images/import_gitlab_repository.png)
 
-
 :::note
-If there's data folder that has the same name already, the system will append
-`_` (underscore) and number in the imported repository folder.
+同じ名前のストレージフォルダがすでに存在する場合、システムはインポートしたリポジトリのフォルダ名に `_`（アンダースコア）と数字を追加します。
 :::

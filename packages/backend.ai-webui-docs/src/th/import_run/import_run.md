@@ -54,7 +54,7 @@ your account must be logined before clicking the button. Otherwise, you have to 
 
 <a id="importing-github-repositories"></a>
 
-## Importing GitHub Repositories
+## การนำเข้ารีโพซิทอรี GitHub
 
 Importing a GitHub repository is similar to import and running Jupyter notebook.
 All you have to do is to fill out with github repository URL and click 'GET TO
@@ -68,14 +68,14 @@ the limit, then importing repository will fail. Please check resource
 statistics panel and Data & Storage page before importing the repository.
 :::
 
-You can see the repository is successfully imported as a data folder with its
+You can see the repository is successfully imported as a storage folder with its
 name.
 
 ![](../images/import_github_repository_result.png)
 
 <a id="importing-gitlab-repositories"></a>
 
-## Importing GitLab Repositories
+## การนำเข้ารีโพซิทอรี GitLab
 
 From 22.03, Backend.AI supports importing from GitLab. It's almost the same as
 [Importing GitHub Repositories](#importing-github-repositories),
@@ -85,6 +85,6 @@ but you need to explicitly set the branch name to import.
 
 
 :::note
-If there's data folder that has the same name already, the system will append
+If there's storage folder that has the same name already, the system will append
 `_` (underscore) and number in the imported repository folder.
 :::
