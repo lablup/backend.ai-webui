@@ -1,44 +1,54 @@
-# ダッシュボード
+# Dashboard
 
-**ダッシュボード**は、すべてのプロジェクトとリソースグループにおける現在のリソース使用状況、利用可能な上限、セッション情報の概要を一目で確認できるページです。コンピューティングリソースの使用状況を素早く把握し、システム内の最近の活動をモニタリングするのに役立ちます。
+The **Dashboard** provides an at-a-glance summary of your current resource usage,
+available limits, and session information across all your projects and resource groups.
+It helps you quickly understand how your computing resources are being utilized
+and monitor your recent activities in the system.
+Click the refresh icon in any panel to update the displayed data if it seems outdated.
 
 ![](../images/dashboard.png)
 
-このページは以下の主要パネルで構成されています：
+The page is composed of several main panels:
 
-- **私のセッション:**
-    インタラクティブ、バッチ、推論、アップロードなど、タイプ別にアクティブなセッション数を表示します。各タイプのセッションがいくつ実行中かをすばやく確認できます。
+- My セッション:
+    Shows the number of active sessions by type,
+    such as *インタラクティブ*, *バッチ*, *推論*, and *Upload*.
+    You can quickly see how many sessions of each type are currently running.
 
-- **私の総リソース制限:**
-    すべてのプロジェクトとリソースグループを合算した総使用量と空きリソースを表示します。ドメイン、プロジェクト、キーペアなど複数の上限が同時に適用される場合、システムは**最も制限的な上限**を基準に残りのリソースを計算します。
+- My Total Resources Limit:
+    Displays the total used and free resources across all your projects and resource groups.
+    When multiple limits (domain, project, or keypair) apply,
+    the system uses the **most restrictive** available limit to calculate the remaining resources.
 
-- **リソースグループの私のリソース:**
-    現在のプロジェクトの選択されたリソースグループにおけるリソース使用量と残りの容量を表示します。ドロップダウンメニューでグループを切り替えることができます。
+- My Resources in Resource Group:
+    Shows your current resource usage and remaining capacity
+    within the selected resource group of your current project.
+    You can switch groups using the dropdown menu.
 
-- **リソースグループの総リソース:**
-    選択されたリソースグループ全体の使用量と空き容量を要約表示します。グループに属するすべてのエージェントのデータを集計した値です。
+- Total Resources in Resource Group:
+    Summarizes the overall used and free resources in the selected resource group.
+    The data is aggregated from all agents that belong to the group.
 
-:::note
-**リソースグループの総リソース**パネルは、システム構成によって表示されない場合があります。
-:::
+- Recently Created セッション:
+    Lists the most recently created active sessions within the current project.
+    Provides session details such as name, status, CPU/memory usage, environment, resource group,
+    session type, and creation time.
+    By default, the latest 5 active sessions are displayed.
 
-- **最近作成されたセッション:**
-    現在のプロジェクトで最近作成されたアクティブなセッション一覧を表示します。セッション名、ステータス、CPU/メモリ使用量、環境、リソースグループ、セッションタイプ、作成日時などの詳細を確認できます。デフォルトでは最新の5つのアクティブなセッションが表示されます。
+For super 管理者s, additional information is available.
 
-## 自動更新
+![](../images/admin_dashboard.png)
 
-ダッシュボードは**15秒**ごとにすべてのパネルデータを自動的に更新します。これにより、手動操作なしに常に最新の情報を確認できます。
+Except for 'Active セッション', 'Agent 統計', and 'Active Agents', the remaining panels
+display the same information as the ユーザー dashboard.
 
-## ダッシュボードレイアウトのカスタマイズ
+- Active セッション:
+    Shows the total number of active sessions across current projects,
+    categorized by session type.
 
-パネルの再配置やサイズ変更により、ダッシュボードのレイアウトをお好みに合わせてカスタマイズできます。
+- Agent 統計:
+    Provides all used resources across all agents in the system.
+    The values represent the total used resources by all active sessions.
 
-- **パネルの移動**: パネルのヘッダーをドラッグして、ボード上の位置を変更できます。
-- **パネルのサイズ変更**: パネルの右下隅をドラッグしてサイズを調整できます。各パネルにはコンテンツの可読性を確保するための最小サイズが設定されています。
-
-カスタマイズされたレイアウトは自動的に保存され、ブラウザセッション間で保持されます。レイアウトはユーザーごとに保存されるため、各ユーザーが独自の配置を設定できます。
-
-:::tip
-WebUIの更新で新しいダッシュボードパネルが追加された場合、保存済みのカスタムレイアウトが
-あっても、新しいパネルは自動的にダッシュボードに表示されます。
-:::
+- Active Agents:
+    Lists all currently active agents in the system.
