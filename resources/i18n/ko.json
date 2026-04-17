@@ -156,6 +156,8 @@
     "ConditionTooltip": "위에서 선택한 메트릭 값으로 오토스케일링을 트리거할 기준값 범위를 설정합니다.",
     "ConfirmDeleteAutoScalingRule": "오토스케일링 규칙 {{ autoScalingRule }} 을 삭제하시겠습니까?",
     "CoolDownSeconds": "쿨다운 시간(초)",
+    "CoolDownSecondsValue": "{{value}}초",
+    "CoolDownTooltip": "스케일링 이벤트 발생 후 다음 스케일링 작업이 시작되기까지의 쿨다운 기간(초 단위).",
     "CreatedAt": "생성 시간",
     "CurrentValue": "현재 값",
     "EditAutoScalingRule": "오토스케일링 규칙 수정",
@@ -202,9 +204,6 @@
     "Threshold": "기준값",
     "ThresholdMustBeNonNegative": "기준값은 음수가 아닌 숫자여야 합니다.",
     "ThresholdRequired": "기준값은 필수입니다.",
-    "TimeWindow": "타임 윈도우",
-    "TimeWindowSeconds": "{{value}}초",
-    "TimeWindowTooltip": "스케일링 지표를 평가하기 위한 타임 윈도우(초 단위).",
     "TypeMetricNameToDelete": "삭제를 확인하려면 \"{{ metricName }}\"을(를) 입력하세요",
     "Upper": "상한"
   },

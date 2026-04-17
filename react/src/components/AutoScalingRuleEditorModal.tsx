@@ -720,11 +720,11 @@ const AutoScalingRuleEditorModalContent: React.FC<{
         />
       </Form.Item>
 
-      {/* Time Window (seconds) */}
+      {/* Cooldown Sec. */}
       <Form.Item
-        label={t('autoScalingRule.TimeWindow')}
+        label={t('autoScalingRule.CoolDownSeconds')}
         name={'timeWindow'}
-        tooltip={t('autoScalingRule.TimeWindowTooltip')}
+        tooltip={t('autoScalingRule.CoolDownTooltip')}
         rules={[
           { required: true },
           {
