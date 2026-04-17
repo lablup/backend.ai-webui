@@ -26,6 +26,7 @@ import {
   Typography,
   theme,
 } from 'antd';
+import type { DefaultOptionType } from 'antd/es/select';
 import {
   BAIButton,
   BAIFlex,
@@ -276,6 +277,10 @@ const AutoScalingRuleEditorModalContent: React.FC<{
                 metricName
                 queryTemplate
                 timeWindow
+                category @since(version: "26.4.3") {
+                  id
+                  name
+                }
               }
             }
           }
@@ -324,17 +329,29 @@ const AutoScalingRuleEditorModalContent: React.FC<{
     description?: string | null;
   };
 
-  // TODO(needs-backend): group by categoryId with human-readable category names
-  // once the backend exposes a QueryDefinitionCategory type/query.
-  const presetOptions: PresetOption[] = _.orderBy(
-    presetNodes,
-    ['rank'],
-    ['asc'],
-  ).map((preset) => ({
-    label: preset.name,
-    value: preset.id,
-    description: preset.description,
-  }));
+  // Group presets by category name for optgroup display.
+  // Presets without a category are shown in a flat list at the end.
+  const presetOptions: DefaultOptionType[] = React.useMemo(() => {
+    const sorted = _.orderBy(presetNodes, ['rank'], ['asc']);
+    const withCategory = sorted.filter((p) => p.category?.name);
+    const withoutCategory = sorted.filter((p) => !p.category?.name);
+
+    const toOption = (preset: (typeof sorted)[number]): PresetOption => ({
+      label: preset.name,
+      value: preset.id,
+      description: preset.description,
+    });
+
+    const grouped = _.groupBy(withCategory, (p) => p.category!.name);
+    const groupOptions = Object.entries(grouped).map(([catName, presets]) => ({
+      label: catName,
+      options: presets.map(toOption),
+    }));
+
+    return withoutCategory.length > 0
+      ? [...groupOptions, ...withoutCategory.map(toOption)]
+      : groupOptions;
+  }, [presetNodes]);
 
   // Build initial form values from existing rule data
   const getInitialValues = (): Partial<AutoScalingRuleFormValues> => {
