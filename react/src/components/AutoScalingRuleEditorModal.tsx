@@ -222,26 +222,26 @@ const PrometheusPresetPreview: React.FC<{
 /**
  * Determines initial condition mode and direction from existing rule data.
  *
- * Direction semantics match the list's "normal range" display:
- *   'lower' ('<'): Metric < maxThreshold — metric should stay BELOW the upper bound.
- *   'upper' ('>'): Metric > minThreshold — metric should stay ABOVE the lower bound.
+ * Direction semantics show the trigger condition:
+ *   'upper' ('>'): Metric > maxThreshold — scale out when metric exceeds the upper bound.
+ *   'lower' ('<'): Metric < minThreshold — scale in when metric drops below the lower bound.
  *
- * So maxThreshold → 'lower', minThreshold → 'upper' (mirrors the list column).
+ * So maxThreshold → 'upper', minThreshold → 'lower'.
  */
 const getInitialConditionState = (
   rule: AutoScalingRuleEditorModalFragment$data | null | undefined,
 ): { mode: ConditionMode; direction: ThresholdDirection } => {
   if (!rule) {
-    return { mode: 'single', direction: 'lower' };
+    return { mode: 'single', direction: 'upper' };
   }
   if (rule.minThreshold != null && rule.maxThreshold != null) {
     return { mode: 'range', direction: 'upper' };
   }
-  // minThreshold set → Metric > minThreshold → direction='upper'
-  if (rule.minThreshold != null) {
+  // maxThreshold set → Metric > maxThreshold → direction='upper' (scale out)
+  if (rule.maxThreshold != null) {
     return { mode: 'single', direction: 'upper' };
   }
-  // maxThreshold set (or neither) → Metric < maxThreshold → direction='lower'
+  // minThreshold set → Metric < minThreshold → direction='lower' (scale in)
   return { mode: 'single', direction: 'lower' };
 };
 
@@ -359,9 +359,9 @@ const AutoScalingRuleEditorModalContent: React.FC<{
       const condition = getInitialConditionState(autoScalingRule);
       let threshold: number | undefined;
       if (condition.mode === 'single') {
-        // 'lower' ('<') → maxThreshold; 'upper' ('>') → minThreshold
+        // 'upper' ('>') → maxThreshold (scale out); 'lower' ('<') → minThreshold (scale in)
         threshold =
-          condition.direction === 'lower'
+          condition.direction === 'upper'
             ? autoScalingRule.maxThreshold != null
               ? Number(autoScalingRule.maxThreshold)
               : undefined
@@ -394,7 +394,7 @@ const AutoScalingRuleEditorModalContent: React.FC<{
     return {
       metricSource: 'KERNEL',
       conditionMode: 'single',
-      direction: 'lower',
+      direction: 'upper',
       stepSize: 1,
       timeWindow: 300,
       minReplicas: 0,
@@ -629,71 +629,72 @@ const AutoScalingRuleEditorModalContent: React.FC<{
             </Form.Item>
           </div>
         ) : (
-          <div
-            style={{
-              display: 'flex',
-              gap: token.marginXS,
-              alignItems: 'center',
-            }}
-          >
-            <Form.Item
-              name={'minThreshold'}
-              noStyle
-              rules={[
-                {
-                  required: true,
-                  message: t('autoScalingRule.MinThresholdRequired'),
-                },
-                {
-                  type: 'number',
-                  min: 0,
-                  message: t('autoScalingRule.ThresholdMustBeNonNegative'),
-                },
-              ]}
-            >
-              <InputNumber
-                placeholder={t('autoScalingRule.MinThreshold')}
-                style={{ flex: 1, width: '100%' }}
-                min={0}
-              />
-            </Form.Item>
-            <Typography.Text style={{ flexShrink: 0 }}>
-              {'<'} {t('autoScalingRule.Metric')} {'<'}
-            </Typography.Text>
-            <Form.Item
-              name={'maxThreshold'}
-              noStyle
-              dependencies={['minThreshold']}
-              rules={[
-                {
-                  required: true,
-                  message: t('autoScalingRule.MaxThresholdRequired'),
-                },
-                {
-                  type: 'number',
-                  min: 0,
-                  message: t('autoScalingRule.ThresholdMustBeNonNegative'),
-                },
-                ({ getFieldValue }) => ({
-                  validator(_, value) {
-                    const min = getFieldValue('minThreshold');
-                    if (min != null && value != null && min >= value) {
-                      return Promise.reject(
-                        new Error(t('autoScalingRule.MinMustBeLessThanMax')),
-                      );
-                    }
-                    return Promise.resolve();
+          <BAIFlex direction="column" gap={'xs'} align="start">
+            <BAIFlex align="center" gap="xs">
+              <Typography.Text style={{ flexShrink: 0 }}>
+                {t('autoScalingRule.Metric')} {'<'}
+              </Typography.Text>
+              <Form.Item
+                name={'minThreshold'}
+                noStyle
+                rules={[
+                  {
+                    required: true,
+                    message: t('autoScalingRule.MinThresholdRequired'),
                   },
-                }),
-              ]}
-            >
-              <InputNumber
-                placeholder={t('autoScalingRule.MaxThreshold')}
-                style={{ flex: 1, width: '100%' }}
-                min={0}
-              />
-            </Form.Item>
-          </div>
+                  {
+                    type: 'number',
+                    min: 0,
+                    message: t('autoScalingRule.ThresholdMustBeNonNegative'),
+                  },
+                ]}
+              >
+                <InputNumber
+                  placeholder={t('autoScalingRule.MinThreshold')}
+                  style={{ flex: 1, width: '100%' }}
+                  min={0}
+                />
+              </Form.Item>
+            </BAIFlex>
+            <BAIFlex align="center" gap="xs">
+              <Form.Item
+                name={'maxThreshold'}
+                noStyle
+                dependencies={['minThreshold']}
+                rules={[
+                  {
+                    required: true,
+                    message: t('autoScalingRule.MaxThresholdRequired'),
+                  },
+                  {
+                    type: 'number',
+                    min: 0,
+                    message: t('autoScalingRule.ThresholdMustBeNonNegative'),
+                  },
+                  ({ getFieldValue }) => ({
+                    validator(_, value) {
+                      const min = getFieldValue('minThreshold');
+                      if (min != null && value != null && min >= value) {
+                        return Promise.reject(
+                          new Error(t('autoScalingRule.MinMustBeLessThanMax')),
+                        );
+                      }
+                      return Promise.resolve();
+                    },
+                  }),
+                ]}
+              >
+                <InputNumber
+                  placeholder={t('autoScalingRule.MaxThreshold')}
+                  style={{ flex: 1, width: '100%' }}
+                  min={0}
+                />
+              </Form.Item>
+              <Typography.Text style={{ flexShrink: 0 }}>
+                {'<'} {t('autoScalingRule.Metric')}
+              </Typography.Text>
+            </BAIFlex>
+          </BAIFlex>
         )}
       </Form.Item>
 
@@ -923,8 +924,8 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
           minThreshold = values.minThreshold ?? null;
           maxThreshold = values.maxThreshold ?? null;
         } else {
-          // Single mode: 'lower' ('<') → maxThreshold; 'upper' ('>') → minThreshold
-          if (values.direction === 'lower') {
+          // Single mode: 'upper' ('>') → maxThreshold (scale out); 'lower' ('<') → minThreshold (scale in)
+          if (values.direction === 'upper') {
             maxThreshold = values.threshold ?? null;
           } else {
             minThreshold = values.threshold ?? null;

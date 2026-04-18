@@ -17,7 +17,16 @@ import {
   PlusOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
-import { App, Button, Card, Tag, Tooltip, Typography, theme } from 'antd';
+import {
+  App,
+  Button,
+  Card,
+  Divider,
+  Tag,
+  Tooltip,
+  Typography,
+  theme,
+} from 'antd';
 import {
   BAIFlex,
   BAIGraphQLPropertyFilter,
@@ -44,10 +53,10 @@ type AutoScalingRuleNode = NonNullable<
 >;
 
 /**
- * Renders the condition column with normalized `<` direction:
- * - maxThreshold only → `[metric_name] < [maxThreshold]`
- * - minThreshold only → `[minThreshold] < [metric_name]`
- * - Both set → `[minThreshold] < [metric_name] < [maxThreshold]`
+ * Renders the condition column showing when scaling triggers:
+ * - maxThreshold only → `[metric_name] > [maxThreshold]` (scale out)
+ * - minThreshold only → `[metric_name] < [minThreshold]` (scale in)
+ * - Both set → `[minThreshold] < [metric_name] < [maxThreshold]` (normal range; scaling fires outside)
  *
  * For PROMETHEUS rules, the tag shows the preset name (from presetMap) instead of
  * the raw metricName, since users select a preset — not the metric directly.
@@ -67,11 +76,12 @@ const renderCondition = (
   if (minThreshold != null && maxThreshold != null) {
     return (
       <BAIFlex gap={'xs'}>
-        {minThreshold}
-        <Tooltip title={t('autoScalingRule.MinThreshold')}>{'<'}</Tooltip>
         <Tag>{tagLabel}</Tag>
-        <Tooltip title={t('autoScalingRule.MaxThreshold')}>{'<'}</Tooltip>
+        {'< '}
+        {minThreshold} <Divider vertical />
         {maxThreshold}
+        {' >'}
+        <Tag>{tagLabel}</Tag>
       </BAIFlex>
     );
   }
@@ -80,7 +90,7 @@ const renderCondition = (
     return (
       <BAIFlex gap={'xs'}>
         <Tag>{tagLabel}</Tag>
-        <Tooltip title={t('autoScalingRule.MaxThreshold')}>{'<'}</Tooltip>
+        <Tooltip title={t('autoScalingRule.MaxThreshold')}>{'>'}</Tooltip>
         {maxThreshold}
       </BAIFlex>
     );
@@ -89,9 +99,9 @@ const renderCondition = (
   if (minThreshold != null) {
     return (
       <BAIFlex gap={'xs'}>
-        {minThreshold}
-        <Tooltip title={t('autoScalingRule.MinThreshold')}>{'<'}</Tooltip>
         <Tag>{tagLabel}</Tag>
+        <Tooltip title={t('autoScalingRule.MinThreshold')}>{'<'}</Tooltip>
+        {minThreshold}
       </BAIFlex>
     );
   }
