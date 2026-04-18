@@ -20,7 +20,7 @@ import {
   Form,
   FormInstance,
   InputNumber,
-  Segmented,
+  Radio,
   Select,
   Skeleton,
   Typography,
@@ -54,8 +54,7 @@ import {
   useMutation,
 } from 'react-relay';
 
-type ConditionMode = 'single' | 'range';
-type ThresholdDirection = 'upper' | 'lower';
+type ConditionMode = 'scale_in' | 'scale_out' | 'scale_in_out';
 
 interface AutoScalingRuleEditorModalProps extends Omit<
   BAIModalProps,
@@ -72,7 +71,6 @@ type AutoScalingRuleFormValues = {
   metricName: string;
   prometheusQueryPresetId?: string;
   conditionMode: ConditionMode;
-  direction: ThresholdDirection;
   threshold?: number;
   minThreshold?: number;
   maxThreshold?: number;
@@ -220,29 +218,25 @@ const PrometheusPresetPreview: React.FC<{
 };
 
 /**
- * Determines initial condition mode and direction from existing rule data.
+ * Determines the initial condition mode from existing rule data.
  *
- * Direction semantics match the list's "normal range" display:
- *   'lower' ('<'): Metric < maxThreshold — metric should stay BELOW the upper bound.
- *   'upper' ('>'): Metric > minThreshold — metric should stay ABOVE the lower bound.
- *
- * So maxThreshold → 'lower', minThreshold → 'upper' (mirrors the list column).
+ *   maxThreshold only set → 'scale_out' (trigger when maxThreshold < metric)
+ *   minThreshold only set → 'scale_in'  (trigger when metric < minThreshold)
+ *   both set              → 'scale_in_out'
  */
-const getInitialConditionState = (
+const getInitialConditionMode = (
   rule: AutoScalingRuleEditorModalFragment$data | null | undefined,
-): { mode: ConditionMode; direction: ThresholdDirection } => {
+): ConditionMode => {
   if (!rule) {
-    return { mode: 'single', direction: 'lower' };
+    return 'scale_out';
   }
   if (rule.minThreshold != null && rule.maxThreshold != null) {
-    return { mode: 'range', direction: 'upper' };
+    return 'scale_in_out';
   }
-  // minThreshold set → Metric > minThreshold → direction='upper'
-  if (rule.minThreshold != null) {
-    return { mode: 'single', direction: 'upper' };
+  if (rule.maxThreshold != null) {
+    return 'scale_out';
   }
-  // maxThreshold set (or neither) → Metric < maxThreshold → direction='lower'
-  return { mode: 'single', direction: 'lower' };
+  return 'scale_in';
 };
 
 /**
@@ -294,12 +288,8 @@ const AutoScalingRuleEditorModalContent: React.FC<{
     [prometheusQueryPresets],
   );
 
-  const initialCondition = getInitialConditionState(autoScalingRule);
   const [conditionMode, setConditionMode] = useState<ConditionMode>(
-    initialCondition.mode,
-  );
-  const [direction, setDirection] = useState<ThresholdDirection>(
-    initialCondition.direction,
+    getInitialConditionMode(autoScalingRule),
   );
   const [selectedMetricSource, setSelectedMetricSource] = useState<string>(
     autoScalingRule?.metricSource || 'KERNEL',
@@ -356,26 +346,21 @@ const AutoScalingRuleEditorModalContent: React.FC<{
   // Build initial form values from existing rule data
   const getInitialValues = (): Partial<AutoScalingRuleFormValues> => {
     if (autoScalingRule) {
-      const condition = getInitialConditionState(autoScalingRule);
+      const mode = getInitialConditionMode(autoScalingRule);
+      // In scale_in/scale_out modes, the single `threshold` field is bound to the
+      // corresponding min/max threshold from the rule.
       let threshold: number | undefined;
-      if (condition.mode === 'single') {
-        // 'lower' ('<') → maxThreshold; 'upper' ('>') → minThreshold
-        threshold =
-          condition.direction === 'lower'
-            ? autoScalingRule.maxThreshold != null
-              ? Number(autoScalingRule.maxThreshold)
-              : undefined
-            : autoScalingRule.minThreshold != null
-              ? Number(autoScalingRule.minThreshold)
-              : undefined;
+      if (mode === 'scale_in' && autoScalingRule.minThreshold != null) {
+        threshold = Number(autoScalingRule.minThreshold);
+      } else if (mode === 'scale_out' && autoScalingRule.maxThreshold != null) {
+        threshold = Number(autoScalingRule.maxThreshold);
       }
       return {
         metricSource:
           autoScalingRule.metricSource as AutoScalingRuleFormValues['metricSource'],
         metricName: autoScalingRule.metricName,
         prometheusQueryPresetId: selectedPresetId,
-        conditionMode: condition.mode,
-        direction: condition.direction,
+        conditionMode: mode,
         threshold,
         minThreshold:
           autoScalingRule.minThreshold != null
@@ -393,8 +378,7 @@ const AutoScalingRuleEditorModalContent: React.FC<{
     }
     return {
       metricSource: 'KERNEL',
-      conditionMode: 'single',
-      direction: 'lower',
+      conditionMode: 'scale_out',
       stepSize: 1,
       timeWindow: 300,
       minReplicas: 0,
@@ -554,58 +538,41 @@ const AutoScalingRuleEditorModalContent: React.FC<{
         </>
       )}
 
-      {/* Condition Mode (Single / Range) */}
+      {/* Condition Mode (Scale In / Scale Out / Scale In & Out) */}
       <Form.Item
         label={t('autoScalingRule.Condition')}
         required
         tooltip={t('autoScalingRule.ConditionTooltip')}
       >
         <Form.Item name={'conditionMode'} noStyle>
-          <Segmented
-            options={[
-              {
-                label: t('autoScalingRule.Single'),
-                value: 'single',
-              },
-              {
-                label: t('autoScalingRule.Range'),
-                value: 'range',
-              },
-            ]}
-            onChange={(value) => {
-              setConditionMode(value as ConditionMode);
+          <Radio.Group
+            optionType="button"
+            onChange={(e) => {
+              setConditionMode(e.target.value as ConditionMode);
             }}
             style={{ marginBottom: token.marginSM }}
+            options={[
+              {
+                label: t('autoScalingRule.ScaleIn'),
+                value: 'scale_in',
+              },
+              {
+                label: t('autoScalingRule.ScaleOut'),
+                value: 'scale_out',
+              },
+              {
+                label: t('autoScalingRule.ScaleInAndOut'),
+                value: 'scale_in_out',
+              },
+            ]}
           />
         </Form.Item>
 
-        {conditionMode === 'single' ? (
-          <div
-            style={{
-              display: 'flex',
-              gap: token.marginXS,
-              alignItems: 'center',
-            }}
-          >
+        {conditionMode === 'scale_in' && (
+          <BAIFlex align="center" gap="xs">
             <Typography.Text style={{ flexShrink: 0 }}>
-              {t('autoScalingRule.Metric')}
+              {t('autoScalingRule.Metric')} {'<'}
             </Typography.Text>
-            <Form.Item name={'direction'} noStyle rules={[{ required: true }]}>
-              <Select
-                style={{ width: 60 }}
-                onChange={(value) => setDirection(value as ThresholdDirection)}
-                options={[
-                  {
-                    label: '>',
-                    value: 'upper',
-                  },
-                  {
-                    label: '<',
-                    value: 'lower',
-                  },
-                ]}
-              />
-            </Form.Item>
             <Form.Item
               name={'threshold'}
               noStyle
@@ -622,69 +589,29 @@ const AutoScalingRuleEditorModalContent: React.FC<{
               ]}
             >
               <InputNumber
-                placeholder={t('autoScalingRule.Threshold')}
-                style={{ flex: 1, width: '100%' }}
-                min={0}
-              />
-            </Form.Item>
-          </div>
-        ) : (
-          <div
-            style={{
-              display: 'flex',
-              gap: token.marginXS,
-              alignItems: 'center',
-            }}
-          >
-            <Form.Item
-              name={'minThreshold'}
-              noStyle
-              rules={[
-                {
-                  required: true,
-                  message: t('autoScalingRule.MinThresholdRequired'),
-                },
-                {
-                  type: 'number',
-                  min: 0,
-                  message: t('autoScalingRule.ThresholdMustBeNonNegative'),
-                },
-              ]}
-            >
-              <InputNumber
                 placeholder={t('autoScalingRule.MinThreshold')}
                 style={{ flex: 1, width: '100%' }}
                 min={0}
               />
             </Form.Item>
-            <Typography.Text style={{ flexShrink: 0 }}>
-              {'<'} {t('autoScalingRule.Metric')} {'<'}
-            </Typography.Text>
+          </BAIFlex>
+        )}
+
+        {conditionMode === 'scale_out' && (
+          <BAIFlex align="center" gap="xs">
             <Form.Item
-              name={'maxThreshold'}
+              name={'threshold'}
               noStyle
-              dependencies={['minThreshold']}
               rules={[
                 {
                   required: true,
-                  message: t('autoScalingRule.MaxThresholdRequired'),
+                  message: t('autoScalingRule.ThresholdRequired'),
                 },
                 {
                   type: 'number',
                   min: 0,
                   message: t('autoScalingRule.ThresholdMustBeNonNegative'),
                 },
-                ({ getFieldValue }) => ({
-                  validator(_, value) {
-                    const min = getFieldValue('minThreshold');
-                    if (min != null && value != null && min >= value) {
-                      return Promise.reject(
-                        new Error(t('autoScalingRule.MinMustBeLessThanMax')),
-                      );
-                    }
-                    return Promise.resolve();
-                  },
-                }),
               ]}
             >
               <InputNumber
@@ -693,7 +620,79 @@ const AutoScalingRuleEditorModalContent: React.FC<{
                 min={0}
               />
             </Form.Item>
-          </div>
+            <Typography.Text style={{ flexShrink: 0 }}>
+              {'<'} {t('autoScalingRule.Metric')}
+            </Typography.Text>
+          </BAIFlex>
+        )}
+
+        {conditionMode === 'scale_in_out' && (
+          <BAIFlex direction="column" gap={'xs'} align="stretch">
+            <BAIFlex align="center" gap="xs">
+              <Typography.Text style={{ flexShrink: 0 }}>
+                {t('autoScalingRule.Metric')} {'<'}
+              </Typography.Text>
+              <Form.Item
+                name={'minThreshold'}
+                noStyle
+                rules={[
+                  {
+                    required: true,
+                    message: t('autoScalingRule.MinThresholdRequired'),
+                  },
+                  {
+                    type: 'number',
+                    min: 0,
+                    message: t('autoScalingRule.ThresholdMustBeNonNegative'),
+                  },
+                ]}
+              >
+                <InputNumber
+                  placeholder={t('autoScalingRule.MinThreshold')}
+                  style={{ flex: 1, width: '100%' }}
+                  min={0}
+                />
+              </Form.Item>
+            </BAIFlex>
+            <BAIFlex align="center" gap="xs">
+              <Form.Item
+                name={'maxThreshold'}
+                noStyle
+                dependencies={['minThreshold']}
+                rules={[
+                  {
+                    required: true,
+                    message: t('autoScalingRule.MaxThresholdRequired'),
+                  },
+                  {
+                    type: 'number',
+                    min: 0,
+                    message: t('autoScalingRule.ThresholdMustBeNonNegative'),
+                  },
+                  ({ getFieldValue }) => ({
+                    validator(_, value) {
+                      const min = getFieldValue('minThreshold');
+                      if (min != null && value != null && min >= value) {
+                        return Promise.reject(
+                          new Error(t('autoScalingRule.MinMustBeLessThanMax')),
+                        );
+                      }
+                      return Promise.resolve();
+                    },
+                  }),
+                ]}
+              >
+                <InputNumber
+                  placeholder={t('autoScalingRule.MaxThreshold')}
+                  style={{ flex: 1, width: '100%' }}
+                  min={0}
+                />
+              </Form.Item>
+              <Typography.Text style={{ flexShrink: 0 }}>
+                {'<'} {t('autoScalingRule.Metric')}
+              </Typography.Text>
+            </BAIFlex>
+          </BAIFlex>
         )}
       </Form.Item>
 
@@ -727,9 +726,9 @@ const AutoScalingRuleEditorModalContent: React.FC<{
           style={{ width: '100%' }}
           prefix={
             <Typography.Text type="secondary">
-              {conditionMode === 'range'
+              {conditionMode === 'scale_in_out'
                 ? '±'
-                : direction === 'upper'
+                : conditionMode === 'scale_out'
                   ? '+'
                   : '−'}
             </Typography.Text>
@@ -919,16 +918,15 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
         let minThreshold: number | null = null;
         let maxThreshold: number | null = null;
 
-        if (values.conditionMode === 'range') {
+        if (values.conditionMode === 'scale_in_out') {
           minThreshold = values.minThreshold ?? null;
           maxThreshold = values.maxThreshold ?? null;
+        } else if (values.conditionMode === 'scale_in') {
+          // Metric < minThreshold
+          minThreshold = values.threshold ?? null;
         } else {
-          // Single mode: 'lower' ('<') → maxThreshold; 'upper' ('>') → minThreshold
-          if (values.direction === 'lower') {
-            maxThreshold = values.threshold ?? null;
-          } else {
-            minThreshold = values.threshold ?? null;
-          }
+          // 'scale_out': maxThreshold < Metric
+          maxThreshold = values.threshold ?? null;
         }
 
         // metricName is always set in the form (auto-filled for PROMETHEUS presets)
