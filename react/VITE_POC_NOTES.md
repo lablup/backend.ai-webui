@@ -77,10 +77,42 @@ Fix:
 
 (Each of these gets its own sub-issue under FR-2605.)
 
-- Production `vite build` output parity with the current `craco build` (FR-2608)
-- Workbox `GenerateSW` replacement (`vite-plugin-pwa`) (FR-2608)
 - Jest → Vitest migration (FR-2609)
 - CI pipeline updates (FR-2611)
+
+## Production `vite build` + Workbox PWA — landed (FR-2608)
+
+`pnpm --prefix ./react run vite:build` now produces a working web build with a generated service worker. Output goes to `react/build/`, same directory the craco pipeline uses.
+
+### What was added
+
+- `react/index.html` — a throwaway build-entry stub. Vite requires an HTML at `root/` so it can parse the app entry; `projectRootStaticPlugin`'s `transformIndexHtml` replaces the stub's content with the real project-root `index.html` at build AND serve time.
+- `vite-plugin-pwa` (`strategies: 'generateSW'`) — mirrors the craco-era `workbox-webpack-plugin@7.4.0 GenerateSW` options:
+  - `skipWaiting: true`, `clientsClaim: true`
+  - `maximumFileSizeToCacheInBytes: 5 MB`
+  - Excludes `*.map` and `asset-manifest.json`
+  - `injectRegister: false` — the project-root `index.html` registers `/sw.js` itself (see index.html:126-131), so the plugin must NOT emit its own registration script.
+- `transformIndexHtml` is now dev/build aware via `ctx.server`:
+  - Dev: strips `// DEV_JS_INJECTING` → NODE_ENV shim, empties `{{nonce}}` placeholders.
+  - Build: removes the dev-only marker line, but **preserves `{{nonce}}` placeholders** so the backend's CSP middleware can substitute them per-request.
+
+### Measurements
+
+- Build time: `37.5s` end-to-end (vs. craco's ~1.5–2min observed on the same tree).
+- Output size: `84 MB` of Vite-emitted artefacts in `react/build/`. Not directly comparable to craco's `build/web/` which includes `resources/` + `manifest/` copies from the top-level `pnpm run build` orchestrator; the Vite output does not yet copy those static dirs.
+- Service worker precaches 462 entries (22.7 MiB). Generated as `sw.js` + `workbox-*.js` runtime chunk, same shape as the craco output.
+- Biggest single chunk: 3.89 MB (`index-*.js`). Matches the current webpack footprint within noise — no regression. Code-splitting audit is not part of Phase 2.
+
+### Known follow-ups for FR-2611 (CI pipeline)
+
+- `pnpm run build` orchestrator still drives `craco build`. The CI task needs to swap that for `vite:build` AND update the `Makefile` dep target whose sanity grep (`grep -q 'es6://static/js/main' react/build/index.html`) matches webpack-era paths; Vite emits `es6://assets/index-*.js`.
+- `vite-plugin-pwa` auto-generates a `manifest.webmanifest` with default values (`name: "backend-ai-webui-react"`, `theme_color: "#42b883"`). The project's real `manifest/` dir is authoritative and gets copied by `pnpm run copyresource`. The auto-generated manifest is cosmetic for the PoC but should be disabled or pointed at the real one in the integration step.
+- Static asset copying (`resources/`, `manifest/`, `config.toml`, `version.json`, `manifest.json` → `build/web/`) is currently done by `copyresource`/`copyconfig` scripts at the top-level build orchestrator. Vite's build on its own does NOT perform these copies. Integrating via `public/` symlinks or a Vite plugin is a small follow-up.
+
+### Verified side-effects (no regression)
+
+- Dev smoke (`e2e/vite-poc-smoke.spec.ts`) still passes after adding build support — i18n renders, no new console errors.
+- `projectRootStaticPlugin`'s middleware + `devAssetsReloadPlugin` remain `apply: 'serve'` and do not affect the build output.
 
 ## fs.watch dev-reload middleware — landed (FR-2610)
 
