@@ -1,18 +1,19 @@
 import { useRuntimeEnvVarConfigs } from './useVariantConfigs';
 import { renderHook } from '@testing-library/react';
 import { useTranslation } from 'react-i18next';
+import type { Mock } from 'vitest';
 
 // Mock react-i18next
-jest.mock('react-i18next', () => ({
-  useTranslation: jest.fn(),
+vi.mock('react-i18next', () => ({
+  useTranslation: vi.fn(),
 }));
 
 describe('useRuntimeEnvVarConfigs', () => {
-  const mockT = jest.fn((key: string) => key);
+  const mockT = vi.fn((key: string) => key);
 
   beforeEach(() => {
-    jest.clearAllMocks();
-    (useTranslation as jest.Mock).mockReturnValue({
+    vi.clearAllMocks();
+    (useTranslation as Mock).mockReturnValue({
       t: mockT,
       i18n: {},
     });

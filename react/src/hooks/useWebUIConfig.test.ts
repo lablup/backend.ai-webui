@@ -33,7 +33,7 @@ function mockFetch(
   body: string,
   contentType: string = 'application/octet-stream',
 ): void {
-  global.fetch = jest.fn().mockResolvedValue({
+  global.fetch = vi.fn().mockResolvedValue({
     status,
     text: () => Promise.resolve(body),
     headers: new Headers({ 'content-type': contentType }),
@@ -46,7 +46,7 @@ function mockFetch(
 
 describe('fetchAndParseConfig', () => {
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   it('returns null config when fetch response status is not 200', async () => {
@@ -57,7 +57,7 @@ describe('fetchAndParseConfig', () => {
   });
 
   it('returns null config without error when fetch throws (network failure)', async () => {
-    global.fetch = jest.fn().mockRejectedValue(new Error('Network error'));
+    global.fetch = vi.fn().mockRejectedValue(new Error('Network error'));
     const result = await fetchAndParseConfig('/config.toml');
     expect(result.config).toBeNull();
     expect(result.error).toBeUndefined();
@@ -229,7 +229,7 @@ debug = true
 
 describe('preprocessToml via fetchAndParseConfig', () => {
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   it('does not modify config when general section is absent', async () => {

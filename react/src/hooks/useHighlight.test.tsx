@@ -3,30 +3,31 @@ import { useThemeMode } from './useThemeMode';
 import { renderHook, waitFor } from '@testing-library/react';
 import { useBAILogger } from 'backend.ai-ui';
 import { codeToHtml } from 'shiki';
+import type { Mock } from 'vitest';
 
 // Mock dependencies
-jest.mock('./useThemeMode');
-jest.mock('backend.ai-ui', () => ({
-  useBAILogger: jest.fn(),
+vi.mock('./useThemeMode');
+vi.mock('backend.ai-ui', () => ({
+  useBAILogger: vi.fn(),
 }));
-jest.mock('shiki', () => ({
-  codeToHtml: jest.fn(),
+vi.mock('shiki', () => ({
+  codeToHtml: vi.fn(),
 }));
 
 describe('useHighlight', () => {
   const mockLogger = {
-    error: jest.fn(),
-    log: jest.fn(),
-    warn: jest.fn(),
-    info: jest.fn(),
-    debug: jest.fn(),
+    error: vi.fn(),
+    log: vi.fn(),
+    warn: vi.fn(),
+    info: vi.fn(),
+    debug: vi.fn(),
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
-    (useBAILogger as jest.Mock).mockReturnValue({ logger: mockLogger });
-    (useThemeMode as jest.Mock).mockReturnValue({ isDarkMode: false });
-    (codeToHtml as jest.Mock).mockResolvedValue('<code>highlighted</code>');
+    vi.clearAllMocks();
+    (useBAILogger as Mock).mockReturnValue({ logger: mockLogger });
+    (useThemeMode as Mock).mockReturnValue({ isDarkMode: false });
+    (codeToHtml as Mock).mockResolvedValue('<code>highlighted</code>');
   });
 
   describe('Basic Functionality', () => {
@@ -71,7 +72,7 @@ describe('useHighlight', () => {
 
   describe('Theme Mode Support', () => {
     it('should use dark theme when dark mode is enabled', async () => {
-      (useThemeMode as jest.Mock).mockReturnValue({ isDarkMode: true });
+      (useThemeMode as Mock).mockReturnValue({ isDarkMode: true });
 
       const { result } = renderHook(() =>
         useHighlight('const x = 1;', 'javascript'),
@@ -103,8 +104,8 @@ describe('useHighlight', () => {
       const testLanguages = ['javascript', 'typescript', 'python', 'java'];
 
       for (const lang of testLanguages) {
-        jest.clearAllMocks();
-        (codeToHtml as jest.Mock).mockResolvedValue('<code>highlighted</code>');
+        vi.clearAllMocks();
+        (codeToHtml as Mock).mockResolvedValue('<code>highlighted</code>');
 
         const { result } = renderHook(() => useHighlight('test code', lang));
 
@@ -121,8 +122,8 @@ describe('useHighlight', () => {
       const testLanguages = ['html', 'xml', 'markdown', 'yaml'];
 
       for (const lang of testLanguages) {
-        jest.clearAllMocks();
-        (codeToHtml as jest.Mock).mockResolvedValue('<code>highlighted</code>');
+        vi.clearAllMocks();
+        (codeToHtml as Mock).mockResolvedValue('<code>highlighted</code>');
 
         const { result } = renderHook(() => useHighlight('test markup', lang));
 
@@ -139,8 +140,8 @@ describe('useHighlight', () => {
       const testLanguages = ['bash', 'shell', 'sh'];
 
       for (const lang of testLanguages) {
-        jest.clearAllMocks();
-        (codeToHtml as jest.Mock).mockResolvedValue('<code>highlighted</code>');
+        vi.clearAllMocks();
+        (codeToHtml as Mock).mockResolvedValue('<code>highlighted</code>');
 
         const { result } = renderHook(() => useHighlight('echo "test"', lang));
 
@@ -161,8 +162,8 @@ describe('useHighlight', () => {
       ];
 
       for (const { alias, expected } of testAliases) {
-        jest.clearAllMocks();
-        (codeToHtml as jest.Mock).mockResolvedValue('<code>highlighted</code>');
+        vi.clearAllMocks();
+        (codeToHtml as Mock).mockResolvedValue('<code>highlighted</code>');
 
         const { result } = renderHook(() => useHighlight('test code', alias));
 

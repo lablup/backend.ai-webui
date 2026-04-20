@@ -831,8 +831,8 @@ describe('newLineToBrElement', () => {
 describe('baiSignedRequestWithPromise', () => {
   it('should call client methods when client is provided', () => {
     const mockClient = {
-      newSignedRequest: jest.fn().mockReturnValue('mockRequest'),
-      _wrapWithPromise: jest.fn().mockReturnValue('mockPromise'),
+      newSignedRequest: vi.fn().mockReturnValue('mockRequest'),
+      _wrapWithPromise: vi.fn().mockReturnValue('mockPromise'),
     };
 
     const result = baiSignedRequestWithPromise({
@@ -854,8 +854,8 @@ describe('baiSignedRequestWithPromise', () => {
 
   it('should handle body parameter', () => {
     const mockClient = {
-      newSignedRequest: jest.fn().mockReturnValue('mockRequest'),
-      _wrapWithPromise: jest.fn().mockReturnValue('mockPromise'),
+      newSignedRequest: vi.fn().mockReturnValue('mockRequest'),
+      _wrapWithPromise: vi.fn().mockReturnValue('mockPromise'),
     };
 
     baiSignedRequestWithPromise({

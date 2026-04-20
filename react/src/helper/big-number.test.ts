@@ -3,7 +3,6 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { BigNumber } from './big-number';
-import { expect } from '@jest/globals';
 import Big from 'big.js';
 
 declare module '@jest/expect' {
