@@ -54,8 +54,24 @@ These appeared during the PoC and should be tracked separately:
 
 1. **`PluginLoader.tsx` dynamic import warning** — `import(pluginUrl /* webpackIgnore: true */)` is not understood by Vite. Needs `/* @vite-ignore */` in the Vite migration (or a different plugin-loading strategy).
 2. **Static resources are served via a small custom middleware**. Craco's dev server had richer behaviour (fs.watch on `config.toml`, `resources/i18n/**`, `resources/theme.json` → full page reload). A follow-up sub-issue should port that behaviour to a Vite plugin.
-3. **No visual sanity check** — this PoC verified every transform and HMR mechanism by curl + log inspection, but we did not open the app in a browser and confirm it mounts end-to-end against a running Backend.AI cluster. A short Playwright smoke test would close that gap.
-4. **`backend.ai-client-esm` watcher behaviour** — the alias resolves, but the root `tsc --watch` → Vite re-serve loop was not stress-tested.
+3. **`backend.ai-client-esm` watcher behaviour** — the alias resolves, but the root `tsc --watch` → Vite re-serve loop was not stress-tested.
+4. **Pre-existing console warnings surfaced by the smoke test** — `antd: Dropdown overlayStyle` (antd v6 migration) and `-webkit-app-region` (antd-style + React 19 warning). These existed before the Vite migration but are now visible; the smoke test allowlists them.
+
+## i18n isolation — extra Phase 1 work landed here
+
+Initial browser smoke showed host-app translation keys (`login.SessionMode`, etc.) rendering as raw strings. Root cause diagnosed and fixed:
+
+- BUI designs for two separate `i18next` instances (host + BUI) — each `<I18nextProvider>` is supposed to scope to a different React Context object. Under CRA this worked because pnpm splits `react-i18next` by peer-dep version (typescript@5.7.3 for react/, @5.9.3 for BUI), giving two physical copies of the module, each with its own `React.createContext(...)`.
+- Vite's dep optimizer dedupes by bare name, collapsing both copies into one bundled chunk → one Context object. BUI's `<I18nextProvider>` then leaks into host components and resolves host keys against BUI's resource set (BUI keys only) → raw keys render.
+
+Fix:
+
+1. `optimizeDeps.exclude: ['i18next', 'react-i18next']` — skip these from Vite's dep pre-bundling so each pnpm store path remains a distinct module.
+2. Add ESM shims (`react/vite-shims/void-elements.mjs`, `use-sync-external-store-shim.mjs`) aliased to replace the CJS transitive deps of `react-i18next`. Without these shims, excluding `react-i18next` leaves those leaves without CJS→ESM transform and the browser's native ESM parser rejects them.
+3. Verified via Playwright smoke (`e2e/vite-poc-smoke.spec.ts`):
+   - `packages/backend.ai-ui/src/components/BAIText.tsx` resolves `react-i18next` from the `typescript@5.9.3` store.
+   - `react/src/components/LoginView.tsx` resolves `react-i18next` from the `typescript@5.7.3` store.
+   - Host page renders English translations (not raw keys).
 
 ## Not validated in this PoC
 
