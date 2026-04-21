@@ -41,7 +41,7 @@
 | 3 | 헬스 색상 구분 | UNHEALTHY → **red/error**, DEGRADED → **amber/warning** |
 | 4 | Route vs Replica | Route는 내부 구현 개념. UI에서는 **Replicas**로만 노출. 헬스/트래픽 상태는 각 Replica의 속성으로 표시 |
 | 5 | Active Pool 위치 | Deployment 상세 페이지 **Overview 섹션** (메인 본문 상단)에 배치 |
-| 6 | 최소 백엔드 버전 | **26.4.2** |
+| 6 | 최소 백엔드 버전 | **26.4.2**. `sessionV2`(26.4.3+) 같은 상위 버전 필드는 optional 처리하고 `@since` 디렉티브 또는 런타임 가드로 감싼다 |
 | 7 | 구버전 컴포넌트 처리 | 구버전 Graphene 기반 페이지/컴포넌트는 **그대로 유지** (fallback 라우팅용). 신규 컴포넌트는 처음부터 새로 작성 |
 | 8 | 편집 = 새 리비전 | 설정 변경 시 덮어쓰기 없음. `addModelRevision` mutation으로 새 리비전 스냅샷 생성 |
 
@@ -109,6 +109,20 @@ ModelReplica (Strawberry GQL 타입)
 
 ---
 
+## ID 명명 규칙
+
+스펙 전반에서 배포 식별자를 명확히 구분합니다.
+
+| 용도 | 이름 | 타입 | 설명 |
+|------|------|------|------|
+| URL 경로 파라미터 | `:deploymentId` | UUID (문자열) | `ModelDeployment.endpointId` 값 (사용자에게 노출되는 안정된 식별자, 기존 endpoint UUID와 동일) |
+| GraphQL 쿼리/뮤테이션 입력 | `$deploymentId` | `ID!` (GlobalID) | `toGlobalId('ModelDeployment', uuid)`로 UUID를 Relay GlobalID로 변환하여 전달 |
+| 레거시 리디렉션 소스 | `:endpointId` / `:serviceId` | UUID | 기존 URL의 파라미터 이름 유지 (리디렉션 대상에서도 같은 UUID 값을 `:deploymentId`로 매핑) |
+
+**일관성 원칙**: 신규 URL에서는 항상 `:deploymentId`를 사용하고, 레거시 리디렉션 코드에서도 파라미터 값을 그대로 `:deploymentId` 자리에 넣는다.
+
+---
+
 ## API 버전 분기 전략
 
 버전 분기는 **라우팅 레벨에서만** 처리합니다. 개별 컴포넌트 내에서 dual-support하지 않습니다.
@@ -151,7 +165,7 @@ if (this.isManagerVersionCompatibleWith('26.4.2')) {
 │ (새 배포 생성)            │  │ (배포 상세)            │
 │ /deployments/create    │  │ /deployments/:id     │
 └────────────────────────┘  └──────────────────────┘
-        │                         │  "Edit" 버튼 클릭
+        │                         │  "Edit Configuration" 클릭
         │ 생성 성공                │
         │                         ▼
         │                ┌────────────────────────┐
@@ -168,7 +182,7 @@ if (this.isManagerVersionCompatibleWith('26.4.2')) {
         │
         ▼
 ┌──────────────────────────┐
-│ AdminDeploymentListPage  │  /admin/deployments
+│ AdminDeploymentListPage  │  /admin-deployments
 │ (전체 배포 목록)            │
 └──────────────────────────┘
         │ 행 클릭
@@ -283,7 +297,8 @@ DeploymentDetailPage (동일)
 **페이지: `DeploymentDetailPage` (`/deployments/:id`)**
 
 사용자 경험:
-- 헤더: 배포 이름, 상태 배지, Endpoint URL 복사 버튼, "Edit" 버튼, "Delete" 버튼
+- 헤더: 배포 이름, 상태 배지, Endpoint URL 복사 버튼, "Delete" 버튼
+  > "Edit" 진입점은 Overview 섹션의 **"Edit Configuration"** 버튼 하나로 통일. 헤더에는 별도 Edit 버튼 없음
 
 **Overview 섹션** (메인 본문 상단, 탭 밖):
 
@@ -297,12 +312,24 @@ DeploymentDetailPage (동일)
 │  [○ Replica 3]  UNHEALTHY Rev. abc123  (트래픽 차단)  red      │
 │  [○ Replica 4]  DEGRADED  Rev. abc123  (유예 중)     amber    │
 └─────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────┐
+│  Configuration                       [Edit Configuration]   │
+├─────────────────────────────────────┬───────────────────────┤
+│  Image                              │  vllm:latest          │
+│  Model                              │  my-llama-model       │
+│  Cluster Mode / Size                │  single / 1           │
+│  Replicas                           │  3                    │
+│  Resource Group                     │  default              │
+│  Resources                          │  GPU 1, CPU 4, 16 GiB │
+└─────────────────────────────────────┴───────────────────────┘
 ```
 
 - `healthStatus = HEALTHY` AND `trafficStatus = ACTIVE`인 레플리카: Active Pool 포함, 정상 표시
 - 그 외 레플리카: "트래픽 미수신" 시각적 표시 (점선 테두리 또는 dim)
 - DEGRADED: amber 경고 표시 (유예 중, 트래픽 차단)
 - UNHEALTHY: red 오류 표시 (확정 비정상, 트래픽 차단)
+- Configuration 카드: 현재 Active 리비전의 설정 요약 (읽기 전용). "Edit Configuration" 버튼 → Flow 4
 
 **탭 구성**:
 
@@ -310,22 +337,17 @@ DeploymentDetailPage (동일)
 |----|------|
 | Replicas | 전체 레플리카 목록 + 헬스 상태 |
 | Revision History | 리비전 목록 + Rollback 버튼 |
-| Settings | 현재 설정 요약 + "Edit Configuration" 버튼 |
 | Access Tokens | 토큰 목록 + 생성/삭제 |
 | Auto-scaling | 규칙 목록 + 생성/편집/삭제 |
 
 **Replicas 탭**:
 - 각 행: `replicaId`, `healthStatus` (`ReplicaStatusTag`), `trafficStatus`, `trafficRatio`, `revision`, `createdAt`
 - 행 클릭 시 Replica 상세 Drawer 오픈
-- Drawer 내용: `livenessStatus`, `readinessStatus`, `activenessStatus`, `sessionId` (Session 링크), `revisionId`, `createdAt`
+- Drawer 내용: `readinessStatus`, `livenessStatus`, `activenessStatus`, `sessionId` (Session 링크), `revisionId`, `createdAt`
 
 **Revision History 탭**:
 - 리비전 목록: 번호, 생성일, 이미지, 리소스 요약
 - 각 리비전에 "Rollback" 버튼 표시 → Flow 5
-
-**Settings 탭**:
-- 현재 Active 리비전의 설정 요약 (읽기 전용)
-- "Edit Configuration" 버튼 → Flow 4 (편집 페이지)
 
 **Access Tokens 탭**:
 - 토큰 목록 표시
@@ -338,18 +360,17 @@ DeploymentDetailPage (동일)
 
 구현 요구사항:
 - [ ] `DeploymentDetailPage.tsx` 신규 생성 (Strawberry API 기반)
-- [ ] `DeploymentActivePoolSection.tsx` 신규 생성 (Overview 섹션 내 Active Pool 시각화)
+- [ ] `DeploymentActivePoolSection.tsx` 신규 생성 (Overview 섹션 — Active Pool 시각화 + Configuration 카드 + "Edit Configuration" 버튼)
 - [ ] `ReplicaStatusTag.tsx` 신규 생성 (Replica 헬스 상태 태그, 아래 별도 스펙 참조)
 - [ ] `DeploymentReplicasTab.tsx` 신규 생성 (Replicas 탭)
 - [ ] `DeploymentRevisionHistoryTab.tsx` 신규 생성 (Revision History 탭)
-- [ ] `DeploymentSettingsTab.tsx` 신규 생성 (Settings 탭)
 - [ ] `DeploymentAccessTokensTab.tsx` 신규 생성 (Access Tokens 탭, 기존 `EndpointTokenGenerationModal` 로직 참조하여 새로 구현)
 - [ ] `DeploymentAutoScalingTab.tsx` 신규 생성 (Auto-scaling 탭)
 - [ ] `DeploymentOwnerInfo.tsx` 신규 생성 (소유자 정보, 기존 `EndpointOwnerInfo` 로직 참조하여 새로 구현)
 - [ ] Replica 상세 Drawer 구현 (Replicas 탭 내)
 - [ ] **활성 탭 URL 동기화** (`nuqs` `useQueryStates` 사용): 새로고침·공유 후에도 탭 위치 유지
   ```ts
-  const tabValues = ['replicas', 'revision-history', 'settings', 'access-tokens', 'auto-scaling'] as const;
+  const tabValues = ['replicas', 'revision-history', 'access-tokens', 'auto-scaling'] as const;
   const [{ tab }, setTab] = useQueryStates({
     tab: parseAsStringLiteral(tabValues).withDefault('replicas'),
   });
@@ -360,7 +381,7 @@ DeploymentDetailPage (동일)
 
 #### Flow 4: 배포 설정 편집 (Edit Deployment)
 
-사용자가 상세 페이지의 "Edit" 버튼 또는 Settings 탭의 "Edit Configuration" 버튼을 클릭합니다.
+사용자가 Overview 섹션의 "Edit Configuration" 버튼을 클릭합니다.
 
 **페이지: `DeploymentLauncherPage` (`/deployments/:id/edit`)**
 
@@ -402,7 +423,7 @@ DeploymentDetailPage (동일)
 
 #### Flow 6: 관리자 배포 목록 (Admin Deployments)
 
-**페이지: `AdminDeploymentListPage` (`/admin/deployments`)**
+**페이지: `AdminDeploymentListPage` (`/admin-deployments`)**
 
 사용자 경험:
 - 전체 사용자/프로젝트의 배포 목록 표시
@@ -410,7 +431,7 @@ DeploymentDetailPage (동일)
 - Flow 1과 동일한 테이블 구조 + 관리자용 추가 컬럼
 
 구현 요구사항:
-- [ ] `AdminDeploymentListPage.tsx` 신규 생성 (`/admin/deployments` 경로)
+- [ ] `AdminDeploymentListPage.tsx` 신규 생성 (`/admin-deployments` 경로, 기존 `/admin-serving`, `/admin-session` 컨벤션과 일치)
 - [ ] `adminDeploymentsV2` query 사용
 - [ ] 소유자 정보 표시 (`DeploymentOwnerInfo` 컴포넌트)
 
@@ -419,7 +440,7 @@ DeploymentDetailPage (동일)
 #### URL 경로 변경 + Fallback 리디렉션
 
 - [ ] URL 경로 `/serving` → `/deployments`로 변경
-- [ ] `/serving/:serviceId` → `/deployments/:serviceId`로 변경
+- [ ] `/serving/:serviceId` → `/deployments/:deploymentId`로 변경 (값은 동일 UUID, 파라미터 이름만 통일)
 - [ ] 기존 경로 fallback 리디렉션 추가 (북마크/외부 링크 호환성 유지)
   ```tsx
   { path: '/serving', Component: () => <WebUINavigate to="/deployments" replace /> },
@@ -428,15 +449,19 @@ DeploymentDetailPage (동일)
       return <WebUINavigate to={`/deployments/${serviceId}`} replace />;
   }},
   ```
-- [ ] `/admin-serving` → `/admin-deployments`로 변경 (동일 패턴 fallback 유지)
+- [ ] `/admin-serving` → `/admin-deployments`로 변경 (하이픈 컨벤션 유지)
+  ```tsx
+  { path: '/admin-serving', Component: () => <WebUINavigate to="/admin-deployments" replace /> },
+  ```
 - [ ] Launcher URL 변경:
   - Create: `/service/start` → `/deployments/create`
-  - Edit: `/service/update/:endpointId` → `/deployments/:deploymentId/edit`
+  - Edit: `/service/update/:endpointId` → `/deployments/:deploymentId/edit` (값은 동일 UUID)
   - 기존 경로 fallback 리디렉션 추가:
     ```tsx
     { path: '/service/start', Component: () => <WebUINavigate to="/deployments/create" replace /> },
     { path: '/service/update/:endpointId', Component: () => {
         const { endpointId } = useParams();
+        // 기존 endpoint UUID를 신규 :deploymentId 자리에 그대로 전달
         return <WebUINavigate to={`/deployments/${endpointId}/edit`} replace />;
     }},
     ```
@@ -487,7 +512,7 @@ export interface ReplicaStatusTagProps extends Omit<BAITagProps, 'color'> {
   "modelService": {
     "DeploymentId": "Deployment ID",
     "DeploymentName": "Deployment Name",
-    "StartNewDeployment": "New Deployment",
+    "NewDeployment": "New Deployment",
     "Deployments": "Deployments",
     "DeploymentDetail": "Deployment Detail",
     "Replicas": "Replicas",
@@ -509,7 +534,7 @@ export interface ReplicaStatusTagProps extends Omit<BAITagProps, 'color'> {
     "RollbackConfirm": "Are you sure you want to rollback to Revision #{{revisionNumber}}? The current revision will be replaced.",
     "RollbackSuccess": "Rollback to Revision #{{revisionNumber}} has been requested.",
     "TrafficSplit": "Traffic Split",
-    "CreateNewDeployment": "Create New Deployment",
+    "EditConfiguration": "Edit Configuration",
     "EditDeployment": "Edit Deployment",
     "NewRevisionWillBeCreated": "Saving will create a new Revision. The previous Revision will be preserved.",
     "NewRevisionWillBeCreatedConfirm": "A new Revision will be created. Continue?",
@@ -546,8 +571,8 @@ export interface ReplicaStatusTagProps extends Omit<BAITagProps, 'color'> {
 제출 흐름:
 - `createModelDeployment` mutation → `deploymentId` 반환
 - `addModelRevision` mutation (minimal config, `deployment-config.yaml` 기반)
-- 백그라운드에서 레플리카 준비 상태 폴링 (신규 API: `GET /v2/deployments/:id` 또는 GQL `deployment.activeReplicas` 확인)
-- 기존: `GET /services/:endpoint_id` active_routes 폴링 → 신규 API로 교체
+- 백그라운드에서 레플리카 준비 상태 폴링 (GQL `deployment { activeReplicas replicas }` 필드 사용)
+- 기존: `GET /services/:endpoint_id` active_routes 폴링 → GQL 폴링으로 교체
 
 구현 요구사항:
 - [ ] `useDeploymentLauncher.ts` 신규 생성 (기존 `useModelServiceLauncher.ts` 대체)
@@ -595,7 +620,6 @@ react/src/components/
   DeploymentActivePoolSection.tsx      # Active Pool 시각화 섹션
   DeploymentReplicasTab.tsx            # Replicas 탭
   DeploymentRevisionHistoryTab.tsx     # Revision History 탭
-  DeploymentSettingsTab.tsx            # Settings 탭
   DeploymentAccessTokensTab.tsx        # Access Tokens 탭
   DeploymentAutoScalingTab.tsx         # Auto-scaling 탭
   DeploymentOwnerInfo.tsx              # 소유자 정보
@@ -674,7 +698,7 @@ type Route {
   createdAt: DateTime
   errorData: JSON
   deployment: ModelDeployment!
-  sessionV2: SessionV2              # since 26.4.3
+  sessionV2: SessionV2              # since 26.4.3 — optional, @since gate required in UI
   revision: ModelRevision
 }
 ```
@@ -690,7 +714,7 @@ type ModelReplica {
   livenessStatus: LivenessStatus!      # NOT_CHECKED | HEALTHY | UNHEALTHY | DEGRADED
   activenessStatus: ActivenessStatus!  # ACTIVE | INACTIVE
   createdAt: DateTime!
-  sessionV2: SessionV2                 # since 26.4.3
+  sessionV2: SessionV2                 # since 26.4.3 — optional, @since gate required in UI
   revision: ModelRevision!
 }
 ```
@@ -744,13 +768,12 @@ type ModelDeployment {
 
 ### Phase 5 — 배포 상세 페이지
 
-16. `DeploymentActivePoolSection.tsx` 신규 생성 (Active Pool 시각화)
+16. `DeploymentActivePoolSection.tsx` 신규 생성 (Active Pool + Configuration 카드 포함 Overview 섹션)
 17. `DeploymentReplicasTab.tsx` 신규 생성 (Replica 목록 + 상세 Drawer)
 18. `DeploymentRevisionHistoryTab.tsx` 신규 생성 (리비전 목록 + Rollback)
-19. `DeploymentSettingsTab.tsx` 신규 생성
-20. `DeploymentAccessTokensTab.tsx` 신규 생성
-21. `DeploymentAutoScalingTab.tsx` 신규 생성
-22. `DeploymentDetailPage.tsx` 신규 생성 (모든 섹션/탭 조합)
+19. `DeploymentAccessTokensTab.tsx` 신규 생성
+20. `DeploymentAutoScalingTab.tsx` 신규 생성
+21. `DeploymentDetailPage.tsx` 신규 생성 (Overview 섹션 + 4탭 조합)
 
 ---
 
@@ -765,6 +788,7 @@ type ModelDeployment {
 
 ## 변경 이력
 
+- 2026-04-21: Settings 탭 제거 → Overview 섹션의 Configuration 카드로 통합. 탭 5개 → 4개
 - 2026-04-21: 초기 초안 작성 (아키텍처 다이어그램 + 코드베이스 분석 기반)
 - 2026-04-21: 사용자 확인 사항 6개 반영하여 한국어로 전면 재작성
   - URL: `/deployments` 변경 + `/serving` fallback 리디렉션
@@ -777,7 +801,7 @@ type ModelDeployment {
 - 2026-04-21: Flow 7 추가 — 모델 폴더에서 바로 배포 (useDeploymentLauncher, deployment-config.yaml 기반)
 - 2026-04-21: Flow 2에 "기존 배포에서 가져오기" 추가 (FR-2419 반영)
 - 2026-04-21: 요구사항 전면 재구조화 — User Flow 중심으로 재작성
-  - US-1~US-8 구조 → Flow 1~6 사용자 흐름 중심으로 전환
+  - US-1~US-8 구조 → Flow 1~7 사용자 흐름 중심으로 전환
   - 신규 컴포넌트 처음부터 새로 작성 (기존 컴포넌트 rename/patch 방식 폐기)
   - 구버전 컴포넌트는 라우팅 fallback 전용으로 유지 (수정 없음)
   - 페이지 간 내비게이션 다이어그램 추가
