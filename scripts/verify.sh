@@ -24,6 +24,7 @@ run_check "Relay" pnpm run relay
 run_check "Lint" pnpm run lint
 run_check "Format" pnpm run format
 run_check "TypeScript" pnpm --prefix ./react exec tsc --noEmit
+run_check "STokenLoginBoundary URL-free" bash scripts/check-stoken-login-boundary-url-free.sh
 
 if [ $FAIL -eq 0 ]; then
   echo "=== ALL PASS ==="
