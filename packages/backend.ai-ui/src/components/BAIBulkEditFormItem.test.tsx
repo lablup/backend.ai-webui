@@ -5,7 +5,7 @@ import { Form, FormInstance, Select } from 'antd';
 import React, { useEffect } from 'react';
 
 // Mock react-i18next
-jest.mock('react-i18next', () => ({
+vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string) => {
       const translations: Record<string, string> = {

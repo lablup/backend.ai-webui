@@ -4,12 +4,17 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 
-// Mock the useNavigate hook from react-router-dom
-const mockNavigate = jest.fn();
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useNavigate: () => mockNavigate,
-}));
+// Mock the useNavigate hook from react-router-dom.
+// Vitest does not have a sync `jest.requireActual`; the async
+// `importOriginal` helper in the factory is the supported equivalent.
+const mockNavigate = vi.fn();
+vi.mock('react-router-dom', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('react-router-dom')>();
+  return {
+    ...actual,
+    useNavigate: () => mockNavigate,
+  };
+});
 
 describe('BAIBackButton', () => {
   beforeEach(() => {

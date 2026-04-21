@@ -1,20 +1,20 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`BAIFlex default render 1`] = `
+exports[`BAIFlex > default render 1`] = `
 <body>
   <div>
     <div
-      style="align-items: center; border: 0px solid black; box-sizing: border-box; display: flex; flex-basis: auto; flex-direction: row; flex-shrink: 0; list-style: none; margin: 0px; min-height: 0; min-width: 0; padding: 0px; position: relative; text-decoration: none; gap: 0; flex-wrap: nowrap; justify-content: flex-start;"
+      style="align-items: center; border: 0px solid black; box-sizing: border-box; display: flex; flex-basis: auto; flex-direction: row; flex-shrink: 0; list-style: none; margin: 0px; min-height: 0px; min-width: 0px; padding: 0px; position: relative; text-decoration: none; gap: 0px; flex-wrap: nowrap; justify-content: flex-start;"
     />
   </div>
 </body>
 `;
 
-exports[`BAIFlex render with children 1`] = `
+exports[`BAIFlex > render with children 1`] = `
 <body>
   <div>
     <div
-      style="align-items: center; border: 0px solid black; box-sizing: border-box; display: flex; flex-basis: auto; flex-direction: row; flex-shrink: 0; list-style: none; margin: 0px; min-height: 0; min-width: 0; padding: 0px; position: relative; text-decoration: none; gap: 0; flex-wrap: nowrap; justify-content: flex-start;"
+      style="align-items: center; border: 0px solid black; box-sizing: border-box; display: flex; flex-basis: auto; flex-direction: row; flex-shrink: 0; list-style: none; margin: 0px; min-height: 0px; min-width: 0px; padding: 0px; position: relative; text-decoration: none; gap: 0px; flex-wrap: nowrap; justify-content: flex-start;"
     >
       <div
         data-testid="firstChildComponent"
@@ -42,11 +42,11 @@ exports[`BAIFlex render with children 1`] = `
 </body>
 `;
 
-exports[`BAIFlex render with custom props 1`] = `
+exports[`BAIFlex > render with custom props 1`] = `
 <body>
   <div>
     <div
-      style="align-items: flex-start; border: 0px solid black; box-sizing: border-box; display: flex; flex-basis: auto; flex-direction: column; flex-shrink: 0; list-style: none; margin: 0px; min-height: 0; min-width: 0; padding: 0px; position: relative; text-decoration: none; gap: 12px; flex-wrap: wrap-reverse; justify-content: center; background-color: blue;"
+      style="align-items: flex-start; border: 0px solid black; box-sizing: border-box; display: flex; flex-basis: auto; flex-direction: column; flex-shrink: 0; list-style: none; margin: 0px; min-height: 0px; min-width: 0px; padding: 0px; position: relative; text-decoration: none; gap: 12px; flex-wrap: wrap-reverse; justify-content: center; background-color: blue;"
     />
   </div>
 </body>

@@ -15,7 +15,9 @@
     "format-fix": "prettier --write 'src/**/*.{js,jsx,ts,tsx,json,css,scss,md}'",
     "format-fix:all": "prettier --write 'src/**/*.{js,jsx,ts,tsx,json,css,scss,md}' 'react/src/**/*.{js,jsx,ts,tsx,json,css,scss,md}'",
     "format-fix:i18n": "prettier --write 'resources/i18n/*.json'",
-    "test": "jest",
+    "test": "vitest run",
+    "vitest": "vitest run",
+    "vitest:watch": "vitest",
     "wsproxy": "node ./src/wsproxy/local_proxy.js",
     "build": "rm -rf build/web dist && mkdir -p build/web && pnpm run copyindex && pnpm run copyresource && pnpm run copyconfig && pnpm run copymonaco && tsc && pnpm run -r --stream build",
     "build:react-only": "pnpm run --prefix ./react build:only",
@@ -81,7 +83,6 @@
     "globals": "catalog:",
     "husky": "^9.1.7",
     "i18next-scanner": "^4.6.0",
-    "jest": "catalog:",
     "jsonc-eslint-parser": "catalog:",
     "lint-staged": "^15.5.2",
     "lodash": "catalog:",
@@ -90,9 +91,9 @@
     "prettier-plugin-sort-json": "catalog:",
     "relay-compiler": "catalog:",
     "serve": "^14.2.6",
-    "ts-jest": "catalog:",
     "tslib": "^2.8.1",
     "typescript": "~5.5.4",
+    "vitest": "^4.1.4",
     "webpack": "catalog:",
     "webpack-cli": "^6.0.1",
     "workbox-expiration": "^7.4.0",
@@ -133,24 +134,5 @@
     "hooks": {
       "pre-commit": "lint-staged"
     }
-  },
-  "jest": {
-    "transform": {
-      "^.+\\.tsx?$": "ts-jest"
-    },
-    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.tsx?$",
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js",
-      "jsx",
-      "json",
-      "node"
-    ],
-    "rootDir": "./",
-    "roots": [
-      "scripts",
-      "src"
-    ]
   }
 }
