@@ -568,7 +568,6 @@ export interface ReplicaStatusTagProps extends Omit<BAITagProps, 'color'> {
 ### 선택 구현 (Nice to Have)
 
 - [ ] **Route 상태 필터**: Replicas 탭에서 `healthStatus`(NOT_CHECKED, HEALTHY, UNHEALTHY, DEGRADED)로 필터링
-- [ ] **Traffic Status 토글**: Route의 `trafficStatus`를 ACTIVE/INACTIVE로 수동 전환 (백엔드 지원 필요 — FR-2591 TODO 확인)
 - [ ] **배포 전략 시각화**: Canary/Blue-Green 배포 시 트래픽 비율을 Bar 또는 퍼센트로 시각 표시
 - [ ] **배포 목록 실시간 헬스 갱신**: 목록 테이블에서 헬스 요약 컬럼 자동 갱신
 
@@ -648,7 +647,7 @@ react/src/components/
 | `endpoint.model_definition_path` | `revision.modelDefinition.modelDefinitionPath` |
 | `endpoint.extra_mounts` | `revision.modelDefinition.extraMounts` |
 | `endpoint.open_to_public` | `deployment.networkAccess.isPublic` |
-| `endpoint.cluster_mode`, `endpoint.cluster_size` | revision 설정 내 해당 필드 |
+| `endpoint.cluster_mode`, `endpoint.cluster_size` | `revision.clusterConfig.mode`, `revision.clusterConfig.size` (`ClusterConfig` 타입) |
 
 ---
 
