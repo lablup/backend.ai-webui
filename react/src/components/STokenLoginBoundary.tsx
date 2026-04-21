@@ -19,8 +19,8 @@ import {
 import { useResolvedApiEndpoint } from '../hooks/useResolvedApiEndpoint';
 import { loginConfigState } from '../hooks/useWebUIConfig';
 import { jotaiStore } from './DefaultProviders';
-import { Alert, Button, Card } from 'antd';
-import { BAIFlex, useBAILogger } from 'backend.ai-ui';
+import { App, Spin, Typography } from 'antd';
+import { BAIButton, BAICard, BAIFlex, useBAILogger } from 'backend.ai-ui';
 import { useAtomValue } from 'jotai';
 import {
   Suspense,
@@ -257,8 +257,21 @@ const STokenLoginBoundaryInner: React.FC<STokenLoginBoundaryProps> = ({
 };
 
 /**
- * Placeholder connecting card. FR-2632 replaces this with the polished
- * BAICard-based version + i18n keys.
+ * Map an error kind to its PascalCase i18n key suffix. The i18n schema
+ * restricts message keys to a flat two-level shape (`module.Key`) where
+ * `Key` must begin with an uppercase letter, so kinds like
+ * `missing-token` cannot appear verbatim in the key.
+ */
+const kindToI18nKey = (kind: STokenLoginError['kind']): string =>
+  kind
+    .split('-')
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join('');
+
+/**
+ * Connecting card shown while the authentication sequence is in flight.
+ * The card is visually subdued so reviewers can tell the app is still
+ * working but hasn't failed.
  */
 const DefaultFallback: React.FC = () => {
   const { t } = useTranslation();
@@ -267,21 +280,66 @@ const DefaultFallback: React.FC = () => {
       direction="column"
       align="center"
       justify="center"
-      style={{ minHeight: '60vh' }}
+      style={{ minHeight: '60vh', padding: 24 }}
     >
-      <Card>{t('login.ConnectingToCluster')}</Card>
+      <BAICard
+        style={{ maxWidth: 480, width: '100%', textAlign: 'center' }}
+        bordered
+      >
+        <BAIFlex direction="column" align="center" gap="md">
+          <Spin size="large" />
+          <Typography.Title level={5} style={{ margin: 0 }}>
+            {t('sTokenLoginBoundary.AuthenticatingTitle')}
+          </Typography.Title>
+          <Typography.Text type="secondary">
+            {t('sTokenLoginBoundary.AuthenticatingDescription')}
+          </Typography.Text>
+        </BAIFlex>
+      </BAICard>
     </BAIFlex>
   );
 };
 
 /**
- * Placeholder error card. FR-2632 replaces this with the full BAICard +
- * BAIButton UI (Retry with async loading state, Copy error details).
+ * Built-in error card rendered when `errorFallback` is not provided.
+ * Offers two actions: Retry (runs the sequence again via BAIButton's
+ * async `action` prop so the loading state appears automatically) and
+ * Copy details (serializes the `{ kind, cause }` payload to JSON and
+ * writes it to the clipboard for support follow-up).
  */
 const DefaultErrorCard: React.FC<{
   error: STokenLoginError;
   onRetry: () => void;
 }> = ({ error, onRetry }) => {
+  const { t } = useTranslation();
+  const { message } = App.useApp();
+
+  const kindKey = kindToI18nKey(error.kind);
+  const title = t(`sTokenLoginBoundary.Error${kindKey}Title`);
+  const description = t(`sTokenLoginBoundary.Error${kindKey}Description`);
+  const causeDetail =
+    'cause' in error && error.cause
+      ? String((error.cause as Error)?.message ?? error.cause)
+      : null;
+
+  const handleRetry = useCallback(async () => {
+    // Wrap in a Promise so BAIButton.action triggers its async loading
+    // state; the synchronous state reset completes before the next
+    // render, which is visually indistinguishable from the live
+    // sequence restart.
+    await Promise.resolve();
+    onRetry();
+  }, [onRetry]);
+
+  const handleCopy = useCallback(async () => {
+    const payload = {
+      kind: error.kind,
+      cause: causeDetail,
+    };
+    await navigator.clipboard.writeText(JSON.stringify(payload, null, 2));
+    message.success(t('sTokenLoginBoundary.ErrorDetailsCopied'));
+  }, [error, causeDetail, message, t]);
+
   return (
     <BAIFlex
       direction="column"
@@ -289,19 +347,33 @@ const DefaultErrorCard: React.FC<{
       justify="center"
       style={{ minHeight: '60vh', padding: 24 }}
     >
-      <Alert
-        type="error"
-        title={`sToken login failed: ${error.kind}`}
-        description={
-          'cause' in error && error.cause
-            ? String((error.cause as Error)?.message ?? error.cause)
-            : undefined
-        }
-        style={{ maxWidth: 520, marginBottom: 16 }}
-      />
-      <Button type="primary" onClick={onRetry}>
-        Retry
-      </Button>
+      <BAICard
+        status="error"
+        title={title}
+        style={{ maxWidth: 520, width: '100%' }}
+      >
+        <BAIFlex direction="column" gap="md" align="stretch">
+          <Typography.Paragraph style={{ margin: 0 }}>
+            {description}
+          </Typography.Paragraph>
+          {causeDetail && (
+            <Typography.Paragraph
+              type="secondary"
+              style={{ margin: 0, fontSize: 12, whiteSpace: 'pre-wrap' }}
+            >
+              {causeDetail}
+            </Typography.Paragraph>
+          )}
+          <BAIFlex direction="row" gap="sm" justify="end">
+            <BAIButton onClick={handleCopy}>
+              {t('sTokenLoginBoundary.CopyErrorDetails')}
+            </BAIButton>
+            <BAIButton type="primary" action={handleRetry}>
+              {t('sTokenLoginBoundary.Retry')}
+            </BAIButton>
+          </BAIFlex>
+        </BAIFlex>
+      </BAICard>
     </BAIFlex>
   );
 };
