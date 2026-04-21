@@ -75,7 +75,7 @@ URL 쿼리 파라미터 `sToken`을 통해 Backend.AI에 SSO 방식으로 로그
 3. 경계 컴포넌트가 URL에서 `sToken`/`stoken`을 읽고 나머지 파라미터를 `extraParams`로 전달받아 `client.token_login(sToken, extraParams)`를 호출한다.
 4. `extraParams`(app, session_id, cpu, mem 등)은 그대로 백엔드에 전달되어 기존 동작을 유지한다.
 5. 성공 후 `EduAppLauncher`는 `onSuccess` 콜백에서 기존 `_prepareProjectInformation` → 세션 조회/생성 → 앱 런칭 스텝을 이어서 진행한다.
-6. URL에서 sToken은 제거되지만 나머지 파라미터는 유지된다 (EduAppLauncher가 URL 파라미터를 여전히 참조하므로).
+6. URL은 **그대로 유지된다** — `sToken`도 제거하지 않는다. EduAppLauncher의 `_createEduSession`이 customer-specific `eduApp.get_user_credential(sToken)` 호출에서 원본 token을 다시 사용해야 하고, `app` / `session_id` / 리소스 힌트 같은 다른 파라미터도 후속 스텝에서 계속 참조되기 때문이다. 교육용 진입 URL은 LMS가 발급하므로 브라우저 히스토리에 남는 것이 허용 가능한 트레이드오프로 본다.
 
 ### 시나리오 3: 미래의 제3 SSO 엔트리 포인트 (비전, 이 스펙 범위 밖)
 
@@ -148,7 +148,7 @@ type STokenLoginError =
 7. **토큰 로그인**: `await client.token_login(sToken, extraParams ?? {})`. 반환이 falsy거나 예외 발생 시 `{ kind: 'token-invalid', cause }` 또는 서버 응답으로부터 동시 세션이 감지되면 `{ kind: 'concurrent-session', cause }`로 분류.
 8. **GQL 연결**: `connectViaGQL(client, loginConfig, endpoints)`를 호출해 사용자 정보 및 리소스 정책을 로드.
 9. **이벤트 디스패치**: `document.dispatchEvent(new CustomEvent('backend-ai-connected', { detail: client }))`를 **정확히 한 번** 디스패치한다. 이 이벤트는 `RelayEnvironment.ts`의 `waitForBAIClient()`를 해제하는 핵심 신호이다.
-10. **성공 콜백**: `onSuccess?.(client)` 호출. 호출자는 이 시점에서 자신의 후처리(패널 닫기, `last_login` 등)와 **URL에서 sToken 제거(nuqs setter)**를 수행한다. URL 정리는 컴포넌트가 아닌 호출자의 책임이다 (다음 섹션 참조).
+10. **성공 콜백**: `onSuccess?.(client)` 호출. 호출자는 이 시점에서 자신의 후처리(패널 닫기, `last_login` 등)를 수행한다. URL 정리(nuqs setter로 sToken 제거)는 **호출자의 선택 사항**이다 — 범용 `/` / `/interactive-login` 진입점은 보안상 제거하고, EduAppLauncher처럼 `sToken`이 이후 스텝에서 재사용되는 플로우는 URL을 그대로 두는 식으로 경로별로 다르게 결정한다 (다음 섹션 참조).
 11. **자식 렌더**: 성공 상태 전이 후 `children`을 렌더.
 
 컴포넌트 본체에는 `window.location`, `URLSearchParams`, `window.history.replaceState`, `document.location` 등 **URL 관련 API를 일절 참조하지 않는다**. 이는 코드 리뷰와 단위 테스트로 강제한다.
@@ -224,8 +224,8 @@ type STokenLoginError =
 
 1. **읽기**: `useQueryState('sToken', parseAsString)`으로 canonical 키를 읽는다.
 2. **`stoken`(소문자) fallback**: 하위 호환을 위해 `stoken`도 함께 읽어야 하는 경우, 호출자 또는 공용 helper hook에서 fallback을 처리한다. `stoken`이 값을 제공한 경우 `logger.warn`을 1회 호출해 deprecation을 남긴다.
-3. **정리**: `onSuccess` 콜백에서 setter로 `null`을 전달해 URL에서 sToken을 제거한다. 다른 쿼리 파라미터는 자동으로 보존된다.
-4. **조건부 렌더**: `sToken`이 존재할 때만 `STokenLoginBoundary`로 children을 감싸고, 그렇지 않을 때는 일반 경로를 그대로 렌더한다 (`/`의 일반 로그인 페이지 등).
+3. **정리 (경로별 선택)**: 보안이 중요한 범용 진입점(`/`, `/interactive-login`)은 `onSuccess` 콜백에서 setter로 `null`을 전달해 URL의 sToken을 제거한다. EduAppLauncher(`/edu-applauncher`, `/applauncher`)처럼 `sToken`이 이후 스텝(`get_user_credential` 등)에서 재사용되는 경로는 URL을 **그대로 둔다**. 어느 쪽이든 다른 쿼리 파라미터는 자동으로 보존된다.
+4. **항상 감싸기 (권장) / 조건부 렌더 (대안)**: 경계 컴포넌트가 session cookie만으로도 success 상태로 전이하므로(`check_login` fast-path) `sToken` 유무와 관계없이 항상 감싸는 것이 단순하다 (EduApp 경로 패턴). 다만 `/` 같은 범용 로그인 페이지는 sToken이 없을 때 `missing-token` 카드 대신 평범한 로그인 폼을 즉시 보여주는 것이 UX 상 낫기 때문에, 조건부 렌더로 sToken이 있을 때만 감싸는 접근도 허용한다 (LoginView 경로 패턴).
 
 ### 공용 helper hook 제안 (선택, Open Question)
 
@@ -319,30 +319,35 @@ export const useSToken = (): [string | null, (next: string | null) => void] => {
 
 #### 시나리오 B — EduAppLauncher 경로 (`/edu-applauncher`, `/applauncher`): 항상 wrapping
 
-EduAppLauncher는 sToken URL 진입이 기본이다. sToken이 없는 경우는 에러 카드(또는 custom `errorFallback`)로 처리한다.
+EduAppLauncher는 sToken URL 진입이 기본이지만, 유효한 session cookie만으로도 (URL에 sToken 없이) 진입 가능하다. 경계 컴포넌트의 `check_login` fast-path가 이를 처리하므로 sToken 유무와 상관없이 **항상 감싸는** 것이 단순하다. URL의 `sToken`은 **그대로 유지**한다 (`_createEduSession`의 `get_user_credential(sToken)` 재사용).
 
 ```tsx
 // pseudo-code — 실제 구조는 story 3에서 확정
 {
   path: '/edu-applauncher',
   Component: () => {
-    const [sToken, setSToken] = useSToken();
-    // extraParams: URL의 나머지 쿼리 파라미터를 nuqs로 수집하거나
-    // EduAppLauncher 내부에서 별도로 처리
+    'use memo';
+    const [sToken] = useSToken(); // setter 사용 안 함 (URL 유지)
+    const [rawExtraParams] = useQueryStates({
+      app: parseAsString, session_id: parseAsString,
+      // ... cpu, mem, shmem, cuda-shares, cuda-device, session_template 등
+    });
+    const extraParams = Object.fromEntries(
+      Object.entries(rawExtraParams).filter(([, v]) => v !== null),
+    ) as Record<string, string>;
+
     return (
       <BAIErrorBoundary>
         <DefaultProvidersForReactRoot>
           <STokenLoginBoundary
             sToken={sToken ?? ''}
-            extraParams={/* app, session_id, cpu, mem 등 */}
-            onSuccess={() => setSToken(null)}
-            errorFallback={(error, retry) => (
-              // 기존 EduAppLauncher 스테퍼 UI와 통합된 에러 표시
-              <EduAppErrorStep error={error} onRetry={retry} />
-            )}
+            extraParams={extraParams}
+            // URL은 의도적으로 제거하지 않는다 (교육용 LMS-issued token,
+            // get_user_credential 재사용 — 시나리오 설명 참조).
+            onSuccess={persistPostLoginState}
           >
             <Suspense fallback={null}>
-              <EduAppLauncherPage />
+              <EduAppLauncherPage sToken={sToken} extraParams={extraParams} />
             </Suspense>
           </STokenLoginBoundary>
         </DefaultProvidersForReactRoot>
@@ -385,10 +390,13 @@ EduAppLauncher는 sToken URL 진입이 기본이다. sToken이 없는 경우는 
 - `react/src/routes.tsx`의 `/edu-applauncher`와 `/applauncher` 라우트 `Component`에서 nuqs로 `sToken`·`extraParams` 후보 키를 읽고, `STokenLoginBoundary`로 `EduAppLauncherPage`를 감싼다 (#사용-패턴-라우트-통합-예시 섹션의 시나리오 B 참조).
 - `EduAppLauncher.tsx`의 `_token_login()` 메서드와 수동 `backend-ai-connected` 디스패치(line 787)를 제거. URL 파싱 코드도 제거.
 - `errorFallback` prop으로 스테퍼 UI와 통합된 에러 표시 제공 (기존 `transition({ name: 'error', step: 'auth', ... })` 로직 재사용).
-- **동작 변경**: URL에서 sToken이 제거된다 (기존 동작과 달라짐 — 보안 개선). 세션 ID·앱 이름 등 나머지 파라미터는 유지 (nuqs가 특정 키만 `null` 설정).
-- **동작 변경**: 쿠키 인코딩은 기존과 동일 (이미 encoded).
+- **URL 유지 결정**: EduApp 경로에서는 성공 후 URL의 `sToken`을 **제거하지 않는다**. 경계 컴포넌트의 `onSuccess`는 `persistPostLoginState(client)`만 호출하며 `useSToken`의 `clear` setter는 사용하지 않는다. 이유:
+  1. `EduAppLauncher._createEduSession`이 customer-specific `eduApp.get_user_credential(sToken)`에서 원본 token을 다시 사용한다. URL을 제거하면 prop으로 흘러온 `sToken`이 다음 렌더에서 `null`이 되어 해당 호출이 깨진다.
+  2. 교육용 진입 URL은 LMS가 발급하므로 브라우저 히스토리 / referer에 sToken이 남는 것이 허용 가능한 트레이드오프이다 (LoginView의 범용 `/` 경로와 성격이 다름).
+  3. `app` / `session_id` / 리소스 힌트는 `nuqs useQueryStates`로 prop으로도 전달하지만, URL 자체에도 남겨 Relay loader의 자식 단계가 동일하게 참조 가능하다.
+- **쿠키 인코딩**: 기존과 동일 (`encodeURIComponent`).
 - 내부 상태 머신(idle → auth → session → launching → done/error)은 유지하되, "auth" 단계는 경계 컴포넌트의 상태로 대체.
-- `_createEduSession`의 `get_user_credential(sToken)` 호출은 Pitfall #8(sToken 재사용)의 해결 전략을 적용한다.
+- `_createEduSession`의 `get_user_credential(sToken)` 호출은 Pitfall #8(sToken 재사용)의 해결 전략을 적용한다 — URL 유지 결정으로 자연스럽게 해결됨.
 - E2E: 기존 EduApp 진입 시나리오(세션 ID 있음/없음) 모두 회귀 없이 통과.
 
 ## 수락 기준 (Acceptance Criteria)
@@ -412,7 +420,7 @@ EduAppLauncher는 sToken URL 진입이 기본이다. sToken이 없는 경우는 
 - [ ] `react/src/components/STokenLoginBoundary.tsx` 및 하위 모듈에서 `window.location`, `window.history`, `document.location`, `URLSearchParams` 등 URL 접근 API의 직접 참조가 **한 건도 발견되지 않는다**. (grep / ESLint custom rule로 검증 가능)
 - [ ] 컴포넌트 단위 테스트는 URL을 모킹하지 않고 prop만 전달하여 모든 시나리오를 재현할 수 있다.
 - [ ] 호출자 코드(`routes.tsx` 또는 페이지 컴포넌트)가 nuqs (`useQueryState` 또는 helper hook)로 `sToken`을 읽고, `onSuccess` 콜백에서 setter로 URL에서 `sToken`을 제거한다.
-- [ ] 마이그레이션 후 E2E에서 success 시 `window.location.search`에 `sToken`이 남지 않는 것이 검증된다. (이 검증은 호출자 책임 영역이며, 컴포넌트의 acceptance는 아니다.)
+- [ ] 마이그레이션 후 E2E에서 경로별 URL 정리 정책이 검증된다: `/` / `/interactive-login`은 success 시 `window.location.search`에 `sToken`이 남지 않고, `/edu-applauncher` / `/applauncher`는 그대로 유지된다 (`_createEduSession`의 `get_user_credential(sToken)` 재사용을 위해). 이 검증은 호출자 책임 영역이며, 컴포넌트의 acceptance는 아니다.
 
 ### 엔드포인트 resolve
 
@@ -435,7 +443,7 @@ EduAppLauncher는 sToken URL 진입이 기본이다. sToken이 없는 경우는 
 4. **`stoken`(소문자) deprecation 경로**: 본 스펙은 인식만 유지하고 경고만 출력한다. 하드 제거 시점은 외부 플랫폼 공지 후 별도 이슈에서 결정한다. 경고 로깅은 컴포넌트가 아닌 **호출자(또는 공용 `useSToken` helper hook)의 책임**이다. 컴포넌트는 URL을 보지 않으므로 어느 이름으로 들어온 값인지 알 수 없다.
 5. **concurrent-session 에러와 동시 로그인 스펙 연계**: `{ kind: 'concurrent-session' }` 에러의 상세 처리(모달, 기존 세션 종료 확인 등)는 `.specs/draft-concurrent-login-guard/`의 LoginView 측 대응과 연계되어야 한다. sToken 플로우에서는 외부 리다이렉트 주체가 모달을 띄우기 어렵기 때문에, 이 에러 분류를 어떻게 surface할지는 dev-plan 단계에서 LoginView의 모달 로직과 함께 설계한다.
 6. **Retry 멱등성**: 중복 쿠키 설정은 안전하나, 중복 이벤트 디스패치는 하위 구독자(예: proxy URL 설정, 플러그인 초기화)가 여러 번 실행되어 사이드이펙트를 낳을 수 있다. 구현 단계에서 "이벤트는 최종 성공 시 1회"를 엄격히 지킨다.
-7. **URL 파라미터 보존 범위**: 호출자가 nuqs setter로 `sToken`(및 필요 시 `stoken`)만 `null`로 설정하면 다른 키는 자동으로 보존된다. LoginView의 기존 `replaceState({}, '', '/')` 스타일(전체 쿼리 제거)은 nuqs 규약으로 대체되면서 자연스럽게 사라진다. EduAppLauncher 쪽도 `session_id`, `app` 등의 키를 nuqs가 그대로 유지하므로 후속 단계가 정상 동작한다.
+7. **URL 정리는 경로별로 다름**: LoginView 계열(`/`, `/interactive-login`)은 `onSuccess`에서 `clearSToken(null)`로 `sToken` / `stoken` 키만 제거한다. 다른 쿼리 키는 nuqs가 그대로 보존한다. EduAppLauncher 계열(`/edu-applauncher`, `/applauncher`)은 URL을 **전혀 건드리지 않는다** — `_createEduSession`이 `eduApp.get_user_credential(sToken)`에서 원본 token을 재사용해야 하고, `app` / `session_id` / 리소스 힌트는 후속 Relay loader에서 읽기 때문이다.
 8. **`backendaiclient._config.endpoint` 스테일 closure**: `LoginView`의 기존 `postConnectSetup`은 `apiEndpoint` closure 대신 client의 `_config.endpoint`를 읽어 최신 값을 취한다. 경계 컴포넌트 마이그레이션 시에도 `onSuccess(client)`에서 `client._config.endpoint`를 참조하여 localStorage에 저장해야 한다.
 9. **StrictMode 이펙트 2회 실행**: dev StrictMode에서 effect가 2회 실행되는 문제를 guard하기 위해 `useRef` 플래그 또는 key 기반 재마운트를 사용한다. 특히 쿠키 설정·서버 ping·token_login이 중복 수행되지 않도록 `started` flag를 둔다.
 10. **Webserver config 병합**: 기존 `loadConfigFromWebServer`는 `apiEndpoint`와 현재 origin이 다를 때 원격 config.toml을 병합하는 단계를 수행한다. 경계 컴포넌트가 이 단계를 포함해야 하는지는 dev-plan에서 결정한다. 포함하지 않으면 호출자가 `onSuccess` 이후 수행할 수도 있다 ([Open Question 2]).
