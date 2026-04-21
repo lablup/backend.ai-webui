@@ -1,0 +1,28 @@
+{
+  "epicKey": null,
+  "epicUrl": null,
+  "specTaskKey": null,
+  "specTaskUrl": null,
+  "jiraFilingPending": true,
+  "proposedEpicTitle": "Extract sToken login flow into reusable boundary component",
+  "proposedSpecTaskTitle": "Define sToken login boundary component spec",
+  "slug": "stoken-login-boundary",
+  "stories": [],
+  "proposedStories": [
+    {
+      "title": "Introduce STokenLoginBoundary component",
+      "summary": "New component, generalized endpoint-resolve hook, extend tokenLogin helper with extraParams (pending Open Question 1), default fallback + error card UI, unit tests."
+    },
+    {
+      "title": "Migrate LoginView sToken path to STokenLoginBoundary",
+      "summary": "Replace connectUsingSession sToken branch (lines 455–490 of LoginView.tsx) with boundary wrapping; move post-login side effects to onSuccess callback."
+    },
+    {
+      "title": "Migrate EduAppLauncher sToken path to STokenLoginBoundary",
+      "summary": "Remove _token_login and manual backend-ai-connected dispatch; wrap stepper auth step with boundary; supply errorFallback for stepper-integrated error UI; strip sToken from URL (behavior change)."
+    }
+  ],
+  "sourceIssues": [],
+  "createdAt": "2026-04-21T00:00:00Z",
+  "notes": "Draft spec — Jira filing pending. Rename directory to {EPIC-KEY}-stoken-login-boundary once Epic is created, and populate epicKey/specTaskKey fields. `fw` (jira-workflow skill) was not available in the environment at spec creation time."
+}
