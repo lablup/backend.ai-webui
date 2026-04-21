@@ -125,8 +125,8 @@ jobs:
       - name: Package macOS Desktop Apps (signed)
         if: inputs.dry_run != true
         run: |
-          make mac_x64_package
-          make mac_arm64_package
+          make mac_x64
+          make mac_arm64
         env:
           BAI_APP_SIGN: 1
           BAI_APP_SIGN_APPLE_TEAM_ID: ${{ secrets.BAI_APP_SIGN_APPLE_TEAM_ID }}
@@ -139,8 +139,8 @@ jobs:
       - name: Package macOS Desktop Apps (unsigned, dry run)
         if: inputs.dry_run == true
         run: |
-          make mac_x64_package
-          make mac_arm64_package
+          make mac_x64
+          make mac_arm64
 
       - name: Upload macOS release assets
         if: inputs.dry_run != true
@@ -194,10 +194,10 @@ jobs:
 
       - name: Package Windows & Linux Desktop Apps
         run: |
-          make win_x64_package
-          make win_arm64_package
-          make linux_x64_package
-          make linux_arm64_package
+          make win_x64
+          make win_arm64
+          make linux_x64
+          make linux_arm64
 
       - name: Upload release assets
         if: inputs.dry_run != true

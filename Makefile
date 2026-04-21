@@ -62,12 +62,12 @@ compile_wsproxy: compile_client_node_ts
 	@pnpm -w exec webpack-cli --config src/wsproxy/webpack.config.js
 all: dep
 	@make compile_all_localproxy
-	@make mac_x64_package
-	@make mac_arm64_package
-	@make win_x64_package
-	@make win_arm64_package
-	@make linux_x64_package
-	@make linux_arm64_package
+	@make mac_x64
+	@make mac_arm64
+	@make win_x64
+	@make win_arm64
+	@make linux_x64
+	@make linux_arm64
 	@make bundle
 # Build all local proxy binaries in parallel (saves ~3-4 min vs sequential)
 compile_all_localproxy:
@@ -95,26 +95,31 @@ dep_web:
 	fi
 # Prepare the Electron app directory. Requires dep_web to have run first.
 # Uses publicPath patching instead of a full second React build (~4-8 min savings).
-# Always re-syncs build/web → build/electron-app/app and the wsproxy/preload
-# files so a stale electron-app directory cannot mask a freshly rebuilt web
-# bundle. Node modules are only installed if the directory was newly created.
+#
+# Idempotent: skips when `build/electron-app/app/index.html` already carries
+# the patched `es6://static/js/main` marker. This mirrors the original
+# Makefile's skip semantics so downstream targets that re-declare `dep` as a
+# prerequisite (e.g. `mac_x64`, `win_x64`) do not repeatedly re-copy the web
+# bundle. Set `FORCE_DEP_ELECTRON=1` to force a re-sync.
 dep_electron: dep_web
-	@first_run=0; \
-	if [ ! -d "./build/electron-app" ]; then \
-		first_run=1; \
-		mkdir -p build/electron-app; \
-		cp -r electron-app/* build/electron-app/; \
-		cp electron-app/.npmrc build/electron-app/; \
-		pnpm i --prefix ./build/electron-app --ignore-workspace; \
-	fi; \
-	rm -rf build/electron-app/app build/electron-app/resources build/electron-app/manifest; \
-	cp -Rp build/web build/electron-app/app; \
-	cp -Rp build/web/resources build/electron-app; \
-	cp -Rp build/web/manifest build/electron-app; \
-	node scripts/patch-electron-publicpath.js build/electron-app/app; \
-	mkdir -p ./build/electron-app/app/wsproxy; \
-	cp ./src/wsproxy/dist/wsproxy.js ./build/electron-app/app/wsproxy/wsproxy.js; \
-	cp ./preload.js ./build/electron-app/preload.js
+	@if [ -f "./build/electron-app/app/index.html" ] && grep -q 'es6://static/js/main' ./build/electron-app/app/index.html && [ "$(FORCE_DEP_ELECTRON)" != "1" ]; then \
+		printf "$(YELLOW)Electron app already prepared, skipping$(NC)\n"; \
+	else \
+		if [ ! -d "./build/electron-app" ]; then \
+			mkdir -p build/electron-app; \
+			cp -r electron-app/* build/electron-app/; \
+			cp electron-app/.npmrc build/electron-app/; \
+			pnpm i --prefix ./build/electron-app --ignore-workspace; \
+		fi; \
+		rm -rf build/electron-app/app build/electron-app/resources build/electron-app/manifest; \
+		cp -Rp build/web build/electron-app/app; \
+		cp -Rp build/web/resources build/electron-app; \
+		cp -Rp build/web/manifest build/electron-app; \
+		node scripts/patch-electron-publicpath.js build/electron-app/app; \
+		mkdir -p ./build/electron-app/app/wsproxy; \
+		cp ./src/wsproxy/dist/wsproxy.js ./build/electron-app/app/wsproxy/wsproxy.js; \
+		cp ./preload.js ./build/electron-app/preload.js; \
+	fi
 dep: dep_electron
 web:
 	@if [ ! -d "./build/web/" ];then \
@@ -148,15 +153,24 @@ endif  # BAI_APP_SIGN_KEYCHAIN
 # Concurrency-safe: each (os, arch) build uses a unique staging directory so
 # multiple invocations can run in parallel without overwriting each other's
 # intermediate file (`backend.ai-local-proxy[.exe]`) packed into the ZIP.
+#
+# Idempotent: skips rebuild when the output ZIP already exists, so `make all`
+# can pre-build everything via `compile_all_localproxy` and downstream targets
+# (`mac_x64`, `win_x64`, ...) can reuse the cached artifact without
+# re-compiling. Set `FORCE_COMPILE_LOCALPROXY=1` to force a rebuild.
 compile_localproxy:
-	@rm -rf ./app/backend.ai-local-proxy-$(BUILD_VERSION)-$(os)-$(arch)$(local_proxy_postfix)
-	@pnpm exec pkg ./src/wsproxy/local_proxy.js --targets node18-$(os)-$(arch) --output ./app/backend.ai-local-proxy-$(BUILD_VERSION)-$(os)-$(arch)$(local_proxy_postfix) --compress Brotli
-	@rm -rf ./app/_lp-stage-$(os)-$(arch)
-	@mkdir -p ./app/_lp-stage-$(os)-$(arch)
-	@cp ./app/backend.ai-local-proxy-$(BUILD_VERSION)-$(os)-$(arch)$(local_proxy_postfix) ./app/_lp-stage-$(os)-$(arch)/backend.ai-local-proxy$(local_proxy_postfix)
-	@rm -f ./app/backend.ai-local-proxy-$(BUILD_VERSION)-$(os)-$(arch).zip
-	@cd ./app/_lp-stage-$(os)-$(arch); zip -r -6 ../backend.ai-local-proxy-$(BUILD_VERSION)-$(os)-$(arch).zip "./backend.ai-local-proxy$(local_proxy_postfix)"
-	@rm -rf ./app/_lp-stage-$(os)-$(arch)
+	@if [ -f "./app/backend.ai-local-proxy-$(BUILD_VERSION)-$(os)-$(arch).zip" ] && [ "$(FORCE_COMPILE_LOCALPROXY)" != "1" ]; then \
+		printf "$(YELLOW)local-proxy $(os)-$(arch) already built, skipping$(NC)\n"; \
+	else \
+		rm -rf ./app/backend.ai-local-proxy-$(BUILD_VERSION)-$(os)-$(arch)$(local_proxy_postfix); \
+		pnpm exec pkg ./src/wsproxy/local_proxy.js --targets node18-$(os)-$(arch) --output ./app/backend.ai-local-proxy-$(BUILD_VERSION)-$(os)-$(arch)$(local_proxy_postfix) --compress Brotli; \
+		rm -rf ./app/_lp-stage-$(os)-$(arch); \
+		mkdir -p ./app/_lp-stage-$(os)-$(arch); \
+		cp ./app/backend.ai-local-proxy-$(BUILD_VERSION)-$(os)-$(arch)$(local_proxy_postfix) ./app/_lp-stage-$(os)-$(arch)/backend.ai-local-proxy$(local_proxy_postfix); \
+		rm -f ./app/backend.ai-local-proxy-$(BUILD_VERSION)-$(os)-$(arch).zip; \
+		(cd ./app/_lp-stage-$(os)-$(arch); zip -r -6 ../backend.ai-local-proxy-$(BUILD_VERSION)-$(os)-$(arch).zip "./backend.ai-local-proxy$(local_proxy_postfix)"); \
+		rm -rf ./app/_lp-stage-$(os)-$(arch); \
+	fi
 package_zip:
 	@printf "$(GREEN)Packaging as ZIP archive...$(NC)"
 	@cp ./configs/$(site).toml ./build/electron-app/app/config.toml
@@ -203,16 +217,6 @@ mac_arm64: arch := arm64
 mac_arm64: local_proxy_postfix :=
 mac_arm64: dep mac_load_keychain compile_localproxy package_dmg
 	@printf "$(GREEN)Build finished$(NC): macOS arm64\n"
-# Package-only targets: assume dep + compile_all_localproxy already done.
-# Used by `make all` which pre-builds all local proxies in parallel.
-mac_x64_package: os := macos
-mac_x64_package: arch := x64
-mac_x64_package: mac_load_keychain package_dmg
-	@printf "$(GREEN)Build finished$(NC): macOS x64\n"
-mac_arm64_package: os := macos
-mac_arm64_package: arch := arm64
-mac_arm64_package: mac_load_keychain package_dmg
-	@printf "$(GREEN)Build finished$(NC): macOS arm64\n"
 win: dep
 	@make win_x64
 	@make win_arm64
@@ -228,17 +232,6 @@ win_arm64: arch := arm64
 win_arm64: local_proxy_postfix := .exe
 win_arm64: dep compile_localproxy package_zip
 	@printf "$(GREEN)Build finished$(NC): Windows arm64\n"
-# Package-only targets for CI parallel jobs
-win_x64_package: os := win
-win_x64_package: os_api := win32
-win_x64_package: arch := x64
-win_x64_package: package_zip
-	@printf "$(GREEN)Build finished$(NC): Windows x64\n"
-win_arm64_package: os := win
-win_arm64_package: os_api := win32
-win_arm64_package: arch := arm64
-win_arm64_package: package_zip
-	@printf "$(GREEN)Build finished$(NC): Windows arm64\n"
 linux: dep
 	@make linux_x64
 	@make linux_arm64
@@ -253,17 +246,6 @@ linux_arm64: os_api := linux
 linux_arm64: arch := arm64
 linux_arm64: local_proxy_postfix :=
 linux_arm64: dep compile_localproxy package_zip
-	@printf "$(GREEN)Build finished$(NC): Linux arm64\n"
-# Package-only targets for CI parallel jobs
-linux_x64_package: os := linux
-linux_x64_package: os_api := linux
-linux_x64_package: arch := x64
-linux_x64_package: package_zip
-	@printf "$(GREEN)Build finished$(NC): Linux x64\n"
-linux_arm64_package: os := linux
-linux_arm64_package: os_api := linux
-linux_arm64_package: arch := arm64
-linux_arm64_package: package_zip
 	@printf "$(GREEN)Build finished$(NC): Linux arm64\n"
 build_docker: compile
 	docker build -t backend.ai-webui:$(BUILD_DATE) .
