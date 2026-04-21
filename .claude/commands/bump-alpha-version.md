@@ -91,14 +91,40 @@ Update dependencies in the following package.json files within semver-compatible
 
 Run `pnpm install` to update the lockfile with new dependency versions.
 
-### 6. Verify Changes and Fix TypeScript Errors
+### 6. Merge pnpm Branch Lockfiles
 
-After updating dependencies, verify everything works correctly:
+This repository uses pnpm's `gitBranchLockfile` feature (see `pnpm-workspace.yaml`: `gitBranchLockfile: true` with `mergeGitBranchLockfilesBranchPattern: - main`). Feature branches accumulate per-branch lockfiles (`pnpm-lock.<branch-name>.yaml`) that must be periodically merged back into the main `pnpm-lock.yaml` so trunk stays consistent.
+
+Run:
+
+```bash
+pnpm install --merge-git-branch-lockfiles
+```
+
+This command:
+
+- Reads all `pnpm-lock.*.yaml` files at the repo root
+- Merges their resolutions into the main `pnpm-lock.yaml`
+- Deletes the per-branch lockfiles
+
+After running, verify:
+
+```bash
+ls pnpm-lock*.yaml   # should show only pnpm-lock.yaml
+git status           # confirm any removed branch lockfiles are staged for deletion
+```
+
+If there are no branch lockfiles present, this step is effectively a no-op and the main lockfile is left unchanged — still run the command to be safe.
+
+### 7. Verify Changes and Fix TypeScript Errors
+
+After updating dependencies and merging branch lockfiles, verify everything works correctly:
 
 1. **Run `pnpm install`** to ensure no errors in dependency resolution
 2. **Check all package.json files** have the correct version
-3. **Note any peer dependency warnings**
-4. **Run TypeScript type checking** to detect any type errors caused by updated packages:
+3. **Confirm `pnpm-lock.*.yaml` branch lockfiles are gone** (only `pnpm-lock.yaml` should remain)
+4. **Note any peer dependency warnings**
+5. **Run TypeScript type checking** to detect any type errors caused by updated packages:
 
 ```bash
 # Check TypeScript errors in react package
@@ -112,7 +138,7 @@ pnpm --prefix ./react exec tsc --noEmit
 pnpm --prefix ./packages/backend.ai-ui exec tsc --noEmit
 ```
 
-5. **If TypeScript errors occur**, fix them before proceeding:
+6. **If TypeScript errors occur**, fix them before proceeding:
    - Review the error messages to identify which updated packages caused the issue
    - Common fixes include:
      - Updating type definitions (`@types/*` packages)
@@ -120,7 +146,7 @@ pnpm --prefix ./packages/backend.ai-ui exec tsc --noEmit
      - Adding type assertions where needed
    - Fix all errors before completing the version bump
 
-6. **Run build to ensure everything compiles**:
+7. **Run build to ensure everything compiles**:
 
 ```bash
 pnpm run build
@@ -146,6 +172,9 @@ pnpm update --ignore-engines
 
 # Install to update lockfile
 pnpm install
+
+# Merge per-branch lockfiles back into pnpm-lock.yaml
+pnpm install --merge-git-branch-lockfiles
 ```
 
 ## Output Summary
@@ -155,8 +184,9 @@ After completion, provide a summary including:
 1. **Version Update**: Old version -> New version
 2. **Files Updated**: List of files modified by `make versiontag`
 3. **Dependencies Updated**: Summary of updated packages with version changes
-4. **Peer Dependency Warnings**: Any warnings encountered
-5. **Next Steps**: Suggest committing changes if everything looks good
+4. **Branch Lockfiles Merged**: List of `pnpm-lock.*.yaml` files removed (empty if none existed)
+5. **Peer Dependency Warnings**: Any warnings encountered
+6. **Next Steps**: Suggest committing changes if everything looks good
 
 ## Example Workflow
 
@@ -168,7 +198,9 @@ Claude:
 2. Runs make versiontag
 3. Updates dependencies in react/ and packages/backend.ai-ui/
 4. Runs pnpm install
-5. Provides summary of all changes
+5. Runs pnpm install --merge-git-branch-lockfiles to fold stale branch lockfiles into pnpm-lock.yaml
+6. Runs typecheck + build
+7. Provides summary of all changes
 ```
 
 ## Notes
