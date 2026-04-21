@@ -357,7 +357,6 @@ DeploymentDetailPage (동일)
 - Flow 2와 동일한 다단계 폼 (`DeploymentLauncherPageContent` 재사용)
 - 현재 Active Revision의 데이터로 폼 pre-fill
 - 폼 상단에 **안내 배너** 표시: "설정을 변경하면 새 Revision이 생성됩니다. 이전 Revision은 보존됩니다."
-- 제출 시 확인 다이얼로그: "새 Revision이 생성됩니다. 계속하시겠습니까?"
 
 제출 흐름:
 - `addModelRevision` mutation 호출 (새 Revision 생성, 이전 Revision 보존)
