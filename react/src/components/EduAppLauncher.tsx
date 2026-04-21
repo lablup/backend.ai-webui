@@ -167,7 +167,7 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
    * Initialize the backend.ai client with session-based auth mode.
    *
    * The caller (`EduAppLauncherPage`) is responsible for providing a
-   * non-empty endpoint via `useEduAppApiEndpoint()`, which reads from
+   * non-empty endpoint via `useResolvedApiEndpoint()`, which reads from
    * `config.toml` and suspends until resolved. If the endpoint is still
    * empty here, client initialization will be rejected and the outer
    * catch in `_launch` will surface the error via notification.
