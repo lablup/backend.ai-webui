@@ -1,9 +1,9 @@
 {
-  "epicKey": null,
-  "epicUrl": null,
-  "specTaskKey": null,
-  "specTaskUrl": null,
-  "jiraFilingPending": true,
+  "epicKey": "FR-2616",
+  "epicUrl": "https://lablup.atlassian.net/browse/FR-2616",
+  "specTaskKey": "FR-2618",
+  "specTaskUrl": "https://lablup.atlassian.net/browse/FR-2618",
+  "jiraFilingPending": false,
   "proposedEpicTitle": "Extract sToken login flow into reusable boundary component",
   "proposedSpecTaskTitle": "Define sToken login boundary component spec",
   "slug": "stoken-login-boundary",
@@ -24,5 +24,5 @@
   ],
   "sourceIssues": [],
   "createdAt": "2026-04-21T00:00:00Z",
-  "notes": "Draft spec — Jira filing pending. Rename directory to {EPIC-KEY}-stoken-login-boundary once Epic is created, and populate epicKey/specTaskKey fields. `fw` (jira-workflow skill) was not available in the environment at spec creation time."
+  "notes": "Epic FR-2616 filed. Spec Task FR-2618 created as sub-issue under the Epic. Spec PR #6828 resolves FR-2618. Directory still uses draft- prefix; rename to FR-2616-stoken-login-boundary as a follow-up."
 }
