@@ -2,7 +2,7 @@
 
 ## 개요
 
-슈퍼어드민이 Admin Serving 페이지에서 Prometheus Query Preset을 관리하고, 일반 사용자가 서비스 디테일 페이지에서 해당 Preset 기반의 메트릭을 선택하여 Auto Scaling Rule을 설정할 수 있도록 한다. 현재 Admin Serving 페이지는 엔드포인트 목록만 표시하는 단일 뷰이며, 새로운 "Auto Scaling Rule" 탭을 추가하여 Prometheus Query Preset CRUD 기능을 제공한다.
+슈퍼어드민이 Admin Serving 페이지에서 Prometheus Query Preset을 관리할 수 있도록 한다. 현재 Admin Serving 페이지는 엔드포인트 목록만 표시하는 단일 뷰이며, 새로운 "Auto Scaling Rule" 탭을 추가하여 Prometheus Query Preset CRUD 기능을 제공한다.
 
 ## 문제 정의
 
@@ -31,12 +31,15 @@
 
 - [ ] "Preset 추가" 버튼 클릭 시 모달을 통해 새 Preset 생성
 - [ ] 모달 입력 필드:
-  - **이름** (`name`): 고유 식별자 (텍스트 입력)
-  - **메트릭 이름** (`metricName`): Prometheus 메트릭 이름 (텍스트 입력)
-  - **쿼리 템플릿** (`queryTemplate`): PromQL 템플릿 문자열 (텍스트 입력). `{labels}`, `{window}`, `{group_by}` 플레이스홀더 사용 가능
-  - **타임 윈도우** (`timeWindow`): 기본 시간 윈도우 (선택 사항, 텍스트 입력. 예: `5m`)
-  - **필터 레이블** (`options.filterLabels`): Prometheus 쿼리의 `{labels}` 플레이스홀더에 들어갈 수 있는 레이블 키 목록. 사용자가 Auto Scaling Rule 설정 시 이 레이블들로 메트릭 범위를 필터링할 수 있다 (다중 입력)
-  - **그룹 레이블** (`options.groupLabels`): Prometheus 쿼리의 `{group_by}` 플레이스홀더에 들어갈 수 있는 레이블 키 목록. 결과를 그룹화하는 기준으로 사용된다 (다중 입력)
+  - **이름** (`name`): 고유 식별자, 유니크 (필수, 텍스트 입력)
+  - **설명** (`description`): 사용자에게 표시되는 Preset 설명 (선택 사항)
+  - **카테고리** (`categoryId`): Preset을 묶는 그룹 (선택 사항, 드롭다운)
+  - **정렬 순서** (`rank`): 드롭다운에서 표시 순서. 낮을수록 위에 표시 (선택 사항, 숫자 입력, 기본값 0)
+  - **메트릭 이름** (`metricName`): Prometheus 메트릭 이름 (필수, 텍스트 입력)
+  - **쿼리 템플릿** (`queryTemplate`): PromQL 템플릿 문자열 (필수, 텍스트 입력). `{labels}`, `{window}`, `{group_by}` 플레이스홀더 사용 가능
+  - **타임 윈도우** (`timeWindow`): 기본 시간 윈도우 (선택 사항, 문자열 입력. 예: `5m`)
+  - **필터 레이블** (`options.filterLabels`): PromQL 템플릿의 `{labels}` 플레이스홀더에 대입될 레이블 키 목록 (필수, 빈 배열 허용. 다중 입력)
+  - **그룹 레이블** (`options.groupLabels`): PromQL 템플릿의 `{group_by}` 플레이스홀더에 대입될 레이블 키 목록 (필수, 빈 배열 허용. 다중 입력)
 - [ ] `adminCreatePrometheusQueryPreset` 뮤테이션 호출
 - [ ] 생성 성공 시 목록 자동 갱신
 
@@ -44,7 +47,20 @@
 
 - [ ] 테이블 행의 편집 액션을 통해 기존 Preset 수정 모달 표시
 - [ ] 생성과 동일한 입력 필드를 제공하되, 기존 값을 초기값으로 채움
+- [ ] 수정 모달에서 쿼리 결과값 미리보기 제공 (아래 "미리보기" 섹션 참조)
 - [ ] `adminModifyPrometheusQueryPreset` 뮤테이션 호출 (변경된 필드만 전송)
+
+#### Prometheus Query Preset 미리보기 (Edit 모달 전용)
+
+`prometheusQueryPresetResult` API는 저장된 Preset의 ID를 필요로 하므로 미리보기는 **수정(Edit) 모달에서만** 제공한다. 생성 모달에서는 ID가 없어 미리보기 불가.
+
+- [ ] 수정 모달 상단(또는 쿼리 템플릿 필드 하단)에 "현재 값(Current value):" 레이블 + 결과값 텍스트 + 새로고침 버튼을 표시
+- [ ] `prometheusQueryPresetResult(id, options: { filterLabels: [], groupLabels: [] })` instant query로 현재 값 조회
+- [ ] 결과값이 단일 시리즈인 경우 최신 값(소수점 둘째자리 반올림)을 표시
+- [ ] 결과값이 다중 시리즈인 경우 시리즈 수 및 첫 번째 최신 값을 표시
+- [ ] 데이터 없을 경우 "No data available" 표시
+- [ ] 새로고침 버튼 클릭 시 최신 결과를 재조회. 초기 로딩 및 재조회 중에는 버튼에 로딩 인디케이터 표시
+- [ ] 구현 참조: `AutoScalingRuleEditorModal.tsx`의 `PreviewValue` / `PrometheusPresetPreview` 컴포넌트 패턴을 따름
 
 #### Prometheus Query Preset 삭제 (Delete)
 
@@ -52,33 +68,6 @@
 - [ ] 삭제 전 확인 다이얼로그 표시
 - [ ] `adminDeletePrometheusQueryPreset` 뮤테이션 호출
 - [ ] 삭제 성공 시 목록 자동 갱신
-
-#### 서비스 디테일 페이지 - Preset 기반 메트릭 선택
-
-- [ ] 기존 Auto Scaling Rule 추가/편집 모달(`AutoScalingRuleEditorModal`)에서 메트릭 선택 방식 개선
-- [ ] 어드민이 등록한 Prometheus Query Preset 목록을 조회하여 메트릭 이름(`metricName`)을 선택 옵션으로 제공
-- [ ] 사용자가 Preset의 메트릭 이름을 선택하면, 해당 Preset에 연결된 쿼리 템플릿과 타임 윈도우가 자동으로 적용됨
-- [ ] 기존 수동 입력 방식(KERNEL metric source의 `cpu_util`, `mem` 등)도 함께 유지하여 하위 호환성 보장
-
-#### 서비스 디테일 페이지 - 조건 모드 선택 (단일/범위)
-
-- [ ] Auto Scaling Rule 추가/편집 모달에서 조건 설정 영역에 Segmented 컴포넌트를 추가하여 "단일" / "범위 선택" 두 가지 모드를 전환할 수 있도록 함
-- [ ] **단일 모드**: 현재 UI와 동일하게 하나의 comparator (`greater_than`, `greater_than_or_equal`, `less_than`, `less_than_or_equal`)와 threshold 값을 입력
-- [ ] **범위 선택 모드**: 쿼리 키를 기준으로 상한/하한 범위를 동시에 지정
-  - UI 구성: `[하한값] [< 또는 ≤] [쿼리 키] [< 또는 ≤] [상한값]`
-  - 왼쪽 비교 연산자: `greater_than` (`<`) 또는 `greater_than_or_equal` (`<=`) — 쿼리 키가 하한값보다 큼
-  - 오른쪽 비교 연산자: `less_than` (`<`) 또는 `less_than_or_equal` (`<=`) — 쿼리 키가 상한값보다 작음
-  - 각 비교 연산자는 드롭다운 또는 토글로 선택
-- [ ] 기본 모드는 "단일"로 설정
-
-#### 서비스 디테일 페이지 - 쿼리 결과값 미리보기
-
-- [ ] Auto Scaling Rule 추가/편집 모달에서 메트릭 설정 form item의 `extra` 영역에 현재 설정 기준의 쿼리 결과값을 미리보기로 표시
-- [ ] `prometheusQueryPresetResult` API를 호출하여 결과값을 조회 (모든 인증된 사용자 접근 가능)
-- [ ] 쿼리 시 `options` 파라미터(`ExecuteQueryDefinitionOptionsInput`)를 통해 `filterLabels`(키-값 쌍)와 `groupLabels`(키 목록)를 전달하여 실행 시점의 필터/그룹 조건을 지정
-- [ ] 표시 상태: 로딩 스피너 → 결과값 텍스트 + 새로고침 아이콘 버튼
-- [ ] 새로고침 버튼 클릭 시 최신 결과값을 다시 조회
-- [ ] 메트릭 설정(Preset 선택, 조건 등)이 변경되면 결과값을 자동으로 다시 조회하거나, 사용자가 새로고침 버튼으로 수동 조회
 
 ### 선택 (Nice to Have)
 
@@ -89,9 +78,6 @@
 
 - 슈퍼어드민으로서, Admin Serving 페이지에서 Prometheus Query Preset을 추가하여 조직에서 사용할 Auto Scaling 메트릭 기준을 사전 정의할 수 있다
 - 슈퍼어드민으로서, 등록된 Prometheus Query Preset을 수정하거나 삭제하여 메트릭 기준을 관리할 수 있다
-- 일반 사용자로서, 서비스 디테일 페이지에서 Auto Scaling Rule을 추가할 때 어드민이 미리 등록한 메트릭 이름을 선택하여 쉽게 규칙을 설정할 수 있다
-- 일반 사용자로서, Auto Scaling Rule의 조건을 단일 값 또는 범위로 설정하여 더 유연한 스케일링 기준을 만들 수 있다
-- 일반 사용자로서, Auto Scaling Rule 설정 시 현재 쿼리 결과값을 미리보기하여 설정이 올바른지 확인할 수 있다
 
 ## 인수 조건 (Acceptance Criteria)
 
@@ -108,32 +94,18 @@
 
 ### Prometheus Query Preset 모달
 
-- [ ] 모든 필수 필드(`name`, `metricName`, `queryTemplate`, `options.filterLabels`, `options.groupLabels`)가 입력되어야 생성/수정이 가능하다
-- [ ] `timeWindow`는 선택 사항이다
+- [ ] 필수 필드(`name`, `metricName`, `queryTemplate`)가 비어있으면 생성/수정이 불가하다
+- [ ] `options.filterLabels`와 `options.groupLabels`는 빈 배열로도 제출 가능하다
+- [ ] `description`, `categoryId`, `rank`, `timeWindow`는 선택 사항이다
 - [ ] 생성/수정 성공 시 성공 메시지가 표시되고 목록이 갱신된다
 - [ ] 오류 발생 시 에러 메시지가 표시된다
 
-### 서비스 디테일 페이지
+### 수정 모달 미리보기
 
-- [ ] Auto Scaling Rule 추가 모달에서 어드민이 등록한 Prometheus Query Preset의 메트릭 이름 목록이 선택 옵션으로 표시된다
-- [ ] Preset 메트릭 선택 시 관련 설정(타임 윈도우 등)이 자동으로 반영된다
-- [ ] 기존 수동 입력 방식도 여전히 동작한다
-
-### 조건 모드 선택 (단일/범위)
-
-- [ ] Segmented 컴포넌트로 "단일" / "범위 선택" 모드를 전환할 수 있다
-- [ ] 단일 모드에서는 기존처럼 하나의 comparator와 threshold를 입력한다
-- [ ] 범위 선택 모드에서는 `[하한값] [</ ≤] [쿼리 키] [</≤] [상한값]` 형태로 상한/하한 범위를 지정할 수 있다
-- [ ] 왼쪽 비교 연산자는 `greater_than`(`<`) 또는 `greater_than_or_equal`(`<=`)이다
-- [ ] 오른쪽 비교 연산자는 `less_than`(`<`) 또는 `less_than_or_equal`(`<=`)이다
-- [ ] 기본 모드는 "단일"이다
-
-### 쿼리 결과값 미리보기
-
-- [ ] 메트릭 설정 form item 하단(`extra`)에 현재 설정 기준의 쿼리 결과값이 표시된다
-- [ ] 결과값 조회 중에는 로딩 스피너가 표시된다
-- [ ] 결과값 옆에 새로고침 아이콘 버튼이 있어 수동으로 최신 결과를 다시 조회할 수 있다
-- [ ] 모든 인증된 사용자가 `prometheusQueryPresetResult` API를 통해 쿼리 결과를 미리볼 수 있다
+- [ ] 수정 모달에 "현재 값:" 레이블 + 결과값 + 새로고침 버튼이 표시된다
+- [ ] 새로고침 버튼 클릭 시 최신 쿼리 결과를 재조회한다
+- [ ] 조회 중 버튼에 로딩 인디케이터가 표시된다
+- [ ] 결과가 없으면 "No data available"이 표시된다
 
 ## GraphQL API 참조
 
@@ -143,7 +115,7 @@
 |---|---|
 | `prometheusQueryPresets(filter, orderBy, limit, offset)` | Preset 목록 조회 (오프셋 기반 페이지네이션) |
 | `prometheusQueryPreset(id)` | 단일 Preset 조회 |
-| `prometheusQueryPresetResult(id, timeRange, options, timeWindow)` | Preset 기반 쿼리 실행 및 결과 조회 |
+| `prometheusQueryPresetResult(id, options)` | Preset 기반 instant query 실행 (수정 모달 미리보기용) |
 
 ### 뮤테이션 (어드민 전용)
 
@@ -152,23 +124,17 @@
 | `adminCreatePrometheusQueryPreset(input: CreateQueryDefinitionInput!)` | Preset 생성 |
 | `adminModifyPrometheusQueryPreset(id: ID!, input: ModifyQueryDefinitionInput!)` | Preset 수정 |
 | `adminDeletePrometheusQueryPreset(id: ID!)` | Preset 삭제 |
+| `adminCreatePrometheusQueryPresetCategory(input: CreateCategoryInput!)` | 카테고리 생성 (Category CRUD는 이번 범위에서 미구현, 참고용) |
+| `adminDeletePrometheusQueryPresetCategory(id: ID!)` | 카테고리 삭제 (동일) |
 
 ### 주요 타입
 
 **QueryDefinition** (Preset 엔티티):
-- `id`, `name`, `metricName`, `queryTemplate`, `timeWindow`, `options` (filterLabels, groupLabels), `createdAt`, `updatedAt`
+- `id`, `name`, `description`, `rank`, `categoryId`, `category` (>=26.4.3), `metricName`, `queryTemplate`, `timeWindow`, `options` (filterLabels, groupLabels), `createdAt`, `updatedAt`
 
-**ExecuteQueryDefinitionOptionsInput** (쿼리 실행 옵션):
-- `filterLabels`: `[MetricLabelEntryInput!]` — 필터링할 레이블 키-값 쌍 목록
-- `groupLabels`: `[String!]` — 결과를 그룹화할 레이블 키 목록
-
-**QueryTimeRangeInput** (쿼리 시간 범위):
-- Prometheus 쿼리의 시간 범위를 지정
-
-**QueryDefinitionExecuteResult** (쿼리 실행 결과):
-- `status`: Prometheus 응답 상태
-- `resultType`: 결과 유형 (예: matrix)
-- `result`: `[QueryDefinitionMetricResult!]!` — 메트릭 결과 항목 목록
+**CreateQueryDefinitionInput**:
+- 필수: `name`, `metricName`, `queryTemplate`, `options` (filterLabels `[String!]!`, groupLabels `[String!]!`)
+- 선택: `description`, `rank` (기본값 0), `categoryId`, `timeWindow`
 
 **Seed Presets** (백엔드에서 기본 제공):
 
@@ -188,7 +154,7 @@
 
 ## 범위 외 (Out of Scope)
 
-- Auto Scaling Rule 자체의 CRUD (이미 서비스 디테일 페이지에 구현되어 있음) -- 단, Preset 기반 메트릭 선택 연동은 포함
+- Auto Scaling Rule 자체의 CRUD 및 에디터 UX (서비스 디테일 페이지) → `draft-auto-scaling-rule-ux` 스펙에서 다룸
 - Prometheus 서버 연결 설정 또는 Prometheus 인프라 관리
 - Auto Scaling Rule 실행 이력 조회 및 모니터링 대시보드
-- Prometheus Query Preset의 권한별 세분화 (현재는 슈퍼어드민만 CRUD 관리, 조회/실행은 모든 인증된 사용자 가능)
+- Prometheus Query Preset의 권한별 세분화 (현재는 슈퍼어드민만 CRUD 관리, 조회는 모든 인증된 사용자 가능)
