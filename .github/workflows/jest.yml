@@ -21,7 +21,7 @@ jobs:
       react-changed: ${{ steps.changes.outputs.react }}
       backend-ai-ui-changed: ${{ steps.changes.outputs.backend-ai-ui }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: dorny/paths-filter@v3
         id: changes
         with:
@@ -41,15 +41,15 @@ jobs:
       contents: write
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: jwalton/gh-find-current-pr@v1
         id: findPr
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v5
         name: Install pnpm
         with:
           version: latest
           run_install: false
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version-file: ".nvmrc"
           cache: "pnpm"
@@ -94,15 +94,15 @@ jobs:
       run:
         working-directory: ./packages/backend.ai-ui
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: jwalton/gh-find-current-pr@v1
         id: findPr
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v5
         name: Install pnpm
         with:
           version: latest
           run_install: false
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version-file: ".nvmrc"
           cache: "pnpm"
