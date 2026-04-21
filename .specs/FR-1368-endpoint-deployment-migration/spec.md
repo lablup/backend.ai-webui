@@ -196,11 +196,63 @@ if (this.isManagerVersionCompatibleWith('26.4.2')) {
 
 구현 요구사항:
 - [ ] `DeploymentListPage.tsx` 신규 생성 (`/deployments` 경로)
-- [ ] `DeploymentList.tsx` 신규 생성 (Strawberry `deploymentsV2` 또는 `modelDeployments` query 기반)
+- [ ] `DeploymentList.tsx` 신규 생성 — `useRefetchableFragment` 패턴, `myDeployments` query 기반
 - [ ] `DeploymentStatusTag.tsx` 신규 생성 (배포 라이프사이클 상태 표시)
 - [ ] 레플리카 헬스 요약 (`activeReplicas / replicas Healthy`) 컬럼 표시
 - [ ] "New Deployment" 버튼 → `/deployments/create`로 이동
 - [ ] 행 클릭 → `/deployments/:deploymentId`로 이동
+
+**서버사이드 필터 / 정렬 / 페이지네이션 요구사항** (DeploymentList.tsx):
+
+- [ ] `BAIGraphQLPropertyFilter` 연동 — `DeploymentFilter` 지원 필드만 노출:
+
+  | 필드 | GQL 타입 | 버전 | 비고 |
+  |------|----------|------|------|
+  | `name` | `StringFilter` | 26.4.2+ | 항상 노출 |
+  | `status` | `DeploymentStatusFilter` | 26.4.2+ | `equals` 고정, `PENDING/SCALING/DEPLOYING/READY/STOPPING/STOPPED` 선택 |
+  | `endpointUrl` | `StringFilter` | 26.4.2+ | 항상 노출 |
+  | `tags` | `StringFilter` | 26.4.2+ | 항상 노출 |
+  | `openToPublic` | `Boolean` | 26.4.2+ | `valueMode: 'scalar'`, boolean 타입 |
+
+  필터 객체는 `nuqs`의 `parseAsJson<DeploymentFilter>`로 URL 직렬화:
+  ```ts
+  filter: parseAsJson<DeploymentFilter>((v) => v as DeploymentFilter)
+  ```
+
+- [ ] `BAITable` `order` / `onChangeOrder` 연동 — 서버에서 지원하는 필드에만 `sorter: true` 부여 (`isEnableSorter` 패턴):
+
+  ```ts
+  // DeploymentOrderField 기준으로 지원 여부 결정
+  const SORTABLE_KEYS = ['name', 'createdAt'] as const;
+  const isEnableSorter = (key: string) => SORTABLE_KEYS.includes(key as any);
+  ```
+
+  | 컬럼 | sorter | DeploymentOrderField 매핑 |
+  |------|--------|--------------------------|
+  | 배포 이름 (`name`) | ✅ | `NAME` |
+  | 상태 (`status`) | ❌ | 미지원 |
+  | 레플리카 요약 | ❌ | 미지원 |
+  | Endpoint URL | ❌ | 미지원 |
+  | 생성일 (`createdAt`) | ✅ | `CREATED_AT` |
+
+  BAITable의 `order` 문자열(`"name"` / `"-createdAt"` 등)을 `convertToOrderBy<DeploymentOrderBy>()` 헬퍼로 변환하여 query 변수에 전달:
+  ```ts
+  import { convertToOrderBy } from '../helper';
+  // "−createdAt" → [{ field: "CREATED_AT", direction: "DESC" }]
+  orderBy: convertToOrderBy<DeploymentOrderBy>(queryParams.order)
+  ```
+
+- [ ] URL 상태 (`nuqs` `useQueryStates`) — `urlKeyPrefix` 파라미터로 복수 인스턴스 충돌 방지:
+  ```ts
+  const [queryParams, setQueryParams] = useQueryStates({
+    current:  parseAsInteger.withDefault(1),
+    pageSize: parseAsInteger.withDefault(20),
+    order:    parseAsStringLiteral(deploymentSortableFields),
+    filter:   parseAsJson<DeploymentFilter>(...),
+  }, { history: 'replace', urlKeys: { current: 'dPage', pageSize: 'dSize', order: 'dOrder', filter: 'dFilter' } });
+  ```
+
+- [ ] 서버사이드 pagination: `myDeployments(limit, offset, ...)` — `count` 필드를 `BAITable.pagination.total`에 전달
 
 ---
 
@@ -409,8 +461,32 @@ if (this.isManagerVersionCompatibleWith('26.4.2')) {
 
 구현 요구사항:
 - [ ] `AdminDeploymentListPage.tsx` 신규 생성 (`/admin-deployments` 경로, 기존 `/admin-serving`, `/admin-session` 컨벤션과 일치)
-- [ ] `adminDeploymentsV2` query 사용
+- [ ] `adminDeployments` query 사용 (Flow 1의 `myDeployments` 대신)
 - [ ] 소유자 정보 표시 (`DeploymentOwnerInfo` 컴포넌트)
+
+**서버사이드 필터 / 정렬 / 페이지네이션 요구사항** (AdminDeploymentList 또는 DeploymentList에 `mode="admin"` prop):
+
+- [ ] Flow 1 필터에 추가되는 관리자 전용 필드 (26.4.3+ 조건부 노출):
+
+  | 필드 | GQL 타입 | 버전 조건 | 비고 |
+  |------|----------|-----------|------|
+  | `domainName` | `StringFilter` | 26.4.3+ | `baiClient.isManagerVersionCompatibleWith('26.4.3')` |
+  | `resourceGroup` | `StringFilter` | 26.4.3+ | 동일 |
+  | `createdAt` | `DateTimeFilter` | 26.4.3+ | datetime picker 사용 |
+
+  ```ts
+  const is26_4_3 = baiClient.isManagerVersionCompatibleWith('26.4.3');
+  filterProperties={filterOutEmpty([
+    { key: 'name', ... },          // 항상 노출
+    { key: 'status', ... },        // 항상 노출
+    is26_4_3 && { key: 'domainName', propertyLabel: t('...'), type: 'string' },
+    is26_4_3 && { key: 'resourceGroup', propertyLabel: t('...'), type: 'string' },
+    is26_4_3 && { key: 'createdAt', propertyLabel: t('...'), type: 'datetime' },
+  ])}
+  ```
+
+- [ ] 관리자 전용 컬럼 추가: `domainName`, `projectName`, 소유자(createdBy)
+- [ ] 정렬: Flow 1과 동일 + `DOMAIN`, `PROJECT`, `RESOURCE_GROUP` sorter 추가 (26.4.3+)
 
 ---
 
@@ -518,7 +594,15 @@ export interface ReplicaStatusTagProps extends Omit<BAITagProps, 'color'> {
     "DeploymentUpdated": "Deployment has been updated.",
     "DeploymentCreated": "Deployment has been created.",
     "FailedToUpdateDeployment": "Failed to update deployment.",
-    "FailedToCreateDeployment": "Failed to create deployment."
+    "FailedToCreateDeployment": "Failed to create deployment.",
+    "FilterByName": "Name",
+    "FilterByStatus": "Status",
+    "FilterByEndpointUrl": "Endpoint URL",
+    "FilterByTags": "Tags",
+    "FilterByOpenToPublic": "Public",
+    "FilterByDomainName": "Domain",
+    "FilterByResourceGroup": "Resource Group",
+    "FilterByCreatedAt": "Created At"
   }
 }
 ```
@@ -700,17 +784,69 @@ type ModelReplica {
 
 ```graphql
 type ModelDeployment {
-  id: GlobalID!
-  endpointId: UUID!
+  id: ID!                          # GlobalID (Relay)
+  metadata: ModelDeploymentMetadata!
+  networkAccess: ModelDeploymentNetworkAccess!
+  replicaState: ReplicaState!      # { desiredReplicaCount: Int! }
+  currentRevision: ModelRevision   # since 26.4.3
+  creator: UserV2                  # since 26.4.3
+  replicas(filter, orderBy, limit, offset): ModelReplicaConnection!
+  revisionHistory(filter, orderBy, limit, offset): ModelRevisionConnection!
+  autoScalingRules(filter, orderBy, limit, offset): AutoScalingRuleConnection!
+  accessTokens(filter, orderBy, limit, offset): AccessTokenConnection!
+}
+
+type ModelDeploymentMetadata {
   name: String!
-  status: EndpointLifecycle!
-  replicas: Int!
-  activeReplicas: Int!
-  currentRevision: ModelRevision
-  routes(filter: RouteFilter, order: RouteOrder, offset: Int, first: Int): RouteConnection!
-  replicas_: ModelReplicaConnection! # (ModelReplica alias)
+  status: DeploymentStatus!        # PENDING | SCALING | DEPLOYING | READY | STOPPING | STOPPED
+  tags: [String!]!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  projectId: ID!
+  domainName: String!
+}
+
+type ModelDeploymentNetworkAccess {
+  endpointUrl: String
+  openToPublic: Boolean!
+}
+
+type ReplicaState {
+  desiredReplicaCount: Int!
 }
 ```
+
+### DeploymentFilter / DeploymentOrderBy
+
+```graphql
+input DeploymentFilter {
+  name: StringFilter           # 26.4.2+
+  status: DeploymentStatusFilter
+  openToPublic: Boolean
+  tags: StringFilter
+  endpointUrl: StringFilter
+  domainName: StringFilter     # 26.4.3+
+  projectId: UUIDFilter        # 26.4.3+
+  resourceGroup: StringFilter  # 26.4.3+
+  createdUserId: UUIDFilter    # 26.4.3+
+  createdAt: DateTimeFilter    # 26.4.3+
+  AND/OR/NOT: [DeploymentFilter!]
+}
+
+input DeploymentOrderBy {
+  field: DeploymentOrderField!  # NAME | CREATED_AT | DESTROYED_AT | DOMAIN | PROJECT | RESOURCE_GROUP | TAG
+  direction: OrderDirection! = DESC
+}
+```
+
+쿼리 시그니처:
+```graphql
+myDeployments(filter: DeploymentFilter, orderBy: [DeploymentOrderBy!], limit: Int, offset: Int): ModelDeploymentConnection!
+projectDeployments(scope: ProjectDeploymentScope!, filter: ..., orderBy: ..., limit: Int, offset: Int): ModelDeploymentConnection!
+adminDeployments(filter: DeploymentFilter, orderBy: [DeploymentOrderBy!], limit: Int, offset: Int): ModelDeploymentConnection!
+```
+
+`convertToOrderBy<DeploymentOrderBy>(orderString)` 헬퍼(`react/src/helper/index.tsx`)로 BAITable 문자열 포맷(`"-createdAt"`) → `[{ field: "CREATED_AT", direction: "DESC" }]` 변환.
 
 ---
 
@@ -765,6 +901,7 @@ type ModelDeployment {
 
 ## 변경 이력
 
+- 2026-04-21: 서버사이드 페이지네이션/필터/정렬 패턴 명세 추가 (DeploymentFilter, DeploymentOrderBy, isEnableSorter, convertToOrderBy, nuqs URL 직렬화)
 - 2026-04-21: Settings 탭 제거 → Overview 섹션의 Configuration 카드로 통합. 탭 5개 → 4개
 - 2026-04-21: 초기 초안 작성 (아키텍처 다이어그램 + 코드베이스 분석 기반)
 - 2026-04-21: 사용자 확인 사항 6개 반영하여 한국어로 전면 재작성
