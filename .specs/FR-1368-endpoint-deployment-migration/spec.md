@@ -654,7 +654,7 @@ react/src/components/
 ## 범위 외 (Out of Scope)
 
 - 백엔드 API 변경 — `RouteHealthStatus`, `ModelReplica`, `LivenessStatus` 등 스키마는 이미 구현됨
-- 오토스케일링 규칙 변경 — `draft-auto-scaling-rule-ux`에서 별도 추적
+- 오토스케일링 규칙 UI — `AutoScalingRuleEditorModal`, `AutoScalingRuleList` 모두 이미 Deployment API(`modelDeploymentId`, `deploymentId`) 기반으로 구현됨. 추가 변경 불필요
 - Chat 페이지의 Endpoint 관련 컴포넌트 (`EndpointSelect.tsx`, `EndpointTokenSelect.tsx`)
 - API 클라이언트 레벨의 `useApiEndpoint.ts`, `useEduAppApiEndpoint.ts` (다른 의미의 "endpoint")
 
