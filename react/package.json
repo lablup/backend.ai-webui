@@ -87,15 +87,14 @@
     "zod": "^4.3.6"
   },
   "scripts": {
-    "start": "NODE_OPTIONS='--max-old-space-size=4096' craco start",
+    "start": "NODE_OPTIONS='--max-old-space-size=4096' vite",
     "vite:dev": "vite",
     "vite:build": "vite build",
     "vitest": "vitest run",
     "vitest:watch": "vitest",
     "build": "pnpm run build:only && cp -r ./build/* ../build/web/",
-    "build:only": "NODE_OPTIONS='--max-old-space-size=4096' pnpm run relay && NODE_OPTIONS='--max-old-space-size=4096' craco build",
-    "test": "NODE_OPTIONS='$NODE_OPTIONS --no-deprecation --experimental-vm-modules' jest",
-    "eject": "react-scripts eject",
+    "build:only": "pnpm run relay && vite build",
+    "test": "vitest run",
     "relay": "relay-compiler",
     "relay:watch": "nodemon --watch schema.graphql --watch client-directives.graphql --exec 'pnpm run relay --watch'",
     "lint": "eslint ./src --max-warnings=0",
@@ -121,7 +120,6 @@
     "@babel/preset-env": "^7.29.2",
     "@babel/preset-react": "^7.28.5",
     "@babel/preset-typescript": "catalog:",
-    "@craco/craco": "^7.1.0",
     "@eslint/js": "catalog:",
     "@tanstack/eslint-plugin-query": "^5.99.0",
     "@testing-library/jest-dom": "catalog:",
@@ -139,7 +137,6 @@
     "@types/relay-runtime": "catalog:",
     "@types/relay-test-utils": "catalog:",
     "@vitejs/plugin-react": "^4.7.0",
-    "babel-jest": "catalog:",
     "babel-plugin-react-compiler": "catalog:",
     "babel-plugin-relay": "^20.1.1",
     "babel-preset-react-app": "^10.1.0",
@@ -152,7 +149,6 @@
     "eslint-plugin-react-hooks": "catalog:",
     "eslint-plugin-relay": "^2.0.0",
     "globals": "catalog:",
-    "html-webpack-plugin": "5.6.3",
     "jsdom": "^29.0.2",
     "nodemon": "^3.1.14",
     "prop-types": "^15.8.1",
@@ -162,14 +158,11 @@
     "react-test-renderer": "^19.2.5",
     "relay-compiler": "catalog:",
     "relay-test-utils": "catalog:",
-    "stream-browserify": "^3.0.0",
     "typescript-eslint": "catalog:",
     "vite": "^6.4.1",
     "vite-plugin-node-polyfills": "^0.24.0",
     "vite-plugin-pwa": "^1.2.0",
     "vite-plugin-svgr": "^4.5.0",
-    "vitest": "^4.1.4",
-    "webpack": "catalog:",
-    "workbox-webpack-plugin": "^7.4.0"
+    "vitest": "^4.1.4"
   }
 }
