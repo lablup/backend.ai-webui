@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import SourceCodeView from '../SourceCodeView';
-import { Descriptions, Skeleton, Typography } from 'antd';
+import { Alert, Descriptions, Skeleton, Typography } from 'antd';
 import {
   BAIButton,
   BAIFlex,
@@ -32,6 +32,7 @@ const VSCodeDesktopConnectionModal: React.FC<
     data: password,
     isLoading,
     isError,
+    refetch,
   } = useTanQuery<string>({
     queryKey: ['vscodePassword', sessionId],
     queryFn: async () => {
@@ -41,7 +42,8 @@ const VSCodeDesktopConnectionModal: React.FC<
       return rawText;
     },
     enabled: !!sessionId && !!modalProps.open,
-    retry: false,
+    retry: 2,
+    retryDelay: 500,
     throwOnError: false,
   });
 
@@ -81,7 +83,19 @@ const VSCodeDesktopConnectionModal: React.FC<
             {isLoading ? (
               <Skeleton.Input />
             ) : isError ? (
-              <BAIText type="secondary">-</BAIText>
+              <BAIFlex direction="column" gap="sm" align="stretch">
+                <Alert
+                  type="error"
+                  showIcon
+                  title={t('session.VSCodeRemotePasswordFetchError')}
+                  description={t(
+                    'session.VSCodeRemotePasswordFetchErrorDescription',
+                  )}
+                />
+                <BAIButton size="small" onClick={() => refetch()}>
+                  {t('button.Retry')}
+                </BAIButton>
+              </BAIFlex>
             ) : (
               <BAIText copyable monospace>
                 {password}
@@ -89,6 +103,16 @@ const VSCodeDesktopConnectionModal: React.FC<
             )}
           </Descriptions.Item>
         </Descriptions>
+        {isError && (
+          <BAIFlex direction="column" gap="xs" align="stretch">
+            <Typography.Text>
+              {t('session.VSCodeRemotePasswordFallbackInstructions')}
+            </Typography.Text>
+            <SourceCodeView language="shell">
+              {`cat /home/work/.password`}
+            </SourceCodeView>
+          </BAIFlex>
+        )}
 
         <Typography.Text>
           {t('session.VSCodeRemoteNoticeSSHConfig')}
