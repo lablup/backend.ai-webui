@@ -143,6 +143,9 @@ if (this.isManagerVersionCompatibleWith('26.4.2')) {
   this._features['model-deployment-strawberry'] = true;
   this._features['model-replica'] = true;
 }
+if (this.isManagerVersionCompatibleWith('26.4.3')) {
+  this._features['model-deployment-extended-filter'] = true;
+}
 ```
 
 ---
@@ -470,18 +473,18 @@ if (this.isManagerVersionCompatibleWith('26.4.2')) {
 
   | 필드 | GQL 타입 | 버전 조건 | 비고 |
   |------|----------|-----------|------|
-  | `domainName` | `StringFilter` | 26.4.3+ | `baiClient.isManagerVersionCompatibleWith('26.4.3')` |
+  | `domainName` | `StringFilter` | 26.4.3+ | `baiClient.supports('model-deployment-extended-filter')` |
   | `resourceGroup` | `StringFilter` | 26.4.3+ | 동일 |
   | `createdAt` | `DateTimeFilter` | 26.4.3+ | datetime picker 사용 |
 
   ```ts
-  const is26_4_3 = baiClient.isManagerVersionCompatibleWith('26.4.3');
+  const isExtendedFilter = baiClient.supports('model-deployment-extended-filter');
   filterProperties={filterOutEmpty([
     { key: 'name', ... },          // 항상 노출
     { key: 'status', ... },        // 항상 노출
-    is26_4_3 && { key: 'domainName', propertyLabel: t('...'), type: 'string' },
-    is26_4_3 && { key: 'resourceGroup', propertyLabel: t('...'), type: 'string' },
-    is26_4_3 && { key: 'createdAt', propertyLabel: t('...'), type: 'datetime' },
+    isExtendedFilter && { key: 'domainName', propertyLabel: t('...'), type: 'string' },
+    isExtendedFilter && { key: 'resourceGroup', propertyLabel: t('...'), type: 'string' },
+    isExtendedFilter && { key: 'createdAt', propertyLabel: t('...'), type: 'datetime' },
   ])}
   ```
 
@@ -711,7 +714,7 @@ react/src/components/
 |----------|---------|
 | `react/src/routes.tsx` | URL 경로 변경, fallback 리디렉션 추가, 신규 페이지 import, 버전 분기 라우팅 |
 | `react/src/hooks/useWebUIMenuItems.tsx` | 메뉴 경로 및 레이블 업데이트 |
-| `src/lib/backend.ai-client-esm.ts` | `model-deployment-strawberry`, `model-replica` feature flag 추가 |
+| `src/lib/backend.ai-client-esm.ts` | `model-deployment-strawberry`, `model-replica`, `model-deployment-extended-filter` feature flag 추가 |
 | `resources/i18n/en.json` | 신규 i18n 키 추가 (22개 언어 번역 필요) |
 
 ---
@@ -854,7 +857,7 @@ adminDeployments(filter: DeploymentFilter, orderBy: [DeploymentOrderBy!], limit:
 
 ### Phase 1 — 기반 작업
 
-1. `backend.ai-client-esm.ts`에 `model-deployment-strawberry`, `model-replica` feature flag 추가
+1. `backend.ai-client-esm.ts`에 `model-deployment-strawberry`, `model-replica`, `model-deployment-extended-filter` feature flag 추가
 2. `routes.tsx`: URL 경로 변경 + fallback 리디렉션 + 버전 분기 라우팅 골격
 3. `useWebUIMenuItems.tsx`: 메뉴 레이블 및 경로 업데이트
 4. i18n 신규 키 추가 (`en.json`)
