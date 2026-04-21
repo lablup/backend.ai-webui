@@ -39,7 +39,7 @@
 | 1 | URL 경로 | `/deployments`로 변경. 기존 `/serving` → `/deployments` 리디렉션 fallback 유지 |
 | 2 | API 호환성 | 26.4.2 이상: 신규 Strawberry API 사용. 미만: 기존 Graphene UI 라우팅. **버전 분기는 라우팅 레벨에서만 처리, 컴포넌트 내 dual-support 없음** |
 | 3 | 헬스 색상 구분 | UNHEALTHY → **red/error**, DEGRADED → **amber/warning** |
-| 4 | Route vs Replica | Route 1개 = Replica 1개 (1:1). 상세 페이지에서 단일 목록으로 표시 |
+| 4 | Route vs Replica | Route는 내부 구현 개념. UI에서는 **Replicas**로만 노출. 헬스/트래픽 상태는 각 Replica의 속성으로 표시 |
 | 5 | Active Pool 위치 | Deployment 상세 페이지 **Overview 섹션** (메인 본문 상단)에 배치 |
 | 6 | 최소 백엔드 버전 | **26.4.2** |
 | 7 | 구버전 컴포넌트 처리 | 구버전 Graphene 기반 페이지/컴포넌트는 **그대로 유지** (fallback 라우팅용). 신규 컴포넌트는 처음부터 새로 작성 |
@@ -56,13 +56,13 @@ Manager ──(HEALTHY 라우트 동기화)──→ AppProxy
                                         ├── Health Checker (레플리카 프로브)
                                         └── Active Pool (HEALTHY 레플리카만 포함)
                                                 │
-                                    사용자 ────→ Route A (HEALTHY ✓) — 트래픽 수신
-                                                 Route B (HEALTHY ✓) — 트래픽 수신
-                                                 Route C (UNHEALTHY ✗) — 트래픽 차단
-                                                 Route D (DEGRADED  ~) — 유예 중, 차단
+                                    사용자 ────→ Replica A (HEALTHY ✓) — 트래픽 수신
+                                                 Replica B (HEALTHY ✓) — 트래픽 수신
+                                                 Replica C (UNHEALTHY ✗) — 트래픽 차단
+                                                 Replica D (DEGRADED  ~) — 유예 중, 차단
 ```
 
-`healthStatus = HEALTHY` AND `trafficStatus = ACTIVE`인 Route만 AppProxy Active Pool에 포함되어 실제 사용자 트래픽을 수신합니다.
+`healthStatus = HEALTHY` AND `trafficStatus = ACTIVE`인 Replica만 AppProxy Active Pool에 포함되어 실제 사용자 트래픽을 수신합니다.
 
 ### Route 헬스 상태 머신
 
@@ -90,21 +90,22 @@ DEGRADED                           ↓
 
 > **주의**: `RouteHealthStatus`는 `NOT_CHECKED | HEALTHY | UNHEALTHY | DEGRADED` 4가지 값을 가지며, TERMINATING은 `RouteStatus.TERMINATING`으로 별도 표현됩니다.
 
-### Route vs ModelReplica 관계
+### 내부 Route 구조와 UI Replica의 관계
 
 ```
 DeploymentRevisionRow
     └── routings (1:N)
-            └── RoutingRow (= 단일 Route)
+            └── RoutingRow (내부 Route, 단일 Replica 슬롯)
                     └── session (FK → SessionRow, 1:1)
 
 ModelReplica (Strawberry GQL 타입)
-    └── Route 데이터를 감싼 래퍼
+    └── RoutingRow를 감싼 사용자 노출용 래퍼
 ```
 
-- `RoutingRow` 하나 = `SessionRow` 하나 = UI상 Replica 하나
-- 1개 Revision에 N개 Route가 있어 카나리/블루-그린 배포(트래픽 분산)를 지원
-- UI에서 **Route 목록 = Replica 목록** (같은 데이터를 컨텍스트에 따라 다른 레이블로 표시)
+- 내부 `RoutingRow` 하나 = `SessionRow` 하나 = **UI상 Replica 하나**
+- Route는 내부 구현 세부사항. **UI에서는 Replicas 탭으로만 노출**
+- `healthStatus` / `trafficStatus`는 각 Replica의 속성으로 표시 (별도 Routes 탭 없음)
+- 1개 Revision에 N개 Replica가 있어 카나리/블루-그린 배포(트래픽 분산)를 지원
 
 ---
 
@@ -334,7 +335,7 @@ DeploymentDetailPage (동일)
 구현 요구사항:
 - [ ] `DeploymentDetailPage.tsx` 신규 생성 (Strawberry API 기반)
 - [ ] `DeploymentActivePoolSection.tsx` 신규 생성 (Overview 섹션 내 Active Pool 시각화)
-- [ ] `ReplicaStatusTag.tsx` 신규 생성 (Route 헬스 상태 태그, 아래 별도 스펙 참조)
+- [ ] `ReplicaStatusTag.tsx` 신규 생성 (Replica 헬스 상태 태그, 아래 별도 스펙 참조)
 - [ ] `DeploymentReplicasTab.tsx` 신규 생성 (Replicas 탭)
 - [ ] `DeploymentRevisionHistoryTab.tsx` 신규 생성 (Revision History 탭)
 - [ ] `DeploymentSettingsTab.tsx` 신규 생성 (Settings 탭)
