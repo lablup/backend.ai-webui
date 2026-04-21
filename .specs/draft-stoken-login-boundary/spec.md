@@ -95,16 +95,17 @@ URL 쿼리 파라미터 `sToken`을 통해 Backend.AI에 SSO 방식으로 로그
 
 ```tsx
 interface STokenLoginBoundaryProps {
-  // 필수
+  // 필수 — 호출자가 nuqs로 URL 쿼리에서 읽어 넘긴다.
+  // 컴포넌트는 내부에서 URL을 직접 파싱하지 않는다 (URL 파라미터 파싱 규약 섹션 참조).
+  sToken: string;
   children: React.ReactNode;
 
-  // 선택 — 생략 시 URL 쿼리에서 추출 (sToken canonical, stoken deprecated)
-  sToken?: string;
-
-  // client.token_login에 두 번째 인자로 그대로 전달되는 추가 파라미터
+  // client.token_login에 두 번째 인자로 그대로 전달되는 추가 파라미터.
+  // 호출자가 nuqs로 수집하거나 정적 객체로 구성해 넘긴다.
   extraParams?: Record<string, string>;
 
-  // 생명주기 훅 — 호출자가 자신의 후처리를 수행
+  // 생명주기 훅 — 호출자가 자신의 후처리를 수행 (패널 닫기, last_login 카운터,
+  // nuqs setter로 URL에서 sToken 제거 등).
   onSuccess?: (client: BackendAIClient) => void;
   onError?: (error: STokenLoginError) => void;
 
@@ -114,7 +115,11 @@ interface STokenLoginBoundaryProps {
 }
 ```
 
-**주의: `apiEndpoint` prop은 제공하지 않는다.** 엔드포인트는 컴포넌트 내부에서 config.toml 기반 훅으로 resolve한다. 테스트용 override는 첫 이터레이션에 포함하지 않으며, 필요해질 경우 후속 이슈에서 결정한다.
+**주의**
+
+- **`apiEndpoint` prop은 제공하지 않는다.** 엔드포인트는 컴포넌트 내부에서 config.toml 기반 훅으로 resolve한다. 테스트용 override는 첫 이터레이션에 포함하지 않으며, 필요해질 경우 후속 이슈에서 결정한다.
+- **`sToken`은 prop으로만 받는다.** 컴포넌트는 `window.location`, `URLSearchParams`, `window.history` 등 URL 관련 API를 **일절 참조하지 않는다**. URL 파싱 책임은 전적으로 호출자에게 있으며 라이브러리는 `nuqs`를 사용한다 (다음 섹션 참조).
+- **`sToken`이 빈 문자열이거나 유효하지 않은 값인 경우**에도 컴포넌트는 이를 URL에서 재조회하지 않는다. `{ kind: 'missing-token' }` 에러 상태로 전이한다.
 
 ### 에러 분류 (`STokenLoginError`)
 
@@ -135,18 +140,18 @@ type STokenLoginError =
 경계 컴포넌트는 성공 상태가 되기 전까지 **절대 자식을 렌더하지 않는다**. 동작 순서는 다음과 같다.
 
 1. **마운트**: 컴포넌트가 마운트되면 `fallback`(기본: 연결 중 카드) 렌더.
-2. **sToken 읽기**: prop으로 받았으면 그 값을 사용. 아니면 `new URLSearchParams(window.location.search)`에서 `sToken` → (없으면) `stoken` 순으로 조회. `stoken`(소문자)을 사용한 경우 `logger.warn`을 1회 호출하고 `sToken`(대소문자 유지)을 canonical로 취급.
-3. **부재 시 에러**: sToken 값이 비어 있거나 없으면 `{ kind: 'missing-token' }` 에러 상태로 전이.
-4. **엔드포인트 resolve**: 공용 엔드포인트 resolve 훅을 사용하여 config.toml에서 엔드포인트를 얻는다 (#엔드포인트-resolve-훅 섹션 참조). 실패 시 `{ kind: 'endpoint-unresolved', cause }`.
-5. **쿠키 설정**: `document.cookie = sToken=${encodeURIComponent(sToken)}; path=/; Secure; SameSite=Lax; expires=Session`로 설정. 값은 **항상 인코딩**한다.
-6. **클라이언트 생성**: `createBackendAIClient('', '', endpoint, 'SESSION')`로 Backend.AI 클라이언트 인스턴스를 만들고 `globalThis.backendaiclient`에 할당한다.
-7. **서버 ping (선택적 방어 단계)**: `client.get_manager_version()`을 호출하여 서버 도달 가능 여부를 사전 확인. 실패 시 `{ kind: 'server-unreachable', cause }`.
-8. **토큰 로그인**: `await client.token_login(sToken, extraParams ?? {})`. 반환이 falsy거나 예외 발생 시 `{ kind: 'token-invalid', cause }` 또는 서버 응답으로부터 동시 세션이 감지되면 `{ kind: 'concurrent-session', cause }`로 분류.
-9. **GQL 연결**: `connectViaGQL(client, loginConfig, endpoints)`를 호출해 사용자 정보 및 리소스 정책을 로드.
-10. **이벤트 디스패치**: `document.dispatchEvent(new CustomEvent('backend-ai-connected', { detail: client }))`를 **정확히 한 번** 디스패치한다. 이 이벤트는 `RelayEnvironment.ts`의 `waitForBAIClient()`를 해제하는 핵심 신호이다.
-11. **URL 정리**: `window.history.replaceState()`로 쿼리스트링에서 `sToken`과 `stoken`만 제거한다. 다른 쿼리 파라미터는 유지한다 (EduAppLauncher가 `session_id`, `app` 등을 후속 단계에서 사용함).
-12. **성공 콜백**: `onSuccess?.(client)` 호출. 호출자는 이 시점에서 자신의 후처리(패널 닫기, `last_login` 등)를 수행.
-13. **자식 렌더**: 성공 상태 전이 후 `children`을 렌더.
+2. **sToken 검증**: prop으로 받은 `sToken`을 그대로 사용한다. URL 파싱은 수행하지 않는다 (호출자가 nuqs로 이미 파싱해 넘긴 값이다). 값이 빈 문자열 또는 `null`/`undefined`(타입 시스템이 막지 못한 경우에 대한 방어)이면 `{ kind: 'missing-token' }` 에러 상태로 전이.
+3. **엔드포인트 resolve**: 공용 엔드포인트 resolve 훅을 사용하여 config.toml에서 엔드포인트를 얻는다 (#엔드포인트-resolve-훅 섹션 참조). 실패 시 `{ kind: 'endpoint-unresolved', cause }`.
+4. **쿠키 설정**: `document.cookie = sToken=${encodeURIComponent(sToken)}; path=/; Secure; SameSite=Lax; expires=Session`로 설정. 값은 **항상 인코딩**한다.
+5. **클라이언트 생성**: `createBackendAIClient('', '', endpoint, 'SESSION')`로 Backend.AI 클라이언트 인스턴스를 만들고 `globalThis.backendaiclient`에 할당한다.
+6. **서버 ping (선택적 방어 단계)**: `client.get_manager_version()`을 호출하여 서버 도달 가능 여부를 사전 확인. 실패 시 `{ kind: 'server-unreachable', cause }`.
+7. **토큰 로그인**: `await client.token_login(sToken, extraParams ?? {})`. 반환이 falsy거나 예외 발생 시 `{ kind: 'token-invalid', cause }` 또는 서버 응답으로부터 동시 세션이 감지되면 `{ kind: 'concurrent-session', cause }`로 분류.
+8. **GQL 연결**: `connectViaGQL(client, loginConfig, endpoints)`를 호출해 사용자 정보 및 리소스 정책을 로드.
+9. **이벤트 디스패치**: `document.dispatchEvent(new CustomEvent('backend-ai-connected', { detail: client }))`를 **정확히 한 번** 디스패치한다. 이 이벤트는 `RelayEnvironment.ts`의 `waitForBAIClient()`를 해제하는 핵심 신호이다.
+10. **성공 콜백**: `onSuccess?.(client)` 호출. 호출자는 이 시점에서 자신의 후처리(패널 닫기, `last_login` 등)와 **URL에서 sToken 제거(nuqs setter)**를 수행한다. URL 정리는 컴포넌트가 아닌 호출자의 책임이다 (다음 섹션 참조).
+11. **자식 렌더**: 성공 상태 전이 후 `children`을 렌더.
+
+컴포넌트 본체에는 `window.location`, `URLSearchParams`, `window.history.replaceState`, `document.location` 등 **URL 관련 API를 일절 참조하지 않는다**. 이는 코드 리뷰와 단위 테스트로 강제한다.
 
 ### 멱등성과 재시도
 
@@ -199,35 +204,191 @@ type STokenLoginError =
 - `useEduAppApiEndpoint`는 모듈 스코프에 `cachedEndpoint`와 `inflightPromise`를 보관한다. 일반화 시 동일한 캐시가 여러 호출자를 만족시킬 수 있는지 점검해야 한다 (보통 page lifetime 동안 endpoint는 바뀌지 않으므로 안전하다).
 - LoginView 경로에서 `useResolvedApiEndpoint`로 통합할지 여부는 **이 스펙의 story 1에서 결정**하거나 Open Question으로 둔다.
 
+## URL 파라미터 파싱 규약 (nuqs)
+
+### 원칙
+
+경계 컴포넌트는 **자체적으로 URL을 파싱하지 않는다**. URL 쿼리 파라미터 read/write는 호출자가 [`nuqs`](https://nuqs.47ng.com/)를 사용해 수행하며, 컴포넌트는 순수하게 prop으로 전달된 값만 다룬다. 이 규약은 다음을 보장한다.
+
+- **관심사 분리**: 인증 로직과 URL 상태 관리가 분리되어 단위 테스트에서 URL을 모킹할 필요가 없다.
+- **라우트 수준 제어**: 호출자가 `sToken`의 존재 여부에 따라 컴포넌트를 조건부로 마운트할 수 있다 (예: LoginView 경로는 sToken이 있을 때만 경계를 감싼다).
+- **일관된 URL 상태**: 컴포넌트와 호출자가 URL을 각자 건드리면 race가 발생할 수 있다. nuqs로 단일 소스를 유지한다.
+- **프로젝트 컨벤션 일치**: 현재 프로젝트에서 URL 쿼리 파라미터는 대부분 `nuqs`의 `useQueryState` / `useQueryStates`로 다루고 있다 (예: `AgentList.tsx`, `UserManagement.tsx`, `FairShareItems/*` 등).
+
+### 의존성
+
+- `nuqs` — `react/package.json`에 `^2.8.9`로 이미 존재. 추가 설치 불필요.
+- 라우트 Component 함수 또는 그 상위에서 `NuqsAdapter`가 이미 구성되어 있다고 가정한다 (현재 프로젝트 전반에 적용됨). 별도 provider 추가는 필요 없다.
+
+### 호출자 코드 규약
+
+1. **읽기**: `useQueryState('sToken', parseAsString)`으로 canonical 키를 읽는다.
+2. **`stoken`(소문자) fallback**: 하위 호환을 위해 `stoken`도 함께 읽어야 하는 경우, 호출자 또는 공용 helper hook에서 fallback을 처리한다. `stoken`이 값을 제공한 경우 `logger.warn`을 1회 호출해 deprecation을 남긴다.
+3. **정리**: `onSuccess` 콜백에서 setter로 `null`을 전달해 URL에서 sToken을 제거한다. 다른 쿼리 파라미터는 자동으로 보존된다.
+4. **조건부 렌더**: `sToken`이 존재할 때만 `STokenLoginBoundary`로 children을 감싸고, 그렇지 않을 때는 일반 경로를 그대로 렌더한다 (`/`의 일반 로그인 페이지 등).
+
+### 공용 helper hook 제안 (선택, Open Question)
+
+하위 호환 fallback을 여러 호출자가 중복 구현하지 않도록, 경계 컴포넌트 배포와 함께 helper hook을 제공하는 것을 권장한다. 최종 도입 여부와 이름은 dev-plan에서 결정한다.
+
+```tsx
+// react/src/hooks/useSToken.ts (제안)
+export const useSToken = (): [string | null, (next: string | null) => void] => {
+  const [sToken, setSToken] = useQueryState('sToken', parseAsString);
+  const [stoken, setStoken] = useQueryState('stoken', parseAsString);
+
+  const effective = sToken ?? stoken;
+  if (stoken && !sToken) {
+    logger.warn('Query param `stoken` (lowercase) is deprecated; use `sToken`.');
+  }
+
+  const clear = useCallback((next: string | null) => {
+    setSToken(next);
+    setStoken(null); // deprecated 키도 함께 정리
+  }, [setSToken, setStoken]);
+
+  return [effective, clear];
+};
+```
+
+## 사용 패턴 (라우트 통합 예시)
+
+프로젝트의 다른 페이지 라우트가 `BAIErrorBoundary`로 감싸는 관용을 따른다. 경계 컴포넌트도 동일한 컨테이너 위치에서 wrapping한다.
+
+### 관용 (참고: 기존 다른 라우트)
+
+```tsx
+// 기존 라우트 패턴 — 참고용
+{
+  path: '/dashboard',
+  handle: { labelKey: 'webui.menu.Dashboard' },
+  Component: () => (
+    <BAIErrorBoundary>
+      <Suspense fallback={<Skeleton active />}>
+        <DashboardPage />
+      </Suspense>
+    </BAIErrorBoundary>
+  ),
+}
+```
+
+### sToken 진입이 가능한 라우트 (이 스펙)
+
+경계 컴포넌트는 `BAIErrorBoundary`와 `Suspense` 사이에 위치시킨다. `BAIErrorBoundary`가 React 렌더링 에러를 처리하고, `STokenLoginBoundary`가 sToken 인증 전제조건을 해결하며, `Suspense`가 자식 트리의 비동기 경계를 담당한다.
+
+#### 시나리오 A — LoginView 경로 (`/`, `/interactive-login`): 조건부 wrapping
+
+`/`와 `/interactive-login`은 sToken 없이도 정상 동작해야 한다(일반 로그인 폼 렌더). 따라서 `useSToken` 결과가 존재할 때만 경계를 감싼다.
+
+```tsx
+// pseudo-code — 실제 구조는 story 2에서 확정
+{
+  path: '/',
+  Component: () => {
+    const [sToken, setSToken] = useSToken(); // helper hook 가정
+    const content = (
+      <>
+        <LoginView />
+        <MainLayout />
+      </>
+    );
+    return (
+      <BAIErrorBoundary>
+        <DefaultProvidersForReactRoot>
+          {sToken ? (
+            <STokenLoginBoundary
+              sToken={sToken}
+              onSuccess={(client) => {
+                setSToken(null); // URL에서 제거 (nuqs setter)
+                // 기타 postConnectSetup 책임: last_login, clearSavedLoginInfo,
+                // api_endpoint localStorage 저장, main-layout-ready 대기 등
+              }}
+            >
+              <Suspense fallback={<Skeleton active />}>{content}</Suspense>
+            </STokenLoginBoundary>
+          ) : (
+            <Suspense fallback={<Skeleton active />}>{content}</Suspense>
+          )}
+        </DefaultProvidersForReactRoot>
+      </BAIErrorBoundary>
+    );
+  },
+  children: mainLayoutChildRoutes,
+}
+```
+
+#### 시나리오 B — EduAppLauncher 경로 (`/edu-applauncher`, `/applauncher`): 항상 wrapping
+
+EduAppLauncher는 sToken URL 진입이 기본이다. sToken이 없는 경우는 에러 카드(또는 custom `errorFallback`)로 처리한다.
+
+```tsx
+// pseudo-code — 실제 구조는 story 3에서 확정
+{
+  path: '/edu-applauncher',
+  Component: () => {
+    const [sToken, setSToken] = useSToken();
+    // extraParams: URL의 나머지 쿼리 파라미터를 nuqs로 수집하거나
+    // EduAppLauncher 내부에서 별도로 처리
+    return (
+      <BAIErrorBoundary>
+        <DefaultProvidersForReactRoot>
+          <STokenLoginBoundary
+            sToken={sToken ?? ''}
+            extraParams={/* app, session_id, cpu, mem 등 */}
+            onSuccess={() => setSToken(null)}
+            errorFallback={(error, retry) => (
+              // 기존 EduAppLauncher 스테퍼 UI와 통합된 에러 표시
+              <EduAppErrorStep error={error} onRetry={retry} />
+            )}
+          >
+            <Suspense fallback={null}>
+              <EduAppLauncherPage />
+            </Suspense>
+          </STokenLoginBoundary>
+        </DefaultProvidersForReactRoot>
+      </BAIErrorBoundary>
+    );
+  },
+}
+```
+
+### 주의
+
+- 위 예시는 **라우트 구조의 예시**이지 확정된 구현이 아니다. 최종 구조는 각 마이그레이션 story에서 결정한다.
+- `handle`, `DefaultProvidersForReactRoot`, 기타 shell wrapping은 기존 라우트와 동일하게 유지한다.
+- 라우트 수준 wrapping이 어려운 경우 (예: 조건부 wrapping 로직이 복잡해질 때) 페이지 컴포넌트 최상위에서 wrapping해도 무방하다. 컴포넌트 자체가 라우트·페이지 어느 계층에서든 동작해야 한다.
+
 ## 마이그레이션 계획
 
 본 스펙은 **세 개의 스택된 PR**로 구현된다. 각 PR은 이전 PR을 기반으로 한다.
 
 ### Story 1: `STokenLoginBoundary` 컴포넌트 도입
 
-- 새 파일 `react/src/components/STokenLoginBoundary.tsx` 작성.
+- 새 파일 `react/src/components/STokenLoginBoundary.tsx` 작성. **URL 관련 API를 일절 참조하지 않음**을 ESLint 규칙 또는 grep CI 검증으로 강제.
+- (선택) `react/src/hooks/useSToken.ts` 공용 helper hook 추가 — nuqs `useQueryState` 기반으로 `sToken`/`stoken`(deprecated) fallback + 경고.
 - 엔드포인트 resolve 훅을 일반화 (이름 확정 포함).
 - `helper/loginSessionAuth.ts`의 `tokenLogin` 헬퍼가 `extraParams`를 받을 수 있도록 확장하거나, 경계 컴포넌트가 `client.token_login` + `connectViaGQL`을 직접 호출하는 경로를 새로 구성한다 ([Open Question 1] 참조).
 - 기본 fallback·error card UI 작성.
-- 단위 테스트: 각 에러 분류 전이, Retry 멱등성, `backend-ai-connected` 이벤트 1회 발행, URL 정리.
+- 단위 테스트: 각 에러 분류 전이, Retry 멱등성, `backend-ai-connected` 이벤트 1회 발행. URL 모킹 없이 prop만으로 전 시나리오 재현 가능할 것.
 - 기존 호출자는 변경하지 않는다 (Story 2·3에서 순차 마이그레이션).
 
 ### Story 2: `LoginView` 마이그레이션
 
-- `connectUsingSession()`의 sToken 분기(현재 lines 455–490)를 제거하고, `STokenLoginBoundary`가 해당 책임을 가져가도록 구조 조정.
-- `LoginView`는 URL에 `sToken`이 있으면 `STokenLoginBoundary`로 자식을 감싸고, 그렇지 않으면 기존 로그인 폼을 렌더.
-- `onSuccess` 콜백에서 기존 `postConnectSetup`의 책임을 수행: `last_login`/`login_attempt` 카운터, `clearSavedLoginInfo`, `setPluginApiEndpoint`, localStorage endpoint 저장, `main-layout-ready` 대기 후 패널 닫기.
+- `react/src/routes.tsx`의 `/`와 `/interactive-login` 라우트 `Component`에서 nuqs로 `sToken`을 읽고, 존재 시에만 `STokenLoginBoundary`로 `LoginView`/`MainLayout` 트리를 감싼다 (#사용-패턴-라우트-통합-예시 섹션의 시나리오 A 참조).
+- `LoginView.tsx`의 `connectUsingSession()` sToken 분기(현재 lines 455–490)를 제거. `LoginView` 내부에서 `sToken` 관련 URL 파싱 코드를 제거.
+- 라우트 `Component`의 `onSuccess` 콜백에서 기존 `postConnectSetup`의 책임을 수행: `last_login`/`login_attempt` 카운터, `clearSavedLoginInfo`, `setPluginApiEndpoint`, localStorage endpoint 저장, `main-layout-ready` 대기 후 패널 닫기, nuqs setter로 URL에서 sToken 제거.
 - `useLoginOrchestration`과는 **무관하게** 동작하도록 유지한다. 경계 컴포넌트는 orchestration 훅을 import하지 않는다.
-- E2E: 기존 sToken 진입 시나리오가 회귀 없이 통과.
+- E2E: 기존 sToken 진입 시나리오가 회귀 없이 통과. 성공 후 URL에 `sToken`이 남지 않는지 추가 검증.
 
 ### Story 3: `EduAppLauncher` 마이그레이션
 
-- `_token_login()` 메서드와 수동 `backend-ai-connected` 디스패치(line 787)를 제거.
-- `STokenLoginBoundary`를 스테퍼 UI의 "auth" 스텝 내부에 배치하고, `extraParams`는 현재와 동일한 방식으로 URL에서 수집하여 전달.
+- `react/src/routes.tsx`의 `/edu-applauncher`와 `/applauncher` 라우트 `Component`에서 nuqs로 `sToken`·`extraParams` 후보 키를 읽고, `STokenLoginBoundary`로 `EduAppLauncherPage`를 감싼다 (#사용-패턴-라우트-통합-예시 섹션의 시나리오 B 참조).
+- `EduAppLauncher.tsx`의 `_token_login()` 메서드와 수동 `backend-ai-connected` 디스패치(line 787)를 제거. URL 파싱 코드도 제거.
 - `errorFallback` prop으로 스테퍼 UI와 통합된 에러 표시 제공 (기존 `transition({ name: 'error', step: 'auth', ... })` 로직 재사용).
-- **동작 변경**: URL에서 sToken이 제거된다 (기존 동작과 달라짐 — 보안 개선). 세션 ID·앱 이름 등 나머지 파라미터는 유지.
+- **동작 변경**: URL에서 sToken이 제거된다 (기존 동작과 달라짐 — 보안 개선). 세션 ID·앱 이름 등 나머지 파라미터는 유지 (nuqs가 특정 키만 `null` 설정).
 - **동작 변경**: 쿠키 인코딩은 기존과 동일 (이미 encoded).
 - 내부 상태 머신(idle → auth → session → launching → done/error)은 유지하되, "auth" 단계는 경계 컴포넌트의 상태로 대체.
+- `_createEduSession`의 `get_user_credential(sToken)` 호출은 Pitfall #8(sToken 재사용)의 해결 전략을 적용한다.
 - E2E: 기존 EduApp 진입 시나리오(세션 ID 있음/없음) 모두 회귀 없이 통과.
 
 ## 수락 기준 (Acceptance Criteria)
@@ -239,14 +400,19 @@ type STokenLoginError =
 - [ ] 컴포넌트가 success 상태가 되기 전까지는 `children` 내부의 Relay 쿼리가 실행되지 않는다. (단위 테스트에서 Relay network spy 또는 mock으로 검증)
 - [ ] `'backend-ai-connected'` 이벤트는 성공 시 **정확히 한 번** 디스패치된다. 재시도 중 이전 실패 시에는 발행되지 않는다.
 - [ ] 성공 시 `globalThis.backendaiclient`가 새 클라이언트 인스턴스로 설정된다.
-- [ ] sToken이 없는 경우 `{ kind: 'missing-token' }` 에러가 `onError`로 전달되고 기본 에러 카드가 렌더된다.
-- [ ] URL 쿼리에 `stoken`(소문자)으로 들어온 경우 `logger.warn`이 **1회만** 호출되며, 값은 `sToken`과 동일하게 처리된다.
-- [ ] success 시 `window.location.search`에서 `sToken`과 `stoken` 키가 모두 제거되며, 다른 키는 유지된다.
+- [ ] `sToken` prop이 빈 문자열 또는 nullish인 경우 `{ kind: 'missing-token' }` 에러가 `onError`로 전달되고 기본 에러 카드가 렌더된다.
 - [ ] `extraParams`가 `client.token_login`의 두 번째 인자로 그대로 전달된다 (prop으로 전달한 객체와 동일한 키·값이 전달됨).
 - [ ] 쿠키 `sToken=...`이 설정될 때 값은 `encodeURIComponent(sToken)` 결과와 정확히 일치한다.
 - [ ] Retry 재시도 시 쿠키는 동일 값으로 재설정되며, `'backend-ai-connected'` 이벤트는 최종 성공 시점에서만 1회 디스패치된다.
 - [ ] `errorFallback`이 제공되면 기본 카드 대신 호출자의 렌더가 사용되며, `retry` 함수 호출 시 인증 시퀀스가 초기 상태부터 재실행된다.
 - [ ] Retry 실행 중에는 fallback UI가 다시 표시된다 (또는 `errorFallback` 사용 시 호출자의 로딩 UX로 위임).
+
+### URL 파싱 금지 불변 조건 (nuqs 규약)
+
+- [ ] `react/src/components/STokenLoginBoundary.tsx` 및 하위 모듈에서 `window.location`, `window.history`, `document.location`, `URLSearchParams` 등 URL 접근 API의 직접 참조가 **한 건도 발견되지 않는다**. (grep / ESLint custom rule로 검증 가능)
+- [ ] 컴포넌트 단위 테스트는 URL을 모킹하지 않고 prop만 전달하여 모든 시나리오를 재현할 수 있다.
+- [ ] 호출자 코드(`routes.tsx` 또는 페이지 컴포넌트)가 nuqs (`useQueryState` 또는 helper hook)로 `sToken`을 읽고, `onSuccess` 콜백에서 setter로 URL에서 `sToken`을 제거한다.
+- [ ] 마이그레이션 후 E2E에서 success 시 `window.location.search`에 `sToken`이 남지 않는 것이 검증된다. (이 검증은 호출자 책임 영역이며, 컴포넌트의 acceptance는 아니다.)
 
 ### 엔드포인트 resolve
 
@@ -266,10 +432,10 @@ type STokenLoginError =
 1. **Relay 환경 초기화 race**: `'backend-ai-connected'` 이벤트 디스패치 이전에 자식 트리를 마운트하면 내부 Relay 쿼리가 영원히 대기한다. 컴포넌트는 이벤트 디스패치 완료 후에만 `children`을 렌더해야 한다 (testable invariant).
 2. **`useLoginOrchestration`과의 경계**: 멀티탭 동기화, 자동 로그아웃, config 게이팅은 경계 컴포넌트의 책임이 아니다. 이 부분은 LoginView가 계속 소유한다.
 3. **쿠키 인코딩 백엔드 호환성**: `encodeURIComponent(sToken)`으로 설정한 쿠키를 Manager/Webserver가 정상 파싱하는지 **검증이 필요**하다. 대부분의 웹서버는 쿠키 값을 자동으로 `decodeURIComponent` 하지만, Backend.AI 측 구현을 코드 단에서 한 번 확인해야 한다.
-4. **`stoken`(소문자) deprecation 경로**: 본 스펙은 인식만 유지하고 경고만 출력한다. 하드 제거 시점은 외부 플랫폼 공지 후 별도 이슈에서 결정한다.
+4. **`stoken`(소문자) deprecation 경로**: 본 스펙은 인식만 유지하고 경고만 출력한다. 하드 제거 시점은 외부 플랫폼 공지 후 별도 이슈에서 결정한다. 경고 로깅은 컴포넌트가 아닌 **호출자(또는 공용 `useSToken` helper hook)의 책임**이다. 컴포넌트는 URL을 보지 않으므로 어느 이름으로 들어온 값인지 알 수 없다.
 5. **concurrent-session 에러와 동시 로그인 스펙 연계**: `{ kind: 'concurrent-session' }` 에러의 상세 처리(모달, 기존 세션 종료 확인 등)는 `.specs/draft-concurrent-login-guard/`의 LoginView 측 대응과 연계되어야 한다. sToken 플로우에서는 외부 리다이렉트 주체가 모달을 띄우기 어렵기 때문에, 이 에러 분류를 어떻게 surface할지는 dev-plan 단계에서 LoginView의 모달 로직과 함께 설계한다.
 6. **Retry 멱등성**: 중복 쿠키 설정은 안전하나, 중복 이벤트 디스패치는 하위 구독자(예: proxy URL 설정, 플러그인 초기화)가 여러 번 실행되어 사이드이펙트를 낳을 수 있다. 구현 단계에서 "이벤트는 최종 성공 시 1회"를 엄격히 지킨다.
-7. **URL 파라미터 보존 범위**: sToken/stoken만 제거하고 나머지(`app`, `session_id`, `cpu`, `mem` 등)는 유지해야 EduAppLauncher의 후속 단계가 동작한다. LoginView 기존 동작(`replaceState({}, '', '/')`처럼 전체 쿼리를 날리는)과 달라지므로 마이그레이션 시 검증 필요.
+7. **URL 파라미터 보존 범위**: 호출자가 nuqs setter로 `sToken`(및 필요 시 `stoken`)만 `null`로 설정하면 다른 키는 자동으로 보존된다. LoginView의 기존 `replaceState({}, '', '/')` 스타일(전체 쿼리 제거)은 nuqs 규약으로 대체되면서 자연스럽게 사라진다. EduAppLauncher 쪽도 `session_id`, `app` 등의 키를 nuqs가 그대로 유지하므로 후속 단계가 정상 동작한다.
 8. **`backendaiclient._config.endpoint` 스테일 closure**: `LoginView`의 기존 `postConnectSetup`은 `apiEndpoint` closure 대신 client의 `_config.endpoint`를 읽어 최신 값을 취한다. 경계 컴포넌트 마이그레이션 시에도 `onSuccess(client)`에서 `client._config.endpoint`를 참조하여 localStorage에 저장해야 한다.
 9. **StrictMode 이펙트 2회 실행**: dev StrictMode에서 effect가 2회 실행되는 문제를 guard하기 위해 `useRef` 플래그 또는 key 기반 재마운트를 사용한다. 특히 쿠키 설정·서버 ping·token_login이 중복 수행되지 않도록 `started` flag를 둔다.
 10. **Webserver config 병합**: 기존 `loadConfigFromWebServer`는 `apiEndpoint`와 현재 origin이 다를 때 원격 config.toml을 병합하는 단계를 수행한다. 경계 컴포넌트가 이 단계를 포함해야 하는지는 dev-plan에서 결정한다. 포함하지 않으면 호출자가 `onSuccess` 이후 수행할 수도 있다 ([Open Question 2]).
@@ -290,6 +456,10 @@ type STokenLoginError =
 5. **쿠키 인코딩 백엔드 호환성**: Manager/Webserver에 실제로 `decodeURIComponent` 파싱 동작이 존재하는지 코드 확인 필요. 만약 서버가 raw 값을 기대한다면 기존 LoginView 동작이 맞고, 이 스펙의 표준이 뒤집힌다.
 
 6. **concurrent-session 에러 감지 신호**: 서버가 이 상태를 어떤 필드로 응답하는지는 `.specs/draft-concurrent-login-guard/`의 Open Question 1에 달려 있다. 본 스펙은 에러 분류만 정의하고 실제 감지 규칙은 concurrent-login 스펙 결정에 위임한다.
+
+7. **`useSToken` helper hook 도입 여부**: `stoken`(소문자) fallback과 deprecation 경고를 모든 호출자가 각자 구현하게 두는 대신, `react/src/hooks/useSToken.ts`로 통일하는 것이 권장되지만 반드시 필수는 아니다. Story 1 또는 Story 2 dev-plan에서 결정한다. 도입하지 않을 경우 각 호출자는 nuqs로 `sToken`/`stoken`을 독립적으로 읽고 deprecation 경고도 각자 관리한다.
+
+8. **EduAppLauncher의 post-login sToken 재사용**: `EduAppLauncher._createEduSession`은 세션 생성 단계에서 `eduApp.get_user_credential(sToken)`(line 631)을 호출하기 위해 URL에서 sToken을 **두 번째**로 읽는다. 경계 컴포넌트가 로그인 성공 즉시 URL에서 sToken을 제거하면 이 호출이 `null` sToken을 받게 된다. 해결 옵션: (a) 라우트 또는 페이지 상위에서 읽은 sToken을 React state/context로 하위 컴포넌트에 전달, (b) `onSuccess`에서 URL 정리를 지연하고 `_createEduSession` 완료 후에 정리, (c) sessionStorage에 임시 보관. Story 3 dev-plan에서 확정한다.
 
 ## 테스트 전략
 
@@ -318,9 +488,11 @@ type STokenLoginError =
 
 | 파일 | 역할 | 변경 예상 |
 |------|------|-----------|
-| `react/src/components/STokenLoginBoundary.tsx` | (신규) sToken 경계 컴포넌트 | 신규 작성 |
-| `react/src/components/LoginView.tsx` | 로그인 플로우 오케스트레이션 | `connectUsingSession` sToken 분기 제거, 경계 컴포넌트 래핑 |
-| `react/src/components/EduAppLauncher.tsx` | 교육용 앱 런처 | `_token_login` 제거, 수동 `backend-ai-connected` 디스패치 제거, 경계 컴포넌트 래핑 |
+| `react/src/components/STokenLoginBoundary.tsx` | (신규) sToken 경계 컴포넌트 | 신규 작성. URL 관련 API 직접 참조 금지 |
+| `react/src/hooks/useSToken.ts` | (신규, 선택) nuqs 기반 sToken 조회 helper hook | `sToken`/`stoken` 읽기·정리 + deprecation 경고 통합 (Open Question 참조) |
+| `react/src/routes.tsx` | React Router 라우트 테이블 | `/`, `/interactive-login`, `/edu-applauncher`, `/applauncher` 라우트 `Component`에서 nuqs로 sToken 읽고 `STokenLoginBoundary` wrapping 추가 |
+| `react/src/components/LoginView.tsx` | 로그인 플로우 오케스트레이션 | `connectUsingSession` sToken 분기 제거. 라우트 레이어가 wrapping을 담당하므로 LoginView 내부에서는 sToken 관련 URL 파싱 로직을 제거 |
+| `react/src/components/EduAppLauncher.tsx` | 교육용 앱 런처 | `_token_login` 제거, 수동 `backend-ai-connected` 디스패치 제거, URL 파싱 제거. 경계 컴포넌트는 라우트 또는 페이지 최상위에서 래핑 |
 | `react/src/helper/loginSessionAuth.ts` | 로그인 세션 유틸 | `tokenLogin`에 `extraParams` 지원 추가 (Open Question 1 채택 시) |
 | `react/src/hooks/useEduAppApiEndpoint.ts` | EduApp 엔드포인트 resolve | 일반화 또는 새 wrapper 훅 추가 |
 | `react/src/RelayEnvironment.ts` | GQL 네트워크 레이어 | 변경 없음 (기존 `waitForBAIClient`를 그대로 의존) |
