@@ -7,7 +7,7 @@
 ## 개요
 
 모델 서빙 UI의 용어와 아키텍처를 "Endpoint" 중심에서 "Deployment" 중심으로 전면 재구축합니다.  
-백엔드의 신규 Strawberry GraphQL API(`ModelDeployment`, `Route`, `ModelReplica`)와 정합성을 맞추며, 배포 라이프사이클과 레플리카 헬스 상태를 사용자가 한눈에 파악할 수 있도록 AWS ECS / Vercel 수준의 Deployment UX를 새로 설계합니다.
+백엔드의 신규 Strawberry GraphQL API(`ModelDeployment`, `Route`, `ModelReplica`)와 정합성을 맞추며, 배포 라이프사이클과 레플리카 헬스 상태를 사용자가 한눈에 파악할 수 있는 Deployment UX를 새로 설계합니다.
 
 **최소 지원 백엔드 버전**: 26.4.2 (Strawberry API 지원 시작)  
 구버전(26.4.2 미만)은 라우팅 레벨에서 기존 Graphene 기반 Serving/Endpoint UI로 전달됩니다.
@@ -140,23 +140,23 @@ if (this.isManagerVersionCompatibleWith('26.4.2')) {
         ▼
 ┌─────────────────────┐
 │  DeploymentListPage  │  /deployments
-│  (배포 목록)         │
+│  (배포 목록)          │
 └─────────────────────┘
         │                         │
         │ "New Deployment" 클릭   │ 행 클릭
         ▼                         ▼
 ┌────────────────────────┐  ┌──────────────────────┐
-│ DeploymentLauncherPage │  │ DeploymentDetailPage  │
-│ (새 배포 생성)          │  │ (배포 상세)            │
-│ /deployments/create    │  │ /deployments/:id      │
+│ DeploymentLauncherPage │  │ DeploymentDetailPage │
+│ (새 배포 생성)            │  │ (배포 상세)            │
+│ /deployments/create    │  │ /deployments/:id     │
 └────────────────────────┘  └──────────────────────┘
         │                         │  "Edit" 버튼 클릭
         │ 생성 성공                │
         │                         ▼
         │                ┌────────────────────────┐
-        │                │ DeploymentLauncherPage  │
+        │                │ DeploymentLauncherPage │
         │                │ (배포 편집)              │
-        │                │ /deployments/:id/edit   │
+        │                │ /deployments/:id/edit  │
         │                └────────────────────────┘
         │                         │ 편집 성공 (새 Revision 생성)
         ▼                         ▼
@@ -168,7 +168,7 @@ if (this.isManagerVersionCompatibleWith('26.4.2')) {
         ▼
 ┌──────────────────────────┐
 │ AdminDeploymentListPage  │  /admin/deployments
-│ (전체 배포 목록)           │
+│ (전체 배포 목록)            │
 └──────────────────────────┘
         │ 행 클릭
         ▼
@@ -240,7 +240,7 @@ DeploymentDetailPage (동일)
 
 #### Flow 3: 배포 상세 (Deployment Detail)
 
-사용자가 목록에서 배포를 클릭하면 상세 페이지로 이동합니다. AWS ECS 콘솔처럼 배포의 현재 상태, 레플리카 헬스, 리비전 히스토리를 한 페이지에서 파악할 수 있어야 합니다.
+사용자가 목록에서 배포를 클릭하면 상세 페이지로 이동합니다. 배포의 현재 상태, 레플리카 헬스, 리비전 히스토리를 한 페이지에서 파악할 수 있어야 합니다.
 
 **페이지: `DeploymentDetailPage` (`/deployments/:id`)**
 
@@ -252,12 +252,12 @@ DeploymentDetailPage (동일)
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │  Active Pool                           [2 / 3 Healthy]      │
-│  AppProxy가 트래픽을 전달하는 레플리카 목록입니다.            │
+│  AppProxy가 트래픽을 전달하는 레플리카 목록입니다.                    │
 ├─────────────────────────────────────────────────────────────┤
 │  [● Replica 1]  HEALTHY   Rev. abc123  Traffic: 50%         │
 │  [● Replica 2]  HEALTHY   Rev. abc123  Traffic: 50%         │
-│  [○ Replica 3]  UNHEALTHY Rev. abc123  (트래픽 차단)  red   │
-│  [○ Replica 4]  DEGRADED  Rev. abc123  (유예 중)     amber  │
+│  [○ Replica 3]  UNHEALTHY Rev. abc123  (트래픽 차단)  red      │
+│  [○ Replica 4]  DEGRADED  Rev. abc123  (유예 중)     amber    │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -480,6 +480,49 @@ export interface ReplicaStatusTagProps extends Omit<BAITagProps, 'color'> {
 
 ---
 
+---
+
+#### Flow 7: 모델 폴더에서 바로 배포 (Quick Deploy)
+
+모델 폴더 목록 또는 모델 카드에서 "Deploy" 버튼을 클릭하면 폼 없이 즉시 배포를 생성합니다.
+
+**진입점**: 모델 폴더 목록, 모델 카드, Model Store 등 (`useDeploymentLauncher` hook 사용)
+
+사용자 경험:
+1. "Deploy" 버튼 클릭
+2. 즉시 배포 생성 시작 — 별도 폼 없음
+3. 백그라운드 알림으로 진행 상황 표시: "배포를 시작하는 중..."
+4. 준비 완료 → 알림에 "/chat으로 이동" 링크 표시
+5. 준비 실패(타임아웃) → 알림에 배포 상세 페이지(`/deployments/:id`) 링크 표시
+
+배포 설정 소스:
+- 런타임: `custom` 고정
+- 이미지/리소스/커맨드 등: 모델 폴더 내 **`deployment-config.yaml`** 파일에서 읽음
+  - (현재 코드는 `service-definition.toml` 참조 중 → `deployment-config.yaml`로 전환 예정)
+
+제출 흐름:
+- `createModelDeployment` mutation → `deploymentId` 반환
+- `addModelRevision` mutation (minimal config, `deployment-config.yaml` 기반)
+- 백그라운드에서 레플리카 준비 상태 폴링 (신규 API: `GET /v2/deployments/:id` 또는 GQL `deployment.activeReplicas` 확인)
+- 기존: `GET /services/:endpoint_id` active_routes 폴링 → 신규 API로 교체
+
+구현 요구사항:
+- [ ] `useDeploymentLauncher.ts` 신규 생성 (기존 `useModelServiceLauncher.ts` 대체)
+  - `createServiceInput` → `createDeploymentInput` (vfolderId, resourceGroup → minimal deployment config)
+  - `mutationToCreateService` (`POST /services`) → `createModelDeployment` + `addModelRevision` GQL mutation
+  - `mutationToClone` (vfolder clone) 유지
+  - 폴링 로직: `GET /services/:id` → 신규 Deployment API로 교체
+  - 알림 링크: `/serving/:id` → `/deployments/:id`
+- [ ] `useModelServiceLauncher.ts` — `useDeploymentLauncher` 지원 후 제거 또는 deprecated 처리
+- [ ] **`deployment-config.yaml` 지원**: 모델 폴더에서 `deployment-config.yaml` 읽기 (기존 `service-definition.toml` 대체)
+- [ ] 26.4.2 미만 백엔드: 기존 `useModelServiceLauncher` 유지 (fallback)
+
+**URL pre-fill 경로** (폼 경유 빠른 시작):
+- `/deployments/create?model=<vfolderId>` — 풀 폼(Flow 2)을 열되 모델 폴더를 pre-fill
+- 기존: `/service/start?model=<vfolderId>` → fallback 리디렉션 추가
+
+---
+
 ### 선택 구현 (Nice to Have)
 
 - [ ] **Route 상태 필터**: Replicas 탭에서 `healthStatus`(NOT_CHECKED, HEALTHY, UNHEALTHY, DEGRADED)로 필터링
@@ -499,6 +542,9 @@ react/src/pages/
   AdminDeploymentListPage.tsx      # Flow 6: 관리자 배포 목록
   DeploymentDetailPage.tsx         # Flow 3: 배포 상세
   DeploymentLauncherPage.tsx       # Flow 2 & 4: 생성/편집 통합 진입점
+
+react/src/hooks/
+  useDeploymentLauncher.ts         # Flow 7: 모델 폴더에서 바로 배포 (useModelServiceLauncher 대체)
 
 react/src/components/
   DeploymentList.tsx                   # 배포 목록 테이블
@@ -687,6 +733,7 @@ type ModelDeployment {
   - Active Pool 섹션: 메인 본문 배치
   - 최소 백엔드 버전: 26.4.2
 - 2026-04-21: ServiceLauncherPage/ServiceLauncherPageContent 마이그레이션 범위 추가
+- 2026-04-21: Flow 7 추가 — 모델 폴더에서 바로 배포 (useDeploymentLauncher, deployment-config.yaml 기반)
 - 2026-04-21: 요구사항 전면 재구조화 — User Flow 중심으로 재작성
   - US-1~US-8 구조 → Flow 1~6 사용자 흐름 중심으로 전환
   - 신규 컴포넌트 처음부터 새로 작성 (기존 컴포넌트 rename/patch 방식 폐기)
