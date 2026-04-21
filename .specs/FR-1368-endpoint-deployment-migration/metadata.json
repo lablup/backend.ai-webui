@@ -1,0 +1,9 @@
+{
+  "epic": "FR-1368",
+  "epicTitle": "Model deployment & Revision #1",
+  "specTask": "FR-1416",
+  "specTaskTitle": "Transition from Serving page to Deployment page",
+  "githubIssue": "https://github.com/lablup/backend.ai-webui/issues/4198",
+  "slug": "endpoint-deployment-migration",
+  "specFile": ".specs/FR-1368-endpoint-deployment-migration/spec.md"
+}
