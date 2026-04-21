@@ -439,6 +439,14 @@ export default defineConfig(({ command, mode }) => {
         strategies: 'generateSW',
         filename: 'sw.js',
         injectRegister: false,
+        // The repo ships its own `manifest.json` under the project root (with
+        // the real Backend.AI icons, name, and colors) and `copyresource`
+        // copies it into `build/web/`. Disable the plugin's auto-generated
+        // `manifest.webmanifest` to avoid shipping two conflicting manifests
+        // — the auto one picks up react/package.json metadata (wrong name,
+        // wrong theme color, no icons) and also injects its own `<link rel=
+        // "manifest">` tag that competes with the existing one in index.html.
+        manifest: false,
         // Stay silent during dev — the registration happens only in prod.
         devOptions: { enabled: false },
         workbox: {
