@@ -553,7 +553,6 @@ export interface ReplicaStatusTagProps extends Omit<BAITagProps, 'color'> {
 - [ ] `useDeploymentLauncher.ts` 신규 생성 (기존 `useModelServiceLauncher.ts` 대체)
   - `createServiceInput` → `createDeploymentInput` (vfolderId, resourceGroup → minimal deployment config)
   - `mutationToCreateService` (`POST /services`) → `createModelDeployment` + `addModelRevision` GQL mutation
-  - `mutationToClone` (vfolder clone) 유지
   - 폴링 로직: `GET /services/:id` → 신규 Deployment API로 교체
   - 알림 링크: `/serving/:id` → `/deployments/:id`
 - [ ] `useModelServiceLauncher.ts` — `useDeploymentLauncher` 지원 후 제거 또는 deprecated 처리
