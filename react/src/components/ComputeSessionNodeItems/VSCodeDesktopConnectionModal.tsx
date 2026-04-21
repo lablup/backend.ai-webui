@@ -3,8 +3,9 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import SourceCodeView from '../SourceCodeView';
-import { Alert, Descriptions, Skeleton, Typography } from 'antd';
+import { Descriptions, Skeleton, Typography } from 'antd';
 import {
+  BAIAlert,
   BAIButton,
   BAIFlex,
   BAIModal,
@@ -14,6 +15,8 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useSuspendedBackendaiClient } from 'src/hooks';
 import { useTanQuery } from 'src/hooks/reactQueryAlias';
+
+const PASSWORD_FILE_PATH = '/home/work/.password';
 
 interface VSCodeDesktopConnectionModalProps extends BAIModalProps {
   sessionId: string;
@@ -31,13 +34,16 @@ const VSCodeDesktopConnectionModal: React.FC<
   const {
     data: password,
     isLoading,
+    isFetching,
     isError,
     refetch,
   } = useTanQuery<string>({
     queryKey: ['vscodePassword', sessionId],
     queryFn: async () => {
-      const file = '/home/work/.password';
-      const blob = await baiClient.download_single(sessionId, file);
+      const blob = await baiClient.download_single(
+        sessionId,
+        PASSWORD_FILE_PATH,
+      );
       const rawText = await blob.text();
       return rawText;
     },
@@ -80,21 +86,28 @@ const VSCodeDesktopConnectionModal: React.FC<
           }}
         >
           <Descriptions.Item label={t('session.VSCodeRemotePasswordTitle')}>
-            {isLoading ? (
+            {isLoading || (isFetching && isError) ? (
               <Skeleton.Input />
             ) : isError ? (
               <BAIFlex direction="column" gap="sm" align="stretch">
-                <Alert
+                <BAIAlert
                   type="error"
                   showIcon
                   title={t('session.VSCodeRemotePasswordFetchError')}
                   description={t(
                     'session.VSCodeRemotePasswordFetchErrorDescription',
                   )}
+                  action={
+                    <BAIButton
+                      size="small"
+                      action={async () => {
+                        await refetch();
+                      }}
+                    >
+                      {t('button.Retry')}
+                    </BAIButton>
+                  }
                 />
-                <BAIButton size="small" onClick={() => refetch()}>
-                  {t('button.Retry')}
-                </BAIButton>
               </BAIFlex>
             ) : (
               <BAIText copyable monospace>
@@ -109,7 +122,7 @@ const VSCodeDesktopConnectionModal: React.FC<
               {t('session.VSCodeRemotePasswordFallbackInstructions')}
             </Typography.Text>
             <SourceCodeView language="shell">
-              {`cat /home/work/.password`}
+              {`cat ${PASSWORD_FILE_PATH}`}
             </SourceCodeView>
           </BAIFlex>
         )}
