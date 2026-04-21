@@ -43,7 +43,7 @@
 | 5 | Active Pool 위치 | Deployment 상세 페이지 **Overview 섹션** (메인 본문 상단)에 배치 |
 | 6 | 최소 백엔드 버전 | **26.4.2** |
 | 7 | 구버전 컴포넌트 처리 | 구버전 Graphene 기반 페이지/컴포넌트는 **그대로 유지** (fallback 라우팅용). 신규 컴포넌트는 처음부터 새로 작성 |
-| 8 | 편집 = 새 Revision | 설정 변경 시 덮어쓰기 없음. `addModelRevision` mutation으로 새 Revision 스냅샷 생성 |
+| 8 | 편집 = 새 리비전 | 설정 변경 시 덮어쓰기 없음. `addModelRevision` mutation으로 새 리비전 스냅샷 생성 |
 
 ---
 
@@ -105,7 +105,7 @@ ModelReplica (Strawberry GQL 타입)
 - 내부 `RoutingRow` 하나 = `SessionRow` 하나 = **UI상 Replica 하나**
 - Route는 내부 구현 세부사항. **UI에서는 Replicas 탭으로만 노출**
 - `healthStatus` / `trafficStatus`는 각 Replica의 속성으로 표시 (별도 Routes 탭 없음)
-- 1개 Revision에 N개 Replica가 있어 카나리/블루-그린 배포(트래픽 분산)를 지원
+- 1개 리비전에 N개 Replica가 있어 카나리/블루-그린 배포(트래픽 분산)를 지원
 
 ---
 
@@ -159,7 +159,7 @@ if (this.isManagerVersionCompatibleWith('26.4.2')) {
         │                │ (배포 편집)              │
         │                │ /deployments/:id/edit  │
         │                └────────────────────────┘
-        │                         │ 편집 성공 (새 Revision 생성)
+        │                         │ 편집 성공 (새 리비전 생성)
         ▼                         ▼
         └──────────────→ DeploymentDetailPage (복귀)
 
@@ -231,7 +231,7 @@ DeploymentDetailPage (동일)
 
 폼 상단 또는 Step 1에 **"기존 배포에서 가져오기"** 버튼 제공:
 1. 버튼 클릭 → 최근 배포 목록 드로어/모달 열기
-2. 목록에서 배포 선택 → 해당 배포의 현재 Revision 설정으로 폼 전체 pre-fill
+2. 목록에서 배포 선택 → 해당 배포의 현재 리비전 설정으로 폼 전체 pre-fill
 3. 이름 필드는 자동으로 초기화 (새 이름 입력 유도), 나머지 설정은 유지
 4. 사용자가 각 필드를 자유롭게 수정 후 제출
 
@@ -266,6 +266,10 @@ DeploymentDetailPage (동일)
   - `myDeploymentsV2` query로 최근 배포 목록 로드
   - 선택 시 `currentRevision` 기반으로 폼 전체 pre-fill
   - 이름 필드 초기화
+- [ ] **URL 상태 동기화** (`nuqs` `useQueryStates` 사용): 새로고침 후에도 폼 상태 유지
+  - `step`: 현재 단계 번호 (`parseAsInteger.withDefault(1)`)
+  - `formValues`: 핵심 폼 값 JSON (`parseAsJson` 또는 `JsonParam`, `withDefault({})`)
+  - 기존 `ServiceLauncherPageContent`의 `useQueryParams` 패턴 참조
 - [ ] 성공 후 상세 페이지로 이동
 
 관련 이슈: FR-2419 (Add 'Import from existing spec' feature in ModelService creation)
@@ -320,7 +324,7 @@ DeploymentDetailPage (동일)
 - 각 리비전에 "Rollback" 버튼 표시 → Flow 5
 
 **Settings 탭**:
-- 현재 Active Revision의 설정 요약 (읽기 전용)
+- 현재 Active 리비전의 설정 요약 (읽기 전용)
 - "Edit Configuration" 버튼 → Flow 4 (편집 페이지)
 
 **Access Tokens 탭**:
@@ -343,6 +347,13 @@ DeploymentDetailPage (동일)
 - [ ] `DeploymentAutoScalingTab.tsx` 신규 생성 (Auto-scaling 탭)
 - [ ] `DeploymentOwnerInfo.tsx` 신규 생성 (소유자 정보, 기존 `EndpointOwnerInfo` 로직 참조하여 새로 구현)
 - [ ] Replica 상세 Drawer 구현 (Replicas 탭 내)
+- [ ] **활성 탭 URL 동기화** (`nuqs` `useQueryStates` 사용): 새로고침·공유 후에도 탭 위치 유지
+  ```ts
+  const tabValues = ['replicas', 'revision-history', 'settings', 'access-tokens', 'auto-scaling'] as const;
+  const [{ tab }, setTab] = useQueryStates({
+    tab: parseAsStringLiteral(tabValues).withDefault('replicas'),
+  });
+  ```
 - [ ] 페이지 자동 갱신 (`fetchKey` 기반 polling 또는 refetch)
 
 ---
@@ -355,18 +366,17 @@ DeploymentDetailPage (동일)
 
 사용자 경험:
 - Flow 2와 동일한 다단계 폼 (`DeploymentLauncherPageContent` 재사용)
-- 현재 Active Revision의 데이터로 폼 pre-fill
-- 폼 상단에 **안내 배너** 표시: "설정을 변경하면 새 Revision이 생성됩니다. 이전 Revision은 보존됩니다."
+- 현재 Active 리비전의 데이터로 폼 pre-fill
+- 폼 상단에 **안내 배너** 표시: "설정을 변경하면 새 리비전이 생성됩니다. 이전 리비전은 보존됩니다."
 
 제출 흐름:
-- `addModelRevision` mutation 호출 (새 Revision 생성, 이전 Revision 보존)
+- `addModelRevision` mutation 호출 (새 리비전 생성, 이전 리비전 보존)
 - 성공 → `/deployments/:id` 상세 페이지로 복귀
 
 구현 요구사항:
 - [ ] `DeploymentLauncherPage`가 create/edit 모드 모두 처리 (URL param으로 구분)
 - [ ] 편집 모드: `deployment(id: $deploymentId)` + `currentRevision` 데이터로 폼 pre-fill
-- [ ] 편집 모드 안내 배너 표시 (새 Revision 생성 안내)
-- [ ] 제출 전 확인 다이얼로그 표시
+- [ ] 편집 모드 안내 배너 표시 (새 리비전 생성 안내)
 - [ ] `addModelRevision` mutation 연동
 - [ ] 성공 후 상세 페이지로 복귀
 
@@ -374,13 +384,13 @@ DeploymentDetailPage (동일)
 
 #### Flow 5: Rollback
 
-사용자가 Revision History 탭에서 이전 Revision의 "Rollback" 버튼을 클릭합니다.
+사용자가 리비전 히스토리 탭에서 이전 리비전의 "Rollback" 버튼을 클릭합니다.
 
 사용자 경험:
 1. "Rollback" 버튼 클릭
-2. 확인 다이얼로그: "Revision #N으로 롤백하시겠습니까? 현재 Revision이 교체됩니다."
+2. 확인 다이얼로그: "리비전 #N으로 롤백하시겠습니까? 현재 리비전이 교체됩니다."
 3. 확인 → `activateRevision` mutation 호출
-4. 성공 → 상세 페이지 갱신, Active Revision 변경 표시
+4. 성공 → 상세 페이지 갱신, Active 리비전 변경 표시
 
 구현 요구사항:
 - [ ] `DeploymentRevisionHistoryTab` 내 Rollback 버튼 구현
@@ -465,7 +475,7 @@ export interface ReplicaStatusTagProps extends Omit<BAITagProps, 'color'> {
 
 #### i18n 키 추가
 
-신규 추가 키 (`resources/i18n/en.json`):
+신규 추가 키를 `resources/i18n/en.json`에 추가한 뒤, `/fw:i18n` 스킬로 22개 지원 언어 전체에 번역을 자동 생성합니다.
 
 ```json
 {
@@ -731,14 +741,14 @@ type ModelDeployment {
 11. `DeploymentLauncherPageContent.tsx` 신규 생성 (다단계 폼, create/edit 통합)
 12. `DeploymentLauncherPage.tsx` 신규 생성
 13. `createModelDeployment` + `addModelRevision` mutation 연동
-14. 편집 모드: `deployment.currentRevision` 기반 pre-fill + 안내 배너 + 확인 다이얼로그
+14. 편집 모드: `deployment.currentRevision` 기반 pre-fill + 안내 배너 (새 리비전 생성 안내)
 15. Relay 컴파일 + `__generated__` 파일 확인
 
 ### Phase 5 — 배포 상세 페이지
 
 16. `DeploymentActivePoolSection.tsx` 신규 생성 (Active Pool 시각화)
 17. `DeploymentReplicasTab.tsx` 신규 생성 (Replica 목록 + 상세 Drawer)
-18. `DeploymentRevisionHistoryTab.tsx` 신규 생성 (Revision 목록 + Rollback)
+18. `DeploymentRevisionHistoryTab.tsx` 신규 생성 (리비전 목록 + Rollback)
 19. `DeploymentSettingsTab.tsx` 신규 생성
 20. `DeploymentAccessTokensTab.tsx` 신규 생성
 21. `DeploymentAutoScalingTab.tsx` 신규 생성
