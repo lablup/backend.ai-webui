@@ -282,10 +282,7 @@ const DefaultFallback: React.FC = () => {
       justify="center"
       style={{ minHeight: '60vh', padding: 24 }}
     >
-      <BAICard
-        style={{ maxWidth: 480, width: '100%', textAlign: 'center' }}
-        bordered
-      >
+      <BAICard style={{ maxWidth: 480, width: '100%', textAlign: 'center' }}>
         <BAIFlex direction="column" align="center" gap="md">
           <Spin size="large" />
           <Typography.Title level={5} style={{ margin: 0 }}>
