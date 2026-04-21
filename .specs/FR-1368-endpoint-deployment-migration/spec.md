@@ -149,46 +149,23 @@ if (this.isManagerVersionCompatibleWith('26.4.2')) {
 
 ## 페이지 간 내비게이션 흐름
 
-```
-사이드바 "Deployments" 클릭
-        │
-        ▼
-┌─────────────────────┐
-│  DeploymentListPage  │  /deployments
-│  (배포 목록)          │
-└─────────────────────┘
-        │                         │
-        │ "New Deployment" 클릭   │ 행 클릭
-        ▼                         ▼
-┌────────────────────────┐  ┌──────────────────────┐
-│ DeploymentLauncherPage │  │ DeploymentDetailPage │
-│ (새 배포 생성)            │  │ (배포 상세)            │
-│ /deployments/create    │  │ /deployments/:id     │
-└────────────────────────┘  └──────────────────────┘
-        │                         │  "Edit Configuration" 클릭
-        │ 생성 성공                │
-        │                         ▼
-        │                ┌────────────────────────┐
-        │                │ DeploymentLauncherPage │
-        │                │ (배포 편집)              │
-        │                │ /deployments/:id/edit  │
-        │                └────────────────────────┘
-        │                         │ 편집 성공 (새 리비전 생성)
-        ▼                         ▼
-        └──────────────→ DeploymentDetailPage (복귀)
+**사용자 경로**
 
+| 단계 | 진입 | 페이지 | URL |
+|------|------|--------|-----|
+| 1 | 사이드바 "Deployments" 클릭 | `DeploymentListPage` (배포 목록) | `/deployments` |
+| 2a | 목록에서 "New Deployment" 클릭 | `DeploymentLauncherPage` (새 배포 생성) | `/deployments/create` |
+| 2b | 생성 성공 | `DeploymentDetailPage` (배포 상세) | `/deployments/:deploymentId` |
+| 3 | 목록에서 행 클릭 | `DeploymentDetailPage` (배포 상세) | `/deployments/:deploymentId` |
+| 4a | 상세 페이지의 "Edit Configuration" 클릭 | `DeploymentLauncherPage` (배포 편집) | `/deployments/:deploymentId/edit` |
+| 4b | 편집 성공 (새 리비전 생성) | `DeploymentDetailPage` (복귀) | `/deployments/:deploymentId` |
 
-관리자 사이드바 "Deployments" 클릭
-        │
-        ▼
-┌──────────────────────────┐
-│ AdminDeploymentListPage  │  /admin-deployments
-│ (전체 배포 목록)            │
-└──────────────────────────┘
-        │ 행 클릭
-        ▼
-DeploymentDetailPage (동일)
-```
+**관리자 경로**
+
+| 단계 | 진입 | 페이지 | URL |
+|------|------|--------|-----|
+| 1 | 관리자 사이드바 "Deployments" 클릭 | `AdminDeploymentListPage` (전체 배포 목록) | `/admin-deployments` |
+| 2 | 행 클릭 | `DeploymentDetailPage` (사용자 화면과 동일) | `/deployments/:deploymentId` |
 
 ---
 
@@ -223,7 +200,7 @@ DeploymentDetailPage (동일)
 - [ ] `DeploymentStatusTag.tsx` 신규 생성 (배포 라이프사이클 상태 표시)
 - [ ] 레플리카 헬스 요약 (`activeReplicas / replicas Healthy`) 컬럼 표시
 - [ ] "New Deployment" 버튼 → `/deployments/create`로 이동
-- [ ] 행 클릭 → `/deployments/:id`로 이동
+- [ ] 행 클릭 → `/deployments/:deploymentId`로 이동
 
 ---
 
@@ -251,14 +228,14 @@ DeploymentDetailPage (동일)
 
 ```
 ┌────────────────────────────────────────────────────────┐
-│  새 배포 생성                                            │
+│  새 배포 생성                                             │
 │                                                        │
-│  [기존 배포에서 가져오기 ▾]   또는 빈 폼으로 시작         │
+│  [기존 배포에서 가져오기 ▾]   또는 빈 폼으로 시작                │
 │                                                        │
-│  최근 배포                                              │
-│  ○ my-llama-service    vllm · A100 x2 · 2 replicas    │
-│  ○ gpt-sglang-prod     sglang · A100 x1 · 1 replica   │
-│  ○ custom-model-v3     custom · H100 x4 · 3 replicas  │
+│  최근 배포                                               │
+│  ○ my-llama-service    vllm · A100 x2 · 2 replicas     │
+│  ○ gpt-sglang-prod     sglang · A100 x1 · 1 replica    │
+│  ○ custom-model-v3     custom · H100 x4 · 3 replicas   │
 └────────────────────────────────────────────────────────┘
 ```
 
@@ -294,7 +271,7 @@ DeploymentDetailPage (동일)
 
 사용자가 목록에서 배포를 클릭하면 상세 페이지로 이동합니다. 배포의 현재 상태, 레플리카 헬스, 리비전 히스토리를 한 페이지에서 파악할 수 있어야 합니다.
 
-**페이지: `DeploymentDetailPage` (`/deployments/:id`)**
+**페이지: `DeploymentDetailPage` (`/deployments/:deploymentId`)**
 
 사용자 경험:
 - 헤더: 배포 이름, 상태 배지, Endpoint URL 복사 버튼, "Delete" 버튼
@@ -383,7 +360,7 @@ DeploymentDetailPage (동일)
 
 사용자가 Overview 섹션의 "Edit Configuration" 버튼을 클릭합니다.
 
-**페이지: `DeploymentLauncherPage` (`/deployments/:id/edit`)**
+**페이지: `DeploymentLauncherPage` (`/deployments/:deploymentId/edit`)**
 
 사용자 경험:
 - Flow 2와 동일한 다단계 폼 (`DeploymentLauncherPageContent` 재사용)
@@ -392,7 +369,7 @@ DeploymentDetailPage (동일)
 
 제출 흐름:
 - `addModelRevision` mutation 호출 (새 리비전 생성, 이전 리비전 보존)
-- 성공 → `/deployments/:id` 상세 페이지로 복귀
+- 성공 → `/deployments/:deploymentId` 상세 페이지로 복귀
 
 구현 요구사항:
 - [ ] `DeploymentLauncherPage`가 create/edit 모드 모두 처리 (URL param으로 구분)
@@ -561,7 +538,7 @@ export interface ReplicaStatusTagProps extends Omit<BAITagProps, 'color'> {
 2. 즉시 배포 생성 시작 — 별도 폼 없음
 3. 백그라운드 알림으로 진행 상황 표시: "배포를 시작하는 중..."
 4. 준비 완료 → 알림에 "/chat으로 이동" 링크 표시
-5. 준비 실패(타임아웃) → 알림에 배포 상세 페이지(`/deployments/:id`) 링크 표시
+5. 준비 실패(타임아웃) → 알림에 배포 상세 페이지(`/deployments/:deploymentId`) 링크 표시
 
 배포 설정 소스:
 - 런타임: `custom` 고정
@@ -579,7 +556,7 @@ export interface ReplicaStatusTagProps extends Omit<BAITagProps, 'color'> {
   - `createServiceInput` → `createDeploymentInput` (vfolderId, resourceGroup → minimal deployment config)
   - `mutationToCreateService` (`POST /services`) → `createModelDeployment` + `addModelRevision` GQL mutation
   - 폴링 로직: `GET /services/:id` → 신규 Deployment API로 교체
-  - 알림 링크: `/serving/:id` → `/deployments/:id`
+  - 알림 링크: `/serving/:endpointId` → `/deployments/:deploymentId`
 - [ ] `useModelServiceLauncher.ts` — `useDeploymentLauncher` 지원 후 제거 또는 deprecated 처리
 - [ ] **`deployment-config.yaml` 지원**: 모델 폴더에서 `deployment-config.yaml` 읽기 (기존 `service-definition.toml` 대체)
 - [ ] 26.4.2 미만 백엔드: 기존 `useModelServiceLauncher` 유지 (fallback)
