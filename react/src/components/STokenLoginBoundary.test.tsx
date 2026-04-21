@@ -13,15 +13,19 @@
  *   can provoke without network (missing-token, endpoint-unresolved,
  *   server-unreachable, token-invalid).
  * - `errorFallback` prop replaces the built-in card for every kind (Q4).
- * - Source file does not reference forbidden URL APIs (mirrors the CI
- *   grep in FR-2634 so local `pnpm test` catches regressions too).
+ * - Source file does not reference forbidden URL APIs — this is the
+ *   CI-enforced gate for the spec FR-2616 "URL 파라미터 파싱 규약" rule.
  *
  * The helper module is mocked entirely because the real
  * `createBackendAIClient` instantiates a global `BackendAIClient` that is
  * only available at runtime in the browser bundle.
  */
 import '../../__test__/matchMedia.mock.js';
-import { createBackendAIClient, tokenLogin } from '../helper/loginSessionAuth';
+import {
+  connectViaGQL,
+  createBackendAIClient,
+  tokenLogin,
+} from '../helper/loginSessionAuth';
 import * as endpointModule from '../hooks/useResolvedApiEndpoint';
 import {
   STokenLoginBoundary,
@@ -60,6 +64,7 @@ jest.mock('../helper/loginSessionAuth', () => ({
   __esModule: true,
   createBackendAIClient: jest.fn(),
   tokenLogin: jest.fn(),
+  connectViaGQL: jest.fn(),
 }));
 
 jest.mock('backend.ai-ui', () => {
@@ -88,6 +93,9 @@ jest.mock('jotai', () => {
 const mockedCreateBackendAIClient =
   createBackendAIClient as jest.MockedFunction<typeof createBackendAIClient>;
 const mockedTokenLogin = tokenLogin as jest.MockedFunction<typeof tokenLogin>;
+const mockedConnectViaGQL = connectViaGQL as jest.MockedFunction<
+  typeof connectViaGQL
+>;
 const endpointState = (
   endpointModule as unknown as { __endpointState: { endpoint: string } }
 ).__endpointState;
@@ -97,12 +105,15 @@ const setEndpoint = (next: string) => {
 
 type FakeClient = {
   get_manager_version: jest.Mock;
+  check_login: jest.Mock;
   token_login: jest.Mock;
 };
 
-const buildFakeClient = (): FakeClient => ({
+const buildFakeClient = (overrides: Partial<FakeClient> = {}): FakeClient => ({
   get_manager_version: jest.fn().mockResolvedValue('1.0'),
+  check_login: jest.fn().mockResolvedValue(false),
   token_login: jest.fn().mockResolvedValue(true),
+  ...overrides,
 });
 
 const renderBoundary = (
@@ -150,6 +161,7 @@ beforeEach(() => {
     clientConfig: {},
   }));
   mockedTokenLogin.mockResolvedValue([]);
+  mockedConnectViaGQL.mockResolvedValue([]);
 });
 
 afterEach(() => {
@@ -242,6 +254,30 @@ describe('STokenLoginBoundary', () => {
     expect(connectedEventCount).toBe(0);
   });
 
+  test('skips token_login when the browser already holds a valid session', async () => {
+    // Reuse the existing session: check_login resolves truthy.
+    const client = buildFakeClient({
+      check_login: jest.fn().mockResolvedValue(true),
+    });
+    mockedCreateBackendAIClient.mockImplementation(() => ({
+      client,
+      clientConfig: {},
+    }));
+    const onSuccess = jest.fn();
+    renderBoundary({ onSuccess });
+
+    await waitFor(() => {
+      expect(screen.getByText('children-rendered')).toBeInTheDocument();
+    });
+    // Fast-path assertions: no re-authentication was attempted, but the
+    // GQL wiring still ran and the connected event fired exactly once so
+    // Relay and plugin subscribers unblock.
+    expect(mockedTokenLogin).not.toHaveBeenCalled();
+    expect(mockedConnectViaGQL).toHaveBeenCalledTimes(1);
+    expect(connectedEventCount).toBe(1);
+    expect(onSuccess).toHaveBeenCalledTimes(1);
+  });
+
   test('errorFallback replaces the built-in card for every kind', async () => {
     const tokenErr = new Error('bad token');
     mockedTokenLogin.mockRejectedValue(tokenErr);
@@ -268,8 +304,8 @@ describe('STokenLoginBoundary source', () => {
       'utf8',
     );
     // Strip block comments and line comments so the rule documentation in
-    // the file header is not flagged. This mirrors the awk-driven stripping
-    // inside scripts/check-stoken-login-boundary-url-free.sh.
+    // the file header (which intentionally names the forbidden APIs) is
+    // not flagged.
     const stripped = source
       .replace(/\/\*[\s\S]*?\*\//g, '')
       .split('\n')
