@@ -219,10 +219,37 @@ DeploymentDetailPage (동일)
 **페이지: `DeploymentLauncherPage` (`/deployments/create`)**
 
 사용자 경험:
+
+**진입 방식 A — 빈 폼으로 시작**
 1. Step 1 — **기본 정보**: 배포 이름, 공개 여부 (`open_to_public`)
 2. Step 2 — **모델 & 런타임**: 모델 폴더(VFolder), 런타임 변형(`vllm` / `sglang` / `custom` 등), 컨테이너 이미지, 실행 커맨드(custom일 때만 표시)
 3. Step 3 — **리소스**: GPU/CPU/메모리, 레플리카 수, 리소스 그룹, 클러스터 모드
 4. Step 4 — **검토 & 생성**: 입력 내용 요약 확인 후 제출
+
+**진입 방식 B — 기존 배포에서 가져오기 (Import from existing, FR-2419)**
+
+폼 상단 또는 Step 1에 **"기존 배포에서 가져오기"** 버튼 제공:
+1. 버튼 클릭 → 최근 배포 목록 드로어/모달 열기
+2. 목록에서 배포 선택 → 해당 배포의 현재 Revision 설정으로 폼 전체 pre-fill
+3. 이름 필드는 자동으로 초기화 (새 이름 입력 유도), 나머지 설정은 유지
+4. 사용자가 각 필드를 자유롭게 수정 후 제출
+
+```
+┌────────────────────────────────────────────────────────┐
+│  새 배포 생성                                            │
+│                                                        │
+│  [기존 배포에서 가져오기 ▾]   또는 빈 폼으로 시작         │
+│                                                        │
+│  최근 배포                                              │
+│  ○ my-llama-service    vllm · A100 x2 · 2 replicas    │
+│  ○ gpt-sglang-prod     sglang · A100 x1 · 1 replica   │
+│  ○ custom-model-v3     custom · H100 x4 · 3 replicas  │
+└────────────────────────────────────────────────────────┘
+```
+
+데이터 소스:
+- `myDeploymentsV2` query로 최근 배포 목록 조회 (최대 10개, `createdAt` 내림차순)
+- 선택된 배포의 `currentRevision` 필드에서 설정 전체 읽기
 
 제출 흐름:
 - `createModelDeployment` mutation → `deploymentId` 반환
@@ -234,7 +261,13 @@ DeploymentDetailPage (동일)
 - [ ] `DeploymentLauncherPageContent.tsx` 신규 생성 (다단계 폼 본문)
 - [ ] Step 1~4 단계형 폼 레이아웃 구현
 - [ ] `createModelDeployment` + `addModelRevision` GQL mutation 연동
+- [ ] **"기존 배포에서 가져오기"** 버튼 및 최근 배포 선택 UI 구현 (FR-2419)
+  - `myDeploymentsV2` query로 최근 배포 목록 로드
+  - 선택 시 `currentRevision` 기반으로 폼 전체 pre-fill
+  - 이름 필드 초기화
 - [ ] 성공 후 상세 페이지로 이동
+
+관련 이슈: FR-2419 (Add 'Import from existing spec' feature in ModelService creation)
 
 ---
 
@@ -734,6 +767,7 @@ type ModelDeployment {
   - 최소 백엔드 버전: 26.4.2
 - 2026-04-21: ServiceLauncherPage/ServiceLauncherPageContent 마이그레이션 범위 추가
 - 2026-04-21: Flow 7 추가 — 모델 폴더에서 바로 배포 (useDeploymentLauncher, deployment-config.yaml 기반)
+- 2026-04-21: Flow 2에 "기존 배포에서 가져오기" 추가 (FR-2419 반영)
 - 2026-04-21: 요구사항 전면 재구조화 — User Flow 중심으로 재작성
   - US-1~US-8 구조 → Flow 1~6 사용자 흐름 중심으로 전환
   - 신규 컴포넌트 처음부터 새로 작성 (기존 컴포넌트 rename/patch 방식 폐기)
