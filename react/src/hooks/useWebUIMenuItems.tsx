@@ -85,7 +85,7 @@ export const VALID_MENU_KEYS = [
   'summary', // alias to dashboard for backward compatibility
   'session',
   'job', // alias to session for backward compatibility
-  'serving',
+  'deployments',
   'model-store',
   'ai-agent',
   'chat',
@@ -101,7 +101,7 @@ export const VALID_MENU_KEYS = [
   'scheduler',
   'resource-policy',
   'reservoir',
-  'admin-serving',
+  'admin-deployments',
   'admin-dashboard',
   'admin-data',
   'project-admin-users',
@@ -126,7 +126,7 @@ const ALL_ADMIN_PAGE_KEYS: ReadonlySet<string> = new Set([
   'scheduler',
   'resource-policy',
   'reservoir',
-  'admin-serving',
+  'admin-deployments',
   'admin-dashboard',
   'admin-data',
   'project-admin-users',
@@ -141,13 +141,13 @@ const ALL_ADMIN_PAGE_KEYS: ReadonlySet<string> = new Set([
 ]);
 
 // Admin-category page keys reachable by a project admin (3-tier admin gating).
-// Project admins see Sessions, Serving, Data (vfolders) and Members within the
-// admin category. Other admin pages remain visible only to domain admins or
+// Project admins see Sessions, Deployments, Data (vfolders) and Members within
+// the admin category. Other admin pages remain visible only to domain admins or
 // superadmins. Kept as a plain array so it can be exported and reused (e.g. for
 // per-page route gating in follow-up PRs).
 export const PROJECT_ADMIN_PAGE_KEYS = [
   // 'admin-session',
-  // 'admin-serving',
+  // 'admin-deployments',
   // 'admin-data',
   'project-admin-users',
 ] as const;
@@ -158,7 +158,7 @@ const PROJECT_ADMIN_PAGE_KEY_SET: ReadonlySet<string> = new Set(
 
 // Page keys that additionally require superadmin role
 const SUPERADMIN_ONLY_PAGE_KEYS: ReadonlySet<string> = new Set([
-  'admin-serving',
+  'admin-deployments',
   'admin-dashboard',
   'admin-data',
   'agent',
@@ -268,10 +268,10 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       'workload',
     ),
     createMenuItem(
-      '/serving',
-      t('webui.menu.Serving'),
+      '/deployments',
+      t('webui.menu.Deployments'),
       <BAIEndpointsIcon style={{ color: token.colorPrimary }} />,
-      'serving',
+      'deployments',
       'service',
     ),
     createMenuItem(
@@ -379,10 +379,12 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
     },
     isSuperAdmin && {
       label: (
-        <WebUILink to="/admin-serving">{t('webui.menu.Serving')}</WebUILink>
+        <WebUILink to="/admin-deployments">
+          {t('webui.menu.Deployments')}
+        </WebUILink>
       ),
       icon: <BAIEndpointsIcon style={{ color: token.colorInfo }} />,
-      key: 'admin-serving' as MenuKeys,
+      key: 'admin-deployments' as MenuKeys,
       group: 'admin-operations' as AdminMenuGroupName,
     },
     {
