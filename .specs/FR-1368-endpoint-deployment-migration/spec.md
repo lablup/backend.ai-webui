@@ -269,7 +269,7 @@ if (this.isManagerVersionCompatibleWith('26.4.3')) {
 
 ```
 ┌──────────────────────────────────────────────────────────────────────┐
-│  New Deployment                         [Recent Deployments]   ✕     │
+│  New Deployment                         [Recent Deployments]         │
 ├────────────────────────────────────────────────┬─────────────────────┤
 │                                                │  1. Basic Info      │
 │  (폼 본문 — 현재 step 내용)                    │     ●               │
