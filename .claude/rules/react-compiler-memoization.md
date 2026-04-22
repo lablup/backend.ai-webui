@@ -1,18 +1,19 @@
 ---
-description: When writing or editing React components and hooks that need memoization
+description: Rely on the React Compiler (`'use memo'`) instead of manual `useMemo` / `useCallback`
+paths:
+  - "react/**/*.{tsx,ts}"
+  - "packages/backend.ai-ui/**/*.{tsx,ts}"
 ---
 
 # React Compiler Memoization Rule
 
-This project runs **React 19.2** with **`babel-plugin-react-compiler` in annotation mode**. Memoization is the React Compiler's job, not the developer's. Do not reach for `useMemo` / `useCallback` as a first instinct — add the `'use memo'` directive to the component or hook body instead, and write plain values and plain functions.
+This project runs **React 19.2** with **`babel-plugin-react-compiler` in annotation mode**. The compiler owns memoization. Add the `'use memo'` directive to each component and hook body, and write plain values and plain functions.
 
 ## Why
 
-1. The compiler analyzes dependencies and inserts caching automatically, including cases that are hard or impossible to express with manual `useMemo` / `useCallback` dependency arrays (e.g., stable references across conditional code paths, partial memoization of branches).
-2. Manual dependency arrays drift out of sync as code evolves — the compiler's view is always up to date with the code it compiles.
-3. `useCallback` cascades: wrapping one function in `useCallback` forces every caller that depends on its identity (child components, other hooks) to also memoize. The compiler breaks this cascade.
-4. Inline arrow functions passed to JSX (`onClick`, `action`, etc.) are already memoized by the compiler under `'use memo'`; wrapping them is noise.
-5. Consistent adoption across the codebase keeps the memoization story legible — reviewers don't have to decide case-by-case whether a given `useCallback` is load-bearing or ceremonial.
+- Manual `useMemo` / `useCallback` dependency arrays drift out of sync as code evolves; the compiler's view is always current with the code it compiles.
+- `useCallback` forces every identity-sensitive caller (child components, other hooks) to also memoize. The compiler short-circuits this cascade.
+- Consistent adoption keeps the memoization story legible across the codebase — reviewers don't decide case-by-case whether a given `useCallback` is load-bearing or ceremonial.
 
 ## Rules
 
