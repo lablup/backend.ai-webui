@@ -265,6 +265,32 @@ if (this.isManagerVersionCompatibleWith('26.4.3')) {
 
 **페이지: `DeploymentLauncherPage` (`/deployments/create`)**
 
+**레이아웃 — 세션 런처(`SessionLauncherPage`)와 동일한 구조**
+
+```
+┌──────────────────────────────────────────────────────────────────────┐
+│  New Deployment                         [Recent Deployments]   ✕     │
+├────────────────────────────────────────────────┬─────────────────────┤
+│                                                │  1. Basic Info      │
+│  (폼 본문 — 현재 step 내용)                    │     ●               │
+│                                                │  2. Model & Runtime │
+│                                                │     ○               │
+│                                                │  3. Resources       │
+│                                                │     ○               │
+│                                                │  4. Review & Create │
+│                                                │     ○               │
+├────────────────────────────────────────────────┴─────────────────────┤
+│  [← Previous]  [Next →]  [Skip to Review »]                          │
+└──────────────────────────────────────────────────────────────────────┘
+```
+
+- **우측 Steps 패널**: `<Steps size="small" orientation="vertical" current={currentStep} />` — `screens.lg`(lg breakpoint 이상) 일 때만 표시, sticky 포지션 (`SessionLauncherPage` 참조)
+- **하단 네비게이션** (매 step 공통):
+  - `← Previous` — currentStep > 0 일 때 표시
+  - `Next →` — 마지막 step 전까지 표시 (primary ghost)
+  - `Skip to Review »` — 마지막 step 전까지 표시, 클릭 시 Review step으로 즉시 이동 (`session.launcher.SkipToConfirmAndLaunch` 패턴 참조)
+  - Review step에서는 `Next`/`Skip to Review` 대신 **`Create Deployment`** (primary) 버튼 표시
+
 **기본 진입 — 빈 폼으로 바로 시작**
 1. Step 1 — **기본 정보**: 배포 이름, 공개 여부 (`open_to_public`)
 2. Step 2 — **모델 & 런타임**: 모델 폴더(VFolder), 런타임 변형(`vllm` / `sglang` / `custom` 등), 컨테이너 이미지, 실행 커맨드(custom일 때만 표시)
@@ -273,17 +299,7 @@ if (this.isManagerVersionCompatibleWith('26.4.3')) {
 
 **오른쪽 상단 버튼 — 기존 배포에서 가져오기 (FR-2419)**
 
-런처 폼 헤더 오른쪽 상단에 **"Recent Deployments"** 버튼을 배치합니다 (세션 런처의 "Recent History" 버튼과 동일한 패턴):
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│  New Deployment                  [Recent Deployments]  ✕    │
-├─────────────────────────────────────────────────────────────┤
-│  Step 1  Step 2  Step 3  Step 4                             │
-│                                                             │
-│  (빈 폼)                                                    │
-└─────────────────────────────────────────────────────────────┘
-```
+런처 폼 헤더 오른쪽 상단에 **"Recent Deployments"** 버튼을 배치합니다 (세션 런처의 "Recent History" 버튼과 동일한 패턴).
 
 "Recent Deployments" 버튼 클릭 시 모달(세션 런처의 Recent History 모달과 동일한 형태)을 열어 최근 배포 목록 표시:
 
@@ -321,7 +337,14 @@ if (this.isManagerVersionCompatibleWith('26.4.3')) {
 구현 요구사항:
 - [ ] `DeploymentLauncherPage.tsx` 신규 생성 (생성/편집 통합 진입점)
 - [ ] `DeploymentLauncherPageContent.tsx` 신규 생성 (다단계 폼 본문)
-- [ ] Step 1~4 단계형 폼 레이아웃 구현
+- [ ] **레이아웃**: 좌측 폼 + 우측 세로 Steps 패널 (`SessionLauncherPage` 구조 참조)
+  - 우측 `<Steps size="small" orientation="vertical" />` — lg breakpoint 이상일 때만 표시, sticky
+  - `antd` `useBreakpoint` (`screens.lg`) 으로 조건부 렌더링
+- [ ] **하단 네비게이션** 구현
+  - `← Previous`: currentStep > 0 일 때 표시
+  - `Next →`: 마지막 step 전까지 표시 (primary ghost)
+  - `Skip to Review »`: 마지막 step 전까지 표시, Review step으로 즉시 이동
+  - Review step: `Create Deployment` (primary) 버튼
 - [ ] `createModelDeployment` + `addModelRevision` GQL mutation 연동
 - [ ] 폼 헤더 오른쪽 상단에 **"Recent Deployments"** 버튼 배치 (세션 런처 `SessionLauncherPage`의 Recent History 버튼 패턴 참조)
 - [ ] **Recent Deployments 모달** 구현 (FR-2419)
