@@ -208,7 +208,7 @@ const StartPage: React.FC = () => {
     enableModelFolders && {
       id: 'modelService',
       rowSpan: 3,
-      requiredMenuKey: 'serving',
+      requiredMenuKey: 'deployments',
       columnSpan: 1,
       columnOffset: { 6: 0, 4: 0 },
       data: {
