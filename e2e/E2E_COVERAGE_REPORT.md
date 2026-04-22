@@ -16,7 +16,7 @@
 
 | Page | Route | Features | Covered | Status |
 |------|-------|:--------:|:-------:|:------:|
-| Authentication | `/interactive-login` | 23 | 21 | 🔶 91% |
+| Authentication | `/interactive-login` | 28 | 26 | 🔶 93% |
 | Change Password | `/change-password` | 9 | 9 | ✅ 100% |
 | Start Page | `/start` | 8 | 6 | 🔶 75% |
 | Dashboard | `/dashboard` | 9 | 7 | 🔶 78% |
@@ -65,7 +65,7 @@
 
 ### 1. Authentication (`/interactive-login`)
 
-**Test files:** [`e2e/auth/login.spec.ts`](auth/login.spec.ts), [`e2e/auth/password-expiry.spec.ts`](auth/password-expiry.spec.ts), [`e2e/auth/forgot-password.spec.ts`](auth/forgot-password.spec.ts)
+**Test files:** [`e2e/auth/login.spec.ts`](auth/login.spec.ts), [`e2e/auth/password-expiry.spec.ts`](auth/password-expiry.spec.ts), [`e2e/auth/forgot-password.spec.ts`](auth/forgot-password.spec.ts), [`e2e/auth/concurrent-login-guard.spec.ts`](auth/concurrent-login-guard.spec.ts)
 
 | Feature | Status | Test |
 |---------|--------|------|
@@ -88,10 +88,15 @@
 | Forgot password form validation (empty) | ✅ | `User cannot submit without email` |
 | Forgot password form validation (invalid email) | ✅ | `User cannot submit with invalid email format` |
 | Forgot password link config-driven visibility | ✅ | `"Forgot password?" link is hidden when config is disabled` |
+| Concurrent session guard (409 modal) | ✅ | `user sees concurrent session modal when another session is active` |
+| Concurrent session cancel & credential preservation | ✅ | `user can cancel concurrent session modal and return to login form with credentials preserved` |
+| Force login (force=true) | ✅ | `clicking Proceed to Login sends a second login request with force=true` |
+| Force login + TOTP persistence | ✅ | `TOTP is required after force login approval — force flag persists when submitting OTP` |
+| Silent re-login skips concurrent modal | ✅ | `page refresh does not show concurrent session modal for silent re-login attempts` |
 | OAuth/SSO login flow | ❌ | - |
 | Session persistence | ❌ | - |
 
-**Coverage: 🔶 21/23 features**
+**Coverage: 🔶 26/28 features**
 
 ---
 
