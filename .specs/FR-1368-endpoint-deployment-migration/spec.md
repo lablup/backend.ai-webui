@@ -261,38 +261,53 @@ if (this.isManagerVersionCompatibleWith('26.4.3')) {
 
 #### Flow 2: 새 배포 생성 (Create Deployment)
 
-사용자가 "New Deployment"를 클릭하면 다단계 생성 폼으로 이동합니다.
+사용자가 "New Deployment"를 클릭하면 **즉시 빈 런처 폼으로 진입**합니다. 세션 런처와 동일한 UX 패턴을 따릅니다.
 
 **페이지: `DeploymentLauncherPage` (`/deployments/create`)**
 
-사용자 경험:
-
-**진입 방식 A — 빈 폼으로 시작**
+**기본 진입 — 빈 폼으로 바로 시작**
 1. Step 1 — **기본 정보**: 배포 이름, 공개 여부 (`open_to_public`)
 2. Step 2 — **모델 & 런타임**: 모델 폴더(VFolder), 런타임 변형(`vllm` / `sglang` / `custom` 등), 컨테이너 이미지, 실행 커맨드(custom일 때만 표시)
 3. Step 3 — **리소스**: GPU/CPU/메모리, 레플리카 수, 리소스 그룹, 클러스터 모드
 4. Step 4 — **검토 & 생성**: 입력 내용 요약 확인 후 제출
 
-**진입 방식 B — 기존 배포에서 가져오기 (Import from existing, FR-2419)**
+**오른쪽 상단 버튼 — 기존 배포에서 가져오기 (FR-2419)**
 
-폼 상단 또는 Step 1에 **"기존 배포에서 가져오기"** 버튼 제공:
-1. 버튼 클릭 → 최근 배포 목록 드로어/모달 열기
-2. 목록에서 배포 선택 → 해당 배포의 현재 리비전 설정으로 폼 전체 pre-fill
-3. 이름 필드는 자동으로 초기화 (새 이름 입력 유도), 나머지 설정은 유지
-4. 사용자가 각 필드를 자유롭게 수정 후 제출
+런처 폼 헤더 오른쪽 상단에 **"Recent Deployments"** 버튼을 배치합니다 (세션 런처의 "Recent History" 버튼과 동일한 패턴):
 
 ```
-┌────────────────────────────────────────────────────────┐
-│  새 배포 생성                                             │
-│                                                        │
-│  [기존 배포에서 가져오기 ▾]   또는 빈 폼으로 시작                │
-│                                                        │
-│  최근 배포                                               │
-│  ○ my-llama-service    vllm · A100 x2 · 2 replicas     │
-│  ○ gpt-sglang-prod     sglang · A100 x1 · 1 replica    │
-│  ○ custom-model-v3     custom · H100 x4 · 3 replicas   │
-└────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│  New Deployment                  [Recent Deployments]  ✕    │
+├─────────────────────────────────────────────────────────────┤
+│  Step 1  Step 2  Step 3  Step 4                             │
+│                                                             │
+│  (빈 폼)                                                    │
+└─────────────────────────────────────────────────────────────┘
 ```
+
+"Recent Deployments" 버튼 클릭 시 모달(세션 런처의 Recent History 모달과 동일한 형태)을 열어 최근 배포 목록 표시:
+
+```
+┌────────────────────────────────────────────────────────────┐
+│  Recent Deployments                                    ✕   │
+├────────────────────────────────────────────────────────────┤
+│  These are your recent deployments. Click a name to        │
+│  pre-fill the form.                                        │
+│                                                            │
+│  Name              Runtime    Resources        CreatedAt   │
+│  ─────────────────────────────────────────────────────     │
+│  my-llama-service  vllm       A100 x2, 2 rep  2026-04-01   │
+│  gpt-sglang-prod   sglang     A100 x1, 1 rep  2026-03-28   │
+│  custom-model-v3   custom     H100 x4, 3 rep  2026-03-15   │
+│                                                            │
+│  (No data — empty state if no previous deployments)        │
+└────────────────────────────────────────────────────────────┘
+```
+
+모달에서 배포 선택 시:
+1. 해당 배포의 `currentRevision` 설정으로 폼 전체 pre-fill
+2. 이름 필드는 자동으로 초기화 (새 이름 입력 유도), 나머지 설정은 유지
+3. 모달 닫힘 → 사용자가 각 필드를 자유롭게 수정 후 제출
 
 데이터 소스:
 - `myDeploymentsV2` query로 최근 배포 목록 조회 (최대 10개, `createdAt` 내림차순)
@@ -308,10 +323,12 @@ if (this.isManagerVersionCompatibleWith('26.4.3')) {
 - [ ] `DeploymentLauncherPageContent.tsx` 신규 생성 (다단계 폼 본문)
 - [ ] Step 1~4 단계형 폼 레이아웃 구현
 - [ ] `createModelDeployment` + `addModelRevision` GQL mutation 연동
-- [ ] **"기존 배포에서 가져오기"** 버튼 및 최근 배포 선택 UI 구현 (FR-2419)
+- [ ] 폼 헤더 오른쪽 상단에 **"Recent Deployments"** 버튼 배치 (세션 런처 `SessionLauncherPage`의 Recent History 버튼 패턴 참조)
+- [ ] **Recent Deployments 모달** 구현 (FR-2419)
   - `myDeploymentsV2` query로 최근 배포 목록 로드
   - 선택 시 `currentRevision` 기반으로 폼 전체 pre-fill
   - 이름 필드 초기화
+  - 빈 상태(no data) 처리
 - [ ] **URL 상태 동기화** (`nuqs` `useQueryStates` 사용): 새로고침 후에도 폼 상태 유지
   - `step`: 현재 단계 번호 (`parseAsInteger.withDefault(1)`)
   - `formValues`: 핵심 폼 값 JSON (`parseAsJson` 또는 `JsonParam`, `withDefault({})`)
@@ -904,6 +921,7 @@ adminDeployments(filter: DeploymentFilter, orderBy: [DeploymentOrderBy!], limit:
 
 ## 변경 이력
 
+- 2026-04-22: Flow 2 UX 변경 — 기본 진입을 빈 폼으로, "Recent Deployments" 버튼을 오른쪽 상단에 배치하여 모달로 기존 배포 선택 (세션 런처 Recent History 패턴)
 - 2026-04-21: 서버사이드 페이지네이션/필터/정렬 패턴 명세 추가 (DeploymentFilter, DeploymentOrderBy, isEnableSorter, convertToOrderBy, nuqs URL 직렬화)
 - 2026-04-21: Settings 탭 제거 → Overview 섹션의 Configuration 카드로 통합. 탭 5개 → 4개
 - 2026-04-21: 초기 초안 작성 (아키텍처 다이어그램 + 코드베이스 분석 기반)
