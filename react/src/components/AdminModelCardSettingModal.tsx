@@ -335,8 +335,10 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
                     <BAIVFolderSelect
                       ref={vfolderSelectRef}
                       excludeDeleted
-                      currentProjectId={currentProject.id ?? undefined}
-                      filter={mergeFilterValues(['ownership_type == "group"'])}
+                      filter={mergeFilterValues([
+                        'ownership_type == "group"',
+                        'usage_mode == "model"',
+                      ])}
                       style={{ flex: 1 }}
                     />
                   </Form.Item>
