@@ -1,3 +1,5 @@
+<a id="model-serving"></a>
+
 # Model Serving
 
 ## Model Service
@@ -22,58 +24,35 @@ administrators only need to specify the scaling parameters required for
 the Model Service, without the need to manually create or delete compute
 sessions.
 
-<details>
-<summary>Model Service in Version 23.03 and Earlier</summary>
-
-Although the model serving-specific feature is officially supported from
-version 23.09, you can still use model service in earlier versions.
-
-For example, in version 23.03, you can configure a model service by
-modifying the compute session for training in the following way:
-
-1. Add pre-opened ports during session creation to map the running
-   server port inside the session for model serving.
-   (For instructions on how to use preopen ports, refer to [Set Preopen Ports](#set-preopen-ports).)
-
-2. Check 'Open app to public' to allow the service mapped to the
-   pre-opened port to be publicly accessible.
-   (For detailed information about "Open app to public," refer to [Open app to public](#open-app-to-public).)
-
-However, there are certain limitations in version 23.03:
-
--  Sessions do not automatically recover if they are terminated due to
-   external factors such as idle timeout or system errors.
--  The app port changes every time a session is restarted.
--  If sessions are repeatedly restarted, the idle ports may be
-   exhausted.
-
-The official Model Service feature in version 23.09 resolves these
-limitations. Therefore, starting from version 23.09, it is recommended
-to create/manage Model Services through the model serving menu whenever
-possible. The use of pre-opened ports is recommended only for
-development and testing purposes.
-
-</details>
-
 ## Guide to Steps for Using Model Service
 
-To use the Model Service, you need to follow the steps below:
+Starting from version 26.4.0, you can deploy a model service easily without a separate configuration file.
+
+**Quick Deploy (Recommended)**: Browse pre-configured models in the [Model Store](#model-store) and click the `Deploy` button to deploy immediately.
+
+**Deploy via Service Launcher**: Click the `Start Service` button on the Serving page to open the service launcher, then select a runtime variant such as `vLLM` or `SGLang` to create a model service without a separate model definition file.
+
+The general workflow is as follows:
+
+1. Create a model service using the service launcher.
+2. (If the model service is not public) Generate a token.
+3. (For end users) Access the service endpoint to verify the service.
+4. (If needed) Modify the model service.
+5. (If needed) Terminate the model service.
+
+<details>
+<summary>Advanced: Using Model Definition and Service Definition Files (Custom Runtime)</summary>
+
+If you are using the `Custom` runtime variant or need finer control, you can create and use model definition and service definition files:
 
 1. Create a model definition file.
 2. Create a service definition file.
 3. Upload the definition files to the model type folder.
-4. Create/Validate the Model Service using the service launcher.
-5. (If the Model Service is not public) Obtain a token.
-6. (For end users) Access the endpoint corresponding to the Model
-   Service to verify the service.
-7. (If needed) Modify the Model Service.
-8. (If needed) Terminate the Model Service.
+4. Select the `Custom` runtime in the service launcher to create/validate the model service.
 
-:::tip
-As an alternative workflow, you can browse pre-configured models in the
-[Model Store](#model-store) and deploy them with a single click using the
-`Deploy` button.
-:::
+For details, refer to the [Creating a Model Definition File](#model-definition-guide) and [Creating a Service Definition File](#service-definition-file) sections below.
+
+</details>
 
 <a id="model-definition-guide"></a>
 
@@ -371,9 +350,11 @@ Click the `Start Service` button on the Serving page to open the service launche
 
 First, provide a service name. The following fields are available:
 
+- **Service Name**: A unique name to identify the endpoint.
 - **Open To Public**: This option allows access to the model service without any separate token. By default, it is disabled.
-- **Model Storage**: The model storage folder to mount, which contains the model definition file inside the directory.
+- **Model Storage Folder to Mount**: Select the storage folder containing the model files.
 - **Inference Runtime Variant**: Selects the runtime variant for the model service. The available variants are dynamically loaded from the backend and may include `vLLM`, `SGLang`, `NVIDIA NIM`, `Modular MAX`, `Custom`, and others depending on your installation.
+- **Environment / Version**: Configure the execution environment for the model service. Selecting a runtime variant automatically filters the environment images.
 
 ![](../images/service_launcher1.png)
 
@@ -393,18 +374,16 @@ Select `Enter Command` to paste a CLI command directly. For example:
 vllm serve /models/my-model --tp 2
 ```
 
-The system automatically parses the command and fills in the following fields:
-
-- **Port**: Auto-detected from the command (default `8000`).
-- **Health Check URL**: Auto-detected from the command (default `/health`).
-- **Model mount path**: Auto-detected from the command.
-
 ![](../images/service_launcher_command_mode.png)
 
-You can also configure:
+The system automatically parses the command and fills in the following fields:
 
-- **Initial Delay**: Seconds to wait before the first health check after the service starts.
-- **Max Retries**: Maximum number of health check attempts before the service is considered failed.
+- **Start Command**: Enter the command to be executed in model serving directly.
+- **Model Mount**: The path where the model storage folder is mounted in the container (default `/models`).
+- **Port**: Auto-detected from the command (default `8000`). The port number that the model serving process listens on.
+- **Health Check URL**: Auto-detected from the command (default `/health`). The HTTP endpoint path called during service health checks.
+- **Initial Delay**: Seconds to wait before the first health check after the service starts (default `60.0`).
+- **Max Retries**: Maximum number of health check attempts before the service is considered failed (default `10`).
 
 :::tip
 If the command suggests multi-GPU usage (e.g., `--tp 2`), a GPU hint will appear
@@ -425,38 +404,41 @@ Select `Use Config File` to use the traditional `model-definition.yaml` approach
 
 When you select the `vLLM` or `SGLang` runtime variant, a **Runtime Parameters** section appears. This section lets you fine-tune the model serving behavior without manually editing configuration files.
 
-![](../images/service_launcher_runtime_params.png)
-
-The parameters are organized into categories:
-
-**Sampling Parameters:**
-
-- **Temperature**: Controls randomness in text generation. Higher values produce more diverse output.
-- **Top P**: Nucleus sampling threshold.
-- **Top K**: Limits the number of highest-probability tokens to consider.
-- **Min P**: Minimum probability threshold for token selection.
-- **Frequency Penalty**: Penalizes tokens based on their frequency in the generated text.
-- **Presence Penalty**: Penalizes tokens that have already appeared.
-- **Repetition Penalty**: Penalizes repeated tokens. Values above 1.0 discourage repetition.
-- **Seed**: Random seed for reproducible generation.
-
-**Context / Engine Parameters:**
-
-- **Context Length**: Maximum context length the model can process.
-- **Data Type**: Data type for model weights and computation.
-- **KV Cache Data Type**: Data type for the key-value cache.
-- **GPU Memory Utilization**: Fraction of GPU memory to use for the model.
-- **Trust Remote Code**: Allow execution of custom model code from the model repository.
-- **Enforce Eager Mode** (vLLM only): Disable CUDA graph optimization for debugging.
-- **Disable CUDA Graph** (SGLang only): Disable CUDA graph capture.
-- **Memory Fraction Static** (SGLang only): Static memory fraction for the model.
-- **Max Model Length**: Maximum context length (number of tokens) the model can process.
-
-**Additional Arguments**: A text field for extra CLI arguments not covered by the controls above.
+Parameters are organized into tab-separated categories. The tab list varies by runtime variant.
 
 :::note
 Unchanged parameters will use the runtime's default values.
 :::
+
+**vLLM Runtime Parameters**
+
+![](../images/service_launcher_runtime_params_vllm.png)
+
+vLLM provides the following tabs: **Model Loading**, **Resource Memory**, **Serving Performance**, **Multimodal**, **Tool Reasoning**, and others.
+
+Key fields in the **Model Loading** tab:
+
+- **Model**: The name or path of the model to use.
+- **DType**: The data type for model weights and computation (e.g., `Auto`, `float16`, `bfloat16`).
+- **Quantization**: The model quantization method (e.g., `awq`, `gptq`, `fp8`).
+- **Max Model Length**: The maximum context length (number of tokens) the model can process.
+- **Served Model Name**: The model name to expose at the API endpoint.
+- **Trust Remote Code**: Allow execution of custom model code from the model repository.
+
+**SGLang Runtime Parameters**
+
+![](../images/service_launcher_runtime_params_sglang.png)
+
+SGLang provides the following tabs: **Model Loading**, **Resource Memory**, **Serving Performance**, **Tool Reasoning**, and others.
+
+Key fields in the **Model Loading** tab:
+
+- **Model**: The name or path of the model to use.
+- **DType**: The data type for model weights and computation (e.g., `Auto`, `float16`, `bfloat16`).
+- **Quantization**: The model quantization method (e.g., `awq`, `gptq`, `fp8`).
+- **Context Length**: The maximum context length the model can process.
+- **Served Model Name**: The model name to expose at the API endpoint.
+- **Trust Remote Code**: Allow execution of custom model code from the model repository.
 
 In addition to runtime parameters, the `vLLM` and `SGLang` runtime variants expose specific environment variables in the **Environment Variables** section of the service launcher:
 
@@ -650,9 +632,9 @@ Click the `Add Rules` button to open the **Add Auto Scaling Rule** editor. To mo
 
 - **Step Size**: A positive integer specifying how many replicas to add or remove per scaling event. The direction (add or remove) is derived automatically from which threshold is configured:
 
-   - Only a minimum threshold is set → `[metric] < [minThreshold]`. Replicas are scaled **in** when the metric falls below the threshold.
-   - Only a maximum threshold is set → `[maxThreshold] < [metric]`. Replicas are scaled **out** when the metric rises above the threshold.
-   - Both thresholds are set → `[metric] < [minThreshold]` or `[maxThreshold] < [metric]`. Replicas are scaled in or out depending on which boundary the metric crosses.
+   - Only a minimum threshold is set: `[metric] < [minThreshold]` triggers **Scale In** (replicas decrease when the metric falls below the threshold).
+   - Only a maximum threshold is set: `[metric] > [maxThreshold]` triggers **Scale Out** (replicas increase when the metric rises above the threshold).
+   - Both thresholds are set: replicas are scaled in or out depending on which boundary the metric crosses (`[minThreshold] < [metric] < [maxThreshold]` is the normal operating range).
 
 - **Time Window**: The time window, in seconds, over which the metric is aggregated and evaluated for scaling. This replaces the legacy `CoolDown Seconds` field and has a different meaning.
 - **Min Replicas** and **Max Replicas**: The lower and upper bounds that auto-scaling enforces on the replica count. Auto-scaling will not reduce the number of replicas below **Min Replicas** or increase it above **Max Replicas**.
@@ -796,7 +778,7 @@ The page uses a search and sort layout at the top:
 - **Sort**: Choose how results are ordered. The available options are `Name (A→Z)`, `Name (Z→A)`, `Oldest first`, and `Newest first`.
 - **Refresh**: Click the refresh button to reload the card list.
 
-Each card displays the model brand icon, title (or name when no title is set), task tag, relative creation time, and the author with an icon. Cards that have **no compatible presets** for the current project are shown at 50% opacity. You can still open such a card to view its details, but its **Deploy** button is disabled and an error alert is shown in the drawer: *No compatible presets available. This model cannot be deployed.*
+Each card displays the model brand icon, title (or name when no title is set), task tag, relative creation time, and the author with an icon. Cards that have **no compatible presets** for the current project are shown at 50% opacity. You can still open such a card to view its details, but its **Deploy** button is disabled and an error alert is shown in the drawer: **No compatible presets available. This model cannot be deployed.**
 
 If the `MODEL_STORE` project is not set up on the server, the page shows a *Model Store project not found* message with instructions to contact an administrator. If no model cards match your filters, the page displays *No models found*.
 
