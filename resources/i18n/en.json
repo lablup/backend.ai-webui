@@ -771,6 +771,7 @@
     "CreateDeployment": "Create Deployment",
     "CreatedAt": "Created At",
     "CreatedBy": "Created By",
+    "Current": "Current",
     "DeleteDeployment": "Delete Deployment",
     "Deployment": "Deployment",
     "DeploymentCreated": "Deployment has been created.",
@@ -828,6 +829,7 @@
     "Revision": "Revision",
     "RevisionHistory": "Revision History",
     "RevisionId": "Revision ID",
+    "RevisionNumber": "Revision #",
     "Revisions": "Revisions",
     "Rollback": "Rollback",
     "RollbackConfirm": "Are you sure you want to rollback to Revision #{{revisionNumber}}? The current revision will be replaced.",
@@ -1266,6 +1268,7 @@
   },
   "general": {
     "AccessKey": "Access Key",
+    "Actions": "Actions",
     "Active": "Active",
     "Add": "Add",
     "Advanced": "Advanced",
