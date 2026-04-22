@@ -254,7 +254,7 @@ const RBACManagementPage: React.FC = () => {
                   key: 'source',
                   propertyLabel: t('rbac.Source'),
                   type: 'enum',
-                  valueMode: 'scalar',
+                  fixedOperator: 'equals',
                   options: [
                     { label: t('rbac.System'), value: 'SYSTEM' },
                     { label: t('rbac.Custom'), value: 'CUSTOM' },
