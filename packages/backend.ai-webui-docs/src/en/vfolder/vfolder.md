@@ -64,7 +64,7 @@ The meaning of each field in the creation dialog is as follows.
 - **Folder name**: The name of the folder (up to 64 characters).
 - **Location**: Select the NFS host where the folder will be created. If there are multiple hosts, choose one. An indicator will show if there is enough available space.
 - **Type**: Determines the type of folder to be created. It can be set as User or Project. The User folder is a folder that users can create and use alone and the Project folder is a folder created by admin and shared by users in the project.
-- **Project**: Shown only when you select project type. Designates the project to which the folder belongs when creating a new project folder. Project folders must belong to a project. However, it does not play any role when creating a user folder.
+- **Project**: Shown only when you select project type. Designates the project to which the folder belongs when creating a new project folder. Project folders must belong to a project. For project folders, the project currently selected in the top bar is automatically selected as the target project. However, it does not play any role when creating a user folder.
 - **Permission**: Set permission of a project folder for project members. If this is set to "Read only", project members cannot write to this folder inside their compute session.
 - **Cloneable**: Shown only when you select usage mode to "Model". Select whether the vfolder you are creating should be cloneable.
 
@@ -121,14 +121,15 @@ The text file editor opens in a modal with a code editor interface. The editor a
 The editor supports both light and dark themes matching your UI preferences. You can edit the file content, then click 'Save' to upload the modified file, or 'Cancel' to discard changes.
 
 :::note
-The Edit File button is only available when you have write_content permission on the storage folder. If the file fails to load, an error message will be displayed.
+The Edit File button is only available when your access to this storage folder includes the `write_content` permission (granted via folder sharing permission or your role on the folder). Storage-host level settings in the control panel do not affect this. If the file fails to load, an error message will be displayed.
 :::
 
 ## Rename Folder
 
 
-If you have permission to rename the storage folder, you can rename it by
-clicking the edit button.
+If you have permission to rename the storage folder, open the folder's detail
+drawer and click the edit button next to the folder name. Renaming is performed
+inside the detail drawer.
 
 ![](../images/rename_vfolder.png)
 
@@ -333,9 +334,6 @@ own SSH private key. So, you don't need to download it every time you
 want to connect via SSH to your container. Please refer to
 [managing user's SSH keypair](#user-ssh-keypair-management).
 :::
-
-## Folder Categories
-
 
 ## Pipeline Folders
 

@@ -151,7 +151,7 @@ refer to the following:
     are created. If there are not enough resources available, requests to create
     sessions that cannot be created are put on the waiting queue.
 
-  ![](../images/launce_session_resource_2.png)
+  ![](../images/launch_session_resource_2.png)
 
   * Select Agent: Select the agent to be assigned. By default, the agent is automatically selected
     by the scheduler. The agent selector displays the actual amount of available resources for each agent.

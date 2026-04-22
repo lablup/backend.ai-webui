@@ -61,6 +61,37 @@ Standards for capturing, naming, and maintaining screenshots in the Backend.AI W
 - Full-page captures are appropriate for page overview screenshots, but for feature-specific documentation, crop to the relevant area so users can clearly identify what is being described
 - Include just enough surrounding context for users to orient themselves
 
+### Match the Existing Screenshot's Framing (for re-captures)
+
+When **replacing an existing screenshot** (same filename), the new image MUST match the previous image's framing scope. The filename encodes a contract about what the image shows.
+
+**Before recapturing**, run the following preflight on the file you intend to replace:
+
+```bash
+# 1. Inspect the previous version's dimensions and visual scope
+git show main:path/to/images/foo.png > /tmp/old.png
+file /tmp/old.png        # note WIDTH x HEIGHT
+# 2. Open /tmp/old.png and identify:
+#    - Is it a header strip? (very wide, very short — e.g., 2358x222)
+#    - Is it a modal/dialog only? (medium, no chrome — e.g., 988x804)
+#    - Is it a sidebar segment? (narrow column — e.g., 1500x1098)
+#    - Is it a full page? (~viewport width × viewport height — e.g., 2880x1800)
+```
+
+Then capture the new screenshot at the **same scope**:
+
+| Old image scope | Capture method |
+|---|---|
+| Header strip (e.g., `header.png`) | `ref` of `header`/top-bar element only — never `fullPage: true` |
+| Modal/dialog only | `ref` of `.ant-modal-wrap .ant-modal` or `[role="dialog"]` |
+| Sidebar segment | `ref` of the sidebar element |
+| Page region (e.g., a step in a wizard) | `ref` of the specific panel, not the whole layout |
+| Full page overview | `fullPage: true` is acceptable |
+
+**Anti-pattern observed in PR #6708**: `header.png` was 2358×222 (header strip only) on `main`, recaptured as 2880×1800 (full viewport including sidebar + main content + breadcrumbs). The filename promises "header" but the new image shows everything. **Always run the preflight above before re-capturing.**
+
+If the framing genuinely needs to change (e.g., the feature now spans more of the page), update the filename to reflect the new scope (e.g., `header.png` → `top_bar_with_session_timer.png`) rather than silently broadening an existing image.
+
 ### Cleanup After Capture
 
 - **Always delete any resources created during screenshot capture** (folders, files, sessions, etc.)

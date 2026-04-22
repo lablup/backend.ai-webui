@@ -62,7 +62,7 @@ The meaning of each field in the creation dialog is as follows.
 - **Folder name**: The name of the folder (up to 64 characters).
 - **Location**: Select the NFS host where the folder will be created. If there are multiple hosts, choose one. An indicator will show if there is enough available space.
 - **ประเภท**: กำหนดประเภทของโฟลเดอร์ที่จะสร้าง สามารถตั้งค่าเป็นผู้ใช้หรือโครงการ โฟลเดอร์ผู้ใช้คือโฟลเดอร์ที่ผู้ใช้สามารถสร้างและใช้งานได้เพียงคนเดียว และโฟลเดอร์โครงการคือโฟลเดอร์ที่สร้างโดยผู้ดูแลระบบและแชร์โดยผู้ใช้ในโครงการ
-- **Project**: Shown only when you select project type. Designates the project to which the folder belongs when creating a new project folder. Project folders must belong to a project. However, it does not play any role when creating a ผู้ใช้ folder.
+- **Project**: Shown only when you select project type. Designates the project to which the folder belongs when creating a new project folder. Project folders must belong to a project. สำหรับโฟลเดอร์โปรเจกต์ โปรเจกต์ที่เลือกอยู่ในแถบด้านบนในปัจจุบันจะถูกเลือกเป็นโปรเจกต์เป้าหมายโดยอัตโนมัติ อย่างไรก็ตาม การตั้งค่านี้จะไม่มีผลเมื่อสร้างโฟลเดอร์ผู้ใช้
 - **สิทธิ์**: กำหนดสิทธิ์ของโฟลเดอร์โปรเจกต์สำหรับสมาชิกโปรเจกต์ หากตั้งค่าเป็น "อ่านเท่านั้น" สมาชิกโปรเจกต์จะไม่สามารถเขียนลงในโฟลเดอร์นี้ภายในเซสชันการคำนวณของพวกเขาได้
 - **Cloneable**: Shown only when you select usage mode to "Model". Select whether the vfolder you are creating should be cloneable.
 
@@ -112,13 +112,13 @@ in the directory.
 ตัวแก้ไขรองรับทั้งธีมสว่างและธีมมืดที่ตรงกับการตั้งค่า UI ของคุณ คุณสามารถแก้ไขเนื้อหาไฟล์ จากนั้นคลิก 'บันทึก' เพื่ออัปโหลดไฟล์ที่แก้ไข หรือ 'ยกเลิก' เพื่อยกเลิกการเปลี่ยนแปลง
 
 :::note
-ปุ่มแก้ไขไฟล์จะใช้งานได้เฉพาะเมื่อคุณมีสิทธิ์ write_content บนโฟลเดอร์จัดเก็บ หากไฟล์โหลดไม่สำเร็จ ข้อความแสดงข้อผิดพลาดจะปรากฏขึ้น
+ปุ่มแก้ไขไฟล์จะใช้งานได้เฉพาะเมื่อสิทธิ์การเข้าถึงของคุณต่อโฟลเดอร์จัดเก็บนี้มีสิทธิ์ `write_content` (ที่ได้รับผ่านสิทธิ์การแชร์โฟลเดอร์หรือบทบาทของคุณบนโฟลเดอร์) การตั้งค่าระดับ storage host ในแผงควบคุมไม่มีผลต่อการทำงานนี้ หากไฟล์โหลดไม่สำเร็จ ข้อความแสดงข้อผิดพลาดจะปรากฏขึ้น
 :::
 
 ## เปลี่ยนชื่อโฟลเดอร์
 
 
-หากคุณมีสิทธิ์ในการเปลี่ยนชื่อโฟลเดอร์จัดเก็บ คุณสามารถเปลี่ยนชื่อได้โดยคลิกที่ปุ่มแก้ไข
+หากคุณมีสิทธิ์ในการเปลี่ยนชื่อโฟลเดอร์จัดเก็บ ให้เปิดลิ้นชักรายละเอียดของโฟลเดอร์แล้วคลิกปุ่มแก้ไขข้างชื่อโฟลเดอร์ การเปลี่ยนชื่อจะดำเนินการภายในลิ้นชักรายละเอียดเท่านั้น
 
 ![](../images/rename_vfolder.png)
 
@@ -300,9 +300,6 @@ own SSH private key. So, you don't need to download it every time you
 want to connect via SSH to your container. Please refer to
 [managing user's SSH keypair](#user-ssh-keypair-management).
 :::
-
-## Folder Categories
-
 
 ## Pipeline folders
 

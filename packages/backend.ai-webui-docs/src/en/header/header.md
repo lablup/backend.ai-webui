@@ -112,7 +112,7 @@ Each item has the following meaning. Enter the desired value and click the
 
 - **Full Name**: User's name (up to 64 characters).
 - **Original password**: Your current password. This field is shown only when
-  the server does not support the V2 user update API, and you must enter it
+  connecting to a server prior to Backend.AI 26.4.0, and you must enter it
   when setting a new password on such servers.
 - **New password**: New password (8 characters or more containing at least 1
   alphabet, number, and symbol). Click the eye icon to reveal the input.
@@ -126,8 +126,7 @@ Each item has the following meaning. Enter the desired value and click the
   you must enter an OTP code at login.
 
 :::note
-The **Allowed client IPs** field is available when the server supports the V2
-user update API.
+The **Allowed client IPs** field is available from Backend.AI 26.4.0 and later.
 :::
 
 :::note

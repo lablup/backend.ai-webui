@@ -62,7 +62,7 @@ The meaning of each field in the creation dialog is as follows.
 - **Folder name**: The name of the folder (up to 64 characters).
 - **Location**: Select the NFS host where the folder will be created. If there are multiple hosts, choose one. An indicator will show if there is enough available space.
 - **種類**: 作成するフォルダーの種類を決定します。ユーザーまたはプロジェクトとして設定できます。ユーザーフォルダーは、ユーザーが自身で作成して使用できるフォルダーであり、プロジェクトフォルダーは管理者によって作成され、プロジェクト内のユーザーと共有されるフォルダーです。
-- **プロジェクト**：プロジェクトタイプを選択したときにのみ表示されます。新しいプロジェクトフォルダを作成するときに、フォルダが属するプロジェクトを指定します。プロジェクトフォルダは、プロジェクトに属する必要があります。ただし、ユーザーフォルダを作成する際には、役割を果たしません。
+- **プロジェクト**：プロジェクトタイプを選択したときにのみ表示されます。新しいプロジェクトフォルダを作成するときに、フォルダが属するプロジェクトを指定します。プロジェクトフォルダは、プロジェクトに属する必要があり、プロジェクトフォルダの場合、トップバーで現在選択されているプロジェクトが対象プロジェクトとして自動的に選択されます。ただし、ユーザーフォルダを作成する際には、役割を果たしません。
 - **アクセス権限**: プロジェクトフォルダのプロジェクトメンバーに対するアクセス権限を設定します。「読み取り専用」に設定されている場合、プロジェクトメンバーはコンピュートセッション内でこのフォルダに書き込みを行うことができません。
 - **Cloneable**: Shown only when you select usage mode to "Model". Select whether the vfolder you are creating should be cloneable.
 
@@ -109,13 +109,13 @@ in the directory.
 エディタはUIの設定に合わせてライトテーマとダークテーマの両方をサポートしています。ファイルの内容を編集した後、「保存」をクリックして変更されたファイルをアップロードするか、「キャンセル」をクリックして変更を破棄できます。
 
 :::note
-ファイルを編集ボタンは、ストレージフォルダに対するwrite_contentパーミッションがある場合にのみ使用できます。ファイルの読み込みに失敗した場合、エラーメッセージが表示されます。
+ファイルを編集ボタンは、対象のストレージフォルダに対するユーザーのアクセス権限に `write_content` 権限が含まれている場合にのみ使用できます（フォルダの共有権限、またはフォルダに付与されたロールを通じて付与されます）。コントロールパネルのストレージホストレベルの設定は、この動作には影響しません。ファイルの読み込みに失敗した場合、エラーメッセージが表示されます。
 :::
 
 ## フォルダー名を変更
 
 
-ストレージフォルダの名前を変更する権限がある場合、編集ボタンをクリックして名前を変更できます。
+ストレージフォルダの名前を変更する権限がある場合、フォルダの詳細ドロワーを開き、フォルダ名の横にある編集ボタンをクリックして名前を変更します。名前変更は詳細ドロワー内でのみ行います。
 
 ![](../images/rename_vfolder.png)
 
@@ -297,9 +297,6 @@ own SSH private key. So, you don't need to download it every time you
 want to connect via SSH to your container. Please refer to
 [managing user's SSH keypair](#user-ssh-keypair-management).
 :::
-
-## Folder Categories
-
 
 ## Pipeline folders
 

@@ -56,5 +56,9 @@
       },
       "inputs": [],
     },
+    "i18n-ally.localesPaths": [
+      "resources/i18n",
+      "packages/backend.ai-ui/src/locale",
+    ],
   },
 }
