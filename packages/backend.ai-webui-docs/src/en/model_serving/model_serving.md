@@ -148,7 +148,7 @@ Container Created
 ▼
 ┌─────────────────────────────────┐
 │  Wait for initial_delay (60s)   │  ← Model loading, GPU init, warmup
-│  Status: DEGRADED               │
+│  Status: NOT_CHECKED            │
 │  No health checks during this   │
 └─────────────────────────────────┘
 │
@@ -617,26 +617,29 @@ The rule list provides:
 
 - A property filter bar to filter rules by **Created At** and **Last Triggered** datetime ranges.
 - Server-side pagination.
-- The following columns: **Metric Source**, **Condition**, **Time Window**, **Step Size**, **Min / Max Replicas**, **Created At**, and **Last Triggered**. The **Step Size** column automatically shows `+`, `−`, or `±` based on the direction derived from the thresholds you have set, so you no longer choose **Scale Out** or **Scale In** explicitly.
+- The following columns: **Metric Source**, **Condition**, **Cooldown Sec.**, **Step Size**, **Min / Max Replicas**, **Created At**, and **Last Triggered**. The **Step Size** column automatically shows `+`, `−`, or `±` based on the direction derived from the thresholds you have set, so you no longer choose **Scale Out** or **Scale In** explicitly.
 - Per-row edit and delete icons shown next to the condition summary in each row.
 
 Click the `Add Rules` button to open the **Add Auto Scaling Rule** editor. To modify an existing rule, click the edit icon on its row; the **Edit Auto Scaling Rule** editor opens with the rule's values pre-filled. The editor contains the following fields in order:
 
 - **Metric Source**: Select one of `Kernel`, `Inference Framework`, or `Prometheus`.
 - **Metric Name**: For `Kernel` and `Inference Framework`, enter a metric name. For `Kernel`, a list of common metrics (such as `cpu_util`, `mem`, `net_rx`, and `net_tx`) is offered as autocomplete suggestions, and you can also type a custom name freely.
-- **Metric Name (Prometheus Preset)**: Shown only when **Metric Source** is `Prometheus`. Select a preset from the dropdown; the preset's metric name, query template, and (when defined) **Time Window** are filled in automatically. Below the selector, a **Current value** preview shows the latest value returned by the preset, with a refresh button. When multiple series are returned, the preview shows the number of series and the most recent value; if no data is available, it shows **No data available**.
-- **Condition**: A segmented control with two modes:
+- **Metric Name (Prometheus Preset)**: Shown only when **Metric Source** is `Prometheus`. Select a preset from the dropdown; the preset's metric name, query template, and (when defined) **Cooldown Sec.** are filled in automatically. Below the selector, a **Current value** preview shows the latest value returned by the preset, with a refresh button. When multiple series are returned, the preview shows the number of series and the most recent value; if no data is available, it shows **No data available**.
+- **Condition**: A segmented control for choosing the scaling direction. It provides three options.
 
-   - **Single**: Defines a single comparison `Metric <op> Threshold`, where `<op>` is either `>` or `<`.
-   - **Range**: Defines a range `Min Threshold < Metric < Max Threshold`. Both thresholds are required; the minimum must be less than the maximum.
+   - **Scale In**: Decreases replicas when the metric falls below a threshold. Sets `Metric < [threshold]`.
+   - **Scale Out**: Increases replicas when the metric rises above a threshold. Sets `Metric > [threshold]`.
+   - **Scale In & Out**: Automatically scales in or out depending on which side of the configured range the metric crosses. Sets `Metric < Min Threshold` or `Metric > Max Threshold`.
 
-- **Step Size**: A positive integer specifying how many replicas to add or remove per scaling event. The direction (add or remove) is derived automatically from which threshold is configured:
+![](../images/auto_scaling_condition_selector.png)
+
+- **Step Size**: A positive integer specifying how many replicas to add or remove per scaling event. The `-`, `+`, or `±` sign is shown automatically based on the selected condition (Scale In / Scale Out / Scale In & Out).
 
    - Only a minimum threshold is set: `[metric] < [minThreshold]` triggers **Scale In** (replicas decrease when the metric falls below the threshold).
    - Only a maximum threshold is set: `[metric] > [maxThreshold]` triggers **Scale Out** (replicas increase when the metric rises above the threshold).
    - Both thresholds are set: replicas are scaled in or out depending on which boundary the metric crosses (`[minThreshold] < [metric] < [maxThreshold]` is the normal operating range).
 
-- **Time Window**: The time window, in seconds, over which the metric is aggregated and evaluated for scaling. This replaces the legacy `CoolDown Seconds` field and has a different meaning.
+- **Cooldown Sec.**: The time, in seconds, to wait after a scaling event before the next evaluation.
 - **Min Replicas** and **Max Replicas**: The lower and upper bounds that auto-scaling enforces on the replica count. Auto-scaling will not reduce the number of replicas below **Min Replicas** or increase it above **Max Replicas**.
 
 ![](../images/auto_scaling_rules_modal_v2.png)

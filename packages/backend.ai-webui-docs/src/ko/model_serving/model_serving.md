@@ -133,7 +133,7 @@ Container Created
 ▼
 ┌─────────────────────────────────┐
 │  Wait for initial_delay (60s)   │  ← Model loading, GPU init, warmup
-│  Status: DEGRADED               │
+│  Status: NOT_CHECKED            │
 │  No health checks during this   │
 └─────────────────────────────────┘
 │
@@ -591,26 +591,29 @@ SGLang은 다음 탭을 제공합니다: **Model Loading**, **Resource Memory**,
 
 - 생성 시간(Created At)과 최근 실행 시점(Last Triggered) 날짜-시간 범위로 규칙을 필터링할 수 있는 속성 필터 바.
 - 서버 측 페이지네이션.
-- 메트릭 소스(Metric Source), 조건(Condition), 타임 윈도우(Time Window), 단계 크기(Step Size), 최소 / 최대 복제본 수(Min / Max Replicas), 생성 시간(Created At), 최근 실행 시점(Last Triggered) 컬럼.
+- 메트릭 소스(Metric Source), 조건(Condition), 쿨다운 초(Cooldown Sec.), 단계 크기(Step Size), 최소 / 최대 복제본 수(Min / Max Replicas), 생성 시간(Created At), 최근 실행 시점(Last Triggered) 컬럼. **단계 크기** 컬럼은 설정한 조건에 따라 `+`, `−`, `±` 부호가 자동으로 표시되므로, **Scale Out** 또는 **Scale In**을 명시적으로 선택할 필요가 없습니다.
 - 각 행의 조건 요약 옆에 표시되는 행별 편집 및 삭제 아이콘.
 
 `Add Rules` 버튼을 클릭하면 **오토스케일링 규칙 추가** 편집기가 열립니다. 기존 규칙을 수정하려면 해당 행의 편집 아이콘을 클릭하세요. 규칙 값이 미리 채워진 상태로 **오토스케일링 규칙 수정** 편집기가 열립니다. 편집기에는 다음 필드가 순서대로 포함됩니다:
 
 - **메트릭 소스(Metric Source)**: `Kernel`, `Inference Framework`, `Prometheus` 중 하나를 선택합니다.
 - **메트릭 이름(Metric Name)**: `Kernel`과 `Inference Framework`의 경우 메트릭 이름을 입력합니다. `Kernel`에서는 `cpu_util`, `mem`, `net_rx`, `net_tx`와 같은 일반적인 메트릭이 자동 완성 제안으로 제공되며, 사용자 정의 이름을 자유롭게 입력할 수도 있습니다.
-- **메트릭 이름 프리셋(Metric Name (Prometheus Preset))**: 메트릭 소스가 `Prometheus`일 때만 표시됩니다. 드롭다운에서 프리셋을 선택하면 프리셋의 메트릭 이름, 쿼리 템플릿, 그리고 (정의된 경우) 타임 윈도우가 자동으로 채워집니다. 선택기 아래의 현재 값(Current value) 미리보기는 프리셋이 반환하는 최신 값을 새로 고침 버튼과 함께 표시합니다. 여러 시리즈가 반환되는 경우 미리보기에는 시리즈 수와 가장 최근 값이 표시되며, 사용 가능한 데이터가 없으면 사용 가능한 데이터가 없습니다(No data available)라고 표시됩니다.
-- **조건(Condition)**: 두 가지 모드를 가진 세그먼트형 컨트롤입니다.
+- **메트릭 이름 프리셋(Metric Name (Prometheus Preset))**: 메트릭 소스가 `Prometheus`일 때만 표시됩니다. 드롭다운에서 프리셋을 선택하면 프리셋의 메트릭 이름, 쿼리 템플릿, 그리고 (정의된 경우) 쿨다운 초(Cooldown Sec.)가 자동으로 채워집니다. 선택기 아래의 현재 값(Current value) 미리보기는 프리셋이 반환하는 최신 값을 새로 고침 버튼과 함께 표시합니다. 여러 시리즈가 반환되는 경우 미리보기에는 시리즈 수와 가장 최근 값이 표시되며, 사용 가능한 데이터가 없으면 사용 가능한 데이터가 없습니다(No data available)라고 표시됩니다.
+- **조건(Condition)**: 스케일링 방향을 선택하는 세그먼트 컨트롤입니다. 세 가지 옵션이 있습니다.
 
-   * 단일(Single): `Metric <op> Threshold` 단일 비교를 정의합니다. 여기서 `<op>`는 `>` 또는 `<` 중 하나입니다.
-   * 범위(Range): `Min Threshold < Metric < Max Threshold` 범위를 정의합니다. 두 임계값 모두 필수이며, 최소값은 최대값보다 작아야 합니다.
+   * **Scale In**: 메트릭이 임계값 아래로 떨어지면 복제본을 줄입니다. `Metric < [임계값]` 조건을 설정합니다.
+   * **Scale Out**: 메트릭이 임계값 위로 올라가면 복제본을 늘립니다. `Metric > [임계값]` 조건을 설정합니다.
+   * **Scale In & Out**: 메트릭이 설정한 범위를 벗어나는 방향에 따라 자동으로 축소 또는 확장합니다. `Metric < Min Threshold` 또는 `Metric > Max Threshold` 조건을 설정합니다.
 
-- **단계 크기(Step Size)**: 스케일링 이벤트마다 추가하거나 제거할 복제본 수를 지정하는 양의 정수입니다. 방향(추가 또는 제거)은 설정된 임계값에서 자동으로 도출됩니다.
+![](../images/auto_scaling_condition_selector.png)
+
+- **단계 크기(Step Size)**: 스케일링 이벤트마다 추가하거나 제거할 복제본 수를 지정하는 양의 정수입니다. 선택한 조건(Scale In / Scale Out / Scale In & Out)에 따라 `-`, `+`, `±` 부호가 자동으로 표시됩니다.
 
    * 최솟값 임계값만 설정: `[metric] < [minThreshold]` 조건이 되면 스케일 **인**(Scale In)됩니다.
    * 최댓값 임계값만 설정: `[metric] > [maxThreshold]` 조건이 되면 스케일 **아웃**(Scale Out)됩니다.
    * 둘 다 설정: `[minThreshold] < [metric] < [maxThreshold]` 범위를 벗어나는 방향에 따라 스케일 인 또는 스케일 아웃됩니다.
 
-- **타임 윈도우(Time Window)**: 메트릭이 집계되어 스케일링 평가에 사용되는 시간(초 단위)입니다. 이는 기존의 `CoolDown Seconds` 필드를 대체하며 의미가 다릅니다.
+- **쿨다운 초(Cooldown Sec.)**: 스케일링 이벤트 이후 다음 평가까지 대기하는 시간(초 단위)입니다.
 - **최소 복제본 수(Min Replicas) 및 최대 복제본 수(Max Replicas)**: 자동 스케일링이 복제본 수에 대해 강제하는 하한과 상한입니다. 자동 스케일링은 복제본 수를 최소 복제본 수 아래로 줄이거나 최대 복제본 수 위로 늘리지 않습니다.
 
 ![](../images/auto_scaling_rules_modal_v2.png)
