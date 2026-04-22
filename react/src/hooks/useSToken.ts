@@ -4,7 +4,7 @@
  */
 import { useBAILogger } from 'backend.ai-ui';
 import { parseAsString, useQueryState } from 'nuqs';
-import { useCallback, useEffect, useEffectEvent, useRef } from 'react';
+import { useEffect, useEffectEvent, useRef } from 'react';
 
 /**
  * Read and clear the sToken URL query parameter using nuqs.
@@ -50,16 +50,13 @@ export const useSToken = (): [
     logDeprecationIfNeeded();
   }, [sToken, stoken]);
 
-  const clear = useCallback(
-    async (next: string | null) => {
-      // Clear both keys; callers typically pass `null` after a successful
-      // login to strip the token from the URL. Return the final search
-      // params from the last setter to match nuqs' Promise contract.
-      await setSToken(next);
-      return setStoken(null);
-    },
-    [setSToken, setStoken],
-  );
+  // React Compiler ('use memo') memoizes the returned tuple; no manual
+  // useCallback wrapper is required. Callers typically pass `null` after a
+  // successful login to strip the token from the URL.
+  const clear = async (next: string | null) => {
+    await setSToken(next);
+    return setStoken(null);
+  };
 
   const effective = sToken ?? stoken;
   return [effective, clear];
