@@ -746,6 +746,12 @@ const eduAppExtraParamSpec = {
   shmem: parseAsString,
   'cuda-shares': parseAsString,
   'cuda-device': parseAsString,
+  // LMS signing envelope: the upstream launcher URL carries these alongside
+  // `sToken` and the manager-side auth hook validates the signature against
+  // them. Dropping any of them causes token_login to reject as tampered.
+  api_version: parseAsString,
+  date: parseAsString,
+  endpoint: parseAsString,
 };
 
 /**
