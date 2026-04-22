@@ -10,6 +10,7 @@ import {
   useSetCurrentProject,
 } from '../hooks/useCurrentProject';
 import FolderCreateModalV2 from './FolderCreateModalV2';
+import { useModelStoreProject } from '../hooks/useModelStoreProject';
 import FolderLink from './FolderLink';
 import { shapes } from '@dicebear/collection';
 import { createAvatar } from '@dicebear/core';
@@ -31,9 +32,9 @@ import {
   BAIFlex,
   BAIModal,
   BAIVFolderSelect,
+  type BAIVFolderSelectProps,
   BAIVFolderSelectRef,
   convertToUUID,
-  mergeFilterValues,
   toGlobalId,
   toLocalId,
   useBAILogger,
@@ -59,6 +60,20 @@ type FormInputType = {
   license?: string;
   readme?: string;
   accessLevel: string;
+};
+
+const ModelStoreScopedVFolderSelect: React.FC<BAIVFolderSelectProps> = ({
+  ref,
+  ...props
+}) => {
+  const { id: modelStoreProjectId } = useModelStoreProject();
+  return (
+    <BAIVFolderSelect
+      {...props}
+      ref={ref}
+      currentProjectId={modelStoreProjectId ?? undefined}
+    />
+  );
 };
 
 interface AdminModelCardSettingModalProps extends ModalProps {
@@ -344,13 +359,10 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
                       },
                     ]}
                   >
-                    <BAIVFolderSelect
+                    <ModelStoreScopedVFolderSelect
                       ref={vfolderSelectRef}
                       excludeDeleted
-                      filter={mergeFilterValues([
-                        'ownership_type == "group"',
-                        'usage_mode == "model"',
-                      ])}
+                      filter='ownership_type == "group"'
                       style={{ flex: 1 }}
                     />
                   </Form.Item>
