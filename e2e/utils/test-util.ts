@@ -402,9 +402,10 @@ export async function verifyVFolder(
   page: Page,
   folderName: string,
   statusTab: 'Active' | 'Trash' = 'Active',
+  dataPath: string = 'data',
 ) {
   // Use navigateTo for reliable navigation regardless of current page state
-  await navigateTo(page, 'data');
+  await navigateTo(page, dataPath);
   await page.getByRole('tab', { name: statusTab }).click();
   await clearAllFilters(page);
   await selectPropertyFilter(page, 'Name', folderName);
@@ -477,9 +478,13 @@ export async function createVFolderAndVerify(
   await verifyVFolder(page, folderName);
 }
 
-export async function moveToTrashAndVerify(page: Page, folderName: string) {
+export async function moveToTrashAndVerify(
+  page: Page,
+  folderName: string,
+  dataPath: string = 'data',
+) {
   // Use navigateTo to ensure a clean navigation to the data page regardless of current state
-  await navigateTo(page, 'data');
+  await navigateTo(page, dataPath);
   await page.getByRole('tab', { name: 'Active' }).click();
   await selectPropertyFilter(page, 'Name', folderName);
 
@@ -495,15 +500,16 @@ export async function moveToTrashAndVerify(page: Page, folderName: string) {
   await expect(confirmButton).toBeVisible();
   await confirmButton.click();
   await removeSearchButton(page, folderName);
-  await verifyVFolder(page, folderName, 'Trash');
+  await verifyVFolder(page, folderName, 'Trash', dataPath);
 }
 
 export async function deleteForeverAndVerifyFromTrash(
   page: Page,
   folderName: string,
+  dataPath: string = 'data',
 ) {
   // Use navigateTo to ensure a clean navigation to the data page regardless of current state
-  await navigateTo(page, 'data');
+  await navigateTo(page, dataPath);
   await page.getByRole('tab', { name: 'Trash' }).click();
 
   // Clear any existing filters before searching for the folder to delete
