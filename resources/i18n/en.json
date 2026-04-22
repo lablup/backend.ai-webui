@@ -787,6 +787,7 @@
     "EditModeBanner": "Saving will create a new Revision. The previous Revision will be preserved.",
     "EndpointUrl": "Endpoint URL",
     "Environ": "Environment Variables",
+    "EnvironmentVariables": "Environment Variables",
     "ExtraMounts": "Additional Mounts",
     "FailedToCreateDeployment": "Failed to create deployment.",
     "FailedToDeleteDeployment": "Failed to delete deployment.",
