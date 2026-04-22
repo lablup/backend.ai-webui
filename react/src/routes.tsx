@@ -33,7 +33,12 @@ import { useSetAtom } from 'jotai';
 import { parseAsString, useQueryStates } from 'nuqs';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
-import { RouteObject, useLocation, useParams } from 'react-router-dom';
+import {
+  Navigate,
+  RouteObject,
+  useLocation,
+  useParams,
+} from 'react-router-dom';
 
 const LoginViewLazy = React.lazy(() => import('./components/LoginView'));
 
@@ -414,7 +419,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
           const { endpointId } = useParams<{ endpointId: string }>();
           const location = useLocation();
           return (
-            <WebUINavigate
+            <Navigate
               to={`/deployments/${endpointId}/edit${location.search}`}
               replace
             />
