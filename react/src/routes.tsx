@@ -59,12 +59,13 @@ const FolderInvitationResponseModalOpener = React.lazy(
 const FileUploadManager = React.lazy(
   () => import('./components/FileUploadManager'),
 );
-const ServiceLauncherCreatePage = React.lazy(
-  () => import('./components/ServiceLauncherPageContent'),
-);
-const ServiceLauncherUpdatePage = React.lazy(
-  () => import('./pages/ServiceLauncherPage'),
-);
+// FR-2675 — The legacy `ServiceLauncherCreatePage` / `ServiceLauncherUpdatePage`
+// routes have been redirected to the new Deployment launcher below so the
+// new `/deployments/new` + `/deployments/:deploymentId/edit` paths are the
+// sole launcher entry points. The underlying `ServiceLauncherPageContent`
+// component is still imported transitively (by `useModelServiceLauncher`,
+// `LegacyModelTryContentButton`, etc.) and is scheduled for removal in a
+// follow-up cleanup once those call sites migrate to the new hook.
 // FR-2664 — Deployment UI migration (Phase 1: Foundation).
 // These pages are currently stub placeholders and will be implemented in
 // Phase 3/4/5 (FR-2671 / FR-2675 / FR-2681 / FR-2672).
@@ -358,34 +359,29 @@ export const mainLayoutChildRoutes: RouteObject[] = [
         element: <WebUINavigate to="/deployments" replace />,
       },
       {
+        // FR-2675 — Legacy `/service/start` → new `/deployments/new`.
         path: 'start',
-        handle: { labelKey: 'modelService.StartNewService' },
-        element: (
-          <Suspense
-            fallback={
-              <BAIFlex direction="column" style={{ maxWidth: 700 }}>
-                <Skeleton active />
-              </BAIFlex>
-            }
-          >
-            <ServiceLauncherCreatePage />
-          </Suspense>
-        ),
+        Component: () => {
+          const location = useLocation();
+          return (
+            <WebUINavigate to={'/deployments/new' + location.search} replace />
+          );
+        },
       },
       {
+        // FR-2675 — Legacy `/service/update/:endpointId` →
+        // `/deployments/:deploymentId/edit`.
         path: 'update/:endpointId',
-        handle: { labelKey: 'modelService.UpdateService' },
-        element: (
-          <Suspense
-            fallback={
-              <BAIFlex direction="column" style={{ maxWidth: 700 }}>
-                <Skeleton active />
-              </BAIFlex>
-            }
-          >
-            <ServiceLauncherUpdatePage />
-          </Suspense>
-        ),
+        Component: () => {
+          const { endpointId } = useParams<{ endpointId: string }>();
+          const location = useLocation();
+          return (
+            <WebUINavigate
+              to={`/deployments/${endpointId}/edit${location.search}`}
+              replace
+            />
+          );
+        },
       },
       {
         // FR-2664 — Legacy fallback: /service/:endpointId → /deployments/:deploymentId
