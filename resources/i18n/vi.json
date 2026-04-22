@@ -825,6 +825,7 @@
     "Revision": "Revision",
     "RevisionHistory": "Lịch sử Revision",
     "RevisionId": "ID Revision",
+    "RevisionNumber": "Số Revision",
     "Revisions": "Revision",
     "Rollback": "Khôi phục",
     "RollbackConfirm": "Bạn có chắc chắn muốn khôi phục về Revision #{{revisionNumber}} không? Revision hiện tại sẽ được thay thế.",
@@ -887,7 +888,13 @@
       "AutoScaling": "Tự động mở rộng",
       "Overview": "Tổng quan",
       "Replicas": "Bản sao",
-      "RevisionHistory": "Lịch sử Revision"
+      "RevisionHistory": "Lịch sử Revision",
+      "description": {
+        "AccessTokens": "Quản lý mã thông báo truy cập để xác thực các yêu cầu API đến điểm cuối của deployment này.",
+        "AutoScaling": "Cấu hình các quy tắc tự động mở rộng để tự động điều chỉnh số lượng bản sao dựa trên số liệu lưu lượng truy cập.",
+        "Replicas": "Xem tất cả các phiên bản bản sao đang chạy cho deployment này cùng với trạng thái sức khỏe và tài nguyên của chúng.",
+        "RevisionHistory": "Duyệt qua các lần sửa đổi deployment trước đây và khôi phục về bất kỳ phiên bản nào. Để tạo bản sửa đổi mới, hãy nhấp vào «Chỉnh sửa Cấu hình» ở trên."
+      }
     }
   },
   "desktopNotification": {

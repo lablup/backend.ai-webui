@@ -110,6 +110,7 @@
     "operator": {
       "After": "после",
       "Before": "до",
+      "Equals": "равно",
       "GreaterThan": "больше",
       "GreaterThanOrEqual": "больше или равно",
       "IContains": "содержит",
@@ -123,6 +124,7 @@
       "In": "в",
       "LessThan": "меньше",
       "LessThanOrEqual": "меньше или равно",
+      "NotEquals": "не равно",
       "NotIn": "не в"
     }
   },

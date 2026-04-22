@@ -825,6 +825,7 @@
     "Revision": "Revision",
     "RevisionHistory": "Historia Revision",
     "RevisionId": "ID Revision",
+    "RevisionNumber": "Numer Rewizji",
     "Revisions": "Revision",
     "Rollback": "Cofnij",
     "RollbackConfirm": "Czy na pewno chcesz cofnąć do Revision #{{revisionNumber}}? Bieżąca Revision zostanie zastąpiona.",
@@ -887,7 +888,13 @@
       "AutoScaling": "Automatyczne skalowanie",
       "Overview": "Przegląd",
       "Replicas": "Repliki",
-      "RevisionHistory": "Historia Revision"
+      "RevisionHistory": "Historia Revision",
+      "description": {
+        "AccessTokens": "Zarządzaj tokenami dostępu do uwierzytelniania żądań API do punktu końcowego tego wdrożenia.",
+        "AutoScaling": "Skonfiguruj reguły automatycznego skalowania, aby automatycznie dostosowywać liczbę replik na podstawie metryk ruchu.",
+        "Replicas": "Wyświetl wszystkie uruchomione instancje replik tego wdrożenia wraz z ich stanem zdrowia i statusem zasobów.",
+        "RevisionHistory": "Przeglądaj poprzednie wersje wdrożenia i wróć do dowolnej z nich. Aby utworzyć nową wersję, kliknij «Edytuj Konfigurację» powyżej."
+      }
     }
   },
   "desktopNotification": {

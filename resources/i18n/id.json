@@ -825,6 +825,7 @@
     "Revision": "Revision",
     "RevisionHistory": "Riwayat Revision",
     "RevisionId": "ID Revision",
+    "RevisionNumber": "Nomor Revisi",
     "Revisions": "Revision",
     "Rollback": "Rollback",
     "RollbackConfirm": "Apakah Anda yakin ingin rollback ke Revision #{{revisionNumber}}? Revision saat ini akan diganti.",
@@ -887,7 +888,13 @@
       "AutoScaling": "Skala Otomatis",
       "Overview": "Ikhtisar",
       "Replicas": "Replika",
-      "RevisionHistory": "Riwayat Revision"
+      "RevisionHistory": "Riwayat Revision",
+      "description": {
+        "AccessTokens": "Kelola token akses untuk mengautentikasi permintaan API ke endpoint deployment ini.",
+        "AutoScaling": "Konfigurasikan aturan penskalaan otomatis untuk menyesuaikan jumlah replika secara otomatis berdasarkan metrik lalu lintas.",
+        "Replicas": "Lihat semua instans replika yang berjalan untuk deployment ini beserta status kesehatan dan sumber dayanya.",
+        "RevisionHistory": "Jelajahi revisi deployment sebelumnya dan kembalikan ke revisi mana pun. Untuk membuat revisi baru, klik Sunting Konfigurasi di atas."
+      }
     }
   },
   "desktopNotification": {

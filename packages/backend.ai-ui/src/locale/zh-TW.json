@@ -110,6 +110,7 @@
     "operator": {
       "After": "之後",
       "Before": "之前",
+      "Equals": "等於",
       "GreaterThan": "大於",
       "GreaterThanOrEqual": "大於或等於",
       "IContains": "包含",
@@ -123,6 +124,7 @@
       "In": "在...中",
       "LessThan": "小於",
       "LessThanOrEqual": "小於或等於",
+      "NotEquals": "不等於",
       "NotIn": "不在...中"
     }
   },

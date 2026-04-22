@@ -826,6 +826,7 @@
     "Revision": "Revision",
     "RevisionHistory": "Revision 歷史",
     "RevisionId": "Revision ID",
+    "RevisionNumber": "Revision 編號",
     "Revisions": "Revision",
     "Rollback": "回滾",
     "RollbackConfirm": "確定要回滾到 Revision #{{revisionNumber}} 嗎？當前 Revision 將被替換。",
@@ -888,7 +889,13 @@
       "AutoScaling": "自動擴縮容",
       "Overview": "概覽",
       "Replicas": "副本",
-      "RevisionHistory": "Revision 歷史"
+      "RevisionHistory": "Revision 歷史",
+      "description": {
+        "AccessTokens": "管理用於向此部署端點驗證 API 請求的存取令牌。",
+        "AutoScaling": "設定自動擴縮容規則，根據流量指標自動調整副本數量。",
+        "Replicas": "檢視此部署所有正在執行的副本實例及其健康狀態和資源狀況。",
+        "RevisionHistory": "瀏覽過去的部署版本歷史，並回滾至任意之前的版本。若要建立新版本，請點擊上方的「編輯設定」。"
+      }
     }
   },
   "desktopNotification": {

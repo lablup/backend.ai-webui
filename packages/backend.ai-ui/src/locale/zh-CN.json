@@ -110,6 +110,7 @@
     "operator": {
       "After": "之后",
       "Before": "之前",
+      "Equals": "等于",
       "GreaterThan": "大于",
       "GreaterThanOrEqual": "大于或等于",
       "IContains": "包含",
@@ -123,6 +124,7 @@
       "In": "在...中",
       "LessThan": "小于",
       "LessThanOrEqual": "小于或等于",
+      "NotEquals": "不等于",
       "NotIn": "不在...中"
     }
   },

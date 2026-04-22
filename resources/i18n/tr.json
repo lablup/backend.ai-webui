@@ -825,6 +825,7 @@
     "Revision": "Revision",
     "RevisionHistory": "Revision Geçmişi",
     "RevisionId": "Revision Kimliği",
+    "RevisionNumber": "Revizyon Numarası",
     "Revisions": "Revision",
     "Rollback": "Geri Al",
     "RollbackConfirm": "Revision #{{revisionNumber}}'a geri almak istediğinizden emin misiniz? Mevcut Revision değiştirilecek.",
@@ -887,7 +888,13 @@
       "AutoScaling": "Otomatik Ölçeklendirme",
       "Overview": "Genel Bakış",
       "Replicas": "Replikalar",
-      "RevisionHistory": "Revision Geçmişi"
+      "RevisionHistory": "Revision Geçmişi",
+      "description": {
+        "AccessTokens": "Bu dağıtımın uç noktasına yapılan API isteklerini doğrulamak için erişim jetonlarını yönetin.",
+        "AutoScaling": "Trafik ölçütlerine göre replika sayısını otomatik olarak ayarlamak için otomatik ölçeklendirme kurallarını yapılandırın.",
+        "Replicas": "Bu dağıtım için çalışan tüm replika örneklerini sağlık durumları ve kaynak statüleriyle birlikte görüntüleyin.",
+        "RevisionHistory": "Geçmiş dağıtım revizyonlarını inceleyin ve istediğiniz bir önceki sürüme geri dönün. Yeni bir revizyon oluşturmak için yukarıdaki «Yapılandırmayı Düzenle» seçeneğine tıklayın."
+      }
     }
   },
   "desktopNotification": {

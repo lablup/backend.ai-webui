@@ -17,8 +17,9 @@ import {
   PlusOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
-import { App, Button, Card, Tag, Tooltip, Typography, theme } from 'antd';
+import { App, Button, Tag, Tooltip, Typography } from 'antd';
 import {
+  BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAINameActionCell,
@@ -335,7 +336,6 @@ const AutoScalingRuleList: React.FC<AutoScalingRuleListProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const { message, modal } = App.useApp();
   const [isPendingRefetch, startRefetchTransition] = useTransition();
   const [fetchKey, updateFetchKey] = useFetchKey();
@@ -504,9 +504,41 @@ const AutoScalingRuleList: React.FC<AutoScalingRuleListProps> = ({
 
   return (
     <>
-      <Card
-        title={t('modelService.AutoScalingRules')}
-        extra={
+      <BAIFlex direction="column" align="stretch" gap="sm">
+        <BAIFlex align="center" gap="sm">
+          <BAIGraphQLPropertyFilter
+            style={{ flex: 1 }}
+            filterProperties={[
+              {
+                key: 'createdAt',
+                propertyLabel: t('autoScalingRule.CreatedAt'),
+                type: 'datetime',
+                operators: ['after', 'before'],
+                defaultOperator: 'after',
+              },
+              {
+                key: 'lastTriggeredAt',
+                propertyLabel: t('autoScalingRule.LastTriggered'),
+                type: 'datetime',
+                operators: ['after', 'before'],
+                defaultOperator: 'after',
+              },
+            ]}
+            value={graphQLFilter}
+            onChange={(filter) => {
+              startRefetchTransition(() => {
+                setQueryParams({ filter: filter ?? null });
+                setTablePaginationOption({ current: 1 });
+              });
+            }}
+          />
+          <BAIFetchKeyButton
+            loading={isPendingRefetch}
+            value=""
+            onChange={() => {
+              startRefetchTransition(() => updateFetchKey());
+            }}
+          />
           <Button
             type="primary"
             icon={<PlusOutlined />}
@@ -518,34 +550,7 @@ const AutoScalingRuleList: React.FC<AutoScalingRuleListProps> = ({
           >
             {t('modelService.AddRules')}
           </Button>
-        }
-      >
-        <BAIGraphQLPropertyFilter
-          style={{ marginBottom: token.marginMD }}
-          filterProperties={[
-            {
-              key: 'createdAt',
-              propertyLabel: t('autoScalingRule.CreatedAt'),
-              type: 'datetime',
-              operators: ['after', 'before'],
-              defaultOperator: 'after',
-            },
-            {
-              key: 'lastTriggeredAt',
-              propertyLabel: t('autoScalingRule.LastTriggered'),
-              type: 'datetime',
-              operators: ['after', 'before'],
-              defaultOperator: 'after',
-            },
-          ]}
-          value={graphQLFilter}
-          onChange={(filter) => {
-            startRefetchTransition(() => {
-              setQueryParams({ filter: filter ?? null });
-              setTablePaginationOption({ current: 1 });
-            });
-          }}
-        />
+        </BAIFlex>
         <AutoScalingRuleListNodes
           autoScalingRulesFrgmt={autoScalingRuleNodes}
           presetMap={presetMap}
@@ -580,7 +585,7 @@ const AutoScalingRuleList: React.FC<AutoScalingRuleListProps> = ({
           }}
           onDeleteRule={handleDeleteRule}
         />
-      </Card>
+      </BAIFlex>
       <BAIUnmountAfterClose>
         <AutoScalingRuleEditorModal
           open={isOpenEditorModal}

@@ -825,6 +825,7 @@
     "Revision": "Revision",
     "RevisionHistory": "Revision 履歴",
     "RevisionId": "Revision ID",
+    "RevisionNumber": "Revision 番号",
     "Revisions": "Revision",
     "Rollback": "ロールバック",
     "RollbackConfirm": "Revision #{{revisionNumber}} にロールバックしてもよろしいですか？現在の Revision は置き換えられます。",
@@ -887,7 +888,13 @@
       "AutoScaling": "自動スケーリング",
       "Overview": "概要",
       "Replicas": "レプリカ",
-      "RevisionHistory": "Revision 履歴"
+      "RevisionHistory": "Revision 履歴",
+      "description": {
+        "AccessTokens": "このデプロイメントのエンドポイントへの API リクエストを認証するためのアクセストークンを管理します。",
+        "AutoScaling": "トラフィックメトリクスに基づいてレプリカ数を自動的に調整する自動スケーリングルールを設定します。",
+        "Replicas": "このデプロイメントで実行中のすべてのレプリカインスタンスをヘルス状態とリソース状況とともに表示します。",
+        "RevisionHistory": "過去のデプロイメントリビジョンを参照し、任意の以前のバージョンにロールバックできます。新しいリビジョンを作成するには、上部の「構成を編集」をクリックしてください。"
+      }
     }
   },
   "desktopNotification": {

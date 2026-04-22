@@ -110,6 +110,7 @@
     "operator": {
       "After": "дараа",
       "Before": "өмнө",
+      "Equals": "тэнцүү",
       "GreaterThan": "их",
       "GreaterThanOrEqual": "их эсвэл тэнцүү",
       "IContains": "агуулсан",
@@ -123,6 +124,7 @@
       "In": "дотор",
       "LessThan": "бага",
       "LessThanOrEqual": "бага эсвэл тэнцүү",
+      "NotEquals": "тэнцүү биш",
       "NotIn": "дотор биш"
     }
   },

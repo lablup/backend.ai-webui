@@ -825,6 +825,7 @@
     "Revision": "Revision",
     "RevisionHistory": "Historique de Revision",
     "RevisionId": "ID de Revision",
+    "RevisionNumber": "Numéro de Revision",
     "Revisions": "Revision",
     "Rollback": "Retour arrière",
     "RollbackConfirm": "Êtes-vous sûr de vouloir revenir à la Revision #{{revisionNumber}} ? La Revision actuelle sera remplacée.",
@@ -887,7 +888,13 @@
       "AutoScaling": "Mise à l'échelle automatique",
       "Overview": "Aperçu",
       "Replicas": "Répliques",
-      "RevisionHistory": "Historique de Revision"
+      "RevisionHistory": "Historique de Revision",
+      "description": {
+        "AccessTokens": "Gérez les jetons d'accès pour authentifier les requêtes API vers le point de terminaison de ce déploiement.",
+        "AutoScaling": "Configurez des règles de mise à l'échelle automatique pour ajuster automatiquement le nombre de répliques en fonction des métriques de trafic.",
+        "Replicas": "Affichez toutes les instances de réplique en cours d'exécution pour ce déploiement avec leur état de santé et leurs ressources.",
+        "RevisionHistory": "Parcourez les révisions de déploiement passées et revenez à n'importe laquelle. Pour créer une nouvelle révision, cliquez sur « Modifier la configuration » ci-dessus."
+      }
     }
   },
   "desktopNotification": {

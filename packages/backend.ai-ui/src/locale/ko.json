@@ -113,6 +113,7 @@
     "operator": {
       "After": "이후",
       "Before": "이전",
+      "Equals": "같음",
       "GreaterThan": "초과",
       "GreaterThanOrEqual": "이상",
       "IContains": "포함",
@@ -126,6 +127,7 @@
       "In": "포함됨",
       "LessThan": "미만",
       "LessThanOrEqual": "이하",
+      "NotEquals": "같지 않음",
       "NotIn": "포함되지 않음"
     }
   },

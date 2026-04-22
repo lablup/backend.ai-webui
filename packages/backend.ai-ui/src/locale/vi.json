@@ -110,6 +110,7 @@
     "operator": {
       "After": "sau",
       "Before": "trước",
+      "Equals": "bằng",
       "GreaterThan": "lớn hơn",
       "GreaterThanOrEqual": "lớn hơn hoặc bằng",
       "IContains": "chứa",
@@ -123,6 +124,7 @@
       "In": "trong",
       "LessThan": "nhỏ hơn",
       "LessThanOrEqual": "nhỏ hơn hoặc bằng",
+      "NotEquals": "không bằng",
       "NotIn": "không trong"
     }
   },

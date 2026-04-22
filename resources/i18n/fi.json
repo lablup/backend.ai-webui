@@ -825,6 +825,7 @@
     "Revision": "Revision",
     "RevisionHistory": "Revision-historia",
     "RevisionId": "Revision ID",
+    "RevisionNumber": "Revisionumero",
     "Revisions": "Revision",
     "Rollback": "Palautus",
     "RollbackConfirm": "Haluatko varmasti palauttaa Revision #{{revisionNumber}}? Nykyinen Revision korvataan.",
@@ -887,7 +888,13 @@
       "AutoScaling": "Automaattinen skaalaus",
       "Overview": "Yleiskatsaus",
       "Replicas": "Replikat",
-      "RevisionHistory": "Revision-historia"
+      "RevisionHistory": "Revision-historia",
+      "description": {
+        "AccessTokens": "Hallitse käyttöoikeustunnuksia, joilla todennetaan API-pyynnöt tämän käyttöönoton päätepisteeseen.",
+        "AutoScaling": "Määritä automaattisen skaalauksen säännöt, joiden avulla replikoiden määrää säädetään automaattisesti liikennemittareiden perusteella.",
+        "Replicas": "Tarkastele kaikkia tämän käyttöönoton käynnissä olevia replikaesiintymiä niiden terveys- ja resurssitiloineen.",
+        "RevisionHistory": "Selaa aiempia käyttöönottorevisioita ja palauta mikä tahansa niistä. Luo uusi revisio napsauttamalla yllä olevaa Muokkaa kokoonpanoa -painiketta."
+      }
     }
   },
   "desktopNotification": {

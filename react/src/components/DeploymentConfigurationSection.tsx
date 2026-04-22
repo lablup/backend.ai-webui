@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { DeploymentConfigurationSectionQuery } from '../__generated__/DeploymentConfigurationSectionQuery.graphql';
 import { DeploymentConfigurationSection_deployment$key } from '../__generated__/DeploymentConfigurationSection_deployment.graphql';
 import { useWebUINavigate } from '../hooks';
 import { CheckOutlined, CloseOutlined, EditOutlined } from '@ant-design/icons';
@@ -11,111 +12,128 @@ import {
   filterOutEmpty,
   BAIButton,
   BAICard,
+  BAIFetchKeyButton,
   BAIFlex,
   toLocalId,
 } from 'backend.ai-ui';
+import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useFragment } from 'react-relay';
+import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 
 interface DeploymentConfigurationSectionProps {
   deploymentFrgmt: DeploymentConfigurationSection_deployment$key;
+  deploymentId: string;
+  isDeploymentDestroying?: boolean;
 }
 
 const DeploymentConfigurationSection: React.FC<
   DeploymentConfigurationSectionProps
-> = ({ deploymentFrgmt }) => {
+> = ({ deploymentFrgmt, deploymentId, isDeploymentDestroying = false }) => {
   'use memo';
 
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const webuiNavigate = useWebUINavigate();
+  const [isPendingRefetch, startRefetchTransition] = useTransition();
+  const [fetchKey, setFetchKey] = useState(0);
 
-  const deployment = useFragment(
+  useFragment(
     graphql`
       fragment DeploymentConfigurationSection_deployment on ModelDeployment {
         id
-        metadata {
-          name
-          tags
-          projectId
-          domainName
-          projectV2 @since(version: "26.4.3") {
-            basicInfo {
-              name
-            }
-          }
-        }
-        networkAccess {
-          openToPublic
-        }
-        defaultDeploymentStrategy {
-          type
-        }
-        replicaState {
-          desiredReplicaCount
-        }
-        currentRevision @since(version: "26.4.3") {
-          id
-          name
-          clusterConfig {
-            mode
-            size
-          }
-          resourceConfig {
-            resourceGroupName
-          }
-          modelRuntimeConfig {
-            runtimeVariant
-            environ {
-              entries {
-                name
-                value
-              }
-            }
-          }
-          modelMountConfig {
-            vfolderId
-            mountDestination
-            definitionPath
-            vfolder {
-              id
-              name
-            }
-          }
-          imageV2 @since(version: "26.4.3") {
-            id
-            identity {
-              canonicalName
-            }
-          }
-        }
       }
     `,
     deploymentFrgmt,
   );
 
-  const deploymentId = toLocalId(deployment.id);
-  const currentRevision = deployment.currentRevision;
+  const { deployment } = useLazyLoadQuery<DeploymentConfigurationSectionQuery>(
+    graphql`
+      query DeploymentConfigurationSectionQuery($deploymentId: ID!) {
+        deployment(id: $deploymentId) {
+          metadata {
+            name
+            tags
+            projectId
+            domainName
+            projectV2 @since(version: "26.4.3") {
+              basicInfo {
+                name
+              }
+            }
+          }
+          networkAccess {
+            openToPublic
+          }
+          defaultDeploymentStrategy {
+            type
+          }
+          replicaState {
+            desiredReplicaCount
+          }
+          currentRevision @since(version: "26.4.3") {
+            id
+            name
+            clusterConfig {
+              mode
+              size
+            }
+            resourceConfig {
+              resourceGroupName
+            }
+            modelRuntimeConfig {
+              runtimeVariant
+              environ {
+                entries {
+                  name
+                  value
+                }
+              }
+            }
+            modelMountConfig {
+              vfolderId
+              mountDestination
+              definitionPath
+              vfolder {
+                id
+                name
+              }
+            }
+            imageV2 @since(version: "26.4.3") {
+              id
+              identity {
+                canonicalName
+              }
+            }
+          }
+        }
+      }
+    `,
+    { deploymentId },
+    { fetchKey, fetchPolicy: 'network-only' },
+  );
+
+  const deploymentLocalId = toLocalId(deploymentId);
+  const currentRevision = deployment?.currentRevision;
   const clusterConfig = currentRevision?.clusterConfig;
   const resourceConfig = currentRevision?.resourceConfig;
   const runtimeConfig = currentRevision?.modelRuntimeConfig;
   const mountConfig = currentRevision?.modelMountConfig;
   const projectName =
-    deployment.metadata.projectV2?.basicInfo?.name ??
-    deployment.metadata.projectId;
+    deployment?.metadata.projectV2?.basicInfo?.name ??
+    deployment?.metadata.projectId;
 
   const renderFallback = () => (
     <Typography.Text type="secondary">-</Typography.Text>
   );
 
   const environEntries = runtimeConfig?.environ?.entries ?? [];
-  const tags = deployment.metadata.tags ?? [];
+  const tags = deployment?.metadata.tags ?? [];
 
   const items: DescriptionsItemType[] = filterOutEmpty([
     {
       key: 'name',
       label: t('deployment.Name'),
-      children: deployment.metadata.name ? (
+      children: deployment?.metadata.name ? (
         <Typography.Text copyable>{deployment.metadata.name}</Typography.Text>
       ) : (
         renderFallback()
@@ -129,7 +147,7 @@ const DeploymentConfigurationSection: React.FC<
     {
       key: 'domain',
       label: t('deployment.Domain'),
-      children: deployment.metadata.domainName || renderFallback(),
+      children: deployment?.metadata.domainName || renderFallback(),
     },
     {
       key: 'resource-group',
@@ -188,12 +206,12 @@ const DeploymentConfigurationSection: React.FC<
       key: 'desired-replicas',
       label: t('deployment.DesiredReplicas'),
       children:
-        deployment.replicaState?.desiredReplicaCount ?? renderFallback(),
+        deployment?.replicaState?.desiredReplicaCount ?? renderFallback(),
     },
     {
       key: 'open-to-public',
       label: t('deployment.OpenToPublic'),
-      children: deployment.networkAccess.openToPublic ? (
+      children: deployment?.networkAccess.openToPublic ? (
         <CheckOutlined />
       ) : (
         <CloseOutlined />
@@ -215,7 +233,7 @@ const DeploymentConfigurationSection: React.FC<
     },
     {
       key: 'environ',
-      label: t('deployment.EnvironmentVariables'),
+      label: t('deployment.Environ'),
       children:
         environEntries.length > 0 ? (
           <BAIFlex direction="column" align="start">
@@ -232,19 +250,33 @@ const DeploymentConfigurationSection: React.FC<
     },
   ]);
 
+  const handleRefetch = () => {
+    startRefetchTransition(() => {
+      setFetchKey((k) => k + 1);
+    });
+  };
+
   return (
     <BAICard
       title={t('deployment.Configuration')}
       extra={
-        <BAIButton
-          type="primary"
-          icon={<EditOutlined />}
-          onClick={() => {
-            webuiNavigate(`/deployments/${deploymentId}/edit`);
-          }}
-        >
-          {t('deployment.EditConfiguration')}
-        </BAIButton>
+        <BAIFlex gap="xs" align="center">
+          <BAIFetchKeyButton
+            loading={isPendingRefetch}
+            value=""
+            onChange={handleRefetch}
+          />
+          <BAIButton
+            type="primary"
+            icon={<EditOutlined />}
+            disabled={isDeploymentDestroying}
+            onClick={() => {
+              webuiNavigate(`/deployments/${deploymentLocalId}/edit`);
+            }}
+          >
+            {t('deployment.EditConfiguration')}
+          </BAIButton>
+        </BAIFlex>
       }
     >
       <Descriptions

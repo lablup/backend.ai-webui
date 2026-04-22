@@ -110,6 +110,7 @@
     "operator": {
       "After": "μετά",
       "Before": "πριν",
+      "Equals": "ίσο με",
       "GreaterThan": "μεγαλύτερο από",
       "GreaterThanOrEqual": "μεγαλύτερο ή ίσο",
       "IContains": "περιέχει",
@@ -123,6 +124,7 @@
       "In": "σε",
       "LessThan": "μικρότερο από",
       "LessThanOrEqual": "μικρότερο ή ίσο",
+      "NotEquals": "όχι ίσο με",
       "NotIn": "όχι σε"
     }
   },

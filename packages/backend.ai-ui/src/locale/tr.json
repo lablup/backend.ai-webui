@@ -110,6 +110,7 @@
     "operator": {
       "After": "sonra",
       "Before": "önce",
+      "Equals": "eşit",
       "GreaterThan": "daha büyük",
       "GreaterThanOrEqual": "büyük veya eşit",
       "IContains": "içerir",
@@ -123,6 +124,7 @@
       "In": "içinde",
       "LessThan": "daha küçük",
       "LessThanOrEqual": "küçük veya eşit",
+      "NotEquals": "eşit değil",
       "NotIn": "içinde değil"
     }
   },

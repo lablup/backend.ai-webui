@@ -825,6 +825,7 @@
     "Revision": "Revision",
     "RevisionHistory": "Revision-ы түүх",
     "RevisionId": "Revision ID",
+    "RevisionNumber": "Revision дугаар",
     "Revisions": "Revision-ууд",
     "Rollback": "Буцаах",
     "RollbackConfirm": "Revision #{{revisionNumber}} руу буцаахдаа итгэлтэй байна уу? Одоогийн Revision солигдох болно.",
@@ -887,7 +888,13 @@
       "AutoScaling": "Автомат масштабжуулалт",
       "Overview": "Ерөнхий мэдэгдэл",
       "Replicas": "Репликүүд",
-      "RevisionHistory": "Revision-ы түүх"
+      "RevisionHistory": "Revision-ы түүх",
+      "description": {
+        "AccessTokens": "Энэ байршуулалтын төгсгөлийн цэг рүү API хүсэлт дамжуулахад ашиглах хандалтын токенуудыг удирдана уу.",
+        "AutoScaling": "Трафикийн хэмжигдэхүүнд үндэслэн репликийн тоог автоматаар тохируулах автомат масштабжуулалтын дүрмүүдийг тохируулна уу.",
+        "Replicas": "Энэ байршуулалтын бүх ажиллаж буй репликийн жишээнүүдийг тэдгээрийн эрүүл мэнд болон нөөцийн статустай хамт харна уу.",
+        "RevisionHistory": "Өмнөх байршуулалтын хяналтуудыг үзэж, дурын өмнөх хувилбар руу буцаж орно уу. Шинэ хяналт үүсгэхийн тулд дээрх «Тохиргоог засах» товчийг дарна уу."
+      }
     }
   },
   "desktopNotification": {

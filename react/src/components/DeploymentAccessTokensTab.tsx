@@ -3,22 +3,12 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { DeploymentAccessTokensTabCreateMutation } from '../__generated__/DeploymentAccessTokensTabCreateMutation.graphql';
-import {
-  DeploymentAccessTokensTab_deployment$data,
-  DeploymentAccessTokensTab_deployment$key,
-} from '../__generated__/DeploymentAccessTokensTab_deployment.graphql';
+import { DeploymentAccessTokensTabListQuery } from '../__generated__/DeploymentAccessTokensTabListQuery.graphql';
+import { DeploymentAccessTokensTab_deployment$key } from '../__generated__/DeploymentAccessTokensTab_deployment.graphql';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import { Alert, App, Button, DatePicker, Form, Typography, theme } from 'antd';
 import {
-  Alert,
-  App,
-  Button,
-  Card,
-  DatePicker,
-  Form,
-  Typography,
-  theme,
-} from 'antd';
-import {
+  BAIFetchKeyButton,
   BAIFlex,
   BAIModal,
   BAINameActionCell,
@@ -32,23 +22,18 @@ import {
 import dayjs from 'dayjs';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useRefetchableFragment } from 'react-relay';
-
-type AccessTokenEdge = NonNullable<
-  NonNullable<
-    DeploymentAccessTokensTab_deployment$data['accessTokens']
-  >['edges']
->[number];
-type AccessTokenNode = NonNullable<AccessTokenEdge['node']>;
+import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 
 interface DeploymentAccessTokensTabProps {
   deploymentFrgmt: DeploymentAccessTokensTab_deployment$key;
+  deploymentId: string;
   isOwnedByCurrentUser?: boolean;
   isDeploymentDestroying?: boolean;
 }
 
 const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
   deploymentFrgmt,
+  deploymentId,
   isOwnedByCurrentUser = true,
   isDeploymentDestroying = false,
 }) => {
@@ -58,6 +43,7 @@ const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
   const { message, modal } = App.useApp();
   const { logger } = useBAILogger();
   const [isPendingRefetch, startRefetchTransition] = useTransition();
+  const [fetchKey, setFetchKey] = useState(0);
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   // After successful creation, show the plaintext token once in a modal.
@@ -66,31 +52,46 @@ const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
     expiresAt: string | null;
   } | null>(null);
 
-  const [deployment, refetch] = useRefetchableFragment(
+  const deployment = useFragment(
     graphql`
-      fragment DeploymentAccessTokensTab_deployment on ModelDeployment
-      @refetchable(
-        queryName: "DeploymentAccessTokensTabDeploymentRefetchQuery"
-      ) {
+      fragment DeploymentAccessTokensTab_deployment on ModelDeployment {
         id
-        accessTokens(orderBy: [{ field: CREATED_AT, direction: DESC }]) {
-          count
-          edges {
-            node {
-              id
-              token
-              createdAt
-              expiresAt
-            }
-          }
-        }
       }
     `,
     deploymentFrgmt,
   );
 
+  const { deployment: listData } =
+    useLazyLoadQuery<DeploymentAccessTokensTabListQuery>(
+      graphql`
+        query DeploymentAccessTokensTabListQuery($deploymentId: ID!) {
+          deployment(id: $deploymentId) {
+            accessTokens(orderBy: [{ field: CREATED_AT, direction: DESC }]) {
+              count
+              edges {
+                node {
+                  id
+                  token
+                  createdAt
+                  expiresAt
+                }
+              }
+            }
+          }
+        }
+      `,
+      { deploymentId },
+      { fetchKey, fetchPolicy: 'network-only' },
+    );
+
+  type AccessTokenNode = NonNullable<
+    NonNullable<
+      NonNullable<typeof listData>['accessTokens']
+    >['edges'][number]['node']
+  >;
+
   const accessTokens = filterOutNullAndUndefined(
-    deployment.accessTokens?.edges?.map((edge) => edge?.node),
+    listData?.accessTokens?.edges?.map((edge) => edge?.node),
   );
 
   const commitCreateMutation =
@@ -111,7 +112,7 @@ const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
 
   const handleRefetch = () => {
     startRefetchTransition(() => {
-      refetch({}, { fetchPolicy: 'network-only' });
+      setFetchKey((k) => k + 1);
     });
   };
 
@@ -142,9 +143,13 @@ const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
 
   return (
     <>
-      <Card
-        title={t('deployment.AccessTokens')}
-        extra={
+      <BAIFlex direction="column" align="stretch" gap="sm">
+        <BAIFlex justify="end" gap="xs">
+          <BAIFetchKeyButton
+            loading={isPendingRefetch}
+            value=""
+            onChange={handleRefetch}
+          />
           <Button
             type="primary"
             icon={<PlusOutlined />}
@@ -153,8 +158,7 @@ const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
           >
             {t('deployment.accessToken.Create')}
           </Button>
-        }
-      >
+        </BAIFlex>
         <BAITable<AccessTokenNode>
           scroll={{ x: 'max-content' }}
           rowKey="id"
@@ -193,7 +197,7 @@ const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
             },
             {
               key: 'createdAt',
-              title: t('deployment.accessToken.Created'),
+              title: t('deployment.CreatedAt'),
               dataIndex: 'createdAt',
               render: (_text, row) =>
                 row?.createdAt ? dayjs(row.createdAt).format('ll LT') : '-',
@@ -209,7 +213,7 @@ const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
             },
           ]}
         />
-      </Card>
+      </BAIFlex>
 
       <BAIUnmountAfterClose>
         <CreateAccessTokenModal
@@ -329,6 +333,11 @@ const CreateAccessTokenModal: React.FC<CreateAccessTokenModalProps> = ({
   const { t } = useTranslation();
   const [form] = Form.useForm<CreateAccessTokenFormValues>();
 
+  // Form.useWatch re-renders this component when expiryOption changes,
+  // replacing the Form.Item dependencies render-prop pattern which only
+  // triggers re-validation (not re-render) when a dependency changes.
+  const expiryOption = Form.useWatch<ExpiryOption>('expiryOption', form) ?? 7;
+
   const handleOk = () => {
     form
       .validateFields()
@@ -347,6 +356,29 @@ const CreateAccessTokenModal: React.FC<CreateAccessTokenModalProps> = ({
         // validation failures surface inline; do nothing.
       });
   };
+
+  const options: Array<{ value: ExpiryOption; label: string }> = [
+    {
+      value: 7,
+      label: t('general.Days', { num: 7, defaultValue: '7 days' }),
+    },
+    {
+      value: 30,
+      label: t('general.Days', { num: 30, defaultValue: '30 days' }),
+    },
+    {
+      value: 90,
+      label: t('general.Days', { num: 90, defaultValue: '90 days' }),
+    },
+    {
+      value: 'custom',
+      label: t('deployment.accessToken.CustomExpiration'),
+    },
+    {
+      value: 'none',
+      label: t('deployment.accessToken.NoExpiration'),
+    },
+  ];
 
   return (
     <BAIModal
@@ -369,103 +401,58 @@ const CreateAccessTokenModal: React.FC<CreateAccessTokenModalProps> = ({
         }}
         validateTrigger={['onChange', 'onBlur']}
       >
-        <Form.Item
-          label={t('deployment.accessToken.Expiration')}
-          shouldUpdate
-          required
-        >
-          {({ getFieldValue, setFieldValue }) => {
-            const current: ExpiryOption = getFieldValue('expiryOption');
-            const options: Array<{ value: ExpiryOption; label: string }> = [
-              {
-                value: 7,
-                label: t('general.Days', { num: 7, defaultValue: '7 days' }),
-              },
-              {
-                value: 30,
-                label: t('general.Days', {
-                  num: 30,
-                  defaultValue: '30 days',
-                }),
-              },
-              {
-                value: 90,
-                label: t('general.Days', {
-                  num: 90,
-                  defaultValue: '90 days',
-                }),
-              },
-              {
-                value: 'custom',
-                label: t('deployment.accessToken.CustomExpiration'),
-              },
-              {
-                value: 'none',
-                label: t('deployment.accessToken.NoExpiration'),
-              },
-            ];
-            return (
-              <BAIFlex direction="column" align="stretch" gap="xs">
-                {options.map((opt) => (
-                  <Button
-                    key={String(opt.value)}
-                    type={current === opt.value ? 'primary' : 'default'}
-                    onClick={() => {
-                      setFieldValue('expiryOption', opt.value);
-                      if (opt.value !== 'custom' && opt.value !== 'none') {
-                        setFieldValue(
-                          'datetime',
-                          dayjs().add(opt.value, 'day'),
-                        );
-                      }
-                    }}
-                  >
-                    {opt.label}
-                  </Button>
-                ))}
-              </BAIFlex>
-            );
-          }}
-        </Form.Item>
-        {/* Hidden field so Form.useForm() tracks the value. */}
+        {/* Hidden field so validateFields() includes expiryOption. */}
         <Form.Item name="expiryOption" hidden rules={[{ required: true }]}>
           <input type="hidden" />
         </Form.Item>
-        <Form.Item dependencies={['expiryOption']} noStyle>
-          {({ getFieldValue }) => {
-            const opt: ExpiryOption = getFieldValue('expiryOption');
-            if (opt !== 'custom') return null;
-            return (
-              <Form.Item
-                name="datetime"
-                label={t('deployment.accessToken.CustomExpiration')}
-                rules={[
-                  {
-                    type: 'object' as const,
-                    required: true,
-                    message: t('dialog.ErrorOccurred'),
-                  },
-                  () => ({
-                    validator(_rule, value) {
-                      if (value && dayjs(value).isAfter(dayjs())) {
-                        return Promise.resolve();
-                      }
-                      return Promise.reject(
-                        new Error(t('dialog.ErrorOccurred')),
-                      );
-                    },
-                  }),
-                ]}
+        <Form.Item label={t('deployment.accessToken.Expiration')} required>
+          <BAIFlex direction="column" align="stretch" gap="xs">
+            {options.map((opt) => (
+              <Button
+                key={String(opt.value)}
+                type={expiryOption === opt.value ? 'primary' : 'default'}
+                onClick={() => {
+                  form.setFieldValue('expiryOption', opt.value);
+                  if (typeof opt.value === 'number') {
+                    form.setFieldValue(
+                      'datetime',
+                      dayjs().add(opt.value, 'day'),
+                    );
+                  }
+                }}
               >
-                <DatePicker
-                  showTime
-                  format="YYYY-MM-DD HH:mm:ss"
-                  style={{ width: '100%' }}
-                />
-              </Form.Item>
-            );
-          }}
+                {opt.label}
+              </Button>
+            ))}
+          </BAIFlex>
         </Form.Item>
+        {expiryOption === 'custom' && (
+          <Form.Item
+            name="datetime"
+            label={t('deployment.accessToken.CustomExpiration')}
+            rules={[
+              {
+                type: 'object' as const,
+                required: true,
+                message: t('dialog.ErrorOccurred'),
+              },
+              () => ({
+                validator(_rule, value) {
+                  if (value && dayjs(value).isAfter(dayjs())) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(new Error(t('dialog.ErrorOccurred')));
+                },
+              }),
+            ]}
+          >
+            <DatePicker
+              showTime
+              format="YYYY-MM-DD HH:mm:ss"
+              style={{ width: '100%' }}
+            />
+          </Form.Item>
+        )}
       </Form>
     </BAIModal>
   );
