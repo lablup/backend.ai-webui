@@ -1,8 +1,8 @@
 # インストール
 
-Backend.AI WebUI can be used in two different forms.
-It can be used as a web service by connecting to a separate web address provided by the 管理者s,
-or as an form of app provided as a stand-alone executable file which does not require separate installation.
+Backend.AI WebUIは2つの異なる形態で使用できます。
+管理者が提供する別途のWebアドレスに接続してWebサービスとして利用するか、
+または別途のインストールを必要としないスタンドアロン実行可能ファイル形式のアプリとして利用できます。
 
 WebUIのウェブベースの形式では、ユーザーは最新バージョンのウェブブラウザだけが必要であり、プラットフォームに依存するデスクトップアプリケーションをインストールする必要はありません。
 
@@ -14,7 +14,7 @@ WebUIのウェブベースの形式では、ユーザーは最新バージョン
 Microsoft Internet Explorer は廃止され、ウェブ標準に従わず、最新のブラウザ機能をサポートしていないため、サポートしていません。
 :::
 
-The stand-alone WebUI app can be downloaded from following link:
+スタンドアロンのWebUIアプリは、以下のリンクからダウンロードできます：
 https://github.com/lablup/backend.ai-webui/releases
 
 

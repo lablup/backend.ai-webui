@@ -1,10 +1,10 @@
 :::warning
-This feature is deprecated, so please use the [dashboard](../dashboard/dashboard.md) page going forward. Also, technical support and bug fixes for this feature are no longer provided. Please understand that issues may not be addressed.
+この機能は非推奨となっているため、今後は[ダッシュボード](../dashboard/dashboard.md)ページをご利用ください。また、この機能に対する技術サポートおよびバグ修正は提供されません。問題が対応されない可能性があることをご了承ください。
 :::
 
 # サマリーページ
 
-On the サマリー page, ユーザーs can check resource status and session usage.
+サマリーページでは、ユーザーはリソースの状態とセッションの使用状況を確認できます。
 
 ![](../images/summary.png)
 
@@ -24,16 +24,16 @@ On the サマリー page, ユーザーs can check resource status and session us
 
 ### Backend.AI Web UI アプリのダウンロード
 
-Backend.AI WebUI supports desktop applications.
-By using desktop app, you can use desktop app specific features, such as [SSH/SFTP connection to a Compute Session](../sftp_to_container/sftp_to_container.md#ssh-sftp-container).
-For now Backend.AI WebUI provides desktop application with following OS:
+Backend.AI WebUIはデスクトップアプリケーションをサポートしています。
+デスクトップアプリを使用すると、[コンピュートセッションへのSSH/SFTP接続](../sftp_to_container/sftp_to_container.md#ssh-sftp-container)などのデスクトップアプリ専用機能を利用できます。
+現在、Backend.AI WebUIは以下のOSでデスクトップアプリケーションを提供しています：
 
-- ウィンドウズ
+- Windows
 - Linux
-- マック
+- Mac
 
 
 :::note
-When you click the button that match with your local environment (e.g. OS, Architecture), It will automatically downloads the same version of current webUI version.
-If you want to download later or former version of WebUI as a desktop app, please visit [here](https://github.com/lablup/backend.ai-webui/releases?page=1) and download the desired version(s).
+お使いのローカル環境（例：OS、アーキテクチャ）に合ったボタンをクリックすると、現在のWebUIバージョンと同じバージョンのデスクトップアプリが自動的にダウンロードされます。
+以前のバージョンまたは以降のバージョンのWebUIをデスクトップアプリとしてダウンロードしたい場合は、[こちら](https://github.com/lablup/backend.ai-webui/releases?page=1)にアクセスして、希望するバージョンをダウンロードしてください。
 :::

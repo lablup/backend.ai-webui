@@ -1,7 +1,7 @@
 # อ้างอิง
 
-- Online API Manual: https://docs.backend.ai
-- Online Client SDK Manual: https://docs.backend.ai/en/latest/client
+- คู่มือ API ออนไลน์: https://docs.backend.ai
+- คู่มือ Client SDK ออนไลน์: https://docs.backend.ai/en/latest/client
 
 เอกสารฉบับล่าสุดสามารถพบได้จากเว็บไซต์ด้านล่าง:
 

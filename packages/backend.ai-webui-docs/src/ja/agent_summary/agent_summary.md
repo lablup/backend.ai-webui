@@ -1,14 +1,14 @@
 # エージェントサマリー
 
-For now, ユーザーs with 管理者 role only can see agent information via 管理者istration menu.
-From 22.09 Backend.AI WebUI supports showing partial information of agent node(s) when configuration is set.
-In Agent summary menu, you can see the list of agent information including endpoint address, CPU architecture, resource allocation,
-and whether the agent is schedulable or not. This menu is useful to check resource allocation on session creation.
+現在、管理者権限を持つユーザーのみが管理メニューを通じてエージェント情報を確認できます。
+22.09以降、Backend.AI WebUIは設定に応じてエージェントノードの一部情報を一般ユーザーにも表示できるようになりました。
+エージェントサマリーメニューでは、エンドポイントアドレス、CPUアーキテクチャ、リソース割り当て、
+およびエージェントのスケジュール可否など、エージェント情報の一覧を確認できます。このメニューは、セッション作成時のリソース割り当て状況の確認に便利です。
 
 ![](../images/agent_summary.png)
 
 
 :::note
-Depending on the server configuration, the agent summary service feature may not be available.
-In that case, please contact 管理者istrator of your system.
+サーバーの設定によっては、エージェントサマリーサービス機能が利用できない場合があります。
+その場合は、システムの管理者にお問い合わせください。
 :::

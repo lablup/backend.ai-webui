@@ -1,24 +1,24 @@
 # การติดตั้ง
 
-Backend.AI WebUI can be used in two different forms.
-It can be used as a web service by connecting to a separate web address provided by the ผู้ดูแลระบบs,
-or as an form of app provided as a stand-alone executable file which does not require separate installation.
+Backend.AI WebUI สามารถใช้งานได้ในสองรูปแบบที่แตกต่างกัน
+สามารถใช้เป็นบริการบนเว็บได้โดยการเชื่อมต่อไปยังที่อยู่เว็บแยกต่างหากที่ผู้ดูแลระบบจัดเตรียมไว้
+หรือในรูปแบบของแอปที่ให้บริการเป็นไฟล์ปฏิบัติการแบบสแตนด์อโลนซึ่งไม่ต้องการการติดตั้งแยกต่างหาก
 
-With web-based form of WebUI, ผู้ใช้s just need the latest versions of web browsers, no need to install platform-dependent desktop applications.
+ในรูปแบบเว็บของ WebUI ผู้ใช้เพียงต้องการเว็บเบราว์เซอร์เวอร์ชันล่าสุดเท่านั้น โดยไม่จำเป็นต้องติดตั้งแอปพลิเคชันเดสก์ท็อปที่ขึ้นกับแพลตฟอร์ม
 
-- Recommended browser: Latest version of Chrome (at least > 80)
-- Requirement: Any machine that runs web browser (2 cores, 4 GiB memory)
+- เบราว์เซอร์ที่แนะนำ: Chrome เวอร์ชันล่าสุด (อย่างน้อย > 80)
+- ข้อกำหนด: เครื่องใด ๆ ที่สามารถรันเว็บเบราว์เซอร์ได้ (2 คอร์, หน่วยความจำ 4 GiB)
 
 
 :::note
-We do not support Microsoft Internet Explorer since it
-is deprecated and does not follow web standard, and does not support up-to-date browser features.
+เราไม่รองรับ Microsoft Internet Explorer เนื่องจาก
+ถูกยกเลิกการใช้งานแล้วและไม่เป็นไปตามมาตรฐานเว็บ รวมถึงไม่รองรับคุณสมบัติของเบราว์เซอร์ที่ทันสมัย
 :::
 
-The stand-alone WebUI app can be downloaded from following link:
+แอป WebUI แบบสแตนด์อโลนสามารถดาวน์โหลดได้จากลิงก์ต่อไปนี้:
 https://github.com/lablup/backend.ai-webui/releases
 
 
 :::note
-Depending on the security settings of the Operating System, our installer may be recognized as an unsigned executable file. Permission check may be required.
+ขึ้นอยู่กับการตั้งค่าความปลอดภัยของระบบปฏิบัติการ ตัวติดตั้งของเราอาจถูกระบุว่าเป็นไฟล์ปฏิบัติการที่ไม่ได้ลงนาม อาจจำเป็นต้องมีการตรวจสอบสิทธิ์
 :::

@@ -1,14 +1,14 @@
 # สรุปตัวแทน
 
-For now, ผู้ใช้s with ผู้ดูแลระบบ role only can see agent information via ผู้ดูแลระบบistration menu.
-From 22.09 Backend.AI WebUI supports showing partial information of agent node(s) when configuration is set.
-In Agent summary menu, you can see the list of agent information including endpoint address, CPU architecture, resource allocation,
-and whether the agent is schedulable or not. This menu is useful to check resource allocation on session creation.
+ในขณะนี้ เฉพาะผู้ใช้ที่มีสิทธิ์ผู้ดูแลระบบเท่านั้นที่สามารถดูข้อมูลเอเจนต์ผ่านเมนูการจัดการได้
+ตั้งแต่เวอร์ชัน 22.09 เป็นต้นไป Backend.AI WebUI รองรับการแสดงข้อมูลบางส่วนของโหนดเอเจนต์ให้กับผู้ใช้ทั่วไปเมื่อมีการกำหนดค่า
+ในเมนูสรุปเอเจนต์ คุณสามารถดูรายการข้อมูลเอเจนต์ รวมถึงที่อยู่ endpoint, สถาปัตยกรรม CPU, การจัดสรรทรัพยากร,
+และเอเจนต์สามารถจัดตารางเวลาได้หรือไม่ เมนูนี้มีประโยชน์สำหรับการตรวจสอบการจัดสรรทรัพยากรเมื่อสร้างเซสชัน
 
 ![](../images/agent_summary.png)
 
 
 :::note
-Depending on the server configuration, the agent summary service feature may not be available.
-In that case, please contact ผู้ดูแลระบบistrator of your system.
+ขึ้นอยู่กับการกำหนดค่าเซิร์ฟเวอร์ คุณสมบัติบริการสรุปเอเจนต์อาจไม่พร้อมใช้งาน
+ในกรณีนี้ โปรดติดต่อผู้ดูแลระบบของคุณ
 :::

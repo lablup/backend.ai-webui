@@ -1,178 +1,166 @@
-# Compute セッション
+# コンピュートセッション
 
-The most visited pages in the Backend.AI WebUI would be the 'セッション' and 'Data' pages.
-This document will cover how to query and create container-based compute sessions and utilize various web applications on the 'セッション' page.
+Backend.AI WebUIで最もよく利用されるページは、「セッション」ページと「データ」ページです。
+本ドキュメントでは、「セッション」ページでコンテナベースのコンピュートセッションを照会・作成し、各種Webアプリケーションを活用する方法について説明します。
 
 <a id="start-a-new-session"></a>
 <a id="create_session"></a>
 
-## Start a new session
+## 新しいセッションを開始する
 
 
-After logging in with a ユーザー account, click 'セッション' on the left sidebar.
-'セッション' page lets you start new sessions or use and manage existing running sessions.
+ユーザーアカウントでログインした後、左側のサイドバーで「セッション」をクリックします。
+「セッション」ページでは、新しいセッションを開始したり、既に実行中のセッションを使用・管理することができます。
 
 ![](../images/sessions_page.png)
 
 
-Click the 'START' button to start a new compute session.
+新しいコンピュートセッションを開始するには、「スタート」ボタンをクリックします。
 
 ![](../images/launch_session_type.png)
 
 <a id="session-type"></a>
 
-### Session Type
+### セッションタイプ
 
-In the first page, ユーザーs can select the type of session, 'interactive' or 'batch'.
-If needed, setting the name of the session (optional) is also available.
+最初のページでは、ユーザーはセッションのタイプ（「interactive」または「batch」）を選択できます。
+必要に応じて、セッション名の設定（任意）も可能です。
 
 
-- Session type: Determines the type of the session. There are two different types of session, \"インタラクティブ\" and \"バッチ\".
-  The following are the primary distinctions between the two types:
+- セッションタイプ: セッションの形態を決定します。セッションには「インタラクティブ」と「バッチ」の2種類があります。
+  両者の主な違いは次のとおりです。
 
-  - インタラクティブ compute session
+  - インタラクティブコンピュートセッション
 
-    - This is the type which has been supported from the initial version of the Backend.AI.
-    - The compute session is used in a way that the ユーザー interacts with after
-      creating a session without specifying a pre-defined execution script or
-      command.
-    - The session is not terminated automatically unless ユーザー explicitly destroys
-      the session or session garbage collectors are set by the 管理者.
+    - Backend.AIの初期バージョンから提供されている形態です。
+    - 事前に定義された実行スクリプトやコマンドを指定せずにセッションを作成し、
+      セッション作成後にユーザーが対話的に操作する方法で使用します。
+    - ユーザーが明示的にセッションを削除するか、管理者によってセッションのガベージコレクターが設定されない限り、
+      セッションは自動的に終了されません。
 
-  - バッチ compute session
+  - バッチコンピュートセッション
 
-    - This type of session is supported via GUI from Backend.AI 22.03 (CLI has
-      supported the batch-type session before the 22.03).
-    - Pre-define the script that will be executed when a compute session is
-      ready.
-    - This session will execute the script as soon as the compute session is ready, and then
-      automatically terminates the session as soon as the execution finishes.
-      It will utilize the server farm's resources efficiently and flexibly if a ユーザー can write the execution script in advance or is
-      building a pipeline of workloads.
-    - Users can set the start time of a batch-type compute session.
-      However, keep in mind that this feature does not guarantee that the session will start at the registered time.
-      It may still stay at 'PENDING' due to the lack of resources, etc. Rather, it guarantees that
-      the session WILL NOT run until the start time.
-    - Users can also set the 'Timeout Duration' of a batch-type compute session.
-      When ユーザーs set the timeout duration, The session will automatically terminate if the specified time is exceeded.
+    - この形態のセッションは、Backend.AI 22.03からGUIで提供されています
+      （CLIでは22.03以前からバッチタイプのセッションをサポートしていました）。
+    - コンピュートセッションが準備できたときに実行されるスクリプトを事前に定義します。
+    - このセッションは、コンピュートセッションが準備でき次第スクリプトを実行し、
+      実行が終了するとすぐにセッションを自動的に終了します。
+      ユーザーが実行スクリプトを事前に記述できる場合や、ワークロードのパイプラインを
+      構築している場合、サーバーファームのリソースを効率的かつ柔軟に活用できます。
+    - バッチタイプのコンピュートセッションでは、開始時刻を設定できます。
+      ただし、この機能は登録された時刻にセッションが必ず開始されることを保証するものではない点にご注意ください。
+      リソース不足などの理由により、`PENDING`状態のままとなることもあります。
+      むしろ、開始時刻までセッションが実行されないことを保証する機能です。
+    - バッチタイプのコンピュートセッションでは、「タイムアウト時間」も設定できます。
+      タイムアウト時間を設定すると、指定した時間を超過した場合にセッションが自動的に終了します。
 
     ![](../images/session_type_batch.png)
 
 <a id="session-naming-rule"></a>
 
-- Session name: Users can specify the name of the compute session to be
-  created. If set, this name appears in Session Info, so it is
-  distinguishable among multiple compute sessions. If not specified, random
-  word will be assigned automatically. Session names only accept alphanumeric
-  characters between 4 and 64 without spaces.
+- セッション名: 作成するコンピュートセッションの名前を指定できます。
+  設定すると、この名前がセッション情報に表示されるため、複数のコンピュートセッションを
+  区別しやすくなります。指定しない場合は、ランダムな単語が自動的に割り当てられます。
+  セッション名には4～64文字の英数字のみを使用でき、スペースは使用できません。
 
-If ユーザーs create a session with the `super admin` or `admin` account,
-they can additionally assign a session owner. If you enable the toggle,
-a ユーザー email field will appear.
+`スーパー管理者`または`管理者`アカウントでセッションを作成する場合は、
+セッション所有者を追加で指定できます。トグルを有効にすると、
+ユーザーメールアドレスフィールドが表示されます。
 
 ![](../images/admin_launch_session_owner.png)
 
-Enter the email of the ユーザー you want to assign the session to,
-click the 'search' button, and the ユーザー's access key will be automatically registered.
-You can also select a project and resource group.
+セッションを割り当てたいユーザーのメールアドレスを入力し、
+「検索」ボタンをクリックすると、そのユーザーのアクセスキーが自動的に登録されます。
+プロジェクトやリソースグループも選択できます。
 
 ![](../images/admin_launch_session_owner_project.png)
 
 <a id="environments-and-resource-allocation"></a>
 
-### Environments & Resource allocation
+### 実行環境とリソース割り当て
 
 
-Click the 'Next' button below, or the 'Environments & Resource allocation' menu on the right
-to proceed to the next page. If you want to create a session without any further
-settings, press the 'Skip to review' button. In this case, settings on the
-other pages will all use the default values.
+次のページに進むには、下部の「次のページ」ボタンをクリックするか、右側の「実行環境とリソース割り当て」メニューをクリックします。
+追加設定なしでセッションを作成したい場合は、「レビューへスキップ」ボタンを押してください。
+この場合、他のページの設定はすべて既定値が使用されます。
 
   ![](../images/launch_session_environments_and_resource.png)
 
-### Environments
+### 実行環境
 
 
-For detailed explanations of each item that can be set on the second page, please
-refer to the following:
+2番目のページで設定できる各項目の詳細な説明については、以下を参照してください。
 
-- Environments: Users can select the base environment for compute sessions such as
-  TensorFlow, PyTorch, C++, etc. The compute session will automatically included into the base environment library.
-  If ユーザーs choose another environment, the corresponding packages will be installed by default.
-- Version: Users can specify the version of the environment.
-  There are multiple versions in a single environment. For example, TensorFlow has multiple versions such as 1.15, 2.3, etc.,
-- Image Name: Users can specify the name of the image to be used for the
-  compute session. This configuration may not be available depending on the environment settings.
-- Set Environment Variable: To give more convenient workspace for ユーザーs, Backend.AI supports environment variable setting
-  in session launching. In this feature, ユーザーs can add any envs such as `PATH` by filling out
-  variable name and value in environment configuration dialog.
+- 実行環境: TensorFlow、PyTorch、C++などのコンピュートセッションの基本環境を選択できます。
+  コンピュートセッションは、基本環境ライブラリに自動的に組み込まれます。
+  別の環境を選択すると、対応するパッケージが既定でインストールされます。
+- バージョン: 実行環境のバージョンを指定できます。
+  1つの実行環境には複数のバージョンがあります。たとえば、TensorFlowには1.15や2.3などの複数のバージョンがあります。
+- イメージ名: コンピュートセッションで使用するイメージの名前を指定できます。
+  この設定は、環境設定によっては利用できない場合があります。
+- 環境変数を設定する: より便利な作業環境をユーザーに提供するために、Backend.AIはセッション起動時の環境変数設定をサポートしています。
+  この機能では、環境変数設定ダイアログに変数名と値を入力することで、
+  `PATH`などの任意の環境変数を追加できます。
 
   ![](../images/launch_session_environments.png)
 
-### Resource allocation
+### リソース割り当て
 
 
-- Resource Group: Specifies the resource group in which to create a compute
-  session. A resource group is a unit that groups host servers that each ユーザー
-  can access. Usually, servers in a resource group would have the same type of
-  GPU resources. Administrators can classify servers by any criteria, group them
-  into one or more resource groups, configure which resource groups a ユーザー
-  can use. Users can launch a compute session only on servers in resource groups
-  allowed by the 管理者istrator. If multiple resource groups are allowed, ユーザーs could select any group they want.
-  However, it cannot be changed when system only allows single-setting.
-- Resource Presets: These templates have pre-defined resource sets, such as
-  CPU, memory, and GPU, to be allocated to a compute session. Administrators can
-  define frequently used resource settings in advance. By adjusting the numerical
-  input or sliding the slider, ユーザーs can allocate the desired amount of resources.
+- リソースグループ: コンピュートセッションを作成するリソースグループを指定します。
+  リソースグループは、各ユーザーがアクセスできるホストサーバーをグループ化する単位です。
+  通常、リソースグループ内のサーバーは同じ種類のGPUリソースを備えています。
+  管理者は、任意の基準でサーバーを分類し、1つ以上のリソースグループにまとめて、
+  ユーザーが使用できるリソースグループを設定できます。ユーザーは、管理者が許可した
+  リソースグループのサーバーでのみコンピュートセッションを起動できます。
+  複数のリソースグループが許可されている場合、ユーザーは任意のグループを選択できますが、
+  システムが単一設定のみ許可している場合は変更できません。
+- リソースプリセット: このテンプレートには、コンピュートセッションに割り当てるCPU、メモリ、GPUなどの
+  リソースセットが事前に定義されています。管理者は、よく使われるリソース設定を事前に定義できます。
+  数値入力を調整するか、スライダーを動かすことで、ユーザーは希望する量のリソースを割り当てることができます。
 
   ![](../images/launch_session_resource.png)
 
-  The meaning of each item is as follows.
-  Clicking the 'Help (?)' button will also give more information.
+  各項目の意味は次のとおりです。
+  「案内(ヘルプ)」ボタン（?）をクリックすると、詳細な情報を確認できます。
 
-  * CPU: The CPU performs basic arithmetic, logic, controlling, and input/output
-    (I/O) operations specified by the instructions. In general, more CPUs are beneficial for high-performance computing workloads.
-    But, to reflect the advantage of more CPUs, program code must be written to adapt multiple CPUs.
-  * Memory: Computer memory is a temporary storage area. It holds the data and
-    instructions that the Central Processing Unit (CPU) needs. When using a GPU in
-    a machine learning workload, at least twice the memory of the
-    GPU to memory need to be allocated. Otherwise, GPU's idle time will increase, resulting
-    penalty in a performance.
-  * Shared Memory: The amount of shared memory in GB to allocate for the compute
-    session. Shared memory will use some part of the memory set in RAM. Therefore,
-    it cannot be greater than the amount specified in RAM.
-  * AI Accelerator: AI accelerators (GPUs or NPUs) are well-suited for the
-    matrix/vector computations involved in machine learning. AI accelerators speed
-    up training / inference algorithms by orders of magnitude, reducing running
-    times from weeks to days.
-  * セッション: Session is a unit of computational environment that is created
-    according to a specified environment and resources. If this value is set to a
-    value greater than 1, multiple sessions corresponding to the resource set above
-    are created. If there are not enough resources available, requests to create
-    sessions that cannot be created are put on the waiting queue.
+  * CPU: CPUは、命令によって指定された基本的な算術、論理、制御、入出力（I/O）操作を実行します。
+    一般に、高性能コンピューティングワークロードではCPUが多いほど有利です。
+    ただし、複数のCPUの利点を活かすには、複数のCPUに対応するようにプログラムコードを記述する必要があります。
+  * メモリ: コンピューターメモリは一時的な記憶領域で、
+    中央処理装置（CPU）が必要とするデータと命令を保持します。
+    機械学習ワークロードでGPUを使用する場合、
+    GPUメモリの少なくとも2倍のメモリを割り当てる必要があります。
+    そうしないと、GPUのアイドル時間が増加し、パフォーマンスが低下します。
+  * 共有メモリ: コンピュートセッションに割り当てる共有メモリの容量（GB）です。
+    共有メモリはRAMに設定されたメモリの一部を使用するため、RAMで指定した量を超えることはできません。
+  * AIアクセラレータ: AIアクセラレータ（GPUまたはNPU）は、機械学習に関わる行列/ベクトル演算に適しています。
+    AIアクセラレータは、トレーニング/推論アルゴリズムを桁違いに高速化し、
+    実行時間を数週間から数日に短縮します。
+  * セッション: セッションは、指定された実行環境とリソースに従って作成される計算環境の単位です。
+    この値を1より大きい値に設定すると、上記のリソースセットに対応する複数のセッションが作成されます。
+    十分なリソースがない場合、作成できないセッションの作成要求は待機キューに追加されます。
 
   ![](../images/launch_session_resource_2.png)
 
-  * Select Agent: Select the agent to be assigned. By default, the agent is automatically selected
-    by the scheduler. The agent selector displays the actual amount of available resources for each agent.
-    Currently, this feature is only supported in single-node, single-container environments.
-  * Cluster mode: Cluster mode allows ユーザーs to create
-    multiple compute sessions at once. For more information, refer to the
-    [Overview of Backend.AI cluster compute session](#backendai-cluster-compute-session).
+  * エージェントの選択: 割り当てるエージェントを選択します。既定では、エージェントはスケジューラーによって自動的に選択されます。
+    エージェントセレクターには、各エージェントで実際に利用可能なリソース量が表示されます。
+    現在、この機能はシングルノード、シングルコンテナ環境でのみサポートされています。
+  * クラスターモード: クラスターモードでは、ユーザーは複数のコンピュートセッションを一度に作成できます。
+    詳細については、[Backend.AIクラスターコンピュートセッションの概要](#backendai-cluster-compute-session)を参照してください。
 
 :::note
-The Agent Select feature may not be available depending on the server environment.
+エージェント選択機能は、サーバー環境によっては利用できない場合があります。
 :::
 
-- High-Performance Computing Optimizations: Backend.AI provides configuring values
-  related to HPC Optimizations.
+- 高性能コンピューティング最適化: Backend.AIはHPC最適化に関連する値の設定を提供します。
 
-  Backend.AI provides configuration UI for internal control variable in `nthreads-var`.
-  Backend.AI sets this value equal to the number of session's CPU cores by default,
-  which has the effect of accelerating typical high-performance computing workloads.
-  Nevertheless, for some multi-thread workloads, multiple processes using OpenMP are used at same time,
-  resulting in an abnormally large number of threads and significant performance degradation.
-  To resolve this issue, setting the number of threads to 1 or 2 would work.
+  Backend.AIは、`nthreads-var`内部制御変数の設定UIを提供します。
+  Backend.AIは既定で、この値をセッションのCPUコア数と同じに設定します。
+  これは、一般的な高性能コンピューティングワークロードを高速化する効果があります。
+  ただし、一部のマルチスレッドワークロードでは、OpenMPを使用する複数のプロセスが同時に動作し、
+  異常に多くのスレッドが生成されて、パフォーマンスが大幅に低下する場合があります。
+  この問題を解決するには、スレッド数を1または2に設定するとよいでしょう。
 
 ![](../images/session_hpc_optimization.png)
 
@@ -182,124 +170,121 @@ The Agent Select feature may not be available depending on the server environmen
 ### データとストレージ
 
 
-Click the 'Next' button below, or the 'データとストレージ' menu on the right to proceed to the next page.
+次のページに進むには、下部の「次のページ」ボタンをクリックするか、右側の「データとストレージ」メニューをクリックします。
 
-When a compute session is destroyed, data deletion is set to default.
-However, data stored in the mounted folders will survive.
-Data in those folders can also be reused by mounting it when creating another compute session.
-For further information on how to mount a folder and run a compute session, refer to
-[Mounting Folders to a Compute Session](#session-mounts).
+コンピュートセッションが削除されると、既定でデータも削除されます。
+ただし、マウントされたフォルダに保存されたデータは保持されます。
+これらのフォルダのデータは、別のコンピュートセッションを作成する際にマウントして再利用することもできます。
+フォルダをマウントしてコンピュートセッションを実行する方法の詳細については、
+[コンピュートセッションへのフォルダのマウント](#session-mounts)を参照してください。
 
 ![](../images/launch_session_data.png)
 
-ユーザーs can specify the data folders to mount in the compute session.
-Folder explorer can be used by clicking folder name. For further information,
-please refer [Explore Folder](#explore-folder) section.
+ユーザーは、コンピュートセッションにマウントするデータフォルダを指定できます。
+フォルダ名をクリックすると、フォルダエクスプローラーを使用できます。詳細については、
+[フォルダの探索](#explore-folder)セクションを参照してください。
 
 ![](../images/folder_explorer.png)
 
-New folder can be created by clicking the '+' button next to the search box.
-When new folder is created, it will automatically be selected as the folder to mount.
-For further information, please refer [Create Storage Folder](#create-storage-folder) section.
+検索ボックス横の「+」ボタンをクリックすると、新しいフォルダを作成できます。
+新しいフォルダを作成すると、マウントするフォルダとして自動的に選択されます。
+詳細については、[ストレージフォルダの作成](#create-storage-folder)セクションを参照してください。
 
 ![](../images/folder_create_modal.png)
 
 <a id="network"></a>
 
-### Network
+### ネットワーク
 
-Click the 'Next' button below, or the 'Network' menu on the right to proceed to the next page.
-On this page, Network configuration can be done such as Preopen Ports.
+次のページに進むには、下部の「次のページ」ボタンをクリックするか、右側の「ネットワーク」メニューをクリックします。
+このページでは、事前開放ポートなどのネットワーク設定を行うことができます。
 
-- Set Preopen Ports: Provides an interface for ユーザーs to set preopen ports in a
-  compute session. Refer to the [How to add preopen ports before session creation](#set-preopen-ports) for further information.
+- 事前開放ポート設定: コンピュートセッションで事前開放ポートを設定するためのインターフェイスを提供します。
+  詳細については、[セッション作成前に事前開放ポートを追加する方法](#set-preopen-ports)を参照してください。
 
 
 ![](../images/launch_session_network.png)
 
 <a id="confirm-and-launch"></a>
 
-### Confirm and Launch
+### 確認と起動
 
 
-If you are done with the network setting, click the 'Next' button below, or
-'Confirm and Launch' button on the right to proceed to the last page.
+ネットワーク設定が完了したら、下部の「次のページ」ボタンをクリックするか、
+右側の「レビューと開始」ボタンをクリックして、最後のページに進みます。
 
-On the last page, ユーザーs could view information of session(s) to create,
-such as environment itself, allocated resources, mount information,
-environment variables set on the previous pages, preopen ports, etc.,
-Review the settings, ユーザーs could launch the session by clicking 'Launch' button.
-Click the 'Edit' button located at the top right of each card to redirect to relevant page.
+最後のページでは、ユーザーは作成するセッションの情報（実行環境、割り当てられたリソース、
+マウント情報、前のページで設定した環境変数、事前開放ポートなど）を確認できます。
+設定を確認したら、ユーザーは「ローンチ」ボタンをクリックしてセッションを起動できます。
+各カード右上の「編集」ボタンをクリックすると、関連ページに移動します。
 
 ![](../images/launch_session_confirm.png)
 
-If there is an issue with the settings, an error message will be displayed as follows.
-Users can edit their settings when this happens.
+設定に問題がある場合は、次のようにエラーメッセージが表示されます。
+この場合、ユーザーは設定を編集できます。
 
 ![](../images/launch_session_error_card.png)
 
-When you click the 'Launch' button, a warning dialog appears stating that there are no mounted folders.
-If folder mounting is not required, you can ignore the warning and click the 'Start' button in the dialog to proceed.
+「ローンチ」ボタンをクリックすると、マウントされたフォルダがないことを示す警告ダイアログが表示されます。
+フォルダのマウントが不要な場合は、警告を無視してダイアログの「スタート」ボタンをクリックして進むことができます。
 
 ![](../images/no_folder_notification_dialog.png)
 
-When a new compute session is added in the **Running** tab, a notification appears at the bottom-right corner of the screen.
-The bottom-left area of the notification displays the session status, while the bottom-right area includes buttons for opening the app dialog,
-launching the terminal, viewing container logs, and terminating the session.
-You can also view this session creation notification by clicking **Notifications** in the header.
+新しいコンピュートセッションが**実行中**タブに追加されると、画面右下に通知が表示されます。
+通知の左下にはセッションのステータスが表示され、右下にはアプリダイアログを開くボタン、
+ターミナルの起動、コンテナログの表示、セッション終了のボタンが含まれています。
+ヘッダーの**通知**をクリックすると、このセッション作成通知を再度表示することもできます。
 
 ![](../images/session_created.png)
 
 
 ![](../images/session_notification.png)
 
-By clicking the app dialog button on the far left, you can view the available app services.
+一番左のアプリダイアログボタンをクリックすると、利用可能なアプリサービスを確認できます。
 
 ![](../images/app_dialog.png)
 
 
-### Recent History
+### 最近の履歴
 
 
-'Session Launcher' page provides a set of options for creating sessions. As of 24.09,
-`Recent History` feature has been added to remember information about previously created sessions.
+「セッションランチャー」ページは、セッションを作成するためのさまざまなオプションを提供します。
+24.09より、以前に作成したセッションの情報を記憶する`最近の履歴`機能が追加されました。
 
 ![](../images/recent_history.png)
 
 ![](../images/recent_history_modal.png)
 
-The `Recent History` modal stores information about the five most recently created sessions.
-Clicking a session name takes you to the 'Confirm and Launch' page, which is the final step of session creation.
-Each item can be renamed or pinned for easier access.
+`最近の履歴`モーダルには、最新の5つのセッションの情報が保存されます。
+セッション名をクリックすると、セッション作成の最終ステップである「レビューと開始」ページに移動します。
+各項目の名前を変更したり、ピン留めしてアクセスしやすくすることもできます。
 
 
 :::note
-Super管理者s can query all compute session information currently running (or
-terminated) in the cluster, and ユーザーs can only view the sessions they have
-created.
+スーパー管理者は、クラスター内で現在実行中（または終了済み）のすべてのコンピュートセッション情報を照会できますが、
+一般ユーザーは自分が作成したセッションのみを表示できます。
 :::
 
 :::note
-Compute session list may not be displayed normally due to intermittent
-network connection problems, and etc. This can be solved by refreshing the
-browser.
+断続的なネットワーク接続の問題などにより、コンピュートセッションリストが正常に表示されない場合があります。
+この場合は、ブラウザを更新することで解決できます。
 :::
 
 <a id="session-detail-panel"></a>
 
-## Session Detail Panel
+## セッション詳細パネル
 
-For detailed information on the session, click the session name in the session list.
-The session details panel shows the information of the session, such as the
-session ID, ユーザー ID, status, type, environments, mount information, resource allocation, reserved time,
-elapsed time, agent, cluster mode, resource usage including network I/O, and kernel information.
+セッションの詳細情報を確認するには、セッションリストでセッション名をクリックします。
+セッション詳細パネルには、セッションID、ユーザーID、ステータス、タイプ、実行環境、マウント情報、
+リソース割り当て、予約時間、経過時間、エージェント、クラスターモード、ネットワークI/Oを含む
+リソース使用量、カーネル情報などのセッション情報が表示されます。
 
-Click the 'Log' button next to the 'Hostname' in 'Kernels' to view the logs of that kernel directly.
+「カーネル」の「ホスト名」の横にある「ログ」ボタンをクリックすると、そのカーネルのログを直接確認できます。
 
 ![](../images/session_detail.png)
 
-Backend.AI provides additional information for sessions in `PENDING`, `TERMINATED`, or `CANCELLED` states.
-Click the 'Info' button to check the details when available.
+Backend.AIは、`PENDING`、`TERMINATED`、または`CANCELLED`状態のセッションに対して追加情報を提供します。
+利用可能な場合は、「情報」ボタンをクリックして詳細を確認できます。
 
 Backend.AI Manager v26.2.0以降をご使用の場合、セッション詳細パネルのセッションステータスタグの横に時計アイコンボタンが表示されます。このアイコンをクリックすると、セッションのスケジュール履歴モーダルが開き、そのセッションに対してシステムが行ったすべてのスケジューリング決定の詳細ログを確認できます。詳細については、[セッションのスケジュール履歴](#session-scheduling-history)セクションを参照してください。
 
@@ -375,350 +360,338 @@ Backend.AI Manager v26.2.0以降をご使用の場合、セッション詳細パ
 
 <a id="use_session"></a>
 
-## Use Jupyter Notebook
+## Jupyter Notebookを使う
 
-Let's look at how to use and manage an already running compute session.
-Click the first icon in the upper-right corner of the session detail panel to open the app launcher, which shows
-the app services available for that session.
+既に実行中のコンピュートセッションを使用および管理する方法を見てみましょう。
+セッション詳細パネル右上の最初のアイコンをクリックすると、アプリランチャーが開き、
+そのセッションで利用可能なアプリサービスが表示されます。
 
 ![](../images/app_dialog.png)
 
 
 :::note
-There are two check options under the app icons. Opening the app with each item checked
-applies the following features, respectively:
+アプリアイコンの下には2つのチェックオプションがあります。それぞれを選択した状態でアプリを開くと、
+次の機能が適用されます。
 
 <a id="open-app-to-public"></a>
 
-* Open app to public: Open the app to the public. Basically, web services
-  such as Terminal and Jupyter Notebook services are not accessible by
-  other ユーザーs, even if the ユーザー knows the service URL, since they are
-  considered unauthenticated. However, checking this option makes it possible
-  for anyone who knows the service URL (and port number) to access and use it. Of
-  course, the ユーザー must have a network path to access the service.
-* Try preferred port: Without this option checked, a port number for the web service is randomly
-  assigned from the port pool prepared in advance by Backend.AI.
-  If you check this item and enter a specific port number, the entered
-  port number will be tried first. However, there is no guarantee that the desired
-  port will always be assigned because the port may not exist at all in the port
-  pool or another service may already be using the port. In this case, the
-  port number is randomly assigned.
+* アプリを外部に公開: アプリを外部に公開します。基本的に、ターミナルやJupyter Notebookサービスなどの
+  Webサービスは未認証と見なされるため、サービスURLを知っていても他のユーザーはアクセスできません。
+  ただし、このオプションをチェックすると、サービスURL（およびポート番号）を知っている人なら
+  誰でもアクセスして使用できるようになります。
+  もちろん、ユーザーはサービスにアクセスするためのネットワーク経路を持っている必要があります。
+* 優先ポートを試す: このオプションをチェックしない場合、WebサービスのポートはBackend.AIが事前に準備した
+  ポートプールからランダムに割り当てられます。
+  このオプションをチェックして特定のポート番号を入力すると、入力したポート番号が最初に試行されます。
+  ただし、ポートがポートプールにまったく存在しない、または他のサービスが既にそのポートを使用している
+  可能性があるため、常に希望のポートが割り当てられる保証はありません。
+  この場合、ポート番号はランダムに割り当てられます。
 
-Depending on the system configuration, these options may not be shown.
+システム構成によっては、これらのオプションが表示されない場合があります。
 :::
 
-Let's click on Jupyter Notebook.
+Jupyter Notebookをクリックしてみましょう。
 
 ![](../images/jupyter_app.png)
 
-Pop up windows will show that Jupyter Notebook is running. This
-notebook was created inside a running compute session and can be used easily
-with the click of a button. Also, there is no need for a separate package installation process because the language environment and
-library provided by the computation session can be used as it is. For detailed
-instructions on how to use Jupyter Notebook, please refer to the official Jupyter Notebook
-documentation.
+新しいウィンドウが開き、Jupyter Notebookが実行されていることが確認できます。
+このNotebookは実行中のコンピュートセッション内で作成されており、ボタンをクリックするだけで簡単に使用できます。
+また、コンピュートセッションが提供する言語環境とライブラリをそのまま使用できるため、
+別途パッケージをインストールする必要はありません。
+Jupyter Notebookの詳しい使い方については、Jupyter Notebookの公式ドキュメントを参照してください。
 
-`id_container file` in the notebook's file explorer, contains a private
-SSH key. If necessary, ユーザーs can download it and use it for SSH / SFTP access to
-the container.
+Notebookのファイルエクスプローラーにある`id_container`ファイルには、SSHの秘密鍵が含まれています。
+必要に応じて、ユーザーはこれをダウンロードし、コンテナへのSSH/SFTP接続に使用できます。
 
-Click the 'NEW' button at the top right and select the Notebook for Backend.AI,
-then the ipynb window appears where ユーザーs can enter their own code.
+右上の「NEW」ボタンをクリックして「Notebook for Backend.AI」を選択すると、
+ユーザーがコードを入力できるipynbウィンドウが表示されます。
 
 ![](../images/backendai_notebook_menu.png)
 
-In this window, ユーザーs can enter and execute any code that they want by using the
-environment that session provides. The code is executed on one of the
-Backend.AI nodes where the compute session is actually created and there is no
-need to configure a separate environment on the local machine.
+このウィンドウでは、ユーザーはセッションが提供する環境を使用して、任意のコードを入力して実行できます。
+コードは、コンピュートセッションが実際に作成されているBackend.AIのノードで実行され、
+ローカルマシン上に別途環境を構成する必要はありません。
 
 ![](../images/notebook_code_execution.png)
 
-When window is closed, `Untitled.ipynb` file can be founded in the notebook file explorer.
-Note that the files created here are deleted when session is terminated. The way to preserve those files even
-after the session is terminated is described in the データとストレージ フォルダー section.
+ウィンドウを閉じると、Notebookファイルエクスプローラーで`Untitled.ipynb`ファイルを確認できます。
+ここで作成されたファイルは、セッションが終了すると削除される点に注意してください。
+セッションが終了した後もファイルを保存する方法については、データとストレージフォルダセクションで説明しています。
 
 ![](../images/untitled_ipynb_created.png)
 
 
-## Use web terminal
+## ウェブターミナルを使う
 
-This section will explain how to use the web terminal. Click the
-terminal icon(second button) to use the container's ttyd app. A terminal will appear in a new window
-and ユーザーs can run shell commands to access the computational session as shown in the following figure.
-If familiar with the commands, ユーザーs can easily run various Linux commands. `Untitled.ipynb` file
-can be found in Jupyter Notebook, which is listed with the `ls` command. This shows that both apps
-are running in the same container environment.
+このセクションでは、ウェブターミナルの使用方法について説明します。
+ターミナルアイコン（2番目のボタン）をクリックすると、コンテナのttydアプリを使用できます。
+新しいウィンドウにターミナルが表示され、次の図のようにシェルコマンドを実行してコンピュートセッションにアクセスできます。
+コマンドに慣れている場合は、さまざまなLinuxコマンドを簡単に実行できます。
+Jupyter Notebookで作成した`Untitled.ipynb`ファイルが、`ls`コマンドでも一覧に表示されていることが確認できます。
+これは、両方のアプリが同じコンテナ環境で実行されていることを示しています。
 
 ![](../images/session_terminal.png)
 
-Files created here can also be immediately seen in the Jupyter Notebook as well. Conversely, changes made to files in Jupyter
-Notebook can also be checked right from the terminal. This is because they are using the same files in the same compute session.
+ここで作成したファイルは、Jupyter Notebookでもすぐに確認できます。逆に、Jupyter Notebookで
+ファイルに加えた変更も、ターミナルからすぐに確認できます。これは、同じコンピュートセッション内で
+同じファイルを使用しているためです。
 
-In addition to this, ユーザーs can use web-based services such as TensorBoard, Jupyter
-Lab, etc., depending on the type of environments provided by the compute session.
+このほかにも、コンピュートセッションが提供する実行環境の種類に応じて、
+TensorBoardやJupyter LabなどのWebベースのサービスを利用できます。
 
 
-## Query compute session log
+## コンピュートセッションのログを照会する
 
-Users can view the log of the compute session by clicking the last icon in the
-Control panel of the running compute session.
+実行中のコンピュートセッションのコントロールパネルにある最後のアイコンをクリックすると、
+コンピュートセッションのログを確認できます。
 
 ![](../images/session_log.png)
 
 <a id="rename-running-session"></a>
 
-## Rename running session
+## 実行中のセッションの名前を変更する
 
-Name of the active session can be changed. Click the 'Edit' button in the session detail
-panel to change the session name.
-New session name should also follow the [the authoring rule](#session-naming-rule).
+実行中のセッションの名前を変更できます。セッション詳細パネルで「編集」ボタンをクリックして、
+セッション名を変更します。
+新しいセッション名も[セッション名の命名規則](#session-naming-rule)に従う必要があります。
 
 ![](../images/session_renaming.png)
 
 
 <a id="delete_session"></a>
 
-## Delete a compute session
+## コンピュートセッションを削除する
 
-To terminate a specific session, simply click on the red power button and click
-'Terminate' button in the dialog. Since the data in the folder inside the compute
-session is deleted as soon as the compute session ends, it is recommended to
-move the data to the mounted folder or upload it to the mounted folder from the
-beginning.
+特定のセッションを終了するには、赤い電源ボタンをクリックし、ダイアログで「終了する」ボタンをクリックします。
+コンピュートセッションが終了すると同時にセッション内のフォルダのデータは削除されるため、
+データはマウントされたフォルダに移動するか、最初からマウントされたフォルダにアップロードすることをお勧めします。
 
 ![](../images/session_destroy_dialog.png)
 
 <a id="idleness-checks"></a>
 
-## Idleness checks
+## アイドル状態チェック
 
-Backend.AI supports three types of inactivity (idleness) criteria for automatic garbage
-collection of compute sessions: Max Session Lifetime, Network Idle Timeout, and Utilization
-Checker.
+Backend.AIは、コンピュートセッションの自動ガベージコレクションのために、
+3種類の非アクティブ（アイドル）基準をサポートしています。
+最大セッション寿命、ネットワークアイドルタイムアウト、利用率チェッカーです。
 
-The criteria for session termination can be found in the 'Idle Checks' section of the session detail panel.
+セッション終了の基準は、セッション詳細パネルの「アイドル状態検査」セクションで確認できます。
 
 ![](../images/idle_checks_column.png)
 
-The meaning of idle checkers are as follows, and more detailed explanations can be
-found by clicking the information (i) button in the idle checks section.
+各アイドルチェッカーの意味は次のとおりで、アイドル状態検査セクションの情報（i）ボタンをクリックすると、
+より詳細な説明を確認できます。
 
-- Max Session Lifetime: Force-terminate sessions after this time from creation.
-  This measure prevents sessions from running indefinitely.
-- Network Idle Timeout: Force-terminate sessions that do not exchange data with the ユーザー (browser
-  or web app) after this time. Traffic between the ユーザー and the compute session continuously occurs
-  when the ユーザー interacts with an app, like terminal or Jupyter, by keyboard input, Jupyter cell
-  creation, etc. Jupyter cell creation, etc. If there is no interaction for a certain period, the
-  condition of garbage collection will be met. Even if there is a process executing a job in the
-  compute session, it is subject to termination if there is no ユーザー interaction.
-- Utilization Checker: Resources allocated to a compute session are reclaimed
-  based on the utilization of those resources. The decision to delete is based on
-  the following two factors:
+- 最大セッション寿命: 作成からこの時間が経過したセッションを強制終了します。
+  これにより、セッションが無限に実行されることを防ぎます。
+- ネットワークアイドルタイムアウト: この時間の間、ユーザー（ブラウザまたはWebアプリ）と
+  データのやり取りがないセッションを強制終了します。
+  ユーザーとコンピュートセッション間のトラフィックは、ユーザーがターミナルやJupyterなどのアプリと
+  キーボード入力やJupyterセル作成などで対話する際に継続的に発生します。
+  一定期間対話がない場合、ガベージコレクションの条件が満たされます。
+  コンピュートセッション内でジョブを実行しているプロセスがあっても、
+  ユーザーの対話がなければ終了の対象となります。
+- 利用率チェッカー: コンピュートセッションに割り当てられたリソースは、
+  そのリソースの使用状況に基づいて回収されます。
+  削除の判断は、次の2つの要素に基づいて行われます。
 
-  - Grace Period: The time during which the utilization idle checker is
-    inactive. Even with low usage, the compute session won't be terminated during
-    this period. However, once the grace period is over, if the average
-    utilization remain below the threshold during the set idle timeout period,
-    the system can terminate the session at any time. The grace period is
-    merely a guaranteed duration during which termination does not occur. This
-    measure is primarily for efficient management of low-usage GPU resources.
-  - Utilization Threshold: If the resource utilization of a compute session does
-    not exceed the set threshold for a certain duration (idle timeout), that
-    session will be automatically terminated. For example, if the accelerator
-    utilization threshold is set to 1%, and a compute session shows a
-    utilization of less than 1% over the idle timeout, it becomes a target for
-    termination. Resources with empty values are excluded from the garbage
-    collection criteria.
+  - 猶予期間: 利用率アイドルチェッカーが非アクティブな期間です。
+    使用率が低くても、この期間中はコンピュートセッションは終了されません。
+    ただし、猶予期間が終了すると、設定されたアイドルタイムアウト期間中の平均利用率が
+    しきい値を下回った場合、システムはいつでもセッションを終了できます。
+    猶予期間は、単に終了が発生しないことが保証される期間に過ぎません。
+    これは主に、使用率の低いGPUリソースを効率的に管理するための措置です。
+  - 利用率しきい値: コンピュートセッションのリソース利用率が一定期間（アイドルタイムアウト）内に
+    設定されたしきい値を超えない場合、そのセッションは自動的に終了されます。
+    たとえば、アクセラレータ利用率のしきい値が1%に設定されていて、アイドルタイムアウト期間中の
+    コンピュートセッションの利用率が1%未満であれば、終了の対象となります。
+    値が空のリソースは、ガベージコレクションの基準から除外されます。
 
 :::note
-After the grace period, sessions can be terminated anytime if utilization
-remains low. Briefly using the resources does not extend the grace period.
-Only the average utilization over the last idle timeout is considered.
+猶予期間が経過した後は、利用率が低い状態が続く場合、いつでもセッションが終了される可能性があります。
+リソースを短時間使用しても、猶予期間は延長されません。
+直近のアイドルタイムアウト期間における平均利用率のみが考慮されます。
 :::
 
-Hovering the mouse over the Utilization Checker will display a tooltip with the
-utilization and threshold values. The text color changes to yellow and then red
-as the current utilization approaches the threshold (indicating low resource
-utilization).
+利用率チェッカーにマウスを合わせると、利用率としきい値を示すツールチップが表示されます。
+現在の利用率がしきい値に近づくにつれて（リソース利用率が低いことを示します）、
+テキストの色が黄色、赤の順に変化します。
 
 
 :::note
-Depending on the environment settings, idle checkers and resource types of
-utilization checker's tooltip may be different.
+環境設定によっては、利用率チェッカーのツールチップに表示されるアイドルチェッカーと
+リソース種別が異なる場合があります。
 :::
 
 <a id="how-to-add-environment-variable-before-creating-a-session"></a>
 
-## How to add environment variable before creating a session
+## セッション作成前に環境変数を追加する方法
 
-To give more convenient workspace for ユーザーs, Backend.AI supports environment variable setting
-in session launching. In this feature, ユーザーs can add any envs such as `PATH` by filling out
-variable name and value in environment configuration dialog.
+より便利な作業環境をユーザーに提供するために、Backend.AIはセッション起動時の環境変数設定をサポートしています。
+この機能では、環境変数設定ダイアログに変数名と値を入力することで、
+ユーザーは`PATH`などの任意の環境変数を追加できます。
 
-To add environment variable, simply click '+ Add environment variables' button of the Variable.
-Also, you can remove the variable by clicking '-' button of the row that you want to get rid of.
+環境変数を追加するには、「＋ 環境変数を追加」ボタンをクリックするだけです。
+また、削除したい行の「-」ボタンをクリックすることで、環境変数を削除できます。
 
 ![](../images/launch_session_env.png)
 
-You can write down variable name and value in the same line of the input fields.
+入力フィールドの同じ行に変数名と値を記述できます。
 
 
 <a id="set-preopen-ports"></a>
 
-## How to add preopen ports before creating a session
+## セッション作成前に事前オープンポートを追加する方法
 
-Backend.AI supports preopen ports setting at container startup. When using this feature, there is no need to build
-separate images when you want to expose the serving port.
+Backend.AIは、コンテナ起動時の事前開放ポート設定をサポートしています。
+この機能を使用すると、サービングポートを公開したい場合に別途イメージをビルドする必要はありません。
 
-To add preopen ports, simply enter multiple values separated by either a comma (,) or a space.
+事前開放ポートを追加するには、カンマ（,）またはスペースで区切って複数の値を入力するだけです。
 
 ![](../images/preopen-ports-config.png)
 
-In the forth page of session creation page, ユーザーs can add, update and delete written preopen ports. To see more detail
-information, please click 'Help (?)'' button.
+セッション作成ページの4ページ目では、ユーザーは記述した事前開放ポートを追加、更新、削除できます。
+詳細については、「案内(ヘルプ)」ボタン（?）をクリックしてください。
 
-Users can put port numbers in between 1024 ~ 65535, to the input fields. Then, press 'Enter'. Users can specify multiple ports, separated by commas (,).
-Users can check the configured preopen ports in the session app launcher.
+入力フィールドに1024～65535のポート番号を入力し、「Enter」を押します。
+ユーザーは複数のポートをカンマ（,）で区切って指定できます。
+設定した事前開放ポートは、セッションのアプリランチャーで確認できます。
 
 ![](../images/session_app_launcher.png)
 
 
 :::note
-The preopen ports are **the internal ports within the container**. Therefore, unlike other apps, when ユーザーs click the
-preopen ports in the session app launcher, a blank page will appear. Please bind a server to the respective port
-before use.
+事前開放ポートは**コンテナ内部のポート**です。したがって、他のアプリとは異なり、
+ユーザーがセッションのアプリランチャーで事前開放ポートをクリックすると、空白のページが表示されます。
+使用する前に、各ポートにサーバーをバインドしてください。
 :::
 
 <a id="save-session-commit"></a>
 
-## Save session commit
+## セッションコミットを保存する
 
 
-Backend.AI supports \"Convert Session to Image\" feature from 24.03. Committing a `RUNNING` session will save the
-current state of the session as a new image. Click the 'Commit' button (the fourth icon) in the session detail panel
-to open a dialog displaying the session information. After entering the session name, ユーザーs can convert the session to
-a new image. The session name must be 4 to 32 characters long and can only contain alphanumeric letters, hyphens (`-`),
-or underscores (`_`).
+Backend.AIは24.03から「セッションをイメージに変換」機能をサポートしています。
+`RUNNING`状態のセッションをコミットすると、セッションの現在の状態が新しいイメージとして保存されます。
+セッション詳細パネルで「コミットする」ボタン（4番目のアイコン）をクリックすると、
+セッション情報が表示されたダイアログが開きます。
+セッション名を入力すると、ユーザーはセッションを新しいイメージに変換できます。
+セッション名は4～32文字で、英数字、ハイフン（`-`）、アンダースコア（`_`）のみ使用できます。
 
 ![](../images/push_session_to_customized_image.png)
 
-After filling out session name in the input field, click the 'PUSH SESSION TO CUSTOMIZED IMAGE' button.
-The customized image created in this way can be used in future session creations. However, directories
-mounted to the container for image commits are considered external resources and are not included in
-the final image. Remember that `/home/work` is a mount folder (scratch directory), so it is not included.
+入力フィールドにセッション名を入力した後、「PUSH SESSION TO CUSTOMIZED IMAGE」ボタンをクリックします。
+この方法で作成したカスタマイズイメージは、今後のセッション作成時に使用できます。
+ただし、イメージコミットのためにコンテナにマウントされたディレクトリは外部リソースと見なされ、
+最終イメージには含まれません。`/home/work`はマウントフォルダ（スクラッチディレクトリ）であるため、
+含まれない点に注意してください。
 
 
 :::note
-Currently, Backend.AI supports "Convert Session to Image" only when the session is in `INTERACTIVE` mode.
-To prevent unexpected error, ユーザーs may not be able to terminate the session during committing process.
-To stop the ongoing process, check the session, and force-terminate it.
+現在、Backend.AIはセッションが`INTERACTIVE`モードの場合にのみ「セッションをイメージに変換」機能をサポートしています。
+予期しないエラーを防ぐため、コミット処理中はセッションを終了できない場合があります。
+進行中の処理を停止するには、該当セッションを確認して強制終了してください。
 :::
 
 :::note
-The number of times to "Convert Session to Image" may be limited by the ユーザー resource policy. In this case,
-[remove the existing customized image](#delete-customized-image) and try again. If this does not resolves
-the problem, please contact the 管理者istrator.
+「セッションをイメージに変換」の回数は、ユーザーリソースポリシーによって制限される場合があります。
+この場合、[既存のカスタマイズイメージを削除](#delete-customized-image)してから再度お試しください。
+それでも問題が解決しない場合は、管理者にお問い合わせください。
 :::
 
 
-## Utilizing converted images of ongoing sessions
+## 進行中のセッションの変換済みイメージを活用する
 
-Converting an ongoing session into an image allows ユーザーs to select this image from the environments in the session launcher
-when creating a new session. This image is not exposed to other ユーザーs and is useful for continuing to use the current session
-state as is. The converted image is tagged with `Customized<session name>`.
+進行中のセッションをイメージに変換すると、新しいセッションを作成する際に、
+セッションランチャーの実行環境からこのイメージを選択できます。
+このイメージは他のユーザーには公開されず、現在のセッションの状態をそのまま引き続き使用したい場合に便利です。
+変換されたイメージには`Customized<セッション名>`というタグが付けられます。
 
 ![](../images/select_customized_image.png)
 
-To manually enter the environment name for future session creation, please click the copy icon.
+今後のセッション作成のために実行環境名を手動で入力するには、コピーアイコンをクリックしてください。
 
 ![](../images/copy_customized_image.png)
 
 
-## Advanced web terminal usage
+## ウェブターミナルの高度な使い方
 
-The web-based terminal internally embeds a utility called
-[tmux](https://github.com/tmux/tmux/wiki). tmux is a terminal multiplexer that
-supports to open multiple shell windows within a single shell, so as to allow
-multiple programs to run in foreground simultaneously. If ユーザーs want to take
-advantage of more powerful tmux features, they can refer to the official tmux
-documentation and other usage examples on the Internet.
+ウェブベースのターミナルには、内部的に[tmux](https://github.com/tmux/tmux/wiki)というユーティリティが組み込まれています。
+tmuxは、1つのシェル内で複数のシェルウィンドウを開くことをサポートするターミナルマルチプレクサーで、
+複数のプログラムをフォアグラウンドで同時に実行できるようにします。
+tmuxのより強力な機能を活用したい場合は、tmuxの公式ドキュメントや、インターネット上のさまざまな使用例を参照してください。
 
-Here we are introducing some simple but useful features.
+ここでは、いくつかのシンプルで便利な機能を紹介します。
 
-### Copy terminal contents
+### ターミナルの内容をコピーする
 
-tmux offers a number of useful features, but it's a bit confusing for first-time
-ユーザーs. In particular, tmux has its own clipboard buffer, so when copying the
-contents of the terminal, ユーザーs can suffer from the fact that it can be pasted
-only within tmux by default. Furthermore, it is difficult to expose ユーザー
-system's clipboard to tmux inside web browser, so the terminal
-contents cannot be copied and pasted to other programs of ユーザー's computer. The
-so-called `Ctrl-C` / `Ctrl-V` is not working with tmux.
+tmuxには多くの便利な機能がありますが、初めて使用するユーザーにとっては少し戸惑うかもしれません。
+特に、tmuxは独自のクリップボードバッファを持っているため、ターミナルの内容をコピーする際、
+既定ではtmux内でしか貼り付けできないという問題が発生する場合があります。
+さらに、Webブラウザ内のtmuxにユーザーのシステムクリップボードを公開するのは難しく、
+ターミナルの内容をユーザーのコンピュータ上の他のプログラムにコピー＆ペーストすることはできません。
+いわゆる`Ctrl-C` / `Ctrl-V`はtmuxでは動作しません。
 
-If copy and paste of terminal contents is needed to system's clipboard,
-ユーザーs can temporarily turn off tmux's mouse support. First, press `Ctrl-B` key
-to enter tmux control mode. Then type `:set -g mouse off` and press `Enter`
-(note to type the first colon as well). Users can check what they are
-typing in the status bar at the bottom of the screen. Then drag the desired text
-from the terminal with the mouse and press the `Ctrl-C` or `Cmd-C` (in マック)
-to copy them to the clipboard of the ユーザー's computer.
+ターミナルの内容をシステムのクリップボードにコピー＆ペーストする必要がある場合、
+ユーザーは一時的にtmuxのマウスサポートをオフにすることができます。
+まず、`Ctrl-B`キーを押してtmux制御モードに入ります。次に、`:set -g mouse off`と入力して
+`Enter`キーを押します（先頭のコロンも入力することに注意してください）。
+画面下部のステータスバーで、入力内容を確認できます。
+その後、ターミナルから必要なテキストをマウスでドラッグし、`Ctrl-C`または`Cmd-C`（マックの場合）を押して、
+ユーザーのコンピュータのクリップボードにコピーします。
 
-With mouse support turned off, scrolling through the mouse wheel is not supprted, to see
-the contents of the previous page from the terminal. In this case, ユーザーs can turn
-on mouse support. Press `Ctrl-B`, and this time, type `:set -g mouse
-on`. Now scrolling through mouse wheelis available to see the contents of the previous page.
+マウスサポートをオフにすると、マウスホイールでターミナルの前のページの内容をスクロールできません。
+この場合、ユーザーはマウスサポートを再度オンにすることができます。
+`Ctrl-B`を押し、今度は`:set -g mouse on`と入力します。これで、マウスホイールでスクロールして
+前のページの内容を確認できるようになります。
 
-If you remember `:set -g mouse off` or `:set -g mouse on` after `Ctrl-B`,
-you can use the web terminal more conveniently.
+`Ctrl-B`の後に`:set -g mouse off`または`:set -g mouse on`を覚えておくと、
+ウェブターミナルをより便利に使用できます。
 
 
 :::note
-`Ctrl-B` is tmux's default control mode key. If ユーザーs set another control key
-by modifying `.tmux.conf` in ユーザー home directory, they should press the set
-key combination instead of `Ctrl-B`.
+`Ctrl-B`はtmuxの既定の制御モードキーです。ユーザーのホームディレクトリにある`.tmux.conf`を修正して
+別の制御キーを設定している場合は、`Ctrl-B`の代わりに設定したキーの組み合わせを押してください。
 :::
 
 :::note
-In the ウィンドウズ environment, refer to the following shortcuts.
+ウィンドウズ環境では、次のショートカットを参照してください。
 
-* Copy: Hold down `Shift`, right-click and drag
-* Paste: Press `Ctrl-Shift-V`
+* コピー: `Shift`を押しながら、マウスの右ボタンをクリックしてドラッグします。
+* ペースト: `Ctrl-Shift-V`を押します。
 :::
 
-### Check the terminal history using keyboard
+### キーボードを使ってターミナルの履歴を確認する
 
-There is also a way to copy the terminal contents and check the previous
-contents of the terminal simultaneously. It is to check the previous contents
-using the keyboard. Again, click `Ctrl-B` first, and then press the `Page
-Up` and/or `Page Down` keys. To exit search mode, just press the `q`
-key. With this method, ユーザーs can check the contents of the terminal history even
-when the mouse support is turned off.
+ターミナルの内容をコピーしながら、同時にターミナルの以前の内容を確認する方法もあります。
+キーボードを使って以前の内容を確認する方法です。
+まず`Ctrl-B`をクリックし、次に`Page Up`および/または`Page Down`キーを押します。
+検索モードを終了するには、`q`キーを押すだけです。
+この方法を使うと、マウスサポートがオフになっている場合でも、ターミナルの履歴内容を確認できます。
 
 <a id="tmux_guide"></a>
 
-### Spawn multiple shells
+### 複数のシェルを起動する
 
-The main advantage of tmux is to launch and use multiple shells in one
-terminal window. Pressing `Ctrl-B` key and `c`. will show the new shell environment.
-Previous window is not visible at this point, but is not terminated.
-Press `Ctrl-B` and `w`. List of shells currently open on tmux is shown.
-Shell starting with `0:` is the initial shell environment, and the shell
-starting with `1:` is the one just created. Users can move between shells
-using the up/down keys. Place the cursor on the shell `0:` and press the Enter
-key to select it.
+tmuxの主な利点は、1つのターミナルウィンドウで複数のシェルを起動して使用できることです。
+`Ctrl-B`キーを押してから`c`を押すと、新しいシェル環境が表示されます。
+この時点で前のウィンドウは表示されなくなりますが、終了したわけではありません。
+`Ctrl-B`を押してから`w`を押します。現在tmuxで開いているシェルのリストが表示されます。
+`0:`で始まるシェルが最初のシェル環境で、`1:`で始まるシェルは今作成したシェルです。
+ユーザーは上下キーでシェル間を移動できます。カーソルを`0:`のシェルに置き、
+Enterキーを押して選択します。
 
 ![](../images/tmux_multi_session_pane.png)
 
-In this way, ユーザーs can use multiple shell environments within a web terminal. To exit or terminate the
-current shell, just enter `exit` command or press `Ctrl-B x` key and then
-type `y`.
+このように、ユーザーはウェブターミナル内で複数のシェル環境を使用できます。
+現在のシェルを終了するには、`exit`コマンドを入力するか、
+`Ctrl-B x`キーを押してから`y`と入力します。
 
-In summary:
+まとめると次のとおりです。
 
-- `Ctrl-B c`: create a new tmux shell
-- `Ctrl-B w`: query current tmux shells and move around among them
-- `exit` or `Ctrl-B x`: terminate the current shell
+- `Ctrl-B c`: 新しいtmuxシェルを作成する
+- `Ctrl-B w`: 現在のtmuxシェルを照会して移動する
+- `exit`または`Ctrl-B x`: 現在のシェルを終了する
 
-Combining the above commands allows ユーザーs to perform various tasks simultaneously
-on multiple shells.
+上記のコマンドを組み合わせることで、ユーザーは複数のシェル上でさまざまなタスクを同時に実行できます。

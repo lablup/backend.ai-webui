@@ -1,10 +1,10 @@
 :::warning
-This feature is deprecated, so please use the [dashboard](../dashboard/dashboard.md) page going forward. Also, technical support and bug fixes for this feature are no longer provided. Please understand that issues may not be addressed.
+คุณสมบัตินี้ถูกยกเลิกการใช้งานแล้ว ดังนั้นโปรดใช้หน้า[แดชบอร์ด](../dashboard/dashboard.md)แทนต่อจากนี้ นอกจากนี้ การสนับสนุนทางเทคนิคและการแก้ไขข้อบกพร่องสำหรับคุณสมบัตินี้จะไม่ให้บริการอีกต่อไป โปรดเข้าใจว่าปัญหาต่าง ๆ อาจไม่ได้รับการแก้ไข
 :::
 
 # หน้าสรุป
 
-On the สรุป page, ผู้ใช้s can check resource status and session usage.
+ที่หน้าสรุป ผู้ใช้สามารถตรวจสอบสถานะทรัพยากรและการใช้งานเซสชันได้
 
 ![](../images/summary.png)
 
@@ -24,16 +24,16 @@ On the สรุป page, ผู้ใช้s can check resource status and sess
 
 ### ดาวน์โหลดแอป Backend.AI Web UI
 
-Backend.AI WebUI supports desktop applications.
-By using desktop app, you can use desktop app specific features, such as [SSH/SFTP connection to a Compute Session](../sftp_to_container/sftp_to_container.md#ssh-sftp-container).
-For now Backend.AI WebUI provides desktop application with following OS:
+Backend.AI WebUI รองรับแอปพลิเคชันเดสก์ท็อป
+เมื่อใช้แอปเดสก์ท็อป คุณจะสามารถใช้คุณสมบัติเฉพาะของแอปเดสก์ท็อปได้ เช่น [การเชื่อมต่อ SSH/SFTP ไปยังเซสชันการคำนวณ](../sftp_to_container/sftp_to_container.md#ssh-sftp-container)
+ในขณะนี้ Backend.AI WebUI ให้บริการแอปพลิเคชันเดสก์ท็อปบนระบบปฏิบัติการต่อไปนี้:
 
-- หน้าต่าง
-- ลินุกซ์
-- แมค
+- Windows
+- Linux
+- Mac
 
 
 :::note
-When you click the button that match with your local environment (e.g. OS, Architecture), It will automatically downloads the same version of current webUI version.
-If you want to download later or former version of WebUI as a desktop app, please visit [here](https://github.com/lablup/backend.ai-webui/releases?page=1) and download the desired version(s).
+เมื่อคุณคลิกปุ่มที่ตรงกับสภาพแวดล้อมท้องถิ่นของคุณ (เช่น ระบบปฏิบัติการ สถาปัตยกรรม) ระบบจะดาวน์โหลดเวอร์ชันเดียวกันกับเวอร์ชัน WebUI ปัจจุบันโดยอัตโนมัติ
+หากคุณต้องการดาวน์โหลด WebUI เวอร์ชันใหม่กว่าหรือเก่ากว่าเป็นแอปเดสก์ท็อป โปรดเข้าชม[ที่นี่](https://github.com/lablup/backend.ai-webui/releases?page=1)และดาวน์โหลดเวอร์ชันที่ต้องการ
 :::

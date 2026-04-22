@@ -4,43 +4,23 @@
 
 ## การใช้ GPU เสมือนและการจัดสรร GPU แบบเศษส่วน
 
-Backend.AI supports GPU virtualization technology which allows single physical
-GPU can be divided and shared by multiple ผู้ใช้s simultaneously. Therefore, if
-you want to execute a task that does not require much GPU computation
-capability, you can create a compute session by allocating a portion of the GPU.
-The amount of GPU resources that 1 fGPU actually allocates may vary from system
-to system depending on ผู้ดูแลระบบistrator settings. For example, if the ผู้ดูแลระบบistrator
-has set one physical GPU to be divided into five pieces, 5 fGPU means 1 physical
-GPU, or 1 fGPU means 0.2 physical GPU. If you set 1 fGPU when creating a compute
-session, the session can utilize the streaming multiprocessor (SM) and GPU
-memory equivalent to 0.2 physical GPU.
+Backend.AI รองรับเทคโนโลยีการจำลอง GPU (GPU virtualization) ซึ่งช่วยให้ GPU ทางกายภาพเพียงตัวเดียวสามารถถูกแบ่งและแชร์ให้ผู้ใช้หลายคนใช้งานพร้อมกันได้ ดังนั้น หากคุณต้องการดำเนินงานที่ไม่ต้องใช้กำลังการประมวลผล GPU มากนัก คุณสามารถสร้างเซสชันการคำนวณโดยการจัดสรร GPU เพียงบางส่วนได้ ปริมาณทรัพยากร GPU ที่ 1 fGPU จัดสรรให้จริงอาจแตกต่างกันไปในแต่ละระบบ ขึ้นอยู่กับการตั้งค่าของผู้ดูแลระบบ ตัวอย่างเช่น หากผู้ดูแลระบบตั้งค่าให้หนึ่ง GPU ทางกายภาพถูกแบ่งออกเป็นห้าส่วน 5 fGPU จะหมายถึง 1 GPU ทางกายภาพ หรือ 1 fGPU จะเท่ากับ 0.2 GPU ทางกายภาพ หากคุณตั้งค่า 1 fGPU เมื่อสร้างเซสชันการคำนวณ เซสชันนั้นจะสามารถใช้งานสตรีมมิงมัลติโปรเซสเซอร์ (SM) และหน่วยความจำ GPU เทียบเท่ากับ 0.2 GPU ทางกายภาพได้
 
 ในส่วนนี้ เราจะสร้างเซสชันการคำนวณโดยการจัดสรรส่วนหนึ่งของ GPU แล้วตรวจสอบว่า GPU ที่ถูกตรวจพบภายในคอนเทนเนอร์การคำนวณนั้นตรงกับ GPU ฟิสิกส์บางส่วนจริงหรือไม่
 
-First, let's check the type of physical GPU installed in the
-host node and the amount of memory. The GPU node used in this guide is equipped
-with a GPU with 8 GB of memory as in the following figure. And through the
-ผู้ดูแลระบบistrator settings, 1 fGPU is set to an amount equivalent to 0.5 physical
-GPU (or 1 physical GPU is 2 fGPU).
+ก่อนอื่น ให้ตรวจสอบประเภทของ GPU ทางกายภาพที่ติดตั้งอยู่บนโหนดโฮสต์ รวมถึงปริมาณหน่วยความจำ โหนด GPU ที่ใช้ในคู่มือนี้มี GPU ที่มีหน่วยความจำ 8 GB ติดตั้งอยู่ ดังที่แสดงในภาพต่อไปนี้ และด้วยการตั้งค่าของผู้ดูแลระบบ 1 fGPU ถูกกำหนดให้เท่ากับ 0.5 GPU ทางกายภาพ (หรือ 1 GPU ทางกายภาพเท่ากับ 2 fGPU)
 
 ![](../images/host_gpu.png)
 
-Now let's go to the เซสชัน page and create a compute session by allocating 0.5
-fGPU as follows:
+ตอนนี้ ให้ไปที่หน้าเซสชันและสร้างเซสชันการคำนวณโดยจัดสรร 0.5 fGPU ดังนี้:
 
 ![](../images/session_launch_dialog_with_gpu.png)
 
-In the AI Accelerator panel of the session list, you can see that
-0.5 fGPU is allocated.
+ในแผง AI Accelerator ของรายการเซสชัน คุณจะเห็นว่ามีการจัดสรร 0.5 fGPU
 
 ![](../images/session_list_with_gpu.png)
 
-Now, let's connect directly to the container and check if the allocated GPU
-memory is really equivalent to 0.5 units (~2 GB). Let's bring up a web
-terminal. When the terminal comes up, run the `nvidia-smi` command. As you can
-see in the following figure, you can see that about 2 GB of GPU memory is
-allocated. This shows that the physical GPU is actually divided into quarters and allocated inside the
-container for this compute session, which is not possible by a way like PCI passthrough.
+ตอนนี้ ให้เชื่อมต่อไปยังคอนเทนเนอร์โดยตรง และตรวจสอบว่าหน่วยความจำ GPU ที่ถูกจัดสรรนั้นเทียบเท่ากับ 0.5 หน่วยจริง (~2 GB) หรือไม่ ให้เปิดเว็บเทอร์มินัล เมื่อเทอร์มินัลเปิดขึ้น ให้รันคำสั่ง `nvidia-smi` ดังที่คุณเห็นในภาพต่อไปนี้ คุณจะเห็นว่ามีการจัดสรรหน่วยความจำ GPU ประมาณ 2 GB ซึ่งแสดงให้เห็นว่า GPU ทางกายภาพถูกแบ่งออกและจัดสรรเข้าไปในคอนเทนเนอร์สำหรับเซสชันการคำนวณนี้จริง ซึ่งไม่สามารถทำได้ด้วยวิธีการอย่าง PCI passthrough
 
 ![](../images/nvidia_smi_inside_container.png)
 
@@ -48,15 +28,11 @@ container for this compute session, which is not possible by a way like PCI pass
 
 ![](../images/mnist_train.png)
 
-While training is in progress, connect to the shell of the GPU host node and
-execute the `nvidia-smi` command. You can see that there is one GPU attached
-to the process and this process is occupying about 25% of the resources of the
-physical GPU. (GPU occupancy can vary greatly depending on training code and GPU
-model.)
+ในระหว่างที่กำลังฝึกสอน ให้เชื่อมต่อเข้ากับเชลล์ของโหนดโฮสต์ GPU และรันคำสั่ง `nvidia-smi` คุณจะเห็นว่ามี GPU หนึ่งตัวเชื่อมต่ออยู่กับโปรเซส และโปรเซสนี้กำลังใช้ทรัพยากรประมาณ 25% ของ GPU ทางกายภาพ (อัตราการใช้งาน GPU อาจแตกต่างกันมากขึ้นอยู่กับโค้ดการฝึกสอนและรุ่นของ GPU)
 
 ![](../images/host_nvidia_smi.png)
 
-Alternatively, you can run the `nvidia-smi` command from the web terminal to query the GPU usage history inside the container.
+อีกวิธีหนึ่ง คุณสามารถรันคำสั่ง `nvidia-smi` จากเว็บเทอร์มินัลเพื่อเรียกดูประวัติการใช้งาน GPU ภายในคอนเทนเนอร์ได้
 
 
 <a id="automated-job-scheduling"></a>
@@ -88,31 +64,27 @@ Backend.AI มีภาพเคอร์เนล ML และ HPC ที่ส
 
 ![](../images/various_kernel_images.png)
 
-Here, let's select the TensorFlow 2.3 environment and created a session.
+ที่นี่ ให้เลือกสภาพแวดล้อม TensorFlow 2.3 และสร้างเซสชัน
 
 ![](../images/session_launch_dialog_tf23.png)
 
-Open the web terminal of the created session and run the following Python
-command. You can see that TensorFlow 2.3 version is installed.
+เปิดเว็บเทอร์มินัลของเซสชันที่สร้างขึ้น และรันคำสั่ง Python ต่อไปนี้ คุณจะเห็นว่ามีการติดตั้ง TensorFlow เวอร์ชัน 2.3 อยู่
 
 ![](../images/tf23_version_print.png)
 
-This time, let's select the TensorFlow 1.15 environment to create a compute
-session. If resources are insufficient, delete the previous session.
+คราวนี้ ให้เลือกสภาพแวดล้อม TensorFlow 1.15 เพื่อสร้างเซสชันการคำนวณ หากทรัพยากรไม่เพียงพอ ให้ลบเซสชันก่อนหน้าออก
 
 ![](../images/session_launch_dialog_tf115.png)
 
-Open the web terminal of the created session and run the same Python command as
-before. You can see that TensorFlow 1.15(.4) version is installed.
+เปิดเว็บเทอร์มินัลของเซสชันที่สร้างขึ้นแล้วรันคำสั่ง Python เดียวกันกับที่ทำก่อนหน้านี้ คุณจะเห็นว่ามีการติดตั้ง TensorFlow เวอร์ชัน 1.15(.4) อยู่
 
 ![](../images/tf115_version_print.png)
 
-Finally, create a compute session using PyTorch version 1.7.
+สุดท้าย ให้สร้างเซสชันการคำนวณโดยใช้ PyTorch เวอร์ชัน 1.7
 
 ![](../images/session_launch_dialog_pytorch17.png)
 
-Open the web terminal of the created session and run the following Python
-command. You can see that PyTorch 1.8 version is installed.
+เปิดเว็บเทอร์มินัลของเซสชันที่สร้างขึ้น และรันคำสั่ง Python ต่อไปนี้ คุณจะเห็นว่ามีการติดตั้ง PyTorch เวอร์ชัน 1.8 อยู่
 
 ![](../images/pytorch17_version_print.png)
 

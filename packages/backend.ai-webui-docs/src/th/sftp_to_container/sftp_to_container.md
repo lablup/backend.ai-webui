@@ -1,54 +1,54 @@
 <a id="ssh-sftp-container"></a>
 
-# การเชื่อมต่อ SSH/SFTP ไปยังเซสชันการคอมพิวเตอร์
+# การเชื่อมต่อ SSH/SFTP ไปยังเซสชันการคำนวณ
 
-Backend.AI สนับสนุนการเชื่อมต่อ SSH/SFTP ไปยังเซสชันการคอมพิวเตอร์ที่สร้างขึ้น (คอนเทนเนอร์) ในส่วนนี้เราจะเรียนรู้วิธีทำเช่นนั้น
+Backend.AI สนับสนุนการเชื่อมต่อ SSH/SFTP ไปยังเซสชันการคำนวณที่สร้างขึ้น (คอนเทนเนอร์) ในส่วนนี้เราจะเรียนรู้วิธีทำเช่นนั้น
 
 :::note
-From 24.03 SSH/SFTP connection feature is available in both Web browser and WebUI Desktop application.
-When the version is 23.09 or lower version, you need to use WebUI Desktop app. Desktop app can be downloaded
-a panel from the สรุป page. Using this panel, the compatible version will be downloaded automatically.
+ตั้งแต่เวอร์ชัน 24.03 เป็นต้นไป ฟีเจอร์การเชื่อมต่อ SSH/SFTP สามารถใช้งานได้ทั้งในเว็บเบราว์เซอร์และแอปพลิเคชัน WebUI Desktop
+เมื่อเวอร์ชันเป็น 23.09 หรือต่ำกว่า คุณจำเป็นต้องใช้แอป WebUI Desktop สามารถดาวน์โหลดแอป Desktop
+ได้จากแผงในหน้าสรุป การใช้แผงนี้จะทำให้เวอร์ชันที่เข้ากันได้ถูกดาวน์โหลดโดยอัตโนมัติ
 
 ![](../images/app_download_panel.png)
 
-You can also download the app from
-https://github.com/lablup/backend.ai-webui/releases. Make sure to download
-the compatible version of the Web-UI in this case. You can check the Web-UI
-version by clicking on the "About Backend.AI" sub-menu located in the
-preference menu on the upper-right side of the GUI.
+คุณยังสามารถดาวน์โหลดแอปได้จาก
+https://github.com/lablup/backend.ai-webui/releases โปรดตรวจสอบให้แน่ใจว่าได้ดาวน์โหลด
+เวอร์ชันของ Web-UI ที่เข้ากันได้ในกรณีนี้ คุณสามารถตรวจสอบเวอร์ชัน Web-UI
+โดยคลิกที่เมนูย่อย "About Backend.AI" ที่อยู่ใน
+เมนูการตั้งค่าที่ด้านขวาบนของ GUI
 :::
 
 
 <a id="for-linux-mac"></a>
 
-## สำหรับ ลินุกซ์ / แมค
+## สำหรับ Linux / Mac
 
-ก่อนอื่น สร้างเซสชันการคอมพิวเตอร์ จากนั้นคลิกที่ไอคอนแอป (ปุ่มแรก) ใน Control ตามด้วยไอคอน SSH / SFTP หลังจากนั้นจะมีการเริ่มต้น daemon ที่อนุญาตให้เข้าถึง SSH/SFTP จากภายในคอนเทนเนอร์ และแอป Web-UI จะทำงานร่วมกับ daemon ผ่านบริการพร็อกซีภายในท้องถิ่น
+ก่อนอื่น สร้างเซสชันการคำนวณ จากนั้นคลิกที่ไอคอนแอป (ปุ่มแรก) ใน Control ตามด้วยไอคอน SSH / SFTP หลังจากนั้นจะมีการเริ่มต้น daemon ที่อนุญาตให้เข้าถึง SSH/SFTP จากภายในคอนเทนเนอร์ และแอป Web-UI จะทำงานร่วมกับ daemon ผ่านบริการพร็อกซีภายในท้องถิ่น
 
 
 :::note
 คุณไม่สามารถสร้างการเชื่อมต่อ SSH/SFTP ไปยังเซสชันจนกว่าคุณจะคลิกที่ไอคอน SSH/SFTP เมื่อคุณปิดแอป Web-UI และเปิดใหม่อีกครั้ง การเชื่อมต่อระหว่างพร็อกซีท้องถิ่นและแอป Web-UI จะถูกสร้างขึ้นใหม่ ดังนั้นจึงต้องคลิกที่ไอคอน SSH/SFTP อีกครั้ง
 :::
 
-Next, a dialog containing SSH/SFTP connection information will be pop up.
-Remember the address (especially the assigned port) written in the SFTP URL and
-click the download link to save the `id_container` file on the local machine.
-This file is an automatically generated SSH private key. Instead of using the
-link, you can also download the `id_container` file located under
-`/home/work/` with your web terminal or Jupyter Notebook. The auto-generated
-SSH key may change when new session is created. In that case, it must be
-downloaded again.
+ถัดไป กล่องโต้ตอบที่มีข้อมูลการเชื่อมต่อ SSH/SFTP จะปรากฏขึ้น
+จดจำที่อยู่ (โดยเฉพาะพอร์ตที่ได้รับมอบหมาย) ที่เขียนใน SFTP URL และ
+คลิกลิงก์ดาวน์โหลดเพื่อบันทึกไฟล์ `id_container` ลงในเครื่องในพื้นที่
+ไฟล์นี้เป็นคีย์ส่วนตัว SSH ที่สร้างขึ้นโดยอัตโนมัติ แทนที่จะใช้
+ลิงก์ คุณยังสามารถดาวน์โหลดไฟล์ `id_container` ที่อยู่ภายใต้
+`/home/work/` ด้วยเทอร์มินัลเว็บหรือ Jupyter Notebook ของคุณได้ คีย์ SSH
+ที่สร้างขึ้นโดยอัตโนมัติอาจเปลี่ยนแปลงเมื่อมีการสร้างเซสชันใหม่ ในกรณีนั้น ต้อง
+ดาวน์โหลดใหม่อีกครั้ง
 
 ![](../images/sftp_app.png)
 
-To เชื่อมต่อ SSH to the compute session with the downloaded SSH private key, you
-run the following command in the shell environment. You should write the
-path to the downloaded `id_container` file after `-i` option and the
-assigned port number after `-p` option. The ผู้ใช้ inside the compute session is
-usually set to `work`, but if your session uses other account, the `work`
-part in `work@127.0.0.1` should be changed to the actual session account.  If
-you run the command correctly, you can see that เชื่อมต่อ SSHion is made to the
-compute session and you are welcomed by the container's shell environment.
+หากต้องการเชื่อมต่อ SSH ไปยังเซสชันการคำนวณด้วยคีย์ส่วนตัว SSH ที่ดาวน์โหลดมา คุณ
+เรียกใช้คำสั่งต่อไปนี้ในสภาพแวดล้อมเชลล์ คุณควรเขียน
+เส้นทางไปยังไฟล์ `id_container` ที่ดาวน์โหลดมาหลังตัวเลือก `-i` และ
+หมายเลขพอร์ตที่ได้รับมอบหมายหลังตัวเลือก `-p` ผู้ใช้ภายในเซสชันการคำนวณ
+โดยปกติจะถูกตั้งค่าเป็น `work` แต่หากเซสชันของคุณใช้บัญชีอื่น ส่วน `work`
+ใน `work@127.0.0.1` ควรเปลี่ยนเป็นบัญชีเซสชันจริง หาก
+คุณเรียกใช้คำสั่งอย่างถูกต้อง คุณจะเห็นว่าการเชื่อมต่อ SSH ถูกสร้างขึ้นไปยัง
+เซสชันการคำนวณ และคุณจะได้รับการต้อนรับด้วยสภาพแวดล้อมเชลล์ของคอนเทนเนอร์
 
 ```shell
 $ ssh \
@@ -60,35 +60,35 @@ Warning: Permanently added '[127.0.0.1]:30722' (RSA) to the list of known hosts.
 f310e8dbce83:~$
 ```
 
-Connecting by SFTP would almost be the same. After running the SFTP client and
-setting public key-based connection method, simply specify `id_container`
-as the SSH private key. Each FTP client may adopt different way, so refer to
-each FTP client manual for details.
+การเชื่อมต่อด้วย SFTP ก็เกือบจะเหมือนกัน หลังจากเรียกใช้ไคลเอ็นต์ SFTP และ
+ตั้งค่าวิธีการเชื่อมต่อด้วยคีย์สาธารณะ เพียงระบุ `id_container`
+เป็นคีย์ส่วนตัว SSH ไคลเอ็นต์ FTP แต่ละตัวอาจใช้วิธีที่แตกต่างกัน ดังนั้นให้ดู
+คู่มือของไคลเอ็นต์ FTP แต่ละตัวสำหรับรายละเอียด
 
 
 :::note
-The SSH/SFTP connection port number is randomly assigned each time when a session
-is created. If you want to use a specific SSH/SFTP port number, you can input
-the port number in the "Preferred SSH Port" field in the user settings menu.
-To avoid possible collisions with other services within the compute session,
-it is recommended to specify a port number between 10000-65000. However, if
-SSH/SFTP connections are made by two or more compute sessions at the same
-time, the second SSH/SFTP connection cannot use the designated port (since
-the first SSH/SFTP connection has already taken it), so a random port number
-will be assigned.
+หมายเลขพอร์ตการเชื่อมต่อ SSH/SFTP จะถูกกำหนดแบบสุ่มทุกครั้งที่สร้างเซสชัน
+หากคุณต้องการใช้หมายเลขพอร์ต SSH/SFTP เฉพาะ คุณสามารถป้อน
+หมายเลขพอร์ตในช่อง "Preferred SSH Port" ในเมนูการตั้งค่าผู้ใช้ได้
+เพื่อหลีกเลี่ยงการชนกันที่อาจเกิดขึ้นกับบริการอื่น ๆ ภายในเซสชันการคำนวณ
+ขอแนะนำให้ระบุหมายเลขพอร์ตระหว่าง 10000-65000 อย่างไรก็ตาม หาก
+มีการเชื่อมต่อ SSH/SFTP โดยเซสชันการคำนวณสองรายการหรือมากกว่าในเวลา
+เดียวกัน การเชื่อมต่อ SSH/SFTP ครั้งที่สองจะไม่สามารถใช้พอร์ตที่กำหนดได้ (เนื่องจาก
+การเชื่อมต่อ SSH/SFTP ครั้งแรกได้ใช้ไปแล้ว) ดังนั้นหมายเลขพอร์ตแบบสุ่ม
+จะถูกกำหนด
 :::
 
 :::note
-If you want to use your own SSH keypair instead of `id_container`, create a
-user-type folder named `.ssh`. If you create `authorized_keys` file in
-that folder and append it with the contents of your SSH public key, you can
-connect by SSH/SFTP through your own SSH private key without having to
-download the `id_container` after creating a compute session.
+หากคุณต้องการใช้คีย์แพร์ SSH ของคุณเองแทน `id_container` ให้สร้าง
+โฟลเดอร์ประเภท user ชื่อ `.ssh` หากคุณสร้างไฟล์ `authorized_keys` ใน
+โฟลเดอร์นั้นและเพิ่มเนื้อหาของคีย์สาธารณะ SSH ของคุณ คุณสามารถ
+เชื่อมต่อด้วย SSH/SFTP ผ่านคีย์ส่วนตัว SSH ของคุณเองได้โดยไม่ต้อง
+ดาวน์โหลด `id_container` หลังจากสร้างเซสชันการคำนวณ
 :::
 
 :::note
-If you receive the following warning message, try again after changing the
-permission of the `id_container` to 600. (`chmod 600 <id_container path>`)
+หากคุณได้รับข้อความเตือนต่อไปนี้ ให้ลองอีกครั้งหลังจากเปลี่ยน
+สิทธิ์ของ `id_container` เป็น 600 (`chmod 600 <id_container path>`)
 
 ![](../images/bad_permissions.png)
 :::
@@ -96,134 +96,133 @@ permission of the `id_container` to 600. (`chmod 600 <id_container path>`)
 
 <a id="for-windows-filezilla"></a>
 
-## For Windows / FileZilla
+## สำหรับ Windows / FileZilla
 
-Backend.AI Web-UI app supports OpenSSH-based public key connection (RSA2048).
-To access with a client such as PuTTY on Windows, a private key must be
-converted into a `ppk` file through a program such as PuTTYgen. You can refer
-to the following link for the conversion method:
-https://wiki.filezilla-project.org/Howto. For easier explanation, this section
-will describe how to connect to SFTP through FileZilla client on Windows.
+แอป Backend.AI Web-UI รองรับการเชื่อมต่อด้วยคีย์สาธารณะแบบ OpenSSH (RSA2048)
+หากต้องการเข้าถึงด้วยไคลเอ็นต์เช่น PuTTY บน Windows จะต้องแปลงคีย์ส่วนตัว
+เป็นไฟล์ `ppk` ผ่านโปรแกรมเช่น PuTTYgen คุณสามารถดู
+ลิงก์ต่อไปนี้สำหรับวิธีการแปลง:
+https://wiki.filezilla-project.org/Howto เพื่อให้อธิบายง่ายขึ้น ส่วนนี้
+จะอธิบายวิธีการเชื่อมต่อ SFTP ผ่านไคลเอ็นต์ FileZilla บน Windows
 
-Refer to the connection method on Linux/Mac, create a compute session, check the
-connection port and download `id_container`. `id_container` is an
-OpenSSH-based key, so if you use a client that supports only Windows or ppk type
-keys, you must convert it. Here, we will convert through the PuTTYgen program
-installed with PuTTY. After running the PuTTYgen, click on the import key in the
-Conversions menu. Select the downloaded `id_container` file from the file open
-dialog. Click the Save private key button of PuTTYGen and save the file with the
-name `id_container.ppk`.
+ดูที่วิธีการเชื่อมต่อบน Linux/Mac สร้างเซสชันการคำนวณ ตรวจสอบ
+พอร์ตการเชื่อมต่อ และดาวน์โหลด `id_container` `id_container` เป็นคีย์
+แบบ OpenSSH ดังนั้นหากคุณใช้ไคลเอ็นต์ที่รองรับเฉพาะ Windows หรือคีย์ประเภท ppk
+คุณต้องแปลงคีย์ ที่นี่เราจะแปลงผ่านโปรแกรม PuTTYgen
+ที่ติดตั้งพร้อมกับ PuTTY หลังจากเรียกใช้ PuTTYgen คลิกที่ import key ในเมนู
+Conversions เลือกไฟล์ `id_container` ที่ดาวน์โหลดมาจากกล่องโต้ตอบเปิดไฟล์
+คลิกปุ่ม Save private key ของ PuTTYGen และบันทึกไฟล์ด้วย
+ชื่อ `id_container.ppk`
 
 ![](../images/puttygen_conversion.png)
 
-After launching the FileZilla client, go to the Settings-Connection-SFTP
-and register the key file `id_container.ppk` (`id_container` for clients
-supporting OpenSSH).
+หลังจากเรียกใช้ไคลเอ็นต์ FileZilla แล้ว ให้ไปที่ Settings-Connection-SFTP
+และลงทะเบียนไฟล์คีย์ `id_container.ppk` (`id_container` สำหรับไคลเอ็นต์
+ที่รองรับ OpenSSH)
 
 ![](../images/filezilla_setting.png)
 
-Open Site Manager, create a new site, and enter the connection information as
-follows.
+เปิด Site Manager สร้างไซต์ใหม่ และป้อนข้อมูลการเชื่อมต่อตาม
+ด้านล่าง
 
 ![](../images/filezilla_site_setting.png)
 
-When connecting to a container for the first time, the following confirmation
-popup may appear. Click the OK button to save the host key.
+เมื่อเชื่อมต่อกับคอนเทนเนอร์เป็นครั้งแรก อาจมีป๊อปอัปยืนยัน
+ต่อไปนี้ปรากฏขึ้น คลิกปุ่ม OK เพื่อบันทึกคีย์โฮสต์
 
 ![](../images/unknown_host_key.png)
 
-After a while, you can see that the connection is established as follows. You
-can now transfer large files to `/home/work/` or other mounted storage folder
-with this SFTP connection.
+หลังจากครู่หนึ่ง คุณจะเห็นว่าการเชื่อมต่อถูกสร้างขึ้นดังต่อไปนี้
+ตอนนี้คุณสามารถถ่ายโอนไฟล์ขนาดใหญ่ไปยัง `/home/work/` หรือโฟลเดอร์จัดเก็บที่เมานต์อื่น
+ผ่านการเชื่อมต่อ SFTP นี้ได้
 
 ![](../images/filezilla_connection_established.png)
 
 
 <a id="for-visual-studio-code"></a>
 
-## For Visual Studio Code
+## สำหรับ Visual Studio Code
 
-Backend.AI supports to develop with the local Visual Studio Code through SSH/SFTP
-connection to a compute session. Once connected, you can interact with files and
-folders anywhere on the compute session. In this section, we will learn how to
-do it.
+Backend.AI รองรับการพัฒนาด้วย Visual Studio Code ในเครื่องผ่านการเชื่อมต่อ SSH/SFTP
+ไปยังเซสชันการคำนวณ เมื่อเชื่อมต่อแล้ว คุณสามารถโต้ตอบกับไฟล์และ
+โฟลเดอร์ที่ใดก็ได้บนเซสชันการคำนวณ ในส่วนนี้ เราจะเรียนรู้วิธี
+ทำสิ่งนี้
 
-First, you should install Visual Studio Code and the Remote Development
-extension pack.
+ก่อนอื่น คุณควรติดตั้ง Visual Studio Code และแพ็กเกจส่วนขยาย Remote Development
 
-Link: https://aka.ms/vscode-remote/download/extension
+ลิงก์: https://aka.ms/vscode-remote/download/extension
 
 ![](../images/vscode_install_remote_ssh.png)
 
-After installing the extension, you should configure the SSH connection for the
-compute session. In the VSCode Remote Connection dialog, click the copy icon button
-to copy the Visual Studio Code remote SSH password. Also, remember the port number.
+หลังจากติดตั้งส่วนขยายแล้ว คุณควรกำหนดค่าการเชื่อมต่อ SSH สำหรับ
+เซสชันการคำนวณ ในกล่องโต้ตอบ VSCode Remote Connection คลิกปุ่มไอคอนคัดลอก
+เพื่อคัดลอกรหัสผ่าน SSH ระยะไกลของ Visual Studio Code นอกจากนี้ ให้จดจำหมายเลขพอร์ต
 
 ![](../images/download_ssh_key.png)
 
-Then, set the SSH config file. Edit the `~/.ssh/config` file (for Linux/Mac)
-or `C:\Users\[ผู้ใช้ name]\.ssh\config` (for Windows) and add the following block.
-For convenience, we set the hostname to `bai-vscode`. It can be changed to any alias.
+จากนั้น ตั้งค่าไฟล์ SSH config แก้ไขไฟล์ `~/.ssh/config` (สำหรับ Linux/Mac)
+หรือ `C:\Users\[ชื่อผู้ใช้]\.ssh\config` (สำหรับ Windows) และเพิ่มบล็อกต่อไปนี้
+เพื่อความสะดวก เราตั้งค่าชื่อโฮสต์เป็น `bai-vscode` สามารถเปลี่ยนเป็นนามแฝงอื่นได้
 
 ```
 Host bai-vscode
 User work
 Hostname 127.0.0.1
-# write down the port number that you remembered
+# ป้อนหมายเลขพอร์ตที่จำไว้
 Port 49335
 StrictHostKeyChecking no
 UserKnownHostsFile /dev/null
 ```
 
-Now in the Visual Studio Code, select the `Command Palette...` from `View` menu.
+ตอนนี้ใน Visual Studio Code ให้เลือก `Command Palette...` จากเมนู `View`
 
 ![](../images/vscode_view_commandpalett.png)
 
-Visual Studio Code can automatically detect the type of host you are connecting
-to. Let's choose `Remote-SSH: Connect to Host...`.
+Visual Studio Code สามารถตรวจจับประเภทของโฮสต์ที่คุณกำลังเชื่อมต่อได้
+โดยอัตโนมัติ เลือก `Remote-SSH: Connect to Host...`
 
 ![](../images/vscode_remote_ssh_connect.png)
 
-You will see the list of hosts in `.ssh/config`. Please select the host to
-connect, in this case, `vscode`.
+คุณจะเห็นรายการโฮสต์ใน `.ssh/config` โปรดเลือกโฮสต์ที่จะ
+เชื่อมต่อ ในกรณีนี้ คือ `vscode`
 
 ![](../images/vscode_remote_ssh_select_host.png)
 
-Selecting the host name will lead you to access the remote compute session.
-After you are connected, you will see an empty window. You can always refer to
-the Status bar to see which host you are connected to.
+การเลือกชื่อโฮสต์จะนำคุณไปสู่การเข้าถึงเซสชันการคำนวณระยะไกล
+หลังจากเชื่อมต่อแล้ว คุณจะเห็นหน้าต่างว่าง คุณสามารถดูแถบสถานะได้เสมอ
+เพื่อดูว่าคุณเชื่อมต่อกับโฮสต์ใดอยู่
 
 ![](../images/vscode_connect_finish.png)
 
-You can then open any folder or workspace on the remote host by accessing `File >
-Open...` or `File > Open Workspace...` menu just as you usually would do!
+จากนั้นคุณสามารถเปิดโฟลเดอร์หรือพื้นที่ทำงานใด ๆ บนโฮสต์ระยะไกลได้โดยการเข้าถึงเมนู `File >
+Open...` หรือ `File > Open Workspace...` เหมือนที่คุณทำตามปกติ!
 
 ![](../images/vscode_connected_host_file_open.png)
 
 
 <a id="establish-ssh-connection-with-backendai-client-package"></a>
 
-## Establish SSH connection with Backend.AI client package
+## ตั้งค่าการเชื่อมต่อ SSH ด้วยแพ็กเกจ Backend.AI Client
 
-This document describes how to establish an SSH connection to a compute session
-in environments where a graphical user interface (GUI) cannot be used.
+เอกสารนี้อธิบายวิธีการสร้างการเชื่อมต่อ SSH ไปยังเซสชันการคำนวณ
+ในสภาพแวดล้อมที่ไม่สามารถใช้ส่วนติดต่อผู้ใช้แบบกราฟิก (GUI) ได้
 
-Typically, GPU nodes that runs compute sessions (containers) cannot be accessed
-directly from the outside. Therefore, in order to establish an SSH or sFTP
-connection to a compute session, a local proxy that creates a tunnel needs to be
-launched to relay the connection between the user and the session. Using the
-Backend.AI Client package, this process is relatively simple to configure.
+โดยทั่วไป โหนด GPU ที่เรียกใช้เซสชันการคำนวณ (คอนเทนเนอร์) ไม่สามารถเข้าถึงได้
+โดยตรงจากภายนอก ดังนั้น เพื่อสร้างการเชื่อมต่อ SSH หรือ sFTP
+ไปยังเซสชันการคำนวณ จำเป็นต้องเริ่มต้นพร็อกซีในพื้นที่ที่สร้างอุโมงค์
+เพื่อถ่ายทอดการเชื่อมต่อระหว่างผู้ใช้และเซสชัน การใช้
+แพ็กเกจ Backend.AI Client กระบวนการนี้ค่อนข้างง่ายในการกำหนดค่า
 
 <a id="prepare-backendai-client-package"></a>
 
-### Prepare Backend.AI Client package
+### เตรียมแพ็กเกจ Backend.AI Client
 
 <a id="prepare-with-docker-image"></a>
 
-#### Prepare with Docker image
+#### เตรียมด้วยอิมเมจ Docker
 
-The Backend.AI Client package is available as a Docker image. You can pull the
-image from the Docker Hub with the following command:
+แพ็กเกจ Backend.AI Client มีให้ใช้งานเป็นอิมเมจ Docker คุณสามารถดึง
+อิมเมจจาก Docker Hub ได้ด้วยคำสั่งต่อไปนี้:
 
 ```bash
 $ docker pull lablup/backend.ai-client
@@ -232,19 +231,19 @@ $ # If you want to use the specific version, you can pull the image with the fol
 $ docker pull lablup/backend.ai-client:<version>
 ```
 
-The version of Backend.AI server can be found in "About Backend.AI" menu that
-appears when you click on the person icon on the top right corner of the Web UI.
+เวอร์ชันของเซิร์ฟเวอร์ Backend.AI สามารถพบได้ในเมนู "About Backend.AI" ที่
+ปรากฏขึ้นเมื่อคุณคลิกที่ไอคอนรูปคนที่มุมขวาบนของ Web UI
 
 ![](../images/check_backend_server_version.png)
 
-Run the Docker image with the following command:
+เรียกใช้อิมเมจ Docker ด้วยคำสั่งต่อไปนี้:
 
 ```bash
 $ docker run --rm -it lablup/backend.ai-client bash
 ```
 
-Check if `backend.ai` command is available in the container. If it is
-available, the help message will be displayed.
+ตรวจสอบว่าคำสั่ง `backend.ai` พร้อมใช้งานในคอนเทนเนอร์หรือไม่ หาก
+พร้อมใช้งาน ข้อความช่วยเหลือจะแสดงขึ้น
 
 ```bash
 $ backend.ai
@@ -252,52 +251,52 @@ $ backend.ai
 
 <a id="prepare-directly-from-host-with-a-python-virtual-environment"></a>
 
-#### Prepare directly from host with a Python virtual environment
+#### เตรียมโดยตรงจากโฮสต์ด้วยสภาพแวดล้อมเสมือน Python
 
-If you cannot or do not want to use Docker, you can install the Backend.AI Client
-package directly on your host machine. Prerequisites are:
+หากคุณไม่สามารถหรือไม่ต้องการใช้ Docker คุณสามารถติดตั้งแพ็กเกจ Backend.AI Client
+โดยตรงบนเครื่องโฮสต์ของคุณได้ ข้อกำหนดเบื้องต้นคือ:
 
-- The required version of Python may vary depending on the Backend.AI Client
-  version. You can check the compability matrix at
-  https://github.com/lablup/backend.ai#python-version-compatibility.
-- `clang` compiler might be needed
-- `zstd` package might be needed if you are using `indygreg` Python binary.
+- เวอร์ชัน Python ที่จำเป็นอาจแตกต่างกันไปขึ้นอยู่กับเวอร์ชันของ Backend.AI Client
+  คุณสามารถตรวจสอบตารางความเข้ากันได้ที่
+  https://github.com/lablup/backend.ai#python-version-compatibility
+- อาจจำเป็นต้องใช้คอมไพเลอร์ `clang`
+- อาจจำเป็นต้องใช้แพ็กเกจ `zstd` หากคุณใช้ Python binary ของ `indygreg`
 
-It is recommended to use a Python virtual environment to install the packages.
-One way is to use the statically-built Python binary from the `indygreg`
-repository. Download the binary that matches your local machine architecture
-from the following page and unzip it.
+ขอแนะนำให้ใช้สภาพแวดล้อมเสมือน Python ในการติดตั้งแพ็กเกจ
+วิธีหนึ่งคือใช้ Python binary ที่สร้างแบบคงที่จาก
+คลัง `indygreg` ดาวน์โหลด binary ที่ตรงกับสถาปัตยกรรมเครื่องในพื้นที่ของคุณ
+จากหน้าต่อไปนี้และแตกไฟล์
 
 - https://github.com/indygreg/python-build-standalone/releases
-- If you are using a popular x86-based Ubuntu environment, you can download and
-  extract it as follows:
+- หากคุณใช้สภาพแวดล้อม Ubuntu แบบ x86 ที่ได้รับความนิยม คุณสามารถดาวน์โหลดและ
+  แตกไฟล์ได้ดังต่อไปนี้:
 
   ```bash
   $ wget https://github.com/indygreg/python-build-standalone/releases/download/20240224/cpython-3.11.8+20240224-x86_64-unknown-linux-gnu-pgo-full.tar.zst
   $ tar -I unzstd -xvf *.tar.zst
   ```
 
-After unarchiving the binary, `python` directory will be created under the
-current directory. You can check the version of the downloaded Python by running
-the following command.
+หลังจากแตกไฟล์ binary แล้ว จะมีการสร้างไดเรกทอรี `python` ภายใต้
+ไดเรกทอรีปัจจุบัน คุณสามารถตรวจสอบเวอร์ชันของ Python ที่ดาวน์โหลดได้โดยเรียกใช้
+คำสั่งต่อไปนี้
 
 ```bash
 $ ./python/install/bin/python3 -V
 Python 3.11.8
 ```
 
-To avoid affecting other Python environments on the system, it is recommended to
-create a separate Python virtual environment. When you run the following
-command, a Python virtual environment will be created under the directory
-`.venv.`.
+เพื่อหลีกเลี่ยงไม่ให้ส่งผลกระทบต่อสภาพแวดล้อม Python อื่น ๆ บนระบบ ขอแนะนำให้
+สร้างสภาพแวดล้อมเสมือน Python แยกต่างหาก เมื่อคุณเรียกใช้
+คำสั่งต่อไปนี้ จะมีการสร้างสภาพแวดล้อมเสมือน Python ภายใต้ไดเรกทอรี
+`.venv.`
 
 ```bash
 $ ./python/install/bin/python3 -m venv .venv
 ```
 
-Activate the virtual environment. Since a new virtual environment has been
-activated, only the `pip` and `setuptools` packages will be installed when
-you run the `pip list` command.
+เปิดใช้งานสภาพแวดล้อมเสมือน เนื่องจากมีการเปิดใช้งานสภาพแวดล้อมเสมือนใหม่แล้ว
+จะมีเพียงแพ็กเกจ `pip` และ `setuptools` เท่านั้นที่ติดตั้งไว้เมื่อ
+คุณเรียกใช้คำสั่ง `pip list`
 
 ```bash
 $ source .venv/bin/activate
@@ -308,11 +307,11 @@ pip        24.0
 setuptools 65.5.0
 ```
 
-Now, install the Backend.AI Client package. Install the client package according
-to the server version. Here, we assume that the version is 23.09. If an
-installation-related error occurs with the `netifaces` package, you may need to
-lower the versions of `pip` and `setuptools`. Check if the `backend.ai`
-command is available.
+ตอนนี้ ติดตั้งแพ็กเกจ Backend.AI Client ติดตั้งแพ็กเกจไคลเอ็นต์ตาม
+เวอร์ชันของเซิร์ฟเวอร์ ที่นี่เราสมมติว่าเวอร์ชันคือ 23.09 หาก
+มีข้อผิดพลาดที่เกี่ยวข้องกับการติดตั้งเกิดขึ้นกับแพ็กเกจ `netifaces` คุณอาจต้อง
+ลดเวอร์ชันของ `pip` และ `setuptools` ตรวจสอบว่าคำสั่ง `backend.ai`
+พร้อมใช้งานหรือไม่
 
 ```bash
 (.venv) $ pip install -U pip==24.0 && pip install -U setuptools==65.5.0
@@ -322,20 +321,20 @@ command is available.
 
 <a id="setting-up-server-connection-for-cli"></a>
 
-### Setting up server connection for CLI
+### การตั้งค่าการเชื่อมต่อเซิร์ฟเวอร์สำหรับ CLI
 
-Create a `.env` file and add the following content. Use the same address for
-`webserver-url` that you use to connect to the Web UI service from your
-browser.
+สร้างไฟล์ `.env` และเพิ่มเนื้อหาต่อไปนี้ ใช้ที่อยู่เดียวกันสำหรับ
+`webserver-url` ที่คุณใช้เชื่อมต่อกับบริการ Web UI จาก
+เบราว์เซอร์ของคุณ
 
 ```bash
 BACKEND_ENDPOINT_TYPE=session
 BACKEND_ENDPOINT=<webserver-url>
 ```
 
-Run the following CLI command to connect to the server. Enter the email and
-password that you use to log in from your browser. If everything goes well, you
-will see the message `เข้าสู่ระบบ succeeded`.
+เรียกใช้คำสั่ง CLI ต่อไปนี้เพื่อเชื่อมต่อกับเซิร์ฟเวอร์ ป้อนอีเมลและ
+รหัสผ่านที่คุณใช้เข้าสู่ระบบจากเบราว์เซอร์ของคุณ หากทุกอย่างเป็นไปด้วยดี คุณ
+จะเห็นข้อความ `Login succeeded`
 
 ```bash
 $ backend.ai login
@@ -346,15 +345,15 @@ Password:
 
 <a id="sshscp-connection-to-computation-session"></a>
 
-### SSH/SCP Connection to Computation Session
+### การเชื่อมต่อ SSH/SCP ไปยังเซสชันการคำนวณ
 
-Create a compute session from the browser by mounting the folder where you want
-to copy the data. You can create the session using CLI as well, but for
-convenience, let's assume that you have created it from the browser. Remember
-the name of the created compute session. Here, we assume it is
-`ibnFmWim-session`.
+สร้างเซสชันการคำนวณจากเบราว์เซอร์โดยการเมานต์โฟลเดอร์ที่คุณต้องการ
+คัดลอกข้อมูลไป คุณสามารถสร้างเซสชันโดยใช้ CLI ก็ได้ แต่เพื่อ
+ความสะดวก ให้เราสมมติว่าคุณได้สร้างจากเบราว์เซอร์แล้ว จดจำ
+ชื่อของเซสชันการคำนวณที่สร้างขึ้น ที่นี่เราสมมติว่าคือ
+`ibnFmWim-session`
 
-If you simply want to SSH, execute the following command:
+หากคุณเพียงต้องการ SSH ให้ดำเนินการคำสั่งต่อไปนี้:
 
 ```bash
 $ backend.ai ssh ibnFmWim-session
@@ -362,10 +361,10 @@ $ backend.ai ssh ibnFmWim-session
 work@main1[ibnFmWim-session]:~$
 ```
 
-If you want to download the SSH key file and explicitly run the ssh command, you
-need to first run the following command to launch a local proxy service that
-relays connection from the local machine to the computation session. You can
-specify the port (9922) to use on the local machine with the b option.
+หากคุณต้องการดาวน์โหลดไฟล์คีย์ SSH และเรียกใช้คำสั่ง ssh อย่างชัดเจน คุณ
+จำเป็นต้องเรียกใช้คำสั่งต่อไปนี้ก่อนเพื่อเริ่มต้นบริการพร็อกซีในพื้นที่ที่
+ถ่ายทอดการเชื่อมต่อจากเครื่องในพื้นที่ไปยังเซสชันการคำนวณ คุณสามารถ
+ระบุพอร์ต (9922) ที่จะใช้บนเครื่องในพื้นที่ได้ด้วยตัวเลือก b
 
 ```bash
 $ backend.ai app ibnFmWim-session sshd -b 9922
@@ -373,20 +372,20 @@ $ backend.ai app ibnFmWim-session sshd -b 9922
 tcp://127.0.0.1:9922
 ```
 
-Open another terminal window on your local machine. Move to the working
-directory where the `.env` file is located, and download the SSH key
-automatically generated in the compute session.
+เปิดหน้าต่างเทอร์มินัลใหม่บนเครื่องในพื้นที่ของคุณ ย้ายไปยังไดเรกทอรี
+การทำงานที่มีไฟล์ `.env` อยู่ และดาวน์โหลดคีย์ SSH
+ที่สร้างขึ้นโดยอัตโนมัติในเซสชันการคำนวณ
 
 ```bash
-$ source .venv/bin/activate  # Reactivate the Python virtual environment as this is a different terminal
+$ source .venv/bin/activate  # เปิดใช้งานสภาพแวดล้อมเสมือน Python อีกครั้ง เนื่องจากเป็นเทอร์มินัลคนละอัน
 $ backend.ai session download ibnFmWim-session id_container
 Downloading files: 3.58kbytes [00:00, 352kbytes/s]
 ✓ Downloaded to /*/client.
 ```
 
-You can use the downloaded key to SSH as follows. Since you launched the local
-proxy on port 9922, the connection address should be 127.0.0.1 and the port
-should be 9922. Use the user account `work` for the connection.
+คุณสามารถใช้คีย์ที่ดาวน์โหลดมาเพื่อ SSH ดังต่อไปนี้ เนื่องจากคุณเริ่มต้นพร็อกซี
+ในพื้นที่บนพอร์ต 9922 ที่อยู่การเชื่อมต่อควรเป็น 127.0.0.1 และพอร์ต
+ควรเป็น 9922 ใช้บัญชีผู้ใช้ `work` สำหรับการเชื่อมต่อ
 
 ```bash
 $ ssh \
@@ -399,9 +398,9 @@ Warning: Permanently added '[127.0.0.1]:9922' (RSA) to the list of known hosts.
 work@
 ```
 
-Similarly, you can use the `scp` command to copy files. In this case, you
-should copy the files to the mounted folder within the compute session to
-preserve them even after the session has been terminated.
+ในทำนองเดียวกัน คุณสามารถใช้คำสั่ง `scp` เพื่อคัดลอกไฟล์ได้ ในกรณีนี้ คุณ
+ควรคัดลอกไฟล์ไปยังโฟลเดอร์ที่เมานต์ภายในเซสชันการคำนวณ เพื่อ
+รักษาไฟล์ไว้แม้หลังจากที่เซสชันสิ้นสุดลงแล้ว
 
 ```bash
 $ scp \
@@ -414,5 +413,5 @@ Warning: Permanently added '[127.0.0.1]:9922' (RSA) to the list of known hosts.
 test_file.xlsx
 ```
 
-When all the tasks are completed, press `Ctrl-C` on the first terminal to
-cancel the local proxy service.
+เมื่องานทั้งหมดเสร็จสิ้นแล้ว กด `Ctrl-C` บนเทอร์มินัลแรกเพื่อ
+ยกเลิกบริการพร็อกซีในพื้นที่
