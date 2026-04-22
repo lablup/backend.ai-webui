@@ -2,7 +2,6 @@
 
 ## Model Service
 
-
 :::note
 This feature is supported in Enterprise version only.
 :::
@@ -23,7 +22,8 @@ administrators only need to specify the scaling parameters required for
 the Model Service, without the need to manually create or delete compute
 sessions.
 
-## Configuring and limitations of model service in version 23.03 and earlier
+<details>
+<summary>Model Service in Version 23.03 and Earlier</summary>
 
 Although the model serving-specific feature is officially supported from
 version 23.09, you can still use model service in earlier versions.
@@ -53,6 +53,8 @@ to create/manage Model Services through the model serving menu whenever
 possible. The use of pre-opened ports is recommended only for
 development and testing purposes.
 
+</details>
+
 ## Guide to Steps for Using Model Service
 
 To use the Model Service, you need to follow the steps below:
@@ -60,16 +62,22 @@ To use the Model Service, you need to follow the steps below:
 1. Create a model definition file.
 2. Create a service definition file.
 3. Upload the definition files to the model type folder.
-4. Create/Validate the Model Service.
+4. Create/Validate the Model Service using the service launcher.
 5. (If the Model Service is not public) Obtain a token.
 6. (For end users) Access the endpoint corresponding to the Model
    Service to verify the service.
 7. (If needed) Modify the Model Service.
 8. (If needed) Terminate the Model Service.
 
+:::tip
+As an alternative workflow, you can browse pre-configured models in the
+[Model Store](#model-store) and deploy them with a single click using the
+`Run this model` button.
+:::
+
 <a id="model-definition-guide"></a>
 
-#### Creating a Model Definition File
+### Creating a Model Definition File
 
 :::note
 From 24.03, you can configure model definition file name. But if you don't
@@ -226,7 +234,7 @@ synchronized with the status displayed in the user interface.
 
 <a id="prestart-actions"></a>
 
-**Description for service action supported in Backend.AI Model serving**
+**Description for Service Action Supported in Backend.AI Model Serving**
 
 
 - `write_file`: This is an action to create a file with the given
@@ -258,7 +266,7 @@ synchronized with the status displayed in the user interface.
    - `args/message`: Specify the message to be displayed in the logs.
    -  `debug`: Set to `True` if it is in debug mode, otherwise set to `False`.
 
-#### Uploading Model Definition File to Model Type Folder
+### Uploading Model Definition File to Model Type Folder
 
 To upload the model definition file (`model-definition.yml`) to the
 model type folder, you need to create a virtual folder. When creating
@@ -280,12 +288,12 @@ please refer to the [Explore Folder](#explore-folder) section.
 
 <a id="service-definition-file"></a>
 
-#### Creating a Service Definition File
+### Creating a Service Definition File
 
 The service definition file (`service-definition.toml`) allows administrators to pre-configure the resources, environment, and runtime settings required for a model service. When this file is present in a model folder, the system uses these settings as default values when creating a service.
 
 Both `model-definition.yaml` and `service-definition.toml` must be present in the
-model folder to enable the "Run this model" button on the Model Store page. These two
+model folder to enable the `Run this model` button on the Model Store page. These two
 files work together: the model definition specifies the model and inference server
 configuration, while the service definition specifies the runtime environment, resource
 allocation, and environment variables.
@@ -332,100 +340,161 @@ selected runtime variant when creating the service.
 :::
 
 :::note
-When a service is created from the Model Store using the "Run this model" button,
+When a service is created from the Model Store using the `Run this model` button,
 the settings from `service-definition.toml` are applied automatically. If you later
 need to adjust the resource allocation, you can modify the service through the
 Model Serving page.
 :::
 
-#### Creating/Validating Model Service
+## Serving Page Overview
 
-Once the model definition file is uploaded to the virtual folder of the
-model type, you are ready to create the model service.
-
-Click the 'Start Service' button on the Model Serving page. This will
-bring up a page where you can enter the required settings for creating
-the service.
+The Serving page displays a list of all model service endpoints in the current project. You can access it by clicking **Model Serving** in the sidebar menu.
 
 ![](../images/serving_list_page.png)
 
-First, provide a service name. For detailed explanations of each item, please refer to the following:
+At the top of the page, you can filter endpoints by lifecycle stage:
 
--  Open To Public: This option allows access to the model service
-   without any separate token on the server where the service is to be
-   hosted. By default, it is disabled.
--  Model Storage To Mount: This is model folder to mount, which contains
-   model definition file inside the directory.
--  Inference Runtime Variant: This categorizes the type of models into four: `vLLM`, `NVIDIA NIM`, `Predefined Image Command`, `Custom`.
+- **Active**: Shows endpoints that are currently running or being created. This is the default view.
+- **Destroyed**: Shows endpoints that have been terminated.
+
+You can also use the property filter bar to search endpoints by **Endpoint Name**, **Service Endpoint URL**, or **Owner** (available to admins and superadmins).
+
+Click the `Start Service` button to open the service launcher and create a new model service.
+
+## Creating a Model Service
+
+### Service Launcher
+
+Click the `Start Service` button on the Serving page to open the service launcher.
+
+#### Service Name and Basic Settings
+
+First, provide a service name. The following fields are available:
+
+- **Open To Public**: This option allows access to the model service without any separate token. By default, it is disabled.
+- **Model Storage**: The model storage folder to mount, which contains the model definition file inside the directory.
+- **Inference Runtime Variant**: Selects the runtime variant for the model service. The available variants are dynamically loaded from the backend and may include `vLLM`, `SGLang`, `NVIDIA NIM`, `Modular MAX`, `Custom`, and others depending on your installation.
 
 ![](../images/service_launcher1.png)
 
-For example, if you choose `vLLM` or `NVIDIA NIM` or `Predefined Image Command` as a runtime variant of model service,
-there's no need to configure a `model-definition` file in your model folder to mount. Instead, you might have to set an additional environment variable.
-For more information, please take a look at
-[Model Variant: Easily Serving Various Model Services](https://www.backend.ai/blog/2024-07-10-various-ways-of-model-serving).
+For runtime variants such as `vLLM`, `SGLang`, `NVIDIA NIM`, or `Modular MAX`, there is no need to configure a `model-definition` file in your model folder. Instead, the system handles the model configuration automatically based on the selected variant.
 
 ![](../images/service_launcher_runtime_variant.png)
 
--  Model Destination For Model Folder: This option allows aliasing path of
-   model storage path to session corresponding to routing, which represents
-   the service. default value is `/models`.
--  Model Definition File Path: You can also set model definition file as you
-   uploaded in model storage path. The default value is `model-definition.yaml`.
--  Additional Mounts: Likewise session, service provides additional mounts.
-   Please make sure that only you can mount general/data usage mode folder, not additional
-   model folder.
+#### Model Definition Mode (Custom Runtime Only)
+
+When you select the `Custom` runtime variant, you can choose between two modes for defining the model service:
+
+##### Enter Command Mode
+
+Select `Enter Command` to paste a CLI command directly. For example:
+
+```shell
+vllm serve /models/my-model --tp 2
+```
+
+The system automatically parses the command and fills in the following fields:
+
+- **Port**: Auto-detected from the command (default `8000`).
+- **Health Check URL**: Auto-detected from the command (default `/health`).
+- **Model mount path**: Auto-detected from the command.
+
+![](../images/service_launcher_command_mode.png)
+
+You can also configure:
+
+- **Initial Delay**: Seconds to wait before the first health check after the service starts.
+- **Max Retries**: Maximum number of health check attempts before the service is considered failed.
+
+:::tip
+If the command suggests multi-GPU usage (e.g., `--tp 2`), a GPU hint will appear
+to help you allocate the correct number of GPU resources.
+:::
+
+##### Use Config File Mode
+
+Select `Use Config File` to use the traditional `model-definition.yaml` approach. This mode allows you to set:
+
+- **Mount Destination For Model Folder**: The path where the model storage is mounted in the session. The default value is `/models`.
+- **Model Definition File Path**: The path to the model definition file you uploaded. The default value is `model-definition.yaml`.
+- **Additional Mounts**: You can mount additional storage folders. Note that only general/data usage mode folders can be mounted, not additional model folders.
 
 ![](../images/service_launcher2.png)
 
-Then set number of replicas and select environments and resource group. The resource group is a collection of
-resources that can be allocated to the model service.
+#### Runtime Parameters (vLLM / SGLang)
 
--  Number of replicas: This setting serves as the basis for determining the number
-   of routing sessions to maintain for the current service. If you change the value of this
-   setting, the manager can create a new replica session or terminate a running session
-   by referring to the number of existing replica sessions.
--  Environment / Version: You can configure the execution environment
-   for the dedicated server of the model service. Currently, even if the
-   service has multiple routings, it will be executed in a single
-   environment only. (Support for multiple execution environments will
-   be added in a future update)
+When you select the `vLLM` or `SGLang` runtime variant, a **Runtime Parameters** section appears. This section lets you fine-tune the model serving behavior without manually editing configuration files.
+
+![](../images/service_launcher_runtime_params.png)
+
+The parameters are organized into categories:
+
+**Sampling Parameters:**
+
+- **Temperature**: Controls randomness in text generation. Higher values produce more diverse output.
+- **Top P**: Nucleus sampling threshold.
+- **Top K**: Limits the number of highest-probability tokens to consider.
+- **Min P**: Minimum probability threshold for token selection.
+- **Frequency Penalty**: Penalizes tokens based on their frequency in the generated text.
+- **Presence Penalty**: Penalizes tokens that have already appeared.
+- **Repetition Penalty**: Penalizes repeated tokens. Values above 1.0 discourage repetition.
+- **Seed**: Random seed for reproducible generation.
+
+**Context / Engine Parameters:**
+
+- **Context Length**: Maximum context length the model can process.
+- **Data Type**: Data type for model weights and computation.
+- **KV Cache Data Type**: Data type for the key-value cache.
+- **GPU Memory Utilization**: Fraction of GPU memory to use for the model.
+- **Trust Remote Code**: Allow execution of custom model code from the model repository.
+- **Enforce Eager Mode** (vLLM only): Disable CUDA graph optimization for debugging.
+- **Disable CUDA Graph** (SGLang only): Disable CUDA graph capture.
+- **Memory Fraction Static** (SGLang only): Static memory fraction for the model.
+- **Max Model Length**: Maximum context length (number of tokens) the model can process.
+
+**Additional Arguments**: A text field for extra CLI arguments not covered by the controls above.
+
+:::note
+Unchanged parameters will use the runtime's default values.
+:::
+
+#### Environment and Resources
+
+Set the number of replicas and select the environment and resource group.
+
+- **Number of replicas**: Determines the number of routing sessions to maintain for the service. Changing this value causes the manager to create or terminate replica sessions accordingly.
+- **Environment / Version**: Configure the execution environment for the model service. Selecting a runtime variant such as vLLM automatically filters the environment images to show relevant ones.
 
 ![](../images/service_launcher3.png)
 
--  Resource Presets: Allows you to select the amount of resources to allocate from the model service.
-   Resource contains CPU, RAM, and AI accelerator, as known as GPU.
+- **Resource Presets**: Select the amount of resources to allocate. Resources include CPU, RAM, and AI accelerator (GPU).
 
 ![](../images/service_launcher4.png)
 
--  Single Node: When running a session, the managed node and worker nodes are
-   placed on a single physical node or virtual machine.
--  Multi Node: When running a session, one managed node and one or more worker
-   nodes are split across multiple physical nodes or virtual machines.
--  Variable: In this section, you can set environment variable when starting a model service.
-   It is useful when you trying to create a model service using runtime variant. some runtime variant needs
-   certain environment variable setting before execution.
+#### Cluster Mode and Environment Variables
+
+- **Single Node**: The managed node and worker nodes are placed on a single physical node or virtual machine.
+- **Multi Node**: One managed node and one or more worker nodes are split across multiple physical nodes or virtual machines.
+- **Variable**: Set environment variables when starting a model service. This is useful when using runtime variants that require certain environment variable settings before execution.
 
 ![](../images/cluster_mode.png)
 
-Before creating model service, Backend.AI supports validation feature to check
-whether execution is available or not(due to any errors during execution).
-By clicking the 'Validate' button at the bottom-left of the service launcher,
-a new popup for listening to validation events will pop up. In the popup modal,
-you can check the status through the container log. When the result is set to
-`Finished`, then the validation check is finished.
+#### Validating the Service
 
+Before creating a model service, Backend.AI supports a validation feature to check
+whether execution is available. Click the `Validate` button at the bottom-left of
+the service launcher, and a new popup for listening to validation events will appear.
+In the popup modal, you can check the status through the container log. When the
+result is set to `Finished`, the validation check is complete.
 
 ![](../images/model-validation-dialog.png)
-
 
 :::note
 The result `Finished` doesn't guarantee that the execution is successfully done.
 Instead, please check the container log.
 :::
 
-
-**Handling Failed Model Service Creation**
+### Handling Failed Model Service Creation
 
 If the status of the model service remains `UNHEALTHY`, it indicates
 that the model service cannot be executed properly.
@@ -446,61 +515,86 @@ follows:
 
    -  Solution: Verify [the format of the model definition file](#model-definition-guide) and
       if any key-value pairs are incorrect, modify them and overwrite the file in the saved location.
-      Then, click 'Clear error and Retry' button to remove all the error stacked in routes info
+      Then, click `Clear error and retry` button to remove all the error stacked in routes info
       table and ensure that the routing of the model service is set correctly.
 
    ![](../images/refresh_button.png)
 
+## Endpoint Detail Page
 
-#### Auto Scaling Rules
+Click on an endpoint name in the serving list to view detailed information about the model service.
+
+### Service Information
+
+The Service Info card displays the following details:
+
+- **Endpoint Name** and **Status**
+- **Endpoint ID** and **Session Owner**
+- **Number of Replicas**
+- **Service Endpoint**: The URL for accessing the model service. For LLM services, an `LLM Chat Test` button is available.
+- **Open To Public**: Whether the service is publicly accessible.
+- **Resources**: The resource group and allocated CPU/Memory/GPU.
+- **Model Storage**: The mounted model storage folder and mount destination.
+- **Additional Mounts**: Any extra storage folders mounted.
+- **Environment Variables**: Displayed as a code block.
+- **Image**: The container image used for the service.
+
+Click the `Edit` button on the Service Info card to navigate to the update launcher and modify the service settings.
+
+:::warning
+If the endpoint belongs to a different project than the currently selected one,
+a project mismatch warning is displayed. Switch to the correct project to manage the endpoint.
+:::
+
+### Auto Scaling Rules
+
 You can configure auto scaling rules for the model service.
-Based on the defined rules, the number of replicas is automatically reduced during low using to conserve resources,
-and increased during high usage to prevent request delays of failures.
+Based on the defined rules, the number of replicas is automatically reduced during low usage to conserve resources,
+and increased during high usage to prevent request delays or failures.
 
 ![](../images/auto_scaling_rules.png)
 
-Click the 'Add Rules' button to add a new rule. When you click the button, a modal appears
-when you can add a rule. Each field in the modal is described below:
+Click the `Add Rules` button to add a new rule. When you click the button, a modal appears
+where you can add a rule. Each field in the modal is described below:
 
-- Type: Define the rule. Select either 'Scale Out' or 'Scale In' based on the scope of the rule.
+- **Type**: Define the rule. Select either `Scale Out` or `Scale In` based on the scope of the rule.
 
-- Metric Source: Inference Framework or kernel.
+- **Metric Source**: Inference Framework or kernel.
 
-   - Inference Framework: Average value taken from every replicas. Supported only if both AppProxy reports the inference metrics.
-   - Kernel: Average value taken from every kernels backing the endpoint.
+   - Inference Framework: Average value taken from every replica. Supported only if AppProxy reports the inference metrics.
+   - Kernel: Average value taken from every kernel backing the endpoint.
 
-- Condition: Set the condition under which the auto scaling rule will be applied.
+- **Condition**: Set the condition under which the auto scaling rule will be applied.
 
-   - Metric Name: The name of the metric to be compared. You can freely input any metric supported by the runtime environment.
-   - Comparator: Method to compare live metrics with threshold value.
+   - **Metric Name**: The name of the metric to be compared. You can freely input any metric supported by the runtime environment.
+   - **Comparator**: Method to compare live metrics with threshold value.
 
       - LESS_THAN: Rule triggered when current metric value goes below the threshold defined
       - LESS_THAN_OR_EQUAL: Rule triggered when current metric value goes below or equals the threshold defined
       - GREATER_THAN: Rule triggered when current metric value goes above the threshold defined
       - GREATER_THAN_OR_EQUAL: Rule triggered when current metric value goes above or equals the threshold defined
 
-   - Threshold: A reference value to determine whether the scaling condition is met.
+   - **Threshold**: A reference value to determine whether the scaling condition is met.
 
-- Step Size: Size of step of the replica count to be changed when rule is triggered.
+- **Step Size**: Size of step of the replica count to be changed when rule is triggered.
   Can be represented as both positive and negative value.
-  when defined as negative, the rule will decrease number of replicas.
+  When defined as negative, the rule will decrease number of replicas.
 
-- Max/Min Replicas: Sets a maximum/minimum value for the replica count of the endpoint.
+- **Max/Min Replicas**: Sets a maximum/minimum value for the replica count of the endpoint.
   Rule will not be triggered if the potential replica count gets above/below this value.
 
-- CoolDown Seconds: Durations in seconds to skip reapplying the rule right after rule is first triggered.
+- **CoolDown Seconds**: Duration in seconds to skip reapplying the rule right after rule is first triggered.
 
 ![](../images/auto_scaling_rules_modal.png)
 
 <a id="generating-tokens"></a>
 
-#### Generating Tokens
+### Generating Tokens
 
 Once the model service is successfully executed, the status will be set
-to `HEALTHY`. In this case, you can click on the corresponding endpoint
-name in the Model Service tab to view detailed information about the
-model service. From there, you can check the service endpoint in the
-routing information of the model service. If the 'Open to Public' option
+to `HEALTHY`. You can click on the corresponding endpoint name in the
+serving list to view detailed information. From there, you can check the
+service endpoint in the routing information. If the **Open To Public** option
 is enabled when the service is created, the endpoint will be publicly
 accessible without any separate token, and end users can access it.
 However, if it is disabled, you can issue a token as described below to
@@ -508,13 +602,12 @@ verify that the service is running properly.
 
 ![](../images/generate_token.png)
 
-Click the 'Generate Token' button located to the right of the generated
-token list in the routing information. In the modal that appears for
-token creation, enter the expiration date.
+Click the `Generate Token` button located to the right of the generated
+token list. In the modal that appears, enter the expiration date.
 
 ![](../images/token_generation_dialog.png)
 
-The issued token will be added to the list of generated tokens. Click the 'copy' button in the token
+The issued token will be added to the list of generated tokens. Each token displays its **Status** (Valid or Expired), **Expiration Date**, and **Created Date**. Click the `copy` button in the token
 item to copy the token, and add it as the value of the following key.
 
 ![](../images/generated_token_copy.png)
@@ -524,19 +617,50 @@ item to copy the token, and add it as the value of the following key.
 | Content-Type  | application/json |
 | Authorization | BackendAI        |
 
-#### Accessing the Model Service Endpoint for End Users
+### Routes Information
+
+The Routes Info card shows the routing status of the model service. You can filter routes by:
+
+- **Running / Finished**: Toggle between active and completed route nodes.
+- **Property filter**: Filter by health status and traffic status.
+
+Click the `Sync Routes` button to synchronize the route information with the backend.
+
+Click on a route node to open the session detail drawer, where you can view individual session details.
+
+### Modifying a Service
+
+Click the `Edit` button on the endpoint detail page to modify a model service. The service launcher opens with previously entered fields already filled in. You can optionally modify only the fields you wish to change. After modifying the fields, click `Confirm` to apply the changes.
+
+![](../images/edit_model_service.png)
+
+### Terminating a Service
+
+The model service periodically runs a scheduler to adjust the routing
+count to match the desired session count. However, this puts a burden on
+the Backend.AI scheduler. Therefore, it is recommended to terminate the
+model service if it is no longer needed. To terminate the model service,
+click on the `Delete` button in the Controls column. A modal will appear asking
+for confirmation to terminate the model service. Clicking `Delete`
+will terminate the model service. The terminated model service will
+appear in the **Destroyed** filter view.
+
+![](../images/terminate_model_service_dialog.png)
+
+## Accessing the Service Endpoint
+
+### Making API Requests
 
 To complete the model serving, you need to share information with the
 actual end users so that they can access the server where the model
-service is running. If the Open to Public option is enabled when the
+service is running. If the **Open To Public** option is enabled when the
 service is created, you can share the service endpoint value from the
-routing information page. If the service was created with the option
+endpoint detail page. If the service was created with the option
 disabled, you can share the service endpoint value along with the token
 previously generated.
 
-Here's the simple command using `curl` command whether to check sending any requests
-to model serving endpoint working properly or not.
-
+Here is a simple command using `curl` to check whether sending requests
+to the model serving endpoint is working properly:
 
 ```bash
 $ export API_TOKEN="<token>"
@@ -545,7 +669,6 @@ $ curl -H "Content-Type: application/json" -X GET \
   <model-service-endpoint>
 ```
 
-
 :::warning
 By default, end users must be on a network that can access the
 endpoint. If the service was created in a closed network, only end
@@ -553,26 +676,26 @@ users who have access within that closed network can access the
 service.
 :::
 
-#### Using the Large Language Model
+### LLM Chat Test
 
-If you've created a Large Language Model (LLM) service, you can test the LLM in real-time.
-Simply click the 'LLM Chat Test' button located in the Service Endpoint column.
+If you have created a Large Language Model (LLM) service, you can test the LLM in real-time.
+Click the `LLM Chat Test` button located in the Service Endpoint section of the endpoint detail page.
 
 ![](../images/LLM_chat_test.png)
 
-Then, You will be redirected to the Chat page, where the model you created is automatically selected.
+You will be redirected to the Chat page, where the model you created is automatically selected.
 Using the chat interface provided on the Chat page, you can test the LLM model.
-For more information about the chat feature, please refer to the [Chat page](#chat-page)
+For more information about the chat feature, please refer to the [Chat page](#chat-page).
 
 ![](../images/LLM_chat.png)
 
 If you encounter issues connecting to the API, the Chat page will display options that allow you to manually configure the model settings.
 To use the model, you will need the following information:
 
-- baseURL (optional): Base URL of the server where the model is located.
+- **baseURL** (optional): Base URL of the server where the model is located.
   Make sure to include the version information.
   For instance, when utilizing the OpenAI API, you should enter https://api.openai.com/v1.
-- Token (optional): An authentication key to access the model service. Tokens can be
+- **Token** (optional): An authentication key to access the model service. Tokens can be
   generated from various services, not just Backend.AI. The format and generation process
   may vary depending on the service. Always refer to the specific service's guide for details.
   For instance, when using the service generated by Backend.AI, please refer to the
@@ -580,25 +703,103 @@ To use the model, you will need the following information:
 
 ![](../images/LLM_chat_custom_model.png)
 
-#### Modifying Model Service
+## Model Store
 
-Click on the wrench icon in the Control tab to modify a model service you want to update.
-The format is identical to the model service start modal, with
-previously entered fields already filled in. You can optionally modify only the
-fields you wish to change. After modifying the fields, click the 'confirm' button.
-The changes will be adjusted accordingly.
+The Model Store provides a card-based gallery of pre-configured models that you can browse, search, and deploy. You can access the Model Store from the sidebar menu.
 
-![](../images/edit_model_service.png)
+![](../images/model_store_page.png)
 
-#### Terminating Model Service
+### Browsing and Searching Models
 
-The model service periodically runs a scheduler to adjust the routing
-count to match the desired session count. However, this puts a burden on
-the Backend.AI scheduler. Therefore, it is recommended to terminate the
-model service if it is no longer needed. To terminate the model service,
-click on the 'trash' button in the Control column. A modal will appear asking
-for confirmation to terminate the model service. Clicking `Delete`
-will terminate the model service. The terminated model service will be
-removed from the list of model services.
+You can search for models by name, description, task, category, or label using the search bar at the top of the page. Additionally, you can use the filter dropdowns to narrow results:
 
-![](../images/terminate_model_service_dialog.png)
+- **Category**: Filter by model category (e.g., LLM).
+- **Task**: Filter by task type (e.g., text-generation).
+- **Label**: Filter by model labels.
+
+### Model Card Details
+
+Click on a model card to view its details in a modal. The model card modal displays:
+
+- **Title**, **Author**, and **Version**
+- **Description** and **README**
+- **Task**, **Category**, and **Architecture**
+- **Framework** and **Labels**
+- **License**
+- **Minimum Resources** required to run the model
+- A link to the model storage folder
+
+![](../images/model_card_detail_modal.png)
+
+### Cloning a Model
+
+Click the `Clone to a folder` button on the model card to clone the model folder to your own storage. A confirmation dialog will appear where you can specify the destination folder name.
+
+![](../images/model_clone_dialog.png)
+
+### Running a Model from Model Store
+
+Click the `Run this model` button on the model card to deploy the model as a service. This requires both `model-definition.yaml` and `service-definition.toml` to be present in the model folder.
+
+- If only one runtime variant is configured in the service definition, the service is launched automatically with the pre-configured settings.
+- If multiple runtime variants are available, you are redirected to the service launcher page to select one.
+
+:::note
+When a service is created from the Model Store, the settings from
+`service-definition.toml` are applied automatically. You can modify the
+service later through the Serving page.
+:::
+
+## Admin Features
+
+### Admin Serving Page
+
+Administrators and superadmins can access the Admin Serving page, which provides a cross-project view of all endpoints. This page shows the **Project** column in addition to the standard endpoint list columns, allowing admins to manage services across all projects.
+
+![](../images/admin_serving_page.png)
+
+The Admin Serving page has two tabs:
+
+- **Serving**: Displays the endpoint list across all projects, with the same lifecycle and property filters as the user-facing Serving page.
+- **Model Store Management**: Available to superadmins only. See the section below.
+
+### Admin Model Store Management
+
+Superadmins can manage model cards through the **Model Store Management** tab on the Admin Serving page. This tab provides a table view of all model cards with the following columns: **Name**, **Title**, **Task**, **Category**, **Labels**, **Created At**, and **Controls**.
+
+![](../images/admin_model_card_list.png)
+
+#### Creating a Model Card
+
+Click the `Create Model Card` button to open the creation modal. Fill in the following fields:
+
+- **Name** (required): A unique identifier for the model card.
+- **Title**: A human-readable display name.
+- **Description**: A detailed description of the model.
+- **Author**: The model creator or organization.
+- **Model Version**: The version of the model.
+- **Task**: The inference task type (e.g., text-generation).
+- **Category**: The model category (e.g., LLM).
+- **Framework**: The ML framework used (e.g., PyTorch, TensorFlow).
+- **Label**: Tags for categorization and filtering.
+- **License**: The license under which the model is distributed.
+- **Architecture**: The model architecture (e.g., Transformer).
+- **README**: A markdown README for the model.
+- **Domain**: The domain to associate the model card with.
+- **Project ID** (required): The project that owns the model card.
+- **VFolder** (required): The storage folder containing the model files.
+- **Access Level**: Set to `Internal` (visible within the domain) or `Public` (visible to all).
+
+![](../images/admin_model_card_modal.png)
+
+#### Editing a Model Card
+
+Click the edit icon in the **Controls** column to modify an existing model card. The edit modal opens with previously entered fields already filled in.
+
+#### Deleting Model Cards
+
+You can delete individual model cards by clicking the delete icon in the **Controls** column, or perform bulk deletion by selecting multiple model cards and clicking `Delete Selected`.
+
+#### Scanning Project Model Cards
+
+Click the `Scan Project Model Cards` button to automatically scan a project's model folders and create model cards for any folders that contain valid model definitions. The scan results show the number of model cards created and updated.
