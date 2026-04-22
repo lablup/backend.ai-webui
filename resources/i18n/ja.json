@@ -1829,6 +1829,7 @@
     "PresetTooltip": "プリセットは、このモデルをサービスとして実行するために使用されるリソース構成（CPU、メモリ、GPU）を定義します。",
     "ProjectNotFound": "モデルストアプロジェクトが見つかりません",
     "ProjectNotFoundDescription": "MODEL_STOREプロジェクトが見つかりませんでした。管理者にお問い合わせください。",
+    "QuickDeployDetailed": "詳細設定後にデプロイ...",
     "RelativeTime": "{{time}}",
     "ResourceGroup": "リソースグループ",
     "ResourceGroupTooltip": "選択したリソースグループでサービスが実行されます。",

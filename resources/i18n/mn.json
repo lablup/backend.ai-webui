@@ -1828,6 +1828,7 @@
     "PresetTooltip": "Урьдчилсан тохиргоо нь энэ загварыг үйлчилгээ болгон ажиллуулахад ашиглах нөөцийн тохиргоог (CPU, санах ой, GPU) тодорхойлдог.",
     "ProjectNotFound": "Модел дэлгүүрийн төсөл олдсонгүй",
     "ProjectNotFoundDescription": "MODEL_STORE төсөл олдсонгүй. Админтай холбогдоно уу.",
+    "QuickDeployDetailed": "Тохируулж байршуулах...",
     "RelativeTime": "{{time}}",
     "ResourceGroup": "Нөөцийн бүлэг",
     "ResourceGroupTooltip": "Сонгосон нөөцийн бүлэгт үйлчилгээ ажиллана.",
