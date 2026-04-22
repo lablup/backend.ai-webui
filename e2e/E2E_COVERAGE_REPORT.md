@@ -22,9 +22,9 @@
 | Dashboard | `/dashboard` | 9 | 7 | 🔶 78% |
 | Session List | `/session` | 22 | 14 | 🔶 64% |
 | Session Launcher | `/session/start` | 14 | 3 | 🔶 21% |
-| Serving | `/serving` | 7 | 0 | ❌ 0% |
+| Serving | `/serving` | 7 | 2 | 🔶 29% |
 | Endpoint Detail | `/serving/:serviceId` | 20 | 9 | 🔶 45% |
-| Service Launcher | `/service/start` | 5 | 0 | ❌ 0% |
+| Service Launcher | `/service/start` | 5 | 1 | 🔶 20% |
 | VFolder / Data | `/data` | 45 | 32 | 🔶 71% |
 | Model Store | `/model-store` | 6 | 6 | ✅ 100% |
 | Admin Model Store | `/admin-model-store` | 22 | 22 | ✅ 100% |
@@ -238,7 +238,7 @@
 
 ### 6. Serving / Model Service (`/serving`)
 
-**Test files:** None (visual regression only: [`e2e/visual_regression/serving/serving_page.test.ts`](visual_regression/serving/serving_page.test.ts))
+**Test files:** [`e2e/serving/serving-deploy-lifecycle.spec.ts`](serving/serving-deploy-lifecycle.spec.ts) (integration, `@integration @serving`)
 
 **Filter:** Active | Destroyed (radio)
 **Primary action:** "Start Service" → navigates to `/service/start`
@@ -247,15 +247,15 @@
 
 | Feature | Status | Test |
 | --------------------------------------------------------- | ------ | ---- |
-| Endpoint list rendering | ❌ | - |
+| Endpoint list rendering | ✅ | `Admin can deploy a model service via ServiceLauncher UI` (verifies row visible in serving list) |
 | "Start Service" → navigate to `/service/start` | ❌ | - |
 | Endpoint name click → EndpointDetailPage | ❌ | - |
 | Status filtering (Active/Destroyed) | ❌ | - |
 | Property filtering | ❌ | - |
 | Edit endpoint → navigate to `/service/update/:endpointId` | ❌ | - |
-| Delete endpoint → confirm dialog | ❌ | - |
+| Delete endpoint → confirm dialog | ✅ | `Admin can terminate a deployed service` |
 
-**Coverage: ❌ 0/7 features**
+**Coverage: 🔶 2/7 features**
 
 ---
 
@@ -296,17 +296,17 @@
 
 ### 8. Service Launcher (`/service/start`, `/service/update/:endpointId`)
 
-**Test files:** None
+**Test files:** [`e2e/serving/serving-deploy-lifecycle.spec.ts`](serving/serving-deploy-lifecycle.spec.ts) (integration, `@integration @serving`)
 
 | Feature | Status | Test |
 | ----------------------- | ------ | ---- |
-| Create model service | ❌ | - |
+| Create model service | ✅ | `Admin can deploy a model service via ServiceLauncher UI` |
 | Update existing service | ❌ | - |
 | Resource configuration | ❌ | - |
 | Model folder selection | ❌ | - |
 | Form validation | ❌ | - |
 
-**Coverage: ❌ 0/5 features**
+**Coverage: 🔶 1/5 features**
 
 ---
 

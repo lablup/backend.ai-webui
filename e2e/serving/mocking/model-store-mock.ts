@@ -289,6 +289,24 @@ const EMPTY_TOKEN_LIST = {
 };
 
 /**
+ * Shared minimal `modelDeployment` node used by EndpointDetailPage mocks. The
+ * page reads `modelDeployment.metadata.status` as the single source of truth
+ * for `isDeploymentDeploying` / `hasAnyHealthyRoute` when the `model-card-v2`
+ * feature flag is injected by the tests.
+ */
+const MOCK_DEPLOYMENT_GLOBAL_ID = btoa(`ModelDeployment:${MOCK_ENDPOINT_UUID}`);
+
+const buildModelDeployment = (
+  status: 'DEPLOYING' | 'READY' | 'TERMINATED',
+) => ({
+  __typename: 'ModelDeployment' as const,
+  id: MOCK_DEPLOYMENT_GLOBAL_ID,
+  metadata: { status },
+  currentRevision: null,
+  revisionHistory: { edges: [] },
+});
+
+/**
  * Mock for EndpointDetailPageQuery — "Preparing your service" state.
  * replicas=1, deploymentScopedSchedulingHistories.count=0 → hasReachedReady=false.
  * Triggers the "Preparing your service" info alert.
@@ -305,6 +323,7 @@ export function endpointDetailPreparingMockResponse() {
     routes: { edges: [], count: 0 },
     healthyRoutes: { count: 0 },
     deploymentScopedSchedulingHistories: { count: 0 },
+    modelDeployment: buildModelDeployment('DEPLOYING'),
   });
 }
 
@@ -324,6 +343,7 @@ export function endpointDetailZeroReplicasMockResponse() {
     routes: { edges: [], count: 0 },
     healthyRoutes: { count: 0 },
     deploymentScopedSchedulingHistories: { count: 0 },
+    modelDeployment: buildModelDeployment('DEPLOYING'),
   });
 }
 
@@ -343,6 +363,7 @@ export function endpointDetailTerminatedMockResponse() {
     routes: { edges: [], count: 0 },
     healthyRoutes: { count: 0 },
     deploymentScopedSchedulingHistories: { count: 0 },
+    modelDeployment: buildModelDeployment('TERMINATED'),
   });
 }
 
@@ -363,6 +384,7 @@ export function endpointDetailServiceReadyMockResponse() {
     routes: { edges: [], count: 0 },
     healthyRoutes: { count: 1 },
     deploymentScopedSchedulingHistories: { count: 1 },
+    modelDeployment: buildModelDeployment('READY'),
   });
 }
 
@@ -383,6 +405,7 @@ export function endpointDetailHealthyButNoSchedulingHistoryMockResponse() {
     routes: { edges: [], count: 0 },
     healthyRoutes: { count: 1 },
     deploymentScopedSchedulingHistories: { count: 0 },
+    modelDeployment: buildModelDeployment('READY'),
   });
 }
 
@@ -402,5 +425,8 @@ export function endpointDetailReadyButNoHealthyRoutesMockResponse() {
     routes: { edges: [], count: 0 },
     healthyRoutes: { count: 0 },
     deploymentScopedSchedulingHistories: { count: 1 },
+    // No healthy routes → hasAnyHealthyRoute=false; use non-READY status so
+    // the "Service Ready" alert is suppressed.
+    modelDeployment: buildModelDeployment('DEPLOYING'),
   });
 }

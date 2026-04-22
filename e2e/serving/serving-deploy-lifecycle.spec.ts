@@ -74,7 +74,6 @@ async function uploadFixturesToVFolder(
   pythonImage: string = DEFAULT_PYTHON_IMAGE,
 ): Promise<void> {
   await navigateTo(page, 'data');
-  await page.waitForLoadState('networkidle');
   const folderLink = page.getByRole('link', { name: folderName }).first();
   await expect(folderLink).toBeVisible({ timeout: 15000 });
   await folderLink.click();
@@ -178,6 +177,25 @@ async function createServiceViaUI(
     .first()
     .click({ timeout: 10000 });
 
+  // Switch Model Definition mode from the default "Enter Command" to
+  // "Use Config File" so the service reads the uploaded `model-definition.yaml`
+  // instead of requiring a startCommand input. The uploaded fixture already
+  // defines the start command, port, and health check — toggling here keeps
+  // the test free of duplicated command wiring that has to be maintained in
+  // lockstep with the yaml.
+  //
+  // Ant Design's Segmented renders its radios as visually-hidden inputs, so
+  // `toBeVisible` on the radio itself fails. Click the segment label instead
+  // (the label's <div> is the actual click target) and assert via `toBeChecked`
+  // on the hidden radio once the state flips.
+  const useConfigFileRadio = page.getByRole('radio', {
+    name: 'Use Config File',
+  });
+  await page
+    .locator('.ant-segmented-item-label', { hasText: 'Use Config File' })
+    .click({ timeout: 10000 });
+  await expect(useConfigFileRadio).toBeChecked({ timeout: 3000 });
+
   // Select resource group - click to open dropdown, search, then select option
   const resourceGroupSelect = page
     .getByRole('combobox', { name: 'Resource Group' })
@@ -190,6 +208,57 @@ async function createServiceViaUI(
     .filter({ hasText: /default/i })
     .first()
     .click({ timeout: 10000 });
+
+  // Pick the "Minimum requirements" resource preset so CPU/Memory are auto-
+  // filled from the selected image's `resourceLimits.min`. Without this, the
+  // form keeps its default values which may fall below the image's minimum
+  // (e.g. "CPU must be minimum 5", "minimum memory capacity is 1088MiB") and
+  // service creation fails with inline Form.Item validation errors at submit
+  // time. Selecting the preset triggers the effect at
+  // ResourceAllocationFormItems.tsx that pulls min values from image metadata,
+  // making the test resilient to image-catalog changes that bump minimums.
+  const presetSelect = page
+    .getByRole('combobox', { name: /Resource Presets?/i })
+    .first();
+  if (await presetSelect.isVisible({ timeout: 3000 }).catch(() => false)) {
+    await presetSelect.click();
+    await page
+      .locator('.ant-select-item-option')
+      .filter({ hasText: 'Minimum requirements' })
+      .first()
+      .click({ timeout: 10000 });
+  }
+
+  // Set AI Accelerator to 0 to avoid GPU-based allocation presets.
+  // When the resource group has a GPU preset selected by default (e.g. cuda01-small),
+  // service creation would fail if no GPU agents are available.
+  // Setting the accelerator count to 0 ensures CPU-only resource allocation.
+  //
+  // Strategy: Find the AI Accelerator form item by its label text, then target
+  // the spinbutton inside it. Ant Design Form.Item uses a `label` element that
+  // may not have a `for` attribute in all versions, so we use a compound selector.
+  const acceleratorFormItem = page
+    .locator('.ant-form-item')
+    .filter({ hasText: 'AI Accelerator' })
+    .first();
+  const acceleratorSpinbutton = acceleratorFormItem.getByRole('spinbutton');
+  if (
+    await acceleratorSpinbutton.isVisible({ timeout: 5000 }).catch(() => false)
+  ) {
+    // If the spinbutton is already disabled (e.g., no GPU presets available in
+    // the selected resource group), it is already at 0 — skip editing it.
+    const isEditable = await acceleratorSpinbutton
+      .isEditable({ timeout: 1000 })
+      .catch(() => false);
+    if (isEditable) {
+      await acceleratorSpinbutton.scrollIntoViewIfNeeded();
+      await acceleratorSpinbutton.click({ clickCount: 3 });
+      await acceleratorSpinbutton.fill('0');
+      await acceleratorSpinbutton.press('Tab');
+      // Wait for the field to reflect the updated CPU-only allocation value
+      await expect(acceleratorSpinbutton).toHaveValue('0', { timeout: 5000 });
+    }
+  }
 
   // Check "Open To Public"
   const openToPublicCheckbox = page.getByLabel('Open To Public');
@@ -205,8 +274,60 @@ async function createServiceViaUI(
   await expect(createButton).toBeEnabled({ timeout: 5000 });
   await createButton.click();
 
-  // Wait for redirect to serving page and verify the service appears
-  await page.waitForURL('**/serving', { timeout: 15000 });
+  // Wait for the service creation to complete. The form navigates to /serving
+  // on success; on failure it stays on /service/start and surfaces feedback
+  // via one of three channels: (1) an Ant Design error notification, (2) an
+  // Ant Design error message toast, or (3) inline `Form.Item` validation
+  // errors when `form.validateFields()` rejects. The original Promise.race
+  // pattern only covered (1) and (2); when (3) fired, the URL wait silently
+  // timed out with an opaque message and no clue as to which field was
+  // invalid. Replace the race with a sequential wait that, on URL timeout,
+  // scans all three error channels and surfaces whichever it finds.
+  const errorNotification = page
+    .locator('.ant-notification-notice-error, .ant-message-error')
+    .first();
+
+  try {
+    await page.waitForURL('**/serving', { timeout: 60_000 });
+  } catch (urlError) {
+    // 1) Ant Design error notification / message toast
+    const toastText = await errorNotification
+      .textContent({ timeout: 1000 })
+      .catch(() => null);
+    if (toastText?.trim()) {
+      throw new Error(
+        `Service creation failed with error notification: ${toastText.trim()}`,
+      );
+    }
+
+    // 2) Inline Form.Item validation errors (handleOk's validateFields catch)
+    const fieldErrorTexts = await page
+      .locator('.ant-form-item-explain-error')
+      .allTextContents()
+      .catch(() => [] as string[]);
+    const fieldErrors = fieldErrorTexts.filter((t) => t.trim().length > 0);
+    if (fieldErrors.length > 0) {
+      throw new Error(
+        `Service creation failed: form validation errors — ${fieldErrors.join(' | ')}`,
+      );
+    }
+
+    // 3) No visible error, but we are still on /service/start (the form
+    // debounces its state into the URL as ?formValues=...). Surface the
+    // current URL so the reviewer can tell mutation-never-fired apart from
+    // a slow backend.
+    const currentUrl = page.url();
+    throw new Error(
+      `Service creation did not redirect to /serving within 60s. ` +
+        `Current URL: ${currentUrl}. ` +
+        `No error notification or form validation error was detected — ` +
+        `the create mutation likely never fired (form submit blocked) or ` +
+        `the backend deploy is hanging. Original error: ${
+          (urlError as Error).message
+        }`,
+    );
+  }
+
   await expect(
     page.getByRole('row').filter({ hasText: serviceName }).first(),
   ).toBeVisible({ timeout: 15000 });
@@ -264,12 +385,18 @@ async function terminateService(
   await expect(refreshButton).toBeVisible({ timeout: 15000 });
   await refreshButton.click();
 
-  // Wait for at least one visible data row to appear, indicating the
-  // table has loaded its data from the API. Exclude Ant Design's hidden
-  // measure row (ant-table-measure-row) which is always present but hidden.
-  await expect(page.locator('tbody tr.ant-table-row').first()).toBeVisible({
-    timeout: 15000,
-  });
+  // Wait for the table's loading indicator to clear. We cannot wait for a
+  // data row to appear here: when every service has already been terminated
+  // (e.g., by a prior run's afterAll or a retry after an earlier failure),
+  // the table is legitimately empty and requiring a row would fail this
+  // helper before its early-return check for a missing service.
+  await page
+    .locator('.ant-spin-spinning')
+    .first()
+    .waitFor({ state: 'hidden', timeout: 15000 })
+    .catch(() => {
+      // Spinner may never have appeared if data was served from cache.
+    });
 
   const serviceRow = page.getByRole('row').filter({ hasText: serviceName });
   if ((await serviceRow.count()) === 0) {
@@ -366,21 +493,10 @@ test.describe(
       // Create model vfolder
       await createVFolderAndVerify(page, VFOLDER_NAME, 'model');
 
-      // Upload mock server fixtures
+      // Upload mock server fixtures. The helper verifies each uploaded file is
+      // visible in the explorer before closing the modal, so no second pass is
+      // needed here.
       await uploadFixturesToVFolder(page, VFOLDER_NAME, resolvedImage);
-
-      // Verify vfolder exists with uploaded files
-      await navigateTo(page, 'data');
-      const folderLink = page.getByRole('link', { name: VFOLDER_NAME }).first();
-      await expect(folderLink).toBeVisible({ timeout: 10000 });
-      await folderLink.click();
-
-      const modal = new FolderExplorerModal(page);
-      await modal.waitForOpen();
-      await modal.verifyFileVisible('mock_openai_server.py');
-      await modal.verifyFileVisible('model-definition.yaml');
-      await modal.verifyFileVisible('service-definition.toml');
-      await modal.close();
     });
 
     test('Admin can deploy a model service via ServiceLauncher UI', async ({

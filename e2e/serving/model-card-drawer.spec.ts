@@ -26,6 +26,86 @@ import { test, expect } from '@playwright/test';
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
+ * Install a persistent `model-card-v2` feature flag override via
+ * `page.addInitScript`. This runs on every navigation (including full-page
+ * reloads via `page.goto` / `navigateTo`), so the flag survives across
+ * `setupModelStorePage`'s serving → model-store navigation hop where a plain
+ * `page.evaluate` override would be wiped out by the reload that rebuilds
+ * `window.backendaiclient` from scratch.
+ *
+ * The script patches `supports()` the moment the client object is assigned to
+ * `window.backendaiclient`, so downstream `useSuspendedBackendaiClient` /
+ * route guards see `model-card-v2 === true` deterministically regardless of
+ * the backend manager version under test.
+ */
+async function installModelCardV2FlagOverride(page: any) {
+  await page.addInitScript(() => {
+    let clientRef: any = undefined;
+    Object.defineProperty(window, 'backendaiclient', {
+      get() {
+        return clientRef;
+      },
+      set(value: any) {
+        if (
+          value &&
+          typeof value.supports === 'function' &&
+          !value.__mcv2Patched
+        ) {
+          const origSupports = value.supports.bind(value);
+          value.supports = function (feature: string) {
+            // Force model-card-v2 on so EndpointDetailPage reads
+            // modelDeployment.metadata.status (which our mocks populate).
+            if (feature === 'model-card-v2') return true;
+            // Force prometheus-auto-scaling-rule off so the EndpointDetailPage
+            // does not render <AutoScalingRuleList>, which fires an
+            // unmocked AutoScalingRuleListQuery whose `deployment(id: ...)`
+            // root field collides with the same Relay store key populated
+            // by EndpointDetailPageQuery and nulls out modelDeployment.
+            if (feature === 'prometheus-auto-scaling-rule') return false;
+            return origSupports(feature);
+          };
+          value.__mcv2Patched = true;
+        }
+        clientRef = value;
+      },
+      configurable: true,
+    });
+  });
+}
+
+/**
+ * Intercepts the REST endpoints used by `useProjectResourceGroups` so tests
+ * can control which resource groups appear in the Deploy modal selector.
+ * The hook calls `/scaling-groups?group=...` and `/folders/_/hosts` via the
+ * Backend.AI client and is shared by `BAIProjectResourceGroupSelect`.
+ */
+async function setupResourceGroupsRestMock(
+  page: any,
+  resourceGroupNames: ReadonlyArray<string>,
+) {
+  await page.route('**/func/scaling-groups**', async (route: any) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        scaling_groups: resourceGroupNames.map((name) => ({ name })),
+      }),
+    });
+  });
+  await page.route('**/func/folders/_/hosts', async (route: any) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        allowed: [],
+        default: '',
+        volume_info: {},
+      }),
+    });
+  });
+}
+
+/**
  * Shared setup: login, navigate to serving (establishes backendaiclient),
  * inject the model-card-v2 feature flag, then set up GraphQL mocks before
  * navigating to the model-store page.
@@ -34,8 +114,22 @@ async function setupModelStorePage(
   page: any,
   request: any,
   mocks: Record<string, (vars: Record<string, any>) => Record<string, any>>,
+  resourceGroupNames: ReadonlyArray<string> = ['default'],
 ) {
   await loginAsAdmin(page, request);
+
+  // Install the model-card-v2 flag override via addInitScript so it survives
+  // the subsequent full-page reloads (`navigateTo` uses `page.goto`). A plain
+  // `page.evaluate` patch would be discarded the moment we navigate away from
+  // the serving page — the new document rebuilds `window.backendaiclient`
+  // from scratch, which then resolves `supports('model-card-v2')` against
+  // whatever the backend manager reports (may be `false` on older managers).
+  await installModelCardV2FlagOverride(page);
+
+  // Mock the REST endpoints that feed `useProjectResourceGroups` before
+  // anything navigates — the Deploy modal reads resource groups from REST,
+  // not GraphQL, so the GraphQL `scaling_groups` field is not enough.
+  await setupResourceGroupsRestMock(page, resourceGroupNames);
 
   // Set up GraphQL mocks BEFORE any navigation that triggers GQL queries.
   // Mock ServingPageQuery as well to prevent real API calls on the serving page.
@@ -47,18 +141,7 @@ async function setupModelStorePage(
   // Navigate to serving first so backendaiclient is initialized
   await navigateTo(page, 'serving');
 
-  // Inject the model-card-v2 feature flag into backendaiclient
-  await page.evaluate(() => {
-    const client = (window as any).backendaiclient;
-    if (client) {
-      const orig = client.supports.bind(client);
-      client.supports = function (feature: string) {
-        return feature === 'model-card-v2' ? true : orig(feature);
-      };
-    }
-  });
-
-  // Navigate to model-store
+  // Navigate to model-store (flag override is reinstalled on this reload)
   await navigateTo(page, 'model-store');
 }
 
@@ -288,11 +371,16 @@ test.describe(
     test.describe.configure({ mode: 'serial' });
 
     test.beforeEach(async ({ page, request }) => {
-      await setupModelStorePage(page, request, {
-        ModelStoreListPageV2Query: modelStoreListWithMultiPresetsMock(),
-        ModelCardDeployModalQuery: modelCardDeployModalQueryMock(),
-        ModelCardDeployModalMutation: modelCardDeployModalMutationMock(),
-      });
+      await setupModelStorePage(
+        page,
+        request,
+        {
+          ModelStoreListPageV2Query: modelStoreListWithMultiPresetsMock(),
+          ModelCardDeployModalQuery: modelCardDeployModalQueryMock(),
+          ModelCardDeployModalMutation: modelCardDeployModalMutationMock(),
+        },
+        ['default', 'gpu-cluster'],
+      );
     });
 
     test('admin can open the Deploy Model modal by clicking Deploy in the drawer', async ({
@@ -597,7 +685,19 @@ test.describe(
     ) {
       await loginAsAdmin(page, request);
 
-      // Set up mocks BEFORE navigation so they are active when the page fires queries
+      // Install the model-card-v2 flag override via addInitScript so that
+      // `isDeploymentDeploying` and `hasAnyHealthyRoute` read from
+      // `modelDeployment.metadata.status` (mocked) rather than
+      // `endpoint.lifecycle_stage`, which is not set by our endpoint mocks.
+      // `navigateTo` does a full page reload — a plain `page.evaluate`
+      // override would be wiped out before the detail page renders.
+      await installModelCardV2FlagOverride(page);
+
+      // Mock both queries the detail page fires. ServingPageQuery is fired
+      // once on `/serving` before we drill in, and EndpointDetailPageQuery is
+      // the detail page's main query. Any unmocked GQL operation that falls
+      // through to the real server risks clobbering shared Relay store
+      // records (notably `deployment(id: ...)`), so keep this set complete.
       await setupGraphQLMocks(page, {
         ServingPageQuery: endpointListMockResponse,
         ...mocks,
@@ -606,19 +706,7 @@ test.describe(
       // Navigate to serving first to initialize backendaiclient
       await navigateTo(page, 'serving');
 
-      // Inject the model-card-v2 feature flag so hasReachedReady is evaluated
-      // deterministically (EndpointDetailPage skips scheduling history without it)
-      await page.evaluate(() => {
-        const client = (window as any).backendaiclient;
-        if (client) {
-          const orig = client.supports.bind(client);
-          client.supports = function (feature: string) {
-            return feature === 'model-card-v2' ? true : orig(feature);
-          };
-        }
-      });
-
-      // Navigate to the endpoint detail page
+      // Navigate to the endpoint detail page (flag override persists across reloads)
       await navigateTo(page, `serving/${MOCK_ENDPOINT_UUID}`);
     }
 
@@ -636,10 +724,11 @@ test.describe(
       ).toBeVisible();
 
       // Verify the "Preparing your service" info alert is visible near the top
+      // Increased timeout: Relay Suspense + double StrictMode fetches can delay render past the 5s default
       const preparingAlert = page
         .getByRole('alert')
         .filter({ hasText: 'Preparing your service' });
-      await expect(preparingAlert).toBeVisible();
+      await expect(preparingAlert).toBeVisible({ timeout: 15000 });
 
       // Verify the alert description text is correct
       await expect(
