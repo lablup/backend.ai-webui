@@ -2,8 +2,9 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { BadgeProps, Tooltip } from 'antd';
-import { BAIBadge, SemanticColor } from 'backend.ai-ui';
+import { Tooltip } from 'antd';
+import type { TagProps } from 'antd';
+import { BAITag, type SemanticColor } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -16,10 +17,7 @@ export type ReplicaStatus =
   | 'TERMINATING'
   | 'TERMINATED';
 
-export interface ReplicaStatusTagProps extends Omit<
-  BadgeProps,
-  'color' | 'status'
-> {
+export interface ReplicaStatusTagProps extends Omit<TagProps, 'color'> {
   /**
    * Replica health/lifecycle state.
    * Health states: `HEALTHY`, `UNHEALTHY`, `DEGRADED`, `NOT_CHECKED`.
@@ -27,44 +25,22 @@ export interface ReplicaStatusTagProps extends Omit<
    */
   status: ReplicaStatus;
   /**
-   * When true, wraps the badge in a tooltip explaining the state.
+   * When true, wraps the tag in a tooltip explaining the state.
    * @default true
    */
   showTooltip?: boolean;
 }
 
-/**
- * Maps each replica status to a semantic color from the BAI design system.
- * `NOT_CHECKED` intentionally maps to `undefined` so `BAIBadge` renders an
- * outline-only (border) dot, matching the "unknown/indeterminate" convention.
- */
-const replicaStatusSemanticMap: Record<
-  ReplicaStatus,
-  SemanticColor | undefined
-> = {
+const replicaStatusColorMap: Record<ReplicaStatus, SemanticColor> = {
   HEALTHY: 'success',
   UNHEALTHY: 'error',
   DEGRADED: 'warning',
-  NOT_CHECKED: undefined,
+  NOT_CHECKED: 'default',
   PROVISIONING: 'info',
   TERMINATING: 'warning',
   TERMINATED: 'default',
 };
 
-/**
- * Statuses that should render with a ripple/processing animation on the dot
- * to convey an in-progress lifecycle transition.
- */
-const processingStatuses: ReadonlySet<ReplicaStatus> = new Set([
-  'PROVISIONING',
-  'TERMINATING',
-]);
-
-/**
- * i18n key suffix (PascalCase) for each replica status. Matches the keys
- * registered under `replicaStatus.*` and `replicaStatus.tooltip.*` in
- * `resources/i18n/en.json` (see FR-2666).
- */
 const replicaStatusI18nKey: Record<ReplicaStatus, string> = {
   HEALTHY: 'Healthy',
   UNHEALTHY: 'Unhealthy',
@@ -75,46 +51,34 @@ const replicaStatusI18nKey: Record<ReplicaStatus, string> = {
   TERMINATED: 'Terminated',
 };
 
-/**
- * ReplicaStatusTag - Displays the health/lifecycle state of a deployment replica.
- *
- * Renders a `BAIBadge` whose dot color and processing animation map to the
- * new replica health state machine used by the Endpoint Deployment UI
- * (FR-1368 / FR-2658). When `showTooltip` is true (default), the badge is
- * wrapped in a `Tooltip` that explains the state to the user.
- */
 const ReplicaStatusTag: React.FC<ReplicaStatusTagProps> = ({
   status,
   showTooltip = true,
-  ...badgeProps
+  ...tagProps
 }) => {
   'use memo';
   const { t } = useTranslation();
 
-  const color = replicaStatusSemanticMap[status];
-  const processing = processingStatuses.has(status);
+  const color = replicaStatusColorMap[status];
   const i18nKey = replicaStatusI18nKey[status];
   const label = t(`replicaStatus.${i18nKey}`);
   const tooltipTitle = showTooltip
     ? t(`replicaStatus.tooltip.${i18nKey}`, { defaultValue: '' })
     : undefined;
 
-  const badge = (
-    <BAIBadge
-      {...badgeProps}
-      color={color}
-      processing={processing}
-      text={label}
-    />
+  const tag = (
+    <BAITag {...tagProps} color={color}>
+      {label}
+    </BAITag>
   );
 
   if (!showTooltip || !tooltipTitle) {
-    return badge;
+    return tag;
   }
 
   return (
     <Tooltip title={tooltipTitle}>
-      <span>{badge}</span>
+      <span>{tag}</span>
     </Tooltip>
   );
 };

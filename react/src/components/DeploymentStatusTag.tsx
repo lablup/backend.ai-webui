@@ -2,8 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { BadgeProps } from 'antd';
-import { BAIBadge, SemanticColor } from 'backend.ai-ui';
+import type { TagProps } from 'antd';
+import { BAITag, type SemanticColor } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -21,14 +21,14 @@ export type DeploymentStatus =
   | 'READY';
 
 /**
- * Maps each deployment status to a semantic color.
+ * Maps each deployment status to a Tag color.
  *
- * - success: HEALTHY, READY — the deployment is fully operational.
- * - info: DEPLOYING, SCALING, PENDING — transient, in-flight states.
- * - warning: DEGRADED, UNHEALTHY, STOPPING — user attention needed or transitioning away.
- * - default: NOT_CHECKED, STOPPED, TERMINATED — neutral / inactive / pre-check states.
+ * - success:    HEALTHY, READY — fully operational.
+ * - processing: DEPLOYING, SCALING, PENDING — transient, in-flight states.
+ * - warning:    DEGRADED, UNHEALTHY, STOPPING — attention needed or transitioning away.
+ * - default:    NOT_CHECKED, STOPPED, TERMINATED — neutral / inactive.
  */
-const deploymentStatusSemanticMap: Record<DeploymentStatus, SemanticColor> = {
+const deploymentStatusColorMap: Record<DeploymentStatus, SemanticColor> = {
   HEALTHY: 'success',
   READY: 'success',
   DEPLOYING: 'info',
@@ -42,15 +42,6 @@ const deploymentStatusSemanticMap: Record<DeploymentStatus, SemanticColor> = {
   TERMINATED: 'default',
 };
 
-/**
- * In-flight statuses that should render with the processing ripple animation.
- */
-const processingStatuses: ReadonlySet<DeploymentStatus> =
-  new Set<DeploymentStatus>(['DEPLOYING', 'SCALING', 'STOPPING']);
-
-/**
- * Maps each deployment status to its i18n translation key under `deployment.status.*`.
- */
 const deploymentStatusI18nMap: Record<DeploymentStatus, string> = {
   HEALTHY: 'deployment.status.Healthy',
   UNHEALTHY: 'deployment.status.Unhealthy',
@@ -65,10 +56,7 @@ const deploymentStatusI18nMap: Record<DeploymentStatus, string> = {
   READY: 'deployment.status.Ready',
 };
 
-export interface DeploymentStatusTagProps extends Omit<
-  BadgeProps,
-  'color' | 'status' | 'styles' | 'text'
-> {
+export interface DeploymentStatusTagProps extends Omit<TagProps, 'color'> {
   /**
    * The deployment-level status to display. Consolidates lifecycle (e.g.
    * `DEPLOYING`, `STOPPED`, `TERMINATED`) and health (e.g. `HEALTHY`,
@@ -78,26 +66,20 @@ export interface DeploymentStatusTagProps extends Omit<
 }
 
 /**
- * DeploymentStatusTag — consolidated lifecycle + health status badge for a
+ * DeploymentStatusTag — consolidated lifecycle + health status tag for a
  * deployment. Used in list rows and detail page headers.
- *
- * In-flight states (`DEPLOYING`, `SCALING`, `STOPPING`) automatically render
- * with a processing ripple animation.
  */
 const DeploymentStatusTag: React.FC<DeploymentStatusTagProps> = ({
   status,
-  ...badgeProps
+  ...tagProps
 }) => {
   'use memo';
   const { t } = useTranslation();
 
   return (
-    <BAIBadge
-      {...badgeProps}
-      color={deploymentStatusSemanticMap[status]}
-      processing={processingStatuses.has(status)}
-      text={t(deploymentStatusI18nMap[status])}
-    />
+    <BAITag {...tagProps} color={deploymentStatusColorMap[status]}>
+      {t(deploymentStatusI18nMap[status])}
+    </BAITag>
   );
 };
 
