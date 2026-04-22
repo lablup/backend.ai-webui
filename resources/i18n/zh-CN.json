@@ -1826,6 +1826,7 @@
     "PresetTooltip": "预设定义了将此模型作为服务运行时使用的资源配置（CPU、内存、GPU）。",
     "ProjectNotFound": "未找到模型商店项目",
     "ProjectNotFoundDescription": "未找到 MODEL_STORE 项目。请联系管理员。",
+    "QuickDeployDetailed": "配置后部署...",
     "RelativeTime": "{{time}}",
     "ResourceGroup": "资源组",
     "ResourceGroupTooltip": "服务将在所选资源组中运行。",

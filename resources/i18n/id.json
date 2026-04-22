@@ -1827,6 +1827,7 @@
     "PresetTooltip": "Preset menentukan konfigurasi sumber daya (CPU, memori, GPU) yang digunakan untuk menjalankan model ini sebagai layanan.",
     "ProjectNotFound": "Proyek Model Store tidak ditemukan",
     "ProjectNotFoundDescription": "Proyek MODEL_STORE tidak dapat ditemukan. Silakan hubungi administrator Anda.",
+    "QuickDeployDetailed": "Konfigurasi dan deploy...",
     "RelativeTime": "{{time}}",
     "ResourceGroup": "Grup Sumber Daya",
     "ResourceGroupTooltip": "Layanan akan berjalan di grup sumber daya yang dipilih.",

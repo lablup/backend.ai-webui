@@ -1826,6 +1826,7 @@
     "PresetTooltip": "Preset xác định cấu hình tài nguyên (CPU, bộ nhớ, GPU) được sử dụng để chạy mô hình này dưới dạng dịch vụ.",
     "ProjectNotFound": "Không tìm thấy dự án Model Store",
     "ProjectNotFoundDescription": "Không tìm thấy dự án MODEL_STORE. Vui lòng liên hệ quản trị viên.",
+    "QuickDeployDetailed": "Cấu hình và triển khai...",
     "RelativeTime": "{{time}}",
     "ResourceGroup": "Nhóm tài nguyên",
     "ResourceGroupTooltip": "Dịch vụ sẽ chạy trong nhóm tài nguyên đã chọn.",
