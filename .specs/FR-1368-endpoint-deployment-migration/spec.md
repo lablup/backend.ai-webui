@@ -9,8 +9,8 @@
 모델 서빙 UI의 용어와 아키텍처를 "Endpoint" 중심에서 "Deployment" 중심으로 전면 재구축합니다.  
 백엔드의 신규 Strawberry GraphQL API(`ModelDeployment`, `Route`, `ModelReplica`)와 정합성을 맞추며, 배포 라이프사이클과 레플리카 헬스 상태를 사용자가 한눈에 파악할 수 있는 Deployment UX를 새로 설계합니다.
 
-**최소 지원 백엔드 버전**: 26.4.2 (Strawberry API 지원 시작)  
-구버전(26.4.2 미만)은 라우팅 레벨에서 기존 Graphene 기반 Serving/Endpoint UI로 전달됩니다.
+**최소 지원 백엔드 버전**: 26.4.x (최신 LTS)  
+구버전 호환성 fallback 없음. 신규 Strawberry API 전용으로 구현하며, 구버전 Graphene 기반 Endpoint 컴포넌트는 삭제합니다.
 
 ---
 
@@ -37,12 +37,12 @@
 | # | 항목 | 결정 내용 |
 |---|------|-----------|
 | 1 | URL 경로 | `/deployments`로 변경. 기존 `/serving` → `/deployments` 리디렉션 fallback 유지 |
-| 2 | API 호환성 | 26.4.2 이상: 신규 Strawberry API 사용. 미만: 기존 Graphene UI 라우팅. **버전 분기는 라우팅 레벨에서만 처리, 컴포넌트 내 dual-support 없음** |
+| 2 | API 호환성 | 최신 LTS 26.4.x만 지원. 구버전 Graphene API 대응 없음. 신규 Strawberry API 전용으로 구현 |
 | 3 | 헬스 색상 구분 | UNHEALTHY → **red/error**, DEGRADED → **amber/warning** |
 | 4 | Route vs Replica | Route는 내부 구현 개념. UI에서는 **Replicas**로만 노출. 헬스/트래픽 상태는 각 Replica의 속성으로 표시 |
-| 5 | Active Pool 위치 | Deployment 상세 페이지 **Overview 섹션** (메인 본문 상단)에 배치 |
-| 6 | 최소 백엔드 버전 | **26.4.2**. `sessionV2`(26.4.3+) 같은 상위 버전 필드는 optional 처리하고 `@since` 디렉티브 또는 런타임 가드로 감싼다 |
-| 7 | 구버전 컴포넌트 처리 | 구버전 Graphene 기반 페이지/컴포넌트는 **그대로 유지** (fallback 라우팅용). 신규 컴포넌트는 처음부터 새로 작성 |
+| 5 | Active Pool 위치 | **Replicas 탭**에서 확인 (Overview 섹션에 배치하지 않음 — 중복) |
+| 6 | 최소 백엔드 버전 | **26.4.x** (최신 LTS). `sessionV2`(26.4.3+) 같은 상위 버전 필드는 optional 처리하고 `@since` 디렉티브 또는 런타임 가드로 감싼다 |
+| 7 | 구버전 컴포넌트 처리 | 구버전 Graphene 기반 페이지/컴포넌트는 **삭제**. 신규 Deployment 컴포넌트로 완전 교체 |
 | 8 | 편집 = 새 리비전 | 설정 변경 시 덮어쓰기 없음. `addModelRevision` mutation으로 새 리비전 스냅샷 생성 |
 
 ---
@@ -123,30 +123,15 @@ ModelReplica (Strawberry GQL 타입)
 
 ---
 
-## API 버전 분기 전략
-
-버전 분기는 **라우팅 레벨에서만** 처리합니다. 개별 컴포넌트 내에서 dual-support하지 않습니다.
-
-### 라우팅 분기 원칙
-
-```tsx
-// routes.tsx에서
-const DetailPage = baiClient.supports('model-deployment-strawberry')
-  ? DeploymentDetailPage    // 신규 컴포넌트 (26.4.2+)
-  : EndpointDetailPage;     // 기존 컴포넌트 유지 (fallback)
-```
-
-### Feature Flag 추가 (backend.ai-client-esm.ts)
+## Feature Flag (backend.ai-client-esm.ts)
 
 ```ts
-if (this.isManagerVersionCompatibleWith('26.4.2')) {
-  this._features['model-deployment-strawberry'] = true;
-  this._features['model-replica'] = true;
-}
 if (this.isManagerVersionCompatibleWith('26.4.3')) {
   this._features['model-deployment-extended-filter'] = true;
 }
 ```
+
+- `model-deployment-extended-filter`: 26.4.3+ 조건부 필터 필드 노출 여부 (관리자 전용 `domainName`, `resourceGroup`, `createdAt` 등)
 
 ---
 
@@ -199,7 +184,7 @@ if (this.isManagerVersionCompatibleWith('26.4.3')) {
 
 구현 요구사항:
 - [ ] `DeploymentListPage.tsx` 신규 생성 (`/deployments` 경로)
-- [ ] `DeploymentList.tsx` 신규 생성 — `useRefetchableFragment` 패턴, `myDeployments` query 기반
+- [ ] `DeploymentList.tsx` 신규 생성 — Relay 복수형 fragment를 받는 Table 컴포넌트 (`myDeployments` query 소유는 `DeploymentListPage`, `DeploymentList`는 `fragmentRef` 수신)
 - [ ] `DeploymentStatusTag.tsx` 신규 생성 (배포 라이프사이클 상태 표시)
 - [ ] 레플리카 헬스 요약 (`activeReplicas / replicas Healthy`) 컬럼 표시
 - [ ] "New Deployment" 버튼 → `/deployments/create`로 이동
@@ -269,7 +254,7 @@ if (this.isManagerVersionCompatibleWith('26.4.3')) {
 
 ```
 ┌──────────────────────────────────────────────────────────────────────┐
-│  New Deployment                         [Recent Deployments]         │
+│  New Deployment                                                       │
 ├────────────────────────────────────────────────┬─────────────────────┤
 │                                                │  1. Basic Info      │
 │  (폼 본문 — 현재 step 내용)                    │     ●               │
@@ -297,37 +282,7 @@ if (this.isManagerVersionCompatibleWith('26.4.3')) {
 3. Step 3 — **리소스**: GPU/CPU/메모리, 레플리카 수, 리소스 그룹, 클러스터 모드
 4. Step 4 — **검토 & 생성**: 입력 내용 요약 확인 후 제출
 
-**오른쪽 상단 버튼 — 기존 배포에서 가져오기 (FR-2419)**
-
-런처 폼 헤더 오른쪽 상단에 **"Recent Deployments"** 버튼을 배치합니다 (세션 런처의 "Recent History" 버튼과 동일한 패턴).
-
-"Recent Deployments" 버튼 클릭 시 모달(세션 런처의 Recent History 모달과 동일한 형태)을 열어 최근 배포 목록 표시:
-
-```
-┌────────────────────────────────────────────────────────────┐
-│  Recent Deployments                                    ✕   │
-├────────────────────────────────────────────────────────────┤
-│  These are your recent deployments. Click a name to        │
-│  pre-fill the form.                                        │
-│                                                            │
-│  Name              Runtime    Resources        CreatedAt   │
-│  ─────────────────────────────────────────────────────     │
-│  my-llama-service  vllm       A100 x2, 2 rep  2026-04-01   │
-│  gpt-sglang-prod   sglang     A100 x1, 1 rep  2026-03-28   │
-│  custom-model-v3   custom     H100 x4, 3 rep  2026-03-15   │
-│                                                            │
-│  (No data — empty state if no previous deployments)        │
-└────────────────────────────────────────────────────────────┘
-```
-
-모달에서 배포 선택 시:
-1. 해당 배포의 `currentRevision` 설정으로 폼 전체 pre-fill
-2. 이름 필드는 자동으로 초기화 (새 이름 입력 유도), 나머지 설정은 유지
-3. 모달 닫힘 → 사용자가 각 필드를 자유롭게 수정 후 제출
-
-데이터 소스:
-- `myDeploymentsV2` query로 최근 배포 목록 조회 (최대 10개, `createdAt` 내림차순)
-- 선택된 배포의 `currentRevision` 필드에서 설정 전체 읽기
+> **범위 외 (별도 spec)**: "기존 배포에서 가져오기" (Recent Deployments pre-fill) 기능은 FR-2419로 완전 별도 진행. 이 스펙에 포함하지 않음.
 
 제출 흐름:
 - `createModelDeployment` mutation → `deploymentId` 반환
@@ -346,19 +301,11 @@ if (this.isManagerVersionCompatibleWith('26.4.3')) {
   - `Skip to Review »`: 마지막 step 전까지 표시, Review step으로 즉시 이동
   - Review step: `Create Deployment` (primary) 버튼
 - [ ] `createModelDeployment` + `addModelRevision` GQL mutation 연동
-- [ ] 폼 헤더 오른쪽 상단에 **"Recent Deployments"** 버튼 배치 (세션 런처 `SessionLauncherPage`의 Recent History 버튼 패턴 참조)
-- [ ] **Recent Deployments 모달** 구현 (FR-2419)
-  - `myDeploymentsV2` query로 최근 배포 목록 로드
-  - 선택 시 `currentRevision` 기반으로 폼 전체 pre-fill
-  - 이름 필드 초기화
-  - 빈 상태(no data) 처리
 - [ ] **URL 상태 동기화** (`nuqs` `useQueryStates` 사용): 새로고침 후에도 폼 상태 유지
   - `step`: 현재 단계 번호 (`parseAsInteger.withDefault(1)`)
   - `formValues`: 핵심 폼 값 JSON (`parseAsJson` 또는 `JsonParam`, `withDefault({})`)
   - 기존 `ServiceLauncherPageContent`의 `useQueryParams` 패턴 참조
 - [ ] 성공 후 상세 페이지로 이동
-
-관련 이슈: FR-2419 (Add 'Import from existing spec' feature in ModelService creation)
 
 ---
 
@@ -374,17 +321,9 @@ if (this.isManagerVersionCompatibleWith('26.4.3')) {
 
 **Overview 섹션** (메인 본문 상단, 탭 밖):
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│  Active Pool                           [2 / 3 Healthy]      │
-│  AppProxy가 트래픽을 전달하는 레플리카 목록입니다.                    │
-├─────────────────────────────────────────────────────────────┤
-│  [● Replica 1]  HEALTHY   Rev. abc123  Traffic: 50%         │
-│  [● Replica 2]  HEALTHY   Rev. abc123  Traffic: 50%         │
-│  [○ Replica 3]  UNHEALTHY Rev. abc123  (트래픽 차단)  red      │
-│  [○ Replica 4]  DEGRADED  Rev. abc123  (유예 중)     amber    │
-└─────────────────────────────────────────────────────────────┘
+> **Active Pool은 Overview에서 제거.** 첫 번째 탭(Replicas)에서 이미 레플리카 상태를 전체 확인할 수 있으므로 중복. Configuration 카드만 Overview에 배치.
 
+```
 ┌─────────────────────────────────────────────────────────────┐
 │  Configuration                       [Edit Configuration]   │
 ├─────────────────────────────────────┬───────────────────────┤
@@ -397,10 +336,6 @@ if (this.isManagerVersionCompatibleWith('26.4.3')) {
 └─────────────────────────────────────┴───────────────────────┘
 ```
 
-- `healthStatus = HEALTHY` AND `trafficStatus = ACTIVE`인 레플리카: Active Pool 포함, 정상 표시
-- 그 외 레플리카: "트래픽 미수신" 시각적 표시 (점선 테두리 또는 dim)
-- DEGRADED: amber 경고 표시 (유예 중, 트래픽 차단)
-- UNHEALTHY: red 오류 표시 (확정 비정상, 트래픽 차단)
 - Configuration 카드: 현재 Active 리비전의 설정 요약 (읽기 전용). "Edit Configuration" 버튼 → Flow 4
 
 **탭 구성**:
@@ -432,7 +367,7 @@ if (this.isManagerVersionCompatibleWith('26.4.3')) {
 
 구현 요구사항:
 - [ ] `DeploymentDetailPage.tsx` 신규 생성 (Strawberry API 기반)
-- [ ] `DeploymentActivePoolSection.tsx` 신규 생성 (Overview 섹션 — Active Pool 시각화 + Configuration 카드 + "Edit Configuration" 버튼)
+- [ ] `DeploymentConfigurationSection.tsx` 신규 생성 (Overview 섹션 — Configuration 카드 + "Edit Configuration" 버튼)
 - [ ] `ReplicaStatusTag.tsx` 신규 생성 (Replica 헬스 상태 태그, 아래 별도 스펙 참조)
 - [ ] `DeploymentReplicasTab.tsx` 신규 생성 (Replicas 탭)
 - [ ] `DeploymentRevisionHistoryTab.tsx` 신규 생성 (Revision History 탭)
@@ -656,12 +591,16 @@ export interface ReplicaStatusTagProps extends Omit<BAITagProps, 'color'> {
 
 #### Flow 7: 모델 폴더에서 바로 배포 (Quick Deploy)
 
-모델 폴더 목록 또는 모델 카드에서 "Deploy" 버튼을 클릭하면 폼 없이 즉시 배포를 생성합니다.
+모델 폴더 목록 또는 모델 카드에서 배포를 시작합니다.
 
-**진입점**: 모델 폴더 목록, 모델 카드, Model Store 등 (`useDeploymentLauncher` hook 사용)
+**진입점**: 모델 폴더 목록, 모델 카드, Model Store 등
 
-사용자 경험:
-1. "Deploy" 버튼 클릭
+**버튼 구성** (`[Deploy | ▼]` 분할 버튼):
+- **`Deploy` (메인 버튼)**: 폼 없이 즉시 배포 생성 (기존 Quick Deploy 동작)
+- **`▼` (드롭다운 버튼)** → `세부 설정 후 배포하기` 메뉴 → `DeploymentLauncherPage` preview 단계(Step 2 또는 Step 1)로 이동, 모델 폴더 pre-fill
+
+**`Deploy` 버튼 Quick Deploy 사용자 경험:**
+1. "Deploy" 클릭
 2. 즉시 배포 생성 시작 — 별도 폼 없음
 3. 백그라운드 알림으로 진행 상황 표시: "배포를 시작하는 중..."
 4. 준비 완료 → 알림에 "/chat으로 이동" 링크 표시
@@ -721,7 +660,7 @@ react/src/components/
   DeploymentStatusTag.tsx              # 배포 상태 태그
   DeploymentLauncherPageContent.tsx    # 생성/편집 다단계 폼 본문
   ReplicaStatusTag.tsx                 # 레플리카 헬스 상태 태그
-  DeploymentActivePoolSection.tsx      # Active Pool 시각화 섹션
+  DeploymentConfigurationSection.tsx   # Overview 섹션 — Configuration 카드
   DeploymentReplicasTab.tsx            # Replicas 탭
   DeploymentRevisionHistoryTab.tsx     # Revision History 탭
   DeploymentAccessTokensTab.tsx        # Access Tokens 탭
@@ -729,32 +668,32 @@ react/src/components/
   DeploymentOwnerInfo.tsx              # 소유자 정보
 ```
 
-### 구버전 컴포넌트 (라우팅 fallback 전용, 변경 없이 유지)
+### 구버전 컴포넌트 (삭제 대상)
 
-26.4.2 미만 백엔드 접속 시 라우팅 레벨에서 아래 기존 페이지로 전달합니다. 이 파일들은 수정하지 않습니다.
+신규 Deployment 컴포넌트로 완전 교체하므로 아래 파일들을 삭제합니다.
 
 ```
 react/src/pages/
-  ServingPage.tsx                  # 구버전 fallback 유지
-  EndpointDetailPage.tsx           # 구버전 fallback 유지
-  ServiceLauncherPage.tsx          # 구버전 fallback 유지
+  ServingPage.tsx                  # 삭제
+  EndpointDetailPage.tsx           # 삭제
+  ServiceLauncherPage.tsx          # 삭제
 
 react/src/components/
-  EndpointList.tsx                 # 구버전 fallback 유지
-  EndpointStatusTag.tsx            # 구버전 fallback 유지
-  EndpointDiagnosticsSection.tsx   # 구버전 fallback 유지
-  EndpointOwnerInfo.tsx            # 구버전 fallback 유지
-  EndpointTokenGenerationModal.tsx # 구버전 fallback 유지
-  ServiceLauncherPageContent.tsx   # 구버전 fallback 유지
+  EndpointList.tsx                 # 삭제
+  EndpointStatusTag.tsx            # 삭제
+  EndpointDiagnosticsSection.tsx   # 삭제
+  EndpointOwnerInfo.tsx            # 삭제
+  EndpointTokenGenerationModal.tsx # 삭제
+  ServiceLauncherPageContent.tsx   # 삭제
 ```
 
 ### 변경 필요 파일
 
 | 파일 경로 | 변경 내용 |
 |----------|---------|
-| `react/src/routes.tsx` | URL 경로 변경, fallback 리디렉션 추가, 신규 페이지 import, 버전 분기 라우팅 |
+| `react/src/routes.tsx` | URL 경로 변경, fallback 리디렉션 추가, 신규 Deployment 페이지 import, 구버전 Endpoint 페이지 제거 |
 | `react/src/hooks/useWebUIMenuItems.tsx` | 메뉴 경로 및 레이블 업데이트 |
-| `src/lib/backend.ai-client-esm.ts` | `model-deployment-strawberry`, `model-replica`, `model-deployment-extended-filter` feature flag 추가 |
+| `src/lib/backend.ai-client-esm.ts` | `model-deployment-extended-filter` feature flag 추가 (26.4.3+ 조건부 필터용) |
 | `resources/i18n/en.json` | 신규 i18n 키 추가 (22개 언어 번역 필요) |
 
 ---
@@ -763,7 +702,7 @@ react/src/components/
 
 | 기존 Graphene 필드 | 신규 Strawberry 필드 |
 |-------------------|---------------------|
-| `endpoint.name` | `deployment.name` |
+| `endpoint.name` | `deployment.metadata.name` |
 | `endpoint.replicas` | `revision.replicaCount` |
 | `endpoint.resource_slots` | `revision.resourceSlots` |
 | `endpoint.resource_group` / `scaling_group` | revision 설정 내 해당 필드 |
@@ -774,7 +713,7 @@ react/src/components/
 | `endpoint.model_mount_destination` | `revision.modelDefinition.modelMountDestination` |
 | `endpoint.model_definition_path` | `revision.modelDefinition.modelDefinitionPath` |
 | `endpoint.extra_mounts` | `revision.modelDefinition.extraMounts` |
-| `endpoint.open_to_public` | `deployment.networkAccess.isPublic` |
+| `endpoint.open_to_public` | `deployment.networkAccess.openToPublic` |
 | `endpoint.cluster_mode`, `endpoint.cluster_size` | `revision.clusterConfig.mode`, `revision.clusterConfig.size` (`ClusterConfig` 타입) |
 
 ---
@@ -897,8 +836,8 @@ adminDeployments(filter: DeploymentFilter, orderBy: [DeploymentOrderBy!], limit:
 
 ### Phase 1 — 기반 작업
 
-1. `backend.ai-client-esm.ts`에 `model-deployment-strawberry`, `model-replica`, `model-deployment-extended-filter` feature flag 추가
-2. `routes.tsx`: URL 경로 변경 + fallback 리디렉션 + 버전 분기 라우팅 골격
+1. `backend.ai-client-esm.ts`에 `model-deployment-extended-filter` feature flag 추가 (26.4.3+ 조건부 필터용)
+2. `routes.tsx`: URL 경로 변경 + fallback 리디렉션 (신규 Deployment 페이지로 직접 라우팅)
 3. `useWebUIMenuItems.tsx`: 메뉴 레이블 및 경로 업데이트
 4. i18n 신규 키 추가 (`en.json`)
 
@@ -933,6 +872,14 @@ adminDeployments(filter: DeploymentFilter, orderBy: [DeploymentOrderBy!], limit:
 
 ---
 
+## 향후 작업 (이 스펙 이후)
+
+- **배포 지표 탭**: deployment에서 표시할 만한 지표가 있으면 상세 페이지에 별도 탭으로 추가
+- **상태 히스토리**: 배포의 상태 변경 이력을 UI에서 확인할 수 있도록 히스토리 뷰 제공
+- **기존 배포에서 가져오기** (FR-2419): 별도 spec으로 진행. Deployment 전반 구현 완료 후 단독 스펙 작성
+
+---
+
 ## 관련 이슈
 
 - FR-2591: Route trafficStatus 수동 전환 (BAIRouteNodes의 TODO)
@@ -944,6 +891,13 @@ adminDeployments(filter: DeploymentFilter, orderBy: [DeploymentOrderBy!], limit:
 
 ## 변경 이력
 
+- 2026-04-22: PR 리뷰 피드백 반영
+  - 구버전 Endpoint 컴포넌트 "유지" → "삭제 대상"으로 변경 (26.4.x LTS만 지원, fallback 제거)
+  - `DeploymentList.tsx` 패턴 수정: `useRefetchableFragment` → 복수형 fragment-receiving Table 컴포넌트
+  - "Recent Deployments" (FR-2419) 이 스펙에서 제거 → 완전 별도 spec으로 분리
+  - Overview 섹션에서 Active Pool 제거 (Replicas 탭과 중복), Configuration 카드만 유지
+  - Flow 7 Quick Deploy UX 변경: `[Deploy | ▼]` 분할 버튼 — `▼` 드롭다운에 "세부 설정 후 배포하기" 추가 → launcher preview 진입
+  - 향후 작업 섹션 추가 (배포 지표 탭, 상태 히스토리)
 - 2026-04-22: Flow 2 UX 변경 — 기본 진입을 빈 폼으로, "Recent Deployments" 버튼을 오른쪽 상단에 배치하여 모달로 기존 배포 선택 (세션 런처 Recent History 패턴)
 - 2026-04-21: 서버사이드 페이지네이션/필터/정렬 패턴 명세 추가 (DeploymentFilter, DeploymentOrderBy, isEnableSorter, convertToOrderBy, nuqs URL 직렬화)
 - 2026-04-21: Settings 탭 제거 → Overview 섹션의 Configuration 카드로 통합. 탭 5개 → 4개
