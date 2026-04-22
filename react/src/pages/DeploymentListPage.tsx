@@ -6,23 +6,31 @@ import {
   DeploymentFilter,
   DeploymentListPageQuery,
   DeploymentOrderBy,
+  DeploymentStatus,
 } from '../__generated__/DeploymentListPageQuery.graphql';
-import DeploymentList, { DeploymentSort } from '../components/DeploymentList';
+import DeploymentList, {
+  availableDeploymentOrderValues,
+  tableOrderToSort,
+  type DeploymentOrderValue,
+  type DeploymentStatusCategory,
+} from '../components/DeploymentList';
 import { useWebUINavigate } from '../hooks';
+import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
+import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { Button } from 'antd';
-import { BAICard, BAIFlex, toLocalId } from 'backend.ai-ui';
-import { PlusIcon } from 'lucide-react';
-import { parseAsInteger, parseAsString, useQueryStates } from 'nuqs';
+import {
+  BAICard,
+  BAIFetchKeyButton,
+  BAIFlex,
+  INITIAL_FETCH_KEY,
+  toLocalId,
+  useFetchKey,
+} from 'backend.ai-ui';
+import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import React, { useDeferredValue, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-/**
- * Parse the JSON-serialized `GraphQLFilter` stored in the URL back into the
- * shape accepted by the `myDeployments(filter: DeploymentFilter)` query
- * variable. Invalid / empty values become `undefined` so the server applies
- * no filter.
- */
 const parseFilterForQuery = (
   filter: string | null,
 ): DeploymentFilter | undefined => {
@@ -39,41 +47,10 @@ const parseFilterForQuery = (
 };
 
 /**
- * Serialize a structured sort value into the JSON URL state and back.
- *
- * The `sort` URL parameter is stored as a JSON string so that both the
- * `field` enum value and `order` direction survive a round-trip through
- * `nuqs`. An absent / malformed value is treated as "no sort" and falls
- * back to the server default (most recently created first).
- */
-const parseSortString = (raw: string | null): DeploymentSort | undefined => {
-  if (!raw) return undefined;
-  try {
-    const parsed = JSON.parse(raw);
-    if (
-      parsed &&
-      typeof parsed === 'object' &&
-      typeof parsed.field === 'string' &&
-      (parsed.order === 'ASC' || parsed.order === 'DESC')
-    ) {
-      return parsed as DeploymentSort;
-    }
-    return undefined;
-  } catch {
-    return undefined;
-  }
-};
-
-const stringifySort = (sort: DeploymentSort | undefined): string | null => {
-  if (!sort) return null;
-  return JSON.stringify(sort);
-};
-
-/**
  * User-facing deployment list page. Owns the `myDeployments` Relay query
  * and feeds the returned connection into `<DeploymentList mode="user" />`.
  *
- * URL-synced state (filter / sort / page / pageSize) is managed via `nuqs`
+ * URL-synced state (filter / order / pagination) is managed via `nuqs`
  * so the view survives refreshes and can be shared via link.
  */
 const DeploymentListPage: React.FC = () => {
@@ -81,52 +58,75 @@ const DeploymentListPage: React.FC = () => {
   const { t } = useTranslation();
   const webuiNavigate = useWebUINavigate();
 
+  const {
+    baiPaginationOption,
+    tablePaginationOption,
+    setTablePaginationOption,
+  } = useBAIPaginationOptionStateOnSearchParam({ current: 1, pageSize: 10 });
+
   const [queryParams, setQueryParams] = useQueryStates(
     {
       filter: parseAsString,
-      sort: parseAsString,
-      page: parseAsInteger.withDefault(1),
-      pageSize: parseAsInteger.withDefault(10),
+      order: parseAsStringLiteral(availableDeploymentOrderValues),
+      statusCategory: parseAsStringLiteral<DeploymentStatusCategory>([
+        'running',
+        'finished',
+      ]).withDefault('running'),
     },
-    { history: 'push' },
+    { history: 'replace' },
   );
 
-  const sort = parseSortString(queryParams.sort);
+  const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
+    'table_column_overrides.DeploymentListPage',
+  );
+
+  const [fetchKey, updateFetchKey] = useFetchKey();
 
   const queryVariables = useMemo(() => {
+    const sort = tableOrderToSort(queryParams.order);
     const orderBy: DeploymentOrderBy[] | undefined = sort
       ? [
           {
             field: sort.field as DeploymentOrderBy['field'],
-            direction: sort.order,
+            direction: sort.order as DeploymentOrderBy['direction'],
           },
         ]
       : undefined;
+    const finishedStatuses: ReadonlyArray<DeploymentStatus> = ['STOPPED'];
+    const statusCategoryFilter: DeploymentFilter =
+      queryParams.statusCategory === 'finished'
+        ? { status: { in: finishedStatuses } }
+        : { status: { notIn: finishedStatuses } };
+    const userFilter = parseFilterForQuery(queryParams.filter);
     return {
-      filter: parseFilterForQuery(queryParams.filter),
+      filter: { ...userFilter, ...statusCategoryFilter },
       orderBy,
-      first: queryParams.pageSize,
-      offset:
-        queryParams.page > 1
-          ? (queryParams.page - 1) * queryParams.pageSize
-          : 0,
+      limit: baiPaginationOption.limit,
+      offset: baiPaginationOption.offset,
     };
-  }, [queryParams.filter, queryParams.page, queryParams.pageSize, sort]);
+  }, [
+    queryParams.filter,
+    queryParams.order,
+    queryParams.statusCategory,
+    baiPaginationOption.limit,
+    baiPaginationOption.offset,
+  ]);
 
   const deferredQueryVariables = useDeferredValue(queryVariables);
+  const deferredFetchKey = useDeferredValue(fetchKey);
 
   const { myDeployments } = useLazyLoadQuery<DeploymentListPageQuery>(
     graphql`
       query DeploymentListPageQuery(
         $filter: DeploymentFilter
         $orderBy: [DeploymentOrderBy!]
-        $first: Int
+        $limit: Int
         $offset: Int
       ) {
         myDeployments(
           filter: $filter
           orderBy: $orderBy
-          first: $first
+          limit: $limit
           offset: $offset
         ) {
           ...DeploymentList_modelDeploymentConnection
@@ -134,25 +134,23 @@ const DeploymentListPage: React.FC = () => {
       }
     `,
     deferredQueryVariables,
-    { fetchPolicy: 'store-and-network' },
+    {
+      fetchPolicy:
+        deferredFetchKey === INITIAL_FETCH_KEY
+          ? 'store-and-network'
+          : 'network-only',
+      fetchKey: deferredFetchKey,
+    },
   );
 
-  const isPending = deferredQueryVariables !== queryVariables;
+  const isPending =
+    deferredQueryVariables !== queryVariables || deferredFetchKey !== fetchKey;
 
   return (
     <BAIFlex direction="column" align="stretch" gap="md">
       <BAICard
         variant="borderless"
         title={t('deployment.Deployments')}
-        extra={
-          <Button
-            type="primary"
-            icon={<PlusIcon size={16} />}
-            onClick={() => webuiNavigate('/deployments/new')}
-          >
-            {t('deployment.CreateDeployment')}
-          </Button>
-        }
         styles={{
           header: { borderBottom: 'none' },
           body: { paddingTop: 0 },
@@ -163,30 +161,50 @@ const DeploymentListPage: React.FC = () => {
             deploymentsFrgmt={myDeployments}
             filter={queryParams.filter ?? undefined}
             setFilter={(value) => {
+              setQueryParams({ filter: value || null });
+              setTablePaginationOption({ current: 1 });
+            }}
+            order={queryParams.order ?? undefined}
+            onChangeOrder={(order) => {
               setQueryParams({
-                filter: value ? value : null,
-                page: 1,
+                order: (order as DeploymentOrderValue) ?? null,
               });
             }}
-            sort={sort}
-            setSort={(value) => {
-              setQueryParams({ sort: stringifySort(value) });
+            statusCategory={queryParams.statusCategory}
+            onStatusCategoryChange={(value) => {
+              setQueryParams({ statusCategory: value });
+              setTablePaginationOption({ current: 1 });
             }}
-            page={queryParams.page}
-            setPage={(value) => {
-              setQueryParams({ page: value });
+            pagination={{
+              ...tablePaginationOption,
+              onChange: (current, pageSize) => {
+                setTablePaginationOption({ current, pageSize });
+              },
             }}
-            pageSize={queryParams.pageSize}
-            setPageSize={(value) => {
-              setQueryParams({ pageSize: value });
+            tableSettings={{
+              columnOverrides,
+              onColumnOverridesChange: setColumnOverrides,
             }}
             mode="user"
             loading={isPending}
             onRowClick={(deploymentId) => {
-              // DeploymentList surfaces the global Relay ID; the route
-              // expects a local UUID (see `/deployments/:deploymentId`).
               webuiNavigate(`/deployments/${toLocalId(deploymentId)}`);
             }}
+            toolbarEnd={
+              <BAIFlex gap="xs" align="center">
+                <BAIFetchKeyButton
+                  value={fetchKey}
+                  onChange={updateFetchKey}
+                  loading={isPending}
+                />
+                <Button
+                  type="primary"
+                  onClick={() => webuiNavigate('/deployments/start')}
+                >
+                  {t('deployment.CreateDeployment')}
+                </Button>
+              </BAIFlex>
+            }
           />
         ) : null}
       </BAICard>

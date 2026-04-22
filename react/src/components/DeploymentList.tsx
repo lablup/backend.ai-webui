@@ -7,9 +7,10 @@ import {
   DeploymentList_modelDeploymentConnection$key,
 } from '../__generated__/DeploymentList_modelDeploymentConnection.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
+import BAIRadioGroup from './BAIRadioGroup';
 import DeploymentOwnerInfo from './DeploymentOwnerInfo';
 import DeploymentStatusTag, { DeploymentStatus } from './DeploymentStatusTag';
-import { Typography, theme } from 'antd';
+import { Tag, Typography } from 'antd';
 import {
   BAIFlex,
   BAIGraphQLPropertyFilter,
@@ -17,6 +18,7 @@ import {
   filterOutEmpty,
   filterOutNullAndUndefined,
   type BAIColumnType,
+  type BAITableProps,
   type GraphQLFilter,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
@@ -26,26 +28,13 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
 type DeploymentEdge = NonNullable<
-  NonNullable<
-    DeploymentList_modelDeploymentConnection$data['edges']
-  >[number]
+  NonNullable<DeploymentList_modelDeploymentConnection$data['edges']>[number]
 >;
 type DeploymentNode = NonNullable<DeploymentEdge['node']>;
 
-/**
- * Deployment sort direction as emitted by the server-side `DeploymentOrderBy`
- * input. Parent pages own the URL state and pass the current value through.
- */
-export type DeploymentSortOrder = 'ASC' | 'DESC';
-
-/**
- * Structured sort value matching the server-side `DeploymentOrderBy` shape.
- * `field` is one of the `DeploymentOrderField` enum values
- * (`NAME`, `CREATED_AT`, `DOMAIN`, `PROJECT`, `RESOURCE_GROUP`, `TAG`, ...).
- */
-export interface DeploymentSort {
+interface DeploymentSort {
   field: string;
-  order: DeploymentSortOrder;
+  order: 'ASC' | 'DESC';
 }
 
 /** Maps BAITable column keys (camelCase) → server-side enum field. */
@@ -58,17 +47,24 @@ const COLUMN_KEY_TO_FIELD: Record<string, string> = {
   tag: 'TAG',
 };
 
-const FIELD_TO_COLUMN_KEY: Record<string, string> = _.invert(
-  COLUMN_KEY_TO_FIELD,
-);
+/** All valid order strings accepted by BAITable for deployments. */
+export const availableDeploymentOrderValues = [
+  'name',
+  '-name',
+  'createdAt',
+  '-createdAt',
+] as const;
+
+export type DeploymentOrderValue =
+  (typeof availableDeploymentOrderValues)[number];
 
 /**
- * BAITable exchanges sort state via a single string (e.g. `'name'`,
- * `'-createdAt'`). Convert that string to the structured `DeploymentSort`
- * shape the parent (and server-side `DeploymentOrderBy`) expects, and vice
- * versa.
+ * Convert a BAITable order string (e.g. `'-createdAt'`) to the structured
+ * `DeploymentSort` shape expected by the server `DeploymentOrderBy` input.
+ * Returns `undefined` for unrecognised keys so callers can safely skip
+ * building the `orderBy` variable.
  */
-const tableOrderToSort = (
+export const tableOrderToSort = (
   order: string | null | undefined,
 ): DeploymentSort | undefined => {
   if (!order) return undefined;
@@ -79,20 +75,6 @@ const tableOrderToSort = (
   return { field, order: descending ? 'DESC' : 'ASC' };
 };
 
-const sortToTableOrder = (
-  sort: DeploymentSort | undefined,
-): string | undefined => {
-  if (!sort) return undefined;
-  const columnKey = FIELD_TO_COLUMN_KEY[sort.field];
-  if (!columnKey) return undefined;
-  return sort.order === 'DESC' ? `-${columnKey}` : columnKey;
-};
-
-/**
- * Safely parse the stringified filter prop into a `GraphQLFilter` object.
- * Invalid JSON and non-object values are treated as "no filter" so the
- * component degrades gracefully when the URL state is malformed.
- */
 const parseFilterString = (
   filter: string | undefined,
 ): GraphQLFilter | undefined => {
@@ -113,37 +95,18 @@ const stringifyFilter = (filter: GraphQLFilter | undefined): string => {
   return JSON.stringify(filter);
 };
 
-export interface DeploymentListProps {
-  /**
-   * Relay fragment reference for a `ModelDeploymentConnection`. The owning
-   * page (e.g. `DeploymentListPage` / `AdminDeploymentListPage`) passes the
-   * connection read from its own query.
-   */
-  deploymentsFrgmt: DeploymentList_modelDeploymentConnection$key;
+export type DeploymentStatusCategory = 'running' | 'finished';
 
-  /**
-   * Current filter value. Expected to be a JSON-serialized
-   * `GraphQLFilter` (as produced by `BAIGraphQLPropertyFilter`). Empty string
-   * or `undefined` means "no filter".
-   *
-   * The parent owns the URL state; this component parses on the way in and
-   * serializes on the way out.
-   */
+export interface DeploymentListProps extends Omit<
+  BAITableProps<DeploymentNode>,
+  'dataSource' | 'columns' | 'onChangeOrder'
+> {
+  deploymentsFrgmt: DeploymentList_modelDeploymentConnection$key;
   filter?: string;
   setFilter: (value: string) => void;
-
-  /** Current server-side sort (field + direction). */
-  sort?: DeploymentSort;
-  setSort: (value: DeploymentSort | undefined) => void;
-
-  /** 1-indexed page number. */
-  page: number;
-  setPage: (value: number) => void;
-
-  /** Rows per page. */
-  pageSize: number;
-  setPageSize: (value: number) => void;
-
+  onChangeOrder?: (order: string | null) => void;
+  statusCategory?: DeploymentStatusCategory;
+  onStatusCategoryChange?: (value: DeploymentStatusCategory) => void;
   /**
    * `'user'` — standard user-owned list (myDeployments / projectDeployments).
    * `'admin'` — admin list. Shows the Owner column and — when the manager
@@ -151,31 +114,26 @@ export interface DeploymentListProps {
    * Domain / Project / Resource Group filters.
    */
   mode: 'user' | 'admin';
-
-  /** Whether the table body should show the loading spinner. */
-  loading?: boolean;
-
   /** Called when a row name is clicked. Receives the deployment global ID. */
   onRowClick?: (deploymentId: string) => void;
+  /** Extra elements rendered at the end of the toolbar row (e.g. refresh + create buttons). */
+  toolbarEnd?: React.ReactNode;
 }
 
 const DeploymentList: React.FC<DeploymentListProps> = ({
   deploymentsFrgmt,
   filter,
   setFilter,
-  sort,
-  setSort,
-  page,
-  setPage,
-  pageSize,
-  setPageSize,
+  onChangeOrder,
+  statusCategory = 'running',
+  onStatusCategoryChange,
   mode,
-  loading,
   onRowClick,
+  toolbarEnd,
+  ...tableProps
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
 
   const connection = useFragment(
@@ -191,6 +149,10 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
               createdAt
               domainName
               projectId
+              tags
+            }
+            networkAccess {
+              endpointUrl
             }
             replicaState {
               desiredReplicaCount
@@ -198,9 +160,7 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
             totalReplicas: replicas {
               count
             }
-            runningReplicas: replicas(
-              filter: { status: { equals: RUNNING } }
-            ) {
+            runningReplicas: replicas(filter: { status: { equals: RUNNING } }) {
               count
             }
             currentRevision @since(version: "26.4.3") {
@@ -281,7 +241,7 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
     {
       key: 'name',
       title: t('deployment.Name'),
-      dataIndex: ['metadata', 'name'],
+      dataIndex: 'name',
       sorter: true,
       fixed: 'left' as const,
       render: (_text, row) => {
@@ -315,9 +275,6 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
         const running = row.runningReplicas?.count ?? 0;
         const desired = row.replicaState?.desiredReplicaCount ?? 0;
         const total = row.totalReplicas?.count ?? desired;
-        // Prefer desired count as the denominator so ongoing (scaling)
-        // deployments still surface the intended replica target. Fall back
-        // to the observed total if desired is not reported.
         const denominator = desired > 0 ? desired : total;
         return (
           <Typography.Text>
@@ -335,7 +292,8 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
       render: (_text, row) => {
         const modelName =
           row.currentRevision?.modelMountConfig?.vfolder?.name ?? null;
-        if (!modelName) return <Typography.Text type="secondary">-</Typography.Text>;
+        if (!modelName)
+          return <Typography.Text type="secondary">-</Typography.Text>;
         return (
           <Typography.Text
             ellipsis={{ tooltip: modelName }}
@@ -347,13 +305,54 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
       },
     },
     {
+      key: 'endpointUrl',
+      title: t('deployment.EndpointUrl'),
+      render: (_text, row) => {
+        const url = row.networkAccess?.endpointUrl;
+        if (!url) return <Typography.Text type="secondary">-</Typography.Text>;
+        return (
+          <Typography.Link href={url} target="_blank" rel="noreferrer">
+            {url}
+          </Typography.Link>
+        );
+      },
+    },
+    {
+      key: 'tags',
+      title: t('deployment.Tags'),
+      render: (_text, row) => {
+        const tags = row.metadata?.tags ?? [];
+        if (tags.length === 0)
+          return <Typography.Text type="secondary">-</Typography.Text>;
+        return (
+          <BAIFlex wrap="wrap" gap="xs">
+            {tags.map((tag) => (
+              <Tag key={tag}>{tag}</Tag>
+            ))}
+          </BAIFlex>
+        );
+      },
+    },
+    {
       key: 'createdAt',
       title: t('deployment.CreatedAt'),
-      dataIndex: ['metadata', 'createdAt'],
+      dataIndex: 'createdAt',
       sorter: true,
       render: (_text, row) => {
         const createdAt = row.metadata?.createdAt;
         return createdAt ? dayjs(createdAt).format('ll LT') : '-';
+      },
+    },
+    isAdminMode && {
+      key: 'domainName',
+      title: t('deployment.Domain'),
+      render: (_text, row) => {
+        const domain = row.metadata?.domainName;
+        return domain ? (
+          <Typography.Text>{domain}</Typography.Text>
+        ) : (
+          <Typography.Text type="secondary">-</Typography.Text>
+        );
       },
     },
     isAdminMode && {
@@ -363,39 +362,49 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
     },
   ]);
 
+  // Merge fragment-derived total into the pagination config supplied by the
+  // parent so callers don't need to separately query for count.
+  const paginationWithTotal =
+    tableProps.pagination === false
+      ? (false as const)
+      : { ...tableProps.pagination, total: totalCount };
+
   return (
     <BAIFlex direction="column" align="stretch" gap="sm">
-      <BAIGraphQLPropertyFilter
-        style={{ marginBottom: token.marginXS }}
-        filterProperties={filterProperties}
-        value={filterValue}
-        onChange={(next) => {
-          setFilter(stringifyFilter(next));
-          // Reset pagination when filters change.
-          setPage(1);
-        }}
-      />
-      <BAITable<DeploymentNode>
-        rowKey="id"
-        scroll={{ x: 'max-content' }}
-        loading={loading}
-        dataSource={deployments}
-        columns={columns}
-        showSorterTooltip={false}
-        order={sortToTableOrder(sort)}
-        onChangeOrder={(order) => {
-          setSort(tableOrderToSort(order));
-        }}
-        pagination={{
-          current: page,
-          pageSize,
-          total: totalCount,
-          onChange: (nextPage, nextPageSize) => {
-            if (nextPage !== page) setPage(nextPage);
-            if (nextPageSize !== pageSize) setPageSize(nextPageSize);
-          },
-        }}
-      />
+      <BAIFlex justify="between" wrap="wrap" gap="sm">
+        <BAIFlex gap="sm" align="start" wrap="wrap" style={{ flexShrink: 1 }}>
+          <BAIRadioGroup
+            value={statusCategory}
+            onChange={(e) => onStatusCategoryChange?.(e.target.value)}
+            options={[
+              { label: t('deployment.Running'), value: 'running' },
+              { label: t('deployment.status.Terminated'), value: 'finished' },
+            ]}
+          />
+          <BAIGraphQLPropertyFilter
+            filterProperties={filterProperties}
+            value={filterValue}
+            onChange={(next) => {
+              setFilter(stringifyFilter(next));
+            }}
+          />
+        </BAIFlex>
+        {toolbarEnd}
+      </BAIFlex>
+      <div style={{ overflowX: 'auto' }}>
+        <BAITable<DeploymentNode>
+          rowKey="id"
+          scroll={{ x: 'max-content' }}
+          showSorterTooltip={false}
+          {...tableProps}
+          dataSource={deployments}
+          columns={columns}
+          onChangeOrder={(order) => {
+            onChangeOrder?.(order || null);
+          }}
+          pagination={paginationWithTotal}
+        />
+      </div>
     </BAIFlex>
   );
 };
