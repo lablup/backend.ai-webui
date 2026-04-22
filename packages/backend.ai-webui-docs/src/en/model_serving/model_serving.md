@@ -72,7 +72,7 @@ To use the Model Service, you need to follow the steps below:
 :::tip
 As an alternative workflow, you can browse pre-configured models in the
 [Model Store](#model-store) and deploy them with a single click using the
-`Run this model` button.
+`Run this model` button (renamed `Deploy` on version 26.4.0 and later).
 :::
 
 <a id="model-definition-guide"></a>
@@ -293,10 +293,10 @@ please refer to the [Explore Folder](#explore-folder) section.
 The service definition file (`service-definition.toml`) allows administrators to pre-configure the resources, environment, and runtime settings required for a model service. When this file is present in a model folder, the system uses these settings as default values when creating a service.
 
 Both `model-definition.yaml` and `service-definition.toml` must be present in the
-model folder to enable the `Run this model` button on the Model Store page. These two
-files work together: the model definition specifies the model and inference server
-configuration, while the service definition specifies the runtime environment, resource
-allocation, and environment variables.
+model folder to enable the `Run this model` button (`Deploy` on version 26.4.0 and
+later) on the Model Store page. These two files work together: the model definition
+specifies the model and inference server configuration, while the service definition
+specifies the runtime environment, resource allocation, and environment variables.
 
 The service definition file follows the TOML format with sections organized by runtime variant. Each section configures a specific aspect of the service:
 
@@ -340,10 +340,10 @@ selected runtime variant when creating the service.
 :::
 
 :::note
-When a service is created from the Model Store using the `Run this model` button,
-the settings from `service-definition.toml` are applied automatically. If you later
-need to adjust the resource allocation, you can modify the service through the
-Model Serving page.
+When a service is created from the Model Store using the `Run this model` button
+(`Deploy` on version 26.4.0 and later), the settings from `service-definition.toml`
+are applied automatically. If you later need to adjust the resource allocation, you
+can modify the service through the Model Serving page.
 :::
 
 ## Serving Page Overview
@@ -587,6 +587,48 @@ where you can add a rule. Each field in the modal is described below:
 
 ![](../images/auto_scaling_rules_modal.png)
 
+:::note
+From Backend.AI version **26.4.0** onwards, Auto Scaling Rules have been redesigned with
+Prometheus preset support and a new condition model. If you are on an older version, the
+description above still applies. Otherwise, refer to
+[Auto Scaling Rules (version 26.4.0 and later)](#auto-scaling-rules-version-26-4-0-and-later) below.
+:::
+
+<a id="auto-scaling-rules-version-26-4-0-and-later"></a>
+
+#### Auto Scaling Rules (version 26.4.0 and later)
+
+On Backend.AI version 26.4.0 and later, Auto Scaling Rules are redesigned with a Prometheus metric source, a segmented condition control, and a richer rule list.
+
+![](../images/auto_scaling_rules_v2.png)
+
+The rule list provides:
+
+- A property filter bar to filter rules by **Created At** and **Last Triggered** datetime ranges.
+- Server-side pagination.
+- The following columns: **Metric Source**, **Condition**, **Time Window**, **Step Size**, **Min / Max Replicas**, **Created At**, and **Last Triggered**. The **Step Size** column automatically shows `+`, `−`, or `±` based on the direction derived from the thresholds you have set, so you no longer choose **Scale Out** or **Scale In** explicitly.
+- Per-row edit and delete icons shown next to the condition summary in each row.
+
+Click the `Add Rules` button to open the **Add Auto Scaling Rule** editor. To modify an existing rule, click the edit icon on its row; the **Edit Auto Scaling Rule** editor opens with the rule's values pre-filled. The editor contains the following fields in order:
+
+- **Metric Source**: Select one of `Kernel`, `Inference Framework`, or `Prometheus`.
+- **Metric Name**: For `Kernel` and `Inference Framework`, enter a metric name. For `Kernel`, a list of common metrics (such as `cpu_util`, `mem`, `net_rx`, and `net_tx`) is offered as autocomplete suggestions, and you can also type a custom name freely.
+- **Metric Name (Prometheus Preset)**: Shown only when **Metric Source** is `Prometheus`. Select a preset from the dropdown; the preset's metric name, query template, and (when defined) **Time Window** are filled in automatically. Below the selector, a **Current value** preview shows the latest value returned by the preset, with a refresh button. When multiple series are returned, the preview shows the number of series and the most recent value; if no data is available, it shows **No data available**.
+- **Condition**: A segmented control with two modes:
+
+   - **Single**: Defines a single comparison `Metric <op> Threshold`, where `<op>` is either `>` or `<`.
+   - **Range**: Defines a range `Min Threshold < Metric < Max Threshold`. Both thresholds are required; the minimum must be less than the maximum.
+
+- **Step Size**: A positive integer specifying how many replicas to add or remove per scaling event. The direction (add or remove) is derived automatically from which threshold is configured, so you only specify the magnitude.
+- **Time Window**: The time window, in seconds, over which the metric is aggregated and evaluated for scaling. This replaces the legacy `CoolDown Seconds` field and has a different meaning.
+- **Min Replicas** and **Max Replicas**: The lower and upper bounds that auto-scaling enforces on the replica count. Auto-scaling will not reduce the number of replicas below **Min Replicas** or increase it above **Max Replicas**.
+
+![](../images/auto_scaling_rules_modal_v2.png)
+
+When **Metric Source** is set to `Prometheus`, the editor shows the preset selector and the live **Current value** preview.
+
+![](../images/auto_scaling_rules_modal_prometheus_v2.png)
+
 <a id="generating-tokens"></a>
 
 ### Generating Tokens
@@ -750,6 +792,65 @@ When a service is created from the Model Store, the settings from
 service later through the Serving page.
 :::
 
+:::note
+From Backend.AI version **26.4.0** onwards, the Model Store has been redesigned. If you are on
+an older version, the description above still applies. Otherwise, refer to
+[Model Store (version 26.4.0 and later)](#model-store-version-26-4-0-and-later) below.
+:::
+
+<a id="model-store-version-26-4-0-and-later"></a>
+
+### Model Store (version 26.4.0 and later)
+
+On Backend.AI version 26.4.0 and later, the Model Store is redesigned with a simplified browsing experience, a card-detail drawer, and a streamlined deploy flow that replaces the legacy browse/detail/run workflow.
+
+![](../images/model_store_page_v2.png)
+
+The page uses a search and sort layout at the top:
+
+- **Search Models**: Use the **Filter By Name** property filter to search model cards by name.
+- **Sort**: Choose how results are ordered. The available options are `Name (A→Z)`, `Name (Z→A)`, `Oldest first`, and `Newest first`.
+- **Refresh**: Click the refresh button to reload the card list.
+
+Each card displays the model brand icon, title (or name when no title is set), task tag, relative creation time, and the author with an icon. Cards that have **no compatible presets** for the current project are shown at 50% opacity. You can still open such a card to view its details, but its **Deploy** button is disabled and an error alert is shown in the drawer: *No compatible presets available. This model cannot be deployed.*
+
+If the `MODEL_STORE` project is not set up on the server, the page shows a *Model Store project not found* message with instructions to contact an administrator. If no model cards match your filters, the page displays *No models found*.
+
+The list is paginated at the bottom. You can change the page size between `10`, `20`, and `50` entries.
+
+Click a card to open the model card drawer on the right side of the page. The drawer shows the model title and description at the top, followed by the task, category, labels, and license tags, and then a details list with the following items:
+
+- **Author**
+- **Architecture**
+- **Framework** (each framework is shown with an icon)
+- **Version**
+- **Created** and **Last Modified** timestamps
+- **Model Folder**: A clickable link that opens the folder explorer for the model storage folder
+- **Min Resource**: The minimum resource requirements (CPU, memory, GPU)
+
+If the model card includes a README, it is rendered as a `README.md` card at the bottom of the drawer.
+
+![](../images/model_card_detail_drawer.png)
+
+To clone a model folder in version 26.4.0 and later, use the [Data](../vfolder/vfolder.md) page directly, since the Model Store drawer no longer provides a dedicated Clone button.
+
+Click the **Deploy** button in the drawer header to deploy the model as a service. The deploy flow behaves in one of two ways:
+
+- **Auto-deploy**: If the model has exactly one available preset and the current project has exactly one accessible resource group, the deployment is created silently without showing a modal. After the endpoint becomes queryable, you are navigated to its endpoint detail page.
+- **Deploy Model modal**: Otherwise, a **Deploy Model** modal opens with the following required fields:
+
+   - **Preset**: A grouped dropdown of available resource presets. When presets span multiple runtime variants, options are grouped by runtime variant name; otherwise the options are shown as a flat list.
+   - **Resource Group**: The resource group where the service will run.
+
+   Click the **Deploy** button in the modal to start the deployment. A success toast confirms that the model has been deployed, and you are navigated to the endpoint detail page.
+
+![](../images/model_card_deploy_modal.png)
+
+:::note
+If the selected model has no compatible presets for the current project, the drawer's
+**Deploy** button is disabled and deployment is blocked until a compatible preset is available.
+:::
+
 ## Admin Features
 
 ### Admin Serving Page
@@ -801,3 +902,43 @@ You can delete individual model cards by clicking the delete icon in the **Contr
 #### Scanning Project Model Cards
 
 Click the `Scan Project Model Cards` button to automatically scan a project's model folders and create model cards for any folders that contain valid model definitions. The scan results show the number of model cards created and updated.
+
+:::note
+The **Scan Project Model Cards** button is not available on Backend.AI version 26.4.0 and later.
+:::
+
+:::note
+From Backend.AI version **26.4.0** onwards, the Admin Model Store Management tab has been
+redesigned. If you are on an older version, the description above still applies. Otherwise,
+refer to [Admin Model Store Management (version 26.4.0 and later)](#admin-model-store-management-version-26-4-0-and-later) below.
+:::
+
+<a id="admin-model-store-management-version-26-4-0-and-later"></a>
+
+#### Admin Model Store Management (version 26.4.0 and later)
+
+On Backend.AI version 26.4.0 and later, the **Model Store Management** tab presents a redesigned model card list.
+
+![](../images/admin_model_card_list_v2.png)
+
+The list provides the following columns:
+
+- **Name**: The unique identifier of the model card.
+- **Title**: The human-readable display name.
+- **Category**: The model category (e.g., LLM).
+- **Task**: The inference task type (e.g., text-generation).
+- **Access Level**: Shows a green `Public` tag when the model card is publicly accessible, or a default `Private` tag otherwise.
+- **Domain**: The domain that owns the model card.
+- **Project**: The project that owns the model card.
+- **Created At**: The timestamp when the model card was created.
+
+You can filter the list by **Name** using the property filter bar at the top. Edit and delete action icons are shown directly in the **Name** cell of each row.
+
+To delete multiple model cards at once, select the rows you want to remove using the checkboxes and click the red trash-bin button next to the selection count. A confirmation dialog appears before the cards are deleted.
+
+:::note
+The Create, Edit, and Delete dialogs for individual model cards are the same as in the legacy
+version. See [Creating a Model Card](#creating-a-model-card),
+[Editing a Model Card](#editing-a-model-card), and [Deleting Model Cards](#deleting-model-cards).
+:::
+
