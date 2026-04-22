@@ -758,10 +758,6 @@ If the model card includes a README, it is rendered as a `README.md` card at the
 
 ![](../images/model_card_detail_drawer.png)
 
-### Cloning a Model
-
-To clone a model folder, use the [Data](../vfolder/vfolder.md) page directly. The Model Store drawer does not provide a dedicated Clone button.
-
 ### Deploying a Model
 
 Click the **Deploy** button in the drawer header to deploy the model as a service. The deploy flow behaves in one of two ways:
@@ -781,69 +777,4 @@ If the selected model has no compatible presets for the current project, the dra
 **Deploy** button is disabled and deployment is blocked until a compatible preset is available.
 :::
 
-## Admin Features
-
-### Admin Serving Page
-
-Administrators and superadmins can access the Admin Serving page, which provides a cross-project view of all endpoints. This page shows the **Project** column in addition to the standard endpoint list columns, allowing admins to manage services across all projects.
-
-![](../images/admin_serving_page.png)
-
-The Admin Serving page has two tabs:
-
-- **Serving**: Displays the endpoint list across all projects, with the same lifecycle and property filters as the user-facing Serving page.
-- **Model Store Management**: Available to superadmins only. See the section below.
-
-### Admin Model Store Management
-
-Superadmins can manage model cards through the **Model Store Management** tab on the Admin Serving page.
-
-![](../images/admin_model_card_list_v2.png)
-
-The list provides the following columns:
-
-- **Name**: The unique identifier of the model card.
-- **Title**: The human-readable display name.
-- **Category**: The model category (e.g., LLM).
-- **Task**: The inference task type (e.g., text-generation).
-- **Access Level**: Shows a green `Public` tag when the model card is publicly accessible, or a default `Private` tag otherwise.
-- **Domain**: The domain that owns the model card.
-- **Project**: The project that owns the model card.
-- **Created At**: The timestamp when the model card was created.
-
-You can filter the list by **Name** using the property filter bar at the top. Edit and delete action icons are shown directly in the **Name** cell of each row.
-
-To delete multiple model cards at once, select the rows you want to remove using the checkboxes and click the red trash-bin button next to the selection count. A confirmation dialog appears before the cards are deleted.
-
-#### Creating a Model Card
-
-Click the `Create Model Card` button to open the creation modal. Fill in the following fields:
-
-- **Name** (required): A unique identifier for the model card.
-- **Title**: A human-readable display name.
-- **Description**: A detailed description of the model.
-- **Author**: The model creator or organization.
-- **Model Version**: The version of the model.
-- **Task**: The inference task type (e.g., text-generation).
-- **Category**: The model category (e.g., LLM).
-- **Framework**: The ML framework used (e.g., PyTorch, TensorFlow).
-- **Label**: Tags for categorization and filtering.
-- **License**: The license under which the model is distributed.
-- **Architecture**: The model architecture (e.g., Transformer).
-- **README**: A markdown README for the model.
-- **Domain**: The domain to associate the model card with.
-- **Project ID** (required): The project that owns the model card.
-- **VFolder** (required): The storage folder containing the model files.
-- **Access Level**: Controls who can see the model card in the user-facing Model Store.
-
-   * `Internal`: Visible only to administrators of the owning domain and project. Regular users cannot see internal cards in their Model Store.
-   * `Public`: Visible to all users who have access to the owning project.
-
-#### Editing a Model Card
-
-Click the edit icon next to the model card name to modify an existing model card. The edit modal opens with previously entered fields already filled in.
-
-#### Deleting Model Cards
-
-You can delete an individual model card by clicking the delete icon next to its name, or perform bulk deletion by selecting multiple model cards with the row checkboxes and clicking the red trash-bin button next to the selection count.
 
