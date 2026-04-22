@@ -29,12 +29,48 @@ Standards for capturing, naming, and maintaining screenshots in the Backend.AI W
 - Avoid abbreviations unless they are standard (e.g., `ssh`, `sftp`)
 - Acronyms in lowercase: `ssh_sftp_connection.png`, `llm_chat.png`
 
-## File Location
+## File Location and Localization
 
 - All screenshots go in `src/{lang}/images/`
-- Images are shared across languages (same filenames, same directory structure per language)
-- **Language-specific captures**: Each language directory should contain screenshots captured in that language's UI locale. Switch the app language before capturing so that UI labels (buttons, menus, headers) appear in the correct language for each version
-- When UI is purely visual with no text (e.g., diagrams), one capture can be shared across all directories
+- All four language directories (`en/`, `ko/`, `ja/`, `th/`) use **identical filenames** for the same screen — the filename is the contract; only the rendered UI language differs.
+- **Each language directory MUST contain screenshots captured in that language's UI locale.** Switch the UI language before capturing so that labels (sidebar menus, buttons, dialog titles, table headers, breadcrumbs, etc.) appear in the correct language for each version.
+   * Korean docs (`src/ko/images/`) → capture with UI language set to **한국어**
+   * Japanese docs (`src/ja/images/`) → capture with UI language set to **日本語**
+   * Thai docs (`src/th/images/`) → capture with UI language set to **ภาษาไทย**
+   * English docs (`src/en/images/`) → capture with UI language set to **English**
+- **Single-language exceptions** (one capture shared across all 4 directories) are allowed only when the image is purely visual with no UI text — e.g., architecture diagrams, terminal/CLI output, third-party tool screenshots (VS Code, MLflow, etc.), version-print outputs.
+- For all other screenshots (any image showing Backend.AI WebUI chrome — sidebar, header, modals, forms, tables), the file in each language directory **must be a separate capture in that language**, even if the underlying screen layout is identical.
+
+### Switching Languages In-Place
+
+The WebUI exposes a global function `window.switchLanguage(lang)` that updates the UI language **without reloading the page** (added in PR #5796 / FR-2230). Use this for screenshot capture instead of navigating to `/usersettings` each time — it preserves the current page state (open modals, populated forms, applied filters, etc.) and lets you capture the **same screen** in all four languages from a single setup.
+
+Available locale codes: `'en'`, `'ko'`, `'ja'`, `'th'`.
+
+**Recommended capture pattern (4 languages from one page state):**
+
+```javascript
+// In Playwright MCP (via browser_evaluate):
+() => { window.switchLanguage('ko'); return 'ok'; }
+// → take screenshot, save to ko/images/<file>.png
+
+() => { window.switchLanguage('ja'); return 'ok'; }
+// → take screenshot, save to ja/images/<file>.png
+
+() => { window.switchLanguage('th'); return 'ok'; }
+// → take screenshot, save to th/images/<file>.png
+
+() => { window.switchLanguage('en'); return 'ok'; }
+// → take screenshot, save to en/images/<file>.png  (and reset to English at end of session)
+```
+
+Per-image workflow:
+1. Navigate to the screen, set up necessary state (open modal, fill form, populate data).
+2. Hide developer overlays (e.g., React Grab toolbar) once.
+3. Loop through the 4 languages: `switchLanguage(lang)` → take screenshot → save to `src/{lang}/images/<file>.png`.
+4. Move to the next screen.
+
+This pattern is ~4× faster than re-navigating to `/usersettings` for each language and avoids repeating the page setup four times.
 
 ## Capture Standards
 
@@ -51,7 +87,7 @@ Standards for capturing, naming, and maintaining screenshots in the Backend.AI W
 - Avoid showing personal information, real email addresses, or API keys
 - Clear the browser address bar of internal/development URLs if visible
 - Use light theme as the default (unless documenting dark mode features)
-- **Always capture in English** regardless of which language directory the screenshot will be saved to. Switch the UI language to English before capturing, then copy the same screenshot to all language directories (`en/`, `ko/`, `ja/`, `th/`)
+- For UI language, see **[File Location and Localization](#file-location-and-localization)** — capture in the locale that matches the destination directory (do not capture in English and copy across all languages)
 
 ### Focused Cropping
 
