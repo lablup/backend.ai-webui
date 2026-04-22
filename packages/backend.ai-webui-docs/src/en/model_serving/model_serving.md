@@ -458,6 +458,28 @@ The parameters are organized into categories:
 Unchanged parameters will use the runtime's default values.
 :::
 
+In addition to runtime parameters, the `vLLM` and `SGLang` runtime variants expose specific environment variables in the **Environment Variables** section of the service launcher:
+
+- **vLLM**: `BACKEND_MODEL_NAME`, `VLLM_QUANTIZATION`, `VLLM_TP_SIZE` (tensor parallelism), `VLLM_PP_SIZE` (pipeline parallelism), `VLLM_EXTRA_ARGS` (extra CLI arguments)
+- **SGLang**: `BACKEND_MODEL_NAME`, `SGLANG_QUANTIZATION`, `SGLANG_TP_SIZE` (tensor parallelism), `SGLANG_PP_SIZE` (pipeline parallelism), `SGLANG_EXTRA_ARGS` (extra CLI arguments)
+
+:::note
+These environment variables appear in the **Environment Variables** section of the launcher,
+not in the Runtime Parameters section. They provide additional configuration options
+specific to each runtime variant.
+:::
+
+#### Runtime Variant Comparison
+
+The following table summarizes the key differences between the three main runtime variants:
+
+| Feature | Custom | vLLM | SGLang |
+|---------|--------|------|--------|
+| Runtime Parameters section | No | Yes | Yes |
+| Enter Command / Use Config File toggle | Yes | No | No |
+| Environment variable presets | Manual only | `VLLM_*` presets | `SGLANG_*` presets |
+| Form pre-populated on edit | Yes (from latest revision) | No | No |
+
 #### Environment and Resources
 
 Set the number of replicas and select the environment and resource group.
@@ -541,9 +563,67 @@ The Service Info card displays the following details:
 
 Click the `Edit` button on the Service Info card to navigate to the update launcher and modify the service settings.
 
-:::warning
-If the endpoint belongs to a different project than the currently selected one,
-a project mismatch warning is displayed. Switch to the correct project to manage the endpoint.
+The Endpoint Detail Page displays contextual alert banners at the top, depending on the current state of the service:
+
+- **Preparing your service**: Shown while the service is being deployed or transitioning between states. Indicates the service is not yet ready to handle requests.
+
+![](../images/endpoint_preparing_alert.png)
+<!-- TODO: Capture screenshot of the "Preparing your service" alert banner -->
+
+- **Service is ready**: Shown when the service is `HEALTHY`. Includes a **Start Chat** button as a shortcut to the LLM Chat Test interface.
+
+![](../images/endpoint_service_ready_alert.png)
+
+- **Not In Project**: Shown when the endpoint belongs to a different project than the currently selected one. The Edit button is disabled while this alert is active. Click the **Switch Project** button in the alert to switch to the correct project and manage the endpoint.
+
+<a id="revision-info"></a>
+
+### Revision Info
+
+:::note
+The Revision Info card is available when the server supports Model Card v2
+(Backend.AI version 26.4.0 and later).
+:::
+
+The Revision Info card on the Endpoint Detail Page displays the configuration of the **latest revision** — the revision that is queued to be applied next. This may differ from the revision that is currently running on the service.
+
+![](../images/endpoint_revision_info.png)
+
+The card shows the following fields:
+
+- **Revision ID**: The identifier of the latest revision.
+- **Model Name**: The name of the model as defined in the model definition.
+- **Model Path**: The path where the model is mounted.
+- **Start Command**: The command used to start the inference server.
+- **Port**: The container port for the model service.
+- **Health Check Path**: The HTTP endpoint path for health checks.
+- **Initial Delay**: Seconds to wait before the first health check.
+- **Max Retries**: Maximum consecutive health check failures allowed.
+
+#### Revision Mismatch State
+
+When a new revision has been queued but the service is still running on the previous revision, a **"The next revision is being applied."** alert is displayed on the Revision Info card. This indicates that the latest revision values shown in the card do not yet match the currently running configuration.
+
+![](../images/endpoint_revision_mismatch.png)
+
+Click the **View Current Revision** button to open a modal that shows the model definition of the revision that is **currently running**. This allows you to compare the upcoming revision (shown in the Revision Info card) with the active revision (shown in the modal).
+
+![](../images/endpoint_current_revision_modal.png)
+
+:::tip
+To summarize: the **Revision Info card** always shows the **latest/upcoming** revision values,
+while the **View Current Revision modal** shows the **currently running** revision values.
+:::
+
+#### Edit Behavior With Revisions (Custom Variant Only)
+
+When you click the **Edit** button on the Service Info panel for a service using the `Custom` runtime variant, the service launcher form is pre-populated with the latest revision's model definition values as defaults. This makes it easy to adjust settings incrementally without re-entering all fields.
+
+:::note
+This pre-population of model definition values applies only to the `Custom` runtime variant.
+`vLLM` and `SGLang` variants do not use model definition fields at all — they expose a
+**Runtime Parameters** section (`inference_runtime_config`) for framework-specific configuration.
+Model definition and runtime parameters are distinct concepts stored separately in the revision.
 :::
 
 ### Auto Scaling Rules
@@ -666,9 +746,13 @@ The Routes Info card shows the routing status of the model service. You can filt
 - **Running / Finished**: Toggle between active and completed route nodes.
 - **Property filter**: Filter by health status and traffic status.
 
-Click the `Sync Routes` button to synchronize the route information with the backend.
 
 Click on a route node to open the session detail drawer, where you can view individual session details.
+
+If a route has encountered an error, clicking the error indicator on the route row opens a JSON viewer modal that displays the raw error data for that route. This is useful for diagnosing issues with individual route nodes.
+
+![](../images/route_error_json_viewer.png)
+<!-- TODO: Capture screenshot of the route error data JSON viewer modal -->
 
 ### Modifying a Service
 
