@@ -1686,6 +1686,7 @@
     "PresetTooltip": "Bir ön ayar, bu modeli hizmet olarak çalıştırmak için kullanılan kaynak yapılandırmasını (CPU, bellek, GPU) tanımlar.",
     "ProjectNotFound": "Model Store projesi bulunamadı",
     "ProjectNotFoundDescription": "MODEL_STORE projesi bulunamadı. Lütfen yöneticinizle iletişime geçin.",
+    "QuickDeployDetailed": "Yapılandır ve dağıt...",
     "RelativeTime": "{{time}}",
     "ResourceGroup": "Kaynak grubu",
     "ResourceGroupTooltip": "Hizmet, seçilen kaynak grubunda çalışacaktır.",
