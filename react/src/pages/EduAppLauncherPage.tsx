@@ -14,38 +14,43 @@ const EduAppLauncherLazy = React.lazy(
  * Standalone page for education app launcher.
  * Renders outside MainLayout (no sidebar).
  *
- * Because this page is entered via a token URL and never goes through
- * LoginView, it resolves the API endpoint directly from `config.toml`
- * via `useResolvedApiEndpoint()`. The Suspense boundary below gates
- * EduAppLauncher rendering until endpoint resolution completes; the
- * resolved value may still be an empty string if every fallback source
- * is unavailable, in which case `EduAppLauncher._initClient` throws and
- * surfaces the error via notification.
- *
- * Notifications are rendered via `useSetBAINotification` inside
- * `EduAppLauncher`, which works on this anonymous page because
- * `DefaultProvidersForReactRoot` already wraps it in antd `App` (the
- * provider `App.useApp()` requires). The legacy
- * `NotificationForAnonymous` CustomEvent bridge is no longer needed
- * here; it remains exported for the other anonymous pages and
- * `MainLayout` that still rely on it.
+ * sToken authentication is handled upstream at the route level (see
+ * `EduAppSTokenRoute` in `routes.tsx`), which captures `sToken` /
+ * `extraParams` from the URL before the boundary's `onSuccess` strips
+ * the token, then passes them down as props. This page is only
+ * responsible for resolving the API endpoint via `useResolvedApiEndpoint`
+ * (suspends until `config.toml` load completes) and threading the
+ * captured values into `EduAppLauncher`.
  */
-const EduAppLauncherPage: React.FC = () => {
+const EduAppLauncherPage: React.FC<{
+  sToken: string | null;
+  extraParams: Record<string, string>;
+}> = ({ sToken, extraParams }) => {
   return (
     <>
       <CSSTokenVariables />
       <Suspense fallback={null}>
-        <EduAppLauncherPageContent />
+        <EduAppLauncherPageContent sToken={sToken} extraParams={extraParams} />
       </Suspense>
     </>
   );
 };
 
-const EduAppLauncherPageContent: React.FC = () => {
+const EduAppLauncherPageContent: React.FC<{
+  sToken: string | null;
+  extraParams: Record<string, string>;
+}> = ({ sToken, extraParams }) => {
   'use memo';
   const apiEndpoint = useResolvedApiEndpoint();
 
-  return <EduAppLauncherLazy apiEndpoint={apiEndpoint} active={true} />;
+  return (
+    <EduAppLauncherLazy
+      apiEndpoint={apiEndpoint}
+      active={true}
+      sToken={sToken}
+      extraParams={extraParams}
+    />
+  );
 };
 
 export default EduAppLauncherPage;

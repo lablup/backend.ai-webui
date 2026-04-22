@@ -23,6 +23,21 @@ import { useBackendAIAppLauncherFragment$key } from 'src/__generated__/useBacken
 interface EduAppLauncherProps {
   apiEndpoint: string;
   active: boolean;
+  /**
+   * sToken captured by the route-level `STokenLoginBoundary` wrapper before
+   * the URL was cleaned. The boundary already authenticated with this token;
+   * the value is only plumbed through so customer-specific code paths that
+   * still reference the token (e.g. `eduApp.get_user_credential` inside
+   * `_createEduSession`) can continue to function after the URL cleanup.
+   * `null` when the page is opened without an sToken URL.
+   */
+  sToken?: string | null;
+  /**
+   * Remaining URL query parameters (all keys except `sToken` / `stoken`)
+   * captured at route mount. Carries app / session_id / resource hints that
+   * drive the launch sequence without re-parsing `window.location`.
+   */
+  extraParams?: Record<string, string>;
 }
 
 /**
@@ -94,6 +109,8 @@ const g = globalThis as any;
 const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
   apiEndpoint,
   active,
+  sToken = null,
+  extraParams = {},
 }) => {
   'use memo';
 
@@ -164,75 +181,18 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
   };
 
   /**
-   * Initialize the backend.ai client with session-based auth mode.
-   *
-   * The caller (`EduAppLauncherPage`) is responsible for providing a
-   * non-empty endpoint via `useResolvedApiEndpoint()`, which reads from
-   * `config.toml` and suspends until resolved. If the endpoint is still
-   * empty here, client initialization will be rejected and the outer
-   * catch in `_launch` will surface the error via notification.
+   * Attach the wsproxy URL from `config.toml` to the already-authenticated
+   * Backend.AI client set up by `STokenLoginBoundary` (route-level). The
+   * boundary owns client creation and authentication (sToken login,
+   * `get_manager_version`, `client.ready`); EduAppLauncher only layers on
+   * the proxyURL needed for the app-launch step, which is not part of the
+   * boundary's narrow scope.
    */
-  const _initClient = async (endpoint: string) => {
-    const resolvedEndpoint = endpoint.trim();
-
-    if (!resolvedEndpoint) {
-      throw new Error('API endpoint is empty; cannot initialize client.');
-    }
-
-    const clientConfig = new g.BackendAIClientConfig(
-      '',
-      '',
-      resolvedEndpoint,
-      'SESSION',
-    );
-    g.backendaiclient = new g.BackendAIClient(
-      clientConfig,
-      'Backend.AI Web UI.',
-    );
+  const _attachProxyURL = async () => {
     const configPath = g.isElectron ? './config.toml' : '../../config.toml';
     const { config: tomlConfig } = await fetchAndParseConfig(configPath);
-    if (tomlConfig?.wsproxy?.proxyURL) {
+    if (tomlConfig?.wsproxy?.proxyURL && g.backendaiclient?._config) {
       g.backendaiclient._config._proxyURL = tomlConfig.wsproxy.proxyURL;
-    }
-    await g.backendaiclient.get_manager_version();
-    g.backendaiclient.ready = true;
-  };
-
-  /**
-   * Authenticate via token from URL query parameters.
-   */
-  const _token_login = async (): Promise<boolean> => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const sToken = urlParams.get('sToken') || urlParams.get('stoken') || null;
-
-    if (sToken !== null) {
-      document.cookie = `sToken=${encodeURIComponent(sToken)}; path=/; Secure; SameSite=Lax`;
-    }
-
-    const extraParams: Record<string, string> = {};
-    for (const [key, value] of urlParams.entries()) {
-      if (key !== 'sToken' && key !== 'stoken') {
-        extraParams[key] = value;
-      }
-    }
-
-    try {
-      const alreadyLoggedIn = await g.backendaiclient.check_login();
-      if (!alreadyLoggedIn) {
-        const loginSuccess = await g.backendaiclient.token_login(
-          sToken,
-          extraParams,
-        );
-        if (!loginSuccess) {
-          notify(t('eduapi.CannotAuthorizeSessionByToken'));
-          return false;
-        }
-      }
-      return true;
-    } catch (err) {
-      logger.error('Token login failed:', err);
-      notify(t('eduapi.CannotAuthorizeSessionByToken'));
-      return false;
     }
   };
 
@@ -396,12 +356,11 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
       return;
     }
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const requestedApp = urlParams.get('app') || 'jupyter';
+    const requestedApp = extraParams.app || 'jupyter';
     let parsedAppName = requestedApp;
     const sessionTemplateName =
-      urlParams.get('session_template') ||
-      urlParams.get('sessionTemplate') ||
+      extraParams.session_template ||
+      extraParams.sessionTemplate ||
       requestedApp;
 
     if (eduAppNamePrefix !== '' && requestedApp.startsWith(eduAppNamePrefix)) {
@@ -619,8 +578,10 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
         });
 
         // 4c. credential bootstrap script (only when an sToken is present
-        // AND the customer-specific endpoint is available).
-        const sToken = urlParams.get('sToken') || urlParams.get('stoken');
+        // AND the customer-specific endpoint is available). The sToken
+        // prop comes from the route-level `STokenLoginBoundary` wrapper
+        // and is captured before the URL is cleaned on successful auth,
+        // so this call still receives the original token.
         logger.info('[_createEduSession] step 4c: get_user_credential', {
           has_sToken: !!sToken,
         });
@@ -737,16 +698,21 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
   };
 
   /**
-   * Main launch sequence: init client, token login, prepare project,
-   * then start or reuse session and launch the app.
+   * Main launch sequence: attach proxy URL, prepare project, then start or
+   * reuse session and launch the app. sToken authentication is handled
+   * upstream by `STokenLoginBoundary` (route wrapper in
+   * `EduAppLauncherPage`); by the time this function runs
+   * `globalThis.backendaiclient` is already authenticated and `ready`.
+   * URL parameters are passed via `extraParams` / `sToken` props rather
+   * than re-parsing `window.location` (spec "URL 파라미터 파싱 규약 (nuqs)").
    */
   const _launch = async (endpoint: string) => {
     logger.info('[EduAppLauncher] _launch() start', { endpoint });
     transition({ name: 'auth' });
     try {
-      await _initClient(endpoint);
+      await _attachProxyURL();
     } catch (err) {
-      logger.error('Failed to initialize client:', err);
+      logger.error('Failed to attach wsproxy URL:', err);
       transition({
         name: 'error',
         step: 'auth',
@@ -756,39 +722,13 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
       return;
     }
 
-    const urlParams = new URLSearchParams(window.location.search);
     const resources: Record<string, string | null> = {
-      cpu: urlParams.get('cpu'),
-      mem: urlParams.get('mem'),
-      shmem: urlParams.get('shmem'),
-      'cuda.shares': urlParams.get('cuda-shares'),
-      'cuda.device': urlParams.get('cuda-device'),
+      cpu: extraParams.cpu ?? null,
+      mem: extraParams.mem ?? null,
+      shmem: extraParams.shmem ?? null,
+      'cuda.shares': extraParams['cuda-shares'] ?? null,
+      'cuda.device': extraParams['cuda-device'] ?? null,
     };
-
-    const loginSuccess = await _token_login();
-    if (!loginSuccess) {
-      transition({
-        name: 'error',
-        step: 'auth',
-        message: t('eduapi.CannotAuthorizeSessionByToken'),
-      });
-      return;
-    }
-
-    // Dispatch `backend-ai-connected` so any descendant component using
-    // `useSuspendedBackendaiClient()` (e.g. `useBackendAIAppLauncher` deep
-    // inside `EduAppSessionLauncher`) can resolve. The shared
-    // `backendaiClientPromise` is created at module load time and only
-    // resolves on this event — `LoginView` dispatches it after a normal
-    // login, but the EduAppLauncher token-login flow bypasses LoginView
-    // entirely, so we have to dispatch it ourselves once the client is
-    // authenticated and ready.
-    logger.info('[EduAppLauncher] dispatching backend-ai-connected');
-    document.dispatchEvent(
-      new CustomEvent('backend-ai-connected', {
-        detail: g.backendaiclient,
-      }),
-    );
 
     try {
       await _prepareProjectInformation();
@@ -803,12 +743,12 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
       return;
     }
 
-    const sessionId = urlParams.get('session_id') || null;
+    const sessionId = extraParams.session_id || null;
     if (sessionId) {
       logger.info('[EduAppLauncher] _launch: Path A (session_id provided)', {
         sessionId,
       });
-      const requestedApp = urlParams.get('app') || 'jupyter';
+      const requestedApp = extraParams.app || 'jupyter';
       transition({
         name: 'session',
         sessionRowId: sessionId,

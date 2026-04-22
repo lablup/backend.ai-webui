@@ -29,6 +29,7 @@ import ServingPage from './pages/ServingPage';
 import VFolderNodeListPage from './pages/VFolderNodeListPage';
 import { Skeleton, theme } from 'antd';
 import { BAIFlex, BAICard } from 'backend.ai-ui';
+import { parseAsString, useQueryStates } from 'nuqs';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { RouteObject, useLocation } from 'react-router-dom';
@@ -728,6 +729,26 @@ const STokenGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 };
 
 /**
+ * nuqs parser spec for the EduAppLauncher URL query parameters (every
+ * key except `sToken` / `stoken`, which `useSToken` owns). Covers the
+ * full set consumed by `EduAppLauncher._launch` and `_createEduSession`,
+ * and forwarded verbatim to `client.token_login(sToken, extraParams)`.
+ * Any new URL param expected by the launcher or a backend auth hook
+ * must be added here so nuqs surfaces it as a typed value.
+ */
+const eduAppExtraParamSpec = {
+  app: parseAsString,
+  session_id: parseAsString,
+  session_template: parseAsString,
+  sessionTemplate: parseAsString,
+  cpu: parseAsString,
+  mem: parseAsString,
+  shmem: parseAsString,
+  'cuda-shares': parseAsString,
+  'cuda-device': parseAsString,
+};
+
+/**
  * Root routes configuration
  */
 export const routes: RouteObject[] = [
@@ -779,28 +800,66 @@ export const routes: RouteObject[] = [
   {
     path: '/edu-applauncher',
     errorElement: <ErrorView />,
-    element: (
-      <BAIErrorBoundary>
-        <DefaultProvidersForReactRoot>
-          <Suspense fallback={<Skeleton active />}>
-            <EduAppLauncherPage />
-          </Suspense>
-        </DefaultProvidersForReactRoot>
-      </BAIErrorBoundary>
-    ),
+    Component: () => {
+      'use memo';
+      const [sToken] = useSToken();
+      const [rawExtraParams] = useQueryStates(eduAppExtraParamSpec);
+      const extraParams: Record<string, string> = Object.fromEntries(
+        Object.entries(rawExtraParams).filter(([, value]) => value !== null),
+      ) as Record<string, string>;
+
+      return (
+        <BAIErrorBoundary>
+          <DefaultProvidersForReactRoot>
+            <STokenLoginBoundary
+              sToken={sToken ?? ''}
+              extraParams={extraParams}
+              // URL is intentionally NOT stripped on success here —
+              // EduAppLauncher's `_createEduSession` still reads
+              // `sToken` (for the customer-specific
+              // `eduApp.get_user_credential` call) and other URL params
+              // drive the launch sequence. The edu token URL is issued
+              // by the integrating LMS, so leaking it into browser
+              // history is considered acceptable in this flow.
+              onSuccess={persistPostLoginState}
+            >
+              <Suspense fallback={<Skeleton active />}>
+                <EduAppLauncherPage sToken={sToken} extraParams={extraParams} />
+              </Suspense>
+            </STokenLoginBoundary>
+          </DefaultProvidersForReactRoot>
+        </BAIErrorBoundary>
+      );
+    },
   },
   {
     path: '/applauncher',
     errorElement: <ErrorView />,
-    element: (
-      <BAIErrorBoundary>
-        <DefaultProvidersForReactRoot>
-          <Suspense fallback={<Skeleton active />}>
-            <EduAppLauncherPage />
-          </Suspense>
-        </DefaultProvidersForReactRoot>
-      </BAIErrorBoundary>
-    ),
+    Component: () => {
+      'use memo';
+      const [sToken] = useSToken();
+      const [rawExtraParams] = useQueryStates(eduAppExtraParamSpec);
+      const extraParams: Record<string, string> = Object.fromEntries(
+        Object.entries(rawExtraParams).filter(([, value]) => value !== null),
+      ) as Record<string, string>;
+
+      return (
+        <BAIErrorBoundary>
+          <DefaultProvidersForReactRoot>
+            <STokenLoginBoundary
+              sToken={sToken ?? ''}
+              extraParams={extraParams}
+              // URL retained — see comment on `/edu-applauncher`.
+              onSuccess={persistPostLoginState}
+            >
+              <Suspense fallback={<Skeleton active />}>
+                <EduAppLauncherPage sToken={sToken} extraParams={extraParams} />
+              </Suspense>
+            </STokenLoginBoundary>
+          </DefaultProvidersForReactRoot>
+        </BAIErrorBoundary>
+      );
+    },
   },
   {
     path: '/',
