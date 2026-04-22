@@ -51,10 +51,12 @@ Standards for capturing, naming, and maintaining screenshots in the Backend.AI W
 - Avoid showing personal information, real email addresses, or API keys
 - Clear the browser address bar of internal/development URLs if visible
 - Use light theme as the default (unless documenting dark mode features)
+- **Always capture in English** regardless of which language directory the screenshot will be saved to. Switch the UI language to English before capturing, then copy the same screenshot to all language directories (`en/`, `ko/`, `ja/`, `th/`)
 
 ### Focused Cropping
 
 - **Prefer element-level screenshots over full-page captures** when documenting a specific feature or interaction
+- **For modals and dialogs: capture only the modal element itself**, not the full page. Use the modal's DOM element as the screenshot target (e.g., `.ant-modal-wrap .ant-modal`, `[role="dialog"]`)
 - Use `ref` parameter in `browser_take_screenshot` to capture only the relevant element (e.g., a modal, a toolbar section, a specific panel)
 - Full-page captures are appropriate for page overview screenshots, but for feature-specific documentation, crop to the relevant area so users can clearly identify what is being described
 - Include just enough surrounding context for users to orient themselves

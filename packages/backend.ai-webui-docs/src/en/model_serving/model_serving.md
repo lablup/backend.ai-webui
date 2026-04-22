@@ -790,8 +790,6 @@ Click the `Create Model Card` button to open the creation modal. Fill in the fol
 - **VFolder** (required): The storage folder containing the model files.
 - **Access Level**: Set to `Internal` (visible within the domain) or `Public` (visible to all).
 
-![](../images/admin_model_card_modal.png)
-
 #### Editing a Model Card
 
 Click the edit icon in the **Controls** column to modify an existing model card. The edit modal opens with previously entered fields already filled in.
