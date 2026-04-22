@@ -127,58 +127,13 @@ models:
 
 ヘルスチェックシステムは、個々のモデルサービスコンテナを監視し、ヘルスステータスに基づいてトラフィックルーティングを自動的に管理します。
 
-```
-Container Created
-│
-▼
-┌─────────────────────────────────┐
-│  Wait for initial_delay (60s)   │  ← Model loading, GPU init, warmup
-│  Status: NOT_CHECKED            │
-│  No health checks during this   │
-└─────────────────────────────────┘
-│
-▼
-Start Health Check Cycle
-│
-▼
-┌─────────────────────────────────┐
-│  Every interval (10s):          │
-│  HTTP GET → path ("/health")    │
-└─────────────────────────────────┘
-│
-▼
-Wait up to max_wait_time (15s)
-│
-┌──────────┴──────────┐
-▼                     ▼
-Response              Timeout/Error
-│                     │
-▼                     │
-Status ==             │
-expected?             │
-│                     │
-┌──┴──┐               │
-▼     ▼               │
-Y     N               │
-│     │               │
-│     └───────┬───────┘
-│             ▼
-│        Consecutive
-│        failures +1
-│             │
-▼             ▼
-HEALTHY       Failures > max_retries?
-(reset                │
-failures)       ┌─────┴─────┐
-                ▼           ▼
-               Yes          No
-                │           │
-                ▼           ▼
-            UNHEALTHY    Keep current
-            (removed     status
-            from traffic
-            internally)
-```
+**① AppProxy: トラフィックルーティング制御**
+
+![](../images/health_check_app_proxy.svg)
+
+**② Manager: ヘルス状態管理と eviction**
+
+![](../images/health_check_state_machine.svg)
 
 :::note
 内部ヘルスステータス（トラフィックルーティングに使用）は、ユーザーインターフェースに

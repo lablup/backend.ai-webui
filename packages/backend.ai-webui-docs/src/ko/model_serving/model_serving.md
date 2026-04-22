@@ -127,58 +127,13 @@ models:
 
 상태 확인 시스템은 개별 모델 서비스 컨테이너를 모니터링하고, 상태에 따라 트래픽 라우팅을 자동으로 관리합니다.
 
-```
-Container Created
-│
-▼
-┌─────────────────────────────────┐
-│  Wait for initial_delay (60s)   │  ← Model loading, GPU init, warmup
-│  Status: NOT_CHECKED            │
-│  No health checks during this   │
-└─────────────────────────────────┘
-│
-▼
-Start Health Check Cycle
-│
-▼
-┌─────────────────────────────────┐
-│  Every interval (10s):          │
-│  HTTP GET → path ("/health")    │
-└─────────────────────────────────┘
-│
-▼
-Wait up to max_wait_time (15s)
-│
-┌──────────┴──────────┐
-▼                     ▼
-Response              Timeout/Error
-│                     │
-▼                     │
-Status ==             │
-expected?             │
-│                     │
-┌──┴──┐               │
-▼     ▼               │
-Y     N               │
-│     │               │
-│     └───────┬───────┘
-│             ▼
-│        Consecutive
-│        failures +1
-│             │
-▼             ▼
-HEALTHY       Failures > max_retries?
-(reset                │
-failures)       ┌─────┴─────┐
-                ▼           ▼
-               Yes          No
-                │           │
-                ▼           ▼
-            UNHEALTHY    Keep current
-            (removed     status
-            from traffic
-            internally)
-```
+**① AppProxy: 트래픽 라우팅 제어**
+
+![](../images/health_check_app_proxy.svg)
+
+**② Manager: 상태 관리 및 eviction**
+
+![](../images/health_check_state_machine.svg)
 
 :::note
 내부 상태 정보(트래픽 라우팅에 사용됨)는 사용자 인터페이스에 표시되는

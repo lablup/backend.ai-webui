@@ -142,58 +142,13 @@ Fields without "(Required)" mark are optional.
 The health check system monitors individual model service containers and automatically
 manages traffic routing based on their health status.
 
-```
-Container Created
-│
-▼
-┌─────────────────────────────────┐
-│  Wait for initial_delay (60s)   │  ← Model loading, GPU init, warmup
-│  Status: NOT_CHECKED            │
-│  No health checks during this   │
-└─────────────────────────────────┘
-│
-▼
-Start Health Check Cycle
-│
-▼
-┌─────────────────────────────────┐
-│  Every interval (10s):          │
-│  HTTP GET → path ("/health")    │
-└─────────────────────────────────┘
-│
-▼
-Wait up to max_wait_time (15s)
-│
-┌──────────┴──────────┐
-▼                     ▼
-Response              Timeout/Error
-│                     │
-▼                     │
-Status ==             │
-expected?             │
-│                     │
-┌──┴──┐               │
-▼     ▼               │
-Y     N               │
-│     │               │
-│     └───────┬───────┘
-│             ▼
-│        Consecutive
-│        failures +1
-│             │
-▼             ▼
-HEALTHY       Failures > max_retries?
-(reset                │
-failures)       ┌─────┴─────┐
-                ▼           ▼
-               Yes          No
-                │           │
-                ▼           ▼
-            UNHEALTHY    Keep current
-            (removed     status
-            from traffic
-            internally)
-```
+**① AppProxy: Traffic Routing Control**
+
+![](../images/health_check_app_proxy.svg)
+
+**② Manager: Health State Management and Eviction**
+
+![](../images/health_check_state_machine.svg)
 
 :::note
 The internal health status (used for traffic routing) may not be immediately
