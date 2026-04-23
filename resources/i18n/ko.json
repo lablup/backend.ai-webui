@@ -810,7 +810,7 @@
     "NewRevisionWillBeCreatedConfirm": "저장하면 새 Revision이 생성됩니다. 계속하시겠습니까?",
     "NoDeployments": "배포가 없습니다.",
     "NumberOfReplicas": "레플리카 수",
-    "OpenToPublic": "공개",
+    "OpenToPublic": "외부에 공개",
     "Owner": "소유자",
     "Project": "프로젝트",
     "QuickDeploy": "배포",
@@ -834,6 +834,7 @@
     "RuntimeVariant": "런타임 변형",
     "SessionId": "세션 ID",
     "Tags": "태그",
+    "TagsPlaceholder": "쉼표로 구분하여 태그를 입력하세요",
     "TrafficRatio": "트래픽 비율",
     "TrafficStatus": "트래픽 상태",
     "UpdateDeployment": "배포 업데이트",
@@ -2938,6 +2939,12 @@
     "TypeInAuthKey": "혹은, 하단의 인증 코드를 입력하여 직접 이중 인증을 활성화할 수도 있습니다."
   },
   "tourGuide": {
+    "neoDeploymentLauncher": {
+      "FixErrorAndTryAgainText": "오류 필드가 있는 경우, 배포 생성 버튼이 비활성화 됩니다. 오류 수정 후 다시 시도해 주세요.",
+      "FixErrorFieldByModifyButton": "해당 오류 필드에 대해, 우측 상단의 수정 버튼으로 바로 이동하여 수정할 수 있습니다.",
+      "ValidationErrorText": "필수 입력 필드에 값을 입력하지 않거나 잘못된 값을 입력한 경우, 해당 필드에 오류 메시지가 표시됩니다.",
+      "ValidationErrorTitle": "입력 필드 검증 오류"
+    },
     "neoSessionLauncher": {
       "FixErrorAndTryAgainText": "오류 필드가 있는 경우, 세션 실행 버튼이 비활성화 됩니다. 오류 수정 후 다시 시도해 주세요.",
       "FixErrorFieldByModifyButton": "해당 오류 필드에 대해, 우측 상단의 수정 버튼으로 바로 이동하여 수정할 수 있습니다.",

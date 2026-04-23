@@ -834,6 +834,7 @@
     "RuntimeVariant": "執行時變體",
     "SessionId": "工作階段 ID",
     "Tags": "標籤",
+    "TagsPlaceholder": "輸入標籤，以逗號分隔",
     "TrafficRatio": "流量比例",
     "TrafficStatus": "流量狀態",
     "UpdateDeployment": "更新部署",
@@ -2929,6 +2930,12 @@
     "TypeInAuthKey": "或者，您也可以在下面手动输入验证码。"
   },
   "tourGuide": {
+    "neoDeploymentLauncher": {
+      "FixErrorAndTryAgainText": "如果存在錯誤欄位，則「建立部署」按鈕將被停用。請更正錯誤並重試。",
+      "FixErrorFieldByModifyButton": "對於該錯誤欄位，您可以直接進入右上角的編輯按鈕進行編輯。",
+      "ValidationErrorText": "如果您未在必填欄位中輸入值或輸入無效值，則該欄位中會顯示錯誤訊息。",
+      "ValidationErrorTitle": "輸入欄位驗證錯誤"
+    },
     "neoSessionLauncher": {
       "FixErrorAndTryAgainText": "如果存在錯誤字段，則「啟動會話」按鈕將被停用。\n請更正錯誤並重試。",
       "FixErrorFieldByModifyButton": "對於該錯誤字段，您可以直接進入右上角的編輯按鈕進行編輯。",

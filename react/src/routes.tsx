@@ -61,7 +61,7 @@ const FileUploadManager = React.lazy(
 );
 // FR-2675 — The legacy `ServiceLauncherCreatePage` / `ServiceLauncherUpdatePage`
 // routes have been redirected to the new Deployment launcher below so the
-// new `/deployments/new` + `/deployments/:deploymentId/edit` paths are the
+// new `/deployments/start` + `/deployments/:deploymentId/edit` paths are the
 // sole launcher entry points. The underlying `ServiceLauncherPageContent`
 // component is still imported transitively (by `useModelServiceLauncher`,
 // `LegacyModelTryContentButton`, etc.) and is scheduled for removal in a
@@ -280,7 +280,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
         },
       },
       {
-        path: 'new',
+        path: 'start',
         handle: { labelKey: 'modelService.StartNewService' },
         element: (
           <Suspense
@@ -359,12 +359,15 @@ export const mainLayoutChildRoutes: RouteObject[] = [
         element: <WebUINavigate to="/deployments" replace />,
       },
       {
-        // FR-2675 — Legacy `/service/start` → new `/deployments/new`.
+        // FR-2675 — Legacy `/service/start` → new `/deployments/start`.
         path: 'start',
         Component: () => {
           const location = useLocation();
           return (
-            <WebUINavigate to={'/deployments/new' + location.search} replace />
+            <WebUINavigate
+              to={'/deployments/start' + location.search}
+              replace
+            />
           );
         },
       },

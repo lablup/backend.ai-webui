@@ -833,6 +833,7 @@
     "RuntimeVariant": "Wariant środowiska uruchomieniowego",
     "SessionId": "ID sesji",
     "Tags": "Tagi",
+    "TagsPlaceholder": "Wprowadź tagi, oddzielone przecinkami",
     "TrafficRatio": "Stosunek ruchu",
     "TrafficStatus": "Status ruchu",
     "UpdateDeployment": "Aktualizuj wdrożenie",
@@ -2928,6 +2929,12 @@
     "TypeInAuthKey": "Alternatywnie, możesz wpisać poniższy kod uwierzytelniający ręcznie."
   },
   "tourGuide": {
+    "neoDeploymentLauncher": {
+      "FixErrorAndTryAgainText": "Jeśli występuje pole błędu, przycisk Utwórz wdrożenie jest wyłączony. Popraw błąd i spróbuj ponownie.",
+      "FixErrorFieldByModifyButton": "W przypadku tego pola błędu możesz przejść bezpośrednio do przycisku Edytuj w prawym górnym rogu, aby go edytować.",
+      "ValidationErrorText": "Jeśli nie wprowadzisz wartości w wymaganym polu lub wprowadzisz nieprawidłową wartość, w tym polu wyświetli się komunikat o błędzie.",
+      "ValidationErrorTitle": "Błędy sprawdzania poprawności pola wejściowego"
+    },
     "neoSessionLauncher": {
       "FixErrorAndTryAgainText": "Jeśli występuje pole błędu, przycisk Uruchom sesję jest wyłączony. \nPopraw błąd i spróbuj ponownie.",
       "FixErrorFieldByModifyButton": "W przypadku tego pola błędu możesz przejść bezpośrednio do przycisku Edytuj w prawym górnym rogu, aby go edytować.",

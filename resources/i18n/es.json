@@ -833,6 +833,7 @@
     "RuntimeVariant": "Variante de tiempo de ejecución",
     "SessionId": "ID de sesión",
     "Tags": "Etiquetas",
+    "TagsPlaceholder": "Ingrese etiquetas, separadas por comas",
     "TrafficRatio": "Proporción de tráfico",
     "TrafficStatus": "Estado del tráfico",
     "UpdateDeployment": "Actualizar despliegue",
@@ -2925,6 +2926,12 @@
     "TypeInAuthKey": "También puede introducir manualmente el código de autenticación."
   },
   "tourGuide": {
+    "neoDeploymentLauncher": {
+      "FixErrorAndTryAgainText": "Si hay un campo de error, el botón Crear implementación está deshabilitado. Corrija el error y vuelva a intentarlo.",
+      "FixErrorFieldByModifyButton": "Para ese campo de error, puede ir directamente al botón Editar en la esquina superior derecha para editarlo.",
+      "ValidationErrorText": "Si no ingresa un valor en un campo obligatorio o ingresa un valor no válido, aparece un mensaje de error en ese campo.",
+      "ValidationErrorTitle": "Errores de validación del campo de entrada"
+    },
     "neoSessionLauncher": {
       "FixErrorAndTryAgainText": "Si hay un campo de error, el botón Iniciar sesión está deshabilitado. \nCorrija el error y vuelva a intentarlo.",
       "FixErrorFieldByModifyButton": "Para ese campo de error, puede ir directamente al botón Editar en la esquina superior derecha para editarlo.",

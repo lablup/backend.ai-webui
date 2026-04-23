@@ -833,6 +833,7 @@
     "RuntimeVariant": "Laufzeitvariante",
     "SessionId": "Sitzungs-ID",
     "Tags": "Tags",
+    "TagsPlaceholder": "Tags eingeben, durch Kommas getrennt",
     "TrafficRatio": "Datenverkehrsanteil",
     "TrafficStatus": "Datenverkehrsstatus",
     "UpdateDeployment": "Bereitstellung aktualisieren",
@@ -2927,6 +2928,12 @@
     "TypeInAuthKey": "Alternativ können Sie den nachstehenden Authentifizierungscode auch manuell eingeben."
   },
   "tourGuide": {
+    "neoDeploymentLauncher": {
+      "FixErrorAndTryAgainText": "Wenn ein Fehlerfeld vorhanden ist, ist die Schaltfläche „Bereitstellung erstellen\" deaktiviert. Bitte beheben Sie den Fehler und versuchen Sie es erneut.",
+      "FixErrorFieldByModifyButton": "Für dieses Fehlerfeld können Sie direkt auf die Schaltfläche „Bearbeiten\" in der oberen rechten Ecke gehen, um es zu bearbeiten.",
+      "ValidationErrorText": "Wenn Sie in einem Pflichtfeld keinen Wert eingeben oder einen ungültigen Wert eingeben, wird in diesem Feld eine Fehlermeldung angezeigt.",
+      "ValidationErrorTitle": "Fehler bei der Validierung des Eingabefelds"
+    },
     "neoSessionLauncher": {
       "FixErrorAndTryAgainText": "Wenn ein Fehlerfeld vorhanden ist, ist die Schaltfläche „Sitzung starten“ deaktiviert. \nBitte beheben Sie den Fehler und versuchen Sie es erneut.",
       "FixErrorFieldByModifyButton": "Für dieses Fehlerfeld können Sie direkt auf die Schaltfläche „Bearbeiten“ in der oberen rechten Ecke gehen, um es zu bearbeiten.",

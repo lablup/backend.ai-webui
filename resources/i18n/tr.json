@@ -833,6 +833,7 @@
     "RuntimeVariant": "Çalışma Zamanı Değişkeni",
     "SessionId": "Oturum Kimliği",
     "Tags": "Etiketler",
+    "TagsPlaceholder": "Etiketleri virgülle ayırarak girin",
     "TrafficRatio": "Trafik Oranı",
     "TrafficStatus": "Trafik Durumu",
     "UpdateDeployment": "Dağıtımı Güncelle",
@@ -2925,6 +2926,12 @@
     "TypeInAuthKey": "Alternatif olarak, aşağıdaki kimlik doğrulama kodunu manuel olarak yazabilirsiniz."
   },
   "tourGuide": {
+    "neoDeploymentLauncher": {
+      "FixErrorAndTryAgainText": "Bir hata alanı varsa Dağıtım Oluştur düğmesi devre dışı bırakılır. Lütfen hatayı düzeltip tekrar deneyin.",
+      "FixErrorFieldByModifyButton": "Bu hata alanını düzenlemek için doğrudan sağ üst köşedeki Düzenle düğmesine gidebilirsiniz.",
+      "ValidationErrorText": "Zorunlu bir alana değer girmezseniz veya geçersiz bir değer girerseniz o alanda bir hata mesajı görüntülenir.",
+      "ValidationErrorTitle": "Giriş alanı doğrulama hataları"
+    },
     "neoSessionLauncher": {
       "FixErrorAndTryAgainText": "Bir hata alanı varsa Oturumu başlat düğmesi devre dışı bırakılır. \nLütfen hatayı düzeltip tekrar deneyin.",
       "FixErrorFieldByModifyButton": "Bu hata alanını düzenlemek için doğrudan sağ üst köşedeki Düzenle düğmesine gidebilirsiniz.",

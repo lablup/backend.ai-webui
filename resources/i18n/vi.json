@@ -833,6 +833,7 @@
     "RuntimeVariant": "Biến thể thời gian chạy",
     "SessionId": "ID phiên",
     "Tags": "Thẻ",
+    "TagsPlaceholder": "Nhập thẻ, phân cách bằng dấu phẩy",
     "TrafficRatio": "Tỷ lệ lưu lượng",
     "TrafficStatus": "Trạng thái lưu lượng",
     "UpdateDeployment": "Cập nhật triển khai",
@@ -2927,6 +2928,12 @@
     "TypeInAuthKey": "Ngoài ra, bạn có thể nhập mã xác thực bên dưới theo cách thủ công."
   },
   "tourGuide": {
+    "neoDeploymentLauncher": {
+      "FixErrorAndTryAgainText": "Nếu có trường lỗi, nút Tạo Triển khai sẽ bị tắt. Vui lòng sửa lỗi và thử lại.",
+      "FixErrorFieldByModifyButton": "Đối với trường lỗi đó, bạn có thể vào thẳng nút Chỉnh sửa ở góc trên cùng bên phải để chỉnh sửa.",
+      "ValidationErrorText": "Nếu bạn không nhập giá trị vào trường bắt buộc hoặc nhập giá trị không hợp lệ, thông báo lỗi sẽ hiển thị trong trường đó.",
+      "ValidationErrorTitle": "Lỗi xác thực trường đầu vào"
+    },
     "neoSessionLauncher": {
       "FixErrorAndTryAgainText": "Nếu có trường lỗi, nút Khởi chạy phiên sẽ bị tắt. \nVui lòng sửa lỗi và thử lại.",
       "FixErrorFieldByModifyButton": "Đối với trường lỗi đó, bạn có thể vào thẳng nút Chỉnh sửa ở góc trên cùng bên phải để chỉnh sửa.",

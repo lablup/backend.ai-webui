@@ -833,6 +833,7 @@
     "RuntimeVariant": "Suoritusaikavariantti",
     "SessionId": "Istunnon ID",
     "Tags": "Tunnisteet",
+    "TagsPlaceholder": "Syötä tunnisteet, pilkuilla erotettuna",
     "TrafficRatio": "Liikennesuhde",
     "TrafficStatus": "Liikenteen tila",
     "UpdateDeployment": "Päivitä käyttöönotto",
@@ -2925,6 +2926,12 @@
     "TypeInAuthKey": "Vaihtoehtoisesti voit kirjoittaa alla olevan todennuskoodin manuaalisesti."
   },
   "tourGuide": {
+    "neoDeploymentLauncher": {
+      "FixErrorAndTryAgainText": "Jos virhekenttä on, Luo käyttöönotto -painike ei ole käytössä. Korjaa virhe ja yritä uudelleen.",
+      "FixErrorFieldByModifyButton": "Voit muokata virhekenttää suoraan oikeassa yläkulmassa olevasta Muokkaa-painikkeesta.",
+      "ValidationErrorText": "Jos et syötä arvoa pakolliseen kenttään tai kirjoitat virheellisen arvon, kenttään tulee virheilmoitus.",
+      "ValidationErrorTitle": "Syöttökentän vahvistusvirheet"
+    },
     "neoSessionLauncher": {
       "FixErrorAndTryAgainText": "Jos virhekenttä on, Launch session -painike ei ole käytössä. \nKorjaa virhe ja yritä uudelleen.",
       "FixErrorFieldByModifyButton": "Voit muokata virhekenttää suoraan oikeassa yläkulmassa olevasta Muokkaa-painikkeesta.",

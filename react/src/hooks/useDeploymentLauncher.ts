@@ -42,7 +42,7 @@ export interface DeployInstantlyResult {
  *   sensible defaults (replicas=1, openToPublic=false, current project +
  *   domain, current resource group as a fallback). Returns the new
  *   deployment id and raises a BAI notification on success/failure.
- * - `openLauncher`: navigates to `/deployments/new?model=<folderId>` so the
+ * - `openLauncher`: navigates to `/deployments/start?model=<folderId>` so the
  *   user can configure a deployment in the full launcher UI.
  *
  * The hook does not wrap the legacy REST-based `useModelServiceLauncher` —
@@ -236,7 +236,7 @@ export const useDeploymentLauncher = (): {
     if (input.resourceGroup && input.resourcePreset) {
       params.set('step', 'review');
     }
-    navigate(`/deployments/new?${params.toString()}`);
+    navigate(`/deployments/start?${params.toString()}`);
   };
 
   return {

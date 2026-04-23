@@ -833,6 +833,7 @@
     "RuntimeVariant": "Varian Runtime",
     "SessionId": "ID Sesi",
     "Tags": "Tag",
+    "TagsPlaceholder": "Masukkan tag, dipisahkan dengan koma",
     "TrafficRatio": "Nisbah Trafik",
     "TrafficStatus": "Status Trafik",
     "UpdateDeployment": "Kemas Kini Penggunaan",
@@ -2925,6 +2926,12 @@
     "TypeInAuthKey": "Sebagai alternatif, anda boleh menaip kod pengesahan di bawah secara manual."
   },
   "tourGuide": {
+    "neoDeploymentLauncher": {
+      "FixErrorAndTryAgainText": "Jika terdapat medan ralat, butang Cipta Penerapan dinyahdayakan. Sila betulkan ralat dan cuba lagi.",
+      "FixErrorFieldByModifyButton": "Untuk medan ralat itu, anda boleh pergi terus ke butang Edit di penjuru kanan sebelah atas untuk mengeditnya.",
+      "ValidationErrorText": "Jika anda tidak memasukkan nilai dalam medan yang diperlukan atau memasukkan nilai yang tidak sah, mesej ralat dipaparkan dalam medan tersebut.",
+      "ValidationErrorTitle": "Ralat pengesahan medan input"
+    },
     "neoSessionLauncher": {
       "FixErrorAndTryAgainText": "Jika terdapat medan ralat, butang Sesi Pelancaran dinyahdayakan. \nSila betulkan ralat dan cuba lagi.",
       "FixErrorFieldByModifyButton": "Untuk medan ralat itu, anda boleh pergi terus ke butang Edit di penjuru kanan sebelah atas untuk mengeditnya.",

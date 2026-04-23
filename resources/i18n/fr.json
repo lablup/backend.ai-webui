@@ -833,6 +833,7 @@
     "RuntimeVariant": "Variante d'exécution",
     "SessionId": "ID de session",
     "Tags": "Étiquettes",
+    "TagsPlaceholder": "Saisir des étiquettes, séparées par des virgules",
     "TrafficRatio": "Rapport de trafic",
     "TrafficStatus": "État du trafic",
     "UpdateDeployment": "Mettre à jour le déploiement",
@@ -2928,6 +2929,12 @@
     "TypeInAuthKey": "Vous pouvez également saisir manuellement le code d'authentification ci-dessous."
   },
   "tourGuide": {
+    "neoDeploymentLauncher": {
+      "FixErrorAndTryAgainText": "S'il y a un champ d'erreur, le bouton Créer un déploiement est désactivé. Veuillez corriger l'erreur et réessayer.",
+      "FixErrorFieldByModifyButton": "Pour ce champ d'erreur, vous pouvez accéder directement au bouton Modifier dans le coin supérieur droit pour le modifier.",
+      "ValidationErrorText": "Si vous ne saisissez pas de valeur dans un champ obligatoire ou si vous saisissez une valeur non valide, un message d'erreur s'affiche dans ce champ.",
+      "ValidationErrorTitle": "Erreurs de validation du champ de saisie"
+    },
     "neoSessionLauncher": {
       "FixErrorAndTryAgainText": "S'il y a un champ d'erreur, le bouton Lancer la session est désactivé. \nVeuillez corriger l'erreur et réessayer.",
       "FixErrorFieldByModifyButton": "Pour ce champ d'erreur, vous pouvez accéder directement au bouton Modifier dans le coin supérieur droit pour le modifier.",

@@ -833,6 +833,7 @@
     "RuntimeVariant": "ランタイムバリアント",
     "SessionId": "セッションID",
     "Tags": "タグ",
+    "TagsPlaceholder": "タグをカンマ区切りで入力してください",
     "TrafficRatio": "トラフィック比率",
     "TrafficStatus": "トラフィック状態",
     "UpdateDeployment": "デプロイを更新",
@@ -2927,6 +2928,12 @@
     "TypeInAuthKey": "または、下の認証コードを入力して直接二要素認証を有効にすることもできます。"
   },
   "tourGuide": {
+    "neoDeploymentLauncher": {
+      "FixErrorAndTryAgainText": "エラーフィールドがある場合、「デプロイメントの作成」ボタンは無効になります。エラーを修正して再試行してください。",
+      "FixErrorFieldByModifyButton": "そのエラー フィールドについては、右上隅にある [編集] ボタンに直接移動して編集できます。",
+      "ValidationErrorText": "必須フィールドに値を入力しなかったり、無効な値を入力したりすると、そのフィールドにエラー メッセージが表示されます。",
+      "ValidationErrorTitle": "入力フィールド検証エラー"
+    },
     "neoSessionLauncher": {
       "FixErrorAndTryAgainText": "エラーフィールドがある場合、「セッションの起動」ボタンは無効になります。\nエラーを修正して再試行してください。",
       "FixErrorFieldByModifyButton": "そのエラー フィールドについては、右上隅にある [編集] ボタンに直接移動して編集できます。",

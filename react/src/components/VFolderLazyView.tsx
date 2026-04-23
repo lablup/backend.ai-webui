@@ -44,11 +44,11 @@ const VFolderLazyView: React.FC<VFolderLazyViewProps> = ({
           {clickable ? (
             <Typography.Link
               onClick={() => {
+                const searchParams = new URLSearchParams(location.search);
+                searchParams.set('folder', toLocalId(vfolder_node.id));
                 webuiNavigate({
                   pathname: location.pathname,
-                  search: new URLSearchParams({
-                    folder: toLocalId(vfolder_node.id),
-                  }).toString(),
+                  search: searchParams.toString(),
                 });
               }}
             >

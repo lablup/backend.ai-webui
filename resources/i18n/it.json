@@ -833,6 +833,7 @@
     "RuntimeVariant": "Variante runtime",
     "SessionId": "ID sessione",
     "Tags": "Tag",
+    "TagsPlaceholder": "Inserisci i tag, separati da virgole",
     "TrafficRatio": "Rapporto traffico",
     "TrafficStatus": "Stato traffico",
     "UpdateDeployment": "Aggiorna distribuzione",
@@ -2925,6 +2926,12 @@
     "TypeInAuthKey": "In alternativa, è possibile digitare manualmente il codice di autenticazione qui sotto."
   },
   "tourGuide": {
+    "neoDeploymentLauncher": {
+      "FixErrorAndTryAgainText": "Se è presente un campo di errore, il pulsante Crea implementazione è disabilitato. Correggi l'errore e riprova.",
+      "FixErrorFieldByModifyButton": "Per quel campo di errore, puoi andare direttamente al pulsante Modifica nell'angolo in alto a destra per modificarlo.",
+      "ValidationErrorText": "Se non inserisci un valore in un campo obbligatorio o inserisci un valore non valido, in quel campo viene visualizzato un messaggio di errore.",
+      "ValidationErrorTitle": "Errori di convalida del campo di input"
+    },
     "neoSessionLauncher": {
       "FixErrorAndTryAgainText": "Se è presente un campo di errore, il pulsante Avvia sessione è disabilitato. \nCorreggi l'errore e riprova.",
       "FixErrorFieldByModifyButton": "Per quel campo di errore, puoi andare direttamente al pulsante Modifica nell'angolo in alto a destra per modificarlo.",

@@ -14,6 +14,7 @@ import { CustomThemeConfig } from 'src/helper/customThemeConfig';
 
 export interface UserSettings {
   has_opened_tour_neo_session_validation?: boolean;
+  has_opened_tour_neo_deployment_validation?: boolean;
   desktop_notification?: boolean;
   compact_sidebar?: boolean;
   preserve_login?: boolean;

@@ -834,6 +834,7 @@
     "RuntimeVariant": "Runtime Variant",
     "SessionId": "Session ID",
     "Tags": "Tags",
+    "TagsPlaceholder": "Enter tags, separated by commas",
     "TrafficRatio": "Traffic Ratio",
     "TrafficStatus": "Traffic Status",
     "UpdateDeployment": "Update Deployment",
@@ -2935,6 +2936,12 @@
     "TypeInAuthKey": "Alternatively, you can type in authentication code below manually."
   },
   "tourGuide": {
+    "neoDeploymentLauncher": {
+      "FixErrorAndTryAgainText": "If there is an error field, the Create Deployment button is disabled. Please correct the error and try again.",
+      "FixErrorFieldByModifyButton": "For that error field, you can go directly to the Edit button in the top right corner to edit it.",
+      "ValidationErrorText": "If you don't enter a value in a required field or enter an invalid value, an error message displays in that field.",
+      "ValidationErrorTitle": "Input field validation errors"
+    },
     "neoSessionLauncher": {
       "FixErrorAndTryAgainText": "If there is an error field, the Launch session button is disabled. Please correct the error and try again.",
       "FixErrorFieldByModifyButton": "For that error field, you can go directly to the Edit button in the top right corner to edit it.",
