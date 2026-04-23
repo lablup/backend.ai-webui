@@ -110,7 +110,7 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
 
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { message } = App.useApp();
+  const { message, modal } = App.useApp();
   const { logger } = useBAILogger();
   const { getErrorMessage } = useErrorMessageResolver();
 
@@ -277,8 +277,18 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
     switchMainKey({
       variables: { input: { accessKey } },
       onCompleted: () => {
-        updateFetchKey();
-        message.success(t('credential.MainKeyChanged'));
+        modal.info({
+          title: t('credential.ReLoginRequired'),
+          content: t('credential.MainKeyChangedNeedRelogin'),
+          okText: t('button.Confirm'),
+          centered: true,
+          closable: false,
+          maskClosable: false,
+          keyboard: false,
+          onOk: () => {
+            document.dispatchEvent(new CustomEvent('backend-ai-logout'));
+          },
+        });
       },
       onError: (error) => {
         logger.error(error);
