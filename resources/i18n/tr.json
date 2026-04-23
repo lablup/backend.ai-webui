@@ -391,7 +391,6 @@
     "MainAccessKey": "Ana Erişim Anahtarı",
     "MainKeyCannotDeactivate": "Ana erişim anahtarı devre dışı bırakılamaz. Önce başka bir anahtara geçin.",
     "MainKeyChanged": "Ana erişim anahtarı değiştirildi.",
-    "MainKeyChangedNeedRelogin": "Ana erişim anahtarı başarıyla değiştirildi. Lütfen yeni anahtarla tekrar giriş yapın.",
     "Max#": "Maks. # klasör",
     "ModifiedAt": "Değiştirilme Tarihi",
     "ModifyKeypairResourcePolicy": "Anahtar çifti kaynak ilkesini değiştirin",
@@ -417,7 +416,6 @@
     "RateLimitFor15min": "Hız Limiti (15 dk. için)",
     "RateLimitInputRequired": "Girdi gerekli.",
     "RateLimitValidation": "Hız Limiti sıfırdan büyük ve 50000'in altında olmalıdır.",
-    "ReLoginRequired": "Yeniden Giriş Gerekli",
     "ReqPer15Min": "15 dakika başına talep",
     "ResourcePolicies": "Kaynak Politikaları",
     "ResourcePolicy": "Kaynak Politikası",
@@ -835,6 +833,7 @@
     "RuntimeVariant": "Çalışma Zamanı Değişkeni",
     "SessionId": "Oturum Kimliği",
     "Tags": "Etiketler",
+    "TagsPlaceholder": "Etiketleri virgülle ayırarak girin",
     "TrafficRatio": "Trafik Oranı",
     "TrafficStatus": "Trafik Durumu",
     "UpdateDeployment": "Dağıtımı Güncelle",
@@ -2229,26 +2228,6 @@
     "SharedMemory": "Paylaşılan Bellek",
     "Updated": "Kaynak ön ayarı güncellendi"
   },
-  "sTokenLoginBoundary": {
-    "AuthenticatingDescription": "Authenticating with your single sign-on token. This usually takes only a moment.",
-    "AuthenticatingTitle": "Signing you in",
-    "CopyErrorDetails": "Copy error details",
-    "ErrorConcurrentSessionDescription": "This account is already signed in somewhere else. Please close the other session and try again.",
-    "ErrorConcurrentSessionTitle": "Another active session was detected.",
-    "ErrorDetailsCopied": "Error details copied to clipboard.",
-    "ErrorDetailsCopyFailed": "Failed to copy error details. Please copy them manually from the page.",
-    "ErrorEndpointUnresolvedDescription": "The Backend.AI server address could not be resolved from the configuration file. Please try again in a moment or contact your administrator.",
-    "ErrorEndpointUnresolvedTitle": "Server configuration is unavailable.",
-    "ErrorMissingTokenDescription": "The sign-in token is missing from the request. Try opening the link again from your original source, or contact your administrator.",
-    "ErrorMissingTokenTitle": "No sign-in token was provided.",
-    "ErrorServerUnreachableDescription": "The server did not respond to the initial connection. Check your network and try again.",
-    "ErrorServerUnreachableTitle": "Cannot reach the Backend.AI server.",
-    "ErrorTokenInvalidDescription": "The sign-in token may have expired or been revoked. Please restart the sign-in flow from your original application.",
-    "ErrorTokenInvalidTitle": "Your sign-in token is not valid.",
-    "ErrorUnknownDescription": "An unexpected error occurred while signing in. Please try again, and copy the error details below if the problem persists.",
-    "ErrorUnknownTitle": "Sign-in failed unexpectedly.",
-    "Retry": "Retry"
-  },
   "scanArtifactModelsFromHuggingFaceModal": {
     "EnterAModelID": "Model kimliğini girin. (örn: openai/gpt-oss-20b)",
     "EnterAVersion": "Sürümü girin. (Varsayılan: main)",
@@ -2951,6 +2930,12 @@
     "TypeInAuthKey": "Alternatif olarak, aşağıdaki kimlik doğrulama kodunu manuel olarak yazabilirsiniz."
   },
   "tourGuide": {
+    "neoDeploymentLauncher": {
+      "FixErrorAndTryAgainText": "Bir hata alanı varsa Dağıtım Oluştur düğmesi devre dışı bırakılır. Lütfen hatayı düzeltip tekrar deneyin.",
+      "FixErrorFieldByModifyButton": "Bu hata alanını düzenlemek için doğrudan sağ üst köşedeki Düzenle düğmesine gidebilirsiniz.",
+      "ValidationErrorText": "Zorunlu bir alana değer girmezseniz veya geçersiz bir değer girerseniz o alanda bir hata mesajı görüntülenir.",
+      "ValidationErrorTitle": "Giriş alanı doğrulama hataları"
+    },
     "neoSessionLauncher": {
       "FixErrorAndTryAgainText": "Bir hata alanı varsa Oturumu başlat düğmesi devre dışı bırakılır. \nLütfen hatayı düzeltip tekrar deneyin.",
       "FixErrorFieldByModifyButton": "Bu hata alanını düzenlemek için doğrudan sağ üst köşedeki Düzenle düğmesine gidebilirsiniz.",

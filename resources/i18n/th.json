@@ -391,7 +391,6 @@
     "MainAccessKey": "คีย์การเข้าถึงหลัก",
     "MainKeyCannotDeactivate": "ไม่สามารถปิดใช้งานคีย์การเข้าถึงหลักได้ โปรดเปลี่ยนไปใช้คีย์อื่นก่อน",
     "MainKeyChanged": "คีย์การเข้าถึงหลักเปลี่ยนแล้ว",
-    "MainKeyChangedNeedRelogin": "คีย์การเข้าถึงหลักได้รับการเปลี่ยนแปลงเรียบร้อยแล้ว กรุณาเข้าสู่ระบบอีกครั้งด้วยคีย์ใหม่",
     "Max#": "จำนวนโฟลเดอร์สูงสุด",
     "ModifiedAt": "แก้ไขเมื่อ",
     "ModifyKeypairResourcePolicy": "แก้ไขนโยบายทรัพยากรคู่คีย์",
@@ -417,7 +416,6 @@
     "RateLimitFor15min": "ขีดจำกัดอัตรา (สำหรับ 15 นาที)",
     "RateLimitInputRequired": "ต้องป้อนข้อมูล",
     "RateLimitValidation": "ขีดจำกัดอัตราควรมากกว่าศูนย์และต่ำกว่า 50000",
-    "ReLoginRequired": "ต้องเข้าสู่ระบบใหม่",
     "ReqPer15Min": "ต้องการต่อ 15 นาที",
     "ResourcePolicies": "นโยบายทรัพยากร",
     "ResourcePolicy": "นโยบายทรัพยากร",
@@ -835,6 +833,7 @@
     "RuntimeVariant": "ตัวแปร Runtime",
     "SessionId": "ID เซสชัน",
     "Tags": "แท็ก",
+    "TagsPlaceholder": "ป้อนแท็ก คั่นด้วยเครื่องหมายจุลภาค",
     "TrafficRatio": "อัตราส่วนทราฟฟิก",
     "TrafficStatus": "สถานะทราฟฟิก",
     "UpdateDeployment": "อัปเดตการปรับใช้",
@@ -2231,26 +2230,6 @@
     "SharedMemory": "หน่วยความจำที่ใช้ร่วมกัน",
     "Updated": "อัปเดตค่าที่กำหนดไว้ล่วงหน้าของทรัพยากรแล้ว"
   },
-  "sTokenLoginBoundary": {
-    "AuthenticatingDescription": "Authenticating with your single sign-on token. This usually takes only a moment.",
-    "AuthenticatingTitle": "Signing you in",
-    "CopyErrorDetails": "Copy error details",
-    "ErrorConcurrentSessionDescription": "This account is already signed in somewhere else. Please close the other session and try again.",
-    "ErrorConcurrentSessionTitle": "Another active session was detected.",
-    "ErrorDetailsCopied": "Error details copied to clipboard.",
-    "ErrorDetailsCopyFailed": "Failed to copy error details. Please copy them manually from the page.",
-    "ErrorEndpointUnresolvedDescription": "The Backend.AI server address could not be resolved from the configuration file. Please try again in a moment or contact your administrator.",
-    "ErrorEndpointUnresolvedTitle": "Server configuration is unavailable.",
-    "ErrorMissingTokenDescription": "The sign-in token is missing from the request. Try opening the link again from your original source, or contact your administrator.",
-    "ErrorMissingTokenTitle": "No sign-in token was provided.",
-    "ErrorServerUnreachableDescription": "The server did not respond to the initial connection. Check your network and try again.",
-    "ErrorServerUnreachableTitle": "Cannot reach the Backend.AI server.",
-    "ErrorTokenInvalidDescription": "The sign-in token may have expired or been revoked. Please restart the sign-in flow from your original application.",
-    "ErrorTokenInvalidTitle": "Your sign-in token is not valid.",
-    "ErrorUnknownDescription": "An unexpected error occurred while signing in. Please try again, and copy the error details below if the problem persists.",
-    "ErrorUnknownTitle": "Sign-in failed unexpectedly.",
-    "Retry": "Retry"
-  },
   "scanArtifactModelsFromHuggingFaceModal": {
     "EnterAModelID": "กรุณาใส่ ID ของโมเดล (เช่น: openai/gpt-oss-20b)",
     "EnterAVersion": "กรุณาใส่เวอร์ชัน (ค่าเริ่มต้น: main)",
@@ -2953,6 +2932,12 @@
     "TypeInAuthKey": "หรือคุณสามารถพิมพ์รหัสยืนยันตัวตนด้านล่างด้วยตนเอง"
   },
   "tourGuide": {
+    "neoDeploymentLauncher": {
+      "FixErrorAndTryAgainText": "หากมีช่องที่ผิดพลาด ปุ่มสร้างการนำใช้งานจะถูกปิดใช้งาน กรุณาแก้ไขข้อผิดพลาดและลองอีกครั้ง",
+      "FixErrorFieldByModifyButton": "สำหรับช่องที่มีข้อผิดพลาดนั้น คุณสามารถไปที่ปุ่มแก้ไขที่มุมขวาบนโดยตรงเพื่อแก้ไขได้",
+      "ValidationErrorText": "หากคุณไม่ป้อนค่าในช่องที่จำเป็นหรือป้อนค่าที่ไม่ถูกต้อง จะแสดงข้อความแจ้งข้อผิดพลาดในช่องนั้น",
+      "ValidationErrorTitle": "ข้อผิดพลาดในการตรวจสอบช่องข้อมูล"
+    },
     "neoSessionLauncher": {
       "FixErrorAndTryAgainText": "หากมีช่องที่ผิดพลาด ปุ่มเริ่มเซสชันจะถูกปิดใช้งาน กรุณาแก้ไขข้อผิดพลาดและลองอีกครั้ง",
       "FixErrorFieldByModifyButton": "สำหรับช่องที่มีข้อผิดพลาดนั้น คุณสามารถไปที่ปุ่มแก้ไขที่มุมขวาบนโดยตรงเพื่อแก้ไขได้",

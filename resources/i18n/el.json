@@ -391,7 +391,6 @@
     "MainAccessKey": "Κύριο κλειδί πρόσβασης",
     "MainKeyCannotDeactivate": "Δεν είναι δυνατή η απενεργοποίηση του κύριου κλειδιού πρόσβασης. Μεταβείτε πρώτα σε άλλο κλειδί.",
     "MainKeyChanged": "Το κύριο κλειδί πρόσβασης άλλαξε.",
-    "MainKeyChangedNeedRelogin": "Το κύριο κλειδί πρόσβασης άλλαξε με επιτυχία. Παρακαλώ συνδεθείτε ξανά με το νέο κλειδί.",
     "Max#": "Μέγιστη. # φακέλων",
     "ModifiedAt": "Τροποποιήθηκε στις",
     "ModifyKeypairResourcePolicy": "Τροποποίηση πολιτικής πόρων πληκτρολογίου",
@@ -417,7 +416,6 @@
     "RateLimitFor15min": "Όριο τιμής (για 15 λεπτά)",
     "RateLimitInputRequired": "Απαιτείται είσοδος.",
     "RateLimitValidation": "Το όριο τιμής πρέπει να είναι μεγαλύτερο από το μηδέν και κάτω από 50000.",
-    "ReLoginRequired": "Απαιτείται επανασύνδεση",
     "ReqPer15Min": "Απαίτηση ανά 15 λεπτά",
     "ResourcePolicies": "Πολιτικές πόρων",
     "ResourcePolicy": "Πολιτική πόρων",
@@ -835,6 +833,7 @@
     "RuntimeVariant": "Παραλλαγή χρόνου εκτέλεσης",
     "SessionId": "ID συνεδρίας",
     "Tags": "Ετικέτες",
+    "TagsPlaceholder": "Εισαγάγετε ετικέτες, χωρισμένες με κόμματα",
     "TrafficRatio": "Αναλογία κίνησης",
     "TrafficStatus": "Κατάσταση κίνησης",
     "UpdateDeployment": "Ενημέρωση ανάπτυξης",
@@ -2229,26 +2228,6 @@
     "SharedMemory": "Κοινόχρηστη μνήμη",
     "Updated": "Η προεπιλογή πόρων ενημερώθηκε"
   },
-  "sTokenLoginBoundary": {
-    "AuthenticatingDescription": "Authenticating with your single sign-on token. This usually takes only a moment.",
-    "AuthenticatingTitle": "Signing you in",
-    "CopyErrorDetails": "Copy error details",
-    "ErrorConcurrentSessionDescription": "This account is already signed in somewhere else. Please close the other session and try again.",
-    "ErrorConcurrentSessionTitle": "Another active session was detected.",
-    "ErrorDetailsCopied": "Error details copied to clipboard.",
-    "ErrorDetailsCopyFailed": "Failed to copy error details. Please copy them manually from the page.",
-    "ErrorEndpointUnresolvedDescription": "The Backend.AI server address could not be resolved from the configuration file. Please try again in a moment or contact your administrator.",
-    "ErrorEndpointUnresolvedTitle": "Server configuration is unavailable.",
-    "ErrorMissingTokenDescription": "The sign-in token is missing from the request. Try opening the link again from your original source, or contact your administrator.",
-    "ErrorMissingTokenTitle": "No sign-in token was provided.",
-    "ErrorServerUnreachableDescription": "The server did not respond to the initial connection. Check your network and try again.",
-    "ErrorServerUnreachableTitle": "Cannot reach the Backend.AI server.",
-    "ErrorTokenInvalidDescription": "The sign-in token may have expired or been revoked. Please restart the sign-in flow from your original application.",
-    "ErrorTokenInvalidTitle": "Your sign-in token is not valid.",
-    "ErrorUnknownDescription": "An unexpected error occurred while signing in. Please try again, and copy the error details below if the problem persists.",
-    "ErrorUnknownTitle": "Sign-in failed unexpectedly.",
-    "Retry": "Retry"
-  },
   "scanArtifactModelsFromHuggingFaceModal": {
     "EnterAModelID": "Εισαγάγετε το ID του μοντέλου. (π.χ.: openai/gpt-oss-20b)",
     "EnterAVersion": "Εισαγάγετε την έκδοση. (Προεπιλογή: main)",
@@ -2951,6 +2930,12 @@
     "TypeInAuthKey": "Εναλλακτικά, μπορείτε να πληκτρολογήσετε χειροκίνητα τον παρακάτω κωδικό ελέγχου ταυτότητας."
   },
   "tourGuide": {
+    "neoDeploymentLauncher": {
+      "FixErrorAndTryAgainText": "Εάν υπάρχει πεδίο σφάλματος, το κουμπί Δημιουργία ανάπτυξης είναι απενεργοποιημένο. Διορθώστε το σφάλμα και δοκιμάστε ξανά.",
+      "FixErrorFieldByModifyButton": "Για αυτό το πεδίο σφάλματος, μπορείτε να μεταβείτε απευθείας στο κουμπί Επεξεργασία στην επάνω δεξιά γωνία για να το επεξεργαστείτε.",
+      "ValidationErrorText": "Εάν δεν εισαγάγετε μια τιμή σε ένα απαιτούμενο πεδίο ή εισαγάγετε μια μη έγκυρη τιμή, εμφανίζεται ένα μήνυμα σφάλματος σε αυτό το πεδίο.",
+      "ValidationErrorTitle": "Σφάλματα επικύρωσης πεδίου εισαγωγής"
+    },
     "neoSessionLauncher": {
       "FixErrorAndTryAgainText": "Εάν υπάρχει πεδίο σφάλματος, το κουμπί Εκκίνηση συνεδρίας είναι απενεργοποιημένο. \nΔιορθώστε το σφάλμα και δοκιμάστε ξανά.",
       "FixErrorFieldByModifyButton": "Για αυτό το πεδίο σφάλματος, μπορείτε να μεταβείτε απευθείας στο κουμπί Επεξεργασία στην επάνω δεξιά γωνία για να το επεξεργαστείτε.",

@@ -391,7 +391,6 @@
     "MainAccessKey": "Pääkäyttöavain",
     "MainKeyCannotDeactivate": "Pääkäyttöavainta ei voi poistaa käytöstä. Vaihda ensin toiseen avaimeen.",
     "MainKeyChanged": "Pääkäyttöavain on vaihdettu.",
-    "MainKeyChangedNeedRelogin": "Pääkäyttöavain on vaihdettu onnistuneesti. Kirjaudu uudelleen sisään uudella avaimella.",
     "Max#": "Max. # Kansioiden määrä",
     "ModifiedAt": "Muokattu",
     "ModifyKeypairResourcePolicy": "Muokkaa avainparin resurssikäytäntöä",
@@ -417,7 +416,6 @@
     "RateLimitFor15min": "Nopeusraja (15 min.)",
     "RateLimitInputRequired": "Tarvittava syöttö.",
     "RateLimitValidation": "Rate Limitin tulisi olla suurempi kuin nolla ja alle 50000.",
-    "ReLoginRequired": "Uudelleenkirjautuminen vaaditaan",
     "ReqPer15Min": "Req per 15 min",
     "ResourcePolicies": "Resurssipolitiikka",
     "ResourcePolicy": "Resurssipolitiikka",
@@ -835,6 +833,7 @@
     "RuntimeVariant": "Suoritusaikavariantti",
     "SessionId": "Istunnon ID",
     "Tags": "Tunnisteet",
+    "TagsPlaceholder": "Syötä tunnisteet, pilkuilla erotettuna",
     "TrafficRatio": "Liikennesuhde",
     "TrafficStatus": "Liikenteen tila",
     "UpdateDeployment": "Päivitä käyttöönotto",
@@ -2229,26 +2228,6 @@
     "SharedMemory": "Jaettu muisti",
     "Updated": "Resurssien esiasetus päivitetty"
   },
-  "sTokenLoginBoundary": {
-    "AuthenticatingDescription": "Authenticating with your single sign-on token. This usually takes only a moment.",
-    "AuthenticatingTitle": "Signing you in",
-    "CopyErrorDetails": "Copy error details",
-    "ErrorConcurrentSessionDescription": "This account is already signed in somewhere else. Please close the other session and try again.",
-    "ErrorConcurrentSessionTitle": "Another active session was detected.",
-    "ErrorDetailsCopied": "Error details copied to clipboard.",
-    "ErrorDetailsCopyFailed": "Failed to copy error details. Please copy them manually from the page.",
-    "ErrorEndpointUnresolvedDescription": "The Backend.AI server address could not be resolved from the configuration file. Please try again in a moment or contact your administrator.",
-    "ErrorEndpointUnresolvedTitle": "Server configuration is unavailable.",
-    "ErrorMissingTokenDescription": "The sign-in token is missing from the request. Try opening the link again from your original source, or contact your administrator.",
-    "ErrorMissingTokenTitle": "No sign-in token was provided.",
-    "ErrorServerUnreachableDescription": "The server did not respond to the initial connection. Check your network and try again.",
-    "ErrorServerUnreachableTitle": "Cannot reach the Backend.AI server.",
-    "ErrorTokenInvalidDescription": "The sign-in token may have expired or been revoked. Please restart the sign-in flow from your original application.",
-    "ErrorTokenInvalidTitle": "Your sign-in token is not valid.",
-    "ErrorUnknownDescription": "An unexpected error occurred while signing in. Please try again, and copy the error details below if the problem persists.",
-    "ErrorUnknownTitle": "Sign-in failed unexpectedly.",
-    "Retry": "Retry"
-  },
   "scanArtifactModelsFromHuggingFaceModal": {
     "EnterAModelID": "Syötä mallin tunnus (esim. openai/gpt-oss-20b)",
     "EnterAVersion": "Syötä versio. (Oletus: main)",
@@ -2951,6 +2930,12 @@
     "TypeInAuthKey": "Vaihtoehtoisesti voit kirjoittaa alla olevan todennuskoodin manuaalisesti."
   },
   "tourGuide": {
+    "neoDeploymentLauncher": {
+      "FixErrorAndTryAgainText": "Jos virhekenttä on, Luo käyttöönotto -painike ei ole käytössä. Korjaa virhe ja yritä uudelleen.",
+      "FixErrorFieldByModifyButton": "Voit muokata virhekenttää suoraan oikeassa yläkulmassa olevasta Muokkaa-painikkeesta.",
+      "ValidationErrorText": "Jos et syötä arvoa pakolliseen kenttään tai kirjoitat virheellisen arvon, kenttään tulee virheilmoitus.",
+      "ValidationErrorTitle": "Syöttökentän vahvistusvirheet"
+    },
     "neoSessionLauncher": {
       "FixErrorAndTryAgainText": "Jos virhekenttä on, Launch session -painike ei ole käytössä. \nKorjaa virhe ja yritä uudelleen.",
       "FixErrorFieldByModifyButton": "Voit muokata virhekenttää suoraan oikeassa yläkulmassa olevasta Muokkaa-painikkeesta.",

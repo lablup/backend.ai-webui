@@ -391,7 +391,6 @@
     "MainAccessKey": "Kunci Akses Utama",
     "MainKeyCannotDeactivate": "Tidak dapat menonaktifkan kunci akses utama. Beralih ke kunci lain terlebih dahulu.",
     "MainKeyChanged": "Kunci akses utama telah diubah.",
-    "MainKeyChangedNeedRelogin": "Kunci akses utama telah berhasil diubah. Silakan masuk kembali dengan kunci baru.",
     "Max#": "Maks. # dari folder",
     "ModifiedAt": "Dimodifikasi Pada",
     "ModifyKeypairResourcePolicy": "Ubah kebijakan sumber daya pasangan kunci",
@@ -417,7 +416,6 @@
     "RateLimitFor15min": "Batas Tarif (selama 15 menit)",
     "RateLimitInputRequired": "Masukan yang diperlukan.",
     "RateLimitValidation": "Batas Tarif harus lebih besar dari nol dan di bawah 50000.",
-    "ReLoginRequired": "Perlu Masuk Kembali",
     "ReqPer15Min": "Persyaratan per 15 menit",
     "ResourcePolicies": "Kebijakan Sumber Daya",
     "ResourcePolicy": "Kebijakan Sumber Daya",
@@ -835,6 +833,7 @@
     "RuntimeVariant": "Varian Runtime",
     "SessionId": "ID Sesi",
     "Tags": "Tag",
+    "TagsPlaceholder": "Masukkan tag, dipisahkan dengan koma",
     "TrafficRatio": "Rasio Lalu Lintas",
     "TrafficStatus": "Status Lalu Lintas",
     "UpdateDeployment": "Perbarui Penerapan",
@@ -2232,26 +2231,6 @@
     "SharedMemory": "Memori bersama",
     "Updated": "Preset sumber daya diperbarui"
   },
-  "sTokenLoginBoundary": {
-    "AuthenticatingDescription": "Authenticating with your single sign-on token. This usually takes only a moment.",
-    "AuthenticatingTitle": "Signing you in",
-    "CopyErrorDetails": "Copy error details",
-    "ErrorConcurrentSessionDescription": "This account is already signed in somewhere else. Please close the other session and try again.",
-    "ErrorConcurrentSessionTitle": "Another active session was detected.",
-    "ErrorDetailsCopied": "Error details copied to clipboard.",
-    "ErrorDetailsCopyFailed": "Failed to copy error details. Please copy them manually from the page.",
-    "ErrorEndpointUnresolvedDescription": "The Backend.AI server address could not be resolved from the configuration file. Please try again in a moment or contact your administrator.",
-    "ErrorEndpointUnresolvedTitle": "Server configuration is unavailable.",
-    "ErrorMissingTokenDescription": "The sign-in token is missing from the request. Try opening the link again from your original source, or contact your administrator.",
-    "ErrorMissingTokenTitle": "No sign-in token was provided.",
-    "ErrorServerUnreachableDescription": "The server did not respond to the initial connection. Check your network and try again.",
-    "ErrorServerUnreachableTitle": "Cannot reach the Backend.AI server.",
-    "ErrorTokenInvalidDescription": "The sign-in token may have expired or been revoked. Please restart the sign-in flow from your original application.",
-    "ErrorTokenInvalidTitle": "Your sign-in token is not valid.",
-    "ErrorUnknownDescription": "An unexpected error occurred while signing in. Please try again, and copy the error details below if the problem persists.",
-    "ErrorUnknownTitle": "Sign-in failed unexpectedly.",
-    "Retry": "Retry"
-  },
   "scanArtifactModelsFromHuggingFaceModal": {
     "EnterAModelID": "Masukkan ID model. (Contoh: openai/gpt-oss-20b)",
     "EnterAVersion": "Masukkan versi. (Nilai bawaan: main)",
@@ -2955,6 +2934,12 @@
     "TypeInAuthKey": "Sebagai alternatif, Anda dapat mengetikkan kode autentikasi di bawah ini secara manual."
   },
   "tourGuide": {
+    "neoDeploymentLauncher": {
+      "FixErrorAndTryAgainText": "Jika ada bidang kesalahan, tombol Buat Penerapan dinonaktifkan. Harap perbaiki kesalahannya dan coba lagi.",
+      "FixErrorFieldByModifyButton": "Untuk kolom error tersebut, Anda bisa langsung menuju tombol Edit di pojok kanan atas untuk mengeditnya.",
+      "ValidationErrorText": "Jika Anda tidak memasukkan nilai di bidang yang wajib diisi atau memasukkan nilai yang tidak valid, pesan kesalahan akan ditampilkan di bidang tersebut.",
+      "ValidationErrorTitle": "Kesalahan validasi kolom masukan"
+    },
     "neoSessionLauncher": {
       "FixErrorAndTryAgainText": "Jika ada bidang kesalahan, tombol Sesi peluncuran dinonaktifkan. \nHarap perbaiki kesalahannya dan coba lagi.",
       "FixErrorFieldByModifyButton": "Untuk kolom error tersebut, Anda bisa langsung menuju tombol Edit di pojok kanan atas untuk mengeditnya.",

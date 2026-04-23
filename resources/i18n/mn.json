@@ -391,7 +391,6 @@
     "MainAccessKey": "Үндсэн хандалтын түлхүүр",
     "MainKeyCannotDeactivate": "Үндсэн хандалтын түлхүүрийг идэвхгүй болгох боломжгүй. Эхлээд өөр түлхүүр рүү шилжнэ үү.",
     "MainKeyChanged": "Үндсэн хандалтын түлхүүр өөрчлөгдлөө.",
-    "MainKeyChangedNeedRelogin": "Үндсэн хандалтын түлхүүр амжилттай өөрчлөгдлөө. Шинэ түлхүүрээр дахин нэвтэрнэ үү.",
     "Max#": "Макс фолдерын тоо",
     "ModifiedAt": "Өөрчлөгдсөн огноо",
     "ModifyKeypairResourcePolicy": "Түлхүүр хосын нөөцийн бодлогыг өөрчлөх",
@@ -417,7 +416,6 @@
     "RateLimitFor15min": "Үнийн хязгаар (15 минутын турш)",
     "RateLimitInputRequired": "Оруулга шаардлагатай.",
     "RateLimitValidation": "Үнийн хязгаар нь тэгээс их ба 50000-аас бага байх ёстой.",
-    "ReLoginRequired": "Дахин нэвтрэх шаардлагатай",
     "ReqPer15Min": "15 минут тутамд хэрэгцээ",
     "ResourcePolicies": "Нөөцийн бодлого",
     "ResourcePolicy": "Нөөцийн бодлого",
@@ -835,6 +833,7 @@
     "RuntimeVariant": "Runtime хувилбар",
     "SessionId": "Сессийн ID",
     "Tags": "Шошго",
+    "TagsPlaceholder": "Таг оруулах, таслалаар тусгаарлана уу",
     "TrafficRatio": "Трафикийн харьцаа",
     "TrafficStatus": "Трафикийн төлөв",
     "UpdateDeployment": "Байршуулалт шинэчлэх",
@@ -2230,26 +2229,6 @@
     "SharedMemory": "Хуваалцсан санах ой",
     "Updated": "Нөөцийн урьдчилан тохируулалтыг шинэчилсэн"
   },
-  "sTokenLoginBoundary": {
-    "AuthenticatingDescription": "Authenticating with your single sign-on token. This usually takes only a moment.",
-    "AuthenticatingTitle": "Signing you in",
-    "CopyErrorDetails": "Copy error details",
-    "ErrorConcurrentSessionDescription": "This account is already signed in somewhere else. Please close the other session and try again.",
-    "ErrorConcurrentSessionTitle": "Another active session was detected.",
-    "ErrorDetailsCopied": "Error details copied to clipboard.",
-    "ErrorDetailsCopyFailed": "Failed to copy error details. Please copy them manually from the page.",
-    "ErrorEndpointUnresolvedDescription": "The Backend.AI server address could not be resolved from the configuration file. Please try again in a moment or contact your administrator.",
-    "ErrorEndpointUnresolvedTitle": "Server configuration is unavailable.",
-    "ErrorMissingTokenDescription": "The sign-in token is missing from the request. Try opening the link again from your original source, or contact your administrator.",
-    "ErrorMissingTokenTitle": "No sign-in token was provided.",
-    "ErrorServerUnreachableDescription": "The server did not respond to the initial connection. Check your network and try again.",
-    "ErrorServerUnreachableTitle": "Cannot reach the Backend.AI server.",
-    "ErrorTokenInvalidDescription": "The sign-in token may have expired or been revoked. Please restart the sign-in flow from your original application.",
-    "ErrorTokenInvalidTitle": "Your sign-in token is not valid.",
-    "ErrorUnknownDescription": "An unexpected error occurred while signing in. Please try again, and copy the error details below if the problem persists.",
-    "ErrorUnknownTitle": "Sign-in failed unexpectedly.",
-    "Retry": "Retry"
-  },
   "scanArtifactModelsFromHuggingFaceModal": {
     "EnterAModelID": "Моделийн ID-г оруулна уу. (Жишээ: openai/gpt-oss-20b)",
     "EnterAVersion": "Хувилбарыг оруулна уу. (Анхдагч: main)",
@@ -2953,6 +2932,12 @@
     "TypeInAuthKey": "Эсвэл та доорх баталгаажуулалтын кодыг гараар бичиж болно."
   },
   "tourGuide": {
+    "neoDeploymentLauncher": {
+      "FixErrorAndTryAgainText": "Хэрэв алдааны талбар байгаа бол \"Байршуулалт үүсгэх\" товчлуур идэвхгүй болно. Алдааг засаад дахин оролдоно уу.",
+      "FixErrorFieldByModifyButton": "Энэ алдааны талбарын хувьд та баруун дээд буланд байрлах Засварлах товчлуур руу шууд очиж засварлаж болно.",
+      "ValidationErrorText": "Хэрэв та шаардлагатай талбарт утга оруулахгүй эсвэл буруу утга оруулбал тухайн талбарт алдааны мэдэгдэл гарч ирнэ.",
+      "ValidationErrorTitle": "Оролтын талбарын баталгаажуулалтын алдаа"
+    },
     "neoSessionLauncher": {
       "FixErrorAndTryAgainText": "Хэрэв алдааны талбар байгаа бол \"Эхлүүлэх сесс\" товчлуур идэвхгүй болно. \nАлдааг засаад дахин оролдоно уу.",
       "FixErrorFieldByModifyButton": "Энэ алдааны талбарын хувьд та баруун дээд буланд байрлах Засварлах товчлуур руу шууд очиж засварлаж болно.",

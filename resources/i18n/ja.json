@@ -391,7 +391,6 @@
     "MainAccessKey": "メインアクセスキー",
     "MainKeyCannotDeactivate": "メインアクセスキーは非アクティブ化できません。別のキーに切り替えてから行ってください。",
     "MainKeyChanged": "メインアクセスキーが変更されました。",
-    "MainKeyChangedNeedRelogin": "メインアクセスキーが正常に変更されました。新しいキーで再度ログインしてください。",
     "Max#": "最大フォルダの数",
     "ModifiedAt": "変更日時",
     "ModifyKeypairResourcePolicy": "キーペアリソースポリシーを変更する",
@@ -417,7 +416,6 @@
     "RateLimitFor15min": "レート制限（15分間）",
     "RateLimitInputRequired": "Rate Limit値を入力してください。",
     "RateLimitValidation": "レート制限はゼロより大きく、50000未満である必要があります。",
-    "ReLoginRequired": "再ログインが必要です",
     "ReqPer15Min": "15分あたりの要求",
     "ResourcePolicies": "リソースポリシー",
     "ResourcePolicy": "リソースポリシー",
@@ -835,6 +833,7 @@
     "RuntimeVariant": "ランタイムバリアント",
     "SessionId": "セッションID",
     "Tags": "タグ",
+    "TagsPlaceholder": "タグをカンマ区切りで入力してください",
     "TrafficRatio": "トラフィック比率",
     "TrafficStatus": "トラフィック状態",
     "UpdateDeployment": "デプロイを更新",
@@ -2231,26 +2230,6 @@
     "SharedMemory": "共有メモリ",
     "Updated": "リソースプリセットが更新されました"
   },
-  "sTokenLoginBoundary": {
-    "AuthenticatingDescription": "Authenticating with your single sign-on token. This usually takes only a moment.",
-    "AuthenticatingTitle": "Signing you in",
-    "CopyErrorDetails": "Copy error details",
-    "ErrorConcurrentSessionDescription": "This account is already signed in somewhere else. Please close the other session and try again.",
-    "ErrorConcurrentSessionTitle": "Another active session was detected.",
-    "ErrorDetailsCopied": "Error details copied to clipboard.",
-    "ErrorDetailsCopyFailed": "Failed to copy error details. Please copy them manually from the page.",
-    "ErrorEndpointUnresolvedDescription": "The Backend.AI server address could not be resolved from the configuration file. Please try again in a moment or contact your administrator.",
-    "ErrorEndpointUnresolvedTitle": "Server configuration is unavailable.",
-    "ErrorMissingTokenDescription": "The sign-in token is missing from the request. Try opening the link again from your original source, or contact your administrator.",
-    "ErrorMissingTokenTitle": "No sign-in token was provided.",
-    "ErrorServerUnreachableDescription": "The server did not respond to the initial connection. Check your network and try again.",
-    "ErrorServerUnreachableTitle": "Cannot reach the Backend.AI server.",
-    "ErrorTokenInvalidDescription": "The sign-in token may have expired or been revoked. Please restart the sign-in flow from your original application.",
-    "ErrorTokenInvalidTitle": "Your sign-in token is not valid.",
-    "ErrorUnknownDescription": "An unexpected error occurred while signing in. Please try again, and copy the error details below if the problem persists.",
-    "ErrorUnknownTitle": "Sign-in failed unexpectedly.",
-    "Retry": "Retry"
-  },
   "scanArtifactModelsFromHuggingFaceModal": {
     "EnterAModelID": "モデルIDを入力してください。（例：openai/gpt-oss-20b）",
     "EnterAVersion": "バージョンを入力してください（デフォルト: main）",
@@ -2953,6 +2932,12 @@
     "TypeInAuthKey": "または、下の認証コードを入力して直接二要素認証を有効にすることもできます。"
   },
   "tourGuide": {
+    "neoDeploymentLauncher": {
+      "FixErrorAndTryAgainText": "エラーフィールドがある場合、「デプロイメントの作成」ボタンは無効になります。エラーを修正して再試行してください。",
+      "FixErrorFieldByModifyButton": "そのエラー フィールドについては、右上隅にある [編集] ボタンに直接移動して編集できます。",
+      "ValidationErrorText": "必須フィールドに値を入力しなかったり、無効な値を入力したりすると、そのフィールドにエラー メッセージが表示されます。",
+      "ValidationErrorTitle": "入力フィールド検証エラー"
+    },
     "neoSessionLauncher": {
       "FixErrorAndTryAgainText": "エラーフィールドがある場合、「セッションの起動」ボタンは無効になります。\nエラーを修正して再試行してください。",
       "FixErrorFieldByModifyButton": "そのエラー フィールドについては、右上隅にある [編集] ボタンに直接移動して編集できます。",

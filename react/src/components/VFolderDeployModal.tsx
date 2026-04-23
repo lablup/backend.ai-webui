@@ -380,7 +380,7 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
         {supportsQuickDeploy && vfolderId ? (
           // Flow 7 (FR-2684): [Deploy | ▼] split button. Primary fires
           // deployVfolderV2 with selected preset/resource group; the dropdown
-          // item navigates to the full launcher at /deployments/new?model=<id>.
+          // item navigates to the full launcher at /deployments/start?model=<id>.
           <Space.Compact>
             <BAIButton
               type="primary"
@@ -407,7 +407,10 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
                       openLauncher({
                         modelFolderId: vfolderId,
                         resourceGroup: effectiveResourceGroup,
-                        resourcePreset: effectivePresetId,
+                        // Pass name so ResourcePresetSelect can match it
+                        resourcePreset: availablePresets.find(
+                          (p) => toLocalId(p.id) === effectivePresetId,
+                        )?.name,
                       });
                     },
                   },

@@ -3,31 +3,70 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { DeploymentLauncherPageContent_deployment$key } from '../__generated__/DeploymentLauncherPageContent_deployment.graphql';
+import { useBaiSignedRequestWithPromise } from '../helper';
+import { parseCliCommand } from '../helper/parseCliCommand';
+import { useSuspendedBackendaiClient } from '../hooks';
+import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
+import { useBAISettingUserState } from '../hooks/useBAISetting';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import {
+  getExtraArgsEnvVarName,
+  type RuntimeParameterGroup,
+} from '../hooks/useRuntimeParameterSchema';
+import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
+import ImageEnvironmentSelectFormItems, {
+  ImageEnvironmentFormInput,
+} from './ImageEnvironmentSelectFormItems';
+import ResourcePresetSelect from './ResourcePresetSelect';
+import RuntimeParameterFormSection, {
+  RuntimeParameterValues,
+} from './RuntimeParameterFormSection';
+import VFolderLazyView from './VFolderLazyView';
 import VFolderSelect from './VFolderSelect';
 import {
   DoubleRightOutlined,
+  GlobalOutlined,
   LeftOutlined,
+  LockOutlined,
   RightOutlined,
 } from '@ant-design/icons';
+import { useDebounceFn } from 'ahooks';
 import {
   Alert,
   Button,
   Card,
   Checkbox,
+  Descriptions,
   Form,
   Grid,
   Input,
   InputNumber,
+  Segmented,
   Select,
   Steps,
+  Tag,
+  Tour,
   Typography,
   theme,
 } from 'antd';
 import type { FormInstance, StepsProps } from 'antd';
-import { BAIFlex, useBAILogger } from 'backend.ai-ui';
+import {
+  BAIButton,
+  BAICard,
+  BAIFlex,
+  BAIProjectResourceGroupSelect,
+  useBAILogger,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
-import React, { useEffect, useEffectEvent, useMemo } from 'react';
+import React, {
+  Suspense,
+  useCallback,
+  useEffect,
+  useEffectEvent,
+  useMemo,
+  useRef,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
@@ -44,27 +83,37 @@ type StepKey = (typeof STEP_KEYS)[number];
  */
 type ClusterMode = 'SINGLE_NODE' | 'MULTI_NODE';
 
+/** Model-definition authoring mode, mirroring ServiceLauncherPageContent. */
+export type CustomDefinitionMode = 'command' | 'file';
+
 /**
  * Form value shape. Field names mirror the Strawberry GraphQL inputs
  * (`CreateDeploymentInput` + `AddRevisionInput`) so that FR-2675's
  * mutation wiring can serialize these values directly without
  * renaming. Keep this interface in sync with the schema.
  */
-export interface DeploymentLauncherFormValue {
+export type DeploymentLauncherFormValue = ImageEnvironmentFormInput & {
   // Step 1 — Basic Info
   name: string;
   tags: string[];
   openToPublic: boolean;
 
   // Step 2 — Model & Runtime
+  /** vfolder UUID stored by VFolderSelect (valuePropName="id"). */
   modelFolderId: string;
-  modelVersion: number;
-  modelDefinitionPath: string;
-  modelMountDestination: string;
   runtimeVariant: string;
-  image?: string;
-  command?: string;
-  environ: Record<string, string>;
+  /** Whether the model definition is authored as a CLI command or a config file. */
+  customDefinitionMode?: CustomDefinitionMode;
+  startCommand?: string;
+  commandPort?: number;
+  commandHealthCheck?: string;
+  commandModelMount?: string;
+  commandInitialDelay?: number;
+  commandMaxRetries?: number;
+  /** Used in file mode only. */
+  modelDefinitionPath?: string;
+  /** Used in file mode only. */
+  modelMountDestination?: string;
   clusterMode: ClusterMode;
   clusterSize: number;
 
@@ -73,7 +122,7 @@ export interface DeploymentLauncherFormValue {
   resourcePresetId?: string;
   desiredReplicaCount: number;
   autoScalingEnabled: boolean;
-}
+};
 
 export interface DeploymentLauncherPageContentProps {
   mode: 'create' | 'edit';
@@ -84,13 +133,6 @@ export interface DeploymentLauncherPageContentProps {
    */
   deploymentFrgmt?: DeploymentLauncherPageContent_deployment$key | null;
   /**
-   * Only used when `mode === 'create'`. Partial form values to pre-fill
-   * from the entry point (e.g. model store split button or VFolderDeployModal).
-   * Merged on top of DEFAULT_FORM_VALUES so any unspecified field keeps its
-   * default. Parsed from URL params by DeploymentLauncherCreateView.
-   */
-  preFilledValues?: Partial<DeploymentLauncherFormValue>;
-  /**
    * Optional change observer forwarded to the underlying antd `<Form>`.
    * Useful for parent pages that want to persist the draft state
    * (e.g. a URL JSON param) without having to read from the form
@@ -100,6 +142,12 @@ export interface DeploymentLauncherPageContentProps {
     changed: Partial<DeploymentLauncherFormValue>,
     all: DeploymentLauncherFormValue,
   ) => void;
+  /** Called when the user clicks the Cancel button in the footer. */
+  onCancel?: () => void;
+  /** Called when the user clicks the submit button on the review step. */
+  onSubmit?: () => Promise<void>;
+  /** When true the submit button shows a loading spinner and is disabled. */
+  isSubmitting?: boolean;
 }
 
 /**
@@ -112,19 +160,27 @@ const DEFAULT_FORM_VALUES: DeploymentLauncherFormValue = {
   tags: [],
   openToPublic: false,
   modelFolderId: '',
-  modelVersion: 1,
+  runtimeVariant: 'custom',
+  customDefinitionMode: 'command',
+  startCommand: undefined,
+  commandPort: 8000,
+  commandHealthCheck: '/health',
+  commandModelMount: '/models',
+  commandInitialDelay: 60,
+  commandMaxRetries: 10,
   modelDefinitionPath: 'model-definition.yaml',
   modelMountDestination: '/models',
-  runtimeVariant: 'custom',
-  image: undefined,
-  command: undefined,
-  environ: {},
   clusterMode: 'SINGLE_NODE',
   clusterSize: 1,
   resourceGroup: '',
   resourcePresetId: undefined,
   desiredReplicaCount: 1,
   autoScalingEnabled: false,
+  environments: {
+    environment: '',
+    version: '',
+    image: undefined,
+  },
 };
 
 /**
@@ -144,16 +200,82 @@ const DEFAULT_FORM_VALUES: DeploymentLauncherFormValue = {
  */
 const DeploymentLauncherPageContent: React.FC<
   DeploymentLauncherPageContentProps
-> = ({ mode, form, deploymentFrgmt, preFilledValues, onValuesChange }) => {
+> = ({
+  mode,
+  form,
+  deploymentFrgmt,
+  onValuesChange,
+  onCancel,
+  onSubmit,
+  isSubmitting,
+}) => {
   'use memo';
 
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const screens = Grid.useBreakpoint();
   const { logger } = useBAILogger();
+  const baiClient = useSuspendedBackendaiClient();
+  const baiRequestWithPromise = useBaiSignedRequestWithPromise();
+
+  // Fetch available runtime variants from the model-service runtimes endpoint.
+  // Falls back to an empty list so the Select renders without crashing.
+  const { data: availableRuntimes } = useSuspenseTanQuery<{
+    runtimes: { name: string; human_readable_name: string }[];
+  }>({
+    queryKey: ['DeploymentLauncher.runtime.list'],
+    queryFn: () =>
+      baiRequestWithPromise({ method: 'GET', url: `/services/_/runtimes` }),
+    staleTime: 60_000,
+  });
+
+  // Debounced CLI command parser — auto-fills port/health/mount from the
+  // pasted command, mirroring ServiceLauncherPageContent behaviour.
+  const { run: parseCommandWithDebounce } = useDebounceFn(
+    (command: string) => {
+      const parsed = parseCliCommand(command);
+      form.setFieldsValue({
+        commandPort: parsed.port,
+        commandHealthCheck: parsed.healthCheckPath,
+        commandModelMount: parsed.modelMountDestination,
+      });
+    },
+    { wait: 400 },
+  );
+
+  void baiClient; // used only for feature-flag checks in future wiring
+
+  const currentProject = useCurrentProjectValue();
+
+  // Refs for runtime parameter UI values. Kept outside form state so that
+  // slider/input changes don't re-render the whole page. Read at submit time.
+  const runtimeParamValuesRef = useRef<RuntimeParameterValues>({});
+  const runtimeParamTouchedKeysRef = useRef<Set<string>>(new Set());
+  const runtimeParamGroupsRef = useRef<RuntimeParameterGroup[] | null>(null);
+
+  const handleGroupsLoaded = useCallback(
+    (groups: RuntimeParameterGroup[] | null) => {
+      runtimeParamGroupsRef.current = groups;
+    },
+    [],
+  );
+  const handleRuntimeParamChange = useCallback(
+    (values: RuntimeParameterValues) => {
+      runtimeParamValuesRef.current = {
+        ...runtimeParamValuesRef.current,
+        ...values,
+      };
+    },
+    [],
+  );
+  const handleTouchedKeysChange = useCallback((keys: Set<string>) => {
+    runtimeParamTouchedKeysRef.current = keys;
+  }, []);
+
+  void runtimeParamGroupsRef; // serialized at submit time by parent (FR-2675)
 
   // Deployment fragment — used for edit-mode pre-fill. Fields mirror the
-  // `폼 필드 매핑` table in .specs/FR-1368-endpoint-deployment-migration/spec.md.
+  // Field mapping documented in .specs/FR-1368-endpoint-deployment-migration/spec.md.
   // Only fields the form needs are selected here to keep the query minimal.
   const deployment = useFragment(
     graphql`
@@ -198,12 +320,23 @@ const DeploymentLauncherPageContent: React.FC<
     deploymentFrgmt ?? null,
   );
 
-  // URL-synced step. `parseAsStringLiteral` narrows unknown values back
-  // to the default so deep-links with stale/invalid step values still
-  // render a usable form instead of a blank screen.
-  const [{ step: currentStepKey }, setQuery] = useQueryStates({
+  // URL-synced step and pre-fill params. nuqs manages all four so that
+  // step navigation (setQuery({ step: … })) never strips the pre-fill
+  // params from the URL, and so the content component reads them
+  // directly without relying on prop drilling through the Suspense boundary.
+  const [
+    {
+      step: currentStepKey,
+      model: urlModel,
+      resourceGroup: urlResourceGroup,
+      resourcePresetId: urlResourcePresetId,
+    },
+    setQuery,
+  ] = useQueryStates({
     step: parseAsStringLiteral(STEP_KEYS).withDefault('basic'),
     model: parseAsString,
+    resourceGroup: parseAsString,
+    resourcePresetId: parseAsString,
   });
 
   const currentStepIndex = STEP_KEYS.indexOf(currentStepKey);
@@ -211,10 +344,9 @@ const DeploymentLauncherPageContent: React.FC<
   const isFirstStep = currentStepIndex === 0;
 
   // Compute initial values once per mount. In edit mode we read every
-  // mapped field from the deployment fragment; in create mode we only
-  // pre-fill the model folder (if provided via `?model=…`). The merge
-  // order lets undefined schema fields (e.g. on older backends) fall
-  // through to the safe DEFAULT_FORM_VALUES baseline.
+  // mapped field from the deployment fragment; in create mode we merge
+  // URL pre-fill params (model, resourceGroup, resourcePresetId) on top
+  // of DEFAULT_FORM_VALUES so any unspecified field keeps its safe default.
   const initialValues: DeploymentLauncherFormValue = useMemo(() => {
     if (mode === 'edit' && deployment) {
       const revision = deployment.currentRevision;
@@ -232,7 +364,6 @@ const DeploymentLauncherPageContent: React.FC<
         runtimeVariant:
           revision?.modelRuntimeConfig?.runtimeVariant ??
           DEFAULT_FORM_VALUES.runtimeVariant,
-        image: revision?.imageV2?.identity?.canonicalName ?? undefined,
         clusterMode: (revision?.clusterConfig?.mode ??
           DEFAULT_FORM_VALUES.clusterMode) as ClusterMode,
         clusterSize:
@@ -241,8 +372,12 @@ const DeploymentLauncherPageContent: React.FC<
         desiredReplicaCount: deployment.replicaState.desiredReplicaCount,
       } satisfies Partial<DeploymentLauncherFormValue>);
     }
-    return _.merge({}, DEFAULT_FORM_VALUES, preFilledValues ?? {});
-  }, [mode, deployment, preFilledValues]);
+    return _.merge({}, DEFAULT_FORM_VALUES, {
+      ...(urlModel && { modelFolderId: urlModel }),
+      ...(urlResourceGroup && { resourceGroup: urlResourceGroup }),
+      ...(urlResourcePresetId && { resourcePresetId: urlResourcePresetId }),
+    });
+  }, [mode, deployment, urlModel, urlResourceGroup, urlResourcePresetId]);
 
   // Apply initial values to the parent-owned form instance exactly once
   // per mount / deployment change. Using `useEffectEvent` keeps the
@@ -260,12 +395,7 @@ const DeploymentLauncherPageContent: React.FC<
 
   useEffect(() => {
     applyInitialValues();
-  }, [
-    deployment?.id,
-    preFilledValues?.modelFolderId,
-    preFilledValues?.resourceGroup,
-    preFilledValues?.resourcePresetId,
-  ]);
+  }, [deployment?.id, urlModel, urlResourceGroup, urlResourcePresetId]);
 
   const setCurrentStep = (nextKey: StepKey) => {
     setQuery({ step: nextKey }, { history: 'push' });
@@ -277,6 +407,14 @@ const DeploymentLauncherPageContent: React.FC<
     if (nextKey) setCurrentStep(nextKey);
   };
 
+  // Trigger full form validation whenever the user reaches the review step
+  // so per-field errors are populated and the review cards can display them.
+  useEffect(() => {
+    if (currentStepIndex === STEP_KEYS.length - 1) {
+      form.validateFields().catch(() => {});
+    }
+  }, [currentStepIndex, form]);
+
   // Step metadata. Titles come straight from the FR-2666 keys
   // (`deployment.step.*`) so copy changes land in one place.
   const stepItems: NonNullable<StepsProps['items']> = [
@@ -286,21 +424,10 @@ const DeploymentLauncherPageContent: React.FC<
     { title: t('deployment.step.ReviewAndCreate') },
   ];
 
-  // Runtime variants shown in the selector. These are the values the
-  // backend accepts via `ModelRuntimeConfigInput.runtimeVariant`; the
-  // full list comes from the `/services/_/runtimes` REST endpoint at
-  // runtime (see FR-2675). For now we expose the three canonical
-  // options plus `custom` so the form is usable without that fetch.
-  const runtimeVariantOptions = [
-    { value: 'vllm', label: 'vLLM' },
-    { value: 'sglang', label: 'SGLang' },
-    { value: 'custom', label: t('deployment.RuntimeVariant') + ' — custom' },
-  ];
-
-  const clusterModeOptions = [
-    { value: 'SINGLE_NODE' as const, label: 'Single Node' },
-    { value: 'MULTI_NODE' as const, label: 'Multi Node' },
-  ];
+  const runtimeVariantOptions = _.map(
+    availableRuntimes?.runtimes ?? [],
+    (rt) => ({ value: rt.name, label: rt.human_readable_name }),
+  );
 
   return (
     <BAIFlex direction="row" gap="md" align="start" style={{ width: '100%' }}>
@@ -353,7 +480,8 @@ const DeploymentLauncherPageContent: React.FC<
               <Select
                 mode="tags"
                 tokenSeparators={[',']}
-                placeholder={t('deployment.Tags')}
+                placeholder={t('deployment.TagsPlaceholder')}
+                notFoundContent={null}
               />
             </Form.Item>
             <Form.Item name="openToPublic" valuePropName="checked">
@@ -368,61 +496,200 @@ const DeploymentLauncherPageContent: React.FC<
               display: currentStepKey === 'model' ? 'block' : 'none',
             }}
           >
+            {/* Model folder — stores UUID (valuePropName="id"); antd Select
+                displays the folder name as label while the form value stays
+                as the UUID for mutation wiring. */}
             <Form.Item
               name="modelFolderId"
-              label={t('deployment.ModelFolder')}
+              label={t('session.launcher.ModelStorageToMount')}
               rules={[{ required: true }]}
             >
               <VFolderSelect
+                valuePropName="id"
                 filter={(vf) =>
                   vf.usage_mode === 'model' &&
                   vf.status === 'ready' &&
                   vf.ownership_type !== 'group'
                 }
-                valuePropName="id"
-                // In edit mode the mount vfolder is fixed for the current
-                // revision; creating a new one via rollback/reconfigure
-                // is handled through a dedicated flow, not by swapping
-                // model folders on an existing deployment.
                 disabled={mode === 'edit'}
                 showOpenButton
                 showCreateButton
                 showRefreshButton
               />
             </Form.Item>
-            <Form.Item name="modelVersion" label={t('deployment.ModelVersion')}>
-              <InputNumber min={1} style={{ width: '100%' }} />
-            </Form.Item>
-            <Form.Item
-              name="modelDefinitionPath"
-              label={t('deployment.ModelDefinitionPath')}
-            >
-              <Input placeholder="model-definition.yaml" />
-            </Form.Item>
-            <Form.Item
-              name="modelMountDestination"
-              label={t('deployment.ModelMountDestination')}
-            >
-              <Input placeholder="/models" />
-            </Form.Item>
+
+            {/* Runtime variant — fetched from /services/_/runtimes */}
             <Form.Item
               name="runtimeVariant"
-              label={t('deployment.RuntimeVariant')}
+              label={t('modelService.RuntimeVariant')}
               rules={[{ required: true }]}
             >
-              <Select options={runtimeVariantOptions} showSearch />
+              <Select
+                options={runtimeVariantOptions}
+                defaultActiveFirstOption
+                showSearch
+              />
             </Form.Item>
-            <Form.Item name="image" label={t('deployment.Image')}>
-              <Input placeholder="registry/namespace/image:tag" />
+
+            {/* Environment / image selector */}
+            <Suspense fallback={null}>
+              <ImageEnvironmentSelectFormItems />
+            </Suspense>
+
+            {/* Runtime parameter section — shown only for non-custom variants */}
+            <Form.Item dependencies={['runtimeVariant']} noStyle>
+              {({ getFieldValue }) => {
+                const variant = getFieldValue('runtimeVariant');
+                if (!variant || variant === 'custom') return null;
+                // TODO(needs-backend): reverse-map existing environ for edit mode once wiring lands
+                void getExtraArgsEnvVarName;
+                return (
+                  <Suspense fallback={null}>
+                    <RuntimeParameterFormSection
+                      runtimeVariant={variant}
+                      onChange={handleRuntimeParamChange}
+                      onTouchedKeysChange={handleTouchedKeysChange}
+                      onGroupsLoaded={handleGroupsLoaded}
+                      initialExtraArgs=""
+                      initialEnvVars={undefined}
+                    />
+                  </Suspense>
+                );
+              }}
             </Form.Item>
-            <Form.Item name="command" label={t('deployment.Command')}>
-              <Input.TextArea autoSize={{ minRows: 2, maxRows: 6 }} />
-            </Form.Item>
-            <Form.Item name="clusterMode" label={t('deployment.ClusterMode')}>
-              <Select options={clusterModeOptions} />
-            </Form.Item>
-            <Form.Item name="clusterSize" label={t('deployment.ClusterSize')}>
-              <InputNumber min={1} style={{ width: '100%' }} />
+
+            {/* Model definition — command vs. config-file mode */}
+            <Form.Item dependencies={['runtimeVariant']} noStyle>
+              {({ getFieldValue }) =>
+                getFieldValue('runtimeVariant') === 'custom' && (
+                  <Card
+                    size="small"
+                    title={t('modelService.ModelDefinition')}
+                    style={{ marginBottom: token.marginMD }}
+                  >
+                    <Form.Item name="customDefinitionMode" noStyle>
+                      <Segmented
+                        options={[
+                          {
+                            label: t('modelService.EnterCommand'),
+                            value: 'command',
+                          },
+                          {
+                            label: t('modelService.UseConfigFile'),
+                            value: 'file',
+                          },
+                        ]}
+                        style={{ marginBottom: token.marginMD }}
+                      />
+                    </Form.Item>
+
+                    <Form.Item dependencies={['customDefinitionMode']} noStyle>
+                      {({ getFieldValue: getField }) =>
+                        getField('customDefinitionMode') === 'command' ? (
+                          <>
+                            <Form.Item
+                              name="startCommand"
+                              label={t('modelService.StartCommand')}
+                              tooltip={t('modelService.StartCommandTooltip')}
+                              rules={[{ required: true, whitespace: true }]}
+                            >
+                              <Input.TextArea
+                                placeholder={t(
+                                  'modelService.StartCommandPlaceholder',
+                                )}
+                                autoSize={{ minRows: 2 }}
+                                onChange={(e) =>
+                                  parseCommandWithDebounce(e.target.value)
+                                }
+                              />
+                            </Form.Item>
+                            <Form.Item
+                              name="commandModelMount"
+                              label={t('modelService.ModelMountDestination')}
+                              tooltip={t('modelService.ModelMountTooltip')}
+                            >
+                              <Input placeholder="/models" />
+                            </Form.Item>
+                            <BAIFlex direction="row" gap="sm" align="end">
+                              <Form.Item
+                                name="commandPort"
+                                label={t('modelService.Port')}
+                                tooltip={t('modelService.PortTooltip')}
+                                style={{ flex: 1 }}
+                                labelCol={{ style: { width: '100%' } }}
+                              >
+                                <InputNumber
+                                  min={1}
+                                  max={65535}
+                                  style={{ width: '100%' }}
+                                />
+                              </Form.Item>
+                              <Form.Item
+                                name="commandHealthCheck"
+                                label={t('modelService.HealthCheck')}
+                                tooltip={t('modelService.HealthCheckTooltip')}
+                                style={{ flex: 1 }}
+                                labelCol={{ style: { width: '100%' } }}
+                              >
+                                <Input placeholder="/health" />
+                              </Form.Item>
+                            </BAIFlex>
+                            <BAIFlex direction="row" gap="sm" align="end">
+                              <Form.Item
+                                name="commandInitialDelay"
+                                label={t('modelService.InitialDelay')}
+                                tooltip={t('modelService.InitialDelayTooltip')}
+                                style={{ flex: 1 }}
+                                labelCol={{ style: { width: '100%' } }}
+                              >
+                                <InputNumber
+                                  min={0}
+                                  step={0.5}
+                                  style={{ width: '100%' }}
+                                />
+                              </Form.Item>
+                              <Form.Item
+                                name="commandMaxRetries"
+                                label={t('modelService.MaxRetries')}
+                                tooltip={t('modelService.MaxRetriesTooltip')}
+                                style={{ flex: 1 }}
+                                labelCol={{ style: { width: '100%' } }}
+                              >
+                                <InputNumber
+                                  min={0}
+                                  style={{ width: '100%' }}
+                                />
+                              </Form.Item>
+                            </BAIFlex>
+                          </>
+                        ) : (
+                          <>
+                            <Form.Item
+                              name="modelMountDestination"
+                              label={t('modelService.ModelMountDestination')}
+                              tooltip={t('modelService.ModelMountTooltip')}
+                            >
+                              <Input allowClear placeholder="/models" />
+                            </Form.Item>
+                            <Form.Item
+                              name="modelDefinitionPath"
+                              label={t('modelService.ModelDefinitionPath')}
+                              tooltip={t(
+                                'modelService.ModelDefinitionPathTooltip',
+                              )}
+                            >
+                              <Input
+                                allowClear
+                                placeholder="model-definition.yaml"
+                              />
+                            </Form.Item>
+                          </>
+                        )
+                      }
+                    </Form.Item>
+                  </Card>
+                )
+              }
             </Form.Item>
           </Card>
 
@@ -435,16 +702,28 @@ const DeploymentLauncherPageContent: React.FC<
           >
             <Form.Item
               name="resourceGroup"
-              label={t('deployment.ResourceGroup')}
+              label={t('session.ResourceGroup')}
               rules={[{ required: true }]}
             >
-              <Input />
+              <BAIProjectResourceGroupSelect
+                projectName={currentProject.name ?? ''}
+                autoSelectDefault
+                showSearch
+              />
             </Form.Item>
-            <Form.Item
-              name="resourcePresetId"
-              label={t('deployment.ResourcePreset')}
-            >
-              <Input />
+            <Form.Item dependencies={['resourceGroup']} noStyle>
+              {({ getFieldValue }) => (
+                <Form.Item
+                  name="resourcePresetId"
+                  label={t('resourcePreset.ResourcePresets')}
+                >
+                  <ResourcePresetSelect
+                    resourceGroup={getFieldValue('resourceGroup')}
+                    autoSelectDefault
+                    showSearch
+                  />
+                </Form.Item>
+              )}
             </Form.Item>
             <Form.Item
               name="desiredReplicaCount"
@@ -459,51 +738,75 @@ const DeploymentLauncherPageContent: React.FC<
           </Card>
 
           {/* --- Step 4: Review & Create --- */}
-          <Card
-            title={t('deployment.step.ReviewAndCreate')}
-            style={{
-              display: currentStepKey === 'review' ? 'block' : 'none',
-            }}
-          >
+          {currentStepKey === 'review' && (
             <Form.Item noStyle shouldUpdate>
-              {() => <ReviewSummary form={form} />}
+              {() => (
+                <DeploymentReviewSummary
+                  form={form}
+                  mode={mode}
+                  onGoToStep={goToStep}
+                />
+              )}
             </Form.Item>
-          </Card>
+          )}
 
           {/* --- Footer navigation ---
             Single row of nav controls shared across every step, per
-            FR-1368 Flow 2 spec. "Skip to Review" is hidden on the last
-            step; Previous is hidden on the first; the submit button is
-            owned by the parent page, not this form body. */}
+            FR-1368 Flow 2 spec. Layout mirrors SessionLauncherPage:
+            Cancel on the left, Previous / Next / Submit on the right.
+            "Skip to Review" is hidden on the last step; Previous is
+            hidden on the first step. */}
           <BAIFlex
             direction="row"
-            justify="end"
+            justify="between"
             gap="sm"
             style={{ marginTop: token.marginMD }}
+            data-test-id="deployment-launcher-tour-step-navigation"
           >
-            {!isFirstStep && (
-              <Button
-                icon={<LeftOutlined />}
-                onClick={() => goToStep(currentStepIndex - 1)}
-              >
-                {t('deployment.nav.Previous')}
-              </Button>
-            )}
-            {!isLastStep && (
-              <>
+            <BAIFlex gap="sm">
+              {onCancel && (
+                <Button onClick={onCancel} disabled={isSubmitting}>
+                  {t('button.Cancel')}
+                </Button>
+              )}
+            </BAIFlex>
+            <BAIFlex direction="row" gap="sm">
+              {!isFirstStep && (
                 <Button
-                  type="primary"
-                  ghost
-                  onClick={() => goToStep(currentStepIndex + 1)}
+                  icon={<LeftOutlined />}
+                  onClick={() => goToStep(currentStepIndex - 1)}
                 >
-                  {t('deployment.nav.Next')} <RightOutlined />
+                  {t('deployment.nav.Previous')}
                 </Button>
-                <Button onClick={() => goToStep(STEP_KEYS.length - 1)}>
-                  {t('deployment.nav.SkipToReview')}
-                  <DoubleRightOutlined />
-                </Button>
-              </>
-            )}
+              )}
+              {isLastStep ? (
+                onSubmit && (
+                  <BAIButton
+                    type="primary"
+                    loading={isSubmitting}
+                    action={onSubmit}
+                  >
+                    {mode === 'edit'
+                      ? t('deployment.UpdateDeployment')
+                      : t('deployment.CreateDeployment')}
+                  </BAIButton>
+                )
+              ) : (
+                <>
+                  <Button
+                    type="primary"
+                    ghost
+                    onClick={() => goToStep(currentStepIndex + 1)}
+                  >
+                    {t('deployment.nav.Next')} <RightOutlined />
+                  </Button>
+                  <Button onClick={() => goToStep(STEP_KEYS.length - 1)}>
+                    {t('deployment.nav.SkipToReview')}
+                    <DoubleRightOutlined />
+                  </Button>
+                </>
+              )}
+            </BAIFlex>
           </BAIFlex>
         </Form>
       </BAIFlex>
@@ -527,65 +830,221 @@ const DeploymentLauncherPageContent: React.FC<
           />
         </BAIFlex>
       )}
+
+      {/* Validation tour — shown once when the user lands on the review
+          step and there are outstanding validation errors. */}
+      <Form.Item noStyle shouldUpdate>
+        {() => (
+          <DeploymentLauncherValidationTour
+            form={form}
+            isReview={currentStepKey === 'review'}
+          />
+        )}
+      </Form.Item>
     </BAIFlex>
   );
 };
 
 /**
- * Review step summary. Reads the current form values via
- * `form.getFieldsValue()` so every field change is reflected without
- * subscribing to individual `Form.useWatch` calls. The enclosing
- * `<Form.Item noStyle shouldUpdate>` handles the re-render trigger.
+ * Validation tour — shown once (per setting key) when the review step has
+ * outstanding field errors. Mirrors SessionLauncherValidationTour but targets
+ * the deployment-specific navigation element.
  */
-const ReviewSummary: React.FC<{
+const DeploymentLauncherValidationTour: React.FC<{
   form: FormInstance<DeploymentLauncherFormValue>;
-}> = ({ form }) => {
-  'use memo';
+  isReview: boolean;
+}> = ({ form, isReview }) => {
   const { t } = useTranslation();
-  const values = form.getFieldsValue();
+  const [hasOpened, setHasOpened] = useBAISettingUserState(
+    'has_opened_tour_neo_deployment_validation',
+  );
 
-  const rows: Array<[string, React.ReactNode]> = [
-    [t('deployment.Name'), values.name || '-'],
-    [t('deployment.Tags'), values.tags?.join(', ') || '-'],
-    [
-      t('deployment.OpenToPublic'),
-      values.openToPublic ? t('button.Yes') : t('button.No'),
-    ],
-    [t('deployment.ModelFolder'), values.modelFolderId || '-'],
-    [t('deployment.ModelVersion'), String(values.modelVersion ?? '-')],
-    [t('deployment.ModelDefinitionPath'), values.modelDefinitionPath || '-'],
-    [
-      t('deployment.ModelMountDestination'),
-      values.modelMountDestination || '-',
-    ],
-    [t('deployment.RuntimeVariant'), values.runtimeVariant || '-'],
-    [t('deployment.Image'), values.image || '-'],
-    [t('deployment.Command'), values.command || '-'],
-    [t('deployment.ClusterMode'), values.clusterMode || '-'],
-    [t('deployment.ClusterSize'), String(values.clusterSize ?? '-')],
-    [t('deployment.ResourceGroup'), values.resourceGroup || '-'],
-    [t('deployment.ResourcePreset'), values.resourcePresetId || '-'],
-    [
-      t('deployment.DesiredReplicas'),
-      String(values.desiredReplicaCount ?? '-'),
-    ],
-    [
-      t('deployment.AutoScaling'),
-      values.autoScalingEnabled ? t('button.Yes') : t('button.No'),
-    ],
+  const hasError =
+    (['name'] as const).some((f) => form.getFieldError(f).length > 0) ||
+    (['modelFolderId', 'runtimeVariant', 'startCommand'] as const).some(
+      (f) => form.getFieldError(f).length > 0,
+    ) ||
+    (['resourceGroup', 'desiredReplicaCount'] as const).some(
+      (f) => form.getFieldError(f).length > 0,
+    );
+
+  const open = isReview && hasError && !hasOpened;
+
+  const steps = [
+    {
+      title: t('tourGuide.neoDeploymentLauncher.ValidationErrorTitle'),
+      description: t('tourGuide.neoDeploymentLauncher.ValidationErrorText'),
+      target: () =>
+        document.getElementsByClassName('bai-card-error')?.[0] as HTMLElement,
+    },
+    {
+      title: t('tourGuide.neoDeploymentLauncher.ValidationErrorTitle'),
+      description: t(
+        'tourGuide.neoDeploymentLauncher.FixErrorFieldByModifyButton',
+      ),
+      target: () =>
+        (
+          document.getElementsByClassName('bai-card-error')?.[0] as HTMLElement
+        )?.querySelector('.ant-card-head') as HTMLElement,
+    },
+    {
+      title: t('tourGuide.neoDeploymentLauncher.ValidationErrorTitle'),
+      description: t('tourGuide.neoDeploymentLauncher.FixErrorAndTryAgainText'),
+      target: () =>
+        document.querySelector(
+          '[data-test-id="deployment-launcher-tour-step-navigation"]',
+        ) as HTMLElement,
+    },
   ];
 
+  return <Tour steps={steps} open={open} onClose={() => setHasOpened(true)} />;
+};
+
+/**
+ * Review step — one BAICard per form step showing a Descriptions summary.
+ * Each card has an "Edit" link that navigates back to the corresponding step,
+ * and shows 'error' status when that step contains validation errors.
+ *
+ * Must NOT use 'use memo' — the enclosing Form.Item shouldUpdate triggers
+ * re-renders on every value change, but the React Compiler would memoize
+ * on the stable `form` ref and serve stale values.
+ */
+const DeploymentReviewSummary: React.FC<{
+  form: FormInstance<DeploymentLauncherFormValue>;
+  mode: 'create' | 'edit';
+  onGoToStep: (index: number) => void;
+}> = ({ form, mode: _mode, onGoToStep }) => {
+  const { t } = useTranslation();
+  const { token } = theme.useToken();
+  const values = form.getFieldsValue();
+
+  const step1HasError = (['name'] as const).some(
+    (f) => form.getFieldError(f).length > 0,
+  );
+  const step2HasError = (
+    ['modelFolderId', 'runtimeVariant', 'startCommand'] as const
+  ).some((f) => form.getFieldError(f).length > 0);
+  const step3HasError = (
+    ['resourceGroup', 'desiredReplicaCount'] as const
+  ).some((f) => form.getFieldError(f).length > 0);
+
+  const editLink = (stepIndex: number) => (
+    <Button type="link" size="small" onClick={() => onGoToStep(stepIndex)}>
+      {t('button.Edit')}
+    </Button>
+  );
+
   return (
-    <BAIFlex direction="column" align="stretch" gap="sm">
-      <Typography.Title level={5} style={{ marginTop: 0 }}>
-        {t('deployment.ConfigurationSummary')}
-      </Typography.Title>
-      {rows.map(([label, value]) => (
-        <BAIFlex key={label} direction="row" justify="between" gap="sm">
-          <Typography.Text type="secondary">{label}</Typography.Text>
-          <Typography.Text>{value}</Typography.Text>
-        </BAIFlex>
-      ))}
+    <BAIFlex direction="column" gap="md" align="stretch">
+      {/* Basic Info */}
+      <BAICard
+        size="small"
+        title={t('deployment.step.BasicInfo')}
+        extra={editLink(0)}
+        status={step1HasError ? 'error' : undefined}
+        showDivider
+      >
+        <Descriptions column={1} size="small">
+          <Descriptions.Item label={t('deployment.Name')}>
+            <Typography.Text strong>{values.name || '-'}</Typography.Text>
+          </Descriptions.Item>
+          <Descriptions.Item label={t('deployment.Tags')}>
+            {values.tags?.length
+              ? values.tags.map((tag) => <Tag key={tag}>{tag}</Tag>)
+              : '-'}
+          </Descriptions.Item>
+          <Descriptions.Item label={t('deployment.OpenToPublic')}>
+            <span style={{ display: 'inline-flex', alignItems: 'center' }}>
+              {values.openToPublic ? (
+                <GlobalOutlined style={{ color: token.colorPrimary }} />
+              ) : (
+                <LockOutlined style={{ color: token.colorTextTertiary }} />
+              )}
+            </span>
+          </Descriptions.Item>
+        </Descriptions>
+      </BAICard>
+
+      {/* Model & Runtime */}
+      <BAICard
+        size="small"
+        title={t('deployment.step.ModelAndRuntime')}
+        extra={editLink(1)}
+        status={step2HasError ? 'error' : undefined}
+        showDivider
+      >
+        <Descriptions column={1} size="small">
+          <Descriptions.Item label={t('session.launcher.ModelStorageToMount')}>
+            {values.modelFolderId ? (
+              <Suspense
+                fallback={
+                  <Typography.Text code>{values.modelFolderId}</Typography.Text>
+                }
+              >
+                <ErrorBoundaryWithNullFallback>
+                  <VFolderLazyView uuid={values.modelFolderId} clickable />
+                </ErrorBoundaryWithNullFallback>
+              </Suspense>
+            ) : (
+              '-'
+            )}
+          </Descriptions.Item>
+          <Descriptions.Item label={t('modelService.RuntimeVariant')}>
+            {values.runtimeVariant || '-'}
+          </Descriptions.Item>
+          {values.startCommand && (
+            <Descriptions.Item label={t('modelService.StartCommand')}>
+              <Typography.Text
+                code
+                style={{
+                  display: 'block',
+                  maxWidth: 480,
+                  whiteSpace: 'pre-wrap',
+                  wordBreak: 'break-all',
+                  fontSize: token.fontSizeSM,
+                }}
+              >
+                {values.startCommand}
+              </Typography.Text>
+            </Descriptions.Item>
+          )}
+          {(values.commandModelMount || values.modelMountDestination) && (
+            <Descriptions.Item label={t('modelService.ModelMountDestination')}>
+              <Typography.Text code>
+                {values.commandModelMount || values.modelMountDestination}
+              </Typography.Text>
+            </Descriptions.Item>
+          )}
+        </Descriptions>
+      </BAICard>
+
+      {/* Resources & Replicas */}
+      <BAICard
+        size="small"
+        title={t('deployment.step.ResourcesAndReplicas')}
+        extra={editLink(2)}
+        status={step3HasError ? 'error' : undefined}
+        showDivider
+      >
+        <Descriptions column={1} size="small">
+          <Descriptions.Item label={t('session.ResourceGroup')}>
+            <Tag>{values.resourceGroup || '-'}</Tag>
+          </Descriptions.Item>
+          {values.resourcePresetId && (
+            <Descriptions.Item label={t('resourcePreset.ResourcePresets')}>
+              {values.resourcePresetId}
+            </Descriptions.Item>
+          )}
+          <Descriptions.Item label={t('deployment.DesiredReplicas')}>
+            {String(values.desiredReplicaCount ?? '-')}
+          </Descriptions.Item>
+          <Descriptions.Item label={t('deployment.AutoScaling')}>
+            <Tag color={values.autoScalingEnabled ? 'green' : undefined}>
+              {values.autoScalingEnabled ? t('button.Yes') : t('button.No')}
+            </Tag>
+          </Descriptions.Item>
+        </Descriptions>
+      </BAICard>
     </BAIFlex>
   );
 };

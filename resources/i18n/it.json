@@ -391,7 +391,6 @@
     "MainAccessKey": "Chiave di accesso principale",
     "MainKeyCannotDeactivate": "Impossibile disattivare la chiave di accesso principale. Prima passa a un'altra chiave.",
     "MainKeyChanged": "La chiave di accesso principale è stata modificata.",
-    "MainKeyChangedNeedRelogin": "La chiave di accesso principale è stata modificata correttamente. Effettua nuovamente l'accesso con la nuova chiave.",
     "Max#": "massimo # di cartelle",
     "ModifiedAt": "Modificato il",
     "ModifyKeypairResourcePolicy": "Modifica la politica delle risorse della coppia di chiavi",
@@ -417,7 +416,6 @@
     "RateLimitFor15min": "Limite di frequenza (per 15 min.)",
     "RateLimitInputRequired": "Ingresso richiesto.",
     "RateLimitValidation": "Il limite di velocità deve essere maggiore di zero e inferiore a 50000.",
-    "ReLoginRequired": "Nuovo accesso richiesto",
     "ReqPer15Min": "Richiesto ogni 15 min",
     "ResourcePolicies": "Politiche delle risorse",
     "ResourcePolicy": "Politica delle risorse",
@@ -835,6 +833,7 @@
     "RuntimeVariant": "Variante runtime",
     "SessionId": "ID sessione",
     "Tags": "Tag",
+    "TagsPlaceholder": "Inserisci i tag, separati da virgole",
     "TrafficRatio": "Rapporto traffico",
     "TrafficStatus": "Stato traffico",
     "UpdateDeployment": "Aggiorna distribuzione",
@@ -2229,26 +2228,6 @@
     "SharedMemory": "Memoria condivisa",
     "Updated": "Preimpostazione delle risorse aggiornata"
   },
-  "sTokenLoginBoundary": {
-    "AuthenticatingDescription": "Authenticating with your single sign-on token. This usually takes only a moment.",
-    "AuthenticatingTitle": "Signing you in",
-    "CopyErrorDetails": "Copy error details",
-    "ErrorConcurrentSessionDescription": "This account is already signed in somewhere else. Please close the other session and try again.",
-    "ErrorConcurrentSessionTitle": "Another active session was detected.",
-    "ErrorDetailsCopied": "Error details copied to clipboard.",
-    "ErrorDetailsCopyFailed": "Failed to copy error details. Please copy them manually from the page.",
-    "ErrorEndpointUnresolvedDescription": "The Backend.AI server address could not be resolved from the configuration file. Please try again in a moment or contact your administrator.",
-    "ErrorEndpointUnresolvedTitle": "Server configuration is unavailable.",
-    "ErrorMissingTokenDescription": "The sign-in token is missing from the request. Try opening the link again from your original source, or contact your administrator.",
-    "ErrorMissingTokenTitle": "No sign-in token was provided.",
-    "ErrorServerUnreachableDescription": "The server did not respond to the initial connection. Check your network and try again.",
-    "ErrorServerUnreachableTitle": "Cannot reach the Backend.AI server.",
-    "ErrorTokenInvalidDescription": "The sign-in token may have expired or been revoked. Please restart the sign-in flow from your original application.",
-    "ErrorTokenInvalidTitle": "Your sign-in token is not valid.",
-    "ErrorUnknownDescription": "An unexpected error occurred while signing in. Please try again, and copy the error details below if the problem persists.",
-    "ErrorUnknownTitle": "Sign-in failed unexpectedly.",
-    "Retry": "Retry"
-  },
   "scanArtifactModelsFromHuggingFaceModal": {
     "EnterAModelID": "Inserisci l'ID del modello. (es.: openai/gpt-oss-20b)",
     "EnterAVersion": "Inserisci la versione. (Predefinito: main)",
@@ -2951,6 +2930,12 @@
     "TypeInAuthKey": "In alternativa, è possibile digitare manualmente il codice di autenticazione qui sotto."
   },
   "tourGuide": {
+    "neoDeploymentLauncher": {
+      "FixErrorAndTryAgainText": "Se è presente un campo di errore, il pulsante Crea implementazione è disabilitato. Correggi l'errore e riprova.",
+      "FixErrorFieldByModifyButton": "Per quel campo di errore, puoi andare direttamente al pulsante Modifica nell'angolo in alto a destra per modificarlo.",
+      "ValidationErrorText": "Se non inserisci un valore in un campo obbligatorio o inserisci un valore non valido, in quel campo viene visualizzato un messaggio di errore.",
+      "ValidationErrorTitle": "Errori di convalida del campo di input"
+    },
     "neoSessionLauncher": {
       "FixErrorAndTryAgainText": "Se è presente un campo di errore, il pulsante Avvia sessione è disabilitato. \nCorreggi l'errore e riprova.",
       "FixErrorFieldByModifyButton": "Per quel campo di errore, puoi andare direttamente al pulsante Modifica nell'angolo in alto a destra per modificarlo.",

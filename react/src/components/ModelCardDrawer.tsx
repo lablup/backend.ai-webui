@@ -151,7 +151,7 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
             // Flow 7 (FR-2684): [Deploy | ▼] split button backed by
             // useDeploymentLauncher. Primary action fires Quick Deploy via
             // createModelDeployment; the dropdown item navigates to the
-            // full launcher page at /deployments/new?model=<folderId>.
+            // full launcher page at /deployments/start?model=<folderId>.
             <Space.Compact>
               <BAIButton
                 type="primary"

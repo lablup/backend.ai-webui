@@ -19,22 +19,16 @@ import {
   useCurrentResourceGroupValue,
 } from '../hooks/useCurrentProject';
 import { App, Form, Skeleton, Typography, theme } from 'antd';
-import {
-  BAIButton,
-  BAIFlex,
-  toGlobalId,
-  toLocalId,
-  useBAILogger,
-} from 'backend.ai-ui';
+import { BAIFlex, toGlobalId, toLocalId, useBAILogger } from 'backend.ai-ui';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 /**
  * DeploymentLauncherPage — page-level orchestrator for the deployment launcher.
  *
- * Handles both create (`/deployments/new`) and edit
+ * Handles both create (`/deployments/start`) and edit
  * (`/deployments/:deploymentId/edit`) routes. Owns:
  *   - Relay `useLazyLoadQuery` for the edit-mode deployment snapshot.
  *   - The antd `FormInstance` that the content component binds to.
@@ -63,31 +57,16 @@ const DeploymentLauncherPage: React.FC = () => {
 };
 
 /**
- * Create-mode view — no deployment fragment to pre-fill from. Reads URL
- * params forwarded by entry points (model store split button, VFolderDeployModal)
- * and builds a preFilledValues object passed down to the content component.
- * Supported params: `model`, `resourceGroup`, `resourcePresetId`.
+ * Create-mode view — no deployment fragment to pre-fill from. Pre-fill
+ * params (model, resourceGroup, resourcePresetId, step) are read directly
+ * from the URL inside DeploymentLauncherPageContent via nuqs so they are
+ * always in sync and never stripped by step navigation URL updates.
  */
 const DeploymentLauncherCreateView: React.FC = () => {
   'use memo';
-  const [searchParams] = useSearchParams();
   const [form] = Form.useForm<DeploymentLauncherFormValue>();
 
-  const preFilledValues: Partial<DeploymentLauncherFormValue> = {};
-  const model = searchParams.get('model');
-  const resourceGroup = searchParams.get('resourceGroup');
-  const resourcePresetId = searchParams.get('resourcePresetId');
-  if (model) preFilledValues.modelFolderId = model;
-  if (resourceGroup) preFilledValues.resourceGroup = resourceGroup;
-  if (resourcePresetId) preFilledValues.resourcePresetId = resourcePresetId;
-
-  return (
-    <DeploymentLauncherPageLayout
-      mode="create"
-      form={form}
-      preFilledValues={preFilledValues}
-    />
-  );
+  return <DeploymentLauncherPageLayout mode="create" form={form} />;
 };
 
 /**
@@ -139,7 +118,6 @@ interface DeploymentLauncherPageLayoutProps {
   deploymentFrgmt?: React.ComponentProps<
     typeof DeploymentLauncherPageContent
   >['deploymentFrgmt'];
-  preFilledValues?: Partial<DeploymentLauncherFormValue>;
 }
 
 /**
@@ -149,7 +127,7 @@ interface DeploymentLauncherPageLayoutProps {
  */
 const DeploymentLauncherPageLayout: React.FC<
   DeploymentLauncherPageLayoutProps
-> = ({ mode, form, deploymentId, deploymentFrgmt, preFilledValues }) => {
+> = ({ mode, form, deploymentId, deploymentFrgmt }) => {
   'use memo';
 
   const { t } = useTranslation();
@@ -396,25 +374,11 @@ const DeploymentLauncherPageLayout: React.FC<
         mode={mode}
         form={form}
         deploymentFrgmt={deploymentFrgmt}
-        preFilledValues={preFilledValues}
         onValuesChange={() => setIsDirty(true)}
+        onCancel={handleCancel}
+        onSubmit={handleSubmit}
+        isSubmitting={isSubmitting}
       />
-
-      <BAIFlex
-        direction="row"
-        justify="end"
-        gap="sm"
-        style={{ marginTop: token.marginLG }}
-      >
-        <BAIButton onClick={handleCancel} disabled={isSubmitting}>
-          {t('button.Cancel')}
-        </BAIButton>
-        <BAIButton type="primary" loading={isSubmitting} action={handleSubmit}>
-          {mode === 'edit'
-            ? t('deployment.UpdateDeployment')
-            : t('deployment.CreateDeployment')}
-        </BAIButton>
-      </BAIFlex>
     </BAIFlex>
   );
 };

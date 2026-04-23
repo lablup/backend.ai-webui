@@ -391,7 +391,6 @@
     "MainAccessKey": "Clé d'accès principale",
     "MainKeyCannotDeactivate": "Impossible de désactiver la clé d'accès principale. Basculez d'abord vers une autre clé.",
     "MainKeyChanged": "La clé d'accès principale a été modifiée.",
-    "MainKeyChangedNeedRelogin": "La clé d'accès principale a été modifiée avec succès. Veuillez vous reconnecter avec la nouvelle clé.",
     "Max#": "Max. # de dossiers",
     "ModifiedAt": "Modifié le",
     "ModifyKeypairResourcePolicy": "Modifier la stratégie de ressource de paire de clés",
@@ -417,7 +416,6 @@
     "RateLimitFor15min": "Limite de débit (pendant 15 min.)",
     "RateLimitInputRequired": "Entrée requise.",
     "RateLimitValidation": "La limite de débit doit être supérieure à zéro et inférieure à 50 000.",
-    "ReLoginRequired": "Reconnexion requise",
     "ReqPer15Min": "Demande par 15 min",
     "ResourcePolicies": "Politiques de ressources",
     "ResourcePolicy": "Politique de ressources",
@@ -835,6 +833,7 @@
     "RuntimeVariant": "Variante d'exécution",
     "SessionId": "ID de session",
     "Tags": "Étiquettes",
+    "TagsPlaceholder": "Saisir des étiquettes, séparées par des virgules",
     "TrafficRatio": "Rapport de trafic",
     "TrafficStatus": "État du trafic",
     "UpdateDeployment": "Mettre à jour le déploiement",
@@ -2231,26 +2230,6 @@
     "SharedMemory": "Mémoire partagée",
     "Updated": "Préréglage de ressource mis à jour"
   },
-  "sTokenLoginBoundary": {
-    "AuthenticatingDescription": "Authenticating with your single sign-on token. This usually takes only a moment.",
-    "AuthenticatingTitle": "Signing you in",
-    "CopyErrorDetails": "Copy error details",
-    "ErrorConcurrentSessionDescription": "This account is already signed in somewhere else. Please close the other session and try again.",
-    "ErrorConcurrentSessionTitle": "Another active session was detected.",
-    "ErrorDetailsCopied": "Error details copied to clipboard.",
-    "ErrorDetailsCopyFailed": "Failed to copy error details. Please copy them manually from the page.",
-    "ErrorEndpointUnresolvedDescription": "The Backend.AI server address could not be resolved from the configuration file. Please try again in a moment or contact your administrator.",
-    "ErrorEndpointUnresolvedTitle": "Server configuration is unavailable.",
-    "ErrorMissingTokenDescription": "The sign-in token is missing from the request. Try opening the link again from your original source, or contact your administrator.",
-    "ErrorMissingTokenTitle": "No sign-in token was provided.",
-    "ErrorServerUnreachableDescription": "The server did not respond to the initial connection. Check your network and try again.",
-    "ErrorServerUnreachableTitle": "Cannot reach the Backend.AI server.",
-    "ErrorTokenInvalidDescription": "The sign-in token may have expired or been revoked. Please restart the sign-in flow from your original application.",
-    "ErrorTokenInvalidTitle": "Your sign-in token is not valid.",
-    "ErrorUnknownDescription": "An unexpected error occurred while signing in. Please try again, and copy the error details below if the problem persists.",
-    "ErrorUnknownTitle": "Sign-in failed unexpectedly.",
-    "Retry": "Retry"
-  },
   "scanArtifactModelsFromHuggingFaceModal": {
     "EnterAModelID": "Saisissez l'ID du modèle. (ex : openai/gpt-oss-20b)",
     "EnterAVersion": "Saisissez la version. (Par défaut : main)",
@@ -2954,6 +2933,12 @@
     "TypeInAuthKey": "Vous pouvez également saisir manuellement le code d'authentification ci-dessous."
   },
   "tourGuide": {
+    "neoDeploymentLauncher": {
+      "FixErrorAndTryAgainText": "S'il y a un champ d'erreur, le bouton Créer un déploiement est désactivé. Veuillez corriger l'erreur et réessayer.",
+      "FixErrorFieldByModifyButton": "Pour ce champ d'erreur, vous pouvez accéder directement au bouton Modifier dans le coin supérieur droit pour le modifier.",
+      "ValidationErrorText": "Si vous ne saisissez pas de valeur dans un champ obligatoire ou si vous saisissez une valeur non valide, un message d'erreur s'affiche dans ce champ.",
+      "ValidationErrorTitle": "Erreurs de validation du champ de saisie"
+    },
     "neoSessionLauncher": {
       "FixErrorAndTryAgainText": "S'il y a un champ d'erreur, le bouton Lancer la session est désactivé. \nVeuillez corriger l'erreur et réessayer.",
       "FixErrorFieldByModifyButton": "Pour ce champ d'erreur, vous pouvez accéder directement au bouton Modifier dans le coin supérieur droit pour le modifier.",

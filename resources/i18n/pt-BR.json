@@ -391,7 +391,6 @@
     "MainAccessKey": "Chave de acesso principal",
     "MainKeyCannotDeactivate": "Não é possível desativar a chave de acesso principal. Mude para outra chave primeiro.",
     "MainKeyChanged": "A chave de acesso principal foi alterada.",
-    "MainKeyChangedNeedRelogin": "A chave de acesso principal foi alterada com sucesso. Por favor, faça login novamente com a nova chave.",
     "Max#": "Máx. # de pastas",
     "ModifiedAt": "Modificado em",
     "ModifyKeypairResourcePolicy": "Modificar a política de recursos do par de chaves",
@@ -417,7 +416,6 @@
     "RateLimitFor15min": "Limite de taxa (por 15 min.)",
     "RateLimitInputRequired": "Entrada necessária.",
     "RateLimitValidation": "O limite de taxa deve ser maior que zero e abaixo de 50000.",
-    "ReLoginRequired": "Novo login necessário",
     "ReqPer15Min": "Solicitação por 15 min",
     "ResourcePolicies": "Políticas de Recursos",
     "ResourcePolicy": "Política de Recursos",
@@ -835,6 +833,7 @@
     "RuntimeVariant": "Variante de tempo de execução",
     "SessionId": "ID da sessão",
     "Tags": "Tags",
+    "TagsPlaceholder": "Insira tags, separadas por vírgulas",
     "TrafficRatio": "Proporção de tráfego",
     "TrafficStatus": "Status do tráfego",
     "UpdateDeployment": "Atualizar implantação",
@@ -2229,26 +2228,6 @@
     "SharedMemory": "Memória compartilhada",
     "Updated": "Predefinição de recurso atualizada"
   },
-  "sTokenLoginBoundary": {
-    "AuthenticatingDescription": "Authenticating with your single sign-on token. This usually takes only a moment.",
-    "AuthenticatingTitle": "Signing you in",
-    "CopyErrorDetails": "Copy error details",
-    "ErrorConcurrentSessionDescription": "This account is already signed in somewhere else. Please close the other session and try again.",
-    "ErrorConcurrentSessionTitle": "Another active session was detected.",
-    "ErrorDetailsCopied": "Error details copied to clipboard.",
-    "ErrorDetailsCopyFailed": "Failed to copy error details. Please copy them manually from the page.",
-    "ErrorEndpointUnresolvedDescription": "The Backend.AI server address could not be resolved from the configuration file. Please try again in a moment or contact your administrator.",
-    "ErrorEndpointUnresolvedTitle": "Server configuration is unavailable.",
-    "ErrorMissingTokenDescription": "The sign-in token is missing from the request. Try opening the link again from your original source, or contact your administrator.",
-    "ErrorMissingTokenTitle": "No sign-in token was provided.",
-    "ErrorServerUnreachableDescription": "The server did not respond to the initial connection. Check your network and try again.",
-    "ErrorServerUnreachableTitle": "Cannot reach the Backend.AI server.",
-    "ErrorTokenInvalidDescription": "The sign-in token may have expired or been revoked. Please restart the sign-in flow from your original application.",
-    "ErrorTokenInvalidTitle": "Your sign-in token is not valid.",
-    "ErrorUnknownDescription": "An unexpected error occurred while signing in. Please try again, and copy the error details below if the problem persists.",
-    "ErrorUnknownTitle": "Sign-in failed unexpectedly.",
-    "Retry": "Retry"
-  },
   "scanArtifactModelsFromHuggingFaceModal": {
     "EnterAModelID": "Digite o ID do modelo. (Ex.: openai/gpt-oss-20b)",
     "EnterAVersion": "Insira a versão. (Padrão: main)",
@@ -2951,6 +2930,12 @@
     "TypeInAuthKey": "Em alternativa, pode introduzir manualmente o código de autenticação abaixo."
   },
   "tourGuide": {
+    "neoDeploymentLauncher": {
+      "FixErrorAndTryAgainText": "Se houver um campo de erro, o botão Criar Implantação estará desabilitado. Corrija o erro e tente novamente.",
+      "FixErrorFieldByModifyButton": "Para esse campo de erro, você pode ir diretamente ao botão Editar no canto superior direito para editá-lo.",
+      "ValidationErrorText": "Se você não inserir um valor em um campo obrigatório ou inserir um valor inválido, uma mensagem de erro será exibida nesse campo.",
+      "ValidationErrorTitle": "Erros de validação de campo de entrada"
+    },
     "neoSessionLauncher": {
       "FixErrorAndTryAgainText": "Se houver um campo de erro, o botão Iniciar sessão estará desabilitado. \nCorrija o erro e tente novamente.",
       "FixErrorFieldByModifyButton": "Para esse campo de erro, você pode ir diretamente ao botão Editar no canto superior direito para editá-lo.",

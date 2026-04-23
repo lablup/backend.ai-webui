@@ -391,7 +391,6 @@
     "MainAccessKey": "主访问密钥",
     "MainKeyCannotDeactivate": "无法停用主访问密钥。请先切换到其他密钥。",
     "MainKeyChanged": "主访问密钥已更改。",
-    "MainKeyChangedNeedRelogin": "主访问密钥已成功更改。请使用新密钥重新登录。",
     "Max#": "最大限度。 # 文件夹",
     "ModifiedAt": "修改时间",
     "ModifyKeypairResourcePolicy": "修改密钥对资源策略",
@@ -417,7 +416,6 @@
     "RateLimitFor15min": "速率限制（15 分钟）",
     "RateLimitInputRequired": "所需输入",
     "RateLimitValidation": "速率限制应大于零且小于 50000。",
-    "ReLoginRequired": "需要重新登录",
     "ReqPer15Min": "每 15 分钟请求数",
     "ResourcePolicies": "资源政策",
     "ResourcePolicy": "资源政策",
@@ -835,6 +833,7 @@
     "RuntimeVariant": "运行时变体",
     "SessionId": "会话 ID",
     "Tags": "标签",
+    "TagsPlaceholder": "输入标签，以逗号分隔",
     "TrafficRatio": "流量比例",
     "TrafficStatus": "流量状态",
     "UpdateDeployment": "更新部署",
@@ -2231,26 +2230,6 @@
     "SharedMemory": "共享内存",
     "Updated": "资源预设已更新"
   },
-  "sTokenLoginBoundary": {
-    "AuthenticatingDescription": "Authenticating with your single sign-on token. This usually takes only a moment.",
-    "AuthenticatingTitle": "Signing you in",
-    "CopyErrorDetails": "Copy error details",
-    "ErrorConcurrentSessionDescription": "This account is already signed in somewhere else. Please close the other session and try again.",
-    "ErrorConcurrentSessionTitle": "Another active session was detected.",
-    "ErrorDetailsCopied": "Error details copied to clipboard.",
-    "ErrorDetailsCopyFailed": "Failed to copy error details. Please copy them manually from the page.",
-    "ErrorEndpointUnresolvedDescription": "The Backend.AI server address could not be resolved from the configuration file. Please try again in a moment or contact your administrator.",
-    "ErrorEndpointUnresolvedTitle": "Server configuration is unavailable.",
-    "ErrorMissingTokenDescription": "The sign-in token is missing from the request. Try opening the link again from your original source, or contact your administrator.",
-    "ErrorMissingTokenTitle": "No sign-in token was provided.",
-    "ErrorServerUnreachableDescription": "The server did not respond to the initial connection. Check your network and try again.",
-    "ErrorServerUnreachableTitle": "Cannot reach the Backend.AI server.",
-    "ErrorTokenInvalidDescription": "The sign-in token may have expired or been revoked. Please restart the sign-in flow from your original application.",
-    "ErrorTokenInvalidTitle": "Your sign-in token is not valid.",
-    "ErrorUnknownDescription": "An unexpected error occurred while signing in. Please try again, and copy the error details below if the problem persists.",
-    "ErrorUnknownTitle": "Sign-in failed unexpectedly.",
-    "Retry": "Retry"
-  },
   "scanArtifactModelsFromHuggingFaceModal": {
     "EnterAModelID": "请输入模型 ID。（例如：openai/gpt-oss-20b）",
     "EnterAVersion": "请输入版本（默认：main）",
@@ -2953,6 +2932,12 @@
     "TypeInAuthKey": "或者，您也可以在下面手动输入验证码。"
   },
   "tourGuide": {
+    "neoDeploymentLauncher": {
+      "FixErrorAndTryAgainText": "如果存在错误字段，则\"创建部署\"按钮将被禁用。请更正错误并重试。",
+      "FixErrorFieldByModifyButton": "对于该错误字段，您可以直接进入右上角的编辑按钮进行编辑。",
+      "ValidationErrorText": "如果您未在必填字段中输入值或输入无效值，则该字段中会显示一条错误消息。",
+      "ValidationErrorTitle": "输入字段验证错误"
+    },
     "neoSessionLauncher": {
       "FixErrorAndTryAgainText": "如果存在错误字段，则“启动会话”按钮将被禁用。\n请更正错误并重试。",
       "FixErrorFieldByModifyButton": "对于该错误字段，您可以直接进入右上角的编辑按钮进行编辑。",
