@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { CSSTokenVariables } from '../components/MainLayout/MainLayout';
-import { useEduAppApiEndpoint } from '../hooks/useEduAppApiEndpoint';
+import { useResolvedApiEndpoint } from '../hooks/useResolvedApiEndpoint';
 import React, { Suspense } from 'react';
 
 const EduAppLauncherLazy = React.lazy(
@@ -16,7 +16,7 @@ const EduAppLauncherLazy = React.lazy(
  *
  * Because this page is entered via a token URL and never goes through
  * LoginView, it resolves the API endpoint directly from `config.toml`
- * via `useEduAppApiEndpoint()`. The Suspense boundary below gates
+ * via `useResolvedApiEndpoint()`. The Suspense boundary below gates
  * EduAppLauncher rendering until endpoint resolution completes; the
  * resolved value may still be an empty string if every fallback source
  * is unavailable, in which case `EduAppLauncher._initClient` throws and
@@ -43,7 +43,7 @@ const EduAppLauncherPage: React.FC = () => {
 
 const EduAppLauncherPageContent: React.FC = () => {
   'use memo';
-  const apiEndpoint = useEduAppApiEndpoint();
+  const apiEndpoint = useResolvedApiEndpoint();
 
   return <EduAppLauncherLazy apiEndpoint={apiEndpoint} active={true} />;
 };
