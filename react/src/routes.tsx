@@ -31,6 +31,7 @@ import VFolderNodeListPage from './pages/VFolderNodeListPage';
 import { Skeleton, theme } from 'antd';
 import { BAIFlex, BAICard } from 'backend.ai-ui';
 import { useSetAtom } from 'jotai';
+import { parseAsString, useQueryStates } from 'nuqs';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { RouteObject, useLocation } from 'react-router-dom';
@@ -740,6 +741,32 @@ const STokenGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 };
 
 /**
+ * nuqs parser spec for the EduAppLauncher URL query parameters (every
+ * key except `sToken` / `stoken`, which `useSToken` owns). Covers the
+ * full set consumed by `EduAppLauncher._launch` and `_createEduSession`,
+ * and forwarded verbatim to `client.token_login(sToken, extraParams)`.
+ * Any new URL param expected by the launcher or a backend auth hook
+ * must be added here so nuqs surfaces it as a typed value.
+ */
+const eduAppExtraParamSpec = {
+  app: parseAsString,
+  session_id: parseAsString,
+  session_template: parseAsString,
+  sessionTemplate: parseAsString,
+  cpu: parseAsString,
+  mem: parseAsString,
+  shmem: parseAsString,
+  'cuda-shares': parseAsString,
+  'cuda-device': parseAsString,
+  // LMS signing envelope: the upstream launcher URL carries these alongside
+  // `sToken` and the manager-side auth hook validates the signature against
+  // them. Dropping any of them causes token_login to reject as tampered.
+  api_version: parseAsString,
+  date: parseAsString,
+  endpoint: parseAsString,
+};
+
+/**
  * Root routes configuration
  */
 export const routes: RouteObject[] = [
@@ -791,28 +818,86 @@ export const routes: RouteObject[] = [
   {
     path: '/edu-applauncher',
     errorElement: <ErrorView />,
-    element: (
-      <BAIErrorBoundary>
-        <DefaultProvidersForReactRoot>
-          <Suspense fallback={<Skeleton active />}>
-            <EduAppLauncherPage />
-          </Suspense>
-        </DefaultProvidersForReactRoot>
-      </BAIErrorBoundary>
-    ),
+    Component: () => {
+      'use memo';
+      const [sToken] = useSToken();
+      const [rawExtraParams] = useQueryStates(eduAppExtraParamSpec);
+      // Narrow via type-guard reducer so `extraParams` is inferred as
+      // `Record<string, string>` without a type assertion. Non-string values
+      // are dropped defensively — nuqs parsers can emit `null`, and future
+      // schema changes might add non-string shapes that shouldn't silently
+      // leak into `client.token_login` via `extraParams`.
+      const extraParams = Object.entries(rawExtraParams).reduce<
+        Record<string, string>
+      >((accumulator, [key, value]) => {
+        if (typeof value === 'string') {
+          accumulator[key] = value;
+        }
+        return accumulator;
+      }, {});
+
+      return (
+        <BAIErrorBoundary>
+          <DefaultProvidersForReactRoot>
+            <STokenLoginBoundary
+              sToken={sToken ?? ''}
+              extraParams={extraParams}
+              // URL is intentionally NOT stripped on success here —
+              // EduAppLauncher's `_createEduSession` still reads
+              // `sToken` (for the customer-specific
+              // `eduApp.get_user_credential` call) and other URL params
+              // drive the launch sequence. The edu token URL is issued
+              // by the integrating LMS, so leaking it into browser
+              // history is considered acceptable in this flow.
+              onSuccess={persistPostLoginState}
+            >
+              <Suspense fallback={<Skeleton active />}>
+                <EduAppLauncherPage sToken={sToken} extraParams={extraParams} />
+              </Suspense>
+            </STokenLoginBoundary>
+          </DefaultProvidersForReactRoot>
+        </BAIErrorBoundary>
+      );
+    },
   },
   {
     path: '/applauncher',
     errorElement: <ErrorView />,
-    element: (
-      <BAIErrorBoundary>
-        <DefaultProvidersForReactRoot>
-          <Suspense fallback={<Skeleton active />}>
-            <EduAppLauncherPage />
-          </Suspense>
-        </DefaultProvidersForReactRoot>
-      </BAIErrorBoundary>
-    ),
+    Component: () => {
+      'use memo';
+      const [sToken] = useSToken();
+      const [rawExtraParams] = useQueryStates(eduAppExtraParamSpec);
+      // Narrow via type-guard reducer so `extraParams` is inferred as
+      // `Record<string, string>` without a type assertion. Non-string values
+      // are dropped defensively — nuqs parsers can emit `null`, and future
+      // schema changes might add non-string shapes that shouldn't silently
+      // leak into `client.token_login` via `extraParams`.
+      const extraParams = Object.entries(rawExtraParams).reduce<
+        Record<string, string>
+      >((accumulator, [key, value]) => {
+        if (typeof value === 'string') {
+          accumulator[key] = value;
+        }
+        return accumulator;
+      }, {});
+
+      return (
+        <BAIErrorBoundary>
+          <DefaultProvidersForReactRoot>
+            <STokenLoginBoundary
+              sToken={sToken ?? ''}
+              extraParams={extraParams}
+              // URL retained — see comment on `/edu-applauncher`.
+              onSuccess={persistPostLoginState}
+            >
+              <Suspense fallback={<Skeleton active />}>
+                <EduAppLauncherPage sToken={sToken} extraParams={extraParams} />
+              </Suspense>
+            </STokenLoginBoundary>
+          </DefaultProvidersForReactRoot>
+        </BAIErrorBoundary>
+      );
+    },
   },
   {
     path: '/',
