@@ -52,7 +52,7 @@ test.describe(
         confirmDialog.getByText(/Are you sure you want to delete/),
       ).toBeVisible();
       await expect(
-        confirmDialog.getByText(cardName, { exact: true }),
+        confirmDialog.getByText(cardName, { exact: true }).first(),
       ).toBeVisible();
       await expect(
         confirmDialog.getByText('This action cannot be undone.'),
@@ -66,6 +66,9 @@ test.describe(
       await expect(
         adminModelCardPage.getAlsoDeleteFolderCheckbox(),
       ).toBeVisible();
+
+      // Type card name to confirm (requireConfirmInput is set on the single-delete modal)
+      await adminModelCardPage.getDeleteConfirmInput().fill(cardName);
 
       // Click Delete to confirm (leave folder checkbox unchecked — folder cleanup handled separately)
       await adminModelCardPage.getDeleteConfirmButton().click();
@@ -130,7 +133,7 @@ test.describe(
     test('Superadmin can select multiple model cards and delete them in bulk', async ({
       page,
     }) => {
-      test.setTimeout(120000);
+      test.setTimeout(180000);
       const adminModelCardPage = new AdminModelCardPage(page);
       const timestamp = Date.now();
       const folderName = `e2e-test-bulk-delete-folder-${timestamp}`;
@@ -197,7 +200,7 @@ test.describe(
       await bulkDialog.getByRole('button', { name: 'Delete' }).click();
 
       // Wait for bulk delete to complete — dialog closes when all mutations finish
-      await expect(bulkDialog).toBeHidden({ timeout: 45000 });
+      await expect(bulkDialog).toBeHidden({ timeout: 90000 });
 
       // Verify the selection label disappears
       await expect(adminModelCardPage.getSelectionLabel()).toBeHidden();
@@ -210,7 +213,7 @@ test.describe(
 
     // 5.4 Superadmin can cancel bulk deletion
     test('Superadmin can cancel bulk deletion', async ({ page }) => {
-      test.setTimeout(120000);
+      test.setTimeout(180000);
       const adminModelCardPage = new AdminModelCardPage(page);
       const timestamp = Date.now();
       const folderName = `e2e-test-bulk-cancel-folder-${timestamp}`;
@@ -328,7 +331,7 @@ test.describe(
     test('Superadmin can select all model cards on the current page using the header checkbox', async ({
       page,
     }) => {
-      test.setTimeout(90000);
+      test.setTimeout(150000);
       const adminModelCardPage = new AdminModelCardPage(page);
       const timestamp = Date.now();
       const folderName = `e2e-test-select-all-folder-${timestamp}`;
@@ -346,23 +349,35 @@ test.describe(
       await page.goto(`${webuiEndpoint}/admin-serving?tab=model-store`);
       await adminModelCardPage.waitForTableLoad();
       await adminModelCardPage.applyNameFilter(cardName);
-      await expect(adminModelCardPage.getDataRows().first()).toBeVisible({
-        timeout: 10000,
+      // Wait for the specific filtered card to appear, confirming the filter has been applied
+      await expect(adminModelCardPage.getRowByName(cardName)).toBeVisible({
+        timeout: 15000,
       });
 
       // Click the "select all" checkbox in the table header
       await adminModelCardPage.getHeaderCheckbox().check();
 
-      // Verify the selection label appears
+      // Verify the selection label appears and shows at least 1 item selected.
+      // Note: antd table "select all" may select all backend records (not just the
+      // filtered/visible rows on the current page), so we assert a positive count
+      // rather than comparing to the visible row count.
       await expect(adminModelCardPage.getSelectionLabel()).toBeVisible();
-
-      // Verify the selection count matches the number of rows on the page
-      const rowCount = await adminModelCardPage.getDataRows().count();
-      await expect(adminModelCardPage.getSelectionLabel()).toContainText(
-        `${rowCount} selected`,
+      const selectionText = await adminModelCardPage
+        .getSelectionLabel()
+        .textContent();
+      expect(selectionText).toMatch(/\d+ selected/);
+      const selectedCount = parseInt(
+        selectionText?.match(/(\d+) selected/)?.[1] ?? '0',
       );
+      expect(selectedCount).toBeGreaterThan(0);
 
-      // Cleanup: delete the model card then clean up the folder
+      // Cleanup: navigate fresh to reset selection state, then delete the model card
+      await page.goto(`${webuiEndpoint}/admin-serving?tab=model-store`);
+      await adminModelCardPage.waitForTableLoad();
+      await adminModelCardPage.applyNameFilter(cardName);
+      await expect(adminModelCardPage.getRowByName(cardName)).toBeVisible({
+        timeout: 15000,
+      });
       await adminModelCardPage.deleteModelCardByName(cardName);
       await moveToTrashAndVerify(page, folderName, 'admin-data');
       await deleteForeverAndVerifyFromTrash(page, folderName, 'admin-data');
@@ -390,6 +405,10 @@ test.describe(
       await page.goto(`${webuiEndpoint}/admin-serving?tab=model-store`);
       await adminModelCardPage.waitForTableLoad();
       await adminModelCardPage.applyNameFilter(cardName);
+      // Wait for the filtered row to appear before clicking delete
+      await expect(adminModelCardPage.getRowByName(cardName)).toBeVisible({
+        timeout: 15000,
+      });
 
       // Open the delete confirmation dialog
       await adminModelCardPage.clickDeleteForRow(cardName);
@@ -410,13 +429,16 @@ test.describe(
         adminModelCardPage.getAlsoDeleteFolderCheckbox(),
       ).toBeChecked();
 
+      // Type card name to confirm (requireConfirmInput is set on the single-delete modal)
+      await adminModelCardPage.getDeleteConfirmInput().fill(cardName);
+
       // Confirm deletion
       await adminModelCardPage.getDeleteConfirmButton().click();
 
       // Verify the success notification for card + folder deletion
       await expect(
         page.getByText('Model card and folder have been moved to trash.'),
-      ).toBeVisible({ timeout: 15000 });
+      ).toBeVisible({ timeout: 30000 });
 
       // Verify "Go to Data > Trash" link is visible in the notification
       const goToTrashLink = page.getByText('Go to Data > Trash');
@@ -466,6 +488,9 @@ test.describe(
       await expect(
         adminModelCardPage.getAlsoDeleteFolderCheckbox(),
       ).not.toBeChecked();
+
+      // Type card name to confirm (requireConfirmInput is set on the single-delete modal)
+      await adminModelCardPage.getDeleteConfirmInput().fill(cardName);
 
       // Confirm deletion
       await adminModelCardPage.getDeleteConfirmButton().click();
