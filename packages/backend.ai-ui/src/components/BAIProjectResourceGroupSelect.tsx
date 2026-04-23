@@ -46,10 +46,13 @@ const BAIProjectResourceGroupSelect: React.FC<
 
   const { resourceGroups } = useProjectResourceGroups(projectName, { filter });
 
-  // If the current selected value is not in the resourceGroups, reset the value to undefined
+  // If the loaded resource group list does not contain the current value, reset to undefined.
+  // Guard on resourceGroups.length > 0 so we don't wipe a pre-filled value while the list
+  // is still loading — an empty list means "not yet fetched", not "no valid groups".
   useEffect(() => {
     if (
       controllableValue &&
+      resourceGroups.length > 0 &&
       !_.some(resourceGroups, (item) => item.name === controllableValue)
     ) {
       setControllableValueWithTransition(undefined);
@@ -68,18 +71,17 @@ const BAIProjectResourceGroupSelect: React.FC<
     : undefined;
 
   useEffect(() => {
-    if (
-      autoSelectDefault &&
-      autoSelectedOption &&
-      autoSelectedOption.value !== selectProps.value
-    ) {
+    if (autoSelectDefault && autoSelectedOption && !controllableValue) {
       setControllableValueWithTransition(
         autoSelectedOption.value,
         autoSelectedOption,
       );
     }
+    // controllableValue is intentionally excluded from deps — we only want
+    // to fire when the available options first appear (autoSelectedOption?.value
+    // transitions from undefined→name), not on every selection change.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [autoSelectDefault]);
+  }, [autoSelectDefault, autoSelectedOption?.value]);
 
   return (
     <BAISelect

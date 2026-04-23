@@ -407,10 +407,7 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
                       openLauncher({
                         modelFolderId: vfolderId,
                         resourceGroup: effectiveResourceGroup,
-                        // Pass name so ResourcePresetSelect can match it
-                        resourcePreset: availablePresets.find(
-                          (p) => toLocalId(p.id) === effectivePresetId,
-                        )?.name,
+                        revisionPresetId: effectivePresetId,
                       });
                     },
                   },

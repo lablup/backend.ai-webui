@@ -55,6 +55,7 @@ export const useProjectResourceGroups = (
   projectName: string,
   options?: UseProjectResourceGroupsOptions,
 ) => {
+  'use memo';
   const baiRequestWithPromise = useBAISignedRequestWithPromise();
 
   const { data } = useSuspenseTanQuery<ProjectResourceGroupsQueryResult>({

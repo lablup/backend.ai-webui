@@ -77,24 +77,6 @@ const FileUploadManager = React.lazy(
 // component is still imported transitively (by `useModelServiceLauncher`,
 // `LegacyModelTryContentButton`, etc.) and is scheduled for removal in a
 // follow-up cleanup once those call sites migrate to the new hook.
-// FR-2664 — Deployment UI migration (Phase 1: Foundation).
-// These pages are currently stub placeholders and will be implemented in
-// Phase 3/4/5 (FR-2671 / FR-2675 / FR-2681 / FR-2672).
-const DeploymentListPage = React.lazy(
-  () => import('./pages/DeploymentListPage'),
-);
-const DeploymentLauncherPage = React.lazy(
-  () => import('./pages/DeploymentLauncherPage'),
-);
-const DeploymentDetailPage = React.lazy(
-  () => import('./pages/DeploymentDetailPage'),
-);
-const AdminDeploymentListPage = React.lazy(
-  () => import('./pages/AdminDeploymentListPage'),
-);
-// FR-2664 — Deployment UI migration (Phase 1: Foundation).
-// These pages are currently stub placeholders and will be implemented in
-// Phase 3/4/5 (FR-2671 / FR-2675 / FR-2681 / FR-2672).
 const DeploymentListPage = React.lazy(
   () => import('./pages/DeploymentListPage'),
 );

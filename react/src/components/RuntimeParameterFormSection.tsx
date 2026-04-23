@@ -443,9 +443,13 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
           required
         >
           <Input
-            value={value}
+            value={touched ? value : ''}
             onChange={(e) => onChange(e.target.value)}
-            placeholder={param.text?.placeholder ?? undefined}
+            placeholder={
+              !touched
+                ? value || (param.text?.placeholder ?? undefined)
+                : (param.text?.placeholder ?? undefined)
+            }
             style={{ opacity: controlOpacity, transition: controlTransition }}
           />
         </Form.Item>

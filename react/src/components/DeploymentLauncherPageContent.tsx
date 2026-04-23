@@ -2,10 +2,12 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { DeploymentLauncherPageContentPresetSummaryQuery } from '../__generated__/DeploymentLauncherPageContentPresetSummaryQuery.graphql';
 import { DeploymentLauncherPageContent_deployment$key } from '../__generated__/DeploymentLauncherPageContent_deployment.graphql';
 import { useBaiSignedRequestWithPromise } from '../helper';
 import { parseCliCommand } from '../helper/parseCliCommand';
 import { useSuspendedBackendaiClient } from '../hooks';
+import { ResourceSlotName, useResourceSlots } from '../hooks/backendai';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
@@ -21,13 +23,12 @@ import ResourcePresetSelect from './ResourcePresetSelect';
 import RuntimeParameterFormSection, {
   RuntimeParameterValues,
 } from './RuntimeParameterFormSection';
+import SourceCodeView from './SourceCodeView';
 import VFolderLazyView from './VFolderLazyView';
 import VFolderSelect from './VFolderSelect';
 import {
   DoubleRightOutlined,
-  GlobalOutlined,
   LeftOutlined,
-  LockOutlined,
   RightOutlined,
 } from '@ant-design/icons';
 import { useDebounceFn } from 'ahooks';
@@ -55,10 +56,15 @@ import {
   BAICard,
   BAIFlex,
   BAIProjectResourceGroupSelect,
-  useBAILogger,
+  BAIResourceNumberWithIcon,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
+import {
+  parseAsJson,
+  parseAsString,
+  parseAsStringLiteral,
+  useQueryStates,
+} from 'nuqs';
 import React, {
   Suspense,
   useCallback,
@@ -68,7 +74,7 @@ import React, {
   useRef,
 } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useFragment } from 'react-relay';
+import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 
 /**
  * URL-synced step keys for the multi-step deployment launcher.
@@ -214,7 +220,6 @@ const DeploymentLauncherPageContent: React.FC<
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const screens = Grid.useBreakpoint();
-  const { logger } = useBAILogger();
   const baiClient = useSuspendedBackendaiClient();
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
 
@@ -274,6 +279,22 @@ const DeploymentLauncherPageContent: React.FC<
 
   void runtimeParamGroupsRef; // serialized at submit time by parent (FR-2675)
 
+  // Snapshot of runtime param state, populated when entering the review step.
+  // Using state (not refs) so DeploymentReviewSummary can read it during render.
+  const [runtimeParamSnapshot, setRuntimeParamSnapshot] = React.useState<{
+    values: RuntimeParameterValues;
+    touchedKeys: Set<string>;
+    groups: RuntimeParameterGroup[] | null;
+  } | null>(null);
+
+  const captureSnapshot = useEffectEvent(() => {
+    setRuntimeParamSnapshot({
+      values: { ...runtimeParamValuesRef.current },
+      touchedKeys: new Set(runtimeParamTouchedKeysRef.current),
+      groups: runtimeParamGroupsRef.current,
+    });
+  });
+
   // Deployment fragment — used for edit-mode pre-fill. Fields mirror the
   // Field mapping documented in .specs/FR-1368-endpoint-deployment-migration/spec.md.
   // Only fields the form needs are selected here to keep the query minimal.
@@ -330,6 +351,7 @@ const DeploymentLauncherPageContent: React.FC<
       model: urlModel,
       resourceGroup: urlResourceGroup,
       resourcePresetId: urlResourcePresetId,
+      formValues: formValuesFromURL,
     },
     setQuery,
   ] = useQueryStates({
@@ -337,6 +359,9 @@ const DeploymentLauncherPageContent: React.FC<
     model: parseAsString,
     resourceGroup: parseAsString,
     resourcePresetId: parseAsString,
+    formValues: parseAsJson<Partial<DeploymentLauncherFormValue>>(
+      (v) => v as Partial<DeploymentLauncherFormValue>,
+    ).withDefault({} as Partial<DeploymentLauncherFormValue>),
   });
 
   const currentStepIndex = STEP_KEYS.indexOf(currentStepKey);
@@ -386,12 +411,36 @@ const DeploymentLauncherPageContent: React.FC<
   // (or the pre-filled model) so the form doesn't reset on unrelated
   // prop identity changes.
   const applyInitialValues = useEffectEvent(() => {
-    form.setFieldsValue(initialValues);
-    logger.debug('DeploymentLauncherPageContent: initial values applied', {
-      mode,
-      deploymentId: deployment?.id,
-    });
+    // In create mode, merge persisted form state from URL on top of the
+    // computed initial values. formValuesFromURL is read here via
+    // useEffectEvent so it always reflects the latest URL state without
+    // polluting the effect's dependency array.
+    const merged =
+      mode === 'create'
+        ? _.merge({}, initialValues, formValuesFromURL)
+        : initialValues;
+    form.setFieldsValue(merged);
   });
+
+  // Debounced URL sync — only in create mode to avoid clobbering
+  // deployment-specific deep-link params set by VFolderDeployModal.
+  // Excludes image object and customizedTag (complex / non-serializable).
+  const { run: syncFormToURL } = useDebounceFn(
+    () => {
+      if (mode !== 'create') return;
+      const currentValue = form.getFieldsValue();
+      setQuery(
+        {
+          formValues: _.omit(currentValue, [
+            'environments.image',
+            'environments.customizedTag',
+          ]) as Partial<DeploymentLauncherFormValue>,
+        },
+        { history: 'replace' },
+      );
+    },
+    { leading: false, wait: 500, trailing: true },
+  );
 
   useEffect(() => {
     applyInitialValues();
@@ -407,11 +456,13 @@ const DeploymentLauncherPageContent: React.FC<
     if (nextKey) setCurrentStep(nextKey);
   };
 
-  // Trigger full form validation whenever the user reaches the review step
-  // so per-field errors are populated and the review cards can display them.
+  // Trigger full form validation and snapshot runtime params when reaching review.
+  // No need to clear the snapshot on step-back: the review component only mounts
+  // when currentStepKey === 'review', so a stale snapshot is never visible.
   useEffect(() => {
     if (currentStepIndex === STEP_KEYS.length - 1) {
       form.validateFields().catch(() => {});
+      captureSnapshot();
     }
   }, [currentStepIndex, form]);
 
@@ -449,7 +500,10 @@ const DeploymentLauncherPageContent: React.FC<
           form={form}
           layout="vertical"
           initialValues={initialValues}
-          onValuesChange={onValuesChange}
+          onValuesChange={(changed, all) => {
+            onValuesChange?.(changed, all);
+            syncFormToURL();
+          }}
           scrollToFirstError
         >
           {/* --- Step 1: Basic Info --- */}
@@ -482,6 +536,7 @@ const DeploymentLauncherPageContent: React.FC<
                 tokenSeparators={[',']}
                 placeholder={t('deployment.TagsPlaceholder')}
                 notFoundContent={null}
+                allowClear
               />
             </Form.Item>
             <Form.Item name="openToPublic" valuePropName="checked">
@@ -501,7 +556,7 @@ const DeploymentLauncherPageContent: React.FC<
                 as the UUID for mutation wiring. */}
             <Form.Item
               name="modelFolderId"
-              label={t('session.launcher.ModelStorageToMount')}
+              label={t('deployment.ModelFolder')}
               rules={[{ required: true }]}
             >
               <VFolderSelect
@@ -745,6 +800,7 @@ const DeploymentLauncherPageContent: React.FC<
                   form={form}
                   mode={mode}
                   onGoToStep={goToStep}
+                  runtimeParamSnapshot={runtimeParamSnapshot}
                 />
               )}
             </Form.Item>
@@ -900,6 +956,65 @@ const DeploymentLauncherValidationTour: React.FC<{
   return <Tour steps={steps} open={open} onClose={() => setHasOpened(true)} />;
 };
 
+const ResourcePresetReviewDisplay: React.FC<{ presetName: string }> = ({
+  presetName,
+}) => {
+  'use memo';
+
+  const [resourceSlots] = useResourceSlots();
+
+  const { resource_presets } =
+    useLazyLoadQuery<DeploymentLauncherPageContentPresetSummaryQuery>(
+      graphql`
+        query DeploymentLauncherPageContentPresetSummaryQuery {
+          resource_presets {
+            name
+            resource_slots
+            shared_memory
+          }
+        }
+      `,
+      {},
+      { fetchPolicy: 'store-and-network' },
+    );
+
+  const preset = (resource_presets ?? []).find((p) => p?.name === presetName);
+  const slotsInfo: Record<string, string> = JSON.parse(
+    preset?.resource_slots || '{}',
+  );
+  const visibleSlots = _.omitBy(slotsInfo, (_v, key) =>
+    _.isEmpty(resourceSlots[key as ResourceSlotName]),
+  );
+
+  return (
+    <BAIFlex
+      direction="row"
+      gap="xs"
+      align="center"
+      style={{ flexWrap: 'wrap' }}
+    >
+      {presetName}
+      {preset && Object.keys(visibleSlots).length > 0 && (
+        <BAIFlex direction="row" gap="xxs">
+          {_.map(visibleSlots, (slot, key) => (
+            <BAIResourceNumberWithIcon
+              key={key}
+              // @ts-ignore
+              type={key}
+              value={slot}
+              opts={
+                key === 'mem' && preset.shared_memory
+                  ? { shmem: preset.shared_memory }
+                  : {}
+              }
+            />
+          ))}
+        </BAIFlex>
+      )}
+    </BAIFlex>
+  );
+};
+
 /**
  * Review step — one BAICard per form step showing a Descriptions summary.
  * Each card has an "Edit" link that navigates back to the corresponding step,
@@ -913,9 +1028,13 @@ const DeploymentReviewSummary: React.FC<{
   form: FormInstance<DeploymentLauncherFormValue>;
   mode: 'create' | 'edit';
   onGoToStep: (index: number) => void;
-}> = ({ form, mode: _mode, onGoToStep }) => {
+  runtimeParamSnapshot: {
+    values: RuntimeParameterValues;
+    touchedKeys: Set<string>;
+    groups: RuntimeParameterGroup[] | null;
+  } | null;
+}> = ({ form, mode: _mode, onGoToStep, runtimeParamSnapshot }) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const values = form.getFieldsValue();
 
   const step1HasError = (['name'] as const).some(
@@ -949,18 +1068,18 @@ const DeploymentReviewSummary: React.FC<{
             <Typography.Text strong>{values.name || '-'}</Typography.Text>
           </Descriptions.Item>
           <Descriptions.Item label={t('deployment.Tags')}>
-            {values.tags?.length
-              ? values.tags.map((tag) => <Tag key={tag}>{tag}</Tag>)
-              : '-'}
+            {values.tags?.length ? (
+              <BAIFlex direction="row" gap="xxs" wrap="wrap">
+                {values.tags.map((tag) => (
+                  <Tag key={tag}>{tag}</Tag>
+                ))}
+              </BAIFlex>
+            ) : (
+              '-'
+            )}
           </Descriptions.Item>
           <Descriptions.Item label={t('deployment.OpenToPublic')}>
-            <span style={{ display: 'inline-flex', alignItems: 'center' }}>
-              {values.openToPublic ? (
-                <GlobalOutlined style={{ color: token.colorPrimary }} />
-              ) : (
-                <LockOutlined style={{ color: token.colorTextTertiary }} />
-              )}
-            </span>
+            {values.openToPublic ? t('button.Yes') : t('button.No')}
           </Descriptions.Item>
         </Descriptions>
       </BAICard>
@@ -974,7 +1093,7 @@ const DeploymentReviewSummary: React.FC<{
         showDivider
       >
         <Descriptions column={1} size="small">
-          <Descriptions.Item label={t('session.launcher.ModelStorageToMount')}>
+          <Descriptions.Item label={t('deployment.ModelFolder')}>
             {values.modelFolderId ? (
               <Suspense
                 fallback={
@@ -989,29 +1108,79 @@ const DeploymentReviewSummary: React.FC<{
               '-'
             )}
           </Descriptions.Item>
-          <Descriptions.Item label={t('modelService.RuntimeVariant')}>
-            {values.runtimeVariant || '-'}
-          </Descriptions.Item>
-          {values.startCommand && (
-            <Descriptions.Item label={t('modelService.StartCommand')}>
-              <Typography.Text
-                code
-                style={{
-                  display: 'block',
-                  maxWidth: 480,
-                  whiteSpace: 'pre-wrap',
-                  wordBreak: 'break-all',
-                  fontSize: token.fontSizeSM,
-                }}
-              >
-                {values.startCommand}
+          {(values.environments?.image?.name ||
+            values.environments?.manual) && (
+            <Descriptions.Item label={t('modelService.Image')}>
+              <Typography.Text code style={{ wordBreak: 'break-all' }}>
+                {values.environments?.manual ||
+                  values.environments?.image?.name}
               </Typography.Text>
             </Descriptions.Item>
           )}
-          {(values.commandModelMount || values.modelMountDestination) && (
+          <Descriptions.Item label={t('modelService.RuntimeVariant')}>
+            {values.runtimeVariant || '-'}
+          </Descriptions.Item>
+          {/* Runtime parameters — only keys the user explicitly modified */}
+          {runtimeParamSnapshot?.groups &&
+            runtimeParamSnapshot.touchedKeys.size > 0 &&
+            runtimeParamSnapshot.groups
+              .flatMap((g) => g.params)
+              .filter((p) => runtimeParamSnapshot.touchedKeys.has(p.key))
+              .map((param) => (
+                <Descriptions.Item
+                  key={param.key}
+                  label={param.displayName || param.name}
+                >
+                  <Typography.Text code>
+                    {runtimeParamSnapshot.values[param.key]}
+                  </Typography.Text>
+                </Descriptions.Item>
+              ))}
+          {values.startCommand && (
+            <Descriptions.Item label={t('modelService.StartCommand')}>
+              <SourceCodeView language="shell">
+                {values.startCommand}
+              </SourceCodeView>
+            </Descriptions.Item>
+          )}
+          {values.commandModelMount && (
+            <Descriptions.Item label={t('modelService.ModelMountDestination')}>
+              <Typography.Text code>{values.commandModelMount}</Typography.Text>
+            </Descriptions.Item>
+          )}
+          {values.commandPort != null && (
+            <Descriptions.Item label={t('modelService.Port')}>
+              {values.commandPort}
+            </Descriptions.Item>
+          )}
+          {values.commandHealthCheck && (
+            <Descriptions.Item label={t('modelService.HealthCheck')}>
+              <Typography.Text code>
+                {values.commandHealthCheck}
+              </Typography.Text>
+            </Descriptions.Item>
+          )}
+          {values.commandInitialDelay != null && (
+            <Descriptions.Item label={t('modelService.InitialDelay')}>
+              {values.commandInitialDelay}s
+            </Descriptions.Item>
+          )}
+          {values.commandMaxRetries != null && (
+            <Descriptions.Item label={t('modelService.MaxRetries')}>
+              {values.commandMaxRetries}
+            </Descriptions.Item>
+          )}
+          {values.modelMountDestination && (
             <Descriptions.Item label={t('modelService.ModelMountDestination')}>
               <Typography.Text code>
-                {values.commandModelMount || values.modelMountDestination}
+                {values.modelMountDestination}
+              </Typography.Text>
+            </Descriptions.Item>
+          )}
+          {values.modelDefinitionPath && (
+            <Descriptions.Item label={t('modelService.ModelDefinitionPath')}>
+              <Typography.Text code>
+                {values.modelDefinitionPath}
               </Typography.Text>
             </Descriptions.Item>
           )}
@@ -1028,20 +1197,26 @@ const DeploymentReviewSummary: React.FC<{
       >
         <Descriptions column={1} size="small">
           <Descriptions.Item label={t('session.ResourceGroup')}>
-            <Tag>{values.resourceGroup || '-'}</Tag>
+            {values.resourceGroup || '-'}
           </Descriptions.Item>
-          {values.resourcePresetId && (
-            <Descriptions.Item label={t('resourcePreset.ResourcePresets')}>
-              {values.resourcePresetId}
-            </Descriptions.Item>
-          )}
+          <Descriptions.Item label={t('resourcePreset.ResourcePresets')}>
+            {values.resourcePresetId ? (
+              <Suspense fallback={<>{values.resourcePresetId}</>}>
+                <ErrorBoundaryWithNullFallback>
+                  <ResourcePresetReviewDisplay
+                    presetName={values.resourcePresetId}
+                  />
+                </ErrorBoundaryWithNullFallback>
+              </Suspense>
+            ) : (
+              '-'
+            )}
+          </Descriptions.Item>
           <Descriptions.Item label={t('deployment.DesiredReplicas')}>
             {String(values.desiredReplicaCount ?? '-')}
           </Descriptions.Item>
           <Descriptions.Item label={t('deployment.AutoScaling')}>
-            <Tag color={values.autoScalingEnabled ? 'green' : undefined}>
-              {values.autoScalingEnabled ? t('button.Yes') : t('button.No')}
-            </Tag>
+            {values.autoScalingEnabled ? t('button.Yes') : t('button.No')}
           </Descriptions.Item>
         </Descriptions>
       </BAICard>

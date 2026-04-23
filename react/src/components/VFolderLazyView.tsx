@@ -2,13 +2,12 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useWebUINavigate } from '../hooks';
+import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import VFolderNodeIdenticon from './VFolderNodeIdenticon';
 import { Typography } from 'antd';
 import { BAIFlex, toGlobalId, toLocalId } from 'backend.ai-ui';
 import React from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-import { useLocation } from 'react-router-dom';
 import { VFolderLazyViewQuery } from 'src/__generated__/VFolderLazyViewQuery.graphql';
 
 interface VFolderLazyViewProps {
@@ -19,9 +18,7 @@ const VFolderLazyView: React.FC<VFolderLazyViewProps> = ({
   uuid,
   clickable,
 }) => {
-  const location = useLocation();
-
-  const webuiNavigate = useWebUINavigate();
+  const { open: openFolderExplorer } = useFolderExplorerOpener();
 
   const { vfolder_node } = useLazyLoadQuery<VFolderLazyViewQuery>(
     graphql`
@@ -43,14 +40,7 @@ const VFolderLazyView: React.FC<VFolderLazyViewProps> = ({
           <VFolderNodeIdenticon vfolderNodeIdenticonFrgmt={vfolder_node} />
           {clickable ? (
             <Typography.Link
-              onClick={() => {
-                const searchParams = new URLSearchParams(location.search);
-                searchParams.set('folder', toLocalId(vfolder_node.id));
-                webuiNavigate({
-                  pathname: location.pathname,
-                  search: searchParams.toString(),
-                });
-              }}
+              onClick={() => openFolderExplorer(toLocalId(vfolder_node.id))}
             >
               {vfolder_node.name}
             </Typography.Link>

@@ -5,6 +5,7 @@
 import { DeploymentLauncherPageCreateMutation } from '../__generated__/DeploymentLauncherPageCreateMutation.graphql';
 import { DeploymentLauncherPageEditMutation } from '../__generated__/DeploymentLauncherPageEditMutation.graphql';
 import { DeploymentLauncherPageQuery } from '../__generated__/DeploymentLauncherPageQuery.graphql';
+import { DeploymentLauncherPageResourcePresetsQuery } from '../__generated__/DeploymentLauncherPageResourcePresetsQuery.graphql';
 import DeploymentLauncherPageContent, {
   DeploymentLauncherFormValue,
 } from '../components/DeploymentLauncherPageContent';
@@ -93,6 +94,11 @@ const DeploymentLauncherEditView: React.FC<{ deploymentId: string }> = ({
       query DeploymentLauncherPageQuery($deploymentId: ID!) {
         deployment(id: $deploymentId) {
           id
+          currentRevision @since(version: "26.4.3") {
+            imageV2 @since(version: "26.4.3") {
+              id
+            }
+          }
           ...DeploymentLauncherPageContent_deployment
         }
       }
@@ -107,6 +113,9 @@ const DeploymentLauncherEditView: React.FC<{ deploymentId: string }> = ({
       form={form}
       deploymentId={deploymentId}
       deploymentFrgmt={deployment ?? null}
+      currentRevisionImageId={
+        deployment?.currentRevision?.imageV2?.id ?? undefined
+      }
     />
   );
 };
@@ -118,6 +127,8 @@ interface DeploymentLauncherPageLayoutProps {
   deploymentFrgmt?: React.ComponentProps<
     typeof DeploymentLauncherPageContent
   >['deploymentFrgmt'];
+  /** Strawberry ImageV2 ID from the current revision (edit mode only). */
+  currentRevisionImageId?: string;
 }
 
 /**
@@ -127,7 +138,7 @@ interface DeploymentLauncherPageLayoutProps {
  */
 const DeploymentLauncherPageLayout: React.FC<
   DeploymentLauncherPageLayoutProps
-> = ({ mode, form, deploymentId, deploymentFrgmt }) => {
+> = ({ mode, form, deploymentId, deploymentFrgmt, currentRevisionImageId }) => {
   'use memo';
 
   const { t } = useTranslation();
@@ -142,6 +153,20 @@ const DeploymentLauncherPageLayout: React.FC<
   const { id: projectId } = useCurrentProjectValue();
   const currentResourceGroup = useCurrentResourceGroupValue();
   const { upsertNotification } = useSetBAINotification();
+
+  const { resource_presets } =
+    useLazyLoadQuery<DeploymentLauncherPageResourcePresetsQuery>(
+      graphql`
+        query DeploymentLauncherPageResourcePresetsQuery {
+          resource_presets {
+            name
+            resource_slots
+          }
+        }
+      `,
+      {},
+      { fetchPolicy: 'store-and-network' },
+    );
 
   // Track form dirtiness to guard cancel with a confirm dialog. We use
   // form.isFieldsTouched() via a lightweight state mirror so the button
@@ -167,8 +192,11 @@ const DeploymentLauncherPageLayout: React.FC<
 
   const [commitEdit, isEditing] =
     useMutation<DeploymentLauncherPageEditMutation>(graphql`
-      mutation DeploymentLauncherPageEditMutation($input: AddRevisionInput!) {
-        addModelRevision(input: $input) {
+      mutation DeploymentLauncherPageEditMutation(
+        $input: AddRevisionInput!
+        $options: AddRevisionOptions
+      ) {
+        addModelRevision(input: $input, options: $options) {
           revision {
             id
           }
@@ -198,24 +226,90 @@ const DeploymentLauncherPageLayout: React.FC<
     navigateBack();
   };
 
+  /** Convert a resource_slots JSON string to ResourceSlotInput entries. */
+  const parseResourceSlotEntries = (resourceSlotsJson: string | null) => {
+    const slots = JSON.parse(resourceSlotsJson ?? '{}') as Record<
+      string,
+      string
+    >;
+    return Object.entries(slots).map(([resourceType, quantity]) => ({
+      resourceType,
+      quantity: String(quantity),
+    }));
+  };
+
   /**
-   * Build the `CreateDeploymentInput` payload from the form values.
-   *
-   * TODO(needs-backend): FR-2675 — the content form currently exposes
-   * `image` as a canonical name string, `resourceGroup` as a plain string,
-   * and does not yet collect `resourceSlots`. These map to GQL inputs
-   * (`ImageInput.id`, `ResourceGroupInput`, `ResourceSlotInput`) that
-   * require additional lookups against the image / resource-group APIs.
-   * Until those lookups land we send `initialRevision: null` for create
-   * (schema allows it) and rely on the user to chain a follow-up
-   * `addModelRevision` for the runtime config, matching FR-2683's
-   * Quick Deploy behavior.
+   * Call `addModelRevision` for the given deployment.
+   * - `imageId`: Strawberry ImageV2 global ID (edit) or Graphene image ID (create).
+   * - `targetDeploymentId`: local UUID of the deployment.
    */
+  const handleAddRevision = (
+    values: DeploymentLauncherFormValue,
+    targetDeploymentId: string,
+    imageId: string,
+  ): Promise<void> => {
+    const preset = resource_presets?.find(
+      (p) => p?.name === values.resourcePresetId,
+    );
+    const entries = parseResourceSlotEntries(preset?.resource_slots ?? null);
+
+    return new Promise((resolve, reject) => {
+      commitEdit({
+        variables: {
+          input: {
+            deploymentId: toGlobalId('ModelDeployment', targetDeploymentId),
+            clusterConfig: {
+              mode: values.clusterMode ?? 'SINGLE_NODE',
+              size: values.clusterSize ?? 1,
+            },
+            resourceConfig: {
+              resourceGroup: { name: values.resourceGroup },
+              resourceSlots: { entries },
+            },
+            image: { id: imageId },
+            modelRuntimeConfig: {
+              runtimeVariant: values.runtimeVariant,
+              inferenceRuntimeConfig: null,
+              environ: null,
+            },
+            modelMountConfig: {
+              vfolderId: values.modelFolderId,
+              mountDestination: values.modelMountDestination ?? '/models',
+              definitionPath:
+                values.modelDefinitionPath ?? 'model-definition.yaml',
+            },
+          },
+          options: { autoActivate: true },
+        },
+        onCompleted: (_, errors) => {
+          if (errors && errors.length > 0) {
+            reject(new Error(errors.map((e) => e.message).join('\n')));
+            return;
+          }
+          resolve();
+        },
+        onError: (err) => {
+          const msg =
+            err instanceof Error
+              ? err.message
+              : ((err as { message?: string })?.message ?? JSON.stringify(err));
+          reject(new Error(msg));
+        },
+      });
+    });
+  };
+
   const handleCreate = async (values: DeploymentLauncherFormValue) => {
     if (!projectId) {
       throw new Error('No current project selected.');
     }
-    return new Promise<string>((resolve, reject) => {
+
+    const imageId = values.environments?.image?.id;
+    if (!imageId) {
+      throw new Error('No image selected.');
+    }
+
+    const newId = await new Promise<string>((resolve, reject) => {
       commitCreate({
         variables: {
           input: {
@@ -231,11 +325,6 @@ const DeploymentLauncherPageLayout: React.FC<
             },
             defaultDeploymentStrategy: { type: 'ROLLING' },
             desiredReplicaCount: values.desiredReplicaCount,
-            // TODO(needs-backend): FR-2675 — once the form collects
-            // image id + resource slots, build `initialRevision` here
-            // instead of leaving it null. Today the content form only
-            // carries canonical image names so we defer the revision to
-            // a follow-up `addModelRevision` once wiring lands.
             initialRevision: null,
           },
         },
@@ -247,34 +336,32 @@ const DeploymentLauncherPageLayout: React.FC<
           const id = toLocalId(response.createModelDeployment.deployment.id);
           resolve(id);
         },
-        onError: (err) => reject(err),
+        onError: (err) => {
+          const msg =
+            err instanceof Error
+              ? err.message
+              : ((err as { message?: string })?.message ?? JSON.stringify(err));
+          reject(new Error(msg));
+        },
       });
     });
+
+    await handleAddRevision(values, newId, imageId);
+    return newId;
   };
 
-  const handleEdit = async (
-    values: DeploymentLauncherFormValue,
-  ): Promise<string> => {
+  const handleEdit = async (values: DeploymentLauncherFormValue) => {
     if (!deploymentId) {
       throw new Error('No deployment id for edit.');
     }
-    // TODO(needs-backend): FR-2675 — `AddRevisionInput` requires
-    // non-null `resourceConfig` (with `resourceGroup` + `resourceSlots`)
-    // and `image.id`. The content form currently collects the image by
-    // canonical name and the resource group by name only, so we cannot
-    // build a well-typed payload end-to-end without additional lookups
-    // against the image and resource-group APIs. Once those lookups
-    // land, construct the `AddRevisionInput` here and call
-    // `commitEdit({ variables: { input: ... } })`.
-    //
-    // For now we fail fast with a descriptive error so the edit button
-    // in the UI is clearly surfacing "wired but not implemented" rather
-    // than silently no-op'ing.
-    void commitEdit;
-    void values;
-    throw new Error(
-      'addModelRevision wiring pending — tracked as TODO(needs-backend) in FR-2675.',
-    );
+    // Prefer the Strawberry ImageV2 ID from the current revision fragment;
+    // fall back to the Graphene image ID from the form selector.
+    const imageId =
+      currentRevisionImageId ?? values.environments?.image?.id ?? null;
+    if (!imageId) {
+      throw new Error('No image selected.');
+    }
+    await handleAddRevision(values, deploymentId, imageId);
   };
 
   const handleSubmit = async () => {

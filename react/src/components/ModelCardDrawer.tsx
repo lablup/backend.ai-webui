@@ -160,7 +160,11 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
                 action={async () => {
                   const modelFolderId = toLocalId(modelCard.vfolder?.id ?? '');
                   if (!modelFolderId) return;
-                  await deployInstantly({ modelFolderId });
+                  const revisionPresetId = toLocalId(presets[0]?.id ?? '');
+                  await deployInstantly({
+                    modelFolderId,
+                    revisionPresetId: revisionPresetId ?? undefined,
+                  });
                 }}
               >
                 {t('modelStore.Deploy')}
