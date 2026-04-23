@@ -404,7 +404,11 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
                     key: 'configure',
                     label: t('modelStore.QuickDeployDetailed'),
                     onClick: () => {
-                      openLauncher({ modelFolderId: vfolderId });
+                      openLauncher({
+                        modelFolderId: vfolderId,
+                        resourceGroup: effectiveResourceGroup,
+                        resourcePreset: effectivePresetId,
+                      });
                     },
                   },
                 ],

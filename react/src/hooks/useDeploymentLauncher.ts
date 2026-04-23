@@ -227,6 +227,15 @@ export const useDeploymentLauncher = (): {
 
   const openLauncher = (input: QuickDeployInput): void => {
     const params = new URLSearchParams({ model: input.modelFolderId });
+    if (input.resourceGroup) params.set('resourceGroup', input.resourceGroup);
+    if (input.resourcePreset)
+      params.set('resourcePresetId', input.resourcePreset);
+    // Jump straight to the review step when the caller provides enough
+    // pre-filled data (model + resource group + preset) so the user only
+    // needs to confirm rather than re-enter fields they already selected.
+    if (input.resourceGroup && input.resourcePreset) {
+      params.set('step', 'review');
+    }
     navigate(`/deployments/new?${params.toString()}`);
   };
 

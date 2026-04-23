@@ -84,11 +84,12 @@ export interface DeploymentLauncherPageContentProps {
    */
   deploymentFrgmt?: DeploymentLauncherPageContent_deployment$key | null;
   /**
-   * Only used when `mode === 'create'`. Populates the model folder
-   * field when the user lands here from the FR-2684 split-button
-   * `?model=<folderId>` link.
+   * Only used when `mode === 'create'`. Partial form values to pre-fill
+   * from the entry point (e.g. model store split button or VFolderDeployModal).
+   * Merged on top of DEFAULT_FORM_VALUES so any unspecified field keeps its
+   * default. Parsed from URL params by DeploymentLauncherCreateView.
    */
-  preFilledModel?: string;
+  preFilledValues?: Partial<DeploymentLauncherFormValue>;
   /**
    * Optional change observer forwarded to the underlying antd `<Form>`.
    * Useful for parent pages that want to persist the draft state
@@ -143,7 +144,7 @@ const DEFAULT_FORM_VALUES: DeploymentLauncherFormValue = {
  */
 const DeploymentLauncherPageContent: React.FC<
   DeploymentLauncherPageContentProps
-> = ({ mode, form, deploymentFrgmt, preFilledModel, onValuesChange }) => {
+> = ({ mode, form, deploymentFrgmt, preFilledValues, onValuesChange }) => {
   'use memo';
 
   const { t } = useTranslation();
@@ -240,10 +241,8 @@ const DeploymentLauncherPageContent: React.FC<
         desiredReplicaCount: deployment.replicaState.desiredReplicaCount,
       } satisfies Partial<DeploymentLauncherFormValue>);
     }
-    return _.merge({}, DEFAULT_FORM_VALUES, {
-      modelFolderId: preFilledModel ?? '',
-    } satisfies Partial<DeploymentLauncherFormValue>);
-  }, [mode, deployment, preFilledModel]);
+    return _.merge({}, DEFAULT_FORM_VALUES, preFilledValues ?? {});
+  }, [mode, deployment, preFilledValues]);
 
   // Apply initial values to the parent-owned form instance exactly once
   // per mount / deployment change. Using `useEffectEvent` keeps the
@@ -261,7 +260,12 @@ const DeploymentLauncherPageContent: React.FC<
 
   useEffect(() => {
     applyInitialValues();
-  }, [deployment?.id, preFilledModel]);
+  }, [
+    deployment?.id,
+    preFilledValues?.modelFolderId,
+    preFilledValues?.resourceGroup,
+    preFilledValues?.resourcePresetId,
+  ]);
 
   const setCurrentStep = (nextKey: StepKey) => {
     setQuery({ step: nextKey }, { history: 'push' });
