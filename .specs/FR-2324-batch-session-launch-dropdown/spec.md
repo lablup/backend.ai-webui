@@ -32,7 +32,7 @@
 - [ ] 드롭다운 트리거는 Launch 버튼의 비활성화 상태를 공유합니다(폼 검증 에러가 있으면 함께 비활성화).
 - [ ] **"Launch Multiple Sessions"** 선택 시 열리는 모달은 다음을 포함합니다.
   - 기능에 대한 간략 안내 문구
-  - 세션 개수 입력(`InputNumber`). `min = 2`, `max` 는 기존 `ResourceAllocationFormItems` 의 sessions 슬라이더와 동일하게 `useCurrentKeyPairResourcePolicyLazyLoadQuery` 의 `sessionLimitAndRemaining.max`(사용자 keypair resource policy 의 `max_concurrent_sessions` 기반)로 결정합니다. 기본값 `= 2`.
+  - 세션 개수 입력(`InputNumber`). `min = 2` 는 `InputNumber` 에 직접 걸고, **`max` 는 `Form.Item` 의 `rules` 로 검증**합니다. `max` 값은 기존 `ResourceAllocationFormItems` 의 sessions 슬라이더와 동일하게 `useCurrentKeyPairResourcePolicyLazyLoadQuery` 의 `sessionLimitAndRemaining.max`(사용자 keypair resource policy 의 `max_concurrent_sessions` 기반)로 결정합니다. 기본값 `= 2`. 초과 입력 시 rule 메시지(`session.launcher.LaunchMultipleSessionsMaxExceeded`)가 노출되어 제출이 차단됩니다.
   - 실시간 **Resource Preview**. 먼저 **세션 1개당 필요한 자원**을 표시하고, 그 아래에 **입력된 세션 개수에 따른 총 필요 자원**을 표시합니다. 두 값 모두 리뷰 단계의 "Total Allocation" 카드와 동일한 `BAIResourceNumberWithIcon` 시각화를 사용합니다.
     - 세션당 자원 = `per_container × cluster_size`
     - 총 자원 = `per_container × cluster_size × num_of_sessions`
@@ -64,7 +64,7 @@
 - [ ] **드롭다운 비활성화**: 폼에 검증 에러가 있으면 Launch 버튼과 드롭다운 트리거가 함께 비활성화되고, hover 시 "Please complete form" 툴팁이 노출됩니다.
 - [ ] **모달 구성**: 배치 런치 모달은 순서대로 다음을 렌더합니다.
   - (a) 기능에 대한 간략 설명 문단
-  - (b) `min=2`, `max=sessionLimitAndRemaining.max`(사용자 keypair resource policy 기반), `suffix` = 현지화된 "Sessions" 인 `InputNumber`
+  - (b) `min=2` 가 `InputNumber` 에 걸린 `Form.Item`. `max` 는 `Form.Item.rules` 로 `sessionLimitAndRemaining.max`(사용자 keypair resource policy 기반) 를 검증. `suffix` = 현지화된 "Sessions"
   - (c) 리소스 그룹명 + 클러스터 모드 요약 — 클러스터 모드는 `SessionNodes` 의 `cluster_mode` 컬럼(`BAISessionClusterMode`)과 동일한 `<모드 축약 라벨> (<cluster_size>)` 포맷으로 표시 (예: `다중 (1)`)
   - (d) **세션 1개당** 자원(`per_container × cluster_size`) 블록
   - (e) **총** 자원(`per_container × cluster_size × num_of_sessions`) 블록
