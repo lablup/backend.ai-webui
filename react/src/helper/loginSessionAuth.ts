@@ -171,14 +171,35 @@ export async function connectViaGQL(
 
 /**
  * Perform token-based login (SSO).
+ *
+ * `extraParams` are forwarded to `client.token_login` alongside the `sToken`
+ * argument. Callers typically collect these from URL query parameters (for
+ * example, EduAppLauncher forwards `app`, `session_id`, resource hints) for
+ * the server-side token handler. LoginView callers that do not need to
+ * forward anything can omit the argument.
+ *
+ * Reserved keys (`sToken`, `stoken`) are stripped from `extraParams` before
+ * forwarding so that the explicit `sToken` argument always wins, regardless
+ * of whether a caller accidentally (or maliciously) included the token in
+ * the forwarded query parameters. `client.token_login` merges `extraParams`
+ * into the request body via `Object.assign`, so an unsanitized map would
+ * otherwise overwrite the authenticated token field.
  */
 export async function tokenLogin(
   client: any,
   sToken: string,
   cfg: LoginConfigState,
   endpoints: string[],
+  extraParams?: Record<string, string>,
 ): Promise<string[]> {
-  const loginSuccess = await client.token_login(sToken);
+  const sanitizedExtraParams = extraParams
+    ? Object.fromEntries(
+        Object.entries(extraParams).filter(
+          ([key]) => key !== 'sToken' && key !== 'stoken',
+        ),
+      )
+    : {};
+  const loginSuccess = await client.token_login(sToken, sanitizedExtraParams);
   if (!loginSuccess) {
     throw new Error('Cannot authorize session by token.');
   }
