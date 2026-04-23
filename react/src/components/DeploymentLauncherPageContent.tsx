@@ -84,13 +84,6 @@ export interface DeploymentLauncherPageContentProps {
    */
   deploymentFrgmt?: DeploymentLauncherPageContent_deployment$key | null;
   /**
-   * Only used when `mode === 'create'`. Partial form values to pre-fill
-   * from the entry point (e.g. model store split button or VFolderDeployModal).
-   * Merged on top of DEFAULT_FORM_VALUES so any unspecified field keeps its
-   * default. Parsed from URL params by DeploymentLauncherCreateView.
-   */
-  preFilledValues?: Partial<DeploymentLauncherFormValue>;
-  /**
    * Optional change observer forwarded to the underlying antd `<Form>`.
    * Useful for parent pages that want to persist the draft state
    * (e.g. a URL JSON param) without having to read from the form
@@ -144,7 +137,7 @@ const DEFAULT_FORM_VALUES: DeploymentLauncherFormValue = {
  */
 const DeploymentLauncherPageContent: React.FC<
   DeploymentLauncherPageContentProps
-> = ({ mode, form, deploymentFrgmt, preFilledValues, onValuesChange }) => {
+> = ({ mode, form, deploymentFrgmt, onValuesChange }) => {
   'use memo';
 
   const { t } = useTranslation();
@@ -198,12 +191,23 @@ const DeploymentLauncherPageContent: React.FC<
     deploymentFrgmt ?? null,
   );
 
-  // URL-synced step. `parseAsStringLiteral` narrows unknown values back
-  // to the default so deep-links with stale/invalid step values still
-  // render a usable form instead of a blank screen.
-  const [{ step: currentStepKey }, setQuery] = useQueryStates({
+  // URL-synced step and pre-fill params. nuqs manages all four so that
+  // step navigation (setQuery({ step: … })) never strips the pre-fill
+  // params from the URL, and so the content component reads them
+  // directly without relying on prop drilling through the Suspense boundary.
+  const [
+    {
+      step: currentStepKey,
+      model: urlModel,
+      resourceGroup: urlResourceGroup,
+      resourcePresetId: urlResourcePresetId,
+    },
+    setQuery,
+  ] = useQueryStates({
     step: parseAsStringLiteral(STEP_KEYS).withDefault('basic'),
     model: parseAsString,
+    resourceGroup: parseAsString,
+    resourcePresetId: parseAsString,
   });
 
   const currentStepIndex = STEP_KEYS.indexOf(currentStepKey);
@@ -211,10 +215,9 @@ const DeploymentLauncherPageContent: React.FC<
   const isFirstStep = currentStepIndex === 0;
 
   // Compute initial values once per mount. In edit mode we read every
-  // mapped field from the deployment fragment; in create mode we only
-  // pre-fill the model folder (if provided via `?model=…`). The merge
-  // order lets undefined schema fields (e.g. on older backends) fall
-  // through to the safe DEFAULT_FORM_VALUES baseline.
+  // mapped field from the deployment fragment; in create mode we merge
+  // URL pre-fill params (model, resourceGroup, resourcePresetId) on top
+  // of DEFAULT_FORM_VALUES so any unspecified field keeps its safe default.
   const initialValues: DeploymentLauncherFormValue = useMemo(() => {
     if (mode === 'edit' && deployment) {
       const revision = deployment.currentRevision;
@@ -241,8 +244,12 @@ const DeploymentLauncherPageContent: React.FC<
         desiredReplicaCount: deployment.replicaState.desiredReplicaCount,
       } satisfies Partial<DeploymentLauncherFormValue>);
     }
-    return _.merge({}, DEFAULT_FORM_VALUES, preFilledValues ?? {});
-  }, [mode, deployment, preFilledValues]);
+    return _.merge({}, DEFAULT_FORM_VALUES, {
+      ...(urlModel && { modelFolderId: urlModel }),
+      ...(urlResourceGroup && { resourceGroup: urlResourceGroup }),
+      ...(urlResourcePresetId && { resourcePresetId: urlResourcePresetId }),
+    });
+  }, [mode, deployment, urlModel, urlResourceGroup, urlResourcePresetId]);
 
   // Apply initial values to the parent-owned form instance exactly once
   // per mount / deployment change. Using `useEffectEvent` keeps the
@@ -260,12 +267,7 @@ const DeploymentLauncherPageContent: React.FC<
 
   useEffect(() => {
     applyInitialValues();
-  }, [
-    deployment?.id,
-    preFilledValues?.modelFolderId,
-    preFilledValues?.resourceGroup,
-    preFilledValues?.resourcePresetId,
-  ]);
+  }, [deployment?.id, urlModel, urlResourceGroup, urlResourcePresetId]);
 
   const setCurrentStep = (nextKey: StepKey) => {
     setQuery({ step: nextKey }, { history: 'push' });
@@ -540,7 +542,10 @@ const DeploymentLauncherPageContent: React.FC<
 const ReviewSummary: React.FC<{
   form: FormInstance<DeploymentLauncherFormValue>;
 }> = ({ form }) => {
-  'use memo';
+  // No 'use memo' here — this component must re-render every time
+  // Form.Item shouldUpdate fires (i.e., whenever any form value changes).
+  // The React Compiler would memoize on `form` identity (stable ref) and
+  // skip re-renders, causing stale values to remain in the review summary.
   const { t } = useTranslation();
   const values = form.getFieldsValue();
 
