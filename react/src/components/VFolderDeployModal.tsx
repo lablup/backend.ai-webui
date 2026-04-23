@@ -7,7 +7,7 @@ import { VFolderDeployModalMutation } from '../__generated__/VFolderDeployModalM
 import { VFolderDeployModalQuery } from '../__generated__/VFolderDeployModalQuery.graphql';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import useDeploymentLauncher from '../hooks/useDeploymentLauncher';
-import { DownOutlined } from '@ant-design/icons';
+import { EllipsisOutlined } from '@ant-design/icons';
 import { App, Dropdown, Form, Space, Typography, theme } from 'antd';
 import type { DefaultOptionType } from 'antd/es/select';
 import {
@@ -410,7 +410,7 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
                 ],
               }}
             >
-              <BAIButton type="primary" icon={<DownOutlined />} />
+              <BAIButton type="primary" icon={<EllipsisOutlined />} />
             </Dropdown>
           </Space.Compact>
         ) : (

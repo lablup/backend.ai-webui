@@ -9,7 +9,11 @@ import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import ModelBrandIcon from './ModelBrandIcon';
 import ModelCardDeployModal from './ModelCardDeployModal';
-import { BankOutlined, DownOutlined, FileOutlined } from '@ant-design/icons';
+import {
+  BankOutlined,
+  EllipsisOutlined,
+  FileOutlined,
+} from '@ant-design/icons';
 import { shapes } from '@dicebear/collection';
 import { createAvatar } from '@dicebear/core';
 import {
@@ -180,7 +184,7 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
                   ],
                 }}
               >
-                <BAIButton type="primary" icon={<DownOutlined />} />
+                <BAIButton type="primary" icon={<EllipsisOutlined />} />
               </Dropdown>
             </Space.Compact>
           ) : (
