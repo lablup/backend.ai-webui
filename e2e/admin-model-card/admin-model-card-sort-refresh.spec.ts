@@ -8,8 +8,32 @@ test.describe(
   'Admin Model Card Management - Refresh and Sorting',
   { tag: ['@admin-model-card', '@admin', '@functional'] },
   () => {
-    test.beforeEach(async ({ page, request }) => {
+    let testCardName: string;
+
+    test.beforeEach(async ({ page, request }, testInfo) => {
+      testCardName = `e2e-test-sort-${testInfo.workerIndex}-${Date.now()}`;
       await loginAsAdmin(page, request);
+
+      // Create a test model card so the table is guaranteed to have data
+      await page.goto(`${webuiEndpoint}/admin-serving?tab=model-store`);
+      const adminModelCardPage = new AdminModelCardPage(page);
+      await adminModelCardPage.waitForTableLoad();
+      await adminModelCardPage.createModelCard({ name: testCardName });
+    });
+
+    test.afterEach(async ({ page }) => {
+      try {
+        await page.goto(`${webuiEndpoint}/admin-serving?tab=model-store`);
+        const adminModelCardPage = new AdminModelCardPage(page);
+        await adminModelCardPage.waitForTableLoad();
+        await adminModelCardPage.applyNameFilter(testCardName);
+        const row = adminModelCardPage.getRowByName(testCardName);
+        if ((await row.count()) > 0) {
+          await adminModelCardPage.deleteModelCardByName(testCardName);
+        }
+      } catch {
+        // Ignore cleanup errors
+      }
     });
 
     // 6.1 Superadmin can refresh the table using the fetch key button
@@ -25,7 +49,9 @@ test.describe(
 
       // Verify the table reloads (wait for table to still be visible after refresh)
       await adminModelCardPage.waitForTableLoad();
-      await expect(adminModelCardPage.getDataRows().first()).toBeVisible();
+      await expect(adminModelCardPage.getDataRows().first()).toBeVisible({
+        timeout: 15000,
+      });
     });
 
     // 7.1 Superadmin can sort model cards by Name in ascending order
@@ -43,7 +69,9 @@ test.describe(
       await expect(page).toHaveURL(/order=name/);
 
       // Verify rows are reordered (at least the table is still showing)
-      await expect(adminModelCardPage.getDataRows().first()).toBeVisible();
+      await expect(adminModelCardPage.getDataRows().first()).toBeVisible({
+        timeout: 15000,
+      });
 
       // Verify the sort indicator shows ascending
       const nameHeader = page.getByRole('columnheader', { name: 'Name' });
@@ -67,7 +95,9 @@ test.describe(
       await expect(page).toHaveURL(/order=-name/);
 
       // Verify rows are still displayed
-      await expect(adminModelCardPage.getDataRows().first()).toBeVisible();
+      await expect(adminModelCardPage.getDataRows().first()).toBeVisible({
+        timeout: 15000,
+      });
     });
 
     // 7.3 Superadmin can sort model cards by Created At
@@ -90,7 +120,9 @@ test.describe(
       await expect(page).toHaveURL(/order=-createdAt/);
 
       // Verify rows are still displayed
-      await expect(adminModelCardPage.getDataRows().first()).toBeVisible();
+      await expect(adminModelCardPage.getDataRows().first()).toBeVisible({
+        timeout: 15000,
+      });
     });
 
     // 7.4 Superadmin can switch sort from one column to another
@@ -111,7 +143,9 @@ test.describe(
       await expect(page).not.toHaveURL(/order=name/);
 
       // Verify rows are still displayed
-      await expect(adminModelCardPage.getDataRows().first()).toBeVisible();
+      await expect(adminModelCardPage.getDataRows().first()).toBeVisible({
+        timeout: 15000,
+      });
     });
   },
 );

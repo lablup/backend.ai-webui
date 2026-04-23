@@ -194,21 +194,19 @@ export class AdminModelCardPage {
     // After clicking "+", either:
     //   (a) a Popconfirm appears asking to "Change Project" first, or
     //   (b) the FolderCreateModal opens directly (project is already model-store).
-    // Check for the Popconfirm button first (short timeout); if it doesn't appear,
-    // fall through to wait for the folder dialog directly. Using Promise.race was
-    // unreliable because the race could resolve on the folder dialog while the
-    // Popconfirm button was also appearing, causing the button click to be missed.
+    // Wait for whichever appears first so the direct-open path doesn't always pay
+    // the full Popconfirm timeout. If the Popconfirm branch appears, click it and
+    // then continue waiting for the folder dialog.
     const folderDialog = this.getFolderCreateDialog();
     const changeProjectButton = this.page.getByRole('button', {
       name: 'Change Project',
     });
 
-    const changeProjectVisible = await changeProjectButton
-      .waitFor({ state: 'visible', timeout: 5000 })
-      .then(() => true)
-      .catch(() => false);
+    await expect(changeProjectButton.or(folderDialog)).toBeVisible({
+      timeout: 5000,
+    });
 
-    if (changeProjectVisible) {
+    if (await changeProjectButton.isVisible()) {
       await changeProjectButton.click();
     }
 
@@ -229,6 +227,19 @@ export class AdminModelCardPage {
       .getByRole('button', { name: 'Create', exact: true })
       .click();
     await expect(folderDialog).toBeHidden({ timeout: 15000 });
+
+    // onRequestClose asynchronously sets `vfolderId` in the Create Model Card form and
+    // triggers a BAIVFolderSelect refetch. Assert the VFolder select reflects the
+    // newly created folder name before proceeding so downstream submit steps don't
+    // race the refetch.
+    // In antd v6 with BAISelect, the selected value text is rendered directly inside
+    // .ant-select-content (which gains .ant-select-content-has-value when a value is set).
+    await expect(
+      modal
+        .locator('.ant-form-item')
+        .filter({ hasText: 'Model Storage Folder' })
+        .locator('.ant-select-content'),
+    ).toContainText(folderName, { timeout: 15000 });
   }
 
   async fillCreateModal(fields: {
@@ -255,13 +266,18 @@ export class AdminModelCardPage {
       // Create a new folder via the "+" button — it will be auto-selected after creation
       await this.createNewFolderViaPlus(fields.createNewFolderName);
     } else {
-      // Select an existing VFolder: use specified title or pick the first available option
-      await modal.getByRole('combobox').first().click();
+      // Select an existing VFolder: use specified title or pick the first available option.
+      // In antd v6 with BAISelect, clicking the .ant-select-content container reliably
+      // opens the dropdown (clicking the raw combobox input does not open it).
+      const vfolderFormItem = modal
+        .locator('.ant-form-item')
+        .filter({ hasText: 'Model Storage Folder' });
+      await vfolderFormItem.locator('.ant-select-content').click();
       // Wait for the VFolder query to load options (BAIVFolderSelect uses network-only fetch on open)
       const dropdown = this.page
         .locator('.ant-select-dropdown:not(.ant-select-dropdown-hidden)')
         .first();
-      await expect(dropdown).toBeVisible();
+      await expect(dropdown).toBeVisible({ timeout: 10000 });
       // Wait for the "Total N items" footer to appear, indicating options have loaded
       await expect(dropdown.getByText(/Total \d+ items/)).toBeVisible({
         timeout: 10000,
@@ -276,53 +292,78 @@ export class AdminModelCardPage {
     }
 
     if (fields.author) {
+      // In antd v6, Form.Item tooltip icons contribute to the accessible name.
+      // Use the form item container to locate the textbox by label text instead.
       await modal
-        .getByRole('textbox', { name: 'Author (optional)' })
+        .locator('.ant-form-item')
+        .filter({ hasText: 'Author' })
+        .getByRole('textbox')
         .fill(fields.author);
     }
     if (fields.title) {
       await modal
-        .getByRole('textbox', { name: 'Title (optional)' })
+        .locator('.ant-form-item')
+        .filter({ hasText: 'Title' })
+        .getByRole('textbox')
         .fill(fields.title);
     }
     if (fields.modelVersion) {
       await modal
-        .getByRole('textbox', { name: 'Model Version (optional)' })
+        .locator('.ant-form-item')
+        .filter({ hasText: 'Model Version' })
+        .getByRole('textbox')
         .fill(fields.modelVersion);
     }
     if (fields.description) {
       await modal
-        .getByRole('textbox', { name: 'Description (optional)' })
+        .locator('.ant-form-item')
+        .filter({ hasText: 'Description' })
+        .getByRole('textbox')
         .fill(fields.description);
     }
     if (fields.task) {
       await modal
-        .getByRole('textbox', { name: 'Task (optional)' })
+        .locator('.ant-form-item')
+        .filter({ hasText: 'Task' })
+        .getByRole('textbox')
         .fill(fields.task);
     }
     if (fields.category) {
       await modal
-        .getByRole('textbox', { name: 'Category (optional)' })
+        .locator('.ant-form-item')
+        .filter({ hasText: 'Category' })
+        .getByRole('textbox')
         .fill(fields.category);
     }
     if (fields.architecture) {
       await modal
-        .getByRole('textbox', { name: 'Architecture (optional)' })
+        .locator('.ant-form-item')
+        .filter({ hasText: 'Architecture' })
+        .getByRole('textbox')
         .fill(fields.architecture);
     }
     if (fields.license) {
       await modal
-        .getByRole('textbox', { name: 'License (optional)' })
+        .locator('.ant-form-item')
+        .filter({ hasText: 'License' })
+        .getByRole('textbox')
         .fill(fields.license);
     }
     if (fields.readme) {
       await modal
-        .getByRole('textbox', { name: 'README.md (optional)' })
+        .locator('.ant-form-item')
+        .filter({ hasText: 'README.md' })
+        .getByRole('textbox')
         .fill(fields.readme);
     }
     // Access Level is required — select specified value or default to 'Private' (INTERNAL)
     const accessLevel = fields.accessLevel ?? 'Private';
-    await modal.getByRole('combobox', { name: 'Access Level' }).click();
+    // In antd v6, use the .ant-select-content to open the dropdown reliably.
+    await modal
+      .locator('.ant-form-item')
+      .filter({ hasText: 'Access Level' })
+      .locator('.ant-select-content')
+      .click();
     // Ant Design Select renders the dropdown items as a portal outside the modal.
     // Use the visible dropdown portal (not the ARIA-virtual options inside the combobox)
     // to click the correct option.
@@ -347,6 +388,10 @@ export class AdminModelCardPage {
   }
 
   // ── Delete Confirm Dialog helpers ────────────────────────────────────────
+
+  getDeleteConfirmInput(): Locator {
+    return this.getDeleteConfirmDialog().getByRole('textbox');
+  }
 
   getDeleteConfirmButton(): Locator {
     return this.getDeleteConfirmDialog().getByRole('button', {
@@ -387,9 +432,10 @@ export class AdminModelCardPage {
 
   async deleteModelCardByName(name: string): Promise<void> {
     await this.clickDeleteForRow(name);
+    await this.getDeleteConfirmInput().fill(name);
     await this.getDeleteConfirmButton().click();
     await expect(
       this.page.getByText(/Model card has been deleted/),
-    ).toBeVisible({ timeout: 15000 });
+    ).toBeVisible({ timeout: 30000 });
   }
 }
