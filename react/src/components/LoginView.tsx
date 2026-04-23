@@ -20,7 +20,6 @@ import {
 import {
   createBackendAIClient,
   connectViaGQL,
-  tokenLogin,
   loadConfigFromWebServer,
   loginWithSAML,
   loginWithOpenID,
@@ -452,42 +451,10 @@ const LoginView: React.FC<{
         block(t('login.PleaseWait'), t('login.ConnectingToCluster'));
       }
 
-      // Check for SSO token
-      const urlParams = new URLSearchParams(window.location.search);
-      const sToken = urlParams.get('sToken');
-      if (sToken) {
-        try {
-          document.cookie = `sToken=${sToken}; expires=Session; path=/; Secure; SameSite=Lax`;
-          const updatedEndpoints = await tokenLogin(
-            client,
-            sToken,
-            configRef.current,
-            endpoints,
-          );
-          setEndpoints(updatedEndpoints);
-
-          // tokenLogin already called connectViaGQL internally; reuse the
-          // shared post-connect helper to stay in sync with the regular
-          // session-login path (login_attempt/last_login, clearSavedLoginInfo,
-          // forceLoginApprovedRef reset, panel close, endpoint persistence).
-          postConnectSetup(client);
-
-          // Strip the sToken from the URL so it doesn't leak into browser
-          // history or get re-processed on refresh.
-          window.history.replaceState({}, '', '/');
-          return;
-        } catch (err) {
-          logger.error('tokenLogin failed', err);
-          notification(t('eduapi.CannotAuthorizeSessionByToken'));
-          // Previously a hard reload cleared the UI; now we must restore
-          // the login panel ourselves so the user isn't stuck in a loading
-          // or blocked state.
-          setIsBlockPanelOpen(false);
-          open();
-          setIsLoading(false);
-          return;
-        }
-      }
+      // sToken (SSO) URL entry is handled entirely by STokenLoginBoundary
+      // at the route level (see routes.tsx `STokenGuard`). LoginView no
+      // longer reads sToken from the URL; when a token is present the
+      // boundary mounts LoginView only after authentication succeeds.
 
       // Do session login
       // client.login() returns only on success (authenticated === true).
