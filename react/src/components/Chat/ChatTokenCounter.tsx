@@ -9,12 +9,13 @@ import { Typography, Tag, Divider } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import { t } from 'i18next';
 import { map, last } from 'lodash-es';
-import React, { useMemo } from 'react';
+import React from 'react';
 
 interface ChatTokenCounterProps {
   input: string;
   messages: UIMessage[];
   startTime: number | null;
+  endTime: number | null;
   style?: React.CSSProperties;
 }
 
@@ -22,39 +23,35 @@ const ChatTokenCounter: React.FC<ChatTokenCounterProps> = ({
   input,
   messages,
   startTime,
+  endTime,
 }) => {
+  'use memo';
+
   const inputTokenCount = useTokenCount(input);
-  const allChatMessageString = useMemo(() => {
-    return map(messages, (message) =>
-      message?.parts
-        ?.filter((part) => part.type === 'text')
-        .map((part) => part.text)
-        .join(''),
-    ).join('');
-  }, [messages]);
+  const allChatMessageString = map(messages, (message) =>
+    message?.parts
+      ?.filter((part) => part.type === 'text')
+      .map((part) => part.text)
+      .join(''),
+  ).join('');
   const chatsTokenCount = useTokenCount(allChatMessageString);
   const totalTokenCount = inputTokenCount + chatsTokenCount;
-  const lastAssistantMessageString = useMemo(() => {
-    const lastAssistantMessage = last(messages);
-    if (lastAssistantMessage?.role === 'assistant') {
-      return (
-        lastAssistantMessage?.parts
+  const lastAssistantMessage = last(messages);
+  const lastAssistantMessageString =
+    lastAssistantMessage?.role === 'assistant'
+      ? lastAssistantMessage?.parts
           ?.filter((part) => part.type === 'text')
           .map((part) => part.text)
           .join('') || ''
-      );
-    } else {
-      return '';
-    }
-  }, [messages]);
+      : '';
 
   const lastAssistantTokenCount = useTokenCount(lastAssistantMessageString);
-  const tokenPerSecond = useMemo(() => {
-    return lastAssistantTokenCount > 0 && startTime
-      ? // eslint-disable-next-line react-hooks/purity
-        lastAssistantTokenCount / ((Date.now() - startTime) / 1000)
-      : 0;
-  }, [lastAssistantTokenCount, startTime]);
+  let tokenPerSecond = 0;
+  if (lastAssistantTokenCount > 0 && startTime) {
+    // eslint-disable-next-line react-hooks/purity
+    const elapsedSec = ((endTime ?? Date.now()) - startTime) / 1000;
+    tokenPerSecond = elapsedSec > 0 ? lastAssistantTokenCount / elapsedSec : 0;
+  }
 
   return (
     <BAIFlex justify="end" align="end">
