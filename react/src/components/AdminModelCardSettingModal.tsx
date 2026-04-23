@@ -33,7 +33,6 @@ import {
   BAIVFolderSelect,
   BAIVFolderSelectRef,
   convertToUUID,
-  mergeFilterValues,
   toGlobalId,
   toLocalId,
   useBAILogger,
@@ -348,7 +347,12 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
                       ref={vfolderSelectRef}
                       excludeDeleted
                       currentProjectId={currentProject.id ?? undefined}
-                      filter={mergeFilterValues(['ownership_type == "group"'])}
+                      // `currentProjectId` routes the paginated query to
+                      // `projectVfolders`, which already only returns
+                      // project-owned folders — the legacy V1 filter
+                      // `ownership_type == "group"` is redundant and
+                      // `VFolderFilter` does not expose ownershipType. See
+                      // FR-2685 for the full V2 migration.
                       style={{ flex: 1 }}
                     />
                   </Form.Item>

@@ -23,7 +23,6 @@ import {
   convertToUUID,
   useBAILogger,
   toLocalId,
-  mergeFilterValues,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { PlusIcon } from 'lucide-react';
@@ -256,13 +255,15 @@ const ImportArtifactRevisionToFolderModal = ({
                   <BAIVFolderSelect
                     ref={vfolderSelectRef}
                     excludeDeleted
-                    // model-store-exclusive project folders only
-                    filter={mergeFilterValues([
-                      'ownership_type == "group"',
-                      modelStoreProject?.id
-                        ? `group == "${modelStoreProject.id}"`
-                        : null,
-                    ])}
+                    // Model-store-exclusive project folders only. Scoping
+                    // the paginated query to `projectVfolders` via
+                    // `currentProjectId` already restricts the result set
+                    // to project-owned folders under the model-store
+                    // project; the legacy V1 filter clauses
+                    // (`ownership_type == "group"` and
+                    // `group == "<model-store-project-id>"`) are therefore
+                    // redundant and `VFolderFilter` exposes neither.
+                    currentProjectId={modelStoreProject?.id ?? undefined}
                   />
                 </Form.Item>
                 {currentProject.id === modelStoreProject?.id ? (
