@@ -866,7 +866,8 @@
   },
   "dialog": {
     "ErrorOccurred": "문제가 발생했습니다",
-    "PleaseTypeToConfirm": "{{confirmText}}를 입력하십시오.",
+    "PleaseTypeToConfirm": "{{confirmText}}를 입력해주세요.",
+    "TypeNameToConfirmDeletion": "삭제 확인을 위해 이름을 입력해주세요.",
     "ask": {
       "DoYouWantToDelete": "정말로 삭제하시겠습니까?",
       "DoYouWantToDeleteSomething": "\"{{ name }}\"을(를) 삭제하시겠습니까?",

@@ -866,6 +866,7 @@
   "dialog": {
     "ErrorOccurred": "Xảy ra lỗi",
     "PleaseTypeToConfirm": "Vui lòng nhập {{confirmText}} để xác nhận.",
+    "TypeNameToConfirmDeletion": "Nhập tên để xác nhận xóa.",
     "ask": {
       "DoYouWantToDelete": "Bạn có chắc chắn muốn xóa không?",
       "DoYouWantToDeleteSomething": "Bạn có chắc chắn muốn xóa \"{{ name }}\" không?",

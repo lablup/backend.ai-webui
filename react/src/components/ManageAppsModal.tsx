@@ -11,13 +11,17 @@ import {
   Form,
   message,
   Typography,
-  App,
   FormInstance,
   theme,
 } from 'antd';
-import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
+import {
+  BAIFlex,
+  BAIModal,
+  BAIModalProps,
+  BAIConfirmModalWithInput,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import React from 'react';
+import React, { useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
@@ -37,7 +41,10 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
 }) => {
   const { t } = useTranslation();
   const formRef = React.useRef<FormInstance>(null);
-  const app = App.useApp();
+  const [isReinstallConfirmOpen, setIsReinstallConfirmOpen] = useState(false);
+  const [pendingCommitRequest, setPendingCommitRequest] = useState<
+    (() => void) | null
+  >(null);
 
   const { token } = theme.useToken();
 
@@ -157,21 +164,8 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
           });
 
         if (image?.installed) {
-          app.modal.confirm({
-            title: 'Image reinstallation required',
-            content: (
-              <>
-                <Trans
-                  i18nKey={
-                    'environment.ModifyImageResourceLimitReinstallRequired'
-                  }
-                />
-              </>
-            ),
-            onOk: commitRequest,
-            getContainer: () => document.body,
-            closable: true,
-          });
+          setPendingCommitRequest(() => commitRequest);
+          setIsReinstallConfirmOpen(true);
         } else {
           commitRequest();
         }
@@ -329,6 +323,25 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
           </Form.List>
         </BAIFlex>
       </Form>
+      <BAIConfirmModalWithInput
+        open={isReinstallConfirmOpen}
+        title={t('environment.ImageReinstallationRequired')}
+        content={
+          <Trans
+            i18nKey={'environment.ModifyImageResourceLimitReinstallRequired'}
+          />
+        }
+        confirmText={image?.name ?? image?.namespace ?? ''}
+        onOk={() => {
+          setIsReinstallConfirmOpen(false);
+          pendingCommitRequest?.();
+          setPendingCommitRequest(null);
+        }}
+        onCancel={() => {
+          setIsReinstallConfirmOpen(false);
+          setPendingCommitRequest(null);
+        }}
+      />
     </BAIModal>
   );
 };

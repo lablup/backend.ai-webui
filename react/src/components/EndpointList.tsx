@@ -18,7 +18,7 @@ import {
   DeleteOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
-import { Typography, theme, App, TablePaginationConfig } from 'antd';
+import { Typography, theme, App, TablePaginationConfig, Alert } from 'antd';
 import type { ColumnType } from 'antd/lib/table';
 import {
   filterOutEmpty,
@@ -26,10 +26,12 @@ import {
   BAITable,
   BAITableProps,
   BAINameActionCell,
+  BAIConfirmModalWithInput,
+  BAIFlex,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
@@ -76,10 +78,13 @@ const EndpointList: React.FC<EndpointListProps> = ({
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { message, modal } = App.useApp();
+  const { message } = App.useApp();
   const [currentUser] = useCurrentUserInfo();
   const baiClient = useSuspendedBackendaiClient();
   const webuiNavigate = useWebUINavigate();
+  const [deletingEndpoint, setDeletingEndpoint] = useState<Endpoint | null>(
+    null,
+  );
 
   const endpoints = useFragment(
     graphql`
@@ -151,46 +156,7 @@ const EndpointList: React.FC<EndpointListProps> = ({
               type: 'danger',
               disabled: isEndpointInDestroyingCategory(row),
               onClick: () => {
-                modal.confirm({
-                  title: t('dialog.ask.DoYouWantToDeleteSomething', {
-                    name: row.name,
-                  }),
-                  content: t('dialog.warning.CannotBeUndone'),
-                  okText: t('button.Delete'),
-                  okButtonProps: {
-                    danger: true,
-                    type: 'primary',
-                  },
-                  onOk: () => {
-                    if (row.endpoint_id) {
-                      return new Promise<void>((resolve) => {
-                        terminateModelServiceMutation.mutate(row.endpoint_id!, {
-                          onSuccess: (res) => {
-                            onDeleted?.(row);
-                            if (res.success) {
-                              message.success(
-                                t('modelService.ServiceTerminated', {
-                                  name: row?.name,
-                                }),
-                              );
-                            } else {
-                              message.error(
-                                t('modelService.FailedToTerminateService'),
-                              );
-                            }
-                            resolve();
-                          },
-                          onError: () => {
-                            message.error(
-                              t('modelService.FailedToTerminateService'),
-                            );
-                            resolve();
-                          },
-                        });
-                      });
-                    }
-                  },
-                });
+                setDeletingEndpoint(row);
               },
             },
           ]}
@@ -282,16 +248,63 @@ const EndpointList: React.FC<EndpointListProps> = ({
   ]);
 
   return (
-    <BAITable
-      size="small"
-      loading={loading}
-      scroll={{ x: 'max-content' }}
-      rowKey={'endpoint_id'}
-      dataSource={filterOutNullAndUndefined(endpoints)}
-      columns={columns}
-      pagination={pagination}
-      {...tableProps}
-    />
+    <>
+      <BAITable
+        size="small"
+        loading={loading}
+        scroll={{ x: 'max-content' }}
+        rowKey={'endpoint_id'}
+        dataSource={filterOutNullAndUndefined(endpoints)}
+        columns={columns}
+        pagination={pagination}
+        {...tableProps}
+      />
+      <BAIConfirmModalWithInput
+        open={!!deletingEndpoint}
+        title={t('dialog.ask.DoYouWantToDeleteSomething', {
+          name: deletingEndpoint?.name,
+        })}
+        content={
+          <BAIFlex direction="column" gap="md" align="stretch">
+            <Alert type="warning" title={t('dialog.warning.CannotBeUndone')} />
+            <BAIFlex>
+              <Typography.Text style={{ marginRight: token.marginXXS }}>
+                {t('dialog.TypeNameToConfirmDeletion')}
+              </Typography.Text>
+              (<Typography.Text code>{deletingEndpoint?.name}</Typography.Text>)
+            </BAIFlex>
+          </BAIFlex>
+        }
+        confirmText={deletingEndpoint?.name ?? ''}
+        inputProps={{ placeholder: deletingEndpoint?.name ?? '' }}
+        okText={t('button.Delete')}
+        okButtonProps={{ loading: terminateModelServiceMutation.isPending }}
+        onOk={() => {
+          if (deletingEndpoint?.endpoint_id) {
+            terminateModelServiceMutation.mutate(deletingEndpoint.endpoint_id, {
+              onSuccess: (res) => {
+                onDeleted?.(deletingEndpoint);
+                if (res.success) {
+                  message.success(
+                    t('modelService.ServiceTerminated', {
+                      name: deletingEndpoint?.name,
+                    }),
+                  );
+                } else {
+                  message.error(t('modelService.FailedToTerminateService'));
+                }
+                setDeletingEndpoint(null);
+              },
+              onError: () => {
+                message.error(t('modelService.FailedToTerminateService'));
+                setDeletingEndpoint(null);
+              },
+            });
+          }
+        }}
+        onCancel={() => setDeletingEndpoint(null)}
+      />
+    </>
   );
 };
 

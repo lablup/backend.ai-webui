@@ -866,6 +866,7 @@
   "dialog": {
     "ErrorOccurred": "Tapahtunut virhe",
     "PleaseTypeToConfirm": "Kirjoita {{confirmText}} vahvistaaksesi.",
+    "TypeNameToConfirmDeletion": "Kirjoita nimi vahvistaaksesi poistamisen.",
     "ask": {
       "DoYouWantToDelete": "Haluatko varmasti poistaa tämän?",
       "DoYouWantToDeleteSomething": "Oletko varma, että haluat poistaa \"{{ name }}\"?\"?",

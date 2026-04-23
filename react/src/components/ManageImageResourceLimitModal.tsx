@@ -8,23 +8,16 @@ import {
 } from '../__generated__/ManageImageResourceLimitModalMutation.graphql';
 import { ManageImageResourceLimitModal_image$key } from '../__generated__/ManageImageResourceLimitModal_image.graphql';
 import { compareNumberWithUnits } from '../helper';
-import {
-  App,
-  Form,
-  type FormInstance,
-  message,
-  InputNumber,
-  Row,
-  Col,
-} from 'antd';
+import { Form, type FormInstance, message, InputNumber, Row, Col } from 'antd';
 import {
   useResourceSlotsDetails,
   BAIModal,
   BAIModalProps,
   BAIDynamicUnitInputNumber,
+  BAIConfirmModalWithInput,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import React, { useRef, Fragment } from 'react';
+import React, { useRef, useState, Fragment } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
@@ -46,8 +39,11 @@ const ManageImageResourceLimitModal: React.FC<
 
   const { t } = useTranslation();
   const formRef = useRef<FormInstance>(null);
-  const app = App.useApp();
   const { mergedResourceSlots } = useResourceSlotsDetails();
+  const [isReinstallConfirmOpen, setIsReinstallConfirmOpen] = useState(false);
+  const [pendingCommitRequest, setPendingCommitRequest] = useState<
+    (() => void) | null
+  >(null);
 
   const image = useFragment(
     graphql`
@@ -129,17 +125,8 @@ const ManageImageResourceLimitModal: React.FC<
       });
 
     if (image?.installed) {
-      app.modal.confirm({
-        title: t('environment.ImageReinstallationRequired'),
-        content: (
-          <Trans
-            i18nKey={'environment.ModifyImageResourceLimitReinstallRequired'}
-          />
-        ),
-        onOk: commitRequest,
-        getContainer: () => document.body,
-        closable: true,
-      });
+      setPendingCommitRequest(() => commitRequest);
+      setIsReinstallConfirmOpen(true);
     } else {
       commitRequest();
     }
@@ -245,6 +232,25 @@ const ManageImageResourceLimitModal: React.FC<
           )}
         </Row>
       </Form>
+      <BAIConfirmModalWithInput
+        open={isReinstallConfirmOpen}
+        title={t('environment.ImageReinstallationRequired')}
+        content={
+          <Trans
+            i18nKey={'environment.ModifyImageResourceLimitReinstallRequired'}
+          />
+        }
+        confirmText={image?.name ?? image?.namespace ?? ''}
+        onOk={() => {
+          setIsReinstallConfirmOpen(false);
+          pendingCommitRequest?.();
+          setPendingCommitRequest(null);
+        }}
+        onCancel={() => {
+          setIsReinstallConfirmOpen(false);
+          setPendingCommitRequest(null);
+        }}
+      />
     </BAIModal>
   );
 };

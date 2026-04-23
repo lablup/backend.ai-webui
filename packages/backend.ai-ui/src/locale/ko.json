@@ -388,7 +388,7 @@
     "modal": {
       "DeleteForeverDesc": "경고: 선택한 항목은 완전히 삭제되며 복원할 수 없습니다.",
       "ItemSelectedWithCount": "{{count}}개 선택됨.",
-      "PleaseTypeToConfirm": "{{ confirmText }}를 입력하십시오."
+      "PleaseTypeToConfirm": "{{ confirmText }}를 입력해주세요."
     },
     "validation": {
       "LetterNumber-_dot": "문자, 숫자, '-', '_', '.'만 입력할 수 있습니다.",

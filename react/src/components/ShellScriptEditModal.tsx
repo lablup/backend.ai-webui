@@ -7,11 +7,23 @@ import { useTanMutation } from '../hooks/reactQueryAlias';
 import { ShellScriptType } from '../pages/UserSettingsPage';
 import BAICodeEditor from './BAICodeEditor';
 import { DeleteOutlined, DownOutlined } from '@ant-design/icons';
-import { App, Button, Dropdown, Form, Select, Space, Typography } from 'antd';
+import {
+  App,
+  Alert,
+  Button,
+  Dropdown,
+  Form,
+  Popconfirm,
+  Select,
+  Space,
+  Typography,
+  theme,
+} from 'antd';
 import {
   BAIModal,
   BAIModalProps,
   BAIFlex,
+  BAIConfirmModalWithInput,
   useErrorMessageResolver,
   useBAILogger,
 } from 'backend.ai-ui';
@@ -36,8 +48,11 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
   ...modalProps
 }) => {
   const { t } = useTranslation();
+  const { token } = theme.useToken();
   const { logger } = useBAILogger();
-  const { message, modal } = App.useApp();
+  const { message } = App.useApp();
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+  const [isResetConfirmOpen, setIsResetConfirmOpen] = useState(false);
   const { getErrorMessage } = useErrorMessageResolver();
   const [rcfileNames, setRcfileNames] = useState<string>('.bashrc');
   const [script, setScript] = useState<string>('');
@@ -195,42 +210,39 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
                 type="default"
                 danger
                 onClick={() => {
-                  modal.confirm({
-                    title: t('dialog.title.LetsDouble-Check'),
-                    content: t('dialog.ask.DoYouWantToDeleteSomething', {
-                      name:
-                        shellInfo === 'bootstrap'
-                          ? t('session.launcher.BootstrapScriptDetail')
-                          : rcfileNames,
-                    }),
-                    onOk: deleteScript,
-                  });
+                  setIsDeleteConfirmOpen(true);
                 }}
               >
                 <DeleteOutlined />
               </Button>
-              <Dropdown
-                menu={{
-                  items: [
-                    {
-                      key: 'reset',
-                      label: t('button.Reset'),
-                      onClick: () => {
-                        modal.confirm({
-                          title: t('dialog.title.LetsDouble-Check'),
-                          content: t('dialog.ask.DoYouWantToResetChanges'),
-                          onOk: () => {
-                            setScript('');
-                          },
-                        });
-                      },
-                      danger: true,
-                    },
-                  ],
+              <Popconfirm
+                open={isResetConfirmOpen}
+                title={t('dialog.title.LetsDouble-Check')}
+                description={t('dialog.ask.DoYouWantToResetChanges')}
+                okButtonProps={{ danger: true }}
+                onConfirm={() => {
+                  setScript('');
+                  setIsResetConfirmOpen(false);
                 }}
+                onCancel={() => setIsResetConfirmOpen(false)}
               >
-                <Button type="default" danger icon={<DownOutlined />} />
-              </Dropdown>
+                <Dropdown
+                  menu={{
+                    items: [
+                      {
+                        key: 'reset',
+                        label: t('button.Reset'),
+                        onClick: () => {
+                          setIsResetConfirmOpen(true);
+                        },
+                        danger: true,
+                      },
+                    ],
+                  }}
+                >
+                  <Button type="default" danger icon={<DownOutlined />} />
+                </Dropdown>
+              </Popconfirm>
             </Space.Compact>
           </BAIFlex>
           <BAIFlex gap={'sm'}>
@@ -311,6 +323,38 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
           value={script}
         />
       </BAIFlex>
+      <BAIConfirmModalWithInput
+        open={isDeleteConfirmOpen}
+        title={t('dialog.title.LetsDouble-Check')}
+        content={
+          <BAIFlex direction="column" gap="md" align="stretch">
+            <Alert type="warning" title={t('dialog.warning.CannotBeUndone')} />
+            <BAIFlex>
+              <Typography.Text style={{ marginRight: token.marginXXS }}>
+                {t('dialog.TypeNameToConfirmDeletion')}
+              </Typography.Text>
+              (
+              <Typography.Text code>
+                {shellInfo === 'bootstrap' ? t('button.Delete') : rcfileNames}
+              </Typography.Text>
+              )
+            </BAIFlex>
+          </BAIFlex>
+        }
+        confirmText={
+          shellInfo === 'bootstrap' ? t('button.Delete') : rcfileNames
+        }
+        inputProps={{
+          placeholder:
+            shellInfo === 'bootstrap' ? t('button.Delete') : rcfileNames,
+        }}
+        okText={t('button.Delete')}
+        onOk={() => {
+          setIsDeleteConfirmOpen(false);
+          deleteScript();
+        }}
+        onCancel={() => setIsDeleteConfirmOpen(false)}
+      />
     </BAIModal>
   );
 };

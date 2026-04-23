@@ -866,6 +866,7 @@
   "dialog": {
     "ErrorOccurred": "Ein Fehler ist aufgetreten",
     "PleaseTypeToConfirm": "Bitte geben Sie {{confirmText}} ein, um zu bestätigen.",
+    "TypeNameToConfirmDeletion": "Geben Sie den Namen ein, um das Löschen zu bestätigen.",
     "ask": {
       "DoYouWantToDelete": "Möchten Sie dies wirklich löschen?",
       "DoYouWantToDeleteSomething": "Sind Sie sicher, dass Sie \"{{ Name }}\" löschen wollen?",

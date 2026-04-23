@@ -866,6 +866,7 @@
   "dialog": {
     "ErrorOccurred": "Errore",
     "PleaseTypeToConfirm": "Si prega di digitare {{confirmText}} per confermare.",
+    "TypeNameToConfirmDeletion": "Digitare il nome per confermare l'eliminazione.",
     "ask": {
       "DoYouWantToDelete": "Sei sicuro di voler eliminare?",
       "DoYouWantToDeleteSomething": "Si è sicuri di voler eliminare \"{{ name }}\"?",
