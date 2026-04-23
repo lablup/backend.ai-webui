@@ -25,7 +25,6 @@ import { BAIButton, BAICard, BAIFlex, useBAILogger } from 'backend.ai-ui';
 import { useAtomValue } from 'jotai';
 import {
   Suspense,
-  useCallback,
   useEffect,
   useEffectEvent,
   useRef,
@@ -104,6 +103,7 @@ type Phase =
 export const STokenLoginBoundary: React.FC<STokenLoginBoundaryProps> = (
   props,
 ) => {
+  'use memo';
   return (
     <Suspense fallback={props.fallback ?? <DefaultFallback />}>
       <STokenLoginBoundaryInner {...props} />
@@ -240,10 +240,10 @@ const STokenLoginBoundaryInner: React.FC<STokenLoginBoundaryProps> = ({
     runLoginSequence();
   }, [retryKey]);
 
-  const retry = useCallback(() => {
+  const retry = () => {
     setPhase({ name: 'pending' });
     setRetryKey((k) => k + 1);
-  }, []);
+  };
 
   if (phase.name === 'error') {
     if (errorFallback) {
@@ -278,6 +278,7 @@ const kindToI18nKey = (kind: STokenLoginError['kind']): string =>
  * working but hasn't failed.
  */
 const DefaultFallback: React.FC = () => {
+  'use memo';
   const { t } = useTranslation();
   return (
     <BAIFlex
@@ -325,16 +326,15 @@ const DefaultErrorCard: React.FC<{
       ? String((error.cause as Error)?.message ?? error.cause)
       : null;
 
-  const handleRetry = useCallback(async () => {
-    // Wrap in a Promise so BAIButton.action triggers its async loading
-    // state; the synchronous state reset completes before the next
-    // render, which is visually indistinguishable from the live
-    // sequence restart.
+  // Wrap in a Promise so BAIButton.action triggers its async loading
+  // state; the synchronous state reset completes before the next render,
+  // which is visually indistinguishable from the live sequence restart.
+  const handleRetry = async () => {
     await Promise.resolve();
     onRetry();
-  }, [onRetry]);
+  };
 
-  const handleCopy = useCallback(async () => {
+  const handleCopy = async () => {
     const payload = {
       kind: error.kind,
       cause: causeDetail,
@@ -346,7 +346,7 @@ const DefaultErrorCard: React.FC<{
       logger.warn('[STokenLoginBoundary] clipboard write failed', copyError);
       message.error(t('sTokenLoginBoundary.ErrorDetailsCopyFailed'));
     }
-  }, [error, causeDetail, message, t, logger]);
+  };
 
   return (
     <BAIFlex

@@ -54,8 +54,10 @@
         {
           "key": "FR-2634",
           "title": "[1.7] CI grep rule forbidding URL APIs in STokenLoginBoundary",
-          "prNumber": 6854,
-          "prUrl": "https://github.com/lablup/backend.ai-webui/pull/6854"
+          "prNumber": null,
+          "prUrl": null,
+          "status": "wont-do",
+          "note": "Closed as redundant. URL-free invariant enforced by FR-2633 test assertion."
         },
         {
           "key": "FR-2635",
@@ -147,5 +149,5 @@
   },
   "sourceIssues": [],
   "createdAt": "2026-04-21T00:00:00Z",
-  "notes": "Epic FR-2616 filed. Spec Task FR-2618 created as sub-issue under the Epic. Spec PR #6828 resolves FR-2618. Dev plan landed on same PR stack. Story 1 implementation PRs #6850-#6856 submitted (FR-2628-FR-2634 + test). FR-2635 closed as investigation-only (comment on issue). Directory still uses draft- prefix; rename to FR-2616-stoken-login-boundary as a follow-up."
+  "notes": "Epic FR-2616 filed. Spec Task FR-2618 created. Story 1 implementation: PRs #6850-#6853, #6855-#6857 submitted (FR-2628, FR-2629, FR-2630, FR-2631, FR-2632, FR-2633, refactor). FR-2634 closed as Not Planned (duplicate of FR-2633 test assertion). FR-2635 closed as investigation-only (Jira comment). Directory still uses draft- prefix; rename to FR-2616-stoken-login-boundary as a follow-up."
 }
