@@ -63,21 +63,29 @@ const DeploymentLauncherPage: React.FC = () => {
 };
 
 /**
- * Create-mode view — no deployment fragment to pre-fill from. Reads the
- * optional `?model=<folderId>` query param for Quick Deploy / model store
- * entry points and forwards it to the content component.
+ * Create-mode view — no deployment fragment to pre-fill from. Reads URL
+ * params forwarded by entry points (model store split button, VFolderDeployModal)
+ * and builds a preFilledValues object passed down to the content component.
+ * Supported params: `model`, `resourceGroup`, `resourcePresetId`.
  */
 const DeploymentLauncherCreateView: React.FC = () => {
   'use memo';
   const [searchParams] = useSearchParams();
-  const preFilledModel = searchParams.get('model') ?? undefined;
   const [form] = Form.useForm<DeploymentLauncherFormValue>();
+
+  const preFilledValues: Partial<DeploymentLauncherFormValue> = {};
+  const model = searchParams.get('model');
+  const resourceGroup = searchParams.get('resourceGroup');
+  const resourcePresetId = searchParams.get('resourcePresetId');
+  if (model) preFilledValues.modelFolderId = model;
+  if (resourceGroup) preFilledValues.resourceGroup = resourceGroup;
+  if (resourcePresetId) preFilledValues.resourcePresetId = resourcePresetId;
 
   return (
     <DeploymentLauncherPageLayout
       mode="create"
       form={form}
-      preFilledModel={preFilledModel}
+      preFilledValues={preFilledValues}
     />
   );
 };
@@ -131,7 +139,7 @@ interface DeploymentLauncherPageLayoutProps {
   deploymentFrgmt?: React.ComponentProps<
     typeof DeploymentLauncherPageContent
   >['deploymentFrgmt'];
-  preFilledModel?: string;
+  preFilledValues?: Partial<DeploymentLauncherFormValue>;
 }
 
 /**
@@ -141,7 +149,7 @@ interface DeploymentLauncherPageLayoutProps {
  */
 const DeploymentLauncherPageLayout: React.FC<
   DeploymentLauncherPageLayoutProps
-> = ({ mode, form, deploymentId, deploymentFrgmt, preFilledModel }) => {
+> = ({ mode, form, deploymentId, deploymentFrgmt, preFilledValues }) => {
   'use memo';
 
   const { t } = useTranslation();
@@ -388,7 +396,7 @@ const DeploymentLauncherPageLayout: React.FC<
         mode={mode}
         form={form}
         deploymentFrgmt={deploymentFrgmt}
-        preFilledModel={preFilledModel}
+        preFilledValues={preFilledValues}
         onValuesChange={() => setIsDirty(true)}
       />
 
