@@ -7,15 +7,9 @@
 import { spawn } from 'node:child_process';
 import process from 'node:process';
 
+import { forwardSignals } from '../../../scripts/lib/forward-signals.mjs';
+
 const port = process.env.PORT || '6006';
 const args = ['dev', '-p', port, ...process.argv.slice(2)];
 const child = spawn('storybook', args, { stdio: 'inherit', shell: false });
-child.on('exit', (code, signal) => {
-  if (signal) process.kill(process.pid, signal);
-  else process.exit(code ?? 0);
-});
-for (const sig of ['SIGINT', 'SIGTERM']) {
-  process.on(sig, () => {
-    if (!child.killed) child.kill(sig);
-  });
-}
+forwardSignals(child);

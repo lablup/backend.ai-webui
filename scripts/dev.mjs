@@ -13,6 +13,8 @@ import { spawn, spawnSync } from "node:child_process";
 import path from "node:path";
 import process from "node:process";
 
+import { forwardSignals } from "./lib/forward-signals.mjs";
+
 const cwd = process.cwd();
 const concurrentlyBin = path.join(cwd, "node_modules", ".bin", "concurrently");
 const tscBin = path.join(cwd, "node_modules", ".bin", "tsc");
@@ -57,15 +59,7 @@ function runConcurrently(reactStartCommand, extraEnv) {
     env,
     shell: false,
   });
-  child.on("exit", (code, signal) => {
-    if (signal) process.kill(process.pid, signal);
-    else process.exit(code ?? 0);
-  });
-  for (const sig of ["SIGINT", "SIGTERM"]) {
-    process.on(sig, () => {
-      if (!child.killed) child.kill(sig);
-    });
-  }
+  forwardSignals(child);
 }
 
 function runLegacy() {
@@ -83,13 +77,17 @@ function runLegacy() {
 }
 
 function runPortless() {
-  // Keep theme-color working by sourcing dev-config's env exports. This also
-  // ensures `REACT_APP_THEME_COLOR` is set for CRA during the Portless path.
+  // Load theme-color env here once; it flows through `runConcurrently`'s
+  // merged env to portless-run and then to the React dev server. This keeps
+  // `REACT_APP_THEME_COLOR` working without double-loading it inside
+  // portless-run.
   const themeEnv = loadDevConfigEnv();
   // Do not fix HOST/PORT in the Portless path — Portless injects `PORT` and
-  // CRA/Craco listens on it. Forward all env vars including theme color.
+  // CRA/Craco listens on it. Also skip `--name`: portless-run derives the
+  // subdomain from the current working directory so multiple worktrees get
+  // distinct URLs automatically (e.g. webui vs webui-feature).
   const reactCmd =
-    "node scripts/portless-run.mjs --name webui --auto-start --source-dev-config -- pnpm --prefix ./react run start";
+    "node scripts/portless-run.mjs --auto-start -- pnpm --prefix ./react run start";
   console.log(
     "[dev] Using Portless (default). Set PORTLESS=0 to run the legacy port-9081(+offset) flow.",
   );

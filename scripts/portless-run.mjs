@@ -7,39 +7,37 @@
  * installed (with a clear install hint).
  *
  * Usage:
- *   node scripts/portless-run.mjs --name <subdomain> \
- *     [--legacy-env KEY=VALUE ...] [--auto-start] [--source-dev-config] \
+ *   node scripts/portless-run.mjs [--name <subdomain>] \
+ *     [--legacy-env KEY=VALUE ...] [--auto-start] \
  *     -- <command> [args...]
  *
  * Flags:
  *   --name <subdomain>        Portless subdomain (e.g. "webui", "wsproxy.webui").
- *                             The project directory name is appended automatically
- *                             when it is not already part of the given name, so
- *                             two clones (e.g. `webui` and `webui-feature`) get
- *                             distinct URLs.
+ *                             If omitted, the app name is derived from the
+ *                             current working directory's basename, slugified
+ *                             to a DNS-safe label. This means two clones
+ *                             (e.g. `webui` and `webui-feature`) automatically
+ *                             get distinct URLs without any configuration.
  *   --legacy-env KEY=VALUE    Extra env var exported ONLY in the PORTLESS=0
  *                             (legacy) branch. Repeatable. Useful for e.g.
  *                             `PROXYBASEPORT=5050`.
  *   --auto-start              Attempt to start the Portless daemon if it is
  *                             not already running.
- *   --source-dev-config       In the Portless branch, source the theme-color
- *                             exports produced by `node scripts/dev-config.js
- *                             env` so `REACT_APP_THEME_COLOR` keeps working.
  *
  * Environment:
  *   PORTLESS=0  Skip Portless and run the command directly (legacy fallback).
  */
 import { spawn, spawnSync } from "node:child_process";
-import { existsSync } from "node:fs";
 import path from "node:path";
 import process from "node:process";
+
+import { forwardSignals } from "./lib/forward-signals.mjs";
 
 function parseArgs(argv) {
   const args = {
     name: null,
     legacyEnv: {},
     autoStart: false,
-    sourceDevConfig: false,
     command: [],
   };
   let i = 0;
@@ -60,31 +58,39 @@ function parseArgs(argv) {
       args.legacyEnv[kv.slice(0, eq)] = kv.slice(eq + 1);
     } else if (arg === "--auto-start") {
       args.autoStart = true;
-    } else if (arg === "--source-dev-config") {
-      args.sourceDevConfig = true;
     } else {
       throw new Error(`Unknown argument: ${arg}`);
     }
     i += 1;
   }
-  if (!args.name) throw new Error("--name is required");
   if (args.command.length === 0) throw new Error("Missing command after --");
   return args;
 }
 
-function resolveAppName(baseName) {
-  const projectDir = path.basename(process.cwd());
-  // Append the project directory name when it is not already the last segment,
-  // so multiple clones get unique URLs (e.g. webui-feature vs webui).
-  const parts = baseName.split(".");
-  const last = parts[parts.length - 1];
-  if (last === projectDir) return baseName;
-  return `${baseName}.${projectDir}`;
+function slugify(raw) {
+  const slug = raw
+    .toLowerCase()
+    .replace(/[^a-z0-9-]+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-+|-+$/g, "");
+  return slug || "webui";
+}
+
+function resolveAppName(explicitName) {
+  if (explicitName) return explicitName;
+  const raw = path.basename(process.cwd());
+  const slug = slugify(raw);
+  if (slug !== raw) {
+    console.warn(
+      `[portless-run] Slugified project directory "${raw}" → "${slug}" for Portless subdomain.`,
+    );
+  }
+  return slug;
 }
 
 function hasPortless() {
   const r = spawnSync("portless", ["--help"], { stdio: "ignore" });
-  return r.status === 0 || r.status === null ? r.error === undefined : false;
+  return r.error === undefined;
 }
 
 function isProxyRunning() {
@@ -99,40 +105,10 @@ function startProxy() {
   return r.status === 0;
 }
 
-function loadThemeColorEnv() {
-  const devConfig = path.join(process.cwd(), "scripts", "dev-config.js");
-  if (!existsSync(devConfig)) return {};
-  const r = spawnSync("node", [devConfig, "env"], { encoding: "utf8" });
-  if (r.status !== 0) return {};
-  const out = {};
-  for (const line of (r.stdout || "").split("\n")) {
-    const m = line.match(/^export\s+([A-Z_][A-Z0-9_]*)=(.*)$/);
-    if (!m) continue;
-    const key = m[1];
-    let value = m[2].trim();
-    if (
-      (value.startsWith('"') && value.endsWith('"')) ||
-      (value.startsWith("'") && value.endsWith("'"))
-    ) {
-      value = value.slice(1, -1);
-    }
-    if (value && value !== "undefined") out[key] = value;
-  }
-  return out;
-}
-
 function runCommand(command, env) {
   const [cmd, ...rest] = command;
   const child = spawn(cmd, rest, { stdio: "inherit", env, shell: false });
-  child.on("exit", (code, signal) => {
-    if (signal) process.kill(process.pid, signal);
-    else process.exit(code ?? 0);
-  });
-  for (const sig of ["SIGINT", "SIGTERM"]) {
-    process.on(sig, () => {
-      if (!child.killed) child.kill(sig);
-    });
-  }
+  forwardSignals(child);
 }
 
 function runLegacy(args) {
@@ -163,7 +139,6 @@ function runPortless(args) {
 
   const appName = resolveAppName(args.name);
   const env = { ...process.env };
-  if (args.sourceDevConfig) Object.assign(env, loadThemeColorEnv());
 
   console.log(
     `[portless-run] Routing "${args.command.join(" ")}" through http://${appName}.localhost:1355`,
@@ -174,15 +149,7 @@ function runPortless(args) {
     env,
     shell: false,
   });
-  child.on("exit", (code, signal) => {
-    if (signal) process.kill(process.pid, signal);
-    else process.exit(code ?? 0);
-  });
-  for (const sig of ["SIGINT", "SIGTERM"]) {
-    process.on(sig, () => {
-      if (!child.killed) child.kill(sig);
-    });
-  }
+  forwardSignals(child);
 }
 
 function main() {
