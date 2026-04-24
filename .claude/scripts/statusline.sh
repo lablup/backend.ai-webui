@@ -19,8 +19,8 @@ mkdir -p "$CACHE_DIR"
 
 # Cross-platform file modification time (seconds since epoch)
 file_mtime() {
-  if stat -f %m "$1" 2>/dev/null; then return; fi  # macOS
-  stat -c %Y "$1" 2>/dev/null || echo 0             # Linux
+  if mt=$(stat -f %m "$1" 2>/dev/null); then echo "$mt"; return; fi  # macOS
+  stat -c %Y "$1" 2>/dev/null || echo 0                               # Linux
 }
 
 # OSC 8 clickable link: link <url> <text>
@@ -87,26 +87,66 @@ try:
 except Exception: pass
 ' 2>/dev/null) || true
 
+# ── VS Code link (⧉ VS Code → opens workspace in VS Code) ──
+# URL scheme:
+#   Remote (SSH): vscode://vscode-remote/ssh-remote+<host><path>
+#     Host resolution (first match wins):
+#       1. $CLAUDE_STATUSLINE_SSH_HOST — explicit override (ssh-config alias or public hostname),
+#          useful when the server IP from SSH_CONNECTION isn't reachable from the client
+#          (NAT, VPN, port forwarding) or when key-based auth is tied to a hostname.
+#       2. `<whoami>@<server-ip>` from SSH_CONNECTION — zero-config default; the third field is
+#          the exact address the client connected to, which is always reachable back.
+#   Local (no SSH): vscode://file<path>
+VSCODE_PART=""
+if [[ -n "$WORKSPACE" ]]; then
+  VSCODE_WS=$(find "$WORKSPACE" -maxdepth 1 -name '*.code-workspace' -print -quit 2>/dev/null) || true
+  VSCODE_TARGET_RAW="${VSCODE_WS:-$WORKSPACE}"
+  # %-encode path segments (preserve /) so spaces and reserved chars survive OSC 8 / URI parsing.
+  VSCODE_TARGET=$(python3 -c 'import sys,urllib.parse;print(urllib.parse.quote(sys.argv[1], safe="/"))' "$VSCODE_TARGET_RAW" 2>/dev/null) || VSCODE_TARGET="$VSCODE_TARGET_RAW"
+  VSCODE_URL=""
+  if [[ -n "${SSH_CONNECTION:-}" ]]; then
+    VSCODE_HOST="${CLAUDE_STATUSLINE_SSH_HOST:-}"
+    if [[ -z "$VSCODE_HOST" ]]; then
+      VSCODE_IP=$(awk '{print $3}' <<< "$SSH_CONNECTION")
+      [[ -n "$VSCODE_IP" ]] && VSCODE_HOST="$(whoami)@${VSCODE_IP}"
+    fi
+    [[ -n "$VSCODE_HOST" ]] && VSCODE_URL="vscode://vscode-remote/ssh-remote+${VSCODE_HOST}${VSCODE_TARGET}"
+  else
+    VSCODE_URL="vscode://file${VSCODE_TARGET}"
+  fi
+  [[ -n "$VSCODE_URL" ]] && VSCODE_PART=$(link "$VSCODE_URL" "⧉ VS Code")
+fi
+
+# Fallback output when there is no Jira/Teams context:
+#   line 1 = VS Code link (if available), line 2 = model/tokens.
+emit_fallback() {
+  if [[ -n "$VSCODE_PART" ]]; then
+    printf '%b\n%b' "$VSCODE_PART" "$MODEL_PART"
+  else
+    printf '%b' "$MODEL_PART"
+  fi
+}
+
 # ── If no workspace, show only model/token ───────────────
 if [[ -z "$WORKSPACE" ]]; then
-  printf '%b' "$MODEL_PART"
+  emit_fallback
   exit 0
 fi
 
 # ── Extract branch and repo info ──────────────────────────
-BRANCH=$(git -C "$WORKSPACE" rev-parse --abbrev-ref HEAD 2>/dev/null) || { printf '%b' "$MODEL_PART"; exit 0; }
+BRANCH=$(git -C "$WORKSPACE" rev-parse --abbrev-ref HEAD 2>/dev/null) || { emit_fallback; exit 0; }
 JIRA_KEY=$(echo "$BRANCH" | grep -oiE 'fr-[0-9]+' | head -1 | tr '[:lower:]' '[:upper:]') || true
 
-# No Jira key on this branch → show only model/token
+# No Jira key on this branch → show only VS Code + model/token
 if [[ -z "$JIRA_KEY" ]]; then
-  printf '%b' "$MODEL_PART"
+  emit_fallback
   exit 0
 fi
 
 # Derive GitHub owner/repo from origin remote
 GH_REPO=$(git -C "$WORKSPACE" remote get-url origin 2>/dev/null \
   | sed -E 's#.*github\.com[:/]##; s/\.git$//' ) || true
-[[ -z "$GH_REPO" ]] && exit 0
+[[ -z "$GH_REPO" ]] && { emit_fallback; exit 0; }
 
 # ── PR check (non-blocking, stale-while-revalidate) ──────
 PR_CACHE_FILE="${CACHE_DIR}/pr-${JIRA_KEY}.txt"
@@ -116,14 +156,14 @@ if [[ -f "$PR_CACHE_FILE" ]]; then
   PR_CACHE_AGE=$(( $(date +%s) - $(file_mtime "$PR_CACHE_FILE") ))
   (( PR_CACHE_AGE >= CACHE_TTL )) && _refresh_pr "$BRANCH" "$PR_CACHE_FILE" "$GH_REPO"
 else
-  # No cache → background pre-warm, show only model/token this cycle
+  # No cache → background pre-warm, show VS Code + model/token this cycle
   _refresh_pr "$BRANCH" "$PR_CACHE_FILE" "$GH_REPO"
-  printf '%b' "$MODEL_PART"
+  emit_fallback
   exit 0
 fi
 
 if [[ -z "$PR_URL" ]]; then
-  printf '%b' "$MODEL_PART"
+  emit_fallback
   exit 0
 fi
 
@@ -134,9 +174,9 @@ if [[ -f "$CACHE_FILE" ]]; then
   JIRA_CACHE_AGE=$(( $(date +%s) - $(file_mtime "$CACHE_FILE") ))
   (( JIRA_CACHE_AGE >= CACHE_TTL )) && _refresh_jira "$JIRA_KEY" "$CACHE_FILE"
 else
-  # No Jira cache → background pre-warm, show only model/token this cycle
+  # No Jira cache → background pre-warm, show VS Code + model/token this cycle
   _refresh_jira "$JIRA_KEY" "$CACHE_FILE"
-  printf '%b' "$MODEL_PART"
+  emit_fallback
   exit 0
 fi
 
@@ -158,8 +198,13 @@ except Exception:
 
 IFS=$'\t' read -r JIRA_SUMMARY JIRA_STATUS TEAMS_URL <<< "$PARSED"
 
-# ── Line 1: Links (Teams + Jira) ─────────────────────────
+# ── Line 1: Links (VS Code + Teams + Jira) ───────────────
 LINE1=""
+
+if [[ -n "$VSCODE_PART" ]]; then
+  LINE1+="$VSCODE_PART"
+  LINE1+="  "
+fi
 
 if [[ -n "$TEAMS_URL" ]]; then
   LINE1+=$(link "$TEAMS_URL" "Teams")
