@@ -79,19 +79,31 @@
       "subtasks": [
         {
           "key": "FR-2636",
-          "title": "[2.1] Wrap / and /interactive-login routes with STokenLoginBoundary conditionally"
+          "title": "[2.1] Wrap / and /interactive-login routes with STokenLoginBoundary conditionally",
+          "prNumber": 6861,
+          "prUrl": "https://github.com/lablup/backend.ai-webui/pull/6861",
+          "note": "bundled into Story 2 PR #6861"
         },
         {
           "key": "FR-2637",
-          "title": "[2.2] Move postConnectSetup side effects into route-level onSuccess"
+          "title": "[2.2] Move postConnectSetup side effects into route-level onSuccess",
+          "prNumber": 6861,
+          "prUrl": "https://github.com/lablup/backend.ai-webui/pull/6861",
+          "note": "bundled into Story 2 PR #6861"
         },
         {
           "key": "FR-2638",
-          "title": "[2.3] Remove connectUsingSession sToken branch and URL parsing in LoginView"
+          "title": "[2.3] Remove connectUsingSession sToken branch and URL parsing in LoginView",
+          "prNumber": 6861,
+          "prUrl": "https://github.com/lablup/backend.ai-webui/pull/6861",
+          "note": "bundled into Story 2 PR #6861"
         },
         {
           "key": "FR-2639",
-          "title": "[2.4] E2E regression for LoginView sToken entry"
+          "title": "[2.4] E2E regression for LoginView sToken entry",
+          "prNumber": 6865,
+          "prUrl": "https://github.com/lablup/backend.ai-webui/pull/6865",
+          "note": "bundled into E2E PR #6865"
         }
       ]
     },
@@ -106,19 +118,31 @@
       "subtasks": [
         {
           "key": "FR-2640",
-          "title": "[3.1] Investigate get_user_credential(sToken) liveness (Q8)"
+          "title": "[3.1] Investigate get_user_credential(sToken) liveness (Q8)",
+          "prNumber": null,
+          "prUrl": null,
+          "note": "investigation only (Jira comment); resolved to option (a) prop-threading"
         },
         {
           "key": "FR-2641",
-          "title": "[3.2] Wrap /edu-applauncher and /applauncher routes with STokenLoginBoundary"
+          "title": "[3.2] Wrap /edu-applauncher and /applauncher routes with STokenLoginBoundary",
+          "prNumber": 6864,
+          "prUrl": "https://github.com/lablup/backend.ai-webui/pull/6864",
+          "note": "bundled into Story 3 PR #6864"
         },
         {
           "key": "FR-2642",
-          "title": "[3.3] Remove _token_login and manual backend-ai-connected dispatch in EduAppLauncher"
+          "title": "[3.3] Remove _token_login and manual backend-ai-connected dispatch in EduAppLauncher",
+          "prNumber": 6864,
+          "prUrl": "https://github.com/lablup/backend.ai-webui/pull/6864",
+          "note": "bundled into Story 3 PR #6864"
         },
         {
           "key": "FR-2643",
-          "title": "[3.4] E2E regression for EduApp sToken entry with and without session_id"
+          "title": "[3.4] E2E regression for EduApp sToken entry with and without session_id",
+          "prNumber": 6865,
+          "prUrl": "https://github.com/lablup/backend.ai-webui/pull/6865",
+          "note": "bundled into E2E PR #6865"
         }
       ]
     }
@@ -149,5 +173,5 @@
   },
   "sourceIssues": [],
   "createdAt": "2026-04-21T00:00:00Z",
-  "notes": "Epic FR-2616 filed. Spec Task FR-2618 created. Story 1 implementation: PRs #6850-#6853, #6855-#6857 submitted (FR-2628, FR-2629, FR-2630, FR-2631, FR-2632, FR-2633, refactor). FR-2634 closed as Not Planned (duplicate of FR-2633 test assertion). FR-2635 closed as investigation-only (Jira comment). Directory still uses draft- prefix; rename to FR-2616-stoken-login-boundary as a follow-up."
+  "notes": "Epic FR-2616 filed. Spec Task FR-2618 + Story 1-3 (FR-2625, FR-2626, FR-2627). Story 1: PRs #6850-#6853, #6855-#6857 (7 PRs). Story 2: PR #6861 bundles FR-2636/2637/2638 (LoginView migration). Story 3: PR #6864 bundles FR-2641/2642 (EduAppLauncher migration). Q8 (FR-2640) resolved via prop-threading, no PR. E2E (FR-2639, FR-2643): PR #6865 bundles both. FR-2634 (CI grep rule) closed as redundant with FR-2633 test. FR-2635 (cookie encoding investigation) closed. Directory still uses draft- prefix; rename to FR-2616-stoken-login-boundary as a follow-up after spec PR merges."
 }
