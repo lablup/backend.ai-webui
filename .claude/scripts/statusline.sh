@@ -118,10 +118,18 @@ if [[ -n "$WORKSPACE" ]]; then
 fi
 
 # Fallback output when there is no Jira/Teams context:
-#   line 1 = VS Code link (if available), line 2 = model/tokens.
+#   line 1 = worktree info + VS Code link (if available), line 2 = model/tokens.
 emit_fallback() {
+  local line1=""
+  if [[ -n "${WORKTREE_PART:-}" ]]; then
+    line1+="$WORKTREE_PART"
+  fi
   if [[ -n "$VSCODE_PART" ]]; then
-    printf '%b\n%b' "$VSCODE_PART" "$MODEL_PART"
+    [[ -n "$line1" ]] && line1+="  "
+    line1+="$VSCODE_PART"
+  fi
+  if [[ -n "$line1" ]]; then
+    printf '%b\n%b' "$line1" "$MODEL_PART"
   else
     printf '%b' "$MODEL_PART"
   fi
@@ -131,6 +139,40 @@ emit_fallback() {
 if [[ -z "$WORKSPACE" ]]; then
   emit_fallback
   exit 0
+fi
+
+# ── Worktree & git safety indicator ──────────────────────
+# Detects: worktree name, uncommitted changes, unpushed commits
+# Output: WORKTREE_PART = colored string for status line
+WORKTREE_PART=""
+if [[ -n "$WORKSPACE" ]] && git -C "$WORKSPACE" rev-parse --git-dir >/dev/null 2>&1; then
+  # Safety check: uncommitted changes or unpushed commits
+  WT_DIRTY=0
+  WT_DETAIL=""
+  if ! git -C "$WORKSPACE" diff-index --quiet HEAD -- 2>/dev/null; then
+    WT_DIRTY=1
+    WT_DETAIL="uncommitted"
+  elif [[ -n "$(git -C "$WORKSPACE" ls-files --others --exclude-standard 2>/dev/null | head -1)" ]]; then
+    WT_DIRTY=1
+    WT_DETAIL="untracked"
+  fi
+
+  WT_UNPUSHED=0
+  if git -C "$WORKSPACE" rev-parse '@{u}' >/dev/null 2>&1; then
+    WT_UNPUSHED=$(git -C "$WORKSPACE" rev-list --count '@{u}..HEAD' 2>/dev/null) || WT_UNPUSHED=0
+  fi
+
+  # Build indicator
+  if (( WT_DIRTY )); then
+    WT_ICON="\033[91m⚠ ${WT_DETAIL}\033[0m"  # red
+  elif (( WT_UNPUSHED > 0 )); then
+    WT_ICON="\033[93m↑${WT_UNPUSHED}\033[0m"  # yellow
+  else
+    WT_ICON="\033[32m✓\033[0m"  # green = safe to delete
+  fi
+
+  # Compose: safety indicator only (✓/⚠/↑N)
+  WORKTREE_PART="$WT_ICON"
 fi
 
 # ── Extract branch and repo info ──────────────────────────
@@ -198,8 +240,13 @@ except Exception:
 
 IFS=$'\t' read -r JIRA_SUMMARY JIRA_STATUS TEAMS_URL <<< "$PARSED"
 
-# ── Line 1: Links (VS Code + Teams + Jira) ───────────────
+# ── Line 1: Worktree + Links (VS Code + Teams + Jira) ────
 LINE1=""
+
+if [[ -n "$WORKTREE_PART" ]]; then
+  LINE1+="$WORKTREE_PART"
+  LINE1+="  "
+fi
 
 if [[ -n "$VSCODE_PART" ]]; then
   LINE1+="$VSCODE_PART"
