@@ -133,7 +133,6 @@
     "@types/react-test-renderer": "^19.1.0",
     "@types/relay-runtime": "catalog:",
     "@types/relay-test-utils": "catalog:",
-    "@types/uuid": "^11.0.0",
     "babel-jest": "catalog:",
     "babel-plugin-react-compiler": "catalog:",
     "babel-plugin-relay": "^20.1.1",
