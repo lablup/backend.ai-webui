@@ -2,6 +2,8 @@
 
 > **Epic**: FR-2320 ([링크](https://lablup.atlassian.net/browse/FR-2320))
 
+> **Update (2026-04-24):** FR-2702 retired the `PORTLESS=0` escape hatch. Portless is now the only supported local dev path.
+
 ## 개요
 
 기존 포트 번호 기반 로컬 개발 설정(`scripts/dev-config.js`, `BAI_WEBUI_DEV_PORT_OFFSET` 등)을 [Portless](https://github.com/vercel-labs/portless)로 대체합니다. 이를 통해 개발자는 `http://localhost:9081` 대신 `http://webui.localhost:1355`와 같이 안정적이고 사람이 읽기 쉬운 `.localhost` URL을 사용할 수 있습니다. 이 변경으로 다중 인스턴스 개발이 간소화되고, 수동 포트 관리가 필요 없어지며, 프로덕션에 더 가까운 로컬 개발 환경을 제공합니다.

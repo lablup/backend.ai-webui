@@ -1,13 +1,19 @@
 #!/usr/bin/env node
 /**
  * storybook-dev.mjs — launches `storybook dev` on the port specified by
- * `process.env.PORT`. Portless injects PORT at runtime; the `6006` default is
- * only used as a safety fallback when PORT is unset.
+ * `process.env.PORT`. Portless injects PORT at runtime; running this script
+ * without Portless is unsupported and fails loudly.
  */
 import { spawn } from 'node:child_process';
 import process from 'node:process';
 
-const port = process.env.PORT || '6006';
+const port = process.env.PORT;
+if (!port) {
+  console.error(
+    '[storybook-dev] PORT is not set. Run via `pnpm run storybook` (Portless).',
+  );
+  process.exit(1);
+}
 const args = ['dev', '-p', port, ...process.argv.slice(2)];
 const child = spawn('storybook', args, { stdio: 'inherit', shell: false });
 child.on('exit', (code, signal) => {

@@ -16,11 +16,16 @@ const concurrentlyBin = path.join(cwd, "node_modules", ".bin", "concurrently");
 const tscBin = path.join(cwd, "node_modules", ".bin", "tsc");
 
 /**
- * Read `.env.development.local` and extract THEME_HEADER_COLOR so the React
- * dev server can pick it up as `REACT_APP_THEME_COLOR`. Returns an empty
- * object when the file is missing or the key is unset.
+ * Resolve THEME_HEADER_COLOR so the React dev server can pick it up as
+ * `REACT_APP_THEME_COLOR`. Precedence matches the legacy `dev-config.js`
+ * behavior: an explicit `process.env.THEME_HEADER_COLOR` wins, then the value
+ * from `.env.development.local`. Returns an empty object when neither is set.
  */
 function loadThemeColorEnv() {
+  const fromEnv = process.env.THEME_HEADER_COLOR;
+  if (fromEnv && fromEnv !== "undefined") {
+    return { REACT_APP_THEME_COLOR: fromEnv };
+  }
   const envFile = path.join(cwd, ".env.development.local");
   if (!existsSync(envFile)) return {};
   let themeColor;

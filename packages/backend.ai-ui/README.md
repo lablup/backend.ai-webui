@@ -143,7 +143,7 @@ $ pnpm run build-storybook
 Components that are not related to Relay can be tested using Storybook.
 
 1. Please write Storybook stories for the components you develop in the `src/components` directory, using the `component-name.stories.tsx` format.
-2. Please run Storybook and go to [http://localhost:6006](http://localhost:6006).
+2. Please run Storybook and go to [http://storybook.webui.localhost:1355](http://storybook.webui.localhost:1355).
    ```console
    $ pnpm run storybook
    ```
