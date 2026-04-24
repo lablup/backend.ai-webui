@@ -38,7 +38,7 @@
     "dev": "vite build --watch --mode development",
     "build": "vite build",
     "test": "NODE_OPTIONS='--no-deprecation' jest",
-    "storybook": "storybook dev -p 6006",
+    "storybook": "node ../../scripts/portless-run.mjs --name storybook.webui --auto-start --legacy-env PORT=6006 -- node ./scripts/storybook-dev.mjs",
     "build-storybook": "storybook build",
     "lint": "eslint ./src --ignore-pattern '**.graphql.**' --max-warnings=0",
     "prepublishOnly": "pnpm lint && pnpm test && pnpm build"

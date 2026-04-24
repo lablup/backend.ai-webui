@@ -1,174 +1,143 @@
-# 🚀 Multi-Instance Development Environment
+# Development Environment
 
-Simple configuration system for running multiple Backend.AI WebUI development servers simultaneously without port conflicts and with visual theme differentiation.
+Local development for Backend.AI WebUI runs behind [Portless](https://github.com/vercel-labs/portless) by default. Portless replaces port-number-based dev URLs (e.g. `http://localhost:9081`) with stable, named `.localhost` URLs derived from the project directory (e.g. `http://webui.localhost:1355`).
 
-## ✨ Features
+The legacy port-offset flow is still available as an escape hatch via `PORTLESS=0`. It is scheduled for removal in a follow-up (FR-2702); until then, both paths are supported.
 
-- **Simple Port Configuration**: Manual port offset via environment variables (defaults to 0)
-- **Optional Theme Color**: Custom header colors when specified
-- **Host Configuration**: Support for custom host addresses (defaults to localhost)
-- **Environment-Based**: Clean configuration via environment variables
-- **Multi-Instance Support**: Run multiple dev servers with different configurations
+## Install Portless (one-time)
 
-## 🛠 Usage
+Portless is a machine-wide developer tool. Install it globally — **do not** add it as a project dependency.
 
-### 1. Basic Usage (Default Configuration)
-
-```bash
-# Check current configuration
-node scripts/dev-config.js show
-
-# Start development server (uses current configuration)
-pnpm run dev
+```console
+$ npm install -g portless   # or: pnpm add -g portless
 ```
 
-### 2. Environment Configuration
+Requirements:
 
-Set environment variables directly or create `.env.development.local` file:
+- Node.js 20+ (this project uses Node 24 via `.nvmrc`, so the requirement is already met).
+- Single machine-wide Portless daemon on port `1355` (one developer, one proxy, many projects).
 
-```bash
-# Custom port offset (defaults to 0 if not set)
-BAI_WEBUI_DEV_PORT_OFFSET=10
+Optional but recommended on Safari:
 
-# Custom theme color (hex format) - optional
-THEME_HEADER_COLOR=#9370DB  
-
-# Custom host (defaults to localhost if not set)
-HOST=192.168.1.100
+```console
+$ sudo portless hosts sync    # Adds .localhost routes to /etc/hosts
 ```
 
-### 3. Export Variables for Shell
+Safari does not resolve arbitrary `.localhost` subdomains without this step. Chrome/Firefox do not need it.
 
-```bash
-# Export environment variables for current shell
-eval "$(node scripts/dev-config.js env)"
+## Everyday Usage
 
-# Check what variables are exported
-node scripts/dev-config.js env
+### Start the dev server
+
+```console
+$ pnpm run dev
+# → http://webui.localhost:1355
 ```
 
-## 📡 Port Configuration
+`pnpm run dev` launches TypeScript watch, Relay watch, and the React dev server concurrently. The React dev server runs behind Portless and the terminal prints the assigned URL.
 
-### Base Ports
-- React dev server: `9081`
+If the Portless proxy daemon is not already running, `pnpm run dev` starts it automatically. If Portless is not installed, the script fails with a clear install hint.
 
-### With Port Offset
-When `BAI_WEBUI_DEV_PORT_OFFSET=20` is set:
-- React dev server: `9101` (9081 + 20)
+### Start the websocket proxy (V1 proxy mode only)
 
-## 🎨 Theme Customization
+```console
+$ pnpm run wsproxy
+# → http://wsproxy.webui.localhost:1355
+```
 
-Set custom header colors using `THEME_HEADER_COLOR` environment variable:
+Only developers using the local Node.js wsproxy (V1 proxy mode) need this. If you are running the Backend.AI webserver (V2 proxy mode), the webserver's built-in `ai.backend.web.proxy` handles session-app traffic and no local wsproxy is necessary.
 
-```bash
-# Purple theme
+### Start Storybook
+
+```console
+$ cd packages/backend.ai-ui
+$ pnpm run storybook
+# → http://storybook.webui.localhost:1355
+```
+
+## Multiple Clones / Worktrees
+
+Portless derives the subdomain from the project directory name, so multiple clones or git worktrees get unique URLs automatically. No configuration required.
+
+| Directory       | URL                                   |
+| --------------- | ------------------------------------- |
+| `webui`         | `http://webui.localhost:1355`         |
+| `webui-feature` | `http://webui-feature.localhost:1355` |
+| `webui-debug`   | `http://webui-debug.localhost:1355`   |
+
+List what is currently routed:
+
+```console
+$ portless list
+```
+
+## Legacy Fallback (`PORTLESS=0`)
+
+Every Portless-wrapped command accepts `PORTLESS=0` as an escape hatch. This is useful when you cannot install Portless, when the daemon is misbehaving, or while the legacy flow is still referenced by other tooling (removed in FR-2702).
+
+```console
+$ PORTLESS=0 pnpm run dev       # React dev server on http://localhost:9081 (+ BAI_WEBUI_DEV_PORT_OFFSET)
+$ PORTLESS=0 pnpm run wsproxy   # WebSocket proxy on http://localhost:5050
+$ PORTLESS=0 pnpm run storybook # Storybook on http://localhost:6006
+```
+
+Under `PORTLESS=0`, port selection falls back to `scripts/dev-config.js`, which honors `BAI_WEBUI_DEV_PORT_OFFSET` from `.env.development.local`. Example:
+
+```env
+# .env.development.local
+BAI_WEBUI_DEV_PORT_OFFSET=10    # shifts React port to 9091
 THEME_HEADER_COLOR=#9370DB
-
-# Green theme  
-THEME_HEADER_COLOR=#32CD32
-
-# Red theme
-THEME_HEADER_COLOR=#DC143C
 ```
 
-The theme color will override the default header background in development mode.
+## Theme Color
 
-## 🌐 Host Configuration
+The development build can tint the header to visually distinguish instances. Set `THEME_HEADER_COLOR` in `.env.development.local`:
 
-By default, servers bind to `localhost`. For remote access:
-
-```bash
-# Allow access from any IP
-HOST=0.0.0.0
-
-# Bind to specific IP
-HOST=192.168.1.100
+```env
+THEME_HEADER_COLOR=#9370DB
 ```
 
-## 🔧 Environment Variables
+Theme color works in **both** the Portless path and the `PORTLESS=0` legacy path. `pnpm run dev` sources `scripts/dev-config.js env` to export `REACT_APP_THEME_COLOR` before spawning the React dev server.
 
-The system uses `BAI_WEBUI_DEV_*` prefixed environment variables internally:
+## HTTPS (optional)
 
-- `BAI_WEBUI_DEV_REACT_PORT` - React development server port
-- `BAI_WEBUI_DEV_HOST` - Host address
-- `BAI_WEBUI_DEV_THEME_COLOR` - Theme color
+To run Portless with HTTP/2 + TLS (auto-generated certs):
 
-These are automatically generated from your configuration.
-
-## 📝 Examples
-
-### Example 1: Default Configuration
-```bash
-# Check default settings
-node scripts/dev-config.js show
-# Output:
-# 🚀 Backend.AI WebUI Development Configuration
-# 🌐 Host: localhost  
-# 📡 Ports:
-#    React: 9081
-# 🔢 Port Offset: +0
+```console
+$ portless proxy stop
+$ portless proxy start --https
+$ portless trust            # Add the local CA to your system trust store
 ```
 
-### Example 2: Custom Configuration
-```bash
-# Set custom configuration
-export BAI_WEBUI_DEV_PORT_OFFSET=30
-export THEME_HEADER_COLOR=#9370DB
-export HOST=192.168.1.100
+Your dev URLs then become `https://webui.localhost:1355` etc. Chrome-based browsers typically work out of the box after `portless trust`.
 
-# Check updated settings
-node scripts/dev-config.js show
-# Output:
-# 🚀 Backend.AI WebUI Development Configuration  
-# 🌐 Host: 192.168.1.100
-# 🎨 Theme Color: #9370DB [colored block]
-# 📡 Ports:
-#    React: 9111
-# 🔢 Port Offset: +30
-```
+## Troubleshooting
 
-### Example 3: Multiple Instances
-```bash
-# Terminal 1: Default instance
-cd webui-ai
-pnpm run dev
-# → React: 9081
+**`portless` is not installed or not on PATH**
+: Install it globally: `npm install -g portless`. Restart your shell if needed. Alternatively run the command with `PORTLESS=0` to bypass Portless entirely.
 
-# Terminal 2: Feature instance with offset
-cd webui-ai-feature  
-echo "BAI_WEBUI_DEV_PORT_OFFSET=10" > .env.development.local
-echo "THEME_HEADER_COLOR=#32CD32" >> .env.development.local
-pnpm run dev
-# → React: 9091, Green header
+**Proxy daemon will not start**
+: Run `portless proxy stop` and then `portless proxy start` manually to see the daemon's error output. Falling back to `PORTLESS=0` is always an option.
 
-# Terminal 3: Debug instance with different offset
-cd webui-ai-debug
-echo "BAI_WEBUI_DEV_PORT_OFFSET=20" > .env.development.local  
-echo "THEME_HEADER_COLOR=#DC143C" >> .env.development.local
-pnpm run dev
-# → React: 9101, Red header
-```
+**Safari shows "cannot find server"**
+: Run `sudo portless hosts sync` to add the current routes to `/etc/hosts`. Safari does not resolve `.localhost` subdomains via mDNS the way Chrome does.
 
-## 🚨 Important Notes
+**HMR does not reconnect**
+: CRA/Craco HMR is sensitive to proxying. If HMR loops on reload, try `PORTLESS=0 pnpm run dev` to confirm the issue is proxy-related, then adjust `WDS_SOCKET_PATH` / `CHOKIDAR_USEPOLLING` env vars as needed. Normal editor saves should work end to end.
 
-- `.env.development.local` is not tracked by git (personal settings)
-- Environment variables take precedence over `.env.development.local` file
-- Server restart required after configuration changes
-- Theme colors only apply in development mode
-- Port offset defaults to 0 when `BAI_WEBUI_DEV_PORT_OFFSET` is not set
-- Theme color is optional - no color applied when not specified
+**WSProxy dynamic session-app ports**
+: The V1 wsproxy assigns dynamic ports in the 10000-30000 range for individual session apps. Portless only manages the wsproxy listener (default `5050`); the dynamic app ports remain directly accessible on `localhost` and are not routed through Portless. This is an architectural property of V1 proxy mode, not a Portless limitation.
 
-## 🔧 Script Commands
+## What about Electron?
 
-```bash
-# Show current configuration
-node scripts/dev-config.js show
+Electron (`pnpm run electron:d`) is out of scope for Portless integration. It continues to use the bundled wsproxy and direct port wiring. If you need a Portless-backed dev server inside Electron, run `pnpm run dev` separately and configure `[server].webServerURL` in `config.toml` to point at the Portless URL.
 
-# Export environment variables  
-node scripts/dev-config.js env
+## Legacy files
 
-# Update and show configuration
-node scripts/dev-config.js update
-```
+The following files back the `PORTLESS=0` escape hatch and will be removed in FR-2702 once the Portless path has been validated:
 
-Now you can run multiple development environments simultaneously without port conflicts, each with distinct visual themes! 🎉
+- `scripts/dev-config.js` — port-offset + theme-color computation
+- `scripts/dev-config.test.ts` — tests for the above
+- `BAI_WEBUI_DEV_PORT_OFFSET` in `.env.development.local.sample`
+
+Do not add new functionality to these files — add it to the Portless wrappers (`scripts/dev.mjs`, `scripts/portless-run.mjs`) instead.

@@ -193,55 +193,61 @@ $ make compile_wsproxy
 
 ### Developing / testing with dev server
 
+Local development runs behind [Portless](https://github.com/vercel-labs/portless) by default. Install it once globally:
+
+```console
+$ npm install -g portless    # or: pnpm add -g portless
+```
+
 On a terminal:
 
 ```console
-$ pnpm run dev   # Starts TypeScript watch + Relay watch + React dev server
+$ pnpm run dev       # Starts TypeScript watch + Relay watch + React dev server
+# → http://webui.localhost:1355
 ```
 
-On another terminal:
+On another terminal (V1 proxy mode only):
 
 ```console
-$ pnpm run wsproxy   # Start websocket proxy (required for API calls)
+$ pnpm run wsproxy   # Start websocket proxy
+# → http://wsproxy.webui.localhost:1355
 ```
 
-#### Port configuration
+See [`DEV_ENVIRONMENT.md`](./DEV_ENVIRONMENT.md) for installation, multi-worktree workflows, Safari setup (`sudo portless hosts sync`), HTTPS mode, and troubleshooting.
 
-The default React dev server port is `9081`. To use a different port, create a `.env.development.local` file in the project root and set `BAI_WEBUI_DEV_PORT_OFFSET`:
+#### Legacy port-based fallback (`PORTLESS=0`)
 
-```
-# .env.development.local
-BAI_WEBUI_DEV_PORT_OFFSET=10   # shifts React port to 9091
-```
-
-Port assignment is managed by `scripts/dev-config.js`. To inspect the current port configuration:
+To bypass Portless (for example, if you cannot install it), set `PORTLESS=0`:
 
 ```console
-$ pnpm run dev:config   # Show current dev configuration
-$ pnpm run dev:setup    # Apply configuration to current environment
+$ PORTLESS=0 pnpm run dev       # React dev server on http://localhost:9081
+$ PORTLESS=0 pnpm run wsproxy   # WebSocket proxy on http://localhost:5050
+$ PORTLESS=0 pnpm --prefix ./packages/backend.ai-ui run storybook   # Storybook on http://localhost:6006
 ```
+
+The legacy flow honors `BAI_WEBUI_DEV_PORT_OFFSET` from `.env.development.local`. It is scheduled for removal in FR-2702.
 
 ### Commands Reference
 
-| Command | Description |
-|---------|-------------|
-| `pnpm run dev` | TypeScript watch + Relay watch + React dev server (concurrent) |
-| `pnpm run wsproxy` | WebSocket proxy (required for dev) |
-| `pnpm run build` | Full production build |
-| `pnpm run build:react-only` | Build only React app |
-| `pnpm run relay` | One-time Relay/GraphQL compile (project root) |
-| `cd react && pnpm run relay:watch` | Relay watch mode (uses nodemon) |
-| `pnpm run lint` | ESLint check |
-| `pnpm run lint-fix` | Auto-fix ESLint issues |
-| `pnpm run format` | Prettier format check |
-| `pnpm run format-fix` | Auto-fix formatting |
-| `bash scripts/verify.sh` | Run Relay + Lint + Format + TypeScript checks |
-| `pnpm run dev:config` | Show current dev port configuration |
-| `pnpm run dev:setup` | Apply dev configuration to current environment |
-| `pnpm run electron:d` | Run Electron in dev mode |
-| `pnpm run electron:d:hmr` | Run Electron in dev mode with HMR (live debug) |
-| `pnpm run test` | Jest unit tests (root: scripts/, src/) |
-| `cd react && pnpm run test` | Jest unit tests for React app |
+| Command                            | Description                                                                |
+| ---------------------------------- | -------------------------------------------------------------------------- |
+| `pnpm run dev`                     | TypeScript watch + Relay watch + React dev server (concurrent)             |
+| `pnpm run wsproxy`                 | WebSocket proxy (required for dev)                                         |
+| `pnpm run build`                   | Full production build                                                      |
+| `pnpm run build:react-only`        | Build only React app                                                       |
+| `pnpm run relay`                   | One-time Relay/GraphQL compile (project root)                              |
+| `cd react && pnpm run relay:watch` | Relay watch mode (uses nodemon)                                            |
+| `pnpm run lint`                    | ESLint check                                                               |
+| `pnpm run lint-fix`                | Auto-fix ESLint issues                                                     |
+| `pnpm run format`                  | Prettier format check                                                      |
+| `pnpm run format-fix`              | Auto-fix formatting                                                        |
+| `bash scripts/verify.sh`           | Run Relay + Lint + Format + TypeScript checks                              |
+| `pnpm run dev:config`              | Show current dev port configuration (legacy fallback, removed in FR-2702)  |
+| `pnpm run dev:setup`               | Apply legacy dev configuration to current environment (removed in FR-2702) |
+| `pnpm run electron:d`              | Run Electron in dev mode                                                   |
+| `pnpm run electron:d:hmr`          | Run Electron in dev mode with HMR (live debug)                             |
+| `pnpm run test`                    | Jest unit tests (root: scripts/, src/)                                     |
+| `cd react && pnpm run test`        | Jest unit tests for React app                                              |
 
 ### Unit Testing
 
@@ -260,6 +266,7 @@ $ cp e2e/envs/.env.playwright.sample e2e/envs/.env.playwright
 ```
 
 Available environment variables:
+
 - `E2E_WEBUI_ENDPOINT` - WebUI endpoint URL (default: `http://127.0.0.1:9081`)
 - `E2E_WEBSERVER_ENDPOINT` - Backend.AI server endpoint URL (default: `http://127.0.0.1:8090`)
 - User credentials: `E2E_ADMIN_EMAIL`, `E2E_ADMIN_PASSWORD`, `E2E_USER_EMAIL`, `E2E_USER_PASSWORD`, etc.

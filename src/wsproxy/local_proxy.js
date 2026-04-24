@@ -3,7 +3,12 @@ require('dotenv').config();
 const DEBUG = process.env.DEBUG === 'true';
 const proxyListenIP = process.env.PROXYLISTENIP || '127.0.0.1';
 const proxyBaseHost = process.env.PROXYBASEHOST || 'localhost';
-const proxyBasePort = parseInt(process.env.PROXYBASEPORT || 5050);
+// Prefer PROXYBASEPORT when explicitly set. Otherwise, honor `PORT` (e.g. the
+// port that Portless injects when running under its proxy), and finally fall
+// back to 5050 for standalone/legacy usage.
+const proxyBasePort = parseInt(
+  process.env.PROXYBASEPORT || process.env.PORT || 5050,
+);
 const ProxyManager = require('./manager.js');
 const logger = require('./lib/logger')(__filename);
 

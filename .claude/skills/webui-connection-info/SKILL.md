@@ -11,15 +11,39 @@ description: >
 
 ## Dev Server Address
 
-The WebUI dev server runs at **http://localhost:9081** by default.
-
-Port can be offset via `BAI_WEBUI_DEV_PORT_OFFSET` in `.env.development.local`. Actual port = `9081 + offset`.
+The WebUI dev server runs behind [Portless](https://github.com/vercel-labs/portless) by default at **http://webui.localhost:1355**. The subdomain is derived from the project directory name, so worktrees (e.g. `webui-feature`) get their own URL automatically.
 
 To check if the dev server is running:
+
+```bash
+curl -s -o /dev/null -w "%{http_code}" http://webui.localhost:1355 2>/dev/null
+```
+
+Inspect all Portless-routed services:
+
+```bash
+portless list
+```
+
+### Legacy fallback (`PORTLESS=0`)
+
+Some developers run the dev server without Portless. In that case the server is at **http://localhost:9081**, with an optional offset via `BAI_WEBUI_DEV_PORT_OFFSET` in `.env.development.local` (actual port = `9081 + offset`). Check the legacy port first if the Portless URL is not responding:
+
 ```bash
 curl -s -o /dev/null -w "%{http_code}" http://localhost:9081 2>/dev/null
 ```
-If not running, tell the user to start it with `pnpm run dev`.
+
+If neither is running, tell the user to start it with `pnpm run dev` (Portless) or `PORTLESS=0 pnpm run dev` (legacy).
+
+Related services (default URLs):
+
+| Service | Portless URL | Legacy URL (`PORTLESS=0`) |
+|---------|--------------|---------------------------|
+| React dev server | `http://webui.localhost:1355` | `http://localhost:9081` |
+| WebSocket proxy (V1) | `http://wsproxy.webui.localhost:1355` | `http://localhost:5050` |
+| Storybook | `http://storybook.webui.localhost:1355` | `http://localhost:6006` |
+
+The legacy flow is scheduled for removal in FR-2702.
 
 ## API Endpoint & Credentials
 
@@ -48,3 +72,4 @@ The app uses `config.toml` with `connectionMode = "SESSION"`. If `apiEndpoint` i
 - Passwords may contain special characters — handle quoting carefully.
 - The webpack-dev-server overlay can intercept clicks. Remove it via: `document.getElementById('webpack-dev-server-client-overlay')?.remove()`
 - If the "Endpoint" input field is not visible on the login page, click "Advanced" to expand it.
+- Safari requires `sudo portless hosts sync` once to resolve `.localhost` subdomains. Chromium/Firefox do not.
