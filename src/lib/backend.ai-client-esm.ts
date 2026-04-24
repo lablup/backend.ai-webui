@@ -1095,8 +1095,16 @@ class Client {
         // check_login() calls don't confuse it with a live session.
         // Mirrors the regular login() failure-path behavior.
         localStorage.removeItem('backendaiwebui.sessionid');
-        if (result.data && result.data.details) {
-          return Promise.resolve({ fail_reason: result.data.details });
+        if (result.data) {
+          // Surface both `details` (free-text) and `type` (problem URL) so
+          // the webui can classify the failure (`active-login-session-exists`,
+          // `require-totp-authentication`, etc.) without string-matching
+          // the user-visible message. Consumers read the last path segment
+          // of `fail_type` the same way LoginView's `extractErrorType` does.
+          return Promise.resolve({
+            fail_reason: result.data.details,
+            fail_type: result.data.type,
+          });
         } else {
           return Promise.resolve(false);
         }
