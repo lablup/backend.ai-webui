@@ -2,42 +2,45 @@
 /**
  * dev.mjs — unified entrypoint for `pnpm run dev`.
  *
- * By default runs the React dev server behind a Portless-managed URL
- * (e.g. http://webui.localhost:1355). Set `PORTLESS=0` to restore the legacy
- * port-offset flow driven by `scripts/dev-config.js`.
- *
- * Both branches launch TypeScript watch + Relay watch + the React dev server
- * concurrently, matching the previous `concurrently` layout.
+ * Runs the React dev server behind a Portless-managed URL
+ * (e.g. http://webui.localhost:1355). Launches TypeScript watch + Relay watch
+ * + the React dev server concurrently.
  */
-import { spawn, spawnSync } from "node:child_process";
+import { spawn } from "node:child_process";
+import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import process from "node:process";
 
 const cwd = process.cwd();
 const concurrentlyBin = path.join(cwd, "node_modules", ".bin", "concurrently");
 const tscBin = path.join(cwd, "node_modules", ".bin", "tsc");
-const usePortless = process.env.PORTLESS !== "0";
 
-function loadDevConfigEnv() {
-  const r = spawnSync("node", ["scripts/dev-config.js", "env"], {
-    encoding: "utf8",
-    cwd,
-  });
-  if (r.status !== 0) return {};
-  const out = {};
-  for (const line of (r.stdout || "").split("\n")) {
-    const m = line.match(/^export\s+([A-Z_][A-Z0-9_]*)=(.*)$/);
-    if (!m) continue;
-    let value = m[2].trim();
+/**
+ * Read `.env.development.local` and extract THEME_HEADER_COLOR so the React
+ * dev server can pick it up as `REACT_APP_THEME_COLOR`. Returns an empty
+ * object when the file is missing or the key is unset.
+ */
+function loadThemeColorEnv() {
+  const envFile = path.join(cwd, ".env.development.local");
+  if (!existsSync(envFile)) return {};
+  let themeColor;
+  for (const rawLine of readFileSync(envFile, "utf8").split("\n")) {
+    const line = rawLine.trim();
+    if (!line || line.startsWith("#")) continue;
+    const eq = line.indexOf("=");
+    if (eq === -1) continue;
+    const key = line.slice(0, eq).trim();
+    if (key !== "THEME_HEADER_COLOR") continue;
+    let value = line.slice(eq + 1).trim();
     if (
       (value.startsWith('"') && value.endsWith('"')) ||
       (value.startsWith("'") && value.endsWith("'"))
     ) {
       value = value.slice(1, -1);
     }
-    if (value && value !== "undefined") out[m[1]] = value;
+    if (value && value !== "undefined") themeColor = value;
   }
-  return out;
+  return themeColor ? { REACT_APP_THEME_COLOR: themeColor } : {};
 }
 
 function runConcurrently(reactStartCommand, extraEnv) {
@@ -68,33 +71,9 @@ function runConcurrently(reactStartCommand, extraEnv) {
   }
 }
 
-function runLegacy() {
-  // Print legacy config banner for parity with the pre-Portless script.
-  const updateResult = spawnSync("node", ["scripts/dev-config.js", "update"], {
-    stdio: "inherit",
-    cwd,
-  });
-  if (updateResult.status !== 0) process.exit(updateResult.status ?? 1);
-  const env = loadDevConfigEnv();
-  const host = env.BAI_WEBUI_DEV_HOST || "localhost";
-  const port = env.BAI_WEBUI_DEV_REACT_PORT || "9081";
-  const reactCmd = `HOST=${host} PORT=${port} pnpm --prefix ./react run start`;
-  runConcurrently(reactCmd, env);
-}
-
-function runPortless() {
-  // Keep theme-color working by sourcing dev-config's env exports. This also
-  // ensures `REACT_APP_THEME_COLOR` is set for CRA during the Portless path.
-  const themeEnv = loadDevConfigEnv();
-  // Do not fix HOST/PORT in the Portless path — Portless injects `PORT` and
-  // CRA/Craco listens on it. Forward all env vars including theme color.
-  const reactCmd =
-    "node scripts/portless-run.mjs --name webui --auto-start --source-dev-config -- pnpm --prefix ./react run start";
-  console.log(
-    "[dev] Using Portless (default). Set PORTLESS=0 to run the legacy port-9081(+offset) flow.",
-  );
-  runConcurrently(reactCmd, themeEnv);
-}
-
-if (usePortless) runPortless();
-else runLegacy();
+// Portless injects `PORT` and CRA/Craco listens on it. Forward theme color
+// so the built CSS can tint the header per-worktree.
+const themeEnv = loadThemeColorEnv();
+const reactCmd =
+  "node scripts/portless-run.mjs --name webui --auto-start -- pnpm --prefix ./react run start";
+runConcurrently(reactCmd, themeEnv);

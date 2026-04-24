@@ -16,7 +16,7 @@
     "format-fix:all": "prettier --write 'src/**/*.{js,jsx,ts,tsx,json,css,scss,md}' 'react/src/**/*.{js,jsx,ts,tsx,json,css,scss,md}'",
     "format-fix:i18n": "prettier --write 'resources/i18n/*.json'",
     "test": "jest",
-    "wsproxy": "node scripts/portless-run.mjs --name wsproxy.webui --auto-start --legacy-env PROXYBASEPORT=5050 -- node ./src/wsproxy/local_proxy.js",
+    "wsproxy": "node scripts/portless-run.mjs --name wsproxy.webui --auto-start -- node ./src/wsproxy/local_proxy.js",
     "build": "rm -rf build/web dist && mkdir -p build/web && pnpm run copyindex && pnpm run copyresource && pnpm run copyconfig && tsc && pnpm run -r --stream build",
     "build:react-only": "pnpm run --prefix ./react build:only",
     "server:p": "serve build/web",
@@ -28,9 +28,7 @@
     "copyconfig": "./scripts/copy-config.js && cp version.json build/web && cp manifest.json build/web",
     "copyindex": "cp index.html build/web",
     "prepare": "husky",
-    "theme-schema:update": "node scripts/gen-theme-schema.cjs",
-    "dev:config": "node scripts/dev-config.js show",
-    "dev:setup": "node scripts/dev-config.js update"
+    "theme-schema:update": "node scripts/gen-theme-schema.cjs"
   },
   "dependencies": {
     "@iarna/toml": "^2.2.5",

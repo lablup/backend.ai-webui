@@ -25,25 +25,15 @@ Inspect all Portless-routed services:
 portless list
 ```
 
-### Legacy fallback (`PORTLESS=0`)
-
-Some developers run the dev server without Portless. In that case the server is at **http://localhost:9081**, with an optional offset via `BAI_WEBUI_DEV_PORT_OFFSET` in `.env.development.local` (actual port = `9081 + offset`). Check the legacy port first if the Portless URL is not responding:
-
-```bash
-curl -s -o /dev/null -w "%{http_code}" http://localhost:9081 2>/dev/null
-```
-
-If neither is running, tell the user to start it with `pnpm run dev` (Portless) or `PORTLESS=0 pnpm run dev` (legacy).
+If the dev server is not running, tell the user to start it with `pnpm run dev`.
 
 Related services (default URLs):
 
-| Service | Portless URL | Legacy URL (`PORTLESS=0`) |
-|---------|--------------|---------------------------|
-| React dev server | `http://webui.localhost:1355` | `http://localhost:9081` |
-| WebSocket proxy (V1) | `http://wsproxy.webui.localhost:1355` | `http://localhost:5050` |
-| Storybook | `http://storybook.webui.localhost:1355` | `http://localhost:6006` |
-
-The legacy flow is scheduled for removal in FR-2702.
+| Service | Portless URL |
+|---------|--------------|
+| React dev server | `http://webui.localhost:1355` |
+| WebSocket proxy (V1) | `http://wsproxy.webui.localhost:1355` |
+| Storybook | `http://storybook.webui.localhost:1355` |
 
 ## API Endpoint & Credentials
 

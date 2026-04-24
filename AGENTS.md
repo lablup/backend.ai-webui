@@ -6,8 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Development
 
-- `pnpm run dev` - Start development environment behind Portless (TypeScript watch + Relay watch + React dev server at `http://webui.localhost:1355`). Set `PORTLESS=0` to fall back to the legacy port-9081(+offset) flow.
-- `pnpm run wsproxy` - Start websocket proxy behind Portless at `http://wsproxy.webui.localhost:1355`. `PORTLESS=0` falls back to port 5050.
+- `pnpm run dev` - Start development environment behind Portless (TypeScript watch + Relay watch + React dev server at `http://webui.localhost:1355`).
+- `pnpm run wsproxy` - Start websocket proxy behind Portless at `http://wsproxy.webui.localhost:1355`.
 
 ### Build and Production
 
@@ -95,7 +95,7 @@ Production build (`pnpm run build`) runs these steps sequentially:
 ### Development Workflow
 
 1. **Dev Server**: Run `pnpm run dev` (TypeScript watch + Relay watch + React dev server behind Portless) and `pnpm run wsproxy` (WebSocket proxy behind Portless) for full development. See `DEV_ENVIRONMENT.md`.
-2. **Port Configuration**: Portless derives URLs from the project directory name (e.g. `http://webui.localhost:1355`). The legacy port-offset flow managed by `scripts/dev-config.js` is still reachable via `PORTLESS=0` and will be removed in FR-2702.
+2. **Port Configuration**: Portless derives URLs from the project directory name (e.g. `http://webui.localhost:1355`).
 3. **Testing**: Jest unit tests + Playwright E2E tests
 4. **Linting**: ESLint 9 (flat config) + Prettier with pre-commit hooks via Husky
 

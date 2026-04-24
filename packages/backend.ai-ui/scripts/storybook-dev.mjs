@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 /**
  * storybook-dev.mjs — launches `storybook dev` on the port specified by
- * `process.env.PORT`. Used by the top-level storybook script so that Portless
- * (which injects PORT) and the legacy PORT=6006 flow are both honored.
+ * `process.env.PORT`. Portless injects PORT at runtime; the `6006` default is
+ * only used as a safety fallback when PORT is unset.
  */
 import { spawn } from 'node:child_process';
 import process from 'node:process';

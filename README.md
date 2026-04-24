@@ -215,18 +215,6 @@ $ pnpm run wsproxy   # Start websocket proxy
 
 See [`DEV_ENVIRONMENT.md`](./DEV_ENVIRONMENT.md) for installation, multi-worktree workflows, Safari setup (`sudo portless hosts sync`), HTTPS mode, and troubleshooting.
 
-#### Legacy port-based fallback (`PORTLESS=0`)
-
-To bypass Portless (for example, if you cannot install it), set `PORTLESS=0`:
-
-```console
-$ PORTLESS=0 pnpm run dev       # React dev server on http://localhost:9081
-$ PORTLESS=0 pnpm run wsproxy   # WebSocket proxy on http://localhost:5050
-$ PORTLESS=0 pnpm --prefix ./packages/backend.ai-ui run storybook   # Storybook on http://localhost:6006
-```
-
-The legacy flow honors `BAI_WEBUI_DEV_PORT_OFFSET` from `.env.development.local`. It is scheduled for removal in FR-2702.
-
 ### Commands Reference
 
 | Command                            | Description                                                                |
@@ -242,8 +230,6 @@ The legacy flow honors `BAI_WEBUI_DEV_PORT_OFFSET` from `.env.development.local`
 | `pnpm run format`                  | Prettier format check                                                      |
 | `pnpm run format-fix`              | Auto-fix formatting                                                        |
 | `bash scripts/verify.sh`           | Run Relay + Lint + Format + TypeScript checks                              |
-| `pnpm run dev:config`              | Show current dev port configuration (legacy fallback, removed in FR-2702)  |
-| `pnpm run dev:setup`               | Apply legacy dev configuration to current environment (removed in FR-2702) |
 | `pnpm run electron:d`              | Run Electron in dev mode                                                   |
 | `pnpm run electron:d:hmr`          | Run Electron in dev mode with HMR (live debug)                             |
 | `pnpm run test`                    | Jest unit tests (root: scripts/, src/)                                     |
