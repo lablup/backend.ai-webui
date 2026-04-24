@@ -4,6 +4,29 @@
   "slug": "portless-dev-environment",
   "specTaskKey": "FR-2321",
   "stories": [],
+  "subtasks": [
+    {
+      "key": "FR-2701",
+      "slug": "integration",
+      "title": "Integrate Portless as primary dev path with legacy fallback",
+      "branch": "feat/portless-integration",
+      "dependsOn": []
+    },
+    {
+      "key": "FR-2702",
+      "slug": "remove-legacy",
+      "title": "Remove legacy port-offset dev config",
+      "branch": "feat/portless-remove-legacy",
+      "dependsOn": ["FR-2701"]
+    }
+  ],
+  "discardedSubtasks": [
+    { "key": "FR-2703", "status": "Not Planned", "reason": "Consolidated into FR-2701" },
+    { "key": "FR-2704", "status": "Not Planned", "reason": "Consolidated into FR-2701" },
+    { "key": "FR-2705", "status": "Not Planned", "reason": "Consolidated into FR-2702" },
+    { "key": "FR-2706", "status": "Not Planned", "reason": "Consolidated into FR-2701/FR-2702" }
+  ],
   "sourceIssues": ["FR-2304"],
-  "createdAt": "2026-03-18T00:00:00.000Z"
+  "createdAt": "2026-03-18T00:00:00.000Z",
+  "planUpdatedAt": "2026-04-24T00:00:00.000Z"
 }
