@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { loadMonacoEditor } from '../helper/monacoEditor';
 import { useTanQuery, useTanMutation } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useThemeMode } from '../hooks/useThemeMode';
@@ -31,7 +32,7 @@ import React, {
 import { useTranslation } from 'react-i18next';
 
 const MonacoEditor = React.lazy(() =>
-  import('@monaco-editor/react').then((module) => ({
+  loadMonacoEditor().then((module) => ({
     default: module.Editor,
   })),
 );

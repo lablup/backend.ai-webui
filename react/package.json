@@ -54,6 +54,7 @@
     "lucide-react": "catalog:",
     "markdown-to-jsx": "^7.7.17",
     "marked": "catalog:",
+    "monaco-editor": "^0.55.1",
     "nanoid": "^5.1.7",
     "nuqs": "^2.8.9",
     "p-queue": "^8.1.1",
