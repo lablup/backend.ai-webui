@@ -2072,11 +2072,12 @@
     "Updated": "リソースプリセットが更新されました"
   },
   "sTokenLoginBoundary": {
-    "AuthenticatingDescription": "Authenticating with your single sign-on token. This usually takes only a moment.",
+"AuthenticatingDescription": "ログイントークンを確認しています…",
     "AuthenticatingTitle": "Signing you in",
+    "ConnectingDescription": "Backend.AIサーバーに接続しています…",
     "CopyErrorDetails": "Copy error details",
-    "ErrorConcurrentSessionDescription": "This account is already signed in somewhere else. Please close the other session and try again.",
-    "ErrorConcurrentSessionTitle": "Another active session was detected.",
+    "ErrorConcurrentSessionDescription": "別の場所で既にログインしています。既存のログインを終了して、こちらでログインしますか？",
+    "ErrorConcurrentSessionTitle": "別の場所でログイン中",
     "ErrorDetailsCopied": "Error details copied to clipboard.",
     "ErrorDetailsCopyFailed": "Failed to copy error details. Please copy them manually from the page.",
     "ErrorEndpointUnresolvedDescription": "The Backend.AI server address could not be resolved from the configuration file. Please try again in a moment or contact your administrator.",
@@ -2087,9 +2088,14 @@
     "ErrorServerUnreachableTitle": "Cannot reach the Backend.AI server.",
     "ErrorTokenInvalidDescription": "The sign-in token may have expired or been revoked. Please restart the sign-in flow from your original application.",
     "ErrorTokenInvalidTitle": "Your sign-in token is not valid.",
+    "ErrorTotpInvalidHint": "入力されたコードは受け付けられませんでした。もう一度お試しください。",
+    "ErrorTotpRequiredDescription": "続行するには、認証アプリのコードを入力してください。",
+    "ErrorTotpRequiredTitle": "二要素認証が必要です",
     "ErrorUnknownDescription": "An unexpected error occurred while signing in. Please try again, and copy the error details below if the problem persists.",
     "ErrorUnknownTitle": "Sign-in failed unexpectedly.",
-    "Retry": "Retry"
+    "Retry": "Retry",
+    "SubmitOtp": "送信",
+    "TotpPlaceholder": "認証コード"
   },
   "scanArtifactModelsFromHuggingFaceModal": {
     "EnterAModelID": "モデルIDを入力してください。（例：openai/gpt-oss-20b）",

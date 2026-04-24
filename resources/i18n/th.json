@@ -2072,11 +2072,12 @@
     "Updated": "อัปเดตค่าที่กำหนดไว้ล่วงหน้าของทรัพยากรแล้ว"
   },
   "sTokenLoginBoundary": {
-    "AuthenticatingDescription": "Authenticating with your single sign-on token. This usually takes only a moment.",
+"AuthenticatingDescription": "กำลังตรวจสอบโทเคนการเข้าสู่ระบบของคุณ…",
     "AuthenticatingTitle": "Signing you in",
+    "ConnectingDescription": "กำลังเชื่อมต่อกับเซิร์ฟเวอร์ Backend.AI…",
     "CopyErrorDetails": "Copy error details",
-    "ErrorConcurrentSessionDescription": "This account is already signed in somewhere else. Please close the other session and try again.",
-    "ErrorConcurrentSessionTitle": "Another active session was detected.",
+    "ErrorConcurrentSessionDescription": "มีการเข้าสู่ระบบจากที่อื่นอยู่แล้ว ต้องการยุติการเข้าสู่ระบบเดิมและเข้าสู่ระบบที่นี่หรือไม่?",
+    "ErrorConcurrentSessionTitle": "กำลังเข้าสู่ระบบจากที่อื่น",
     "ErrorDetailsCopied": "Error details copied to clipboard.",
     "ErrorDetailsCopyFailed": "Failed to copy error details. Please copy them manually from the page.",
     "ErrorEndpointUnresolvedDescription": "The Backend.AI server address could not be resolved from the configuration file. Please try again in a moment or contact your administrator.",
@@ -2087,9 +2088,14 @@
     "ErrorServerUnreachableTitle": "Cannot reach the Backend.AI server.",
     "ErrorTokenInvalidDescription": "The sign-in token may have expired or been revoked. Please restart the sign-in flow from your original application.",
     "ErrorTokenInvalidTitle": "Your sign-in token is not valid.",
+    "ErrorTotpInvalidHint": "รหัสที่คุณป้อนไม่ถูกต้อง กรุณาลองอีกครั้ง",
+    "ErrorTotpRequiredDescription": "กรุณาป้อนรหัสจากแอปยืนยันตัวตนของคุณเพื่อดำเนินการต่อ",
+    "ErrorTotpRequiredTitle": "จำเป็นต้องยืนยันตัวตนสองขั้นตอน",
     "ErrorUnknownDescription": "An unexpected error occurred while signing in. Please try again, and copy the error details below if the problem persists.",
     "ErrorUnknownTitle": "Sign-in failed unexpectedly.",
-    "Retry": "Retry"
+    "Retry": "Retry",
+    "SubmitOtp": "ส่ง",
+    "TotpPlaceholder": "รหัสยืนยันตัวตน"
   },
   "scanArtifactModelsFromHuggingFaceModal": {
     "EnterAModelID": "กรุณาใส่ ID ของโมเดล (เช่น: openai/gpt-oss-20b)",

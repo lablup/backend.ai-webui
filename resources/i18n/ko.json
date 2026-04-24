@@ -2082,11 +2082,12 @@
     "Updated": "자원 프리셋이 수정되었습니다"
   },
   "sTokenLoginBoundary": {
-    "AuthenticatingDescription": "싱글 사인온 토큰으로 로그인하고 있습니다. 잠시만 기다려 주세요.",
+    "AuthenticatingDescription": "로그인 토큰을 확인하고 있습니다…",
     "AuthenticatingTitle": "로그인 중",
+    "ConnectingDescription": "Backend.AI 서버에 연결 중…",
     "CopyErrorDetails": "오류 세부 정보 복사",
-    "ErrorConcurrentSessionDescription": "다른 곳에서 이미 로그인되어 있습니다. 해당 세션을 종료한 뒤 다시 시도해 주세요.",
-    "ErrorConcurrentSessionTitle": "이미 다른 세션에서 로그인된 상태입니다.",
+    "ErrorConcurrentSessionDescription": "다른 곳에서 이미 로그인되어 있습니다. 기존 로그인을 종료하고 여기에서 로그인하시겠습니까?",
+    "ErrorConcurrentSessionTitle": "다른 곳에서 로그인 중",
     "ErrorDetailsCopied": "오류 세부 정보가 클립보드에 복사되었습니다.",
     "ErrorDetailsCopyFailed": "오류 세부 정보를 복사하지 못했습니다. 페이지에서 직접 복사해 주세요.",
     "ErrorEndpointUnresolvedDescription": "구성 파일에서 Backend.AI 서버 주소를 확인하지 못했습니다. 잠시 후 다시 시도하거나 관리자에게 문의하세요.",
@@ -2097,9 +2098,16 @@
     "ErrorServerUnreachableTitle": "Backend.AI 서버에 연결할 수 없습니다.",
     "ErrorTokenInvalidDescription": "로그인 토큰이 만료되었거나 해지되었을 수 있습니다. 원래 애플리케이션에서 로그인 절차를 다시 시작해 주세요.",
     "ErrorTokenInvalidTitle": "로그인 토큰이 유효하지 않습니다.",
+    "ErrorTotpInvalidHint": "입력하신 코드가 올바르지 않습니다. 다시 시도해 주세요.",
+    "ErrorTotpRequiredDescription": "인증기 앱에 표시된 코드를 입력해 계속 진행하세요.",
+    "ErrorTotpRequiredMessage": "인증기 앱의 코드를 입력해 주세요.",
+    "ErrorTotpRequiredTitle": "2단계 인증이 필요합니다",
     "ErrorUnknownDescription": "로그인 중 알 수 없는 오류가 발생했습니다. 다시 시도해 주시고, 문제가 계속되면 아래 오류 세부 정보를 복사해 전달해 주세요.",
     "ErrorUnknownTitle": "로그인 중 예기치 않은 오류가 발생했습니다.",
-    "Retry": "다시 시도"
+    "ForceLogin": "그래도 로그인",
+    "Retry": "다시 시도",
+    "SubmitOtp": "확인",
+    "TotpPlaceholder": "인증 코드"
   },
   "scanArtifactModelsFromHuggingFaceModal": {
     "EnterAModelID": "모델 ID를 입력하십시오. (예 : openai/gpt-oss-20b)",

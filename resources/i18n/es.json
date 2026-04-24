@@ -2070,11 +2070,12 @@
     "Updated": "Preajuste de recursos actualizado"
   },
   "sTokenLoginBoundary": {
-    "AuthenticatingDescription": "Authenticating with your single sign-on token. This usually takes only a moment.",
+"AuthenticatingDescription": "Verificando su token de inicio de sesión…",
     "AuthenticatingTitle": "Signing you in",
+    "ConnectingDescription": "Conectando al servidor Backend.AI…",
     "CopyErrorDetails": "Copy error details",
-    "ErrorConcurrentSessionDescription": "This account is already signed in somewhere else. Please close the other session and try again.",
-    "ErrorConcurrentSessionTitle": "Another active session was detected.",
+    "ErrorConcurrentSessionDescription": "Ya ha iniciado sesión en otro lugar. ¿Desea cerrar la sesión existente e iniciar sesión aquí?",
+    "ErrorConcurrentSessionTitle": "Sesión iniciada en otro lugar",
     "ErrorDetailsCopied": "Error details copied to clipboard.",
     "ErrorDetailsCopyFailed": "Failed to copy error details. Please copy them manually from the page.",
     "ErrorEndpointUnresolvedDescription": "The Backend.AI server address could not be resolved from the configuration file. Please try again in a moment or contact your administrator.",
@@ -2085,9 +2086,14 @@
     "ErrorServerUnreachableTitle": "Cannot reach the Backend.AI server.",
     "ErrorTokenInvalidDescription": "The sign-in token may have expired or been revoked. Please restart the sign-in flow from your original application.",
     "ErrorTokenInvalidTitle": "Your sign-in token is not valid.",
+    "ErrorTotpInvalidHint": "El código introducido no fue aceptado. Por favor, inténtelo de nuevo.",
+    "ErrorTotpRequiredDescription": "Ingrese el código de su aplicación de autenticación para continuar.",
+    "ErrorTotpRequiredTitle": "Se requiere autenticación de dos factores",
     "ErrorUnknownDescription": "An unexpected error occurred while signing in. Please try again, and copy the error details below if the problem persists.",
     "ErrorUnknownTitle": "Sign-in failed unexpectedly.",
-    "Retry": "Retry"
+    "Retry": "Retry",
+    "SubmitOtp": "Enviar",
+    "TotpPlaceholder": "Código de autenticación"
   },
   "scanArtifactModelsFromHuggingFaceModal": {
     "EnterAModelID": "Introduzca el ID del modelo. (p. ej.: openai/gpt-oss-20b)",

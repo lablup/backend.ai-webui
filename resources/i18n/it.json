@@ -2070,11 +2070,12 @@
     "Updated": "Preimpostazione delle risorse aggiornata"
   },
   "sTokenLoginBoundary": {
-    "AuthenticatingDescription": "Authenticating with your single sign-on token. This usually takes only a moment.",
+"AuthenticatingDescription": "Verifica del token di accesso in corso…",
     "AuthenticatingTitle": "Signing you in",
+    "ConnectingDescription": "Connessione al server Backend.AI…",
     "CopyErrorDetails": "Copy error details",
-    "ErrorConcurrentSessionDescription": "This account is already signed in somewhere else. Please close the other session and try again.",
-    "ErrorConcurrentSessionTitle": "Another active session was detected.",
+    "ErrorConcurrentSessionDescription": "Sei già connesso altrove. Vuoi terminare la sessione esistente e accedere qui?",
+    "ErrorConcurrentSessionTitle": "Accesso da un altro dispositivo",
     "ErrorDetailsCopied": "Error details copied to clipboard.",
     "ErrorDetailsCopyFailed": "Failed to copy error details. Please copy them manually from the page.",
     "ErrorEndpointUnresolvedDescription": "The Backend.AI server address could not be resolved from the configuration file. Please try again in a moment or contact your administrator.",
@@ -2085,9 +2086,14 @@
     "ErrorServerUnreachableTitle": "Cannot reach the Backend.AI server.",
     "ErrorTokenInvalidDescription": "The sign-in token may have expired or been revoked. Please restart the sign-in flow from your original application.",
     "ErrorTokenInvalidTitle": "Your sign-in token is not valid.",
+    "ErrorTotpInvalidHint": "Il codice inserito non è stato accettato. Riprova.",
+    "ErrorTotpRequiredDescription": "Inserisci il codice dell'app di autenticazione per continuare.",
+    "ErrorTotpRequiredTitle": "Autenticazione a due fattori richiesta",
     "ErrorUnknownDescription": "An unexpected error occurred while signing in. Please try again, and copy the error details below if the problem persists.",
     "ErrorUnknownTitle": "Sign-in failed unexpectedly.",
-    "Retry": "Retry"
+    "Retry": "Retry",
+    "SubmitOtp": "Invia",
+    "TotpPlaceholder": "Codice di autenticazione"
   },
   "scanArtifactModelsFromHuggingFaceModal": {
     "EnterAModelID": "Inserisci l'ID del modello. (es.: openai/gpt-oss-20b)",
