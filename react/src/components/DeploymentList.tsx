@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import type { DeploymentListDeleteMutation } from '../__generated__/DeploymentListDeleteMutation.graphql';
 import {
   DeploymentList_modelDeploymentConnection$data,
   DeploymentList_modelDeploymentConnection$key,
@@ -10,22 +11,28 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import BAIRadioGroup from './BAIRadioGroup';
 import DeploymentOwnerInfo from './DeploymentOwnerInfo';
 import DeploymentStatusTag, { DeploymentStatus } from './DeploymentStatusTag';
-import { Tag, Typography } from 'antd';
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { Alert, App, Tag, Typography, theme } from 'antd';
 import {
+  BAIConfirmModalWithInput,
   BAIFlex,
   BAIGraphQLPropertyFilter,
+  BAINameActionCell,
   BAITable,
   filterOutEmpty,
   filterOutNullAndUndefined,
+  toLocalId,
+  useBAILogger,
   type BAIColumnType,
+  type BAINameActionCellAction,
   type BAITableProps,
   type GraphQLFilter,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useFragment } from 'react-relay';
+import { graphql, useFragment, useMutation } from 'react-relay';
 
 type DeploymentEdge = NonNullable<
   NonNullable<DeploymentList_modelDeploymentConnection$data['edges']>[number]
@@ -116,6 +123,10 @@ export interface DeploymentListProps extends Omit<
   mode: 'user' | 'admin';
   /** Called when a row name is clicked. Receives the deployment global ID. */
   onRowClick?: (deploymentId: string) => void;
+  /** Called when the edit action button is clicked. Receives the deployment global ID. */
+  onEditClick?: (deploymentId: string) => void;
+  /** Called after a deployment is successfully deleted. Use to refresh the list. */
+  onDeleteComplete?: () => void;
   /** Extra elements rendered at the end of the toolbar row (e.g. refresh + create buttons). */
   toolbarEnd?: React.ReactNode;
 }
@@ -129,12 +140,30 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
   onStatusCategoryChange,
   mode,
   onRowClick,
+  onEditClick,
+  onDeleteComplete,
   toolbarEnd,
   ...tableProps
 }) => {
   'use memo';
   const { t } = useTranslation();
+  const { message } = App.useApp();
+  const { token } = theme.useToken();
+  const { logger } = useBAILogger();
   const baiClient = useSuspendedBackendaiClient();
+  const [deletingDeployment, setDeletingDeployment] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
+
+  const [commitDeleteMutation, isInFlightDeleteMutation] =
+    useMutation<DeploymentListDeleteMutation>(graphql`
+      mutation DeploymentListDeleteMutation($input: DeleteDeploymentInput!) {
+        deleteModelDeployment(input: $input) {
+          id
+        }
+      }
+    `);
 
   const connection = useFragment(
     graphql`
@@ -246,16 +275,34 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
       fixed: 'left' as const,
       render: (_text, row) => {
         const name = row.metadata?.name ?? '-';
-        if (!onRowClick) {
-          return <Typography.Text>{name}</Typography.Text>;
+        const isDestroying = ['STOPPING', 'STOPPED', 'TERMINATED'].includes(
+          row.metadata?.status ?? '',
+        );
+        const actions: BAINameActionCellAction[] = [];
+        if (onEditClick) {
+          actions.push({
+            key: 'edit',
+            title: t('deployment.EditDeployment'),
+            icon: <EditOutlined />,
+            disabled: isDestroying,
+            onClick: () => onEditClick(row.id),
+          });
         }
+        actions.push({
+          key: 'delete',
+          title: t('deployment.DeleteDeployment'),
+          icon: <DeleteOutlined />,
+          type: 'danger',
+          disabled: isDestroying,
+          onClick: () => setDeletingDeployment({ id: row.id, name }),
+        });
         return (
-          <Typography.Link
-            onClick={() => onRowClick(row.id)}
-            style={{ maxWidth: 240 }}
-          >
-            {name}
-          </Typography.Link>
+          <BAINameActionCell
+            title={name}
+            onTitleClick={onRowClick ? () => onRowClick(row.id) : undefined}
+            actions={actions}
+            showActions="always"
+          />
         );
       },
     },
@@ -370,42 +417,90 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
       : { ...tableProps.pagination, total: totalCount };
 
   return (
-    <BAIFlex direction="column" align="stretch" gap="sm">
-      <BAIFlex justify="between" wrap="wrap" gap="sm">
-        <BAIFlex gap="sm" align="start" wrap="wrap" style={{ flexShrink: 1 }}>
-          <BAIRadioGroup
-            value={statusCategory}
-            onChange={(e) => onStatusCategoryChange?.(e.target.value)}
-            options={[
-              { label: t('deployment.Running'), value: 'running' },
-              { label: t('deployment.status.Terminated'), value: 'finished' },
-            ]}
-          />
-          <BAIGraphQLPropertyFilter
-            filterProperties={filterProperties}
-            value={filterValue}
-            onChange={(next) => {
-              setFilter(stringifyFilter(next));
-            }}
-          />
+    <>
+      <BAIFlex direction="column" align="stretch" gap="sm">
+        <BAIFlex justify="between" wrap="wrap" gap="sm">
+          <BAIFlex gap="sm" align="start" wrap="wrap" style={{ flexShrink: 1 }}>
+            <BAIRadioGroup
+              value={statusCategory}
+              onChange={(e) => onStatusCategoryChange?.(e.target.value)}
+              options={[
+                { label: t('deployment.Running'), value: 'running' },
+                { label: t('deployment.status.Terminated'), value: 'finished' },
+              ]}
+            />
+            <BAIGraphQLPropertyFilter
+              filterProperties={filterProperties}
+              value={filterValue}
+              onChange={(next) => {
+                setFilter(stringifyFilter(next));
+              }}
+            />
+          </BAIFlex>
+          {toolbarEnd}
         </BAIFlex>
-        {toolbarEnd}
+        <div style={{ overflowX: 'auto' }}>
+          <BAITable<DeploymentNode>
+            rowKey="id"
+            scroll={{ x: 'max-content' }}
+            showSorterTooltip={false}
+            {...tableProps}
+            dataSource={deployments}
+            columns={columns}
+            onChangeOrder={(order) => {
+              onChangeOrder?.(order || null);
+            }}
+            pagination={paginationWithTotal}
+          />
+        </div>
       </BAIFlex>
-      <div style={{ overflowX: 'auto' }}>
-        <BAITable<DeploymentNode>
-          rowKey="id"
-          scroll={{ x: 'max-content' }}
-          showSorterTooltip={false}
-          {...tableProps}
-          dataSource={deployments}
-          columns={columns}
-          onChangeOrder={(order) => {
-            onChangeOrder?.(order || null);
-          }}
-          pagination={paginationWithTotal}
-        />
-      </div>
-    </BAIFlex>
+      <BAIConfirmModalWithInput
+        open={!!deletingDeployment}
+        title={t('deployment.DeleteDeployment')}
+        content={
+          <BAIFlex direction="column" gap="md" align="stretch">
+            <Alert type="warning" title={t('dialog.warning.CannotBeUndone')} />
+            <BAIFlex>
+              <Typography.Text style={{ marginRight: token.marginXXS }}>
+                {t('dialog.TypeNameToConfirmDeletion')}
+              </Typography.Text>
+              (
+              <Typography.Text code>{deletingDeployment?.name}</Typography.Text>
+              )
+            </BAIFlex>
+          </BAIFlex>
+        }
+        confirmText={deletingDeployment?.name ?? ''}
+        inputProps={{ placeholder: deletingDeployment?.name ?? '' }}
+        okText={t('button.Delete')}
+        okButtonProps={{ loading: isInFlightDeleteMutation }}
+        onOk={() => {
+          if (!deletingDeployment) return;
+          commitDeleteMutation({
+            variables: {
+              input: {
+                id: toLocalId(deletingDeployment.id) ?? deletingDeployment.id,
+              },
+            },
+            onCompleted: (_response, errors) => {
+              if (errors && errors.length > 0) {
+                logger.error('Failed to delete deployment', errors);
+                message.error(t('deployment.FailedToDeleteDeployment'));
+                return;
+              }
+              message.success(t('deployment.DeploymentDeleted'));
+              setDeletingDeployment(null);
+              onDeleteComplete?.();
+            },
+            onError: (error) => {
+              logger.error('Failed to delete deployment', error);
+              message.error(t('deployment.FailedToDeleteDeployment'));
+            },
+          });
+        }}
+        onCancel={() => setDeletingDeployment(null)}
+      />
+    </>
   );
 };
 

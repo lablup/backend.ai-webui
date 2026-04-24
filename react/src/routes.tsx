@@ -24,7 +24,6 @@ import { useWebUIMenuItems } from './hooks/useWebUIMenuItems';
 import { pluginApiEndpointState } from './hooks/useWebUIPluginState';
 // High priority to import the component
 import ComputeSessionListPage from './pages/ComputeSessionListPage';
-import LegacyModelStoreListPage from './pages/LegacyModelStoreListPage';
 import Page404 from './pages/Page404';
 import VFolderNodeListPage from './pages/VFolderNodeListPage';
 import { Skeleton, theme } from 'antd';
@@ -77,6 +76,7 @@ const FileUploadManager = React.lazy(
 // component is still imported transitively (by `useModelServiceLauncher`,
 // `LegacyModelTryContentButton`, etc.) and is scheduled for removal in a
 // follow-up cleanup once those call sites migrate to the new hook.
+
 const DeploymentListPage = React.lazy(
   () => import('./pages/DeploymentListPage'),
 );
@@ -116,9 +116,6 @@ const ReservoirArtifactDetailPage = React.lazy(
   () => import('./pages/ReservoirArtifactDetailPage'),
 );
 
-const ModelStoreListPageV2 = React.lazy(
-  () => import('./pages/ModelStoreListPageV2'),
-);
 const SchedulerPage = React.lazy(() => import('./pages/SchedulerPage'));
 const BrandingPage = React.lazy(() => import('./pages/BrandingPage'));
 const RBACManagementPage = React.lazy(
@@ -139,6 +136,12 @@ const ChangePasswordPage = React.lazy(
 );
 const EduAppLauncherPage = React.lazy(
   () => import('./pages/EduAppLauncherPage'),
+);
+const ModelStoreListPageV2 = React.lazy(
+  () => import('./pages/ModelStoreListPageV2'),
+);
+const LegacyModelStoreListPage = React.lazy(
+  () => import('./pages/LegacyModelStoreListPage'),
 );
 
 /**
@@ -429,13 +432,13 @@ export const mainLayoutChildRoutes: RouteObject[] = [
     handle: { labelKey: 'data.ModelStore' },
     Component: () => {
       const baiClient = useSuspendedBackendaiClient();
-      return (
+      return baiClient?.supports('model-card-v2') ? (
         <Suspense fallback={<Skeleton active />}>
-          {baiClient?.supports('model-card-v2') ? (
-            <ModelStoreListPageV2 />
-          ) : (
-            <LegacyModelStoreListPage />
-          )}
+          <ModelStoreListPageV2 />
+        </Suspense>
+      ) : (
+        <Suspense fallback={<Skeleton active />}>
+          <LegacyModelStoreListPage />
         </Suspense>
       );
     },

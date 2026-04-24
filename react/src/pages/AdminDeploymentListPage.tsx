@@ -48,7 +48,6 @@ const parseFilterVariable = (
 
 const AdminDeploymentListPageContent: React.FC = () => {
   'use memo';
-  const { t } = useTranslation();
   const webUINavigate = useWebUINavigate();
 
   const {
@@ -135,66 +134,67 @@ const AdminDeploymentListPageContent: React.FC = () => {
   const isLoading =
     deferredQueryVariables !== queryVariables || deferredFetchKey !== fetchKey;
 
-  return (
-    <BAICard
-      title={t('deployment.Deployments')}
-      styles={{
-        header: { borderBottom: 'none' },
-        body: { paddingTop: 0 },
+  return adminDeployments ? (
+    <DeploymentList
+      mode="admin"
+      deploymentsFrgmt={adminDeployments}
+      filter={queryParams.filter}
+      setFilter={(value) => {
+        setQueryParams({ filter: value || null });
+        setTablePaginationOption({ current: 1 });
       }}
-    >
-      {adminDeployments ? (
-        <DeploymentList
-          mode="admin"
-          deploymentsFrgmt={adminDeployments}
-          filter={queryParams.filter}
-          setFilter={(value) => {
-            setQueryParams({ filter: value || null });
-            setTablePaginationOption({ current: 1 });
-          }}
-          order={queryParams.order ?? undefined}
-          onChangeOrder={(order) => {
-            setQueryParams({ order: (order as DeploymentOrderValue) ?? null });
-          }}
-          statusCategory={queryParams.statusCategory}
-          onStatusCategoryChange={(value) => {
-            setQueryParams({ statusCategory: value });
-            setTablePaginationOption({ current: 1 });
-          }}
-          pagination={{
-            ...tablePaginationOption,
-            onChange: (current, pageSize) => {
-              setTablePaginationOption({ current, pageSize });
-            },
-          }}
-          tableSettings={{
-            columnOverrides,
-            onColumnOverridesChange: setColumnOverrides,
-          }}
+      order={queryParams.order ?? undefined}
+      onChangeOrder={(order) => {
+        setQueryParams({ order: (order as DeploymentOrderValue) ?? null });
+      }}
+      statusCategory={queryParams.statusCategory}
+      onStatusCategoryChange={(value) => {
+        setQueryParams({ statusCategory: value });
+        setTablePaginationOption({ current: 1 });
+      }}
+      pagination={{
+        ...tablePaginationOption,
+        onChange: (current, pageSize) => {
+          setTablePaginationOption({ current, pageSize });
+        },
+      }}
+      tableSettings={{
+        columnOverrides,
+        onColumnOverridesChange: setColumnOverrides,
+      }}
+      loading={isLoading}
+      onRowClick={(deploymentId) => {
+        webUINavigate(`/deployments/${toLocalId(deploymentId)}`);
+      }}
+      onEditClick={(deploymentId) => {
+        webUINavigate(`/deployments/${toLocalId(deploymentId)}/edit`);
+      }}
+      onDeleteComplete={updateFetchKey}
+      toolbarEnd={
+        <BAIFetchKeyButton
+          value={fetchKey}
+          onChange={updateFetchKey}
+          autoUpdateDelay={15_000}
           loading={isLoading}
-          onRowClick={(deploymentId) => {
-            webUINavigate(`/deployments/${toLocalId(deploymentId)}`);
-          }}
-          toolbarEnd={
-            <BAIFetchKeyButton
-              value={fetchKey}
-              onChange={updateFetchKey}
-              autoUpdateDelay={15_000}
-              loading={isLoading}
-            />
-          }
         />
-      ) : null}
-    </BAICard>
-  );
+      }
+    />
+  ) : null;
 };
 
 const AdminDeploymentListPage: React.FC = () => {
   'use memo';
+  const { t } = useTranslation();
   return (
-    <Suspense fallback={<Skeleton active />}>
-      <AdminDeploymentListPageContent />
-    </Suspense>
+    <BAICard
+      variant="borderless"
+      title={t('webui.menu.Deployments')}
+      styles={{ body: { paddingTop: 0 } }}
+    >
+      <Suspense fallback={<Skeleton active />}>
+        <AdminDeploymentListPageContent />
+      </Suspense>
+    </BAICard>
   );
 };
 
