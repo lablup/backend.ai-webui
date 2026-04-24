@@ -41,6 +41,22 @@ module.exports = {
         // HMR handles React component updates; static files are served as-is.
         watch: false,
       },
+      // Serve the self-hosted Monaco AMD runtime at /resources/monaco/vs
+      // from react/node_modules/monaco-editor/min/vs. In production, the
+      // same tree is copied to build/web/resources/monaco/vs by the root
+      // `copymonaco` script. Without this, @monaco-editor/react falls
+      // back to loading Monaco from the jsDelivr CDN and fails in
+      // offline / air-gapped setups. The /resources prefix keeps Monaco
+      // inside the existing static-asset namespace alongside theme and
+      // model-definition schemas, so no new top-level route is added.
+      {
+        directory: path.resolve(
+          __dirname,
+          'node_modules/monaco-editor/min/vs',
+        ),
+        publicPath: '/resources/monaco/vs',
+        watch: false,
+      },
       ...existingStatic,
     ];
 

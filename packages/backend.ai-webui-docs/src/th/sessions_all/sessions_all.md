@@ -1,7 +1,7 @@
-# เซสชันการคอมพิวเตอร์
+# เซสชันการคำนวณ
 
-The most visited pages in the Backend.AI WebUI would be the 'เซสชัน' and 'Data' pages.
-This document will cover how to query and create container-based compute sessions and utilize various web applications on the 'เซสชัน' page.
+หน้าที่เข้าชมบ่อยที่สุดใน Backend.AI WebUI คือหน้า 'เซสชัน' และหน้า 'ข้อมูล'
+เอกสารนี้จะครอบคลุมวิธีการค้นหาและสร้างเซสชันการคำนวณที่ใช้คอนเทนเนอร์ รวมถึงการใช้งานแอปพลิเคชันเว็บต่าง ๆ ในหน้า 'เซสชัน'
 
 <a id="start-a-new-session"></a>
 <a id="create_session"></a>
@@ -9,161 +9,152 @@ This document will cover how to query and create container-based compute session
 ## เริ่มเซสชันใหม่
 
 
-After logging in with a ผู้ใช้ account, click 'เซสชัน' on the left sidebar.
-'เซสชัน' page lets you start new sessions or use and manage existing running sessions.
+หลังจากเข้าสู่ระบบด้วยบัญชีผู้ใช้ ให้คลิก 'เซสชัน' บนแถบด้านข้างซ้าย
+หน้า 'เซสชัน' ช่วยให้คุณสามารถเริ่มเซสชันใหม่ หรือใช้งานและจัดการเซสชันที่กำลังทำงานอยู่ได้
 
 ![](../images/sessions_page.png)
 
 
-Click the 'START' button to start a new compute session.
+คลิกปุ่ม 'START' เพื่อเริ่มเซสชันการคำนวณใหม่
 
 ![](../images/launch_session_type.png)
 
 <a id="session-type"></a>
 
-### Session Type
+### ประเภทเซสชัน
 
-In the first page, ผู้ใช้s can select the type of session, 'interactive' or 'batch'.
-If needed, setting the name of the session (optional) is also available.
+ในหน้าแรก ผู้ใช้สามารถเลือกประเภทของเซสชันได้ ไม่ว่าจะเป็น 'interactive' หรือ 'batch'
+หากจำเป็น สามารถตั้งชื่อของเซสชันได้ด้วย (เป็นตัวเลือก)
 
 
-- Session type: Determines the type of the session. There are two different types of session, \"Interactive\" and \"Batch\".
-  The following are the primary distinctions between the two types:
+- ประเภทเซสชัน: กำหนดประเภทของเซสชัน มีเซสชันสองประเภทที่แตกต่างกัน ได้แก่ \"Interactive\" และ \"Batch\"
+  ข้อแตกต่างหลักระหว่างสองประเภทมีดังต่อไปนี้:
 
-  - ช่วงการคำนวณแบบโต้ตอบ
+  - เซสชันการคำนวณแบบโต้ตอบ (Interactive)
 
-    - This is the type which has been supported from the initial version of the Backend.AI.
-    - เซสชันการคอมพิวเตอร์ถูกใช้งานในลักษณะที่ผู้ใช้มีปฏิสัมพันธ์หลังจากสร้างเซสชันโดยไม่ต้องระบุสคริปต์หรือคำสั่งการดำเนินการที่กำหนดไว้ล่วงหน้า
+    - เป็นประเภทที่ได้รับการสนับสนุนมาตั้งแต่ Backend.AI เวอร์ชันแรก
+    - เซสชันการคำนวณถูกใช้งานในลักษณะที่ผู้ใช้มีปฏิสัมพันธ์หลังจากสร้างเซสชันโดยไม่ต้องระบุสคริปต์หรือคำสั่งการดำเนินการที่กำหนดไว้ล่วงหน้า
     - เซสชันจะไม่ถูกยกเลิกโดยอัตโนมัติ เว้นแต่ผู้ใช้จะทำการทำลายเซสชันอย่างชัดเจนหรือผู้ดูแลระบบตั้งค่าโปรแกรมทำความสะอาดเซสชัน
 
-  - เซสชันการคำนวณแบบชุด
+  - เซสชันการคำนวณแบบชุด (Batch)
 
-    - This type of session is supported via GUI from Backend.AI 22.03 (CLI has
-      supported the batch-type session before the 22.03).
-    - กำหนดสคริปต์ล่วงหน้าที่จะถูกดำเนินการเมื่อเซสชันการคอมพิวเตอร์พร้อมใช้งาน
-    - This session will execute the script as soon as the compute session is ready, and then
-      automatically terminates the session as soon as the execution finishes.
-      It will utilize the server farm's resources efficiently and flexibly if a ผู้ใช้ can write the execution script in advance or is
-      building a pipeline of workloads.
-    - Users can set the start time of a batch-type compute session.
-      However, keep in mind that this feature does not guarantee that the session will start at the registered time.
-      It may still stay at 'PENDING' due to the lack of resources, etc. Rather, it guarantees that
-      the session WILL NOT run until the start time.
-    - Users can also set the 'Timeout Duration' of a batch-type compute session.
-      When ผู้ใช้s set the timeout duration, The session will automatically terminate if the specified time is exceeded.
+    - ประเภทเซสชันนี้รองรับผ่าน GUI ตั้งแต่ Backend.AI 22.03 (CLI รองรับเซสชันประเภท batch มาก่อน 22.03)
+    - กำหนดสคริปต์ล่วงหน้าที่จะถูกดำเนินการเมื่อเซสชันการคำนวณพร้อมใช้งาน
+    - เซสชันนี้จะดำเนินการสคริปต์ทันทีที่เซสชันการคำนวณพร้อมใช้งาน จากนั้นจะยุติเซสชันโดยอัตโนมัติทันทีที่การดำเนินการเสร็จสิ้น
+      ซึ่งจะใช้ทรัพยากรของฟาร์มเซิร์ฟเวอร์ได้อย่างมีประสิทธิภาพและยืดหยุ่นหากผู้ใช้สามารถเขียนสคริปต์การดำเนินการล่วงหน้าหรือกำลังสร้างไปป์ไลน์ของภาระงานได้
+    - ผู้ใช้สามารถตั้งเวลาเริ่มต้นของเซสชันการคำนวณแบบ batch ได้
+      อย่างไรก็ตาม โปรดจำไว้ว่าฟีเจอร์นี้ไม่รับประกันว่าเซสชันจะเริ่มต้นตามเวลาที่ลงทะเบียนไว้
+      เซสชันอาจยังคงอยู่ในสถานะ 'PENDING' เนื่องจากทรัพยากรไม่เพียงพอ เป็นต้น แต่จะรับประกันว่าเซสชันจะไม่ทำงานก่อนเวลาเริ่มต้น
+    - ผู้ใช้ยังสามารถตั้งค่า 'Timeout Duration' ของเซสชันการคำนวณแบบ batch ได้
+      เมื่อผู้ใช้ตั้งค่าระยะเวลาหมดเวลา เซสชันจะยุติโดยอัตโนมัติหากเกินเวลาที่กำหนด
 
     ![](../images/session_type_batch.png)
 
 <a id="session-naming-rule"></a>
 
-- Session name: Users can specify the name of the compute session to be
-  created. If set, this name appears in Session Info, so it is
-  distinguishable among multiple compute sessions. If not specified, random
-  word will be assigned automatically. Session names only accept alphanumeric
-  characters between 4 and 64 without spaces.
+- ชื่อเซสชัน: ผู้ใช้สามารถระบุชื่อของเซสชันการคำนวณที่จะสร้างได้
+  หากตั้งค่าไว้ ชื่อนี้จะปรากฏในข้อมูลเซสชัน ทำให้สามารถแยกแยะระหว่างเซสชันการคำนวณหลายรายการได้
+  หากไม่ได้ระบุ ระบบจะกำหนดคำแบบสุ่มให้โดยอัตโนมัติ ชื่อเซสชันยอมรับเฉพาะตัวอักษรและตัวเลขที่มีความยาว 4 ถึง 64 ตัวอักษรโดยไม่มีช่องว่าง
 
-If ผู้ใช้s create a session with the `super admin` or `admin` account,
-they can additionally assign a session owner. If you enable the toggle,
-a ผู้ใช้ email field will appear.
+หากผู้ใช้สร้างเซสชันด้วยบัญชี `super admin` หรือ `admin`
+ผู้ใช้สามารถมอบหมายเจ้าของเซสชันเพิ่มเติมได้ หากคุณเปิดใช้งานสวิตช์สลับ
+จะมีช่องอีเมลของผู้ใช้ปรากฏขึ้น
 
 ![](../images/admin_launch_session_owner.png)
 
-Enter the email of the ผู้ใช้ you want to assign the session to,
-click the 'search' button, and the ผู้ใช้'s access key will be automatically registered.
-You can also select a project and กลุ่มทรัพยากร.
+ป้อนอีเมลของผู้ใช้ที่คุณต้องการมอบหมายเซสชันให้
+คลิกปุ่ม 'search' และคีย์การเข้าถึงของผู้ใช้จะถูกลงทะเบียนโดยอัตโนมัติ
+คุณยังสามารถเลือกโปรเจกต์และกลุ่มทรัพยากรได้อีกด้วย
 
 ![](../images/admin_launch_session_owner_project.png)
 
 <a id="environments-and-resource-allocation"></a>
 
-### Environments & Resource allocation
+### สภาพแวดล้อมและการจัดสรรทรัพยากร
 
 
-Click the 'Next' button below, or the 'Environments & Resource allocation' menu on the right
-to proceed to the next page. If you want to create a session without any further
-settings, press the 'Skip to review' button. In this case, settings on the
-other pages will all use the default values.
+คลิกปุ่ม 'Next' ที่ด้านล่าง หรือเมนู 'Environments & Resource allocation' ทางด้านขวา
+เพื่อไปยังหน้าถัดไป หากคุณต้องการสร้างเซสชันโดยไม่มีการตั้งค่าเพิ่มเติม
+ให้กดปุ่ม 'Skip to review' ในกรณีนี้ การตั้งค่าในหน้าอื่น ๆ
+จะใช้ค่าเริ่มต้นทั้งหมด
 
   ![](../images/launch_session_environments_and_resource.png)
 
-### Environments
+### สภาพแวดล้อม
 
 
-For detailed explanations of each item that can be set on the second page, please
-refer to the following:
+สำหรับคำอธิบายโดยละเอียดของแต่ละรายการที่สามารถตั้งค่าได้ในหน้าที่สอง โปรดดูที่รายการต่อไปนี้:
 
-- Environments: Users can select the base environment for compute sessions such as
-  TensorFlow, PyTorch, C++, etc. The compute session will automatically included into the base environment library.
-  If ผู้ใช้s choose another environment, the corresponding packages will be installed by default.
-- Version: Users can specify the version of the environment.
-  There are multiple versions in a single environment. For example, TensorFlow has multiple versions such as 1.15, 2.3, etc.,
-- Image Name: Users can specify the name of the image to be used for the
-  compute session. This configuration may not be available depending on the environment settings.
-- Set Environment Variable: To give more convenient workspace for ผู้ใช้s, Backend.AI supports environment variable setting
-  in session launching. In this feature, ผู้ใช้s can add any envs such as `PATH` by filling out
-  variable name and value in environment configuration dialog.
+- สภาพแวดล้อม (Environments): ผู้ใช้สามารถเลือกสภาพแวดล้อมพื้นฐานสำหรับเซสชันการคำนวณ เช่น
+  TensorFlow, PyTorch, C++ เป็นต้น เซสชันการคำนวณจะถูกรวมเข้ากับไลบรารีสภาพแวดล้อมพื้นฐานโดยอัตโนมัติ
+  หากผู้ใช้เลือกสภาพแวดล้อมอื่น แพ็กเกจที่เกี่ยวข้องจะถูกติดตั้งตามค่าเริ่มต้น
+- เวอร์ชัน (Version): ผู้ใช้สามารถระบุเวอร์ชันของสภาพแวดล้อมได้
+  มีหลายเวอร์ชันในสภาพแวดล้อมเดียว ตัวอย่างเช่น TensorFlow มีหลายเวอร์ชัน เช่น 1.15, 2.3 เป็นต้น
+- ชื่ออิมเมจ (Image Name): ผู้ใช้สามารถระบุชื่อของอิมเมจที่จะใช้สำหรับเซสชันการคำนวณได้
+  การกำหนดค่านี้อาจไม่สามารถใช้งานได้ขึ้นอยู่กับการตั้งค่าสภาพแวดล้อม
+- ตั้งค่าตัวแปรสภาพแวดล้อม (Set Environment Variable): เพื่อให้พื้นที่ทำงานที่สะดวกยิ่งขึ้นสำหรับผู้ใช้ Backend.AI รองรับการตั้งค่าตัวแปรสภาพแวดล้อม
+  ในการเริ่มต้นเซสชัน ในฟีเจอร์นี้ ผู้ใช้สามารถเพิ่มตัวแปรสภาพแวดล้อมใด ๆ เช่น `PATH` โดยการกรอก
+  ชื่อตัวแปรและค่าในกล่องโต้ตอบการกำหนดค่าสภาพแวดล้อม
 
   ![](../images/launch_session_environments.png)
 
-### Resource allocation
+### การจัดสรรทรัพยากร
 
 
-- Resource Group: Specifies the กลุ่มทรัพยากร in which to create a compute
-  session. A กลุ่มทรัพยากร is a unit that groups host servers that each ผู้ใช้
-  can access. Usually, servers in a กลุ่มทรัพยากร would have the same type of
-  GPU resources. Administrators can classify servers by any criteria, group them
-  into one or more กลุ่มทรัพยากรs, configure which กลุ่มทรัพยากรs a ผู้ใช้
-  can use. Users can launch a compute session only on servers in กลุ่มทรัพยากรs
-  allowed by the ผู้ดูแลระบบistrator. If multiple กลุ่มทรัพยากรs are allowed, ผู้ใช้s could select any group they want.
-  However, it cannot be changed when system only allows single-setting.
-- Resource Presets: These templates have pre-defined resource sets, such as
-  CPU, memory, and GPU, to be allocated to a compute session. Administrators can
-  define frequently used resource settings in advance. By adjusting the numerical
-  input or sliding the slider, ผู้ใช้s can allocate the desired amount of resources.
+- กลุ่มทรัพยากร (Resource Group): ระบุกลุ่มทรัพยากรที่จะสร้างเซสชันการคำนวณ
+  กลุ่มทรัพยากรเป็นหน่วยที่จัดกลุ่มเซิร์ฟเวอร์โฮสต์ที่ผู้ใช้แต่ละคนสามารถเข้าถึงได้
+  โดยทั่วไป เซิร์ฟเวอร์ในกลุ่มทรัพยากรจะมีทรัพยากร GPU ประเภทเดียวกัน
+  ผู้ดูแลระบบสามารถจำแนกเซิร์ฟเวอร์ตามเกณฑ์ใด ๆ จัดกลุ่มเป็นกลุ่มทรัพยากรหนึ่งหรือหลายกลุ่ม
+  และกำหนดค่าว่าผู้ใช้สามารถใช้กลุ่มทรัพยากรใดได้บ้าง ผู้ใช้สามารถเริ่มเซสชันการคำนวณได้เฉพาะบนเซิร์ฟเวอร์ในกลุ่มทรัพยากร
+  ที่ผู้ดูแลระบบอนุญาตเท่านั้น หากได้รับอนุญาตหลายกลุ่มทรัพยากร ผู้ใช้สามารถเลือกกลุ่มใดก็ได้ที่ต้องการ
+  อย่างไรก็ตาม ไม่สามารถเปลี่ยนแปลงได้เมื่อระบบอนุญาตให้ตั้งค่าเพียงกลุ่มเดียว
+- Resource Presets: เทมเพลตเหล่านี้มีชุดทรัพยากรที่กำหนดไว้ล่วงหน้า เช่น
+  CPU หน่วยความจำ และ GPU ที่จะจัดสรรให้กับเซสชันการคำนวณ ผู้ดูแลระบบสามารถ
+  กำหนดการตั้งค่าทรัพยากรที่ใช้บ่อยไว้ล่วงหน้าได้ โดยการปรับค่าตัวเลข
+  หรือเลื่อนแถบเลื่อน ผู้ใช้สามารถจัดสรรทรัพยากรตามจำนวนที่ต้องการได้
 
   ![](../images/launch_session_resource.png)
 
-  The meaning of each item is as follows.
-  Clicking the 'Help (?)' button will also give more information.
+  ความหมายของแต่ละรายการมีดังนี้
+  การคลิกปุ่ม 'Help (?)' จะให้ข้อมูลเพิ่มเติมด้วย
 
-  * CPU: The CPU performs basic arithmetic, logic, controlling, and input/output
-    (I/O) operations specified by the instructions. In general, more CPUs are beneficial for high-performance computing workloads.
-    But, to reflect the advantage of more CPUs, program code must be written to adapt multiple CPUs.
-  * Memory: Computer memory is a temporary storage area. It holds the data and
-    instructions that the Central Processing Unit (CPU) needs. When using a GPU in
-    a machine learning workload, at least twice the memory of the
-    GPU to memory need to be allocated. Otherwise, GPU's idle time will increase, resulting
-    penalty in a performance.
-  * หน่วยความจำที่แชร์: ปริมาณหน่วยความจำที่แชร์ในหน่วย GB ที่จะจัดสรรสำหรับเซสชันการประมวลผล หน่วยความจำที่แชร์จะใช้บางส่วนของหน่วยความจำที่ตั้งค่าใน RAM ดังนั้นจึงไม่สามารถมากกว่าปริมาณที่ระบุใน RAM ได้
+  * CPU: CPU ทำการคำนวณเลขคณิต ตรรกะ การควบคุม และการดำเนินการอินพุต/เอาต์พุต
+    (I/O) ขั้นพื้นฐานตามคำสั่งที่ระบุ โดยทั่วไปแล้ว CPU ที่มากขึ้นจะเป็นประโยชน์สำหรับภาระงานการคำนวณสมรรถนะสูง
+    แต่เพื่อให้ได้ประโยชน์จาก CPU ที่มากขึ้น โค้ดโปรแกรมต้องเขียนให้สามารถรองรับ CPU หลายตัวได้
+  * หน่วยความจำ (Memory): หน่วยความจำคอมพิวเตอร์เป็นพื้นที่จัดเก็บข้อมูลชั่วคราว โดยเก็บข้อมูล
+    และคำสั่งที่ Central Processing Unit (CPU) ต้องการ เมื่อใช้ GPU ในภาระงาน
+    การเรียนรู้ของเครื่อง จำเป็นต้องจัดสรรหน่วยความจำอย่างน้อยสองเท่าของ
+    หน่วยความจำ GPU มิฉะนั้น เวลาว่างของ GPU จะเพิ่มขึ้น ส่งผลให้ประสิทธิภาพลดลง
+  * หน่วยความจำที่แชร์: ปริมาณหน่วยความจำที่แชร์ในหน่วย GB ที่จะจัดสรรสำหรับเซสชันการคำนวณ หน่วยความจำที่แชร์จะใช้บางส่วนของหน่วยความจำที่ตั้งค่าใน RAM ดังนั้นจึงไม่สามารถมากกว่าปริมาณที่ระบุใน RAM ได้
   * AI Accelerator: AI accelerator (GPU หรือ NPU) เหมาะสำหรับการคำนวณเมทริกซ์/เวกเตอร์ที่เกี่ยวข้องกับการเรียนรู้ของเครื่อง AI accelerator เร่งความเร็วอัลกอริธึมการฝึกอบรม / การอนุมานโดยมาก ทำให้เวลาในการประมวลผลลดลงจากหลายสัปดาห์เหลือไม่กี่วัน
-  * เซสชัน: Session is a unit of computational environment that is created
-    according to a specified environment and resources. If this value is set to a
-    value greater than 1, multiple sessions corresponding to the resource set above
-    are created. If there are not enough resources available, requests to create
-    sessions that cannot be created are put on the waiting queue.
+  * เซสชัน (Sessions): เซสชันเป็นหน่วยของสภาพแวดล้อมการคำนวณที่ถูกสร้างขึ้น
+    ตามสภาพแวดล้อมและทรัพยากรที่ระบุ หากค่านี้ถูกตั้งค่าเป็นค่า
+    ที่มากกว่า 1 จะมีการสร้างเซสชันหลายรายการตามชุดทรัพยากรที่ตั้งค่าไว้ข้างต้น
+    หากมีทรัพยากรที่พร้อมใช้งานไม่เพียงพอ คำขอสร้างเซสชันที่ไม่สามารถสร้างได้
+    จะถูกใส่ไว้ในคิวรอ
 
-  ![](../images/launce_session_resource_2.png)
+  ![](../images/launch_session_resource_2.png)
 
-  * Select Agent: Select the agent to be assigned. By default, the agent is automatically selected
-    by the scheduler. The agent selector displays the actual amount of available resources for each agent.
-    Currently, this feature is only supported in single-node, single-container environments.
-  * Cluster mode: Cluster mode allows ผู้ใช้s to create
-    multiple compute sessions at once. For more information, refer to the
-    [Overview of Backend.AI cluster compute session](#backendai-cluster-compute-session).
+  * เลือกเอเจนต์ (Select Agent): เลือกเอเจนต์ที่จะมอบหมายให้ โดยค่าเริ่มต้น เอเจนต์จะถูกเลือกโดยอัตโนมัติ
+    โดยตัวจัดตาราง ตัวเลือกเอเจนต์จะแสดงปริมาณทรัพยากรที่ใช้งานได้จริงสำหรับแต่ละเอเจนต์
+    ปัจจุบัน ฟีเจอร์นี้รองรับเฉพาะในสภาพแวดล้อมโหนดเดียว คอนเทนเนอร์เดียวเท่านั้น
+  * โหมดคลัสเตอร์ (Cluster mode): โหมดคลัสเตอร์ช่วยให้ผู้ใช้สามารถสร้าง
+    เซสชันการคำนวณหลายรายการพร้อมกันได้ สำหรับข้อมูลเพิ่มเติม โปรดดูที่
+    [ภาพรวมของเซสชันการคำนวณแบบคลัสเตอร์ของ Backend.AI](#backendai-cluster-compute-session)
 
 :::note
-The Agent Select feature may not be available depending on the server environment.
+ฟีเจอร์ Agent Select อาจไม่สามารถใช้งานได้ขึ้นอยู่กับสภาพแวดล้อมของเซิร์ฟเวอร์
 :::
 
-- High-Performance Computing Optimizations: Backend.AI provides configuring values
-  related to HPC Optimizations.
+- การปรับแต่งการคำนวณสมรรถนะสูง (High-Performance Computing Optimizations): Backend.AI ให้การกำหนดค่า
+  ที่เกี่ยวข้องกับการปรับแต่ง HPC
 
-  Backend.AI provides configuration UI for internal control variable in `nthreads-var`.
-  Backend.AI sets this value equal to the number of session's CPU cores by default,
-  which has the effect of accelerating typical high-performance computing workloads.
-  Nevertheless, for some multi-thread workloads, multiple processes using OpenMP are used at same time,
-  resulting in an abnormally large number of threads and significant performance degradation.
-  To resolve this issue, setting the number of threads to 1 or 2 would work.
+  Backend.AI มี UI การกำหนดค่าสำหรับตัวแปรควบคุมภายในใน `nthreads-var`
+  Backend.AI ตั้งค่านี้ให้เท่ากับจำนวนแกน CPU ของเซสชันโดยค่าเริ่มต้น
+  ซึ่งมีผลในการเร่งความเร็วภาระงานการคำนวณสมรรถนะสูงทั่วไป
+  อย่างไรก็ตาม สำหรับภาระงานแบบหลายเธรดบางประเภท มีการใช้กระบวนการหลายกระบวนการที่ใช้ OpenMP พร้อมกัน
+  ส่งผลให้มีจำนวนเธรดที่มากผิดปกติและประสิทธิภาพลดลงอย่างมาก
+  เพื่อแก้ไขปัญหานี้ การตั้งค่าจำนวนเธรดเป็น 1 หรือ 2 จะช่วยแก้ไขได้
 
 ![](../images/session_hpc_optimization.png)
 
@@ -173,124 +164,124 @@ The Agent Select feature may not be available depending on the server environmen
 ### ข้อมูลและการจัดเก็บ
 
 
-Click the 'Next' button below, or the 'ข้อมูลและการจัดเก็บ' menu on the right to proceed to the next page.
+คลิกปุ่ม 'Next' ที่ด้านล่าง หรือเมนู 'ข้อมูลและการจัดเก็บ' ทางด้านขวาเพื่อไปยังหน้าถัดไป
 
-When a compute session is destroyed, data deletion is set to default.
-However, data stored in the mounted folders will survive.
-Data in those folders can also be reused by mounting it when creating another compute session.
-For further information on how to mount a folder and run a compute session, refer to
-[Mounting Folders to a Compute Session](#session-mounts).
+เมื่อเซสชันการคำนวณถูกทำลาย การลบข้อมูลจะถูกตั้งค่าเป็นค่าเริ่มต้น
+อย่างไรก็ตาม ข้อมูลที่จัดเก็บในโฟลเดอร์ที่ถูกเมานต์จะยังคงอยู่
+ข้อมูลในโฟลเดอร์เหล่านั้นยังสามารถนำกลับมาใช้ใหม่ได้โดยการเมานต์เมื่อสร้างเซสชันการคำนวณใหม่
+สำหรับข้อมูลเพิ่มเติมเกี่ยวกับวิธีการเมานต์โฟลเดอร์และเรียกใช้เซสชันการคำนวณ โปรดดูที่
+[การเมานต์โฟลเดอร์ไปยังเซสชันการคำนวณ](#session-mounts)
 
 ![](../images/launch_session_data.png)
 
-ผู้ใช้s can specify the data folders to mount in the compute session.
-Folder explorer can be used by clicking folder name. For further information,
-please refer [Explore Folder](#explore-folder) section.
+ผู้ใช้สามารถระบุโฟลเดอร์ข้อมูลที่จะเมานต์ในเซสชันการคำนวณได้
+สามารถใช้ตัวสำรวจโฟลเดอร์ได้โดยการคลิกที่ชื่อโฟลเดอร์ สำหรับข้อมูลเพิ่มเติม
+โปรดดูที่ส่วน [สำรวจโฟลเดอร์](#explore-folder)
 
 ![](../images/folder_explorer.png)
 
-New folder can be created by clicking the '+' button next to the search box.
-When new folder is created, it will automatically be selected as the folder to mount.
-For further information, please refer [Create Storage Folder](#create-storage-folder) section.
+สามารถสร้างโฟลเดอร์ใหม่ได้โดยการคลิกปุ่ม '+' ถัดจากช่องค้นหา
+เมื่อสร้างโฟลเดอร์ใหม่ โฟลเดอร์นั้นจะถูกเลือกเป็นโฟลเดอร์ที่จะเมานต์โดยอัตโนมัติ
+สำหรับข้อมูลเพิ่มเติม โปรดดูที่ส่วน [สร้างโฟลเดอร์จัดเก็บ](#create-storage-folder)
 
 ![](../images/folder_create_modal.png)
 
 <a id="network"></a>
 
-### Network
+### เครือข่าย
 
-Click the 'Next' button below, or the 'Network' menu on the right to proceed to the next page.
-On this page, Network configuration can be done such as Preopen Ports.
+คลิกปุ่ม 'Next' ที่ด้านล่าง หรือเมนู 'Network' ทางด้านขวาเพื่อไปยังหน้าถัดไป
+ในหน้านี้ สามารถทำการกำหนดค่าเครือข่าย เช่น Preopen Ports ได้
 
-- Set Preopen Ports: Provides an interface for ผู้ใช้s to set preopen ports in a
-  compute session. Refer to the [How to add preopen ports before session creation](#set-preopen-ports) for further information.
+- ตั้งค่าพอร์ตที่เปิดล่วงหน้า (Set Preopen Ports): จัดเตรียมอินเทอร์เฟซสำหรับผู้ใช้ในการตั้งค่าพอร์ตที่เปิดล่วงหน้า
+  ในเซสชันการคำนวณ ดูที่ [วิธีเพิ่มพอร์ตที่เปิดล่วงหน้าก่อนสร้างเซสชัน](#set-preopen-ports) สำหรับข้อมูลเพิ่มเติม
 
 
 ![](../images/launch_session_network.png)
 
 <a id="confirm-and-launch"></a>
 
-### Confirm and Launch
+### ยืนยันและเปิดใช้งาน
 
 
-If you are done with the network setting, click the 'Next' button below, or
-'Confirm and Launch' button on the right to proceed to the last page.
+เมื่อคุณตั้งค่าเครือข่ายเสร็จแล้ว ให้คลิกปุ่ม 'Next' ที่ด้านล่าง หรือ
+ปุ่ม 'Confirm and Launch' ทางด้านขวาเพื่อไปยังหน้าสุดท้าย
 
-On the last page, ผู้ใช้s could view information of session(s) to create,
-such as environment itself, allocated resources, mount information,
-environment variables set on the previous pages, preopen ports, etc.,
-Review the settings, ผู้ใช้s could launch the session by clicking 'Launch' button.
-Click the 'Edit' button located at the top right of each card to redirect to relevant page.
+ในหน้าสุดท้าย ผู้ใช้สามารถดูข้อมูลของเซสชันที่จะสร้างได้
+เช่น สภาพแวดล้อม ทรัพยากรที่จัดสรร ข้อมูลการเมานต์
+ตัวแปรสภาพแวดล้อมที่ตั้งค่าไว้ในหน้าก่อนหน้า พอร์ตที่เปิดล่วงหน้า เป็นต้น
+เมื่อตรวจสอบการตั้งค่าแล้ว ผู้ใช้สามารถเริ่มเซสชันได้โดยคลิกปุ่ม 'Launch'
+คลิกปุ่ม 'Edit' ที่อยู่มุมขวาบนของแต่ละการ์ดเพื่อไปยังหน้าที่เกี่ยวข้อง
 
 ![](../images/launch_session_confirm.png)
 
-If there is an issue with the settings, an error message will be displayed as follows.
-Users can edit their settings when this happens.
+หากมีปัญหากับการตั้งค่า จะมีข้อความแสดงข้อผิดพลาดปรากฏขึ้นดังต่อไปนี้
+ผู้ใช้สามารถแก้ไขการตั้งค่าของตนได้เมื่อสิ่งนี้เกิดขึ้น
 
 ![](../images/launch_session_error_card.png)
 
-When you click the 'Launch' button, a warning dialog appears stating that there are no mounted folders.
-If folder mounting is not required, you can ignore the warning and click the 'Start' button in the dialog to proceed.
+เมื่อคุณคลิกปุ่ม 'Launch' จะมีกล่องโต้ตอบคำเตือนปรากฏขึ้นระบุว่าไม่มีโฟลเดอร์ที่ถูกเมานต์
+หากไม่จำเป็นต้องเมานต์โฟลเดอร์ คุณสามารถเพิกเฉยต่อคำเตือนและคลิกปุ่ม 'Start' ในกล่องโต้ตอบเพื่อดำเนินการต่อได้
 
 ![](../images/no_folder_notification_dialog.png)
 
-When a new compute session is added in the **Running** tab, a notification appears at the bottom-right corner of the screen.
-The bottom-left area of the notification displays the session status, while the bottom-right area includes buttons for opening the app dialog,
-launching the terminal, viewing container logs, and terminating the session.
-You can also view this session creation notification by clicking **Notifications** in the header.
+เมื่อมีการเพิ่มเซสชันการคำนวณใหม่ในแท็บ **Running** จะมีการแจ้งเตือนปรากฏที่มุมล่างขวาของหน้าจอ
+พื้นที่ด้านล่างซ้ายของการแจ้งเตือนจะแสดงสถานะเซสชัน ในขณะที่พื้นที่ด้านล่างขวาจะมีปุ่มสำหรับเปิดกล่องโต้ตอบแอป
+เริ่มเทอร์มินัล ดูบันทึกของคอนเทนเนอร์ และยุติเซสชัน
+คุณยังสามารถดูการแจ้งเตือนการสร้างเซสชันนี้ได้โดยคลิก **Notifications** ในส่วนหัว
 
 ![](../images/session_created.png)
 
 
 ![](../images/session_notification.png)
 
-By clicking the app dialog button on the far left, you can view the available app services.
+โดยการคลิกปุ่มกล่องโต้ตอบแอปที่อยู่ซ้ายสุด คุณสามารถดูบริการแอปที่พร้อมใช้งานได้
 
 ![](../images/app_dialog.png)
 
 
-### Recent History
+### ประวัติล่าสุด
 
 
-'Session Launcher' page provides a set of options for creating sessions. As of 24.09,
-`Recent History` feature has been added to remember information about previously created sessions.
+หน้า 'Session Launcher' มีชุดตัวเลือกสำหรับการสร้างเซสชัน ตั้งแต่เวอร์ชัน 24.09 เป็นต้นไป
+ได้มีการเพิ่มฟีเจอร์ `Recent History` เพื่อจดจำข้อมูลเกี่ยวกับเซสชันที่สร้างไว้ก่อนหน้า
 
 ![](../images/recent_history.png)
 
 ![](../images/recent_history_modal.png)
 
-The `Recent History` modal stores information about the five most recently created sessions.
-Clicking a session name takes you to the 'Confirm and Launch' page, which is the final step of session creation.
-Each item can be renamed or pinned for easier access.
+โมดัล `Recent History` จะจัดเก็บข้อมูลเกี่ยวกับเซสชันห้ารายการที่สร้างล่าสุด
+การคลิกชื่อเซสชันจะนำคุณไปยังหน้า 'Confirm and Launch' ซึ่งเป็นขั้นตอนสุดท้ายของการสร้างเซสชัน
+แต่ละรายการสามารถเปลี่ยนชื่อหรือปักหมุดเพื่อการเข้าถึงที่ง่ายขึ้นได้
 
 
 :::note
-Superผู้ดูแลระบบs can query all compute session information currently running (or
-terminated) in the cluster, and ผู้ใช้s can only view the sessions they have
-created.
+ผู้ดูแลระบบสูงสุด (Superadmin) สามารถค้นหาข้อมูลเซสชันการคำนวณทั้งหมดที่กำลังทำงาน (หรือ
+ยุติแล้ว) ในคลัสเตอร์ได้ และผู้ใช้สามารถดูได้เฉพาะเซสชันที่ตนเอง
+สร้างขึ้นเท่านั้น
 :::
 
 :::note
-Compute session list may not be displayed normally due to intermittent
-network connection problems, and etc. This can be solved by refreshing the
-browser.
+รายการเซสชันการคำนวณอาจแสดงผลไม่เป็นปกติเนื่องจากปัญหาการเชื่อมต่อเครือข่าย
+เป็นระยะ ๆ เป็นต้น สามารถแก้ไขได้โดยการรีเฟรช
+เบราว์เซอร์
 :::
 
 <a id="session-detail-panel"></a>
 
-## Session Detail Panel
+## แผงรายละเอียดเซสชัน
 
-For detailed information on the session, click the session name in the session list.
-The session details panel shows the information of the session, such as the
-session ID, ผู้ใช้ ID, status, type, environments, mount information, resource allocation, reserved time,
-elapsed time, agent, cluster mode, resource usage including network I/O, and kernel information.
+สำหรับข้อมูลโดยละเอียดเกี่ยวกับเซสชัน ให้คลิกชื่อเซสชันในรายการเซสชัน
+แผงรายละเอียดเซสชันจะแสดงข้อมูลของเซสชัน เช่น
+ID เซสชัน ID ผู้ใช้ สถานะ ประเภท สภาพแวดล้อม ข้อมูลการเมานต์ การจัดสรรทรัพยากร เวลาที่จอง
+เวลาที่ผ่านไป เอเจนต์ โหมดคลัสเตอร์ การใช้ทรัพยากรรวมถึงเครือข่าย I/O และข้อมูลเคอร์เนล
 
-Click the 'Log' button next to the 'Hostname' in 'Kernels' to view the logs of that kernel directly.
+คลิกปุ่ม 'Log' ถัดจาก 'Hostname' ใน 'Kernels' เพื่อดูบันทึกของเคอร์เนลนั้นโดยตรง
 
 ![](../images/session_detail.png)
 
-Backend.AI provides additional information for sessions in `PENDING`, `TERMINATED`, or `CANCELLED` states.
-Click the 'Info' button to check the details when available.
+Backend.AI ให้ข้อมูลเพิ่มเติมสำหรับเซสชันในสถานะ `PENDING`, `TERMINATED` หรือ `CANCELLED`
+คลิกปุ่ม 'Info' เพื่อตรวจสอบรายละเอียดเมื่อพร้อมใช้งาน
 
 เมื่อใช้ Backend.AI Manager v26.2.0 หรือใหม่กว่า ปุ่มไอคอนนาฬิกาจะปรากฏข้างแท็กสถานะเซสชันในแผงรายละเอียดเซสชัน การคลิกไอคอนนี้จะเปิดโมดัลประวัติการจัดตารางเซสชัน ซึ่งแสดงบันทึกรายละเอียดของการตัดสินใจในการจัดตารางทั้งหมดที่ระบบได้ทำสำหรับเซสชันนั้น สำหรับข้อมูลเพิ่มเติม โปรดดูที่ส่วน[ประวัติการจัดตารางเซสชัน](#session-scheduling-history)
 
@@ -368,9 +359,9 @@ Click the 'Info' button to check the details when available.
 
 ## ใช้ Jupyter Notebook
 
-Let's look at how to use and manage an already running compute session.
-Click the first icon in the upper-right corner of the session detail panel to open the app launcher, which shows
-the app services available for that session.
+มาดูวิธีการใช้และจัดการเซสชันการคำนวณที่กำลังทำงานอยู่แล้วกัน
+คลิกไอคอนแรกที่มุมขวาบนของแผงรายละเอียดเซสชันเพื่อเปิดตัวเปิดแอป ซึ่งจะแสดง
+บริการแอปที่พร้อมใช้งานสำหรับเซสชันนั้น
 
 ![](../images/app_dialog.png)
 
@@ -390,58 +381,57 @@ the app services available for that session.
 
 ![](../images/jupyter_app.png)
 
-Pop up windows will show that Jupyter Notebook is running. This
-notebook was created inside a running compute session and can be used easily
-with the click of a button. Also, there is no need for a separate package installation process because the language environment and
-library provided by the computation session can be used as it is. For detailed
-instructions on how to use Jupyter Notebook, please refer to the official Jupyter Notebook
-documentation.
+หน้าต่างป๊อปอัปจะแสดงว่า Jupyter Notebook กำลังทำงาน
+โน้ตบุ๊กนี้ถูกสร้างขึ้นภายในเซสชันการคำนวณที่กำลังทำงานอยู่ และสามารถใช้งานได้อย่างง่ายดาย
+ด้วยการคลิกปุ่มเพียงครั้งเดียว นอกจากนี้ ไม่จำเป็นต้องมีขั้นตอนการติดตั้งแพ็กเกจแยกต่างหาก เนื่องจากสภาพแวดล้อมภาษาและ
+ไลบรารีที่เซสชันการคำนวณจัดเตรียมไว้สามารถใช้งานได้เลย สำหรับคำแนะนำ
+โดยละเอียดเกี่ยวกับวิธีการใช้ Jupyter Notebook โปรดดูเอกสารอย่างเป็นทางการของ Jupyter Notebook
 
-`id_container file` in the notebook's file explorer, contains a private
-SSH key. If necessary, ผู้ใช้s can download it and use it for SSH / SFTP access to
-the container.
+ไฟล์ `id_container` ในตัวสำรวจไฟล์ของโน้ตบุ๊กประกอบด้วยคีย์ส่วนตัว
+SSH หากจำเป็น ผู้ใช้สามารถดาวน์โหลดและใช้งานเพื่อการเข้าถึง SSH / SFTP ไปยัง
+คอนเทนเนอร์ได้
 
-Click the 'NEW' button at the top right and select the Notebook for Backend.AI,
-then the ipynb window appears where ผู้ใช้s can enter their own code.
+คลิกปุ่ม 'NEW' ที่มุมขวาบนและเลือก Notebook สำหรับ Backend.AI
+จากนั้นหน้าต่าง ipynb จะปรากฏขึ้นซึ่งผู้ใช้สามารถป้อนโค้ดของตนเองได้
 
 ![](../images/backendai_notebook_menu.png)
 
-In this window, ผู้ใช้s can enter and execute any code that they want by using the
-environment that session provides. The code is executed on one of the
-Backend.AI nodes where the compute session is actually created and there is no
-need to configure a separate environment on the local machine.
+ในหน้าต่างนี้ ผู้ใช้สามารถป้อนและดำเนินการโค้ดใด ๆ ที่ต้องการโดยใช้
+สภาพแวดล้อมที่เซสชันจัดเตรียมไว้ โค้ดจะถูกดำเนินการบนหนึ่งใน
+โหนด Backend.AI ที่เซสชันการคำนวณถูกสร้างขึ้นจริง และไม่จำเป็นต้อง
+กำหนดค่าสภาพแวดล้อมแยกต่างหากบนเครื่องในพื้นที่
 
 ![](../images/notebook_code_execution.png)
 
-When window is closed, `Untitled.ipynb` file can be founded in the notebook file explorer.
-Note that the files created here are deleted when session is terminated. The way to preserve those files even
-after the session is terminated is described in the ข้อมูลและการจัดเก็บ โฟลเดอร์ section.
+เมื่อปิดหน้าต่าง สามารถพบไฟล์ `Untitled.ipynb` ได้ในตัวสำรวจไฟล์ของโน้ตบุ๊ก
+โปรดทราบว่าไฟล์ที่สร้างที่นี่จะถูกลบเมื่อเซสชันสิ้นสุดลง วิธีการรักษาไฟล์เหล่านั้นแม้
+หลังจากเซสชันสิ้นสุดลงจะอธิบายไว้ในส่วนโฟลเดอร์ข้อมูลและการจัดเก็บ
 
 ![](../images/untitled_ipynb_created.png)
 
 
 ## ใช้เทอร์มินัลเว็บ
 
-This section will explain how to use the web terminal. Click the
-terminal icon(second button) to use the container's ttyd app. A terminal will appear in a new window
-and ผู้ใช้s can run shell commands to access the computational session as shown in the following figure.
-If familiar with the commands, ผู้ใช้s can easily run various ลินุกซ์ commands. `Untitled.ipynb` file
-can be found in Jupyter Notebook, which is listed with the `ls` command. This shows that both apps
-are running in the same container environment.
+ส่วนนี้จะอธิบายวิธีการใช้งานเทอร์มินัลเว็บ คลิก
+ไอคอนเทอร์มินัล (ปุ่มที่สอง) เพื่อใช้แอป ttyd ของคอนเทนเนอร์ เทอร์มินัลจะปรากฏในหน้าต่างใหม่
+และผู้ใช้สามารถเรียกใช้คำสั่งเชลล์เพื่อเข้าถึงเซสชันการคำนวณได้ดังแสดงในรูปต่อไปนี้
+หากคุ้นเคยกับคำสั่ง ผู้ใช้สามารถเรียกใช้คำสั่ง Linux ต่าง ๆ ได้อย่างง่ายดาย ไฟล์ `Untitled.ipynb`
+สามารถพบได้ใน Jupyter Notebook ซึ่งแสดงด้วยคำสั่ง `ls` นี่แสดงให้เห็นว่าทั้งสองแอป
+กำลังทำงานในสภาพแวดล้อมคอนเทนเนอร์เดียวกัน
 
 ![](../images/session_terminal.png)
 
-Files created here can also be immediately seen in the Jupyter Notebook as well. Conversely, changes made to files in Jupyter
-Notebook can also be checked right from the terminal. This is because they are using the same files in the same compute session.
+ไฟล์ที่สร้างที่นี่ยังสามารถเห็นได้ทันทีใน Jupyter Notebook ด้วย ในทางกลับกัน การเปลี่ยนแปลงที่ทำกับไฟล์ใน Jupyter
+Notebook ก็สามารถตรวจสอบได้จากเทอร์มินัลทันที นี่เป็นเพราะทั้งสองแอปใช้ไฟล์เดียวกันในเซสชันการคำนวณเดียวกัน
 
-In addition to this, ผู้ใช้s can use web-based services such as TensorBoard, Jupyter
-Lab, etc., depending on the type of environments provided by the compute session.
+นอกจากนี้ ผู้ใช้ยังสามารถใช้บริการที่ใช้เว็บ เช่น TensorBoard, Jupyter
+Lab เป็นต้น ขึ้นอยู่กับประเภทของสภาพแวดล้อมที่เซสชันการคำนวณจัดเตรียมไว้
 
 
-## บันทึกเซสชันการคำนวณของการค้นหา
+## ค้นหาบันทึกของเซสชันการคำนวณ
 
-Users can view the log of the compute session by clicking the last icon in the
-Control panel of the running compute session.
+ผู้ใช้สามารถดูบันทึกของเซสชันการคำนวณได้โดยคลิกไอคอนสุดท้ายใน
+แผงควบคุมของเซสชันการคำนวณที่กำลังทำงานอยู่
 
 ![](../images/session_log.png)
 
@@ -449,59 +439,57 @@ Control panel of the running compute session.
 
 ## เปลี่ยนชื่อเซสชันที่กำลังรัน
 
-Name of the active session can be changed. Click the 'Edit' button in the session detail
-panel to change the session name.
-New session name should also follow the [the authoring rule](#session-naming-rule).
+สามารถเปลี่ยนชื่อของเซสชันที่กำลังทำงานอยู่ได้ คลิกปุ่ม 'Edit' ในแผงรายละเอียดเซสชัน
+เพื่อเปลี่ยนชื่อเซสชัน
+ชื่อเซสชันใหม่ควรเป็นไปตาม[กฎการตั้งชื่อ](#session-naming-rule) ด้วย
 
 ![](../images/session_renaming.png)
 
 
 <a id="delete_session"></a>
 
-## ลบเซสชันการคอมพิวเตอร์
+## ลบเซสชันการคำนวณ
 
-To terminate a specific session, simply click on the red power button and click
-'Terminate' button in the dialog. Since the data in the folder inside the compute
-session is deleted as soon as the compute session ends, it is recommended to
-move the data to the mounted folder or upload it to the mounted folder from the
-beginning.
+หากต้องการยุติเซสชันที่ระบุ เพียงคลิกที่ปุ่มเปิดปิดสีแดงและคลิก
+ปุ่ม 'Terminate' ในกล่องโต้ตอบ เนื่องจากข้อมูลในโฟลเดอร์ภายในเซสชันการคำนวณ
+จะถูกลบทันทีที่เซสชันการคำนวณสิ้นสุดลง จึงแนะนำให้
+ย้ายข้อมูลไปยังโฟลเดอร์ที่ถูกเมานต์หรืออัปโหลดไปยังโฟลเดอร์ที่ถูกเมานต์ตั้งแต่
+เริ่มต้น
 
 ![](../images/session_destroy_dialog.png)
 
 <a id="idleness-checks"></a>
 
-## Idleness checks
+## การตรวจสอบสถานะไม่ใช้งาน
 
-Backend.AI รองรับเกณฑ์การไร้กิจกรรม (ความเฉยเมย) สําหรับการเก็บขยะอัตโนมัติของเซสชันการประมวลผลสามประเภท: อายุขัยสูงสุดของเซสชัน, เวลาเงียบสงบของเครือข่าย, และการตรวจสอบการใช้ทรัพยากร.
+Backend.AI รองรับเกณฑ์การไร้กิจกรรม (ความเฉยเมย) สําหรับการเก็บขยะอัตโนมัติของเซสชันการคำนวณสามประเภท: อายุขัยสูงสุดของเซสชัน, เวลาเงียบสงบของเครือข่าย, และการตรวจสอบการใช้ทรัพยากร.
 
-The criteria for session termination can be found in the 'Idle Checks' section of the session detail panel.
+เกณฑ์สำหรับการยุติเซสชันสามารถพบได้ในส่วน 'Idle Checks' ของแผงรายละเอียดเซสชัน
 
 ![](../images/idle_checks_column.png)
 
-The meaning of idle checkers are as follows, and more detailed explanations can be
-found by clicking the information (i) button in the idle checks section.
+ความหมายของตัวตรวจสอบสถานะไม่ใช้งานมีดังต่อไปนี้ และสามารถดูคำอธิบายโดยละเอียดเพิ่มเติมได้
+โดยคลิกปุ่มข้อมูล (i) ในส่วนการตรวจสอบสถานะไม่ใช้งาน
 
 - อายุการใช้งานเซสชันสูงสุด: บังคับยุติเซสชันหลังจากเวลานี้นับตั้งแต่การสร้าง มาตรการนี้ป้องกันไม่ให้เซสชันทำงานต่อไปไม่มีที่สิ้นสุด
-- การหมดเวลาขณะว่างในการเชื่อมต่อเครือข่าย: บังคับยกเลิกเซสชันที่ไม่ได้แลกเปลี่ยนข้อมูลกับผู้ใช้ (เบราว์เซอร์หรือแอปเว็บ) หลังจากเวลานี้ การรับส่งข้อมูลระหว่างผู้ใช้และเซสชันการคอมพิวเตอร์จะเกิดขึ้นอย่างต่อเนื่องเมื่อผู้ใช้โต้ตอบกับแอป เช่น เทอร์มินัลหรือ Jupyter โดยการพิมพ์จากแป้นพิมพ์ การสร้างเซลล์ Jupyter ฯลฯ การสร้างเซลล์ Jupyter ฯลฯ หากไม่มีการโต้ตอบเป็นระยะเวลาหนึ่ง สภาวะการเก็บขยะจะถูกตอบสนอง แม้ว่าจะมีการประมวลผลที่กำลังดำเนินการงานในเซสชันการคอมพิวเตอร์ แต่ก็จะต้องถูกยกเลิกหากไม่มีการโต้ตอบจากผู้ใช้
-- Utilization Checker: ทรัพยากรที่ถูกจัดสรรให้กับเซสชันการคอมพิวเตอร์จะถูกเรียกคืนตามการใช้ทรัพยากรเหล่านั้น การตัดสินใจในการลบขึ้นอยู่กับสองปัจจัยดังต่อไปนี้:
+- การหมดเวลาขณะว่างในการเชื่อมต่อเครือข่าย: บังคับยกเลิกเซสชันที่ไม่ได้แลกเปลี่ยนข้อมูลกับผู้ใช้ (เบราว์เซอร์หรือแอปเว็บ) หลังจากเวลานี้ การรับส่งข้อมูลระหว่างผู้ใช้และเซสชันการคำนวณจะเกิดขึ้นอย่างต่อเนื่องเมื่อผู้ใช้โต้ตอบกับแอป เช่น เทอร์มินัลหรือ Jupyter โดยการพิมพ์จากแป้นพิมพ์ การสร้างเซลล์ Jupyter ฯลฯ การสร้างเซลล์ Jupyter ฯลฯ หากไม่มีการโต้ตอบเป็นระยะเวลาหนึ่ง สภาวะการเก็บขยะจะถูกตอบสนอง แม้ว่าจะมีการประมวลผลที่กำลังดำเนินการงานในเซสชันการคำนวณ แต่ก็จะต้องถูกยกเลิกหากไม่มีการโต้ตอบจากผู้ใช้
+- Utilization Checker: ทรัพยากรที่ถูกจัดสรรให้กับเซสชันการคำนวณจะถูกเรียกคืนตามการใช้ทรัพยากรเหล่านั้น การตัดสินใจในการลบขึ้นอยู่กับสองปัจจัยดังต่อไปนี้:
 
-  - ระยะเวลาผ่อนผัน: ช่วงเวลาที่ตัวตรวจสอบการใช้งานที่ไม่ได้ใช้งานจะไม่ทำงาน แม้ว่าจะมีการใช้งานต่ำ เซสชันการคอมพิวเตอร์จะไม่ถูกยุติในระยะเวลานี้ อย่างไรก็ตาม เมื่อตัวระยะเวลาผ่อนผันสิ้นสุดลง หากการใช้งานเฉลี่ยยังคงต่ำกว่าค่ากำหนดในช่วงเวลารอที่ตั้งไว้ ระบบสามารถยุติเซสชันได้ตลอดเวลา ระยะเวลาผ่อนผันเป็นช่วงเวลาที่รับประกันเท่านั้นที่การยุติจะไม่เกิดขึ้น มาตรการนี้มีจุดประสงค์หลักเพื่อการจัดการทรัพยากร GPU ที่มีการใช้งานต่ำอย่างมีประสิทธิภาพ
-  - Utilization Threshold: If the resource utilization of a compute session does
-    not exceed the set threshold for a certain duration (idle timeout), that
-    session will be automatically terminated. For example, if the accelerator
-    utilization threshold is set to 1%, and a compute session shows a
-    utilization of less than 1% over the idle timeout, it becomes a target for
-    termination. Resources with empty values are excluded from the garbage
-    collection criteria.
+  - ระยะเวลาผ่อนผัน: ช่วงเวลาที่ตัวตรวจสอบการใช้งานที่ไม่ได้ใช้งานจะไม่ทำงาน แม้ว่าจะมีการใช้งานต่ำ เซสชันการคำนวณจะไม่ถูกยุติในระยะเวลานี้ อย่างไรก็ตาม เมื่อตัวระยะเวลาผ่อนผันสิ้นสุดลง หากการใช้งานเฉลี่ยยังคงต่ำกว่าค่ากำหนดในช่วงเวลารอที่ตั้งไว้ ระบบสามารถยุติเซสชันได้ตลอดเวลา ระยะเวลาผ่อนผันเป็นช่วงเวลาที่รับประกันเท่านั้นที่การยุติจะไม่เกิดขึ้น มาตรการนี้มีจุดประสงค์หลักเพื่อการจัดการทรัพยากร GPU ที่มีการใช้งานต่ำอย่างมีประสิทธิภาพ
+  - เกณฑ์การใช้งาน (Utilization Threshold): หากการใช้ทรัพยากรของเซสชันการคำนวณ
+    ไม่เกินเกณฑ์ที่กำหนดในระยะเวลาที่กำหนด (idle timeout) เซสชันนั้น
+    จะถูกยุติโดยอัตโนมัติ ตัวอย่างเช่น หากเกณฑ์การใช้งานตัวเร่งความเร็ว
+    ถูกตั้งค่าเป็น 1% และเซสชันการคำนวณแสดง
+    การใช้งานน้อยกว่า 1% ในช่วง idle timeout เซสชันนั้นจะกลายเป็นเป้าหมายสำหรับ
+    การยุติ ทรัพยากรที่มีค่าว่างจะถูกยกเว้นจากเกณฑ์การเก็บขยะ
 
 :::note
 หลังจากช่วงเวลาให้อภัย เซสชันสามารถถูกยกเลิกได้ทุกเมื่อหากการใช้งานยังคงต่ำ การใช้ทรัพยากรอย่างสั้นๆ จะไม่ขยายช่วงเวลาให้อภัย จะพิจารณาเฉพาะการใช้งานเฉลี่ยในช่วงเวลาไม่ใช้งานล่าสุดเท่านั้น
 :::
 
-Hovering the mouse over the Utilization Checker will display a tooltip with the
-utilization and threshold values. The text color changes to yellow and then red
-as the current utilization approaches the threshold (indicating low resource
-utilization).
+การวางเมาส์เหนือ Utilization Checker จะแสดงคำแนะนำเครื่องมือพร้อมกับ
+ค่าการใช้งานและค่าเกณฑ์ สีข้อความจะเปลี่ยนเป็นสีเหลืองและต่อมาเป็นสีแดง
+เมื่อการใช้งานปัจจุบันเข้าใกล้เกณฑ์ (แสดงถึงการใช้ทรัพยากรต่ำ)
 
 
 :::note
@@ -512,16 +500,16 @@ utilization).
 
 ## วิธีการเพิ่มตัวแปรสภาพแวดล้อมก่อนที่จะสร้างเซสชัน
 
-To give more convenient workspace for ผู้ใช้s, Backend.AI supports environment variable setting
-in session launching. In this feature, ผู้ใช้s can add any envs such as `PATH` by filling out
-variable name and value in environment configuration dialog.
+เพื่อให้พื้นที่ทำงานที่สะดวกยิ่งขึ้นสำหรับผู้ใช้ Backend.AI รองรับการตั้งค่าตัวแปรสภาพแวดล้อม
+ในการเริ่มต้นเซสชัน ในฟีเจอร์นี้ ผู้ใช้สามารถเพิ่มตัวแปรสภาพแวดล้อมใด ๆ เช่น `PATH` ได้โดยการกรอก
+ชื่อตัวแปรและค่าในกล่องโต้ตอบการกำหนดค่าสภาพแวดล้อม
 
-To add environment variable, simply click '+ Add environment variables' button of the Variable.
-Also, you can remove the variable by clicking '-' button of the row that you want to get rid of.
+หากต้องการเพิ่มตัวแปรสภาพแวดล้อม เพียงคลิกปุ่ม '+ Add environment variables' ของตัวแปร
+นอกจากนี้ คุณยังสามารถลบตัวแปรได้โดยการคลิกปุ่ม '-' ของแถวที่คุณต้องการลบออก
 
 ![](../images/launch_session_env.png)
 
-You can write down variable name and value in the same line of the input fields.
+คุณสามารถเขียนชื่อตัวแปรและค่าในบรรทัดเดียวกันของช่องป้อนข้อมูลได้
 
 
 <a id="set-preopen-ports"></a>
@@ -534,56 +522,56 @@ Backend.AI รองรับการตั้งค่าพอร์ตที
 
 ![](../images/preopen-ports-config.png)
 
-In the forth page of session creation page, ผู้ใช้s can add, update and delete written preopen ports. To see more detail
-information, please click 'Help (?)'' button.
+ในหน้าที่สี่ของหน้าการสร้างเซสชัน ผู้ใช้สามารถเพิ่ม อัปเดต และลบพอร์ตที่เปิดล่วงหน้าที่เขียนไว้ได้ หากต้องการดูข้อมูลโดยละเอียด
+เพิ่มเติม โปรดคลิกปุ่ม 'Help (?)'
 
-Users can put port numbers in between 1024 ~ 65535, to the input fields. Then, press 'Enter'. Users can specify multiple ports, separated by commas (,).
-Users can check the configured preopen ports in the session app launcher.
+ผู้ใช้สามารถใส่หมายเลขพอร์ตระหว่าง 1024 ~ 65535 ในช่องป้อนข้อมูล จากนั้นกด 'Enter' ผู้ใช้สามารถระบุพอร์ตได้หลายพอร์ตโดยคั่นด้วยเครื่องหมายจุลภาค (,)
+ผู้ใช้สามารถตรวจสอบพอร์ตที่เปิดล่วงหน้าที่กำหนดค่าไว้ได้ในตัวเปิดแอปเซสชัน
 
 ![](../images/session_app_launcher.png)
 
 
 :::note
-พอร์ตที่เปิดล่วงหน้าคือ **พอร์ตภายในภาชนะ** ดังนั้น ต่างจากแอปอื่น เมื่อผู้ใช้คลิกพอร์ตที่เปิดล่วงหน้าในตัวเปิดแอปเซสชัน จะมีหน้าว่างปรากฏขึ้น กรุณาผูกเซิร์ฟเวอร์กับพอร์ตที่เกี่ยวข้องก่อนใช้งาน
+พอร์ตที่เปิดล่วงหน้าคือ **พอร์ตภายในคอนเทนเนอร์** ดังนั้น ต่างจากแอปอื่น เมื่อผู้ใช้คลิกพอร์ตที่เปิดล่วงหน้าในตัวเปิดแอปเซสชัน จะมีหน้าว่างปรากฏขึ้น กรุณาผูกเซิร์ฟเวอร์กับพอร์ตที่เกี่ยวข้องก่อนใช้งาน
 :::
 
 <a id="save-session-commit"></a>
 
-## บันทึกการทำธุรกรรมการเซสชัน
+## บันทึกการคอมมิตเซสชัน
 
 
-Backend.AI supports \"Convert Session to Image\" feature from 24.03. Committing a `RUNNING` session will save the
-current state of the session as a new image. Click the 'Commit' button (the fourth icon) in the session detail panel
-to open a dialog displaying the session information. After entering the session name, ผู้ใช้s can convert the session to
-a new image. The session name must be 4 to 32 characters long and can only contain alphanumeric letters, hyphens (`-`),
-or underscores (`_`).
+Backend.AI รองรับฟีเจอร์ \"Convert Session to Image\" ตั้งแต่เวอร์ชัน 24.03 การคอมมิตเซสชันที่อยู่ในสถานะ `RUNNING` จะบันทึก
+สถานะปัจจุบันของเซสชันเป็นอิมเมจใหม่ คลิกปุ่ม 'Commit' (ไอคอนที่สี่) ในแผงรายละเอียดเซสชัน
+เพื่อเปิดกล่องโต้ตอบที่แสดงข้อมูลเซสชัน หลังจากป้อนชื่อเซสชัน ผู้ใช้สามารถแปลงเซสชันเป็น
+อิมเมจใหม่ได้ ชื่อเซสชันต้องมีความยาว 4 ถึง 32 ตัวอักษร และสามารถประกอบด้วยตัวอักษรและตัวเลข เครื่องหมายยัติภังค์ (`-`)
+หรือเครื่องหมายขีดล่าง (`_`) เท่านั้น
 
 ![](../images/push_session_to_customized_image.png)
 
-After filling out session name in the input field, click the 'PUSH SESSION TO CUSTOMIZED IMAGE' button.
-The customized image created in this way can be used in future session creations. However, directories
-mounted to the container for image commits are considered external resources and are not included in
-the final image. Remember that `/home/work` is a mount folder (scratch directory), so it is not included.
+หลังจากกรอกชื่อเซสชันในช่องป้อนข้อมูลแล้ว ให้คลิกปุ่ม 'PUSH SESSION TO CUSTOMIZED IMAGE'
+อิมเมจแบบกำหนดเองที่สร้างขึ้นด้วยวิธีนี้สามารถใช้ในการสร้างเซสชันในอนาคตได้ อย่างไรก็ตาม ไดเรกทอรี
+ที่เมานต์ไปยังคอนเทนเนอร์สำหรับการคอมมิตอิมเมจจะถือเป็นทรัพยากรภายนอกและจะไม่รวมอยู่ใน
+อิมเมจสุดท้าย โปรดจำไว้ว่า `/home/work` เป็นโฟลเดอร์เมานต์ (scratch directory) ดังนั้นจึงไม่รวมอยู่ด้วย
 
 
 :::note
-Currently, Backend.AI supports "Convert Session to Image" only when the session is in `INTERACTIVE` mode.
-To prevent unexpected error, ผู้ใช้s may not be able to terminate the session during committing process.
-To stop the ongoing process, check the session, and force-terminate it.
+ปัจจุบัน Backend.AI รองรับ "Convert Session to Image" เฉพาะเมื่อเซสชันอยู่ในโหมด `INTERACTIVE` เท่านั้น
+เพื่อป้องกันข้อผิดพลาดที่ไม่คาดคิด ผู้ใช้อาจไม่สามารถยุติเซสชันในระหว่างขั้นตอนการคอมมิตได้
+หากต้องการหยุดขั้นตอนที่กำลังดำเนินการ ให้เลือกเซสชันและบังคับยุติ
 :::
 
 :::note
-The number of times to "Convert Session to Image" may be limited by the ผู้ใช้ resource policy. In this case,
-[remove the existing customized image](#delete-customized-image) and try again. If this does not resolves
-the problem, please contact the ผู้ดูแลระบบistrator.
+จำนวนครั้งในการทำ "Convert Session to Image" อาจถูกจำกัดโดยนโยบายทรัพยากรของผู้ใช้ ในกรณีนี้
+ให้[ลบอิมเมจแบบกำหนดเองที่มีอยู่](#delete-customized-image) และลองอีกครั้ง หากยังไม่สามารถแก้ไข
+ปัญหาได้ โปรดติดต่อผู้ดูแลระบบ
 :::
 
 
-## การใช้ภาพที่ถูกแปลงจากเซสชันที่กำลังดำเนินอยู่
+## การใช้งานอิมเมจที่ถูกแปลงจากเซสชันที่กำลังดำเนินอยู่
 
-Converting an ongoing session into an image allows ผู้ใช้s to select this image from the environments in the session launcher
-when creating a new session. This image is not exposed to other ผู้ใช้s and is useful for continuing to use the current session
-state as is. The converted image is tagged with `Customized<session name>`.
+การแปลงเซสชันที่กำลังดำเนินอยู่ให้เป็นอิมเมจช่วยให้ผู้ใช้สามารถเลือกอิมเมจนี้ได้จากสภาพแวดล้อมในตัวเปิดเซสชัน
+เมื่อสร้างเซสชันใหม่ อิมเมจนี้จะไม่ถูกเปิดเผยต่อผู้ใช้คนอื่น และมีประโยชน์สำหรับการใช้งานสถานะเซสชันปัจจุบัน
+ต่อไปตามเดิม อิมเมจที่แปลงแล้วจะถูกติดแท็กด้วย `Customized<session name>`
 
 ![](../images/select_customized_image.png)
 
@@ -594,88 +582,88 @@ state as is. The converted image is tagged with `Customized<session name>`.
 
 ## การใช้งานเทอร์มินัลเว็บขั้นสูง
 
-The web-based terminal internally embeds a utility called
-[tmux](https://github.com/tmux/tmux/wiki). tmux is a terminal multiplexer that
-supports to open multiple shell windows within a single shell, so as to allow
-multiple programs to run in foreground simultaneously. If ผู้ใช้s want to take
-advantage of more powerful tmux features, they can refer to the official tmux
-documentation and other usage examples on the Internet.
+เทอร์มินัลที่ใช้เว็บจะฝังยูทิลิตี้ที่เรียกว่า
+[tmux](https://github.com/tmux/tmux/wiki) ไว้ภายใน tmux เป็น terminal multiplexer ที่
+รองรับการเปิดหน้าต่างเชลล์หลายหน้าต่างภายในเชลล์เดียว เพื่อให้
+โปรแกรมหลายโปรแกรมสามารถทำงานในเบื้องหน้าพร้อมกันได้ หากผู้ใช้ต้องการใช้ประโยชน์
+จากฟีเจอร์ tmux ที่ทรงพลังยิ่งขึ้น สามารถดูเอกสารอย่างเป็นทางการของ tmux
+และตัวอย่างการใช้งานอื่น ๆ บนอินเทอร์เน็ตได้
 
 ที่นี่เรากำลังแนะนำฟีเจอร์ที่ง่ายแต่มีประโยชน์บางอย่าง
 
 ### คัดลอกเนื้อหาของเทอร์มินัล
 
-tmux offers a number of useful features, but it's a bit confusing for first-time
-ผู้ใช้s. In particular, tmux has its own clipboard buffer, so when copying the
-contents of the terminal, ผู้ใช้s can suffer from the fact that it can be pasted
-only within tmux by default. Furthermore, it is difficult to expose ผู้ใช้
-system's clipboard to tmux inside web browser, so the terminal
-contents cannot be copied and pasted to other programs of ผู้ใช้'s computer. The
-so-called `Ctrl-C` / `Ctrl-V` is not working with tmux.
+tmux มีฟีเจอร์ที่มีประโยชน์จำนวนมาก แต่ค่อนข้างสับสนสำหรับ
+ผู้ใช้ครั้งแรก โดยเฉพาะอย่างยิ่ง tmux มีบัฟเฟอร์คลิปบอร์ดของตัวเอง ดังนั้นเมื่อคัดลอก
+เนื้อหาของเทอร์มินัล ผู้ใช้อาจประสบปัญหาที่สามารถวางได้เฉพาะภายใน tmux
+เท่านั้นตามค่าเริ่มต้น ยิ่งไปกว่านั้น ยากที่จะเปิดเผยคลิปบอร์ดของระบบผู้ใช้
+ให้กับ tmux ภายในเว็บเบราว์เซอร์ ดังนั้นเนื้อหาเทอร์มินัล
+จึงไม่สามารถคัดลอกและวางไปยังโปรแกรมอื่นของคอมพิวเตอร์ผู้ใช้ได้ สิ่งที่เรียกว่า
+`Ctrl-C` / `Ctrl-V` ไม่ทำงานกับ tmux
 
-If copy and paste of terminal contents is needed to system's clipboard,
-ผู้ใช้s can temporarily turn off tmux's mouse support. First, press `Ctrl-B` key
-to enter tmux control mode. Then type `:set -g mouse off` and press `Enter`
-(note to type the first colon as well). Users can check what they are
-typing in the status bar at the bottom of the screen. Then drag the desired text
-from the terminal with the mouse and press the `Ctrl-C` or `Cmd-C` (in แมค)
-to copy them to the clipboard of the ผู้ใช้'s computer.
+หากจำเป็นต้องคัดลอกและวางเนื้อหาเทอร์มินัลไปยังคลิปบอร์ดของระบบ
+ผู้ใช้สามารถปิดการรองรับเมาส์ของ tmux ชั่วคราวได้ ก่อนอื่น ให้กดปุ่ม `Ctrl-B`
+เพื่อเข้าสู่โหมดควบคุม tmux จากนั้นพิมพ์ `:set -g mouse off` แล้วกด `Enter`
+(โปรดสังเกตว่าต้องพิมพ์เครื่องหมายทวิภาคแรกด้วย) ผู้ใช้สามารถตรวจสอบสิ่งที่กำลัง
+พิมพ์ได้ในแถบสถานะที่ด้านล่างของหน้าจอ จากนั้นลากข้อความที่ต้องการ
+จากเทอร์มินัลด้วยเมาส์และกด `Ctrl-C` หรือ `Cmd-C` (ใน Mac)
+เพื่อคัดลอกไปยังคลิปบอร์ดของคอมพิวเตอร์ผู้ใช้
 
-With mouse support turned off, scrolling through the mouse wheel is not supprted, to see
-the contents of the previous page from the terminal. In this case, ผู้ใช้s can turn
-on mouse support. Press `Ctrl-B`, and this time, type `:set -g mouse
-on`. Now scrolling through mouse wheelis available to see the contents of the previous page.
+เมื่อปิดการรองรับเมาส์ จะไม่สามารถเลื่อนดูผ่านล้อเมาส์เพื่อดู
+เนื้อหาของหน้าก่อนหน้าจากเทอร์มินัลได้ ในกรณีนี้ ผู้ใช้สามารถเปิด
+การรองรับเมาส์ได้ กด `Ctrl-B` และในครั้งนี้ พิมพ์ `:set -g mouse
+on` ตอนนี้การเลื่อนผ่านล้อเมาส์พร้อมใช้งานเพื่อดูเนื้อหาของหน้าก่อนหน้า
 
-If you remember `:set -g mouse off` or `:set -g mouse on` after `Ctrl-B`,
-you can use the web terminal more conveniently.
+หากคุณจำ `:set -g mouse off` หรือ `:set -g mouse on` หลังจาก `Ctrl-B` ได้
+คุณจะสามารถใช้เทอร์มินัลเว็บได้อย่างสะดวกยิ่งขึ้น
 
 
 :::note
-`Ctrl-B` is tmux's default control mode key. If ผู้ใช้s set another control key
-by modifying `.tmux.conf` in ผู้ใช้ home directory, they should press the set
-key combination instead of `Ctrl-B`.
+`Ctrl-B` เป็นคีย์โหมดควบคุมเริ่มต้นของ tmux หากผู้ใช้ตั้งค่าคีย์ควบคุมอื่น
+โดยการแก้ไข `.tmux.conf` ในไดเรกทอรีโฮมของผู้ใช้ ผู้ใช้ควรกด
+ชุดคีย์ที่ตั้งไว้แทน `Ctrl-B`
 :::
 
 :::note
-ในสภาพแวดล้อม หน้าต่าง ให้ดูที่ทางลัดต่อไปนี้
+ในสภาพแวดล้อม Windows ให้ดูที่ทางลัดต่อไปนี้
 
-* Copy: Hold down `Shift`, right-click and drag
-* Paste: Press `Ctrl-Shift-V`
+* คัดลอก: กด `Shift` ค้างไว้ คลิกขวา แล้วลาก
+* วาง: กด `Ctrl-Shift-V`
 :::
 
 ### ตรวจสอบประวัติเทอร์มินัลโดยใช้แป้นพิมพ์
 
-There is also a way to copy the terminal contents and check the previous
-contents of the terminal simultaneously. It is to check the previous contents
-using the keyboard. Again, click `Ctrl-B` first, and then press the `Page
-Up` and/or `Page Down` keys. To exit search mode, just press the `q`
-key. With this method, ผู้ใช้s can check the contents of the terminal history even
-when the mouse support is turned off.
+ยังมีอีกวิธีหนึ่งในการคัดลอกเนื้อหาเทอร์มินัลและตรวจสอบเนื้อหา
+ก่อนหน้าของเทอร์มินัลพร้อมกัน นั่นคือการตรวจสอบเนื้อหาก่อนหน้า
+โดยใช้แป้นพิมพ์ คลิก `Ctrl-B` ก่อน แล้วจึงกดปุ่ม `Page
+Up` และ/หรือ `Page Down` หากต้องการออกจากโหมดค้นหา เพียงกดปุ่ม `q`
+ด้วยวิธีนี้ ผู้ใช้สามารถตรวจสอบเนื้อหาประวัติเทอร์มินัลได้แม้
+เมื่อปิดการรองรับเมาส์
 
 <a id="tmux_guide"></a>
 
 ### สร้างเชลล์หลายตัว
 
-The main advantage of tmux is to launch and use multiple shells in one
-terminal window. Pressing `Ctrl-B` key and `c`. will show the new shell environment.
-Previous window is not visible at this point, but is not terminated.
-Press `Ctrl-B` and `w`. List of shells currently open on tmux is shown.
-Shell starting with `0:` is the initial shell environment, and the shell
-starting with `1:` is the one just created. Users can move between shells
-using the up/down keys. Place the cursor on the shell `0:` and press the Enter
-key to select it.
+ข้อได้เปรียบหลักของ tmux คือการเปิดและใช้งานเชลล์หลายตัวในหน้าต่าง
+เทอร์มินัลเดียว การกดปุ่ม `Ctrl-B` และ `c` จะแสดงสภาพแวดล้อมเชลล์ใหม่
+หน้าต่างก่อนหน้าจะมองไม่เห็นในตอนนี้ แต่ยังไม่ถูกยุติ
+กด `Ctrl-B` และ `w` รายการของเชลล์ที่เปิดอยู่บน tmux จะแสดงขึ้น
+เชลล์ที่ขึ้นต้นด้วย `0:` คือสภาพแวดล้อมเชลล์เริ่มต้น และเชลล์
+ที่ขึ้นต้นด้วย `1:` คือเชลล์ที่เพิ่งสร้างขึ้น ผู้ใช้สามารถเคลื่อนย้ายระหว่างเชลล์
+โดยใช้ปุ่มขึ้น/ลง วางเคอร์เซอร์บนเชลล์ `0:` และกดปุ่ม Enter
+เพื่อเลือก
 
 ![](../images/tmux_multi_session_pane.png)
 
-In this way, ผู้ใช้s can use multiple shell environments within a web terminal. To exit or terminate the
-current shell, just enter `exit` command or press `Ctrl-B x` key and then
-type `y`.
+ด้วยวิธีนี้ ผู้ใช้สามารถใช้สภาพแวดล้อมเชลล์หลายตัวภายในเทอร์มินัลเว็บได้ หากต้องการออกหรือยุติ
+เชลล์ปัจจุบัน เพียงป้อนคำสั่ง `exit` หรือกดปุ่ม `Ctrl-B x` จากนั้น
+พิมพ์ `y`
 
 โดยสรุป:
 
-- `Ctrl-B c`: create a new tmux shell
-- `Ctrl-B w`: query current tmux shells and move around among them
-- `exit` or `Ctrl-B x`: terminate the current shell
+- `Ctrl-B c`: สร้างเชลล์ tmux ใหม่
+- `Ctrl-B w`: ค้นหาเชลล์ tmux ปัจจุบันและย้ายไปมาระหว่างเชลล์เหล่านั้น
+- `exit` หรือ `Ctrl-B x`: ยุติเชลล์ปัจจุบัน
 
-Combining the above commands allows ผู้ใช้s to perform various tasks simultaneously
-on multiple shells.
+การรวมคำสั่งข้างต้นช่วยให้ผู้ใช้สามารถทำงานต่าง ๆ พร้อมกัน
+บนเชลล์หลายตัวได้

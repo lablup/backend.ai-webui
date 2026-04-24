@@ -1,48 +1,132 @@
-# This workflow will triage pull requests and apply a label based on the
-# paths that are modified in the pull request.
+# Build and release workflow for Backend.AI Desktop and WebUI bundle.
 #
-# To use this workflow, you will need to set up a .github/labeler.yml
-# file with configuration.  For more information, see:
-# https://github.com/actions/labeler/blob/master/README.md
+# Architecture: 3 parallel jobs after a shared web build step.
+#
+#   build_web (ubuntu) ──┬──> build_mac (macos)    → DMG x64/arm64 + local proxy
+#                        ├──> build_desktop (ubuntu) → Win/Linux ZIP x64/arm64 + local proxy
+#                        └──> upload web bundle
+#
+# Key optimizations over the previous single-job approach:
+#   1. Parallel jobs: macOS + win/linux builds run concurrently (~10 min saved)
+#   2. No double React build: publicPath patching replaces full rebuild (~5 min saved)
+#   3. Parallel local proxy compilation within each job (~3 min saved)
+#   4. Optimized ZIP compression level (-6 vs -9, marginal size diff, ~1 min saved)
 
 name: Build and Release Packages
 on:
   release:
     types: [published]
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Skip release asset upload (for testing the build pipeline)'
+        type: boolean
+        default: true
+
+env:
+  NODE_OPTIONS: --max-old-space-size=4096
 
 jobs:
-  build_mac:
+  # ──────────────────────────────────────────────────────────────────────
+  # Job 1: Build web assets and create the web bundle (ubuntu, ~8 min)
+  # ──────────────────────────────────────────────────────────────────────
+  build_web:
     permissions:
       contents: write
-      checks: write
-      actions: read
-      issues: read
-      packages: write
-      pull-requests: read
-      repository-projects: read
-      statuses: read
-    runs-on: macos-latest
-    environment: app-packaging
+    runs-on: ubuntu-latest
     steps:
       - name: Check out Git repository
-        uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
+        uses: actions/checkout@v5
+
+      - uses: pnpm/action-setup@v5
         name: Install pnpm
         with:
           version: latest
           run_install: false
+
       - name: Install Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version-file: '.nvmrc'
           cache: 'pnpm'
+
       - name: Install Dependencies
-        # CI defaults to --frozen-lockfile, which blocks merging git branch lockfiles.
-        # pnpm-workspace.yaml's mergeGitBranchLockfilesBranchPattern auto-merges
-        # branch lockfiles on main. --no-frozen-lockfile allows that merge write.
         run: pnpm install --no-frozen-lockfile
-      - name: Package Desktop Applications
-        run: make all
+
+      - name: Build web assets
+        run: make dep_web
+
+      - name: Create web bundle
+        run: make bundle
+
+      - name: Upload release bundle
+        if: inputs.dry_run != true
+        run: node upload-release.js app
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Share build artifacts with downstream desktop jobs
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v5
+        with:
+          name: web-build
+          path: |
+            build/web/
+            src/wsproxy/dist/
+          retention-days: 1
+          compression-level: 3
+
+  # ──────────────────────────────────────────────────────────────────────
+  # Job 2: Build macOS desktop apps — requires macOS for code signing,
+  #         notarization, and DMG creation (~10 min)
+  # ──────────────────────────────────────────────────────────────────────
+  build_mac:
+    needs: build_web
+    permissions:
+      contents: write
+    runs-on: macos-latest
+    # Use the protected `app-packaging` environment for real releases (which
+    # gates access to signing secrets). Dry runs use a separate unprotected
+    # name because GitHub Actions rejects an empty environment value.
+    environment: ${{ inputs.dry_run != true && 'app-packaging' || 'app-packaging-dryrun' }}
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v5
+
+      - uses: pnpm/action-setup@v5
+        name: Install pnpm
+        with:
+          version: latest
+          run_install: false
+
+      - name: Install Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'pnpm'
+
+      - name: Install Dependencies
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Download web build artifacts
+        uses: actions/download-artifact@v5
+        with:
+          name: web-build
+
+      - name: Prepare Electron app
+        run: make dep_electron
+
+      - name: Compile local proxies (parallel)
+        run: |
+          make compile_localproxy os=macos arch=x64 local_proxy_postfix= &
+          make compile_localproxy os=macos arch=arm64 local_proxy_postfix= &
+          wait
+
+      - name: Package macOS Desktop Apps (signed)
+        if: inputs.dry_run != true
+        run: |
+          make mac_x64
+          make mac_arm64
         env:
           BAI_APP_SIGN: 1
           BAI_APP_SIGN_APPLE_TEAM_ID: ${{ secrets.BAI_APP_SIGN_APPLE_TEAM_ID }}
@@ -51,10 +135,72 @@ jobs:
           BAI_APP_SIGN_IDENTITY: ${{ secrets.BAI_APP_SIGN_IDENTITY }}
           BAI_APP_SIGN_KEYCHAIN_B64: ${{ secrets.BAI_APP_SIGN_KEYCHAIN_B64 }}
           BAI_APP_SIGN_KEYCHAIN_PASSWORD: ${{ secrets.BAI_APP_SIGN_KEYCHAIN_PASSWORD }}
-          NODE_OPTIONS: --max-old-space-size=4096
-      - name: Bundle static resources into zip package
-        run: make bundle
-      - name: Upload application to latest release
+
+      - name: Package macOS Desktop Apps (unsigned, dry run)
+        if: inputs.dry_run == true
+        run: |
+          make mac_x64
+          make mac_arm64
+
+      - name: Upload macOS release assets
+        if: inputs.dry_run != true
+        run: node upload-release.js app
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # ──────────────────────────────────────────────────────────────────────
+  # Job 3: Build Windows + Linux desktop apps (ubuntu, ~8 min)
+  #         No code signing needed — can run on cheaper/faster ubuntu runners.
+  # ──────────────────────────────────────────────────────────────────────
+  build_desktop:
+    needs: build_web
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v5
+
+      - uses: pnpm/action-setup@v5
+        name: Install pnpm
+        with:
+          version: latest
+          run_install: false
+
+      - name: Install Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'pnpm'
+
+      - name: Install Dependencies
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Download web build artifacts
+        uses: actions/download-artifact@v5
+        with:
+          name: web-build
+
+      - name: Prepare Electron app
+        run: make dep_electron
+
+      - name: Compile local proxies (parallel)
+        run: |
+          make compile_localproxy os=win arch=x64 local_proxy_postfix=.exe &
+          make compile_localproxy os=win arch=arm64 local_proxy_postfix=.exe &
+          make compile_localproxy os=linux arch=x64 local_proxy_postfix= &
+          make compile_localproxy os=linux arch=arm64 local_proxy_postfix= &
+          wait
+
+      - name: Package Windows & Linux Desktop Apps
+        run: |
+          make win_x64
+          make win_arm64
+          make linux_x64
+          make linux_arm64
+
+      - name: Upload release assets
+        if: inputs.dry_run != true
         run: node upload-release.js app
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

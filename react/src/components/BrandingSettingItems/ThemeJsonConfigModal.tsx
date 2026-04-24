@@ -16,11 +16,12 @@ import * as _ from 'lodash-es';
 import React, { Suspense, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { downloadBlob } from 'src/helper/csv-util';
+import { loadMonacoEditor } from 'src/helper/monacoEditor';
 import { useThemeMode } from 'src/hooks/useThemeMode';
 import { useUserCustomThemeConfig } from 'src/hooks/useUserCustomThemeConfig';
 
 const MonacoEditor = React.lazy(() =>
-  import('@monaco-editor/react').then((module) => ({
+  loadMonacoEditor().then((module) => ({
     default: module.Editor,
   })),
 );

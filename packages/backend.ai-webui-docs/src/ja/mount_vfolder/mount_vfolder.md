@@ -2,46 +2,38 @@
 
 <a id="session-mounts"></a>
 
-Backend.AI provides a function to mount storage folders when creating a compute session.
-When new compute session is started, ユーザー will have access to the`/home/work/` directory.
-Normal directories and files created under `/home/work/` will disappear when the compute session is terminated.
-This is because compute sessions are dynamically created and deleted based on the container.
-To preserve data inside a container regardless of the container's lifecycle, a separate host folder must be mounted in the container, and then files must be created within the mounted folder.
+Backend.AIは、コンピュートセッション作成時にストレージフォルダをマウントする機能を提供しています。新しいコンピュートセッションが開始されると、ユーザーは `/home/work/` ディレクトリにアクセスできます。
+`/home/work/` 配下に作成された通常のディレクトリやファイルは、コンピュートセッションが終了すると消失します。
+これは、コンピュートセッションがコンテナをベースに動的に作成・削除されるためです。
+コンテナのライフサイクルに関係なくコンテナ内のデータを保持するには、別のホストフォルダをコンテナにマウントし、マウントされたフォルダ内にファイルを作成する必要があります。
 
-Go to 'セッション' page and click the 'Start' button.
-After filling out the 'Session Type', 'Environments & Resource allocation' steps,
-navigate to the 'データとストレージ' step to see a list of folders that ユーザーs can mount.
-From this list, choose the folders to mount and add them, or select multiple folders to mount more.
-The documentation will explain how to mount two folders, `user1-ml-test` and `user2-vfolder`,
-and then create a session.
+「セッション」ページに移動し、「開始」ボタンをクリックします。
+「セッションタイプ」、「環境とリソース割り当て」のステップを入力した後、
+「データとストレージ」ステップに進むと、ユーザーがマウントできるフォルダの一覧が表示されます。
+この一覧から、マウントするフォルダを選択して追加したり、複数のフォルダを選択してまとめてマウントしたりすることができます。
+このドキュメントでは、`user1-ml-test` と `user2-vfolder` の2つのフォルダをマウントしてセッションを作成する方法を説明します。
 
 ![](../images/create_session_with_folders.png)
 
 
 :::note
-By looking at the data and folder information within that project, ユーザーs can see information such as usage mode,
-the storage host the folder belongs to, permissions, and more.
-Note that the 'データとストレージ' step only outputs data folders that are mountable by the current ユーザー.
-For example, folders that belong to other projects cannot be viewed.
+プロジェクト内のデータおよびフォルダ情報を確認することで、ユーザーは使用モード、フォルダが属するストレージホスト、権限などの情報を確認できます。
+「データとストレージ」ステップでは、現在のユーザーがマウント可能なデータフォルダのみが表示される点に注意してください。例えば、他のプロジェクトに属するフォルダは表示されません。
 :::
 
 :::note
-Clicking a 'folder name' in the 'データとストレージ' step will open the folder explorer for that folder.
-From this, ユーザーs can view the folders that have been created, create new folders, and upload files.
-For more detailed instructions related to folders, please refer [Explore Folder](#explore-folder) section.
+「データとストレージ」ステップで「フォルダ名」をクリックすると、そのフォルダのフォルダエクスプローラーが開きます。
+ここから、ユーザーは作成済みのフォルダを表示したり、新しいフォルダを作成したり、ファイルをアップロードしたりできます。
+フォルダに関するより詳細な操作については、[フォルダを探索](#explore-folder)セクションを参照してください。
 :::
 
 :::note
-Alternatively, a new virtual folder can be created by clicking the '+' button.
-For further information on how to create a new folder in session launcher page,
-please refer [Create storage folder](#create-storage-folder) section.
+また、「+」ボタンをクリックして新しいバーチャルフォルダを作成することもできます。
+セッションランチャーページで新しいフォルダを作成する方法の詳細については、[ストレージフォルダを作成](#create-storage-folder)セクションを参照してください。
 :::
 
-In the created session, click the created session name to open detail information drawer. Then,
-click the 'Execute Terminal App' icon button (upper right corner, second from the right) to open terminal app.
-Or you can also open terminal app from the notification.
-`ls` command will mount ``user1-ml-test` folder and `user2-vfolder` under the `user1-ml-test`
-and `user2-vfolder` folders are mounted under the home directory.
+作成されたセッションで、セッション名をクリックして詳細情報ドロワーを開きます。そして、「ターミナルアプリを実行」アイコンボタン（右上の右から2番目）をクリックしてターミナルアプリを開きます。または通知からターミナルアプリを開くこともできます。
+`ls` コマンドを実行すると、`user1-ml-test` フォルダと `user2-vfolder` フォルダがホームディレクトリ配下にマウントされていることを確認できます。
 
 ![](../images/execute_terminal_app.png)
 
@@ -49,27 +41,26 @@ and `user2-vfolder` folders are mounted under the home directory.
 
 
 :::note
-The selected folder will be mounted with its name under `/home/work/` inside the compute session, by its default.
-For example, if folder's name is `test`, it is mounted on `/home/work/test`.
-To customize the mount path, write an absolute path in the 'Path and Alias' input fields.
-Writing `/workspace` in the input field of the `test` folder will mount to `/workspace` inside the session.
-Writing a relative path will mount the folder under `/home/work/` with the path.
+選択したフォルダは、デフォルトでコンピュートセッション内の `/home/work/` 配下にフォルダ名でマウントされます。
+例えば、フォルダ名が `test` の場合、`/home/work/test` にマウントされます。
+マウントパスをカスタマイズするには、「Path and Alias」入力フィールドに絶対パスを記入します。
+`test` フォルダの入力フィールドに `/workspace` と記入すると、セッション内の `/workspace` にマウントされます。
+相対パスを記入した場合は、そのパスを付けて `/home/work/` 配下にフォルダがマウントされます。
 :::
 
 Backend.AIは、計算セッションが削除される際にフォルダー内のファイルを保持するオプションを提供します。以下の例は、何が起こっているかを示しています。
 
-Under the `user2-vfolder`, create a `test_file`.
-Fill the contents with \"file inside ユーザー2-vfolder\".
+`user2-vfolder` の配下に `test_file` を作成します。
+ファイルの内容は \"file inside user2-vfolder\" とします。
 
 ![](../images/mounted_folders_in_terminal.png)
 
-Running `ls` command against `user2-vfolder`, ユーザーs can confirm the file was created successfully.
-Please note the contents of the file can be chekced with `cat` command.
+`user2-vfolder` に対して `ls` コマンドを実行すると、ファイルが正常に作成されたことを確認できます。
+ファイルの内容は `cat` コマンドで確認できます。
 
-Now delete the compute session and go to the Storage page.
-Locate the `user2-vfolder folder`, open a file explorer and check that the `test_file` exists.
-Click the 'download' button in 'Actions' tab to download the file to the local machine and open it
-to confirm that the contents are \"file inside ユーザー2-vfolder\".
+次に、コンピュートセッションを削除してストレージページに移動します。
+`user2-vfolder` フォルダを見つけ、ファイルエクスプローラーを開いて `test_file` が存在することを確認します。
+「アクション」タブの「ダウンロード」ボタンをクリックしてファイルをローカルマシンにダウンロードし、ファイルを開いて内容が \"file inside user2-vfolder\" であることを確認します。
 
 ![](../images/download_file_from_folder.png)
 
@@ -80,32 +71,29 @@ to confirm that the contents are \"file inside ユーザー2-vfolder\".
 
 ## 自動マウントフォルダを使用して計算セッション環境を構成する
 
-If a new program or library is required that is not pre-installed in a compute session, a Storage folder attribute and [automount folder](#automount-folder),
-which is independent of the compute session lifecycle, can be used to install the package.
-Configure a consistent environment regardless of the type of compute session.
+コンピュートセッションにプリインストールされていない新しいプログラムやライブラリが必要な場合、ストレージフォルダの属性とコンピュートセッションのライフサイクルから独立した[自動マウントフォルダ](#automount-folder)を利用して、パッケージをインストールできます。
+これにより、コンピュートセッションの種類に関係なく一貫した環境を構成できます。
 
 
 <a id="using-pip-with-automountfolder"></a>
 
 ### pipでPythonパッケージをインストールする
 
-Creating a folder named `.local` allows a ユーザー to install Python ユーザー packages in same folder.
-`pip` by default installs the packages in the `.local` folder under the ユーザー's home folder
-(Please note that automount folder is mounted under ユーザー's home folder).
-So, to keep a Python package called `tqdm` installed at all times, regardless of the computing environment,
-a command like the following could be issued from the terminal:
+`.local` という名前のフォルダを作成すると、ユーザーは同じフォルダにPythonユーザーパッケージをインストールできます。
+`pip` はデフォルトでユーザーのホームフォルダ配下の `.local` フォルダにパッケージをインストールします
+（自動マウントフォルダはユーザーのホームフォルダ配下にマウントされることに注意してください）。
+したがって、コンピューティング環境に関係なく `tqdm` という Python パッケージを常にインストール済みの状態に保つには、ターミナルから以下のようなコマンドを実行します。
 
 ```shell
 pip install tqdm
 ```
 
-After that, when a new compute session is created, the `.local` folder where the `tqdm` package
-is installed is automatically mounted, so users can use it without reinstalling the `tqdm` package.
+その後、新しいコンピュートセッションを作成すると、`tqdm` パッケージがインストールされた `.local` フォルダが自動的にマウントされるため、ユーザーは `tqdm` パッケージを再インストールすることなく利用できます。
 
 :::note
-When using multiple Python versions or sessions with different Python versions, packages may have compatibility issues.
-This can be circumvented by branching `PYTHONPATH` environment variable via the `.bashrc`.
-This is because the user's `pip` package is installed in the path specified in the `PYTHONPATH`.
+複数のPythonバージョン、または異なるPythonバージョンを使用するセッションを利用する場合、パッケージに互換性の問題が発生する可能性があります。
+これは、`.bashrc` を通じて `PYTHONPATH` 環境変数を分岐させることで回避できます。
+これは、ユーザーの `pip` パッケージが `PYTHONPATH` で指定されたパスにインストールされるためです。
 :::
 
 
@@ -113,25 +101,24 @@ This is because the user's `pip` package is installed in the path specified in t
 
 ### Homebrewでパッケージをインストールする
 
-Package managers like Ubuntu `apt` or CentOS `yum` usually require the `root` permission.
-For security reasons, `sudo` and `root` accesses are blocked by default in Backend.AI's compute session (Depending on the configuration, this may be allowed), so we recommend to use [Homebrew on Linux](https://docs.brew.sh/Homebrew-on-Linux) which does not require `sudo`.
+Ubuntuの `apt` やCentOSの `yum` のようなパッケージマネージャーは通常 `root` 権限を必要とします。
+セキュリティ上の理由から、Backend.AIのコンピュートセッションではデフォルトで `sudo` と `root` のアクセスがブロックされているため（設定によっては許可される場合もあります）、`sudo` を必要としない [Homebrew on Linux](https://docs.brew.sh/Homebrew-on-Linux) の使用を推奨します。
 
-Homebrew can be configured as follows:
+Homebrewは以下のように設定できます。
 
-- Create `.linuxbrew` folder in Data & Storage page.
-- Create a compute session (`.linuxbrew` folder is automatically mounted at
-  `/home/linuxbrew/.linuxbrew`).
-- Install Homebrew in the compute session, if not yet installed.
+- データとストレージページで `.linuxbrew` フォルダを作成します。
+- コンピュートセッションを作成します（`.linuxbrew` フォルダは `/home/linuxbrew/.linuxbrew` に自動的にマウントされます）。
+- まだインストールされていない場合は、コンピュートセッション内でHomebrewをインストールします。
 
    ```shell
    $ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
    ```
-- Homebrew packages can be installed like following:
+- Homebrewパッケージは以下のようにインストールできます。
 
    ```shell
    $ brew install hello
    $ hello
    Hello, world!
    ```
-`brew` installs packages under `/home/linuxbrew/.linuxbrew` which is automatically mounted when `.linuxbrew` folder exists.
-So, if an automount folder named `.linuxbrew` is created, the Homebrew packages previously installed can be used again, even if the compute session is deleted and a new compute session is created.
+`brew` は `/home/linuxbrew/.linuxbrew` 配下にパッケージをインストールします。このディレクトリは `.linuxbrew` フォルダが存在する場合に自動的にマウントされます。
+したがって、`.linuxbrew` という名前の自動マウントフォルダを作成しておけば、コンピュートセッションを削除して新しいコンピュートセッションを作成しても、以前にインストールしたHomebrewパッケージを再利用できます。

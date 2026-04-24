@@ -12,12 +12,16 @@ import FlexActivityIndicator from './components/FlexActivityIndicator';
 import LocationStateBreadCrumb from './components/LocationStateBreadCrumb';
 import LoginView from './components/LoginView';
 import MainLayout from './components/MainLayout/MainLayout';
+import { STokenLoginBoundary } from './components/STokenLoginBoundary';
 import WebUINavigate from './components/WebUINavigate';
+import { persistPostLoginState } from './helper/loginSessionAuth';
 import { useSuspendedBackendaiClient } from './hooks';
 import { useAutoDiagnostics } from './hooks/useAutoDiagnostics';
 import { useBAISettingUserState } from './hooks/useBAISetting';
 import { LogoutEventHandler } from './hooks/useLogout';
+import { useSToken } from './hooks/useSToken';
 import { useWebUIMenuItems } from './hooks/useWebUIMenuItems';
+import { pluginApiEndpointState } from './hooks/useWebUIPluginState';
 // High priority to import the component
 import ComputeSessionListPage from './pages/ComputeSessionListPage';
 import LegacyModelStoreListPage from './pages/LegacyModelStoreListPage';
@@ -26,6 +30,8 @@ import ServingPage from './pages/ServingPage';
 import VFolderNodeListPage from './pages/VFolderNodeListPage';
 import { Skeleton, theme } from 'antd';
 import { BAIFlex, BAICard } from 'backend.ai-ui';
+import { useSetAtom } from 'jotai';
+import { parseAsString, useQueryStates } from 'nuqs';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { RouteObject, useLocation } from 'react-router-dom';
@@ -693,6 +699,74 @@ const AutoDiagnosticsEffect = () => {
 };
 
 /**
+ * Route-level gate that delegates to `STokenLoginBoundary` when an sToken
+ * is present in the URL (transparently passes through otherwise). Sourced
+ * here so the regular `LoginView` + `MainLayout` tree never re-reads the
+ * URL query for authentication — see the spec "URL 파라미터 파싱 규약
+ * (nuqs)" section for the invariant.
+ *
+ * On boundary success, the route-level `onSuccess` persists the login
+ * state (`last_login`, `login_attempt`, saved-credential cleanup,
+ * `api_endpoint`, `client.ready`) and nulls both `sToken` / `stoken` keys
+ * from the URL via the nuqs setter so the token doesn't leak into browser
+ * history or referer headers.
+ */
+const STokenGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  'use memo';
+  const [sToken, clearSToken] = useSToken();
+  const setPluginApiEndpoint = useSetAtom(pluginApiEndpointState);
+  if (!sToken) {
+    return <>{children}</>;
+  }
+  return (
+    <STokenLoginBoundary
+      sToken={sToken}
+      onSuccess={(client) => {
+        persistPostLoginState(client);
+        // Mirror LoginView's postConnectSetup so `PluginLoader` (which gates
+        // on this atom) loads plugins on the sToken entry paths too. Without
+        // this set, Electron and plugin-enabled deployments would leave
+        // plugins permanently unloaded on any sToken-based login.
+        const endpoint = (client as { _config?: { endpoint?: unknown } })
+          ?._config?.endpoint;
+        if (typeof endpoint === 'string' && endpoint) {
+          setPluginApiEndpoint(endpoint);
+        }
+        clearSToken(null);
+      }}
+    >
+      {children}
+    </STokenLoginBoundary>
+  );
+};
+
+/**
+ * nuqs parser spec for the EduAppLauncher URL query parameters (every
+ * key except `sToken` / `stoken`, which `useSToken` owns). Covers the
+ * full set consumed by `EduAppLauncher._launch` and `_createEduSession`,
+ * and forwarded verbatim to `client.token_login(sToken, extraParams)`.
+ * Any new URL param expected by the launcher or a backend auth hook
+ * must be added here so nuqs surfaces it as a typed value.
+ */
+const eduAppExtraParamSpec = {
+  app: parseAsString,
+  session_id: parseAsString,
+  session_template: parseAsString,
+  sessionTemplate: parseAsString,
+  cpu: parseAsString,
+  mem: parseAsString,
+  shmem: parseAsString,
+  'cuda-shares': parseAsString,
+  'cuda-device': parseAsString,
+  // LMS signing envelope: the upstream launcher URL carries these alongside
+  // `sToken` and the manager-side auth hook validates the signature against
+  // them. Dropping any of them causes token_login to reject as tampered.
+  api_version: parseAsString,
+  date: parseAsString,
+  endpoint: parseAsString,
+};
+
+/**
  * Root routes configuration
  */
 export const routes: RouteObject[] = [
@@ -702,13 +776,15 @@ export const routes: RouteObject[] = [
     element: (
       <BAIErrorBoundary>
         <DefaultProvidersForReactRoot>
-          <Suspense>
-            <LoginView waitForMainLayout={false} />
-          </Suspense>
-          <LogoutEventHandler />
-          <Suspense fallback={<Skeleton active />}>
-            <InteractiveLoginPage />
-          </Suspense>
+          <STokenGuard>
+            <Suspense>
+              <LoginView waitForMainLayout={false} />
+            </Suspense>
+            <LogoutEventHandler />
+            <Suspense fallback={<Skeleton active />}>
+              <InteractiveLoginPage />
+            </Suspense>
+          </STokenGuard>
         </DefaultProvidersForReactRoot>
       </BAIErrorBoundary>
     ),
@@ -742,28 +818,86 @@ export const routes: RouteObject[] = [
   {
     path: '/edu-applauncher',
     errorElement: <ErrorView />,
-    element: (
-      <BAIErrorBoundary>
-        <DefaultProvidersForReactRoot>
-          <Suspense fallback={<Skeleton active />}>
-            <EduAppLauncherPage />
-          </Suspense>
-        </DefaultProvidersForReactRoot>
-      </BAIErrorBoundary>
-    ),
+    Component: () => {
+      'use memo';
+      const [sToken] = useSToken();
+      const [rawExtraParams] = useQueryStates(eduAppExtraParamSpec);
+      // Narrow via type-guard reducer so `extraParams` is inferred as
+      // `Record<string, string>` without a type assertion. Non-string values
+      // are dropped defensively — nuqs parsers can emit `null`, and future
+      // schema changes might add non-string shapes that shouldn't silently
+      // leak into `client.token_login` via `extraParams`.
+      const extraParams = Object.entries(rawExtraParams).reduce<
+        Record<string, string>
+      >((accumulator, [key, value]) => {
+        if (typeof value === 'string') {
+          accumulator[key] = value;
+        }
+        return accumulator;
+      }, {});
+
+      return (
+        <BAIErrorBoundary>
+          <DefaultProvidersForReactRoot>
+            <STokenLoginBoundary
+              sToken={sToken ?? ''}
+              extraParams={extraParams}
+              // URL is intentionally NOT stripped on success here —
+              // EduAppLauncher's `_createEduSession` still reads
+              // `sToken` (for the customer-specific
+              // `eduApp.get_user_credential` call) and other URL params
+              // drive the launch sequence. The edu token URL is issued
+              // by the integrating LMS, so leaking it into browser
+              // history is considered acceptable in this flow.
+              onSuccess={persistPostLoginState}
+            >
+              <Suspense fallback={<Skeleton active />}>
+                <EduAppLauncherPage sToken={sToken} extraParams={extraParams} />
+              </Suspense>
+            </STokenLoginBoundary>
+          </DefaultProvidersForReactRoot>
+        </BAIErrorBoundary>
+      );
+    },
   },
   {
     path: '/applauncher',
     errorElement: <ErrorView />,
-    element: (
-      <BAIErrorBoundary>
-        <DefaultProvidersForReactRoot>
-          <Suspense fallback={<Skeleton active />}>
-            <EduAppLauncherPage />
-          </Suspense>
-        </DefaultProvidersForReactRoot>
-      </BAIErrorBoundary>
-    ),
+    Component: () => {
+      'use memo';
+      const [sToken] = useSToken();
+      const [rawExtraParams] = useQueryStates(eduAppExtraParamSpec);
+      // Narrow via type-guard reducer so `extraParams` is inferred as
+      // `Record<string, string>` without a type assertion. Non-string values
+      // are dropped defensively — nuqs parsers can emit `null`, and future
+      // schema changes might add non-string shapes that shouldn't silently
+      // leak into `client.token_login` via `extraParams`.
+      const extraParams = Object.entries(rawExtraParams).reduce<
+        Record<string, string>
+      >((accumulator, [key, value]) => {
+        if (typeof value === 'string') {
+          accumulator[key] = value;
+        }
+        return accumulator;
+      }, {});
+
+      return (
+        <BAIErrorBoundary>
+          <DefaultProvidersForReactRoot>
+            <STokenLoginBoundary
+              sToken={sToken ?? ''}
+              extraParams={extraParams}
+              // URL retained — see comment on `/edu-applauncher`.
+              onSuccess={persistPostLoginState}
+            >
+              <Suspense fallback={<Skeleton active />}>
+                <EduAppLauncherPage sToken={sToken} extraParams={extraParams} />
+              </Suspense>
+            </STokenLoginBoundary>
+          </DefaultProvidersForReactRoot>
+        </BAIErrorBoundary>
+      );
+    },
   },
   {
     path: '/',
@@ -771,33 +905,35 @@ export const routes: RouteObject[] = [
     element: (
       <BAIErrorBoundary>
         <DefaultProvidersForReactRoot>
-          <Suspense>
-            <LoginView />
-          </Suspense>
-          {/*FYI, MainLayout has ErrorBoundaryWithNullFallback for <Outlet/> */}
-          <MainLayout />
-          <ErrorBoundaryWithNullFallback>
-            <RoutingEventHandler />
-          </ErrorBoundaryWithNullFallback>
-          <Suspense>
+          <STokenGuard>
+            <Suspense>
+              <LoginView />
+            </Suspense>
+            {/*FYI, MainLayout has ErrorBoundaryWithNullFallback for <Outlet/> */}
+            <MainLayout />
             <ErrorBoundaryWithNullFallback>
-              <AutoDiagnosticsEffect />
+              <RoutingEventHandler />
             </ErrorBoundaryWithNullFallback>
-          </Suspense>
-          <Suspense>
-            <ErrorBoundaryWithNullFallback>
-              <LoginViewLazy />
-            </ErrorBoundaryWithNullFallback>
-            <ErrorBoundaryWithNullFallback>
-              <FolderExplorerOpener />
-            </ErrorBoundaryWithNullFallback>
-            <ErrorBoundaryWithNullFallback>
-              <FolderInvitationResponseModalOpener />
-            </ErrorBoundaryWithNullFallback>
-            <ErrorBoundaryWithNullFallback>
-              <FileUploadManager />
-            </ErrorBoundaryWithNullFallback>
-          </Suspense>
+            <Suspense>
+              <ErrorBoundaryWithNullFallback>
+                <AutoDiagnosticsEffect />
+              </ErrorBoundaryWithNullFallback>
+            </Suspense>
+            <Suspense>
+              <ErrorBoundaryWithNullFallback>
+                <LoginViewLazy />
+              </ErrorBoundaryWithNullFallback>
+              <ErrorBoundaryWithNullFallback>
+                <FolderExplorerOpener />
+              </ErrorBoundaryWithNullFallback>
+              <ErrorBoundaryWithNullFallback>
+                <FolderInvitationResponseModalOpener />
+              </ErrorBoundaryWithNullFallback>
+              <ErrorBoundaryWithNullFallback>
+                <FileUploadManager />
+              </ErrorBoundaryWithNullFallback>
+            </Suspense>
+          </STokenGuard>
         </DefaultProvidersForReactRoot>
       </BAIErrorBoundary>
     ),

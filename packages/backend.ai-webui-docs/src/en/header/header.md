@@ -103,25 +103,34 @@ Below the user information, the following action items are available.
 
 ### My Account
 
-If you click `My Account`, the following dialog appears.
+If you click `My Account`, the My Account Information dialog appears.
 
 ![](../images/my_account_information.png)
 
-Each item has the following meaning. Enter the desired value and click the `Update` button to update the user
-information.
+Each item has the following meaning. Enter the desired value and click the
+`Update` button to update your information.
 
 - **Full Name**: User's name (up to 64 characters).
-- **Original password**: Original password. Click the right view button to see the
-  input contents.
+- **Original password**: Your current password. This field is shown only when
+  connecting to a server prior to Backend.AI 26.4.0, and you must enter it
+  when setting a new password on such servers.
 - **New password**: New password (8 characters or more containing at least 1
-  alphabet, number, and symbol). Click the right view button to see the input
-  contents.
+  alphabet, number, and symbol). Click the eye icon to reveal the input.
 - **New password (again)**: Re-enter the new password for confirmation.
-- **2FA Enabled**: 2FA activation. The user needs to enter the OTP code when logging in if it is checked.
-
+- **Allowed client IPs**: Restrict login access to specific IP addresses or CIDR
+  ranges. Enter one or more IP addresses or CIDR notations (e.g.,
+  `10.20.30.40`, `10.20.30.0/24`). Below the field, your current client IP
+  address is displayed with a copy button for convenience. If the configured
+  list does not include your current IP, a warning is shown.
+- **2FA Enabled**: Enable or disable two-factor authentication. When enabled,
+  you must enter an OTP code at login.
 
 :::note
-Depending on the plugin settings, the `2FA Enabled` column might be invisible.
+The **Allowed client IPs** field is available from Backend.AI 26.4.0 and later.
+:::
+
+:::note
+Depending on the plugin settings, the `2FA Enabled` field might not be visible.
 In that case, please contact the administrator of your system.
 :::
 

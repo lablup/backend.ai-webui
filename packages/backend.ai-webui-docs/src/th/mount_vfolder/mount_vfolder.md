@@ -2,46 +2,44 @@
 
 <a id="session-mounts"></a>
 
-Backend.AI provides a function to mount storage folders when creating a compute session.
-When new compute session is started, ผู้ใช้ will have access to the`/home/work/` directory.
-Normal directories and files created under `/home/work/` will disappear when the compute session is terminated.
-This is because compute sessions are dynamically created and deleted based on the container.
-To preserve data inside a container regardless of the container's lifecycle, a separate host folder must be mounted in the container, and then files must be created within the mounted folder.
+Backend.AI มีฟังก์ชันในการเมาท์โฟลเดอร์จัดเก็บเมื่อสร้างเซสชันการคำนวณ
+เมื่อเริ่มเซสชันการคำนวณใหม่ ผู้ใช้จะสามารถเข้าถึงไดเรกทอรี `/home/work/` ได้
+ไดเรกทอรีและไฟล์ทั่วไปที่สร้างไว้ภายใต้ `/home/work/` จะหายไปเมื่อเซสชันการคำนวณสิ้นสุดลง
+ทั้งนี้เนื่องจากเซสชันการคำนวณถูกสร้างและลบแบบไดนามิกบนพื้นฐานของคอนเทนเนอร์
+หากต้องการเก็บข้อมูลภายในคอนเทนเนอร์ไว้โดยไม่คำนึงถึงวงจรชีวิตของคอนเทนเนอร์ ต้องเมาท์โฟลเดอร์โฮสต์แยกต่างหากเข้าไปในคอนเทนเนอร์ จากนั้นจึงสร้างไฟล์ภายในโฟลเดอร์ที่เมาท์ไว้
 
-Go to 'เซสชัน' page and click the 'Start' button.
-After filling out the 'Session Type', 'Environments & Resource allocation' steps,
-navigate to the 'ข้อมูลและการจัดเก็บ' step to see a list of folders that ผู้ใช้s can mount.
-From this list, choose the folders to mount and add them, or select multiple folders to mount more.
-The documentation will explain how to mount two folders, `user1-ml-test` and `user2-vfolder`,
-and then create a session.
+ไปที่หน้า 'เซสชัน' แล้วคลิกปุ่ม 'เริ่มต้น'
+หลังจากกรอกข้อมูลในขั้นตอน 'ประเภทเซสชัน' และ 'สภาพแวดล้อมและการจัดสรรทรัพยากร' แล้ว
+ให้ไปที่ขั้นตอน 'ข้อมูลและการจัดเก็บ' เพื่อดูรายการโฟลเดอร์ที่ผู้ใช้สามารถเมาท์ได้
+จากรายการนี้ ให้เลือกโฟลเดอร์ที่ต้องการเมาท์แล้วเพิ่มเข้าไป หรือเลือกหลายโฟลเดอร์เพื่อเมาท์เพิ่มเติม
+เอกสารนี้จะอธิบายวิธีการเมาท์โฟลเดอร์สองโฟลเดอร์คือ `user1-ml-test` และ `user2-vfolder` และสร้างเซสชัน
 
 ![](../images/create_session_with_folders.png)
 
 
 :::note
-By looking at the data and folder information within that project, ผู้ใช้s can see information such as usage mode,
-the storage host the folder belongs to, permissions, and more.
-Note that the 'ข้อมูลและการจัดเก็บ' step only outputs data folders that are mountable by the current ผู้ใช้.
-For example, folders that belong to other projects cannot be viewed.
+เมื่อดูข้อมูลและข้อมูลโฟลเดอร์ภายในโปรเจกต์นั้น ผู้ใช้จะเห็นข้อมูลต่าง ๆ เช่น โหมดการใช้งาน
+โฮสต์ที่เก็บข้อมูลที่โฟลเดอร์สังกัด สิทธิ์ และอื่น ๆ
+โปรดทราบว่าขั้นตอน 'ข้อมูลและการจัดเก็บ' จะแสดงเฉพาะโฟลเดอร์ข้อมูลที่ผู้ใช้ปัจจุบันสามารถเมาท์ได้เท่านั้น
+ตัวอย่างเช่น ไม่สามารถดูโฟลเดอร์ที่สังกัดโปรเจกต์อื่นได้
 :::
 
 :::note
-Clicking a 'folder name' in the 'ข้อมูลและการจัดเก็บ' step will open the folder explorer for that folder.
-From this, ผู้ใช้s can view the folders that have been created, create new folders, and upload files.
-For more detailed instructions related to folders, please refer [Explore Folder](#explore-folder) section.
+การคลิก 'ชื่อโฟลเดอร์' ในขั้นตอน 'ข้อมูลและการจัดเก็บ' จะเปิดตัวสำรวจโฟลเดอร์ของโฟลเดอร์นั้น
+จากหน้านี้ ผู้ใช้สามารถดูโฟลเดอร์ที่สร้างไว้ สร้างโฟลเดอร์ใหม่ และอัปโหลดไฟล์ได้
+สำหรับคำแนะนำที่ละเอียดยิ่งขึ้นเกี่ยวกับโฟลเดอร์ โปรดดูที่ส่วน [สำรวจโฟลเดอร์](#explore-folder)
 :::
 
 :::note
-Alternatively, a new virtual folder can be created by clicking the '+' button.
-For further information on how to create a new folder in session launcher page,
-please refer [Create storage folder](#create-storage-folder) section.
+นอกจากนี้ ยังสามารถสร้างโฟลเดอร์เสมือนใหม่ได้โดยการคลิกปุ่ม '+'
+สำหรับข้อมูลเพิ่มเติมเกี่ยวกับการสร้างโฟลเดอร์ใหม่ในหน้าตัวเปิดเซสชัน (session launcher)
+โปรดดูที่ส่วน [สร้างโฟลเดอร์จัดเก็บ](#create-storage-folder)
 :::
 
-In the created session, click the created session name to open detail information drawer. Then,
-click the 'Execute Terminal App' icon button (upper right corner, second from the right) to open terminal app.
-Or you can also open terminal app from the notification.
-`ls` command will mount ``user1-ml-test` folder and `user2-vfolder` under the `user1-ml-test`
-and `user2-vfolder` folders are mounted under the home directory.
+ในเซสชันที่สร้างขึ้น ให้คลิกที่ชื่อเซสชันที่สร้างเพื่อเปิดลิ้นชักข้อมูลรายละเอียด จากนั้น
+คลิกปุ่มไอคอน 'เรียกใช้แอปเทอร์มินัล' (ที่มุมขวาบน ลำดับที่สองจากขวา) เพื่อเปิดแอปเทอร์มินัล
+หรือคุณสามารถเปิดแอปเทอร์มินัลจากการแจ้งเตือนได้เช่นกัน
+เมื่อรันคำสั่ง `ls` คุณจะเห็นว่าโฟลเดอร์ `user1-ml-test` และ `user2-vfolder` ถูกเมาท์ไว้ภายใต้ไดเรกทอรีโฮม
 
 ![](../images/execute_terminal_app.png)
 
@@ -49,91 +47,91 @@ and `user2-vfolder` folders are mounted under the home directory.
 
 
 :::note
-The selected folder will be mounted with its name under `/home/work/` inside the compute session, by its default.
-For example, if folder's name is `test`, it is mounted on `/home/work/test`.
-To customize the mount path, write an absolute path in the 'Path and Alias' input fields.
-Writing `/workspace` in the input field of the `test` folder will mount to `/workspace` inside the session.
-Writing a relative path will mount the folder under `/home/work/` with the path.
+โดยค่าเริ่มต้น โฟลเดอร์ที่เลือกจะถูกเมาท์โดยใช้ชื่อของโฟลเดอร์ภายใต้ `/home/work/` ภายในเซสชันการคำนวณ
+ตัวอย่างเช่น หากชื่อโฟลเดอร์คือ `test` จะถูกเมาท์ที่ `/home/work/test`
+หากต้องการกำหนดพาธของการเมาท์เอง ให้ระบุพาธแบบสัมบูรณ์ในช่อง 'Path and Alias'
+การระบุ `/workspace` ในช่องข้อมูลของโฟลเดอร์ `test` จะเมาท์ไปที่ `/workspace` ภายในเซสชัน
+การระบุพาธแบบสัมพัทธ์จะเมาท์โฟลเดอร์ภายใต้ `/home/work/` ด้วยพาธดังกล่าว
 :::
 
-Backend.AI gives an option to preserve files in folders when a compute session is deleted.
-The example below illustrates what's happening.
+Backend.AI มีตัวเลือกในการเก็บไฟล์ในโฟลเดอร์ไว้เมื่อเซสชันการคำนวณถูกลบ
+ตัวอย่างด้านล่างแสดงให้เห็นถึงสิ่งที่เกิดขึ้น
 
-Under the `user2-vfolder`, create a `test_file`.
-Fill the contents with \"file inside ผู้ใช้2-vfolder\".
+ภายใต้ `user2-vfolder` ให้สร้าง `test_file`
+เติมเนื้อหาด้วยข้อความ "file inside user2-vfolder"
 
 ![](../images/mounted_folders_in_terminal.png)
 
-Running `ls` command against `user2-vfolder`, ผู้ใช้s can confirm the file was created successfully.
-Please note the contents of the file can be chekced with `cat` command.
+เมื่อรันคำสั่ง `ls` ที่ `user2-vfolder` ผู้ใช้จะยืนยันได้ว่าไฟล์ถูกสร้างขึ้นเรียบร้อยแล้ว
+โปรดทราบว่าสามารถตรวจสอบเนื้อหาของไฟล์ได้ด้วยคำสั่ง `cat`
 
-Now delete the compute session and go to the Storage page.
-Locate the `user2-vfolder folder`, open a file explorer and check that the `test_file` exists.
-Click the 'download' button in 'Actions' tab to download the file to the local machine and open it
-to confirm that the contents are \"file inside ผู้ใช้2-vfolder\".
+ตอนนี้ให้ลบเซสชันการคำนวณและไปที่หน้า Storage
+หาโฟลเดอร์ `user2-vfolder` เปิดตัวสำรวจไฟล์ และตรวจสอบว่า `test_file` มีอยู่
+คลิกปุ่ม 'ดาวน์โหลด' ในแท็บ 'การกระทำ' เพื่อดาวน์โหลดไฟล์ไปยังเครื่องในเครื่อง และเปิดไฟล์
+เพื่อยืนยันว่าเนื้อหาเป็น "file inside user2-vfolder"
 
 ![](../images/download_file_from_folder.png)
 
-Performing file management on a mounted folder when you create a compute session,
-data can be preserved even after ผู้ใช้s ends the compute session.
+เมื่อคุณจัดการไฟล์บนโฟลเดอร์ที่เมาท์ไว้ในขณะสร้างเซสชันการคำนวณ
+ข้อมูลจะสามารถคงอยู่ได้แม้หลังจากที่ผู้ใช้สิ้นสุดเซสชันการคำนวณ
 
 
 <a id="using-automount-folder"></a>
 
-## กำหนดค่าบริเวณเซสชั่นการคอมพิวเตอร์โดยใช้โฟลเดอร์อัตโนมัติ
+## การกำหนดค่าสภาพแวดล้อมของเซสชันการคำนวณด้วยโฟลเดอร์เมาท์อัตโนมัติ
 
-If a new program or library is required that is not pre-installed in a compute session, a Storage folder attribute and [automount folder](#automount-folder),
-which is independent of the compute session lifecycle, can be used to install the package.
-Configure a consistent environment regardless of the type of compute session.
+หากต้องการใช้โปรแกรมหรือไลบรารีใหม่ที่ไม่ได้ถูกติดตั้งไว้ล่วงหน้าในเซสชันการคำนวณ คุณสามารถใช้คุณลักษณะของโฟลเดอร์จัดเก็บและ[โฟลเดอร์เมาท์อัตโนมัติ](#automount-folder)
+ซึ่งเป็นอิสระจากวงจรชีวิตของเซสชันการคำนวณ ในการติดตั้งแพ็กเกจ
+สิ่งนี้ช่วยให้คุณสามารถกำหนดค่าสภาพแวดล้อมที่สอดคล้องกันได้ โดยไม่คำนึงถึงประเภทของเซสชันการคำนวณ
 
 
 <a id="using-pip-with-automountfolder"></a>
 
-### ติดตั้งแพ็คเกจ Python ผ่าน pip
+### ติดตั้งแพ็กเกจ Python ผ่าน pip
 
-Creating a folder named `.local` allows a ผู้ใช้ to install Python ผู้ใช้ packages in same folder.
-`pip` by default installs the packages in the `.local` folder under the ผู้ใช้'s home folder
-(Please note that automount folder is mounted under ผู้ใช้'s home folder).
-So, to keep a Python package called `tqdm` installed at all times, regardless of the computing environment,
-a command like the following could be issued from the terminal:
+การสร้างโฟลเดอร์ชื่อ `.local` จะช่วยให้ผู้ใช้สามารถติดตั้งแพ็กเกจ Python ของผู้ใช้ไว้ในโฟลเดอร์เดียวกันได้
+โดยค่าเริ่มต้น `pip` จะติดตั้งแพ็กเกจในโฟลเดอร์ `.local` ภายใต้โฟลเดอร์โฮมของผู้ใช้
+(โปรดทราบว่าโฟลเดอร์เมาท์อัตโนมัติจะถูกเมาท์ไว้ภายใต้โฟลเดอร์โฮมของผู้ใช้)
+ดังนั้น หากต้องการให้แพ็กเกจ Python ที่ชื่อ `tqdm` ถูกติดตั้งอยู่ตลอดเวลา ไม่ว่าสภาพแวดล้อมการคำนวณจะเป็นแบบใด
+สามารถรันคำสั่งต่อไปนี้ได้จากเทอร์มินัล:
 
 ```shell
 pip install tqdm
 ```
 
-After that, when a new compute session is created, the `.local` folder where the `tqdm` package
-is installed is automatically mounted, so users can use it without reinstalling the `tqdm` package.
+หลังจากนั้น เมื่อสร้างเซสชันการคำนวณใหม่ โฟลเดอร์ `.local` ที่ติดตั้งแพ็กเกจ `tqdm` ไว้จะถูกเมาท์โดยอัตโนมัติ
+ทำให้ผู้ใช้สามารถใช้งานได้โดยไม่ต้องติดตั้งแพ็กเกจ `tqdm` ซ้ำอีก
 
 :::note
-When using multiple Python versions or sessions with different Python versions, packages may have compatibility issues.
-This can be circumvented by branching `PYTHONPATH` environment variable via the `.bashrc`.
-This is because the user's `pip` package is installed in the path specified in the `PYTHONPATH`.
+เมื่อใช้งาน Python หลายเวอร์ชัน หรือใช้เซสชันที่มี Python เวอร์ชันต่างกัน แพ็กเกจอาจมีปัญหาด้านความเข้ากันได้
+สามารถหลีกเลี่ยงปัญหานี้ได้โดยการแยกตัวแปรสภาพแวดล้อม `PYTHONPATH` ผ่านไฟล์ `.bashrc`
+เนื่องจากแพ็กเกจ `pip` ของผู้ใช้จะถูกติดตั้งในพาธที่ระบุไว้ใน `PYTHONPATH`
 :::
 
 
 <a id="using-linuxbrew-with-automountfolder"></a>
 
-### ติดตั้งแพ็คเกจผ่าน Homebrew
+### ติดตั้งแพ็กเกจผ่าน Homebrew
 
-Package managers like Ubuntu `apt` or CentOS `yum` usually require the `root` permission.
-For security reasons, `sudo` and `root` accesses are blocked by default in Backend.AI's compute session (Depending on the configuration, this may be allowed), so we recommend to use [Homebrew on Linux](https://docs.brew.sh/Homebrew-on-Linux) which does not require `sudo`.
+ตัวจัดการแพ็กเกจ เช่น `apt` ของ Ubuntu หรือ `yum` ของ CentOS มักจะต้องใช้สิทธิ์ `root`
+ด้วยเหตุผลด้านความปลอดภัย การเข้าถึง `sudo` และ `root` ถูกบล็อกไว้โดยค่าเริ่มต้นในเซสชันการคำนวณของ Backend.AI (อาจได้รับอนุญาตขึ้นอยู่กับการตั้งค่า) ดังนั้นเราจึงแนะนำให้ใช้ [Homebrew on Linux](https://docs.brew.sh/Homebrew-on-Linux) ซึ่งไม่ต้องใช้ `sudo`
 
-Homebrew can be configured as follows:
+สามารถตั้งค่า Homebrew ได้ดังนี้:
 
-- Create `.linuxbrew` folder in Data & Storage page.
-- Create a compute session (`.linuxbrew` folder is automatically mounted at
-  `/home/linuxbrew/.linuxbrew`).
-- Install Homebrew in the compute session, if not yet installed.
+- สร้างโฟลเดอร์ `.linuxbrew` ในหน้า Data & Storage
+- สร้างเซสชันการคำนวณ (โฟลเดอร์ `.linuxbrew` จะถูกเมาท์โดยอัตโนมัติที่
+  `/home/linuxbrew/.linuxbrew`)
+- ติดตั้ง Homebrew ในเซสชันการคำนวณ หากยังไม่ได้ติดตั้ง
 
    ```shell
    $ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
    ```
-- Homebrew packages can be installed like following:
+- สามารถติดตั้งแพ็กเกจ Homebrew ได้ดังนี้:
 
    ```shell
    $ brew install hello
    $ hello
    Hello, world!
    ```
-`brew` installs packages under `/home/linuxbrew/.linuxbrew` which is automatically mounted when `.linuxbrew` folder exists.
-So, if an automount folder named `.linuxbrew` is created, the Homebrew packages previously installed can be used again, even if the compute session is deleted and a new compute session is created.
+`brew` จะติดตั้งแพ็กเกจภายใต้ `/home/linuxbrew/.linuxbrew` ซึ่งจะถูกเมาท์โดยอัตโนมัติเมื่อมีโฟลเดอร์ `.linuxbrew` อยู่
+ดังนั้น หากคุณสร้างโฟลเดอร์เมาท์อัตโนมัติชื่อ `.linuxbrew` ไว้แล้ว แพ็กเกจ Homebrew ที่ติดตั้งไว้ก่อนหน้านี้จะสามารถใช้งานได้อีกครั้ง แม้ว่าจะลบเซสชันการคำนวณเดิมและสร้างเซสชันการคำนวณใหม่ก็ตาม

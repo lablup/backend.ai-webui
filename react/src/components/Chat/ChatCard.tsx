@@ -238,6 +238,7 @@ const PureChatCard: React.FC<ChatCardProps> = ({
   const dropContainerRef = useRef<HTMLDivElement>(null);
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
   const [startTime, setStartTime] = useState<number | null>(null);
+  const [endTime, setEndTime] = useState<number | null>(null);
 
   const { agents } = useAIAgent();
   const agent = agents.find((a) => a.id === chat.provider.agentId);
@@ -261,9 +262,6 @@ const PureChatCard: React.FC<ChatCardProps> = ({
   const { error, messages, stop, status, sendMessage, setMessages } = useChat({
     experimental_throttle: 100,
     messages: chat.messages,
-    onFinish: () => {
-      setStartTime(null);
-    },
     // Because there is an issue(https://github.com/vercel/ai/issues/8956) with useChat that does not run a new transport without an id change,
     // we have to change the id and use fetch by utilizing useEventNotStable.
     id: `chat-${baseURL}-${modelId}-${effectiveApiKey}`,
@@ -329,9 +327,28 @@ const PureChatCard: React.FC<ChatCardProps> = ({
 
   const isStreaming = status === 'streaming' || status === 'submitted';
 
+  // TPS measurement window follows the standard LLM inference convention:
+  // start when the first output token arrives (status transitions to
+  // 'streaming') and stop when streaming ends (success, abort, or error).
+  // This excludes file upload, network RTT, and prefill (TTFT), so the
+  // displayed TPS reflects pure decode rate — the same definition used by
+  // vLLM, Ollama, NVIDIA GenAI-Perf, etc.
+  useEffect(() => {
+    if (status === 'streaming' && startTime === null) {
+      setStartTime(Date.now());
+    }
+  }, [status, startTime]);
+
+  useEffect(() => {
+    if (!isStreaming && startTime !== null && endTime === null) {
+      setEndTime(Date.now());
+    }
+  }, [isStreaming, startTime, endTime]);
+
   // Helper function to handle message sending with files
   const handleSendMessage = async (textContent: string, files?: File[]) => {
-    setStartTime(Date.now());
+    setStartTime(null);
+    setEndTime(null);
 
     const parts: Array<
       | { type: 'text'; text: string }
@@ -540,6 +557,7 @@ const PureChatCard: React.FC<ChatCardProps> = ({
         input={input}
         isStreaming={isStreaming}
         startTime={startTime}
+        endTime={endTime}
       />
       <ChatInput
         disabled={!baseURL}

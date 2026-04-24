@@ -4,15 +4,14 @@
 
 このドキュメントは、Backend.AI ソフトウェアのライセンス契約の条件を定義しています。Lablup によって提供される Backend.AI クラウドサービスの使用料およびサポートプランは、このポリシーとは無関係です。
 
-Backend.AI server components (hereinafter referred to as "Backend.AI Server")
-are distributed under the GNU Lesser General Public License v3.0 ("LGPL"), and
-API Client libraries and auxiliary components for accessing Backend.AI server
-(hereinafter "Backend.AI Client") are distributed under the MIT License. Even if
-LGPL complies, commercial contracts with Lablup Co., Ltd. ("Lablup") are
-required depending on the conditions when performing profit activities using the
-Backend.AI server. Several additional plug-ins and 管理者's GUI Control-Panel
-that apply to Backend.AI enterprise solutions are not open source, but
-commercial software.
+Backend.AI のサーバーコンポーネント（以下「Backend.AI サーバー」）は
+GNU Lesser General Public License v3.0（以下「LGPL」）のもとで配布されており、
+Backend.AI サーバーにアクセスするための API クライアントライブラリおよび補助コンポーネント
+（以下「Backend.AI クライアント」）は MIT License のもとで配布されます。LGPL を遵守して
+いる場合であっても、Backend.AI サーバーを利用した収益活動を行う場合、条件によっては
+Lablup Co., Ltd.（以下「Lablup」）との商業契約が必要となります。Backend.AI エンタープライズ
+ソリューションを対象とするいくつかの追加プラグインおよび管理者向け GUI コントロールパネル
+はオープンソースではなく、商用ソフトウェアです。
 
 **用語の定義**
 

@@ -171,18 +171,81 @@ export async function connectViaGQL(
 
 /**
  * Perform token-based login (SSO).
+ *
+ * `extraParams` are forwarded to `client.token_login` alongside the `sToken`
+ * argument. Callers typically collect these from URL query parameters (for
+ * example, EduAppLauncher forwards `app`, `session_id`, resource hints) for
+ * the server-side token handler. LoginView callers that do not need to
+ * forward anything can omit the argument.
+ *
+ * Reserved keys (`sToken`, `stoken`) are stripped from `extraParams` before
+ * forwarding so that the explicit `sToken` argument always wins, regardless
+ * of whether a caller accidentally (or maliciously) included the token in
+ * the forwarded query parameters. `client.token_login` merges `extraParams`
+ * into the request body via `Object.assign`, so an unsanitized map would
+ * otherwise overwrite the authenticated token field.
  */
 export async function tokenLogin(
   client: any,
   sToken: string,
   cfg: LoginConfigState,
   endpoints: string[],
+  extraParams?: Record<string, string>,
 ): Promise<string[]> {
-  const loginSuccess = await client.token_login(sToken);
+  const sanitizedExtraParams = extraParams
+    ? Object.fromEntries(
+        Object.entries(extraParams).filter(
+          ([key]) => key !== 'sToken' && key !== 'stoken',
+        ),
+      )
+    : {};
+  const loginSuccess = await client.token_login(sToken, sanitizedExtraParams);
   if (!loginSuccess) {
     throw new Error('Cannot authorize session by token.');
   }
   return connectViaGQL(client, cfg, endpoints);
+}
+
+/**
+ * Persist the state a successful login should leave behind, independent of
+ * which UI surface performed the login (LoginView panel, STokenLoginBoundary,
+ * etc.). Centralized here so every successful login path keeps the same
+ * side effects in lockstep:
+ *
+ *   - `last_login` timestamp + reset of `login_attempt` counter
+ *   - drop any saved username / password / keypair credentials from prior
+ *     signed-out sessions on this device
+ *   - persist the resolved API endpoint into `localStorage` so the next
+ *     cold start can re-use it
+ *   - mark the client `ready` so `useLoginOrchestration` short-circuits on
+ *     subsequent mounts within the same page load
+ *
+ * Callers: the `STokenLoginBoundary` `onSuccess` route handlers (route-level
+ * sToken flow for `/`, `/interactive-login`, `/edu-applauncher`, `/applauncher`).
+ * LoginView's panel-based login still runs its own `postConnectSetup` inline —
+ * unifying both paths through this helper is tracked as a follow-up refactor
+ * once the boundary migrations settle (see PR #6861 review discussion). Kept
+ * separate from `connectViaGQL` because the GQL step also runs for the
+ * non-authenticated paths (e.g. an already-logged-in session refresh) where
+ * the counter and credential-cleanup side effects would be incorrect.
+ */
+export function persistPostLoginState(client: any): void {
+  const options = (globalThis as any).backendaioptions;
+  if (options) {
+    options.set('last_login', Math.floor(Date.now() / 1000), 'general');
+    options.set('login_attempt', 0, 'general');
+  }
+  localStorage.removeItem('backendaiwebui.login.api_key');
+  localStorage.removeItem('backendaiwebui.login.secret_key');
+  localStorage.removeItem('backendaiwebui.login.user_id');
+  localStorage.removeItem('backendaiwebui.login.password');
+  const endpoint = client?._config?.endpoint;
+  if (typeof endpoint === 'string' && endpoint) {
+    localStorage.setItem('backendaiwebui.api_endpoint', endpoint);
+  }
+  if (client) {
+    client.ready = true;
+  }
 }
 
 /**

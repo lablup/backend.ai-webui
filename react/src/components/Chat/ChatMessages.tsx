@@ -18,6 +18,7 @@ interface ChatMessageProps {
   input: string;
   isStreaming: boolean;
   startTime: number | null;
+  endTime: number | null;
 }
 
 const ChatMessages: React.FC<ChatMessageProps> = ({
@@ -25,6 +26,7 @@ const ChatMessages: React.FC<ChatMessageProps> = ({
   input,
   isStreaming,
   startTime,
+  endTime,
 }) => {
   const { token } = theme.useToken();
   return (
@@ -44,6 +46,7 @@ const ChatMessages: React.FC<ChatMessageProps> = ({
           messages={messages}
           input={input}
           startTime={startTime}
+          endTime={endTime}
         />
       </BAIFlex>
     </BAIFlex>

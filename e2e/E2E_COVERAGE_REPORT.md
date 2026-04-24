@@ -12,19 +12,19 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 254 / 410 features covered (62%)**
+**Overall (in-scope routes): 261 / 408 features covered (64%)**
 
 | Page | Route | Features | Covered | Status |
 |------|-------|:--------:|:-------:|:------:|
-| Authentication | `/interactive-login` | 23 | 21 | 🔶 91% |
+| Authentication | `/interactive-login` | 37 | 35 | 🔶 95% |
 | Change Password | `/change-password` | 9 | 9 | ✅ 100% |
 | Start Page | `/start` | 8 | 6 | 🔶 75% |
 | Dashboard | `/dashboard` | 9 | 7 | 🔶 78% |
 | Session List | `/session` | 22 | 14 | 🔶 64% |
 | Session Launcher | `/session/start` | 14 | 3 | 🔶 21% |
-| Serving | `/serving` | 7 | 0 | ❌ 0% |
+| Serving | `/serving` | 7 | 2 | 🔶 29% |
 | Endpoint Detail | `/serving/:serviceId` | 20 | 9 | 🔶 45% |
-| Service Launcher | `/service/start` | 5 | 0 | ❌ 0% |
+| Service Launcher | `/service/start` | 5 | 1 | 🔶 20% |
 | VFolder / Data | `/data` | 45 | 32 | 🔶 71% |
 | Model Store | `/model-store` | 6 | 6 | ✅ 100% |
 | Admin Model Store | `/admin-model-store` | 22 | 22 | ✅ 100% |
@@ -46,7 +46,8 @@
 | App Launcher | (modal) | 18 | 10 | 🔶 56% |
 | Chat | `/chat/:id?` | 6 | 6 | ✅ 100% |
 | Plugin System | (config-based) | 12 | 12 | ✅ 100% |
-| **Total** | | **357** | **204** | **57%** |
+| RBAC Management | `/rbac` | 22 | 21 | 🔶 95% |
+| **Total** | | **408** | **261** | **64%** |
 
 ---
 
@@ -65,7 +66,7 @@
 
 ### 1. Authentication (`/interactive-login`)
 
-**Test files:** [`e2e/auth/login.spec.ts`](auth/login.spec.ts), [`e2e/auth/password-expiry.spec.ts`](auth/password-expiry.spec.ts), [`e2e/auth/forgot-password.spec.ts`](auth/forgot-password.spec.ts)
+**Test files:** [`e2e/auth/login.spec.ts`](auth/login.spec.ts), [`e2e/auth/password-expiry.spec.ts`](auth/password-expiry.spec.ts), [`e2e/auth/forgot-password.spec.ts`](auth/forgot-password.spec.ts), [`e2e/auth/concurrent-login-guard.spec.ts`](auth/concurrent-login-guard.spec.ts), [`e2e/auth/login-error-messages.spec.ts`](auth/login-error-messages.spec.ts)
 
 | Feature | Status | Test |
 |---------|--------|------|
@@ -88,10 +89,24 @@
 | Forgot password form validation (empty) | ✅ | `User cannot submit without email` |
 | Forgot password form validation (invalid email) | ✅ | `User cannot submit with invalid email format` |
 | Forgot password link config-driven visibility | ✅ | `"Forgot password?" link is hidden when config is disabled` |
+| Concurrent session guard (409 modal) | ✅ | `user sees concurrent session modal when another session is active` |
+| Concurrent session cancel & credential preservation | ✅ | `user can cancel concurrent session modal and return to login form with credentials preserved` |
+| Force login (force=true) | ✅ | `clicking Proceed to Login sends a second login request with force=true` |
+| Force login + TOTP persistence | ✅ | `TOTP is required after force login approval — force flag persists when submitting OTP` |
+| Silent re-login skips concurrent modal | ✅ | `page refresh does not show concurrent session modal for silent re-login attempts` |
+| Invalid API params error (missing username) | ✅ | `invalid API params (missing username) shows login failed notification` |
+| Invalid API params error (missing password) | ✅ | `invalid API params (missing password) shows login failed notification` |
+| Brute-force block (too many failures) | ✅ | `too many login failures shows brute-force block notification` |
+| Auth failed — credential mismatch | ✅ | `credential mismatch shows login information mismatch notification` |
+| Auth failed — inactive account | ✅ | `inactive account shows login information mismatch notification` |
+| Auth failed — email verification required | ✅ | `email verification required shows email verification notification` |
+| Auth failed — missing keypair | ✅ | `missing keypair shows login information mismatch notification` |
+| Active login session exists notification | ✅ | `active login session exists shows session exists notification` |
+| Monitor role login forbidden | ✅ | `monitor role user sees login forbidden notification` |
 | OAuth/SSO login flow | ❌ | - |
 | Session persistence | ❌ | - |
 
-**Coverage: 🔶 21/23 features**
+**Coverage: 🔶 35/37 features**
 
 ---
 
@@ -223,7 +238,7 @@
 
 ### 6. Serving / Model Service (`/serving`)
 
-**Test files:** None (visual regression only: [`e2e/visual_regression/serving/serving_page.test.ts`](visual_regression/serving/serving_page.test.ts))
+**Test files:** [`e2e/serving/serving-deploy-lifecycle.spec.ts`](serving/serving-deploy-lifecycle.spec.ts) (integration, `@integration @serving`)
 
 **Filter:** Active | Destroyed (radio)
 **Primary action:** "Start Service" → navigates to `/service/start`
@@ -232,15 +247,15 @@
 
 | Feature | Status | Test |
 | --------------------------------------------------------- | ------ | ---- |
-| Endpoint list rendering | ❌ | - |
+| Endpoint list rendering | ✅ | `Admin can deploy a model service via ServiceLauncher UI` (verifies row visible in serving list) |
 | "Start Service" → navigate to `/service/start` | ❌ | - |
 | Endpoint name click → EndpointDetailPage | ❌ | - |
 | Status filtering (Active/Destroyed) | ❌ | - |
 | Property filtering | ❌ | - |
 | Edit endpoint → navigate to `/service/update/:endpointId` | ❌ | - |
-| Delete endpoint → confirm dialog | ❌ | - |
+| Delete endpoint → confirm dialog | ✅ | `Admin can terminate a deployed service` |
 
-**Coverage: ❌ 0/7 features**
+**Coverage: 🔶 2/7 features**
 
 ---
 
@@ -281,17 +296,17 @@
 
 ### 8. Service Launcher (`/service/start`, `/service/update/:endpointId`)
 
-**Test files:** None
+**Test files:** [`e2e/serving/serving-deploy-lifecycle.spec.ts`](serving/serving-deploy-lifecycle.spec.ts) (integration, `@integration @serving`)
 
 | Feature | Status | Test |
 | ----------------------- | ------ | ---- |
-| Create model service | ❌ | - |
+| Create model service | ✅ | `Admin can deploy a model service via ServiceLauncher UI` |
 | Update existing service | ❌ | - |
 | Resource configuration | ❌ | - |
 | Model folder selection | ❌ | - |
 | Form validation | ❌ | - |
 
-**Coverage: ❌ 0/5 features**
+**Coverage: 🔶 1/5 features**
 
 ---
 
@@ -946,6 +961,39 @@
 | Plugin state persists after page reload | ✅ | `Admin can see plugin menu item after page reload` |
 
 **Coverage: ✅ 12/12 features**
+
+---
+
+### 28. RBAC Management (`/rbac`)
+
+**Test files:** [`e2e/rbac/rbac-role-list.spec.ts`](rbac/rbac-role-list.spec.ts), [`e2e/rbac/rbac-role-crud.spec.ts`](rbac/rbac-role-crud.spec.ts), [`e2e/rbac/rbac-role-detail.spec.ts`](rbac/rbac-role-detail.spec.ts)
+
+| Feature | Status | Test |
+|---------|--------|------|
+| Display RBAC management page with role list table | ✅ | `Superadmin can view the RBAC management page with role list table` |
+| Switch between Active/Inactive role filters | ✅ | `Superadmin can switch to Inactive roles filter and back to Active` |
+| Search for a role by name using property filter | ✅ | `Superadmin can search for a role by name using the property filter` |
+| Filter roles by Source (SYSTEM or CUSTOM) | 🚧 | `Superadmin can filter roles by Source (SYSTEM or CUSTOM)` |
+| Empty state when no roles match search | ✅ | `Superadmin sees empty state message when no roles match the search` |
+| Sort role list by Role Name column | ✅ | `Superadmin can sort role list by Role Name column` |
+| Refresh role list using refresh button | ✅ | `Superadmin can refresh the role list using the refresh button` |
+| Create a new custom role with name and description | ✅ | `Superadmin can create a new custom role with name and description` |
+| Edit a custom role name and description via drawer | ✅ | `Superadmin can edit a custom role name and description via drawer` |
+| System role edit button absent | ✅ | `Superadmin cannot edit a system role name or description (edit button absent)` |
+| Deactivate (soft-delete) an active custom role | ✅ | `Superadmin can delete (soft-delete) an active custom role` |
+| Activate (restore) a soft-deleted role | ✅ | `Superadmin can activate (restore) a soft-deleted role` |
+| Purge (hard-delete) a soft-deleted role | ✅ | `Superadmin can purge (hard-delete) a soft-deleted role` |
+| Open role detail drawer by clicking role name | ✅ | `Superadmin can open the role detail drawer by clicking a role name` |
+| Drawer shows Role Assignments and Permissions tabs | ✅ | `Drawer shows "Role Assignments" and "Permissions" tabs` |
+| Close role detail drawer | ✅ | `Superadmin can close the role detail drawer` |
+| Add a permission to a role | ✅ | `Superadmin can add a permission to a role` |
+| Delete a permission from a role | ✅ | `Superadmin can delete a permission from a role` |
+| Empty state in Permissions tab | ✅ | `Superadmin sees empty state in Permissions tab when role has no permissions` |
+| Assign a user to a role | ✅ | `Superadmin can assign a user to a role` |
+| Revoke a user from a role | ✅ | `Superadmin can revoke a single user from a role` |
+| Empty state in Role Assignments tab | ✅ | `Superadmin sees empty state in Role Assignments tab when role has no users` |
+
+**Coverage: 🔶 21/22 features**
 
 ---
 

@@ -130,6 +130,27 @@ Open the browser and log in:
 - Use `browser_snapshot` to find the correct `ref` for the element you want to capture
 - When UI has icon-only buttons, **always verify the button's accessible name** in the snapshot before clicking — e.g., "trash bin" vs download icon can look similar
 
+**Re-capture preflight (when overwriting an existing screenshot):**
+
+The filename of an existing screenshot encodes a contract about what it shows. Silently broadening the scope (e.g., turning a header strip into a full-page capture) breaks documentation that references it. Before overwriting any existing image:
+
+1. Inspect the previous version's dimensions and visual scope:
+   ```bash
+   git show main:packages/backend.ai-webui-docs/src/en/images/foo.png > /tmp/old.png
+   file /tmp/old.png   # note WIDTH x HEIGHT
+   ```
+2. Open `/tmp/old.png` and identify its scope:
+   - Header strip: very wide, ≤300 px tall (e.g., 2358×222) → use `ref` of `[data-testid="webui-header"]`
+   - Modal/dialog only: medium, no chrome (e.g., 988×804) → use `ref` of `.ant-modal-wrap .ant-modal` or `[role="dialog"]`
+   - Sidebar segment: narrow column → use `ref` of `.ant-layout-sider`
+   - Wizard step / panel: capture the specific panel `ref`, not the layout root
+   - Full page (~viewport × viewport): `fullPage: true` is acceptable
+3. After capture, sanity-check dimensions match the same order of magnitude as the old. If new dimensions differ by more than ~2× in either axis, you broke the framing — recapture with `ref`.
+
+**Anti-pattern observed in PR #6708**: `header.png` was 2358×222 (header strip) on `main`, recaptured as 2880×1800 (full viewport including sidebar + main content). The filename promised "header" but the new image showed everything. Always run the preflight above before overwriting.
+
+If the framing genuinely needs to change, **rename the file** to reflect the new scope (e.g., `header.png` → `top_bar_with_session_timer.png`) and update all markdown references — never silently broaden an existing image.
+
 ```
 .playwright-mcp/packages/backend.ai-webui-docs/src/en/images/{filename}.png  ← captured with English UI
 .playwright-mcp/packages/backend.ai-webui-docs/src/ko/images/{filename}.png  ← captured with Korean UI

@@ -382,10 +382,19 @@ function createWindow() {
     mainWindow.loadURL(endpoint);
   } else {
     // Load HTML into new Window (file-based serving)
+    const loadFallbackIndex = () => {
+      mainURL = url.format({
+        pathname: path.join(mainIndex),
+        protocol: 'file',
+        slashes: true,
+      });
+      mainWindow.loadURL(mainURL);
+    };
     nfs.readFile(path.join(es6Path, 'config.toml'), 'utf-8', (err, data) => {
       console.log('Running on build-resource debug mode...');
       if (err) {
         console.log('No configuration file found.');
+        loadFallbackIndex();
         return;
       }
       try {
@@ -404,16 +413,13 @@ function createWindow() {
           config.server.webServerURL != '""'
         ) {
           mainURL = config.server.webServerURL;
+          mainWindow.loadURL(mainURL);
         } else {
-          mainURL = url.format({
-            pathname: path.join(mainIndex),
-            protocol: 'file',
-            slashes: true,
-          });
+          loadFallbackIndex();
         }
-        mainWindow.loadURL(mainURL);
       } catch (parseErr) {
         console.error('config.toml parse error:', parseErr);
+        loadFallbackIndex();
       }
     });
   }

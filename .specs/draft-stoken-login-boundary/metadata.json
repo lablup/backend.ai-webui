@@ -1,0 +1,153 @@
+{
+  "epicKey": "FR-2616",
+  "epicUrl": "https://lablup.atlassian.net/browse/FR-2616",
+  "specTaskKey": "FR-2618",
+  "specTaskUrl": "https://lablup.atlassian.net/browse/FR-2618",
+  "devPlanPath": ".specs/draft-stoken-login-boundary/dev-plan.md",
+  "jiraFilingPending": false,
+  "proposedEpicTitle": "Extract sToken login flow into reusable boundary component",
+  "proposedSpecTaskTitle": "Define sToken login boundary component spec",
+  "slug": "stoken-login-boundary",
+  "stories": [
+    {
+      "key": "FR-2625",
+      "url": "https://lablup.atlassian.net/browse/FR-2625",
+      "title": "Story 1: Introduce STokenLoginBoundary component",
+      "prStackBranch": "feat/stoken-login-boundary-story-1-component",
+      "subtasks": [
+        {
+          "key": "FR-2628",
+          "title": "[1.1] Rename useEduAppApiEndpoint to useResolvedApiEndpoint",
+          "prNumber": 6850,
+          "prUrl": "https://github.com/lablup/backend.ai-webui/pull/6850"
+        },
+        {
+          "key": "FR-2629",
+          "title": "[1.2] Extend tokenLogin helper with optional extraParams",
+          "prNumber": 6851,
+          "prUrl": "https://github.com/lablup/backend.ai-webui/pull/6851"
+        },
+        {
+          "key": "FR-2630",
+          "title": "[1.3] Add useSToken hook (nuqs) with stoken fallback and deprecation warning",
+          "prNumber": 6852,
+          "prUrl": "https://github.com/lablup/backend.ai-webui/pull/6852"
+        },
+        {
+          "key": "FR-2631",
+          "title": "[1.4] Implement STokenLoginBoundary component core",
+          "prNumber": 6853,
+          "prUrl": "https://github.com/lablup/backend.ai-webui/pull/6853"
+        },
+        {
+          "key": "FR-2632",
+          "title": "[1.5] Default fallback and error card UI",
+          "prNumber": 6855,
+          "prUrl": "https://github.com/lablup/backend.ai-webui/pull/6855"
+        },
+        {
+          "key": "FR-2633",
+          "title": "[1.6] Unit tests for STokenLoginBoundary state transitions and invariants",
+          "prNumber": 6856,
+          "prUrl": "https://github.com/lablup/backend.ai-webui/pull/6856"
+        },
+        {
+          "key": "FR-2634",
+          "title": "[1.7] CI grep rule forbidding URL APIs in STokenLoginBoundary",
+          "prNumber": null,
+          "prUrl": null,
+          "status": "wont-do",
+          "note": "Closed as redundant. URL-free invariant enforced by FR-2633 test assertion."
+        },
+        {
+          "key": "FR-2635",
+          "title": "[1.8] Verify Manager/Webserver cookie decoding for sToken (Q5)",
+          "prNumber": null,
+          "prUrl": null,
+          "note": "investigation only; no PR; Jira comment with findings"
+        }
+      ]
+    },
+    {
+      "key": "FR-2626",
+      "url": "https://lablup.atlassian.net/browse/FR-2626",
+      "title": "Story 2: Migrate LoginView sToken path to STokenLoginBoundary",
+      "prStackBranch": "feat/stoken-login-boundary-story-2-loginview",
+      "blockedBy": [
+        "FR-2625"
+      ],
+      "subtasks": [
+        {
+          "key": "FR-2636",
+          "title": "[2.1] Wrap / and /interactive-login routes with STokenLoginBoundary conditionally"
+        },
+        {
+          "key": "FR-2637",
+          "title": "[2.2] Move postConnectSetup side effects into route-level onSuccess"
+        },
+        {
+          "key": "FR-2638",
+          "title": "[2.3] Remove connectUsingSession sToken branch and URL parsing in LoginView"
+        },
+        {
+          "key": "FR-2639",
+          "title": "[2.4] E2E regression for LoginView sToken entry"
+        }
+      ]
+    },
+    {
+      "key": "FR-2627",
+      "url": "https://lablup.atlassian.net/browse/FR-2627",
+      "title": "Story 3: Migrate EduAppLauncher sToken path to STokenLoginBoundary",
+      "prStackBranch": "feat/stoken-login-boundary-story-3-eduapplauncher",
+      "blockedBy": [
+        "FR-2625"
+      ],
+      "subtasks": [
+        {
+          "key": "FR-2640",
+          "title": "[3.1] Investigate get_user_credential(sToken) liveness (Q8)"
+        },
+        {
+          "key": "FR-2641",
+          "title": "[3.2] Wrap /edu-applauncher and /applauncher routes with STokenLoginBoundary"
+        },
+        {
+          "key": "FR-2642",
+          "title": "[3.3] Remove _token_login and manual backend-ai-connected dispatch in EduAppLauncher"
+        },
+        {
+          "key": "FR-2643",
+          "title": "[3.4] E2E regression for EduApp sToken entry with and without session_id"
+        }
+      ]
+    }
+  ],
+  "proposedStories": [
+    {
+      "title": "Introduce STokenLoginBoundary component",
+      "summary": "New component, generalized endpoint-resolve hook, extend tokenLogin helper with extraParams (pending Open Question 1), default fallback + error card UI, unit tests."
+    },
+    {
+      "title": "Migrate LoginView sToken path to STokenLoginBoundary",
+      "summary": "Replace connectUsingSession sToken branch (lines 455–490 of LoginView.tsx) with boundary wrapping; move post-login side effects to onSuccess callback."
+    },
+    {
+      "title": "Migrate EduAppLauncher sToken path to STokenLoginBoundary",
+      "summary": "Remove _token_login and manual backend-ai-connected dispatch; wrap stepper auth step with boundary; supply errorFallback for stepper-integrated error UI; strip sToken from URL (behavior change)."
+    }
+  ],
+  "resolvedOpenQuestions": {
+    "Q1_tokenLogin_extension": "extend (option a) — add optional extraParams arg to tokenLogin helper",
+    "Q2_loadConfigFromWebServer": "exclude — caller may invoke inside onSuccess if needed",
+    "Q3_endpoint_hook_name": "rename useEduAppApiEndpoint to useResolvedApiEndpoint (option a)",
+    "Q4_errorFallback_fallthrough": "errorFallback wins for all kinds when provided",
+    "Q5_cookie_encoding_verification": "verification sub-task FR-2635 under Story 1",
+    "Q6_concurrent_session_detection": "defer — emit unknown kind with TODO",
+    "Q7_useSToken_hook": "adopt in Story 1 as FR-2630",
+    "Q8_eduapp_sToken_reuse": "default option (a) prop-threading; FR-2640 first verifies if option (d) deletion applies"
+  },
+  "sourceIssues": [],
+  "createdAt": "2026-04-21T00:00:00Z",
+  "notes": "Epic FR-2616 filed. Spec Task FR-2618 created. Story 1 implementation: PRs #6850-#6853, #6855-#6857 submitted (FR-2628, FR-2629, FR-2630, FR-2631, FR-2632, FR-2633, refactor). FR-2634 closed as Not Planned (duplicate of FR-2633 test assertion). FR-2635 closed as investigation-only (Jira comment). Directory still uses draft- prefix; rename to FR-2616-stoken-login-boundary as a follow-up."
+}

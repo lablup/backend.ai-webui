@@ -582,6 +582,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
           setDeletingVFolder(null);
         }}
         confirmText={deletingVFolder?.name ?? ''}
+        inputProps={{ placeholder: deletingVFolder?.name ?? '' }}
         content={
           <BAIFlex
             direction="column"

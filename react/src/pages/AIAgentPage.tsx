@@ -13,12 +13,22 @@ import {
   PlusOutlined,
   UndoOutlined,
 } from '@ant-design/icons';
-import { App, Button, Card, Dropdown, List, Skeleton, Tag, theme } from 'antd';
+import {
+  Alert,
+  Button,
+  Card,
+  Dropdown,
+  List,
+  Skeleton,
+  Tag,
+  Typography,
+  theme,
+} from 'antd';
 import { createStyles } from 'antd-style';
 import {
-  BAIDeleteConfirmModal,
   BAIFlex,
   BAIUnmountAfterClose,
+  BAIConfirmModalWithInput,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { Suspense, useState } from 'react';
@@ -181,12 +191,12 @@ const AIAgentPage: React.FC = () => {
   const { token } = theme.useToken();
   const { agents, builtInAgents, deleteAgent } = useAIAgent();
   const webuiNavigate = useWebUINavigate();
-  const { modal } = App.useApp();
   const { styles } = useStyles();
 
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [editingAgent, setEditingAgent] = useState<AIAgent | undefined>();
   const [deletingAgent, setDeletingAgent] = useState<AIAgent | null>(null);
+  const [resettingAgent, setResettingAgent] = useState<AIAgent | null>(null);
 
   const builtInIds = new Set(builtInAgents.map((a) => a.id));
 
@@ -200,11 +210,7 @@ const AIAgentPage: React.FC = () => {
   };
 
   const handleReset = (agent: AIAgent) => {
-    modal.confirm({
-      title: t('aiAgent.ResetConfirmTitle'),
-      content: t('aiAgent.ResetConfirmDescription'),
-      onOk: () => deleteAgent(agent.id),
-    });
+    setResettingAgent(agent);
   };
 
   return (
@@ -270,27 +276,69 @@ const AIAgentPage: React.FC = () => {
             }}
           />
         </BAIUnmountAfterClose>
-        <BAIDeleteConfirmModal
+        <BAIConfirmModalWithInput
           open={!!deletingAgent}
-          items={
-            deletingAgent
-              ? [
-                  {
-                    key: deletingAgent.id,
-                    label: deletingAgent.meta.title,
-                  },
-                ]
-              : []
-          }
           title={t('aiAgent.DeleteConfirmTitle')}
-          description={t('aiAgent.DeleteConfirmDescription')}
+          content={
+            <BAIFlex direction="column" gap="md" align="stretch">
+              <Alert
+                type="warning"
+                title={t('dialog.warning.CannotBeUndone')}
+              />
+              <BAIFlex>
+                <Typography.Text style={{ marginRight: token.marginXXS }}>
+                  {t('dialog.TypeNameToConfirmDeletion')}
+                </Typography.Text>
+                (
+                <Typography.Text code>
+                  {deletingAgent?.meta.title}
+                </Typography.Text>
+                )
+              </BAIFlex>
+            </BAIFlex>
+          }
+          confirmText={deletingAgent?.meta.title ?? ''}
+          inputProps={{ placeholder: deletingAgent?.meta.title ?? '' }}
+          okText={t('button.Delete')}
           onOk={() => {
             if (deletingAgent) {
               deleteAgent(deletingAgent.id);
-              setDeletingAgent(null);
             }
+            setDeletingAgent(null);
           }}
           onCancel={() => setDeletingAgent(null)}
+        />
+        <BAIConfirmModalWithInput
+          open={!!resettingAgent}
+          title={t('aiAgent.ResetConfirmTitle')}
+          content={
+            <BAIFlex direction="column" gap="md" align="stretch">
+              <Alert
+                type="warning"
+                title={t('dialog.warning.CannotBeUndone')}
+              />
+              <BAIFlex>
+                <Typography.Text style={{ marginRight: token.marginXXS }}>
+                  {t('dialog.TypeNameToConfirmDeletion')}
+                </Typography.Text>
+                (
+                <Typography.Text code>
+                  {resettingAgent?.meta.title}
+                </Typography.Text>
+                )
+              </BAIFlex>
+            </BAIFlex>
+          }
+          confirmText={resettingAgent?.meta.title ?? ''}
+          inputProps={{ placeholder: resettingAgent?.meta.title ?? '' }}
+          okText={t('button.Reset')}
+          onOk={() => {
+            if (resettingAgent) {
+              deleteAgent(resettingAgent.id);
+            }
+            setResettingAgent(null);
+          }}
+          onCancel={() => setResettingAgent(null)}
         />
       </BAIFlex>
     </Suspense>

@@ -63,10 +63,14 @@ const main = async () => {
 
     const tag = process.env.RELEASE_TAG || (await getLatestTag())
     const releaseId = await getReleaseIdFromTag(tag)
+    // Fetch the upload URL once — it's constant per release. Calling
+    // getUploadURL() per asset wastes API quota and risks rate limiting.
+    const uploadUrl = await getUploadURL(releaseId)
 
-    for (const filename of DMGs) {
+    // Upload files concurrently (up to 4 at a time) for faster release publishing
+    const CONCURRENCY = 4
+    const uploadFile = async (filename) => {
         console.log(`Uploading file ${filename} to https://github.com/${OWNER}/${REPOSITORY}/releases/${tag}`)
-        const uploadUrl = await getUploadURL(releaseId)
         const buf = await fs.promises.readFile(path.join(folder, filename))
         try {
             await octokit.request({
@@ -78,15 +82,21 @@ const main = async () => {
                 data: buf,
                 name: filename,
             })
-            console.log('completed uploading file')
+            console.log(`completed uploading file: ${filename}`)
         } catch (e) {
-            if (e.response.data) {
-                console.error('error while uploading file:', e.response.data.errors)
+            if (e.response && e.response.data) {
+                console.error(`error while uploading file ${filename}:`, e.response.data.errors)
             } else {
-                console.error('unknown error while uploading file:')
+                console.error(`unknown error while uploading file ${filename}:`)
                 console.error(e)
             }
         }
+    }
+
+    // Process uploads in batches to avoid overwhelming the API
+    for (let i = 0; i < DMGs.length; i += CONCURRENCY) {
+        const batch = DMGs.slice(i, i + CONCURRENCY)
+        await Promise.all(batch.map(uploadFile))
     }
 }
 

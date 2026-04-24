@@ -2,37 +2,28 @@
 
 
 :::note
-Cluster compute session feature is supported from Backend.AI server 20.09 or
-higher.
+ฟีเจอร์เซสชันการคำนวณคลัสเตอร์รองรับจาก Backend.AI server เวอร์ชัน 20.09
+ขึ้นไป
 :::
 
 <a id="backendai-cluster-compute-session"></a>
 
 ### ภาพรวมของเซสชันการคำนวณคลัสเตอร์ Backend.AI
 
-Backend.AI supports cluster compute session to support distributed computing /
-training tasks. A cluster session consists of multiple containers, each of which
-is created across multiple Agent nodes. Containers under a cluster session are
-automatically connected each other through a dynamically-created private
-network. Temporary domain names (`main1`, `sub1`, `sub2`, etc.) are also
-given, making it simple to execute networking tasks such as เชื่อมต่อ SSHion. All
-the necessary secret keys and various settings for เชื่อมต่อ SSHion between
-containers are automatically generated.
+Backend.AI รองรับเซสชันการคำนวณคลัสเตอร์เพื่อสนับสนุนงานคำนวณ/การฝึกสอนแบบกระจาย เซสชันคลัสเตอร์ประกอบด้วยคอนเทนเนอร์หลายรายการ ซึ่งแต่ละรายการจะถูกสร้างข้ามโหนดเอเจนต์หลายโหนด คอนเทนเนอร์ภายใต้เซสชันคลัสเตอร์จะเชื่อมต่อกันโดยอัตโนมัติผ่านเครือข่ายส่วนตัวที่ถูกสร้างขึ้นแบบไดนามิก นอกจากนี้ยังมีการกำหนดชื่อโดเมนชั่วคราว (`main1`, `sub1`, `sub2` ฯลฯ) ให้ด้วย ทำให้การทำงานด้านเครือข่าย เช่น การเชื่อมต่อ SSH เป็นเรื่องง่าย คีย์ลับและการตั้งค่าต่าง ๆ ที่จำเป็นสำหรับการเชื่อมต่อ SSH ระหว่างคอนเทนเนอร์จะถูกสร้างขึ้นโดยอัตโนมัติ
 
 สำหรับรายละเอียดเกี่ยวกับเซสชันของคลัสเตอร์ Backend.AI โปรดดูที่ด้านล่างนี้
 
 ![](../images/overview_cluster_session.png)
 
-- คอนเทนเนอร์ภายใต้เซสชันคลัสเตอร์จะถูกสร้างขึ้นข้ามโหนดตัวแทนหนึ่งหรือมากกว่าซึ่งเป็นของกลุ่มทรัพยากร
-- A cluster session consists of one main container (`main1`) and one or more
-  sub containers (`subX`).
+- คอนเทนเนอร์ภายใต้เซสชันคลัสเตอร์จะถูกสร้างขึ้นข้ามโหนดเอเจนต์หนึ่งหรือหลายโหนดที่สังกัดอยู่ในกลุ่มทรัพยากร
+- เซสชันคลัสเตอร์ประกอบด้วยคอนเทนเนอร์หลักหนึ่งตัว (`main1`) และคอนเทนเนอร์ย่อย (`subX`) อีกหนึ่งหรือหลายตัว
 - ทุกคอนเทนเนอร์ภายใต้เซสชันคลัสเตอร์ถูกสร้างขึ้นโดยการจัดสรรทรัพยากรในปริมาณที่เท่ากัน ในรูปภาพข้างต้น คอนเทนเนอร์ทั้งสี่ของเซสชัน X ถูกสร้างขึ้นด้วยทรัพยากรในปริมาณที่เท่ากัน
 - ทุกคอนเทนเนอร์ภายใต้เซสชันคลัสเตอร์จะทำการจัดเก็บข้อมูลในโฟลเดอร์เดียวกันที่กำหนดไว้เมื่อสร้างเซสชันการคำนวณ
 - คอนเทนเนอร์ทั้งหมดภายใต้เซสชันคลัสเตอร์เชื่อมโยงกับเครือข่ายส่วนบุคคล
 
-   * The name of the main container is `main1`.
-   * Sub-containers are named as `sub1`, `sub2`, ... in the increasing
-     order.
+   * ชื่อของคอนเทนเนอร์หลักคือ `main1`
+   * คอนเทนเนอร์ย่อยจะถูกตั้งชื่อเป็น `sub1`, `sub2`, ... ตามลำดับเพิ่มขึ้น
    * ไม่มีไฟร์วอลล์ระหว่างคอนเทนเนอร์ที่ประกอบเป็นเซสชันคลัสเตอร์
    * ผู้ใช้สามารถเชื่อมต่อกับคอนเทนเนอร์หลักได้โดยตรง และคอนเทนเนอร์ย่อยสามารถเชื่อมต่อได้เฉพาะจากคอนเทนเนอร์หลักเท่านั้น
 
@@ -44,27 +35,24 @@ containers are automatically generated.
 
 - เซสชันคลัสเตอร์โหนดเดียวจะสร้างขึ้นในกรณีต่อไปนี้
 
-   * When "Single Node" is selected for Cluster mode field when creating a
-     compute session. If there is no single agent with enough resources to
-     create all containers at the same time, the session will stay in a pending
-     (`PENDING`) state.
-   * “โหมดคลัสเตอร์” ถูกเลือกเป็น “หลายโหนด” แต่มีเอเจนต์เดียวที่มีทรัพยากรเพียงพอที่สามารถสร้างคอนเทนเนอร์ทั้งหมดได้พร้อมกัน ดังนั้น คอนเทนเนอร์ทั้งหมดจะถูกปรับใช้ในเอเจนต์นั้น เพื่อที่จะลดความหน่วงของเครือข่ายให้มากที่สุดโดยการไม่ให้เข้าถึงเครือข่ายภายนอก
+   * เมื่อเลือก "โหนดเดียว" (Single Node) ในช่องโหมดคลัสเตอร์ในขณะสร้างเซสชันการคำนวณ หากไม่มีเอเจนต์ใดเลยที่มีทรัพยากรเพียงพอต่อการสร้างคอนเทนเนอร์ทั้งหมดในเวลาเดียวกัน เซสชันจะยังคงอยู่ในสถานะรอดำเนินการ (`PENDING`)
+   * เมื่อเลือก "หลายโหนด" (Multi Node) เป็นโหมดคลัสเตอร์ แต่มีเอเจนต์เดียวที่มีทรัพยากรเพียงพอที่สามารถสร้างคอนเทนเนอร์ทั้งหมดได้พร้อมกัน ในกรณีนี้คอนเทนเนอร์ทั้งหมดจะถูกปรับใช้บนเอเจนต์นั้น เพื่อลดความหน่วงของเครือข่ายให้มากที่สุดโดยการหลีกเลี่ยงการเข้าถึงเครือข่ายภายนอก
 
 แต่ละคอนเทนเนอร์ในเซสชันคลัสเตอร์มีตัวแปรสภาพแวดล้อมดังต่อไปนี้ คุณสามารถอ้างถึงมันเพื่อตรวจสอบการกำหนดค่าคลัสเตอร์และข้อมูลคอนเทนเนอร์ที่เชื่อมต่ออยู่ในปัจจุบัน
 
-- `BACKENDAI_CLUSTER_HOST`: the name of the current container (ex. `main1`)
-- `BACKENDAI_CLUSTER_HOSTS`: Names of all containers belonging to the current
-  cluster session (ex. `main1,sub1,sub2`)
-- `BACKENDAI_CLUSTER_IDX`: numeric index of the current container (ex. `1`)
-- `BACKENDAI_CLUSTER_MODE`: Cluster session mode/type (ex. `single-node`)
-- `BACKENDAI_CLUSTER_ROLE`: Type of current container (ex. `main`)
-- `BACKENDAI_CLUSTER_SIZE`: Total number of containers belonging to the
-  current cluster session (ex. `4`)
-- `BACKENDAI_KERNEL_ID`: ID of the current container
-  (ex. `3614fdf3-0e04-...`)
-- `BACKENDAI_SESSION_ID`: ID of the cluster session to which the current
-  container belongs (ex. `3614fdf3-0e04-...`). The main container's
-  `BACKENDAI_KERNEL_ID` is the same as `BACKENDAI_SESSION_ID`.
+- `BACKENDAI_CLUSTER_HOST`: ชื่อของคอนเทนเนอร์ปัจจุบัน (เช่น `main1`)
+- `BACKENDAI_CLUSTER_HOSTS`: ชื่อของคอนเทนเนอร์ทั้งหมดที่สังกัดอยู่ในเซสชันคลัสเตอร์
+  ปัจจุบัน (เช่น `main1,sub1,sub2`)
+- `BACKENDAI_CLUSTER_IDX`: ดัชนีตัวเลขของคอนเทนเนอร์ปัจจุบัน (เช่น `1`)
+- `BACKENDAI_CLUSTER_MODE`: โหมด/ประเภทของเซสชันคลัสเตอร์ (เช่น `single-node`)
+- `BACKENDAI_CLUSTER_ROLE`: ประเภทของคอนเทนเนอร์ปัจจุบัน (เช่น `main`)
+- `BACKENDAI_CLUSTER_SIZE`: จำนวนคอนเทนเนอร์ทั้งหมดที่สังกัดอยู่ใน
+  เซสชันคลัสเตอร์ปัจจุบัน (เช่น `4`)
+- `BACKENDAI_KERNEL_ID`: ID ของคอนเทนเนอร์ปัจจุบัน
+  (เช่น `3614fdf3-0e04-...`)
+- `BACKENDAI_SESSION_ID`: ID ของเซสชันคลัสเตอร์ที่คอนเทนเนอร์ปัจจุบัน
+  สังกัดอยู่ (เช่น `3614fdf3-0e04-...`) โดย `BACKENDAI_KERNEL_ID` ของ
+  คอนเทนเนอร์หลักจะเหมือนกับ `BACKENDAI_SESSION_ID`
 
 <a id="use-of-backendai-cluster-compute-session"></a>
 
@@ -78,28 +66,20 @@ containers are automatically generated.
 
 ในฟิลด์ "โหมดคลัสเตอร์" ที่ด้านล่าง คุณสามารถเลือกประเภทของคลัสเตอร์ที่คุณต้องการสร้างได้
 
-- โหนดเดียว: ทุกคอนเทนเนอร์จะถูกสร้างขึ้นบนโหนดเอเยนต์เดียว
-- Multi Node: คอนเทนเนอร์จะถูกสร้างขึ้นทั่วทั้งหลายโหนดของเอเจนต์ภายในกลุ่มทรัพยากร อย่างไรก็ตาม หากคอนเทนเนอร์ทั้งหมดสามารถสร้างขึ้นในโหนดเอเจนต์เดียวได้ คอนเทนเนอร์ทั้งหมดจะถูกสร้างในโหนดนั้น เพื่อช่วยลดเวลาล่าช้าของเครือข่ายระหว่างคอนเทนเนอร์
+- โหนดเดียว (Single Node): คอนเทนเนอร์ทั้งหมดจะถูกสร้างขึ้นบนโหนดเอเจนต์เดียว
+- หลายโหนด (Multi Node): คอนเทนเนอร์จะถูกสร้างขึ้นกระจายไปทั่วโหนดเอเจนต์หลายโหนดภายในกลุ่มทรัพยากร อย่างไรก็ตาม หากคอนเทนเนอร์ทั้งหมดสามารถสร้างขึ้นในโหนดเอเจนต์เดียวได้ คอนเทนเนอร์ทั้งหมดจะถูกสร้างในโหนดนั้น ทั้งนี้เพื่อลดความหน่วงของเครือข่ายระหว่างคอนเทนเนอร์ให้น้อยที่สุด
 
 ตั้งค่า "ขนาดคลัสเตอร์" ด้านล่าง หากตั้งค่าเป็น 3 จะมีการสร้างคอนเทนเนอร์ทั้งหมดสามตัวรวมถึงคอนเทนเนอร์หลัก คอนเทนเนอร์ทั้งสามนี้จะถูกผูกไว้ภายใต้เครือข่ายส่วนตัวเพื่อสร้างเซสชันการคำนวณหนึ่งเซสชัน
 
-Click the LAUNCH button to send a request to create a compute session, and wait
-for a while to get a cluster session. After the session is created, you can view
-the created containers on the session details page.
+คลิกปุ่ม LAUNCH เพื่อส่งคำขอสร้างเซสชันการคำนวณ และรอสักครู่เพื่อให้ได้เซสชันคลัสเตอร์ หลังจากเซสชันถูกสร้างขึ้นแล้ว คุณสามารถดูคอนเทนเนอร์ที่ถูกสร้างขึ้นได้ในหน้ารายละเอียดเซสชัน
 
 ![](../images/cluster_session_created.png)
 
-Let's open the terminal app in the compute session we just have created. If you
-look up the environment variables, you can see that the `BACKENDAI_CLUSTER_*`
-variables described in the above section are set. Compare the meaning and value
-of each environment variable with the description above.
+ให้เราเปิดแอปเทอร์มินัลในเซสชันการคำนวณที่เพิ่งสร้างขึ้น หากคุณตรวจสอบตัวแปรสภาพแวดล้อม คุณจะเห็นว่าตัวแปร `BACKENDAI_CLUSTER_*` ที่ระบุไว้ในหัวข้อด้านบนถูกตั้งค่าไว้ ลองเปรียบเทียบความหมายและค่าของตัวแปรสภาพแวดล้อมแต่ละตัวกับคำอธิบายข้างต้น
 
 ![](../images/terminal_on_main_container.png)
 
-You can also SSH into the `sub1` container. No separate SSH setting is
-required, just issue the command `ssh sub1` and you are done. You can see the
-hostname after `work@` has changed, which indicated the sub container's shell
-is displayed.
+คุณยังสามารถ SSH เข้าไปยังคอนเทนเนอร์ `sub1` ได้ โดยไม่ต้องตั้งค่า SSH แยกต่างหาก เพียงแค่รันคำสั่ง `ssh sub1` ก็เสร็จเรียบร้อย คุณจะเห็นว่าชื่อโฮสต์หลัง `work@` เปลี่ยนไป ซึ่งบ่งชี้ว่าเชลล์ของคอนเทนเนอร์ย่อยกำลังแสดงอยู่
 
 ![](../images/terminal_on_sub1_container.png)
 
@@ -109,7 +89,6 @@ is displayed.
 
 ### ดูบันทึกต่อคอนเทนเนอร์
 
-From 24.03, You can check each log of container in logs modal. It will help you
-to understand what's going on not only in `main` container but also `sub` containers.
+ตั้งแต่เวอร์ชัน 24.03 เป็นต้นไป คุณสามารถตรวจสอบบันทึก (log) ของแต่ละคอนเทนเนอร์ได้ในโมดัลบันทึก ซึ่งจะช่วยให้คุณเข้าใจว่ากำลังเกิดอะไรขึ้น ไม่เฉพาะในคอนเทนเนอร์ `main` เท่านั้น แต่รวมถึงคอนเทนเนอร์ `sub` ด้วย
 
 ![](../images/log_modal_per_container.png)

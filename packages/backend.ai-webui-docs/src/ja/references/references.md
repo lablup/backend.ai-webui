@@ -1,7 +1,7 @@
 # 参考文献
 
-- Online API Manual: https://docs.backend.ai
-- Online Client SDK Manual: https://docs.backend.ai/en/latest/client
+- オンラインAPIマニュアル: https://docs.backend.ai
+- オンラインクライアントSDKマニュアル: https://docs.backend.ai/en/latest/client
 
 このドキュメントの最新バージョンは、以下のサイトから見つけることができます。
 

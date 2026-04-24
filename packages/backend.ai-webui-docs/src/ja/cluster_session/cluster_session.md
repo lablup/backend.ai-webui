@@ -2,37 +2,27 @@
 
 
 :::note
-Cluster compute session feature is supported from Backend.AI server 20.09 or
-higher.
+クラスターコンピュートセッション機能は、Backend.AIサーバー 20.09 以降でサポートされています。
 :::
 
 <a id="backendai-cluster-compute-session"></a>
 
 ### Backend.AI クラスター コンピュート セッションの概要
 
-Backend.AI supports cluster compute session to support distributed computing /
-training tasks. A cluster session consists of multiple containers, each of which
-is created across multiple Agent nodes. Containers under a cluster session are
-automatically connected each other through a dynamically-created private
-network. Temporary domain names (`main1`, `sub1`, `sub2`, etc.) are also
-given, making it simple to execute networking tasks such as SSH接続ion. All
-the necessary secret keys and various settings for SSH接続ion between
-containers are automatically generated.
+Backend.AIは、分散コンピューティング／トレーニングタスクをサポートするためにクラスターコンピュートセッションを提供しています。クラスターセッションは複数のコンテナで構成され、それぞれが複数のエージェントノードにわたって作成されます。クラスターセッション配下のコンテナは、動的に作成されるプライベートネットワークを通じて自動的に相互接続されます。また、一時的なドメイン名（`main1`、`sub1`、`sub2` など）も付与されるため、SSH接続などのネットワークタスクを簡単に実行できます。コンテナ間のSSH接続に必要なすべての秘密鍵や各種設定は、自動的に生成されます。
 
 Backend.AI クラスターセッションの詳細については、以下を参照してください。
 
 ![](../images/overview_cluster_session.png)
 
 - クラスタセッション下のコンテナは、リソースグループに属する1台以上のエージェントノードにわたって作成されます。
-- A cluster session consists of one main container (`main1`) and one or more
-  sub containers (`subX`).
+- クラスターセッションは、1つのメインコンテナ（`main1`）と1つ以上のサブコンテナ（`subX`）で構成されます。
 - クラスターセッションの下にあるすべてのコンテナは、同じ量のリソースを割り当てて作成されます。上の図では、セッションXの4つのコンテナすべてが同じ量のリソースで作成されています。
 - クラスターセッション内のすべてのコンテナは、コンピュートセッションを作成するときに指定された同じデータフォルダーをマウントします。
 - クラスターセッション下のすべてのコンテナはプライベートネットワークに結びつけられます。
 
-   * The name of the main container is `main1`.
-   * Sub-containers are named as `sub1`, `sub2`, ... in the increasing
-     order.
+   * メインコンテナの名前は `main1` です。
+   * サブコンテナは `sub1`、`sub2` のように昇順で名前が付けられます。
    * クラスターセッションを構成するコンテナ間にファイアウォールはありません。
    * ユーザーはメインコンテナに直接接続でき、サブコンテナにはメインコンテナからのみ接続できます。
 
@@ -44,27 +34,19 @@ Backend.AI クラスターセッションの詳細については、以下を参
 
 - 単一ノードクラスターセッションは、以下の場合に作成されます。
 
-   * When "Single Node" is selected for Cluster mode field when creating a
-     compute session. If there is no single agent with enough resources to
-     create all containers at the same time, the session will stay in a pending
-     (`PENDING`) state.
+   * コンピュートセッション作成時に「クラスターモード」フィールドで「シングルノード」が選択されたとき。すべてのコンテナを同時に作成できる十分なリソースを持つ単一のエージェントが存在しない場合、セッションは保留（`PENDING`）状態のままとなります。
    * 「マルチノード」がクラスター モードとして選択されているが、全てのコンテナを同時に作成できる十分なリソースを持つ単一のエージェントが存在する場合、全てのコンテナはそのエージェントにデプロイされる。これは外部ネットワークへのアクセスを排除し、ネットワーク遅延を可能な限り削減するためである。
 
 クラスターセッション内の各コンテナには、以下の環境変数があります。これを参照してクラスターの構成や現在接続されているコンテナ情報を確認することができます。
 
-- `BACKENDAI_CLUSTER_HOST`: the name of the current container (ex. `main1`)
-- `BACKENDAI_CLUSTER_HOSTS`: Names of all containers belonging to the current
-  cluster session (ex. `main1,sub1,sub2`)
-- `BACKENDAI_CLUSTER_IDX`: numeric index of the current container (ex. `1`)
-- `BACKENDAI_CLUSTER_MODE`: Cluster session mode/type (ex. `single-node`)
-- `BACKENDAI_CLUSTER_ROLE`: Type of current container (ex. `main`)
-- `BACKENDAI_CLUSTER_SIZE`: Total number of containers belonging to the
-  current cluster session (ex. `4`)
-- `BACKENDAI_KERNEL_ID`: ID of the current container
-  (ex. `3614fdf3-0e04-...`)
-- `BACKENDAI_SESSION_ID`: ID of the cluster session to which the current
-  container belongs (ex. `3614fdf3-0e04-...`). The main container's
-  `BACKENDAI_KERNEL_ID` is the same as `BACKENDAI_SESSION_ID`.
+- `BACKENDAI_CLUSTER_HOST`: 現在のコンテナの名前（例: `main1`）
+- `BACKENDAI_CLUSTER_HOSTS`: 現在のクラスターセッションに属するすべてのコンテナの名前（例: `main1,sub1,sub2`）
+- `BACKENDAI_CLUSTER_IDX`: 現在のコンテナの数値インデックス（例: `1`）
+- `BACKENDAI_CLUSTER_MODE`: クラスターセッションのモード／タイプ（例: `single-node`）
+- `BACKENDAI_CLUSTER_ROLE`: 現在のコンテナのタイプ（例: `main`）
+- `BACKENDAI_CLUSTER_SIZE`: 現在のクラスターセッションに属するコンテナの総数（例: `4`）
+- `BACKENDAI_KERNEL_ID`: 現在のコンテナのID（例: `3614fdf3-0e04-...`）
+- `BACKENDAI_SESSION_ID`: 現在のコンテナが属するクラスターセッションのID（例: `3614fdf3-0e04-...`）。メインコンテナの `BACKENDAI_KERNEL_ID` は `BACKENDAI_SESSION_ID` と同じです。
 
 <a id="use-of-backendai-cluster-compute-session"></a>
 
@@ -83,23 +65,15 @@ Backend.AI クラスターセッションの詳細については、以下を参
 
 その下の「クラスターサイズ」を設定します。3に設定すると、メインコンテナを含む合計3つのコンテナが作成されます。これらの3つのコンテナは、プライベートネットワークで結合され、1つの計算セッションを形成します。
 
-Click the LAUNCH button to send a request to create a compute session, and wait
-for a while to get a cluster session. After the session is created, you can view
-the created containers on the session details page.
+LAUNCHボタンをクリックしてコンピュートセッションの作成リクエストを送信し、しばらく待つとクラスターセッションが作成されます。セッションが作成されると、セッション詳細ページで作成されたコンテナを確認できます。
 
 ![](../images/cluster_session_created.png)
 
-Let's open the terminal app in the compute session we just have created. If you
-look up the environment variables, you can see that the `BACKENDAI_CLUSTER_*`
-variables described in the above section are set. Compare the meaning and value
-of each environment variable with the description above.
+先ほど作成したコンピュートセッションでターミナルアプリを開いてみましょう。環境変数を確認すると、上記のセクションで説明した `BACKENDAI_CLUSTER_*` 変数が設定されていることが確認できます。各環境変数の意味と値を、上記の説明と比較してみてください。
 
 ![](../images/terminal_on_main_container.png)
 
-You can also SSH into the `sub1` container. No separate SSH setting is
-required, just issue the command `ssh sub1` and you are done. You can see the
-hostname after `work@` has changed, which indicated the sub container's shell
-is displayed.
+また、`sub1` コンテナにもSSHで接続できます。別途SSH設定を行う必要はなく、`ssh sub1` コマンドを実行するだけで接続できます。`work@` の後のホスト名が変更されたことを確認でき、サブコンテナのシェルが表示されていることが分かります。
 
 ![](../images/terminal_on_sub1_container.png)
 
@@ -109,7 +83,6 @@ is displayed.
 
 ### コンテナごとのログを表示
 
-From 24.03, You can check each log of container in logs modal. It will help you
-to understand what's going on not only in `main` container but also `sub` containers.
+バージョン24.03から、ログモーダルで各コンテナのログを確認できます。これにより、`main` コンテナだけでなく `sub` コンテナで何が起こっているかを把握するのに役立ちます。
 
 ![](../images/log_modal_per_container.png)

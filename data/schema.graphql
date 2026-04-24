@@ -10804,6 +10804,11 @@ type Mutation
   """Added in 26.4.2. Permanently purge a virtual folder."""
   purgeVfolderV2(vfolderId: UUID!): PurgeVFolderV2Payload! @join__field(graph: STRAWBERRY)
 
+  """
+  Added in UNRELEASED. Restore a trashed virtual folder. RBAC enforced via scope chain.
+  """
+  restoreVFolder(vfolderId: UUID!): RestoreVFolderPayload! @join__field(graph: STRAWBERRY)
+
   """Added in 26.4.2. Deploy a deployment directly from a model VFolder."""
   deployVfolderV2(vfolderId: UUID!, input: DeployVFolderV2Input!): DeployVFolderV2Payload! @join__field(graph: STRAWBERRY)
 
@@ -14639,6 +14644,16 @@ type RestoreArtifactsPayload
 }
 
 """
+Added in UNRELEASED. Payload returned after restoring a virtual folder from trash.
+"""
+type RestoreVFolderPayload
+  @join__type(graph: STRAWBERRY)
+{
+  """ID of the restored virtual folder"""
+  id: UUID!
+}
+
+"""
 Added in 26.4.3. Per-deployment result of an admin bulk revision refresh.
 """
 type RevisionRefreshResult
@@ -14857,7 +14872,7 @@ type RoleAssignmentEdge
 input RoleAssignmentFilter
   @join__type(graph: STRAWBERRY)
 {
-  roleId: UUID = null
+  roleId: UUIDFilter = null
   role: RoleAssignmentRoleNestedFilter = null
   permission: PermissionNestedFilter = null
   username: StringFilter = null

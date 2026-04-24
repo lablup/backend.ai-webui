@@ -207,7 +207,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
       refetch(
         {
           filter: {
-            roleId,
+            roleId: { equals: roleId },
             ...(overrides?.filter !== undefined
               ? overrides.filter
               : queryParams.filter),

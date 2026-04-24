@@ -6,13 +6,13 @@ runs:
   steps:
     # Step 1: Setup Node.js and pnpm
     - name: Install pnpm
-      uses: pnpm/action-setup@v4
+      uses: pnpm/action-setup@v5
       with:
         version: latest
         run_install: false
 
     - name: Setup Node.js
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v5
       with:
         node-version-file: ".nvmrc"
         cache: "pnpm"
@@ -24,7 +24,7 @@ runs:
         echo "Step: Get pnpm store directory" >> coverage-steps.log
 
     - name: Setup pnpm cache
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: ${{ env.STORE_PATH }}
         key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
@@ -146,7 +146,7 @@ runs:
 
     # Step 9: Upload coverage reports as artifacts
     - name: Upload coverage artifacts
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: coverage
         path: |

@@ -23,6 +23,21 @@ import { useBackendAIAppLauncherFragment$key } from 'src/__generated__/useBacken
 interface EduAppLauncherProps {
   apiEndpoint: string;
   active: boolean;
+  /**
+   * sToken captured by the route-level `STokenLoginBoundary` wrapper before
+   * the URL was cleaned. The boundary already authenticated with this token;
+   * the value is only plumbed through so customer-specific code paths that
+   * still reference the token (e.g. `eduApp.get_user_credential` inside
+   * `_createEduSession`) can continue to function after the URL cleanup.
+   * `null` when the page is opened without an sToken URL.
+   */
+  sToken?: string | null;
+  /**
+   * Remaining URL query parameters (all keys except `sToken` / `stoken`)
+   * captured at route mount. Carries app / session_id / resource hints that
+   * drive the launch sequence without re-parsing `window.location`.
+   */
+  extraParams?: Record<string, string>;
 }
 
 /**
@@ -43,13 +58,19 @@ export type EduAppSessionErrorCategory =
  * Staged state machine for the EduAppLauncher flow.
  *
  * Stages progress:
- *   idle -> auth -> session -> launching -> done
+ *   idle -> session -> launching -> done
  * Any stage may transition to `error` with a step label. The Card UI
  * (FR-2487) consumes this state; FR-2484 introduces the machine only.
+ *
+ * Authentication is owned by the route-level `STokenLoginBoundary` wrapper —
+ * by the time this component mounts, `globalThis.backendaiclient` is already
+ * authenticated via sToken (or an existing session) and `connectViaGQL` has
+ * resolved `groups` / `groupIds` / `current_group`. The legacy `auth`
+ * stage is therefore removed; the launcher only visualizes session and
+ * launch work.
  */
 export type EduAppLaunchStage =
   | { name: 'idle' }
-  | { name: 'auth' }
   | {
       name: 'session';
       sessionRowId: string;
@@ -64,7 +85,7 @@ export type EduAppLaunchStage =
   | { name: 'done'; appConnectUrl: string }
   | {
       name: 'error';
-      step: 'auth' | 'session' | 'launch';
+      step: 'session' | 'launch';
       category?: EduAppSessionErrorCategory;
       message: string;
     };
@@ -94,6 +115,8 @@ const g = globalThis as any;
 const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
   apiEndpoint,
   active,
+  sToken = null,
+  extraParams = {},
 }) => {
   'use memo';
 
@@ -164,103 +187,19 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
   };
 
   /**
-   * Initialize the backend.ai client with session-based auth mode.
-   *
-   * The caller (`EduAppLauncherPage`) is responsible for providing a
-   * non-empty endpoint via `useEduAppApiEndpoint()`, which reads from
-   * `config.toml` and suspends until resolved. If the endpoint is still
-   * empty here, client initialization will be rejected and the outer
-   * catch in `_launch` will surface the error via notification.
+   * Attach the wsproxy URL from `config.toml` to the already-authenticated
+   * Backend.AI client set up by `STokenLoginBoundary` (route-level). The
+   * boundary owns client creation and authentication (sToken login,
+   * `get_manager_version`, `client.ready`); EduAppLauncher only layers on
+   * the proxyURL needed for the app-launch step, which is not part of the
+   * boundary's narrow scope.
    */
-  const _initClient = async (endpoint: string) => {
-    const resolvedEndpoint = endpoint.trim();
-
-    if (!resolvedEndpoint) {
-      throw new Error('API endpoint is empty; cannot initialize client.');
-    }
-
-    const clientConfig = new g.BackendAIClientConfig(
-      '',
-      '',
-      resolvedEndpoint,
-      'SESSION',
-    );
-    g.backendaiclient = new g.BackendAIClient(
-      clientConfig,
-      'Backend.AI Web UI.',
-    );
+  const _attachProxyURL = async () => {
     const configPath = g.isElectron ? './config.toml' : '../../config.toml';
     const { config: tomlConfig } = await fetchAndParseConfig(configPath);
-    if (tomlConfig?.wsproxy?.proxyURL) {
+    if (tomlConfig?.wsproxy?.proxyURL && g.backendaiclient?._config) {
       g.backendaiclient._config._proxyURL = tomlConfig.wsproxy.proxyURL;
     }
-    await g.backendaiclient.get_manager_version();
-    g.backendaiclient.ready = true;
-  };
-
-  /**
-   * Authenticate via token from URL query parameters.
-   */
-  const _token_login = async (): Promise<boolean> => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const sToken = urlParams.get('sToken') || urlParams.get('stoken') || null;
-
-    if (sToken !== null) {
-      document.cookie = `sToken=${encodeURIComponent(sToken)}; path=/; Secure; SameSite=Lax`;
-    }
-
-    const extraParams: Record<string, string> = {};
-    for (const [key, value] of urlParams.entries()) {
-      if (key !== 'sToken' && key !== 'stoken') {
-        extraParams[key] = value;
-      }
-    }
-
-    try {
-      const alreadyLoggedIn = await g.backendaiclient.check_login();
-      if (!alreadyLoggedIn) {
-        const loginSuccess = await g.backendaiclient.token_login(
-          sToken,
-          extraParams,
-        );
-        if (!loginSuccess) {
-          notify(t('eduapi.CannotAuthorizeSessionByToken'));
-          return false;
-        }
-      }
-      return true;
-    } catch (err) {
-      logger.error('Token login failed:', err);
-      notify(t('eduapi.CannotAuthorizeSessionByToken'));
-      return false;
-    }
-  };
-
-  /**
-   * Fetch and cache group/project information for the current user.
-   */
-  const _prepareProjectInformation = async () => {
-    const fields = ['email', 'groups {name, id}'];
-    const query = `query { user{ ${fields.join(' ')} } }`;
-    const response = await g.backendaiclient.query(query, {});
-
-    g.backendaiclient.groups = response.user.groups
-      .map((item: { name: string }) => item.name)
-      .sort();
-    g.backendaiclient.groupIds = response.user.groups.reduce(
-      (acc: Record<string, string>, group: { name: string; id: string }) => {
-        acc[group.name] = group.id;
-        return acc;
-      },
-      {},
-    );
-    const currentProject = g.backendaiutils._readRecentProjectGroup();
-    g.backendaiclient.current_group = currentProject
-      ? currentProject
-      : g.backendaiclient.groups[0];
-    g.backendaiclient.current_group_id = () => {
-      return g.backendaiclient.groupIds[g.backendaiclient.current_group];
-    };
   };
 
   /**
@@ -396,12 +335,11 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
       return;
     }
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const requestedApp = urlParams.get('app') || 'jupyter';
+    const requestedApp = extraParams.app || 'jupyter';
     let parsedAppName = requestedApp;
     const sessionTemplateName =
-      urlParams.get('session_template') ||
-      urlParams.get('sessionTemplate') ||
+      extraParams.session_template ||
+      extraParams.sessionTemplate ||
       requestedApp;
 
     if (eduAppNamePrefix !== '' && requestedApp.startsWith(eduAppNamePrefix)) {
@@ -619,8 +557,10 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
         });
 
         // 4c. credential bootstrap script (only when an sToken is present
-        // AND the customer-specific endpoint is available).
-        const sToken = urlParams.get('sToken') || urlParams.get('stoken');
+        // AND the customer-specific endpoint is available). The sToken
+        // prop comes from the route-level `STokenLoginBoundary` wrapper
+        // and is captured before the URL is cleaned on successful auth,
+        // so this call still receives the original token.
         logger.info('[_createEduSession] step 4c: get_user_credential', {
           has_sToken: !!sToken,
         });
@@ -737,78 +677,44 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
   };
 
   /**
-   * Main launch sequence: init client, token login, prepare project,
-   * then start or reuse session and launch the app.
+   * Main launch sequence: attach proxy URL, then start or reuse a session
+   * and launch the app. sToken authentication and project/group bootstrap
+   * are handled upstream by `STokenLoginBoundary` (route wrapper in
+   * `EduAppLauncherPage`); by the time this function runs
+   * `globalThis.backendaiclient` is already authenticated, `ready`, and
+   * has `groups` / `current_group` populated by `connectViaGQL`. URL
+   * parameters are passed via `extraParams` / `sToken` props rather than
+   * re-parsing `window.location` (spec "URL 파라미터 파싱 규약 (nuqs)").
    */
-  const _launch = async (endpoint: string) => {
-    logger.info('[EduAppLauncher] _launch() start', { endpoint });
-    transition({ name: 'auth' });
+  const _launch = async () => {
+    logger.info('[EduAppLauncher] _launch() start');
     try {
-      await _initClient(endpoint);
+      await _attachProxyURL();
     } catch (err) {
-      logger.error('Failed to initialize client:', err);
+      logger.error('Failed to attach wsproxy URL:', err);
       transition({
         name: 'error',
-        step: 'auth',
+        step: 'session',
         message: t('eduapi.CannotInitializeClient'),
       });
       notify(t('eduapi.CannotInitializeClient'), undefined, true);
       return;
     }
 
-    const urlParams = new URLSearchParams(window.location.search);
     const resources: Record<string, string | null> = {
-      cpu: urlParams.get('cpu'),
-      mem: urlParams.get('mem'),
-      shmem: urlParams.get('shmem'),
-      'cuda.shares': urlParams.get('cuda-shares'),
-      'cuda.device': urlParams.get('cuda-device'),
+      cpu: extraParams.cpu ?? null,
+      mem: extraParams.mem ?? null,
+      shmem: extraParams.shmem ?? null,
+      'cuda.shares': extraParams['cuda-shares'] ?? null,
+      'cuda.device': extraParams['cuda-device'] ?? null,
     };
 
-    const loginSuccess = await _token_login();
-    if (!loginSuccess) {
-      transition({
-        name: 'error',
-        step: 'auth',
-        message: t('eduapi.CannotAuthorizeSessionByToken'),
-      });
-      return;
-    }
-
-    // Dispatch `backend-ai-connected` so any descendant component using
-    // `useSuspendedBackendaiClient()` (e.g. `useBackendAIAppLauncher` deep
-    // inside `EduAppSessionLauncher`) can resolve. The shared
-    // `backendaiClientPromise` is created at module load time and only
-    // resolves on this event — `LoginView` dispatches it after a normal
-    // login, but the EduAppLauncher token-login flow bypasses LoginView
-    // entirely, so we have to dispatch it ourselves once the client is
-    // authenticated and ready.
-    logger.info('[EduAppLauncher] dispatching backend-ai-connected');
-    document.dispatchEvent(
-      new CustomEvent('backend-ai-connected', {
-        detail: g.backendaiclient,
-      }),
-    );
-
-    try {
-      await _prepareProjectInformation();
-    } catch (err) {
-      logger.error('Failed to prepare project information:', err);
-      transition({
-        name: 'error',
-        step: 'auth',
-        message: (err as any)?.message ?? String(err),
-      });
-      _handleError(err);
-      return;
-    }
-
-    const sessionId = urlParams.get('session_id') || null;
+    const sessionId = extraParams.session_id || null;
     if (sessionId) {
       logger.info('[EduAppLauncher] _launch: Path A (session_id provided)', {
         sessionId,
       });
-      const requestedApp = urlParams.get('app') || 'jupyter';
+      const requestedApp = extraParams.app || 'jupyter';
       transition({
         name: 'session',
         sessionRowId: sessionId,
@@ -842,60 +748,52 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
     });
     if (!active || hasLaunchedRef.current) return;
     hasLaunchedRef.current = true;
-    _launch(apiEndpoint);
+    _launch();
   });
   useEffect(() => {
     onLaunchEffect();
   }, [active, apiEndpoint]);
 
   // Map the state machine stage to the visual Steps component:
-  //   step 0 = Authentication
-  //   step 1 = Session (lookup or create)
-  //   step 2 = Launch (proxy + window.open)
+  //   step 0 = Session (lookup or create)
+  //   step 1 = Launch (proxy + window.open)
+  // - Authentication is handled upstream by `STokenLoginBoundary` and is
+  //   not represented in this stepper at all.
   // - Stages strictly before the current step are 'finish'.
   // - The current step is 'process', or 'error' when stage.name === 'error'
   //   and the error step matches.
   // - Stages after the current step are 'wait'.
-  // - On 'done', all three steps are 'finish'.
+  // - On 'done', both steps are 'finish'.
   // No `useMemo` needed: `'use memo'` directive at the top of this
   // component lets the React Compiler memoize derived values automatically.
-  const STEP_AUTH = 0;
-  const STEP_SESSION = 1;
-  const STEP_LAUNCH = 2;
-  let currentStep = STEP_AUTH;
+  const STEP_SESSION = 0;
+  const STEP_LAUNCH = 1;
+  let currentStep = STEP_SESSION;
   let stepStatuses: Array<'wait' | 'process' | 'finish' | 'error'> = [
-    'wait',
     'wait',
     'wait',
   ];
   switch (stage.name) {
     case 'idle':
-    case 'auth':
-      currentStep = STEP_AUTH;
-      stepStatuses = ['process', 'wait', 'wait'];
-      break;
     case 'session':
       currentStep = STEP_SESSION;
-      stepStatuses = ['finish', 'process', 'wait'];
+      stepStatuses = ['process', 'wait'];
       break;
     case 'launching':
       currentStep = STEP_LAUNCH;
-      stepStatuses = ['finish', 'finish', 'process'];
+      stepStatuses = ['finish', 'process'];
       break;
     case 'done':
       currentStep = STEP_LAUNCH;
-      stepStatuses = ['finish', 'finish', 'finish'];
+      stepStatuses = ['finish', 'finish'];
       break;
     case 'error': {
-      if (stage.step === 'auth') {
-        currentStep = STEP_AUTH;
-        stepStatuses = ['error', 'wait', 'wait'];
-      } else if (stage.step === 'session') {
+      if (stage.step === 'session') {
         currentStep = STEP_SESSION;
-        stepStatuses = ['finish', 'error', 'wait'];
+        stepStatuses = ['error', 'wait'];
       } else {
         currentStep = STEP_LAUNCH;
-        stepStatuses = ['finish', 'finish', 'error'];
+        stepStatuses = ['finish', 'error'];
       }
       break;
     }
@@ -985,16 +883,12 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
           current={currentStep}
           items={[
             {
-              title: t('eduapi.CheckingAuthentication'),
+              title: t('eduapi.PreparingSession'),
               status: stepStatuses[0],
             },
             {
-              title: t('eduapi.PreparingSession'),
-              status: stepStatuses[1],
-            },
-            {
               title: t('eduapi.LaunchingAppStep'),
-              status: stepStatuses[2],
+              status: stepStatuses[1],
             },
           ]}
         />

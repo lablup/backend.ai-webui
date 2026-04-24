@@ -246,37 +246,47 @@ also displayed in the Permission panel.
 
 <a id="manage-models-cards"></a>
 
-## Manage Models cards
+## Manage Model Cards
 
-All of the Model cards in model store are managed by project admin.
-After uploading model store with model-definition file, any user in the project
-can access to model card and clone it if needed.
+Model cards in the Model Store are created and managed through the [Admin Model Store Management](#admin-model-store-management) interface. Each model card is linked to a storage folder (vfolder) that contains the actual model files.
 
-Following method is to add model cards from the Hugging Face.
+### Setting Up the Model Store Folder
 
 :::note
-Before creating a model card, getting an access to the specific model on Hugging Face is needed.
-For more information, please refer to [Gated models](https://huggingface.co/docs/hub/models-gated) .
+If the model is hosted on Hugging Face as a gated model, you will need to request access before downloading. Refer to [Gated models](https://huggingface.co/docs/hub/models-gated) for details.
 :::
 
-First, Set the project to 'model-store'.
+First, set the project to `model-store`.
 
 ![](../images/select_project_to_model_store.png)
 
-Move to data page and click the 'Create Folder' button on the right side. Enter the folder name,
-and set the rest of folder configuration as shown below:
+Go to the Data page and click the **Create Folder** button. Configure the folder as follows:
 
-- Usage Mode: Model
-- Type: project
-- Permission: Read-Write
-- Cloneable: True
+- **Usage Mode**: Model
+- **Type**: Project
+- **Permission**: Read-Write
 
 ![](../images/model_store_folder.png)
 
-After creating the folder, you need to set and upload the model-definition.yaml file
-to the folder that you've just created. Following is the example of the model-definition file.
-If you want to know how to write model-definition file,
-please refer to [Model definition guide](#model-definition-guide) section.
+After creating the folder, download the model files into it. You can mount the model folder during session creation and use tools such as `huggingface-cli` to download model weights.
+
+:::note
+You need to download the model files manually into the folder. For instructions on how to download from Hugging Face, refer to [Downloading models](https://huggingface.co/docs/hub/models-downloading).
+:::
+
+Once the folder and its model files are ready, create a model card through the [Admin Model Store Management](#admin-model-store-management) interface and link it to this folder.
+
+![](../images/model_card_detail.png)
+
+### Model Definition File (Advanced — Custom Runtime)
+
+For the `Custom` runtime variant, you can optionally place a `model-definition.yaml` file in the model folder. This file tells Backend.AI how to start and operate the inference server during serving — including the startup command, health check settings, and any pre-start actions such as downloading model weights at launch time.
+
+:::note
+Runtime variants such as `vLLM`, `SGLang`, `NVIDIA NIM`, and `Modular MAX` do not require a `model-definition.yaml` file. These variants handle model configuration automatically based on the selected settings.
+:::
+
+The following is an example `model-definition.yaml` that starts a vLLM server using the `Custom` variant:
 
 ```yaml
 models:
@@ -316,134 +326,83 @@ models:
         max_retries: 500
 ```
 
-Once the model-definition file is uploaded, the model card will appear in the model store page.
-
-![](../images/model_card_added.png)
+For a full description of the model definition format, refer to the [Model Definition Guide](../model_serving/model_serving.md#model-definition-guide) in the Model Serving documentation.
 
 :::note
-You need to download model manually after setting model-definition file. For downloading the model file to folder,
-you can mount the model folder to session creation and download file to there by referring
-[Downloading models](https://huggingface.co/docs/hub/models-downloading) .
+To enable the **Deploy** button on a model card in the Model Store, include `service-definition.toml` in the linked folder so Backend.AI can read the model service configuration. Add `model-definition.yaml` only when you use the `Custom` runtime variant; preset runtime variants (such as `vLLM`, `SGLang`, `NVIDIA NIM`, and `Modular MAX`) do not require it. For details on the service definition file, refer to the [Service Definition File](../model_serving/model_serving.md#service-definition-file) section in the Model Serving documentation.
 :::
 
-Clicking on the model card you've just created will display the details of the model-definition file you uploaded.
-Now, every member of the project can access the model card and clone it.
+<a id="admin-features"></a>
 
-![](../images/model_card_detail.png)
+## Admin Features
 
-:::note
-To enable the "Run this model" button on the model card, both
-`model-definition.yaml` and `service-definition.toml` files must exist in the
-folder. If either file is missing, the button will be disabled. For details on
-creating the service definition file, refer to the
-[Service Definition File](#service-definition-file)
-section in the Model Serving documentation.
-:::
+<a id="admin-serving-page"></a>
 
-<a id="model-store-page"></a>
+### Admin Serving Page
 
-## Model Store Page
+Administrators and superadmins can access the Admin Serving page, which provides a cross-project view of all endpoints. This page shows the **Project** column in addition to the standard endpoint list columns, allowing admins to manage services across all projects.
 
-The Model Store page is where users can discover and use pre-configured models that have been set up by administrators. When you navigate to the Model Store page from the sidebar, you will see model cards displaying all available models from the model-store project.
+![](../images/admin_serving_page.png)
 
-![](../images/model_store_page_overview.png)
+The Admin Serving page has two tabs:
 
-Each model card displays key information about the model, including:
+- **Serving**: Displays the endpoint list across all projects, with the same lifecycle and property filters as the user-facing Serving page.
+- **Model Store Management**: Available to superadmins only. See the section below.
 
-- Model name (folder name)
-- README content (if a README file exists in the folder)
-- Metadata from the model-definition.yaml file
-- Action buttons for interacting with the model
+<a id="admin-model-store-management"></a>
 
-Clicking on a model card opens a detailed view with the full README content and available actions.
+### Admin Model Store Management
 
-![](../images/model_card_detail_with_buttons.png)
+Superadmins can manage model cards through the **Model Store Management** tab on the Admin Serving page.
 
-<a id="clone-to-folder"></a>
+![](../images/admin_model_card_list_v2.png)
 
-### Clone to Folder
+The list provides the following columns:
 
-The "Clone to folder" button allows you to create a personal copy of a model store folder. Since model store folders are read-only and shared across the project, you need to clone them to your own storage to modify files or use them in custom workflows.
+- **Name**: The unique identifier of the model card.
+- **Title**: The human-readable display name.
+- **Category**: The model category (e.g., LLM).
+- **Task**: The inference task type (e.g., text-generation).
+- **Access Level**: Shows a green `Public` tag when the model card is publicly accessible, or a default `Private` tag otherwise.
+- **Domain**: The domain that owns the model card.
+- **Project**: The project that owns the model card.
+- **Created At**: The timestamp when the model card was created.
 
-To clone a model folder:
+You can filter the list by **Name** using the property filter bar at the top. Edit and delete action icons are shown directly in the **Name** cell of each row.
 
-1. Click the "Clone to folder" button on the model card
-2. In the clone dialog, configure the following settings:
-   - **Folder Name**: The name for your cloned folder (defaults to the original name with a random suffix)
-   - **Permission**: Set the access permission for the cloned folder (Read-Only or Read-Write)
-   - **Usage Mode**: The folder type (General, Model, or Auto Mount)
-3. Click the "Clone" button to start the cloning process
+To delete multiple model cards at once, select the rows you want to remove using the checkboxes and click the red trash-bin button next to the selection count. A confirmation dialog appears before the cards are deleted.
 
-![](../images/model_store_clone_dialog.png)
+#### Creating a Model Card
 
-:::note
-Currently, folder cloning only supports cloning to the same storage host.
-:::
+Click the `Create Model Card` button to open the creation modal. Fill in the following fields:
 
-After cloning completes, the new folder will appear in your Data page under the appropriate tab based on the usage mode you selected.
+- **Name** (required): A unique identifier for the model card.
+- **Title**: A human-readable display name.
+- **Description**: A detailed description of the model.
+- **Author**: The model creator or organization.
+- **Model Version**: The version of the model.
+- **Task**: The inference task type (e.g., text-generation).
+- **Category**: The model category (e.g., LLM).
+- **Framework**: The ML framework used (e.g., PyTorch, TensorFlow).
+- **Label**: Tags for categorization and filtering.
+- **License**: The license under which the model is distributed.
+- **Architecture**: The model architecture (e.g., Transformer).
+- **README**: A markdown README for the model.
+- **Domain**: The domain to associate the model card with.
+- **Project ID** (required): The project that owns the model card.
+- **VFolder** (required): The storage folder containing the model files.
+- **Access Level**: Controls who can see the model card in the user-facing Model Store.
 
-<a id="create-service-from-this-model"></a>
+   * `Internal`: Visible only to administrators of the owning domain and project. Regular users cannot see internal cards in their Model Store.
+   * `Public`: Visible to all users who have access to the owning project.
 
-### Create Service from This Model
+#### Editing a Model Card
 
-The "Run this model" button allows you to create a model service directly from a model card with a single click. This feature automates the process of cloning the model folder and creating a model service endpoint.
+Click the edit icon next to the model card name to modify an existing model card. The edit modal opens with previously entered fields already filled in.
 
-:::note
-This button requires the following conditions to be met:
+#### Deleting Model Cards
 
-- Both `model-definition.yaml` and `service-definition.toml` files must exist in the model folder. If either file is missing, the button will be disabled with a tooltip explaining which file is needed.
-- You must have sufficient resource quota to create a model service.
-- The resource group must allow inference session types.
-  :::
-
-<a id="service-creation-workflow"></a>
-
-#### Service Creation Workflow
-
-When you click the "Run this model" button, Backend.AI follows this workflow:
-
-1. **Check for Required Files**: The system verifies that both model-definition.yaml and service-definition.toml exist in the folder
-
-2. **Clone Folder (if needed)**: If you don't have a cloned copy of the model folder:
-   - A confirmation dialog appears asking if you want to clone the folder
-   - The folder will be cloned with a name format: `{original-name}-{random-4-chars}`
-   - A notification shows the cloning progress
-
-![](../images/model_service_clone_confirmation.png)
-
-<!-- TODO: Capture screenshot of clone confirmation dialog before service creation -->
-
-3. **Create Service**: Once the folder exists (either from a previous clone or just cloned):
-   - The service is automatically created using settings from service-definition.toml
-   - A notification displays the service creation progress
-   - You can click the notification to navigate to the Model Serving page
-
-![](../images/model_service_creation_progress.png)
-
-<!-- TODO: Capture screenshot of service creation progress notification -->
-
-4. **View Service Details**: After creation completes, you can navigate to the Model Serving page to view the endpoint details, monitor service health, and manage the service
-
-![](../images/model_service_created_detail.png)
-
-:::note
-If a cloned folder already exists from a previous operation, the system will
-automatically use that folder to create the service. In a future release, you will
-be able to select which cloned folder to use if multiple copies exist.
-:::
-
-<a id="troubleshooting"></a>
-
-#### Troubleshooting
-
-If service creation fails:
-
-- Check that both model-definition.yaml and service-definition.toml are correctly formatted
-- Verify that your resource quota allows creating new model services
-- Check the Model Serving page for error messages in the service status
-- Refer to the [Model Serving](#model-serving) documentation for detailed troubleshooting steps
-
-For more information about model services, service configuration, and endpoint management, refer to the [Model Serving](#model-serving) documentation.
+You can delete an individual model card by clicking the delete icon next to its name, or perform bulk deletion by selecting multiple model cards with the row checkboxes and clicking the red trash-bin button next to the selection count.
 
 <a id="manage-resource-policy"></a>
 

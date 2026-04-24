@@ -190,3 +190,4 @@ achieves more intuitive use.
 | Maintenance* | X | O |
 | Information* | X | O |
 | RBAC Management* | X | O (superadmin) |
+| Project* | X | O |
