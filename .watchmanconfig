@@ -1,0 +1,12 @@
+{
+  "ignore_dirs": [
+    "node_modules",
+    ".git",
+    "build",
+    "react/build",
+    "react/.craco-cache",
+    "packages/backend.ai-ui/dist",
+    "packages/backend.ai-ui/storybook-static",
+    ".pnpm-store"
+  ]
+}
