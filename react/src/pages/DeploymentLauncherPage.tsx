@@ -6,6 +6,7 @@ import { DeploymentLauncherPageCreateMutation } from '../__generated__/Deploymen
 import { DeploymentLauncherPageEditMutation } from '../__generated__/DeploymentLauncherPageEditMutation.graphql';
 import { DeploymentLauncherPageQuery } from '../__generated__/DeploymentLauncherPageQuery.graphql';
 import { DeploymentLauncherPageResourcePresetsQuery } from '../__generated__/DeploymentLauncherPageResourcePresetsQuery.graphql';
+import { DeploymentLauncherPageRuntimeVariantsQuery } from '../__generated__/DeploymentLauncherPageRuntimeVariantsQuery.graphql';
 import DeploymentLauncherPageContent, {
   DeploymentLauncherFormValue,
 } from '../components/DeploymentLauncherPageContent';
@@ -168,6 +169,29 @@ const DeploymentLauncherPageLayout: React.FC<
       { fetchPolicy: 'store-and-network' },
     );
 
+  const { runtimeVariants: runtimeVariantConnection } =
+    useLazyLoadQuery<DeploymentLauncherPageRuntimeVariantsQuery>(
+      graphql`
+        query DeploymentLauncherPageRuntimeVariantsQuery {
+          runtimeVariants {
+            edges {
+              node {
+                rowId
+                name
+              }
+            }
+          }
+        }
+      `,
+      {},
+      { fetchPolicy: 'store-and-network' },
+    );
+
+  const runtimeVariantList =
+    runtimeVariantConnection?.edges
+      ?.map((e) => e?.node)
+      ?.filter((n): n is NonNullable<typeof n> => Boolean(n)) ?? [];
+
   // Track form dirtiness to guard cancel with a confirm dialog. We use
   // form.isFieldsTouched() via a lightweight state mirror so the button
   // can react to edits without forcing the whole page to re-render on
@@ -268,7 +292,10 @@ const DeploymentLauncherPageLayout: React.FC<
             },
             image: { id: imageId },
             modelRuntimeConfig: {
-              runtimeVariant: values.runtimeVariant,
+              runtimeVariantId:
+                runtimeVariantList.find(
+                  (rv) => rv.name === values.runtimeVariant,
+                )?.rowId ?? '',
               inferenceRuntimeConfig: null,
               environ: null,
             },
@@ -461,6 +488,7 @@ const DeploymentLauncherPageLayout: React.FC<
         mode={mode}
         form={form}
         deploymentFrgmt={deploymentFrgmt}
+        runtimeVariants={runtimeVariantList}
         onValuesChange={() => setIsDirty(true)}
         onCancel={handleCancel}
         onSubmit={handleSubmit}

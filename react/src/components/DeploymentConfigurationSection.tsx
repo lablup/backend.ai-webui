@@ -81,7 +81,9 @@ const DeploymentConfigurationSection: React.FC<
               resourceGroupName
             }
             modelRuntimeConfig {
-              runtimeVariant
+              runtimeVariant {
+                name
+              }
               environ {
                 entries {
                   name
@@ -183,7 +185,7 @@ const DeploymentConfigurationSection: React.FC<
     {
       key: 'runtime-variant',
       label: t('deployment.RuntimeVariant'),
-      children: runtimeConfig?.runtimeVariant || renderFallback(),
+      children: runtimeConfig?.runtimeVariant?.name || renderFallback(),
     },
     {
       key: 'image',

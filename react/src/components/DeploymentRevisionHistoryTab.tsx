@@ -173,7 +173,9 @@ const DeploymentRevisionHistoryTab: React.FC<
                     size
                   }
                   modelRuntimeConfig {
-                    runtimeVariant
+                    runtimeVariant {
+                      name
+                    }
                   }
                   modelDefinition {
                     models {
@@ -368,7 +370,7 @@ const DeploymentRevisionHistoryTab: React.FC<
       key: 'runtimeVariant',
       dataIndex: 'runtimeVariant',
       render: (_value, record) =>
-        record.modelRuntimeConfig?.runtimeVariant ?? '-',
+        record.modelRuntimeConfig?.runtimeVariant?.name ?? '-',
     },
     {
       title: t('deployment.Image'),
