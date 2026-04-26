@@ -6,16 +6,10 @@
 import fs from "fs";
 import http from "http";
 import path from "path";
-import { parse as parseYaml } from "yaml";
 import { generateWebsite } from "./website-generator.js";
 import type { ResolvedDocConfig } from "./config.js";
+import { loadBookConfig } from "./book-config.js";
 
-interface BookConfig {
-  title: string;
-  description: string;
-  languages: string[];
-  navigation: Record<string, Array<{ title: string; path: string }>>;
-}
 
 export interface WebsitePreviewOptions {
   lang: string;
@@ -63,9 +57,7 @@ export async function startWebsitePreviewServer(
   const args = { ...parseArgs(process.argv.slice(2)), ...options };
 
   const configPath = path.join(config.srcDir, "book.config.yaml");
-  const bookConfig: BookConfig = parseYaml(
-    fs.readFileSync(configPath, "utf-8"),
-  );
+  const bookConfig = loadBookConfig(config.srcDir);
 
   const navigation = bookConfig.navigation[args.lang];
   if (!navigation) {

@@ -429,3 +429,108 @@ image = rendered brand SVG (or none), no absolute URLs, no sitemap.
 The PDF pipeline reads ONLY `book.config.yaml`, not the `og` key in
 `docs-toolkit.config.yaml`. Adding an `og` block has zero effect on
 PDF output. `pnpm run pdf:en` is unchanged by F2.
+
+## F1 — Site entry & multilingual routing
+
+### Title normalization rule (mandatory)
+
+`book.config.yaml` may write the document title as a YAML block scalar:
+
+```yaml
+title: |
+  Backend.AI WebUI
+  User Guide
+```
+
+The shared loader `book-config.ts` always exposes two derived values:
+
+| Field             | Form              | Used by                                                                                              |
+|-------------------|-------------------|------------------------------------------------------------------------------------------------------|
+| `title`           | single-line       | HTML `<title>`, sidebar header, console output, PDF filename templates, language-picker page         |
+| `titleMultiline`  | original (multi)  | **Only** the PDF cover page (where line breaks are part of the visual layout)                        |
+
+`title` is computed as `raw.title.replace(/\s+/g, " ").trim()` — runs of any whitespace (including newlines) collapse to a single space. `titleMultiline` is `raw.title.trimEnd()` so trailing blank lines are dropped but author-intended line breaks survive for the cover.
+
+**Rules**
+
+1. All call sites that need the title for an HTML `<title>` element, a sidebar header, a log line, or a filename template must use `bookConfig.title`.
+2. Only `html-builder.ts`'s cover renderer (`buildCoverHtml`) reads `metadata.titleMultiline`, with a fallback to `metadata.title` for callers that did not pass it.
+3. The PDF `<head>` `<title>` element keeps a defensive `.trim().replace(/\n/g, " ")` to remain idempotent — but the input is already normalized, so the regex is a safety net rather than a hot path.
+4. New pipelines that read `book.config.yaml` must use `loadBookConfig()` instead of `parseYaml(...).title` to avoid reintroducing the regression.
+
+### Site root and language picker
+
+The website generator emits **one** site-root file outside any language subtree:
+
+```
+dist/web/
+  index.html              ← language picker (this file)
+  favicon.ico             ← from F5
+  apple-touch-icon.png    ← from F5
+  site.webmanifest        ← from F5
+  assets/
+  en/
+  ja/
+  ko/
+  th/
+```
+
+`buildLanguagePickerPage` (in `website-builder.ts`) builds a tiny standalone HTML page (≤ 5 KB total) that:
+
+- Renders a static `<ul>` of language choices (works without JavaScript)
+- Includes an inline `<script>` (no CDN, no external file) that, on first load:
+  1. Reads `localStorage.lang` if it matches a supported language
+  2. Falls back to `navigator.languages` / `navigator.language`, accepting both full tags (`ko-KR`) and primary subtags (`ko`)
+  3. Falls back to `en` (or the first supported language) when no signal matches
+- Uses `location.replace` to avoid polluting the back-button history
+- **Loop-safety**: the script is gated on the URL pathname matching `/(?:^|\/)(?:index\.html)?$/` AND not containing any `/<lang>/` segment, so even if the script were accidentally re-included on a per-language page it would not redirect
+
+`localStorage.lang` is set only when the user clicks one of the visible picker links (the click handler captures `data-lang`). It is never written by the auto-detect path, so a user who lands on the picker once and uses the `<a>` link gets a sticky preference; one who lets the auto-detect fire still re-evaluates `navigator.language` on subsequent root visits.
+
+### Per-page header (language switcher slot)
+
+Every per-page HTML now opens with a `<header class="page-header-bar">` block above the chapter content. F1 occupies it with a single `lang-switcher` group:
+
+```html
+<header class="page-header-bar">
+  <nav class="page-header-nav" aria-label="Page header controls">
+    <div class="lang-switcher" role="group" aria-label="Language switcher">
+      <a class="lang-switcher__item lang-switcher__item--current"   …>English</a>
+      <a class="lang-switcher__item lang-switcher__item--available" …>한국어</a>
+      …
+    </div>
+  </nav>
+</header>
+```
+
+The `<nav class="page-header-nav">` region is intentionally a flex container so future buckets can drop in siblings without reflowing layout: F4 will add a "Copy" toggle, F6 will add a version-selector dropdown.
+
+### Cross-language link resolution
+
+Slugs differ per language because they derive from the localized chapter title (`slugify(nav.title)`). The path is the only stable join key across languages, so the generator builds a per-language `Map<navPath, slug>` once at build time and uses it to resolve switcher hrefs:
+
+- Source: `book.config.yaml`'s `navigation.<lang>[].path` (e.g., `quickstart.md`)
+- Lookup: `slugByPathPerLang[peerLang].get(currentPath)` → peer slug
+- Result href: `../{peerLang}/{peerSlug}.html`
+- Missing peer (chapter not translated): falls back to `../{peerLang}/index.html` and the link is marked `lang-switcher__item--unavailable`
+
+The same lookup also drives `<link rel="alternate" hreflang="…">` in the `<head>`, plus an `x-default` pointing at the English version of the same page (or the first available language when English is absent).
+
+### Files touched
+
+| File                                      | Role                                                                                                  |
+|-------------------------------------------|-------------------------------------------------------------------------------------------------------|
+| `src/book-config.ts` (new)                | Single read site for `book.config.yaml`; exposes `title` (normalized) + `titleMultiline` (raw)        |
+| `src/website-builder.ts`                  | Adds `LanguagePeer`, `buildLanguagePickerPage`, `buildPageHeader`; emits `hreflang` link tags         |
+| `src/website-generator.ts`                | Builds per-language nav-path → slug map; writes `dist/web/index.html`; passes `peers` per page         |
+| `src/styles-web.ts`                       | New `.page-header-bar` / `.lang-switcher` block (sits above the chapter content)                       |
+| `src/html-builder.ts`                     | `DocMetadata.titleMultiline` (optional); cover renderer prefers it when present                       |
+| `src/generate-pdf.ts`                     | Reads via `loadBookConfig`; passes both `title` and `titleMultiline` into the PDF builder             |
+| `src/preview-server*.ts`                  | All three switched to `loadBookConfig` for parity with the production pipelines                       |
+| `src/index.ts`                            | Re-exports the new public types/functions for downstream consumers                                    |
+
+### Constraints honoured
+
+- **Air-gapped** — the language picker script is inline; no CDN, no fetch, no eval.
+- **JS budget** — the picker script is a few hundred bytes; the per-page switcher adds zero JS (links are plain `<a>`).
+- **PDF non-regression** — the cover page still receives the multi-line title via `titleMultiline`; the `<title>` element remains single-line via the existing `.trim().replace(/\n/g, " ")` safety net.

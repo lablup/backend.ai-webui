@@ -1,20 +1,13 @@
 import fs from 'fs';
 import path from 'path';
-import { parse as parseYaml } from 'yaml';
 import { chromium } from 'playwright';
 import { processMarkdownFiles } from './markdown-processor.js';
 import { buildFullDocument } from './html-builder.js';
 import { renderPdf } from './pdf-renderer.js';
 import { loadTheme } from './theme.js';
 import { getDocVersion } from './version.js';
+import { loadBookConfig } from './book-config.js';
 import type { ResolvedDocConfig } from './config.js';
-
-interface BookConfig {
-  title: string;
-  description: string;
-  languages: string[];
-  navigation: Record<string, Array<{ title: string; path: string }>>;
-}
 
 export interface GeneratePdfOptions {
   lang: string;
@@ -65,10 +58,11 @@ export async function generatePdf(
 ): Promise<void> {
   const args = options ?? parseArgs(process.argv.slice(2));
 
-  const configPath = path.join(config.srcDir, 'book.config.yaml');
-  const bookConfig: BookConfig = parseYaml(
-    fs.readFileSync(configPath, 'utf-8'),
-  );
+  // Single-line `title` is used for `<title>`, console output, filename
+  // templates. The PDF cover renderer reads `titleMultiline` so the visual
+  // line breaks the author intended (`title: |` block scalar) survive on
+  // the cover page.
+  const bookConfig = loadBookConfig(config.srcDir);
 
   const theme = loadTheme(args.theme ?? 'default');
   const { display: version, filename: versionForFilename } = getDocVersion(
@@ -76,11 +70,11 @@ export async function generatePdf(
     config.version,
   );
   const title = bookConfig.title;
+  const titleMultiline = bookConfig.titleMultiline;
   const availableLanguages = bookConfig.languages;
 
   const langArg = args.lang ?? 'all';
-  const languages =
-    langArg === 'all' ? availableLanguages : [langArg];
+  const languages = langArg === 'all' ? availableLanguages : [langArg];
 
   // Validate requested language
   for (const lang of languages) {
@@ -176,7 +170,7 @@ export async function generatePdf(
     console.log(`[${lang}] Building HTML...`);
     const html = buildFullDocument(
       chapters,
-      { title, version, lang, note: args.note },
+      { title, titleMultiline, version, lang, note: args.note },
       config,
       theme,
     );

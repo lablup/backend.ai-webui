@@ -33,6 +33,13 @@ export interface WebPageContext {
   /** Hashed asset filenames keyed by logical name (e.g. "styles.css" → "styles.deadbeef.css"). */
   assets: PageAssets;
   /**
+   * Per-language switcher links for this exact chapter. Always contains one
+   * entry per language declared in `book.config.yaml` (including the current
+   * language). Languages where the chapter is missing are still listed but
+   * marked `available: false`.
+   */
+  peers: LanguagePeer[];
+  /**
    * Versioned-docs context (F6). Optional — only set when the build is
    * running in versioned mode (`versions` declared in config). Drives
    * the header version selector and the "is this the latest?" hint
@@ -96,6 +103,26 @@ export interface WebsiteMetadata {
   title: string;
   version: string;
   lang: string;
+  /**
+   * All languages declared in `book.config.yaml`. Used to emit
+   * `<link rel="alternate" hreflang="…">` tags and to render the language
+   * switcher control in the page header (F1).
+   */
+  availableLanguages: string[];
+}
+
+/**
+ * One entry in the per-page language switcher. The `href` is page-relative
+ * (`../<peerLang>/<slug>.html`) so the link works for any deployment path.
+ * `available: false` indicates the chapter is not present in the peer
+ * language and the link falls back to that language's index page; the
+ * switcher uses this signal to render a disabled state.
+ */
+export interface LanguagePeer {
+  lang: string;
+  label: string;
+  href: string;
+  available: boolean;
 }
 
 /**
@@ -321,6 +348,7 @@ function buildHeadAssetTags(
   assets: PageAssets,
   prefix: string,
   seo: PageSeoContext | undefined,
+  peers: LanguagePeer[],
 ): string {
   const lines: string[] = [
     `<meta charset="utf-8" />`,
@@ -414,6 +442,24 @@ function buildHeadAssetTags(
         url: pageUrlAbs,
         imageUrl: ogImageAbs,
       }),
+    );
+  }
+
+  // hreflang alternates (F1). One per peer language plus an `x-default`
+  // pointing at English (when present) — search engines use `x-default` to
+  // pick a target for users whose preferred language is not listed.
+  for (const peer of peers) {
+    lines.push(
+      `<link rel="alternate" hreflang="${escapeHtml(peer.lang)}" href="${escapeHtml(peer.href)}" />`,
+    );
+  }
+  const xDefault =
+    peers.find((p) => p.lang === "en" && p.available) ??
+    peers.find((p) => p.available) ??
+    peers[0];
+  if (xDefault) {
+    lines.push(
+      `<link rel="alternate" hreflang="x-default" href="${escapeHtml(xDefault.href)}" />`,
     );
   }
 
@@ -580,11 +626,58 @@ export function applyImageAttributes(
 }
 
 /**
+ * Build the in-page header bar. Currently hosts the language switcher (F1).
+ * F4 (code-block copy) and F6 (version selector) will add additional
+ * controls into the same `<header class="page-header-bar">`; the
+ * `<nav class="page-header-nav">` slots them as siblings of the language
+ * switcher so they can extend without reflowing the layout.
+ */
+function buildPageHeader(
+  metadata: WebsiteMetadata,
+  peers: LanguagePeer[],
+): string {
+  const items = peers
+    .map((peer) => {
+      const isCurrent = peer.lang === metadata.lang;
+      const ariaCurrent = isCurrent ? ' aria-current="true"' : "";
+      const classes = [
+        "lang-switcher__item",
+        isCurrent ? "lang-switcher__item--current" : "",
+        peer.available
+          ? "lang-switcher__item--available"
+          : "lang-switcher__item--unavailable",
+      ]
+        .filter(Boolean)
+        .join(" ");
+      const titleAttr = peer.available
+        ? ""
+        : ' title="This page is not available in this language; goes to that language\'s index instead."';
+      return `<a class="${classes}" href="${escapeHtml(peer.href)}" hreflang="${escapeHtml(peer.lang)}" lang="${escapeHtml(peer.lang)}"${ariaCurrent}${titleAttr}>${escapeHtml(peer.label)}</a>`;
+    })
+    .join("");
+  return `
+<header class="page-header-bar">
+  <nav class="page-header-nav" aria-label="Page header controls">
+    <div class="lang-switcher" role="group" aria-label="Language switcher">
+      ${items}
+    </div>
+  </nav>
+</header>`;
+}
+
+/**
  * Build a complete HTML page for a single chapter in the static website.
  */
 export function buildWebPage(context: WebPageContext): string {
-  const { chapter, allChapters, currentIndex, metadata, config, assets } =
-    context;
+  const {
+    chapter,
+    allChapters,
+    currentIndex,
+    metadata,
+    config,
+    assets,
+    peers,
+  } = context;
 
   const prefix = rootPrefix(context);
 
@@ -594,7 +687,8 @@ export function buildWebPage(context: WebPageContext): string {
     metadata,
     config,
   );
-  const content = buildPageContent(chapter);
+  const pageHeader = buildPageHeader(metadata, peers);
+  const innerContent = buildPageContent(chapter);
   const metadataBar = buildPageMetadata(context);
   const pagination = buildPaginationNav(
     allChapters,
@@ -612,6 +706,7 @@ export function buildWebPage(context: WebPageContext): string {
     assets,
     prefix,
     context.seo,
+    context.peers,
   );
   const headerBar = buildPageHeaderBar(context);
   const searchScript = buildSearchScriptTag(assets, prefix);
@@ -627,7 +722,8 @@ ${headerBar}
 <div class="doc-page">
   ${sidebar}
   <main class="doc-main">
-    ${content}
+    ${pageHeader}
+    ${innerContent}
     <div class="page-footer">
       ${metadataBar}
       ${pagination}
@@ -657,6 +753,151 @@ export function buildIndexPage(
 </head>
 <body>
   <p>Redirecting to <a href="./${firstSlug}.html">${escapeHtml(metadata.title)}</a>...</p>
+</body>
+</html>`;
+}
+
+/**
+ * Build the site-root `dist/web/index.html` language picker page.
+ *
+ * The picker renders a static list of language choices so users without
+ * JavaScript can still navigate. With JavaScript enabled, an inline
+ * (≤ 1 KB) script consults — in order — `localStorage.lang` (sticky user
+ * choice from a previous visit), `navigator.language[s]` (browser
+ * preference), and finally the explicit `fallback` language. The chosen
+ * language's landing page is loaded via `location.replace` so the picker
+ * does not enter the back-button history.
+ *
+ * Loop-safety: the redirect ONLY fires from this exact page (`pathname`
+ * ends with `/` or `/index.html`). Per-language pages never redirect, and
+ * `localStorage.lang` is set only on an explicit user click — so the
+ * picker can never be reached and immediately bounced away again in a
+ * cycle. Falls back to `fallback` (typically `"en"`) when no signal is
+ * available.
+ */
+export interface LanguagePickerPageOptions {
+  title: string;
+  productName: string;
+  languages: Array<{ lang: string; label: string }>;
+  fallback: string;
+}
+
+/**
+ * Serialize a value to JSON safe for embedding inside an inline `<script>`.
+ *
+ * `JSON.stringify` alone is unsafe in HTML script context: a string containing
+ * `</script>` would terminate the surrounding tag and let attacker-controlled
+ * content execute as HTML. Even though the picker's input is operator-supplied
+ * (`book.config.yaml` `languages`), defense-in-depth requires escaping the
+ * known script-breakout sequences (`<`, `-->`, `--!>`, U+2028, U+2029) before
+ * interpolating into a `<script>` block. Per the HTML5 spec, comments may end
+ * with either `-->` or `--!>`, so both forms are escaped. The two comment-
+ * closer forms use distinct literal replacements so each `>` is escaped via
+ * a global string replace (CodeQL js/incomplete-sanitization).
+ */
+function safeJsonForScript(value: unknown): string {
+  return JSON.stringify(value)
+    .replace(/</g, "\\u003c")
+    .replace(/--!>/g, "--!\\u003e")
+    .replace(/-->/g, "--\\u003e")
+    .replace(/\u2028/g, "\\u2028")
+    .replace(/\u2029/g, "\\u2029");
+}
+
+export function buildLanguagePickerPage(
+  opts: LanguagePickerPageOptions,
+): string {
+  const { title, productName, languages, fallback } = opts;
+  const safeTitle = escapeHtml(title);
+  const safeProduct = escapeHtml(productName);
+  const langCodes = languages.map((l) => l.lang);
+  const langCodesJson = safeJsonForScript(langCodes);
+  const fallbackJson = safeJsonForScript(fallback);
+
+  const items = languages
+    .map(
+      (l) =>
+        `      <li><a class="lang-pick" data-lang="${escapeHtml(l.lang)}" hreflang="${escapeHtml(l.lang)}" lang="${escapeHtml(l.lang)}" href="./${escapeHtml(l.lang)}/index.html">${escapeHtml(l.label)}</a></li>`,
+    )
+    .join("\n");
+
+  // The script is intentionally tiny and CSP-friendly. No fetch, no CDN,
+  // no eval. It runs once on first load of `/` (or `/index.html`).
+  const script = `(function(){
+  var SUPPORTED=${langCodesJson};
+  var FALLBACK=${fallbackJson};
+  function pick(){
+    try{
+      var ls=window.localStorage&&window.localStorage.getItem("lang");
+      if(ls&&SUPPORTED.indexOf(ls)>=0)return ls;
+    }catch(e){}
+    var navs=[];
+    if(navigator.languages&&navigator.languages.length){
+      for(var i=0;i<navigator.languages.length;i++)navs.push(navigator.languages[i]);
+    }
+    if(navigator.language)navs.push(navigator.language);
+    for(var j=0;j<navs.length;j++){
+      var tag=String(navs[j]||"").toLowerCase();
+      // Try full tag, then primary subtag (e.g. "ko-kr" -> "ko").
+      if(SUPPORTED.indexOf(tag)>=0)return tag;
+      var primary=tag.split("-")[0];
+      if(SUPPORTED.indexOf(primary)>=0)return primary;
+    }
+    return FALLBACK;
+  }
+  // Loop-safety guard: only redirect from the picker page itself, never
+  // from inside a language subtree. The picker script is only included in
+  // the root index.html, but this check makes the safety property visible
+  // and survives accidental re-inclusion (e.g. via templating mistakes).
+  var p=(window.location.pathname||"").toLowerCase();
+  var atRoot=/(?:^|\\/)(?:index\\.html)?$/.test(p);
+  var inLangDir=false;
+  for(var k=0;k<SUPPORTED.length;k++){
+    if(p.indexOf("/"+SUPPORTED[k]+"/")>=0){inLangDir=true;break;}
+  }
+  if(!atRoot||inLangDir)return;
+  var target=pick();
+  if(SUPPORTED.indexOf(target)<0)target=FALLBACK;
+  window.location.replace("./"+target+"/index.html");
+})();
+// Persist explicit user choice from the visible picker.
+document.addEventListener("click",function(e){
+  var t=e.target;
+  while(t&&t!==document){
+    if(t.tagName==="A"&&t.classList&&t.classList.contains("lang-pick")){
+      try{window.localStorage.setItem("lang",t.getAttribute("data-lang"));}catch(err){}
+      return;
+    }
+    t=t.parentNode;
+  }
+});`;
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>${safeTitle}</title>
+  <meta name="robots" content="noindex" />
+  <style>
+    body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;margin:0;background:#fff;color:#1c1e21;display:flex;min-height:100vh;align-items:center;justify-content:center;padding:2rem;}
+    .lp-card{max-width:30rem;width:100%;border:1px solid #ebedf0;border-radius:.5rem;padding:2rem;box-shadow:0 1px 3px rgba(0,0,0,.05);}
+    .lp-title{margin:0 0 .25rem 0;font-size:1.5rem;}
+    .lp-product{margin:0 0 1.5rem 0;color:#606770;font-size:.875rem;}
+    .lp-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:.5rem;}
+    .lp-list a{display:block;padding:.75rem 1rem;border:1px solid #ebedf0;border-radius:.4rem;color:#3578e5;text-decoration:none;font-weight:500;}
+    .lp-list a:hover,.lp-list a:focus{background:#f5f6f7;border-color:#dadde1;}
+  </style>
+</head>
+<body>
+  <main class="lp-card">
+    <h1 class="lp-title">${safeTitle}</h1>
+    <p class="lp-product">${safeProduct}</p>
+    <ul class="lp-list">
+${items}
+    </ul>
+  </main>
+  <script>${script}</script>
 </body>
 </html>`;
 }

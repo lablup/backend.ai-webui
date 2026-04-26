@@ -79,13 +79,24 @@ export { buildFullDocument } from "./html-builder.js";
 export type { WebDocMetadata } from "./html-builder-web.js";
 export { buildWebDocument } from "./html-builder-web.js";
 export type {
+  LanguagePeer,
+  LanguagePickerPageOptions,
+  PageAssets,
+  PageSeoContext,
+  PageVersionContext,
   WebPageContext,
   WebsiteMetadata,
-  PageAssets,
-  PageVersionContext,
-  PageSeoContext,
 } from "./website-builder.js";
-export { buildWebPage, buildIndexPage } from "./website-builder.js";
+export {
+  applyImageAttributes,
+  buildIndexPage,
+  buildLanguagePickerPage,
+  buildWebPage,
+} from "./website-builder.js";
+
+// ── Book Config (shared loader for book.config.yaml) ────────────
+export type { NormalizedBookConfig, RawBookConfig } from "./book-config.js";
+export { loadBookConfig, normalizeTitle } from "./book-config.js";
 
 // ── SEO (F2) ────────────────────────────────────────────────────
 export type { OgTagOptions, TwitterCardOptions, JsonLdOptions } from "./seo.js";

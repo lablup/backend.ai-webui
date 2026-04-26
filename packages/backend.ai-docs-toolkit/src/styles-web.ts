@@ -697,6 +697,76 @@ details > :last-child {
   color: var(--ifm-color-emphasis-600);
 }
 
+/* ==========================================================================
+   Page Header Bar (website mode) — F1: language switcher slot.
+   F4 (Copy button toggle) and F6 (version selector) will hang off the same
+   <nav class="page-header-nav"> region.
+   ========================================================================== */
+.page-header-bar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin: 0 0 1.5rem 0;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.page-header-nav {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.lang-switcher {
+  display: inline-flex;
+  gap: 0.25rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 0.4rem;
+  padding: 0.15rem;
+  background: var(--ifm-color-emphasis-0);
+}
+
+.lang-switcher__item {
+  display: inline-block;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.8rem;
+  line-height: 1.2;
+  border-radius: 0.25rem;
+  color: var(--ifm-color-emphasis-700);
+  text-decoration: none;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+
+.lang-switcher__item:hover,
+.lang-switcher__item:focus {
+  background: var(--ifm-color-emphasis-100);
+  color: var(--ifm-color-emphasis-900);
+  text-decoration: none;
+}
+
+.lang-switcher__item--current {
+  background: var(--ifm-color-primary);
+  color: #fff;
+  cursor: default;
+}
+
+.lang-switcher__item--current:hover,
+.lang-switcher__item--current:focus {
+  background: var(--ifm-color-primary-dark);
+  color: #fff;
+}
+
+.lang-switcher__item--unavailable {
+  color: var(--ifm-color-emphasis-500);
+}
+
+.lang-switcher__item--unavailable:hover,
+.lang-switcher__item--unavailable:focus {
+  background: var(--ifm-color-emphasis-100);
+  color: var(--ifm-color-emphasis-700);
+}
+
 /* Pagination Navigation */
 .pagination-nav {
   display: flex;

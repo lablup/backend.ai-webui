@@ -8,17 +8,18 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import { execFileSync } from "child_process";
-import { parse as parseYaml } from "yaml";
 import { processMarkdownFilesForWeb } from "./markdown-processor-web.js";
 import type { LinkDiagnostic } from "./markdown-processor-web.js";
 import { slugify } from "./markdown-processor.js";
 import {
   buildWebPage,
   buildIndexPage,
+  buildLanguagePickerPage,
   applyImageAttributes,
 } from "./website-builder.js";
 import { buildSearchIndex } from "./search-index-builder.js";
 import type {
+  LanguagePeer,
   PageAssets,
   PageSeoContext,
   PageVersionContext,
@@ -34,6 +35,7 @@ import {
 import { canonicalPathFor } from "./versions.js";
 import { generateWebsiteStyles } from "./styles-web.js";
 import { getDocVersion } from "./version.js";
+import { loadBookConfig, type NormalizedBookConfig } from "./book-config.js";
 import type { ResolvedDocConfig } from "./config.js";
 import { writeHashedAsset, type AssetManifest } from "./asset-hasher.js";
 import { readImageDimensions } from "./image-meta.js";
@@ -45,13 +47,6 @@ import {
   type Version,
   type PageEnumerationRow,
 } from "./versions.js";
-
-interface BookConfig {
-  title: string;
-  description: string;
-  languages: string[];
-  navigation: Record<string, Array<{ title: string; path: string }>>;
-}
 
 export interface GenerateWebsiteOptions {
   lang: string;
@@ -206,10 +201,10 @@ export async function generateWebsite(
   config: ResolvedDocConfig,
   options?: Partial<GenerateWebsiteOptions>,
 ): Promise<GenerateWebsiteResult> {
-  const configPath = path.join(config.srcDir, "book.config.yaml");
-  const bookConfig: BookConfig = parseYaml(
-    fs.readFileSync(configPath, "utf-8"),
-  );
+  // Single-line `title` is used for `<title>`, sidebar headers, and console
+  // output. `book.config.yaml`'s `title: |` block scalar is collapsed at
+  // load time so embedded newlines never reach the rendered HTML.
+  const bookConfig = loadBookConfig(config.srcDir);
 
   const { display: version } = getDocVersion(
     config.versionSource,
@@ -398,13 +393,7 @@ export async function generateWebsite(
               projectRoot: versionRoot,
               srcDir: path.join(versionRoot, "src"),
             };
-      const versionBookConfigPath = path.join(
-        versionConfig.srcDir,
-        "book.config.yaml",
-      );
-      const versionBookConfig: BookConfig = parseYaml(
-        fs.readFileSync(versionBookConfigPath, "utf-8"),
-      );
+      const versionBookConfig = loadBookConfig(versionConfig.srcDir);
 
       console.log(`=== Version ${v.label}${v.isLatest ? " (latest)" : ""} ===`);
       const versionDir = path.join(distBase, v.outDir);
@@ -530,6 +519,23 @@ export async function generateWebsite(
     process.exit(1);
   }
 
+  // Site-root language picker (F1). Lives at dist/web/index.html and is
+  // the only page outside any language subtree. Always uses `en` as the
+  // hard fallback so the picker never enters an infinite redirect loop
+  // even on user agents that report no language signal at all.
+  const peerLangsForPicker = availableLanguages.map((peerLang) => ({
+    lang: peerLang,
+    label: config.languageLabels[peerLang] ?? peerLang,
+  }));
+  const pickerHtml = buildLanguagePickerPage({
+    title,
+    productName,
+    languages: peerLangsForPicker,
+    fallback: availableLanguages.includes("en") ? "en" : availableLanguages[0],
+  });
+  fs.writeFileSync(path.join(distBase, "index.html"), pickerHtml, "utf-8");
+  console.log(`Written: index.html (language picker)`);
+
   console.log(`Website generated at: ${distBase}`);
 
   return {
@@ -567,7 +573,7 @@ async function buildLanguage(args: {
   version: string;
   title: string;
   config: ResolvedDocConfig;
-  bookConfig: BookConfig;
+  bookConfig: NormalizedBookConfig;
   outRoot: string;
   rootDepth: 2 | 3;
   versionLabel: string | null;
@@ -625,7 +631,23 @@ async function buildLanguage(args: {
   );
   for (const d of langDiagnostics) allDiagnostics.push(d);
 
-  const metadata: WebsiteMetadata = { title, version, lang };
+  const availableLanguages = bookConfig.languages;
+  const metadata: WebsiteMetadata = { title, version, lang, availableLanguages };
+
+  // Per-language nav-path -> slug index. The language switcher (F1) maps
+  // `quickstart.md` (path) in the current language to the same path in
+  // every peer language, then resolves the peer's localized slug for the
+  // cross-language link target. Paths are stable across languages — slugs
+  // are not — so the join key is the path.
+  const slugByPathPerLang: Record<string, Map<string, string>> = {};
+  for (const peerLang of availableLanguages) {
+    const peerNav = bookConfig.navigation[peerLang] ?? [];
+    const map = new Map<string, string>();
+    for (const entry of peerNav) {
+      map.set(entry.path, slugify(entry.title));
+    }
+    slugByPathPerLang[peerLang] = map;
+  }
 
   // Collect last-modified dates for all navigation files
   const navFilePaths = navigation.map((nav) => path.join(lang, nav.path));
@@ -717,6 +739,31 @@ async function buildLanguage(args: {
       lastModSink.set(pagePath, lastDate);
     }
 
+    // Resolve the same chapter in every peer language. Missing peers
+    // (e.g. a page only translated into a subset of languages) are still
+    // listed in the switcher but link to that language's index page so
+    // users always have an escape hatch.
+    const peers: LanguagePeer[] = availableLanguages.map((peerLang) => {
+      const peerSlug = navEntry
+        ? slugByPathPerLang[peerLang]?.get(navEntry.path)
+        : undefined;
+      const langLabelPeer = config.languageLabels[peerLang] ?? peerLang;
+      if (peerSlug) {
+        return {
+          lang: peerLang,
+          label: langLabelPeer,
+          href: `../${peerLang}/${peerSlug}.html`,
+          available: true,
+        };
+      }
+      return {
+        lang: peerLang,
+        label: langLabelPeer,
+        href: `../${peerLang}/index.html`,
+        available: false,
+      };
+    });
+
     let pageHtml = buildWebPage({
       chapter: chapters[i],
       allChapters: chapters,
@@ -726,6 +773,7 @@ async function buildLanguage(args: {
       navPath: navEntry?.path,
       lastUpdated: lastDate ? formatDate(lastDate, lang) : undefined,
       assets: pageAssets,
+      peers,
       versionContext,
       seo,
     });
