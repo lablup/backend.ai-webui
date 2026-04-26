@@ -162,18 +162,72 @@ export async function startWebsitePreviewServer(
       return;
     }
 
-    // Resolve file path from URL
+    // Resolve file path from URL.
+    //
+    // Two preview-only correctness fixes (FR-2728):
+    //   1. Root (`/`) used to serve `<lang>/index.html` directly. That page
+    //      contains a `<meta refresh url=./quickstart.html>` redirect,
+    //      which the browser resolves *relative to its current URL* (`/`).
+    //      The result was a request for `/quickstart.html`, which does
+    //      not exist in `dist/web/` (the chapter is at `<lang>/quickstart.html`).
+    //      Send a real HTTP 302 to `/<lang>/` instead so the browser's
+    //      base URL is the language directory and downstream relative
+    //      links resolve correctly. Also serve `dist/web/index.html`
+    //      (the language picker) when the user reaches root via a
+    //      language-agnostic entry point.
+    //   2. Browsers percent-encode non-ASCII path segments (e.g. KO
+    //      `헤더.html` -> `%ED%97%A4%EB%8D%94.html`). The server must
+    //      decode before joining onto `distBase`, otherwise the
+    //      filesystem lookup fails with 404 even though the file exists.
+    //      Production static hosts (nginx, GH Pages, etc.) handle this
+    //      transparently; this matches that behavior.
     let filePath: string;
-    if (
-      url.pathname === "/" ||
-      url.pathname === `/${args.lang}/` ||
-      url.pathname === `/${args.lang}`
-    ) {
-      // Serve language index for root and language root paths
+    if (url.pathname === "/") {
+      // Prefer the language picker at `dist/web/index.html` when it
+      // exists (multi-lang build); otherwise fall back to a 302 to the
+      // current language's directory so relative redirects in the
+      // per-language `index.html` resolve correctly.
+      const pickerPath = path.join(distBase, "index.html");
+      if (fs.existsSync(pickerPath)) {
+        filePath = pickerPath;
+      } else {
+        res.writeHead(302, { Location: `/${args.lang}/` });
+        res.end();
+        return;
+      }
+    } else if (url.pathname === `/${args.lang}`) {
+      // Redirect `/<lang>` (no trailing slash) to `/<lang>/` so the
+      // browser's base URL becomes the language directory and the
+      // relative meta-refresh in `<lang>/index.html` resolves to
+      // `/<lang>/<slug>.html` instead of `/<slug>.html`.
+      res.writeHead(302, { Location: `/${args.lang}/` });
+      res.end();
+      return;
+    } else if (url.pathname === `/${args.lang}/`) {
       filePath = path.join(distBase, args.lang, "index.html");
     } else {
-      // Normalize: remove leading slash
-      const safePath = path.normalize(url.pathname).replace(/^\/+/, "");
+      // Decode percent-encoded path segments (e.g. CJK filenames),
+      // then strip any leading slash and normalize against distBase.
+      let decoded: string;
+      try {
+        decoded = decodeURIComponent(url.pathname);
+      } catch {
+        // Malformed escape sequence — refuse rather than fall back to
+        // the encoded form, which would let an attacker probe the FS.
+        res.writeHead(400, { "Content-Type": "text/plain" });
+        res.end("Bad request");
+        return;
+      }
+      // NUL bytes (`\0`) survive `decodeURIComponent` (e.g. `%00`) and
+      // crash Node's sync fs APIs, killing the preview server (DoS).
+      // Reject explicitly and 400 instead of letting the request reach
+      // the filesystem layer.
+      if (decoded.includes("\0")) {
+        res.writeHead(400, { "Content-Type": "text/plain" });
+        res.end("Bad request");
+        return;
+      }
+      const safePath = path.normalize(decoded).replace(/^\/+/, "");
       filePath = path.resolve(distBase, safePath);
     }
 
@@ -184,16 +238,24 @@ export async function startWebsitePreviewServer(
       return;
     }
 
-    // Check if file exists
-    if (!fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) {
-      // Try with .html extension
-      if (!filePath.endsWith(".html") && fs.existsSync(filePath + ".html")) {
-        filePath = filePath + ".html";
-      } else {
-        res.writeHead(404, { "Content-Type": "text/plain" });
-        res.end("Not found");
-        return;
+    // Check if file exists. Wrap the sync fs probes in try/catch as
+    // defense-in-depth — even though the `\0` filter above blocks the
+    // canonical NUL-crash path, any future code path that builds a
+    // bad `filePath` shouldn't take down the preview server.
+    try {
+      if (!fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) {
+        if (!filePath.endsWith(".html") && fs.existsSync(filePath + ".html")) {
+          filePath = filePath + ".html";
+        } else {
+          res.writeHead(404, { "Content-Type": "text/plain" });
+          res.end("Not found");
+          return;
+        }
       }
+    } catch {
+      res.writeHead(400, { "Content-Type": "text/plain" });
+      res.end("Bad request");
+      return;
     }
 
     const ext = path.extname(filePath).toLowerCase();
