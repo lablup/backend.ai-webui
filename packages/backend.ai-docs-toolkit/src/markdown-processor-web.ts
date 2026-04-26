@@ -3,9 +3,9 @@
  * Supports: admonitions, code block titles, line highlighting, details/summary.
  */
 
-import fs from 'fs';
-import path from 'path';
-import { Marked } from 'marked';
+import fs from "fs";
+import path from "path";
+import { Marked } from "marked";
 import {
   slugify,
   deduplicateH1,
@@ -13,8 +13,8 @@ import {
   normalizeRstTables,
   convertIndentedNotes,
   resolveMarkdownPath,
-} from './markdown-processor.js';
-import type { Chapter, Heading } from './markdown-processor.js';
+} from "./markdown-processor.js";
+import type { Chapter, Heading } from "./markdown-processor.js";
 import {
   processAdmonitions,
   processCodeBlockMeta,
@@ -23,8 +23,8 @@ import {
   stripHtmlTags,
   getFigureLabel,
   parseImageSizeHint,
-} from './markdown-extensions.js';
-import type { ResolvedDocConfig } from './config.js';
+} from "./markdown-extensions.js";
+import type { ResolvedDocConfig } from "./config.js";
 
 export type { Chapter, Heading };
 
@@ -41,7 +41,7 @@ export interface AnchorEntry {
   /** Nav path of the source file (e.g., "vfolder/vfolder.md") */
   filePath: string;
   /** Source: heading-derived or explicit <a id> tag */
-  source: 'heading' | 'explicit';
+  source: "heading" | "explicit";
   /** The final ID as it appears in the rendered HTML */
   resolvedId: string;
 }
@@ -54,7 +54,7 @@ export interface AnchorRegistry {
 }
 
 export interface LinkDiagnostic {
-  type: 'broken-link' | 'duplicate-anchor' | 'ambiguous-link';
+  type: "broken-link" | "duplicate-anchor" | "ambiguous-link";
   anchorId: string;
   sourceFile: string;
   message: string;
@@ -80,7 +80,7 @@ function rewriteImagePathsForWeb(
       if (/^(?:https?|file):\/\//.test(imgPath)) return match;
 
       // Treat leading-slash paths as already web-absolute
-      if (imgPath.startsWith('/')) return match;
+      if (imgPath.startsWith("/")) return match;
 
       // Resolve relative to the md file's directory
       const resolved = path.resolve(mdDir, imgPath);
@@ -90,7 +90,7 @@ function rewriteImagePathsForWeb(
 
       // Make path relative to lang dir and convert to a URL path
       const relToLang = path.relative(langDir, resolved);
-      const webPath = '/' + relToLang.split(path.sep).join('/');
+      const webPath = "/" + relToLang.split(path.sep).join("/");
       return `![${alt}](${webPath})`;
     },
   );
@@ -100,7 +100,10 @@ function rewriteImagePathsForWeb(
  * Fix legacy malformed cross-reference links where HTML tags leaked into href.
  * This handles a narrow edge case from RST-to-Markdown migration.
  */
-function fixMalformedCrossReferences(html: string, chapterSlug: string): string {
+function fixMalformedCrossReferences(
+  html: string,
+  chapterSlug: string,
+): string {
   return html.replace(
     /href="#([^"]*)<([^>]+)>[^"]*"/g,
     (_, _text, anchor) => `href="#${chapterSlug}-${slugify(anchor)}"`,
@@ -138,7 +141,7 @@ function buildAnchorRegistryFromRendered(
       resolvedIds.add(heading.id);
 
       // Derive the raw slug by stripping the chapter-slug prefix
-      const prefix = chapter.slug + '-';
+      const prefix = chapter.slug + "-";
       const rawSlug = heading.id.startsWith(prefix)
         ? heading.id.slice(prefix.length)
         : heading.id;
@@ -146,7 +149,7 @@ function buildAnchorRegistryFromRendered(
       addEntry(rawSlug, {
         chapterSlug: chapter.slug,
         filePath,
-        source: 'heading',
+        source: "heading",
         resolvedId: heading.id,
       });
     }
@@ -162,7 +165,7 @@ function buildAnchorRegistryFromRendered(
       addEntry(anchorId, {
         chapterSlug: chapter.slug,
         filePath,
-        source: 'explicit',
+        source: "explicit",
         resolvedId: anchorId,
       });
       resolvedIds.add(anchorId);
@@ -182,15 +185,15 @@ function detectDuplicateAnchors(
   for (const [anchorId, entries] of registry.anchors) {
     const chaptersWithExplicit = [
       ...new Set(
-        entries.filter((e) => e.source === 'explicit').map((e) => e.filePath),
+        entries.filter((e) => e.source === "explicit").map((e) => e.filePath),
       ),
     ];
     if (chaptersWithExplicit.length > 1) {
       diagnostics.push({
-        type: 'duplicate-anchor',
+        type: "duplicate-anchor",
         anchorId,
-        sourceFile: chaptersWithExplicit.join(', '),
-        message: `Duplicate explicit anchor <a id="${anchorId}"> in: ${chaptersWithExplicit.join(', ')}`,
+        sourceFile: chaptersWithExplicit.join(", "),
+        message: `Duplicate explicit anchor <a id="${anchorId}"> in: ${chaptersWithExplicit.join(", ")}`,
       });
     }
   }
@@ -235,7 +238,7 @@ function rewriteCrossPageLinks(
       if (!reportedAnchors.has(anchorId)) {
         reportedAnchors.add(anchorId);
         diagnostics.push({
-          type: 'broken-link',
+          type: "broken-link",
           anchorId,
           sourceFile,
           message: `No matching anchor found for #${anchorId}`,
@@ -250,24 +253,24 @@ function rewriteCrossPageLinks(
     );
     if (sameChapter.length > 0) {
       // Explicit anchors keep their raw ID which already works in-page
-      const explicit = sameChapter.find((e) => e.source === 'explicit');
+      const explicit = sameChapter.find((e) => e.source === "explicit");
       if (explicit) return fullMatch;
       // Heading-only: rewrite to chapter-prefixed resolved ID
       return `href="#${sameChapter[0].resolvedId}"`;
     }
 
     // Cross-chapter link — resolve target first so diagnostic is accurate
-    const targetExplicit = entries.find((e) => e.source === 'explicit');
+    const targetExplicit = entries.find((e) => e.source === "explicit");
     const target = targetExplicit ?? entries[0];
 
     const uniqueChapters = [...new Set(entries.map((e) => e.chapterSlug))];
     if (uniqueChapters.length > 1 && !reportedAnchors.has(anchorId)) {
       reportedAnchors.add(anchorId);
       diagnostics.push({
-        type: 'ambiguous-link',
+        type: "ambiguous-link",
         anchorId,
         sourceFile,
-        message: `Ambiguous link #${anchorId} found in chapters: ${uniqueChapters.join(', ')}. Resolved to: ${target.chapterSlug}`,
+        message: `Ambiguous link #${anchorId} found in chapters: ${uniqueChapters.join(", ")}. Resolved to: ${target.chapterSlug}`,
       });
     }
 
@@ -276,7 +279,7 @@ function rewriteCrossPageLinks(
     }
 
     // Single-page mode: explicit <a id> tags are all in one page, link works as-is
-    if (target.source === 'explicit') {
+    if (target.source === "explicit") {
       return fullMatch;
     }
     return `href="#${target.resolvedId}"`;
@@ -287,9 +290,9 @@ function rewriteCrossPageLinks(
  * Log anchor resolution diagnostics to the console.
  */
 function reportLinkDiagnostics(diagnostics: LinkDiagnostic[]): void {
-  const broken = diagnostics.filter((d) => d.type === 'broken-link');
-  const duplicates = diagnostics.filter((d) => d.type === 'duplicate-anchor');
-  const ambiguous = diagnostics.filter((d) => d.type === 'ambiguous-link');
+  const broken = diagnostics.filter((d) => d.type === "broken-link");
+  const duplicates = diagnostics.filter((d) => d.type === "duplicate-anchor");
+  const ambiguous = diagnostics.filter((d) => d.type === "ambiguous-link");
 
   if (duplicates.length > 0) {
     console.warn(`\n⚠ Duplicate anchors (${duplicates.length}):`);
@@ -319,7 +322,11 @@ function reportLinkDiagnostics(diagnostics: LinkDiagnostic[]): void {
 function buildWebRenderer(
   chapterSlug: string,
   headings: Heading[],
-  options?: { chapterIndex?: number; lang?: string; figureLabels?: Record<string, string> },
+  options?: {
+    chapterIndex?: number;
+    lang?: string;
+    figureLabels?: Record<string, string>;
+  },
 ) {
   let imgCounter = 0;
   const chapterIndex = options?.chapterIndex ?? 0;
@@ -334,11 +341,11 @@ function buildWebRenderer(
       return `<h${level} id="${id}">${text}<a class="hash-link" href="#${id}" aria-label="Direct link to ${escapedPlainText}">#</a></h${level}>\n`;
     },
     image(href: string, title: string | null, text: string): string {
-      const titleAttr = title ? ` title="${title}"` : '';
-      const { cleanAlt, sizeHint } = parseImageSizeHint(text || '');
+      const titleAttr = title ? ` title="${title}"` : "";
+      const { cleanAlt, sizeHint } = parseImageSizeHint(text || "");
 
-      let styleAttr = '';
-      if (sizeHint && sizeHint !== 'auto') {
+      let styleAttr = "";
+      if (sizeHint && sizeHint !== "auto") {
         styleAttr = ` style="width:${sizeHint}"`;
       }
 
@@ -354,40 +361,40 @@ function buildWebRenderer(
       return `<img src="${href}" alt="${cleanAlt}" class="doc-image"${titleAttr}${styleAttr} />\n`;
     },
     code(code: string, infostring: string | undefined): string {
-      const info = infostring || '';
+      const info = infostring || "";
       const langMatch = info.match(/^(\w+)/);
       const titleMatch = info.match(/data-title="([^"]*)"/);
       const highlightMatch = info.match(/data-highlight="([^"]*)"/);
 
-      const lang = langMatch?.[1] || '';
-      const title = titleMatch?.[1] || '';
-      const highlightSpec = highlightMatch?.[1] || '';
+      const lang = langMatch?.[1] || "";
+      const title = titleMatch?.[1] || "";
+      const highlightSpec = highlightMatch?.[1] || "";
       const highlightLines = parseHighlightLines(highlightSpec);
 
       let codeHtml: string;
       if (highlightLines.size > 0) {
-        const lines = code.split('\n');
+        const lines = code.split("\n");
         codeHtml = lines
           .map((line, idx) => {
             const lineNum = idx + 1;
             const cls = highlightLines.has(lineNum)
-              ? 'code-line highlighted'
-              : 'code-line';
+              ? "code-line highlighted"
+              : "code-line";
             return `<span class="${cls}">${escapeHtml(line)}</span>`;
           })
-          .join('\n');
+          .join("\n");
       } else {
         codeHtml = escapeHtml(code);
       }
 
-      const langClass = lang ? ` class="language-${lang}"` : '';
+      const langClass = lang ? ` class="language-${lang}"` : "";
       const preBlock = `<pre><code${langClass}>${codeHtml}</code></pre>`;
 
       if (title) {
         return `<div class="code-block-wrapper"><div class="code-block-title">${escapeHtml(title)}</div>${preBlock}</div>\n`;
       }
 
-      return preBlock + '\n';
+      return preBlock + "\n";
     },
   };
 }
@@ -395,6 +402,12 @@ function buildWebRenderer(
 export interface WebProcessingOptions {
   /** Enable multi-page link resolution (default: false) */
   multiPage?: boolean;
+  /**
+   * If provided, the processor pushes link diagnostics into this array
+   * instead of (only) printing warnings. The website generator uses this
+   * to decide whether to fail under `--strict`.
+   */
+  diagnosticsSink?: LinkDiagnostic[];
 }
 
 export async function processMarkdownFilesForWeb(
@@ -425,7 +438,7 @@ export async function processMarkdownFilesForWeb(
     }
 
     chapterIndex++;
-    let markdown = fs.readFileSync(mdPath, 'utf-8');
+    let markdown = fs.readFileSync(mdPath, "utf-8");
     const chapterSlug = slugify(nav.title);
 
     // Pre-processing pipeline (reused from PDF processor)
@@ -441,7 +454,13 @@ export async function processMarkdownFilesForWeb(
 
     const headings: Heading[] = [];
     const marked = new Marked();
-    marked.use({ renderer: buildWebRenderer(chapterSlug, headings, { chapterIndex, lang, figureLabels }) });
+    marked.use({
+      renderer: buildWebRenderer(chapterSlug, headings, {
+        chapterIndex,
+        lang,
+        figureLabels,
+      }),
+    });
 
     const htmlContent = await marked.parse(markdown);
 
@@ -475,6 +494,11 @@ export async function processMarkdownFilesForWeb(
   // ── Report diagnostics ───────────────────────────────────────
   if (diagnostics.length > 0) {
     reportLinkDiagnostics(diagnostics);
+  }
+
+  // Forward diagnostics to caller (used by --strict in the website generator).
+  if (options?.diagnosticsSink) {
+    for (const d of diagnostics) options.diagnosticsSink.push(d);
   }
 
   return rendered.map((r) => r.chapter);

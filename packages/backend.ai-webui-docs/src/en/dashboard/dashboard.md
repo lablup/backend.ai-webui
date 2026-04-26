@@ -39,9 +39,11 @@ system configuration.
     session type, and creation time.
     By default, the latest 5 active sessions are displayed.
 
+<a id="superadmin-dashboard"></a>
+
 When you are logged in as a superadmin, the Dashboard page also displays
 **Agent Statistics** and **Active Agents** panels alongside the standard user panels.
-See the [Superadmin Dashboard](#superadmin-dashboard) section for details on these panels.
+These superadmin-only panels surface fleet-wide health and capacity at a glance.
 
 ## Auto-Refresh
 
@@ -51,7 +53,6 @@ interaction.
 
 :::note
 The superadmin dashboard uses a **30-second** refresh interval instead.
-See the [Superadmin Dashboard](#superadmin-dashboard) section for more information.
 :::
 
 ## Customizing the Dashboard Layout
