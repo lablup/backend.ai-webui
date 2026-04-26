@@ -1,62 +1,167 @@
 /**
- * Infima-based CSS styles for web preview.
- * Uses Infima CSS variables for consistent styling.
+ * Web stylesheet generator (FR-2726 — Backend.AI design system).
+ *
+ * Phase 1 replaces the legacy Infima palette with Backend.AI design
+ * tokens (orange `#FF7A00` primary, teal `#00BD9B` success, IBM Plex
+ * Sans KR + JetBrains Mono typography), adds a `[data-theme="dark"]`
+ * surface, and threads through consumer-tunable branding (primary
+ * color override). The legacy `--ifm-*` variable names are kept as
+ * aliases that resolve to BAI tokens, so every existing class rule in
+ * this file (and any external consumer) keeps working untouched —
+ * subsequent phases will introduce new components that consume the
+ * `--bai-*` tokens directly.
  */
+
+import {
+  DEFAULT_PRIMARY_COLOR,
+  DEFAULT_PRIMARY_COLOR_ACTIVE,
+  DEFAULT_PRIMARY_COLOR_HOVER,
+  DEFAULT_PRIMARY_COLOR_SOFT,
+  validateCssColor,
+} from "./config.js";
 
 const CJK_LANGS = new Set(["ko", "ja", "zh", "zh-CN", "zh-TW"]);
 
-export function generateWebStyles(lang?: string): string {
+/**
+ * Subset of `ResolvedBrandingConfig` consumed by the stylesheet. The
+ * generator validates each value before interpolating into the emitted
+ * CSS (FR-2726).
+ */
+export interface StyleBrandingTokens {
+  primaryColor?: string;
+  primaryColorHover?: string;
+  primaryColorActive?: string;
+  primaryColorSoft?: string;
+}
+
+export function generateWebStyles(
+  lang?: string,
+  branding?: StyleBrandingTokens,
+): string {
   const isCjk = lang ? CJK_LANGS.has(lang) : false;
+
+  // Validate every interpolated color so a misconfigured value cannot
+  // break out of the surrounding declaration and inject CSS rules.
+  const safe = (
+    value: string | undefined,
+    field: string,
+    fallback: string,
+  ): string => (value ? validateCssColor(value, field) : fallback);
+  const primary = safe(
+    branding?.primaryColor,
+    "branding.primaryColor",
+    DEFAULT_PRIMARY_COLOR,
+  );
+  const primaryHover = safe(
+    branding?.primaryColorHover,
+    "branding.primaryColorHover",
+    DEFAULT_PRIMARY_COLOR_HOVER,
+  );
+  const primaryActive = safe(
+    branding?.primaryColorActive,
+    "branding.primaryColorActive",
+    DEFAULT_PRIMARY_COLOR_ACTIVE,
+  );
+  const primarySoft = safe(
+    branding?.primaryColorSoft,
+    "branding.primaryColorSoft",
+    DEFAULT_PRIMARY_COLOR_SOFT,
+  );
+
   return `
+/* Backend.AI Web UI Manual — Phase 1 (FR-2726)
+   Typography from Google Fonts. The @import is the first declaration
+   so the loader fires before any text renders. CJK fallback chain is
+   kept for offline/airgapped builds where Google Fonts may be blocked. */
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
 /* ==========================================================================
-   Infima CSS Variables
+   Backend.AI Design Tokens (Phase 1 — FR-2726)
+   --------------------------------------------------------------------------
+   The \`--bai-*\` tokens are the source of truth. The \`--ifm-*\` aliases
+   below map them onto the Infima variable names so all legacy rules in
+   this file (and any external consumer that still references
+   \`--ifm-*\`) keep working unchanged.
    ========================================================================== */
 :root {
-  --ifm-color-primary: #3578e5;
-  --ifm-color-primary-dark: #306cce;
-  --ifm-color-primary-light: #538ce9;
-  --ifm-color-primary-lighter: #72a1ed;
-  --ifm-color-primary-lightest: #9dbcf2;
-  --ifm-color-primary-darkest: #1d4584;
-  --ifm-color-primary-darker: #205bac;
+  /* Brand */
+  --bai-primary: ${primary};
+  --bai-primary-hover: ${primaryHover};
+  --bai-primary-active: ${primaryActive};
+  --bai-primary-soft: ${primarySoft};
 
-  --ifm-color-success: #00a400;
-  --ifm-color-success-light: #33b633;
-  --ifm-color-success-dark: #008a00;
+  /* Semantic */
+  --bai-success: #00BD9B;
+  --bai-warning: #FFBF00;
+  --bai-danger: #BB1F1F;
+  --bai-info: #2A99B8;
 
-  --ifm-color-info: #54c7ec;
-  --ifm-color-info-light: #6ecfef;
-  --ifm-color-info-dark: #1fa4d4;
+  /* Typography */
+  --bai-font-sans: 'IBM Plex Sans KR', 'IBM Plex Sans', system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Noto Sans", "Noto Sans KR", "Noto Sans CJK KR", "Noto Sans JP", "Noto Sans CJK JP", "Noto Sans TC", "Noto Sans CJK TC", "Noto Sans Thai", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --bai-font-heading: 'IBM Plex Sans KR', 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+  --bai-font-mono: 'JetBrains Mono', 'IBM Plex Mono', SFMono-Regular, Menlo, Consolas, "Liberation Mono", "Courier New", ui-monospace, monospace;
+  --bai-type-scale: 1;
 
-  --ifm-color-warning: #ffba00;
-  --ifm-color-warning-light: #ffc733;
-  --ifm-color-warning-dark: #d49e00;
+  /* Neutral surface */
+  --bai-bg: #FFFFFF;
+  --bai-bg-muted: #FAFAFA;
+  --bai-bg-subtle: #F5F5F5;
+  --bai-bg-sider: #FCFCFC;
+  --bai-border: #E8E8E8;
+  --bai-border-soft: #F0F0F0;
+  --bai-text: #141414;
+  --bai-text-2: #595959;
+  --bai-text-3: #8C8C8C;
+  --bai-text-4: #BFBFBF;
 
-  --ifm-color-danger: #fa383e;
-  --ifm-color-danger-light: #fb5b5f;
-  --ifm-color-danger-dark: #e8232a;
+  /* Elevation + shape */
+  --bai-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --bai-shadow-md: 0 4px 14px rgba(0, 0, 0, 0.07);
+  --bai-shadow-lg: 0 18px 48px rgba(0, 0, 0, 0.18);
+  --bai-radius-sm: 4px;
+  --bai-radius: 8px;
+  --bai-radius-lg: 12px;
 
-  --ifm-color-secondary: #ebedf0;
-  --ifm-color-emphasis-0: #fff;
-  --ifm-color-emphasis-100: #f5f6f7;
-  --ifm-color-emphasis-200: #ebedf0;
-  --ifm-color-emphasis-300: #dadde1;
-  --ifm-color-emphasis-400: #ccd0d5;
-  --ifm-color-emphasis-500: #bec3c9;
-  --ifm-color-emphasis-600: #8d949e;
-  --ifm-color-emphasis-700: #606770;
-  --ifm-color-emphasis-800: #444950;
-  --ifm-color-emphasis-900: #1c1e21;
+  /* ── Infima aliases (legacy) ──────────────────────────────── */
+  --ifm-color-primary: var(--bai-primary);
+  --ifm-color-primary-dark: var(--bai-primary-active);
+  --ifm-color-primary-light: var(--bai-primary-hover);
+  --ifm-color-primary-lighter: var(--bai-primary-hover);
+  --ifm-color-primary-lightest: var(--bai-primary-soft);
+  --ifm-color-primary-darkest: #B34A00;
+  --ifm-color-primary-darker: var(--bai-primary-active);
+
+  --ifm-color-success: var(--bai-success);
+  --ifm-color-success-light: #1FCEAD;
+  --ifm-color-success-dark: #009C80;
+
+  --ifm-color-info: var(--bai-info);
+  --ifm-color-info-light: #4FB1CC;
+  --ifm-color-info-dark: #1F7E97;
+
+  --ifm-color-warning: var(--bai-warning);
+  --ifm-color-warning-light: #FFD747;
+  --ifm-color-warning-dark: #B88A00;
+
+  --ifm-color-danger: var(--bai-danger);
+  --ifm-color-danger-light: #DC3535;
+  --ifm-color-danger-dark: #8E1717;
+
+  --ifm-color-secondary: var(--bai-bg-subtle);
+  --ifm-color-emphasis-0: var(--bai-bg);
+  --ifm-color-emphasis-100: var(--bai-bg-muted);
+  --ifm-color-emphasis-200: var(--bai-border-soft);
+  --ifm-color-emphasis-300: var(--bai-border);
+  --ifm-color-emphasis-400: #DCDCDC;
+  --ifm-color-emphasis-500: var(--bai-text-4);
+  --ifm-color-emphasis-600: var(--bai-text-3);
+  --ifm-color-emphasis-700: var(--bai-text-2);
+  --ifm-color-emphasis-800: #424242;
+  --ifm-color-emphasis-900: var(--bai-text);
   --ifm-color-emphasis-1000: #000;
 
-  --ifm-font-family-base: system-ui, -apple-system, "Segoe UI", Roboto,
-    Ubuntu, Cantarell, "Noto Sans",
-    "Noto Sans KR", "Noto Sans CJK KR",
-    "Noto Sans JP", "Noto Sans CJK JP",
-    "Noto Sans TC", "Noto Sans CJK TC",
-    "Noto Sans Thai",
-    sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  --ifm-font-family-monospace: "SFMono-Regular", Menlo, Consolas, "Liberation Mono", "Courier New", monospace;
+  --ifm-font-family-base: var(--bai-font-sans);
+  --ifm-font-family-monospace: var(--bai-font-mono);
 
   --ifm-font-size-base: 100%;
   --ifm-font-weight-light: 300;
@@ -122,6 +227,58 @@ export function generateWebStyles(lang?: string): string {
 }
 
 /* ==========================================================================
+   Dark mode (Phase 1 surface — toggle UI ships in Phase 4)
+   --------------------------------------------------------------------------
+   Two opt-in routes:
+     1. \`<html data-theme="dark">\` — explicit override (set by Phase 4
+        toggle persisted in localStorage).
+     2. \`prefers-color-scheme: dark\` — passive default. The toggle, when
+        it lands, will write a sentinel \`data-theme\` value to opt out.
+   The selector below covers both without giving the OS preference
+   priority over an explicit user choice.
+   ========================================================================== */
+[data-theme="dark"] {
+  --bai-bg: #0E0E10;
+  --bai-bg-muted: #141417;
+  --bai-bg-subtle: #1A1A1F;
+  --bai-bg-sider: #111114;
+  --bai-border: #2A2A30;
+  --bai-border-soft: #1F1F25;
+  --bai-text: #F0F0F0;
+  --bai-text-2: #B5B5BD;
+  --bai-text-3: #7E7E89;
+  --bai-text-4: #4F4F58;
+  --bai-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --bai-shadow-md: 0 4px 14px rgba(0, 0, 0, 0.45);
+  --bai-shadow-lg: 0 18px 48px rgba(0, 0, 0, 0.6);
+  /* Dark-mode soft fill is derived from the resolved primary via
+     color-mix() so the tint stays in sync when consumers override
+     branding.primaryColor. Browsers without color-mix() simply
+     keep the light-mode --bai-primary-soft value (still readable). */
+  --bai-primary-soft: color-mix(in srgb, var(--bai-primary) 12%, transparent);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --bai-bg: #0E0E10;
+    --bai-bg-muted: #141417;
+    --bai-bg-subtle: #1A1A1F;
+    --bai-bg-sider: #111114;
+    --bai-border: #2A2A30;
+    --bai-border-soft: #1F1F25;
+    --bai-text: #F0F0F0;
+    --bai-text-2: #B5B5BD;
+    --bai-text-3: #7E7E89;
+    --bai-text-4: #4F4F58;
+    --bai-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+    --bai-shadow-md: 0 4px 14px rgba(0, 0, 0, 0.45);
+    --bai-shadow-lg: 0 18px 48px rgba(0, 0, 0, 0.6);
+    /* Same color-mix derivation as the explicit dark theme block. */
+    --bai-primary-soft: color-mix(in srgb, var(--bai-primary) 12%, transparent);
+  }
+}
+
+/* ==========================================================================
    Reset & Base
    ========================================================================== */
 *, *::before, *::after {
@@ -136,11 +293,11 @@ html {
 }
 
 body {
-  font-family: var(--ifm-font-family-base);
+  font-family: var(--bai-font-sans);
   font-size: 1rem;
   line-height: var(--ifm-line-height-base);
-  color: var(--ifm-color-emphasis-900);
-  background: #fff;
+  color: var(--bai-text);
+  background: var(--bai-bg);
   margin: 0;
   padding: 0;
   ${isCjk ? "word-break: keep-all;" : ""}
@@ -438,14 +595,28 @@ a:hover {
 
 /* ==========================================================================
    Inline Code
+   --------------------------------------------------------------------------
+   BAI design uses primary-active (deep orange) for inline code so it
+   reads as a navigable token, not a generic monospace background.
+   The \`:not(pre) > code\` qualifier keeps Shiki's tokenized code blocks
+   (which contain bare \`<code>\` inside \`<pre>\`) untouched.
    ========================================================================== */
 code {
-  font-family: var(--ifm-font-family-monospace);
+  font-family: var(--bai-font-mono);
   font-size: var(--ifm-code-font-size);
-  background: var(--ifm-code-background);
-  border-radius: var(--ifm-code-border-radius);
-  padding: var(--ifm-code-padding-vertical) var(--ifm-code-padding-horizontal);
-  border: 1px solid var(--ifm-color-emphasis-200);
+}
+
+:not(pre) > code {
+  background: var(--bai-bg-subtle);
+  border: 1px solid var(--bai-border-soft);
+  border-radius: var(--bai-radius-sm);
+  padding: 1px 6px;
+  color: var(--bai-primary-active);
+  font-weight: 500;
+}
+
+[data-theme="dark"] :not(pre) > code {
+  color: var(--bai-primary-hover);
 }
 
 /* ==========================================================================
@@ -1143,10 +1314,15 @@ details > :last-child {
  * Generate CSS for multi-page static website.
  * Unlike generateWebStyles(lang), this produces a single stylesheet
  * suitable for all languages by using :lang() selectors for CJK-specific rules.
+ *
+ * `branding` is forwarded to the underlying token block so consumers can
+ * override the brand primary color (FR-2726). Other branding fields
+ * (logos, sub-label) flow through HTML — not CSS — and are consumed by
+ * the website builder in later phases.
  */
-export function generateWebsiteStyles(): string {
+export function generateWebsiteStyles(branding?: StyleBrandingTokens): string {
   // Base styles without any language-specific conditional
-  const baseStyles = generateWebStyles();
+  const baseStyles = generateWebStyles(undefined, branding);
 
   // Generate :lang() selectors for CJK word-break from CJK_LANGS
   const cjkSelectors = Array.from(CJK_LANGS)

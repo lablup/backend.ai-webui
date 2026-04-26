@@ -36,6 +36,25 @@ website:
   editBaseUrl: "https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src"
   repoUrl: "https://github.com/lablup/backend.ai-webui"
 
+# Branding overrides for the web build (FR-2726).
+# Lets consumers tune the topbar logo, sub-label, and primary color
+# without forking the toolkit. All fields are optional; omitted fields
+# fall back to Backend.AI defaults.
+#
+# - primaryColor: defaults to #FF7A00 (Backend.AI Orange)
+# - logoLight / logoDark: SVG paths (project-root relative)
+# - subLabel: per-language map (or single string). Used in Phase 2's
+#   topbar to render text next to the logo (e.g. "Manual" / "매뉴얼").
+branding:
+  primaryColor: "#FF7A00"
+  logoLight: "../../manifest/backend.ai-webui-black.svg"
+  logoDark: "../../manifest/backend.ai-webui-white.svg"
+  subLabel:
+    en: "Manual"
+    ko: "매뉴얼"
+    ja: "マニュアル"
+    th: "คู่มือ"
+
 # Code-block presentation (F4 — Shiki syntax highlighting).
 # `lightTheme` selects the build-time syntax theme. Default: "github-light".
 # Any bundled Shiki theme name works (see https://shiki.style/themes —

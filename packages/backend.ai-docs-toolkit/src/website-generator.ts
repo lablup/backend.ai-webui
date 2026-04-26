@@ -295,7 +295,15 @@ export async function generateWebsite(
   const assetManifest: AssetManifest = {};
 
   // styles.css → styles.{hash}.css
-  const cssContent = generateWebsiteStyles();
+  // FR-2726 Phase 1: forward consumer branding (primary color + hover /
+  // active / soft variants) to the stylesheet generator. Logo paths and
+  // sub-label flow through HTML in later phases, not CSS.
+  const cssContent = generateWebsiteStyles({
+    primaryColor: config.branding.primaryColor,
+    primaryColorHover: config.branding.primaryColorHover,
+    primaryColorActive: config.branding.primaryColorActive,
+    primaryColorSoft: config.branding.primaryColorSoft,
+  });
   const stylesName = writeHashedAsset(
     assetsDir,
     "styles.css",

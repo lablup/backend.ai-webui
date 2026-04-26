@@ -49,6 +49,18 @@ function makeConfig(versions: VersionEntry[] | undefined): ResolvedDocConfig {
     pathFallbacks: {},
     productName: "p",
     versions,
+    // FR-2726: ResolvedDocConfig now also requires `code` and `branding`.
+    // Use the toolkit's bundled defaults so this fixture stays minimal.
+    code: { lightTheme: "github-light" },
+    branding: {
+      primaryColor: "#FF7A00",
+      primaryColorHover: "#FF9729",
+      primaryColorActive: "#E65C00",
+      primaryColorSoft: "#FFF4E5",
+      logoLight: null,
+      logoDark: null,
+      subLabel: {},
+    },
   } satisfies ResolvedDocConfig;
 }
 

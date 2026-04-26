@@ -147,6 +147,62 @@ export interface VersionEntry {
 }
 
 /**
+ * Branding config (FR-2726 — production-quality docs site).
+ *
+ * Exposes the consumer-tunable surface of the BAI-themed site: brand
+ * primary color, light/dark logos, and the small sub-label rendered next
+ * to the logo in the topbar (e.g. "Manual" / "매뉴얼"). All fields are
+ * optional; when omitted the toolkit falls back to Backend.AI defaults so
+ * an unconfigured consumer still ships a coherent palette.
+ *
+ * Logos are resolved relative to `projectRoot` and copied into the site
+ * `assets/` directory at build time (Phase 2 of FR-2726). The sub-label
+ * is either a single string or a per-language map keyed by language code;
+ * use the `default` key as a fallback for unmapped languages.
+ */
+export interface BrandingConfig {
+  /**
+   * Override the base primary brand color token (`--bai-primary`).
+   * Must be a valid CSS color string (hex, rgb, hsl, or color name).
+   * Default: `#FF7A00` (Backend.AI Orange).
+   *
+   * `primaryColorHover` / `primaryColorActive` / `primaryColorSoft` are
+   * NOT auto-derived from this value — they fall back to the Backend.AI
+   * orange variants when omitted. To keep an alternate brand consistent
+   * across hover/active/soft surfaces, supply all four fields together.
+   */
+  primaryColor?: string;
+  /**
+   * Override the hover variant of the primary color (`--bai-primary-hover`).
+   * Defaults to Backend.AI orange hover when omitted.
+   */
+  primaryColorHover?: string;
+  /**
+   * Override the active/pressed variant (`--bai-primary-active`).
+   * Defaults to Backend.AI orange active when omitted.
+   */
+  primaryColorActive?: string;
+  /**
+   * Override the soft tinted fill used for active sider items, link
+   * hovers, and similar low-emphasis surfaces (`--bai-primary-soft`).
+   * In dark mode the soft fill falls back to a translucent variant of
+   * the resolved primary so it reads on dark backgrounds.
+   */
+  primaryColorSoft?: string;
+  /** Path to light-theme logo SVG, relative to `projectRoot`. */
+  logoLight?: string;
+  /** Path to dark-theme logo SVG, relative to `projectRoot`. Falls back to `logoLight` when omitted. */
+  logoDark?: string;
+  /**
+   * Sub-label rendered next to the logo. Either a single string (used for
+   * every language) or a per-language map keyed by language code (e.g.
+   * `{ en: "Manual", ko: "매뉴얼" }`). When using the map form, the
+   * `default` key is the fallback for unmapped languages.
+   */
+  subLabel?: string | Record<string, string>;
+}
+
+/**
  * Code-block presentation config (F4 — reading UX).
  *
  * `lightTheme` controls Shiki's light syntax theme used during build-time
@@ -184,6 +240,12 @@ export interface ToolkitConfig extends DocConfig {
   og?: OgConfig;
   /** Code-block presentation (Shiki theme, F4). */
   code?: CodeConfig;
+  /**
+   * Optional branding overrides for the web build (FR-2726).
+   * Lets consumers tune the topbar logo, sub-label, and primary color
+   * without forking the toolkit. See `BrandingConfig`.
+   */
+  branding?: BrandingConfig;
 }
 
 // ── Defaults ──────────────────────────────────────────────────
@@ -399,6 +461,73 @@ export interface ResolvedDocConfig {
    * so downstream consumers don't have to null-check.
    */
   code: ResolvedCodeConfig;
+  /**
+   * Resolved branding (FR-2726). Always populated (defaults applied) so
+   * the website generator and stylesheet can read it directly.
+   */
+  branding: ResolvedBrandingConfig;
+}
+
+/** Resolved branding — defaults applied. */
+export interface ResolvedBrandingConfig {
+  /** Primary brand color in CSS color syntax. */
+  primaryColor: string;
+  /** Hover variant of the primary color. */
+  primaryColorHover: string;
+  /** Active/pressed variant of the primary color. */
+  primaryColorActive: string;
+  /** Soft tinted fill (used for active sider items, hovered links, etc.). */
+  primaryColorSoft: string;
+  /** Absolute path to light-theme logo SVG, or `null` when not configured. */
+  logoLight: string | null;
+  /** Absolute path to dark-theme logo SVG, or `null` when not configured. */
+  logoDark: string | null;
+  /** Per-language sub-label map. `default` key is the fallback. */
+  subLabel: Record<string, string>;
+}
+
+/** Default Backend.AI brand palette (orange family). */
+export const DEFAULT_PRIMARY_COLOR = "#FF7A00";
+export const DEFAULT_PRIMARY_COLOR_HOVER = "#FF9729";
+export const DEFAULT_PRIMARY_COLOR_ACTIVE = "#E65C00";
+export const DEFAULT_PRIMARY_COLOR_SOFT = "#FFF4E5";
+
+/**
+ * Validate a CSS color string before interpolating into the generated
+ * stylesheet (FR-2726). The grammar is intentionally narrow — it accepts
+ * the four common authoring forms (hex, rgb/rgba, hsl/hsla, color-name)
+ * and rejects anything containing newline / `;` / `}` / `<` / `*` so a
+ * misconfigured `primaryColor` value cannot terminate the surrounding
+ * declaration block and inject extra CSS rules.
+ *
+ * Returns the trimmed value when valid; throws when not.
+ */
+export function validateCssColor(value: string, field: string): string {
+  const trimmed = value.trim();
+  if (!trimmed) {
+    throw new Error(`${field}: empty CSS color value`);
+  }
+  // Block obvious CSS-injection vectors before fine-grained format checks.
+  if (/[;{}<>\n\r\*\\]/.test(trimmed)) {
+    throw new Error(
+      `${field}: invalid CSS color "${value}" (contains forbidden characters)`,
+    );
+  }
+  const HEX = /^#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/;
+  // Linear pattern: `[^()]*` matches anything except parentheses, so the
+  // engine never has to choose between overlapping `\s*` and `[\s…]+`
+  // matches (which CodeQL flagged as polynomial-time backtracking on
+  // pathological inputs like "rgb(\t\t\t…"). The forbidden-character
+  // pre-check above already rejects `;`, `{`, `<`, etc., so loosening
+  // the body grammar here doesn't widen the injection surface.
+  const FUNC = /^(?:rgb|rgba|hsl|hsla|hwb|lab|lch|oklab|oklch|color)\([^()]*\)$/i;
+  const NAME = /^[a-zA-Z]+$/;
+  if (!HEX.test(trimmed) && !FUNC.test(trimmed) && !NAME.test(trimmed)) {
+    throw new Error(
+      `${field}: invalid CSS color "${value}" (expected hex, rgb/rgba, hsl/hsla, color-name)`,
+    );
+  }
+  return trimmed;
 }
 
 /** Resolved code-block config — all defaults applied. */
@@ -462,6 +591,60 @@ export function resolveConfig(config: ToolkitConfig): ResolvedDocConfig {
     code: {
       lightTheme: config.code?.lightTheme ?? DEFAULT_CODE_LIGHT_THEME,
     },
+    branding: resolveBranding(config.branding, projectRoot),
+  };
+}
+
+export function resolveBranding(
+  raw: BrandingConfig | undefined,
+  projectRoot: string,
+): ResolvedBrandingConfig {
+  const resolveLogo = (p: string | undefined): string | null =>
+    p ? path.resolve(projectRoot, p) : null;
+
+  const logoLight = resolveLogo(raw?.logoLight);
+  const logoDark = resolveLogo(raw?.logoDark) ?? logoLight;
+
+  const subLabel: Record<string, string> = {};
+  if (typeof raw?.subLabel === "string") {
+    subLabel.default = raw.subLabel;
+  } else if (raw?.subLabel && typeof raw.subLabel === "object") {
+    Object.assign(subLabel, raw.subLabel);
+  }
+
+  // Each branding color goes through validateCssColor so a bad value
+  // surfaces as a clear error instead of silently injecting CSS into the
+  // generated stylesheet (FR-2726 review feedback).
+  const resolveColor = (
+    value: string | undefined,
+    field: string,
+    fallback: string,
+  ): string => (value ? validateCssColor(value, `branding.${field}`) : fallback);
+
+  return {
+    primaryColor: resolveColor(
+      raw?.primaryColor,
+      "primaryColor",
+      DEFAULT_PRIMARY_COLOR,
+    ),
+    primaryColorHover: resolveColor(
+      raw?.primaryColorHover,
+      "primaryColorHover",
+      DEFAULT_PRIMARY_COLOR_HOVER,
+    ),
+    primaryColorActive: resolveColor(
+      raw?.primaryColorActive,
+      "primaryColorActive",
+      DEFAULT_PRIMARY_COLOR_ACTIVE,
+    ),
+    primaryColorSoft: resolveColor(
+      raw?.primaryColorSoft,
+      "primaryColorSoft",
+      DEFAULT_PRIMARY_COLOR_SOFT,
+    ),
+    logoLight,
+    logoDark,
+    subLabel,
   };
 }
 
