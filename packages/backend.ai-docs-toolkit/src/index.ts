@@ -15,6 +15,7 @@ export type {
   ResolvedDocConfig,
   VersionEntry,
   VersionSource,
+  OgConfig,
 } from "./config.js";
 export { resolveConfig, loadToolkitConfig, WEBSITE_LABELS } from "./config.js";
 
@@ -77,8 +78,32 @@ export type { DocMetadata } from "./html-builder.js";
 export { buildFullDocument } from "./html-builder.js";
 export type { WebDocMetadata } from "./html-builder-web.js";
 export { buildWebDocument } from "./html-builder-web.js";
-export type { WebPageContext, WebsiteMetadata } from "./website-builder.js";
+export type {
+  WebPageContext,
+  WebsiteMetadata,
+  PageAssets,
+  PageVersionContext,
+  PageSeoContext,
+} from "./website-builder.js";
 export { buildWebPage, buildIndexPage } from "./website-builder.js";
+
+// ── SEO (F2) ────────────────────────────────────────────────────
+export type { OgTagOptions, TwitterCardOptions, JsonLdOptions } from "./seo.js";
+export {
+  extractDescription,
+  truncateForDescription,
+  buildOgTags,
+  buildTwitterCard,
+  buildJsonLd,
+  joinBaseUrl,
+  DEFAULT_DESCRIPTION_CHAR_LIMIT,
+} from "./seo.js";
+export type { BuildSitemapOptions } from "./sitemap.js";
+export { buildSitemapXml } from "./sitemap.js";
+export type { BuildRobotsTxtOptions } from "./robots-txt.js";
+export { buildRobotsTxt } from "./robots-txt.js";
+export type { RenderedOgImage } from "./og-image-renderer.js";
+export { renderDefaultOgImage, copyUserOgImage } from "./og-image-renderer.js";
 
 // ── PDF Rendering ───────────────────────────────────────────────
 export type { RenderOptions } from "./pdf-renderer.js";

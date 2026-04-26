@@ -7,6 +7,13 @@ import type { Chapter } from "./markdown-processor.js";
 import type { ResolvedDocConfig } from "./config.js";
 import { WEBSITE_LABELS } from "./config.js";
 import { escapeHtml } from "./markdown-extensions.js";
+import {
+  buildJsonLd,
+  buildOgTags,
+  buildTwitterCard,
+  extractDescription,
+  joinBaseUrl,
+} from "./seo.js";
 
 export interface WebPageContext {
   /** Current chapter to render */
@@ -32,6 +39,57 @@ export interface WebPageContext {
    * the page metadata bar can show.
    */
   versionContext?: PageVersionContext;
+  /**
+   * SEO metadata context (F2). Optional — when omitted, only the base
+   * `<head>` tags (title, viewport, stylesheet, favicons) are emitted.
+   * When supplied, F2's per-page tags (description, OG, Twitter,
+   * canonical, JSON-LD) are added to the head block. The website
+   * generator builds this from `og` config + page-relative paths +
+   * lastModified date.
+   */
+  seo?: PageSeoContext;
+}
+
+/**
+ * Per-page SEO context. Built once per (version, lang, slug) by the
+ * website generator and threaded through to the head builder. All
+ * URL fields are RELATIVE to the website output root (`dist/web/`)
+ * unless explicitly absolute. The head builder converts to absolute
+ * with `og.baseUrl` only when emitting the OG / canonical tags.
+ */
+export interface PageSeoContext {
+  /**
+   * Public deploy URL, e.g. `https://docs.backend.ai`. When `undefined`,
+   * the head builder omits the canonical tag and `og:url`, and the
+   * sitemap-emitter step is skipped at the generator level.
+   */
+  baseUrl?: string;
+  /** `og:site_name` / JSON-LD publisher name. Defaults to doc title. */
+  siteName?: string;
+  /**
+   * Path to this page relative to the website output root, e.g.
+   * `en/quickstart.html` (flat) or `25.16/en/quickstart.html` (versioned).
+   * Used to compute `og:url`.
+   */
+  pagePath: string;
+  /**
+   * Path to the canonical URL relative to the website output root.
+   * In versioned mode, points at the same slug under the latest
+   * version (per F6's `canonicalPathFor`). In flat mode, equals
+   * `pagePath`.
+   */
+  canonicalPath: string;
+  /**
+   * Default OG image path relative to the website output root, e.g.
+   * `assets/og-default.png`. When `undefined` (Playwright unavailable
+   * and no override), the `og:image` and `twitter:image` tags are
+   * dropped.
+   */
+  ogImageRelUrl?: string;
+  /** ISO-8601 last-modified timestamp for JSON-LD `dateModified`. */
+  lastModifiedIso?: string;
+  /** Publisher / author for JSON-LD. Falls back to `pdfMetadata.author`. */
+  publisher?: string;
 }
 
 export interface WebsiteMetadata {
@@ -239,13 +297,30 @@ function rootPrefix(context: { versionContext?: PageVersionContext }): string {
 /**
  * Build the `<head>` block: meta tags + stylesheet + favicon / apple-touch /
  * webmanifest. The search script is referenced separately from `<body>` end.
+ *
+ * F2 (SEO) extends this with description / OG / Twitter / canonical /
+ * JSON-LD when `seo` is supplied. The order is:
+ *   - charset / viewport / title / stylesheet (always)
+ *   - favicon / apple-touch / webmanifest (when bundled)
+ *   - description (always when chapter has any prose)
+ *   - canonical (when seo.baseUrl is set)
+ *   - OG tags (always; omits absolute-URL tags when seo.baseUrl is unset)
+ *   - Twitter card (always)
+ *   - JSON-LD TechArticle (always)
+ *
+ * F1 (NOT in this worktree) injects `<link rel="alternate" hreflang>`
+ * tags. F2's contribution stays additive — the F1 + F2 reconciliation
+ * is mechanical.
  */
 function buildHeadAssetTags(
   metadata: WebsiteMetadata,
   langLabel: string,
   pageTitle: string,
+  chapterHeadline: string,
+  chapterHtml: string,
   assets: PageAssets,
   prefix: string,
+  seo: PageSeoContext | undefined,
 ): string {
   const lines: string[] = [
     `<meta charset="utf-8" />`,
@@ -270,11 +345,90 @@ function buildHeadAssetTags(
     );
   }
 
-  // Suppress unused-variable warning under strict TS — `metadata` is reserved
-  // for future per-language `<head>` extensions (e.g., hreflang) but not used yet.
-  void metadata;
+  // ── F2: SEO / sharing metadata ────────────────────────────────
+  // Description is extracted from the chapter HTML's first paragraph;
+  // when the chapter has no prose (e.g. a stub page), we fall back to
+  // the title so social-share previews still get a useful blurb.
+  const description =
+    extractDescription(chapterHtml) || stripChapterTitle(chapterHeadline);
+
+  if (description) {
+    lines.push(
+      `<meta name="description" content="${escapeHtml(description)}" />`,
+    );
+  }
+
+  if (seo) {
+    // Canonical: when baseUrl is set, point at the absolute URL of the
+    // canonical page (latest version's same slug, per F6). When baseUrl
+    // is unset, fall back to a relative canonical pointing at the page
+    // itself — better than no canonical at all because it still tells
+    // crawlers "this URL is canonical for itself" (vs. ?utm_… etc.).
+    const canonicalAbs = joinBaseUrl(seo.baseUrl, seo.canonicalPath);
+    if (canonicalAbs) {
+      lines.push(`<link rel="canonical" href="${escapeHtml(canonicalAbs)}" />`);
+    } else {
+      // Relative canonical: from this page back to the canonical path.
+      // In flat mode, canonicalPath === pagePath, so the relative ref
+      // is just "./<basename>" — but the simpler form is the bare
+      // basename, which the browser resolves against the document URL.
+      // We use `prefix + canonicalPath` so versioned-mode canonical
+      // works (canonical lives in the latest-version subdir, possibly
+      // a sibling to the current page).
+      lines.push(
+        `<link rel="canonical" href="${prefix}${escapeHtml(seo.canonicalPath)}" />`,
+      );
+    }
+
+    const pageUrlAbs = joinBaseUrl(seo.baseUrl, seo.pagePath);
+    const ogImageAbs = seo.ogImageRelUrl
+      ? (joinBaseUrl(seo.baseUrl, seo.ogImageRelUrl) ??
+        `${prefix}${seo.ogImageRelUrl}`)
+      : undefined;
+
+    const ogTags = buildOgTags({
+      title: chapterHeadline,
+      description: description || undefined,
+      imageUrl: ogImageAbs,
+      pageUrl: pageUrlAbs,
+      siteName: seo.siteName,
+      locale: metadata.lang,
+    });
+    for (const tag of ogTags) lines.push(tag);
+
+    const twitterTags = buildTwitterCard({
+      title: chapterHeadline,
+      description: description || undefined,
+      imageUrl: ogImageAbs,
+    });
+    for (const tag of twitterTags) lines.push(tag);
+
+    lines.push(
+      buildJsonLd({
+        headline: chapterHeadline,
+        description: description || undefined,
+        inLanguage: metadata.lang,
+        dateModified: seo.lastModifiedIso,
+        author: seo.publisher,
+        publisher: seo.publisher,
+        url: pageUrlAbs,
+        imageUrl: ogImageAbs,
+      }),
+    );
+  }
 
   return lines.join("\n  ");
+}
+
+/**
+ * Trim a "Chapter Title - Doc Title" composite back to just the chapter
+ * portion, used as a description fallback when no prose paragraph
+ * exists. The composite shape is built one layer up (`pageTitle =
+ * "<chapter> - <doc title>"`); F2's description fallback prefers the
+ * chapter portion alone since the doc title is already in `<title>`.
+ */
+function stripChapterTitle(headline: string): string {
+  return headline.replace(/\s+-\s+.*$/, "").trim();
 }
 
 /**
@@ -453,8 +607,11 @@ export function buildWebPage(context: WebPageContext): string {
     metadata,
     langLabel,
     pageTitle,
+    chapter.title,
+    chapter.htmlContent,
     assets,
     prefix,
+    context.seo,
   );
   const headerBar = buildPageHeaderBar(context);
   const searchScript = buildSearchScriptTag(assets, prefix);

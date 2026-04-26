@@ -84,6 +84,37 @@ export interface WebsiteConfig {
   basePath?: string;
 }
 
+// ── SEO / Open Graph schema (F2 / FR-2714) ────────────────────────
+//
+// `og` is OPTIONAL. When omitted, every per-page SEO tag that does NOT
+// require an absolute base URL is still emitted (description, twitter
+// card, JSON-LD without canonical URL). Tags that REQUIRE an absolute
+// URL (canonical, og:url, sitemap entries with `<loc>`) are silently
+// skipped/relativized so that air-gapped builds without a public URL
+// do not crash. A warning is printed once per build when `baseUrl` is
+// missing. See ARCHITECTURE.md → "SEO & sharing metadata (F2)".
+export interface OgConfig {
+  /**
+   * Override path to the default Open Graph image, relative to the
+   * project root (NOT the docs source dir). When set, the file is
+   * copied verbatim to `dist/web/assets/og-default.<ext>` and used as
+   * the `og:image`. When unset, the toolkit attempts to render
+   * `manifest/backend.ai-brand-simple.svg` to a 1200×630 PNG via
+   * Playwright at build time.
+   */
+  imagePath?: string;
+  /** `og:site_name` value. Defaults to `config.title`. */
+  siteName?: string;
+  /**
+   * Public deploy URL (e.g. `https://docs.backend.ai`). Used to build
+   * absolute URLs in `<link rel="canonical">`, `og:url`, and the
+   * `<loc>` entries of `sitemap.xml`. When unset, those tags are
+   * omitted (canonical points to the page itself as a relative URL,
+   * `og:url` is dropped, `sitemap.xml` uses relative paths).
+   */
+  baseUrl?: string;
+}
+
 // ── Versioned-docs schema (F6 / FR-2718) ──────────────────────────
 //
 // `versions` is OPTIONAL and OPT-IN. When omitted, the existing flat
@@ -125,6 +156,12 @@ export interface ToolkitConfig extends DocConfig {
    * normalized runtime shape and validation rules.
    */
   versions?: VersionEntry[];
+  /**
+   * Optional Open Graph / SEO config. Controls per-page `<meta>`
+   * tags (description, og:*, twitter card, canonical, JSON-LD) plus
+   * `sitemap.xml` and `robots.txt` generation. See `OgConfig`.
+   */
+  og?: OgConfig;
 }
 
 // ── Defaults ──────────────────────────────────────────────────
@@ -264,6 +301,11 @@ export interface ResolvedDocConfig {
    * mode applies.
    */
   versions?: VersionEntry[];
+  /**
+   * Raw `og` block from `docs-toolkit.config.yaml`. Consumed by F2's
+   * SEO tag emitter, sitemap, and OG image renderer.
+   */
+  og?: OgConfig;
 }
 
 export function resolveConfig(config: ToolkitConfig): ResolvedDocConfig {
@@ -315,6 +357,7 @@ export function resolveConfig(config: ToolkitConfig): ResolvedDocConfig {
     agents: config.agents,
     website: config.website,
     versions: config.versions,
+    og: config.og,
   };
 }
 

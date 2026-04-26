@@ -38,7 +38,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
-    "test": "tsx --test src/versions.test.ts",
+    "test": "tsx --test src/versions.test.ts src/seo.test.ts",
     "prepublishOnly": "pnpm build"
   },
   "dependencies": {

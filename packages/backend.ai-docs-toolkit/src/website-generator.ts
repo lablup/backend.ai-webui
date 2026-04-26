@@ -20,9 +20,18 @@ import {
 import { buildSearchIndex } from "./search-index-builder.js";
 import type {
   PageAssets,
+  PageSeoContext,
   PageVersionContext,
   WebsiteMetadata,
 } from "./website-builder.js";
+import { buildSitemapXml } from "./sitemap.js";
+import { buildRobotsTxt } from "./robots-txt.js";
+import {
+  copyUserOgImage,
+  renderDefaultOgImage,
+  type RenderedOgImage,
+} from "./og-image-renderer.js";
+import { canonicalPathFor } from "./versions.js";
 import { generateWebsiteStyles } from "./styles-web.js";
 import { getDocVersion } from "./version.js";
 import type { ResolvedDocConfig } from "./config.js";
@@ -326,6 +335,44 @@ export async function generateWebsite(
     webmanifest: rootAssets.webmanifest,
   };
 
+  // ── F2: Default OG image rendering ────────────────────────────
+  // Two strategies, in priority order:
+  //   1. `og.imagePath` (operator override) — copied verbatim.
+  //   2. Default rendering — `manifest/backend.ai-brand-simple.svg`
+  //      → 1200×630 PNG via Playwright.
+  // Both produce a file under `dist/web/assets/og-default.<ext>`. When
+  // both are unavailable (missing file or no Playwright), the OG image
+  // tag is dropped per page — no crash, just degraded preview cards.
+  const ogImage = await prepareOgImage(config, assetsDir);
+  if (ogImage) {
+    console.log(`Written: ${ogImage.relUrl}`);
+  }
+
+  // ── F2: SEO context skeleton (per-page details filled later) ──
+  const ogConfig = config.og ?? {};
+  const baseUrl = normalizeBaseUrl(ogConfig.baseUrl);
+  if (!baseUrl) {
+    console.warn(
+      "[seo] og.baseUrl not set in docs-toolkit.config.yaml. " +
+        "sitemap.xml will be skipped, canonical URLs will be relative, " +
+        'og:url will be omitted. Set `og.baseUrl: "https://..."` to enable.',
+    );
+  }
+  // F2 normalizes multi-line `book.config.yaml` titles before embedding
+  // them in `og:site_name` / JSON-LD. F1 will fix the `<title>` tag at
+  // its own layer (and may also normalize the value at config-read
+  // time), but until F1 lands, F2 must not ship literal newlines in
+  // SEO tags — they break Open Graph parsers.
+  const siteName = collapseWhitespace(ogConfig.siteName ?? title);
+  const publisher = config.pdfMetadata.author ?? config.productName;
+
+  // ── F2: Last-modified timestamps shared across emissions ──────
+  // The website generator passes a sink Map down to every per-language
+  // step; each step adds its (filePath → Date) pairs. After the build
+  // completes, the sitemap emitter consumes the same Map to attach
+  // `<lastmod>` per (version, lang, slug) row.
+  const lastModSink = new Map<string, Date>();
+
   if (loadedVersions.enabled) {
     // Versioned mode — iterate over each declared version.
     // Past minors that fail to resolve their archive-branch worktree are
@@ -385,6 +432,13 @@ export async function generateWebsite(
           allDiagnostics,
           imageStats,
           pageRegistry,
+          seoBase: {
+            baseUrl,
+            siteName,
+            publisher,
+            ogImageRelUrl: ogImage?.relUrl,
+          },
+          lastModSink,
         });
       }
 
@@ -413,9 +467,46 @@ export async function generateWebsite(
         allDiagnostics,
         imageStats,
         pageRegistry,
+        seoBase: {
+          baseUrl,
+          siteName,
+          publisher,
+          ogImageRelUrl: ogImage?.relUrl,
+        },
+        lastModSink,
       });
     }
   }
+
+  // ── F2: sitemap.xml + robots.txt emission ─────────────────────
+  // We only emit sitemap.xml when `og.baseUrl` is set, because a
+  // sitemap with relative `<loc>` is non-conformant. robots.txt is
+  // always emitted (it's useful even without a sitemap reference).
+  if (baseUrl) {
+    const sitemapXml = buildSitemapXml({
+      pages: pageRegistry.enumerateAll(),
+      baseUrl,
+      lastModFor: (row) => {
+        // F6's path is `<v>/<lang>/<slug>.html` or `<lang>/<slug>.html`.
+        // The sink uses the SAME path key, so we can look up directly.
+        const date = lastModSink.get(row.path);
+        return date ? date.toISOString() : undefined;
+      },
+    });
+    fs.writeFileSync(path.join(distBase, "sitemap.xml"), sitemapXml, "utf-8");
+    console.log(
+      `Written: sitemap.xml (${pageRegistry.enumerateAll().length} URLs)`,
+    );
+  } else {
+    console.log("Skipped: sitemap.xml (og.baseUrl not configured)");
+  }
+
+  const sitemapAbs = baseUrl
+    ? `${baseUrl.replace(/\/$/, "")}/sitemap.xml`
+    : undefined;
+  const robotsTxt = buildRobotsTxt({ sitemapUrl: sitemapAbs });
+  fs.writeFileSync(path.join(distBase, "robots.txt"), robotsTxt, "utf-8");
+  console.log(`Written: robots.txt`);
 
   // Image-attribute coverage report (loading/decoding are 100% via post-
   // processing; width/height depends on parsed PNG headers).
@@ -458,6 +549,19 @@ export async function generateWebsite(
  * `versionLabel` is null in flat mode, otherwise the minor label like "25.16".
  * The version selector header is only emitted when `versionLabel !== null`.
  */
+/**
+ * Per-build SEO base context. Built once in `generateWebsite()` and
+ * forwarded to every `buildLanguage()` invocation; the per-page
+ * `PageSeoContext` is composed on the fly by mixing in pagePath,
+ * canonicalPath, and lastModifiedIso.
+ */
+interface SeoBaseContext {
+  baseUrl: string | undefined;
+  siteName: string;
+  publisher: string;
+  ogImageRelUrl: string | undefined;
+}
+
 async function buildLanguage(args: {
   lang: string;
   version: string;
@@ -473,6 +577,8 @@ async function buildLanguage(args: {
   allDiagnostics: LinkDiagnostic[];
   imageStats: { total: number; withDims: number };
   pageRegistry: VersionPageRegistry;
+  seoBase: SeoBaseContext;
+  lastModSink: Map<string, Date>;
 }): Promise<void> {
   const {
     lang,
@@ -488,6 +594,8 @@ async function buildLanguage(args: {
     allDiagnostics,
     imageStats,
     pageRegistry,
+    seoBase,
+    lastModSink,
   } = args;
 
   const startTime = Date.now();
@@ -583,6 +691,32 @@ async function buildLanguage(args: {
       pageRegistry,
     });
 
+    // ── F2: Per-page SEO context ──────────────────────────────
+    // pagePath is the URL-relative path used in the cross-version
+    // page registry. canonicalPath uses F6's canonicalPathFor() so
+    // non-latest versions point at the latest version's same slug.
+    const pagePath =
+      versionLabel !== null
+        ? `${versionLabel}/${lang}/${chapters[i].slug}.html`
+        : `${lang}/${chapters[i].slug}.html`;
+    const canonicalPath = canonicalPathFor(
+      loadedVersions,
+      lang,
+      chapters[i].slug,
+    );
+    const seo: PageSeoContext = {
+      baseUrl: seoBase.baseUrl,
+      siteName: seoBase.siteName,
+      publisher: seoBase.publisher,
+      pagePath,
+      canonicalPath,
+      ogImageRelUrl: seoBase.ogImageRelUrl,
+      lastModifiedIso: lastDate ? lastDate.toISOString() : undefined,
+    };
+    if (lastDate) {
+      lastModSink.set(pagePath, lastDate);
+    }
+
     let pageHtml = buildWebPage({
       chapter: chapters[i],
       allChapters: chapters,
@@ -593,6 +727,7 @@ async function buildLanguage(args: {
       lastUpdated: lastDate ? formatDate(lastDate, lang) : undefined,
       assets: pageAssets,
       versionContext,
+      seo,
     });
 
     // Fix image paths for static site (./images/foo.png).
@@ -860,4 +995,99 @@ function writeRootBrandAssets(
   console.log(`Written: site.webmanifest`);
 
   return out;
+}
+
+/**
+ * Resolve and prepare the default OG image (F2). Two strategies:
+ *
+ *   1. Operator override via `og.imagePath` — file is copied verbatim
+ *      into `dist/web/assets/og-default.<ext>`. Operators control the
+ *      design; the toolkit just ships it.
+ *   2. Default rendering — the bundled `manifest/backend.ai-brand-simple.svg`
+ *      is rendered to a 1200×630 PNG via Playwright. The brand SVG path
+ *      is resolved relative to the toolkit's project root candidates so
+ *      the renderer works whether the toolkit is checked out as part of
+ *      the monorepo (typical) or installed as a published package.
+ *
+ * Returns `null` (and warns) when neither path produces a file. The
+ * generator passes that null through to every page's `PageSeoContext`,
+ * which then drops the `og:image` tag rather than emitting a broken
+ * reference.
+ */
+async function prepareOgImage(
+  config: ResolvedDocConfig,
+  assetsDir: string,
+): Promise<RenderedOgImage | null> {
+  const og = config.og;
+
+  // Strategy 1: operator override.
+  if (og?.imagePath) {
+    const sourceAbs = path.resolve(config.projectRoot, og.imagePath);
+    const result = copyUserOgImage({
+      sourcePath: sourceAbs,
+      destDir: assetsDir,
+    });
+    if (result) return result;
+    // Fall through to default rendering when the override file is
+    // missing — better than no OG image at all.
+  }
+
+  // Strategy 2: render the bundled brand SVG.
+  const brandSvgCandidates = [
+    // Monorepo layout — toolkit is at packages/backend.ai-docs-toolkit/
+    // and the brand SVG is at <repo-root>/manifest/backend.ai-brand-simple.svg.
+    path.resolve(
+      config.projectRoot,
+      "../../manifest/backend.ai-brand-simple.svg",
+    ),
+    // Workspace layout — docs site is the project root, brand lives at
+    // a relative manifest dir.
+    path.resolve(config.projectRoot, "manifest/backend.ai-brand-simple.svg"),
+    // Direct override via the resolved logoPath — useful when operators
+    // ship a custom brand SVG via `logoPath` but no separate `og.imagePath`.
+    config.logoPath ?? "",
+  ].filter((p): p is string => !!p && fs.existsSync(p));
+
+  if (brandSvgCandidates.length === 0) {
+    console.warn(
+      "[og-image] No brand SVG found at any of the expected paths " +
+        "(repo-root/manifest, projectRoot/manifest, or config.logoPath). " +
+        "Skipping default OG image. Set `og.imagePath` to ship a static one.",
+    );
+    return null;
+  }
+
+  return renderDefaultOgImage({
+    svgSourcePath: brandSvgCandidates[0],
+    destDir: assetsDir,
+  });
+}
+
+/**
+ * Collapse internal whitespace runs (including newlines from YAML
+ * `title: |` block scalars) into single spaces, then trim. Used by F2
+ * to keep multi-line book titles from breaking Open Graph parsers.
+ * F1 may later normalize `book.config.yaml`'s title at read-time,
+ * making this redundant — until then F2 defends its own surface.
+ */
+function collapseWhitespace(input: string): string {
+  return input.replace(/\s+/g, " ").trim();
+}
+
+/**
+ * Normalize the `og.baseUrl` config value. Strips a trailing slash so
+ * URL composition doesn't double up. Returns `undefined` when the
+ * input is missing or doesn't look like an http(s) URL — consumers
+ * use the undefined to skip absolute-URL tags entirely.
+ */
+function normalizeBaseUrl(raw: string | undefined): string | undefined {
+  if (!raw || typeof raw !== "string") return undefined;
+  const trimmed = raw.trim();
+  if (!/^https?:\/\//i.test(trimmed)) {
+    console.warn(
+      `[seo] og.baseUrl "${trimmed}" does not start with http(s):// — ignored.`,
+    );
+    return undefined;
+  }
+  return trimmed.endsWith("/") ? trimmed.slice(0, -1) : trimmed;
 }

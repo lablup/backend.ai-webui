@@ -304,3 +304,128 @@ continues to build the current checkout's content, regardless of
 whether `versions` is declared. This is intentional — past-minor PDFs
 are likewise produced by their toolkit-of-its-day, not by re-rendering
 through the current toolkit.
+
+## SEO & sharing metadata (F2 / FR-2714)
+
+The web build emits per-page SEO/sharing tags plus site-root
+`sitemap.xml` and `robots.txt`. Everything is generated at build time;
+no runtime JS is added (the F2 head tags live entirely in `<head>`).
+Pure helpers in `seo.ts`, `sitemap.ts`, and `robots-txt.ts` are
+side-effect free and unit-testable; the website generator wires the
+inputs.
+
+### Per-page head tags
+
+Each rendered page now carries the following tags in `<head>` (in
+addition to the base set from F5 and the language switcher / version
+selector from F1 / F6):
+
+| Tag | Source | Notes |
+|---|---|---|
+| `<meta name="description">` | first non-heading paragraph in chapter HTML | capped at 155 chars; sentence-boundary preferred, then word boundary, then ellipsis |
+| `<meta property="og:type">` | constant `"article"` | site index uses `"website"` (F1) |
+| `<meta property="og:title">` | chapter title | |
+| `<meta property="og:description">` | same as description | omitted when description is empty |
+| `<meta property="og:url">` | `og.baseUrl` + page path | omitted when `og.baseUrl` unset |
+| `<meta property="og:image">` | absolute path to `assets/og-default.png` (or override) | omitted when no image was rendered |
+| `<meta property="og:site_name">` | `og.siteName` (default: doc title) | |
+| `<meta property="og:locale">` | page language code | |
+| `<meta name="twitter:card">` | constant `"summary_large_image"` | |
+| `<meta name="twitter:title">` | chapter title | |
+| `<meta name="twitter:description">` | same as description | omitted when description is empty |
+| `<meta name="twitter:image">` | same as `og:image` | omitted when no image was rendered |
+| `<link rel="canonical">` | `og.baseUrl` + canonicalPath (absolute) OR relative `prefix + canonicalPath` (when baseUrl unset) | canonicalPath comes from F6's `canonicalPathFor()` so non-latest versions point at the latest version |
+| `<script type="application/ld+json">` | Schema.org `TechArticle` | includes `headline`, `inLanguage`, `dateModified`, `author`, `publisher`, `description`, `url`, `image` |
+
+Description extraction is implemented in `seo.ts::extractDescription()`
+and runs against the already-rendered chapter HTML — it deliberately
+does NOT touch the markdown processor (preserves PDF non-regression).
+The first `<p>` block (Marked emits `<p>` only for plain paragraphs;
+admonitions/figures/tables are wrapped in `<div>` / `<figure>` / `<aside>`)
+becomes the seed text.
+
+### `og.baseUrl` behavior
+
+`og.baseUrl` is the public deploy URL (e.g. `https://docs.backend.ai`).
+It is OPTIONAL but strongly recommended. Behavior matrix:
+
+| Tag / artifact | `og.baseUrl` set | `og.baseUrl` unset |
+|---|---|---|
+| `<link rel="canonical">` | Absolute URL | Relative path (`prefix + canonicalPath`) — still emits the tag |
+| `<meta property="og:url">` | Absolute URL | Tag omitted |
+| `<meta property="og:image">` | Absolute URL | Relative path (`prefix + assets/og-default.png`) — still emits the tag |
+| `<meta name="twitter:image">` | Absolute URL | Relative path |
+| JSON-LD `url` / `image` | Absolute URLs | Omitted |
+| `dist/web/sitemap.xml` | Emitted with absolute `<loc>` values | NOT emitted (sitemap with relative `<loc>` is non-conformant) |
+| `dist/web/robots.txt` | Emitted with `Sitemap:` reference | Emitted without `Sitemap:` reference |
+
+Air-gapped builds (no public URL) thus get a usable site without
+crashing — the SEO tags degrade gracefully. A single warning is
+printed at build start when `og.baseUrl` is unset.
+
+### `dist/web/sitemap.xml`
+
+A standards-compliant sitemap (`http://www.sitemaps.org/schemas/sitemap/0.9`).
+
+- One `<url>` per page emitted by the build. F6's `generateWebsite()`
+  returns `pages: PageEnumerationRow[]`, which the sitemap builder
+  consumes verbatim. In versioned mode that means `versions × langs ×
+  pages`; in flat mode `langs × pages`.
+- `<lastmod>` is the chapter file's git `--format=%aI` timestamp,
+  falling back to `fs.statSync().mtime`. Resolution happens once per
+  language during the per-page render and is keyed by URL-relative
+  page path (the same key the registry uses).
+- `<changefreq>` and `<priority>` are intentionally omitted — Google
+  ignores them and they add noise.
+
+### `dist/web/robots.txt`
+
+```
+User-agent: *
+Disallow:
+
+Sitemap: <og.baseUrl>/sitemap.xml
+```
+
+- The empty `Disallow:` allows everything per the de-facto standard.
+- The `Sitemap:` line is omitted when `og.baseUrl` is unset.
+
+### Default OG image strategy
+
+Two sources, in priority order:
+
+1. **`og.imagePath`** — operator-supplied image, copied verbatim to
+   `dist/web/assets/og-default.<ext>`. Useful when the team wants a
+   designed share card, or when rendering via Playwright is not
+   available in the target environment.
+2. **Default rendering** — `manifest/backend.ai-brand-simple.svg` is
+   centered on a white 1200×630 canvas and rasterized to PNG via
+   Playwright (`og-image-renderer.ts`). Output: `dist/web/assets/og-default.png`.
+
+If Playwright is not available (the consumer skipped the optional peer
+dep) and `og.imagePath` is unset, the image step is skipped with a
+warning and every page's `og:image` / `twitter:image` tag is dropped.
+The build never fails because of a missing OG image.
+
+The 1200×630 dimensions match Facebook's recommended OG aspect ratio
+and exceed Twitter's `summary_large_image` minimum (300×157), so the
+same asset works across networks.
+
+### `og` config schema
+
+```yaml
+og:
+  baseUrl: "https://docs.backend.ai"   # optional; enables absolute URLs + sitemap.xml
+  siteName: "Backend.AI Docs"          # optional; defaults to doc title
+  imagePath: "assets/share-card.png"   # optional override; relative to projectRoot
+```
+
+All three fields are optional. When the entire `og` block is omitted,
+the build proceeds with sensible defaults: site name = doc title,
+image = rendered brand SVG (or none), no absolute URLs, no sitemap.
+
+### PDF pipeline interaction (F2)
+
+The PDF pipeline reads ONLY `book.config.yaml`, not the `og` key in
+`docs-toolkit.config.yaml`. Adding an `og` block has zero effect on
+PDF output. `pnpm run pdf:en` is unchanged by F2.
