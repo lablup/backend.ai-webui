@@ -214,6 +214,19 @@ export interface PageAssets {
   appleTouchIcon?: string;
   /** Site-root web app manifest filename, e.g. `site.webmanifest`. */
   webmanifest?: string;
+  /**
+   * Hashed light-theme brand logo filename (FR-2726 Phase 2). Optional —
+   * present only when the consumer configured `branding.logoLight` in
+   * `docs-toolkit.config.yaml`. Topbar omits the `<img>` and renders a
+   * text fallback when both light and dark are absent.
+   */
+  brandLogoLight?: string;
+  /**
+   * Hashed dark-theme brand logo filename (FR-2726 Phase 2). Optional —
+   * falls back to `brandLogoLight` when only light is configured. The
+   * topbar uses `<picture>` + `prefers-color-scheme: dark` to swap.
+   */
+  brandLogoDark?: string;
 }
 
 /**
@@ -281,8 +294,16 @@ function buildWebsiteSidebar(
     );
     const openAttr = containsActive ? " open" : "";
     const groupSlug = slugify(group.category) || "group";
+    // Phase 2 (FR-2726): each summary now carries a leading icon + a
+    // trailing count pill matching the BAI sider pattern.
+    const iconSvg = sidebarCategoryIconSvg(group.category);
+    const itemCount = group.items.length;
     return `<details class="doc-sidebar-group"${openAttr}>
-  <summary class="doc-sidebar-group__summary">${escapeHtml(group.category)}</summary>
+  <summary class="doc-sidebar-group__summary">
+    <span class="doc-sidebar-group__icon" aria-hidden="true">${iconSvg}</span>
+    <span class="doc-sidebar-group__label">${escapeHtml(group.category)}</span>
+    <span class="doc-sidebar-group__count" aria-label="${itemCount} pages">${itemCount}</span>
+  </summary>
   <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="${escapeHtml(groupSlug)}">
     ${itemsHtml}
   </ul>
@@ -294,25 +315,53 @@ function buildWebsiteSidebar(
     .map((g) => renderGroup(g, isLegacyFlat))
     .join("\n");
 
-  const searchLabels = WEBSITE_LABELS[metadata.lang] ?? WEBSITE_LABELS.en;
-  const placeholderAttr = escapeHtml(searchLabels.searchPlaceholder);
-  const noResultsAttr = escapeHtml(searchLabels.noResults);
+  // Phase 2 (FR-2726): the brand block, version pill, and search input now
+  // live in the topbar. The legacy sidebar header / search input are
+  // intentionally omitted from the new output — keeping the language label
+  // unused here is fine; \`langLabel\` is referenced earlier in this file
+  // for the legacy code path.
+  void langLabel;
 
   return `
 <aside class="doc-sidebar">
-  <div class="doc-sidebar-header">
-    <h2>${escapeHtml(metadata.title)}</h2>
-    <div class="doc-meta">${escapeHtml(metadata.version)} &middot; ${escapeHtml(langLabel)}</div>
-  </div>
-  <div class="doc-search">
-    <input type="text" id="search-input" placeholder="${placeholderAttr}" data-no-results="${noResultsAttr}" autocomplete="off" />
-    <div id="search-results" class="search-results" hidden></div>
-  </div>
   <nav class="doc-sidebar-groups" aria-label="Documentation navigation">
     ${groupsHtml}
   </nav>
 </aside>`;
 }
+
+/**
+ * Inline SVG icon for a sidebar category header (FR-2726 Phase 2).
+ *
+ * The mapping matches a small whitelist of canonical English category
+ * labels (case-insensitive). Categories that don't match — including
+ * every non-English label in localized navs — fall through to a generic
+ * "stack of pages" icon so every category still gets a visual anchor.
+ * Phase 3+ may extend this with a config knob in `book.config.yaml`,
+ * letting consumers map any category label to any icon name.
+ */
+function sidebarCategoryIconSvg(category: string): string {
+  const key = category.trim().toLowerCase();
+  // Common Backend.AI WebUI categories. Other consumers fall through to
+  // the default icon, which is intentional — Phase 3 will add per-category
+  // icon configuration to book.config.yaml.
+  const map: Record<string, string> = {
+    "getting started": ICON_ROCKET,
+    workloads: ICON_BOX,
+    "storage & data": ICON_FOLDER,
+    "storage and data": ICON_FOLDER,
+    administration: ICON_SETTINGS,
+    reference: ICON_BOOK,
+  };
+  return map[key] ?? ICON_STACK;
+}
+
+const ICON_ROCKET = `<svg width="14" height="14" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M14.5 4c4 1 5.5 4.5 5.5 5.5 0 0-3.5 1.5-5.5 5.5h-5C7.5 11 4 9.5 4 9.5S5.5 5 9.5 4h5Zm-2.5 5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3ZM7 17l-2 3 3-2m8-1 2 3-3-2"/></svg>`;
+const ICON_BOX = `<svg width="14" height="14" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" d="m12 3 9 5v8l-9 5-9-5V8l9-5Z"/><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" d="m3 8 9 5 9-5M12 13v8"/></svg>`;
+const ICON_FOLDER = `<svg width="14" height="14" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg>`;
+const ICON_SETTINGS = `<svg width="14" height="14" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.6"/><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg>`;
+const ICON_BOOK = `<svg width="14" height="14" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5v14ZM4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg>`;
+const ICON_STACK = `<svg width="14" height="14" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" d="m12 3 9 5-9 5-9-5 9-5Z"/><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" d="m3 13 9 5 9-5"/></svg>`;
 
 /**
  * Build the breadcrumb trail (F3): `Home › Category › Page Title`. When the
@@ -361,30 +410,106 @@ function buildBreadcrumb(
  * view. When there are no H2 headings, the rail renders empty so the
  * layout grid column doesn't shift between pages.
  */
-function buildRightRailToc(chapter: Chapter, lang: string): string {
+function buildRightRailToc(
+  chapter: Chapter,
+  lang: string,
+  config: ResolvedDocConfig,
+  navPath: string | undefined,
+): string {
   const labels = WEBSITE_LABELS[lang] ?? WEBSITE_LABELS.en;
   const heading = labels.onThisPage ?? "On this page";
   const items = chapter.headings.filter((h) => h.level === 2 || h.level === 3);
-  if (items.length === 0) {
-    // Render the aside container even when empty so the grid column has a
-    // stable layout; CSS hides the heading when the list is empty.
-    return `<aside class="doc-toc" aria-labelledby="doc-toc-heading" data-empty="true">
+
+  // Get-help section (FR-2726 Phase 2): edit-this-page + view-on-github.
+  // Rendered below the scroll-spy list. Only emitted when at least one
+  // link can be built, so the rail doesn't show an empty heading.
+  const contribHtml = buildTocGetHelp(config, navPath, lang);
+
+  const isEmpty = items.length === 0;
+  const tocList = isEmpty
+    ? `<ul class="doc-toc__list"></ul>`
+    : `<ul class="doc-toc__list">
+      ${items
+        .map(
+          (h) =>
+            `<li class="doc-toc__item doc-toc__item--h${h.level}"><a class="doc-toc__link" href="#${encodeURIComponent(h.id)}" data-toc-target="${escapeHtml(h.id)}">${escapeHtml(h.text)}</a></li>`,
+        )
+        .join("\n      ")}
+  </ul>`;
+
+  const dataEmpty = isEmpty ? ' data-empty="true"' : "";
+  // The divider only appears when both sections are present, so the rail
+  // doesn't show a stray separator on TOC-less or help-less pages.
+  const divider = !isEmpty && contribHtml ? `<div class="doc-toc__divider"></div>` : "";
+
+  return `<aside class="doc-toc" aria-labelledby="doc-toc-heading"${dataEmpty}>
   <div class="doc-toc__heading" id="doc-toc-heading">${escapeHtml(heading)}</div>
-  <ul class="doc-toc__list"></ul>
+  ${tocList}
+  ${divider}
+  ${contribHtml}
 </aside>`;
+}
+
+/**
+ * Build the "Get help" link cluster shown below the scroll-spy list in
+ * the right rail (FR-2726 Phase 2). Pulls "Edit this page" from
+ * `editBaseUrl + lang/navPath` and "View on GitHub" from `repoUrl`.
+ * Returns an empty string when neither can be built.
+ */
+function buildTocGetHelp(
+  config: ResolvedDocConfig,
+  navPath: string | undefined,
+  lang: string,
+): string {
+  const labels = WEBSITE_LABELS[lang] ?? WEBSITE_LABELS.en;
+  const links: string[] = [];
+
+  const editBaseUrl = config.website?.editBaseUrl;
+  if (editBaseUrl && navPath) {
+    const editUrl = `${editBaseUrl}/${lang}/${navPath}`;
+    const editIcon = `<svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M12 20h9M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4 12.5-12.5Z"/></svg>`;
+    links.push(
+      `<a class="doc-toc__link doc-toc__link--external" href="${escapeHtml(editUrl)}" target="_blank" rel="noopener noreferrer">${editIcon}${escapeHtml(labels.editThisPage)}</a>`,
+    );
   }
-  const listItems = items
-    .map(
-      (h) =>
-        `<li class="doc-toc__item doc-toc__item--h${h.level}"><a class="doc-toc__link" href="#${encodeURIComponent(h.id)}" data-toc-target="${escapeHtml(h.id)}">${escapeHtml(h.text)}</a></li>`,
-    )
-    .join("\n      ");
-  return `<aside class="doc-toc" aria-labelledby="doc-toc-heading">
-  <div class="doc-toc__heading" id="doc-toc-heading">${escapeHtml(heading)}</div>
-  <ul class="doc-toc__list">
-      ${listItems}
-  </ul>
-</aside>`;
+
+  const repoUrl = config.website?.repoUrl;
+  if (repoUrl) {
+    const githubIcon = `<svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56 0-.27-.01-1.16-.02-2.1-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.7 1.25 3.36.96.1-.74.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.46.11-3.04 0 0 .96-.31 3.16 1.18a10.95 10.95 0 0 1 5.76 0c2.2-1.49 3.16-1.18 3.16-1.18.62 1.58.23 2.75.11 3.04.74.81 1.18 1.84 1.18 3.1 0 4.43-2.7 5.41-5.27 5.69.41.36.78 1.06.78 2.13 0 1.54-.01 2.78-.01 3.16 0 .31.21.67.8.56C20.21 21.39 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5Z"/></svg>`;
+    // The link text is intentionally the literal product name "GitHub"
+    // rather than a translatable label — "GitHub" is a proper noun
+    // recognized in every supported language. If a translatable
+    // alternative becomes desired (e.g. "View on GitHub"), introduce a
+    // dedicated WEBSITE_LABELS key for it; do NOT reuse `editThisPage`.
+    links.push(
+      `<a class="doc-toc__link doc-toc__link--external" href="${escapeHtml(repoUrl)}" target="_blank" rel="noopener noreferrer">${githubIcon}GitHub</a>`,
+    );
+  }
+
+  if (links.length === 0) return "";
+
+  // The heading reuses the "On this page" typographic style but with a
+  // dedicated id-less heading element so it doesn't conflict with the
+  // scroll-spy aria-label.
+  return `<div class="doc-toc__contrib">
+    <div class="doc-toc__heading">${escapeHtml(getHelpLabel(lang))}</div>
+    ${links.join("\n    ")}
+  </div>`;
+}
+
+/**
+ * Localized "Get help" heading. Uses a small built-in map; falls back
+ * to English. Phase 2 doesn't add this to WEBSITE_LABELS to keep the
+ * existing label bucket additive — Phase 3 may consolidate.
+ */
+function getHelpLabel(lang: string): string {
+  const map: Record<string, string> = {
+    en: "Get help",
+    ko: "도움 받기",
+    ja: "ヘルプ",
+    th: "ขอความช่วยเหลือ",
+  };
+  return map[lang] ?? map.en;
 }
 
 /**
@@ -895,6 +1020,140 @@ export function applyImageAttributes(
 }
 
 /**
+ * Build the BAI topbar (FR-2726 Phase 2).
+ *
+ * The topbar is a sticky 56px strip above the page grid. It carries the
+ * brand block (logo + sub-label + version pill), an inline search input
+ * (which the existing search.js script binds to via #search-input), and
+ * an actions cluster on the right (lang switcher, version selector,
+ * GitHub icon).
+ *
+ * The lang switcher and version selector were previously rendered inside
+ * the in-page `.page-header-bar`. Phase 2 relocates them into the topbar
+ * so site-level controls live above the page chrome and the article
+ * column starts cleanly with breadcrumbs + content.
+ *
+ * Layout:
+ *   [menu] [brand|sub|version]   [search ............]   [lang][version][github]
+ *
+ * The mobile menu icon and the search-as-icon button are hidden on
+ * desktop and revealed at narrow viewports via the responsive CSS.
+ */
+function buildBaiTopbar(
+  context: WebPageContext,
+  peers: LanguagePeer[],
+  prefix: string,
+): string {
+  const { metadata, config, assets } = context;
+  const labels = WEBSITE_LABELS[metadata.lang] ?? WEBSITE_LABELS.en;
+
+  // Brand block: <picture> + <img> when logos are configured, otherwise
+  // a text fallback so the topbar still has a recognizable anchor.
+  const lightSrc = assets.brandLogoLight
+    ? `${prefix}assets/${escapeHtml(assets.brandLogoLight)}`
+    : "";
+  const darkSrc = assets.brandLogoDark
+    ? `${prefix}assets/${escapeHtml(assets.brandLogoDark)}`
+    : lightSrc;
+
+  let brandLogoHtml: string;
+  if (lightSrc) {
+    const altText = escapeHtml(metadata.title);
+    if (darkSrc && darkSrc !== lightSrc) {
+      brandLogoHtml = `<picture>
+        <source srcset="${darkSrc}" media="(prefers-color-scheme: dark)" />
+        <img class="bai-brand-logo" src="${lightSrc}" alt="${altText}" />
+      </picture>`;
+    } else {
+      brandLogoHtml = `<img class="bai-brand-logo" src="${lightSrc}" alt="${altText}" />`;
+    }
+  } else {
+    brandLogoHtml = `<span class="bai-brand-fallback">${escapeHtml(metadata.title)}</span>`;
+  }
+
+  // Sub-label: per-language map → fallback to `default` → fallback to "".
+  const subLabelMap = config.branding.subLabel;
+  const subLabel =
+    subLabelMap[metadata.lang] ?? subLabelMap.default ?? "";
+
+  const subLabelHtml = subLabel
+    ? `<span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">${escapeHtml(subLabel)}</span>`
+    : "";
+
+  const versionPillHtml = `<span class="bai-brand-version">${escapeHtml(metadata.version)}</span>`;
+
+  // Search input (existing search.js binds via #search-input). Placeholder
+  // and noResults message localized via WEBSITE_LABELS.
+  const placeholderAttr = escapeHtml(labels.searchPlaceholder);
+  const noResultsAttr = escapeHtml(labels.noResults);
+  const searchIconSvg = `<svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`;
+  const searchIconLargeSvg = `<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`;
+
+  const searchHtml = `<div class="bai-topbar__search" role="search">
+    ${searchIconSvg}
+    <input type="text" id="search-input" placeholder="${placeholderAttr}" data-no-results="${noResultsAttr}" autocomplete="off" />
+    <span class="bai-kbd-group" aria-hidden="true"><kbd>⌘</kbd><kbd>K</kbd></span>
+    <div id="search-results" class="search-results" hidden></div>
+  </div>
+  <button class="bai-iconbtn bai-topbar__searchicon" type="button" aria-label="${placeholderAttr}" onclick="document.getElementById('search-input').focus()">${searchIconLargeSvg}</button>`;
+
+  // Lang switcher: extracted from the legacy buildPageHeader. Same HTML
+  // shape so the existing CSS rules apply.
+  const langItems = peers
+    .map((peer) => {
+      const isCurrent = peer.lang === metadata.lang;
+      const ariaCurrent = isCurrent ? ' aria-current="true"' : "";
+      const classes = [
+        "lang-switcher__item",
+        isCurrent ? "lang-switcher__item--current" : "",
+        peer.available
+          ? "lang-switcher__item--available"
+          : "lang-switcher__item--unavailable",
+      ]
+        .filter(Boolean)
+        .join(" ");
+      const titleAttr = peer.available
+        ? ""
+        : ' title="This page is not available in this language; goes to that language\'s index instead."';
+      return `<a class="${classes}" href="${escapeHtml(peer.href)}" hreflang="${escapeHtml(peer.lang)}" lang="${escapeHtml(peer.lang)}"${ariaCurrent}${titleAttr}>${escapeHtml(peer.label)}</a>`;
+    })
+    .join("");
+  const langSwitcherHtml = `<div class="lang-switcher" role="group" aria-label="Language switcher">
+    ${langItems}
+  </div>`;
+
+  // Version selector (only in versioned mode).
+  const versionSwitcherHtml = buildVersionSwitcher(context);
+
+  // GitHub link — derived from website.repoUrl. When unset, the icon is
+  // omitted so we don't ship a dead link.
+  const repoUrl = config.website?.repoUrl;
+  const githubIconSvg = `<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56 0-.27-.01-1.16-.02-2.1-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.7 1.25 3.36.96.1-.74.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.46.11-3.04 0 0 .96-.31 3.16 1.18a10.95 10.95 0 0 1 5.76 0c2.2-1.49 3.16-1.18 3.16-1.18.62 1.58.23 2.75.11 3.04.74.81 1.18 1.84 1.18 3.1 0 4.43-2.7 5.41-5.27 5.69.41.36.78 1.06.78 2.13 0 1.54-.01 2.78-.01 3.16 0 .31.21.67.8.56C20.21 21.39 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5Z"/></svg>`;
+  const githubLinkHtml = repoUrl
+    ? `<a class="bai-iconbtn" href="${escapeHtml(repoUrl)}" target="_blank" rel="noopener noreferrer" aria-label="GitHub">${githubIconSvg}</a>`
+    : "";
+
+  // Mobile menu icon (Phase 2 emits the surface; Phase 4 wires the
+  // drawer toggle).
+  const menuIconSvg = `<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`;
+
+  return `<header class="bai-topbar" role="banner">
+  <button class="bai-iconbtn bai-topbar__menu" type="button" aria-label="Toggle navigation">${menuIconSvg}</button>
+  <a class="bai-topbar__brand" href="./index.html">
+    ${brandLogoHtml}
+    ${subLabelHtml}
+    ${versionPillHtml}
+  </a>
+  ${searchHtml}
+  <div class="bai-topbar__actions">
+    ${versionSwitcherHtml}
+    ${langSwitcherHtml}
+    ${githubLinkHtml}
+  </div>
+</header>`;
+}
+
+/**
  * Build the in-page header bar. Currently hosts the language switcher (F1).
  * F4 (code-block copy) and F6 (version selector) will add additional
  * controls into the same `<header class="page-header-bar">`; the
@@ -905,6 +1164,11 @@ export function applyImageAttributes(
  * spec calls for a breadcrumb "above the chapter content", and keeping
  * the header reserved for site-level controls (lang switcher, future
  * version selector) avoids a tight coupling with F6's incoming UI.
+ *
+ * FR-2726 Phase 2 supersedes this for the website build — the language
+ * switcher is now rendered inside the BAI topbar by `buildBaiTopbar`.
+ * `buildPageHeader` is kept for any external consumer still building
+ * pages from individual helpers.
  */
 function buildPageHeader(
   metadata: WebsiteMetadata,
@@ -964,10 +1228,19 @@ export function buildWebPage(context: WebPageContext): string {
     config,
     navGroups,
   );
-  const pageHeader = buildPageHeader(metadata, peers);
+  // Phase 2 (FR-2726): the topbar replaces the legacy in-page header
+  // (lang switcher) and version-selector header. We omit pageHeader /
+  // headerBar from the body output below; they're folded into the topbar.
+  const topbar = buildBaiTopbar(context, peers, prefix);
+  void buildPageHeader;
   const breadcrumb = buildBreadcrumb(chapter, category, metadata.lang);
   const innerContent = buildPageContent(chapter);
-  const rightRailToc = buildRightRailToc(chapter, metadata.lang);
+  const rightRailToc = buildRightRailToc(
+    chapter,
+    metadata.lang,
+    config,
+    context.navPath,
+  );
   const metadataBar = buildPageMetadata(context);
   const pagination = buildPaginationNav(
     allChapters,
@@ -987,7 +1260,9 @@ export function buildWebPage(context: WebPageContext): string {
     context.seo,
     context.peers,
   );
-  const headerBar = buildPageHeaderBar(context);
+  // Phase 2 (FR-2726): the version-switcher header bar is folded into
+  // the BAI topbar — `buildPageHeaderBar` is intentionally not invoked.
+  void buildPageHeaderBar;
   const versionBanner = buildVersionBanner(context);
   const versionNotice = buildVersionNotice(context);
   const searchScript = buildSearchScriptTag(assets, prefix);
@@ -1011,13 +1286,12 @@ export function buildWebPage(context: WebPageContext): string {
   ${headTags}
 </head>
 <body ${copyDataAttrs}>
-${headerBar}
+${topbar}
 ${versionBanner}
 <div class="doc-page">
   ${sidebar}
   <main class="doc-main">
     ${versionNotice}
-    ${pageHeader}
     ${breadcrumb}
     ${innerContent}
     <div class="page-footer">

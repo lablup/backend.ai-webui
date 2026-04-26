@@ -406,6 +406,58 @@ export async function generateWebsite(
   // like `/favicon.ico` work for any deployment layout.
   const rootAssets = writeRootBrandAssets(distBase, title, productName);
 
+  // Topbar brand logos (FR-2726 Phase 2). Copied into `assets/` with a
+  // content hash so the topbar can reference them via relative URLs that
+  // survive deploys to any subpath. Both light and dark are optional;
+  // when unconfigured, the topbar renders a text fallback.
+  let brandLogoLight: string | undefined;
+  let brandLogoDark: string | undefined;
+  if (config.branding.logoLight && fs.existsSync(config.branding.logoLight)) {
+    const ext = path.extname(config.branding.logoLight) || ".svg";
+    const bytes = fs.readFileSync(config.branding.logoLight);
+    brandLogoLight = writeHashedAsset(
+      assetsDir,
+      `brand-logo-light${ext}`,
+      bytes,
+      assetManifest,
+    );
+    console.log(`Written: assets/${brandLogoLight}`);
+  } else if (config.branding.logoLight) {
+    console.warn(
+      `[branding] logoLight not found at ${config.branding.logoLight}; topbar will use text fallback.`,
+    );
+  }
+  if (
+    config.branding.logoDark &&
+    config.branding.logoDark !== config.branding.logoLight &&
+    fs.existsSync(config.branding.logoDark)
+  ) {
+    const ext = path.extname(config.branding.logoDark) || ".svg";
+    const bytes = fs.readFileSync(config.branding.logoDark);
+    brandLogoDark = writeHashedAsset(
+      assetsDir,
+      `brand-logo-dark${ext}`,
+      bytes,
+      assetManifest,
+    );
+    console.log(`Written: assets/${brandLogoDark}`);
+  } else if (
+    config.branding.logoDark &&
+    config.branding.logoDark === config.branding.logoLight
+  ) {
+    // Same file — re-use the light variant's hashed name.
+    brandLogoDark = brandLogoLight;
+  } else if (
+    config.branding.logoDark &&
+    config.branding.logoDark !== config.branding.logoLight
+  ) {
+    // Symmetric warning to the logoLight branch above so a missing
+    // dark-mode logo is just as easy to spot as a missing light one.
+    console.warn(
+      `[branding] logoDark not found at ${config.branding.logoDark}; topbar will fall back to the light logo in dark mode.`,
+    );
+  }
+
   // Aggregate counters used for the post-build summary / strict gate.
   const allDiagnostics: LinkDiagnostic[] = [];
   const imageStats = { total: 0, withDims: 0 };
@@ -433,6 +485,8 @@ export async function generateWebsite(
     favicon: rootAssets.favicon,
     appleTouchIcon: rootAssets.appleTouchIcon,
     webmanifest: rootAssets.webmanifest,
+    brandLogoLight,
+    brandLogoDark,
   };
 
   // ── F2: Default OG image rendering ────────────────────────────

@@ -220,10 +220,16 @@ export function generateWebStyles(
   --ifm-alert-padding-vertical: 1rem;
   --ifm-alert-padding-horizontal: 1.2rem;
 
-  --doc-sidebar-width: 260px;
-  /* F3: right-rail "On this page" TOC width. Coexists with sidebar (260px)
-     and main column (~720-960px) on a desktop CSS grid. */
-  --doc-toc-width: 220px;
+  /* Layout (FR-2726 Phase 2) */
+  --bai-topbar-h: 56px;
+  --bai-sider-w: 280px;
+  --bai-toc-w: 240px;
+  --bai-content-max: 820px;
+  --bai-gutter: 32px;
+
+  /* Legacy aliases used by F3 grid rules (resolve to BAI tokens). */
+  --doc-sidebar-width: var(--bai-sider-w);
+  --doc-toc-width: var(--bai-toc-w);
 }
 
 /* ==========================================================================
@@ -305,79 +311,284 @@ body {
 }
 
 /* ==========================================================================
-   Page Layout — F3 three-column grid
+   Topbar (Phase 2 — FR-2726)
    --------------------------------------------------------------------------
-   Desktop: [sidebar] [main, max ~960px] [right-rail TOC, fixed width].
-   The grid lets the right-rail size predictably and lets the main column
-   fill any spare width. Below 1100px the right-rail collapses (see the
-   responsive section near the end of this file).
+   The topbar sits above the page grid as a sticky 56px strip with the
+   brand on the left, a center search trigger (host for the existing
+   search input until Phase 4 introduces a Cmd-K palette), and an
+   actions cluster on the right (lang switcher, version selector, GitHub
+   icon). The mobile menu icon and the search icon are hidden on
+   desktop and revealed on narrower viewports — see the responsive
+   block near the end of this file.
+   ========================================================================== */
+.bai-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  height: var(--bai-topbar-h);
+  padding: 0 20px;
+  background: var(--bai-bg);
+  border-bottom: 1px solid var(--bai-border);
+}
+
+.bai-topbar__menu {
+  display: none;
+}
+
+.bai-topbar__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+  color: var(--bai-text);
+  text-decoration: none;
+}
+
+.bai-topbar__brand:hover {
+  text-decoration: none;
+  color: var(--bai-text);
+}
+
+.bai-brand-logo {
+  height: 22px;
+  width: auto;
+  display: block;
+}
+
+.bai-brand-fallback {
+  font-family: var(--bai-font-heading);
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--bai-text);
+}
+
+.bai-brand-divider {
+  width: 1px;
+  height: 18px;
+  background: var(--bai-border);
+}
+
+.bai-brand-sub {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--bai-text-3);
+  letter-spacing: -0.005em;
+}
+
+.bai-brand-version {
+  font-family: var(--bai-font-mono);
+  font-size: 10.5px;
+  color: var(--bai-text-3);
+  background: var(--bai-bg-subtle);
+  border: 1px solid var(--bai-border);
+  padding: 2px 7px;
+  border-radius: 999px;
+  margin-left: 4px;
+}
+
+/* Topbar search — hosts \`#search-input\` (which the existing search.js
+   binds to). When Phase 4 lands, this trigger becomes a Cmd-K-style
+   button that opens a palette; until then the input stays inline so
+   typing-to-search keeps working without any JS changes. */
+.bai-topbar__search {
+  flex: 1;
+  max-width: 520px;
+  margin: 0 auto;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 36px;
+  padding: 0 12px 0 14px;
+  border: 1px solid var(--bai-border);
+  border-radius: var(--bai-radius);
+  background: var(--bai-bg-muted);
+  color: var(--bai-text-3);
+  font: inherit;
+  font-size: 13px;
+  cursor: text;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.bai-topbar__search:hover,
+.bai-topbar__search:focus-within {
+  border-color: var(--bai-primary);
+  background: var(--bai-bg);
+}
+
+.bai-topbar__search > svg {
+  flex-shrink: 0;
+  color: var(--bai-text-3);
+}
+
+.bai-topbar__search input {
+  flex: 1;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-size: 13px;
+  color: var(--bai-text);
+  outline: none;
+  padding: 0;
+  min-width: 0;
+}
+
+.bai-topbar__search input::placeholder {
+  color: var(--bai-text-3);
+}
+
+.bai-kbd-group {
+  display: inline-flex;
+  gap: 3px;
+  flex-shrink: 0;
+}
+
+.bai-topbar__search kbd,
+.bai-kbd-group kbd {
+  font-family: var(--bai-font-mono);
+  font-size: 10.5px;
+  background: var(--bai-bg);
+  border: 1px solid var(--bai-border);
+  border-bottom-width: 2px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  color: var(--bai-text-2);
+  min-width: 18px;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.bai-topbar .bai-topbar__searchicon {
+  display: none;
+}
+
+.bai-topbar__actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.bai-iconbtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  min-width: 32px;
+  padding: 0 8px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  color: var(--bai-text-2);
+  border-radius: 6px;
+  font: inherit;
+  text-decoration: none;
+}
+
+.bai-iconbtn:hover {
+  background: var(--bai-bg-subtle);
+  color: var(--bai-text);
+  text-decoration: none;
+}
+
+/* Search results dropdown anchored to the topbar search container. */
+.bai-topbar__search .search-results {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  background: var(--bai-bg);
+  border: 1px solid var(--bai-border);
+  border-radius: var(--bai-radius);
+  box-shadow: var(--bai-shadow-md);
+  max-height: 420px;
+  overflow-y: auto;
+  z-index: 60;
+}
+
+/* ==========================================================================
+   Page Layout — F3 three-column grid (rebased on BAI tokens — Phase 2)
+   --------------------------------------------------------------------------
+   Desktop: [sidebar] [main, max ~820px] [right-rail TOC, fixed width].
+   The topbar sits above this grid (sticky, 56px), so the sider/TOC are
+   sticky relative to (100vh - topbar-height).
    ========================================================================== */
 .doc-page {
   display: grid;
-  grid-template-columns: var(--doc-sidebar-width) minmax(0, 1fr) var(--doc-toc-width);
-  min-height: 100vh;
+  grid-template-columns: var(--bai-sider-w) minmax(0, 1fr) var(--bai-toc-w);
+  align-items: stretch;
+  min-height: calc(100vh - var(--bai-topbar-h));
 }
 
 .doc-sidebar {
   position: sticky;
-  top: 0;
-  height: 100vh;
+  top: var(--bai-topbar-h);
+  height: calc(100vh - var(--bai-topbar-h));
   overflow-y: auto;
-  border-right: 1px solid var(--ifm-color-emphasis-200);
-  background: var(--ifm-color-emphasis-0);
-  padding: 1rem 0;
+  border-right: 1px solid var(--bai-border);
+  background: var(--bai-bg-sider);
+  padding: 10px 8px 24px;
 }
 
+.doc-sidebar::-webkit-scrollbar {
+  width: 8px;
+}
+.doc-sidebar::-webkit-scrollbar-thumb {
+  background: var(--bai-border);
+  border-radius: 4px;
+}
+
+/* Sidebar header (legacy F3) — Phase 2 hides it; the topbar carries the
+   product brand and version pill now. The structural HTML stays so
+   downstream consumers that haven't migrated still get a working page. */
 .doc-sidebar-header {
-  padding: 0.5rem 1rem 1rem;
-  border-bottom: 1px solid var(--ifm-color-emphasis-200);
-  margin-bottom: 0.5rem;
+  display: none;
 }
 
-.doc-sidebar-header h2 {
-  font-size: 1.1rem;
-  margin: 0 0 0.25rem 0;
-  font-weight: 700;
-  color: var(--ifm-color-emphasis-900);
-}
-
-.doc-sidebar-header .doc-meta {
-  font-size: 0.8rem;
-  color: var(--ifm-color-emphasis-600);
-}
-
-/* Search */
-.doc-search {
-  padding: 0.5rem 1rem;
+/* Search input — Phase 2 moves this into the topbar. The original
+   .doc-search wrapper still exists in the DOM for backwards compat
+   when consumers haven't run the new builder yet, so keep the legacy
+   styling in place behind a guard. */
+.doc-sidebar > .doc-search {
+  padding: 8px 12px 12px;
   position: relative;
+  border-bottom: 1px solid var(--bai-border-soft);
+  margin-bottom: 6px;
 }
 
-.doc-search input {
+.doc-sidebar > .doc-search input {
   width: 100%;
   padding: 0.4rem 0.6rem;
   font-size: 0.85rem;
-  border: 1px solid var(--ifm-color-emphasis-300);
-  border-radius: var(--ifm-pre-border-radius);
-  background: var(--ifm-color-emphasis-0);
+  border: 1px solid var(--bai-border);
+  border-radius: var(--bai-radius-sm);
+  background: var(--bai-bg);
   outline: none;
-  font-family: var(--ifm-font-family-base);
+  font-family: var(--bai-font-sans);
 }
 
-.doc-search input:focus {
-  border-color: var(--ifm-color-primary);
-  box-shadow: 0 0 0 2px rgba(53, 120, 229, 0.15);
+.doc-sidebar > .doc-search input:focus {
+  border-color: var(--bai-primary);
+  box-shadow: 0 0 0 2px var(--bai-primary-soft);
 }
 
+/* Generic search-results dropdown styling. The topbar's search container
+   overrides positioning so the dropdown anchors to the input rather than
+   to the legacy .doc-search wrapper. */
 .search-results {
   position: absolute;
   top: 100%;
-  left: 1rem;
-  right: 1rem;
-  background: var(--ifm-color-emphasis-0);
-  border: 1px solid var(--ifm-color-emphasis-300);
-  border-radius: var(--ifm-pre-border-radius);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-  max-height: 400px;
+  left: 0;
+  right: 0;
+  background: var(--bai-bg);
+  border: 1px solid var(--bai-border);
+  border-radius: var(--bai-radius);
+  box-shadow: var(--bai-shadow-md);
+  max-height: 420px;
   overflow-y: auto;
   z-index: 100;
 }
@@ -448,16 +659,49 @@ body {
 .doc-sidebar-group > summary,
 .doc-sidebar-group__summary {
   cursor: pointer;
-  display: block;
-  padding: 0.55rem 1rem 0.4rem;
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-family: var(--bai-font-sans);
+  font-size: 12px;
+  font-weight: 600;
   letter-spacing: 0.04em;
-  color: var(--ifm-color-emphasis-700);
+  text-transform: uppercase;
+  color: var(--bai-text-3);
   user-select: none;
   list-style: none;
   position: relative;
+}
+
+/* Category icon (Phase 2 — FR-2726). Sits at the start of the summary
+   so it never collides with the disclosure caret on the right. */
+.doc-sidebar-group__icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: var(--bai-text-3);
+}
+
+/* Category label fills the available space; the icon is on its left
+   and the count pill on its right. */
+.doc-sidebar-group__label {
+  flex: 1 1 auto;
+  text-align: left;
+}
+
+/* Item count pill — the small monospace number on the right side of the
+   category summary. Clearly delineated from text via the muted bg. */
+.doc-sidebar-group__count {
+  flex-shrink: 0;
+  font-family: var(--bai-font-mono);
+  font-weight: 400;
+  font-size: 10.5px;
+  letter-spacing: 0;
+  color: var(--bai-text-4);
+  background: var(--bai-bg-subtle);
+  padding: 1px 6px;
+  border-radius: 999px;
 }
 
 /* Hide the default disclosure triangle — we draw our own caret below. */
@@ -471,23 +715,25 @@ body {
 
 .doc-sidebar-group > summary::after {
   content: "";
-  position: absolute;
-  right: 1rem;
-  top: 50%;
   width: 0.5rem;
   height: 0.5rem;
-  border-right: 1.5px solid currentColor;
-  border-bottom: 1.5px solid currentColor;
-  transform: translateY(-65%) rotate(-45deg);
+  border-right: 1.5px solid var(--bai-text-3);
+  border-bottom: 1.5px solid var(--bai-text-3);
+  transform: rotate(-45deg);
   transition: transform 120ms ease;
+  flex-shrink: 0;
+  margin-left: 4px;
+  margin-top: -2px;
 }
 
 .doc-sidebar-group[open] > summary::after {
-  transform: translateY(-30%) rotate(45deg);
+  transform: rotate(45deg);
+  margin-top: -4px;
 }
 
 .doc-sidebar-group > summary:hover {
-  color: var(--ifm-color-primary);
+  background: var(--bai-bg-subtle);
+  color: var(--bai-text-2);
 }
 
 .doc-sidebar-group[open] > summary {
@@ -497,7 +743,20 @@ body {
 .doc-sidebar-nav {
   list-style: none;
   padding: 0;
-  margin: 0 0 0.5rem 0;
+  margin: 2px 0 8px;
+  position: relative;
+}
+
+/* Connector line between category and items — same visual idiom as the
+   BAI sider in the main app. */
+.doc-sidebar-nav--grouped::before {
+  content: "";
+  position: absolute;
+  left: 19px;
+  top: 4px;
+  bottom: 4px;
+  width: 1px;
+  background: var(--bai-border-soft);
 }
 
 .doc-sidebar-nav > li {
@@ -505,38 +764,94 @@ body {
 }
 
 .doc-sidebar-nav > li > a {
-  display: block;
-  padding: 0.4rem 1rem;
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--ifm-color-emphasis-800);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 12px 7px 28px;
+  border-radius: 6px;
+  color: var(--bai-text-2);
+  font-size: 13.5px;
+  font-weight: 400;
   text-decoration: none;
-  border-left: 3px solid transparent;
-  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  position: relative;
+  margin: 1px 0;
+  transition: background 0.15s, color 0.15s;
 }
 
 .doc-sidebar-nav--grouped > li > a {
-  /* Slightly indented so items visually nest under the category header. */
-  padding-left: 1.5rem;
+  /* Reset: indentation + bullet are produced by ::before on the link. */
+  padding-left: 28px;
+}
+
+.doc-sidebar-nav > li > a::before {
+  content: "";
+  position: absolute;
+  left: 17px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--bai-border);
+  transition: background 0.15s, width 0.15s, height 0.15s;
 }
 
 .doc-sidebar-nav > li > a:hover {
-  background: var(--ifm-color-emphasis-100);
-  color: var(--ifm-color-primary);
+  background: var(--bai-bg-subtle);
+  color: var(--bai-text);
+  text-decoration: none;
+}
+
+.doc-sidebar-nav > li > a:hover::before {
+  background: var(--bai-text-3);
 }
 
 .doc-sidebar-nav > li > a.active {
-  border-left-color: var(--ifm-color-primary);
-  color: var(--ifm-color-primary);
-  background: rgba(53, 120, 229, 0.06);
+  background: var(--bai-primary-soft);
+  color: var(--bai-primary);
+  font-weight: 500;
+}
+
+.doc-sidebar-nav > li > a.active::before {
+  background: var(--bai-primary);
+  width: 6px;
+  height: 6px;
+}
+
+/* NEW badge (FR-2726). Rendered on the sidebar nav item to highlight
+   recently added pages. The data attribute trick lets consumers set
+   data-new="true" on a nav LI via book-config without changing HTML —
+   Phase 2 ships the styling; per-page tagging arrives later. */
+.doc-sidebar-nav .bai-badge {
+  margin-left: auto;
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  padding: 1px 6px;
+  border-radius: 999px;
+  font-family: var(--bai-font-sans);
+}
+
+.doc-sidebar-nav .bai-badge--new {
+  background: rgba(0, 189, 155, 0.12);
+  color: var(--bai-success);
 }
 
 .doc-main {
   min-width: 0;
-  max-width: 960px;
+  max-width: var(--bai-content-max);
   width: 100%;
   margin: 0 auto;
-  padding: 2rem 2.5rem;
+  padding: 28px var(--bai-gutter) 80px;
+}
+
+@media (min-width: 1181px) {
+  /* When the right rail isn't shown we still cap the article width so
+     prose doesn't stretch. The grid keeps the column flexible; this
+     just bounds the inner content. */
+  .doc-main {
+    max-width: var(--bai-content-max);
+  }
 }
 
 /* ==========================================================================
@@ -1015,73 +1330,71 @@ details > :last-child {
 }
 
 /* ==========================================================================
-   Page Header Bar (website mode) — F1: language switcher slot.
-   F4 (Copy button toggle) and F6 (version selector) will hang off the same
-   <nav class="page-header-nav"> region.
+   In-page header bar (legacy F1 slot).
+   --------------------------------------------------------------------------
+   Phase 2 (FR-2726) moves the language switcher and version selector
+   into the new sticky topbar. We keep the .page-header-bar / .lang-switcher
+   classnames so older bundled HTML and external consumers still parse,
+   but visually fold the bar away when there's nothing to render.
    ========================================================================== */
 .page-header-bar {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  margin: 0 0 1.5rem 0;
-  padding-bottom: 0.75rem;
-  border-bottom: 1px solid var(--ifm-color-emphasis-200);
+  display: none;
 }
 
 .page-header-nav {
   display: flex;
-  gap: 0.5rem;
+  gap: 8px;
   align-items: center;
   flex-wrap: wrap;
 }
 
 .lang-switcher {
   display: inline-flex;
-  gap: 0.25rem;
-  border: 1px solid var(--ifm-color-emphasis-300);
-  border-radius: 0.4rem;
-  padding: 0.15rem;
-  background: var(--ifm-color-emphasis-0);
+  gap: 2px;
+  border: 1px solid var(--bai-border);
+  border-radius: 6px;
+  padding: 2px;
+  background: var(--bai-bg);
 }
 
 .lang-switcher__item {
   display: inline-block;
-  padding: 0.25rem 0.6rem;
-  font-size: 0.8rem;
+  padding: 4px 9px;
+  font-size: 12px;
   line-height: 1.2;
-  border-radius: 0.25rem;
-  color: var(--ifm-color-emphasis-700);
+  border-radius: 4px;
+  color: var(--bai-text-2);
   text-decoration: none;
   transition: background-color 120ms ease, color 120ms ease;
 }
 
 .lang-switcher__item:hover,
 .lang-switcher__item:focus {
-  background: var(--ifm-color-emphasis-100);
-  color: var(--ifm-color-emphasis-900);
+  background: var(--bai-bg-subtle);
+  color: var(--bai-text);
   text-decoration: none;
 }
 
 .lang-switcher__item--current {
-  background: var(--ifm-color-primary);
+  background: var(--bai-primary);
   color: #fff;
   cursor: default;
 }
 
 .lang-switcher__item--current:hover,
 .lang-switcher__item--current:focus {
-  background: var(--ifm-color-primary-dark);
+  background: var(--bai-primary-active);
   color: #fff;
 }
 
 .lang-switcher__item--unavailable {
-  color: var(--ifm-color-emphasis-500);
+  color: var(--bai-text-4);
 }
 
 .lang-switcher__item--unavailable:hover,
 .lang-switcher__item--unavailable:focus {
-  background: var(--ifm-color-emphasis-100);
-  color: var(--ifm-color-emphasis-700);
+  background: var(--bai-bg-subtle);
+  color: var(--bai-text-3);
 }
 
 /* Pagination Navigation */
@@ -1133,9 +1446,9 @@ details > :last-child {
    semantic (an ol of li segments) and translates cleanly.
    ========================================================================== */
 .breadcrumb {
-  margin: 0 0 1rem 0;
-  font-size: 0.85rem;
-  color: var(--ifm-color-emphasis-700);
+  margin: 0 0 18px 0;
+  font-size: 12.5px;
+  color: var(--bai-text-3);
 }
 
 .breadcrumb__list {
@@ -1144,84 +1457,84 @@ details > :last-child {
   margin: 0;
   display: flex;
   flex-wrap: wrap;
-  gap: 0.35rem 0.5rem;
+  gap: 6px 8px;
   align-items: center;
 }
 
 .breadcrumb__item {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 8px;
   margin: 0;
 }
 
 .breadcrumb__item + .breadcrumb__item::before {
-  /* Note: NOT a > glyph (which would conflict with HTML escaping in some
-     reading-mode tools). U+203A SINGLE RIGHT-POINTING ANGLE QUOTATION MARK
-     reads naturally in all four supported languages. */
+  /* U+203A SINGLE RIGHT-POINTING ANGLE QUOTATION MARK — reads naturally
+     across all four supported languages. */
   content: "›";
-  color: var(--ifm-color-emphasis-500);
+  color: var(--bai-text-4);
 }
 
 .breadcrumb__link {
-  color: var(--ifm-color-primary);
+  color: var(--bai-text-3);
   text-decoration: none;
+  transition: color 0.12s;
 }
 
 .breadcrumb__link:hover {
-  text-decoration: underline;
+  color: var(--bai-primary);
+  text-decoration: none;
 }
 
 .breadcrumb__item--current {
-  color: var(--ifm-color-emphasis-900);
-  font-weight: 600;
+  color: var(--bai-text);
+  font-weight: 500;
 }
 
 .breadcrumb__item--category {
-  /* Category is non-navigable (no per-category landing page), so render as
-     plain text rather than implying it's a link. */
-  color: var(--ifm-color-emphasis-700);
+  color: var(--bai-text-3);
 }
 
 /* ==========================================================================
-   Right-rail "On this page" TOC (F3)
+   Right-rail "On this page" TOC (F3 + FR-2726 Phase 2)
    --------------------------------------------------------------------------
    Sticky aside in the third grid column on desktop. IntersectionObserver
    scroll-spy adds .is-active to the link whose section is in view.
    ========================================================================== */
 .doc-toc {
   position: sticky;
-  top: 0;
+  top: var(--bai-topbar-h);
   align-self: start;
-  height: 100vh;
+  height: calc(100vh - var(--bai-topbar-h));
   overflow-y: auto;
-  padding: 2rem 1rem 2rem 1.5rem;
-  font-size: 0.85rem;
-  border-left: 1px solid var(--ifm-color-emphasis-200);
+  padding: 28px 22px;
+  font-size: 13px;
+  background: var(--bai-bg);
+  border-left: 1px solid var(--bai-border);
 }
 
 .doc-toc[data-empty="true"] .doc-toc__heading,
 .doc-toc[data-empty="true"] .doc-toc__list {
-  /* Hide the heading when there is nothing to list. We still render the
-     aside element (preserves grid column width) so layout does not shift
-     between pages with and without TOC entries. */
+  /* Hide the heading and list when there is nothing to spy on, but
+     keep the aside in the grid (and the Get-help section visible) so
+     the rail still looks intentional. */
   display: none;
 }
 
 .doc-toc__heading {
-  font-size: 0.75rem;
-  font-weight: 700;
+  font-size: 11px;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--ifm-color-emphasis-700);
-  margin-bottom: 0.75rem;
+  letter-spacing: 0.08em;
+  color: var(--bai-text-3);
+  margin-bottom: 10px;
 }
 
 .doc-toc__list {
   list-style: none;
   padding: 0;
-  margin: 0;
-  border-left: 1px solid var(--ifm-color-emphasis-200);
+  margin: 0 0 24px;
+  border-left: 1px solid var(--bai-border-soft);
 }
 
 .doc-toc__item {
@@ -1229,68 +1542,138 @@ details > :last-child {
 }
 
 .doc-toc__item--h3 {
-  /* Sub-items rendered with extra left padding so the visual hierarchy
-     mirrors the heading levels they reference. */
-  padding-left: 0.75rem;
+  padding-left: 12px;
 }
 
 .doc-toc__link {
   display: block;
-  padding: 0.25rem 0.75rem;
+  padding: 4px 12px;
   margin-left: -1px;
   border-left: 2px solid transparent;
-  color: var(--ifm-color-emphasis-700);
+  color: var(--bai-text-3);
   text-decoration: none;
-  line-height: 1.35;
-  transition: color 120ms ease, border-color 120ms ease, background 120ms ease;
+  line-height: 1.45;
+  transition: color 120ms ease, border-color 120ms ease;
 }
 
 .doc-toc__link:hover {
-  color: var(--ifm-color-primary);
+  color: var(--bai-text);
   text-decoration: none;
 }
 
 .doc-toc__link.is-active {
-  color: var(--ifm-color-primary);
-  border-left-color: var(--ifm-color-primary);
-  background: rgba(53, 120, 229, 0.06);
+  color: var(--bai-primary);
+  border-left-color: var(--bai-primary);
+  font-weight: 500;
+  background: transparent;
+}
+
+/* Get help — small link cluster below the scroll-spy list. Phase 2
+   surface; the list of links is built by the website builder from
+   editBaseUrl + repoUrl. Empty when neither is configured. */
+.doc-toc__divider {
+  height: 1px;
+  background: var(--bai-border-soft);
+  margin: 18px 0;
+}
+
+.doc-toc__contrib {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 22px;
+}
+
+.doc-toc__contrib .doc-toc__heading {
+  margin-bottom: 6px;
+}
+
+.doc-toc__link--external {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 0;
+  font-size: 12.5px;
+  color: var(--bai-text-2);
+  border-left: 0;
+  margin-left: 0;
+}
+
+.doc-toc__link--external > svg {
+  flex-shrink: 0;
+  color: var(--bai-text-3);
+  transition: color 0.12s;
+}
+
+.doc-toc__link--external:hover {
+  color: var(--bai-primary);
+}
+
+.doc-toc__link--external:hover > svg {
+  color: var(--bai-primary);
 }
 
 /* ==========================================================================
-   Responsive
+   Responsive — FR-2726 Phase 2 breakpoints
    --------------------------------------------------------------------------
-   Two breakpoints:
-     - 1100px: drop the right-rail TOC. Its content is still anchor-
-       reachable from inline headings; on a narrow viewport the prose
-       column needs the room more than the rail does. The rail HTML stays
-       in place (we don't move it inline; that would require JS) — it just
-       isn't displayed.
-     - 768px: collapse the sidebar to a top strip and let the page flow
-       in a single column.
+   - 1180px: drop the right-rail TOC. Article reclaims its width; TOC
+     headings remain anchor-reachable from the table of contents in the
+     page itself.
+   -  880px: hide the topbar search bar AND the sidebar; replace search
+     with the magnifier icon button. The icon click focuses #search-input
+     in Phase 2 (works because the input is still inside the search
+     container, just visually hidden until Phase 4 adds a real palette).
+
+   Phase 2 intentionally keeps the topbar search bar visible at 1024px
+   widths so users on tablet-class viewports (≤1180px) still have a
+   working inline search. Phase 4 introduces the Cmd-K palette and can
+   re-introduce a tighter breakpoint then.
    ========================================================================== */
-@media (max-width: 1100px) {
+@media (max-width: 1180px) {
   .doc-page {
-    grid-template-columns: var(--doc-sidebar-width) minmax(0, 1fr);
+    grid-template-columns: var(--bai-sider-w) minmax(0, 1fr);
   }
   .doc-toc {
     display: none;
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 880px) {
+  .bai-topbar .bai-topbar__search {
+    display: none;
+  }
+  .bai-topbar .bai-topbar__searchicon {
+    display: inline-flex;
+    margin-left: auto;
+  }
+  .bai-topbar__actions {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 880px) {
+  :root {
+    --bai-sider-w: 0px;
+  }
   .doc-page {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
   .doc-sidebar {
-    position: static;
-    width: 100%;
-    height: auto;
-    max-height: 40vh;
-    border-right: none;
-    border-bottom: 1px solid var(--ifm-color-emphasis-200);
+    display: none;
+  }
+  .bai-topbar__menu {
+    display: inline-flex;
+  }
+  .bai-topbar__brand {
+    gap: 8px;
+  }
+  .bai-brand-divider,
+  .bai-brand-sub,
+  .bai-brand-version {
+    display: none;
   }
   .doc-main {
-    padding: 1.5rem;
+    padding: 24px 16px 60px;
   }
   .pagination-nav {
     flex-direction: column;
@@ -1302,9 +1685,6 @@ details > :last-child {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;
-  }
-  .breadcrumb {
-    font-size: 0.8rem;
   }
 }
 `;
