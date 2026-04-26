@@ -175,11 +175,14 @@ describe("buildWebPage — FR-2726 surfaces", () => {
     assert.match(html, /class="bai-iconbtn bai-topbar__searchicon"/);
   });
 
-  it("emits the language switcher with all configured peers", () => {
+  it("emits a native-select language switcher with all peers as <option>", () => {
     const html = buildWebPage(makeContext());
     assert.match(html, /class="lang-switcher"/);
-    assert.match(html, />English</);
-    assert.match(html, />한국어</);
+    assert.match(html, /class="lang-switcher__select"/);
+    // Both peers must appear as <option> entries; the current language
+    // option is marked `selected`.
+    assert.match(html, /<option[^>]+value="\.\.\/en\/dashboard\.html"[^>]*selected[^>]*>English<\/option>/);
+    assert.match(html, /<option[^>]+value="\.\.\/ko\/dashboard\.html"[^>]*>한국어<\/option>/);
   });
 
   it("emits the GitHub icon link only when website.repoUrl is set", () => {

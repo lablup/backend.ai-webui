@@ -1178,30 +1178,29 @@ function buildBaiTopbar(
   // localization passes through to search.js.
   void noResultsAttr;
 
-  // Lang switcher: extracted from the legacy buildPageHeader. Same HTML
-  // shape so the existing CSS rules apply.
-  const langItems = peers
+  // Lang switcher (FR-2728): a native <select> styled as a BAI button.
+  // Native select is keyboard-accessible, screen-reader-friendly, and
+  // collapses to one row in the topbar — replacing the always-expanded
+  // pill row. Pages where a language is missing keep the option, but
+  // the value is the language's index page (so the click still works).
+  const langOptions = peers
     .map((peer) => {
       const isCurrent = peer.lang === metadata.lang;
-      const ariaCurrent = isCurrent ? ' aria-current="true"' : "";
-      const classes = [
-        "lang-switcher__item",
-        isCurrent ? "lang-switcher__item--current" : "",
-        peer.available
-          ? "lang-switcher__item--available"
-          : "lang-switcher__item--unavailable",
-      ]
-        .filter(Boolean)
-        .join(" ");
       const titleAttr = peer.available
         ? ""
-        : ' title="This page is not available in this language; goes to that language\'s index instead."';
-      return `<a class="${classes}" href="${escapeHtml(peer.href)}" hreflang="${escapeHtml(peer.lang)}" lang="${escapeHtml(peer.lang)}"${ariaCurrent}${titleAttr}>${escapeHtml(peer.label)}</a>`;
+        : ' title="Page is not available in this language; jumps to that language\'s index."';
+      return `<option value="${escapeHtml(peer.href)}" lang="${escapeHtml(peer.lang)}"${isCurrent ? " selected" : ""}${titleAttr}>${escapeHtml(peer.label)}</option>`;
     })
     .join("");
-  const langSwitcherHtml = `<div class="lang-switcher" role="group" aria-label="Language switcher">
-    ${langItems}
-  </div>`;
+  // The switcher uses an inline `onchange` navigate so it works
+  // self-contained — including on pages that don't ship
+  // interactions.js (e.g. the language-picker root). Native <select>
+  // requires JavaScript to fire `change`; consumers who need a true
+  // no-JS fallback can layer a `<noscript>` block of plain anchor
+  // links above this widget.
+  const langSwitcherHtml = `<label class="lang-switcher" role="group" aria-label="Language switcher">
+    <select class="lang-switcher__select" onchange="if(this.value)window.location.assign(this.value)">${langOptions}</select>
+  </label>`;
 
   // Version selector (only in versioned mode).
   const versionSwitcherHtml = buildVersionSwitcher(context);

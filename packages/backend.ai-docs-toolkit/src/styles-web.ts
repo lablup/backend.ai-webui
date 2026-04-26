@@ -1921,15 +1921,68 @@ details > :last-child {
   flex-wrap: wrap;
 }
 
+/* Lang switcher (FR-2728): native <select> styled as a BAI button.
+   The wrapping <label> serves as the visual frame so we can paint a
+   chevron via background-image without disturbing the native popup. */
 .lang-switcher {
   display: inline-flex;
+  align-items: center;
+  position: relative;
+  /* gap is a no-op when the switcher contains a single SELECT
+     (the native variant FR-2728 ships) but matters for legacy HTML
+     that still renders multiple .lang-switcher__item children inline.
+     Keep it so older bundles don't collapse the spacing. */
   gap: 2px;
-  border: 1px solid var(--bai-border);
   border-radius: 6px;
-  padding: 2px;
-  background: var(--bai-bg);
+  background: transparent;
 }
 
+.lang-switcher__select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  display: inline-flex;
+  align-items: center;
+  height: 30px;
+  padding: 0 28px 0 10px;
+  border: 1px solid var(--bai-border);
+  border-radius: 6px;
+  background: var(--bai-bg);
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238C8C8C' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 12px 12px;
+  color: var(--bai-text-2);
+  font: inherit;
+  font-size: 12.5px;
+  line-height: 1;
+  cursor: pointer;
+  transition: border-color 120ms ease, color 120ms ease, background-color 120ms ease;
+}
+
+.lang-switcher__select:hover {
+  border-color: var(--bai-primary);
+  color: var(--bai-text);
+}
+
+.lang-switcher__select:focus,
+.lang-switcher__select:focus-visible {
+  outline: 2px solid var(--bai-primary);
+  outline-offset: 1px;
+  color: var(--bai-text);
+}
+
+[data-theme="dark"] .lang-switcher__select {
+  /* Dark-mode native popup: tell the browser to render the dropdown
+     panel itself in dark too (Chrome / Safari / Firefox honor this). */
+  color-scheme: dark;
+}
+
+/* Legacy classnames retained for older bundled HTML in the wild
+   (pre-FR-2728 pill row). These rules still apply real styling
+   (padding / font / colors / current-state background) so the
+   pill-row variant continues to render correctly, just without
+   the new BAI select chrome. */
 .lang-switcher__item {
   display: inline-block;
   padding: 4px 9px;
@@ -1938,36 +1991,11 @@ details > :last-child {
   border-radius: 4px;
   color: var(--bai-text-2);
   text-decoration: none;
-  transition: background-color 120ms ease, color 120ms ease;
-}
-
-.lang-switcher__item:hover,
-.lang-switcher__item:focus {
-  background: var(--bai-bg-subtle);
-  color: var(--bai-text);
-  text-decoration: none;
 }
 
 .lang-switcher__item--current {
   background: var(--bai-primary);
   color: #fff;
-  cursor: default;
-}
-
-.lang-switcher__item--current:hover,
-.lang-switcher__item--current:focus {
-  background: var(--bai-primary-active);
-  color: #fff;
-}
-
-.lang-switcher__item--unavailable {
-  color: var(--bai-text-4);
-}
-
-.lang-switcher__item--unavailable:hover,
-.lang-switcher__item--unavailable:focus {
-  background: var(--bai-bg-subtle);
-  color: var(--bai-text-3);
 }
 
 /* Pagination Navigation (FR-2726 Phase 3 — BAI pager card style) */
