@@ -208,6 +208,13 @@ export interface PageAssets {
    * by the version-switcher script).
    */
   versionBanner?: string;
+  /**
+   * Hashed `interactions.js` filename (FR-2726 Phase 4). Optional —
+   * only present when the toolkit ships the template asset. Bundles
+   * the theme toggle, mobile drawer, and search palette interactions
+   * in a single script for per-page JS budget tightness.
+   */
+  interactions?: string;
   /** Site-root favicon filename, e.g. `favicon.ico`. */
   favicon?: string;
   /** Site-root apple-touch-icon filename, e.g. `apple-touch-icon.png`. */
@@ -665,6 +672,9 @@ function buildHeadAssetTags(
     `<meta charset="utf-8" />`,
     `<meta name="viewport" content="width=device-width, initial-scale=1" />`,
     `<title>${pageTitle} - ${escapeHtml(langLabel)}</title>`,
+    // FR-2726 Phase 4 anti-FOUC: set data-theme BEFORE the stylesheet
+    // is evaluated so dark-mode users don't see a light flash.
+    buildThemeBootstrapScript(),
     `<link rel="stylesheet" href="${prefix}assets/${escapeHtml(assets.styles)}" />`,
   ];
 
@@ -1014,6 +1024,37 @@ function buildTocScrollspyScriptTag(assets: PageAssets): string {
 }
 
 /**
+ * Build the interactions.js script tag (FR-2726 Phase 4). Receives
+ * `prefix` so the script URL stays correct under versioned-mode page
+ * paths (e.g. `<version>/<lang>/page.html` needs `../../assets/...`).
+ * The Phase 4 topbar is search-trigger-only and the palette starts
+ * hidden, so an absent interactions asset would leave the search UI
+ * inaccessible — the caller MUST verify the asset is present (see
+ * `buildWebPage`).
+ */
+function buildInteractionsScriptTag(
+  assets: PageAssets,
+  prefix: string,
+): string {
+  if (!assets.interactions) return "";
+  return `<script defer src="${prefix}assets/${escapeHtml(assets.interactions)}"></script>`;
+}
+
+/**
+ * Inline `<head>` bootstrap that sets `data-theme` on <html> before
+ * the page paints (FR-2726 Phase 4 — anti-FOUC). Reads `docs-theme`
+ * from localStorage; falls back to `prefers-color-scheme: dark` for
+ * users who never explicitly toggled. Total payload < 300 bytes.
+ *
+ * Returns a `<script>` tag — emitted from `buildHeadAssetTags` so it
+ * runs before any render-blocking stylesheet evaluation.
+ */
+function buildThemeBootstrapScript(): string {
+  const body = `(function(){try{var t=localStorage.getItem('docs-theme');if(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches){t='dark';}if(t){document.documentElement.setAttribute('data-theme',t);}}catch(_){ }})();`;
+  return `<script>${body}</script>`;
+}
+
+/**
  * Augment every `<img …>` tag with `loading="lazy"`, `decoding="async"`, and
  * (when supplied) `width`/`height` attributes from `dimensions`. Any pre-
  * existing attributes on the tag are preserved. Tags that already declare
@@ -1078,8 +1119,12 @@ function buildBaiTopbar(
   const { metadata, config, assets } = context;
   const labels = WEBSITE_LABELS[metadata.lang] ?? WEBSITE_LABELS.en;
 
-  // Brand block: <picture> + <img> when logos are configured, otherwise
-  // a text fallback so the topbar still has a recognizable anchor.
+  // Brand block (FR-2726 Phase 4): emit BOTH light and dark logos as
+  // `<img>` elements and let CSS hide the one that doesn't match the
+  // active `data-theme`. The earlier `<picture>` + `prefers-color-scheme`
+  // approach only honored the OS preference and ignored the manual
+  // theme toggle, so users who flipped to dark mode kept seeing the
+  // light logo.
   const lightSrc = assets.brandLogoLight
     ? `${prefix}assets/${escapeHtml(assets.brandLogoLight)}`
     : "";
@@ -1091,10 +1136,8 @@ function buildBaiTopbar(
   if (lightSrc) {
     const altText = escapeHtml(metadata.title);
     if (darkSrc && darkSrc !== lightSrc) {
-      brandLogoHtml = `<picture>
-        <source srcset="${darkSrc}" media="(prefers-color-scheme: dark)" />
-        <img class="bai-brand-logo" src="${lightSrc}" alt="${altText}" />
-      </picture>`;
+      brandLogoHtml = `<img class="bai-brand-logo bai-brand-logo--light" src="${lightSrc}" alt="${altText}" />` +
+        `<img class="bai-brand-logo bai-brand-logo--dark" src="${darkSrc}" alt="${altText}" />`;
     } else {
       brandLogoHtml = `<img class="bai-brand-logo" src="${lightSrc}" alt="${altText}" />`;
     }
@@ -1120,13 +1163,20 @@ function buildBaiTopbar(
   const searchIconSvg = `<svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`;
   const searchIconLargeSvg = `<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`;
 
-  const searchHtml = `<div class="bai-topbar__search" role="search">
+  // Phase 4 (FR-2726): the topbar exposes a button trigger that opens
+  // a Cmd-K-style palette. The actual <input id="search-input"> + the
+  // results list live inside the palette overlay (rendered in the
+  // body further down) so search.js continues to work unchanged.
+  const searchHtml = `<button class="bai-topbar__search" type="button" data-search-trigger aria-label="${placeholderAttr}">
     ${searchIconSvg}
-    <input type="text" id="search-input" placeholder="${placeholderAttr}" data-no-results="${noResultsAttr}" autocomplete="off" />
+    <span class="bai-topbar__search-label">${placeholderAttr}</span>
     <span class="bai-kbd-group" aria-hidden="true"><kbd>⌘</kbd><kbd>K</kbd></span>
-    <div id="search-results" class="search-results" hidden></div>
-  </div>
-  <button class="bai-iconbtn bai-topbar__searchicon" type="button" aria-label="${placeholderAttr}" onclick="document.getElementById('search-input').focus()">${searchIconLargeSvg}</button>`;
+  </button>
+  <button class="bai-iconbtn bai-topbar__searchicon" type="button" data-search-trigger aria-label="${placeholderAttr}">${searchIconLargeSvg}</button>`;
+  // The placeholder + no-results attributes are forwarded to the
+  // input via its data-* set inside the palette markup below, so the
+  // localization passes through to search.js.
+  void noResultsAttr;
 
   // Lang switcher: extracted from the legacy buildPageHeader. Same HTML
   // shape so the existing CSS rules apply.
@@ -1164,6 +1214,13 @@ function buildBaiTopbar(
     ? `<a class="bai-iconbtn" href="${escapeHtml(repoUrl)}" target="_blank" rel="noopener noreferrer" aria-label="GitHub">${githubIconSvg}</a>`
     : "";
 
+  // Theme toggle (Phase 4 — FR-2726). Sun/moon icon both rendered;
+  // CSS hides the inactive one based on data-theme. The aria-pressed
+  // state is updated by interactions.js when the user clicks.
+  const themeIconLight = `<svg class="bai-theme-icon bai-theme-icon--light" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M12 3v2M12 19v2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M3 12h2M19 12h2M5.6 18.4 7 17M17 7l1.4-1.4"/></svg>`;
+  const themeIconDark = `<svg class="bai-theme-icon bai-theme-icon--dark" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></svg>`;
+  const themeToggleHtml = `<button class="bai-iconbtn" type="button" data-theme-toggle aria-label="Toggle dark mode">${themeIconLight}${themeIconDark}</button>`;
+
   // Mobile menu icon (Phase 2 emits the surface; Phase 4 wires the
   // drawer toggle).
   const menuIconSvg = `<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`;
@@ -1179,9 +1236,39 @@ function buildBaiTopbar(
   <div class="bai-topbar__actions">
     ${versionSwitcherHtml}
     ${langSwitcherHtml}
+    ${themeToggleHtml}
     ${githubLinkHtml}
   </div>
 </header>`;
+}
+
+/**
+ * Build the search palette overlay (FR-2726 Phase 4). Hidden until
+ * `interactions.js` toggles `bai-palette-open` on the body. Hosts the
+ * actual `<input id="search-input">` and `<div id="search-results">`
+ * elements so search.js (which binds by id) keeps working unchanged.
+ */
+function buildSearchPalette(metadata: WebsiteMetadata): string {
+  const labels = WEBSITE_LABELS[metadata.lang] ?? WEBSITE_LABELS.en;
+  const placeholderAttr = escapeHtml(labels.searchPlaceholder);
+  const noResultsAttr = escapeHtml(labels.noResults);
+  const searchIconSvg = `<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`;
+  // The `doc-search` class is intentional: search.js attaches a
+  // document-level click handler that hides #search-results on any
+  // click outside an ancestor with class `doc-search`. Without it,
+  // clicks inside the palette panel (e.g. focusing the input) would
+  // immediately collapse the result list.
+  return `<div class="bai-palette" data-search-palette role="dialog" aria-modal="true" aria-label="${placeholderAttr}" hidden aria-hidden="true">
+  <div class="bai-palette__scrim"></div>
+  <div class="bai-palette__panel doc-search" role="search">
+    <div class="bai-palette__searchrow">
+      ${searchIconSvg}
+      <input type="text" id="search-input" placeholder="${placeholderAttr}" data-no-results="${noResultsAttr}" autocomplete="off" />
+      <kbd class="bai-palette__close-hint">esc</kbd>
+    </div>
+    <div id="search-results" class="search-results" hidden></div>
+  </div>
+</div>`;
 }
 
 /**
@@ -1297,6 +1384,19 @@ export function buildWebPage(context: WebPageContext): string {
   void buildPageHeaderBar;
   const versionBanner = buildVersionBanner(context);
   const versionNotice = buildVersionNotice(context);
+  // Phase 4 (FR-2726): search palette + interactions script tag.
+  const searchPalette = buildSearchPalette(metadata);
+  // Phase 4 (FR-2726): the topbar exposes only a trigger button while
+  // the palette starts hidden — without interactions.js there is no
+  // way to open it, so the search UI would be inaccessible. Refuse
+  // to emit a page with broken search rather than silently degrade.
+  if (!assets.interactions) {
+    throw new Error(
+      "FR-2726 Phase 4: missing required interactions asset. " +
+        "Search UI requires interactions.js to open the search palette.",
+    );
+  }
+  const interactionsScript = buildInteractionsScriptTag(assets, prefix);
   const searchScript = buildSearchScriptTag(assets, prefix);
   const codeCopyScript = buildCodeCopyScriptTag(assets, prefix);
   const tocScrollspyScript = buildTocScrollspyScriptTag(assets);
@@ -1334,10 +1434,12 @@ ${versionBanner}
   </main>
   ${rightRailToc}
 </div>
+${searchPalette}
 ${searchScript}
 ${codeCopyScript}
 ${tocScrollspyScript}
 ${versionBannerScript}
+${interactionsScript}
 </body>
 </html>`;
 }

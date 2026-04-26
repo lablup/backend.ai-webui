@@ -349,6 +349,28 @@ export async function generateWebsite(
     console.log(`Written: assets/${codeCopyName}`);
   }
 
+  // FR-2726 Phase 4: BAI interactions (theme toggle, mobile drawer,
+  // search palette). Single file so the page only ships one extra
+  // script tag. Skipped when the template doesn't exist so older
+  // toolkit installs build cleanly.
+  const interactionsPath = path.resolve(
+    path.dirname(fileURLToPath(import.meta.url)),
+    "..",
+    "templates",
+    "assets",
+    "interactions.js",
+  );
+  if (fs.existsSync(interactionsPath)) {
+    const bytes = fs.readFileSync(interactionsPath);
+    const interactionsName = writeHashedAsset(
+      assetsDir,
+      "interactions.js",
+      bytes,
+      assetManifest,
+    );
+    console.log(`Written: assets/${interactionsName}`);
+  }
+
   // Right-rail TOC scroll-spy (F3). Tiny IntersectionObserver script —
   // shipped only when the file exists in templates so a toolkit install
   // without F3 still builds. Page builder also no-ops when the asset is
@@ -482,6 +504,7 @@ export async function generateWebsite(
     codeCopy: assetManifest["code-copy.js"],
     tocScrollspy: assetManifest["toc-scrollspy.js"],
     versionBanner: assetManifest["version-banner.js"],
+    interactions: assetManifest["interactions.js"],
     favicon: rootAssets.favicon,
     appleTouchIcon: rootAssets.appleTouchIcon,
     webmanifest: rootAssets.webmanifest,

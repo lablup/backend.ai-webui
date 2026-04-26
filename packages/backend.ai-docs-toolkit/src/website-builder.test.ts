@@ -101,6 +101,10 @@ function makeContext(): WebPageContext {
     favicon: "favicon.ico",
     brandLogoLight: "brand-logo-light.abcd.svg",
     brandLogoDark: "brand-logo-dark.abcd.svg",
+    // Phase 4 (FR-2726): buildWebPage requires interactions.js for the
+    // Cmd-K palette + theme toggle + drawer. Including it here keeps
+    // the test fixture aligned with what real builds produce.
+    interactions: "interactions.abcd.js",
   };
   return {
     chapter,

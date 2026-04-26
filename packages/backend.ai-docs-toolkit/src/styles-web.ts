@@ -358,6 +358,14 @@ body {
   display: block;
 }
 
+/* Brand logo swap (FR-2726 Phase 4). Both light and dark variants are
+   in the DOM; CSS hides whichever doesn't match the active data-theme.
+   :root:not([data-theme="dark"]) covers both the unset case (light is
+   default) and the explicit data-theme="light" case. */
+:root:not([data-theme="dark"]) .bai-brand-logo--dark { display: none; }
+[data-theme="dark"] .bai-brand-logo--light { display: none; }
+[data-theme="dark"] .bai-brand-logo--dark { display: block; }
+
 .bai-brand-fallback {
   font-family: var(--bai-font-heading);
   font-weight: 600;
@@ -493,6 +501,226 @@ body {
   background: var(--bai-bg-subtle);
   color: var(--bai-text);
   text-decoration: none;
+}
+
+/* Topbar search trigger label (Phase 4) — replaces the inline input.
+   Visually mimics the input field so the bar still reads as a search
+   surface, but the click opens the palette overlay. */
+.bai-topbar__search-label {
+  flex: 1;
+  text-align: left;
+  color: var(--bai-text-3);
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Theme toggle (Phase 4). Shows the destination icon — the moon when
+   light mode is active, the sun when dark mode is active. */
+.bai-theme-icon {
+  display: none;
+}
+:root:not([data-theme="dark"]) .bai-theme-icon--dark {
+  display: inline;
+}
+[data-theme="dark"] .bai-theme-icon--light {
+  display: inline;
+}
+
+/* Search palette (Phase 4 — FR-2726). The palette is a body-class-
+   controlled modal: when body has bai-palette-open, the .bai-palette
+   element is shown; otherwise it stays hidden. The scrim covers the
+   full viewport; the panel is centered horizontally with a fixed top
+   offset (~14vh) so the field lands near the user's gaze. Inside the
+   panel, #search-input is restyled to match the palette look-and-feel;
+   #search-results renders the existing search.js dropdown, repositioned
+   to flow inside the panel instead of floating absolutely. */
+.bai-palette {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 14vh;
+  pointer-events: none;
+}
+
+.bai-palette[hidden] {
+  display: none;
+}
+
+body.bai-palette-open .bai-palette {
+  pointer-events: auto;
+}
+
+.bai-palette__scrim {
+  position: absolute;
+  inset: 0;
+  background: rgba(20, 20, 20, 0.45);
+  backdrop-filter: blur(4px);
+}
+[data-theme="dark"] .bai-palette__scrim {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.bai-palette__panel {
+  position: relative;
+  width: 600px;
+  max-width: 92vw;
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bai-bg);
+  border: 1px solid var(--bai-border);
+  border-radius: var(--bai-radius-lg);
+  box-shadow: var(--bai-shadow-lg);
+  overflow: hidden;
+  animation: bai-palette-in 180ms ease-out;
+}
+
+@keyframes bai-palette-in {
+  from {
+    transform: translateY(-12px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.bai-palette__searchrow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--bai-border);
+}
+
+.bai-palette__searchrow > svg {
+  color: var(--bai-text-3);
+  flex-shrink: 0;
+}
+
+.bai-palette__panel #search-input {
+  flex: 1;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-family: var(--bai-font-sans);
+  font-size: 15.5px;
+  color: var(--bai-text);
+  outline: 0;
+  padding: 0;
+}
+
+.bai-palette__panel #search-input::placeholder {
+  color: var(--bai-text-3);
+}
+
+.bai-palette__close-hint {
+  font-family: var(--bai-font-mono);
+  font-size: 10.5px;
+  background: var(--bai-bg-muted);
+  border: 1px solid var(--bai-border);
+  border-bottom-width: 2px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  color: var(--bai-text-3);
+  flex-shrink: 0;
+}
+
+/* When the search-results dropdown lives inside the palette panel,
+   override its absolute positioning so it scrolls inline with the
+   panel body instead of floating relative to the viewport. */
+.bai-palette__panel #search-results {
+  position: static;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+  max-height: none;
+  flex: 1;
+  overflow-y: auto;
+  padding: 6px 0;
+}
+
+.bai-palette__panel #search-results .search-result-item {
+  padding: 10px 18px;
+  border-bottom: 1px solid var(--bai-border-soft);
+}
+
+.bai-palette__panel #search-results .search-result-item:last-child {
+  border-bottom: 0;
+}
+
+.bai-palette__panel #search-results .search-result-item:hover,
+.bai-palette__panel #search-results .search-result-item:focus {
+  background: var(--bai-bg-muted);
+  outline: 0;
+}
+
+.bai-palette__panel #search-results .search-result-title {
+  color: var(--bai-text);
+  font-size: 14px;
+}
+
+.bai-palette__panel #search-results .search-result-snippet {
+  color: var(--bai-text-3);
+  font-size: 12px;
+}
+
+/* Mobile drawer scrim (Phase 4). Created lazily by interactions.js
+   and added to the body when the user opens the drawer. Re-uses the
+   palette scrim look so the visual language stays consistent. */
+.bai-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(20, 20, 20, 0.45);
+  backdrop-filter: blur(4px);
+  display: none;
+}
+
+[data-theme="dark"] .bai-scrim {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+body.bai-drawer-open .bai-scrim {
+  display: block;
+}
+
+/* When the drawer is open at narrow viewports, slide the sider in
+   from the left as a fixed-position overlay. Desktop layout is
+   unaffected — the @media query below scopes the override to
+   ≤ 880px so the sider's regular sticky behavior is preserved. */
+@media (max-width: 880px) {
+  body.bai-drawer-open .doc-sidebar {
+    display: block;
+    position: fixed;
+    top: var(--bai-topbar-h);
+    left: 0;
+    width: 280px;
+    max-width: 86vw;
+    height: calc(100vh - var(--bai-topbar-h));
+    z-index: 101;
+    background: var(--bai-bg-sider);
+    border-right: 1px solid var(--bai-border);
+    box-shadow: var(--bai-shadow-lg);
+    overflow-y: auto;
+    animation: bai-drawer-in 200ms ease-out;
+  }
+}
+
+@keyframes bai-drawer-in {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
 }
 
 /* Search results dropdown anchored to the topbar search container. */
