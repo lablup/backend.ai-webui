@@ -25,12 +25,48 @@ export interface WebPageContext {
   lastUpdated?: string;
   /** Hashed asset filenames keyed by logical name (e.g. "styles.css" → "styles.deadbeef.css"). */
   assets: PageAssets;
+  /**
+   * Versioned-docs context (F6). Optional — only set when the build is
+   * running in versioned mode (`versions` declared in config). Drives
+   * the header version selector and the "is this the latest?" hint
+   * the page metadata bar can show.
+   */
+  versionContext?: PageVersionContext;
 }
 
 export interface WebsiteMetadata {
   title: string;
   version: string;
   lang: string;
+}
+
+/**
+ * Per-page version context. Built by the website generator from the
+ * loaded `LoadedVersions` and the slug being rendered.
+ */
+export interface PageVersionContext {
+  /** Current minor label, e.g. "25.16". */
+  current: string;
+  /** Full ordered list of minor labels for the dropdown. */
+  allLabels: string[];
+  /** Label of the entry marked `latest: true`. */
+  latest: string;
+  /**
+   * For each version label, indicates whether the current page slug
+   * exists there. Used to decide between "navigate to same slug" and
+   * "fall back to that version's index". Built once per (lang, slug)
+   * by the generator and reused across pages with that slug.
+   */
+  slugAvailability: Record<string, boolean>;
+  /** Current page slug. Used by the inline switcher script for navigation. */
+  slug: string;
+  /**
+   * Path depth from the current page back to the website output root.
+   * For a page at `<dist>/web/<version>/<lang>/<slug>.html` this is 3
+   * (`../../../`). Drives the relative-URL math the inline script uses
+   * when navigating across versions.
+   */
+  rootDepth: number;
 }
 
 /**
@@ -186,6 +222,21 @@ function buildPageMetadata(context: WebPageContext): string {
 }
 
 /**
+ * Compute the `..` prefix that points from a chapter page back to the
+ * website output root (`dist/web/`). Pages at `<lang>/foo.html` need
+ * one `..`; pages at `<version>/<lang>/foo.html` (versioned mode) need
+ * two. Used for stylesheet, search script, favicon, and root-relative
+ * navigation URLs so the same builder works in both layouts.
+ */
+function rootPrefix(context: { versionContext?: PageVersionContext }): string {
+  const depth = context.versionContext?.rootDepth ?? 2;
+  // Each segment between the page and `dist/web/` adds one `../`.
+  // Depth 2 = `<lang>/foo.html` → 1 hop up. Depth 3 = `<v>/<lang>/foo.html` → 2 hops.
+  const hops = Math.max(0, depth - 1);
+  return "../".repeat(hops);
+}
+
+/**
  * Build the `<head>` block: meta tags + stylesheet + favicon / apple-touch /
  * webmanifest. The search script is referenced separately from `<body>` end.
  */
@@ -194,27 +245,28 @@ function buildHeadAssetTags(
   langLabel: string,
   pageTitle: string,
   assets: PageAssets,
+  prefix: string,
 ): string {
   const lines: string[] = [
     `<meta charset="utf-8" />`,
     `<meta name="viewport" content="width=device-width, initial-scale=1" />`,
     `<title>${pageTitle} - ${escapeHtml(langLabel)}</title>`,
-    `<link rel="stylesheet" href="../assets/${escapeHtml(assets.styles)}" />`,
+    `<link rel="stylesheet" href="${prefix}assets/${escapeHtml(assets.styles)}" />`,
   ];
 
   if (assets.favicon) {
     lines.push(
-      `<link rel="icon" href="../${escapeHtml(assets.favicon)}" sizes="any" />`,
+      `<link rel="icon" href="${prefix}${escapeHtml(assets.favicon)}" sizes="any" />`,
     );
   }
   if (assets.appleTouchIcon) {
     lines.push(
-      `<link rel="apple-touch-icon" href="../${escapeHtml(assets.appleTouchIcon)}" />`,
+      `<link rel="apple-touch-icon" href="${prefix}${escapeHtml(assets.appleTouchIcon)}" />`,
     );
   }
   if (assets.webmanifest) {
     lines.push(
-      `<link rel="manifest" href="../${escapeHtml(assets.webmanifest)}" />`,
+      `<link rel="manifest" href="${prefix}${escapeHtml(assets.webmanifest)}" />`,
     );
   }
 
@@ -230,16 +282,110 @@ function buildHeadAssetTags(
  * a data attribute on `#search-input`, so the script itself stays
  * language-agnostic and can be content-hashed once.
  */
-function buildSearchScriptTag(assets: PageAssets): string {
-  return `<script defer src="../assets/${escapeHtml(assets.search)}"></script>`;
+function buildSearchScriptTag(assets: PageAssets, prefix: string): string {
+  return `<script defer src="${prefix}assets/${escapeHtml(assets.search)}"></script>`;
 }
 
 /**
  * Build optional code-copy script tag (added by F4). No-op until F4 lands.
  */
-function buildCodeCopyScriptTag(assets: PageAssets): string {
+function buildCodeCopyScriptTag(assets: PageAssets, prefix: string): string {
   if (!assets.codeCopy) return "";
-  return `<script defer src="../assets/${escapeHtml(assets.codeCopy)}"></script>`;
+  return `<script defer src="${prefix}assets/${escapeHtml(assets.codeCopy)}"></script>`;
+}
+
+/**
+ * Build the page-header bar. F1 (sibling stack arm) introduces the
+ * language switcher in this same `<header class="page-header-bar">`
+ * structure; F6 contributes the version selector. When F1 lands the
+ * two contributions live side-by-side as siblings inside `page-header-nav`.
+ *
+ * In F6's worktree (which doesn't yet have F1), this header carries the
+ * version selector on its own. The CSS class names are stable so the
+ * eventual F1 + F6 reconciliation is a small CSS adjustment, not a
+ * structural conflict.
+ *
+ * Returns an empty string when no header content is present (no version
+ * selector, no language switcher) so we don't emit a stray `<header />`.
+ */
+function buildPageHeaderBar(context: WebPageContext): string {
+  const versionSwitcher = buildVersionSwitcher(context);
+  if (!versionSwitcher) {
+    // Nothing to render in the header today. F1 will fill this in with
+    // a language switcher; F6 leaves the scaffold absent until then so
+    // we don't ship empty markup.
+    return "";
+  }
+  return `<header class="page-header-bar">
+  <nav class="page-header-nav" aria-label="Documentation navigation">
+    ${versionSwitcher}
+  </nav>
+</header>`;
+}
+
+/**
+ * Build the version selector dropdown for versioned-docs mode.
+ *
+ * The dropdown lists every minor label (never patches — that
+ * invariant is enforced at config-load time in `versions.ts`). On
+ * change, an inline script navigates to the same slug in the target
+ * version when the slug exists there; otherwise it falls back to the
+ * target version's index page (no 404).
+ *
+ * The data needed by the inline script is passed via `data-` attributes
+ * on the `<select>` so the script body itself stays small and language-
+ * agnostic. Total inline JS budget < 1 KB; safely under the 25 KB total
+ * per-page JS cap.
+ */
+function buildVersionSwitcher(context: WebPageContext): string {
+  const ver = context.versionContext;
+  if (!ver) return "";
+  // Build availability JSON: { "25.16": true, "25.10": false, ... }.
+  // The script reads this to decide between same-slug and index-fallback.
+  const availabilityJson = JSON.stringify(ver.slugAvailability);
+  const optionsHtml = ver.allLabels
+    .map((label) => {
+      const selected = label === ver.current ? " selected" : "";
+      const isLatest = label === ver.latest ? " (latest)" : "";
+      return `<option value="${escapeHtml(label)}"${selected}>${escapeHtml(label)}${isLatest}</option>`;
+    })
+    .join("");
+  // The handler is inlined to avoid a separate hashed asset for ~30 LoC.
+  // It is idempotent and language-agnostic: the only state it touches is
+  // `window.location.assign(...)` after a probe of the availability map.
+  const inlineScript = `(function(){
+  var sel = document.currentScript && document.currentScript.previousElementSibling;
+  if (!sel || sel.tagName !== 'SELECT') return;
+  sel.addEventListener('change', function(e) {
+    var target = e.target.value;
+    if (!target) return;
+    var current = sel.dataset.current;
+    if (target === current) return;
+    var lang = sel.dataset.lang;
+    var slug = sel.dataset.slug;
+    var rootDepth = parseInt(sel.dataset.rootDepth, 10) || 2;
+    var availability = {};
+    try { availability = JSON.parse(sel.dataset.availability || '{}'); } catch (_) {}
+    var hops = Math.max(0, rootDepth - 1);
+    var prefix = '';
+    for (var i = 0; i < hops; i++) { prefix += '../'; }
+    var dest = availability[target]
+      ? prefix + target + '/' + lang + '/' + slug + '.html'
+      : prefix + target + '/' + lang + '/index.html';
+    window.location.assign(dest);
+  });
+})();`;
+  return `<label class="version-switcher-label" for="version-switcher">Version</label>
+    <select
+      id="version-switcher"
+      class="version-switcher"
+      data-current="${escapeHtml(ver.current)}"
+      data-lang="${escapeHtml(context.metadata.lang)}"
+      data-slug="${escapeHtml(ver.slug)}"
+      data-root-depth="${ver.rootDepth}"
+      data-availability="${escapeHtml(availabilityJson)}"
+    >${optionsHtml}</select>
+    <script>${inlineScript}</script>`;
 }
 
 /**
@@ -286,6 +432,8 @@ export function buildWebPage(context: WebPageContext): string {
   const { chapter, allChapters, currentIndex, metadata, config, assets } =
     context;
 
+  const prefix = rootPrefix(context);
+
   const sidebar = buildWebsiteSidebar(
     allChapters,
     currentIndex,
@@ -301,9 +449,16 @@ export function buildWebPage(context: WebPageContext): string {
   );
   const langLabel = config.languageLabels[metadata.lang] || metadata.lang;
   const pageTitle = `${escapeHtml(chapter.title)} - ${escapeHtml(metadata.title)}`;
-  const headTags = buildHeadAssetTags(metadata, langLabel, pageTitle, assets);
-  const searchScript = buildSearchScriptTag(assets);
-  const codeCopyScript = buildCodeCopyScriptTag(assets);
+  const headTags = buildHeadAssetTags(
+    metadata,
+    langLabel,
+    pageTitle,
+    assets,
+    prefix,
+  );
+  const headerBar = buildPageHeaderBar(context);
+  const searchScript = buildSearchScriptTag(assets, prefix);
+  const codeCopyScript = buildCodeCopyScriptTag(assets, prefix);
 
   return `<!DOCTYPE html>
 <html lang="${escapeHtml(metadata.lang)}">
@@ -311,6 +466,7 @@ export function buildWebPage(context: WebPageContext): string {
   ${headTags}
 </head>
 <body>
+${headerBar}
 <div class="doc-page">
   ${sidebar}
   <main class="doc-main">

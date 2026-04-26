@@ -3,7 +3,7 @@
  * Uses Infima CSS variables for consistent styling.
  */
 
-const CJK_LANGS = new Set(['ko', 'ja', 'zh', 'zh-CN', 'zh-TW']);
+const CJK_LANGS = new Set(["ko", "ja", "zh", "zh-CN", "zh-TW"]);
 
 export function generateWebStyles(lang?: string): string {
   const isCjk = lang ? CJK_LANGS.has(lang) : false;
@@ -140,7 +140,7 @@ body {
   background: #fff;
   margin: 0;
   padding: 0;
-  ${isCjk ? 'word-break: keep-all;' : ''}
+  ${isCjk ? "word-break: keep-all;" : ""}
   overflow-wrap: break-word;
 }
 
@@ -784,9 +784,45 @@ export function generateWebsiteStyles(): string {
   const cjkSelectors = Array.from(CJK_LANGS)
     .sort()
     .map((code) => `:lang(${code}) body`)
-    .join(',\n');
+    .join(",\n");
 
-  return baseStyles + `
+  return (
+    baseStyles +
+    `
+
+/* ==========================================================================
+   Page header bar (F1 language switcher + F6 version switcher live here)
+   ========================================================================== */
+.page-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid var(--ifm-color-emphasis-200);
+  background: var(--ifm-color-emphasis-0);
+  font-size: 0.875rem;
+}
+.page-header-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.version-switcher-label {
+  color: var(--ifm-color-emphasis-700);
+  font-weight: 500;
+}
+.version-switcher {
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 4px;
+  background: var(--ifm-color-emphasis-0);
+  color: var(--ifm-color-emphasis-900);
+  font: inherit;
+  cursor: pointer;
+}
+.version-switcher:hover {
+  border-color: var(--ifm-color-primary);
+}
 
 /* ==========================================================================
    CJK Language Rules (via :lang() selectors for shared stylesheet)
@@ -794,5 +830,6 @@ export function generateWebsiteStyles(): string {
 ${cjkSelectors} {
   word-break: keep-all;
 }
-`;
+`
+  );
 }

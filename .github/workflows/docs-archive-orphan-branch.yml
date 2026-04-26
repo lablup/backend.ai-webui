@@ -1,0 +1,177 @@
+# Build the WebUI docs site for a specific minor version with the
+# toolkit-of-its-day, then commit + push the artifacts to a docs-archive
+# orphan branch (e.g., `docs-archive/25.16`).
+#
+# Why orphan branches?
+#   Past minors are NOT rebuilt with the current toolkit on every deploy
+#   — markdown structure of older minors may diverge enough to break the
+#   build. Instead, each minor is built ONCE with the toolkit it shipped
+#   with and parked on a dedicated orphan branch. Orphan branches share
+#   no history with `main`, so the main repo size is unaffected.
+#
+# Trigger: manual (`workflow_dispatch`) for v1. The operator picks the
+# tagged commit they want to immortalize and the minor label that
+# represents it. Future iteration may add an on-tag trigger but that is
+# explicitly out of scope here.
+#
+# Output: a `docs-archive/<minor>` branch containing only the contents
+# of `dist/web/<minor>/` (so the archived site is the FILES, not the
+# source tree). The deployment pipeline (AWS Amplify or equivalent)
+# checks out `docs-archive/<minor>` and serves it under `/<minor>/...`.
+# The deployment pipeline itself is deferred to a separate spec.
+#
+# References:
+#   - Spec: .specs/FR-2710-docs-site-production-uplift/spec.md (F6)
+#   - Issue: FR-2718 / gh#7003
+
+name: docs-archive-orphan-branch
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_ref:
+        description: "Source ref to build from (commit SHA or tag, e.g. v25.16.5)"
+        required: true
+        type: string
+      minor_label:
+        description: "Minor label this archive represents (e.g. 25.16). MUST NOT include patch."
+        required: true
+        type: string
+      dry_run:
+        description: "If true, build and inspect only — do NOT push the orphan branch"
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-archive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Validate minor label shape
+        # Refuse anything that looks like a full patch (three numeric segments)
+        # to mirror the validation in `versions.ts` — the selector lists minors
+        # only, never patches. Inputs flow through env vars (NOT shell
+        # interpolation) to avoid command injection from malicious input.
+        env:
+          MINOR_LABEL: ${{ inputs.minor_label }}
+        run: |
+          if [[ "$MINOR_LABEL" =~ ^[0-9]+\.[0-9]+\.[0-9]+ ]]; then
+            echo "ERROR: minor_label '$MINOR_LABEL' looks like a patch."
+            echo "Expected format: '<MAJOR>.<MINOR>' (e.g. 25.16). The selector lists minors only."
+            exit 1
+          fi
+          if [[ ! "$MINOR_LABEL" =~ ^[0-9]+\.[0-9]+$ ]]; then
+            echo "ERROR: minor_label '$MINOR_LABEL' is not a clean MAJOR.MINOR pair."
+            exit 1
+          fi
+
+      - name: Checkout source ref (toolkit-of-its-day)
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.source_ref }}
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build website (toolkit-of-its-day)
+        # We deliberately use the toolkit version that shipped with this
+        # source ref. Past minors are NEVER rebuilt with main's toolkit.
+        run: pnpm --filter backend.ai-webui-docs run build:web
+
+      - name: Verify build output exists
+        run: |
+          DIST="packages/backend.ai-webui-docs/dist/web"
+          if [ ! -d "$DIST" ]; then
+            echo "ERROR: expected build output at $DIST"
+            exit 1
+          fi
+          echo "Build output:"
+          ls -la "$DIST"
+
+      - name: Stage build artifact for archive
+        # The archive branch should hold ONLY the rendered site, with no
+        # source files or lockfiles. We collect the output into a temp
+        # directory the orphan branch is built from. Inputs flow through
+        # env vars to avoid shell injection.
+        env:
+          MINOR_LABEL: ${{ inputs.minor_label }}
+          SOURCE_REF: ${{ inputs.source_ref }}
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          mkdir -p /tmp/docs-archive
+          cp -R packages/backend.ai-webui-docs/dist/web/. /tmp/docs-archive/
+          # Drop any version-prefixed subdirectory: the archive branch
+          # represents a SINGLE minor, so its root is the rendered site.
+          # If the source ref already used `versions:` mode the output is
+          # `dist/web/<v>/<lang>/...`; flatten it.
+          cd /tmp/docs-archive
+          if [ -d "$MINOR_LABEL" ]; then
+            mv "$MINOR_LABEL"/* .
+            rmdir "$MINOR_LABEL"
+          fi
+          echo "Archive contents:"
+          ls -la
+          # Drop a sentinel file so anyone browsing the branch knows
+          # which minor + source ref produced it.
+          cat > .archive-info.txt <<EOF
+          minor_label: $MINOR_LABEL
+          source_ref:  $SOURCE_REF
+          built_at:    $(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          built_by:    docs-archive-orphan-branch.yml (gh actions run $RUN_ID)
+          EOF
+
+      - name: Configure git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Create orphan branch and commit artifacts
+        if: ${{ inputs.dry_run != true }}
+        env:
+          MINOR_LABEL: ${{ inputs.minor_label }}
+          SOURCE_REF: ${{ inputs.source_ref }}
+        run: |
+          BRANCH="docs-archive/$MINOR_LABEL"
+          # Use a fresh worktree so we don't disturb the main checkout.
+          git worktree add --detach /tmp/orphan-worktree
+          cd /tmp/orphan-worktree
+          # Detach HEAD and clear the index so the orphan starts truly empty.
+          git checkout --orphan "$BRANCH"
+          git rm -rf --cached . > /dev/null 2>&1 || true
+          # Wipe everything — we want the orphan tree to contain ONLY the
+          # archived site, no inherited source files.
+          find . -mindepth 1 -maxdepth 1 ! -name '.git' -exec rm -rf {} +
+          # Copy the staged archive in.
+          cp -R /tmp/docs-archive/. .
+          git add -A
+          git commit -m "docs-archive($MINOR_LABEL): build from $SOURCE_REF"
+          # Force-push: each invocation replaces the previous archive for
+          # this minor, since we re-build with the toolkit-of-its-day to
+          # pick up the latest patch within the minor.
+          git push --force origin "$BRANCH"
+
+      - name: Dry-run summary
+        if: ${{ inputs.dry_run == true }}
+        env:
+          MINOR_LABEL: ${{ inputs.minor_label }}
+          SOURCE_REF: ${{ inputs.source_ref }}
+        run: |
+          echo "Dry-run mode: orphan branch was NOT pushed."
+          echo "Would push: docs-archive/$MINOR_LABEL"
+          echo "Source ref: $SOURCE_REF"
+          echo "Artifact size:"
+          du -sh /tmp/docs-archive

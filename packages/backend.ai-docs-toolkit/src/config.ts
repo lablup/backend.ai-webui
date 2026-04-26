@@ -1,7 +1,7 @@
-import fs from 'fs';
-import path from 'path';
-import { parse as parseYaml } from 'yaml';
-import type { PdfTheme } from './theme.js';
+import fs from "fs";
+import path from "path";
+import { parse as parseYaml } from "yaml";
+import type { PdfTheme } from "./theme.js";
 
 export interface DocConfig {
   /** Document title, e.g. "Backend.AI WebUI User Guide" */
@@ -30,7 +30,10 @@ export interface DocConfig {
   /** Language labels, e.g. { en: "English", ko: "한국어" } */
   languageLabels?: Record<string, string>;
   /** Localized UI strings per language */
-  localizedStrings?: Record<string, { userGuide?: string; tableOfContents?: string }>;
+  localizedStrings?: Record<
+    string,
+    { userGuide?: string; tableOfContents?: string }
+  >;
   /** Localized admonition titles per language */
   admonitionTitles?: Record<string, Record<string, string>>;
   /** Localized figure labels per language */
@@ -81,48 +84,144 @@ export interface WebsiteConfig {
   basePath?: string;
 }
 
+// ── Versioned-docs schema (F6 / FR-2718) ──────────────────────────
+//
+// `versions` is OPTIONAL and OPT-IN. When omitted, the existing flat
+// output layout (`dist/web/<lang>/...`) is preserved exactly. When
+// declared, each entry produces a self-contained per-minor site under
+// `dist/web/<label>/<lang>/...`, and the version selector is rendered in
+// every page header. See ARCHITECTURE.md → "Versioned docs (F6)".
+//
+// Source kinds:
+//   - `workspace`     — build from the current checkout (used for the
+//                       `latest` entry in normal day-to-day deploys).
+//   - `archive-branch`— build by checking out a static, pre-built tree
+//                       from a `docs-archive/<minor>` orphan branch.
+//                       The toolkit-of-its-day produced those artifacts;
+//                       we never re-run the current toolkit against past
+//                       minors. If the branch does not exist locally,
+//                       the version is skipped with a clear warning.
+
+export type VersionSource =
+  | { kind: "workspace" }
+  | { kind: "archive-branch"; ref: string };
+
+export interface VersionEntry {
+  /** Display label for the selector, e.g. "25.16". Must be the minor portion, never a full patch. */
+  label: string;
+  /** How to source this version's built site. */
+  source: VersionSource;
+  /** Exactly one entry across `versions[]` must carry `latest: true`. */
+  latest?: boolean;
+}
+
 /** Full toolkit config file shape (docs-toolkit.config.yaml) */
 export interface ToolkitConfig extends DocConfig {
   agents?: AgentConfig;
   website?: WebsiteConfig;
+  /**
+   * Optional minor-grained version list. When omitted, the build emits
+   * the legacy single-version flat layout. See `versions.ts` for the
+   * normalized runtime shape and validation rules.
+   */
+  versions?: VersionEntry[];
 }
 
 // ── Defaults ──────────────────────────────────────────────────
 
 const DEFAULT_LANGUAGE_LABELS: Record<string, string> = {
-  en: 'English',
-  ko: '한국어',
-  ja: '日本語',
-  th: 'ภาษาไทย',
+  en: "English",
+  ko: "한국어",
+  ja: "日本語",
+  th: "ภาษาไทย",
 };
 
-const DEFAULT_LOCALIZED_STRINGS: Record<string, { userGuide: string; tableOfContents: string }> = {
-  en: { userGuide: 'User Guide', tableOfContents: 'Table of Contents' },
-  ko: { userGuide: '사용자 가이드', tableOfContents: '목차' },
-  ja: { userGuide: 'ユーザーガイド', tableOfContents: '目次' },
-  th: { userGuide: 'คู่มือผู้ใช้', tableOfContents: 'สารบัญ' },
+const DEFAULT_LOCALIZED_STRINGS: Record<
+  string,
+  { userGuide: string; tableOfContents: string }
+> = {
+  en: { userGuide: "User Guide", tableOfContents: "Table of Contents" },
+  ko: { userGuide: "사용자 가이드", tableOfContents: "목차" },
+  ja: { userGuide: "ユーザーガイド", tableOfContents: "目次" },
+  th: { userGuide: "คู่มือผู้ใช้", tableOfContents: "สารบัญ" },
 };
 
 const DEFAULT_ADMONITION_TITLES: Record<string, Record<string, string>> = {
-  en: { note: 'NOTE', tip: 'TIP', info: 'INFO', warning: 'WARNING', caution: 'CAUTION', danger: 'DANGER' },
-  ko: { note: '참고', tip: '팁', info: '정보', warning: '주의', caution: '주의', danger: '위험' },
-  ja: { note: '注記', tip: 'ヒント', info: '情報', warning: '警告', caution: '注意', danger: '危険' },
-  th: { note: 'หมายเหตุ', tip: 'เคล็ดลับ', info: 'ข้อมูล', warning: 'คำเตือน', caution: 'ข้อควรระวัง', danger: 'อันตราย' },
+  en: {
+    note: "NOTE",
+    tip: "TIP",
+    info: "INFO",
+    warning: "WARNING",
+    caution: "CAUTION",
+    danger: "DANGER",
+  },
+  ko: {
+    note: "참고",
+    tip: "팁",
+    info: "정보",
+    warning: "주의",
+    caution: "주의",
+    danger: "위험",
+  },
+  ja: {
+    note: "注記",
+    tip: "ヒント",
+    info: "情報",
+    warning: "警告",
+    caution: "注意",
+    danger: "危険",
+  },
+  th: {
+    note: "หมายเหตุ",
+    tip: "เคล็ดลับ",
+    info: "ข้อมูล",
+    warning: "คำเตือน",
+    caution: "ข้อควรระวัง",
+    danger: "อันตราย",
+  },
 };
 
 const DEFAULT_FIGURE_LABELS: Record<string, string> = {
-  en: 'Figure',
-  ko: '그림',
-  ja: '図',
-  th: 'รูปที่',
+  en: "Figure",
+  ko: "그림",
+  ja: "図",
+  th: "รูปที่",
 };
 
 /** Localized labels for website navigation and metadata */
 export const WEBSITE_LABELS: Record<string, Record<string, string>> = {
-  en: { previous: 'Previous', next: 'Next', editThisPage: 'Edit this page', lastUpdated: 'Last updated on', searchPlaceholder: 'Search docs...', noResults: 'No results found' },
-  ko: { previous: '이전', next: '다음', editThisPage: '이 페이지 편집', lastUpdated: '마지막 업데이트', searchPlaceholder: '문서 검색...', noResults: '검색 결과가 없습니다' },
-  ja: { previous: '前へ', next: '次へ', editThisPage: 'このページを編集', lastUpdated: '最終更新日', searchPlaceholder: 'ドキュメント検索...', noResults: '結果が見つかりません' },
-  th: { previous: 'ก่อนหน้า', next: 'ถัดไป', editThisPage: 'แก้ไขหน้านี้', lastUpdated: 'อัปเดตล่าสุด', searchPlaceholder: 'ค้นหาเอกสาร...', noResults: 'ไม่พบผลลัพธ์' },
+  en: {
+    previous: "Previous",
+    next: "Next",
+    editThisPage: "Edit this page",
+    lastUpdated: "Last updated on",
+    searchPlaceholder: "Search docs...",
+    noResults: "No results found",
+  },
+  ko: {
+    previous: "이전",
+    next: "다음",
+    editThisPage: "이 페이지 편집",
+    lastUpdated: "마지막 업데이트",
+    searchPlaceholder: "문서 검색...",
+    noResults: "검색 결과가 없습니다",
+  },
+  ja: {
+    previous: "前へ",
+    next: "次へ",
+    editThisPage: "このページを編集",
+    lastUpdated: "最終更新日",
+    searchPlaceholder: "ドキュメント検索...",
+    noResults: "結果が見つかりません",
+  },
+  th: {
+    previous: "ก่อนหน้า",
+    next: "ถัดไป",
+    editThisPage: "แก้ไขหน้านี้",
+    lastUpdated: "อัปเดตล่าสุด",
+    searchPlaceholder: "ค้นหาเอกสาร...",
+    noResults: "ไม่พบผลลัพธ์",
+  },
 };
 
 // ── Resolved config (all defaults applied) ────────────────────
@@ -142,7 +241,10 @@ export interface ResolvedDocConfig {
   version: string | null;
 
   languageLabels: Record<string, string>;
-  localizedStrings: Record<string, { userGuide: string; tableOfContents: string }>;
+  localizedStrings: Record<
+    string,
+    { userGuide: string; tableOfContents: string }
+  >;
   admonitionTitles: Record<string, Record<string, string>>;
   figureLabels: Record<string, string>;
 
@@ -155,34 +257,55 @@ export interface ResolvedDocConfig {
 
   agents?: AgentConfig;
   website?: WebsiteConfig;
+  /**
+   * Raw `versions` from `docs-toolkit.config.yaml`. Left unnormalized
+   * here so the website generator can apply F6's eligibility rules
+   * (see `versions.ts`). When undefined, single-version compatibility
+   * mode applies.
+   */
+  versions?: VersionEntry[];
 }
 
 export function resolveConfig(config: ToolkitConfig): ResolvedDocConfig {
   const projectRoot = config.projectRoot;
   return {
     title: config.title,
-    subtitle: config.subtitle ?? 'User Guide',
+    subtitle: config.subtitle ?? "User Guide",
     company: config.company,
-    logoPath: config.logoPath ? path.resolve(projectRoot, config.logoPath) : null,
-    logoFallbackHtml: config.logoFallbackHtml ?? `<div style="font-size:48px;color:#ff9d00;font-weight:bold;">${config.title}</div>`,
+    logoPath: config.logoPath
+      ? path.resolve(projectRoot, config.logoPath)
+      : null,
+    logoFallbackHtml:
+      config.logoFallbackHtml ??
+      `<div style="font-size:48px;color:#ff9d00;font-weight:bold;">${config.title}</div>`,
 
     projectRoot,
-    srcDir: path.resolve(projectRoot, config.srcDir ?? 'src'),
-    distDir: path.resolve(projectRoot, config.distDir ?? 'dist'),
+    srcDir: path.resolve(projectRoot, config.srcDir ?? "src"),
+    distDir: path.resolve(projectRoot, config.distDir ?? "dist"),
 
-    versionSource: path.resolve(projectRoot, config.versionSource ?? 'package.json'),
+    versionSource: path.resolve(
+      projectRoot,
+      config.versionSource ?? "package.json",
+    ),
     version: config.version ?? null,
 
     languageLabels: { ...DEFAULT_LANGUAGE_LABELS, ...config.languageLabels },
-    localizedStrings: mergeLocalizedStrings(DEFAULT_LOCALIZED_STRINGS, config.localizedStrings),
-    admonitionTitles: mergeNestedRecord(DEFAULT_ADMONITION_TITLES, config.admonitionTitles),
+    localizedStrings: mergeLocalizedStrings(
+      DEFAULT_LOCALIZED_STRINGS,
+      config.localizedStrings,
+    ),
+    admonitionTitles: mergeNestedRecord(
+      DEFAULT_ADMONITION_TITLES,
+      config.admonitionTitles,
+    ),
     figureLabels: { ...DEFAULT_FIGURE_LABELS, ...config.figureLabels },
 
-    pdfFilenameTemplate: config.pdfFilenameTemplate ?? '{title}_{version}_{lang}.pdf',
+    pdfFilenameTemplate:
+      config.pdfFilenameTemplate ?? "{title}_{version}_{lang}.pdf",
     pdfMetadata: {
       author: config.pdfMetadata?.author ?? config.company,
       subject: config.pdfMetadata?.subject ?? `${config.title}`,
-      creator: config.pdfMetadata?.creator ?? 'docs-toolkit PDF Generator',
+      creator: config.pdfMetadata?.creator ?? "docs-toolkit PDF Generator",
     },
     cjkFontPaths: config.cjkFontPaths ?? [],
 
@@ -191,6 +314,7 @@ export function resolveConfig(config: ToolkitConfig): ResolvedDocConfig {
 
     agents: config.agents,
     website: config.website,
+    versions: config.versions,
   };
 }
 
@@ -202,8 +326,12 @@ function mergeLocalizedStrings(
   const result = { ...defaults };
   for (const [lang, strings] of Object.entries(overrides)) {
     result[lang] = {
-      userGuide: strings.userGuide ?? defaults[lang]?.userGuide ?? defaults.en.userGuide,
-      tableOfContents: strings.tableOfContents ?? defaults[lang]?.tableOfContents ?? defaults.en.tableOfContents,
+      userGuide:
+        strings.userGuide ?? defaults[lang]?.userGuide ?? defaults.en.userGuide,
+      tableOfContents:
+        strings.tableOfContents ??
+        defaults[lang]?.tableOfContents ??
+        defaults.en.tableOfContents,
     };
   }
   return result;
@@ -215,7 +343,10 @@ function mergeNestedRecord(
 ): Record<string, Record<string, string>> {
   if (!overrides) return { ...defaults };
   const result: Record<string, Record<string, string>> = {};
-  for (const key of new Set([...Object.keys(defaults), ...Object.keys(overrides)])) {
+  for (const key of new Set([
+    ...Object.keys(defaults),
+    ...Object.keys(overrides),
+  ])) {
     result[key] = { ...defaults[key], ...overrides[key] };
   }
   return result;
@@ -223,16 +354,19 @@ function mergeNestedRecord(
 
 // ── Config file loader ────────────────────────────────────────
 
-const CONFIG_FILENAME = 'docs-toolkit.config.yaml';
+const CONFIG_FILENAME = "docs-toolkit.config.yaml";
 
 export function loadToolkitConfig(projectRoot: string): ToolkitConfig {
   const configPath = path.resolve(projectRoot, CONFIG_FILENAME);
   if (!fs.existsSync(configPath)) {
     throw new Error(
       `Config file not found: ${configPath}\n` +
-      `Run "docs-toolkit init" to create one, or create ${CONFIG_FILENAME} manually.`,
+        `Run "docs-toolkit init" to create one, or create ${CONFIG_FILENAME} manually.`,
     );
   }
-  const raw = parseYaml(fs.readFileSync(configPath, 'utf-8')) as Record<string, unknown>;
+  const raw = parseYaml(fs.readFileSync(configPath, "utf-8")) as Record<
+    string,
+    unknown
+  >;
   return { ...raw, projectRoot } as ToolkitConfig;
 }
