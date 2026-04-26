@@ -363,6 +363,36 @@ export async function generateWebsite(
     console.log(`Written: assets/${tocScrollspyName}`);
   }
 
+  // FR-2723: version-banner.js powers the "view latest" banner +
+  // "not in selected version" notice. Only emitted in versioned mode
+  // — in flat mode there is no versioning UX to drive, so we skip the
+  // asset entirely (zero bytes shipped, zero behavior change).
+  if (loadedVersions.enabled) {
+    const versionBannerPath = path.resolve(
+      path.dirname(fileURLToPath(import.meta.url)),
+      "..",
+      "templates",
+      "assets",
+      "version-banner.js",
+    );
+    if (fs.existsSync(versionBannerPath)) {
+      const bytes = fs.readFileSync(versionBannerPath);
+      const versionBannerName = writeHashedAsset(
+        assetsDir,
+        "version-banner.js",
+        bytes,
+        assetManifest,
+      );
+      console.log(`Written: assets/${versionBannerName}`);
+    } else {
+      console.warn(
+        "[version-banner] templates/assets/version-banner.js not found — " +
+          "version-mismatch UX will not render. Reinstall backend.ai-docs-toolkit " +
+          "or restore the template file.",
+      );
+    }
+  }
+
   // Site-root brand assets (favicon, apple-touch-icon, site.webmanifest).
   // These live at `dist/web/` (not under `assets/`) so absolute references
   // like `/favicon.ico` work for any deployment layout.
@@ -383,11 +413,15 @@ export async function generateWebsite(
   const versionsBuilt: Version[] = [];
 
   // Per-page asset manifest is identical for every page in every layout.
+  // `versionBanner` is only present in versioned mode (asset is only
+  // written when `loadedVersions.enabled`); flat-mode pages get
+  // `undefined`, which the page builder treats as "no script tag".
   const pageAssets: PageAssets = {
     styles: assetManifest["styles.css"],
     search: assetManifest["search.js"],
     codeCopy: assetManifest["code-copy.js"],
     tocScrollspy: assetManifest["toc-scrollspy.js"],
+    versionBanner: assetManifest["version-banner.js"],
     favicon: rootAssets.favicon,
     appleTouchIcon: rootAssets.appleTouchIcon,
     webmanifest: rootAssets.webmanifest,

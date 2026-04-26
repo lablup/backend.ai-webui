@@ -247,7 +247,25 @@ const DEFAULT_FIGURE_LABELS: Record<string, string> = {
   th: "รูปที่",
 };
 
-/** Localized labels for website navigation and metadata */
+/** Localized labels for website navigation and metadata.
+ *
+ * Version-mismatch UX (FR-2723) keys:
+ *   - `bannerViewLatest`     — body text of the "view latest" banner shown
+ *                              on every non-latest version page. Includes
+ *                              `{version}` and `{latestVersion}` placeholders
+ *                              (substituted client-side in version-banner.js).
+ *   - `bannerViewLatestLink` — anchor text for the "view latest" link.
+ *   - `bannerDismiss`        — aria-label / tooltip for the dismiss "×" button
+ *                              on both the banner and the notice.
+ *   - `noticeNotInVersion`   — body text shown when the version switcher
+ *                              fell back to the version index because the
+ *                              same slug doesn't exist there. Includes a
+ *                              `{version}` placeholder for the target minor.
+ *
+ * The placeholder syntax is plain `{name}` (NOT i18next `{{name}}`) because
+ * the substitution happens in our own ~1 KB inline JS, not via an i18n
+ * library. See `templates/assets/version-banner.js`.
+ */
 export const WEBSITE_LABELS: Record<string, Record<string, string>> = {
   en: {
     previous: "Previous",
@@ -262,6 +280,12 @@ export const WEBSITE_LABELS: Record<string, Record<string, string>> = {
     copy: "Copy",
     copied: "Copied!",
     copyFailed: "Copy failed",
+    bannerViewLatest:
+      "You are viewing version {version}. View the latest version ({latestVersion}).",
+    bannerViewLatestLink: "View the latest version ({latestVersion})",
+    bannerDismiss: "Dismiss",
+    noticeNotInVersion:
+      "This page is not available in version {version}. You are viewing the version index instead.",
   },
   ko: {
     previous: "이전",
@@ -276,6 +300,12 @@ export const WEBSITE_LABELS: Record<string, Record<string, string>> = {
     copy: "복사",
     copied: "복사됨!",
     copyFailed: "복사 실패",
+    bannerViewLatest:
+      "버전 {version} 문서를 보고 있습니다. 최신 버전({latestVersion}) 보기.",
+    bannerViewLatestLink: "최신 버전({latestVersion}) 보기",
+    bannerDismiss: "닫기",
+    noticeNotInVersion:
+      "이 페이지는 버전 {version}에 존재하지 않습니다. 해당 버전의 인덱스 페이지로 이동했습니다.",
   },
   ja: {
     previous: "前へ",
@@ -290,6 +320,12 @@ export const WEBSITE_LABELS: Record<string, Record<string, string>> = {
     copy: "コピー",
     copied: "コピーしました!",
     copyFailed: "コピーに失敗しました",
+    bannerViewLatest:
+      "バージョン {version} のドキュメントを表示しています。最新バージョン({latestVersion})を表示。",
+    bannerViewLatestLink: "最新バージョン({latestVersion})を表示",
+    bannerDismiss: "閉じる",
+    noticeNotInVersion:
+      "このページはバージョン {version} には存在しません。代わりにバージョンのインデックスを表示しています。",
   },
   th: {
     previous: "ก่อนหน้า",
@@ -304,6 +340,12 @@ export const WEBSITE_LABELS: Record<string, Record<string, string>> = {
     copy: "คัดลอก",
     copied: "คัดลอกแล้ว!",
     copyFailed: "คัดลอกไม่สำเร็จ",
+    bannerViewLatest:
+      "คุณกำลังดูเวอร์ชัน {version} ดูเวอร์ชันล่าสุด ({latestVersion})",
+    bannerViewLatestLink: "ดูเวอร์ชันล่าสุด ({latestVersion})",
+    bannerDismiss: "ปิด",
+    noticeNotInVersion:
+      "หน้านี้ไม่มีในเวอร์ชัน {version} กำลังแสดงหน้าดัชนีของเวอร์ชันแทน",
   },
 };
 

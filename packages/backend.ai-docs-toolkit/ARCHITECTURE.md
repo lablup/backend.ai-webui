@@ -287,6 +287,54 @@ Each `PageEnumerationRow` has `{ version, lang, slug, path, isLatest }`.
 F2 iterates `pages` to emit `sitemap.xml`. `canonicalPathFor(loaded, lang, slug)`
 returns the per-page canonical URL relative to the website output root.
 
+### Version mismatch UX (FR-2723)
+
+In versioned mode the build emits two pieces of UX that warn readers
+when they're not on the latest version, or when the version they
+selected doesn't carry the slug they were reading. Both pieces are
+air-gap safe (no fetches, no CDN, no runtime API), localized for
+en/ko/ja/th from `WEBSITE_LABELS`, and dismissible per-session via
+`sessionStorage`.
+
+**Source files:**
+
+| File | Role |
+|---|---|
+| `src/website-builder.ts` → `buildVersionBanner` | Render the "view latest" banner on every non-latest page |
+| `src/website-builder.ts` → `buildVersionNotice` | Render the (initially hidden) "not in selected version" notice |
+| `src/website-builder.ts` → `buildVersionSwitcher` inline script | Set `sessionStorage["docs.notice.notInVersion"]` before navigating to a fallback index |
+| `templates/assets/version-banner.js` | Hashed asset that handles dismissal + notice reveal at runtime |
+| `src/styles-web.ts` → `.docs-banner`, `.docs-notice` | Visual styles |
+| `src/config.ts` → `WEBSITE_LABELS.{bannerViewLatest, bannerViewLatestLink, bannerDismiss, noticeNotInVersion}` | Localized strings |
+
+**"View latest version" banner.** Injected at build time on every
+non-latest version page, BETWEEN `<header class="page-header-bar">`
+and the `.doc-page` flex row, so it spans the full width above the
+sidebar. Renders unconditionally as visible markup (so SSR / no-JS
+readers still see it); on `DOMContentLoaded`, `version-banner.js`
+checks `sessionStorage["docs.banner.viewLatestDismissed:<current>:<latest>"]`
+and hides the banner when set. The dismissal key is scoped per
+(currentVersion, latestVersion) pair so dismissing it on `25.16` does
+not suppress it on `25.10`. The link target follows the same fallback
+rule as the version switcher: same slug in latest if available, else
+the latest version's index.
+
+**"Not in selected version" notice.** Injected hidden inside `<main>`
+above the chapter content. The version-switcher inline script (in
+`buildVersionSwitcher`) sets
+`sessionStorage["docs.notice.notInVersion"] = "<targetVersion>::<originSlug>"`
+right before navigating to a fallback `index.html`. On the destination
+page, `version-banner.js` reads the flag, verifies
+`<targetVersion> === <currentVersion>` (defends against stale flags
+after browser back/forward), substitutes `{version}` into the
+localized `data-message-template` attribute, reveals the notice, and
+clears the flag. A subsequent reload of the same page does not
+re-show the notice (the flag is consumed once).
+
+Both surfaces are skipped entirely in flat mode (no `versionContext`,
+no asset emitted, no CSS used). Total runtime JS overhead: ~5 KB
+unminified hashed asset, well under the 25 KB per-page budget.
+
 ### Single-version compatibility mode
 
 When `versions` is not declared, the build behaves exactly as before

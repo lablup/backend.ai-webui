@@ -200,6 +200,14 @@ export interface PageAssets {
   codeCopy?: string;
   /** Hashed `toc-scrollspy.js` filename. Optional — added by F3. */
   tocScrollspy?: string;
+  /**
+   * Hashed `version-banner.js` filename (FR-2723). Optional — only
+   * present when the build runs in versioned mode. Powers both the
+   * "view latest version" banner (per-session dismissal) and the
+   * "not in selected version" inline notice (sessionStorage flag set
+   * by the version-switcher script).
+   */
+  versionBanner?: string;
   /** Site-root favicon filename, e.g. `favicon.ico`. */
   favicon?: string;
   /** Site-root apple-touch-icon filename, e.g. `apple-touch-icon.png`. */
@@ -642,6 +650,95 @@ function buildCodeCopyScriptTag(assets: PageAssets, prefix: string): string {
 }
 
 /**
+ * Build optional version-banner script tag (FR-2723). Only emitted when
+ * the build is in versioned mode — the script handles BOTH the
+ * "view latest version" banner dismissal AND the "not in selected
+ * version" notice that fires after a fallback navigation.
+ */
+function buildVersionBannerScriptTag(
+  assets: PageAssets,
+  prefix: string,
+): string {
+  if (!assets.versionBanner) return "";
+  return `<script defer src="${prefix}assets/${escapeHtml(assets.versionBanner)}"></script>`;
+}
+
+/**
+ * Build the "View latest version" banner (FR-2723) — shown on every
+ * NON-latest version page. Renders an unconditional dismissible banner;
+ * the dismissal state is enforced client-side by `version-banner.js`
+ * via per-(currentVersion, latestVersion) sessionStorage keys.
+ *
+ * The banner is rendered visible by default; the script flips it to
+ * `hidden` synchronously on DOMContentLoaded if a sessionStorage flag
+ * exists. We accept a brief flash on slow first paint over the
+ * alternative of starting hidden + showing on missing flag, because
+ * the latter would suppress the banner entirely if JS is disabled.
+ *
+ * Returns an empty string when no version context is present (flat
+ * mode) or when the current page IS the latest version.
+ */
+function buildVersionBanner(context: WebPageContext): string {
+  const ver = context.versionContext;
+  if (!ver) return "";
+  if (ver.current === ver.latest) return "";
+
+  const labels = WEBSITE_LABELS[context.metadata.lang] ?? WEBSITE_LABELS.en;
+  // Build the link target: same slug in latest if available, else the
+  // latest version's index page. We mirror the version-switcher's
+  // fallback rule so the banner never points at a 404.
+  const hops = Math.max(0, ver.rootDepth - 1);
+  const prefix = "../".repeat(hops);
+  const targetExists = ver.slugAvailability[ver.latest] === true;
+  const href = targetExists
+    ? `${prefix}${ver.latest}/${context.metadata.lang}/${ver.slug}.html`
+    : `${prefix}${ver.latest}/${context.metadata.lang}/index.html`;
+
+  // Substitute placeholders directly in the rendered text (keeps the
+  // markup search-engine-friendly without requiring JS to read the
+  // banner). The link uses its own localized label.
+  const message = labels.bannerViewLatest
+    .replace(/\{version\}/g, ver.current)
+    .replace(/\{latestVersion\}/g, ver.latest);
+  const linkLabel = labels.bannerViewLatestLink.replace(
+    /\{latestVersion\}/g,
+    ver.latest,
+  );
+  const dismissLabel = labels.bannerDismiss;
+
+  return `<div class="docs-banner docs-banner--view-latest" role="status" data-current-version="${escapeHtml(ver.current)}" data-latest-version="${escapeHtml(ver.latest)}">
+  <span class="docs-banner__body">${escapeHtml(message)}</span>
+  <a class="docs-banner__link" href="${escapeHtml(href)}">${escapeHtml(linkLabel)}</a>
+  <button type="button" class="docs-banner__dismiss" aria-label="${escapeHtml(dismissLabel)}" title="${escapeHtml(dismissLabel)}">&times;</button>
+</div>`;
+}
+
+/**
+ * Build the "Not in selected version" notice (FR-2723) — injected
+ * hidden on every page and revealed by `version-banner.js` only when
+ * the user arrived here via a version-switcher fallback (sessionStorage
+ * flag set by the inline switcher script).
+ *
+ * The notice's body text is filled in client-side by reading
+ * `data-message-template` and substituting `{version}` with the value
+ * from the sessionStorage flag — so the same hidden markup works for
+ * any (target version, slug) the user came from.
+ *
+ * Returns empty string in flat mode (no version context).
+ */
+function buildVersionNotice(context: WebPageContext): string {
+  const ver = context.versionContext;
+  if (!ver) return "";
+  const labels = WEBSITE_LABELS[context.metadata.lang] ?? WEBSITE_LABELS.en;
+  const messageTemplate = labels.noticeNotInVersion;
+  const dismissLabel = labels.bannerDismiss;
+  return `<div class="docs-notice docs-notice--not-in-version" role="status" hidden data-current-version="${escapeHtml(ver.current)}" data-message-template="${escapeHtml(messageTemplate)}">
+  <span class="docs-notice__body"></span>
+  <button type="button" class="docs-notice__dismiss" aria-label="${escapeHtml(dismissLabel)}" title="${escapeHtml(dismissLabel)}">&times;</button>
+</div>`;
+}
+
+/**
  * Build the page-header bar. F1 (sibling stack arm) introduces the
  * language switcher in this same `<header class="page-header-bar">`
  * structure; F6 contributes the version selector. When F1 lands the
@@ -699,7 +796,14 @@ function buildVersionSwitcher(context: WebPageContext): string {
     .join("");
   // The handler is inlined to avoid a separate hashed asset for ~30 LoC.
   // It is idempotent and language-agnostic: the only state it touches is
-  // `window.location.assign(...)` after a probe of the availability map.
+  // `window.location.assign(...)` after a probe of the availability map,
+  // plus a single `sessionStorage.setItem` when the slug is missing in the
+  // target version (FR-2723: "Not in selected version" notice).
+  //
+  // The sessionStorage flag uses the same key as `templates/assets/
+  // version-banner.js` (`docs.notice.notInVersion`); payload format is
+  // `<targetVersion>::<originSlug>` so the notice script can verify it
+  // landed on the right destination before showing the message.
   const inlineScript = `(function(){
   var sel = document.currentScript && document.currentScript.previousElementSibling;
   if (!sel || sel.tagName !== 'SELECT') return;
@@ -716,7 +820,13 @@ function buildVersionSwitcher(context: WebPageContext): string {
     var hops = Math.max(0, rootDepth - 1);
     var prefix = '';
     for (var i = 0; i < hops; i++) { prefix += '../'; }
-    var dest = availability[target]
+    var hasSlug = availability[target] === true;
+    if (!hasSlug) {
+      try {
+        sessionStorage.setItem('docs.notice.notInVersion', target + '::' + slug);
+      } catch (_) {}
+    }
+    var dest = hasSlug
       ? prefix + target + '/' + lang + '/' + slug + '.html'
       : prefix + target + '/' + lang + '/index.html';
     window.location.assign(dest);
@@ -878,9 +988,12 @@ export function buildWebPage(context: WebPageContext): string {
     context.peers,
   );
   const headerBar = buildPageHeaderBar(context);
+  const versionBanner = buildVersionBanner(context);
+  const versionNotice = buildVersionNotice(context);
   const searchScript = buildSearchScriptTag(assets, prefix);
   const codeCopyScript = buildCodeCopyScriptTag(assets, prefix);
   const tocScrollspyScript = buildTocScrollspyScriptTag(assets);
+  const versionBannerScript = buildVersionBannerScriptTag(assets, prefix);
 
   // F4: data-* attributes on <body> carry the localized labels for the
   // code-copy script (which is content-hashed once across every language,
@@ -899,9 +1012,11 @@ export function buildWebPage(context: WebPageContext): string {
 </head>
 <body ${copyDataAttrs}>
 ${headerBar}
+${versionBanner}
 <div class="doc-page">
   ${sidebar}
   <main class="doc-main">
+    ${versionNotice}
     ${pageHeader}
     ${breadcrumb}
     ${innerContent}
@@ -915,6 +1030,7 @@ ${headerBar}
 ${searchScript}
 ${codeCopyScript}
 ${tocScrollspyScript}
+${versionBannerScript}
 </body>
 </html>`;
 }

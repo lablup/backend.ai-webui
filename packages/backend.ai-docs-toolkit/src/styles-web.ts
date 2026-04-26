@@ -1193,6 +1193,88 @@ export function generateWebsiteStyles(): string {
 }
 
 /* ==========================================================================
+   Version-mismatch UX (FR-2723)
+   - .docs-banner.docs-banner--view-latest: shown on every non-latest
+     version page, dismissible per-session.
+   - .docs-notice.docs-notice--not-in-version: shown after the version
+     switcher falls back to the index because the slug doesn't exist
+     in the target version.
+   ========================================================================== */
+.docs-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid var(--ifm-color-warning-dark);
+  background: var(--ifm-color-warning-light);
+  color: var(--ifm-color-emphasis-1000);
+  font-size: 0.875rem;
+}
+.docs-banner[hidden] { display: none; }
+.docs-banner__body {
+  flex: 1 1 auto;
+}
+.docs-banner__link {
+  color: var(--ifm-color-primary-darker);
+  font-weight: 600;
+  text-decoration: underline;
+}
+.docs-banner__link:hover {
+  color: var(--ifm-color-primary-darkest);
+}
+.docs-banner__dismiss {
+  flex: 0 0 auto;
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--ifm-color-emphasis-800);
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.docs-banner__dismiss:hover {
+  background: rgba(0, 0, 0, 0.08);
+  color: var(--ifm-color-emphasis-1000);
+}
+.docs-notice {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0 0 1.5rem 0;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--ifm-color-info-dark);
+  border-left: 4px solid var(--ifm-color-info-dark);
+  border-radius: var(--ifm-pre-border-radius);
+  background: rgba(84, 199, 236, 0.12);
+  color: var(--ifm-color-emphasis-1000);
+  font-size: 0.875rem;
+}
+.docs-notice[hidden] { display: none; }
+.docs-notice__body {
+  flex: 1 1 auto;
+}
+.docs-notice__dismiss {
+  flex: 0 0 auto;
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--ifm-color-emphasis-800);
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.docs-notice__dismiss:hover {
+  background: rgba(0, 0, 0, 0.08);
+  color: var(--ifm-color-emphasis-1000);
+}
+
+/* ==========================================================================
    CJK Language Rules (via :lang() selectors for shared stylesheet)
    ========================================================================== */
 ${cjkSelectors} {
