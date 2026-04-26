@@ -9,240 +9,303 @@ languages:
   - ja
   - ko
   - th
+# F3 — Information architecture
+# ----------------------------------------------------------------------------
+# `navigation` per language uses the F3 grouped form:
+#
+#   - category: <localized category label>
+#     items:
+#       - { title: <chapter title>, path: <markdown path> }
+#
+# The legacy flat form (a list of `{title, path}` directly under each
+# language) is still accepted by `loadBookConfig`. Pages within a group
+# render in the listed order; group ordering is preserved when flattened
+# for the PDF pipeline. The 5 categories below were chosen to balance
+# bucket sizes (4-9 chapters each) and follow a typical reader's journey:
+# learn the product (Getting Started) → use it (Workloads → Storage & Data) →
+# administer it (Administration) → look up reference material (Reference).
+#
+# Reordering note: The flat order produced by flattening these groups
+# differs slightly from the legacy book.config.yaml ordering — chapters
+# now group with their thematic siblings (e.g. Cluster Session moves
+# next to other Workloads chapters; SFTP-to-container moves into Storage &
+# Data). The PDF pipeline reads the flattened list, so the PDF chapter
+# order will match the new grouped sequence.
+# ----------------------------------------------------------------------------
 navigation:
   en:
-    - title: Quickstart
-      path: quickstart.md
-    - title: Disclaimer
-      path: disclaimer.md
-    - title: Overview
-      path: overview/overview.md
-    - title: Installation
-      path: installation/installation.md
-    - title: Login
-      path: login/login.md
-    - title: Header
-      path: header/header.md
-    - title: Start
-      path: start/start.md
-    - title: Dashboard
-      path: dashboard/dashboard.md
-    - title: Summary
-      path: summary/summary.md
-    - title: Vfolder
-      path: vfolder/vfolder.md
-    - title: Session Page
-      path: session_page/session_page.md
-    - title: Sessions All
-      path: sessions_all/sessions_all.md
-    - title: Mount Vfolder
-      path: mount_vfolder/mount_vfolder.md
-    - title: Share Vfolder
-      path: share_vfolder/share_vfolder.md
-    - title: Model Serving
-      path: model_serving/model_serving.md
-    - title: Chat
-      path: chat/chat.md
-    - title: Import Run
-      path: import_run/import_run.md
-    - title: My Environments
-      path: my_environments/my_environments.md
-    - title: Agent Summary
-      path: agent_summary/agent_summary.md
-    - title: Statistics
-      path: statistics/statistics.md
-    - title: Sftp To Container
-      path: sftp_to_container/sftp_to_container.md
-    - title: User Settings
-      path: user_settings/user_settings.md
-    - title: Cluster Session
-      path: cluster_session/cluster_session.md
-    - title: RBAC Management
-      path: rbac_management/rbac_management.md
-    - title: Admin Menu
-      path: admin_menu/admin_menu.md
-    - title: Trouble Shooting
-      path: trouble_shooting/trouble_shooting.md
-    - title: Appendix
-      path: appendix/appendix.md
-    - title: License Agreement
-      path: license_agreement/license_agreement.md
-    - title: References
-      path: references/references.md
+    - category: Getting Started
+      items:
+        - title: Quickstart
+          path: quickstart.md
+        - title: Disclaimer
+          path: disclaimer.md
+        - title: Overview
+          path: overview/overview.md
+        - title: Installation
+          path: installation/installation.md
+        - title: Login
+          path: login/login.md
+        - title: Header
+          path: header/header.md
+        - title: Start
+          path: start/start.md
+        - title: Dashboard
+          path: dashboard/dashboard.md
+        - title: Summary
+          path: summary/summary.md
+    - category: Workloads
+      items:
+        - title: Session Page
+          path: session_page/session_page.md
+        - title: Sessions All
+          path: sessions_all/sessions_all.md
+        - title: Cluster Session
+          path: cluster_session/cluster_session.md
+        - title: Model Serving
+          path: model_serving/model_serving.md
+        - title: Chat
+          path: chat/chat.md
+        - title: Import Run
+          path: import_run/import_run.md
+        - title: My Environments
+          path: my_environments/my_environments.md
+    - category: Storage & Data
+      items:
+        - title: Vfolder
+          path: vfolder/vfolder.md
+        - title: Mount Vfolder
+          path: mount_vfolder/mount_vfolder.md
+        - title: Share Vfolder
+          path: share_vfolder/share_vfolder.md
+        - title: Sftp To Container
+          path: sftp_to_container/sftp_to_container.md
+    - category: Administration
+      items:
+        - title: User Settings
+          path: user_settings/user_settings.md
+        - title: RBAC Management
+          path: rbac_management/rbac_management.md
+        - title: Admin Menu
+          path: admin_menu/admin_menu.md
+        - title: Agent Summary
+          path: agent_summary/agent_summary.md
+        - title: Statistics
+          path: statistics/statistics.md
+    - category: Reference
+      items:
+        - title: Trouble Shooting
+          path: trouble_shooting/trouble_shooting.md
+        - title: Appendix
+          path: appendix/appendix.md
+        - title: License Agreement
+          path: license_agreement/license_agreement.md
+        - title: References
+          path: references/references.md
   ja:
-    - title: クイックスタート
-      path: quickstart.md
-    - title: 免責事項
-      path: disclaimer.md
-    - title: 概要
-      path: overview/overview.md
-    - title: インストール
-      path: installation/installation.md
-    - title: ログイン
-      path: login/login.md
-    - title: ヘッダー
-      path: header/header.md
-    - title: スタート
-      path: start/start.md
-    - title: ダッシュボード
-      path: dashboard/dashboard.md
-    - title: サマリー
-      path: summary/summary.md
-    - title: ストレージフォルダ
-      path: vfolder/vfolder.md
-    - title: セッションページ
-      path: session_page/session_page.md
-    - title: 全セッション
-      path: sessions_all/sessions_all.md
-    - title: ストレージフォルダのマウント
-      path: mount_vfolder/mount_vfolder.md
-    - title: ストレージフォルダの共有
-      path: share_vfolder/share_vfolder.md
-    - title: モデルサービング
-      path: model_serving/model_serving.md
-    - title: チャット
-      path: chat/chat.md
-    - title: インポート＆実行
-      path: import_run/import_run.md
-    - title: マイ環境
-      path: my_environments/my_environments.md
-    - title: エージェントサマリー
-      path: agent_summary/agent_summary.md
-    - title: 統計
-      path: statistics/statistics.md
-    - title: コンピュートセッションへのSFTP接続
-      path: sftp_to_container/sftp_to_container.md
-    - title: ユーザー設定
-      path: user_settings/user_settings.md
-    - title: クラスターセッション
-      path: cluster_session/cluster_session.md
-    - title: RBAC管理
-      path: rbac_management/rbac_management.md
-    - title: 管理者メニュー
-      path: admin_menu/admin_menu.md
-    - title: FAQ＆トラブルシューティング
-      path: trouble_shooting/trouble_shooting.md
-    - title: 付録
-      path: appendix/appendix.md
-    - title: ライセンス契約
-      path: license_agreement/license_agreement.md
-    - title: 参考資料
-      path: references/references.md
+    - category: はじめに
+      items:
+        - title: クイックスタート
+          path: quickstart.md
+        - title: 免責事項
+          path: disclaimer.md
+        - title: 概要
+          path: overview/overview.md
+        - title: インストール
+          path: installation/installation.md
+        - title: ログイン
+          path: login/login.md
+        - title: ヘッダー
+          path: header/header.md
+        - title: スタート
+          path: start/start.md
+        - title: ダッシュボード
+          path: dashboard/dashboard.md
+        - title: サマリー
+          path: summary/summary.md
+    - category: ワークロード
+      items:
+        - title: セッションページ
+          path: session_page/session_page.md
+        - title: 全セッション
+          path: sessions_all/sessions_all.md
+        - title: クラスターセッション
+          path: cluster_session/cluster_session.md
+        - title: モデルサービング
+          path: model_serving/model_serving.md
+        - title: チャット
+          path: chat/chat.md
+        - title: インポート＆実行
+          path: import_run/import_run.md
+        - title: マイ環境
+          path: my_environments/my_environments.md
+    - category: ストレージとデータ
+      items:
+        - title: ストレージフォルダ
+          path: vfolder/vfolder.md
+        - title: ストレージフォルダのマウント
+          path: mount_vfolder/mount_vfolder.md
+        - title: ストレージフォルダの共有
+          path: share_vfolder/share_vfolder.md
+        - title: コンピュートセッションへのSFTP接続
+          path: sftp_to_container/sftp_to_container.md
+    - category: 管理
+      items:
+        - title: ユーザー設定
+          path: user_settings/user_settings.md
+        - title: RBAC管理
+          path: rbac_management/rbac_management.md
+        - title: 管理者メニュー
+          path: admin_menu/admin_menu.md
+        - title: エージェントサマリー
+          path: agent_summary/agent_summary.md
+        - title: 統計
+          path: statistics/statistics.md
+    - category: リファレンス
+      items:
+        - title: FAQ＆トラブルシューティング
+          path: trouble_shooting/trouble_shooting.md
+        - title: 付録
+          path: appendix/appendix.md
+        - title: ライセンス契約
+          path: license_agreement/license_agreement.md
+        - title: 参考資料
+          path: references/references.md
   ko:
-    - title: 빠른 시작
-      path: quickstart.md
-    - title: 면책 조항
-      path: disclaimer.md
-    - title: 개요
-      path: overview/overview.md
-    - title: 설치
-      path: installation/installation.md
-    - title: 로그인
-      path: login/login.md
-    - title: 헤더
-      path: header/header.md
-    - title: 시작 페이지
-      path: start/start.md
-    - title: 대시보드
-      path: dashboard/dashboard.md
-    - title: 요약
-      path: summary/summary.md
-    - title: 스토리지 폴더
-      path: vfolder/vfolder.md
-    - title: 세션 페이지
-      path: session_page/session_page.md
-    - title: 전체 세션
-      path: sessions_all/sessions_all.md
-    - title: 스토리지 폴더 마운트
-      path: mount_vfolder/mount_vfolder.md
-    - title: 스토리지 폴더 공유
-      path: share_vfolder/share_vfolder.md
-    - title: 모델 서빙
-      path: model_serving/model_serving.md
-    - title: 채팅
-      path: chat/chat.md
-    - title: 가져오기 및 실행
-      path: import_run/import_run.md
-    - title: 내 환경
-      path: my_environments/my_environments.md
-    - title: 에이전트 요약
-      path: agent_summary/agent_summary.md
-    - title: 통계
-      path: statistics/statistics.md
-    - title: 연산 세션에 대한 SFTP 연결
-      path: sftp_to_container/sftp_to_container.md
-    - title: 사용자 설정
-      path: user_settings/user_settings.md
-    - title: 클러스터 세션
-      path: cluster_session/cluster_session.md
-    - title: RBAC 관리
-      path: rbac_management/rbac_management.md
-    - title: 관리자 메뉴
-      path: admin_menu/admin_menu.md
-    - title: FAQ 및 문제 해결
-      path: trouble_shooting/trouble_shooting.md
-    - title: 부록
-      path: appendix/appendix.md
-    - title: 사용권 계약 조건
-      path: license_agreement/license_agreement.md
-    - title: 참고 자료
-      path: references/references.md
+    - category: 시작하기
+      items:
+        - title: 빠른 시작
+          path: quickstart.md
+        - title: 면책 조항
+          path: disclaimer.md
+        - title: 개요
+          path: overview/overview.md
+        - title: 설치
+          path: installation/installation.md
+        - title: 로그인
+          path: login/login.md
+        - title: 헤더
+          path: header/header.md
+        - title: 시작 페이지
+          path: start/start.md
+        - title: 대시보드
+          path: dashboard/dashboard.md
+        - title: 요약
+          path: summary/summary.md
+    - category: 워크로드
+      items:
+        - title: 세션 페이지
+          path: session_page/session_page.md
+        - title: 전체 세션
+          path: sessions_all/sessions_all.md
+        - title: 클러스터 세션
+          path: cluster_session/cluster_session.md
+        - title: 모델 서빙
+          path: model_serving/model_serving.md
+        - title: 채팅
+          path: chat/chat.md
+        - title: 가져오기 및 실행
+          path: import_run/import_run.md
+        - title: 내 환경
+          path: my_environments/my_environments.md
+    - category: 스토리지 및 데이터
+      items:
+        - title: 스토리지 폴더
+          path: vfolder/vfolder.md
+        - title: 스토리지 폴더 마운트
+          path: mount_vfolder/mount_vfolder.md
+        - title: 스토리지 폴더 공유
+          path: share_vfolder/share_vfolder.md
+        - title: 연산 세션에 대한 SFTP 연결
+          path: sftp_to_container/sftp_to_container.md
+    - category: 관리
+      items:
+        - title: 사용자 설정
+          path: user_settings/user_settings.md
+        - title: RBAC 관리
+          path: rbac_management/rbac_management.md
+        - title: 관리자 메뉴
+          path: admin_menu/admin_menu.md
+        - title: 에이전트 요약
+          path: agent_summary/agent_summary.md
+        - title: 통계
+          path: statistics/statistics.md
+    - category: 참고 자료
+      items:
+        - title: FAQ 및 문제 해결
+          path: trouble_shooting/trouble_shooting.md
+        - title: 부록
+          path: appendix/appendix.md
+        - title: 사용권 계약 조건
+          path: license_agreement/license_agreement.md
+        - title: 참고 자료
+          path: references/references.md
   th:
-    - title: เริ่มต้นอย่างรวดเร็ว
-      path: quickstart.md
-    - title: ข้อจำกัดความรับผิดชอบ
-      path: disclaimer.md
-    - title: ภาพรวม
-      path: overview/overview.md
-    - title: การติดตั้ง
-      path: installation/installation.md
-    - title: การเข้าสู่ระบบ
-      path: login/login.md
-    - title: ส่วนหัว
-      path: header/header.md
-    - title: เริ่มต้น
-      path: start/start.md
-    - title: แดชบอร์ด
-      path: dashboard/dashboard.md
-    - title: สรุป
-      path: summary/summary.md
-    - title: โฟลเดอร์จัดเก็บ
-      path: vfolder/vfolder.md
-    - title: หน้าเซสชัน
-      path: session_page/session_page.md
-    - title: เซสชันทั้งหมด
-      path: sessions_all/sessions_all.md
-    - title: การเมาท์โฟลเดอร์จัดเก็บ
-      path: mount_vfolder/mount_vfolder.md
-    - title: การแชร์โฟลเดอร์จัดเก็บ
-      path: share_vfolder/share_vfolder.md
-    - title: การให้บริการโมเดล
-      path: model_serving/model_serving.md
-    - title: แชท
-      path: chat/chat.md
-    - title: นำเข้าและรัน
-      path: import_run/import_run.md
-    - title: สภาพแวดล้อมของฉัน
-      path: my_environments/my_environments.md
-    - title: สรุปเอเจนต์
-      path: agent_summary/agent_summary.md
-    - title: สถิติ
-      path: statistics/statistics.md
-    - title: การเชื่อมต่อ SFTP ไปยังเซสชันการคำนวณ
-      path: sftp_to_container/sftp_to_container.md
-    - title: ตั้งค่าผู้ใช้
-      path: user_settings/user_settings.md
-    - title: เซสชันคลัสเตอร์
-      path: cluster_session/cluster_session.md
-    - title: การจัดการ RBAC
-      path: rbac_management/rbac_management.md
-    - title: เมนูผู้ดูแลระบบ
-      path: admin_menu/admin_menu.md
-    - title: FAQ และการแก้ไขปัญหา
-      path: trouble_shooting/trouble_shooting.md
-    - title: ภาคผนวก
-      path: appendix/appendix.md
-    - title: ข้อตกลงการอนุญาตใช้งาน
-      path: license_agreement/license_agreement.md
-    - title: อ้างอิง
-      path: references/references.md
+    - category: เริ่มต้นใช้งาน
+      items:
+        - title: เริ่มต้นอย่างรวดเร็ว
+          path: quickstart.md
+        - title: ข้อจำกัดความรับผิดชอบ
+          path: disclaimer.md
+        - title: ภาพรวม
+          path: overview/overview.md
+        - title: การติดตั้ง
+          path: installation/installation.md
+        - title: การเข้าสู่ระบบ
+          path: login/login.md
+        - title: ส่วนหัว
+          path: header/header.md
+        - title: เริ่มต้น
+          path: start/start.md
+        - title: แดชบอร์ด
+          path: dashboard/dashboard.md
+        - title: สรุป
+          path: summary/summary.md
+    - category: เวิร์กโหลด
+      items:
+        - title: หน้าเซสชัน
+          path: session_page/session_page.md
+        - title: เซสชันทั้งหมด
+          path: sessions_all/sessions_all.md
+        - title: เซสชันคลัสเตอร์
+          path: cluster_session/cluster_session.md
+        - title: การให้บริการโมเดล
+          path: model_serving/model_serving.md
+        - title: แชท
+          path: chat/chat.md
+        - title: นำเข้าและรัน
+          path: import_run/import_run.md
+        - title: สภาพแวดล้อมของฉัน
+          path: my_environments/my_environments.md
+    - category: พื้นที่จัดเก็บและข้อมูล
+      items:
+        - title: โฟลเดอร์จัดเก็บ
+          path: vfolder/vfolder.md
+        - title: การเมาท์โฟลเดอร์จัดเก็บ
+          path: mount_vfolder/mount_vfolder.md
+        - title: การแชร์โฟลเดอร์จัดเก็บ
+          path: share_vfolder/share_vfolder.md
+        - title: การเชื่อมต่อ SFTP ไปยังเซสชันการคำนวณ
+          path: sftp_to_container/sftp_to_container.md
+    - category: การดูแลระบบ
+      items:
+        - title: ตั้งค่าผู้ใช้
+          path: user_settings/user_settings.md
+        - title: การจัดการ RBAC
+          path: rbac_management/rbac_management.md
+        - title: เมนูผู้ดูแลระบบ
+          path: admin_menu/admin_menu.md
+        - title: สรุปเอเจนต์
+          path: agent_summary/agent_summary.md
+        - title: สถิติ
+          path: statistics/statistics.md
+    - category: เอกสารอ้างอิง
+      items:
+        - title: FAQ และการแก้ไขปัญหา
+          path: trouble_shooting/trouble_shooting.md
+        - title: ภาคผนวก
+          path: appendix/appendix.md
+        - title: ข้อตกลงการอนุญาตใช้งาน
+          path: license_agreement/license_agreement.md
+        - title: อ้างอิง
+          path: references/references.md

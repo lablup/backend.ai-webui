@@ -95,7 +95,13 @@ export {
 } from "./website-builder.js";
 
 // ── Book Config (shared loader for book.config.yaml) ────────────
-export type { NormalizedBookConfig, RawBookConfig } from "./book-config.js";
+export type {
+  NavGroup,
+  NavItem,
+  NormalizedBookConfig,
+  RawBookConfig,
+  RawNavigation,
+} from "./book-config.js";
 export { loadBookConfig, normalizeTitle } from "./book-config.js";
 
 // ── SEO (F2) ────────────────────────────────────────────────────
