@@ -2,7 +2,7 @@ import fs from 'fs';
 import os from 'os';
 import path from 'path';
 import { pathToFileURL } from 'url';
-import { chromium } from 'playwright';
+import { chromium, type Browser } from 'playwright';
 import { PDFDocument, PDFName, PDFArray, PDFDict, PDFRef, rgb, StandardFonts } from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
 import type { PdfTheme } from './theme.js';
@@ -19,10 +19,17 @@ const DEFAULT_CJK_FONT_CANDIDATES = [
   path.join(os.homedir(), 'Library/Fonts/NanumBarunGothic.ttf'),
   path.join(os.homedir(), 'Library/Fonts/NanumSquareRegular.ttf'),
   '/System/Library/Fonts/Supplemental/Arial Unicode.ttf',
-  // Linux common paths
+  // Linux common paths — Korean
   '/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc',
   '/usr/share/fonts/truetype/noto/NotoSansKR-Regular.ttf',
   '/usr/share/fonts/truetype/nanum/NanumBarunGothic.ttf',
+  // Linux common paths — Japanese (fonts-takao-gothic on Debian/Ubuntu)
+  '/usr/share/fonts/truetype/takao-gothic/TakaoGothic.ttf',
+  '/usr/share/fonts/truetype/takao-mincho/TakaoMincho.ttf',
+  // Linux common paths — Thai (fonts-thai-tlwg on Debian/Ubuntu)
+  '/usr/share/fonts/truetype/tlwg/Loma.ttf',
+  '/usr/share/fonts/opentype/tlwg/Loma.otf',
+  '/usr/share/fonts/truetype/tlwg/Garuda.ttf',
 ];
 
 type EmbeddedFont = Awaited<ReturnType<PDFDocument['embedFont']>>;
@@ -61,6 +68,13 @@ export interface RenderOptions {
   lang: string;
   theme?: PdfTheme;
   config?: ResolvedDocConfig;
+  /**
+   * Optional shared Chromium instance. When provided, renderPdf reuses it
+   * by opening a new page on the existing browser, and the caller owns its
+   * lifecycle. This avoids paying the per-call launch cost when generating
+   * multiple PDFs in one run (e.g. one PDF per language during release builds).
+   */
+  browser?: Browser;
 }
 
 interface ChapterInfo {
@@ -382,16 +396,23 @@ export async function renderPdf(options: RenderOptions): Promise<void> {
 
   fs.mkdirSync(path.dirname(options.outputPath), { recursive: true });
 
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'bai-docs-'));
-  const tmpHtmlPath = path.join(tmpDir, 'document.html');
-  fs.writeFileSync(tmpHtmlPath, options.html, 'utf-8');
+  const ownsBrowser = !options.browser;
+  const browser = options.browser ?? (await chromium.launch());
 
-  const browser = await chromium.launch();
+  // tmpDir is created after the browser is ready so a chromium.launch()
+  // failure cannot leave an orphaned temp directory behind. Use an outer
+  // try/finally so a failure between mkdtempSync and the inner try also
+  // cleans up the browser when we own it.
+  let tmpDir: string | undefined;
   let pdfBuffer: Buffer;
   let chapterInfoList: ChapterInfo[] = [];
   let sectionList: SectionInfo[] = [];
+  let page: Awaited<ReturnType<Browser['newPage']>> | undefined;
   try {
-    const page = await browser.newPage({
+    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'bai-docs-'));
+    const tmpHtmlPath = path.join(tmpDir, 'document.html');
+    fs.writeFileSync(tmpHtmlPath, options.html, 'utf-8');
+    page = await browser.newPage({
       viewport: { width: PRINT_WIDTH_PX, height: 800 },
     });
 
@@ -479,8 +500,15 @@ export async function renderPdf(options: RenderOptions): Promise<void> {
     console.log('  Rendering final PDF...');
     pdfBuffer = await page.pdf(PDF_OPTIONS);
   } finally {
-    await browser.close();
-    fs.rmSync(tmpDir, { recursive: true, force: true });
+    if (page) {
+      await page.close().catch(() => {});
+    }
+    if (ownsBrowser) {
+      await browser.close();
+    }
+    if (tmpDir) {
+      fs.rmSync(tmpDir, { recursive: true, force: true });
+    }
   }
 
   // ── Post-processing ──────────────────────────────────────────

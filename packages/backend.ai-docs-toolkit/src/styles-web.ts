@@ -50,7 +50,11 @@ export function generateWebStyles(lang?: string): string {
   --ifm-color-emphasis-1000: #000;
 
   --ifm-font-family-base: system-ui, -apple-system, "Segoe UI", Roboto,
-    Ubuntu, Cantarell, "Noto Sans", "Noto Sans KR", "Noto Sans JP", "Noto Sans Thai",
+    Ubuntu, Cantarell, "Noto Sans",
+    "Noto Sans KR", "Noto Sans CJK KR",
+    "Noto Sans JP", "Noto Sans CJK JP",
+    "Noto Sans TC", "Noto Sans CJK TC",
+    "Noto Sans Thai",
     sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --ifm-font-family-monospace: "SFMono-Regular", Menlo, Consolas, "Liberation Mono", "Courier New", monospace;
 

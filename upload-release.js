@@ -47,19 +47,19 @@ const getUploadURL = async (releaseId) => {
 
 const main = async () => {
     if (process.argv.length !== 3) {
-        console.error('usage: node upload-release.js <folder containing DMG/ZIP files>')
+        console.error('usage: node upload-release.js <folder containing DMG/ZIP/PDF files>')
         process.exit(1)
     }
     const folder = process.argv[2]
-    let DMGs = []
+    let assets = []
     try {
-        DMGs = (await fs.promises.readdir(folder)).filter((s) => !s.startsWith('.') && (s.endsWith('.dmg') || s.endsWith('.zip')))
+        assets = (await fs.promises.readdir(folder)).filter((s) => !s.startsWith('.') && (s.endsWith('.dmg') || s.endsWith('.zip') || s.endsWith('.pdf')))
     } catch (e) {
         console.error(e.message)
         process.exit(1)
     }
 
-    console.log(`found ${DMGs.length} DMG(s): ${DMGs}`)
+    console.log(`found ${assets.length} asset(s): ${assets}`)
 
     const tag = process.env.RELEASE_TAG || (await getLatestTag())
     const releaseId = await getReleaseIdFromTag(tag)
@@ -94,8 +94,8 @@ const main = async () => {
     }
 
     // Process uploads in batches to avoid overwhelming the API
-    for (let i = 0; i < DMGs.length; i += CONCURRENCY) {
-        const batch = DMGs.slice(i, i + CONCURRENCY)
+    for (let i = 0; i < assets.length; i += CONCURRENCY) {
+        const batch = assets.slice(i, i + CONCURRENCY)
         await Promise.all(batch.map(uploadFile))
     }
 }
