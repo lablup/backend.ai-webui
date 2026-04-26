@@ -146,6 +146,26 @@ export interface VersionEntry {
   latest?: boolean;
 }
 
+/**
+ * Code-block presentation config (F4 — reading UX).
+ *
+ * `lightTheme` controls Shiki's light syntax theme used during build-time
+ * highlighting in the web pipeline. Any theme bundled with `shiki` is
+ * accepted (e.g. `github-light`, `vitesse-light`, `light-plus`). Unknown
+ * themes fall back to `github-light` with a warning.
+ *
+ * Reserved namespace — do not wire yet:
+ *   - `darkTheme`: a future dark-mode bucket will introduce this and pair
+ *     it with Shiki's dual-theme (`themes: { light, dark }`) rendering.
+ *     Adding the key here now would commit us to an output format before
+ *     that work has chosen one. Keep the slot reserved at the type level
+ *     only via this comment.
+ */
+export interface CodeConfig {
+  /** Shiki light theme name. Default: `'github-light'`. */
+  lightTheme?: string;
+}
+
 /** Full toolkit config file shape (docs-toolkit.config.yaml) */
 export interface ToolkitConfig extends DocConfig {
   agents?: AgentConfig;
@@ -162,6 +182,8 @@ export interface ToolkitConfig extends DocConfig {
    * `sitemap.xml` and `robots.txt` generation. See `OgConfig`.
    */
   og?: OgConfig;
+  /** Code-block presentation (Shiki theme, F4). */
+  code?: CodeConfig;
 }
 
 // ── Defaults ──────────────────────────────────────────────────
@@ -237,6 +259,9 @@ export const WEBSITE_LABELS: Record<string, Record<string, string>> = {
     home: "Home",
     onThisPage: "On this page",
     tocToggle: "On this page",
+    copy: "Copy",
+    copied: "Copied!",
+    copyFailed: "Copy failed",
   },
   ko: {
     previous: "이전",
@@ -248,6 +273,9 @@ export const WEBSITE_LABELS: Record<string, Record<string, string>> = {
     home: "홈",
     onThisPage: "이 페이지의 목차",
     tocToggle: "이 페이지의 목차",
+    copy: "복사",
+    copied: "복사됨!",
+    copyFailed: "복사 실패",
   },
   ja: {
     previous: "前へ",
@@ -259,6 +287,9 @@ export const WEBSITE_LABELS: Record<string, Record<string, string>> = {
     home: "ホーム",
     onThisPage: "このページの目次",
     tocToggle: "このページの目次",
+    copy: "コピー",
+    copied: "コピーしました!",
+    copyFailed: "コピーに失敗しました",
   },
   th: {
     previous: "ก่อนหน้า",
@@ -270,6 +301,9 @@ export const WEBSITE_LABELS: Record<string, Record<string, string>> = {
     home: "หน้าแรก",
     onThisPage: "หัวข้อในหน้านี้",
     tocToggle: "หัวข้อในหน้านี้",
+    copy: "คัดลอก",
+    copied: "คัดลอกแล้ว!",
+    copyFailed: "คัดลอกไม่สำเร็จ",
   },
 };
 
@@ -318,7 +352,20 @@ export interface ResolvedDocConfig {
    * SEO tag emitter, sitemap, and OG image renderer.
    */
   og?: OgConfig;
+  /**
+   * Resolved code-block presentation. Always populated (defaults applied)
+   * so downstream consumers don't have to null-check.
+   */
+  code: ResolvedCodeConfig;
 }
+
+/** Resolved code-block config — all defaults applied. */
+export interface ResolvedCodeConfig {
+  lightTheme: string;
+}
+
+/** Default Shiki light theme — readable, neutral, ships with shiki/themes. */
+export const DEFAULT_CODE_LIGHT_THEME = "github-light";
 
 export function resolveConfig(config: ToolkitConfig): ResolvedDocConfig {
   const projectRoot = config.projectRoot;
@@ -370,6 +417,9 @@ export function resolveConfig(config: ToolkitConfig): ResolvedDocConfig {
     website: config.website,
     versions: config.versions,
     og: config.og,
+    code: {
+      lightTheme: config.code?.lightTheme ?? DEFAULT_CODE_LIGHT_THEME,
+    },
   };
 }
 

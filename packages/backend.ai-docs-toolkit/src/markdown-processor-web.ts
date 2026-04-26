@@ -25,6 +25,8 @@ import {
   parseImageSizeHint,
 } from "./markdown-extensions.js";
 import type { ResolvedDocConfig } from "./config.js";
+import { DEFAULT_CODE_LIGHT_THEME } from "./config.js";
+import { highlight as shikiHighlight } from "./shiki-highlighter.js";
 
 export type { Chapter, Heading };
 
@@ -318,6 +320,14 @@ function reportLinkDiagnostics(diagnostics: LinkDiagnostic[]): void {
  * Build a custom Marked renderer for web preview.
  * Handles headings with anchor links, images with doc-image class,
  * and code blocks with title/line-highlighting support.
+ *
+ * Code blocks: F4 swaps the legacy `escapeHtml` body with Shiki-tokenized
+ * inner HTML. Tokenization is async (Shiki loads grammars on demand) so a
+ * pre-pass populates `highlightedCode` (keyed by `lang\0source`) before
+ * `marked.parse()` runs. The renderer is purely sync here — it just looks
+ * up the pre-rendered HTML, falling back to `escapeHtml` if the lookup
+ * misses (defensive: should not happen because the pre-pass walks the
+ * exact same tokens marked will render).
  */
 function buildWebRenderer(
   chapterSlug: string,
@@ -326,11 +336,14 @@ function buildWebRenderer(
     chapterIndex?: number;
     lang?: string;
     figureLabels?: Record<string, string>;
+    /** Pre-rendered Shiki HTML keyed by `${lang}\0${code}`. */
+    highlightedCode?: Map<string, string>;
   },
 ) {
   let imgCounter = 0;
   const chapterIndex = options?.chapterIndex ?? 0;
   const figureLabel = getFigureLabel(options?.lang, options?.figureLabels);
+  const highlightedCode = options?.highlightedCode;
 
   return {
     heading(text: string, level: number, _raw: string): string {
@@ -371,6 +384,13 @@ function buildWebRenderer(
       const highlightSpec = highlightMatch?.[1] || "";
       const highlightLines = parseHighlightLines(highlightSpec);
 
+      // F4: line-highlight feature (data-highlight="1,3-5") wraps each line
+      // in `.code-line.highlighted`. Mixing this with Shiki's per-token
+      // colored spans is messy (we'd have to walk Shiki's output and split
+      // by line preserving colors), so when an author uses data-highlight
+      // we fall back to the legacy un-highlighted line wrappers. This keeps
+      // the line-highlight feature working unchanged. Authors who want
+      // both can land that in a follow-up; F4 spec doesn't require it.
       let codeHtml: string;
       if (highlightLines.size > 0) {
         const lines = code.split("\n");
@@ -384,11 +404,23 @@ function buildWebRenderer(
           })
           .join("\n");
       } else {
-        codeHtml = escapeHtml(code);
+        // Look up Shiki's pre-rendered output. The pre-pass uses the exact
+        // same `(lang, code)` tuple, so a miss means either the pre-pass
+        // wasn't run (catalog mode) or the renderer was invoked with a
+        // token that didn't go through Marked's lexer (no realistic path
+        // today, but defensive). Fall back to escaped plaintext.
+        const key = `${lang}|||${code}`;
+        const pre = highlightedCode?.get(key);
+        codeHtml = pre ?? escapeHtml(code);
       }
 
-      const langClass = lang ? ` class="language-${lang}"` : "";
-      const preBlock = `<pre><code${langClass}>${codeHtml}</code></pre>`;
+      // Add `language-{lang}` for legacy CSS hooks (existing themes target
+      // these classes). Shiki adds its own `.shiki` / `.line` classes inside
+      // the `<code>` body — both shells coexist without conflict.
+      const langClass = lang
+        ? ` class="language-${lang} shiki-host"`
+        : ` class="shiki-host"`;
+      const preBlock = `<pre${langClass}><code>${codeHtml}</code></pre>`;
 
       if (title) {
         return `<div class="code-block-wrapper"><div class="code-block-title">${escapeHtml(title)}</div>${preBlock}</div>\n`;
@@ -410,6 +442,75 @@ export interface WebProcessingOptions {
   diagnosticsSink?: LinkDiagnostic[];
 }
 
+/**
+ * Walk the rendered markdown's tokens and pre-tokenize every fenced code
+ * block via Shiki. Returns a map keyed by `${lang} ${rawCode}` whose value
+ * is the pre-rendered inner HTML for `<code>`. The renderer in
+ * `buildWebRenderer` reads from this map synchronously.
+ *
+ * Shiki tokenization is async (loadLanguage / loadTheme), but the actual
+ * `codeToHtml` call is synchronous once the grammar is loaded. We do the
+ * loading upfront here so the marked render pipeline stays sync.
+ *
+ * The cache inside `shikiHighlight` makes repeat blocks (across chapters or
+ * across languages) free after the first sighting — important for the
+ * "≤ +50% wall-clock per language" budget when building all 4 langs.
+ */
+async function precomputeShikiBlocks(
+  markdown: string,
+  theme: string,
+): Promise<Map<string, string>> {
+  const map = new Map<string, string>();
+  const seen = new Set<string>();
+
+  // Lex the same markdown the renderer will parse so we see the same `text`
+  // marked passes to `code()`. Walking marked's lexer output (rather than
+  // a regex over the raw markdown) handles list-indented code blocks, CRLF
+  // normalization, and the trailing-newline trimming the lexer applies —
+  // any of which would cause key mismatches if we tokenized by regex.
+  const lexer = new Marked();
+  const tokens = lexer.lexer(markdown);
+
+  type AnyToken = {
+    type: string;
+    lang?: string;
+    text?: string;
+    tokens?: AnyToken[];
+    items?: AnyToken[];
+  };
+
+  const visit = async (node: AnyToken | AnyToken[]): Promise<void> => {
+    if (Array.isArray(node)) {
+      for (const child of node) await visit(child);
+      return;
+    }
+    if (node.type === "code" && typeof node.text === "string") {
+      const info = (node.lang ?? "").trim();
+      const langMatch = info.match(/^(\w+)/);
+      const lang = langMatch?.[1] ?? "";
+      // Skip blocks with line-highlight — the renderer falls back to its
+      // legacy line-wrapping path for these (see comment in `code()` above).
+      if (/data-highlight="[^"]*\d+/.test(info)) return;
+
+      const key = `${lang}|||${node.text}`;
+      if (!seen.has(key)) {
+        seen.add(key);
+        const result = await shikiHighlight({
+          code: node.text,
+          lang,
+          theme,
+        });
+        map.set(key, result.innerHtml);
+      }
+    }
+    if (node.tokens) await visit(node.tokens);
+    if (node.items) await visit(node.items);
+  };
+
+  await visit(tokens as unknown as AnyToken[]);
+  return map;
+}
+
 export async function processMarkdownFilesForWeb(
   lang: string,
   navigation: NavEntry[],
@@ -424,6 +525,10 @@ export async function processMarkdownFilesForWeb(
   const pathFallbacks = config?.pathFallbacks ?? {};
   const admonitionTitles = config?.admonitionTitles;
   const figureLabels = config?.figureLabels;
+  // F4: Shiki theme. Resolved config always has a value; in the bare
+  // `processMarkdownFilesForWeb({ config: undefined })` path we fall back
+  // to the same default the resolver would pick.
+  const shikiTheme = config?.code?.lightTheme ?? DEFAULT_CODE_LIGHT_THEME;
 
   // ── Pass 1: Render all chapters to HTML ──────────────────────
   const rendered: RenderedChapter[] = [];
@@ -452,6 +557,12 @@ export async function processMarkdownFilesForWeb(
     markdown = processAdmonitions(markdown, lang, admonitionTitles);
     markdown = processCodeBlockMeta(markdown);
 
+    // F4: pre-tokenize all fenced code blocks via Shiki so the marked
+    // renderer (which is sync) can read pre-rendered HTML by lookup. The
+    // shared in-memory cache makes this a near-noop for repeating snippets
+    // across chapters / languages.
+    const highlightedCode = await precomputeShikiBlocks(markdown, shikiTheme);
+
     const headings: Heading[] = [];
     const marked = new Marked();
     marked.use({
@@ -459,6 +570,7 @@ export async function processMarkdownFilesForWeb(
         chapterIndex,
         lang,
         figureLabels,
+        highlightedCode,
       }),
     });
 
@@ -521,9 +633,19 @@ export async function processCatalogMarkdownForWeb(
     markdown = processAdmonitions(markdown);
     markdown = processCodeBlockMeta(markdown);
 
+    // F4: catalog mode uses default Shiki theme — there's no toolkit config
+    // available here. Operators who want a different theme will see it
+    // applied in the real `build:web` path which threads `config.code` in.
+    const highlightedCode = await precomputeShikiBlocks(
+      markdown,
+      DEFAULT_CODE_LIGHT_THEME,
+    );
+
     const headings: Heading[] = [];
     const marked = new Marked();
-    marked.use({ renderer: buildWebRenderer(chapterSlug, headings) });
+    marked.use({
+      renderer: buildWebRenderer(chapterSlug, headings, { highlightedCode }),
+    });
 
     const htmlContent = await marked.parse(markdown);
 

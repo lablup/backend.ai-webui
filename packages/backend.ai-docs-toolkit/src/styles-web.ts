@@ -507,6 +507,87 @@ pre code {
 }
 
 /* ==========================================================================
+   F4 — Shiki tokenized code blocks + Copy button
+   --------------------------------------------------------------------------
+   Build-time syntax highlighting (Shiki) emits inline-styled <span> tokens
+   inside <span class="line"> rows. We only need a few rules:
+     - Keep Shiki's per-token color spans visible (don't over-style).
+     - Wrap each <pre> with a positioning context so the Copy button can
+       sit at the top-right corner.
+     - Provide a hover-revealed Copy button with a transient "Copied!" state.
+   ========================================================================== */
+.shiki-host > code .line {
+  /* Each token row Shiki emits. display:block makes line wrapping behave
+     consistently — long lines wrap inside the line span instead of pushing
+     the parent <pre> wider. */
+  display: block;
+}
+
+/* Wrapper injected at runtime by code-copy.js. Provides the positioning
+   context for the absolutely-positioned button. The wrapper is invisible
+   itself — the <pre> inside keeps its frame styling. */
+.doc-code-block-wrapper {
+  position: relative;
+  margin: 0 0 var(--ifm-spacing-vertical);
+}
+
+/* When inside a titled wrapper (already provides a frame), reset the
+   bottom margin so the doc-code-block-wrapper doesn't double-space. */
+.code-block-wrapper .doc-code-block-wrapper {
+  margin: 0;
+}
+
+.doc-code-block-wrapper > pre {
+  /* Reset margin on pre when wrapped — wrapper owns the bottom margin. */
+  margin: 0;
+}
+
+.doc-code-copy-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.75rem;
+  line-height: 1.2;
+  font-family: var(--ifm-font-family-base);
+  color: var(--ifm-color-emphasis-700);
+  background: var(--ifm-color-emphasis-0);
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 0.25rem;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 120ms ease, color 120ms ease, border-color 120ms ease,
+    background-color 120ms ease;
+}
+
+.doc-code-block-wrapper:hover .doc-code-copy-btn,
+.doc-code-block-wrapper:focus-within .doc-code-copy-btn,
+.doc-code-copy-btn:focus,
+.doc-code-copy-btn:focus-visible {
+  opacity: 1;
+}
+
+.doc-code-copy-btn:hover {
+  color: var(--ifm-color-primary);
+  border-color: var(--ifm-color-primary);
+  background: var(--ifm-color-emphasis-100);
+}
+
+.doc-code-copy-btn[data-state="copied"] {
+  color: var(--ifm-color-success-dark);
+  border-color: var(--ifm-color-success);
+  background: rgba(0, 164, 0, 0.08);
+  opacity: 1;
+}
+
+.doc-code-copy-btn[data-state="failed"] {
+  color: var(--ifm-color-danger-dark);
+  border-color: var(--ifm-color-danger);
+  background: rgba(250, 56, 62, 0.06);
+  opacity: 1;
+}
+
+/* ==========================================================================
    Tables
    ========================================================================== */
 table {

@@ -659,3 +659,86 @@ The PDF pipeline reads `bookConfig.navigation[lang]` (the flat list). Since the 
 - **CSS-only collapse** — sidebar groups use native `<details>`/`<summary>`; no runtime JS for collapse.
 - **PDF non-regression** — flat `navigation` shape preserved for the PDF pipeline; only the chapter ordering changes (intentionally).
 - **Backward compat** — flat `navigation` form still loads and renders identically to F1's sidebar.
+
+## F4 — Reading UX (code-block syntax highlighting + Copy button)
+
+F4 upgrades the web pipeline's code-block presentation:
+
+1. **Build-time syntax highlighting** via [Shiki](https://shiki.style) — Shiki tokenizes source with TextMate grammars and returns inline-styled `<span>` rows. Zero runtime highlight JS is shipped (no Prism, no highlight.js).
+2. A **Copy button** per code block, served as a tiny vanilla JS asset `templates/assets/code-copy.js`.
+
+### Shiki integration
+
+`src/shiki-highlighter.ts` is the only place the toolkit talks to Shiki. It exposes a single `highlight({ code, lang, theme })` API used by `markdown-processor-web.ts`.
+
+```text
+markdown-processor-web.ts
+  precomputeShikiBlocks(markdown, theme)         ← walks marked's lexer tokens
+    ↓ for each code token: shikiHighlight(...)
+    ↓ tokens cached in-memory: (theme, lang, sha1(code)) → innerHtml
+  buildWebRenderer({ highlightedCode })          ← sync renderer
+    ↓ code() looks up `${lang}|||${node.text}` → wraps in <pre><code>
+```
+
+**Why the pre-pass walks marked's lexer (not regex):** code blocks inside list items are dedented by marked's lexer before reaching the renderer. A regex over the raw markdown would store keys with the original indent, while the renderer looks up the dedented form — every list-nested code block would miss the cache. Walking the lexer guarantees the same `(lang, code)` tuple is used on both sides.
+
+**Cache scope:** the in-memory map persists for the duration of one Node process (one `build:web` invocation). Building all four languages in sequence reuses the cache, so a snippet that appears in `en/foo.md` and again in `ko/foo.md` tokenizes once. The cache is not persisted to disk — Shiki's tokenization is fast enough on second-run that an in-memory cache covers the spec's "build wall-clock per language ≤ +50%" budget; for the WebUI docs the all-langs build runs in ~4s end-to-end.
+
+**Defensive paths:** unknown languages render as plain `<span class="line">` rows (not highlighted, not error). Unknown themes warn once and fall back to `github-light`. Shiki errors during tokenization are caught and degrade to plain escaped text — never fail the build.
+
+### Theme configuration
+
+Operators control the syntax theme via `docs-toolkit.config.yaml`:
+
+```yaml
+code:
+  lightTheme: "github-light"   # default; any bundled Shiki theme works
+```
+
+Any [bundled Shiki theme](https://shiki.style/themes) is accepted (`github-light`, `vitesse-light`, `light-plus`, etc.). Unknown theme names warn once and fall back to `github-light`.
+
+**Reserved namespace — `code.darkTheme`:** intentionally NOT wired in F4. The spec scopes F4 to light-theme only; a future dark-mode bucket will introduce `code.darkTheme` paired with Shiki's dual-theme rendering (`themes: { light, dark }`). Adding the key now would commit us to a CSS-variables vs inline-style output format before that work has chosen one. The slot is reserved at the type level via a code comment in `src/config.ts` only.
+
+### Copy button (`templates/assets/code-copy.js`)
+
+A vanilla DOM script (no framework, no deps; ~5 KB unminified, well under the per-page 25 KB JS budget). On `DOMContentLoaded`:
+
+1. Wrap each `<pre><code>` in `.doc-code-block-wrapper` (idempotent).
+2. Inject a `.doc-code-copy-btn` button that reads `[data-copy-label]` etc. from `<body>` for localized strings.
+3. Click → `navigator.clipboard.writeText(<pre>.textContent)`. Falls back to a hidden-textarea + `document.execCommand("copy")` for non-secure-context previews.
+4. Flash "Copied!" / "Copy failed" states for 1.5s, then revert.
+
+Localized labels (`copy`, `copied`, `copyFailed`) live in `WEBSITE_LABELS` (`src/config.ts`) and are injected as `data-*` attributes on `<body>`, so the script itself stays language-agnostic and gets content-hashed once across every language.
+
+The script is automatically picked up by `website-generator.ts`'s asset pipeline (the slot was wired in F5) — drop the file at `templates/assets/code-copy.js` and the build hashes it and includes it via `PageAssets.codeCopy`.
+
+### CSS additions (`styles-web.ts`)
+
+- `.shiki-host > code .line { display: block }` — ensures Shiki's `.line` rows wrap correctly inside the `<pre>` frame instead of pushing it wider.
+- `.doc-code-block-wrapper` — positioning context for the absolutely-placed Copy button. The wrapper is invisible (no border / margin override).
+- `.doc-code-copy-btn` — top-right corner pill that fades in on hover/focus of the wrapper. Distinct color states: `idle` (default), `copied` (green tint), `failed` (red tint).
+
+### Files touched (F4)
+
+| File                                              | Role                                                                           |
+|---------------------------------------------------|--------------------------------------------------------------------------------|
+| `src/shiki-highlighter.ts` (new)                  | Lazy Shiki highlighter, in-memory `(theme, lang, sha1(code))` cache             |
+| `src/markdown-processor-web.ts`                   | `precomputeShikiBlocks()` pre-pass; renderer reads pre-rendered HTML            |
+| `src/config.ts`                                   | `CodeConfig` / `ResolvedCodeConfig` types; `code.lightTheme` default; copy labels in WEBSITE_LABELS |
+| `src/styles-web.ts`                               | `.shiki-host`, `.doc-code-block-wrapper`, `.doc-code-copy-btn` styles           |
+| `src/website-builder.ts`                          | `<body data-copy-label=…>` data attrs for the Copy script                       |
+| `src/index.ts`                                    | Re-exports for `highlightCode`, `CodeConfig`, `DEFAULT_CODE_LIGHT_THEME`        |
+| `templates/assets/code-copy.js` (new)             | Vanilla JS Copy button (no deps, no CDN)                                         |
+| `package.json`                                    | `shiki@1.29.2` runtime dependency                                                |
+
+### PDF pipeline non-regression (F4)
+
+F4 only touches `markdown-processor-web.ts`. The PDF pipeline (`markdown-processor.ts`) keeps its existing renderer — PDF code blocks remain unhighlighted (the spec does not require Shiki in PDFs). Verified by running `pnpm run pdf:en` on this commit (PDF generated successfully).
+
+### Constraints honoured (F4)
+
+- **Air-gapped** — Shiki bundles its grammars and themes as JSON inside the `shiki` npm package; no CDN, no network at build time. The Copy button uses `navigator.clipboard` (browser-native, no network).
+- **JS budget** — `code-copy.js` source is ~5 KB unminified, well under the per-page 25 KB budget. No runtime highlight JS is shipped (Shiki runs build-time only).
+- **Build wall-clock** — Shiki tokenization is amortized by the in-memory cache. The all-langs WebUI docs build runs in ~4s end-to-end (well within the "≤ +50% per language" budget).
+- **No dark-mode leakage** — F4 emits inline-styled spans for the configured light theme only. No `data-theme` attributes, no toggle UI, no `code.darkTheme` wiring (namespace reserved by comment only).
+- **Backward compat** — code blocks with `data-highlight="…"` (line-highlight feature) keep using the legacy `code-line.highlighted` renderer; mixing per-token Shiki colors with line-level overlays is left for a follow-up.

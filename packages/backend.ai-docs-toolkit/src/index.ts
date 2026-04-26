@@ -11,13 +11,27 @@ export type {
   DocConfig,
   AgentConfig,
   WebsiteConfig,
+  CodeConfig,
   ToolkitConfig,
   ResolvedDocConfig,
   VersionEntry,
   VersionSource,
   OgConfig,
+  ResolvedCodeConfig,
 } from "./config.js";
-export { resolveConfig, loadToolkitConfig, WEBSITE_LABELS } from "./config.js";
+export {
+  resolveConfig,
+  loadToolkitConfig,
+  WEBSITE_LABELS,
+  DEFAULT_CODE_LIGHT_THEME,
+} from "./config.js";
+
+// ── Shiki Code Highlighting (F4) ────────────────────────────────
+export { highlight as highlightCode } from "./shiki-highlighter.js";
+export type {
+  ShikiHighlightOptions,
+  ShikiHighlightResult,
+} from "./shiki-highlighter.js";
 
 // ── Versioned docs (F6) ─────────────────────────────────────────
 export type {
