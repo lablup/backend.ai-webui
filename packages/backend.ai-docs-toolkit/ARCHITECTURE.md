@@ -742,3 +742,104 @@ F4 only touches `markdown-processor-web.ts`. The PDF pipeline (`markdown-process
 - **Build wall-clock** — Shiki tokenization is amortized by the in-memory cache. The all-langs WebUI docs build runs in ~4s end-to-end (well within the "≤ +50% per language" budget).
 - **No dark-mode leakage** — F4 emits inline-styled spans for the configured light theme only. No `data-theme` attributes, no toggle UI, no `code.darkTheme` wiring (namespace reserved by comment only).
 - **Backward compat** — code blocks with `data-highlight="…"` (line-highlight feature) keep using the legacy `code-line.highlighted` renderer; mixing per-token Shiki colors with line-level overlays is left for a follow-up.
+
+## Image optimization (FR-2722, F5 stretch)
+
+The `--optimize-images` flag on `docs-toolkit build:web` enables
+WebP variant generation for PNG screenshots. The flag is **off by
+default** so dev / preview wall-clock stays unchanged; CI / release
+builds opt in.
+
+### Pipeline
+
+```
+src/<lang>/images/foo.png  ──► dist/web/<v>/<lang>/images/foo.png        (always)
+                           ╰─► dist/web/<v>/<lang>/images/foo.webp       (when --optimize-images)
+                           ╰─► dist/web/<v>/<lang>/images/foo.avif       (when --optimize-images-avif)
+
+dist/web/.image-optimizer-cache/<sha256>.webp                            (cache layer)
+```
+
+The HTML rewrite turns:
+
+```html
+<img src="./images/foo.png" loading="lazy" decoding="async" width="..." height="..." />
+```
+
+into:
+
+```html
+<picture>
+  <source type="image/webp" srcset="./images/foo.webp" />
+  <img src="./images/foo.png" loading="lazy" decoding="async" width="..." height="..." />
+</picture>
+```
+
+When AVIF is enabled, an additional `<source type="image/avif">` is
+emitted **before** the WebP source so browsers that support both pick
+AVIF (smaller bytes for the same visual quality).
+
+### Skip rules
+
+The optimizer skips re-encoding in three cases:
+
+| Condition | Effect |
+|-----------|--------|
+| Source PNG < 50 KB | Skip — re-encoding tiny PNGs has no meaningful payoff |
+| Encoded variant ≥ source size | Skip that format only — no point shipping a heavier file |
+| `sharp` not installed | Skip with one-time warning, build continues PNG-only |
+
+The 50 KB threshold (`SIZE_THRESHOLD_BYTES` in `image-optimizer.ts`)
+matches FR-2722's acceptance criterion. It can be adjusted by callers
+of `optimizeImage()` in tests, but the CLI uses the constant.
+
+### Cache
+
+Variants are keyed by SHA-256 content hash of the source bytes (16
+hex chars, parallel to `asset-hasher.ts`'s 8-char site-asset hash —
+images need a wider key because the address space is larger and we
+want negligible collision risk). The cache lives at
+`dist/web/.image-optimizer-cache/`. A "no-benefit" answer is recorded
+as a 0-byte sentinel so subsequent probes are O(1).
+
+Cache invalidation is content-driven: replacing a screenshot with a
+new file (different bytes → different hash) invalidates the entry
+automatically. Re-running the build with unchanged inputs is a 100%
+cache hit and the optimization step adds <1 second of overhead.
+
+### Air-gap & supply chain
+
+`sharp` is declared as an **optional peer dependency**. It ships
+prebuilt native binaries per platform via `@img/sharp-libvips-*`
+sub-packages — no `node-gyp`, no compile-on-install, no network
+calls during runtime. When the prebuilt binary is unavailable for the
+target platform (extremely rare on supported OS / arch combinations),
+the optimizer logs a warning and the build falls back to PNG-only
+output.
+
+The PNG fallback is the **same file the build emits without the
+flag**, so `<picture>` degradation is graceful: browsers without
+WebP / AVIF support, or builds without `sharp`, see the original
+PNG with no missing-asset errors.
+
+### Wall-clock budget
+
+| Mode | Wall-clock impact |
+|------|-------------------|
+| Default (no flag) | 0% — code path is unchanged |
+| `--optimize-images`, cold cache (~320 imgs / language) | +5-10s per language |
+| `--optimize-images`, warm cache | <1s overhead per language |
+| `--optimize-images-avif`, cold cache | +20-40s per language (AVIF is slow) |
+
+The flag is intentionally not enabled in CI by default — operators
+opt in per release pipeline. See the `build:web:optimized` script in
+`packages/backend.ai-webui-docs/package.json` for the canonical
+invocation.
+
+### Out of scope (this PR)
+
+- The PDF pipeline (`generate-pdf.ts`, `pdf-renderer.ts`) is
+  untouched. PDFs continue to embed the original PNG bytes.
+- The dev-mode preview server (`preview-server-website.ts`) does not
+  re-encode on the fly. Operators can run the optimized build to a
+  scratch directory if they want to preview the optimized output.

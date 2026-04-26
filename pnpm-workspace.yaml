@@ -93,6 +93,7 @@ onlyBuiltDependencies:
   - electron
   - es5-ext
   - esbuild
+  - sharp
   - unrs-resolver
   - utf-8-validate
 

@@ -68,6 +68,10 @@ Options:
     --lang <all|en|ko|...>    Language(s) to generate (default: all)
     --strict                  Fail on broken links (default for production)
     --no-strict               Warn-only mode (legacy behavior)
+    --optimize-images         Generate .webp variants for PNG > 50 KB and emit
+                              <picture> wrappers in HTML (off by default;
+                              requires \`sharp\` to be installed)
+    --optimize-images-avif    Also generate .avif variants (slower, smaller)
 
   serve:web:
     --lang <en|ko|...>        Language (default: en)
@@ -426,9 +430,15 @@ async function main(): Promise<void> {
       // CI scripts that prefer to be loud about which mode they ran in.
       const noStrict = hasFlag(argv, "--no-strict");
       const strict = !noStrict;
+      // FR-2722: image optimization is OFF by default to keep dev /
+      // preview wall-clock unchanged. CI / release builds opt in.
+      const optimizeImages = hasFlag(argv, "--optimize-images");
+      const optimizeImagesAvif = hasFlag(argv, "--optimize-images-avif");
       await generateWebsite(config, {
         lang: langIdx >= 0 ? argv[langIdx + 1] : "all",
         strict,
+        optimizeImages,
+        optimizeImagesAvif,
       });
       break;
     }

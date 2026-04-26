@@ -44,6 +44,15 @@ import type { ResolvedDocConfig } from "./config.js";
 import { writeHashedAsset, type AssetManifest } from "./asset-hasher.js";
 import { readImageDimensions } from "./image-meta.js";
 import {
+  optimizeImage,
+  newOptimizeImageStats,
+  recordOptimizeStat,
+  formatOptimizeSummary,
+  rewriteImageTagsToPicture,
+  type OptimizeImageStats,
+  type ImageVariantInfo,
+} from "./image-optimizer.js";
+import {
   loadVersions,
   resolveVersionSource,
   VersionPageRegistry,
@@ -62,6 +71,20 @@ export interface GenerateWebsiteOptions {
    * warning-only behavior.
    */
   strict: boolean;
+  /**
+   * F5 stretch (FR-2722): when true, every PNG > 50 KB also gets a
+   * `.webp` (and optionally `.avif`) variant generated via `sharp`,
+   * and `<img>` tags are rewritten to `<picture>` with a PNG fallback.
+   * Off by default to keep dev/preview wall-clock unchanged. The flag
+   * is plumbed from `--optimize-images` on the CLI.
+   */
+  optimizeImages?: boolean;
+  /**
+   * Generate AVIF variants in addition to WebP. Only takes effect when
+   * `optimizeImages` is true. Off by default — AVIF encoding is slower
+   * and the marginal size win over WebP is small for typical screenshots.
+   */
+  optimizeImagesAvif?: boolean;
 }
 
 /** Source paths for site-root brand assets. Resolved relative to the toolkit
@@ -219,6 +242,9 @@ export async function generateWebsite(
   const websiteOutDir = config.website?.outDir ?? "web";
   // Default ON for production builds; CLI flips this off when --no-strict is given.
   const strict = options?.strict ?? true;
+  // F5 stretch (FR-2722): default OFF so dev/preview wall-clock is unchanged.
+  const optimizeImages = options?.optimizeImages === true;
+  const optimizeImagesAvif = options?.optimizeImagesAvif === true;
 
   const langArg = options?.lang ?? "all";
   const languages = langArg === "all" ? availableLanguages : [langArg];
@@ -244,6 +270,11 @@ export async function generateWebsite(
   console.log(
     `Strict: ${strict ? "on (broken links fail the build)" : "off (warnings only)"}`,
   );
+  if (optimizeImages) {
+    console.log(
+      `Image optimization: on (PNG > 50 KB → WebP${optimizeImagesAvif ? " + AVIF" : ""})`,
+    );
+  }
   if (loadedVersions.enabled) {
     console.log(
       `Versions: ${loadedVersions.entries.map((v) => v.label + (v.isLatest ? " (latest)" : "")).join(", ")}`,
@@ -340,6 +371,11 @@ export async function generateWebsite(
   // Aggregate counters used for the post-build summary / strict gate.
   const allDiagnostics: LinkDiagnostic[] = [];
   const imageStats = { total: 0, withDims: 0 };
+  // FR-2722: image optimization stats — only populated when the flag is on.
+  const optimizeStats = newOptimizeImageStats();
+  // Shared image-optimizer cache lives at the build root so identical
+  // PNGs across languages / versions hit the same entry.
+  const optimizerCacheDir = path.join(distBase, ".image-optimizer-cache");
 
   // Track every (version, lang, slug) row this build emits. F2 (sitemap +
   // canonical) reads this list to enumerate URLs.
@@ -455,6 +491,10 @@ export async function generateWebsite(
             ogImageRelUrl: ogImage?.relUrl,
           },
           lastModSink,
+          optimizeImages,
+          optimizeImagesAvif,
+          optimizeStats,
+          optimizerCacheDir,
         });
       }
 
@@ -490,6 +530,10 @@ export async function generateWebsite(
           ogImageRelUrl: ogImage?.relUrl,
         },
         lastModSink,
+        optimizeImages,
+        optimizeImagesAvif,
+        optimizeStats,
+        optimizerCacheDir,
       });
     }
   }
@@ -531,6 +575,15 @@ export async function generateWebsite(
     console.log(
       `Images: ${imageStats.total} total — width/height present on ${imageStats.withDims} (${dimPct}%); loading/decoding present on all.`,
     );
+  }
+
+  // FR-2722: image optimization summary. Only emitted when the operator
+  // opted in with --optimize-images and we actually walked at least one
+  // PNG. Cache hits and below-threshold counts are reported here so
+  // operators can tune the threshold or invalidate the cache.
+  if (optimizeImages) {
+    const summary = formatOptimizeSummary(optimizeStats);
+    if (summary) console.log(summary);
   }
 
   // Strict-mode gate: any broken-link / ambiguous-link diagnostic fails the build.
@@ -612,6 +665,10 @@ async function buildLanguage(args: {
   pageRegistry: VersionPageRegistry;
   seoBase: SeoBaseContext;
   lastModSink: Map<string, Date>;
+  optimizeImages: boolean;
+  optimizeImagesAvif: boolean;
+  optimizeStats: OptimizeImageStats;
+  optimizerCacheDir: string;
 }): Promise<void> {
   const {
     lang,
@@ -629,6 +686,10 @@ async function buildLanguage(args: {
     pageRegistry,
     seoBase,
     lastModSink,
+    optimizeImages,
+    optimizeImagesAvif,
+    optimizeStats,
+    optimizerCacheDir,
   } = args;
 
   const startTime = Date.now();
@@ -727,6 +788,45 @@ async function buildLanguage(args: {
           ? true
           : versionLabel === loadedVersions.latest?.label,
     });
+  }
+
+  // ── FR-2722: Copy images first so the optimizer can run before page
+  // rendering, populating the `<picture>` availability map used during
+  // HTML rewrite. The order swap is intentional — when --optimize-images
+  // is OFF, this is just a relocated copy step (same I/O, same bytes).
+  // When ON, optimizeImage() runs in-line after each PNG copy.
+  const destImagesDir = path.join(langDir, "images");
+  // Map from page-relative URL (`./images/foo.png`) → variant filenames.
+  // Empty when --optimize-images is off; the rewrite is a no-op in that case.
+  const variantAvailability = new Map<string, ImageVariantInfo>();
+  if (fs.existsSync(srcImagesDir)) {
+    fs.mkdirSync(destImagesDir, { recursive: true });
+    const imageFiles = fs.readdirSync(srcImagesDir);
+    let imageCount = 0;
+    for (const file of imageFiles) {
+      const srcPath = path.join(srcImagesDir, file);
+      if (!fs.statSync(srcPath).isFile()) continue;
+      fs.copyFileSync(srcPath, path.join(destImagesDir, file));
+      imageCount++;
+
+      if (optimizeImages && /\.png$/i.test(file)) {
+        const result = await optimizeImage(srcPath, destImagesDir, {
+          avif: optimizeImagesAvif,
+          // Cache lives at the website build root (`dist/web/.image-optimizer-cache/`)
+          // so identical images across languages / versions share entries.
+          cacheDir: optimizerCacheDir,
+        });
+        recordOptimizeStat(optimizeStats, result);
+        if (result.webp || result.avif) {
+          const key = `./images/${file}`;
+          const variants: ImageVariantInfo = {};
+          if (result.webp) variants.webp = `./images/${result.webp}`;
+          if (result.avif) variants.avif = `./images/${result.avif}`;
+          variantAvailability.set(key, variants);
+        }
+      }
+    }
+    console.log(`${labelPrefix} Copied ${imageCount} images`);
   }
 
   // Generate individual HTML pages
@@ -834,6 +934,12 @@ async function buildLanguage(args: {
     // so dimension lookup keys (`./images/x.png`) match the final HTML.
     pageHtml = applyImageAttributes(pageHtml, imageDims);
 
+    // FR-2722: wrap eligible <img> tags in <picture> with WebP / AVIF
+    // sources. No-op when --optimize-images is off (map is empty).
+    if (variantAvailability.size > 0) {
+      pageHtml = rewriteImageTagsToPicture(pageHtml, variantAvailability);
+    }
+
     // Track image-attribute coverage for the post-build report.
     const imgStatsForPage = countImageAttrs(pageHtml);
     imageStats.total += imgStatsForPage.total;
@@ -867,22 +973,6 @@ async function buildLanguage(args: {
   console.log(
     `${labelPrefix} Search index: ${Object.keys(searchIndex.index).length} terms (${indexSizeKb} KB)`,
   );
-
-  // Copy images
-  const destImagesDir = path.join(langDir, "images");
-  if (fs.existsSync(srcImagesDir)) {
-    fs.mkdirSync(destImagesDir, { recursive: true });
-    const imageFiles = fs.readdirSync(srcImagesDir);
-    let imageCount = 0;
-    for (const file of imageFiles) {
-      const srcPath = path.join(srcImagesDir, file);
-      if (fs.statSync(srcPath).isFile()) {
-        fs.copyFileSync(srcPath, path.join(destImagesDir, file));
-        imageCount++;
-      }
-    }
-    console.log(`${labelPrefix} Copied ${imageCount} images`);
-  }
 
   const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
   console.log(

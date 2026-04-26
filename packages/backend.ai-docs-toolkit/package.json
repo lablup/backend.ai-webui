@@ -38,7 +38,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
-    "test": "tsx --test src/versions.test.ts src/seo.test.ts",
+    "test": "tsx --test src/versions.test.ts src/seo.test.ts src/image-optimizer.test.ts",
     "prepublishOnly": "pnpm build"
   },
   "dependencies": {
@@ -50,15 +50,20 @@
     "yaml": "^2.8.2"
   },
   "peerDependencies": {
-    "playwright": "^1.40.0"
+    "playwright": "^1.40.0",
+    "sharp": "^0.34.0"
   },
   "peerDependenciesMeta": {
     "playwright": {
+      "optional": true
+    },
+    "sharp": {
       "optional": true
     }
   },
   "devDependencies": {
     "playwright": "^1.58.2",
+    "sharp": "^0.34.5",
     "tsx": "^4.21.0",
     "typescript": "~5.5.4"
   }

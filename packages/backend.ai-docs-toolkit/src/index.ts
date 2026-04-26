@@ -148,6 +148,22 @@ export type { GeneratePdfOptions } from "./generate-pdf.js";
 export { generateWebsite } from "./website-generator.js";
 export type { GenerateWebsiteOptions } from "./website-generator.js";
 
+// ── Image Optimization (FR-2722) ────────────────────────────────
+export {
+  optimizeImage,
+  rewriteImageTagsToPicture,
+  newOptimizeImageStats,
+  recordOptimizeStat,
+  formatOptimizeSummary,
+  SIZE_THRESHOLD_BYTES,
+} from "./image-optimizer.js";
+export type {
+  OptimizeImageOptions,
+  OptimizeImageResult,
+  OptimizeImageStats,
+  ImageVariantInfo,
+} from "./image-optimizer.js";
+
 // ── Search Index ────────────────────────────────────────────────
 export { buildSearchIndex, tokenize } from "./search-index-builder.js";
 export type {

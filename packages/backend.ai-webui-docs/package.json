@@ -25,6 +25,8 @@
     "build:web": "pnpm run build:toolkit && docs-toolkit build:web --lang all",
     "build:web:en": "pnpm run build:toolkit && docs-toolkit build:web --lang en",
     "build:web:ko": "pnpm run build:toolkit && docs-toolkit build:web --lang ko",
+    "build:web:optimized": "pnpm run build:toolkit && docs-toolkit build:web --lang all --optimize-images",
+    "build:web:en:optimized": "pnpm run build:toolkit && docs-toolkit build:web --lang en --optimize-images",
     "serve:web": "pnpm run build:toolkit && docs-toolkit serve:web --lang en",
     "serve:web:ko": "pnpm run build:toolkit && docs-toolkit serve:web --lang ko",
     "serve:web:ja": "pnpm run build:toolkit && docs-toolkit serve:web --lang ja",
