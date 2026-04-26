@@ -334,7 +334,12 @@ body {
   border-bottom: 1px solid var(--bai-border);
 }
 
-.bai-topbar__menu {
+/* Bump specificity past the generic .bai-iconbtn { display: inline-flex }
+   rule below so the menu button stays hidden on desktop. Without the
+   parent qualifier both selectors share specificity (0,1,0) and the
+   later iconbtn rule wins, leaving the desktop topbar with a visible
+   hamburger that opens the drawer-scrim on click. */
+.bai-topbar .bai-topbar__menu {
   display: none;
 }
 
@@ -1091,10 +1096,11 @@ body.bai-drawer-open .bai-scrim {
      - H2: 26px / 600 — separated by a soft top border (acts as section
        divider so consecutive sections feel grouped without an ::after
        horizontal rule cluttering the column)
-     - H3: 18px / 600 — minor section, slightly negative bottom margin
-       so the following paragraph hugs the heading
+     - H3: 18px / 600 — minor section with a small positive bottom
+       margin (8px) so the following paragraph stays close to the
+       heading without overlapping it
    The first H2 in a chapter has no top border (it would visually clash
-   with the lede paragraph spacing).
+   with the leading paragraph spacing).
    ========================================================================== */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--bai-font-heading);
@@ -1136,7 +1142,11 @@ h2:first-of-type {
 h3 {
   font-size: calc(18px * var(--bai-type-scale));
   font-weight: 600;
-  margin: 28px 0 -8px;
+  /* The original prototype used a negative bottom margin to pull the
+     following paragraph up, but in our markdown output the next
+     element has its own top margin so the negative value caused
+     visible overlap. Use a small positive bottom margin instead. */
+  margin: 28px 0 8px;
   scroll-margin-top: calc(var(--bai-topbar-h) + 24px);
 }
 
@@ -2236,7 +2246,9 @@ details > :last-child {
   .doc-sidebar {
     display: none;
   }
-  .bai-topbar__menu {
+  /* Match the desktop hide rule's specificity so the responsive show
+     actually wins (FR-2728 follow-up). */
+  .bai-topbar .bai-topbar__menu {
     display: inline-flex;
   }
   .bai-topbar__brand {
