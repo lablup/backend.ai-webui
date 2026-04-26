@@ -1154,17 +1154,11 @@ h4 { font-size: var(--ifm-h4-font-size); margin-top: 1.25rem; }
 h5 { font-size: var(--ifm-h5-font-size); }
 h6 { font-size: var(--ifm-h6-font-size); }
 
-/* Lede — the first paragraph immediately after the chapter H1 reads as
-   the page summary. Slightly larger and softer color than body text;
-   capped to 68ch so long paragraphs wrap before reaching the rail. */
-.chapter > h1 + p {
-  font-size: calc(17px * var(--bai-type-scale));
-  line-height: 1.55;
-  color: var(--bai-text-2);
-  margin: 0 0 22px;
-  text-wrap: pretty;
-  max-width: 68ch;
-}
+/* The BAI prototype rendered the first paragraph after H1 as a
+   "lede" summary (larger, muted, capped to 68ch). Our docs don't
+   consistently structure the first paragraph as a summary, so the
+   distinct style + right-side gap read as a defect. The first
+   paragraph now matches the rest of the body. */
 
 /* Heading anchors */
 h1 > a.hash-link,
@@ -1463,16 +1457,26 @@ pre code {
 /* ==========================================================================
    Tables (FR-2726 Phase 3 — BAI bordered card style)
    --------------------------------------------------------------------------
-   Wide tables on narrow viewports must remain horizontally scrollable so
-   the column structure stays readable. We use display: block + overflow-x:
-   auto for the scroll container; min-width keeps the table edge-to-edge
-   on viewports wider than the content. The 1px border + radius wrap the
-   block so the BAI card framing is preserved.
+   Tables size to their content (width: max-content) and are capped at
+   the article column (max-width: 100%). Narrow tables stay compact
+   instead of padding empty space on the right; wide tables hit
+   max-width: 100% and become horizontally scrollable via
+   overflow-x: auto so the column structure stays readable. The 1px
+   border + radius wrap the block so the BAI card framing is preserved.
    ========================================================================== */
 table {
+  /* Sizing: tables are width-of-content (max-content) but capped to
+     the article column (max-width: 100%). This way:
+       - Narrow tables (e.g. 3 short cols) stay compact instead of
+         padding empty space on the right.
+       - Wide tables overflow the column and become horizontally
+         scrollable thanks to overflow-x: auto.
+     We intentionally drop the previously-set min-width: 100% rule
+     (which forced narrow tables to span the column) because it
+     produced 400+ px of dead space inside narrow tables. */
   display: block;
   width: max-content;
-  min-width: 100%;
+  max-width: 100%;
   border-collapse: collapse;
   margin-bottom: var(--ifm-spacing-vertical);
   font-size: 13.5px;
@@ -1563,11 +1567,21 @@ li > ul, li > ol {
 }
 
 figure {
+  /* Figure owns the outer vertical rhythm only. The image is
+     centered horizontally by the figure .doc-image rule below
+     (margin: 0 auto), and the caption is centered by figcaption's
+     own text-align rule — so this block intentionally avoids
+     setting text-align (which would only catch stray inline
+     content and could surprise authors). */
   margin: 1.25rem 0;
 }
 
 figure .doc-image {
-  margin: 0;
+  /* Override .doc-image's default block centering only on the
+     vertical axis (figure owns the outer top/bottom margin); keep
+     auto on the horizontal axis so narrow images stay centered
+     instead of left-aligning to the figure's edge. */
+  margin: 0 auto;
 }
 
 figcaption {
