@@ -281,8 +281,7 @@ function buildWebsiteSidebar(
 </details>`;
   };
 
-  const isLegacyFlat =
-    navGroups.length === 1 && navGroups[0].category === "";
+  const isLegacyFlat = navGroups.length === 1 && navGroups[0].category === "";
   const groupsHtml = navGroups
     .map((g) => renderGroup(g, isLegacyFlat))
     .join("\n");
@@ -317,7 +316,11 @@ function buildWebsiteSidebar(
  * language picker at `dist/web/index.html` is reachable via the language
  * switcher in the page header.
  */
-function buildBreadcrumb(chapter: Chapter, category: string, lang: string): string {
+function buildBreadcrumb(
+  chapter: Chapter,
+  category: string,
+  lang: string,
+): string {
   const labels = WEBSITE_LABELS[lang] ?? WEBSITE_LABELS.en;
   const homeLabel = labels.home ?? "Home";
   const segments: string[] = [
@@ -353,9 +356,7 @@ function buildBreadcrumb(chapter: Chapter, category: string, lang: string): stri
 function buildRightRailToc(chapter: Chapter, lang: string): string {
   const labels = WEBSITE_LABELS[lang] ?? WEBSITE_LABELS.en;
   const heading = labels.onThisPage ?? "On this page";
-  const items = chapter.headings.filter(
-    (h) => h.level === 2 || h.level === 3,
-  );
+  const items = chapter.headings.filter((h) => h.level === 2 || h.level === 3);
   if (items.length === 0) {
     // Render the aside container even when empty so the grid column has a
     // stable layout; CSS hides the heading when the list is empty.
@@ -881,12 +882,22 @@ export function buildWebPage(context: WebPageContext): string {
   const codeCopyScript = buildCodeCopyScriptTag(assets, prefix);
   const tocScrollspyScript = buildTocScrollspyScriptTag(assets);
 
+  // F4: data-* attributes on <body> carry the localized labels for the
+  // code-copy script (which is content-hashed once across every language,
+  // so the script itself stays language-agnostic).
+  const labels = WEBSITE_LABELS[metadata.lang] ?? WEBSITE_LABELS.en;
+  const copyDataAttrs = [
+    `data-copy-label="${escapeHtml(labels.copy ?? "Copy")}"`,
+    `data-copied-label="${escapeHtml(labels.copied ?? "Copied!")}"`,
+    `data-copy-failed-label="${escapeHtml(labels.copyFailed ?? "Copy failed")}"`,
+  ].join(" ");
+
   return `<!DOCTYPE html>
 <html lang="${escapeHtml(metadata.lang)}">
 <head>
   ${headTags}
 </head>
-<body>
+<body ${copyDataAttrs}>
 ${headerBar}
 <div class="doc-page">
   ${sidebar}

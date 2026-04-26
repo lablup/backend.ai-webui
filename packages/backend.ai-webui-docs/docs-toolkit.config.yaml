@@ -36,6 +36,15 @@ website:
   editBaseUrl: "https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src"
   repoUrl: "https://github.com/lablup/backend.ai-webui"
 
+# Code-block presentation (F4 — Shiki syntax highlighting).
+# `lightTheme` selects the build-time syntax theme. Default: "github-light".
+# Any bundled Shiki theme name works (see https://shiki.style/themes —
+# e.g. "vitesse-light", "light-plus"). Unknown names fall back to
+# "github-light" with a one-time warning.
+# Dark mode is intentionally out of scope; a future bucket may add code.darkTheme.
+# code:
+#   lightTheme: "github-light"
+
 # Agent configuration (for 'docs-toolkit agents' command)
 agents:
   projectTitle: "Backend.AI WebUI"
