@@ -1,12 +1,29 @@
 /**
  * Multi-page HTML builder for static website generation.
  * Generates individual HTML pages from processed chapters with sidebar navigation.
+ *
+ * F3 layout (this file owns the page template):
+ *
+ *   <body>
+ *     <div class="doc-page">                    ← CSS grid: sidebar | main | rail
+ *       <aside class="doc-sidebar">             ← collapsible category groups
+ *       <main class="doc-main">
+ *         <header class="page-header-bar">      ← language switcher (F1) + future
+ *         <nav class="breadcrumb">              ← Home › Category › Title (F3)
+ *         <section class="chapter">             ← markdown body
+ *         <div class="page-footer">             ← edit-this-page + prev/next
+ *       <aside class="doc-toc">                 ← right-rail "On this page" (F3)
+ *
+ * The right-rail TOC and breadcrumb together replace the legacy
+ * sidebar-embedded H2 list.
  */
 
 import type { Chapter } from "./markdown-processor.js";
+import type { NavGroup, NavItem } from "./book-config.js";
 import type { ResolvedDocConfig } from "./config.js";
 import { WEBSITE_LABELS } from "./config.js";
 import { escapeHtml } from "./markdown-extensions.js";
+import { slugify } from "./markdown-processor.js";
 import {
   buildJsonLd,
   buildOgTags,
@@ -39,6 +56,20 @@ export interface WebPageContext {
    * marked `available: false`.
    */
   peers: LanguagePeer[];
+  /**
+   * F3 grouped navigation for the current language. Always present — even
+   * legacy flat configs are wrapped in a single anonymous-category group
+   * by the loader. Sidebar render walks this directly so groups stay in
+   * authored order.
+   */
+  navGroups: NavGroup[];
+  /**
+   * F3 category for the current chapter (the group that contains it).
+   * Empty string when the page falls into the synthetic uncategorized
+   * group (legacy flat configs) — breadcrumb omits the middle segment in
+   * that case.
+   */
+  category: string;
   /**
    * Versioned-docs context (F6). Optional — only set when the build is
    * running in versioned mode (`versions` declared in config). Drives
@@ -167,6 +198,8 @@ export interface PageAssets {
   search: string;
   /** Hashed `code-copy.js` filename. Optional — added by F4. */
   codeCopy?: string;
+  /** Hashed `toc-scrollspy.js` filename. Optional — added by F3. */
+  tocScrollspy?: string;
   /** Site-root favicon filename, e.g. `favicon.ico`. */
   favicon?: string;
   /** Site-root apple-touch-icon filename, e.g. `apple-touch-icon.png`. */
@@ -177,39 +210,81 @@ export interface PageAssets {
 
 /**
  * Build sidebar HTML for a multi-page website.
- * Current page is highlighted, subsections shown only for active page.
+ *
+ * F3 — categories render as `<details>` drawers (CSS-only, no runtime JS).
+ * The active page's category is `<details open>` so it shows on first load;
+ * other categories are collapsed by default. The synthetic anonymous group
+ * (legacy flat input) renders as a flat list with no drawer wrapper, so a
+ * config that hasn't migrated to grouped form looks identical to F1.
  */
 function buildWebsiteSidebar(
   chapters: Chapter[],
   currentIndex: number,
   metadata: WebsiteMetadata,
   config: ResolvedDocConfig,
+  navGroups: NavGroup[],
 ): string {
   const langLabel = config.languageLabels[metadata.lang] || metadata.lang;
 
-  const navItems = chapters
-    .map((chapter, index) => {
-      const num = index + 1;
-      const isActive = index === currentIndex;
-      const href = `./${chapter.slug}.html`;
-      const activeClass = isActive ? ' class="active"' : "";
+  // Build a map of nav.path -> index in `chapters` so we can render the
+  // group's items in `book.config.yaml` order while still highlighting the
+  // active one (which is identified by index, not by path/title).
+  const indexByPath = new Map<string, number>();
+  // The chapter index sequence matches the flattened nav order produced by
+  // `loadBookConfig`, but path may not be on the Chapter (it's derived
+  // from nav). Walk navGroups + a mirror counter so we know each item's
+  // global index.
+  let counter = 0;
+  for (const group of navGroups) {
+    for (const item of group.items) {
+      indexByPath.set(item.path, counter);
+      counter++;
+    }
+  }
 
-      let subsectionHtml = "";
-      if (isActive) {
-        const subsections = chapter.headings.filter((h) => h.level === 2);
-        if (subsections.length > 0) {
-          const subItems = subsections
-            .map(
-              (h) =>
-                `<li><a href="#${encodeURIComponent(h.id)}">${escapeHtml(h.text)}</a></li>`,
-            )
-            .join("\n");
-          subsectionHtml = `<ul class="toc-subsections">${subItems}</ul>`;
-        }
-      }
+  const renderItem = (item: NavItem, globalIndex: number): string => {
+    const num = globalIndex + 1;
+    const chapter = chapters[globalIndex];
+    if (!chapter) {
+      // Defensive fallback: chapter array length and nav length should
+      // always match because both are derived from the same flattened
+      // navigation. If they don't, render a plain text entry rather than
+      // throwing — keeps the build alive while the mismatch is debugged.
+      return `<li><span>${num}. ${escapeHtml(item.title)}</span></li>`;
+    }
+    const isActive = globalIndex === currentIndex;
+    const href = `./${chapter.slug}.html`;
+    const activeClass = isActive ? ' class="active" aria-current="page"' : "";
+    return `<li><a href="${href}"${activeClass}>${num}. ${escapeHtml(chapter.title)}</a></li>`;
+  };
 
-      return `<li><a href="${href}"${activeClass}>${num}. ${escapeHtml(chapter.title)}</a>${subsectionHtml}</li>`;
-    })
+  const renderGroup = (group: NavGroup, isAnonymous: boolean): string => {
+    const itemsHtml = group.items
+      .map((item) => renderItem(item, indexByPath.get(item.path) ?? -1))
+      .join("\n");
+
+    if (isAnonymous) {
+      // Legacy flat config — no `<details>` drawer, just a flat list.
+      return `<ul class="doc-sidebar-nav">${itemsHtml}</ul>`;
+    }
+
+    const containsActive = group.items.some(
+      (item) => indexByPath.get(item.path) === currentIndex,
+    );
+    const openAttr = containsActive ? " open" : "";
+    const groupSlug = slugify(group.category) || "group";
+    return `<details class="doc-sidebar-group"${openAttr}>
+  <summary class="doc-sidebar-group__summary">${escapeHtml(group.category)}</summary>
+  <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="${escapeHtml(groupSlug)}">
+    ${itemsHtml}
+  </ul>
+</details>`;
+  };
+
+  const isLegacyFlat =
+    navGroups.length === 1 && navGroups[0].category === "";
+  const groupsHtml = navGroups
+    .map((g) => renderGroup(g, isLegacyFlat))
     .join("\n");
 
   const searchLabels = WEBSITE_LABELS[metadata.lang] ?? WEBSITE_LABELS.en;
@@ -226,8 +301,79 @@ function buildWebsiteSidebar(
     <input type="text" id="search-input" placeholder="${placeholderAttr}" data-no-results="${noResultsAttr}" autocomplete="off" />
     <div id="search-results" class="search-results" hidden></div>
   </div>
-  <ul class="doc-sidebar-nav">
-    ${navItems}
+  <nav class="doc-sidebar-groups" aria-label="Documentation navigation">
+    ${groupsHtml}
+  </nav>
+</aside>`;
+}
+
+/**
+ * Build the breadcrumb trail (F3): `Home › Category › Page Title`. When the
+ * page belongs to the synthetic uncategorized group, the middle segment is
+ * dropped — `Home › Page Title`. Each segment except the last is a link.
+ *
+ * "Home" links to the language's `index.html` (the per-language landing
+ * page). It is intentionally not a cross-language site root link — the
+ * language picker at `dist/web/index.html` is reachable via the language
+ * switcher in the page header.
+ */
+function buildBreadcrumb(chapter: Chapter, category: string, lang: string): string {
+  const labels = WEBSITE_LABELS[lang] ?? WEBSITE_LABELS.en;
+  const homeLabel = labels.home ?? "Home";
+  const segments: string[] = [
+    `<li class="breadcrumb__item"><a class="breadcrumb__link" href="./index.html">${escapeHtml(homeLabel)}</a></li>`,
+  ];
+  if (category) {
+    // Category is not a navigable destination on its own (no per-category
+    // landing page), so render it as plain text rather than a stub link.
+    segments.push(
+      `<li class="breadcrumb__item breadcrumb__item--category">${escapeHtml(category)}</li>`,
+    );
+  }
+  segments.push(
+    `<li class="breadcrumb__item breadcrumb__item--current" aria-current="page">${escapeHtml(chapter.title)}</li>`,
+  );
+  return `<nav class="breadcrumb" aria-label="Breadcrumb">
+  <ol class="breadcrumb__list">
+    ${segments.join("\n    ")}
+  </ol>
+</nav>`;
+}
+
+/**
+ * Build the right-rail "On this page" TOC (F3). Lists H2 + H3 only — H4+
+ * are excluded to keep the rail short on long chapters. Anchors are the
+ * heading IDs already produced by the markdown pipeline.
+ *
+ * The list is plain `<a>` links; the scroll-spy script (toc-scrollspy.js)
+ * adds a `.is-active` class to the link whose section is currently in
+ * view. When there are no H2 headings, the rail renders empty so the
+ * layout grid column doesn't shift between pages.
+ */
+function buildRightRailToc(chapter: Chapter, lang: string): string {
+  const labels = WEBSITE_LABELS[lang] ?? WEBSITE_LABELS.en;
+  const heading = labels.onThisPage ?? "On this page";
+  const items = chapter.headings.filter(
+    (h) => h.level === 2 || h.level === 3,
+  );
+  if (items.length === 0) {
+    // Render the aside container even when empty so the grid column has a
+    // stable layout; CSS hides the heading when the list is empty.
+    return `<aside class="doc-toc" aria-labelledby="doc-toc-heading" data-empty="true">
+  <div class="doc-toc__heading" id="doc-toc-heading">${escapeHtml(heading)}</div>
+  <ul class="doc-toc__list"></ul>
+</aside>`;
+  }
+  const listItems = items
+    .map(
+      (h) =>
+        `<li class="doc-toc__item doc-toc__item--h${h.level}"><a class="doc-toc__link" href="#${encodeURIComponent(h.id)}" data-toc-target="${escapeHtml(h.id)}">${escapeHtml(h.text)}</a></li>`,
+    )
+    .join("\n      ");
+  return `<aside class="doc-toc" aria-labelledby="doc-toc-heading">
+  <div class="doc-toc__heading" id="doc-toc-heading">${escapeHtml(heading)}</div>
+  <ul class="doc-toc__list">
+      ${listItems}
   </ul>
 </aside>`;
 }
@@ -589,6 +735,18 @@ function buildVersionSwitcher(context: WebPageContext): string {
 }
 
 /**
+ * Build the right-rail TOC scroll-spy script tag (F3). The script uses
+ * IntersectionObserver to track which heading section is currently in
+ * view, then toggles the matching `.doc-toc__link` to `.is-active`.
+ * Skipped when there is no TOC (chapter has no H2 headings) — in that
+ * case the rail is rendered empty and the script is a no-op anyway.
+ */
+function buildTocScrollspyScriptTag(assets: PageAssets): string {
+  if (!assets.tocScrollspy) return "";
+  return `<script defer src="../assets/${escapeHtml(assets.tocScrollspy)}"></script>`;
+}
+
+/**
  * Augment every `<img …>` tag with `loading="lazy"`, `decoding="async"`, and
  * (when supplied) `width`/`height` attributes from `dimensions`. Any pre-
  * existing attributes on the tag are preserved. Tags that already declare
@@ -631,6 +789,11 @@ export function applyImageAttributes(
  * controls into the same `<header class="page-header-bar">`; the
  * `<nav class="page-header-nav">` slots them as siblings of the language
  * switcher so they can extend without reflowing the layout.
+ *
+ * F3 deliberately does NOT put the breadcrumb in this header bar — the
+ * spec calls for a breadcrumb "above the chapter content", and keeping
+ * the header reserved for site-level controls (lang switcher, future
+ * version selector) avoids a tight coupling with F6's incoming UI.
  */
 function buildPageHeader(
   metadata: WebsiteMetadata,
@@ -677,6 +840,8 @@ export function buildWebPage(context: WebPageContext): string {
     config,
     assets,
     peers,
+    navGroups,
+    category,
   } = context;
 
   const prefix = rootPrefix(context);
@@ -686,9 +851,12 @@ export function buildWebPage(context: WebPageContext): string {
     currentIndex,
     metadata,
     config,
+    navGroups,
   );
   const pageHeader = buildPageHeader(metadata, peers);
+  const breadcrumb = buildBreadcrumb(chapter, category, metadata.lang);
   const innerContent = buildPageContent(chapter);
+  const rightRailToc = buildRightRailToc(chapter, metadata.lang);
   const metadataBar = buildPageMetadata(context);
   const pagination = buildPaginationNav(
     allChapters,
@@ -711,6 +879,7 @@ export function buildWebPage(context: WebPageContext): string {
   const headerBar = buildPageHeaderBar(context);
   const searchScript = buildSearchScriptTag(assets, prefix);
   const codeCopyScript = buildCodeCopyScriptTag(assets, prefix);
+  const tocScrollspyScript = buildTocScrollspyScriptTag(assets);
 
   return `<!DOCTYPE html>
 <html lang="${escapeHtml(metadata.lang)}">
@@ -723,15 +892,18 @@ ${headerBar}
   ${sidebar}
   <main class="doc-main">
     ${pageHeader}
+    ${breadcrumb}
     ${innerContent}
     <div class="page-footer">
       ${metadataBar}
       ${pagination}
     </div>
   </main>
+  ${rightRailToc}
 </div>
 ${searchScript}
 ${codeCopyScript}
+${tocScrollspyScript}
 </body>
 </html>`;
 }

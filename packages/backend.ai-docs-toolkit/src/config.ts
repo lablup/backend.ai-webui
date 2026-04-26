@@ -234,6 +234,9 @@ export const WEBSITE_LABELS: Record<string, Record<string, string>> = {
     lastUpdated: "Last updated on",
     searchPlaceholder: "Search docs...",
     noResults: "No results found",
+    home: "Home",
+    onThisPage: "On this page",
+    tocToggle: "On this page",
   },
   ko: {
     previous: "이전",
@@ -242,6 +245,9 @@ export const WEBSITE_LABELS: Record<string, Record<string, string>> = {
     lastUpdated: "마지막 업데이트",
     searchPlaceholder: "문서 검색...",
     noResults: "검색 결과가 없습니다",
+    home: "홈",
+    onThisPage: "이 페이지의 목차",
+    tocToggle: "이 페이지의 목차",
   },
   ja: {
     previous: "前へ",
@@ -250,6 +256,9 @@ export const WEBSITE_LABELS: Record<string, Record<string, string>> = {
     lastUpdated: "最終更新日",
     searchPlaceholder: "ドキュメント検索...",
     noResults: "結果が見つかりません",
+    home: "ホーム",
+    onThisPage: "このページの目次",
+    tocToggle: "このページの目次",
   },
   th: {
     previous: "ก่อนหน้า",
@@ -258,6 +267,9 @@ export const WEBSITE_LABELS: Record<string, Record<string, string>> = {
     lastUpdated: "อัปเดตล่าสุด",
     searchPlaceholder: "ค้นหาเอกสาร...",
     noResults: "ไม่พบผลลัพธ์",
+    home: "หน้าแรก",
+    onThisPage: "หัวข้อในหน้านี้",
+    tocToggle: "หัวข้อในหน้านี้",
   },
 };
 

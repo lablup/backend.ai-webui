@@ -534,3 +534,128 @@ The same lookup also drives `<link rel="alternate" hreflang="…">` in the `<hea
 - **Air-gapped** — the language picker script is inline; no CDN, no fetch, no eval.
 - **JS budget** — the picker script is a few hundred bytes; the per-page switcher adds zero JS (links are plain `<a>`).
 - **PDF non-regression** — the cover page still receives the multi-line title via `titleMultiline`; the `<title>` element remains single-line via the existing `.trim().replace(/\n/g, " ")` safety net.
+
+## F3 — Information architecture (sidebar grouping + right-rail TOC + breadcrumbs)
+
+### Navigation schema (backward compatible)
+
+`book.config.yaml`'s `navigation.<lang>` accepts two forms:
+
+```yaml
+# Legacy (F1 and earlier; still accepted)
+navigation:
+  en:
+    - { title: Quickstart, path: quickstart.md }
+    - { title: Overview,   path: overview/overview.md }
+
+# Grouped (F3)
+navigation:
+  en:
+    - category: Getting Started
+      items:
+        - { title: Quickstart, path: quickstart.md }
+    - category: Workloads
+      items:
+        - { title: Sessions, path: sessions/sessions.md }
+```
+
+`loadBookConfig` normalizes both forms into:
+
+| Field                  | Shape                              | Used by                                                                         |
+|------------------------|------------------------------------|---------------------------------------------------------------------------------|
+| `navigation`           | `Record<lang, NavItem[]>` (flat)   | PDF pipeline; web cross-language slug map; backward-compat consumers            |
+| `navigationGroups`     | `Record<lang, NavGroup[]>`         | F3 web sidebar groups, breadcrumb category resolution                            |
+
+When the input is the legacy flat form, `navigationGroups[lang]` contains a single group with `category: ""` (anonymous). The web sidebar renders an anonymous group as a flat list (no `<details>` drawer) so a config that hasn't migrated to grouped form looks identical to F1's sidebar — no breadcrumb middle segment, no group headers.
+
+The two forms cannot be **mixed within a single language** (e.g. `en: [grouped, grouped, flat]`). The loader inspects only the first entry to decide the form; mismatched siblings are dropped with a warning. Each language can independently choose its form, however — `en: grouped, th: flat` is fine while a translator works through categorization.
+
+Soft-fail policy on grouped-form structural problems:
+
+- Group with empty `category:` → dropped with warning, items skipped.
+- Group with no valid `items` → dropped with warning.
+- Item missing `title` or `path` → dropped with warning, group keeps remaining items.
+
+The build never crashes on these — matches F5's diagnostics-sink philosophy.
+
+### Sidebar render (CSS-only collapsible groups)
+
+The web sidebar renders one `<details class="doc-sidebar-group">` per category, each containing a `<ul class="doc-sidebar-nav doc-sidebar-nav--grouped">` of nav items. No JavaScript is involved — `<details>` natively handles the open/close state. The active page's group is `<details open>` on first load (computed at build time by checking which group contains the current item's path); other groups are collapsed by default.
+
+The pre-F3 inline H2 sub-list under the active sidebar item is gone; that data lives in the right-rail TOC now.
+
+### Right-rail "On this page" TOC
+
+Every chapter page renders an `<aside class="doc-toc">` in the third grid column on desktop. The list shows H2 + H3 headings only (H4+ are excluded so the rail stays short on long chapters). The aside is sticky-positioned with `position: sticky; top: 0; height: 100vh; overflow-y: auto`.
+
+**Scroll-spy**: `templates/assets/toc-scrollspy.js` (~1 KB) uses a single `IntersectionObserver` with `rootMargin: "-25% 0px -75% 0px"` (a 25%–75% spy band of the viewport). The link whose target heading is currently in the band gets `.is-active`. When no heading is intersecting (between two sections), the script falls back to picking the last heading whose top is above the spy line. On TOC link click, the active state syncs immediately so it doesn't lag behind the smooth-scroll animation.
+
+The script ships only when `templates/assets/toc-scrollspy.js` exists — `website-generator.ts`'s asset pipeline registers it the same way as F4's optional `code-copy.js`. Pages with no H2 headings render an empty `<aside data-empty="true">`; CSS hides the heading and the script is a cheap no-op (no targets to observe).
+
+### Breadcrumbs
+
+A `<nav class="breadcrumb">` block appears between the page-header-bar (language switcher) and the chapter content. Format:
+
+```
+Home › Category › Chapter Title
+```
+
+- "Home" links to the per-language `index.html` landing page.
+- "Category" is the F3 group containing the page (rendered as plain text — no per-category landing exists).
+- "Chapter Title" is the current page (plain text, marked `aria-current="page"`).
+
+When the page belongs to the synthetic anonymous group (legacy flat config), the middle segment is dropped — `Home › Chapter Title`. Separators (`›`, U+203A) are CSS pseudo-elements, so the structural HTML stays semantic (`<ol>` of `<li>` segments).
+
+The breadcrumb is intentionally **not** placed inside the `<header class="page-header-bar">` flex container. The header is reserved for site-level controls (lang switcher, F6's incoming version selector). Keeping the breadcrumb as a separate block above the chapter avoids tight coupling with F6's layout.
+
+### Layout grid
+
+`.doc-page` is a 3-column CSS grid:
+
+| Column         | Width                                            |
+|----------------|--------------------------------------------------|
+| `.doc-sidebar` | `var(--doc-sidebar-width)` (260px)               |
+| `.doc-main`    | `minmax(0, 1fr)` — fills remaining width, max 960px content |
+| `.doc-toc`     | `var(--doc-toc-width)` (220px)                   |
+
+Responsive breakpoints:
+
+- **≤1100px**: drop the third column. `.doc-toc` is hidden via `display: none`. Headings remain anchor-reachable from inline `#` links — the TOC content is recoverable, just not always visible. (Moving the rail inline would require runtime JS to relocate the `<aside>`; out of scope for F3.)
+- **≤768px**: collapse to a single column. Sidebar becomes a top strip (`max-height: 40vh`), main content flows below.
+
+### Localization
+
+WEBSITE_LABELS (`config.ts`) gains three keys:
+
+| Key           | en              | ja               | ko                | th                |
+|---------------|-----------------|------------------|-------------------|-------------------|
+| `home`        | "Home"          | "ホーム"           | "홈"              | "หน้าแรก"          |
+| `onThisPage`  | "On this page"  | "このページの目次"   | "이 페이지의 목차"  | "หัวข้อในหน้านี้"   |
+| `tocToggle`   | (same)          | (same)           | (same)            | (same)            |
+
+Category labels themselves are localized **inline in `book.config.yaml`** — each language declares its own `category:` strings. There's no per-category lookup table; the localized label for the breadcrumb is whatever the matching nav-group's `category:` field says.
+
+### PDF pipeline non-regression
+
+The PDF pipeline reads `bookConfig.navigation[lang]` (the flat list). Since the flat list is constructed by walking `navigationGroups` in order and concatenating items, the PDF chapter ordering follows the grouped sequence. For the WebUI docs this means the legacy `Vfolder/Sessions All/.../Cluster Session` interleave is replaced by a clean `Getting Started → Workloads → Storage & Data → Administration → Reference` order — a small, deliberate ordering change documented in the F3 PR. The PDF pipeline itself never sees the categories, so the cover page, TOC entries, and chapter outline structure are unaffected.
+
+### Files touched
+
+| File                                           | Role                                                                                        |
+|------------------------------------------------|---------------------------------------------------------------------------------------------|
+| `src/book-config.ts`                           | `RawNavigation` type union (flat \| grouped); `NavGroup`/`NavItem` exports; normalization    |
+| `src/website-builder.ts`                       | `buildBreadcrumb`, `buildRightRailToc`, grouped sidebar, `tocScrollspy` asset slot          |
+| `src/website-generator.ts`                     | Resolve `categoryByPath` per language; write `toc-scrollspy.js`; pass `navGroups`+`category` |
+| `src/styles-web.ts`                            | 3-column grid; sidebar `<details>` styles; breadcrumb; right-rail TOC; responsive breakpoints |
+| `src/config.ts`                                | New WEBSITE_LABELS keys: `home`, `onThisPage`, `tocToggle`                                  |
+| `src/index.ts`                                 | Re-export `NavGroup`, `NavItem`, `RawNavigation`                                            |
+| `templates/assets/toc-scrollspy.js` (new)      | IntersectionObserver scroll-spy (~1 KB)                                                     |
+| `packages/backend.ai-webui-docs/src/book.config.yaml` | Author the default 5-category mapping for all 29 chapters in 4 languages              |
+
+### Constraints honoured (F3)
+
+- **Air-gapped** — scroll-spy is a small bundled script using native IntersectionObserver; no CDN, no fetch.
+- **JS budget** — `toc-scrollspy.js` source is ~3 KB unminified, well under the per-page 25 KB budget.
+- **CSS-only collapse** — sidebar groups use native `<details>`/`<summary>`; no runtime JS for collapse.
+- **PDF non-regression** — flat `navigation` shape preserved for the PDF pipeline; only the chapter ordering changes (intentionally).
+- **Backward compat** — flat `navigation` form still loads and renders identically to F1's sidebar.

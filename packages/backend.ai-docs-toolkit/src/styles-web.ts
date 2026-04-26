@@ -116,6 +116,9 @@ export function generateWebStyles(lang?: string): string {
   --ifm-alert-padding-horizontal: 1.2rem;
 
   --doc-sidebar-width: 260px;
+  /* F3: right-rail "On this page" TOC width. Coexists with sidebar (260px)
+     and main column (~720-960px) on a desktop CSS grid. */
+  --doc-toc-width: 220px;
 }
 
 /* ==========================================================================
@@ -145,20 +148,24 @@ body {
 }
 
 /* ==========================================================================
-   Page Layout
+   Page Layout — F3 three-column grid
+   --------------------------------------------------------------------------
+   Desktop: [sidebar] [main, max ~960px] [right-rail TOC, fixed width].
+   The grid lets the right-rail size predictably and lets the main column
+   fill any spare width. Below 1100px the right-rail collapses (see the
+   responsive section near the end of this file).
    ========================================================================== */
 .doc-page {
-  display: flex;
+  display: grid;
+  grid-template-columns: var(--doc-sidebar-width) minmax(0, 1fr) var(--doc-toc-width);
   min-height: 100vh;
 }
 
 .doc-sidebar {
   position: sticky;
   top: 0;
-  width: var(--doc-sidebar-width);
   height: 100vh;
   overflow-y: auto;
-  flex-shrink: 0;
   border-right: 1px solid var(--ifm-color-emphasis-200);
   background: var(--ifm-color-emphasis-0);
   padding: 1rem 0;
@@ -258,10 +265,82 @@ body {
   text-align: center;
 }
 
+/* F3: sidebar nav. Two render modes share the same .doc-sidebar-nav
+   ruleset:
+     1. Grouped (default for F3) — wrapped in details.doc-sidebar-group
+        with a summary header per category.
+     2. Ungrouped (legacy flat config) — a single .doc-sidebar-nav directly
+        under .doc-sidebar-groups, no details wrapper.
+   The H2 sub-list inside the active sidebar entry is gone — that data lives
+   in the right-rail TOC now. */
+.doc-sidebar-groups {
+  padding: 0;
+  margin: 0;
+}
+
+.doc-sidebar-group {
+  /* Override the global <details> rule so groups don't render the rounded
+     bordered card style — they're navigation, not callouts. */
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+}
+
+.doc-sidebar-group > summary,
+.doc-sidebar-group__summary {
+  cursor: pointer;
+  display: block;
+  padding: 0.55rem 1rem 0.4rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ifm-color-emphasis-700);
+  user-select: none;
+  list-style: none;
+  position: relative;
+}
+
+/* Hide the default disclosure triangle — we draw our own caret below. */
+.doc-sidebar-group > summary::-webkit-details-marker {
+  display: none;
+}
+.doc-sidebar-group > summary::marker {
+  display: none;
+  content: "";
+}
+
+.doc-sidebar-group > summary::after {
+  content: "";
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: translateY(-65%) rotate(-45deg);
+  transition: transform 120ms ease;
+}
+
+.doc-sidebar-group[open] > summary::after {
+  transform: translateY(-30%) rotate(45deg);
+}
+
+.doc-sidebar-group > summary:hover {
+  color: var(--ifm-color-primary);
+}
+
+.doc-sidebar-group[open] > summary {
+  margin-bottom: 0.25rem;
+}
+
 .doc-sidebar-nav {
   list-style: none;
   padding: 0;
-  margin: 0;
+  margin: 0 0 0.5rem 0;
 }
 
 .doc-sidebar-nav > li {
@@ -279,6 +358,11 @@ body {
   transition: background 0.15s, color 0.15s, border-color 0.15s;
 }
 
+.doc-sidebar-nav--grouped > li > a {
+  /* Slightly indented so items visually nest under the category header. */
+  padding-left: 1.5rem;
+}
+
 .doc-sidebar-nav > li > a:hover {
   background: var(--ifm-color-emphasis-100);
   color: var(--ifm-color-primary);
@@ -290,29 +374,10 @@ body {
   background: rgba(53, 120, 229, 0.06);
 }
 
-.doc-sidebar-nav .toc-subsections {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 0.25rem 0;
-}
-
-.doc-sidebar-nav .toc-subsections a {
-  display: block;
-  padding: 0.25rem 1rem 0.25rem 1.75rem;
-  font-size: 0.8rem;
-  color: var(--ifm-color-emphasis-600);
-  text-decoration: none;
-  transition: color 0.15s;
-}
-
-.doc-sidebar-nav .toc-subsections a:hover {
-  color: var(--ifm-color-primary);
-}
-
 .doc-main {
-  flex: 1;
   min-width: 0;
-  max-width: 800px;
+  max-width: 960px;
+  width: 100%;
   margin: 0 auto;
   padding: 2rem 2.5rem;
 }
@@ -809,11 +874,160 @@ details > :last-child {
 }
 
 /* ==========================================================================
-   Responsive
+   Breadcrumb (F3)
+   --------------------------------------------------------------------------
+   Sits above the chapter content, below the page-header-bar. The "›"
+   separators are CSS pseudo-elements so the structural HTML stays
+   semantic (an ol of li segments) and translates cleanly.
    ========================================================================== */
+.breadcrumb {
+  margin: 0 0 1rem 0;
+  font-size: 0.85rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.breadcrumb__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.5rem;
+  align-items: center;
+}
+
+.breadcrumb__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.breadcrumb__item + .breadcrumb__item::before {
+  /* Note: NOT a > glyph (which would conflict with HTML escaping in some
+     reading-mode tools). U+203A SINGLE RIGHT-POINTING ANGLE QUOTATION MARK
+     reads naturally in all four supported languages. */
+  content: "›";
+  color: var(--ifm-color-emphasis-500);
+}
+
+.breadcrumb__link {
+  color: var(--ifm-color-primary);
+  text-decoration: none;
+}
+
+.breadcrumb__link:hover {
+  text-decoration: underline;
+}
+
+.breadcrumb__item--current {
+  color: var(--ifm-color-emphasis-900);
+  font-weight: 600;
+}
+
+.breadcrumb__item--category {
+  /* Category is non-navigable (no per-category landing page), so render as
+     plain text rather than implying it's a link. */
+  color: var(--ifm-color-emphasis-700);
+}
+
+/* ==========================================================================
+   Right-rail "On this page" TOC (F3)
+   --------------------------------------------------------------------------
+   Sticky aside in the third grid column on desktop. IntersectionObserver
+   scroll-spy adds .is-active to the link whose section is in view.
+   ========================================================================== */
+.doc-toc {
+  position: sticky;
+  top: 0;
+  align-self: start;
+  height: 100vh;
+  overflow-y: auto;
+  padding: 2rem 1rem 2rem 1.5rem;
+  font-size: 0.85rem;
+  border-left: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.doc-toc[data-empty="true"] .doc-toc__heading,
+.doc-toc[data-empty="true"] .doc-toc__list {
+  /* Hide the heading when there is nothing to list. We still render the
+     aside element (preserves grid column width) so layout does not shift
+     between pages with and without TOC entries. */
+  display: none;
+}
+
+.doc-toc__heading {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ifm-color-emphasis-700);
+  margin-bottom: 0.75rem;
+}
+
+.doc-toc__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border-left: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.doc-toc__item {
+  margin: 0;
+}
+
+.doc-toc__item--h3 {
+  /* Sub-items rendered with extra left padding so the visual hierarchy
+     mirrors the heading levels they reference. */
+  padding-left: 0.75rem;
+}
+
+.doc-toc__link {
+  display: block;
+  padding: 0.25rem 0.75rem;
+  margin-left: -1px;
+  border-left: 2px solid transparent;
+  color: var(--ifm-color-emphasis-700);
+  text-decoration: none;
+  line-height: 1.35;
+  transition: color 120ms ease, border-color 120ms ease, background 120ms ease;
+}
+
+.doc-toc__link:hover {
+  color: var(--ifm-color-primary);
+  text-decoration: none;
+}
+
+.doc-toc__link.is-active {
+  color: var(--ifm-color-primary);
+  border-left-color: var(--ifm-color-primary);
+  background: rgba(53, 120, 229, 0.06);
+}
+
+/* ==========================================================================
+   Responsive
+   --------------------------------------------------------------------------
+   Two breakpoints:
+     - 1100px: drop the right-rail TOC. Its content is still anchor-
+       reachable from inline headings; on a narrow viewport the prose
+       column needs the room more than the rail does. The rail HTML stays
+       in place (we don't move it inline; that would require JS) — it just
+       isn't displayed.
+     - 768px: collapse the sidebar to a top strip and let the page flow
+       in a single column.
+   ========================================================================== */
+@media (max-width: 1100px) {
+  .doc-page {
+    grid-template-columns: var(--doc-sidebar-width) minmax(0, 1fr);
+  }
+  .doc-toc {
+    display: none;
+  }
+}
+
 @media (max-width: 768px) {
   .doc-page {
-    flex-direction: column;
+    grid-template-columns: 1fr;
   }
   .doc-sidebar {
     position: static;
@@ -836,6 +1050,9 @@ details > :last-child {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;
+  }
+  .breadcrumb {
+    font-size: 0.8rem;
   }
 }
 `;

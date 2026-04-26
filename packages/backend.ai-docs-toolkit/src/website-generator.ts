@@ -35,7 +35,11 @@ import {
 import { canonicalPathFor } from "./versions.js";
 import { generateWebsiteStyles } from "./styles-web.js";
 import { getDocVersion } from "./version.js";
-import { loadBookConfig, type NormalizedBookConfig } from "./book-config.js";
+import {
+  loadBookConfig,
+  type NavGroup,
+  type NormalizedBookConfig,
+} from "./book-config.js";
 import type { ResolvedDocConfig } from "./config.js";
 import { writeHashedAsset, type AssetManifest } from "./asset-hasher.js";
 import { readImageDimensions } from "./image-meta.js";
@@ -306,6 +310,28 @@ export async function generateWebsite(
     console.log(`Written: assets/${codeCopyName}`);
   }
 
+  // Right-rail TOC scroll-spy (F3). Tiny IntersectionObserver script —
+  // shipped only when the file exists in templates so a toolkit install
+  // without F3 still builds. Page builder also no-ops when the asset is
+  // absent, so this is safe regardless.
+  const tocScrollspyPath = path.resolve(
+    path.dirname(fileURLToPath(import.meta.url)),
+    "..",
+    "templates",
+    "assets",
+    "toc-scrollspy.js",
+  );
+  if (fs.existsSync(tocScrollspyPath)) {
+    const bytes = fs.readFileSync(tocScrollspyPath);
+    const tocScrollspyName = writeHashedAsset(
+      assetsDir,
+      "toc-scrollspy.js",
+      bytes,
+      assetManifest,
+    );
+    console.log(`Written: assets/${tocScrollspyName}`);
+  }
+
   // Site-root brand assets (favicon, apple-touch-icon, site.webmanifest).
   // These live at `dist/web/` (not under `assets/`) so absolute references
   // like `/favicon.ico` work for any deployment layout.
@@ -325,6 +351,7 @@ export async function generateWebsite(
     styles: assetManifest["styles.css"],
     search: assetManifest["search.js"],
     codeCopy: assetManifest["code-copy.js"],
+    tocScrollspy: assetManifest["toc-scrollspy.js"],
     favicon: rootAssets.favicon,
     appleTouchIcon: rootAssets.appleTouchIcon,
     webmanifest: rootAssets.webmanifest,
@@ -634,6 +661,19 @@ async function buildLanguage(args: {
   const availableLanguages = bookConfig.languages;
   const metadata: WebsiteMetadata = { title, version, lang, availableLanguages };
 
+  // F3: nav groups for the current language. Always present — even legacy
+  // flat configs are wrapped in a single anonymous-category group by the
+  // loader. Build a path → category map once so per-page breadcrumb
+  // resolution is O(1). Empty-string category (anonymous group) means
+  // the breadcrumb omits the middle segment for that page.
+  const navGroups: NavGroup[] = bookConfig.navigationGroups[lang] ?? [];
+  const categoryByPath = new Map<string, string>();
+  for (const group of navGroups) {
+    for (const item of group.items) {
+      categoryByPath.set(item.path, group.category);
+    }
+  }
+
   // Per-language nav-path -> slug index. The language switcher (F1) maps
   // `quickstart.md` (path) in the current language to the same path in
   // every peer language, then resolves the peer's localized slug for the
@@ -764,6 +804,13 @@ async function buildLanguage(args: {
       };
     });
 
+    // F3: resolve the page's category from the path (set when navGroups
+    // were normalized). Empty string for legacy flat configs — the
+    // breadcrumb renders without a middle segment in that case.
+    const category = navEntry
+      ? categoryByPath.get(navEntry.path) ?? ""
+      : "";
+
     let pageHtml = buildWebPage({
       chapter: chapters[i],
       allChapters: chapters,
@@ -774,6 +821,8 @@ async function buildLanguage(args: {
       lastUpdated: lastDate ? formatDate(lastDate, lang) : undefined,
       assets: pageAssets,
       peers,
+      navGroups,
+      category,
       versionContext,
       seo,
     });
