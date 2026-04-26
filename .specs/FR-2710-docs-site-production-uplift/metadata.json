@@ -1,0 +1,11 @@
+{
+  "epicKey": "FR-2710",
+  "epicUrl": "https://lablup.atlassian.net/browse/FR-2710",
+  "slug": "docs-site-production-uplift",
+  "specTaskKey": "FR-2711",
+  "specTaskUrl": "https://lablup.atlassian.net/browse/FR-2711",
+  "stories": [],
+  "sourceIssues": [],
+  "predecessorEpics": ["FR-2159", "FR-2160"],
+  "createdAt": "2026-04-25T00:00:00Z"
+}
