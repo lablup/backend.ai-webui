@@ -56,13 +56,12 @@ branding:
     th: "คู่มือ"
 
 # Code-block presentation (F4 — Shiki syntax highlighting).
-# `lightTheme` selects the build-time syntax theme. Default: "github-light".
-# Any bundled Shiki theme name works (see https://shiki.style/themes —
-# e.g. "vitesse-light", "light-plus"). Unknown names fall back to
-# "github-light" with a one-time warning.
-# Dark mode is intentionally out of scope; a future bucket may add code.darkTheme.
-# code:
-#   lightTheme: "github-light"
+# FR-2726 Phase 3 paints code blocks with a BAI dark frame, so the
+# Shiki theme is set to `github-dark` here so token colors read on
+# the dark surface. Switch back to `github-light` (or any bundled
+# theme) if your design needs light code blocks instead.
+code:
+  lightTheme: "github-dark"
 
 # Agent configuration (for 'docs-toolkit agents' command)
 agents:

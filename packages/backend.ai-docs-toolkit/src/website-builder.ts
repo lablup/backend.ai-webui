@@ -556,6 +556,37 @@ function buildPaginationNav(
 </nav>`;
 }
 
+/**
+ * Site-level article footer (FR-2726 Phase 3). Renders a small
+ * `© {year} {company} · {productName}` line at the bottom of every
+ * article. Operators can extend it with secondary links via
+ * `website.footerLinks` (Phase 3+ extension); the toolkit does not
+ * own those today, so we ship just the copyright line.
+ */
+function buildArticleFooter(config: ResolvedDocConfig): string {
+  const year = new Date().getFullYear();
+  const rawCompany = (config.company || "").trim();
+  const rawTitle = (config.title || "").trim();
+  const rawProductName = (config.productName || rawTitle).trim();
+
+  const segments: string[] = [];
+  if (rawCompany) segments.push(`&copy; ${year} ${escapeHtml(rawCompany)}`);
+  // Drop the productName segment when it equals the company or title to
+  // avoid duplicate footer text like "© 2026 Lablup Inc. · Lablup Inc.".
+  // The match is case-sensitive to keep the rule cheap and predictable.
+  if (
+    rawProductName &&
+    rawProductName !== rawCompany &&
+    rawProductName !== rawTitle
+  ) {
+    segments.push(escapeHtml(rawProductName));
+  }
+  if (segments.length === 0) return "";
+  return `<footer class="docfoot">
+  <div>${segments.join(" &middot; ")}</div>
+</footer>`;
+}
+
 const EDIT_ICON_SVG =
   '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg>';
 
@@ -1247,6 +1278,7 @@ export function buildWebPage(context: WebPageContext): string {
     currentIndex,
     metadata.lang,
   );
+  const articleFooter = buildArticleFooter(config);
   const langLabel = config.languageLabels[metadata.lang] || metadata.lang;
   const pageTitle = `${escapeHtml(chapter.title)} - ${escapeHtml(metadata.title)}`;
   const headTags = buildHeadAssetTags(
@@ -1298,6 +1330,7 @@ ${versionBanner}
       ${metadataBar}
       ${pagination}
     </div>
+    ${articleFooter}
   </main>
   ${rightRailToc}
 </div>

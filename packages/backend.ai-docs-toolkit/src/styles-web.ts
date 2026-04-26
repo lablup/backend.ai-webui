@@ -855,21 +855,78 @@ body {
 }
 
 /* ==========================================================================
-   Typography & Headings
+   Typography & Headings (FR-2726 Phase 3)
+   --------------------------------------------------------------------------
+   The chapter H1 is the page title; the H2/H3 hierarchy carries the
+   in-page outline reflected by the right-rail TOC. BAI sizes:
+     - H1: 40px / 600 — generous, slightly tightened letter-spacing
+     - H2: 26px / 600 — separated by a soft top border (acts as section
+       divider so consecutive sections feel grouped without an ::after
+       horizontal rule cluttering the column)
+     - H3: 18px / 600 — minor section, slightly negative bottom margin
+       so the following paragraph hugs the heading
+   The first H2 in a chapter has no top border (it would visually clash
+   with the lede paragraph spacing).
    ========================================================================== */
 h1, h2, h3, h4, h5, h6 {
-  font-weight: var(--ifm-heading-font-weight);
-  line-height: var(--ifm-heading-line-height);
-  margin-top: var(--ifm-heading-margin-top);
-  margin-bottom: var(--ifm-heading-margin-bottom);
+  font-family: var(--bai-font-heading);
+  font-weight: 600;
+  line-height: 1.25;
+  margin-top: 0;
+  margin-bottom: 0.6em;
+  color: var(--bai-text);
 }
 
-h1 { font-size: var(--ifm-h1-font-size); }
-h2 { font-size: var(--ifm-h2-font-size); margin-top: 2rem; }
-h3 { font-size: var(--ifm-h3-font-size); margin-top: 1.5rem; }
+.chapter h1,
+h1 {
+  font-size: calc(40px * var(--bai-type-scale));
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin: 0 0 14px;
+}
+
+.chapter h2,
+h2 {
+  font-size: calc(26px * var(--bai-type-scale));
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 44px 0 4px;
+  padding-top: 8px;
+  border-top: 1px solid var(--bai-border-soft);
+  scroll-margin-top: calc(var(--bai-topbar-h) + 24px);
+}
+
+.chapter h2:first-of-type,
+h2:first-of-type {
+  border-top: 0;
+  padding-top: 0;
+  margin-top: 24px;
+}
+
+.chapter h3,
+h3 {
+  font-size: calc(18px * var(--bai-type-scale));
+  font-weight: 600;
+  margin: 28px 0 -8px;
+  scroll-margin-top: calc(var(--bai-topbar-h) + 24px);
+}
+
 h4 { font-size: var(--ifm-h4-font-size); margin-top: 1.25rem; }
 h5 { font-size: var(--ifm-h5-font-size); }
 h6 { font-size: var(--ifm-h6-font-size); }
+
+/* Lede — the first paragraph immediately after the chapter H1 reads as
+   the page summary. Slightly larger and softer color than body text;
+   capped to 68ch so long paragraphs wrap before reaching the rail. */
+.chapter > h1 + p {
+  font-size: calc(17px * var(--bai-type-scale));
+  line-height: 1.55;
+  color: var(--bai-text-2);
+  margin: 0 0 22px;
+  text-wrap: pretty;
+  max-width: 68ch;
+}
 
 /* Heading anchors */
 h1 > a.hash-link,
@@ -954,27 +1011,55 @@ pre code {
   border-radius: 0;
 }
 
-/* Code block with title */
+/* Code block with title (FR-2726 Phase 3 — BAI dark code block).
+   The wrapper provides the dark frame; the title bar shows a language
+   pill (orange chip on the left), the filename (centered/left), and
+   the always-visible copy button on the right. Shiki tokens still
+   render inside the <pre> using their inline styles; the dark wrapper
+   means even light-themed Shiki output reads on a dark surface as the
+   <pre> background is dark via the wrapper. */
 .code-block-wrapper {
   margin: 0 0 var(--ifm-spacing-vertical);
-  border-radius: var(--ifm-pre-border-radius);
+  border-radius: var(--bai-radius);
   overflow: hidden;
-  border: 1px solid var(--ifm-color-emphasis-300);
+  border: 1px solid var(--bai-border);
+  background: #0E0E10;
+  font-family: var(--bai-font-mono);
+  font-size: 12.5px;
 }
 
 .code-block-title {
-  background: var(--ifm-color-emphasis-200);
-  padding: 0.5rem 1rem;
-  font-family: var(--ifm-font-family-monospace);
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--ifm-color-emphasis-800);
-  border-bottom: 1px solid var(--ifm-color-emphasis-300);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  background: #1A1A1F;
+  border-bottom: 1px solid #2A2A30;
+  color: #B5B5BD;
+  font-family: var(--bai-font-mono);
+  font-size: 11.5px;
+  font-weight: 500;
 }
 
 .code-block-wrapper pre {
   border-radius: 0;
   margin: 0;
+  background: #0E0E10 !important;
+  color: #E0E0E5;
+  padding: 16px 18px;
+  line-height: 1.7;
+  overflow-x: auto;
+}
+
+/* Shiki emits inline-styled <span> tokens inside <pre>. We let those
+   inline colors come through (they're already designed for dark bg
+   when the consumer keeps the default github-dark theme). When the
+   consumer overrides to a light theme, the wrapper background is
+   still dark — the tokens will still be readable, just not optimal.
+   That's a known trade-off for the BAI design (always-dark code). */
+.code-block-wrapper pre code {
+  color: inherit;
+  background: transparent;
 }
 
 /* Line highlighting */
@@ -1009,99 +1094,183 @@ pre code {
   display: block;
 }
 
-/* Wrapper injected at runtime by code-copy.js. Provides the positioning
-   context for the absolutely-positioned button. The wrapper is invisible
-   itself — the <pre> inside keeps its frame styling. */
+/* Wrapper injected at runtime by code-copy.js around every <pre> on the
+   page (titled OR untitled). FR-2726 Phase 3 makes this the canonical
+   BAI dark code frame so untitled fenced blocks (the common case) get
+   the dark surface too — not just blocks that opt in via title=.
+   The titled wrapper (.code-block-wrapper above) already paints the
+   dark frame; when both wrappers are present, the inner one is
+   transparent so the title bar's frame wins. */
 .doc-code-block-wrapper {
   position: relative;
   margin: 0 0 var(--ifm-spacing-vertical);
+  border-radius: var(--bai-radius);
+  overflow: hidden;
+  border: 1px solid var(--bai-border);
+  background: #0E0E10;
+  font-family: var(--bai-font-mono);
+  font-size: 12.5px;
 }
 
 /* When inside a titled wrapper (already provides a frame), reset the
    bottom margin so the doc-code-block-wrapper doesn't double-space. */
 .code-block-wrapper .doc-code-block-wrapper {
   margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
 }
 
 .doc-code-block-wrapper > pre {
-  /* Reset margin on pre when wrapped — wrapper owns the bottom margin. */
+  /* Reset margin on pre when wrapped — wrapper owns the bottom margin.
+     Force the dark surface on the <pre> too; Shiki doesn't emit an inline
+     style on the <pre> root (only on token spans), so a plain CSS rule
+     wins. The !important guards against any future Shiki version that
+     does inline-style the root. */
   margin: 0;
+  background: #0E0E10 !important;
+  color: #E0E0E5;
+  padding: 16px 18px;
+  line-height: 1.7;
+  overflow-x: auto;
 }
 
+/* Tokens are inline-styled by Shiki for the configured lightTheme.
+   Operators who keep github-light end up with light token colors on
+   our dark frame, which doesn't read. The two paths forward:
+     1. Set code.lightTheme to a dark-friendly theme (github-dark,
+        vitesse-dark, etc.) in docs-toolkit.config.yaml.
+     2. Wait for the F4 dual-theme follow-up that pairs Shiki's
+        themes: { light, dark } emitter with our [data-theme] hook.
+   Until either is configured, we leave token colors untouched so the
+   build doesn't fight Shiki's output. */
+
+/* Copy button (FR-2726 Phase 3 — BAI dark code block).
+   The button is always visible (no hover-reveal) so users can always
+   see the copy affordance, matching the BAI design prototype. When
+   the code block has a title bar, the button sits inside the bar; when
+   it doesn't, it floats at the top-right of the dark frame. */
 .doc-code-copy-btn {
   position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
-  padding: 0.25rem 0.6rem;
-  font-size: 0.75rem;
+  top: 6px;
+  right: 8px;
+  padding: 3px 9px;
+  font-size: 11px;
   line-height: 1.2;
-  font-family: var(--ifm-font-family-base);
-  color: var(--ifm-color-emphasis-700);
-  background: var(--ifm-color-emphasis-0);
-  border: 1px solid var(--ifm-color-emphasis-300);
-  border-radius: 0.25rem;
+  font-family: var(--bai-font-sans);
+  color: #B5B5BD;
+  background: transparent;
+  border: 1px solid #2A2A30;
+  border-radius: 4px;
   cursor: pointer;
-  opacity: 0;
-  transition: opacity 120ms ease, color 120ms ease, border-color 120ms ease,
+  opacity: 1;
+  transition: color 120ms ease, border-color 120ms ease,
     background-color 120ms ease;
 }
 
-.doc-code-block-wrapper:hover .doc-code-copy-btn,
-.doc-code-block-wrapper:focus-within .doc-code-copy-btn,
-.doc-code-copy-btn:focus,
-.doc-code-copy-btn:focus-visible {
-  opacity: 1;
+/* When inside a title bar, anchor to the bar's right edge instead of
+   floating absolute. The copy script puts the button at the top-right
+   of the wrapper; the title bar already renders at the top, so the
+   absolute position lands on the bar visually. */
+.code-block-wrapper .doc-code-copy-btn {
+  top: 6px;
+  right: 8px;
 }
 
 .doc-code-copy-btn:hover {
-  color: var(--ifm-color-primary);
-  border-color: var(--ifm-color-primary);
-  background: var(--ifm-color-emphasis-100);
+  color: var(--bai-primary);
+  border-color: var(--bai-primary);
+  background: transparent;
 }
 
 .doc-code-copy-btn[data-state="copied"] {
-  color: var(--ifm-color-success-dark);
-  border-color: var(--ifm-color-success);
-  background: rgba(0, 164, 0, 0.08);
-  opacity: 1;
+  color: var(--bai-success);
+  border-color: var(--bai-success);
+  background: transparent;
 }
 
 .doc-code-copy-btn[data-state="failed"] {
-  color: var(--ifm-color-danger-dark);
-  border-color: var(--ifm-color-danger);
-  background: rgba(250, 56, 62, 0.06);
-  opacity: 1;
+  color: var(--bai-danger);
+  border-color: var(--bai-danger);
+  background: transparent;
+}
+
+/* Language pill (FR-2726 Phase 3). Surfaced when the consumer wraps
+   their code block in <div class="code-block-wrapper"> with a
+   <span class="code-block-lang">bash</span> sibling — the markdown
+   pipeline does not auto-emit this today, but the styles are in place
+   so a future enhancement can flip it on. */
+.code-block-lang {
+  display: inline-flex;
+  align-items: center;
+  background: var(--bai-primary);
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.code-block-title-text {
+  flex: 1;
+  min-width: 0;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 /* ==========================================================================
-   Tables
+   Tables (FR-2726 Phase 3 — BAI bordered card style)
+   --------------------------------------------------------------------------
+   Wide tables on narrow viewports must remain horizontally scrollable so
+   the column structure stays readable. We use display: block + overflow-x:
+   auto for the scroll container; min-width keeps the table edge-to-edge
+   on viewports wider than the content. The 1px border + radius wrap the
+   block so the BAI card framing is preserved.
    ========================================================================== */
 table {
-  width: 100%;
+  display: block;
+  width: max-content;
+  min-width: 100%;
   border-collapse: collapse;
   margin-bottom: var(--ifm-spacing-vertical);
-  display: table;
-  overflow: auto;
+  font-size: 13.5px;
+  border: 1px solid var(--bai-border);
+  border-radius: var(--bai-radius);
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
 }
 
 thead {
-  background: var(--ifm-table-head-background);
+  background: var(--bai-bg-muted);
 }
 
 th {
-  font-weight: var(--ifm-table-head-font-weight);
-  padding: var(--ifm-table-cell-padding);
-  border-bottom: 2px solid var(--ifm-table-border-color);
+  font-weight: 600;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--bai-border);
   text-align: left;
+  color: var(--bai-text);
+  font-size: 12.5px;
+  letter-spacing: 0.02em;
 }
 
 td {
-  padding: var(--ifm-table-cell-padding);
-  border-bottom: var(--ifm-table-border-width) solid var(--ifm-table-border-color);
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--bai-border-soft);
+  color: var(--bai-text);
 }
 
-tbody tr:nth-child(even) {
-  background: var(--ifm-table-stripe-background);
+tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+tbody tr:hover {
+  background: var(--bai-bg-muted);
 }
 
 /* ==========================================================================
@@ -1136,16 +1305,101 @@ li > ul, li > ol {
 }
 
 /* ==========================================================================
-   Images
+   Images (FR-2726 Phase 3 — BAI figure styling)
+   --------------------------------------------------------------------------
+   The doc-image wrapper acts as a clean BAI-style figure: 1px border,
+   12px radius, soft shadow. Captions (when produced by the markdown
+   pipeline as <figcaption>) sit centered below the image. Stat cards
+   and other content components opt into the BAI palette via the
+   .bai-stat-grid / .bai-stat-card classes below.
    ========================================================================== */
 .doc-image {
   max-width: 100%;
   height: auto;
   display: block;
-  margin: 1rem auto;
-  border: 1px solid var(--ifm-color-emphasis-200);
-  border-radius: var(--ifm-pre-border-radius);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  margin: 1.25rem auto;
+  border: 1px solid var(--bai-border);
+  border-radius: var(--bai-radius-lg);
+  box-shadow: var(--bai-shadow-sm);
+  background: var(--bai-bg);
+}
+
+figure {
+  margin: 1.25rem 0;
+}
+
+figure .doc-image {
+  margin: 0;
+}
+
+figcaption {
+  text-align: center;
+  font-size: 12.5px;
+  color: var(--bai-text-3);
+  padding: 12px;
+}
+
+/* Stat-card grid (opt-in HTML). Authors who need a quick numeric
+   scoreboard can write:
+     <div class="bai-stat-grid">
+       <div class="bai-stat-card">
+         <div class="bai-stat-card__label">Sessions</div>
+         <div class="bai-stat-card__value">3<span class="bai-stat-card__unit">active</span></div>
+         <div class="bai-stat-card__hint">Optional context line</div>
+       </div>
+     </div>
+   The Phase 3 styles match the BAI prototype's scoreboard idiom. */
+.bai-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.bai-stat-card {
+  background: var(--bai-bg);
+  border: 1px solid var(--bai-border);
+  border-radius: var(--bai-radius);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.bai-stat-card__label {
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--bai-text-3);
+  font-weight: 500;
+}
+
+.bai-stat-card__value {
+  font-family: var(--bai-font-heading);
+  font-size: 30px;
+  font-weight: 600;
+  line-height: 1.05;
+  color: var(--bai-primary);
+  letter-spacing: -0.02em;
+}
+
+.bai-stat-card__unit {
+  font-size: 12px;
+  color: var(--bai-text-3);
+  margin-left: 6px;
+  font-weight: 400;
+}
+
+.bai-stat-card__hint {
+  font-size: 11.5px;
+  color: var(--bai-text-3);
+  margin-top: 2px;
+}
+
+@media (max-width: 880px) {
+  .bai-stat-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* ==========================================================================
@@ -1165,85 +1419,139 @@ strong {
 }
 
 /* ==========================================================================
-   Admonitions
+   Admonitions (FR-2726 Phase 3 — BAI semantic colors + 3px border)
+   --------------------------------------------------------------------------
+   Five severity levels share a 3px left border + soft tinted bg + colored
+   icon/title. The card-bg derives from the semantic color at 6-8% alpha
+   so the callout is recognizable in both light and dark themes (the
+   alpha tint adapts naturally to the page background).
    ========================================================================== */
 .admonition {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px;
   margin-bottom: 1em;
-  padding: var(--ifm-alert-padding-vertical) var(--ifm-alert-padding-horizontal);
-  border: var(--ifm-alert-border-width) solid transparent;
-  border-left-width: var(--ifm-alert-border-left-width);
-  border-radius: var(--ifm-alert-border-radius);
+  padding: 14px 16px;
+  border: 1px solid var(--bai-border);
+  border-left-width: 3px;
+  border-radius: var(--bai-radius);
+  background: var(--bai-bg-muted);
 }
 
 .admonition-heading {
+  grid-column: 2;
   display: flex;
   align-items: center;
-  font-weight: 700;
-  font-size: 0.9rem;
+  font-family: var(--bai-font-heading);
+  font-size: 13px;
+  font-weight: 600;
   text-transform: uppercase;
-  margin-bottom: 0.3rem;
+  letter-spacing: 0.02em;
+  margin: 0 0 4px;
 }
 
 .admonition-heading .admonition-icon {
-  display: inline-flex;
-  margin-right: 0.4rem;
+  /* Icon sits in the first grid column (outside the heading) so the
+     admonition's title and body wrap together in the second column.
+     We pin it via a pseudo-element-style position trick: the .admonition
+     grid places the .admonition-content-wrap in column 2, but icons
+     in legacy markup are rendered as a child of .admonition-heading.
+     Move them to column 1 by giving them position:absolute relative to
+     the admonition. */
+  display: none; /* hidden in heading; we render it via ::before below */
 }
 
-.admonition-heading .admonition-icon svg {
-  width: 1.1rem;
-  height: 1.1rem;
-  fill: currentColor;
+.admonition::before {
+  content: "";
+  grid-row: 1 / span 2;
+  grid-column: 1;
+  width: 22px;
+  height: 22px;
+  margin-top: 1px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+.admonition-content {
+  grid-column: 2;
 }
 
 .admonition-content > :last-child {
   margin-bottom: 0;
 }
 
-/* Note */
-.admonition-note {
-  background: rgba(235, 237, 240, 0.3);
-  border-left-color: var(--ifm-color-secondary);
-}
-.admonition-note .admonition-heading {
-  color: var(--ifm-color-emphasis-700);
+.admonition-content > p {
+  margin: 0 0 0.5em;
+  font-size: 14px;
+  color: var(--bai-text-2);
 }
 
-/* Tip */
+.admonition-content > p:last-child {
+  margin-bottom: 0;
+}
+
+/* Inline-SVG icon per severity (data: URI keeps the icon in CSS so no
+   extra HTTP request and no per-page HTML expansion). All icons use
+   currentColor; tinting per severity is done via a CSS color hack —
+   we set the icon as a mask and color the surface, ensuring the icon
+   inherits from the admonition's accent color. */
+.admonition-note,
+.admonition-info {
+  border-left-color: var(--bai-info);
+  background: rgba(42, 153, 184, 0.06);
+}
+.admonition-note .admonition-heading,
+.admonition-info .admonition-heading {
+  color: var(--bai-info);
+}
+.admonition-note::before,
+.admonition-info::before {
+  background-color: var(--bai-info);
+  -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="black" stroke-width="2"/><line x1="12" y1="8" x2="12" y2="8" stroke="black" stroke-width="2.4" stroke-linecap="round"/><line x1="12" y1="11" x2="12" y2="17" stroke="black" stroke-width="2" stroke-linecap="round"/></svg>') center/contain no-repeat;
+  mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="black" stroke-width="2"/><line x1="12" y1="8" x2="12" y2="8" stroke="black" stroke-width="2.4" stroke-linecap="round"/><line x1="12" y1="11" x2="12" y2="17" stroke="black" stroke-width="2" stroke-linecap="round"/></svg>') center/contain no-repeat;
+}
+
 .admonition-tip {
-  background: rgba(0, 164, 0, 0.06);
-  border-left-color: var(--ifm-color-success);
+  border-left-color: var(--bai-success);
+  background: rgba(0, 189, 155, 0.07);
 }
 .admonition-tip .admonition-heading {
-  color: var(--ifm-color-success-dark);
+  color: var(--bai-success);
+}
+.admonition-tip::before {
+  background-color: var(--bai-success);
+  -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.74V17h8v-2.26A7 7 0 0 0 12 2Z"/></svg>') center/contain no-repeat;
+  mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.74V17h8v-2.26A7 7 0 0 0 12 2Z"/></svg>') center/contain no-repeat;
 }
 
-/* Info */
-.admonition-info {
-  background: rgba(84, 199, 236, 0.1);
-  border-left-color: var(--ifm-color-info);
-}
-.admonition-info .admonition-heading {
-  color: var(--ifm-color-info-dark);
-}
-
-/* Warning / Caution */
 .admonition-warning,
 .admonition-caution {
-  background: rgba(255, 186, 0, 0.1);
-  border-left-color: var(--ifm-color-warning);
+  border-left-color: var(--bai-warning);
+  background: rgba(255, 191, 0, 0.08);
 }
 .admonition-warning .admonition-heading,
 .admonition-caution .admonition-heading {
-  color: var(--ifm-color-warning-dark);
+  color: #B88A00;
+}
+.admonition-warning::before,
+.admonition-caution::before {
+  background-color: #B88A00;
+  -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><line x1="12" y1="9" x2="12" y2="13" stroke="black" stroke-width="2" stroke-linecap="round"/><line x1="12" y1="17" x2="12" y2="17" stroke="black" stroke-width="2.4" stroke-linecap="round"/></svg>') center/contain no-repeat;
+  mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><line x1="12" y1="9" x2="12" y2="13" stroke="black" stroke-width="2" stroke-linecap="round"/><line x1="12" y1="17" x2="12" y2="17" stroke="black" stroke-width="2.4" stroke-linecap="round"/></svg>') center/contain no-repeat;
 }
 
-/* Danger */
 .admonition-danger {
-  background: rgba(250, 56, 62, 0.06);
-  border-left-color: var(--ifm-color-danger);
+  border-left-color: var(--bai-danger);
+  background: rgba(187, 31, 31, 0.06);
 }
 .admonition-danger .admonition-heading {
-  color: var(--ifm-color-danger-dark);
+  color: var(--bai-danger);
+}
+.admonition-danger::before {
+  background-color: var(--bai-danger);
+  -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="black" stroke-width="2"/><line x1="15" y1="9" x2="9" y2="15" stroke="black" stroke-width="2" stroke-linecap="round"/><line x1="9" y1="9" x2="15" y2="15" stroke="black" stroke-width="2" stroke-linecap="round"/></svg>') center/contain no-repeat;
+  mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="black" stroke-width="2"/><line x1="15" y1="9" x2="9" y2="15" stroke="black" stroke-width="2" stroke-linecap="round"/><line x1="9" y1="9" x2="15" y2="15" stroke="black" stroke-width="2" stroke-linecap="round"/></svg>') center/contain no-repeat;
 }
 
 /* ==========================================================================
@@ -1290,43 +1598,70 @@ details > :last-child {
 }
 
 /* ==========================================================================
-   Page Footer (website mode)
+   Page Footer (website mode — FR-2726 Phase 3)
+   --------------------------------------------------------------------------
+   The page-footer wraps the meta bar (last-updated only — Edit-this-page
+   moved to the right rail Get-help cluster) and the prev/next pager.
+   The site-level docfoot (copyright + secondary links) sits below the
+   pager when emitted by the page builder.
    ========================================================================== */
 .page-footer {
-  margin-top: 3rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid var(--ifm-color-emphasis-200);
+  margin-top: 60px;
+  padding-top: 0;
+  border-top: 0;
 }
 
 .page-metadata {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
-  margin-bottom: 1rem;
-  font-size: 0.85rem;
-  color: var(--ifm-color-emphasis-600);
+  margin: 0 0 18px;
+  font-size: 12.5px;
+  color: var(--bai-text-3);
 }
 
 .page-metadata .edit-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  color: var(--ifm-color-primary);
-  text-decoration: none;
-}
-
-.page-metadata .edit-link:hover {
-  text-decoration: underline;
-}
-
-.page-metadata .edit-link svg {
-  width: 1rem;
-  height: 1rem;
-  fill: currentColor;
+  /* The right-rail Get-help section now owns the edit-this-page link;
+     keep the legacy class hidden in the meta bar so existing builds
+     don't double-render it. The CSS rule is preserved for any consumer
+     who chose to inline the edit link. */
+  display: none;
 }
 
 .page-metadata .last-updated {
-  color: var(--ifm-color-emphasis-600);
+  color: var(--bai-text-3);
+}
+
+/* Site-level article footer (FR-2726 Phase 3). Rendered at the bottom
+   of every page below the pager. Single line of muted text plus an
+   optional cluster of secondary links (privacy / terms / license)
+   driven by website.footerLinks (when configured). */
+.docfoot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 60px;
+  padding-top: 22px;
+  border-top: 1px solid var(--bai-border-soft);
+  font-size: 12px;
+  color: var(--bai-text-3);
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.docfoot__links {
+  display: inline-flex;
+  gap: 14px;
+}
+
+.docfoot a {
+  color: var(--bai-text-3);
+  text-decoration: none;
+}
+
+.docfoot a:hover {
+  color: var(--bai-primary);
+  text-decoration: none;
 }
 
 /* ==========================================================================
@@ -1397,45 +1732,57 @@ details > :last-child {
   color: var(--bai-text-3);
 }
 
-/* Pagination Navigation */
+/* Pagination Navigation (FR-2726 Phase 3 — BAI pager card style) */
 .pagination-nav {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 60px;
 }
 
 .pagination-nav__link {
-  display: block;
-  flex: 1;
-  padding: 1rem;
-  border: 1px solid var(--ifm-color-emphasis-300);
-  border-radius: var(--ifm-pre-border-radius);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 18px;
+  border: 1px solid var(--bai-border);
+  border-radius: var(--bai-radius);
+  background: var(--bai-bg);
+  color: var(--bai-text);
   text-decoration: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: border-color 0.15s, background 0.15s;
 }
 
 .pagination-nav__link:hover {
-  border-color: var(--ifm-color-primary);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  border-color: var(--bai-primary);
+  background: var(--bai-bg-muted);
   text-decoration: none;
+  color: var(--bai-text);
 }
 
 .pagination-nav__link--next {
   text-align: right;
+  align-items: flex-end;
 }
 
 .pagination-nav__sublabel {
-  font-size: 0.75rem;
-  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  color: var(--bai-text-3);
+  font-weight: 500;
   text-transform: uppercase;
-  color: var(--ifm-color-emphasis-600);
-  margin-bottom: 0.25rem;
+  letter-spacing: 0.05em;
+  margin: 0;
 }
 
 .pagination-nav__label {
-  font-size: 1rem;
+  font-family: var(--bai-font-heading);
+  font-size: 16px;
   font-weight: 600;
-  color: var(--ifm-color-primary);
+  color: var(--bai-text);
+  margin: 0;
 }
 
 /* ==========================================================================
@@ -1675,11 +2022,14 @@ details > :last-child {
   .doc-main {
     padding: 24px 16px 60px;
   }
+  /* The pager is a CSS grid (Phase 3); collapse to a single column on
+     narrow viewports — flex-direction has no effect on a grid. */
   .pagination-nav {
-    flex-direction: column;
+    grid-template-columns: 1fr;
   }
   .pagination-nav__link--next {
     text-align: left;
+    align-items: flex-start;
   }
   .page-metadata {
     flex-direction: column;
