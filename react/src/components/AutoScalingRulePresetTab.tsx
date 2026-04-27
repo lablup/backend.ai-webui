@@ -8,6 +8,7 @@ import {
   AutoScalingRulePresetTabQuery$variables,
   QueryDefinitionFilter,
 } from '../__generated__/AutoScalingRulePresetTabQuery.graphql';
+import { PrometheusQueryPresetEditorModalFragment$key } from '../__generated__/PrometheusQueryPresetEditorModalFragment.graphql';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import PrometheusQueryPresetEditorModal from './PrometheusQueryPresetEditorModal';
 import PrometheusQueryPresetNodes from './PrometheusQueryPresetNodes';
@@ -25,12 +26,7 @@ import {
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { parseAsJson, useQueryStates } from 'nuqs';
-import React, {
-  Suspense,
-  useDeferredValue,
-  useState,
-  useTransition,
-} from 'react';
+import React, { Suspense, useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 
@@ -59,8 +55,9 @@ const AutoScalingRulePresetTab: React.FC = () => {
   });
 
   const [fetchKey, updateFetchKey] = useFetchKey();
-  const [, startRefetchTransition] = useTransition();
   const [isCreatingPreset, setIsCreatingPreset] = useState(false);
+  const [editingPreset, setEditingPreset] =
+    useState<PrometheusQueryPresetEditorModalFragment$key | null>(null);
   const [deletingPreset, setDeletingPreset] =
     useState<DeletingPresetTarget | null>(null);
 
@@ -187,6 +184,9 @@ const AutoScalingRulePresetTab: React.FC = () => {
               }
             },
           }}
+          onEditPreset={(preset) => {
+            setEditingPreset(preset);
+          }}
           onDeletePreset={(preset) => {
             setDeletingPreset({ id: preset.id, name: preset.name });
           }}
@@ -197,9 +197,17 @@ const AutoScalingRulePresetTab: React.FC = () => {
         onRequestClose={(success) => {
           setIsCreatingPreset(false);
           if (success) {
-            startRefetchTransition(() => {
-              updateFetchKey();
-            });
+            updateFetchKey();
+          }
+        }}
+      />
+      <PrometheusQueryPresetEditorModal
+        open={!!editingPreset}
+        presetFrgmt={editingPreset}
+        onRequestClose={(success) => {
+          setEditingPreset(null);
+          if (success) {
+            updateFetchKey();
           }
         }}
       />
@@ -240,9 +248,7 @@ const AutoScalingRulePresetTab: React.FC = () => {
               }
               message.success(t('prometheusQueryPreset.SuccessfullyDeleted'));
               setDeletingPreset(null);
-              startRefetchTransition(() => {
-                updateFetchKey();
-              });
+              updateFetchKey();
             },
             onError: (error) => {
               message.error(error.message);

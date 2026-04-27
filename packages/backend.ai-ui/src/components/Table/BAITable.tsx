@@ -238,8 +238,8 @@ export interface BAITableProps<
  * />
  * ```
  */
-const BAITable = <RecordType extends object = any>({
-  resizable = false,
+const BAITable = <RecordType extends AnyObject = AnyObject>({
+  resizable = true,
   columns,
   components,
   loading,

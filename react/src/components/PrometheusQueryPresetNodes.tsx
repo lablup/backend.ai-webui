@@ -2,12 +2,13 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { PrometheusQueryPresetEditorModalFragment$key } from '../__generated__/PrometheusQueryPresetEditorModalFragment.graphql';
 import {
   PrometheusQueryPresetNodesFragment$data,
   PrometheusQueryPresetNodesFragment$key,
 } from '../__generated__/PrometheusQueryPresetNodesFragment.graphql';
 import { localeCompare } from '../helper';
-import { DeleteOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { Button, Typography } from 'antd';
 import {
   BAIColumnsType,
@@ -31,6 +32,7 @@ interface PrometheusQueryPresetNodesProps extends Omit<
 > {
   presetsFrgmt: PrometheusQueryPresetNodesFragment$key;
   onDeletePreset?: (preset: PrometheusQueryPresetNodeInList) => void;
+  onEditPreset?: (preset: PrometheusQueryPresetEditorModalFragment$key) => void;
   customizeColumns?: (
     baseColumns: BAIColumnsType<PrometheusQueryPresetNodeInList>,
   ) => BAIColumnsType<PrometheusQueryPresetNodeInList>;
@@ -39,6 +41,7 @@ interface PrometheusQueryPresetNodesProps extends Omit<
 const PrometheusQueryPresetNodes: React.FC<PrometheusQueryPresetNodesProps> = ({
   presetsFrgmt,
   onDeletePreset,
+  onEditPreset,
   customizeColumns,
   ...tableProps
 }) => {
@@ -67,6 +70,7 @@ const PrometheusQueryPresetNodes: React.FC<PrometheusQueryPresetNodesProps> = ({
           id
           name
         }
+        ...PrometheusQueryPresetEditorModalFragment
       }
     `,
     presetsFrgmt,
@@ -129,6 +133,11 @@ const PrometheusQueryPresetNodes: React.FC<PrometheusQueryPresetNodesProps> = ({
       fixed: 'right',
       render: (_value, row) => (
         <BAIFlex gap="xxs">
+          <Button
+            type="text"
+            icon={<EditOutlined />}
+            onClick={() => onEditPreset?.(row)}
+          />
           <Button
             type="text"
             danger
