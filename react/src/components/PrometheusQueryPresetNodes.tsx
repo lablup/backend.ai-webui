@@ -9,16 +9,18 @@ import {
 } from '../__generated__/PrometheusQueryPresetNodesFragment.graphql';
 import { localeCompare } from '../helper';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { Button, Typography } from 'antd';
+import { Typography } from 'antd';
 import {
   BAIColumnsType,
   BAIFlex,
+  BAINameActionCell,
   BAITable,
+  BAITableColumnOverrideItem,
   BAITableProps,
   filterOutNullAndUndefined,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
@@ -28,7 +30,7 @@ export type PrometheusQueryPresetNodeInList = NonNullable<
 
 interface PrometheusQueryPresetNodesProps extends Omit<
   BAITableProps<PrometheusQueryPresetNodeInList>,
-  'dataSource' | 'columns'
+  'dataSource' | 'columns' | 'tableSettings'
 > {
   presetsFrgmt: PrometheusQueryPresetNodesFragment$key;
   onDeletePreset?: (preset: PrometheusQueryPresetNodeInList) => void;
@@ -47,6 +49,9 @@ const PrometheusQueryPresetNodes: React.FC<PrometheusQueryPresetNodesProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
+  const [columnOverrides, setColumnOverrides] = useState<
+    Record<string, BAITableColumnOverrideItem>
+  >({});
 
   const presets = useFragment(
     graphql`
@@ -81,8 +86,30 @@ const PrometheusQueryPresetNodes: React.FC<PrometheusQueryPresetNodesProps> = ({
       title: t('prometheusQueryPreset.Name'),
       dataIndex: 'name',
       key: 'name',
+      fixed: 'left',
+      required: true,
       sorter: (a, b) => localeCompare(a?.name, b?.name),
-      render: (name: string) => name,
+      render: (_name: string, row) => (
+        <BAINameActionCell
+          title={row.name}
+          showActions="always"
+          actions={[
+            {
+              key: 'edit',
+              title: t('button.Edit'),
+              icon: <EditOutlined />,
+              onClick: () => onEditPreset?.(row),
+            },
+            {
+              key: 'delete',
+              title: t('button.Delete'),
+              icon: <DeleteOutlined />,
+              type: 'danger',
+              onClick: () => onDeletePreset?.(row),
+            },
+          ]}
+        />
+      ),
     },
     {
       title: t('prometheusQueryPreset.MetricName'),
@@ -99,6 +126,7 @@ const PrometheusQueryPresetNodes: React.FC<PrometheusQueryPresetNodesProps> = ({
           <Typography.Text
             code
             ellipsis={{ tooltip: queryTemplate }}
+            copyable={{ text: queryTemplate }}
             style={{ maxWidth: 320 }}
           >
             {queryTemplate}
@@ -117,6 +145,7 @@ const PrometheusQueryPresetNodes: React.FC<PrometheusQueryPresetNodesProps> = ({
       title: t('prometheusQueryPreset.CreatedAt'),
       dataIndex: 'createdAt',
       key: 'createdAt',
+      defaultHidden: true,
       render: (createdAt: string | null | undefined) =>
         createdAt ? dayjs(createdAt).format('lll') : '-',
     },
@@ -124,28 +153,9 @@ const PrometheusQueryPresetNodes: React.FC<PrometheusQueryPresetNodesProps> = ({
       title: t('prometheusQueryPreset.UpdatedAt'),
       dataIndex: 'updatedAt',
       key: 'updatedAt',
+      defaultHidden: true,
       render: (updatedAt: string | null | undefined) =>
         updatedAt ? dayjs(updatedAt).format('lll') : '-',
-    },
-    {
-      title: t('general.Control'),
-      key: 'actions',
-      fixed: 'right',
-      render: (_value, row) => (
-        <BAIFlex gap="xxs">
-          <Button
-            type="text"
-            icon={<EditOutlined />}
-            onClick={() => onEditPreset?.(row)}
-          />
-          <Button
-            type="text"
-            danger
-            icon={<DeleteOutlined />}
-            onClick={() => onDeletePreset?.(row)}
-          />
-        </BAIFlex>
-      ),
     },
   ];
 
@@ -154,15 +164,21 @@ const PrometheusQueryPresetNodes: React.FC<PrometheusQueryPresetNodesProps> = ({
     : baseColumns;
 
   return (
-    <BAITable
-      size="small"
-      scroll={{ x: 'max-content' }}
-      rowKey="id"
-      dataSource={filterOutNullAndUndefined(presets)}
-      columns={allColumns}
-      showSorterTooltip={false}
-      {...tableProps}
-    />
+    <BAIFlex direction="column" align="stretch">
+      <BAITable
+        size="small"
+        scroll={{ x: 'max-content' }}
+        rowKey="id"
+        dataSource={filterOutNullAndUndefined(presets)}
+        columns={allColumns}
+        showSorterTooltip={false}
+        tableSettings={{
+          columnOverrides,
+          onColumnOverridesChange: setColumnOverrides,
+        }}
+        {...tableProps}
+      />
+    </BAIFlex>
   );
 };
 

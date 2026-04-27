@@ -1748,6 +1748,32 @@
   "projectSelect": {
     "ProjectAdminBadge": "Administrator projektu"
   },
+  "prometheusQueryPreset": {
+    "AddPreset": "Dodaj preset",
+    "Category": "Kategoria",
+    "CreatePreset": "Utwórz preset",
+    "CreatedAt": "Utworzono",
+    "DeleteWarning": "Usunięcie tego presetu spowoduje trwałe jego usunięcie i nie można tego cofnąć.",
+    "Description": "Opis",
+    "EditPreset": "Edytuj preset",
+    "FilterLabels": "Etykiety filtrów",
+    "GroupLabels": "Etykiety grup",
+    "MetricName": "Nazwa metryki",
+    "MetricNameRequired": "Nazwa metryki jest wymagana.",
+    "Name": "Nazwa",
+    "NameMustBeUnique": "Musi być unikalna wśród wszystkich presetów zapytań Prometheus.",
+    "NameRequired": "Nazwa jest wymagana.",
+    "NoCategory": "Brak kategorii",
+    "PermanentlyDeletePreset": "Trwale usunąć \"{{ name }}\"?",
+    "QueryTemplate": "Szablon zapytania",
+    "QueryTemplateRequired": "Szablon zapytania jest wymagany.",
+    "Rank": "Ranga",
+    "SuccessfullyCreated": "Preset zapytania Prometheus został pomyślnie utworzony.",
+    "SuccessfullyDeleted": "Preset zapytania Prometheus został pomyślnie usunięty.",
+    "SuccessfullyUpdated": "Preset zapytania Prometheus został pomyślnie zaktualizowany.",
+    "TimeWindow": "Okno czasowe",
+    "UpdatedAt": "Zaktualizowano"
+  },
   "rbac": {
     "Active": "Aktywny",
     "Assign": "Przypisz",
@@ -2072,7 +2098,7 @@
     "Updated": "Zaktualizowano wstępne ustawienia zasobów"
   },
   "sTokenLoginBoundary": {
-"AuthenticatingDescription": "Trwa weryfikacja tokenu logowania…",
+    "AuthenticatingDescription": "Trwa weryfikacja tokenu logowania…",
     "AuthenticatingTitle": "Signing you in",
     "ConnectingDescription": "Łączenie z serwerem Backend.AI…",
     "CopyErrorDetails": "Copy error details",
@@ -2985,6 +3011,7 @@
       "AllowedClientIpWarning": "Jeśli Twój aktualny adres IP nie znajduje się na liście dozwolonych adresów IP, możesz nie być w stanie się zalogować. Skontaktuj się z administratorem, jeśli tak się stanie.",
       "Architecture": "Architektura",
       "ArtifactDetails": "Szczegóły artefaktu",
+      "AutoScalingRule": "Reguła automatycznego skalowania",
       "Branding": "Identyfikacja wizualna",
       "Cancel": "Anuluj",
       "ChangePassword": "Zmień hasło",

@@ -1748,6 +1748,32 @@
   "projectSelect": {
     "ProjectAdminBadge": "Projektadministrator"
   },
+  "prometheusQueryPreset": {
+    "AddPreset": "Voreinstellung hinzufügen",
+    "Category": "Kategorie",
+    "CreatePreset": "Voreinstellung erstellen",
+    "CreatedAt": "Erstellt am",
+    "DeleteWarning": "Das Löschen dieser Voreinstellung entfernt sie dauerhaft und kann nicht rückgängig gemacht werden.",
+    "Description": "Beschreibung",
+    "EditPreset": "Voreinstellung bearbeiten",
+    "FilterLabels": "Filterbezeichnungen",
+    "GroupLabels": "Gruppenbezeichnungen",
+    "MetricName": "Metrikname",
+    "MetricNameRequired": "Metrikname ist erforderlich.",
+    "Name": "Name",
+    "NameMustBeUnique": "Muss unter allen Prometheus-Abfragevoreinstellungen eindeutig sein.",
+    "NameRequired": "Name ist erforderlich.",
+    "NoCategory": "Keine Kategorie",
+    "PermanentlyDeletePreset": "\"{{ name }}\" dauerhaft löschen?",
+    "QueryTemplate": "Abfragevorlage",
+    "QueryTemplateRequired": "Abfragevorlage ist erforderlich.",
+    "Rank": "Rang",
+    "SuccessfullyCreated": "Die Prometheus-Abfragevoreinstellung wurde erfolgreich erstellt.",
+    "SuccessfullyDeleted": "Die Prometheus-Abfragevoreinstellung wurde erfolgreich gelöscht.",
+    "SuccessfullyUpdated": "Die Prometheus-Abfragevoreinstellung wurde erfolgreich aktualisiert.",
+    "TimeWindow": "Zeitfenster",
+    "UpdatedAt": "Aktualisiert am"
+  },
   "rbac": {
     "Active": "Aktiv",
     "Assign": "Zuweisen",
@@ -2072,7 +2098,7 @@
     "Updated": "Ressourcenvoreinstellung aktualisiert"
   },
   "sTokenLoginBoundary": {
-"AuthenticatingDescription": "Ihr Anmelde-Token wird verifiziert…",
+    "AuthenticatingDescription": "Ihr Anmelde-Token wird verifiziert…",
     "AuthenticatingTitle": "Signing you in",
     "ConnectingDescription": "Verbindung mit dem Backend.AI-Server wird hergestellt…",
     "CopyErrorDetails": "Copy error details",
@@ -2984,6 +3010,7 @@
       "AllowedClientIpWarning": "Wenn Ihre aktuelle IP nicht in der Positivliste enthalten ist, können Sie sich möglicherweise nicht anmelden. Bitte wenden Sie sich in diesem Fall an Ihren Administrator.",
       "Architecture": "Architektur",
       "ArtifactDetails": "Artefaktdetails",
+      "AutoScalingRule": "Automatische Skalierungsregel",
       "Branding": "Branding",
       "Cancel": "Stornieren",
       "ChangePassword": "Kennwort ändern",

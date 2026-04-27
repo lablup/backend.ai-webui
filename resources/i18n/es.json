@@ -1746,6 +1746,32 @@
   "projectSelect": {
     "ProjectAdminBadge": "Administrador del proyecto"
   },
+  "prometheusQueryPreset": {
+    "AddPreset": "Agregar preset",
+    "Category": "Categoría",
+    "CreatePreset": "Crear preset",
+    "CreatedAt": "Creado el",
+    "DeleteWarning": "Eliminar este preset lo eliminará de forma permanente y no se puede deshacer.",
+    "Description": "Descripción",
+    "EditPreset": "Editar preset",
+    "FilterLabels": "Etiquetas de filtro",
+    "GroupLabels": "Etiquetas de grupo",
+    "MetricName": "Nombre de métrica",
+    "MetricNameRequired": "El nombre de métrica es obligatorio.",
+    "Name": "Nombre",
+    "NameMustBeUnique": "Debe ser único entre todos los presets de consulta de Prometheus.",
+    "NameRequired": "El nombre es obligatorio.",
+    "NoCategory": "Sin categoría",
+    "PermanentlyDeletePreset": "¿Eliminar permanentemente \"{{ name }}\"?",
+    "QueryTemplate": "Plantilla de consulta",
+    "QueryTemplateRequired": "La plantilla de consulta es obligatoria.",
+    "Rank": "Rango",
+    "SuccessfullyCreated": "El preset de consulta de Prometheus se ha creado correctamente.",
+    "SuccessfullyDeleted": "El preset de consulta de Prometheus se ha eliminado correctamente.",
+    "SuccessfullyUpdated": "El preset de consulta de Prometheus se ha actualizado correctamente.",
+    "TimeWindow": "Ventana de tiempo",
+    "UpdatedAt": "Actualizado el"
+  },
   "rbac": {
     "Active": "Activo",
     "Assign": "Asignar",
@@ -2070,7 +2096,7 @@
     "Updated": "Preajuste de recursos actualizado"
   },
   "sTokenLoginBoundary": {
-"AuthenticatingDescription": "Verificando su token de inicio de sesión…",
+    "AuthenticatingDescription": "Verificando su token de inicio de sesión…",
     "AuthenticatingTitle": "Signing you in",
     "ConnectingDescription": "Conectando al servidor Backend.AI…",
     "CopyErrorDetails": "Copy error details",
@@ -2982,6 +3008,7 @@
       "AllowedClientIpWarning": "Si su IP actual no está incluida en la lista de IPs permitidas, es posible que no pueda iniciar sesión. Contacte a su administrador si esto ocurre.",
       "Architecture": "Arquitectura",
       "ArtifactDetails": "Detalles de artefactos",
+      "AutoScalingRule": "Regla de escala automática",
       "Branding": "Personalización de marca",
       "Cancel": "Cancelar",
       "ChangePassword": "Cambiar contraseña",
