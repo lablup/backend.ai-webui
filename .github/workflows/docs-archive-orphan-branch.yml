@@ -87,7 +87,10 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          # Track `.nvmrc` (currently 24) so the runner inherits future
+          # bumps automatically. Hardcoding `20` here was incompatible
+          # with deps that specify `engines.node >= 22` (e.g., chevrotain).
+          node-version-file: ".nvmrc"
           cache: "pnpm"
 
       - name: Install dependencies
