@@ -102,6 +102,19 @@ jobs:
         # release CI) keep --frozen-lockfile.
         run: pnpm install --no-frozen-lockfile
 
+      - name: Build docs-toolkit and link CLI
+        # backend.ai-docs-toolkit ships its `docs-toolkit` CLI as the
+        # package bin, but it lives at dist/cli.js which only exists
+        # after `tsc` runs. On a fresh `pnpm install` the dist directory
+        # is empty, so pnpm cannot create the .bin/docs-toolkit symlink
+        # and the later `build:web` step fails with `spawn ENOENT`.
+        # Building the toolkit and re-running install populates dist/
+        # and lets pnpm wire the bin link. (Same pattern as FR-2719's
+        # build_docs job in package.yml.)
+        run: |
+          pnpm --filter backend.ai-docs-toolkit run build
+          pnpm install --no-frozen-lockfile
+
       - name: Build website (toolkit-of-its-day)
         # We deliberately use the toolkit version that shipped with this
         # source ref. Past minors are NEVER rebuilt with main's toolkit.
