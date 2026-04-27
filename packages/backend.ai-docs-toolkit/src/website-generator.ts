@@ -12,6 +12,7 @@ import { processMarkdownFilesForWeb } from "./markdown-processor-web.js";
 import type { LinkDiagnostic } from "./markdown-processor-web.js";
 import {
   RESERVED_HOME_SLUG,
+  resolveMarkdownPath,
   slugFromNavPath,
 } from "./markdown-processor.js";
 import {
@@ -57,6 +58,7 @@ import {
 } from "./image-optimizer.js";
 import {
   loadVersions,
+  pickDisplayVersion,
   resolveVersionSource,
   VersionPageRegistry,
   type LoadedVersions,
@@ -561,6 +563,78 @@ export async function generateWebsite(
   // language. Populated inside the versioned-mode loop below.
   let latestVersionLanguages: string[] | null = null;
 
+  // FR-2754 Fix 1: pre-populate the slug registry before any version is
+  // rendered, so per-page `availability` is correct regardless of build
+  // order. Without this pass the FIRST version in the loop sees an
+  // empty registry for every other version and bakes
+  // `availability[<other>] = false` into its pages — which spuriously
+  // fires the version-mismatch banner on click even when the slug
+  // exists in both versions. The walk only consults `book.config.yaml`
+  // navigation, so it does not need any markdown files to be loaded.
+  // Versions whose archive-branch source isn't materialized are still
+  // skipped (no entries declared); their availability remains `false`,
+  // which is the desired fallback.
+  if (loadedVersions.enabled) {
+    for (const v of loadedVersions.entries) {
+      const resolved = resolveVersionSource(config, v);
+      if (!resolved.ok || !resolved.rootDir) continue;
+      const versionConfig: ResolvedDocConfig =
+        v.source.kind === "workspace"
+          ? config
+          : {
+              ...config,
+              projectRoot: resolved.rootDir,
+              srcDir: path.join(resolved.rootDir, "src"),
+            };
+      let versionBookConfig: NormalizedBookConfig;
+      try {
+        versionBookConfig = loadBookConfig(versionConfig.srcDir);
+      } catch {
+        // If a past minor's archive can't be parsed for any reason,
+        // skip it here — the main render loop below will surface the
+        // diagnostic with full context.
+        continue;
+      }
+      // The synthetic home chapter writes to `<lang>/index.html` and
+      // is always present in every version's output, so register it
+      // even though it has no `navigation[]` entry of its own.
+      pageRegistry.declareSlug(v.label, RESERVED_HOME_SLUG);
+      // Mirror the renderer's path resolution: a `book.config.yaml`
+      // entry whose markdown file does not actually exist in the
+      // version's `src/<lang>/` tree is silently skipped by
+      // `processMarkdownFilesForWeb` (it warns and continues), so
+      // declaring its slug here would over-promise — the version
+      // selector would link to a slug that never produced HTML and
+      // 404. We therefore gate `declareSlug()` on `resolveMarkdownPath`
+      // succeeding for at least one language; once the slug is on disk
+      // for any lang the renderer will emit it for that lang and the
+      // version-switcher fallback to the index page is enough for the
+      // languages where it is missing. `pathFallbacks` is sourced from
+      // the version's resolved config, mirroring the renderer.
+      const pathFallbacks = versionConfig.pathFallbacks ?? {};
+      for (const lang of languages) {
+        if (!versionBookConfig.languages.includes(lang)) continue;
+        const navGroups: NavGroup[] =
+          versionBookConfig.navigationGroups[lang] ?? [];
+        for (const group of navGroups) {
+          for (const item of group.items) {
+            try {
+              resolveMarkdownPath(
+                lang,
+                item.path,
+                versionConfig.srcDir,
+                pathFallbacks,
+              );
+            } catch {
+              continue;
+            }
+            pageRegistry.declareSlug(v.label, slugFromNavPath(item.path));
+          }
+        }
+      }
+    }
+  }
+
   if (loadedVersions.enabled) {
     // Versioned mode — iterate over each declared version.
     // Past minors that fail to resolve their archive-branch worktree are
@@ -876,7 +950,21 @@ async function buildLanguage(args: {
   for (const d of langDiagnostics) allDiagnostics.push(d);
 
   const availableLanguages = bookConfig.languages;
-  const metadata: WebsiteMetadata = { title, version, lang, availableLanguages };
+  // FR-2754 Fix 2: choose what the brand version pill shows for THIS
+  // version. See `pickDisplayVersion` for the exact rule.
+  const displayVersion = pickDisplayVersion({
+    workspaceVersion: version,
+    versionLabel,
+    versionEntry: versionLabel
+      ? loadedVersions.entries.find((v) => v.label === versionLabel) ?? null
+      : null,
+  });
+  const metadata: WebsiteMetadata = {
+    title,
+    version: displayVersion,
+    lang,
+    availableLanguages,
+  };
 
   // F3: nav groups for the current language. Always present — even legacy
   // flat configs are wrapped in a single anonymous-category group by the

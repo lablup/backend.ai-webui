@@ -1,3 +1,8 @@
 dist/
 node_modules/
 .agent-output/
+# Local checkouts of `docs-archive/<minor>` branches used by
+# docs-toolkit for versioned builds. Materialized via `git worktree
+# add .docs-archive/docs-archive__<minor> docs-archive/<minor>` and
+# never tracked back into the workspace.
+.docs-archive/

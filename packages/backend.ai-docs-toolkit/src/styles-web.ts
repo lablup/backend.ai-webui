@@ -2101,6 +2101,20 @@ details > :last-child {
    content column slightly and removes the chapter top padding so the
    hero can breathe.
    ========================================================================== */
+/*
+ * The home page does not emit a right-rail .doc-toc (it has no
+ * headings to scroll-spy), so the default .doc-page 3-column grid
+ * (sidebar + main + TOC) leaves an empty 240px column on the right
+ * and main sits flush against the sidebar — making the hero look
+ * left-shifted on wide viewports. The .doc-page--home modifier is
+ * already emitted on the home page outer div; collapse the grid to
+ * two columns there and center the (max-width 960px) main inside
+ * the post-sidebar region.
+ */
+.doc-page--home {
+  grid-template-columns: var(--bai-sider-w) minmax(0, 1fr);
+}
+
 .doc-main--home {
   padding-top: 56px;
   max-width: 960px;

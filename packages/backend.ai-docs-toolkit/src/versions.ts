@@ -368,6 +368,38 @@ export function canonicalPathFor(
 }
 
 /**
+ * Choose the version string to render in the topbar brand pill for a
+ * single page render (FR-2754 Fix 2).
+ *
+ *   - Flat / non-versioned mode (`versionLabel === null`): use the
+ *     workspace version (`package.json` version + git short SHA from
+ *     `getDocVersion()`). Same as pre-FR-2754 behavior.
+ *   - Workspace-source version (`next`): also use the workspace
+ *     version — `next` IS the workspace tip, so the SHA is meaningful.
+ *   - Archive-branch version (`26.4` and earlier minors): prefer its
+ *     pinned release tag (`pdfTag`, e.g. `v26.4.7`) so the pill tells
+ *     the reader exactly which Backend.AI release they are reading
+ *     docs for. Fall back to the version label itself when no tag was
+ *     configured.
+ *
+ * Kept here next to `Version` / `LoadedVersions` so the rule stays in
+ * one place; `website-generator.ts` just calls this from inside
+ * `buildLanguage`.
+ */
+export function pickDisplayVersion(args: {
+  workspaceVersion: string;
+  versionLabel: string | null;
+  versionEntry: Version | null | undefined;
+}): string {
+  const { workspaceVersion, versionLabel, versionEntry } = args;
+  if (!versionLabel || !versionEntry) return workspaceVersion;
+  if (versionEntry.source.kind === "archive-branch") {
+    return versionEntry.pdfTag ?? versionEntry.label;
+  }
+  return workspaceVersion;
+}
+
+/**
  * Cross-version slug map: for a given slug, which versions contain it.
  * The header version selector uses this to fall back to the version's
  * index page when a slug doesn't exist there.
@@ -382,12 +414,25 @@ export class VersionPageRegistry {
 
   record(row: PageEnumerationRow): void {
     this.rows.push(row);
-    let bucket = this.slugsByVersion.get(row.version);
+    this.declareSlug(row.version, row.slug);
+  }
+
+  /**
+   * Mark `slug` as existing in `version` without adding a sitemap row
+   * (FR-2754). The website generator's pre-pass uses this to populate
+   * the slug-by-version map for every declared version BEFORE any page
+   * is rendered, so the per-page `availability` map is correct
+   * regardless of build/iteration order. Calling this for a slug that
+   * is later passed to `record()` is harmless — `Set.add` is
+   * idempotent.
+   */
+  declareSlug(version: string, slug: string): void {
+    let bucket = this.slugsByVersion.get(version);
     if (!bucket) {
       bucket = new Set<string>();
-      this.slugsByVersion.set(row.version, bucket);
+      this.slugsByVersion.set(version, bucket);
     }
-    bucket.add(row.slug);
+    bucket.add(slug);
   }
 
   /** True when `slug` exists in `version` (any language). */
