@@ -184,7 +184,19 @@ applications:
                 }
                 git worktree add --detach "${worktree}" "${ref}"
               done
-            - pnpm --filter backend.ai-webui-docs run build:web
+            # Bypass the `build:web` script's wrapper (which re-runs
+            # `build:toolkit` redundantly — toolkit is already built in
+            # preBuild) and invoke the toolkit CLI directly so we can
+            # pass `--no-strict`.
+            #
+            # Strict mode is OFF for archive overlays: v26.4.7 src/
+            # contains 8 link diagnostics that the toolkit-of-its-day
+            # tolerated but main's stricter toolkit fails on. Tracked in
+            # FR-2752; once those are fixed, drop `--no-strict` and let
+            # strict mode catch future regressions. CI / release builds
+            # still run with strict default-on; only the Amplify overlay
+            # path relaxes it.
+            - pnpm --filter backend.ai-webui-docs exec docs-toolkit build:web --lang all --no-strict
       artifacts:
         # Path is relative to appRoot (this package). The toolkit
         # emits `dist/web/` under this package directory.
