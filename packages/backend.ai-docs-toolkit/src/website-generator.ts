@@ -1068,6 +1068,18 @@ async function buildLanguage(args: {
     fs.writeFileSync(outputPath, pageHtml, "utf-8");
   }
 
+  // FR-2732: surface the current version's optional `pdfTag` to the
+  // landing-page renderer. We deliberately look up the entry by label
+  // (rather than passing the whole `loadedVersions`) so the renderer
+  // never sees other versions' tags. When the lookup misses (flat /
+  // non-versioned mode, or `versionLabel === null`), the result is
+  // `undefined` and the renderer falls back to its byte-equivalent
+  // legacy redirect-stub branch.
+  const currentVersionEntry =
+    versionLabel !== null
+      ? loadedVersions.entries.find((v) => v.label === versionLabel)
+      : undefined;
+
   // Generate index.html (redirect to first page, or placeholder if no chapters)
   const indexHtml =
     chapters.length === 0
@@ -1076,7 +1088,13 @@ async function buildLanguage(args: {
 <head><meta charset="utf-8" /><title>${title}</title></head>
 <body><h1>${title}</h1><p>No documentation content was generated for this language.</p></body>
 </html>`
-      : buildIndexPage(chapters, metadata);
+      : buildIndexPage(chapters, metadata, {
+          pdfTag: currentVersionEntry?.pdfTag,
+          // FR-2732 follow-up: thread resolved branding tokens so the
+          // PDF card honors white-label `branding.primaryColor` overrides
+          // instead of always rendering BAI orange.
+          branding: config.branding,
+        });
   fs.writeFileSync(path.join(langDir, "index.html"), indexHtml, "utf-8");
 
   // Build search index — partitioned per (version × lang) so search

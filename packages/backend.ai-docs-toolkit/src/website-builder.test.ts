@@ -16,10 +16,12 @@ import assert from "node:assert/strict";
 import path from "path";
 import {
   applyImageAttributes,
+  buildIndexPage,
   buildWebPage,
   type WebPageContext,
   type PageAssets,
 } from "./website-builder.js";
+import type { WebsiteMetadata } from "./website-builder.js";
 import { resolveLegacyDocsUrl, type ResolvedDocConfig } from "./config.js";
 import type { Chapter } from "./markdown-processor.js";
 import type { NavGroup } from "./book-config.js";
@@ -527,5 +529,165 @@ describe("buildWebPage — FR-2733 version-banner variants", () => {
     // The default versioned fixture has current === latest === "26.4".
     const html = buildWebPage(makeVersionedContext());
     assert.doesNotMatch(html, /class="docs-banner/);
+  });
+});
+
+// ── FR-2732: per-version PDF download card on landing page ────────────
+//
+// Two output shapes for `<version>/<lang>/index.html`:
+//   1. No `pdfTag` → byte-equivalent legacy meta-refresh stub.
+//   2. `pdfTag` set → richer landing with the deterministic PDF anchor.
+//
+// The landing page is the ONLY surface that renders the card. Inner
+// chapter pages (rendered via `buildWebPage`) MUST NOT contain the
+// card — verified by an additional negative assertion below.
+
+function makeIndexMetadata(lang: string): WebsiteMetadata {
+  return {
+    title: "Backend.AI WebUI User Guide",
+    version: "v26.4.7",
+    lang,
+    availableLanguages: ["en", "ko", "ja", "th"],
+  };
+}
+
+const indexChapters = [
+  {
+    slug: "dashboard",
+    title: "Dashboard",
+    htmlContent: "<p>...</p>",
+    headings: [],
+  } as unknown as import("./markdown-processor.js").Chapter,
+];
+
+describe("buildIndexPage — FR-2732 PDF download card", () => {
+  it("emits the byte-equivalent legacy redirect stub when pdfTag is unset", () => {
+    const html = buildIndexPage(indexChapters, makeIndexMetadata("en"));
+    // Redirect stub MUST stay byte-equivalent to the pre-FR-2732
+    // baseline so versions like `next` keep an identical output.
+    assert.match(html, /<meta http-equiv="refresh" content="0; url=\.\/dashboard\.html"/);
+    // No PDF surfaces of any kind.
+    assert.doesNotMatch(html, /releases\/download/);
+    assert.doesNotMatch(html, /Download PDF/);
+    assert.doesNotMatch(html, /pdf-download-card/);
+    assert.doesNotMatch(html, /pdfTag/i);
+  });
+
+  it("emits the same redirect stub for `next`-style versions (no pdfTag)", () => {
+    // Spec acceptance: `/next/<lang>/index.html` contains no occurrence
+    // of `releases/download`, no "Download PDF" string, no localized
+    // card label in any of the four shipped languages.
+    for (const lang of ["en", "ko", "ja", "th"]) {
+      const html = buildIndexPage(indexChapters, makeIndexMetadata(lang));
+      assert.doesNotMatch(html, /releases\/download/, `lang=${lang}`);
+      assert.doesNotMatch(html, /Download PDF/, `lang=${lang}`);
+      assert.doesNotMatch(html, /PDF 다운로드/, `lang=${lang}`);
+      assert.doesNotMatch(html, /PDFダウンロード/, `lang=${lang}`);
+      assert.doesNotMatch(html, /ดาวน์โหลด PDF/, `lang=${lang}`);
+    }
+  });
+
+  it("emits the deterministic GitHub Release URL for each language when pdfTag is set", () => {
+    // The href shape MUST exactly equal the spec — string match,
+    // no regex slop. Any deviation (different filename, missing
+    // patch component, query string) would 404 against the GitHub
+    // Releases CDN.
+    const cases: Array<{ lang: string; expected: string }> = [
+      {
+        lang: "en",
+        expected:
+          "https://github.com/lablup/backend.ai-webui/releases/download/v26.4.7/Backend.AI_WebUI_User_Guide_v26.4.7_en.pdf",
+      },
+      {
+        lang: "ko",
+        expected:
+          "https://github.com/lablup/backend.ai-webui/releases/download/v26.4.7/Backend.AI_WebUI_User_Guide_v26.4.7_ko.pdf",
+      },
+      {
+        lang: "ja",
+        expected:
+          "https://github.com/lablup/backend.ai-webui/releases/download/v26.4.7/Backend.AI_WebUI_User_Guide_v26.4.7_ja.pdf",
+      },
+      {
+        lang: "th",
+        expected:
+          "https://github.com/lablup/backend.ai-webui/releases/download/v26.4.7/Backend.AI_WebUI_User_Guide_v26.4.7_th.pdf",
+      },
+    ];
+    for (const { lang, expected } of cases) {
+      const html = buildIndexPage(indexChapters, makeIndexMetadata(lang), {
+        pdfTag: "v26.4.7",
+      });
+      // String-match the full href to catch any future template drift.
+      assert.ok(
+        html.includes(`href="${expected}"`),
+        `expected href="${expected}" in ${lang} landing, got:\n${html}`,
+      );
+      // The `download` attribute is present so single-click downloads
+      // get the canonical filename even if a future GitHub change
+      // drops `Content-Disposition: attachment`.
+      assert.ok(
+        html.includes(
+          `download="Backend.AI_WebUI_User_Guide_v26.4.7_${lang}.pdf"`,
+        ),
+        `expected download attr in ${lang} landing`,
+      );
+      // No `target="_blank"` on the download link — direct download
+      // is intentional per the spec.
+      assert.doesNotMatch(html, /target="_blank"/);
+    }
+  });
+
+  it("renders the localized 'Download PDF (this version)' label per language", () => {
+    const cases: Array<{ lang: string; label: string }> = [
+      { lang: "en", label: "Download PDF (this version)" },
+      { lang: "ko", label: "PDF 다운로드 (이 버전)" },
+      { lang: "ja", label: "PDFダウンロード（このバージョン）" },
+      { lang: "th", label: "ดาวน์โหลด PDF (เวอร์ชันนี้)" },
+    ];
+    for (const { lang, label } of cases) {
+      const html = buildIndexPage(indexChapters, makeIndexMetadata(lang), {
+        pdfTag: "v26.4.7",
+      });
+      assert.ok(
+        html.includes(label),
+        `expected label "${label}" in ${lang} landing`,
+      );
+    }
+  });
+
+  it("drops the meta-refresh when the PDF card is rendered", () => {
+    // When the card is shown the user needs time to click it; an
+    // immediate redirect would defeat the entire purpose.
+    const html = buildIndexPage(indexChapters, makeIndexMetadata("en"), {
+      pdfTag: "v26.4.7",
+    });
+    assert.doesNotMatch(html, /<meta http-equiv="refresh"/);
+    // But the manual "continue" link to the first chapter MUST still
+    // be present — users without a PDF need an escape hatch.
+    assert.match(html, /href="\.\/dashboard\.html"/);
+  });
+
+  it("does NOT render the card on inner chapter pages (buildWebPage)", () => {
+    // The card is landing-only. Inner pages are produced by
+    // buildWebPage and must remain card-free regardless of the
+    // version's pdfTag — the card targets the user who *just* arrived
+    // at the version's home, not a reader deep in chapter content.
+    const html = buildWebPage(makeContext());
+    assert.doesNotMatch(html, /class="pdf-download-card"/);
+    assert.doesNotMatch(html, /releases\/download\/v\d+\.\d+\.\d+\//);
+    // Iterate every shipped localized label so a future translation
+    // drift can't silently leak the card into inner pages.
+    for (const label of [
+      "Download PDF (this version)",
+      "PDF 다운로드 (이 버전)",
+      "PDFダウンロード（このバージョン）",
+      "ดาวน์โหลด PDF (เวอร์ชันนี้)",
+    ]) {
+      assert.ok(
+        !html.includes(label),
+        `inner page must not contain "${label}"`,
+      );
+    }
   });
 });

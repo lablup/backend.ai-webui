@@ -393,6 +393,10 @@ export const WEBSITE_LABELS: Record<string, Record<string, string>> = {
       "This page is not available in version {version}. You are viewing the version index instead.",
     previousVersions: "Previous versions",
     versionLabel: "Version",
+    // FR-2732: per-version PDF download card on the per-language landing
+    // page. Rendered ONLY when `versions[].pdfTag` is set; absent versions
+    // (e.g., `next`) emit no card markup at all.
+    downloadPdfThisVersion: "Download PDF (this version)",
   },
   ko: {
     previous: "이전",
@@ -417,6 +421,7 @@ export const WEBSITE_LABELS: Record<string, Record<string, string>> = {
       "이 페이지는 버전 {version}에 존재하지 않습니다. 해당 버전의 인덱스 페이지로 이동했습니다.",
     previousVersions: "이전 버전",
     versionLabel: "버전",
+    downloadPdfThisVersion: "PDF 다운로드 (이 버전)",
   },
   ja: {
     previous: "前へ",
@@ -442,6 +447,7 @@ export const WEBSITE_LABELS: Record<string, Record<string, string>> = {
       "このページはバージョン {version} には存在しません。代わりにバージョンのインデックスを表示しています。",
     previousVersions: "以前のバージョン",
     versionLabel: "バージョン",
+    downloadPdfThisVersion: "PDFダウンロード（このバージョン）",
   },
   th: {
     previous: "ก่อนหน้า",
@@ -467,6 +473,7 @@ export const WEBSITE_LABELS: Record<string, Record<string, string>> = {
       "หน้านี้ไม่มีในเวอร์ชัน {version} กำลังแสดงหน้าดัชนีของเวอร์ชันแทน",
     previousVersions: "เวอร์ชันก่อนหน้า",
     versionLabel: "เวอร์ชัน",
+    downloadPdfThisVersion: "ดาวน์โหลด PDF (เวอร์ชันนี้)",
   },
 };
 

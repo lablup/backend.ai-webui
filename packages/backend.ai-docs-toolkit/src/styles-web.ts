@@ -2585,6 +2585,46 @@ export function generateWebsiteStyles(branding?: StyleBrandingTokens): string {
 }
 
 /* ==========================================================================
+   Per-version PDF download card (FR-2732)
+   --------------------------------------------------------------------------
+   The card is rendered ONLY on the per-language landing page
+   (\`<version>/<lang>/index.html\`) when \`versions[].pdfTag\` is set.
+   The landing page is intentionally stylesheet-free in the no-tag
+   baseline (byte-equivalence with the legacy meta-refresh stub), so
+   the card ships its own inline copy of these rules. The class
+   definitions are mirrored here so consumers who want to extend the
+   card (e.g., add it to the topbar in a future phase) can rely on the
+   shared stylesheet.
+   ========================================================================== */
+.pdf-download-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--bai-border);
+  border-radius: var(--bai-radius);
+  background: var(--bai-primary-soft);
+  color: var(--bai-text);
+  text-decoration: none;
+  font-weight: 500;
+}
+.pdf-download-card:hover {
+  border-color: var(--bai-primary);
+  color: var(--bai-primary);
+}
+.pdf-download-card:focus-visible {
+  outline: 2px solid var(--bai-primary);
+  outline-offset: 2px;
+}
+.pdf-download-card__icon {
+  display: inline-flex;
+  color: var(--bai-primary);
+}
+.pdf-download-card__label {
+  flex: 1 1 auto;
+}
+
+/* ==========================================================================
    CJK Language Rules (via :lang() selectors for shared stylesheet)
    ========================================================================== */
 ${cjkSelectors} {

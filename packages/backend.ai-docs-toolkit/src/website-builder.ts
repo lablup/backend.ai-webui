@@ -20,8 +20,13 @@
 
 import type { Chapter } from "./markdown-processor.js";
 import type { NavGroup, NavItem } from "./book-config.js";
-import type { ResolvedDocConfig } from "./config.js";
-import { WEBSITE_LABELS } from "./config.js";
+import type { ResolvedBrandingConfig, ResolvedDocConfig } from "./config.js";
+import {
+  DEFAULT_PRIMARY_COLOR,
+  DEFAULT_PRIMARY_COLOR_HOVER,
+  DEFAULT_PRIMARY_COLOR_SOFT,
+  WEBSITE_LABELS,
+} from "./config.js";
 import { escapeHtml } from "./markdown-extensions.js";
 import { slugify } from "./markdown-processor.js";
 import {
@@ -1565,22 +1570,203 @@ ${interactionsScript}
 }
 
 /**
- * Build an index.html that redirects to the first page.
+ * Options accepted by `buildIndexPage` (FR-2732). All fields are optional —
+ * when omitted, the function falls back to the legacy meta-refresh stub
+ * exactly as before. The PDF card is rendered only when `pdfTag` is a
+ * non-empty string; an unset / empty `pdfTag` produces byte-identical
+ * output to the pre-FR-2732 baseline (no card markup, no extra bytes).
+ */
+export interface IndexPageOptions {
+  /**
+   * GitHub Release tag for the current version (FR-2731 / FR-2732), e.g.
+   * `"v26.4.7"`. When set, the per-language landing page renders a
+   * "Download PDF (this version)" card whose anchor points at
+   * `https://github.com/lablup/backend.ai-webui/releases/download/<pdfTag>/Backend.AI_WebUI_User_Guide_<pdfTag>_<lang>.pdf`.
+   * The card is rendered ONLY on this landing page (`<lang>/index.html`),
+   * never on inner content pages.
+   */
+  pdfTag?: string;
+  /**
+   * Resolved branding tokens (FR-2726) used to color the inline `<style>`
+   * block of the PDF card landing. When omitted, the renderer falls back
+   * to the BAI orange defaults from `config.ts` so a stand-alone caller
+   * (e.g. unit tests) keeps producing the same output. White-label
+   * deployments override `branding.primaryColor` etc. in
+   * `docs-toolkit.config.yaml`; the website-generator threads the
+   * resolved tokens through here so the card matches every other surface.
+   */
+  branding?: ResolvedBrandingConfig;
+}
+
+/**
+ * GitHub Release CDN host for the WebUI repo. Hardcoded because the toolkit
+ * is single-tenant for backend.ai-webui (the spec ties the URL shape to
+ * this exact repo); a future generalization can make it config-driven.
+ */
+const PDF_RELEASE_BASE_URL =
+  "https://github.com/lablup/backend.ai-webui/releases/download";
+
+/**
+ * Inline SVG download icon for the PDF card. Kept inline (not a hashed
+ * asset) because the index.html landing page is intentionally
+ * stylesheet-free in the no-`pdfTag` baseline — embedding the icon avoids
+ * pulling in the full asset pipeline just for the card.
+ */
+const PDF_DOWNLOAD_ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`;
+
+/**
+ * Build the deterministic GitHub Release CDN URL for the current
+ * (pdfTag, lang) pair. Kept as a small standalone helper so unit tests
+ * can exercise URL construction independently of the larger render.
+ *
+ * `pdfTag` is regex-validated upstream (FR-2731: `^v\d+\.\d+\.\d+$`),
+ * but `lang` originates from `book.config.yaml`'s `languages: string[]`
+ * with no shape validation. We `encodeURIComponent` both segments as
+ * defense-in-depth so a stray space or non-ASCII character cannot
+ * produce a malformed URL.
+ */
+function buildPdfReleaseUrl(pdfTag: string, lang: string): string {
+  const encodedTag = encodeURIComponent(pdfTag);
+  const encodedLang = encodeURIComponent(lang);
+  return `${PDF_RELEASE_BASE_URL}/${encodedTag}/Backend.AI_WebUI_User_Guide_${encodedTag}_${encodedLang}.pdf`;
+}
+
+/**
+ * Build an `index.html` for a per-language landing page (FR-2732).
+ *
+ * Two output shapes:
+ *   1. **No `pdfTag`** — emits a tiny meta-refresh stub that immediately
+ *      redirects to the first chapter. Byte-equivalent to the pre-FR-2732
+ *      baseline so versions like `next` (which carry no PDF) keep the
+ *      exact same output. Required by the FR-2732 acceptance criteria.
+ *   2. **`pdfTag` is set** — emits a real landing page with a "Download
+ *      PDF (this version)" card linking to the GitHub Release CDN, plus
+ *      a manual "continue to docs" link. The meta-refresh is dropped so
+ *      the user actually has time to see and click the card. The card
+ *      is language-aware: a single anchor for the page's current `<lang>`
+ *      rather than one anchor per language (see FR-13 in the spec).
+ *
+ * The hardcoded asset filename pattern (`Backend.AI_WebUI_User_Guide_<tag>_<lang>.pdf`)
+ * mirrors the per-language PDFs published by FR-2719's release workflow.
+ * No HEAD-request validation at build time — a missing release surfaces
+ * as a 404 on click, which the runbook (FR-2736) catches before the
+ * release is announced.
  */
 export function buildIndexPage(
   chapters: Chapter[],
   metadata: WebsiteMetadata,
+  options: IndexPageOptions = {},
 ): string {
   const firstSlug = chapters[0]?.slug ?? "index";
-  return `<!DOCTYPE html>
-<html lang="${escapeHtml(metadata.lang)}">
+  const lang = escapeHtml(metadata.lang);
+  const title = escapeHtml(metadata.title);
+  const pdfTag = options.pdfTag;
+
+  // No `pdfTag` → byte-identical legacy redirect stub. Do NOT touch this
+  // path: FR-2732 acceptance requires zero diff for `next` and any other
+  // version that does not declare a release tag.
+  if (!pdfTag) {
+    return `<!DOCTYPE html>
+<html lang="${lang}">
 <head>
   <meta charset="utf-8" />
   <meta http-equiv="refresh" content="0; url=./${firstSlug}.html" />
-  <title>${escapeHtml(metadata.title)}</title>
+  <title>${title}</title>
 </head>
 <body>
-  <p>Redirecting to <a href="./${firstSlug}.html">${escapeHtml(metadata.title)}</a>...</p>
+  <p>Redirecting to <a href="./${firstSlug}.html">${title}</a>...</p>
+</body>
+</html>`;
+  }
+
+  // `pdfTag` is present — render the PDF card landing.
+  //
+  // The card label is localized via WEBSITE_LABELS; falling back to the
+  // English copy keeps unknown locales rendering a usable card rather
+  // than an empty surface.
+  const labels = WEBSITE_LABELS[metadata.lang] ?? WEBSITE_LABELS.en;
+  const downloadLabel = escapeHtml(
+    labels.downloadPdfThisVersion ??
+      WEBSITE_LABELS.en.downloadPdfThisVersion ??
+      "Download PDF (this version)",
+  );
+  const pdfUrl = buildPdfReleaseUrl(pdfTag, metadata.lang);
+  // The asset URL contains only `[A-Za-z0-9._-]` characters by
+  // construction (pdfTag is regex-validated `^v\d+\.\d+\.\d+$`, lang is
+  // an ISO language code), so escapeHtml is defensive but harmless.
+  const safeHref = escapeHtml(pdfUrl);
+  // Native filename derived from the URL — matches the GitHub release
+  // asset name. Browsers honor `download` for same-origin and CORS-safe
+  // cross-origin resources; GitHub Releases respond with
+  // `Content-Disposition: attachment` regardless, so the link works
+  // even if `download` is ignored.
+  const downloadName = `Backend.AI_WebUI_User_Guide_${pdfTag}_${metadata.lang}.pdf`;
+  const safeDownloadName = escapeHtml(downloadName);
+  const continueLabel = escapeHtml(labels.next ?? "Next");
+
+  // Brand tokens (FR-2726). When the caller doesn't pass `branding` we
+  // fall back to the BAI orange defaults exported from `config.ts` so
+  // standalone callers (unit tests, ad-hoc renders) keep producing the
+  // same output, while white-label deployments that override
+  // `branding.primaryColor` in `docs-toolkit.config.yaml` see the
+  // override here too.
+  const primary = options.branding?.primaryColor ?? DEFAULT_PRIMARY_COLOR;
+  const primaryHover =
+    options.branding?.primaryColorHover ?? DEFAULT_PRIMARY_COLOR_HOVER;
+  const primarySoft =
+    options.branding?.primaryColorSoft ?? DEFAULT_PRIMARY_COLOR_SOFT;
+
+  return `<!DOCTYPE html>
+<html lang="${lang}">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>${title}</title>
+  <style>
+    /* The landing page is intentionally stylesheet-free in the
+       no-pdfTag baseline; with the card we ship a self-contained
+       inline block instead of pulling the full hashed stylesheet
+       just for two surfaces. Colors mirror the FR-2726 design tokens
+       so light- and dark-mode users see the same brand identity. */
+    :root{
+      --bai-bg:#FFFFFF;
+      --bai-text:#141414;
+      --bai-text-2:#595959;
+      --bai-border:#E8E8E8;
+      --bai-primary:${primary};
+      --bai-primary-hover:${primaryHover};
+      --bai-primary-soft:${primarySoft};
+    }
+    @media (prefers-color-scheme: dark){
+      :root{
+        --bai-bg:#0E0E10;
+        --bai-text:#F0F0F0;
+        --bai-text-2:#B5B5BD;
+        --bai-border:#2A2A30;
+      }
+    }
+    body{margin:0;padding:2rem;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bai-bg);color:var(--bai-text);display:flex;min-height:100vh;align-items:center;justify-content:center;}
+    .pdf-landing{max-width:32rem;width:100%;}
+    .pdf-landing__title{margin:0 0 1.5rem 0;font-size:1.5rem;font-weight:600;}
+    .pdf-download-card{display:flex;align-items:center;gap:0.75rem;padding:1rem 1.25rem;border:1px solid var(--bai-border);border-radius:8px;background:var(--bai-primary-soft);color:var(--bai-text);text-decoration:none;font-weight:500;}
+    .pdf-download-card:hover{border-color:var(--bai-primary);color:var(--bai-primary);}
+    .pdf-download-card:focus-visible{outline:2px solid var(--bai-primary);outline-offset:2px;}
+    .pdf-download-card__icon{display:inline-flex;color:var(--bai-primary);}
+    .pdf-download-card__label{flex:1 1 auto;}
+    .pdf-landing__continue{margin-top:1rem;font-size:0.875rem;color:var(--bai-text-2);}
+    .pdf-landing__continue a{color:var(--bai-primary);text-decoration:none;}
+    .pdf-landing__continue a:hover{text-decoration:underline;}
+  </style>
+</head>
+<body>
+  <main class="pdf-landing">
+    <h1 class="pdf-landing__title">${title}</h1>
+    <a class="pdf-download-card" href="${safeHref}" download="${safeDownloadName}">
+      <span class="pdf-download-card__icon" aria-hidden="true">${PDF_DOWNLOAD_ICON_SVG}</span>
+      <span class="pdf-download-card__label">${downloadLabel}</span>
+    </a>
+    <p class="pdf-landing__continue"><a href="./${firstSlug}.html">${continueLabel} →</a></p>
+  </main>
 </body>
 </html>`;
 }
