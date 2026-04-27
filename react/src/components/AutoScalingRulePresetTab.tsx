@@ -178,16 +178,6 @@ const AutoScalingRulePresetTab: React.FC = () => {
                 propertyLabel: t('prometheusQueryPreset.Name'),
                 type: 'string',
               },
-              {
-                key: 'createdAt',
-                propertyLabel: t('prometheusQueryPreset.CreatedAt'),
-                type: 'datetime',
-              },
-              {
-                key: 'updatedAt',
-                propertyLabel: t('prometheusQueryPreset.UpdatedAt'),
-                type: 'datetime',
-              },
             ]}
           />
         </BAIFlex>
