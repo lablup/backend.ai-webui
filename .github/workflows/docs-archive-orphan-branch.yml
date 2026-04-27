@@ -91,7 +91,13 @@ jobs:
           cache: "pnpm"
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        # Archive builds are one-off snapshots of an OLD tag's content.
+        # Lockfile drift between (lockfile, package.json) at the tag is
+        # possible (e.g., dep range bumps merged without re-running
+        # `pnpm install`) and would block --frozen-lockfile. Drop the
+        # strict mode here only — production builds (amplify.yml,
+        # release CI) keep --frozen-lockfile.
+        run: pnpm install --no-frozen-lockfile
 
       - name: Build website (toolkit-of-its-day)
         # We deliberately use the toolkit version that shipped with this
