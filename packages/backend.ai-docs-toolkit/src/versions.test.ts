@@ -350,6 +350,54 @@ describe("loadVersions — pdfTag validation (FR-2731)", () => {
   });
 });
 
+describe("loadVersions — 'next' label sentinel (FR-2710 F6)", () => {
+  it("accepts label='next' when paired with source.kind='workspace'", () => {
+    const result = loadVersions(
+      makeConfig([
+        { label: "26.4", source: { kind: "workspace" }, latest: true },
+        { label: "next", source: { kind: "workspace" } },
+      ]),
+    );
+    assert.equal(result.enabled, true);
+    assert.equal(result.entries.length, 2);
+    assert.equal(result.entries[1].label, "next");
+    assert.equal(result.entries[1].outDir, "next");
+    assert.equal(result.entries[1].isLatest, false);
+  });
+
+  it("rejects label='next' paired with source.kind='archive-branch'", () => {
+    assert.throws(
+      () =>
+        loadVersions(
+          makeConfig([
+            { label: "26.4", source: { kind: "workspace" }, latest: true },
+            {
+              label: "next",
+              source: { kind: "archive-branch", ref: "docs-archive/next" },
+            },
+          ]),
+        ),
+      /label "next" must use source\.kind = "workspace"/,
+    );
+  });
+
+  it("still rejects other non-numeric labels (e.g., 'stable', 'preview', 'latest')", () => {
+    for (const bad of ["stable", "preview", "latest", "main", "dev"]) {
+      assert.throws(
+        () =>
+          loadVersions(
+            makeConfig([
+              { label: "26.4", source: { kind: "workspace" }, latest: true },
+              { label: bad, source: { kind: "workspace" } },
+            ]),
+          ),
+        /must match \^\[0-9\]\+\\\.\[0-9\]\+\$.*or be the literal "next"/,
+        `expected label ${JSON.stringify(bad)} to be rejected`,
+      );
+    }
+  });
+});
+
 describe("canonicalPathFor", () => {
   it("returns flat layout when versions are not enabled", () => {
     const loaded = loadVersions(makeConfig(undefined));

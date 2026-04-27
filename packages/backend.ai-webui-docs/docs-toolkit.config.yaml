@@ -28,6 +28,35 @@ pdfMetadata:
   subject: "Backend.AI WebUI User Guide"
   creator: "Backend.AI Docs PDF Generator"
 
+# Versions (FR-2729 multi-version deployment).
+# - 26.4: archived release (FR-2738 creates the docs-archive/26.4 branch)
+# - next: workspace tip; rebuilt on every commit
+# Exactly one entry must carry `latest: true`.
+# Per FR-2710 F6, version labels are minor-only (no patch); the literal
+# label `next` is the only non-numeric value allowed and must pair with
+# `source.kind: workspace`.
+# `pdfTag` (optional, FR-2731) pins to a GitHub Release tag whose
+# assets are linked from the per-language landing page (FR-2732).
+#
+# Release procedure (when cutting a new minor X.Y):
+#   1. Insert a new entry ABOVE the `next` entry with
+#        label: "X.Y"
+#        source: { kind: archive-branch, ref: docs-archive/X.Y }
+#        pdfTag: "vX.Y.Z"   # highest patch in the minor
+#   2. Move `latest: true` onto the new entry; remove it from the prior one.
+#   3. Leave the `next` entry last; it never carries `latest: true`.
+#   See the docs release runbook for the full procedure.
+versions:
+  - label: "26.4"
+    source:
+      kind: archive-branch
+      ref: docs-archive/26.4
+    latest: true
+    pdfTag: "v26.4.7"
+  - label: "next"
+    source:
+      kind: workspace
+
 # Product name for log messages
 productName: "Backend.AI WebUI Docs"
 

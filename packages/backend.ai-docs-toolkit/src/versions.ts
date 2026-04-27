@@ -34,8 +34,21 @@ import type {
  * catches any deviation (patch suffix, pre-release tag, slash, etc.)
  * at load time rather than letting it leak into URL paths and filesystem
  * segments downstream.
+ *
+ * One literal exception: the sentinel label `"next"` (see `NEXT_LABEL`)
+ * is accepted IFF its `source.kind === "workspace"`. The `next` channel
+ * always tracks the current checkout and never an archived branch, so
+ * the pairing is enforced as a separate validation rule below.
  */
 const MINOR_LABEL = /^[0-9]+\.[0-9]+$/;
+
+/**
+ * Sentinel label for the workspace-tracking channel (FR-2710 F6). Allowed
+ * as a `versions[].label` only when `source.kind === "workspace"` — the
+ * pairing is intentional: `next` is rebuilt on every commit to the trunk
+ * checkout, never to a frozen `docs-archive/<X.Y>` branch.
+ */
+const NEXT_LABEL = "next";
 
 /**
  * Strict `vMAJOR.MINOR.PATCH` shape for `versions[].pdfTag` (FR-2731).
@@ -169,11 +182,19 @@ function validateEntryShape(entry: VersionEntry, index: number): void {
   // deviation — patch suffix, pre-release tag, slash, etc. — fails fast at
   // config load time instead of leaking into URL paths or filesystem
   // segments downstream.
-  if (!MINOR_LABEL.test(entry.label)) {
+  //
+  // Single exception: the literal label `"next"` (NEXT_LABEL) is allowed
+  // for the workspace-tracking channel. The kind-pairing check below
+  // enforces that `"next"` may only be paired with `source.kind:
+  // "workspace"` — an archive-branch `"next"` is rejected with a clear
+  // error rather than silently producing a directory name that collides
+  // with future minors.
+  if (entry.label !== NEXT_LABEL && !MINOR_LABEL.test(entry.label)) {
     throw new Error(
       `docs-toolkit.config.yaml: "versions[${index}].label" must match ${MINOR_LABEL.source} ` +
-        `(minor only, e.g., "25.16"). Got: ${JSON.stringify(entry.label)}. The selector never ` +
-        `lists patches; the highest patch within a minor is built and published as that minor.`,
+        `(minor only, e.g., "25.16") or be the literal "${NEXT_LABEL}" (workspace-tracking ` +
+        `channel). Got: ${JSON.stringify(entry.label)}. The selector never lists patches; ` +
+        `the highest patch within a minor is built and published as that minor.`,
     );
   }
   if (!entry.source || typeof entry.source !== "object") {
@@ -186,6 +207,17 @@ function validateEntryShape(entry: VersionEntry, index: number): void {
     throw new Error(
       `docs-toolkit.config.yaml: "versions[${index}].source.kind" must be ` +
         `"workspace" or "archive-branch". Got: ${JSON.stringify(kind)}.`,
+    );
+  }
+  // `next` is the workspace-tracking channel by definition — it must never
+  // be paired with an archived branch. Catch the misconfiguration here
+  // instead of letting the build pull frozen content under a label that
+  // implies "tip of trunk".
+  if (entry.label === NEXT_LABEL && kind !== "workspace") {
+    throw new Error(
+      `docs-toolkit.config.yaml: "versions[${index}]" with label "${NEXT_LABEL}" must use ` +
+        `source.kind = "workspace" (got ${JSON.stringify(kind)}). The "${NEXT_LABEL}" channel ` +
+        `always tracks the current checkout, never an archived branch.`,
     );
   }
   if (kind === "archive-branch") {
