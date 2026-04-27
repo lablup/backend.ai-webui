@@ -8,6 +8,7 @@ import {
   QueryDefinitionFilter,
 } from '../__generated__/AutoScalingRulePresetTabQuery.graphql';
 import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
+import PrometheusQueryPresetEditorModal from './PrometheusQueryPresetEditorModal';
 import PrometheusQueryPresetList from './PrometheusQueryPresetList';
 import { PlusOutlined } from '@ant-design/icons';
 import { Button, Skeleton } from 'antd';
@@ -20,7 +21,13 @@ import {
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { parseAsJson, useQueryStates } from 'nuqs';
-import React, { Suspense, useDeferredValue, useMemo } from 'react';
+import React, {
+  Suspense,
+  useDeferredValue,
+  useMemo,
+  useState,
+  useTransition,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
@@ -45,6 +52,8 @@ const AutoScalingRulePresetTab: React.FC = () => {
   });
 
   const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
+  const [, startRefetchTransition] = useTransition();
+  const [isCreatingPreset, setIsCreatingPreset] = useState(false);
 
   // QueryDefinitionFilter only supports a flat `name` filter today, so collapse
   // any AND/OR wrapper produced by BAIGraphQLPropertyFilter back to a flat object.
@@ -143,8 +152,7 @@ const AutoScalingRulePresetTab: React.FC = () => {
           <Button
             type="primary"
             icon={<PlusOutlined />}
-            disabled
-            // TODO(needs-frontend): wire up create modal in FR-2451 sub-task 3
+            onClick={() => setIsCreatingPreset(true)}
           >
             {t('prometheusQueryPreset.AddPreset')}
           </Button>
@@ -166,6 +174,17 @@ const AutoScalingRulePresetTab: React.FC = () => {
           }}
         />
       </Suspense>
+      <PrometheusQueryPresetEditorModal
+        open={isCreatingPreset}
+        onRequestClose={(success) => {
+          setIsCreatingPreset(false);
+          if (success) {
+            startRefetchTransition(() => {
+              updateFetchKey();
+            });
+          }
+        }}
+      />
     </BAIFlex>
   );
 };
