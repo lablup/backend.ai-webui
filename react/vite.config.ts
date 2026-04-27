@@ -231,6 +231,53 @@ function projectRootStaticPlugin(): Plugin {
   };
 }
 
+/**
+ * Serve the Monaco AMD runtime at `/resources/monaco/vs/*` from
+ * `react/node_modules/monaco-editor/min/vs/*` during dev. Mirrors the
+ * `static` directory entry that lived in the deleted `react/craco.config.cjs`.
+ *
+ * `@monaco-editor/react` resolves the URL prefix via
+ *   loader.config({ paths: { vs: '/resources/monaco/vs' } })
+ * (see `react/src/helper/monacoEditor.ts`). Self-hosting keeps Monaco
+ * working in offline / air-gapped deployments where jsDelivr is unreachable.
+ *
+ * Production is unchanged: the root `copymonaco` script (`package.json:32`)
+ * copies the same tree into `build/web/resources/monaco/vs/`.
+ *
+ * `min/vs` is Monaco's prebuilt AMD bundle — used here rather than the ESM
+ * tree because `@monaco-editor/react` consumes the AMD form to keep the
+ * Monaco worker chunks intact for runtime lazy-loading.
+ */
+function monacoStaticPlugin(): Plugin {
+  const monacoRoot = resolve(__dirname, 'node_modules/monaco-editor/min/vs');
+  const URL_PREFIX = '/resources/monaco/vs/';
+
+  return {
+    name: 'bai-monaco-static',
+    apply: 'serve',
+    configureServer(server) {
+      server.middlewares.use((req, res, next) => {
+        if (!req.url) return next();
+        const url = req.url.split('?')[0];
+        if (!url.startsWith(URL_PREFIX)) return next();
+
+        const rel = url.slice(URL_PREFIX.length);
+        const filePath = join(monacoRoot, rel);
+        // Path-traversal guard: `join` normalizes `..`, so prefix comparison
+        // catches any URL that escapes `monacoRoot`.
+        if (!filePath.startsWith(monacoRoot)) return next();
+        if (!existsSync(filePath) || !statSync(filePath).isFile()) {
+          return next();
+        }
+        const mime =
+          MIME[extname(filePath).toLowerCase()] ?? 'application/octet-stream';
+        res.setHeader('Content-Type', mime);
+        createReadStream(filePath).pipe(res);
+      });
+    },
+  };
+}
+
 export default defineConfig(({ command, mode }) => {
   const env = loadEnv(mode, projectRoot, '');
   Object.assign(process.env, env);
@@ -405,7 +452,10 @@ export default defineConfig(({ command, mode }) => {
 
     plugins: [
       // Must run before @vitejs/plugin-react so we own the HTML transform
-      // and the index.html resolution.
+      // and the index.html resolution. Monaco's narrower prefix is matched
+      // first so the more general projectRoot middleware never has to
+      // reach into the filesystem for a `/resources/monaco/vs/*` request.
+      monacoStaticPlugin(),
       projectRootStaticPlugin(),
       devAssetsReloadPlugin(),
 
