@@ -16,6 +16,7 @@ import assert from "node:assert/strict";
 import path from "path";
 import {
   applyImageAttributes,
+  buildHomePage,
   buildIndexPage,
   buildWebPage,
   type WebPageContext,
@@ -23,7 +24,7 @@ import {
 } from "./website-builder.js";
 import type { WebsiteMetadata } from "./website-builder.js";
 import { resolveLegacyDocsUrl, type ResolvedDocConfig } from "./config.js";
-import type { Chapter } from "./markdown-processor.js";
+import { slugFromNavPath, type Chapter } from "./markdown-processor.js";
 import type { NavGroup } from "./book-config.js";
 
 function makeConfig(): ResolvedDocConfig {
@@ -255,6 +256,241 @@ describe("buildWebPage — FR-2726 surfaces", () => {
     const html = buildWebPage(makeContext());
     assert.match(html, /class="doc-sidebar-group__count"/);
     assert.match(html, /aria-label="1 pages">1</);
+  });
+});
+
+describe("buildWebPage — FR-2737 sidebar category icons are language-stable", () => {
+  // Same Backend.AI WebUI category structure as the real
+  // book.config.yaml (5 groups, identical paths across languages).
+  // Only the labels differ. The chosen Lucide-style icon is decided
+  // from the group's first-item path (`quickstart.md` →
+  // `session_page/...` → `vfolder/...` → `user_settings/...` →
+  // `trouble_shooting/...`), so every language MUST emit the SAME
+  // sequence of <svg> path payloads in the sidebar headers.
+  const navGroupsByLang: Record<string, NavGroup[]> = {
+    en: [
+      {
+        category: "Getting Started",
+        items: [{ title: "Quickstart", path: "quickstart.md" }],
+      },
+      {
+        category: "Workloads",
+        items: [
+          {
+            title: "Session Page",
+            path: "session_page/session_page.md",
+          },
+        ],
+      },
+      {
+        category: "Storage & Data",
+        items: [{ title: "Vfolder", path: "vfolder/vfolder.md" }],
+      },
+      {
+        category: "Administration",
+        items: [
+          {
+            title: "User Settings",
+            path: "user_settings/user_settings.md",
+          },
+        ],
+      },
+      {
+        category: "Reference",
+        items: [
+          {
+            title: "Trouble Shooting",
+            path: "trouble_shooting/trouble_shooting.md",
+          },
+        ],
+      },
+    ],
+    ko: [
+      {
+        category: "시작하기",
+        items: [{ title: "빠른 시작", path: "quickstart.md" }],
+      },
+      {
+        category: "워크로드",
+        items: [
+          {
+            title: "세션 페이지",
+            path: "session_page/session_page.md",
+          },
+        ],
+      },
+      {
+        category: "스토리지 및 데이터",
+        items: [
+          { title: "스토리지 폴더", path: "vfolder/vfolder.md" },
+        ],
+      },
+      {
+        category: "관리",
+        items: [
+          {
+            title: "사용자 설정",
+            path: "user_settings/user_settings.md",
+          },
+        ],
+      },
+      {
+        category: "참고 자료",
+        items: [
+          {
+            title: "FAQ 및 문제 해결",
+            path: "trouble_shooting/trouble_shooting.md",
+          },
+        ],
+      },
+    ],
+    ja: [
+      {
+        category: "はじめに",
+        items: [{ title: "クイックスタート", path: "quickstart.md" }],
+      },
+      {
+        category: "ワークロード",
+        items: [
+          {
+            title: "セッションページ",
+            path: "session_page/session_page.md",
+          },
+        ],
+      },
+      {
+        category: "ストレージとデータ",
+        items: [
+          {
+            title: "ストレージフォルダ",
+            path: "vfolder/vfolder.md",
+          },
+        ],
+      },
+      {
+        category: "管理",
+        items: [
+          {
+            title: "ユーザー設定",
+            path: "user_settings/user_settings.md",
+          },
+        ],
+      },
+      {
+        category: "リファレンス",
+        items: [
+          {
+            title: "FAQ＆トラブルシューティング",
+            path: "trouble_shooting/trouble_shooting.md",
+          },
+        ],
+      },
+    ],
+    th: [
+      {
+        category: "เริ่มต้นใช้งาน",
+        items: [
+          {
+            title: "เริ่มต้นอย่างรวดเร็ว",
+            path: "quickstart.md",
+          },
+        ],
+      },
+      {
+        category: "เวิร์กโหลด",
+        items: [
+          {
+            title: "หน้าเซสชัน",
+            path: "session_page/session_page.md",
+          },
+        ],
+      },
+      {
+        category: "พื้นที่จัดเก็บและข้อมูล",
+        items: [
+          {
+            title: "โฟลเดอร์จัดเก็บ",
+            path: "vfolder/vfolder.md",
+          },
+        ],
+      },
+      {
+        category: "การดูแลระบบ",
+        items: [
+          {
+            title: "ตั้งค่าผู้ใช้",
+            path: "user_settings/user_settings.md",
+          },
+        ],
+      },
+      {
+        category: "เอกสารอ้างอิง",
+        items: [
+          {
+            title: "FAQ และการแก้ไขปัญหา",
+            path: "trouble_shooting/trouble_shooting.md",
+          },
+        ],
+      },
+    ],
+  };
+
+  /**
+   * Capture the sequence of `<svg>` icon HTML emitted inside each
+   * `.doc-sidebar-group__icon` span, in document order.
+   */
+  function extractIconSequence(html: string): string[] {
+    const re =
+      /class="doc-sidebar-group__icon"[^>]*>(<svg[^]*?<\/svg>)/g;
+    return [...html.matchAll(re)].map((m) => m[1]);
+  }
+
+  function makeCtxForLang(
+    lang: string,
+    navGroups: NavGroup[],
+  ): WebPageContext {
+    // Reuse the standard fixture but swap the lang and navGroups so
+    // the sidebar renders the localized labels with the same paths.
+    // The active page (`dashboard`) doesn't appear in any of these
+    // groups, so no group auto-expands — that's fine for the icon
+    // assertion.
+    const ctx = makeContext();
+    ctx.metadata = { ...ctx.metadata, lang };
+    ctx.navGroups = navGroups;
+    return ctx;
+  }
+
+  it("emits the same icon sequence in every language", () => {
+    const sequences = Object.entries(navGroupsByLang).map(
+      ([lang, groups]) => extractIconSequence(buildWebPage(makeCtxForLang(lang, groups))),
+    );
+    // Sanity: 5 categories ⇒ 5 icons per language.
+    for (const seq of sequences) assert.equal(seq.length, 5);
+    // The English sequence is the reference. Every other language
+    // must emit the byte-identical sequence of <svg> bodies.
+    const [reference, ...others] = sequences;
+    for (const other of others) {
+      assert.deepStrictEqual(other, reference);
+    }
+  });
+
+  it("does NOT fall back to the generic stack icon for any localized language", () => {
+    // The stack icon's distinctive d= signature (used by the legacy
+    // fallback). With FR-2737 in place none of the localized
+    // category headers should resort to it.
+    const stackSig = "m12 3 9 5-9 5-9-5 9-5";
+    for (const [lang, groups] of Object.entries(navGroupsByLang)) {
+      if (lang === "en") continue; // the English path also won't hit fallback; skip for symmetry
+      const html = buildWebPage(makeCtxForLang(lang, groups));
+      const icons = extractIconSequence(html);
+      for (const svg of icons) {
+        assert.equal(
+          svg.includes(stackSig),
+          false,
+          `lang=${lang}: localized category icon fell back to ICON_STACK`,
+        );
+      }
+    }
   });
 });
 
@@ -689,5 +925,226 @@ describe("buildIndexPage — FR-2732 PDF download card", () => {
         `inner page must not contain "${label}"`,
       );
     }
+  });
+});
+
+describe("slugFromNavPath — FR-2737 language-stable slugs", () => {
+  it("derives the slug from the basename, lowercased", () => {
+    assert.equal(slugFromNavPath("quickstart.md"), "quickstart");
+    assert.equal(slugFromNavPath("Quickstart.md"), "quickstart");
+  });
+
+  it("uses only the leaf segment of nested paths", () => {
+    assert.equal(
+      slugFromNavPath("model_serving/model_serving.md"),
+      "model_serving",
+    );
+    assert.equal(slugFromNavPath("a/b/c/dashboard.md"), "dashboard");
+  });
+
+  it("preserves underscores so on-disk filenames survive into URLs", () => {
+    assert.equal(slugFromNavPath("admin_menu/admin_menu.md"), "admin_menu");
+    assert.equal(
+      slugFromNavPath("trouble_shooting/trouble_shooting.md"),
+      "trouble_shooting",
+    );
+  });
+
+  it("produces a deterministic, language-independent slug from the path", () => {
+    // The path is identical across languages; only the localized title
+    // differs in book.config.yaml. The slug must therefore depend
+    // *only* on the path — that is the whole point of FR-2737. The
+    // earlier `assert.equal(f(p), f(p))` shape was a tautology that
+    // could never fail; assert against a known expected value instead
+    // so a regression to title-derived slugs would be caught.
+    assert.equal(
+      slugFromNavPath("model_serving/model_serving.md"),
+      "model_serving",
+    );
+    // And for completeness, also verify the call is idempotent
+    // (same input → same output every time, no hidden state).
+    const first = slugFromNavPath("session_page/session_page.md");
+    const second = slugFromNavPath("session_page/session_page.md");
+    assert.equal(first, "session_page");
+    assert.equal(second, first);
+  });
+
+  it("collapses runs of disallowed characters into a single dash", () => {
+    // The single-pass sanitizer must collapse `foo  bar.md` into
+    // `foo-bar`, not `foo--bar`. Guards against quantifier drift in
+    // the linear-time replacement loop.
+    assert.equal(slugFromNavPath("foo  bar.md"), "foo-bar");
+    assert.equal(slugFromNavPath("foo!!!bar.md"), "foo-bar");
+  });
+
+  it("trims trailing dash / underscore boundary characters", () => {
+    assert.equal(slugFromNavPath("foo--.md"), "foo");
+    assert.equal(slugFromNavPath("foo__.md"), "foo");
+  });
+
+  it("throws when the path basename has no allowlisted characters", () => {
+    // Earlier code returned the raw basename here, which could leak
+    // unsafe characters (spaces, non-ASCII) into the URL. The
+    // post-feedback contract is to refuse the input and surface a
+    // config-error instead, so the operator fixes book.config.yaml
+    // before the build emits a broken slug.
+    assert.throws(() => slugFromNavPath("   .md"), /Cannot derive a slug/);
+    assert.throws(() => slugFromNavPath("***.md"), /Cannot derive a slug/);
+  });
+});
+
+describe("buildHomePage — FR-2737 home page", () => {
+  function makeHomeContext() {
+    const config = makeConfig();
+    const navGroups: NavGroup[] = [
+      {
+        category: "Getting Started",
+        items: [
+          { title: "Quickstart", path: "quickstart.md" },
+          { title: "Overview", path: "overview/overview.md" },
+        ],
+      },
+      {
+        category: "Workloads",
+        items: [
+          {
+            title: "Session Page",
+            path: "session_page/session_page.md",
+          },
+        ],
+      },
+    ];
+    const allChapters: Chapter[] = [
+      {
+        title: "Quickstart",
+        slug: "quickstart",
+        htmlContent: "<p>start</p>",
+        headings: [],
+      },
+      {
+        title: "Overview",
+        slug: "overview",
+        htmlContent: "<p>overview</p>",
+        headings: [],
+      },
+      {
+        title: "Session Page",
+        slug: "session_page",
+        htmlContent: "<p>session</p>",
+        headings: [],
+      },
+    ];
+    const assets: PageAssets = {
+      styles: "styles.abcd.css",
+      search: "search.abcd.js",
+      favicon: "favicon.ico",
+      brandLogoLight: "brand-logo-light.abcd.svg",
+      brandLogoDark: "brand-logo-dark.abcd.svg",
+      interactions: "interactions.abcd.js",
+    };
+    return {
+      metadata: {
+        title: "Backend.AI WebUI User Guide",
+        version: "v26.5.0",
+        lang: "ko",
+        availableLanguages: ["en", "ko", "ja", "th"],
+      },
+      config,
+      navGroups,
+      allChapters,
+      assets,
+      peers: [
+        {
+          lang: "en",
+          label: "English",
+          href: "../en/index.html",
+          available: true,
+        },
+        {
+          lang: "ko",
+          label: "한국어",
+          href: "../ko/index.html",
+          available: true,
+        },
+        {
+          lang: "ja",
+          label: "日本語",
+          href: "../ja/index.html",
+          available: true,
+        },
+        {
+          lang: "th",
+          label: "ภาษาไทย",
+          href: "../th/index.html",
+          available: true,
+        },
+      ],
+    };
+  }
+
+  it("emits hero, intro sections, and a category-card grid", () => {
+    const html = buildHomePage(makeHomeContext());
+    assert.match(html, /class="home-hero"/);
+    assert.match(html, /class="home-hero__title"/);
+    assert.match(html, /home-section--intro/);
+    assert.match(html, /class="home-browse__grid"/);
+    // Two non-empty categories ⇒ two cards.
+    const cardMatches = html.match(/class="home-card"/g) ?? [];
+    assert.equal(cardMatches.length, 2);
+  });
+
+  it("points each category card at the first chapter inside that group", () => {
+    const html = buildHomePage(makeHomeContext());
+    // Getting Started → quickstart.md → quickstart.html
+    assert.match(html, /<a class="home-card" href="\.\/quickstart\.html">/);
+    // Workloads → session_page/session_page.md → session_page.html
+    assert.match(html, /<a class="home-card" href="\.\/session_page\.html">/);
+  });
+
+  it("uses localized strings for the current language", () => {
+    const html = buildHomePage(makeHomeContext());
+    // Korean fixture above ⇒ Korean welcome line.
+    assert.match(html, /Backend\.AI WebUI 사용자 매뉴얼에 오신 것을 환영합니다/);
+    // The hint copy mentions "빠른 시작" (the Korean Quickstart label).
+    assert.match(html, /빠른 시작/);
+  });
+
+  it("links the primary CTA at the first chapter slug", () => {
+    const html = buildHomePage(makeHomeContext());
+    assert.match(
+      html,
+      /<a class="home-cta home-cta--primary" href="\.\/quickstart\.html">/,
+    );
+  });
+
+  it("reuses the topbar (logo, search, lang switcher) and the sidebar", () => {
+    const html = buildHomePage(makeHomeContext());
+    assert.match(html, /<header class="bai-topbar"/);
+    assert.match(html, /class="bai-topbar__brand"[^>]*href="\.\/index\.html"/);
+    assert.match(html, /class="lang-switcher__icon"/); // FR-2737 icon
+    assert.match(html, /class="doc-sidebar"/);
+  });
+
+  it("does NOT emit a breadcrumb (the home page IS the home destination)", () => {
+    const html = buildHomePage(makeHomeContext());
+    assert.doesNotMatch(html, /class="breadcrumb"/);
+  });
+
+  it("does NOT emit pagination (no prev/next on the home page)", () => {
+    const html = buildHomePage(makeHomeContext());
+    assert.doesNotMatch(html, /class="pagination-nav"/);
+  });
+
+  it("renders a GitHub CTA only when website.repoUrl is set", () => {
+    const html = buildHomePage(makeHomeContext());
+    assert.match(html, /class="home-cta home-cta--secondary"/);
+
+    const ctxNoRepo = makeHomeContext();
+    ctxNoRepo.config = {
+      ...ctxNoRepo.config,
+      website: { editBaseUrl: ctxNoRepo.config.website?.editBaseUrl },
+    };
+    const html2 = buildHomePage(ctxNoRepo);
+    assert.doesNotMatch(html2, /class="home-cta home-cta--secondary"/);
   });
 });

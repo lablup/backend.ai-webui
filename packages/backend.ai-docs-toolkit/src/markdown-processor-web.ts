@@ -8,6 +8,7 @@ import path from "path";
 import { Marked } from "marked";
 import {
   slugify,
+  slugFromNavPath,
   deduplicateH1,
   substituteTemplateVars,
   normalizeRstTables,
@@ -544,7 +545,7 @@ export async function processMarkdownFilesForWeb(
 
     chapterIndex++;
     let markdown = fs.readFileSync(mdPath, "utf-8");
-    const chapterSlug = slugify(nav.title);
+    const chapterSlug = slugFromNavPath(nav.path);
 
     // Pre-processing pipeline (reused from PDF processor)
     markdown = deduplicateH1(markdown);

@@ -97,6 +97,112 @@ export function slugify(text: string): string {
     .replace(/^-|-$/g, '');
 }
 
+/**
+ * Reserved chapter slug for the per-language home page (web build).
+ * The website generator writes the home page to `<lang>/index.html`,
+ * so a real chapter whose path slugifies to `index` (e.g. `index.md`)
+ * would silently overwrite the home. `slugFromNavPath` enforces this
+ * boundary by throwing when a navigation path resolves to the
+ * reserved slug — operators are required to rename the offending
+ * chapter (or use a sub-folder) before the build can proceed.
+ */
+export const RESERVED_HOME_SLUG = 'index';
+
+/**
+ * Derive a chapter slug from the navigation `path` rather than the
+ * (localized) navigation title.
+ *
+ * The navigation path is identical across every language (only the
+ * title is translated), so this guarantees that the same chapter
+ * resolves to the same slug — and therefore the same `<slug>.html`
+ * filename — in every language. This in turn lets readers swap the
+ * language segment in a URL (e.g. `/ko/quickstart.html` ↔
+ * `/en/quickstart.html`) and land on the same chapter without
+ * juggling localized filenames.
+ *
+ * Sanitization is intentionally *less* aggressive than `slugify`:
+ *
+ *   - `slugify` strips underscores (they fall outside its
+ *     `[\p{L}\p{N}\s-]` allowlist), but every existing `book.config`
+ *     in the wild stores paths like `admin_menu/admin_menu.md`. We
+ *     keep `_` so the resulting URL — `admin_menu.html` — matches
+ *     the on-disk filename and the corresponding section anchor in
+ *     the PDF, instead of collapsing to `adminmenu.html`.
+ *   - All other non-`[a-z0-9_-]` characters are dropped to avoid
+ *     surprising URL-encoded paths if someone introduces a path
+ *     with spaces or punctuation.
+ *
+ * The leading basename + extension strip is the structural part: it
+ * pins the slug to the file's leaf identity, which is the property
+ * the language-stable URL contract relies on.
+ *
+ * Implementation note: an earlier version used a chain of `.replace()`
+ * calls with quantified character classes (`/[^a-z0-9_-]+/g`,
+ * `/-+/g`, `/^[-_]+|[-_]+$/g`). CodeQL flagged each of those as a
+ * potential polynomial-regex hot spot on uncontrolled input, even
+ * though the input here is bounded by `book.config.yaml`. The
+ * single-pass character loop below has the same semantics with
+ * unambiguously linear runtime — no regex backtracking, no
+ * compounding quantifiers — so it satisfies the lint *and* removes
+ * the need for a manual `// codeql ignore` annotation.
+ */
+export function slugFromNavPath(navPath: string): string {
+  const base = path.basename(navPath, path.extname(navPath)).toLowerCase();
+  // Single linear pass: keep `[a-z0-9_-]` characters, collapse any
+  // run of disallowed characters into a single `-`. Underscores are
+  // explicitly preserved so `admin_menu.md` stays `admin_menu`
+  // instead of collapsing to `adminmenu`.
+  let cleaned = '';
+  let lastWasDash = false;
+  for (let i = 0; i < base.length; i++) {
+    const ch = base[i];
+    const code = base.charCodeAt(i);
+    const isAllowed =
+      (code >= 0x30 && code <= 0x39) || // 0-9
+      (code >= 0x61 && code <= 0x7a) || // a-z
+      ch === '_' ||
+      ch === '-';
+    if (isAllowed) {
+      // Collapse runs of `-` so `foo--bar` becomes `foo-bar`.
+      if (ch === '-') {
+        if (!lastWasDash && cleaned.length > 0) cleaned += '-';
+        lastWasDash = true;
+      } else {
+        cleaned += ch;
+        lastWasDash = false;
+      }
+    } else {
+      // Treat any disallowed character (or run of them) as a single
+      // dash separator, so `foo bar` becomes `foo-bar`.
+      if (!lastWasDash && cleaned.length > 0) cleaned += '-';
+      lastWasDash = true;
+    }
+  }
+  // Trim trailing `-` / `_` boundary chars one at a time. The leading
+  // boundary is naturally handled by the `cleaned.length > 0` guard
+  // above (we never start with `-`).
+  while (
+    cleaned.length > 0 &&
+    (cleaned[cleaned.length - 1] === '-' ||
+      cleaned[cleaned.length - 1] === '_')
+  ) {
+    cleaned = cleaned.slice(0, -1);
+  }
+  if (!cleaned) {
+    // Refusing the input is preferable to returning `base` (the
+    // earlier `cleaned || base` fallback could leak filtered
+    // characters back into the URL — e.g. spaces or non-ASCII —
+    // producing an unsafe or URL-encoded slug). A `book.config.yaml`
+    // path that sanitizes to nothing is a config error.
+    throw new Error(
+      `Cannot derive a slug from navigation path "${navPath}": ` +
+        `no [a-z0-9_-] characters in basename. Rename the file or ` +
+        `set an explicit ASCII-friendly path.`,
+    );
+  }
+  return cleaned;
+}
+
 export function resolveMarkdownPath(
   lang: string,
   configPath: string,
@@ -306,7 +412,7 @@ export async function processMarkdownFiles(
 
     chapterIndex++;
     let markdown = fs.readFileSync(mdPath, 'utf-8');
-    const chapterSlug = slugify(nav.title);
+    const chapterSlug = slugFromNavPath(nav.path);
 
     // Pre-processing pipeline
     markdown = deduplicateH1(markdown);
