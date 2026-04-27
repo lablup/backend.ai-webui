@@ -59,5 +59,24 @@ export default defineConfig({
     ],
     include: ['src/**/*.{test,spec}.{ts,tsx}'],
     exclude: ['**/node_modules/**', '**/dist/**', '**/__generated__/**'],
+
+    // Coverage settings — see comment in `react/vitest.config.ts`. The
+    // `davelosert/vitest-coverage-report-action` GitHub Action consumes the
+    // `json-summary` reporter to post a PR comment with line/branch/function/
+    // statement coverage diffs.
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json', 'json-summary', 'html'],
+      reportsDirectory: 'coverage',
+      include: ['src/**/*.{ts,tsx}'],
+      exclude: [
+        'src/**/*.{test,spec}.{ts,tsx}',
+        'src/**/*.stories.{ts,tsx}',
+        'src/__generated__/**',
+        'src/**/__generated__/**',
+        'src/index.ts',
+        'src/locale/**',
+      ],
+    },
   },
 });

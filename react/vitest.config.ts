@@ -97,5 +97,25 @@ export default defineConfig({
     ],
     include: ['src/**/*.{test,spec}.{ts,tsx}'],
     exclude: ['**/node_modules/**', '**/build/**', '**/__generated__/**'],
+
+    // Coverage settings: V8 provider is the fastest (Node's built-in V8
+    // inspector with no Babel transform). `json-summary` is what
+    // `davelosert/vitest-coverage-report-action` consumes for the PR comment;
+    // `text` keeps a console summary; `html` lets developers open
+    // `coverage/index.html` locally for inline drill-down.
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json', 'json-summary', 'html'],
+      reportsDirectory: 'coverage',
+      include: ['src/**/*.{ts,tsx}'],
+      exclude: [
+        'src/**/*.{test,spec}.{ts,tsx}',
+        'src/**/*.stories.{ts,tsx}',
+        'src/__generated__/**',
+        'src/**/__generated__/**',
+        'src/index.tsx',
+        'src/reportWebVitals.ts',
+      ],
+    },
   },
 });

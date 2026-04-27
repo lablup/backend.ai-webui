@@ -31,3 +31,6 @@ storybook-static
 !.vscode/settings.json.sample
 
 dist
+
+# vitest coverage output
+/coverage
