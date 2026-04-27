@@ -22,43 +22,63 @@ import type { ResolvedDocConfig } from './config.js';
  * extraction (see `extractFontFromTtc`), so `NotoSansCJK-Regular.ttc` works
  * on Linux without requiring a separate per-language TTF.
  *
+ * We use language-specific candidate lists so that the first successful load
+ * is a font that actually covers the target script. Korean prefers Nanum
+ * (user-installed, better Hangul rendering) then falls back to Arial Unicode.
+ * Japanese and Chinese prioritize Arial Unicode (macOS system font with broad
+ * CJK coverage) before user-installed Korean-only fonts like Nanum.
+ *
  * We load only the candidates needed for the current language. Loading
  * unused fonts wastes memory and (more importantly) can trigger latent
  * fontkit subsetting bugs in fonts whose glyphs are never actually drawn.
  */
-const CJK_FONT_CANDIDATES = [
-  // macOS – user-installed fonts
+
+/** Korean: prefer Nanum (good Hangul) then broad-coverage fallbacks. */
+const KO_FONT_CANDIDATES = [
+  // macOS – user-installed Korean fonts
   path.join(os.homedir(), 'Library/Fonts/NanumBarunGothic.ttf'),
   path.join(os.homedir(), 'Library/Fonts/NanumSquareRegular.ttf'),
+  // macOS – broad Unicode coverage (covers CJK including Hangul)
   '/System/Library/Fonts/Supplemental/Arial Unicode.ttf',
-  // Linux – Noto CJK collection (covers ko/ja/zh-CN/zh-TW/zh-HK)
+  // Linux – Noto CJK collection
   '/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc',
-  // Linux – per-language Noto CJK if installed separately
   '/usr/share/fonts/truetype/noto/NotoSansKR-Regular.ttf',
-  '/usr/share/fonts/truetype/noto/NotoSansJP-Regular.ttf',
-  // Linux – Korean fallback
   '/usr/share/fonts/truetype/nanum/NanumBarunGothic.ttf',
-  // Linux common paths — Japanese (fonts-takao-gothic on Debian/Ubuntu)
+];
+
+/**
+ * Japanese / Chinese: Arial Unicode (macOS system font) comes first so it is
+ * picked before user-installed Korean-only fonts like NanumBarunGothic that
+ * do not cover Kana or Han glyphs.
+ */
+const JA_ZH_FONT_CANDIDATES = [
+  // macOS – broad Unicode coverage (covers Kana, CJK Han)
+  '/System/Library/Fonts/Supplemental/Arial Unicode.ttf',
+  // macOS – AppleGothic covers Hangul/CJK, useful as secondary fallback
+  '/System/Library/Fonts/Supplemental/AppleGothic.ttf',
+  // Linux – Noto CJK collection
+  '/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc',
+  '/usr/share/fonts/truetype/noto/NotoSansJP-Regular.ttf',
+  // Linux – Japanese (fonts-takao-gothic on Debian/Ubuntu)
   '/usr/share/fonts/truetype/takao-gothic/TakaoGothic.ttf',
   '/usr/share/fonts/truetype/takao-mincho/TakaoMincho.ttf',
-  // Linux common paths — Thai (fonts-thai-tlwg on Debian/Ubuntu)
-  '/usr/share/fonts/truetype/tlwg/Loma.ttf',
-  '/usr/share/fonts/opentype/tlwg/Loma.otf',
-  '/usr/share/fonts/truetype/tlwg/Garuda.ttf',
 ];
 
 const THAI_FONT_CANDIDATES = [
+  // macOS – system Thai font (ships with macOS)
+  '/System/Library/Fonts/Supplemental/Thonburi.ttc',
   // Linux – TLWG family ships with Debian/Ubuntu by default
   '/usr/share/fonts/opentype/tlwg/Loma.otf',
   '/usr/share/fonts/truetype/tlwg/Garuda.ttf',
   '/usr/share/fonts/truetype/tlwg/Norasi.ttf',
 ];
 
+const KO_LANGS = new Set(['ko']);
 /**
  * Languages whose header/footer stamp text is expected to contain CJK
- * Han / Hangul / Kana glyphs.
+ * Han / Kana glyphs (excludes Korean which has its own candidate list).
  */
-const CJK_LANGS = new Set(['ko', 'ja', 'zh', 'zh-CN', 'zh-TW', 'zh-HK']);
+const JA_ZH_LANGS = new Set(['ja', 'zh', 'zh-CN', 'zh-TW', 'zh-HK']);
 const THAI_LANGS = new Set(['th']);
 
 type EmbeddedFont = Awaited<ReturnType<PDFDocument['embedFont']>>;
@@ -240,8 +260,10 @@ async function loadStampFallbackFonts(
 
   const langKey = lang.split('-')[0];
   let defaultCandidates: string[] = [];
-  if (CJK_LANGS.has(lang) || CJK_LANGS.has(langKey)) {
-    defaultCandidates = CJK_FONT_CANDIDATES;
+  if (KO_LANGS.has(lang) || KO_LANGS.has(langKey)) {
+    defaultCandidates = KO_FONT_CANDIDATES;
+  } else if (JA_ZH_LANGS.has(lang) || JA_ZH_LANGS.has(langKey)) {
+    defaultCandidates = JA_ZH_FONT_CANDIDATES;
   } else if (THAI_LANGS.has(lang) || THAI_LANGS.has(langKey)) {
     defaultCandidates = THAI_FONT_CANDIDATES;
   }
@@ -804,11 +826,16 @@ export async function renderPdf(options: RenderOptions): Promise<void> {
     config?.cjkFontPaths,
   );
   if (fontFallbacks.length === 0 && options.lang !== 'en') {
+    const hint =
+      options.lang === 'th'
+        ? 'macOS: Thonburi.ttc ships with the OS — ensure /System/Library/Fonts/Supplemental/Thonburi.ttc is readable. Linux: install fonts-thai-tlwg (Loma/Garuda).'
+        : options.lang === 'ja'
+          ? 'macOS: ensure /System/Library/Fonts/Supplemental/Arial Unicode.ttf is readable. Linux: install fonts-noto-cjk or fonts-takao-gothic.'
+          : 'Install Noto Sans CJK or Nanum fonts, or set "cjkFontPaths" in docs-toolkit.config.yaml.';
     console.warn(
-      `  Warning: No CJK/Thai fonts found for lang="${options.lang}". ` +
+      `  Warning: No suitable font found for lang="${options.lang}". ` +
         `Header/footer stamp will fall back to Latin (Helvetica) — non-Latin ` +
-        `glyphs may render as missing/tofu. Install Noto Sans CJK and TLWG ` +
-        `(Loma/Garuda) fonts, or set "cjkFontPaths" in docs-toolkit.config.yaml.`,
+        `glyphs may render as missing/tofu. ${hint}`,
     );
   }
 
