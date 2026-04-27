@@ -11,15 +11,15 @@ description: >
 
 ## Dev Server Address
 
-The WebUI dev server runs at **http://localhost:9081** by default.
+The WebUI dev server runs under [Portless](https://github.com/vercel-labs/portless) on a `*.localhost:1355` URL.
 
-Port can be offset via `BAI_WEBUI_DEV_PORT_OFFSET` in `.env.development.local`. Actual port = `9081 + offset`.
+`scripts/dev.mjs` picks the subdomain from the current git branch:
+- Branch contains an `FR-XXXX` token → `http://fr-XXXX.localhost:1355` (e.g. `04-24-feat_fr-2701_...` → `fr-2701.localhost`).
+- Otherwise → `<branch>.<project>.localhost:1355` (Portless's default `run` form).
 
-To check if the dev server is running:
-```bash
-curl -s -o /dev/null -w "%{http_code}" http://localhost:9081 2>/dev/null
-```
-If not running, tell the user to start it with `pnpm run dev`.
+To find the actual URL for a running instance, run `portless list` or check the `pnpm run dev` terminal output. To pin the React port (e.g. for an existing browser tab), use `PORT=9081 pnpm run dev`.
+
+If no dev server is running, tell the user to start it with `pnpm run dev` (requires Portless: `npm install -g portless`). `pnpm run wsproxy` runs separately on fixed port 5050 (not wrapped by Portless).
 
 ## API Endpoint & Credentials
 

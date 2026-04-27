@@ -205,21 +205,17 @@ On another terminal:
 $ pnpm run wsproxy   # Start websocket proxy (required for API calls)
 ```
 
-#### Port configuration
+#### Dev server URL
 
-The default React dev server port is `9081`. To use a different port, create a `.env.development.local` file in the project root and set `BAI_WEBUI_DEV_PORT_OFFSET`:
+`pnpm run dev` runs the React dev server under [Portless](https://github.com/vercel-labs/portless), which assigns a stable `*.localhost` subdomain and serves HTTPS/2 by default. Portless ships as a `devDependency` — `pnpm install` is enough; no global install needed. `pnpm run wsproxy` stays on a fixed port (5050).
 
-```
-# .env.development.local
-BAI_WEBUI_DEV_PORT_OFFSET=10   # shifts React port to 9091
-```
-
-Port assignment is managed by `scripts/dev-config.js`. To inspect the current port configuration:
+Safari users (and some corporate networks) need a one-time `/etc/hosts` sync:
 
 ```console
-$ pnpm run dev:config   # Show current dev configuration
-$ pnpm run dev:setup    # Apply configuration to current environment
+$ sudo pnpm exec portless hosts sync
 ```
+
+If your branch name contains an `FR-XXXX` issue number, the URL is `https://fr-XXXX.localhost:1355`; otherwise Portless picks a branch-derived subdomain. To pin a specific React port, run `PORT=9081 pnpm run dev`. See `DEV_ENVIRONMENT.md` for theme color and troubleshooting.
 
 ### Commands Reference
 
@@ -236,8 +232,6 @@ $ pnpm run dev:setup    # Apply configuration to current environment
 | `pnpm run format` | Prettier format check |
 | `pnpm run format-fix` | Auto-fix formatting |
 | `bash scripts/verify.sh` | Run Relay + Lint + Format + TypeScript checks |
-| `pnpm run dev:config` | Show current dev port configuration |
-| `pnpm run dev:setup` | Apply dev configuration to current environment |
 | `pnpm run electron:d` | Run Electron in dev mode |
 | `pnpm run electron:d:hmr` | Run Electron in dev mode with HMR (live debug) |
 | `pnpm run test` | Jest unit tests (root: scripts/, src/) |
