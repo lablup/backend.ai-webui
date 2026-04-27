@@ -423,8 +423,21 @@ function buildWebRenderer(
         : ` class="shiki-host"`;
       const preBlock = `<pre${langClass}><code>${codeHtml}</code></pre>`;
 
-      if (title) {
-        return `<div class="code-block-wrapper"><div class="code-block-title">${escapeHtml(title)}</div>${preBlock}</div>\n`;
+      // Emit the BAI dark frame whenever we have either a language hint
+      // or a title — the header renders a language pill (left), filename
+      // text slot (middle, flex-grows so the copy button lands flush
+      // right), and an empty slot the runtime copy script populates with
+      // its SVG button. Plain fenced blocks with no lang/title fall
+      // through to bare <pre>; code-copy.js still wraps them with the
+      // doc-code-block-wrapper at runtime so they get the dark frame.
+      if (lang || title) {
+        const langPill = lang
+          ? `<span class="code-block-lang">${escapeHtml(lang)}</span>`
+          : "";
+        const titleText = title
+          ? `<span class="code-block-title-text">${escapeHtml(title)}</span>`
+          : `<span class="code-block-title-text" aria-hidden="true"></span>`;
+        return `<div class="code-block-wrapper"><div class="code-block-title">${langPill}${titleText}</div>${preBlock}</div>\n`;
       }
 
       return preBlock + "\n";
