@@ -2,12 +2,13 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { PrometheusQueryPresetEditorModalFragment$key } from '../__generated__/PrometheusQueryPresetEditorModalFragment.graphql';
 import {
   PrometheusQueryPresetListFragment$data,
   PrometheusQueryPresetListFragment$key,
 } from '../__generated__/PrometheusQueryPresetListFragment.graphql';
 import { localeCompare } from '../helper';
-import { DeleteOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import {
   Button,
   Typography,
@@ -35,6 +36,7 @@ interface PrometheusQueryPresetListProps extends Omit<
   loading?: boolean;
   pagination: TablePaginationConfig;
   onDeletePreset?: (preset: PrometheusQueryPresetRow) => void;
+  onEditPreset?: (preset: PrometheusQueryPresetEditorModalFragment$key) => void;
 }
 
 const PrometheusQueryPresetList: React.FC<PrometheusQueryPresetListProps> = ({
@@ -42,6 +44,7 @@ const PrometheusQueryPresetList: React.FC<PrometheusQueryPresetListProps> = ({
   loading,
   pagination,
   onDeletePreset,
+  onEditPreset,
   ...tableProps
 }) => {
   'use memo';
@@ -69,6 +72,7 @@ const PrometheusQueryPresetList: React.FC<PrometheusQueryPresetListProps> = ({
           id
           name
         }
+        ...PrometheusQueryPresetEditorModalFragment
       }
     `,
     presetsFrgmt,
@@ -131,6 +135,11 @@ const PrometheusQueryPresetList: React.FC<PrometheusQueryPresetListProps> = ({
       fixed: 'right',
       render: (_value, row) => (
         <BAIFlex gap="xxs">
+          <Button
+            type="text"
+            icon={<EditOutlined />}
+            onClick={() => onEditPreset?.(row)}
+          />
           <Button
             type="text"
             danger

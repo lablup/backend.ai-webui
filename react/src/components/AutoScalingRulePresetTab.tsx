@@ -8,6 +8,7 @@ import {
   AutoScalingRulePresetTabQuery$variables,
   QueryDefinitionFilter,
 } from '../__generated__/AutoScalingRulePresetTabQuery.graphql';
+import { PrometheusQueryPresetEditorModalFragment$key } from '../__generated__/PrometheusQueryPresetEditorModalFragment.graphql';
 import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
 import PrometheusQueryPresetEditorModal from './PrometheusQueryPresetEditorModal';
 import PrometheusQueryPresetList from './PrometheusQueryPresetList';
@@ -60,6 +61,8 @@ const AutoScalingRulePresetTab: React.FC = () => {
   const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
   const [, startRefetchTransition] = useTransition();
   const [isCreatingPreset, setIsCreatingPreset] = useState(false);
+  const [editingPreset, setEditingPreset] =
+    useState<PrometheusQueryPresetEditorModalFragment$key | null>(null);
   const [deletingPreset, setDeletingPreset] =
     useState<DeletingPresetTarget | null>(null);
 
@@ -189,6 +192,9 @@ const AutoScalingRulePresetTab: React.FC = () => {
               }
             },
           }}
+          onEditPreset={(preset) => {
+            setEditingPreset(preset);
+          }}
           onDeletePreset={(preset) => {
             setDeletingPreset({ id: preset.id, name: preset.name });
           }}
@@ -203,6 +209,23 @@ const AutoScalingRulePresetTab: React.FC = () => {
               updateFetchKey();
             });
           }
+        }}
+      />
+      <PrometheusQueryPresetEditorModal
+        open={!!editingPreset}
+        presetFrgmt={editingPreset}
+        onRequestClose={(success) => {
+          setEditingPreset(null);
+          if (success) {
+            startRefetchTransition(() => {
+              updateFetchKey();
+            });
+          }
+        }}
+        onComplete={() => {
+          startRefetchTransition(() => {
+            updateFetchKey();
+          });
         }}
       />
       <BAIConfirmModalWithInput
