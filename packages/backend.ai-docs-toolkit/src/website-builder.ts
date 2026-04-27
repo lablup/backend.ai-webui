@@ -183,6 +183,16 @@ export interface PageVersionContext {
    * when navigating across versions.
    */
   rootDepth: number;
+  /**
+   * Optional GitHub release tag for the current version (FR-2731). When
+   * present, downstream renderers may use it to build a PDF download
+   * URL like `https://github.com/<org>/<repo>/releases/download/<pdfTag>/<asset>`.
+   * `undefined` means "no PDF card" — renderers MUST suppress the card
+   * entirely rather than coercing to an empty href. This sub-task wires
+   * the value through; the actual UI rendering is implemented in a
+   * follow-up sub-task.
+   */
+  pdfTag?: string;
 }
 
 /**

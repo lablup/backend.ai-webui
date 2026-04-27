@@ -38,6 +38,15 @@ import type {
 const MINOR_LABEL = /^[0-9]+\.[0-9]+$/;
 
 /**
+ * Strict `vMAJOR.MINOR.PATCH` shape for `versions[].pdfTag` (FR-2731).
+ * The value is interpolated into a GitHub Releases CDN URL like
+ * `https://github.com/<org>/<repo>/releases/download/<pdfTag>/<asset>`,
+ * so any deviation (missing `v`, missing patch, trailing suffix) would
+ * yield a 404 at request time. Validate at config load instead.
+ */
+const PDF_TAG_REGEX = /^v[0-9]+\.[0-9]+\.[0-9]+$/;
+
+/**
  * Runtime-normalized version entry. One per minor version that survives
  * validation. The `outDir` lives directly under the website output root
  * (`<distDir>/<websiteOutDir>/<outDir>/<lang>/...`) and is identical to
@@ -53,6 +62,14 @@ export interface Version {
   isLatest: boolean;
   /** The directory segment under `dist/web/` for this version. Equal to `label`. */
   outDir: string;
+  /**
+   * Optional release tag (FR-2731) for building the per-version PDF
+   * download URL. Validated against `^v\d+\.\d+\.\d+$` at config load.
+   * `undefined` means "no PDF card for this version" — downstream
+   * renderers must distinguish missing vs present rather than coercing
+   * to an empty string.
+   */
+  pdfTag?: string;
 }
 
 /**
@@ -116,6 +133,11 @@ export function loadVersions(config: ResolvedDocConfig): LoadedVersions {
       source: entry.source,
       isLatest: entry.latest === true,
       outDir: entry.label,
+      // `pdfTag` is fully optional. We deliberately omit the property
+      // (rather than store `undefined` explicitly) so downstream
+      // `JSON.stringify` and `'pdfTag' in v` checks behave intuitively
+      // — a version without a tag has no key at all.
+      ...(entry.pdfTag !== undefined ? { pdfTag: entry.pdfTag } : {}),
     });
   }
 
@@ -149,7 +171,7 @@ function validateEntryShape(entry: VersionEntry, index: number): void {
   // segments downstream.
   if (!MINOR_LABEL.test(entry.label)) {
     throw new Error(
-      `docs-toolkit.config.yaml: "versions[${index}].label" must match ^[0-9]+\\.[0-9]+$ ` +
+      `docs-toolkit.config.yaml: "versions[${index}].label" must match ${MINOR_LABEL.source} ` +
         `(minor only, e.g., "25.16"). Got: ${JSON.stringify(entry.label)}. The selector never ` +
         `lists patches; the highest patch within a minor is built and published as that minor.`,
     );
@@ -172,6 +194,24 @@ function validateEntryShape(entry: VersionEntry, index: number): void {
       throw new Error(
         `docs-toolkit.config.yaml: "versions[${index}].source.ref" is required when ` +
           `kind is "archive-branch" (e.g., "docs-archive/25.16").`,
+      );
+    }
+  }
+  // FR-2731: optional `pdfTag` must shape as `vMAJOR.MINOR.PATCH`. We
+  // validate at config-load time rather than letting a malformed value
+  // produce a 404 from the GitHub Releases CDN at request time.
+  if (entry.pdfTag !== undefined) {
+    if (typeof entry.pdfTag !== "string" || entry.pdfTag.length === 0) {
+      throw new Error(
+        `docs-toolkit.config.yaml: "versions[${index}].pdfTag" must be a non-empty string ` +
+          `(e.g., "v26.4.7"). Got: ${JSON.stringify(entry.pdfTag)}.`,
+      );
+    }
+    if (!PDF_TAG_REGEX.test(entry.pdfTag)) {
+      throw new Error(
+        `docs-toolkit.config.yaml: "versions[${index}].pdfTag" must match ${PDF_TAG_REGEX.source} ` +
+          `(e.g., "v26.4.7"). Got: ${JSON.stringify(entry.pdfTag)}. The value is used to build a ` +
+          `GitHub Releases CDN URL — a leading "v" and a full patch component are both required.`,
       );
     }
   }

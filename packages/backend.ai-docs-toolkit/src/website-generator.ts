@@ -1137,10 +1137,17 @@ function buildPageVersionContext(args: {
   }
   const allLabels = loadedVersions.entries.map((v) => v.label);
   const slugAvailability: Record<string, boolean> = {};
+  // FR-2731: also capture the current version's entry in this same pass
+  // so a follow-up sub-task can render the PDF download card. We
+  // deliberately omit `pdfTag` from the result (rather than store
+  // `undefined` explicitly) so template engines that check for property
+  // presence behave the same for "no entry" and "entry without tag".
+  let currentEntry: Version | undefined;
   for (const v of loadedVersions.entries) {
     if (v.label === versionLabel) {
       // Always available: the page is being rendered right now in this version.
       slugAvailability[v.label] = true;
+      currentEntry = v;
       continue;
     }
     // For OTHER versions: trust the registry's answer. If the slug is
@@ -1159,6 +1166,9 @@ function buildPageVersionContext(args: {
     slugAvailability,
     slug,
     rootDepth,
+    ...(currentEntry?.pdfTag !== undefined
+      ? { pdfTag: currentEntry.pdfTag }
+      : {}),
   };
 }
 

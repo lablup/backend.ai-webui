@@ -223,6 +223,133 @@ describe("loadVersions — validation failures", () => {
   });
 });
 
+describe("loadVersions — pdfTag validation (FR-2731)", () => {
+  it("accepts a well-formed pdfTag and exposes it on the runtime entry", () => {
+    const result = loadVersions(
+      makeConfig([
+        {
+          label: "26.4",
+          source: { kind: "workspace" },
+          latest: true,
+          pdfTag: "v26.4.7",
+        },
+      ]),
+    );
+    assert.equal(result.enabled, true);
+    assert.equal(result.entries[0].pdfTag, "v26.4.7");
+  });
+
+  it("treats absent pdfTag as no value at runtime (no defaults)", () => {
+    const result = loadVersions(
+      makeConfig([
+        { label: "26.4", source: { kind: "workspace" }, latest: true },
+      ]),
+    );
+    // Must be missing entirely — not coerced to null or empty string.
+    assert.equal(result.entries[0].pdfTag, undefined);
+    assert.equal("pdfTag" in result.entries[0], false);
+  });
+
+  it("rejects a tag missing the leading 'v'", () => {
+    assert.throws(
+      () =>
+        loadVersions(
+          makeConfig([
+            {
+              label: "26.4",
+              source: { kind: "workspace" },
+              latest: true,
+              pdfTag: "26.4.7",
+            },
+          ]),
+        ),
+      /pdfTag.*must match \^v\[0-9\]\+\\\.\[0-9\]\+\\\.\[0-9\]\+\$/,
+    );
+  });
+
+  it("rejects a tag missing the patch component", () => {
+    assert.throws(
+      () =>
+        loadVersions(
+          makeConfig([
+            {
+              label: "26.4",
+              source: { kind: "workspace" },
+              latest: true,
+              pdfTag: "v26.4",
+            },
+          ]),
+        ),
+      /pdfTag.*must match \^v\[0-9\]\+\\\.\[0-9\]\+\\\.\[0-9\]\+\$/,
+    );
+  });
+
+  it("rejects assorted malformed pdfTag shapes", () => {
+    for (const bad of [
+      "v26",
+      "v26.4.7-rc1",
+      "26.4.7v",
+      "vv26.4.7",
+      "v26.4.7.0",
+      "release-26.4.7",
+      "",
+    ]) {
+      assert.throws(
+        () =>
+          loadVersions(
+            makeConfig([
+              {
+                label: "26.4",
+                source: { kind: "workspace" },
+                latest: true,
+                pdfTag: bad,
+              },
+            ]),
+          ),
+        /pdfTag/,
+        `expected pdfTag ${JSON.stringify(bad)} to be rejected`,
+      );
+    }
+  });
+
+  it("error messages name the offending entry index", () => {
+    assert.throws(
+      () =>
+        loadVersions(
+          makeConfig([
+            { label: "26.4", source: { kind: "workspace" }, latest: true },
+            {
+              label: "25.16",
+              source: { kind: "archive-branch", ref: "docs-archive/25.16" },
+              pdfTag: "25.16.5",
+            },
+          ]),
+        ),
+      /versions\[1\]\.pdfTag/,
+    );
+  });
+
+  it("preserves pdfTag presence per entry in a mixed multi-entry config", () => {
+    const result = loadVersions(
+      makeConfig([
+        {
+          label: "26.4",
+          source: { kind: "workspace" },
+          latest: true,
+          pdfTag: "v26.4.7",
+        },
+        { label: "26.3", source: { kind: "workspace" } },
+      ]),
+    );
+    // Entry with pdfTag carries the value
+    assert.equal(result.entries[0].pdfTag, "v26.4.7");
+    assert.equal("pdfTag" in result.entries[0], true);
+    // Entry without pdfTag has the key omitted entirely
+    assert.equal(result.entries[1].pdfTag, undefined);
+    assert.equal("pdfTag" in result.entries[1], false);
+  });
+});
+
 describe("canonicalPathFor", () => {
   it("returns flat layout when versions are not enabled", () => {
     const loaded = loadVersions(makeConfig(undefined));

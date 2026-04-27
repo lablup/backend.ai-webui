@@ -144,6 +144,19 @@ export interface VersionEntry {
   source: VersionSource;
   /** Exactly one entry across `versions[]` must carry `latest: true`. */
   latest?: boolean;
+  /**
+   * Optional release tag used to build the per-version PDF download URL
+   * (FR-2731). Must match `^v\d+\.\d+\.\d+$` (e.g., `"v26.4.7"`) — the
+   * format the GitHub Releases CDN expects under
+   * `https://github.com/<org>/<repo>/releases/download/<pdfTag>/<asset>`.
+   *
+   * The toolkit owns this schema; consumers only pass a value through.
+   * When omitted, downstream renderers must treat the version as "no PDF
+   * card" (no defaults, no synthesized URL). Rendering is implemented in
+   * a follow-up sub-task — this field is wired through the pipeline but
+   * does not yet drive any UI.
+   */
+  pdfTag?: string;
 }
 
 /**
