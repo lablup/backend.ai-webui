@@ -233,6 +233,23 @@ export interface ToolkitConfig extends DocConfig {
    */
   versions?: VersionEntry[];
   /**
+   * Optional URL of an external "previous versions" docs site (FR-2733).
+   *
+   * When set, the header version selector renders a "Previous versions"
+   * entry at the bottom of the dropdown that opens this URL in a new tab.
+   * When unset (or set to an empty string), the entry is fully hidden —
+   * no empty option, no separator, no extra DOM nodes.
+   *
+   * In production, this value is supplied at build time via the Amplify
+   * environment variable `LEGACY_DOCS_URL`. Must be a well-formed
+   * `https://…` (or `http://…`) URL when present.
+   *
+   * Typed as `string | null` because YAML loaders (and explicit overrides)
+   * can produce a literal `null` for an unset entry; the resolver
+   * normalizes both `null` and absent to the same end state.
+   */
+  legacyDocsUrl?: string | null;
+  /**
    * Optional Open Graph / SEO config. Controls per-page `<meta>`
    * tags (description, og:*, twitter card, canonical, JSON-LD) plus
    * `sitemap.xml` and `robots.txt` generation. See `OgConfig`.
@@ -311,12 +328,21 @@ const DEFAULT_FIGURE_LABELS: Record<string, string> = {
 
 /** Localized labels for website navigation and metadata.
  *
- * Version-mismatch UX (FR-2723) keys:
- *   - `bannerViewLatest`     — body text of the "view latest" banner shown
- *                              on every non-latest version page. Includes
- *                              `{version}` and `{latestVersion}` placeholders
- *                              (substituted client-side in version-banner.js).
- *   - `bannerViewLatestLink` — anchor text for the "view latest" link.
+ * Version-mismatch UX keys (FR-2723 originally; redesigned in FR-2733):
+ *   - `bannerOutdatedTitle`  — title of the "outdated" banner shown on a
+ *                              non-latest, non-`next` version page. Includes
+ *                              the `{version}` placeholder for the current
+ *                              minor (substituted at render time, not
+ *                              client-side).
+ *   - `bannerOutdatedBody`   — body text for the outdated variant. Includes
+ *                              a `{link}` placeholder where the inline
+ *                              "View the latest version" anchor is spliced.
+ *   - `bannerPreviewTitle`   — title of the "preview" banner shown when the
+ *                              current channel is `next` (unreleased docs).
+ *   - `bannerPreviewBody`    — body text for the preview variant. Same
+ *                              `{link}` placeholder convention.
+ *   - `bannerViewLatestLink` — anchor text spliced into both banner bodies
+ *                              via `{link}`. Includes `{latestVersion}`.
  *   - `bannerDismiss`        — aria-label / tooltip for the dismiss "×" button
  *                              on both the banner and the notice.
  *   - `noticeNotInVersion`   — body text shown when the version switcher
@@ -325,8 +351,9 @@ const DEFAULT_FIGURE_LABELS: Record<string, string> = {
  *                              `{version}` placeholder for the target minor.
  *
  * The placeholder syntax is plain `{name}` (NOT i18next `{{name}}`) because
- * the substitution happens in our own ~1 KB inline JS, not via an i18n
- * library. See `templates/assets/version-banner.js`.
+ * the substitution happens at build time inside `buildVersionBanner` (and
+ * for the `noticeNotInVersion` slot, in our ~1 KB inline JS). See
+ * `templates/assets/version-banner.js`.
  */
 export const WEBSITE_LABELS: Record<string, Record<string, string>> = {
   en: {
@@ -342,12 +369,17 @@ export const WEBSITE_LABELS: Record<string, Record<string, string>> = {
     copy: "Copy",
     copied: "Copied!",
     copyFailed: "Copy failed",
-    bannerViewLatest:
-      "You are viewing version {version}. View the latest version ({latestVersion}).",
-    bannerViewLatestLink: "View the latest version ({latestVersion})",
+    bannerOutdatedTitle: "You are viewing an older version ({version}).",
+    bannerOutdatedBody: "For up-to-date documentation, see the {link}.",
+    bannerPreviewTitle:
+      "This is unreleased documentation for WebUI Next version.",
+    bannerPreviewBody: "For up-to-date documentation, see the {link}.",
+    bannerViewLatestLink: "latest version ({latestVersion})",
     bannerDismiss: "Dismiss",
     noticeNotInVersion:
       "This page is not available in version {version}. You are viewing the version index instead.",
+    previousVersions: "Previous versions",
+    versionLabel: "Version",
   },
   ko: {
     previous: "이전",
@@ -362,12 +394,16 @@ export const WEBSITE_LABELS: Record<string, Record<string, string>> = {
     copy: "복사",
     copied: "복사됨!",
     copyFailed: "복사 실패",
-    bannerViewLatest:
-      "버전 {version} 문서를 보고 있습니다. 최신 버전({latestVersion}) 보기.",
-    bannerViewLatestLink: "최신 버전({latestVersion}) 보기",
+    bannerOutdatedTitle: "이전 버전({version})을 보고 있습니다.",
+    bannerOutdatedBody: "최신 문서는 {link}에서 확인하세요.",
+    bannerPreviewTitle: "WebUI 다음 버전(Next)의 미발행 문서입니다.",
+    bannerPreviewBody: "최신 문서는 {link}에서 확인하세요.",
+    bannerViewLatestLink: "최신 버전({latestVersion})",
     bannerDismiss: "닫기",
     noticeNotInVersion:
       "이 페이지는 버전 {version}에 존재하지 않습니다. 해당 버전의 인덱스 페이지로 이동했습니다.",
+    previousVersions: "이전 버전",
+    versionLabel: "버전",
   },
   ja: {
     previous: "前へ",
@@ -382,12 +418,17 @@ export const WEBSITE_LABELS: Record<string, Record<string, string>> = {
     copy: "コピー",
     copied: "コピーしました!",
     copyFailed: "コピーに失敗しました",
-    bannerViewLatest:
-      "バージョン {version} のドキュメントを表示しています。最新バージョン({latestVersion})を表示。",
-    bannerViewLatestLink: "最新バージョン({latestVersion})を表示",
+    bannerOutdatedTitle: "古いバージョン({version})を表示しています。",
+    bannerOutdatedBody: "最新のドキュメントは{link}をご覧ください。",
+    bannerPreviewTitle:
+      "WebUI 次期バージョン (Next) の未公開ドキュメントです。",
+    bannerPreviewBody: "最新のドキュメントは{link}をご覧ください。",
+    bannerViewLatestLink: "最新バージョン({latestVersion})",
     bannerDismiss: "閉じる",
     noticeNotInVersion:
       "このページはバージョン {version} には存在しません。代わりにバージョンのインデックスを表示しています。",
+    previousVersions: "以前のバージョン",
+    versionLabel: "バージョン",
   },
   th: {
     previous: "ก่อนหน้า",
@@ -402,12 +443,17 @@ export const WEBSITE_LABELS: Record<string, Record<string, string>> = {
     copy: "คัดลอก",
     copied: "คัดลอกแล้ว!",
     copyFailed: "คัดลอกไม่สำเร็จ",
-    bannerViewLatest:
-      "คุณกำลังดูเวอร์ชัน {version} ดูเวอร์ชันล่าสุด ({latestVersion})",
-    bannerViewLatestLink: "ดูเวอร์ชันล่าสุด ({latestVersion})",
+    bannerOutdatedTitle: "คุณกำลังดูเวอร์ชันเก่า ({version})",
+    bannerOutdatedBody: "ดูเอกสารฉบับล่าสุดได้ที่ {link}",
+    bannerPreviewTitle:
+      "นี่คือเอกสารที่ยังไม่เผยแพร่สำหรับ WebUI เวอร์ชัน Next",
+    bannerPreviewBody: "ดูเอกสารฉบับล่าสุดได้ที่ {link}",
+    bannerViewLatestLink: "เวอร์ชันล่าสุด ({latestVersion})",
     bannerDismiss: "ปิด",
     noticeNotInVersion:
       "หน้านี้ไม่มีในเวอร์ชัน {version} กำลังแสดงหน้าดัชนีของเวอร์ชันแทน",
+    previousVersions: "เวอร์ชันก่อนหน้า",
+    versionLabel: "เวอร์ชัน",
   },
 };
 
@@ -451,6 +497,14 @@ export interface ResolvedDocConfig {
    * mode applies.
    */
   versions?: VersionEntry[];
+  /**
+   * Resolved external "previous versions" docs URL (FR-2733). `null`
+   * when unset or when the raw value was an empty/whitespace-only
+   * string. When non-null, the value is guaranteed to be a well-formed
+   * `http(s)://…` URL (validated at config-load time). Consumed by the
+   * version-selector renderer in `website-builder.ts`.
+   */
+  legacyDocsUrl: string | null;
   /**
    * Raw `og` block from `docs-toolkit.config.yaml`. Consumed by F2's
    * SEO tag emitter, sitemap, and OG image renderer.
@@ -520,7 +574,8 @@ export function validateCssColor(value: string, field: string): string {
   // pathological inputs like "rgb(\t\t\t…"). The forbidden-character
   // pre-check above already rejects `;`, `{`, `<`, etc., so loosening
   // the body grammar here doesn't widen the injection surface.
-  const FUNC = /^(?:rgb|rgba|hsl|hsla|hwb|lab|lch|oklab|oklch|color)\([^()]*\)$/i;
+  const FUNC =
+    /^(?:rgb|rgba|hsl|hsla|hwb|lab|lch|oklab|oklch|color)\([^()]*\)$/i;
   const NAME = /^[a-zA-Z]+$/;
   if (!HEX.test(trimmed) && !FUNC.test(trimmed) && !NAME.test(trimmed)) {
     throw new Error(
@@ -537,6 +592,38 @@ export interface ResolvedCodeConfig {
 
 /** Default Shiki light theme — readable, neutral, ships with shiki/themes. */
 export const DEFAULT_CODE_LIGHT_THEME = "github-light";
+
+/**
+ * Validate and normalize the optional `legacyDocsUrl` config field
+ * (FR-2733). Returns the trimmed URL string when valid, or `null` when
+ * the value is absent / empty / whitespace-only (the two are treated
+ * identically — both mean "no legacy docs link, hide the selector entry").
+ *
+ * Throws when the value is a non-empty string that is not a well-formed
+ * `http(s)://…` URL. The narrow protocol whitelist prevents `javascript:`
+ * or other surprising schemes from sneaking into the rendered anchor.
+ */
+export function resolveLegacyDocsUrl(
+  raw: string | null | undefined,
+): string | null {
+  if (raw === undefined || raw === null) return null;
+  const trimmed = String(raw).trim();
+  if (!trimmed) return null;
+  let parsed: URL;
+  try {
+    parsed = new URL(trimmed);
+  } catch {
+    throw new Error(
+      `legacyDocsUrl: invalid URL "${raw}" (expected absolute http:// or https:// URL)`,
+    );
+  }
+  if (parsed.protocol !== "https:" && parsed.protocol !== "http:") {
+    throw new Error(
+      `legacyDocsUrl: unsupported protocol "${parsed.protocol}" (only http:// and https:// are allowed)`,
+    );
+  }
+  return trimmed;
+}
 
 export function resolveConfig(config: ToolkitConfig): ResolvedDocConfig {
   const projectRoot = config.projectRoot;
@@ -587,6 +674,7 @@ export function resolveConfig(config: ToolkitConfig): ResolvedDocConfig {
     agents: config.agents,
     website: config.website,
     versions: config.versions,
+    legacyDocsUrl: resolveLegacyDocsUrl(config.legacyDocsUrl),
     og: config.og,
     code: {
       lightTheme: config.code?.lightTheme ?? DEFAULT_CODE_LIGHT_THEME,
@@ -619,7 +707,8 @@ export function resolveBranding(
     value: string | undefined,
     field: string,
     fallback: string,
-  ): string => (value ? validateCssColor(value, `branding.${field}`) : fallback);
+  ): string =>
+    value ? validateCssColor(value, `branding.${field}`) : fallback;
 
   return {
     primaryColor: resolveColor(

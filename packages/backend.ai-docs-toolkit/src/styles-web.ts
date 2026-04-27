@@ -866,6 +866,65 @@ body.bai-drawer-open .bai-scrim {
   text-align: center;
 }
 
+/* FR-2733: version switcher block at the top of the sidebar (above the
+   nav groups). Renders only in versioned-docs mode; non-versioned builds
+   skip the wrapper entirely. The select itself mirrors the
+   .lang-switcher__select chrome (30px, 1px BAI border, transparent
+   background, BAI primary on hover, native chevron via SVG background
+   image, BAI primary focus outline) so the two site-level controls feel
+   like a coordinated pair. */
+.doc-sidebar-version {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px 18px 12px;
+  border-bottom: 1px solid var(--bai-border);
+}
+.doc-sidebar-version__label {
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--bai-text-2);
+}
+.doc-sidebar-version .version-switcher {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  display: inline-flex;
+  align-items: center;
+  height: 30px;
+  padding: 0 28px 0 10px;
+  border: 1px solid var(--bai-border);
+  border-radius: 6px;
+  background: transparent;
+  /* Hard-coded #595959 stroke matches --bai-text-2 in light mode; dark
+     mode fades a little but stays legible. CSS vars don't resolve
+     inside url() so an inline SVG is the only option without shipping
+     a separate asset. */
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23595959' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 12px;
+  font-size: 12px;
+  color: var(--bai-text);
+  cursor: pointer;
+  transition: border-color 120ms ease;
+}
+.doc-sidebar-version .version-switcher:hover {
+  border-color: var(--bai-primary);
+}
+.doc-sidebar-version .version-switcher:focus,
+.doc-sidebar-version .version-switcher:focus-visible {
+  outline: 2px solid var(--bai-primary);
+  outline-offset: 1px;
+}
+[data-theme="dark"] .doc-sidebar-version .version-switcher {
+  /* Dark-mode native popup: tell the browser to render the dropdown
+     panel itself in dark too (matches lang-switcher__select). */
+  color-scheme: dark;
+}
+
 /* F3: sidebar nav. Two render modes share the same .doc-sidebar-nav
    ruleset:
      1. Grouped (default for F3) — wrapped in details.doc-sidebar-group
@@ -2381,35 +2440,90 @@ export function generateWebsiteStyles(branding?: StyleBrandingTokens): string {
 }
 
 /* ==========================================================================
-   Version-mismatch UX (FR-2723)
-   - .docs-banner.docs-banner--view-latest: shown on every non-latest
-     version page, dismissible per-session.
-   - .docs-notice.docs-notice--not-in-version: shown after the version
-     switcher falls back to the index because the slug doesn't exist
-     in the target version.
+   Version-mismatch UX (FR-2723; redesigned in FR-2733)
+
+   Two visual variants share the same DOM scaffolding and dismiss script:
+   - .docs-banner--outdated: warn-yellow, triangle-alert icon. Shown on
+     older release minors.
+   - .docs-banner--preview: BAI primary (orange) soft tint, sparkle icon.
+     Shown on the unreleased "next" channel.
+
+   The legacy .docs-banner--view-latest modifier is preserved on every
+   variant so templates/assets/version-banner.js (which selects on that
+   class) keeps working without changes.
+
+   Notice block (.docs-notice--not-in-version) sits below the banner and
+   is shown after a version-switcher fallback navigation. It carries its
+   own neutral palette and is not part of the banner-variant family.
    ========================================================================== */
 .docs-banner {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.5rem 1rem;
-  border-bottom: 1px solid var(--ifm-color-warning-dark);
-  background: var(--ifm-color-warning-light);
-  color: var(--ifm-color-emphasis-1000);
-  font-size: 0.875rem;
+  gap: 10px;
+  padding: 10px 22px;
+  border-bottom: 1px solid var(--bai-border);
+  position: sticky;
+  top: var(--bai-topbar-h);
+  z-index: 40;
+  font-size: 13px;
+  line-height: 1.5;
 }
 .docs-banner[hidden] { display: none; }
+
+/* Variant treatments. Higher specificity (.docs-banner.docs-banner--*)
+   wins over the base .docs-banner background/border, so order in the
+   stylesheet does not matter. */
+.docs-banner.docs-banner--outdated {
+  background: #FFF6D6;
+  border-bottom-color: rgba(255, 191, 0, 0.4);
+  color: #6B5300;
+}
+.docs-banner.docs-banner--preview {
+  background: var(--bai-primary-soft, #FFF4E5);
+  border-bottom-color: rgba(255, 122, 0, 0.4);
+  color: #8A4200;
+}
+[data-theme="dark"] .docs-banner.docs-banner--outdated {
+  background: #3A2F0E;
+  border-bottom-color: rgba(255, 191, 0, 0.4);
+  color: #FFD877;
+}
+[data-theme="dark"] .docs-banner.docs-banner--preview {
+  background: #3D2410;
+  border-bottom-color: rgba(255, 122, 0, 0.4);
+  color: #FFC388;
+}
+
+.docs-banner__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.docs-banner.docs-banner--outdated .docs-banner__icon { color: #B88A00; }
+.docs-banner.docs-banner--preview  .docs-banner__icon { color: var(--bai-primary); }
+
 .docs-banner__body {
   flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
 }
+.docs-banner__title { font-weight: 600; }
+.docs-banner__desc { font-weight: 400; opacity: 0.9; }
+
 .docs-banner__link {
-  color: var(--ifm-color-primary-darker);
-  font-weight: 600;
+  color: inherit;
   text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1px;
+  font-weight: 500;
 }
 .docs-banner__link:hover {
-  color: var(--ifm-color-primary-darkest);
+  text-decoration-thickness: 2px;
 }
+
 .docs-banner__dismiss {
   flex: 0 0 auto;
   width: 1.5rem;
@@ -2417,15 +2531,23 @@ export function generateWebsiteStyles(branding?: StyleBrandingTokens): string {
   padding: 0;
   border: none;
   background: transparent;
-  color: var(--ifm-color-emphasis-800);
+  color: inherit;
   font-size: 1.25rem;
   line-height: 1;
   cursor: pointer;
   border-radius: 4px;
+  opacity: 0.7;
 }
 .docs-banner__dismiss:hover {
   background: rgba(0, 0, 0, 0.08);
-  color: var(--ifm-color-emphasis-1000);
+  opacity: 1;
+}
+[data-theme="dark"] .docs-banner__dismiss:hover {
+  background: rgba(255, 255, 255, 0.10);
+}
+
+@media (max-width: 640px) {
+  .docs-banner { padding: 10px 16px; font-size: 12.5px; }
 }
 .docs-notice {
   display: flex;

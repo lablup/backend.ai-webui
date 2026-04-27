@@ -251,6 +251,7 @@ function buildWebsiteSidebar(
   metadata: WebsiteMetadata,
   config: ResolvedDocConfig,
   navGroups: NavGroup[],
+  versionSwitcherHtml: string = "",
 ): string {
   const langLabel = config.languageLabels[metadata.lang] || metadata.lang;
 
@@ -329,9 +330,26 @@ function buildWebsiteSidebar(
   // for the legacy code path.
   void langLabel;
 
+  // FR-2733: when versioned-mode is on, render a `.doc-sidebar-version`
+  // block at the very top of the aside (above the nav groups). The block
+  // wraps the same `<select.version-switcher>` that used to live in the
+  // topbar, paired with a small uppercase localized "VERSION" label so
+  // its purpose is clear without inheriting the topbar's tight chrome.
+  // When `versionSwitcherHtml` is empty (non-versioned build), nothing
+  // is rendered and the sidebar opens directly with the nav.
+  const labels = WEBSITE_LABELS[metadata.lang] ?? WEBSITE_LABELS.en;
+  const versionLabel = labels.versionLabel ?? "Version";
+  const versionBlockHtml = versionSwitcherHtml
+    ? `  <div class="doc-sidebar-version">
+    <span class="doc-sidebar-version__label">${escapeHtml(versionLabel)}</span>
+    ${versionSwitcherHtml}
+  </div>
+`
+    : "";
+
   return `
 <aside class="doc-sidebar">
-  <nav class="doc-sidebar-groups" aria-label="Documentation navigation">
+${versionBlockHtml}  <nav class="doc-sidebar-groups" aria-label="Documentation navigation">
     ${groupsHtml}
   </nav>
 </aside>`;
@@ -447,7 +465,8 @@ function buildRightRailToc(
   const dataEmpty = isEmpty ? ' data-empty="true"' : "";
   // The divider only appears when both sections are present, so the rail
   // doesn't show a stray separator on TOC-less or help-less pages.
-  const divider = !isEmpty && contribHtml ? `<div class="doc-toc__divider"></div>` : "";
+  const divider =
+    !isEmpty && contribHtml ? `<div class="doc-toc__divider"></div>` : "";
 
   return `<aside class="doc-toc" aria-labelledby="doc-toc-heading"${dataEmpty}>
   <div class="doc-toc__heading" id="doc-toc-heading">${escapeHtml(heading)}</div>
@@ -829,11 +848,35 @@ function buildVersionBannerScriptTag(
   return `<script defer src="${prefix}assets/${escapeHtml(assets.versionBanner)}"></script>`;
 }
 
+// Inline SVG icons for the version banner (FR-2733 redesign). Kept as
+// constants here — not in styles-web.ts — because they live in the page
+// markup, not the stylesheet. The icons are theme-agnostic (use
+// `currentColor`) so the per-variant CSS rule that sets `color` on
+// `.docs-banner__icon` is the single source of truth for tinting.
+const BANNER_ICON_SVG_OUTDATED =
+  '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>';
+
+// Triangle warning icon for the preview variant — same warning semantic
+// as outdated, just tinted with BAI primary instead of yellow. Matches
+// the design's `warn` glyph (simple triangle with a center bang).
+const BANNER_ICON_SVG_PREVIEW =
+  '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 2 21h20L12 3Z"/><path d="M12 10v4M12 17h.01"/></svg>';
+
 /**
- * Build the "View latest version" banner (FR-2723) — shown on every
- * NON-latest version page. Renders an unconditional dismissible banner;
- * the dismissal state is enforced client-side by `version-banner.js`
- * via per-(currentVersion, latestVersion) sessionStorage keys.
+ * Build the version-mismatch banner (FR-2723; redesigned in FR-2733) —
+ * shown on every NON-latest version page. Two visual variants share the
+ * same DOM scaffolding and the same dismiss script:
+ *
+ *   - `preview` (when `current === "next"`): purple/lavender treatment,
+ *     sparkle icon, copy framed as "unreleased docs".
+ *   - `outdated` (any other non-latest minor): warn-yellow treatment,
+ *     triangle-alert icon, copy framed as "older version".
+ *
+ * The dismissal state is enforced client-side by `version-banner.js`
+ * via per-(currentVersion, latestVersion) sessionStorage keys. The
+ * `docs-banner--view-latest` class is preserved on both variants so the
+ * existing dismiss script keeps working without touching JS — the new
+ * variant classes are additive and only drive the visual treatment.
  *
  * The banner is rendered visible by default; the script flips it to
  * `hidden` synchronously on DOMContentLoaded if a sessionStorage flag
@@ -860,21 +903,44 @@ function buildVersionBanner(context: WebPageContext): string {
     ? `${prefix}${ver.latest}/${context.metadata.lang}/${ver.slug}.html`
     : `${prefix}${ver.latest}/${context.metadata.lang}/index.html`;
 
-  // Substitute placeholders directly in the rendered text (keeps the
-  // markup search-engine-friendly without requiring JS to read the
-  // banner). The link uses its own localized label.
-  const message = labels.bannerViewLatest
-    .replace(/\{version\}/g, ver.current)
-    .replace(/\{latestVersion\}/g, ver.latest);
+  // Variant selection:
+  //   `next` is the unreleased preview channel → preview variant.
+  //   Everything else that hits this function is, by definition, an older
+  //   release minor (the early-return above filters out `current === latest`).
+  const variant: "preview" | "outdated" =
+    ver.current === "next" ? "preview" : "outdated";
+
+  const titleTemplate =
+    variant === "preview"
+      ? labels.bannerPreviewTitle
+      : labels.bannerOutdatedTitle;
+  const bodyTemplate =
+    variant === "preview"
+      ? labels.bannerPreviewBody
+      : labels.bannerOutdatedBody;
+
+  const title = titleTemplate.replace(/\{version\}/g, ver.current);
   const linkLabel = labels.bannerViewLatestLink.replace(
     /\{latestVersion\}/g,
     ver.latest,
   );
-  const dismissLabel = labels.bannerDismiss;
+  // Splice the localized {link} placeholder with an inline anchor. Each
+  // surrounding piece is HTML-escaped before concat so a malicious locale
+  // override can't break out of the body span.
+  const [bodyPre = "", bodyPost = ""] = bodyTemplate.split("{link}");
+  const bodyHtml = `${escapeHtml(bodyPre)}<a class="docs-banner__link" href="${escapeHtml(href)}">${escapeHtml(linkLabel)}</a>${escapeHtml(bodyPost)}`;
 
-  return `<div class="docs-banner docs-banner--view-latest" role="status" data-current-version="${escapeHtml(ver.current)}" data-latest-version="${escapeHtml(ver.latest)}">
-  <span class="docs-banner__body">${escapeHtml(message)}</span>
-  <a class="docs-banner__link" href="${escapeHtml(href)}">${escapeHtml(linkLabel)}</a>
+  const dismissLabel = labels.bannerDismiss;
+  const iconSvg =
+    variant === "preview" ? BANNER_ICON_SVG_PREVIEW : BANNER_ICON_SVG_OUTDATED;
+  const variantClass = `docs-banner--${variant}`;
+
+  return `<div class="docs-banner docs-banner--view-latest ${variantClass}" role="status" data-current-version="${escapeHtml(ver.current)}" data-latest-version="${escapeHtml(ver.latest)}">
+  <span class="docs-banner__icon" aria-hidden="true">${iconSvg}</span>
+  <div class="docs-banner__body">
+    <span class="docs-banner__title">${escapeHtml(title)}</span>
+    <span class="docs-banner__desc">${bodyHtml}</span>
+  </div>
   <button type="button" class="docs-banner__dismiss" aria-label="${escapeHtml(dismissLabel)}" title="${escapeHtml(dismissLabel)}">&times;</button>
 </div>`;
 }
@@ -919,18 +985,13 @@ function buildVersionNotice(context: WebPageContext): string {
  * selector, no language switcher) so we don't emit a stray `<header />`.
  */
 function buildPageHeaderBar(context: WebPageContext): string {
-  const versionSwitcher = buildVersionSwitcher(context);
-  if (!versionSwitcher) {
-    // Nothing to render in the header today. F1 will fill this in with
-    // a language switcher; F6 leaves the scaffold absent until then so
-    // we don't ship empty markup.
-    return "";
-  }
-  return `<header class="page-header-bar">
-  <nav class="page-header-nav" aria-label="Documentation navigation">
-    ${versionSwitcher}
-  </nav>
-</header>`;
+  // FR-2733: the legacy `.page-header-bar` used to host the version
+  // selector, but the redesigned UX puts it in the sidebar instead.
+  // No other content lives here today (F1's lang switcher long since
+  // moved into the BAI topbar) so the bar emits nothing. The function
+  // is retained as a structural anchor for future header surfaces.
+  void context;
+  return "";
 }
 
 /**
@@ -944,8 +1005,8 @@ function buildPageHeaderBar(context: WebPageContext): string {
  *
  * The data needed by the inline script is passed via `data-` attributes
  * on the `<select>` so the script body itself stays small and language-
- * agnostic. Total inline JS budget < 1 KB; safely under the 25 KB total
- * per-page JS cap.
+ * agnostic. Total inline JS stays around 1.3 KB (including FR-2733's
+ * legacy-URL branch); safely under the 25 KB total per-page JS cap.
  */
 function buildVersionSwitcher(context: WebPageContext): string {
   const ver = context.versionContext;
@@ -960,6 +1021,27 @@ function buildVersionSwitcher(context: WebPageContext): string {
       return `<option value="${escapeHtml(label)}"${selected}>${escapeHtml(label)}${isLatest}</option>`;
     })
     .join("");
+  // FR-2733: append a "Previous versions" entry at the bottom of the
+  // dropdown when `legacyDocsUrl` is configured. The option's value is a
+  // sentinel (`__legacy__`) that the inline handler uses to branch into
+  // a `window.open(url, '_blank', 'noopener,noreferrer')` instead of a
+  // version-switch navigation. When the URL is unset, no entry, no
+  // separator, no empty option — the dropdown renders identical to its
+  // pre-FR-2733 shape.
+  //
+  // The `__legacy__` sentinel cannot collide with a real version label:
+  // toolkit-side validation in `versions.ts` (`MINOR_LABEL = /^[0-9]+\.[0-9]+$/`)
+  // restricts `versions[].label` to `MAJOR.MINOR` digits-and-dot only, so
+  // an underscore-flanked literal is structurally impossible.
+  const legacyDocsUrl = context.config.legacyDocsUrl;
+  const labels = WEBSITE_LABELS[context.metadata.lang] ?? WEBSITE_LABELS.en;
+  const previousVersionsLabel = labels.previousVersions ?? "Previous versions";
+  const legacyOptionHtml = legacyDocsUrl
+    ? `<option value="__legacy__">${escapeHtml(previousVersionsLabel)}</option>`
+    : "";
+  const legacyDataAttr = legacyDocsUrl
+    ? ` data-legacy-url="${escapeHtml(legacyDocsUrl)}"`
+    : "";
   // The handler is inlined to avoid a separate hashed asset for ~30 LoC.
   // It is idempotent and language-agnostic: the only state it touches is
   // `window.location.assign(...)` after a probe of the availability map,
@@ -970,6 +1052,13 @@ function buildVersionSwitcher(context: WebPageContext): string {
   // version-banner.js` (`docs.notice.notInVersion`); payload format is
   // `<targetVersion>::<originSlug>` so the notice script can verify it
   // landed on the right destination before showing the message.
+  //
+  // FR-2733: when the user picks the sentinel `__legacy__` option, the
+  // handler reads the legacy hostname from `data-legacy-url` and opens
+  // it in a new tab via `window.open(..., '_blank', 'noopener,noreferrer')`
+  // — the `rel` keywords are required to prevent reverse-tabnabbing
+  // attacks on the legacy origin. The `<select>` is reset to `current`
+  // afterwards so re-picking the same item still fires `change`.
   const inlineScript = `(function(){
   var sel = document.currentScript && document.currentScript.previousElementSibling;
   if (!sel || sel.tagName !== 'SELECT') return;
@@ -977,6 +1066,12 @@ function buildVersionSwitcher(context: WebPageContext): string {
     var target = e.target.value;
     if (!target) return;
     var current = sel.dataset.current;
+    if (target === '__legacy__') {
+      var legacy = sel.dataset.legacyUrl;
+      if (legacy) window.open(legacy, '_blank', 'noopener,noreferrer');
+      sel.value = current;
+      return;
+    }
     if (target === current) return;
     var lang = sel.dataset.lang;
     var slug = sel.dataset.slug;
@@ -998,16 +1093,20 @@ function buildVersionSwitcher(context: WebPageContext): string {
     window.location.assign(dest);
   });
 })();`;
-  return `<label class="version-switcher-label" for="version-switcher">Version</label>
-    <select
+  // FR-2733: the legacy `<label class="version-switcher-label">Version</label>`
+  // that used to live inline next to the select is dropped here. The
+  // sidebar variant (`.doc-sidebar-version`) emits its own uppercase,
+  // localized "VERSION" label above the select; rendering both would
+  // duplicate the affordance and break the new visual rhythm.
+  return `<select
       id="version-switcher"
       class="version-switcher"
       data-current="${escapeHtml(ver.current)}"
       data-lang="${escapeHtml(context.metadata.lang)}"
       data-slug="${escapeHtml(ver.slug)}"
       data-root-depth="${ver.rootDepth}"
-      data-availability="${escapeHtml(availabilityJson)}"
-    >${optionsHtml}</select>
+      data-availability="${escapeHtml(availabilityJson)}"${legacyDataAttr}
+    >${optionsHtml}${legacyOptionHtml}</select>
     <script>${inlineScript}</script>`;
 }
 
@@ -1018,9 +1117,12 @@ function buildVersionSwitcher(context: WebPageContext): string {
  * Skipped when there is no TOC (chapter has no H2 headings) — in that
  * case the rail is rendered empty and the script is a no-op anyway.
  */
-function buildTocScrollspyScriptTag(assets: PageAssets): string {
+function buildTocScrollspyScriptTag(
+  assets: PageAssets,
+  prefix: string,
+): string {
   if (!assets.tocScrollspy) return "";
-  return `<script defer src="../assets/${escapeHtml(assets.tocScrollspy)}"></script>`;
+  return `<script defer src="${prefix}assets/${escapeHtml(assets.tocScrollspy)}"></script>`;
 }
 
 /**
@@ -1136,7 +1238,8 @@ function buildBaiTopbar(
   if (lightSrc) {
     const altText = escapeHtml(metadata.title);
     if (darkSrc && darkSrc !== lightSrc) {
-      brandLogoHtml = `<img class="bai-brand-logo bai-brand-logo--light" src="${lightSrc}" alt="${altText}" />` +
+      brandLogoHtml =
+        `<img class="bai-brand-logo bai-brand-logo--light" src="${lightSrc}" alt="${altText}" />` +
         `<img class="bai-brand-logo bai-brand-logo--dark" src="${darkSrc}" alt="${altText}" />`;
     } else {
       brandLogoHtml = `<img class="bai-brand-logo" src="${lightSrc}" alt="${altText}" />`;
@@ -1147,8 +1250,7 @@ function buildBaiTopbar(
 
   // Sub-label: per-language map → fallback to `default` → fallback to "".
   const subLabelMap = config.branding.subLabel;
-  const subLabel =
-    subLabelMap[metadata.lang] ?? subLabelMap.default ?? "";
+  const subLabel = subLabelMap[metadata.lang] ?? subLabelMap.default ?? "";
 
   const subLabelHtml = subLabel
     ? `<span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">${escapeHtml(subLabel)}</span>`
@@ -1202,8 +1304,12 @@ function buildBaiTopbar(
     <select class="lang-switcher__select" onchange="if(this.value)window.location.assign(this.value)">${langOptions}</select>
   </label>`;
 
-  // Version selector (only in versioned mode).
-  const versionSwitcherHtml = buildVersionSwitcher(context);
+  // FR-2733: the version selector used to render here in the topbar
+  // actions, but the redesigned UX places it at the top of the sidebar
+  // (`.doc-sidebar-version`) so it sits next to the navigation it
+  // controls. The switcher HTML is built once in `buildWebPage` and
+  // threaded into `buildWebsiteSidebar`; the topbar leaves the slot
+  // empty rather than emitting a duplicate.
 
   // GitHub link — derived from website.repoUrl. When unset, the icon is
   // omitted so we don't ship a dead link.
@@ -1233,7 +1339,6 @@ function buildBaiTopbar(
   </a>
   ${searchHtml}
   <div class="bai-topbar__actions">
-    ${versionSwitcherHtml}
     ${langSwitcherHtml}
     ${themeToggleHtml}
     ${githubLinkHtml}
@@ -1338,12 +1443,18 @@ export function buildWebPage(context: WebPageContext): string {
 
   const prefix = rootPrefix(context);
 
+  // FR-2733: build the version switcher once and thread it into the
+  // sidebar. `buildVersionSwitcher` returns "" in non-versioned mode,
+  // and `buildWebsiteSidebar` skips the wrapper block on empty input
+  // so non-versioned builds render unchanged.
+  const versionSwitcherHtml = buildVersionSwitcher(context);
   const sidebar = buildWebsiteSidebar(
     allChapters,
     currentIndex,
     metadata,
     config,
     navGroups,
+    versionSwitcherHtml,
   );
   // Phase 2 (FR-2726): the topbar replaces the legacy in-page header
   // (lang switcher) and version-selector header. We omit pageHeader /
@@ -1398,7 +1509,7 @@ export function buildWebPage(context: WebPageContext): string {
   const interactionsScript = buildInteractionsScriptTag(assets, prefix);
   const searchScript = buildSearchScriptTag(assets, prefix);
   const codeCopyScript = buildCodeCopyScriptTag(assets, prefix);
-  const tocScrollspyScript = buildTocScrollspyScriptTag(assets);
+  const tocScrollspyScript = buildTocScrollspyScriptTag(assets, prefix);
   const versionBannerScript = buildVersionBannerScriptTag(assets, prefix);
 
   // F4: data-* attributes on <body> carry the localized labels for the

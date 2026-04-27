@@ -19,6 +19,8 @@ import {
   DEFAULT_PRIMARY_COLOR_HOVER,
   DEFAULT_PRIMARY_COLOR_SOFT,
   resolveBranding,
+  resolveConfig,
+  resolveLegacyDocsUrl,
   validateCssColor,
 } from "./config.js";
 
@@ -30,15 +32,15 @@ describe("validateCssColor", () => {
   });
 
   it("accepts rgb / rgba / hsl / hsla", () => {
-    assert.equal(
-      validateCssColor("rgb(255, 122, 0)", "x"),
-      "rgb(255, 122, 0)",
-    );
+    assert.equal(validateCssColor("rgb(255, 122, 0)", "x"), "rgb(255, 122, 0)");
     assert.equal(
       validateCssColor("rgba(255, 122, 0, 0.5)", "x"),
       "rgba(255, 122, 0, 0.5)",
     );
-    assert.equal(validateCssColor("hsl(20, 100%, 50%)", "x"), "hsl(20, 100%, 50%)");
+    assert.equal(
+      validateCssColor("hsl(20, 100%, 50%)", "x"),
+      "hsl(20, 100%, 50%)",
+    );
   });
 
   it("accepts named CSS colors", () => {
@@ -52,17 +54,25 @@ describe("validateCssColor", () => {
 
   it("rejects empty / whitespace-only values", () => {
     assert.throws(() => validateCssColor("", "branding.primaryColor"), /empty/);
-    assert.throws(() => validateCssColor("   ", "branding.primaryColor"), /empty/);
+    assert.throws(
+      () => validateCssColor("   ", "branding.primaryColor"),
+      /empty/,
+    );
   });
 
   it("rejects CSS-injection vectors (semicolons, braces, comment delim)", () => {
     // The classic break-out attempt: terminate the declaration and inject.
     assert.throws(
-      () => validateCssColor("red; background: url(evil)", "branding.primaryColor"),
+      () =>
+        validateCssColor("red; background: url(evil)", "branding.primaryColor"),
       /forbidden characters/,
     );
     assert.throws(
-      () => validateCssColor("red} body { background: black", "branding.primaryColor"),
+      () =>
+        validateCssColor(
+          "red} body { background: black",
+          "branding.primaryColor",
+        ),
       /forbidden characters/,
     );
     assert.throws(
@@ -81,10 +91,7 @@ describe("validateCssColor", () => {
       /invalid CSS color/,
     );
     assert.throws(() => validateCssColor("#zzz", "x"), /invalid CSS color/);
-    assert.throws(
-      () => validateCssColor("rgb(", "x"),
-      /invalid CSS color/,
-    );
+    assert.throws(() => validateCssColor("rgb(", "x"), /invalid CSS color/);
   });
 });
 
@@ -173,5 +180,101 @@ describe("resolveBranding", () => {
       ko: "매뉴얼",
       default: "Docs",
     });
+  });
+});
+
+describe("resolveLegacyDocsUrl (FR-2733)", () => {
+  it("returns null when the value is undefined", () => {
+    assert.equal(resolveLegacyDocsUrl(undefined), null);
+  });
+
+  it("returns null for an empty / whitespace-only string", () => {
+    assert.equal(resolveLegacyDocsUrl(""), null);
+    assert.equal(resolveLegacyDocsUrl("   "), null);
+    assert.equal(resolveLegacyDocsUrl("\t\n"), null);
+  });
+
+  it("returns the trimmed URL for a well-formed https:// value", () => {
+    assert.equal(
+      resolveLegacyDocsUrl("https://example.test/legacy"),
+      "https://example.test/legacy",
+    );
+    assert.equal(
+      resolveLegacyDocsUrl("  https://example.test/legacy  "),
+      "https://example.test/legacy",
+    );
+  });
+
+  it("accepts http:// (less common but legal for internal mirrors)", () => {
+    assert.equal(
+      resolveLegacyDocsUrl("http://internal.example/legacy"),
+      "http://internal.example/legacy",
+    );
+  });
+
+  it("rejects malformed URLs with a clear error", () => {
+    assert.throws(
+      () => resolveLegacyDocsUrl("not a url"),
+      /legacyDocsUrl: invalid URL/,
+    );
+    assert.throws(
+      () => resolveLegacyDocsUrl("/relative/path"),
+      /legacyDocsUrl: invalid URL/,
+    );
+  });
+
+  it("rejects unsupported protocols (javascript:, file:, etc.)", () => {
+    assert.throws(
+      () => resolveLegacyDocsUrl("javascript:alert(1)"),
+      /unsupported protocol/,
+    );
+    assert.throws(
+      () => resolveLegacyDocsUrl("file:///etc/passwd"),
+      /unsupported protocol/,
+    );
+  });
+});
+
+describe("resolveConfig — legacyDocsUrl (FR-2733)", () => {
+  const projectRoot = path.resolve("/tmp/fake-project-root");
+  const baseConfig = {
+    title: "Docs",
+    company: "Lablup",
+    projectRoot,
+  };
+
+  it("defaults to null when the field is omitted", () => {
+    const resolved = resolveConfig({ ...baseConfig });
+    assert.equal(resolved.legacyDocsUrl, null);
+  });
+
+  it("normalizes empty / whitespace values to null", () => {
+    assert.equal(
+      resolveConfig({ ...baseConfig, legacyDocsUrl: "" }).legacyDocsUrl,
+      null,
+    );
+    assert.equal(
+      resolveConfig({ ...baseConfig, legacyDocsUrl: "   " }).legacyDocsUrl,
+      null,
+    );
+  });
+
+  it("preserves a well-formed https URL verbatim", () => {
+    const resolved = resolveConfig({
+      ...baseConfig,
+      legacyDocsUrl: "https://legacy.example/manual",
+    });
+    assert.equal(resolved.legacyDocsUrl, "https://legacy.example/manual");
+  });
+
+  it("throws on a malformed URL", () => {
+    assert.throws(
+      () =>
+        resolveConfig({
+          ...baseConfig,
+          legacyDocsUrl: "not-a-valid-url",
+        }),
+      /legacyDocsUrl/,
+    );
   });
 });
