@@ -136,6 +136,11 @@ You can debug the app.
 - feature/[feature-branch] : Feature branch. Uses `git flow` development scheme.
 - tags/v[versions] : version tags. Each tag represents release versions.
 
+## Release Runbook
+
+For the release manager checklist (including the docs site multi-version
+deployment steps), see [`docs/release-runbook.md`](docs/release-runbook.md).
+
 ## Development Guide
 
 Backend.AI Web UI is built with
