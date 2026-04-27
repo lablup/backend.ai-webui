@@ -17,7 +17,7 @@ import {
 import {
   buildWebPage,
   buildHomePage,
-  buildLanguagePickerPage,
+  buildRootRedirectIndexPage,
   applyImageAttributes,
 } from "./website-builder.js";
 import { buildSearchIndex } from "./search-index-builder.js";
@@ -553,6 +553,14 @@ export async function generateWebsite(
   // `<lastmod>` per (version, lang, slug) row.
   const lastModSink = new Map<string, Date>();
 
+  // Tracks the languages actually emitted for the latest version, so the
+  // root redirect index can offer only languages that exist on the page
+  // it redirects into. Otherwise the workspace `book.config.yaml` and
+  // the latest archive's `book.config.yaml` could diverge and the
+  // picker would 404 a user who happened to prefer the missing
+  // language. Populated inside the versioned-mode loop below.
+  let latestVersionLanguages: string[] | null = null;
+
   if (loadedVersions.enabled) {
     // Versioned mode — iterate over each declared version.
     // Past minors that fail to resolve their archive-branch worktree are
@@ -579,6 +587,13 @@ export async function generateWebsite(
               srcDir: path.join(versionRoot, "src"),
             };
       const versionBookConfig = loadBookConfig(versionConfig.srcDir);
+      if (v.isLatest) {
+        // Intersect with the per-run `languages` filter so a `--lang en`
+        // run does not promise other languages on the redirect page.
+        latestVersionLanguages = versionBookConfig.languages.filter((l) =>
+          languages.includes(l),
+        );
+      }
 
       console.log(`=== Version ${v.label}${v.isLatest ? " (latest)" : ""} ===`);
       const versionDir = path.join(distBase, v.outDir);
@@ -621,11 +636,6 @@ export async function generateWebsite(
       }
 
       versionsBuilt.push(v);
-    }
-
-    // Root index → redirect to latest version's default lang (en if available).
-    if (loadedVersions.latest) {
-      writeRootRedirectIndex(distBase, loadedVersions.latest, languages);
     }
   } else {
     // Flat (legacy / single-version) mode — preserves FR-2159 behavior.
@@ -721,22 +731,46 @@ export async function generateWebsite(
     process.exit(1);
   }
 
-  // Site-root language picker (F1). Lives at dist/web/index.html and is
-  // the only page outside any language subtree. Always uses `en` as the
-  // hard fallback so the picker never enters an infinite redirect loop
-  // even on user agents that report no language signal at all.
-  const peerLangsForPicker = availableLanguages.map((peerLang) => ({
-    lang: peerLang,
-    label: config.languageLabels[peerLang] ?? peerLang,
-  }));
-  const pickerHtml = buildLanguagePickerPage({
-    title,
-    productName,
-    languages: peerLangsForPicker,
-    fallback: availableLanguages.includes("en") ? "en" : availableLanguages[0],
-  });
-  fs.writeFileSync(path.join(distBase, "index.html"), pickerHtml, "utf-8");
-  console.log(`Written: index.html (language picker)`);
+  // Site-root redirect index (FR-2710 F1 / FR-2753). Lives at
+  // `dist/web/index.html` and is the only page outside any language (or
+  // version) subtree. The redirect script runs in <head> so the page
+  // never paints UI before navigating; a `<noscript>` fallback ships
+  // working links for clients with JavaScript disabled.
+  //
+  // In versioned mode (FR-2729) the redirect target is prefixed with the
+  // `latest: true` entry's label, so the user lands on a real page
+  // instead of `./<lang>/index.html` (which does not exist when output
+  // lives at `dist/web/<version>/<lang>/...`). The language list is
+  // sourced from the LATEST version's own `book.config.yaml` (filtered
+  // by this run's --lang) — not from the workspace root — so it cannot
+  // promise a language the latest archive does not actually ship.
+  const redirectLanguages =
+    loadedVersions.enabled && latestVersionLanguages
+      ? latestVersionLanguages
+      : languages;
+  if (redirectLanguages.length === 0) {
+    console.warn(
+      "Skipped: index.html (no built languages for the redirect target)",
+    );
+  } else {
+    const peerLangsForRedirect = redirectLanguages.map((peerLang) => ({
+      lang: peerLang,
+      label: config.languageLabels[peerLang] ?? peerLang,
+    }));
+    const redirectHtml = buildRootRedirectIndexPage({
+      title,
+      productName,
+      languages: peerLangsForRedirect,
+      fallback: redirectLanguages.includes("en")
+        ? "en"
+        : redirectLanguages[0],
+      latestVersion: loadedVersions.latest?.label,
+    });
+    fs.writeFileSync(path.join(distBase, "index.html"), redirectHtml, "utf-8");
+    console.log(
+      `Written: index.html (root redirect${loadedVersions.latest ? ` → ${loadedVersions.latest.label}` : ""})`,
+    );
+  }
 
   console.log(`Website generated at: ${distBase}`);
 
@@ -1271,35 +1305,6 @@ function buildPageVersionContext(args: {
   };
 }
 
-/**
- * Write a tiny `dist/web/index.html` that redirects to the latest
- * version's default-language landing page. F1 (root language picker)
- * may later replace this with a richer entry; in the meantime a
- * meta-refresh keeps `dist/web/` from 404ing in versioned mode.
- */
-function writeRootRedirectIndex(
-  distBase: string,
-  latest: Version,
-  builtLanguages: string[],
-): void {
-  // Prefer English when present, otherwise the first built language.
-  const targetLang = builtLanguages.includes("en") ? "en" : builtLanguages[0];
-  if (!targetLang) return;
-  const target = `./${latest.label}/${targetLang}/index.html`;
-  const html = `<!DOCTYPE html>
-<html lang="${targetLang}">
-<head>
-  <meta charset="utf-8" />
-  <meta http-equiv="refresh" content="0; url=${target}" />
-  <title>Backend.AI Docs</title>
-</head>
-<body>
-  <p>Redirecting to <a href="${target}">latest version</a>…</p>
-</body>
-</html>`;
-  fs.writeFileSync(path.join(distBase, "index.html"), html, "utf-8");
-  console.log(`Written: index.html → ${target}`);
-}
 
 /**
  * Parse PNG IHDR width/height for every file under `srcImagesDir`. The map

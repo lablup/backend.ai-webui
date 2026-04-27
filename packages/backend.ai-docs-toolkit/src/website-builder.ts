@@ -2109,29 +2109,32 @@ ${interactionsScript}
 }
 
 /**
- * Build the site-root `dist/web/index.html` language picker page.
+ * Build the site-root `dist/web/index.html` redirect page (FR-2753).
  *
- * The picker renders a static list of language choices so users without
- * JavaScript can still navigate. With JavaScript enabled, an inline
- * (≤ 1 KB) script consults — in order — `localStorage.lang` (sticky user
- * choice from a previous visit), `navigator.language[s]` (browser
- * preference), and finally the explicit `fallback` language. The chosen
- * language's landing page is loaded via `location.replace` so the picker
- * does not enter the back-button history.
- *
- * Loop-safety: the redirect ONLY fires from this exact page (`pathname`
- * ends with `/` or `/index.html`). Per-language pages never redirect, and
- * `localStorage.lang` is set only on an explicit user click — so the
- * picker can never be reached and immediately bounced away again in a
- * cycle. Falls back to `fallback` (typically `"en"`) when no signal is
- * available.
+ * Picks a language (`localStorage.lang` → `navigator.languages` →
+ * `fallback`) and redirects via `location.replace` from a script in
+ * `<head>` so no UI paints first. `<body>` carries only a `<noscript>`
+ * fallback list. When `latestVersion` is set, the target and noscript
+ * hrefs are prefixed with `./<latestVersion>/` to match the versioned
+ * output layout (`dist/web/<version>/<lang>/...`); otherwise the flat
+ * `./<lang>/index.html` shape is used.
  */
-export interface LanguagePickerPageOptions {
+export interface RootRedirectIndexPageOptions {
   title: string;
   productName: string;
   languages: Array<{ lang: string; label: string }>;
   fallback: string;
+  /**
+   * When set, the redirect target and `<noscript>` hrefs are prefixed
+   * with `./<latestVersion>/`. Used in versioned mode (FR-2729) where
+   * pages live at `dist/web/<version>/<lang>/...`. Leave undefined for
+   * flat-mode builds (FR-2710 F1 contract).
+   */
+  latestVersion?: string;
 }
+
+/** @deprecated Renamed to {@link RootRedirectIndexPageOptions}. */
+export type LanguagePickerPageOptions = RootRedirectIndexPageOptions;
 
 /**
  * Serialize a value to JSON safe for embedding inside an inline `<script>`.
@@ -2155,32 +2158,77 @@ function safeJsonForScript(value: unknown): string {
     .replace(/\u2029/g, "\\u2029");
 }
 
-export function buildLanguagePickerPage(
-  opts: LanguagePickerPageOptions,
+export function buildRootRedirectIndexPage(
+  opts: RootRedirectIndexPageOptions,
 ): string {
-  const { title, productName, languages, fallback } = opts;
+  const { title, productName, languages, fallback, latestVersion } = opts;
+  if (languages.length === 0) {
+    throw new Error(
+      `buildRootRedirectIndexPage: \`languages\` must contain at least one entry`,
+    );
+  }
   const safeTitle = escapeHtml(title);
   const safeProduct = escapeHtml(productName);
-  const langCodes = languages.map((l) => l.lang);
+  // BCP-47 tags are case-insensitive (`zh-CN` ≡ `zh-cn`). The redirect
+  // script lowercases incoming `navigator.language[s]`, so we must also
+  // lowercase the SUPPORTED list — otherwise an operator using
+  // canonical casing in `book.config.yaml.languages` (e.g. `zh-CN`)
+  // would never match a user's browser preference. URL hrefs preserve
+  // the configured casing so on-disk directory names remain stable.
+  const langCodes = languages.map((l) => l.lang.toLowerCase());
   const langCodesJson = safeJsonForScript(langCodes);
-  const fallbackJson = safeJsonForScript(fallback);
+  const fallbackJson = safeJsonForScript(fallback.toLowerCase());
+  const supportedHrefMapJson = safeJsonForScript(
+    Object.fromEntries(languages.map((l) => [l.lang.toLowerCase(), l.lang])),
+  );
+  // The version prefix is interpolated into the URL the redirect script
+  // builds. Require an alphanumeric first character so values like ".",
+  // "..", or ".cache" can never produce a path-breakout target. The
+  // upstream validator in `versions.ts` already enforces a stricter
+  // shape; this is defense-in-depth for direct callers and tests.
+  if (
+    latestVersion !== undefined &&
+    !/^[A-Za-z0-9][A-Za-z0-9._-]*$/.test(latestVersion)
+  ) {
+    throw new Error(
+      `buildRootRedirectIndexPage: invalid latestVersion ${JSON.stringify(latestVersion)}`,
+    );
+  }
+  const versionPrefixJson = safeJsonForScript(
+    latestVersion ? `${latestVersion}/` : "",
+  );
+  const versionHrefSegment = latestVersion
+    ? `${escapeHtml(latestVersion)}/`
+    : "";
 
-  const items = languages
+  // <noscript> fallback links — used only by clients with JavaScript
+  // disabled. The visible picker UI from the previous design has been
+  // removed; on a JS-enabled client the redirect script (in <head>)
+  // navigates away before <body> is parsed so this block never paints.
+  const noscriptItems = languages
     .map(
       (l) =>
-        `      <li><a class="lang-pick" data-lang="${escapeHtml(l.lang)}" hreflang="${escapeHtml(l.lang)}" lang="${escapeHtml(l.lang)}" href="./${escapeHtml(l.lang)}/index.html">${escapeHtml(l.label)}</a></li>`,
+        `      <li><a hreflang="${escapeHtml(l.lang)}" lang="${escapeHtml(l.lang)}" href="./${versionHrefSegment}${escapeHtml(l.lang)}/index.html">${escapeHtml(l.label)}</a></li>`,
     )
     .join("\n");
 
   // The script is intentionally tiny and CSP-friendly. No fetch, no CDN,
-  // no eval. It runs once on first load of `/` (or `/index.html`).
+  // no eval. It is placed at the top of <head> so it runs synchronously
+  // before <body> parses — that is what eliminates the UI flash.
+  // If a CSP is later added to the docs deploy, this block needs a
+  // matching hash (or nonce) — it is the only inline script we ship.
   const script = `(function(){
   var SUPPORTED=${langCodesJson};
+  var HREFS=${supportedHrefMapJson};
   var FALLBACK=${fallbackJson};
+  var VERSION_PREFIX=${versionPrefixJson};
   function pick(){
     try{
       var ls=window.localStorage&&window.localStorage.getItem("lang");
-      if(ls&&SUPPORTED.indexOf(ls)>=0)return ls;
+      if(ls){
+        var lsl=String(ls).toLowerCase();
+        if(SUPPORTED.indexOf(lsl)>=0)return lsl;
+      }
     }catch(e){}
     var navs=[];
     if(navigator.languages&&navigator.languages.length){
@@ -2189,39 +2237,26 @@ export function buildLanguagePickerPage(
     if(navigator.language)navs.push(navigator.language);
     for(var j=0;j<navs.length;j++){
       var tag=String(navs[j]||"").toLowerCase();
-      // Try full tag, then primary subtag (e.g. "ko-kr" -> "ko").
       if(SUPPORTED.indexOf(tag)>=0)return tag;
       var primary=tag.split("-")[0];
       if(SUPPORTED.indexOf(primary)>=0)return primary;
     }
     return FALLBACK;
   }
-  // Loop-safety guard: only redirect from the picker page itself, never
-  // from inside a language subtree. The picker script is only included in
-  // the root index.html, but this check makes the safety property visible
-  // and survives accidental re-inclusion (e.g. via templating mistakes).
-  var p=(window.location.pathname||"").toLowerCase();
-  var atRoot=/(?:^|\\/)(?:index\\.html)?$/.test(p);
-  var inLangDir=false;
-  for(var k=0;k<SUPPORTED.length;k++){
-    if(p.indexOf("/"+SUPPORTED[k]+"/")>=0){inLangDir=true;break;}
-  }
-  if(!atRoot||inLangDir)return;
-  var target=pick();
-  if(SUPPORTED.indexOf(target)<0)target=FALLBACK;
-  window.location.replace("./"+target+"/index.html");
-})();
-// Persist explicit user choice from the visible picker.
-document.addEventListener("click",function(e){
-  var t=e.target;
-  while(t&&t!==document){
-    if(t.tagName==="A"&&t.classList&&t.classList.contains("lang-pick")){
-      try{window.localStorage.setItem("lang",t.getAttribute("data-lang"));}catch(err){}
-      return;
-    }
-    t=t.parentNode;
-  }
-});`;
+  // Loop-safety guard: only fire from the actual site root (\`/\` or
+  // \`/index.html\`). Anything else — e.g. /26.3/ served by a hosting
+  // 404 fallback that preserves the requested URL — must NOT trigger
+  // the redirect, because \`location.replace("./...")\` would resolve
+  // the relative target against the bogus URL and land the user on a
+  // doubly-broken path.
+  var p=window.location.pathname||"";
+  if(!/^\\/?(?:index\\.html)?$/i.test(p))return;
+  var picked=pick();
+  // Map the matched (lower-cased) tag back to its original config
+  // casing so the URL hits the actual on-disk directory name.
+  var dir=Object.prototype.hasOwnProperty.call(HREFS,picked)?HREFS[picked]:HREFS[FALLBACK];
+  window.location.replace("./"+VERSION_PREFIX+dir+"/index.html");
+})();`;
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -2230,25 +2265,26 @@ document.addEventListener("click",function(e){
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>${safeTitle}</title>
   <meta name="robots" content="noindex" />
-  <style>
-    body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;margin:0;background:#fff;color:#1c1e21;display:flex;min-height:100vh;align-items:center;justify-content:center;padding:2rem;}
-    .lp-card{max-width:30rem;width:100%;border:1px solid #ebedf0;border-radius:.5rem;padding:2rem;box-shadow:0 1px 3px rgba(0,0,0,.05);}
-    .lp-title{margin:0 0 .25rem 0;font-size:1.5rem;}
-    .lp-product{margin:0 0 1.5rem 0;color:#606770;font-size:.875rem;}
-    .lp-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:.5rem;}
-    .lp-list a{display:block;padding:.75rem 1rem;border:1px solid #ebedf0;border-radius:.4rem;color:#3578e5;text-decoration:none;font-weight:500;}
-    .lp-list a:hover,.lp-list a:focus{background:#f5f6f7;border-color:#dadde1;}
-  </style>
+  <script>${script}</script>
 </head>
 <body>
-  <main class="lp-card">
-    <h1 class="lp-title">${safeTitle}</h1>
-    <p class="lp-product">${safeProduct}</p>
-    <ul class="lp-list">
-${items}
-    </ul>
-  </main>
-  <script>${script}</script>
+  <noscript>
+    <main style="font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;max-width:30rem;margin:4rem auto;padding:2rem;border:1px solid #ebedf0;border-radius:.5rem;">
+      <h1 style="margin:0 0 .25rem 0;font-size:1.5rem;">${safeTitle}</h1>
+      <p style="margin:0 0 1.5rem 0;color:#606770;font-size:.875rem;">${safeProduct}</p>
+      <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:.5rem;">
+${noscriptItems}
+      </ul>
+    </main>
+  </noscript>
 </body>
 </html>`;
 }
+
+/**
+ * @deprecated Renamed to {@link buildRootRedirectIndexPage}. The page
+ * is no longer a visible "language picker"; it is a redirect-only root
+ * index. The alias is kept so external imports do not break in the
+ * same release that introduces the rename.
+ */
+export const buildLanguagePickerPage = buildRootRedirectIndexPage;

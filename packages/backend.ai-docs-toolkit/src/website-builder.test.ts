@@ -14,10 +14,13 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import path from "path";
+import vm from "node:vm";
 import {
   applyImageAttributes,
   buildHomePage,
   buildIndexPage,
+  buildLanguagePickerPage,
+  buildRootRedirectIndexPage,
   buildWebPage,
   type WebPageContext,
   type PageAssets,
@@ -1146,5 +1149,305 @@ describe("buildHomePage — FR-2737 home page", () => {
     };
     const html2 = buildHomePage(ctxNoRepo);
     assert.doesNotMatch(html2, /class="home-cta home-cta--secondary"/);
+  });
+});
+
+describe("buildRootRedirectIndexPage — FR-2753 root redirect index", () => {
+  const baseLanguages = [
+    { lang: "en", label: "English" },
+    { lang: "ko", label: "한국어" },
+    { lang: "ja", label: "日本語" },
+    { lang: "th", label: "ภาษาไทย" },
+  ];
+
+  /**
+   * Run the inline redirect script under a stubbed DOM and return the
+   * argument passed to `location.replace` (or `null` if the script
+   * bailed out). This is what the script actually does at runtime, so
+   * tests written against this helper survive harmless source-shape
+   * refactors of the embedded script body.
+   */
+  function runRedirectScript(args: {
+    html: string;
+    pathname: string;
+    storedLang?: string;
+    navigatorLanguages?: string[];
+  }): string | null {
+    // Case-insensitive match: although our builder only emits lowercase
+    // <script> tags, CodeQL flags any HTML-stripping regex that doesn't
+    // tolerate uppercase variants. Adding the `i` flag is correct in
+    // general and silences the analyzer at zero behavioral cost.
+    const m = args.html.match(/<script>([\s\S]*?)<\/script>/i);
+    if (!m) throw new Error("redirect script not found in head");
+    let replaceTarget: string | null = null;
+    const stored = args.storedLang ?? null;
+    const sandbox: Record<string, unknown> = {
+      window: {
+        localStorage: {
+          getItem: (k: string) => (k === "lang" ? stored : null),
+        },
+        location: {
+          pathname: args.pathname,
+          replace: (target: string) => {
+            replaceTarget = target;
+          },
+        },
+      },
+      navigator: {
+        languages: args.navigatorLanguages ?? [],
+        language: args.navigatorLanguages?.[0],
+      },
+      Object,
+      String,
+    };
+    // Mirror window.* onto the global so the script's bare references
+    // (window.localStorage / window.location) and bare references
+    // (navigator) all resolve.
+    (sandbox as { window: { location: unknown } }).window;
+    Object.assign(sandbox, {
+      localStorage: (sandbox.window as { localStorage: unknown }).localStorage,
+      location: (sandbox.window as { location: unknown }).location,
+    });
+    vm.runInNewContext(m[1], sandbox, { timeout: 100 });
+    return replaceTarget;
+  }
+
+  it("emits relative `./<lang>/index.html` hrefs in flat mode (no version prefix)", () => {
+    const html = buildRootRedirectIndexPage({
+      title: "Backend.AI WebUI User Guide",
+      productName: "Backend.AI WebUI",
+      languages: baseLanguages,
+      fallback: "en",
+    });
+    assert.match(html, /href="\.\/en\/index\.html"/);
+    assert.match(html, /href="\.\/ko\/index\.html"/);
+    assert.match(html, /href="\.\/ja\/index\.html"/);
+    assert.match(html, /href="\.\/th\/index\.html"/);
+    // No version segment must leak into the redirect script's prefix.
+    assert.match(html, /var VERSION_PREFIX="";/);
+  });
+
+  it("emits version-prefixed `./<latestVersion>/<lang>/index.html` hrefs in versioned mode (FR-2753)", () => {
+    const html = buildRootRedirectIndexPage({
+      title: "Backend.AI WebUI User Guide",
+      productName: "Backend.AI WebUI",
+      languages: baseLanguages,
+      fallback: "en",
+      latestVersion: "26.4",
+    });
+    assert.match(html, /href="\.\/26\.4\/en\/index\.html"/);
+    assert.match(html, /href="\.\/26\.4\/ko\/index\.html"/);
+    assert.match(html, /href="\.\/26\.4\/ja\/index\.html"/);
+    assert.match(html, /href="\.\/26\.4\/th\/index\.html"/);
+    // VERSION_PREFIX gets baked into the redirect script so
+    // location.replace builds `./26.4/<picked>/index.html` at runtime.
+    assert.match(html, /var VERSION_PREFIX="26\.4\/";/);
+    // Flat-mode hrefs MUST NOT appear — that was the FR-2753 prod bug.
+    assert.doesNotMatch(html, /href="\.\/en\/index\.html"/);
+  });
+
+  it("places the redirect script in <head> so it runs before <body> paints", () => {
+    const html = buildRootRedirectIndexPage({
+      title: "Docs",
+      productName: "Docs",
+      languages: baseLanguages,
+      fallback: "en",
+    });
+    const headStart = html.indexOf("<head>");
+    const headEnd = html.indexOf("</head>");
+    const scriptIdx = html.indexOf("<script>");
+    assert.ok(headStart >= 0 && headEnd > headStart, "head bounds");
+    assert.ok(
+      scriptIdx > headStart && scriptIdx < headEnd,
+      "redirect script must live inside <head>",
+    );
+  });
+
+  it("ships a <noscript> fallback list (no visible picker UI in the default body)", () => {
+    const html = buildRootRedirectIndexPage({
+      title: "Docs",
+      productName: "Docs",
+      languages: baseLanguages,
+      fallback: "en",
+    });
+    const noscriptStart = html.indexOf("<noscript>");
+    const noscriptEnd = html.indexOf("</noscript>");
+    assert.ok(noscriptStart >= 0 && noscriptEnd > noscriptStart);
+    const noscriptBody = html.slice(noscriptStart, noscriptEnd);
+    for (const l of baseLanguages) {
+      assert.ok(
+        noscriptBody.includes(`href="./${l.lang}/index.html"`),
+        `<noscript> must link to ${l.lang}`,
+      );
+    }
+    // The legacy visible picker classes must not be present anywhere
+    // outside <noscript>; the redirect-only design replaced them.
+    const beforeNoscript = html.slice(0, noscriptStart);
+    const afterNoscript = html.slice(noscriptEnd);
+    assert.doesNotMatch(beforeNoscript, /class="lp-card"/);
+    assert.doesNotMatch(afterNoscript, /class="lp-card"/);
+    assert.doesNotMatch(beforeNoscript, /class="lang-pick"/);
+    assert.doesNotMatch(afterNoscript, /class="lang-pick"/);
+  });
+
+  it("redirects to the localStorage choice when set (sticky preference, behavioral test)", () => {
+    const html = buildRootRedirectIndexPage({
+      title: "Docs",
+      productName: "Docs",
+      languages: baseLanguages,
+      fallback: "en",
+      latestVersion: "26.4",
+    });
+    // localStorage says "ko" — must win over navigator preferring "ja".
+    const target = runRedirectScript({
+      html,
+      pathname: "/",
+      storedLang: "ko",
+      navigatorLanguages: ["ja-JP", "ja"],
+    });
+    assert.equal(target, "./26.4/ko/index.html");
+  });
+
+  it("falls back to navigator.languages when localStorage is empty", () => {
+    const html = buildRootRedirectIndexPage({
+      title: "Docs",
+      productName: "Docs",
+      languages: baseLanguages,
+      fallback: "en",
+    });
+    const target = runRedirectScript({
+      html,
+      pathname: "/",
+      navigatorLanguages: ["ja-JP", "ja"],
+    });
+    assert.equal(target, "./ja/index.html");
+  });
+
+  it("matches navigator.language case-insensitively against config codes (Copilot review)", () => {
+    // Operator may write canonical BCP-47 casing in book.config.yaml
+    // (e.g. `zh-CN`). The script lowercases the user agent's
+    // navigator.language before comparing, so SUPPORTED must also be
+    // lowercased for the match — but the URL must use the configured
+    // (mixed-case) directory name.
+    const html = buildRootRedirectIndexPage({
+      title: "Docs",
+      productName: "Docs",
+      languages: [
+        { lang: "en", label: "English" },
+        { lang: "zh-CN", label: "简体中文" },
+      ],
+      fallback: "en",
+    });
+    const target = runRedirectScript({
+      html,
+      pathname: "/",
+      navigatorLanguages: ["zh-CN"],
+    });
+    assert.equal(target, "./zh-CN/index.html");
+    // Also via lowercased localStorage — same casing should resolve.
+    const target2 = runRedirectScript({
+      html,
+      pathname: "/",
+      storedLang: "zh-cn",
+    });
+    assert.equal(target2, "./zh-CN/index.html");
+  });
+
+  it("falls back to `fallback` when no signal matches a supported language", () => {
+    const html = buildRootRedirectIndexPage({
+      title: "Docs",
+      productName: "Docs",
+      languages: baseLanguages,
+      fallback: "en",
+      latestVersion: "26.4",
+    });
+    const target = runRedirectScript({
+      html,
+      pathname: "/",
+      navigatorLanguages: ["fr-FR"],
+    });
+    assert.equal(target, "./26.4/en/index.html");
+  });
+
+  it("does NOT redirect from a non-root path (loop-safety, e.g. older /26.3/ served via 404 fallback)", () => {
+    // This was the latent bug flagged by code-reviewer: relative
+    // `./` resolution against a 404'd `/26.3/` URL would have built
+    // `/26.3/26.4/en/index.html`. The fix is to bail out when the
+    // script ever runs anywhere other than the actual site root.
+    const html = buildRootRedirectIndexPage({
+      title: "Docs",
+      productName: "Docs",
+      languages: baseLanguages,
+      fallback: "en",
+      latestVersion: "26.4",
+    });
+    for (const pathname of [
+      "/26.3/",
+      "/26.3/index.html",
+      "/26.4/en/",
+      "/26.4/en/index.html",
+      "/foo/bar",
+    ]) {
+      const target = runRedirectScript({ html, pathname });
+      assert.equal(
+        target,
+        null,
+        `script must NOT fire from ${pathname}; got ${target}`,
+      );
+    }
+  });
+
+  it("DOES redirect from `/` and `/index.html` (true site root)", () => {
+    const html = buildRootRedirectIndexPage({
+      title: "Docs",
+      productName: "Docs",
+      languages: baseLanguages,
+      fallback: "en",
+      latestVersion: "26.4",
+    });
+    assert.equal(
+      runRedirectScript({ html, pathname: "/" }),
+      "./26.4/en/index.html",
+    );
+    assert.equal(
+      runRedirectScript({ html, pathname: "/index.html" }),
+      "./26.4/en/index.html",
+    );
+  });
+
+  it("rejects a latestVersion containing shell, path-breakout, or leading-dot characters", () => {
+    for (const bad of ["../etc", "26.4/26.5", "..", ".", ".cache", "-foo"]) {
+      assert.throws(
+        () =>
+          buildRootRedirectIndexPage({
+            title: "Docs",
+            productName: "Docs",
+            languages: baseLanguages,
+            fallback: "en",
+            latestVersion: bad,
+          }),
+        /invalid latestVersion/,
+        `expected ${JSON.stringify(bad)} to be rejected`,
+      );
+    }
+  });
+
+  it("throws when `languages` is empty (defense-in-depth for direct callers)", () => {
+    assert.throws(
+      () =>
+        buildRootRedirectIndexPage({
+          title: "Docs",
+          productName: "Docs",
+          languages: [],
+          fallback: "en",
+        }),
+      /must contain at least one entry/,
+    );
+  });
+
+  it("preserves the deprecated `buildLanguagePickerPage` alias for one release", () => {
+    // The old name is re-exported as an alias so external callers do
+    // not break in the same release that introduces the rename.
+    assert.equal(buildLanguagePickerPage, buildRootRedirectIndexPage);
   });
 });

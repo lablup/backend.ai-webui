@@ -100,6 +100,7 @@ export type {
   PageAssets,
   PageSeoContext,
   PageVersionContext,
+  RootRedirectIndexPageOptions,
   WebPageContext,
   WebsiteMetadata,
 } from "./website-builder.js";
@@ -109,6 +110,7 @@ export {
   buildHomePage,
   buildIndexPage,
   buildLanguagePickerPage,
+  buildRootRedirectIndexPage,
   buildWebPage,
 } from "./website-builder.js";
 
