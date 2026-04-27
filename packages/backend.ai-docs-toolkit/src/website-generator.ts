@@ -10,10 +10,13 @@ import { fileURLToPath } from "url";
 import { execFileSync } from "child_process";
 import { processMarkdownFilesForWeb } from "./markdown-processor-web.js";
 import type { LinkDiagnostic } from "./markdown-processor-web.js";
-import { slugify } from "./markdown-processor.js";
+import {
+  RESERVED_HOME_SLUG,
+  slugFromNavPath,
+} from "./markdown-processor.js";
 import {
   buildWebPage,
-  buildIndexPage,
+  buildHomePage,
   buildLanguagePickerPage,
   applyImageAttributes,
 } from "./website-builder.js";
@@ -856,15 +859,19 @@ async function buildLanguage(args: {
 
   // Per-language nav-path -> slug index. The language switcher (F1) maps
   // `quickstart.md` (path) in the current language to the same path in
-  // every peer language, then resolves the peer's localized slug for the
-  // cross-language link target. Paths are stable across languages — slugs
-  // are not — so the join key is the path.
+  // every peer language, then resolves the peer's slug for the
+  // cross-language link target. Paths are stable across languages, and
+  // slugs are now derived from those paths (FR-2737), so the join key
+  // and the resulting slug are both language-stable. The map is kept
+  // (rather than collapsed to a single shared slug map) so future
+  // language-specific slug overrides — e.g. an explicit `slug:` in
+  // `book.config.yaml` — would slot in here without changing callers.
   const slugByPathPerLang: Record<string, Map<string, string>> = {};
   for (const peerLang of availableLanguages) {
     const peerNav = bookConfig.navigation[peerLang] ?? [];
     const map = new Map<string, string>();
     for (const entry of peerNav) {
-      map.set(entry.path, slugify(entry.title));
+      map.set(entry.path, slugFromNavPath(entry.path));
     }
     slugByPathPerLang[peerLang] = map;
   }
@@ -888,12 +895,39 @@ async function buildLanguage(args: {
     chapters.map((c) => c.slug).filter((s): s is string => !!s),
   );
 
+  // FR-2737 reserved-slug guard: `RESERVED_HOME_SLUG` is the slug
+  // the synthetic home chapter writes to (`<lang>/index.html`). If a
+  // real chapter's `nav.path` ever sanitizes to that same value
+  // (e.g. somebody adds `index.md`), the chapter HTML and the home
+  // HTML would target the same file — only the last writer would
+  // win, silently. Fail the build with an actionable error instead
+  // of producing a broken site.
+  const collidingSlug = chapters.find(
+    (c) => c.slug === RESERVED_HOME_SLUG,
+  );
+  if (collidingSlug) {
+    throw new Error(
+      `Chapter slug "${RESERVED_HOME_SLUG}" is reserved for the home page. ` +
+        `The chapter titled "${collidingSlug.title}" sanitizes to that ` +
+        `slug — rename the source file or move it under a sub-folder ` +
+        `(e.g. "overview/index.md") in book.config.yaml.`,
+    );
+  }
+
   // Pre-record this build's pages into the cross-version registry. We
   // do it BEFORE rendering so the version-switcher availability map
   // (which uses the registry transitively only for the *current* slug)
   // remains correct in the common case where versions share slugs.
   // See note on the `availability` field below.
-  for (const slug of allSlugsThisLang) {
+  //
+  // FR-2737: also register the synthetic home slug for the home
+  // page. Every language ships an `index.html`, so listing it lets
+  // the version switcher resolve "same slug in another version" to
+  // that version's home page rather than falling back to Quickstart
+  // when the user changes the version from the landing screen.
+  const recordedSlugs = new Set(allSlugsThisLang);
+  recordedSlugs.add(RESERVED_HOME_SLUG);
+  for (const slug of recordedSlugs) {
     pageRegistry.record({
       version: versionLabel ?? "",
       lang,
@@ -952,7 +986,7 @@ async function buildLanguage(args: {
   console.log(`${labelPrefix} Generating ${chapters.length} pages...`);
   for (let i = 0; i < chapters.length; i++) {
     const navEntry = navigation.find(
-      (n) => slugify(n.title) === chapters[i].slug,
+      (n) => slugFromNavPath(n.path) === chapters[i].slug,
     );
     if (!navEntry) {
       console.warn(
@@ -1068,33 +1102,80 @@ async function buildLanguage(args: {
     fs.writeFileSync(outputPath, pageHtml, "utf-8");
   }
 
-  // FR-2732: surface the current version's optional `pdfTag` to the
-  // landing-page renderer. We deliberately look up the entry by label
-  // (rather than passing the whole `loadedVersions`) so the renderer
-  // never sees other versions' tags. When the lookup misses (flat /
-  // non-versioned mode, or `versionLabel === null`), the result is
-  // `undefined` and the renderer falls back to its byte-equivalent
-  // legacy redirect-stub branch.
-  const currentVersionEntry =
-    versionLabel !== null
-      ? loadedVersions.entries.find((v) => v.label === versionLabel)
-      : undefined;
-
-  // Generate index.html (redirect to first page, or placeholder if no chapters)
-  const indexHtml =
-    chapters.length === 0
-      ? `<!DOCTYPE html>
+  // Generate index.html. FR-2737 replaces the legacy meta-refresh
+  // redirect with a real Home page — production-quality intro to
+  // Backend.AI WebUI and the manual itself, anchored to the current
+  // language. The fallback below is intentionally kept for the
+  // empty-navigation case (a language declared in book.config.yaml
+  // with no chapters yet) so partial translations still produce a
+  // visible page rather than crashing the build.
+  let indexHtml: string;
+  if (chapters.length === 0) {
+    indexHtml = `<!DOCTYPE html>
 <html lang="${lang}">
 <head><meta charset="utf-8" /><title>${title}</title></head>
 <body><h1>${title}</h1><p>No documentation content was generated for this language.</p></body>
-</html>`
-      : buildIndexPage(chapters, metadata, {
-          pdfTag: currentVersionEntry?.pdfTag,
-          // FR-2732 follow-up: thread resolved branding tokens so the
-          // PDF card honors white-label `branding.primaryColor` overrides
-          // instead of always rendering BAI orange.
-          branding: config.branding,
-        });
+</html>`;
+  } else {
+    // Home page peers — every peer language has its own home, so the
+    // switcher always lands on `../<peer>/index.html` and `available`
+    // is always true. (Per-page availability is a chapter-level
+    // concept that does not apply here.)
+    const homePeers: LanguagePeer[] = availableLanguages.map((peerLang) => ({
+      lang: peerLang,
+      label: config.languageLabels[peerLang] ?? peerLang,
+      href: `../${peerLang}/index.html`,
+      available: true,
+    }));
+    // Version context for the home page. Reuses the per-page builder
+    // with the reserved home slug so the version switcher's same-slug
+    // navigation lands on each version's home rather than dropping
+    // the user back into Quickstart on every version change.
+    const homeVersionContext = buildPageVersionContext({
+      loadedVersions,
+      versionLabel,
+      slug: RESERVED_HOME_SLUG,
+      rootDepth,
+      pageRegistry,
+    });
+    // Home page SEO. `pagePath` and `canonicalPath` both point at the
+    // language's `index.html`, with the version segment included in
+    // versioned mode so the OG / canonical URLs are accurate.
+    const homePagePath =
+      versionLabel !== null
+        ? `${versionLabel}/${lang}/index.html`
+        : `${lang}/index.html`;
+    const homeCanonicalPath = loadedVersions.latest
+      ? `${loadedVersions.latest.label}/${lang}/index.html`
+      : homePagePath;
+    const homeSeo: PageSeoContext = {
+      baseUrl: seoBase.baseUrl,
+      siteName: seoBase.siteName,
+      publisher: seoBase.publisher,
+      pagePath: homePagePath,
+      canonicalPath: homeCanonicalPath,
+      ogImageRelUrl: seoBase.ogImageRelUrl,
+    };
+    indexHtml = buildHomePage({
+      metadata,
+      config,
+      navGroups,
+      allChapters: chapters,
+      assets: pageAssets,
+      peers: homePeers,
+      versionContext: homeVersionContext,
+      seo: homeSeo,
+    });
+    // Mirror the chapter-page post-processing pipeline for image tags
+    // (lazy-load attrs + WebP/AVIF rewrite). The home page does not
+    // currently render `<img>` tags, but keeping the pipeline parity
+    // means future content edits — e.g. adding a hero illustration —
+    // pick up the same optimizations without further wiring.
+    indexHtml = applyImageAttributes(indexHtml, imageDims);
+    if (variantAvailability.size > 0) {
+      indexHtml = rewriteImageTagsToPicture(indexHtml, variantAvailability);
+    }
+  }
   fs.writeFileSync(path.join(langDir, "index.html"), indexHtml, "utf-8");
 
   // Build search index — partitioned per (version × lang) so search

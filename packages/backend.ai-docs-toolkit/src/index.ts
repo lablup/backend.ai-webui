@@ -57,7 +57,9 @@ export type { Chapter, Heading } from "./markdown-processor.js";
 export {
   processMarkdownFiles,
   processCatalogMarkdownForPdf,
+  RESERVED_HOME_SLUG,
   slugify,
+  slugFromNavPath,
   resolveMarkdownPath,
 } from "./markdown-processor.js";
 export type {
@@ -101,8 +103,10 @@ export type {
   WebPageContext,
   WebsiteMetadata,
 } from "./website-builder.js";
+export type { HomePageContext } from "./website-builder.js";
 export {
   applyImageAttributes,
+  buildHomePage,
   buildIndexPage,
   buildLanguagePickerPage,
   buildWebPage,

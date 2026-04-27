@@ -1994,55 +1994,75 @@ details > :last-child {
   flex-wrap: wrap;
 }
 
-/* Lang switcher (FR-2728): native <select> styled as a BAI button.
-   The wrapping <label> serves as the visual frame so we can paint a
-   chevron via background-image without disturbing the native popup. */
+/* Lang switcher (FR-2737 — icon-only variant).
+   Renders as a single Lucide languages icon button. The native <select>
+   is sized to cover the icon and made fully transparent, so clicking
+   the icon opens the OS-native option list — keyboard support, screen
+   reader support, and per-platform dropdown chrome all come "for free"
+   from the underlying <select>. The icon is the only thing the user
+   sees; selected language is communicated via the <select>'s
+   aria-label, the option list, and the chosen-option attribute. */
 .lang-switcher {
+  position: relative;
   display: inline-flex;
   align-items: center;
-  position: relative;
-  /* gap is a no-op when the switcher contains a single SELECT
-     (the native variant FR-2728 ships) but matters for legacy HTML
-     that still renders multiple .lang-switcher__item children inline.
-     Keep it so older bundles don't collapse the spacing. */
-  gap: 2px;
-  border-radius: 6px;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
   background: transparent;
+  color: var(--bai-text-2);
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
+}
+
+.lang-switcher:hover,
+.lang-switcher:focus-within {
+  background: var(--bai-primary-soft);
+  color: var(--bai-primary);
+}
+
+.lang-switcher__icon {
+  width: 18px;
+  height: 18px;
+  color: inherit;
+  pointer-events: none;
 }
 
 .lang-switcher__select {
+  /* Cover the entire button surface so any click on the icon (or the
+     surrounding hit-area) opens the native dropdown. Opacity 0 hides
+     the native chrome — including the platform chevron — without
+     hiding the control from the accessibility tree. */
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: transparent;
+  font: inherit;
+  opacity: 0;
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
-  display: inline-flex;
-  align-items: center;
-  height: 30px;
-  padding: 0 28px 0 10px;
-  border: 1px solid var(--bai-border);
-  border-radius: 6px;
-  background: var(--bai-bg);
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238C8C8C' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
-  background-repeat: no-repeat;
-  background-position: right 8px center;
-  background-size: 12px 12px;
-  color: var(--bai-text-2);
-  font: inherit;
-  font-size: 12.5px;
-  line-height: 1;
   cursor: pointer;
-  transition: border-color 120ms ease, color 120ms ease, background-color 120ms ease;
+  /* Native popup positioning honors direction. font-size 16px
+     prevents iOS Safari from auto-zooming when the user opens the
+     option list. */
+  font-size: 16px;
 }
 
-.lang-switcher__select:hover {
-  border-color: var(--bai-primary);
-  color: var(--bai-text);
+.lang-switcher__select:focus-visible + .lang-switcher__icon,
+.lang-switcher:focus-within .lang-switcher__icon {
+  color: var(--bai-primary);
 }
 
-.lang-switcher__select:focus,
-.lang-switcher__select:focus-visible {
+.lang-switcher:focus-within {
   outline: 2px solid var(--bai-primary);
-  outline-offset: 1px;
-  color: var(--bai-text);
+  outline-offset: 2px;
 }
 
 [data-theme="dark"] .lang-switcher__select {
@@ -2069,6 +2089,212 @@ details > :last-child {
 .lang-switcher__item--current {
   background: var(--bai-primary);
   color: #fff;
+}
+
+/* ==========================================================================
+   Home page (FR-2737)
+   ==========================================================================
+   The home page reuses the doc layout chrome (topbar, sidebar, footer,
+   search palette) but its <main> body is structured differently — a
+   hero block, a two-column intro, and a category-card grid that
+   doubles as a topical index. The .doc-main--home opt-in widens the
+   content column slightly and removes the chapter top padding so the
+   hero can breathe.
+   ========================================================================== */
+.doc-main--home {
+  padding-top: 56px;
+  max-width: 960px;
+}
+
+.home-article {
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+}
+
+.home-hero {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--bai-border);
+}
+
+.home-hero__eyebrow {
+  margin: 0;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--bai-primary);
+}
+
+.home-hero__title {
+  margin: 0;
+  font-size: 34px;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  font-weight: 700;
+  color: var(--bai-text);
+}
+
+.home-hero__lede {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--bai-text-2);
+}
+
+.home-hero__cta-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.home-hero__hint {
+  margin: 0;
+  font-size: 13px;
+  color: var(--bai-text-3);
+}
+
+.home-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  border: 1px solid transparent;
+  transition: background 120ms ease, border-color 120ms ease, color 120ms ease, transform 120ms ease;
+}
+
+.home-cta__arrow {
+  transition: transform 120ms ease;
+}
+
+.home-cta--primary {
+  background: var(--bai-primary);
+  color: #fff;
+}
+
+.home-cta--primary:hover {
+  background: var(--bai-primary-hover);
+  color: #fff;
+}
+
+.home-cta--primary:hover .home-cta__arrow {
+  transform: translateX(2px);
+}
+
+.home-cta--secondary {
+  background: transparent;
+  color: var(--bai-text);
+  border-color: var(--bai-border);
+}
+
+.home-cta--secondary:hover {
+  border-color: var(--bai-primary);
+  color: var(--bai-primary);
+}
+
+.home-section {
+  display: grid;
+  gap: 12px;
+}
+
+.home-section__title {
+  margin: 0;
+  font-size: 20px;
+  line-height: 1.3;
+  font-weight: 700;
+  color: var(--bai-text);
+}
+
+.home-section__body {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--bai-text-2);
+}
+
+.home-section--intro {
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+
+@media (max-width: 720px) {
+  .home-section--intro {
+    grid-template-columns: 1fr;
+  }
+}
+
+.home-section__col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.home-browse__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.home-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 18px 18px 16px;
+  border: 1px solid var(--bai-border);
+  border-radius: 10px;
+  background: var(--bai-bg);
+  color: var(--bai-text);
+  text-decoration: none;
+  transition: border-color 120ms ease, background 120ms ease, transform 120ms ease;
+}
+
+.home-card:hover {
+  border-color: var(--bai-primary);
+  background: var(--bai-primary-soft);
+  transform: translateY(-1px);
+}
+
+.home-card--disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.home-card__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: var(--bai-primary-soft);
+  color: var(--bai-primary);
+}
+
+.home-card__icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.home-card__title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--bai-text);
+}
+
+.home-card__count {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--bai-text-3);
 }
 
 /* Pagination Navigation (FR-2726 Phase 3 — BAI pager card style) */

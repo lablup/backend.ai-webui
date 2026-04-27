@@ -28,7 +28,11 @@ import {
   WEBSITE_LABELS,
 } from "./config.js";
 import { escapeHtml } from "./markdown-extensions.js";
-import { slugify } from "./markdown-processor.js";
+import {
+  RESERVED_HOME_SLUG,
+  slugFromNavPath,
+  slugify,
+} from "./markdown-processor.js";
 import {
   buildJsonLd,
   buildOgTags,
@@ -318,8 +322,10 @@ function buildWebsiteSidebar(
     const openAttr = containsActive ? " open" : "";
     const groupSlug = slugify(group.category) || "group";
     // Phase 2 (FR-2726): each summary now carries a leading icon + a
-    // trailing count pill matching the BAI sider pattern.
-    const iconSvg = sidebarCategoryIconSvg(group.category);
+    // trailing count pill matching the BAI sider pattern. FR-2737:
+    // pass the whole group so the icon helper can key off the first
+    // item's path (language-stable) instead of the localized label.
+    const iconSvg = sidebarCategoryIconSvg(group);
     const itemCount = group.items.length;
     return `<details class="doc-sidebar-group"${openAttr}>
   <summary class="doc-sidebar-group__summary">
@@ -371,21 +377,48 @@ ${versionBlockHtml}  <nav class="doc-sidebar-groups" aria-label="Documentation n
 }
 
 /**
- * Inline SVG icon for a sidebar category header (FR-2726 Phase 2).
+ * Inline SVG icon for a sidebar category header.
  *
- * The mapping matches a small whitelist of canonical English category
- * labels (case-insensitive). Categories that don't match — including
- * every non-English label in localized navs — fall through to a generic
- * "stack of pages" icon so every category still gets a visual anchor.
- * Phase 3+ may extend this with a config knob in `book.config.yaml`,
- * letting consumers map any category label to any icon name.
+ * Originally (FR-2726 Phase 2) the mapping keyed off the localized
+ * category label and only matched English. That meant the Korean /
+ * Japanese / Thai sidebars all collapsed to the generic "stack" icon
+ * for every category — visually identical drawers with no per-topic
+ * cue.
+ *
+ * FR-2737 fixes that by deriving the icon from the FIRST item's
+ * navigation path instead of the localized label. Paths in
+ * `book.config.yaml` are identical across every language (only titles
+ * are translated), so the same group resolves to the same icon in
+ * every language. The English label match is kept as a soft fallback
+ * for projects that re-order their nav so a non-Backend.AI first
+ * item shows up under a familiar English category name.
  */
-function sidebarCategoryIconSvg(category: string): string {
-  const key = category.trim().toLowerCase();
-  // Common Backend.AI WebUI categories. Other consumers fall through to
-  // the default icon, which is intentional — Phase 3 will add per-category
-  // icon configuration to book.config.yaml.
-  const map: Record<string, string> = {
+function sidebarCategoryIconSvg(group: NavGroup): string {
+  // 1) Language-stable path lookup. The slug of the group's first item
+  //    uniquely identifies the canonical Backend.AI WebUI category
+  //    even after the label is translated. Matches the on-disk
+  //    filename convention (`<topic>.md` or `<topic>/<topic>.md`).
+  //    Defensive guard: a synthetic empty group would make the path
+  //    empty, which `slugFromNavPath` would reject. Fall through to
+  //    the label / stack-icon fallbacks below in that case rather
+  //    than crashing the build.
+  const firstPath = group.items[0]?.path;
+  const firstSlug = firstPath ? slugFromNavPath(firstPath) : "";
+  const slugIcon: Record<string, string> = {
+    quickstart: ICON_ROCKET, // Getting Started
+    session_page: ICON_BOX, // Workloads
+    vfolder: ICON_FOLDER, // Storage & Data
+    user_settings: ICON_SETTINGS, // Administration
+    trouble_shooting: ICON_BOOK, // Reference
+  };
+  if (slugIcon[firstSlug]) return slugIcon[firstSlug];
+
+  // 2) Fallback: English category-label lookup. Useful for downstream
+  //    consumers that build their own nav groups with the canonical
+  //    English headings but a different first item, and for legacy
+  //    book configs that haven't been re-keyed yet.
+  const labelKey = group.category.trim().toLowerCase();
+  const labelIcon: Record<string, string> = {
     "getting started": ICON_ROCKET,
     workloads: ICON_BOX,
     "storage & data": ICON_FOLDER,
@@ -393,10 +426,25 @@ function sidebarCategoryIconSvg(category: string): string {
     administration: ICON_SETTINGS,
     reference: ICON_BOOK,
   };
-  return map[key] ?? ICON_STACK;
+  if (labelIcon[labelKey]) return labelIcon[labelKey];
+
+  // 3) Last resort: generic "stack of pages" so every category still
+  //    gets some visual anchor.
+  return ICON_STACK;
 }
 
-const ICON_ROCKET = `<svg width="14" height="14" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M14.5 4c4 1 5.5 4.5 5.5 5.5 0 0-3.5 1.5-5.5 5.5h-5C7.5 11 4 9.5 4 9.5S5.5 5 9.5 4h5Zm-2.5 5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3ZM7 17l-2 3 3-2m8-1 2 3-3-2"/></svg>`;
+/**
+ * Lucide `languages` icon — used to signal the purpose of the topbar
+ * language switcher (FR-2737). Inline SVG, currentColor stroke so it
+ * inherits the surrounding text color in both light and dark themes.
+ * Source: https://lucide.dev/icons/languages
+ */
+const LUCIDE_LANGUAGES_ICON_SVG = `<svg class="lang-switcher__icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg>`;
+
+// Canonical Lucide `rocket` icon. Swapped in (FR-2737) for the
+// hand-drawn placeholder, whose silhouette read as a horizontal blob
+// at 14px. Source: https://lucide.dev/icons/rocket
+const ICON_ROCKET = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg>`;
 const ICON_BOX = `<svg width="14" height="14" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" d="m12 3 9 5v8l-9 5-9-5V8l9-5Z"/><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" d="m3 8 9 5 9-5M12 13v8"/></svg>`;
 const ICON_FOLDER = `<svg width="14" height="14" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg>`;
 const ICON_SETTINGS = `<svg width="14" height="14" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.6"/><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg>`;
@@ -1295,11 +1343,19 @@ function buildBaiTopbar(
   // localization passes through to search.js.
   void noResultsAttr;
 
-  // Lang switcher (FR-2728): a native <select> styled as a BAI button.
-  // Native select is keyboard-accessible, screen-reader-friendly, and
-  // collapses to one row in the topbar — replacing the always-expanded
-  // pill row. Pages where a language is missing keep the option, but
-  // the value is the language's index page (so the click still works).
+  // Lang switcher (FR-2737 — icon-only variant).
+  //
+  // The visible affordance is a single Lucide `languages` icon. A
+  // transparent native `<select>` is layered on top of the icon, so
+  // clicking the icon opens the OS-native option list — every browser
+  // and platform (incl. mobile) renders this dropdown using its own
+  // accessible UI. We don't reinvent the menu in JS: keyboard support,
+  // screen-reader announcements, and touch-friendly option pickers all
+  // come "for free" from the native control.
+  //
+  // Pages where the chapter is missing in a peer language still get an
+  // option, but its value is that language's `index.html` so the click
+  // never lands on a 404.
   const langOptions = peers
     .map((peer) => {
       const isCurrent = peer.lang === metadata.lang;
@@ -1315,8 +1371,15 @@ function buildBaiTopbar(
   // requires JavaScript to fire `change`; consumers who need a true
   // no-JS fallback can layer a `<noscript>` block of plain anchor
   // links above this widget.
-  const langSwitcherHtml = `<label class="lang-switcher" role="group" aria-label="Language switcher">
-    <select class="lang-switcher__select" onchange="if(this.value)window.location.assign(this.value)">${langOptions}</select>
+  //
+  // The <select> is rendered BEFORE the icon so the icon paints on
+  // top of it (later DOM order = higher in the natural stacking
+  // context). Both elements share the wrapping <label>, which means
+  // a click on the icon still focuses the select via the implicit
+  // label association.
+  const langSwitcherHtml = `<label class="lang-switcher" aria-label="Language switcher">
+    <select class="lang-switcher__select" aria-label="Language switcher" onchange="if(this.value)window.location.assign(this.value)">${langOptions}</select>
+    ${LUCIDE_LANGUAGES_ICON_SVG}
   </label>`;
 
   // FR-2733: the version selector used to render here in the topbar
@@ -1575,6 +1638,12 @@ ${interactionsScript}
  * exactly as before. The PDF card is rendered only when `pdfTag` is a
  * non-empty string; an unset / empty `pdfTag` produces byte-identical
  * output to the pre-FR-2732 baseline (no card markup, no extra bytes).
+ *
+ * Note: the production website build now uses `buildHomePage` for the
+ * per-language landing — `buildIndexPage` is retained as a thin fallback
+ * for languages with no chapters (an empty navigation is still a valid
+ * `book.config.yaml` shape) and for external callers that have not
+ * migrated to `buildHomePage`. See `website-generator.ts`.
  */
 export interface IndexPageOptions {
   /**
@@ -1657,7 +1726,7 @@ export function buildIndexPage(
   metadata: WebsiteMetadata,
   options: IndexPageOptions = {},
 ): string {
-  const firstSlug = chapters[0]?.slug ?? "index";
+  const firstSlug = chapters[0]?.slug ?? RESERVED_HOME_SLUG;
   const lang = escapeHtml(metadata.lang);
   const title = escapeHtml(metadata.title);
   const pdfTag = options.pdfTag;
@@ -1767,6 +1836,274 @@ export function buildIndexPage(
     </a>
     <p class="pdf-landing__continue"><a href="./${firstSlug}.html">${continueLabel} →</a></p>
   </main>
+</body>
+</html>`;
+}
+
+/**
+ * Per-language Home page (FR-2737).
+ *
+ * The home page is web-only — the PDF pipeline starts directly with
+ * the first chapter and has no concept of a landing page. It serves
+ * three purposes:
+ *
+ *   1. Give first-time visitors a real introduction to Backend.AI
+ *      WebUI and to the manual itself, instead of bouncing them via
+ *      a `<meta refresh>` redirect into a chapter that assumes prior
+ *      context.
+ *   2. Provide a stable destination for the topbar logo and the
+ *      breadcrumb "Home" link in the *current* language. With this
+ *      page in place, both controls now go somewhere meaningful
+ *      rather than dropping the user one chapter into the manual.
+ *   3. Surface the top-level category structure as a grid of cards,
+ *      mirroring the sidebar's grouped nav. Each card jumps to the
+ *      first chapter inside its group, so the home doubles as a
+ *      browse-by-topic index.
+ *
+ * The page reuses every piece of chrome already used by chapter pages
+ * (topbar, sidebar, version banner / notice, footer, search palette,
+ * scripts) to keep visual continuity. Only the article body differs.
+ */
+export interface HomePageContext {
+  metadata: WebsiteMetadata;
+  config: ResolvedDocConfig;
+  /** Sidebar nav groups for the current language. */
+  navGroups: NavGroup[];
+  /** All chapters for the current language (powers the sidebar). */
+  allChapters: Chapter[];
+  /** Resolved per-page asset filenames (already content-hashed). */
+  assets: PageAssets;
+  /** Per-language switcher links (always one entry per declared lang). */
+  peers: LanguagePeer[];
+  /**
+   * Versioned-docs context, when running in versioned mode. Plumbed
+   * through so the topbar / sidebar version selector and the
+   * "you are viewing an older version" banner show on the home page
+   * too — otherwise users can't read the version of the docs they're
+   * looking at without first navigating into a chapter.
+   */
+  versionContext?: PageVersionContext;
+  /** Per-page SEO context. Optional. */
+  seo?: PageSeoContext;
+}
+
+/**
+ * Resolve the slug of the first chapter listed in a category group.
+ * Used to point the "Browse the manual" cards at a concrete first
+ * page rather than an abstract "category landing" that does not
+ * exist. Returns `undefined` for an empty group, in which case the
+ * caller renders the card as plain text rather than a dead link.
+ */
+function firstChapterSlugInGroup(group: NavGroup): string | undefined {
+  const first = group.items[0];
+  if (!first) return undefined;
+  // Reuse the shared `slugFromNavPath` helper (also used by the
+  // markdown processor + website generator) so the sidebar card
+  // targets and the on-disk chapter filenames cannot drift apart
+  // — a duplicate local implementation here would silently diverge
+  // the day someone tweaked the slug rules in markdown-processor.ts.
+  return slugFromNavPath(first.path);
+}
+
+export function buildHomePage(context: HomePageContext): string {
+  const {
+    metadata,
+    config,
+    navGroups,
+    allChapters,
+    assets,
+    peers,
+    versionContext,
+  } = context;
+
+  const labels = WEBSITE_LABELS[metadata.lang] ?? WEBSITE_LABELS.en;
+  const langLabel = config.languageLabels[metadata.lang] || metadata.lang;
+
+  // The topbar + sidebar + banner / notice / version-switcher widgets
+  // expect a `WebPageContext`. Wrap the home context in a minimal
+  // synthetic chapter so we can reuse them verbatim — this keeps
+  // every visual surface (logo, search, lang switcher, version
+  // selector, theme toggle) identical to a chapter page.
+  // The synthetic home chapter borrows the reserved `index` slug
+  // because every downstream surface that consumes a chapter slug
+  // (sidebar, version switcher, peer-link math) ultimately maps
+  // back to `<lang>/<slug>.html`, and the home page is written to
+  // `<lang>/index.html`. Real chapters cannot collide with this
+  // value: `slugFromNavPath` is the only producer of chapter slugs,
+  // and the website generator validates against `RESERVED_HOME_SLUG`
+  // (see website-generator.ts) before any chapter is rendered, so
+  // a `nav.path` like `index.md` aborts the build with a clear
+  // error rather than silently overwriting the home output.
+  const homeChapter: Chapter = {
+    title: labels.home ?? "Home",
+    slug: RESERVED_HOME_SLUG,
+    htmlContent: "",
+    headings: [],
+  };
+  const fakeWebContext: WebPageContext = {
+    chapter: homeChapter,
+    allChapters: [homeChapter, ...allChapters],
+    // currentIndex of -1 marks "no active chapter" so the sidebar
+    // doesn't highlight any item. `buildWebsiteSidebar` matches by
+    // numeric equality, so any out-of-range value works; -1 is the
+    // most explicit sentinel.
+    currentIndex: -1,
+    metadata,
+    config,
+    assets,
+    peers,
+    navGroups,
+    category: "",
+    versionContext,
+    seo: context.seo,
+  };
+
+  const prefix = rootPrefix(fakeWebContext);
+  const versionSwitcherHtml = buildVersionSwitcher(fakeWebContext);
+  // Sidebar uses the real `allChapters` (not the synthetic one) so the
+  // numbered list matches every chapter's standalone page.
+  const sidebar = buildWebsiteSidebar(
+    allChapters,
+    -1,
+    metadata,
+    config,
+    navGroups,
+    versionSwitcherHtml,
+  );
+  const topbar = buildBaiTopbar(fakeWebContext, peers, prefix);
+  const versionBanner = buildVersionBanner(fakeWebContext);
+  const versionNotice = buildVersionNotice(fakeWebContext);
+  const articleFooter = buildArticleFooter(config);
+  const searchPalette = buildSearchPalette(metadata);
+
+  if (!assets.interactions) {
+    throw new Error(
+      "FR-2726 Phase 4: missing required interactions asset. " +
+        "Search UI requires interactions.js to open the search palette.",
+    );
+  }
+  const interactionsScript = buildInteractionsScriptTag(assets, prefix);
+  const searchScript = buildSearchScriptTag(assets, prefix);
+  const versionBannerScript = buildVersionBannerScriptTag(assets, prefix);
+
+  // Hero CTA target: the first chapter overall (typically Quickstart
+  // in Backend.AI's nav). When the manual has no chapters at all
+  // (empty nav), suppress the CTA rather than emit a dead link.
+  const firstChapterSlug = allChapters[0]?.slug;
+  const ctaQuickstart = firstChapterSlug
+    ? `<a class="home-cta home-cta--primary" href="./${escapeHtml(firstChapterSlug)}.html">${escapeHtml(labels.homeQuickstartCta ?? "Get started")}<span class="home-cta__arrow" aria-hidden="true">&rarr;</span></a>`
+    : "";
+
+  const repoUrl = config.website?.repoUrl;
+  const ctaGithub = repoUrl
+    ? `<a class="home-cta home-cta--secondary" href="${escapeHtml(repoUrl)}" target="_blank" rel="noopener noreferrer">${escapeHtml(labels.homeViewOnGitHub ?? "View source on GitHub")}</a>`
+    : "";
+
+  // Hero
+  const heroHtml = `<section class="home-hero">
+    <p class="home-hero__eyebrow">${escapeHtml(metadata.title)} &middot; ${escapeHtml(metadata.version)}</p>
+    <h1 class="home-hero__title">${escapeHtml(labels.homeWelcome ?? "Welcome")}</h1>
+    <p class="home-hero__lede">${escapeHtml(labels.homeIntro ?? "")}</p>
+    <div class="home-hero__cta-row">
+      ${ctaQuickstart}
+      ${ctaGithub}
+    </div>
+    ${labels.homeQuickstartHint ? `<p class="home-hero__hint">${escapeHtml(labels.homeQuickstartHint)}</p>` : ""}
+  </section>`;
+
+  // Two intro sections — about the product, about the manual.
+  const aboutHtml = `<section class="home-section home-section--intro">
+    <div class="home-section__col">
+      <h2 class="home-section__title">${escapeHtml(labels.homeAboutWebUI ?? "About")}</h2>
+      <p class="home-section__body">${escapeHtml(labels.homeAboutWebUIBody ?? "")}</p>
+    </div>
+    <div class="home-section__col">
+      <h2 class="home-section__title">${escapeHtml(labels.homeAboutDocs ?? "About this manual")}</h2>
+      <p class="home-section__body">${escapeHtml(labels.homeAboutDocsBody ?? "")}</p>
+    </div>
+  </section>`;
+
+  // Browse-by-category cards. Skip the synthetic anonymous group used
+  // for legacy flat configs (`category === ""`) — there is nothing
+  // useful to title that card with.
+  const pagesSuffix = labels.homePagesSuffix ?? "pages";
+  const categoryCardsHtml = navGroups
+    .filter((g) => g.category)
+    .map((group) => {
+      const slug = firstChapterSlugInGroup(group);
+      const iconSvg = sidebarCategoryIconSvg(group);
+      const inner = `<span class="home-card__icon" aria-hidden="true">${iconSvg}</span>
+        <h3 class="home-card__title">${escapeHtml(group.category)}</h3>
+        <p class="home-card__count">${group.items.length} ${escapeHtml(pagesSuffix)}</p>`;
+      if (slug) {
+        return `<a class="home-card" href="./${escapeHtml(slug)}.html">${inner}</a>`;
+      }
+      return `<div class="home-card home-card--disabled">${inner}</div>`;
+    })
+    .join("\n      ");
+
+  const browseHtml = categoryCardsHtml
+    ? `<section class="home-section home-browse">
+    <h2 class="home-section__title">${escapeHtml(labels.homeBrowse ?? "Browse")}</h2>
+    <div class="home-browse__grid">
+      ${categoryCardsHtml}
+    </div>
+  </section>`
+    : "";
+
+  // <head> tags. We pass an empty `chapterHtml` so the description
+  // falls back to the home headline (the welcome line). We also
+  // intentionally pass an empty `peers` for hreflang purposes only
+  // when the metadata.availableLanguages list is empty — otherwise
+  // the head builder emits one `<link rel=alternate>` per peer. The
+  // peer hrefs use `../{lang}/index.html` which is already correct
+  // for the home page.
+  const pageTitle = escapeHtml(metadata.title);
+  const headTags = buildHeadAssetTags(
+    metadata,
+    langLabel,
+    pageTitle,
+    labels.homeWelcome ?? metadata.title,
+    `<p>${escapeHtml(labels.homeIntro ?? "")}</p>`,
+    assets,
+    prefix,
+    context.seo,
+    peers,
+  );
+
+  // Body data-* attrs for the code-copy script (it's content-hashed
+  // language-agnostic so we keep emitting them — even though there
+  // are no code blocks on the home, the script no-ops gracefully).
+  const copyDataAttrs = [
+    `data-copy-label="${escapeHtml(labels.copy ?? "Copy")}"`,
+    `data-copied-label="${escapeHtml(labels.copied ?? "Copied!")}"`,
+    `data-copy-failed-label="${escapeHtml(labels.copyFailed ?? "Copy failed")}"`,
+  ].join(" ");
+
+  return `<!DOCTYPE html>
+<html lang="${escapeHtml(metadata.lang)}">
+<head>
+  ${headTags}
+</head>
+<body ${copyDataAttrs} data-page="home">
+${topbar}
+${versionBanner}
+<div class="doc-page doc-page--home">
+  ${sidebar}
+  <main class="doc-main doc-main--home">
+    ${versionNotice}
+    <article class="home-article">
+      ${heroHtml}
+      ${aboutHtml}
+      ${browseHtml}
+    </article>
+    ${articleFooter}
+  </main>
+</div>
+${searchPalette}
+${searchScript}
+${versionBannerScript}
+${interactionsScript}
 </body>
 </html>`;
 }

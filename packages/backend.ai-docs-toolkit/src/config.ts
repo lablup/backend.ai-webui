@@ -397,6 +397,21 @@ export const WEBSITE_LABELS: Record<string, Record<string, string>> = {
     // page. Rendered ONLY when `versions[].pdfTag` is set; absent versions
     // (e.g., `next`) emit no card markup at all.
     downloadPdfThisVersion: "Download PDF (this version)",
+    homeWelcome: "Welcome to the Backend.AI WebUI User Guide",
+    homeIntro:
+      "Backend.AI WebUI is the official browser-based control plane for Backend.AI — Lablup's distributed compute platform for AI and ML workloads. This guide walks you through every screen and every workflow, from your first compute session to administering a multi-tenant deployment.",
+    homeAboutWebUI: "About Backend.AI WebUI",
+    homeAboutWebUIBody:
+      "Connect to your Backend.AI cluster, launch interactive or batch sessions on CPUs and GPUs, share storage folders with your team, and serve trained models as inference endpoints — all without leaving the browser.",
+    homeAboutDocs: "About this manual",
+    homeAboutDocsBody:
+      "Each chapter is grouped by topic in the left sidebar. Use the search bar at the top to jump directly to a feature, or pick a different release from the version selector. The full manual is also available as a downloadable PDF.",
+    homeBrowse: "Browse the manual",
+    homeQuickstartCta: "Get started",
+    homeQuickstartHint:
+      "First time here? Start with the Quickstart chapter to set up your first session.",
+    homeViewOnGitHub: "View source on GitHub",
+    homePagesSuffix: "pages",
   },
   ko: {
     previous: "이전",
@@ -422,6 +437,21 @@ export const WEBSITE_LABELS: Record<string, Record<string, string>> = {
     previousVersions: "이전 버전",
     versionLabel: "버전",
     downloadPdfThisVersion: "PDF 다운로드 (이 버전)",
+    homeWelcome: "Backend.AI WebUI 사용자 매뉴얼에 오신 것을 환영합니다",
+    homeIntro:
+      "Backend.AI WebUI는 Lablup의 분산 AI/ML 컴퓨팅 플랫폼인 Backend.AI를 위한 공식 브라우저 기반 관리 콘솔입니다. 이 매뉴얼은 첫 연산 세션 생성부터 멀티 테넌트 운영까지, 모든 화면과 워크플로우를 단계별로 안내합니다.",
+    homeAboutWebUI: "Backend.AI WebUI 소개",
+    homeAboutWebUIBody:
+      "Backend.AI 클러스터에 접속해 CPU·GPU 위에서 대화형 또는 배치 세션을 실행하고, 팀과 스토리지 폴더를 공유하며, 학습된 모델을 추론 엔드포인트로 서빙하세요. 모든 작업을 브라우저에서 수행할 수 있습니다.",
+    homeAboutDocs: "이 매뉴얼에 대해",
+    homeAboutDocsBody:
+      "왼쪽 사이드바에서 주제별로 정리된 챕터를 확인할 수 있습니다. 상단 검색창으로 원하는 기능에 바로 이동하거나, 버전 선택기에서 다른 릴리스 문서를 볼 수 있습니다. 전체 매뉴얼은 PDF로도 내려받을 수 있습니다.",
+    homeBrowse: "매뉴얼 둘러보기",
+    homeQuickstartCta: "시작하기",
+    homeQuickstartHint:
+      "처음 방문하셨다면 빠른 시작 챕터에서 첫 세션을 만들어 보세요.",
+    homeViewOnGitHub: "GitHub에서 소스 보기",
+    homePagesSuffix: "개 페이지",
   },
   ja: {
     previous: "前へ",
@@ -448,6 +478,21 @@ export const WEBSITE_LABELS: Record<string, Record<string, string>> = {
     previousVersions: "以前のバージョン",
     versionLabel: "バージョン",
     downloadPdfThisVersion: "PDFダウンロード（このバージョン）",
+    homeWelcome: "Backend.AI WebUI ユーザーガイドへようこそ",
+    homeIntro:
+      "Backend.AI WebUI は、Lablup の分散 AI／ML コンピューティング基盤 Backend.AI 向けの公式ブラウザインターフェイスです。本マニュアルは、初回のコンピュートセッション作成からマルチテナント運用に至るまで、すべての画面とワークフローを順を追って解説します。",
+    homeAboutWebUI: "Backend.AI WebUI について",
+    homeAboutWebUIBody:
+      "Backend.AI クラスターに接続し、CPU や GPU 上でインタラクティブ／バッチセッションを起動し、ストレージフォルダをチームと共有し、学習済みモデルを推論エンドポイントとして提供できます。すべての操作をブラウザだけで完結できます。",
+    homeAboutDocs: "このマニュアルについて",
+    homeAboutDocsBody:
+      "左サイドバーには各章がトピックごとにまとめられています。上部の検索バーから機能に直接ジャンプしたり、バージョンセレクタから別リリースの文書を参照したりできます。マニュアル全文は PDF でもダウンロード可能です。",
+    homeBrowse: "マニュアルを見る",
+    homeQuickstartCta: "はじめる",
+    homeQuickstartHint:
+      "はじめてご利用の方は、クイックスタートから読み始めてください。",
+    homeViewOnGitHub: "ソースを GitHub で表示",
+    homePagesSuffix: "ページ",
   },
   th: {
     previous: "ก่อนหน้า",
@@ -474,6 +519,21 @@ export const WEBSITE_LABELS: Record<string, Record<string, string>> = {
     previousVersions: "เวอร์ชันก่อนหน้า",
     versionLabel: "เวอร์ชัน",
     downloadPdfThisVersion: "ดาวน์โหลด PDF (เวอร์ชันนี้)",
+    homeWelcome: "ยินดีต้อนรับสู่คู่มือผู้ใช้ Backend.AI WebUI",
+    homeIntro:
+      "Backend.AI WebUI คืออินเทอร์เฟซเว็บอย่างเป็นทางการสำหรับ Backend.AI — แพลตฟอร์มการประมวลผลแบบกระจายของ Lablup สำหรับงาน AI และ ML คู่มือนี้จะพาคุณรู้จักทุกหน้าจอและทุกขั้นตอนการทำงาน ตั้งแต่การสร้างเซสชันการคำนวณครั้งแรก จนถึงการดูแลระบบแบบหลายผู้เช่า",
+    homeAboutWebUI: "เกี่ยวกับ Backend.AI WebUI",
+    homeAboutWebUIBody:
+      "เชื่อมต่อกับคลัสเตอร์ Backend.AI ของคุณ เริ่มเซสชันแบบ interactive หรือ batch บน CPU และ GPU แชร์โฟลเดอร์จัดเก็บกับทีม และให้บริการโมเดลที่ฝึกแล้วเป็น inference endpoint — ทั้งหมดทำได้บนเบราว์เซอร์",
+    homeAboutDocs: "เกี่ยวกับคู่มือนี้",
+    homeAboutDocsBody:
+      "แต่ละบทถูกจัดกลุ่มตามหัวข้อในแถบด้านซ้าย ใช้ช่องค้นหาด้านบนเพื่อข้ามไปยังคุณสมบัติที่ต้องการ หรือเลือกรุ่นอื่นจากตัวเลือกเวอร์ชัน คู่มือฉบับเต็มยังสามารถดาวน์โหลดเป็น PDF ได้",
+    homeBrowse: "ดูคู่มือ",
+    homeQuickstartCta: "เริ่มต้นใช้งาน",
+    homeQuickstartHint:
+      "หากเข้ามาครั้งแรก ขอแนะนำให้เริ่มจากบท เริ่มต้นอย่างรวดเร็ว เพื่อสร้างเซสชันแรกของคุณ",
+    homeViewOnGitHub: "ดูซอร์สโค้ดบน GitHub",
+    homePagesSuffix: "หน้า",
   },
 };
 
