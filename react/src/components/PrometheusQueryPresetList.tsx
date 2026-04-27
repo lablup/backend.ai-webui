@@ -7,12 +7,15 @@ import {
   PrometheusQueryPresetListFragment$key,
 } from '../__generated__/PrometheusQueryPresetListFragment.graphql';
 import { localeCompare } from '../helper';
+import { DeleteOutlined } from '@ant-design/icons';
 import {
+  Button,
   Typography,
   type TableColumnsType,
   type TablePaginationConfig,
 } from 'antd';
 import {
+  BAIFlex,
   BAITable,
   BAITableProps,
   filterOutNullAndUndefined,
@@ -31,12 +34,14 @@ interface PrometheusQueryPresetListProps extends Omit<
   presetsFrgmt: PrometheusQueryPresetListFragment$key;
   loading?: boolean;
   pagination: TablePaginationConfig;
+  onDeletePreset?: (preset: PrometheusQueryPresetRow) => void;
 }
 
 const PrometheusQueryPresetList: React.FC<PrometheusQueryPresetListProps> = ({
   presetsFrgmt,
   loading,
   pagination,
+  onDeletePreset,
   ...tableProps
 }) => {
   'use memo';
@@ -119,6 +124,21 @@ const PrometheusQueryPresetList: React.FC<PrometheusQueryPresetListProps> = ({
       key: 'updatedAt',
       render: (updatedAt: string | null | undefined) =>
         updatedAt ? dayjs(updatedAt).format('lll') : '-',
+    },
+    {
+      title: t('general.Control'),
+      key: 'actions',
+      fixed: 'right',
+      render: (_value, row) => (
+        <BAIFlex gap="xxs">
+          <Button
+            type="text"
+            danger
+            icon={<DeleteOutlined />}
+            onClick={() => onDeletePreset?.(row)}
+          />
+        </BAIFlex>
+      ),
     },
   ];
 
