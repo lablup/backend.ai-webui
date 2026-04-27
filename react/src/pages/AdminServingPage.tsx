@@ -29,6 +29,10 @@ const AdminModelCardListPage = React.lazy(
   () => import('./AdminModelCardListPage'),
 );
 
+const AutoScalingRulePresetTab = React.lazy(
+  () => import('../components/AutoScalingRulePresetTab'),
+);
+
 const ServingTabContent: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
@@ -244,6 +248,10 @@ const AdminServingPage: React.FC = () => {
           key: 'model-store',
           label: t('adminModelCard.ModelStoreManagement'),
         },
+        isSuperAdmin && {
+          key: 'auto-scaling-rule',
+          label: t('webui.menu.AutoScalingRule'),
+        },
       ])}
     >
       <Suspense fallback={<Skeleton active />}>
@@ -251,6 +259,11 @@ const AdminServingPage: React.FC = () => {
         {queryParam.tab === 'model-store' && isSuperAdmin && (
           <BAIErrorBoundary>
             <AdminModelCardListPage />
+          </BAIErrorBoundary>
+        )}
+        {queryParam.tab === 'auto-scaling-rule' && isSuperAdmin && (
+          <BAIErrorBoundary>
+            <AutoScalingRulePresetTab />
           </BAIErrorBoundary>
         )}
       </Suspense>
