@@ -90,10 +90,6 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: [
       resolve(__dirname, 'src/setupTests.ts'),
-      // Map `jest.*` helpers to their `vi.*` equivalents so tests written
-      // against Jest can run under Vitest without per-file renames.
-      // This is a migration aid; new tests should use `vi.*` directly.
-      resolve(__dirname, '__test__/vitest.jest-compat.ts'),
     ],
     include: ['src/**/*.{test,spec}.{ts,tsx}'],
     exclude: ['**/node_modules/**', '**/build/**', '**/__generated__/**'],

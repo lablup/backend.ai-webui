@@ -17,11 +17,6 @@ export default defineConfig({
   test: {
     globals: true,
     environment: "node",
-    setupFiles: [
-      // Map `jest.*` helpers to their `vi.*` equivalents so tests written
-      // against Jest can run under Vitest without per-file renames.
-      resolve(__dirname, "__test__/vitest.jest-compat.ts"),
-    ],
     include: ["{src,scripts}/**/*.{test,spec}.ts"],
     exclude: [
       "**/node_modules/**",

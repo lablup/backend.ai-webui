@@ -27,12 +27,6 @@ export default defineConfig({
       // Matches the alias in BUI's vite.config.ts so relay imports
       // (`./__generated__/*.graphql`) resolve to `src/__generated__/*.graphql.ts`.
       { find: './__generated__', replacement: generatedDir },
-      // Two BUI tests still `import { ... } from '@jest/globals'`.
-      // Redirect the specifier to a local shim that re-exports from vitest.
-      {
-        find: '@jest/globals',
-        replacement: resolve(__dirname, '__test__/jest-globals-shim.ts'),
-      },
     ],
   },
 
@@ -53,9 +47,6 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: [
       resolve(__dirname, 'setupTests.ts'),
-      // Map `jest.*` helpers to their `vi.*` equivalents so tests written
-      // against Jest can run under Vitest without per-file renames.
-      resolve(__dirname, '__test__/vitest.jest-compat.ts'),
     ],
     include: ['src/**/*.{test,spec}.{ts,tsx}'],
     exclude: ['**/node_modules/**', '**/dist/**', '**/__generated__/**'],

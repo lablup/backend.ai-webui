@@ -199,7 +199,7 @@ describe("i18n-merge-driver utility functions", () => {
 
 describe("i18n-merge-driver integration scenarios", () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it("should handle typical i18n merge scenario without conflicts", () => {

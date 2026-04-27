@@ -63,10 +63,8 @@ vi.mock('../helper/loginSessionAuth', () => ({
   loadConfigFromWebServer: vi.fn().mockResolvedValue(undefined),
 }));
 
-const MockedTabCount = TabCount as jest.MockedClass<typeof TabCount>;
-const mockedLoadConfig = loadConfigFromWebServer as jest.MockedFunction<
-  typeof loadConfigFromWebServer
->;
+const MockedTabCount = vi.mocked(TabCount, { partial: false });
+const mockedLoadConfig = vi.mocked(loadConfigFromWebServer);
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -133,7 +131,7 @@ function makeConnectedClient() {
 function mockNavigationType(
   type: 'navigate' | 'reload' | 'back_forward',
 ): void {
-  (window.performance as any).getEntriesByType = jest
+  (window.performance as any).getEntriesByType = vi
     .fn()
     .mockImplementation((entryType: string) => {
       if (entryType === 'navigation') {

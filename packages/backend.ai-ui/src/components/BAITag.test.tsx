@@ -59,7 +59,7 @@ describe('BAITag', () => {
 
   describe('Close Functionality', () => {
     it('should call onClose when close button is clicked', () => {
-      const handleClose = jest.fn();
+      const handleClose = vi.fn();
       render(
         <BAITag closable onClose={handleClose}>
           Closable
@@ -155,7 +155,7 @@ describe('BAITag', () => {
 
   describe('Accessibility', () => {
     it('should be keyboard accessible when closable', () => {
-      const handleClose = jest.fn();
+      const handleClose = vi.fn();
       render(
         <BAITag closable onClose={handleClose}>
           Accessible Tag
@@ -187,8 +187,8 @@ describe('BAITag', () => {
     });
 
     it('should handle multiple closable tags independently', () => {
-      const handleClose1 = jest.fn();
-      const handleClose2 = jest.fn();
+      const handleClose1 = vi.fn();
+      const handleClose2 = vi.fn();
       render(
         <>
           <BAITag closable onClose={handleClose1}>
@@ -211,7 +211,7 @@ describe('BAITag', () => {
 
   describe('Event Handlers', () => {
     it('should call onClick when tag is clicked', () => {
-      const handleClick = jest.fn();
+      const handleClick = vi.fn();
       render(<BAITag onClick={handleClick}>Clickable Tag</BAITag>);
       const tag = screen.getByText('Clickable Tag');
       act(() => {
@@ -221,7 +221,7 @@ describe('BAITag', () => {
     });
 
     it('should call onClose with event parameter', () => {
-      const handleClose = jest.fn();
+      const handleClose = vi.fn();
       render(
         <BAITag closable onClose={handleClose}>
           Closable

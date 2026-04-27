@@ -4,12 +4,12 @@ import { act } from 'react';
 
 describe('useDebouncedDeferredValue', () => {
   beforeEach(() => {
-    jest.useFakeTimers();
+    vi.useFakeTimers();
   });
 
   afterEach(() => {
-    jest.runOnlyPendingTimers();
-    jest.useRealTimers();
+    vi.runOnlyPendingTimers();
+    vi.useRealTimers();
   });
 
   describe('Basic Functionality', () => {
@@ -70,9 +70,9 @@ describe('useDebouncedDeferredValue', () => {
       // Rapid updates within debounce window
       act(() => {
         rerender({ value: 'updated1' });
-        jest.advanceTimersByTime(50);
+        vi.advanceTimersByTime(50);
         rerender({ value: 'updated2' });
-        jest.advanceTimersByTime(50);
+        vi.advanceTimersByTime(50);
         rerender({ value: 'final' });
       });
 
@@ -81,7 +81,7 @@ describe('useDebouncedDeferredValue', () => {
 
       // Advance past default debounce time (200ms)
       await act(async () => {
-        jest.advanceTimersByTime(200);
+        vi.advanceTimersByTime(200);
       });
 
       await waitFor(() => {
@@ -102,13 +102,13 @@ describe('useDebouncedDeferredValue', () => {
 
       // Should not update before custom wait time
       await act(async () => {
-        jest.advanceTimersByTime(400);
+        vi.advanceTimersByTime(400);
       });
       expect(result.current).toBe('initial');
 
       // Should update after custom wait time
       await act(async () => {
-        jest.advanceTimersByTime(100);
+        vi.advanceTimersByTime(100);
       });
 
       await waitFor(() => {
@@ -157,7 +157,7 @@ describe('useDebouncedDeferredValue', () => {
 
       // Should update after wait time
       await act(async () => {
-        jest.advanceTimersByTime(200);
+        vi.advanceTimersByTime(200);
       });
 
       await waitFor(() => {
@@ -178,11 +178,11 @@ describe('useDebouncedDeferredValue', () => {
       // Continuously update within debounce window
       act(() => {
         rerender({ value: 'update1' });
-        jest.advanceTimersByTime(100);
+        vi.advanceTimersByTime(100);
         rerender({ value: 'update2' });
-        jest.advanceTimersByTime(100);
+        vi.advanceTimersByTime(100);
         rerender({ value: 'update3' });
-        jest.advanceTimersByTime(100);
+        vi.advanceTimersByTime(100);
       });
 
       // After maxWait time, should force update even if keep updating
@@ -209,7 +209,7 @@ describe('useDebouncedDeferredValue', () => {
 
       // After debounce time
       await act(async () => {
-        jest.advanceTimersByTime(200);
+        vi.advanceTimersByTime(200);
       });
 
       // Should eventually update (deferred value may lag slightly)
@@ -234,12 +234,12 @@ describe('useDebouncedDeferredValue', () => {
 
       // Advance through all updates
       await act(async () => {
-        jest.advanceTimersByTime(250);
+        vi.advanceTimersByTime(250);
       });
 
       // Should debounce and show final value
       await act(async () => {
-        jest.advanceTimersByTime(200);
+        vi.advanceTimersByTime(200);
       });
 
       await waitFor(() => {
@@ -261,7 +261,7 @@ describe('useDebouncedDeferredValue', () => {
 
       // With zero wait, should update quickly
       await act(async () => {
-        jest.advanceTimersByTime(0);
+        vi.advanceTimersByTime(0);
       });
 
       await waitFor(() => {
@@ -280,7 +280,7 @@ describe('useDebouncedDeferredValue', () => {
       });
 
       await act(async () => {
-        jest.advanceTimersByTime(200);
+        vi.advanceTimersByTime(200);
       });
 
       expect(result.current).toBe('test');
@@ -302,7 +302,7 @@ describe('useDebouncedDeferredValue', () => {
       });
 
       await act(async () => {
-        jest.advanceTimersByTime(200);
+        vi.advanceTimersByTime(200);
       });
 
       await waitFor(() => {
@@ -333,7 +333,7 @@ describe('useDebouncedDeferredValue', () => {
 
       // Should not throw or cause issues
       await act(async () => {
-        jest.advanceTimersByTime(200);
+        vi.advanceTimersByTime(200);
       });
     });
   });
