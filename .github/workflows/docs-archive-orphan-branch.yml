@@ -1,28 +1,36 @@
-# Build the WebUI docs site for a specific minor version with the
-# toolkit-of-its-day, then commit + push the artifacts to a docs-archive
-# orphan branch (e.g., `docs-archive/25.16`).
+# Snapshot the docs SOURCE (markdown + book.config.yaml) at a specific
+# release tag and commit + push it to a `docs-archive/<minor>` orphan
+# branch (e.g., `docs-archive/26.4`).
 #
-# Why orphan branches?
-#   Past minors are NOT rebuilt with the current toolkit on every deploy
-#   — markdown structure of older minors may diverge enough to break the
-#   build. Instead, each minor is built ONCE with the toolkit it shipped
-#   with and parked on a dedicated orphan branch. Orphan branches share
-#   no history with `main`, so the main repo size is unaffected.
+# Why this exists (the FR-2729 v1 "overlay" archive model)
+#   Each archive holds the *source* of a minor at the chosen release ref,
+#   not its rendered output. At Amplify build time the current toolkit
+#   on `main` re-renders every archive's source so all versions on the
+#   live site share the same toolkit features (FR-2731 PDF card, FR-2733
+#   selector + banner UX, etc.). FR-2710 F6's original intent was
+#   "toolkit-of-its-day" (build once, freeze); FR-2729 inverted that
+#   for v1 because shipping the same look across versions matters more
+#   than perfectly reproducing each minor's contemporary toolkit. See
+#   FR-2751 for follow-up build caching that makes this efficient at
+#   archive count >= 2.
 #
-# Trigger: manual (`workflow_dispatch`) for v1. The operator picks the
-# tagged commit they want to immortalize and the minor label that
+# Trigger: manual (`workflow_dispatch`). The operator picks the tagged
+# commit whose docs source should be parked, and the minor label that
 # represents it. Future iteration may add an on-tag trigger but that is
 # explicitly out of scope here.
 #
-# Output: a `docs-archive/<minor>` branch containing only the contents
-# of `dist/web/<minor>/` (so the archived site is the FILES, not the
-# source tree). The deployment pipeline (AWS Amplify or equivalent)
-# checks out `docs-archive/<minor>` and serves it under `/<minor>/...`.
-# The deployment pipeline itself is deferred to a separate spec.
+# Output: a `docs-archive/<minor>` branch containing ONLY:
+#   src/                          # markdown + book.config.yaml
+#   .archive-info.txt             # provenance sentinel
+# Orphan branches share no history with `main`, so the main repo size
+# is unaffected. Each dispatch force-pushes — running for the same
+# minor on a higher patch tag overwrites the archive with the new src.
 #
 # References:
-#   - Spec: .specs/FR-2710-docs-site-production-uplift/spec.md (F6)
-#   - Issue: FR-2718 / gh#7003
+#   - Spec:   .specs/FR-2729-webui-docs-multi-version-deployment/spec.md
+#   - v1 sub-task: FR-2738
+#   - Predecessor (Done): FR-2710 F6 (versioned output layout)
+#   - Follow-up: FR-2751 (per-archive build caching)
 
 name: docs-archive-orphan-branch
 
@@ -30,15 +38,15 @@ on:
   workflow_dispatch:
     inputs:
       source_ref:
-        description: "Source ref to build from (commit SHA or tag, e.g. v25.16.5)"
+        description: "Source ref whose docs src/ to snapshot (tag or SHA, e.g. v26.4.7)"
         required: true
         type: string
       minor_label:
-        description: "Minor label this archive represents (e.g. 25.16). MUST NOT include patch."
+        description: "Minor label this archive represents (e.g. 26.4). MUST NOT include patch."
         required: true
         type: string
       dry_run:
-        description: "If true, build and inspect only — do NOT push the orphan branch"
+        description: "If true, stage and inspect only — do NOT push the orphan branch"
         required: false
         type: boolean
         default: false
@@ -49,7 +57,7 @@ permissions:
 jobs:
   build-and-archive:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 10
     steps:
       - name: Validate minor label shape
         # Refuse anything that looks like a full patch (three numeric segments)
@@ -61,7 +69,7 @@ jobs:
         run: |
           if [[ "$MINOR_LABEL" =~ ^[0-9]+\.[0-9]+\.[0-9]+ ]]; then
             echo "ERROR: minor_label '$MINOR_LABEL' looks like a patch."
-            echo "Expected format: '<MAJOR>.<MINOR>' (e.g. 25.16). The selector lists minors only."
+            echo "Expected format: '<MAJOR>.<MINOR>' (e.g. 26.4). The selector lists minors only."
             exit 1
           fi
           if [[ ! "$MINOR_LABEL" =~ ^[0-9]+\.[0-9]+$ ]]; then
@@ -69,98 +77,52 @@ jobs:
             exit 1
           fi
 
-      - name: Checkout source ref (toolkit-of-its-day)
+      - name: Checkout source ref
         uses: actions/checkout@v4
         with:
           ref: ${{ inputs.source_ref }}
           fetch-depth: 0
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          # Match the version range in `package.json#engines.pnpm`
-          # (currently ^10.16.0). action-setup@v4 requires either a
-          # `version:` input or a `packageManager` field in package.json;
-          # the repo has neither, so pin here directly.
-          version: 10
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          # Track `.nvmrc` (currently 24) so the runner inherits future
-          # bumps automatically. Hardcoding `20` here was incompatible
-          # with deps that specify `engines.node >= 22` (e.g., chevrotain).
-          node-version-file: ".nvmrc"
-          cache: "pnpm"
-
-      - name: Install dependencies
-        # Archive builds are one-off snapshots of an OLD tag's content.
-        # Lockfile drift between (lockfile, package.json) at the tag is
-        # possible (e.g., dep range bumps merged without re-running
-        # `pnpm install`) and would block --frozen-lockfile. Drop the
-        # strict mode here only — production builds (amplify.yml,
-        # release CI) keep --frozen-lockfile.
-        run: pnpm install --no-frozen-lockfile
-
-      - name: Build docs-toolkit and link CLI
-        # backend.ai-docs-toolkit ships its `docs-toolkit` CLI as the
-        # package bin, but it lives at dist/cli.js which only exists
-        # after `tsc` runs. On a fresh `pnpm install` the dist directory
-        # is empty, so pnpm cannot create the .bin/docs-toolkit symlink
-        # and the later `build:web` step fails with `spawn ENOENT`.
-        # Building the toolkit and re-running install populates dist/
-        # and lets pnpm wire the bin link. (Same pattern as FR-2719's
-        # build_docs job in package.yml.)
+      - name: Verify docs source exists at source ref
         run: |
-          pnpm --filter backend.ai-docs-toolkit run build
-          pnpm install --no-frozen-lockfile
-
-      - name: Build website (toolkit-of-its-day)
-        # We deliberately use the toolkit version that shipped with this
-        # source ref. Past minors are NEVER rebuilt with main's toolkit.
-        run: pnpm --filter backend.ai-webui-docs run build:web
-
-      - name: Verify build output exists
-        run: |
-          DIST="packages/backend.ai-webui-docs/dist/web"
-          if [ ! -d "$DIST" ]; then
-            echo "ERROR: expected build output at $DIST"
+          SRC="packages/backend.ai-webui-docs/src"
+          if [ ! -d "$SRC" ]; then
+            echo "ERROR: expected docs source at $SRC (does this ref predate the package?)"
             exit 1
           fi
-          echo "Build output:"
-          ls -la "$DIST"
+          if [ ! -f "$SRC/book.config.yaml" ]; then
+            echo "ERROR: expected $SRC/book.config.yaml — required by docs-toolkit at consumer-rebuild time"
+            exit 1
+          fi
+          echo "Docs source contents (top level):"
+          ls -la "$SRC"
 
-      - name: Stage build artifact for archive
-        # The archive branch should hold ONLY the rendered site, with no
-        # source files or lockfiles. We collect the output into a temp
-        # directory the orphan branch is built from. Inputs flow through
-        # env vars to avoid shell injection.
+      - name: Stage archive contents (source markdown)
+        # Archive root layout (matches what docs-toolkit expects when
+        # resolving a `versions[].source.kind=archive-branch` entry):
+        #   src/book.config.yaml
+        #   src/<lang>/...                   # md + images
+        #   .archive-info.txt
+        # Inputs flow through env vars to avoid shell injection.
         env:
           MINOR_LABEL: ${{ inputs.minor_label }}
           SOURCE_REF: ${{ inputs.source_ref }}
           RUN_ID: ${{ github.run_id }}
         run: |
-          mkdir -p /tmp/docs-archive
-          cp -R packages/backend.ai-webui-docs/dist/web/. /tmp/docs-archive/
-          # Drop any version-prefixed subdirectory: the archive branch
-          # represents a SINGLE minor, so its root is the rendered site.
-          # If the source ref already used `versions:` mode the output is
-          # `dist/web/<v>/<lang>/...`; flatten it.
-          cd /tmp/docs-archive
-          if [ -d "$MINOR_LABEL" ]; then
-            mv "$MINOR_LABEL"/* .
-            rmdir "$MINOR_LABEL"
-          fi
-          echo "Archive contents:"
-          ls -la
+          mkdir -p /tmp/docs-archive/src
+          cp -R packages/backend.ai-webui-docs/src/. /tmp/docs-archive/src/
           # Drop a sentinel file so anyone browsing the branch knows
           # which minor + source ref produced it.
-          cat > .archive-info.txt <<EOF
+          cat > /tmp/docs-archive/.archive-info.txt <<EOF
           minor_label: $MINOR_LABEL
           source_ref:  $SOURCE_REF
           built_at:    $(date -u +"%Y-%m-%dT%H:%M:%SZ")
           built_by:    docs-archive-orphan-branch.yml (gh actions run $RUN_ID)
           EOF
+          echo "Staged archive contents:"
+          ls -la /tmp/docs-archive
+          echo "Source tree (top level):"
+          ls -la /tmp/docs-archive/src
 
       - name: Configure git
         run: |
@@ -181,15 +143,15 @@ jobs:
           git checkout --orphan "$BRANCH"
           git rm -rf --cached . > /dev/null 2>&1 || true
           # Wipe everything — we want the orphan tree to contain ONLY the
-          # archived site, no inherited source files.
+          # archived source, no inherited files.
           find . -mindepth 1 -maxdepth 1 ! -name '.git' -exec rm -rf {} +
           # Copy the staged archive in.
           cp -R /tmp/docs-archive/. .
           git add -A
-          git commit -m "docs-archive($MINOR_LABEL): build from $SOURCE_REF"
+          git commit -m "docs-archive($MINOR_LABEL): snapshot src from $SOURCE_REF"
           # Force-push: each invocation replaces the previous archive for
-          # this minor, since we re-build with the toolkit-of-its-day to
-          # pick up the latest patch within the minor.
+          # this minor, since a higher patch on the same minor may carry
+          # docs corrections that should land in the archive.
           git push --force origin "$BRANCH"
 
       - name: Dry-run summary
