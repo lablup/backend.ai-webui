@@ -1,0 +1,34 @@
+{
+  "_comment": [
+    "AWS Amplify 'Rewrites and redirects' rules for webui.docs.backend.ai.",
+    "Spec: .specs/FR-2729-webui-docs-multi-version-deployment/spec.md (FR-4, FR-5).",
+    "",
+    "Amplify Hosting does NOT read this file directly — see amplify.yml header note.",
+    "DevOps applies these rules in the Amplify console under 'App settings →",
+    "Rewrites and redirects' (or via the AWS CLI: `aws amplify update-app",
+    "--custom-rules file://amplify-redirects.json`). Versioning the file",
+    "here keeps the intent reviewable in the repo.",
+    "",
+    "Anti-pattern guard:",
+    "  - The root MUST redirect to /26.4/<...>, NOT to /next/<...>.",
+    "    `next` is opt-in only (FR-5).",
+    "  - The /26.4/ target is hardcoded for v1. When the `latest: true`",
+    "    flip moves to a new minor (e.g., 26.5), update both this file",
+    "    AND re-apply the rules in the console. A future toolkit helper",
+    "    may emit this list from `versions[latest=true]` automatically.",
+    "  - Deep-link redirects (/<lang>/<*> -> /<latest>/<lang>/<*>) are",
+    "    intentionally out of scope for v1. Tracked in FR-2742.",
+    "",
+    "Status codes:",
+    "  301 — Permanent redirect. Used for the root because /26.4/ is",
+    "        the deliberate canonical landing page until the next",
+    "        latest-stable shift."
+  ],
+  "customRules": [
+    {
+      "source": "/",
+      "target": "/26.4/",
+      "status": "301"
+    }
+  ]
+}
