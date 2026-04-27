@@ -72,9 +72,6 @@ catalog:
 
 gitBranchLockfile: true
 
-mergeGitBranchLockfilesBranchPattern:
-  - main
-
 minimumReleaseAge: 10080
 
 minimumReleaseAgeExclude:
