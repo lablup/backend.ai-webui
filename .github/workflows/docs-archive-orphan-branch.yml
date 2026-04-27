@@ -78,11 +78,11 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          # Pin to the major matching `pnpm-lock.yaml` (lockfileVersion 9.0).
-          # Without this, action-setup@v4 fails with "No pnpm version is
-          # specified" when the repo's package.json has no `packageManager`
-          # field.
-          version: 9
+          # Match the version range in `package.json#engines.pnpm`
+          # (currently ^10.16.0). action-setup@v4 requires either a
+          # `version:` input or a `packageManager` field in package.json;
+          # the repo has neither, so pin here directly.
+          version: 10
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
