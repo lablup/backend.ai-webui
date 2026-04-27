@@ -1747,6 +1747,32 @@
   "projectSelect": {
     "ProjectAdminBadge": "Төслийн администратор"
   },
+  "prometheusQueryPreset": {
+    "AddPreset": "Урьдчилсан тохиргоо нэмэх",
+    "Category": "Ангилал",
+    "CreatePreset": "Урьдчилсан тохиргоо үүсгэх",
+    "CreatedAt": "Үүсгэсэн огноо",
+    "DeleteWarning": "Энэ урьдчилсан тохиргоог устгавал бүрмөсөн устгагдах бөгөөд буцаах боломжгүй.",
+    "Description": "Тайлбар",
+    "EditPreset": "Урьдчилсан тохиргоо засах",
+    "FilterLabels": "Шүүлтүүрийн шошго",
+    "GroupLabels": "Бүлгийн шошго",
+    "MetricName": "Метрикийн нэр",
+    "MetricNameRequired": "Метрикийн нэр шаардлагатай.",
+    "Name": "Нэр",
+    "NameMustBeUnique": "Бүх Prometheus асуулгын урьдчилсан тохиргоонуудад давтагдахгүй байх ёстой.",
+    "NameRequired": "Нэр шаардлагатай.",
+    "NoCategory": "Ангилалгүй",
+    "PermanentlyDeletePreset": "\"{{ name }}\"-г бүрмөсөн устгах уу?",
+    "QueryTemplate": "Асуулгын загвар",
+    "QueryTemplateRequired": "Асуулгын загвар шаардлагатай.",
+    "Rank": "Зэрэглэл",
+    "SuccessfullyCreated": "Prometheus асуулгын урьдчилсан тохиргоо амжилттай үүсгэгдлээ.",
+    "SuccessfullyDeleted": "Prometheus асуулгын урьдчилсан тохиргоо амжилттай устгагдлаа.",
+    "SuccessfullyUpdated": "Prometheus асуулгын урьдчилсан тохиргоо амжилттай шинэчлэгдлээ.",
+    "TimeWindow": "Цагийн цонх",
+    "UpdatedAt": "Шинэчлэгдсэн огноо"
+  },
   "rbac": {
     "Active": "Идэвхтэй",
     "Assign": "Оноох",
@@ -2071,7 +2097,7 @@
     "Updated": "Нөөцийн урьдчилан тохируулалтыг шинэчилсэн"
   },
   "sTokenLoginBoundary": {
-"AuthenticatingDescription": "Нэвтрэх токеныг шалгаж байна…",
+    "AuthenticatingDescription": "Нэвтрэх токеныг шалгаж байна…",
     "AuthenticatingTitle": "Signing you in",
     "ConnectingDescription": "Backend.AI серверт холбогдож байна…",
     "CopyErrorDetails": "Copy error details",
@@ -2984,6 +3010,7 @@
       "AllowedClientIpWarning": "Хэрэв таны одоогийн IP зөвшөөрөгдсөн IP жагсаалтад байхгүй бол та нэвтрэх боломжгүй болж болзошгүй. Энэ тохиолдолд администраторт хандана уу.",
       "Architecture": "Уран барилгач",
       "ArtifactDetails": "Олдворын дэлгэрэнгүй",
+      "AutoScalingRule": "Автомат масштабын дүрэм",
       "Branding": "Брэндчлэл",
       "Cancel": "Цуцлах",
       "ChangePassword": "Нууц үгээ солих",

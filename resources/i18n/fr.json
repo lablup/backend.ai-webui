@@ -1748,6 +1748,32 @@
   "projectSelect": {
     "ProjectAdminBadge": "Administrateur de projet"
   },
+  "prometheusQueryPreset": {
+    "AddPreset": "Ajouter un préréglage",
+    "Category": "Catégorie",
+    "CreatePreset": "Créer un préréglage",
+    "CreatedAt": "Créé le",
+    "DeleteWarning": "La suppression de ce préréglage le supprimera définitivement et cette action est irréversible.",
+    "Description": "Description",
+    "EditPreset": "Modifier le préréglage",
+    "FilterLabels": "Étiquettes de filtre",
+    "GroupLabels": "Étiquettes de groupe",
+    "MetricName": "Nom de la métrique",
+    "MetricNameRequired": "Le nom de la métrique est obligatoire.",
+    "Name": "Nom",
+    "NameMustBeUnique": "Doit être unique parmi tous les préréglages de requête Prometheus.",
+    "NameRequired": "Le nom est obligatoire.",
+    "NoCategory": "Aucune catégorie",
+    "PermanentlyDeletePreset": "Supprimer définitivement \"{{ name }}\" ?",
+    "QueryTemplate": "Modèle de requête",
+    "QueryTemplateRequired": "Le modèle de requête est obligatoire.",
+    "Rank": "Rang",
+    "SuccessfullyCreated": "Le préréglage de requête Prometheus a été créé avec succès.",
+    "SuccessfullyDeleted": "Le préréglage de requête Prometheus a été supprimé avec succès.",
+    "SuccessfullyUpdated": "Le préréglage de requête Prometheus a été mis à jour avec succès.",
+    "TimeWindow": "Fenêtre temporelle",
+    "UpdatedAt": "Mis à jour le"
+  },
   "rbac": {
     "Active": "Actif",
     "Assign": "Attribuer",
@@ -2072,7 +2098,7 @@
     "Updated": "Préréglage de ressource mis à jour"
   },
   "sTokenLoginBoundary": {
-"AuthenticatingDescription": "Vérification de votre jeton de connexion…",
+    "AuthenticatingDescription": "Vérification de votre jeton de connexion…",
     "AuthenticatingTitle": "Signing you in",
     "ConnectingDescription": "Connexion au serveur Backend.AI…",
     "CopyErrorDetails": "Copy error details",
@@ -2985,6 +3011,7 @@
       "AllowedClientIpWarning": "Si votre IP actuelle ne figure pas dans la liste des IP autorisées, vous ne pourrez peut-être pas vous connecter. Veuillez contacter votre administrateur si cela se produit.",
       "Architecture": "Architecture",
       "ArtifactDetails": "Détails d'artefacts",
+      "AutoScalingRule": "Règle de mise à l'échelle automatique",
       "Branding": "Personnalisation de la marque",
       "Cancel": "Annuler",
       "ChangePassword": "Changer le mot de passe",

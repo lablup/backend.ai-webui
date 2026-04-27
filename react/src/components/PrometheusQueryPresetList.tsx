@@ -9,20 +9,18 @@ import {
 } from '../__generated__/PrometheusQueryPresetListFragment.graphql';
 import { localeCompare } from '../helper';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { Typography, type TablePaginationConfig } from 'antd';
 import {
-  Button,
-  Typography,
-  type TableColumnsType,
-  type TablePaginationConfig,
-} from 'antd';
-import {
+  BAIColumnsType,
   BAIFlex,
+  BAINameActionCell,
   BAITable,
+  BAITableColumnOverrideItem,
   BAITableProps,
   filterOutNullAndUndefined,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
@@ -30,7 +28,7 @@ type PrometheusQueryPresetRow = PrometheusQueryPresetListFragment$data[number];
 
 interface PrometheusQueryPresetListProps extends Omit<
   BAITableProps<PrometheusQueryPresetRow>,
-  'dataSource' | 'columns'
+  'dataSource' | 'columns' | 'tableSettings'
 > {
   presetsFrgmt: PrometheusQueryPresetListFragment$key;
   loading?: boolean;
@@ -49,6 +47,9 @@ const PrometheusQueryPresetList: React.FC<PrometheusQueryPresetListProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
+  const [columnOverrides, setColumnOverrides] = useState<
+    Record<string, BAITableColumnOverrideItem>
+  >({});
 
   const presets = useFragment(
     graphql`
@@ -78,13 +79,35 @@ const PrometheusQueryPresetList: React.FC<PrometheusQueryPresetListProps> = ({
     presetsFrgmt,
   );
 
-  const columns: TableColumnsType<PrometheusQueryPresetRow> = [
+  const columns: BAIColumnsType<PrometheusQueryPresetRow> = [
     {
       title: t('prometheusQueryPreset.Name'),
       dataIndex: 'name',
       key: 'name',
+      fixed: 'left',
+      required: true,
       sorter: (a, b) => localeCompare(a?.name, b?.name),
-      render: (name: string) => name,
+      render: (_name: string, row) => (
+        <BAINameActionCell
+          title={row.name}
+          showActions="always"
+          actions={[
+            {
+              key: 'edit',
+              title: t('button.Edit'),
+              icon: <EditOutlined />,
+              onClick: () => onEditPreset?.(row),
+            },
+            {
+              key: 'delete',
+              title: t('button.Delete'),
+              icon: <DeleteOutlined />,
+              type: 'danger',
+              onClick: () => onDeletePreset?.(row),
+            },
+          ]}
+        />
+      ),
     },
     {
       title: t('prometheusQueryPreset.MetricName'),
@@ -101,6 +124,7 @@ const PrometheusQueryPresetList: React.FC<PrometheusQueryPresetListProps> = ({
           <Typography.Text
             code
             ellipsis={{ tooltip: queryTemplate }}
+            copyable={{ text: queryTemplate }}
             style={{ maxWidth: 320 }}
           >
             {queryTemplate}
@@ -119,6 +143,7 @@ const PrometheusQueryPresetList: React.FC<PrometheusQueryPresetListProps> = ({
       title: t('prometheusQueryPreset.CreatedAt'),
       dataIndex: 'createdAt',
       key: 'createdAt',
+      defaultHidden: true,
       render: (createdAt: string | null | undefined) =>
         createdAt ? dayjs(createdAt).format('lll') : '-',
     },
@@ -126,43 +151,30 @@ const PrometheusQueryPresetList: React.FC<PrometheusQueryPresetListProps> = ({
       title: t('prometheusQueryPreset.UpdatedAt'),
       dataIndex: 'updatedAt',
       key: 'updatedAt',
+      defaultHidden: true,
       render: (updatedAt: string | null | undefined) =>
         updatedAt ? dayjs(updatedAt).format('lll') : '-',
-    },
-    {
-      title: t('general.Control'),
-      key: 'actions',
-      fixed: 'right',
-      render: (_value, row) => (
-        <BAIFlex gap="xxs">
-          <Button
-            type="text"
-            icon={<EditOutlined />}
-            onClick={() => onEditPreset?.(row)}
-          />
-          <Button
-            type="text"
-            danger
-            icon={<DeleteOutlined />}
-            onClick={() => onDeletePreset?.(row)}
-          />
-        </BAIFlex>
-      ),
     },
   ];
 
   return (
-    <BAITable
-      size="small"
-      loading={loading}
-      scroll={{ x: 'max-content' }}
-      rowKey="id"
-      dataSource={filterOutNullAndUndefined(presets)}
-      columns={columns}
-      pagination={pagination}
-      showSorterTooltip={false}
-      {...tableProps}
-    />
+    <BAIFlex direction="column" align="stretch">
+      <BAITable
+        size="small"
+        loading={loading}
+        scroll={{ x: 'max-content' }}
+        rowKey="id"
+        dataSource={filterOutNullAndUndefined(presets)}
+        columns={columns}
+        pagination={pagination}
+        showSorterTooltip={false}
+        tableSettings={{
+          columnOverrides,
+          onColumnOverridesChange: setColumnOverrides,
+        }}
+        {...tableProps}
+      />
+    </BAIFlex>
   );
 };
 
