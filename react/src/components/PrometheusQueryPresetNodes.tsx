@@ -7,7 +7,6 @@ import {
   PrometheusQueryPresetNodesFragment$data,
   PrometheusQueryPresetNodesFragment$key,
 } from '../__generated__/PrometheusQueryPresetNodesFragment.graphql';
-import { localeCompare } from '../helper';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { Typography } from 'antd';
 import {
@@ -88,7 +87,7 @@ const PrometheusQueryPresetNodes: React.FC<PrometheusQueryPresetNodesProps> = ({
       key: 'name',
       fixed: 'left',
       required: true,
-      sorter: (a, b) => localeCompare(a?.name, b?.name),
+      sorter: true,
       render: (_name: string, row) => (
         <BAINameActionCell
           title={row.name}
@@ -146,6 +145,7 @@ const PrometheusQueryPresetNodes: React.FC<PrometheusQueryPresetNodesProps> = ({
       dataIndex: 'createdAt',
       key: 'createdAt',
       defaultHidden: true,
+      sorter: true,
       render: (createdAt: string | null | undefined) =>
         createdAt ? dayjs(createdAt).format('lll') : '-',
     },
@@ -154,6 +154,7 @@ const PrometheusQueryPresetNodes: React.FC<PrometheusQueryPresetNodesProps> = ({
       dataIndex: 'updatedAt',
       key: 'updatedAt',
       defaultHidden: true,
+      sorter: true,
       render: (updatedAt: string | null | undefined) =>
         updatedAt ? dayjs(updatedAt).format('lll') : '-',
     },

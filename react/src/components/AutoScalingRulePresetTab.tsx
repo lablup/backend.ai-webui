@@ -25,7 +25,7 @@ import {
   useFetchKey,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { parseAsJson, useQueryStates } from 'nuqs';
+import { parseAsJson, parseAsString, useQueryStates } from 'nuqs';
 import React, { Suspense, useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
@@ -41,6 +41,7 @@ const AutoScalingRulePresetTab: React.FC = () => {
   const [queryParam, setQueryParam] = useQueryStates(
     {
       filter: parseAsJson<GraphQLFilter>((value) => value as GraphQLFilter),
+      order: parseAsString,
     },
     { history: 'push' },
   );
@@ -85,10 +86,27 @@ const AutoScalingRulePresetTab: React.FC = () => {
     return filter as QueryDefinitionFilter;
   };
 
+  const computeOrderBy = (): AutoScalingRulePresetTabQuery$variables['orderBy'] => {
+    if (!queryParam.order) return null;
+    const isDesc = queryParam.order.startsWith('-');
+    const field = isDesc ? queryParam.order.slice(1) : queryParam.order;
+    const fieldMap: Record<string, string> = {
+      name: 'NAME',
+      createdAt: 'CREATED_AT',
+      updatedAt: 'UPDATED_AT',
+    };
+    const gqlField = fieldMap[field];
+    if (!gqlField) return null;
+    return [
+      { field: gqlField, direction: isDesc ? 'DESC' : 'ASC' },
+    ] as AutoScalingRulePresetTabQuery$variables['orderBy'];
+  };
+
   const queryVariables: AutoScalingRulePresetTabQuery$variables = {
     offset: baiPaginationOption.offset,
     limit: baiPaginationOption.limit,
     filter: flattenGraphQLFilter(queryParam.filter),
+    orderBy: computeOrderBy(),
   };
 
   const deferredQueryVariables = useDeferredValue(queryVariables);
@@ -101,11 +119,13 @@ const AutoScalingRulePresetTab: React.FC = () => {
           $offset: Int
           $limit: Int
           $filter: QueryDefinitionFilter
+          $orderBy: [QueryDefinitionOrderBy!]
         ) {
           prometheusQueryPresets(
             offset: $offset
             limit: $limit
             filter: $filter
+            orderBy: $orderBy
           ) {
             count
             edges {
@@ -152,6 +172,16 @@ const AutoScalingRulePresetTab: React.FC = () => {
                 propertyLabel: t('prometheusQueryPreset.Name'),
                 type: 'string',
               },
+              {
+                key: 'createdAt',
+                propertyLabel: t('prometheusQueryPreset.CreatedAt'),
+                type: 'datetime',
+              },
+              {
+                key: 'updatedAt',
+                propertyLabel: t('prometheusQueryPreset.UpdatedAt'),
+                type: 'datetime',
+              },
             ]}
           />
         </BAIFlex>
@@ -183,6 +213,11 @@ const AutoScalingRulePresetTab: React.FC = () => {
                 setTablePaginationOption({ current, pageSize });
               }
             },
+          }}
+          order={queryParam.order}
+          onChangeOrder={(order) => {
+            setQueryParam({ order: order ?? null });
+            setTablePaginationOption({ current: 1 });
           }}
           onEditPreset={(preset) => {
             setEditingPreset(preset);
