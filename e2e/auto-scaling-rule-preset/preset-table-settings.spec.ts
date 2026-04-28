@@ -278,10 +278,9 @@ test.describe(
       await expect(row).toBeVisible({ timeout: 15000 });
 
       // Find and click the copy icon in the Query Template cell
-      const queryTemplateCell = row
-        .getByRole('cell')
-        .filter({ hasText: queryTemplate });
-      await expect(queryTemplateCell).toBeVisible();
+      // The cell text is truncated in the DOM (CSS ellipsis), so we locate it by column index (3rd cell = Query Template)
+      const queryTemplateCell = row.locator('td').nth(2);
+      await expect(queryTemplateCell).toBeVisible({ timeout: 15000 });
 
       const copyButton = queryTemplateCell.getByRole('button', {
         name: /copy/i,

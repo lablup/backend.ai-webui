@@ -5,7 +5,7 @@
 // This test deploys a brand-new model service, verifies the preset appears in the
 // auto-scaling rule editor dropdown, then terminates the service in afterAll.
 import { FolderExplorerModal } from '../utils/classes/vfolder/FolderExplorerModal';
-import { sweepServices } from '../utils/cleanup-util';
+import { sweepServices, sweepVFolders } from '../utils/cleanup-util';
 import {
   loginAsAdmin,
   navigateTo,
@@ -53,10 +53,9 @@ async function createPreset(
 ): Promise<void> {
   await page.goto(`${webuiEndpoint}/admin-serving?tab=auto-scaling-rule`);
   await page.getByRole('button', { name: /Add Preset/i }).click();
-  const modal = page
-    .locator('.ant-modal')
-    .filter({ has: page.getByRole('dialog') });
-  await expect(modal).toBeVisible();
+  const modal = page.getByRole('dialog');
+  await expect(modal).toBeVisible({ timeout: 10000 });
+  await expect(modal).not.toHaveClass(/ant-zoom-appear/, { timeout: 10000 });
   await modal.getByRole('textbox', { name: 'Name', exact: true }).fill(name);
   await modal.getByRole('textbox', { name: 'Metric Name' }).fill(metricName);
   await modal
@@ -66,24 +65,27 @@ async function createPreset(
   await expect(
     page.getByText('Prometheus query preset has been successfully created.'),
   ).toBeVisible({ timeout: 10000 });
-  await expect(modal).toBeHidden();
+  await expect(modal).toBeHidden({ timeout: 30000 });
 }
 
 async function deletePreset(page: Page, presetName: string): Promise<void> {
   await page.goto(`${webuiEndpoint}/admin-serving?tab=auto-scaling-rule`);
   const row = page.getByRole('row').filter({ hasText: presetName });
   if ((await row.count()) === 0) return;
-  await row.getByRole('button', { name: 'delete' }).click();
-  const confirmInput = page.locator('#confirmText');
-  await expect(confirmInput).toBeVisible({ timeout: 5000 });
-  await confirmInput.fill(presetName);
-  await page
+  await row.locator('button:has(.anticon-delete)').click();
+  const confirmModal = page.getByRole('dialog');
+  await expect(confirmModal).toBeVisible({ timeout: 30000 });
+  await expect(confirmModal).not.toHaveClass(/ant-zoom-appear/, {
+    timeout: 10000,
+  });
+  await confirmModal.locator('input').fill(presetName);
+  await confirmModal
     .getByRole('button', { name: 'Delete', exact: true })
-    .last()
     .click();
   await expect(
     page.getByText('Prometheus query preset has been successfully deleted.'),
   ).toBeVisible({ timeout: 10000 });
+  await expect(confirmModal).toBeHidden({ timeout: 30000 });
 }
 
 async function uploadFixturesToVFolder(
@@ -286,7 +288,16 @@ test.describe(
     let presetName: string;
     let presetNameTimeWindow: string;
 
-    test.afterAll(async ({ page }) => {
+    test.afterAll(async ({ browser, request }) => {
+      // Cleanup presets and services using a fresh context (page fixture not allowed in afterAll)
+      const context = await browser.newContext();
+      const page = await context.newPage();
+      try {
+        await loginAsAdmin(page, request);
+      } catch {
+        await context.close();
+        return;
+      }
       // Cleanup presets
       if (presetName) {
         try {
@@ -308,6 +319,13 @@ test.describe(
       } catch {
         // ignore
       }
+      // Delete the model vfolder
+      try {
+        await sweepVFolders(page, new RegExp(VFOLDER_NAME));
+      } catch {
+        // ignore
+      }
+      await context.close();
     });
 
     // 9.1 A newly created Prometheus Query Preset appears in the auto-scaling rule editor dropdown
@@ -326,10 +344,11 @@ test.describe(
 
       await page.goto(`${webuiEndpoint}/admin-serving?tab=auto-scaling-rule`);
       await page.getByRole('button', { name: /Add Preset/i }).click();
-      const createModal = page
-        .locator('.ant-modal')
-        .filter({ has: page.getByRole('dialog') });
-      await expect(createModal).toBeVisible();
+      const createModal = page.getByRole('dialog');
+      await expect(createModal).toBeVisible({ timeout: 10000 });
+      await expect(createModal).not.toHaveClass(/ant-zoom-appear/, {
+        timeout: 10000,
+      });
       await createModal
         .getByRole('textbox', { name: 'Name', exact: true })
         .fill(presetName);
@@ -349,7 +368,7 @@ test.describe(
           'Prometheus query preset has been successfully created.',
         ),
       ).toBeVisible({ timeout: 10000 });
-      await expect(createModal).toBeHidden();
+      await expect(createModal).toBeHidden({ timeout: 30000 });
 
       // Verify the preset row appears in the table
       await expect(
@@ -375,10 +394,10 @@ test.describe(
       await expect(serviceRow).toBeVisible({ timeout: 60_000 });
 
       // Step 8: Navigate to the endpoint detail page
-      const serviceNameLink = serviceRow
+      await serviceRow
         .getByRole('link', { name: SERVICE_NAME })
-        .or(serviceRow.getByRole('cell', { name: SERVICE_NAME }));
-      await serviceNameLink.first().click();
+        .first()
+        .click();
 
       // Step 9: Locate the "Auto Scaling Rules" section and click "Add Rules"
       const addRulesButton = page
@@ -388,13 +407,12 @@ test.describe(
       await addRulesButton.click();
 
       // Step 10: Verify the Add Auto Scaling Rule modal opens
-      const ruleModal = page
-        .locator('.ant-modal')
-        .filter({ has: page.getByRole('dialog') });
-      await expect(ruleModal).toBeVisible();
-      await expect(ruleModal.getByRole('dialog')).toContainText(
-        /Auto Scaling Rule/i,
-      );
+      const ruleModal = page.getByRole('dialog');
+      await expect(ruleModal).toBeVisible({ timeout: 10000 });
+      await expect(ruleModal).not.toHaveClass(/ant-zoom-appear/, {
+        timeout: 10000,
+      });
+      await expect(ruleModal).toContainText(/Auto Scaling Rule/i);
 
       // Step 11: Set Metric Source to "Prometheus"
       const metricSourceSelect = ruleModal.getByRole('combobox', {
@@ -402,10 +420,12 @@ test.describe(
       });
       await expect(metricSourceSelect).toBeVisible({ timeout: 10000 });
       await metricSourceSelect.click();
-      await page
+      const prometheusItem = page
         .locator('.ant-select-dropdown:not(.ant-select-dropdown-hidden)')
-        .getByRole('option', { name: 'Prometheus' })
-        .click();
+        .last()
+        .locator('.ant-select-item-option', { hasText: 'Prometheus' });
+      await expect(prometheusItem).toBeVisible({ timeout: 10000 });
+      await prometheusItem.click();
 
       // Step 12: Verify the Metric Name (Prometheus Preset) select field is visible
       const prometheusPresetSelect = ruleModal.getByRole('combobox', {
@@ -415,27 +435,27 @@ test.describe(
 
       // Step 13: Click the dropdown and verify the test preset is listed
       await prometheusPresetSelect.click();
+      // Use .last() to pick the actively appearing dropdown (the previous one may still be in leave-animation)
       const presetOption = page
         .locator('.ant-select-dropdown:not(.ant-select-dropdown-hidden)')
-        .getByRole('option', { name: presetName });
+        .last()
+        .locator('.ant-select-item-option', { hasText: presetName });
       await expect(presetOption).toBeVisible({ timeout: 10000 });
 
       // Step 14: Select the test preset
       await presetOption.click();
 
       // Step 15: Verify the (hidden) Metric Name field is auto-filled
-      // The hidden metric name field is filled when the preset is selected
-      // (via form.setFieldsValue in the component)
-      const metricNameField = ruleModal.getByRole('textbox', {
-        name: /Metric Name$/i,
-      });
-      await expect(metricNameField).toHaveValue('e2e_integration_metric', {
+      // The Metric Name field is hidden (display:none) when Prometheus is selected,
+      // since the field is controlled via form.setFieldsValue. Check via DOM input value.
+      const metricNameInput = ruleModal.locator('input[id*="metricName"]');
+      await expect(metricNameInput).toHaveValue('e2e_integration_metric', {
         timeout: 5000,
       });
 
       // Step 16: Cancel the modal
       await ruleModal.getByRole('button', { name: 'Cancel' }).click();
-      await expect(ruleModal).toBeHidden();
+      await expect(ruleModal).toBeHidden({ timeout: 30000 });
     });
 
     // 9.2 Selecting a Prometheus preset auto-fills the Metric Name and Cool Down Seconds
@@ -461,10 +481,11 @@ test.describe(
         .filter({ hasText: presetNameTimeWindow });
       await expect(twRow).toBeVisible({ timeout: 10000 });
       await twRow.getByRole('button', { name: 'edit' }).click();
-      const editModal = page
-        .locator('.ant-modal')
-        .filter({ has: page.getByRole('dialog') });
-      await expect(editModal).toBeVisible();
+      const editModal = page.getByRole('dialog');
+      await expect(editModal).toBeVisible({ timeout: 10000 });
+      await expect(editModal).not.toHaveClass(/ant-zoom-appear/, {
+        timeout: 10000,
+      });
       await editModal
         .getByRole('textbox', { name: 'Time Window (optional)' })
         .fill('15m');
@@ -474,7 +495,7 @@ test.describe(
           'Prometheus query preset has been successfully updated.',
         ),
       ).toBeVisible({ timeout: 10000 });
-      await expect(editModal).toBeHidden();
+      await expect(editModal).toBeHidden({ timeout: 30000 });
 
       // Navigate to the endpoint detail page for the service from test 9.1
       await navigateTo(page, 'serving');
@@ -482,10 +503,10 @@ test.describe(
         .getByRole('row')
         .filter({ hasText: SERVICE_NAME });
       await expect(serviceRow).toBeVisible({ timeout: 30_000 });
-      const serviceNameLink = serviceRow
+      await serviceRow
         .getByRole('link', { name: SERVICE_NAME })
-        .or(serviceRow.getByRole('cell', { name: SERVICE_NAME }));
-      await serviceNameLink.first().click();
+        .first()
+        .click();
 
       // Open the "Add Auto Scaling Rule" modal
       const addRulesButton = page
@@ -494,20 +515,23 @@ test.describe(
       await expect(addRulesButton).toBeVisible({ timeout: 30_000 });
       await addRulesButton.click();
 
-      const ruleModal = page
-        .locator('.ant-modal')
-        .filter({ has: page.getByRole('dialog') });
-      await expect(ruleModal).toBeVisible();
+      const ruleModal = page.getByRole('dialog');
+      await expect(ruleModal).toBeVisible({ timeout: 10000 });
+      await expect(ruleModal).not.toHaveClass(/ant-zoom-appear/, {
+        timeout: 10000,
+      });
 
       // Set Metric Source to "Prometheus"
       const metricSourceSelect = ruleModal.getByRole('combobox', {
         name: /Metric Source/i,
       });
       await metricSourceSelect.click();
-      await page
+      const prometheusItemTw = page
         .locator('.ant-select-dropdown:not(.ant-select-dropdown-hidden)')
-        .getByRole('option', { name: 'Prometheus' })
-        .click();
+        .last()
+        .locator('.ant-select-item-option', { hasText: 'Prometheus' });
+      await expect(prometheusItemTw).toBeVisible({ timeout: 10000 });
+      await prometheusItemTw.click();
 
       // Select the time-window preset
       const prometheusPresetSelect = ruleModal.getByRole('combobox', {
@@ -517,21 +541,22 @@ test.describe(
       await prometheusPresetSelect.click();
       const twPresetOption = page
         .locator('.ant-select-dropdown:not(.ant-select-dropdown-hidden)')
-        .getByRole('option', { name: presetNameTimeWindow });
+        .last()
+        .locator('.ant-select-item-option', { hasText: presetNameTimeWindow });
       await expect(twPresetOption).toBeVisible({ timeout: 10000 });
       await twPresetOption.click();
 
       // Verify the hidden Metric Name field is auto-filled
-      const metricNameField = ruleModal.getByRole('textbox', {
-        name: /Metric Name$/i,
-      });
-      await expect(metricNameField).toHaveValue('e2e_tw_metric', {
+      // The Metric Name field is hidden (display:none) when Prometheus is selected,
+      // since the field is controlled via form.setFieldsValue. Check via DOM input value.
+      const metricNameInputTw = ruleModal.locator('input[id*="metricName"]');
+      await expect(metricNameInputTw).toHaveValue('e2e_tw_metric', {
         timeout: 5000,
       });
 
       // Cancel the modal
       await ruleModal.getByRole('button', { name: 'Cancel' }).click();
-      await expect(ruleModal).toBeHidden();
+      await expect(ruleModal).toBeHidden({ timeout: 30000 });
     });
   },
 );
