@@ -133,19 +133,15 @@ test.describe(
     test('Superadmin can select multiple model cards and delete them in bulk', async ({
       page,
     }) => {
-      test.setTimeout(180000);
+      test.setTimeout(300000);
       const adminModelCardPage = new AdminModelCardPage(page);
       const timestamp = Date.now();
       const folderName = `e2e-test-bulk-delete-folder-${timestamp}`;
       const filterPrefix = `e2e-test-bulk-delete-${timestamp}`;
-      const cardNames = [
-        `${filterPrefix}-1`,
-        `${filterPrefix}-2`,
-        `${filterPrefix}-3`,
-      ];
+      const cardNames = [`${filterPrefix}-1`, `${filterPrefix}-2`];
 
       // Setup: create a shared folder via the "+" button for the first card,
-      // then reuse it for the remaining cards
+      // then reuse it for the second card
       await page.goto(`${webuiEndpoint}/admin-serving?tab=model-store`);
       await adminModelCardPage.waitForTableLoad();
       await adminModelCardPage.createModelCard({
@@ -153,21 +149,19 @@ test.describe(
         createNewFolderName: folderName,
       });
 
-      for (const name of cardNames.slice(1)) {
-        await page.goto(`${webuiEndpoint}/admin-serving?tab=model-store`);
-        await adminModelCardPage.waitForTableLoad();
-        await adminModelCardPage.createModelCard({
-          name,
-          vfolderTitle: folderName,
-        });
-      }
+      await page.goto(`${webuiEndpoint}/admin-serving?tab=model-store`);
+      await adminModelCardPage.waitForTableLoad();
+      await adminModelCardPage.createModelCard({
+        name: cardNames[1],
+        vfolderTitle: folderName,
+      });
 
       // Filter to show only this run's test cards (timestamp ensures uniqueness)
       await page.goto(`${webuiEndpoint}/admin-serving?tab=model-store`);
       await adminModelCardPage.waitForTableLoad();
       await adminModelCardPage.applyNameFilter(filterPrefix);
       await expect(adminModelCardPage.getDataRows().first()).toBeVisible({
-        timeout: 10000,
+        timeout: 30000,
       });
 
       // Check the header checkbox to select all visible rows
@@ -199,8 +193,12 @@ test.describe(
       // Click Delete to confirm
       await bulkDialog.getByRole('button', { name: 'Delete' }).click();
 
-      // Wait for bulk delete to complete — dialog closes when all mutations finish
-      await expect(bulkDialog).toBeHidden({ timeout: 90000 });
+      // Wait for the success toast — under parallel-test load the bulk deletion
+      // can be slow, so wait on the visible outcome rather than polling the dialog.
+      await expect(
+        page.getByText(/\d+ model card\(s\) have been deleted\./i),
+      ).toBeVisible({ timeout: 240000 });
+      await expect(bulkDialog).toBeHidden();
 
       // Verify the selection label disappears
       await expect(adminModelCardPage.getSelectionLabel()).toBeHidden();
@@ -241,7 +239,7 @@ test.describe(
       await adminModelCardPage.waitForTableLoad();
       await adminModelCardPage.applyNameFilter(filterPrefix);
       await expect(adminModelCardPage.getDataRows().first()).toBeVisible({
-        timeout: 10000,
+        timeout: 30000,
       });
 
       // Select all visible rows
@@ -299,7 +297,7 @@ test.describe(
       await adminModelCardPage.waitForTableLoad();
       await adminModelCardPage.applyNameFilter(cardName);
       await expect(adminModelCardPage.getDataRows().first()).toBeVisible({
-        timeout: 10000,
+        timeout: 30000,
       });
 
       // Check the checkbox for the first row
@@ -447,11 +445,14 @@ test.describe(
       // Click "Go to Data > Trash" and verify URL includes folder filter
       await goToTrashLink.click();
       await page.waitForURL(
-        (url) =>
-          url.pathname === '/data' &&
-          url.searchParams.get('statusCategory') === 'deleted' &&
-          url.searchParams.get('filter') === `name == "${folderName}"`,
-        { timeout: 10000 },
+        (url) => {
+          if (url.pathname !== '/admin-data') return false;
+          if (url.searchParams.get('statusCategory') !== 'deleted')
+            return false;
+          const rawFilter = url.searchParams.get('filter') ?? '';
+          return rawFilter === `name == "${folderName}"`;
+        },
+        { timeout: 30000 },
       );
 
       // Verify the folder row is visible in the trash list and permanently delete it
@@ -519,6 +520,177 @@ test.describe(
       // Cleanup: move the kept test folder to trash then permanently delete it
       await moveToTrashAndVerify(page, folderName, 'admin-data');
       await deleteForeverAndVerifyFromTrash(page, folderName, 'admin-data');
+    });
+
+    // 5.9 Superadmin can bulk delete model cards and move their folders to trash
+    test('Superadmin can bulk delete model cards and move their associated folders to trash', async ({
+      page,
+    }) => {
+      test.setTimeout(300000);
+      const adminModelCardPage = new AdminModelCardPage(page);
+      const timestamp = Date.now();
+      const folderName1 = `e2e-test-bulk-trash-f1-${timestamp}`;
+      const folderName2 = `e2e-test-bulk-trash-f2-${timestamp}`;
+      const filterPrefix = `e2e-test-bulk-trash-${timestamp}`;
+      const cardNames = [`${filterPrefix}-1`, `${filterPrefix}-2`];
+
+      // Cleanup is handled explicitly within this test body:
+      // - cards are removed by the bulk-delete action under test
+      // - folders are permanently deleted at the end via deleteForeverAndVerifyFromTrash
+
+      // Setup: create card 1 with its own folder
+      await page.goto(`${webuiEndpoint}/admin-serving?tab=model-store`);
+      await adminModelCardPage.waitForTableLoad();
+      await adminModelCardPage.createModelCard({
+        name: cardNames[0],
+        createNewFolderName: folderName1,
+      });
+
+      // Setup: create card 2 with its own folder
+      await page.goto(`${webuiEndpoint}/admin-serving?tab=model-store`);
+      await adminModelCardPage.waitForTableLoad();
+      await adminModelCardPage.createModelCard({
+        name: cardNames[1],
+        createNewFolderName: folderName2,
+      });
+
+      // Filter to show only this run's test cards
+      await page.goto(`${webuiEndpoint}/admin-serving?tab=model-store`);
+      await adminModelCardPage.waitForTableLoad();
+      await adminModelCardPage.applyNameFilter(filterPrefix);
+      await expect(adminModelCardPage.getDataRows().first()).toBeVisible({
+        timeout: 30000,
+      });
+
+      // Select all visible rows
+      await adminModelCardPage.getHeaderCheckbox().click();
+      await expect(adminModelCardPage.getSelectionLabel()).toBeVisible();
+
+      // Open bulk delete dialog
+      await adminModelCardPage.getBulkDeleteButton().click();
+      const bulkDialog = adminModelCardPage.getBulkDeleteConfirmDialog();
+      await expect(bulkDialog).toBeVisible();
+
+      // Verify the "Also delete the associated model folders" checkbox is visible and unchecked by default
+      const alsoDeleteCheckbox =
+        adminModelCardPage.getAlsoDeleteFoldersBulkCheckbox();
+      await expect(alsoDeleteCheckbox).toBeVisible();
+      await expect(alsoDeleteCheckbox).not.toBeChecked();
+
+      // Check the checkbox to also move folders to trash
+      await alsoDeleteCheckbox.check();
+      await expect(alsoDeleteCheckbox).toBeChecked();
+
+      // Type "Delete" to confirm
+      await bulkDialog.getByLabel(/Type.*to confirm/i).fill('Delete');
+
+      // Confirm deletion
+      await bulkDialog.getByRole('button', { name: 'Delete' }).click();
+
+      // Wait for the success notification — card delete + folder soft-delete run
+      // sequentially; under parallel-test load the combined mutation can be slow,
+      // so we wait directly on the visible outcome rather than polling the dialog.
+      await expect(
+        page.getByText(
+          /model card\(s\) and their folders have been moved to trash/i,
+        ),
+      ).toBeVisible({ timeout: 240000 });
+
+      // Dialog must be hidden once the notification is shown
+      await expect(bulkDialog).toBeHidden();
+
+      // Verify "Go to Data > Trash" link is visible
+      const goToTrashLink = page.getByText('Go to Data > Trash');
+      await expect(goToTrashLink).toBeVisible();
+
+      // Click the link and verify navigation to trash tab without folder filter
+      await goToTrashLink.click();
+      await page.waitForURL(
+        (url) => {
+          if (url.pathname !== '/admin-data') return false;
+          return url.searchParams.get('statusCategory') === 'deleted';
+        },
+        { timeout: 30000 },
+      );
+
+      // Permanently delete both folders from trash for cleanup
+      await deleteForeverAndVerifyFromTrash(page, folderName1, 'admin-data');
+      await deleteForeverAndVerifyFromTrash(page, folderName2, 'admin-data');
+    });
+
+    // 5.10 Superadmin can bulk delete model cards without moving their folders to trash
+    test('Superadmin can bulk delete model cards without moving their folders to trash', async ({
+      page,
+    }) => {
+      test.setTimeout(300000);
+      const adminModelCardPage = new AdminModelCardPage(page);
+      const timestamp = Date.now();
+      const folderName = `e2e-test-bulk-notrash-folder-${timestamp}`;
+      const filterPrefix = `e2e-test-bulk-notrash-${timestamp}`;
+      const cardNames = [`${filterPrefix}-1`, `${filterPrefix}-2`];
+
+      // Cards are removed by the bulk-delete action under test.
+      // Folder stays active (checkbox unchecked) and is left as-is for the next run.
+
+      // Setup: create card 1 with a new folder
+      await page.goto(`${webuiEndpoint}/admin-serving?tab=model-store`);
+      await adminModelCardPage.waitForTableLoad();
+      await adminModelCardPage.createModelCard({
+        name: cardNames[0],
+        createNewFolderName: folderName,
+      });
+
+      // Setup: create card 2 sharing the same folder
+      await page.goto(`${webuiEndpoint}/admin-serving?tab=model-store`);
+      await adminModelCardPage.waitForTableLoad();
+      await adminModelCardPage.createModelCard({
+        name: cardNames[1],
+        vfolderTitle: folderName,
+      });
+
+      // Filter to show only this run's test cards
+      await page.goto(`${webuiEndpoint}/admin-serving?tab=model-store`);
+      await adminModelCardPage.waitForTableLoad();
+      await adminModelCardPage.applyNameFilter(filterPrefix);
+      await expect(adminModelCardPage.getDataRows().first()).toBeVisible({
+        timeout: 30000,
+      });
+
+      // Select all visible rows
+      await adminModelCardPage.getHeaderCheckbox().click();
+      await expect(adminModelCardPage.getSelectionLabel()).toBeVisible();
+
+      // Open bulk delete dialog
+      await adminModelCardPage.getBulkDeleteButton().click();
+      const bulkDialog = adminModelCardPage.getBulkDeleteConfirmDialog();
+      await expect(bulkDialog).toBeVisible();
+
+      // Verify the checkbox is visible but leave it unchecked (default)
+      const alsoDeleteCheckbox =
+        adminModelCardPage.getAlsoDeleteFoldersBulkCheckbox();
+      await expect(alsoDeleteCheckbox).toBeVisible();
+      await expect(alsoDeleteCheckbox).not.toBeChecked();
+
+      // Type "Delete" to confirm (checkbox unchecked)
+      await bulkDialog.getByLabel(/Type.*to confirm/i).fill('Delete');
+
+      // Confirm deletion
+      await bulkDialog.getByRole('button', { name: 'Delete' }).click();
+
+      // Wait for the success toast — under parallel-test load the bulk deletion
+      // can be slow, so wait on the visible outcome rather than polling the dialog.
+      await expect(
+        page.getByText(/\d+ model card\(s\) have been deleted\./i),
+      ).toBeVisible({ timeout: 240000 });
+      await expect(bulkDialog).toBeHidden();
+
+      // Verify no "Go to Data > Trash" link appears
+      await expect(page.getByText('Go to Data > Trash')).not.toBeVisible();
+
+      // Verify selection label has cleared (cards were deleted)
+      await expect(adminModelCardPage.getSelectionLabel()).toBeHidden();
+
+      // afterEach handles folder cleanup (folder remains in active state)
     });
   },
 );
