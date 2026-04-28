@@ -835,9 +835,7 @@ export async function generateWebsite(
       title,
       productName,
       languages: peerLangsForRedirect,
-      fallback: redirectLanguages.includes("en")
-        ? "en"
-        : redirectLanguages[0],
+      fallback: redirectLanguages.includes("en") ? "en" : redirectLanguages[0],
       latestVersion: loadedVersions.latest?.label,
     });
     fs.writeFileSync(path.join(distBase, "index.html"), redirectHtml, "utf-8");
@@ -956,7 +954,7 @@ async function buildLanguage(args: {
     workspaceVersion: version,
     versionLabel,
     versionEntry: versionLabel
-      ? loadedVersions.entries.find((v) => v.label === versionLabel) ?? null
+      ? (loadedVersions.entries.find((v) => v.label === versionLabel) ?? null)
       : null,
   });
   const metadata: WebsiteMetadata = {
@@ -1009,6 +1007,32 @@ async function buildLanguage(args: {
   const srcImagesDir = path.join(config.srcDir, lang, "images");
   const imageDims = collectImageDimensions(srcImagesDir);
 
+  // FR-2759: also collect per-chapter image dimensions. Chapters authored
+  // as `<chapter-dir>/<chapter>.md` keep their illustrations under a
+  // sibling `images/` folder (`<lang>/<chapter-dir>/images/foo.png`),
+  // and emit `./<chapter-dir>/images/foo.png` URLs. Without this loop
+  // those `<img>` tags would render without width/height attributes,
+  // which still works visually but trips CLS budgets and the build's
+  // own coverage report.
+  //
+  // We compute the deduplicated set of chapter directories once here
+  // and reuse it for the per-chapter image-copy loop below, so the two
+  // surfaces (dimension cache + copy-to-dist) can never disagree about
+  // which chapters have nested images. `collectChapterImageDirs` also
+  // rejects path-traversing entries so a malicious or accidental
+  // `..` / absolute path in `book.config.yaml` cannot make the build
+  // read or write outside the language source / dist roots.
+  const chapterImageDirs = collectChapterImageDirs(
+    bookConfig.navigation[lang] ?? [],
+    config.srcDir,
+    lang,
+    labelPrefix,
+  );
+  for (const { srcDir: chapterImagesDir, urlPrefix } of chapterImageDirs) {
+    const chapterDims = collectImageDimensions(chapterImagesDir, urlPrefix);
+    for (const [k, v] of chapterDims) imageDims.set(k, v);
+  }
+
   // Compute per-version slug availability ONCE per language. The same
   // slug-availability map is reused for every page in this language —
   // it depends only on (currentVersion, lang, slug), and within a
@@ -1024,9 +1048,7 @@ async function buildLanguage(args: {
   // HTML would target the same file — only the last writer would
   // win, silently. Fail the build with an actionable error instead
   // of producing a broken site.
-  const collidingSlug = chapters.find(
-    (c) => c.slug === RESERVED_HOME_SLUG,
-  );
+  const collidingSlug = chapters.find((c) => c.slug === RESERVED_HOME_SLUG);
   if (collidingSlug) {
     throw new Error(
       `Chapter slug "${RESERVED_HOME_SLUG}" is reserved for the home page. ` +
@@ -1070,22 +1092,33 @@ async function buildLanguage(args: {
   // HTML rewrite. The order swap is intentional — when --optimize-images
   // is OFF, this is just a relocated copy step (same I/O, same bytes).
   // When ON, optimizeImage() runs in-line after each PNG copy.
-  const destImagesDir = path.join(langDir, "images");
   // Map from page-relative URL (`./images/foo.png`) → variant filenames.
   // Empty when --optimize-images is off; the rewrite is a no-op in that case.
   const variantAvailability = new Map<string, ImageVariantInfo>();
-  if (fs.existsSync(srcImagesDir)) {
-    fs.mkdirSync(destImagesDir, { recursive: true });
-    const imageFiles = fs.readdirSync(srcImagesDir);
-    let imageCount = 0;
-    for (const file of imageFiles) {
-      const srcPath = path.join(srcImagesDir, file);
+  let totalImagesCopied = 0;
+
+  // Helper that copies a single `images/` directory to its mirror under
+  // `langDir`, optionally optimizing PNGs inline. The `urlPrefix` parameter
+  // is the page-relative path the page builder emits for this directory
+  // (e.g. `./images/` for the lang-root flat folder, `./rbac_management/
+  // images/` for a per-chapter folder); it's the key the variant-availability
+  // map and the dimension cache below are looked up by.
+  async function copyImagesDir(
+    srcDirAbs: string,
+    destDirAbs: string,
+    urlPrefix: string,
+  ): Promise<number> {
+    if (!fs.existsSync(srcDirAbs)) return 0;
+    fs.mkdirSync(destDirAbs, { recursive: true });
+    let count = 0;
+    for (const file of fs.readdirSync(srcDirAbs)) {
+      const srcPath = path.join(srcDirAbs, file);
       if (!fs.statSync(srcPath).isFile()) continue;
-      fs.copyFileSync(srcPath, path.join(destImagesDir, file));
-      imageCount++;
+      fs.copyFileSync(srcPath, path.join(destDirAbs, file));
+      count++;
 
       if (optimizeImages && /\.png$/i.test(file)) {
-        const result = await optimizeImage(srcPath, destImagesDir, {
+        const result = await optimizeImage(srcPath, destDirAbs, {
           avif: optimizeImagesAvif,
           // Cache lives at the website build root (`dist/web/.image-optimizer-cache/`)
           // so identical images across languages / versions share entries.
@@ -1093,15 +1126,57 @@ async function buildLanguage(args: {
         });
         recordOptimizeStat(optimizeStats, result);
         if (result.webp || result.avif) {
-          const key = `./images/${file}`;
+          const key = `${urlPrefix}${file}`;
           const variants: ImageVariantInfo = {};
-          if (result.webp) variants.webp = `./images/${result.webp}`;
-          if (result.avif) variants.avif = `./images/${result.avif}`;
+          if (result.webp) variants.webp = `${urlPrefix}${result.webp}`;
+          if (result.avif) variants.avif = `${urlPrefix}${result.avif}`;
           variantAvailability.set(key, variants);
         }
       }
     }
-    console.log(`${labelPrefix} Copied ${imageCount} images`);
+    return count;
+  }
+
+  // Lang-root flat folder: `src/<lang>/images/` → `<langDir>/images/`.
+  // This is the historical layout used by every chapter authored as a
+  // single `<chapter>.md` at the language root.
+  totalImagesCopied += await copyImagesDir(
+    srcImagesDir,
+    path.join(langDir, "images"),
+    "./images/",
+  );
+
+  // FR-2759: per-chapter image folders. Some chapters (e.g. `rbac_management`)
+  // live in their own directory under the language root with a sibling
+  // `images/` folder: `src/<lang>/<chapter-dir>/<chapter>.md` paired with
+  // `src/<lang>/<chapter-dir>/images/`. The markdown processor resolves
+  // `images/foo.png` references in those files relative to the .md's own
+  // directory and emits `./<chapter-dir>/images/foo.png` URLs, so the
+  // dist needs the same nested layout. Without this loop the rewritten
+  // URLs 404 — the bug Sujin reported on /26.4/ko/rbac_management.html
+  // before this fix.
+  //
+  // We reuse the deduplicated, validated chapter-dirs list computed
+  // earlier (alongside the dimension cache). `collectChapterImageDirs`
+  // already rejects path-traversing or absolute `nav.path` values, so
+  // by the time we get here `navDir` is guaranteed to stay inside
+  // `<srcDir>/<lang>/...`.
+  for (const {
+    navDir,
+    srcDir: srcChapterImagesDir,
+    urlPrefix,
+  } of chapterImageDirs) {
+    if (!fs.existsSync(srcChapterImagesDir)) continue;
+    const destChapterImagesDir = path.join(langDir, navDir, "images");
+    totalImagesCopied += await copyImagesDir(
+      srcChapterImagesDir,
+      destChapterImagesDir,
+      urlPrefix,
+    );
+  }
+
+  if (totalImagesCopied > 0) {
+    console.log(`${labelPrefix} Copied ${totalImagesCopied} images`);
   }
 
   // Generate individual HTML pages
@@ -1182,9 +1257,7 @@ async function buildLanguage(args: {
     // F3: resolve the page's category from the path (set when navGroups
     // were normalized). Empty string for legacy flat configs — the
     // breadcrumb renders without a middle segment in that case.
-    const category = navEntry
-      ? categoryByPath.get(navEntry.path) ?? ""
-      : "";
+    const category = navEntry ? (categoryByPath.get(navEntry.path) ?? "") : "";
 
     let pageHtml = buildWebPage({
       chapter: chapters[i],
@@ -1393,14 +1466,105 @@ function buildPageVersionContext(args: {
   };
 }
 
+/**
+ * Resolved per-chapter image directory descriptor (FR-2759). One row per
+ * unique chapter directory found in the navigation; the dimension cache
+ * and the image-copy loop both consume the same list so they can never
+ * disagree about which chapters have nested images.
+ */
+interface ChapterImageDir {
+  /** Chapter directory relative to `<srcDir>/<lang>` (e.g. `rbac_management`). */
+  navDir: string;
+  /** Absolute path to that chapter's `images/` folder. */
+  srcDir: string;
+  /**
+   * URL prefix the page builder emits for files in this folder
+   * (e.g. `./rbac_management/images/`). Forward-slash-only so the
+   * variant-availability map and the dimension-lookup keys stay portable
+   * across Windows/POSIX builds.
+   */
+  urlPrefix: string;
+}
+
+/**
+ * Walk `navigation` and collect the unique chapter directories that
+ * carry their own `images/` sibling (FR-2759).
+ *
+ * Returns a deduplicated list with path-traversal validation applied:
+ * any `nav.path` whose `path.dirname` is absolute or escapes the
+ * language source root with `..` segments is dropped with a warning.
+ * Without this guard a malicious or accidental `nav.path` value in
+ * `book.config.yaml` could make the image-copy loop read or write
+ * outside `<srcDir>/<lang>` / `<langDir>`.
+ *
+ * The deduplication step is a defensive measure — no current consumer
+ * has multiple chapters share a parent directory, but if one ever does
+ * we don't want to scan or copy the same `images/` folder twice.
+ */
+function collectChapterImageDirs(
+  navigation: ReadonlyArray<{ path: string }>,
+  srcDir: string,
+  lang: string,
+  labelPrefix: string,
+): ChapterImageDir[] {
+  const langRoot = path.resolve(srcDir, lang);
+  const seen = new Set<string>();
+  const result: ChapterImageDir[] = [];
+
+  for (const nav of navigation) {
+    const navDir = path.dirname(nav.path);
+    if (!navDir || navDir === "." || navDir === path.sep) continue;
+    if (seen.has(navDir)) continue;
+    seen.add(navDir);
+
+    // Reject absolute paths and any segment that escapes `<langRoot>`.
+    // path.isAbsolute catches both POSIX and Windows absolute forms.
+    // The startsWith() check after path.resolve() catches the common
+    // case where navDir contains `..` segments — `path.resolve` collapses
+    // those, so a traversing path resolves to a directory outside
+    // `langRoot` and is rejected here.
+    if (path.isAbsolute(navDir)) {
+      console.warn(
+        `${labelPrefix} Rejecting nav.path "${nav.path}" — absolute paths are not allowed.`,
+      );
+      continue;
+    }
+    const resolvedSrc = path.resolve(langRoot, navDir);
+    if (
+      resolvedSrc !== langRoot &&
+      !resolvedSrc.startsWith(langRoot + path.sep)
+    ) {
+      console.warn(
+        `${labelPrefix} Rejecting nav.path "${nav.path}" — resolves outside the language source root.`,
+      );
+      continue;
+    }
+
+    result.push({
+      navDir,
+      srcDir: path.join(resolvedSrc, "images"),
+      urlPrefix: `./${navDir.split(path.sep).join("/")}/images/`,
+    });
+  }
+
+  return result;
+}
 
 /**
  * Parse PNG IHDR width/height for every file under `srcImagesDir`. The map
- * key matches the URL the page builder emits (`./images/<file>`), so the
- * `<img>` post-processor can look up dimensions in O(1).
+ * key is `${urlPrefix}<file>`, matching whatever URL the page builder
+ * emits for that image so the `<img>` post-processor can look up
+ * dimensions in O(1).
+ *
+ * `urlPrefix` defaults to the historical `./images/` (lang-root flat
+ * folder) for backward compatibility with every existing call site.
+ * FR-2759 introduced per-chapter image folders, which pass a nested
+ * prefix like `./rbac_management/images/` so the lookup keys agree
+ * with the rewritten `<img src=...>` URLs in those chapters.
  */
 function collectImageDimensions(
   srcImagesDir: string,
+  urlPrefix: string = "./images/",
 ): Map<string, { width: number; height: number }> {
   const result = new Map<string, { width: number; height: number }>();
   if (!fs.existsSync(srcImagesDir)) return result;
@@ -1417,7 +1581,7 @@ function collectImageDimensions(
     if (!/\.png$/i.test(file)) continue; // PNG is the only format we parse today
     const dims = readImageDimensions(full);
     if (!dims) continue;
-    result.set(`./images/${file}`, dims);
+    result.set(`${urlPrefix}${file}`, dims);
   }
   return result;
 }
