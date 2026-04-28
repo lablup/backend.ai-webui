@@ -10,10 +10,13 @@ import type {
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import BAITabs from '../components/BAITabs';
 import DeleteVFolderModal from '../components/DeleteVFolderModal';
+import FolderCreateModal from '../components/FolderCreateModal';
 import RestoreVFolderModal from '../components/RestoreVFolderModal';
 import VFolderNodes, { VFolderNodeInList } from '../components/VFolderNodes';
 import { handleRowSelectionChange } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { useEffectiveAdminRole } from '../hooks/useCurrentUserProjectRoles';
 import { isDeletedCategory } from './VFolderNodeListPage';
 import { useToggle } from 'ahooks';
 import { Badge, Button, theme, Tooltip } from 'antd';
@@ -66,6 +69,8 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
+  const effectiveAdminRole = useEffectiveAdminRole();
+  const currentProject = useCurrentProjectValue();
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
     'table_column_overrides.AdminVFolderNodeListPage',
@@ -75,6 +80,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
     Array<VFolderNodesType>
   >([]);
 
+  const [isOpenCreateModal, { toggle: toggleCreateModal }] = useToggle(false);
   const [isOpenDeleteModal, { toggle: toggleDeleteModal }] = useToggle(false);
   const [isOpenRestoreModal, { toggle: toggleRestoreModal }] = useToggle(false);
 
@@ -123,10 +129,29 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
 
   const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
 
-  // scope_id is intentionally omitted so superadmin sees all vfolders across all projects/domains
+  // Determine the `scope_id` to apply to the `vfolder_nodes` query based on the
+  // user's effective admin role:
+  // - superadmin: no scope (sees all projects/domains)
+  // - currentProjectAdmin: scope to the currently selected project
+  // - domainAdmin: TODO(needs-backend) — requires a `domain:<name>` scope argument
+  //   that the core does not yet accept. For now, fall back to no scope, which
+  //   matches the pre-FR-2556 behavior for domain admins.
+  // Personal (user-type) folders are always filtered out via `ownership_type == "group"`
+  // so that admins never see other users' private folders.
+  const scopeId: string | undefined =
+    effectiveAdminRole === 'currentProjectAdmin' && currentProject?.id
+      ? `project:${currentProject.id}`
+      : undefined;
+  // TODO(needs-backend): FR-2556 — domainAdmin scope requires `domain:<name>`
+  // scope support on the `vfolder_nodes` query. Remove this note once the
+  // backend contract is finalized.
+
+  const ownershipTypeFilter = 'ownership_type == "group"';
+
   const queryVariables: AdminVFolderNodeListPageQuery$variables = {
     offset: baiPaginationOption.offset,
     first: baiPaginationOption.first,
+    scope_id: scopeId,
     filter: mergeFilterValues([
       queryParams.statusCategory === 'active' ||
       queryParams.statusCategory === undefined
@@ -134,11 +159,18 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
         : FILTER_BY_STATUS_CATEGORY['deleted'],
       queryParams.filter,
       usageModeFilter,
+      ownershipTypeFilter,
     ]),
     order: queryParams.order,
     permission: 'read_attribute',
-    filterForActiveCount: FILTER_BY_STATUS_CATEGORY['active'],
-    filterForDeletedCount: FILTER_BY_STATUS_CATEGORY['deleted'],
+    filterForActiveCount: mergeFilterValues([
+      FILTER_BY_STATUS_CATEGORY['active'],
+      ownershipTypeFilter,
+    ]),
+    filterForDeletedCount: mergeFilterValues([
+      FILTER_BY_STATUS_CATEGORY['deleted'],
+      ownershipTypeFilter,
+    ]),
   };
   const deferredQueryVariables = useDeferredValue(queryVariables);
   const deferredFetchKey = useDeferredValue(fetchKey);
@@ -149,6 +181,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
         query AdminVFolderNodeListPageQuery(
           $offset: Int
           $first: Int
+          $scope_id: ScopeField
           $filter: String
           $order: String
           $permission: VFolderPermissionValueField
@@ -158,6 +191,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
           vfolder_nodes(
             offset: $offset
             first: $first
+            scope_id: $scope_id
             filter: $filter
             order: $order
             permission: $permission
@@ -181,6 +215,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
           active: vfolder_nodes(
             first: 0
             offset: 0
+            scope_id: $scope_id
             filter: $filterForActiveCount
             permission: $permission
           ) {
@@ -189,6 +224,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
           deleted: vfolder_nodes(
             first: 0
             offset: 0
+            scope_id: $scope_id
             filter: $filterForDeletedCount
             permission: $permission
           ) {
@@ -212,6 +248,16 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
       <BAICard
         variant="borderless"
         title={t('data.Folders')}
+        extra={
+          <Button
+            type="primary"
+            onClick={() => {
+              toggleCreateModal();
+            }}
+          >
+            {t('data.CreateFolder')}
+          </Button>
+        }
         styles={{
           header: {
             borderBottom: 'none',
@@ -341,23 +387,9 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                     propertyLabel: t('data.folders.Location'),
                     type: 'string',
                   },
-                  {
-                    key: 'ownership_type',
-                    propertyLabel: t('data.Type'),
-                    type: 'string',
-                    strictSelection: true,
-                    defaultOperator: '==',
-                    options: [
-                      {
-                        label: t('data.User'),
-                        value: 'user',
-                      },
-                      {
-                        label: t('data.Project'),
-                        value: 'group',
-                      },
-                    ],
-                  },
+                  // `ownership_type` filter removed: admin view is pinned to
+                  // project-type folders (user-type folders are hidden for
+                  // all admin roles per the FR-2209 spec audit).
                   {
                     key: 'permission',
                     propertyLabel: t('data.Permission'),
@@ -498,6 +530,26 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
           />
         </BAIFlex>
       </BAICard>
+      <FolderCreateModal
+        open={isOpenCreateModal}
+        // Admin view creates folders for the currently-scoped project only:
+        // the type radio group ("User"/"Project") and the project selector
+        // are hidden so an admin cannot create a personal folder or target a
+        // different project. The `group` field defaults to
+        // `currentProject.id` inside `FolderCreateModal`, so simply hiding
+        // the fields locks the folder to the current project.
+        initialValues={{
+          type: 'project',
+          group: currentProject?.id || undefined,
+        }}
+        hiddenFormItems={['type', 'group']}
+        onRequestClose={(success) => {
+          if (success) {
+            updateFetchKey();
+          }
+          toggleCreateModal();
+        }}
+      />
       <DeleteVFolderModal
         vfolderFrgmts={selectedFolderList}
         open={isOpenDeleteModal}

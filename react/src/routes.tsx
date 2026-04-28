@@ -463,6 +463,18 @@ export const mainLayoutChildRoutes: RouteObject[] = [
     },
   },
   {
+    path: '/project-admin-vfolders',
+    handle: { labelKey: 'webui.menu.ProjectFolders' },
+    Component: () => {
+      useSuspendedBackendaiClient();
+      return (
+        <Suspense fallback={<Skeleton active />}>
+          <AdminVFolderNodeListPage />
+        </Suspense>
+      );
+    },
+  },
+  {
     path: '/environment',
     handle: { labelKey: 'webui.menu.Environments' },
     element: (

@@ -105,6 +105,7 @@ export const VALID_MENU_KEYS = [
   'admin-dashboard',
   'admin-data',
   'project-admin-users',
+  'project-admin-vfolders',
   'agent',
   'project',
   'settings',
@@ -130,6 +131,7 @@ const ALL_ADMIN_PAGE_KEYS: ReadonlySet<string> = new Set([
   'admin-dashboard',
   'admin-data',
   'project-admin-users',
+  'project-admin-vfolders',
   'agent',
   'project',
   'settings',
@@ -141,15 +143,17 @@ const ALL_ADMIN_PAGE_KEYS: ReadonlySet<string> = new Set([
 ]);
 
 // Admin-category page keys reachable by a project admin (3-tier admin gating).
-// Project admins see Sessions, Serving, Data (vfolders) and Members within the
-// admin category. Other admin pages remain visible only to domain admins or
+// Project admins see Sessions, Members, and Folders within the admin category.
+// The Folders page (`project-admin-vfolders`) reuses `AdminVFolderNodeListPage`,
+// which auto-scopes the `vfolder_nodes` query to the current project for
+// project admins. Other admin pages remain visible only to domain admins or
 // superadmins. Kept as a plain array so it can be exported and reused (e.g. for
 // per-page route gating in follow-up PRs).
 export const PROJECT_ADMIN_PAGE_KEYS = [
-  // 'admin-session',
+  'admin-session',
   // 'admin-serving',
-  // 'admin-data',
   'project-admin-users',
+  'project-admin-vfolders',
 ] as const;
 
 const PROJECT_ADMIN_PAGE_KEY_SET: ReadonlySet<string> = new Set(
@@ -355,6 +359,16 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       ),
       icon: <TeamOutlined style={{ color: token.colorInfo }} />,
       key: 'project-admin-users' as MenuKeys,
+      group: 'admin-operations' as AdminMenuGroupName,
+    },
+    {
+      label: (
+        <WebUILink to="/project-admin-vfolders">
+          {t('webui.menu.ProjectFolders')}
+        </WebUILink>
+      ),
+      icon: <CloudUploadOutlined style={{ color: token.colorInfo }} />,
+      key: 'project-admin-vfolders' as MenuKeys,
       group: 'admin-operations' as AdminMenuGroupName,
     },
     isSuperAdmin && {
