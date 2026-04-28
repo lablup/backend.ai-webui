@@ -1529,6 +1529,22 @@ pre code {
   line-height: 1.6;
 }
 
+/* shellsession blocks (FR-2756). The pre-pass parses prompt lines and
+   emits .cmd-line / .output-line spans WITHOUT the literal '$' / '#'
+   character — the prompt is restored visually here via ::before with
+   user-select: none, so drag-copy / button-copy / Select-All never pull
+   the prompt into the clipboard. Output rows are dimmed so the eye
+   tracks command vs response at a glance. */
+.shiki-host > code .line.cmd-line::before {
+  content: attr(data-prompt) " ";
+  color: var(--bai-text-3);
+  user-select: none;
+}
+
+.shiki-host > code .line.output-line {
+  color: rgba(255, 255, 255, 0.55);
+}
+
 /* Wrapper injected at runtime by code-copy.js around every <pre> on the
    page (titled OR untitled). FR-2726 Phase 3 makes this the canonical
    BAI dark code frame so untitled fenced blocks (the common case) get

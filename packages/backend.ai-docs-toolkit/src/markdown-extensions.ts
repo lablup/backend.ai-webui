@@ -177,6 +177,50 @@ export function parseImageSizeHint(alt: string): {
   return { cleanAlt: alt, sizeHint: null };
 }
 
+/**
+ * One row inside a `shellsession` (a.k.a. `console`) fenced block.
+ * `cmd` rows had a `$` or `#` prompt at column 0 (followed by a space or
+ * tab) — the prompt has been stripped from `text`, leaving the bare
+ * command. `output` rows are everything else (program output, blank
+ * separator lines, etc.).
+ *
+ * The renderer emits `cmd` rows as `<span class="line cmd-line"
+ * data-prompt="$">…</span>` so the prompt is restored visually via a CSS
+ * `::before` pseudo-element with `user-select: none` — the prompt never
+ * lands in the DOM and so never reaches drag-copy or the copy button.
+ */
+export interface ShellSessionLine {
+  type: 'cmd' | 'output';
+  /** `$` or `#` — only set when type === 'cmd'. */
+  prompt?: '$' | '#';
+  /** Line text with the prompt+space stripped (for cmd) or as-authored (for output). */
+  text: string;
+}
+
+/**
+ * Parse a `shellsession` / `console` fenced block into command and output
+ * rows. A "command" line begins with `$ ` or `# ` (single space or tab
+ * after the prompt). Anything else is treated as output, including blank
+ * lines (so the rendered transcript preserves vertical rhythm).
+ *
+ * Trailing newline is dropped so authors can write
+ * \`\`\`shellsession
+ * $ ls
+ * file.txt
+ * \`\`\`
+ * without producing a trailing empty output row.
+ */
+export function parseShellSessionLines(code: string): ShellSessionLine[] {
+  const trimmed = code.replace(/\n$/, '');
+  if (trimmed === '') return [];
+  const promptRe = /^([$#])[ \t]+(.*)$/;
+  return trimmed.split('\n').map((line) => {
+    const m = line.match(promptRe);
+    if (m) return { type: 'cmd', prompt: m[1] as '$' | '#', text: m[2] };
+    return { type: 'output', text: line };
+  });
+}
+
 export function escapeHtml(str: string): string {
   return str
     .replace(/&/g, '&amp;')

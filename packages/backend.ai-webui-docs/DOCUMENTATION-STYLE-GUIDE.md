@@ -304,10 +304,42 @@ Rules:
 Use fenced code blocks with a language identifier:
 
 ````markdown
-```shell
-$ pip install backend.ai-client
+```bash
+pip install backend.ai-client
 ```
 ````
+
+#### Choosing the right language identifier
+
+| Situation | Fence | Notes |
+|---|---|---|
+| Runnable command or shell script | ` ```bash ` | Default for most snippets. Don't include a `$ ` prompt — the snippet should be ready to copy-and-paste. |
+| Terminal session transcript (prompt + output) | ` ```shellsession ` | Use this when showing what the user types **and** what the program prints. Lines starting with `$ ` or `# ` are treated as commands; everything else is treated as program output. The `$` / `#` prompt is rendered visually but **excluded from the clipboard** — readers can copy the block and paste runnable commands without manual cleanup. |
+| POSIX-only script (no bashisms) | ` ```sh ` | Use when the snippet must run under any POSIX shell. |
+| zsh / fish-specific snippet | ` ```zsh ` / ` ```fish ` | Reserve for shell-specific syntax. |
+| Other languages | ` ```python `, ` ```toml `, ` ```javascript `, etc. | Use the language's canonical Shiki name. |
+
+##### shellsession example
+
+````markdown
+```shellsession
+$ docker pull lablup/backend.ai-client
+$ docker run --rm -it lablup/backend.ai-client bash
+Hello, world!
+$ exit
+```
+````
+
+In the rendered web page, the `$` prompts and the `Hello, world!` output line are visible, but **clicking the copy button (or drag-selecting and copying) yields only the runnable commands and output text — never the `$` prompts**:
+
+```
+docker pull lablup/backend.ai-client
+docker run --rm -it lablup/backend.ai-client bash
+Hello, world!
+exit
+```
+
+> **PDF note:** the printed PDF shows the `$` prompts visually too, but text-extraction behavior on PDF copy depends on the viewer. Most viewers include the prompt characters that the page renders, including content injected via CSS `::before`. The web copy button is the guaranteed path for prompt-free clipboard text.
 
 #### Code Block with Title
 

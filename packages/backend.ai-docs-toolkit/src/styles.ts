@@ -572,6 +572,24 @@ em {
   padding-left: 9px;
 }
 
+/* shellsession blocks (FR-2756). The PDF pipeline strips the literal
+   '$' / '#' from the source DOM and restores it via ::before so the
+   visible prompt prints in the PDF too. Output lines are slightly dimmed
+   so command vs response is visually distinct on paper. */
+.cmd-line {
+  display: block;
+}
+
+.cmd-line::before {
+  content: attr(data-prompt) " ";
+  color: #888;
+}
+
+.output-line {
+  display: block;
+  color: #666;
+}
+
 /* ==========================================================================
    Details / Summary
    ========================================================================== */

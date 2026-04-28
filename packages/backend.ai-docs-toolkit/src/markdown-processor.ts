@@ -6,12 +6,32 @@ import {
   processAdmonitions,
   processCodeBlockMeta,
   parseHighlightLines,
+  parseShellSessionLines,
   escapeHtml as escapeHtmlExt,
   stripHtmlTags,
   getFigureLabel,
   parseImageSizeHint,
 } from './markdown-extensions.js';
 import type { ResolvedDocConfig } from './config.js';
+
+/**
+ * Render a `shellsession` / `console` fenced block as a sequence of
+ * `.cmd-line` / `.output-line` spans for PDF output. The prompt is removed
+ * from the DOM here too — PDF style sheets re-add it via CSS `::before`,
+ * matching the web behaviour. PDF doesn't get syntax highlighting; the
+ * command body is escaped plaintext.
+ */
+function renderShellSessionForPdf(code: string): string {
+  const lines = parseShellSessionLines(code);
+  return lines
+    .map((ln) => {
+      if (ln.type === 'cmd') {
+        return `<span class="line cmd-line" data-prompt="${ln.prompt}">${escapeHtmlExt(ln.text)}</span>`;
+      }
+      return `<span class="line output-line">${escapeHtmlExt(ln.text)}</span>`;
+    })
+    .join('\n');
+}
 
 /**
  * Read image dimensions from a PNG or JPEG file header.
@@ -501,7 +521,9 @@ export async function processMarkdownFiles(
         const highlightLines = parseHighlightLines(highlightSpec);
 
         let codeHtml: string;
-        if (highlightLines.size > 0) {
+        if (lang === 'shellsession' || lang === 'console') {
+          codeHtml = renderShellSessionForPdf(code);
+        } else if (highlightLines.size > 0) {
           const lines = code.split('\n');
           codeHtml = lines
             .map((line, idx) => {
@@ -599,7 +621,9 @@ export async function processCatalogMarkdownForPdf(
         const highlightLines = parseHighlightLines(highlightSpec);
 
         let codeHtml: string;
-        if (highlightLines.size > 0) {
+        if (lang === 'shellsession' || lang === 'console') {
+          codeHtml = renderShellSessionForPdf(code);
+        } else if (highlightLines.size > 0) {
           const lines = code.split('\n');
           codeHtml = lines
             .map((line, idx) => {

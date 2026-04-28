@@ -20,6 +20,7 @@ import {
   processAdmonitions,
   processCodeBlockMeta,
   parseHighlightLines,
+  parseShellSessionLines,
   escapeHtml,
   stripHtmlTags,
   getFigureLabel,
@@ -392,8 +393,20 @@ function buildWebRenderer(
       // we fall back to the legacy un-highlighted line wrappers. This keeps
       // the line-highlight feature working unchanged. Authors who want
       // both can land that in a follow-up; F4 spec doesn't require it.
+      //
+      // Shellsession blocks (FR-2756) take precedence over the highlight
+      // path: even when a shellsession block sets `data-highlight=…`, we
+      // must still pull the prompt-stripped HTML from the precompute map
+      // (the legacy line-wrap path would leak literal `$` prompts into
+      // the DOM and clipboard). Combining shellsession with line-highlight
+      // is intentionally out of scope for v1.
+      const isShellSession = lang === "shellsession" || lang === "console";
       let codeHtml: string;
-      if (highlightLines.size > 0) {
+      if (isShellSession) {
+        const key = `${lang}|||${code}`;
+        const pre = highlightedCode?.get(key);
+        codeHtml = pre ?? escapeHtml(code);
+      } else if (highlightLines.size > 0) {
         const lines = code.split("\n");
         codeHtml = lines
           .map((line, idx) => {
@@ -457,9 +470,26 @@ export interface WebProcessingOptions {
 }
 
 /**
+ * Strip the outer `<span class="line">…</span>` Shiki wraps around every
+ * tokenized line. Used by the shellsession path so each command's
+ * inline-styled tokens can be re-wrapped under our own `.cmd-line` shell
+ * without producing a nested `.line` element. Returns the input unchanged
+ * if the expected wrapper is absent (defensive: future Shiki versions or
+ * the plaintext fallback may emit a different shape).
+ */
+function unwrapShikiSingleLine(html: string): string {
+  const open = '<span class="line">';
+  const close = "</span>";
+  if (html.startsWith(open) && html.endsWith(close)) {
+    return html.slice(open.length, html.length - close.length);
+  }
+  return html;
+}
+
+/**
  * Walk the rendered markdown's tokens and pre-tokenize every fenced code
- * block via Shiki. Returns a map keyed by `${lang} ${rawCode}` whose value
- * is the pre-rendered inner HTML for `<code>`. The renderer in
+ * block via Shiki. Returns a map keyed by `${lang}|||${rawCode}` whose
+ * value is the pre-rendered inner HTML for `<code>`. The renderer in
  * `buildWebRenderer` reads from this map synchronously.
  *
  * Shiki tokenization is async (loadLanguage / loadTheme), but the actual
@@ -469,6 +499,16 @@ export interface WebProcessingOptions {
  * The cache inside `shikiHighlight` makes repeat blocks (across chapters or
  * across languages) free after the first sighting — important for the
  * "≤ +50% wall-clock per language" budget when building all 4 langs.
+ *
+ * Shellsession blocks (FR-2756) take a different path: they are parsed
+ * line-by-line and the prompt is stripped from the DOM. Cmd lines run
+ * through Shiki as `bash` in parallel (Promise.all) so a long transcript
+ * doesn't serialize highlighter calls. Shellsession runs even when
+ * `data-highlight=` is set on the fence — the line-highlight overlay is
+ * not currently combined with shellsession (out of scope for v1), but
+ * we must not skip the prompt-stripping pass, otherwise a shellsession
+ * block with `{1}` highlighting would leak literal `$` prompts into the
+ * DOM and clipboard.
  */
 async function precomputeShikiBlocks(
   markdown: string,
@@ -502,19 +542,53 @@ async function precomputeShikiBlocks(
       const info = (node.lang ?? "").trim();
       const langMatch = info.match(/^(\w+)/);
       const lang = langMatch?.[1] ?? "";
-      // Skip blocks with line-highlight — the renderer falls back to its
-      // legacy line-wrapping path for these (see comment in `code()` above).
-      if (/data-highlight="[^"]*\d+/.test(info)) return;
+      const isShellSession = lang === "shellsession" || lang === "console";
+      const hasLineHighlight = /data-highlight="[^"]*\d+/.test(info);
+
+      // For non-shellsession blocks with line-highlight, the renderer
+      // takes its legacy line-wrapping path and ignores the Shiki map,
+      // so we skip pre-tokenization. Shellsession blocks must NOT skip
+      // — even with highlighting set, they need the prompt-stripping
+      // pass or `$` characters would land in the DOM/clipboard.
+      if (hasLineHighlight && !isShellSession) return;
 
       const key = `${lang}|||${node.text}`;
       if (!seen.has(key)) {
         seen.add(key);
-        const result = await shikiHighlight({
-          code: node.text,
-          lang,
-          theme,
-        });
-        map.set(key, result.innerHtml);
+        if (isShellSession) {
+          // Terminal transcript: split into prompt/cmd/output rows. The
+          // prompt is removed from the DOM here and restored visually
+          // by CSS ::before on .cmd-line so drag-copy / button-copy
+          // never include the prompt char (FR-2756). Cmd lines are
+          // tokenized in parallel via Promise.all so a long transcript
+          // doesn't serialize highlighter calls.
+          const lines = parseShellSessionLines(node.text);
+          const segments = await Promise.all(
+            lines.map(async (ln) => {
+              if (ln.type === "cmd") {
+                const tokenized = await shikiHighlight({
+                  code: ln.text,
+                  lang: "bash",
+                  theme,
+                });
+                // Shiki always wraps a single line in <span class="line">…</span>;
+                // unwrap so we can put our own .cmd-line wrapper on it without
+                // emitting nested .line elements.
+                const inner = unwrapShikiSingleLine(tokenized.innerHtml);
+                return `<span class="line cmd-line" data-prompt="${ln.prompt}">${inner}</span>`;
+              }
+              return `<span class="line output-line">${escapeHtml(ln.text)}</span>`;
+            }),
+          );
+          map.set(key, segments.join("\n"));
+        } else {
+          const result = await shikiHighlight({
+            code: node.text,
+            lang,
+            theme,
+          });
+          map.set(key, result.innerHtml);
+        }
       }
     }
     if (node.tokens) await visit(node.tokens);
