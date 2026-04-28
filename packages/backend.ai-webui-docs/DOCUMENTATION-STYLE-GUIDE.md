@@ -341,6 +341,76 @@ exit
 
 > **PDF note:** the printed PDF shows the `$` prompts visually too, but text-extraction behavior on PDF copy depends on the viewer. Most viewers include the prompt characters that the page renders, including content injected via CSS `::before`. The web copy button is the guaranteed path for prompt-free clipboard text.
 
+#### How to choose: bash or shellsession?
+
+Ask: **does the block include any program output, error messages, or a follow-up shell prompt?**
+
+- **No** → ` ```bash `. Strip any decorative `$ ` from each line. The reader's copy button gives them runnable commands directly.
+- **Yes** → ` ```shellsession `. Author the transcript as the user would actually see it (prompts, commands, output). The toolkit hides the `$` / `#` from the clipboard automatically.
+
+A multi-line command joined by `\` line continuations is still a single command — keep it in ` ```bash `:
+
+````markdown
+```bash
+curl -H "Content-Type: application/json" -X GET \
+  -H "Authorization: Bearer $TOKEN" \
+  https://api.example.com/v1/resource
+```
+````
+
+#### Placeholders in bash blocks
+
+In shells like `bash`, an unquoted `<word>` in a command can be parsed as **input redirection**, even when it appears mid-token. A naive copy-paste of `docker pull image:<version>` will fail because the shell tries to read from a file named `version`. Two safe patterns:
+
+| Pattern | Use when |
+|---|---|
+| `${VARIABLE}` (with an `export VAR="<placeholder>"` companion) | The placeholder appears multiple times, or the block is meant to be edited then run end-to-end. |
+| Quoted string `"<placeholder>"` | A single-occurrence placeholder where the reader will replace the whole quoted token. |
+
+````markdown
+```bash
+# ✅ safe — VERSION is a real shell variable
+export VERSION="<the version you want, e.g. 24.09>"
+docker pull lablup/backend.ai-client:${VERSION}
+```
+````
+
+````markdown
+```bash
+# ✅ safe — quoted; reader replaces the literal token
+docker pull "lablup/backend.ai-client:<version>"
+```
+````
+
+````markdown
+```bash
+# ❌ broken — bash parses <version> as input redirection
+docker pull lablup/backend.ai-client:<version>
+```
+````
+
+The same rule applies to `<token>`, `<endpoint>`, `<path>`, etc. — and not just inside ` ```bash ` blocks. ` ```shellsession ` blocks also have a copy button, and readers paste the resulting command text into a real shell; an unquoted `<placeholder>` in a shellsession command line will fail in their terminal too. Apply the placeholder-safety rule whenever you expect readers to copy and run the command, regardless of fence type.
+
+#### Code-block authoring checklist
+
+Before merging a doc page that contains code blocks, verify:
+
+1. The fence language matches the **content type** (single command vs transcript).
+2. There is no decorative `$ ` prefix in ` ```bash ` blocks. Use ` ```shellsession ` if you need to show the prompt.
+3. No unquoted `<placeholder>` at the start of a token in a bash block.
+4. **Inline comments inside the code block are localized**: if the source `.md` is in `ko/`, `ja/`, or `th/`, any `# comment` lines must be translated to that locale (the comment is part of the user-facing rendered code, not a build-time directive). See [TRANSLATION-GUIDE.md](TRANSLATION-GUIDE.md#inline-code-comments).
+5. Pasting the rendered (web copy-button) output into a real shell would actually run.
+
+#### Common mistakes
+
+| Mistake | Why it's wrong | Fix |
+|---|---|---|
+| Decorative `$ ` in ` ```bash ` | The reader's copy includes `$ ` which is not a command — paste fails. | Drop the `$ `, or move to ` ```shellsession ` if showing transcript intent. |
+| Unquoted `<placeholder>` | Bash parses `<…>` as redirection. | Use `${VARIABLE}` or quoted form (see above). |
+| English `# comment` in a translated locale | Reader sees an untranslated string in the middle of otherwise-localized prose. | Translate the comment to the locale's language. |
+| ` ```shellsession ` for a single command with no output | Adds prompt visual noise without transcript value. | Use ` ```bash ` without prompt. |
+| ` ```shell ` (legacy alias) | Deprecated in this manual; avoid using it in new or updated pages. | Use ` ```bash ` (or ` ```sh ` for explicit POSIX-only intent). |
+
 #### Code Block with Title
 
 Add `title="filename"` after the language to display a filename label above the code block:

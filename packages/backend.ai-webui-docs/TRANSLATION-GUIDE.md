@@ -146,7 +146,8 @@ Keep these in their original form across all languages:
 - Product name: **Backend.AI**
 - Technical identifiers: fGPU, API, SSH, SFTP, HTTP, GPU, CPU, RAM
 - File paths: `/home/work/`, `config.toml`
-- Code examples and shell commands
+- **Shell commands themselves** — the runnable code (e.g. `docker pull lablup/backend.ai-client`) is identical across languages
+- **Code and configuration examples** in fenced blocks (for example, `toml`, `yaml`, `json`, and similar formats) — keep the code itself identical across languages; only comment lines should be translated, as described below
 - Image filenames
 - Cross-reference anchor names
 - Version numbers
@@ -159,6 +160,46 @@ Keep these in their original form across all languages:
 - Dialog field descriptions
 - Notes and warnings
 - Navigation titles in `book.config.yaml`
+- **Inline `# …` comments inside code blocks** (see below)
+
+<a id="inline-code-comments"></a>
+
+### Inline code comments
+
+Comment lines inside a code block (e.g. `# If you want to use the specific version, …`) are **user-facing prose** that happens to live inside a fenced block. They render as part of the rendered transcript and are seen by the reader exactly as authored.
+
+Treat them like any other narrative text:
+
+- **Translate the comment** to the locale's language.
+- The shell command itself stays unchanged.
+
+````markdown
+<!-- en/ -->
+```bash
+# If you want a specific version, pull the image with:
+docker pull lablup/backend.ai-client:${VERSION}
+```
+
+<!-- ko/ -->
+```bash
+# 특정 버전을 사용하려면 다음 명령으로 이미지를 가져올 수 있습니다:
+docker pull lablup/backend.ai-client:${VERSION}
+```
+
+<!-- ja/ -->
+```bash
+# 特定のバージョンを使用したい場合は、次のコマンドでイメージを取得できます:
+docker pull lablup/backend.ai-client:${VERSION}
+```
+
+<!-- th/ -->
+```bash
+# หากคุณต้องการใช้เวอร์ชันที่ระบุ คุณสามารถดึงอิมเมจได้ด้วยคำสั่งต่อไปนี้:
+docker pull lablup/backend.ai-client:${VERSION}
+```
+````
+
+This rule applies to ` ```bash `, ` ```shellsession `, and any other fenced block that uses `#` / `//` for comments. Leaving English comments inside a translated locale is a translation defect (FR-2763 surfaced this in the Thai locale).
 
 ## Quality Checklist
 
@@ -168,6 +209,7 @@ For each translated document, verify:
 - [ ] Consistent formality level throughout
 - [ ] Terminology matches `TERMINOLOGY.md`
 - [ ] No untranslated English sentences left in the body text
+- [ ] No untranslated English `#` / `//` comments inside code blocks (see [Inline code comments](#inline-code-comments))
 - [ ] Image references are identical to the English version
 - [ ] Cross-reference anchors are preserved
 - [ ] Natural sentence structure (not word-for-word translation)

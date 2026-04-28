@@ -84,3 +84,11 @@ Read these before writing or editing documentation:
 - Check `resources/i18n/{lang}.json` in the main project for actual UI label translations
 - Images are shared naming across languages: `![](images/filename.png)`
 - Keep all 4 language versions structurally identical
+
+### Code blocks (cheat sheet)
+
+- ` ```bash ` for runnable commands. **No** decorative `$ ` prefix; the snippet must be ready to copy-and-paste.
+- ` ```shellsession ` for terminal *transcripts* (commands + program output / nested prompts). The toolkit hides the `$` / `#` from the clipboard automatically.
+- Avoid unquoted `<placeholder>` in a bash block — bash parses `<` as input redirection unless it is quoted, even in the middle of a token. Use `${VARIABLE}` (with an `export VAR="<placeholder>"` companion) or quote the placeholder.
+- **Translate inline `# …` comments inside code blocks** to the locale's language. The shell command itself stays unchanged.
+- See `DOCUMENTATION-STYLE-GUIDE.md` → "Code Blocks" for the full convention, examples, and authoring checklist.
