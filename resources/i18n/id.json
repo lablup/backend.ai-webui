@@ -1757,6 +1757,7 @@
     "CustomExpirationDate": "Tanggal kedaluwarsa khusus",
     "CustomExpiredDate": "Tanggal kedaluwarsa khusus",
     "DeployAsService": "Terapkan sebagai Layanan",
+    "DeploymentPresetDetail": "Detail preset deployment",
     "DesiredSessionCount": "Jumlah Sesi yang Diinginkan",
     "Destroyed": "Hancur",
     "EditModelService": "Layanan Edit Model",

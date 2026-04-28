@@ -1756,6 +1756,7 @@
     "CustomExpirationDate": "วันหมดอายุที่กำหนดเอง",
     "CustomExpiredDate": "วันที่หมดอายุที่กำหนดเอง",
     "DeployAsService": "ปรับใช้เป็นบริการ",
+    "DeploymentPresetDetail": "รายละเอียดพรีเซตการปรับใช้",
     "DesiredSessionCount": "จำนวนเซสชันที่ต้องการ",
     "Destroyed": "ถูกทำลาย",
     "EditModelService": "แก้ไขบริการโมเดล",

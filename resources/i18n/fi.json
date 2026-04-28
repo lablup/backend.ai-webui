@@ -1754,6 +1754,7 @@
     "CustomExpirationDate": "Mukautettu päättymispäivä",
     "CustomExpiredDate": "Mukautettu päättymispäivä",
     "DeployAsService": "Ota käyttöön palveluna",
+    "DeploymentPresetDetail": "Käyttöönottomäärityksen tiedot",
     "DesiredSessionCount": "Haluttu istunnon määrä",
     "Destroyed": "Tuhottu",
     "EditModelService": "Muokkaa mallipalvelua",

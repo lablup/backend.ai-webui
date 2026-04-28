@@ -1756,6 +1756,7 @@
     "CustomExpirationDate": "カスタム有効期限",
     "CustomExpiredDate": "カスタム有効期限",
     "DeployAsService": "サービスとしてデプロイ",
+    "DeploymentPresetDetail": "デプロイメントプリセット詳細",
     "DesiredSessionCount": "希望のセッション数",
     "Destroyed": "破壊された",
     "EditModelService": "モデルサービスの修正",
