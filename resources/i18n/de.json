@@ -1713,6 +1713,7 @@
     "CustomExpirationDate": "Benutzerdefinierte Ablaufdatum",
     "CustomExpiredDate": "Benutzerdefinierte Ablaufdatum",
     "DeployAsService": "Als Dienst bereitstellen",
+    "DeploymentPresetDetail": "Deployment-Preset Details",
     "DesiredSessionCount": "Gewünschte Anzahl von Sitzungen",
     "Destroyed": "Zerstört",
     "EditModelService": "Modelldienst bearbeiten",

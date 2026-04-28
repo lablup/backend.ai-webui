@@ -1713,6 +1713,7 @@
     "CustomExpirationDate": "自定义到期日期",
     "CustomExpiredDate": "自定义过期日期",
     "DeployAsService": "部署为服务",
+    "DeploymentPresetDetail": "部署预设详情",
     "DesiredSessionCount": "希望的会话次数",
     "Destroyed": "被摧毁",
     "EditModelService": "编辑模型服务",

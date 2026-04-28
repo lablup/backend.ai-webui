@@ -1711,6 +1711,7 @@
     "CustomExpirationDate": "Ημερομηνία λήξης προσαρμοσμένης",
     "CustomExpiredDate": "Ημερομηνία λήξης προσαρμοσμένης",
     "DeployAsService": "Ανάπτυξη ως υπηρεσία",
+    "DeploymentPresetDetail": "Λεπτομέρειες προεπιλογής ανάπτυξης",
     "DesiredSessionCount": "Επιθυμητός αριθμός συνόδων",
     "Destroyed": "Καταστράφηκε",
     "EditModelService": "Επεξεργασία υπηρεσίας μοντέλου",
