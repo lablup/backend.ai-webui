@@ -3,13 +3,15 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import {
-  PrometheusQueryPresetListFragment$data,
-  PrometheusQueryPresetListFragment$key,
-} from '../__generated__/PrometheusQueryPresetListFragment.graphql';
+  PrometheusQueryPresetNodesFragment$data,
+  PrometheusQueryPresetNodesFragment$key,
+} from '../__generated__/PrometheusQueryPresetNodesFragment.graphql';
 import { localeCompare } from '../helper';
-import { Typography } from 'antd';
+import { DeleteOutlined } from '@ant-design/icons';
+import { Button, Typography } from 'antd';
 import {
   BAIColumnsType,
+  BAIFlex,
   BAITable,
   BAITableProps,
   filterOutNullAndUndefined,
@@ -19,17 +21,25 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
-type PrometheusQueryPresetRow = PrometheusQueryPresetListFragment$data[number];
+export type PrometheusQueryPresetNodeInList = NonNullable<
+  PrometheusQueryPresetNodesFragment$data[number]
+>;
 
-interface PrometheusQueryPresetListProps extends Omit<
-  BAITableProps<PrometheusQueryPresetRow>,
+interface PrometheusQueryPresetNodesProps extends Omit<
+  BAITableProps<PrometheusQueryPresetNodeInList>,
   'dataSource' | 'columns'
 > {
-  presetsFrgmt: PrometheusQueryPresetListFragment$key;
+  presetsFrgmt: PrometheusQueryPresetNodesFragment$key;
+  onDeletePreset?: (preset: PrometheusQueryPresetNodeInList) => void;
+  customizeColumns?: (
+    baseColumns: BAIColumnsType<PrometheusQueryPresetNodeInList>,
+  ) => BAIColumnsType<PrometheusQueryPresetNodeInList>;
 }
 
-const PrometheusQueryPresetList: React.FC<PrometheusQueryPresetListProps> = ({
+const PrometheusQueryPresetNodes: React.FC<PrometheusQueryPresetNodesProps> = ({
   presetsFrgmt,
+  onDeletePreset,
+  customizeColumns,
   ...tableProps
 }) => {
   'use memo';
@@ -37,7 +47,7 @@ const PrometheusQueryPresetList: React.FC<PrometheusQueryPresetListProps> = ({
 
   const presets = useFragment(
     graphql`
-      fragment PrometheusQueryPresetListFragment on QueryDefinition
+      fragment PrometheusQueryPresetNodesFragment on QueryDefinition
       @relay(plural: true) {
         id
         name
@@ -62,7 +72,7 @@ const PrometheusQueryPresetList: React.FC<PrometheusQueryPresetListProps> = ({
     presetsFrgmt,
   );
 
-  const columns: BAIColumnsType<PrometheusQueryPresetRow> = [
+  const baseColumns: BAIColumnsType<PrometheusQueryPresetNodeInList> = [
     {
       title: t('prometheusQueryPreset.Name'),
       dataIndex: 'name',
@@ -113,7 +123,26 @@ const PrometheusQueryPresetList: React.FC<PrometheusQueryPresetListProps> = ({
       render: (updatedAt: string | null | undefined) =>
         updatedAt ? dayjs(updatedAt).format('lll') : '-',
     },
+    {
+      title: t('general.Control'),
+      key: 'actions',
+      fixed: 'right',
+      render: (_value, row) => (
+        <BAIFlex gap="xxs">
+          <Button
+            type="text"
+            danger
+            icon={<DeleteOutlined />}
+            onClick={() => onDeletePreset?.(row)}
+          />
+        </BAIFlex>
+      ),
+    },
   ];
+
+  const allColumns = customizeColumns
+    ? customizeColumns(baseColumns)
+    : baseColumns;
 
   return (
     <BAITable
@@ -121,11 +150,11 @@ const PrometheusQueryPresetList: React.FC<PrometheusQueryPresetListProps> = ({
       scroll={{ x: 'max-content' }}
       rowKey="id"
       dataSource={filterOutNullAndUndefined(presets)}
-      columns={columns}
+      columns={allColumns}
       showSorterTooltip={false}
       {...tableProps}
     />
   );
 };
 
-export default PrometheusQueryPresetList;
+export default PrometheusQueryPresetNodes;

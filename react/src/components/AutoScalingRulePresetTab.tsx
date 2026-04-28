@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { AutoScalingRulePresetTabDeleteMutation } from '../__generated__/AutoScalingRulePresetTabDeleteMutation.graphql';
 import {
   AutoScalingRulePresetTabQuery,
   AutoScalingRulePresetTabQuery$variables,
@@ -9,13 +10,15 @@ import {
 } from '../__generated__/AutoScalingRulePresetTabQuery.graphql';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import PrometheusQueryPresetEditorModal from './PrometheusQueryPresetEditorModal';
-import PrometheusQueryPresetList from './PrometheusQueryPresetList';
+import PrometheusQueryPresetNodes from './PrometheusQueryPresetNodes';
 import { PlusOutlined } from '@ant-design/icons';
-import { Button, Skeleton } from 'antd';
+import { Alert, App, Button, Skeleton, theme } from 'antd';
 import {
+  BAIConfirmModalWithInput,
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
+  BAIText,
   type GraphQLFilter,
   INITIAL_FETCH_KEY,
   useFetchKey,
@@ -29,11 +32,15 @@ import React, {
   useTransition,
 } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery } from 'react-relay';
+import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
+
+type DeletingPresetTarget = { id: string; name: string };
 
 const AutoScalingRulePresetTab: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
+  const { token } = theme.useToken();
+  const { message } = App.useApp();
 
   const [queryParam, setQueryParam] = useQueryStates(
     {
@@ -54,6 +61,17 @@ const AutoScalingRulePresetTab: React.FC = () => {
   const [fetchKey, updateFetchKey] = useFetchKey();
   const [, startRefetchTransition] = useTransition();
   const [isCreatingPreset, setIsCreatingPreset] = useState(false);
+  const [deletingPreset, setDeletingPreset] =
+    useState<DeletingPresetTarget | null>(null);
+
+  const [commitDeleteMutation, isInflightDelete] =
+    useMutation<AutoScalingRulePresetTabDeleteMutation>(graphql`
+      mutation AutoScalingRulePresetTabDeleteMutation($id: ID!) {
+        adminDeletePrometheusQueryPreset(id: $id) {
+          id
+        }
+      }
+    `);
 
   // QueryDefinitionFilter only supports a flat `name` filter today, so collapse
   // any AND/OR wrapper produced by BAIGraphQLPropertyFilter back to a flat object.
@@ -96,7 +114,7 @@ const AutoScalingRulePresetTab: React.FC = () => {
             edges {
               node {
                 id
-                ...PrometheusQueryPresetListFragment
+                ...PrometheusQueryPresetNodesFragment
               }
             }
           }
@@ -156,7 +174,7 @@ const AutoScalingRulePresetTab: React.FC = () => {
         </BAIFlex>
       </BAIFlex>
       <Suspense fallback={<Skeleton active />}>
-        <PrometheusQueryPresetList
+        <PrometheusQueryPresetNodes
           presetsFrgmt={presetNodes}
           loading={isPending}
           pagination={{
@@ -168,6 +186,9 @@ const AutoScalingRulePresetTab: React.FC = () => {
                 setTablePaginationOption({ current, pageSize });
               }
             },
+          }}
+          onDeletePreset={(preset) => {
+            setDeletingPreset({ id: preset.id, name: preset.name });
           }}
         />
       </Suspense>
@@ -181,6 +202,55 @@ const AutoScalingRulePresetTab: React.FC = () => {
             });
           }
         }}
+      />
+      <BAIConfirmModalWithInput
+        open={!!deletingPreset}
+        title={t('prometheusQueryPreset.PermanentlyDeletePreset', {
+          name: deletingPreset?.name,
+        })}
+        content={
+          <BAIFlex direction="column" gap="md" align="stretch">
+            <Alert
+              type="warning"
+              title={t('prometheusQueryPreset.DeleteWarning')}
+            />
+            <BAIFlex>
+              <BAIText style={{ marginRight: token.marginXXS }}>
+                {t('dialog.TypeNameToConfirmDeletion')}
+              </BAIText>
+              (<BAIText code>{deletingPreset?.name}</BAIText>)
+            </BAIFlex>
+          </BAIFlex>
+        }
+        confirmText={deletingPreset?.name ?? ''}
+        inputProps={{ placeholder: deletingPreset?.name ?? '' }}
+        okText={t('button.Delete')}
+        confirmLoading={isInflightDelete}
+        onOk={() => {
+          if (!deletingPreset) return;
+          commitDeleteMutation({
+            variables: {
+              id: deletingPreset.id,
+            },
+            onCompleted: (_res, errors) => {
+              if (errors && errors.length > 0) {
+                _.forEach(errors, (err) => message.error(err.message));
+                setDeletingPreset(null);
+                return;
+              }
+              message.success(t('prometheusQueryPreset.SuccessfullyDeleted'));
+              setDeletingPreset(null);
+              startRefetchTransition(() => {
+                updateFetchKey();
+              });
+            },
+            onError: (error) => {
+              message.error(error.message);
+              setDeletingPreset(null);
+            },
+          });
+        }}
+        onCancel={() => setDeletingPreset(null)}
       />
     </BAIFlex>
   );
