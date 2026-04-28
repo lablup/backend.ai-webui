@@ -4,10 +4,15 @@ title: |
   User Guide
 description: Multilingual user manual by Lablup Inc.
 type: document
+# FR-2765: ko first so the language switcher surfaces 한국어 at the top
+# of the dropdown. The build pipeline iterates this list to enumerate
+# per-language pages, but iteration order is output-only — no consumer
+# of the build relies on it. Remaining order (en, ja, th) preserved
+# for downstream stability.
 languages:
+  - ko
   - en
   - ja
-  - ko
   - th
 # F3 — Information architecture
 # ----------------------------------------------------------------------------

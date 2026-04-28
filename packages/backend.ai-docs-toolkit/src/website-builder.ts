@@ -459,12 +459,27 @@ function sidebarCategoryIconSvg(group: NavGroup): string {
 }
 
 /**
- * Lucide `languages` icon — used to signal the purpose of the topbar
- * language switcher (FR-2737). Inline SVG, currentColor stroke so it
- * inherits the surrounding text color in both light and dark themes.
- * Source: https://lucide.dev/icons/languages
+ * Language-switcher icon (FR-2765). Replaces the previous Lucide
+ * `languages` glyph (which read as a generic "two-character set" for
+ * non-CJK readers and as a generic squiggle for everyone else) with a
+ * 가 / A pair, matching the Material Symbols `language_korean_latin`
+ * idea: one Hangul syllable + one Latin uppercase letter so the
+ * control's purpose is unambiguous to readers who recognize either
+ * script.
+ *
+ * The glyph outlines are baked in as a single `<path>` with `fill:
+ * currentColor`, generated offline from Noto Sans CJK KR Bold via
+ * fontTools. This avoids depending on the visitor's system having a
+ * CJK font available — without it, an SVG `<text>` "가" would fall
+ * back to a tofu box on stripped-down environments. Air-gap safe.
+ *
+ * Path-generation reproducibility: the `d` attribute below was emitted
+ * by `fontTools.pens.svgPathPen.SVGPathPen` from glyphs U+AC00 (가) and
+ * U+0041 (A) at font-size 13, baselines (1, 12) and (11, 23), inside
+ * a 24×24 viewBox. Re-run the conversion if the visual scale or
+ * placement ever changes; do not hand-edit the path.
  */
-const LUCIDE_LANGUAGES_ICON_SVG = `<svg class="lang-switcher__icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg>`;
+const LANGUAGE_SWITCHER_ICON_SVG = `<svg class="lang-switcher__icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M9.22 1.09V13.13H10.96V7.12H12.63V5.71H10.96V1.09ZM2.07 2.34V3.73H5.99C5.69 6.41 4.2 8.31 1.4 9.75L2.38 11.06C6.38 9.05 7.76 5.96 7.76 2.34Z M10.95 23H12.9L13.57 20.53H16.68L17.36 23H19.38L16.3 13.37H14.03ZM13.99 19.04 14.28 17.98C14.56 16.98 14.84 15.89 15.09 14.84H15.15C15.43 15.86 15.69 16.98 15.99 17.98L16.28 19.04Z"/></svg>`;
 
 // Canonical Lucide `rocket` icon. Swapped in (FR-2737) for the
 // hand-drawn placeholder, whose silhouette read as a horizontal blob
@@ -1372,15 +1387,18 @@ function buildBaiTopbar(
   // localization passes through to search.js.
   void noResultsAttr;
 
-  // Lang switcher (FR-2737 — icon-only variant).
+  // Lang switcher (FR-2737 — icon-only variant; icon updated in FR-2765).
   //
-  // The visible affordance is a single Lucide `languages` icon. A
-  // transparent native `<select>` is layered on top of the icon, so
-  // clicking the icon opens the OS-native option list — every browser
-  // and platform (incl. mobile) renders this dropdown using its own
-  // accessible UI. We don't reinvent the menu in JS: keyboard support,
-  // screen-reader announcements, and touch-friendly option pickers all
-  // come "for free" from the native control.
+  // The visible affordance is a single 가 / A pair (Hangul + Latin)
+  // baked in as inline SVG `<path>` data — see
+  // `LANGUAGE_SWITCHER_ICON_SVG` above for the source-font /
+  // glyph-extraction details. A transparent native `<select>` is
+  // layered on top of the icon, so clicking the icon opens the OS-
+  // native option list — every browser and platform (incl. mobile)
+  // renders this dropdown using its own accessible UI. We don't
+  // reinvent the menu in JS: keyboard support, screen-reader
+  // announcements, and touch-friendly option pickers all come "for
+  // free" from the native control.
   //
   // Pages where the chapter is missing in a peer language still get an
   // option, but its value is that language's `index.html` so the click
@@ -1408,7 +1426,7 @@ function buildBaiTopbar(
   // label association.
   const langSwitcherHtml = `<label class="lang-switcher" aria-label="Language switcher">
     <select class="lang-switcher__select" aria-label="Language switcher" onchange="if(this.value)window.location.assign(this.value)">${langOptions}</select>
-    ${LUCIDE_LANGUAGES_ICON_SVG}
+    ${LANGUAGE_SWITCHER_ICON_SVG}
   </label>`;
 
   // FR-2733: the version selector used to render here in the topbar

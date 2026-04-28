@@ -227,6 +227,59 @@ describe("buildWebPage — FR-2726 surfaces", () => {
     );
   });
 
+  it("renders language <option> entries in the order supplied by peers (FR-2765)", () => {
+    // Surface 한국어 at the top of the language dropdown by feeding peers
+    // in [ko, en, ja, th] order. The renderer must respect that order
+    // verbatim — without this guarantee, reordering `languages:` in
+    // book.config.yaml (the source of truth for peer order) would not
+    // change the user-visible <select> order.
+    const ctx = makeContext();
+    ctx.metadata = {
+      ...ctx.metadata,
+      lang: "ko",
+      availableLanguages: ["ko", "en", "ja", "th"],
+    };
+    ctx.peers = [
+      {
+        lang: "ko",
+        label: "한국어",
+        href: "../ko/dashboard.html",
+        available: true,
+      },
+      {
+        lang: "en",
+        label: "English",
+        href: "../en/dashboard.html",
+        available: true,
+      },
+      {
+        lang: "ja",
+        label: "日本語",
+        href: "../ja/dashboard.html",
+        available: true,
+      },
+      {
+        lang: "th",
+        label: "ภาษาไทย",
+        href: "../th/dashboard.html",
+        available: true,
+      },
+    ];
+    const html = buildWebPage(ctx);
+
+    // Anchor on the topbar's lang-switcher <select> (avoid colliding with
+    // any other <select> rendered downstream, e.g. the version switcher).
+    const selectMatch = html.match(
+      /<select[^>]*class="lang-switcher__select"[\s\S]*?<\/select>/,
+    );
+    assert.ok(selectMatch, "lang-switcher__select not found");
+    const selectHtml = selectMatch[0];
+    const optionLabels = Array.from(
+      selectHtml.matchAll(/<option[^>]*>([^<]+)<\/option>/g),
+    ).map((m) => m[1]);
+    assert.deepEqual(optionLabels, ["한국어", "English", "日本語", "ภาษาไทย"]);
+  });
+
   it("emits the GitHub icon link only when website.repoUrl is set", () => {
     const html = buildWebPage(makeContext());
     assert.match(html, /aria-label="GitHub"/);
@@ -577,13 +630,43 @@ describe("buildWebPage — FR-2733 sidebar version block placement", () => {
     assert.doesNotMatch(html, /class="doc-sidebar-version"/);
     assert.doesNotMatch(html, /id="version-switcher"/);
   });
+
+  it("renders version <option> entries in the order supplied by allLabels (FR-2765)", () => {
+    // Surface `next` at the top of the version dropdown by feeding
+    // allLabels in [next, 26.4] order. The renderer must respect that
+    // order verbatim — without this guarantee, reordering `versions:`
+    // in docs-toolkit.config.yaml (the source of truth for switcher
+    // order) would not change the user-visible <select> order.
+    const ctx = makeVersionedContext();
+    ctx.versionContext = {
+      ...ctx.versionContext!,
+      current: "next",
+      allLabels: ["next", "26.4"],
+      latest: "26.4",
+    };
+    const html = buildWebPage(ctx);
+
+    const selectMatch = html.match(
+      /<select[^>]*id="version-switcher"[\s\S]*?<\/select>/,
+    );
+    assert.ok(selectMatch, "version-switcher <select> not found");
+    const selectHtml = selectMatch[0];
+    const optionLabels = Array.from(
+      selectHtml.matchAll(/<option[^>]*>([^<]+)<\/option>/g),
+    ).map((m) => m[1]);
+    // First option is `next` (no "(latest)" marker — that attaches to
+    // whichever entry is flagged latest); second is `26.4 (latest)`.
+    assert.deepEqual(optionLabels, ["next", "26.4 (latest)"]);
+  });
 });
 
 describe("buildWebPage / buildHomePage — FR-2758 sidebar 'Introduction' entry", () => {
   it("renders an Introduction anchor at the top of the sidebar linking to ./index.html", () => {
     const html = buildWebPage(makeContext());
 
-    const sidebarMatch = html.match(/<aside class="doc-sidebar">[\s\S]*?<\/aside>/);
+    const sidebarMatch = html.match(
+      /<aside class="doc-sidebar">[\s\S]*?<\/aside>/,
+    );
     assert.ok(sidebarMatch, ".doc-sidebar aside not found");
     const sidebarHtml = sidebarMatch[0];
 
@@ -647,10 +730,7 @@ describe("buildWebPage / buildHomePage — FR-2758 sidebar 'Introduction' entry"
     const koCtx = makeContext();
     koCtx.metadata = { ...koCtx.metadata, lang: "ko" };
     const koHtml = buildWebPage(koCtx);
-    assert.match(
-      koHtml,
-      /<span class="doc-sidebar-intro__label">소개<\/span>/,
-    );
+    assert.match(koHtml, /<span class="doc-sidebar-intro__label">소개<\/span>/);
 
     const jaCtx = makeContext();
     jaCtx.metadata = { ...jaCtx.metadata, lang: "ja" };
@@ -663,10 +743,7 @@ describe("buildWebPage / buildHomePage — FR-2758 sidebar 'Introduction' entry"
     const thCtx = makeContext();
     thCtx.metadata = { ...thCtx.metadata, lang: "th" };
     const thHtml = buildWebPage(thCtx);
-    assert.match(
-      thHtml,
-      /<span class="doc-sidebar-intro__label">บทนำ<\/span>/,
-    );
+    assert.match(thHtml, /<span class="doc-sidebar-intro__label">บทนำ<\/span>/);
   });
 });
 

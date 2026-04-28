@@ -441,7 +441,7 @@ export const WEBSITE_LABELS: Record<string, Record<string, string>> = {
     downloadPdfThisVersion: "PDF 다운로드 (이 버전)",
     homeWelcome: "Backend.AI WebUI 사용자 매뉴얼에 오신 것을 환영합니다",
     homeIntro:
-      "Backend.AI WebUI는 Lablup의 분산 AI/ML 컴퓨팅 플랫폼인 Backend.AI를 위한 공식 브라우저 기반 관리 콘솔입니다. 이 매뉴얼은 첫 연산 세션 생성부터 멀티 테넌트 운영까지, 모든 화면과 워크플로우를 단계별로 안내합니다.",
+      "Backend.AI WebUI는 래블업의 분산 AI/ML 컴퓨팅 플랫폼인 Backend.AI를 위한 공식 브라우저 기반 관리 콘솔입니다. 이 매뉴얼은 첫 연산 세션 생성부터 멀티 테넌트 운영까지, 모든 화면과 워크플로우를 단계별로 안내합니다.",
     homeAboutWebUI: "Backend.AI WebUI 소개",
     homeAboutWebUIBody:
       "Backend.AI 클러스터에 접속해 CPU·GPU 위에서 대화형 또는 배치 세션을 실행하고, 팀과 스토리지 폴더를 공유하며, 학습된 모델을 추론 엔드포인트로 서빙하세요. 모든 작업을 브라우저에서 수행할 수 있습니다.",

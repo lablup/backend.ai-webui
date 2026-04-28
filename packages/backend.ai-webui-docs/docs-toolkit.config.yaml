@@ -39,23 +39,33 @@ pdfMetadata:
 # assets are linked from the per-language landing page (FR-2732).
 #
 # Release procedure (when cutting a new minor X.Y):
-#   1. Insert a new entry ABOVE the `next` entry with
+#   1. Insert a new entry IMMEDIATELY BELOW the `next` entry (above the
+#      previous-latest minor) with
 #        label: "X.Y"
 #        source: { kind: archive-branch, ref: docs-archive/X.Y }
 #        pdfTag: "vX.Y.Z"   # highest patch in the minor
 #   2. Move `latest: true` onto the new entry; remove it from the prior one.
-#   3. Leave the `next` entry last; it never carries `latest: true`.
+#   3. Keep the `next` entry at the TOP of the list (FR-2765 — surfaces
+#      `next` at the top of the version <select>); it never carries
+#      `latest: true`.
 #   See the docs release runbook for the full procedure.
 versions:
+  # FR-2765: `next` is intentionally listed first so it appears at the
+  # top of the version `<select>` dropdown. Readers visiting `next` see
+  # it as the active option without scrolling, and stable-channel
+  # readers still see the "(latest)" marker that the switcher renders
+  # next to whichever entry has `latest: true`. Build iteration follows
+  # this list order, but build order is output-only — no consumer of
+  # the build relies on it.
+  - label: "next"
+    source:
+      kind: workspace
   - label: "26.4"
     source:
       kind: archive-branch
       ref: docs-archive/26.4
     latest: true
     pdfTag: "v26.4.7"
-  - label: "next"
-    source:
-      kind: workspace
 
 # Product name for log messages
 productName: "Backend.AI WebUI Docs"
