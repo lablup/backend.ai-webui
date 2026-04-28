@@ -469,6 +469,10 @@ export async function createVFolderAndVerify(
   }
 
   await (await modal.getCreateButton()).click();
+  // Wait for the creation modal to close before verifying
+  await expect(
+    page.getByRole('dialog').filter({ hasText: 'Create a new storage folder' }),
+  ).toBeHidden({ timeout: 30000 });
   await verifyVFolder(page, folderName);
 }
 
