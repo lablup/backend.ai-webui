@@ -1712,6 +1712,7 @@
     "CustomExpirationDate": "Захиалгат дуусах хугацаа",
     "CustomExpiredDate": "Захиалгат хугацаа нь дууссан огноо",
     "DeployAsService": "Үйлчилгээ болгон байршуулах",
+    "DeploymentPresetDetail": "Байршуулалтын тохируулгын дэлгэрэнгүй",
     "DesiredSessionCount": "Хүссэн хуралдааны тоо",
     "Destroyed": "Сүйрсэн",
     "EditModelService": "Загварын үйлчилгээг засах",

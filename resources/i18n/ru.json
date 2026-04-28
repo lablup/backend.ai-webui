@@ -1711,6 +1711,7 @@
     "CustomExpirationDate": "Пользовательская дата истечения срока действия",
     "CustomExpiredDate": "Пользовательская дата истек",
     "DeployAsService": "Развернуть как сервис",
+    "DeploymentPresetDetail": "Детали предустановки развёртывания",
     "DesiredSessionCount": "Желаемое количество сеансов",
     "Destroyed": "Уничтожен",
     "EditModelService": "Редактирование модели сервиса",
