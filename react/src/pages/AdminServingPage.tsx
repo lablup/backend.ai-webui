@@ -6,7 +6,7 @@ import { AdminServingPageQuery } from '../__generated__/AdminServingPageQuery.gr
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import EndpointList from '../components/EndpointList';
-import { useWebUINavigate } from '../hooks';
+import { useWebUINavigate, useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
 import { Skeleton } from 'antd';
@@ -21,12 +21,16 @@ import {
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { parseAsString, useQueryStates } from 'nuqs';
-import React, { Suspense, useDeferredValue, useMemo } from 'react';
+import React, { Suspense, useEffect, useDeferredValue, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 const AdminModelCardListPage = React.lazy(
   () => import('./AdminModelCardListPage'),
+);
+
+const AdminDeploymentPresetListPage = React.lazy(
+  () => import('./AdminDeploymentPresetListPage'),
 );
 
 const ServingTabContent: React.FC = () => {
@@ -207,7 +211,9 @@ const AdminServingPage: React.FC = () => {
   const { t } = useTranslation();
   const currentUserRole = useCurrentUserRole();
   const webUINavigate = useWebUINavigate();
+  const baiClient = useSuspendedBackendaiClient();
   const isSuperAdmin = currentUserRole === 'superadmin';
+  const isDeploymentPresetSupported = baiClient.supports('deployment-preset');
 
   const [queryParam, setQueryParam] = useQueryStates(
     {
@@ -215,6 +221,21 @@ const AdminServingPage: React.FC = () => {
     },
     { history: 'push' },
   );
+
+  // Fall back to 'serving' tab when access is not permitted
+  useEffect(() => {
+    if (
+      queryParam.tab === 'deployment-presets' &&
+      (!isSuperAdmin || !isDeploymentPresetSupported)
+    ) {
+      setQueryParam({ tab: 'serving' });
+    }
+  }, [
+    queryParam.tab,
+    isSuperAdmin,
+    isDeploymentPresetSupported,
+    setQueryParam,
+  ]);
 
   return (
     <BAICard
@@ -237,6 +258,11 @@ const AdminServingPage: React.FC = () => {
           key: 'model-store',
           label: t('adminModelCard.ModelStoreManagement'),
         },
+        isSuperAdmin &&
+          isDeploymentPresetSupported && {
+            key: 'deployment-presets',
+            label: t('adminDeploymentPreset.TabTitle'),
+          },
       ])}
     >
       <Suspense fallback={<Skeleton active />}>
@@ -246,6 +272,13 @@ const AdminServingPage: React.FC = () => {
             <AdminModelCardListPage />
           </BAIErrorBoundary>
         )}
+        {queryParam.tab === 'deployment-presets' &&
+          isSuperAdmin &&
+          isDeploymentPresetSupported && (
+            <BAIErrorBoundary>
+              <AdminDeploymentPresetListPage />
+            </BAIErrorBoundary>
+          )}
       </Suspense>
     </BAICard>
   );
