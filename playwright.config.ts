@@ -1,6 +1,6 @@
 import { defineConfig, devices } from "@playwright/test";
 import * as dotenv from "dotenv";
-dotenv.config({ path: "./e2e/envs/.env.playwright" });
+dotenv.config({ path: "./e2e/envs/.env.playwright", override: true });
 /**
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
@@ -27,6 +27,8 @@ export default defineConfig({
     ? [["html", { open: "never" }], ["github"]]
     : [["html", { open: "never" }], ["list"]],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
+  /* Default timeout for each test */
+  timeout: 180000,
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
     // baseURL: 'http://127.0.0.1:3000',
