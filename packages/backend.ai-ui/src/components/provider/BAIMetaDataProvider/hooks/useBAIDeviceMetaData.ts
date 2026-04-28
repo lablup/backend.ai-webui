@@ -1,4 +1,4 @@
-import { useBAILogger } from '../../../../hooks';
+import useBAILogger from '../../../../hooks/useBAILogger';
 import { BAIDeviceMetaDataContext } from '../context';
 import { useContext } from 'react';
 

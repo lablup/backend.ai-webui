@@ -44,7 +44,7 @@ export interface LoggerPlugin {
 class Logger {
   private plugins: LoggerPlugin[] = [];
   private metadata: Record<string, any> = {};
-  private enabled: boolean = process.env.NODE_ENV !== 'production';
+  private enabled: boolean = !import.meta.env.PROD;
   private static instance: Logger;
 
   private constructor() {

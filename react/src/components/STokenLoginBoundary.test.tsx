@@ -36,50 +36,52 @@ import fs from 'fs';
 import { Provider as JotaiProvider, createStore } from 'jotai';
 import path from 'path';
 import React from 'react';
+import { vi, type Mock, type MockedFunction } from 'vitest';
 
 // ---------------------------------------------------------------------------
 // Module mocks
 // ---------------------------------------------------------------------------
 
-jest.mock('./DefaultProviders', () => ({
+vi.mock('./DefaultProviders', () => ({
   __esModule: true,
   jotaiStore: { get: () => null, set: () => {} },
 }));
 
-jest.mock('../hooks/useWebUIConfig', () => ({
+vi.mock('../hooks/useWebUIConfig', () => ({
   __esModule: true,
   loginConfigState: { toString: () => 'loginConfigState' },
 }));
 
-jest.mock('../hooks/useResolvedApiEndpoint', () => {
+vi.mock('../hooks/useResolvedApiEndpoint', () => {
   const state: { endpoint: string } = { endpoint: 'https://api.example.com' };
   return {
     __esModule: true,
-    useResolvedApiEndpoint: jest.fn(() => state.endpoint),
+    useResolvedApiEndpoint: vi.fn(() => state.endpoint),
     __endpointState: state,
   };
 });
 
-jest.mock('../helper/loginSessionAuth', () => ({
+vi.mock('../helper/loginSessionAuth', () => ({
   __esModule: true,
-  createBackendAIClient: jest.fn(),
-  tokenLogin: jest.fn(),
-  connectViaGQL: jest.fn(),
+  createBackendAIClient: vi.fn(),
+  tokenLogin: vi.fn(),
+  connectViaGQL: vi.fn(),
 }));
 
-jest.mock('backend.ai-ui', () => {
-  const actual = jest.requireActual('backend.ai-ui');
+vi.mock('backend.ai-ui', async () => {
+  const actual =
+    await vi.importActual<typeof import('backend.ai-ui')>('backend.ai-ui');
   return {
     ...actual,
     useBAILogger: () => ({
-      logger: { error: jest.fn(), warn: jest.fn(), info: jest.fn() },
+      logger: { error: vi.fn(), warn: vi.fn(), info: vi.fn() },
     }),
   };
 });
 
 // Mock Jotai's useAtomValue to return null (no config in test env).
-jest.mock('jotai', () => {
-  const actual = jest.requireActual('jotai');
+vi.mock('jotai', async () => {
+  const actual = await vi.importActual<typeof import('jotai')>('jotai');
   return {
     ...actual,
     useAtomValue: () => null,
@@ -90,10 +92,11 @@ jest.mock('jotai', () => {
 // Test helpers
 // ---------------------------------------------------------------------------
 
-const mockedCreateBackendAIClient =
-  createBackendAIClient as jest.MockedFunction<typeof createBackendAIClient>;
-const mockedTokenLogin = tokenLogin as jest.MockedFunction<typeof tokenLogin>;
-const mockedConnectViaGQL = connectViaGQL as jest.MockedFunction<
+const mockedCreateBackendAIClient = createBackendAIClient as MockedFunction<
+  typeof createBackendAIClient
+>;
+const mockedTokenLogin = tokenLogin as MockedFunction<typeof tokenLogin>;
+const mockedConnectViaGQL = connectViaGQL as MockedFunction<
   typeof connectViaGQL
 >;
 const endpointState = (
@@ -104,15 +107,15 @@ const setEndpoint = (next: string) => {
 };
 
 type FakeClient = {
-  get_manager_version: jest.Mock;
-  check_login: jest.Mock;
-  token_login: jest.Mock;
+  get_manager_version: Mock;
+  check_login: Mock;
+  token_login: Mock;
 };
 
 const buildFakeClient = (overrides: Partial<FakeClient> = {}): FakeClient => ({
-  get_manager_version: jest.fn().mockResolvedValue('1.0'),
-  check_login: jest.fn().mockResolvedValue(false),
-  token_login: jest.fn().mockResolvedValue(true),
+  get_manager_version: vi.fn().mockResolvedValue('1.0'),
+  check_login: vi.fn().mockResolvedValue(false),
+  token_login: vi.fn().mockResolvedValue(true),
   ...overrides,
 });
 
@@ -166,7 +169,7 @@ beforeEach(() => {
 
 afterEach(() => {
   document.removeEventListener('backend-ai-connected', connectedEventHandler);
-  jest.clearAllMocks();
+  vi.clearAllMocks();
 });
 
 // ---------------------------------------------------------------------------
@@ -175,7 +178,7 @@ afterEach(() => {
 
 describe('STokenLoginBoundary', () => {
   test('renders children after the login sequence succeeds', async () => {
-    const onSuccess = jest.fn();
+    const onSuccess = vi.fn();
     renderBoundary({ onSuccess });
 
     await waitFor(() => {
@@ -195,7 +198,7 @@ describe('STokenLoginBoundary', () => {
   });
 
   test('reports missing-token when sToken prop is empty', async () => {
-    const onError = jest.fn();
+    const onError = vi.fn();
     renderBoundary({ sToken: '', onError });
 
     await waitFor(() => {
@@ -206,7 +209,7 @@ describe('STokenLoginBoundary', () => {
   });
 
   test('reports endpoint-unresolved when the resolver returns empty', async () => {
-    const onError = jest.fn();
+    const onError = vi.fn();
     setEndpoint('');
     renderBoundary({ onError });
 
@@ -221,12 +224,12 @@ describe('STokenLoginBoundary', () => {
     const serverErr = new Error('network down');
     mockedCreateBackendAIClient.mockImplementation(() => ({
       client: {
-        get_manager_version: jest.fn().mockRejectedValue(serverErr),
-        token_login: jest.fn(),
+        get_manager_version: vi.fn().mockRejectedValue(serverErr),
+        token_login: vi.fn(),
       },
       clientConfig: {},
     }));
-    const onError = jest.fn();
+    const onError = vi.fn();
     renderBoundary({ onError });
 
     await waitFor(() => {
@@ -242,7 +245,7 @@ describe('STokenLoginBoundary', () => {
   test('reports token-invalid when tokenLogin throws', async () => {
     const tokenErr = new Error('bad token');
     mockedTokenLogin.mockRejectedValue(tokenErr);
-    const onError = jest.fn();
+    const onError = vi.fn();
     renderBoundary({ onError });
 
     await waitFor(() => {
@@ -257,13 +260,13 @@ describe('STokenLoginBoundary', () => {
   test('skips token_login when the browser already holds a valid session', async () => {
     // Reuse the existing session: check_login resolves truthy.
     const client = buildFakeClient({
-      check_login: jest.fn().mockResolvedValue(true),
+      check_login: vi.fn().mockResolvedValue(true),
     });
     mockedCreateBackendAIClient.mockImplementation(() => ({
       client,
       clientConfig: {},
     }));
-    const onSuccess = jest.fn();
+    const onSuccess = vi.fn();
     renderBoundary({ onSuccess });
 
     await waitFor(() => {
@@ -281,7 +284,7 @@ describe('STokenLoginBoundary', () => {
   test('errorFallback replaces the built-in card for every kind', async () => {
     const tokenErr = new Error('bad token');
     mockedTokenLogin.mockRejectedValue(tokenErr);
-    const errorFallback = jest.fn((error: STokenLoginError) => (
+    const errorFallback = vi.fn((error: STokenLoginError) => (
       <div>custom-{error.kind}</div>
     ));
     renderBoundary({ errorFallback });

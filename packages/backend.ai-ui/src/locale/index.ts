@@ -20,7 +20,7 @@ import vi from './vi.json';
 import zh_CN from './zh-CN.json';
 import zh_TW from './zh-TW.json';
 import { Locale } from 'antd/es/locale';
-import { createInstance } from 'i18next';
+import { createInstance, type i18n as I18nInstance } from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
 const resources = {
@@ -89,7 +89,7 @@ const resources = {
   },
 };
 
-export const i18n = createInstance({
+export const i18n: I18nInstance = createInstance({
   lng: 'en',
   fallbackLng: 'en',
   defaultNS: 'backend.ai-ui',
