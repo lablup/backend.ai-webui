@@ -134,6 +134,9 @@
     "Token": "Token",
     "TokenUpdatedSuccessfully": "Token updated successfully."
   },
+  "comp:BAIImageSelect": {
+    "SelectImage": "Seleccionar Imagen"
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "Las versiones {{count}} están excluidas.",
     "FailedToPullVersions": "No se pudo tirar de versiones.",
