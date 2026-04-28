@@ -21,7 +21,13 @@ import {
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { parseAsString, useQueryStates } from 'nuqs';
-import React, { Suspense, useEffect, useDeferredValue, useMemo } from 'react';
+import React, {
+  Suspense,
+  useEffect,
+  useEffectEvent,
+  useDeferredValue,
+  useMemo,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
@@ -222,20 +228,20 @@ const AdminServingPage: React.FC = () => {
     { history: 'push' },
   );
 
-  // Fall back to 'serving' tab when access is not permitted
-  useEffect(() => {
+  // Fall back to 'serving' tab when access is not permitted.
+  // `setQueryParam` is wrapped in `useEffectEvent` so the effect only
+  // re-synchronizes against the genuine reactive deps below.
+  const fallbackToServingTab = useEffectEvent(() => {
     if (
       queryParam.tab === 'deployment-presets' &&
       (!isSuperAdmin || !isDeploymentPresetSupported)
     ) {
       setQueryParam({ tab: 'serving' });
     }
-  }, [
-    queryParam.tab,
-    isSuperAdmin,
-    isDeploymentPresetSupported,
-    setQueryParam,
-  ]);
+  });
+  useEffect(() => {
+    fallbackToServingTab();
+  }, [queryParam.tab, isSuperAdmin, isDeploymentPresetSupported]);
 
   return (
     <BAICard
