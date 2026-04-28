@@ -681,11 +681,12 @@ previously generated.
 Here is a simple command using `curl` to check whether sending requests
 to the model serving endpoint is working properly:
 
-```shellsession
-$ export API_TOKEN="<token>"
-$ curl -H "Content-Type: application/json" -X GET \
+```bash
+export API_TOKEN="<token>"
+export MODEL_SERVICE_ENDPOINT="<model-service-endpoint>"
+curl -H "Content-Type: application/json" -X GET \
   -H "Authorization: BackendAI $API_TOKEN" \
-  <model-service-endpoint>
+  "$MODEL_SERVICE_ENDPOINT"
 ```
 
 :::warning

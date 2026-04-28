@@ -232,11 +232,11 @@ Backend.AI Client package, this process is relatively simple to configure.
 The Backend.AI Client package is available as a Docker image. You can pull the
 image from the Docker Hub with the following command:
 
-```shellsession
-$ docker pull lablup/backend.ai-client
-$
-$ # If you want to use the specific version, you can pull the image with the following command:
-$ docker pull lablup/backend.ai-client:<version>
+```bash
+docker pull lablup/backend.ai-client
+
+# If you want to use the specific version, you can pull the image with the following command:
+docker pull lablup/backend.ai-client:${VERSION}
 ```
 
 The version of Backend.AI server can be found in "About Backend.AI" menu that
@@ -246,15 +246,15 @@ appears when you click on the person icon on the top right corner of the Web UI.
 
 Run the Docker image with the following command:
 
-```shellsession
-$ docker run --rm -it lablup/backend.ai-client bash
+```bash
+docker run --rm -it lablup/backend.ai-client bash
 ```
 
 Check if `backend.ai` command is available in the container. If it is
 available, the help message will be displayed.
 
-```shellsession
-$ backend.ai
+```bash
+backend.ai
 ```
 
 <a id="prepare-directly-from-host-with-a-python-virtual-environment"></a>
@@ -298,8 +298,8 @@ create a separate Python virtual environment. When you run the following
 command, a Python virtual environment will be created under the directory
 `.venv.`.
 
-```shellsession
-$ ./python/install/bin/python3 -m venv .venv
+```bash
+./python/install/bin/python3 -m venv .venv
 ```
 
 Activate the virtual environment. Since a new virtual environment has been

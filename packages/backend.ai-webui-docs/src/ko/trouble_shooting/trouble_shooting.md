@@ -29,8 +29,8 @@
 
 pip 패키지를 설치하면 기본적으로 `~/.local` 경로에 설치됩니다. 따라서, `.local`이라는 이름의 자동 마운트 스토리지 폴더를 생성하면, 연산 세션이 종료된 후에도 설치된 패키지를 보존하여 다음 연산 세션에서 재사용할 수 있습니다. 다음과 같이 pip를 사용하여 패키지를 설치하면 됩니다.
 
-```shellsession
-$ pip install aiohttp
+```bash
+pip install aiohttp
 ```
 자세한 내용은 [자동 마운트 폴더에서 Python 패키지 설치 가이드](../mount_vfolder/mount_vfolder.md#using-pip-with-automountfolder)를 참고하십시오.
 

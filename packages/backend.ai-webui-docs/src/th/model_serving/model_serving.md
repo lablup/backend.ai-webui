@@ -642,11 +642,12 @@ SGLang มีแท็บดังต่อไปนี้: **Model Loading**, *
 นี่คือคำสั่ง `curl` ง่ายๆ เพื่อตรวจสอบว่าการส่งคำขอไปยัง
 endpoint การให้บริการโมเดล ทำงานอย่างถูกต้องหรือไม่:
 
-```shellsession
-$ export API_TOKEN="<token>"
-$ curl -H "Content-Type: application/json" -X GET \
+```bash
+export API_TOKEN="<token>"
+export MODEL_SERVICE_ENDPOINT="<model-service-endpoint>"
+curl -H "Content-Type: application/json" -X GET \
   -H "Authorization: BackendAI $API_TOKEN" \
-  <model-service-endpoint>
+  "$MODEL_SERVICE_ENDPOINT"
 ```
 
 :::warning

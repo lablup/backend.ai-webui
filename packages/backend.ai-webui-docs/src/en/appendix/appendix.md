@@ -263,10 +263,10 @@ If you don't have any experience in creating session and executing app inside, p
 look through [How to create a session](#start-a-new-session) section.
 :::
 
-First, launch terminal app "console". and execute the command below, It will start mlflow tracking UI server.
+First, launch the terminal app `Console` and execute the command below. It will start the MLflow Tracking UI server.
 
-```shellsession
-$ mlflow ui --host 0.0.0.0
+```bash
+mlflow ui --host 0.0.0.0
 ```
 
 Then, Click "MLFlow UI" app in app launcher dialog.
@@ -280,9 +280,9 @@ After few moment, you will see a new page for MLFlow UI.
 By using MLFlow, you can track experiments, such as metrics and parameters every time you run.
 Let's start tracking experiments from simple example.
 
-```shellsession
-$ wget https://raw.githubusercontent.com/mlflow/mlflow/master/examples/sklearn_elasticnet_diabetes/linux/train_diabetes.py
-$ python train_diabetes.py
+```bash
+wget https://raw.githubusercontent.com/mlflow/mlflow/master/examples/sklearn_elasticnet_diabetes/linux/train_diabetes.py
+python train_diabetes.py
 ```
 
 After executing python code, you may see the experiments result in MLFlow.
@@ -291,8 +291,8 @@ After executing python code, you may see the experiments result in MLFlow.
 
 You can also set hyperparameter by giving arguments with code execution.
 
-```shellsession
-$ python train_diabetes.py 0.2 0.05
+```bash
+python train_diabetes.py 0.2 0.05
 ```
 
 After a few training, you can compare trained models with results.

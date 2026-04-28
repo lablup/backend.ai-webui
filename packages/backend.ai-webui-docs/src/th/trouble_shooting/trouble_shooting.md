@@ -36,8 +36,8 @@
 สามารถเก็บแพ็กเกจที่ติดตั้งไว้ได้แม้หลังจากที่เซสชันการคำนวณถูกทำลาย และนำมา
 ใช้ใหม่ในเซสชันการคำนวณครั้งต่อไปได้ เพียงติดตั้งแพ็กเกจด้วย pip ดังนี้:
 
-```shellsession
-$ pip install aiohttp
+```bash
+pip install aiohttp
 ```
 สำหรับข้อมูลเพิ่มเติม โปรดดู[คู่มือการติดตั้งแพ็กเกจ Python
 ด้วยโฟลเดอร์เมาท์อัตโนมัติ](../mount_vfolder/mount_vfolder.md#using-pip-with-automountfolder)
