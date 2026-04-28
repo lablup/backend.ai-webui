@@ -277,8 +277,19 @@ const AdminDeploymentPresetListPage: React.FC = () => {
       result.name = flat.name as DeploymentRevisionPresetFilter['name'];
     }
     if (flat.runtimeVariantId) {
-      result.runtimeVariantId =
-        flat.runtimeVariantId as DeploymentRevisionPresetFilter['runtimeVariantId'];
+      // The schema declares runtimeVariantId as a raw UUID scalar (not a UUIDFilter
+      // object), so coerce the scalar string and tolerate the legacy
+      // `{ equals: "..." }` operator form that might survive in URL state.
+      // See data/schema.graphql:
+      //   input DeploymentRevisionPresetFilter { runtimeVariantId: UUID = null }
+      const raw = flat.runtimeVariantId;
+      const value =
+        typeof raw === 'string'
+          ? raw
+          : raw && typeof raw === 'object'
+            ? ((raw as { equals?: string | null }).equals ?? null)
+            : null;
+      if (value) result.runtimeVariantId = value;
     }
     return result;
   };
@@ -410,7 +421,9 @@ const AdminDeploymentPresetListPage: React.FC = () => {
               {
                 key: 'runtimeVariantId',
                 propertyLabel: t('adminDeploymentPreset.RuntimeVariantId'),
-                type: 'string',
+                type: 'uuid',
+                valueMode: 'scalar',
+                fixedOperator: 'equals',
               },
             ]}
             value={queryParams.filter ?? undefined}
