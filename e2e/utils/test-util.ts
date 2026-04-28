@@ -876,9 +876,15 @@ export async function modifyConfigToml(
     await tempContext.close();
 
     if (!config) {
-      throw new Error(
-        `Failed to fetch config.toml from ${webuiEndpoint} after ${maxRetries} attempts: ${lastError}`,
+      // Fallback: use an empty config object so the requested changes can still be
+      // applied and served via route interception. This makes login resilient when
+      // the server cannot be reached at the configured webuiEndpoint (e.g., when
+      // running tests via the Playwright MCP tool without the env var set).
+      console.warn(
+        `Failed to fetch config.toml from ${webuiEndpoint} after ${maxRetries} attempts: ${lastError}. ` +
+          `Using empty base config — only explicitly requested keys will be set.`,
       );
+      config = {};
     }
   }
 
