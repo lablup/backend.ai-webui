@@ -42,7 +42,7 @@ const DeploymentPresetDetailContent: React.FC<
           startupCommand
           bootstrapScript
           environ {
-            name
+            key
             value
           }
         }

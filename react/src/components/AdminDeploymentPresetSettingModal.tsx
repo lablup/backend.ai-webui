@@ -4,6 +4,7 @@
  */
 import type { AdminDeploymentPresetSettingModalCreateMutation } from '../__generated__/AdminDeploymentPresetSettingModalCreateMutation.graphql';
 import type { AdminDeploymentPresetSettingModalFragment$key } from '../__generated__/AdminDeploymentPresetSettingModalFragment.graphql';
+import type { AdminDeploymentPresetSettingModalImagesQuery } from '../__generated__/AdminDeploymentPresetSettingModalImagesQuery.graphql';
 import type { AdminDeploymentPresetSettingModalRuntimeVariantsQuery } from '../__generated__/AdminDeploymentPresetSettingModalRuntimeVariantsQuery.graphql';
 import type { AdminDeploymentPresetSettingModalUpdateMutation } from '../__generated__/AdminDeploymentPresetSettingModalUpdateMutation.graphql';
 import {
@@ -17,6 +18,7 @@ import {
   Select,
   Switch,
   Typography,
+  theme,
 } from 'antd';
 import { BAIButton, BAIFlex, BAIModal, useBAILogger } from 'backend.ai-ui';
 import React, { useRef } from 'react';
@@ -28,32 +30,31 @@ import {
   useMutation,
 } from 'react-relay';
 
-type DeploymentStrategyType = 'ROLLING' | 'BLUE_GREEN';
+type ClusterModeType = 'SINGLE_NODE' | 'MULTI_NODE';
 
 type FormInputType = {
   name: string;
   description?: string;
   runtimeVariantId: string;
-  // TODO(needs-backend): FR-2761 — imageId is required per spec but not yet in CreateDeploymentRevisionPresetInput schema
-  // imageId?: string;
-  // TODO(needs-backend): FR-2761 — cluster fields not yet in schema
-  // clusterMode?: 'single-node' | 'multi-node';
-  // clusterSize?: number;
-  // TODO(needs-backend): FR-2761 — resource fields not yet in schema
-  // resourceSlots?: Record<string, string>;
-  // shmem?: number;
-  // TODO(needs-backend): FR-2761 — execution fields not yet in schema
-  // startupCommand?: string;
-  // bootstrapScript?: string;
+  imageId: string;
+  clusterMode?: ClusterModeType;
+  clusterSize?: number;
+  startupCommand?: string;
+  bootstrapScript?: string;
+  // TODO(needs-ui): FR-2761 — environ (key-value list) needs dedicated UI component
   // environ?: Array<{ name: string; value: string }>;
+  // TODO(needs-ui): FR-2761 — resourceSlots needs resource allocation UI
+  // resourceSlots?: Record<string, string>;
+  // TODO(needs-ui): FR-2761 — presetValues needs dedicated UI component
   // presetValues?: string;
+  // TODO(needs-ui): FR-2761 — modelDefinition needs structured JSON editor
+  // modelDefinition?: string;
   // Deployment defaults
   openToPublic?: boolean;
   replicaCount?: number;
   revisionHistoryLimit?: number;
-  deploymentStrategy?: DeploymentStrategyType;
-  // TODO(needs-backend): FR-2761 — modelDefinition not yet in schema
-  // modelDefinition?: string;
+  // deploymentStrategy is temporarily disabled per product decision
+  // deploymentStrategy?: 'ROLLING' | 'BLUE_GREEN';
   // Edit-only
   rank?: number;
 };
@@ -104,9 +105,95 @@ const RuntimeVariantSelect: React.FC<{
       onChange={onChange}
       options={options}
       placeholder={t('adminDeploymentPreset.SelectRuntimeVariant')}
-      showSearch
-      optionFilterProp="label"
+      showSearch={{
+        filterOption: (input, option) =>
+          String(option?.label ?? '')
+            .toLowerCase()
+            .includes(input.toLowerCase()),
+      }}
     />
+  );
+};
+
+// Wraps RuntimeVariantSelect with Suspense so Form.Item always renders,
+// keeping the field registered in the form store even during loading.
+const RuntimeVariantSelectField: React.FC<{
+  value?: string;
+  onChange?: (value: string) => void;
+}> = ({ value, onChange }) => {
+  'use memo';
+  const { t } = useTranslation();
+  return (
+    <React.Suspense
+      fallback={<Select disabled placeholder={t('general.Loading')} />}
+    >
+      <RuntimeVariantSelect value={value} onChange={onChange} />
+    </React.Suspense>
+  );
+};
+
+const ImageSelect: React.FC<{
+  value?: string;
+  onChange?: (value: string) => void;
+}> = ({ value, onChange }) => {
+  'use memo';
+  const { t } = useTranslation();
+
+  const queryRef =
+    useLazyLoadQuery<AdminDeploymentPresetSettingModalImagesQuery>(
+      graphql`
+        query AdminDeploymentPresetSettingModalImagesQuery {
+          images {
+            id
+            humanized_name
+            tag
+            registry
+          }
+        }
+      `,
+      {},
+      { fetchPolicy: 'store-and-network' },
+    );
+
+  const options = (queryRef.images ?? [])
+    .filter((img) => img?.id != null)
+    .map((img) => ({
+      value: img!.id!,
+      label: img?.humanized_name
+        ? `${img.humanized_name}:${img?.tag ?? ''}`
+        : `${img?.registry ?? ''}:${img?.tag ?? ''}`,
+    }));
+
+  return (
+    <Select
+      value={value}
+      onChange={onChange}
+      options={options}
+      placeholder={t('adminDeploymentPreset.SelectImage')}
+      showSearch={{
+        filterOption: (input, option) =>
+          String(option?.label ?? '')
+            .toLowerCase()
+            .includes(input.toLowerCase()),
+      }}
+    />
+  );
+};
+
+// Wraps ImageSelect with Suspense so Form.Item always renders,
+// keeping the field registered in the form store even during loading.
+const ImageSelectField: React.FC<{
+  value?: string;
+  onChange?: (value: string) => void;
+}> = ({ value, onChange }) => {
+  'use memo';
+  const { t } = useTranslation();
+  return (
+    <React.Suspense
+      fallback={<Select disabled placeholder={t('general.Loading')} />}
+    >
+      <ImageSelect value={value} onChange={onChange} />
+    </React.Suspense>
   );
 };
 
@@ -118,6 +205,7 @@ const AdminDeploymentPresetSettingModal: React.FC<
   const { t } = useTranslation();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
+  const { token } = theme.useToken();
   const formRef = useRef<FormInstance<FormInputType>>(null);
 
   const preset = useFragment(
@@ -132,6 +220,15 @@ const AdminDeploymentPresetSettingModal: React.FC<
         runtimeVariant {
           id
           name
+        }
+        cluster {
+          clusterMode
+          clusterSize
+        }
+        execution {
+          image
+          startupCommand
+          bootstrapScript
         }
         deploymentDefaults {
           openToPublic
@@ -171,6 +268,15 @@ const AdminDeploymentPresetSettingModal: React.FC<
             name
             description
             rank
+            cluster {
+              clusterMode
+              clusterSize
+            }
+            execution {
+              image
+              startupCommand
+              bootstrapScript
+            }
             deploymentDefaults {
               openToPublic
               replicaCount
@@ -187,14 +293,16 @@ const AdminDeploymentPresetSettingModal: React.FC<
         name: preset.name,
         description: preset.description ?? undefined,
         runtimeVariantId: preset.runtimeVariantId,
+        clusterMode:
+          (preset.cluster?.clusterMode as ClusterModeType) ?? undefined,
+        clusterSize: preset.cluster?.clusterSize ?? undefined,
+        startupCommand: preset.execution?.startupCommand ?? undefined,
+        bootstrapScript: preset.execution?.bootstrapScript ?? undefined,
         rank: preset.rank,
         openToPublic: preset.deploymentDefaults?.openToPublic ?? undefined,
         replicaCount: preset.deploymentDefaults?.replicaCount ?? undefined,
         revisionHistoryLimit:
           preset.deploymentDefaults?.revisionHistoryLimit ?? undefined,
-        deploymentStrategy:
-          (preset.deploymentDefaults
-            ?.deploymentStrategy as DeploymentStrategyType) ?? undefined,
       }
     : {};
 
@@ -216,12 +324,17 @@ const AdminDeploymentPresetSettingModal: React.FC<
               name: values.name,
               description: values.description ?? null,
               rank: values.rank ?? null,
+              imageId: values.imageId ?? null,
+              clusterMode: values.clusterMode ?? null,
+              clusterSize: values.clusterSize ?? null,
+              startupCommand: values.startupCommand ?? null,
+              bootstrapScript: values.bootstrapScript ?? null,
               openToPublic: values.openToPublic,
               replicaCount: values.replicaCount,
               revisionHistoryLimit: values.revisionHistoryLimit,
-              deploymentStrategy: values.deploymentStrategy
-                ? { type: values.deploymentStrategy }
-                : null,
+              // deploymentStrategy: values.deploymentStrategy
+              //   ? { type: values.deploymentStrategy }
+              //   : null,
             },
           },
           onCompleted: (_data, errors) => {
@@ -245,13 +358,19 @@ const AdminDeploymentPresetSettingModal: React.FC<
           variables: {
             input: {
               runtimeVariantId: values.runtimeVariantId,
+              imageId: values.imageId,
               name: values.name,
+              description: values.description ?? null,
+              clusterMode: values.clusterMode ?? null,
+              clusterSize: values.clusterSize ?? null,
+              startupCommand: values.startupCommand ?? null,
+              bootstrapScript: values.bootstrapScript ?? null,
               openToPublic: values.openToPublic ?? null,
               replicaCount: values.replicaCount ?? null,
               revisionHistoryLimit: values.revisionHistoryLimit ?? null,
-              deploymentStrategy: values.deploymentStrategy
-                ? { type: values.deploymentStrategy }
-                : null,
+              // deploymentStrategy: values.deploymentStrategy
+              //   ? { type: values.deploymentStrategy }
+              //   : null,
             },
           },
           onCompleted: (_data, errors) => {
@@ -296,11 +415,18 @@ const AdminDeploymentPresetSettingModal: React.FC<
         ref={formRef}
         layout="vertical"
         initialValues={initialValues}
-        style={{ maxHeight: '60vh', overflowY: 'auto', paddingRight: 4 }}
+        style={{
+          maxHeight: '60vh',
+          overflowY: 'auto',
+          paddingRight: token.paddingXXS,
+        }}
       >
         {/* Basic Info */}
-        <Divider titlePlacement="left" orientationMargin={0}>
-          <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+        <Divider titlePlacement="left" styles={{ content: { margin: 0 } }}>
+          <Typography.Text
+            type="secondary"
+            style={{ fontSize: token.fontSizeSM }}
+          >
             {t('adminDeploymentPreset.SectionBasicInfo')}
           </Typography.Text>
         </Divider>
@@ -316,23 +442,15 @@ const AdminDeploymentPresetSettingModal: React.FC<
         >
           <Input placeholder={t('adminDeploymentPreset.NamePlaceholder')} />
         </Form.Item>
-        {/*
-          TODO(needs-backend): FR-2761 — `description` is supported by
-          UpdateDeploymentRevisionPresetInput but not yet by
-          CreateDeploymentRevisionPresetInput. Render the field only in edit
-          mode for now so create-mode users do not silently lose their input.
-        */}
-        {isEditMode && (
-          <Form.Item
-            name="description"
-            label={t('adminDeploymentPreset.Description')}
-          >
-            <Input.TextArea
-              rows={2}
-              placeholder={t('adminDeploymentPreset.DescriptionPlaceholder')}
-            />
-          </Form.Item>
-        )}
+        <Form.Item
+          name="description"
+          label={t('adminDeploymentPreset.Description')}
+        >
+          <Input.TextArea
+            rows={2}
+            placeholder={t('adminDeploymentPreset.DescriptionPlaceholder')}
+          />
+        </Form.Item>
         {isEditMode ? (
           <Form.Item label={t('adminDeploymentPreset.Runtime')}>
             <Typography.Text>
@@ -340,36 +458,124 @@ const AdminDeploymentPresetSettingModal: React.FC<
             </Typography.Text>
           </Form.Item>
         ) : (
-          <React.Suspense
-            fallback={
-              <Form.Item label={t('adminDeploymentPreset.Runtime')}>
-                <Select disabled placeholder={t('general.Loading')} />
-              </Form.Item>
-            }
+          <Form.Item
+            name="runtimeVariantId"
+            label={t('adminDeploymentPreset.Runtime')}
+            rules={[
+              {
+                required: true,
+                message: t('adminDeploymentPreset.RuntimeRequired'),
+              },
+            ]}
           >
-            <Form.Item
-              name="runtimeVariantId"
-              label={t('adminDeploymentPreset.Runtime')}
-              rules={[
-                {
-                  required: true,
-                  message: t('adminDeploymentPreset.RuntimeRequired'),
-                },
-              ]}
+            <RuntimeVariantSelectField />
+          </Form.Item>
+        )}
+        {isEditMode ? (
+          <Form.Item label={t('adminDeploymentPreset.Image')}>
+            <Typography.Text
+              type="secondary"
+              style={{ fontSize: token.fontSizeSM }}
             >
-              <RuntimeVariantSelect />
-            </Form.Item>
-          </React.Suspense>
+              {preset.execution?.image ?? '-'}
+            </Typography.Text>
+          </Form.Item>
+        ) : (
+          <Form.Item
+            name="imageId"
+            label={t('adminDeploymentPreset.Image')}
+            rules={[
+              {
+                required: true,
+                message: t('adminDeploymentPreset.ImageRequired'),
+              },
+            ]}
+          >
+            <ImageSelectField />
+          </Form.Item>
         )}
 
-        {/* TODO(needs-backend): FR-2761 — imageId field not yet in CreateDeploymentRevisionPresetInput schema */}
-        {/* TODO(needs-backend): FR-2761 — cluster fields (clusterMode, clusterSize) not yet in schema */}
-        {/* TODO(needs-backend): FR-2761 — resource fields (resourceSlots, shmem) not yet in schema */}
-        {/* TODO(needs-backend): FR-2761 — execution fields (startupCommand, bootstrapScript, environ, presetValues) not yet in schema */}
+        {/* Cluster */}
+        <Divider titlePlacement="left" styles={{ content: { margin: 0 } }}>
+          <Typography.Text
+            type="secondary"
+            style={{ fontSize: token.fontSizeSM }}
+          >
+            {t('adminDeploymentPreset.SectionCluster')}
+          </Typography.Text>
+        </Divider>
+        <BAIFlex gap="md" wrap="wrap">
+          <Form.Item
+            name="clusterMode"
+            label={t('adminDeploymentPreset.ClusterMode')}
+            style={{ flex: 1, minWidth: 120 }}
+          >
+            <Select
+              placeholder={t('adminDeploymentPreset.SelectClusterMode')}
+              allowClear
+              options={[
+                {
+                  value: 'SINGLE_NODE',
+                  label: t('adminDeploymentPreset.SingleNode'),
+                },
+                {
+                  value: 'MULTI_NODE',
+                  label: t('adminDeploymentPreset.MultiNode'),
+                },
+              ]}
+            />
+          </Form.Item>
+          <Form.Item
+            name="clusterSize"
+            label={t('adminDeploymentPreset.ClusterSize')}
+            style={{ flex: 1, minWidth: 120 }}
+          >
+            <InputNumber
+              min={1}
+              style={{ width: '100%' }}
+              placeholder={t('adminDeploymentPreset.ClusterSizePlaceholder')}
+            />
+          </Form.Item>
+        </BAIFlex>
+
+        {/* Execution */}
+        <Divider titlePlacement="left" styles={{ content: { margin: 0 } }}>
+          <Typography.Text
+            type="secondary"
+            style={{ fontSize: token.fontSizeSM }}
+          >
+            {t('adminDeploymentPreset.SectionExecution')}
+          </Typography.Text>
+        </Divider>
+        <Form.Item
+          name="startupCommand"
+          label={t('adminDeploymentPreset.StartupCommand')}
+        >
+          <Input.TextArea
+            rows={2}
+            placeholder={t('adminDeploymentPreset.StartupCommandPlaceholder')}
+          />
+        </Form.Item>
+        <Form.Item
+          name="bootstrapScript"
+          label={t('adminDeploymentPreset.BootstrapScript')}
+        >
+          <Input.TextArea
+            rows={3}
+            placeholder={t('adminDeploymentPreset.BootstrapScriptPlaceholder')}
+          />
+        </Form.Item>
+        {/* TODO(needs-ui): FR-2761 — environ (env var list) needs key-value editor component */}
+        {/* TODO(needs-ui): FR-2761 — resourceSlots needs resource allocation UI */}
+        {/* TODO(needs-ui): FR-2761 — presetValues needs dedicated UI component */}
+        {/* TODO(needs-ui): FR-2761 — modelDefinition needs structured editor */}
 
         {/* Deployment Defaults */}
-        <Divider titlePlacement="left" orientationMargin={0}>
-          <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+        <Divider titlePlacement="left" styles={{ content: { margin: 0 } }}>
+          <Typography.Text
+            type="secondary"
+            style={{ fontSize: token.fontSizeSM }}
+          >
             {t('adminDeploymentPreset.SectionDeploymentDefaults')}
           </Typography.Text>
         </Divider>
@@ -399,7 +605,8 @@ const AdminDeploymentPresetSettingModal: React.FC<
             />
           </Form.Item>
         </BAIFlex>
-        <Form.Item
+        {/* deploymentStrategy is temporarily disabled per product decision */}
+        {/* <Form.Item
           name="deploymentStrategy"
           label={t('adminDeploymentPreset.Strategy')}
         >
@@ -411,7 +618,7 @@ const AdminDeploymentPresetSettingModal: React.FC<
               { value: 'BLUE_GREEN', label: 'BLUE_GREEN' },
             ]}
           />
-        </Form.Item>
+        </Form.Item> */}
         <Form.Item
           name="openToPublic"
           label={t('adminDeploymentPreset.OpenToPublic')}
@@ -420,13 +627,14 @@ const AdminDeploymentPresetSettingModal: React.FC<
           <Switch />
         </Form.Item>
 
-        {/* TODO(needs-backend): FR-2761 — modelDefinition textarea not yet in schema */}
-
         {/* Edit-only: rank */}
         {isEditMode && (
           <>
-            <Divider titlePlacement="left" orientationMargin={0}>
-              <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+            <Divider titlePlacement="left" styles={{ content: { margin: 0 } }}>
+              <Typography.Text
+                type="secondary"
+                style={{ fontSize: token.fontSizeSM }}
+              >
                 {t('adminDeploymentPreset.SectionAdvanced')}
               </Typography.Text>
             </Divider>

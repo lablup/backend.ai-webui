@@ -342,7 +342,7 @@ const AdminDeploymentPresetListPage: React.FC = () => {
                 startupCommand
                 bootstrapScript
                 environ {
-                  name
+                  key
                   value
                 }
               }
