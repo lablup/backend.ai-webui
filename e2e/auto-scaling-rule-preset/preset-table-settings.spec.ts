@@ -13,7 +13,7 @@ async function createPreset(
   metricName = 'e2e_metric',
   queryTemplate = 'up',
 ): Promise<void> {
-  await page.goto(`${webuiEndpoint}/admin-serving?tab=auto-scaling-rule`);
+  await page.goto(`${webuiEndpoint}/admin-serving?tab=prometheus-preset`);
   await page.waitForLoadState('domcontentloaded');
   await expect(page.getByRole('button', { name: /Add Preset/i })).toBeVisible({
     timeout: 60000,
@@ -36,7 +36,7 @@ async function createPreset(
 }
 
 async function deletePreset(page: Page, presetName: string): Promise<void> {
-  await page.goto(`${webuiEndpoint}/admin-serving?tab=auto-scaling-rule`);
+  await page.goto(`${webuiEndpoint}/admin-serving?tab=prometheus-preset`);
   await page.waitForLoadState('domcontentloaded');
   await expect(page.getByRole('button', { name: /Add Preset/i })).toBeVisible({
     timeout: 60000,
@@ -73,7 +73,7 @@ test.describe(
       page,
     }) => {
       // Navigate to the tab
-      await page.goto(`${webuiEndpoint}/admin-serving?tab=auto-scaling-rule`);
+      await page.goto(`${webuiEndpoint}/admin-serving?tab=prometheus-preset`);
       await page.waitForLoadState('domcontentloaded');
       await expect(page.getByRole('table')).toBeVisible({ timeout: 30000 });
 
@@ -135,7 +135,7 @@ test.describe(
       page,
     }) => {
       // Navigate to the tab
-      await page.goto(`${webuiEndpoint}/admin-serving?tab=auto-scaling-rule`);
+      await page.goto(`${webuiEndpoint}/admin-serving?tab=prometheus-preset`);
       await page.waitForLoadState('domcontentloaded');
       await expect(page.getByRole('table')).toBeVisible({ timeout: 30000 });
 
@@ -213,7 +213,7 @@ test.describe(
       page,
     }) => {
       // Navigate to the tab
-      await page.goto(`${webuiEndpoint}/admin-serving?tab=auto-scaling-rule`);
+      await page.goto(`${webuiEndpoint}/admin-serving?tab=prometheus-preset`);
       await page.waitForLoadState('domcontentloaded');
 
       // Verify table is visible
@@ -269,7 +269,7 @@ test.describe(
       await createPreset(page, presetName, 'e2e_metric', queryTemplate);
 
       // Navigate to the tab
-      await page.goto(`${webuiEndpoint}/admin-serving?tab=auto-scaling-rule`);
+      await page.goto(`${webuiEndpoint}/admin-serving?tab=prometheus-preset`);
       await page.waitForLoadState('domcontentloaded');
       await expect(page.getByRole('table')).toBeVisible({ timeout: 30000 });
 

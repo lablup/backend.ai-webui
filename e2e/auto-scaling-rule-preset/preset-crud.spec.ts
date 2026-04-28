@@ -13,7 +13,7 @@ async function createPreset(
   metricName = 'e2e_metric',
   queryTemplate = 'up',
 ): Promise<void> {
-  await page.goto(`${webuiEndpoint}/admin-serving?tab=auto-scaling-rule`);
+  await page.goto(`${webuiEndpoint}/admin-serving?tab=prometheus-preset`);
   await page.waitForLoadState('domcontentloaded');
   await expect(page.getByRole('button', { name: /Add Preset/i })).toBeVisible({
     timeout: 60000,
@@ -38,7 +38,7 @@ async function createPreset(
 }
 
 async function deletePreset(page: Page, presetName: string): Promise<void> {
-  await page.goto(`${webuiEndpoint}/admin-serving?tab=auto-scaling-rule`);
+  await page.goto(`${webuiEndpoint}/admin-serving?tab=prometheus-preset`);
   await page.waitForLoadState('domcontentloaded');
   const row = page.getByRole('row').filter({ hasText: presetName });
   if ((await row.count()) === 0) return;
@@ -70,8 +70,8 @@ test.describe(
     test('Superadmin can view the Auto Scaling Rule tab with all toolbar elements and table columns', async ({
       page,
     }) => {
-      // Navigate to the admin-serving page with auto-scaling-rule tab
-      await page.goto(`${webuiEndpoint}/admin-serving?tab=auto-scaling-rule`);
+      // Navigate to the admin-serving page with prometheus-preset tab
+      await page.goto(`${webuiEndpoint}/admin-serving?tab=prometheus-preset`);
       await page.waitForLoadState('domcontentloaded');
 
       // Verify the active tab is "Auto Scaling Rule"
@@ -122,8 +122,8 @@ test.describe(
     test('Superadmin can see pagination controls on the preset list', async ({
       page,
     }) => {
-      // Navigate to the auto-scaling rule tab
-      await page.goto(`${webuiEndpoint}/admin-serving?tab=auto-scaling-rule`);
+      // Navigate to the prometheus preset tab
+      await page.goto(`${webuiEndpoint}/admin-serving?tab=prometheus-preset`);
 
       // Verify the table renders
       await expect(page.getByRole('table')).toBeVisible();
@@ -144,16 +144,29 @@ test.describe(
   'Auto Scaling Rule Preset - Create',
   { tag: ['@auto-scaling-rule-preset', '@admin', '@crud'] },
   () => {
+    let presetName: string;
+
     test.beforeEach(async ({ page, request }) => {
       await loginAsAdmin(page, request);
+    });
+
+    test.afterEach(async ({ page }) => {
+      if (presetName) {
+        try {
+          await deletePreset(page, presetName);
+        } catch {
+          // ignore cleanup errors
+        }
+        presetName = '';
+      }
     });
 
     // 2.1 Superadmin can open the Create Preset modal
     test('Superadmin can open the Create Preset modal with all form fields', async ({
       page,
     }) => {
-      // Navigate to the auto-scaling rule tab
-      await page.goto(`${webuiEndpoint}/admin-serving?tab=auto-scaling-rule`);
+      // Navigate to the prometheus preset tab
+      await page.goto(`${webuiEndpoint}/admin-serving?tab=prometheus-preset`);
 
       // Click the "Add Preset" button
       await page.getByRole('button', { name: /Add Preset/i }).click();
@@ -210,10 +223,10 @@ test.describe(
     test('Superadmin can create a new preset with only required fields', async ({
       page,
     }) => {
-      const presetName = `e2e-preset-create-required-${Date.now()}`;
+      presetName = `e2e-preset-create-required-${Date.now()}`;
 
-      // Navigate to the auto-scaling rule tab
-      await page.goto(`${webuiEndpoint}/admin-serving?tab=auto-scaling-rule`);
+      // Navigate to the prometheus preset tab
+      await page.goto(`${webuiEndpoint}/admin-serving?tab=prometheus-preset`);
 
       // Click the "Add Preset" button
       await page.getByRole('button', { name: /Add Preset/i }).click();
@@ -255,19 +268,16 @@ test.describe(
       await expect(
         newRow.getByRole('cell', { name: 'e2e_cpu_util' }),
       ).toBeVisible();
-
-      // Cleanup
-      await deletePreset(page, presetName);
     });
 
     // 2.3 Superadmin can create a new preset with all fields populated
     test('Superadmin can create a new preset with all fields populated', async ({
       page,
     }) => {
-      const presetName = `e2e-preset-create-full-${Date.now()}`;
+      presetName = `e2e-preset-create-full-${Date.now()}`;
 
       // Navigate and open modal
-      await page.goto(`${webuiEndpoint}/admin-serving?tab=auto-scaling-rule`);
+      await page.goto(`${webuiEndpoint}/admin-serving?tab=prometheus-preset`);
       await page.waitForLoadState('domcontentloaded');
       await expect(
         page.getByRole('button', { name: /Add Preset/i }),
@@ -349,16 +359,6 @@ test.describe(
       await expect(
         newRow.getByRole('cell', { name: '5m', exact: true }),
       ).toBeVisible();
-
-      // Cleanup: delete directly from current page (no re-navigation needed)
-      await newRow.locator('button:has(.anticon-delete)').click();
-      const cleanupModal = page.getByRole('dialog');
-      await expect(cleanupModal).toBeVisible({ timeout: 15000 });
-      await cleanupModal.locator('input').fill(presetName);
-      await cleanupModal
-        .getByRole('button', { name: 'Delete', exact: true })
-        .click();
-      await expect(cleanupModal).toBeHidden({ timeout: 60000 });
     });
 
     // 2.4 Superadmin cannot create a preset without a Name
@@ -366,7 +366,7 @@ test.describe(
       page,
     }) => {
       // Navigate and open modal
-      await page.goto(`${webuiEndpoint}/admin-serving?tab=auto-scaling-rule`);
+      await page.goto(`${webuiEndpoint}/admin-serving?tab=prometheus-preset`);
       await page.getByRole('button', { name: /Add Preset/i }).click();
       // In this version of Ant Design, .ant-modal itself has role="dialog"
       const modal = page.getByRole('dialog');
@@ -396,7 +396,7 @@ test.describe(
       page,
     }) => {
       // Navigate and open modal
-      await page.goto(`${webuiEndpoint}/admin-serving?tab=auto-scaling-rule`);
+      await page.goto(`${webuiEndpoint}/admin-serving?tab=prometheus-preset`);
       await page.getByRole('button', { name: /Add Preset/i }).click();
       // In this version of Ant Design, .ant-modal itself has role="dialog"
       const modal = page.getByRole('dialog');
@@ -426,7 +426,7 @@ test.describe(
       page,
     }) => {
       // Navigate and open modal
-      await page.goto(`${webuiEndpoint}/admin-serving?tab=auto-scaling-rule`);
+      await page.goto(`${webuiEndpoint}/admin-serving?tab=prometheus-preset`);
       await page.getByRole('button', { name: /Add Preset/i }).click();
       // In this version of Ant Design, .ant-modal itself has role="dialog"
       const modal = page.getByRole('dialog');
@@ -462,7 +462,7 @@ test.describe(
       const cancelledName = `e2e-preset-cancelled-${Date.now()}`;
 
       // Navigate and note the initial count
-      await page.goto(`${webuiEndpoint}/admin-serving?tab=auto-scaling-rule`);
+      await page.goto(`${webuiEndpoint}/admin-serving?tab=prometheus-preset`);
       const paginationInfo = page
         .getByRole('listitem')
         .filter({ hasText: /items/ });
@@ -504,7 +504,7 @@ test.describe(
       const duplicateName = `e2e-preset-duplicate-${Date.now()}`;
 
       // Navigate and create first preset
-      await page.goto(`${webuiEndpoint}/admin-serving?tab=auto-scaling-rule`);
+      await page.goto(`${webuiEndpoint}/admin-serving?tab=prometheus-preset`);
       await createPreset(page, duplicateName, 'e2e_metric_1', 'up');
 
       // Verify first preset created successfully and appears in table
@@ -576,7 +576,7 @@ test.describe(
     }) => {
       presetName = `e2e-preset-edit-open-${Date.now()}`;
 
-      // Create a preset via helper (leaves page on admin-serving?tab=auto-scaling-rule)
+      // Create a preset via helper (leaves page on admin-serving?tab=prometheus-preset)
       await createPreset(page, presetName, 'e2e_old_metric', 'up');
 
       // Locate the preset row and click the Edit button
@@ -622,7 +622,7 @@ test.describe(
     }) => {
       presetName = `e2e-preset-edit-metric-${Date.now()}`;
 
-      // Create a preset (leaves page on admin-serving?tab=auto-scaling-rule)
+      // Create a preset (leaves page on admin-serving?tab=prometheus-preset)
       await createPreset(page, presetName, 'e2e_old_metric', 'up');
 
       // Locate the preset row and click Edit
@@ -667,7 +667,7 @@ test.describe(
     }) => {
       presetName = `e2e-preset-edit-window-${Date.now()}`;
 
-      // Create a preset (no Time Window) — leaves page on admin-serving?tab=auto-scaling-rule
+      // Create a preset (no Time Window) — leaves page on admin-serving?tab=prometheus-preset
       await createPreset(page, presetName, 'e2e_metric', 'up');
 
       // Locate the preset row and click Edit
@@ -708,7 +708,7 @@ test.describe(
     }) => {
       presetName = `e2e-preset-edit-labels-${Date.now()}`;
 
-      // Create a preset (leaves page on admin-serving?tab=auto-scaling-rule)
+      // Create a preset (leaves page on admin-serving?tab=prometheus-preset)
       await createPreset(page, presetName, 'e2e_metric', 'up');
 
       // Locate the preset row and click Edit
@@ -756,7 +756,7 @@ test.describe(
     }) => {
       presetName = `e2e-preset-edit-clear-name-${Date.now()}`;
 
-      // Create a preset (leaves page on admin-serving?tab=auto-scaling-rule)
+      // Create a preset (leaves page on admin-serving?tab=prometheus-preset)
       await createPreset(page, presetName, 'e2e_metric', 'up');
 
       // Locate the preset row and click Edit
@@ -795,7 +795,7 @@ test.describe(
     }) => {
       presetName = `e2e-preset-edit-clear-metric-${Date.now()}`;
 
-      // Create a preset (leaves page on admin-serving?tab=auto-scaling-rule)
+      // Create a preset (leaves page on admin-serving?tab=prometheus-preset)
       await createPreset(page, presetName, 'e2e_metric', 'up');
 
       // Locate the preset row and click Edit
@@ -829,7 +829,7 @@ test.describe(
     }) => {
       presetName = `e2e-preset-edit-cancel-${Date.now()}`;
 
-      // Create a preset (leaves page on admin-serving?tab=auto-scaling-rule)
+      // Create a preset (leaves page on admin-serving?tab=prometheus-preset)
       await createPreset(page, presetName, 'e2e_old_metric', 'up');
 
       // Locate the preset row and click Edit
@@ -895,7 +895,7 @@ test.describe(
     }) => {
       presetName = `e2e-preset-delete-confirm-${Date.now()}`;
 
-      // Create a preset (leaves page on admin-serving?tab=auto-scaling-rule)
+      // Create a preset (leaves page on admin-serving?tab=prometheus-preset)
       await createPreset(page, presetName, 'e2e_metric', 'up');
 
       // Locate the preset row and click Delete
@@ -958,7 +958,7 @@ test.describe(
       presetName = `e2e-preset-delete-wrong-${Date.now()}`;
 
       // Create a preset
-      // Create a preset (leaves page on admin-serving?tab=auto-scaling-rule)
+      // Create a preset (leaves page on admin-serving?tab=prometheus-preset)
       await createPreset(page, presetName, 'e2e_metric', 'up');
 
       // Locate the preset row and click Delete
@@ -1003,7 +1003,7 @@ test.describe(
     }) => {
       presetName = `e2e-preset-delete-cancel-${Date.now()}`;
 
-      // Create a preset (leaves page on admin-serving?tab=auto-scaling-rule)
+      // Create a preset (leaves page on admin-serving?tab=prometheus-preset)
       await createPreset(page, presetName, 'e2e_metric', 'up');
 
       // Locate the preset row and click Delete

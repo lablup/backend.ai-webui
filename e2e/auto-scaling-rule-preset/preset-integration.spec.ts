@@ -51,7 +51,7 @@ async function createPreset(
   metricName = 'e2e_metric',
   queryTemplate = 'up',
 ): Promise<void> {
-  await page.goto(`${webuiEndpoint}/admin-serving?tab=auto-scaling-rule`);
+  await page.goto(`${webuiEndpoint}/admin-serving?tab=prometheus-preset`);
   await page.getByRole('button', { name: /Add Preset/i }).click();
   const modal = page.getByRole('dialog');
   await expect(modal).toBeVisible({ timeout: 10000 });
@@ -69,7 +69,7 @@ async function createPreset(
 }
 
 async function deletePreset(page: Page, presetName: string): Promise<void> {
-  await page.goto(`${webuiEndpoint}/admin-serving?tab=auto-scaling-rule`);
+  await page.goto(`${webuiEndpoint}/admin-serving?tab=prometheus-preset`);
   const row = page.getByRole('row').filter({ hasText: presetName });
   if ((await row.count()) === 0) return;
   await row.locator('button:has(.anticon-delete)').click();
@@ -342,7 +342,7 @@ test.describe(
       const timestamp = Date.now();
       presetName = `e2e-preset-integration-${timestamp}`;
 
-      await page.goto(`${webuiEndpoint}/admin-serving?tab=auto-scaling-rule`);
+      await page.goto(`${webuiEndpoint}/admin-serving?tab=prometheus-preset`);
       await page.getByRole('button', { name: /Add Preset/i }).click();
       const createModal = page.getByRole('dialog');
       await expect(createModal).toBeVisible({ timeout: 10000 });
@@ -433,8 +433,10 @@ test.describe(
       });
       await expect(prometheusPresetSelect).toBeVisible({ timeout: 10000 });
 
-      // Step 13: Click the dropdown and verify the test preset is listed
+      // Step 13: Click the dropdown, type to filter, and verify the test preset is listed
       await prometheusPresetSelect.click();
+      // Type the preset name to filter the dropdown (uses showSearch filterOption)
+      await prometheusPresetSelect.fill(presetName);
       // Use .last() to pick the actively appearing dropdown (the previous one may still be in leave-animation)
       const presetOption = page
         .locator('.ant-select-dropdown:not(.ant-select-dropdown-hidden)')
@@ -475,7 +477,7 @@ test.describe(
       await createPreset(page, presetNameTimeWindow, 'e2e_tw_metric', 'up');
 
       // Fill Time Window for this second preset via edit modal
-      await page.goto(`${webuiEndpoint}/admin-serving?tab=auto-scaling-rule`);
+      await page.goto(`${webuiEndpoint}/admin-serving?tab=prometheus-preset`);
       const twRow = page
         .getByRole('row')
         .filter({ hasText: presetNameTimeWindow });
@@ -539,6 +541,8 @@ test.describe(
       });
       await expect(prometheusPresetSelect).toBeVisible({ timeout: 10000 });
       await prometheusPresetSelect.click();
+      // Type to filter the dropdown (uses showSearch filterOption)
+      await prometheusPresetSelect.fill(presetNameTimeWindow);
       const twPresetOption = page
         .locator('.ant-select-dropdown:not(.ant-select-dropdown-hidden)')
         .last()

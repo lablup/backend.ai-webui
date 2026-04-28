@@ -91,8 +91,9 @@ export type ThemeConfig = {
   branding?: ThemeBrandingConfig;
 };
 
-export const webuiEndpoint =
-  process.env.E2E_WEBUI_ENDPOINT || 'http://127.0.0.1:9081';
+export const webuiEndpoint = (
+  process.env.E2E_WEBUI_ENDPOINT || 'http://127.0.0.1:9081'
+).replace(/\/$/, '');
 export const webServerEndpoint =
   process.env.E2E_WEBSERVER_ENDPOINT || 'http://127.0.0.1:8090';
 
