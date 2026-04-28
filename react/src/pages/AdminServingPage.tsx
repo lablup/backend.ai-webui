@@ -6,7 +6,7 @@ import { AdminServingPageQuery } from '../__generated__/AdminServingPageQuery.gr
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import EndpointList from '../components/EndpointList';
-import { useWebUINavigate } from '../hooks';
+import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
 import { Skeleton } from 'antd';
@@ -29,8 +29,8 @@ const AdminModelCardListPage = React.lazy(
   () => import('./AdminModelCardListPage'),
 );
 
-const AutoScalingRulePresetTab = React.lazy(
-  () => import('../components/AutoScalingRulePresetTab'),
+const PrometheusPresetTab = React.lazy(
+  () => import('../components/PrometheusPresetTab'),
 );
 
 const ServingTabContent: React.FC = () => {
@@ -212,6 +212,10 @@ const AdminServingPage: React.FC = () => {
   const currentUserRole = useCurrentUserRole();
   const webUINavigate = useWebUINavigate();
   const isSuperAdmin = currentUserRole === 'superadmin';
+  const baiClient = useSuspendedBackendaiClient();
+  const supportsPrometheusAutoScalingRule = baiClient.supports(
+    'prometheus-auto-scaling-rule',
+  );
 
   const [queryParam, setQueryParam] = useQueryStates(
     {
@@ -254,11 +258,13 @@ const AdminServingPage: React.FC = () => {
             <AdminModelCardListPage />
           </BAIErrorBoundary>
         )}
-        {queryParam.tab === 'prometheus-preset' && isSuperAdmin && (
-          <BAIErrorBoundary>
-            <AutoScalingRulePresetTab />
-          </BAIErrorBoundary>
-        )}
+        {queryParam.tab === 'prometheus-preset' &&
+          isSuperAdmin &&
+          supportsPrometheusAutoScalingRule && (
+            <BAIErrorBoundary>
+              <PrometheusPresetTab />
+            </BAIErrorBoundary>
+          )}
       </Suspense>
     </BAICard>
   );

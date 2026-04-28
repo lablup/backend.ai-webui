@@ -1748,6 +1748,32 @@
   "projectSelect": {
     "ProjectAdminBadge": "Administrador do projeto"
   },
+  "prometheusQueryPreset": {
+    "AddPreset": "Adicionar predefinição",
+    "Category": "Categoria",
+    "CreatePreset": "Criar predefinição",
+    "CreatedAt": "Criado em",
+    "DeleteWarning": "A eliminação desta predefinição irá removê-la permanentemente e não pode ser revertida.",
+    "Description": "Descrição",
+    "EditPreset": "Editar predefinição",
+    "FilterLabels": "Etiquetas de filtro",
+    "GroupLabels": "Etiquetas de grupo",
+    "MetricName": "Nome da métrica",
+    "MetricNameRequired": "O nome da métrica é obrigatório.",
+    "Name": "Nome",
+    "NameMustBeUnique": "Deve ser único entre todas as predefinições de consulta do Prometheus.",
+    "NameRequired": "O nome é obrigatório.",
+    "NoCategory": "Sem categoria",
+    "PermanentlyDeletePreset": "Eliminar permanentemente \"{{ name }}\"?",
+    "QueryTemplate": "Modelo de consulta",
+    "QueryTemplateRequired": "O modelo de consulta é obrigatório.",
+    "Rank": "Classificação",
+    "SuccessfullyCreated": "A predefinição de consulta do Prometheus foi criada com sucesso.",
+    "SuccessfullyDeleted": "A predefinição de consulta do Prometheus foi eliminada com sucesso.",
+    "SuccessfullyUpdated": "A predefinição de consulta do Prometheus foi atualizada com sucesso.",
+    "TimeWindow": "Janela de tempo",
+    "UpdatedAt": "Atualizado em"
+  },
   "rbac": {
     "Active": "Ativo",
     "Assign": "Atribuir",
@@ -2072,7 +2098,7 @@
     "Updated": "Predefinição de recurso atualizada"
   },
   "sTokenLoginBoundary": {
-"AuthenticatingDescription": "A verificar o seu token de início de sessão…",
+    "AuthenticatingDescription": "A verificar o seu token de início de sessão…",
     "AuthenticatingTitle": "Signing you in",
     "ConnectingDescription": "A ligar ao servidor Backend.AI…",
     "CopyErrorDetails": "Copy error details",
@@ -2984,6 +3010,7 @@
       "AllowedClientIpWarning": "Se o seu IP atual não estiver incluído na lista de IPs permitidos, poderá não conseguir iniciar sessão. Contacte o administrador se isso acontecer.",
       "Architecture": "Arquitetura",
       "ArtifactDetails": "Detalhes do artefato",
+      "AutoScalingRule": "Regra de dimensionamento automático",
       "Branding": "Personalização da marca",
       "Cancel": "Cancelar",
       "ChangePassword": "Alterar a senha",
@@ -3050,6 +3077,7 @@
       "Project": "Projeto",
       "ProjectMembers": "Usuários",
       "Projects": "Projetos",
+      "PrometheusPreset": "Predefinição Prometheus",
       "RBACManagement": "Gestão RBAC",
       "Remaining": "Restante",
       "Reservoir": "Reservatório",

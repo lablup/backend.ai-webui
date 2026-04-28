@@ -1746,6 +1746,32 @@
   "projectSelect": {
     "ProjectAdminBadge": "Pentadbir Projek"
   },
+  "prometheusQueryPreset": {
+    "AddPreset": "Tambah Pratetap",
+    "Category": "Kategori",
+    "CreatePreset": "Cipta Pratetap",
+    "CreatedAt": "Dicipta Pada",
+    "DeleteWarning": "Memadam pratetap ini akan mengalihkannya secara kekal dan tidak boleh dibatalkan.",
+    "Description": "Penerangan",
+    "EditPreset": "Edit Pratetap",
+    "FilterLabels": "Label Penapis",
+    "GroupLabels": "Label Kumpulan",
+    "MetricName": "Nama Metrik",
+    "MetricNameRequired": "Nama metrik diperlukan.",
+    "Name": "Nama",
+    "NameMustBeUnique": "Mesti unik di antara semua pratetap pertanyaan Prometheus.",
+    "NameRequired": "Nama diperlukan.",
+    "NoCategory": "Tiada kategori",
+    "PermanentlyDeletePreset": "Padam kekal \"{{ name }}\"?",
+    "QueryTemplate": "Templat Pertanyaan",
+    "QueryTemplateRequired": "Templat pertanyaan diperlukan.",
+    "Rank": "Kedudukan",
+    "SuccessfullyCreated": "Pratetap pertanyaan Prometheus telah berjaya dicipta.",
+    "SuccessfullyDeleted": "Pratetap pertanyaan Prometheus telah berjaya dipadam.",
+    "SuccessfullyUpdated": "Pratetap pertanyaan Prometheus telah berjaya dikemas kini.",
+    "TimeWindow": "Tetingkap Masa",
+    "UpdatedAt": "Dikemas Kini Pada"
+  },
   "rbac": {
     "Active": "Aktif",
     "Assign": "Tugaskan",
@@ -2070,7 +2096,7 @@
     "Updated": "Pratetap sumber dikemas kini"
   },
   "sTokenLoginBoundary": {
-"AuthenticatingDescription": "Token log masuk anda sedang disahkan…",
+    "AuthenticatingDescription": "Token log masuk anda sedang disahkan…",
     "AuthenticatingTitle": "Signing you in",
     "ConnectingDescription": "Menyambung ke pelayan Backend.AI…",
     "CopyErrorDetails": "Copy error details",
@@ -2982,6 +3008,7 @@
       "AllowedClientIpWarning": "Jika IP semasa anda tidak disertakan dalam senarai IP yang dibenarkan, anda mungkin tidak dapat log masuk. Sila hubungi pentadbir anda jika ini berlaku.",
       "Architecture": "Seni bina",
       "ArtifactDetails": "Butiran artifak",
+      "AutoScalingRule": "Peraturan Penskalaan Auto",
       "Branding": "Penjenamaan",
       "Cancel": "Batal",
       "ChangePassword": "Tukar kata laluan",
@@ -3048,6 +3075,7 @@
       "Project": "Projek",
       "ProjectMembers": "Pengguna",
       "Projects": "Projek",
+      "PrometheusPreset": "Pratetap Prometheus",
       "RBACManagement": "Pengurusan RBAC",
       "Remaining": "Tinggal",
       "Reservoir": "Takungan",

@@ -7,17 +7,18 @@ import {
   PrometheusQueryPresetNodesFragment$data,
   PrometheusQueryPresetNodesFragment$key,
 } from '../__generated__/PrometheusQueryPresetNodesFragment.graphql';
-import { localeCompare } from '../helper';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { Button, Typography } from 'antd';
+import { Typography } from 'antd';
 import {
   BAIColumnsType,
   BAIFlex,
+  BAINameActionCell,
   BAITable,
   BAITableProps,
   filterOutNullAndUndefined,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
+import * as _ from 'lodash-es';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -26,9 +27,24 @@ export type PrometheusQueryPresetNodeInList = NonNullable<
   PrometheusQueryPresetNodesFragment$data[number]
 >;
 
+const availablePrometheusQueryPresetSorterKeys = [
+  'name',
+  'createdAt',
+  'updatedAt',
+] as const;
+
+export const availablePrometheusQueryPresetSorterValues = [
+  ...availablePrometheusQueryPresetSorterKeys,
+  ...availablePrometheusQueryPresetSorterKeys.map((key) => `-${key}` as const),
+] as const;
+
+const isEnableSorter = (key: string) => {
+  return _.includes(availablePrometheusQueryPresetSorterKeys, key);
+};
+
 interface PrometheusQueryPresetNodesProps extends Omit<
   BAITableProps<PrometheusQueryPresetNodeInList>,
-  'dataSource' | 'columns'
+  'dataSource' | 'columns' | 'onChangeOrder'
 > {
   presetsFrgmt: PrometheusQueryPresetNodesFragment$key;
   onDeletePreset?: (preset: PrometheusQueryPresetNodeInList) => void;
@@ -36,6 +52,9 @@ interface PrometheusQueryPresetNodesProps extends Omit<
   customizeColumns?: (
     baseColumns: BAIColumnsType<PrometheusQueryPresetNodeInList>,
   ) => BAIColumnsType<PrometheusQueryPresetNodeInList>;
+  onChangeOrder?: (
+    order: (typeof availablePrometheusQueryPresetSorterValues)[number] | null,
+  ) => void;
 }
 
 const PrometheusQueryPresetNodes: React.FC<PrometheusQueryPresetNodesProps> = ({
@@ -43,6 +62,7 @@ const PrometheusQueryPresetNodes: React.FC<PrometheusQueryPresetNodesProps> = ({
   onDeletePreset,
   onEditPreset,
   customizeColumns,
+  onChangeOrder,
   ...tableProps
 }) => {
   'use memo';
@@ -81,8 +101,30 @@ const PrometheusQueryPresetNodes: React.FC<PrometheusQueryPresetNodesProps> = ({
       title: t('prometheusQueryPreset.Name'),
       dataIndex: 'name',
       key: 'name',
-      sorter: (a, b) => localeCompare(a?.name, b?.name),
-      render: (name: string) => name,
+      fixed: 'left',
+      required: true,
+      sorter: isEnableSorter('name'),
+      render: (_name: string, row) => (
+        <BAINameActionCell
+          title={row.name}
+          showActions="always"
+          actions={[
+            {
+              key: 'edit',
+              title: t('button.Edit'),
+              icon: <EditOutlined />,
+              onClick: () => onEditPreset?.(row),
+            },
+            {
+              key: 'delete',
+              title: t('button.Delete'),
+              icon: <DeleteOutlined />,
+              type: 'danger',
+              onClick: () => onDeletePreset?.(row),
+            },
+          ]}
+        />
+      ),
     },
     {
       title: t('prometheusQueryPreset.MetricName'),
@@ -99,6 +141,7 @@ const PrometheusQueryPresetNodes: React.FC<PrometheusQueryPresetNodesProps> = ({
           <Typography.Text
             code
             ellipsis={{ tooltip: queryTemplate }}
+            copyable={{ text: queryTemplate }}
             style={{ maxWidth: 320 }}
           >
             {queryTemplate}
@@ -117,6 +160,8 @@ const PrometheusQueryPresetNodes: React.FC<PrometheusQueryPresetNodesProps> = ({
       title: t('prometheusQueryPreset.CreatedAt'),
       dataIndex: 'createdAt',
       key: 'createdAt',
+      defaultHidden: true,
+      sorter: isEnableSorter('createdAt'),
       render: (createdAt: string | null | undefined) =>
         createdAt ? dayjs(createdAt).format('lll') : '-',
     },
@@ -124,28 +169,10 @@ const PrometheusQueryPresetNodes: React.FC<PrometheusQueryPresetNodesProps> = ({
       title: t('prometheusQueryPreset.UpdatedAt'),
       dataIndex: 'updatedAt',
       key: 'updatedAt',
+      defaultHidden: true,
+      sorter: isEnableSorter('updatedAt'),
       render: (updatedAt: string | null | undefined) =>
         updatedAt ? dayjs(updatedAt).format('lll') : '-',
-    },
-    {
-      title: t('general.Control'),
-      key: 'actions',
-      fixed: 'right',
-      render: (_value, row) => (
-        <BAIFlex gap="xxs">
-          <Button
-            type="text"
-            icon={<EditOutlined />}
-            onClick={() => onEditPreset?.(row)}
-          />
-          <Button
-            type="text"
-            danger
-            icon={<DeleteOutlined />}
-            onClick={() => onDeletePreset?.(row)}
-          />
-        </BAIFlex>
-      ),
     },
   ];
 
@@ -154,15 +181,23 @@ const PrometheusQueryPresetNodes: React.FC<PrometheusQueryPresetNodesProps> = ({
     : baseColumns;
 
   return (
-    <BAITable
-      size="small"
-      scroll={{ x: 'max-content' }}
-      rowKey="id"
-      dataSource={filterOutNullAndUndefined(presets)}
-      columns={allColumns}
-      showSorterTooltip={false}
-      {...tableProps}
-    />
+    <BAIFlex direction="column" align="stretch">
+      <BAITable
+        size="small"
+        scroll={{ x: 'max-content' }}
+        rowKey="id"
+        dataSource={filterOutNullAndUndefined(presets)}
+        columns={allColumns}
+        showSorterTooltip={false}
+        onChangeOrder={(order) => {
+          onChangeOrder?.(
+            (order as (typeof availablePrometheusQueryPresetSorterValues)[number]) ||
+              null,
+          );
+        }}
+        {...tableProps}
+      />
+    </BAIFlex>
   );
 };
 

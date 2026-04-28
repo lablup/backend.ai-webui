@@ -1749,6 +1749,32 @@
   "projectSelect": {
     "ProjectAdminBadge": "Admin Proyek"
   },
+  "prometheusQueryPreset": {
+    "AddPreset": "Tambah Preset",
+    "Category": "Kategori",
+    "CreatePreset": "Buat Preset",
+    "CreatedAt": "Dibuat Pada",
+    "DeleteWarning": "Menghapus preset ini akan menghapusnya secara permanen dan tidak dapat dibatalkan.",
+    "Description": "Deskripsi",
+    "EditPreset": "Edit Preset",
+    "FilterLabels": "Label Filter",
+    "GroupLabels": "Label Grup",
+    "MetricName": "Nama Metrik",
+    "MetricNameRequired": "Nama metrik wajib diisi.",
+    "Name": "Nama",
+    "NameMustBeUnique": "Harus unik di antara semua preset kueri Prometheus.",
+    "NameRequired": "Nama wajib diisi.",
+    "NoCategory": "Tidak ada kategori",
+    "PermanentlyDeletePreset": "Hapus permanen \"{{ name }}\"?",
+    "QueryTemplate": "Template Kueri",
+    "QueryTemplateRequired": "Template kueri wajib diisi.",
+    "Rank": "Peringkat",
+    "SuccessfullyCreated": "Preset kueri Prometheus berhasil dibuat.",
+    "SuccessfullyDeleted": "Preset kueri Prometheus berhasil dihapus.",
+    "SuccessfullyUpdated": "Preset kueri Prometheus berhasil diperbarui.",
+    "TimeWindow": "Jendela Waktu",
+    "UpdatedAt": "Diperbarui Pada"
+  },
   "rbac": {
     "Active": "Aktif",
     "Assign": "Tetapkan",
@@ -2073,7 +2099,7 @@
     "Updated": "Preset sumber daya diperbarui"
   },
   "sTokenLoginBoundary": {
-"AuthenticatingDescription": "Memverifikasi token masuk Anda…",
+    "AuthenticatingDescription": "Memverifikasi token masuk Anda…",
     "AuthenticatingTitle": "Signing you in",
     "ConnectingDescription": "Menghubungkan ke server Backend.AI…",
     "CopyErrorDetails": "Copy error details",
@@ -2986,6 +3012,7 @@
       "AllowedClientIpWarning": "Jika IP Anda saat ini tidak termasuk dalam daftar IP yang diizinkan, Anda mungkin tidak dapat masuk. Hubungi administrator Anda jika hal ini terjadi.",
       "Architecture": "Arsitektur",
       "ArtifactDetails": "Detail Artefak",
+      "AutoScalingRule": "Aturan Skala Otomatis",
       "Branding": "Penjenamaan",
       "Cancel": "Batal",
       "ChangePassword": "Ganti kata sandi",
@@ -3052,6 +3079,7 @@
       "Project": "Proyek",
       "ProjectMembers": "Pengguna",
       "Projects": "Proyek",
+      "PrometheusPreset": "Preset Prometheus",
       "RBACManagement": "Manajemen RBAC",
       "Remaining": "Tersisa",
       "Reservoir": "Waduk",

@@ -1748,6 +1748,32 @@
   "projectSelect": {
     "ProjectAdminBadge": "项目管理员"
   },
+  "prometheusQueryPreset": {
+    "AddPreset": "添加预设",
+    "Category": "类别",
+    "CreatePreset": "创建预设",
+    "CreatedAt": "创建时间",
+    "DeleteWarning": "删除此预设将永久移除它且无法撤销。",
+    "Description": "描述",
+    "EditPreset": "编辑预设",
+    "FilterLabels": "过滤标签",
+    "GroupLabels": "分组标签",
+    "MetricName": "指标名称",
+    "MetricNameRequired": "指标名称为必填项。",
+    "Name": "名称",
+    "NameMustBeUnique": "在所有 Prometheus 查询预设中必须唯一。",
+    "NameRequired": "名称为必填项。",
+    "NoCategory": "无类别",
+    "PermanentlyDeletePreset": "永久删除 \"{{ name }}\"？",
+    "QueryTemplate": "查询模板",
+    "QueryTemplateRequired": "查询模板为必填项。",
+    "Rank": "排名",
+    "SuccessfullyCreated": "Prometheus 查询预设已成功创建。",
+    "SuccessfullyDeleted": "Prometheus 查询预设已成功删除。",
+    "SuccessfullyUpdated": "Prometheus 查询预设已成功更新。",
+    "TimeWindow": "时间窗口",
+    "UpdatedAt": "更新时间"
+  },
   "rbac": {
     "Active": "活跃",
     "Assign": "分配",
@@ -2072,7 +2098,7 @@
     "Updated": "资源预设已更新"
   },
   "sTokenLoginBoundary": {
-"AuthenticatingDescription": "正在验证您的登录令牌…",
+    "AuthenticatingDescription": "正在验证您的登录令牌…",
     "AuthenticatingTitle": "Signing you in",
     "ConnectingDescription": "正在连接 Backend.AI 服务器…",
     "CopyErrorDetails": "Copy error details",
@@ -2984,6 +3010,7 @@
       "AllowedClientIpWarning": "如果您当前的IP未包含在允许IP列表中，您可能无法登录。如果发生这种情况，请联系管理员。",
       "Architecture": "建筑学",
       "ArtifactDetails": "文物细节",
+      "AutoScalingRule": "自动缩放规则",
       "Branding": "品牌",
       "Cancel": "取消",
       "ChangePassword": "更改密码",
@@ -3050,6 +3077,7 @@
       "Project": "项目",
       "ProjectMembers": "用户",
       "Projects": "项目",
+      "PrometheusPreset": "Prometheus 预设",
       "RBACManagement": "RBAC管理",
       "Remaining": "其余的",
       "Reservoir": "水库",

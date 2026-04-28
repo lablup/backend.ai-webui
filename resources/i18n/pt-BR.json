@@ -1746,6 +1746,32 @@
   "projectSelect": {
     "ProjectAdminBadge": "Administrador do projeto"
   },
+  "prometheusQueryPreset": {
+    "AddPreset": "Adicionar predefinição",
+    "Category": "Categoria",
+    "CreatePreset": "Criar predefinição",
+    "CreatedAt": "Criado em",
+    "DeleteWarning": "Excluir esta predefinição a removerá permanentemente e não poderá ser desfeito.",
+    "Description": "Descrição",
+    "EditPreset": "Editar predefinição",
+    "FilterLabels": "Rótulos de filtro",
+    "GroupLabels": "Rótulos de grupo",
+    "MetricName": "Nome da métrica",
+    "MetricNameRequired": "O nome da métrica é obrigatório.",
+    "Name": "Nome",
+    "NameMustBeUnique": "Deve ser único entre todas as predefinições de consulta do Prometheus.",
+    "NameRequired": "O nome é obrigatório.",
+    "NoCategory": "Sem categoria",
+    "PermanentlyDeletePreset": "Excluir permanentemente \"{{ name }}\"?",
+    "QueryTemplate": "Modelo de consulta",
+    "QueryTemplateRequired": "O modelo de consulta é obrigatório.",
+    "Rank": "Classificação",
+    "SuccessfullyCreated": "A predefinição de consulta do Prometheus foi criada com sucesso.",
+    "SuccessfullyDeleted": "A predefinição de consulta do Prometheus foi excluída com sucesso.",
+    "SuccessfullyUpdated": "A predefinição de consulta do Prometheus foi atualizada com sucesso.",
+    "TimeWindow": "Janela de tempo",
+    "UpdatedAt": "Atualizado em"
+  },
   "rbac": {
     "Active": "Ativo",
     "Assign": "Atribuir",
@@ -2070,7 +2096,7 @@
     "Updated": "Predefinição de recurso atualizada"
   },
   "sTokenLoginBoundary": {
-"AuthenticatingDescription": "Verificando seu token de login…",
+    "AuthenticatingDescription": "Verificando seu token de login…",
     "AuthenticatingTitle": "Signing you in",
     "ConnectingDescription": "Conectando ao servidor Backend.AI…",
     "CopyErrorDetails": "Copy error details",
@@ -2982,6 +3008,7 @@
       "AllowedClientIpWarning": "Se o seu IP atual não estiver incluído na lista de IPs permitidos, você poderá não conseguir fazer login. Entre em contato com seu administrador se isso acontecer.",
       "Architecture": "Arquitetura",
       "ArtifactDetails": "Detalhes do artefato",
+      "AutoScalingRule": "Regra de dimensionamento automático",
       "Branding": "Personalização da marca",
       "Cancel": "Cancelar",
       "ChangePassword": "Alterar a senha",
@@ -3048,6 +3075,7 @@
       "Project": "Projeto",
       "ProjectMembers": "Usuários",
       "Projects": "Projetos",
+      "PrometheusPreset": "Predefinição do Prometheus",
       "RBACManagement": "Gerenciamento RBAC",
       "Remaining": "Restante",
       "Reservoir": "Reservatório",

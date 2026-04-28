@@ -900,6 +900,8 @@ class Client {
       this._features['route-health-status'] = true;
       this._features['model-card-v2'] = true;
       this._features['my-roles'] = true;
+    }
+    if (this.isManagerVersionCompatibleWith('26.4.0')) {
       this._features['prometheus-auto-scaling-rule'] = true;
     }
   }

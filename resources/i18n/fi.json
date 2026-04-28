@@ -1746,6 +1746,32 @@
   "projectSelect": {
     "ProjectAdminBadge": "Projektin ylläpitäjä"
   },
+  "prometheusQueryPreset": {
+    "AddPreset": "Lisää esiasetus",
+    "Category": "Kategoria",
+    "CreatePreset": "Luo esiasetus",
+    "CreatedAt": "Luotu",
+    "DeleteWarning": "Tämän esiasetuksen poistaminen poistaa sen pysyvästi eikä sitä voi kumota.",
+    "Description": "Kuvaus",
+    "EditPreset": "Muokkaa esiasetusta",
+    "FilterLabels": "Suodatinnimiöt",
+    "GroupLabels": "Ryhmänimiöt",
+    "MetricName": "Mittarinimi",
+    "MetricNameRequired": "Mittarinimi on pakollinen.",
+    "Name": "Nimi",
+    "NameMustBeUnique": "Nimen on oltava yksilöllinen kaikkien Prometheus-kyselyesiasetuksien joukossa.",
+    "NameRequired": "Nimi on pakollinen.",
+    "NoCategory": "Ei kategoriaa",
+    "PermanentlyDeletePreset": "Poistetaanko pysyvästi \"{{ name }}\"?",
+    "QueryTemplate": "Kyselymalli",
+    "QueryTemplateRequired": "Kyselymalli on pakollinen.",
+    "Rank": "Järjestysnumero",
+    "SuccessfullyCreated": "Prometheus-kyselyesiasetus on luotu onnistuneesti.",
+    "SuccessfullyDeleted": "Prometheus-kyselyesiasetus on poistettu onnistuneesti.",
+    "SuccessfullyUpdated": "Prometheus-kyselyesiasetus on päivitetty onnistuneesti.",
+    "TimeWindow": "Aikaikkuna",
+    "UpdatedAt": "Päivitetty"
+  },
   "rbac": {
     "Active": "Aktiivinen",
     "Assign": "Määritä",
@@ -2070,7 +2096,7 @@
     "Updated": "Resurssien esiasetus päivitetty"
   },
   "sTokenLoginBoundary": {
-"AuthenticatingDescription": "Kirjautumistunnistettasi varmennetaan…",
+    "AuthenticatingDescription": "Kirjautumistunnistettasi varmennetaan…",
     "AuthenticatingTitle": "Signing you in",
     "ConnectingDescription": "Yhdistetään Backend.AI-palvelimeen…",
     "CopyErrorDetails": "Copy error details",
@@ -2982,6 +3008,7 @@
       "AllowedClientIpWarning": "Jos nykyinen IP-osoitteesi ei sisälly sallittujen IP-osoitteiden luetteloon, et ehkä pysty kirjautumaan sisään. Ota tarvittaessa yhteyttä järjestelmänvalvojaasi.",
       "Architecture": "Arkkitehtuuri",
       "ArtifactDetails": "Esineiden yksityiskohdat",
+      "AutoScalingRule": "Automaattinen skaalaussääntö",
       "Branding": "Brändäys",
       "Cancel": "Peruuta",
       "ChangePassword": "Vaihda salasana",
@@ -3049,6 +3076,7 @@
       "Project": "Hanke",
       "ProjectMembers": "Käyttäjät",
       "Projects": "Hankkeet",
+      "PrometheusPreset": "Prometheus-esiasetus",
       "RBACManagement": "RBAC-hallinta",
       "Remaining": "Jäljellä oleva",
       "Reservoir": "Säiliö",

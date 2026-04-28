@@ -1746,6 +1746,32 @@
   "projectSelect": {
     "ProjectAdminBadge": "Proje Yöneticisi"
   },
+  "prometheusQueryPreset": {
+    "AddPreset": "Ön ayar ekle",
+    "Category": "Kategori",
+    "CreatePreset": "Ön ayar oluştur",
+    "CreatedAt": "Oluşturulma tarihi",
+    "DeleteWarning": "Bu ön ayarı silmek onu kalıcı olarak kaldıracak ve geri alınamayacak.",
+    "Description": "Açıklama",
+    "EditPreset": "Ön ayarı düzenle",
+    "FilterLabels": "Filtre etiketleri",
+    "GroupLabels": "Grup etiketleri",
+    "MetricName": "Metrik adı",
+    "MetricNameRequired": "Metrik adı zorunludur.",
+    "Name": "Ad",
+    "NameMustBeUnique": "Tüm Prometheus sorgu ön ayarları arasında benzersiz olmalıdır.",
+    "NameRequired": "Ad zorunludur.",
+    "NoCategory": "Kategori yok",
+    "PermanentlyDeletePreset": "\"{{ name }}\" kalıcı olarak silinsin mi?",
+    "QueryTemplate": "Sorgu şablonu",
+    "QueryTemplateRequired": "Sorgu şablonu zorunludur.",
+    "Rank": "Sıralama",
+    "SuccessfullyCreated": "Prometheus sorgu ön ayarı başarıyla oluşturuldu.",
+    "SuccessfullyDeleted": "Prometheus sorgu ön ayarı başarıyla silindi.",
+    "SuccessfullyUpdated": "Prometheus sorgu ön ayarı başarıyla güncellendi.",
+    "TimeWindow": "Zaman penceresi",
+    "UpdatedAt": "Güncellenme tarihi"
+  },
   "rbac": {
     "Active": "Aktif",
     "Assign": "Ata",
@@ -2070,7 +2096,7 @@
     "Updated": "Kaynak ön ayarı güncellendi"
   },
   "sTokenLoginBoundary": {
-"AuthenticatingDescription": "Oturum açma jetonunuz doğrulanıyor…",
+    "AuthenticatingDescription": "Oturum açma jetonunuz doğrulanıyor…",
     "AuthenticatingTitle": "Signing you in",
     "ConnectingDescription": "Backend.AI sunucusuna bağlanılıyor…",
     "CopyErrorDetails": "Copy error details",
@@ -2982,6 +3008,7 @@
       "AllowedClientIpWarning": "Geçerli IP'niz izin verilen IP listesine dahil değilse, oturum açamayabilirsiniz. Bu durumda lütfen yöneticinizle iletişime geçin.",
       "Architecture": "Mimarlık",
       "ArtifactDetails": "Eser detayları",
+      "AutoScalingRule": "Otomatik ölçekleme kuralı",
       "Branding": "Markalaşma",
       "Cancel": "İptal etmek",
       "ChangePassword": "Şifre değiştir",
@@ -3048,6 +3075,7 @@
       "Project": "Proje",
       "ProjectMembers": "Kullanıcılar",
       "Projects": "Projeler",
+      "PrometheusPreset": "Prometheus Ön Ayarı",
       "RBACManagement": "RBAC Yönetimi",
       "Remaining": "Geriye kalan",
       "Reservoir": "Rezervuar",

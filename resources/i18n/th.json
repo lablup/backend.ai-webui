@@ -1748,6 +1748,32 @@
   "projectSelect": {
     "ProjectAdminBadge": "ผู้ดูแลโปรเจกต์"
   },
+  "prometheusQueryPreset": {
+    "AddPreset": "เพิ่มพรีเซต",
+    "Category": "หมวดหมู่",
+    "CreatePreset": "สร้างพรีเซต",
+    "CreatedAt": "สร้างเมื่อ",
+    "DeleteWarning": "การลบพรีเซตนี้จะลบออกอย่างถาวรและไม่สามารถกู้คืนได้",
+    "Description": "คำอธิบาย",
+    "EditPreset": "แก้ไขพรีเซต",
+    "FilterLabels": "ป้ายกำกับตัวกรอง",
+    "GroupLabels": "ป้ายกำกับกลุ่ม",
+    "MetricName": "ชื่อเมตริก",
+    "MetricNameRequired": "จำเป็นต้องระบุชื่อเมตริก",
+    "Name": "ชื่อ",
+    "NameMustBeUnique": "ต้องไม่ซ้ำกันในพรีเซตคำสั่ง Prometheus ทั้งหมด",
+    "NameRequired": "จำเป็นต้องระบุชื่อ",
+    "NoCategory": "ไม่มีหมวดหมู่",
+    "PermanentlyDeletePreset": "ลบ \"{{ name }}\" อย่างถาวร?",
+    "QueryTemplate": "เทมเพลตคำสั่ง",
+    "QueryTemplateRequired": "จำเป็นต้องระบุเทมเพลตคำสั่ง",
+    "Rank": "อันดับ",
+    "SuccessfullyCreated": "สร้างพรีเซตคำสั่ง Prometheus สำเร็จแล้ว",
+    "SuccessfullyDeleted": "ลบพรีเซตคำสั่ง Prometheus สำเร็จแล้ว",
+    "SuccessfullyUpdated": "อัปเดตพรีเซตคำสั่ง Prometheus สำเร็จแล้ว",
+    "TimeWindow": "ช่วงเวลา",
+    "UpdatedAt": "อัปเดตเมื่อ"
+  },
   "rbac": {
     "Active": "ใช้งานอยู่",
     "Assign": "มอบหมาย",
@@ -2072,7 +2098,7 @@
     "Updated": "อัปเดตค่าที่กำหนดไว้ล่วงหน้าของทรัพยากรแล้ว"
   },
   "sTokenLoginBoundary": {
-"AuthenticatingDescription": "กำลังตรวจสอบโทเคนการเข้าสู่ระบบของคุณ…",
+    "AuthenticatingDescription": "กำลังตรวจสอบโทเคนการเข้าสู่ระบบของคุณ…",
     "AuthenticatingTitle": "Signing you in",
     "ConnectingDescription": "กำลังเชื่อมต่อกับเซิร์ฟเวอร์ Backend.AI…",
     "CopyErrorDetails": "Copy error details",
@@ -2984,6 +3010,7 @@
       "AllowedClientIpWarning": "หาก IP ปัจจุบันของคุณไม่ได้อยู่ในรายการ IP ที่อนุญาต คุณอาจไม่สามารถเข้าสู่ระบบได้ กรุณาติดต่อผู้ดูแลระบบหากเกิดปัญหา",
       "Architecture": "สถาปัตยกรรม",
       "ArtifactDetails": "รายละเอียดสิ่งประดิษฐ์",
+      "AutoScalingRule": "กฎการปรับขนาดอัตโนมัติ",
       "Branding": "การสร้างแบรนด์",
       "Cancel": "ยกเลิก",
       "ChangePassword": "เปลี่ยนรหัสผ่าน",
@@ -3050,6 +3077,7 @@
       "Project": "โครงการ",
       "ProjectMembers": "ผู้ใช้",
       "Projects": "โครงการ",
+      "PrometheusPreset": "Prometheus Preset",
       "RBACManagement": "การจัดการ RBAC",
       "Remaining": "ที่เหลืออยู่",
       "Reservoir": "อ่างเก็บน้ำ",

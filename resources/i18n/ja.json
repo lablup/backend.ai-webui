@@ -1748,6 +1748,32 @@
   "projectSelect": {
     "ProjectAdminBadge": "プロジェクト管理者"
   },
+  "prometheusQueryPreset": {
+    "AddPreset": "プリセットを追加",
+    "Category": "カテゴリ",
+    "CreatePreset": "プリセットを作成",
+    "CreatedAt": "作成日時",
+    "DeleteWarning": "このプリセットを削除すると完全に削除され、元に戻すことはできません。",
+    "Description": "説明",
+    "EditPreset": "プリセットを編集",
+    "FilterLabels": "フィルタラベル",
+    "GroupLabels": "グループラベル",
+    "MetricName": "メトリクス名",
+    "MetricNameRequired": "メトリクス名は必須です。",
+    "Name": "名前",
+    "NameMustBeUnique": "すべての Prometheus クエリプリセット間で一意である必要があります。",
+    "NameRequired": "名前は必須です。",
+    "NoCategory": "カテゴリなし",
+    "PermanentlyDeletePreset": "\"{{ name }}\" を完全に削除しますか？",
+    "QueryTemplate": "クエリテンプレート",
+    "QueryTemplateRequired": "クエリテンプレートは必須です。",
+    "Rank": "ランク",
+    "SuccessfullyCreated": "Prometheus クエリプリセットが正常に作成されました。",
+    "SuccessfullyDeleted": "Prometheus クエリプリセットが正常に削除されました。",
+    "SuccessfullyUpdated": "Prometheus クエリプリセットが正常に更新されました。",
+    "TimeWindow": "時間ウィンドウ",
+    "UpdatedAt": "更新日時"
+  },
   "rbac": {
     "Active": "アクティブ",
     "Assign": "割り当て",
@@ -2072,7 +2098,7 @@
     "Updated": "リソースプリセットが更新されました"
   },
   "sTokenLoginBoundary": {
-"AuthenticatingDescription": "ログイントークンを確認しています…",
+    "AuthenticatingDescription": "ログイントークンを確認しています…",
     "AuthenticatingTitle": "Signing you in",
     "ConnectingDescription": "Backend.AIサーバーに接続しています…",
     "CopyErrorDetails": "Copy error details",
@@ -2984,6 +3010,7 @@
       "AllowedClientIpWarning": "現在のIPが許可IPリストに含まれていない場合、ログインできなくなる可能性があります。この場合は管理者にお問い合わせください。",
       "Architecture": "建築",
       "ArtifactDetails": "アーティファクトの詳細",
+      "AutoScalingRule": "自動スケーリングルール",
       "Branding": "ブランディング",
       "Cancel": "キャンセル",
       "ChangePassword": "パスワードを変更する",
@@ -3050,6 +3077,7 @@
       "Project": "プロジェクト",
       "ProjectMembers": "ユーザー",
       "Projects": "プロジェクト",
+      "PrometheusPreset": "Prometheusプリセット",
       "RBACManagement": "RBAC管理",
       "Remaining": "残り",
       "Reservoir": "貯水池",
