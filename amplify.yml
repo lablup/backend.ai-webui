@@ -213,3 +213,95 @@ applications:
         paths:
           - $HOME/.pnpm-store/**/*
           - $HOME/.cache/pnpm/**/*
+
+  # ─────────────────────────────────────────────────────────────────
+  # WebUI (React app) — FR-2766
+  #
+  # Until FR-2766 added this entry, the webui Amplify app fell back
+  # to the docs entry above (single-application monorepo manifest)
+  # and served the docs site at the webui domain. The Amplify app's
+  # console "App root" must be set to `react` to match this entry.
+  #
+  # The repo's root `package.json#scripts.build` orchestrates the
+  # full webui build (clean, copy static assets, tsc, workspace
+  # builds). It must be invoked from the workspace root, NOT from
+  # `react/` (running `pnpm run build` inside `react/` would execute
+  # `react/package.json#build` which assumes `../build/web/` already
+  # exists). We therefore `cd ..` into the workspace root for the
+  # build step, and point `artifacts.baseDirectory` at the
+  # workspace-root `build/web/` directory via a `..` segment from
+  # the appRoot.
+  #
+  # `pnpm install` from any workspace directory installs the entire
+  # monorepo via `pnpm-workspace.yaml`, so it's safe to run from
+  # `react/` cwd in preBuild.
+  - appRoot: react
+    frontend:
+      phases:
+        preBuild:
+          commands:
+            - nvm install
+            - nvm use
+            - corepack enable
+            - corepack prepare pnpm@10 --activate
+            - pnpm install --frozen-lockfile
+        build:
+          commands:
+            # Run the orchestrating root build script from the
+            # workspace root. It produces the final artifact at
+            # `<workspace-root>/build/web/`.
+            - cd ..
+            - pnpm run build
+      artifacts:
+        # `..` resolves out of appRoot (`react/`) to the workspace
+        # root, then into `build/web/`. Amplify accepts paths that
+        # escape appRoot via `..` segments.
+        baseDirectory: ../build/web
+        files:
+          - "**/*"
+      cache:
+        paths:
+          - $HOME/.pnpm-store/**/*
+          - $HOME/.cache/pnpm/**/*
+
+  # ─────────────────────────────────────────────────────────────────
+  # Storybook (backend.ai-ui component library) — FR-2766
+  #
+  # Storybook lives entirely inside `packages/backend.ai-ui/` and
+  # produces a self-contained static bundle at `storybook-static/`.
+  # The Amplify app's console "App root" must be set to
+  # `packages/backend.ai-ui` to match this entry.
+  #
+  # Relay codegen is required before `storybook build` so any
+  # `__generated__` artifacts referenced by stories are present;
+  # `pnpm relay` at the workspace root walks both projects.
+  - appRoot: packages/backend.ai-ui
+    frontend:
+      phases:
+        preBuild:
+          commands:
+            - nvm install
+            - nvm use
+            - corepack enable
+            - corepack prepare pnpm@10 --activate
+            - pnpm install --frozen-lockfile
+            # Relay codegen for both projects, invoked at the
+            # workspace root via pnpm's `-w` flag so the current
+            # working directory stays inside this entry's appRoot
+            # (`packages/backend.ai-ui/`). Using `cd ..; cd ..` here
+            # would assume Amplify resets cwd to appRoot between
+            # phases, which is not contractually guaranteed across
+            # build-runner versions.
+            - pnpm -w run relay
+        build:
+          commands:
+            - pnpm run build-storybook
+      artifacts:
+        # Default Storybook output dir, relative to this entry's appRoot.
+        baseDirectory: storybook-static
+        files:
+          - "**/*"
+      cache:
+        paths:
+          - $HOME/.pnpm-store/**/*
+          - $HOME/.cache/pnpm/**/*
