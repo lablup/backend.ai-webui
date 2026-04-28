@@ -120,6 +120,9 @@ const RBACManagementPage = React.lazy(
   () => import('./pages/RBACManagementPage'),
 );
 const AdminSessionPage = React.lazy(() => import('./pages/AdminSessionPage'));
+const AdminDeploymentPresetSettingPage = React.lazy(
+  () => import('./pages/AdminDeploymentPresetSettingPage'),
+);
 const AdminVFolderNodeListPage = React.lazy(
   () => import('./pages/AdminVFolderNodeListPage'),
 );
@@ -520,15 +523,42 @@ export const mainLayoutChildRoutes: RouteObject[] = [
     // /admin-serving route (see fallback redirect below).
     path: '/admin-deployments',
     handle: { labelKey: 'webui.menu.Serving' },
-    Component: () => {
-      return (
-        <BAIErrorBoundary>
-          <Suspense fallback={<BAICard loading />}>
-            <AdminDeploymentListPage />
-          </Suspense>
-        </BAIErrorBoundary>
-      );
-    },
+    children: [
+      {
+        index: true,
+        Component: () => {
+          return (
+            <BAIErrorBoundary>
+              <Suspense fallback={<BAICard loading />}>
+                <AdminDeploymentListPage />
+              </Suspense>
+            </BAIErrorBoundary>
+          );
+        },
+      },
+      {
+        path: 'deployment-presets/new',
+        handle: { labelKey: 'adminDeploymentPreset.CreatePreset' },
+        element: (
+          <BAIErrorBoundary>
+            <Suspense fallback={<Skeleton active />}>
+              <AdminDeploymentPresetSettingPage />
+            </Suspense>
+          </BAIErrorBoundary>
+        ),
+      },
+      {
+        path: 'deployment-presets/:presetId/edit',
+        handle: { labelKey: 'adminDeploymentPreset.EditPreset' },
+        element: (
+          <BAIErrorBoundary>
+            <Suspense fallback={<Skeleton active />}>
+              <AdminDeploymentPresetSettingPage />
+            </Suspense>
+          </BAIErrorBoundary>
+        ),
+      },
+    ],
   },
   {
     // FR-2664 — Legacy /admin-serving fallback. Transient redirect; remove

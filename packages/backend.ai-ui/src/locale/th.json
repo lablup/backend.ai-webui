@@ -134,6 +134,9 @@
     "Token": "Token",
     "TokenUpdatedSuccessfully": "Token updated successfully."
   },
+  "comp:BAIImageSelect": {
+    "SelectImage": "เลือกรูปภาพ"
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}} ไม่รวมรุ่น",
     "FailedToPullVersions": "ไม่สามารถดึงเวอร์ชันได้",

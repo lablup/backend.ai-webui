@@ -220,9 +220,9 @@ const DeploymentRevisionHistoryTab: React.FC<
   const [commitRollback] =
     useMutation<DeploymentRevisionHistoryTabRollbackMutation>(graphql`
       mutation DeploymentRevisionHistoryTabRollbackMutation(
-        $input: UpdateDeploymentInput!
+        $input: ActivateRevisionInput!
       ) {
-        updateModelDeployment(input: $input) {
+        activateDeploymentRevision(input: $input) {
           deployment {
             id
             currentRevisionId
@@ -282,8 +282,8 @@ const DeploymentRevisionHistoryTab: React.FC<
           commitRollback({
             variables: {
               input: {
-                id: toLocalId(deployment.id),
-                activeRevisionId: toLocalId(revision.id),
+                deploymentId: toLocalId(deployment.id),
+                revisionId: toLocalId(revision.id),
               },
             },
             onCompleted: (_res, errors) => {

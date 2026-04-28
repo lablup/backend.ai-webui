@@ -6,7 +6,7 @@ import { AdminServingPageQuery } from '../__generated__/AdminServingPageQuery.gr
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import EndpointList from '../components/EndpointList';
-import { useWebUINavigate, useSuspendedBackendaiClient } from '../hooks';
+import { useWebUINavigate } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
 import { Skeleton } from 'antd';
@@ -21,22 +21,12 @@ import {
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { parseAsString, useQueryStates } from 'nuqs';
-import React, {
-  Suspense,
-  useEffect,
-  useEffectEvent,
-  useDeferredValue,
-  useMemo,
-} from 'react';
+import React, { Suspense, useDeferredValue, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 const AdminModelCardListPage = React.lazy(
   () => import('./AdminModelCardListPage'),
-);
-
-const AdminDeploymentPresetListPage = React.lazy(
-  () => import('./AdminDeploymentPresetListPage'),
 );
 
 const ServingTabContent: React.FC = () => {
@@ -217,9 +207,7 @@ const AdminServingPage: React.FC = () => {
   const { t } = useTranslation();
   const currentUserRole = useCurrentUserRole();
   const webUINavigate = useWebUINavigate();
-  const baiClient = useSuspendedBackendaiClient();
   const isSuperAdmin = currentUserRole === 'superadmin';
-  const isDeploymentPresetSupported = baiClient.supports('deployment-preset');
 
   const [queryParam, setQueryParam] = useQueryStates(
     {
@@ -228,27 +216,12 @@ const AdminServingPage: React.FC = () => {
     { history: 'push' },
   );
 
-  // Fall back to 'serving' tab when access is not permitted.
-  // `setQueryParam` is wrapped in `useEffectEvent` so the effect only
-  // re-synchronizes against the genuine reactive deps below.
-  const fallbackToServingTab = useEffectEvent(() => {
-    if (
-      queryParam.tab === 'deployment-presets' &&
-      (!isSuperAdmin || !isDeploymentPresetSupported)
-    ) {
-      setQueryParam({ tab: 'serving' });
-    }
-  });
-  useEffect(() => {
-    fallbackToServingTab();
-  }, [queryParam.tab, isSuperAdmin, isDeploymentPresetSupported]);
-
   return (
     <BAICard
       activeTabKey={queryParam.tab}
       onTabChange={(key) => {
         webUINavigate({
-          pathname: '/admin-serving',
+          pathname: '/admin-deployments',
           search: new URLSearchParams({
             tab: key,
           }).toString(),
@@ -264,11 +237,6 @@ const AdminServingPage: React.FC = () => {
           key: 'model-store',
           label: t('adminModelCard.ModelStoreManagement'),
         },
-        isSuperAdmin &&
-          isDeploymentPresetSupported && {
-            key: 'deployment-presets',
-            label: t('adminDeploymentPreset.TabTitle'),
-          },
       ])}
     >
       <Suspense fallback={<Skeleton active />}>
@@ -278,13 +246,6 @@ const AdminServingPage: React.FC = () => {
             <AdminModelCardListPage />
           </BAIErrorBoundary>
         )}
-        {queryParam.tab === 'deployment-presets' &&
-          isSuperAdmin &&
-          isDeploymentPresetSupported && (
-            <BAIErrorBoundary>
-              <AdminDeploymentPresetListPage />
-            </BAIErrorBoundary>
-          )}
       </Suspense>
     </BAICard>
   );

@@ -144,6 +144,7 @@ const ALL_ADMIN_PAGE_KEYS: ReadonlySet<string> = new Set([
   'resource-policy',
   'reservoir',
   'admin-deployments',
+  'admin-serving', // legacy redirect path; treat as admin so goBackPath is not polluted
   'admin-dashboard',
   'admin-data',
   'project-admin-users',

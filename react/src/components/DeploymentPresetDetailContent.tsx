@@ -24,7 +24,6 @@ const DeploymentPresetDetailContent: React.FC<
     graphql`
       fragment DeploymentPresetDetailContentFragment on DeploymentRevisionPreset {
         id
-        rowId
         name
         description
         rank
@@ -42,7 +41,7 @@ const DeploymentPresetDetailContent: React.FC<
           startupCommand
           bootstrapScript
           environ {
-            name
+            key
             value
           }
         }
