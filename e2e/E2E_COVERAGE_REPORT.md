@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-04-28
+> **Last Updated:** 2026-05-05
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -12,7 +12,7 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 297 / 445 features covered (67%)**
+**Overall (in-scope routes): 299 / 447 features covered (67%)**
 
 | Page              | Route                                  | Features | Covered | Status  |
 | ----------------- | -------------------------------------- | :------: | :-----: | :-----: |
@@ -27,7 +27,7 @@
 | Service Launcher  | `/service/start`                       |    5     |    1    | 🔶 20%  |
 | VFolder / Data    | `/data`                                |    45    |   32    | 🔶 71%  |
 | Model Store       | `/model-store`                         |    6     |    6    | ✅ 100% |
-| Admin Model Store | `/admin-model-store`                   |    26    |   26    | ✅ 100% |
+| Admin Model Store | `/admin-model-store`                   |    28    |   28    | ✅ 100% |
 | Storage Host      | `/storage-settings/:hostname`          |    3     |    0    |  ❌ 0%  |
 | My Environment    | `/my-environment`                      |    2     |    2    | ✅ 100% |
 | Environment       | `/environment`                         |    27    |   21    | 🔶 78%  |
@@ -48,7 +48,7 @@
 | Plugin System     | (config-based)                         |    12    |   12    | ✅ 100% |
 | RBAC Management   | `/rbac`                                |    22    |   21    | 🔶 95%  |
 | Auto Scaling Rule Preset | `/admin-serving?tab=auto-scaling-rule` | 33 | 32 | 🔶 97% |
-| **Total**         |                                        | **445**  | **297** | **67%** |
+| **Total**         |                                        | **447**  | **299** | **67%** |
 
 ---
 
@@ -429,10 +429,12 @@
 | Cancel bulk delete | ✅ | `admin-model-card-delete.spec.ts` |
 | Clear selection | ✅ | `admin-model-card-delete.spec.ts` |
 | Select all via header checkbox | ✅ | `admin-model-card-delete.spec.ts` |
+| Bulk delete + move folders to trash (checkbox) | ✅ | `admin-model-card-delete.spec.ts` |
+| Bulk delete notification → Go to Trash (no folder filter) | ✅ | `admin-model-card-delete.spec.ts` |
 | Non-admin access blocked | ✅ | `admin-model-card-access-control.spec.ts` |
 | URL state persistence (filter/sort/pagination) | ✅ | `admin-model-card-url-state.spec.ts` |
 
-**Coverage: ✅ 26/26 features**
+**Coverage: ✅ 28/28 features**
 
 ---
 
