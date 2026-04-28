@@ -44,7 +44,7 @@ By default, when you install a pip package, it will be installed under
 can keep the installed packages after a compute session is destroyed, and then
 reus them for the next compute session. Just install the packages with pip like:
 
-```shell
+```shellsession
 $ pip install aiohttp
 ```
 For more information, please refer to the [guide on installing Python

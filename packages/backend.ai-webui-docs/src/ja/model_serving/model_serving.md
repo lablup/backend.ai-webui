@@ -643,7 +643,7 @@ SGLangは次のタブを提供します：**Model Loading**、**Resource Memory*
 
 以下は、モデルサービングエンドポイントへのリクエスト送信が正しく機能しているかどうかを確認する`curl`コマンドの簡単な例です：
 
-```bash
+```shellsession
 $ export API_TOKEN="<token>"
 $ curl -H "Content-Type: application/json" -X GET \
   -H "Authorization: BackendAI $API_TOKEN" \

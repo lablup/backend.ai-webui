@@ -168,7 +168,7 @@ Backend.AI มีภาพเคอร์เนล ML และ HPC ที่ส
 
 ก่อนอื่น เปิดแอปเทอร์มินัล "console" และรันคำสั่งด้านล่าง ซึ่งจะเริ่มเซิร์ฟเวอร์ MLFlow tracking UI
 
-```shell
+```shellsession
 $ mlflow ui --host 0.0.0.0
 ```
 
@@ -182,7 +182,7 @@ $ mlflow ui --host 0.0.0.0
 
 การใช้ MLFlow ช่วยให้คุณติดตามการทดลอง เช่น เมตริกและพารามิเตอร์ทุกครั้งที่คุณรัน มาเริ่มติดตามการทดลองจากตัวอย่างง่ายๆ
 
-```shell
+```shellsession
 $ wget https://raw.githubusercontent.com/mlflow/mlflow/master/examples/sklearn_elasticnet_diabetes/linux/train_diabetes.py
 $ python train_diabetes.py
 ```
@@ -193,7 +193,7 @@ $ python train_diabetes.py
 
 คุณยังสามารถตั้งค่าไฮเปอร์พารามิเตอร์โดยส่งอาร์กิวเมนต์กับการรันโค้ด
 
-```shell
+```shellsession
 $ python train_diabetes.py 0.2 0.05
 ```
 

@@ -681,7 +681,7 @@ previously generated.
 Here is a simple command using `curl` to check whether sending requests
 to the model serving endpoint is working properly:
 
-```bash
+```shellsession
 $ export API_TOKEN="<token>"
 $ curl -H "Content-Type: application/json" -X GET \
   -H "Authorization: BackendAI $API_TOKEN" \

@@ -265,7 +265,7 @@ look through [How to create a session](#start-a-new-session) section.
 
 First, launch terminal app "console". and execute the command below, It will start mlflow tracking UI server.
 
-```shell
+```shellsession
 $ mlflow ui --host 0.0.0.0
 ```
 
@@ -280,7 +280,7 @@ After few moment, you will see a new page for MLFlow UI.
 By using MLFlow, you can track experiments, such as metrics and parameters every time you run.
 Let's start tracking experiments from simple example.
 
-```shell
+```shellsession
 $ wget https://raw.githubusercontent.com/mlflow/mlflow/master/examples/sklearn_elasticnet_diabetes/linux/train_diabetes.py
 $ python train_diabetes.py
 ```
@@ -291,7 +291,7 @@ After executing python code, you may see the experiments result in MLFlow.
 
 You can also set hyperparameter by giving arguments with code execution.
 
-```shell
+```shellsession
 $ python train_diabetes.py 0.2 0.05
 ```
 

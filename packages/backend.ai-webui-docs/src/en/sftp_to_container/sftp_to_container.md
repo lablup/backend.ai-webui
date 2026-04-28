@@ -57,7 +57,7 @@ part in `work@127.0.0.1` should be changed to the actual session account.  If
 you run the command correctly, you can see that SSH connection is made to the
 compute session and you are welcomed by the container's shell environment.
 
-```shell
+```shellsession
 $ ssh \
     -i ~/.ssh/id_container -p 30722 \
     -o StrictHostKeyChecking=no \
@@ -232,7 +232,7 @@ Backend.AI Client package, this process is relatively simple to configure.
 The Backend.AI Client package is available as a Docker image. You can pull the
 image from the Docker Hub with the following command:
 
-```bash
+```shellsession
 $ docker pull lablup/backend.ai-client
 $
 $ # If you want to use the specific version, you can pull the image with the following command:
@@ -246,14 +246,14 @@ appears when you click on the person icon on the top right corner of the Web UI.
 
 Run the Docker image with the following command:
 
-```bash
+```shellsession
 $ docker run --rm -it lablup/backend.ai-client bash
 ```
 
 Check if `backend.ai` command is available in the container. If it is
 available, the help message will be displayed.
 
-```bash
+```shellsession
 $ backend.ai
 ```
 
@@ -288,7 +288,7 @@ After unarchiving the binary, `python` directory will be created under the
 current directory. You can check the version of the downloaded Python by running
 the following command.
 
-```bash
+```shellsession
 $ ./python/install/bin/python3 -V
 Python 3.11.8
 ```
@@ -298,7 +298,7 @@ create a separate Python virtual environment. When you run the following
 command, a Python virtual environment will be created under the directory
 `.venv.`.
 
-```bash
+```shellsession
 $ ./python/install/bin/python3 -m venv .venv
 ```
 
@@ -306,7 +306,7 @@ Activate the virtual environment. Since a new virtual environment has been
 activated, only the `pip` and `setuptools` packages will be installed when
 you run the `pip list` command.
 
-```bash
+```shellsession
 $ source .venv/bin/activate
 (.venv) $ pip list
 Package    Version
@@ -344,7 +344,7 @@ Run the following CLI command to connect to the server. Enter the email and
 password that you use to log in from your browser. If everything goes well, you
 will see the message `Login succeeded`.
 
-```bash
+```shellsession
 $ backend.ai login
 User ID: myuser@test.com
 Password:
@@ -363,7 +363,7 @@ the name of the created compute session. Here, we assume it is
 
 If you simply want to SSH, execute the following command:
 
-```bash
+```shellsession
 $ backend.ai ssh ibnFmWim-session
 ∙ running a temporary sshd proxy at localhost:9922 ...
 work@main1[ibnFmWim-session]:~$
@@ -374,7 +374,7 @@ need to first run the following command to launch a local proxy service that
 relays connection from the local machine to the computation session. You can
 specify the port (9922) to use on the local machine with the b option.
 
-```bash
+```shellsession
 $ backend.ai app ibnFmWim-session sshd -b 9922
 ∙ A local proxy to the application "sshd" provided by the session "ibnFmWim-session" is available at:
 tcp://127.0.0.1:9922
@@ -384,7 +384,7 @@ Open another terminal window on your local machine. Move to the working
 directory where the `.env` file is located, and download the SSH key
 automatically generated in the compute session.
 
-```bash
+```shellsession
 $ source .venv/bin/activate  # Reactivate the Python virtual environment as this is a different terminal
 $ backend.ai session download ibnFmWim-session id_container
 Downloading files: 3.58kbytes [00:00, 352kbytes/s]
@@ -395,7 +395,7 @@ You can use the downloaded key to SSH as follows. Since you launched the local
 proxy on port 9922, the connection address should be 127.0.0.1 and the port
 should be 9922. Use the user account `work` for the connection.
 
-```bash
+```shellsession
 $ ssh \
 -o StrictHostKeyChecking=no \
 -o UserKnownHostsFile=/dev/null \
@@ -410,7 +410,7 @@ Similarly, you can use the `scp` command to copy files. In this case, you
 should copy the files to the mounted folder within the compute session to
 preserve them even after the session has been terminated.
 
-```bash
+```shellsession
 $ scp \
 -o StrictHostKeyChecking=no \
 -o UserKnownHostsFile=/dev/null \
