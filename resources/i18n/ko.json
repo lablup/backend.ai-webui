@@ -1714,6 +1714,7 @@
     "CustomExpirationDate": "사용자 정의 만료 시각",
     "CustomExpiredDate": "사용자 정의 만료 시각",
     "DeployAsService": "서비스로 배포",
+    "DeploymentPresetDetail": "배포 프리셋 상세",
     "DesiredSessionCount": "원하는 세션 수",
     "Destroyed": "종료됨",
     "EditModelService": "모델 서비스 수정",

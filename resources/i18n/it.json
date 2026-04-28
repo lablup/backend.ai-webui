@@ -1711,6 +1711,7 @@
     "CustomExpirationDate": "Data di scadenza personalizzata",
     "CustomExpiredDate": "Data di scadenza personalizzata",
     "DeployAsService": "Distribuisci come servizio",
+    "DeploymentPresetDetail": "Dettaglio preset di distribuzione",
     "DesiredSessionCount": "Conteggio delle sessioni desiderate",
     "Destroyed": "Distrutto",
     "EditModelService": "Modifica del servizio modello",
