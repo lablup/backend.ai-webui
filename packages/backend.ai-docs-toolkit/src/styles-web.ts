@@ -1338,8 +1338,59 @@ pre code {
   background: #0E0E10 !important;
   color: #E0E0E5;
   padding: 16px 18px;
-  line-height: 1.7;
+  /* Collapse the anonymous text-node strut Shiki emits between
+     <span class="line"> rows: each '\\n' between line spans would
+     otherwise render as a blank line of pre's line-height tall, doubling
+     the apparent vertical gap. line-height: 0 here zeroes that strut,
+     and .shiki-host > code .line below sets line-height back for the
+     visible line spans (display: block). */
+  line-height: 0;
+  /* overflow-x: auto (not scroll) so non-overflowing blocks don't
+     reserve a bottom track gutter. Chromium's overlay scrollbar mode
+     (which would also hide overlay scrollbars on overflow) is opted
+     out via the ::-webkit-scrollbar { -webkit-appearance: none }
+     rule below — the bar then renders classic-style, visible whenever
+     overflow is real. Firefox uses scrollbar-width / scrollbar-color. */
   overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+}
+
+/* -webkit-appearance: none is what actually opts <pre> out of
+   Chromium's overlay scrollbar (which fades out on idle and never
+   reads as "scrollable" at a glance). Without this, the rules below
+   still get applied but the overlay engine hides them between
+   interactions. */
+/* When the runtime detects real horizontal overflow on a <pre> (set by
+   code-copy.js as .has-x-overflow), upgrade overflow-x to scroll so the
+   scrollbar is pinned visible. Without this, Safari respects the macOS
+   "Show scroll bars: When scrolling" system setting and fades the bar
+   out on idle even with -webkit-appearance: none — users on Macs report
+   the bar shows only intermittently. */
+.code-block-wrapper pre.has-x-overflow,
+.doc-code-block-wrapper > pre.has-x-overflow {
+  overflow-x: scroll;
+}
+
+.code-block-wrapper pre::-webkit-scrollbar,
+.doc-code-block-wrapper > pre::-webkit-scrollbar {
+  -webkit-appearance: none;
+  height: 8px;
+  width: 8px;
+}
+.code-block-wrapper pre::-webkit-scrollbar-track,
+.doc-code-block-wrapper > pre::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 4px;
+}
+.code-block-wrapper pre::-webkit-scrollbar-thumb,
+.doc-code-block-wrapper > pre::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.28);
+  border-radius: 4px;
+}
+.code-block-wrapper pre::-webkit-scrollbar-thumb:hover,
+.doc-code-block-wrapper > pre::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
 }
 
 /* Shiki emits inline-styled <span> tokens inside <pre>. We let those
@@ -1381,8 +1432,11 @@ pre code {
 .shiki-host > code .line {
   /* Each token row Shiki emits. display:block makes line wrapping behave
      consistently — long lines wrap inside the line span instead of pushing
-     the parent <pre> wider. */
+     the parent <pre> wider. line-height restores the visible rhythm
+     after .code-block-wrapper pre / .doc-code-block-wrapper > pre zero
+     out line-height to collapse the inter-line '\\n' strut. */
   display: block;
+  line-height: 1.6;
 }
 
 /* Wrapper injected at runtime by code-copy.js around every <pre> on the
@@ -1422,8 +1476,10 @@ pre code {
   background: #0E0E10 !important;
   color: #E0E0E5;
   padding: 16px 18px;
-  line-height: 1.7;
+  line-height: 0; /* See .code-block-wrapper pre comment above. */
   overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
 }
 
 /* Tokens are inline-styled by Shiki for the configured lightTheme.
@@ -1445,13 +1501,16 @@ pre code {
   position: absolute;
   top: 6px;
   right: 8px;
-  padding: 3px 9px;
-  font-size: 11px;
-  line-height: 1.2;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   font-family: var(--bai-font-sans);
   color: #B5B5BD;
   background: transparent;
-  border: 1px solid #2A2A30;
+  border: 1px solid transparent;
   border-radius: 4px;
   cursor: pointer;
   opacity: 1;
@@ -1459,13 +1518,21 @@ pre code {
     background-color 120ms ease;
 }
 
-/* When inside a title bar, anchor to the bar's right edge instead of
-   floating absolute. The copy script puts the button at the top-right
-   of the wrapper; the title bar already renders at the top, so the
-   absolute position lands on the bar visually. */
-.code-block-wrapper .doc-code-copy-btn {
-  top: 6px;
-  right: 8px;
+.doc-code-copy-btn svg {
+  width: 14px;
+  height: 14px;
+  display: block;
+}
+
+/* When inside a title bar, drop absolute positioning and sit inline
+   at the right edge of the bar (the title bar uses flex with an empty
+   text slot that flex-grows so the button always lands on the right). */
+.code-block-title .doc-code-copy-btn {
+  position: static;
+  top: auto;
+  right: auto;
+  flex-shrink: 0;
+  margin-left: auto;
 }
 
 .doc-code-copy-btn:hover {
@@ -1492,16 +1559,17 @@ pre code {
    pipeline does not auto-emit this today, but the styles are in place
    so a future enhancement can flip it on. */
 .code-block-lang {
+  /* Subtle inline language label — readable but not loud. No background,
+     no uppercasing, regular weight. The header bar is the visual frame;
+     the language string is just metadata. */
   display: inline-flex;
   align-items: center;
-  background: var(--bai-primary);
-  color: #fff;
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-size: 10.5px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  color: #8E8E96;
+  padding: 0;
+  font-size: 11.5px;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: lowercase;
   flex-shrink: 0;
 }
 
