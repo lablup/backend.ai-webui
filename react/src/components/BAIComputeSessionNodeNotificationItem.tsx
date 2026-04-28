@@ -24,10 +24,9 @@ import {
   useRelayEnvironment,
   useSubscription,
 } from 'react-relay';
-import { useNavigate } from 'react-router-dom';
 import { BAIComputeSessionNodeNotificationItemFragment$key } from 'src/__generated__/BAIComputeSessionNodeNotificationItemFragment.graphql';
 import { BAIComputeSessionNodeNotificationItemRefreshQuery } from 'src/__generated__/BAIComputeSessionNodeNotificationItemRefreshQuery.graphql';
-import { useSuspendedBackendaiClient } from 'src/hooks';
+import { useSuspendedBackendaiClient, useWebUINavigate } from 'src/hooks';
 import {
   NotificationState,
   useSetBAINotification,
@@ -45,7 +44,7 @@ const BAIComputeSessionNodeNotificationItem: React.FC<
 > = ({ sessionFrgmt, showDate, notification, primaryAppOption }) => {
   const { closeNotification } = useSetBAINotification();
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const navigate = useWebUINavigate();
   const baiClient = useSuspendedBackendaiClient();
   const node = useFragment(
     graphql`

@@ -9,14 +9,15 @@ import { CardTabListType } from 'antd/es/card';
 import { BAIFlex, BAICard } from 'backend.ai-ui';
 import { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import BAIErrorBoundary from 'src/components/BAIErrorBoundary';
+import { useWebUINavigate } from 'src/hooks';
 
 const UserCredentialsPage: React.FC = () => {
   const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const currentTab = searchParams.get('tab') || 'users';
-  const navigate = useNavigate();
+  const navigate = useWebUINavigate();
   const tabItems: CardTabListType[] = [
     {
       key: 'users',

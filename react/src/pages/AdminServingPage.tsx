@@ -220,19 +220,12 @@ const AdminServingPage: React.FC = () => {
     <BAICard
       activeTabKey={queryParam.tab}
       onTabChange={(key) => {
-        webUINavigate(
-          {
-            pathname: '/admin-serving',
-            search: new URLSearchParams({
-              tab: key,
-            }).toString(),
-          },
-          {
-            params: {
-              tab: key,
-            },
-          },
-        );
+        webUINavigate({
+          pathname: '/admin-serving',
+          search: new URLSearchParams({
+            tab: key,
+          }).toString(),
+        });
         setQueryParam({ tab: key });
       }}
       tabList={filterOutEmpty([

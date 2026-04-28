@@ -5,6 +5,7 @@
 import { VFolderDeployModalEndpointPollQuery } from '../__generated__/VFolderDeployModalEndpointPollQuery.graphql';
 import { VFolderDeployModalMutation } from '../__generated__/VFolderDeployModalMutation.graphql';
 import { VFolderDeployModalQuery } from '../__generated__/VFolderDeployModalQuery.graphql';
+import { useWebUINavigate } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { App, Form, Typography, theme } from 'antd';
 import type { DefaultOptionType } from 'antd/es/select';
@@ -35,7 +36,6 @@ import {
   useMutation,
   useRelayEnvironment,
 } from 'react-relay';
-import { useNavigate } from 'react-router-dom';
 
 /**
  * Poll-before-navigate configuration for the post-deploy handoff to the
@@ -85,7 +85,7 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { message } = App.useApp();
-  const navigate = useNavigate();
+  const navigate = useWebUINavigate();
   const { id: projectId, name: projectName } = useCurrentProjectValue();
   const relayEnvironment = useRelayEnvironment();
   const { logger } = useBAILogger();

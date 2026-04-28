@@ -8,6 +8,7 @@ import { buiLanguages } from '../helper/bui-language';
 import {
   backendaiClientPromise,
   createAnonymousBackendaiClient,
+  useWebUINavigate,
 } from '../hooks';
 import { useCustomThemeConfig } from '../hooks/useCustomThemeConfig';
 import { useThemeMode } from '../hooks/useThemeMode';
@@ -58,7 +59,7 @@ import React, {
 } from 'react';
 import { useTranslation, initReactI18next } from 'react-i18next';
 import { RelayEnvironmentProvider } from 'react-relay/hooks';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { useDeviceMetaData } from 'src/hooks/backendai';
 import { QueryParamProvider } from 'use-query-params';
 import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
@@ -185,7 +186,7 @@ const BAIMetaDataWrapper = ({ children }: { children: ReactNode }) => {
 };
 
 export const RoutingEventHandler = () => {
-  const navigate = useNavigate();
+  const navigate = useWebUINavigate();
   const location = useLocation();
   useLayoutEffect(() => {
     const handleNavigate = (e: any) => {

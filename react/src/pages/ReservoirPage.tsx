@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
 import { useToggle } from 'ahooks';
 import { theme, Col, Row, Statistic, Card, Button, Tooltip } from 'antd';
@@ -31,7 +32,6 @@ import { BanIcon, Brain, UndoIcon } from 'lucide-react';
 import React, { useMemo, useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-import { useNavigate } from 'react-router-dom';
 import {
   ReservoirPageQuery,
   ReservoirPageQuery$data,
@@ -63,7 +63,7 @@ const ReservoirPage: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const navigate = useNavigate();
+  const navigate = useWebUINavigate();
   const { upsertNotification } = useSetBAINotification();
 
   const [selectedArtifactIdList, setSelectedArtifactIdList] = useState<

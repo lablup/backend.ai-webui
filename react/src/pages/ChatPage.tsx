@@ -11,6 +11,7 @@ import {
   useHistory,
 } from '../components/Chat/ChatHistory';
 import { type ChatProviderData } from '../components/Chat/ChatModel';
+import WebUINavigate from '../components/WebUINavigate';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { Badge, Button, Card, Drawer, theme, Tooltip, Typography } from 'antd';
 import { createStyles } from 'antd-style';
@@ -328,10 +329,8 @@ function isClonable(chatLength: number) {
 const ChatPage: React.FC = () => {
   const { id } = useParams();
 
-  const webuiNavigate = useWebUINavigate();
-
   if (id && !getChatById(id)) {
-    webuiNavigate(`/chat`, { replace: true });
+    return <WebUINavigate to="/chat" replace />;
   }
 
   return <PureChatPage id={id || generateChatId()} />;

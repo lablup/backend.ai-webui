@@ -47,6 +47,12 @@ export default [
               importNames: ["useThemeMode"],
               message: "Use 'src/hooks/useThemeMode' instead.",
             },
+            {
+              name: "react-router-dom",
+              importNames: ["useNavigate", "Navigate"],
+              message:
+                "Use 'useWebUINavigate' from 'src/hooks' or '<WebUINavigate>' from 'src/components/WebUINavigate' instead.",
+            },
           ],
         },
       ],
