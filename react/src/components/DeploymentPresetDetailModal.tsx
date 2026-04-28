@@ -4,6 +4,7 @@
  */
 import type { DeploymentPresetDetailModalQuery } from '../__generated__/DeploymentPresetDetailModalQuery.graphql';
 import DeploymentPresetDetailContent from './DeploymentPresetDetailContent';
+import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import { Skeleton } from 'antd';
 import { BAIModal, BAIModalProps } from 'backend.ai-ui';
 import React, { Suspense } from 'react';
@@ -62,9 +63,11 @@ const DeploymentPresetDetailModal: React.FC<
       footer={null}
     >
       {presetId ? (
-        <Suspense fallback={<Skeleton active paragraph={{ rows: 6 }} />}>
-          <DeploymentPresetDetailModalContent presetId={presetId} />
-        </Suspense>
+        <ErrorBoundaryWithNullFallback>
+          <Suspense fallback={<Skeleton active paragraph={{ rows: 6 }} />}>
+            <DeploymentPresetDetailModalContent presetId={presetId} />
+          </Suspense>
+        </ErrorBoundaryWithNullFallback>
       ) : null}
     </BAIModal>
   );
