@@ -438,7 +438,7 @@ export async function createVFolderAndVerify(
   type: 'user' | 'project' = 'user',
   permission: 'rw' | 'ro' = 'rw',
 ) {
-  await page.getByRole('link', { name: 'Data' }).click();
+  await navigateTo(page, 'data');
   await page.getByRole('button', { name: 'Create Folder' }).nth(1).click();
 
   const modal = new FolderCreationModal(page);

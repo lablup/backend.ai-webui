@@ -41,10 +41,17 @@ export async function sweepServices(
       .first();
     if ((await serviceRow.count()) === 0) break;
 
+    // Hover over the first cell to reveal BAINameActionCell action buttons
+    await serviceRow
+      .getByRole('cell')
+      .first()
+      .hover()
+      .catch(() => {});
+
     const deleteBtn = serviceRow
       .getByRole('button', { name: 'delete' })
       .first();
-    if (!(await deleteBtn.isVisible({ timeout: 3000 }).catch(() => false))) {
+    if (!(await deleteBtn.isVisible({ timeout: 5000 }).catch(() => false))) {
       console.log('Service row found but no delete button, skipping');
       break;
     }
