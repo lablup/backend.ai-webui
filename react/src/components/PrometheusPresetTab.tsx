@@ -2,12 +2,12 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { AutoScalingRulePresetTabDeleteMutation } from '../__generated__/AutoScalingRulePresetTabDeleteMutation.graphql';
+import { PrometheusPresetTabDeleteMutation } from '../__generated__/PrometheusPresetTabDeleteMutation.graphql';
 import {
-  AutoScalingRulePresetTabQuery,
-  AutoScalingRulePresetTabQuery$variables,
+  PrometheusPresetTabQuery,
+  PrometheusPresetTabQuery$variables,
   QueryDefinitionFilter,
-} from '../__generated__/AutoScalingRulePresetTabQuery.graphql';
+} from '../__generated__/PrometheusPresetTabQuery.graphql';
 import { PrometheusQueryPresetEditorModalFragment$key } from '../__generated__/PrometheusQueryPresetEditorModalFragment.graphql';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import PrometheusQueryPresetEditorModal from './PrometheusQueryPresetEditorModal';
@@ -19,9 +19,11 @@ import {
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
+  BAITableColumnOverrideItem,
   BAIText,
   type GraphQLFilter,
   INITIAL_FETCH_KEY,
+  toLocalId,
   useFetchKey,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -32,7 +34,7 @@ import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 
 type DeletingPresetTarget = { id: string; name: string };
 
-const AutoScalingRulePresetTab: React.FC = () => {
+const PrometheusPresetTab: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -61,10 +63,13 @@ const AutoScalingRulePresetTab: React.FC = () => {
     useState<PrometheusQueryPresetEditorModalFragment$key | null>(null);
   const [deletingPreset, setDeletingPreset] =
     useState<DeletingPresetTarget | null>(null);
+  const [columnOverrides, setColumnOverrides] = useState<
+    Record<string, BAITableColumnOverrideItem>
+  >({});
 
   const [commitDeleteMutation, isInflightDelete] =
-    useMutation<AutoScalingRulePresetTabDeleteMutation>(graphql`
-      mutation AutoScalingRulePresetTabDeleteMutation($id: ID!) {
+    useMutation<PrometheusPresetTabDeleteMutation>(graphql`
+      mutation PrometheusPresetTabDeleteMutation($id: ID!) {
         adminDeletePrometheusQueryPreset(id: $id) {
           id
         }
@@ -86,7 +91,7 @@ const AutoScalingRulePresetTab: React.FC = () => {
     return filter as QueryDefinitionFilter;
   };
 
-  const computeOrderBy = (): AutoScalingRulePresetTabQuery$variables['orderBy'] => {
+  const computeOrderBy = (): PrometheusPresetTabQuery$variables['orderBy'] => {
     if (!queryParam.order) return null;
     const isDesc = queryParam.order.startsWith('-');
     const field = isDesc ? queryParam.order.slice(1) : queryParam.order;
@@ -99,10 +104,10 @@ const AutoScalingRulePresetTab: React.FC = () => {
     if (!gqlField) return null;
     return [
       { field: gqlField, direction: isDesc ? 'DESC' : 'ASC' },
-    ] as AutoScalingRulePresetTabQuery$variables['orderBy'];
+    ] as PrometheusPresetTabQuery$variables['orderBy'];
   };
 
-  const queryVariables: AutoScalingRulePresetTabQuery$variables = {
+  const queryVariables: PrometheusPresetTabQuery$variables = {
     offset: baiPaginationOption.offset,
     limit: baiPaginationOption.limit,
     filter: flattenGraphQLFilter(queryParam.filter),
@@ -112,41 +117,40 @@ const AutoScalingRulePresetTab: React.FC = () => {
   const deferredQueryVariables = useDeferredValue(queryVariables);
   const deferredFetchKey = useDeferredValue(fetchKey);
 
-  const { prometheusQueryPresets } =
-    useLazyLoadQuery<AutoScalingRulePresetTabQuery>(
-      graphql`
-        query AutoScalingRulePresetTabQuery(
-          $offset: Int
-          $limit: Int
-          $filter: QueryDefinitionFilter
-          $orderBy: [QueryDefinitionOrderBy!]
+  const { prometheusQueryPresets } = useLazyLoadQuery<PrometheusPresetTabQuery>(
+    graphql`
+      query PrometheusPresetTabQuery(
+        $offset: Int
+        $limit: Int
+        $filter: QueryDefinitionFilter
+        $orderBy: [QueryDefinitionOrderBy!]
+      ) {
+        prometheusQueryPresets(
+          offset: $offset
+          limit: $limit
+          filter: $filter
+          orderBy: $orderBy
         ) {
-          prometheusQueryPresets(
-            offset: $offset
-            limit: $limit
-            filter: $filter
-            orderBy: $orderBy
-          ) {
-            count
-            edges {
-              node {
-                id
-                ...PrometheusQueryPresetNodesFragment
-              }
+          count
+          edges {
+            node {
+              id
+              ...PrometheusQueryPresetNodesFragment
             }
           }
         }
-      `,
-      deferredQueryVariables,
-      {
-        fetchPolicy:
-          deferredFetchKey === INITIAL_FETCH_KEY
-            ? 'store-and-network'
-            : 'network-only',
-        fetchKey:
-          deferredFetchKey === INITIAL_FETCH_KEY ? undefined : deferredFetchKey,
-      },
-    );
+      }
+    `,
+    deferredQueryVariables,
+    {
+      fetchPolicy:
+        deferredFetchKey === INITIAL_FETCH_KEY
+          ? 'store-and-network'
+          : 'network-only',
+      fetchKey:
+        deferredFetchKey === INITIAL_FETCH_KEY ? undefined : deferredFetchKey,
+    },
+  );
 
   const isPending =
     deferredQueryVariables !== queryVariables || deferredFetchKey !== fetchKey;
@@ -209,6 +213,10 @@ const AutoScalingRulePresetTab: React.FC = () => {
             setQueryParam({ order: order ?? null });
             setTablePaginationOption({ current: 1 });
           }}
+          tableSettings={{
+            columnOverrides,
+            onColumnOverridesChange: setColumnOverrides,
+          }}
           onEditPreset={(preset) => {
             setEditingPreset(preset);
           }}
@@ -263,7 +271,7 @@ const AutoScalingRulePresetTab: React.FC = () => {
           if (!deletingPreset) return;
           commitDeleteMutation({
             variables: {
-              id: deletingPreset.id,
+              id: toLocalId(deletingPreset.id),
             },
             onCompleted: (_res, errors) => {
               if (errors && errors.length > 0) {
@@ -287,4 +295,4 @@ const AutoScalingRulePresetTab: React.FC = () => {
   );
 };
 
-export default AutoScalingRulePresetTab;
+export default PrometheusPresetTab;

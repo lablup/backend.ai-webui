@@ -14,12 +14,12 @@ import {
   BAIFlex,
   BAINameActionCell,
   BAITable,
-  BAITableColumnOverrideItem,
   BAITableProps,
   filterOutNullAndUndefined,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
-import React, { useState } from 'react';
+import * as _ from 'lodash-es';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
@@ -27,9 +27,24 @@ export type PrometheusQueryPresetNodeInList = NonNullable<
   PrometheusQueryPresetNodesFragment$data[number]
 >;
 
+const availablePrometheusQueryPresetSorterKeys = [
+  'name',
+  'createdAt',
+  'updatedAt',
+] as const;
+
+export const availablePrometheusQueryPresetSorterValues = [
+  ...availablePrometheusQueryPresetSorterKeys,
+  ...availablePrometheusQueryPresetSorterKeys.map((key) => `-${key}` as const),
+] as const;
+
+const isEnableSorter = (key: string) => {
+  return _.includes(availablePrometheusQueryPresetSorterKeys, key);
+};
+
 interface PrometheusQueryPresetNodesProps extends Omit<
   BAITableProps<PrometheusQueryPresetNodeInList>,
-  'dataSource' | 'columns' | 'tableSettings'
+  'dataSource' | 'columns' | 'onChangeOrder'
 > {
   presetsFrgmt: PrometheusQueryPresetNodesFragment$key;
   onDeletePreset?: (preset: PrometheusQueryPresetNodeInList) => void;
@@ -37,6 +52,9 @@ interface PrometheusQueryPresetNodesProps extends Omit<
   customizeColumns?: (
     baseColumns: BAIColumnsType<PrometheusQueryPresetNodeInList>,
   ) => BAIColumnsType<PrometheusQueryPresetNodeInList>;
+  onChangeOrder?: (
+    order: (typeof availablePrometheusQueryPresetSorterValues)[number] | null,
+  ) => void;
 }
 
 const PrometheusQueryPresetNodes: React.FC<PrometheusQueryPresetNodesProps> = ({
@@ -44,13 +62,11 @@ const PrometheusQueryPresetNodes: React.FC<PrometheusQueryPresetNodesProps> = ({
   onDeletePreset,
   onEditPreset,
   customizeColumns,
+  onChangeOrder,
   ...tableProps
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const [columnOverrides, setColumnOverrides] = useState<
-    Record<string, BAITableColumnOverrideItem>
-  >({});
 
   const presets = useFragment(
     graphql`
@@ -87,7 +103,7 @@ const PrometheusQueryPresetNodes: React.FC<PrometheusQueryPresetNodesProps> = ({
       key: 'name',
       fixed: 'left',
       required: true,
-      sorter: true,
+      sorter: isEnableSorter('name'),
       render: (_name: string, row) => (
         <BAINameActionCell
           title={row.name}
@@ -145,7 +161,7 @@ const PrometheusQueryPresetNodes: React.FC<PrometheusQueryPresetNodesProps> = ({
       dataIndex: 'createdAt',
       key: 'createdAt',
       defaultHidden: true,
-      sorter: true,
+      sorter: isEnableSorter('createdAt'),
       render: (createdAt: string | null | undefined) =>
         createdAt ? dayjs(createdAt).format('lll') : '-',
     },
@@ -154,7 +170,7 @@ const PrometheusQueryPresetNodes: React.FC<PrometheusQueryPresetNodesProps> = ({
       dataIndex: 'updatedAt',
       key: 'updatedAt',
       defaultHidden: true,
-      sorter: true,
+      sorter: isEnableSorter('updatedAt'),
       render: (updatedAt: string | null | undefined) =>
         updatedAt ? dayjs(updatedAt).format('lll') : '-',
     },
@@ -173,9 +189,11 @@ const PrometheusQueryPresetNodes: React.FC<PrometheusQueryPresetNodesProps> = ({
         dataSource={filterOutNullAndUndefined(presets)}
         columns={allColumns}
         showSorterTooltip={false}
-        tableSettings={{
-          columnOverrides,
-          onColumnOverridesChange: setColumnOverrides,
+        onChangeOrder={(order) => {
+          onChangeOrder?.(
+            (order as (typeof availablePrometheusQueryPresetSorterValues)[number]) ||
+              null,
+          );
         }}
         {...tableProps}
       />
