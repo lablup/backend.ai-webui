@@ -316,15 +316,23 @@ const AdminDeploymentPresetSettingModal: React.FC<
         >
           <Input placeholder={t('adminDeploymentPreset.NamePlaceholder')} />
         </Form.Item>
-        <Form.Item
-          name="description"
-          label={t('adminDeploymentPreset.Description')}
-        >
-          <Input.TextArea
-            rows={2}
-            placeholder={t('adminDeploymentPreset.DescriptionPlaceholder')}
-          />
-        </Form.Item>
+        {/*
+          TODO(needs-backend): FR-2761 — `description` is supported by
+          UpdateDeploymentRevisionPresetInput but not yet by
+          CreateDeploymentRevisionPresetInput. Render the field only in edit
+          mode for now so create-mode users do not silently lose their input.
+        */}
+        {isEditMode && (
+          <Form.Item
+            name="description"
+            label={t('adminDeploymentPreset.Description')}
+          >
+            <Input.TextArea
+              rows={2}
+              placeholder={t('adminDeploymentPreset.DescriptionPlaceholder')}
+            />
+          </Form.Item>
+        )}
         {isEditMode ? (
           <Form.Item label={t('adminDeploymentPreset.Runtime')}>
             <Typography.Text>
