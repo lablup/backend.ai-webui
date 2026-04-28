@@ -137,6 +137,9 @@
     "Token": "토큰",
     "TokenUpdatedSuccessfully": "토큰이 성공적으로 업데이트되었습니다."
   },
+  "comp:BAIImageSelect": {
+    "SelectImage": "이미지 선택"
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}}개 버전은 제외됐습니다.",
     "FailedToPullVersions": "버전을 가져오는데 실패했습니다.",

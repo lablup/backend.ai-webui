@@ -9,18 +9,16 @@ import type {
   DeploymentRevisionPresetFilter,
   DeploymentRevisionPresetOrderBy,
 } from '../__generated__/AdminDeploymentPresetListPageQuery.graphql';
-import AdminDeploymentPresetSettingModal from '../components/AdminDeploymentPresetSettingModal';
-import DeploymentPresetDetailContent from '../components/DeploymentPresetDetailContent';
 import { convertToOrderBy } from '../helper';
-import { useSuspendedBackendaiClient } from '../hooks';
+import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { SettingOutlined } from '@ant-design/icons';
-import { Alert, App } from 'antd';
+import { App } from 'antd';
 import {
   BAIButton,
   BAIColumnType,
-  BAIConfirmModalWithInput,
+  BAIDeleteConfirmModal,
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
@@ -28,7 +26,6 @@ import {
   BAITable,
   BAITableColumnOverrideRecord,
   BAITrashBinIcon,
-  BAIUnmountAfterClose,
   filterOutEmpty,
   type GraphQLFilter,
   INITIAL_FETCH_KEY,
@@ -38,12 +35,7 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { parseAsJson, parseAsString, useQueryStates } from 'nuqs';
-import React, {
-  SetStateAction,
-  Suspense,
-  useDeferredValue,
-  useState,
-} from 'react';
+import React, { SetStateAction, useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 
@@ -146,6 +138,10 @@ const AdminDeploymentPresetTable: React.FC<
     {
       key: 'image',
       title: t('adminDeploymentPreset.Image'),
+      // TODO(needs-backend): execution.image should return the canonical image
+      // tag (e.g. cr.backend.ai/stable/vllm:latest) but the backend currently
+      // returns null. DeploymentRevisionPreset has no top-level imageId field,
+      // so we cannot resolve it on the frontend.
       render: (_: unknown, record: DeploymentPresetNode) =>
         record.execution?.image ?? '-',
     },
@@ -171,13 +167,6 @@ const AdminDeploymentPresetTable: React.FC<
       defaultHidden: true,
       render: (_: unknown, record: DeploymentPresetNode) =>
         record.deploymentDefaults?.deploymentStrategy ?? '-',
-    },
-    {
-      key: 'rank',
-      title: t('adminDeploymentPreset.Rank'),
-      dataIndex: 'rank',
-      sorter: true,
-      defaultHidden: true,
     },
     {
       key: 'createdAt',
@@ -229,16 +218,13 @@ const AdminDeploymentPresetListPage: React.FC = () => {
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const baiClient = useSuspendedBackendaiClient();
+  const webuiNavigate = useWebUINavigate();
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
     'table_column_overrides.AdminDeploymentPresetListPage',
   );
 
   const [deletingPreset, setDeletingPreset] =
-    useState<DeploymentPresetNode | null>(null);
-
-  const [isSettingModalOpen, setIsSettingModalOpen] = useState(false);
-  const [editingPreset, setEditingPreset] =
     useState<DeploymentPresetNode | null>(null);
 
   const {
@@ -252,7 +238,7 @@ const AdminDeploymentPresetListPage: React.FC = () => {
 
   const [queryParams, setQueryParams] = useQueryStates(
     {
-      order: parseAsString,
+      order: parseAsString.withDefault('-createdAt'),
       filter: parseAsJson<GraphQLFilter>((value) => value as GraphQLFilter),
     },
     {
@@ -277,19 +263,15 @@ const AdminDeploymentPresetListPage: React.FC = () => {
       result.name = flat.name as DeploymentRevisionPresetFilter['name'];
     }
     if (flat.runtimeVariantId) {
-      // The schema declares runtimeVariantId as a raw UUID scalar (not a UUIDFilter
-      // object), so coerce the scalar string and tolerate the legacy
-      // `{ equals: "..." }` operator form that might survive in URL state.
-      // See data/schema.graphql:
-      //   input DeploymentRevisionPresetFilter { runtimeVariantId: UUID = null }
       const raw = flat.runtimeVariantId;
+      // Normalise both plain-string and { equals: "..." } forms from URL state
       const value =
         typeof raw === 'string'
           ? raw
           : raw && typeof raw === 'object'
             ? ((raw as { equals?: string | null }).equals ?? null)
             : null;
-      if (value) result.runtimeVariantId = value;
+      if (value) result.runtimeVariantId = { equals: value };
     }
     return result;
   };
@@ -324,7 +306,6 @@ const AdminDeploymentPresetListPage: React.FC = () => {
           edges {
             node {
               id
-              rowId
               name
               description
               rank
@@ -339,33 +320,12 @@ const AdminDeploymentPresetListPage: React.FC = () => {
               }
               execution {
                 image
-                startupCommand
-                bootstrapScript
-                environ {
-                  name
-                  value
-                }
-              }
-              resource {
-                resourceOpts {
-                  name
-                  value
-                }
               }
               deploymentDefaults {
-                openToPublic
                 replicaCount
-                revisionHistoryLimit
                 deploymentStrategy
-                deploymentStrategySpec
-              }
-              presetValues {
-                presetId
-                value
               }
               createdAt
-              updatedAt
-              ...AdminDeploymentPresetSettingModalFragment
               ...DeploymentPresetDetailContentFragment
             }
           }
@@ -396,13 +356,13 @@ const AdminDeploymentPresetListPage: React.FC = () => {
   };
 
   const handleEditPreset = (preset: DeploymentPresetNode) => {
-    setEditingPreset(preset);
-    setIsSettingModalOpen(true);
+    webuiNavigate(
+      `/admin-deployments/deployment-presets/${toLocalId(preset.id)}/edit`,
+    );
   };
 
   const handleOpenCreateModal = () => {
-    setEditingPreset(null);
-    setIsSettingModalOpen(true);
+    webuiNavigate('/admin-deployments/deployment-presets/new');
   };
 
   const isSupported = baiClient.supports('deployment-preset');
@@ -467,32 +427,13 @@ const AdminDeploymentPresetListPage: React.FC = () => {
           {t('adminDeploymentPreset.NotSupported')}
         </BAIFlex>
       )}
-      <Suspense>
-        <BAIUnmountAfterClose>
-          <AdminDeploymentPresetSettingModal
-            open={isSettingModalOpen}
-            presetFrgmt={editingPreset}
-            onRequestClose={(success) => {
-              setIsSettingModalOpen(false);
-              setEditingPreset(null);
-              if (success) {
-                updateFetchKey();
-              }
-            }}
-          />
-        </BAIUnmountAfterClose>
-      </Suspense>
-      <BAIConfirmModalWithInput
+      <BAIDeleteConfirmModal
         open={!!deletingPreset}
-        title={t('adminDeploymentPreset.DeletePreset')}
-        content={
-          <BAIFlex direction="column" gap="sm" align="stretch">
-            <Alert type="warning" title={t('dialog.warning.CannotBeUndone')} />
-            <DeploymentPresetDetailContent presetFrgmt={deletingPreset} />
-          </BAIFlex>
+        items={
+          deletingPreset
+            ? [{ key: deletingPreset.id, label: deletingPreset.name }]
+            : []
         }
-        confirmText={deletingPreset?.name ?? ''}
-        okText={t('button.Delete')}
         onOk={async () => {
           if (deletingPreset) {
             await new Promise<void>((resolve, reject) => {
