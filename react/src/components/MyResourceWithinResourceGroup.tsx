@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { ResourceSlotName } from '../hooks/backendai';
+import { ResourceSlotName, useResourceSlotsDetails } from '../hooks/backendai';
 import {
   useCurrentProjectValue,
   useCurrentResourceGroupValue,
@@ -19,7 +19,6 @@ import {
   processMemoryValue,
   BAIFetchKeyButton,
   BAIFlexProps,
-  useResourceSlotsDetails,
   useFetchKey,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';

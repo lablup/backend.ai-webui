@@ -3,7 +3,10 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { TotalResourceWithinResourceGroupFragment$key } from '../__generated__/TotalResourceWithinResourceGroupFragment.graphql';
-import { useCurrentUserRole } from '../hooks/backendai';
+import {
+  useCurrentUserRole,
+  useResourceSlotsDetails,
+} from '../hooks/backendai';
 import SharedResourceGroupSelectForCurrentProject from './SharedResourceGroupSelectForCurrentProject';
 import { useControllableValue } from 'ahooks';
 import { Segmented, theme, Typography } from 'antd';
@@ -18,7 +21,6 @@ import {
   processMemoryValue,
   BAIFlexProps,
   BAIFetchKeyButton,
-  useResourceSlotsDetails,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {

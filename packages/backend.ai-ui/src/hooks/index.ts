@@ -1,10 +1,5 @@
-import {
-  ResourceSlotName,
-  useBAIDeviceMetaData,
-  useConnectedBAIClient,
-} from '../components';
-import { useSuspenseTanQuery, useTanQuery } from '../helper/reactQueryAlias';
-import { useBAISignedRequestWithPromise } from './useBAISignedRequestWithPromise';
+import { useConnectedBAIClient } from '../components';
+import { useSuspenseTanQuery } from '../helper/reactQueryAlias';
 import { useEventNotStable } from './useEventNotStable';
 import * as _ from 'lodash-es';
 import { useMemo, useState } from 'react';
@@ -90,43 +85,6 @@ export type ResourceSlotDetail = {
   display_icon: string;
 };
 
-/**
- * Custom hook to fetch resource slot details by resource group name.
- * @param resourceGroupName - The name of the resource group. if not provided, it will use resource/device_metadata.json
- * @returns An array containing the resource slots and a refresh function.
- */
-export const useResourceSlotsDetails = (resourceGroupName?: string) => {
-  'use memo';
-  const [key, checkUpdate] = useUpdatableState('first');
-  const baiRequestWithPromise = useBAISignedRequestWithPromise();
-  const { data: resourceSlotsInRG, isLoading } = useTanQuery<{
-    [key in ResourceSlotName]?: ResourceSlotDetail | undefined;
-  }>({
-    queryKey: ['useResourceSlots', resourceGroupName, key],
-    queryFn: () => {
-      const search = new URLSearchParams();
-      resourceGroupName && search.set('sgroup', resourceGroupName);
-      const searchParamString = search.toString();
-      return baiRequestWithPromise({
-        method: 'GET',
-        // if `sgroup` is not provided, it will return all resource slots of all resource groups
-        url: `/config/resource-slots/details${searchParamString ? '?' + search.toString() : ''}`,
-      });
-    },
-    staleTime: 3000,
-  });
-
-  const deviceMetaData = useBAIDeviceMetaData();
-
-  return {
-    resourceSlotsInRG,
-    deviceMetaData,
-    mergedResourceSlots: _.merge({}, deviceMetaData, resourceSlotsInRG),
-    refresh: checkUpdate,
-    isLoading,
-  };
-};
-
 export function useMutationWithPromise<T extends MutationParameters>(
   mutation: GraphQLTaggedNode,
 ) {
@@ -170,3 +128,4 @@ export type { LoggerPlugin, LogContext, BAILogger } from './useBAILogger';
 export { useEventNotStable } from './useEventNotStable';
 export { useProjectResourceGroups } from './useProjectResourceGroups';
 export type { ScalingGroupItem } from './useProjectResourceGroups';
+export { useBAIMetaData } from '../components';
