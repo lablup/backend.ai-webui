@@ -1507,6 +1507,7 @@
     "CustomExpirationDate": "Ngày hết hạn tùy chỉnh",
     "CustomExpiredDate": "Ngày hết hạn tùy chỉnh",
     "DeployAsService": "Triển khai dưới dạng dịch vụ",
+    "DeploymentPresetDetail": "Chi tiết preset triển khai",
     "DesiredSessionCount": "Số phiên mong muốn",
     "Destroyed": "Bị phá hủy",
     "EditModelService": "Chỉnh sửa dịch vụ mẫu",

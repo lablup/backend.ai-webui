@@ -1505,6 +1505,7 @@
     "CustomExpirationDate": "Fecha de vencimiento personalizada",
     "CustomExpiredDate": "Fecha de vencimiento personalizada",
     "DeployAsService": "Implementar como servicio",
+    "DeploymentPresetDetail": "Detalle del preset de despliegue",
     "DesiredSessionCount": "Recuento de sesiones deseado",
     "Destroyed": "Destruido",
     "EditModelService": "Editar modelo de servicio",

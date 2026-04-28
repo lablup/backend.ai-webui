@@ -1505,6 +1505,7 @@
     "CustomExpirationDate": "Özel Son kullanma tarihi",
     "CustomExpiredDate": "Özel süresi dolmuş tarih",
     "DeployAsService": "Hizmet Olarak Dağıt",
+    "DeploymentPresetDetail": "Dağıtım ön ayarı ayrıntısı",
     "DesiredSessionCount": "İstenen Oturum Sayısı",
     "Destroyed": "Yok edilmiş",
     "EditModelService": "Model Hizmetini Düzenle",

@@ -5,6 +5,7 @@
 import { ServiceLauncherPageContentFragment$key } from '../__generated__/ServiceLauncherPageContentFragment.graphql';
 import { ServiceLauncherPageContentModifyMutation } from '../__generated__/ServiceLauncherPageContentModifyMutation.graphql';
 import { ServiceLauncherPageContent_AutoScalingRulesQuery } from '../__generated__/ServiceLauncherPageContent_AutoScalingRulesQuery.graphql';
+import { ServiceLauncherPageContent_DeploymentPresetsQuery } from '../__generated__/ServiceLauncherPageContent_DeploymentPresetsQuery.graphql';
 import { ServiceLauncherPageContent_ModelDefinitionQuery } from '../__generated__/ServiceLauncherPageContent_ModelDefinitionQuery.graphql';
 import { ServiceLauncherPageContent_UserInfoQuery } from '../__generated__/ServiceLauncherPageContent_UserInfoQuery.graphql';
 import { ServiceLauncherPageContent_UserResourcePolicyQuery } from '../__generated__/ServiceLauncherPageContent_UserResourcePolicyQuery.graphql';
@@ -42,6 +43,7 @@ import {
 } from '../hooks/useRuntimeParameterSchema';
 import { useValidateServiceName } from '../hooks/useValidateServiceName';
 import { useRuntimeEnvVarConfigs } from '../hooks/useVariantConfigs';
+import DeploymentPresetDetailModal from './DeploymentPresetDetailModal';
 import EnvVarFormList, {
   sanitizeSensitiveEnv,
   EnvVarFormListValue,
@@ -63,6 +65,7 @@ import SwitchToProjectButton from './SwitchToProjectButton';
 import VFolderLazyView from './VFolderLazyView';
 import VFolderSelect from './VFolderSelect';
 import VFolderTableFormItem from './VFolderTableFormItem';
+import { InfoCircleOutlined } from '@ant-design/icons';
 import { useDebounceFn } from 'ahooks';
 import {
   App,
@@ -76,6 +79,7 @@ import {
   Segmented,
   Skeleton,
   Select,
+  Space,
   theme,
   Tooltip,
   Tag,
@@ -244,6 +248,10 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
   const validationRules = useValidateServiceName();
   const [isOpenServiceValidationModal, setIsOpenServiceValidationModal] =
     useState(false);
+  const [selectedPresetId, setSelectedPresetId] = useState<
+    string | null | undefined
+  >(null);
+  const [isPresetDetailOpen, setIsPresetDetailOpen] = useState(false);
 
   const [form] = Form.useForm<ServiceLauncherFormValue>();
   const [wantToChangeResource, setWantToChangeResource] = useState(false);
@@ -888,6 +896,29 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
     );
   const hasAutoScalingRules =
     (endpoint_auto_scaling_rules?.edges?.length ?? 0) > 0;
+
+  const isSupportDeploymentPreset = baiClient.supports('deployment-preset');
+  const { deploymentRevisionPresets } =
+    useLazyLoadQuery<ServiceLauncherPageContent_DeploymentPresetsQuery>(
+      graphql`
+        query ServiceLauncherPageContent_DeploymentPresetsQuery {
+          deploymentRevisionPresets(limit: 100) {
+            edges {
+              node {
+                rowId
+                name
+              }
+            }
+          }
+        }
+      `,
+      {},
+      {
+        fetchPolicy: isSupportDeploymentPreset
+          ? 'store-and-network'
+          : 'store-only',
+      },
+    );
 
   const [
     commitModifyEndpoint,
@@ -1675,6 +1706,47 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                             }}
                           />
                         </Form.Item>
+                        {isSupportDeploymentPreset && (
+                          <Form.Item
+                            label={t('modelService.SelectDeploymentPreset')}
+                          >
+                            <BAIFlex direction="row" gap="xs">
+                              <Select
+                                allowClear
+                                options={
+                                  deploymentRevisionPresets?.edges?.map(
+                                    (edge) => ({
+                                      value: edge.node.rowId,
+                                      label: edge.node.name,
+                                    }),
+                                  ) ?? []
+                                }
+                                value={selectedPresetId}
+                                onChange={(value) => {
+                                  setSelectedPresetId(value ?? null);
+                                }}
+                                placeholder={t(
+                                  'modelService.SelectDeploymentPreset',
+                                )}
+                              />
+                              <Space.Compact>
+                                <Tooltip
+                                  title={t(
+                                    'modelService.DeploymentPresetDetail',
+                                  )}
+                                >
+                                  <Button
+                                    icon={<InfoCircleOutlined />}
+                                    disabled={!selectedPresetId}
+                                    onClick={() => {
+                                      setIsPresetDetailOpen(true);
+                                    }}
+                                  />
+                                </Tooltip>
+                              </Space.Compact>
+                            </BAIFlex>
+                          </Form.Item>
+                        )}
                         <ImageEnvironmentSelectFormItems
                           searchPrefill={envSearchPrefill}
                           // //TODO: test with real inference images
@@ -2207,6 +2279,13 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
       >
         <ServiceValidationView serviceData={validateServiceData} />
       </BAIModal>
+      <DeploymentPresetDetailModal
+        open={isPresetDetailOpen}
+        presetId={selectedPresetId}
+        onRequestClose={() => {
+          setIsPresetDetailOpen(false);
+        }}
+      />
     </>
   );
 };

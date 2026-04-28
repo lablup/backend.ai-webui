@@ -1508,6 +1508,7 @@
     "CustomExpirationDate": "自定義到期日期",
     "CustomExpiredDate": "自定義過期日期",
     "DeployAsService": "部署為服務",
+    "DeploymentPresetDetail": "部署預設詳細資料",
     "DesiredRoutingCount": "所需的路由计数",
     "DesiredSessionCount": "希望的会话次数",
     "Destroyed": "被摧毀",
