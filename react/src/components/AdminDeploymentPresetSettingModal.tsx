@@ -340,22 +340,26 @@ const AdminDeploymentPresetSettingModal: React.FC<
             </Typography.Text>
           </Form.Item>
         ) : (
-          <Form.Item
-            name="runtimeVariantId"
-            label={t('adminDeploymentPreset.Runtime')}
-            rules={[
-              {
-                required: true,
-                message: t('adminDeploymentPreset.RuntimeRequired'),
-              },
-            ]}
+          <React.Suspense
+            fallback={
+              <Form.Item label={t('adminDeploymentPreset.Runtime')}>
+                <Select disabled placeholder={t('general.Loading')} />
+              </Form.Item>
+            }
           >
-            <React.Suspense
-              fallback={<Select disabled placeholder={t('general.Loading')} />}
+            <Form.Item
+              name="runtimeVariantId"
+              label={t('adminDeploymentPreset.Runtime')}
+              rules={[
+                {
+                  required: true,
+                  message: t('adminDeploymentPreset.RuntimeRequired'),
+                },
+              ]}
             >
               <RuntimeVariantSelect />
-            </React.Suspense>
-          </Form.Item>
+            </Form.Item>
+          </React.Suspense>
         )}
 
         {/* TODO(needs-backend): FR-2761 — imageId field not yet in CreateDeploymentRevisionPresetInput schema */}
