@@ -730,7 +730,37 @@ body.bai-drawer-open .bai-scrim {
     border-right: 1px solid var(--bai-border);
     box-shadow: var(--bai-shadow-lg);
     overflow-y: auto;
+    /* FR-2768: contain touch scroll inside the drawer so reaching the
+       top/bottom of the nav doesn't bubble up and scroll the page
+       behind. Without this, mobile Safari/Chrome route the gesture to
+       the body whenever the sider hits a boundary — the user sees the
+       menu freeze and the article scroll instead. Pairs with the
+       body-lock rule below for defense in depth. */
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
     animation: bai-drawer-in 200ms ease-out;
+  }
+
+  /* In drawer mode, .doc-sidebar is forced back to display:block
+     above, so the inner .doc-sidebar__scroll wrapper no longer has the
+     flex-sizing that gives it a constrained height — its content
+     determines its size, and there is nothing for overflow-y:auto to
+     scroll. Make that explicit by switching it to overflow:visible so
+     there is exactly one scrollport (the sider itself) and the
+     touch-action / overscroll-behavior rules above unambiguously
+     target the element that actually scrolls. */
+  body.bai-drawer-open .doc-sidebar__scroll {
+    overflow: visible;
+  }
+
+  /* Lock the underlying page scroll while the drawer is open. The
+     scrim already blocks taps, but on touch devices the gesture
+     hand-off (when the sider has no more room to scroll) still reaches
+     the body unless its overflow is clipped. */
+  body.bai-drawer-open {
+    overflow: hidden;
+    touch-action: none;
   }
 }
 
@@ -782,16 +812,39 @@ body.bai-drawer-open .bai-scrim {
      .doc-toc below. */
   top: calc(var(--bai-topbar-h) + var(--bai-banner-h, 0px));
   height: calc(100vh - var(--bai-topbar-h) - var(--bai-banner-h, 0px));
-  overflow-y: auto;
+  /* FR-2768: switch from a single scrollable aside to a flex column
+     with an internal scrollport. The version block becomes the first
+     row (no flex), the .doc-sidebar__scroll wrapper takes flex: 1 and
+     owns the overflow. This pins the version selector to the top of
+     the sider while the nav list scrolls beneath, matching the design
+     handoff (and avoiding the position:sticky / z-index dance). */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   border-right: 1px solid var(--bai-border);
   background: var(--bai-bg-sider);
+}
+
+/* The internal scrollport. Holds the synthetic Introduction entry +
+   the nav groups; everything that should scroll lives inside this
+   wrapper. Padding moves here from .doc-sidebar so the version block
+   above can render edge-to-edge with its own padding. */
+.doc-sidebar__scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  /* Prevent scroll chaining: if the user scrolls the nav past its
+     top/bottom, the gesture stays inside this container instead of
+     bubbling out and scrolling the article. Same defense applied to
+     the mobile drawer override below. */
+  overscroll-behavior: contain;
   padding: 10px 8px 24px;
 }
 
-.doc-sidebar::-webkit-scrollbar {
+.doc-sidebar__scroll::-webkit-scrollbar {
   width: 8px;
 }
-.doc-sidebar::-webkit-scrollbar-thumb {
+.doc-sidebar__scroll::-webkit-scrollbar-thumb {
   background: var(--bai-border);
   border-radius: 4px;
 }
@@ -895,11 +948,26 @@ body.bai-drawer-open .bai-scrim {
    image, BAI primary focus outline) so the two site-level controls feel
    like a coordinated pair. */
 .doc-sidebar-version {
+  /* FR-2768: horizontal layout matching the design handoff —
+     uppercase label on the left, switcher pill on the right, soft
+     bottom rule separating it from the scrolling nav below. The
+     wrapper is a fixed-height row outside the scrollport so it stays
+     visible while the nav scrolls.
+
+     Horizontal padding is 24px (vs. the design's 18px) to align with
+     the indentation of nav items below: the .doc-sidebar__scroll
+     wrapper adds 8px padding and .doc-sidebar-group adds 6px margin
+     plus the summary's 10px inner padding (FR-2758 introduced this
+     extra margin). 8 + 6 + 10 = 24px from the sider edge to the
+     category label — the version label needs to sit at the same
+     x-coordinate so the grid aligns. */
   display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding: 14px 18px 12px;
-  border-bottom: 1px solid var(--bai-border);
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex: 0 0 auto;
+  padding: 14px 24px 10px;
+  border-bottom: 1px solid var(--bai-border-soft, var(--bai-border));
 }
 .doc-sidebar-version__label {
   font-size: 10.5px;
@@ -907,8 +975,16 @@ body.bai-drawer-open .bai-scrim {
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--bai-text-2);
+  flex: 0 0 auto;
 }
 .doc-sidebar-version .version-switcher {
+  flex: 0 0 auto;
+  /* FR-2768: native <select> auto-sizes to its longest option, which
+     for short version labels (e.g., "next") renders much narrower
+     than the prototype's pill button. Anchor the width so the
+     control reads as a deliberate UI element rather than a tiny
+     dropdown. */
+  min-width: 132px;
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
@@ -2757,6 +2833,14 @@ details > :last-child {
   }
   .bai-topbar__actions {
     margin-left: 0;
+  }
+  /* FR-2768: match the topbar's child-to-child gap to .bai-topbar__actions'
+     internal gap so the search-icon-button → first-action-button distance
+     reads the same as action-button → action-button. Without this the
+     14px top-level gap clashed with the 6px cluster gap, making the
+     search button look detached from the rest of the icon row on mobile. */
+  .bai-topbar {
+    gap: 6px;
   }
 }
 

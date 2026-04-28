@@ -386,11 +386,21 @@ function buildWebsiteSidebar(
   </a>
 `;
 
+  // Wrap intro + nav groups in a scroll container so the version block
+  // stays pinned at the top while the nav list scrolls beneath it. The
+  // sider itself is overflow:hidden + flex column (see styles-web.ts);
+  // .doc-sidebar__scroll is flex: 1 + overflow-y: auto. Mirrors the
+  // pattern from the FR-2768 design handoff (`.sider__nav` in the
+  // prototype). Tests still see .doc-sidebar-version inside <aside>
+  // before .doc-sidebar-groups — the wrapper sits between them but
+  // doesn't change ordering.
   return `
 <aside class="doc-sidebar">
-${versionBlockHtml}${introHtml}  <nav class="doc-sidebar-groups" aria-label="Documentation navigation">
-    ${groupsHtml}
-  </nav>
+${versionBlockHtml}  <div class="doc-sidebar__scroll">
+${introHtml}    <nav class="doc-sidebar-groups" aria-label="Documentation navigation">
+      ${groupsHtml}
+    </nav>
+  </div>
 </aside>`;
 }
 
@@ -1453,7 +1463,13 @@ function buildBaiTopbar(
 
   // Mobile menu icon (Phase 2 emits the surface; Phase 4 wires the
   // drawer toggle).
-  const menuIconSvg = `<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`;
+  // Path data spans x=3..21 (18 units wide) so the bars fill the icon's
+  // 18×18 box edge-to-edge, matching the visual weight of the GitHub /
+  // theme icons on the right side. The original 4..20 left ~3px of dead
+  // space inside the SVG, which made the menu glyph appear inset
+  // compared to the right-edge buttons even though the button paddings
+  // were symmetric.
+  const menuIconSvg = `<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`;
 
   return `<header class="bai-topbar" role="banner">
   <button class="bai-iconbtn bai-topbar__menu" type="button" aria-label="Toggle navigation">${menuIconSvg}</button>
