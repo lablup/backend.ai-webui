@@ -679,10 +679,25 @@ body.bai-palette-open .bai-palette {
 
 /* Mobile drawer scrim (Phase 4). Created lazily by interactions.js
    and added to the body when the user opens the drawer. Re-uses the
-   palette scrim look so the visual language stays consistent. */
+   palette scrim look so the visual language stays consistent.
+
+   FR-2758: the scrim used to start at top: 0 (inset: 0), which pulled
+   the topbar (z-index 50) under the scrim's z-index 100 and blurred
+   the topbar along with the page. Tester feedback: the topbar
+   appeared to "load with a blur over it" when the drawer was opened.
+   We now anchor the scrim to start under the topbar instead, so the
+   topbar stays sharp and remains interactable (close-drawer
+   hamburger, theme toggle) while the drawer is open. */
 .bai-scrim {
   position: fixed;
-  inset: 0;
+  /* Anchor below both the topbar and the sticky banner so neither
+     gets blurred while the drawer is open. --bai-banner-h is set by
+     version-banner.js (default 0px) so non-banner pages still start
+     the scrim right under the topbar. */
+  top: calc(var(--bai-topbar-h) + var(--bai-banner-h, 0px));
+  right: 0;
+  bottom: 0;
+  left: 0;
   z-index: 100;
   background: rgba(20, 20, 20, 0.45);
   backdrop-filter: blur(4px);
@@ -705,11 +720,11 @@ body.bai-drawer-open .bai-scrim {
   body.bai-drawer-open .doc-sidebar {
     display: block;
     position: fixed;
-    top: var(--bai-topbar-h);
+    top: calc(var(--bai-topbar-h) + var(--bai-banner-h, 0px));
     left: 0;
     width: 280px;
     max-width: 86vw;
-    height: calc(100vh - var(--bai-topbar-h));
+    height: calc(100vh - var(--bai-topbar-h) - var(--bai-banner-h, 0px));
     z-index: 101;
     background: var(--bai-bg-sider);
     border-right: 1px solid var(--bai-border);
@@ -759,8 +774,14 @@ body.bai-drawer-open .bai-scrim {
 
 .doc-sidebar {
   position: sticky;
-  top: var(--bai-topbar-h);
-  height: calc(100vh - var(--bai-topbar-h));
+  /* FR-2758: anchor below the sticky topbar AND the sticky version
+     banner. --bai-banner-h is set by version-banner.js (default 0px
+     when no banner is present) so non-banner pages keep the original
+     56px offset. Without this, the banner overlapped the top of the
+     sidebar's scroll area when the user scrolled. Same applies to
+     .doc-toc below. */
+  top: calc(var(--bai-topbar-h) + var(--bai-banner-h, 0px));
+  height: calc(100vh - var(--bai-topbar-h) - var(--bai-banner-h, 0px));
   overflow-y: auto;
   border-right: 1px solid var(--bai-border);
   background: var(--bai-bg-sider);
@@ -925,6 +946,58 @@ body.bai-drawer-open .bai-scrim {
   color-scheme: dark;
 }
 
+/* FR-2758: synthetic "Introduction" entry that links back to the
+   web-only home page (lang/index.html). Sits near the top of the
+   sidebar — below the version block when one is present (so the
+   version selector stays visually grouped with itself), and above
+   every nav group — so the user always has a one-click path back to
+   the welcome screen no matter how deep they are in the manual.
+   The visual treatment borrows from the group-summary chrome
+   (uppercase, muted, leading icon) but is rendered as an anchor so
+   it gets the standard active highlight when the home page is the
+   current document. */
+.doc-sidebar-intro {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 6px 6px 4px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-family: var(--bai-font-sans);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--bai-text-3);
+  text-decoration: none;
+  transition: background 120ms ease, color 120ms ease;
+}
+.doc-sidebar-intro:hover {
+  background: var(--bai-bg-soft, rgba(0, 0, 0, 0.04));
+  color: var(--bai-text);
+  text-decoration: none;
+}
+.doc-sidebar-intro.active {
+  background: var(--bai-primary-soft, rgba(255, 122, 0, 0.12));
+  color: var(--bai-primary);
+}
+.doc-sidebar-intro__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  color: inherit;
+}
+.doc-sidebar-intro__label {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+[data-theme="dark"] .doc-sidebar-intro:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
 /* F3: sidebar nav. Two render modes share the same .doc-sidebar-nav
    ruleset:
      1. Grouped (default for F3) — wrapped in details.doc-sidebar-group
@@ -940,8 +1013,17 @@ body.bai-drawer-open .bai-scrim {
 
 .doc-sidebar-group {
   /* Override the global <details> rule so groups don't render the rounded
-     bordered card style — they're navigation, not callouts. */
-  margin: 0;
+     bordered card style — they're navigation, not callouts.
+
+     FR-2758: 6px horizontal margin pulls the group summary's leading
+     icon over to the same x-coordinate as .doc-sidebar-intro's icon
+     (which has margin 6px on the sides). Without this nudge the
+     "Introduction" icon sat 6px to the right of every group's icon,
+     giving the sidebar a visibly stair-stepped rhythm. The bullets
+     and connector line nested inside .doc-sidebar-nav are positioned
+     via left: 17px / 19px relative to the inner ul, so they shift the
+     same 6px and stay aligned with the icon column. */
+  margin: 0 6px;
   padding: 0;
   background: transparent;
   border: none;
@@ -1187,7 +1269,13 @@ h2 {
   margin: 44px 0 4px;
   padding-top: 8px;
   border-top: 1px solid var(--bai-border-soft);
-  scroll-margin-top: calc(var(--bai-topbar-h) + 24px);
+  /* FR-2758: include --bai-banner-h so anchor jumps clear the sticky
+     version banner when one is present. The variable is set by
+     version-banner.js (default 0px); when no banner exists the
+     fallback keeps behavior identical to pre-FR-2758. */
+  scroll-margin-top: calc(
+    var(--bai-topbar-h) + var(--bai-banner-h, 0px) + 24px
+  );
 }
 
 .chapter h2:first-of-type,
@@ -1206,7 +1294,9 @@ h3 {
      element has its own top margin so the negative value caused
      visible overlap. Use a small positive bottom margin instead. */
   margin: 28px 0 8px;
-  scroll-margin-top: calc(var(--bai-topbar-h) + 24px);
+  scroll-margin-top: calc(
+    var(--bai-topbar-h) + var(--bai-banner-h, 0px) + 24px
+  );
 }
 
 h4 { font-size: var(--ifm-h4-font-size); margin-top: 1.25rem; }
@@ -2497,9 +2587,12 @@ details > :last-child {
    ========================================================================== */
 .doc-toc {
   position: sticky;
-  top: var(--bai-topbar-h);
+  /* FR-2758: see .doc-sidebar above — anchor below both topbar and the
+     sticky banner so the rail's scroll area never sits underneath the
+     banner. */
+  top: calc(var(--bai-topbar-h) + var(--bai-banner-h, 0px));
   align-self: start;
-  height: calc(100vh - var(--bai-topbar-h));
+  height: calc(100vh - var(--bai-topbar-h) - var(--bai-banner-h, 0px));
   overflow-y: auto;
   padding: 28px 22px;
   font-size: 13px;
@@ -2507,11 +2600,17 @@ details > :last-child {
   border-left: 1px solid var(--bai-border);
 }
 
-.doc-toc[data-empty="true"] .doc-toc__heading,
-.doc-toc[data-empty="true"] .doc-toc__list {
+.doc-toc[data-empty="true"] > .doc-toc__heading,
+.doc-toc[data-empty="true"] > .doc-toc__list {
   /* Hide the heading and list when there is nothing to spy on, but
      keep the aside in the grid (and the Get-help section visible) so
-     the rail still looks intentional. */
+     the rail still looks intentional.
+
+     FR-2758: scoped to direct children only. The contrib block reuses
+     .doc-toc__heading for its own "Get help" label; an unscoped
+     descendant selector swept that label up too, leaving the
+     "Edit this page" / "GitHub" links orphaned with no group title
+     on chapters that have no H2/H3 headings (e.g. installation.html). */
   display: none;
 }
 
@@ -2770,6 +2869,15 @@ export function generateWebsiteStyles(branding?: StyleBrandingTokens): string {
   gap: 10px;
   padding: 10px 22px;
   border-bottom: 1px solid var(--bai-border);
+  /* FR-2758: banner sits sticky right under the topbar so it stays
+     visible during scroll (the operator wants this notice to be a
+     permanent reminder). Anchor navigation is reconciled via the
+     --bai-banner-h CSS variable wired below: version-banner.js
+     measures the banner's actual rendered height on load + resize
+     and writes it onto :root, so heading scroll-margin-top includes
+     both the topbar and the banner. The banner has no dismiss
+     control either; users who scroll back up will see the version
+     notice again, which is the intended "always-on" behavior. */
   position: sticky;
   top: var(--bai-topbar-h);
   z-index: 40;

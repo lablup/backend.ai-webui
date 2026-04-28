@@ -324,9 +324,7 @@ describe("buildWebPage — FR-2737 sidebar category icons are language-stable", 
       },
       {
         category: "스토리지 및 데이터",
-        items: [
-          { title: "스토리지 폴더", path: "vfolder/vfolder.md" },
-        ],
+        items: [{ title: "스토리지 폴더", path: "vfolder/vfolder.md" }],
       },
       {
         category: "관리",
@@ -443,15 +441,11 @@ describe("buildWebPage — FR-2737 sidebar category icons are language-stable", 
    * `.doc-sidebar-group__icon` span, in document order.
    */
   function extractIconSequence(html: string): string[] {
-    const re =
-      /class="doc-sidebar-group__icon"[^>]*>(<svg[^]*?<\/svg>)/g;
+    const re = /class="doc-sidebar-group__icon"[^>]*>(<svg[^]*?<\/svg>)/g;
     return [...html.matchAll(re)].map((m) => m[1]);
   }
 
-  function makeCtxForLang(
-    lang: string,
-    navGroups: NavGroup[],
-  ): WebPageContext {
+  function makeCtxForLang(lang: string, navGroups: NavGroup[]): WebPageContext {
     // Reuse the standard fixture but swap the lang and navGroups so
     // the sidebar renders the localized labels with the same paths.
     // The active page (`dashboard`) doesn't appear in any of these
@@ -464,8 +458,8 @@ describe("buildWebPage — FR-2737 sidebar category icons are language-stable", 
   }
 
   it("emits the same icon sequence in every language", () => {
-    const sequences = Object.entries(navGroupsByLang).map(
-      ([lang, groups]) => extractIconSequence(buildWebPage(makeCtxForLang(lang, groups))),
+    const sequences = Object.entries(navGroupsByLang).map(([lang, groups]) =>
+      extractIconSequence(buildWebPage(makeCtxForLang(lang, groups))),
     );
     // Sanity: 5 categories ⇒ 5 icons per language.
     for (const seq of sequences) assert.equal(seq.length, 5);
@@ -582,6 +576,97 @@ describe("buildWebPage — FR-2733 sidebar version block placement", () => {
     const html = buildWebPage(ctx);
     assert.doesNotMatch(html, /class="doc-sidebar-version"/);
     assert.doesNotMatch(html, /id="version-switcher"/);
+  });
+});
+
+describe("buildWebPage / buildHomePage — FR-2758 sidebar 'Introduction' entry", () => {
+  it("renders an Introduction anchor at the top of the sidebar linking to ./index.html", () => {
+    const html = buildWebPage(makeContext());
+
+    const sidebarMatch = html.match(/<aside class="doc-sidebar">[\s\S]*?<\/aside>/);
+    assert.ok(sidebarMatch, ".doc-sidebar aside not found");
+    const sidebarHtml = sidebarMatch[0];
+
+    // Anchor exists and points to the per-language home page.
+    assert.match(
+      sidebarHtml,
+      /<a class="doc-sidebar-intro[^"]*"[^>]*href="\.\/index\.html"/,
+    );
+
+    // Appears before the nav groups so the user always has a one-click
+    // path back to the welcome screen at the very top of navigation.
+    const introIdx = sidebarHtml.indexOf("doc-sidebar-intro");
+    const groupsIdx = sidebarHtml.indexOf("doc-sidebar-groups");
+    assert.ok(
+      introIdx >= 0 && groupsIdx > introIdx,
+      ".doc-sidebar-intro must appear before .doc-sidebar-groups inside the aside",
+    );
+  });
+
+  it("does NOT mark the Introduction entry active on a chapter page", () => {
+    // makeContext() positions the user on a real chapter (currentIndex !== -1),
+    // so the synthetic home entry must stay inactive.
+    const html = buildWebPage(makeContext());
+    assert.match(html, /<a class="doc-sidebar-intro" href="\.\/index\.html"/);
+    assert.doesNotMatch(html, /class="doc-sidebar-intro active"/);
+    // No aria-current on a non-home chapter page.
+    assert.doesNotMatch(
+      html,
+      /<a class="doc-sidebar-intro[^"]*"[^>]*aria-current="page"/,
+    );
+  });
+
+  it("marks the Introduction entry active + aria-current on the home page", () => {
+    const ctx = makeContext();
+    const html = buildHomePage({
+      metadata: ctx.metadata,
+      config: ctx.config,
+      navGroups: ctx.navGroups,
+      allChapters: ctx.allChapters,
+      assets: ctx.assets,
+      peers: ctx.peers,
+      seo: ctx.seo,
+    });
+
+    // Active class + aria-current=page so screen readers and styles both
+    // mark the intro as the user's current location.
+    assert.match(
+      html,
+      /<a class="doc-sidebar-intro active"[^>]*aria-current="page"[^>]*href="\.\/index\.html"/,
+    );
+  });
+
+  it("uses the localized sidebarIntroduction label per language", () => {
+    // English fallback.
+    const enHtml = buildWebPage(makeContext());
+    assert.match(
+      enHtml,
+      /<span class="doc-sidebar-intro__label">Introduction<\/span>/,
+    );
+
+    const koCtx = makeContext();
+    koCtx.metadata = { ...koCtx.metadata, lang: "ko" };
+    const koHtml = buildWebPage(koCtx);
+    assert.match(
+      koHtml,
+      /<span class="doc-sidebar-intro__label">소개<\/span>/,
+    );
+
+    const jaCtx = makeContext();
+    jaCtx.metadata = { ...jaCtx.metadata, lang: "ja" };
+    const jaHtml = buildWebPage(jaCtx);
+    assert.match(
+      jaHtml,
+      /<span class="doc-sidebar-intro__label">はじめに<\/span>/,
+    );
+
+    const thCtx = makeContext();
+    thCtx.metadata = { ...thCtx.metadata, lang: "th" };
+    const thHtml = buildWebPage(thCtx);
+    assert.match(
+      thHtml,
+      /<span class="doc-sidebar-intro__label">บทนำ<\/span>/,
+    );
   });
 });
 
@@ -735,8 +820,10 @@ describe("buildWebPage — FR-2733 version-banner variants", () => {
     // tinted with BAI primary instead of yellow. Match the distinctive
     // triangle path.
     assert.match(html, /M12 3 2 21h20L12 3Z/);
-    // Dismiss button preserved for backward-compat with version-banner.js.
-    assert.match(html, /class="docs-banner__dismiss"/);
+    // FR-2758: the banner is now non-dismissible — the dismiss button must
+    // not appear in the rendered markup. The reader should not be able to
+    // silence a notice that affects every page they visit.
+    assert.doesNotMatch(html, /class="docs-banner__dismiss"/);
   });
 
   it("renders the outdated variant on an older release minor with {version} substituted", () => {
@@ -804,7 +891,10 @@ describe("buildIndexPage — FR-2732 PDF download card", () => {
     const html = buildIndexPage(indexChapters, makeIndexMetadata("en"));
     // Redirect stub MUST stay byte-equivalent to the pre-FR-2732
     // baseline so versions like `next` keep an identical output.
-    assert.match(html, /<meta http-equiv="refresh" content="0; url=\.\/dashboard\.html"/);
+    assert.match(
+      html,
+      /<meta http-equiv="refresh" content="0; url=\.\/dashboard\.html"/,
+    );
     // No PDF surfaces of any kind.
     assert.doesNotMatch(html, /releases\/download/);
     assert.doesNotMatch(html, /Download PDF/);
@@ -1107,7 +1197,10 @@ describe("buildHomePage — FR-2737 home page", () => {
   it("uses localized strings for the current language", () => {
     const html = buildHomePage(makeHomeContext());
     // Korean fixture above ⇒ Korean welcome line.
-    assert.match(html, /Backend\.AI WebUI 사용자 매뉴얼에 오신 것을 환영합니다/);
+    assert.match(
+      html,
+      /Backend\.AI WebUI 사용자 매뉴얼에 오신 것을 환영합니다/,
+    );
     // The hint copy mentions "빠른 시작" (the Korean Quickstart label).
     assert.match(html, /빠른 시작/);
   });

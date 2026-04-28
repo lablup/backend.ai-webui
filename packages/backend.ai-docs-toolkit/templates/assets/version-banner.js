@@ -1,68 +1,56 @@
-/* docs-toolkit version-mismatch UX (FR-2723).
+/* docs-toolkit version-mismatch UX (FR-2723; banner non-dismissible per FR-2758).
  *
- * Two pieces of UI live here:
+ * Wires up two pieces of UI:
  *
- *   1. "View latest version" banner — injected by website-builder.ts on
- *      every NON-latest version page. Hides itself when the user clicks
- *      the dismiss button (per-session via `sessionStorage`). Has no
- *      runtime API call: the destination URL and label substitutions
- *      come from `data-` attributes on the banner element.
+ *   1. Sticky version banner — always-on notice rendered above the doc
+ *      grid on non-latest pages. The banner has no close button (FR-2758);
+ *      this script's only responsibility for it is keeping the
+ *      --bai-banner-h CSS variable in sync with the banner's actual
+ *      rendered height so heading scroll-margin-top stays correct as
+ *      the layout reflows (narrow viewports wrap the title onto two
+ *      lines, etc.). Without that variable, anchor jumps land the
+ *      heading underneath the sticky banner — the bug user feedback
+ *      called out.
  *
- *   2. "Not in selected version" notice — injected hidden on EVERY
- *      versioned page (so the destination index pages all carry it).
- *      The version-switcher inline script in website-builder.ts sets a
+ *   2. "Not in selected version" notice — injected hidden on every
+ *      versioned page. The version-switcher inline script sets a
  *      sessionStorage flag right before navigating to a fallback index;
- *      this script reads that flag on load, fills in `{version}`, and
- *      reveals the notice. Dismissal also clears the flag so refresh
- *      doesn't re-show it.
+ *      this script reads that flag, fills in `{version}`, and reveals
+ *      the notice. Dismissal also clears the flag so a refresh doesn't
+ *      re-show the notice on an already-acknowledged page.
  *
- * Both pieces are language-agnostic at runtime: localized strings come
- * from `data-message-template` attributes (set at build time from
- * WEBSITE_LABELS) so this script can be content-hashed once and reused
- * across every language × every version.
- *
- * Air-gap safe: no fetches, no CDN, no external dependencies. Total
- * code budget ~1-2 KB minified. State lives only in sessionStorage so
- * it never persists across browser sessions (per FR-2723 spec).
+ * Air-gap safe: no fetches, no CDN, no external dependencies. State
+ * lives only in sessionStorage so it never persists across browser
+ * sessions.
  */
 (function () {
-  var BANNER_DISMISS_KEY = "docs.banner.viewLatestDismissed";
   var NOTICE_FLAG_KEY = "docs.notice.notInVersion";
 
-  // ── "View latest version" banner ──────────────────────────────────
-  function setupBanner() {
+  // ── Banner height -> --bai-banner-h CSS variable ──────────────────
+  // The banner is `position: sticky; top: var(--bai-topbar-h)`, which
+  // means anchor scroll targets must include the banner's height in
+  // their scroll-margin-top to land below the sticky strip. We mirror
+  // the banner's offsetHeight onto the document root and re-measure on
+  // resize because the title wraps differently across viewport widths
+  // and across languages (Korean / Japanese in particular run longer).
+  function syncBannerHeight() {
     var banner = document.querySelector(".docs-banner--view-latest");
-    if (!banner) return;
-
-    // Per-session dismissal: keyed by version pair so a dismissal on
-    // 25.16 doesn't suppress the banner when navigating to 25.10.
-    var current = banner.getAttribute("data-current-version") || "";
-    var latest = banner.getAttribute("data-latest-version") || "";
-    var dismissKey = BANNER_DISMISS_KEY + ":" + current + ":" + latest;
-
-    var dismissed = false;
-    try {
-      dismissed = sessionStorage.getItem(dismissKey) === "1";
-    } catch (_) {
-      // sessionStorage unavailable (private mode, etc.) — show the banner anyway.
+    var h = 0;
+    if (banner && !banner.hidden) {
+      // offsetHeight rounds to integer pixels, which is what scroll-
+      // margin-top consumes. getBoundingClientRect().height would be
+      // a touch more accurate on fractional layouts but the int round
+      // is well within the 24px headroom the heading rule already adds.
+      h = banner.offsetHeight;
     }
-    if (dismissed) {
-      banner.hidden = true;
-      return;
-    }
-    banner.hidden = false;
+    document.documentElement.style.setProperty("--bai-banner-h", h + "px");
+  }
 
-    var dismissBtn = banner.querySelector(".docs-banner__dismiss");
-    if (dismissBtn) {
-      dismissBtn.addEventListener("click", function () {
-        banner.hidden = true;
-        try {
-          sessionStorage.setItem(dismissKey, "1");
-        } catch (_) {
-          // Best effort.
-        }
-      });
-    }
+  function watchBanner() {
+    syncBannerHeight();
+    // Catch viewport reflows (mobile rotation, browser resize) so the
+    // CSS variable stays accurate as the banner rewraps.
+    window.addEventListener("resize", syncBannerHeight, { passive: true });
   }
 
   // ── "Not in selected version" inline notice ───────────────────────
@@ -124,13 +112,14 @@
     }
   }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", function () {
-      setupBanner();
-      setupNotice();
-    });
-  } else {
-    setupBanner();
+  function init() {
+    watchBanner();
     setupNotice();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
   }
 })();

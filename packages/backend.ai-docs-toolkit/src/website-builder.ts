@@ -368,13 +368,38 @@ function buildWebsiteSidebar(
 `
     : "";
 
+  // Synthetic top-level "Introduction" entry (FR-2758). The home page
+  // (`<lang>/index.html`) is the welcome / web-only landing the user
+  // arrives at first; without an entry here it has no visible anchor in
+  // the left nav once the user starts reading a chapter. We render it
+  // above all nav groups so the user can always navigate back to the
+  // intro. `currentIndex === -1` is the home-page sentinel set by
+  // `buildHomePage`, so we mark this entry active only there.
+  const introLabel =
+    labels.sidebarIntroduction ?? labels.home ?? "Introduction";
+  const isHome = currentIndex === -1;
+  const introClass = isHome ? "doc-sidebar-intro active" : "doc-sidebar-intro";
+  const introCurrent = isHome ? ' aria-current="page"' : "";
+  const introHtml = `  <a class="${introClass}"${introCurrent} href="./index.html">
+    <span class="doc-sidebar-intro__icon" aria-hidden="true">${SIDEBAR_INTRO_ICON_SVG}</span>
+    <span class="doc-sidebar-intro__label">${escapeHtml(introLabel)}</span>
+  </a>
+`;
+
   return `
 <aside class="doc-sidebar">
-${versionBlockHtml}  <nav class="doc-sidebar-groups" aria-label="Documentation navigation">
+${versionBlockHtml}${introHtml}  <nav class="doc-sidebar-groups" aria-label="Documentation navigation">
     ${groupsHtml}
   </nav>
 </aside>`;
 }
+
+// Inline icon for the synthetic "Introduction" entry (FR-2758). Uses
+// `currentColor` so the active/hover treatment in styles-web.ts can
+// drive the tint without re-emitting the SVG. House-style: same
+// 18×18 / 1.6 stroke as the topbar iconbtn glyphs.
+const SIDEBAR_INTRO_ICON_SVG =
+  '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 9.5 12 3l9 6.5"/><path d="M5 9v11h14V9"/><path d="M9 20v-6h6v6"/></svg>';
 
 /**
  * Inline SVG icon for a sidebar category header.
@@ -569,7 +594,7 @@ function buildTocGetHelp(
     // rather than a translatable label — "GitHub" is a proper noun
     // recognized in every supported language. If a translatable
     // alternative becomes desired (e.g. "View on GitHub"), introduce a
-    // dedicated WEBSITE_LABELS key for it; do NOT reuse `editThisPage`.
+    // dedicated WEBSITE_LABELS key for it; do NOT reuse `editThisPage'.
     links.push(
       `<a class="doc-toc__link doc-toc__link--external" href="${escapeHtml(repoUrl)}" target="_blank" rel="noopener noreferrer">${githubIcon}GitHub</a>`,
     );
@@ -993,18 +1018,22 @@ function buildVersionBanner(context: WebPageContext): string {
   const [bodyPre = "", bodyPost = ""] = bodyTemplate.split("{link}");
   const bodyHtml = `${escapeHtml(bodyPre)}<a class="docs-banner__link" href="${escapeHtml(href)}">${escapeHtml(linkLabel)}</a>${escapeHtml(bodyPost)}`;
 
-  const dismissLabel = labels.bannerDismiss;
   const iconSvg =
     variant === "preview" ? BANNER_ICON_SVG_PREVIEW : BANNER_ICON_SVG_OUTDATED;
   const variantClass = `docs-banner--${variant}`;
 
+  // FR-2758: the dismiss button used to live here (per-session, sessionStorage-
+  // backed). User feedback was that the banner is the kind of always-on notice
+  // the reader should not be able to silence — it tells them they're not on
+  // latest, which matters for every page they visit. The button was removed
+  // and the banner is now non-sticky (see `.docs-banner` in styles-web.ts) so
+  // it scrolls away with the page rather than permanently obscuring content.
   return `<div class="docs-banner docs-banner--view-latest ${variantClass}" role="status" data-current-version="${escapeHtml(ver.current)}" data-latest-version="${escapeHtml(ver.latest)}">
   <span class="docs-banner__icon" aria-hidden="true">${iconSvg}</span>
   <div class="docs-banner__body">
     <span class="docs-banner__title">${escapeHtml(title)}</span>
     <span class="docs-banner__desc">${bodyHtml}</span>
   </div>
-  <button type="button" class="docs-banner__dismiss" aria-label="${escapeHtml(dismissLabel)}" title="${escapeHtml(dismissLabel)}">&times;</button>
 </div>`;
 }
 
