@@ -20,6 +20,7 @@ import {
   BAIFlex,
   BAIGraphQLPropertyFilter,
   type GraphQLFilter,
+  toLocalId,
   useUpdatableState,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -278,7 +279,7 @@ const AutoScalingRulePresetTab: React.FC = () => {
           if (!deletingPreset) return;
           commitDeleteMutation({
             variables: {
-              id: deletingPreset.id,
+              id: toLocalId(deletingPreset.id),
             },
             onCompleted: (_res, errors) => {
               if (errors && errors.length > 0) {
