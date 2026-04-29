@@ -1853,6 +1853,7 @@
       "RESOURCE_GROUP": "Resurssiryhmä",
       "RESOURCE_PRESET": "Resurssiasiasetus",
       "ROLE": "Rooli",
+      "ROLE_ASSIGNMENT": "Roolin määritys",
       "ROUTING": "Reititys",
       "SESSION": "Istunto",
       "SESSION_TEMPLATE": "Istuntomalli",
@@ -2070,7 +2071,7 @@
     "Updated": "Resurssien esiasetus päivitetty"
   },
   "sTokenLoginBoundary": {
-"AuthenticatingDescription": "Kirjautumistunnistettasi varmennetaan…",
+    "AuthenticatingDescription": "Kirjautumistunnistettasi varmennetaan…",
     "AuthenticatingTitle": "Signing you in",
     "ConnectingDescription": "Yhdistetään Backend.AI-palvelimeen…",
     "CopyErrorDetails": "Copy error details",

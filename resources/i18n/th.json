@@ -1855,6 +1855,7 @@
       "RESOURCE_GROUP": "กลุ่มทรัพยากร",
       "RESOURCE_PRESET": "ค่าที่ตั้งล่วงหน้าของทรัพยากร",
       "ROLE": "บทบาท",
+      "ROLE_ASSIGNMENT": "การกำหนดบทบาท",
       "ROUTING": "การกำหนดเส้นทาง",
       "SESSION": "เซสชัน",
       "SESSION_TEMPLATE": "เทมเพลตเซสชัน",
@@ -2072,7 +2073,7 @@
     "Updated": "อัปเดตค่าที่กำหนดไว้ล่วงหน้าของทรัพยากรแล้ว"
   },
   "sTokenLoginBoundary": {
-"AuthenticatingDescription": "กำลังตรวจสอบโทเคนการเข้าสู่ระบบของคุณ…",
+    "AuthenticatingDescription": "กำลังตรวจสอบโทเคนการเข้าสู่ระบบของคุณ…",
     "AuthenticatingTitle": "Signing you in",
     "ConnectingDescription": "กำลังเชื่อมต่อกับเซิร์ฟเวอร์ Backend.AI…",
     "CopyErrorDetails": "Copy error details",

@@ -1857,6 +1857,7 @@
       "RESOURCE_GROUP": "資源群組",
       "RESOURCE_PRESET": "資源預設",
       "ROLE": "角色",
+      "ROLE_ASSIGNMENT": "角色指派",
       "ROUTING": "路由",
       "SESSION": "工作階段",
       "SESSION_TEMPLATE": "工作階段範本",
@@ -2074,7 +2075,7 @@
     "Updated": "資源預設已更新"
   },
   "sTokenLoginBoundary": {
-"AuthenticatingDescription": "正在驗證您的登入權杖…",
+    "AuthenticatingDescription": "正在驗證您的登入權杖…",
     "AuthenticatingTitle": "Signing you in",
     "ConnectingDescription": "正在連線至 Backend.AI 伺服器…",
     "CopyErrorDetails": "Copy error details",

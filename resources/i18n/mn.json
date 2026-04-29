@@ -1854,6 +1854,7 @@
       "RESOURCE_GROUP": "Нөөцийн бүлэг",
       "RESOURCE_PRESET": "Нөөцийн урьдчилсан тохиргоо",
       "ROLE": "Үүрэг",
+      "ROLE_ASSIGNMENT": "Үүрэг хуваарилалт",
       "ROUTING": "Чиглүүлэлт",
       "SESSION": "Сесс",
       "SESSION_TEMPLATE": "Сессийн загвар",
@@ -2071,7 +2072,7 @@
     "Updated": "Нөөцийн урьдчилан тохируулалтыг шинэчилсэн"
   },
   "sTokenLoginBoundary": {
-"AuthenticatingDescription": "Нэвтрэх токеныг шалгаж байна…",
+    "AuthenticatingDescription": "Нэвтрэх токеныг шалгаж байна…",
     "AuthenticatingTitle": "Signing you in",
     "ConnectingDescription": "Backend.AI серверт холбогдож байна…",
     "CopyErrorDetails": "Copy error details",

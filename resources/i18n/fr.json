@@ -1855,6 +1855,7 @@
       "RESOURCE_GROUP": "Groupe de ressources",
       "RESOURCE_PRESET": "Préréglage de ressources",
       "ROLE": "Rôle",
+      "ROLE_ASSIGNMENT": "Attribution de rôle",
       "ROUTING": "Routage",
       "SESSION": "Session",
       "SESSION_TEMPLATE": "Modèle de session",
@@ -2072,7 +2073,7 @@
     "Updated": "Préréglage de ressource mis à jour"
   },
   "sTokenLoginBoundary": {
-"AuthenticatingDescription": "Vérification de votre jeton de connexion…",
+    "AuthenticatingDescription": "Vérification de votre jeton de connexion…",
     "AuthenticatingTitle": "Signing you in",
     "ConnectingDescription": "Connexion au serveur Backend.AI…",
     "CopyErrorDetails": "Copy error details",

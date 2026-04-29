@@ -1855,6 +1855,7 @@
       "RESOURCE_GROUP": "Grupo de recursos",
       "RESOURCE_PRESET": "Predefinição de recursos",
       "ROLE": "Função",
+      "ROLE_ASSIGNMENT": "Atribuição de função",
       "ROUTING": "Roteamento",
       "SESSION": "Sessão",
       "SESSION_TEMPLATE": "Modelo de sessão",
@@ -2072,7 +2073,7 @@
     "Updated": "Predefinição de recurso atualizada"
   },
   "sTokenLoginBoundary": {
-"AuthenticatingDescription": "A verificar o seu token de início de sessão…",
+    "AuthenticatingDescription": "A verificar o seu token de início de sessão…",
     "AuthenticatingTitle": "Signing you in",
     "ConnectingDescription": "A ligar ao servidor Backend.AI…",
     "CopyErrorDetails": "Copy error details",

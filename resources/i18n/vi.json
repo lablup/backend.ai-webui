@@ -1855,6 +1855,7 @@
       "RESOURCE_GROUP": "Nhóm tài nguyên",
       "RESOURCE_PRESET": "Cài đặt sẵn tài nguyên",
       "ROLE": "Vai trò",
+      "ROLE_ASSIGNMENT": "Gán vai trò",
       "ROUTING": "Định tuyến",
       "SESSION": "Phiên",
       "SESSION_TEMPLATE": "Mẫu phiên",
@@ -2072,7 +2073,7 @@
     "Updated": "Đã cập nhật cài đặt trước tài nguyên"
   },
   "sTokenLoginBoundary": {
-"AuthenticatingDescription": "Đang xác minh token đăng nhập của bạn…",
+    "AuthenticatingDescription": "Đang xác minh token đăng nhập của bạn…",
     "AuthenticatingTitle": "Signing you in",
     "ConnectingDescription": "Đang kết nối đến máy chủ Backend.AI…",
     "CopyErrorDetails": "Copy error details",

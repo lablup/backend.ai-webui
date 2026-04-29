@@ -1855,6 +1855,7 @@
       "RESOURCE_GROUP": "Grupa zasobów",
       "RESOURCE_PRESET": "Ustawienie wstępne zasobów",
       "ROLE": "Rola",
+      "ROLE_ASSIGNMENT": "Przypisanie roli",
       "ROUTING": "Routing",
       "SESSION": "Sesja",
       "SESSION_TEMPLATE": "Szablon sesji",
@@ -2072,7 +2073,7 @@
     "Updated": "Zaktualizowano wstępne ustawienia zasobów"
   },
   "sTokenLoginBoundary": {
-"AuthenticatingDescription": "Trwa weryfikacja tokenu logowania…",
+    "AuthenticatingDescription": "Trwa weryfikacja tokenu logowania…",
     "AuthenticatingTitle": "Signing you in",
     "ConnectingDescription": "Łączenie z serwerem Backend.AI…",
     "CopyErrorDetails": "Copy error details",

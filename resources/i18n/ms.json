@@ -1853,6 +1853,7 @@
       "RESOURCE_GROUP": "Kumpulan Sumber",
       "RESOURCE_PRESET": "Pratetap Sumber",
       "ROLE": "Peranan",
+      "ROLE_ASSIGNMENT": "Penugasan peranan",
       "ROUTING": "Penghalaan",
       "SESSION": "Sesi",
       "SESSION_TEMPLATE": "Templat Sesi",
@@ -2070,7 +2071,7 @@
     "Updated": "Pratetap sumber dikemas kini"
   },
   "sTokenLoginBoundary": {
-"AuthenticatingDescription": "Token log masuk anda sedang disahkan…",
+    "AuthenticatingDescription": "Token log masuk anda sedang disahkan…",
     "AuthenticatingTitle": "Signing you in",
     "ConnectingDescription": "Menyambung ke pelayan Backend.AI…",
     "CopyErrorDetails": "Copy error details",

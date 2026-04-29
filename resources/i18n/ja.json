@@ -1855,6 +1855,7 @@
       "RESOURCE_GROUP": "リソースグループ",
       "RESOURCE_PRESET": "リソースプリセット",
       "ROLE": "ロール",
+      "ROLE_ASSIGNMENT": "ロールの割り当て",
       "ROUTING": "ルーティング",
       "SESSION": "セッション",
       "SESSION_TEMPLATE": "セッションテンプレート",
@@ -2072,7 +2073,7 @@
     "Updated": "リソースプリセットが更新されました"
   },
   "sTokenLoginBoundary": {
-"AuthenticatingDescription": "ログイントークンを確認しています…",
+    "AuthenticatingDescription": "ログイントークンを確認しています…",
     "AuthenticatingTitle": "Signing you in",
     "ConnectingDescription": "Backend.AIサーバーに接続しています…",
     "CopyErrorDetails": "Copy error details",

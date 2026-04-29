@@ -1855,6 +1855,7 @@
       "RESOURCE_GROUP": "Ressourcengruppe",
       "RESOURCE_PRESET": "Ressourcenvorlage",
       "ROLE": "Rolle",
+      "ROLE_ASSIGNMENT": "Rollenzuweisung",
       "ROUTING": "Routing",
       "SESSION": "Sitzung",
       "SESSION_TEMPLATE": "Sitzungsvorlage",
@@ -2072,7 +2073,7 @@
     "Updated": "Ressourcenvoreinstellung aktualisiert"
   },
   "sTokenLoginBoundary": {
-"AuthenticatingDescription": "Ihr Anmelde-Token wird verifiziert…",
+    "AuthenticatingDescription": "Ihr Anmelde-Token wird verifiziert…",
     "AuthenticatingTitle": "Signing you in",
     "ConnectingDescription": "Verbindung mit dem Backend.AI-Server wird hergestellt…",
     "CopyErrorDetails": "Copy error details",

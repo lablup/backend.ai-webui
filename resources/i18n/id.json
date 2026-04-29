@@ -1856,6 +1856,7 @@
       "RESOURCE_GROUP": "Grup Sumber Daya",
       "RESOURCE_PRESET": "Preset Sumber Daya",
       "ROLE": "Peran",
+      "ROLE_ASSIGNMENT": "Penugasan peran",
       "ROUTING": "Perutean",
       "SESSION": "Sesi",
       "SESSION_TEMPLATE": "Template Sesi",
@@ -2073,7 +2074,7 @@
     "Updated": "Preset sumber daya diperbarui"
   },
   "sTokenLoginBoundary": {
-"AuthenticatingDescription": "Memverifikasi token masuk Anda…",
+    "AuthenticatingDescription": "Memverifikasi token masuk Anda…",
     "AuthenticatingTitle": "Signing you in",
     "ConnectingDescription": "Menghubungkan ke server Backend.AI…",
     "CopyErrorDetails": "Copy error details",

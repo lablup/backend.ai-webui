@@ -1853,6 +1853,7 @@
       "RESOURCE_GROUP": "Ομάδα πόρων",
       "RESOURCE_PRESET": "Προεπιλογή πόρων",
       "ROLE": "Ρόλος",
+      "ROLE_ASSIGNMENT": "Ανάθεση ρόλου",
       "ROUTING": "Δρομολόγηση",
       "SESSION": "Συνεδρία",
       "SESSION_TEMPLATE": "Πρότυπο συνεδρίας",
@@ -2070,7 +2071,7 @@
     "Updated": "Η προεπιλογή πόρων ενημερώθηκε"
   },
   "sTokenLoginBoundary": {
-"AuthenticatingDescription": "Το διακριτικό σύνδεσής σας επαληθεύεται…",
+    "AuthenticatingDescription": "Το διακριτικό σύνδεσής σας επαληθεύεται…",
     "AuthenticatingTitle": "Signing you in",
     "ConnectingDescription": "Σύνδεση με τον διακομιστή Backend.AI…",
     "CopyErrorDetails": "Copy error details",
