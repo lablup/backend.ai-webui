@@ -1852,6 +1852,7 @@
     "ModelNameIsRequired": "Nama model diperlukan untuk membuat perkhidmatan",
     "ModelPath": "Laluan Model",
     "NoCompatiblePresets": "Tiada pratetap yang serasi tersedia. Model ini tidak boleh disebarkan.",
+    "NoCompatiblePresetsRedirectingToLauncher": "Tiada pratetap yang serasi tersedia. Mengalihkan ke pelancar perkhidmatan untuk konfigurasi manual.",
     "NoModelsFound": "Tiada model ditemui",
     "Path": "Laluan",
     "Port": "Pelabuhan",

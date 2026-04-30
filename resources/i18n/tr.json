@@ -1852,6 +1852,7 @@
     "ModelNameIsRequired": "Hizmet oluşturmak için model adı gereklidir",
     "ModelPath": "Model Yolu",
     "NoCompatiblePresets": "Uyumlu ön ayar mevcut değil. Bu model dağıtılamaz.",
+    "NoCompatiblePresetsRedirectingToLauncher": "Uyumlu ön ayar mevcut değil. Manuel yapılandırma için servis başlatıcıya yönlendiriliyor.",
     "NoModelsFound": "Model bulunamadı",
     "Path": "Yol",
     "Port": "Liman",

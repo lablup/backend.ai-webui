@@ -1855,6 +1855,7 @@
     "ModelNameIsRequired": "서비스를 만들려면 모델 이름이 필요합니다.",
     "ModelPath": "모델 경로",
     "NoCompatiblePresets": "호환 가능한 프리셋이 없습니다. 이 모델은 배포할 수 없습니다.",
+    "NoCompatiblePresetsRedirectingToLauncher": "사용 가능한 프리셋이 없어 세부 설정 후 배포하기 페이지로 이동합니다.",
     "NoModelsFound": "모델을 찾을 수 없습니다",
     "Path": "길",
     "Port": "포트",

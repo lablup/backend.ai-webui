@@ -1854,6 +1854,7 @@
     "ModelNameIsRequired": "サービスを作成するにはモデル名が必要です",
     "ModelPath": "モデルパス",
     "NoCompatiblePresets": "互換性のあるプリセットがありません。このモデルはデプロイできません。",
+    "NoCompatiblePresetsRedirectingToLauncher": "互換性のあるプリセットがありません。手動設定のためにサービスランチャーにリダイレクトします。",
     "NoModelsFound": "モデルが見つかりません",
     "Path": "パス",
     "Port": "ポート",

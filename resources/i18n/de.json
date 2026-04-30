@@ -1854,6 +1854,7 @@
     "ModelNameIsRequired": "Zum Erstellen eines Dienstes ist ein Modellname erforderlich",
     "ModelPath": "Modellpfad",
     "NoCompatiblePresets": "Keine kompatiblen Voreinstellungen verfügbar. Dieses Modell kann nicht bereitgestellt werden.",
+    "NoCompatiblePresetsRedirectingToLauncher": "Keine kompatiblen Voreinstellungen verfügbar. Sie werden zum Service-Launcher für die manuelle Konfiguration weitergeleitet.",
     "NoModelsFound": "Keine Modelle gefunden",
     "Path": "Weg",
     "Port": "Hafen",

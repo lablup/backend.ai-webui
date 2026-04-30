@@ -1852,6 +1852,7 @@
     "ModelNameIsRequired": "Se requiere el nombre del modelo para crear un servicio.",
     "ModelPath": "Ruta del modelo",
     "NoCompatiblePresets": "No hay presets compatibles disponibles. Este modelo no puede ser desplegado.",
+    "NoCompatiblePresetsRedirectingToLauncher": "No hay presets compatibles disponibles. Redirigiendo al lanzador de servicios para configuración manual.",
     "NoModelsFound": "No se encontraron modelos",
     "Path": "Camino",
     "Port": "Puerto",

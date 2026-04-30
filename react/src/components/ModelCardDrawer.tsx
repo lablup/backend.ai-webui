@@ -17,7 +17,6 @@ import {
 import { shapes } from '@dicebear/collection';
 import { createAvatar } from '@dicebear/core';
 import {
-  Alert,
   Card,
   Descriptions,
   Drawer,
@@ -111,7 +110,7 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
     modelCardDrawerFrgmt,
   );
 
-  const hasNoPresets =
+  const hasNoAvailablePresets =
     !modelCard?.availablePresets || modelCard.availablePresets.count === 0;
   const [deployModalOpen, setDeployModalOpen] = useState(false);
 
@@ -147,7 +146,22 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
           </BAIFlex>
         }
         extra={
-          supportsQuickDeploy && modelCard?.vfolder?.id ? (
+          hasNoAvailablePresets ? (
+            // When no presets are available, show a single "Configure and
+            // deploy" button that navigates to the full launcher so the user
+            // can set up a deployment manually.
+            <BAIButton
+              type="primary"
+              disabled={!modelCard?.vfolder?.id}
+              onClick={() => {
+                const modelFolderId = toLocalId(modelCard?.vfolder?.id ?? '');
+                if (!modelFolderId) return;
+                openLauncher({ modelFolderId });
+              }}
+            >
+              {t('modelStore.QuickDeployDetailed')}
+            </BAIButton>
+          ) : supportsQuickDeploy && modelCard?.vfolder?.id ? (
             // Flow 7 (FR-2684): [Deploy | ▼] split button backed by
             // useDeploymentLauncher. Primary action fires Quick Deploy via
             // createModelDeployment; the dropdown item navigates to the
@@ -156,7 +170,7 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
               <BAIButton
                 type="primary"
                 loading={isDeploying}
-                disabled={hasNoPresets || !modelCard?.id}
+                disabled={!modelCard?.id}
                 action={async () => {
                   const modelFolderId = toLocalId(modelCard.vfolder?.id ?? '');
                   if (!modelFolderId) return;
@@ -170,7 +184,7 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
                 {t('modelStore.Deploy')}
               </BAIButton>
               <Dropdown
-                disabled={hasNoPresets || !modelCard?.id || isDeploying}
+                disabled={!modelCard?.id || isDeploying}
                 trigger={['click']}
                 menu={{
                   items: [
@@ -198,7 +212,7 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
             // universally available.
             <BAIButton
               type="primary"
-              disabled={hasNoPresets || !modelCard?.id}
+              disabled={!modelCard?.id}
               onClick={() => setDeployModalOpen(true)}
             >
               {t('modelStore.Deploy')}
@@ -208,14 +222,6 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
       >
         {modelCard && (
           <BAIFlex direction="column" align="stretch" gap="sm">
-            {hasNoPresets && (
-              <Alert
-                type="error"
-                showIcon
-                title={t('modelStore.NoCompatiblePresets')}
-              />
-            )}
-
             {modelCard.metadata?.description && (
               <Typography.Paragraph
                 style={{ marginBottom: 0 }}

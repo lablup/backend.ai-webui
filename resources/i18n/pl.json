@@ -1854,6 +1854,7 @@
     "ModelNameIsRequired": "Aby utworzyć usługę, wymagana jest nazwa modelu",
     "ModelPath": "Ścieżka modelu",
     "NoCompatiblePresets": "Brak dostępnych kompatybilnych presetów. Ten model nie może zostać wdrożony.",
+    "NoCompatiblePresetsRedirectingToLauncher": "Brak dostępnych kompatybilnych presetów. Przekierowywanie do programu uruchamiającego usługę w celu ręcznej konfiguracji.",
     "NoModelsFound": "Nie znaleziono modeli",
     "Path": "Ścieżka",
     "Port": "Port",

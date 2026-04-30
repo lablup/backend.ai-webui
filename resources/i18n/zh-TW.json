@@ -1856,6 +1856,7 @@
     "ModelNameIsRequired": "創建服務時需要模型名稱",
     "ModelPath": "模型路徑",
     "NoCompatiblePresets": "沒有可用的相容預設。此模型無法部署。",
+    "NoCompatiblePresetsRedirectingToLauncher": "沒有可用的相容預設。正在重新導向至服務啟動器以進行手動設定。",
     "NoModelsFound": "未找到模型",
     "Path": "小路",
     "Port": "連接埠",

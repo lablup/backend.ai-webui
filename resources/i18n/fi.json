@@ -1852,6 +1852,7 @@
     "ModelNameIsRequired": "Mallin nimi vaaditaan palvelun luomiseen",
     "ModelPath": "Mallin polku",
     "NoCompatiblePresets": "Yhteensopivia esiasetuksia ei ole saatavilla. Tätä mallia ei voi ottaa käyttöön.",
+    "NoCompatiblePresetsRedirectingToLauncher": "Yhteensopivia esiasetuksia ei ole saatavilla. Sinut ohjataan palvelun käynnistysohjelmaan manuaalista määritystä varten.",
     "NoModelsFound": "Malleja ei löytynyt",
     "Path": "Polku",
     "Port": "Portti",

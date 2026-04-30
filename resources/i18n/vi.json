@@ -1854,6 +1854,7 @@
     "ModelNameIsRequired": "Cần có tên mẫu để tạo dịch vụ",
     "ModelPath": "Đường dẫn mẫu",
     "NoCompatiblePresets": "Không có cấu hình sẵn có nào tương thích. Mô hình này không thể triển khai.",
+    "NoCompatiblePresetsRedirectingToLauncher": "Không có cấu hình sẵn có nào tương thích. Đang chuyển hướng đến trình khởi chạy dịch vụ để cấu hình thủ công.",
     "NoModelsFound": "Không tìm thấy mô hình",
     "Path": "Con đường",
     "Port": "Cổng",

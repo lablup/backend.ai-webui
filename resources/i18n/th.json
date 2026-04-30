@@ -1854,6 +1854,7 @@
     "ModelNameIsRequired": "ต้องระบุชื่อรุ่นเพื่อสร้างบริการ",
     "ModelPath": "เส้นทางโมเดล",
     "NoCompatiblePresets": "ไม่มีพรีเซ็ตที่เข้ากันได้ โมเดลนี้ไม่สามารถปรับใช้ได้",
+    "NoCompatiblePresetsRedirectingToLauncher": "ไม่มีพรีเซ็ตที่เข้ากันได้ กำลังเปลี่ยนเส้นทางไปยัง Service Launcher สำหรับการกำหนดค่าด้วยตนเอง",
     "NoModelsFound": "ไม่พบโมเดล",
     "Path": "เส้นทาง",
     "Port": "พอร์ต",

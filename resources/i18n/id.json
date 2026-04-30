@@ -1855,6 +1855,7 @@
     "ModelNameIsRequired": "Nama model diperlukan untuk membuat layanan",
     "ModelPath": "Jalur Model",
     "NoCompatiblePresets": "Tidak ada preset yang kompatibel. Model ini tidak dapat diterapkan.",
+    "NoCompatiblePresetsRedirectingToLauncher": "Tidak ada preset yang kompatibel tersedia. Mengalihkan ke peluncur layanan untuk konfigurasi manual.",
     "NoModelsFound": "Model tidak ditemukan",
     "Path": "Jalur",
     "Port": "Pelabuhan",

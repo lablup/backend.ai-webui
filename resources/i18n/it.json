@@ -1852,6 +1852,7 @@
     "ModelNameIsRequired": "Il nome del modello è obbligatorio per creare un servizio",
     "ModelPath": "Percorso del modello",
     "NoCompatiblePresets": "Nessun preset compatibile disponibile. Questo modello non può essere distribuito.",
+    "NoCompatiblePresetsRedirectingToLauncher": "Nessun preset compatibile disponibile. Reindirizzamento al launcher del servizio per la configurazione manuale.",
     "NoModelsFound": "Nessun modello trovato",
     "Path": "Sentiero",
     "Port": "Porta",
