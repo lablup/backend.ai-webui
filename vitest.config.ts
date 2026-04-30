@@ -31,5 +31,20 @@ export default defineConfig({
       "react/**",
       "packages/**",
     ],
+
+    // Coverage settings — see comment in `react/vitest.config.ts`. Same
+    // reporters and provider so the `davelosert/vitest-coverage-report-action`
+    // PR comment shape is consistent across the three workspaces.
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "json", "json-summary", "html"],
+      reportsDirectory: "coverage",
+      include: ["{src,scripts}/**/*.{ts,js,cjs}"],
+      exclude: [
+        "{src,scripts}/**/*.{test,spec}.ts",
+        "src/wsproxy/**",
+        "src/lib/backend.ai-client-node.*",
+      ],
+    },
   },
 });

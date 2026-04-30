@@ -15,6 +15,9 @@ on:
 
 permissions:
   contents: read
+  # `davelosert/vitest-coverage-report-action` writes a PR comment with the
+  # coverage diff; needs write access on pull-requests for that.
+  pull-requests: write
 
 jobs:
   check-changes:
@@ -80,8 +83,14 @@ jobs:
         run: pnpm run lint
       - name: Run relay-compiler
         run: pnpm run relay
-      - name: Run Vitest
-        run: pnpm run vitest
+      - name: Run Vitest with coverage
+        run: pnpm exec vitest run --coverage
+      - name: Report coverage on PR
+        if: always()
+        uses: davelosert/vitest-coverage-report-action@v2
+        with:
+          working-directory: ./react
+          name: react-coverage
 
   backend-ai-ui-vitest:
     needs: check-changes
@@ -119,8 +128,14 @@ jobs:
         run: pnpm run lint
       - name: Run relay-compiler
         run: cd ../.. && pnpm run relay
-      - name: Run Vitest
-        run: pnpm run vitest
+      - name: Run Vitest with coverage
+        run: pnpm exec vitest run --coverage
+      - name: Report coverage on PR
+        if: always()
+        uses: davelosert/vitest-coverage-report-action@v2
+        with:
+          working-directory: ./packages/backend.ai-ui
+          name: backend-ai-ui-coverage
 
   root-vitest:
     needs: check-changes
@@ -150,5 +165,10 @@ jobs:
             ${{ runner.os }}-pnpm-store-
       - name: Install dependencies
         run: pnpm install --merge-git-branch-lockfiles --no-frozen-lockfile
-      - name: Run Vitest
-        run: pnpm run vitest
+      - name: Run Vitest with coverage
+        run: pnpm exec vitest run --coverage
+      - name: Report coverage on PR
+        if: always()
+        uses: davelosert/vitest-coverage-report-action@v2
+        with:
+          name: root-coverage
