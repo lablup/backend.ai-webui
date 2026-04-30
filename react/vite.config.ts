@@ -137,6 +137,20 @@ export default defineConfig(({ mode }) => {
     cacheDir: resolve(__dirname, 'node_modules/.vite'),
 
     resolve: {
+      // Force a single instance of shared singletons across the monorepo.
+      //
+      // BUI intentionally maintains its OWN i18n instance (see the note in
+      // packages/backend.ai-ui/vite.config.ts). Do NOT add `i18next` or
+      // `react-i18next` here — the design relies on each side having its
+      // own default singleton. React, Relay, Jotai must still be deduped
+      // so hooks/state sharing works across the monorepo.
+      dedupe: [
+        'react',
+        'react-dom',
+        'react-relay',
+        'relay-runtime',
+        'jotai',
+      ],
       // Array form lets us mix regex aliases (for `src/` baseUrl imports) with
       // the workspace-package aliases. `find` is matched against the import
       // source; `replacement` replaces the match.
@@ -156,6 +170,33 @@ export default defineConfig(({ mode }) => {
           find: /^backend\.ai-client-esm$/,
           replacement: resolve(projectRoot, 'dist/lib/backend.ai-client-esm.js'),
         },
+
+        // ESM shims for CJS-only transitive deps of `react-i18next`.
+        //
+        // Why: `react-i18next` and `i18next` are intentionally excluded
+        // from Vite's dep optimizer (see `optimizeDeps.exclude` below) so
+        // two physical copies can coexist — that's what preserves BUI's
+        // i18n Context isolation from the host app. The side effect is
+        // that their CJS transitive deps (`void-elements`,
+        // `use-sync-external-store/shim`) never go through the
+        // optimizer's CJS→ESM transform, which breaks the browser's
+        // native ESM `import default from 'cjs-pkg'` expectation.
+        //
+        // These aliases redirect those imports to hand-written ESM
+        // shims under `react/vite-shims/` — `void-elements` is a plain
+        // lookup object, and `use-sync-external-store/shim` re-exports
+        // React 19's native `useSyncExternalStore`.
+        {
+          find: /^void-elements$/,
+          replacement: resolve(__dirname, 'vite-shims/void-elements.mjs'),
+        },
+        {
+          find: /^use-sync-external-store\/shim$/,
+          replacement: resolve(
+            __dirname,
+            'vite-shims/use-sync-external-store-shim.mjs',
+          ),
+        },
       ],
     },
 
@@ -168,7 +209,27 @@ export default defineConfig(({ mode }) => {
         'src/index.tsx',
         'src/**/*.{ts,tsx}',
       ],
-      exclude: ['backend.ai-ui'],
+      exclude: [
+        'backend.ai-ui',
+        // BUI is designed to have its OWN i18n singleton separate from the
+        // host app (see packages/backend.ai-ui/src/locale/index.ts +
+        // BAIConfigProvider wraps children with <I18nextProvider i18n={buiI18n}>).
+        //
+        // Under CRA this worked because pnpm's per-package i18next/react-i18next
+        // copies (split by typescript peer version) meant both `react-i18next`
+        // copies had DIFFERENT React Context objects. BUI's Provider published
+        // to its own Context; host's useTranslation read host's Context.
+        //
+        // Under Vite's dep optimizer the two copies collapse into one bundled
+        // module = one Context object. BAIConfigProvider's Provider then
+        // leaks into host components and they resolve host keys against BUI's
+        // resource set (which only has BUI keys) → raw keys render.
+        //
+        // Excluding from optimization preserves natural pnpm-per-package
+        // resolution and keeps the two Context objects distinct.
+        'i18next',
+        'react-i18next',
+      ],
     },
 
     server: {
