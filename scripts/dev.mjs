@@ -22,10 +22,19 @@ if (!env.REACT_APP_THEME_COLOR && existsSync(envFile)) {
   }
 }
 
-// Ensure the Portless daemon is running on port 1355. Portless 0.10+ defaults
-// the daemon to port 443 which requires sudo; binding 1355 keeps it
-// unprivileged. The call is idempotent (no-op if already running).
-spawnSync('portless', ['proxy', 'start', '-p', '1355'], { stdio: 'inherit' });
+// Ensure the Portless daemon is running. Portless 0.10+ defaults the daemon
+// to port 443 which requires sudo; we override that to an unprivileged 1355
+// only when the user has not already pinned a port via PORTLESS_PORT. When
+// PORTLESS_PORT is set, Portless reads it directly — both the daemon here
+// and subsequent `portless` client invocations later in this script — so we
+// stay out of its way and avoid the explicit `-p` flag overriding the env.
+// An empty export (`PORTLESS_PORT=`) is treated as unset, matching shell
+// convention. The call is idempotent (no-op if already running).
+const proxyArgs = ['proxy', 'start'];
+if (!process.env.PORTLESS_PORT?.trim()) {
+  proxyArgs.push('-p', '1355');
+}
+spawnSync('portless', proxyArgs, { stdio: 'inherit' });
 
 // Optional fixed port via `PORT=9081 pnpm run dev`. If unset, Portless picks a free port.
 const portFlag = process.env.PORT ? `--app-port ${process.env.PORT} ` : '';

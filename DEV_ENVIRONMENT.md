@@ -36,6 +36,16 @@ Open that URL in your browser. Portless 0.10+ serves HTTPS/2 by default; the loc
 
 Portless's default daemon port is 443, which requires `sudo`. `dev.mjs` starts the daemon with `-p 1355` so dev never prompts for a password.
 
+To pin a different daemon port on a machine — for example, when another Portless daemon is already running — export `PORTLESS_PORT` in your shell rc:
+
+```bash
+export PORTLESS_PORT=1356
+```
+
+When `PORTLESS_PORT` is set, `dev.mjs` skips its explicit `-p` flag entirely and lets Portless read the env var itself — both for the daemon start and for subsequent `portless` client calls (`portless run`, `portless list`, …) — so daemon and clients stay aligned via a single source of truth.
+
+The remaining `*.localhost:1355` URLs and `portless proxy start -p 1355` examples in this document describe the default. When `PORTLESS_PORT` is set, substitute its value in those URLs and commands.
+
 ### Hostname rules
 
 `scripts/dev.mjs` picks the Portless app name as follows:
