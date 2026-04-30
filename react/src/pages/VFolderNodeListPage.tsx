@@ -11,7 +11,7 @@ import ActionItemContent from '../components/ActionItemContent';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import BAITabs from '../components/BAITabs';
 import DeleteVFolderModal from '../components/DeleteVFolderModal';
-import FolderCreateModal from '../components/FolderCreateModal';
+import FolderCreateModalV2 from '../components/FolderCreateModalV2';
 import QuotaPerStorageVolumePanelCard from '../components/QuotaPerStorageVolumePanelCard';
 import RestoreVFolderModal from '../components/RestoreVFolderModal';
 import StorageStatusPanelCard from '../components/StorageStatusPanelCard';
@@ -700,7 +700,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
           />
         </BAIFlex>
       </BAICard>
-      <FolderCreateModal
+      <FolderCreateModalV2
         open={isOpenCreateModal}
         initialValues={{
           usage_mode:

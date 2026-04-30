@@ -6,7 +6,7 @@ import { useBaiSignedRequestWithPromise } from '../helper';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import useControllableState_deprecated from '../hooks/useControllableState';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import FolderCreateModal from './FolderCreateModal';
+import FolderCreateModalV2 from './FolderCreateModalV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import { ReloadOutlined } from '@ant-design/icons';
 import { Button, Select, type SelectProps, Space, Tooltip } from 'antd';
@@ -186,7 +186,7 @@ const VFolderSelect: React.FC<VFolderSelectProps> = ({
           </Tooltip>
         ) : null}
       </Space.Compact>
-      <FolderCreateModal
+      <FolderCreateModalV2
         open={isOpenCreateModal}
         initialValues={{ usage_mode: 'model' }}
         onRequestClose={(result) => {

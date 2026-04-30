@@ -10,14 +10,16 @@ import type {
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import BAITabs from '../components/BAITabs';
 import DeleteVFolderModal from '../components/DeleteVFolderModal';
+import FolderCreateModalV2 from '../components/FolderCreateModalV2';
 import RestoreVFolderModal from '../components/RestoreVFolderModal';
 import VFolderNodes, { VFolderNodeInList } from '../components/VFolderNodes';
 import { handleRowSelectionChange } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { isDeletedCategory } from './VFolderNodeListPage';
 import { useToggle } from 'ahooks';
-import { Badge, Button, theme, Tooltip } from 'antd';
+import { Badge, theme, Tooltip } from 'antd';
 import {
+  BAIButton,
   BAICard,
   BAIFetchKeyButton,
   BAIFlex,
@@ -31,6 +33,7 @@ import {
   useUpdatableState,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { PlusIcon } from 'lucide-react';
 import React, { useDeferredValue, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -77,6 +80,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
 
   const [isOpenDeleteModal, { toggle: toggleDeleteModal }] = useToggle(false);
   const [isOpenRestoreModal, { toggle: toggleRestoreModal }] = useToggle(false);
+  const [isOpenCreateModal, { toggle: toggleCreateModal }] = useToggle(false);
 
   const {
     baiPaginationOption,
@@ -415,7 +419,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                       onClearSelection={() => setSelectedFolderList([])}
                     />
                     <Tooltip title={t('data.folders.Restore')}>
-                      <Button
+                      <BAIButton
                         style={{
                           color: token.colorInfo,
                           borderColor: token.colorBorder,
@@ -441,6 +445,15 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                   updateFetchKey(newFetchKey);
                 }}
               />
+              <BAIButton
+                type="primary"
+                icon={<PlusIcon />}
+                onClick={() => {
+                  toggleCreateModal();
+                }}
+              >
+                {t('data.CreateFolder')}
+              </BAIButton>
             </BAIFlex>
           </BAIFlex>
           <VFolderNodes
@@ -518,6 +531,16 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
             setSelectedFolderList([]);
           }
           toggleRestoreModal();
+        }}
+      />
+      <FolderCreateModalV2
+        open={isOpenCreateModal}
+        allowCreateProjectFolder
+        onRequestClose={(result) => {
+          toggleCreateModal();
+          if (result) {
+            updateFetchKey();
+          }
         }}
       />
     </BAIFlex>
