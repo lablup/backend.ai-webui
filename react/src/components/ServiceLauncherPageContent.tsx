@@ -905,7 +905,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
           deploymentRevisionPresets(limit: 100) {
             edges {
               node {
-                rowId
+                id
                 name
               }
             }
@@ -1716,7 +1716,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                                 options={
                                   deploymentRevisionPresets?.edges?.map(
                                     (edge) => ({
-                                      value: edge.node.rowId,
+                                      value: edge.node.id,
                                       label: edge.node.name,
                                     }),
                                   ) ?? []
