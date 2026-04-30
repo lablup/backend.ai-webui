@@ -278,7 +278,7 @@ function monacoStaticPlugin(): Plugin {
   };
 }
 
-export default defineConfig(({ command, mode }) => {
+export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, projectRoot, '');
   Object.assign(process.env, env);
 
@@ -297,31 +297,11 @@ export default defineConfig(({ command, mode }) => {
         .filter(Boolean)
     : undefined;
 
-  // Electron target uses a custom `es6://` URL scheme; the main process
-  // registers a protocol handler via `protocol.handle('es6', ...)` in
-  // `electron-app/main.js` that resolves `es6://foo` to
-  // `<electron-app>/app/foo` on disk. This matches the craco-era
-  // `webpackConfig.output.publicPath = 'es6://'` override in
-  // `react/craco.config.cjs`.
-  //
-  // We cannot set `base: 'es6://'` directly: Vite's external-URL regex is
-  // `/^([a-z]+:)?\/\//`, and the `6` in `es6` breaks the `[a-z]+` group,
-  // so Vite treats `es6://` as a malformed absolute path and strips the
-  // scheme. The official escape hatch is `experimental.renderBuiltUrl`,
-  // which is called per built asset and whose return value replaces the
-  // default `base + filename` concatenation — no scheme validation.
-  const isElectronBuild =
-    command === 'build' && process.env.BUILD_TARGET === 'electron';
-
+  // The Electron target's `es6://` publicPath is applied by
+  // `scripts/patch-electron-publicpath.js` after the single web build
+  // (per FR-2612 policy: one build, post-patch — never a second `vite build`).
   return {
     base: '/',
-    experimental: isElectronBuild
-      ? {
-          renderBuiltUrl(filename) {
-            return `es6://${filename}`;
-          },
-        }
-      : undefined,
     // Keep root at `react/` so pnpm's react/react-dom installed in
     // react/node_modules resolve correctly. Static assets from projectRoot
     // are handled by projectRootStaticPlugin above.

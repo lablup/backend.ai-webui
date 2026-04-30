@@ -1,21 +1,26 @@
 #!/usr/bin/env node
 
 /**
- * Patch the web build output to use Electron's 'es6://' publicPath.
+ * Patch the Vite web build output to use Electron's 'es6://' publicPath.
  *
- * When building for Electron, webpack's output.publicPath must be 'es6://'
- * instead of the default '/'. Previously this required a full second React
- * build (~4-8 min). This script achieves the same result by patching the
- * already-built files, saving significant CI time.
+ * When building for Electron, asset URLs must use the custom 'es6://' scheme
+ * (handled by electron-app/main.js) instead of the default '/'. Doing this
+ * with a second `vite build` (BUILD_TARGET=electron + experimental.renderBuiltUrl)
+ * doubles release CI time, which FR-2612 explicitly eliminated. This script
+ * keeps the single-build model by patching the already-built files.
  *
  * Usage: node scripts/patch-electron-publicpath.js <build-dir>
  *
- * The script patches:
- *   1. index.html — static asset references (/static/... → es6://static/...)
- *   2. asset-manifest.json — all asset paths
- *   3. JS bundles — webpack runtime's publicPath assignment (e.g. n.p="/")
- *   4. CSS files — url() references to /static/ assets
- *   5. Service worker (sw.js) — precache manifest URLs
+ * Vite's output layout (post-FR-2606 migration):
+ *   - index.html with `<base href="/">` and `<script src="/assets/...">`
+ *   - assets/*.js, assets/*.css, assets/<fonts/images>
+ *   - sw.js + workbox-*.js (precache uses relative URLs, no patch needed)
+ *   - JS chunks reference siblings via ESM imports already resolved by the HTML
+ *     entry, so chunk file contents themselves carry no '/assets/' literals.
+ *
+ * Patched targets:
+ *   1. index.html — <base href> + script/link tags pointing to /assets/
+ *   2. CSS files under assets/ — url(/assets/...) references (fonts, images)
  */
 
 const fs = require('fs');
@@ -33,14 +38,10 @@ if (!fs.existsSync(buildDir)) {
   process.exit(1);
 }
 
-const WEB_PUBLIC_PATH = '/';
 const ELECTRON_PUBLIC_PATH = 'es6://';
 
 let patchedCount = 0;
 
-/**
- * Replace all occurrences of web publicPath with electron publicPath in a file.
- */
 function patchFile(filePath, replacements) {
   if (!fs.existsSync(filePath)) return false;
 
@@ -60,63 +61,34 @@ function patchFile(filePath, replacements) {
   return false;
 }
 
-console.log(`Patching publicPath: "${WEB_PUBLIC_PATH}" → "${ELECTRON_PUBLIC_PATH}"`);
+console.log(`Patching publicPath: "/" → "${ELECTRON_PUBLIC_PATH}"`);
 console.log(`Build directory: ${buildDir}\n`);
 
-// 1. Patch index.html
+// 1. Patch index.html — only root-absolute refs
+//
+// Note: <base href="/"> is intentionally NOT patched. The webpack-era patch
+// script left it untouched too. The renderer loads index.html via file://,
+// and rewriting <base> to es6:// causes window.location/origin mismatches
+// (history API, same-origin checks). Relative refs like "manifest/foo" and
+// "resources/bar.css" resolve against the file:// document URL and read
+// from the app dir, which is what Electron actually serves.
 patchFile(path.join(buildDir, 'index.html'), [
-  // Script/link tags: src="/static/... → src="es6://static/...
-  ['="/static/', `="${ELECTRON_PUBLIC_PATH}static/`],
-  // Href references
-  ['href="/static/', `href="${ELECTRON_PUBLIC_PATH}static/`],
-  // Manifest and other root-relative references
-  ['="/manifest', `="${ELECTRON_PUBLIC_PATH}manifest`],
+  // src="/assets/... or href="/assets/...
+  ['="/assets/', `="${ELECTRON_PUBLIC_PATH}assets/`],
 ]);
 
-// 2. Patch asset-manifest.json
-patchFile(path.join(buildDir, 'asset-manifest.json'), [
-  [`"/static/`, `"${ELECTRON_PUBLIC_PATH}static/`],
-]);
-
-// 3. Patch JS bundles (webpack runtime publicPath + chunk references)
-const jsDir = path.join(buildDir, 'static', 'js');
-if (fs.existsSync(jsDir)) {
-  const jsFiles = fs.readdirSync(jsDir).filter((f) => f.endsWith('.js'));
-  for (const file of jsFiles) {
-    patchFile(path.join(jsDir, file), [
-      // Webpack runtime: various minified forms of __webpack_require__.p = "/"
-      // Common patterns from webpack 5 + terser:
-      ['.p="/"', `.p="${ELECTRON_PUBLIC_PATH}"`],
-      [".p='/'", `.p='${ELECTRON_PUBLIC_PATH}'`],
-      // Static references to /static/ in chunk loading code
-      ['"/static/', `"${ELECTRON_PUBLIC_PATH}static/`],
-    ]);
-  }
-}
-
-// 4. Patch CSS files (url() references)
-const cssDir = path.join(buildDir, 'static', 'css');
-if (fs.existsSync(cssDir)) {
-  const cssFiles = fs.readdirSync(cssDir).filter((f) => f.endsWith('.css'));
+// 2. Patch CSS files under assets/ — url(/assets/...) references for fonts/images
+const assetsDir = path.join(buildDir, 'assets');
+if (fs.existsSync(assetsDir)) {
+  const cssFiles = fs.readdirSync(assetsDir).filter((f) => f.endsWith('.css'));
   for (const file of cssFiles) {
-    patchFile(path.join(cssDir, file), [
-      ['url(/static/', `url(${ELECTRON_PUBLIC_PATH}static/`],
+    patchFile(path.join(assetsDir, file), [
+      ['url(/assets/', `url(${ELECTRON_PUBLIC_PATH}assets/`],
+      // Quoted forms (rare but allowed by CSS spec)
+      ['url("/assets/', `url("${ELECTRON_PUBLIC_PATH}assets/`],
+      ["url('/assets/", `url('${ELECTRON_PUBLIC_PATH}assets/`],
     ]);
   }
-}
-
-// 5. Patch service worker if present
-patchFile(path.join(buildDir, 'sw.js'), [
-  ['"/static/', `"${ELECTRON_PUBLIC_PATH}static/`],
-  ['url:"/static/', `url:"${ELECTRON_PUBLIC_PATH}static/`],
-]);
-
-// 6. Patch workbox precache manifest if present
-const swFiles = fs.readdirSync(buildDir).filter((f) => /^workbox-.*\.js$/.test(f));
-for (const file of swFiles) {
-  patchFile(path.join(buildDir, file), [
-    ['"/static/', `"${ELECTRON_PUBLIC_PATH}static/`],
-  ]);
 }
 
 console.log(`\nDone. Patched ${patchedCount} file(s).`);
@@ -125,11 +97,13 @@ console.log(`\nDone. Patched ${patchedCount} file(s).`);
 const indexPath = path.join(buildDir, 'index.html');
 if (fs.existsSync(indexPath)) {
   const indexContent = fs.readFileSync(indexPath, 'utf-8');
-  if (indexContent.includes('es6://static/js/main')) {
-    console.log('✓ Verification passed: index.html contains es6://static/js/main');
+  if (indexContent.includes(`${ELECTRON_PUBLIC_PATH}assets/`)) {
+    console.log(`✓ Verification passed: index.html contains ${ELECTRON_PUBLIC_PATH}assets/`);
   } else {
-    console.error('✗ Verification failed: index.html does not contain es6://static/js/main');
-    console.error('  The Electron build may not work correctly.');
+    console.error(
+      `✗ Verification failed: index.html does not contain ${ELECTRON_PUBLIC_PATH}assets/`,
+    );
+    console.error('  The Electron build will not work correctly.');
     process.exit(1);
   }
 }

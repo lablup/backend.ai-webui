@@ -97,12 +97,12 @@ dep_web:
 # Uses publicPath patching instead of a full second React build (~4-8 min savings).
 #
 # Idempotent: skips when `build/electron-app/app/index.html` already carries
-# the patched `es6://static/js/main` marker. This mirrors the original
+# the patched `es6://assets/` marker. This mirrors the original
 # Makefile's skip semantics so downstream targets that re-declare `dep` as a
 # prerequisite (e.g. `mac_x64`, `win_x64`) do not repeatedly re-copy the web
 # bundle. Set `FORCE_DEP_ELECTRON=1` to force a re-sync.
 dep_electron: dep_web
-	@if [ -f "./build/electron-app/app/index.html" ] && grep -q 'es6://static/js/main' ./build/electron-app/app/index.html && [ "$(FORCE_DEP_ELECTRON)" != "1" ]; then \
+	@if [ -f "./build/electron-app/app/index.html" ] && grep -q 'es6://assets/' ./build/electron-app/app/index.html && [ "$(FORCE_DEP_ELECTRON)" != "1" ]; then \
 		printf "$(YELLOW)Electron app already prepared, skipping$(NC)\n"; \
 	else \
 		if [ ! -d "./build/electron-app" ]; then \
@@ -110,14 +110,14 @@ dep_electron: dep_web
 			cp -r electron-app/* build/electron-app/; \
 			cp electron-app/.npmrc build/electron-app/; \
 			pnpm i --prefix ./build/electron-app --ignore-workspace; \
-		fi; \
-		rm -rf build/electron-app/app build/electron-app/resources build/electron-app/manifest; \
-		cp -Rp build/web build/electron-app/app; \
-		cp -Rp build/web/resources build/electron-app; \
-		cp -Rp build/web/manifest build/electron-app; \
-		node scripts/patch-electron-publicpath.js build/electron-app/app; \
-		mkdir -p ./build/electron-app/app/wsproxy; \
-		cp ./src/wsproxy/dist/wsproxy.js ./build/electron-app/app/wsproxy/wsproxy.js; \
+		fi && \
+		rm -rf build/electron-app/app build/electron-app/resources build/electron-app/manifest && \
+		cp -Rp build/web build/electron-app/app && \
+		cp -Rp build/web/resources build/electron-app && \
+		cp -Rp build/web/manifest build/electron-app && \
+		node scripts/patch-electron-publicpath.js build/electron-app/app && \
+		mkdir -p ./build/electron-app/app/wsproxy && \
+		cp ./src/wsproxy/dist/wsproxy.js ./build/electron-app/app/wsproxy/wsproxy.js && \
 		cp ./preload.js ./build/electron-app/preload.js; \
 	fi
 dep: dep_electron
