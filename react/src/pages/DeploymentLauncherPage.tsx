@@ -252,11 +252,8 @@ const DeploymentLauncherPageLayout: React.FC<
 
   const [commitEdit, isEditing] =
     useMutation<DeploymentLauncherPageEditMutation>(graphql`
-      mutation DeploymentLauncherPageEditMutation(
-        $input: AddRevisionInput!
-        $options: AddRevisionOptions
-      ) {
-        addModelRevision(input: $input, options: $options) {
+      mutation DeploymentLauncherPageEditMutation($input: AddRevisionInput!) {
+        addModelRevision(input: $input) {
           revision {
             id
           }
@@ -426,8 +423,8 @@ const DeploymentLauncherPageLayout: React.FC<
               definitionPath,
             },
             modelDefinition,
+            options: { autoActivate: true },
           },
-          options: { autoActivate: true },
         },
         onCompleted: (_, errors) => {
           if (errors && errors.length > 0) {

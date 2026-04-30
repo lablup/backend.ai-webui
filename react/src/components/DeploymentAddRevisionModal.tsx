@@ -169,7 +169,7 @@ const DeploymentAddRevisionModalFormBody: React.FC<
       mutation DeploymentAddRevisionModalAddMutation(
         $input: AddRevisionInput!
       ) {
-        addModelRevision(input: $input, options: { autoActivate: true }) {
+        addModelRevision(input: $input) {
           revision {
             id
             name
@@ -398,6 +398,7 @@ const DeploymentAddRevisionModalFormBody: React.FC<
             definitionPath,
           },
           modelDefinition,
+          options: { autoActivate: true },
         },
       },
       onCompleted: (_, errors) => {
