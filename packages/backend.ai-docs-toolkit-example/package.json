@@ -14,9 +14,16 @@
     "pdf:ko": "pnpm run build:toolkit && docs-toolkit pdf --lang ko",
     "preview": "pnpm run build:toolkit && docs-toolkit preview --mode document --lang en",
     "serve:web": "pnpm run build:toolkit && docs-toolkit serve:web --lang en",
-    "serve:web:ko": "pnpm run build:toolkit && docs-toolkit serve:web --lang ko"
+    "serve:web:ko": "pnpm run build:toolkit && docs-toolkit serve:web --lang ko",
+    "test": "pnpm run test:pdf && pnpm run test:e2e",
+    "test:e2e": "playwright test --config tests/web/playwright.config.ts",
+    "test:pdf": "tsx --test tests/pdf/*.test.ts"
   },
   "devDependencies": {
-    "backend.ai-docs-toolkit": "workspace:*"
+    "@playwright/test": "^1.58.2",
+    "backend.ai-docs-toolkit": "workspace:*",
+    "pdf-lib": "^1.17.1",
+    "playwright": "^1.58.2",
+    "tsx": "^4.21.0"
   }
 }

@@ -154,6 +154,14 @@ versions:
     source:
       kind: workspace
     latest: true
+    # pdfTag declared on the latest entry only — exercises the per-version
+    # "PDF download card" rendering path (FR-2731 / FR-2732) on the landing
+    # page. The tag is FAKE — no real GitHub Release exists for the
+    # example. The toolkit renders the URL from the tag without verifying
+    # it, which is exactly what the integration test checks: the card is
+    # present when pdfTag is set and absent when it is not (the `next`
+    # version intentionally has no pdfTag to verify the absent-case).
+    pdfTag: "v0.1.0"
 
 # ---------------------------------------------------------------------------
 # SEO / Open Graph (F2 / FR-2714).
