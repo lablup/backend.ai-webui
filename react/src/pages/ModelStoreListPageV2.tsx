@@ -32,6 +32,7 @@ import {
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAISelect,
+  BAIStorageHostSelect,
   type GraphQLFilter,
   useUpdatableState,
 } from 'backend.ai-ui';
@@ -67,8 +68,13 @@ const parseSortValue = (value: string) => {
 // `name.iContains` value found, for use as a highlight keyword.
 const extractFirstNameKeyword = (filter: GraphQLFilter | undefined): string => {
   if (!filter) return '';
-  const name = (filter as { name?: { iContains?: string | null } }).name;
+  const name = (
+    filter as {
+      name?: { iContains?: string | null; equals?: string | null };
+    }
+  ).name;
   if (name?.iContains) return name.iContains;
+  if (name?.equals) return name.equals;
   const branches = [
     (filter as { AND?: GraphQLFilter | GraphQLFilter[] }).AND,
     (filter as { OR?: GraphQLFilter | GraphQLFilter[] }).OR,
@@ -82,6 +88,27 @@ const extractFirstNameKeyword = (filter: GraphQLFilter | undefined): string => {
     }
   }
   return '';
+};
+
+const StorageHostFilterInput: React.FC<{
+  onConfirm: (value: string) => void;
+}> = ({ onConfirm }) => {
+  'use memo';
+  const { t } = useTranslation();
+  const [resetKey, setResetKey] = React.useState(0);
+  return (
+    <BAIStorageHostSelect
+      key={resetKey}
+      placeholder={t('import.StorageHost')}
+      onChange={(value) => {
+        if (value) {
+          onConfirm(value as string);
+          setResetKey((k) => k + 1);
+        }
+      }}
+      style={{ minWidth: 180 }}
+    />
+  );
 };
 
 const ModelCardV2Card: React.FC<{
@@ -401,10 +428,24 @@ const ModelStoreListPageV2: React.FC = () => {
             }}
             filterProperties={[
               {
-                fixedOperator: 'iContains',
                 key: 'name',
                 propertyLabel: t('modelStore.ModelName'),
                 type: 'string',
+              },
+              {
+                key: 'domainName',
+                propertyLabel: t('adminModelCard.Domain'),
+                type: 'string',
+              },
+              {
+                key: 'storageHost',
+                propertyLabel: t('import.StorageHost'),
+                type: 'string',
+                operators: ['equals', 'notEquals'],
+                defaultOperator: 'equals',
+                renderInput: ({ onConfirm }) => (
+                  <StorageHostFilterInput onConfirm={onConfirm} />
+                ),
               },
             ]}
           />
