@@ -407,8 +407,14 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
             value
           }
         }
-        # TODO(needs-backend): restore once AllocatedResourceSlotNode.id is implemented on the backend
-        # resourceSlots(limit: 20) { edges { node { slotName quantity } } }
+        resourceSlots {
+          edges {
+            node {
+              slotName
+              quantity
+            }
+          }
+        }
         deploymentDefaults {
           openToPublic
           replicaCount
@@ -486,7 +492,35 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
             | 'MULTI_NODE'
             | undefined) ?? undefined,
         clusterSize: preset.cluster?.clusterSize ?? undefined,
-        // TODO(needs-backend): pre-fill cpu/mem/resourceSlots once AllocatedResourceSlotNode.id is implemented
+        ...(() => {
+          const slots = preset.resourceSlots?.edges?.map((e) => e?.node) ?? [];
+          const cpuSlot = slots.find((s) => s?.slotName === 'cpu');
+          const memSlot = slots.find((s) => s?.slotName === 'mem');
+          const otherSlots = slots.filter(
+            (s) => s && s.slotName !== 'cpu' && s.slotName !== 'mem',
+          );
+          const cpuQty = cpuSlot?.quantity
+            ? String(parseFloat(cpuSlot.quantity))
+            : undefined;
+          let memQty: string | undefined;
+          if (memSlot?.quantity) {
+            const bytes = parseFloat(memSlot.quantity);
+            const gib = bytes / 1073741824;
+            memQty = Number.isInteger(gib)
+              ? `${gib}g`
+              : `${Math.round(bytes / 1048576)}m`;
+          }
+          return {
+            cpu: cpuQty,
+            mem: memQty,
+            resourceSlots: otherSlots
+              .filter((s) => s != null)
+              .map((s) => ({
+                resourceType: s!.slotName,
+                quantity: String(parseFloat(s!.quantity)),
+              })),
+          };
+        })(),
         startupCommand: preset.execution?.startupCommand ?? undefined,
         bootstrapScript: preset.execution?.bootstrapScript ?? undefined,
         environ:
