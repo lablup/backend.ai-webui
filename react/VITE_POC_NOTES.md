@@ -77,12 +77,47 @@ Fix:
 
 (Each of these gets its own sub-issue under FR-2605.)
 
-- Production `vite build` output parity with the current `craco build`
-- Workbox `GenerateSW` replacement (`vite-plugin-pwa`)
-- Electron `BUILD_TARGET=electron` → `es6://` publicPath
-- Jest → Vitest migration
-- Custom fs.watch middlewares for i18n / theme / config.toml reload
-- CI pipeline updates
+- Production `vite build` output parity with the current `craco build` (FR-2608)
+- Workbox `GenerateSW` replacement (`vite-plugin-pwa`) (FR-2608)
+- Jest → Vitest migration (FR-2609)
+- Custom fs.watch middlewares for i18n / theme / config.toml reload (FR-2610)
+- CI pipeline updates (FR-2611)
+
+## Electron `es6://` — spike answered (FR-2607)
+
+Answered ahead of the full Electron sub-issue because it was the biggest unknown. If this had been a blocker, the whole migration plan would have needed a rethink.
+
+**Finding**: Vite CAN emit `es6://` prefixed asset URLs, but NOT via the `base` option.
+
+`base: 'es6://'` does not work. Vite's external-URL regex is `/^([a-z]+:)?\/\//` — the `6` in `es6` breaks the `[a-z]+` group, so Vite classifies `es6://` as a non-external URL, treats it as a malformed absolute path, and falls back to `/`.
+
+The escape hatch is `experimental.renderBuiltUrl(filename)`. It is called per built asset and its return value replaces `base + filename` concatenation directly — no scheme validation. Current config:
+
+```ts
+const isElectronBuild =
+  command === 'build' && process.env.BUILD_TARGET === 'electron';
+
+return {
+  base: '/',
+  experimental: isElectronBuild
+    ? { renderBuiltUrl: (filename) => `es6://${filename}` }
+    : undefined,
+  ...
+};
+```
+
+### Empirical verification (minimal throwaway build)
+
+Built a 3-file fixture (`index.html` + `main.js` with dynamic `import('./chunk.js')`) against this config. Emitted output:
+
+- `dist/index.html` → `<script type="module" crossorigin src="es6://assets/index-BWEqRl42.js"></script>` ✓
+- Dynamic import compiled to `import("./chunk-*.js", ..., import.meta.url)` — resolves relative to the loading module's URL, so once the entry is loaded via `es6://...`, all dynamic chunks inherit the scheme automatically. No extra config needed.
+
+### Known follow-ups for the full Electron build sub-issue (FR-2607)
+
+- Makefile dep target has a sanity grep `'es6://static/js/main'` that is webpack-specific. Must update to match Vite's output structure (`es6://assets/index-*.js`).
+- Electron's protocol handler in `electron-app/main.js:552-568` should work unchanged — it parses `es6://<anything>` and reads from `<app>/<anything>` on disk. Vite's output directory placement needs to match (`build/web` → `build/electron-app/app` in the Makefile, already in place).
+- `renderBuiltUrl` is flagged `experimental` in Vite. Behaviour has been stable for 3+ major versions but this deserves a note — if future Vite versions break the API, we will need to bump to the stable replacement.
 
 ## Files touched
 
