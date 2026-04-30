@@ -438,7 +438,7 @@ const SessionLauncherPage = () => {
     }
 
     if (_.isEmpty(values.mount_ids) || values.mount_ids?.length === 0) {
-      const isConformed = await app.modal.confirm({
+      const isConfirmed = await app.modal.confirm({
         title: t('session.launcher.NoFolderMounted'),
         content: (
           <>
@@ -454,7 +454,7 @@ const SessionLauncherPage = () => {
         okText: t('session.launcher.Start'),
         closable: true,
       });
-      if (!isConformed) return;
+      if (!isConfirmed) return;
     }
 
     await startSession({ ...values, num_of_sessions: numOfSessions })

@@ -77,9 +77,15 @@ const LaunchMultipleSessionsModal: React.FC<
   'use memo';
   const { t } = useTranslation();
   const formRef = useRef<FormInstance<BatchLaunchFormValues>>(null);
-  const [{ sessionLimitAndRemaining }] =
+  const [{ sessionLimitAndRemaining, keypairResourcePolicy }] =
     useCurrentKeyPairResourcePolicyLazyLoadQuery();
-  const max = Math.max(sessionLimitAndRemaining.max, MIN_COUNT);
+  const policyMax = Number(keypairResourcePolicy?.max_concurrent_sessions);
+  const max = Math.max(
+    Number.isFinite(policyMax) && policyMax > 0
+      ? policyMax
+      : sessionLimitAndRemaining.max,
+    MIN_COUNT,
+  );
   const safeClusterSize = Math.max(clusterSize, 1);
   const remaining = sessionLimitAndRemaining.remaining;
 
@@ -126,11 +132,21 @@ const LaunchMultipleSessionsModal: React.FC<
                   { max },
                 ),
               },
+              {
+                validator: (_, value) => {
+                  if (value == null || Number.isInteger(value)) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject();
+                },
+              },
             ]}
             style={{ marginBottom: 0 }}
           >
             <InputNumber
               min={MIN_COUNT}
+              precision={0}
+              step={1}
               style={{ width: '100%' }}
               suffix={t('session.launcher.Sessions')}
             />
