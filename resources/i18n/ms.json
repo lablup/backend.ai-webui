@@ -2033,6 +2033,7 @@
       "RESOURCE_GROUP": "Kumpulan Sumber",
       "RESOURCE_PRESET": "Pratetap Sumber",
       "ROLE": "Peranan",
+      "ROLE_ASSIGNMENT": "Penugasan peranan",
       "ROUTING": "Penghalaan",
       "SESSION": "Sesi",
       "SESSION_TEMPLATE": "Templat Sesi",

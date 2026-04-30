@@ -2036,6 +2036,7 @@
       "RESOURCE_GROUP": "Grup Sumber Daya",
       "RESOURCE_PRESET": "Preset Sumber Daya",
       "ROLE": "Peran",
+      "ROLE_ASSIGNMENT": "Penugasan peran",
       "ROUTING": "Perutean",
       "SESSION": "Sesi",
       "SESSION_TEMPLATE": "Template Sesi",

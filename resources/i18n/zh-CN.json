@@ -2035,6 +2035,7 @@
       "RESOURCE_GROUP": "资源组",
       "RESOURCE_PRESET": "资源预设",
       "ROLE": "角色",
+      "ROLE_ASSIGNMENT": "角色分配",
       "ROUTING": "路由",
       "SESSION": "会话",
       "SESSION_TEMPLATE": "会话模板",

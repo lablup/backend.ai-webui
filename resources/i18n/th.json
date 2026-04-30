@@ -2035,6 +2035,7 @@
       "RESOURCE_GROUP": "กลุ่มทรัพยากร",
       "RESOURCE_PRESET": "ค่าที่ตั้งล่วงหน้าของทรัพยากร",
       "ROLE": "บทบาท",
+      "ROLE_ASSIGNMENT": "การกำหนดบทบาท",
       "ROUTING": "การกำหนดเส้นทาง",
       "SESSION": "เซสชัน",
       "SESSION_TEMPLATE": "เทมเพลตเซสชัน",

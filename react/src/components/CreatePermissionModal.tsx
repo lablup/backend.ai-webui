@@ -83,6 +83,43 @@ const CreatePermissionModal: React.FC<CreatePermissionModalProps> = ({
             node {
               scopeType
               scopeId
+              scope {
+                ... on DomainV2 {
+                  basicInfo {
+                    domainName: name
+                  }
+                }
+                ... on ProjectV2 {
+                  basicInfo {
+                    projectName: name
+                  }
+                }
+                ... on UserV2 {
+                  basicInfo {
+                    email
+                  }
+                }
+                ... on VirtualFolderNode {
+                  vfolderName: name
+                }
+                ... on SessionV2 {
+                  metadata {
+                    sessionName: name
+                  }
+                }
+                ... on ModelDeployment {
+                  metadata {
+                    deploymentName: name
+                  }
+                }
+                ... on ResourceGroup {
+                  resourceGroupName: name
+                }
+                ... on ContainerRegistryV2 {
+                  registryName
+                  project
+                }
+              }
             }
           }
         }
@@ -108,10 +145,36 @@ const CreatePermissionModal: React.FC<CreatePermissionModalProps> = ({
 
   const roleScopes = (roleScope?.allScopes?.edges ?? [])
     .map((e) => e?.node)
-    .filter(
-      (n): n is { scopeType: RBACElementType; scopeId: string } =>
-        !!n && !!n.scopeType && !!n.scopeId,
-    );
+    .filter((n): n is NonNullable<typeof n> => !!n);
+
+  const getScopeDisplayName = (
+    scopeType: string,
+    scope: (typeof roleScopes)[number]['scope'] | null | undefined,
+  ): string | null | undefined => {
+    if (!scope) return null;
+    switch (scopeType) {
+      case 'DOMAIN':
+        return scope.basicInfo?.domainName;
+      case 'PROJECT':
+        return scope.basicInfo?.projectName;
+      case 'USER':
+        return scope.basicInfo?.email;
+      case 'VFOLDER':
+        return scope.vfolderName;
+      case 'SESSION':
+        return scope.metadata?.sessionName;
+      case 'MODEL_DEPLOYMENT':
+        return scope.metadata?.deploymentName;
+      case 'RESOURCE_GROUP':
+        return scope.resourceGroupName;
+      case 'CONTAINER_REGISTRY':
+        return scope.project
+          ? `${scope.registryName} - ${scope.project}`
+          : scope.registryName;
+      default:
+        return null;
+    }
+  };
 
   const hasRoleScopes = roleScopes.length > 0;
   const watchedRoleScopeKey = Form.useWatch('roleScopeKey', form) as
@@ -368,12 +431,16 @@ const CreatePermissionModal: React.FC<CreatePermissionModalProps> = ({
             <BAISelect
               showSearch
               placeholder={t('rbac.ScopeTypeAndId')}
-              options={actionableRoleScopes.map((s) => ({
-                value: makeScopeKey(s.scopeType, s.scopeId),
-                label: `${t(`rbac.types.${s.scopeType}`, {
-                  defaultValue: s.scopeType,
-                })} / ${s.scopeId}`,
-              }))}
+              options={actionableRoleScopes.map((s) => {
+                const displayName =
+                  getScopeDisplayName(s.scopeType, s.scope) || s.scopeId;
+                return {
+                  value: makeScopeKey(s.scopeType, s.scopeId),
+                  label: `${t(`rbac.types.${s.scopeType}`, {
+                    defaultValue: s.scopeType,
+                  })} / ${displayName}`,
+                };
+              })}
             />
           </Form.Item>
         ) : (

@@ -2045,6 +2045,7 @@
       "RESOURCE_GROUP": "자원 그룹",
       "RESOURCE_PRESET": "자원 프리셋",
       "ROLE": "역할",
+      "ROLE_ASSIGNMENT": "권한 할당",
       "ROUTING": "라우팅",
       "SESSION": "세션",
       "SESSION_TEMPLATE": "세션 템플릿",

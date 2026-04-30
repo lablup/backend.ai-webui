@@ -2034,6 +2034,7 @@
       "RESOURCE_GROUP": "Нөөцийн бүлэг",
       "RESOURCE_PRESET": "Нөөцийн урьдчилсан тохиргоо",
       "ROLE": "Үүрэг",
+      "ROLE_ASSIGNMENT": "Үүрэг хуваарилалт",
       "ROUTING": "Чиглүүлэлт",
       "SESSION": "Сесс",
       "SESSION_TEMPLATE": "Сессийн загвар",

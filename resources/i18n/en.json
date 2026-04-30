@@ -2043,6 +2043,7 @@
       "RESOURCE_GROUP": "Resource Group",
       "RESOURCE_PRESET": "Resource Preset",
       "ROLE": "Role",
+      "ROLE_ASSIGNMENT": "Role Assignment",
       "ROUTING": "Routing",
       "SESSION": "Session",
       "SESSION_TEMPLATE": "Session Template",

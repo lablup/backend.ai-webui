@@ -2035,6 +2035,7 @@
       "RESOURCE_GROUP": "Grupa zasobów",
       "RESOURCE_PRESET": "Ustawienie wstępne zasobów",
       "ROLE": "Rola",
+      "ROLE_ASSIGNMENT": "Przypisanie roli",
       "ROUTING": "Routing",
       "SESSION": "Sesja",
       "SESSION_TEMPLATE": "Szablon sesji",

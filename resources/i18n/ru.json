@@ -2033,6 +2033,7 @@
       "RESOURCE_GROUP": "Группа ресурсов",
       "RESOURCE_PRESET": "Предустановка ресурсов",
       "ROLE": "Роль",
+      "ROLE_ASSIGNMENT": "Назначение роли",
       "ROUTING": "Маршрутизация",
       "SESSION": "Сессия",
       "SESSION_TEMPLATE": "Шаблон сессии",
