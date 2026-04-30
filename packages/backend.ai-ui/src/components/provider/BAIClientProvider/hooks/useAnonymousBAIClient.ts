@@ -1,4 +1,4 @@
-import { useBAILogger } from '../../../../hooks';
+import useBAILogger from '../../../../hooks/useBAILogger';
 import { BAIAnonymousClientContext } from '../context';
 import { BAIClient } from '../types';
 import { useContext } from 'react';

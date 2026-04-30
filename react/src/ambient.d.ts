@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+/// <reference types="vite/client" />
 /// <reference types="vitest/globals" />
 // Project-wide ambient TypeScript declarations: shared utility types,
 // global variables seeded by the host shell, and `Window` augmentations.

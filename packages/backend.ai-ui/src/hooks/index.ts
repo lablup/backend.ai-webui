@@ -1,8 +1,6 @@
-import {
-  ResourceSlotName,
-  useBAIDeviceMetaData,
-  useConnectedBAIClient,
-} from '../components';
+import useConnectedBAIClient from '../components/provider/BAIClientProvider/hooks/useConnectedBAIClient';
+import useBAIDeviceMetaData from '../components/provider/BAIMetaDataProvider/hooks/useBAIDeviceMetaData';
+import type { ResourceSlotName } from '../components/provider/BAIMetaDataProvider/types';
 import { useSuspenseTanQuery, useTanQuery } from '../helper/reactQueryAlias';
 import { useBAISignedRequestWithPromise } from './useBAISignedRequestWithPromise';
 import { useEventNotStable } from './useEventNotStable';
