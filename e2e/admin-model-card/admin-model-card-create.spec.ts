@@ -27,43 +27,75 @@ test.describe(
       const modal = adminModelCardPage.getCreateModal();
       await expect(modal).toBeVisible();
 
-      // Verify key form fields are present
+      // Verify key form fields are present.
+      // In antd v6, Form.Item tooltip icons contribute "question-circle" to the accessible
+      // name, so we locate fields by form item label text rather than exact accessible name.
       await expect(modal.getByRole('textbox', { name: 'Name' })).toBeVisible();
       await expect(modal.getByText('Model Storage Folder')).toBeVisible();
       await expect(modal.getByText('Domain').first()).toBeVisible({
         timeout: 10000,
       });
       await expect(
-        modal.getByRole('textbox', { name: 'Author (optional)' }),
+        modal
+          .locator('.ant-form-item')
+          .filter({ hasText: 'Author' })
+          .getByRole('textbox'),
       ).toBeVisible();
       await expect(
-        modal.getByRole('textbox', { name: 'Title (optional)' }),
+        modal
+          .locator('.ant-form-item')
+          .filter({ hasText: 'Title' })
+          .getByRole('textbox'),
       ).toBeVisible();
       await expect(
-        modal.getByRole('textbox', { name: 'Model Version (optional)' }),
+        modal
+          .locator('.ant-form-item')
+          .filter({ hasText: 'Model Version' })
+          .getByRole('textbox'),
       ).toBeVisible();
       await expect(
-        modal.getByRole('textbox', { name: 'Description (optional)' }),
+        modal
+          .locator('.ant-form-item')
+          .filter({ hasText: 'Description' })
+          .getByRole('textbox'),
       ).toBeVisible();
       await expect(
-        modal.getByRole('textbox', { name: 'Task (optional)' }),
+        modal
+          .locator('.ant-form-item')
+          .filter({ hasText: 'Task' })
+          .getByRole('textbox'),
       ).toBeVisible();
       await expect(
-        modal.getByRole('textbox', { name: 'Category (optional)' }),
+        modal
+          .locator('.ant-form-item')
+          .filter({ hasText: 'Category' })
+          .getByRole('textbox'),
       ).toBeVisible();
       await expect(
-        modal.getByRole('textbox', { name: 'Architecture (optional)' }),
+        modal
+          .locator('.ant-form-item')
+          .filter({ hasText: 'Architecture' })
+          .getByRole('textbox'),
       ).toBeVisible();
       await expect(
-        modal.getByRole('textbox', { name: 'License (optional)' }),
+        modal
+          .locator('.ant-form-item')
+          .filter({ hasText: 'License' })
+          .getByRole('textbox'),
       ).toBeVisible();
       await expect(
-        modal.getByRole('textbox', { name: 'README.md (optional)' }),
+        modal
+          .locator('.ant-form-item')
+          .filter({ hasText: 'README.md' })
+          .getByRole('textbox'),
       ).toBeVisible();
 
-      // Verify Access Level is present as a required field (no default value)
+      // Verify Access Level is present as a required field
       await expect(
-        modal.getByRole('combobox', { name: 'Access Level' }),
+        modal
+          .locator('.ant-form-item')
+          .filter({ hasText: 'Access Level' })
+          .locator('.ant-select'),
       ).toBeVisible();
 
       // Verify the Create and Cancel buttons are present in the modal footer
@@ -79,6 +111,7 @@ test.describe(
     test('Superadmin can create a model card with only required fields', async ({
       page,
     }) => {
+      test.setTimeout(90000);
       const adminModelCardPage = new AdminModelCardPage(page);
       const cardName = `e2e-test-required-only-${Date.now()}`;
 
@@ -93,26 +126,35 @@ test.describe(
       // Fill in the Name field
       await modal.getByRole('textbox', { name: 'Name' }).fill(cardName);
 
-      // Select an available VFolder
-      await modal.getByRole('combobox').first().click();
+      // Select an available VFolder.
+      // In antd v6 with BAISelect, click .ant-select-content to open the dropdown.
+      await modal
+        .locator('.ant-form-item')
+        .filter({ hasText: 'Model Storage Folder' })
+        .locator('.ant-select-content')
+        .click();
       const vfolderDropdown = page
         .locator('.ant-select-dropdown:not(.ant-select-dropdown-hidden)')
         .first();
-      await expect(vfolderDropdown).toBeVisible();
+      await expect(vfolderDropdown).toBeVisible({ timeout: 10000 });
       await expect(vfolderDropdown.getByText(/Total \d+ items/)).toBeVisible({
         timeout: 10000,
       });
       await vfolderDropdown.locator('.ant-select-item-option').first().click();
 
-      // Select Access Level (required)
-      await modal.getByRole('combobox', { name: 'Access Level' }).click();
+      // Select Access Level (required). Access level options are "Private" (INTERNAL) and "Public".
+      await modal
+        .locator('.ant-form-item')
+        .filter({ hasText: 'Access Level' })
+        .locator('.ant-select-content')
+        .click();
       const accessDropdown = page
         .locator('.ant-select-dropdown:not(.ant-select-dropdown-hidden)')
         .first();
       await expect(accessDropdown).toBeVisible();
       await accessDropdown
         .locator('.ant-select-item-option')
-        .filter({ hasText: 'Internal' })
+        .filter({ hasText: 'Private' })
         .click();
 
       // Click Create
@@ -139,6 +181,7 @@ test.describe(
     test('Superadmin can create a model card with all fields populated', async ({
       page,
     }) => {
+      test.setTimeout(90000);
       const adminModelCardPage = new AdminModelCardPage(page);
       const cardName = `e2e-test-full-card-${Date.now()}`;
 
@@ -153,48 +196,75 @@ test.describe(
       // Fill Name
       await modal.getByRole('textbox', { name: 'Name' }).fill(cardName);
 
-      // Select VFolder
-      await modal.getByRole('combobox').first().click();
+      // Select VFolder. In antd v6 with BAISelect, click .ant-select-content to open the dropdown.
+      await modal
+        .locator('.ant-form-item')
+        .filter({ hasText: 'Model Storage Folder' })
+        .locator('.ant-select-content')
+        .click();
       const vfolderDropdown = page
         .locator('.ant-select-dropdown:not(.ant-select-dropdown-hidden)')
         .first();
-      await expect(vfolderDropdown).toBeVisible();
+      await expect(vfolderDropdown).toBeVisible({ timeout: 10000 });
       await expect(vfolderDropdown.getByText(/Total \d+ items/)).toBeVisible({
         timeout: 10000,
       });
       await vfolderDropdown.locator('.ant-select-item-option').first().click();
 
-      // Fill optional fields
+      // Fill optional fields. In antd v6, tooltip icons alter the accessible name so
+      // we locate textboxes via their parent form item label.
       await modal
-        .getByRole('textbox', { name: 'Author (optional)' })
+        .locator('.ant-form-item')
+        .filter({ hasText: 'Author' })
+        .getByRole('textbox')
         .fill('Test Author');
       await modal
-        .getByRole('textbox', { name: 'Title (optional)' })
+        .locator('.ant-form-item')
+        .filter({ hasText: 'Title' })
+        .getByRole('textbox')
         .fill('Test Model Title');
       await modal
-        .getByRole('textbox', { name: 'Model Version (optional)' })
+        .locator('.ant-form-item')
+        .filter({ hasText: 'Model Version' })
+        .getByRole('textbox')
         .fill('1.0.0');
       await modal
-        .getByRole('textbox', { name: 'Description (optional)' })
+        .locator('.ant-form-item')
+        .filter({ hasText: 'Description' })
+        .getByRole('textbox')
         .fill('This is a test model description');
       await modal
-        .getByRole('textbox', { name: 'Task (optional)' })
+        .locator('.ant-form-item')
+        .filter({ hasText: 'Task' })
+        .getByRole('textbox')
         .fill('text-generation');
       await modal
-        .getByRole('textbox', { name: 'Category (optional)' })
+        .locator('.ant-form-item')
+        .filter({ hasText: 'Category' })
+        .getByRole('textbox')
         .fill('LLM');
       await modal
-        .getByRole('textbox', { name: 'Architecture (optional)' })
+        .locator('.ant-form-item')
+        .filter({ hasText: 'Architecture' })
+        .getByRole('textbox')
         .fill('Transformer');
       await modal
-        .getByRole('textbox', { name: 'License (optional)' })
+        .locator('.ant-form-item')
+        .filter({ hasText: 'License' })
+        .getByRole('textbox')
         .fill('Apache-2.0');
       await modal
-        .getByRole('textbox', { name: 'README.md (optional)' })
+        .locator('.ant-form-item')
+        .filter({ hasText: 'README.md' })
+        .getByRole('textbox')
         .fill('# Test Model\nThis is a test model.');
 
       // Change Access Level to Public
-      await modal.getByRole('combobox', { name: 'Access Level' }).click();
+      await modal
+        .locator('.ant-form-item')
+        .filter({ hasText: 'Access Level' })
+        .locator('.ant-select-content')
+        .click();
       await expect(
         page
           .locator('.ant-select-dropdown:not(.ant-select-dropdown-hidden)')
@@ -248,12 +318,17 @@ test.describe(
       const modal = adminModelCardPage.getCreateModal();
       await expect(modal).toBeVisible();
 
-      // Select a VFolder but leave Name empty
-      await modal.getByRole('combobox').first().click();
+      // Select a VFolder but leave Name empty.
+      // In antd v6 with BAISelect, click .ant-select-content to open the dropdown.
+      await modal
+        .locator('.ant-form-item')
+        .filter({ hasText: 'Model Storage Folder' })
+        .locator('.ant-select-content')
+        .click();
       const vfolderDropdown = page
         .locator('.ant-select-dropdown:not(.ant-select-dropdown-hidden)')
         .first();
-      await expect(vfolderDropdown).toBeVisible();
+      await expect(vfolderDropdown).toBeVisible({ timeout: 10000 });
       await expect(vfolderDropdown.getByText(/Total \d+ items/)).toBeVisible({
         timeout: 10000,
       });
@@ -283,7 +358,15 @@ test.describe(
       const modal = adminModelCardPage.getCreateModal();
       await expect(modal).toBeVisible();
 
-      // Fill Name but leave VFolder empty
+      // Fill Name but leave VFolder empty.
+      // Wait for the VFolder select to load out of Suspense before filling the name,
+      // so the form field is registered and will fire validation on submit.
+      await expect(
+        modal
+          .locator('.ant-form-item')
+          .filter({ hasText: 'Model Storage Folder' })
+          .locator('.ant-select-content'),
+      ).toBeVisible({ timeout: 15000 });
       await modal
         .getByRole('textbox', { name: 'Name' })
         .fill('test-no-vfolder');
@@ -292,7 +375,9 @@ test.describe(
       await adminModelCardPage.getCreateModalSubmitButton().click();
 
       // Verify validation error "VFolder is required."
-      await expect(modal.getByText('VFolder is required.')).toBeVisible();
+      await expect(modal.getByText('VFolder is required.')).toBeVisible({
+        timeout: 10000,
+      });
 
       // Verify the modal remains open
       await expect(modal).toBeVisible();

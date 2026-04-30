@@ -8,8 +8,32 @@ test.describe(
   'Admin Model Card Management - URL State Persistence',
   { tag: ['@admin-model-card', '@admin', '@functional'] },
   () => {
-    test.beforeEach(async ({ page, request }) => {
+    let testCardName: string;
+
+    test.beforeEach(async ({ page, request }, testInfo) => {
+      testCardName = `e2e-test-url-${testInfo.workerIndex}-${Date.now()}`;
       await loginAsAdmin(page, request);
+
+      // Create a test model card so the table is guaranteed to have data
+      await page.goto(`${webuiEndpoint}/admin-serving?tab=model-store`);
+      const adminModelCardPage = new AdminModelCardPage(page);
+      await adminModelCardPage.waitForTableLoad();
+      await adminModelCardPage.createModelCard({ name: testCardName });
+    });
+
+    test.afterEach(async ({ page }) => {
+      try {
+        await page.goto(`${webuiEndpoint}/admin-serving?tab=model-store`);
+        const adminModelCardPage = new AdminModelCardPage(page);
+        await adminModelCardPage.waitForTableLoad();
+        await adminModelCardPage.applyNameFilter(testCardName);
+        const row = adminModelCardPage.getRowByName(testCardName);
+        if ((await row.count()) > 0) {
+          await adminModelCardPage.deleteModelCardByName(testCardName);
+        }
+      } catch {
+        // Ignore cleanup errors
+      }
     });
 
     // 10.1 Filter state is persisted in the URL query parameters
@@ -20,6 +44,10 @@ test.describe(
       await page.goto(`${webuiEndpoint}/admin-serving?tab=model-store`);
       await adminModelCardPage.waitForTableLoad();
 
+      // Wait for at least one data row to be visible before reading its name
+      await expect(adminModelCardPage.getDataRows().first()).toBeVisible({
+        timeout: 15000,
+      });
       // Get the name of the first model card to use as a filter value
       const firstRowName = await adminModelCardPage
         .getDataRows()
@@ -80,7 +108,9 @@ test.describe(
       await expect(page).toHaveURL(/order=name/);
 
       // Verify rows are still displayed (sort preserved)
-      await expect(adminModelCardPage.getDataRows().first()).toBeVisible();
+      await expect(adminModelCardPage.getDataRows().first()).toBeVisible({
+        timeout: 15000,
+      });
     });
 
     // 10.3 Pagination state is persisted in the URL query parameters
