@@ -10,6 +10,7 @@ import EnvVarFormList, {
 import ImageEnvironmentSelectFormItems, {
   ImageEnvironmentFormInput,
 } from '../components/ImageEnvironmentSelectFormItems';
+import LaunchMultipleSessionsModal from '../components/LaunchMultipleSessionsModal';
 import { mainContentDivRefState } from '../components/MainLayout/MainLayout';
 import PortSelectFormItem, {
   PortSelectFormValues,
@@ -40,6 +41,7 @@ import { useRecentSessionHistory } from '../hooks/useRecentSessionHistory';
 import customCSS from './SessionLauncherPage.css?raw';
 import {
   DoubleRightOutlined,
+  EllipsisOutlined,
   LeftOutlined,
   PlayCircleFilled,
   PlayCircleOutlined,
@@ -53,6 +55,7 @@ import {
   Card,
   Checkbox,
   Col,
+  Dropdown,
   Form,
   Grid,
   Input,
@@ -77,6 +80,7 @@ import {
   generateRandomString,
   useBAILogger,
   BAIResourceNumberWithIcon,
+  BAIUnmountAfterClose,
   useUpdatableState,
   BAIIntervalView,
 } from 'backend.ai-ui';
@@ -84,6 +88,7 @@ import dayjs from 'dayjs';
 import { useAtomValue } from 'jotai';
 import * as _ from 'lodash-es';
 import React, {
+  Suspense,
   useEffect,
   useEffectEvent,
   useLayoutEffect,
@@ -332,6 +337,23 @@ const SessionLauncherPage = () => {
     form.getFieldValue('sessionType') ||
     formValuesFromQueryParams.sessionType;
 
+  const batchLaunchResource = Form.useWatch('resource', {
+    form,
+    preserve: true,
+  });
+  const batchLaunchClusterSize = Form.useWatch('cluster_size', {
+    form,
+    preserve: true,
+  });
+  const batchLaunchClusterMode = Form.useWatch('cluster_mode', {
+    form,
+    preserve: true,
+  });
+  const batchLaunchResourceGroup = Form.useWatch('resourceGroup', {
+    form,
+    preserve: true,
+  });
+
   const steps: Array<StepPropsWithKey> = filterOutEmpty([
     {
       title: t('session.launcher.SessionType'),
@@ -391,6 +413,11 @@ const SessionLauncherPage = () => {
 
   const [validationTourOpen, setValidationTourOpen] = useState(false);
 
+  const [
+    isLaunchMultipleSessionsModalOpen,
+    setIsLaunchMultipleSessionsModalOpen,
+  ] = useState(false);
+
   const [isQueryReset, setIsQueryReset] = useState(false);
   useLayoutEffect(() => {
     if (isQueryReset) {
@@ -398,6 +425,73 @@ const SessionLauncherPage = () => {
       setIsQueryReset(false);
     }
   }, [isQueryReset, form]);
+
+  const performLaunch = async (numOfSessions: number) => {
+    const usedSearchParams = search;
+    const values = await form.validateFields().catch((e) => {
+      logger.error('validation errors', e);
+    });
+
+    // validation failed do nothing
+    if (!values) {
+      return;
+    }
+
+    if (_.isEmpty(values.mount_ids) || values.mount_ids?.length === 0) {
+      const isConfirmed = await app.modal.confirm({
+        title: t('session.launcher.NoFolderMounted'),
+        content: (
+          <>
+            {t('session.launcher.HomeDirectoryDeletionDialog')}
+            <br />
+            <br />
+            {t('session.launcher.LaunchConfirmationDialog')}
+            <br />
+            <br />
+            {t('dialog.ask.DoYouWantToProceed')}
+          </>
+        ),
+        okText: t('session.launcher.Start'),
+        closable: true,
+      });
+      if (!isConfirmed) return;
+    }
+
+    await startSession({ ...values, num_of_sessions: numOfSessions })
+      .then((results) => {
+        // After sending a create request, navigate to job page and set current resource group
+        if (results?.fulfilled && results.fulfilled.length > 0) {
+          // Do not await here to speed up the navigation
+          upsertSessionNotification(results.fulfilled);
+          setCurrentGlobalResourceGroup(values.resourceGroup);
+          pushSessionHistory({
+            params: usedSearchParams,
+            name: results.fulfilled[0].value.sessionName,
+          });
+          webuiNavigate(redirectTo || '/job');
+        }
+
+        // If there are any failed session creations, show the first error message
+        if (results?.rejected && results.rejected.length > 0) {
+          const error = results.rejected[0].reason;
+          if (error?.error_code === 'session_create_already-exists') {
+            app.modal.error({
+              title: t('session.launcher.SessionAlreadyExists'),
+            });
+          } else {
+            app.modal.error({
+              title: error?.title,
+              content: getErrorMessage(error),
+            });
+          }
+        }
+      })
+      .catch((error) => {
+        // Unexpected error in `then` of allSettled
+        logger.error('Unexpected error during session creation:', error);
+        app.message.error(t('error.UnexpectedError'));
+      });
+  };
 
   return (
     <BAIFlex
@@ -932,7 +1026,6 @@ const SessionLauncherPage = () => {
                       !baiClient._config.hideAgents &&
                       baiClient.supports('agent-select')
                     }
-                    enableNumOfSessions
                     enableResourcePresets
                     showRemainingWarning
                   />
@@ -1181,111 +1274,39 @@ const SessionLauncherPage = () => {
                             : undefined
                         }
                       >
-                        <BAIButton
-                          type="primary"
-                          icon={<PlayCircleOutlined />}
-                          disabled={hasError}
-                          action={async () => {
-                            const usedSearchParams = search;
-                            const values = await form
-                              .validateFields()
-                              .catch((e) => {
-                                logger.error('validation errors', e);
-                              });
-
-                            // validation failed do nothing
-                            if (!values) {
-                              return;
-                            }
-
-                            if (
-                              _.isEmpty(values.mount_ids) ||
-                              values.mount_ids?.length === 0
-                            ) {
-                              const isConformed = await app.modal.confirm({
-                                title: t('session.launcher.NoFolderMounted'),
-                                content: (
-                                  <>
-                                    {t(
-                                      'session.launcher.HomeDirectoryDeletionDialog',
-                                    )}
-                                    <br />
-                                    <br />
-                                    {t(
-                                      'session.launcher.LaunchConfirmationDialog',
-                                    )}
-                                    <br />
-                                    <br />
-                                    {t('dialog.ask.DoYouWantToProceed')}
-                                  </>
-                                ),
-                                okText: t('session.launcher.Start'),
-                                closable: true,
-                              });
-                              if (!isConformed) return;
-                            }
-                            await startSession(values)
-                              .then((results) => {
-                                // After sending a create request, navigate to job page and set current resource group
-                                if (
-                                  results?.fulfilled &&
-                                  results.fulfilled.length > 0
-                                ) {
-                                  // Do not await here to speed up the navigation
-                                  upsertSessionNotification(results.fulfilled);
-                                  setCurrentGlobalResourceGroup(
-                                    values.resourceGroup,
-                                  );
-                                  pushSessionHistory({
-                                    params: usedSearchParams,
-                                    name: results.fulfilled[0].value
-                                      .sessionName,
-                                  });
-                                }
-                                // If at least one session creation is successful, navigate to job page and show success notifications
-                                if (
-                                  results?.fulfilled &&
-                                  results.fulfilled.length > 0
-                                ) {
-                                  webuiNavigate(redirectTo || '/job');
-                                }
-
-                                // If there are any failed session creations, show the first error message
-                                if (
-                                  results?.rejected &&
-                                  results.rejected.length > 0
-                                ) {
-                                  const error = results.rejected[0].reason;
-                                  if (
-                                    error?.error_code ===
-                                    'session_create_already-exists'
-                                  ) {
-                                    app.modal.error({
-                                      title: t(
-                                        'session.launcher.SessionAlreadyExists',
-                                      ),
-                                    });
-                                  } else {
-                                    app.modal.error({
-                                      title: error?.title,
-                                      content: getErrorMessage(error),
-                                    });
-                                  }
-                                }
-                              })
-                              .catch((error) => {
-                                // Unexpected error in `then` of allSettled
-                                logger.error(
-                                  'Unexpected error during session creation:',
-                                  error,
-                                );
-
-                                app.message.error(t('error.UnexpectedError'));
-                              });
-                          }}
-                        >
-                          {t('session.launcher.Launch')}
-                        </BAIButton>
+                        <Space.Compact>
+                          <BAIButton
+                            type="primary"
+                            icon={<PlayCircleOutlined />}
+                            disabled={hasError}
+                            action={() => performLaunch(1)}
+                          >
+                            {t('session.launcher.Launch')}
+                          </BAIButton>
+                          <Dropdown
+                            trigger={['click']}
+                            disabled={hasError}
+                            menu={{
+                              items: [
+                                {
+                                  key: 'batch',
+                                  label: t(
+                                    'session.launcher.LaunchMultipleSessions',
+                                  ),
+                                  onClick: () => {
+                                    setIsLaunchMultipleSessionsModalOpen(true);
+                                  },
+                                },
+                              ],
+                            }}
+                          >
+                            <BAIButton
+                              type="primary"
+                              icon={<EllipsisOutlined />}
+                              disabled={hasError}
+                            />
+                          </Dropdown>
+                        </Space.Compact>
                       </Tooltip>
                     ) : (
                       <Button
@@ -1335,6 +1356,32 @@ const SessionLauncherPage = () => {
           </BAIFlex>
         )}
       </BAIFlex>
+      <Suspense fallback={null}>
+        <BAIUnmountAfterClose>
+          <LaunchMultipleSessionsModal
+            open={isLaunchMultipleSessionsModalOpen}
+            resource={batchLaunchResource ?? form.getFieldValue('resource')}
+            clusterSize={
+              batchLaunchClusterSize ?? form.getFieldValue('cluster_size') ?? 1
+            }
+            clusterMode={
+              batchLaunchClusterMode ??
+              form.getFieldValue('cluster_mode') ??
+              'single-node'
+            }
+            resourceGroup={
+              batchLaunchResourceGroup ?? form.getFieldValue('resourceGroup')
+            }
+            ResourcePreview={ResourceNumbersOfSession}
+            onRequestClose={async (count) => {
+              setIsLaunchMultipleSessionsModalOpen(false);
+              if (typeof count === 'number') {
+                await performLaunch(count);
+              }
+            }}
+          />
+        </BAIUnmountAfterClose>
+      </Suspense>
       <SessionTemplateModal
         onRequestClose={(formValue) => {
           if (formValue) {

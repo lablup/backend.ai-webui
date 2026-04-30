@@ -84,7 +84,6 @@ export type MergedResourceAllocationFormValue = ResourceAllocationFormValue &
 
 interface ResourceAllocationFormItemsProps {
   enableAgentSelect?: boolean;
-  enableNumOfSessions?: boolean;
   enableResourcePresets?: boolean;
   showRemainingWarning?: boolean;
   forceImageMinValues?: boolean;
@@ -99,7 +98,6 @@ const ResourceAllocationFormItems: React.FC<
   ResourceAllocationFormItemsProps
 > = ({
   enableAgentSelect = false,
-  enableNumOfSessions,
   enableResourcePresets,
   forceImageMinValues = false,
   showRemainingWarning = false,
@@ -113,7 +111,7 @@ const ResourceAllocationFormItems: React.FC<
   const baiClient = useSuspendedBackendaiClient();
   const supportMultiAgents = baiClient.supports('multi-agents');
 
-  const [{ keypairResourcePolicy, sessionLimitAndRemaining }] =
+  const [{ keypairResourcePolicy }] =
     useCurrentKeyPairResourcePolicyLazyLoadQuery();
 
   const [agentFetchKey, updateAgentFetchKey] = useUpdatableState('first');
@@ -241,12 +239,6 @@ const ResourceAllocationFormItems: React.FC<
       });
     }
   }, [supportedAcceleratorTypesInRGByImage, form, currentResourceValue]);
-
-  const sessionSliderLimitAndRemaining = {
-    min: 1,
-    max: sessionLimitAndRemaining.max,
-    remaining: sessionLimitAndRemaining.remaining,
-  };
 
   const allocatablePresetNames = useMemo(() => {
     return getAllocatablePresetNames(
@@ -1214,80 +1206,6 @@ const ResourceAllocationFormItems: React.FC<
           }}
         </Form.Item>
       </Card>
-      {enableNumOfSessions ? (
-        <Card
-          style={{
-            marginBottom: token.margin,
-          }}
-        >
-          <Form.Item
-            noStyle
-            shouldUpdate={(prev, next) =>
-              prev.cluster_size !== next.cluster_size
-            }
-          >
-            {() => {
-              return (
-                <Form.Item
-                  name={['num_of_sessions']}
-                  label={t('webui.menu.Sessions')}
-                  tooltip={<Trans i18nKey={'session.launcher.DescSession'} />}
-                  required
-                  rules={[
-                    {
-                      required: true,
-                    },
-                    {
-                      warningOnly: true,
-                      validator: async (_rule, value: number) => {
-                        if (showRemainingWarning) {
-                          if (
-                            sessionSliderLimitAndRemaining &&
-                            value > sessionSliderLimitAndRemaining.remaining
-                          ) {
-                            return Promise.reject(
-                              t(
-                                'session.launcher.EnqueueComputeSessionWarning',
-                              ),
-                            );
-                          }
-                        }
-                        return Promise.resolve();
-                      },
-                    },
-                  ]}
-                >
-                  <InputNumberWithSlider
-                    inputContainerMinWidth={190}
-                    inputNumberProps={{
-                      suffix: '#',
-                    }}
-                    disabled={form.getFieldValue('cluster_size') > 1}
-                    sliderProps={{
-                      marks: {
-                        [sessionSliderLimitAndRemaining?.min]:
-                          sessionSliderLimitAndRemaining?.min,
-                        // remaining mark code should be located before max mark code to prevent overlapping when it is same value
-                        ...(sessionSliderLimitAndRemaining?.remaining
-                          ? {
-                              [sessionSliderLimitAndRemaining?.remaining]: {
-                                label: <RemainingMark />,
-                              },
-                            }
-                          : {}),
-                        [sessionSliderLimitAndRemaining?.max]:
-                          sessionSliderLimitAndRemaining?.max,
-                      },
-                    }}
-                    min={sessionSliderLimitAndRemaining?.min}
-                    max={sessionSliderLimitAndRemaining?.max}
-                  />
-                </Form.Item>
-              );
-            }}
-          </Form.Item>
-        </Card>
-      ) : null}
       {/* TODO: Support cluster mode */}
       {enableAgentSelect && (
         <Form.Item
@@ -1577,11 +1495,6 @@ const ResourceAllocationFormItems: React.FC<
                               }}
                               inputNumberProps={{
                                 suffix: clusterUnit,
-                              }}
-                              onChange={(value) => {
-                                if (value > 1) {
-                                  form.setFieldValue('num_of_sessions', 1);
-                                }
                               }}
                             />
                           </Form.Item>
