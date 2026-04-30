@@ -179,3 +179,6 @@ e2e/.agent-output/
 
 
 e2e/recordings/
+
+# Spec-driven workflow local cache (see spec-driven-workflow skill)
+.specs/**/.context/

@@ -1,0 +1,84 @@
+{
+  "epic": "FR-1368",
+  "epicKey": "FR-1368",
+  "epicUrl": "https://lablup.atlassian.net/browse/FR-1368",
+  "epicTitle": "Model deployment & Revision #1",
+  "specTask": "FR-1416",
+  "specTaskKey": "FR-1416",
+  "specTaskTitle": "Transition from Serving page to Deployment page",
+  "githubIssue": "https://github.com/lablup/backend.ai-webui/issues/4198",
+  "slug": "endpoint-deployment-migration",
+  "specFile": ".specs/FR-1368-endpoint-deployment-migration/spec.md",
+  "stories": [
+    {
+      "key": "FR-2657",
+      "title": "Deployment UI Phase 1 — Foundation (feature flag, routes, menu, i18n)",
+      "specSection": "§Feature Flag, §URL 경로 변경 + Fallback 리디렉션, §i18n 키 추가",
+      "prStack": "feat/endpoint-deployment-migration-foundation",
+      "subtasks": [
+        { "key": "FR-2663", "title": "Add model-deployment-extended-filter feature flag (26.4.3+)" },
+        { "key": "FR-2664", "title": "Add routes for /deployments + /admin-deployments with legacy fallbacks" },
+        { "key": "FR-2665", "title": "Update sidebar menu: Serving → Deployments" },
+        { "key": "FR-2666", "title": "Add Deployment i18n keys (en.json) + propagate to 21 languages" }
+      ]
+    },
+    {
+      "key": "FR-2658",
+      "title": "Deployment UI Phase 2 — Shared status/owner components",
+      "specSection": "§ReplicaStatusTag 컴포넌트, §Flow 1, §Flow 6",
+      "prStack": "feat/endpoint-deployment-migration-shared-components",
+      "subtasks": [
+        { "key": "FR-2667", "title": "Add ReplicaStatusTag component + Storybook story" },
+        { "key": "FR-2668", "title": "Add DeploymentStatusTag component" },
+        { "key": "FR-2669", "title": "Add DeploymentOwnerInfo component" }
+      ]
+    },
+    {
+      "key": "FR-2659",
+      "title": "Deployment UI Phase 3 — Deployment list pages (user + admin)",
+      "specSection": "§Flow 1, §Flow 6",
+      "prStack": "feat/endpoint-deployment-migration-list-pages",
+      "subtasks": [
+        { "key": "FR-2670", "title": "Add DeploymentList fragment-receiving table component (server-side filter/sort/paginate)" },
+        { "key": "FR-2671", "title": "Add DeploymentListPage (user) — owns myDeployments query" },
+        { "key": "FR-2672", "title": "Add AdminDeploymentListPage + admin-only filters/columns (26.4.3+)" },
+        { "key": "FR-2673", "title": "Remove legacy ServingPage and EndpointList / EndpointStatusTag" }
+      ]
+    },
+    {
+      "key": "FR-2660",
+      "title": "Deployment UI Phase 4 — Deployment Launcher (create + edit)",
+      "specSection": "§Flow 2, §Flow 4, §폼 필드 매핑",
+      "prStack": "feat/endpoint-deployment-migration-launcher",
+      "subtasks": [
+        { "key": "FR-2674", "title": "Add DeploymentLauncherPageContent — multi-step form body" },
+        { "key": "FR-2675", "title": "Add DeploymentLauncherPage (create/edit entry) + GQL mutations" }
+      ]
+    },
+    {
+      "key": "FR-2661",
+      "title": "Deployment UI Phase 5 — Detail page with tabs, Drawer, and Rollback",
+      "specSection": "§Flow 3, §Flow 5",
+      "prStack": "feat/endpoint-deployment-migration-detail-page",
+      "subtasks": [
+        { "key": "FR-2676", "title": "Add DeploymentConfigurationSection (Overview card + Edit button)" },
+        { "key": "FR-2677", "title": "Add DeploymentReplicasTab + Replica detail Drawer" },
+        { "key": "FR-2678", "title": "Add DeploymentRevisionHistoryTab + Rollback flow" },
+        { "key": "FR-2679", "title": "Add DeploymentAccessTokensTab (list + create + delete)" },
+        { "key": "FR-2680", "title": "Add DeploymentAutoScalingTab (wrap existing AutoScalingRuleList)" },
+        { "key": "FR-2681", "title": "Add DeploymentDetailPage (header + Overview + 4 tabs + URL tab sync)" },
+        { "key": "FR-2682", "title": "Remove legacy EndpointDetailPage + related Endpoint components" }
+      ]
+    },
+    {
+      "key": "FR-2662",
+      "title": "Deployment UI Flow 7 — Quick Deploy from model folder (useDeploymentLauncher)",
+      "specSection": "§Flow 7",
+      "prStack": "feat/endpoint-deployment-migration-quick-deploy",
+      "subtasks": [
+        { "key": "FR-2683", "title": "Add useDeploymentLauncher hook (GQL-based Quick Deploy)" },
+        { "key": "FR-2684", "title": "Migrate Deploy button sites to [Deploy | ▼] split button using useDeploymentLauncher" }
+      ]
+    }
+  ]
+}
