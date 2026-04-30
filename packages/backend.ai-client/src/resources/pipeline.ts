@@ -41,7 +41,7 @@ export class Pipeline {
         }),
       });
       // if there's no token, then user account is invalid
-      if (!result.hasOwnProperty('token')) {
+      if (!Object.prototype.hasOwnProperty.call(result, 'token')) {
         return Promise.resolve(false);
       } else {
         const token = result.token;
