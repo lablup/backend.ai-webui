@@ -13,6 +13,10 @@ test.describe(
   'Admin Model Card Management - Delete',
   { tag: ['@admin-model-card', '@admin', '@crud'] },
   () => {
+    // Run sequentially: tests create and query server-side resources; parallel
+    // execution under fullyParallel:true causes filter results to be empty
+    // because the server is slow to index newly created cards under load.
+    test.describe.configure({ mode: 'serial' });
     test.setTimeout(60000);
 
     test.beforeEach(async ({ page, request }) => {
@@ -164,8 +168,11 @@ test.describe(
         timeout: 30000,
       });
 
-      // Check the header checkbox to select all visible rows
-      await adminModelCardPage.getHeaderCheckbox().check();
+      // Click the header checkbox to select all visible rows.
+      // Use .click() instead of .check(): Ant Design's "select all" header checkbox starts
+      // in an unchecked-but-may-be-indeterminate state. Playwright's .check() fails when
+      // the checkbox is already in an indeterminate state; .click() works unconditionally.
+      await adminModelCardPage.getHeaderCheckbox().click();
 
       // Verify the BAISelectionLabel appears showing selected count
       await expect(adminModelCardPage.getSelectionLabel()).toBeVisible();
@@ -190,8 +197,12 @@ test.describe(
       // Type "Delete" in the confirmation input (required for bulk delete)
       await bulkDialog.getByRole('textbox').fill('Delete');
 
-      // Click Delete to confirm
-      await bulkDialog.getByRole('button', { name: 'Delete' }).click();
+      // Wait for Form.useWatch to re-render and enable the button before clicking.
+      const deleteButton = bulkDialog.getByRole('button', {
+        name: 'Delete',
+      });
+      await expect(deleteButton).not.toBeDisabled({ timeout: 5000 });
+      await deleteButton.click();
 
       // Wait for the success toast — under parallel-test load the bulk deletion
       // can be slow, so wait on the visible outcome rather than polling the dialog.
@@ -242,8 +253,11 @@ test.describe(
         timeout: 30000,
       });
 
-      // Select all visible rows
-      await adminModelCardPage.getHeaderCheckbox().check();
+      // Click the header checkbox to select all visible rows.
+      // Use .click() instead of .check(): Ant Design's "select all" header checkbox starts
+      // in an unchecked-but-may-be-indeterminate state. Playwright's .check() fails when
+      // the checkbox is already in an indeterminate state; .click() works unconditionally.
+      await adminModelCardPage.getHeaderCheckbox().click();
 
       // Click the bulk delete button (scoped to bulk-action area)
       await adminModelCardPage.getBulkDeleteButton().click();
@@ -261,9 +275,12 @@ test.describe(
       // Verify the dialog closes
       await expect(bulkDialog).toBeHidden();
 
-      // Verify the model cards are still in the table
+      // Verify the model cards are still in the table (table may briefly re-render
+      // after dialog close, so allow extra time beyond the default 5 s).
       for (const name of cardNames) {
-        await expect(adminModelCardPage.getRowByName(name)).toBeVisible();
+        await expect(adminModelCardPage.getRowByName(name)).toBeVisible({
+          timeout: 15000,
+        });
       }
 
       // Cleanup: delete each model card (card only), then clean up the shared folder
@@ -352,8 +369,11 @@ test.describe(
         timeout: 15000,
       });
 
-      // Click the "select all" checkbox in the table header
-      await adminModelCardPage.getHeaderCheckbox().check();
+      // Click the "select all" checkbox in the table header.
+      // Use .click() instead of .check(): Ant Design's "select all" header checkbox starts
+      // in an unchecked-but-may-be-indeterminate state. Playwright's .check() fails when
+      // the checkbox is already in an indeterminate state; .click() works unconditionally.
+      await adminModelCardPage.getHeaderCheckbox().click();
 
       // Verify the selection label appears and shows at least 1 item selected.
       // Note: antd table "select all" may select all backend records (not just the
@@ -459,8 +479,11 @@ test.describe(
       await deleteForeverAndVerifyFromTrash(page, folderName, 'admin-data');
     });
 
-    // 5.8 Superadmin deletes card only: notification shows correct message and Go to Trash navigates correctly
-    test('Superadmin can delete a model card only and navigate to trash without folder filter', async ({
+    // 5.8 Superadmin deletes card only: card-only deletion shows success message (no trash link)
+    // When "Also delete folder" is left unchecked, the app calls message.success() which is
+    // a simple toast with no navigation link — unlike the folder-deletion flow which uses
+    // upsertNotification() with a "Go to Data > Trash" link.
+    test('Superadmin can delete a model card only and see a success message without a trash link', async ({
       page,
     }) => {
       test.setTimeout(90000);
@@ -496,28 +519,20 @@ test.describe(
       // Confirm deletion
       await adminModelCardPage.getDeleteConfirmButton().click();
 
-      // Verify the notification message for card-only deletion
+      // Verify the notification message for card-only deletion.
+      // Card-only deletion uses message.success() — a plain toast with no navigation link.
       await expect(
         page.getByText(
           'Model card has been deleted. The model folder was not deleted.',
         ),
       ).toBeVisible({ timeout: 15000 });
 
-      // Verify "Go to Data > Trash" link is visible
-      const goToTrashLink = page.getByText('Go to Data > Trash');
-      await expect(goToTrashLink).toBeVisible();
-
-      // Click "Go to Data > Trash" and verify URL (no folder filter)
-      await goToTrashLink.click();
-      await page.waitForURL(
-        (url) =>
-          url.pathname === '/data' &&
-          url.searchParams.get('statusCategory') === 'deleted' &&
-          !url.searchParams.has('filter'),
-        { timeout: 10000 },
+      // Verify the model card row is removed from the filtered table
+      await expect(adminModelCardPage.getPaginationInfo()).toContainText(
+        '0 items',
       );
 
-      // Cleanup: move the kept test folder to trash then permanently delete it
+      // Cleanup: the folder was kept active; move it to trash and permanently delete
       await moveToTrashAndVerify(page, folderName, 'admin-data');
       await deleteForeverAndVerifyFromTrash(page, folderName, 'admin-data');
     });
@@ -559,10 +574,13 @@ test.describe(
       await adminModelCardPage.waitForTableLoad();
       await adminModelCardPage.applyNameFilter(filterPrefix);
       await expect(adminModelCardPage.getDataRows().first()).toBeVisible({
-        timeout: 30000,
+        timeout: 60000,
       });
 
-      // Select all visible rows
+      // Click the header checkbox to select all visible rows.
+      // Use .click() instead of .check(): Ant Design's "select all" header checkbox starts
+      // in an unchecked-but-may-be-indeterminate state. Playwright's .check() fails when
+      // the checkbox is already in an indeterminate state; .click() works unconditionally.
       await adminModelCardPage.getHeaderCheckbox().click();
       await expect(adminModelCardPage.getSelectionLabel()).toBeVisible();
 
@@ -582,10 +600,14 @@ test.describe(
       await expect(alsoDeleteCheckbox).toBeChecked();
 
       // Type "Delete" to confirm
-      await bulkDialog.getByLabel(/Type.*to confirm/i).fill('Delete');
+      await bulkDialog.getByRole('textbox').fill('Delete');
 
-      // Confirm deletion
-      await bulkDialog.getByRole('button', { name: 'Delete' }).click();
+      // Wait for Form.useWatch to re-render and enable the button before clicking.
+      const deleteButton = bulkDialog.getByRole('button', {
+        name: 'Delete',
+      });
+      await expect(deleteButton).not.toBeDisabled({ timeout: 5000 });
+      await deleteButton.click();
 
       // Wait for the success notification — card delete + folder soft-delete run
       // sequentially; under parallel-test load the combined mutation can be slow,
@@ -653,10 +675,13 @@ test.describe(
       await adminModelCardPage.waitForTableLoad();
       await adminModelCardPage.applyNameFilter(filterPrefix);
       await expect(adminModelCardPage.getDataRows().first()).toBeVisible({
-        timeout: 30000,
+        timeout: 60000,
       });
 
-      // Select all visible rows
+      // Click the header checkbox to select all visible rows.
+      // Use .click() instead of .check(): Ant Design's "select all" header checkbox starts
+      // in an unchecked-but-may-be-indeterminate state. Playwright's .check() fails when
+      // the checkbox is already in an indeterminate state; .click() works unconditionally.
       await adminModelCardPage.getHeaderCheckbox().click();
       await expect(adminModelCardPage.getSelectionLabel()).toBeVisible();
 
@@ -672,10 +697,14 @@ test.describe(
       await expect(alsoDeleteCheckbox).not.toBeChecked();
 
       // Type "Delete" to confirm (checkbox unchecked)
-      await bulkDialog.getByLabel(/Type.*to confirm/i).fill('Delete');
+      await bulkDialog.getByRole('textbox').fill('Delete');
 
-      // Confirm deletion
-      await bulkDialog.getByRole('button', { name: 'Delete' }).click();
+      // Wait for Form.useWatch to re-render and enable the button before clicking.
+      const deleteButton = bulkDialog.getByRole('button', {
+        name: 'Delete',
+      });
+      await expect(deleteButton).not.toBeDisabled({ timeout: 5000 });
+      await deleteButton.click();
 
       // Wait for the success toast — under parallel-test load the bulk deletion
       // can be slow, so wait on the visible outcome rather than polling the dialog.
@@ -684,13 +713,15 @@ test.describe(
       ).toBeVisible({ timeout: 240000 });
       await expect(bulkDialog).toBeHidden();
 
-      // Verify no "Go to Data > Trash" link appears
+      // Verify no "Go to Data > Trash" link appears (folders were kept active)
       await expect(page.getByText('Go to Data > Trash')).not.toBeVisible();
 
       // Verify selection label has cleared (cards were deleted)
       await expect(adminModelCardPage.getSelectionLabel()).toBeHidden();
 
-      // afterEach handles folder cleanup (folder remains in active state)
+      // Cleanup: cards are deleted, but folder remains active; move to trash and permanently delete
+      await moveToTrashAndVerify(page, folderName, 'admin-data');
+      await deleteForeverAndVerifyFromTrash(page, folderName, 'admin-data');
     });
   },
 );
