@@ -3,7 +3,7 @@ import BAIModal, { type BAIModalProps } from './BAIModal';
 import BAIText from './BAIText';
 import { ExclamationCircleFilled } from '@ant-design/icons';
 import { Form, Input, theme, Typography, type InputProps } from 'antd';
-import React, { useState } from 'react';
+import React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 const { Text } = Typography;
@@ -70,7 +70,8 @@ const BAIDeleteConfirmModal: React.FC<BAIDeleteConfirmModalProps> = ({
 
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const [typedText, setTypedText] = useState('');
+  const [form] = Form.useForm();
+  const typedText = Form.useWatch('confirmText', form) ?? '';
 
   const needsInput = items.length > 1 || requireConfirmInput;
 
@@ -149,31 +150,29 @@ const BAIDeleteConfirmModal: React.FC<BAIDeleteConfirmModalProps> = ({
           ...okButtonProps,
         }}
         onOk={(e) => {
-          setTypedText('');
+          form.resetFields();
           onOk?.(e);
         }}
         onCancel={(e) => {
-          setTypedText('');
+          form.resetFields();
           onCancel?.(e);
         }}
       >
         <BAIFlex direction="column" align="stretch" gap="xs">
           <Text>{resolvedDescription}</Text>
           {items.length > 1 && itemListContent}
-          <Form layout="vertical" preserve={false}>
+          <Form
+            form={form}
+            layout="vertical"
+            requiredMark={false}
+            preserve={false}
+          >
             <Form.Item
+              name="confirmText"
               label={resolvedInputLabel}
               style={{ marginBottom: 0 }}
-              required
             >
-              <Input
-                autoFocus
-                autoComplete="off"
-                allowClear
-                value={typedText}
-                onChange={(e) => setTypedText(e.target.value)}
-                {...inputProps}
-              />
+              <Input autoFocus autoComplete="off" allowClear {...inputProps} />
             </Form.Item>
           </Form>
           <Text type="danger">
