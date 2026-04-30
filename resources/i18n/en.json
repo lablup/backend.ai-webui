@@ -3202,6 +3202,7 @@
       "AllowedClientIpWarning": "If your current IP is not included in the allowed IP list, you may be unable to log in. Please contact your administrator if this happens.",
       "Architecture": "Architecture",
       "ArtifactDetails": "Artifact Details",
+      "AutoScalingRule": "Auto Scaling Rule",
       "Branding": "Branding",
       "Cancel": "Cancel",
       "ChangePassword": "Change Password",
