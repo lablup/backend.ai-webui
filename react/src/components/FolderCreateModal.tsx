@@ -178,6 +178,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
   });
 
   const handleOk = async () => {
+    if (mutationToCreateFolder.isPending) return;
     await formRef.current
       ?.validateFields()
       .then((values) => {
