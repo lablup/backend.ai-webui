@@ -4,8 +4,8 @@
  */
 import type { DeploymentPresetDetailContentFragment$key } from '../__generated__/DeploymentPresetDetailContentFragment.graphql';
 import type { DeploymentPresetDetailContentImageQuery } from '../__generated__/DeploymentPresetDetailContentImageQuery.graphql';
-import { Descriptions, Divider, Typography } from 'antd';
-import { BAIFlex, toGlobalId } from 'backend.ai-ui';
+import { Descriptions, Typography } from 'antd';
+import { BAICard, BAIFlex, toGlobalId } from 'backend.ai-ui';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
@@ -96,137 +96,111 @@ const DeploymentPresetDetailContent: React.FC<
       {preset.description && (
         <Typography.Text type="secondary">{preset.description}</Typography.Text>
       )}
-      <Descriptions
+      <BAICard
         size="small"
-        column={2}
-        items={[
-          {
-            label: t('adminDeploymentPreset.Rank'),
-            children: preset.rank,
-          },
-          {
-            label: t('adminDeploymentPreset.Runtime'),
-            children: preset.runtimeVariant?.name ?? preset.runtimeVariantId,
-          },
-        ]}
-      />
-
-      <Divider
-        style={{ margin: '4px 0' }}
-        titlePlacement="left"
-        styles={{ content: { margin: 0 } }}
+        title={t('adminDeploymentPreset.SectionImage')}
+        styles={{ body: { paddingTop: 0 } }}
       >
-        <Typography.Text type="secondary" style={{ fontSize: 12 }}>
-          {t('adminDeploymentPreset.SectionImage')}
-        </Typography.Text>
-      </Divider>
-      <Descriptions
+        <Descriptions
+          size="small"
+          column={1}
+          items={[
+            {
+              label: t('adminDeploymentPreset.Image'),
+              children: preset.execution?.imageId ? (
+                <Suspense fallback={preset.execution.imageId}>
+                  <ImageCanonicalName imageId={preset.execution.imageId} />
+                </Suspense>
+              ) : (
+                '-'
+              ),
+            },
+            {
+              label: t('adminDeploymentPreset.Runtime'),
+              children: preset.runtimeVariant?.name ?? preset.runtimeVariantId,
+            },
+          ]}
+        />
+      </BAICard>
+      <BAICard
         size="small"
-        column={1}
-        items={[
-          {
-            label: t('adminDeploymentPreset.Image'),
-            children: preset.execution?.imageId ? (
-              <Suspense fallback={preset.execution.imageId}>
-                <ImageCanonicalName imageId={preset.execution.imageId} />
-              </Suspense>
-            ) : (
-              '-'
-            ),
-          },
-        ]}
-      />
-
-      <Divider
-        style={{ margin: '4px 0' }}
-        titlePlacement="left"
-        styles={{ content: { margin: 0 } }}
+        title={t('adminDeploymentPreset.SectionCluster')}
+        styles={{ body: { paddingTop: 0 } }}
       >
-        <Typography.Text type="secondary" style={{ fontSize: 12 }}>
-          {t('adminDeploymentPreset.SectionCluster')}
-        </Typography.Text>
-      </Divider>
-      <Descriptions
+        <Descriptions
+          size="small"
+          column={2}
+          items={[
+            {
+              label: t('adminDeploymentPreset.ClusterMode'),
+              children: preset.cluster?.clusterMode || '-',
+            },
+            {
+              label: t('adminDeploymentPreset.ClusterSize'),
+              children: preset.cluster?.clusterSize ?? '-',
+            },
+          ]}
+        />
+      </BAICard>
+      <BAICard
         size="small"
-        column={2}
-        items={[
-          {
-            label: t('adminDeploymentPreset.ClusterMode'),
-            children: preset.cluster?.clusterMode || '-',
-          },
-          {
-            label: t('adminDeploymentPreset.ClusterSize'),
-            children: preset.cluster?.clusterSize ?? '-',
-          },
-        ]}
-      />
-
-      <Divider
-        style={{ margin: '4px 0' }}
-        titlePlacement="left"
-        styles={{ content: { margin: 0 } }}
+        title={t('adminDeploymentPreset.SectionResources')}
+        styles={{ body: { paddingTop: 0 } }}
       >
-        <Typography.Text type="secondary" style={{ fontSize: 12 }}>
-          {t('adminDeploymentPreset.SectionResources')}
-        </Typography.Text>
-      </Divider>
-      <Descriptions
+        <Descriptions
+          size="small"
+          column={2}
+          items={[
+            ...(shmem
+              ? [
+                  {
+                    label: t('adminDeploymentPreset.Shmem'),
+                    children: `${shmem} GiB`,
+                  },
+                ]
+              : []),
+            ...(preset.resource?.resourceOpts
+              ?.filter((opt) => opt.name !== 'shmem')
+              .map((opt) => ({
+                label: opt.name,
+                children: opt.value,
+              })) ?? []),
+          ]}
+        />
+      </BAICard>
+      <BAICard
         size="small"
-        column={2}
-        items={[
-          ...(shmem
-            ? [
-                {
-                  label: t('adminDeploymentPreset.Shmem'),
-                  children: `${shmem} GiB`,
-                },
-              ]
-            : []),
-          ...(preset.resource?.resourceOpts
-            ?.filter((opt) => opt.name !== 'shmem')
-            .map((opt) => ({
-              label: opt.name,
-              children: opt.value,
-            })) ?? []),
-        ]}
-      />
-
-      <Divider
-        style={{ margin: '4px 0' }}
-        titlePlacement="left"
-        styles={{ content: { margin: 0 } }}
+        title={t('adminDeploymentPreset.SectionDeploymentDefaults')}
+        styles={{ body: { paddingTop: 0 } }}
       >
-        <Typography.Text type="secondary" style={{ fontSize: 12 }}>
-          {t('adminDeploymentPreset.SectionDeploymentDefaults')}
-        </Typography.Text>
-      </Divider>
-      <Descriptions
-        size="small"
-        column={2}
-        items={[
-          {
-            label: t('adminDeploymentPreset.Replicas'),
-            children: preset.deploymentDefaults?.replicaCount ?? '-',
-          },
-          {
-            label: t('adminDeploymentPreset.RevisionHistoryLimit'),
-            children: preset.deploymentDefaults?.revisionHistoryLimit ?? '-',
-          },
-          {
-            label: t('adminDeploymentPreset.Strategy'),
-            children: preset.deploymentDefaults?.deploymentStrategy ?? '-',
-          },
-          {
-            label: t('adminDeploymentPreset.OpenToPublic'),
-            children:
-              preset.deploymentDefaults?.openToPublic != null
-                ? preset.deploymentDefaults.openToPublic
-                  ? t('button.Yes')
-                  : t('button.No')
-                : '-',
-          },
-        ]}
-      />
+        <Descriptions
+          size="small"
+          column={2}
+          items={[
+            {
+              label: t('adminDeploymentPreset.Replicas'),
+              children: preset.deploymentDefaults?.replicaCount ?? '-',
+            },
+            {
+              label: t('adminDeploymentPreset.RevisionHistoryLimit'),
+              children: preset.deploymentDefaults?.revisionHistoryLimit ?? '-',
+            },
+            {
+              label: t('adminDeploymentPreset.Strategy'),
+              children: preset.deploymentDefaults?.deploymentStrategy ?? '-',
+            },
+            {
+              label: t('adminDeploymentPreset.OpenToPublic'),
+              children:
+                preset.deploymentDefaults?.openToPublic != null
+                  ? preset.deploymentDefaults.openToPublic
+                    ? t('button.Yes')
+                    : t('button.No')
+                  : '-',
+            },
+          ]}
+        />
+      </BAICard>
     </BAIFlex>
   );
 };

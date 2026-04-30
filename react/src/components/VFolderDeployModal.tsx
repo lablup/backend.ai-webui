@@ -378,7 +378,7 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
           tooltip={t('modelStore.PresetTooltip')}
           required
         >
-          <Space.Compact style={{ width: '100%' }}>
+          <BAIFlex direction="row" gap="xs">
             <BAISelect
               value={effectivePresetId}
               onChange={(value: string) => setUserSelectedPresetId(value)}
@@ -403,14 +403,16 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
               )}
               style={{ flex: 1 }}
             />
-            <Tooltip title={t('modelService.DeploymentPresetDetail')}>
-              <Button
-                icon={<InfoCircleOutlined />}
-                disabled={!effectivePresetId}
-                onClick={() => setPresetDetailId(effectivePresetId)}
-              />
-            </Tooltip>
-          </Space.Compact>
+            <Space.Compact>
+              <Tooltip title={t('modelService.DeploymentPresetDetail')}>
+                <Button
+                  icon={<InfoCircleOutlined />}
+                  disabled={!effectivePresetId}
+                  onClick={() => setPresetDetailId(effectivePresetId)}
+                />
+              </Tooltip>
+            </Space.Compact>
+          </BAIFlex>
           <DeploymentPresetDetailModal
             open={!!presetDetailId}
             presetId={presetDetailId}
