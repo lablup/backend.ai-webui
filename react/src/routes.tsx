@@ -362,9 +362,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
   {
     path: '/data',
     handle: { labelKey: 'webui.menu.Data' },
-    Component: () => {
-      return <VFolderNodeListPage />;
-    },
+    Component: VFolderNodeListPage,
   },
   {
     path: '/my-environment',
