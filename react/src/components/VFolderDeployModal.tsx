@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import type { DeploymentPresetDetailContentFragment$key } from '../__generated__/DeploymentPresetDetailContentFragment.graphql';
 import { VFolderDeployModalEndpointPollQuery } from '../__generated__/VFolderDeployModalEndpointPollQuery.graphql';
 import { VFolderDeployModalMutation } from '../__generated__/VFolderDeployModalMutation.graphql';
 import { VFolderDeployModalQuery } from '../__generated__/VFolderDeployModalQuery.graphql';
@@ -9,13 +10,15 @@ import { useWebUINavigate } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import useDeploymentLauncher from '../hooks/useDeploymentLauncher';
-import DeploymentPresetDetailModal from './DeploymentPresetDetailModal';
+import DeploymentPresetDetailContent from './DeploymentPresetDetailContent';
+import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import { EllipsisOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import {
   App,
   Button,
   Dropdown,
   Form,
+  Skeleton,
   Space,
   Tooltip,
   Typography,
@@ -131,6 +134,7 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
                 description
                 rank
                 runtimeVariantId
+                ...DeploymentPresetDetailContentFragment
               }
             }
           }
@@ -152,17 +156,7 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
     return (
       deploymentRevisionPresets?.edges
         ?.map((edge) => edge?.node)
-        .filter(
-          (
-            node,
-          ): node is {
-            readonly id: string;
-            readonly name: string;
-            readonly description: string | null;
-            readonly rank: number;
-            readonly runtimeVariantId: string;
-          } => node != null,
-        ) ?? []
+        .filter((node): node is NonNullable<typeof node> => node != null) ?? []
     );
   }, [deploymentRevisionPresets]);
 
@@ -278,9 +272,8 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
   const [userSelectedPresetId, setUserSelectedPresetId] = useState<
     string | undefined
   >(undefined);
-  const [presetDetailId, setPresetDetailId] = useState<string | undefined>(
-    undefined,
-  );
+  const [presetDetailFrgmt, setPresetDetailFrgmt] =
+    useState<DeploymentPresetDetailContentFragment$key | null>(null);
   const effectivePresetId =
     userSelectedPresetId ??
     (availablePresets[0]?.id ? toLocalId(availablePresets[0].id) : undefined);
@@ -408,7 +401,12 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
                 <Button
                   icon={<InfoCircleOutlined />}
                   disabled={!effectivePresetId}
-                  onClick={() => setPresetDetailId(effectivePresetId)}
+                  onClick={() => {
+                    const node = deploymentRevisionPresets?.edges?.find(
+                      (e) => toLocalId(e?.node?.id ?? '') === effectivePresetId,
+                    )?.node;
+                    if (node) setPresetDetailFrgmt(node);
+                  }}
                 />
               </Tooltip>
             </Space.Compact>
@@ -427,11 +425,20 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
           />
         </Form.Item>
       </Form>
-      <DeploymentPresetDetailModal
-        open={!!presetDetailId}
-        presetId={presetDetailId}
-        onRequestClose={() => setPresetDetailId(undefined)}
-      />
+      <BAIModal
+        open={!!presetDetailFrgmt}
+        centered
+        title={t('modelService.DeploymentPresetDetail')}
+        onCancel={() => setPresetDetailFrgmt(null)}
+        destroyOnHidden
+        footer={null}
+      >
+        <ErrorBoundaryWithNullFallback>
+          <Suspense fallback={<Skeleton active paragraph={{ rows: 6 }} />}>
+            <DeploymentPresetDetailContent presetFrgmt={presetDetailFrgmt} />
+          </Suspense>
+        </ErrorBoundaryWithNullFallback>
+      </BAIModal>
       <BAIFlex justify="end" gap="sm">
         <BAIButton onClick={onClose}>{t('button.Cancel')}</BAIButton>
         {supportsQuickDeploy && vfolderId ? (

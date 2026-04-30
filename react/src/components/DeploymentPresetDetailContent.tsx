@@ -3,6 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import type { DeploymentPresetDetailContentFragment$key } from '../__generated__/DeploymentPresetDetailContentFragment.graphql';
+import { convertToBinaryUnit } from '../helper';
+import { ResourceNumbersOfSession } from '../pages/SessionLauncherPage';
 import { Descriptions, Typography } from 'antd';
 import { BAICard, BAIFlex } from 'backend.ai-ui';
 import React from 'react';
@@ -26,7 +28,6 @@ const DeploymentPresetDetailContent: React.FC<
         id
         name
         description
-        rank
         runtimeVariantId
         runtimeVariant {
           id
@@ -49,6 +50,14 @@ const DeploymentPresetDetailContent: React.FC<
           resourceOpts {
             name
             value
+          }
+        }
+        resourceSlots {
+          edges {
+            node {
+              slotName
+              quantity
+            }
           }
         }
         deploymentDefaults {
@@ -88,7 +97,13 @@ const DeploymentPresetDetailContent: React.FC<
           items={[
             {
               label: t('adminDeploymentPreset.Image'),
-              children: preset.execution?.image || '-',
+              children: preset.execution?.image ? (
+                <Typography.Text copyable>
+                  {preset.execution.image}
+                </Typography.Text>
+              ) : (
+                '-'
+              ),
             },
             {
               label: t('adminDeploymentPreset.Runtime'),
@@ -122,26 +137,57 @@ const DeploymentPresetDetailContent: React.FC<
         title={t('adminDeploymentPreset.SectionResources')}
         styles={{ body: { paddingTop: 0 } }}
       >
-        <Descriptions
-          size="small"
-          column={2}
-          items={[
-            ...(shmem
-              ? [
-                  {
-                    label: t('adminDeploymentPreset.Shmem'),
-                    children: `${shmem} GiB`,
-                  },
-                ]
-              : []),
-            ...(preset.resource?.resourceOpts
-              ?.filter((opt) => opt.name !== 'shmem')
-              .map((opt) => ({
-                label: opt.name,
-                children: opt.value,
-              })) ?? []),
-          ]}
-        />
+        <BAIFlex direction="column" align="stretch" gap="xs">
+          <ResourceNumbersOfSession
+            resource={(() => {
+              const slots = (preset.resourceSlots?.edges ?? [])
+                .map((e) => e?.node)
+                .filter((n) => n != null);
+              const cpuSlot = slots.find((n) => n!.slotName === 'cpu');
+              const memSlot = slots.find((n) => n!.slotName === 'mem');
+              const accelSlot = slots.find(
+                (n) => n!.slotName !== 'cpu' && n!.slotName !== 'mem',
+              );
+              const memBytes = memSlot ? parseFloat(memSlot.quantity) : 0;
+              const memGiB =
+                convertToBinaryUnit(memBytes, 'g', 0, true)?.number ?? 0;
+              return {
+                cpu: cpuSlot ? parseFloat(cpuSlot.quantity) : 0,
+                mem: `${memGiB}g`,
+                ...(accelSlot
+                  ? {
+                      accelerator: parseFloat(accelSlot.quantity),
+                      acceleratorType: accelSlot.slotName,
+                    }
+                  : {}),
+              };
+            })()}
+          />
+          {(shmem ||
+            (preset.resource?.resourceOpts?.filter((o) => o.name !== 'shmem')
+              .length ?? 0) > 0) && (
+            <Descriptions
+              size="small"
+              column={2}
+              items={[
+                ...(shmem
+                  ? [
+                      {
+                        label: t('adminDeploymentPreset.Shmem'),
+                        children: `${shmem} GiB`,
+                      },
+                    ]
+                  : []),
+                ...(preset.resource?.resourceOpts
+                  ?.filter((opt) => opt.name !== 'shmem')
+                  .map((opt) => ({
+                    label: opt.name,
+                    children: opt.value,
+                  })) ?? []),
+              ]}
+            />
+          )}
+        </BAIFlex>
       </BAICard>
       <BAICard
         size="small"
