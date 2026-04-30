@@ -57,7 +57,22 @@ import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import WebUILink from 'src/components/WebUILink';
-import { ROUTER_STATIC_PATHS, ROUTER_DYNAMIC_PATTERNS } from 'src/routes';
+
+// Mutable registry populated by routes.tsx at module initialization time.
+// Using mutable objects (Set / Array) means importers share the same reference
+// and see values added after their own import statement runs.
+export const ROUTER_STATIC_PATHS = new Set<string>();
+export const ROUTER_DYNAMIC_PATTERNS: RegExp[] = [];
+
+export function populateRouterPaths(
+  staticPaths: Set<string>,
+  dynamicPatterns: RegExp[],
+): void {
+  ROUTER_STATIC_PATHS.clear();
+  ROUTER_DYNAMIC_PATTERNS.length = 0;
+  staticPaths.forEach((p) => ROUTER_STATIC_PATHS.add(p));
+  dynamicPatterns.forEach((p) => ROUTER_DYNAMIC_PATTERNS.push(p));
+}
 
 export type MenuGroupName =
   | 'none'

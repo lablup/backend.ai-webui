@@ -20,7 +20,10 @@ import { useAutoDiagnostics } from './hooks/useAutoDiagnostics';
 import { useBAISettingUserState } from './hooks/useBAISetting';
 import { LogoutEventHandler } from './hooks/useLogout';
 import { useSToken } from './hooks/useSToken';
-import { useWebUIMenuItems } from './hooks/useWebUIMenuItems';
+import {
+  useWebUIMenuItems,
+  populateRouterPaths,
+} from './hooks/useWebUIMenuItems';
 import { pluginApiEndpointState } from './hooks/useWebUIPluginState';
 // High priority to import the component
 import ComputeSessionListPage from './pages/ComputeSessionListPage';
@@ -1166,19 +1169,10 @@ function extractRoutePaths(
   return { staticPaths, dynamicPatterns };
 }
 
-// Extract valid paths from mainLayoutChildRoutes (excluding root-level routes like /interactive-login)
+// Populate the shared routerPaths registry so useWebUIMenuItems can read
+// valid paths without importing routes.tsx directly (which would create a
+// circular dependency: routes → useWebUIMenuItems → routes).
 const { staticPaths, dynamicPatterns } = extractRoutePaths(
   mainLayoutChildRoutes,
 );
-
-/**
- * Set of valid static route paths (first path segment only).
- * Derived from the router configuration.
- */
-export const ROUTER_STATIC_PATHS = staticPaths;
-
-/**
- * Array of regex patterns for dynamic routes.
- * Derived from the router configuration.
- */
-export const ROUTER_DYNAMIC_PATTERNS = dynamicPatterns;
+populateRouterPaths(staticPaths, dynamicPatterns);
