@@ -3,8 +3,19 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { DeploymentRevisionDetailDrawerQuery } from '../__generated__/DeploymentRevisionDetailDrawerQuery.graphql';
+import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import SourceCodeView from './SourceCodeView';
-import { Descriptions, Drawer, Skeleton, Tag, Typography, theme } from 'antd';
+import { FolderOpenOutlined } from '@ant-design/icons';
+import {
+  Button,
+  Descriptions,
+  Drawer,
+  Grid,
+  Skeleton,
+  Tag,
+  Typography,
+  theme,
+} from 'antd';
 import { DescriptionsItemType } from 'antd/es/descriptions';
 import { DrawerProps } from 'antd/lib';
 import {
@@ -30,6 +41,7 @@ const DeploymentRevisionDetailDrawerContent: React.FC<{
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
+  const { open: openFolderExplorer } = useFolderExplorerOpener();
 
   const { revision } = useLazyLoadQuery<DeploymentRevisionDetailDrawerQuery>(
     graphql`
@@ -97,6 +109,7 @@ const DeploymentRevisionDetailDrawerContent: React.FC<{
     <Typography.Text type="secondary">-</Typography.Text>
   );
 
+  const screens = Grid.useBreakpoint();
   // `revision.id` is the Strawberry global id (`ModelRevision:<uuid>`
   // base64) and the `currentRevisionId` prop may come in either form
   // depending on the caller (some pass the local UUID from
@@ -125,7 +138,7 @@ const DeploymentRevisionDetailDrawerContent: React.FC<{
 
   const descriptionsProps = {
     bordered: true,
-    column: { xxl: 2, xl: 2, lg: 2, md: 1, sm: 1, xs: 1 },
+    column: screens.md ? 2 : 1,
     style: { backgroundColor: token.colorBgBase },
   } as const;
 
@@ -160,14 +173,37 @@ const DeploymentRevisionDetailDrawerContent: React.FC<{
       key: 'model-folder',
       label: t('deployment.ModelFolder'),
       children: mountConfig?.vfolder?.name ? (
-        <BAIFlex direction="column" align="start">
-          <Typography.Text>{mountConfig.vfolder.name}</Typography.Text>
-          {mountConfig.mountDestination && (
-            <Typography.Text type="secondary">
-              {mountConfig.mountDestination}
-            </Typography.Text>
-          )}
-        </BAIFlex>
+        (() => {
+          const localId = toLocalId(mountConfig.vfolder.id);
+          return (
+            <BAIFlex direction="column" align="start">
+              <BAIFlex gap="xs" align="center">
+                <Typography.Text>{mountConfig.vfolder.name}</Typography.Text>
+                <Button
+                  type="link"
+                  size="small"
+                  icon={<FolderOpenOutlined />}
+                  aria-label={t('modelService.OpenFolder')}
+                  title={t('modelService.OpenFolder')}
+                  disabled={!localId}
+                  style={{ padding: 0 }}
+                  onClick={() => {
+                    if (localId) openFolderExplorer(localId);
+                  }}
+                />
+              </BAIFlex>
+              {mountConfig.mountDestination && (
+                <Typography.Text type="secondary">
+                  {mountConfig.mountDestination}
+                </Typography.Text>
+              )}
+            </BAIFlex>
+          );
+        })()
+      ) : mountConfig?.vfolderId ? (
+        <Typography.Text type="secondary">
+          {mountConfig.vfolderId}
+        </Typography.Text>
       ) : (
         renderFallback()
       ),

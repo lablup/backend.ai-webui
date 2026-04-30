@@ -156,8 +156,6 @@ export interface DeploymentLauncherPageContentProps {
     changed: Partial<DeploymentLauncherFormValue>,
     all: DeploymentLauncherFormValue,
   ) => void;
-  /** Called when the user clicks the Cancel button in the footer. */
-  onCancel?: () => void;
   /** Called when the user clicks the submit button on the review step. */
   onSubmit?: () => Promise<void>;
   /** When true the submit button shows a loading spinner and is disabled. */
@@ -230,7 +228,6 @@ const DeploymentLauncherPageContent: React.FC<
   deploymentFrgmt,
   runtimeVariants = [],
   onValuesChange,
-  onCancel,
   onSubmit,
   isSubmitting,
   serializerRef,
@@ -471,6 +468,10 @@ const DeploymentLauncherPageContent: React.FC<
           revision?.clusterConfig?.size ?? DEFAULT_FORM_VALUES.clusterSize,
         resourceGroup: revision?.resourceConfig?.resourceGroupName ?? '',
         desiredReplicaCount: deployment.replicaState.desiredReplicaCount,
+        // TODO(needs-backend): FR-2787 — resourcePresetId is not exposed in the
+        // ModelRevision schema, so the preset selector cannot be pre-populated in
+        // edit mode. Once the backend exposes resourcePresetName/id on the
+        // revision, add it here.
       } satisfies Partial<DeploymentLauncherFormValue>);
     }
     return _.merge({}, DEFAULT_FORM_VALUES, {
@@ -921,18 +922,11 @@ const DeploymentLauncherPageContent: React.FC<
             hidden on the first step. */}
           <BAIFlex
             direction="row"
-            justify="between"
+            justify="end"
             gap="sm"
             style={{ marginTop: token.marginMD }}
             data-test-id="deployment-launcher-tour-step-navigation"
           >
-            <BAIFlex gap="sm">
-              {onCancel && (
-                <Button onClick={onCancel} disabled={isSubmitting}>
-                  {t('button.Cancel')}
-                </Button>
-              )}
-            </BAIFlex>
             <BAIFlex direction="row" gap="sm">
               {!isFirstStep && (
                 <Button

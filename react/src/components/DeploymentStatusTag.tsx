@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import type { TagProps } from 'antd';
-import { BAITag } from 'backend.ai-ui';
+import { BAITag, SemanticColor, useSemanticColorMap } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -20,31 +20,12 @@ export type DeploymentStatus =
   | 'PENDING'
   | 'READY';
 
-// antd Tag preset status colors. `'info'` is NOT a preset — passing it falls
-// through as a raw CSS color and renders as a vivid default tag in dark mode,
-// which is why this map uses `'processing'` (the in-flight preset with a
-// colorInfo-tinted background and pulsing dot).
-type StatusTagColor =
-  | 'success'
-  | 'processing'
-  | 'error'
-  | 'default'
-  | 'warning';
-
-/**
- * Maps each deployment status to a Tag color.
- *
- * - success:    HEALTHY, READY — fully operational.
- * - processing: DEPLOYING, SCALING, PENDING — transient, in-flight states.
- * - warning:    DEGRADED, UNHEALTHY, STOPPING — attention needed or transitioning away.
- * - default:    NOT_CHECKED, STOPPED, TERMINATED — neutral / inactive.
- */
-const deploymentStatusColorMap: Record<DeploymentStatus, StatusTagColor> = {
+const deploymentStatusSemanticMap: Record<DeploymentStatus, SemanticColor> = {
   HEALTHY: 'success',
   READY: 'success',
-  DEPLOYING: 'processing',
-  SCALING: 'processing',
-  PENDING: 'processing',
+  DEPLOYING: 'info',
+  SCALING: 'info',
+  PENDING: 'info',
   DEGRADED: 'warning',
   UNHEALTHY: 'warning',
   STOPPING: 'warning',
@@ -78,7 +59,8 @@ export interface DeploymentStatusTagProps extends Omit<TagProps, 'color'> {
 
 /**
  * DeploymentStatusTag — consolidated lifecycle + health status tag for a
- * deployment. Used in list rows and detail page headers.
+ * deployment. Uses the semantic color system to align with the project admin
+ * serving page (EndpointStatusTag).
  */
 const DeploymentStatusTag: React.FC<DeploymentStatusTagProps> = ({
   status,
@@ -86,9 +68,13 @@ const DeploymentStatusTag: React.FC<DeploymentStatusTagProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
+  const semanticColorMap = useSemanticColorMap();
 
   return (
-    <BAITag {...tagProps} color={deploymentStatusColorMap[status]}>
+    <BAITag
+      {...tagProps}
+      color={semanticColorMap[deploymentStatusSemanticMap[status]]}
+    >
       {t(deploymentStatusI18nMap[status])}
     </BAITag>
   );
