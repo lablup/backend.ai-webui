@@ -413,11 +413,6 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
               </Tooltip>
             </Space.Compact>
           </BAIFlex>
-          <DeploymentPresetDetailModal
-            open={!!presetDetailId}
-            presetId={presetDetailId}
-            onRequestClose={() => setPresetDetailId(undefined)}
-          />
         </Form.Item>
         <Form.Item
           label={t('modelStore.ResourceGroup')}
@@ -432,6 +427,11 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
           />
         </Form.Item>
       </Form>
+      <DeploymentPresetDetailModal
+        open={!!presetDetailId}
+        presetId={presetDetailId}
+        onRequestClose={() => setPresetDetailId(undefined)}
+      />
       <BAIFlex justify="end" gap="sm">
         <BAIButton onClick={onClose}>{t('button.Cancel')}</BAIButton>
         {supportsQuickDeploy && vfolderId ? (
