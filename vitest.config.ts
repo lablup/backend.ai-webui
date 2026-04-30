@@ -32,6 +32,13 @@ export default defineConfig({
       "packages/**",
     ],
 
+    // V8 coverage instrumentation slows down tests significantly on CI's
+    // smaller boxes. `gen-theme-schema.test.ts > generates a valid JSON
+    // schema file` exercises the antd type tree several times per test
+    // and routinely takes 5–10s under coverage. Bump the per-test timeout
+    // so CI matches a normal local run without coverage.
+    testTimeout: 30000,
+
     // Coverage settings — see comment in `react/vitest.config.ts`. Same
     // reporters and provider so the `davelosert/vitest-coverage-report-action`
     // PR comment shape is consistent across the three workspaces.
@@ -44,6 +51,10 @@ export default defineConfig({
         "{src,scripts}/**/*.{test,spec}.ts",
         "src/wsproxy/**",
         "src/lib/backend.ai-client-node.*",
+        // Build tooling — instrumenting these slows tests without giving
+        // useful coverage signal. They are exercised end-to-end by the
+        // tests but the coverage % of build scripts is not actionable.
+        "scripts/**/*.cjs",
       ],
     },
   },

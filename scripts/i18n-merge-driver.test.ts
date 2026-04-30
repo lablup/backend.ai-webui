@@ -1,16 +1,15 @@
-import { readFileSync } from "fs";
+import { mkdtempSync, rmSync, writeFileSync } from "fs";
+import { tmpdir } from "os";
+import { join } from "path";
 
-// Mock fs functions. Must be `vi.mock` (not `jest.mock`) — only the literal
-// `vi.mock` identifier is hoisted by Vitest above the `import` statements.
-vi.mock("fs", () => ({
-  readFileSync: vi.fn(),
-}));
-
-// Mock process.exit to avoid test termination
-const mockExit = jest.fn();
+// Mock process.exit to avoid test termination if the driver triggers it.
+const mockExit = vi.fn();
 process.exit = mockExit as any;
 
-// Import functions from the actual implementation
+// Import functions from the actual CJS driver. Using `require()` (not
+// `vi.mock`) — the driver itself does `require("fs")` internally, and that
+// CJS require slips past Vitest's module mock transform. Tests below that
+// need to exercise file IO use real temp files instead of mocks.
 const {
   readJSON,
   deepEqual,
@@ -19,36 +18,36 @@ const {
   pathKey,
 } = require("./i18n-merge-driver");
 
-const mockReadFileSync = readFileSync as jest.MockedFunction<
-  typeof readFileSync
->;
-
 describe("i18n-merge-driver utility functions", () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe("readJSON", () => {
-    // TODO(FR-2609): vitest's `vi.mock('fs', ...)` does not propagate into
-    // the CJS `require("fs")` at the top of `i18n-merge-driver.js`. Jest's
-    // `require` patching applied globally; vitest only intercepts imports on
-    // its own transform pipeline, and the JS file's inline `require()` slips
-    // through. Re-enable after migrating the driver to ESM or switching to
-    // `vi.mock` on the driver module directly.
-    it.skip("should parse JSON from file correctly", () => {
-      const mockData = '{"test": "value"}';
-      mockReadFileSync.mockReturnValue(mockData);
+    let tmpDir: string;
 
-      const result = readJSON("test.json");
+    beforeEach(() => {
+      tmpDir = mkdtempSync(join(tmpdir(), "i18n-merge-driver-test-"));
+    });
 
-      expect(mockReadFileSync).toHaveBeenCalledWith("test.json", "utf8");
+    afterEach(() => {
+      rmSync(tmpDir, { recursive: true, force: true });
+    });
+
+    it("should parse JSON from file correctly", () => {
+      const file = join(tmpDir, "valid.json");
+      writeFileSync(file, '{"test": "value"}', "utf8");
+
+      const result = readJSON(file);
+
       expect(result).toEqual({ test: "value" });
     });
 
     it("should throw error for invalid JSON", () => {
-      mockReadFileSync.mockReturnValue("{invalid json}");
+      const file = join(tmpDir, "invalid.json");
+      writeFileSync(file, "{invalid json}", "utf8");
 
-      expect(() => readJSON("invalid.json")).toThrow();
+      expect(() => readJSON(file)).toThrow();
     });
   });
 
