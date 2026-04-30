@@ -29,49 +29,64 @@ const VFolderRelayResolver = ({
   );
 };
 
+// V2 VFolder mock shape: `id`, `status`, `metadata { name }`. The component
+// derives local UUIDs (used for `valuePropName='row_id'`) via `toLocalId(id)`
+// at render time, so stories no longer need to provide a separate `row_id`.
 const sampleVFolders = [
   {
     node: {
-      id: 'VkZvbGRlck5vZGU6MTIzNDU2Nzg5MA==',
-      name: 'my-project-data',
-      row_id: 'abcd1234-5678-90ef-ghij-klmnopqrstuv',
+      id: 'VkZvbGRlcjphYmNkMTIzNC01Njc4LTkwZWYtZ2hpai1rbG1ub3BxcnN0dXY=',
+      status: 'READY',
+      metadata: {
+        name: 'my-project-data',
+      },
     },
   },
   {
     node: {
-      id: 'VkZvbGRlck5vZGU6MDk4NzY1NDMyMQ==',
-      name: 'shared-datasets',
-      row_id: 'wxyz9876-5432-10ab-cdef-ghijklmnopqr',
+      id: 'VkZvbGRlcjp3eHl6OTg3Ni01NDMyLTEwYWItY2RlZi1naGlqa2xtbm9wcXI=',
+      status: 'READY',
+      metadata: {
+        name: 'shared-datasets',
+      },
     },
   },
   {
     node: {
-      id: 'VkZvbGRlck5vZGU6MTExMTExMTExMQ==',
-      name: 'model-checkpoints',
-      row_id: 'aaaa1111-2222-3333-4444-555566667777',
+      id: 'VkZvbGRlcjphYWFhMTExMS0yMjIyLTMzMzMtNDQ0NC01NTU1NjY2Njc3Nzc=',
+      status: 'READY',
+      metadata: {
+        name: 'model-checkpoints',
+      },
     },
   },
   {
     node: {
-      id: 'VkZvbGRlck5vZGU6MjIyMjIyMjIyMg==',
-      name: 'training-logs',
-      row_id: 'bbbb2222-3333-4444-5555-666677778888',
+      id: 'VkZvbGRlcjpiYmJiMjIyMi0zMzMzLTQ0NDQtNTU1NS02NjY2Nzc3Nzg4ODg=',
+      status: 'READY',
+      metadata: {
+        name: 'training-logs',
+      },
     },
   },
   {
     node: {
-      id: 'VkZvbGRlck5vZGU6MzMzMzMzMzMzMw==',
-      name: 'test-results',
-      row_id: 'cccc3333-4444-5555-6666-777788889999',
+      id: 'VkZvbGRlcjpjY2NjMzMzMy00NDQ0LTU1NTUtNjY2Ni03Nzc3ODg4ODk5OTk=',
+      status: 'READY',
+      metadata: {
+        name: 'test-results',
+      },
     },
   },
 ];
 
 const sampleManyVFolders = Array.from({ length: 15 }, (_, i) => ({
   node: {
-    id: `VkZvbGRlck5vZGU6${i + 1000000000}`,
-    name: `vfolder-${i + 1}`,
-    row_id: `${i.toString().padStart(8, '0')}-aaaa-bbbb-cccc-ddddeeeefffff`,
+    id: btoa(`VFolder:00000000-aaaa-bbbb-cccc-${String(i).padStart(12, '0')}`),
+    status: 'READY',
+    metadata: {
+      name: `vfolder-${i + 1}`,
+    },
   },
 }));
 
@@ -106,24 +121,24 @@ const meta: Meta<typeof BAIVFolderSelect> = {
 
 | Name | Type | Default | Description |
 |------|------|---------|-------------|
-| \`currentProjectId\` | \`string\` | - | Project ID to scope vfolder selection |
+| \`currentProjectId\` | \`string\` | - | Project ID to scope vfolder selection. When set, the paginated query uses \`projectVfolders\`; otherwise \`myVfolders\`. |
 | \`onClickVFolder\` | \`(value: string) => void\` | - | Callback when vfolder name is clicked |
-| \`filter\` | \`string\` | - | Additional filter string for vfolder query |
+| \`filter\` | \`VFolderFilter \\| null\` | - | Additional structured filter merged into the paginated query (AND-combined with internal filters) |
 | \`valuePropName\` | \`'id' \\| 'row_id'\` | \`'id'\` | Which field to use as option value |
 | \`excludeDeleted\` | \`boolean\` | \`false\` | Exclude deleted or deleting vfolders |
 | \`ref\` | \`React.Ref<BAIVFolderSelectRef>\` | - | Ref exposing \`refetch()\` method |
 
 ## Features
-- Fetches vfolders from two GraphQL queries:
-  - \`BAIVFolderSelectValueQuery\`: Fetch selected vfolder labels
-  - \`BAIVFolderSelectPaginatedQuery\`: Fetch paginated available vfolders
+- Strawberry V2 GraphQL queries:
+  - \`BAIVFolderSelectValueQuery\`: Resolves preselected vfolders by id via aliased \`vfolderV2(vfolderId:)\` lookups (up to 10 slots)
+  - \`BAIVFolderSelectPaginatedQuery\`: Paginated \`myVfolders\` / \`projectVfolders\` depending on \`currentProjectId\`
 - Pagination support with \`useLazyPaginatedQuery\` hook
-- Search functionality with debounced loading state
+- Search functionality with debounced loading state, using \`VFolderFilter.name.iContains\`
 - Infinite scroll via \`endReached\` callback
 - Total count footer with loading indicator
 - Custom label/option rendering with ID display (truncated)
 - Clickable vfolder names when \`onClickVFolder\` is provided
-- Automatic filtering of deleted vfolders when \`excludeDeleted\` is true
+- Automatic filtering of deleted vfolders via \`VFolderOperationStatusFilter\` when \`excludeDeleted\` is true
 - Project scoping through \`currentProjectId\` prop
 - Optimistic UI updates for smooth user experience
 - Exposed \`refetch()\` method via ref
@@ -133,23 +148,15 @@ const meta: Meta<typeof BAIVFolderSelect> = {
 ### Value Query (for selected items)
 \`\`\`graphql
 query BAIVFolderSelectValueQuery(
-  $selectedFilter: String
-  $skipSelectedVFolder: Boolean!
-  $scopeId: ScopeField
+  $id0: UUID!
+  $include0: Boolean!
+  # ... up to $id9 / $include9
 ) {
-  vfolder_nodes(
-    scope_id: $scopeId
-    filter: $selectedFilter
-    permission: "read_attribute"
-  ) @skip(if: $skipSelectedVFolder) {
-    edges {
-      node {
-        name
-        id
-        row_id
-      }
-    }
+  v0: vfolderV2(vfolderId: $id0) @include(if: $include0) {
+    id
+    metadata { name }
   }
+  # ... v1..v9
 }
 \`\`\`
 
@@ -158,26 +165,25 @@ query BAIVFolderSelectValueQuery(
 query BAIVFolderSelectPaginatedQuery(
   $offset: Int!
   $limit: Int!
-  $scopeId: ScopeField
-  $filter: String
-  $permission: VFolderPermissionValueField
+  $projectId: UUID!
+  $filter: VFolderFilter
+  $orderBy: [VFolderOrderBy!]
+  $useProject: Boolean!
 ) {
-  vfolder_nodes(
-    scope_id: $scopeId
-    offset: $offset
-    first: $limit
-    filter: $filter
-    permission: $permission
-    order: "-created_at"
-  ) {
+  myVfolders(offset: $offset, limit: $limit, filter: $filter, orderBy: $orderBy)
+    @skip(if: $useProject) {
     count
-    edges {
-      node {
-        id
-        name
-        row_id
-      }
-    }
+    edges { node { id metadata { name } } }
+  }
+  projectVfolders(
+    projectId: $projectId
+    offset: $offset
+    limit: $limit
+    filter: $filter
+    orderBy: $orderBy
+  ) @include(if: $useProject) {
+    count
+    edges { node { id metadata { name } } }
   }
 }
 \`\`\`
@@ -190,16 +196,16 @@ query BAIVFolderSelectPaginatedQuery(
   onChange={(value) => console.log(value)}
 />
 
-// With project scoping
+// With project scoping (uses projectVfolders)
 <BAIVFolderSelect
   currentProjectId="project-123"
   excludeDeleted
   onChange={(value) => console.log(value)}
 />
 
-// With clickable names
+// With structured filter
 <BAIVFolderSelect
-  onClickVFolder={(id) => window.open(\`/vfolder/\${id}\`)}
+  filter={{ name: { iContains: 'test' } }}
   onChange={(value) => console.log(value)}
 />
 
@@ -230,11 +236,11 @@ For all other props, refer to [BAISelect](/?path=/docs/components-input-baiselec
       description: 'Callback when vfolder name is clicked',
     },
     filter: {
-      control: { type: 'text' },
+      control: false,
       description:
-        'Additional filter string for vfolder query (e.g., "name ilike \'%test%\'")',
+        'Additional VFolderFilter merged into the paginated query (e.g., `{ name: { iContains: "test" } }`)',
       table: {
-        type: { summary: 'string' },
+        type: { summary: 'VFolderFilter | null' },
       },
     },
     valuePropName: {
@@ -308,7 +314,11 @@ export const Default: Story = {
     <VFolderRelayResolver
       mockResolvers={{
         Query: () => ({
-          vfolder_nodes: {
+          myVfolders: {
+            count: 5,
+            edges: sampleVFolders,
+          },
+          projectVfolders: {
             count: 5,
             edges: sampleVFolders,
           },
@@ -338,7 +348,11 @@ export const Empty: Story = {
     <VFolderRelayResolver
       mockResolvers={{
         Query: () => ({
-          vfolder_nodes: {
+          myVfolders: {
+            count: 0,
+            edges: [],
+          },
+          projectVfolders: {
             count: 0,
             edges: [],
           },
@@ -370,7 +384,11 @@ export const ManyVFolders: Story = {
     <VFolderRelayResolver
       mockResolvers={{
         Query: () => ({
-          vfolder_nodes: {
+          myVfolders: {
+            count: 15,
+            edges: sampleManyVFolders,
+          },
+          projectVfolders: {
             count: 15,
             edges: sampleManyVFolders,
           },
@@ -402,7 +420,11 @@ export const WithClickableNames: Story = {
     <VFolderRelayResolver
       mockResolvers={{
         Query: () => ({
-          vfolder_nodes: {
+          myVfolders: {
+            count: 5,
+            edges: sampleVFolders,
+          },
+          projectVfolders: {
             count: 5,
             edges: sampleVFolders,
           },
@@ -439,7 +461,11 @@ export const WithRowId: Story = {
     <VFolderRelayResolver
       mockResolvers={{
         Query: () => ({
-          vfolder_nodes: {
+          myVfolders: {
+            count: 5,
+            edges: sampleVFolders,
+          },
+          projectVfolders: {
             count: 5,
             edges: sampleVFolders,
           },

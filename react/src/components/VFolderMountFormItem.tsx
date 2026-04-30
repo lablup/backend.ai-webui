@@ -2,7 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { VFolderMountFormItemAutoMountQuery } from '../__generated__/VFolderMountFormItemAutoMountQuery.graphql';
+import {
+  VFolderMountFormItemAutoMountQuery,
+  VFolderFilter,
+} from '../__generated__/VFolderMountFormItemAutoMountQuery.graphql';
 import FolderCreateModalV2 from './FolderCreateModalV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import {
@@ -48,7 +51,7 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
  */
 
 interface VFolderMountFormItemProps {
-  filter?: string;
+  filter?: VFolderFilter | null;
   currentProjectId?: string;
   label?: React.ReactNode;
 }
@@ -328,7 +331,8 @@ const VFolderMountFormItem: React.FC<VFolderMountFormItemProps> = ({
 
 /**
  * Lazy-loaded section that queries and displays auto-mount folders (name starts with '.').
- * Uses GraphQL vfolder_nodes with the same filter condition as VFolderTable and VFolderNodeListPage.
+ * Uses the Strawberry V2 `projectVfolders` query with a `VFolderFilter` that
+ * mirrors the previous filter string (`name ilike ".%" & status == "ready"`).
  */
 const AutoMountFolderSection: React.FC<{ currentProjectId: string }> = ({
   currentProjectId,
@@ -336,36 +340,45 @@ const AutoMountFolderSection: React.FC<{ currentProjectId: string }> = ({
   'use memo';
   const { t } = useTranslation();
 
-  const { vfolder_nodes } =
+  const { projectVfolders } =
     useLazyLoadQuery<VFolderMountFormItemAutoMountQuery>(
       graphql`
         query VFolderMountFormItemAutoMountQuery(
-          $scopeId: ScopeField
-          $filter: String
+          $projectId: UUID!
+          $filter: VFolderFilter
+          $limit: Int
         ) {
-          vfolder_nodes(
-            scope_id: $scopeId
+          projectVfolders(
+            projectId: $projectId
             filter: $filter
-            first: 100
-            permission: "read_attribute"
+            limit: $limit
           ) {
             edges {
               node {
-                name
+                id
                 status
+                metadata {
+                  name
+                }
               }
             }
           }
         }
       `,
       {
-        scopeId: `project:${currentProjectId}`,
-        filter: 'name ilike ".%" & status == "ready"',
+        projectId: currentProjectId,
+        filter: {
+          AND: [
+            { name: { iStartsWith: '.' } },
+            { status: { equals: 'READY' } },
+          ],
+        },
+        limit: 100,
       },
     );
 
   const autoMountNames = _.compact(
-    _.map(vfolder_nodes?.edges, (edge) => edge?.node?.name),
+    _.map(projectVfolders?.edges, (edge) => edge?.node?.metadata?.name),
   );
 
   if (autoMountNames.length === 0) return null;
