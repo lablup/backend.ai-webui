@@ -207,7 +207,7 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
             edges @required(action: THROW) {
               node @required(action: THROW) {
                 id @required(action: THROW)
-                status
+                vfolderStatus: status
                 ...VFolderNodesV2Fragment
                 ...DeleteVFolderModalV2Fragment
                 ...DeleteForeverVFolderModalV2Fragment
@@ -442,8 +442,8 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
             getCheckboxProps(record: VFolderNodeInList) {
               return {
                 disabled:
-                  isDeletedCategory(record.status) &&
-                  record.status !== 'DELETE_PENDING',
+                  isDeletedCategory(record.vfolderStatus) &&
+                  record.vfolderStatus !== 'DELETE_PENDING',
               };
             },
             onChange: (selectedRowKeys) => {

@@ -70,7 +70,9 @@ const BAIGeneralNotificationItem: React.FC<{
             </Typography.Paragraph>
           </BAIFlex>
           <BAIFlex direction="row" align="end" gap={'xxs'} justify="between">
-            <Typography.Paragraph>
+            <Typography.Paragraph
+              style={{ flex: 1, minWidth: 0, marginBottom: 0 }}
+            >
               {_.isString(notification.description)
                 ? _.truncate(notification.description, {
                     length: 300,
@@ -78,8 +80,9 @@ const BAIGeneralNotificationItem: React.FC<{
                 : notification.description}
             </Typography.Paragraph>
             {notification.to ? (
-              <BAIFlex>
+              <BAIFlex style={{ flexShrink: 0 }}>
                 <Typography.Link
+                  style={{ whiteSpace: 'nowrap' }}
                   onClick={(e) => {
                     onClickAction && onClickAction(e, notification);
                   }}
@@ -91,15 +94,16 @@ const BAIGeneralNotificationItem: React.FC<{
               </BAIFlex>
             ) : null}
             {notification?.onCancel ? (
-              <BAIFlex>
+              <BAIFlex style={{ flexShrink: 0 }}>
                 <Button type="link" onClick={notification.onCancel}>
                   {t('button.Cancel')}
                 </Button>
               </BAIFlex>
             ) : null}
             {notification.extraDescription && !notification?.onCancel ? (
-              <BAIFlex>
+              <BAIFlex style={{ flexShrink: 0 }}>
                 <Typography.Link
+                  style={{ whiteSpace: 'nowrap' }}
                   onClick={() => {
                     // onClickAction && onClickAction(e, notification);
                     setShowExtraDescription(!showExtraDescription);

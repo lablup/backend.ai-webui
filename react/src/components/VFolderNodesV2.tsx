@@ -11,6 +11,7 @@ import { VFolderNodesV2RestoreMutation } from '../__generated__/VFolderNodesV2Re
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useSuspenseTanQuery, useTanQuery } from '../hooks/reactQueryAlias';
+import { useSetBAINotification } from '../hooks/useBAINotification';
 import { isDeletedCategory } from '../pages/VFolderNodeListPage';
 import DeleteForeverVFolderModalV2 from './DeleteForeverVFolderModalV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
@@ -28,6 +29,7 @@ import {
   filterOutNullAndUndefined,
   BAIAlertIconWithTooltip,
   BAIEndpointsIcon,
+  BAILink,
   BAIRestoreIcon,
   BAIShareAltIcon,
   BAITrashBinIcon,
@@ -48,6 +50,7 @@ import * as _ from 'lodash-es';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
+import { useNavigate } from 'react-router-dom';
 
 export const statusTagColor = {
   // V2 UPPERCASE enum values (VFolderOperationStatus)
@@ -130,7 +133,7 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
 
   const isPipelineFolder = vfolder?.metadata?.usageMode === 'DATA';
   const isModelFolder = vfolder?.metadata?.usageMode === 'MODEL';
-  const isDeleted = isDeletedCategory(vfolder?.status);
+  const isDeleted = isDeletedCategory(vfolder?.vfolderStatus);
 
   const vfolderId = toLocalId(vfolder.id ?? '');
 
@@ -186,7 +189,8 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
           key: 'restore',
           title: t('data.folders.Restore'),
           icon: <BAIRestoreIcon />,
-          disabled: vfolder?.status !== 'DELETE_PENDING' || isPipelineFolder,
+          disabled:
+            vfolder?.vfolderStatus !== 'DELETE_PENDING' || isPipelineFolder,
           disabledReason: isPipelineFolder
             ? t('data.folders.CannotRestorePipelineFolder')
             : undefined,
@@ -200,7 +204,7 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
           title: t('data.folders.Delete'),
           icon: <BAITrashBinIcon />,
           type: 'danger' as const,
-          disabled: vfolder?.status !== 'DELETE_PENDING',
+          disabled: vfolder?.vfolderStatus !== 'DELETE_PENDING',
           onClick: onDeleteForever,
         }
       : null,
@@ -416,6 +420,8 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
   const [currentUser] = useCurrentUserInfo();
   const [inviteFolderId, setInviteFolderId] = useState<string | null>(null);
   const { getErrorMessage } = useErrorMessageResolver();
+  const navigate = useNavigate();
+  const { upsertNotification } = useSetBAINotification();
 
   // Row-level hard-delete reuses the same modal as the bulk toolbar
   // (typed-input confirmation is required for irreversible deletion). Soft
@@ -432,11 +438,16 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
   >(null);
   const [isHostQuotaModalOpen, setIsHostQuotaModalOpen] = useState(false);
 
+  // `vfolderStatus: status` aliases the V2 `VFolder.status`
+  // (`VFolderOperationStatus!`) so it doesn't collide with V1
+  // `VirtualFolderNode.status` (`String`) and `ComputeSessionNode.status`
+  // (`String`) — both reachable from here via `BAINodeNotificationItemFragment`.
+  // The Status column key + V2 OrderField sort value stay `status`.
   const vfolders = useFragment(
     graphql`
       fragment VFolderNodesV2Fragment on VFolder @relay(plural: true) {
         id @required(action: NONE)
-        status
+        vfolderStatus: status
         host
         unmanagedPath
         metadata {
@@ -470,6 +481,7 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
         ...VFolderNodeIdenticonV2Fragment
         ...SharedFolderPermissionInfoModalV2Fragment
         ...DeleteForeverVFolderModalV2Fragment
+        ...BAINodeNotificationItemFragment @alias(as: "notificationFrgmt")
       }
     `,
     vfoldersFrgmt,
@@ -497,45 +509,43 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
     `,
   );
 
-  // TODO(FR-XXXX): Re-enable rich notification (folder header link + clickable
-  // session IDs via `upsertNotification`) once `BAINodeNotificationItemFragment`
-  // gains a `... on VFolder` branch. For now the V2 `VFolder` type is not
-  // recognized by the notification dispatcher, so we fall back to a plain
-  // error toast. Kept the parsing/link-rendering code below commented for
-  // easy restoration.
-  const handleDeleteError = (_vfolder: VFolderNodeInList, error: Error) => {
-    message.error(getErrorMessage(error));
-    // const matchString = error?.message.match(/sessions\(ids: (\[.*?\])\)/)?.[1];
-    // const occupiedSession = JSON.parse(matchString?.replace(/'/g, '"') || '[]');
-    // upsertNotification({
-    //   open: true,
-    //   key: `vfolder-error-${_vfolder?.id}`,
-    //   node: _vfolder,
-    //   description: getErrorMessage(error).replace(/\(ids[\s\S]*$/, ''),
-    //   extraDescription: !_.isEmpty(occupiedSession) ? (
-    //     <BAIFlex direction="column" align="stretch">
-    //       <Typography.Text style={{ color: token.colorTextDescription }}>
-    //         {t('data.folders.MountedSessions')}
-    //       </Typography.Text>
-    //       {_.map(occupiedSession, (sessionId) => (
-    //         <BAILink
-    //           key={sessionId}
-    //           style={{ fontWeight: 'normal' }}
-    //           onClick={() => {
-    //             navigate({
-    //               pathname: '/session',
-    //               search: new URLSearchParams({
-    //                 sessionDetail: sessionId,
-    //               }).toString(),
-    //             });
-    //           }}
-    //         >
-    //           {sessionId}
-    //         </BAILink>
-    //       ))}
-    //     </BAIFlex>
-    //   ) : null,
-    // });
+  // V2 rich-notification path: now that `BAINodeNotificationItemFragment`
+  // gained a `... on VFolder` branch (FR-2573 follow-up), we can render the
+  // same folder-link + clickable session-IDs UX the V1 `VFolderNodes` flow
+  // uses. Falls back gracefully to a plain description if the error message
+  // doesn't carry an occupied-sessions list.
+  const handleDeleteError = (vfolder: VFolderNodeInList, error: Error) => {
+    const matchString = error?.message.match(/sessions\(ids: (\[.*?\])\)/)?.[1];
+    const occupiedSession = JSON.parse(matchString?.replace(/'/g, '"') || '[]');
+    upsertNotification({
+      open: true,
+      key: `vfolder-error-${vfolder?.id}`,
+      node: vfolder?.notificationFrgmt ?? null,
+      description: getErrorMessage(error).replace(/\(ids[\s\S]*$/, ''),
+      extraDescription: !_.isEmpty(occupiedSession) ? (
+        <BAIFlex direction="column" align="stretch">
+          <Typography.Text style={{ color: token.colorTextDescription }}>
+            {t('data.folders.MountedSessions')}
+          </Typography.Text>
+          {_.map(occupiedSession, (sessionId) => (
+            <BAILink
+              key={sessionId}
+              style={{ fontWeight: 'normal' }}
+              onClick={() => {
+                navigate({
+                  pathname: '/session',
+                  search: new URLSearchParams({
+                    sessionDetail: sessionId,
+                  }).toString(),
+                });
+              }}
+            >
+              {sessionId}
+            </BAILink>
+          ))}
+        </BAIFlex>
+      ) : null,
+    });
   };
 
   return (
@@ -589,14 +599,12 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
                     const folderId = vfolder?.id;
                     if (!folderId) return;
                     const handleError = (error: Error) => {
-                      // TODO(FR-XXXX): Swap back to `upsertNotification` once the
-                      // V2 VFolder branch lands in BAINodeNotificationItem.
-                      message.error(getErrorMessage(error));
-                      // upsertNotification({
-                      //   key: `vfolder-error-${folderId}`,
-                      //   description: getErrorMessage(error),
-                      //   open: true,
-                      // });
+                      upsertNotification({
+                        key: `vfolder-error-${folderId}`,
+                        node: vfolder?.notificationFrgmt ?? null,
+                        description: getErrorMessage(error),
+                        open: true,
+                      });
                     };
                     commitRestoreMutation({
                       variables: { vfolderId: toLocalId(folderId) },
@@ -629,7 +637,7 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
           {
             key: 'status',
             title: t('data.folders.Status'),
-            dataIndex: 'status',
+            dataIndex: 'vfolderStatus',
             render: (status: string) => {
               return (
                 <BAITag

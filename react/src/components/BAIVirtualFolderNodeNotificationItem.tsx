@@ -23,6 +23,12 @@ interface BAIVirtualFolderNodeNotificationItemProps {
   showDate?: boolean;
 }
 
+/**
+ * @deprecated Renders V1 `VirtualFolderNode` notifications. The V2 counterpart
+ * `BAIVFolderNotificationItem` (operating on `VFolder implements Node` from
+ * the Strawberry GraphQL API, FR-2573) is the preferred path going forward.
+ * This component will be removed once all V1 callers migrate.
+ */
 const BAIVirtualFolderNodeNotificationItem: React.FC<
   BAIVirtualFolderNodeNotificationItemProps
 > = ({ notification, virtualFolderNodeFrgmt, showDate }) => {
@@ -79,7 +85,7 @@ const BAIVirtualFolderNodeNotificationItem: React.FC<
                 justify="between"
               >
                 {_.isString(notification.description) ? (
-                  <BAIText>
+                  <BAIText style={{ flex: 1, minWidth: 0 }}>
                     {_.truncate(notification.description, { length: 300 })}
                   </BAIText>
                 ) : (
@@ -87,8 +93,9 @@ const BAIVirtualFolderNodeNotificationItem: React.FC<
                 )}
 
                 {notification.extraDescription && !notification?.onCancel ? (
-                  <BAIFlex>
+                  <BAIFlex style={{ flexShrink: 0 }}>
                     <Typography.Link
+                      style={{ whiteSpace: 'nowrap' }}
                       onClick={() => {
                         toggleShowExtraDescription();
                       }}
