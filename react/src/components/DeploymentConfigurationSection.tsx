@@ -5,11 +5,13 @@
 import { DeploymentConfigurationSectionQuery } from '../__generated__/DeploymentConfigurationSectionQuery.graphql';
 import { useWebUINavigate } from '../hooks';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
+import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import SourceCodeView from './SourceCodeView';
 import {
   CheckOutlined,
   CloseOutlined,
   EditOutlined,
+  FolderOpenOutlined,
   LoadingOutlined,
 } from '@ant-design/icons';
 import {
@@ -58,7 +60,7 @@ type ModelDef = {
 
 const descriptionsProps = {
   bordered: true,
-  column: { xxl: 3, xl: 2, lg: 2, md: 1, sm: 1, xs: 1 },
+  column: { xs: 1, sm: 1, md: 2, lg: 2, xl: 2, xxl: 2 },
 } as const;
 
 const renderFallback = () => (
@@ -220,6 +222,7 @@ const DeploymentRevisionInfoContent: React.FC<{
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
+  const { open: openFolderExplorer } = useFolderExplorerOpener();
 
   const currentRevision = deployment?.currentRevision;
   const deployingRevision = deployment?.deployingRevision;
@@ -249,14 +252,37 @@ const DeploymentRevisionInfoContent: React.FC<{
       key: 'model-folder',
       label: t('deployment.ModelFolder'),
       children: mountConfig?.vfolder?.name ? (
-        <BAIFlex direction="column" align="start">
-          <Typography.Text>{mountConfig.vfolder.name}</Typography.Text>
-          {mountConfig.mountDestination && (
-            <Typography.Text type="secondary">
-              {mountConfig.mountDestination}
-            </Typography.Text>
-          )}
-        </BAIFlex>
+        (() => {
+          const localId = toLocalId(mountConfig.vfolder.id);
+          return (
+            <BAIFlex direction="column" align="start">
+              <BAIFlex gap="xs" align="center">
+                <Typography.Text>{mountConfig.vfolder.name}</Typography.Text>
+                <Button
+                  type="link"
+                  size="small"
+                  icon={<FolderOpenOutlined />}
+                  aria-label={t('modelService.OpenFolder')}
+                  title={t('modelService.OpenFolder')}
+                  disabled={!localId}
+                  style={{ padding: 0 }}
+                  onClick={() => {
+                    if (localId) openFolderExplorer(localId);
+                  }}
+                />
+              </BAIFlex>
+              {mountConfig.mountDestination && (
+                <Typography.Text type="secondary">
+                  {mountConfig.mountDestination}
+                </Typography.Text>
+              )}
+            </BAIFlex>
+          );
+        })()
+      ) : mountConfig?.vfolderId ? (
+        <Typography.Text type="secondary">
+          {mountConfig.vfolderId}
+        </Typography.Text>
       ) : (
         renderFallback()
       ),

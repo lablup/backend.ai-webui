@@ -85,7 +85,9 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
     {
       current: parseAsInteger.withDefault(1),
       pageSize: parseAsInteger.withDefault(10),
-      order: parseAsStringLiteral(availableReplicaSorterValues),
+      order: parseAsStringLiteral(availableReplicaSorterValues).withDefault(
+        '-createdAt',
+      ),
       rFilter: parseAsString,
     },
     {
@@ -237,6 +239,9 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
       title: t('deployment.HealthStatus'),
       dataIndex: 'livenessStatus',
       render: (value: string | null | undefined) => (
+        // TODO(needs-backend): FR-2787 — expose failure reason / error message
+        // from the replica once the backend adds a `failureReason` field to
+        // `ModelReplica` so unhealthy replicas surface actionable error info.
         <ReplicaStatusTag status={toReplicaTagStatus(value)} />
       ),
     },
@@ -292,6 +297,7 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
       title: t('deployment.CreatedAt'),
       dataIndex: 'createdAt',
       sorter: isEnableSorter('createdAt'),
+      defaultSortOrder: 'descend',
       render: (value: string | null | undefined) =>
         value ? dayjs(value).format('lll') : '-',
     },
