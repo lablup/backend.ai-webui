@@ -110,6 +110,7 @@
     "operator": {
       "After": "depois",
       "Before": "antes",
+      "Equals": "igual a",
       "GreaterThan": "maior que",
       "GreaterThanOrEqual": "maior ou igual",
       "IContains": "contém",
@@ -123,6 +124,7 @@
       "In": "em",
       "LessThan": "menor que",
       "LessThanOrEqual": "menor ou igual",
+      "NotEquals": "diferente de",
       "NotIn": "não em"
     }
   },

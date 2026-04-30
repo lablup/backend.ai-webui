@@ -4,7 +4,6 @@
  */
 import { DeploymentLauncherPageContentPresetSummaryQuery } from '../__generated__/DeploymentLauncherPageContentPresetSummaryQuery.graphql';
 import { DeploymentLauncherPageContent_deployment$key } from '../__generated__/DeploymentLauncherPageContent_deployment.graphql';
-import { useBaiSignedRequestWithPromise } from '../helper';
 import { parseCliCommand } from '../helper/parseCliCommand';
 import {
   mergeExtraArgs,
@@ -12,7 +11,6 @@ import {
 } from '../helper/runtimeExtraArgsParser';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { ResourceSlotName, useResourceSlots } from '../hooks/backendai';
-import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import {
@@ -148,6 +146,8 @@ export interface DeploymentLauncherPageContentProps {
    * Provides the deployment snapshot used to pre-fill the form.
    */
   deploymentFrgmt?: DeploymentLauncherPageContent_deployment$key | null;
+  /** Available runtime variants fetched by the parent page layout. */
+  runtimeVariants?: ReadonlyArray<{ name: string; rowId: string }>;
   /**
    * Optional change observer forwarded to the underlying antd `<Form>`.
    * Useful for parent pages that want to persist the draft state
@@ -231,6 +231,7 @@ const DeploymentLauncherPageContent: React.FC<
   mode,
   form,
   deploymentFrgmt,
+  runtimeVariants = [],
   onValuesChange,
   onCancel,
   onSubmit,
@@ -242,20 +243,6 @@ const DeploymentLauncherPageContent: React.FC<
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const screens = Grid.useBreakpoint();
-  const baiClient = useSuspendedBackendaiClient();
-  const baiRequestWithPromise = useBaiSignedRequestWithPromise();
-
-  // Fetch available runtime variants from the model-service runtimes endpoint.
-  // Falls back to an empty list so the Select renders without crashing.
-  const { data: availableRuntimes } = useSuspenseTanQuery<{
-    runtimes: { name: string; human_readable_name: string }[];
-  }>({
-    queryKey: ['DeploymentLauncher.runtime.list'],
-    queryFn: () =>
-      baiRequestWithPromise({ method: 'GET', url: `/services/_/runtimes` }),
-    staleTime: 60_000,
-  });
-
   // Debounced CLI command parser — auto-fills port/health/mount from the
   // pasted command, mirroring ServiceLauncherPageContent behaviour.
   const { run: parseCommandWithDebounce } = useDebounceFn(
@@ -269,8 +256,6 @@ const DeploymentLauncherPageContent: React.FC<
     },
     { wait: 400 },
   );
-
-  void baiClient; // used only for feature-flag checks in future wiring
 
   const currentProject = useCurrentProjectValue();
 
@@ -578,10 +563,10 @@ const DeploymentLauncherPageContent: React.FC<
     { title: t('deployment.step.ReviewAndCreate') },
   ];
 
-  const runtimeVariantOptions = _.map(
-    availableRuntimes?.runtimes ?? [],
-    (rt) => ({ value: rt.name, label: rt.human_readable_name }),
-  );
+  const runtimeVariantOptions = _.map(runtimeVariants, (rt) => ({
+    value: rt.name,
+    label: rt.name,
+  }));
 
   return (
     <BAIFlex direction="row" gap="md" align="start" style={{ width: '100%' }}>

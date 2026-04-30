@@ -194,11 +194,13 @@ const DeploymentLauncherPageLayout: React.FC<
       { fetchPolicy: 'store-or-network' },
     );
 
+  const runtimeVariantList =
+    runtimeVariants?.edges
+      ?.map((e) => e?.node)
+      ?.filter((n): n is NonNullable<typeof n> => Boolean(n)) ?? [];
+
   const runtimeVariantByName = Object.fromEntries(
-    (runtimeVariants?.edges ?? [])
-      .map((e) => e?.node)
-      .filter((n): n is NonNullable<typeof n> => n != null)
-      .map((n) => [n.name, n]),
+    runtimeVariantList.map((n) => [n.name, n]),
   );
 
   // Track form dirtiness to guard cancel with a confirm dialog. We use
@@ -554,6 +556,7 @@ const DeploymentLauncherPageLayout: React.FC<
         mode={mode}
         form={form}
         deploymentFrgmt={deploymentFrgmt}
+        runtimeVariants={runtimeVariantList}
         onValuesChange={() => setIsDirty(true)}
         onCancel={handleCancel}
         onSubmit={handleSubmit}

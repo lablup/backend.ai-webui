@@ -110,6 +110,7 @@
     "operator": {
       "After": "setelah",
       "Before": "sebelum",
+      "Equals": "sama dengan",
       "GreaterThan": "lebih besar dari",
       "GreaterThanOrEqual": "lebih besar atau sama",
       "IContains": "mengandung",
@@ -123,6 +124,7 @@
       "In": "dalam",
       "LessThan": "kurang dari",
       "LessThanOrEqual": "kurang dari atau sama",
+      "NotEquals": "tidak sama dengan",
       "NotIn": "tidak dalam"
     }
   },

@@ -100,21 +100,14 @@ const SessionDetailContent: React.FC<{
   // TODO: Remove useLazyLoadQuery and use useRefetchableFragment instead of useFragment to fetch session data when deprecatedProjectId is removed.
   const { internalLoadedSession } = useLazyLoadQuery<SessionDetailContentQuery>(
     graphql`
-      query SessionDetailContentQuery(
-        $id: GlobalIDField!
-        $scope_id: ScopeField
-      ) {
-        internalLoadedSession: compute_session_node(
-          id: $id
-          scope_id: $scope_id
-        ) {
+      query SessionDetailContentQuery($id: GlobalIDField!) {
+        internalLoadedSession: compute_session_node(id: $id) {
           ...SessionDetailContentFragment
         }
       }
     `,
     {
       id: toGlobalId('ComputeSessionNode', id),
-      scope_id: `project:${currentProject.id}`,
     },
     {
       fetchPolicy:

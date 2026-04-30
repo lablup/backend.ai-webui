@@ -837,6 +837,7 @@
     "Revision": "Revision",
     "RevisionHistory": "Historial de Revision",
     "RevisionId": "ID de Revision",
+    "RevisionNumber": "Número de Revisión",
     "Revisions": "Revision",
     "Rollback": "Revertir",
     "RollbackConfirm": "¿Está seguro de que desea revertir a la Revision #{{revisionNumber}}? La Revision actual será reemplazada.",
@@ -899,7 +900,13 @@
       "AutoScaling": "Escalado automático",
       "Overview": "Resumen",
       "Replicas": "Réplicas",
-      "RevisionHistory": "Historial de Revision"
+      "RevisionHistory": "Historial de Revision",
+      "description": {
+        "AccessTokens": "Gestione los tokens de acceso para autenticar las solicitudes de API al endpoint de este despliegue.",
+        "AutoScaling": "Configure reglas de escalado automático para ajustar automáticamente el número de réplicas según las métricas de tráfico.",
+        "Replicas": "Vea todas las instancias de réplica en ejecución de este despliegue con su estado de salud y recursos.",
+        "RevisionHistory": "Explore las revisiones anteriores del despliegue y revierta a cualquier versión anterior. Para crear una nueva revisión, haga clic en «Editar Configuración» arriba."
+      }
     }
   },
   "desktopNotification": {

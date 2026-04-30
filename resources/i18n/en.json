@@ -838,6 +838,7 @@
     "Revision": "Revision",
     "RevisionHistory": "Revision History",
     "RevisionId": "Revision ID",
+    "RevisionNumber": "Revision Number",
     "Revisions": "Revisions",
     "Rollback": "Rollback",
     "RollbackConfirm": "Are you sure you want to rollback to Revision #{{revisionNumber}}? The current revision will be replaced.",
@@ -900,7 +901,13 @@
       "AutoScaling": "Auto-scaling",
       "Overview": "Overview",
       "Replicas": "Replicas",
-      "RevisionHistory": "Revision History"
+      "RevisionHistory": "Revision History",
+      "description": {
+        "AccessTokens": "Manage access tokens for authenticating API requests to this deployment's endpoint.",
+        "AutoScaling": "Configure auto-scaling rules to automatically adjust replica count based on traffic metrics.",
+        "Replicas": "View all running replica instances for this deployment with their health and resource status.",
+        "RevisionHistory": "Browse past deployment revisions and roll back to any previous one. To create a new revision, click Edit Configuration above."
+      }
     }
   },
   "desktopNotification": {

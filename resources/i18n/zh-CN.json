@@ -837,6 +837,7 @@
     "Revision": "Revision",
     "RevisionHistory": "Revision 历史",
     "RevisionId": "Revision ID",
+    "RevisionNumber": "Revision 编号",
     "Revisions": "Revision",
     "Rollback": "回滚",
     "RollbackConfirm": "确定要回滚到 Revision #{{revisionNumber}} 吗？当前 Revision 将被替换。",
@@ -899,7 +900,13 @@
       "AutoScaling": "自动扩缩容",
       "Overview": "概览",
       "Replicas": "副本",
-      "RevisionHistory": "Revision 历史"
+      "RevisionHistory": "Revision 历史",
+      "description": {
+        "AccessTokens": "管理用于向此部署端点验证 API 请求的访问令牌。",
+        "AutoScaling": "配置自动扩缩容规则，根据流量指标自动调整副本数量。",
+        "Replicas": "查看此部署所有正在运行的副本实例及其健康状态和资源状况。",
+        "RevisionHistory": "浏览过去的部署版本历史，并回滚到任意之前的版本。若要创建新版本，请点击上方的「编辑配置」。"
+      }
     }
   },
   "desktopNotification": {

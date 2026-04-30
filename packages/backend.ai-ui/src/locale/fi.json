@@ -110,6 +110,7 @@
     "operator": {
       "After": "jälkeen",
       "Before": "ennen",
+      "Equals": "yhtä suuri",
       "GreaterThan": "suurempi kuin",
       "GreaterThanOrEqual": "suurempi tai yhtä suuri",
       "IContains": "sisältää",
@@ -123,6 +124,7 @@
       "In": "sisällä",
       "LessThan": "pienempi kuin",
       "LessThanOrEqual": "pienempi tai yhtä suuri",
+      "NotEquals": "ei yhtä suuri",
       "NotIn": "ei sisällä"
     }
   },

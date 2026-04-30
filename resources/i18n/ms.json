@@ -837,6 +837,7 @@
     "Revision": "Revision",
     "RevisionHistory": "Sejarah Revision",
     "RevisionId": "ID Revision",
+    "RevisionNumber": "Nombor Revisi",
     "Revisions": "Revision",
     "Rollback": "Rollback",
     "RollbackConfirm": "Adakah anda pasti mahu rollback ke Revision #{{revisionNumber}}? Revision semasa akan digantikan.",
@@ -899,7 +900,13 @@
       "AutoScaling": "Penskalaan Automatik",
       "Overview": "Gambaran Keseluruhan",
       "Replicas": "Replika",
-      "RevisionHistory": "Sejarah Revision"
+      "RevisionHistory": "Sejarah Revision",
+      "description": {
+        "AccessTokens": "Urus token akses untuk mengesahkan permintaan API ke titik akhir deployment ini.",
+        "AutoScaling": "Konfigurasikan peraturan penskalaan automatik untuk melaraskan bilangan replika secara automatik berdasarkan metrik trafik.",
+        "Replicas": "Lihat semua instans replika yang sedang berjalan untuk deployment ini beserta status kesihatan dan sumber dayanya.",
+        "RevisionHistory": "Semak semula revisi deployment yang lalu dan gulung balik ke mana-mana versi sebelumnya. Untuk mencipta revisi baharu, klik Edit Konfigurasi di atas."
+      }
     }
   },
   "desktopNotification": {

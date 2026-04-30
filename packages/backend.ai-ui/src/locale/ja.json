@@ -110,6 +110,7 @@
     "operator": {
       "After": "後",
       "Before": "前",
+      "Equals": "等しい",
       "GreaterThan": "より大きい",
       "GreaterThanOrEqual": "以上",
       "IContains": "含む",
@@ -123,6 +124,7 @@
       "In": "含まれる",
       "LessThan": "より小さい",
       "LessThanOrEqual": "以下",
+      "NotEquals": "等しくない",
       "NotIn": "含まれない"
     }
   },

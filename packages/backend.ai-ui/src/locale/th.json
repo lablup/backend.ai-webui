@@ -110,6 +110,7 @@
     "operator": {
       "After": "หลัง",
       "Before": "ก่อน",
+      "Equals": "เท่ากับ",
       "GreaterThan": "มากกว่า",
       "GreaterThanOrEqual": "มากกว่าหรือเท่ากับ",
       "IContains": "ประกอบด้วย",
@@ -123,6 +124,7 @@
       "In": "ใน",
       "LessThan": "น้อยกว่า",
       "LessThanOrEqual": "น้อยกว่าหรือเท่ากับ",
+      "NotEquals": "ไม่เท่ากับ",
       "NotIn": "ไม่ใน"
     }
   },

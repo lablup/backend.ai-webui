@@ -837,6 +837,7 @@
     "Revision": "Revision",
     "RevisionHistory": "Histórico de Revision",
     "RevisionId": "ID de Revision",
+    "RevisionNumber": "Número de Revisão",
     "Revisions": "Revision",
     "Rollback": "Reverter",
     "RollbackConfirm": "Tem certeza de que deseja reverter para a Revision #{{revisionNumber}}? A Revision atual será substituída.",
@@ -899,7 +900,13 @@
       "AutoScaling": "Dimensionamento automático",
       "Overview": "Visão geral",
       "Replicas": "Réplicas",
-      "RevisionHistory": "Histórico de Revision"
+      "RevisionHistory": "Histórico de Revision",
+      "description": {
+        "AccessTokens": "Gerencie tokens de acesso para autenticar requisições de API no endpoint deste deployment.",
+        "AutoScaling": "Configure regras de dimensionamento automático para ajustar automaticamente o número de réplicas com base nas métricas de tráfego.",
+        "Replicas": "Visualize todas as instâncias de réplica em execução deste deployment com seu status de saúde e recursos.",
+        "RevisionHistory": "Navegue pelas revisões anteriores do deployment e reverta para qualquer uma delas. Para criar uma nova revisão, clique em «Editar Configuração» acima."
+      }
     }
   },
   "desktopNotification": {

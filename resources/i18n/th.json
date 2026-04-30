@@ -837,6 +837,7 @@
     "Revision": "Revision",
     "RevisionHistory": "ประวัติ Revision",
     "RevisionId": "ID Revision",
+    "RevisionNumber": "หมายเลข Revision",
     "Revisions": "Revision",
     "Rollback": "ย้อนกลับ",
     "RollbackConfirm": "คุณแน่ใจหรือไม่ว่าต้องการย้อนกลับไปยัง Revision #{{revisionNumber}}? Revision ปัจจุบันจะถูกแทนที่",
@@ -899,7 +900,13 @@
       "AutoScaling": "การปรับขนาดอัตโนมัติ",
       "Overview": "ภาพรวม",
       "Replicas": "เรพลิกา",
-      "RevisionHistory": "ประวัติ Revision"
+      "RevisionHistory": "ประวัติ Revision",
+      "description": {
+        "AccessTokens": "จัดการโทเค็นการเข้าถึงสำหรับการยืนยันตัวตนคำขอ API ไปยังเอนด์พอยต์ของการปรับใช้นี้",
+        "AutoScaling": "กำหนดกฎการปรับขนาดอัตโนมัติเพื่อปรับจำนวนเรพลิกาโดยอัตโนมัติตามตัวชี้วัดปริมาณการใช้งาน",
+        "Replicas": "ดูอินสแตนซ์เรพลิกาทั้งหมดที่กำลังทำงานสำหรับการปรับใช้นี้พร้อมสถานะความสมบูรณ์และทรัพยากร",
+        "RevisionHistory": "เรียกดูการแก้ไขการปรับใช้ที่ผ่านมาและย้อนกลับไปยังเวอร์ชันใดก็ได้ หากต้องการสร้างการแก้ไขใหม่ ให้คลิก «แก้ไขการกำหนดค่า» ด้านบน"
+      }
     }
   },
   "desktopNotification": {
