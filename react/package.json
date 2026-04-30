@@ -89,6 +89,7 @@
   "scripts": {
     "start": "NODE_OPTIONS='--max-old-space-size=4096' craco start",
     "vite:dev": "vite",
+    "vite:build": "vite build",
     "build": "pnpm run build:only && cp -r ./build/* ../build/web/",
     "build:only": "NODE_OPTIONS='--max-old-space-size=4096' pnpm run relay && NODE_OPTIONS='--max-old-space-size=4096' craco build",
     "test": "NODE_OPTIONS='$NODE_OPTIONS --no-deprecation --experimental-vm-modules' jest",
@@ -166,6 +167,7 @@
     "typescript-eslint": "catalog:",
     "vite": "^6.4.1",
     "vite-plugin-node-polyfills": "^0.24.0",
+    "vite-plugin-pwa": "^1.2.0",
     "vite-plugin-svgr": "^4.5.0",
     "webpack": "catalog:",
     "workbox-webpack-plugin": "^7.4.0"

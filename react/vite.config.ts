@@ -11,6 +11,7 @@ import {
 import { fileURLToPath } from 'node:url';
 import { defineConfig, loadEnv, type Plugin } from 'vite';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
+import { VitePWA } from 'vite-plugin-pwa';
 import svgr from 'vite-plugin-svgr';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -188,17 +189,43 @@ function projectRootStaticPlugin(): Plugin {
 
     transformIndexHtml: {
       order: 'pre',
-      handler(html) {
-        return html
-          .replace(
-            '// DEV_JS_INJECTING',
-            'globalThis.process = {env: {NODE_ENV: "development"}};',
-          )
-          .replace(
-            '<!-- REACT_BUNDLE_INJECTING FOR DEV-->',
-            '<script type="module" src="/src/index.tsx"></script>',
-          )
-          .replace(/\{\{nonce\}\}/g, '');
+      handler(html, ctx) {
+        // In dev (serve), ctx.server is defined; in build, it's undefined.
+        // The build-time entry at `react/index.html` is a throwaway stub —
+        // we always want to operate on the real project-root template.
+        const realHtml = readFileSync(rootIndexHtml, 'utf-8');
+        const isServe = !!ctx.server;
+
+        // Always inject the app entry script at the REACT_BUNDLE_INJECTING
+        // marker. In dev, Vite serves `/src/index.tsx` directly. In build,
+        // Vite's HTML parser sees this tag, bundles `src/index.tsx`, and
+        // rewrites the src to the hashed chunk URL.
+        let out = realHtml.replace(
+          '<!-- REACT_BUNDLE_INJECTING FOR DEV-->',
+          '<script type="module" src="/src/index.tsx"></script>',
+        );
+
+        if (isServe) {
+          // Dev-only: the webpack/craco pipeline injected a tiny
+          // `process.env.NODE_ENV` shim here so dev-only code like
+          // `if (process.env.NODE_ENV === 'development')` works in the
+          // browser. Also strip `{{nonce}}` — the backend replaces it at
+          // runtime in prod; in local dev we have no server-side CSP.
+          out = out
+            .replace(
+              '// DEV_JS_INJECTING',
+              'globalThis.process = {env: {NODE_ENV: "development"}};',
+            )
+            .replace(/\{\{nonce\}\}/g, '');
+        } else {
+          // Build: remove the dev-only marker comment entirely (so the
+          // inline script block just has the runtime constants) and
+          // PRESERVE `{{nonce}}` so the backend's CSP middleware can
+          // substitute it per-request.
+          out = out.replace('// DEV_JS_INJECTING', '');
+        }
+
+        return out;
       },
     },
   };
@@ -399,12 +426,37 @@ export default defineConfig(({ command, mode }) => {
           process: false,
         },
       }),
+
+      // Service worker generation (build only). Mirrors the options used
+      // by craco's workbox-webpack-plugin GenerateSW call in
+      // craco.config.cjs:390-400.
+      //
+      // Strategy `generateSW` produces a standalone SW file that precaches
+      // the build manifest. We opt out of `registerType: 'autoUpdate'` to
+      // preserve the legacy behaviour where index.html's inline script
+      // registers `/sw.js` itself on load (see ../index.html:126-131).
+      VitePWA({
+        strategies: 'generateSW',
+        filename: 'sw.js',
+        injectRegister: false,
+        // Stay silent during dev — the registration happens only in prod.
+        devOptions: { enabled: false },
+        workbox: {
+          skipWaiting: true,
+          clientsClaim: true,
+          maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
+          globIgnores: ['**/*.map', '**/asset-manifest.json'],
+        },
+      }),
     ],
 
     build: {
       outDir: resolve(__dirname, 'build'),
       emptyOutDir: true,
       sourcemap: true,
+      // Suppress the warning about chunk size; the app is large and this
+      // matches the existing craco/webpack threshold expectation.
+      chunkSizeWarningLimit: 2000,
     },
   };
 });
