@@ -1,6 +1,13 @@
 import react from '@vitejs/plugin-react';
 import { createReadStream, existsSync, readFileSync, statSync } from 'node:fs';
-import { dirname, extname, join, resolve } from 'node:path';
+import {
+  dirname,
+  extname,
+  isAbsolute,
+  join,
+  relative,
+  resolve,
+} from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { defineConfig, loadEnv, type Plugin } from 'vite';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
@@ -59,6 +66,79 @@ const MIME: Record<string, string> = {
  * project-root `index.html` as the SPA template. Mirrors the behaviour of the
  * existing craco devServer.static + HtmlWebpackPlugin setup.
  */
+/**
+ * Trigger a full page reload whenever a project-root runtime-fetched asset
+ * changes on disk. Mirrors the `fs.watch` / `fs.watchFile` setup in the
+ * craco devServer config (craco.config.cjs:80-147).
+ *
+ * Why this is needed: `i18next-http-backend` fetches `resources/i18n/*.json`
+ * at runtime — those JSONs are NOT part of the Vite module graph, so Vite
+ * will never HMR them. A full reload is the only way to pick up an edit.
+ * `config.toml`, `resources/theme.json`, and the project-root `index.html`
+ * are in the same category.
+ *
+ * Debounce: 300ms (matches craco). FSEvents on macOS can fire multiple
+ * watcher events for a single save; editors that use atomic-save (write
+ * temp → rename) produce two events. Debouncing collapses both into one
+ * reload signal.
+ */
+function devAssetsReloadPlugin(): Plugin {
+  const watchTargets = [
+    resolve(projectRoot, 'config.toml'),
+    resolve(projectRoot, 'index.html'),
+    resolve(projectRoot, 'resources/i18n'),
+    resolve(projectRoot, 'resources/theme.json'),
+  ];
+
+  return {
+    name: 'bai-dev-assets-reload',
+    apply: 'serve',
+    configureServer(server) {
+      // Vite's `server.watcher` is a chokidar instance. Add our target
+      // paths so chokidar emits `change`/`add` events for them even when
+      // they are outside the module graph.
+      for (const target of watchTargets) {
+        server.watcher.add(target);
+      }
+
+      let reloadTimer: NodeJS.Timeout | undefined;
+      const scheduleReload = (changedPath: string) => {
+        clearTimeout(reloadTimer);
+        reloadTimer = setTimeout(() => {
+          server.config.logger.info(
+            `[bai] full reload triggered by ${changedPath}`,
+            { clear: false, timestamp: true },
+          );
+          server.ws.send({ type: 'full-reload' });
+        }, 300);
+      };
+
+      // Use `path.relative` so containment is detected correctly on Windows,
+      // where chokidar emits paths with `\` separators that would never match
+      // a `target + '/'` prefix.
+      const isMatchedPath = (changedPath: string) =>
+        watchTargets.some((target) => {
+          const rel = relative(target, changedPath);
+          return rel === '' || (!rel.startsWith('..') && !isAbsolute(rel));
+        });
+
+      const handler = (changedPath: string) => {
+        if (isMatchedPath(changedPath)) {
+          scheduleReload(changedPath);
+        }
+      };
+
+      server.watcher.on('change', handler);
+      server.watcher.on('add', handler);
+      server.watcher.on('unlink', handler);
+
+      server.httpServer?.on('close', () => {
+        clearTimeout(reloadTimer);
+      });
+    },
+  };
+}
+
 function projectRootStaticPlugin(): Plugin {
   const rootIndexHtml = resolve(projectRoot, 'index.html');
 
@@ -273,7 +353,8 @@ export default defineConfig(({ command, mode }) => {
           '**/build/**',
           '**/.git/**',
           '**/scripts/temp-releases/**',
-          resolve(projectRoot, 'config.toml'),
+          // Note: do NOT ignore config.toml here — `devAssetsReloadPlugin`
+          // watches it explicitly for full-page-reload on change.
         ],
       },
     },
@@ -282,6 +363,7 @@ export default defineConfig(({ command, mode }) => {
       // Must run before @vitejs/plugin-react so we own the HTML transform
       // and the index.html resolution.
       projectRootStaticPlugin(),
+      devAssetsReloadPlugin(),
 
       react({
         babel: (id) => {

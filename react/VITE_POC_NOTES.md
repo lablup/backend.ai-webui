@@ -80,8 +80,22 @@ Fix:
 - Production `vite build` output parity with the current `craco build` (FR-2608)
 - Workbox `GenerateSW` replacement (`vite-plugin-pwa`) (FR-2608)
 - Jest → Vitest migration (FR-2609)
-- Custom fs.watch middlewares for i18n / theme / config.toml reload (FR-2610)
 - CI pipeline updates (FR-2611)
+
+## fs.watch dev-reload middleware — landed (FR-2610)
+
+Ported craco's custom dev-server `fs.watch` / `fs.watchFile` behaviour (craco.config.cjs:80-147) to a Vite plugin: `devAssetsReloadPlugin`. Watches four project-root paths for changes and emits a debounced full page reload:
+
+- `config.toml`
+- `index.html` (project-root template)
+- `resources/i18n/` (translation JSON files fetched by `i18next-http-backend`)
+- `resources/theme.json`
+
+Why a full reload and not HMR: these files are fetched at runtime, not bundled into the module graph, so HMR has no handle on them. The host app reads them on initial load; reload is the only way to pick up edits.
+
+Implementation uses Vite's built-in chokidar instance (`server.watcher`) — `server.watcher.add(path)` to opt those paths into the watch set, then `server.ws.send({ type: 'full-reload' })` on change with a 300ms debounce (same as craco). Also had to remove `config.toml` from `server.watch.ignored` since the earlier mirror of craco's `watchOptions.ignored` explicitly excluded it.
+
+Verified by `touch`-ing each of the four targets and confirming `[bai] full reload triggered by ...` appears in the Vite server log.
 
 ## Electron `es6://` — spike answered (FR-2607)
 
