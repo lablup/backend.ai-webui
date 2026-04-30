@@ -1174,7 +1174,8 @@ const ResourceAllocationFormItems: React.FC<
                                 >
                                   <BAISelect
                                     style={{
-                                      width: 75,
+                                      minWidth: 75,
+                                      maxWidth: 100,
                                     }}
                                     autoSelectOption
                                     tabIndex={-1}
