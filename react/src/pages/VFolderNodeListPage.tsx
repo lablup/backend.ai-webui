@@ -10,33 +10,29 @@ import {
 import ActionItemContent from '../components/ActionItemContent';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import BAITabs from '../components/BAITabs';
-import DeleteVFolderModal from '../components/DeleteVFolderModal';
+import DeleteForeverVFolderModalV2 from '../components/DeleteForeverVFolderModalV2';
+import DeleteVFolderModalV2 from '../components/DeleteVFolderModalV2';
 import FolderCreateModalV2 from '../components/FolderCreateModalV2';
 import QuotaPerStorageVolumePanelCard from '../components/QuotaPerStorageVolumePanelCard';
-import RestoreVFolderModal from '../components/RestoreVFolderModal';
+import RestoreVFolderModalV2 from '../components/RestoreVFolderModalV2';
 import StorageStatusPanelCard from '../components/StorageStatusPanelCard';
-import VFolderNodes, { VFolderNodeInList } from '../components/VFolderNodes';
+import VFolderNodesV2, {
+  VFolderNodeInList,
+} from '../components/VFolderNodesV2';
 import { handleRowSelectionChange } from '../helper';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useToggle } from 'ahooks';
-import {
-  Badge,
-  Button,
-  Col,
-  Grid,
-  Row,
-  theme,
-  Tooltip,
-  Typography,
-} from 'antd';
+import { Badge, Col, Grid, Row, theme, Tooltip, Typography } from 'antd';
 import {
   BAIAlertIconWithTooltip,
+  BAIButton,
   BAICard,
   BAIFetchKeyButton,
   BAIFlex,
   BAINewFolderIcon,
   BAIPropertyFilter,
+  BAIPurgeIcon,
   BAIRestoreIcon,
   BAISelectionLabel,
   BAIVFolderDeleteButton,
@@ -124,6 +120,8 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
   const [isOpenCreateModal, { toggle: toggleCreateModal }] = useToggle(false);
   const [isOpenDeleteModal, { toggle: toggleDeleteModal }] = useToggle(false);
   const [isOpenRestoreModal, { toggle: toggleRestoreModal }] = useToggle(false);
+  const [isOpenDeleteForeverModal, { toggle: toggleDeleteForeverModal }] =
+    useToggle(false);
 
   const {
     baiPaginationOption,
@@ -220,10 +218,11 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                 id @required(action: THROW)
                 status
                 permissions
-                ...VFolderNodesFragment
-                ...DeleteVFolderModalFragment
+                ...VFolderNodesV2Fragment
+                ...DeleteVFolderModalV2Fragment
+                ...DeleteForeverVFolderModalV2Fragment
                 ...EditableVFolderNameFragment
-                ...RestoreVFolderModalFragment
+                ...RestoreVFolderModalV2Fragment
                 ...VFolderNodeIdenticonFragment
                 ...SharedFolderPermissionInfoModalFragment
                 ...BAIVFolderDeleteButtonFragment
@@ -395,14 +394,14 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
         variant="borderless"
         title={t('data.Folders')}
         extra={
-          <Button
+          <BAIButton
             type="primary"
             onClick={() => {
               toggleCreateModal();
             }}
           >
             {t('data.CreateFolder')}
-          </Button>
+          </BAIButton>
         }
         styles={{
           header: {
@@ -617,7 +616,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                       onClearSelection={() => setSelectedFolderList([])}
                     />
                     <Tooltip title={t('data.folders.Restore')}>
-                      <Button
+                      <BAIButton
                         style={{
                           color: token.colorInfo,
                           borderColor: token.colorBorder,
@@ -627,6 +626,20 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                         icon={<BAIRestoreIcon />}
                         onClick={() => {
                           toggleRestoreModal();
+                        }}
+                      />
+                    </Tooltip>
+                    <Tooltip title={t('data.folders.Delete')}>
+                      <BAIButton
+                        style={{
+                          color: token.colorError,
+                          borderColor: token.colorBorder,
+                        }}
+                        type="text"
+                        variant="outlined"
+                        icon={<BAIPurgeIcon />}
+                        onClick={() => {
+                          toggleDeleteForeverModal();
                         }}
                       />
                     </Tooltip>
@@ -645,7 +658,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
               />
             </BAIFlex>
           </BAIFlex>
-          <VFolderNodes
+          <VFolderNodesV2
             order={queryParams.order}
             loading={deferredQueryVariables !== queryVariables}
             vfoldersFrgmt={filterOutNullAndUndefined(
@@ -653,7 +666,6 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
             )}
             rowSelection={{
               type: 'checkbox',
-              // Preserve selected rows between pages, but clear when filter changes
               preserveSelectedRowKeys: true,
               getCheckboxProps(record: VFolderNodeInList) {
                 return {
@@ -663,7 +675,6 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                 };
               },
               onChange: (selectedRowKeys) => {
-                // Using selectedRowKeys to retrieve selected rows since selectedRows lack nested fragment types
                 handleRowSelectionChange(
                   selectedRowKeys,
                   filterOutNullAndUndefined(
@@ -717,7 +728,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
           toggleCreateModal();
         }}
       />
-      <DeleteVFolderModal
+      <DeleteVFolderModalV2
         vfolderFrgmts={selectedFolderList}
         open={isOpenDeleteModal}
         onRequestClose={(success) => {
@@ -728,7 +739,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
           toggleDeleteModal();
         }}
       />
-      <RestoreVFolderModal
+      <RestoreVFolderModalV2
         vfolderFrgmts={selectedFolderList}
         open={isOpenRestoreModal}
         onRequestClose={(success) => {
@@ -737,6 +748,17 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
             setSelectedFolderList([]);
           }
           toggleRestoreModal();
+        }}
+      />
+      <DeleteForeverVFolderModalV2
+        vfolderFrgmts={selectedFolderList}
+        open={isOpenDeleteForeverModal}
+        onRequestClose={(success) => {
+          if (success) {
+            updateFetchKey();
+            setSelectedFolderList([]);
+          }
+          toggleDeleteForeverModal();
         }}
       />
     </BAIFlex>

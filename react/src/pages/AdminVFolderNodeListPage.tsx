@@ -9,10 +9,13 @@ import type {
 } from '../__generated__/AdminVFolderNodeListPageQuery.graphql';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import BAITabs from '../components/BAITabs';
-import DeleteVFolderModal from '../components/DeleteVFolderModal';
+import DeleteForeverVFolderModalV2 from '../components/DeleteForeverVFolderModalV2';
+import DeleteVFolderModalV2 from '../components/DeleteVFolderModalV2';
 import FolderCreateModalV2 from '../components/FolderCreateModalV2';
-import RestoreVFolderModal from '../components/RestoreVFolderModal';
-import VFolderNodes, { VFolderNodeInList } from '../components/VFolderNodes';
+import RestoreVFolderModalV2 from '../components/RestoreVFolderModalV2';
+import VFolderNodesV2, {
+  VFolderNodeInList,
+} from '../components/VFolderNodesV2';
 import { handleRowSelectionChange } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { isDeletedCategory } from './VFolderNodeListPage';
@@ -24,6 +27,7 @@ import {
   BAIFetchKeyButton,
   BAIFlex,
   BAIPropertyFilter,
+  BAIPurgeIcon,
   BAIRestoreIcon,
   BAISelectionLabel,
   BAIVFolderDeleteButton,
@@ -81,6 +85,8 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
   const [isOpenDeleteModal, { toggle: toggleDeleteModal }] = useToggle(false);
   const [isOpenRestoreModal, { toggle: toggleRestoreModal }] = useToggle(false);
   const [isOpenCreateModal, { toggle: toggleCreateModal }] = useToggle(false);
+  const [isOpenDeleteForeverModal, { toggle: toggleDeleteForeverModal }] =
+    useToggle(false);
 
   const {
     baiPaginationOption,
@@ -171,10 +177,11 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                 id @required(action: THROW)
                 status
                 permissions
-                ...VFolderNodesFragment
-                ...DeleteVFolderModalFragment
+                ...VFolderNodesV2Fragment
+                ...DeleteVFolderModalV2Fragment
+                ...DeleteForeverVFolderModalV2Fragment
                 ...EditableVFolderNameFragment
-                ...RestoreVFolderModalFragment
+                ...RestoreVFolderModalV2Fragment
                 ...VFolderNodeIdenticonFragment
                 ...SharedFolderPermissionInfoModalFragment
                 ...BAIVFolderDeleteButtonFragment
@@ -432,6 +439,20 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                         }}
                       />
                     </Tooltip>
+                    <Tooltip title={t('data.folders.Delete')}>
+                      <BAIButton
+                        style={{
+                          color: token.colorError,
+                          borderColor: token.colorBorder,
+                        }}
+                        type="text"
+                        variant="outlined"
+                        icon={<BAIPurgeIcon />}
+                        onClick={() => {
+                          toggleDeleteForeverModal();
+                        }}
+                      />
+                    </Tooltip>
                   </>
                 )}
               <BAIFetchKeyButton
@@ -456,7 +477,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
               </BAIButton>
             </BAIFlex>
           </BAIFlex>
-          <VFolderNodes
+          <VFolderNodesV2
             order={queryParams.order}
             loading={deferredQueryVariables !== queryVariables}
             vfoldersFrgmt={filterOutNullAndUndefined(
@@ -464,7 +485,6 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
             )}
             rowSelection={{
               type: 'checkbox',
-              // Preserve selected rows between pages, but clear when filter changes
               preserveSelectedRowKeys: true,
               getCheckboxProps(record: VFolderNodeInList) {
                 return {
@@ -474,7 +494,6 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                 };
               },
               onChange: (selectedRowKeys) => {
-                // Using selectedRowKeys to retrieve selected rows since selectedRows lack nested fragment types
                 handleRowSelectionChange(
                   selectedRowKeys,
                   filterOutNullAndUndefined(
@@ -511,7 +530,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
           />
         </BAIFlex>
       </BAICard>
-      <DeleteVFolderModal
+      <DeleteVFolderModalV2
         vfolderFrgmts={selectedFolderList}
         open={isOpenDeleteModal}
         onRequestClose={(success) => {
@@ -522,7 +541,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
           toggleDeleteModal();
         }}
       />
-      <RestoreVFolderModal
+      <RestoreVFolderModalV2
         vfolderFrgmts={selectedFolderList}
         open={isOpenRestoreModal}
         onRequestClose={(success) => {
@@ -531,6 +550,17 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
             setSelectedFolderList([]);
           }
           toggleRestoreModal();
+        }}
+      />
+      <DeleteForeverVFolderModalV2
+        vfolderFrgmts={selectedFolderList}
+        open={isOpenDeleteForeverModal}
+        onRequestClose={(success) => {
+          if (success) {
+            updateFetchKey();
+            setSelectedFolderList([]);
+          }
+          toggleDeleteForeverModal();
         }}
       />
       <FolderCreateModalV2

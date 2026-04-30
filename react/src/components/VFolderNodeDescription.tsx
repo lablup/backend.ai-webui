@@ -11,7 +11,7 @@ import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useVirtualFolderPath } from '../hooks/useVirtualFolderNodePath';
-import { statusTagColor } from './VFolderNodes';
+import { statusTagColor } from './VFolderNodesV2';
 import VirtualFolderPath from './VirtualFolderNodeItems/VirtualFolderPath';
 import { CheckCircleOutlined, UserOutlined } from '@ant-design/icons';
 import {
