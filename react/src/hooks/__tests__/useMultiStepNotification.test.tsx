@@ -35,8 +35,7 @@ vi.mock('react-i18next', () => ({
   }),
 }));
 
-const mockedListenToBackgroundTask =
-  listenToBackgroundTask as jest.MockedFunction<typeof listenToBackgroundTask>;
+const mockedListenToBackgroundTask = vi.mocked(listenToBackgroundTask);
 
 const baseConfig = {
   key: 'test-notification',
@@ -94,7 +93,7 @@ describe('useMultiStepNotification', () => {
   describe('step failure and retry', () => {
     it('sets failed state when a step rejects, then retry resumes from that step', async () => {
       const error = new Error('Step 2 failed');
-      const step2Executor = jest
+      const step2Executor = vi
         .fn()
         .mockRejectedValueOnce(error)
         .mockResolvedValueOnce('result2');

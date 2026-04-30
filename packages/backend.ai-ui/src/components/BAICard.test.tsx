@@ -82,7 +82,7 @@ describe('BAICard', () => {
 
     it('should call onClickExtraButton when extra button is clicked', async () => {
       const user = userEvent.setup();
-      const handleClick = jest.fn();
+      const handleClick = vi.fn();
       render(
         <BAICard
           title="Card"
@@ -263,7 +263,7 @@ describe('BAICard', () => {
 
     it('should call onTabChange when tab is clicked', async () => {
       const user = userEvent.setup();
-      const handleTabChange = jest.fn();
+      const handleTabChange = vi.fn();
       render(
         <BAICard
           title="Card with Tabs"
@@ -364,7 +364,7 @@ describe('BAICard', () => {
 
   describe('Complex Scenarios', () => {
     it('should render card with multiple features combined', () => {
-      const handleClick = jest.fn();
+      const handleClick = vi.fn();
       render(
         <BAICard
           title="Complex Card"
@@ -385,8 +385,8 @@ describe('BAICard', () => {
 
     it('should render card with tabs and extra button', async () => {
       const user = userEvent.setup();
-      const handleButtonClick = jest.fn();
-      const handleTabChange = jest.fn();
+      const handleButtonClick = vi.fn();
+      const handleTabChange = vi.fn();
 
       render(
         <BAICard

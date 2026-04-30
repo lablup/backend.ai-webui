@@ -31,7 +31,7 @@ describe('BAIButton', () => {
 
   describe('onClick Handler', () => {
     it('should call onClick handler when clicked', async () => {
-      const onClick = jest.fn();
+      const onClick = vi.fn();
       const user = userEvent.setup();
       render(<BAIButton onClick={onClick}>Click</BAIButton>);
 
@@ -40,7 +40,7 @@ describe('BAIButton', () => {
     });
 
     it('should not call onClick if disabled', async () => {
-      const onClick = jest.fn();
+      const onClick = vi.fn();
       const user = userEvent.setup();
       render(
         <BAIButton onClick={onClick} disabled>
@@ -55,7 +55,7 @@ describe('BAIButton', () => {
 
   describe('Async Action Handling', () => {
     it('should execute async action when provided', async () => {
-      const action = jest.fn().mockResolvedValue(undefined);
+      const action = vi.fn().mockResolvedValue(undefined);
       const user = userEvent.setup();
       render(<BAIButton action={action}>Execute Action</BAIButton>);
 
@@ -67,7 +67,7 @@ describe('BAIButton', () => {
     });
 
     it('should show loading state during async action', async () => {
-      const action = jest
+      const action = vi
         .fn()
         .mockImplementation(
           () => new Promise((resolve) => setTimeout(resolve, 100)),
@@ -87,7 +87,7 @@ describe('BAIButton', () => {
     });
 
     it('should clear loading state after action completes', async () => {
-      const action = jest.fn().mockResolvedValue(undefined);
+      const action = vi.fn().mockResolvedValue(undefined);
       const user = userEvent.setup();
       render(<BAIButton action={action}>Complete Action</BAIButton>);
 
@@ -110,8 +110,8 @@ describe('BAIButton', () => {
     });
 
     it('should call both action and onClick when both are provided', async () => {
-      const action = jest.fn().mockResolvedValue(undefined);
-      const onClick = jest.fn();
+      const action = vi.fn().mockResolvedValue(undefined);
+      const onClick = vi.fn();
       const user = userEvent.setup();
       render(
         <BAIButton action={action} onClick={onClick}>
@@ -128,7 +128,7 @@ describe('BAIButton', () => {
     });
 
     it('should handle async action with successful resolution', async () => {
-      const action = jest.fn().mockResolvedValue('success');
+      const action = vi.fn().mockResolvedValue('success');
       const user = userEvent.setup();
       render(<BAIButton action={action}>Async Success</BAIButton>);
 
@@ -160,7 +160,7 @@ describe('BAIButton', () => {
     });
 
     it('should combine loading prop with action loading state', async () => {
-      const action = jest
+      const action = vi
         .fn()
         .mockImplementation(
           () => new Promise((resolve) => setTimeout(resolve, 50)),
@@ -217,7 +217,7 @@ describe('BAIButton', () => {
 
   describe('Event Object Handling', () => {
     it('should pass click event to onClick handler', async () => {
-      const onClick = jest.fn();
+      const onClick = vi.fn();
       const user = userEvent.setup();
       render(<BAIButton onClick={onClick}>Click</BAIButton>);
 
@@ -231,8 +231,8 @@ describe('BAIButton', () => {
     });
 
     it('should call onClick even when action is provided', async () => {
-      const action = jest.fn().mockResolvedValue(undefined);
-      const onClick = jest.fn();
+      const action = vi.fn().mockResolvedValue(undefined);
+      const onClick = vi.fn();
       const user = userEvent.setup();
       render(
         <BAIButton action={action} onClick={onClick}>
@@ -254,7 +254,7 @@ describe('BAIButton', () => {
 
   describe('Edge Cases', () => {
     it('should handle undefined action gracefully', async () => {
-      const onClick = jest.fn();
+      const onClick = vi.fn();
       const user = userEvent.setup();
       render(
         <BAIButton action={undefined} onClick={onClick}>
@@ -277,7 +277,7 @@ describe('BAIButton', () => {
     });
 
     it('should handle rapid clicks during async action', async () => {
-      const action = jest
+      const action = vi
         .fn()
         .mockImplementation(
           () => new Promise((resolve) => setTimeout(resolve, 100)),
@@ -301,7 +301,7 @@ describe('BAIButton', () => {
 
   describe('Accessibility', () => {
     it('should be keyboard accessible', async () => {
-      const onClick = jest.fn();
+      const onClick = vi.fn();
       const user = userEvent.setup();
       render(<BAIButton onClick={onClick}>Accessible</BAIButton>);
 

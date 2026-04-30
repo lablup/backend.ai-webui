@@ -38,7 +38,7 @@ const TestIntervalValueComponent: React.FC<{
 
 describe('useInterval and useIntervalValue hooks', () => {
   beforeEach(() => {
-    jest.useFakeTimers();
+    vi.useFakeTimers();
     // Mock document.hidden as false initially (page is visible)
     Object.defineProperty(document, 'hidden', {
       writable: true,
@@ -47,7 +47,7 @@ describe('useInterval and useIntervalValue hooks', () => {
   });
 
   afterEach(() => {
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
 
   describe('useInterval', () => {
@@ -57,13 +57,13 @@ describe('useInterval and useIntervalValue hooks', () => {
       expect(screen.getByTestId('interval-count')).toHaveTextContent('0');
 
       act(() => {
-        jest.advanceTimersByTime(1000);
+        vi.advanceTimersByTime(1000);
       });
 
       expect(screen.getByTestId('interval-count')).toHaveTextContent('1');
 
       act(() => {
-        jest.advanceTimersByTime(2000);
+        vi.advanceTimersByTime(2000);
       });
 
       expect(screen.getByTestId('interval-count')).toHaveTextContent('3');
@@ -82,7 +82,7 @@ describe('useInterval and useIntervalValue hooks', () => {
 
       // Timer should not increment
       act(() => {
-        jest.advanceTimersByTime(2000);
+        vi.advanceTimersByTime(2000);
       });
 
       expect(screen.getByTestId('interval-count')).toHaveTextContent('0');
@@ -98,7 +98,7 @@ describe('useInterval and useIntervalValue hooks', () => {
 
       // Continue normal interval
       act(() => {
-        jest.advanceTimersByTime(1000);
+        vi.advanceTimersByTime(1000);
       });
 
       expect(screen.getByTestId('interval-count')).toHaveTextContent('2');
@@ -117,7 +117,7 @@ describe('useInterval and useIntervalValue hooks', () => {
 
       // Timer should continue to increment even when hidden
       act(() => {
-        jest.advanceTimersByTime(2000);
+        vi.advanceTimersByTime(2000);
       });
 
       expect(screen.getByTestId('interval-count')).toHaveTextContent('2');
@@ -129,7 +129,7 @@ describe('useInterval and useIntervalValue hooks', () => {
       expect(screen.getByTestId('interval-count')).toHaveTextContent('0');
 
       act(() => {
-        jest.advanceTimersByTime(5000);
+        vi.advanceTimersByTime(5000);
       });
 
       expect(screen.getByTestId('interval-count')).toHaveTextContent('0');
@@ -143,7 +143,7 @@ describe('useInterval and useIntervalValue hooks', () => {
       const initialValue = screen.getByTestId('interval-value').textContent;
 
       act(() => {
-        jest.advanceTimersByTime(1000);
+        vi.advanceTimersByTime(1000);
       });
 
       const updatedValue = screen.getByTestId('interval-value').textContent;
@@ -164,7 +164,7 @@ describe('useInterval and useIntervalValue hooks', () => {
       });
 
       act(() => {
-        jest.advanceTimersByTime(2000);
+        vi.advanceTimersByTime(2000);
       });
 
       // Value should not change when hidden
@@ -197,7 +197,7 @@ describe('useInterval and useIntervalValue hooks', () => {
       });
 
       act(() => {
-        jest.advanceTimersByTime(1000);
+        vi.advanceTimersByTime(1000);
       });
 
       // Value should continue to update even when hidden

@@ -232,7 +232,23 @@ function projectRootStaticPlugin(): Plugin {
 }
 
 export default defineConfig(({ command, mode }) => {
-  Object.assign(process.env, loadEnv(mode, projectRoot, ''));
+  const env = loadEnv(mode, projectRoot, '');
+  Object.assign(process.env, env);
+
+  // Comma-separated list of additional hostnames to whitelist for the dev
+  // server's host check (Vite 6 default-blocks anything outside localhost
+  // since CVE-2025-30208). Example for SwitchHosts users:
+  //   VITE_ALLOWED_HOSTS=local.backend.ai,*.lablup.local
+  // Reads from process.env first (shell override) so CI/scripts can set it
+  // ad-hoc, then falls back to the .env.development.local entry.
+  const allowedHostsRaw =
+    process.env.VITE_ALLOWED_HOSTS ?? env.VITE_ALLOWED_HOSTS;
+  const allowedHosts = allowedHostsRaw
+    ? allowedHostsRaw
+        .split(',')
+        .map((h) => h.trim())
+        .filter(Boolean)
+    : undefined;
 
   // Electron target uses a custom `es6://` URL scheme; the main process
   // registers a protocol handler via `protocol.handle('es6', ...)` in
@@ -365,9 +381,10 @@ export default defineConfig(({ command, mode }) => {
 
     server: {
       host: process.env.HOST || '0.0.0.0',
-      port: Number(process.env.PORT) || 9083,
+      port: Number(process.env.PORT) || 9081,
       strictPort: false,
       open: false,
+      allowedHosts: allowedHosts,
       fs: {
         // Allow Vite to read files from the whole monorepo so that the
         // alias to `../dist/lib/...` and `../packages/backend.ai-ui/src`

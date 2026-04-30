@@ -4,12 +4,12 @@ import {
   type CustomThemeConfig,
   type LogoConfig,
 } from './customThemeConfig';
-import type { Mock } from 'vitest';
+import type { Mock, MockInstance } from 'vitest';
 
 describe('customThemeConfig', () => {
   let fetchMock: Mock;
   let originalFetch: typeof global.fetch;
-  let dispatchEventSpy: jest.SpyInstance;
+  let dispatchEventSpy: MockInstance;
 
   beforeEach(() => {
     // Save original values

@@ -340,7 +340,7 @@ describe('BAIBulkEditFormItem', () => {
     });
 
     it('should allow user selection in edit mode', async () => {
-      const onValuesChange = jest.fn();
+      const onValuesChange = vi.fn();
       const user = setupUser();
       render(
         <FormWrapper onValuesChange={onValuesChange}>
