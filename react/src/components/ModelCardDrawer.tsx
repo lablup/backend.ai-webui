@@ -9,13 +9,12 @@ import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import ModelBrandIcon from './ModelBrandIcon';
 import ModelCardDeployModal from './ModelCardDeployModal';
+import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
 import {
   BankOutlined,
   EllipsisOutlined,
   FileOutlined,
 } from '@ant-design/icons';
-import { shapes } from '@dicebear/collection';
-import { createAvatar } from '@dicebear/core';
 import {
   Card,
   Descriptions,
@@ -25,7 +24,6 @@ import {
   Space,
   Tag,
   Typography,
-  theme,
 } from 'antd';
 import {
   BAIButton,
@@ -56,8 +54,6 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
   'use memo';
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
-
   const [imageMetaData] = useBackendAIImageMetaData();
   const { generateFolderPath } = useFolderExplorerOpener();
   const { deployInstantly, openLauncher, isDeploying, supportsQuickDeploy } =
@@ -92,6 +88,7 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
           metadata {
             name
           }
+          ...VFolderNodeIdenticonV2Fragment
         }
         availablePresets(orderBy: [{ field: RANK, direction: "ASC" }]) {
           count
@@ -369,23 +366,8 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
                           )}
                         >
                           <BAIFlex gap="xs" align="center">
-                            <img
-                              draggable={false}
-                              onDragStart={(e) => e.preventDefault()}
-                              style={{
-                                borderRadius: '0.25em',
-                                width: '1em',
-                                height: '1em',
-                                borderWidth: 0.5,
-                                borderStyle: 'solid',
-                                borderColor: token.colorBorder,
-                                userSelect: 'none',
-                              }}
-                              src={createAvatar(shapes, {
-                                seed: modelCard.vfolder.id,
-                                shape3: [],
-                              })?.toDataUri()}
-                              alt="VFolder Identicon"
+                            <VFolderNodeIdenticonV2
+                              vfolderNodeIdenticonFrgmt={modelCard.vfolder}
                             />
                             {modelCard.vfolder.metadata?.name}
                           </BAIFlex>
