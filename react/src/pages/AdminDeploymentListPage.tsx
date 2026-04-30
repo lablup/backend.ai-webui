@@ -137,7 +137,7 @@ const AdminDeploymentListPageContent: React.FC = () => {
   const isLoading =
     deferredQueryVariables !== queryVariables || deferredFetchKey !== fetchKey;
 
-  return adminDeployments ? (
+  return (
     <DeploymentList
       mode="admin"
       deploymentsFrgmt={adminDeployments}
@@ -182,7 +182,7 @@ const AdminDeploymentListPageContent: React.FC = () => {
         />
       }
     />
-  ) : null;
+  );
 };
 
 const AdminDeploymentListPage: React.FC = () => {

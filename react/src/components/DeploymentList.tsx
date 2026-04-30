@@ -108,7 +108,10 @@ export interface DeploymentListProps extends Omit<
   BAITableProps<DeploymentNode>,
   'dataSource' | 'columns' | 'onChangeOrder'
 > {
-  deploymentsFrgmt: DeploymentList_modelDeploymentConnection$key;
+  deploymentsFrgmt:
+    | DeploymentList_modelDeploymentConnection$key
+    | null
+    | undefined;
   filter?: string;
   setFilter: (value: string) => void;
   onChangeOrder?: (order: string | null) => void;

@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import type { TagProps } from 'antd';
-import { BAITag, type SemanticColor } from 'backend.ai-ui';
+import { BAITag } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -20,6 +20,17 @@ export type DeploymentStatus =
   | 'PENDING'
   | 'READY';
 
+// antd Tag preset status colors. `'info'` is NOT a preset — passing it falls
+// through as a raw CSS color and renders as a vivid default tag in dark mode,
+// which is why this map uses `'processing'` (the in-flight preset with a
+// colorInfo-tinted background and pulsing dot).
+type StatusTagColor =
+  | 'success'
+  | 'processing'
+  | 'error'
+  | 'default'
+  | 'warning';
+
 /**
  * Maps each deployment status to a Tag color.
  *
@@ -28,12 +39,12 @@ export type DeploymentStatus =
  * - warning:    DEGRADED, UNHEALTHY, STOPPING — attention needed or transitioning away.
  * - default:    NOT_CHECKED, STOPPED, TERMINATED — neutral / inactive.
  */
-const deploymentStatusColorMap: Record<DeploymentStatus, SemanticColor> = {
+const deploymentStatusColorMap: Record<DeploymentStatus, StatusTagColor> = {
   HEALTHY: 'success',
   READY: 'success',
-  DEPLOYING: 'info',
-  SCALING: 'info',
-  PENDING: 'info',
+  DEPLOYING: 'processing',
+  SCALING: 'processing',
+  PENDING: 'processing',
   DEGRADED: 'warning',
   UNHEALTHY: 'warning',
   STOPPING: 'warning',

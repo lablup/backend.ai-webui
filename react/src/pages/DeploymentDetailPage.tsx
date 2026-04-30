@@ -13,8 +13,8 @@ import DeploymentStatusTag, {
 } from '../components/DeploymentStatusTag';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import { Card, Skeleton, Tooltip, Typography, theme } from 'antd';
-import { BAIFlex, toGlobalId } from 'backend.ai-ui';
+import { Skeleton, Tooltip, Typography, theme } from 'antd';
+import { BAICard, BAIFlex, toGlobalId } from 'backend.ai-ui';
 import { parseAsString, useQueryState } from 'nuqs';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -91,14 +91,12 @@ const DeploymentDetailPage: React.FC = () => {
         </Typography.Title>
         <DeploymentStatusTag status={deploymentStatus} />
       </BAIFlex>
-      <Suspense fallback={<Skeleton active />}>
-        <DeploymentConfigurationSection
-          deploymentFrgmt={deployment}
-          deploymentId={toGlobalId('ModelDeployment', deploymentId)}
-          isDeploymentDestroying={isDeploymentDestroying}
-        />
-      </Suspense>
-      <Card
+      <DeploymentConfigurationSection
+        deploymentFrgmt={deployment}
+        deploymentId={toGlobalId('ModelDeployment', deploymentId)}
+        isDeploymentDestroying={isDeploymentDestroying}
+      />
+      <BAICard
         activeTabKey={activeTab}
         onTabChange={(key) => setActiveTab(key)}
         tabList={[
@@ -153,42 +151,14 @@ const DeploymentDetailPage: React.FC = () => {
             />
           </Suspense>
         </div>
-      </Card>
-      <Card
-        title={
-          <BAIFlex gap="xs" align="center">
-            {t('deployment.tab.AutoScaling')}
-            <Tooltip title={t('deployment.tab.description.AutoScaling')}>
-              <QuestionCircleOutlined
-                style={{ color: token.colorTextDescription }}
-              />
-            </Tooltip>
-          </BAIFlex>
-        }
-      >
-        <DeploymentAutoScalingTab deploymentFrgmt={deployment} />
-      </Card>
-      <Card
-        title={
-          <BAIFlex gap="xs" align="center">
-            {t('deployment.tab.AccessTokens')}
-            <Tooltip title={t('deployment.tab.description.AccessTokens')}>
-              <QuestionCircleOutlined
-                style={{ color: token.colorTextDescription }}
-              />
-            </Tooltip>
-          </BAIFlex>
-        }
-      >
-        <Suspense fallback={<Skeleton active />}>
-          <DeploymentAccessTokensTab
-            deploymentFrgmt={deployment}
-            deploymentId={toGlobalId('ModelDeployment', deploymentId)}
-            isOwnedByCurrentUser={isOwnedByCurrentUser}
-            isDeploymentDestroying={isDeploymentDestroying}
-          />
-        </Suspense>
-      </Card>
+      </BAICard>
+      <DeploymentAutoScalingTab deploymentFrgmt={deployment} />
+      <DeploymentAccessTokensTab
+        deploymentFrgmt={deployment}
+        deploymentId={toGlobalId('ModelDeployment', deploymentId)}
+        isOwnedByCurrentUser={isOwnedByCurrentUser}
+        isDeploymentDestroying={isDeploymentDestroying}
+      />
     </BAIFlex>
   );
 };

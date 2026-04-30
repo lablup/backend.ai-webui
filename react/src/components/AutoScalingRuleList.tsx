@@ -34,7 +34,12 @@ import type { BAITableProps, GraphQLFilter } from 'backend.ai-ui';
 import { default as dayjs } from 'dayjs';
 import * as _ from 'lodash-es';
 import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
-import React, { useDeferredValue, useState, useTransition } from 'react';
+import React, {
+  useDeferredValue,
+  useImperativeHandle,
+  useState,
+  useTransition,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 
@@ -321,11 +326,29 @@ const AutoScalingRuleListNodes: React.FC<AutoScalingRuleListNodesProps> = ({
 
 // --- List orchestrator component ---
 
+export interface AutoScalingRuleListRef {
+  openAddModal: () => void;
+}
+
 interface AutoScalingRuleListProps {
   deploymentId: string; // Relay global ID (e.g., toGlobalId('ModelDeployment', uuid))
   isEndpointDestroying: boolean;
   isOwnedByCurrentUser: boolean;
   fetchKey?: string;
+  /**
+   * When true, the inline "Add rules" primary button is hidden so the parent
+   * can render its own trigger (typically in a `BAICard.extra` slot). The
+   * editor modal is still managed internally; callers should use
+   * `ref.current.openAddModal()` to open it.
+   */
+  hideInlineAddButton?: boolean;
+  /**
+   * When true, the inline refresh button (`BAIFetchKeyButton`) is hidden so
+   * the parent can render refresh in a `BAICard.extra` slot. Drive the
+   * refetch externally by bumping `fetchKey`.
+   */
+  hideInlineRefreshButton?: boolean;
+  ref?: React.Ref<AutoScalingRuleListRef>;
 }
 
 const AutoScalingRuleList: React.FC<AutoScalingRuleListProps> = ({
@@ -333,6 +356,9 @@ const AutoScalingRuleList: React.FC<AutoScalingRuleListProps> = ({
   isEndpointDestroying,
   isOwnedByCurrentUser,
   fetchKey: parentFetchKey,
+  hideInlineAddButton = false,
+  hideInlineRefreshButton = false,
+  ref,
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -342,6 +368,17 @@ const AutoScalingRuleList: React.FC<AutoScalingRuleListProps> = ({
 
   const [editingRuleId, setEditingRuleId] = useState<string | null>(null);
   const [isOpenEditorModal, setIsOpenEditorModal] = useState(false);
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      openAddModal: () => {
+        setEditingRuleId(null);
+        setIsOpenEditorModal(true);
+      },
+    }),
+    [],
+  );
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
     'table_column_overrides.AutoScalingRuleList',
@@ -532,24 +569,28 @@ const AutoScalingRuleList: React.FC<AutoScalingRuleListProps> = ({
               });
             }}
           />
-          <BAIFetchKeyButton
-            loading={isPendingRefetch}
-            value=""
-            onChange={() => {
-              startRefetchTransition(() => updateFetchKey());
-            }}
-          />
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            disabled={isEndpointDestroying || !isOwnedByCurrentUser}
-            onClick={() => {
-              setEditingRuleId(null);
-              setIsOpenEditorModal(true);
-            }}
-          >
-            {t('modelService.AddRules')}
-          </Button>
+          {!hideInlineRefreshButton && (
+            <BAIFetchKeyButton
+              loading={isPendingRefetch}
+              value=""
+              onChange={() => {
+                startRefetchTransition(() => updateFetchKey());
+              }}
+            />
+          )}
+          {!hideInlineAddButton && (
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              disabled={isEndpointDestroying || !isOwnedByCurrentUser}
+              onClick={() => {
+                setEditingRuleId(null);
+                setIsOpenEditorModal(true);
+              }}
+            >
+              {t('modelService.AddRules')}
+            </Button>
+          )}
         </BAIFlex>
         <AutoScalingRuleListNodes
           autoScalingRulesFrgmt={autoScalingRuleNodes}

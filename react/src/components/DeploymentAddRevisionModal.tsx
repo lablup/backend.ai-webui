@@ -35,7 +35,7 @@ import {
   InputNumber,
   Segmented,
   Select,
-  Spin,
+  Skeleton,
   Typography,
   theme,
 } from 'antd';
@@ -754,13 +754,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       }
     >
       {open && (
-        <Suspense
-          fallback={
-            <BAIFlex justify="center" align="center" style={{ minHeight: 200 }}>
-              <Spin />
-            </BAIFlex>
-          }
-        >
+        <Suspense fallback={<Skeleton active />}>
           <DeploymentAddRevisionModalFormBody
             deploymentId={deploymentId}
             form={form}

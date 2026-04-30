@@ -6,9 +6,24 @@ import { DeploymentAccessTokensTabCreateMutation } from '../__generated__/Deploy
 import { DeploymentAccessTokensTabDeleteMutation } from '../__generated__/DeploymentAccessTokensTabDeleteMutation.graphql';
 import { DeploymentAccessTokensTabListQuery } from '../__generated__/DeploymentAccessTokensTabListQuery.graphql';
 import { DeploymentAccessTokensTab_deployment$key } from '../__generated__/DeploymentAccessTokensTab_deployment.graphql';
-import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
-import { App, Button, DatePicker, Form, Select, Typography } from 'antd';
 import {
+  DeleteOutlined,
+  PlusOutlined,
+  QuestionCircleOutlined,
+} from '@ant-design/icons';
+import {
+  App,
+  Button,
+  DatePicker,
+  Form,
+  Select,
+  Skeleton,
+  Tooltip,
+  Typography,
+  theme,
+} from 'antd';
+import {
+  BAICard,
   BAIFetchKeyButton,
   BAIFlex,
   BAIModal,
@@ -22,7 +37,7 @@ import {
   useMutationWithPromise,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
-import React, { useState, useTransition } from 'react';
+import React, { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   graphql,
@@ -46,7 +61,8 @@ const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { message, modal } = App.useApp();
+  const { token } = theme.useToken();
+  const { message } = App.useApp();
   const { logger } = useBAILogger();
   const [isPendingRefetch, startRefetchTransition] = useTransition();
   const [fetchKey, setFetchKey] = useState(0);
@@ -67,39 +83,6 @@ const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
     deploymentFrgmt,
   );
 
-  const { deployment: listData } =
-    useLazyLoadQuery<DeploymentAccessTokensTabListQuery>(
-      graphql`
-        query DeploymentAccessTokensTabListQuery($deploymentId: ID!) {
-          deployment(id: $deploymentId) {
-            accessTokens(orderBy: [{ field: CREATED_AT, direction: DESC }]) {
-              count
-              edges {
-                node {
-                  id
-                  token
-                  createdAt
-                  expiresAt
-                }
-              }
-            }
-          }
-        }
-      `,
-      { deploymentId },
-      { fetchKey, fetchPolicy: 'network-only' },
-    );
-
-  type AccessTokenNode = NonNullable<
-    NonNullable<
-      NonNullable<typeof listData>['accessTokens']
-    >['edges'][number]['node']
-  >;
-
-  const accessTokens = filterOutNullAndUndefined(
-    listData?.accessTokens?.edges?.map((edge) => edge?.node),
-  );
-
   const commitCreateMutation =
     useMutationWithPromise<DeploymentAccessTokensTabCreateMutation>(graphql`
       mutation DeploymentAccessTokensTabCreateMutation(
@@ -116,137 +99,56 @@ const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
       }
     `);
 
-  const [commitDelete, isDeletingToken] =
-    useMutation<DeploymentAccessTokensTabDeleteMutation>(graphql`
-      mutation DeploymentAccessTokensTabDeleteMutation(
-        $input: DeleteAccessTokenInput!
-      ) {
-        deleteAccessToken(input: $input) {
-          id
-        }
-      }
-    `);
-
   const handleRefetch = () => {
     startRefetchTransition(() => {
       setFetchKey((k) => k + 1);
     });
   };
 
+  const isMutationDisabled = isDeploymentDestroying || !isOwnedByCurrentUser;
+
   return (
     <>
-      <BAIFlex direction="column" align="stretch" gap="sm">
-        <BAIFlex justify="end" gap="xs">
-          <BAIFetchKeyButton
-            loading={isPendingRefetch}
-            value=""
-            onChange={handleRefetch}
+      <BAICard
+        title={
+          <BAIFlex gap="xs" align="center">
+            {t('deployment.tab.AccessTokens')}
+            <Tooltip title={t('deployment.tab.description.AccessTokens')}>
+              <QuestionCircleOutlined
+                style={{ color: token.colorTextDescription }}
+              />
+            </Tooltip>
+          </BAIFlex>
+        }
+        extra={
+          <BAIFlex gap="xs" align="center">
+            <BAIFetchKeyButton
+              loading={isPendingRefetch}
+              value=""
+              onChange={handleRefetch}
+            />
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              disabled={isMutationDisabled}
+              onClick={() => setIsCreateModalOpen(true)}
+            >
+              {t('deployment.accessToken.Create')}
+            </Button>
+          </BAIFlex>
+        }
+        styles={{ body: { paddingTop: 0 } }}
+      >
+        <Suspense fallback={<Skeleton active />}>
+          <DeploymentAccessTokensTable
+            deploymentId={deploymentId}
+            fetchKey={fetchKey}
+            isPendingRefetch={isPendingRefetch}
+            isDeleteDisabled={isMutationDisabled}
+            onAfterDelete={handleRefetch}
           />
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            disabled={isDeploymentDestroying || !isOwnedByCurrentUser}
-            onClick={() => setIsCreateModalOpen(true)}
-          >
-            {t('deployment.accessToken.Create')}
-          </Button>
-        </BAIFlex>
-        <BAITable<AccessTokenNode>
-          scroll={{ x: 'max-content' }}
-          rowKey="id"
-          loading={isPendingRefetch || isDeletingToken}
-          dataSource={accessTokens}
-          pagination={false}
-          columns={[
-            {
-              key: 'token',
-              title: t('deployment.accessToken.Token'),
-              dataIndex: 'token',
-              render: (_text, row) => {
-                if (!row) return '-';
-                return (
-                  <BAINameActionCell
-                    title={
-                      <BAIText
-                        copyable={{ text: row.token }}
-                        ellipsis
-                        code
-                        style={{ maxWidth: 120 }}
-                      >
-                        {row.token}
-                      </BAIText>
-                    }
-                    showActions="always"
-                    actions={[
-                      {
-                        key: 'delete',
-                        title: t('deployment.accessToken.Delete'),
-                        icon: <DeleteOutlined />,
-                        type: 'danger',
-                        disabled:
-                          isDeploymentDestroying || !isOwnedByCurrentUser,
-                        onClick: () => {
-                          modal.confirm({
-                            title: t('deployment.accessToken.Delete'),
-                            content: t('deployment.accessToken.DeleteConfirm'),
-                            okText: t('button.Delete'),
-                            okButtonProps: { danger: true },
-                            onOk: () => {
-                              commitDelete({
-                                variables: {
-                                  input: {
-                                    id: toLocalId(row.id) ?? row.id,
-                                  },
-                                },
-                                onCompleted: (_res, errors) => {
-                                  if (errors && errors.length > 0) {
-                                    logger.error(errors[0]);
-                                    message.error(
-                                      errors[0]?.message ??
-                                        t('dialog.ErrorOccurred'),
-                                    );
-                                    return;
-                                  }
-                                  message.success(
-                                    t('deployment.accessToken.Deleted'),
-                                  );
-                                  handleRefetch();
-                                },
-                                onError: (err) => {
-                                  logger.error(err);
-                                  message.error(
-                                    err.message ?? t('dialog.ErrorOccurred'),
-                                  );
-                                },
-                              });
-                            },
-                          });
-                        },
-                      },
-                    ]}
-                  />
-                );
-              },
-            },
-            {
-              key: 'createdAt',
-              title: t('deployment.CreatedAt'),
-              dataIndex: 'createdAt',
-              render: (_text, row) =>
-                row?.createdAt ? dayjs(row.createdAt).format('ll LT') : '-',
-            },
-            {
-              key: 'expiresAt',
-              title: t('deployment.accessToken.Expiration'),
-              dataIndex: 'expiresAt',
-              render: (_text, row) =>
-                row?.expiresAt
-                  ? dayjs(row.expiresAt).format('ll LT')
-                  : t('deployment.accessToken.NoExpiration'),
-            },
-          ]}
-        />
-      </BAIFlex>
+        </Suspense>
+      </BAICard>
 
       <BAIUnmountAfterClose>
         <CreateAccessTokenModal
@@ -324,6 +226,175 @@ const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
         </BAIModal>
       </BAIUnmountAfterClose>
     </>
+  );
+};
+
+// ---------------------------------------------------------------------------
+// Inner table component — owns the data fetch and per-row delete mutation so
+// the BAICard header above can remain visible while the list suspends.
+// ---------------------------------------------------------------------------
+
+interface DeploymentAccessTokensTableProps {
+  deploymentId: string;
+  fetchKey: number;
+  isPendingRefetch: boolean;
+  isDeleteDisabled: boolean;
+  onAfterDelete: () => void;
+}
+
+const DeploymentAccessTokensTable: React.FC<
+  DeploymentAccessTokensTableProps
+> = ({
+  deploymentId,
+  fetchKey,
+  isPendingRefetch,
+  isDeleteDisabled,
+  onAfterDelete,
+}) => {
+  'use memo';
+  const { t } = useTranslation();
+  const { message, modal } = App.useApp();
+  const { logger } = useBAILogger();
+
+  const { deployment: listData } =
+    useLazyLoadQuery<DeploymentAccessTokensTabListQuery>(
+      graphql`
+        query DeploymentAccessTokensTabListQuery($deploymentId: ID!) {
+          deployment(id: $deploymentId) {
+            accessTokens(orderBy: [{ field: CREATED_AT, direction: DESC }]) {
+              count
+              edges {
+                node {
+                  id
+                  token
+                  createdAt
+                  expiresAt
+                }
+              }
+            }
+          }
+        }
+      `,
+      { deploymentId },
+      { fetchKey, fetchPolicy: 'network-only' },
+    );
+
+  type AccessTokenNode = NonNullable<
+    NonNullable<
+      NonNullable<typeof listData>['accessTokens']
+    >['edges'][number]['node']
+  >;
+
+  const accessTokens = filterOutNullAndUndefined(
+    listData?.accessTokens?.edges?.map((edge) => edge?.node),
+  );
+
+  const [commitDelete, isDeletingToken] =
+    useMutation<DeploymentAccessTokensTabDeleteMutation>(graphql`
+      mutation DeploymentAccessTokensTabDeleteMutation(
+        $input: DeleteAccessTokenInput!
+      ) {
+        deleteAccessToken(input: $input) {
+          id
+        }
+      }
+    `);
+
+  return (
+    <BAITable<AccessTokenNode>
+      scroll={{ x: 'max-content' }}
+      rowKey="id"
+      loading={isPendingRefetch || isDeletingToken}
+      dataSource={accessTokens}
+      pagination={false}
+      columns={[
+        {
+          key: 'token',
+          title: t('deployment.accessToken.Token'),
+          dataIndex: 'token',
+          render: (_text, row) => {
+            if (!row) return '-';
+            return (
+              <BAINameActionCell
+                title={
+                  <BAIText
+                    copyable={{ text: row.token }}
+                    ellipsis
+                    code
+                    style={{ maxWidth: 120 }}
+                  >
+                    {row.token}
+                  </BAIText>
+                }
+                showActions="always"
+                actions={[
+                  {
+                    key: 'delete',
+                    title: t('deployment.accessToken.Delete'),
+                    icon: <DeleteOutlined />,
+                    type: 'danger',
+                    disabled: isDeleteDisabled,
+                    onClick: () => {
+                      modal.confirm({
+                        title: t('deployment.accessToken.Delete'),
+                        content: t('deployment.accessToken.DeleteConfirm'),
+                        okText: t('button.Delete'),
+                        okButtonProps: { danger: true },
+                        onOk: () => {
+                          commitDelete({
+                            variables: {
+                              input: {
+                                id: toLocalId(row.id) ?? row.id,
+                              },
+                            },
+                            onCompleted: (_res, errors) => {
+                              if (errors && errors.length > 0) {
+                                logger.error(errors[0]);
+                                message.error(
+                                  errors[0]?.message ??
+                                    t('dialog.ErrorOccurred'),
+                                );
+                                return;
+                              }
+                              message.success(
+                                t('deployment.accessToken.Deleted'),
+                              );
+                              onAfterDelete();
+                            },
+                            onError: (err) => {
+                              logger.error(err);
+                              message.error(
+                                err.message ?? t('dialog.ErrorOccurred'),
+                              );
+                            },
+                          });
+                        },
+                      });
+                    },
+                  },
+                ]}
+              />
+            );
+          },
+        },
+        {
+          key: 'createdAt',
+          title: t('deployment.CreatedAt'),
+          dataIndex: 'createdAt',
+          render: (_text, row) =>
+            row?.createdAt ? dayjs(row.createdAt).format('ll LT') : '-',
+        },
+        {
+          key: 'expiresAt',
+          title: t('deployment.accessToken.Expiration'),
+          dataIndex: 'expiresAt',
+          render: (_text, row) =>
+            row?.expiresAt
+              ? dayjs(row.expiresAt).format('ll LT')
+              : t('deployment.accessToken.NoExpiration'),
+        },
+      ]}
+    />
   );
 };
 

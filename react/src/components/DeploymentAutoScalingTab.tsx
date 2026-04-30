@@ -4,33 +4,42 @@
  */
 import { DeploymentAutoScalingTab_deployment$key } from '../__generated__/DeploymentAutoScalingTab_deployment.graphql';
 import { useCurrentUserInfo } from '../hooks/backendai';
-import AutoScalingRuleList from './AutoScalingRuleList';
-import React from 'react';
+import AutoScalingRuleList, {
+  type AutoScalingRuleListRef,
+} from './AutoScalingRuleList';
+import { PlusOutlined, QuestionCircleOutlined } from '@ant-design/icons';
+import { Button, Skeleton, Tooltip, theme } from 'antd';
+import { BAICard, BAIFetchKeyButton, BAIFlex } from 'backend.ai-ui';
+import React, { Suspense, useRef, useState, useTransition } from 'react';
+import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
 interface DeploymentAutoScalingTabProps {
   deploymentFrgmt: DeploymentAutoScalingTab_deployment$key | null | undefined;
-  fetchKey?: string;
 }
 
 /**
- * DeploymentAutoScalingTab — tab shown on the Deployment detail page that
+ * DeploymentAutoScalingTab — section card on the Deployment detail page that
  * hosts the Auto-Scaling Rules management UI.
  *
- * This is a thin wrapper around `<AutoScalingRuleList />`. It extracts the
- * Relay global ID from the deployment fragment and derives the
- * `isEndpointDestroying` / `isOwnedByCurrentUser` flags that the underlying
- * list needs for permission gating. `AutoScalingRuleList` is already
- * Deployment-API based (its GraphQL query is rooted at `deployment(id: $id)`)
- * so no API migration is needed — we only need to surface it inside the new
- * Deployment detail page tabs.
+ * The card owns the section title, the refresh button, and the primary "Add
+ * rules" button — all rendered in the BAICard `extra` slot per project
+ * convention. The actual rule list (`AutoScalingRuleList`) still owns the
+ * editor modal; we drive it via an imperative `ref` so the trigger can live
+ * in the card header while the modal stays co-located with the data it
+ * mutates.
  */
 const DeploymentAutoScalingTab: React.FC<DeploymentAutoScalingTabProps> = ({
   deploymentFrgmt,
-  fetchKey,
 }) => {
   'use memo';
+  const { t } = useTranslation();
+  const { token } = theme.useToken();
   const [currentUser] = useCurrentUserInfo();
+  const autoScalingRef = useRef<AutoScalingRuleListRef>(null);
+
+  const [isPendingRefetch, startRefetchTransition] = useTransition();
+  const [fetchKey, setFetchKey] = useState(0);
 
   const deployment = useFragment(
     graphql`
@@ -66,13 +75,57 @@ const DeploymentAutoScalingTab: React.FC<DeploymentAutoScalingTabProps> = ({
   const isOwnedByCurrentUser =
     !creatorEmail || creatorEmail === currentUser.email;
 
+  const isAddDisabled = isEndpointDestroying || !isOwnedByCurrentUser;
+
+  const handleRefetch = () => {
+    startRefetchTransition(() => {
+      setFetchKey((k) => k + 1);
+    });
+  };
+
   return (
-    <AutoScalingRuleList
-      deploymentId={deployment.id}
-      isEndpointDestroying={isEndpointDestroying}
-      isOwnedByCurrentUser={isOwnedByCurrentUser}
-      fetchKey={fetchKey}
-    />
+    <BAICard
+      title={
+        <BAIFlex gap="xs" align="center">
+          {t('deployment.tab.AutoScaling')}
+          <Tooltip title={t('deployment.tab.description.AutoScaling')}>
+            <QuestionCircleOutlined
+              style={{ color: token.colorTextDescription }}
+            />
+          </Tooltip>
+        </BAIFlex>
+      }
+      extra={
+        <BAIFlex gap="xs" align="center">
+          <BAIFetchKeyButton
+            loading={isPendingRefetch}
+            value=""
+            onChange={handleRefetch}
+          />
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            disabled={isAddDisabled}
+            onClick={() => autoScalingRef.current?.openAddModal()}
+          >
+            {t('modelService.AddRules')}
+          </Button>
+        </BAIFlex>
+      }
+      styles={{ body: { paddingTop: 0 } }}
+    >
+      <Suspense fallback={<Skeleton active />}>
+        <AutoScalingRuleList
+          ref={autoScalingRef}
+          deploymentId={deployment.id}
+          isEndpointDestroying={isEndpointDestroying}
+          isOwnedByCurrentUser={isOwnedByCurrentUser}
+          fetchKey={String(fetchKey)}
+          hideInlineAddButton
+          hideInlineRefreshButton
+        />
+      </Suspense>
+    </BAICard>
   );
 };
 

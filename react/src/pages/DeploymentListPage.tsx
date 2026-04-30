@@ -133,7 +133,7 @@ const DeploymentListPageContent: React.FC = () => {
   const isPending =
     deferredQueryVariables !== queryVariables || deferredFetchKey !== fetchKey;
 
-  return myDeployments ? (
+  return (
     <DeploymentList
       deploymentsFrgmt={myDeployments}
       filter={queryParams.filter ?? undefined}
@@ -187,7 +187,7 @@ const DeploymentListPageContent: React.FC = () => {
         </BAIFlex>
       }
     />
-  ) : null;
+  );
 };
 
 const DeploymentListPage: React.FC = () => {
