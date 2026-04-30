@@ -455,6 +455,7 @@
     "WrongEmail": "Adresse e-mail invalide",
     "YouAreAboutToDeleteCredential": "Vous êtes sur le point de supprimer les identifiants de cet utilisateur :",
     "validation": {
+      "MaxUserCount": "Le nombre maximum d'utilisateurs pouvant être créés en une fois est de {{count}}.",
       "PleaseEnterPositiveAndUnder2_31": "Veuillez saisir une valeur positive inférieure à 2^31",
       "PleaseEnterPositiveInteger": "Veuillez saisir une valeur positive.",
       "PleaseEnterUniqueNumbers": "Veuillez entrer des nombres uniques",

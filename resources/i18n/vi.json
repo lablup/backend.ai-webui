@@ -455,6 +455,7 @@
     "WrongEmail": "Địa chỉ email không hợp lệ",
     "YouAreAboutToDeleteCredential": "Bạn sắp xóa thông tin xác thực của người dùng này:",
     "validation": {
+      "MaxUserCount": "Số lượng người dùng tối đa có thể tạo cùng lúc là {{count}}.",
       "PleaseEnterPositiveAndUnder2_31": "Vui lòng nhập một giá trị dương nhỏ hơn 2^31",
       "PleaseEnterPositiveInteger": "Vui lòng nhập một giá trị dương.",
       "PleaseEnterUniqueNumbers": "Vui lòng nhập các số không trùng lặp",

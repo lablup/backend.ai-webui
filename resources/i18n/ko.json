@@ -455,7 +455,7 @@
     "WrongEmail": "잘못된 이메일 주소 형식입니다.",
     "YouAreAboutToDeleteCredential": "다음 사용자의 자격증명을 삭제하려고 합니다:",
     "validation": {
-      "MaxUserCount": "최대 사용자 수는 {{count}}명입니다.",
+      "MaxUserCount": "한 번에 생성할 수 있는 최대 사용자 수는 {{count}}명입니다.",
       "PleaseEnterPositiveAndUnder2_31": "2^31보다 작은 양수를 입력하세요.",
       "PleaseEnterPositiveInteger": "양수를 입력하세요.",
       "PleaseEnterUniqueNumbers": "중복되지 않는 숫자를 입력하세요",

@@ -455,6 +455,7 @@
     "WrongEmail": "Имэйл хаяг буруу байна",
     "YouAreAboutToDeleteCredential": "Та энэ хэрэглэгчийн итгэмжлэлийг устгах гэж байна:",
     "validation": {
+      "MaxUserCount": "Нэг удаад үүсгэх боломжтой хэрэглэгчдийн дээд тоо нь {{count}} байна.",
       "PleaseEnterPositiveAndUnder2_31": "2^31-аас бага эерэг утга оруулна уу",
       "PleaseEnterPositiveInteger": "Эерэг утга оруулна уу.",
       "PleaseEnterUniqueNumbers": "Давтагдаагүй тоо оруулна уу",
