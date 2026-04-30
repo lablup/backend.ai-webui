@@ -1,0 +1,66 @@
+name: backend.ai-client CI
+
+on:
+  pull_request:
+    paths:
+      - 'packages/backend.ai-client/**'
+      - 'pnpm-lock.yaml'
+      - '.github/workflows/backend-ai-client-ci.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'packages/backend.ai-client/**'
+      - 'pnpm-lock.yaml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: backend-ai-client-ci-${{ github.workflow }}-${{ github.event.pull_request.head.ref || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Lint, typecheck, test, build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: pnpm/action-setup@v5
+        name: Install pnpm
+        with:
+          version: latest
+          run_install: false
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'pnpm'
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - uses: actions/cache@v5
+        name: Setup pnpm cache
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --merge-git-branch-lockfiles --no-frozen-lockfile
+
+      - name: Lint
+        run: pnpm --filter backend.ai-client run lint
+
+      - name: Typecheck
+        run: pnpm --filter backend.ai-client exec tsc --noEmit
+
+      - name: Test
+        run: pnpm --filter backend.ai-client run test
+
+      - name: Build
+        run: pnpm --filter backend.ai-client run build
