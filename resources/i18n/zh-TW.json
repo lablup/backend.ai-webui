@@ -603,6 +603,7 @@
       "WritePermissionRequiredInUploadFiles": "上傳文件需要寫權限。"
     },
     "folders": {
+      "AdminDataPageAlert": "管理員資料頁面僅可建立專案資料夾。",
       "CannotDeleteFolder": "無法刪除安裝在一個或多個會話中的文件夾。請先終止會話。",
       "CannotDeletePipelineFolder": "您無法刪除管道文件夾。",
       "CannotRestorePipelineFolder": "您無法還原管道文件夾。",
@@ -650,6 +651,7 @@
       "LeaveAFolder": "留下文件夾",
       "LeaveFolder": "离开文件夹",
       "Location": "地點",
+      "ManageProjectFolderInAdmin": "專案資料夾管理可在管理員設定中進行。",
       "MaxFolderQuota": "最大文件夹配额",
       "MaxSize": "最大尺寸",
       "ModelProjectFolderRestrictedToReadOnly": "模型儲存資料夾不支援「讀取與寫入」權限",
@@ -668,12 +670,14 @@
       "Name": "名稱",
       "NoDeletePermission": "无删除权限",
       "NoFolderToDisplay": "无文件夹显示",
+      "NoRestorePermission": "無還原權限",
       "NumberOfFiles": "文件數",
       "OpenAFolder": "打开文件夹",
       "Owner": "所有者",
       "Ownership": "所有權",
       "Path": "存儲路徑",
       "Permission": "允許",
+      "ProjectAdminDataPageAlert": "專案管理員資料頁面僅可建立專案資料夾。",
       "ProjectFolderAlertDesc": "該文件夾與項目的所有成員共享",
       "ProjectFolderCreationHelp": "將創建一個可以通過“{{projectName}}”項目用戶訪問的文件夾。",
       "Rename": "改名",
@@ -2082,7 +2086,7 @@
     "Updated": "資源預設已更新"
   },
   "sTokenLoginBoundary": {
-"AuthenticatingDescription": "正在驗證您的登入權杖…",
+    "AuthenticatingDescription": "正在驗證您的登入權杖…",
     "AuthenticatingTitle": "Signing you in",
     "ConnectingDescription": "正在連線至 Backend.AI 伺服器…",
     "CopyErrorDetails": "Copy error details",

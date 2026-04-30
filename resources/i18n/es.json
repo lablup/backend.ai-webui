@@ -603,6 +603,7 @@
       "WritePermissionRequiredInUploadFiles": "Se requiere permiso de escritura para cargar archivos."
     },
     "folders": {
+      "AdminDataPageAlert": "En la página de Datos de Administrador solo se pueden crear carpetas de proyecto.",
       "CannotDeleteFolder": "No se puede eliminar la carpeta montada en una o más sesiones. Por favor, termine la sesión primero.",
       "CannotDeletePipelineFolder": "No puede eliminar las carpetas de tuberías.",
       "CannotRestorePipelineFolder": "No puedes restaurar las carpetas de tuberías.",
@@ -650,6 +651,7 @@
       "LeaveAFolder": "Dejar una carpeta",
       "LeaveFolder": "Dejar carpeta",
       "Location": "Ubicación",
+      "ManageProjectFolderInAdmin": "La gestión de carpetas de proyecto está disponible en la configuración de administrador.",
       "MaxFolderQuota": "Cuota máxima de carpetas",
       "MaxSize": "Tamaño máximo",
       "ModelProjectFolderRestrictedToReadOnly": "El permiso 'Lectura y escritura' no es compatible con la carpeta del almacén de modelos",
@@ -668,12 +670,14 @@
       "Name": "Nombre",
       "NoDeletePermission": "Sin permiso de eliminación",
       "NoFolderToDisplay": "No hay carpetas que mostrar",
+      "NoRestorePermission": "Sin permiso de restauración",
       "NumberOfFiles": "Número de ficheros",
       "OpenAFolder": "Abrir una carpeta",
       "Owner": "Propietario",
       "Ownership": "Propiedad",
       "Path": "Ruta de almacenamiento",
       "Permission": "Permiso",
+      "ProjectAdminDataPageAlert": "En la página de Datos de Administrador del Proyecto solo se pueden crear carpetas de proyecto.",
       "ProjectFolderAlertDesc": "Esta carpeta se comparte con todos los miembros del proyecto.",
       "ProjectFolderCreationHelp": "Se creará una carpeta accesible por los usuarios del proyecto \"{{projectName}}\".",
       "Rename": "Cambie el nombre de",
@@ -2078,7 +2082,7 @@
     "Updated": "Preajuste de recursos actualizado"
   },
   "sTokenLoginBoundary": {
-"AuthenticatingDescription": "Verificando su token de inicio de sesión…",
+    "AuthenticatingDescription": "Verificando su token de inicio de sesión…",
     "AuthenticatingTitle": "Signing you in",
     "ConnectingDescription": "Conectando al servidor Backend.AI…",
     "CopyErrorDetails": "Copy error details",

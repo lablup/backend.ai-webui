@@ -603,6 +603,7 @@
       "WritePermissionRequiredInUploadFiles": "Файл (ууд) -ийг байршуулахад бичих зөвшөөрөл шаардлагатай."
     },
     "folders": {
+      "AdminDataPageAlert": "Админы өгөгдлийн хуудсан дээр зөвхөн төслийн хавтас үүсгэх боломжтой.",
       "CannotDeleteFolder": "Нэг буюу хэд хэдэн хэсэгт суулгасан фолдерыг устгах боломжгүй. Эхлээд хуралдааныг зогсооно уу.",
       "CannotDeletePipelineFolder": "Та дамжуулах хоолойн хавтасыг устгах боломжгүй.",
       "CannotRestorePipelineFolder": "Та дамжуулах хоолойн хавтасыг сэргээх боломжгүй.",
@@ -650,6 +651,7 @@
       "LeaveAFolder": "Фолдер үлдээнэ үү",
       "LeaveFolder": "Фолдерыг орхи",
       "Location": "Байршил",
+      "ManageProjectFolderInAdmin": "Төслийн хавтасны удирдлага нь админы тохиргоонд боломжтой.",
       "MaxFolderQuota": "Фолдерын хамгийн их квот",
       "MaxSize": "Хамгийн их хэмжээ",
       "ModelProjectFolderRestrictedToReadOnly": "Моделийн агуулах хавтас дээр 'Унших ба бичих' эрхийг дэмждэггүй.",
@@ -668,12 +670,14 @@
       "Name": "Нэр",
       "NoDeletePermission": "Устгах зөвшөөрөл байхгүй байна",
       "NoFolderToDisplay": "Харуулах хавтас байхгүй",
+      "NoRestorePermission": "Сэргээх зөвшөөрөл байхгүй байна",
       "NumberOfFiles": "Файлын тоо",
       "OpenAFolder": "Фолдер нээх",
       "Owner": "Эзэмшигч",
       "Ownership": "Эзэмшил",
       "Path": "Агуулахын зам",
       "Permission": "Зөвшөөрөл",
+      "ProjectAdminDataPageAlert": "Төслийн админы өгөгдлийн хуудсан дээр зөвхөн төслийн хавтас үүсгэх боломжтой.",
       "ProjectFolderAlertDesc": "Энэ фолдерыг төслийн бүх гишүүдээр хуваалцаж байна",
       "ProjectFolderCreationHelp": "\"{{projectName}} нь\" Төслийн хэрэглэгчид үүсгэгдэх болно.",
       "Rename": "Нэрийг нь өөрчлөх",
@@ -2079,7 +2083,7 @@
     "Updated": "Нөөцийн урьдчилан тохируулалтыг шинэчилсэн"
   },
   "sTokenLoginBoundary": {
-"AuthenticatingDescription": "Нэвтрэх токеныг шалгаж байна…",
+    "AuthenticatingDescription": "Нэвтрэх токеныг шалгаж байна…",
     "AuthenticatingTitle": "Signing you in",
     "ConnectingDescription": "Backend.AI серверт холбогдож байна…",
     "CopyErrorDetails": "Copy error details",

@@ -603,6 +603,7 @@
       "WritePermissionRequiredInUploadFiles": "Dosya(lar)ı yüklerken yazma izni gereklidir."
     },
     "folders": {
+      "AdminDataPageAlert": "Yönetici Veri sayfasında yalnızca proje klasörleri oluşturulabilir.",
       "CannotDeleteFolder": "Bir veya daha fazla oturuma bağlı klasör silinemez. Lütfen önce oturumu sonlandırın.",
       "CannotDeletePipelineFolder": "Boru hattı klasörlerini silemezsiniz.",
       "CannotRestorePipelineFolder": "Boru hattı klasörlerini geri yükleyemezsiniz.",
@@ -650,6 +651,7 @@
       "LeaveAFolder": "klasör bırak",
       "LeaveFolder": "Klasörden ayrıl",
       "Location": "yer",
+      "ManageProjectFolderInAdmin": "Proje klasörü yönetimi, yönetici ayarlarında kullanılabilir.",
       "MaxFolderQuota": "Maksimum Klasör Kotası",
       "MaxSize": "Maksimum Boyut",
       "ModelProjectFolderRestrictedToReadOnly": "'Okuma ve Yazma' izni model depolama klasörü için desteklenmiyor",
@@ -668,12 +670,14 @@
       "Name": "isim",
       "NoDeletePermission": "Silme izni yok",
       "NoFolderToDisplay": "Görüntülenecek Klasör Yok",
+      "NoRestorePermission": "Geri yükleme izni yok",
       "NumberOfFiles": "Dosya sayısı",
       "OpenAFolder": "Bir klasör açın",
       "Owner": "Sahip",
       "Ownership": "Mülkiyet",
       "Path": "Depolama yolu",
       "Permission": "izin",
+      "ProjectAdminDataPageAlert": "Proje Yönetici Veri sayfasında yalnızca proje klasörleri oluşturulabilir.",
       "ProjectFolderAlertDesc": "Bu klasör projenin tüm üyeleriyle paylaşılıyor",
       "ProjectFolderCreationHelp": "\"{{projectName}}\" proje kullanıcıları tarafından erişilebilen bir klasör oluşturulacaktır.",
       "Rename": "Adını değiştirmek",
@@ -2078,7 +2082,7 @@
     "Updated": "Kaynak ön ayarı güncellendi"
   },
   "sTokenLoginBoundary": {
-"AuthenticatingDescription": "Oturum açma jetonunuz doğrulanıyor…",
+    "AuthenticatingDescription": "Oturum açma jetonunuz doğrulanıyor…",
     "AuthenticatingTitle": "Signing you in",
     "ConnectingDescription": "Backend.AI sunucusuna bağlanılıyor…",
     "CopyErrorDetails": "Copy error details",

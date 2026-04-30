@@ -603,6 +603,7 @@
       "WritePermissionRequiredInUploadFiles": "上传文件需要写权限。"
     },
     "folders": {
+      "AdminDataPageAlert": "管理员数据页面仅可创建项目文件夹。",
       "CannotDeleteFolder": "无法删除安装在一个或多个会话中的文件夹。请先终止会话。",
       "CannotDeletePipelineFolder": "您无法删除管道文件夹。",
       "CannotRestorePipelineFolder": "您无法还原管道文件夹。",
@@ -650,6 +651,7 @@
       "LeaveAFolder": "留下文件夹",
       "LeaveFolder": "离开文件夹",
       "Location": "地点",
+      "ManageProjectFolderInAdmin": "项目文件夹管理可在管理员设置中进行。",
       "MaxFolderQuota": "最大文件夹配额",
       "MaxSize": "最大尺寸",
       "ModelProjectFolderRestrictedToReadOnly": "模型存储文件夹不支持“读写”权限",
@@ -668,12 +670,14 @@
       "Name": "名称",
       "NoDeletePermission": "无删除权限",
       "NoFolderToDisplay": "无文件夹显示",
+      "NoRestorePermission": "无恢复权限",
       "NumberOfFiles": "文件数",
       "OpenAFolder": "打开文件夹",
       "Owner": "所有者",
       "Ownership": "所有权",
       "Path": "存储路径",
       "Permission": "允许",
+      "ProjectAdminDataPageAlert": "项目管理员数据页面仅可创建项目文件夹。",
       "ProjectFolderAlertDesc": "该文件夹与项目的所有成员共享",
       "ProjectFolderCreationHelp": "将创建一个可以通过“{{projectName}}”项目用户访问的文件夹。",
       "Rename": "改名",
@@ -2080,7 +2084,7 @@
     "Updated": "资源预设已更新"
   },
   "sTokenLoginBoundary": {
-"AuthenticatingDescription": "正在验证您的登录令牌…",
+    "AuthenticatingDescription": "正在验证您的登录令牌…",
     "AuthenticatingTitle": "Signing you in",
     "ConnectingDescription": "正在连接 Backend.AI 服务器…",
     "CopyErrorDetails": "Copy error details",

@@ -4,9 +4,8 @@
  */
 import { DeleteVFolderModalV2Fragment$key } from '../__generated__/DeleteVFolderModalV2Fragment.graphql';
 import { DeleteVFolderModalV2Mutation } from '../__generated__/DeleteVFolderModalV2Mutation.graphql';
-import { App, Typography, theme } from 'antd';
+import { App, Typography } from 'antd';
 import {
-  BAIAlert,
   BAIFlex,
   BAIModal,
   BAIModalProps,
@@ -32,15 +31,14 @@ const DeleteVFolderModalV2: React.FC<DeleteVFolderModalV2Props> = ({
   const { t } = useTranslation();
   const { message } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
-  const { token } = theme.useToken();
 
   const vfolders = useFragment(
     graphql`
-      fragment DeleteVFolderModalV2Fragment on VirtualFolderNode
-      @relay(plural: true) {
+      fragment DeleteVFolderModalV2Fragment on VFolder @relay(plural: true) {
         id
-        name
-        permissions
+        metadata {
+          name
+        }
       }
     `,
     vfolderFrgmts,
@@ -57,12 +55,13 @@ const DeleteVFolderModalV2: React.FC<DeleteVFolderModalV2Props> = ({
       }
     `);
 
-  const foldersByPermission = _.groupBy(vfolders, (vfolder) => {
-    if (vfolder.permissions?.includes('delete_vfolder')) {
-      return 'deletable';
-    }
-    return 'undeletable';
-  });
+  // TODO(needs-backend): V2 `VFolder` does not expose a per-user action
+  // permission (legacy `VirtualFolderNode.permissions` had `delete_vfolder`).
+  // `accessControl.permission` is a mount-level enum (RO/RW/RW_DELETE), not
+  // an entity-level action permission, so it cannot be used to filter out
+  // undeletable folders here. Send all selected folders and let the backend
+  // reject unauthorized ones until a proper permission field is exposed.
+  const folders = vfolders ?? [];
 
   return (
     <BAIModal
@@ -73,12 +72,11 @@ const DeleteVFolderModalV2: React.FC<DeleteVFolderModalV2Props> = ({
       confirmLoading={isInFlightBulkDelete}
       onCancel={() => onRequestClose?.(false)}
       onOk={() => {
-        const deletable = foldersByPermission.deletable ?? [];
-        if (deletable.length === 0) {
+        if (folders.length === 0) {
           onRequestClose?.(false);
           return;
         }
-        const ids = _.map(deletable, (vfolder) => toLocalId(vfolder.id));
+        const ids = _.map(folders, (vfolder) => toLocalId(vfolder.id));
         commitBulkDeleteMutation({
           variables: { input: { ids } },
           onCompleted: (data, errors) => {
@@ -91,22 +89,24 @@ const DeleteVFolderModalV2: React.FC<DeleteVFolderModalV2Props> = ({
             if (deletedCount === 0) {
               message.error(
                 t('data.folders.FailedToDeleteFolders', {
-                  folderNames: _.map(deletable, 'name').join(', '),
+                  folderNames: _.map(folders, (v) => v?.metadata?.name).join(
+                    ', ',
+                  ),
                 }),
               );
               return;
             }
-            if (deletable.length === 1) {
+            if (folders.length === 1) {
               message.success(
                 t('data.folders.FolderDeleted', {
-                  folderName: deletable[0]?.name,
+                  folderName: folders[0]?.metadata?.name,
                 }),
               );
             } else {
               message.success(
                 t('data.folders.MultipleFolderDeleted', {
                   count: deletedCount,
-                  total: deletable.length,
+                  total: folders.length,
                 }),
               );
             }
@@ -120,37 +120,13 @@ const DeleteVFolderModalV2: React.FC<DeleteVFolderModalV2Props> = ({
       {...baiModalProps}
     >
       <BAIFlex direction="column" gap={'sm'} align="stretch">
-        {vfolders &&
-          vfolders.length !== foldersByPermission.deletable?.length && (
-            <BAIAlert
-              showIcon
-              ghostInfoBg={false}
-              title={t('data.folders.ExcludedFolders', {
-                count: foldersByPermission.undeletable?.length || 0,
-              })}
-              description={
-                <ul
-                  style={{
-                    margin: 0,
-                    padding: 0,
-                    paddingTop: token.paddingXXS,
-                    listStyle: 'circle',
-                  }}
-                >
-                  {_.map(foldersByPermission.undeletable, (vfolder) => (
-                    <li key={vfolder.id}>{vfolder.name}</li>
-                  ))}
-                </ul>
-              }
-            />
-          )}
         <Typography.Text>
-          {foldersByPermission.deletable?.length === 1
+          {folders.length === 1
             ? t('data.folders.MoveToTrashDescription', {
-                folderName: foldersByPermission.deletable?.[0]?.name,
+                folderName: folders[0]?.metadata?.name,
               })
             : t('data.folders.MoveToTrashMultipleDescription', {
-                folderLength: foldersByPermission.deletable?.length,
+                folderLength: folders.length,
               })}
         </Typography.Text>
       </BAIFlex>

@@ -603,6 +603,7 @@
       "WritePermissionRequiredInUploadFiles": "ต้องมีสิทธิ์เขียนในการอัปโหลดไฟล์"
     },
     "folders": {
+      "AdminDataPageAlert": "ในหน้าข้อมูลผู้ดูแลระบบ สามารถสร้างได้เฉพาะโฟลเดอร์โครงการเท่านั้น",
       "CannotDeleteFolder": "ไม่สามารถลบโฟลเดอร์ที่ถูกเมาท์ในหนึ่งหรือหลายเซสชัน กรุณายุติเซสชันก่อน",
       "CannotDeletePipelineFolder": "คุณไม่สามารถลบโฟลเดอร์ไปป์ไลน์ได้",
       "CannotRestorePipelineFolder": "คุณไม่สามารถกู้คืนโฟลเดอร์ไปป์ไลน์ได้",
@@ -650,6 +651,7 @@
       "LeaveAFolder": "ออกจากโฟลเดอร์",
       "LeaveFolder": "ออกจากโฟลเดอร์",
       "Location": "ตำแหน่ง",
+      "ManageProjectFolderInAdmin": "การจัดการโฟลเดอร์โครงการสามารถทำได้ในการตั้งค่าผู้ดูแลระบบ",
       "MaxFolderQuota": "โควตาโฟลเดอร์สูงสุด",
       "MaxSize": "ขนาดสูงสุด",
       "ModelProjectFolderRestrictedToReadOnly": "สิทธิ์ 'อ่านและเขียน' ไม่รองรับสำหรับโฟลเดอร์ Model Store",
@@ -668,12 +670,14 @@
       "Name": "ชื่อ",
       "NoDeletePermission": "ไม่มีการลบการอนุญาต",
       "NoFolderToDisplay": "ไม่มีโฟลเดอร์ที่จะแสดง",
+      "NoRestorePermission": "ไม่มีการกู้คืนการอนุญาต",
       "NumberOfFiles": "จำนวนไฟล์",
       "OpenAFolder": "เปิดโฟลเดอร์",
       "Owner": "เจ้าของ",
       "Ownership": "ความเป็นเจ้าของ",
       "Path": "เส้นทางการจัดเก็บ",
       "Permission": "สิทธิ์",
+      "ProjectAdminDataPageAlert": "ในหน้าข้อมูลผู้ดูแลโครงการ สามารถสร้างได้เฉพาะโฟลเดอร์โครงการเท่านั้น",
       "ProjectFolderAlertDesc": "โฟลเดอร์นี้แบ่งปันกับสมาชิกทุกคนในโครงการ",
       "ProjectFolderCreationHelp": "โฟลเดอร์สามารถเข้าถึงได้โดย \"{{projectName}}\" ผู้ใช้โครงการจะถูกสร้างขึ้น",
       "Rename": "เปลี่ยนชื่อ",
@@ -2080,7 +2084,7 @@
     "Updated": "อัปเดตค่าที่กำหนดไว้ล่วงหน้าของทรัพยากรแล้ว"
   },
   "sTokenLoginBoundary": {
-"AuthenticatingDescription": "กำลังตรวจสอบโทเคนการเข้าสู่ระบบของคุณ…",
+    "AuthenticatingDescription": "กำลังตรวจสอบโทเคนการเข้าสู่ระบบของคุณ…",
     "AuthenticatingTitle": "Signing you in",
     "ConnectingDescription": "กำลังเชื่อมต่อกับเซิร์ฟเวอร์ Backend.AI…",
     "CopyErrorDetails": "Copy error details",

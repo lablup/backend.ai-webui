@@ -603,6 +603,7 @@
       "WritePermissionRequiredInUploadFiles": "Zum Hochladen von Datei(en) ist eine Schreibberechtigung erforderlich."
     },
     "folders": {
+      "AdminDataPageAlert": "Auf der Admin-Datenseite können nur Projekt-Ordner erstellt werden.",
       "CannotDeleteFolder": "Der in einer oder mehreren Sitzungen bereitgestellte Ordner kann nicht gelöscht werden. Bitte beenden Sie zuerst die Sitzung.",
       "CannotDeletePipelineFolder": "Sie können Pipeline -Ordner nicht löschen.",
       "CannotRestorePipelineFolder": "Sie können Pipeline -Ordner nicht wiederherstellen.",
@@ -650,6 +651,7 @@
       "LeaveAFolder": "Hinterlasse einen Ordner",
       "LeaveFolder": "Ordner verlassen",
       "Location": "Ort",
+      "ManageProjectFolderInAdmin": "Die Verwaltung von Projektordnern ist in den Admin-Einstellungen verfügbar.",
       "MaxFolderQuota": "Maximale Ordner-Quote",
       "MaxSize": "Maximale Größe",
       "ModelProjectFolderRestrictedToReadOnly": "Die Berechtigung 'Lesen & Schreiben' wird für Model-Store-Ordner nicht unterstützt.",
@@ -668,12 +670,14 @@
       "Name": "Name",
       "NoDeletePermission": "Keine Löschberechtigung",
       "NoFolderToDisplay": "Keine Ordner anzeigen",
+      "NoRestorePermission": "Keine Wiederherstellungsberechtigung",
       "NumberOfFiles": "Anzahl der Dateien",
       "OpenAFolder": "Einen Ordner öffnen",
       "Owner": "Inhaber",
       "Ownership": "Eigentum",
       "Path": "Speicherpfad",
       "Permission": "Genehmigung",
+      "ProjectAdminDataPageAlert": "Auf der Projekt-Admin-Datenseite können nur Projekt-Ordner erstellt werden.",
       "ProjectFolderAlertDesc": "Dieser Ordner wird an alle Mitglieder des Projekts geteilt",
       "ProjectFolderCreationHelp": "Ein Ordner, der von \"{{projectName}}\" -Projektnutzern zugänglich ist, wird erstellt.",
       "Rename": "Umbenennen",
@@ -2080,7 +2084,7 @@
     "Updated": "Ressourcenvoreinstellung aktualisiert"
   },
   "sTokenLoginBoundary": {
-"AuthenticatingDescription": "Ihr Anmelde-Token wird verifiziert…",
+    "AuthenticatingDescription": "Ihr Anmelde-Token wird verifiziert…",
     "AuthenticatingTitle": "Signing you in",
     "ConnectingDescription": "Verbindung mit dem Backend.AI-Server wird hergestellt…",
     "CopyErrorDetails": "Copy error details",

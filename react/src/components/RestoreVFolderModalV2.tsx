@@ -37,10 +37,11 @@ const RestoreVFolderModalV2: React.FC<RestoreVFolderModalV2Props> = ({
 
   const vfolders = useFragment(
     graphql`
-      fragment RestoreVFolderModalV2Fragment on VirtualFolderNode
-      @relay(plural: true) {
+      fragment RestoreVFolderModalV2Fragment on VFolder @relay(plural: true) {
         id
-        name
+        metadata {
+          name
+        }
       }
     `,
     vfolderFrgmts,
@@ -100,7 +101,7 @@ const RestoreVFolderModalV2: React.FC<RestoreVFolderModalV2Props> = ({
             if (vfolders?.length === 1) {
               message.success(
                 t('data.folders.FolderRestored', {
-                  folderName: vfolders?.[0]?.name,
+                  folderName: vfolders?.[0]?.metadata?.name,
                 }),
               );
             } else {
@@ -119,7 +120,7 @@ const RestoreVFolderModalV2: React.FC<RestoreVFolderModalV2Props> = ({
       <Typography.Text>
         {vfolders?.length === 1
           ? t('data.folders.RestoreDescription', {
-              folderName: vfolders?.[0]?.name,
+              folderName: vfolders?.[0]?.metadata?.name,
             })
           : t('data.folders.RestoreMultipleDescription', {
               folderLength: vfolders?.length,

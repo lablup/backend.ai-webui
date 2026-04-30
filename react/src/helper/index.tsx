@@ -966,7 +966,7 @@ export function listenToBackgroundTask<
  * // => [{ field: 'FAIR_SHARE_FACTOR', direction: 'DESC' }]
  */
 export const convertToOrderBy = <
-  TOrderBy extends { field: string; direction?: string },
+  TOrderBy extends { field?: string; direction?: string },
 >(
   order: string | null | undefined,
 ): ReadonlyArray<TOrderBy> | undefined => {

@@ -36,10 +36,12 @@ const DeleteForeverVFolderModalV2: React.FC<
 
   const vfolders = useFragment(
     graphql`
-      fragment DeleteForeverVFolderModalV2Fragment on VirtualFolderNode
+      fragment DeleteForeverVFolderModalV2Fragment on VFolder
       @relay(plural: true) {
         id
-        name
+        metadata {
+          name
+        }
       }
     `,
     vfolderFrgmts,
@@ -63,7 +65,8 @@ const DeleteForeverVFolderModalV2: React.FC<
   // generic confirmation word since there is no single name to bind to.
   const confirmText =
     purgeable.length === 1
-      ? (purgeable[0]?.name ?? t('data.folders.DeleteForeverConfirmText'))
+      ? (purgeable[0]?.metadata?.name ??
+        t('data.folders.DeleteForeverConfirmText'))
       : t('data.folders.DeleteForeverConfirmText');
 
   return (
@@ -88,7 +91,7 @@ const DeleteForeverVFolderModalV2: React.FC<
           <Typography.Text>
             {purgeable.length === 1
               ? t('data.folders.DeleteForeverDescription', {
-                  folderName: purgeable[0]?.name,
+                  folderName: purgeable[0]?.metadata?.name,
                 })
               : t('data.folders.DeleteForeverMultipleDescription', {
                   folderLength: purgeable.length,
@@ -120,7 +123,9 @@ const DeleteForeverVFolderModalV2: React.FC<
             if (purgedCount === 0) {
               message.error(
                 t('data.folders.FailedToDeleteFolders', {
-                  folderNames: _.map(purgeable, 'name').join(', '),
+                  folderNames: _.map(purgeable, (v) => v?.metadata?.name).join(
+                    ', ',
+                  ),
                 }),
               );
               return;
@@ -128,7 +133,7 @@ const DeleteForeverVFolderModalV2: React.FC<
             if (purgeable.length === 1) {
               message.success(
                 t('data.folders.FolderDeletedForever', {
-                  folderName: purgeable[0]?.name,
+                  folderName: purgeable[0]?.metadata?.name,
                 }),
               );
             } else {

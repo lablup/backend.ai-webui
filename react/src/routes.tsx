@@ -118,6 +118,9 @@ const AdminVFolderNodeListPage = React.lazy(
 const ProjectAdminUsersPage = React.lazy(
   () => import('./pages/ProjectAdminUsersPage'),
 );
+const ProjectAdminDataPage = React.lazy(
+  () => import('./pages/ProjectAdminDataPage'),
+);
 const EmailVerificationPage = React.lazy(
   () => import('./pages/EmailVerificationPage'),
 );
@@ -458,6 +461,18 @@ export const mainLayoutChildRoutes: RouteObject[] = [
       return (
         <Suspense fallback={<Skeleton active />}>
           <ProjectAdminUsersPage />
+        </Suspense>
+      );
+    },
+  },
+  {
+    path: '/project-data',
+    handle: { labelKey: 'webui.menu.Data' },
+    Component: () => {
+      useSuspendedBackendaiClient();
+      return (
+        <Suspense fallback={<Skeleton active />}>
+          <ProjectAdminDataPage />
         </Suspense>
       );
     },

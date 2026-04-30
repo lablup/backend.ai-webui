@@ -603,6 +603,7 @@
       "WritePermissionRequiredInUploadFiles": "A permissão de gravação é necessária ao enviar arquivo (s)."
     },
     "folders": {
+      "AdminDataPageAlert": "Na página Dados do Administrador só é possível criar pastas de projeto.",
       "CannotDeleteFolder": "Não é possível excluir a pasta montada em uma ou mais sessões. Por favor, termine a sessão primeiro.",
       "CannotDeletePipelineFolder": "Você não pode excluir pastas de pipeline.",
       "CannotRestorePipelineFolder": "Você não pode restaurar pastas de pipeline.",
@@ -650,6 +651,7 @@
       "LeaveAFolder": "Deixe uma pasta",
       "LeaveFolder": "Pasta de saída",
       "Location": "Localização",
+      "ManageProjectFolderInAdmin": "A gestão de pastas de projeto está disponível nas configurações de administrador.",
       "MaxFolderQuota": "Quota máxima de pastas",
       "MaxSize": "Tamanho máximo",
       "ModelProjectFolderRestrictedToReadOnly": "A permissão 'Leitura e escrita' não é suportada para a pasta do repositório de modelos",
@@ -668,12 +670,14 @@
       "Name": "Nome",
       "NoDeletePermission": "Sem permissão de eliminação",
       "NoFolderToDisplay": "Não há pastas a apresentar",
+      "NoRestorePermission": "Sem permissão de restauração",
       "NumberOfFiles": "Número de arquivos",
       "OpenAFolder": "Abrir uma pasta",
       "Owner": "Proprietário",
       "Ownership": "Propriedade",
       "Path": "Caminho de armazenamento",
       "Permission": "Permissão",
+      "ProjectAdminDataPageAlert": "Na página Dados do Administrador do Projeto só é possível criar pastas de projeto.",
       "ProjectFolderAlertDesc": "Esta pasta é compartilhada com todos os membros do projeto",
       "ProjectFolderCreationHelp": "Uma pasta acessível por \"{{projectName}}\" \"os usuários do projeto serão criados.",
       "Rename": "Renomear",
@@ -2080,7 +2084,7 @@
     "Updated": "Predefinição de recurso atualizada"
   },
   "sTokenLoginBoundary": {
-"AuthenticatingDescription": "A verificar o seu token de início de sessão…",
+    "AuthenticatingDescription": "A verificar o seu token de início de sessão…",
     "AuthenticatingTitle": "Signing you in",
     "ConnectingDescription": "A ligar ao servidor Backend.AI…",
     "CopyErrorDetails": "Copy error details",

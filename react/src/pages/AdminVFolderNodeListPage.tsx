@@ -9,13 +9,10 @@ import type {
 } from '../__generated__/AdminVFolderNodeListPageQuery.graphql';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import BAITabs from '../components/BAITabs';
-import DeleteForeverVFolderModalV2 from '../components/DeleteForeverVFolderModalV2';
-import DeleteVFolderModalV2 from '../components/DeleteVFolderModalV2';
+import DeleteVFolderModal from '../components/DeleteVFolderModal';
 import FolderCreateModalV2 from '../components/FolderCreateModalV2';
-import RestoreVFolderModalV2 from '../components/RestoreVFolderModalV2';
-import VFolderNodesV2, {
-  VFolderNodeInList,
-} from '../components/VFolderNodesV2';
+import RestoreVFolderModal from '../components/RestoreVFolderModal';
+import VFolderNodes, { VFolderNodeInList } from '../components/VFolderNodes';
 import { handleRowSelectionChange } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { isDeletedCategory } from './VFolderNodeListPage';
@@ -27,7 +24,6 @@ import {
   BAIFetchKeyButton,
   BAIFlex,
   BAIPropertyFilter,
-  BAIPurgeIcon,
   BAIRestoreIcon,
   BAISelectionLabel,
   BAIVFolderDeleteButton,
@@ -85,8 +81,6 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
   const [isOpenDeleteModal, { toggle: toggleDeleteModal }] = useToggle(false);
   const [isOpenRestoreModal, { toggle: toggleRestoreModal }] = useToggle(false);
   const [isOpenCreateModal, { toggle: toggleCreateModal }] = useToggle(false);
-  const [isOpenDeleteForeverModal, { toggle: toggleDeleteForeverModal }] =
-    useToggle(false);
 
   const {
     baiPaginationOption,
@@ -177,11 +171,10 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                 id @required(action: THROW)
                 status
                 permissions
-                ...VFolderNodesV2Fragment
-                ...DeleteVFolderModalV2Fragment
-                ...DeleteForeverVFolderModalV2Fragment
+                ...VFolderNodesFragment
+                ...DeleteVFolderModalFragment
                 ...EditableVFolderNameFragment
-                ...RestoreVFolderModalV2Fragment
+                ...RestoreVFolderModalFragment
                 ...VFolderNodeIdenticonFragment
                 ...SharedFolderPermissionInfoModalFragment
                 ...BAIVFolderDeleteButtonFragment
@@ -439,20 +432,6 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                         }}
                       />
                     </Tooltip>
-                    <Tooltip title={t('data.folders.Delete')}>
-                      <BAIButton
-                        style={{
-                          color: token.colorError,
-                          borderColor: token.colorBorder,
-                        }}
-                        type="text"
-                        variant="outlined"
-                        icon={<BAIPurgeIcon />}
-                        onClick={() => {
-                          toggleDeleteForeverModal();
-                        }}
-                      />
-                    </Tooltip>
                   </>
                 )}
               <BAIFetchKeyButton
@@ -477,7 +456,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
               </BAIButton>
             </BAIFlex>
           </BAIFlex>
-          <VFolderNodesV2
+          <VFolderNodes
             order={queryParams.order}
             loading={deferredQueryVariables !== queryVariables}
             vfoldersFrgmt={filterOutNullAndUndefined(
@@ -530,7 +509,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
           />
         </BAIFlex>
       </BAICard>
-      <DeleteVFolderModalV2
+      <DeleteVFolderModal
         vfolderFrgmts={selectedFolderList}
         open={isOpenDeleteModal}
         onRequestClose={(success) => {
@@ -541,7 +520,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
           toggleDeleteModal();
         }}
       />
-      <RestoreVFolderModalV2
+      <RestoreVFolderModal
         vfolderFrgmts={selectedFolderList}
         open={isOpenRestoreModal}
         onRequestClose={(success) => {
@@ -552,20 +531,10 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
           toggleRestoreModal();
         }}
       />
-      <DeleteForeverVFolderModalV2
-        vfolderFrgmts={selectedFolderList}
-        open={isOpenDeleteForeverModal}
-        onRequestClose={(success) => {
-          if (success) {
-            updateFetchKey();
-            setSelectedFolderList([]);
-          }
-          toggleDeleteForeverModal();
-        }}
-      />
       <FolderCreateModalV2
         open={isOpenCreateModal}
-        allowCreateProjectFolder
+        folderType="project"
+        alertMessage={t('data.folders.AdminDataPageAlert')}
         onRequestClose={(result) => {
           toggleCreateModal();
           if (result) {

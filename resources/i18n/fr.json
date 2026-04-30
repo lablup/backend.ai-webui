@@ -603,6 +603,7 @@
       "WritePermissionRequiredInUploadFiles": "Une autorisation d'écriture est requise pour le téléchargement de fichiers."
     },
     "folders": {
+      "AdminDataPageAlert": "La page Données de l'administrateur ne permet de créer que des dossiers de projet.",
       "CannotDeleteFolder": "Impossible de supprimer le dossier monté dans une ou plusieurs sessions. Veuillez d'abord terminer la session.",
       "CannotDeletePipelineFolder": "Vous ne pouvez pas supprimer les dossiers du pipeline.",
       "CannotRestorePipelineFolder": "Vous ne pouvez pas restaurer les dossiers du pipeline.",
@@ -650,6 +651,7 @@
       "LeaveAFolder": "Laisser un dossier",
       "LeaveFolder": "Dossier de sortie",
       "Location": "Emplacement",
+      "ManageProjectFolderInAdmin": "La gestion des dossiers de projet est disponible dans les paramètres d'administration.",
       "MaxFolderQuota": "Quota maximum de dossiers",
       "MaxSize": "Taille maximale",
       "ModelProjectFolderRestrictedToReadOnly": "La permission 'Lecture et écriture' n'est pas prise en charge pour le dossier du référentiel de modèles.",
@@ -668,12 +670,14 @@
       "Name": "Nom",
       "NoDeletePermission": "Pas d'autorisation de suppression",
       "NoFolderToDisplay": "Aucun dossier à afficher",
+      "NoRestorePermission": "Pas d'autorisation de restauration",
       "NumberOfFiles": "Nombre de fichiers",
       "OpenAFolder": "Ouvrir un dossier",
       "Owner": "Propriétaire",
       "Ownership": "La possession",
       "Path": "Chemin de stockage",
       "Permission": "Autorisation",
+      "ProjectAdminDataPageAlert": "La page Données de l’administrateur du projet ne permet de créer que des dossiers de projet.",
       "ProjectFolderAlertDesc": "Ce dossier est partagé avec tous les membres du projet",
       "ProjectFolderCreationHelp": "Un dossier accessible par \"{{projectName}}\" Les utilisateurs du projet seront créés.",
       "Rename": "Renommer",
@@ -2080,7 +2084,7 @@
     "Updated": "Préréglage de ressource mis à jour"
   },
   "sTokenLoginBoundary": {
-"AuthenticatingDescription": "Vérification de votre jeton de connexion…",
+    "AuthenticatingDescription": "Vérification de votre jeton de connexion…",
     "AuthenticatingTitle": "Signing you in",
     "ConnectingDescription": "Connexion au serveur Backend.AI…",
     "CopyErrorDetails": "Copy error details",

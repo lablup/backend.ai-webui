@@ -603,6 +603,7 @@
       "WritePermissionRequiredInUploadFiles": "Для загрузки файла (ов) требуется разрешение на запись."
     },
     "folders": {
+      "AdminDataPageAlert": "На странице «Данные администратора» можно создавать только папки проекта.",
       "CannotDeleteFolder": "Невозможно удалить папку, установленную в одном или нескольких сеансах. Пожалуйста, сначала завершите сеанс.",
       "CannotDeletePipelineFolder": "Вы не можете удалить папки трубопровода.",
       "CannotRestorePipelineFolder": "Вы не можете восстановить папки трубопровода.",
@@ -650,6 +651,7 @@
       "LeaveAFolder": "Обновить настройки папки",
       "LeaveFolder": "Папка-скоросшиватель",
       "Location": "Место расположения",
+      "ManageProjectFolderInAdmin": "Управление папками проекта доступно в настройках администратора.",
       "MaxFolderQuota": "Максимальная квота на папки",
       "MaxSize": "Максимальный размер",
       "ModelProjectFolderRestrictedToReadOnly": "Разрешение 'Read & Write' не поддерживается для папки хранилища моделей",
@@ -668,12 +670,14 @@
       "Name": "Имя",
       "NoDeletePermission": "Нет разрешения на удаление",
       "NoFolderToDisplay": "Нет папок для отображения",
+      "NoRestorePermission": "Нет разрешения на восстановление",
       "NumberOfFiles": "Количество файлов",
       "OpenAFolder": "Открыть папку",
       "Owner": "Владелец",
       "Ownership": "Владение",
       "Path": "Путь хранения",
       "Permission": "Разрешение",
+      "ProjectAdminDataPageAlert": "На странице «Данные администратора проекта» можно создавать только папки проекта.",
       "ProjectFolderAlertDesc": "Эта папка передается всем членам проекта",
       "ProjectFolderCreationHelp": "Папка, доступная по \"{{projectName}}\" Пользователи проекта будут созданы.",
       "Rename": "Переименовать",
@@ -2078,7 +2082,7 @@
     "Updated": "Предустановка ресурса обновлена"
   },
   "sTokenLoginBoundary": {
-"AuthenticatingDescription": "Выполняется проверка токена входа…",
+    "AuthenticatingDescription": "Выполняется проверка токена входа…",
     "AuthenticatingTitle": "Signing you in",
     "ConnectingDescription": "Подключение к серверу Backend.AI…",
     "CopyErrorDetails": "Copy error details",

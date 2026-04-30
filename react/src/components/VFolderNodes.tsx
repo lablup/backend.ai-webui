@@ -10,6 +10,7 @@ import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
+import { useEffectiveAdminRole } from '../hooks/useCurrentUserProjectRoles';
 import { isDeletedCategory } from '../pages/VFolderNodeListPage';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import InviteFolderSettingModal from './InviteFolderSettingModal';
@@ -94,6 +95,15 @@ interface VFolderNameCellProps {
    * (FR-2599) for the given vfolder instead of navigating away.
    */
   onStartServiceFallback: (vfolderId: string) => void;
+  /**
+   * When true, project-type folders (`ownership_type === 'group'`) are
+   * locked from row-level destructive actions regardless of the caller's
+   * `delete_vfolder` permission — even super-admins. Used by the
+   * user-facing data page (`/data`) where project folders are managed
+   * exclusively from the admin data page; the row-level disabled tooltip
+   * additionally redirects admins (project/domain/super) to that page.
+   */
+  disableProjectFolderActions?: boolean;
 }
 
 const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
@@ -103,19 +113,32 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
   onRestore,
   onDeleteForever,
   onStartServiceFallback,
+  disableProjectFolderActions = false,
 }) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { generateFolderPath } = useFolderExplorerOpener();
+  const effectiveAdminRole = useEffectiveAdminRole();
 
   const isPipelineFolder = vfolder?.usage_mode === 'data';
   const isModelFolder = vfolder?.usage_mode === 'model';
   const isDeleted = isDeletedCategory(vfolder?.status);
+  const isProjectFolder = vfolder?.ownership_type === 'group';
   const hasDeletePermission = _.includes(
     vfolder?.permissions,
     'delete_vfolder',
   );
+  const isProjectFolderManagedElsewhere =
+    disableProjectFolderActions && isProjectFolder;
+  // When project folder actions are routed elsewhere (e.g. `/data` defers to
+  // the admin data page), tell admins where to go. Regular members fall back
+  // to the existing per-action default (e.g. "no delete permission") since
+  // the redirect message wouldn't apply to them.
+  const projectFolderAdminHint =
+    isProjectFolderManagedElsewhere && effectiveAdminRole !== 'none'
+      ? t('data.folders.ManageProjectFolderInAdmin')
+      : undefined;
 
   const vfolderId = toLocalId(vfolder.id ?? '');
 
@@ -145,10 +168,13 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
           title: t('data.folders.MoveToTrash'),
           icon: <BAITrashBinIcon />,
           type: 'danger' as const,
-          disabled: !hasDeletePermission || isPipelineFolder,
+          disabled:
+            !hasDeletePermission ||
+            isPipelineFolder ||
+            isProjectFolderManagedElsewhere,
           disabledReason: isPipelineFolder
             ? t('data.folders.CannotDeletePipelineFolder')
-            : t('data.folders.NoDeletePermission'),
+            : (projectFolderAdminHint ?? t('data.folders.NoDeletePermission')),
           onClick: onDelete,
         }
       : null,
@@ -158,10 +184,16 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
           key: 'restore',
           title: t('data.folders.Restore'),
           icon: <BAIRestoreIcon />,
-          disabled: vfolder?.status !== 'delete-pending' || isPipelineFolder,
+          disabled:
+            vfolder?.status !== 'delete-pending' ||
+            isPipelineFolder ||
+            isProjectFolderManagedElsewhere,
           disabledReason: isPipelineFolder
             ? t('data.folders.CannotRestorePipelineFolder')
-            : undefined,
+            : isProjectFolderManagedElsewhere
+              ? (projectFolderAdminHint ??
+                t('data.folders.NoRestorePermission'))
+              : undefined,
           onClick: onRestore,
         }
       : null,
@@ -172,7 +204,12 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
           title: t('data.folders.Delete'),
           icon: <BAITrashBinIcon />,
           type: 'danger' as const,
-          disabled: vfolder?.status !== 'delete-pending',
+          disabled:
+            vfolder?.status !== 'delete-pending' ||
+            isProjectFolderManagedElsewhere,
+          disabledReason: isProjectFolderManagedElsewhere
+            ? (projectFolderAdminHint ?? t('data.folders.NoDeletePermission'))
+            : undefined,
           onClick: onDeleteForever,
         }
       : null,
@@ -201,11 +238,23 @@ interface VFolderNodesProps extends Omit<
   vfoldersFrgmt: VFolderNodesFragment$key;
   // Callback when a row is removed from current list
   onRemoveRow?: (updatedFolderId?: string) => void;
+  /**
+   * Forwarded to each row's name cell. Set on the user-facing data page
+   * (`/data`) so project folders are not deletable/restorable from there
+   * — those actions live on the admin data page instead.
+   *
+   * NOTE: VFolderNodesV2 should be refactored to support this kind of
+   * row-action variation through column overrides (composing the actions
+   * column at the call site) rather than carrying boolean flags on the
+   * component. This prop is the V1-friendly stopgap.
+   */
+  disableProjectFolderActions?: boolean;
 }
 
 const VFolderNodes: React.FC<VFolderNodesProps> = ({
   vfoldersFrgmt,
   onRemoveRow,
+  disableProjectFolderActions,
   ...tableProps
 }) => {
   const { t } = useTranslation();
@@ -297,6 +346,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
               return (
                 <VFolderNameCell
                   vfolder={vfolder}
+                  disableProjectFolderActions={disableProjectFolderActions}
                   onShare={() => {
                     vfolder?.user === currentUser?.uuid
                       ? setInviteFolderId(toLocalId(vfolder?.id ?? null))

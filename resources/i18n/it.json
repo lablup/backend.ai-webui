@@ -603,6 +603,7 @@
       "WritePermissionRequiredInUploadFiles": "Per caricare i file è richiesta l'autorizzazione di scrittura."
     },
     "folders": {
+      "AdminDataPageAlert": "Nella pagina Dati Amministratore si possono creare solo cartelle di progetto.",
       "CannotDeleteFolder": "Impossibile eliminare la cartella montata in una o più sessioni. Si prega di terminare prima la sessione.",
       "CannotDeletePipelineFolder": "Non puoi eliminare le cartelle della pipeline.",
       "CannotRestorePipelineFolder": "Non puoi ripristinare le cartelle della pipeline.",
@@ -650,6 +651,7 @@
       "LeaveAFolder": "Lascia una cartella",
       "LeaveFolder": "Lasciare la cartella",
       "Location": "Posizione",
+      "ManageProjectFolderInAdmin": "La gestione delle cartelle di progetto è disponibile nelle impostazioni di amministrazione.",
       "MaxFolderQuota": "Quota massima della cartella",
       "MaxSize": "Dimensione massima",
       "ModelProjectFolderRestrictedToReadOnly": "Il permesso 'Read & Write' non è supportato per la cartella del model store",
@@ -668,12 +670,14 @@
       "Name": "Nome",
       "NoDeletePermission": "Nessun permesso di cancellazione",
       "NoFolderToDisplay": "Nessuna cartella da visualizzare",
+      "NoRestorePermission": "Nessun permesso di ripristino",
       "NumberOfFiles": "Numero di file",
       "OpenAFolder": "Aprire una cartella",
       "Owner": "Proprietario",
       "Ownership": "Proprietà",
       "Path": "Percorso di archiviazione",
       "Permission": "Autorizzazione",
+      "ProjectAdminDataPageAlert": "Nella pagina Dati Amministratore del Progetto si possono creare solo cartelle di progetto.",
       "ProjectFolderAlertDesc": "Questa cartella è condivisa con tutti i membri del progetto",
       "ProjectFolderCreationHelp": "Verrà creata una cartella accessibile da \"{{projectName}}\". Gli utenti del progetto.",
       "Rename": "Rinominare",
@@ -2078,7 +2082,7 @@
     "Updated": "Preimpostazione delle risorse aggiornata"
   },
   "sTokenLoginBoundary": {
-"AuthenticatingDescription": "Verifica del token di accesso in corso…",
+    "AuthenticatingDescription": "Verifica del token di accesso in corso…",
     "AuthenticatingTitle": "Signing you in",
     "ConnectingDescription": "Connessione al server Backend.AI…",
     "CopyErrorDetails": "Copy error details",

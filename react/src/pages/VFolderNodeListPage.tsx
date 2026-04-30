@@ -9,13 +9,10 @@ import {
 } from '../__generated__/VFolderNodeListPageQuery.graphql';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import BAITabs from '../components/BAITabs';
-import DeleteForeverVFolderModalV2 from '../components/DeleteForeverVFolderModalV2';
-import DeleteVFolderModalV2 from '../components/DeleteVFolderModalV2';
+import DeleteVFolderModal from '../components/DeleteVFolderModal';
 import FolderCreateModalV2 from '../components/FolderCreateModalV2';
-import RestoreVFolderModalV2 from '../components/RestoreVFolderModalV2';
-import VFolderNodesV2, {
-  VFolderNodeInList,
-} from '../components/VFolderNodesV2';
+import RestoreVFolderModal from '../components/RestoreVFolderModal';
+import VFolderNodes, { VFolderNodeInList } from '../components/VFolderNodes';
 import { handleRowSelectionChange } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
@@ -27,7 +24,6 @@ import {
   BAIFetchKeyButton,
   BAIFlex,
   BAIPropertyFilter,
-  BAIPurgeIcon,
   BAIRestoreIcon,
   BAISelectionLabel,
   BAIVFolderDeleteButton,
@@ -47,7 +43,18 @@ import { StringParam, useQueryParams, withDefault } from 'use-query-params';
 
 export const isDeletedCategory = (status?: string | null) => {
   return _.includes(
-    ['delete-pending', 'delete-ongoing', 'delete-complete', 'delete-error'],
+    [
+      // V1 `VirtualFolderNode.status` (kebab-case)
+      'delete-pending',
+      'delete-ongoing',
+      'delete-complete',
+      'delete-error',
+      // V2 `VFolder.status` (UPPERCASE enum, VFolderOperationStatus)
+      'DELETE_PENDING',
+      'DELETE_ONGOING',
+      'DELETE_COMPLETE',
+      'DELETE_ERROR',
+    ],
     status,
   );
 };
@@ -104,8 +111,6 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
   const [isOpenCreateModal, { toggle: toggleCreateModal }] = useToggle(false);
   const [isOpenDeleteModal, { toggle: toggleDeleteModal }] = useToggle(false);
   const [isOpenRestoreModal, { toggle: toggleRestoreModal }] = useToggle(false);
-  const [isOpenDeleteForeverModal, { toggle: toggleDeleteForeverModal }] =
-    useToggle(false);
 
   const {
     baiPaginationOption,
@@ -202,11 +207,10 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                 id @required(action: THROW)
                 status
                 permissions
-                ...VFolderNodesV2Fragment
-                ...DeleteVFolderModalV2Fragment
-                ...DeleteForeverVFolderModalV2Fragment
+                ...VFolderNodesFragment
+                ...DeleteVFolderModalFragment
                 ...EditableVFolderNameFragment
-                ...RestoreVFolderModalV2Fragment
+                ...RestoreVFolderModalFragment
                 ...VFolderNodeIdenticonFragment
                 ...SharedFolderPermissionInfoModalFragment
                 ...BAIVFolderDeleteButtonFragment
@@ -486,20 +490,6 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                         }}
                       />
                     </Tooltip>
-                    <Tooltip title={t('data.folders.Delete')}>
-                      <BAIButton
-                        style={{
-                          color: token.colorError,
-                          borderColor: token.colorBorder,
-                        }}
-                        type="text"
-                        variant="outlined"
-                        icon={<BAIPurgeIcon />}
-                        onClick={() => {
-                          toggleDeleteForeverModal();
-                        }}
-                      />
-                    </Tooltip>
                   </>
                 )}
               <BAIFetchKeyButton
@@ -515,9 +505,10 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
               />
             </BAIFlex>
           </BAIFlex>
-          <VFolderNodesV2
+          <VFolderNodes
             order={queryParams.order}
             loading={deferredQueryVariables !== queryVariables}
+            disableProjectFolderActions
             vfoldersFrgmt={filterOutNullAndUndefined(
               _.map(vfolder_nodes?.edges, 'node'),
             )}
@@ -585,7 +576,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
           toggleCreateModal();
         }}
       />
-      <DeleteVFolderModalV2
+      <DeleteVFolderModal
         vfolderFrgmts={selectedFolderList}
         open={isOpenDeleteModal}
         onRequestClose={(success) => {
@@ -596,7 +587,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
           toggleDeleteModal();
         }}
       />
-      <RestoreVFolderModalV2
+      <RestoreVFolderModal
         vfolderFrgmts={selectedFolderList}
         open={isOpenRestoreModal}
         onRequestClose={(success) => {
@@ -605,17 +596,6 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
             setSelectedFolderList([]);
           }
           toggleRestoreModal();
-        }}
-      />
-      <DeleteForeverVFolderModalV2
-        vfolderFrgmts={selectedFolderList}
-        open={isOpenDeleteForeverModal}
-        onRequestClose={(success) => {
-          if (success) {
-            updateFetchKey();
-            setSelectedFolderList([]);
-          }
-          toggleDeleteForeverModal();
         }}
       />
     </BAIFlex>

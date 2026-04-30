@@ -603,6 +603,7 @@
       "WritePermissionRequiredInUploadFiles": "Do przesyłania plików wymagane jest uprawnienie do zapisu."
     },
     "folders": {
+      "AdminDataPageAlert": "Na stronie Dane administratora można tworzyć tylko foldery projektu.",
       "CannotDeleteFolder": "Nie można usunąć folderu zamontowanego w co najmniej jednej sesji. Najpierw zakończ sesję.",
       "CannotDeletePipelineFolder": "Nie możesz usunąć folderów rurociągów.",
       "CannotRestorePipelineFolder": "Nie możesz przywrócić folderów rurociągów.",
@@ -650,6 +651,7 @@
       "LeaveAFolder": "Zostaw folder",
       "LeaveFolder": "Zostaw folder",
       "Location": "Lokalizacja",
+      "ManageProjectFolderInAdmin": "Zarządzanie folderami projektu jest dostępne w ustawieniach administratora.",
       "MaxFolderQuota": "Maksymalny limit folderu",
       "MaxSize": "Max rozmiar",
       "ModelProjectFolderRestrictedToReadOnly": "Uprawnienie 'Odczyt i zapis' nie jest obsługiwane dla folderu magazynu modeli",
@@ -668,12 +670,14 @@
       "Name": "Nazwa",
       "NoDeletePermission": "Brak uprawnień do usuwania",
       "NoFolderToDisplay": "Brak wyświetlanych folderów",
+      "NoRestorePermission": "Brak uprawnień do przywracania",
       "NumberOfFiles": "Liczba plików",
       "OpenAFolder": "Otwórz folder",
       "Owner": "Właściciel",
       "Ownership": "Własność",
       "Path": "Ścieżka przechowywania",
       "Permission": "Pozwolenie",
+      "ProjectAdminDataPageAlert": "Na stronie Dane administratora projektu można tworzyć tylko foldery projektu.",
       "ProjectFolderAlertDesc": "Ten folder jest udostępniany wszystkim członkom projektu",
       "ProjectFolderCreationHelp": "Folder dostępny przez użytkowników projektu „{{projectName}}”.",
       "Rename": "Przemianować",
@@ -2080,7 +2084,7 @@
     "Updated": "Zaktualizowano wstępne ustawienia zasobów"
   },
   "sTokenLoginBoundary": {
-"AuthenticatingDescription": "Trwa weryfikacja tokenu logowania…",
+    "AuthenticatingDescription": "Trwa weryfikacja tokenu logowania…",
     "AuthenticatingTitle": "Signing you in",
     "ConnectingDescription": "Łączenie z serwerem Backend.AI…",
     "CopyErrorDetails": "Copy error details",

@@ -603,6 +603,7 @@
       "WritePermissionRequiredInUploadFiles": "Quyền ghi là bắt buộc khi tải lên (các) tệp."
     },
     "folders": {
+      "AdminDataPageAlert": "Trên trang Dữ liệu Quản trị chỉ có thể tạo thư mục dự án.",
       "CannotDeleteFolder": "Không thể xóa thư mục được gắn trong một hoặc nhiều phiên. Vui lòng kết thúc phiên trước.",
       "CannotDeletePipelineFolder": "Bạn không thể xóa các thư mục đường ống.",
       "CannotRestorePipelineFolder": "Bạn không thể khôi phục các thư mục đường ống.",
@@ -650,6 +651,7 @@
       "LeaveAFolder": "Để lại một thư mục",
       "LeaveFolder": "Rời khỏi thư mục",
       "Location": "Vị trí",
+      "ManageProjectFolderInAdmin": "Quản lý thư mục dự án có thể thực hiện trong cài đặt quản trị.",
       "MaxFolderQuota": "Hạn ngạch thư mục tối đa",
       "MaxSize": "Kích thước tối đa",
       "ModelProjectFolderRestrictedToReadOnly": "Quyền 'Đọc & Ghi' không được hỗ trợ cho thư mục kho mô hình",
@@ -668,12 +670,14 @@
       "Name": "Tên",
       "NoDeletePermission": "Không xóa quyền",
       "NoFolderToDisplay": "Không có thư mục nào để hiển thị",
+      "NoRestorePermission": "Không có quyền khôi phục",
       "NumberOfFiles": "Số lượng tệp",
       "OpenAFolder": "Mở một thư mục",
       "Owner": "Chủ nhân",
       "Ownership": "Quyền sở hữu",
       "Path": "Đường dẫn lưu trữ",
       "Permission": "Sự cho phép",
+      "ProjectAdminDataPageAlert": "Trên trang Dữ liệu Quản trị Dự án chỉ có thể tạo thư mục dự án.",
       "ProjectFolderAlertDesc": "Thư mục này được chia sẻ với tất cả các thành viên của dự án",
       "ProjectFolderCreationHelp": "Một thư mục có thể truy cập bằng \"{{projectName}}\" Người dùng dự án sẽ được tạo.",
       "Rename": "Đổi tên",
@@ -2080,7 +2084,7 @@
     "Updated": "Đã cập nhật cài đặt trước tài nguyên"
   },
   "sTokenLoginBoundary": {
-"AuthenticatingDescription": "Đang xác minh token đăng nhập của bạn…",
+    "AuthenticatingDescription": "Đang xác minh token đăng nhập của bạn…",
     "AuthenticatingTitle": "Signing you in",
     "ConnectingDescription": "Đang kết nối đến máy chủ Backend.AI…",
     "CopyErrorDetails": "Copy error details",

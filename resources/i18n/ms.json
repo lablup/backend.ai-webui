@@ -603,6 +603,7 @@
       "WritePermissionRequiredInUploadFiles": "Kebenaran menulis diperlukan untuk memuat naik fail."
     },
     "folders": {
+      "AdminDataPageAlert": "Pada halaman Data Admin hanya folder projek boleh dicipta.",
       "CannotDeleteFolder": "Tidak dapat menghapus folder yang dipasang dalam satu atau lebih sesi. Tamatkan sesi terlebih dahulu.",
       "CannotDeletePipelineFolder": "Anda tidak boleh memadam folder saluran paip.",
       "CannotRestorePipelineFolder": "Anda tidak boleh memulihkan folder saluran paip.",
@@ -650,6 +651,7 @@
       "LeaveAFolder": "Tinggalkan folder",
       "LeaveFolder": "Tinggalkan folder",
       "Location": "Lokasi",
+      "ManageProjectFolderInAdmin": "Pengurusan folder projek tersedia dalam tetapan pentadbir.",
       "MaxFolderQuota": "Kuota Folder Maks",
       "MaxSize": "Saiz maks",
       "ModelProjectFolderRestrictedToReadOnly": "Kebenaran \"Baca & Tulis\" tidak disokong untuk folder stor model",
@@ -668,12 +670,14 @@
       "Name": "Nama",
       "NoDeletePermission": "Tiada kebenaran memadam",
       "NoFolderToDisplay": "Tiada Folder untuk dipaparkan",
+      "NoRestorePermission": "Tiada kebenaran memulihkan",
       "NumberOfFiles": "Bilangan fail",
       "OpenAFolder": "Buka folder",
       "Owner": "Pemilik",
       "Ownership": "Pemilikan",
       "Path": "Laluan penyimpanan",
       "Permission": "Kebenaran",
+      "ProjectAdminDataPageAlert": "Pada halaman Data Pentadbir Projek hanya folder projek boleh dicipta.",
       "ProjectFolderAlertDesc": "Folder ini dikongsi dengan semua ahli projek",
       "ProjectFolderCreationHelp": "Folder yang boleh diakses oleh pengguna projek \"{{projectName}}\" akan dibuat.",
       "Rename": "Namakan semula",
@@ -2078,7 +2082,7 @@
     "Updated": "Pratetap sumber dikemas kini"
   },
   "sTokenLoginBoundary": {
-"AuthenticatingDescription": "Token log masuk anda sedang disahkan…",
+    "AuthenticatingDescription": "Token log masuk anda sedang disahkan…",
     "AuthenticatingTitle": "Signing you in",
     "ConnectingDescription": "Menyambung ke pelayan Backend.AI…",
     "CopyErrorDetails": "Copy error details",

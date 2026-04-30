@@ -603,6 +603,7 @@
       "WritePermissionRequiredInUploadFiles": "Tiedoston (tiedostojen) lataaminen edellyttää kirjoitusoikeutta."
     },
     "folders": {
+      "AdminDataPageAlert": "Järjestelmänvalvojan tiedot -sivulla voi luoda vain projektin kansioita.",
       "CannotDeleteFolder": "Yhdessä tai useammassa istunnossa asennettua kansiota ei voi poistaa. Lopeta istunto ensin.",
       "CannotDeletePipelineFolder": "Et voi poistaa putkilinjan kansioita.",
       "CannotRestorePipelineFolder": "Putkilinjan kansiot eivät voi palauttaa.",
@@ -650,6 +651,7 @@
       "LeaveAFolder": "Jätä kansio",
       "LeaveFolder": "Jätä kansio",
       "Location": "Sijainti",
+      "ManageProjectFolderInAdmin": "Projektikansioiden hallinta on käytettävissä järjestelmänvalvojan asetuksissa.",
       "MaxFolderQuota": "Kansioiden enimmäiskiintiö",
       "MaxSize": "Enimmäiskoko",
       "ModelProjectFolderRestrictedToReadOnly": "Luku- ja kirjoitusoikeutta ei tueta mallivaraston kansiolle.",
@@ -668,12 +670,14 @@
       "Name": "Nimi",
       "NoDeletePermission": "Ei poistolupaa",
       "NoFolderToDisplay": "Ei näytettäviä kansioita",
+      "NoRestorePermission": "Ei palautuslupaa",
       "NumberOfFiles": "Tiedostojen määrä",
       "OpenAFolder": "Avaa kansio",
       "Owner": "Omistaja",
       "Ownership": "Omistus",
       "Path": "Säilytyspolku",
       "Permission": "Lupa",
+      "ProjectAdminDataPageAlert": "Projektin järjestelmänvalvojan tiedot -sivulla voi luoda vain projektin kansioita.",
       "ProjectFolderAlertDesc": "Tämä kansio on jaettu kaikkien projektin jäsenten kanssa",
       "ProjectFolderCreationHelp": "Projektin käyttäjät luodaan kansioon, johon pääsee \"{{projectName}}\".",
       "Rename": "Nimeä uudelleen",
@@ -2078,7 +2082,7 @@
     "Updated": "Resurssien esiasetus päivitetty"
   },
   "sTokenLoginBoundary": {
-"AuthenticatingDescription": "Kirjautumistunnistettasi varmennetaan…",
+    "AuthenticatingDescription": "Kirjautumistunnistettasi varmennetaan…",
     "AuthenticatingTitle": "Signing you in",
     "ConnectingDescription": "Yhdistetään Backend.AI-palvelimeen…",
     "CopyErrorDetails": "Copy error details",

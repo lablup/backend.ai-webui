@@ -603,6 +603,7 @@
       "WritePermissionRequiredInUploadFiles": "Απαιτείται άδεια εγγραφής κατά τη μεταφόρτωση αρχείων."
     },
     "folders": {
+      "AdminDataPageAlert": "Στη σελίδα Δεδομένων Διαχειριστή μπορούν να δημιουργηθούν μόνο φάκελοι έργου.",
       "CannotDeleteFolder": "Δεν είναι δυνατή η διαγραφή του φακέλου που είναι τοποθετημένος σε μία ή περισσότερες περιόδους σύνδεσης. Κλείστε πρώτα τη συνεδρία.",
       "CannotDeletePipelineFolder": "Δεν μπορείτε να διαγράψετε τους φακέλους αγωγών.",
       "CannotRestorePipelineFolder": "Δεν μπορείτε να επαναφέρετε τους φακέλους αγωγών.",
@@ -650,6 +651,7 @@
       "LeaveAFolder": "Αφήστε έναν φάκελο",
       "LeaveFolder": "Αφήστε το φάκελο",
       "Location": "Τοποθεσία",
+      "ManageProjectFolderInAdmin": "Η διαχείριση φακέλων έργου είναι διαθέσιμη στις ρυθμίσεις διαχειριστή.",
       "MaxFolderQuota": "Μέγιστη ποσόστωση φακέλων",
       "MaxSize": "Μέγιστο μέγεθος",
       "ModelProjectFolderRestrictedToReadOnly": "Δεν υποστηρίζεται η άδεια 'Read & Write' για τον φάκελο του model store.",
@@ -668,12 +670,14 @@
       "Name": "Ονομα",
       "NoDeletePermission": "Δεν υπάρχει δικαίωμα διαγραφής",
       "NoFolderToDisplay": "Δεν εμφανίζονται φάκελοι",
+      "NoRestorePermission": "Δεν υπάρχει δικαίωμα επαναφοράς",
       "NumberOfFiles": "Αριθμός αρχείων",
       "OpenAFolder": "Ανοίξτε έναν φάκελο",
       "Owner": "Ιδιοκτήτης",
       "Ownership": "Ιδιοκτησία",
       "Path": "Διαδρομή αποθήκευσης",
       "Permission": "Αδεια",
+      "ProjectAdminDataPageAlert": "Στη σελίδα Δεδομένων Διαχειριστή Έργου μπορούν να δημιουργηθούν μόνο φάκελοι έργου.",
       "ProjectFolderAlertDesc": "Αυτός ο φάκελος μοιράζεται με όλα τα μέλη του έργου",
       "ProjectFolderCreationHelp": "Ένα φάκελο προσβάσιμο από το \"{{projectName}}\" Οι χρήστες του έργου θα δημιουργηθούν.",
       "Rename": "Μετονομάζω",
@@ -2078,7 +2082,7 @@
     "Updated": "Η προεπιλογή πόρων ενημερώθηκε"
   },
   "sTokenLoginBoundary": {
-"AuthenticatingDescription": "Το διακριτικό σύνδεσής σας επαληθεύεται…",
+    "AuthenticatingDescription": "Το διακριτικό σύνδεσής σας επαληθεύεται…",
     "AuthenticatingTitle": "Signing you in",
     "ConnectingDescription": "Σύνδεση με τον διακομιστή Backend.AI…",
     "CopyErrorDetails": "Copy error details",

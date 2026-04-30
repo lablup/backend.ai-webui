@@ -8,10 +8,9 @@ import {
   VFolderNodesV2Fragment$key,
 } from '../__generated__/VFolderNodesV2Fragment.graphql';
 import { VFolderNodesV2RestoreMutation } from '../__generated__/VFolderNodesV2RestoreMutation.graphql';
-import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useSuspenseTanQuery, useTanQuery } from '../hooks/reactQueryAlias';
-import { useSetBAINotification } from '../hooks/useBAINotification';
 import { isDeletedCategory } from '../pages/VFolderNodeListPage';
 import DeleteForeverVFolderModalV2 from './DeleteForeverVFolderModalV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
@@ -19,17 +18,16 @@ import InviteFolderSettingModal from './InviteFolderSettingModal';
 import QuotaPerStorageVolumePanelCard, {
   type VolumeInfo,
 } from './QuotaPerStorageVolumePanelCard';
-import SharedFolderPermissionInfoModal from './SharedFolderPermissionInfoModal';
+import SharedFolderPermissionInfoModalV2 from './SharedFolderPermissionInfoModalV2';
 import VFolderDeployModal from './VFolderDeployModal';
-import VFolderNodeIdenticon from './VFolderNodeIdenticon';
-import VFolderPermissionCell from './VFolderPermissionCell';
+import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
+import VFolderPermissionCellV2 from './VFolderPermissionCellV2';
 import { QuestionCircleOutlined, UserOutlined } from '@ant-design/icons';
 import { App, Modal, Skeleton, theme, Tooltip, Typography } from 'antd';
 import {
   filterOutNullAndUndefined,
   BAIAlertIconWithTooltip,
   BAIEndpointsIcon,
-  BAILink,
   BAIRestoreIcon,
   BAIShareAltIcon,
   BAITrashBinIcon,
@@ -42,7 +40,6 @@ import {
   toLocalId,
   useErrorMessageResolver,
   BAITag,
-  bytesToGB,
   StorageUsageBadge,
 } from 'backend.ai-ui';
 import type { BAINameActionCellAction } from 'backend.ai-ui';
@@ -53,17 +50,28 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
 export const statusTagColor = {
+  // V2 UPPERCASE enum values (VFolderOperationStatus)
   // mountable
+  READY: 'warning',
+  CLONING: 'warning',
+  // delete
+  DELETE_PENDING: 'default',
+  DELETE_ONGOING: 'default',
+  DELETE_COMPLETE: 'default',
+  // error
+  DELETE_ERROR: 'error',
+  // Legacy V1 kebab-case values emitted by `VirtualFolderNode.status`.
+  // Kept alongside V2 keys so consumers that still read V1 status (e.g.
+  // `VFolderNodeDescription`) continue to get a color mapping and do not
+  // need to normalize the status before indexing.
   ready: 'warning',
   performing: 'warning',
   cloning: 'warning',
   mounted: 'warning',
-  // delete
+  error: 'error',
   'delete-pending': 'default',
   'delete-ongoing': 'default',
   'delete-complete': 'default',
-  // error
-  error: 'error',
   'delete-error': 'error',
 };
 
@@ -71,19 +79,21 @@ export type VFolderNodeInList = NonNullable<
   VFolderNodesV2Fragment$data[number]
 >;
 
+// V2 `VFolderOrderField` enum values. Legacy fields not present in V2
+// (last_used, cloneable, ownership_type, quota_scope_id, num_files, cur_size,
+// max_files, max_size) are intentionally omitted and kept as unsortable
+// columns. See FR-2573 for the V2 migration scope.
 const availableVFolderSorterKeys = [
   'name',
   'host',
-  'quota_scope_id',
   'usage_mode',
-  'ownership_type',
-  'max_files',
-  'max_size',
   'created_at',
-  'last_used',
-  'cloneable',
   'status',
-  'cur_size',
+] as const;
+
+export const availableVFolderSorterValues = [
+  ...availableVFolderSorterKeys,
+  ...availableVFolderSorterKeys.map((key) => `-${key}` as const),
 ] as const;
 
 const isEnableSorter = (key: string) => {
@@ -118,13 +128,9 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
   const { token } = theme.useToken();
   const { generateFolderPath } = useFolderExplorerOpener();
 
-  const isPipelineFolder = vfolder?.usage_mode === 'data';
-  const isModelFolder = vfolder?.usage_mode === 'model';
+  const isPipelineFolder = vfolder?.metadata?.usageMode === 'DATA';
+  const isModelFolder = vfolder?.metadata?.usageMode === 'MODEL';
   const isDeleted = isDeletedCategory(vfolder?.status);
-  const hasDeletePermission = _.includes(
-    vfolder?.permissions,
-    'delete_vfolder',
-  );
 
   const vfolderId = toLocalId(vfolder.id ?? '');
 
@@ -154,7 +160,14 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
           title: t('data.folders.MoveToTrash'),
           icon: <BAITrashBinIcon />,
           type: 'danger' as const,
-          disabled: !hasDeletePermission || isPipelineFolder,
+          // TODO(needs-backend): V2 `VFolder` does not expose a per-user
+          // action permission (legacy `VirtualFolderNode.permissions` had
+          // `delete_vfolder`). `accessControl.permission` is a mount-level
+          // enum (RO/RW/RW_DELETE), not an entity-level action permission,
+          // so it cannot gate this button. Enable unconditionally and let
+          // the backend reject unauthorized requests until a proper field
+          // is exposed on `VFolder`.
+          disabled: isPipelineFolder,
           disabledReason: isPipelineFolder
             ? t('data.folders.CannotDeletePipelineFolder')
             : t('data.folders.NoDeletePermission'),
@@ -173,7 +186,7 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
           key: 'restore',
           title: t('data.folders.Restore'),
           icon: <BAIRestoreIcon />,
-          disabled: vfolder?.status !== 'delete-pending' || isPipelineFolder,
+          disabled: vfolder?.status !== 'DELETE_PENDING' || isPipelineFolder,
           disabledReason: isPipelineFolder
             ? t('data.folders.CannotRestorePipelineFolder')
             : undefined,
@@ -187,7 +200,7 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
           title: t('data.folders.Delete'),
           icon: <BAITrashBinIcon />,
           type: 'danger' as const,
-          disabled: vfolder?.status !== 'delete-pending',
+          disabled: vfolder?.status !== 'DELETE_PENDING',
           onClick: onDeleteForever,
         }
       : null,
@@ -196,12 +209,12 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
   return (
     <BAINameActionCell
       icon={
-        <VFolderNodeIdenticon
+        <VFolderNodeIdenticonV2
           vfolderNodeIdenticonFrgmt={vfolder}
           style={{ fontSize: token.fontSizeHeading5 }}
         />
       }
-      title={vfolder.name}
+      title={vfolder.metadata?.name}
       to={generateFolderPath(vfolderId)}
       actions={actions}
       showActions="always"
@@ -402,9 +415,7 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
   const { message } = App.useApp();
   const [currentUser] = useCurrentUserInfo();
   const [inviteFolderId, setInviteFolderId] = useState<string | null>(null);
-  const { upsertNotification } = useSetBAINotification();
   const { getErrorMessage } = useErrorMessageResolver();
-  const navigate = useWebUINavigate();
 
   // Row-level hard-delete reuses the same modal as the bulk toolbar
   // (typed-input confirmation is required for irreversible deletion). Soft
@@ -423,31 +434,41 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
 
   const vfolders = useFragment(
     graphql`
-      fragment VFolderNodesV2Fragment on VirtualFolderNode
-      @relay(plural: true) {
+      fragment VFolderNodesV2Fragment on VFolder @relay(plural: true) {
         id @required(action: NONE)
         status
-        name
         host
-        quota_scope_id
-        ownership_type
-        user
-        user_email
-        group
-        group_name
-        usage_mode
-        max_files
-        max_size
-        created_at
-        last_used
-        num_files
-        cur_size
-        cloneable
-        permissions @since(version: "24.09.0")
-        ...VFolderPermissionCellFragment
-        ...VFolderNodeIdenticonFragment
-        ...SharedFolderPermissionInfoModalFragment
-        ...BAINodeNotificationItemFragment
+        unmanagedPath
+        metadata {
+          name
+          usageMode
+          quotaScopeId
+          createdAt
+          lastUsed
+          cloneable
+        }
+        accessControl {
+          permission
+          ownershipType
+        }
+        ownership {
+          userId
+          projectId
+          creatorEmail
+          user {
+            basicInfo {
+              email
+            }
+          }
+          project {
+            basicInfo {
+              name
+            }
+          }
+        }
+        ...VFolderPermissionCellV2Fragment
+        ...VFolderNodeIdenticonV2Fragment
+        ...SharedFolderPermissionInfoModalV2Fragment
         ...DeleteForeverVFolderModalV2Fragment
       }
     `,
@@ -476,41 +497,45 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
     `,
   );
 
-  // Backend reports "vfolder is occupied by sessions(ids: ['s1', 's2'])"
-  // when a folder is mounted in active sessions. Surface those session IDs
-  // as clickable links in the notification so the user can jump to them.
-  const handleDeleteError = (vfolder: VFolderNodeInList, error: Error) => {
-    const matchString = error?.message.match(/sessions\(ids: (\[.*?\])\)/)?.[1];
-    const occupiedSession = JSON.parse(matchString?.replace(/'/g, '"') || '[]');
-    upsertNotification({
-      open: true,
-      key: `vfolder-error-${vfolder?.id}`,
-      node: vfolder,
-      description: getErrorMessage(error).replace(/\(ids[\s\S]*$/, ''),
-      extraDescription: !_.isEmpty(occupiedSession) ? (
-        <BAIFlex direction="column" align="stretch">
-          <Typography.Text style={{ color: token.colorTextDescription }}>
-            {t('data.folders.MountedSessions')}
-          </Typography.Text>
-          {_.map(occupiedSession, (sessionId) => (
-            <BAILink
-              key={sessionId}
-              style={{ fontWeight: 'normal' }}
-              onClick={() => {
-                navigate({
-                  pathname: '/session',
-                  search: new URLSearchParams({
-                    sessionDetail: sessionId,
-                  }).toString(),
-                });
-              }}
-            >
-              {sessionId}
-            </BAILink>
-          ))}
-        </BAIFlex>
-      ) : null,
-    });
+  // TODO(FR-XXXX): Re-enable rich notification (folder header link + clickable
+  // session IDs via `upsertNotification`) once `BAINodeNotificationItemFragment`
+  // gains a `... on VFolder` branch. For now the V2 `VFolder` type is not
+  // recognized by the notification dispatcher, so we fall back to a plain
+  // error toast. Kept the parsing/link-rendering code below commented for
+  // easy restoration.
+  const handleDeleteError = (_vfolder: VFolderNodeInList, error: Error) => {
+    message.error(getErrorMessage(error));
+    // const matchString = error?.message.match(/sessions\(ids: (\[.*?\])\)/)?.[1];
+    // const occupiedSession = JSON.parse(matchString?.replace(/'/g, '"') || '[]');
+    // upsertNotification({
+    //   open: true,
+    //   key: `vfolder-error-${_vfolder?.id}`,
+    //   node: _vfolder,
+    //   description: getErrorMessage(error).replace(/\(ids[\s\S]*$/, ''),
+    //   extraDescription: !_.isEmpty(occupiedSession) ? (
+    //     <BAIFlex direction="column" align="stretch">
+    //       <Typography.Text style={{ color: token.colorTextDescription }}>
+    //         {t('data.folders.MountedSessions')}
+    //       </Typography.Text>
+    //       {_.map(occupiedSession, (sessionId) => (
+    //         <BAILink
+    //           key={sessionId}
+    //           style={{ fontWeight: 'normal' }}
+    //           onClick={() => {
+    //             navigate({
+    //               pathname: '/session',
+    //               search: new URLSearchParams({
+    //                 sessionDetail: sessionId,
+    //               }).toString(),
+    //             });
+    //           }}
+    //         >
+    //           {sessionId}
+    //         </BAILink>
+    //       ))}
+    //     </BAIFlex>
+    //   ) : null,
+    // });
   };
 
   return (
@@ -526,14 +551,14 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
           {
             key: 'name',
             title: t('data.folders.Name'),
-            dataIndex: 'name',
+            dataIndex: ['metadata', 'name'],
             required: true,
             render: (_name, vfolder) => {
               return (
                 <VFolderNameCell
                   vfolder={vfolder}
                   onShare={() => {
-                    vfolder?.user === currentUser?.uuid
+                    vfolder?.ownership?.userId === currentUser?.uuid
                       ? setInviteFolderId(toLocalId(vfolder?.id ?? null))
                       : setCurrentSharedVFolder(vfolder);
                   }}
@@ -553,7 +578,7 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
                         onRemoveRow?.(folderId);
                         message.success(
                           t('data.folders.MovedToTrashBin', {
-                            folderName: vfolder?.name,
+                            folderName: vfolder?.metadata?.name,
                           }),
                         );
                       },
@@ -564,12 +589,14 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
                     const folderId = vfolder?.id;
                     if (!folderId) return;
                     const handleError = (error: Error) => {
-                      upsertNotification({
-                        key: `vfolder-error-${folderId}`,
-                        node: vfolder,
-                        description: getErrorMessage(error),
-                        open: true,
-                      });
+                      // TODO(FR-XXXX): Swap back to `upsertNotification` once the
+                      // V2 VFolder branch lands in BAINodeNotificationItem.
+                      message.error(getErrorMessage(error));
+                      // upsertNotification({
+                      //   key: `vfolder-error-${folderId}`,
+                      //   description: getErrorMessage(error),
+                      //   open: true,
+                      // });
                     };
                     commitRestoreMutation({
                       variables: { vfolderId: toLocalId(folderId) },
@@ -581,7 +608,7 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
                         onRemoveRow?.(folderId);
                         message.success(
                           t('data.folders.FolderRestored', {
-                            folderName: vfolder?.name,
+                            folderName: vfolder?.metadata?.name,
                           }),
                         );
                       },
@@ -612,7 +639,7 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
                       : undefined
                   }
                 >
-                  {_.toUpper(status)}
+                  {status}
                 </BAITag>
               );
             },
@@ -634,19 +661,23 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
             ),
             sorter: isEnableSorter('host'),
           },
+          // TODO(needs-backend): V2 `VFolder` does not expose the legacy
+          // per-user `permissions` array. The Mount Permission column now
+          // derives RO/RW from `accessControl.permission` only; restore or
+          // augment once the backend re-introduces richer permission info.
           {
             key: 'permissions',
             title: t('data.folders.MountPermission'),
             render: (_perm: string, vfolder) => {
-              return <VFolderPermissionCell vfolderFrgmt={vfolder} />;
+              return <VFolderPermissionCellV2 vfolderFrgmt={vfolder} />;
             },
           },
           {
             key: 'ownership_type',
             title: t('data.folders.Type'),
-            dataIndex: 'ownership_type',
+            dataIndex: ['accessControl', 'ownershipType'],
             render: (type: string) => {
-              return type === 'user' ? (
+              return type === 'USER' ? (
                 <BAIFlex gap={'xs'}>
                   <Typography.Text>{t('data.User')}</Typography.Text>
                   <UserOutlined style={{ color: token.colorTextTertiary }} />
@@ -660,6 +691,7 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
                 </BAIFlex>
               );
             },
+            // V2 `VFolderOrderField` does not expose ownership_type.
             sorter: isEnableSorter('ownership_type'),
           },
 
@@ -667,72 +699,69 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
             key: 'owner',
             title: t('data.folders.Owner'),
             render: (__, vfolder) =>
-              vfolder.ownership_type === 'user'
-                ? vfolder?.user_email
-                : vfolder?.group_name,
+              vfolder.accessControl?.ownershipType === 'USER'
+                ? vfolder?.ownership?.user?.basicInfo?.email
+                : vfolder?.ownership?.project?.basicInfo?.name,
           },
           {
             key: 'usage_mode',
             title: t('data.UsageMode'),
-            dataIndex: 'usage_mode',
+            dataIndex: ['metadata', 'usageMode'],
             defaultHidden: true,
             sorter: isEnableSorter('usage_mode'),
             render: (mode: string) => {
               switch (mode) {
-                case 'general':
+                case 'GENERAL':
                   return t('data.General');
-                case 'data':
+                case 'DATA':
                   return t('webui.menu.Data');
-                case 'model':
+                case 'MODEL':
                   return t('data.Models');
                 default:
                   return mode;
               }
             },
           },
+          // TODO(needs-backend): V2 `VFolder` does not yet expose file/size
+          // usage statistics (num_files, cur_size) or quota limits
+          // (max_files, max_size). Keep these as hidden placeholder columns
+          // so column order and per-user settings (saved by key) remain
+          // stable; swap `render` back to the real formatter once the
+          // backend fields are available.
           {
             key: 'num_files',
             title: t('data.folders.NumberOfFiles'),
-            dataIndex: 'num_files',
             defaultHidden: true,
-            sorter: isEnableSorter('num_files'),
-            render: (value: number) =>
-              value != null ? value.toLocaleString() : '-',
+            sorter: false,
+            render: () => '-',
           },
           {
             key: 'cur_size',
             title: t('data.folders.FolderUsage'),
-            dataIndex: 'cur_size',
             defaultHidden: true,
-            sorter: isEnableSorter('cur_size'),
-            render: (value: string) =>
-              value != null ? `${bytesToGB(Number(value))} GB` : '-',
+            sorter: false,
+            render: () => '-',
           },
           {
             key: 'max_files',
             title: t('data.folders.MaxFolderQuota'),
-            dataIndex: 'max_files',
             defaultHidden: true,
-            sorter: isEnableSorter('max_files'),
-            render: (value: number) =>
-              value != null && value > 0 ? value.toLocaleString() : '-',
+            sorter: false,
+            render: () => '-',
           },
           {
             key: 'max_size',
             title: t('data.folders.MaxSize'),
-            dataIndex: 'max_size',
             defaultHidden: true,
-            sorter: isEnableSorter('max_size'),
-            render: (value: string) =>
-              value != null && Number(value) > 0
-                ? `${bytesToGB(Number(value))} GB`
-                : '-',
+            sorter: false,
+            render: () => '-',
           },
           {
             key: 'cloneable',
             title: t('data.folders.Cloneable'),
-            dataIndex: 'cloneable',
+            dataIndex: ['metadata', 'cloneable'],
             defaultHidden: true,
+            // V2 `VFolderOrderField` does not expose cloneable.
             sorter: isEnableSorter('cloneable'),
             render: (value: boolean) =>
               value ? t('button.Yes') : t('button.No'),
@@ -740,8 +769,9 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
           {
             key: 'quota_scope_id',
             title: t('data.QuotaScopeId'),
-            dataIndex: 'quota_scope_id',
+            dataIndex: ['metadata', 'quotaScopeId'],
             defaultHidden: true,
+            // V2 `VFolderOrderField` does not expose quota_scope_id.
             sorter: isEnableSorter('quota_scope_id'),
             render: (value: string) =>
               value ? <BAIText copyable>{value}</BAIText> : '-',
@@ -749,8 +779,9 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
           {
             key: 'last_used',
             title: t('credential.LastUsed'),
-            dataIndex: 'last_used',
+            dataIndex: ['metadata', 'lastUsed'],
             defaultHidden: true,
+            // V2 `VFolderOrderField` does not expose last_used.
             sorter: isEnableSorter('last_used'),
             render: (value: string) =>
               value ? dayjs(value).format('ll LT') : '-',
@@ -758,7 +789,7 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
           {
             key: 'created_at',
             title: t('data.folders.CreatedAt'),
-            dataIndex: 'created_at',
+            dataIndex: ['metadata', 'createdAt'],
             defaultHidden: true,
             sorter: isEnableSorter('created_at'),
             render: (value: string) =>
@@ -784,7 +815,7 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
         vfolderId={inviteFolderId}
         open={!!inviteFolderId}
       />
-      <SharedFolderPermissionInfoModal
+      <SharedFolderPermissionInfoModalV2
         vfolderFrgmt={currentSharedVFolder}
         open={!!currentSharedVFolder}
         onLeaveFolder={(id) => {

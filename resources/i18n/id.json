@@ -603,6 +603,7 @@
       "WritePermissionRequiredInUploadFiles": "Izin menulis diperlukan dalam mengunggah file."
     },
     "folders": {
+      "AdminDataPageAlert": "Di halaman Data Admin hanya folder proyek yang dapat dibuat.",
       "CannotDeleteFolder": "Tidak dapat menghapus folder yang dipasang di satu atau beberapa sesi. Mohon hentikan sesi terlebih dahulu.",
       "CannotDeletePipelineFolder": "Anda tidak dapat menghapus folder pipa.",
       "CannotRestorePipelineFolder": "Anda tidak dapat mengembalikan folder pipa.",
@@ -650,6 +651,7 @@
       "LeaveAFolder": "Tinggalkan folder",
       "LeaveFolder": "Tinggalkan folder",
       "Location": "Lokasi",
+      "ManageProjectFolderInAdmin": "Pengelolaan folder proyek tersedia di pengaturan admin.",
       "MaxFolderQuota": "Kuota Folder Maksimal",
       "MaxSize": "Ukuran maksimal",
       "ModelProjectFolderRestrictedToReadOnly": "Izin 'Baca & Tulis' tidak didukung untuk folder penyimpanan model.",
@@ -668,12 +670,14 @@
       "Name": "Nama",
       "NoDeletePermission": "Tidak ada izin hapus",
       "NoFolderToDisplay": "Tidak ada Folder untuk ditampilkan",
+      "NoRestorePermission": "Tidak ada izin pemulihan",
       "NumberOfFiles": "Jumlah file",
       "OpenAFolder": "Membuka folder",
       "Owner": "Pemilik",
       "Ownership": "Kepemilikan",
       "Path": "Jalur penyimpanan",
       "Permission": "Izin",
+      "ProjectAdminDataPageAlert": "Di halaman Data Admin Proyek hanya folder proyek yang dapat dibuat.",
       "ProjectFolderAlertDesc": "Folder ini dibagikan dengan semua anggota proyek",
       "ProjectFolderCreationHelp": "Folder yang dapat diakses oleh \"{{projectName}}\" pengguna proyek akan dibuat.",
       "Rename": "Ganti nama",
@@ -2081,7 +2085,7 @@
     "Updated": "Preset sumber daya diperbarui"
   },
   "sTokenLoginBoundary": {
-"AuthenticatingDescription": "Memverifikasi token masuk Anda…",
+    "AuthenticatingDescription": "Memverifikasi token masuk Anda…",
     "AuthenticatingTitle": "Signing you in",
     "ConnectingDescription": "Menghubungkan ke server Backend.AI…",
     "CopyErrorDetails": "Copy error details",

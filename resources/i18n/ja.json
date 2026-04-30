@@ -603,6 +603,7 @@
       "WritePermissionRequiredInUploadFiles": "ファイルのアップロードには書き込み権限が必要です。"
     },
     "folders": {
+      "AdminDataPageAlert": "管理者用データページではプロジェクトフォルダーのみ作成できます。",
       "CannotDeleteFolder": "1つ以上のセッションでマウントされたフォルダを削除できません。最初にセッションを終了してください。",
       "CannotDeletePipelineFolder": "パイプラインフォルダーを削除することはできません。",
       "CannotRestorePipelineFolder": "パイプラインフォルダーを復元することはできません。",
@@ -650,6 +651,7 @@
       "LeaveAFolder": "フォルダを離れる",
       "LeaveFolder": "招待されたフォルダを出る",
       "Location": "ロケーション",
+      "ManageProjectFolderInAdmin": "プロジェクトフォルダーの管理は管理者設定で行えます。",
       "MaxFolderQuota": "最大割り当て可能容量",
       "MaxSize": "最大サイズ",
       "ModelProjectFolderRestrictedToReadOnly": "モデルストアフォルダーでは「読み取り/書き込み」権限はサポートされていません",
@@ -668,12 +670,14 @@
       "Name": "名前",
       "NoDeletePermission": "削除許可なし",
       "NoFolderToDisplay": "フォルダ情報がありません。",
+      "NoRestorePermission": "復元許可なし",
       "NumberOfFiles": "ファイル数",
       "OpenAFolder": "フォルダを開く",
       "Owner": "オーナー",
       "Ownership": "所有",
       "Path": "ストレージパス",
       "Permission": "許可",
+      "ProjectAdminDataPageAlert": "プロジェクト管理者用データページではプロジェクトフォルダーのみ作成できます。",
       "ProjectFolderAlertDesc": "このフォルダはプロジェクトのすべてのメンバーと共有されます",
       "ProjectFolderCreationHelp": "「{{projectName}}」プロジェクトユーザーが作成できるフォルダーが作成されます。",
       "Rename": "名前を変更",
@@ -2080,7 +2084,7 @@
     "Updated": "リソースプリセットが更新されました"
   },
   "sTokenLoginBoundary": {
-"AuthenticatingDescription": "ログイントークンを確認しています…",
+    "AuthenticatingDescription": "ログイントークンを確認しています…",
     "AuthenticatingTitle": "Signing you in",
     "ConnectingDescription": "Backend.AIサーバーに接続しています…",
     "CopyErrorDetails": "Copy error details",
