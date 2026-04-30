@@ -43,7 +43,6 @@ import {
 } from '../hooks/useRuntimeParameterSchema';
 import { useValidateServiceName } from '../hooks/useValidateServiceName';
 import { useRuntimeEnvVarConfigs } from '../hooks/useVariantConfigs';
-import DeploymentPresetDetailModal from './DeploymentPresetDetailModal';
 import EnvVarFormList, {
   sanitizeSensitiveEnv,
   EnvVarFormListValue,
@@ -65,7 +64,6 @@ import SwitchToProjectButton from './SwitchToProjectButton';
 import VFolderLazyViewV2 from './VFolderLazyViewV2';
 import VFolderSelect from './VFolderSelect';
 import VFolderTableFormItem from './VFolderTableFormItem';
-import { InfoCircleOutlined } from '@ant-design/icons';
 import { useDebounceFn } from 'ahooks';
 import {
   App,
@@ -79,7 +77,6 @@ import {
   Segmented,
   Skeleton,
   Select,
-  Space,
   theme,
   Tooltip,
   Tag,
@@ -251,8 +248,6 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
   const [selectedPresetId, setSelectedPresetId] = useState<
     string | null | undefined
   >(null);
-  const [isPresetDetailOpen, setIsPresetDetailOpen] = useState(false);
-
   const [form] = Form.useForm<ServiceLauncherFormValue>();
   const [wantToChangeResource, setWantToChangeResource] = useState(false);
   const [currentGlobalResourceGroup, setCurrentGlobalResourceGroup] =
@@ -1710,41 +1705,24 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                           <Form.Item
                             label={t('modelService.SelectDeploymentPreset')}
                           >
-                            <BAIFlex direction="row" gap="xs">
-                              <Select
-                                allowClear
-                                options={
-                                  deploymentRevisionPresets?.edges?.map(
-                                    (edge) => ({
-                                      value: edge.node.id,
-                                      label: edge.node.name,
-                                    }),
-                                  ) ?? []
-                                }
-                                value={selectedPresetId}
-                                onChange={(value) => {
-                                  setSelectedPresetId(value ?? null);
-                                }}
-                                placeholder={t(
-                                  'modelService.SelectDeploymentPreset',
-                                )}
-                              />
-                              <Space.Compact>
-                                <Tooltip
-                                  title={t(
-                                    'modelService.DeploymentPresetDetail',
-                                  )}
-                                >
-                                  <Button
-                                    icon={<InfoCircleOutlined />}
-                                    disabled={!selectedPresetId}
-                                    onClick={() => {
-                                      setIsPresetDetailOpen(true);
-                                    }}
-                                  />
-                                </Tooltip>
-                              </Space.Compact>
-                            </BAIFlex>
+                            <Select
+                              allowClear
+                              options={
+                                deploymentRevisionPresets?.edges?.map(
+                                  (edge) => ({
+                                    value: edge.node.id,
+                                    label: edge.node.name,
+                                  }),
+                                ) ?? []
+                              }
+                              value={selectedPresetId}
+                              onChange={(value) => {
+                                setSelectedPresetId(value ?? null);
+                              }}
+                              placeholder={t(
+                                'modelService.SelectDeploymentPreset',
+                              )}
+                            />
                           </Form.Item>
                         )}
                         <ImageEnvironmentSelectFormItems
@@ -2279,13 +2257,6 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
       >
         <ServiceValidationView serviceData={validateServiceData} />
       </BAIModal>
-      <DeploymentPresetDetailModal
-        open={isPresetDetailOpen}
-        presetId={selectedPresetId}
-        onRequestClose={() => {
-          setIsPresetDetailOpen(false);
-        }}
-      />
     </>
   );
 };
