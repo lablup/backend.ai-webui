@@ -11,6 +11,7 @@ import {
   BAIFlex,
   filterOutEmpty,
   filterOutNullAndUndefined,
+  toLocalId,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import React, { Suspense } from 'react';
@@ -96,7 +97,26 @@ const DeploymentRevisionDetailDrawerContent: React.FC<{
     <Typography.Text type="secondary">-</Typography.Text>
   );
 
-  const isCurrent = revision?.id === currentRevisionId;
+  // `revision.id` is the Strawberry global id (`ModelRevision:<uuid>`
+  // base64) and the `currentRevisionId` prop may come in either form
+  // depending on the caller (some pass the local UUID from
+  // `deployment.currentRevisionId`, others pass the global id from
+  // `deployment.currentRevision.id`). Normalize both sides to local UUIDs
+  // before comparing so the "currently applied" indicator works in either
+  // case. `toLocalId` calls `atob` which throws on non-base64 input, so
+  // fall back to the raw value when decoding fails.
+  const safeToLocalId = (id: string | null | undefined): string | undefined => {
+    if (!id) return undefined;
+    try {
+      return toLocalId(id) ?? id;
+    } catch {
+      return id;
+    }
+  };
+  const isCurrent =
+    !!revision?.id &&
+    !!currentRevisionId &&
+    safeToLocalId(revision.id) === safeToLocalId(currentRevisionId);
   const clusterConfig = revision?.clusterConfig;
   const resourceConfig = revision?.resourceConfig;
   const runtimeConfig = revision?.modelRuntimeConfig;

@@ -4,6 +4,7 @@
  */
 import { DeploymentAddRevisionModalAddMutation } from '../__generated__/DeploymentAddRevisionModalAddMutation.graphql';
 import { DeploymentAddRevisionModalQuery } from '../__generated__/DeploymentAddRevisionModalQuery.graphql';
+import { tokenizeShellCommand } from '../helper/parseCliCommand';
 import {
   mergeExtraArgs,
   reverseMapExtraArgs,
@@ -45,11 +46,29 @@ import {
   BAIModal,
   BAIProjectResourceGroupSelect,
   filterOutNullAndUndefined,
+  isValidUUID,
   toLocalId,
 } from 'backend.ai-ui';
 import React, { Suspense, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
+
+/**
+ * Resolve a UUID from either a raw UUID or a Strawberry global id like
+ * `ImageV2:<uuid>`. `ImageInput.id` is declared as `ID!` but parsed as
+ * `UUID!` server-side, so we decode the form value before submitting.
+ * `toLocalId` calls `atob` which throws on non-base64 input — guard with
+ * try/catch and verify the decoded value is a UUID.
+ */
+const safeDecodeUuid = (idOrGlobalId: string): string | undefined => {
+  if (isValidUUID(idOrGlobalId)) return idOrGlobalId;
+  try {
+    const decoded = toLocalId(idOrGlobalId);
+    return decoded && isValidUUID(decoded) ? decoded : undefined;
+  } catch {
+    return undefined;
+  }
+};
 
 const SectionHeader: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -311,6 +330,19 @@ const DeploymentAddRevisionModalFormBody: React.FC<
       ]);
       return;
     }
+    // `ImageInput.id` is declared as `ID!` but parsed as `UUID!`
+    // server-side. The form provides a Strawberry global id
+    // (`ImageV2:<uuid>` base64-encoded), so decode before submitting.
+    const decodedImageId = safeDecodeUuid(imageId);
+    if (!decodedImageId) {
+      form.setFields([
+        {
+          name: ['environments', 'version'],
+          errors: [t('modelService.ImageRequired')],
+        },
+      ]);
+      return;
+    }
 
     const preset = resource_presets?.find(
       (p) => p?.name === values.resourceGroup,
@@ -337,6 +369,10 @@ const DeploymentAddRevisionModalFormBody: React.FC<
     );
 
     // Build modelDefinition for custom + command mode.
+    // `ModelServiceConfigInput.startCommand` is `JSON!` in the schema but
+    // the server-side Pydantic `ModelDefinition` validator requires a list
+    // of shell tokens. Tokenize the user-typed command string the same
+    // way `generateModelDefinitionYaml` does.
     const modelDefinition =
       isCustom && isCommandMode && values.startCommand
         ? {
@@ -346,7 +382,7 @@ const DeploymentAddRevisionModalFormBody: React.FC<
                 modelPath: values.commandModelMount ?? '/models',
                 service: {
                   preStartActions: [],
-                  startCommand: values.startCommand,
+                  startCommand: tokenizeShellCommand(values.startCommand),
                   port: values.commandPort ?? 8000,
                   healthCheck: values.commandHealthCheck
                     ? {
@@ -385,7 +421,7 @@ const DeploymentAddRevisionModalFormBody: React.FC<
             resourceGroup: { name: values.resourceGroup },
             resourceSlots: { entries },
           },
-          image: { id: imageId },
+          image: { id: decodedImageId },
           modelRuntimeConfig: {
             runtimeVariantId: values.runtimeVariantId,
             inferenceRuntimeConfig: null,
@@ -511,7 +547,23 @@ const DeploymentAddRevisionModalFormBody: React.FC<
       <Form.Item
         name="runtimeVariantId"
         label={t('deployment.RuntimeVariant')}
-        rules={[{ required: true }]}
+        rules={[
+          { required: true },
+          {
+            warningOnly: true,
+            validator: async (_rule, value: string) => {
+              const variantName = runtimeVariantOptions.find(
+                (o) => o.value === value,
+              )?.label;
+              if (variantName && variantName !== 'custom') {
+                return Promise.reject(
+                  t('modelService.RuntimeVariantDefaultCommandAppliedNote'),
+                );
+              }
+              return Promise.resolve();
+            },
+          },
+        ]}
       >
         <Select options={runtimeVariantOptions} showSearch />
       </Form.Item>

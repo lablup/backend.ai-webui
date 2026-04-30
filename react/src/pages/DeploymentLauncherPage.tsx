@@ -11,6 +11,7 @@ import { DeploymentLauncherPageUpdateReplicaMutation } from '../__generated__/De
 import DeploymentLauncherPageContent, {
   DeploymentLauncherFormValue,
 } from '../components/DeploymentLauncherPageContent';
+import { tokenizeShellCommand } from '../helper/parseCliCommand';
 import {
   useCurrentDomainValue,
   useSuspendedBackendaiClient,
@@ -50,17 +51,19 @@ import { useParams } from 'react-router-dom';
  */
 
 /**
- * Decode a Strawberry global id and return the embedded UUID, or undefined if
- * the id isn't a base64-encoded `<Type>:<uuid>` payload. `toLocalId` calls
- * `atob` which throws on non-base64 input, so we guard with try/catch and
- * also verify the decoded value is a UUID via `isValidUUID` — that prevents
- * accidentally forwarding a global id (or other garbage) to a mutation field
- * that the server parses as `UUID!`.
+ * Resolve a UUID from either a raw UUID string or a Strawberry global id.
+ * The `addModelRevision` mutation declares fields like `ImageInput.id` and
+ * `ModelRuntimeConfigInput.runtimeVariantId` as `ID!`, but the server
+ * actually parses them as `UUID!` and rejects base64-encoded global ids
+ * (e.g. `ImageV2:<uuid>`). `toLocalId` calls `atob` which throws on
+ * non-base64 input, so we guard with try/catch and verify the result via
+ * `isValidUUID` to avoid forwarding garbage to the mutation.
  */
-const safeDecodeRuntimeVariantUuid = (globalId: string): string | undefined => {
+const safeDecodeUuid = (idOrGlobalId: string): string | undefined => {
+  if (isValidUUID(idOrGlobalId)) return idOrGlobalId;
   try {
-    const decoded = toLocalId(globalId);
-    return isValidUUID(decoded) ? decoded : undefined;
+    const decoded = toLocalId(idOrGlobalId);
+    return decoded && isValidUUID(decoded) ? decoded : undefined;
   } catch {
     return undefined;
   }
@@ -336,11 +339,23 @@ const DeploymentLauncherPageLayout: React.FC<
     const variantNode = runtimeVariantByName[values.runtimeVariant];
     const runtimeVariantId =
       values.runtimeVariantId ??
-      (variantNode ? safeDecodeRuntimeVariantUuid(variantNode.id) : undefined);
+      (variantNode ? safeDecodeUuid(variantNode.id) : undefined);
     if (!runtimeVariantId) {
       throw new Error(
         `Could not resolve a UUID for runtime variant "${values.runtimeVariant}". ` +
           'Please re-select a runtime variant.',
+      );
+    }
+
+    // `ImageInput.id` is typed as `ID!` but parsed as `UUID!` server-side
+    // (see safeDecodeUuid for the broader pattern). The form provides a
+    // Strawberry global id like `ImageV2:<uuid>` (base64-encoded); decode
+    // it before submitting so the server accepts the value.
+    const decodedImageId = safeDecodeUuid(imageId);
+    if (!decodedImageId) {
+      throw new Error(
+        `Could not resolve a UUID for the selected image (received "${imageId}"). ` +
+          'Please re-select an image.',
       );
     }
 
@@ -357,6 +372,11 @@ const DeploymentLauncherPageLayout: React.FC<
     // For custom variant in command mode, build modelDefinition from form fields.
     const isCustom = values.runtimeVariant === 'custom';
     const isCommandMode = values.customDefinitionMode === 'command';
+    // `ModelServiceConfigInput.startCommand` is `JSON!` in the schema but the
+    // server-side Pydantic `ModelDefinition` validator requires a list of
+    // shell tokens. The form holds the user-typed command line as a single
+    // string, so tokenize it the same way `generateModelDefinitionYaml`
+    // does to keep the create/edit and yaml paths in sync.
     const modelDefinition =
       isCustom && isCommandMode && values.startCommand
         ? {
@@ -366,7 +386,7 @@ const DeploymentLauncherPageLayout: React.FC<
                 modelPath: values.commandModelMount ?? '/models',
                 service: {
                   preStartActions: [],
-                  startCommand: values.startCommand,
+                  startCommand: tokenizeShellCommand(values.startCommand),
                   port: values.commandPort ?? 8000,
                   healthCheck: values.commandHealthCheck
                     ? {
@@ -410,7 +430,7 @@ const DeploymentLauncherPageLayout: React.FC<
               resourceGroup: { name: values.resourceGroup },
               resourceSlots: { entries },
             },
-            image: { id: imageId },
+            image: { id: decodedImageId },
             modelRuntimeConfig: {
               runtimeVariantId,
               inferenceRuntimeConfig: null,

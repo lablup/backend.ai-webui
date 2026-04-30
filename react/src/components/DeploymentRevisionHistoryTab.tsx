@@ -2,18 +2,22 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { DeploymentRevisionHistoryTabActivateMutation } from '../__generated__/DeploymentRevisionHistoryTabActivateMutation.graphql';
 import {
   DeploymentRevisionHistoryTabListQuery,
   ModelRevisionOrderBy,
 } from '../__generated__/DeploymentRevisionHistoryTabListQuery.graphql';
-import { DeploymentRevisionHistoryTabRollbackMutation } from '../__generated__/DeploymentRevisionHistoryTabRollbackMutation.graphql';
 import type { DeploymentRevisionHistoryTab_deployment$key } from '../__generated__/DeploymentRevisionHistoryTab_deployment.graphql';
 import { convertToOrderBy } from '../helper';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import DeploymentAddRevisionModal from './DeploymentAddRevisionModal';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
-import { PlusOutlined, UndoOutlined } from '@ant-design/icons';
-import { App, Tag, Typography, theme } from 'antd';
+import {
+  LoadingOutlined,
+  PlayCircleOutlined,
+  PlusOutlined,
+} from '@ant-design/icons';
+import { App, Typography } from 'antd';
 import {
   type BAIColumnType,
   BAIButton,
@@ -22,6 +26,7 @@ import {
   BAIGraphQLPropertyFilter,
   BAINameActionCell,
   BAITable,
+  BAITag,
   BAIUnmountAfterClose,
   type GraphQLFilter,
   filterOutNullAndUndefined,
@@ -73,7 +78,6 @@ const DeploymentRevisionHistoryTab: React.FC<
 > = ({ deploymentFrgmt, deploymentId, isDeploymentDestroying = false }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const { modal } = App.useApp();
   const { logger } = useBAILogger();
   const { upsertNotification } = useSetBAINotification();
@@ -162,16 +166,7 @@ const DeploymentRevisionHistoryTab: React.FC<
         ) {
           deployment(id: $deploymentId) {
             currentRevisionId
-            latestRevision: revisionHistory(
-              limit: 1
-              orderBy: [{ field: CREATED_AT, direction: DESC }]
-            ) {
-              edges {
-                node {
-                  id
-                }
-              }
-            }
+            deployingRevisionId
             revisionHistory(
               filter: $filter
               orderBy: $orderBy
@@ -217,12 +212,18 @@ const DeploymentRevisionHistoryTab: React.FC<
       { fetchKey, fetchPolicy: 'network-only' },
     );
 
-  const [commitRollback] =
-    useMutation<DeploymentRevisionHistoryTabRollbackMutation>(graphql`
-      mutation DeploymentRevisionHistoryTabRollbackMutation(
-        $input: UpdateDeploymentInput!
+  // Use the dedicated `activateDeploymentRevision` mutation rather than
+  // the generic `updateModelDeployment` so the server can apply the
+  // deployment's policy and surface the previous/next revision ids in
+  // the payload. Both `deploymentId` and `revisionId` are typed as `ID!`
+  // in the schema but are parsed as UUIDs server-side, so pass the
+  // local-id form (consistent with the rest of this PR).
+  const [commitActivate] =
+    useMutation<DeploymentRevisionHistoryTabActivateMutation>(graphql`
+      mutation DeploymentRevisionHistoryTabActivateMutation(
+        $input: ActivateRevisionInput!
       ) {
-        updateModelDeployment(input: $input) {
+        activateDeploymentRevision(input: $input) {
           deployment {
             id
             currentRevisionId
@@ -231,12 +232,14 @@ const DeploymentRevisionHistoryTab: React.FC<
               name
             }
           }
+          previousRevisionId
+          activatedRevisionId
         }
       }
     `);
 
   const currentRevisionId = listData?.currentRevisionId;
-  const latestRevisionId = listData?.latestRevision?.edges?.[0]?.node?.id;
+  const deployingRevisionId = listData?.deployingRevisionId;
   const revisionHistory = listData?.revisionHistory;
 
   type RevisionNode = NonNullable<
@@ -268,22 +271,22 @@ const DeploymentRevisionHistoryTab: React.FC<
     // text is never blank.
     const revisionLabel = revision.name ?? toLocalId(revision.id);
     modal.confirm({
-      title: t('deployment.Rollback'),
-      content: t('deployment.RollbackConfirm', {
+      title: t('deployment.Deploy'),
+      content: t('deployment.DeployConfirm', {
         revisionNumber: revisionLabel,
       }),
-      okText: t('deployment.Rollback'),
+      okText: t('deployment.Deploy'),
       okButtonProps: {
         danger: true,
       },
       onOk: () => {
         return new Promise<void>((resolve) => {
           setRollingBackRevisionId(revision.id);
-          commitRollback({
+          commitActivate({
             variables: {
               input: {
-                id: toLocalId(deployment.id),
-                activeRevisionId: toLocalId(revision.id),
+                deploymentId: toLocalId(deployment.id),
+                revisionId: toLocalId(revision.id),
               },
             },
             onCompleted: (_res, errors) => {
@@ -302,7 +305,7 @@ const DeploymentRevisionHistoryTab: React.FC<
               upsertNotification({
                 open: true,
                 duration: 4.5,
-                message: t('deployment.RollbackSuccess', {
+                message: t('deployment.DeploySuccess', {
                   revisionNumber: revisionLabel,
                 }),
               });
@@ -333,40 +336,50 @@ const DeploymentRevisionHistoryTab: React.FC<
       key: 'revisionNumber',
       fixed: 'left',
       render: (_value, record) => {
-        const isCurrent = record.id === currentRevisionId;
-        const isLatest = record.id === latestRevisionId;
-        const rollbackDisabledReason =
-          isCurrent || isLatest ? t('deployment.RollbackDisabled') : undefined;
-        const isRollbackDisabled =
+        // `currentRevisionId` and `deployingRevisionId` come back as raw
+        // UUIDs from the scalar fields, while `record.id` is the
+        // Strawberry global id (`ModelRevision:<uuid>` base64). Compare
+        // in the same shape so the disable check actually matches.
+        const recordLocalId = toLocalId(record.id);
+        const isCurrent = recordLocalId === currentRevisionId;
+        const isDeploying = recordLocalId === deployingRevisionId;
+        const deployDisabledReason =
+          isCurrent || isDeploying ? t('deployment.DeployDisabled') : undefined;
+        const isDeployDisabled =
           isCurrent ||
-          isLatest ||
+          isDeploying ||
           isDeploymentDestroying ||
           rollingBackRevisionId === record.id;
         return (
           <BAINameActionCell
             title={
               <BAIFlex gap="xs" align="center">
-                <Typography.Link
-                  strong={isCurrent}
-                  onClick={() => setDrawerRevisionId(record.id)}
-                >
+                <Typography.Link onClick={() => setDrawerRevisionId(record.id)}>
                   {record.name ?? '-'}
                 </Typography.Link>
                 {isCurrent ? (
-                  <Tag color={token.colorPrimary}>
-                    {t('deployment.Current')}
-                  </Tag>
+                  <BAITag color="success">{t('deployment.Current')}</BAITag>
+                ) : null}
+                {isDeploying && !isCurrent ? (
+                  // Skip the "Deploying" tag when this revision is also
+                  // the current one — the server briefly leaves
+                  // `deployingRevisionId` set after promotion until the
+                  // reconciler clears it, and showing both tags side by
+                  // side reads as a contradiction.
+                  <BAITag color="warning" icon={<LoadingOutlined spin />}>
+                    {t('deployment.Deploying')}
+                  </BAITag>
                 ) : null}
               </BAIFlex>
             }
             showActions="always"
             actions={[
               {
-                key: 'rollback',
-                title: t('deployment.Rollback'),
-                icon: <UndoOutlined />,
-                disabled: isRollbackDisabled,
-                disabledReason: rollbackDisabledReason,
+                key: 'deploy',
+                title: t('deployment.Deploy'),
+                icon: <PlayCircleOutlined />,
+                disabled: isDeployDisabled,
+                disabledReason: deployDisabledReason,
                 onClick: () => handleRollback(record),
               },
             ]}

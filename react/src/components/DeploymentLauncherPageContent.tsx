@@ -672,7 +672,22 @@ const DeploymentLauncherPageContent: React.FC<
             <Form.Item
               name="runtimeVariant"
               label={t('modelService.RuntimeVariant')}
-              rules={[{ required: true }]}
+              rules={[
+                { required: true },
+                {
+                  warningOnly: true,
+                  validator: async (_rule, value: string) => {
+                    if (value && value !== 'custom') {
+                      return Promise.reject(
+                        t(
+                          'modelService.RuntimeVariantDefaultCommandAppliedNote',
+                        ),
+                      );
+                    }
+                    return Promise.resolve();
+                  },
+                },
+              ]}
             >
               <Select
                 options={runtimeVariantOptions}

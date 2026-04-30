@@ -163,7 +163,7 @@ export function useRuntimeParameterSchema(
     `,
     {
       filter: variantRowId
-        ? { runtimeVariantId: variantRowId }
+        ? { runtimeVariantId: { equals: variantRowId } }
         : // When no variant UUID, use an impossible filter to get 0 results
           { name: { equals: '__none__' } },
       orderBy: [{ field: 'RANK', direction: 'ASC' }],

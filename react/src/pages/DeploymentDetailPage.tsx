@@ -52,7 +52,6 @@ const DeploymentDetailPage: React.FC = () => {
               email
             }
           }
-          ...DeploymentConfigurationSection_deployment
           ...DeploymentReplicasTab_deployment
           ...DeploymentRevisionHistoryTab_deployment
           ...DeploymentAccessTokensTab_deployment
@@ -92,7 +91,6 @@ const DeploymentDetailPage: React.FC = () => {
         <DeploymentStatusTag status={deploymentStatus} />
       </BAIFlex>
       <DeploymentConfigurationSection
-        deploymentFrgmt={deployment}
         deploymentId={toGlobalId('ModelDeployment', deploymentId)}
         isDeploymentDestroying={isDeploymentDestroying}
       />
