@@ -496,14 +496,25 @@ const DeploymentLauncherPageContent: React.FC<
         ? _.merge({}, initialValues, formValuesFromURL)
         : initialValues;
 
-    // In create mode, skip setting an empty resourceGroup so that
-    // BAIProjectResourceGroupSelect.autoSelectDefault can pick the first option.
-    // Child effects (auto-select) run before parent effects (this one), so
-    // passing '' here would override the already-selected value.
+    // In create mode, skip setting empty fields whose child component owns an
+    // autoSelectDefault flow. Child effects (auto-select) run before parent
+    // effects (this one), so passing an empty value here would clobber the
+    // value the child has already selected — the child's internal display
+    // state would survive but the form value reads as undefined, so downstream
+    // readers (e.g. the review summary) see '-'.
+    //
+    // Membership rule: add a field here only if its step-2/3 Select passes
+    // `autoSelectDefault`. Currently: BAIProjectResourceGroupSelect (step 3)
+    // and ResourcePresetSelect (step 3). VFolderSelect (step 2) does not pass
+    // autoSelectDefault; if that ever changes, add 'modelFolderId' here.
+    const autoSelectKeys: Array<keyof DeploymentLauncherFormValue> = [
+      'resourceGroup',
+      'resourcePresetId',
+    ];
+    const omitKeys =
+      mode === 'create' ? autoSelectKeys.filter((k) => !merged[k]) : [];
     form.setFieldsValue(
-      mode === 'create' && !merged.resourceGroup
-        ? _.omit(merged, 'resourceGroup')
-        : merged,
+      omitKeys.length > 0 ? _.omit(merged, omitKeys) : merged,
     );
   });
 
