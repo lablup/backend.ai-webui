@@ -180,17 +180,20 @@ function BAISelect<
         showSearch={
           selectProps.showSearch === false
             ? false
-            : {
-                ...(_.isObject(selectProps.showSearch)
-                  ? selectProps.showSearch
-                  : {}),
-                onSearch: async (value) => {
-                  _.get(selectProps.showSearch, 'onSearch')?.(value);
-                  startTransition(async () => {
-                    await searchAction?.(value);
-                  });
-                },
+            : _.isObject(selectProps.showSearch)
+              ? selectProps.showSearch
+              : true
+        }
+        onSearch={
+          searchAction || _.get(selectProps.showSearch, 'onSearch')
+            ? async (value) => {
+                selectProps.onSearch?.(value);
+                _.get(selectProps.showSearch, 'onSearch')?.(value);
+                startTransition(async () => {
+                  await searchAction?.(value);
+                });
               }
+            : selectProps.onSearch
         }
         ref={ref}
         className={classNames(
