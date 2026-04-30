@@ -7,30 +7,25 @@ import {
   VFolderNodeListPageQuery$data,
   VFolderNodeListPageQuery$variables,
 } from '../__generated__/VFolderNodeListPageQuery.graphql';
-import ActionItemContent from '../components/ActionItemContent';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import BAITabs from '../components/BAITabs';
 import DeleteForeverVFolderModalV2 from '../components/DeleteForeverVFolderModalV2';
 import DeleteVFolderModalV2 from '../components/DeleteVFolderModalV2';
 import FolderCreateModalV2 from '../components/FolderCreateModalV2';
-import QuotaPerStorageVolumePanelCard from '../components/QuotaPerStorageVolumePanelCard';
 import RestoreVFolderModalV2 from '../components/RestoreVFolderModalV2';
-import StorageStatusPanelCard from '../components/StorageStatusPanelCard';
 import VFolderNodesV2, {
   VFolderNodeInList,
 } from '../components/VFolderNodesV2';
 import { handleRowSelectionChange } from '../helper';
-import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useToggle } from 'ahooks';
-import { Badge, Col, Grid, Row, theme, Tooltip, Typography } from 'antd';
+import { Badge, theme, Tooltip } from 'antd';
 import {
-  BAIAlertIconWithTooltip,
   BAIButton,
   BAICard,
   BAIFetchKeyButton,
   BAIFlex,
-  BAINewFolderIcon,
   BAIPropertyFilter,
   BAIPurgeIcon,
   BAIRestoreIcon,
@@ -42,14 +37,7 @@ import {
   useUpdatableState,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import React, {
-  Suspense,
-  useDeferredValue,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
-import { ErrorBoundary } from 'react-error-boundary';
+import React, { useDeferredValue, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useBAIPaginationOptionStateOnSearchParamLegacy } from 'src/hooks/reactPaginationQueryOptions';
@@ -88,8 +76,6 @@ const FILTER_BY_STATUS_CATEGORY = {
   deleted: 'status in ["DELETE_PENDING", "DELETE_ONGOING", "DELETE_ERROR"]',
 };
 
-const CARD_MIN_HEIGHT = 200;
-
 const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
   ...props
 }) => {
@@ -97,10 +83,8 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
 
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { lg } = Grid.useBreakpoint();
   const currentProject = useCurrentProjectValue();
   const baiClient = useSuspendedBackendaiClient();
-  const webuiNavigate = useWebUINavigate();
   const [invitations] = useVFolderInvitations();
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
@@ -263,133 +247,6 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
 
   return (
     <BAIFlex direction="column" align="stretch" gap={'md'} {...props}>
-      <Row
-        gutter={[16, 16]}
-        align={'stretch'}
-        style={{ minHeight: lg ? CARD_MIN_HEIGHT : undefined }}
-      >
-        <Col xs={24} md={8} xl={4} style={{ display: 'flex' }}>
-          <BAICard
-            style={{
-              width: '100%',
-              minHeight: lg ? CARD_MIN_HEIGHT : undefined,
-            }}
-          >
-            <ActionItemContent
-              title={
-                <Typography.Text
-                  style={{
-                    maxWidth: lg ? 120 : undefined,
-                    wordBreak: 'keep-all',
-                    overflowWrap: 'break-word',
-                  }}
-                >
-                  {t('data.CreateFolderAndUploadFiles')}
-                </Typography.Text>
-              }
-              buttonText={t('data.CreateFolder')}
-              icon={<BAINewFolderIcon />}
-              type="simple"
-              onClick={() => {
-                toggleCreateModal();
-              }}
-              style={{
-                height: '100%',
-              }}
-            />
-          </BAICard>
-        </Col>
-        <Col xs={24} md={16} xl={8} style={{ display: 'flex' }}>
-          <ErrorBoundary
-            fallbackRender={() => {
-              return (
-                <BAICard
-                  style={{
-                    width: '100%',
-                    minHeight: lg ? CARD_MIN_HEIGHT : undefined,
-                  }}
-                  title={t('data.FolderStatus')}
-                  status="error"
-                  extra={
-                    <BAIAlertIconWithTooltip
-                      title={t('error.UnexpectedError')}
-                    />
-                  }
-                />
-              );
-            }}
-          >
-            <Suspense
-              fallback={
-                <BAICard
-                  style={{
-                    width: '100%',
-                    minHeight: lg ? CARD_MIN_HEIGHT : undefined,
-                  }}
-                  title={t('data.FolderStatus')}
-                  loading
-                />
-              }
-            >
-              <StorageStatusPanelCard
-                style={{
-                  width: '100%',
-                  minHeight: lg ? CARD_MIN_HEIGHT : undefined,
-                }}
-                fetchKey={deferredFetchKey}
-                onRequestBadgeClick={() => {
-                  webuiNavigate({
-                    search: new URLSearchParams({
-                      invitation: 'true',
-                    }).toString(),
-                  });
-                }}
-              />
-            </Suspense>
-          </ErrorBoundary>
-        </Col>
-        <Col xs={24} md={24} xl={12} style={{ display: 'flex' }}>
-          <ErrorBoundary
-            fallbackRender={() => {
-              return (
-                <BAICard
-                  style={{
-                    width: '100%',
-                    minHeight: lg ? CARD_MIN_HEIGHT : undefined,
-                  }}
-                  title={t('data.QuotaPerStorageVolume')}
-                  status="error"
-                  extra={
-                    <BAIAlertIconWithTooltip
-                      title={t('error.UnexpectedError')}
-                    />
-                  }
-                />
-              );
-            }}
-          >
-            <Suspense
-              fallback={
-                <BAICard
-                  style={{
-                    width: '100%',
-                    minHeight: lg ? CARD_MIN_HEIGHT : undefined,
-                  }}
-                  title={t('data.QuotaPerStorageVolume')}
-                  loading
-                />
-              }
-            >
-              <QuotaPerStorageVolumePanelCard
-                style={{
-                  width: '100%',
-                  minHeight: lg ? CARD_MIN_HEIGHT : undefined,
-                }}
-              />
-            </Suspense>
-          </ErrorBoundary>
-        </Col>
-      </Row>
       <BAICard
         variant="borderless"
         title={t('data.Folders')}

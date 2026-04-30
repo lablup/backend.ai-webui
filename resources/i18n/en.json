@@ -754,9 +754,11 @@
     "usage": {
       "Adequate": "Adequate",
       "Caution": "Caution",
+      "HostStatusTooltip": "Host usage status: {{status}}",
       "Insufficient": "Insufficient",
       "Status": "Status",
       "StatusOfSelectedHost": "Status Of Selected Host",
+      "Unknown": "Unknown",
       "Used": "used"
     }
   },

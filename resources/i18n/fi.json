@@ -753,9 +753,11 @@
     "usage": {
       "Adequate": "Riittävästi",
       "Caution": "Varoitus",
+      "HostStatusTooltip": "Isännän käyttötila: {{status}}",
       "Insufficient": "Riittämätön",
       "Status": "Tila",
       "StatusOfSelectedHost": "Valitun isännän tila",
+      "Unknown": "Tuntematon",
       "Used": "käytetty"
     }
   },

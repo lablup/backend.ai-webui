@@ -754,9 +754,11 @@
     "usage": {
       "Adequate": "여유",
       "Caution": "주의",
+      "HostStatusTooltip": "호스트 사용량 상태: {{status}}",
       "Insufficient": "부족",
       "Status": "상태",
       "StatusOfSelectedHost": "선택한 호스트 상태",
+      "Unknown": "알 수 없음",
       "Used": "사용 중"
     }
   },

@@ -753,9 +753,11 @@
     "usage": {
       "Adequate": "Adeguato",
       "Caution": "Attenzione",
+      "HostStatusTooltip": "Stato utilizzo host: {{status}}",
       "Insufficient": "Insufficiente",
       "Status": "Stato",
       "StatusOfSelectedHost": "Stato dell'host selezionato",
+      "Unknown": "Sconosciuto",
       "Used": "usato"
     }
   },

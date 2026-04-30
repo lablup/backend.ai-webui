@@ -21,8 +21,11 @@ export type VolumeInfo = {
   id: string;
   backend: string;
   capabilities: string[];
-  usage: {
-    percentage: number;
+  // `usage` is optional because `vfolder.list_hosts()` only attaches it for
+  // hosts that can report capacity; `usage.percentage` is optional because
+  // even a reporting host may omit the percentage.
+  usage?: {
+    percentage?: number;
   };
   sftp_scaling_groups: string[];
 };
@@ -118,38 +121,42 @@ const StorageSelect: React.FC<Props> = ({
             }
       }
       optionLabelProp={showUsageStatus ? 'label' : 'value'}
-      options={_.map(vhostInfo?.allowed, (host) => ({
-        label: showUsageStatus ? (
-          <BAIFlex align="center">
-            {vhostInfo?.volume_info?.[host]?.usage && (
-              <Tooltip
-                title={`${t('data.Host')} ${t('data.usage.Status')}:
-                ${
-                  vhostInfo?.volume_info[host]?.usage?.percentage < 70
-                    ? t('data.usage.Adequate')
-                    : vhostInfo?.volume_info[host]?.usage?.percentage < 90
-                      ? t('data.usage.Caution')
-                      : t('data.usage.Insufficient')
-                }`}
-              >
-                <StorageUsageBadge
-                  percent={vhostInfo?.volume_info[host]?.usage?.percentage}
-                />
-                {/* Use &nbsp; instead of Flex gap to fix Tooltip  */}
-                &nbsp;&nbsp;
-              </Tooltip>
-            )}
-            <TextHighlighter keyword={controllableSearchValue}>
-              {host}
-            </TextHighlighter>
-            {/* TODO: uncomment after implementing click action */}
-            {/* <Button type="link" size="small" icon={<InfoCircleOutlined />} /> */}
-          </BAIFlex>
-        ) : (
-          host
-        ),
-        value: host,
-      }))}
+      options={_.map(vhostInfo?.allowed, (host) => {
+        const usagePercent = vhostInfo?.volume_info?.[host]?.usage?.percentage;
+        const usageLabel =
+          usagePercent === undefined
+            ? t('data.usage.Unknown')
+            : usagePercent < 70
+              ? t('data.usage.Adequate')
+              : usagePercent < 90
+                ? t('data.usage.Caution')
+                : t('data.usage.Insufficient');
+        return {
+          label: showUsageStatus ? (
+            <BAIFlex align="center">
+              {vhostInfo?.volume_info?.[host]?.usage && (
+                <Tooltip
+                  title={t('data.usage.HostStatusTooltip', {
+                    status: usageLabel,
+                  })}
+                >
+                  <StorageUsageBadge percent={usagePercent} />
+                  {/* Use &nbsp; instead of Flex gap to fix Tooltip  */}
+                  &nbsp;&nbsp;
+                </Tooltip>
+              )}
+              <TextHighlighter keyword={controllableSearchValue}>
+                {host}
+              </TextHighlighter>
+              {/* TODO: uncomment after implementing click action */}
+              {/* <Button type="link" size="small" icon={<InfoCircleOutlined />} /> */}
+            </BAIFlex>
+          ) : (
+            host
+          ),
+          value: host,
+        };
+      })}
       {...partialSelectProps}
     />
   );

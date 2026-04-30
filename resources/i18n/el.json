@@ -753,9 +753,11 @@
     "usage": {
       "Adequate": "Επαρκής",
       "Caution": "Προσοχή",
+      "HostStatusTooltip": "Κατάσταση χρήσης κεντρικού υπολογιστή: {{status}}",
       "Insufficient": "Ανεπαρκές",
       "Status": "Κατάσταση",
       "StatusOfSelectedHost": "Κατάσταση του επιλεγμένου κεντρικού υπολογιστή",
+      "Unknown": "Άγνωστο",
       "Used": "χρησιμοποιημένο"
     }
   },

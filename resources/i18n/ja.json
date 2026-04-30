@@ -753,9 +753,11 @@
     "usage": {
       "Adequate": "余裕",
       "Caution": "注意",
+      "HostStatusTooltip": "ホスト使用状況: {{status}}",
       "Insufficient": "不足",
       "Status": "状態",
       "StatusOfSelectedHost": "選択したホストの状態",
+      "Unknown": "不明",
       "Used": "使用中"
     }
   },

@@ -753,9 +753,11 @@
     "usage": {
       "Adequate": "Хангалттай",
       "Caution": "Анхааруулга",
+      "HostStatusTooltip": "Хост ашиглалтын төлөв: {{status}}",
       "Insufficient": "Хангалтгүй",
       "Status": "Статус",
       "StatusOfSelectedHost": "Сонгосон хостын төлөв",
+      "Unknown": "Тодорхойгүй",
       "Used": "ашигласан"
     }
   },

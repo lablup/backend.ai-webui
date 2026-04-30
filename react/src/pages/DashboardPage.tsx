@@ -6,12 +6,14 @@ import { DashboardPageQuery } from '../__generated__/DashboardPageQuery.graphql'
 import BAIBoard, { BAIBoardItem } from '../components/BAIBoard';
 import MyResource from '../components/MyResource';
 import MyResourceWithinResourceGroup from '../components/MyResourceWithinResourceGroup';
+import QuotaPerStorageVolumeDashboardItem from '../components/QuotaPerStorageVolumeDashboardItem';
 import RecentlyCreatedSession from '../components/RecentlyCreatedSession';
 import SessionCountDashboardItem from '../components/SessionCountDashboardItem';
+import StorageStatusPanelCard from '../components/StorageStatusPanelCard';
 import TotalResourceWithinResourceGroup, {
   useIsAvailableTotalResourceWithinResourceGroup,
 } from '../components/TotalResourceWithinResourceGroup';
-import { useSuspendedBackendaiClient } from '../hooks';
+import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import {
   useCurrentProjectValue,
@@ -41,6 +43,7 @@ const DashboardPage: React.FC = () => {
   const currentResourceGroup = useCurrentResourceGroupValue();
   const userRole = useCurrentUserRole();
   const baiClient = useSuspendedBackendaiClient();
+  const webuiNavigate = useWebUINavigate();
 
   const [fetchKey, updateFetchKey] = useFetchKey();
   const [isPendingIntervalRefetch, startIntervalRefetchTransition] =
@@ -165,6 +168,62 @@ const DashboardPage: React.FC = () => {
               fetchKey={fetchKey}
               refetching={isPendingIntervalRefetch}
             />
+          </BAIBoardItemErrorBoundary>
+        ),
+      },
+    },
+    {
+      id: 'folderStatus',
+      rowSpan: 2,
+      columnSpan: 2,
+      definition: {
+        minRowSpan: 2,
+        minColumnSpan: 2,
+      },
+      data: {
+        content: (
+          <BAIBoardItemErrorBoundary
+            title={t('data.FolderStatus')}
+            status="error"
+          >
+            <Suspense
+              fallback={<Skeleton active style={{ padding: token.marginMD }} />}
+            >
+              <StorageStatusPanelCard
+                fetchKey={fetchKey}
+                onRequestBadgeClick={() => {
+                  webuiNavigate({
+                    pathname: '/data',
+                    search: new URLSearchParams({
+                      invitation: 'true',
+                    }).toString(),
+                  });
+                }}
+              />
+            </Suspense>
+          </BAIBoardItemErrorBoundary>
+        ),
+      },
+    },
+    {
+      id: 'quotaPerStorageVolume',
+      rowSpan: 2,
+      columnSpan: 2,
+      definition: {
+        minRowSpan: 2,
+        minColumnSpan: 2,
+      },
+      data: {
+        content: (
+          <BAIBoardItemErrorBoundary
+            title={t('data.QuotaPerStorageVolume')}
+            status="error"
+          >
+            <Suspense
+              fallback={<Skeleton active style={{ padding: token.marginMD }} />}
+            >
+              <QuotaPerStorageVolumeDashboardItem />
+            </Suspense>
           </BAIBoardItemErrorBoundary>
         ),
       },

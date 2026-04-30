@@ -753,9 +753,11 @@
     "usage": {
       "Adequate": "Đủ",
       "Caution": "Thận trọng",
+      "HostStatusTooltip": "Trạng thái sử dụng máy chủ: {{status}}",
       "Insufficient": "không đủ",
       "Status": "Trạng thái",
       "StatusOfSelectedHost": "Trạng thái của máy chủ được chọn",
+      "Unknown": "Không xác định",
       "Used": "đã sử dụng"
     }
   },

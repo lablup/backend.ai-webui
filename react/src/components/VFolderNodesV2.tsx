@@ -8,21 +8,26 @@ import {
   VFolderNodesV2Fragment$key,
 } from '../__generated__/VFolderNodesV2Fragment.graphql';
 import { VFolderNodesV2RestoreMutation } from '../__generated__/VFolderNodesV2RestoreMutation.graphql';
-import { useWebUINavigate } from '../hooks';
+import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
+import { useSuspenseTanQuery, useTanQuery } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { isDeletedCategory } from '../pages/VFolderNodeListPage';
 import DeleteForeverVFolderModalV2 from './DeleteForeverVFolderModalV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import InviteFolderSettingModal from './InviteFolderSettingModal';
+import QuotaPerStorageVolumePanelCard, {
+  type VolumeInfo,
+} from './QuotaPerStorageVolumePanelCard';
 import SharedFolderPermissionInfoModal from './SharedFolderPermissionInfoModal';
 import VFolderDeployModal from './VFolderDeployModal';
 import VFolderNodeIdenticon from './VFolderNodeIdenticon';
 import VFolderPermissionCell from './VFolderPermissionCell';
-import { UserOutlined } from '@ant-design/icons';
-import { App, theme, Typography } from 'antd';
+import { QuestionCircleOutlined, UserOutlined } from '@ant-design/icons';
+import { App, Modal, Skeleton, theme, Tooltip, Typography } from 'antd';
 import {
   filterOutNullAndUndefined,
+  BAIAlertIconWithTooltip,
   BAIEndpointsIcon,
   BAILink,
   BAIRestoreIcon,
@@ -38,11 +43,12 @@ import {
   useErrorMessageResolver,
   BAITag,
   bytesToGB,
+  StorageUsageBadge,
 } from 'backend.ai-ui';
 import type { BAINameActionCellAction } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import React, { useState } from 'react';
+import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
@@ -203,6 +209,179 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
   );
 };
 
+interface VFolderHostCellProps {
+  host?: string | null;
+}
+
+// Renders a Host column cell: usage badge (if the backend reports one)
+// plus the host name. The badge's data comes from `vfolder.list_hosts()`,
+// cached under the same tan-query key that `StorageSelect` uses, so the
+// payload is fetched once and shared across rows + selects. Uses the
+// non-suspense `useTanQuery` here — a per-cell suspense boundary with a
+// plain-text fallback rendered identically on the loaded-without-usage path,
+// so rows would get stuck in the fallback branch and never pick up the badge
+// after the query resolved.
+const VFolderHostCell: React.FC<VFolderHostCellProps> = ({ host }) => {
+  'use memo';
+  const { t } = useTranslation();
+  const baiClient = useSuspendedBackendaiClient();
+
+  const { data: vhostInfo } = useTanQuery<{
+    volume_info?: Record<string, Omit<VolumeInfo, 'id'>>;
+  } | null>({
+    queryKey: ['vhostInfo'],
+    queryFn: () => baiClient.vfolder.list_hosts(),
+    staleTime: 1000 * 60 * 5,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+  });
+
+  if (!host) return null;
+
+  const volumeInfo = vhostInfo?.volume_info?.[host];
+  const usage = volumeInfo?.usage;
+  const usagePercent = usage?.percentage;
+  // Match `StorageSelect`'s gating: render the badge whenever the backend
+  // attaches a `usage` object — even an empty `{}` — so rows render a neutral
+  // (uncolored) marker while percentage data is unavailable. Color is derived
+  // from percentage inside `StorageUsageBadge` and is `undefined` (neutral)
+  // when the percentage is missing.
+  const usageLabel =
+    usagePercent === undefined
+      ? t('data.usage.Unknown')
+      : usagePercent < 70
+        ? t('data.usage.Adequate')
+        : usagePercent < 90
+          ? t('data.usage.Caution')
+          : t('data.usage.Insufficient');
+
+  return (
+    <BAIFlex gap={'xs'} align="center">
+      {usage ? (
+        <Tooltip
+          title={t('data.usage.HostStatusTooltip', { status: usageLabel })}
+        >
+          <StorageUsageBadge percent={usagePercent} />
+        </Tooltip>
+      ) : null}
+      <Typography.Text>{host}</Typography.Text>
+    </BAIFlex>
+  );
+};
+
+// Column-header affordance that opens `QuotaPerStorageVolumePanelCard` in a
+// modal, pre-selected on a quota-supporting host so the empty "does not
+// support" state is not the first thing users see. Renders nothing when no
+// volume reports `quota` in its capabilities — removing the modal entry
+// point entirely rather than opening a dialog with no useful content.
+//
+// The trigger (icon) lives inside the column `title`, but the Modal is
+// hoisted to the table-level so React synthetic events from inside the
+// Modal do not bubble up through the React tree to the `<th>` and trigger
+// column sorting (Portal nodes still bubble through the React tree).
+interface HostQuotaTriggerProps {
+  onOpen: () => void;
+}
+
+const HostQuotaTriggerInner: React.FC<HostQuotaTriggerProps> = ({ onOpen }) => {
+  'use memo';
+  const { t } = useTranslation();
+  const baiClient = useSuspendedBackendaiClient();
+
+  const { data: vhostInfo } = useSuspenseTanQuery<{
+    volume_info?: Record<string, Omit<VolumeInfo, 'id'>>;
+  } | null>({
+    queryKey: ['vhostInfo'],
+    queryFn: () => baiClient.vfolder.list_hosts(),
+  });
+
+  const hasQuotaSupportedHost = _.some(
+    _.values(vhostInfo?.volume_info ?? {}),
+    (info) => _.includes(info?.capabilities, 'quota'),
+  );
+  if (!hasQuotaSupportedHost) return null;
+
+  return (
+    <BAIAlertIconWithTooltip
+      title={t('data.QuotaPerStorageVolume')}
+      iconProps={{
+        size: 14,
+        onClick: (e) => {
+          e.stopPropagation();
+          onOpen();
+        },
+        style: { cursor: 'pointer' },
+      }}
+    />
+  );
+};
+
+const HostQuotaTrigger: React.FC<HostQuotaTriggerProps> = (props) => (
+  <Suspense fallback={null}>
+    <HostQuotaTriggerInner {...props} />
+  </Suspense>
+);
+
+const HostQuotaModalContent: React.FC = () => {
+  'use memo';
+  const baiClient = useSuspendedBackendaiClient();
+
+  const { data: vhostInfo } = useSuspenseTanQuery<{
+    volume_info?: Record<string, Omit<VolumeInfo, 'id'>>;
+  } | null>({
+    queryKey: ['vhostInfo'],
+    queryFn: () => baiClient.vfolder.list_hosts(),
+  });
+
+  const quotaSupportedEntry = _.find(
+    _.entries(vhostInfo?.volume_info ?? {}),
+    ([, info]) => _.includes(info?.capabilities, 'quota'),
+  );
+  if (!quotaSupportedEntry) return null;
+
+  const [host, info] = quotaSupportedEntry;
+  const defaultVolumeInfo: VolumeInfo = { id: host, ...info };
+
+  return (
+    <QuotaPerStorageVolumePanelCard defaultVolumeInfo={defaultVolumeInfo} />
+  );
+};
+
+interface HostQuotaModalProps {
+  open: boolean;
+  onCancel: () => void;
+}
+
+const HostQuotaModal: React.FC<HostQuotaModalProps> = ({ open, onCancel }) => {
+  'use memo';
+  const { t } = useTranslation();
+  const { token } = theme.useToken();
+
+  return (
+    <Modal
+      open={open}
+      onCancel={onCancel}
+      footer={null}
+      title={
+        <BAIFlex gap={'xs'} align="center">
+          {t('data.QuotaPerStorageVolume')}
+          <Tooltip title={t('data.HostDetails')}>
+            <QuestionCircleOutlined
+              style={{ color: token.colorTextDescription }}
+            />
+          </Tooltip>
+        </BAIFlex>
+      }
+      width={640}
+      destroyOnHidden
+    >
+      <Suspense fallback={<Skeleton active />}>
+        <HostQuotaModalContent />
+      </Suspense>
+    </Modal>
+  );
+};
+
 interface VFolderNodesV2Props extends Omit<
   BAITableProps<VFolderNodeInList>,
   'dataSource' | 'columns'
@@ -240,6 +419,7 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
   const [deployFallbackVfolderId, setDeployFallbackVfolderId] = useState<
     string | null
   >(null);
+  const [isHostQuotaModalOpen, setIsHostQuotaModalOpen] = useState(false);
 
   const vfolders = useFragment(
     graphql`
@@ -440,8 +620,18 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
           },
           {
             key: 'host',
-            title: t('data.folders.Location'),
+            title: (
+              <BAIFlex gap={'xs'} align="center">
+                {t('data.Host')}
+                <HostQuotaTrigger
+                  onOpen={() => setIsHostQuotaModalOpen(true)}
+                />
+              </BAIFlex>
+            ),
             dataIndex: 'host',
+            render: (host: string | null | undefined) => (
+              <VFolderHostCell host={host} />
+            ),
             sorter: isEnableSorter('host'),
           },
           {
@@ -609,6 +799,10 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
         vfolderId={deployFallbackVfolderId ?? undefined}
         onClose={() => setDeployFallbackVfolderId(null)}
         onDeployed={() => setDeployFallbackVfolderId(null)}
+      />
+      <HostQuotaModal
+        open={isHostQuotaModalOpen}
+        onCancel={() => setIsHostQuotaModalOpen(false)}
       />
     </>
   );

@@ -753,9 +753,11 @@
     "usage": {
       "Adequate": "Yeterli",
       "Caution": "Dikkat",
+      "HostStatusTooltip": "Ana bilgisayar kullanım durumu: {{status}}",
       "Insufficient": "Yetersiz",
       "Status": "Durum",
       "StatusOfSelectedHost": "Seçilen Ana Bilgisayarın Durumu",
+      "Unknown": "Bilinmiyor",
       "Used": "kullanılmış"
     }
   },

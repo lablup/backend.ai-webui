@@ -753,9 +753,11 @@
     "usage": {
       "Adequate": "Memadai",
       "Caution": "Perhatian",
+      "HostStatusTooltip": "Status penggunaan host: {{status}}",
       "Insufficient": "Tidak mencukupi",
       "Status": "Status",
       "StatusOfSelectedHost": "Status Tuan Rumah Terpilih",
+      "Unknown": "Tidak diketahui",
       "Used": "digunakan"
     }
   },

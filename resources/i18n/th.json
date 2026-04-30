@@ -753,9 +753,11 @@
     "usage": {
       "Adequate": "เพียงพอ",
       "Caution": "ควรระวัง",
+      "HostStatusTooltip": "สถานะการใช้งานโฮสต์: {{status}}",
       "Insufficient": "ไม่เพียงพอ",
       "Status": "สถานะ",
       "StatusOfSelectedHost": "สถานะของโฮสต์ที่เลือก",
+      "Unknown": "ไม่ทราบ",
       "Used": "ใช้แล้ว"
     }
   },

@@ -754,9 +754,11 @@
     "usage": {
       "Adequate": "充足",
       "Caution": "注意事项",
+      "HostStatusTooltip": "主機使用狀態: {{status}}",
       "Insufficient": "不足",
       "Status": "现状",
       "StatusOfSelectedHost": "选定主机的状态",
+      "Unknown": "未知",
       "Used": "用過的"
     }
   },
