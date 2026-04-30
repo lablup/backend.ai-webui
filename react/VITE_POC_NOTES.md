@@ -77,8 +77,50 @@ Fix:
 
 (Each of these gets its own sub-issue under FR-2605.)
 
-- Jest → Vitest migration (FR-2609)
 - CI pipeline updates (FR-2611)
+
+## Vitest migration (react/ only) — complete (FR-2609)
+
+`pnpm --prefix ./react run vitest` now passes **856/856 tests** across the migrated suite. The Vitest-semantic differences from Jest noted below have been resolved as part of this PR, so this note no longer implies outstanding failures.
+
+### What was added
+
+- `react/vitest.config.ts` — dedicated Vitest config, separate from `vite.config.ts`. Shares the transform pipeline (`@vitejs/plugin-react` + babel-plugin-relay with per-directory `artifactDirectory` + babel-plugin-react-compiler) so tests exercise the same transforms as dev/prod.
+- `react/__test__/vitest.jest-compat.ts` — a setup file that aliases `globalThis.jest = vi` so legacy `jest.fn()` / `jest.clearAllMocks()` call sites continue to work. Migration aid only; new tests should use `vi.*` directly.
+- `vitest` / `vitest:watch` scripts in `react/package.json`.
+
+### Bulk migrations applied
+
+Mechanical `jest.` → `vi.` rewrites across 39 test files (perl one-liner in the commit message):
+
+- `jest.mock|fn|spyOn|clearAllMocks|resetAllMocks|restoreAllMocks|useFakeTimers|useRealTimers|advanceTimersByTime|runOnlyPendingTimers|runAllTimers|doMock` → `vi.*`
+- `jest.Mock` (type cast) → `Mock`, with `import type { Mock } from 'vitest'` added
+- Removed `@jest/globals` import lines (Vitest's `globals: true` provides them)
+
+Without this, Vitest's `vi.mock` hoisting does NOT apply to `jest.mock(...)` calls (Vitest only recognises literal `vi.mock` for hoisting). The rewrites restore mock correctness across 14+ files.
+
+### Module resolution
+
+- `src/` baseUrl via regex alias `{ find: /^src\//, replacement: reactSrc + '/' }`.
+- `backend.ai-ui/*`, `backend.ai-client-esm` mapped to same mocks Jest used.
+- `.svg` plain imports → `__test__/svg.mock.js`; `.svg?react` → `vite-plugin-svgr`.
+- `.css` / `.css?raw` → `__test__/rawCss.mock.js` (regex anchored with `^.+` so the entire specifier is replaced; array-form aliases replace the matched portion).
+
+### Vitest-semantic differences from Jest (resolved in this PR)
+
+- `react/src/helper/customThemeConfig.test.ts` — was using `Object.defineProperty(process.env, 'NODE_ENV', ...)` to toggle dev/prod; Vitest's `process.env.NODE_ENV` has an immutable descriptor. Migrated to `vi.stubEnv('NODE_ENV', ...)` + `vi.unstubAllEnvs()` in `afterEach`, plus `vi.restoreAllMocks()` between nested describes to avoid event-dispatcher accumulation.
+- `react/src/components/MyResourceWithinResourceGroup.test.tsx` and `react/src/hooks/useResourceLimitAndRemaining.test.ts` — bare `vi.mock(path)` without a factory does not produce a `default` export for ESM under Vitest. Fixed by passing an explicit `() => ({ default: vi.fn() })` factory.
+
+### Performance
+
+- Vitest run: ~20s wall clock for 848 tests (transform 71s, tests 6s — tests themselves are very fast; the time is transform + import cost, paid only once per file).
+- Jest equivalent on the same tree has not been measured in this session; prior expectation was 60-120s. Confidence level: "materially faster" but exact multiplier needs a controlled benchmark.
+
+### Still open
+
+- BUI (`packages/backend.ai-ui`) Jest → Vitest migration
+- Root `/src` Jest → Vitest migration
+- `transformIgnorePatterns` regex in existing `react/jest.config.cjs` can be deleted once the Jest pipeline is fully retired.
 
 ## Production `vite build` + Workbox PWA — landed (FR-2608)
 

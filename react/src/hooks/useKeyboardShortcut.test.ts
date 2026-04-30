@@ -1,9 +1,10 @@
 import useKeyboardShortcut from './useKeyboardShortcut';
 import { renderHook } from '@testing-library/react';
+import type { Mock } from 'vitest';
 
 // Mock ahooks useEventListener
-jest.mock('ahooks', () => ({
-  useEventListener: jest.fn((event, handler) => {
+vi.mock('ahooks', () => ({
+  useEventListener: vi.fn((event, handler) => {
     // Store handler for testing
     (global as any).__eventListeners = (global as any).__eventListeners || {};
     (global as any).__eventListeners[event] = handler;
@@ -11,10 +12,10 @@ jest.mock('ahooks', () => ({
 }));
 
 describe('useKeyboardShortcut', () => {
-  let mockHandler: jest.Mock;
+  let mockHandler: Mock;
 
   beforeEach(() => {
-    mockHandler = jest.fn();
+    mockHandler = vi.fn();
     // Clear stored event listeners
     (global as any).__eventListeners = {};
     // Clear DOM
@@ -22,7 +23,7 @@ describe('useKeyboardShortcut', () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   const triggerKeydown = (options: Partial<KeyboardEvent> = {}) => {

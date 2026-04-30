@@ -1,10 +1,11 @@
 import { useTokenCount, encodeAsync } from './useTokenizer';
 import { renderHook, waitFor } from '@testing-library/react';
 import { encode } from 'gpt-tokenizer';
+import type { Mock } from 'vitest';
 
 // Mock gpt-tokenizer
-jest.mock('gpt-tokenizer', () => ({
-  encode: jest.fn((str: string) => Array(str.length).fill(0)), // Mock: 1 token per character
+vi.mock('gpt-tokenizer', () => ({
+  encode: vi.fn((str: string) => Array(str.length).fill(0)), // Mock: 1 token per character
 }));
 
 describe('useTokenizer', () => {
@@ -60,7 +61,7 @@ describe('useTokenizer', () => {
     });
 
     it('should fallback to string length on encoding error', async () => {
-      (encode as jest.Mock).mockImplementationOnce(() => {
+      (encode as Mock).mockImplementationOnce(() => {
         throw new Error('Encoding failed');
       });
 

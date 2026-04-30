@@ -11,13 +11,13 @@ import { render, screen } from '@testing-library/react';
 import React from 'react';
 
 // Mock all the required hooks and dependencies
-jest.mock('react-i18next', () => ({
+vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string) => key,
   }),
 }));
 
-jest.mock('antd', () => ({
+vi.mock('antd', () => ({
   Segmented: ({ children }: any) => (
     <div data-testid="segmented">{children}</div>
   ),
@@ -30,11 +30,11 @@ jest.mock('antd', () => ({
   },
 }));
 
-jest.mock('ahooks', () => ({
-  useControllableValue: () => ['free', jest.fn()],
+vi.mock('ahooks', () => ({
+  useControllableValue: () => ['free', vi.fn()],
 }));
 
-jest.mock('../hooks/useCurrentProject', () => ({
+vi.mock('../hooks/useCurrentProject', () => ({
   useCurrentProjectValue: () => ({ name: 'test-project' }),
   useCurrentResourceGroupValue: () => 'default',
 }));
@@ -117,8 +117,8 @@ const mockDataScenarios = {
   },
 };
 
-jest.mock('../hooks/useResourceLimitAndRemaining', () => ({
-  useResourceLimitAndRemaining: jest.fn(() => [
+vi.mock('../hooks/useResourceLimitAndRemaining', () => ({
+  useResourceLimitAndRemaining: vi.fn(() => [
     {
       resourceGroupResourceSize: { cpu: 0, mem: '0 GiB', accelerators: {} },
       resourceLimits: { accelerators: {} },
@@ -130,12 +130,12 @@ jest.mock('../hooks/useResourceLimitAndRemaining', () => ({
       checkPresetInfo: mockDataScenarios.normal as any,
     },
     {
-      refetch: jest.fn(),
+      refetch: vi.fn(),
     },
   ]),
 }));
 
-jest.mock('backend.ai-ui', () => {
+vi.mock('backend.ai-ui', () => {
   const isoDate = new Date().toISOString();
   return {
     useResourceSlotsDetails: () => ({
@@ -149,7 +149,7 @@ jest.mock('backend.ai-ui', () => {
         },
       },
     }),
-    useFetchKey: () => [isoDate, jest.fn(), isoDate],
+    useFetchKey: () => [isoDate, vi.fn(), isoDate],
     convertToNumber: (value: any) => parseFloat(value) || 0,
     processMemoryValue: (value: any) => {
       if (!value || value === 'Infinity' || value === Infinity) return value;
@@ -190,12 +190,14 @@ jest.mock('backend.ai-ui', () => {
   };
 });
 
-jest.mock('./SharedResourceGroupSelectForCurrentProject', () => {
+vi.mock('./SharedResourceGroupSelectForCurrentProject', () => {
   const MockedComponent = () => (
     <div data-testid="resource-group-select">Select</div>
   );
   MockedComponent.displayName = 'SharedResourceGroupSelectForCurrentProject';
-  return MockedComponent;
+  // Source uses `import X from ...`, so the factory must return a module
+  // namespace with a `default` export, not the component directly.
+  return { default: MockedComponent };
 });
 
 // Helper function to create mock return value
@@ -212,7 +214,7 @@ const createMockReturnValue = (checkPresetInfo: any) =>
       checkPresetInfo,
     },
     {
-      refetch: jest.fn(),
+      refetch: vi.fn(),
     },
   ] as const;
 
@@ -237,7 +239,7 @@ TestWrapper.displayName = 'TestWrapper';
 describe('MyResourceWithinResourceGroup', () => {
   let queryClient: QueryClient;
 
-  const mockHook = jest.spyOn(
+  const mockHook = vi.spyOn(
     useResourceLimitAndRemainingModule,
     'useResourceLimitAndRemaining',
   );
@@ -249,7 +251,7 @@ describe('MyResourceWithinResourceGroup', () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     mockHook.mockReset();
   });
 
