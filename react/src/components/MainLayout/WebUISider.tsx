@@ -346,7 +346,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
                 style={{ fontSize: token.sizeXS }}
               >
                 {/* @ts-ignore */}
-                {`${global.packageVersion}.${globalThis.buildNumber}`}
+                {`${globalThis.packageVersion}.${globalThis.buildNumber}`}
               </small>
             </address>
           </Typography.Text>
