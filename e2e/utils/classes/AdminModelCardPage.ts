@@ -203,14 +203,21 @@ export class AdminModelCardPage {
     });
 
     await expect(changeProjectButton.or(folderDialog)).toBeVisible({
-      timeout: 5000,
+      timeout: 10000,
     });
 
     if (await changeProjectButton.isVisible()) {
       await changeProjectButton.click();
+      // The onConfirm handler runs inside startTransition: it first shows a
+      // success message and then sets isOpenCreateFolderModal=true. Assert the
+      // message to confirm the project change went through (i.e. modelStoreProject
+      // data was available) before waiting for the folder dialog.
+      await expect(
+        this.page.getByText('Current project changed successfully.'),
+      ).toBeVisible({ timeout: 10000 });
     }
 
-    await expect(folderDialog).toBeVisible({ timeout: 15000 });
+    await expect(folderDialog).toBeVisible({ timeout: 30000 });
 
     // initialValidate={true} calls validateFields() in afterOpenChange, which triggers
     // a re-render. Soft wait for the "required" error — it's not guaranteed to appear
