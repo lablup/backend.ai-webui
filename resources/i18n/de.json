@@ -391,7 +391,6 @@
     "MainAccessKey": "Hauptzugangsschlüssel",
     "MainKeyCannotDeactivate": "Der Hauptzugangsschlüssel kann nicht deaktiviert werden. Wechseln Sie zuerst zu einem anderen Schlüssel.",
     "MainKeyChanged": "Hauptzugangsschlüssel wurde geändert.",
-    "MainKeyChangedNeedRelogin": "Der Hauptzugangsschlüssel wurde erfolgreich geändert. Bitte melden Sie sich mit dem neuen Schlüssel erneut an.",
     "Max#": "max. Anzahl Ordner folder",
     "ModifiedAt": "Geändert am",
     "ModifyKeypairResourcePolicy": "Schlüsselpaar-Ressourcenrichtlinie ändern",
@@ -417,7 +416,6 @@
     "RateLimitFor15min": "Ratenbegrenzung (für 15 Min.)",
     "RateLimitInputRequired": "Eingabe erforderlich.",
     "RateLimitValidation": "Die Ratengrenze sollte größer als null und unter 50000 sein.",
-    "ReLoginRequired": "Erneutes Anmelden erforderlich",
     "ReqPer15Min": "Erforderlich pro 15 Min",
     "ResourcePolicies": "Ressourcenrichtlinien",
     "ResourcePolicy": "Ressourcenrichtlinie",
@@ -847,6 +845,7 @@
     "RuntimeVariant": "Laufzeitvariante",
     "SessionId": "Sitzungs-ID",
     "Tags": "Tags",
+    "TagsPlaceholder": "Tags eingeben, durch Kommas getrennt",
     "TrafficRatio": "Datenverkehrsanteil",
     "TrafficStatus": "Datenverkehrsstatus",
     "UpdateDeployment": "Bereitstellung aktualisieren",
@@ -1844,6 +1843,7 @@
     "PresetTooltip": "Ein Preset definiert die Ressourcenkonfiguration (CPU, Speicher, GPU), die zum Ausführen dieses Modells als Dienst verwendet wird.",
     "ProjectNotFound": "Modellspeicher-Projekt nicht gefunden",
     "ProjectNotFoundDescription": "Das MODEL_STORE-Projekt konnte nicht gefunden werden. Bitte wenden Sie sich an Ihren Administrator.",
+    "QuickDeployDetailed": "Konfigurieren und bereitstellen...",
     "RelativeTime": "{{time}}",
     "ResourceGroup": "Ressourcengruppe",
     "ResourceGroupTooltip": "Der Dienst wird in der ausgewählten Ressourcengruppe ausgeführt.",
@@ -2973,6 +2973,12 @@
     "TypeInAuthKey": "Alternativ können Sie den nachstehenden Authentifizierungscode auch manuell eingeben."
   },
   "tourGuide": {
+    "neoDeploymentLauncher": {
+      "FixErrorAndTryAgainText": "Wenn ein Fehlerfeld vorhanden ist, ist die Schaltfläche „Bereitstellung erstellen\" deaktiviert. Bitte beheben Sie den Fehler und versuchen Sie es erneut.",
+      "FixErrorFieldByModifyButton": "Für dieses Fehlerfeld können Sie direkt auf die Schaltfläche „Bearbeiten\" in der oberen rechten Ecke gehen, um es zu bearbeiten.",
+      "ValidationErrorText": "Wenn Sie in einem Pflichtfeld keinen Wert eingeben oder einen ungültigen Wert eingeben, wird in diesem Feld eine Fehlermeldung angezeigt.",
+      "ValidationErrorTitle": "Fehler bei der Validierung des Eingabefelds"
+    },
     "neoSessionLauncher": {
       "FixErrorAndTryAgainText": "Wenn ein Fehlerfeld vorhanden ist, ist die Schaltfläche „Sitzung starten“ deaktiviert. \nBitte beheben Sie den Fehler und versuchen Sie es erneut.",
       "FixErrorFieldByModifyButton": "Für dieses Fehlerfeld können Sie direkt auf die Schaltfläche „Bearbeiten“ in der oberen rechten Ecke gehen, um es zu bearbeiten.",

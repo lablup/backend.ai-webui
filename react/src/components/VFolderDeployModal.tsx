@@ -7,7 +7,9 @@ import { VFolderDeployModalMutation } from '../__generated__/VFolderDeployModalM
 import { VFolderDeployModalQuery } from '../__generated__/VFolderDeployModalQuery.graphql';
 import { useWebUINavigate } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import { App, Form, Typography, theme } from 'antd';
+import useDeploymentLauncher from '../hooks/useDeploymentLauncher';
+import { EllipsisOutlined } from '@ant-design/icons';
+import { App, Dropdown, Form, Space, Typography, theme } from 'antd';
 import type { DefaultOptionType } from 'antd/es/select';
 import {
   BAIButton,
@@ -89,6 +91,7 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
   const { id: projectId, name: projectName } = useCurrentProjectValue();
   const relayEnvironment = useRelayEnvironment();
   const { logger } = useBAILogger();
+  const { openLauncher, supportsQuickDeploy } = useDeploymentLauncher();
 
   // Fetch resource groups accessible to the current project. Shares the React
   // Query cache with BAIProjectResourceGroupSelect below, so no duplicate
@@ -374,19 +377,61 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
       </Form>
       <BAIFlex justify="end" gap="sm">
         <BAIButton onClick={onClose}>{t('button.Cancel')}</BAIButton>
-        <BAIButton
-          type="primary"
-          action={handleDeploy}
-          disabled={
-            !vfolderId ||
-            !projectId ||
-            !effectivePresetId ||
-            !effectiveResourceGroup ||
-            hasNoPresets
-          }
-        >
-          {t('modelStore.Deploy')}
-        </BAIButton>
+        {supportsQuickDeploy && vfolderId ? (
+          // Flow 7 (FR-2684): [Deploy | ▼] split button. Primary fires
+          // deployVfolderV2 with selected preset/resource group; the dropdown
+          // item navigates to the full launcher at /deployments/start?model=<id>.
+          <Space.Compact>
+            <BAIButton
+              type="primary"
+              action={handleDeploy}
+              disabled={
+                !vfolderId ||
+                !projectId ||
+                !effectivePresetId ||
+                !effectiveResourceGroup ||
+                hasNoPresets
+              }
+            >
+              {t('modelStore.Deploy')}
+            </BAIButton>
+            <Dropdown
+              disabled={hasNoPresets}
+              trigger={['click']}
+              menu={{
+                items: [
+                  {
+                    key: 'configure',
+                    label: t('modelStore.QuickDeployDetailed'),
+                    onClick: () => {
+                      openLauncher({
+                        modelFolderId: vfolderId,
+                        resourceGroup: effectiveResourceGroup,
+                        revisionPresetId: effectivePresetId,
+                      });
+                    },
+                  },
+                ],
+              }}
+            >
+              <BAIButton type="primary" icon={<EllipsisOutlined />} />
+            </Dropdown>
+          </Space.Compact>
+        ) : (
+          <BAIButton
+            type="primary"
+            action={handleDeploy}
+            disabled={
+              !vfolderId ||
+              !projectId ||
+              !effectivePresetId ||
+              !effectiveResourceGroup ||
+              hasNoPresets
+            }
+          >
+            {t('modelStore.Deploy')}
+          </BAIButton>
+        )}
       </BAIFlex>
     </BAIModal>
   );

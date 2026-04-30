@@ -391,7 +391,6 @@
     "MainAccessKey": "Main Access Key",
     "MainKeyCannotDeactivate": "Cannot deactivate the main access key. Switch to another key first.",
     "MainKeyChanged": "Main access key changed.",
-    "MainKeyChangedNeedRelogin": "The main access key has been changed successfully. Please log in again with the new key.",
     "Max#": "Max. # of folders",
     "ModifiedAt": "Modified At",
     "ModifyKeypairResourcePolicy": "Modify keypair resource policy",
@@ -417,7 +416,6 @@
     "RateLimitFor15min": "Rate Limit (for 15 min.)",
     "RateLimitInputRequired": "Input required.",
     "RateLimitValidation": "Rate Limit should be greater than zero and below 50000.",
-    "ReLoginRequired": "Re-login Required",
     "ReqPer15Min": "Req per 15 min",
     "ResourcePolicies": "Resource Policies",
     "ResourcePolicy": "Resource Policy",
@@ -848,6 +846,7 @@
     "RuntimeVariant": "Runtime Variant",
     "SessionId": "Session ID",
     "Tags": "Tags",
+    "TagsPlaceholder": "Enter tags, separated by commas",
     "TrafficRatio": "Traffic Ratio",
     "TrafficStatus": "Traffic Status",
     "UpdateDeployment": "Update Deployment",
@@ -1843,6 +1842,7 @@
     "PresetTooltip": "A preset defines the resource configuration (CPU, memory, GPU) used to run this model as a service.",
     "ProjectNotFound": "Model Store project not found",
     "ProjectNotFoundDescription": "The MODEL_STORE project could not be found. Please contact your administrator.",
+    "QuickDeployDetailed": "Configure and deploy...",
     "RelativeTime": "{{time}}",
     "ResourceGroup": "Resource Group",
     "ResourceGroupTooltip": "The service will run in the selected resource group.",
@@ -2983,6 +2983,12 @@
     "TypeInAuthKey": "Alternatively, you can type in authentication code below manually."
   },
   "tourGuide": {
+    "neoDeploymentLauncher": {
+      "FixErrorAndTryAgainText": "If there is an error field, the Create Deployment button is disabled. Please correct the error and try again.",
+      "FixErrorFieldByModifyButton": "For that error field, you can go directly to the Edit button in the top right corner to edit it.",
+      "ValidationErrorText": "If you don't enter a value in a required field or enter an invalid value, an error message displays in that field.",
+      "ValidationErrorTitle": "Input field validation errors"
+    },
     "neoSessionLauncher": {
       "FixErrorAndTryAgainText": "If there is an error field, the Launch session button is disabled. Please correct the error and try again.",
       "FixErrorFieldByModifyButton": "For that error field, you can go directly to the Edit button in the top right corner to edit it.",

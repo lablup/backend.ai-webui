@@ -391,7 +391,6 @@
     "MainAccessKey": "Kunci Akses Utama",
     "MainKeyCannotDeactivate": "Tidak dapat menonaktifkan kunci akses utama. Beralih ke kunci lain terlebih dahulu.",
     "MainKeyChanged": "Kunci akses utama telah diubah.",
-    "MainKeyChangedNeedRelogin": "Kunci akses utama telah berhasil diubah. Silakan masuk kembali dengan kunci baru.",
     "Max#": "Maks. # dari folder",
     "ModifiedAt": "Dimodifikasi Pada",
     "ModifyKeypairResourcePolicy": "Ubah kebijakan sumber daya pasangan kunci",
@@ -417,7 +416,6 @@
     "RateLimitFor15min": "Batas Tarif (selama 15 menit)",
     "RateLimitInputRequired": "Masukan yang diperlukan.",
     "RateLimitValidation": "Batas Tarif harus lebih besar dari nol dan di bawah 50000.",
-    "ReLoginRequired": "Perlu Masuk Kembali",
     "ReqPer15Min": "Persyaratan per 15 menit",
     "ResourcePolicies": "Kebijakan Sumber Daya",
     "ResourcePolicy": "Kebijakan Sumber Daya",
@@ -847,6 +845,7 @@
     "RuntimeVariant": "Varian Runtime",
     "SessionId": "ID Sesi",
     "Tags": "Tag",
+    "TagsPlaceholder": "Masukkan tag, dipisahkan dengan koma",
     "TrafficRatio": "Rasio Lalu Lintas",
     "TrafficStatus": "Status Lalu Lintas",
     "UpdateDeployment": "Perbarui Penerapan",
@@ -1845,6 +1844,7 @@
     "PresetTooltip": "Preset menentukan konfigurasi sumber daya (CPU, memori, GPU) yang digunakan untuk menjalankan model ini sebagai layanan.",
     "ProjectNotFound": "Proyek Model Store tidak ditemukan",
     "ProjectNotFoundDescription": "Proyek MODEL_STORE tidak dapat ditemukan. Silakan hubungi administrator Anda.",
+    "QuickDeployDetailed": "Konfigurasi dan deploy...",
     "RelativeTime": "{{time}}",
     "ResourceGroup": "Grup Sumber Daya",
     "ResourceGroupTooltip": "Layanan akan berjalan di grup sumber daya yang dipilih.",
@@ -2975,6 +2975,12 @@
     "TypeInAuthKey": "Sebagai alternatif, Anda dapat mengetikkan kode autentikasi di bawah ini secara manual."
   },
   "tourGuide": {
+    "neoDeploymentLauncher": {
+      "FixErrorAndTryAgainText": "Jika ada bidang kesalahan, tombol Buat Penerapan dinonaktifkan. Harap perbaiki kesalahannya dan coba lagi.",
+      "FixErrorFieldByModifyButton": "Untuk kolom error tersebut, Anda bisa langsung menuju tombol Edit di pojok kanan atas untuk mengeditnya.",
+      "ValidationErrorText": "Jika Anda tidak memasukkan nilai di bidang yang wajib diisi atau memasukkan nilai yang tidak valid, pesan kesalahan akan ditampilkan di bidang tersebut.",
+      "ValidationErrorTitle": "Kesalahan validasi kolom masukan"
+    },
     "neoSessionLauncher": {
       "FixErrorAndTryAgainText": "Jika ada bidang kesalahan, tombol Sesi peluncuran dinonaktifkan. \nHarap perbaiki kesalahannya dan coba lagi.",
       "FixErrorFieldByModifyButton": "Untuk kolom error tersebut, Anda bisa langsung menuju tombol Edit di pojok kanan atas untuk mengeditnya.",

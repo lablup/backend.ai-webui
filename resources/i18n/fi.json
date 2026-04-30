@@ -391,7 +391,6 @@
     "MainAccessKey": "Pääkäyttöavain",
     "MainKeyCannotDeactivate": "Pääkäyttöavainta ei voi poistaa käytöstä. Vaihda ensin toiseen avaimeen.",
     "MainKeyChanged": "Pääkäyttöavain on vaihdettu.",
-    "MainKeyChangedNeedRelogin": "Pääkäyttöavain on vaihdettu onnistuneesti. Kirjaudu uudelleen sisään uudella avaimella.",
     "Max#": "Max. # Kansioiden määrä",
     "ModifiedAt": "Muokattu",
     "ModifyKeypairResourcePolicy": "Muokkaa avainparin resurssikäytäntöä",
@@ -417,7 +416,6 @@
     "RateLimitFor15min": "Nopeusraja (15 min.)",
     "RateLimitInputRequired": "Tarvittava syöttö.",
     "RateLimitValidation": "Rate Limitin tulisi olla suurempi kuin nolla ja alle 50000.",
-    "ReLoginRequired": "Uudelleenkirjautuminen vaaditaan",
     "ReqPer15Min": "Req per 15 min",
     "ResourcePolicies": "Resurssipolitiikka",
     "ResourcePolicy": "Resurssipolitiikka",
@@ -847,6 +845,7 @@
     "RuntimeVariant": "Suoritusaikavariantti",
     "SessionId": "Istunnon ID",
     "Tags": "Tunnisteet",
+    "TagsPlaceholder": "Syötä tunnisteet, pilkuilla erotettuna",
     "TrafficRatio": "Liikennesuhde",
     "TrafficStatus": "Liikenteen tila",
     "UpdateDeployment": "Päivitä käyttöönotto",
@@ -1842,6 +1841,7 @@
     "PresetTooltip": "Esiasetus määrittää resurssikokoonpanon (CPU, muisti, GPU), jota käytetään tämän mallin palveluna suorittamiseen.",
     "ProjectNotFound": "Model Store -projektia ei löydy",
     "ProjectNotFoundDescription": "MODEL_STORE-projektia ei löytynyt. Ota yhteyttä järjestelmänvalvojaan.",
+    "QuickDeployDetailed": "Määritä ja ota käyttöön...",
     "RelativeTime": "{{time}}",
     "ResourceGroup": "Resurssiryhmä",
     "ResourceGroupTooltip": "Palvelu suoritetaan valitussa resurssiryhmässä.",
@@ -2971,6 +2971,12 @@
     "TypeInAuthKey": "Vaihtoehtoisesti voit kirjoittaa alla olevan todennuskoodin manuaalisesti."
   },
   "tourGuide": {
+    "neoDeploymentLauncher": {
+      "FixErrorAndTryAgainText": "Jos virhekenttä on, Luo käyttöönotto -painike ei ole käytössä. Korjaa virhe ja yritä uudelleen.",
+      "FixErrorFieldByModifyButton": "Voit muokata virhekenttää suoraan oikeassa yläkulmassa olevasta Muokkaa-painikkeesta.",
+      "ValidationErrorText": "Jos et syötä arvoa pakolliseen kenttään tai kirjoitat virheellisen arvon, kenttään tulee virheilmoitus.",
+      "ValidationErrorTitle": "Syöttökentän vahvistusvirheet"
+    },
     "neoSessionLauncher": {
       "FixErrorAndTryAgainText": "Jos virhekenttä on, Launch session -painike ei ole käytössä. \nKorjaa virhe ja yritä uudelleen.",
       "FixErrorFieldByModifyButton": "Voit muokata virhekenttää suoraan oikeassa yläkulmassa olevasta Muokkaa-painikkeesta.",

@@ -391,7 +391,6 @@
     "MainAccessKey": "Khóa truy cập chính",
     "MainKeyCannotDeactivate": "Không thể vô hiệu hóa khóa truy cập chính. Vui lòng chuyển sang khóa khác trước.",
     "MainKeyChanged": "Khóa truy cập chính đã được thay đổi.",
-    "MainKeyChangedNeedRelogin": "Khóa truy cập chính đã được thay đổi thành công. Vui lòng đăng nhập lại bằng khóa mới.",
     "Max#": "Tối đa # thư mục",
     "ModifiedAt": "Đã sửa đổi lúc",
     "ModifyKeypairResourcePolicy": "Sửa đổi chính sách tài nguyên cặp khóa",
@@ -417,7 +416,6 @@
     "RateLimitFor15min": "Giới hạn tốc độ (trong 15 phút)",
     "RateLimitInputRequired": "Yêu cầu đầu vào.",
     "RateLimitValidation": "Giới hạn Tỷ lệ phải lớn hơn 0 và dưới 50000.",
-    "ReLoginRequired": "Yêu cầu đăng nhập lại",
     "ReqPer15Min": "Yêu cầu mỗi 15 phút",
     "ResourcePolicies": "Chính sách tài nguyên",
     "ResourcePolicy": "Chính sách tài nguyên",
@@ -847,6 +845,7 @@
     "RuntimeVariant": "Biến thể thời gian chạy",
     "SessionId": "ID phiên",
     "Tags": "Thẻ",
+    "TagsPlaceholder": "Nhập thẻ, phân cách bằng dấu phẩy",
     "TrafficRatio": "Tỷ lệ lưu lượng",
     "TrafficStatus": "Trạng thái lưu lượng",
     "UpdateDeployment": "Cập nhật triển khai",
@@ -1844,6 +1843,7 @@
     "PresetTooltip": "Preset xác định cấu hình tài nguyên (CPU, bộ nhớ, GPU) được sử dụng để chạy mô hình này dưới dạng dịch vụ.",
     "ProjectNotFound": "Không tìm thấy dự án Model Store",
     "ProjectNotFoundDescription": "Không tìm thấy dự án MODEL_STORE. Vui lòng liên hệ quản trị viên.",
+    "QuickDeployDetailed": "Cấu hình và triển khai...",
     "RelativeTime": "{{time}}",
     "ResourceGroup": "Nhóm tài nguyên",
     "ResourceGroupTooltip": "Dịch vụ sẽ chạy trong nhóm tài nguyên đã chọn.",
@@ -2973,6 +2973,12 @@
     "TypeInAuthKey": "Ngoài ra, bạn có thể nhập mã xác thực bên dưới theo cách thủ công."
   },
   "tourGuide": {
+    "neoDeploymentLauncher": {
+      "FixErrorAndTryAgainText": "Nếu có trường lỗi, nút Tạo Triển khai sẽ bị tắt. Vui lòng sửa lỗi và thử lại.",
+      "FixErrorFieldByModifyButton": "Đối với trường lỗi đó, bạn có thể vào thẳng nút Chỉnh sửa ở góc trên cùng bên phải để chỉnh sửa.",
+      "ValidationErrorText": "Nếu bạn không nhập giá trị vào trường bắt buộc hoặc nhập giá trị không hợp lệ, thông báo lỗi sẽ hiển thị trong trường đó.",
+      "ValidationErrorTitle": "Lỗi xác thực trường đầu vào"
+    },
     "neoSessionLauncher": {
       "FixErrorAndTryAgainText": "Nếu có trường lỗi, nút Khởi chạy phiên sẽ bị tắt. \nVui lòng sửa lỗi và thử lại.",
       "FixErrorFieldByModifyButton": "Đối với trường lỗi đó, bạn có thể vào thẳng nút Chỉnh sửa ở góc trên cùng bên phải để chỉnh sửa.",

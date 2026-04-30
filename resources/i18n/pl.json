@@ -391,7 +391,6 @@
     "MainAccessKey": "Główny klucz dostępu",
     "MainKeyCannotDeactivate": "Nie można dezaktywować głównego klucza dostępu. Najpierw przełącz się na inny klucz.",
     "MainKeyChanged": "Główny klucz dostępu został zmieniony.",
-    "MainKeyChangedNeedRelogin": "Główny klucz dostępu został pomyślnie zmieniony. Zaloguj się ponownie nowym kluczem.",
     "Max#": "Maks. # folderów",
     "ModifiedAt": "Zmodyfikowano",
     "ModifyKeypairResourcePolicy": "Zmodyfikuj politykę zasobów par kluczy",
@@ -417,7 +416,6 @@
     "RateLimitFor15min": "Limit szybkości (przez 15 min.)",
     "RateLimitInputRequired": "Wymagane dane wejściowe.",
     "RateLimitValidation": "Limit szybkości powinien być większy od zera i mniejszy niż 50000.",
-    "ReLoginRequired": "Wymagane ponowne logowanie",
     "ReqPer15Min": "Zapotrzebowanie na 15 min",
     "ResourcePolicies": "Zasady dotyczące zasobów",
     "ResourcePolicy": "Polityka zasobów",
@@ -847,6 +845,7 @@
     "RuntimeVariant": "Wariant środowiska uruchomieniowego",
     "SessionId": "ID sesji",
     "Tags": "Tagi",
+    "TagsPlaceholder": "Wprowadź tagi, oddzielone przecinkami",
     "TrafficRatio": "Stosunek ruchu",
     "TrafficStatus": "Status ruchu",
     "UpdateDeployment": "Aktualizuj wdrożenie",
@@ -1844,6 +1843,7 @@
     "PresetTooltip": "Preset definiuje konfigurację zasobów (CPU, pamięć, GPU) używaną do uruchomienia tego modelu jako usługi.",
     "ProjectNotFound": "Nie znaleziono projektu Model Store",
     "ProjectNotFoundDescription": "Nie można znaleźć projektu MODEL_STORE. Skontaktuj się z administratorem.",
+    "QuickDeployDetailed": "Skonfiguruj i wdróż...",
     "RelativeTime": "{{time}}",
     "ResourceGroup": "Grupa zasobów",
     "ResourceGroupTooltip": "Usługa będzie działać w wybranej grupie zasobów.",
@@ -2974,6 +2974,12 @@
     "TypeInAuthKey": "Alternatywnie, możesz wpisać poniższy kod uwierzytelniający ręcznie."
   },
   "tourGuide": {
+    "neoDeploymentLauncher": {
+      "FixErrorAndTryAgainText": "Jeśli występuje pole błędu, przycisk Utwórz wdrożenie jest wyłączony. Popraw błąd i spróbuj ponownie.",
+      "FixErrorFieldByModifyButton": "W przypadku tego pola błędu możesz przejść bezpośrednio do przycisku Edytuj w prawym górnym rogu, aby go edytować.",
+      "ValidationErrorText": "Jeśli nie wprowadzisz wartości w wymaganym polu lub wprowadzisz nieprawidłową wartość, w tym polu wyświetli się komunikat o błędzie.",
+      "ValidationErrorTitle": "Błędy sprawdzania poprawności pola wejściowego"
+    },
     "neoSessionLauncher": {
       "FixErrorAndTryAgainText": "Jeśli występuje pole błędu, przycisk Uruchom sesję jest wyłączony. \nPopraw błąd i spróbuj ponownie.",
       "FixErrorFieldByModifyButton": "W przypadku tego pola błędu możesz przejść bezpośrednio do przycisku Edytuj w prawym górnym rogu, aby go edytować.",

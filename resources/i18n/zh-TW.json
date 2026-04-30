@@ -391,7 +391,6 @@
     "MainAccessKey": "主存取密鑰",
     "MainKeyCannotDeactivate": "無法停用主存取金鑰。請先切換至其他金鑰。",
     "MainKeyChanged": "主存取金鑰已變更。",
-    "MainKeyChangedNeedRelogin": "主存取金鑰已成功變更。請使用新金鑰重新登入。",
     "Max#": "最大限度。 # 文件夾",
     "ModifiedAt": "修改時間",
     "ModifyKeypairResourcePolicy": "修改密鑰對資源策略",
@@ -417,7 +416,6 @@
     "RateLimitFor15min": "速率限制（15 分鐘）",
     "RateLimitInputRequired": "所需输入",
     "RateLimitValidation": "速率限制應大於零且小於 50000。",
-    "ReLoginRequired": "需要重新登入",
     "ReqPer15Min": "每 15 分鐘請求數",
     "ResourcePolicies": "資源政策",
     "ResourcePolicy": "資源政策",
@@ -848,6 +846,7 @@
     "RuntimeVariant": "執行時變體",
     "SessionId": "工作階段 ID",
     "Tags": "標籤",
+    "TagsPlaceholder": "輸入標籤，以逗號分隔",
     "TrafficRatio": "流量比例",
     "TrafficStatus": "流量狀態",
     "UpdateDeployment": "更新部署",
@@ -1846,6 +1845,7 @@
     "PresetTooltip": "預設定義了將此模型作為服務運行時使用的資源配置（CPU、記憶體、GPU）。",
     "ProjectNotFound": "找不到模型商店專案",
     "ProjectNotFoundDescription": "找不到 MODEL_STORE 專案。請聯絡管理員。",
+    "QuickDeployDetailed": "設定後部署...",
     "RelativeTime": "{{time}}",
     "ResourceGroup": "資源群組",
     "ResourceGroupTooltip": "服務將在所選資源群組中運行。",
@@ -2975,6 +2975,12 @@
     "TypeInAuthKey": "或者，您也可以在下面手动输入验证码。"
   },
   "tourGuide": {
+    "neoDeploymentLauncher": {
+      "FixErrorAndTryAgainText": "如果存在錯誤欄位，則「建立部署」按鈕將被停用。請更正錯誤並重試。",
+      "FixErrorFieldByModifyButton": "對於該錯誤欄位，您可以直接進入右上角的編輯按鈕進行編輯。",
+      "ValidationErrorText": "如果您未在必填欄位中輸入值或輸入無效值，則該欄位中會顯示錯誤訊息。",
+      "ValidationErrorTitle": "輸入欄位驗證錯誤"
+    },
     "neoSessionLauncher": {
       "FixErrorAndTryAgainText": "如果存在錯誤字段，則「啟動會話」按鈕將被停用。\n請更正錯誤並重試。",
       "FixErrorFieldByModifyButton": "對於該錯誤字段，您可以直接進入右上角的編輯按鈕進行編輯。",

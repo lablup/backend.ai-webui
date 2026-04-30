@@ -391,7 +391,6 @@
     "MainAccessKey": "Ana Erişim Anahtarı",
     "MainKeyCannotDeactivate": "Ana erişim anahtarı devre dışı bırakılamaz. Önce başka bir anahtara geçin.",
     "MainKeyChanged": "Ana erişim anahtarı değiştirildi.",
-    "MainKeyChangedNeedRelogin": "Ana erişim anahtarı başarıyla değiştirildi. Lütfen yeni anahtarla tekrar giriş yapın.",
     "Max#": "Maks. # klasör",
     "ModifiedAt": "Değiştirilme Tarihi",
     "ModifyKeypairResourcePolicy": "Anahtar çifti kaynak ilkesini değiştirin",
@@ -417,7 +416,6 @@
     "RateLimitFor15min": "Hız Limiti (15 dk. için)",
     "RateLimitInputRequired": "Girdi gerekli.",
     "RateLimitValidation": "Hız Limiti sıfırdan büyük ve 50000'in altında olmalıdır.",
-    "ReLoginRequired": "Yeniden Giriş Gerekli",
     "ReqPer15Min": "15 dakika başına talep",
     "ResourcePolicies": "Kaynak Politikaları",
     "ResourcePolicy": "Kaynak Politikası",
@@ -847,6 +845,7 @@
     "RuntimeVariant": "Çalışma Zamanı Değişkeni",
     "SessionId": "Oturum Kimliği",
     "Tags": "Etiketler",
+    "TagsPlaceholder": "Etiketleri virgülle ayırarak girin",
     "TrafficRatio": "Trafik Oranı",
     "TrafficStatus": "Trafik Durumu",
     "UpdateDeployment": "Dağıtımı Güncelle",
@@ -1842,6 +1841,7 @@
     "PresetTooltip": "Bir ön ayar, bu modeli hizmet olarak çalıştırmak için kullanılan kaynak yapılandırmasını (CPU, bellek, GPU) tanımlar.",
     "ProjectNotFound": "Model Store projesi bulunamadı",
     "ProjectNotFoundDescription": "MODEL_STORE projesi bulunamadı. Lütfen yöneticinizle iletişime geçin.",
+    "QuickDeployDetailed": "Yapılandır ve dağıt...",
     "RelativeTime": "{{time}}",
     "ResourceGroup": "Kaynak grubu",
     "ResourceGroupTooltip": "Hizmet, seçilen kaynak grubunda çalışacaktır.",
@@ -2971,6 +2971,12 @@
     "TypeInAuthKey": "Alternatif olarak, aşağıdaki kimlik doğrulama kodunu manuel olarak yazabilirsiniz."
   },
   "tourGuide": {
+    "neoDeploymentLauncher": {
+      "FixErrorAndTryAgainText": "Bir hata alanı varsa Dağıtım Oluştur düğmesi devre dışı bırakılır. Lütfen hatayı düzeltip tekrar deneyin.",
+      "FixErrorFieldByModifyButton": "Bu hata alanını düzenlemek için doğrudan sağ üst köşedeki Düzenle düğmesine gidebilirsiniz.",
+      "ValidationErrorText": "Zorunlu bir alana değer girmezseniz veya geçersiz bir değer girerseniz o alanda bir hata mesajı görüntülenir.",
+      "ValidationErrorTitle": "Giriş alanı doğrulama hataları"
+    },
     "neoSessionLauncher": {
       "FixErrorAndTryAgainText": "Bir hata alanı varsa Oturumu başlat düğmesi devre dışı bırakılır. \nLütfen hatayı düzeltip tekrar deneyin.",
       "FixErrorFieldByModifyButton": "Bu hata alanını düzenlemek için doğrudan sağ üst köşedeki Düzenle düğmesine gidebilirsiniz.",

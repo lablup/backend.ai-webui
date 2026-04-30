@@ -391,7 +391,6 @@
     "MainAccessKey": "Chiave di accesso principale",
     "MainKeyCannotDeactivate": "Impossibile disattivare la chiave di accesso principale. Prima passa a un'altra chiave.",
     "MainKeyChanged": "La chiave di accesso principale è stata modificata.",
-    "MainKeyChangedNeedRelogin": "La chiave di accesso principale è stata modificata correttamente. Effettua nuovamente l'accesso con la nuova chiave.",
     "Max#": "massimo # di cartelle",
     "ModifiedAt": "Modificato il",
     "ModifyKeypairResourcePolicy": "Modifica la politica delle risorse della coppia di chiavi",
@@ -417,7 +416,6 @@
     "RateLimitFor15min": "Limite di frequenza (per 15 min.)",
     "RateLimitInputRequired": "Ingresso richiesto.",
     "RateLimitValidation": "Il limite di velocità deve essere maggiore di zero e inferiore a 50000.",
-    "ReLoginRequired": "Nuovo accesso richiesto",
     "ReqPer15Min": "Richiesto ogni 15 min",
     "ResourcePolicies": "Politiche delle risorse",
     "ResourcePolicy": "Politica delle risorse",
@@ -847,6 +845,7 @@
     "RuntimeVariant": "Variante runtime",
     "SessionId": "ID sessione",
     "Tags": "Tag",
+    "TagsPlaceholder": "Inserisci i tag, separati da virgole",
     "TrafficRatio": "Rapporto traffico",
     "TrafficStatus": "Stato traffico",
     "UpdateDeployment": "Aggiorna distribuzione",
@@ -1842,6 +1841,7 @@
     "PresetTooltip": "Un preset definisce la configurazione delle risorse (CPU, memoria, GPU) utilizzata per eseguire questo modello come servizio.",
     "ProjectNotFound": "Progetto Model Store non trovato",
     "ProjectNotFoundDescription": "Impossibile trovare il progetto MODEL_STORE. Contattare l'amministratore.",
+    "QuickDeployDetailed": "Configura e distribuisci...",
     "RelativeTime": "{{time}}",
     "ResourceGroup": "Gruppo di risorse",
     "ResourceGroupTooltip": "Il servizio verrà eseguito nel gruppo di risorse selezionato.",
@@ -2971,6 +2971,12 @@
     "TypeInAuthKey": "In alternativa, è possibile digitare manualmente il codice di autenticazione qui sotto."
   },
   "tourGuide": {
+    "neoDeploymentLauncher": {
+      "FixErrorAndTryAgainText": "Se è presente un campo di errore, il pulsante Crea implementazione è disabilitato. Correggi l'errore e riprova.",
+      "FixErrorFieldByModifyButton": "Per quel campo di errore, puoi andare direttamente al pulsante Modifica nell'angolo in alto a destra per modificarlo.",
+      "ValidationErrorText": "Se non inserisci un valore in un campo obbligatorio o inserisci un valore non valido, in quel campo viene visualizzato un messaggio di errore.",
+      "ValidationErrorTitle": "Errori di convalida del campo di input"
+    },
     "neoSessionLauncher": {
       "FixErrorAndTryAgainText": "Se è presente un campo di errore, il pulsante Avvia sessione è disabilitato. \nCorreggi l'errore e riprova.",
       "FixErrorFieldByModifyButton": "Per quel campo di errore, puoi andare direttamente al pulsante Modifica nell'angolo in alto a destra per modificarlo.",

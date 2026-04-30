@@ -391,7 +391,6 @@
     "MainAccessKey": "Chave de acesso principal",
     "MainKeyCannotDeactivate": "Não é possível desativar a chave de acesso principal. Mude primeiro para outra chave.",
     "MainKeyChanged": "A chave de acesso principal foi alterada.",
-    "MainKeyChangedNeedRelogin": "A chave de acesso principal foi alterada com sucesso. Por favor, inicie sessão novamente com a nova chave.",
     "Max#": "Máx. # de pastas",
     "ModifiedAt": "Modificado em",
     "ModifyKeypairResourcePolicy": "Modificar a política de recursos do par de chaves",
@@ -417,7 +416,6 @@
     "RateLimitFor15min": "Limite de taxa (por 15 min.)",
     "RateLimitInputRequired": "Entrada necessária.",
     "RateLimitValidation": "O limite de taxa deve ser maior que zero e abaixo de 50000.",
-    "ReLoginRequired": "Novo início de sessão necessário",
     "ReqPer15Min": "Solicitação por 15 min",
     "ResourcePolicies": "Políticas de Recursos",
     "ResourcePolicy": "Política de Recursos",
@@ -847,6 +845,7 @@
     "RuntimeVariant": "Variante de tempo de execução",
     "SessionId": "ID da sessão",
     "Tags": "Etiquetas",
+    "TagsPlaceholder": "Introduza etiquetas, separadas por vírgulas",
     "TrafficRatio": "Proporção de tráfego",
     "TrafficStatus": "Estado do tráfego",
     "UpdateDeployment": "Atualizar implementação",
@@ -1844,6 +1843,7 @@
     "PresetTooltip": "Um preset define a configuração de recursos (CPU, memória, GPU) usada para executar este modelo como serviço.",
     "ProjectNotFound": "Projeto Model Store não encontrado",
     "ProjectNotFoundDescription": "O projeto MODEL_STORE não foi encontrado. Contacte o administrador.",
+    "QuickDeployDetailed": "Configurar e implantar...",
     "RelativeTime": "{{time}}",
     "ResourceGroup": "Grupo de recursos",
     "ResourceGroupTooltip": "O serviço será executado no grupo de recursos selecionado.",
@@ -2973,6 +2973,12 @@
     "TypeInAuthKey": "Em alternativa, pode introduzir manualmente o código de autenticação abaixo."
   },
   "tourGuide": {
+    "neoDeploymentLauncher": {
+      "FixErrorAndTryAgainText": "Se houver um campo de erro, o botão Criar Implementação estará desabilitado. Corrija o erro e tente novamente.",
+      "FixErrorFieldByModifyButton": "Para esse campo de erro, você pode ir diretamente ao botão Editar no canto superior direito para editá-lo.",
+      "ValidationErrorText": "Se você não inserir um valor em um campo obrigatório ou inserir um valor inválido, uma mensagem de erro será exibida nesse campo.",
+      "ValidationErrorTitle": "Erros de validação de campo de entrada"
+    },
     "neoSessionLauncher": {
       "FixErrorAndTryAgainText": "Se houver um campo de erro, o botão Iniciar sessão estará desabilitado. \nCorrija o erro e tente novamente.",
       "FixErrorFieldByModifyButton": "Para esse campo de erro, você pode ir diretamente ao botão Editar no canto superior direito para editá-lo.",
