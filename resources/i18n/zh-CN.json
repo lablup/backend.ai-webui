@@ -769,6 +769,7 @@
     "ActivePool": "Active Pool",
     "ActivePoolDescription": "当前通过 AppProxy 接收流量的副本。",
     "ActivenessStatus": "活跃状态",
+    "AddRevision": "添加 Revision",
     "AutoScaling": "自动扩缩容",
     "AutoScalingRules": "自动扩缩容规则",
     "ClusterMode": "集群模式",
@@ -781,6 +782,8 @@
     "CreateDeployment": "创建部署",
     "CreatedAt": "创建时间",
     "CreatedBy": "创建者",
+    "Current": "当前",
+    "CurrentRevision": "当前 Revision",
     "DeleteDeployment": "删除部署",
     "Deployment": "部署",
     "DeploymentCreated": "部署已创建。",
@@ -821,6 +824,7 @@
     "NoDeployments": "未找到部署。",
     "NumberOfReplicas": "副本数量",
     "OpenToPublic": "公开",
+    "Overview": "概览",
     "Owner": "所有者",
     "Project": "项目",
     "QuickDeploy": "部署",
@@ -835,12 +839,17 @@
     "ResourcePreset": "资源预设",
     "Resources": "资源",
     "Revision": "Revision",
+    "RevisionDetail": "Revision 详情",
     "RevisionHistory": "Revision 历史",
     "RevisionId": "Revision ID",
+    "RevisionIdPlaceholder": "输入 Revision ID（可选）",
+    "RevisionName": "Revision 名称",
+    "RevisionNamePlaceholder": "留空以自动生成",
     "RevisionNumber": "Revision 编号",
     "Revisions": "Revision",
     "Rollback": "回滚",
     "RollbackConfirm": "确定要回滚到 Revision #{{revisionNumber}} 吗？当前 Revision 将被替换。",
+    "RollbackDisabled": "当前或最新 Revision 不可回滚。",
     "RollbackSuccess": "已请求回滚到 Revision #{{revisionNumber}}。",
     "Running": "运行中",
     "RuntimeVariant": "运行时变体",
@@ -891,6 +900,7 @@
     },
     "step": {
       "BasicInfo": "基本信息",
+      "ClusterAndResources": "集群与资源",
       "ModelAndRuntime": "模型与运行时",
       "ResourcesAndReplicas": "资源与副本",
       "ReviewAndCreate": "审查并创建"
@@ -900,12 +910,14 @@
       "AutoScaling": "自动扩缩容",
       "Overview": "概览",
       "Replicas": "副本",
+      "Revision": "Revision",
       "RevisionHistory": "Revision 历史",
       "description": {
         "AccessTokens": "管理用于向此部署端点验证 API 请求的访问令牌。",
         "AutoScaling": "配置自动扩缩容规则，根据流量指标自动调整副本数量。",
         "Replicas": "查看此部署所有正在运行的副本实例及其健康状态和资源状况。",
-        "RevisionHistory": "浏览过去的部署版本历史，并回滚到任意之前的版本。若要创建新版本，请点击上方的「编辑配置」。"
+        "Revision": "浏览过去的部署版本历史，并回滚到任意之前的版本。",
+        "RevisionHistory": "浏览过去的部署版本历史，并回滚到任意之前的版本。"
       }
     }
   },

@@ -9,7 +9,6 @@ import {
   mergeExtraArgs,
   reverseMapExtraArgs,
 } from '../helper/runtimeExtraArgsParser';
-import { useSuspendedBackendaiClient } from '../hooks';
 import { ResourceSlotName, useResourceSlots } from '../hooks/backendai';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
@@ -135,7 +134,6 @@ export type DeploymentLauncherFormValue = ImageEnvironmentFormInput & {
   resourceGroup: string;
   resourcePresetId?: string;
   desiredReplicaCount: number;
-  autoScalingEnabled: boolean;
 };
 
 export interface DeploymentLauncherPageContentProps {
@@ -202,7 +200,6 @@ const DEFAULT_FORM_VALUES: DeploymentLauncherFormValue = {
   resourceGroup: '',
   resourcePresetId: undefined,
   desiredReplicaCount: 1,
-  autoScalingEnabled: false,
   environments: {
     environment: '',
     version: '',
@@ -875,9 +872,6 @@ const DeploymentLauncherPageContent: React.FC<
             >
               <InputNumber min={0} style={{ width: '100%' }} />
             </Form.Item>
-            <Form.Item name="autoScalingEnabled" valuePropName="checked">
-              <Checkbox>{t('deployment.AutoScaling')}</Checkbox>
-            </Form.Item>
           </Card>
 
           {/* --- Step 4: Review & Create --- */}
@@ -1302,9 +1296,6 @@ const DeploymentReviewSummary: React.FC<{
           </Descriptions.Item>
           <Descriptions.Item label={t('deployment.DesiredReplicas')}>
             {String(values.desiredReplicaCount ?? '-')}
-          </Descriptions.Item>
-          <Descriptions.Item label={t('deployment.AutoScaling')}>
-            {values.autoScalingEnabled ? t('button.Yes') : t('button.No')}
           </Descriptions.Item>
         </Descriptions>
       </BAICard>

@@ -769,6 +769,7 @@
     "ActivePool": "Active Pool",
     "ActivePoolDescription": "AppProxy を通じてトラフィックを受信中のレプリカです。",
     "ActivenessStatus": "アクティブ状態",
+    "AddRevision": "Revision を追加",
     "AutoScaling": "自動スケーリング",
     "AutoScalingRules": "自動スケーリングルール",
     "ClusterMode": "クラスターモード",
@@ -781,6 +782,8 @@
     "CreateDeployment": "デプロイを作成",
     "CreatedAt": "作成日時",
     "CreatedBy": "作成者",
+    "Current": "現在",
+    "CurrentRevision": "現在の Revision",
     "DeleteDeployment": "デプロイを削除",
     "Deployment": "デプロイ",
     "DeploymentCreated": "デプロイが作成されました。",
@@ -821,6 +824,7 @@
     "NoDeployments": "デプロイが見つかりません。",
     "NumberOfReplicas": "レプリカ数",
     "OpenToPublic": "公開",
+    "Overview": "概要",
     "Owner": "オーナー",
     "Project": "プロジェクト",
     "QuickDeploy": "デプロイ",
@@ -835,12 +839,17 @@
     "ResourcePreset": "リソースプリセット",
     "Resources": "リソース",
     "Revision": "Revision",
+    "RevisionDetail": "Revision 詳細",
     "RevisionHistory": "Revision 履歴",
     "RevisionId": "Revision ID",
+    "RevisionIdPlaceholder": "Revision ID を入力（任意）",
+    "RevisionName": "Revision 名",
+    "RevisionNamePlaceholder": "空白のままにすると自動生成されます",
     "RevisionNumber": "Revision 番号",
     "Revisions": "Revision",
     "Rollback": "ロールバック",
     "RollbackConfirm": "Revision #{{revisionNumber}} にロールバックしてもよろしいですか？現在の Revision は置き換えられます。",
+    "RollbackDisabled": "現在または最新の Revision へのロールバックは利用できません。",
     "RollbackSuccess": "Revision #{{revisionNumber}} へのロールバックが要求されました。",
     "Running": "実行中",
     "RuntimeVariant": "ランタイムバリアント",
@@ -891,6 +900,7 @@
     },
     "step": {
       "BasicInfo": "基本情報",
+      "ClusterAndResources": "クラスターとリソース",
       "ModelAndRuntime": "モデルとランタイム",
       "ResourcesAndReplicas": "リソースとレプリカ",
       "ReviewAndCreate": "確認して作成"
@@ -900,12 +910,14 @@
       "AutoScaling": "自動スケーリング",
       "Overview": "概要",
       "Replicas": "レプリカ",
+      "Revision": "Revision",
       "RevisionHistory": "Revision 履歴",
       "description": {
         "AccessTokens": "このデプロイメントのエンドポイントへの API リクエストを認証するためのアクセストークンを管理します。",
         "AutoScaling": "トラフィックメトリクスに基づいてレプリカ数を自動的に調整する自動スケーリングルールを設定します。",
         "Replicas": "このデプロイメントで実行中のすべてのレプリカインスタンスをヘルス状態とリソース状況とともに表示します。",
-        "RevisionHistory": "過去のデプロイメントリビジョンを参照し、任意の以前のバージョンにロールバックできます。新しいリビジョンを作成するには、上部の「構成を編集」をクリックしてください。"
+        "Revision": "過去のデプロイメントリビジョンを参照し、任意の以前のバージョンにロールバックできます。",
+        "RevisionHistory": "過去のデプロイメントリビジョンを参照し、任意の以前のバージョンにロールバックできます。"
       }
     }
   },

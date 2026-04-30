@@ -769,6 +769,7 @@
     "ActivePool": "Active Pool",
     "ActivePoolDescription": "Repliki aktualnie odbierające ruch przez AppProxy.",
     "ActivenessStatus": "Status aktywności",
+    "AddRevision": "Dodaj Revision",
     "AutoScaling": "Automatyczne skalowanie",
     "AutoScalingRules": "Reguły automatycznego skalowania",
     "ClusterMode": "Tryb klastra",
@@ -781,6 +782,8 @@
     "CreateDeployment": "Utwórz wdrożenie",
     "CreatedAt": "Utworzono",
     "CreatedBy": "Utworzone przez",
+    "Current": "Bieżąca",
+    "CurrentRevision": "Bieżąca Revision",
     "DeleteDeployment": "Usuń wdrożenie",
     "Deployment": "Wdrożenie",
     "DeploymentCreated": "Wdrożenie zostało utworzone.",
@@ -821,6 +824,7 @@
     "NoDeployments": "Nie znaleziono wdrożeń.",
     "NumberOfReplicas": "Liczba replik",
     "OpenToPublic": "Publiczne",
+    "Overview": "Przegląd",
     "Owner": "Właściciel",
     "Project": "Projekt",
     "QuickDeploy": "Wdróż",
@@ -835,12 +839,17 @@
     "ResourcePreset": "Preset zasobów",
     "Resources": "Zasoby",
     "Revision": "Revision",
+    "RevisionDetail": "Szczegóły Revision",
     "RevisionHistory": "Historia Revision",
     "RevisionId": "ID Revision",
+    "RevisionIdPlaceholder": "Wprowadź ID Revision (opcjonalne)",
+    "RevisionName": "Nazwa Revision",
+    "RevisionNamePlaceholder": "Pozostaw puste, aby wygenerować automatycznie",
     "RevisionNumber": "Numer Rewizji",
     "Revisions": "Revision",
     "Rollback": "Cofnij",
     "RollbackConfirm": "Czy na pewno chcesz cofnąć do Revision #{{revisionNumber}}? Bieżąca Revision zostanie zastąpiona.",
+    "RollbackDisabled": "Cofnięcie nie jest dostępne dla bieżącej lub najnowszej Revision.",
     "RollbackSuccess": "Żądanie cofnięcia do Revision #{{revisionNumber}} zostało wysłane.",
     "Running": "Uruchomiony",
     "RuntimeVariant": "Wariant środowiska uruchomieniowego",
@@ -891,6 +900,7 @@
     },
     "step": {
       "BasicInfo": "Podstawowe informacje",
+      "ClusterAndResources": "Klaster i zasoby",
       "ModelAndRuntime": "Model i środowisko",
       "ResourcesAndReplicas": "Zasoby i repliki",
       "ReviewAndCreate": "Przejrzyj i utwórz"
@@ -900,12 +910,14 @@
       "AutoScaling": "Automatyczne skalowanie",
       "Overview": "Przegląd",
       "Replicas": "Repliki",
+      "Revision": "Revision",
       "RevisionHistory": "Historia Revision",
       "description": {
         "AccessTokens": "Zarządzaj tokenami dostępu do uwierzytelniania żądań API do punktu końcowego tego wdrożenia.",
         "AutoScaling": "Skonfiguruj reguły automatycznego skalowania, aby automatycznie dostosowywać liczbę replik na podstawie metryk ruchu.",
         "Replicas": "Wyświetl wszystkie uruchomione instancje replik tego wdrożenia wraz z ich stanem zdrowia i statusem zasobów.",
-        "RevisionHistory": "Przeglądaj poprzednie wersje wdrożenia i wróć do dowolnej z nich. Aby utworzyć nową wersję, kliknij «Edytuj Konfigurację» powyżej."
+        "Revision": "Przeglądaj poprzednie wersje wdrożenia i wróć do dowolnej z nich.",
+        "RevisionHistory": "Przeglądaj poprzednie wersje wdrożenia i wróć do dowolnej z nich."
       }
     }
   },

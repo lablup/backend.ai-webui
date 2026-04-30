@@ -769,6 +769,7 @@
     "ActivePool": "Active Pool",
     "ActivePoolDescription": "AppProxy aracılığıyla şu anda trafik alan replikalar.",
     "ActivenessStatus": "Etkinlik Durumu",
+    "AddRevision": "Revision Ekle",
     "AutoScaling": "Otomatik Ölçeklendirme",
     "AutoScalingRules": "Otomatik Ölçeklendirme Kuralları",
     "ClusterMode": "Küme Modu",
@@ -781,6 +782,8 @@
     "CreateDeployment": "Dağıtım Oluştur",
     "CreatedAt": "Oluşturulma Tarihi",
     "CreatedBy": "Oluşturan",
+    "Current": "Mevcut",
+    "CurrentRevision": "Mevcut Revision",
     "DeleteDeployment": "Dağıtımı Sil",
     "Deployment": "Dağıtım",
     "DeploymentCreated": "Dağıtım oluşturuldu.",
@@ -821,6 +824,7 @@
     "NoDeployments": "Dağıtım bulunamadı.",
     "NumberOfReplicas": "Replika Sayısı",
     "OpenToPublic": "Herkese Açık",
+    "Overview": "Genel Bakış",
     "Owner": "Sahibi",
     "Project": "Proje",
     "QuickDeploy": "Dağıt",
@@ -835,12 +839,17 @@
     "ResourcePreset": "Kaynak Ön Ayarı",
     "Resources": "Kaynaklar",
     "Revision": "Revision",
+    "RevisionDetail": "Revision Detayı",
     "RevisionHistory": "Revision Geçmişi",
     "RevisionId": "Revision Kimliği",
+    "RevisionIdPlaceholder": "Bir Revision Kimliği girin (isteğe bağlı)",
+    "RevisionName": "Revision Adı",
+    "RevisionNamePlaceholder": "Otomatik oluşturmak için boş bırakın",
     "RevisionNumber": "Revizyon Numarası",
     "Revisions": "Revision",
     "Rollback": "Geri Al",
     "RollbackConfirm": "Revision #{{revisionNumber}}'a geri almak istediğinizden emin misiniz? Mevcut Revision değiştirilecek.",
+    "RollbackDisabled": "Mevcut veya en son Revision için geri alma kullanılamaz.",
     "RollbackSuccess": "Revision #{{revisionNumber}}'a geri alma işlemi talep edildi.",
     "Running": "Çalışıyor",
     "RuntimeVariant": "Çalışma Zamanı Değişkeni",
@@ -891,6 +900,7 @@
     },
     "step": {
       "BasicInfo": "Temel Bilgiler",
+      "ClusterAndResources": "Küme ve Kaynaklar",
       "ModelAndRuntime": "Model ve Çalışma Zamanı",
       "ResourcesAndReplicas": "Kaynaklar ve Replikalar",
       "ReviewAndCreate": "İncele ve Oluştur"
@@ -900,12 +910,14 @@
       "AutoScaling": "Otomatik Ölçeklendirme",
       "Overview": "Genel Bakış",
       "Replicas": "Replikalar",
+      "Revision": "Revision",
       "RevisionHistory": "Revision Geçmişi",
       "description": {
         "AccessTokens": "Bu dağıtımın uç noktasına yapılan API isteklerini doğrulamak için erişim jetonlarını yönetin.",
         "AutoScaling": "Trafik ölçütlerine göre replika sayısını otomatik olarak ayarlamak için otomatik ölçeklendirme kurallarını yapılandırın.",
         "Replicas": "Bu dağıtım için çalışan tüm replika örneklerini sağlık durumları ve kaynak statüleriyle birlikte görüntüleyin.",
-        "RevisionHistory": "Geçmiş dağıtım revizyonlarını inceleyin ve istediğiniz bir önceki sürüme geri dönün. Yeni bir revizyon oluşturmak için yukarıdaki «Yapılandırmayı Düzenle» seçeneğine tıklayın."
+        "Revision": "Geçmiş dağıtım revizyonlarını inceleyin ve istediğiniz bir önceki sürüme geri alın.",
+        "RevisionHistory": "Geçmiş dağıtım revizyonlarını inceleyin ve istediğiniz bir önceki sürüme geri dönün."
       }
     }
   },

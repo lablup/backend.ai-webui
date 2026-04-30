@@ -769,6 +769,7 @@
     "ActivePool": "Active Pool",
     "ActivePoolDescription": "Replikat, jotka vastaanottavat liikennettä AppProxyn kautta.",
     "ActivenessStatus": "Aktiivisuustila",
+    "AddRevision": "Lisää Revision",
     "AutoScaling": "Automaattinen skaalaus",
     "AutoScalingRules": "Automaattisen skaalauksen säännöt",
     "ClusterMode": "Klusteritila",
@@ -781,6 +782,8 @@
     "CreateDeployment": "Luo käyttöönotto",
     "CreatedAt": "Luotu",
     "CreatedBy": "Luonut",
+    "Current": "Nykyinen",
+    "CurrentRevision": "Nykyinen Revision",
     "DeleteDeployment": "Poista käyttöönotto",
     "Deployment": "Käyttöönotto",
     "DeploymentCreated": "Käyttöönotto on luotu.",
@@ -821,6 +824,7 @@
     "NoDeployments": "Käyttöönottoja ei löydy.",
     "NumberOfReplicas": "Replikoiden määrä",
     "OpenToPublic": "Julkinen",
+    "Overview": "Yleiskatsaus",
     "Owner": "Omistaja",
     "Project": "Projekti",
     "QuickDeploy": "Ota käyttöön",
@@ -835,12 +839,17 @@
     "ResourcePreset": "Resurssiesiasetukset",
     "Resources": "Resurssit",
     "Revision": "Revision",
+    "RevisionDetail": "Revision-tiedot",
     "RevisionHistory": "Revision-historia",
     "RevisionId": "Revision ID",
+    "RevisionIdPlaceholder": "Anna Revision ID (valinnainen)",
+    "RevisionName": "Revision nimi",
+    "RevisionNamePlaceholder": "Jätä tyhjäksi automaattista luontia varten",
     "RevisionNumber": "Revisionumero",
     "Revisions": "Revision",
     "Rollback": "Palautus",
     "RollbackConfirm": "Haluatko varmasti palauttaa Revision #{{revisionNumber}}? Nykyinen Revision korvataan.",
+    "RollbackDisabled": "Palautus ei ole käytettävissä nykyiselle tai uusimmalle Revision-versiolle.",
     "RollbackSuccess": "Palautus Revision #{{revisionNumber}} on pyydetty.",
     "Running": "Käynnissä",
     "RuntimeVariant": "Suoritusaikavariantti",
@@ -891,6 +900,7 @@
     },
     "step": {
       "BasicInfo": "Perustiedot",
+      "ClusterAndResources": "Klusteri ja resurssit",
       "ModelAndRuntime": "Malli ja suoritusaika",
       "ResourcesAndReplicas": "Resurssit ja replikat",
       "ReviewAndCreate": "Tarkista ja luo"
@@ -900,12 +910,14 @@
       "AutoScaling": "Automaattinen skaalaus",
       "Overview": "Yleiskatsaus",
       "Replicas": "Replikat",
+      "Revision": "Revision",
       "RevisionHistory": "Revision-historia",
       "description": {
         "AccessTokens": "Hallitse käyttöoikeustunnuksia, joilla todennetaan API-pyynnöt tämän käyttöönoton päätepisteeseen.",
         "AutoScaling": "Määritä automaattisen skaalauksen säännöt, joiden avulla replikoiden määrää säädetään automaattisesti liikennemittareiden perusteella.",
         "Replicas": "Tarkastele kaikkia tämän käyttöönoton käynnissä olevia replikaesiintymiä niiden terveys- ja resurssitiloineen.",
-        "RevisionHistory": "Selaa aiempia käyttöönottorevisioita ja palauta mikä tahansa niistä. Luo uusi revisio napsauttamalla yllä olevaa Muokkaa kokoonpanoa -painiketta."
+        "Revision": "Selaa aiempia käyttöönottorevisioita ja palauta mikä tahansa aiempi versio.",
+        "RevisionHistory": "Selaa aiempia käyttöönottorevisioita ja palauta mikä tahansa niistä."
       }
     }
   },

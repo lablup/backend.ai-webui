@@ -242,7 +242,7 @@ const ModelCardV2Grid: React.FC<{
       offset,
     },
     {
-      fetchPolicy: 'network-only',
+      fetchPolicy: 'store-and-network',
       fetchKey,
     },
   );

@@ -5,16 +5,32 @@
 import { DeploymentConfigurationSectionQuery } from '../__generated__/DeploymentConfigurationSectionQuery.graphql';
 import { DeploymentConfigurationSection_deployment$key } from '../__generated__/DeploymentConfigurationSection_deployment.graphql';
 import { useWebUINavigate } from '../hooks';
-import ImageNodeSimpleTag from './ImageNodeSimpleTag';
-import { CheckOutlined, CloseOutlined, EditOutlined } from '@ant-design/icons';
-import { Descriptions, Tag, Typography, theme } from 'antd';
+import SourceCodeView from './SourceCodeView';
+import {
+  CheckCircleOutlined,
+  CheckOutlined,
+  CloseOutlined,
+  EditOutlined,
+  LoadingOutlined,
+} from '@ant-design/icons';
+import {
+  Alert,
+  Button,
+  Card,
+  Descriptions,
+  Tag,
+  Typography,
+  theme,
+} from 'antd';
 import { DescriptionsItemType } from 'antd/es/descriptions';
 import {
   filterOutEmpty,
+  filterOutNullAndUndefined,
   BAIButton,
   BAICard,
   BAIFetchKeyButton,
   BAIFlex,
+  BAIModal,
   toLocalId,
 } from 'backend.ai-ui';
 import React, { useState, useTransition } from 'react';
@@ -37,6 +53,8 @@ const DeploymentConfigurationSection: React.FC<
   const webuiNavigate = useWebUINavigate();
   const [isPendingRefetch, startRefetchTransition] = useTransition();
   const [fetchKey, setFetchKey] = useState(0);
+  const [isCurrentRevisionModalOpen, setIsCurrentRevisionModalOpen] =
+    useState(false);
 
   useFragment(
     graphql`
@@ -64,6 +82,7 @@ const DeploymentConfigurationSection: React.FC<
           }
           networkAccess {
             openToPublic
+            endpointUrl
           }
           defaultDeploymentStrategy {
             type
@@ -107,8 +126,46 @@ const DeploymentConfigurationSection: React.FC<
                 canonicalName
               }
             }
-            image {
-              ...ImageNodeSimpleTagFragment
+            modelDefinition {
+              models {
+                name
+                modelPath
+                service {
+                  startCommand
+                  port
+                  healthCheck {
+                    path
+                    initialDelay
+                    maxRetries
+                  }
+                }
+              }
+            }
+          }
+          revisionHistory(
+            limit: 1
+            orderBy: [{ field: CREATED_AT, direction: DESC }]
+          ) {
+            edges {
+              node {
+                id
+                name
+                modelDefinition {
+                  models {
+                    name
+                    modelPath
+                    service {
+                      startCommand
+                      port
+                      healthCheck {
+                        path
+                        initialDelay
+                        maxRetries
+                      }
+                    }
+                  }
+                }
+              }
             }
           }
         }
@@ -135,7 +192,14 @@ const DeploymentConfigurationSection: React.FC<
   const environEntries = runtimeConfig?.environ?.entries ?? [];
   const tags = deployment?.metadata.tags ?? [];
 
-  const items: DescriptionsItemType[] = filterOutEmpty([
+  const descriptionsProps = {
+    bordered: true,
+    column: { xxl: 3, xl: 2, lg: 2, md: 1, sm: 1, xs: 1 },
+    style: { backgroundColor: token.colorBgBase },
+  } as const;
+
+  // ─── Deployment-level items ───────────────────────────────────────────────
+  const deploymentItems: DescriptionsItemType[] = filterOutEmpty([
     {
       key: 'name',
       label: t('deployment.Name'),
@@ -155,6 +219,50 @@ const DeploymentConfigurationSection: React.FC<
       label: t('deployment.Domain'),
       children: deployment?.metadata.domainName || renderFallback(),
     },
+    {
+      key: 'endpoint-url',
+      label: t('deployment.EndpointUrl'),
+      children: deployment?.networkAccess.endpointUrl ? (
+        <Typography.Text copyable>
+          {deployment.networkAccess.endpointUrl}
+        </Typography.Text>
+      ) : (
+        renderFallback()
+      ),
+    },
+    {
+      key: 'open-to-public',
+      label: t('deployment.OpenToPublic'),
+      children: deployment?.networkAccess.openToPublic ? (
+        <CheckOutlined />
+      ) : (
+        <CloseOutlined />
+      ),
+    },
+    {
+      key: 'tags',
+      label: t('deployment.Tags'),
+      children:
+        tags.length > 0 ? (
+          <BAIFlex direction="row" wrap="wrap" gap="xxs">
+            {tags.map((tag) => (
+              <Tag key={tag}>{tag}</Tag>
+            ))}
+          </BAIFlex>
+        ) : (
+          renderFallback()
+        ),
+    },
+    {
+      key: 'desired-replicas',
+      label: t('deployment.DesiredReplicas'),
+      children:
+        deployment?.replicaState?.desiredReplicaCount ?? renderFallback(),
+    },
+  ]);
+
+  // ─── Current-revision config items ───────────────────────────────────────
+  const revisionItems: DescriptionsItemType[] = filterOutEmpty([
     {
       key: 'resource-group',
       label: t('deployment.ResourceGroup'),
@@ -194,11 +302,7 @@ const DeploymentConfigurationSection: React.FC<
     {
       key: 'image',
       label: t('deployment.Image'),
-      // TODO(needs-backend): ModelRevision.image fields return DOWNSTREAM_SERVICE_ERROR
-      // for deployments; fall back to imageV2.identity.canonicalName until fixed.
-      children: currentRevision?.image?.name ? (
-        <ImageNodeSimpleTag imageFrgmt={currentRevision.image} />
-      ) : currentRevision?.imageV2?.identity?.canonicalName ? (
+      children: currentRevision?.imageV2?.identity?.canonicalName ? (
         <Typography.Text copyable>
           {currentRevision.imageV2.identity.canonicalName}
         </Typography.Text>
@@ -216,35 +320,6 @@ const DeploymentConfigurationSection: React.FC<
       ) : (
         renderFallback()
       ),
-    },
-    {
-      key: 'desired-replicas',
-      label: t('deployment.DesiredReplicas'),
-      children:
-        deployment?.replicaState?.desiredReplicaCount ?? renderFallback(),
-    },
-    {
-      key: 'open-to-public',
-      label: t('deployment.OpenToPublic'),
-      children: deployment?.networkAccess.openToPublic ? (
-        <CheckOutlined />
-      ) : (
-        <CloseOutlined />
-      ),
-    },
-    {
-      key: 'tags',
-      label: t('deployment.Tags'),
-      children:
-        tags.length > 0 ? (
-          <BAIFlex direction="row" wrap="wrap" gap="xxs">
-            {tags.map((tag) => (
-              <Tag key={tag}>{tag}</Tag>
-            ))}
-          </BAIFlex>
-        ) : (
-          renderFallback()
-        ),
     },
     {
       key: 'environ',
@@ -265,6 +340,117 @@ const DeploymentConfigurationSection: React.FC<
     },
   ]);
 
+  // ─── Model definition items (ported from EndpointDetailPage) ─────────────
+  const buildModelDefinitionItems = (
+    rawModels:
+      | ReadonlyArray<{
+          readonly name: string | null | undefined;
+          readonly modelPath: string | null | undefined;
+          readonly service?: {
+            readonly startCommand: unknown;
+            readonly port: number | null | undefined;
+            readonly healthCheck?: {
+              readonly path: string | null | undefined;
+              readonly initialDelay: number | null | undefined;
+              readonly maxRetries: number | null | undefined;
+            } | null;
+          } | null;
+        } | null>
+      | null
+      | undefined,
+  ): DescriptionsItemType[] => {
+    const models = filterOutNullAndUndefined(rawModels);
+    if (!models || models.length === 0) return [];
+    return models.flatMap((model, idx) => {
+      const prefix = models.length > 1 ? `[${idx}] ` : '';
+      const modelItems: DescriptionsItemType[] = [
+        {
+          key: `model-name-${idx}`,
+          label: `${prefix}${t('modelStore.ModelName')}`,
+          children: model.name || renderFallback(),
+        },
+        {
+          key: `model-path-${idx}`,
+          label: `${prefix}${t('modelStore.ModelPath')}`,
+          children: model.modelPath || renderFallback(),
+        },
+        ...(model.service
+          ? ([
+              {
+                key: `model-start-command-${idx}`,
+                label: `${prefix}${t('modelService.StartCommand')}`,
+                children: model.service.startCommand ? (
+                  <SourceCodeView language="shell">
+                    {typeof model.service.startCommand === 'string'
+                      ? model.service.startCommand
+                      : JSON.stringify(model.service.startCommand, null, 2)}
+                  </SourceCodeView>
+                ) : (
+                  renderFallback()
+                ),
+                span: { xl: 2 },
+              },
+              {
+                key: `model-port-${idx}`,
+                label: `${prefix}${t('modelService.Port')}`,
+                children: model.service.port ?? renderFallback(),
+              },
+              ...(model.service.healthCheck
+                ? ([
+                    {
+                      key: `model-healthcheck-path-${idx}`,
+                      label: `${prefix}${t('modelService.HealthCheck')}`,
+                      children:
+                        model.service.healthCheck.path || renderFallback(),
+                    },
+                    {
+                      key: `model-initial-delay-${idx}`,
+                      label: `${prefix}${t('modelService.InitialDelay')}`,
+                      children:
+                        model.service.healthCheck.initialDelay ??
+                        renderFallback(),
+                    },
+                    {
+                      key: `model-max-retries-${idx}`,
+                      label: `${prefix}${t('modelService.MaxRetries')}`,
+                      children:
+                        model.service.healthCheck.maxRetries ??
+                        renderFallback(),
+                    },
+                  ] as DescriptionsItemType[])
+                : []),
+            ] as DescriptionsItemType[])
+          : []),
+      ];
+      return modelItems;
+    });
+  };
+
+  const currentModelDefItems = buildModelDefinitionItems(
+    currentRevision?.modelDefinition?.models,
+  );
+  const latestModelDefItems = buildModelDefinitionItems(
+    deployment?.revisionHistory?.edges?.[0]?.node?.modelDefinition?.models,
+  );
+  const currentRevisionName = currentRevision?.name;
+  const latestRevisionName =
+    deployment?.revisionHistory?.edges?.[0]?.node?.name;
+  const isRevisionMismatch =
+    currentRevision?.id != null &&
+    deployment?.revisionHistory?.edges?.[0]?.node?.id != null &&
+    currentRevision.id !== deployment.revisionHistory.edges[0].node.id;
+
+  // Latest revision: prefer latest model def items; current revision config always comes from currentRevision
+  const displayRevisionName =
+    latestModelDefItems.length > 0 ? latestRevisionName : currentRevisionName;
+  const displayRevisionItems = [
+    ...revisionItems,
+    ...(latestModelDefItems.length > 0
+      ? latestModelDefItems
+      : currentModelDefItems),
+  ];
+  const currentRevisionAllItems = [...revisionItems, ...currentModelDefItems];
+
   const handleRefetch = () => {
     startRefetchTransition(() => {
       setFetchKey((k) => k + 1);
@@ -272,37 +458,87 @@ const DeploymentConfigurationSection: React.FC<
   };
 
   return (
-    <BAICard
-      title={t('deployment.Configuration')}
-      extra={
-        <BAIFlex gap="xs" align="center">
-          <BAIFetchKeyButton
-            loading={isPendingRefetch}
-            value=""
-            onChange={handleRefetch}
+    <>
+      <BAICard
+        title={t('deployment.Overview')}
+        extra={
+          <BAIFlex gap="xs" align="center">
+            <BAIFetchKeyButton
+              loading={isPendingRefetch}
+              value=""
+              onChange={handleRefetch}
+            />
+            <BAIButton
+              type="primary"
+              icon={<EditOutlined />}
+              disabled={isDeploymentDestroying}
+              onClick={() => {
+                webuiNavigate(`/deployments/${deploymentLocalId}/edit`);
+              }}
+            >
+              {t('deployment.EditConfiguration')}
+            </BAIButton>
+          </BAIFlex>
+        }
+      >
+        <Descriptions {...descriptionsProps} items={deploymentItems} />
+      </BAICard>
+      {currentRevision && (
+        <Card title={t('modelService.RevisionInfo')}>
+          {isRevisionMismatch && (
+            <Alert
+              type="info"
+              icon={<LoadingOutlined spin />}
+              showIcon
+              title={t('modelService.NextRevisionApplying')}
+              action={
+                <Button onClick={() => setIsCurrentRevisionModalOpen(true)}>
+                  {t('modelService.ViewCurrentRevision')}
+                </Button>
+              }
+              style={{ marginBottom: token.marginMD }}
+            />
+          )}
+          <Descriptions
+            {...descriptionsProps}
+            items={[
+              {
+                key: 'revision-id',
+                label: t('modelService.RevisionID'),
+                children: displayRevisionName || renderFallback(),
+              },
+              ...displayRevisionItems,
+            ]}
           />
-          <BAIButton
-            type="primary"
-            icon={<EditOutlined />}
-            disabled={isDeploymentDestroying}
-            onClick={() => {
-              webuiNavigate(`/deployments/${deploymentLocalId}/edit`);
-            }}
-          >
-            {t('deployment.EditConfiguration')}
-          </BAIButton>
-        </BAIFlex>
-      }
-    >
-      <Descriptions
-        bordered
-        column={{ xxl: 3, xl: 2, lg: 2, md: 1, sm: 1, xs: 1 }}
-        style={{
-          backgroundColor: token.colorBgBase,
-        }}
-        items={items}
-      />
-    </BAICard>
+        </Card>
+      )}
+      <BAIModal
+        open={isCurrentRevisionModalOpen}
+        onCancel={() => setIsCurrentRevisionModalOpen(false)}
+        title={t('modelService.CurrentRevisionTitle')}
+        footer={null}
+        width={800}
+      >
+        <Alert
+          type="info"
+          icon={<CheckCircleOutlined />}
+          showIcon
+          title={t('modelService.CurrentlyApplied')}
+          style={{ marginBottom: token.marginMD }}
+        />
+        <Descriptions
+          {...descriptionsProps}
+          items={[
+            {
+              key: 'current-revision-id',
+              label: t('modelService.RevisionID'),
+              children: currentRevisionName || renderFallback(),
+            },
+            ...currentRevisionAllItems,
+          ]}
+        />
+      </BAIModal>
+    </>
   );
 };
 

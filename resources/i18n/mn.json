@@ -769,6 +769,7 @@
     "ActivePool": "Active Pool",
     "ActivePoolDescription": "AppProxy-р дамжуулан одоогоор трафик хүлээн авч буй репликүүд.",
     "ActivenessStatus": "Идэвхжилтийн төлөв",
+    "AddRevision": "Revision нэмэх",
     "AutoScaling": "Автомат масштабжуулалт",
     "AutoScalingRules": "Автомат масштабжуулалтын дүрмүүд",
     "ClusterMode": "Кластерийн горим",
@@ -781,6 +782,8 @@
     "CreateDeployment": "Байршуулалт үүсгэх",
     "CreatedAt": "Үүсгэсэн огноо",
     "CreatedBy": "Үүсгэсэн хүн",
+    "Current": "Одоогийн",
+    "CurrentRevision": "Одоогийн Revision",
     "DeleteDeployment": "Байршуулалт устгах",
     "Deployment": "Байршуулалт",
     "DeploymentCreated": "Байршуулалт үүсгэгдлээ.",
@@ -821,6 +824,7 @@
     "NoDeployments": "Байршуулалт олдсонгүй.",
     "NumberOfReplicas": "Репликийн тоо",
     "OpenToPublic": "Нийтэд нээлттэй",
+    "Overview": "Ерөнхий мэдэгдэл",
     "Owner": "Эзэмшигч",
     "Project": "Төсөл",
     "QuickDeploy": "Байршуулах",
@@ -835,12 +839,17 @@
     "ResourcePreset": "Нөөцийн урьдчилсан тохиргоо",
     "Resources": "Нөөцүүд",
     "Revision": "Revision",
+    "RevisionDetail": "Revision-ы дэлгэрэнгүй",
     "RevisionHistory": "Revision-ы түүх",
     "RevisionId": "Revision ID",
+    "RevisionIdPlaceholder": "Revision ID оруулна уу (заавал биш)",
+    "RevisionName": "Revision нэр",
+    "RevisionNamePlaceholder": "Автоматаар үүсгэхийн тулд хоосон үлдээнэ үү",
     "RevisionNumber": "Revision дугаар",
     "Revisions": "Revision-ууд",
     "Rollback": "Буцаах",
     "RollbackConfirm": "Revision #{{revisionNumber}} руу буцаахдаа итгэлтэй байна уу? Одоогийн Revision солигдох болно.",
+    "RollbackDisabled": "Одоогийн эсвэл хамгийн сүүлийн Revision руу буцаах боломжгүй.",
     "RollbackSuccess": "Revision #{{revisionNumber}} руу буцаах хүсэлт гаргагдлаа.",
     "Running": "Ажиллаж байна",
     "RuntimeVariant": "Runtime хувилбар",
@@ -891,6 +900,7 @@
     },
     "step": {
       "BasicInfo": "Үндсэн мэдээлэл",
+      "ClusterAndResources": "Кластер ба нөөц",
       "ModelAndRuntime": "Загвар ба Runtime",
       "ResourcesAndReplicas": "Нөөц ба Репликүүд",
       "ReviewAndCreate": "Шалгаад үүсгэх"
@@ -900,12 +910,14 @@
       "AutoScaling": "Автомат масштабжуулалт",
       "Overview": "Ерөнхий мэдэгдэл",
       "Replicas": "Репликүүд",
+      "Revision": "Revision",
       "RevisionHistory": "Revision-ы түүх",
       "description": {
         "AccessTokens": "Энэ байршуулалтын төгсгөлийн цэг рүү API хүсэлт дамжуулахад ашиглах хандалтын токенуудыг удирдана уу.",
         "AutoScaling": "Трафикийн хэмжигдэхүүнд үндэслэн репликийн тоог автоматаар тохируулах автомат масштабжуулалтын дүрмүүдийг тохируулна уу.",
         "Replicas": "Энэ байршуулалтын бүх ажиллаж буй репликийн жишээнүүдийг тэдгээрийн эрүүл мэнд болон нөөцийн статустай хамт харна уу.",
-        "RevisionHistory": "Өмнөх байршуулалтын хяналтуудыг үзэж, дурын өмнөх хувилбар руу буцаж орно уу. Шинэ хяналт үүсгэхийн тулд дээрх «Тохиргоог засах» товчийг дарна уу."
+        "Revision": "Өмнөх байршуулалтын хяналтуудыг үзэж, дурын өмнөх хувилбар руу буцаах боломжтой.",
+        "RevisionHistory": "Өмнөх байршуулалтын хяналтуудыг үзэж, дурын өмнөх хувилбар руу буцаж орно уу."
       }
     }
   },

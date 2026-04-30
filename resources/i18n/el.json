@@ -769,6 +769,7 @@
     "ActivePool": "Active Pool",
     "ActivePoolDescription": "Αντίγραφα που λαμβάνουν τρέχουσα κίνηση μέσω AppProxy.",
     "ActivenessStatus": "Κατάσταση ενεργότητας",
+    "AddRevision": "Προσθήκη Revision",
     "AutoScaling": "Αυτόματη κλιμάκωση",
     "AutoScalingRules": "Κανόνες αυτόματης κλιμάκωσης",
     "ClusterMode": "Λειτουργία cluster",
@@ -781,6 +782,8 @@
     "CreateDeployment": "Δημιουργία ανάπτυξης",
     "CreatedAt": "Δημιουργήθηκε",
     "CreatedBy": "Δημιουργήθηκε από",
+    "Current": "Τρέχουσα",
+    "CurrentRevision": "Τρέχουσα Revision",
     "DeleteDeployment": "Διαγραφή ανάπτυξης",
     "Deployment": "Ανάπτυξη",
     "DeploymentCreated": "Η ανάπτυξη δημιουργήθηκε.",
@@ -821,6 +824,7 @@
     "NoDeployments": "Δεν βρέθηκαν αναπτύξεις.",
     "NumberOfReplicas": "Αριθμός αντιγράφων",
     "OpenToPublic": "Δημόσιο",
+    "Overview": "Επισκόπηση",
     "Owner": "Ιδιοκτήτης",
     "Project": "Έργο",
     "QuickDeploy": "Ανάπτυξη",
@@ -835,12 +839,17 @@
     "ResourcePreset": "Προεπιλογή πόρων",
     "Resources": "Πόροι",
     "Revision": "Revision",
+    "RevisionDetail": "Λεπτομέρειες Revision",
     "RevisionHistory": "Ιστορικό Revision",
     "RevisionId": "ID Revision",
+    "RevisionIdPlaceholder": "Εισάγετε ID Revision (προαιρετικό)",
+    "RevisionName": "Όνομα Revision",
+    "RevisionNamePlaceholder": "Αφήστε κενό για αυτόματη δημιουργία",
     "RevisionNumber": "Αριθμός Αναθεώρησης",
     "Revisions": "Revision",
     "Rollback": "Επαναφορά",
     "RollbackConfirm": "Είστε σίγουροι ότι θέλετε να επαναφέρετε στη Revision #{{revisionNumber}}; Η τρέχουσα Revision θα αντικατασταθεί.",
+    "RollbackDisabled": "Η επαναφορά δεν είναι διαθέσιμη για την τρέχουσα ή την πιο πρόσφατη Revision.",
     "RollbackSuccess": "Η επαναφορά στη Revision #{{revisionNumber}} ζητήθηκε.",
     "Running": "Σε εκτέλεση",
     "RuntimeVariant": "Παραλλαγή χρόνου εκτέλεσης",
@@ -891,6 +900,7 @@
     },
     "step": {
       "BasicInfo": "Βασικές πληροφορίες",
+      "ClusterAndResources": "Σύμπλεγμα & Πόροι",
       "ModelAndRuntime": "Μοντέλο & Χρόνος εκτέλεσης",
       "ResourcesAndReplicas": "Πόροι & Αντίγραφα",
       "ReviewAndCreate": "Αναθεώρηση & Δημιουργία"
@@ -900,12 +910,14 @@
       "AutoScaling": "Αυτόματη κλιμάκωση",
       "Overview": "Επισκόπηση",
       "Replicas": "Αντίγραφα",
+      "Revision": "Revision",
       "RevisionHistory": "Ιστορικό Revision",
       "description": {
         "AccessTokens": "Διαχειριστείτε τα διακριτικά πρόσβασης για την επαλήθευση ταυτότητας αιτημάτων API στο τελικό σημείο αυτής της ανάπτυξης.",
         "AutoScaling": "Ρυθμίστε κανόνες αυτόματης κλιμάκωσης για αυτόματη προσαρμογή του αριθμού των αντιγράφων βάσει μετρικών κυκλοφορίας.",
         "Replicas": "Δείτε όλες τις εκτελούμενες παρουσίες αντιγράφων για αυτήν την ανάπτυξη με την κατάστασή τους και τους πόρους τους.",
-        "RevisionHistory": "Περιηγηθείτε σε προηγούμενες αναθεωρήσεις ανάπτυξης και επαναφέρετε οποιαδήποτε προηγούμενη έκδοση. Για να δημιουργήσετε νέα αναθεώρηση, κάντε κλικ στην επιλογή «Επεξεργασία Διαμόρφωσης» παραπάνω."
+        "Revision": "Περιηγηθείτε σε προηγούμενες αναθεωρήσεις ανάπτυξης και επαναφέρετε οποιαδήποτε προηγούμενη.",
+        "RevisionHistory": "Περιηγηθείτε σε προηγούμενες αναθεωρήσεις ανάπτυξης και επαναφέρετε οποιαδήποτε προηγούμενη έκδοση."
       }
     }
   },

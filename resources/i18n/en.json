@@ -770,6 +770,7 @@
     "ActivePool": "Active Pool",
     "ActivePoolDescription": "Replicas currently receiving traffic through AppProxy.",
     "ActivenessStatus": "Activeness Status",
+    "AddRevision": "Add Revision",
     "AutoScaling": "Auto-scaling",
     "AutoScalingRules": "Auto-scaling Rules",
     "ClusterMode": "Cluster Mode",
@@ -782,6 +783,8 @@
     "CreateDeployment": "Create Deployment",
     "CreatedAt": "Created At",
     "CreatedBy": "Created By",
+    "Current": "Current",
+    "CurrentRevision": "Current Revision",
     "DeleteDeployment": "Delete Deployment",
     "Deployment": "Deployment",
     "DeploymentCreated": "Deployment has been created.",
@@ -822,6 +825,7 @@
     "NoDeployments": "No deployments found.",
     "NumberOfReplicas": "Number of Replicas",
     "OpenToPublic": "Open To Public",
+    "Overview": "Overview",
     "Owner": "Owner",
     "Project": "Project",
     "QuickDeploy": "Deploy",
@@ -836,12 +840,17 @@
     "ResourcePreset": "Resource Preset",
     "Resources": "Resources",
     "Revision": "Revision",
+    "RevisionDetail": "Revision Detail",
     "RevisionHistory": "Revision History",
     "RevisionId": "Revision ID",
+    "RevisionIdPlaceholder": "Leave blank to auto-generate",
+    "RevisionName": "Revision Name",
+    "RevisionNamePlaceholder": "Leave blank to auto-generate",
     "RevisionNumber": "Revision Number",
     "Revisions": "Revisions",
     "Rollback": "Rollback",
     "RollbackConfirm": "Are you sure you want to rollback to Revision #{{revisionNumber}}? The current revision will be replaced.",
+    "RollbackDisabled": "Rollback is not available for the current or latest revision.",
     "RollbackSuccess": "Rollback to Revision #{{revisionNumber}} has been requested.",
     "Running": "Running",
     "RuntimeVariant": "Runtime Variant",
@@ -892,6 +901,7 @@
     },
     "step": {
       "BasicInfo": "Basic Info",
+      "ClusterAndResources": "Cluster & Resources",
       "ModelAndRuntime": "Model & Runtime",
       "ResourcesAndReplicas": "Resources & Replicas",
       "ReviewAndCreate": "Review & Create"
@@ -901,12 +911,14 @@
       "AutoScaling": "Auto-scaling",
       "Overview": "Overview",
       "Replicas": "Replicas",
+      "Revision": "Revision",
       "RevisionHistory": "Revision History",
       "description": {
         "AccessTokens": "Manage access tokens for authenticating API requests to this deployment's endpoint.",
         "AutoScaling": "Configure auto-scaling rules to automatically adjust replica count based on traffic metrics.",
         "Replicas": "View all running replica instances for this deployment with their health and resource status.",
-        "RevisionHistory": "Browse past deployment revisions and roll back to any previous one. To create a new revision, click Edit Configuration above."
+        "Revision": "Browse past deployment revisions and roll back to any previous one.",
+        "RevisionHistory": "Browse past deployment revisions and roll back to any previous one."
       }
     }
   },

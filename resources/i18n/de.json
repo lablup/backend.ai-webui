@@ -769,6 +769,7 @@
     "ActivePool": "Active Pool",
     "ActivePoolDescription": "Replikate, die derzeit über AppProxy Datenverkehr empfangen.",
     "ActivenessStatus": "Aktivitätsstatus",
+    "AddRevision": "Revision hinzufügen",
     "AutoScaling": "Automatische Skalierung",
     "AutoScalingRules": "Regeln für automatische Skalierung",
     "ClusterMode": "Cluster-Modus",
@@ -781,6 +782,8 @@
     "CreateDeployment": "Bereitstellung erstellen",
     "CreatedAt": "Erstellt am",
     "CreatedBy": "Erstellt von",
+    "Current": "Aktuell",
+    "CurrentRevision": "Aktuelle Revision",
     "DeleteDeployment": "Bereitstellung löschen",
     "Deployment": "Bereitstellung",
     "DeploymentCreated": "Bereitstellung wurde erstellt.",
@@ -821,6 +824,7 @@
     "NoDeployments": "Keine Bereitstellungen gefunden.",
     "NumberOfReplicas": "Anzahl der Replikate",
     "OpenToPublic": "Öffentlich",
+    "Overview": "Übersicht",
     "Owner": "Eigentümer",
     "Project": "Projekt",
     "QuickDeploy": "Bereitstellen",
@@ -835,12 +839,17 @@
     "ResourcePreset": "Ressourcen-Voreinstellung",
     "Resources": "Ressourcen",
     "Revision": "Revision",
+    "RevisionDetail": "Revisionsdetails",
     "RevisionHistory": "Revisionsverlauf",
     "RevisionId": "Revisions-ID",
+    "RevisionIdPlaceholder": "Revisions-ID eingeben (optional)",
+    "RevisionName": "Revisionsname",
+    "RevisionNamePlaceholder": "Leer lassen für automatische Generierung",
     "RevisionNumber": "Revisionsnummer",
     "Revisions": "Revisionen",
     "Rollback": "Rollback",
     "RollbackConfirm": "Möchten Sie wirklich auf Revision #{{revisionNumber}} zurücksetzen? Die aktuelle Revision wird ersetzt.",
+    "RollbackDisabled": "Rollback ist für die aktuelle oder neueste Revision nicht verfügbar.",
     "RollbackSuccess": "Rollback zu Revision #{{revisionNumber}} wurde angefordert.",
     "Running": "Läuft",
     "RuntimeVariant": "Laufzeitvariante",
@@ -891,6 +900,7 @@
     },
     "step": {
       "BasicInfo": "Grunddaten",
+      "ClusterAndResources": "Cluster & Ressourcen",
       "ModelAndRuntime": "Modell & Laufzeit",
       "ResourcesAndReplicas": "Ressourcen & Replikate",
       "ReviewAndCreate": "Überprüfen & Erstellen"
@@ -900,12 +910,14 @@
       "AutoScaling": "Automatische Skalierung",
       "Overview": "Übersicht",
       "Replicas": "Replikate",
+      "Revision": "Revision",
       "RevisionHistory": "Revisionsverlauf",
       "description": {
         "AccessTokens": "Verwalten Sie Zugriffstoken zur Authentifizierung von API-Anfragen an den Endpunkt dieses Deployments.",
         "AutoScaling": "Konfigurieren Sie Regeln zur automatischen Skalierung, um die Anzahl der Replikate basierend auf Verkehrsmetriken automatisch anzupassen.",
         "Replicas": "Zeigen Sie alle laufenden Replikat-Instanzen dieses Deployments mit ihrem Gesundheitszustand und Ressourcenstatus an.",
-        "RevisionHistory": "Durchsuchen Sie vergangene Deployment-Revisionen und führen Sie ein Rollback auf eine beliebige frühere Version durch. Um eine neue Revision zu erstellen, klicken Sie oben auf „Konfiguration bearbeiten“."
+        "Revision": "Sehen Sie sich vergangene Deployment-Revisionen an und führen Sie einen Rollback auf eine beliebige frühere Version durch.",
+        "RevisionHistory": "Durchsuchen Sie vergangene Deployment-Revisionen und führen Sie ein Rollback auf eine beliebige frühere Version durch."
       }
     }
   },

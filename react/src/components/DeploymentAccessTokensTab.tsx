@@ -5,14 +5,15 @@
 import { DeploymentAccessTokensTabCreateMutation } from '../__generated__/DeploymentAccessTokensTabCreateMutation.graphql';
 import { DeploymentAccessTokensTabListQuery } from '../__generated__/DeploymentAccessTokensTabListQuery.graphql';
 import { DeploymentAccessTokensTab_deployment$key } from '../__generated__/DeploymentAccessTokensTab_deployment.graphql';
-import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
-import { Alert, App, Button, DatePicker, Form, Typography, theme } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
+import { App, Button, DatePicker, Form, Typography } from 'antd';
 import {
   BAIFetchKeyButton,
   BAIFlex,
   BAIModal,
   BAINameActionCell,
   BAITable,
+  BAIText,
   BAIUnmountAfterClose,
   filterOutNullAndUndefined,
   toLocalId,
@@ -39,8 +40,7 @@ const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
-  const { message, modal } = App.useApp();
+  const { message } = App.useApp();
   const { logger } = useBAILogger();
   const [isPendingRefetch, startRefetchTransition] = useTransition();
   const [fetchKey, setFetchKey] = useState(0);
@@ -94,10 +94,6 @@ const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
     listData?.accessTokens?.edges?.map((edge) => edge?.node),
   );
 
-  // TODO(needs-backend): BA-5853 — createAccessToken mutation fails with a
-  // Pydantic validation error ("deployment_id Field required"). The frontend
-  // sends `modelDeploymentId` per the supergraph schema but the backend
-  // resolver expects `deployment_id`. Token creation is disabled until fixed.
   const commitCreateMutation =
     useMutationWithPromise<DeploymentAccessTokensTabCreateMutation>(graphql`
       mutation DeploymentAccessTokensTabCreateMutation(
@@ -118,31 +114,6 @@ const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
     startRefetchTransition(() => {
       setFetchKey((k) => k + 1);
     });
-  };
-
-  const handleDeleteToken = (tokenId: string) => {
-    modal.confirm({
-      title: t('dialog.warning.CannotBeUndone'),
-      content: t('deployment.accessToken.Delete'),
-      okText: t('button.Delete'),
-      okButtonProps: { danger: true },
-      onOk: () => {
-        // TODO(needs-backend): FR-2679 — ModelDeployment access token
-        // delete mutation is not yet exposed in the GraphQL schema.
-        // When the backend adds e.g. `deleteAccessToken(input: { id })`,
-        // wire it up here and call handleRefetch() on success.
-        void tokenId;
-        message.warning({
-          key: 'access-token-delete-not-implemented',
-          content: t('deployment.accessToken.Delete'),
-        });
-      },
-    });
-  };
-
-  const truncateToken = (rawToken: string) => {
-    if (rawToken.length <= 16) return rawToken;
-    return `${rawToken.slice(0, 8)}…${rawToken.slice(-4)}`;
   };
 
   return (
@@ -179,22 +150,20 @@ const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
                 return (
                   <BAINameActionCell
                     title={
-                      <Typography.Text code style={{ fontSize: 12 }}>
-                        {truncateToken(row.token)}
-                      </Typography.Text>
+                      <BAIText
+                        copyable={{ text: row.token }}
+                        ellipsis
+                        code
+                        style={{ maxWidth: 120 }}
+                      >
+                        {row.token}
+                      </BAIText>
                     }
                     showActions="always"
-                    actions={[
-                      {
-                        key: 'delete',
-                        title: t('button.Delete'),
-                        icon: <DeleteOutlined />,
-                        type: 'danger',
-                        disabled:
-                          isDeploymentDestroying || !isOwnedByCurrentUser,
-                        onClick: () => handleDeleteToken(row.id),
-                      },
-                    ]}
+                    // TODO(needs-backend): deleteAccessToken mutation is
+                    // defined in the schema but not yet deployed to the
+                    // running supergraph. Restore once the server is updated.
+                    actions={[]}
                   />
                 );
               },
@@ -231,7 +200,9 @@ const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
               commitCreateMutation({
                 input: {
                   modelDeploymentId: toLocalId(deployment.id),
-                  expiresAt: result.expiresAt,
+                  // Schema requires DateTime! (non-null); map "no expiration" to a far-future date.
+                  expiresAt:
+                    result.expiresAt ?? new Date('2099-12-31').toISOString(),
                 },
               })
                 .then((response) => {
@@ -265,33 +236,18 @@ const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
           open={createdToken !== null}
           destroyOnHidden
           title={t('deployment.accessToken.Token')}
-          onOk={() => setCreatedToken(null)}
           onCancel={() => setCreatedToken(null)}
-          cancelButtonProps={{ style: { display: 'none' } }}
-          okText={t('button.OK')}
+          footer={null}
           width={520}
         >
           <BAIFlex direction="column" align="stretch" gap="sm">
-            <Alert
-              type="warning"
-              showIcon
-              title={t('deployment.accessToken.Created')}
-              description={t('dialog.warning.CannotBeUndone')}
-            />
+            <Typography.Text>
+              {t('deployment.accessToken.Created')}
+            </Typography.Text>
             {createdToken ? (
-              <div
-                style={{
-                  padding: token.paddingSM,
-                  backgroundColor: token.colorFillQuaternary,
-                  border: `1px solid ${token.colorBorderSecondary}`,
-                  borderRadius: token.borderRadiusSM,
-                  wordBreak: 'break-all',
-                }}
-              >
-                <Typography.Text copyable={{ text: createdToken.token }} code>
-                  {createdToken.token}
-                </Typography.Text>
-              </div>
+              <BAIText copyable={{ text: createdToken.token }} ellipsis code>
+                {createdToken.token}
+              </BAIText>
             ) : null}
             {createdToken?.expiresAt ? (
               <Typography.Text type="secondary">

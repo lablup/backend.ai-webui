@@ -770,6 +770,7 @@
     "ActivePool": "Active Pool",
     "ActivePoolDescription": "AppProxy를 통해 현재 트래픽을 수신 중인 레플리카입니다.",
     "ActivenessStatus": "활성 상태",
+    "AddRevision": "리비전 추가",
     "AutoScaling": "자동 스케일링",
     "AutoScalingRules": "자동 스케일링 규칙",
     "ClusterMode": "클러스터 모드",
@@ -782,6 +783,8 @@
     "CreateDeployment": "배포 생성",
     "CreatedAt": "생성일",
     "CreatedBy": "생성자",
+    "Current": "현재",
+    "CurrentRevision": "현재 리비전",
     "DeleteDeployment": "배포 삭제",
     "Deployment": "배포",
     "DeploymentCreated": "배포가 생성되었습니다.",
@@ -822,6 +825,7 @@
     "NoDeployments": "배포가 없습니다.",
     "NumberOfReplicas": "레플리카 수",
     "OpenToPublic": "외부에 공개",
+    "Overview": "개요",
     "Owner": "소유자",
     "Project": "프로젝트",
     "QuickDeploy": "배포",
@@ -836,12 +840,17 @@
     "ResourcePreset": "리소스 프리셋",
     "Resources": "리소스",
     "Revision": "리비전",
+    "RevisionDetail": "리비전 상세",
     "RevisionHistory": "리비전 히스토리",
     "RevisionId": "리비전 ID",
+    "RevisionIdPlaceholder": "리비전 ID를 입력하세요 (선택 사항)",
+    "RevisionName": "리비전 이름",
+    "RevisionNamePlaceholder": "비워두면 자동 생성",
     "RevisionNumber": "리비전 번호",
     "Revisions": "리비전",
     "Rollback": "롤백",
     "RollbackConfirm": "리비전 #{{revisionNumber}}으로 롤백하시겠습니까? 현재 리비전이 교체됩니다.",
+    "RollbackDisabled": "현재 또는 최신 리비전은 롤백할 수 없습니다.",
     "RollbackSuccess": "리비전 #{{revisionNumber}}으로의 롤백이 요청되었습니다.",
     "Running": "실행 중",
     "RuntimeVariant": "런타임 변형",
@@ -892,6 +901,7 @@
     },
     "step": {
       "BasicInfo": "기본 정보",
+      "ClusterAndResources": "클러스터 및 리소스",
       "ModelAndRuntime": "모델 및 런타임",
       "ResourcesAndReplicas": "리소스 및 레플리카",
       "ReviewAndCreate": "검토 및 생성"
@@ -901,12 +911,14 @@
       "AutoScaling": "자동 스케일링",
       "Overview": "개요",
       "Replicas": "레플리카",
+      "Revision": "리비전",
       "RevisionHistory": "리비전 히스토리",
       "description": {
         "AccessTokens": "이 배포의 엔드포인트에 API 요청을 인증하기 위한 액세스 토큰을 관리합니다.",
         "AutoScaling": "트래픽 지표에 따라 레플리카 수를 자동으로 조정하는 자동 스케일링 규칙을 설정합니다.",
         "Replicas": "현재 실행 중인 레플리카 인스턴스의 상태 및 리소스 현황을 확인합니다.",
-        "RevisionHistory": "이전 배포 리비전을 확인하고 롤백할 수 있습니다. 새 리비전을 생성하려면 상단의 설정 편집 버튼을 클릭하세요."
+        "Revision": "이전 배포 리비전을 확인하고 롤백할 수 있습니다.",
+        "RevisionHistory": "이전 배포 리비전을 확인하고 롤백할 수 있습니다."
       }
     }
   },

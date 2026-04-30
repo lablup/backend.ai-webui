@@ -10,10 +10,13 @@ import { DeploymentRevisionHistoryTabRollbackMutation } from '../__generated__/D
 import type { DeploymentRevisionHistoryTab_deployment$key } from '../__generated__/DeploymentRevisionHistoryTab_deployment.graphql';
 import { convertToOrderBy } from '../helper';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
-import { UndoOutlined } from '@ant-design/icons';
+import DeploymentAddRevisionModal from './DeploymentAddRevisionModal';
+import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
+import { PlusOutlined, UndoOutlined } from '@ant-design/icons';
 import { App, Tag, Typography, theme } from 'antd';
 import {
   type BAIColumnType,
+  BAIButton,
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
@@ -70,13 +73,15 @@ const DeploymentRevisionHistoryTab: React.FC<
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { modal, message } = App.useApp();
+  const { modal } = App.useApp();
   const { logger } = useBAILogger();
   const { upsertNotification } = useSetBAINotification();
   const [isPending, startTransition] = useTransition();
   const [rollingBackRevisionId, setRollingBackRevisionId] = useState<
     string | null
   >(null);
+  const [drawerRevisionId, setDrawerRevisionId] = useState<string | null>(null);
+  const [isAddRevisionModalOpen, setIsAddRevisionModalOpen] = useState(false);
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
     'table_column_overrides.DeploymentRevisionHistoryTab',
@@ -156,6 +161,16 @@ const DeploymentRevisionHistoryTab: React.FC<
         ) {
           deployment(id: $deploymentId) {
             currentRevisionId
+            latestRevision: revisionHistory(
+              limit: 1
+              orderBy: [{ field: CREATED_AT, direction: DESC }]
+            ) {
+              edges {
+                node {
+                  id
+                }
+              }
+            }
             revisionHistory(
               filter: $filter
               orderBy: $orderBy
@@ -220,6 +235,7 @@ const DeploymentRevisionHistoryTab: React.FC<
     `);
 
   const currentRevisionId = listData?.currentRevisionId;
+  const latestRevisionId = listData?.latestRevision?.edges?.[0]?.node?.id;
   const revisionHistory = listData?.revisionHistory;
 
   type RevisionNode = NonNullable<
@@ -273,14 +289,19 @@ const DeploymentRevisionHistoryTab: React.FC<
               setRollingBackRevisionId(null);
               if (errors && errors.length > 0) {
                 logger.error(errors[0]);
-                message.error(errors[0]?.message ?? t('general.ErrorOccurred'));
+                upsertNotification({
+                  open: true,
+                  duration: 4.5,
+                  message: errors[0]?.message || t('general.ErrorOccurred'),
+                  type: 'error',
+                });
                 resolve();
                 return;
               }
               upsertNotification({
                 open: true,
                 duration: 4.5,
-                title: t('deployment.RollbackSuccess', {
+                message: t('deployment.RollbackSuccess', {
                   revisionNumber: revisionLabel,
                 }),
               });
@@ -290,7 +311,12 @@ const DeploymentRevisionHistoryTab: React.FC<
             onError: (error) => {
               setRollingBackRevisionId(null);
               logger.error(error);
-              message.error(error?.message ?? t('general.ErrorOccurred'));
+              upsertNotification({
+                open: true,
+                duration: 4.5,
+                message: error?.message || t('general.ErrorOccurred'),
+                type: 'error',
+              });
               resolve();
             },
           });
@@ -307,13 +333,24 @@ const DeploymentRevisionHistoryTab: React.FC<
       fixed: 'left',
       render: (_value, record) => {
         const isCurrent = record.id === currentRevisionId;
+        const isLatest = record.id === latestRevisionId;
+        const rollbackDisabledReason =
+          isCurrent || isLatest ? t('deployment.RollbackDisabled') : undefined;
+        const isRollbackDisabled =
+          isCurrent ||
+          isLatest ||
+          isDeploymentDestroying ||
+          rollingBackRevisionId === record.id;
         return (
           <BAINameActionCell
             title={
               <BAIFlex gap="xs" align="center">
-                <Typography.Text strong={isCurrent}>
+                <Typography.Link
+                  strong={isCurrent}
+                  onClick={() => setDrawerRevisionId(record.id)}
+                >
                   {record.name ?? '-'}
-                </Typography.Text>
+                </Typography.Link>
                 {isCurrent ? (
                   <Tag color={token.colorPrimary}>
                     {t('deployment.Current')}
@@ -327,10 +364,8 @@ const DeploymentRevisionHistoryTab: React.FC<
                 key: 'rollback',
                 title: t('deployment.Rollback'),
                 icon: <UndoOutlined />,
-                disabled:
-                  isCurrent ||
-                  isDeploymentDestroying ||
-                  rollingBackRevisionId === record.id,
+                disabled: isRollbackDisabled,
+                disabledReason: rollbackDisabledReason,
                 onClick: () => handleRollback(record),
               },
             ]}
@@ -422,11 +457,24 @@ const DeploymentRevisionHistoryTab: React.FC<
 
   return (
     <>
+      <DeploymentRevisionDetailDrawer
+        revisionId={drawerRevisionId}
+        currentRevisionId={currentRevisionId}
+        open={!!drawerRevisionId}
+        onClose={() => setDrawerRevisionId(null)}
+      />
+      <DeploymentAddRevisionModal
+        open={isAddRevisionModalOpen}
+        onClose={() => setIsAddRevisionModalOpen(false)}
+        onSuccess={handleRefresh}
+        deploymentId={deploymentId}
+      />
       <BAIFlex
         justify="between"
         align="center"
         gap="xs"
         style={{ marginBottom: 12 }}
+        wrap="wrap"
       >
         <BAIGraphQLPropertyFilter
           filterProperties={filterProperties}
@@ -438,11 +486,21 @@ const DeploymentRevisionHistoryTab: React.FC<
             doRefetch({ filter: parsed, offset: 0 });
           }}
         />
-        <BAIFetchKeyButton
-          loading={isPending}
-          value=""
-          onChange={() => handleRefresh()}
-        />
+        <BAIFlex gap="xs" align="center">
+          <BAIFetchKeyButton
+            loading={isPending}
+            value=""
+            onChange={() => handleRefresh()}
+          />
+          <BAIButton
+            type="primary"
+            icon={<PlusOutlined />}
+            disabled={isDeploymentDestroying}
+            onClick={() => setIsAddRevisionModalOpen(true)}
+          >
+            {t('deployment.AddRevision')}
+          </BAIButton>
+        </BAIFlex>
       </BAIFlex>
       <BAITable
         rowKey="id"

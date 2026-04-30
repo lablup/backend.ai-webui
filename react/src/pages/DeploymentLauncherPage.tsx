@@ -25,7 +25,7 @@ import { BAIFlex, toGlobalId, toLocalId, useBAILogger } from 'backend.ai-ui';
 import React, { Suspense, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 /**
  * DeploymentLauncherPage — page-level orchestrator for the deployment launcher.
@@ -144,8 +144,8 @@ const DeploymentLauncherPageLayout: React.FC<
 
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const navigate = useNavigate();
-  const webuiNavigate = useWebUINavigate();
+  const navigate = useWebUINavigate();
+  const webuiNavigate = navigate; // alias for readability at call sites
   const app = App.useApp();
   const { logger } = useBAILogger();
 
@@ -419,7 +419,7 @@ const DeploymentLauncherPageLayout: React.FC<
               openToPublic: values.openToPublic,
             },
             defaultDeploymentStrategy: { type: 'ROLLING' },
-            desiredReplicaCount: values.desiredReplicaCount,
+            replicaCount: values.desiredReplicaCount,
             initialRevision: null,
           },
         },

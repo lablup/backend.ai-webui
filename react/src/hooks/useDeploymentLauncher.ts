@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useDeploymentLauncherDeployVFolderMutation } from '../__generated__/useDeploymentLauncherDeployVFolderMutation.graphql';
-import { useSuspendedBackendaiClient } from '../hooks';
+import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import {
   useCurrentProjectValue,
@@ -13,7 +13,6 @@ import { useBAILogger } from 'backend.ai-ui';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useMutation } from 'react-relay';
-import { useNavigate } from 'react-router-dom';
 
 export interface QuickDeployInput {
   /** Virtual folder (model folder) id that backs the deployment. */
@@ -52,7 +51,7 @@ export const useDeploymentLauncher = (): {
   'use memo';
 
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const navigate = useWebUINavigate();
   const baiClient = useSuspendedBackendaiClient();
   const { id: projectId } = useCurrentProjectValue();
   const currentResourceGroup = useCurrentResourceGroupValue();

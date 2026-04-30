@@ -769,6 +769,7 @@
     "ActivePool": "Active Pool",
     "ActivePoolDescription": "Реплики, в настоящее время получающие трафик через AppProxy.",
     "ActivenessStatus": "Статус активности",
+    "AddRevision": "Добавить Revision",
     "AutoScaling": "Автоматическое масштабирование",
     "AutoScalingRules": "Правила автоматического масштабирования",
     "ClusterMode": "Режим кластера",
@@ -781,6 +782,8 @@
     "CreateDeployment": "Создать развёртывание",
     "CreatedAt": "Создано",
     "CreatedBy": "Создано пользователем",
+    "Current": "Текущая",
+    "CurrentRevision": "Текущая Revision",
     "DeleteDeployment": "Удалить развёртывание",
     "Deployment": "Развёртывание",
     "DeploymentCreated": "Развёртывание создано.",
@@ -821,6 +824,7 @@
     "NoDeployments": "Развёртывания не найдены.",
     "NumberOfReplicas": "Количество реплик",
     "OpenToPublic": "Публичное",
+    "Overview": "Обзор",
     "Owner": "Владелец",
     "Project": "Проект",
     "QuickDeploy": "Развернуть",
@@ -835,12 +839,17 @@
     "ResourcePreset": "Предустановка ресурсов",
     "Resources": "Ресурсы",
     "Revision": "Revision",
+    "RevisionDetail": "Детали Revision",
     "RevisionHistory": "История Revision",
     "RevisionId": "ID Revision",
+    "RevisionIdPlaceholder": "Введите ID Revision (необязательно)",
+    "RevisionName": "Название Revision",
+    "RevisionNamePlaceholder": "Оставьте пустым для автоматической генерации",
     "RevisionNumber": "Номер ревизии",
     "Revisions": "Revision",
     "Rollback": "Откат",
     "RollbackConfirm": "Вы уверены, что хотите выполнить откат до Revision #{{revisionNumber}}? Текущая Revision будет заменена.",
+    "RollbackDisabled": "Откат недоступен для текущей или последней Revision.",
     "RollbackSuccess": "Запрошен откат до Revision #{{revisionNumber}}.",
     "Running": "Выполняется",
     "RuntimeVariant": "Вариант среды выполнения",
@@ -891,6 +900,7 @@
     },
     "step": {
       "BasicInfo": "Основная информация",
+      "ClusterAndResources": "Кластер и ресурсы",
       "ModelAndRuntime": "Модель и среда выполнения",
       "ResourcesAndReplicas": "Ресурсы и реплики",
       "ReviewAndCreate": "Проверить и создать"
@@ -900,12 +910,14 @@
       "AutoScaling": "Автоматическое масштабирование",
       "Overview": "Обзор",
       "Replicas": "Реплики",
+      "Revision": "Revision",
       "RevisionHistory": "История Revision",
       "description": {
         "AccessTokens": "Управляйте токенами доступа для аутентификации API-запросов к конечной точке этого развёртывания.",
         "AutoScaling": "Настройте правила автоматического масштабирования для автоматической корректировки количества реплик на основе метрик трафика.",
         "Replicas": "Просмотрите все запущенные экземпляры реплик этого развёртывания с их состоянием и статусом ресурсов.",
-        "RevisionHistory": "Просматривайте прошлые ревизии развёртывания и откатывайтесь к любой из них. Чтобы создать новую ревизию, нажмите «Изменить конфигурацию» выше."
+        "Revision": "Просматривайте прошлые ревизии развёртывания и откатывайтесь до любой из них.",
+        "RevisionHistory": "Просматривайте прошлые ревизии развёртывания и откатывайтесь к любой из них."
       }
     }
   },

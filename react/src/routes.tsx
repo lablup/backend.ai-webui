@@ -521,12 +521,9 @@ export const mainLayoutChildRoutes: RouteObject[] = [
     path: '/admin-deployments',
     handle: { labelKey: 'webui.menu.Serving' },
     Component: () => {
-      const { t } = useTranslation();
       return (
         <BAIErrorBoundary>
-          <Suspense
-            fallback={<BAICard title={t('webui.menu.Serving')} loading />}
-          >
+          <Suspense fallback={<BAICard loading />}>
             <AdminDeploymentListPage />
           </Suspense>
         </BAIErrorBoundary>

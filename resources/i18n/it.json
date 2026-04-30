@@ -769,6 +769,7 @@
     "ActivePool": "Active Pool",
     "ActivePoolDescription": "Repliche che ricevono attualmente traffico tramite AppProxy.",
     "ActivenessStatus": "Stato di attività",
+    "AddRevision": "Aggiungi Revision",
     "AutoScaling": "Scalabilità automatica",
     "AutoScalingRules": "Regole di scalabilità automatica",
     "ClusterMode": "Modalità cluster",
@@ -781,6 +782,8 @@
     "CreateDeployment": "Crea distribuzione",
     "CreatedAt": "Creato il",
     "CreatedBy": "Creato da",
+    "Current": "Corrente",
+    "CurrentRevision": "Revision Corrente",
     "DeleteDeployment": "Elimina distribuzione",
     "Deployment": "Distribuzione",
     "DeploymentCreated": "La distribuzione è stata creata.",
@@ -821,6 +824,7 @@
     "NoDeployments": "Nessuna distribuzione trovata.",
     "NumberOfReplicas": "Numero di repliche",
     "OpenToPublic": "Pubblico",
+    "Overview": "Panoramica",
     "Owner": "Proprietario",
     "Project": "Progetto",
     "QuickDeploy": "Distribuisci",
@@ -835,12 +839,17 @@
     "ResourcePreset": "Preset risorse",
     "Resources": "Risorse",
     "Revision": "Revision",
+    "RevisionDetail": "Dettaglio Revision",
     "RevisionHistory": "Cronologia Revision",
     "RevisionId": "ID Revision",
+    "RevisionIdPlaceholder": "Inserisci un ID Revision (opzionale)",
+    "RevisionName": "Nome Revision",
+    "RevisionNamePlaceholder": "Lascia vuoto per la generazione automatica",
     "RevisionNumber": "Numero di Revisione",
     "Revisions": "Revision",
     "Rollback": "Rollback",
     "RollbackConfirm": "Sei sicuro di voler tornare alla Revision #{{revisionNumber}}? La Revision attuale verrà sostituita.",
+    "RollbackDisabled": "Il rollback non è disponibile per la Revision corrente o più recente.",
     "RollbackSuccess": "Il ripristino alla Revision #{{revisionNumber}} è stato richiesto.",
     "Running": "In esecuzione",
     "RuntimeVariant": "Variante runtime",
@@ -891,6 +900,7 @@
     },
     "step": {
       "BasicInfo": "Informazioni di base",
+      "ClusterAndResources": "Cluster e risorse",
       "ModelAndRuntime": "Modello e runtime",
       "ResourcesAndReplicas": "Risorse e repliche",
       "ReviewAndCreate": "Revisiona e crea"
@@ -900,12 +910,14 @@
       "AutoScaling": "Scalabilità automatica",
       "Overview": "Panoramica",
       "Replicas": "Repliche",
+      "Revision": "Revision",
       "RevisionHistory": "Cronologia Revision",
       "description": {
         "AccessTokens": "Gestisci i token di accesso per autenticare le richieste API all'endpoint di questo deployment.",
         "AutoScaling": "Configura le regole di scalabilità automatica per regolare automaticamente il numero di repliche in base alle metriche del traffico.",
         "Replicas": "Visualizza tutte le istanze di replica in esecuzione per questo deployment con il loro stato di salute e le risorse.",
-        "RevisionHistory": "Sfoglia le revisioni passate del deployment e ripristina qualsiasi versione precedente. Per creare una nuova revisione, fai clic su «Modifica Configurazione» in alto."
+        "Revision": "Sfoglia le revisioni passate del deployment e ripristina qualsiasi versione precedente.",
+        "RevisionHistory": "Sfoglia le revisioni passate del deployment e ripristina qualsiasi versione precedente."
       }
     }
   },

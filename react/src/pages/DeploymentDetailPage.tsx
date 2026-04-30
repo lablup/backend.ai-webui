@@ -122,42 +122,8 @@ const DeploymentDetailPage: React.FC = () => {
             key: 'revisions',
             label: (
               <>
-                {t('deployment.tab.RevisionHistory')}
-                <Tooltip
-                  title={t('deployment.tab.description.RevisionHistory')}
-                >
-                  <QuestionCircleOutlined
-                    style={{
-                      marginLeft: token.marginXXS,
-                      color: token.colorTextDescription,
-                    }}
-                  />
-                </Tooltip>
-              </>
-            ),
-          },
-          {
-            key: 'tokens',
-            label: (
-              <>
-                {t('deployment.tab.AccessTokens')}
-                <Tooltip title={t('deployment.tab.description.AccessTokens')}>
-                  <QuestionCircleOutlined
-                    style={{
-                      marginLeft: token.marginXXS,
-                      color: token.colorTextDescription,
-                    }}
-                  />
-                </Tooltip>
-              </>
-            ),
-          },
-          {
-            key: 'autoscaling',
-            label: (
-              <>
-                {t('deployment.tab.AutoScaling')}
-                <Tooltip title={t('deployment.tab.description.AutoScaling')}>
+                {t('deployment.tab.Revision')}
+                <Tooltip title={t('deployment.tab.description.Revision')}>
                   <QuestionCircleOutlined
                     style={{
                       marginLeft: token.marginXXS,
@@ -187,19 +153,41 @@ const DeploymentDetailPage: React.FC = () => {
             />
           </Suspense>
         </div>
-        <div hidden={activeTab !== 'tokens'}>
-          <Suspense fallback={<Skeleton active />}>
-            <DeploymentAccessTokensTab
-              deploymentFrgmt={deployment}
-              deploymentId={toGlobalId('ModelDeployment', deploymentId)}
-              isOwnedByCurrentUser={isOwnedByCurrentUser}
-              isDeploymentDestroying={isDeploymentDestroying}
-            />
-          </Suspense>
-        </div>
-        <div hidden={activeTab !== 'autoscaling'}>
-          <DeploymentAutoScalingTab deploymentFrgmt={deployment} />
-        </div>
+      </Card>
+      <Card
+        title={
+          <BAIFlex gap="xs" align="center">
+            {t('deployment.tab.AutoScaling')}
+            <Tooltip title={t('deployment.tab.description.AutoScaling')}>
+              <QuestionCircleOutlined
+                style={{ color: token.colorTextDescription }}
+              />
+            </Tooltip>
+          </BAIFlex>
+        }
+      >
+        <DeploymentAutoScalingTab deploymentFrgmt={deployment} />
+      </Card>
+      <Card
+        title={
+          <BAIFlex gap="xs" align="center">
+            {t('deployment.tab.AccessTokens')}
+            <Tooltip title={t('deployment.tab.description.AccessTokens')}>
+              <QuestionCircleOutlined
+                style={{ color: token.colorTextDescription }}
+              />
+            </Tooltip>
+          </BAIFlex>
+        }
+      >
+        <Suspense fallback={<Skeleton active />}>
+          <DeploymentAccessTokensTab
+            deploymentFrgmt={deployment}
+            deploymentId={toGlobalId('ModelDeployment', deploymentId)}
+            isOwnedByCurrentUser={isOwnedByCurrentUser}
+            isDeploymentDestroying={isDeploymentDestroying}
+          />
+        </Suspense>
       </Card>
     </BAIFlex>
   );

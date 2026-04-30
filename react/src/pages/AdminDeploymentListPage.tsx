@@ -18,7 +18,9 @@ import DeploymentList, {
 import { useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
+import AdminModelCardListPage from './AdminModelCardListPage';
 import { Skeleton } from 'antd';
+import type { CardTabListType } from 'antd/es/card';
 import {
   BAICard,
   BAIFetchKeyButton,
@@ -30,6 +32,7 @@ import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import React, { Suspense, useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
+import { useSearchParams } from 'react-router-dom';
 
 const parseFilterVariable = (
   filter: string | null | undefined,
@@ -185,14 +188,36 @@ const AdminDeploymentListPageContent: React.FC = () => {
 const AdminDeploymentListPage: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
+  const [searchParams] = useSearchParams();
+  const currentTab = searchParams.get('tab') || 'deployments';
+  const navigate = useWebUINavigate();
+
+  const tabItems: CardTabListType[] = [
+    {
+      key: 'deployments',
+      label: t('webui.menu.Deployments'),
+    },
+    {
+      key: 'model-store-management',
+      label: t('adminModelCard.ModelStoreManagement'),
+    },
+  ];
+
   return (
     <BAICard
       variant="borderless"
-      title={t('webui.menu.Deployments')}
-      styles={{ body: { paddingTop: 0 } }}
+      activeTabKey={currentTab}
+      onTabChange={(key) =>
+        navigate({
+          pathname: '/admin-deployments',
+          search: `?tab=${key}`,
+        })
+      }
+      tabList={tabItems}
     >
       <Suspense fallback={<Skeleton active />}>
-        <AdminDeploymentListPageContent />
+        {currentTab === 'deployments' && <AdminDeploymentListPageContent />}
+        {currentTab === 'model-store-management' && <AdminModelCardListPage />}
       </Suspense>
     </BAICard>
   );

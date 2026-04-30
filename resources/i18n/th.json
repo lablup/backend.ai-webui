@@ -769,6 +769,7 @@
     "ActivePool": "Active Pool",
     "ActivePoolDescription": "เรพลิกาที่กำลังรับทราฟฟิกผ่าน AppProxy ในขณะนี้",
     "ActivenessStatus": "สถานะความเคลื่อนไหว",
+    "AddRevision": "เพิ่ม Revision",
     "AutoScaling": "การปรับขนาดอัตโนมัติ",
     "AutoScalingRules": "กฎการปรับขนาดอัตโนมัติ",
     "ClusterMode": "โหมดคลัสเตอร์",
@@ -781,6 +782,8 @@
     "CreateDeployment": "สร้างการปรับใช้",
     "CreatedAt": "สร้างเมื่อ",
     "CreatedBy": "สร้างโดย",
+    "Current": "ปัจจุบัน",
+    "CurrentRevision": "Revision ปัจจุบัน",
     "DeleteDeployment": "ลบการปรับใช้",
     "Deployment": "การปรับใช้",
     "DeploymentCreated": "สร้างการปรับใช้เรียบร้อยแล้ว",
@@ -821,6 +824,7 @@
     "NoDeployments": "ไม่พบการปรับใช้",
     "NumberOfReplicas": "จำนวนเรพลิกา",
     "OpenToPublic": "เปิดสาธารณะ",
+    "Overview": "ภาพรวม",
     "Owner": "เจ้าของ",
     "Project": "โปรเจกต์",
     "QuickDeploy": "ปรับใช้",
@@ -835,12 +839,17 @@
     "ResourcePreset": "ค่าตั้งต้นทรัพยากร",
     "Resources": "ทรัพยากร",
     "Revision": "Revision",
+    "RevisionDetail": "รายละเอียด Revision",
     "RevisionHistory": "ประวัติ Revision",
     "RevisionId": "ID Revision",
+    "RevisionIdPlaceholder": "กรอก ID Revision (ไม่บังคับ)",
+    "RevisionName": "ชื่อ Revision",
+    "RevisionNamePlaceholder": "ปล่อยว่างเพื่อสร้างอัตโนมัติ",
     "RevisionNumber": "หมายเลข Revision",
     "Revisions": "Revision",
     "Rollback": "ย้อนกลับ",
     "RollbackConfirm": "คุณแน่ใจหรือไม่ว่าต้องการย้อนกลับไปยัง Revision #{{revisionNumber}}? Revision ปัจจุบันจะถูกแทนที่",
+    "RollbackDisabled": "การย้อนกลับไม่สามารถใช้งานได้สำหรับ Revision ปัจจุบันหรือล่าสุด",
     "RollbackSuccess": "ส่งคำขอย้อนกลับไปยัง Revision #{{revisionNumber}} แล้ว",
     "Running": "กำลังทำงาน",
     "RuntimeVariant": "ตัวแปร Runtime",
@@ -891,6 +900,7 @@
     },
     "step": {
       "BasicInfo": "ข้อมูลพื้นฐาน",
+      "ClusterAndResources": "คลัสเตอร์และทรัพยากร",
       "ModelAndRuntime": "โมเดลและ Runtime",
       "ResourcesAndReplicas": "ทรัพยากรและเรพลิกา",
       "ReviewAndCreate": "ตรวจสอบและสร้าง"
@@ -900,12 +910,14 @@
       "AutoScaling": "การปรับขนาดอัตโนมัติ",
       "Overview": "ภาพรวม",
       "Replicas": "เรพลิกา",
+      "Revision": "Revision",
       "RevisionHistory": "ประวัติ Revision",
       "description": {
         "AccessTokens": "จัดการโทเค็นการเข้าถึงสำหรับการยืนยันตัวตนคำขอ API ไปยังเอนด์พอยต์ของการปรับใช้นี้",
         "AutoScaling": "กำหนดกฎการปรับขนาดอัตโนมัติเพื่อปรับจำนวนเรพลิกาโดยอัตโนมัติตามตัวชี้วัดปริมาณการใช้งาน",
         "Replicas": "ดูอินสแตนซ์เรพลิกาทั้งหมดที่กำลังทำงานสำหรับการปรับใช้นี้พร้อมสถานะความสมบูรณ์และทรัพยากร",
-        "RevisionHistory": "เรียกดูการแก้ไขการปรับใช้ที่ผ่านมาและย้อนกลับไปยังเวอร์ชันใดก็ได้ หากต้องการสร้างการแก้ไขใหม่ ให้คลิก «แก้ไขการกำหนดค่า» ด้านบน"
+        "Revision": "เรียกดูการแก้ไขการปรับใช้ที่ผ่านมาและย้อนกลับไปยังเวอร์ชันใดก็ได้",
+        "RevisionHistory": "เรียกดูการแก้ไขการปรับใช้ที่ผ่านมาและย้อนกลับไปยังเวอร์ชันใดก็ได้"
       }
     }
   },

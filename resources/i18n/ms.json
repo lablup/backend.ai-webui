@@ -769,6 +769,7 @@
     "ActivePool": "Active Pool",
     "ActivePoolDescription": "Replika yang sedang menerima trafik melalui AppProxy.",
     "ActivenessStatus": "Status Keaktifan",
+    "AddRevision": "Tambah Revision",
     "AutoScaling": "Penskalaan Automatik",
     "AutoScalingRules": "Peraturan Penskalaan Automatik",
     "ClusterMode": "Mod Kelompok",
@@ -781,6 +782,8 @@
     "CreateDeployment": "Cipta Penggunaan",
     "CreatedAt": "Dicipta Pada",
     "CreatedBy": "Dicipta Oleh",
+    "Current": "Semasa",
+    "CurrentRevision": "Revision Semasa",
     "DeleteDeployment": "Padam Penggunaan",
     "Deployment": "Penggunaan",
     "DeploymentCreated": "Penggunaan telah dicipta.",
@@ -821,6 +824,7 @@
     "NoDeployments": "Tiada penggunaan ditemui.",
     "NumberOfReplicas": "Bilangan Replika",
     "OpenToPublic": "Terbuka kepada Awam",
+    "Overview": "Gambaran Keseluruhan",
     "Owner": "Pemilik",
     "Project": "Projek",
     "QuickDeploy": "Gunakan",
@@ -835,12 +839,17 @@
     "ResourcePreset": "Pratetap Sumber",
     "Resources": "Sumber",
     "Revision": "Revision",
+    "RevisionDetail": "Butiran Revision",
     "RevisionHistory": "Sejarah Revision",
     "RevisionId": "ID Revision",
+    "RevisionIdPlaceholder": "Masukkan ID Revision (pilihan)",
+    "RevisionName": "Nama Revision",
+    "RevisionNamePlaceholder": "Biarkan kosong untuk jana secara automatik",
     "RevisionNumber": "Nombor Revisi",
     "Revisions": "Revision",
     "Rollback": "Rollback",
     "RollbackConfirm": "Adakah anda pasti mahu rollback ke Revision #{{revisionNumber}}? Revision semasa akan digantikan.",
+    "RollbackDisabled": "Rollback tidak tersedia untuk Revision semasa atau terkini.",
     "RollbackSuccess": "Rollback ke Revision #{{revisionNumber}} telah diminta.",
     "Running": "Sedang berjalan",
     "RuntimeVariant": "Varian Runtime",
@@ -891,6 +900,7 @@
     },
     "step": {
       "BasicInfo": "Maklumat Asas",
+      "ClusterAndResources": "Kluster & Sumber",
       "ModelAndRuntime": "Model & Runtime",
       "ResourcesAndReplicas": "Sumber & Replika",
       "ReviewAndCreate": "Semak & Cipta"
@@ -900,12 +910,14 @@
       "AutoScaling": "Penskalaan Automatik",
       "Overview": "Gambaran Keseluruhan",
       "Replicas": "Replika",
+      "Revision": "Revision",
       "RevisionHistory": "Sejarah Revision",
       "description": {
         "AccessTokens": "Urus token akses untuk mengesahkan permintaan API ke titik akhir deployment ini.",
         "AutoScaling": "Konfigurasikan peraturan penskalaan automatik untuk melaraskan bilangan replika secara automatik berdasarkan metrik trafik.",
         "Replicas": "Lihat semua instans replika yang sedang berjalan untuk deployment ini beserta status kesihatan dan sumber dayanya.",
-        "RevisionHistory": "Semak semula revisi deployment yang lalu dan gulung balik ke mana-mana versi sebelumnya. Untuk mencipta revisi baharu, klik Edit Konfigurasi di atas."
+        "Revision": "Semak semula revisi deployment yang lalu dan gulung balik ke mana-mana versi sebelumnya.",
+        "RevisionHistory": "Semak semula revisi deployment yang lalu dan gulung balik ke mana-mana versi sebelumnya."
       }
     }
   },

@@ -769,6 +769,7 @@
     "ActivePool": "Active Pool",
     "ActivePoolDescription": "Các bản sao đang nhận lưu lượng truy cập qua AppProxy.",
     "ActivenessStatus": "Trạng thái hoạt động",
+    "AddRevision": "Thêm Revision",
     "AutoScaling": "Tự động mở rộng",
     "AutoScalingRules": "Quy tắc tự động mở rộng",
     "ClusterMode": "Chế độ cụm",
@@ -781,6 +782,8 @@
     "CreateDeployment": "Tạo triển khai",
     "CreatedAt": "Ngày tạo",
     "CreatedBy": "Tạo bởi",
+    "Current": "Hiện tại",
+    "CurrentRevision": "Revision Hiện Tại",
     "DeleteDeployment": "Xóa triển khai",
     "Deployment": "Triển khai",
     "DeploymentCreated": "Triển khai đã được tạo.",
@@ -821,6 +824,7 @@
     "NoDeployments": "Không tìm thấy triển khai.",
     "NumberOfReplicas": "Số lượng bản sao",
     "OpenToPublic": "Công khai",
+    "Overview": "Tổng quan",
     "Owner": "Chủ sở hữu",
     "Project": "Dự án",
     "QuickDeploy": "Triển khai",
@@ -835,12 +839,17 @@
     "ResourcePreset": "Cài đặt sẵn tài nguyên",
     "Resources": "Tài nguyên",
     "Revision": "Revision",
+    "RevisionDetail": "Chi tiết Revision",
     "RevisionHistory": "Lịch sử Revision",
     "RevisionId": "ID Revision",
+    "RevisionIdPlaceholder": "Nhập ID Revision (tùy chọn)",
+    "RevisionName": "Tên Revision",
+    "RevisionNamePlaceholder": "Để trống để tự động tạo",
     "RevisionNumber": "Số Revision",
     "Revisions": "Revision",
     "Rollback": "Khôi phục",
     "RollbackConfirm": "Bạn có chắc chắn muốn khôi phục về Revision #{{revisionNumber}} không? Revision hiện tại sẽ được thay thế.",
+    "RollbackDisabled": "Không thể khôi phục về Revision hiện tại hoặc mới nhất.",
     "RollbackSuccess": "Đã yêu cầu khôi phục về Revision #{{revisionNumber}}.",
     "Running": "Đang chạy",
     "RuntimeVariant": "Biến thể thời gian chạy",
@@ -891,6 +900,7 @@
     },
     "step": {
       "BasicInfo": "Thông tin cơ bản",
+      "ClusterAndResources": "Cụm và tài nguyên",
       "ModelAndRuntime": "Mô hình và thời gian chạy",
       "ResourcesAndReplicas": "Tài nguyên và bản sao",
       "ReviewAndCreate": "Xem lại và tạo"
@@ -900,12 +910,14 @@
       "AutoScaling": "Tự động mở rộng",
       "Overview": "Tổng quan",
       "Replicas": "Bản sao",
+      "Revision": "Revision",
       "RevisionHistory": "Lịch sử Revision",
       "description": {
         "AccessTokens": "Quản lý mã thông báo truy cập để xác thực các yêu cầu API đến điểm cuối của deployment này.",
         "AutoScaling": "Cấu hình các quy tắc tự động mở rộng để tự động điều chỉnh số lượng bản sao dựa trên số liệu lưu lượng truy cập.",
         "Replicas": "Xem tất cả các phiên bản bản sao đang chạy cho deployment này cùng với trạng thái sức khỏe và tài nguyên của chúng.",
-        "RevisionHistory": "Duyệt qua các lần sửa đổi deployment trước đây và khôi phục về bất kỳ phiên bản nào. Để tạo bản sửa đổi mới, hãy nhấp vào «Chỉnh sửa Cấu hình» ở trên."
+        "Revision": "Duyệt qua các lần sửa đổi deployment trước đây và khôi phục về bất kỳ phiên bản nào.",
+        "RevisionHistory": "Duyệt qua các lần sửa đổi deployment trước đây và khôi phục về bất kỳ phiên bản nào."
       }
     }
   },
