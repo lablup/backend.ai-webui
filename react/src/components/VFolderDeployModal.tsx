@@ -9,8 +9,18 @@ import { useWebUINavigate } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import useDeploymentLauncher from '../hooks/useDeploymentLauncher';
-import { EllipsisOutlined } from '@ant-design/icons';
-import { App, Dropdown, Form, Space, Typography, theme } from 'antd';
+import DeploymentPresetDetailModal from './DeploymentPresetDetailModal';
+import { EllipsisOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import {
+  App,
+  Button,
+  Dropdown,
+  Form,
+  Space,
+  Tooltip,
+  Typography,
+  theme,
+} from 'antd';
 import type { DefaultOptionType } from 'antd/es/select';
 import {
   BAIButton,
@@ -268,6 +278,9 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
   const [userSelectedPresetId, setUserSelectedPresetId] = useState<
     string | undefined
   >(undefined);
+  const [presetDetailId, setPresetDetailId] = useState<string | undefined>(
+    undefined,
+  );
   const effectivePresetId =
     userSelectedPresetId ??
     (availablePresets[0]?.id ? toLocalId(availablePresets[0].id) : undefined);
@@ -365,29 +378,43 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
           tooltip={t('modelStore.PresetTooltip')}
           required
         >
-          <BAISelect
-            value={effectivePresetId}
-            onChange={(value: string) => setUserSelectedPresetId(value)}
-            options={presetOptions}
-            disabled={hasNoPresets}
-            placeholder={
-              hasNoPresets ? t('modelStore.NoCompatiblePresets') : undefined
-            }
-            optionRender={(option) => (
-              <BAIFlex direction="column" align="start">
-                {option.label}
-                {option.data.description && (
-                  <Typography.Text
-                    type="secondary"
-                    style={{ fontSize: token.fontSizeSM }}
-                    ellipsis
-                  >
-                    {option.data.description}
-                  </Typography.Text>
-                )}
-              </BAIFlex>
-            )}
-            style={{ width: '100%' }}
+          <Space.Compact style={{ width: '100%' }}>
+            <BAISelect
+              value={effectivePresetId}
+              onChange={(value: string) => setUserSelectedPresetId(value)}
+              options={presetOptions}
+              disabled={hasNoPresets}
+              placeholder={
+                hasNoPresets ? t('modelStore.NoCompatiblePresets') : undefined
+              }
+              optionRender={(option) => (
+                <BAIFlex direction="column" align="start">
+                  {option.label}
+                  {option.data.description && (
+                    <Typography.Text
+                      type="secondary"
+                      style={{ fontSize: token.fontSizeSM }}
+                      ellipsis
+                    >
+                      {option.data.description}
+                    </Typography.Text>
+                  )}
+                </BAIFlex>
+              )}
+              style={{ flex: 1 }}
+            />
+            <Tooltip title={t('modelService.DeploymentPresetDetail')}>
+              <Button
+                icon={<InfoCircleOutlined />}
+                disabled={!effectivePresetId}
+                onClick={() => setPresetDetailId(effectivePresetId)}
+              />
+            </Tooltip>
+          </Space.Compact>
+          <DeploymentPresetDetailModal
+            open={!!presetDetailId}
+            presetId={presetDetailId}
+            onRequestClose={() => setPresetDetailId(undefined)}
           />
         </Form.Item>
         <Form.Item
