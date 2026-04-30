@@ -190,7 +190,11 @@ const LoginView: React.FC<{
     if (!sanitizedPlugin || sanitizedPlugin !== loginPlugin) return;
 
     import(
-      /* webpackIgnore: true */
+      // `@vite-ignore` = Vite's equivalent of webpack's `webpackIgnore`.
+      // The path interpolates a user-config'd plugin name at runtime and
+      // sits OUTSIDE react/src — Vite would otherwise warn about the
+      // un-analyzable specifier on every dev rebuild.
+      /* @vite-ignore */
       `../../../src/plugins/${sanitizedPlugin}`
     ).catch(() => {
       setLoginError({ message: t('error.LoginFailed') });

@@ -107,7 +107,10 @@ function PluginLoader() {
               : `/dist/plugins/${sanitizedPage}.js`;
 
           try {
-            await import(/* webpackIgnore: true */ pluginUrl);
+            // `@vite-ignore` = Vite's equivalent of webpack's `webpackIgnore`.
+            // pluginUrl is a runtime-computed path outside the module graph,
+            // so we opt out of static analysis entirely.
+            await import(/* @vite-ignore */ pluginUrl);
 
             const pageItem = document.createElement(page) as PluginPageElement;
             pageItem.classList.add('page');
