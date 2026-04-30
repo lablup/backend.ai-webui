@@ -36,15 +36,18 @@
     "test": "vitest run",
     "vitest": "vitest run",
     "vitest:watch": "vitest",
-    "lint": "eslint ./src --max-warnings=0",
+    "lint": "eslint ./src",
     "prepublishOnly": "pnpm lint && pnpm test && pnpm build"
   },
   "dependencies": {
     "crypto-es": "^2.1.0"
   },
   "devDependencies": {
+    "@eslint/js": "catalog:",
+    "eslint-config-bai": "workspace:*",
     "tsup": "^8.5.0",
     "typescript": "^5.9.3",
+    "typescript-eslint": "catalog:",
     "vitest": "^4.1.4"
   },
   "type": "module"
