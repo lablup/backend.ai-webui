@@ -1979,7 +1979,24 @@ export function buildHomePage(context: HomePageContext): string {
     versionContext,
   } = context;
 
-  const labels = WEBSITE_LABELS[metadata.lang] ?? WEBSITE_LABELS.en;
+  // Merge consumer overrides from `config.localizedStrings.<lang>` over the
+  // hardcoded WEBSITE_LABELS defaults. The home-page hero / about text
+  // ships with Backend.AI WebUI-specific copy by default; non-WebUI
+  // consumers (e.g. the docs-toolkit example/boilerplate) override the
+  // home labels via this map so the rendered landing introduces THEIR
+  // project, not the WebUI manual. Spread-merge would lose the
+  // `Record<string, string>` index signature, so we copy + assign instead
+  // and ignore undefined values (so an unset override doesn't shadow a
+  // default).
+  const labels: Record<string, string> = {
+    ...(WEBSITE_LABELS[metadata.lang] ?? WEBSITE_LABELS.en),
+  };
+  const overrides = config.localizedStrings?.[metadata.lang];
+  if (overrides) {
+    for (const [k, v] of Object.entries(overrides)) {
+      if (typeof v === "string") labels[k] = v;
+    }
+  }
   const langLabel = config.languageLabels[metadata.lang] || metadata.lang;
 
   // The topbar + sidebar + banner / notice / version-switcher widgets

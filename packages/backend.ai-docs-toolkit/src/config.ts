@@ -29,10 +29,35 @@ export interface DocConfig {
 
   /** Language labels, e.g. { en: "English", ko: "한국어" } */
   languageLabels?: Record<string, string>;
-  /** Localized UI strings per language */
+  /**
+   * Localized UI strings per language. Optional overrides for any of the
+   * built-in `WEBSITE_LABELS` entries — set just the keys you want to
+   * customize, the rest fall back to the toolkit's defaults.
+   *
+   * The home-page hero / about-section copy (`homeWelcome`, `homeIntro`,
+   * `homeAboutWebUI`, `homeAboutWebUIBody`, `homeAboutDocs`,
+   * `homeAboutDocsBody`) is the most common override target — the toolkit
+   * defaults are written for the Backend.AI WebUI manual, so a different
+   * consumer (e.g. a starter project, a different product manual) will
+   * almost always want to replace them.
+   */
   localizedStrings?: Record<
     string,
-    { userGuide?: string; tableOfContents?: string }
+    {
+      userGuide?: string;
+      tableOfContents?: string;
+      homeWelcome?: string;
+      homeIntro?: string;
+      homeAboutWebUI?: string;
+      homeAboutWebUIBody?: string;
+      homeAboutDocs?: string;
+      homeAboutDocsBody?: string;
+      homeBrowse?: string;
+      homeQuickstartCta?: string;
+      homeQuickstartHint?: string;
+      homeViewOnGitHub?: string;
+      homePagesSuffix?: string;
+    }
   >;
   /** Localized admonition titles per language */
   admonitionTitles?: Record<string, Record<string, string>>;
@@ -558,9 +583,17 @@ export interface ResolvedDocConfig {
   version: string | null;
 
   languageLabels: Record<string, string>;
+  /**
+   * Resolved localized strings per language. `userGuide` and
+   * `tableOfContents` are always populated (PDF pipeline depends on
+   * them); other keys are present only when the consumer set them as
+   * overrides via `DocConfig.localizedStrings` and are read opportunistically
+   * by the website builder (home-page hero / about copy etc.) with a
+   * fallback to the toolkit's hardcoded `WEBSITE_LABELS` defaults.
+   */
   localizedStrings: Record<
     string,
-    { userGuide: string; tableOfContents: string }
+    { userGuide: string; tableOfContents: string } & Record<string, string>
   >;
   admonitionTitles: Record<string, Record<string, string>>;
   figureLabels: Record<string, string>;
@@ -823,19 +856,45 @@ export function resolveBranding(
 
 function mergeLocalizedStrings(
   defaults: Record<string, { userGuide: string; tableOfContents: string }>,
-  overrides?: Record<string, { userGuide?: string; tableOfContents?: string }>,
-): Record<string, { userGuide: string; tableOfContents: string }> {
-  if (!overrides) return { ...defaults };
-  const result = { ...defaults };
+  overrides?: Record<
+    string,
+    {
+      userGuide?: string;
+      tableOfContents?: string;
+      [key: string]: string | undefined;
+    }
+  >,
+): Record<
+  string,
+  { userGuide: string; tableOfContents: string } & Record<string, string>
+> {
+  const result: Record<
+    string,
+    { userGuide: string; tableOfContents: string } & Record<string, string>
+  > = {};
+  for (const [lang, strings] of Object.entries(defaults)) {
+    result[lang] = { ...strings };
+  }
+  if (!overrides) return result;
   for (const [lang, strings] of Object.entries(overrides)) {
-    result[lang] = {
-      userGuide:
-        strings.userGuide ?? defaults[lang]?.userGuide ?? defaults.en.userGuide,
-      tableOfContents:
-        strings.tableOfContents ??
-        defaults[lang]?.tableOfContents ??
-        defaults.en.tableOfContents,
+    // Start from this language's defaults if present, else en's, else the
+    // PDF-required keys come from `defaults.en` so the result is always
+    // structurally valid.
+    const base = result[lang] ?? { ...defaults.en };
+    const merged: { userGuide: string; tableOfContents: string } & Record<
+      string,
+      string
+    > = {
+      ...base,
+      userGuide: strings.userGuide ?? base.userGuide,
+      tableOfContents: strings.tableOfContents ?? base.tableOfContents,
     };
+    // Carry over every other override key (e.g., home-page labels).
+    for (const [k, v] of Object.entries(strings)) {
+      if (k === "userGuide" || k === "tableOfContents") continue;
+      if (typeof v === "string") merged[k] = v;
+    }
+    result[lang] = merged;
   }
   return result;
 }

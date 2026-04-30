@@ -1,0 +1,47 @@
+id: docs-toolkit-example
+title: |
+  Docs Toolkit
+  Example
+description: Minimal example/boilerplate for backend.ai-docs-toolkit.
+type: document
+
+# en first so the language switcher surfaces English at the top of the
+# dropdown for consumers who copy this as a starter. Reorder freely.
+languages:
+  - en
+  - ko
+
+# ---------------------------------------------------------------------------
+# Grouped navigation (F3 form).
+#
+# Two categories — Getting Started, Reference — keep the example small but
+# still exercise the grouped sidebar render, the breadcrumb path, and the
+# right-rail TOC across multiple chapters per group.
+# ---------------------------------------------------------------------------
+navigation:
+  en:
+    - category: Getting Started
+      items:
+        - title: Quickstart
+          path: quickstart.md
+        - title: Features
+          path: features.md
+    - category: Reference
+      items:
+        - title: Customization
+          path: customization.md
+        - title: About
+          path: about.md
+  ko:
+    - category: 시작하기
+      items:
+        - title: 빠른 시작
+          path: quickstart.md
+        - title: 기능
+          path: features.md
+    - category: 레퍼런스
+      items:
+        - title: 커스터마이징
+          path: customization.md
+        - title: 소개
+          path: about.md

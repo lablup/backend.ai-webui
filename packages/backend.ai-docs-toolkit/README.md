@@ -2,6 +2,22 @@
 
 Reusable documentation engine for converting multilingual Markdown into production-ready PDF and HTML. Provides a CLI (`docs-toolkit`), config-driven pipeline, and Handlebars-based Claude AI agent template system.
 
+## Getting started — copy the example
+
+The fastest way to evaluate the toolkit is to copy the [example/boilerplate package](../backend.ai-docs-toolkit-example/) and edit it. It is a minimal, runnable project that exercises every consumer-tunable knob (custom logo, brand color, multi-version selector, grouped sidebar, en + ko content for CJK font verification).
+
+Run the commands below **from the monorepo root** (`backend.ai-webui/`):
+
+```bash
+cp -r packages/backend.ai-docs-toolkit-example/ ../my-docs/
+cd ../my-docs
+# Edit docs-toolkit.config.yaml, src/book.config.yaml, src/<lang>/*.md
+pnpm install
+pnpm build:web
+```
+
+> See the example's [`README.md`](../backend.ai-docs-toolkit-example/README.md#using-the-example-outside-this-monorepo) for the standalone-repo recipe (the `pnpm --filter` build step needs to be replaced).
+
 ## Quick Start
 
 ```bash
