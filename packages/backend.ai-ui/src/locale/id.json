@@ -152,6 +152,28 @@
     "Minimize": "Minimize",
     "Restore": "Restore"
   },
+  "comp:BAIModelDeploymentNodes": {
+    "AreYouSureToDeleteDeployment": "Apakah Anda yakin ingin menghapus penerapan \"{{deploymentName}}\"? Tindakan ini tidak dapat dibatalkan.",
+    "CreatedAt": "Dibuat Pada",
+    "CreatedUser": "Penulis",
+    "CurrentRevisionID": "ID Revisi Saat Ini",
+    "Delete": "Menghapus",
+    "DeleteDeployment": "Hapus Penerapan",
+    "DeploymentDeleted": "Penerapan berhasil dihapus.",
+    "DeploymentID": "ID Penerapan",
+    "DomainName": "Domain",
+    "EndpointURL": "URL Titik Akhir",
+    "FailedToDeleteDeployment": "Gagal menghapus penerapan.",
+    "Name": "Nama",
+    "OpenToPublic": "Terbuka untuk Umum",
+    "PreferredDomainName": "Domain Pilihan",
+    "ProjectID": "ID Proyek",
+    "Replicas": "Replika",
+    "Status": "Status",
+    "StrategyType": "Strategi",
+    "Tags": "Tag",
+    "UpdatedAt": "Diperbarui Pada"
+  },
   "comp:BAIProjectBulkEditModal": {
     "FollowingFoldersWillBeUpdated": "Folder berikut akan diperbarui.",
     "ProjectResourcePolicy": "Kebijakan Sumber Daya Proyek",

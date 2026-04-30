@@ -152,6 +152,28 @@
     "Minimize": "Minimize",
     "Restore": "Restore"
   },
+  "comp:BAIModelDeploymentNodes": {
+    "AreYouSureToDeleteDeployment": "Sei sicuro di voler eliminare il deployment \"{{deploymentName}}\"? Questa azione non può essere annullata.",
+    "CreatedAt": "Creato il",
+    "CreatedUser": "Autore",
+    "CurrentRevisionID": "ID revisione corrente",
+    "Delete": "Elimina",
+    "DeleteDeployment": "Elimina deployment",
+    "DeploymentDeleted": "Deployment eliminato.",
+    "DeploymentID": "ID deployment",
+    "DomainName": "Dominio",
+    "EndpointURL": "URL del punto finale",
+    "FailedToDeleteDeployment": "Eliminazione del deployment non riuscita.",
+    "Name": "Nome",
+    "OpenToPublic": "Aperto al pubblico",
+    "PreferredDomainName": "Dominio preferito",
+    "ProjectID": "ID progetto",
+    "Replicas": "Repliche",
+    "Status": "Stato",
+    "StrategyType": "Strategia",
+    "Tags": "Tag",
+    "UpdatedAt": "Aggiornato il"
+  },
   "comp:BAIProjectBulkEditModal": {
     "FollowingFoldersWillBeUpdated": "La cartella o le cartelle seguenti verranno aggiornate.",
     "ProjectResourcePolicy": "Politica delle risorse del progetto",

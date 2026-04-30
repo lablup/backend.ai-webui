@@ -152,6 +152,28 @@
     "Minimize": "Minimize",
     "Restore": "Restore"
   },
+  "comp:BAIModelDeploymentNodes": {
+    "AreYouSureToDeleteDeployment": "Bạn có chắc chắn muốn xóa triển khai \"{{deploymentName}}\"? Hành động này không thể hoàn tác.",
+    "CreatedAt": "Ngày tạo",
+    "CreatedUser": "Tác giả",
+    "CurrentRevisionID": "ID phiên bản hiện tại",
+    "Delete": "Xóa",
+    "DeleteDeployment": "Xóa triển khai",
+    "DeploymentDeleted": "Đã xóa triển khai.",
+    "DeploymentID": "ID triển khai",
+    "DomainName": "Tên miền",
+    "EndpointURL": "URL điểm cuối",
+    "FailedToDeleteDeployment": "Không thể xóa triển khai.",
+    "Name": "Tên",
+    "OpenToPublic": "Mở cho công khai",
+    "PreferredDomainName": "Tên miền ưa thích",
+    "ProjectID": "ID dự án",
+    "Replicas": "Số bản sao",
+    "Status": "Trạng thái",
+    "StrategyType": "Chiến lược",
+    "Tags": "Thẻ",
+    "UpdatedAt": "Ngày cập nhật"
+  },
   "comp:BAIProjectBulkEditModal": {
     "FollowingFoldersWillBeUpdated": "Thư mục sau sẽ được cập nhật.",
     "ProjectResourcePolicy": "Chính sách tài nguyên dự án",

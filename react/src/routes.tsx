@@ -121,6 +121,9 @@ const ProjectAdminUsersPage = React.lazy(
 const ProjectAdminDataPage = React.lazy(
   () => import('./pages/ProjectAdminDataPage'),
 );
+const ProjectAdminDeploymentsPage = React.lazy(
+  () => import('./pages/ProjectAdminDeploymentsPage'),
+);
 const EmailVerificationPage = React.lazy(
   () => import('./pages/EmailVerificationPage'),
 );
@@ -473,6 +476,18 @@ export const mainLayoutChildRoutes: RouteObject[] = [
       return (
         <Suspense fallback={<Skeleton active />}>
           <ProjectAdminDataPage />
+        </Suspense>
+      );
+    },
+  },
+  {
+    path: '/project-admin-deployments',
+    handle: { labelKey: 'webui.menu.ProjectDeployments' },
+    Component: () => {
+      useSuspendedBackendaiClient();
+      return (
+        <Suspense fallback={<Skeleton active />}>
+          <ProjectAdminDeploymentsPage />
         </Suspense>
       );
     },

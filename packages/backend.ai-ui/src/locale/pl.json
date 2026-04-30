@@ -152,6 +152,28 @@
     "Minimize": "Minimize",
     "Restore": "Restore"
   },
+  "comp:BAIModelDeploymentNodes": {
+    "AreYouSureToDeleteDeployment": "Czy na pewno chcesz usunąć wdrożenie \"{{deploymentName}}\"? Tej operacji nie można cofnąć.",
+    "CreatedAt": "Utworzono",
+    "CreatedUser": "Autor",
+    "CurrentRevisionID": "Bieżące ID rewizji",
+    "Delete": "Usuń",
+    "DeleteDeployment": "Usuń wdrożenie",
+    "DeploymentDeleted": "Wdrożenie usunięte.",
+    "DeploymentID": "ID wdrożenia",
+    "DomainName": "Domena",
+    "EndpointURL": "URL punktu końcowego",
+    "FailedToDeleteDeployment": "Nie udało się usunąć wdrożenia.",
+    "Name": "Nazwa",
+    "OpenToPublic": "Otwarty dla wszystkich",
+    "PreferredDomainName": "Preferowana domena",
+    "ProjectID": "ID projektu",
+    "Replicas": "Repliki",
+    "Status": "Status",
+    "StrategyType": "Strategia",
+    "Tags": "Tagi",
+    "UpdatedAt": "Zaktualizowano"
+  },
   "comp:BAIProjectBulkEditModal": {
     "FollowingFoldersWillBeUpdated": "Poniższe foldery zostaną zaktualizowane.",
     "ProjectResourcePolicy": "Polityka zasobów projektu",

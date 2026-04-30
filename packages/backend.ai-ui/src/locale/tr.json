@@ -152,6 +152,28 @@
     "Minimize": "Minimize",
     "Restore": "Restore"
   },
+  "comp:BAIModelDeploymentNodes": {
+    "AreYouSureToDeleteDeployment": "\"{{deploymentName}}\" dağıtımını silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
+    "CreatedAt": "Oluşturulma Tarihi",
+    "CreatedUser": "Yazar",
+    "CurrentRevisionID": "Mevcut Revizyon Kimliği",
+    "Delete": "Sil",
+    "DeleteDeployment": "Dağıtımı Sil",
+    "DeploymentDeleted": "Dağıtım silindi.",
+    "DeploymentID": "Dağıtım Kimliği",
+    "DomainName": "Alan Adı",
+    "EndpointURL": "Uç Nokta URL'si",
+    "FailedToDeleteDeployment": "Dağıtım silinemedi.",
+    "Name": "Ad",
+    "OpenToPublic": "Herkese Açık",
+    "PreferredDomainName": "Tercih Edilen Alan Adı",
+    "ProjectID": "Proje Kimliği",
+    "Replicas": "Kopyalar",
+    "Status": "Durum",
+    "StrategyType": "Strateji",
+    "Tags": "Etiketler",
+    "UpdatedAt": "Güncellenme Tarihi"
+  },
   "comp:BAIProjectBulkEditModal": {
     "FollowingFoldersWillBeUpdated": "Aşağıdaki klasör(ler) güncellenecek.",
     "ProjectResourcePolicy": "Proje Kaynak Politikası",

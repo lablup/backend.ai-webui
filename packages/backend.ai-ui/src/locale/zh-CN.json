@@ -152,6 +152,28 @@
     "Minimize": "最小化",
     "Restore": "还原"
   },
+  "comp:BAIModelDeploymentNodes": {
+    "AreYouSureToDeleteDeployment": "确定要删除部署 \"{{deploymentName}}\" 吗？此操作无法撤销。",
+    "CreatedAt": "创建时间",
+    "CreatedUser": "作者",
+    "CurrentRevisionID": "当前修订版本ID",
+    "Delete": "删除",
+    "DeleteDeployment": "删除部署",
+    "DeploymentDeleted": "部署已删除。",
+    "DeploymentID": "部署ID",
+    "DomainName": "域",
+    "EndpointURL": "端点URL",
+    "FailedToDeleteDeployment": "删除部署失败。",
+    "Name": "名称",
+    "OpenToPublic": "公开",
+    "PreferredDomainName": "首选域",
+    "ProjectID": "项目ID",
+    "Replicas": "副本数",
+    "Status": "状态",
+    "StrategyType": "策略",
+    "Tags": "标签",
+    "UpdatedAt": "更新时间"
+  },
   "comp:BAIProjectBulkEditModal": {
     "FollowingFoldersWillBeUpdated": "以下文件夹将被更新。",
     "ProjectResourcePolicy": "项目资源策略",

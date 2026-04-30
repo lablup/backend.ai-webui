@@ -152,6 +152,28 @@
     "Minimize": "最小化",
     "Restore": "還原"
   },
+  "comp:BAIModelDeploymentNodes": {
+    "AreYouSureToDeleteDeployment": "確定要刪除部署 \"{{deploymentName}}\" 嗎？此操作無法復原。",
+    "CreatedAt": "建立時間",
+    "CreatedUser": "作者",
+    "CurrentRevisionID": "目前修訂版本ID",
+    "Delete": "刪除",
+    "DeleteDeployment": "刪除部署",
+    "DeploymentDeleted": "部署已刪除。",
+    "DeploymentID": "部署ID",
+    "DomainName": "網域",
+    "EndpointURL": "端點URL",
+    "FailedToDeleteDeployment": "刪除部署失敗。",
+    "Name": "名稱",
+    "OpenToPublic": "公開",
+    "PreferredDomainName": "偏好網域",
+    "ProjectID": "專案ID",
+    "Replicas": "副本數",
+    "Status": "狀態",
+    "StrategyType": "策略",
+    "Tags": "標籤",
+    "UpdatedAt": "更新時間"
+  },
   "comp:BAIProjectBulkEditModal": {
     "FollowingFoldersWillBeUpdated": "下列資料夾將會更新。",
     "ProjectResourcePolicy": "專案資源政策",

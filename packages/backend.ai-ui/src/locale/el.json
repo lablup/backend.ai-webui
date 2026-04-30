@@ -152,6 +152,28 @@
     "Minimize": "Minimize",
     "Restore": "Restore"
   },
+  "comp:BAIModelDeploymentNodes": {
+    "AreYouSureToDeleteDeployment": "Είστε σίγουροι ότι θέλετε να διαγράψετε την ανάπτυξη \"{{deploymentName}}\"; Αυτή η ενέργεια δεν μπορεί να αναιρεθεί.",
+    "CreatedAt": "Δημιουργήθηκε",
+    "CreatedUser": "Συντάκτης",
+    "CurrentRevisionID": "ID Τρέχουσας Αναθεώρησης",
+    "Delete": "Διαγραφή",
+    "DeleteDeployment": "Διαγραφή Ανάπτυξης",
+    "DeploymentDeleted": "Η ανάπτυξη διαγράφηκε.",
+    "DeploymentID": "ID Ανάπτυξης",
+    "DomainName": "Τομέας",
+    "EndpointURL": "URL Τελικού Σημείου",
+    "FailedToDeleteDeployment": "Αποτυχία διαγραφής ανάπτυξης.",
+    "Name": "Όνομα",
+    "OpenToPublic": "Ανοιχτό στο Κοινό",
+    "PreferredDomainName": "Προτιμώμενος Τομέας",
+    "ProjectID": "ID Έργου",
+    "Replicas": "Αντίγραφα",
+    "Status": "Κατάσταση",
+    "StrategyType": "Στρατηγική",
+    "Tags": "Ετικέτες",
+    "UpdatedAt": "Ενημερώθηκε"
+  },
   "comp:BAIProjectBulkEditModal": {
     "FollowingFoldersWillBeUpdated": "Οι ακόλουθοι φάκελοι θα ενημερωθούν.",
     "ProjectResourcePolicy": "Πολιτική πόρων έργου",

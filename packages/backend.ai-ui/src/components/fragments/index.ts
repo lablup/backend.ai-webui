@@ -125,6 +125,14 @@ export type {
 } from './BAIHuggingFaceRegistrySettingModal';
 export { default as BAIRouteNodes } from './BAIRouteNodes';
 export type { BAIRouteNodesProps, RouteNodeInList } from './BAIRouteNodes';
+export {
+  default as BAIModelDeploymentNodes,
+  availableDeploymentSorterValues,
+} from './BAIModelDeploymentNodes';
+export type {
+  BAIModelDeploymentNodesProps,
+  ModelDeploymentNodeInList,
+} from './BAIModelDeploymentNodes';
 export { default as BAISchedulingHistoryNodes } from './BAISchedulingHistoryNodes';
 export type {
   BAISchedulingHistoryNodesProps,

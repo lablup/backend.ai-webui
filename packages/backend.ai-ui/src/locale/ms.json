@@ -152,6 +152,28 @@
     "Minimize": "Minimize",
     "Restore": "Restore"
   },
+  "comp:BAIModelDeploymentNodes": {
+    "AreYouSureToDeleteDeployment": "Adakah anda pasti mahu memadamkan penggunaan \"{{deploymentName}}\"? Tindakan ini tidak boleh dibatalkan.",
+    "CreatedAt": "Dicipta Pada",
+    "CreatedUser": "Pengarang",
+    "CurrentRevisionID": "ID Semakan Semasa",
+    "Delete": "Padam",
+    "DeleteDeployment": "Padam Penggunaan",
+    "DeploymentDeleted": "Penggunaan dipadamkan.",
+    "DeploymentID": "ID Penggunaan",
+    "DomainName": "Domain",
+    "EndpointURL": "URL Titik Akhir",
+    "FailedToDeleteDeployment": "Gagal memadamkan penggunaan.",
+    "Name": "Nama",
+    "OpenToPublic": "Terbuka untuk Awam",
+    "PreferredDomainName": "Domain Pilihan",
+    "ProjectID": "ID Projek",
+    "Replicas": "Replika",
+    "Status": "Status",
+    "StrategyType": "Strategi",
+    "Tags": "Tag",
+    "UpdatedAt": "Dikemas kini Pada"
+  },
   "comp:BAIProjectBulkEditModal": {
     "FollowingFoldersWillBeUpdated": "Folder berikut akan dikemas kini.",
     "ProjectResourcePolicy": "Polisi Sumber Projek",

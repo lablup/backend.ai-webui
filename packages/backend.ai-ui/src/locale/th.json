@@ -152,6 +152,28 @@
     "Minimize": "Minimize",
     "Restore": "Restore"
   },
+  "comp:BAIModelDeploymentNodes": {
+    "AreYouSureToDeleteDeployment": "คุณแน่ใจหรือไม่ว่าต้องการลบการปรับใช้ \"{{deploymentName}}\"? การดำเนินการนี้ไม่สามารถยกเลิกได้",
+    "CreatedAt": "วันที่สร้าง",
+    "CreatedUser": "ผู้เขียน",
+    "CurrentRevisionID": "รหัสการแก้ไขปัจจุบัน",
+    "Delete": "ลบ",
+    "DeleteDeployment": "ลบการปรับใช้",
+    "DeploymentDeleted": "ลบการปรับใช้แล้ว",
+    "DeploymentID": "รหัสการปรับใช้",
+    "DomainName": "โดเมน",
+    "EndpointURL": "URL ปลายทาง",
+    "FailedToDeleteDeployment": "ไม่สามารถลบการปรับใช้ได้",
+    "Name": "ชื่อ",
+    "OpenToPublic": "เปิดสาธารณะ",
+    "PreferredDomainName": "โดเมนที่ต้องการ",
+    "ProjectID": "รหัสโปรเจกต์",
+    "Replicas": "จำนวนสำเนา",
+    "Status": "สถานะ",
+    "StrategyType": "กลยุทธ์",
+    "Tags": "แท็ก",
+    "UpdatedAt": "วันที่อัปเดต"
+  },
   "comp:BAIProjectBulkEditModal": {
     "FollowingFoldersWillBeUpdated": "โฟลเดอร์ต่อไปนี้จะถูกอัปเดต.",
     "ProjectResourcePolicy": "นโยบายทรัพยากรโครงการ",

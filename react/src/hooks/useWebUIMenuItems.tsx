@@ -106,6 +106,7 @@ export const VALID_MENU_KEYS = [
   'admin-data',
   'project-admin-users',
   'project-data',
+  'project-admin-deployments',
   'agent',
   'project',
   'settings',
@@ -132,6 +133,7 @@ const ALL_ADMIN_PAGE_KEYS: ReadonlySet<string> = new Set([
   'admin-data',
   'project-admin-users',
   'project-data',
+  'project-admin-deployments',
   'agent',
   'project',
   'settings',
@@ -153,6 +155,7 @@ export const PROJECT_ADMIN_PAGE_KEYS = [
   // 'admin-data',
   'project-admin-users',
   'project-data',
+  'project-admin-deployments',
 ] as const;
 
 const PROJECT_ADMIN_PAGE_KEY_SET: ReadonlySet<string> = new Set(
@@ -364,6 +367,16 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       label: <WebUILink to="/project-data">{t('webui.menu.Data')}</WebUILink>,
       icon: <CloudUploadOutlined style={{ color: token.colorInfo }} />,
       key: 'project-data' as MenuKeys,
+      group: 'admin-operations' as AdminMenuGroupName,
+    },
+    {
+      label: (
+        <WebUILink to="/project-admin-deployments">
+          {t('webui.menu.ProjectDeployments')}
+        </WebUILink>
+      ),
+      icon: <BAIEndpointsIcon style={{ color: token.colorInfo }} />,
+      key: 'project-admin-deployments' as MenuKeys,
       group: 'admin-operations' as AdminMenuGroupName,
     },
     isSuperAdmin && {
