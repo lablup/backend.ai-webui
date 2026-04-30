@@ -444,7 +444,6 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
             rowKey="id"
             scroll={{ x: 'max-content' }}
             showSorterTooltip={false}
-            locale={{ emptyText: t('deployment.NoDeployments') }}
             {...tableProps}
             dataSource={deployments}
             columns={columns}

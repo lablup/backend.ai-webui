@@ -403,7 +403,15 @@ const DeploymentAddRevisionModalFormBody: React.FC<
       onCompleted: (_, errors) => {
         onIsAddingChange(false);
         if (errors && errors.length > 0) {
-          message.error(errors[0]?.message ?? t('general.ErrorOccurred'));
+          const err = errors[0];
+          const isInProgress = err?.message?.includes(
+            'Another deployment is already in progress',
+          );
+          message.error(
+            isInProgress
+              ? t('deployment.AnotherDeploymentInProgress')
+              : (err?.message ?? t('general.ErrorOccurred')),
+          );
           return;
         }
         form.resetFields();
@@ -412,7 +420,14 @@ const DeploymentAddRevisionModalFormBody: React.FC<
       },
       onError: (err) => {
         onIsAddingChange(false);
-        message.error(err.message ?? t('general.ErrorOccurred'));
+        const isInProgress = err.message?.includes(
+          'Another deployment is already in progress',
+        );
+        message.error(
+          isInProgress
+            ? t('deployment.AnotherDeploymentInProgress')
+            : (err.message ?? t('general.ErrorOccurred')),
+        );
       },
     });
   };

@@ -22,6 +22,7 @@ import {
   BAIGraphQLPropertyFilter,
   BAINameActionCell,
   BAITable,
+  BAIUnmountAfterClose,
   type GraphQLFilter,
   filterOutNullAndUndefined,
   toLocalId,
@@ -457,12 +458,14 @@ const DeploymentRevisionHistoryTab: React.FC<
 
   return (
     <>
-      <DeploymentRevisionDetailDrawer
-        revisionId={drawerRevisionId}
-        currentRevisionId={currentRevisionId}
-        open={!!drawerRevisionId}
-        onClose={() => setDrawerRevisionId(null)}
-      />
+      <BAIUnmountAfterClose>
+        <DeploymentRevisionDetailDrawer
+          revisionId={drawerRevisionId}
+          currentRevisionId={currentRevisionId}
+          open={!!drawerRevisionId}
+          onClose={() => setDrawerRevisionId(null)}
+        />
+      </BAIUnmountAfterClose>
       <DeploymentAddRevisionModal
         open={isAddRevisionModalOpen}
         onClose={() => setIsAddRevisionModalOpen(false)}

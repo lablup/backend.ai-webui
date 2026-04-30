@@ -3,10 +3,11 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { DeploymentAccessTokensTabCreateMutation } from '../__generated__/DeploymentAccessTokensTabCreateMutation.graphql';
+import { DeploymentAccessTokensTabDeleteMutation } from '../__generated__/DeploymentAccessTokensTabDeleteMutation.graphql';
 import { DeploymentAccessTokensTabListQuery } from '../__generated__/DeploymentAccessTokensTabListQuery.graphql';
 import { DeploymentAccessTokensTab_deployment$key } from '../__generated__/DeploymentAccessTokensTab_deployment.graphql';
-import { PlusOutlined } from '@ant-design/icons';
-import { App, Button, DatePicker, Form, Typography } from 'antd';
+import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import { App, Button, DatePicker, Form, Select, Typography } from 'antd';
 import {
   BAIFetchKeyButton,
   BAIFlex,
@@ -23,7 +24,12 @@ import {
 import dayjs from 'dayjs';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
+import {
+  graphql,
+  useFragment,
+  useLazyLoadQuery,
+  useMutation,
+} from 'react-relay';
 
 interface DeploymentAccessTokensTabProps {
   deploymentFrgmt: DeploymentAccessTokensTab_deployment$key;
@@ -40,7 +46,7 @@ const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { message } = App.useApp();
+  const { message, modal } = App.useApp();
   const { logger } = useBAILogger();
   const [isPendingRefetch, startRefetchTransition] = useTransition();
   const [fetchKey, setFetchKey] = useState(0);
@@ -110,6 +116,17 @@ const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
       }
     `);
 
+  const [commitDelete, isDeletingToken] =
+    useMutation<DeploymentAccessTokensTabDeleteMutation>(graphql`
+      mutation DeploymentAccessTokensTabDeleteMutation(
+        $input: DeleteAccessTokenInput!
+      ) {
+        deleteAccessToken(input: $input) {
+          id
+        }
+      }
+    `);
+
   const handleRefetch = () => {
     startRefetchTransition(() => {
       setFetchKey((k) => k + 1);
@@ -137,7 +154,7 @@ const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
         <BAITable<AccessTokenNode>
           scroll={{ x: 'max-content' }}
           rowKey="id"
-          loading={isPendingRefetch}
+          loading={isPendingRefetch || isDeletingToken}
           dataSource={accessTokens}
           pagination={false}
           columns={[
@@ -160,10 +177,53 @@ const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
                       </BAIText>
                     }
                     showActions="always"
-                    // TODO(needs-backend): deleteAccessToken mutation is
-                    // defined in the schema but not yet deployed to the
-                    // running supergraph. Restore once the server is updated.
-                    actions={[]}
+                    actions={[
+                      {
+                        key: 'delete',
+                        title: t('deployment.accessToken.Delete'),
+                        icon: <DeleteOutlined />,
+                        type: 'danger',
+                        disabled:
+                          isDeploymentDestroying || !isOwnedByCurrentUser,
+                        onClick: () => {
+                          modal.confirm({
+                            title: t('deployment.accessToken.Delete'),
+                            content: t('deployment.accessToken.DeleteConfirm'),
+                            okText: t('button.Delete'),
+                            okButtonProps: { danger: true },
+                            onOk: () => {
+                              commitDelete({
+                                variables: {
+                                  input: {
+                                    id: toLocalId(row.id) ?? row.id,
+                                  },
+                                },
+                                onCompleted: (_res, errors) => {
+                                  if (errors && errors.length > 0) {
+                                    logger.error(errors[0]);
+                                    message.error(
+                                      errors[0]?.message ??
+                                        t('dialog.ErrorOccurred'),
+                                    );
+                                    return;
+                                  }
+                                  message.success(
+                                    t('deployment.accessToken.Deleted'),
+                                  );
+                                  handleRefetch();
+                                },
+                                onError: (err) => {
+                                  logger.error(err);
+                                  message.error(
+                                    err.message ?? t('dialog.ErrorOccurred'),
+                                  );
+                                },
+                              });
+                            },
+                          });
+                        },
+                      },
+                    ]}
                   />
                 );
               },
@@ -361,30 +421,20 @@ const CreateAccessTokenModal: React.FC<CreateAccessTokenModalProps> = ({
         }}
         validateTrigger={['onChange', 'onBlur']}
       >
-        {/* Hidden field so validateFields() includes expiryOption. */}
-        <Form.Item name="expiryOption" hidden rules={[{ required: true }]}>
-          <input type="hidden" />
-        </Form.Item>
-        <Form.Item label={t('deployment.accessToken.Expiration')} required>
-          <BAIFlex direction="column" align="stretch" gap="xs">
-            {options.map((opt) => (
-              <Button
-                key={String(opt.value)}
-                type={expiryOption === opt.value ? 'primary' : 'default'}
-                onClick={() => {
-                  form.setFieldValue('expiryOption', opt.value);
-                  if (typeof opt.value === 'number') {
-                    form.setFieldValue(
-                      'datetime',
-                      dayjs().add(opt.value, 'day'),
-                    );
-                  }
-                }}
-              >
-                {opt.label}
-              </Button>
-            ))}
-          </BAIFlex>
+        <Form.Item
+          name="expiryOption"
+          label={t('deployment.accessToken.Expiration')}
+          rules={[{ required: true }]}
+        >
+          <Select<ExpiryOption>
+            style={{ width: 200 }}
+            options={options}
+            onChange={(value) => {
+              if (typeof value === 'number') {
+                form.setFieldValue('datetime', dayjs().add(value, 'day'));
+              }
+            }}
+          />
         </Form.Item>
         {expiryOption === 'custom' && (
           <Form.Item
@@ -394,7 +444,6 @@ const CreateAccessTokenModal: React.FC<CreateAccessTokenModalProps> = ({
               {
                 type: 'object' as const,
                 required: true,
-                message: t('dialog.ErrorOccurred'),
               },
               () => ({
                 validator(_rule, value) {

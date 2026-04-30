@@ -618,6 +618,7 @@ const DeploymentLauncherPageContent: React.FC<
             <Form.Item name="tags" label={t('deployment.Tags')}>
               <Select
                 mode="tags"
+                open={false}
                 tokenSeparators={[',']}
                 placeholder={t('deployment.TagsPlaceholder')}
                 notFoundContent={null}
@@ -647,9 +648,7 @@ const DeploymentLauncherPageContent: React.FC<
               <VFolderSelect
                 valuePropName="id"
                 filter={(vf) =>
-                  vf.usage_mode === 'model' &&
-                  vf.status === 'ready' &&
-                  vf.ownership_type !== 'group'
+                  vf.usage_mode === 'model' && vf.status === 'ready'
                 }
                 disabled={mode === 'edit'}
                 showOpenButton
@@ -868,9 +867,9 @@ const DeploymentLauncherPageContent: React.FC<
             <Form.Item
               name="desiredReplicaCount"
               label={t('deployment.DesiredReplicas')}
-              rules={[{ required: true }]}
+              rules={[{ required: true, type: 'number', min: 1 }]}
             >
-              <InputNumber min={0} style={{ width: '100%' }} />
+              <InputNumber min={1} style={{ width: '100%' }} />
             </Form.Item>
           </Card>
 

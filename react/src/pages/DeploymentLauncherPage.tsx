@@ -7,6 +7,7 @@ import { DeploymentLauncherPageEditMutation } from '../__generated__/DeploymentL
 import { DeploymentLauncherPageQuery } from '../__generated__/DeploymentLauncherPageQuery.graphql';
 import { DeploymentLauncherPageResourcePresetsQuery } from '../__generated__/DeploymentLauncherPageResourcePresetsQuery.graphql';
 import { DeploymentLauncherPageRuntimeVariantsQuery } from '../__generated__/DeploymentLauncherPageRuntimeVariantsQuery.graphql';
+import { DeploymentLauncherPageUpdateReplicaMutation } from '../__generated__/DeploymentLauncherPageUpdateReplicaMutation.graphql';
 import DeploymentLauncherPageContent, {
   DeploymentLauncherFormValue,
 } from '../components/DeploymentLauncherPageContent';
@@ -239,6 +240,22 @@ const DeploymentLauncherPageLayout: React.FC<
       }
     `);
 
+  const [commitUpdateReplica] =
+    useMutation<DeploymentLauncherPageUpdateReplicaMutation>(graphql`
+      mutation DeploymentLauncherPageUpdateReplicaMutation(
+        $input: UpdateDeploymentInput!
+      ) {
+        updateModelDeployment(input: $input) {
+          deployment {
+            id
+            replicaState {
+              desiredReplicaCount
+            }
+          }
+        }
+      }
+    `);
+
   const isSubmitting = isCreating || isEditing;
 
   const navigateBack = () => {
@@ -419,7 +436,7 @@ const DeploymentLauncherPageLayout: React.FC<
               openToPublic: values.openToPublic,
             },
             defaultDeploymentStrategy: { type: 'ROLLING' },
-            replicaCount: values.desiredReplicaCount,
+            replicaCount: values.desiredReplicaCount ?? 1,
             initialRevision: null,
           },
         },
@@ -456,7 +473,29 @@ const DeploymentLauncherPageLayout: React.FC<
     if (!imageId) {
       throw new Error('No image selected.');
     }
-    await handleAddRevision(values, deploymentId, imageId);
+    await Promise.all([
+      handleAddRevision(values, deploymentId, imageId),
+      new Promise<void>((resolve, reject) => {
+        commitUpdateReplica({
+          variables: {
+            input: {
+              id: toGlobalId('ModelDeployment', deploymentId),
+              replicaCount: values.desiredReplicaCount ?? 1,
+            },
+          },
+          onCompleted: (_, errors) => {
+            if (errors && errors.length > 0) {
+              reject(new Error(errors.map((e) => e.message).join('\n')));
+              return;
+            }
+            resolve();
+          },
+          onError: (err) => {
+            reject(new Error(err.message));
+          },
+        });
+      }),
+    ]);
   };
 
   const handleSubmit = async () => {
@@ -515,17 +554,33 @@ const DeploymentLauncherPageLayout: React.FC<
       } catch (err) {
         const msg = err instanceof Error ? err.message : String(err);
         logger.error('[DeploymentLauncherPage] submit failed', err);
-        upsertNotification({
-          key: notificationKey,
-          open: true,
-          message:
-            mode === 'edit'
-              ? t('deployment.FailedToUpdateDeployment')
-              : t('deployment.FailedToCreateDeployment'),
-          description: msg,
-          duration: 0,
-          backgroundTask: { status: 'rejected', percent: 99 },
-        });
+        const isInProgress = msg.includes(
+          'Another deployment is already in progress',
+        );
+        if (mode === 'edit' && isInProgress) {
+          upsertNotification({
+            key: notificationKey,
+            open: false,
+            duration: 0,
+            backgroundTask: { status: 'rejected', percent: 99 },
+          });
+          app.modal.error({
+            title: t('deployment.FailedToUpdateDeployment'),
+            content: t('deployment.AnotherDeploymentInProgress'),
+          });
+        } else {
+          upsertNotification({
+            key: notificationKey,
+            open: true,
+            message:
+              mode === 'edit'
+                ? t('deployment.FailedToUpdateDeployment')
+                : t('deployment.FailedToCreateDeployment'),
+            description: msg,
+            duration: 0,
+            backgroundTask: { status: 'rejected', percent: 99 },
+          });
+        }
       }
     } catch {
       // validateFields throws on invalid fields — antd already surfaces

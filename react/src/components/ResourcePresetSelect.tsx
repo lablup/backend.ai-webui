@@ -117,7 +117,7 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [autoSelectDefault]);
+  }, [autoSelectDefault, firstAvailablePresetName]);
 
   return (
     <Select
