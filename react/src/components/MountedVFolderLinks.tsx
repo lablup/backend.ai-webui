@@ -21,6 +21,12 @@ const MountedVFolderLinks: React.FC<MountedVFolderLinksProps> = ({
 }) => {
   const baiClient = useSuspendedBackendaiClient();
 
+  // TODO(needs-backend): the FR-2619 V2 migration cannot reach this surface
+  // because `ComputeSessionNode` only exposes the V1 `vfolder_nodes`
+  // (`VirtualFolderConnection`) field — there is no V2 `VFolder` connection
+  // on the session type. Migrate `MountedVFolderLinks`, `FolderLink`, and the
+  // session query in `SessionDetailContent` to a V2 fragment once the backend
+  // adds a `VFolder` (Strawberry V2) connection on `ComputeSessionNode`.
   const session = useFragment(
     graphql`
       fragment MountedVFolderLinksFragment on ComputeSessionNode {

@@ -6,7 +6,7 @@ import React from 'react';
 import { useLocation } from 'react-router-dom';
 import { StringParam, useQueryParam } from 'use-query-params';
 
-const FolderExplorerModal = React.lazy(() => import('./FolderExplorerModal'));
+const FolderExplorerModal = React.lazy(() => import('./FolderExplorerModalV2'));
 
 const FolderExplorerOpener = () => {
   const [folderId, setFolderId] = useQueryParam('folder', StringParam);

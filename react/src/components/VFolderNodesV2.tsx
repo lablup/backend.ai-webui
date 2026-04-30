@@ -8,7 +8,7 @@ import {
   VFolderNodesV2Fragment$key,
 } from '../__generated__/VFolderNodesV2Fragment.graphql';
 import { VFolderNodesV2RestoreMutation } from '../__generated__/VFolderNodesV2RestoreMutation.graphql';
-import { useSuspendedBackendaiClient } from '../hooks';
+import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useSuspenseTanQuery, useTanQuery } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
@@ -50,7 +50,6 @@ import * as _ from 'lodash-es';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
-import { useNavigate } from 'react-router-dom';
 
 export const statusTagColor = {
   // V2 UPPERCASE enum values (VFolderOperationStatus)
@@ -420,7 +419,7 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
   const [currentUser] = useCurrentUserInfo();
   const [inviteFolderId, setInviteFolderId] = useState<string | null>(null);
   const { getErrorMessage } = useErrorMessageResolver();
-  const navigate = useNavigate();
+  const navigate = useWebUINavigate();
   const { upsertNotification } = useSetBAINotification();
 
   // Row-level hard-delete reuses the same modal as the bulk toolbar

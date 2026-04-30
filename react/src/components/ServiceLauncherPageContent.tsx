@@ -60,7 +60,7 @@ import ResourceAllocationFormItems, {
   ResourceAllocationFormValue,
 } from './SessionFormItems/ResourceAllocationFormItems';
 import SwitchToProjectButton from './SwitchToProjectButton';
-import VFolderLazyView from './VFolderLazyView';
+import VFolderLazyViewV2 from './VFolderLazyViewV2';
 import VFolderSelect from './VFolderSelect';
 import VFolderTableFormItem from './VFolderTableFormItem';
 import { useDebounceFn } from 'ahooks';
@@ -1626,7 +1626,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                             >
                               <BAIFlex gap="xs" align="center">
                                 <Suspense fallback={<Skeleton.Input active />}>
-                                  <VFolderLazyView
+                                  <VFolderLazyViewV2
                                     uuid={endpoint?.model}
                                     clickable
                                   />

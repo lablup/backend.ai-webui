@@ -16,8 +16,8 @@ import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
-import { useNavigate } from 'react-router-dom';
 import { BAIVFolderNotificationItemFragment$key } from 'src/__generated__/BAIVFolderNotificationItemFragment.graphql';
+import { useWebUINavigate } from 'src/hooks';
 import {
   NotificationState,
   useSetBAINotification,
@@ -41,7 +41,7 @@ const BAIVFolderNotificationItem: React.FC<BAIVFolderNotificationItemProps> = ({
 }) => {
   'use memo';
 
-  const navigate = useNavigate();
+  const navigate = useWebUINavigate();
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { closeNotification } = useSetBAINotification();
