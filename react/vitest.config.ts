@@ -36,11 +36,11 @@ export default defineConfig({
       // moduleNameMapper entry for `backend.ai-ui`).
       { find: /^backend\.ai-ui\/dist(\/|$)/, replacement: buiSrc + '$1' },
       { find: /^backend\.ai-ui$/, replacement: buiSrc },
-      // `backend.ai-client-esm` is mocked in tests (see __test__/backendAiClientEsm.mock.js).
+      // `backend.ai-client` is mocked in tests (see __test__/backendAiClient.mock.js).
       // The Jest moduleNameMapper handled this explicitly; we use an alias instead.
       {
-        find: /^backend\.ai-client-esm$/,
-        replacement: resolve(__dirname, '__test__/backendAiClientEsm.mock.js'),
+        find: /^backend\.ai-client$/,
+        replacement: resolve(__dirname, '__test__/backendAiClient.mock.js'),
       },
       // Existing `.svg` (plain import, not SVGR `?react`) module mock.
       // SVGR `?react` imports are handled by `vite-plugin-svgr` below.

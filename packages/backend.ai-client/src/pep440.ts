@@ -1,3 +1,4 @@
+// @ts-nocheck
 export function normalizePEP440Version(version: string) {
   // Replace -, _, and whitespace with .
   let normalizedVersion = version?.replace(/[-_\s]/g, '.');
@@ -56,13 +57,14 @@ function comparePEP440LocalVersions(
   return 0;
 }
 const getNormalizedSuffixesIndex = (suffix) => {
-  const normalized = {
-    'beta': 'b',
-    'alpha': 'a'
-  }[suffix] || suffix;
+  const normalized =
+    {
+      beta: 'b',
+      alpha: 'a',
+    }[suffix] || suffix;
 
   return ['dev', 'a', 'b', 'c', 'rc', undefined, 'post'].indexOf(normalized);
-}
+};
 export function comparePEP440Versions(version1: string, version2: string) {
   // Normalize versions
   const normalizedVersion1 = normalizePEP440Version(version1);
@@ -104,16 +106,15 @@ export function comparePEP440Versions(version1: string, version2: string) {
   return comparePEP440LocalVersions(localVersion1, localVersion2);
 }
 
-
 /**
  * Removes patch version components from a PEP 440 version string.
- * 
+ *
  * @param version - The PEP 440 version string.
  * @returns The version string with only the major and minor version components.
  */
 export const removeAfterMinorVersion = (version: string) => {
   return normalizePEP440Version(version).split('.').slice(0, 2).join('.');
-}
+};
 
 /**
  * Checks if a source version is compatible with multiple conditions versions.
@@ -121,13 +122,15 @@ export const removeAfterMinorVersion = (version: string) => {
  * @param conditionsVersions - An array of condition versions to compare against.
  * @returns A boolean indicating if the source version is compatible with the conditions versions.
  */
-export function isCompatibleMultipleConditions(source: string, conditionsVersions: string[]) {
+export function isCompatibleMultipleConditions(
+  source: string,
+  conditionsVersions: string[],
+) {
   const sorted = conditionsVersions.sort((a, b) => comparePEP440Versions(a, b));
-  const sourceMinor= removeAfterMinorVersion(source);
+  const sourceMinor = removeAfterMinorVersion(source);
   const minorMatchedVersion = sorted.find((version) => {
     return sourceMinor === removeAfterMinorVersion(version);
   });
   const chooseCondition = minorMatchedVersion || sorted[sorted.length - 1];
   return comparePEP440Versions(source, chooseCondition) >= 0;
 }
-

@@ -17,11 +17,6 @@
 // would exclude `@types/jest`, breaking `@testing-library/jest-dom`'s
 // default matcher augmentation).
 
-declare module 'backend.ai-client-esm' {
-  const ai: { backend: { Client: any; ClientConfig: any } };
-  export = ai;
-}
-
 type ArrayElement<ArrayType extends readonly unknown[]> =
   ArrayType extends readonly (infer ElementType)[] ? ElementType : never;
 type ArgumentTypes<F extends Function> = F extends (...args: infer A) => any

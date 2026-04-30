@@ -339,10 +339,11 @@ export default defineConfig(({ mode }) => {
         { find: /^backend\.ai-ui\/dist(\/|$)/, replacement: buiSrc + '$1' },
         { find: /^backend\.ai-ui$/, replacement: buiSrc },
 
-        // Backend.AI client ESM library alias (matches craco.config.cjs:409-412).
+        // backend.ai-client workspace package, dev-aliased to source so HMR
+        // tracks the SDK without rebuilding tsup output.
         {
-          find: /^backend\.ai-client-esm$/,
-          replacement: resolve(projectRoot, 'dist/lib/backend.ai-client-esm.js'),
+          find: /^backend\.ai-client$/,
+          replacement: resolve(projectRoot, 'packages/backend.ai-client/src/index.ts'),
         },
 
         // ESM shims for CJS-only transitive deps of `react-i18next`.
@@ -385,6 +386,12 @@ export default defineConfig(({ mode }) => {
       ],
       exclude: [
         'backend.ai-ui',
+        // backend.ai-client is dev-aliased to its source entry (see
+        // resolve.alias above). Excluding it from the dep optimizer keeps
+        // Vite serving the SDK as on-the-fly source modules so edits in
+        // packages/backend.ai-client/src trigger HMR instead of requiring
+        // a tsup rebuild + full reload.
+        'backend.ai-client',
         // BUI is designed to have its OWN i18n singleton separate from the
         // host app (see packages/backend.ai-ui/src/locale/index.ts +
         // BAIConfigProvider wraps children with <I18nextProvider i18n={buiI18n}>).

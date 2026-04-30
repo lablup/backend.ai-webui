@@ -1,4 +1,10 @@
-import { comparePEP440Versions, isCompatibleMultipleConditions, normalizePEP440Version } from './pep440';
+import { describe, expect, test } from 'vitest';
+
+import {
+  comparePEP440Versions,
+  isCompatibleMultipleConditions,
+  normalizePEP440Version,
+} from './pep440';
 
 describe('normalizePEP440Version', () => {
   test('should normalize versions correctly', () => {
@@ -41,7 +47,6 @@ describe('comparePEP440Versions', () => {
     expect(comparePEP440Versions('24.03.4-b.2', '24.03.4-beta.2')).toBe(0);
     expect(comparePEP440Versions('24.03.4-alpha.2', '24.03.4-a.2')).toBe(0);
     expect(comparePEP440Versions('24.03.4-b.2', '24.03.4-alpha.2')).toBe(1);
-
   });
 
   test('comparePEP440Versions', () => {
@@ -74,16 +79,54 @@ describe('comparePEP440Versions', () => {
   });
 });
 
-describe('isCompatibleMultipleConditions', ()=>{
-  it('should compare versions correctly', ()=>{
-    expect(isCompatibleMultipleConditions('23.03.3', ['24.3.1', '23.03.2'])).toBe(true)
-    expect(isCompatibleMultipleConditions('23.03.3', ['24.3.1', '23.03.4'])).toBe(false)
-    expect(isCompatibleMultipleConditions('25.03.3', ['24.3.1', '23.03.4'])).toBe(true)
-    expect(isCompatibleMultipleConditions('22.03.3', ['24.3.1', '23.03.4'])).toBe(false)
-    expect(isCompatibleMultipleConditions('24.12.1', ['25.1.0', '24.09.6', '24.03.12'])).toBe(false)
-    expect(isCompatibleMultipleConditions('25.1.1', ['25.1.0', '24.09.6', '24.03.12'])).toBe(true)
-    expect(isCompatibleMultipleConditions('25.0.0', ['25.1.0', '24.09.6', '24.03.12'])).toBe(false)
-    expect(isCompatibleMultipleConditions('24.09.5', ['25.1.0', '24.09.6', '24.03.12'])).toBe(false)
-    expect(isCompatibleMultipleConditions('24.09.7', ['25.1.0', '24.09.6', '24.03.12'])).toBe(true)
+describe('isCompatibleMultipleConditions', () => {
+  it('should compare versions correctly', () => {
+    expect(
+      isCompatibleMultipleConditions('23.03.3', ['24.3.1', '23.03.2']),
+    ).toBe(true);
+    expect(
+      isCompatibleMultipleConditions('23.03.3', ['24.3.1', '23.03.4']),
+    ).toBe(false);
+    expect(
+      isCompatibleMultipleConditions('25.03.3', ['24.3.1', '23.03.4']),
+    ).toBe(true);
+    expect(
+      isCompatibleMultipleConditions('22.03.3', ['24.3.1', '23.03.4']),
+    ).toBe(false);
+    expect(
+      isCompatibleMultipleConditions('24.12.1', [
+        '25.1.0',
+        '24.09.6',
+        '24.03.12',
+      ]),
+    ).toBe(false);
+    expect(
+      isCompatibleMultipleConditions('25.1.1', [
+        '25.1.0',
+        '24.09.6',
+        '24.03.12',
+      ]),
+    ).toBe(true);
+    expect(
+      isCompatibleMultipleConditions('25.0.0', [
+        '25.1.0',
+        '24.09.6',
+        '24.03.12',
+      ]),
+    ).toBe(false);
+    expect(
+      isCompatibleMultipleConditions('24.09.5', [
+        '25.1.0',
+        '24.09.6',
+        '24.03.12',
+      ]),
+    ).toBe(false);
+    expect(
+      isCompatibleMultipleConditions('24.09.7', [
+        '25.1.0',
+        '24.09.6',
+        '24.03.12',
+      ]),
+    ).toBe(true);
   });
-})
+});

@@ -33,6 +33,7 @@
     "ansi_up": "^6.0.6",
     "antd": "catalog:",
     "antd-style": "catalog:",
+    "backend.ai-client": "workspace:*",
     "backend.ai-ui": "workspace:*",
     "big.js": "catalog:",
     "classnames": "catalog:",

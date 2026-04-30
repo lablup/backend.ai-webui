@@ -19,10 +19,12 @@
     "paths": {
       "backend.ai-ui": ["../packages/backend.ai-ui/src/index.ts"],
       "backend.ai-ui/*": ["../packages/backend.ai-ui/src/*"],
-      "backend.ai-ui/dist/locale/*": ["../packages/backend.ai-ui/src/locale/*"]
+      "backend.ai-ui/dist/locale/*": ["../packages/backend.ai-ui/src/locale/*"],
+      "backend.ai-client": ["../packages/backend.ai-client/src/index.ts"],
+      "backend.ai-client/*": ["../packages/backend.ai-client/src/*"]
     }
   },
-  "include": ["src", "../packages/backend.ai-ui/src"],
+  "include": ["src", "../packages/backend.ai-ui/src", "../packages/backend.ai-client/src"],
   "exclude": [
     "../packages/backend.ai-ui/src/**/*.test.*",
     "../packages/backend.ai-ui/src/**/*.stories.*",

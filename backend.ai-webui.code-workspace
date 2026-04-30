@@ -9,6 +9,10 @@
       "name": "backend.ai-ui",
     },
     {
+      "path": "packages/backend.ai-client",
+      "name": "backend.ai-client",
+    },
+    {
       "path": "packages/eslint-config-bai",
       "name": "eslint-config-bai",
     },
@@ -38,6 +42,7 @@
     "i18n-ally.translate.openai.apiModel": "gpt-5-mini",
     "files.exclude": {
       "packages/backend.ai-ui": true,
+      "packages/backend.ai-client": true,
       "packages/eslint-config-bai": true,
       "packages/backend.ai-webui-docs": true,
     },
