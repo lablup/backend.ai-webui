@@ -413,6 +413,12 @@ export class AdminModelCardPage {
     return this.getDeleteConfirmDialog().getByRole('link').first();
   }
 
+  getAlsoDeleteFoldersBulkCheckbox(): Locator {
+    return this.getBulkDeleteConfirmDialog().getByRole('checkbox', {
+      name: /Also delete.*model folders/i,
+    });
+  }
+
   // ── Helper: create via UI and return ─────────────────────────────────────
 
   async createModelCard(fields: {
