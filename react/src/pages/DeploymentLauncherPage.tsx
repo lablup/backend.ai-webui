@@ -22,7 +22,13 @@ import {
   useCurrentResourceGroupValue,
 } from '../hooks/useCurrentProject';
 import { App, Form, Skeleton, Typography, theme } from 'antd';
-import { BAIFlex, toGlobalId, toLocalId, useBAILogger } from 'backend.ai-ui';
+import {
+  BAIFlex,
+  isValidUUID,
+  toGlobalId,
+  toLocalId,
+  useBAILogger,
+} from 'backend.ai-ui';
 import React, { Suspense, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
@@ -42,6 +48,24 @@ import { useParams } from 'react-router-dom';
  * (see FR-2674), which is responsible for the card layout, step navigation,
  * and per-field validation.
  */
+
+/**
+ * Decode a Strawberry global id and return the embedded UUID, or undefined if
+ * the id isn't a base64-encoded `<Type>:<uuid>` payload. `toLocalId` calls
+ * `atob` which throws on non-base64 input, so we guard with try/catch and
+ * also verify the decoded value is a UUID via `isValidUUID` — that prevents
+ * accidentally forwarding a global id (or other garbage) to a mutation field
+ * that the server parses as `UUID!`.
+ */
+const safeDecodeRuntimeVariantUuid = (globalId: string): string | undefined => {
+  try {
+    const decoded = toLocalId(globalId);
+    return isValidUUID(decoded) ? decoded : undefined;
+  } catch {
+    return undefined;
+  }
+};
+
 const DeploymentLauncherPage: React.FC = () => {
   'use memo';
 
@@ -184,7 +208,7 @@ const DeploymentLauncherPageLayout: React.FC<
           runtimeVariants {
             edges {
               node {
-                rowId
+                id
                 name
               }
             }
@@ -306,13 +330,19 @@ const DeploymentLauncherPageLayout: React.FC<
     const entries = parseResourceSlotEntries(preset?.resource_slots ?? null);
 
     // Resolve runtimeVariantId: prefer value stored in form (edit pre-fill),
-    // fall back to looking up by name from the runtimeVariants query.
+    // fall back to decoding the Strawberry global id from the runtimeVariants
+    // query into a local UUID. ModelRuntimeConfigInput.runtimeVariantId is
+    // typed as UUID! on the server, matching the rowId portion of the global
+    // id. toLocalId throws on non-base64 input, so guard with try/catch and
+    // verify the decoded value is a UUID before submitting — surface a clear
+    // error rather than letting a malformed id reach the mutation.
+    const variantNode = runtimeVariantByName[values.runtimeVariant];
     const runtimeVariantId =
       values.runtimeVariantId ??
-      runtimeVariantByName[values.runtimeVariant]?.rowId;
+      (variantNode ? safeDecodeRuntimeVariantUuid(variantNode.id) : undefined);
     if (!runtimeVariantId) {
       throw new Error(
-        `Unknown runtime variant: ${values.runtimeVariant}. ` +
+        `Could not resolve a UUID for runtime variant "${values.runtimeVariant}". ` +
           'Please re-select a runtime variant.',
       );
     }
@@ -368,7 +398,13 @@ const DeploymentLauncherPageLayout: React.FC<
       commitEdit({
         variables: {
           input: {
-            deploymentId: toGlobalId('ModelDeployment', targetDeploymentId),
+            // `AddRevisionInput.deploymentId` is `ID!` in the schema but the
+            // server resolver expects the local UUID, matching the working
+            // pattern in `DeploymentAddRevisionModal.tsx:378`. Wrapping it in
+            // `toGlobalId('ModelDeployment', ...)` here previously caused the
+            // server to reject the input with `badly formed hexadecimal UUID
+            // string` after createModelDeployment succeeded.
+            deploymentId: targetDeploymentId,
             clusterConfig: {
               mode: values.clusterMode ?? 'SINGLE_NODE',
               size: values.clusterSize ?? 1,
@@ -479,7 +515,10 @@ const DeploymentLauncherPageLayout: React.FC<
         commitUpdateReplica({
           variables: {
             input: {
-              id: toGlobalId('ModelDeployment', deploymentId),
+              // `UpdateDeploymentInput.id` is `ID!` in the schema but the
+              // server resolver expects the local UUID, matching
+              // `DeploymentRevisionHistoryTab.tsx` rollback mutation.
+              id: deploymentId,
               replicaCount: values.desiredReplicaCount ?? 1,
             },
           },

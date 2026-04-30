@@ -145,7 +145,7 @@ export interface DeploymentLauncherPageContentProps {
    */
   deploymentFrgmt?: DeploymentLauncherPageContent_deployment$key | null;
   /** Available runtime variants fetched by the parent page layout. */
-  runtimeVariants?: ReadonlyArray<{ name: string; rowId: string }>;
+  runtimeVariants?: ReadonlyArray<{ name: string; id: string }>;
   /**
    * Optional change observer forwarded to the underlying antd `<Form>`.
    * Useful for parent pages that want to persist the draft state
