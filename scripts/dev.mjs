@@ -1,25 +1,39 @@
 #!/usr/bin/env node
-// Bridges THEME_HEADER_COLOR from .env.development.local into REACT_APP_THEME_COLOR,
-// then spawns concurrently with three children (tsc watch, Relay watch, CRA via Portless).
+// Bridges THEME_HEADER_COLOR (shell env or .env.development.local) into
+// VITE_THEME_HEADER_COLOR so Vite auto-exposes it on import.meta.env.
+// Then spawns concurrently with three children (tsc watch, Relay watch, Vite via Portless).
 import { spawn, spawnSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 const env = { ...process.env };
-const envFile = resolve(process.cwd(), '.env.development.local');
-if (!env.REACT_APP_THEME_COLOR && existsSync(envFile)) {
-  for (const line of readFileSync(envFile, 'utf8').split('\n')) {
-    const trimmed = line.trim();
-    if (!trimmed || trimmed.startsWith('#')) continue;
-    const eq = trimmed.indexOf('=');
-    if (eq === -1) continue;
-    const key = trimmed.slice(0, eq).trim();
-    const value = trimmed.slice(eq + 1).trim().replace(/^['"]|['"]$/g, '');
-    if (key === 'THEME_HEADER_COLOR' && value) {
-      env.REACT_APP_THEME_COLOR = value;
-      break;
+
+// Resolution order for the dev header color:
+//   1. VITE_THEME_HEADER_COLOR — already in Vite-native form, pass through.
+//   2. THEME_HEADER_COLOR — friendly shell-side name (e.g. used by the
+//      dev-server skill: `THEME_HEADER_COLOR=#... pnpm dev`).
+//   3. THEME_HEADER_COLOR in .env.development.local — file-based default.
+// The friendly aliases are bridged to VITE_THEME_HEADER_COLOR; raw
+// VITE_THEME_HEADER_COLOR is also accepted directly in .env.development.local
+// since Vite picks it up natively.
+if (!env.VITE_THEME_HEADER_COLOR) {
+  let color = env.THEME_HEADER_COLOR;
+  const envFile = resolve(process.cwd(), '.env.development.local');
+  if (!color && existsSync(envFile)) {
+    for (const line of readFileSync(envFile, 'utf8').split('\n')) {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith('#')) continue;
+      const eq = trimmed.indexOf('=');
+      if (eq === -1) continue;
+      const key = trimmed.slice(0, eq).trim();
+      const value = trimmed.slice(eq + 1).trim().replace(/^['"]|['"]$/g, '');
+      if (key === 'THEME_HEADER_COLOR' && value) {
+        color = value;
+        break;
+      }
     }
   }
+  if (color) env.VITE_THEME_HEADER_COLOR = color;
 }
 
 // Ensure the Portless daemon is running. Portless 0.10+ defaults the daemon

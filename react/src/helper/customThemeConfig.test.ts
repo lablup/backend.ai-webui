@@ -99,9 +99,10 @@ describe('customThemeConfig', () => {
       expect(theme?.logo).toEqual(mockLegacyTheme.logo);
     });
 
-    it('should apply REACT_APP_THEME_COLOR in development environment', async () => {
-      vi.stubEnv('NODE_ENV', 'development');
-      process.env.REACT_APP_THEME_COLOR = '#ff0000';
+    it('should apply VITE_THEME_HEADER_COLOR in development environment', async () => {
+      vi.stubEnv('MODE', 'development');
+      vi.stubEnv('DEV', true);
+      vi.stubEnv('VITE_THEME_HEADER_COLOR', '#ff0000');
 
       const mockTheme: CustomThemeConfig = {
         light: {
@@ -132,9 +133,10 @@ describe('customThemeConfig', () => {
       expect(theme?.dark.components?.Layout?.headerBg).toBe('#ff0000');
     });
 
-    it('should not apply REACT_APP_THEME_COLOR in production environment', async () => {
-      vi.stubEnv('NODE_ENV', 'production');
-      process.env.REACT_APP_THEME_COLOR = '#ff0000';
+    it('should not apply VITE_THEME_HEADER_COLOR in production environment', async () => {
+      vi.stubEnv('MODE', 'production');
+      vi.stubEnv('DEV', false);
+      vi.stubEnv('VITE_THEME_HEADER_COLOR', '#ff0000');
 
       const mockTheme: CustomThemeConfig = {
         light: {
@@ -371,9 +373,10 @@ describe('customThemeConfig', () => {
       expect(dispatchEventSpy).toHaveBeenCalledTimes(2);
     });
 
-    it('should only apply REACT_APP_THEME_COLOR when both development mode and env var are set', async () => {
-      vi.stubEnv('NODE_ENV', 'development');
-      delete process.env.REACT_APP_THEME_COLOR;
+    it('should only apply VITE_THEME_HEADER_COLOR when both development mode and env var are set', async () => {
+      vi.stubEnv('MODE', 'development');
+      vi.stubEnv('DEV', true);
+      vi.stubEnv('VITE_THEME_HEADER_COLOR', '');
 
       const mockTheme: CustomThemeConfig = {
         light: {
@@ -404,9 +407,10 @@ describe('customThemeConfig', () => {
       expect(theme?.dark.components?.Layout?.headerBg).toBeUndefined();
     });
 
-    it('should preserve existing Layout component settings when applying REACT_APP_THEME_COLOR', async () => {
-      vi.stubEnv('NODE_ENV', 'development');
-      process.env.REACT_APP_THEME_COLOR = '#ff0000';
+    it('should preserve existing Layout component settings when applying VITE_THEME_HEADER_COLOR', async () => {
+      vi.stubEnv('MODE', 'development');
+      vi.stubEnv('DEV', true);
+      vi.stubEnv('VITE_THEME_HEADER_COLOR', '#ff0000');
 
       const mockTheme: CustomThemeConfig = {
         light: {
