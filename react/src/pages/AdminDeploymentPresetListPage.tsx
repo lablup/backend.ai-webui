@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import type { AdminDeploymentPresetListPageDeleteMutation } from '../__generated__/AdminDeploymentPresetListPageDeleteMutation.graphql';
+import type { AdminDeploymentPresetListPageImageQuery } from '../__generated__/AdminDeploymentPresetListPageImageQuery.graphql';
 import type {
   AdminDeploymentPresetListPageQuery,
   AdminDeploymentPresetListPageQuery$data,
@@ -35,13 +36,36 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { parseAsJson, parseAsString, useQueryStates } from 'nuqs';
-import React, { SetStateAction, useDeferredValue, useState } from 'react';
+import React, {
+  SetStateAction,
+  Suspense,
+  useDeferredValue,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 
 type DeploymentPresetNode = NonNullableNodeOnEdges<
   AdminDeploymentPresetListPageQuery$data['deploymentRevisionPresets']
 >;
+
+const ImageCanonicalName: React.FC<{ imageId: string }> = ({ imageId }) => {
+  'use memo';
+  const data = useLazyLoadQuery<AdminDeploymentPresetListPageImageQuery>(
+    graphql`
+      query AdminDeploymentPresetListPageImageQuery($id: ID!) {
+        imageV2(id: $id) {
+          identity {
+            canonicalName
+          }
+        }
+      }
+    `,
+    { id: imageId },
+    { fetchPolicy: 'store-or-network' },
+  );
+  return <>{data.imageV2?.identity.canonicalName ?? imageId}</>;
+};
 
 const availablePresetSorterKeys = ['name', 'rank', 'createdAt'] as const;
 
@@ -138,12 +162,14 @@ const AdminDeploymentPresetTable: React.FC<
     {
       key: 'image',
       title: t('adminDeploymentPreset.Image'),
-      // TODO(needs-backend): execution.image should return the canonical image
-      // tag (e.g. cr.backend.ai/stable/vllm:latest) but the backend currently
-      // returns null. DeploymentRevisionPreset has no top-level imageId field,
-      // so we cannot resolve it on the frontend.
       render: (_: unknown, record: DeploymentPresetNode) =>
-        record.execution?.image ?? '-',
+        record.execution?.imageId ? (
+          <Suspense fallback={record.execution.imageId}>
+            <ImageCanonicalName imageId={record.execution.imageId} />
+          </Suspense>
+        ) : (
+          '-'
+        ),
     },
     {
       key: 'cluster',
@@ -319,7 +345,7 @@ const AdminDeploymentPresetListPage: React.FC = () => {
                 clusterSize
               }
               execution {
-                image
+                imageId
               }
               deploymentDefaults {
                 replicaCount

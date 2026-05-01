@@ -2,7 +2,6 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import type { AdminDeploymentPresetSettingPageContentImageIdByNameQuery } from '../__generated__/AdminDeploymentPresetSettingPageContentImageIdByNameQuery.graphql';
 import type { AdminDeploymentPresetSettingPageContentImageQuery } from '../__generated__/AdminDeploymentPresetSettingPageContentImageQuery.graphql';
 import type { AdminDeploymentPresetSettingPageContent_preset$key } from '../__generated__/AdminDeploymentPresetSettingPageContent_preset.graphql';
 import EnvVarFormList from '../components/EnvVarFormList';
@@ -315,49 +314,6 @@ const ImageCanonicalName: React.FC<{ imageId: string }> = ({ imageId }) => {
 };
 
 // ---------------------------------------------------------------------------
-// ImageIdResolver — looks up UUID by canonical name and sets the form field
-// ---------------------------------------------------------------------------
-
-const ImageIdResolver: React.FC<{
-  canonicalName: string;
-  onResolved: (imageId: string) => void;
-}> = ({ canonicalName, onResolved }) => {
-  'use memo';
-  const data =
-    useLazyLoadQuery<AdminDeploymentPresetSettingPageContentImageIdByNameQuery>(
-      graphql`
-        query AdminDeploymentPresetSettingPageContentImageIdByNameQuery(
-          $canonicalName: String!
-        ) {
-          adminImagesV2(
-            filter: { name: { equals: $canonicalName } }
-            limit: 1
-          ) {
-            edges {
-              node {
-                id
-              }
-            }
-          }
-        }
-      `,
-      { canonicalName },
-      { fetchPolicy: 'store-or-network' },
-    );
-
-  const id = data.adminImagesV2?.edges?.[0]?.node?.id;
-  const resolveId = useEffectEvent(() => {
-    if (id) onResolved(toLocalId(id));
-  });
-
-  useEffect(() => {
-    resolveId();
-  }, [id]);
-
-  return null;
-};
-
-// ---------------------------------------------------------------------------
 // Main content component
 // ---------------------------------------------------------------------------
 
@@ -393,7 +349,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
           clusterSize
         }
         execution {
-          image
+          imageId
           startupCommand
           bootstrapScript
           environ {
@@ -486,6 +442,9 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
         name: preset.name,
         description: preset.description ?? undefined,
         runtimeVariantId: preset.runtimeVariantId,
+        imageId: preset.execution?.imageId
+          ? toLocalId(preset.execution.imageId)
+          : undefined,
         clusterMode:
           (preset.cluster?.clusterMode as
             | 'SINGLE_NODE'
@@ -661,16 +620,6 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
           onValuesChange={() => syncFormToURL()}
           scrollToFirstError
         >
-          {/* Edit mode: resolve imageId from canonical name asynchronously */}
-          {mode === 'edit' && preset?.execution?.image && (
-            <Suspense fallback={null}>
-              <ImageIdResolver
-                canonicalName={preset.execution.image}
-                onResolved={(id) => form.setFieldValue('imageId', id)}
-              />
-            </Suspense>
-          )}
-
           {/* ----------------------------------------------------------------
               Step 1 — Basic Info
           ---------------------------------------------------------------- */}
