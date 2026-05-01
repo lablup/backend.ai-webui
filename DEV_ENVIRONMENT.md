@@ -77,7 +77,7 @@ Create `.env.development.local` (copy from `.env.development.local.sample`) and 
 THEME_HEADER_COLOR=#7C3AED
 ```
 
-`scripts/dev.mjs` forwards this value as `REACT_APP_THEME_COLOR` to the CRA process, tinting the header so you can tell multiple instances apart at a glance.
+`scripts/dev.mjs` forwards this value as `VITE_THEME_HEADER_COLOR` so Vite exposes it on `import.meta.env` for the React app, tinting the header so you can tell multiple instances apart at a glance. You can also set `VITE_THEME_HEADER_COLOR` directly (in the file or the shell) — the bridge is a convenience for the friendlier `THEME_HEADER_COLOR` name.
 
 ## Storybook
 
