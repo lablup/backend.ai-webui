@@ -442,9 +442,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
         name: preset.name,
         description: preset.description ?? undefined,
         runtimeVariantId: preset.runtimeVariantId,
-        imageId: preset.execution?.imageId
-          ? toLocalId(preset.execution.imageId)
-          : undefined,
+        imageId: preset.execution?.imageId ?? undefined,
         clusterMode:
           (preset.cluster?.clusterMode as
             | 'SINGLE_NODE'
