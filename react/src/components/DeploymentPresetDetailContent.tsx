@@ -6,7 +6,7 @@ import type { DeploymentPresetDetailContentFragment$key } from '../__generated__
 import type { DeploymentPresetDetailContentImageQuery } from '../__generated__/DeploymentPresetDetailContentImageQuery.graphql';
 import { convertToBinaryUnit } from '../helper';
 import { ResourceNumbersOfSession } from '../pages/SessionLauncherPage';
-import { Descriptions, Typography } from 'antd';
+import { Descriptions, Skeleton, Typography } from 'antd';
 import { BAICard, BAIFlex, toGlobalId } from 'backend.ai-ui';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -27,7 +27,11 @@ const ImageCanonicalName: React.FC<{ imageId: string }> = ({ imageId }) => {
     { id: toGlobalId('ImageV2', imageId) },
     { fetchPolicy: 'store-or-network' },
   );
-  return <>{data.imageV2?.identity.canonicalName ?? imageId}</>;
+  return (
+    <Typography.Text copyable>
+      {data.imageV2?.identity.canonicalName ?? imageId}
+    </Typography.Text>
+  );
 };
 
 interface DeploymentPresetDetailContentProps {
@@ -117,11 +121,9 @@ const DeploymentPresetDetailContent: React.FC<
             {
               label: t('adminDeploymentPreset.Image'),
               children: preset.execution?.imageId ? (
-                <Typography.Text copyable>
-                  <Suspense fallback={preset.execution.imageId}>
-                    <ImageCanonicalName imageId={preset.execution.imageId} />
-                  </Suspense>
-                </Typography.Text>
+                <Suspense fallback={<Skeleton.Input size="small" active />}>
+                  <ImageCanonicalName imageId={preset.execution.imageId} />
+                </Suspense>
               ) : (
                 '-'
               ),
