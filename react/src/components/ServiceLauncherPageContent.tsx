@@ -5,6 +5,7 @@
 import { ServiceLauncherPageContentFragment$key } from '../__generated__/ServiceLauncherPageContentFragment.graphql';
 import { ServiceLauncherPageContentModifyMutation } from '../__generated__/ServiceLauncherPageContentModifyMutation.graphql';
 import { ServiceLauncherPageContent_AutoScalingRulesQuery } from '../__generated__/ServiceLauncherPageContent_AutoScalingRulesQuery.graphql';
+import { ServiceLauncherPageContent_DeploymentPresetsQuery } from '../__generated__/ServiceLauncherPageContent_DeploymentPresetsQuery.graphql';
 import { ServiceLauncherPageContent_ModelDefinitionQuery } from '../__generated__/ServiceLauncherPageContent_ModelDefinitionQuery.graphql';
 import { ServiceLauncherPageContent_UserInfoQuery } from '../__generated__/ServiceLauncherPageContent_UserInfoQuery.graphql';
 import { ServiceLauncherPageContent_UserResourcePolicyQuery } from '../__generated__/ServiceLauncherPageContent_UserResourcePolicyQuery.graphql';
@@ -244,7 +245,9 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
   const validationRules = useValidateServiceName();
   const [isOpenServiceValidationModal, setIsOpenServiceValidationModal] =
     useState(false);
-
+  const [selectedPresetId, setSelectedPresetId] = useState<
+    string | null | undefined
+  >(null);
   const [form] = Form.useForm<ServiceLauncherFormValue>();
   const [wantToChangeResource, setWantToChangeResource] = useState(false);
   const [currentGlobalResourceGroup, setCurrentGlobalResourceGroup] =
@@ -888,6 +891,29 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
     );
   const hasAutoScalingRules =
     (endpoint_auto_scaling_rules?.edges?.length ?? 0) > 0;
+
+  const isSupportDeploymentPreset = baiClient.supports('deployment-preset');
+  const { deploymentRevisionPresets } =
+    useLazyLoadQuery<ServiceLauncherPageContent_DeploymentPresetsQuery>(
+      graphql`
+        query ServiceLauncherPageContent_DeploymentPresetsQuery {
+          deploymentRevisionPresets(limit: 100) {
+            edges {
+              node {
+                id
+                name
+              }
+            }
+          }
+        }
+      `,
+      {},
+      {
+        fetchPolicy: isSupportDeploymentPreset
+          ? 'store-and-network'
+          : 'store-only',
+      },
+    );
 
   const [
     commitModifyEndpoint,
@@ -1675,6 +1701,30 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                             }}
                           />
                         </Form.Item>
+                        {isSupportDeploymentPreset && (
+                          <Form.Item
+                            label={t('modelService.SelectDeploymentPreset')}
+                          >
+                            <Select
+                              allowClear
+                              options={
+                                deploymentRevisionPresets?.edges?.map(
+                                  (edge) => ({
+                                    value: edge.node.id,
+                                    label: edge.node.name,
+                                  }),
+                                ) ?? []
+                              }
+                              value={selectedPresetId}
+                              onChange={(value) => {
+                                setSelectedPresetId(value ?? null);
+                              }}
+                              placeholder={t(
+                                'modelService.SelectDeploymentPreset',
+                              )}
+                            />
+                          </Form.Item>
+                        )}
                         <ImageEnvironmentSelectFormItems
                           searchPrefill={envSearchPrefill}
                           // //TODO: test with real inference images
