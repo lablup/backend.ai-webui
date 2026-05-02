@@ -366,7 +366,7 @@ const DeploymentLauncherPageLayout: React.FC<
                 modelPath: values.commandModelMount ?? '/models',
                 service: {
                   preStartActions: [],
-                  startCommand: values.startCommand,
+                  startCommand: [values.startCommand],
                   port: values.commandPort ?? 8000,
                   healthCheck: values.commandHealthCheck
                     ? {

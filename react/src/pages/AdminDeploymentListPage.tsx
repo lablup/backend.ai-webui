@@ -9,15 +9,18 @@ import type {
   DeploymentStatus,
   OrderDirection,
 } from '../__generated__/AdminDeploymentListPageQuery.graphql';
+import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import DeploymentList, {
   availableDeploymentOrderValues,
   tableOrderToSort,
   type DeploymentOrderValue,
   type DeploymentStatusCategory,
 } from '../components/DeploymentList';
-import { useWebUINavigate } from '../hooks';
+import { useWebUINavigate, useSuspendedBackendaiClient } from '../hooks';
+import { useCurrentUserRole } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
+import AdminDeploymentPresetListPage from './AdminDeploymentPresetListPage';
 import AdminModelCardListPage from './AdminModelCardListPage';
 import { Skeleton } from 'antd';
 import type { CardTabListType } from 'antd/es/card';
@@ -25,6 +28,7 @@ import {
   BAICard,
   BAIFetchKeyButton,
   INITIAL_FETCH_KEY,
+  filterOutEmpty,
   toLocalId,
   useFetchKey,
 } from 'backend.ai-ui';
@@ -191,8 +195,12 @@ const AdminDeploymentListPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const currentTab = searchParams.get('tab') || 'deployments';
   const navigate = useWebUINavigate();
+  const currentUserRole = useCurrentUserRole();
+  const baiClient = useSuspendedBackendaiClient();
+  const isSuperAdmin = currentUserRole === 'superadmin';
+  const isDeploymentPresetSupported = baiClient.supports('deployment-preset');
 
-  const tabItems: CardTabListType[] = [
+  const tabItems: CardTabListType[] = filterOutEmpty([
     {
       key: 'deployments',
       label: t('webui.menu.Deployments'),
@@ -201,7 +209,12 @@ const AdminDeploymentListPage: React.FC = () => {
       key: 'model-store-management',
       label: t('adminModelCard.ModelStoreManagement'),
     },
-  ];
+    isSuperAdmin &&
+      isDeploymentPresetSupported && {
+        key: 'deployment-presets',
+        label: t('adminDeploymentPreset.TabTitle'),
+      },
+  ]);
 
   return (
     <BAICard
@@ -218,6 +231,13 @@ const AdminDeploymentListPage: React.FC = () => {
       <Suspense fallback={<Skeleton active />}>
         {currentTab === 'deployments' && <AdminDeploymentListPageContent />}
         {currentTab === 'model-store-management' && <AdminModelCardListPage />}
+        {currentTab === 'deployment-presets' &&
+          isSuperAdmin &&
+          isDeploymentPresetSupported && (
+            <BAIErrorBoundary>
+              <AdminDeploymentPresetListPage />
+            </BAIErrorBoundary>
+          )}
       </Suspense>
     </BAICard>
   );

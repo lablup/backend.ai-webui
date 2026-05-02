@@ -221,7 +221,7 @@ const AdminServingPage: React.FC = () => {
       activeTabKey={queryParam.tab}
       onTabChange={(key) => {
         webUINavigate({
-          pathname: '/admin-serving',
+          pathname: '/admin-deployments',
           search: new URLSearchParams({
             tab: key,
           }).toString(),
