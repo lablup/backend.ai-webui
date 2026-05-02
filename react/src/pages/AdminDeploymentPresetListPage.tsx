@@ -64,7 +64,7 @@ const ImageCanonicalName: React.FC<{ imageId: string }> = ({ imageId }) => {
     { id: imageId },
     { fetchPolicy: 'store-or-network' },
   );
-  return <>{data.imageV2?.identity.canonicalName ?? imageId}</>;
+  return <>{data.imageV2?.identity?.canonicalName ?? imageId}</>;
 };
 
 const availablePresetSorterKeys = ['name', 'rank', 'createdAt'] as const;
@@ -455,6 +455,7 @@ const AdminDeploymentPresetListPage: React.FC = () => {
       )}
       <BAIDeleteConfirmModal
         open={!!deletingPreset}
+        requireConfirmInput
         items={
           deletingPreset
             ? [{ key: deletingPreset.id, label: deletingPreset.name }]

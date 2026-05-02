@@ -10,16 +10,16 @@ import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { ResourceNumbersOfSession } from '../pages/SessionLauncherPage';
 import {
   DoubleRightOutlined,
+  DownOutlined,
   LeftOutlined,
   MinusCircleOutlined,
   PlusOutlined,
   RightOutlined,
 } from '@ant-design/icons';
-import { useDebounceFn } from 'ahooks';
+import { useDebounceFn, useToggle } from 'ahooks';
 import {
   AutoComplete,
   Button,
-  Card,
   Checkbox,
   Descriptions,
   Form,
@@ -29,16 +29,18 @@ import {
   Select,
   Space,
   Steps,
+  Tag,
   Tour,
   Typography,
   theme,
 } from 'antd';
 import type { FormInstance, StepsProps, TourProps } from 'antd';
 import {
+  BAIAdminImageSelect,
   BAIButton,
+  BAICard,
   BAIDynamicUnitInputNumber,
   BAIFlex,
-  BAIImageSelect,
   toLocalId,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -57,12 +59,61 @@ import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 // Step keys (URL-synced)
 // ---------------------------------------------------------------------------
 
-const STEP_KEYS = ['basic', 'model', 'deployment', 'review'] as const;
+const STEP_KEYS = ['basic', 'model', 'review'] as const;
 type StepKey = (typeof STEP_KEYS)[number];
 
 // ---------------------------------------------------------------------------
 // Form value type
 // ---------------------------------------------------------------------------
+
+export type ModelHealthCheckFormValue = {
+  path: string;
+  interval?: number;
+  maxRetries?: number;
+  maxWaitTime?: number;
+  expectedStatusCode?: number;
+  initialDelay?: number;
+};
+
+export type PreStartActionFormValue = {
+  action: string;
+  args: string; // JSON string
+};
+
+export type ModelServiceFormValue = {
+  port?: number;
+  shell?: string;
+  startCommand?: string;
+  preStartActions?: PreStartActionFormValue[];
+  enableHealthCheck?: boolean;
+  healthCheck?: ModelHealthCheckFormValue;
+};
+
+export type ModelMetadataFormValue = {
+  author?: string;
+  title?: string;
+  version?: string;
+  description?: string;
+  task?: string;
+  category?: string;
+  architecture?: string;
+  framework?: string[];
+  label?: string[];
+  license?: string;
+};
+
+export type ModelConfigFormValue = {
+  name: string;
+  modelPath: string;
+  enableService?: boolean;
+  service?: ModelServiceFormValue;
+  enableMetadata?: boolean;
+  metadata?: ModelMetadataFormValue;
+};
+
+export type ModelDefinitionFormValue = {
+  models?: ModelConfigFormValue[];
+};
 
 export type AdminDeploymentPresetFormValue = {
   name: string;
@@ -82,7 +133,7 @@ export type AdminDeploymentPresetFormValue = {
   environ?: Array<{ variable: string; value: string }>;
   resourceSlots?: Array<{ resourceType: string; quantity: string }>;
   resourceOpts?: Array<{ name: string; value: string }>;
-  modelDefinition?: string;
+  modelDefinition?: ModelDefinitionFormValue;
   openToPublic?: boolean;
   replicaCount?: number;
   revisionHistoryLimit?: number;
@@ -118,7 +169,7 @@ export interface AdminDeploymentPresetSettingPageContentProps {
 }
 
 // ---------------------------------------------------------------------------
-// ImageSelectField — thin Suspense wrapper around BAIImageSelect
+// ImageSelectField — thin Suspense wrapper around BAIAdminImageSelect
 // ---------------------------------------------------------------------------
 
 const ImageSelectField: React.FC<{
@@ -129,7 +180,7 @@ const ImageSelectField: React.FC<{
   const { t } = useTranslation();
   return (
     <Suspense fallback={<Select disabled placeholder={t('general.Loading')} />}>
-      <BAIImageSelect value={value} onChange={onChange} />
+      <BAIAdminImageSelect value={value} onChange={onChange} />
     </Suspense>
   );
 };
@@ -291,6 +342,516 @@ const FixedResourceSlotField: React.FC<{
 };
 
 // ---------------------------------------------------------------------------
+// ModelConfigItem — one model entry card in the modelDefinition Form.List
+// ---------------------------------------------------------------------------
+
+const ModelConfigItem: React.FC<{
+  listItemName: number;
+  restField: object;
+  onRemove: () => void;
+}> = ({ listItemName, restField, onRemove }) => {
+  'use memo';
+  const { t } = useTranslation();
+  const { token } = theme.useToken();
+  const form = Form.useFormInstance<AdminDeploymentPresetFormValue>();
+
+  // Pass `form` explicitly so useWatch subscribes to the store even without a
+  // registered Form.Item for these boolean flags.
+  const formEnableService = Form.useWatch(
+    ['modelDefinition', 'models', listItemName, 'enableService'],
+    form,
+  );
+  const formEnableMetadata = Form.useWatch(
+    ['modelDefinition', 'models', listItemName, 'enableMetadata'],
+    form,
+  );
+  const enableHealthCheck = Form.useWatch(
+    ['modelDefinition', 'models', listItemName, 'service', 'enableHealthCheck'],
+    form,
+  );
+
+  // Initialise from the form store so that edit-mode values (set via Form
+  // initialValues before this component mounts) are visible on the first render,
+  // rather than waiting for the formEnableService watcher to fire.
+  const [serviceOpen, { toggle: toggleServiceState, set: setServiceOpen }] =
+    useToggle<boolean>(
+      !!(form as FormInstance).getFieldValue([
+        'modelDefinition',
+        'models',
+        listItemName,
+        'enableService',
+      ]),
+    );
+  const [metadataOpen, { toggle: toggleMetadataState, set: setMetadataOpen }] =
+    useToggle<boolean>(
+      !!(form as FormInstance).getFieldValue([
+        'modelDefinition',
+        'models',
+        listItemName,
+        'enableMetadata',
+      ]),
+    );
+
+  // Sync form store → local toggle when the form is (re-)initialised (edit mode).
+  const onSyncService = useEffectEvent(() =>
+    setServiceOpen(!!formEnableService),
+  );
+  const onSyncMetadata = useEffectEvent(() =>
+    setMetadataOpen(!!formEnableMetadata),
+  );
+  useEffect(() => {
+    onSyncService();
+  }, [formEnableService]);
+  useEffect(() => {
+    onSyncMetadata();
+  }, [formEnableMetadata]);
+
+  const toggleService = () => {
+    toggleServiceState();
+    // `NamePath<AdminDeploymentPresetFormValue>` is truncated by TypeScript before
+    // reaching depth-4 array element fields; cast to the unparameterised FormInstance
+    // (which uses NamePath<any>) to keep the call site fully typed without `any`.
+    (form as FormInstance).setFieldValue(
+      ['modelDefinition', 'models', listItemName, 'enableService'],
+      !serviceOpen,
+    );
+  };
+
+  const toggleMetadata = () => {
+    toggleMetadataState();
+    (form as FormInstance).setFieldValue(
+      ['modelDefinition', 'models', listItemName, 'enableMetadata'],
+      !metadataOpen,
+    );
+  };
+
+  return (
+    <BAIFlex direction="row" align="start" gap="xs">
+      <BAICard size="small" style={{ flex: 1 }}>
+        {/* ── Name + Path ── */}
+        <BAIFlex gap="md" wrap="wrap">
+          <Form.Item
+            {...restField}
+            name={[listItemName, 'name']}
+            label={t('adminDeploymentPreset.modelDef.ModelName')}
+            style={{ flex: 1, minWidth: 160 }}
+            rules={[{ required: true, message: '' }]}
+          >
+            <Input
+              placeholder={t(
+                'adminDeploymentPreset.modelDef.ModelNamePlaceholder',
+              )}
+            />
+          </Form.Item>
+          <Form.Item
+            {...restField}
+            name={[listItemName, 'modelPath']}
+            label={t('adminDeploymentPreset.modelDef.ModelPath')}
+            style={{ flex: 2, minWidth: 200 }}
+            rules={[{ required: true, message: '' }]}
+          >
+            <Input
+              placeholder={t(
+                'adminDeploymentPreset.modelDef.ModelPathPlaceholder',
+              )}
+            />
+          </Form.Item>
+        </BAIFlex>
+
+        {/* ── Configure Service (collapsible inner card) ── */}
+        <BAICard
+          size="small"
+          type="inner"
+          showDivider={serviceOpen}
+          title={t('adminDeploymentPreset.modelDef.EnableService')}
+          style={{ marginTop: token.marginSM }}
+          styles={{ body: { display: serviceOpen ? undefined : 'none' } }}
+          extra={
+            <Button
+              type="text"
+              size="small"
+              icon={serviceOpen ? <DownOutlined /> : <RightOutlined />}
+              onClick={toggleService}
+            />
+          }
+        >
+          {serviceOpen && (
+            <BAIFlex direction="column" align="stretch" gap="xs">
+              <BAIFlex gap="md" wrap="wrap">
+                <Form.Item
+                  {...restField}
+                  name={[listItemName, 'service', 'port']}
+                  label={t('adminDeploymentPreset.modelDef.Port')}
+                  style={{ flex: 1, minWidth: 100 }}
+                  rules={[{ required: true, message: '' }]}
+                >
+                  <InputNumber
+                    min={1}
+                    max={65535}
+                    style={{ width: '100%' }}
+                    placeholder="8080"
+                  />
+                </Form.Item>
+                <Form.Item
+                  {...restField}
+                  name={[listItemName, 'service', 'shell']}
+                  label={t('adminDeploymentPreset.modelDef.Shell')}
+                  style={{ flex: 2, minWidth: 160 }}
+                >
+                  <Input placeholder="/bin/bash" />
+                </Form.Item>
+              </BAIFlex>
+              <Form.Item
+                {...restField}
+                name={[listItemName, 'service', 'startCommand']}
+                label={t('adminDeploymentPreset.modelDef.StartCommand')}
+              >
+                <Input
+                  placeholder={t(
+                    'adminDeploymentPreset.modelDef.StartCommandPlaceholder',
+                  )}
+                />
+              </Form.Item>
+
+              {/* Pre-start actions */}
+              <Form.Item
+                label={t('adminDeploymentPreset.modelDef.PreStartActions')}
+                style={{ marginBottom: 0 }}
+              >
+                <Form.List name={[listItemName, 'service', 'preStartActions']}>
+                  {(fields, { add, remove }) => (
+                    <BAIFlex direction="column" gap="xs" align="stretch">
+                      {fields.map(({ key, name, ...rest }) => (
+                        <BAIFlex
+                          key={key}
+                          direction="row"
+                          align="baseline"
+                          gap="xs"
+                        >
+                          <Form.Item
+                            {...rest}
+                            name={[name, 'action']}
+                            style={{ marginBottom: 0, flex: 1 }}
+                            rules={[{ required: true, message: '' }]}
+                          >
+                            <Input
+                              placeholder={t(
+                                'adminDeploymentPreset.modelDef.ActionPlaceholder',
+                              )}
+                            />
+                          </Form.Item>
+                          <Form.Item
+                            {...rest}
+                            name={[name, 'args']}
+                            style={{ marginBottom: 0, flex: 2 }}
+                            rules={[
+                              { required: true, message: '' },
+                              {
+                                validator: async (_, v) => {
+                                  if (!v) return;
+                                  try {
+                                    JSON.parse(v);
+                                  } catch {
+                                    return Promise.reject('');
+                                  }
+                                },
+                              },
+                            ]}
+                          >
+                            <Input placeholder="{}" />
+                          </Form.Item>
+                          <MinusCircleOutlined onClick={() => remove(name)} />
+                        </BAIFlex>
+                      ))}
+                      <Form.Item noStyle>
+                        <Button
+                          type="dashed"
+                          onClick={() => add({ action: '', args: '{}' })}
+                          icon={<PlusOutlined />}
+                          block
+                        >
+                          {t(
+                            'adminDeploymentPreset.modelDef.AddPreStartAction',
+                          )}
+                        </Button>
+                      </Form.Item>
+                    </BAIFlex>
+                  )}
+                </Form.List>
+              </Form.Item>
+
+              {/* Health check */}
+              <Form.Item
+                {...restField}
+                name={[listItemName, 'service', 'enableHealthCheck']}
+                valuePropName="checked"
+                style={{
+                  marginTop: token.marginXS,
+                  marginBottom: enableHealthCheck ? token.marginSM : 0,
+                }}
+              >
+                <Checkbox>
+                  {t('adminDeploymentPreset.modelDef.EnableHealthCheck')}
+                </Checkbox>
+              </Form.Item>
+
+              {enableHealthCheck && (
+                <BAIFlex direction="column" align="stretch" gap="xs">
+                  <Form.Item
+                    {...restField}
+                    name={[listItemName, 'service', 'healthCheck', 'path']}
+                    label={t('adminDeploymentPreset.modelDef.HealthCheckPath')}
+                    rules={[{ required: true, message: '' }]}
+                  >
+                    <Input placeholder="/health" />
+                  </Form.Item>
+                  <BAIFlex gap="md" wrap="wrap" align="end">
+                    <Form.Item
+                      {...restField}
+                      name={[
+                        listItemName,
+                        'service',
+                        'healthCheck',
+                        'interval',
+                      ]}
+                      label={t(
+                        'adminDeploymentPreset.modelDef.HealthCheckInterval',
+                      )}
+                      rules={[{ required: true }]}
+                      style={{ flex: 1, minWidth: 160 }}
+                    >
+                      <InputNumber
+                        min={1}
+                        placeholder="10"
+                        style={{ width: '100%' }}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      {...restField}
+                      name={[
+                        listItemName,
+                        'service',
+                        'healthCheck',
+                        'maxRetries',
+                      ]}
+                      label={t(
+                        'adminDeploymentPreset.modelDef.HealthCheckMaxRetries',
+                      )}
+                      rules={[{ required: true }]}
+                      style={{ flex: 1, minWidth: 160 }}
+                    >
+                      <InputNumber
+                        min={1}
+                        placeholder="10"
+                        style={{ width: '100%' }}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      {...restField}
+                      name={[
+                        listItemName,
+                        'service',
+                        'healthCheck',
+                        'maxWaitTime',
+                      ]}
+                      label={t(
+                        'adminDeploymentPreset.modelDef.HealthCheckMaxWaitTime',
+                      )}
+                      rules={[{ required: true }]}
+                      style={{ flex: 1, minWidth: 160 }}
+                    >
+                      <InputNumber
+                        min={1}
+                        placeholder="15"
+                        style={{ width: '100%' }}
+                      />
+                    </Form.Item>
+                  </BAIFlex>
+                  <BAIFlex gap="md" wrap="wrap" align="end">
+                    <Form.Item
+                      {...restField}
+                      name={[
+                        listItemName,
+                        'service',
+                        'healthCheck',
+                        'expectedStatusCode',
+                      ]}
+                      label={t(
+                        'adminDeploymentPreset.modelDef.HealthCheckExpectedStatus',
+                      )}
+                      rules={[{ required: true }]}
+                      style={{ flex: 1, minWidth: 160 }}
+                    >
+                      <InputNumber
+                        min={100}
+                        max={599}
+                        placeholder="200"
+                        style={{ width: '100%' }}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      {...restField}
+                      name={[
+                        listItemName,
+                        'service',
+                        'healthCheck',
+                        'initialDelay',
+                      ]}
+                      label={t(
+                        'adminDeploymentPreset.modelDef.HealthCheckInitialDelay',
+                      )}
+                      rules={[{ required: true }]}
+                      style={{ flex: 1, minWidth: 160 }}
+                    >
+                      <InputNumber
+                        min={0}
+                        placeholder="60"
+                        style={{ width: '100%' }}
+                      />
+                    </Form.Item>
+                    <div style={{ flex: 1, minWidth: 160 }} />
+                  </BAIFlex>
+                </BAIFlex>
+              )}
+            </BAIFlex>
+          )}
+        </BAICard>
+
+        {/* ── Add Metadata (collapsible inner card) ── */}
+        <BAICard
+          size="small"
+          type="inner"
+          showDivider={metadataOpen}
+          title={t('adminDeploymentPreset.modelDef.EnableMetadata')}
+          style={{ marginTop: token.marginSM }}
+          styles={{ body: { display: metadataOpen ? undefined : 'none' } }}
+          extra={
+            <Button
+              type="text"
+              size="small"
+              icon={metadataOpen ? <DownOutlined /> : <RightOutlined />}
+              onClick={toggleMetadata}
+            />
+          }
+        >
+          {metadataOpen && (
+            <BAIFlex direction="column" align="stretch" gap="xs">
+              <BAIFlex gap="md" wrap="wrap">
+                <Form.Item
+                  {...restField}
+                  name={[listItemName, 'metadata', 'title']}
+                  label={t('adminDeploymentPreset.modelDef.Title')}
+                  style={{ flex: 1, minWidth: 160 }}
+                >
+                  <Input />
+                </Form.Item>
+                <Form.Item
+                  {...restField}
+                  name={[listItemName, 'metadata', 'author']}
+                  label={t('adminDeploymentPreset.modelDef.Author')}
+                  style={{ flex: 1, minWidth: 160 }}
+                >
+                  <Input />
+                </Form.Item>
+              </BAIFlex>
+              <BAIFlex gap="md" wrap="wrap">
+                <Form.Item
+                  {...restField}
+                  name={[listItemName, 'metadata', 'version']}
+                  label={t('adminDeploymentPreset.modelDef.Version')}
+                  style={{ flex: 1, minWidth: 120 }}
+                >
+                  <Input />
+                </Form.Item>
+                <Form.Item
+                  {...restField}
+                  name={[listItemName, 'metadata', 'license']}
+                  label={t('adminDeploymentPreset.modelDef.License')}
+                  style={{ flex: 1, minWidth: 120 }}
+                >
+                  <Input />
+                </Form.Item>
+              </BAIFlex>
+              <Form.Item
+                {...restField}
+                name={[listItemName, 'metadata', 'description']}
+                label={t('adminDeploymentPreset.modelDef.Description')}
+              >
+                <Input.TextArea rows={2} />
+              </Form.Item>
+              <BAIFlex gap="md" wrap="wrap">
+                <Form.Item
+                  {...restField}
+                  name={[listItemName, 'metadata', 'task']}
+                  label={t('adminDeploymentPreset.modelDef.Task')}
+                  style={{ flex: 1, minWidth: 120 }}
+                >
+                  <Input />
+                </Form.Item>
+                <Form.Item
+                  {...restField}
+                  name={[listItemName, 'metadata', 'category']}
+                  label={t('adminDeploymentPreset.modelDef.Category')}
+                  style={{ flex: 1, minWidth: 120 }}
+                >
+                  <Input />
+                </Form.Item>
+                <Form.Item
+                  {...restField}
+                  name={[listItemName, 'metadata', 'architecture']}
+                  label={t('adminDeploymentPreset.modelDef.Architecture')}
+                  style={{ flex: 1, minWidth: 120 }}
+                >
+                  <Input />
+                </Form.Item>
+              </BAIFlex>
+              <BAIFlex gap="md" wrap="wrap">
+                <Form.Item
+                  {...restField}
+                  name={[listItemName, 'metadata', 'framework']}
+                  label={t('adminDeploymentPreset.modelDef.Framework')}
+                  style={{ flex: 1, minWidth: 160 }}
+                >
+                  <Select
+                    mode="tags"
+                    tokenSeparators={[',']}
+                    placeholder={t(
+                      'adminDeploymentPreset.modelDef.FrameworkPlaceholder',
+                    )}
+                    style={{ width: '100%' }}
+                    allowClear
+                  />
+                </Form.Item>
+                <Form.Item
+                  {...restField}
+                  name={[listItemName, 'metadata', 'label']}
+                  label={t('adminDeploymentPreset.modelDef.Label')}
+                  style={{ flex: 1, minWidth: 160 }}
+                >
+                  <Select
+                    mode="tags"
+                    tokenSeparators={[',']}
+                    placeholder={t(
+                      'adminDeploymentPreset.modelDef.LabelPlaceholder',
+                    )}
+                    style={{ width: '100%' }}
+                    allowClear
+                  />
+                </Form.Item>
+              </BAIFlex>
+            </BAIFlex>
+          )}
+        </BAICard>
+      </BAICard>
+      <MinusCircleOutlined
+        style={{ cursor: 'pointer', paddingTop: token.paddingSM }}
+        onClick={onRemove}
+      />
+    </BAIFlex>
+  );
+};
+
+// ---------------------------------------------------------------------------
 // Image canonical name resolver (for review step)
 // ---------------------------------------------------------------------------
 
@@ -299,10 +860,14 @@ const ImageCanonicalName: React.FC<{ imageId: string }> = ({ imageId }) => {
   const data =
     useLazyLoadQuery<AdminDeploymentPresetSettingPageContentImageQuery>(
       graphql`
-        query AdminDeploymentPresetSettingPageContentImageQuery($id: ID!) {
-          imageV2(id: $id) {
-            identity {
-              canonicalName
+        query AdminDeploymentPresetSettingPageContentImageQuery($id: UUID!) {
+          adminImagesV2(filter: { id: { equals: $id } }, limit: 1) {
+            edges {
+              node {
+                identity {
+                  canonicalName
+                }
+              }
             }
           }
         }
@@ -310,7 +875,17 @@ const ImageCanonicalName: React.FC<{ imageId: string }> = ({ imageId }) => {
       { id: imageId },
       { fetchPolicy: 'store-or-network' },
     );
-  return <>{data.imageV2?.identity.canonicalName ?? imageId}</>;
+  const canonicalName =
+    data.adminImagesV2?.edges?.[0]?.node?.identity?.canonicalName ?? imageId;
+  return (
+    <Typography.Text
+      code
+      style={{ wordBreak: 'break-all' }}
+      copyable={{ text: canonicalName }}
+    >
+      {canonicalName}
+    </Typography.Text>
+  );
 };
 
 // ---------------------------------------------------------------------------
@@ -364,17 +939,14 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
           }
         }
         resourceSlots {
-          edges {
-            node {
-              slotName
-              quantity
-            }
-          }
+          slotName
+          quantity
         }
         deploymentDefaults {
           openToPublic
           replicaCount
           revisionHistoryLimit
+          deploymentStrategy
         }
         modelDefinition {
           models {
@@ -450,7 +1022,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
             | undefined) ?? undefined,
         clusterSize: preset.cluster?.clusterSize ?? undefined,
         ...(() => {
-          const slots = preset.resourceSlots?.edges?.map((e) => e?.node) ?? [];
+          const slots = preset.resourceSlots ?? [];
           const cpuSlot = slots.find((s) => s?.slotName === 'cpu');
           const memSlot = slots.find((s) => s?.slotName === 'mem');
           const otherSlots = slots.filter(
@@ -494,8 +1066,61 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
         replicaCount: preset.deploymentDefaults?.replicaCount ?? undefined,
         revisionHistoryLimit:
           preset.deploymentDefaults?.revisionHistoryLimit ?? undefined,
-        modelDefinition: preset.modelDefinition
-          ? JSON.stringify(preset.modelDefinition, null, 2)
+        modelDefinition: preset.modelDefinition?.models?.length
+          ? {
+              models: preset.modelDefinition.models.map((m) => ({
+                name: m.name,
+                modelPath: m.modelPath,
+                enableService: !!m.service,
+                service: m.service
+                  ? {
+                      port: m.service.port,
+                      shell: m.service.shell ?? undefined,
+                      startCommand:
+                        m.service.startCommand?.join(' ') ?? undefined,
+                      enableHealthCheck: !!m.service.healthCheck,
+                      healthCheck: m.service.healthCheck
+                        ? {
+                            path: m.service.healthCheck.path,
+                            interval: m.service.healthCheck.interval,
+                            maxRetries: m.service.healthCheck.maxRetries,
+                            maxWaitTime: m.service.healthCheck.maxWaitTime,
+                            expectedStatusCode:
+                              m.service.healthCheck.expectedStatusCode,
+                            initialDelay: m.service.healthCheck.initialDelay,
+                          }
+                        : undefined,
+                      preStartActions:
+                        m.service.preStartActions?.map((a) => ({
+                          action: a.action,
+                          args: JSON.stringify(a.args),
+                        })) ?? [],
+                    }
+                  : undefined,
+                enableMetadata: !!m.metadata,
+                metadata: m.metadata
+                  ? {
+                      author: m.metadata.author ?? undefined,
+                      title: m.metadata.title ?? undefined,
+                      version:
+                        m.metadata.version != null
+                          ? String(m.metadata.version)
+                          : undefined,
+                      description: m.metadata.description ?? undefined,
+                      task: m.metadata.task ?? undefined,
+                      category: m.metadata.category ?? undefined,
+                      architecture: m.metadata.architecture ?? undefined,
+                      framework: m.metadata.framework
+                        ? [...m.metadata.framework]
+                        : undefined,
+                      label: m.metadata.label
+                        ? [...m.metadata.label]
+                        : undefined,
+                      license: m.metadata.license ?? undefined,
+                    }
+                  : undefined,
+              })),
+            }
           : undefined,
       };
     }
@@ -508,12 +1133,15 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
   const applyInitialValues = useEffectEvent(() => {
     // In edit mode, skip applying until the preset data is available.
     if (mode === 'edit' && !preset) return;
-    const merged =
-      mode === 'create'
-        ? _.merge({}, initialValues, formValuesFromURL)
-        : initialValues;
-    form.resetFields();
-    form.setFieldsValue(merged);
+    if (mode === 'create') {
+      // Create mode: merge URL-synced values on top of defaults.
+      form.resetFields();
+      form.setFieldsValue(_.merge({}, initialValues, formValuesFromURL));
+    } else {
+      // Edit mode: form already has initialValues from <Form initialValues>,
+      // so only call setFieldsValue (no resetFields to avoid clearing briefly).
+      form.setFieldsValue(initialValues);
+    }
   });
 
   useEffect(() => {
@@ -529,7 +1157,6 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
         {
           formValues: _.omit(currentValue, [
             'environ',
-            'bootstrapScript',
             'modelDefinition',
           ]) as Partial<AdminDeploymentPresetFormValue>,
         },
@@ -541,26 +1168,36 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
 
   const [validationTourOpen, setValidationTourOpen] = useState(false);
   const [reviewHasError, setReviewHasError] = useState(false);
+  const [errorFieldNames, setErrorFieldNames] = useState<string[]>([]);
 
-  // Trigger full validation every time the review step is entered.
-  // form.getFieldsError() only covers mounted fields, so we track the review-step
-  // result in a dedicated state that persists across re-renders.
-  const triggerValidation = useEffectEvent(() => {
+  // Trigger full form validation and update review-step error state.
+  // Called both when navigating to the review step (synchronous, before render)
+  // and in a useEffect as a safety net for URL-based navigation.
+  const triggerValidation = () => {
     form
       .validateFields()
       .then(() => {
         setReviewHasError(false);
+        setErrorFieldNames([]);
       })
       .catch((errorInfo) => {
         const hasErrors = (errorInfo?.errorFields?.length ?? 0) > 0;
+        const names: string[] = (errorInfo?.errorFields ?? []).map(
+          (ef: { name: (string | number)[] }) => String(ef.name[0]),
+        );
         setValidationTourOpen(hasErrors);
         setReviewHasError(hasErrors);
+        setErrorFieldNames(names);
       });
+  };
+
+  const onEnterReview = useEffectEvent(() => {
+    triggerValidation();
   });
 
   useEffect(() => {
     if (currentStepKey === 'review') {
-      triggerValidation();
+      onEnterReview();
     }
   }, [currentStepKey]);
 
@@ -571,7 +1208,13 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
   const goToStep = (nextIndex: number) => {
     const clamped = _.clamp(nextIndex, 0, STEP_KEYS.length - 1);
     const nextKey = STEP_KEYS[clamped];
-    if (nextKey) setCurrentStep(nextKey);
+    if (nextKey) {
+      if (nextKey === 'review') {
+        // Validate before navigating so errors are visible on first render.
+        triggerValidation();
+      }
+      setCurrentStep(nextKey);
+    }
   };
 
   const stepHasError = (fields: string[]) =>
@@ -586,16 +1229,16 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
       'mem',
       'clusterMode',
       'clusterSize',
+      'replicaCount',
     ]),
-    stepHasError(['startupCommand', 'bootstrapScript', 'modelDefinition']),
-    stepHasError(['replicaCount', 'revisionHistoryLimit']),
+    stepHasError(['startupCommand', 'bootstrapScript']) ||
+      errorFieldNames.includes('modelDefinition'),
     reviewHasError,
   ];
 
   const stepItems: NonNullable<StepsProps['items']> = [
     { title: t('adminDeploymentPreset.step.BasicInfo') },
     { title: t('adminDeploymentPreset.step.ModelAndExecution') },
-    { title: t('adminDeploymentPreset.step.Deployment') },
     {
       title: (
         <span style={reviewHasError ? { color: token.colorError } : undefined}>
@@ -614,6 +1257,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
       >
         <Form<AdminDeploymentPresetFormValue>
           form={form}
+          initialValues={initialValues}
           layout="vertical"
           onValuesChange={() => syncFormToURL()}
           scrollToFirstError
@@ -621,9 +1265,11 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
           {/* ----------------------------------------------------------------
               Step 1 — Basic Info
           ---------------------------------------------------------------- */}
-          <Card
+          <BAICard
+            id="preset-form-card-basic"
             title={t('adminDeploymentPreset.step.BasicInfo')}
             style={{ display: currentStepKey === 'basic' ? 'block' : 'none' }}
+            showDivider
           >
             <Form.Item
               name="name"
@@ -682,21 +1328,24 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
             >
               <ImageSelectField />
             </Form.Item>
-          </Card>
+          </BAICard>
 
           {/* ----------------------------------------------------------------
               Step 1 (cont.) — Resources card
           ---------------------------------------------------------------- */}
-          <Card
+          <BAICard
+            id="preset-form-card-resources"
             title={t('adminDeploymentPreset.step.Resources')}
             style={{
               display: currentStepKey === 'basic' ? 'block' : 'none',
               marginTop: token.marginMD,
             }}
+            showDivider
           >
             <Form.Item
               label={t('adminDeploymentPreset.ResourceSlots')}
               style={{ marginBottom: 0 }}
+              required
             >
               <BAIFlex direction="column" gap="xs" align="stretch">
                 <FixedResourceSlotField
@@ -843,16 +1492,18 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                 />
               </Form.Item>
             </BAIFlex>
-          </Card>
+          </BAICard>
 
           {/* ----------------------------------------------------------------
               Step 2 — Model & Execution
           ---------------------------------------------------------------- */}
-          <Card
+          <BAICard
+            id="preset-form-card-model"
             title={t('adminDeploymentPreset.step.ModelAndExecution')}
             style={{
               display: currentStepKey === 'model' ? 'block' : 'none',
             }}
+            showDivider
           >
             <Form.Item
               name="startupCommand"
@@ -883,47 +1534,52 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
               <EnvVarFormList name="environ" />
             </Form.Item>
             <Form.Item
-              name="modelDefinition"
               label={t('adminDeploymentPreset.ModelDefinition')}
-              style={{ marginTop: token.marginMD }}
-              rules={[
-                {
-                  validator: async (_rule, value) => {
-                    if (!value) return;
-                    try {
-                      JSON.parse(value);
-                    } catch {
-                      return Promise.reject(
-                        t('adminDeploymentPreset.ModelDefinitionInvalidJson'),
-                      );
-                    }
-                  },
-                },
-              ]}
+              style={{ marginTop: token.marginMD, marginBottom: 0 }}
             >
-              <Input.TextArea
-                rows={4}
-                placeholder={t(
-                  'adminDeploymentPreset.ModelDefinitionPlaceholder',
+              <Form.List name={['modelDefinition', 'models']}>
+                {(fields, { add, remove }) => (
+                  <BAIFlex direction="column" align="stretch" gap="sm">
+                    {fields.map(({ key, name, ...rest }) => (
+                      <ModelConfigItem
+                        key={key}
+                        listItemName={name}
+                        restField={rest}
+                        onRemove={() => remove(name)}
+                      />
+                    ))}
+                    <Button
+                      type="dashed"
+                      onClick={() => add({ name: '', modelPath: '' })}
+                      icon={<PlusOutlined />}
+                      block
+                    >
+                      {t('adminDeploymentPreset.modelDef.AddModel')}
+                    </Button>
+                  </BAIFlex>
                 )}
-              />
+              </Form.List>
             </Form.Item>
-          </Card>
+          </BAICard>
 
           {/* ----------------------------------------------------------------
-              Step 3 — Deployment Defaults
+              Step 1 (cont.) — Deployment Defaults card (within basic step)
           ---------------------------------------------------------------- */}
-          <Card
+          <BAICard
+            id="preset-form-card-deployment"
             title={t('adminDeploymentPreset.step.Deployment')}
             style={{
-              display: currentStepKey === 'deployment' ? 'block' : 'none',
+              display: currentStepKey === 'basic' ? 'block' : 'none',
+              marginTop: token.marginMD,
             }}
+            showDivider
           >
             <BAIFlex gap="md" wrap="wrap" style={{ alignItems: 'flex-end' }}>
               <Form.Item
                 name="replicaCount"
                 label={t('adminDeploymentPreset.Replicas')}
                 style={{ flex: 1, minWidth: 120 }}
+                rules={[{ required: true }]}
               >
                 <InputNumber
                   min={1}
@@ -948,10 +1604,10 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
             <Form.Item name="openToPublic" valuePropName="checked">
               <Checkbox>{t('adminDeploymentPreset.OpenToPublic')}</Checkbox>
             </Form.Item>
-          </Card>
+          </BAICard>
 
           {/* ----------------------------------------------------------------
-              Step 5 — Review
+              Step 3 — Review
           ---------------------------------------------------------------- */}
           {currentStepKey === 'review' && (
             <Form.Item noStyle shouldUpdate>
@@ -961,6 +1617,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                   mode={mode}
                   onGoToStep={goToStep}
                   runtimeVariants={runtimeVariants}
+                  errorFieldNames={errorFieldNames}
                 />
               )}
             </Form.Item>
@@ -1052,41 +1709,58 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
 // PresetReviewSummary — read-only summary of all form fields on the review step
 // ---------------------------------------------------------------------------
 
+const BASIC_INFO_FIELDS = ['name', 'runtimeVariantId', 'imageId'] as const;
+const RESOURCES_FIELDS = ['cpu', 'mem', 'clusterMode', 'clusterSize'] as const;
+const DEPLOYMENT_FIELDS = ['replicaCount'] as const;
+const STEP2_FIELDS = [
+  'startupCommand',
+  'bootstrapScript',
+  'modelDefinition',
+] as const;
+
 const PresetReviewSummary: React.FC<{
   form: FormInstance<AdminDeploymentPresetFormValue>;
   mode: 'create' | 'edit';
   onGoToStep: (index: number) => void;
   runtimeVariants: ReadonlyArray<{ id: string; name: string }>;
-}> = ({ form, mode, onGoToStep, runtimeVariants }) => {
+  errorFieldNames: string[];
+}> = ({ form, mode, onGoToStep, runtimeVariants, errorFieldNames }) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const values = form.getFieldsValue();
+  // Pass `true` to include values set via setFieldValue (e.g. enableService,
+  // enableMetadata) that have no registered Form.Item. The `true` overload
+  // returns `any`; annotate the variable explicitly to restore type safety.
+  const values: AdminDeploymentPresetFormValue = form.getFieldsValue(true);
 
-  const step1HasError = (
-    [
-      'name',
-      'runtimeVariantId',
-      'imageId',
-      'cpu',
-      'mem',
-      'clusterMode',
-      'clusterSize',
-    ] as const
-  ).some((f) => form.getFieldError(f).length > 0);
-  const step2HasError = (['startupCommand', 'bootstrapScript'] as const).some(
-    (f) => form.getFieldError(f).length > 0,
+  const basicInfoHasError = BASIC_INFO_FIELDS.some((f) =>
+    errorFieldNames.includes(f),
   );
-  const step3HasError = (
-    ['replicaCount', 'revisionHistoryLimit'] as const
-  ).some((f) => form.getFieldError(f).length > 0);
+  const resourcesHasError = RESOURCES_FIELDS.some((f) =>
+    errorFieldNames.includes(f),
+  );
+  const deploymentHasError = DEPLOYMENT_FIELDS.some((f) =>
+    errorFieldNames.includes(f),
+  );
+  const step2HasError = STEP2_FIELDS.some((f) => errorFieldNames.includes(f));
 
   const runtimeName =
     runtimeVariants.find((r) => toLocalId(r.id) === values.runtimeVariantId)
       ?.name ?? values.runtimeVariantId;
 
-  const editLink = (stepIndex: number) => (
-    <Button type="link" size="small" onClick={() => onGoToStep(stepIndex)}>
+  const editLink = (stepIndex: number, cardId: string) => (
+    <Button
+      type="link"
+      size="small"
+      onClick={() => {
+        onGoToStep(stepIndex);
+        setTimeout(() => {
+          document
+            .getElementById(cardId)
+            ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 50);
+      }}
+    >
       {t('button.Edit')}
     </Button>
   );
@@ -1094,12 +1768,14 @@ const PresetReviewSummary: React.FC<{
   return (
     <BAIFlex direction="column" gap="md" align="stretch">
       {/* Basic Info */}
-      <Card
+      <BAICard
         size="small"
-        className={step1HasError ? 'bai-card-error' : ''}
-        style={step1HasError ? { borderColor: token.colorError } : undefined}
+        className={basicInfoHasError ? 'bai-card-error' : ''}
+        style={
+          basicInfoHasError ? { borderColor: token.colorError } : undefined
+        }
         title={t('adminDeploymentPreset.step.BasicInfo')}
-        extra={editLink(0)}
+        extra={editLink(0, 'preset-form-card-basic')}
       >
         <Descriptions column={1} size="small">
           <Descriptions.Item label={t('adminDeploymentPreset.Name')}>
@@ -1116,41 +1792,49 @@ const PresetReviewSummary: React.FC<{
             </Descriptions.Item>
           )}
           <Descriptions.Item label={t('adminDeploymentPreset.Image')}>
-            <Typography.Text code style={{ wordBreak: 'break-all' }}>
-              {values.imageId ? (
-                <Suspense fallback={values.imageId}>
-                  <ImageCanonicalName imageId={values.imageId} />
-                </Suspense>
-              ) : (
-                '-'
-              )}
-            </Typography.Text>
+            {values.imageId ? (
+              <Suspense
+                fallback={
+                  <Typography.Text code style={{ wordBreak: 'break-all' }}>
+                    {values.imageId}
+                  </Typography.Text>
+                }
+              >
+                <ImageCanonicalName imageId={values.imageId} />
+              </Suspense>
+            ) : (
+              '-'
+            )}
           </Descriptions.Item>
         </Descriptions>
-      </Card>
+      </BAICard>
 
       {/* Resources */}
-      <Card
+      <BAICard
         size="small"
-        className={step1HasError ? 'bai-card-error' : ''}
-        style={step1HasError ? { borderColor: token.colorError } : undefined}
+        className={resourcesHasError ? 'bai-card-error' : ''}
+        style={
+          resourcesHasError ? { borderColor: token.colorError } : undefined
+        }
         title={t('adminDeploymentPreset.step.Resources')}
-        extra={editLink(0)}
+        extra={editLink(0, 'preset-form-card-resources')}
       >
         <Descriptions column={1} size="small">
           <Descriptions.Item label={t('adminDeploymentPreset.ResourceSlots')}>
             <BAIFlex direction="row" align="start" gap="sm" wrap="wrap">
               <ResourceNumbersOfSession
-                resource={{
-                  cpu: values.cpu ? Number(values.cpu) : 0,
-                  mem: values.mem || '0g',
-                  ...Object.fromEntries(
-                    (values.resourceSlots ?? []).map((s) => [
-                      s.resourceType,
-                      s.quantity,
-                    ]),
-                  ),
-                }}
+                resource={
+                  {
+                    ...(values.cpu ? { cpu: Number(values.cpu) } : {}),
+                    ...(values.mem ? { mem: values.mem } : {}),
+                    ...Object.fromEntries(
+                      (values.resourceSlots ?? []).map((s) => [
+                        s.resourceType,
+                        s.quantity,
+                      ]),
+                    ),
+                  } as any
+                }
               />
             </BAIFlex>
           </Descriptions.Item>
@@ -1165,15 +1849,44 @@ const PresetReviewSummary: React.FC<{
             {values.clusterSize != null ? values.clusterSize : '-'}
           </Descriptions.Item>
         </Descriptions>
-      </Card>
+      </BAICard>
+
+      {/* Deployment */}
+      <BAICard
+        size="small"
+        className={deploymentHasError ? 'bai-card-error' : ''}
+        style={
+          deploymentHasError ? { borderColor: token.colorError } : undefined
+        }
+        title={t('adminDeploymentPreset.step.Deployment')}
+        extra={editLink(0, 'preset-form-card-deployment')}
+      >
+        <Descriptions column={2} size="small">
+          <Descriptions.Item label={t('adminDeploymentPreset.Replicas')}>
+            {values.replicaCount ?? '-'}
+          </Descriptions.Item>
+          <Descriptions.Item
+            label={t('adminDeploymentPreset.RevisionHistoryLimit')}
+          >
+            {values.revisionHistoryLimit ?? '-'}
+          </Descriptions.Item>
+          <Descriptions.Item label={t('adminDeploymentPreset.OpenToPublic')}>
+            {values.openToPublic == null
+              ? '-'
+              : values.openToPublic
+                ? t('button.Yes')
+                : t('button.No')}
+          </Descriptions.Item>
+        </Descriptions>
+      </BAICard>
 
       {/* Model & Execution */}
-      <Card
+      <BAICard
         size="small"
         className={step2HasError ? 'bai-card-error' : ''}
         style={step2HasError ? { borderColor: token.colorError } : undefined}
         title={t('adminDeploymentPreset.step.ModelAndExecution')}
-        extra={editLink(1)}
+        extra={editLink(1, 'preset-form-card-model')}
       >
         <Descriptions column={1} size="small">
           <Descriptions.Item label={t('adminDeploymentPreset.StartupCommand')}>
@@ -1200,34 +1913,215 @@ const PresetReviewSummary: React.FC<{
             )}
           </Descriptions.Item>
         </Descriptions>
-      </Card>
-
-      {/* Deployment */}
-      <Card
-        size="small"
-        className={step3HasError ? 'bai-card-error' : ''}
-        style={step3HasError ? { borderColor: token.colorError } : undefined}
-        title={t('adminDeploymentPreset.step.Deployment')}
-        extra={editLink(2)}
-      >
-        <Descriptions column={2} size="small">
-          <Descriptions.Item label={t('adminDeploymentPreset.Replicas')}>
-            {values.replicaCount ?? '-'}
-          </Descriptions.Item>
-          <Descriptions.Item
-            label={t('adminDeploymentPreset.RevisionHistoryLimit')}
+        {values.modelDefinition?.models?.length ? (
+          <BAIFlex
+            direction="column"
+            align="stretch"
+            gap="xs"
+            style={{ marginTop: token.marginSM }}
           >
-            {values.revisionHistoryLimit ?? '-'}
-          </Descriptions.Item>
-          <Descriptions.Item label={t('adminDeploymentPreset.OpenToPublic')}>
-            {values.openToPublic == null
-              ? '-'
-              : values.openToPublic
-                ? t('button.Yes')
-                : t('button.No')}
-          </Descriptions.Item>
-        </Descriptions>
-      </Card>
+            <Typography.Text
+              type="secondary"
+              style={{ fontSize: token.fontSizeSM }}
+            >
+              {t('adminDeploymentPreset.ModelDefinition')}
+            </Typography.Text>
+            {values.modelDefinition.models.map((m, i) => (
+              <BAICard key={i} size="small" title={m.name}>
+                <Descriptions column={1} size="small">
+                  <Descriptions.Item
+                    label={t('adminDeploymentPreset.modelDef.ModelPath')}
+                  >
+                    <Typography.Text code style={{ wordBreak: 'break-all' }}>
+                      {m.modelPath || '-'}
+                    </Typography.Text>
+                  </Descriptions.Item>
+                  {m.enableService && m.service?.port != null && (
+                    <Descriptions.Item
+                      label={t('adminDeploymentPreset.modelDef.Port')}
+                    >
+                      {m.service.port}
+                    </Descriptions.Item>
+                  )}
+                  {m.enableService && m.service?.shell && (
+                    <Descriptions.Item
+                      label={t('adminDeploymentPreset.modelDef.Shell')}
+                    >
+                      <Typography.Text code>{m.service.shell}</Typography.Text>
+                    </Descriptions.Item>
+                  )}
+                  {m.enableService && m.service?.startCommand && (
+                    <Descriptions.Item
+                      label={t('adminDeploymentPreset.modelDef.StartCommand')}
+                    >
+                      <Typography.Text code>
+                        {m.service.startCommand}
+                      </Typography.Text>
+                    </Descriptions.Item>
+                  )}
+                  {m.enableService &&
+                    (m.service?.preStartActions?.length ?? 0) > 0 && (
+                      <Descriptions.Item
+                        label={t(
+                          'adminDeploymentPreset.modelDef.PreStartActions',
+                        )}
+                      >
+                        {m.service?.preStartActions?.map((a, ai) => (
+                          <Typography.Text
+                            key={ai}
+                            code
+                            style={{ display: 'block' }}
+                          >
+                            {a.action}
+                          </Typography.Text>
+                        ))}
+                      </Descriptions.Item>
+                    )}
+                  {m.enableService &&
+                    m.service?.enableHealthCheck &&
+                    m.service.healthCheck?.path && (
+                      <>
+                        <Descriptions.Item
+                          label={t(
+                            'adminDeploymentPreset.modelDef.HealthCheckPath',
+                          )}
+                        >
+                          <Typography.Text code>
+                            {m.service.healthCheck.path}
+                          </Typography.Text>
+                        </Descriptions.Item>
+                        {m.service.healthCheck.interval != null && (
+                          <Descriptions.Item
+                            label={t(
+                              'adminDeploymentPreset.modelDef.HealthCheckInterval',
+                            )}
+                          >
+                            {m.service.healthCheck.interval}
+                          </Descriptions.Item>
+                        )}
+                        {m.service.healthCheck.maxRetries != null && (
+                          <Descriptions.Item
+                            label={t(
+                              'adminDeploymentPreset.modelDef.HealthCheckMaxRetries',
+                            )}
+                          >
+                            {m.service.healthCheck.maxRetries}
+                          </Descriptions.Item>
+                        )}
+                        {m.service.healthCheck.maxWaitTime != null && (
+                          <Descriptions.Item
+                            label={t(
+                              'adminDeploymentPreset.modelDef.HealthCheckMaxWaitTime',
+                            )}
+                          >
+                            {m.service.healthCheck.maxWaitTime}
+                          </Descriptions.Item>
+                        )}
+                        {m.service.healthCheck.expectedStatusCode != null && (
+                          <Descriptions.Item
+                            label={t(
+                              'adminDeploymentPreset.modelDef.HealthCheckExpectedStatus',
+                            )}
+                          >
+                            {m.service.healthCheck.expectedStatusCode}
+                          </Descriptions.Item>
+                        )}
+                        {m.service.healthCheck.initialDelay != null && (
+                          <Descriptions.Item
+                            label={t(
+                              'adminDeploymentPreset.modelDef.HealthCheckInitialDelay',
+                            )}
+                          >
+                            {m.service.healthCheck.initialDelay}
+                          </Descriptions.Item>
+                        )}
+                      </>
+                    )}
+                  {m.enableMetadata && m.metadata?.title && (
+                    <Descriptions.Item
+                      label={t('adminDeploymentPreset.modelDef.Title')}
+                    >
+                      {m.metadata.title}
+                    </Descriptions.Item>
+                  )}
+                  {m.enableMetadata && m.metadata?.author && (
+                    <Descriptions.Item
+                      label={t('adminDeploymentPreset.modelDef.Author')}
+                    >
+                      {m.metadata.author}
+                    </Descriptions.Item>
+                  )}
+                  {m.enableMetadata && m.metadata?.version && (
+                    <Descriptions.Item
+                      label={t('adminDeploymentPreset.modelDef.Version')}
+                    >
+                      {m.metadata.version}
+                    </Descriptions.Item>
+                  )}
+                  {m.enableMetadata && m.metadata?.description && (
+                    <Descriptions.Item
+                      label={t('adminDeploymentPreset.modelDef.Description')}
+                    >
+                      {m.metadata.description}
+                    </Descriptions.Item>
+                  )}
+                  {m.enableMetadata && m.metadata?.task && (
+                    <Descriptions.Item
+                      label={t('adminDeploymentPreset.modelDef.Task')}
+                    >
+                      {m.metadata.task}
+                    </Descriptions.Item>
+                  )}
+                  {m.enableMetadata && m.metadata?.category && (
+                    <Descriptions.Item
+                      label={t('adminDeploymentPreset.modelDef.Category')}
+                    >
+                      {m.metadata.category}
+                    </Descriptions.Item>
+                  )}
+                  {m.enableMetadata && m.metadata?.architecture && (
+                    <Descriptions.Item
+                      label={t('adminDeploymentPreset.modelDef.Architecture')}
+                    >
+                      {m.metadata.architecture}
+                    </Descriptions.Item>
+                  )}
+                  {m.enableMetadata &&
+                    (m.metadata?.framework?.length ?? 0) > 0 && (
+                      <Descriptions.Item
+                        label={t('adminDeploymentPreset.modelDef.Framework')}
+                      >
+                        <Space size="small" wrap>
+                          {m.metadata!.framework!.map((f, fi) => (
+                            <Tag key={fi}>{f}</Tag>
+                          ))}
+                        </Space>
+                      </Descriptions.Item>
+                    )}
+                  {m.enableMetadata && (m.metadata?.label?.length ?? 0) > 0 && (
+                    <Descriptions.Item
+                      label={t('adminDeploymentPreset.modelDef.Label')}
+                    >
+                      <Space size="small" wrap>
+                        {m.metadata!.label!.map((l, li) => (
+                          <Tag key={li}>{l}</Tag>
+                        ))}
+                      </Space>
+                    </Descriptions.Item>
+                  )}
+                  {m.enableMetadata && m.metadata?.license && (
+                    <Descriptions.Item
+                      label={t('adminDeploymentPreset.modelDef.License')}
+                    >
+                      {m.metadata.license}
+                    </Descriptions.Item>
+                  )}
+                </Descriptions>
+              </BAICard>
+            ))}
+          </BAIFlex>
+        ) : null}
+      </BAICard>
     </BAIFlex>
   );
 };

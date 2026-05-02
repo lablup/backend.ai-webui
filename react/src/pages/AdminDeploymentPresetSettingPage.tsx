@@ -9,6 +9,7 @@ import type { AdminDeploymentPresetSettingPageRuntimeVariantsQuery } from '../__
 import type { AdminDeploymentPresetSettingPageUpdateMutation } from '../__generated__/AdminDeploymentPresetSettingPageUpdateMutation.graphql';
 import AdminDeploymentPresetSettingPageContent, {
   type AdminDeploymentPresetFormValue,
+  type ModelDefinitionFormValue,
 } from '../components/AdminDeploymentPresetSettingPageContent';
 import { useWebUINavigate } from '../hooks';
 import { App, Form, Skeleton, Typography, theme } from 'antd';
@@ -17,6 +18,70 @@ import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 import { useParams } from 'react-router-dom';
+
+const buildModelDefinitionInput = (
+  value: ModelDefinitionFormValue | undefined,
+) => {
+  if (!value?.models?.length) return null;
+  return {
+    models: value.models.map((m) => ({
+      name: m.name,
+      modelPath: m.modelPath,
+      service:
+        m.enableService && m.service?.port != null
+          ? {
+              port: m.service.port,
+              shell: m.service.shell || '/bin/bash',
+              startCommand: m.service.startCommand?.trim()
+                ? m.service.startCommand.trim().split(/\s+/)
+                : null,
+              preStartActions: (m.service.preStartActions ?? []).map((a) => ({
+                action: a.action,
+                args: (() => {
+                  try {
+                    return JSON.parse(a.args || '{}');
+                  } catch {
+                    return {};
+                  }
+                })(),
+              })),
+              healthCheck:
+                m.service.enableHealthCheck && m.service.healthCheck?.path
+                  ? {
+                      path: m.service.healthCheck.path,
+                      interval: m.service.healthCheck.interval,
+                      maxRetries: m.service.healthCheck.maxRetries,
+                      maxWaitTime: m.service.healthCheck.maxWaitTime,
+                      expectedStatusCode:
+                        m.service.healthCheck.expectedStatusCode,
+                      initialDelay: m.service.healthCheck.initialDelay,
+                    }
+                  : null,
+            }
+          : null,
+      metadata:
+        m.enableMetadata && m.metadata
+          ? {
+              author: m.metadata.author || null,
+              title: m.metadata.title || null,
+              version: m.metadata.version || null,
+              created: null,
+              lastModified: null,
+              description: m.metadata.description || null,
+              task: m.metadata.task || null,
+              category: m.metadata.category || null,
+              architecture: m.metadata.architecture || null,
+              framework: m.metadata.framework?.length
+                ? m.metadata.framework
+                : null,
+              label: m.metadata.label?.length ? m.metadata.label : null,
+              license: m.metadata.license || null,
+              minResource: null,
+            }
+          : null,
+    })),
+  };
+};
 
 /**
  * AdminDeploymentPresetSettingPage — router entry.
@@ -162,11 +227,16 @@ const AdminDeploymentPresetSettingPageInner: React.FC<
   const isSubmitting = isCreating || isUpdating;
 
   const navigateToList = () =>
-    webuiNavigate('/admin-deployments?tab=deployment-presets');
+    webuiNavigate('/admin-deployments?tab=deployment-preset');
 
   const handleSubmit = async () => {
-    const values = await form.validateFields().catch(() => null);
-    if (!values) return;
+    // validateFields() triggers field-level validation (shows error messages).
+    // We discard its return value because setFieldValue-set fields (enableService,
+    // enableMetadata) are not registered Form.Items and therefore omitted from
+    // the validated result. Instead we read the full store via getFieldsValue(true).
+    const valid = await form.validateFields().catch(() => null);
+    if (!valid) return;
+    const values: AdminDeploymentPresetFormValue = form.getFieldsValue(true);
 
     await new Promise<void>((resolve, reject) => {
       if (mode === 'edit' && presetId) {
@@ -199,12 +269,14 @@ const AdminDeploymentPresetSettingPageInner: React.FC<
               resourceOpts: values.resourceOpts?.length
                 ? values.resourceOpts
                 : null,
-              modelDefinition: values.modelDefinition
-                ? JSON.parse(values.modelDefinition)
-                : null,
+              modelDefinition: buildModelDefinitionInput(
+                values.modelDefinition,
+              ),
               openToPublic: values.openToPublic ?? null,
               replicaCount: values.replicaCount ?? null,
               revisionHistoryLimit: values.revisionHistoryLimit ?? null,
+              // TODO: Add BLUE_GREEN support when the backend implements it.
+              deploymentStrategy: { type: 'ROLLING' as const },
             },
           },
           onCompleted: (_data, errors) => {
@@ -232,8 +304,8 @@ const AdminDeploymentPresetSettingPageInner: React.FC<
               imageId: values.imageId,
               name: values.name,
               description: values.description ?? null,
-              clusterMode: values.clusterMode ?? null,
-              clusterSize: values.clusterSize ?? null,
+              clusterMode: values.clusterMode!,
+              clusterSize: values.clusterSize!,
               startupCommand: values.startupCommand ?? null,
               bootstrapScript: values.bootstrapScript ?? null,
               environ: values.environ?.length
@@ -254,12 +326,14 @@ const AdminDeploymentPresetSettingPageInner: React.FC<
               resourceOpts: values.resourceOpts?.length
                 ? values.resourceOpts
                 : null,
-              modelDefinition: values.modelDefinition
-                ? JSON.parse(values.modelDefinition)
-                : null,
+              modelDefinition: buildModelDefinitionInput(
+                values.modelDefinition,
+              ),
               openToPublic: values.openToPublic ?? null,
-              replicaCount: values.replicaCount ?? null,
+              replicaCount: values.replicaCount!,
               revisionHistoryLimit: values.revisionHistoryLimit ?? null,
+              // TODO: Add BLUE_GREEN support when the backend implements it.
+              deploymentStrategy: { type: 'ROLLING' as const },
             },
           },
           onCompleted: (_data, errors) => {

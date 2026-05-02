@@ -1,5 +1,5 @@
-import { BAIImageSelectPaginatedQuery } from '../../__generated__/BAIImageSelectPaginatedQuery.graphql';
-import { BAIImageSelectValueQuery } from '../../__generated__/BAIImageSelectValueQuery.graphql';
+import { BAIAdminImageSelectPaginatedQuery } from '../../__generated__/BAIAdminImageSelectPaginatedQuery.graphql';
+import { BAIAdminImageSelectValueQuery } from '../../__generated__/BAIAdminImageSelectValueQuery.graphql';
 import { toLocalId } from '../../helper';
 import useDebouncedDeferredValue from '../../helper/useDebouncedDeferredValue';
 import { useFetchKey } from '../../hooks';
@@ -22,16 +22,18 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
 
 export type ImageV2Node = NonNullable<
   NonNullable<
-    BAIImageSelectPaginatedQuery['response']['adminImagesV2']
+    BAIAdminImageSelectPaginatedQuery['response']['adminImagesV2']
   >['edges'][number]
 >['node'];
 
-export interface BAIImageSelectRef {
+export interface BAIAdminImageSelectRef {
   refetch: () => void;
 }
 
-export interface BAIImageSelectProps
-  extends Omit<BAISelectProps, 'options' | 'labelInValue' | 'ref'> {
+export interface BAIAdminImageSelectProps extends Omit<
+  BAISelectProps,
+  'options' | 'labelInValue' | 'ref'
+> {
   /** Additional GraphQL filter to narrow the image list. */
   filter?: {
     status?: { equals?: 'ALIVE' | 'DELETED' };
@@ -39,15 +41,15 @@ export interface BAIImageSelectProps
     architecture?: { equals?: string };
     registryId?: { equals?: string };
   };
-  ref?: React.Ref<BAIImageSelectRef>;
+  ref?: React.Ref<BAIAdminImageSelectRef>;
 }
 
 /**
  * Paginated image selector backed by `adminImagesV2` (ImageV2).
- * Stored value is the Relay global ID (`id`). Use `toLocalId(value)` to
- * obtain a UUID when passing to mutation inputs that expect `UUID`.
+ * Stored value is the image UUID so callers can pass it directly to
+ * mutation inputs that expect `UUID`.
  */
-const BAIImageSelect: React.FC<BAIImageSelectProps> = ({
+const BAIAdminImageSelect: React.FC<BAIAdminImageSelectProps> = ({
   loading,
   filter: filterFromProps,
   ref,
@@ -78,41 +80,58 @@ const BAIImageSelect: React.FC<BAIImageSelectProps> = ({
   const [fetchKey, updateFetchKey] = useFetchKey();
   const deferredFetchKey = useDeferredValue(fetchKey);
 
+  const isMultiple =
+    selectProps.mode === 'multiple' || selectProps.mode === 'tags';
+
   const deferredControllableValue = useDeferredValue(controllableValue);
 
-  // Resolve label for the currently selected value
-  const { imageV2: selectedImage } =
-    useLazyLoadQuery<BAIImageSelectValueQuery>(
+  // Label cache maps UUID -> canonicalName for all selected items.
+  // Updated in onChange so multiple-mode selections retain labels after
+  // the deferred transition completes (selectedImage only resolves the first UUID).
+  const [labelCache, setLabelCache] = useState<Record<string, string>>({});
+
+  const selectedUUID = _.isArray(deferredControllableValue)
+    ? (deferredControllableValue[0] ?? '')
+    : (deferredControllableValue ?? '');
+  const hasValue = !_.isEmpty(selectedUUID);
+
+  // Resolve the label for the currently selected value via adminImagesV2 so
+  // admin users can see images that may be filtered by user-level permissions.
+  const { adminImagesV2: selectedImageResult } =
+    useLazyLoadQuery<BAIAdminImageSelectValueQuery>(
       graphql`
-        query BAIImageSelectValueQuery($id: ID!, $skipSelected: Boolean!) {
-          imageV2(id: $id) @skip(if: $skipSelected) {
-            id
-            identity {
-              canonicalName
+        query BAIAdminImageSelectValueQuery(
+          $id: UUID!
+          $skipSelected: Boolean!
+        ) {
+          adminImagesV2(filter: { id: { equals: $id } }, limit: 1)
+            @skip(if: $skipSelected) {
+            edges {
+              node {
+                id
+                identity {
+                  canonicalName
+                }
+              }
             }
           }
         }
       `,
       {
-        id: !_.isEmpty(deferredControllableValue)
-          ? _.isArray(deferredControllableValue)
-            ? (deferredControllableValue[0] ?? '')
-            : (deferredControllableValue ?? '')
-          : '',
-        skipSelected: _.isEmpty(deferredControllableValue),
+        id: selectedUUID,
+        skipSelected: !hasValue,
       },
       {
-        fetchPolicy: !_.isEmpty(deferredControllableValue)
-          ? 'store-or-network'
-          : 'store-only',
+        fetchPolicy: hasValue ? 'store-or-network' : 'store-only',
         fetchKey: deferredFetchKey,
       },
     );
+  const selectedImage = selectedImageResult?.edges?.[0]?.node ?? null;
 
   const { paginationData, result, loadNext, isLoadingNext } =
-    useLazyPaginatedQuery<BAIImageSelectPaginatedQuery, ImageV2Node>(
+    useLazyPaginatedQuery<BAIAdminImageSelectPaginatedQuery, ImageV2Node>(
       graphql`
-        query BAIImageSelectPaginatedQuery(
+        query BAIAdminImageSelectPaginatedQuery(
           $offset: Int!
           $limit: Int!
           $filter: ImageV2Filter
@@ -173,19 +192,23 @@ const BAIImageSelect: React.FC<BAIImageSelectProps> = ({
     value: item?.id ? toLocalId(item.id) : item?.id,
   }));
 
-  const controllableValueWithLabel = selectedImage
-    ? [
-        {
+  const controllableValueWithLabel = (() => {
+    if (_.isEmpty(deferredControllableValue)) return undefined;
+    const allValues = _.castArray(deferredControllableValue);
+    const items = allValues.map((value) => {
+      // Use the GraphQL-resolved label when it matches (always the first UUID).
+      if (selectedImage && toLocalId(selectedImage.id) === value) {
+        return {
           label: selectedImage.identity?.canonicalName,
           value: toLocalId(selectedImage.id),
-        },
-      ]
-    : !_.isEmpty(deferredControllableValue)
-      ? _.castArray(deferredControllableValue).map((value) => ({
-          label: value,
-          value,
-        }))
-      : undefined;
+        };
+      }
+      // Fall back to labels cached from previous onChange calls.
+      return { label: labelCache[value] ?? value, value };
+    });
+    if (items.length === 0) return undefined;
+    return isMultiple ? items : items[0];
+  })();
 
   const [optimisticValueWithLabel, setOptimisticValueWithLabel] = useState(
     controllableValueWithLabel,
@@ -234,9 +257,22 @@ const BAIImageSelect: React.FC<BAIImageSelectProps> = ({
               v.value);
           return { label, value: v.value };
         });
-        setOptimisticValueWithLabel(valueWithOriginalLabel);
-        const isMultiple =
-          selectProps.mode === 'multiple' || selectProps.mode === 'tags';
+        // Cache UUID -> label for every selected item so controllableValueWithLabel
+        // can display all tags after the deferred transition completes.
+        setLabelCache((prev) => ({
+          ...prev,
+          ...Object.fromEntries(
+            valueWithOriginalLabel.map(({ label, value }) => [
+              value,
+              _.toString(label),
+            ]),
+          ),
+        }));
+        setOptimisticValueWithLabel(
+          isMultiple
+            ? valueWithOriginalLabel
+            : (valueWithOriginalLabel[0] ?? undefined),
+        );
         const idArray = castedValue.map((v) => _.toString(v.value));
         setControllableValue(
           isMultiple ? idArray : (idArray[0] ?? undefined),
@@ -267,4 +303,4 @@ const BAIImageSelect: React.FC<BAIImageSelectProps> = ({
   );
 };
 
-export default BAIImageSelect;
+export default BAIAdminImageSelect;

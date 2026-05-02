@@ -150,12 +150,12 @@ export type {
   BAIStorageHostSelectRef,
   StorageHostNode,
 } from './BAIStorageHostSelect';
-export { default as BAIImageSelect } from './BAIImageSelect';
+export { default as BAIAdminImageSelect } from './BAIAdminImageSelect';
 export type {
-  BAIImageSelectProps,
-  BAIImageSelectRef,
+  BAIAdminImageSelectProps,
+  BAIAdminImageSelectRef,
   ImageV2Node,
-} from './BAIImageSelect';
+} from './BAIAdminImageSelect';
 export { default as BAISessionHistorySubStepNodes } from './BAISessionHistorySubStepNodes';
 export type {
   BAISessionHistorySubStepNodesProps,

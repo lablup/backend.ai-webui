@@ -211,7 +211,7 @@ const AdminDeploymentListPage: React.FC = () => {
     },
     isSuperAdmin &&
       isDeploymentPresetSupported && {
-        key: 'deployment-presets',
+        key: 'deployment-preset',
         label: t('adminDeploymentPreset.TabTitle'),
       },
   ]);
@@ -231,7 +231,7 @@ const AdminDeploymentListPage: React.FC = () => {
       <Suspense fallback={<Skeleton active />}>
         {currentTab === 'deployments' && <AdminDeploymentListPageContent />}
         {currentTab === 'model-store-management' && <AdminModelCardListPage />}
-        {currentTab === 'deployment-presets' &&
+        {currentTab === 'deployment-preset' &&
           isSuperAdmin &&
           isDeploymentPresetSupported && (
             <BAIErrorBoundary>
