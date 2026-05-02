@@ -3,11 +3,30 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import type { DeploymentPresetDetailContentFragment$key } from '../__generated__/DeploymentPresetDetailContentFragment.graphql';
+import type { DeploymentPresetDetailContentImageQuery } from '../__generated__/DeploymentPresetDetailContentImageQuery.graphql';
 import { Descriptions, Divider, Typography } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
-import React from 'react';
+import { BAIFlex, toGlobalId } from 'backend.ai-ui';
+import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useFragment } from 'react-relay';
+import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
+
+const ImageCanonicalName: React.FC<{ imageId: string }> = ({ imageId }) => {
+  'use memo';
+  const data = useLazyLoadQuery<DeploymentPresetDetailContentImageQuery>(
+    graphql`
+      query DeploymentPresetDetailContentImageQuery($id: ID!) {
+        imageV2(id: $id) {
+          identity {
+            canonicalName
+          }
+        }
+      }
+    `,
+    { id: toGlobalId('ImageV2', imageId) },
+    { fetchPolicy: 'store-or-network' },
+  );
+  return <>{data.imageV2?.identity.canonicalName ?? imageId}</>;
+};
 
 interface DeploymentPresetDetailContentProps {
   presetFrgmt: DeploymentPresetDetailContentFragment$key | null | undefined;
@@ -37,7 +56,7 @@ const DeploymentPresetDetailContent: React.FC<
           clusterSize
         }
         execution {
-          image
+          imageId
           startupCommand
           bootstrapScript
           environ {
@@ -95,7 +114,7 @@ const DeploymentPresetDetailContent: React.FC<
       <Divider
         style={{ margin: '4px 0' }}
         titlePlacement="left"
-        orientationMargin={0}
+        styles={{ content: { margin: 0 } }}
       >
         <Typography.Text type="secondary" style={{ fontSize: 12 }}>
           {t('adminDeploymentPreset.SectionImage')}
@@ -107,7 +126,13 @@ const DeploymentPresetDetailContent: React.FC<
         items={[
           {
             label: t('adminDeploymentPreset.Image'),
-            children: preset.execution?.image || '-',
+            children: preset.execution?.imageId ? (
+              <Suspense fallback={preset.execution.imageId}>
+                <ImageCanonicalName imageId={preset.execution.imageId} />
+              </Suspense>
+            ) : (
+              '-'
+            ),
           },
         ]}
       />
@@ -115,7 +140,7 @@ const DeploymentPresetDetailContent: React.FC<
       <Divider
         style={{ margin: '4px 0' }}
         titlePlacement="left"
-        orientationMargin={0}
+        styles={{ content: { margin: 0 } }}
       >
         <Typography.Text type="secondary" style={{ fontSize: 12 }}>
           {t('adminDeploymentPreset.SectionCluster')}
@@ -139,7 +164,7 @@ const DeploymentPresetDetailContent: React.FC<
       <Divider
         style={{ margin: '4px 0' }}
         titlePlacement="left"
-        orientationMargin={0}
+        styles={{ content: { margin: 0 } }}
       >
         <Typography.Text type="secondary" style={{ fontSize: 12 }}>
           {t('adminDeploymentPreset.SectionResources')}
@@ -169,7 +194,7 @@ const DeploymentPresetDetailContent: React.FC<
       <Divider
         style={{ margin: '4px 0' }}
         titlePlacement="left"
-        orientationMargin={0}
+        styles={{ content: { margin: 0 } }}
       >
         <Typography.Text type="secondary" style={{ fontSize: 12 }}>
           {t('adminDeploymentPreset.SectionDeploymentDefaults')}

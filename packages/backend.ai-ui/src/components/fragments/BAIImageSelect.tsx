@@ -1,6 +1,6 @@
 import { BAIImageSelectPaginatedQuery } from '../../__generated__/BAIImageSelectPaginatedQuery.graphql';
 import { BAIImageSelectValueQuery } from '../../__generated__/BAIImageSelectValueQuery.graphql';
-import { toLocalId } from '../../helper';
+import { toGlobalId, toLocalId } from '../../helper';
 import useDebouncedDeferredValue from '../../helper/useDebouncedDeferredValue';
 import { useFetchKey } from '../../hooks';
 import { useLazyPaginatedQuery } from '../../hooks/usePaginatedQuery';
@@ -30,8 +30,10 @@ export interface BAIImageSelectRef {
   refetch: () => void;
 }
 
-export interface BAIImageSelectProps
-  extends Omit<BAISelectProps, 'options' | 'labelInValue' | 'ref'> {
+export interface BAIImageSelectProps extends Omit<
+  BAISelectProps,
+  'options' | 'labelInValue' | 'ref'
+> {
   /** Additional GraphQL filter to narrow the image list. */
   filter?: {
     status?: { equals?: 'ALIVE' | 'DELETED' };
@@ -44,8 +46,10 @@ export interface BAIImageSelectProps
 
 /**
  * Paginated image selector backed by `adminImagesV2` (ImageV2).
- * Stored value is the Relay global ID (`id`). Use `toLocalId(value)` to
- * obtain a UUID when passing to mutation inputs that expect `UUID`.
+ * Stored value is the image UUID so callers can pass it directly to
+ * mutation inputs that expect `UUID`. The component re-encodes the UUID
+ * to a Relay global ID internally when resolving the selected option's
+ * label via `imageV2(id: ID!)`.
  */
 const BAIImageSelect: React.FC<BAIImageSelectProps> = ({
   loading,
@@ -81,33 +85,37 @@ const BAIImageSelect: React.FC<BAIImageSelectProps> = ({
   const deferredControllableValue = useDeferredValue(controllableValue);
 
   // Resolve label for the currently selected value
-  const { imageV2: selectedImage } =
-    useLazyLoadQuery<BAIImageSelectValueQuery>(
-      graphql`
-        query BAIImageSelectValueQuery($id: ID!, $skipSelected: Boolean!) {
-          imageV2(id: $id) @skip(if: $skipSelected) {
-            id
-            identity {
-              canonicalName
-            }
+  const { imageV2: selectedImage } = useLazyLoadQuery<BAIImageSelectValueQuery>(
+    graphql`
+      query BAIImageSelectValueQuery($id: ID!, $skipSelected: Boolean!) {
+        imageV2(id: $id) @skip(if: $skipSelected) {
+          id
+          identity {
+            canonicalName
           }
         }
-      `,
-      {
-        id: !_.isEmpty(deferredControllableValue)
-          ? _.isArray(deferredControllableValue)
-            ? (deferredControllableValue[0] ?? '')
-            : (deferredControllableValue ?? '')
-          : '',
-        skipSelected: _.isEmpty(deferredControllableValue),
-      },
-      {
-        fetchPolicy: !_.isEmpty(deferredControllableValue)
-          ? 'store-or-network'
-          : 'store-only',
-        fetchKey: deferredFetchKey,
-      },
-    );
+      }
+    `,
+    {
+      // Stored value is a UUID; `imageV2(id: ID!)` expects a Relay global ID,
+      // so re-encode here.
+      id: !_.isEmpty(deferredControllableValue)
+        ? toGlobalId(
+            'ImageV2',
+            _.isArray(deferredControllableValue)
+              ? (deferredControllableValue[0] ?? '')
+              : (deferredControllableValue ?? ''),
+          )
+        : '',
+      skipSelected: _.isEmpty(deferredControllableValue),
+    },
+    {
+      fetchPolicy: !_.isEmpty(deferredControllableValue)
+        ? 'store-or-network'
+        : 'store-only',
+      fetchKey: deferredFetchKey,
+    },
+  );
 
   const { paginationData, result, loadNext, isLoadingNext } =
     useLazyPaginatedQuery<BAIImageSelectPaginatedQuery, ImageV2Node>(

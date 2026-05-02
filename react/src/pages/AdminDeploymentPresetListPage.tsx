@@ -30,6 +30,7 @@ import {
   filterOutEmpty,
   type GraphQLFilter,
   INITIAL_FETCH_KEY,
+  toGlobalId,
   toLocalId,
   useBAILogger,
   useFetchKey,
@@ -61,7 +62,7 @@ const ImageCanonicalName: React.FC<{ imageId: string }> = ({ imageId }) => {
         }
       }
     `,
-    { id: imageId },
+    { id: toGlobalId('ImageV2', imageId) },
     { fetchPolicy: 'store-or-network' },
   );
   return <>{data.imageV2?.identity.canonicalName ?? imageId}</>;
@@ -455,6 +456,7 @@ const AdminDeploymentPresetListPage: React.FC = () => {
       )}
       <BAIDeleteConfirmModal
         open={!!deletingPreset}
+        requireConfirmInput
         items={
           deletingPreset
             ? [{ key: deletingPreset.id, label: deletingPreset.name }]

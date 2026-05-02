@@ -16,7 +16,7 @@
     "ClusterSize": "Tamaño de Clúster",
     "ClusterSizePlaceholder": "ej. 2",
     "ClusterSizeRequired": "El tamaño de clúster es obligatorio",
-    "ConfirmDelete": "Are you sure you want to delete the deployment preset \"{{name}}\"?",
+    "ConfirmDelete": "¿Está seguro de que desea eliminar el preset de implementación \"{{name}}\"?",
     "CreatePreset": "Crear Preset",
     "DeletePreset": "Eliminar Preset",
     "Description": "Descripción",
