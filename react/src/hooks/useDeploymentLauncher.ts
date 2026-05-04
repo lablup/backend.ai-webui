@@ -25,6 +25,16 @@ export interface QuickDeployInput {
   replicas?: number;
   /** Public endpoint toggle (default: false). */
   openToPublic?: boolean;
+  /** Pre-populate form fields in the launcher from a preset (create mode only). */
+  launcherFormValues?: {
+    startCommand?: string;
+    runtimeVariant?: string;
+    runtimeVariantId?: string;
+    clusterMode?: string;
+    clusterSize?: number;
+    desiredReplicaCount?: number;
+    openToPublic?: boolean;
+  };
 }
 
 export interface DeployInstantlyResult {
@@ -190,6 +200,11 @@ export const useDeploymentLauncher = (): {
     if (input.resourceGroup) params.set('resourceGroup', input.resourceGroup);
     if (input.revisionPresetId)
       params.set('revisionPresetId', input.revisionPresetId);
+    if (
+      input.launcherFormValues &&
+      Object.keys(input.launcherFormValues).length > 0
+    )
+      params.set('formValues', JSON.stringify(input.launcherFormValues));
     navigate(`/deployments/start?${params.toString()}`);
   };
 

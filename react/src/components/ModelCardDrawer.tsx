@@ -102,6 +102,20 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
               description
               rank
               runtimeVariantId
+              runtimeVariant {
+                name
+              }
+              execution {
+                startupCommand
+              }
+              cluster {
+                clusterMode
+                clusterSize
+              }
+              deploymentDefaults {
+                openToPublic
+                replicaCount
+              }
             }
           }
         }
@@ -186,7 +200,28 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
                           modelCard.vfolder?.id ?? '',
                         );
                         if (!modelFolderId) return;
-                        openLauncher({ modelFolderId });
+                        openLauncher({
+                          modelFolderId,
+                          launcherFormValues: {
+                            startCommand:
+                              presets[0]?.execution?.startupCommand ??
+                              undefined,
+                            runtimeVariant:
+                              presets[0]?.runtimeVariant?.name ?? undefined,
+                            runtimeVariantId:
+                              presets[0]?.runtimeVariantId ?? undefined,
+                            clusterMode:
+                              presets[0]?.cluster?.clusterMode ?? undefined,
+                            clusterSize:
+                              presets[0]?.cluster?.clusterSize ?? undefined,
+                            desiredReplicaCount:
+                              presets[0]?.deploymentDefaults?.replicaCount ??
+                              undefined,
+                            openToPublic:
+                              presets[0]?.deploymentDefaults?.openToPublic ??
+                              undefined,
+                          },
+                        });
                       },
                     },
                   ],

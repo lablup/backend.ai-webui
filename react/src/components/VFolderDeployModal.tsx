@@ -134,6 +134,20 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
                 description
                 rank
                 runtimeVariantId
+                runtimeVariant {
+                  name
+                }
+                execution {
+                  startupCommand
+                }
+                cluster {
+                  clusterMode
+                  clusterSize
+                }
+                deploymentDefaults {
+                  openToPublic
+                  replicaCount
+                }
                 ...DeploymentPresetDetailContentFragment
               }
             }
@@ -468,10 +482,32 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
                     key: 'configure',
                     label: t('modelStore.QuickDeployDetailed'),
                     onClick: () => {
+                      const selectedPreset = availablePresets.find(
+                        (p) => toLocalId(p.id) === effectivePresetId,
+                      );
                       openLauncher({
                         modelFolderId: vfolderId,
                         resourceGroup: effectiveResourceGroup,
                         revisionPresetId: effectivePresetId,
+                        launcherFormValues: {
+                          startCommand:
+                            selectedPreset?.execution?.startupCommand ??
+                            undefined,
+                          runtimeVariant:
+                            selectedPreset?.runtimeVariant?.name ?? undefined,
+                          runtimeVariantId:
+                            selectedPreset?.runtimeVariantId ?? undefined,
+                          clusterMode:
+                            selectedPreset?.cluster?.clusterMode ?? undefined,
+                          clusterSize:
+                            selectedPreset?.cluster?.clusterSize ?? undefined,
+                          desiredReplicaCount:
+                            selectedPreset?.deploymentDefaults?.replicaCount ??
+                            undefined,
+                          openToPublic:
+                            selectedPreset?.deploymentDefaults?.openToPublic ??
+                            undefined,
+                        },
                       });
                     },
                   },
