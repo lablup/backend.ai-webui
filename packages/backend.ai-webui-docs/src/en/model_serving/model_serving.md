@@ -566,7 +566,7 @@ Model definition and runtime parameters are distinct concepts stored separately 
 
 Auto Scaling Rules automatically increase or decrease the number of replicas for a model service based on live metrics. This conserves resources during low usage and prevents request delays or failures during high usage.
 
-![](../images/auto_scaling_rules_v2.png)
+![](../images/auto_scaling_rules.png)
 
 The rule list provides:
 
