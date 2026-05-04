@@ -203,8 +203,14 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
       `,
     );
 
-  const navigateToList = () =>
-    webuiNavigate('/admin-deployments?tab=deployment-preset');
+  const navigateToList = () => {
+    const params = new URLSearchParams();
+    params.set('tab', 'deployment-presets');
+    webuiNavigate({
+      pathname: '/admin-deployments',
+      search: params.toString(),
+    });
+  };
 
   const handleSubmit = async () => {
     // validateFields() triggers field-level validation (shows error messages).
