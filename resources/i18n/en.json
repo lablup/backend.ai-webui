@@ -1927,6 +1927,15 @@
   "projectSelect": {
     "ProjectAdminBadge": "Project Admin"
   },
+  "prometheusQueryPreset": {
+    "AddPreset": "Add Preset",
+    "CreatedAt": "Created At",
+    "MetricName": "Metric Name",
+    "Name": "Name",
+    "QueryTemplate": "Query Template",
+    "TimeWindow": "Time Window",
+    "UpdatedAt": "Updated At"
+  },
   "rbac": {
     "Activate": "Activate",
     "ActivateRole": "Activate Role",
@@ -3278,6 +3287,7 @@
       "ProjectDeployments": "Deployments",
       "ProjectMembers": "Users",
       "Projects": "Projects",
+      "PrometheusPreset": "Prometheus Preset",
       "RBACManagement": "RBAC Management",
       "Remaining": "Remaining",
       "Reservoir": "Reservoir",

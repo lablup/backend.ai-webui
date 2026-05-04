@@ -242,8 +242,8 @@ const AdminServingPage: React.FC = () => {
           label: t('adminModelCard.ModelStoreManagement'),
         },
         isSuperAdmin && {
-          key: 'auto-scaling-rule',
-          label: t('webui.menu.AutoScalingRule'),
+          key: 'prometheus-preset',
+          label: t('webui.menu.PrometheusPreset'),
         },
       ])}
     >
@@ -254,7 +254,7 @@ const AdminServingPage: React.FC = () => {
             <AdminModelCardListPage />
           </BAIErrorBoundary>
         )}
-        {queryParam.tab === 'auto-scaling-rule' && isSuperAdmin && (
+        {queryParam.tab === 'prometheus-preset' && isSuperAdmin && (
           <BAIErrorBoundary>
             <AutoScalingRulePresetTab />
           </BAIErrorBoundary>
