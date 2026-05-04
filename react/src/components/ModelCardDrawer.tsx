@@ -102,6 +102,21 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
               description
               rank
               runtimeVariantId
+              runtimeVariant {
+                name
+              }
+              execution {
+                imageId
+                startupCommand
+              }
+              cluster {
+                clusterMode
+                clusterSize
+              }
+              deploymentDefaults {
+                openToPublic
+                replicaCount
+              }
             }
           }
         }
@@ -181,12 +196,41 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
                     {
                       key: 'configure',
                       label: t('modelStore.QuickDeployDetailed'),
+                      // TODO(FR-2762): Always uses the top-ranked preset
+                      // (presets[0]). If a model card has multiple presets
+                      // with different runtime variants, the launcher is
+                      // always pre-filled with the first one (e.g. vllm).
+                      // Consider letting the user pick a preset when
+                      // multiple are available.
                       onClick: () => {
                         const modelFolderId = toLocalId(
                           modelCard.vfolder?.id ?? '',
                         );
                         if (!modelFolderId) return;
-                        openLauncher({ modelFolderId });
+                        openLauncher({
+                          modelFolderId,
+                          launcherFormValues: {
+                            imageId:
+                              presets[0]?.execution?.imageId ?? undefined,
+                            startCommand:
+                              presets[0]?.execution?.startupCommand ??
+                              undefined,
+                            runtimeVariant:
+                              presets[0]?.runtimeVariant?.name ?? undefined,
+                            runtimeVariantId:
+                              presets[0]?.runtimeVariantId ?? undefined,
+                            clusterMode:
+                              presets[0]?.cluster?.clusterMode ?? undefined,
+                            clusterSize:
+                              presets[0]?.cluster?.clusterSize ?? undefined,
+                            desiredReplicaCount:
+                              presets[0]?.deploymentDefaults?.replicaCount ??
+                              undefined,
+                            openToPublic:
+                              presets[0]?.deploymentDefaults?.openToPublic ??
+                              undefined,
+                          },
+                        });
                       },
                     },
                   ],
