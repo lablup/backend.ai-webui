@@ -20,6 +20,7 @@ import PrometheusPresetTab from '../components/PrometheusPresetTab';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
+import AdminDeploymentPresetListPage from './AdminDeploymentPresetListPage';
 import AdminModelCardListPage from './AdminModelCardListPage';
 import { Skeleton } from 'antd';
 import type { CardTabListType } from 'antd/es/card';
@@ -198,6 +199,7 @@ const AdminDeploymentListPage: React.FC = () => {
   const isPrometheusPresetSupported = baiClient.supports(
     'prometheus-query-preset',
   );
+  const isDeploymentPresetSupported = baiClient.supports('deployment-preset');
 
   const tabItems: CardTabListType[] = filterOutEmpty([
     {
@@ -211,6 +213,10 @@ const AdminDeploymentListPage: React.FC = () => {
     isPrometheusPresetSupported && {
       key: 'prometheus-preset',
       label: t('webui.menu.PrometheusPreset'),
+    },
+    isDeploymentPresetSupported && {
+      key: 'deployment-presets',
+      label: t('adminDeploymentPreset.TabTitle'),
     },
   ]);
 
@@ -240,6 +246,11 @@ const AdminDeploymentListPage: React.FC = () => {
         {currentTab === 'prometheus-preset' && isPrometheusPresetSupported && (
           <BAIErrorBoundary>
             <PrometheusPresetTab />
+          </BAIErrorBoundary>
+        )}
+        {currentTab === 'deployment-presets' && isDeploymentPresetSupported && (
+          <BAIErrorBoundary>
+            <AdminDeploymentPresetListPage />
           </BAIErrorBoundary>
         )}
       </Suspense>
