@@ -9,12 +9,12 @@ import {
   PrometheusQueryPresetEditorModalFragment$key,
 } from '../__generated__/PrometheusQueryPresetEditorModalFragment.graphql';
 import { PrometheusQueryPresetEditorModalUpdateMutation } from '../__generated__/PrometheusQueryPresetEditorModalUpdateMutation.graphql';
-import BAIErrorBoundary from './BAIErrorBoundary';
 import PrometheusPresetPreview from './PrometheusPresetPreview';
-import { App, Form, FormInstance, Input, InputNumber, Select } from 'antd';
+import { App, Form, FormInstance, Input } from 'antd';
 import {
   BAIModal,
   BAIModalProps,
+  BAISelect,
   toLocalId,
   useBAILogger,
 } from 'backend.ai-ui';
@@ -34,7 +34,6 @@ type PrometheusQueryPresetFormValues = {
   name: string;
   description?: string | null;
   categoryId?: string | null;
-  rank?: number | null;
   metricName: string;
   queryTemplate: string;
   timeWindow?: string | null;
@@ -64,7 +63,6 @@ const getInitialValues = (
       name: preset.name,
       description: preset.description ?? undefined,
       categoryId: preset.categoryId ?? undefined,
-      rank: preset.rank ?? 0,
       metricName: preset.metricName,
       queryTemplate: preset.queryTemplate,
       timeWindow: preset.timeWindow ?? undefined,
@@ -77,7 +75,6 @@ const getInitialValues = (
     };
   }
   return {
-    rank: 0,
     filterLabels: [],
     groupLabels: [],
   };
@@ -98,7 +95,6 @@ const PrometheusQueryPresetEditorModal: React.FC<
         id
         name
         description
-        rank
         categoryId
         metricName
         queryTemplate
@@ -215,9 +211,6 @@ const PrometheusQueryPresetEditorModal: React.FC<
           if (values.categoryId !== initial.categoryId) {
             input.categoryId = values.categoryId ?? null;
           }
-          if (values.rank !== initial.rank) {
-            input.rank = values.rank ?? 0;
-          }
           if (values.metricName !== initial.metricName) {
             input.metricName = values.metricName;
           }
@@ -281,7 +274,6 @@ const PrometheusQueryPresetEditorModal: React.FC<
               name: values.name,
               description: values.description ?? null,
               categoryId: values.categoryId ?? null,
-              rank: values.rank ?? 0,
               metricName: values.metricName,
               queryTemplate: values.queryTemplate,
               timeWindow: values.timeWindow ?? null,
@@ -334,115 +326,110 @@ const PrometheusQueryPresetEditorModal: React.FC<
       okText={preset ? t('button.Save') : t('button.Create')}
       confirmLoading={isInflightCreate || isInflightUpdate}
     >
-      <BAIErrorBoundary>
-        <Form
-          ref={formRef}
-          layout="vertical"
-          preserve={false}
-          initialValues={getInitialValues(preset ?? null)}
+      <Form
+        ref={formRef}
+        layout="vertical"
+        preserve={false}
+        scrollToFirstError
+        initialValues={getInitialValues(preset ?? null)}
+      >
+        <Form.Item
+          label={t('prometheusQueryPreset.Name')}
+          name="name"
+          rules={[
+            {
+              required: true,
+              message: t('prometheusQueryPreset.NameRequired'),
+            },
+          ]}
+          extra={t('prometheusQueryPreset.NameMustBeUnique')}
         >
-          <Form.Item
-            label={t('prometheusQueryPreset.Name')}
-            name="name"
-            rules={[
-              {
-                required: true,
-                message: t('prometheusQueryPreset.NameRequired'),
-              },
-            ]}
-            extra={t('prometheusQueryPreset.NameMustBeUnique')}
-          >
-            <Input />
-          </Form.Item>
+          <Input />
+        </Form.Item>
 
-          <Form.Item
-            label={t('prometheusQueryPreset.Description')}
-            name="description"
-          >
-            <TextArea autoSize={{ minRows: 2, maxRows: 4 }} />
-          </Form.Item>
+        <Form.Item
+          label={t('prometheusQueryPreset.Description')}
+          name="description"
+        >
+          <TextArea autoSize={{ minRows: 2, maxRows: 4 }} />
+        </Form.Item>
 
-          <Form.Item
-            label={t('prometheusQueryPreset.Category')}
-            name="categoryId"
-          >
-            <Select
-              allowClear
-              placeholder={t('prometheusQueryPreset.NoCategory')}
-              options={categoryOptions}
-              notFoundContent={t('prometheusQueryPreset.NoCategory')}
-            />
-          </Form.Item>
+        <Form.Item
+          label={t('prometheusQueryPreset.Category')}
+          name="categoryId"
+        >
+          <BAISelect
+            allowClear
+            placeholder={t('prometheusQueryPreset.NoCategory')}
+            options={categoryOptions}
+            notFoundContent={t('prometheusQueryPreset.NoCategory')}
+          />
+        </Form.Item>
 
-          <Form.Item label={t('prometheusQueryPreset.Rank')} name="rank">
-            <InputNumber style={{ width: '100%' }} step={1} />
-          </Form.Item>
+        <Form.Item
+          label={t('prometheusQueryPreset.MetricName')}
+          name="metricName"
+          rules={[
+            {
+              required: true,
+              message: t('prometheusQueryPreset.MetricNameRequired'),
+            },
+          ]}
+        >
+          <Input />
+        </Form.Item>
 
-          <Form.Item
-            label={t('prometheusQueryPreset.MetricName')}
-            name="metricName"
-            rules={[
-              {
-                required: true,
-                message: t('prometheusQueryPreset.MetricNameRequired'),
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
+        <Form.Item
+          label={t('prometheusQueryPreset.QueryTemplate')}
+          name="queryTemplate"
+          rules={[
+            {
+              required: true,
+              message: t('prometheusQueryPreset.QueryTemplateRequired'),
+            },
+          ]}
+          extra={
+            preset ? (
+              <Suspense fallback={null}>
+                <PrometheusPresetPreview presetGlobalId={preset.id} />
+              </Suspense>
+            ) : undefined
+          }
+        >
+          <TextArea autoSize={{ minRows: 4, maxRows: 12 }} />
+        </Form.Item>
 
-          <Form.Item
-            label={t('prometheusQueryPreset.QueryTemplate')}
-            name="queryTemplate"
-            rules={[
-              {
-                required: true,
-                message: t('prometheusQueryPreset.QueryTemplateRequired'),
-              },
-            ]}
-            extra={
-              preset ? (
-                <Suspense fallback={null}>
-                  <PrometheusPresetPreview presetGlobalId={preset.id} />
-                </Suspense>
-              ) : undefined
-            }
-          >
-            <TextArea autoSize={{ minRows: 4, maxRows: 12 }} />
-          </Form.Item>
+        <Form.Item
+          label={t('prometheusQueryPreset.TimeWindow')}
+          name="timeWindow"
+        >
+          <Input placeholder="5m" />
+        </Form.Item>
 
-          <Form.Item
-            label={t('prometheusQueryPreset.TimeWindow')}
-            name="timeWindow"
-          >
-            <Input placeholder="5m" />
-          </Form.Item>
+        <Form.Item
+          label={t('prometheusQueryPreset.FilterLabels')}
+          name="filterLabels"
+        >
+          <BAISelect
+            mode="tags"
+            tokenSeparators={[',']}
+            notFoundContent={null}
+            suffixIcon={null}
+          />
+        </Form.Item>
 
-          <Form.Item
-            label={t('prometheusQueryPreset.FilterLabels')}
-            name="filterLabels"
-          >
-            <Select
-              mode="tags"
-              tokenSeparators={[',']}
-              notFoundContent={null}
-              suffixIcon={null}
-            />
-          </Form.Item>
-
-          <Form.Item
-            label={t('prometheusQueryPreset.GroupLabels')}
-            name="groupLabels"
-          >
-            <Select
-              mode="tags"
-              tokenSeparators={[',']}
-              notFoundContent={null}
-              suffixIcon={null}
-            />
-          </Form.Item>
-        </Form>
-      </BAIErrorBoundary>
+        <Form.Item
+          label={t('prometheusQueryPreset.GroupLabels')}
+          name="groupLabels"
+        >
+          <BAISelect
+            mode="tags"
+            tokenSeparators={[',']}
+            notFoundContent={null}
+            suffixIcon={null}
+          />
+        </Form.Item>
+      </Form>
     </BAIModal>
   );
 };

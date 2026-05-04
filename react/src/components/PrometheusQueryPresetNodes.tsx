@@ -8,14 +8,16 @@ import {
   PrometheusQueryPresetNodesFragment$key,
 } from '../__generated__/PrometheusQueryPresetNodesFragment.graphql';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { Typography } from 'antd';
+import { Tag } from 'antd';
 import {
   BAIColumnsType,
   BAIFlex,
   BAINameActionCell,
   BAITable,
   BAITableProps,
+  BAIText,
   filterOutNullAndUndefined,
+  toLocalId,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -86,7 +88,7 @@ const PrometheusQueryPresetNodes: React.FC<PrometheusQueryPresetNodesProps> = ({
         }
         createdAt
         updatedAt
-        category @since(version: "26.4.3") {
+        category {
           id
           name
         }
@@ -127,25 +129,40 @@ const PrometheusQueryPresetNodes: React.FC<PrometheusQueryPresetNodesProps> = ({
       ),
     },
     {
+      title: t('prometheusQueryPreset.Id'),
+      dataIndex: 'id',
+      key: 'id',
+      defaultHidden: true,
+      sorter: isEnableSorter('id'),
+      onCell: () => ({ style: { maxWidth: 120 } }),
+      render: (id: string) => (
+        <BAIText copyable ellipsis monospace title={toLocalId(id)}>
+          {toLocalId(id)}
+        </BAIText>
+      ),
+    },
+    {
       title: t('prometheusQueryPreset.MetricName'),
       dataIndex: 'metricName',
       key: 'metricName',
+      sorter: isEnableSorter('metricName'),
       render: (metricName: string) => metricName ?? '-',
     },
     {
       title: t('prometheusQueryPreset.QueryTemplate'),
       dataIndex: 'queryTemplate',
       key: 'queryTemplate',
+      sorter: isEnableSorter('queryTemplate'),
+      onCell: () => ({ style: { maxWidth: 320 } }),
       render: (queryTemplate: string) =>
         queryTemplate ? (
-          <Typography.Text
+          <BAIText
             code
-            ellipsis={{ tooltip: queryTemplate }}
+            ellipsis={{ tooltip: true }}
             copyable={{ text: queryTemplate }}
-            style={{ maxWidth: 320 }}
           >
             {queryTemplate}
-          </Typography.Text>
+          </BAIText>
         ) : (
           '-'
         ),
@@ -154,7 +171,104 @@ const PrometheusQueryPresetNodes: React.FC<PrometheusQueryPresetNodesProps> = ({
       title: t('prometheusQueryPreset.TimeWindow'),
       dataIndex: 'timeWindow',
       key: 'timeWindow',
+      sorter: isEnableSorter('timeWindow'),
       render: (timeWindow: string | null | undefined) => timeWindow ?? '-',
+    },
+    {
+      title: t('prometheusQueryPreset.Category'),
+      key: 'category',
+      children: [
+        {
+          title: t('prometheusQueryPreset.Id'),
+          dataIndex: ['category', 'id'],
+          key: 'categoryId',
+          sorter: isEnableSorter('categoryId'),
+          onCell: () => ({ style: { maxWidth: 120 } }),
+
+          render: (_value: unknown, row) => (
+            <BAIText
+              ellipsis
+              copyable
+              monospace
+              title={row.category?.id ?? '-'}
+            >
+              {row.category?.id ?? '-'}
+            </BAIText>
+          ),
+        },
+        {
+          title: t('prometheusQueryPreset.Name'),
+          dataIndex: ['category', 'name'],
+          key: 'categoryName',
+          sorter: isEnableSorter('categoryName'),
+          render: (_value: unknown, row) => row.category?.name ?? '-',
+        },
+      ],
+    },
+    {
+      title: t('prometheusQueryPreset.Options'),
+      key: 'options',
+      children: [
+        {
+          title: t('prometheusQueryPreset.FilterLabels'),
+          dataIndex: ['options', 'filterLabels'],
+          key: 'filterLabels',
+          sorter: isEnableSorter('filterLabels'),
+          width: 200,
+          render: (_value: unknown, row) => {
+            const labels = row.options?.filterLabels;
+            if (!labels || labels.length === 0) return '-';
+            return (
+              <BAIFlex wrap="wrap" gap="xxs">
+                {_.map(labels, (label) => (
+                  <Tag key={label}>{label}</Tag>
+                ))}
+              </BAIFlex>
+            );
+          },
+        },
+        {
+          title: t('prometheusQueryPreset.GroupLabels'),
+          dataIndex: ['options', 'groupLabels'],
+          key: 'groupLabels',
+          sorter: isEnableSorter('groupLabels'),
+          width: 200,
+          render: (_value: unknown, row) => {
+            const labels = row.options?.groupLabels;
+            if (!labels || labels.length === 0) return '-';
+            return (
+              <BAIFlex wrap="wrap" gap="xxs">
+                {_.map(labels, (label) => (
+                  <Tag key={label}>{label}</Tag>
+                ))}
+              </BAIFlex>
+            );
+          },
+        },
+      ],
+    },
+    {
+      title: t('prometheusQueryPreset.Rank'),
+      dataIndex: 'rank',
+      defaultHidden: true,
+      key: 'rank',
+      sorter: isEnableSorter('rank'),
+      render: (rank: number | null | undefined) =>
+        _.isNumber(rank) ? rank : '-',
+    },
+    {
+      title: t('prometheusQueryPreset.Description'),
+      dataIndex: 'description',
+      key: 'description',
+      defaultHidden: true,
+      sorter: isEnableSorter('description'),
+      onCell: () => ({ style: { maxWidth: 320 } }),
+      render: (description: string | null | undefined) =>
+        description ? (
+          <BAIText ellipsis={{ tooltip: true }}>{description}</BAIText>
+        ) : (
+          '-'
+        ),
     },
     {
       title: t('prometheusQueryPreset.CreatedAt'),
@@ -181,23 +295,21 @@ const PrometheusQueryPresetNodes: React.FC<PrometheusQueryPresetNodesProps> = ({
     : baseColumns;
 
   return (
-    <BAIFlex direction="column" align="stretch">
-      <BAITable
-        size="small"
-        scroll={{ x: 'max-content' }}
-        rowKey="id"
-        dataSource={filterOutNullAndUndefined(presets)}
-        columns={allColumns}
-        showSorterTooltip={false}
-        onChangeOrder={(order) => {
-          onChangeOrder?.(
-            (order as (typeof availablePrometheusQueryPresetSorterValues)[number]) ||
-              null,
-          );
-        }}
-        {...tableProps}
-      />
-    </BAIFlex>
+    <BAITable
+      size="small"
+      scroll={{ x: 'max-content' }}
+      rowKey="id"
+      dataSource={filterOutNullAndUndefined(presets)}
+      columns={allColumns}
+      showSorterTooltip={false}
+      onChangeOrder={(order) => {
+        onChangeOrder?.(
+          (order as (typeof availablePrometheusQueryPresetSorterValues)[number]) ||
+            null,
+        );
+      }}
+      {...tableProps}
+    />
   );
 };
 

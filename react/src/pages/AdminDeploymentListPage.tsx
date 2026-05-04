@@ -9,13 +9,15 @@ import type {
   DeploymentStatus,
   OrderDirection,
 } from '../__generated__/AdminDeploymentListPageQuery.graphql';
+import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import DeploymentList, {
   availableDeploymentOrderValues,
   tableOrderToSort,
   type DeploymentOrderValue,
   type DeploymentStatusCategory,
 } from '../components/DeploymentList';
-import { useWebUINavigate } from '../hooks';
+import PrometheusPresetTab from '../components/PrometheusPresetTab';
+import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import AdminModelCardListPage from './AdminModelCardListPage';
@@ -24,6 +26,7 @@ import type { CardTabListType } from 'antd/es/card';
 import {
   BAICard,
   BAIFetchKeyButton,
+  filterOutEmpty,
   INITIAL_FETCH_KEY,
   toLocalId,
   useFetchKey,
@@ -191,8 +194,12 @@ const AdminDeploymentListPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const currentTab = searchParams.get('tab') || 'deployments';
   const navigate = useWebUINavigate();
+  const baiClient = useSuspendedBackendaiClient();
+  const isPrometheusPresetSupported = baiClient.supports(
+    'prometheus-query-preset',
+  );
 
-  const tabItems: CardTabListType[] = [
+  const tabItems: CardTabListType[] = filterOutEmpty([
     {
       key: 'deployments',
       label: t('webui.menu.Deployments'),
@@ -201,7 +208,11 @@ const AdminDeploymentListPage: React.FC = () => {
       key: 'model-store-management',
       label: t('adminModelCard.ModelStoreManagement'),
     },
-  ];
+    isPrometheusPresetSupported && {
+      key: 'prometheus-preset',
+      label: t('webui.menu.PrometheusPreset'),
+    },
+  ]);
 
   return (
     <BAICard
@@ -216,8 +227,21 @@ const AdminDeploymentListPage: React.FC = () => {
       tabList={tabItems}
     >
       <Suspense fallback={<Skeleton active />}>
-        {currentTab === 'deployments' && <AdminDeploymentListPageContent />}
-        {currentTab === 'model-store-management' && <AdminModelCardListPage />}
+        {currentTab === 'deployments' && (
+          <BAIErrorBoundary>
+            <AdminDeploymentListPageContent />
+          </BAIErrorBoundary>
+        )}
+        {currentTab === 'model-store-management' && (
+          <BAIErrorBoundary>
+            <AdminModelCardListPage />
+          </BAIErrorBoundary>
+        )}
+        {currentTab === 'prometheus-preset' && isPrometheusPresetSupported && (
+          <BAIErrorBoundary>
+            <PrometheusPresetTab />
+          </BAIErrorBoundary>
+        )}
       </Suspense>
     </BAICard>
   );

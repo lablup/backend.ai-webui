@@ -6,20 +6,21 @@ import { PrometheusPresetTabDeleteMutation } from '../__generated__/PrometheusPr
 import {
   PrometheusPresetTabQuery,
   PrometheusPresetTabQuery$variables,
-  QueryDefinitionFilter,
 } from '../__generated__/PrometheusPresetTabQuery.graphql';
 import { PrometheusQueryPresetEditorModalFragment$key } from '../__generated__/PrometheusQueryPresetEditorModalFragment.graphql';
+import { convertToOrderBy } from '../helper';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
+import { useBAISettingUserState } from '../hooks/useBAISetting';
 import PrometheusQueryPresetEditorModal from './PrometheusQueryPresetEditorModal';
 import PrometheusQueryPresetNodes from './PrometheusQueryPresetNodes';
 import { PlusOutlined } from '@ant-design/icons';
-import { Alert, App, Button, Skeleton, theme } from 'antd';
+import { Alert, App, theme } from 'antd';
 import {
+  BAIButton,
   BAIConfirmModalWithInput,
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
-  BAITableColumnOverrideItem,
   BAIText,
   type GraphQLFilter,
   INITIAL_FETCH_KEY,
@@ -28,7 +29,7 @@ import {
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { parseAsJson, parseAsString, useQueryStates } from 'nuqs';
-import React, { Suspense, useDeferredValue, useState } from 'react';
+import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 
@@ -45,7 +46,7 @@ const PrometheusPresetTab: React.FC = () => {
       filter: parseAsJson<GraphQLFilter>((value) => value as GraphQLFilter),
       order: parseAsString,
     },
-    { history: 'push' },
+    { history: 'replace' },
   );
 
   const {
@@ -58,14 +59,14 @@ const PrometheusPresetTab: React.FC = () => {
   });
 
   const [fetchKey, updateFetchKey] = useFetchKey();
-  const [isCreatingPreset, setIsCreatingPreset] = useState(false);
+  const [isOpenEditorModal, setIsOpenEditorModal] = useState(false);
   const [editingPreset, setEditingPreset] =
     useState<PrometheusQueryPresetEditorModalFragment$key | null>(null);
   const [deletingPreset, setDeletingPreset] =
     useState<DeletingPresetTarget | null>(null);
-  const [columnOverrides, setColumnOverrides] = useState<
-    Record<string, BAITableColumnOverrideItem>
-  >({});
+  const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
+    'table_column_overrides.PrometheusPresetTab',
+  );
 
   const [commitDeleteMutation, isInflightDelete] =
     useMutation<PrometheusPresetTabDeleteMutation>(graphql`
@@ -76,42 +77,11 @@ const PrometheusPresetTab: React.FC = () => {
       }
     `);
 
-  // QueryDefinitionFilter only supports a flat `name` filter today, so collapse
-  // any AND/OR wrapper produced by BAIGraphQLPropertyFilter back to a flat object.
-  const flattenGraphQLFilter = (
-    filter: GraphQLFilter | null | undefined,
-  ): QueryDefinitionFilter | null => {
-    if (!filter) return null;
-    if (filter.AND && Array.isArray(filter.AND)) {
-      return Object.assign({}, ...filter.AND) as QueryDefinitionFilter;
-    }
-    if (filter.OR && Array.isArray(filter.OR)) {
-      return Object.assign({}, ...filter.OR) as QueryDefinitionFilter;
-    }
-    return filter as QueryDefinitionFilter;
-  };
-
-  const computeOrderBy = (): PrometheusPresetTabQuery$variables['orderBy'] => {
-    if (!queryParam.order) return null;
-    const isDesc = queryParam.order.startsWith('-');
-    const field = isDesc ? queryParam.order.slice(1) : queryParam.order;
-    const fieldMap: Record<string, string> = {
-      name: 'NAME',
-      createdAt: 'CREATED_AT',
-      updatedAt: 'UPDATED_AT',
-    };
-    const gqlField = fieldMap[field];
-    if (!gqlField) return null;
-    return [
-      { field: gqlField, direction: isDesc ? 'DESC' : 'ASC' },
-    ] as PrometheusPresetTabQuery$variables['orderBy'];
-  };
-
   const queryVariables: PrometheusPresetTabQuery$variables = {
     offset: baiPaginationOption.offset,
     limit: baiPaginationOption.limit,
-    filter: flattenGraphQLFilter(queryParam.filter),
-    orderBy: computeOrderBy(),
+    filter: queryParam.filter,
+    orderBy: convertToOrderBy(queryParam.order),
   };
 
   const deferredQueryVariables = useDeferredValue(queryVariables);
@@ -162,82 +132,74 @@ const PrometheusPresetTab: React.FC = () => {
   return (
     <BAIFlex direction="column" align="stretch" gap="sm">
       <BAIFlex direction="row" justify="between" wrap="wrap" gap="sm">
-        <BAIFlex gap="sm" align="start" wrap="wrap" style={{ flexShrink: 1 }}>
-          <BAIGraphQLPropertyFilter
-            combinationMode="AND"
-            value={queryParam.filter ?? undefined}
-            onChange={(value) => {
-              setQueryParam({ filter: value ?? null });
-              setTablePaginationOption({ current: 1 });
-            }}
-            filterProperties={[
-              {
-                key: 'name',
-                propertyLabel: t('prometheusQueryPreset.Name'),
-                type: 'string',
-              },
-            ]}
-          />
-        </BAIFlex>
+        <BAIGraphQLPropertyFilter
+          combinationMode="AND"
+          value={queryParam.filter ?? undefined}
+          onChange={(value) => {
+            setQueryParam({ filter: value ?? null });
+          }}
+          filterProperties={[
+            {
+              key: 'name',
+              propertyLabel: t('prometheusQueryPreset.Name'),
+              type: 'string',
+            },
+            {
+              key: 'categoryId',
+              propertyLabel: t('prometheusQueryPreset.CategoryId'),
+              type: 'uuid',
+            },
+          ]}
+        />
         <BAIFlex gap="xs">
           <BAIFetchKeyButton
             value={fetchKey}
             onChange={updateFetchKey}
             loading={isPending}
           />
-          <Button
+          <BAIButton
             type="primary"
             icon={<PlusOutlined />}
-            onClick={() => setIsCreatingPreset(true)}
+            onClick={() => setIsOpenEditorModal(true)}
           >
             {t('prometheusQueryPreset.AddPreset')}
-          </Button>
+          </BAIButton>
         </BAIFlex>
       </BAIFlex>
-      <Suspense fallback={<Skeleton active />}>
-        <PrometheusQueryPresetNodes
-          presetsFrgmt={presetNodes}
-          loading={isPending}
-          pagination={{
-            pageSize: tablePaginationOption.pageSize,
-            current: tablePaginationOption.current,
-            total: prometheusQueryPresets?.count,
-            onChange(current, pageSize) {
-              if (_.isNumber(current) && _.isNumber(pageSize)) {
-                setTablePaginationOption({ current, pageSize });
-              }
-            },
-          }}
-          order={queryParam.order}
-          onChangeOrder={(order) => {
-            setQueryParam({ order: order ?? null });
-            setTablePaginationOption({ current: 1 });
-          }}
-          tableSettings={{
-            columnOverrides,
-            onColumnOverridesChange: setColumnOverrides,
-          }}
-          onEditPreset={(preset) => {
-            setEditingPreset(preset);
-          }}
-          onDeletePreset={(preset) => {
-            setDeletingPreset({ id: preset.id, name: preset.name });
-          }}
-        />
-      </Suspense>
-      <PrometheusQueryPresetEditorModal
-        open={isCreatingPreset}
-        onRequestClose={(success) => {
-          setIsCreatingPreset(false);
-          if (success) {
-            updateFetchKey();
-          }
+      <PrometheusQueryPresetNodes
+        presetsFrgmt={presetNodes}
+        loading={isPending}
+        pagination={{
+          pageSize: tablePaginationOption.pageSize,
+          current: tablePaginationOption.current,
+          total: prometheusQueryPresets?.count,
+          onChange(current, pageSize) {
+            if (_.isNumber(current) && _.isNumber(pageSize)) {
+              setTablePaginationOption({ current, pageSize });
+            }
+          },
+        }}
+        order={queryParam.order}
+        onChangeOrder={(order) => {
+          setQueryParam({ order: order });
+        }}
+        tableSettings={{
+          columnOverrides,
+          onColumnOverridesChange: setColumnOverrides,
+        }}
+        onEditPreset={(preset) => {
+          setIsOpenEditorModal(true);
+          setEditingPreset(preset);
+        }}
+        onDeletePreset={(preset) => {
+          setDeletingPreset({ id: preset.id, name: preset.name });
         }}
       />
       <PrometheusQueryPresetEditorModal
-        open={!!editingPreset}
+        open={isOpenEditorModal}
         presetFrgmt={editingPreset}
         onRequestClose={(success) => {
+          setIsOpenEditorModal(false);
           setEditingPreset(null);
           if (success) {
             updateFetchKey();
@@ -285,7 +247,6 @@ const PrometheusPresetTab: React.FC = () => {
             },
             onError: (error) => {
               message.error(error.message);
-              setDeletingPreset(null);
             },
           });
         }}

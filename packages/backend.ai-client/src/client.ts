@@ -755,6 +755,9 @@ export class Client {
       this._features['my-roles'] = true;
       this._features['prometheus-auto-scaling-rule'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('26.4.2')) {
+      this._features['prometheus-query-preset'] = true;
+    }
   }
 
   /**
