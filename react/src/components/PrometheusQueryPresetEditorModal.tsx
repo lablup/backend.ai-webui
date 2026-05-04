@@ -125,7 +125,9 @@ const PrometheusQueryPresetEditorModal: React.FC<
       {},
       {
         fetchPolicy:
-          deferredOpen && baiModalProps.open ? 'network-only' : 'store-only',
+          deferredOpen && baiModalProps.open
+            ? 'store-and-network'
+            : 'store-only',
       },
     );
 

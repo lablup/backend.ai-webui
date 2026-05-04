@@ -5,7 +5,12 @@
 import { PrometheusPresetPreviewResultQuery } from '../__generated__/PrometheusPresetPreviewResultQuery.graphql';
 import { ReloadOutlined } from '@ant-design/icons';
 import { Typography, theme } from 'antd';
-import { BAIButton, toLocalId, useFetchKey } from 'backend.ai-ui';
+import {
+  BAIButton,
+  INITIAL_FETCH_KEY,
+  toLocalId,
+  useFetchKey,
+} from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -53,7 +58,11 @@ export const PrometheusPresetPreview: React.FC<{
         groupLabels: [],
       },
     },
-    { fetchPolicy: 'network-only', fetchKey: `preview-${fetchKey}` },
+    {
+      fetchPolicy:
+        fetchKey === INITIAL_FETCH_KEY ? 'store-and-network' : 'network-only',
+      fetchKey,
+    },
   );
 
   const results = data.prometheusQueryPresetResult.result;
