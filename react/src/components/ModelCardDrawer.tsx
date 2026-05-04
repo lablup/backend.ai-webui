@@ -106,6 +106,7 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
                 name
               }
               execution {
+                imageId
                 startupCommand
               }
               cluster {
@@ -203,6 +204,8 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
                         openLauncher({
                           modelFolderId,
                           launcherFormValues: {
+                            imageId:
+                              presets[0]?.execution?.imageId ?? undefined,
                             startCommand:
                               presets[0]?.execution?.startupCommand ??
                               undefined,

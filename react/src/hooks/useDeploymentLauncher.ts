@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useDeploymentLauncherDeployVFolderMutation } from '../__generated__/useDeploymentLauncherDeployVFolderMutation.graphql';
+import { useDeploymentLauncherImageCanonicalNameQuery } from '../__generated__/useDeploymentLauncherImageCanonicalNameQuery.graphql';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import {
@@ -12,7 +13,12 @@ import {
 import { useBAILogger } from 'backend.ai-ui';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useMutation } from 'react-relay';
+import {
+  fetchQuery,
+  graphql,
+  useMutation,
+  useRelayEnvironment,
+} from 'react-relay';
 
 export interface QuickDeployInput {
   /** Virtual folder (model folder) id that backs the deployment. */
@@ -34,6 +40,12 @@ export interface QuickDeployInput {
     clusterSize?: number;
     desiredReplicaCount?: number;
     openToPublic?: boolean;
+    /**
+     * Image UUID from the preset's execution spec. Resolved to the canonical
+     * name string (registry/ns:tag@arch) before being serialized into
+     * `environments.version` in the URL — the launcher's form field name.
+     */
+    imageId?: string;
   };
 }
 
@@ -52,9 +64,19 @@ export interface DeployInstantlyResult {
  * - `openLauncher`: navigates to `/deployments/start?model=<folderId>` so the
  *   user can configure a deployment in the full launcher UI.
  */
+const imageCanonicalNameQuery = graphql`
+  query useDeploymentLauncherImageCanonicalNameQuery($id: ID!) {
+    imageV2(id: $id) {
+      identity {
+        canonicalName
+      }
+    }
+  }
+`;
+
 export const useDeploymentLauncher = (): {
   deployInstantly: (input: QuickDeployInput) => Promise<DeployInstantlyResult>;
-  openLauncher: (input: QuickDeployInput) => void;
+  openLauncher: (input: QuickDeployInput) => Promise<void>;
   isDeploying: boolean;
   supportsQuickDeploy: boolean;
 } => {
@@ -67,6 +89,8 @@ export const useDeploymentLauncher = (): {
   const currentResourceGroup = useCurrentResourceGroupValue();
   const { upsertNotification } = useSetBAINotification();
   const { logger } = useBAILogger();
+
+  const relayEnvironment = useRelayEnvironment();
 
   const [isDeploying, setIsDeploying] = useState<boolean>(false);
 
@@ -195,16 +219,44 @@ export const useDeploymentLauncher = (): {
     });
   };
 
-  const openLauncher = (input: QuickDeployInput): void => {
+  const openLauncher = async (input: QuickDeployInput): Promise<void> => {
     const params = new URLSearchParams({ model: input.modelFolderId });
     if (input.resourceGroup) params.set('resourceGroup', input.resourceGroup);
     if (input.revisionPresetId)
       params.set('revisionPresetId', input.revisionPresetId);
+
     if (
       input.launcherFormValues &&
       Object.keys(input.launcherFormValues).length > 0
-    )
-      params.set('formValues', JSON.stringify(input.launcherFormValues));
+    ) {
+      const { imageId, ...restFormValues } = input.launcherFormValues;
+      const urlFormValues: Record<string, unknown> = { ...restFormValues };
+
+      if (imageId) {
+        try {
+          const result =
+            await fetchQuery<useDeploymentLauncherImageCanonicalNameQuery>(
+              relayEnvironment,
+              imageCanonicalNameQuery,
+              { id: imageId },
+              { fetchPolicy: 'store-or-network' },
+            ).toPromise();
+          const canonicalName = result?.imageV2?.identity?.canonicalName;
+          if (canonicalName) {
+            urlFormValues.environments = { version: canonicalName };
+          }
+        } catch (e) {
+          logger.warn(
+            '[useDeploymentLauncher] Failed to resolve imageId to canonical name',
+            e,
+          );
+        }
+      }
+
+      if (Object.keys(urlFormValues).length > 0)
+        params.set('formValues', JSON.stringify(urlFormValues));
+    }
+
     navigate(`/deployments/start?${params.toString()}`);
   };
 

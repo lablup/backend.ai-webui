@@ -138,6 +138,7 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
                   name
                 }
                 execution {
+                  imageId
                   startupCommand
                 }
                 cluster {
@@ -490,6 +491,8 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
                         resourceGroup: effectiveResourceGroup,
                         revisionPresetId: effectivePresetId,
                         launcherFormValues: {
+                          imageId:
+                            selectedPreset?.execution?.imageId ?? undefined,
                           startCommand:
                             selectedPreset?.execution?.startupCommand ??
                             undefined,
