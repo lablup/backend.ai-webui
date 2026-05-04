@@ -1,6 +1,7 @@
 import react from '@vitejs/plugin-react';
 import { createReadStream, existsSync, readFileSync, statSync } from 'node:fs';
 import {
+  basename,
   dirname,
   extname,
   isAbsolute,
@@ -74,22 +75,36 @@ const MIME: Record<string, string> = {
  *
  * Why this is needed: `i18next-http-backend` fetches `resources/i18n/*.json`
  * at runtime — those JSONs are NOT part of the Vite module graph, so Vite
- * will never HMR them. A full reload is the only way to pick up an edit.
- * `config.toml`, `resources/theme.json`, and the project-root `index.html`
- * are in the same category.
+ * will never HMR them on its own. `config.toml`, `resources/theme.json`,
+ * and the project-root `index.html` are in the same category.
  *
- * Debounce: 300ms (matches craco). FSEvents on macOS can fire multiple
- * watcher events for a single save; editors that use atomic-save (write
- * temp → rename) produce two events. Debouncing collapses both into one
- * reload signal.
+ * Host i18n JSONs are special-cased: instead of a full reload, we emit a
+ * custom HMR event (`bai:host-i18n-changed`) that the host's i18n bootstrap
+ * (react/src/components/DefaultProviders.tsx) listens for and answers with
+ * `i18n.reloadResources(lng)` + `changeLanguage`. This preserves app state
+ * (open modals, forms, Relay cache) on copy edits.
+ *
+ * BUI's locale JSONs (packages/backend.ai-ui/src/locale/*.json) are NOT
+ * watched here — they are statically imported by BUI's `locale/index.ts`
+ * so Vite already tracks them in the module graph. BUI's bootstrap
+ * registers its own `import.meta.hot.accept` boundary to update its
+ * (separate) i18n instance.
+ *
+ * Debounce: full-reload uses 300ms (matches craco); host i18n hot-reload
+ * uses a tighter 150ms because the update preserves UI state and the
+ * shorter wait makes copy edits feel near-instant. Both debounces exist
+ * because FSEvents on macOS can fire multiple watcher events for a single
+ * save, and editors that use atomic-save (write temp → rename) produce
+ * two events. Debouncing collapses each burst into one signal.
  */
 function devAssetsReloadPlugin(): Plugin {
-  const watchTargets = [
+  const i18nHostDir = resolve(projectRoot, 'resources/i18n');
+  const fullReloadTargets = [
     resolve(projectRoot, 'config.toml'),
     resolve(projectRoot, 'index.html'),
-    resolve(projectRoot, 'resources/i18n'),
     resolve(projectRoot, 'resources/theme.json'),
   ];
+  const watchTargets = [...fullReloadTargets, i18nHostDir];
 
   return {
     name: 'bai-dev-assets-reload',
@@ -103,6 +118,8 @@ function devAssetsReloadPlugin(): Plugin {
       }
 
       let reloadTimer: NodeJS.Timeout | undefined;
+      let i18nTimer: NodeJS.Timeout | undefined;
+
       const scheduleReload = (changedPath: string) => {
         clearTimeout(reloadTimer);
         reloadTimer = setTimeout(() => {
@@ -114,17 +131,40 @@ function devAssetsReloadPlugin(): Plugin {
         }, 300);
       };
 
+      const scheduleI18nUpdate = (lng: string) => {
+        clearTimeout(i18nTimer);
+        i18nTimer = setTimeout(() => {
+          server.config.logger.info(
+            `[bai] host i18n hot-reload: ${lng}`,
+            { clear: false, timestamp: true },
+          );
+          server.ws.send({
+            type: 'custom',
+            event: 'bai:host-i18n-changed',
+            data: { lng },
+          });
+        }, 150);
+      };
+
       // Use `path.relative` so containment is detected correctly on Windows,
       // where chokidar emits paths with `\` separators that would never match
       // a `target + '/'` prefix.
-      const isMatchedPath = (changedPath: string) =>
-        watchTargets.some((target) => {
-          const rel = relative(target, changedPath);
-          return rel === '' || (!rel.startsWith('..') && !isAbsolute(rel));
-        });
+      const isUnder = (target: string, changedPath: string) => {
+        const rel = relative(target, changedPath);
+        return rel === '' || (!rel.startsWith('..') && !isAbsolute(rel));
+      };
 
       const handler = (changedPath: string) => {
-        if (isMatchedPath(changedPath)) {
+        // Host i18n JSON → custom HMR event (no full reload).
+        if (
+          isUnder(i18nHostDir, changedPath) &&
+          changedPath.endsWith('.json')
+        ) {
+          scheduleI18nUpdate(basename(changedPath, '.json'));
+          return;
+        }
+        // Other watched assets → full reload (existing behaviour).
+        if (fullReloadTargets.some((t) => isUnder(t, changedPath))) {
           scheduleReload(changedPath);
         }
       };
@@ -135,6 +175,7 @@ function devAssetsReloadPlugin(): Plugin {
 
       server.httpServer?.on('close', () => {
         clearTimeout(reloadTimer);
+        clearTimeout(i18nTimer);
       });
     },
   };
