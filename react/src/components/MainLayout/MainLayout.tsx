@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { useWebUINavigate } from '../../hooks';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import { useCustomThemeConfig } from '../../hooks/useCustomThemeConfig';
 import useKeyboardShortcut from '../../hooks/useKeyboardShortcut';
@@ -35,7 +36,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { useNavigate, Outlet, useMatches, useLocation } from 'react-router-dom';
+import { Outlet, useMatches, useLocation } from 'react-router-dom';
 import usePrimaryColors from 'src/hooks/usePrimaryColors';
 import { useWebUIMenuItems } from 'src/hooks/useWebUIMenuItems';
 import { useSetupWebUIPluginEffect } from 'src/hooks/useWebUIPluginState';
@@ -64,7 +65,7 @@ const useStyle = createStyles(({ css, token }) => ({
 
 function MainLayout() {
   'use memo';
-  const navigate = useNavigate();
+  const navigate = useWebUINavigate();
   const [compactSidebarActive] = useBAISettingUserState('compact_sidebar');
   const [sideCollapsed, setSideCollapsed] =
     useState<boolean>(!!compactSidebarActive);

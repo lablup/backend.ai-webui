@@ -4,19 +4,25 @@
  */
 import { ModelCardDrawerFragment$key } from '../__generated__/ModelCardDrawerFragment.graphql';
 import { useBackendAIImageMetaData } from '../hooks';
+import useDeploymentLauncher from '../hooks/useDeploymentLauncher';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import ModelBrandIcon from './ModelBrandIcon';
 import ModelCardDeployModal from './ModelCardDeployModal';
-import { BankOutlined, FileOutlined } from '@ant-design/icons';
+import {
+  BankOutlined,
+  EllipsisOutlined,
+  FileOutlined,
+} from '@ant-design/icons';
 import { shapes } from '@dicebear/collection';
 import { createAvatar } from '@dicebear/core';
 import {
-  Alert,
   Card,
   Descriptions,
   Drawer,
+  Dropdown,
   Skeleton,
+  Space,
   Tag,
   Typography,
   theme,
@@ -54,6 +60,8 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
 
   const [imageMetaData] = useBackendAIImageMetaData();
   const { generateFolderPath } = useFolderExplorerOpener();
+  const { deployInstantly, openLauncher, isDeploying, supportsQuickDeploy } =
+    useDeploymentLauncher();
 
   const modelCard = useFragment(
     graphql`
@@ -102,7 +110,7 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
     modelCardDrawerFrgmt,
   );
 
-  const hasNoPresets =
+  const hasNoAvailablePresets =
     !modelCard?.availablePresets || modelCard.availablePresets.count === 0;
   const [deployModalOpen, setDeployModalOpen] = useState(false);
 
@@ -138,25 +146,82 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
           </BAIFlex>
         }
         extra={
-          <BAIButton
-            type="primary"
-            disabled={hasNoPresets || !modelCard?.id}
-            onClick={() => setDeployModalOpen(true)}
-          >
-            {t('modelStore.Deploy')}
-          </BAIButton>
+          hasNoAvailablePresets ? (
+            // When no presets are available, show a single "Configure and
+            // deploy" button that navigates to the full launcher so the user
+            // can set up a deployment manually.
+            <BAIButton
+              type="primary"
+              disabled={!modelCard?.vfolder?.id}
+              onClick={() => {
+                const modelFolderId = toLocalId(modelCard?.vfolder?.id ?? '');
+                if (!modelFolderId) return;
+                openLauncher({ modelFolderId });
+              }}
+            >
+              {t('modelStore.QuickDeployDetailed')}
+            </BAIButton>
+          ) : supportsQuickDeploy && modelCard?.vfolder?.id ? (
+            // Flow 7 (FR-2684): [Deploy | ▼] split button backed by
+            // useDeploymentLauncher. Primary action fires Quick Deploy via
+            // createModelDeployment; the dropdown item navigates to the
+            // full launcher page at /deployments/start?model=<folderId>.
+            <Space.Compact>
+              <BAIButton
+                type="primary"
+                loading={isDeploying}
+                disabled={!modelCard?.id}
+                action={async () => {
+                  const modelFolderId = toLocalId(modelCard.vfolder?.id ?? '');
+                  if (!modelFolderId) return;
+                  const revisionPresetId = toLocalId(presets[0]?.id ?? '');
+                  await deployInstantly({
+                    modelFolderId,
+                    revisionPresetId: revisionPresetId ?? undefined,
+                  });
+                }}
+              >
+                {t('modelStore.Deploy')}
+              </BAIButton>
+              <Dropdown
+                disabled={!modelCard?.id || isDeploying}
+                trigger={['click']}
+                menu={{
+                  items: [
+                    {
+                      key: 'configure',
+                      label: t('modelStore.QuickDeployDetailed'),
+                      onClick: () => {
+                        const modelFolderId = toLocalId(
+                          modelCard.vfolder?.id ?? '',
+                        );
+                        if (!modelFolderId) return;
+                        openLauncher({ modelFolderId });
+                      },
+                    },
+                  ],
+                }}
+              >
+                <BAIButton type="primary" icon={<EllipsisOutlined />} />
+              </Dropdown>
+            </Space.Compact>
+          ) : (
+            // Legacy path (< manager 26.4.3): keep the pre-FR-2684
+            // single-button behavior that opens the ModelCardDeployModal
+            // so older backends remain functional until Quick Deploy is
+            // universally available.
+            <BAIButton
+              type="primary"
+              disabled={!modelCard?.id}
+              onClick={() => setDeployModalOpen(true)}
+            >
+              {t('modelStore.Deploy')}
+            </BAIButton>
+          )
         }
       >
         {modelCard && (
           <BAIFlex direction="column" align="stretch" gap="sm">
-            {hasNoPresets && (
-              <Alert
-                type="error"
-                showIcon
-                title={t('modelStore.NoCompatiblePresets')}
-              />
-            )}
-
             {modelCard.metadata?.description && (
               <Typography.Paragraph
                 style={{ marginBottom: 0 }}

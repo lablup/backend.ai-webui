@@ -10,7 +10,7 @@ RBAC Management is only available to superadmins and requires Backend.AI Manager
 
 To access the RBAC Management page, click **RBAC Management** in the **Admin Settings** section of the sidebar menu.
 
-![](images/rbac_role_list_page.png)
+![](../images/rbac_role_list_page.png)
 
 ## Role List
 
@@ -52,7 +52,7 @@ To create a new custom role:
    - **Scope Type / Target** (required, at least one): For each scope row, select a **Scope Type** and then choose the specific **Target** within that scope type. Click **Add** to add more scope rows, or the delete icon to remove a row. You must add at least one scope.
 3. Click **OK** to create the role
 
-![](images/rbac_create_role_modal.png)
+![](../images/rbac_create_role_modal.png)
 
 :::info
 Scopes are defined at role creation time and cannot be edited afterwards through the role detail drawer. Plan the scopes carefully before creating the role.
@@ -80,7 +80,7 @@ The drawer header displays the role name and provides an **Edit** button for cus
 
 Below the metadata, three tabs are available: **Scopes**, **Permissions**, and **Role Assignments**.
 
-![](images/rbac_role_detail_drawer.png)
+![](../images/rbac_role_detail_drawer.png)
 
 ### Edit a Role
 
@@ -91,7 +91,7 @@ To edit a custom role's name or description:
 3. Modify the **Role Name** and/or **Description** in the edit modal
 4. Click **OK** to save the changes
 
-![](images/rbac_edit_role_modal.png)
+![](../images/rbac_edit_role_modal.png)
 
 :::note
 The Edit button is only available for Custom roles. System roles cannot have their name or description modified. Scopes cannot be modified after role creation in either case.
@@ -114,7 +114,7 @@ Purging a role is irreversible. The role and all its associated data will be per
 
 The **Scopes** tab in the role detail drawer lists the scope entries that were assigned to the role at creation time. Each entry constrains the set of targets that permissions on this role can reference.
 
-![](images/rbac_role_scope_tab.png)
+![](../images/rbac_role_scope_tab.png)
 
 The table displays the following columns:
 
@@ -132,7 +132,7 @@ Scopes are read-only in this tab. To change a role's scopes, you must create a n
 
 The **Permissions** tab in the role detail drawer shows the fine-grained permissions configured for the role.
 
-![](images/rbac_permissions_tab.png)
+![](../images/rbac_permissions_tab.png)
 
 ### Understanding Permissions
 
@@ -170,7 +170,7 @@ Here are some common permission configurations to help you understand how the fo
    - **Permission**: Select the operation (e.g., Create, Read, Update, Soft Delete, Hard Delete, or delegation operations)
 4. Click **Add** to create the permission
 
-![](images/rbac_add_permission_modal.png)
+![](../images/rbac_add_permission_modal.png)
 
 :::note
 If a role was created without any scopes (for example, a legacy role imported from an earlier version), the **Add Permission** modal falls back to showing separate **Scope Type** and **Target** fields so that administrators can still configure the permission target.
@@ -185,7 +185,7 @@ If a role was created without any scopes (for example, a legacy role imported fr
 
 The **Role Assignments** tab in the role detail drawer shows which users are assigned to the role.
 
-![](images/rbac_assignments_tab.png)
+![](../images/rbac_assignments_tab.png)
 
 ### Add Users to a Role
 
@@ -195,11 +195,11 @@ The **Role Assignments** tab in the role detail drawer shows which users are ass
 4. Select one or more users using the checkboxes
 5. Click **Add** to assign the selected users to the role
 
-![](images/rbac_add_user_modal.png)
+![](../images/rbac_add_user_modal.png)
 
 ### Remove Users from a Role
 
 1. In the **Role Assignments** tab, click the **Delete** button next to the user you want to remove
 2. Confirm the removal in the confirmation dialog
 
-![](images/rbac_remove_user_dialog.png)
+![](../images/rbac_remove_user_dialog.png)

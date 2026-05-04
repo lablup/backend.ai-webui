@@ -25,19 +25,12 @@ const ResourcePolicyPage: React.FC<ResourcePolicyPageProps> = () => {
     <BAICard
       activeTabKey={curTabKey}
       onTabChange={(key) => {
-        webUINavigate(
-          {
-            pathname: '/resource-policy',
-            search: new URLSearchParams({
-              tab: key,
-            }).toString(),
-          },
-          {
-            params: {
-              tab: key,
-            },
-          },
-        );
+        webUINavigate({
+          pathname: '/resource-policy',
+          search: new URLSearchParams({
+            tab: key,
+          }).toString(),
+        });
       }}
       tabList={filterOutEmpty([
         {

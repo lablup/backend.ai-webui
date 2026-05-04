@@ -171,14 +171,7 @@ const UserDropdownMenu: React.FC<{
       key: 'preferences',
       icon: <SettingOutlined />,
       onClick: () => {
-        webuiNavigate('/usersettings', {
-          params: {
-            tab: 'general',
-          },
-        });
-        // dispatch event to update tab of backend-ai-usersettings
-        const event = new CustomEvent('backend-ai-usersettings', {});
-        document.dispatchEvent(event);
+        webuiNavigate('/usersettings?tab=general');
       },
     },
     {
@@ -188,9 +181,6 @@ const UserDropdownMenu: React.FC<{
       icon: <FileTextOutlined />,
       onClick: () => {
         webuiNavigate('/usersettings?tab=logs');
-        // dispatch event to update tab of backend-ai-usersettings
-        const event = new CustomEvent('backend-ai-usersettings', {});
-        document.dispatchEvent(event);
       },
     },
     baiClient._config.allowAppDownloadPanel && {

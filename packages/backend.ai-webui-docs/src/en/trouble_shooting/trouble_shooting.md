@@ -42,10 +42,10 @@ the [guide on using Homebrew with automount folder](../mount_vfolder/mount_vfold
 By default, when you install a pip package, it will be installed under
 `~/.local`. So, if you create a automount data folder named `.local`, you
 can keep the installed packages after a compute session is destroyed, and then
-reus them for the next compute session. Just install the packages with pip like:
+reuse them for the next compute session. Just install the packages with pip like:
 
-```shell
-$ pip install aiohttp
+```bash
+pip install aiohttp
 ```
 For more information, please refer to the [guide on installing Python
 packages with automount folder](../mount_vfolder/mount_vfolder.md#using-pip-with-automountfolder).

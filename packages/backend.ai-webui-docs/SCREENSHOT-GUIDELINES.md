@@ -67,8 +67,10 @@ Available locale codes: `'en'`, `'ko'`, `'ja'`, `'th'`.
 Per-image workflow:
 1. Navigate to the screen, set up necessary state (open modal, fill form, populate data).
 2. Hide developer overlays (e.g., React Grab toolbar) once.
-3. Loop through the 4 languages: `switchLanguage(lang)` → take screenshot → save to `src/{lang}/images/<file>.png`.
-4. Move to the next screen.
+3. Apply 2× zoom: `document.body.style.zoom = '2'` (see [2× zoom capture procedure](#2-zoom-capture-procedure)).
+4. Resize viewport to fit the zoomed element.
+5. Loop through the 4 languages: `switchLanguage(lang)` → re-apply zoom (it can reset on language switch) → take screenshot → save to `src/{lang}/images/<file>.png`.
+6. Reset zoom (`document.body.style.zoom = ''`) before moving to the next screen.
 
 This pattern is ~4× faster than re-navigating to `/usersettings` for each language and avoids repeating the page setup four times.
 
@@ -76,10 +78,30 @@ This pattern is ~4× faster than re-navigating to `/usersettings` for each langu
 
 ### Resolution and Size
 
-- Capture at standard display resolution (not Retina/HiDPI unless necessary)
+- **Always capture at 2× CSS zoom for sharper text rendering** when capturing via Playwright MCP. Apply `document.body.style.zoom = '2'` and resize the viewport to fit the zoomed layout (e.g., `2000×1500` for full-page captures, or sized to the target element) before taking the screenshot. This effectively doubles the pixel density of the captured PNG without requiring a Retina display or `deviceScaleFactor` change to the browser context.
 - Crop to show only the relevant UI area, not the entire browser window
 - Include enough surrounding context for users to identify where they are in the app
-- Target file size: under 500KB per image where possible
+- Target file size: under 500KB per image where possible (2× zoom captures may exceed this for large pages — that is acceptable when text legibility benefits)
+
+#### 2× zoom capture procedure
+
+```javascript
+// 1. Apply 2× zoom to body before capture
+document.body.style.zoom = '2';
+
+// 2. Resize viewport so the zoomed element fits
+//    (use browser_resize with width/height roughly 2× the natural CSS dimensions)
+
+// 3. Switch language and remove dev overlays as usual, then capture via element ref:
+//    await browser_take_screenshot({ ref: '<dialog ref>' })
+
+// 4. After all four language captures for a screen, reset zoom before moving on:
+document.body.style.zoom = '';
+```
+
+The resulting PNG will be ~2× the natural CSS dimensions in pixels (e.g., a 450×700 modal becomes a 900×1400 PNG), giving noticeably sharper text and icons in the docs.
+
+> **Note on `Match the Existing Screenshot's Framing`** (below): the framing *scope* contract is unchanged — only the pixel density doubles. A modal that was 450×700 at 1× zoom becomes 900×1400 at 2× zoom; both show the same modal-only scope.
 
 ### Content
 

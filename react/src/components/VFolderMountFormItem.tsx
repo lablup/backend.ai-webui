@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { VFolderMountFormItemAutoMountQuery } from '../__generated__/VFolderMountFormItemAutoMountQuery.graphql';
-import FolderCreateModal from './FolderCreateModal';
+import FolderCreateModalV2 from './FolderCreateModalV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import {
   vFolderAliasNameRegExp,
@@ -302,13 +302,15 @@ const VFolderMountFormItem: React.FC<VFolderMountFormItemProps> = ({
         </Suspense>
       )}
       <Suspense>
-        <FolderCreateModal
+        <FolderCreateModalV2
           open={isFolderCreateModalOpen}
-          hiddenFormItems={[
-            'usage_mode',
-            'usage_mode_model',
-            'usage_mode_automount',
-          ]}
+          // TODO: hiddenFormItems prop was removed from FolderCreateModalV2.
+          // This component is currently unused; revisit if it gets re-enabled.
+          // hiddenFormItems={[
+          //   'usage_mode',
+          //   'usage_mode_model',
+          //   'usage_mode_automount',
+          // ]}
           initialValues={{ usage_mode: 'general' }}
           onRequestClose={(response) => {
             setIsFolderCreateModalOpen(false);

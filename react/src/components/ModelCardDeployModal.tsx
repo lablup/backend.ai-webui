@@ -5,6 +5,7 @@
 import { ModelCardDeployModalEndpointPollQuery } from '../__generated__/ModelCardDeployModalEndpointPollQuery.graphql';
 import { ModelCardDeployModalMutation } from '../__generated__/ModelCardDeployModalMutation.graphql';
 import { ModelCardDeployModalQuery } from '../__generated__/ModelCardDeployModalQuery.graphql';
+import { useWebUINavigate } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { App, Form, Typography, theme } from 'antd';
 import type { DefaultOptionType } from 'antd/es/select';
@@ -34,7 +35,6 @@ import {
   useMutation,
   useRelayEnvironment,
 } from 'react-relay';
-import { useNavigate } from 'react-router-dom';
 
 /**
  * Poll-before-navigate configuration for the post-deploy handoff to the
@@ -75,7 +75,7 @@ const ModelCardDeployModalContent: React.FC<
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { message } = App.useApp();
-  const navigate = useNavigate();
+  const navigate = useWebUINavigate();
   const { id: projectId, name: projectName } = useCurrentProjectValue();
   const relayEnvironment = useRelayEnvironment();
 

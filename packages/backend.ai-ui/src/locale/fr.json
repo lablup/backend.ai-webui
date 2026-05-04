@@ -110,6 +110,7 @@
     "operator": {
       "After": "après",
       "Before": "avant",
+      "Equals": "égal à",
       "GreaterThan": "supérieur à",
       "GreaterThanOrEqual": "supérieur ou égal",
       "IContains": "contient",
@@ -123,6 +124,7 @@
       "In": "dans",
       "LessThan": "inférieur à",
       "LessThanOrEqual": "inférieur ou égal",
+      "NotEquals": "différent de",
       "NotIn": "pas dans"
     }
   },
@@ -151,6 +153,28 @@
     "Maximize": "Maximize",
     "Minimize": "Minimize",
     "Restore": "Restore"
+  },
+  "comp:BAIModelDeploymentNodes": {
+    "AreYouSureToDeleteDeployment": "Êtes-vous sûr de vouloir supprimer le déploiement \"{{deploymentName}}\" ? Cette action est irréversible.",
+    "CreatedAt": "Créé le",
+    "CreatedUser": "Auteur",
+    "CurrentRevisionID": "ID de révision actuel",
+    "Delete": "Supprimer",
+    "DeleteDeployment": "Supprimer le déploiement",
+    "DeploymentDeleted": "Déploiement supprimé.",
+    "DeploymentID": "ID de déploiement",
+    "DomainName": "Domaine",
+    "EndpointURL": "URL du point final",
+    "FailedToDeleteDeployment": "Échec de la suppression du déploiement.",
+    "Name": "Nom",
+    "OpenToPublic": "Ouvert au public",
+    "PreferredDomainName": "Domaine préféré",
+    "ProjectID": "ID du projet",
+    "Replicas": "Réplicas",
+    "Status": "Statut",
+    "StrategyType": "Stratégie",
+    "Tags": "Tags",
+    "UpdatedAt": "Mis à jour le"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingFoldersWillBeUpdated": "Le(s) dossier(s) suivant(s) sera(ont) mis à jour.",

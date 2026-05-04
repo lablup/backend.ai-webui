@@ -1,25 +1,25 @@
 import fs from 'fs';
 import path from 'path';
-import { parse as parseYaml } from 'yaml';
+import { chromium } from 'playwright';
 import { processMarkdownFiles } from './markdown-processor.js';
 import { buildFullDocument } from './html-builder.js';
 import { renderPdf } from './pdf-renderer.js';
 import { loadTheme } from './theme.js';
 import { getDocVersion } from './version.js';
+import { loadBookConfig } from './book-config.js';
 import type { ResolvedDocConfig } from './config.js';
-
-interface BookConfig {
-  title: string;
-  description: string;
-  languages: string[];
-  navigation: Record<string, Array<{ title: string; path: string }>>;
-}
 
 export interface GeneratePdfOptions {
   lang: string;
   theme: string;
   chapters?: string[];
   note?: string;
+  /**
+   * Maximum number of languages to render concurrently.
+   * Defaults to 2 (safe for GitHub-hosted ubuntu runners with 2 vCPU).
+   * Override via the `BAI_DOCS_PDF_CONCURRENCY` env var.
+   */
+  concurrency?: number;
 }
 
 function parseArgs(argv: string[]): GeneratePdfOptions {
@@ -58,10 +58,11 @@ export async function generatePdf(
 ): Promise<void> {
   const args = options ?? parseArgs(process.argv.slice(2));
 
-  const configPath = path.join(config.srcDir, 'book.config.yaml');
-  const bookConfig: BookConfig = parseYaml(
-    fs.readFileSync(configPath, 'utf-8'),
-  );
+  // Single-line `title` is used for `<title>`, console output, filename
+  // templates. The PDF cover renderer reads `titleMultiline` so the visual
+  // line breaks the author intended (`title: |` block scalar) survive on
+  // the cover page.
+  const bookConfig = loadBookConfig(config.srcDir);
 
   const theme = loadTheme(args.theme ?? 'default');
   const { display: version, filename: versionForFilename } = getDocVersion(
@@ -69,11 +70,11 @@ export async function generatePdf(
     config.version,
   );
   const title = bookConfig.title;
+  const titleMultiline = bookConfig.titleMultiline;
   const availableLanguages = bookConfig.languages;
 
   const langArg = args.lang ?? 'all';
-  const languages =
-    langArg === 'all' ? availableLanguages : [langArg];
+  const languages = langArg === 'all' ? availableLanguages : [langArg];
 
   // Validate requested language
   for (const lang of languages) {
@@ -85,22 +86,40 @@ export async function generatePdf(
     }
   }
 
+  const envConcurrency = Number.parseInt(
+    process.env.BAI_DOCS_PDF_CONCURRENCY ?? '',
+    10,
+  );
+  const optionConcurrency = Number.isFinite(args.concurrency)
+    ? args.concurrency
+    : undefined;
+  const concurrency = Math.max(
+    1,
+    optionConcurrency ?? (Number.isFinite(envConcurrency) ? envConcurrency : 2),
+  );
+
   const productName = config.productName;
   console.log(`${productName} PDF Generator`);
   console.log(`Title: ${title}`);
   console.log(`Version: ${version}`);
   console.log(`Theme: ${theme.name}`);
   console.log(`Languages: ${languages.join(', ')}`);
+  console.log(`Concurrency: ${concurrency}`);
   console.log('');
 
-  for (const lang of languages) {
+  // Launch a single Chromium instance shared across all language renders.
+  // Each renderPdf call opens its own page on this browser, which avoids
+  // paying the launch cost (~1–2s) per language.
+  const sharedBrowser = await chromium.launch();
+
+  const renderOne = async (lang: string): Promise<void> => {
     const startTime = Date.now();
     console.log(`[${lang}] Generating PDF...`);
 
     let navigation = bookConfig.navigation[lang];
     if (!navigation) {
       console.warn(`[${lang}] No navigation found, skipping`);
-      continue;
+      return;
     }
 
     // Filter chapters if --chapters option is specified
@@ -129,7 +148,7 @@ export async function generatePdf(
           `[${lang}] Chapter identifiers can be a full path (e.g. overview/overview.md), directory name, or filename.`,
         );
         console.error(`[${lang}] Available chapters: ${available}`);
-        process.exit(1);
+        throw new Error(`No chapters matched filter for "${lang}"`);
       }
       navigation = filtered;
       console.log(
@@ -151,7 +170,7 @@ export async function generatePdf(
     console.log(`[${lang}] Building HTML...`);
     const html = buildFullDocument(
       chapters,
-      { title, version, lang, note: args.note },
+      { title, titleMultiline, version, lang, note: args.note },
       config,
       theme,
     );
@@ -173,6 +192,7 @@ export async function generatePdf(
       lang,
       theme,
       config,
+      browser: sharedBrowser,
     });
 
     const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
@@ -181,7 +201,55 @@ export async function generatePdf(
       `[${lang}] Done: ${outputPath} (${fileSize} MB, ${elapsed}s)`,
     );
     console.log('');
+  };
+
+  // Track per-language outcome so a single language failure (e.g. missing
+  // CJK font on a runner) does not kill renders that have already started
+  // or are still queued. The script exits non-zero only if *every*
+  // requested language failed.
+  const failures: Array<{ lang: string; error: Error }> = [];
+
+  try {
+    // Concurrency-limited fan-out: process up to `concurrency` languages at
+    // a time. Each worker pulls the next language from a shared cursor.
+    const queue = [...languages];
+    const workers: Promise<void>[] = [];
+    const workerCount = Math.min(concurrency, queue.length);
+    for (let i = 0; i < workerCount; i++) {
+      workers.push(
+        (async () => {
+          while (queue.length > 0) {
+            const lang = queue.shift();
+            if (!lang) break;
+            try {
+              await renderOne(lang);
+            } catch (err) {
+              const error = err instanceof Error ? err : new Error(String(err));
+              console.error(`[${lang}] FAILED: ${error.message}`);
+              failures.push({ lang, error });
+            }
+          }
+        })(),
+      );
+    }
+    await Promise.all(workers);
+  } finally {
+    await sharedBrowser.close();
   }
 
-  console.log('PDF generation complete!');
+  if (failures.length > 0) {
+    console.log('');
+    console.log(`PDF generation finished with ${failures.length}/${languages.length} failures:`);
+    for (const { lang, error } of failures) {
+      console.log(`  - [${lang}] ${error.message}`);
+    }
+    if (failures.length === languages.length) {
+      throw new Error('All requested languages failed to build');
+    }
+    console.log(
+      `Continuing because ${languages.length - failures.length} language(s) succeeded.`,
+    );
+  } else {
+    console.log('PDF generation complete!');
+  }
 }

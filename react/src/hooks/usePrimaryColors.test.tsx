@@ -4,8 +4,8 @@ import { ConfigProvider } from 'antd';
 import React from 'react';
 
 // Mock @ant-design/colors
-jest.mock('@ant-design/colors', () => ({
-  generate: jest.fn((color: string) => [
+vi.mock('@ant-design/colors', () => ({
+  generate: vi.fn((color: string) => [
     `${color}-1`,
     `${color}-2`,
     `${color}-3`,

@@ -20,13 +20,14 @@ import { useAutoDiagnostics } from './hooks/useAutoDiagnostics';
 import { useBAISettingUserState } from './hooks/useBAISetting';
 import { LogoutEventHandler } from './hooks/useLogout';
 import { useSToken } from './hooks/useSToken';
-import { useWebUIMenuItems } from './hooks/useWebUIMenuItems';
+import {
+  useWebUIMenuItems,
+  populateRouterPaths,
+} from './hooks/useWebUIMenuItems';
 import { pluginApiEndpointState } from './hooks/useWebUIPluginState';
 // High priority to import the component
 import ComputeSessionListPage from './pages/ComputeSessionListPage';
-import LegacyModelStoreListPage from './pages/LegacyModelStoreListPage';
 import Page404 from './pages/Page404';
-import ServingPage from './pages/ServingPage';
 import VFolderNodeListPage from './pages/VFolderNodeListPage';
 import { Skeleton, theme } from 'antd';
 import { BAIFlex, BAICard } from 'backend.ai-ui';
@@ -34,14 +35,11 @@ import { useSetAtom } from 'jotai';
 import { parseAsString, useQueryStates } from 'nuqs';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
-import { RouteObject, useLocation } from 'react-router-dom';
+import { RouteObject, useLocation, useParams } from 'react-router-dom';
 
 const LoginViewLazy = React.lazy(() => import('./components/LoginView'));
 
 const Information = React.lazy(() => import('./components/Information'));
-const EndpointDetailPage = React.lazy(
-  () => import('./pages/EndpointDetailPage'),
-);
 const StartPage = React.lazy(() => import('./pages/StartPage'));
 const DashboardPage = React.lazy(() => import('./pages/DashboardPage'));
 const AdminDashboardPage = React.lazy(
@@ -69,11 +67,25 @@ const FolderInvitationResponseModalOpener = React.lazy(
 const FileUploadManager = React.lazy(
   () => import('./components/FileUploadManager'),
 );
-const ServiceLauncherCreatePage = React.lazy(
-  () => import('./components/ServiceLauncherPageContent'),
+// FR-2675 — The legacy `ServiceLauncherCreatePage` / `ServiceLauncherUpdatePage`
+// routes have been redirected to the new Deployment launcher below so the
+// new `/deployments/start` + `/deployments/:deploymentId/edit` paths are the
+// sole launcher entry points. The underlying `ServiceLauncherPageContent`
+// component is still imported transitively (by `useModelServiceLauncher`,
+// `LegacyModelTryContentButton`, etc.) and is scheduled for removal in a
+// follow-up cleanup once those call sites migrate to the new hook.
+
+const DeploymentListPage = React.lazy(
+  () => import('./pages/DeploymentListPage'),
 );
-const ServiceLauncherUpdatePage = React.lazy(
-  () => import('./pages/ServiceLauncherPage'),
+const DeploymentLauncherPage = React.lazy(
+  () => import('./pages/DeploymentLauncherPage'),
+);
+const DeploymentDetailPage = React.lazy(
+  () => import('./pages/DeploymentDetailPage'),
+);
+const AdminDeploymentListPage = React.lazy(
+  () => import('./pages/AdminDeploymentListPage'),
 );
 const InteractiveLoginPage = React.lazy(
   () => import('./pages/InteractiveLoginPage'),
@@ -102,21 +114,23 @@ const ReservoirArtifactDetailPage = React.lazy(
   () => import('./pages/ReservoirArtifactDetailPage'),
 );
 
-const ModelStoreListPageV2 = React.lazy(
-  () => import('./pages/ModelStoreListPageV2'),
-);
 const SchedulerPage = React.lazy(() => import('./pages/SchedulerPage'));
 const BrandingPage = React.lazy(() => import('./pages/BrandingPage'));
 const RBACManagementPage = React.lazy(
   () => import('./pages/RBACManagementPage'),
 );
 const AdminSessionPage = React.lazy(() => import('./pages/AdminSessionPage'));
-const AdminServingPage = React.lazy(() => import('./pages/AdminServingPage'));
 const AdminVFolderNodeListPage = React.lazy(
   () => import('./pages/AdminVFolderNodeListPage'),
 );
 const ProjectAdminUsersPage = React.lazy(
   () => import('./pages/ProjectAdminUsersPage'),
+);
+const ProjectAdminDataPage = React.lazy(
+  () => import('./pages/ProjectAdminDataPage'),
+);
+const ProjectAdminDeploymentsPage = React.lazy(
+  () => import('./pages/ProjectAdminDeploymentsPage'),
 );
 const EmailVerificationPage = React.lazy(
   () => import('./pages/EmailVerificationPage'),
@@ -126,6 +140,12 @@ const ChangePasswordPage = React.lazy(
 );
 const EduAppLauncherPage = React.lazy(
   () => import('./pages/EduAppLauncherPage'),
+);
+const ModelStoreListPageV2 = React.lazy(
+  () => import('./pages/ModelStoreListPageV2'),
+);
+const LegacyModelStoreListPage = React.lazy(
+  () => import('./pages/LegacyModelStoreListPage'),
 );
 
 /**
@@ -255,8 +275,9 @@ export const mainLayoutChildRoutes: RouteObject[] = [
     ],
   },
   {
-    path: '/serving',
-
+    // FR-2664 — New Deployment UI routes. Replaces the legacy /serving
+    // routes (see fallback redirects below).
+    path: '/deployments',
     handle: { labelKey: 'webui.menu.Serving' },
     children: [
       {
@@ -268,29 +289,10 @@ export const mainLayoutChildRoutes: RouteObject[] = [
             <Suspense
               fallback={<BAICard title={t('webui.menu.Serving')} loading />}
             >
-              <ServingPage />
+              <DeploymentListPage />
             </Suspense>
           );
         },
-      },
-      {
-        path: '/serving/:serviceId',
-        element: (
-          <Suspense fallback={<Skeleton active />}>
-            <EndpointDetailPage />
-          </Suspense>
-        ),
-        handle: { labelKey: 'modelService.RoutingInfo' },
-      },
-    ],
-  },
-  {
-    path: '/service',
-    handle: { labelKey: 'webui.menu.Serving' },
-    children: [
-      {
-        path: '',
-        element: <WebUINavigate to="/serving" replace />,
       },
       {
         path: 'start',
@@ -303,12 +305,21 @@ export const mainLayoutChildRoutes: RouteObject[] = [
               </BAIFlex>
             }
           >
-            <ServiceLauncherCreatePage />
+            <DeploymentLauncherPage />
           </Suspense>
         ),
       },
       {
-        path: 'update/:endpointId',
+        path: ':deploymentId',
+        handle: { labelKey: 'modelService.RoutingInfo' },
+        element: (
+          <Suspense fallback={<Skeleton active />}>
+            <DeploymentDetailPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: ':deploymentId/edit',
         handle: { labelKey: 'modelService.UpdateService' },
         element: (
           <Suspense
@@ -318,9 +329,105 @@ export const mainLayoutChildRoutes: RouteObject[] = [
               </BAIFlex>
             }
           >
-            <ServiceLauncherUpdatePage />
+            <DeploymentLauncherPage />
           </Suspense>
         ),
+      },
+    ],
+  },
+  {
+    // FR-2664 — Legacy /serving fallback. Transient redirect; remove once
+    // all internal links + external references have been migrated.
+    path: '/serving',
+    handle: { labelKey: 'webui.menu.Serving' },
+    children: [
+      {
+        path: '',
+        Component: () => {
+          const location = useLocation();
+          return (
+            <WebUINavigate to={'/deployments' + location.search} replace />
+          );
+        },
+      },
+      {
+        path: ':serviceId',
+        Component: () => {
+          const { serviceId } = useParams<{ serviceId: string }>();
+          const location = useLocation();
+          return (
+            <WebUINavigate
+              to={`/deployments/${serviceId}${location.search}`}
+              replace
+            />
+          );
+        },
+      },
+    ],
+  },
+  {
+    path: '/service',
+    handle: { labelKey: 'webui.menu.Serving' },
+    children: [
+      {
+        path: '',
+        element: <WebUINavigate to="/deployments" replace />,
+      },
+      {
+        // FR-2675 — Legacy `/service/start` → new `/deployments/start`.
+        path: 'start',
+        Component: () => {
+          const location = useLocation();
+          return (
+            <WebUINavigate
+              to={'/deployments/start' + location.search}
+              replace
+            />
+          );
+        },
+      },
+      {
+        // FR-2675 — Legacy `/service/update/:endpointId` →
+        // `/deployments/:deploymentId/edit`.
+        path: 'update/:endpointId',
+        Component: () => {
+          const { endpointId } = useParams<{ endpointId: string }>();
+          const location = useLocation();
+          return (
+            <WebUINavigate
+              to={`/deployments/${endpointId}/edit${location.search}`}
+              replace
+            />
+          );
+        },
+      },
+      {
+        // FR-2664 — Legacy fallback: /service/:endpointId → /deployments/:deploymentId
+        path: ':endpointId',
+        Component: () => {
+          const { endpointId } = useParams<{ endpointId: string }>();
+          const location = useLocation();
+          return (
+            <WebUINavigate
+              to={`/deployments/${endpointId}${location.search}`}
+              replace
+            />
+          );
+        },
+      },
+      {
+        // FR-2664 — Legacy fallback: /service/:endpointId/edit → /deployments/:deploymentId/edit
+        path: ':endpointId/edit',
+        Component: () => {
+          const { endpointId } = useParams<{ endpointId: string }>();
+          const location = useLocation();
+          return (
+            <WebUINavigate
+              to={`/deployments/${endpointId}/edit${location.search}`}
+              replace
+            />
+          );
+        },
       },
     ],
   },
@@ -329,13 +436,13 @@ export const mainLayoutChildRoutes: RouteObject[] = [
     handle: { labelKey: 'data.ModelStore' },
     Component: () => {
       const baiClient = useSuspendedBackendaiClient();
-      return (
+      return baiClient?.supports('model-card-v2') ? (
         <Suspense fallback={<Skeleton active />}>
-          {baiClient?.supports('model-card-v2') ? (
-            <ModelStoreListPageV2 />
-          ) : (
-            <LegacyModelStoreListPage />
-          )}
+          <ModelStoreListPageV2 />
+        </Suspense>
+      ) : (
+        <Suspense fallback={<Skeleton active />}>
+          <LegacyModelStoreListPage />
         </Suspense>
       );
     },
@@ -409,32 +516,53 @@ export const mainLayoutChildRoutes: RouteObject[] = [
     ),
   },
   {
+    // FR-2664 — New admin deployment list route. Replaces the legacy
+    // /admin-serving route (see fallback redirect below).
+    path: '/admin-deployments',
+    handle: { labelKey: 'webui.menu.Serving' },
+    Component: () => {
+      return (
+        <BAIErrorBoundary>
+          <Suspense fallback={<BAICard loading />}>
+            <AdminDeploymentListPage />
+          </Suspense>
+        </BAIErrorBoundary>
+      );
+    },
+  },
+  {
+    // FR-2664 — Legacy /admin-serving fallback. Transient redirect; remove
+    // once all internal links + external references have been migrated.
     path: '/admin-serving',
     handle: { labelKey: 'webui.menu.Serving' },
     children: [
       {
         index: true,
         Component: () => {
-          const { t } = useTranslation();
+          const location = useLocation();
           return (
-            <BAIErrorBoundary>
-              <Suspense
-                fallback={<BAICard title={t('webui.menu.Serving')} loading />}
-              >
-                <AdminServingPage />
-              </Suspense>
-            </BAIErrorBoundary>
+            <WebUINavigate
+              to={'/admin-deployments' + location.search}
+              replace
+            />
           );
         },
       },
       {
+        // /admin-deployments has no nested detail route — the deployment
+        // detail page is shared at /deployments/:deploymentId regardless
+        // of the viewer's role.
         path: ':serviceId',
-        element: (
-          <Suspense fallback={<Skeleton active />}>
-            <EndpointDetailPage />
-          </Suspense>
-        ),
-        handle: { labelKey: 'modelService.RoutingInfo' },
+        Component: () => {
+          const { serviceId } = useParams<{ serviceId: string }>();
+          const location = useLocation();
+          return (
+            <WebUINavigate
+              to={`/deployments/${serviceId}${location.search}`}
+              replace
+            />
+          );
+        },
       },
     ],
   },
@@ -458,6 +586,30 @@ export const mainLayoutChildRoutes: RouteObject[] = [
       return (
         <Suspense fallback={<Skeleton active />}>
           <ProjectAdminUsersPage />
+        </Suspense>
+      );
+    },
+  },
+  {
+    path: '/project-data',
+    handle: { labelKey: 'webui.menu.Data' },
+    Component: () => {
+      useSuspendedBackendaiClient();
+      return (
+        <Suspense fallback={<Skeleton active />}>
+          <ProjectAdminDataPage />
+        </Suspense>
+      );
+    },
+  },
+  {
+    path: '/project-admin-deployments',
+    handle: { labelKey: 'webui.menu.ProjectDeployments' },
+    Component: () => {
+      useSuspendedBackendaiClient();
+      return (
+        <Suspense fallback={<Skeleton active />}>
+          <ProjectAdminDeploymentsPage />
         </Suspense>
       );
     },
@@ -1014,19 +1166,10 @@ function extractRoutePaths(
   return { staticPaths, dynamicPatterns };
 }
 
-// Extract valid paths from mainLayoutChildRoutes (excluding root-level routes like /interactive-login)
+// Populate the shared routerPaths registry so useWebUIMenuItems can read
+// valid paths without importing routes.tsx directly (which would create a
+// circular dependency: routes → useWebUIMenuItems → routes).
 const { staticPaths, dynamicPatterns } = extractRoutePaths(
   mainLayoutChildRoutes,
 );
-
-/**
- * Set of valid static route paths (first path segment only).
- * Derived from the router configuration.
- */
-export const ROUTER_STATIC_PATHS = staticPaths;
-
-/**
- * Array of regex patterns for dynamic routes.
- * Derived from the router configuration.
- */
-export const ROUTER_DYNAMIC_PATTERNS = dynamicPatterns;
+populateRouterPaths(staticPaths, dynamicPatterns);

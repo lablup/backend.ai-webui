@@ -102,7 +102,7 @@ describe('BAIUnmountAfterClose', () => {
 
   describe('afterClose Callback (Modal)', () => {
     it('should call original afterClose callback when provided', async () => {
-      const originalAfterClose = jest.fn();
+      const originalAfterClose = vi.fn();
 
       render(
         <BAIUnmountAfterClose>
@@ -149,7 +149,7 @@ describe('BAIUnmountAfterClose', () => {
     });
 
     it('should handle modal with afterClose callback', () => {
-      const afterClose = jest.fn();
+      const afterClose = vi.fn();
 
       render(
         <BAIUnmountAfterClose>
@@ -179,7 +179,7 @@ describe('BAIUnmountAfterClose', () => {
     });
 
     it('should preserve original afterOpenChange callback', () => {
-      const originalAfterOpenChange = jest.fn();
+      const originalAfterOpenChange = vi.fn();
 
       render(
         <BAIUnmountAfterClose>
@@ -200,7 +200,7 @@ describe('BAIUnmountAfterClose', () => {
     });
 
     it('should handle drawer with custom props', () => {
-      const onClose = jest.fn();
+      const onClose = vi.fn();
 
       render(
         <BAIUnmountAfterClose>
@@ -274,8 +274,8 @@ describe('BAIUnmountAfterClose', () => {
     });
 
     it('should preserve modal props other than afterClose', () => {
-      const onCancel = jest.fn();
-      const onOk = jest.fn();
+      const onCancel = vi.fn();
+      const onOk = vi.fn();
 
       render(
         <BAIUnmountAfterClose>
@@ -296,7 +296,7 @@ describe('BAIUnmountAfterClose', () => {
     });
 
     it('should preserve drawer props other than afterOpenChange', () => {
-      const onClose = jest.fn();
+      const onClose = vi.fn();
 
       render(
         <BAIUnmountAfterClose>
@@ -317,7 +317,7 @@ describe('BAIUnmountAfterClose', () => {
 
   describe('Performance and Re-rendering', () => {
     it('should not cause unnecessary re-renders when open prop stays true', () => {
-      const renderCounter = jest.fn();
+      const renderCounter = vi.fn();
 
       const TestModal = ({ open }: { open: boolean }) => {
         renderCounter();

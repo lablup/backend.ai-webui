@@ -20,7 +20,26 @@ export function generatePdfStyles(theme: PdfTheme, lang?: string): string {
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans",
-    "Noto Sans KR", "Noto Sans JP", "Noto Sans Thai",
+    "Noto Sans KR", "Noto Sans CJK KR",
+    "Noto Sans JP", "Noto Sans CJK JP",
+    "Noto Sans TC", "Noto Sans CJK TC",
+    "Noto Sans Thai",
+    Helvetica, Arial, sans-serif;
+}
+
+/* Per-language font priorities so Chromium picks the language-appropriate
+ * Noto CJK face first (KR/JP/TC differ in kanji/hanja glyph style). The
+ * <html lang="..."> attribute is set by html-builder.ts. */
+:lang(ja) {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans",
+    "Noto Sans JP", "Noto Sans CJK JP",
+    "Noto Sans KR", "Noto Sans CJK KR",
+    Helvetica, Arial, sans-serif;
+}
+
+:lang(th) {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans",
+    "Noto Sans Thai", "Loma", "Garuda",
     Helvetica, Arial, sans-serif;
   font-size: ${theme.baseFontSize};
   line-height: 1.6;
@@ -551,6 +570,24 @@ em {
   border-left: 3px solid #3578e5;
   margin-left: -12px;
   padding-left: 9px;
+}
+
+/* shellsession blocks (FR-2756). The PDF pipeline strips the literal
+   '$' / '#' from the source DOM and restores it via ::before so the
+   visible prompt prints in the PDF too. Output lines are slightly dimmed
+   so command vs response is visually distinct on paper. */
+.cmd-line {
+  display: block;
+}
+
+.cmd-line::before {
+  content: attr(data-prompt) " ";
+  color: #888;
+}
+
+.output-line {
+  display: block;
+  color: #666;
 }
 
 /* ==========================================================================

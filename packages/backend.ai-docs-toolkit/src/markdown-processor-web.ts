@@ -3,28 +3,32 @@
  * Supports: admonitions, code block titles, line highlighting, details/summary.
  */
 
-import fs from 'fs';
-import path from 'path';
-import { Marked } from 'marked';
+import fs from "fs";
+import path from "path";
+import { Marked } from "marked";
 import {
   slugify,
+  slugFromNavPath,
   deduplicateH1,
   substituteTemplateVars,
   normalizeRstTables,
   convertIndentedNotes,
   resolveMarkdownPath,
-} from './markdown-processor.js';
-import type { Chapter, Heading } from './markdown-processor.js';
+} from "./markdown-processor.js";
+import type { Chapter, Heading } from "./markdown-processor.js";
 import {
   processAdmonitions,
   processCodeBlockMeta,
   parseHighlightLines,
+  parseShellSessionLines,
   escapeHtml,
   stripHtmlTags,
   getFigureLabel,
   parseImageSizeHint,
-} from './markdown-extensions.js';
-import type { ResolvedDocConfig } from './config.js';
+} from "./markdown-extensions.js";
+import type { ResolvedDocConfig } from "./config.js";
+import { DEFAULT_CODE_LIGHT_THEME } from "./config.js";
+import { highlight as shikiHighlight } from "./shiki-highlighter.js";
 
 export type { Chapter, Heading };
 
@@ -41,7 +45,7 @@ export interface AnchorEntry {
   /** Nav path of the source file (e.g., "vfolder/vfolder.md") */
   filePath: string;
   /** Source: heading-derived or explicit <a id> tag */
-  source: 'heading' | 'explicit';
+  source: "heading" | "explicit";
   /** The final ID as it appears in the rendered HTML */
   resolvedId: string;
 }
@@ -54,7 +58,7 @@ export interface AnchorRegistry {
 }
 
 export interface LinkDiagnostic {
-  type: 'broken-link' | 'duplicate-anchor' | 'ambiguous-link';
+  type: "broken-link" | "duplicate-anchor" | "ambiguous-link";
   anchorId: string;
   sourceFile: string;
   message: string;
@@ -80,7 +84,7 @@ function rewriteImagePathsForWeb(
       if (/^(?:https?|file):\/\//.test(imgPath)) return match;
 
       // Treat leading-slash paths as already web-absolute
-      if (imgPath.startsWith('/')) return match;
+      if (imgPath.startsWith("/")) return match;
 
       // Resolve relative to the md file's directory
       const resolved = path.resolve(mdDir, imgPath);
@@ -90,7 +94,7 @@ function rewriteImagePathsForWeb(
 
       // Make path relative to lang dir and convert to a URL path
       const relToLang = path.relative(langDir, resolved);
-      const webPath = '/' + relToLang.split(path.sep).join('/');
+      const webPath = "/" + relToLang.split(path.sep).join("/");
       return `![${alt}](${webPath})`;
     },
   );
@@ -100,7 +104,10 @@ function rewriteImagePathsForWeb(
  * Fix legacy malformed cross-reference links where HTML tags leaked into href.
  * This handles a narrow edge case from RST-to-Markdown migration.
  */
-function fixMalformedCrossReferences(html: string, chapterSlug: string): string {
+function fixMalformedCrossReferences(
+  html: string,
+  chapterSlug: string,
+): string {
   return html.replace(
     /href="#([^"]*)<([^>]+)>[^"]*"/g,
     (_, _text, anchor) => `href="#${chapterSlug}-${slugify(anchor)}"`,
@@ -138,7 +145,7 @@ function buildAnchorRegistryFromRendered(
       resolvedIds.add(heading.id);
 
       // Derive the raw slug by stripping the chapter-slug prefix
-      const prefix = chapter.slug + '-';
+      const prefix = chapter.slug + "-";
       const rawSlug = heading.id.startsWith(prefix)
         ? heading.id.slice(prefix.length)
         : heading.id;
@@ -146,7 +153,7 @@ function buildAnchorRegistryFromRendered(
       addEntry(rawSlug, {
         chapterSlug: chapter.slug,
         filePath,
-        source: 'heading',
+        source: "heading",
         resolvedId: heading.id,
       });
     }
@@ -162,7 +169,7 @@ function buildAnchorRegistryFromRendered(
       addEntry(anchorId, {
         chapterSlug: chapter.slug,
         filePath,
-        source: 'explicit',
+        source: "explicit",
         resolvedId: anchorId,
       });
       resolvedIds.add(anchorId);
@@ -182,15 +189,15 @@ function detectDuplicateAnchors(
   for (const [anchorId, entries] of registry.anchors) {
     const chaptersWithExplicit = [
       ...new Set(
-        entries.filter((e) => e.source === 'explicit').map((e) => e.filePath),
+        entries.filter((e) => e.source === "explicit").map((e) => e.filePath),
       ),
     ];
     if (chaptersWithExplicit.length > 1) {
       diagnostics.push({
-        type: 'duplicate-anchor',
+        type: "duplicate-anchor",
         anchorId,
-        sourceFile: chaptersWithExplicit.join(', '),
-        message: `Duplicate explicit anchor <a id="${anchorId}"> in: ${chaptersWithExplicit.join(', ')}`,
+        sourceFile: chaptersWithExplicit.join(", "),
+        message: `Duplicate explicit anchor <a id="${anchorId}"> in: ${chaptersWithExplicit.join(", ")}`,
       });
     }
   }
@@ -235,7 +242,7 @@ function rewriteCrossPageLinks(
       if (!reportedAnchors.has(anchorId)) {
         reportedAnchors.add(anchorId);
         diagnostics.push({
-          type: 'broken-link',
+          type: "broken-link",
           anchorId,
           sourceFile,
           message: `No matching anchor found for #${anchorId}`,
@@ -250,24 +257,24 @@ function rewriteCrossPageLinks(
     );
     if (sameChapter.length > 0) {
       // Explicit anchors keep their raw ID which already works in-page
-      const explicit = sameChapter.find((e) => e.source === 'explicit');
+      const explicit = sameChapter.find((e) => e.source === "explicit");
       if (explicit) return fullMatch;
       // Heading-only: rewrite to chapter-prefixed resolved ID
       return `href="#${sameChapter[0].resolvedId}"`;
     }
 
     // Cross-chapter link — resolve target first so diagnostic is accurate
-    const targetExplicit = entries.find((e) => e.source === 'explicit');
+    const targetExplicit = entries.find((e) => e.source === "explicit");
     const target = targetExplicit ?? entries[0];
 
     const uniqueChapters = [...new Set(entries.map((e) => e.chapterSlug))];
     if (uniqueChapters.length > 1 && !reportedAnchors.has(anchorId)) {
       reportedAnchors.add(anchorId);
       diagnostics.push({
-        type: 'ambiguous-link',
+        type: "ambiguous-link",
         anchorId,
         sourceFile,
-        message: `Ambiguous link #${anchorId} found in chapters: ${uniqueChapters.join(', ')}. Resolved to: ${target.chapterSlug}`,
+        message: `Ambiguous link #${anchorId} found in chapters: ${uniqueChapters.join(", ")}. Resolved to: ${target.chapterSlug}`,
       });
     }
 
@@ -276,7 +283,7 @@ function rewriteCrossPageLinks(
     }
 
     // Single-page mode: explicit <a id> tags are all in one page, link works as-is
-    if (target.source === 'explicit') {
+    if (target.source === "explicit") {
       return fullMatch;
     }
     return `href="#${target.resolvedId}"`;
@@ -287,9 +294,9 @@ function rewriteCrossPageLinks(
  * Log anchor resolution diagnostics to the console.
  */
 function reportLinkDiagnostics(diagnostics: LinkDiagnostic[]): void {
-  const broken = diagnostics.filter((d) => d.type === 'broken-link');
-  const duplicates = diagnostics.filter((d) => d.type === 'duplicate-anchor');
-  const ambiguous = diagnostics.filter((d) => d.type === 'ambiguous-link');
+  const broken = diagnostics.filter((d) => d.type === "broken-link");
+  const duplicates = diagnostics.filter((d) => d.type === "duplicate-anchor");
+  const ambiguous = diagnostics.filter((d) => d.type === "ambiguous-link");
 
   if (duplicates.length > 0) {
     console.warn(`\n⚠ Duplicate anchors (${duplicates.length}):`);
@@ -315,15 +322,30 @@ function reportLinkDiagnostics(diagnostics: LinkDiagnostic[]): void {
  * Build a custom Marked renderer for web preview.
  * Handles headings with anchor links, images with doc-image class,
  * and code blocks with title/line-highlighting support.
+ *
+ * Code blocks: F4 swaps the legacy `escapeHtml` body with Shiki-tokenized
+ * inner HTML. Tokenization is async (Shiki loads grammars on demand) so a
+ * pre-pass populates `highlightedCode` (keyed by `lang\0source`) before
+ * `marked.parse()` runs. The renderer is purely sync here — it just looks
+ * up the pre-rendered HTML, falling back to `escapeHtml` if the lookup
+ * misses (defensive: should not happen because the pre-pass walks the
+ * exact same tokens marked will render).
  */
 function buildWebRenderer(
   chapterSlug: string,
   headings: Heading[],
-  options?: { chapterIndex?: number; lang?: string; figureLabels?: Record<string, string> },
+  options?: {
+    chapterIndex?: number;
+    lang?: string;
+    figureLabels?: Record<string, string>;
+    /** Pre-rendered Shiki HTML keyed by `${lang}\0${code}`. */
+    highlightedCode?: Map<string, string>;
+  },
 ) {
   let imgCounter = 0;
   const chapterIndex = options?.chapterIndex ?? 0;
   const figureLabel = getFigureLabel(options?.lang, options?.figureLabels);
+  const highlightedCode = options?.highlightedCode;
 
   return {
     heading(text: string, level: number, _raw: string): string {
@@ -334,11 +356,11 @@ function buildWebRenderer(
       return `<h${level} id="${id}">${text}<a class="hash-link" href="#${id}" aria-label="Direct link to ${escapedPlainText}">#</a></h${level}>\n`;
     },
     image(href: string, title: string | null, text: string): string {
-      const titleAttr = title ? ` title="${title}"` : '';
-      const { cleanAlt, sizeHint } = parseImageSizeHint(text || '');
+      const titleAttr = title ? ` title="${title}"` : "";
+      const { cleanAlt, sizeHint } = parseImageSizeHint(text || "");
 
-      let styleAttr = '';
-      if (sizeHint && sizeHint !== 'auto') {
+      let styleAttr = "";
+      if (sizeHint && sizeHint !== "auto") {
         styleAttr = ` style="width:${sizeHint}"`;
       }
 
@@ -354,40 +376,84 @@ function buildWebRenderer(
       return `<img src="${href}" alt="${cleanAlt}" class="doc-image"${titleAttr}${styleAttr} />\n`;
     },
     code(code: string, infostring: string | undefined): string {
-      const info = infostring || '';
+      const info = infostring || "";
       const langMatch = info.match(/^(\w+)/);
       const titleMatch = info.match(/data-title="([^"]*)"/);
       const highlightMatch = info.match(/data-highlight="([^"]*)"/);
 
-      const lang = langMatch?.[1] || '';
-      const title = titleMatch?.[1] || '';
-      const highlightSpec = highlightMatch?.[1] || '';
+      const lang = langMatch?.[1] || "";
+      const title = titleMatch?.[1] || "";
+      const highlightSpec = highlightMatch?.[1] || "";
       const highlightLines = parseHighlightLines(highlightSpec);
 
+      // F4: line-highlight feature (data-highlight="1,3-5") wraps each line
+      // in `.code-line.highlighted`. Mixing this with Shiki's per-token
+      // colored spans is messy (we'd have to walk Shiki's output and split
+      // by line preserving colors), so when an author uses data-highlight
+      // we fall back to the legacy un-highlighted line wrappers. This keeps
+      // the line-highlight feature working unchanged. Authors who want
+      // both can land that in a follow-up; F4 spec doesn't require it.
+      //
+      // Shellsession blocks (FR-2756) take precedence over the highlight
+      // path: even when a shellsession block sets `data-highlight=…`, we
+      // must still pull the prompt-stripped HTML from the precompute map
+      // (the legacy line-wrap path would leak literal `$` prompts into
+      // the DOM and clipboard). Combining shellsession with line-highlight
+      // is intentionally out of scope for v1.
+      const isShellSession = lang === "shellsession" || lang === "console";
       let codeHtml: string;
-      if (highlightLines.size > 0) {
-        const lines = code.split('\n');
+      if (isShellSession) {
+        const key = `${lang}|||${code}`;
+        const pre = highlightedCode?.get(key);
+        codeHtml = pre ?? escapeHtml(code);
+      } else if (highlightLines.size > 0) {
+        const lines = code.split("\n");
         codeHtml = lines
           .map((line, idx) => {
             const lineNum = idx + 1;
             const cls = highlightLines.has(lineNum)
-              ? 'code-line highlighted'
-              : 'code-line';
+              ? "code-line highlighted"
+              : "code-line";
             return `<span class="${cls}">${escapeHtml(line)}</span>`;
           })
-          .join('\n');
+          .join("\n");
       } else {
-        codeHtml = escapeHtml(code);
+        // Look up Shiki's pre-rendered output. The pre-pass uses the exact
+        // same `(lang, code)` tuple, so a miss means either the pre-pass
+        // wasn't run (catalog mode) or the renderer was invoked with a
+        // token that didn't go through Marked's lexer (no realistic path
+        // today, but defensive). Fall back to escaped plaintext.
+        const key = `${lang}|||${code}`;
+        const pre = highlightedCode?.get(key);
+        codeHtml = pre ?? escapeHtml(code);
       }
 
-      const langClass = lang ? ` class="language-${lang}"` : '';
-      const preBlock = `<pre><code${langClass}>${codeHtml}</code></pre>`;
+      // Add `language-{lang}` for legacy CSS hooks (existing themes target
+      // these classes). Shiki adds its own `.shiki` / `.line` classes inside
+      // the `<code>` body — both shells coexist without conflict.
+      const langClass = lang
+        ? ` class="language-${lang} shiki-host"`
+        : ` class="shiki-host"`;
+      const preBlock = `<pre${langClass}><code>${codeHtml}</code></pre>`;
 
-      if (title) {
-        return `<div class="code-block-wrapper"><div class="code-block-title">${escapeHtml(title)}</div>${preBlock}</div>\n`;
+      // Emit the BAI dark frame whenever we have either a language hint
+      // or a title — the header renders a language pill (left), filename
+      // text slot (middle, flex-grows so the copy button lands flush
+      // right), and an empty slot the runtime copy script populates with
+      // its SVG button. Plain fenced blocks with no lang/title fall
+      // through to bare <pre>; code-copy.js still wraps them with the
+      // doc-code-block-wrapper at runtime so they get the dark frame.
+      if (lang || title) {
+        const langPill = lang
+          ? `<span class="code-block-lang">${escapeHtml(lang)}</span>`
+          : "";
+        const titleText = title
+          ? `<span class="code-block-title-text">${escapeHtml(title)}</span>`
+          : `<span class="code-block-title-text" aria-hidden="true"></span>`;
+        return `<div class="code-block-wrapper"><div class="code-block-title">${langPill}${titleText}</div>${preBlock}</div>\n`;
       }
 
-      return preBlock + '\n';
+      return preBlock + "\n";
     },
   };
 }
@@ -395,6 +461,142 @@ function buildWebRenderer(
 export interface WebProcessingOptions {
   /** Enable multi-page link resolution (default: false) */
   multiPage?: boolean;
+  /**
+   * If provided, the processor pushes link diagnostics into this array
+   * instead of (only) printing warnings. The website generator uses this
+   * to decide whether to fail under `--strict`.
+   */
+  diagnosticsSink?: LinkDiagnostic[];
+}
+
+/**
+ * Strip the outer `<span class="line">…</span>` Shiki wraps around every
+ * tokenized line. Used by the shellsession path so each command's
+ * inline-styled tokens can be re-wrapped under our own `.cmd-line` shell
+ * without producing a nested `.line` element. Returns the input unchanged
+ * if the expected wrapper is absent (defensive: future Shiki versions or
+ * the plaintext fallback may emit a different shape).
+ */
+function unwrapShikiSingleLine(html: string): string {
+  const open = '<span class="line">';
+  const close = "</span>";
+  if (html.startsWith(open) && html.endsWith(close)) {
+    return html.slice(open.length, html.length - close.length);
+  }
+  return html;
+}
+
+/**
+ * Walk the rendered markdown's tokens and pre-tokenize every fenced code
+ * block via Shiki. Returns a map keyed by `${lang}|||${rawCode}` whose
+ * value is the pre-rendered inner HTML for `<code>`. The renderer in
+ * `buildWebRenderer` reads from this map synchronously.
+ *
+ * Shiki tokenization is async (loadLanguage / loadTheme), but the actual
+ * `codeToHtml` call is synchronous once the grammar is loaded. We do the
+ * loading upfront here so the marked render pipeline stays sync.
+ *
+ * The cache inside `shikiHighlight` makes repeat blocks (across chapters or
+ * across languages) free after the first sighting — important for the
+ * "≤ +50% wall-clock per language" budget when building all 4 langs.
+ *
+ * Shellsession blocks (FR-2756) take a different path: they are parsed
+ * line-by-line and the prompt is stripped from the DOM. Cmd lines run
+ * through Shiki as `bash` in parallel (Promise.all) so a long transcript
+ * doesn't serialize highlighter calls. Shellsession runs even when
+ * `data-highlight=` is set on the fence — the line-highlight overlay is
+ * not currently combined with shellsession (out of scope for v1), but
+ * we must not skip the prompt-stripping pass, otherwise a shellsession
+ * block with `{1}` highlighting would leak literal `$` prompts into the
+ * DOM and clipboard.
+ */
+async function precomputeShikiBlocks(
+  markdown: string,
+  theme: string,
+): Promise<Map<string, string>> {
+  const map = new Map<string, string>();
+  const seen = new Set<string>();
+
+  // Lex the same markdown the renderer will parse so we see the same `text`
+  // marked passes to `code()`. Walking marked's lexer output (rather than
+  // a regex over the raw markdown) handles list-indented code blocks, CRLF
+  // normalization, and the trailing-newline trimming the lexer applies —
+  // any of which would cause key mismatches if we tokenized by regex.
+  const lexer = new Marked();
+  const tokens = lexer.lexer(markdown);
+
+  type AnyToken = {
+    type: string;
+    lang?: string;
+    text?: string;
+    tokens?: AnyToken[];
+    items?: AnyToken[];
+  };
+
+  const visit = async (node: AnyToken | AnyToken[]): Promise<void> => {
+    if (Array.isArray(node)) {
+      for (const child of node) await visit(child);
+      return;
+    }
+    if (node.type === "code" && typeof node.text === "string") {
+      const info = (node.lang ?? "").trim();
+      const langMatch = info.match(/^(\w+)/);
+      const lang = langMatch?.[1] ?? "";
+      const isShellSession = lang === "shellsession" || lang === "console";
+      const hasLineHighlight = /data-highlight="[^"]*\d+/.test(info);
+
+      // For non-shellsession blocks with line-highlight, the renderer
+      // takes its legacy line-wrapping path and ignores the Shiki map,
+      // so we skip pre-tokenization. Shellsession blocks must NOT skip
+      // — even with highlighting set, they need the prompt-stripping
+      // pass or `$` characters would land in the DOM/clipboard.
+      if (hasLineHighlight && !isShellSession) return;
+
+      const key = `${lang}|||${node.text}`;
+      if (!seen.has(key)) {
+        seen.add(key);
+        if (isShellSession) {
+          // Terminal transcript: split into prompt/cmd/output rows. The
+          // prompt is removed from the DOM here and restored visually
+          // by CSS ::before on .cmd-line so drag-copy / button-copy
+          // never include the prompt char (FR-2756). Cmd lines are
+          // tokenized in parallel via Promise.all so a long transcript
+          // doesn't serialize highlighter calls.
+          const lines = parseShellSessionLines(node.text);
+          const segments = await Promise.all(
+            lines.map(async (ln) => {
+              if (ln.type === "cmd") {
+                const tokenized = await shikiHighlight({
+                  code: ln.text,
+                  lang: "bash",
+                  theme,
+                });
+                // Shiki always wraps a single line in <span class="line">…</span>;
+                // unwrap so we can put our own .cmd-line wrapper on it without
+                // emitting nested .line elements.
+                const inner = unwrapShikiSingleLine(tokenized.innerHtml);
+                return `<span class="line cmd-line" data-prompt="${ln.prompt}">${inner}</span>`;
+              }
+              return `<span class="line output-line">${escapeHtml(ln.text)}</span>`;
+            }),
+          );
+          map.set(key, segments.join("\n"));
+        } else {
+          const result = await shikiHighlight({
+            code: node.text,
+            lang,
+            theme,
+          });
+          map.set(key, result.innerHtml);
+        }
+      }
+    }
+    if (node.tokens) await visit(node.tokens);
+    if (node.items) await visit(node.items);
+  };
+
+  await visit(tokens as unknown as AnyToken[]);
+  return map;
 }
 
 export async function processMarkdownFilesForWeb(
@@ -411,6 +613,10 @@ export async function processMarkdownFilesForWeb(
   const pathFallbacks = config?.pathFallbacks ?? {};
   const admonitionTitles = config?.admonitionTitles;
   const figureLabels = config?.figureLabels;
+  // F4: Shiki theme. Resolved config always has a value; in the bare
+  // `processMarkdownFilesForWeb({ config: undefined })` path we fall back
+  // to the same default the resolver would pick.
+  const shikiTheme = config?.code?.lightTheme ?? DEFAULT_CODE_LIGHT_THEME;
 
   // ── Pass 1: Render all chapters to HTML ──────────────────────
   const rendered: RenderedChapter[] = [];
@@ -425,8 +631,8 @@ export async function processMarkdownFilesForWeb(
     }
 
     chapterIndex++;
-    let markdown = fs.readFileSync(mdPath, 'utf-8');
-    const chapterSlug = slugify(nav.title);
+    let markdown = fs.readFileSync(mdPath, "utf-8");
+    const chapterSlug = slugFromNavPath(nav.path);
 
     // Pre-processing pipeline (reused from PDF processor)
     markdown = deduplicateH1(markdown);
@@ -439,9 +645,22 @@ export async function processMarkdownFilesForWeb(
     markdown = processAdmonitions(markdown, lang, admonitionTitles);
     markdown = processCodeBlockMeta(markdown);
 
+    // F4: pre-tokenize all fenced code blocks via Shiki so the marked
+    // renderer (which is sync) can read pre-rendered HTML by lookup. The
+    // shared in-memory cache makes this a near-noop for repeating snippets
+    // across chapters / languages.
+    const highlightedCode = await precomputeShikiBlocks(markdown, shikiTheme);
+
     const headings: Heading[] = [];
     const marked = new Marked();
-    marked.use({ renderer: buildWebRenderer(chapterSlug, headings, { chapterIndex, lang, figureLabels }) });
+    marked.use({
+      renderer: buildWebRenderer(chapterSlug, headings, {
+        chapterIndex,
+        lang,
+        figureLabels,
+        highlightedCode,
+      }),
+    });
 
     const htmlContent = await marked.parse(markdown);
 
@@ -477,6 +696,11 @@ export async function processMarkdownFilesForWeb(
     reportLinkDiagnostics(diagnostics);
   }
 
+  // Forward diagnostics to caller (used by --strict in the website generator).
+  if (options?.diagnosticsSink) {
+    for (const d of diagnostics) options.diagnosticsSink.push(d);
+  }
+
   return rendered.map((r) => r.chapter);
 }
 
@@ -497,9 +721,19 @@ export async function processCatalogMarkdownForWeb(
     markdown = processAdmonitions(markdown);
     markdown = processCodeBlockMeta(markdown);
 
+    // F4: catalog mode uses default Shiki theme — there's no toolkit config
+    // available here. Operators who want a different theme will see it
+    // applied in the real `build:web` path which threads `config.code` in.
+    const highlightedCode = await precomputeShikiBlocks(
+      markdown,
+      DEFAULT_CODE_LIGHT_THEME,
+    );
+
     const headings: Heading[] = [];
     const marked = new Marked();
-    marked.use({ renderer: buildWebRenderer(chapterSlug, headings) });
+    marked.use({
+      renderer: buildWebRenderer(chapterSlug, headings, { highlightedCode }),
+    });
 
     const htmlContent = await marked.parse(markdown);
 

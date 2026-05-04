@@ -2,8 +2,6 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-'use memo';
-
 import { SwitchToProjectButtonQuery } from '../__generated__/SwitchToProjectButtonQuery.graphql';
 import { useSetCurrentProject } from '../hooks/useCurrentProject';
 import {
@@ -24,6 +22,7 @@ const SwitchToProjectButtonContent: React.FC<SwitchToProjectButtonProps> = ({
   projectId,
   ...buttonProps
 }) => {
+  'use memo';
   const { t } = useTranslation();
   const setCurrentProject = useSetCurrentProject();
   const [isPending, startTransition] = useTransition();

@@ -39,7 +39,7 @@ export const useModelStoreProject = () => {
     `,
     { domainName },
     {
-      fetchPolicy: 'store-and-network',
+      fetchPolicy: 'store-or-network',
     },
   );
 

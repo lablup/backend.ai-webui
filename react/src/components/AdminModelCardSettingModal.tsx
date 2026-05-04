@@ -9,7 +9,7 @@ import {
   useCurrentProjectValue,
   useSetCurrentProject,
 } from '../hooks/useCurrentProject';
-import FolderCreateModal from './FolderCreateModal';
+import FolderCreateModalV2 from './FolderCreateModalV2';
 import FolderLink from './FolderLink';
 import { shapes } from '@dicebear/collection';
 import { createAvatar } from '@dicebear/core';
@@ -538,21 +538,10 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
           </Form.Item>
         </Form>
       </BAIModal>
-      <FolderCreateModal
+      <FolderCreateModalV2
         open={isOpenCreateFolderModal}
         initialValidate={true}
-        initialValues={{
-          usage_mode: 'model',
-          type: 'project',
-          permission: 'ro',
-          cloneable: true,
-        }}
-        hiddenFormItems={[
-          'usage_mode_general',
-          'usage_mode_automount',
-          'type_user',
-          'permission_rw',
-        ]}
+        folderType="model_project"
         onRequestClose={(result) => {
           setIsOpenCreateFolderModal(false);
           if (result) {

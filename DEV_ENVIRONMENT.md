@@ -1,174 +1,108 @@
-# 🚀 Multi-Instance Development Environment
+# Development Environment
 
-Simple configuration system for running multiple Backend.AI WebUI development servers simultaneously without port conflicts and with visual theme differentiation.
+The Backend.AI WebUI dev server runs behind [Portless](https://github.com/vercel-labs/portless), which assigns each branch a stable `*.localhost` subdomain. No more port offsets, no more port conflicts between worktrees.
 
-## ✨ Features
+## No global install required
 
-- **Simple Port Configuration**: Manual port offset via environment variables (defaults to 0)
-- **Optional Theme Color**: Custom header colors when specified
-- **Host Configuration**: Support for custom host addresses (defaults to localhost)
-- **Environment-Based**: Clean configuration via environment variables
-- **Multi-Instance Support**: Run multiple dev servers with different configurations
+`portless` is bundled as a `devDependency`. After `pnpm install`, `pnpm run dev` invokes the project-local Portless binary — no `npm install -g portless` needed.
 
-## 🛠 Usage
-
-### 1. Basic Usage (Default Configuration)
+Safari (and some corporate network setups) need `/etc/hosts` entries for `*.localhost` resolution:
 
 ```bash
-# Check current configuration
-node scripts/dev-config.js show
+sudo pnpm exec portless hosts sync   # one-time
+```
 
-# Start development server (uses current configuration)
+## Starting the dev server
+
+In two terminals:
+
+```bash
+# Terminal 1 — TypeScript watch + Relay watch + CRA dev server (via Portless)
 pnpm run dev
+
+# Terminal 2 — WebSocket proxy (plain, fixed port 5050)
+pnpm run wsproxy
 ```
 
-### 2. Environment Configuration
+`pnpm run dev` automatically starts the Portless daemon on port 1355 (idempotent — no-op if already running) and prints the assigned URL on startup, for example:
 
-Set environment variables directly or create `.env.development.local` file:
+```
+-> https://fr-2701.localhost:1355
+```
+
+Open that URL in your browser. Portless 0.10+ serves HTTPS/2 by default; the local CA is auto-installed in your system keychain on first start (no `sudo` on macOS).
+
+### Why port 1355?
+
+Portless's default daemon port is 443, which requires `sudo`. `dev.mjs` starts the daemon with `-p 1355` so dev never prompts for a password.
+
+To pin a different daemon port on a machine — for example, when another Portless daemon is already running — export `PORTLESS_PORT` in your shell rc:
 
 ```bash
-# Custom port offset (defaults to 0 if not set)
-BAI_WEBUI_DEV_PORT_OFFSET=10
-
-# Custom theme color (hex format) - optional
-THEME_HEADER_COLOR=#9370DB  
-
-# Custom host (defaults to localhost if not set)
-HOST=192.168.1.100
+export PORTLESS_PORT=1356
 ```
 
-### 3. Export Variables for Shell
+When `PORTLESS_PORT` is set, `dev.mjs` skips its explicit `-p` flag entirely and lets Portless read the env var itself — both for the daemon start and for subsequent `portless` client calls (`portless run`, `portless list`, …) — so daemon and clients stay aligned via a single source of truth.
+
+The remaining `*.localhost:1355` URLs and `portless proxy start -p 1355` examples in this document describe the default. When `PORTLESS_PORT` is set, substitute its value in those URLs and commands.
+
+### Hostname rules
+
+`scripts/dev.mjs` picks the Portless app name as follows:
+
+1. If the current git branch matches `FR-XXXX` (case-insensitive — `fr-XXXX`, `feat/FR-XXXX-...`, `04-24-feat_fr-2701_...`), the hostname becomes `fr-XXXX.localhost:1355`.
+2. Otherwise it falls back to `portless run`, which yields `<branch>.<project>.localhost:1355` automatically.
+
+Why issue-number names: long branch names trigger a TLS-cert generation issue under HTTPS. Short, predictable names sidestep that and are also easier to read and bookmark.
+
+## Optional: fix the React dev server port
+
+By default Portless assigns a random free port to CRA (4000–4999). If you need a fixed port — for example to point an existing browser tab or external integration at it — set `PORT` when running `dev`:
 
 ```bash
-# Export environment variables for current shell
-eval "$(node scripts/dev-config.js env)"
-
-# Check what variables are exported
-node scripts/dev-config.js env
+PORT=9081 pnpm run dev
 ```
 
-## 📡 Port Configuration
+Portless then proxies `https://<name>.localhost:1355` to `http://localhost:9081`, and CRA listens directly on 9081.
 
-### Base Ports
-- React dev server: `9081`
+## Multiple instances / worktrees
 
-### With Port Offset
-When `BAI_WEBUI_DEV_PORT_OFFSET=20` is set:
-- React dev server: `9101` (9081 + 20)
+Each worktree picks up its own branch's FR number, so two worktrees on different issues (`fr-2701` and `fr-2890`) coexist on `fr-2701.localhost:1355` and `fr-2890.localhost:1355` without conflict. Two worktrees on the **same** branch will collide; `dev.mjs` passes `--force` so the second one overrides the first registration. Run only one of them at a time.
 
-## 🎨 Theme Customization
+## Theme color for visual differentiation
 
-Set custom header colors using `THEME_HEADER_COLOR` environment variable:
+Create `.env.development.local` (copy from `.env.development.local.sample`) and set:
 
 ```bash
-# Purple theme
-THEME_HEADER_COLOR=#9370DB
-
-# Green theme  
-THEME_HEADER_COLOR=#32CD32
-
-# Red theme
-THEME_HEADER_COLOR=#DC143C
+VITE_THEME_HEADER_COLOR=#7C3AED
 ```
 
-The theme color will override the default header background in development mode.
+Vite auto-loads `VITE_*` vars from this file and exposes them on `import.meta.env` for the React app, tinting the header so you can tell multiple instances apart at a glance. You can also export `VITE_THEME_HEADER_COLOR` in the shell — same effect, no file edit needed.
 
-## 🌐 Host Configuration
-
-By default, servers bind to `localhost`. For remote access:
+## Storybook
 
 ```bash
-# Allow access from any IP
-HOST=0.0.0.0
-
-# Bind to specific IP
-HOST=192.168.1.100
+pnpm --filter backend.ai-ui run storybook
 ```
 
-## 🔧 Environment Variables
+Runs behind Portless on a fixed internal port 6006. Open the printed `*.localhost:1355` URL.
 
-The system uses `BAI_WEBUI_DEV_*` prefixed environment variables internally:
+## Troubleshooting
 
-- `BAI_WEBUI_DEV_REACT_PORT` - React development server port
-- `BAI_WEBUI_DEV_HOST` - Host address
-- `BAI_WEBUI_DEV_THEME_COLOR` - Theme color
+- **Browser cannot reach `*.localhost`** — run `sudo pnpm exec portless hosts sync`. Safari requires this; Chrome and Firefox usually work without it.
+- **Service-worker error like `Script .../sw.js load failed`** — fixed in this branch (`index.html` now skips SW registration on `*.localhost`). If you still see it, unregister the stale SW via DevTools → Application → Service Workers.
+- **`already registered by a running process`** — Portless route from a previously killed dev server still exists. `dev.mjs` passes `--force` so this should self-heal; if not, run `pnpm exec portless proxy stop && pnpm exec portless proxy start -p 1355` once.
+- **HTTPS request hangs / `HTTP 000`** — TLS cert generation can fail for very long hostnames. Either rename the branch to include `FR-XXXX`, or switch the daemon to HTTP with `pnpm exec portless proxy start -p 1355 --no-tls`.
+- **Theme color not applied** — confirm `VITE_THEME_HEADER_COLOR` is set in `.env.development.local` or the shell, and restart `pnpm run dev`. Vite reads env at server start, so existing dev servers won't pick up changes until restarted.
+- **Watchers seem stuck** — all three dev children (tsc, Relay watch, CRA) run under `concurrently` with `--kill-others`; Ctrl+C tears them down together.
 
-These are automatically generated from your configuration.
+## Commands reference
 
-## 📝 Examples
-
-### Example 1: Default Configuration
-```bash
-# Check default settings
-node scripts/dev-config.js show
-# Output:
-# 🚀 Backend.AI WebUI Development Configuration
-# 🌐 Host: localhost  
-# 📡 Ports:
-#    React: 9081
-# 🔢 Port Offset: +0
-```
-
-### Example 2: Custom Configuration
-```bash
-# Set custom configuration
-export BAI_WEBUI_DEV_PORT_OFFSET=30
-export THEME_HEADER_COLOR=#9370DB
-export HOST=192.168.1.100
-
-# Check updated settings
-node scripts/dev-config.js show
-# Output:
-# 🚀 Backend.AI WebUI Development Configuration  
-# 🌐 Host: 192.168.1.100
-# 🎨 Theme Color: #9370DB [colored block]
-# 📡 Ports:
-#    React: 9111
-# 🔢 Port Offset: +30
-```
-
-### Example 3: Multiple Instances
-```bash
-# Terminal 1: Default instance
-cd webui-ai
-pnpm run dev
-# → React: 9081
-
-# Terminal 2: Feature instance with offset
-cd webui-ai-feature  
-echo "BAI_WEBUI_DEV_PORT_OFFSET=10" > .env.development.local
-echo "THEME_HEADER_COLOR=#32CD32" >> .env.development.local
-pnpm run dev
-# → React: 9091, Green header
-
-# Terminal 3: Debug instance with different offset
-cd webui-ai-debug
-echo "BAI_WEBUI_DEV_PORT_OFFSET=20" > .env.development.local  
-echo "THEME_HEADER_COLOR=#DC143C" >> .env.development.local
-pnpm run dev
-# → React: 9101, Red header
-```
-
-## 🚨 Important Notes
-
-- `.env.development.local` is not tracked by git (personal settings)
-- Environment variables take precedence over `.env.development.local` file
-- Server restart required after configuration changes
-- Theme colors only apply in development mode
-- Port offset defaults to 0 when `BAI_WEBUI_DEV_PORT_OFFSET` is not set
-- Theme color is optional - no color applied when not specified
-
-## 🔧 Script Commands
-
-```bash
-# Show current configuration
-node scripts/dev-config.js show
-
-# Export environment variables  
-node scripts/dev-config.js env
-
-# Update and show configuration
-node scripts/dev-config.js update
-```
-
-Now you can run multiple development environments simultaneously without port conflicts, each with distinct visual themes! 🎉
+| Command | Description |
+|---|---|
+| `pnpm run dev` | TypeScript watch + Relay watch + CRA dev server, all under Portless |
+| `PORT=9081 pnpm run dev` | Same, but pin CRA to port 9081 |
+| `pnpm run wsproxy` | WebSocket proxy on fixed port 5050 (not wrapped by Portless) |
+| `pnpm --filter backend.ai-ui run storybook` | Storybook under Portless |
+| `pnpm exec portless list` | Show active Portless routes |
+| `pnpm exec portless proxy stop` / `start -p 1355 [--no-tls]` | Daemon control (project-local binary) |

@@ -19,7 +19,7 @@ import {
   BAIResourceNumberWithIcon,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import React, { useTransition } from 'react';
+import React, { useEffect, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
@@ -45,12 +45,14 @@ export interface ResourcePresetSelectProps extends Omit<
   showMinimumRequired?: boolean;
   showCustom?: boolean;
   resourceGroup?: string;
+  autoSelectDefault?: boolean;
 }
 const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
   allocatablePresetNames,
   showCustom,
   showMinimumRequired,
   resourceGroup,
+  autoSelectDefault,
   ...selectProps
 }) => {
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
@@ -97,6 +99,25 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
           _.isEmpty(preset?.scaling_group_name),
       )
     : resource_presets;
+
+  const firstAvailablePresetName = [...(resourcePresets ?? [])]
+    .filter(
+      (p): p is NonNullable<typeof p> =>
+        p != null &&
+        (!allocatablePresetNames ||
+          allocatablePresetNames.includes(p.name ?? '')),
+    )
+    .sort((a, b) => localeCompare(a.name ?? '', b.name ?? ''))[0]?.name;
+
+  useEffect(() => {
+    if (autoSelectDefault && !controllableValue && firstAvailablePresetName) {
+      setControllableValue(firstAvailablePresetName, {
+        value: firstAvailablePresetName,
+        selectedLabel: firstAvailablePresetName,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoSelectDefault, firstAvailablePresetName]);
 
   return (
     <Select
@@ -151,6 +172,7 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
               : undefined;
             return {
               value: preset?.name,
+              selectedLabel: preset?.name,
               label: (
                 <BAIFlex direction="row" justify="between" gap={'xs'}>
                   {preset?.name}
@@ -206,11 +228,7 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
       {...selectProps}
       value={controllableValue}
       onChange={setControllableValue}
-      optionLabelProp={
-        _.includes(['custom', 'minimum-required'], controllableValue)
-          ? 'selectedLabel'
-          : 'label'
-      }
+      optionLabelProp="selectedLabel"
       onOpenChange={(open) => {
         selectProps.onOpenChange && selectProps.onOpenChange(open);
         if (open) {

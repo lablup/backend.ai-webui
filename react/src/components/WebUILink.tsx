@@ -7,11 +7,7 @@ import * as _ from 'lodash-es';
 import React from 'react';
 import { Link, LinkProps } from 'react-router-dom';
 
-interface WebUILinkProps extends LinkProps {
-  options?: {
-    params?: any;
-  };
-}
+interface WebUILinkProps extends LinkProps {}
 
 /**
  * Resolve a react-router `to` prop into a plain string href usable on a
@@ -24,7 +20,7 @@ const resolveHref = (to: LinkProps['to']): string => {
   return (to.pathname ?? '') + (to.search ?? '') + (to.hash ?? '');
 };
 
-const WebUILink: React.FC<WebUILinkProps> = ({ options, ...props }) => {
+const WebUILink: React.FC<WebUILinkProps> = ({ ...props }) => {
   const hasActiveErrorBoundary = useHasActiveErrorBoundary();
 
   // After any error boundary has been triggered, the React tree may still
@@ -51,27 +47,7 @@ const WebUILink: React.FC<WebUILinkProps> = ({ options, ...props }) => {
     );
   }
 
-  return (
-    <Link
-      {...props}
-      onClick={(e) => {
-        props.onClick?.(e);
-        const pathName = _.isString(props.to)
-          ? props.to
-          : props.to.pathname || '';
-        if (!e.metaKey && !e.ctrlKey) {
-          document.dispatchEvent(
-            new CustomEvent('move-to-from-react', {
-              detail: {
-                path: pathName,
-                params: options?.params,
-              },
-            }),
-          );
-        }
-      }}
-    />
-  );
+  return <Link {...props} />;
 };
 
 export default WebUILink;

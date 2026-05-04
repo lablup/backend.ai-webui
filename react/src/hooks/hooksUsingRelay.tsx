@@ -7,7 +7,6 @@ import { hooksUsingRelay_KeyPairQuery } from '../__generated__/hooksUsingRelay_K
 import { hooksUsingRelay_KeyPairResourcePolicyQuery } from '../__generated__/hooksUsingRelay_KeyPairResourcePolicyQuery.graphql';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { useUpdatableState } from 'backend.ai-ui';
-import * as _ from 'lodash-es';
 import { useCallback } from 'react';
 import { graphql, FetchPolicy, useLazyLoadQuery } from 'react-relay';
 
@@ -87,14 +86,12 @@ export const useCurrentKeyPairResourcePolicyLazyLoadQuery = (
       >,
       keypair: (keypair || {}) as NonNullable<typeof keypair>,
       sessionLimitAndRemaining: {
-        max: _.min([
+        max:
           (keypair_resource_policy || {}).max_concurrent_sessions ||
-            SIGNED_32BIT_MAX_INT,
-          3, //BackendAiResourceBroker.DEFAULT_CONCURRENT_SESSION_COUNT
-        ]) as number,
+          SIGNED_32BIT_MAX_INT,
         remaining:
-          ((keypair_resource_policy || {}).max_concurrent_sessions || 3) -
-          ((keypair || {}).concurrency_used || 0),
+          ((keypair_resource_policy || {}).max_concurrent_sessions ||
+            SIGNED_32BIT_MAX_INT) - ((keypair || {}).concurrency_used || 0),
       },
     },
     { refresh },

@@ -4,11 +4,17 @@
  */
 import { NotificationState } from '../hooks/useBAINotification';
 import BAIComputeSessionNodeNotificationItem from './BAIComputeSessionNodeNotificationItem';
+import BAIVFolderNotificationItem from './BAIVFolderNotificationItem';
 import BAIVirtualFolderNodeNotificationItem from './BAIVirtualFolderNodeNotificationItem';
 import React from 'react';
 import { graphql, useRefetchableFragment } from 'react-relay';
 import { BAINodeNotificationItemFragment$key } from 'src/__generated__/BAINodeNotificationItemFragment.graphql';
 
+// `... on VFolder` is the V2 (Strawberry GraphQL, FR-2573) branch and the
+// preferred path for new VFolder list/mutation flows.
+// `... on VirtualFolderNode` is the legacy V1 branch and is **deprecated** —
+// kept here only so callers that still hold V1 fragments keep rendering. It
+// will be removed once all VFolder callers migrate to V2 `VFolder`.
 const nodeFragmentOperation = graphql`
   fragment BAINodeNotificationItemFragment on Node
   @refetchable(queryName: "BAINodeNotificationItemRefetchQuery") {
@@ -19,6 +25,10 @@ const nodeFragmentOperation = graphql`
       row_id
       ...BAIComputeSessionNodeNotificationItemFragment
         @alias(as: "sessionFrgmt")
+    }
+    ... on VFolder {
+      __typename
+      ...BAIVFolderNotificationItemFragment @alias(as: "vfolderFrgmt")
     }
     ... on VirtualFolderNode {
       __typename
@@ -45,7 +55,18 @@ const BAINodeNotificationItem: React.FC<{
         primaryAppOption={notification.extraData}
       />
     );
+  } else if (node?.__typename === 'VFolder') {
+    return (
+      <BAIVFolderNotificationItem
+        notification={notification}
+        vfolderFrgmt={node.vfolderFrgmt || null}
+        showDate={showDate}
+      />
+    );
   } else if (node?.__typename === 'VirtualFolderNode') {
+    // @deprecated Renders the legacy V1 VFolder notification. Will be removed
+    // once all V1 callers are gone — see the matching note on the V2 branch
+    // above.
     return (
       <BAIVirtualFolderNodeNotificationItem
         notification={notification}

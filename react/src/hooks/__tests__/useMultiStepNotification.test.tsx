@@ -6,22 +6,22 @@ import { listenToBackgroundTask } from '../../helper';
 import { useMultiStepNotification } from '../useMultiStepNotification';
 import { renderHook, act } from '@testing-library/react';
 
-const mockUpsertNotification = jest.fn();
+const mockUpsertNotification = vi.fn();
 
-jest.mock('../useBAINotification', () => ({
+vi.mock('../useBAINotification', () => ({
   useSetBAINotification: () => ({
     upsertNotification: mockUpsertNotification,
-    deleteNotification: jest.fn(),
-    updateNotification: jest.fn(),
+    deleteNotification: vi.fn(),
+    updateNotification: vi.fn(),
   }),
   CLOSING_DURATION: 4,
 }));
 
-jest.mock('../../helper', () => ({
-  listenToBackgroundTask: jest.fn(),
+vi.mock('../../helper', () => ({
+  listenToBackgroundTask: vi.fn(),
 }));
 
-jest.mock('react-i18next', () => ({
+vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string, params?: Record<string, unknown>) => {
       if (params) {
@@ -35,8 +35,7 @@ jest.mock('react-i18next', () => ({
   }),
 }));
 
-const mockedListenToBackgroundTask =
-  listenToBackgroundTask as jest.MockedFunction<typeof listenToBackgroundTask>;
+const mockedListenToBackgroundTask = vi.mocked(listenToBackgroundTask);
 
 const baseConfig = {
   key: 'test-notification',
@@ -45,7 +44,7 @@ const baseConfig = {
 
 describe('useMultiStepNotification', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('sequential Promise flow', () => {
@@ -54,17 +53,17 @@ describe('useMultiStepNotification', () => {
         {
           label: 'Step 1',
           type: 'promise' as const,
-          executor: jest.fn().mockResolvedValue('result1'),
+          executor: vi.fn().mockResolvedValue('result1'),
         },
         {
           label: 'Step 2',
           type: 'promise' as const,
-          executor: jest.fn().mockResolvedValue('result2'),
+          executor: vi.fn().mockResolvedValue('result2'),
         },
         {
           label: 'Step 3',
           type: 'promise' as const,
-          executor: jest.fn().mockResolvedValue('result3'),
+          executor: vi.fn().mockResolvedValue('result3'),
         },
       ];
 
@@ -94,7 +93,7 @@ describe('useMultiStepNotification', () => {
   describe('step failure and retry', () => {
     it('sets failed state when a step rejects, then retry resumes from that step', async () => {
       const error = new Error('Step 2 failed');
-      const step2Executor = jest
+      const step2Executor = vi
         .fn()
         .mockRejectedValueOnce(error)
         .mockResolvedValueOnce('result2');
@@ -103,7 +102,7 @@ describe('useMultiStepNotification', () => {
         {
           label: 'Step 1',
           type: 'promise' as const,
-          executor: jest.fn().mockResolvedValue('result1'),
+          executor: vi.fn().mockResolvedValue('result1'),
         },
         {
           label: 'Step 2',
@@ -137,12 +136,12 @@ describe('useMultiStepNotification', () => {
 
   describe('data chaining', () => {
     it('passes step 1 result as prevResult to step 2', async () => {
-      const step2Executor = jest.fn().mockResolvedValue('result2');
+      const step2Executor = vi.fn().mockResolvedValue('result2');
       const steps = [
         {
           label: 'Step 1',
           type: 'promise' as const,
-          executor: jest.fn().mockResolvedValue('result-from-step1'),
+          executor: vi.fn().mockResolvedValue('result-from-step1'),
         },
         {
           label: 'Step 2',
@@ -180,7 +179,7 @@ describe('useMultiStepNotification', () => {
         {
           label: 'Step 1',
           type: 'promise' as const,
-          executor: jest.fn(() => {
+          executor: vi.fn(() => {
             executionOrder.push('step1-started');
             return step1Promise;
           }),
@@ -189,7 +188,7 @@ describe('useMultiStepNotification', () => {
           label: 'Step 2 (eager)',
           type: 'promise' as const,
           dependsOn: false,
-          executor: jest.fn(() => {
+          executor: vi.fn(() => {
             executionOrder.push('step2-started');
             return Promise.resolve('eager-result');
           }),
@@ -224,7 +223,7 @@ describe('useMultiStepNotification', () => {
         {
           label: 'Long Step',
           type: 'promise' as const,
-          executor: jest.fn(() => pendingStep),
+          executor: vi.fn(() => pendingStep),
         },
       ];
 
@@ -265,7 +264,7 @@ describe('useMultiStepNotification', () => {
         {
           label: 'Step 1',
           type: 'promise' as const,
-          executor: jest.fn(() => pendingStep),
+          executor: vi.fn(() => pendingStep),
         },
       ];
 
@@ -300,7 +299,7 @@ describe('useMultiStepNotification', () => {
         {
           label: 'Step 1',
           type: 'promise' as const,
-          executor: jest.fn().mockResolvedValue('result1'),
+          executor: vi.fn().mockResolvedValue('result1'),
         },
       ];
 
@@ -324,7 +323,7 @@ describe('useMultiStepNotification', () => {
         {
           label: 'Step 1',
           type: 'promise' as const,
-          executor: jest.fn().mockResolvedValue('result1'),
+          executor: vi.fn().mockResolvedValue('result1'),
         },
       ];
 
@@ -355,14 +354,14 @@ describe('useMultiStepNotification', () => {
 
       mockedListenToBackgroundTask.mockImplementation((_taskId, handlers) => {
         onDoneCallback = handlers.onDone as () => void;
-        return jest.fn(); // cleanup function
+        return vi.fn(); // cleanup function
       });
 
       const steps = [
         {
           label: 'SSE Step',
           type: 'sse' as const,
-          executor: jest.fn().mockReturnValue({ taskId: 'task-123' }),
+          executor: vi.fn().mockReturnValue({ taskId: 'task-123' }),
         },
       ];
 
@@ -391,14 +390,14 @@ describe('useMultiStepNotification', () => {
 
       mockedListenToBackgroundTask.mockImplementation((_taskId, handlers) => {
         onTaskFailedCallback = handlers.onTaskFailed as (data: unknown) => void;
-        return jest.fn();
+        return vi.fn();
       });
 
       const steps = [
         {
           label: 'SSE Step',
           type: 'sse' as const,
-          executor: jest.fn().mockReturnValue({ taskId: 'task-456' }),
+          executor: vi.fn().mockReturnValue({ taskId: 'task-456' }),
         },
       ];
 
@@ -424,12 +423,12 @@ describe('useMultiStepNotification', () => {
         {
           label: 'Step 1',
           type: 'promise' as const,
-          executor: jest.fn().mockResolvedValue('result1'),
+          executor: vi.fn().mockResolvedValue('result1'),
         },
         {
           label: 'Step 2',
           type: 'promise' as const,
-          executor: jest.fn().mockResolvedValue('result2'),
+          executor: vi.fn().mockResolvedValue('result2'),
         },
       ];
 

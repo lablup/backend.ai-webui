@@ -2,7 +2,7 @@ import fs from 'fs';
 import os from 'os';
 import path from 'path';
 import { pathToFileURL } from 'url';
-import { chromium } from 'playwright';
+import { chromium, type Browser } from 'playwright';
 import { PDFDocument, PDFName, PDFArray, PDFDict, PDFRef, rgb, StandardFonts } from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
 import type { PdfTheme } from './theme.js';
@@ -10,47 +10,293 @@ import { defaultTheme } from './theme.js';
 import type { ResolvedDocConfig } from './config.js';
 
 /**
- * Default CJK font path candidates (in priority order).
- * Uses the first TTF/OTF found on the system.
- * TTC (collection) files are excluded as pdf-lib/fontkit does not support them directly.
+ * Default font path candidates for the header/footer stamp, grouped by
+ * the script kind they cover.
+ *
+ * The header/footer is rendered with pdf-lib (not Chromium), so it needs an
+ * embedded font that covers every codepoint that may appear in the document
+ * title and section labels — which, for ko/ja/th builds, includes CJK and
+ * Thai glyphs that pdf-lib's default WinAnsi-encoded Helvetica cannot encode.
+ *
+ * TTC (TrueType Collection) files are supported via in-process sub-font
+ * extraction (see `extractFontFromTtc`), so `NotoSansCJK-Regular.ttc` works
+ * on Linux without requiring a separate per-language TTF.
+ *
+ * We use language-specific candidate lists so that the first successful load
+ * is a font that actually covers the target script. Korean prefers Nanum
+ * (user-installed, better Hangul rendering) then falls back to Arial Unicode.
+ * Japanese and Chinese prioritize Arial Unicode (macOS system font with broad
+ * CJK coverage) before user-installed Korean-only fonts like Nanum.
+ *
+ * We load only the candidates needed for the current language. Loading
+ * unused fonts wastes memory and (more importantly) can trigger latent
+ * fontkit subsetting bugs in fonts whose glyphs are never actually drawn.
  */
-const DEFAULT_CJK_FONT_CANDIDATES = [
-  // macOS – user-installed fonts
+
+/** Korean: prefer Nanum (good Hangul) then broad-coverage fallbacks. */
+const KO_FONT_CANDIDATES = [
+  // macOS – user-installed Korean fonts
   path.join(os.homedir(), 'Library/Fonts/NanumBarunGothic.ttf'),
   path.join(os.homedir(), 'Library/Fonts/NanumSquareRegular.ttf'),
+  // macOS – broad Unicode coverage (covers CJK including Hangul)
   '/System/Library/Fonts/Supplemental/Arial Unicode.ttf',
-  // Linux common paths
+  // Linux – Noto CJK collection
   '/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc',
   '/usr/share/fonts/truetype/noto/NotoSansKR-Regular.ttf',
   '/usr/share/fonts/truetype/nanum/NanumBarunGothic.ttf',
 ];
 
+/**
+ * Japanese / Chinese: Arial Unicode (macOS system font) comes first so it is
+ * picked before user-installed Korean-only fonts like NanumBarunGothic that
+ * do not cover Kana or Han glyphs.
+ */
+const JA_ZH_FONT_CANDIDATES = [
+  // macOS – broad Unicode coverage (covers Kana, CJK Han)
+  '/System/Library/Fonts/Supplemental/Arial Unicode.ttf',
+  // macOS – AppleGothic covers Hangul/CJK, useful as secondary fallback
+  '/System/Library/Fonts/Supplemental/AppleGothic.ttf',
+  // Linux – Noto CJK collection
+  '/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc',
+  '/usr/share/fonts/truetype/noto/NotoSansJP-Regular.ttf',
+  // Linux – Japanese (fonts-takao-gothic on Debian/Ubuntu)
+  '/usr/share/fonts/truetype/takao-gothic/TakaoGothic.ttf',
+  '/usr/share/fonts/truetype/takao-mincho/TakaoMincho.ttf',
+];
+
+const THAI_FONT_CANDIDATES = [
+  // macOS – system Thai font (ships with macOS)
+  '/System/Library/Fonts/Supplemental/Thonburi.ttc',
+  // Linux – TLWG family ships with Debian/Ubuntu by default
+  '/usr/share/fonts/opentype/tlwg/Loma.otf',
+  '/usr/share/fonts/truetype/tlwg/Garuda.ttf',
+  '/usr/share/fonts/truetype/tlwg/Norasi.ttf',
+];
+
+const KO_LANGS = new Set(['ko']);
+/**
+ * Languages whose header/footer stamp text is expected to contain CJK
+ * Han / Kana glyphs (excludes Korean which has its own candidate list).
+ */
+const JA_ZH_LANGS = new Set(['ja', 'zh', 'zh-CN', 'zh-TW', 'zh-HK']);
+const THAI_LANGS = new Set(['th']);
+
 type EmbeddedFont = Awaited<ReturnType<PDFDocument['embedFont']>>;
 
-async function loadCjkFont(
+/**
+ * Extract a single sub-font from a TrueType Collection (.ttc) into a
+ * standalone TTF/OTF byte buffer that pdf-lib can embed.
+ *
+ * TTC files concatenate multiple sfnt fonts behind a single header. Each
+ * sub-font's table directory contains absolute offsets into the collection
+ * file. To produce a valid standalone font, we copy the sub-font's tables
+ * into a fresh buffer and rewrite the table directory with new (relative)
+ * offsets. Table data is 4-byte aligned per the OpenType spec.
+ */
+function extractFontFromTtc(buf: Buffer, subIndex: number): Buffer {
+  if (buf.length < 12 || buf.toString('ascii', 0, 4) !== 'ttcf') {
+    throw new Error('Not a TrueType Collection (missing ttcf tag)');
+  }
+  const numFonts = buf.readUInt32BE(8);
+  if (subIndex < 0 || subIndex >= numFonts) {
+    throw new Error(
+      `TTC sub-font index ${subIndex} out of range (0..${numFonts - 1})`,
+    );
+  }
+  if (buf.length < 12 + 4 * numFonts) {
+    throw new Error('Truncated TTC: offset table overruns file');
+  }
+  const subOffset = buf.readUInt32BE(12 + 4 * subIndex);
+  if (subOffset + 12 > buf.length) {
+    throw new Error('Truncated TTC: sub-font offset overruns file');
+  }
+
+  const sfntVersion = buf.readUInt32BE(subOffset);
+  const numTables = buf.readUInt16BE(subOffset + 4);
+  const searchRange = buf.readUInt16BE(subOffset + 6);
+  const entrySelector = buf.readUInt16BE(subOffset + 8);
+  const rangeShift = buf.readUInt16BE(subOffset + 10);
+  if (subOffset + 12 + numTables * 16 > buf.length) {
+    throw new Error('Truncated TTC: table directory overruns file');
+  }
+
+  type TableEntry = {
+    tag: string;
+    checksum: number;
+    offset: number;
+    length: number;
+    newOffset: number;
+  };
+  const tables: TableEntry[] = [];
+  for (let i = 0; i < numTables; i++) {
+    const entryOff = subOffset + 12 + i * 16;
+    const tOffset = buf.readUInt32BE(entryOff + 8);
+    const tLength = buf.readUInt32BE(entryOff + 12);
+    if (tOffset + tLength > buf.length) {
+      throw new Error('Truncated TTC: table data overruns file');
+    }
+    tables.push({
+      tag: buf.toString('ascii', entryOff, entryOff + 4),
+      checksum: buf.readUInt32BE(entryOff + 4),
+      offset: tOffset,
+      length: tLength,
+      newOffset: 0,
+    });
+  }
+
+  const align4 = (n: number) => (n + 3) & ~3;
+  let cursor = 12 + numTables * 16;
+  for (const t of tables) {
+    t.newOffset = cursor;
+    cursor += align4(t.length);
+  }
+
+  const out = Buffer.alloc(cursor, 0);
+  out.writeUInt32BE(sfntVersion, 0);
+  out.writeUInt16BE(numTables, 4);
+  out.writeUInt16BE(searchRange, 6);
+  out.writeUInt16BE(entrySelector, 8);
+  out.writeUInt16BE(rangeShift, 10);
+  for (let i = 0; i < numTables; i++) {
+    const t = tables[i];
+    const dirOff = 12 + i * 16;
+    out.write(t.tag, dirOff, 4, 'ascii');
+    out.writeUInt32BE(t.checksum, dirOff + 4);
+    out.writeUInt32BE(t.newOffset, dirOff + 8);
+    out.writeUInt32BE(t.length, dirOff + 12);
+    buf.copy(out, t.newOffset, t.offset, t.offset + t.length);
+  }
+
+  return out;
+}
+
+/**
+ * Per-language preferred postscript names within a NotoSansCJK TTC.
+ * Used to pick the right sub-font when the candidate is a TTC.
+ * For unlisted languages, falls back to the JP variant which has the
+ * widest Han coverage among the four.
+ */
+const CJK_TTC_LANG_TO_PSNAME: Record<string, string> = {
+  ko: 'NotoSansCJKkr-Regular',
+  ja: 'NotoSansCJKjp-Regular',
+  zh: 'NotoSansCJKsc-Regular',
+  'zh-CN': 'NotoSansCJKsc-Regular',
+  'zh-TW': 'NotoSansCJKtc-Regular',
+  'zh-HK': 'NotoSansCJKhk-Regular',
+};
+
+/**
+ * Load a candidate font path into pdf-lib. Handles plain TTF/OTF and
+ * TrueType Collections (.ttc) by extracting the appropriate sub-font.
+ *
+ * Path syntax: `path/to/font.ttc#PostscriptName` or `path/to/font.ttc#3`
+ * lets the caller pin a specific sub-font; otherwise the language hint is
+ * used to look up the preferred sub-font from `CJK_TTC_LANG_TO_PSNAME`.
+ */
+async function embedFontFromPath(
   pdfDoc: PDFDocument,
-  extraPaths?: string[],
+  candidatePath: string,
+  lang: string,
 ): Promise<EmbeddedFont | null> {
+  const [filePath, selector] = candidatePath.split('#');
+  if (!fs.existsSync(filePath)) return null;
+
+  let fontBytes = fs.readFileSync(filePath);
+
+  // TTC: extract the right sub-font into a standalone OTF/TTF buffer
+  if (fontBytes.length >= 4 && fontBytes.toString('ascii', 0, 4) === 'ttcf') {
+    // fontkit's TypeScript types don't expose the TrueTypeCollection variant,
+    // but at runtime `fontkit.create(ttcBytes)` returns an object with a
+    // `fonts: TTFFont[]` property listing every sub-font in postscript-name order.
+    const collection = fontkit.create(fontBytes) as unknown as {
+      fonts: Array<{ postscriptName: string; fullName: string }>;
+    };
+    const subFonts = collection.fonts;
+
+    let subIndex = -1;
+    if (selector) {
+      const numericSelector = Number(selector);
+      if (Number.isInteger(numericSelector)) {
+        subIndex = numericSelector;
+      } else {
+        subIndex = subFonts.findIndex((f) => f.postscriptName === selector);
+      }
+    }
+    if (subIndex < 0) {
+      const langPsName = CJK_TTC_LANG_TO_PSNAME[lang]
+        ?? CJK_TTC_LANG_TO_PSNAME[lang.split('-')[0]]
+        ?? CJK_TTC_LANG_TO_PSNAME.ja;
+      subIndex = subFonts.findIndex((f) => f.postscriptName === langPsName);
+    }
+    if (subIndex < 0) subIndex = 0;
+
+    fontBytes = extractFontFromTtc(fontBytes, subIndex);
+  }
+
+  const font = await pdfDoc.embedFont(fontBytes, { subset: true });
+  return font;
+}
+
+/**
+ * Load fallback fonts for the header/footer stamp. Returns the first
+ * successfully-embedded font from the language-appropriate candidate list,
+ * wrapped in an array so the caller can extend it with the Latin fallback.
+ *
+ * Loading is language-scoped: only CJK candidates are tried for ko/ja/zh,
+ * only Thai candidates for th, and English builds skip non-Latin fonts
+ * entirely. Loading every candidate up-front would waste memory and (more
+ * importantly) can trigger latent fontkit subsetting bugs in fonts whose
+ * glyphs are never actually drawn on the final PDF.
+ *
+ * When no candidate is available, returns an empty array and the caller
+ * falls back to Latin-only Helvetica with a warning logged.
+ */
+async function loadStampFallbackFonts(
+  pdfDoc: PDFDocument,
+  lang: string,
+  extraPaths?: string[],
+): Promise<EmbeddedFont[]> {
   pdfDoc.registerFontkit(fontkit);
 
-  const candidates = [
-    ...(extraPaths ?? []),
-    ...DEFAULT_CJK_FONT_CANDIDATES,
-  ];
+  const langKey = lang.split('-')[0];
+  let defaultCandidates: string[] = [];
+  if (KO_LANGS.has(lang) || KO_LANGS.has(langKey)) {
+    defaultCandidates = KO_FONT_CANDIDATES;
+  } else if (JA_ZH_LANGS.has(lang) || JA_ZH_LANGS.has(langKey)) {
+    defaultCandidates = JA_ZH_FONT_CANDIDATES;
+  } else if (THAI_LANGS.has(lang) || THAI_LANGS.has(langKey)) {
+    defaultCandidates = THAI_FONT_CANDIDATES;
+  }
 
+  // User-supplied paths take priority and are tried first regardless of
+  // language — the consumer knows their content best.
+  const candidates = [...(extraPaths ?? []), ...defaultCandidates];
+
+  const loaded: EmbeddedFont[] = [];
+  const seen = new Set<string>();
   for (const candidate of candidates) {
-    if (!fs.existsSync(candidate)) continue;
-    if (candidate.endsWith('.ttc')) continue;
+    const filePath = candidate.split('#')[0];
+    if (seen.has(filePath)) continue;
+    seen.add(filePath);
     try {
-      const fontBytes = fs.readFileSync(candidate);
-      const font = await pdfDoc.embedFont(fontBytes, { subset: true });
-      console.log(`  CJK font: ${path.basename(candidate)}`);
-      return font;
+      const font = await embedFontFromPath(pdfDoc, candidate, lang);
+      if (font) {
+        console.log(`  Stamp font loaded: ${path.basename(filePath)}`);
+        loaded.push(font);
+        // Stop after the first successfully-loaded font for this language —
+        // the glyph-coverage check at draw time only needs one good
+        // candidate, and avoiding extra subsetters dodges the CFF-subset
+        // bug in @pdf-lib/fontkit (RangeError in CFFSubset.encode) when a
+        // font is registered but its glyphs are never actually drawn.
+        break;
+      }
     } catch (e) {
-      console.warn(`  Warning: Could not embed font ${candidate}: ${(e as Error).message}`);
+      console.warn(
+        `  Warning: Could not embed font ${candidate}: ${(e as Error).message}`,
+      );
     }
   }
-  return null;
+  return loaded;
 }
 
 export interface RenderOptions {
@@ -61,6 +307,13 @@ export interface RenderOptions {
   lang: string;
   theme?: PdfTheme;
   config?: ResolvedDocConfig;
+  /**
+   * Optional shared Chromium instance. When provided, renderPdf reuses it
+   * by opening a new page on the existing browser, and the caller owns its
+   * lifecycle. This avoids paying the per-call launch cost when generating
+   * multiple PDFs in one run (e.g. one PDF per language during release builds).
+   */
+  browser?: Browser;
 }
 
 interface ChapterInfo {
@@ -247,6 +500,46 @@ async function getAllSections(
 }
 
 /**
+ * Pick the best font for a given text by checking glyph coverage.
+ *
+ * Walks the candidate list in order and returns the first font whose
+ * fontkit instance reports a glyph for every codepoint in the string.
+ * If none cover the text fully, returns the last (Latin) font — drawing
+ * with it may produce tofu boxes for unsupported codepoints, but pdf-lib
+ * will not throw `WinAnsi cannot encode "目"`-style errors because all
+ * fonts we load here are Unicode-encoded subsets.
+ */
+function pickFontForText(text: string, candidates: EmbeddedFont[]): EmbeddedFont {
+  if (candidates.length === 1) return candidates[0];
+  for (const font of candidates) {
+    // pdf-lib does not expose hasGlyphForCodePoint publicly, but the
+    // underlying fontkit instance is reachable via the embedder.
+    const fkFont = (font as unknown as {
+      embedder?: { font?: { hasGlyphForCodePoint?: (cp: number) => boolean } };
+    }).embedder?.font;
+    if (!fkFont?.hasGlyphForCodePoint) {
+      // Standard14 fonts (Helvetica) lack this introspection; only safe
+      // to use when the text is ASCII.
+      let asciiOnly = true;
+      for (const ch of text) {
+        if (ch.codePointAt(0)! > 0x7e) { asciiOnly = false; break; }
+      }
+      if (asciiOnly) return font;
+      continue;
+    }
+    let covers = true;
+    for (const ch of text) {
+      if (!fkFont.hasGlyphForCodePoint(ch.codePointAt(0)!)) {
+        covers = false;
+        break;
+      }
+    }
+    if (covers) return font;
+  }
+  return candidates[candidates.length - 1];
+}
+
+/**
  * Draws header/footer directly with pdf-lib.
  * Does not use Playwright's displayHeaderFooter — gives full control over CJK rendering,
  * positioning, and margins.
@@ -257,21 +550,31 @@ async function getAllSections(
  * Section label logic:
  *   For each page, shows the last section that starts on or before (<=) that page.
  *   Prefers H2 if available; falls back to the current chapter (H1) otherwise.
+ *
+ * Font selection:
+ *   Each text string is drawn with the first font in `fontFallbacks` whose
+ *   underlying fontkit instance reports glyph coverage for every codepoint.
+ *   The Latin font is the last candidate, used for ASCII-only strings (e.g.
+ *   page numbers) and as the final fallback.
  */
 function stampHeaderFooter(
   pdfDoc: PDFDocument,
   opts: {
     title: string;
     font: EmbeddedFont;
-    cjkFont: EmbeddedFont | null;
+    fontFallbacks: EmbeddedFont[];
     sections: SectionInfo[];
     firstChapterPage: number;
   },
 ): void {
-  const { title, font, cjkFont, sections, firstChapterPage } = opts;
+  const { title, font, fontFallbacks, sections, firstChapterPage } = opts;
   const totalPages = pdfDoc.getPageCount();
 
-  const hfFont = cjkFont ?? font;
+  // Order: non-Latin fonts first (so CJK/Thai win when the text needs them),
+  // Latin font last (handles ASCII page numbers and serves as final fallback).
+  const candidates: EmbeddedFont[] = [...fontFallbacks, font];
+
+  const titleFont = pickFontForText(title, candidates);
 
   // Style constants — book-style layout
   const fontSize = 8.5;
@@ -323,7 +626,7 @@ function stampHeaderFooter(
       x: xLeft,
       y: headerTextY,
       size: fontSize,
-      font: hfFont,
+      font: titleFont,
       color: textColor,
     });
     pdfPage.drawLine({
@@ -341,27 +644,32 @@ function stampHeaderFooter(
       color: lineColor,
     });
 
-    // Page number (right-aligned)
+    // Page number (right-aligned, ASCII-only)
     const pageNumStr = String(pageNum);
-    const pageNumWidth = hfFont.widthOfTextAtSize(pageNumStr, fontSize);
+    const pageNumFont = pickFontForText(pageNumStr, candidates);
+    const pageNumWidth = pageNumFont.widthOfTextAtSize(pageNumStr, fontSize);
     pdfPage.drawText(pageNumStr, {
       x: xRight - pageNumWidth,
       y: footerTextY,
       size: fontSize,
-      font: hfFont,
+      font: pageNumFont,
       color: textColor,
     });
 
-    // Section label (left-aligned, from chapter pages onward)
+    // Section label (left-aligned, from chapter pages onward).
+    // Picked per-page because chapter labels in different languages may
+    // need different fonts (e.g. CJK for ko/ja chapter titles, Thai font
+    // for th chapter titles, Latin for English appendix headings).
     const sectionLabel = pageSectionLabel[pageNum];
     if (sectionLabel && pageNum >= firstChapterPage) {
+      const labelFont = pickFontForText(sectionLabel, candidates);
       const maxLabelWidth = contentWidth - pageNumWidth - 20;
       let displayLabel = sectionLabel;
-      let labelWidth = hfFont.widthOfTextAtSize(displayLabel, fontSize);
+      let labelWidth = labelFont.widthOfTextAtSize(displayLabel, fontSize);
       if (labelWidth > maxLabelWidth) {
         while (displayLabel.length > 0 && labelWidth > maxLabelWidth) {
           displayLabel = displayLabel.slice(0, -1);
-          labelWidth = hfFont.widthOfTextAtSize(displayLabel + '\u2026', fontSize);
+          labelWidth = labelFont.widthOfTextAtSize(displayLabel + '\u2026', fontSize);
         }
         displayLabel += '\u2026';
       }
@@ -369,7 +677,7 @@ function stampHeaderFooter(
         x: xLeft,
         y: footerTextY,
         size: fontSize,
-        font: hfFont,
+        font: labelFont,
         color: textColor,
       });
     }
@@ -382,16 +690,23 @@ export async function renderPdf(options: RenderOptions): Promise<void> {
 
   fs.mkdirSync(path.dirname(options.outputPath), { recursive: true });
 
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'bai-docs-'));
-  const tmpHtmlPath = path.join(tmpDir, 'document.html');
-  fs.writeFileSync(tmpHtmlPath, options.html, 'utf-8');
+  const ownsBrowser = !options.browser;
+  const browser = options.browser ?? (await chromium.launch());
 
-  const browser = await chromium.launch();
+  // tmpDir is created after the browser is ready so a chromium.launch()
+  // failure cannot leave an orphaned temp directory behind. Use an outer
+  // try/finally so a failure between mkdtempSync and the inner try also
+  // cleans up the browser when we own it.
+  let tmpDir: string | undefined;
   let pdfBuffer: Buffer;
   let chapterInfoList: ChapterInfo[] = [];
   let sectionList: SectionInfo[] = [];
+  let page: Awaited<ReturnType<Browser['newPage']>> | undefined;
   try {
-    const page = await browser.newPage({
+    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'bai-docs-'));
+    const tmpHtmlPath = path.join(tmpDir, 'document.html');
+    fs.writeFileSync(tmpHtmlPath, options.html, 'utf-8');
+    page = await browser.newPage({
       viewport: { width: PRINT_WIDTH_PX, height: 800 },
     });
 
@@ -479,8 +794,15 @@ export async function renderPdf(options: RenderOptions): Promise<void> {
     console.log('  Rendering final PDF...');
     pdfBuffer = await page.pdf(PDF_OPTIONS);
   } finally {
-    await browser.close();
-    fs.rmSync(tmpDir, { recursive: true, force: true });
+    if (page) {
+      await page.close().catch(() => {});
+    }
+    if (ownsBrowser) {
+      await browser.close();
+    }
+    if (tmpDir) {
+      fs.rmSync(tmpDir, { recursive: true, force: true });
+    }
   }
 
   // ── Post-processing ──────────────────────────────────────────
@@ -498,7 +820,24 @@ export async function renderPdf(options: RenderOptions): Promise<void> {
   pdfDoc.setCreationDate(new Date());
 
   const latinFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
-  const cjkFont = await loadCjkFont(pdfDoc, config?.cjkFontPaths);
+  const fontFallbacks = await loadStampFallbackFonts(
+    pdfDoc,
+    options.lang,
+    config?.cjkFontPaths,
+  );
+  if (fontFallbacks.length === 0 && options.lang !== 'en') {
+    const hint =
+      options.lang === 'th'
+        ? 'macOS: Thonburi.ttc ships with the OS — ensure /System/Library/Fonts/Supplemental/Thonburi.ttc is readable. Linux: install fonts-thai-tlwg (Loma/Garuda).'
+        : options.lang === 'ja'
+          ? 'macOS: ensure /System/Library/Fonts/Supplemental/Arial Unicode.ttf is readable. Linux: install fonts-noto-cjk or fonts-takao-gothic.'
+          : 'Install Noto Sans CJK or Nanum fonts, or set "cjkFontPaths" in docs-toolkit.config.yaml.';
+    console.warn(
+      `  Warning: No suitable font found for lang="${options.lang}". ` +
+        `Header/footer stamp will fall back to Latin (Helvetica) — non-Latin ` +
+        `glyphs may render as missing/tofu. ${hint}`,
+    );
+  }
 
   // First chapter start page (skip chapter labels on preceding pages like TOC).
   // Computed from sectionList (H1/H2 heading id attributes) — works around the issue
@@ -515,7 +854,7 @@ export async function renderPdf(options: RenderOptions): Promise<void> {
   stampHeaderFooter(pdfDoc, {
     title: flatTitle,
     font: latinFont,
-    cjkFont,
+    fontFallbacks,
     sections: sectionList,
     firstChapterPage,
   });

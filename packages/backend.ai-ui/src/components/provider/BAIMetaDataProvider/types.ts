@@ -1,4 +1,4 @@
-import { ResourceSlotDetail } from '../../../hooks';
+import type { ResourceSlotDetail } from '../../../hooks';
 
 export type DeviceMetaData = {
   [name: string]: ResourceSlotDetail | undefined;

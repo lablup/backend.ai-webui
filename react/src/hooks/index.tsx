@@ -7,33 +7,22 @@ import { useSuspenseTanQuery } from './reactQueryAlias';
 import { MenuKeys } from './useWebUIMenuItems';
 import * as _ from 'lodash-es';
 import { useEffect, useMemo, useState } from 'react';
-import { NavigateOptions, To, useNavigate } from 'react-router-dom';
+// eslint-disable-next-line no-restricted-imports
+import { useNavigate } from 'react-router-dom';
 
-interface WebUINavigateOptions extends NavigateOptions {
-  params?: any;
-}
-export const useWebUINavigate = () => {
-  const _reactNavigate = useNavigate();
-  // @ts-ignore
-  return (to: To, options?: WebUINavigateOptions) => {
-    _reactNavigate(to, _.omit(options, ['params']));
-    const pathName = _.isString(to) ? to : to.pathname || '';
-    document.dispatchEvent(
-      new CustomEvent('move-to-from-react', {
-        detail: {
-          path: pathName,
-          params: options?.params,
-        },
-      }),
-    );
-
-    // dispatch event to update tab of backend-ai-usersettings
-    if (pathName === '/usersettings') {
-      const event = new CustomEvent('backend-ai-usersettings', {});
-      document.dispatchEvent(event);
-    }
-  };
-};
+/**
+ * Thin wrapper around `useNavigate` from react-router-dom.
+ *
+ * Originally this hook also dispatched `move-to-from-react` and
+ * `backend-ai-usersettings` custom events to bridge navigation to the legacy
+ * Lit shell (with a `params` extension on `NavigateOptions` carrying the
+ * Lit-side Redux action payload). The Lit shell was removed
+ * (`backend-ai-webui.ts` in 428205a79, `backend-ai-usersettings-general-list.ts`
+ * in #2465), so the events and the `params` option no longer have any
+ * consumer. The wrapper is kept as a project-level abstraction point for
+ * future cross-cutting navigation concerns.
+ */
+export const useWebUINavigate = () => useNavigate();
 
 export const useBackendAIConnectedState = () => {
   const [time, setTime] = useState<string>();

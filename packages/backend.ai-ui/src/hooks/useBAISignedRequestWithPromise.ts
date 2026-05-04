@@ -1,4 +1,4 @@
-import { useConnectedBAIClient } from '../components';
+import useConnectedBAIClient from '../components/provider/BAIClientProvider/hooks/useConnectedBAIClient';
 
 export const baiSignedRequestWithPromise = ({
   method,

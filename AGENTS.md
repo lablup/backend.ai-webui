@@ -6,8 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Development
 
-- `pnpm run dev` - Start development environment (TypeScript watch + Relay watch + React dev server)
-- `pnpm run wsproxy` - Start websocket proxy (required for local development)
+- `pnpm run dev` - Start development environment (TypeScript watch + Relay watch + React dev server under Portless on `*.localhost:1355`)
 
 ### Build and Production
 
@@ -94,8 +93,8 @@ Production build (`pnpm run build`) runs these steps sequentially:
 
 ### Development Workflow
 
-1. **Dev Server**: Run `pnpm run dev` (TypeScript watch + Relay watch + React dev server) and `pnpm run wsproxy` (WebSocket proxy) for full development
-2. **Port Configuration**: Managed by `scripts/dev-config.js` (default React port: 9081)
+1. **Dev Server**: Run `pnpm run dev` (TypeScript watch + Relay watch + React dev server under [Portless](https://github.com/vercel-labs/portless)). Portless is a `devDependency`, no global install needed; `dev.mjs` auto-starts the daemon on port 1355 (HTTPS by default).
+2. **URL**: For branches matching `FR-XXXX` the dev URL is `https://fr-XXXX.localhost:1355`; otherwise Portless derives a branch-based subdomain (printed on startup). See `DEV_ENVIRONMENT.md` for theme color and troubleshooting.
 3. **Testing**: Jest unit tests + Playwright E2E tests
 4. **Linting**: ESLint 9 (flat config) + Prettier with pre-commit hooks via Husky
 
@@ -162,12 +161,11 @@ Production build (`pnpm run build`) runs these steps sequentially:
 
 ## Important Notes
 
-- Always run websocket proxy (`pnpm run wsproxy`) for local development
 - Pre-commit hooks (Husky + lint-staged) run linting and formatting automatically
 - Use `make clean` before building if encountering issues
 - Electron app requires special build process with `make dep`
 - React components use Relay; ensure GraphQL schema in `/data/` is up to date
-- Backend.AI client library (`src/lib/backend.ai-client-esm.ts`) is aliased in Craco config
+- Backend.AI client library is a workspace package at `packages/backend.ai-client/` (built with tsup)
 
 ## Core Guidelines
 

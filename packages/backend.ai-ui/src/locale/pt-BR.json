@@ -110,6 +110,7 @@
     "operator": {
       "After": "depois",
       "Before": "antes",
+      "Equals": "igual a",
       "GreaterThan": "maior que",
       "GreaterThanOrEqual": "maior ou igual",
       "IContains": "contém",
@@ -123,6 +124,7 @@
       "In": "em",
       "LessThan": "menor que",
       "LessThanOrEqual": "menor ou igual",
+      "NotEquals": "diferente de",
       "NotIn": "não em"
     }
   },
@@ -150,6 +152,28 @@
     "Maximize": "Maximize",
     "Minimize": "Minimize",
     "Restore": "Restore"
+  },
+  "comp:BAIModelDeploymentNodes": {
+    "AreYouSureToDeleteDeployment": "Tem certeza que deseja excluir o deployment \"{{deploymentName}}\"? Esta ação não pode ser desfeita.",
+    "CreatedAt": "Criado em",
+    "CreatedUser": "Autor",
+    "CurrentRevisionID": "ID de revisão atual",
+    "Delete": "Excluir",
+    "DeleteDeployment": "Excluir deployment",
+    "DeploymentDeleted": "Deployment excluído.",
+    "DeploymentID": "ID do deployment",
+    "DomainName": "Domínio",
+    "EndpointURL": "URL do ponto final",
+    "FailedToDeleteDeployment": "Falha ao excluir o deployment.",
+    "Name": "Nome",
+    "OpenToPublic": "Aberto ao público",
+    "PreferredDomainName": "Domínio preferido",
+    "ProjectID": "ID do projeto",
+    "Replicas": "Réplicas",
+    "Status": "Status",
+    "StrategyType": "Estratégia",
+    "Tags": "Tag",
+    "UpdatedAt": "Atualizado em"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingFoldersWillBeUpdated": "A(s) pasta(s) a seguir será(ão) atualizada(s).",

@@ -1,16 +1,20 @@
 # Build and release workflow for Backend.AI Desktop and WebUI bundle.
 #
-# Architecture: 3 parallel jobs after a shared web build step.
+# Architecture: 4 parallel jobs (build_docs is fully independent, the others
+# share a web build step).
 #
 #   build_web (ubuntu) ──┬──> build_mac (macos)    → DMG x64/arm64 + local proxy
 #                        ├──> build_desktop (ubuntu) → Win/Linux ZIP x64/arm64 + local proxy
 #                        └──> upload web bundle
+#   build_docs (ubuntu, independent)               → User Guide PDFs (en/ko/ja/th)
 #
 # Key optimizations over the previous single-job approach:
-#   1. Parallel jobs: macOS + win/linux builds run concurrently (~10 min saved)
+#   1. Parallel jobs: macOS + win/linux + docs builds run concurrently (~10 min saved)
 #   2. No double React build: publicPath patching replaces full rebuild (~5 min saved)
 #   3. Parallel local proxy compilation within each job (~3 min saved)
 #   4. Optimized ZIP compression level (-6 vs -9, marginal size diff, ~1 min saved)
+#   5. PDF generation reuses one Chromium instance and renders languages in
+#      parallel; Playwright browsers are cached across runs.
 
 name: Build and Release Packages
 on:
@@ -204,3 +208,123 @@ jobs:
         run: node upload-release.js app
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # ──────────────────────────────────────────────────────────────────────
+  # Job 4: Build per-language User Guide PDFs (ubuntu, target ~5 min)
+  #
+  # Independent of the web/desktop jobs — only needs the docs sources under
+  # `packages/backend.ai-webui-docs/src/`. Runs in parallel with build_mac
+  # and build_desktop, so a healthy run does not extend the overall wall
+  # clock (mac is the current critical path at ~10 min).
+  #
+  # Failure handling is scoped to the PDF build step itself (not the whole
+  # job), so partial per-language failures degrade gracefully but a full
+  # generator failure (all languages failed → generate-pdf.ts exits non-
+  # zero) still fails the job. This prevents shipping a release with zero
+  # PDF assets going unnoticed.
+  # ──────────────────────────────────────────────────────────────────────
+  build_docs:
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v5
+
+      - uses: pnpm/action-setup@v5
+        name: Install pnpm
+        with:
+          version: latest
+          run_install: false
+
+      - name: Install Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'pnpm'
+
+      - name: Install Dependencies
+        run: pnpm install --no-frozen-lockfile
+
+      # backend.ai-docs-toolkit ships its `docs-toolkit` CLI as the package
+      # bin, but it lives at dist/cli.js which only exists after `tsc` runs.
+      # On a fresh `pnpm install` the dist directory is empty, so pnpm
+      # cannot create the .bin/docs-toolkit symlink and later `pdf:all`
+      # fails with `spawn ENOENT`. Building the toolkit and re-running
+      # install populates dist/ and lets pnpm wire the bin link.
+      - name: Build docs-toolkit and link CLI
+        run: |
+          pnpm --filter backend.ai-docs-toolkit run build
+          pnpm install --no-frozen-lockfile
+
+      # Cache the Playwright browser binaries (~150 MB Chromium download).
+      # The lockfile hash keys the cache so a Playwright version bump
+      # naturally invalidates the cache without manual intervention.
+      - name: Cache Playwright browsers
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+
+      - name: Install Playwright Chromium
+        run: pnpm --filter backend.ai-webui-docs exec playwright install --with-deps chromium
+
+      # PDF rendering uses two distinct font paths that need different fonts:
+      #
+      # 1. Body text — rendered by Chromium from HTML. Resolves the CSS
+      #    font-family (see styles.ts) via fontconfig, so it understands
+      #    .ttc collections. `fonts-noto-cjk` provides "Noto Sans CJK KR/JP/TC"
+      #    which the CSS lists as the canonical CJK body font.
+      #
+      # 2. Header/footer — stamped post-render by pdf-lib, which cannot embed
+      #    .ttc collections. So we additionally install language-specific
+      #    single-face packages whose paths are listed in
+      #    DEFAULT_CJK_FONT_CANDIDATES (pdf-renderer.ts):
+      #      - fonts-nanum         → /usr/share/fonts/truetype/nanum/NanumBarunGothic.ttf  (ko)
+      #      - fonts-takao-gothic  → /usr/share/fonts/truetype/takao-gothic/TakaoGothic.ttf (ja)
+      #      - fonts-thai-tlwg     → /usr/share/fonts/opentype/tlwg/Loma.otf | Garuda.ttf  (th)
+      #
+      # Languages whose pdf-lib font is missing will be reported as a failure by
+      # generate-pdf.ts but will not abort the other language renders.
+      - name: Install CJK + Thai fonts (best effort)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            fonts-noto-cjk \
+            fonts-nanum fonts-takao-gothic fonts-thai-tlwg || true
+          fc-cache -f || true
+
+      # generate-pdf.ts continues past per-language failures and exits
+      # non-zero only if *every* requested language failed. Combined with
+      # `continue-on-error: true` on the job, a partial PDF run still
+      # uploads the languages that succeeded.
+      - name: Build PDFs (en/ko/ja/th)
+        run: pnpm --filter backend.ai-webui-docs run pdf:all
+
+      - name: Stage PDFs for upload
+        run: |
+          mkdir -p ./app
+          if compgen -G "packages/backend.ai-webui-docs/dist/*.pdf" > /dev/null; then
+            cp packages/backend.ai-webui-docs/dist/*.pdf ./app/
+            ls -lh ./app/*.pdf
+          else
+            echo "::warning::No PDFs were produced; nothing to upload."
+          fi
+
+      - name: Upload PDF release assets
+        if: inputs.dry_run != true
+        run: node upload-release.js app
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Always retain the built PDFs as a workflow artifact for inspection
+      # (handy during dry runs and when debugging the release path).
+      - name: Upload PDFs as workflow artifact
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: webui-docs-pdfs
+          path: packages/backend.ai-webui-docs/dist/*.pdf
+          if-no-files-found: warn
+          retention-days: 14

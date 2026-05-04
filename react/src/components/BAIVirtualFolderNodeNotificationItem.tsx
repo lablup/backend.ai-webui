@@ -10,8 +10,8 @@ import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
-import { useNavigate } from 'react-router-dom';
 import { BAIVirtualFolderNodeNotificationItemFragment$key } from 'src/__generated__/BAIVirtualFolderNodeNotificationItemFragment.graphql';
+import { useWebUINavigate } from 'src/hooks';
 import {
   NotificationState,
   useSetBAINotification,
@@ -23,12 +23,18 @@ interface BAIVirtualFolderNodeNotificationItemProps {
   showDate?: boolean;
 }
 
+/**
+ * @deprecated Renders V1 `VirtualFolderNode` notifications. The V2 counterpart
+ * `BAIVFolderNotificationItem` (operating on `VFolder implements Node` from
+ * the Strawberry GraphQL API, FR-2573) is the preferred path going forward.
+ * This component will be removed once all V1 callers migrate.
+ */
 const BAIVirtualFolderNodeNotificationItem: React.FC<
   BAIVirtualFolderNodeNotificationItemProps
 > = ({ notification, virtualFolderNodeFrgmt, showDate }) => {
   'use memo';
 
-  const navigate = useNavigate();
+  const navigate = useWebUINavigate();
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { closeNotification } = useSetBAINotification();
@@ -79,7 +85,7 @@ const BAIVirtualFolderNodeNotificationItem: React.FC<
                 justify="between"
               >
                 {_.isString(notification.description) ? (
-                  <BAIText>
+                  <BAIText style={{ flex: 1, minWidth: 0 }}>
                     {_.truncate(notification.description, { length: 300 })}
                   </BAIText>
                 ) : (
@@ -87,8 +93,9 @@ const BAIVirtualFolderNodeNotificationItem: React.FC<
                 )}
 
                 {notification.extraDescription && !notification?.onCancel ? (
-                  <BAIFlex>
+                  <BAIFlex style={{ flexShrink: 0 }}>
                     <Typography.Link
+                      style={{ whiteSpace: 'nowrap' }}
                       onClick={() => {
                         toggleShowExtraDescription();
                       }}

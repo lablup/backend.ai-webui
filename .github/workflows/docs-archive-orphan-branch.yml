@@ -1,0 +1,167 @@
+# Snapshot the docs SOURCE (markdown + book.config.yaml) at a specific
+# release tag and commit + push it to a `docs-archive/<minor>` orphan
+# branch (e.g., `docs-archive/26.4`).
+#
+# Why this exists (the FR-2729 v1 "overlay" archive model)
+#   Each archive holds the *source* of a minor at the chosen release ref,
+#   not its rendered output. At Amplify build time the current toolkit
+#   on `main` re-renders every archive's source so all versions on the
+#   live site share the same toolkit features (FR-2731 PDF card, FR-2733
+#   selector + banner UX, etc.). FR-2710 F6's original intent was
+#   "toolkit-of-its-day" (build once, freeze); FR-2729 inverted that
+#   for v1 because shipping the same look across versions matters more
+#   than perfectly reproducing each minor's contemporary toolkit. See
+#   FR-2751 for follow-up build caching that makes this efficient at
+#   archive count >= 2.
+#
+# Trigger: manual (`workflow_dispatch`). The operator picks the tagged
+# commit whose docs source should be parked, and the minor label that
+# represents it. Future iteration may add an on-tag trigger but that is
+# explicitly out of scope here.
+#
+# Output: a `docs-archive/<minor>` branch containing ONLY:
+#   src/                          # markdown + book.config.yaml
+#   .archive-info.txt             # provenance sentinel
+# Orphan branches share no history with `main`, so the main repo size
+# is unaffected. Each dispatch force-pushes — running for the same
+# minor on a higher patch tag overwrites the archive with the new src.
+#
+# References:
+#   - Spec:   .specs/FR-2729-webui-docs-multi-version-deployment/spec.md
+#   - v1 sub-task: FR-2738
+#   - Predecessor (Done): FR-2710 F6 (versioned output layout)
+#   - Follow-up: FR-2751 (per-archive build caching)
+
+name: docs-archive-orphan-branch
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_ref:
+        description: "Source ref whose docs src/ to snapshot (tag or SHA, e.g. v26.4.7)"
+        required: true
+        type: string
+      minor_label:
+        description: "Minor label this archive represents (e.g. 26.4). MUST NOT include patch."
+        required: true
+        type: string
+      dry_run:
+        description: "If true, stage and inspect only — do NOT push the orphan branch"
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-archive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Validate minor label shape
+        # Refuse anything that looks like a full patch (three numeric segments)
+        # to mirror the validation in `versions.ts` — the selector lists minors
+        # only, never patches. Inputs flow through env vars (NOT shell
+        # interpolation) to avoid command injection from malicious input.
+        env:
+          MINOR_LABEL: ${{ inputs.minor_label }}
+        run: |
+          if [[ "$MINOR_LABEL" =~ ^[0-9]+\.[0-9]+\.[0-9]+ ]]; then
+            echo "ERROR: minor_label '$MINOR_LABEL' looks like a patch."
+            echo "Expected format: '<MAJOR>.<MINOR>' (e.g. 26.4). The selector lists minors only."
+            exit 1
+          fi
+          if [[ ! "$MINOR_LABEL" =~ ^[0-9]+\.[0-9]+$ ]]; then
+            echo "ERROR: minor_label '$MINOR_LABEL' is not a clean MAJOR.MINOR pair."
+            exit 1
+          fi
+
+      - name: Checkout source ref
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.source_ref }}
+          fetch-depth: 0
+
+      - name: Verify docs source exists at source ref
+        run: |
+          SRC="packages/backend.ai-webui-docs/src"
+          if [ ! -d "$SRC" ]; then
+            echo "ERROR: expected docs source at $SRC (does this ref predate the package?)"
+            exit 1
+          fi
+          if [ ! -f "$SRC/book.config.yaml" ]; then
+            echo "ERROR: expected $SRC/book.config.yaml — required by docs-toolkit at consumer-rebuild time"
+            exit 1
+          fi
+          echo "Docs source contents (top level):"
+          ls -la "$SRC"
+
+      - name: Stage archive contents (source markdown)
+        # Archive root layout (matches what docs-toolkit expects when
+        # resolving a `versions[].source.kind=archive-branch` entry):
+        #   src/book.config.yaml
+        #   src/<lang>/...                   # md + images
+        #   .archive-info.txt
+        # Inputs flow through env vars to avoid shell injection.
+        env:
+          MINOR_LABEL: ${{ inputs.minor_label }}
+          SOURCE_REF: ${{ inputs.source_ref }}
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          mkdir -p /tmp/docs-archive/src
+          cp -R packages/backend.ai-webui-docs/src/. /tmp/docs-archive/src/
+          # Drop a sentinel file so anyone browsing the branch knows
+          # which minor + source ref produced it.
+          cat > /tmp/docs-archive/.archive-info.txt <<EOF
+          minor_label: $MINOR_LABEL
+          source_ref:  $SOURCE_REF
+          built_at:    $(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          built_by:    docs-archive-orphan-branch.yml (gh actions run $RUN_ID)
+          EOF
+          echo "Staged archive contents:"
+          ls -la /tmp/docs-archive
+          echo "Source tree (top level):"
+          ls -la /tmp/docs-archive/src
+
+      - name: Configure git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Create orphan branch and commit artifacts
+        if: ${{ inputs.dry_run != true }}
+        env:
+          MINOR_LABEL: ${{ inputs.minor_label }}
+          SOURCE_REF: ${{ inputs.source_ref }}
+        run: |
+          BRANCH="docs-archive/$MINOR_LABEL"
+          # Use a fresh worktree so we don't disturb the main checkout.
+          git worktree add --detach /tmp/orphan-worktree
+          cd /tmp/orphan-worktree
+          # Detach HEAD and clear the index so the orphan starts truly empty.
+          git checkout --orphan "$BRANCH"
+          git rm -rf --cached . > /dev/null 2>&1 || true
+          # Wipe everything — we want the orphan tree to contain ONLY the
+          # archived source, no inherited files.
+          find . -mindepth 1 -maxdepth 1 ! -name '.git' -exec rm -rf {} +
+          # Copy the staged archive in.
+          cp -R /tmp/docs-archive/. .
+          git add -A
+          git commit -m "docs-archive($MINOR_LABEL): snapshot src from $SOURCE_REF"
+          # Force-push: each invocation replaces the previous archive for
+          # this minor, since a higher patch on the same minor may carry
+          # docs corrections that should land in the archive.
+          git push --force origin "$BRANCH"
+
+      - name: Dry-run summary
+        if: ${{ inputs.dry_run == true }}
+        env:
+          MINOR_LABEL: ${{ inputs.minor_label }}
+          SOURCE_REF: ${{ inputs.source_ref }}
+        run: |
+          echo "Dry-run mode: orphan branch was NOT pushed."
+          echo "Would push: docs-archive/$MINOR_LABEL"
+          echo "Source ref: $SOURCE_REF"
+          echo "Artifact size:"
+          du -sh /tmp/docs-archive

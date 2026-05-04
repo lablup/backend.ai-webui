@@ -49,26 +49,22 @@ function setWindowPathname(pathname: string): void {
 // ---------------------------------------------------------------------------
 
 // Prevent TabCount from starting real setInterval timers in jsdom.
-jest.mock('../lib/TabCounter', () => {
+// The real implementation is assigned per-test via `MockedTabCount.mockImplementation(function() {...})`
+// so that `new TabCount()` (arrow functions can't be constructors in Vitest 4).
+vi.mock('../lib/TabCounter', () => {
   return {
     __esModule: true,
-    default: jest.fn().mockImplementation(() => ({
-      tabsCounter: 1,
-      tabsCount: jest.fn().mockReturnValue(1),
-      pause: jest.fn(),
-    })),
+    default: vi.fn(),
   };
 });
 
 // Mock loadConfigFromWebServer so we don't make real network requests.
-jest.mock('../helper/loginSessionAuth', () => ({
-  loadConfigFromWebServer: jest.fn().mockResolvedValue(undefined),
+vi.mock('../helper/loginSessionAuth', () => ({
+  loadConfigFromWebServer: vi.fn().mockResolvedValue(undefined),
 }));
 
-const MockedTabCount = TabCount as jest.MockedClass<typeof TabCount>;
-const mockedLoadConfig = loadConfigFromWebServer as jest.MockedFunction<
-  typeof loadConfigFromWebServer
->;
+const MockedTabCount = vi.mocked(TabCount, { partial: false });
+const mockedLoadConfig = vi.mocked(loadConfigFromWebServer);
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -98,11 +94,11 @@ function makeOptions(
   overrides: Partial<Parameters<typeof useLoginOrchestration>[0]> = {},
 ) {
   return {
-    onLogin: jest.fn().mockResolvedValue(undefined),
-    onOpen: jest.fn(),
-    onBlock: jest.fn(),
-    onCheckLogin: jest.fn().mockResolvedValue(false),
-    onLogoutSession: jest.fn().mockResolvedValue(undefined),
+    onLogin: vi.fn().mockResolvedValue(undefined),
+    onOpen: vi.fn(),
+    onBlock: vi.fn(),
+    onCheckLogin: vi.fn().mockResolvedValue(false),
+    onLogoutSession: vi.fn().mockResolvedValue(undefined),
     apiEndpoint: 'https://api.example.com',
     connectionMode: 'SESSION' as const,
     ...overrides,
@@ -135,7 +131,7 @@ function makeConnectedClient() {
 function mockNavigationType(
   type: 'navigate' | 'reload' | 'back_forward',
 ): void {
-  (window.performance as any).getEntriesByType = jest
+  (window.performance as any).getEntriesByType = vi
     .fn()
     .mockImplementation((entryType: string) => {
       if (entryType === 'navigation') {
@@ -156,22 +152,24 @@ beforeEach(() => {
   // Default: non-reload navigation
   mockNavigationType('navigate');
 
-  // Reset TabCount mock: single tab, not reloaded
-  MockedTabCount.mockImplementation(
-    () =>
-      ({
-        tabsCounter: 1,
-        tabsCount: jest.fn().mockReturnValue(1),
-        pause: jest.fn(),
-      }) as unknown as TabCount,
-  );
+  // Reset TabCount mock: single tab, not reloaded.
+  // Use a regular `function` so `new TabCount()` works as a constructor in Vitest 4.
+  MockedTabCount.mockImplementation(function (this: any) {
+    this.tabsCounter = 1;
+    this.tabsCount = vi.fn().mockReturnValue(1);
+    this.pause = vi.fn();
+  } as unknown as () => TabCount);
 
   mockedLoadConfig.mockResolvedValue(undefined);
 });
 
 afterEach(() => {
   clearClient();
-  jest.restoreAllMocks();
+  // `vi.restoreAllMocks()` only affects `spyOn` spies. Factory-created mocks
+  // (e.g. `mockedLoadConfig`, `MockedTabCount`) need `clearAllMocks` to wipe
+  // their call history between tests.
+  vi.clearAllMocks();
+  vi.restoreAllMocks();
   backendaiOptions.set('last_window_close_time', 0);
 });
 
@@ -307,14 +305,11 @@ describe('useLoginOrchestration - normal flow', () => {
 
   it('calls onLogin(false) when there are multiple tabs even with auto_logout on', async () => {
     // Multiple tabs: tabsCounter > 1
-    MockedTabCount.mockImplementation(
-      () =>
-        ({
-          tabsCounter: 2,
-          tabsCount: jest.fn().mockReturnValue(2),
-          pause: jest.fn(),
-        }) as unknown as TabCount,
-    );
+    MockedTabCount.mockImplementation(function (this: any) {
+      this.tabsCounter = 2;
+      this.tabsCount = vi.fn().mockReturnValue(2);
+      this.pause = vi.fn();
+    } as unknown as () => TabCount);
     const { options } = await renderOrchestrationHook(true, true);
     expect(options.onLogin).toHaveBeenCalledWith(false);
     expect(options.onOpen).not.toHaveBeenCalled();
@@ -382,14 +377,11 @@ describe('useLoginOrchestration - Electron', () => {
 describe('useLoginOrchestration - auto-logout (single tab, fresh navigation)', () => {
   beforeEach(() => {
     // Single tab, fresh navigation (not a reload)
-    MockedTabCount.mockImplementation(
-      () =>
-        ({
-          tabsCounter: 1,
-          tabsCount: jest.fn().mockReturnValue(1),
-          pause: jest.fn(),
-        }) as unknown as TabCount,
-    );
+    MockedTabCount.mockImplementation(function (this: any) {
+      this.tabsCounter = 1;
+      this.tabsCount = vi.fn().mockReturnValue(1);
+      this.pause = vi.fn();
+    } as unknown as () => TabCount);
     mockNavigationType('navigate');
   });
 
@@ -398,7 +390,7 @@ describe('useLoginOrchestration - auto-logout (single tab, fresh navigation)', (
     backendaiOptions.set('last_window_close_time', now - 10); // 10 seconds ago
 
     const { options } = await renderOrchestrationHook(true, true, {
-      onCheckLogin: jest.fn().mockResolvedValue(true), // logged in but stale
+      onCheckLogin: vi.fn().mockResolvedValue(true), // logged in but stale
     });
 
     expect(options.onLogoutSession).toHaveBeenCalled();
@@ -411,7 +403,7 @@ describe('useLoginOrchestration - auto-logout (single tab, fresh navigation)', (
     backendaiOptions.set('last_window_close_time', now - 1); // 1 second ago
 
     const { options } = await renderOrchestrationHook(true, true, {
-      onCheckLogin: jest.fn().mockResolvedValue(true), // logged in, recent
+      onCheckLogin: vi.fn().mockResolvedValue(true), // logged in, recent
     });
 
     expect(options.onLogoutSession).not.toHaveBeenCalled();
@@ -424,7 +416,7 @@ describe('useLoginOrchestration - auto-logout (single tab, fresh navigation)', (
     backendaiOptions.set('last_window_close_time', now - 1);
 
     const { options } = await renderOrchestrationHook(true, true, {
-      onCheckLogin: jest.fn().mockResolvedValue(false), // not logged in
+      onCheckLogin: vi.fn().mockResolvedValue(false), // not logged in
     });
 
     expect(options.onOpen).toHaveBeenCalled();
@@ -439,7 +431,7 @@ describe('useLoginOrchestration - auto-logout (single tab, fresh navigation)', (
     backendaiOptions.delete('last_window_close_time');
 
     const { options } = await renderOrchestrationHook(true, true, {
-      onCheckLogin: jest.fn().mockResolvedValue(true),
+      onCheckLogin: vi.fn().mockResolvedValue(true),
     });
 
     // currentTime - currentTime === 0 which is NOT > 3, so silent re-login
@@ -456,7 +448,7 @@ describe('useLoginOrchestration - error handling', () => {
   it('calls onBlock when orchestration throws', async () => {
     // Force an error by making onCheckLogin throw
     const { options } = await renderOrchestrationHook(true, true, {
-      onCheckLogin: jest.fn().mockRejectedValue(new Error('network failure')),
+      onCheckLogin: vi.fn().mockRejectedValue(new Error('network failure')),
     });
 
     expect(options.onBlock).toHaveBeenCalledWith(

@@ -28,6 +28,45 @@ pdfMetadata:
   subject: "Backend.AI WebUI User Guide"
   creator: "Backend.AI Docs PDF Generator"
 
+# Versions (FR-2729 multi-version deployment).
+# - 26.4: archived release (FR-2738 creates the docs-archive/26.4 branch)
+# - next: workspace tip; rebuilt on every commit
+# Exactly one entry must carry `latest: true`.
+# Per FR-2710 F6, version labels are minor-only (no patch); the literal
+# label `next` is the only non-numeric value allowed and must pair with
+# `source.kind: workspace`.
+# `pdfTag` (optional, FR-2731) pins to a GitHub Release tag whose
+# assets are linked from the per-language landing page (FR-2732).
+#
+# Release procedure (when cutting a new minor X.Y):
+#   1. Insert a new entry IMMEDIATELY BELOW the `next` entry (above the
+#      previous-latest minor) with
+#        label: "X.Y"
+#        source: { kind: archive-branch, ref: docs-archive/X.Y }
+#        pdfTag: "vX.Y.Z"   # highest patch in the minor
+#   2. Move `latest: true` onto the new entry; remove it from the prior one.
+#   3. Keep the `next` entry at the TOP of the list (FR-2765 — surfaces
+#      `next` at the top of the version <select>); it never carries
+#      `latest: true`.
+#   See the docs release runbook for the full procedure.
+versions:
+  # FR-2765: `next` is intentionally listed first so it appears at the
+  # top of the version `<select>` dropdown. Readers visiting `next` see
+  # it as the active option without scrolling, and stable-channel
+  # readers still see the "(latest)" marker that the switcher renders
+  # next to whichever entry has `latest: true`. Build iteration follows
+  # this list order, but build order is output-only — no consumer of
+  # the build relies on it.
+  - label: "next"
+    source:
+      kind: workspace
+  - label: "26.4"
+    source:
+      kind: archive-branch
+      ref: docs-archive/26.4
+    latest: true
+    pdfTag: "v26.4.7"
+
 # Product name for log messages
 productName: "Backend.AI WebUI Docs"
 
@@ -35,6 +74,33 @@ productName: "Backend.AI WebUI Docs"
 website:
   editBaseUrl: "https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src"
   repoUrl: "https://github.com/lablup/backend.ai-webui"
+
+# Branding overrides for the web build (FR-2726).
+# Lets consumers tune the topbar logo, sub-label, and primary color
+# without forking the toolkit. All fields are optional; omitted fields
+# fall back to Backend.AI defaults.
+#
+# - primaryColor: defaults to #FF7A00 (Backend.AI Orange)
+# - logoLight / logoDark: SVG paths (project-root relative)
+# - subLabel: per-language map (or single string). Used in Phase 2's
+#   topbar to render text next to the logo (e.g. "Manual" / "매뉴얼").
+branding:
+  primaryColor: "#FF7A00"
+  logoLight: "../../manifest/backend.ai-webui-black.svg"
+  logoDark: "../../manifest/backend.ai-webui-white.svg"
+  subLabel:
+    en: "Manual"
+    ko: "매뉴얼"
+    ja: "マニュアル"
+    th: "คู่มือ"
+
+# Code-block presentation (F4 — Shiki syntax highlighting).
+# FR-2726 Phase 3 paints code blocks with a BAI dark frame, so the
+# Shiki theme is set to `github-dark` here so token colors read on
+# the dark surface. Switch back to `github-light` (or any bundled
+# theme) if your design needs light code blocks instead.
+code:
+  lightTheme: "github-dark"
 
 # Agent configuration (for 'docs-toolkit agents' command)
 agents:

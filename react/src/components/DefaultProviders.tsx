@@ -8,6 +8,7 @@ import { buiLanguages } from '../helper/bui-language';
 import {
   backendaiClientPromise,
   createAnonymousBackendaiClient,
+  useWebUINavigate,
 } from '../hooks';
 import { useCustomThemeConfig } from '../hooks/useCustomThemeConfig';
 import { useThemeMode } from '../hooks/useThemeMode';
@@ -58,7 +59,7 @@ import React, {
 } from 'react';
 import { useTranslation, initReactI18next } from 'react-i18next';
 import { RelayEnvironmentProvider } from 'react-relay/hooks';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { useDeviceMetaData } from 'src/hooks/backendai';
 import { QueryParamProvider } from 'use-query-params';
 import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
@@ -123,6 +124,13 @@ i18n
   .init({
     backend: {
       loadPath: '/resources/i18n/{{lng}}.json',
+      // In dev, bypass HTTP cache so `i18n.reloadResources(lng)` issued by
+      // the HMR listener below always sees the freshly-saved JSON. The
+      // option is forwarded by `i18next-http-backend` to `fetch`.
+      requestOptions:
+        process.env.NODE_ENV === 'development'
+          ? { cache: 'no-store' }
+          : undefined,
     },
     postProcess:
       process.env.NODE_ENV === 'development' ? ['copyableI18nKey'] : [],
@@ -136,6 +144,42 @@ i18n
       transKeepBasicHtmlNodesFor: ['br', 'strong', 'span', 'code', 'p'],
     },
   });
+
+// Dev-only: react to host i18n JSON edits without a full page reload.
+// `vite.config.ts:devAssetsReloadPlugin` watches `resources/i18n/*.json` and
+// emits `bai:host-i18n-changed` instead of a full reload. Here we re-fetch
+// the affected language and trigger a re-render via `changeLanguage`.
+//
+// `import.meta.hot` is dev-only — Vite tree-shakes the whole branch out of
+// production builds. BUI's locale instance is updated separately by its
+// own HMR boundary in `packages/backend.ai-ui/src/locale/index.ts`.
+if (import.meta.hot) {
+  import.meta.hot.on(
+    'bai:host-i18n-changed',
+    async ({ lng }: { lng: string }) => {
+      try {
+        await i18n.reloadResources(lng);
+        // `loaded` is not in react-i18next's default `bindI18n` set, so we
+        // bounce the language through `changeLanguage` to trigger
+        // `languageChanged`, which IS bound and re-renders subscribers.
+        if (i18n.language === lng) {
+          await i18n.changeLanguage(lng);
+        }
+      } catch (e) {
+        // Last-resort fallback so the dev never gets stuck on a stale view.
+        // useBAILogger is a hook and unavailable here (top-level module
+        // body); plain console.warn is the right tool for a dev-only HMR
+        // diagnostic.
+        // eslint-disable-next-line no-console
+        console.warn(
+          '[bai] host i18n hot-reload failed; falling back to full reload',
+          e,
+        );
+        location.reload();
+      }
+    },
+  );
+}
 
 export const useCurrentLanguage = () => {
   const [lang, _setLang] = useState(
@@ -185,7 +229,7 @@ const BAIMetaDataWrapper = ({ children }: { children: ReactNode }) => {
 };
 
 export const RoutingEventHandler = () => {
-  const navigate = useNavigate();
+  const navigate = useWebUINavigate();
   const location = useLocation();
   useLayoutEffect(() => {
     const handleNavigate = (e: any) => {

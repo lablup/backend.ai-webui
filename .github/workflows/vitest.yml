@@ -1,0 +1,174 @@
+name: Run Vitest on /react, /packages/backend.ai-ui, and /scripts
+
+on:
+  pull_request:
+    paths:
+      - react/src/**
+      - react/package.json
+      - react/vitest.config.ts
+      - packages/backend.ai-ui/src/**
+      - packages/backend.ai-ui/package.json
+      - packages/backend.ai-ui/vitest.config.ts
+      - scripts/**
+      - src/**
+      - vitest.config.ts
+
+permissions:
+  contents: read
+  # `davelosert/vitest-coverage-report-action` writes a PR comment with the
+  # coverage diff; needs write access on pull-requests for that.
+  pull-requests: write
+
+jobs:
+  check-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      react-changed: ${{ steps.changes.outputs.react }}
+      backend-ai-ui-changed: ${{ steps.changes.outputs.backend-ai-ui }}
+      root-changed: ${{ steps.changes.outputs.root }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            react:
+              - 'react/src/**'
+              - 'react/package.json'
+              - 'react/vitest.config.ts'
+            backend-ai-ui:
+              - 'packages/backend.ai-ui/src/**'
+              - 'packages/backend.ai-ui/package.json'
+              - 'packages/backend.ai-ui/vitest.config.ts'
+            root:
+              - 'scripts/**'
+              - 'src/**'
+              - 'vitest.config.ts'
+
+  react-vitest:
+    needs: check-changes
+    if: needs.check-changes.outputs.react-changed == 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./react
+    steps:
+      - uses: actions/checkout@v5
+      - uses: jwalton/gh-find-current-pr@v1
+        id: findPr
+      - uses: pnpm/action-setup@v5
+        name: Install pnpm
+        with:
+          version: latest
+          run_install: false
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: ".nvmrc"
+          cache: "pnpm"
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+      - uses: actions/cache@v5
+        name: Setup pnpm cache
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+      - name: Install dependencies
+        working-directory: .
+        run: pnpm install --merge-git-branch-lockfiles --no-frozen-lockfile
+      - name: Run ESLint on React
+        run: pnpm run lint
+      - name: Run relay-compiler
+        run: pnpm run relay
+      - name: Run Vitest with coverage
+        run: pnpm exec vitest run --coverage
+      - name: Report coverage on PR
+        if: always()
+        uses: davelosert/vitest-coverage-report-action@v2
+        with:
+          working-directory: ./react
+          name: react-coverage
+
+  backend-ai-ui-vitest:
+    needs: check-changes
+    if: needs.check-changes.outputs.backend-ai-ui-changed == 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./packages/backend.ai-ui
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v5
+        name: Install pnpm
+        with:
+          version: latest
+          run_install: false
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: ".nvmrc"
+          cache: "pnpm"
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+      - uses: actions/cache@v5
+        name: Setup pnpm cache
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+      - name: Install dependencies
+        working-directory: .
+        run: pnpm install --merge-git-branch-lockfiles --no-frozen-lockfile
+      - name: Run ESLint on backend.ai-ui
+        run: pnpm run lint
+      - name: Run relay-compiler
+        run: cd ../.. && pnpm run relay
+      - name: Run Vitest with coverage
+        run: pnpm exec vitest run --coverage
+      - name: Report coverage on PR
+        if: always()
+        uses: davelosert/vitest-coverage-report-action@v2
+        with:
+          working-directory: ./packages/backend.ai-ui
+          name: backend-ai-ui-coverage
+
+  root-vitest:
+    needs: check-changes
+    if: needs.check-changes.outputs.root-changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          version: latest
+          run_install: false
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: ".nvmrc"
+          cache: "pnpm"
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+      - uses: actions/cache@v5
+        name: Setup pnpm cache
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+      - name: Install dependencies
+        run: pnpm install --merge-git-branch-lockfiles --no-frozen-lockfile
+      - name: Run Vitest with coverage
+        run: pnpm exec vitest run --coverage
+      - name: Report coverage on PR
+        if: always()
+        uses: davelosert/vitest-coverage-report-action@v2
+        with:
+          name: root-coverage

@@ -3,7 +3,7 @@ import { renderHook } from '@testing-library/react';
 import type { RuleObject } from 'antd/es/form';
 
 // Mock react-i18next to return translation keys
-jest.mock('react-i18next', () => ({
+vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string) => key,
   }),

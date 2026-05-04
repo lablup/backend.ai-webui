@@ -566,7 +566,7 @@ Model definition and runtime parameters are distinct concepts stored separately 
 
 Auto Scaling Rules automatically increase or decrease the number of replicas for a model service based on live metrics. This conserves resources during low usage and prevents request delays or failures during high usage.
 
-![](../images/auto_scaling_rules_v2.png)
+![](../images/auto_scaling_rules.png)
 
 The rule list provides:
 
@@ -682,10 +682,11 @@ Here is a simple command using `curl` to check whether sending requests
 to the model serving endpoint is working properly:
 
 ```bash
-$ export API_TOKEN="<token>"
-$ curl -H "Content-Type: application/json" -X GET \
+export API_TOKEN="<token>"
+export MODEL_SERVICE_ENDPOINT="<model-service-endpoint>"
+curl -H "Content-Type: application/json" -X GET \
   -H "Authorization: BackendAI $API_TOKEN" \
-  <model-service-endpoint>
+  "$MODEL_SERVICE_ENDPOINT"
 ```
 
 :::warning

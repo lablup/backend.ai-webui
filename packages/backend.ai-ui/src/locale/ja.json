@@ -110,6 +110,7 @@
     "operator": {
       "After": "後",
       "Before": "前",
+      "Equals": "等しい",
       "GreaterThan": "より大きい",
       "GreaterThanOrEqual": "以上",
       "IContains": "含む",
@@ -123,6 +124,7 @@
       "In": "含まれる",
       "LessThan": "より小さい",
       "LessThanOrEqual": "以下",
+      "NotEquals": "等しくない",
       "NotIn": "含まれない"
     }
   },
@@ -151,6 +153,28 @@
     "Maximize": "最大化",
     "Minimize": "最小化",
     "Restore": "復元"
+  },
+  "comp:BAIModelDeploymentNodes": {
+    "AreYouSureToDeleteDeployment": "デプロイメント \"{{deploymentName}}\" を削除しますか？この操作は取り消せません。",
+    "CreatedAt": "作成日時",
+    "CreatedUser": "作成者",
+    "CurrentRevisionID": "現在のリビジョンID",
+    "Delete": "削除",
+    "DeleteDeployment": "デプロイメントを削除",
+    "DeploymentDeleted": "デプロイメントが削除されました。",
+    "DeploymentID": "デプロイメントID",
+    "DomainName": "ドメイン",
+    "EndpointURL": "エンドポイントURL",
+    "FailedToDeleteDeployment": "デプロイメントの削除に失敗しました。",
+    "Name": "名前",
+    "OpenToPublic": "公開",
+    "PreferredDomainName": "優先ドメイン",
+    "ProjectID": "プロジェクトID",
+    "Replicas": "レプリカ",
+    "Status": "状態",
+    "StrategyType": "戦略",
+    "Tags": "タグ",
+    "UpdatedAt": "更新日時"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingFoldersWillBeUpdated": "以下のフォルダーが更新されます.",

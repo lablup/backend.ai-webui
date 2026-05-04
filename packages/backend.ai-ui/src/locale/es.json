@@ -110,6 +110,7 @@
     "operator": {
       "After": "después",
       "Before": "antes",
+      "Equals": "igual a",
       "GreaterThan": "mayor que",
       "GreaterThanOrEqual": "mayor o igual",
       "IContains": "contiene",
@@ -123,6 +124,7 @@
       "In": "en",
       "LessThan": "menor que",
       "LessThanOrEqual": "menor o igual",
+      "NotEquals": "no igual a",
       "NotIn": "no en"
     }
   },
@@ -151,6 +153,28 @@
     "Maximize": "Maximize",
     "Minimize": "Minimize",
     "Restore": "Restore"
+  },
+  "comp:BAIModelDeploymentNodes": {
+    "AreYouSureToDeleteDeployment": "¿Está seguro de que desea eliminar el despliegue \"{{deploymentName}}\"? Esta acción no se puede deshacer.",
+    "CreatedAt": "Creado en",
+    "CreatedUser": "Autor",
+    "CurrentRevisionID": "ID de revisión actual",
+    "Delete": "Borrar",
+    "DeleteDeployment": "Eliminar despliegue",
+    "DeploymentDeleted": "Despliegue eliminado.",
+    "DeploymentID": "ID de despliegue",
+    "DomainName": "Dominio",
+    "EndpointURL": "URL del punto final",
+    "FailedToDeleteDeployment": "Error al eliminar el despliegue.",
+    "Name": "Nombre",
+    "OpenToPublic": "Abierto al público",
+    "PreferredDomainName": "Dominio preferido",
+    "ProjectID": "ID del proyecto",
+    "Replicas": "Réplicas",
+    "Status": "Estado",
+    "StrategyType": "Estrategia",
+    "Tags": "Etiquetas",
+    "UpdatedAt": "Actualizado en"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingFoldersWillBeUpdated": "Se actualizará(n) la(s) siguiente(s) carpeta(s).",

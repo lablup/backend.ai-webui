@@ -1,8 +1,10 @@
 packages:
   - react
   - packages/backend.ai-ui
+  - packages/backend.ai-client
   - packages/eslint-config-bai
   - packages/backend.ai-docs-toolkit
+  - packages/backend.ai-docs-toolkit-example
   - packages/backend.ai-webui-docs
 
 catalog:
@@ -72,9 +74,6 @@ catalog:
 
 gitBranchLockfile: true
 
-mergeGitBranchLockfilesBranchPattern:
-  - main
-
 minimumReleaseAge: 10080
 
 minimumReleaseAgeExclude:
@@ -93,6 +92,7 @@ onlyBuiltDependencies:
   - electron
   - es5-ext
   - esbuild
+  - sharp
   - unrs-resolver
   - utf-8-validate
 
@@ -101,4 +101,3 @@ patchedDependencies:
   '@lobehub/fluent-emoji@2.0.0': react/patches/lobehub__fluent-emoji@2.0.0.patch
   '@rc-component/form': react/patches/@rc-component__form.patch
   ansi_up@6.0.6: react/patches/ansi_up@6.0.6.patch
-  react-scripts@5.0.1: react/patches/react-scripts@5.0.1.patch

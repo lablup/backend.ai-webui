@@ -109,7 +109,20 @@ export function buildWebDocument(
   metadata: WebDocMetadata,
   config?: ResolvedDocConfig,
 ): string {
-  const styles = generateWebStyles(metadata.lang);
+  // FR-2726: forward consumer branding tokens to the preview stylesheet
+  // so preview renders with the same accent palette as the production
+  // build. Skipped silently when `config` is omitted.
+  const styles = generateWebStyles(
+    metadata.lang,
+    config
+      ? {
+          primaryColor: config.branding.primaryColor,
+          primaryColorHover: config.branding.primaryColorHover,
+          primaryColorActive: config.branding.primaryColorActive,
+          primaryColorSoft: config.branding.primaryColorSoft,
+        }
+      : undefined,
+  );
   const sidebar = buildSidebarHtml(chapters, metadata, config);
   const content = buildContentHtml(chapters);
   const liveReload = buildLiveReloadScript();

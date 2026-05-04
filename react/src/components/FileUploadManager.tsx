@@ -12,6 +12,7 @@ import {
   toLocalId,
   useConnectedBAIClient,
 } from 'backend.ai-ui';
+import dayjs from 'dayjs';
 import { atom, useAtom, useSetAtom } from 'jotai';
 import { atomFamily } from 'jotai-family';
 import * as _ from 'lodash-es';
@@ -38,6 +39,10 @@ type UploadRequest = {
 
 type UploadStatusInfo = {
   vFolderName: string;
+  // Unique notification key for the current upload cycle. Regenerated when a
+  // new cycle starts (i.e., previous cycle ended) so that progress, resolved,
+  // and rejected notifications of different cycles do not overwrite each other.
+  cycleKey: string;
   pendingFiles: Array<string>;
   completedFiles: Array<string>;
   failedFiles: Array<string>;
@@ -85,12 +90,21 @@ const FileUploadManager: React.FC = () => {
   const queue = new PQueue({ concurrency: maxConcurrentUploads || 2 });
 
   const pendingDeltaBytesRef = useRef<Record<string, number>>({});
+  // Tracks cycleKeys that have already been notified with their terminal
+  // (resolved/rejected) state. The cycle-end effect runs on every uploadStatus
+  // change and iterates over all folders, so without this guard a finished
+  // cycle's notification would be re-fired whenever an unrelated folder
+  // updates state.
+  const notifiedCyclesRef = useRef<Set<string>>(new Set());
   const throttledUploadRequests = _.throttle(
     (vFolderId: string, fileName: string) => {
       const accumulatedDelta = pendingDeltaBytesRef.current[vFolderId] || 0;
       pendingDeltaBytesRef.current[vFolderId] = 0;
 
       setUploadStatus((prev) => {
+        const cycleKey = prev[vFolderId]?.cycleKey;
+        if (!cycleKey) return prev;
+
         const uploadedFilesCount = prev[vFolderId]?.completedFiles?.length || 0;
         const totalUploadedFilesCount =
           (prev[vFolderId]?.completedFiles?.length || 0) +
@@ -102,7 +116,7 @@ const FileUploadManager: React.FC = () => {
           (prev[vFolderId]?.completedBytes || 0) + accumulatedDelta;
 
         upsertNotification({
-          key: 'upload:' + vFolderId,
+          key: cycleKey,
           backgroundTask: {
             status: 'pending',
             percent:
@@ -158,16 +172,40 @@ const FileUploadManager: React.FC = () => {
       );
 
       setUploadStatus((prev) => {
-        const isFirstUpload = !prev[vFolderId];
-        const newTotalExpectedSize =
-          (prev[vFolderId]?.totalExpectedSize || 0) + currUploadTotalSize;
-        const currPct = isFirstUpload
+        // A cycle is considered ended when no files are pending. On a new
+        // upload that starts after the previous cycle ended, reset the
+        // accumulated completed/failed/bytes/total so the new cycle starts
+        // fresh. While a cycle is in progress, accumulate as before.
+        const isPreviousCycleEnded = _.isEmpty(prev[vFolderId]?.pendingFiles);
+        // Use a fresh notification key for each new cycle so that the previous
+        // cycle's resolved/rejected notification is not overwritten when a new
+        // upload starts.
+        const cycleKey = isPreviousCycleEnded
+          ? `upload:${vFolderId}:${dayjs().valueOf()}`
+          : (prev[vFolderId]?.cycleKey ??
+            `upload:${vFolderId}:${dayjs().valueOf()}`);
+        const baseCompletedFiles = isPreviousCycleEnded
+          ? []
+          : prev[vFolderId]?.completedFiles || [];
+        const baseFailedFiles = isPreviousCycleEnded
+          ? []
+          : prev[vFolderId]?.failedFiles || [];
+        const baseCompletedBytes = isPreviousCycleEnded
           ? 0
-          : ((prev[vFolderId]?.completedBytes || 0) / newTotalExpectedSize) *
-            100;
+          : prev[vFolderId]?.completedBytes || 0;
+        const baseTotalExpectedSize = isPreviousCycleEnded
+          ? 0
+          : prev[vFolderId]?.totalExpectedSize || 0;
+
+        const newTotalExpectedSize =
+          baseTotalExpectedSize + currUploadTotalSize;
+        const currPct =
+          newTotalExpectedSize > 0
+            ? (baseCompletedBytes / newTotalExpectedSize) * 100
+            : 0;
 
         upsertNotification({
-          key: 'upload:' + vFolderId,
+          key: cycleKey,
           open: true,
           message: (
             <span>
@@ -178,11 +216,14 @@ const FileUploadManager: React.FC = () => {
                 }}
                 to={generateFolderPath(vFolderId)}
                 onClick={() => {
-                  closeNotification('upload:' + vFolderId);
+                  closeNotification(cycleKey);
                 }}
               >{`${vFolderName}`}</BAILink>
             </span>
           ),
+          // Clear stale extraDescription (e.g., failed file list) from a prior
+          // cycle so it does not bleed into the new cycle's progress UI.
+          extraDescription: null,
           backgroundTask: {
             status: 'pending',
             percent: currPct,
@@ -197,15 +238,16 @@ const FileUploadManager: React.FC = () => {
           ...prev,
           [vFolderId]: {
             vFolderName,
+            cycleKey,
             pendingFiles: [
               ...(prev[vFolderId]?.pendingFiles || []),
               ...uploadFileInfo.map(
                 (info) => info.file.webkitRelativePath || info.file.name,
               ),
             ],
-            completedFiles: prev[vFolderId]?.completedFiles || [],
-            failedFiles: prev[vFolderId]?.failedFiles || [],
-            completedBytes: prev[vFolderId]?.completedBytes || 0,
+            completedFiles: baseCompletedFiles,
+            failedFiles: baseFailedFiles,
+            completedBytes: baseCompletedBytes,
             totalExpectedSize: newTotalExpectedSize,
           },
         };
@@ -276,10 +318,15 @@ const FileUploadManager: React.FC = () => {
   useEffect(() => {
     Object.entries(uploadStatus).forEach(([vFolderId, status]) => {
       if (!_.isEmpty(status?.pendingFiles)) return;
+      if (!status?.cycleKey) return;
+      const cycleKey = status.cycleKey;
+      // Avoid re-firing the terminal notification when this effect runs again
+      // for unrelated reasons (e.g., another folder's upload updates state).
+      if (notifiedCyclesRef.current.has(cycleKey)) return;
 
       if (!_.isEmpty(status?.failedFiles)) {
         upsertNotification({
-          key: 'upload:' + vFolderId,
+          key: cycleKey,
           open: true,
           message: t('explorer.UploadFailed', {
             folderName: status?.vFolderName,
@@ -295,9 +342,10 @@ const FileUploadManager: React.FC = () => {
           },
           extraDescription: _.join(status?.failedFiles, ', '),
         });
+        notifiedCyclesRef.current.add(cycleKey);
       } else if (!_.isEmpty(status?.completedFiles)) {
         upsertNotification({
-          key: 'upload:' + vFolderId,
+          key: cycleKey,
           open: true,
           message: (
             <span>
@@ -308,7 +356,7 @@ const FileUploadManager: React.FC = () => {
                 }}
                 to={generateFolderPath(vFolderId)}
                 onClick={() => {
-                  closeNotification('upload:' + vFolderId);
+                  closeNotification(cycleKey);
                 }}
               >{`${status?.vFolderName}`}</BAILink>
             </span>
@@ -322,15 +370,7 @@ const FileUploadManager: React.FC = () => {
           },
           duration: 3,
         });
-        setUploadStatus((prev) => ({
-          ...prev,
-          [vFolderId]: {
-            ...prev[vFolderId],
-            completedFiles: [],
-            completedBytes: 0,
-            totalExpectedSize: 0,
-          },
-        }));
+        notifiedCyclesRef.current.add(cycleKey);
       }
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps

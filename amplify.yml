@@ -1,0 +1,307 @@
+# AWS Amplify build manifest (monorepo).
+#
+# Spec: .specs/FR-2729-webui-docs-multi-version-deployment/spec.md
+# Sub-task: FR-2735 (add `amplify.yml` for multi-version docs deployment)
+#
+# ─────────────────────────────────────────────────────────────────────
+# LOCATION & SCHEMA (monorepo)
+#
+# This file lives at the **repo root** by AWS Amplify Hosting's
+# requirement: when an Amplify app is configured as a monorepo, the
+# build manifest MUST sit at the repo root and use the `applications:`
+# array schema. Amplify reads this file from the default branch's HEAD
+# and matches the configured "App root" against an `applications[].appRoot`
+# entry to pick the per-app build settings.
+#
+# The `applications:` wrapper is what makes this file a *monorepo
+# manifest* and NOT a "deploy the whole repo" declaration: each entry
+# below is a self-contained build spec for one Amplify app, scoped to
+# its own `appRoot`. As more packages need their own Amplify deployment,
+# they are added as additional `applications[]` entries — not by
+# replacing this file.
+#
+# Per-package details for the WebUI docs site live entirely under
+# `applications[0]` below. The Amplify console for that app must be
+# configured with:
+#   App settings → General → App root: packages/backend.ai-webui-docs
+#
+# Without that App root setting, Amplify cannot match the configured
+# app to any `applications[]` entry and the build fails with
+# "Monorepo spec provided without applications key" (the legacy single-
+# app schema is also not accepted on a monorepo-mode app).
+#
+# Reference: AWS Amplify Hosting "Set up monorepos"
+# https://docs.aws.amazon.com/amplify/latest/userguide/monorepo-configuration.html
+#
+# ─────────────────────────────────────────────────────────────────────
+# Mechanism notes (do NOT remove without re-checking AWS docs).
+#
+# 1. Build phases / artifacts / cache: file-based (this file). Within
+#    each `applications[]` entry, paths are RELATIVE TO THAT entry's
+#    `appRoot`. For commands that need to act on the whole workspace
+#    (`pnpm install`, `git fetch` for archive branches), pnpm walks up
+#    the directory tree to find `pnpm-workspace.yaml` automatically,
+#    and git operates on the enclosing repo regardless of cwd.
+#
+# 2. Redirects / rewrites (FR-4 / FR-5): CONSOLE-BASED. Amplify Hosting
+#    does NOT natively read a `_redirects` file from the artifacts. The
+#    "Rewrites and redirects" rules live in the Amplify app config and
+#    must be applied in the Amplify console (or via the AWS Amplify
+#    CLI / CloudFormation, which DevOps owns).
+#
+#    For v1 we keep the desired rules versioned in this repo at
+#    `packages/backend.ai-webui-docs/amplify-redirects.json` so
+#    reviewers can audit the intent. DevOps copies them into the
+#    Amplify console as part of FR-2737. FR-2729 spec
+#    "Dependencies / Open Items" tracks the limitation; a follow-up
+#    (FR-2740) may emit `amplify-redirects.json` from the toolkit so
+#    the `latest: true` flip propagates without manual edits.
+#
+#    Deep-link coverage (e.g., `/<lang>/<*>` → `/<latest>/<lang>/<*>`)
+#    is intentionally deferred from v1 and tracked separately in
+#    FR-2742. The v1 rule set covers only the root redirect.
+#
+#    Reference: AWS Amplify Hosting "Rewrites and redirects"
+#    https://docs.aws.amazon.com/amplify/latest/userguide/redirects.html
+#
+# 3. Paths-filter rebuild trigger (FR-8): CONSOLE-BASED. Amplify's
+#    GitHub-app integration reads "Build settings → Build image
+#    settings → Custom build images / Monorepo settings → Watched
+#    paths" from the Amplify console — NOT from this file.
+#
+#    Desired watched paths (rebuild only when these change):
+#      packages/backend.ai-webui-docs/**
+#      packages/backend.ai-docs-toolkit/**
+#
+# 4. HTTPS / TLS: managed by Amplify (ACM cert + CloudFront). No config
+#    needed here.
+#
+# ─────────────────────────────────────────────────────────────────────
+# Local sanity check (run from anywhere in the workspace — pnpm walks
+# up to find `pnpm-workspace.yaml`):
+#
+#   pnpm install --frozen-lockfile
+#   pnpm --filter backend.ai-docs-toolkit run build
+#   pnpm install --frozen-lockfile
+#   pnpm --filter backend.ai-webui-docs run build:web
+#
+# Produces `packages/backend.ai-webui-docs/dist/web/`. The toolkit's
+# website-generator (FR-2710 F6) iterates over `versions:` from
+# `docs-toolkit.config.yaml`. If `docs-archive/26.4` does not exist as
+# a worktree, the toolkit warn-and-skips that version and the local
+# build produces only the `next` subtree.
+#
+# Manual archive-branch fetch (when reproducing a full Amplify build
+# locally — Amplify performs the equivalent automatically via the
+# `git fetch` step in the runner):
+#
+#   git fetch origin docs-archive/26.4:docs-archive/26.4
+#   git worktree add packages/backend.ai-webui-docs/.docs-archive/docs-archive__26.4 docs-archive/26.4
+#
+# ─────────────────────────────────────────────────────────────────────
+
+version: 1
+applications:
+  - appRoot: packages/backend.ai-webui-docs
+    frontend:
+      phases:
+        preBuild:
+          commands:
+            # Use the Node version pinned by `.nvmrc` (currently 24).
+            # Amplify's Linux build images ship with `nvm`. `.nvmrc`
+            # lives at the repo root; nvm walks up to find it.
+            - nvm install
+            - nvm use
+            # Pin pnpm to the major declared by `package.json#engines.pnpm`
+            # (currently ^10.16.0). `pnpm@latest` would be non-reproducible —
+            # a future major could change install behavior without warning.
+            # When the repo root adds a `packageManager` field to
+            # `package.json`, corepack will auto-use it and the explicit
+            # `prepare` line below can be dropped (just `corepack enable`
+            # would suffice).
+            - corepack enable
+            - corepack prepare pnpm@10 --activate
+            # Reproducible installs only — never `--no-frozen-lockfile`.
+            # `pnpm install` from anywhere in the workspace installs the
+            # entire monorepo by default (it locates the workspace root
+            # via `pnpm-workspace.yaml`).
+            - pnpm install --frozen-lockfile
+            # backend.ai-docs-toolkit ships its `docs-toolkit` CLI as
+            # the package bin, but it lives at dist/cli.js which only
+            # exists after `tsc` runs. On a fresh `pnpm install` the
+            # dist directory is empty, so pnpm cannot create the
+            # .bin/docs-toolkit symlink and the later `build:web` step
+            # fails with `spawn ENOENT`. Building the toolkit and
+            # re-running install populates dist/ and lets pnpm wire
+            # the bin link. (Same pattern as FR-2719's build_docs job
+            # in package.yml and the docs-archive workflow.)
+            - pnpm --filter backend.ai-docs-toolkit run build
+            - pnpm install --frozen-lockfile
+        build:
+          commands:
+            # The toolkit's website-generator (FR-2710 F6) iterates
+            # over `versions:` from `docs-toolkit.config.yaml`. For
+            # each entry whose `source.kind` is `archive-branch`, it
+            # expects a pre-checked-out worktree at
+            # `<projectRoot>/.docs-archive/<sanitized-ref>`. With the
+            # appRoot set to this package, `<projectRoot>` IS the cwd,
+            # so the worktree path is simply
+            # `.docs-archive/<sanitized-ref>`. The list is hardcoded
+            # to `26.4` for v1; future archived minors must be added
+            # here in lockstep with the `versions:` config until a
+            # toolkit helper does it dynamically.
+            - |
+              set -euo pipefail
+              ARCHIVE_REFS=(docs-archive/26.4)
+              for ref in "${ARCHIVE_REFS[@]}"; do
+                sanitized="${ref//\//__}"
+                worktree=".docs-archive/${sanitized}"
+                # Idempotency check: a plain `[ -d "${worktree}" ]` is
+                # too shallow — a stray empty directory or a stale path
+                # from a previous archive ref would pass it, but
+                # `git worktree add` would then fail or behave
+                # incorrectly. Ask git directly whether the path is a
+                # registered worktree.
+                worktree_abs="$(realpath -m "${worktree}")"
+                if git worktree list --porcelain | grep -q "^worktree ${worktree_abs}$"; then
+                  echo "Archive worktree already registered: ${worktree}"
+                  continue
+                fi
+                # If a stray non-worktree directory exists at the path,
+                # remove it before `git worktree add` (which would refuse
+                # to write into a non-empty existing directory).
+                if [ -d "${worktree}" ]; then
+                  echo "Removing stray directory at ${worktree} (not a registered worktree)"
+                  rm -rf "${worktree}"
+                fi
+                echo "Fetching ${ref} ..."
+                # `git` operates on the enclosing repo regardless of
+                # cwd — this works even though cwd is a subdirectory
+                # of the workspace root.
+                git fetch --depth=1 origin "${ref}:${ref}" || {
+                  echo "WARNING: ${ref} not found on origin — skipping (toolkit will warn)"
+                  continue
+                }
+                git worktree add --detach "${worktree}" "${ref}"
+              done
+            # Bypass the `build:web` script's wrapper (which re-runs
+            # `build:toolkit` redundantly — toolkit is already built in
+            # preBuild) and invoke the toolkit CLI directly so we can
+            # pass `--no-strict`.
+            #
+            # Strict mode is OFF for archive overlays: v26.4.7 src/
+            # contains 8 link diagnostics that the toolkit-of-its-day
+            # tolerated but main's stricter toolkit fails on. Tracked in
+            # FR-2752; once those are fixed, drop `--no-strict` and let
+            # strict mode catch future regressions. CI / release builds
+            # still run with strict default-on; only the Amplify overlay
+            # path relaxes it.
+            - pnpm --filter backend.ai-webui-docs exec docs-toolkit build:web --lang all --no-strict
+      artifacts:
+        # Path is relative to appRoot (this package). The toolkit
+        # emits `dist/web/` under this package directory.
+        baseDirectory: dist/web
+        files:
+          - "**/*"
+      cache:
+        # pnpm's content-addressable store lives in the user's home
+        # dir and is unaffected by the appRoot setting. Caching the
+        # workspace-root `node_modules/` from a subdirectory appRoot
+        # is awkward and mostly contains symlinks for pnpm — we rely
+        # on the store cache plus a clean `pnpm install --frozen-lockfile`
+        # (fast when the store is warm).
+        paths:
+          - $HOME/.pnpm-store/**/*
+          - $HOME/.cache/pnpm/**/*
+
+  # ─────────────────────────────────────────────────────────────────
+  # WebUI (React app) — FR-2766
+  #
+  # Until FR-2766 added this entry, the webui Amplify app fell back
+  # to the docs entry above (single-application monorepo manifest)
+  # and served the docs site at the webui domain. The Amplify app's
+  # console "App root" must be set to `react` to match this entry.
+  #
+  # The repo's root `package.json#scripts.build` orchestrates the
+  # full webui build (clean, copy static assets, tsc, workspace
+  # builds). It must be invoked from the workspace root, NOT from
+  # `react/` (running `pnpm run build` inside `react/` would execute
+  # `react/package.json#build` which assumes `../build/web/` already
+  # exists). We therefore `cd ..` into the workspace root for the
+  # build step, and point `artifacts.baseDirectory` at the
+  # workspace-root `build/web/` directory via a `..` segment from
+  # the appRoot.
+  #
+  # `pnpm install` from any workspace directory installs the entire
+  # monorepo via `pnpm-workspace.yaml`, so it's safe to run from
+  # `react/` cwd in preBuild.
+  - appRoot: react
+    frontend:
+      phases:
+        preBuild:
+          commands:
+            - nvm install
+            - nvm use
+            - corepack enable
+            - corepack prepare pnpm@10 --activate
+            - pnpm install --frozen-lockfile
+        build:
+          commands:
+            # Run the orchestrating root build script from the
+            # workspace root. It produces the final artifact at
+            # `<workspace-root>/build/web/`.
+            - cd ..
+            - pnpm run build
+      artifacts:
+        # `..` resolves out of appRoot (`react/`) to the workspace
+        # root, then into `build/web/`. Amplify accepts paths that
+        # escape appRoot via `..` segments.
+        baseDirectory: ../build/web
+        files:
+          - "**/*"
+      cache:
+        paths:
+          - $HOME/.pnpm-store/**/*
+          - $HOME/.cache/pnpm/**/*
+
+  # ─────────────────────────────────────────────────────────────────
+  # Storybook (backend.ai-ui component library) — FR-2766
+  #
+  # Storybook lives entirely inside `packages/backend.ai-ui/` and
+  # produces a self-contained static bundle at `storybook-static/`.
+  # The Amplify app's console "App root" must be set to
+  # `packages/backend.ai-ui` to match this entry.
+  #
+  # Relay codegen is required before `storybook build` so any
+  # `__generated__` artifacts referenced by stories are present;
+  # `pnpm relay` at the workspace root walks both projects.
+  - appRoot: packages/backend.ai-ui
+    frontend:
+      phases:
+        preBuild:
+          commands:
+            - nvm install
+            - nvm use
+            - corepack enable
+            - corepack prepare pnpm@10 --activate
+            - pnpm install --frozen-lockfile
+            # Relay codegen for both projects, invoked at the
+            # workspace root via pnpm's `-w` flag so the current
+            # working directory stays inside this entry's appRoot
+            # (`packages/backend.ai-ui/`). Using `cd ..; cd ..` here
+            # would assume Amplify resets cwd to appRoot between
+            # phases, which is not contractually guaranteed across
+            # build-runner versions.
+            - pnpm -w run relay
+        build:
+          commands:
+            - pnpm run build-storybook
+      artifacts:
+        # Default Storybook output dir, relative to this entry's appRoot.
+        baseDirectory: storybook-static
+        files:
+          - "**/*"
+      cache:
+        paths:
+          - $HOME/.pnpm-store/**/*
+          - $HOME/.cache/pnpm/**/*

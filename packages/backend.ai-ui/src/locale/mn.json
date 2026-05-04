@@ -110,6 +110,7 @@
     "operator": {
       "After": "дараа",
       "Before": "өмнө",
+      "Equals": "тэнцүү",
       "GreaterThan": "их",
       "GreaterThanOrEqual": "их эсвэл тэнцүү",
       "IContains": "агуулсан",
@@ -123,6 +124,7 @@
       "In": "дотор",
       "LessThan": "бага",
       "LessThanOrEqual": "бага эсвэл тэнцүү",
+      "NotEquals": "тэнцүү биш",
       "NotIn": "дотор биш"
     }
   },
@@ -151,6 +153,28 @@
     "Maximize": "Maximize",
     "Minimize": "Minimize",
     "Restore": "Restore"
+  },
+  "comp:BAIModelDeploymentNodes": {
+    "AreYouSureToDeleteDeployment": "\"{{deploymentName}}\" байршуулалтыг устгахдаа итгэлтэй байна уу? Энэ үйлдлийг буцаах боломжгүй.",
+    "CreatedAt": "Үүсгэсэн огноо",
+    "CreatedUser": "Зохиогч",
+    "CurrentRevisionID": "Одоогийн засвариин ID",
+    "Delete": "Устгах",
+    "DeleteDeployment": "Байршуулалт устгах",
+    "DeploymentDeleted": "Байршуулалт устгагдлаа.",
+    "DeploymentID": "Байршуулалтын ID",
+    "DomainName": "Домайн",
+    "EndpointURL": "Төгсгөлийн цэгийн URL",
+    "FailedToDeleteDeployment": "Байршуулалт устгаж чадсангүй.",
+    "Name": "Нэр",
+    "OpenToPublic": "Нийтэд нээлттэй",
+    "PreferredDomainName": "Давуу домайн",
+    "ProjectID": "Төслийн ID",
+    "Replicas": "Хуулбар",
+    "Status": "Төлөв",
+    "StrategyType": "Стратеги",
+    "Tags": "Шошго",
+    "UpdatedAt": "Шинэчлэгдсэн огноо"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingFoldersWillBeUpdated": "Дараах хавтас(ууд) шинэчлэгдэх болно.",

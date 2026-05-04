@@ -530,7 +530,7 @@ SGLang มีแท็บดังต่อไปนี้: **Model Loading**, *
 
 กฎการปรับขนาดอัตโนมัติ (Auto Scaling Rules) จะเพิ่มหรือลดจำนวนเรพลิกาของบริการโมเดลโดยอัตโนมัติตามเมตริกสด ช่วยประหยัดทรัพยากรในช่วงการใช้งานต่ำ และป้องกันความล่าช้าหรือความล้มเหลวของคำขอในช่วงการใช้งานสูง
 
-![](../images/auto_scaling_rules_v2.png)
+![](../images/auto_scaling_rules.png)
 
 รายการกฎให้บริการดังนี้:
 
@@ -643,10 +643,11 @@ SGLang มีแท็บดังต่อไปนี้: **Model Loading**, *
 endpoint การให้บริการโมเดล ทำงานอย่างถูกต้องหรือไม่:
 
 ```bash
-$ export API_TOKEN="<token>"
-$ curl -H "Content-Type: application/json" -X GET \
+export API_TOKEN="<token>"
+export MODEL_SERVICE_ENDPOINT="<model-service-endpoint>"
+curl -H "Content-Type: application/json" -X GET \
   -H "Authorization: BackendAI $API_TOKEN" \
-  <model-service-endpoint>
+  "$MODEL_SERVICE_ENDPOINT"
 ```
 
 :::warning

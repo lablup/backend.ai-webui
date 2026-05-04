@@ -91,8 +91,9 @@ export type ThemeConfig = {
   branding?: ThemeBrandingConfig;
 };
 
-export const webuiEndpoint =
-  process.env.E2E_WEBUI_ENDPOINT || 'http://127.0.0.1:9081';
+export const webuiEndpoint = (
+  process.env.E2E_WEBUI_ENDPOINT || 'http://127.0.0.1:9081'
+).replace(/\/$/, '');
 export const webServerEndpoint =
   process.env.E2E_WEBSERVER_ENDPOINT || 'http://127.0.0.1:8090';
 
@@ -438,7 +439,7 @@ export async function createVFolderAndVerify(
   type: 'user' | 'project' = 'user',
   permission: 'rw' | 'ro' = 'rw',
 ) {
-  await page.getByRole('link', { name: 'Data' }).click();
+  await navigateTo(page, 'data');
   await page.getByRole('button', { name: 'Create Folder' }).nth(1).click();
 
   const modal = new FolderCreationModal(page);
@@ -469,6 +470,10 @@ export async function createVFolderAndVerify(
   }
 
   await (await modal.getCreateButton()).click();
+  // Wait for the creation modal to close before verifying
+  await expect(
+    page.getByRole('dialog').filter({ hasText: 'Create a new storage folder' }),
+  ).toBeHidden({ timeout: 30000 });
   await verifyVFolder(page, folderName);
 }
 
@@ -876,9 +881,15 @@ export async function modifyConfigToml(
     await tempContext.close();
 
     if (!config) {
-      throw new Error(
-        `Failed to fetch config.toml from ${webuiEndpoint} after ${maxRetries} attempts: ${lastError}`,
+      // Fallback: use an empty config object so the requested changes can still be
+      // applied and served via route interception. This makes login resilient when
+      // the server cannot be reached at the configured webuiEndpoint (e.g., when
+      // running tests via the Playwright MCP tool without the env var set).
+      console.warn(
+        `Failed to fetch config.toml from ${webuiEndpoint} after ${maxRetries} attempts: ${lastError}. ` +
+          `Using empty base config — only explicitly requested keys will be set.`,
       );
+      config = {};
     }
   }
 

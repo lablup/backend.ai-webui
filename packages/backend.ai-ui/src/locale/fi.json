@@ -110,6 +110,7 @@
     "operator": {
       "After": "jälkeen",
       "Before": "ennen",
+      "Equals": "yhtä suuri",
       "GreaterThan": "suurempi kuin",
       "GreaterThanOrEqual": "suurempi tai yhtä suuri",
       "IContains": "sisältää",
@@ -123,6 +124,7 @@
       "In": "sisällä",
       "LessThan": "pienempi kuin",
       "LessThanOrEqual": "pienempi tai yhtä suuri",
+      "NotEquals": "ei yhtä suuri",
       "NotIn": "ei sisällä"
     }
   },
@@ -151,6 +153,28 @@
     "Maximize": "Maximize",
     "Minimize": "Minimize",
     "Restore": "Restore"
+  },
+  "comp:BAIModelDeploymentNodes": {
+    "AreYouSureToDeleteDeployment": "Haluatko varmasti poistaa käyttöönoton \"{{deploymentName}}\"? Tätä toimintoa ei voi kumota.",
+    "CreatedAt": "Luotu",
+    "CreatedUser": "Tekijä",
+    "CurrentRevisionID": "Nykyinen revisiotunnus",
+    "Delete": "Poista",
+    "DeleteDeployment": "Poista käyttöönotto",
+    "DeploymentDeleted": "Käyttöönotto poistettu.",
+    "DeploymentID": "Käyttöönoton tunnus",
+    "DomainName": "Toimialue",
+    "EndpointURL": "Päätepisteen URL",
+    "FailedToDeleteDeployment": "Käyttöönoton poistaminen epäonnistui.",
+    "Name": "Nimi",
+    "OpenToPublic": "Avoin julkisesti",
+    "PreferredDomainName": "Ensisijainen toimialue",
+    "ProjectID": "Projektin tunnus",
+    "Replicas": "Kopioita",
+    "Status": "Tila",
+    "StrategyType": "Strategia",
+    "Tags": "Tunnisteet",
+    "UpdatedAt": "Päivitetty"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingFoldersWillBeUpdated": "Seuraavat kansiot päivitetään.",

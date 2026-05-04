@@ -11,33 +11,67 @@ export type {
   DocConfig,
   AgentConfig,
   WebsiteConfig,
+  CodeConfig,
   ToolkitConfig,
   ResolvedDocConfig,
-} from './config.js';
-export { resolveConfig, loadToolkitConfig, WEBSITE_LABELS } from './config.js';
+  VersionEntry,
+  VersionSource,
+  OgConfig,
+  ResolvedCodeConfig,
+} from "./config.js";
+export {
+  resolveConfig,
+  loadToolkitConfig,
+  WEBSITE_LABELS,
+  DEFAULT_CODE_LIGHT_THEME,
+} from "./config.js";
+
+// ── Shiki Code Highlighting (F4) ────────────────────────────────
+export { highlight as highlightCode } from "./shiki-highlighter.js";
+export type {
+  ShikiHighlightOptions,
+  ShikiHighlightResult,
+} from "./shiki-highlighter.js";
+
+// ── Versioned docs (F6) ─────────────────────────────────────────
+export type {
+  Version,
+  LoadedVersions,
+  ResolvedVersionSource,
+  PageEnumerationRow,
+} from "./versions.js";
+export {
+  loadVersions,
+  findLatest,
+  resolveVersionSource,
+  canonicalPathFor,
+  VersionPageRegistry,
+} from "./versions.js";
 
 // ── Theme ───────────────────────────────────────────────────────
-export type { PdfTheme } from './theme.js';
-export { defaultTheme, loadTheme } from './theme.js';
+export type { PdfTheme } from "./theme.js";
+export { defaultTheme, loadTheme } from "./theme.js";
 
 // ── Markdown Processing ─────────────────────────────────────────
-export type { Chapter, Heading } from './markdown-processor.js';
+export type { Chapter, Heading } from "./markdown-processor.js";
 export {
   processMarkdownFiles,
   processCatalogMarkdownForPdf,
+  RESERVED_HOME_SLUG,
   slugify,
+  slugFromNavPath,
   resolveMarkdownPath,
-} from './markdown-processor.js';
+} from "./markdown-processor.js";
 export type {
   AnchorEntry,
   AnchorRegistry,
   LinkDiagnostic,
   WebProcessingOptions,
-} from './markdown-processor-web.js';
+} from "./markdown-processor-web.js";
 export {
   processMarkdownFilesForWeb,
   processCatalogMarkdownForWeb,
-} from './markdown-processor-web.js';
+} from "./markdown-processor-web.js";
 
 // ── Markdown Extensions ─────────────────────────────────────────
 export {
@@ -52,48 +86,113 @@ export {
   ADMONITION_TYPES,
   ADMONITION_ICONS,
   ADMONITION_TITLES,
-} from './markdown-extensions.js';
-export type { AdmonitionType } from './markdown-extensions.js';
+} from "./markdown-extensions.js";
+export type { AdmonitionType } from "./markdown-extensions.js";
 
 // ── HTML Builders ───────────────────────────────────────────────
-export type { DocMetadata } from './html-builder.js';
-export { buildFullDocument } from './html-builder.js';
-export type { WebDocMetadata } from './html-builder-web.js';
-export { buildWebDocument } from './html-builder-web.js';
-export type { WebPageContext, WebsiteMetadata } from './website-builder.js';
-export { buildWebPage, buildIndexPage } from './website-builder.js';
+export type { DocMetadata } from "./html-builder.js";
+export { buildFullDocument } from "./html-builder.js";
+export type { WebDocMetadata } from "./html-builder-web.js";
+export { buildWebDocument } from "./html-builder-web.js";
+export type {
+  LanguagePeer,
+  LanguagePickerPageOptions,
+  PageAssets,
+  PageSeoContext,
+  PageVersionContext,
+  RootRedirectIndexPageOptions,
+  WebPageContext,
+  WebsiteMetadata,
+} from "./website-builder.js";
+export type { HomePageContext } from "./website-builder.js";
+export {
+  applyImageAttributes,
+  buildHomePage,
+  buildIndexPage,
+  buildLanguagePickerPage,
+  buildRootRedirectIndexPage,
+  buildWebPage,
+} from "./website-builder.js";
+
+// ── Book Config (shared loader for book.config.yaml) ────────────
+export type {
+  NavGroup,
+  NavItem,
+  NormalizedBookConfig,
+  RawBookConfig,
+  RawNavigation,
+} from "./book-config.js";
+export { loadBookConfig, normalizeTitle } from "./book-config.js";
+
+// ── SEO (F2) ────────────────────────────────────────────────────
+export type { OgTagOptions, TwitterCardOptions, JsonLdOptions } from "./seo.js";
+export {
+  extractDescription,
+  truncateForDescription,
+  buildOgTags,
+  buildTwitterCard,
+  buildJsonLd,
+  joinBaseUrl,
+  DEFAULT_DESCRIPTION_CHAR_LIMIT,
+} from "./seo.js";
+export type { BuildSitemapOptions } from "./sitemap.js";
+export { buildSitemapXml } from "./sitemap.js";
+export type { BuildRobotsTxtOptions } from "./robots-txt.js";
+export { buildRobotsTxt } from "./robots-txt.js";
+export type { RenderedOgImage } from "./og-image-renderer.js";
+export { renderDefaultOgImage, copyUserOgImage } from "./og-image-renderer.js";
 
 // ── PDF Rendering ───────────────────────────────────────────────
-export type { RenderOptions } from './pdf-renderer.js';
-export { renderPdf } from './pdf-renderer.js';
+export type { RenderOptions } from "./pdf-renderer.js";
+export { renderPdf } from "./pdf-renderer.js";
 
 // ── PDF Generation ──────────────────────────────────────────────
-export { generatePdf } from './generate-pdf.js';
-export type { GeneratePdfOptions } from './generate-pdf.js';
+export { generatePdf } from "./generate-pdf.js";
+export type { GeneratePdfOptions } from "./generate-pdf.js";
 
 // ── Website Generation ──────────────────────────────────────────
-export { generateWebsite } from './website-generator.js';
-export type { GenerateWebsiteOptions } from './website-generator.js';
+export { generateWebsite } from "./website-generator.js";
+export type { GenerateWebsiteOptions } from "./website-generator.js";
+
+// ── Image Optimization (FR-2722) ────────────────────────────────
+export {
+  optimizeImage,
+  rewriteImageTagsToPicture,
+  newOptimizeImageStats,
+  recordOptimizeStat,
+  formatOptimizeSummary,
+  SIZE_THRESHOLD_BYTES,
+} from "./image-optimizer.js";
+export type {
+  OptimizeImageOptions,
+  OptimizeImageResult,
+  OptimizeImageStats,
+  ImageVariantInfo,
+} from "./image-optimizer.js";
 
 // ── Search Index ────────────────────────────────────────────────
-export { buildSearchIndex, tokenize } from './search-index-builder.js';
-export type { SearchDocument, SearchIndex, SearchIndexEntry } from './search-index-builder.js';
+export { buildSearchIndex, tokenize } from "./search-index-builder.js";
+export type {
+  SearchDocument,
+  SearchIndex,
+  SearchIndexEntry,
+} from "./search-index-builder.js";
 
 // ── Preview Servers ─────────────────────────────────────────────
-export { startPreviewServer } from './preview-server.js';
-export type { PreviewServerOptions } from './preview-server.js';
-export { startHtmlPreviewServer } from './preview-server-web.js';
-export type { HtmlPreviewOptions } from './preview-server-web.js';
-export { startWebsitePreviewServer } from './preview-server-website.js';
-export type { WebsitePreviewOptions } from './preview-server-website.js';
+export { startPreviewServer } from "./preview-server.js";
+export type { PreviewServerOptions } from "./preview-server.js";
+export { startHtmlPreviewServer } from "./preview-server-web.js";
+export type { HtmlPreviewOptions } from "./preview-server-web.js";
+export { startWebsitePreviewServer } from "./preview-server-website.js";
+export type { WebsitePreviewOptions } from "./preview-server-website.js";
 
 // ── Styles ──────────────────────────────────────────────────────
-export { generatePdfStyles } from './styles.js';
-export { generateWebStyles, generateWebsiteStyles } from './styles-web.js';
+export { generatePdfStyles } from "./styles.js";
+export { generateWebStyles, generateWebsiteStyles } from "./styles-web.js";
 
 // ── Version ─────────────────────────────────────────────────────
-export { getDocVersion } from './version.js';
+export { getDocVersion } from "./version.js";
 
 // ── Sample Content ──────────────────────────────────────────────
-export { buildThemeInfoChapter } from './sample-content.js';
-export { getCatalogMarkdown } from './sample-content-markdown.js';
+export { buildThemeInfoChapter } from "./sample-content.js";
+export { getCatalogMarkdown } from "./sample-content-markdown.js";

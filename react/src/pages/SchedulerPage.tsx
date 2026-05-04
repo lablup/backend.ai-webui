@@ -29,19 +29,12 @@ const SchedulerPage: React.FC<SchedulerPageProps> = () => {
     <BAICard
       activeTabKey={curTabKey}
       onTabChange={(key) => {
-        webUINavigate(
-          {
-            pathname: '/fair-share',
-            search: new URLSearchParams({
-              tab: key,
-            }).toString(),
-          },
-          {
-            params: {
-              tab: key,
-            },
-          },
-        );
+        webUINavigate({
+          pathname: '/fair-share',
+          search: new URLSearchParams({
+            tab: key,
+          }).toString(),
+        });
       }}
       tabList={[
         {

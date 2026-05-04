@@ -69,7 +69,7 @@ export default defineConfig(({ mode }) => {
         codegen: !isDevMode,
       }),
       dts({
-        include: ['src/**/*'],
+        include: ['src/**/*', 'vite-env.d.ts'],
         exclude: ['**/*.{stories,test}.{ts,tsx}', 'src/locale/*.json'],
         rollupTypes: false,
         insertTypesEntry: true,

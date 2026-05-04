@@ -1,0 +1,55 @@
+{
+  "epicKey": "FR-2710",
+  "epicUrl": "https://lablup.atlassian.net/browse/FR-2710",
+  "slug": "docs-site-production-uplift",
+  "specTaskKey": "FR-2711",
+  "specTaskUrl": "https://lablup.atlassian.net/browse/FR-2711",
+  "stories": [],
+  "sourceIssues": [],
+  "predecessorEpics": ["FR-2159", "FR-2160"],
+  "createdAt": "2026-04-25T00:00:00Z",
+  "subtasks": [
+    {
+      "key": "FR-2713",
+      "label": "F1",
+      "title": "feat(FR-2710 / F1): site entry and multilingual routing",
+      "githubIssue": 6998,
+      "dependsOn": []
+    },
+    {
+      "key": "FR-2714",
+      "label": "F2",
+      "title": "feat(FR-2710 / F2): SEO and sharing metadata",
+      "githubIssue": 6999,
+      "dependsOn": ["FR-2718"]
+    },
+    {
+      "key": "FR-2715",
+      "label": "F3",
+      "title": "feat(FR-2710 / F3): information architecture (sidebar grouping, right-rail TOC, breadcrumbs)",
+      "githubIssue": 7000,
+      "dependsOn": []
+    },
+    {
+      "key": "FR-2716",
+      "label": "F4",
+      "title": "feat(FR-2710 / F4): code-block reading UX (Shiki + Copy button)",
+      "githubIssue": 7001,
+      "dependsOn": ["FR-2715"]
+    },
+    {
+      "key": "FR-2717",
+      "label": "F5",
+      "title": "feat(FR-2710 / F5): build robustness and static asset optimization",
+      "githubIssue": 7002,
+      "dependsOn": []
+    },
+    {
+      "key": "FR-2718",
+      "label": "F6",
+      "title": "feat(FR-2710 / F6): versioned docs and minor-grained version selector",
+      "githubIssue": 7003,
+      "dependsOn": ["FR-2717"]
+    }
+  ]
+}

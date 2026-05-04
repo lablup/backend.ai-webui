@@ -1,0 +1,5 @@
+{
+  "_comment": "Recorded page-count baselines per language. Update by hand when intentional content changes ship — see tests/pdf/page-count.test.ts for the ±20% tolerance band that protects against routine drift.",
+  "en": 11,
+  "ko": 10
+}

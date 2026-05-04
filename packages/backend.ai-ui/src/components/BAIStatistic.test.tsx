@@ -2,7 +2,7 @@ import BAIStatistic from './BAIStatistic';
 import { render, screen, fireEvent } from '@testing-library/react';
 
 // Mock useTranslation
-jest.mock('react-i18next', () => ({
+vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string) => {
       const translations: { [key: string]: string } = {

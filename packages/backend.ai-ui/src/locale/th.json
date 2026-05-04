@@ -110,6 +110,7 @@
     "operator": {
       "After": "หลัง",
       "Before": "ก่อน",
+      "Equals": "เท่ากับ",
       "GreaterThan": "มากกว่า",
       "GreaterThanOrEqual": "มากกว่าหรือเท่ากับ",
       "IContains": "ประกอบด้วย",
@@ -123,6 +124,7 @@
       "In": "ใน",
       "LessThan": "น้อยกว่า",
       "LessThanOrEqual": "น้อยกว่าหรือเท่ากับ",
+      "NotEquals": "ไม่เท่ากับ",
       "NotIn": "ไม่ใน"
     }
   },
@@ -151,6 +153,28 @@
     "Maximize": "Maximize",
     "Minimize": "Minimize",
     "Restore": "Restore"
+  },
+  "comp:BAIModelDeploymentNodes": {
+    "AreYouSureToDeleteDeployment": "คุณแน่ใจหรือไม่ว่าต้องการลบการปรับใช้ \"{{deploymentName}}\"? การดำเนินการนี้ไม่สามารถยกเลิกได้",
+    "CreatedAt": "วันที่สร้าง",
+    "CreatedUser": "ผู้เขียน",
+    "CurrentRevisionID": "รหัสการแก้ไขปัจจุบัน",
+    "Delete": "ลบ",
+    "DeleteDeployment": "ลบการปรับใช้",
+    "DeploymentDeleted": "ลบการปรับใช้แล้ว",
+    "DeploymentID": "รหัสการปรับใช้",
+    "DomainName": "โดเมน",
+    "EndpointURL": "URL ปลายทาง",
+    "FailedToDeleteDeployment": "ไม่สามารถลบการปรับใช้ได้",
+    "Name": "ชื่อ",
+    "OpenToPublic": "เปิดสาธารณะ",
+    "PreferredDomainName": "โดเมนที่ต้องการ",
+    "ProjectID": "รหัสโปรเจกต์",
+    "Replicas": "จำนวนสำเนา",
+    "Status": "สถานะ",
+    "StrategyType": "กลยุทธ์",
+    "Tags": "แท็ก",
+    "UpdatedAt": "วันที่อัปเดต"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingFoldersWillBeUpdated": "โฟลเดอร์ต่อไปนี้จะถูกอัปเดต.",

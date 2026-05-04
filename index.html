@@ -119,7 +119,8 @@
         document.getElementById('loading-message').innerText = 'Not supported browser.';
         document.getElementById('loading-message').style.color = 'red';
       }
-      if (!['127.0.0.1', 'localhost'].includes(window.location.hostname) &&
+      if (window.location.hostname !== '127.0.0.1' &&
+        !window.location.hostname.endsWith('localhost') &&
         'enableSW' in globalThis &&
         globalThis.enableSW === true) {
         // Service worker routine.

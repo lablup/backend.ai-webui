@@ -9,7 +9,7 @@ import { useKeyPairLazyLoadQuery } from '../hooks/hooksUsingRelay';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import useControllableState_deprecated from '../hooks/useControllableState';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import FolderCreateModal from './FolderCreateModal';
+import FolderCreateModalV2 from './FolderCreateModalV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import TextHighlighter from './TextHighlighter';
 import VFolderPermissionTag from './VFolderPermissionTag';
@@ -707,7 +707,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
           </Descriptions>
         </>
       ) : null}
-      <FolderCreateModal
+      <FolderCreateModalV2
         open={isOpenCreateModal}
         onRequestClose={(result) => {
           setIsOpenCreateModal(false);

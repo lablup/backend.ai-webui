@@ -30,7 +30,7 @@ const SessionLauncherValidationTour: React.FC<
       target: () =>
         (
           document.getElementsByClassName('bai-card-error')?.[0] as HTMLElement
-        )?.querySelector('.ant-card-extra') as HTMLElement,
+        )?.querySelector('.ant-card-head') as HTMLElement,
     },
     {
       title: t('tourGuide.neoSessionLauncher.ValidationErrorTitle'),

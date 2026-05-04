@@ -3,8 +3,8 @@ import BAIButton from '../BAIButton';
 import BAILink from '../BAILink';
 import BAIText from '../BAIText';
 import { MoreOutlined } from '@ant-design/icons';
-import { Dropdown, theme, Tooltip } from 'antd';
-import type { MenuProps } from 'antd';
+import { App, Dropdown, Popconfirm, theme, Tooltip } from 'antd';
+import type { MenuProps, PopconfirmProps } from 'antd';
 import { createStyles } from 'antd-style';
 import React, { useEffect, useRef, useState, useTransition } from 'react';
 import type { LinkProps } from 'react-router-dom';
@@ -38,6 +38,19 @@ export interface BAINameActionCellAction {
    * - 'always': always shown only in the more menu
    */
   showInMenu?: 'auto' | 'always';
+  /**
+   * Ant Design Popconfirm props to gate the action behind a confirmation
+   * popover. When set, the visible icon button is wrapped with `<Popconfirm>`
+   * and the confirm action should be wired via `popConfirm.onConfirm`.
+   *
+   * When the action overflows into the more menu, the menu item falls back
+   * to a `Modal.confirm` dialog that mirrors the popConfirm title,
+   * description, okText, cancelText, and button props — so the
+   * confirmation UI is preserved in both visible and overflow states.
+   * If `onClick`/`action` is also set, those take precedence and the
+   * popConfirm is ignored in the overflow menu.
+   */
+  popConfirm?: Omit<PopconfirmProps, 'children'>;
 }
 
 export interface BAINameActionCellProps {
@@ -156,6 +169,7 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
   'use memo';
   const { styles, cx } = useStyles();
   const { token } = theme.useToken();
+  const { modal } = App.useApp();
   const [, startTransition] = useTransition();
   const containerRef = useRef<HTMLDivElement>(null);
   const titleAreaRef = useRef<HTMLDivElement>(null);
@@ -255,10 +269,40 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
     danger: action.type === 'danger',
     disabled: action.disabled,
     onClick: () => {
-      action.onClick?.();
-      if (action.action) {
-        startTransition(async () => {
-          await action.action!();
+      if (action.onClick || action.action) {
+        action.onClick?.();
+        if (action.action) {
+          startTransition(async () => {
+            await action.action!();
+          });
+        }
+        return;
+      }
+      if (action.popConfirm) {
+        const {
+          title: confirmTitle,
+          description,
+          okText,
+          cancelText,
+          okButtonProps,
+          cancelButtonProps,
+          onConfirm,
+          onCancel,
+        } = action.popConfirm;
+        const resolveNode = (
+          value: PopconfirmProps['title'] | PopconfirmProps['description'],
+        ): React.ReactNode =>
+          typeof value === 'function' ? value() : (value ?? null);
+        modal.confirm({
+          title: resolveNode(confirmTitle),
+          content: resolveNode(description),
+          okText,
+          cancelText,
+          okButtonProps,
+          cancelButtonProps,
+          okType: okButtonProps?.danger ? 'danger' : 'primary',
+          onOk: () => onConfirm?.(),
+          onCancel: () => onCancel?.(),
         });
       }
     },
@@ -351,21 +395,29 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
                 ? styles.actionButtonDanger
                 : styles.actionButtonDefault;
 
+            const button = (
+              <BAIButton
+                type="text"
+                size="small"
+                icon={action.icon}
+                disabled={action.disabled}
+                className={buttonClassName}
+                style={action.style}
+                onClick={action.onClick}
+                action={action.action}
+              />
+            );
+
             return (
               <Tooltip
                 key={action.key}
                 title={action.disabled ? action.disabledReason : action.title}
               >
-                <BAIButton
-                  type="text"
-                  size="small"
-                  icon={action.icon}
-                  disabled={action.disabled}
-                  className={buttonClassName}
-                  style={action.style}
-                  onClick={action.onClick}
-                  action={action.action}
-                />
+                {action.popConfirm && !action.disabled ? (
+                  <Popconfirm {...action.popConfirm}>{button}</Popconfirm>
+                ) : (
+                  button
+                )}
               </Tooltip>
             );
           })}

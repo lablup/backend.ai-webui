@@ -5,7 +5,7 @@
 import ActionItemContent from '../components/ActionItemContent';
 import AnnouncementAlert from '../components/AnnouncementAlert';
 import BAIBoard, { BAIBoardItem } from '../components/BAIBoard';
-import FolderCreateModal from '../components/FolderCreateModal';
+import FolderCreateModalV2 from '../components/FolderCreateModalV2';
 import StartFromURLModal from '../components/StartFromURLModal';
 import ThemeSecondaryProvider from '../components/ThemeSecondaryProvider';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
@@ -208,7 +208,7 @@ const StartPage: React.FC = () => {
     enableModelFolders && {
       id: 'modelService',
       rowSpan: 3,
-      requiredMenuKey: 'serving',
+      requiredMenuKey: 'deployments',
       columnSpan: 1,
       columnOffset: { 6: 0, 4: 0 },
       data: {
@@ -294,7 +294,7 @@ const StartPage: React.FC = () => {
         <BAIAlert type="info" description={t('start.NoStartItems')} showIcon />
       )}
       <BAIUnmountAfterClose>
-        <FolderCreateModal
+        <FolderCreateModalV2
           open={isOpenCreateModal}
           onRequestClose={(response) => {
             setIsOpenCreateModal(false);

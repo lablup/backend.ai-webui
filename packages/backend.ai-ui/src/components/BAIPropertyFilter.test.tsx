@@ -136,7 +136,7 @@ describe('BAIPropertyFilter Component', () => {
 
   it('should accept value prop and parse filters', async () => {
     const value = 'name ilike "%test%" & status == "active"';
-    const mockOnChange = jest.fn();
+    const mockOnChange = vi.fn();
     render(
       <BAIPropertyFilter
         filterProperties={mockFilterProperties}
@@ -155,7 +155,7 @@ describe('BAIPropertyFilter Component', () => {
   });
 
   it('should call onChange when adding a new filter', async () => {
-    const mockOnChange = jest.fn();
+    const mockOnChange = vi.fn();
     render(
       <BAIPropertyFilter
         filterProperties={mockFilterProperties}
@@ -175,7 +175,7 @@ describe('BAIPropertyFilter Component', () => {
   });
 
   it('should remove filter tag when close button is clicked', async () => {
-    const mockOnChange = jest.fn();
+    const mockOnChange = vi.fn();
     const value = 'name ilike "%test%"';
     const { container } = render(
       <BAIPropertyFilter
@@ -209,7 +209,7 @@ describe('BAIPropertyFilter Component', () => {
   });
 
   it('should clear all filters when reset button is clicked', async () => {
-    const mockOnChange = jest.fn();
+    const mockOnChange = vi.fn();
     const value = 'name ilike "%test%" & status == "active"';
     render(
       <BAIPropertyFilter
@@ -228,7 +228,7 @@ describe('BAIPropertyFilter Component', () => {
   });
 
   it('should handle boolean type filters with strict selection', async () => {
-    const mockOnChange = jest.fn();
+    const mockOnChange = vi.fn();
     render(
       <BAIPropertyFilter
         filterProperties={mockFilterProperties}
@@ -270,7 +270,7 @@ describe('BAIPropertyFilter Component', () => {
       },
     ];
 
-    const mockOnChange = jest.fn();
+    const mockOnChange = vi.fn();
     render(
       <BAIPropertyFilter
         filterProperties={filterPropertiesWithValidation}
@@ -309,7 +309,7 @@ describe('BAIPropertyFilter Component', () => {
   });
 
   it('should handle string filters with ilike operator adding wildcards', async () => {
-    const mockOnChange = jest.fn();
+    const mockOnChange = vi.fn();
     render(
       <BAIPropertyFilter
         filterProperties={mockFilterProperties}
@@ -350,7 +350,7 @@ describe('BAIPropertyFilter Component', () => {
   });
 
   it('should use defaultValue when value prop is not provided', async () => {
-    const mockOnChange = jest.fn();
+    const mockOnChange = vi.fn();
     render(
       <BAIPropertyFilter
         filterProperties={mockFilterProperties}
@@ -369,7 +369,7 @@ describe('BAIPropertyFilter Component', () => {
   });
 
   it('should not add filter when empty value is submitted', async () => {
-    const mockOnChange = jest.fn();
+    const mockOnChange = vi.fn();
     render(
       <BAIPropertyFilter
         filterProperties={mockFilterProperties}
@@ -400,7 +400,7 @@ describe('BAIPropertyFilter Component', () => {
       },
     ];
 
-    const mockOnChange = jest.fn();
+    const mockOnChange = vi.fn();
     render(
       <BAIPropertyFilter
         filterProperties={strictFilterProperties}

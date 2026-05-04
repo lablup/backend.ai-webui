@@ -11,13 +11,22 @@
  *   docs-toolkit agents [--force]
  */
 
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import { loadToolkitConfig, resolveConfig } from './config.js';
-import type { ResolvedDocConfig, AgentConfig } from './config.js';
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+import { loadToolkitConfig, resolveConfig } from "./config.js";
+import type { ResolvedDocConfig, AgentConfig } from "./config.js";
 
-const COMMANDS = ['pdf', 'preview', 'preview:html', 'build:web', 'serve:web', 'init', 'agents', 'help'] as const;
+const COMMANDS = [
+  "pdf",
+  "preview",
+  "preview:html",
+  "build:web",
+  "serve:web",
+  "init",
+  "agents",
+  "help",
+] as const;
 type Command = (typeof COMMANDS)[number];
 
 function printUsage(): void {
@@ -57,6 +66,12 @@ Options:
 
   build:web:
     --lang <all|en|ko|...>    Language(s) to generate (default: all)
+    --strict                  Fail on broken links (default for production)
+    --no-strict               Warn-only mode (legacy behavior)
+    --optimize-images         Generate .webp variants for PNG > 50 KB and emit
+                              <picture> wrappers in HTML (off by default;
+                              requires \`sharp\` to be installed)
+    --optimize-images-avif    Also generate .avif variants (slower, smaller)
 
   serve:web:
     --lang <en|ko|...>        Language (default: en)
@@ -86,7 +101,7 @@ function getCommand(argv: string[]): Command | null {
   const cmd = argv[0];
   if (!cmd) return null;
   if (COMMANDS.includes(cmd as Command)) return cmd as Command;
-  if (cmd === '--help' || cmd === '-h') return 'help';
+  if (cmd === "--help" || cmd === "-h") return "help";
   return null;
 }
 
@@ -98,7 +113,7 @@ function getFlagValue(argv: string[], flag: string): string | undefined {
   const idx = argv.indexOf(flag);
   if (idx < 0) return undefined;
   const value = argv[idx + 1];
-  if (!value || value.startsWith('--')) {
+  if (!value || value.startsWith("--")) {
     console.error(`Error: ${flag} requires a value.`);
     process.exit(1);
   }
@@ -109,7 +124,7 @@ function getFlagValue(argv: string[], flag: string): string | undefined {
 
 async function runInit(): Promise<void> {
   const projectRoot = process.cwd();
-  const configFile = 'docs-toolkit.config.yaml';
+  const configFile = "docs-toolkit.config.yaml";
   const configPath = path.join(projectRoot, configFile);
 
   if (fs.existsSync(configPath)) {
@@ -119,7 +134,7 @@ async function runInit(): Promise<void> {
   }
 
   // Create directories
-  const dirs = ['src/en', 'src/en/images', 'assets'];
+  const dirs = ["src/en", "src/en/images", "assets"];
   for (const dir of dirs) {
     const dirPath = path.join(projectRoot, dir);
     fs.mkdirSync(dirPath, { recursive: true });
@@ -166,11 +181,11 @@ pdfMetadata:
 #   styleGuideFile: "DOCUMENTATION-STYLE-GUIDE.md"
 `;
 
-  fs.writeFileSync(configPath, configContent, 'utf-8');
+  fs.writeFileSync(configPath, configContent, "utf-8");
   console.log(`  Created: ${configFile}`);
 
   // Create book.config.yaml
-  const bookConfigPath = path.join(projectRoot, 'src', 'book.config.yaml');
+  const bookConfigPath = path.join(projectRoot, "src", "book.config.yaml");
   if (!fs.existsSync(bookConfigPath)) {
     const bookContent = `title: "My Documentation"
 description: "Documentation project"
@@ -181,12 +196,12 @@ navigation:
     - title: "Getting Started"
       path: "quickstart.md"
 `;
-    fs.writeFileSync(bookConfigPath, bookContent, 'utf-8');
+    fs.writeFileSync(bookConfigPath, bookContent, "utf-8");
     console.log(`  Created: src/book.config.yaml`);
   }
 
   // Create sample quickstart.md
-  const quickstartPath = path.join(projectRoot, 'src', 'en', 'quickstart.md');
+  const quickstartPath = path.join(projectRoot, "src", "en", "quickstart.md");
   if (!fs.existsSync(quickstartPath)) {
     const quickstartContent = `# Getting Started
 
@@ -206,53 +221,61 @@ Describe how to install your product here.
 This is a helpful tip for your users.
 :::
 `;
-    fs.writeFileSync(quickstartPath, quickstartContent, 'utf-8');
+    fs.writeFileSync(quickstartPath, quickstartContent, "utf-8");
     console.log(`  Created: src/en/quickstart.md`);
   }
 
-  console.log('');
-  console.log('  Documentation project initialized!');
-  console.log('');
-  console.log('  Next steps:');
-  console.log('    1. Edit docs-toolkit.config.yaml with your project settings');
-  console.log('    2. Add markdown files to src/en/');
-  console.log('    3. Update src/book.config.yaml with navigation');
-  console.log('    4. Run: docs-toolkit pdf --lang en');
-  console.log('');
+  console.log("");
+  console.log("  Documentation project initialized!");
+  console.log("");
+  console.log("  Next steps:");
+  console.log(
+    "    1. Edit docs-toolkit.config.yaml with your project settings",
+  );
+  console.log("    2. Add markdown files to src/en/");
+  console.log("    3. Update src/book.config.yaml with navigation");
+  console.log("    4. Run: docs-toolkit pdf --lang en");
+  console.log("");
 }
 
 // ── Agents Command ──────────────────────────────────────────────
 
-async function runAgents(config: ResolvedDocConfig, force: boolean): Promise<void> {
+async function runAgents(
+  config: ResolvedDocConfig,
+  force: boolean,
+): Promise<void> {
   const agentConfig = config.agents;
   if (!agentConfig) {
-    console.log('  No agent configuration found in docs-toolkit.config.yaml.');
+    console.log("  No agent configuration found in docs-toolkit.config.yaml.");
     console.log('  Add an "agents" section to generate Claude agent files.');
-    console.log('');
-    console.log('  Example:');
-    console.log('    agents:');
+    console.log("");
+    console.log("  Example:");
+    console.log("    agents:");
     console.log('      projectTitle: "My Project"');
     console.log('      docsRoot: "."');
-    console.log('      languages:');
-    console.log('        - code: en');
-    console.log('          label: English');
+    console.log("      languages:");
+    console.log("        - code: en");
+    console.log("          label: English");
     return;
   }
 
   // Dynamic import of Handlebars (only when needed)
-  let Handlebars: typeof import('handlebars');
+  let Handlebars: typeof import("handlebars");
   try {
-    const hbsModule = await import('handlebars');
-    Handlebars = hbsModule.default as typeof import('handlebars');
+    const hbsModule = await import("handlebars");
+    Handlebars = hbsModule.default as typeof import("handlebars");
   } catch {
-    console.error('  Error: handlebars package is required for agent generation.');
-    console.error('  Install it: pnpm add -D handlebars');
+    console.error(
+      "  Error: handlebars package is required for agent generation.",
+    );
+    console.error("  Install it: pnpm add -D handlebars");
     process.exit(1);
   }
 
   const templatesDir = path.resolve(
     path.dirname(fileURLToPath(import.meta.url)),
-    '..', 'templates',
+    "..",
+    "templates",
   );
 
   if (!fs.existsSync(templatesDir)) {
@@ -261,14 +284,22 @@ async function runAgents(config: ResolvedDocConfig, force: boolean): Promise<voi
   }
 
   // Register Handlebars helpers
-  Handlebars.registerHelper('join', (arr: unknown[], sep: string) => {
-    if (!Array.isArray(arr)) return '';
-    return arr.join(typeof sep === 'string' ? sep : ', ');
+  Handlebars.registerHelper("join", (arr: unknown[], sep: string) => {
+    if (!Array.isArray(arr)) return "";
+    return arr.join(typeof sep === "string" ? sep : ", ");
   });
-  Handlebars.registerHelper('eq', (a: unknown, b: unknown) => a === b);
-  Handlebars.registerHelper('ifCond', function (this: unknown, v1: unknown, v2: unknown, options: Handlebars.HelperOptions) {
-    return v1 === v2 ? options.fn(this) : options.inverse(this);
-  });
+  Handlebars.registerHelper("eq", (a: unknown, b: unknown) => a === b);
+  Handlebars.registerHelper(
+    "ifCond",
+    function (
+      this: unknown,
+      v1: unknown,
+      v2: unknown,
+      options: Handlebars.HelperOptions,
+    ) {
+      return v1 === v2 ? options.fn(this) : options.inverse(this);
+    },
+  );
 
   const templateData = {
     ...agentConfig,
@@ -279,14 +310,16 @@ async function runAgents(config: ResolvedDocConfig, force: boolean): Promise<voi
   };
 
   // Process agent templates
-  const agentTemplatesDir = path.join(templatesDir, 'agents');
+  const agentTemplatesDir = path.join(templatesDir, "agents");
   if (fs.existsSync(agentTemplatesDir)) {
-    const outputDir = path.join(config.projectRoot, '.claude', 'agents');
+    const outputDir = path.join(config.projectRoot, ".claude", "agents");
     fs.mkdirSync(outputDir, { recursive: true });
 
-    const templateFiles = fs.readdirSync(agentTemplatesDir).filter((f) => f.endsWith('.hbs'));
+    const templateFiles = fs
+      .readdirSync(agentTemplatesDir)
+      .filter((f) => f.endsWith(".hbs"));
     for (const templateFile of templateFiles) {
-      const outputName = templateFile.replace(/\.hbs$/, '');
+      const outputName = templateFile.replace(/\.hbs$/, "");
       const outputPath = path.join(outputDir, outputName);
 
       if (fs.existsSync(outputPath) && !force) {
@@ -294,35 +327,38 @@ async function runAgents(config: ResolvedDocConfig, force: boolean): Promise<voi
         continue;
       }
 
-      const templateSrc = fs.readFileSync(path.join(agentTemplatesDir, templateFile), 'utf-8');
+      const templateSrc = fs.readFileSync(
+        path.join(agentTemplatesDir, templateFile),
+        "utf-8",
+      );
       const template = Handlebars.compile(templateSrc, { noEscape: true });
       const rendered = template(templateData);
 
-      fs.writeFileSync(outputPath, rendered, 'utf-8');
+      fs.writeFileSync(outputPath, rendered, "utf-8");
       console.log(`  Generated: .claude/agents/${outputName}`);
     }
   }
 
   // Process CLAUDE.md template
-  const claudeTemplatePath = path.join(templatesDir, 'CLAUDE.md.hbs');
+  const claudeTemplatePath = path.join(templatesDir, "CLAUDE.md.hbs");
   if (fs.existsSync(claudeTemplatePath)) {
-    const outputPath = path.join(config.projectRoot, 'CLAUDE.md');
+    const outputPath = path.join(config.projectRoot, "CLAUDE.md");
 
     if (fs.existsSync(outputPath) && !force) {
       console.log(`  Skipping (exists): CLAUDE.md`);
     } else {
-      const templateSrc = fs.readFileSync(claudeTemplatePath, 'utf-8');
+      const templateSrc = fs.readFileSync(claudeTemplatePath, "utf-8");
       const template = Handlebars.compile(templateSrc, { noEscape: true });
       const rendered = template(templateData);
-      fs.writeFileSync(outputPath, rendered, 'utf-8');
+      fs.writeFileSync(outputPath, rendered, "utf-8");
       console.log(`  Generated: CLAUDE.md`);
     }
   }
 
-  console.log('');
-  console.log('  Agent files generated. You can customize them as needed.');
+  console.log("");
+  console.log("  Agent files generated. You can customize them as needed.");
   if (!force) {
-    console.log('  Use --force to overwrite existing files.');
+    console.log("  Use --force to overwrite existing files.");
   }
 }
 
@@ -332,13 +368,13 @@ async function main(): Promise<void> {
   const argv = process.argv.slice(2);
   const command = getCommand(argv);
 
-  if (!command || command === 'help') {
+  if (!command || command === "help") {
     printUsage();
     process.exit(command ? 0 : 1);
   }
 
   // Init doesn't need an existing config
-  if (command === 'init') {
+  if (command === "init") {
     await runInit();
     return;
   }
@@ -355,15 +391,15 @@ async function main(): Promise<void> {
   }
 
   switch (command) {
-    case 'pdf': {
-      const { generatePdf } = await import('./generate-pdf.js');
-      const langArg = getFlagValue(argv, '--lang') ?? 'all';
-      const themeArg = getFlagValue(argv, '--theme') ?? 'default';
-      const chaptersRaw = getFlagValue(argv, '--chapters');
+    case "pdf": {
+      const { generatePdf } = await import("./generate-pdf.js");
+      const langArg = getFlagValue(argv, "--lang") ?? "all";
+      const themeArg = getFlagValue(argv, "--theme") ?? "default";
+      const chaptersRaw = getFlagValue(argv, "--chapters");
       const chaptersArg = chaptersRaw
-        ? chaptersRaw.split(',').map((c) => c.trim())
+        ? chaptersRaw.split(",").map((c) => c.trim())
         : undefined;
-      const noteArg = getFlagValue(argv, '--note');
+      const noteArg = getFlagValue(argv, "--note");
       await generatePdf(config, {
         lang: langArg,
         theme: themeArg,
@@ -373,35 +409,49 @@ async function main(): Promise<void> {
       break;
     }
 
-    case 'preview': {
-      const { startPreviewServer } = await import('./preview-server.js');
+    case "preview": {
+      const { startPreviewServer } = await import("./preview-server.js");
       await startPreviewServer(config);
       break;
     }
 
-    case 'preview:html': {
-      const { startHtmlPreviewServer } = await import('./preview-server-web.js');
+    case "preview:html": {
+      const { startHtmlPreviewServer } =
+        await import("./preview-server-web.js");
       await startHtmlPreviewServer(config);
       break;
     }
 
-    case 'build:web': {
-      const { generateWebsite } = await import('./website-generator.js');
-      const langIdx = argv.indexOf('--lang');
+    case "build:web": {
+      const { generateWebsite } = await import("./website-generator.js");
+      const langIdx = argv.indexOf("--lang");
+      // --strict defaults ON for production builds; --no-strict opts out.
+      // We keep --strict as an explicit affirmative for documentation and
+      // CI scripts that prefer to be loud about which mode they ran in.
+      const noStrict = hasFlag(argv, "--no-strict");
+      const strict = !noStrict;
+      // FR-2722: image optimization is OFF by default to keep dev /
+      // preview wall-clock unchanged. CI / release builds opt in.
+      const optimizeImages = hasFlag(argv, "--optimize-images");
+      const optimizeImagesAvif = hasFlag(argv, "--optimize-images-avif");
       await generateWebsite(config, {
-        lang: langIdx >= 0 ? argv[langIdx + 1] : 'all',
+        lang: langIdx >= 0 ? argv[langIdx + 1] : "all",
+        strict,
+        optimizeImages,
+        optimizeImagesAvif,
       });
       break;
     }
 
-    case 'serve:web': {
-      const { startWebsitePreviewServer } = await import('./preview-server-website.js');
+    case "serve:web": {
+      const { startWebsitePreviewServer } =
+        await import("./preview-server-website.js");
       await startWebsitePreviewServer(config);
       break;
     }
 
-    case 'agents': {
-      const force = hasFlag(argv, '--force');
+    case "agents": {
+      const force = hasFlag(argv, "--force");
       await runAgents(config, force);
       break;
     }
@@ -409,6 +459,6 @@ async function main(): Promise<void> {
 }
 
 main().catch((err) => {
-  console.error('docs-toolkit error:', err);
+  console.error("docs-toolkit error:", err);
   process.exit(1);
 });

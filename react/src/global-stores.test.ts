@@ -228,7 +228,7 @@ describe('BackendAIMetadataStore', () => {
 
   it('has a readImageMetadata method that returns a Promise', () => {
     const originalFetch = global.fetch;
-    global.fetch = jest.fn().mockRejectedValue(new Error('offline'));
+    global.fetch = vi.fn().mockRejectedValue(new Error('offline'));
 
     const result = backendaiMetadata.readImageMetadata();
     expect(result).toBeInstanceOf(Promise);
@@ -245,7 +245,7 @@ describe('BackendAIMetadataStore', () => {
       tagReplace: {},
     };
 
-    global.fetch = jest.fn().mockResolvedValue({
+    global.fetch = vi.fn().mockResolvedValue({
       json: () => Promise.resolve(mockPayload),
     } as unknown as Response);
 
@@ -265,7 +265,7 @@ describe('BackendAIMetadataStore', () => {
   });
 
   it('silently handles fetch failure without throwing', async () => {
-    global.fetch = jest.fn().mockRejectedValue(new Error('network error'));
+    global.fetch = vi.fn().mockRejectedValue(new Error('network error'));
 
     await expect(
       backendaiMetadata.readImageMetadata(),
@@ -279,11 +279,11 @@ describe('BackendAIMetadataStore', () => {
 
 describe('BackendAITasker', () => {
   beforeEach(() => {
-    jest.useFakeTimers();
+    vi.useFakeTimers();
   });
 
   afterEach(() => {
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
 
   describe('add()', () => {

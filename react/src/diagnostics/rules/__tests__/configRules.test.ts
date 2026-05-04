@@ -13,7 +13,6 @@ import {
   checkSslMismatch,
   checkUrlFields,
 } from '../configRules';
-import { describe, expect, it } from '@jest/globals';
 
 const validMenuKeys = [
   'start',

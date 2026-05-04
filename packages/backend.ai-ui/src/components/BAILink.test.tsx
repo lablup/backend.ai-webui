@@ -115,7 +115,7 @@ describe('BAILink', () => {
 
   describe('onClick Handler', () => {
     it('should call onClick handler when clicked on react-router Link', async () => {
-      const onClick = jest.fn((e) => e.preventDefault());
+      const onClick = vi.fn((e) => e.preventDefault());
       const user = userEvent.setup();
       renderWithRouter(
         <BAILink to="/test" onClick={onClick}>
@@ -128,7 +128,7 @@ describe('BAILink', () => {
     });
 
     it('should call onClick handler when clicked on Typography.Link', async () => {
-      const onClick = jest.fn();
+      const onClick = vi.fn();
       const user = userEvent.setup();
       render(<BAILink onClick={onClick}>Clickable Typography Link</BAILink>);
 
@@ -137,7 +137,7 @@ describe('BAILink', () => {
     });
 
     it('should block click interaction when link is disabled', async () => {
-      const onClick = jest.fn();
+      const onClick = vi.fn();
       const user = userEvent.setup();
       render(
         <BAILink type="disabled" onClick={onClick}>
@@ -219,7 +219,7 @@ describe('BAILink', () => {
 
   describe('Accessibility', () => {
     it('should be keyboard accessible for react-router Link', async () => {
-      const onClick = jest.fn((e) => e.preventDefault());
+      const onClick = vi.fn((e) => e.preventDefault());
       const user = userEvent.setup();
       renderWithRouter(
         <BAILink to="/test" onClick={onClick}>
@@ -235,7 +235,7 @@ describe('BAILink', () => {
     });
 
     it('should call onClick for Typography.Link on click', async () => {
-      const onClick = jest.fn();
+      const onClick = vi.fn();
       const user = userEvent.setup();
       render(<BAILink onClick={onClick}>Typography Click</BAILink>);
 

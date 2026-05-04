@@ -19,13 +19,22 @@ import ReactDOM from 'react-dom/client';
 // It's advisable to ignore these frequent logs in development mode.
 if (process.env.NODE_ENV === 'development') {
   // Enable react-grab for AI agent element inspection during development
-  import('react-grab').catch((error) => {
-    // eslint-disable-next-line no-console
-    console.warn(
-      'Failed to load react-grab devtool. AI agent element inspection will be disabled.',
-      error,
-    );
-  });
+  import('react-grab')
+    .then(() => {
+      window.__REACT_GRAB__?.registerPlugin({
+        name: 'hide-toolbar',
+        theme: {
+          toolbar: { enabled: false },
+        },
+      });
+    })
+    .catch((error) => {
+      // eslint-disable-next-line no-console
+      console.warn(
+        'Failed to load react-grab devtool. AI agent element inspection will be disabled.',
+        error,
+      );
+    });
 
   // eslint-disable-next-line no-console
   const originalConsoleError = console.error;

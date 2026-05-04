@@ -32,7 +32,7 @@ import InferenceSessionErrorModal from '../components/InferenceSessionErrorModal
 import SessionDetailDrawer from '../components/SessionDetailDrawer';
 import SourceCodeView from '../components/SourceCodeView';
 import SwitchToProjectButton from '../components/SwitchToProjectButton';
-import VFolderLazyView from '../components/VFolderLazyView';
+import VFolderLazyViewV2 from '../components/VFolderLazyViewV2';
 import { baiSignedRequestWithPromise, convertToOrderBy } from '../helper';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
@@ -628,7 +628,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
       children: endpoint?.model ? (
         <Suspense fallback={<Spin indicator={<LoadingOutlined spin />} />}>
           <BAIFlex direction="column" align="start">
-            <VFolderLazyView uuid={endpoint?.model} clickable={true} />
+            <VFolderLazyViewV2 uuid={endpoint?.model} clickable={true} />
             {endpoint?.model_mount_destination && (
               <BAIFlex direction="row" align="center" gap={'xxs'}>
                 <ArrowRightOutlined type="secondary" />

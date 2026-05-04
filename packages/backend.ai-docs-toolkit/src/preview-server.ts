@@ -1,28 +1,25 @@
-import fs from 'fs';
-import http from 'http';
-import path from 'path';
-import { parse as parseYaml } from 'yaml';
-import { processMarkdownFiles, processCatalogMarkdownForPdf } from './markdown-processor.js';
-import { buildFullDocument } from './html-builder.js';
-import { renderPdf } from './pdf-renderer.js';
-import { loadTheme } from './theme.js';
-import { buildThemeInfoChapter } from './sample-content.js';
-import { getDocVersion } from './version.js';
-import type { ResolvedDocConfig } from './config.js';
+import fs from "fs";
+import http from "http";
+import path from "path";
+import {
+  processMarkdownFiles,
+  processCatalogMarkdownForPdf,
+} from "./markdown-processor.js";
+import { buildFullDocument } from "./html-builder.js";
+import { renderPdf } from "./pdf-renderer.js";
+import { loadTheme } from "./theme.js";
+import { buildThemeInfoChapter } from "./sample-content.js";
+import { getDocVersion } from "./version.js";
+import type { ResolvedDocConfig } from "./config.js";
+import { loadBookConfig } from "./book-config.js";
 
-interface BookConfig {
-  title: string;
-  description: string;
-  languages: string[];
-  navigation: Record<string, Array<{ title: string; path: string }>>;
-}
 
-type PreviewMode = 'catalog' | 'document' | 'sample';
+type PreviewMode = "catalog" | "document" | "sample";
 
 const MODE_LABELS: Record<PreviewMode, string> = {
-  catalog: 'Style Catalog (theme reference + sample elements)',
-  sample: 'Sample content (fast)',
-  document: 'Full document (real markdown)',
+  catalog: "Style Catalog (theme reference + sample elements)",
+  sample: "Sample content (fast)",
+  document: "Full document (real markdown)",
 };
 
 export interface PreviewServerOptions {
@@ -33,15 +30,27 @@ export interface PreviewServerOptions {
 }
 
 function parseArgs(argv: string[]): PreviewServerOptions {
-  let lang = 'en';
-  let theme = 'default';
+  let lang = "en";
+  let theme = "default";
   let port = 3456;
-  let mode: PreviewMode = 'sample';
+  let mode: PreviewMode = "sample";
   for (let i = 0; i < argv.length; i++) {
-    if (argv[i] === '--lang' && argv[i + 1]) { lang = argv[i + 1]; i++; }
-    if (argv[i] === '--theme' && argv[i + 1]) { theme = argv[i + 1]; i++; }
-    if (argv[i] === '--port' && argv[i + 1]) { port = parseInt(argv[i + 1], 10); i++; }
-    if (argv[i] === '--mode' && argv[i + 1]) { mode = argv[i + 1] as PreviewMode; i++; }
+    if (argv[i] === "--lang" && argv[i + 1]) {
+      lang = argv[i + 1];
+      i++;
+    }
+    if (argv[i] === "--theme" && argv[i + 1]) {
+      theme = argv[i + 1];
+      i++;
+    }
+    if (argv[i] === "--port" && argv[i + 1]) {
+      port = parseInt(argv[i + 1], 10);
+      i++;
+    }
+    if (argv[i] === "--mode" && argv[i + 1]) {
+      mode = argv[i + 1] as PreviewMode;
+      i++;
+    }
   }
   return { lang, theme, port, mode };
 }
@@ -191,9 +200,12 @@ export async function startPreviewServer(
 ): Promise<void> {
   const args = { ...parseArgs(process.argv.slice(2)), ...options };
 
-  const configPath = path.join(config.srcDir, 'book.config.yaml');
-  const bookConfig: BookConfig = parseYaml(fs.readFileSync(configPath, 'utf-8'));
-  const { display: version } = getDocVersion(config.versionSource, config.version);
+  const configPath = path.join(config.srcDir, "book.config.yaml");
+  const bookConfig = loadBookConfig(config.srcDir);
+  const { display: version } = getDocVersion(
+    config.versionSource,
+    config.version,
+  );
   const theme = loadTheme(args.theme);
   const title = bookConfig.title;
 
@@ -201,7 +213,10 @@ export async function startPreviewServer(
   let isBuilding = false;
 
   fs.mkdirSync(config.distDir, { recursive: true });
-  const previewPdfPath = path.join(config.distDir, `preview_${args.mode}_${args.lang}.pdf`);
+  const previewPdfPath = path.join(
+    config.distDir,
+    `preview_${args.mode}_${args.lang}.pdf`,
+  );
 
   /**
    * Generate preview PDF using the actual Playwright pipeline.
@@ -212,15 +227,24 @@ export async function startPreviewServer(
     const start = Date.now();
 
     let html: string;
-    if (args.mode === 'catalog' || args.mode === 'sample') {
+    if (args.mode === "catalog" || args.mode === "sample") {
       // Dynamic import with cache-busting to pick up file changes at runtime
       const cacheBuster = `?t=${Date.now()}`;
-      const { getCatalogMarkdown } = await import(`./sample-content-markdown.js${cacheBuster}`);
-      const sampleChapters = await processCatalogMarkdownForPdf(getCatalogMarkdown());
-      const chapters = args.mode === 'catalog'
-        ? [buildThemeInfoChapter(theme), ...sampleChapters]
-        : sampleChapters;
-      html = buildFullDocument(chapters, { title, version, lang: args.lang }, config, theme);
+      const { getCatalogMarkdown } = await import(
+        `./sample-content-markdown.js${cacheBuster}`
+      );
+      const sampleChapters =
+        await processCatalogMarkdownForPdf(getCatalogMarkdown());
+      const chapters =
+        args.mode === "catalog"
+          ? [buildThemeInfoChapter(theme), ...sampleChapters]
+          : sampleChapters;
+      html = buildFullDocument(
+        chapters,
+        { title, version, lang: args.lang },
+        config,
+        theme,
+      );
     } else {
       // Document mode: real markdown content
       const navigation = bookConfig.navigation[args.lang];
@@ -229,11 +253,22 @@ export async function startPreviewServer(
         isBuilding = false;
         return;
       }
-      const chapters = await processMarkdownFiles(args.lang, navigation, config.srcDir, version, config);
-      html = buildFullDocument(chapters, { title, version, lang: args.lang }, config, theme);
+      const chapters = await processMarkdownFiles(
+        args.lang,
+        navigation,
+        config.srcDir,
+        version,
+        config,
+      );
+      html = buildFullDocument(
+        chapters,
+        { title, version, lang: args.lang },
+        config,
+        theme,
+      );
     }
 
-    console.log('  Rendering PDF via Playwright...');
+    console.log("  Rendering PDF via Playwright...");
     await renderPdf({
       html,
       outputPath: previewPdfPath,
@@ -275,7 +310,7 @@ export async function startPreviewServer(
       try {
         await generatePreviewPdf();
       } catch (err) {
-        console.error('  Rebuild failed:', err);
+        console.error("  Rebuild failed:", err);
         isBuilding = false;
       } finally {
         currentBuild = null;
@@ -290,19 +325,21 @@ export async function startPreviewServer(
     if (rebuildTimer) clearTimeout(rebuildTimer);
     rebuildTimer = setTimeout(() => {
       rebuildTimer = null;
-      console.log(`  File changed: ${path.relative(config.projectRoot, changedFile)}`);
+      console.log(
+        `  File changed: ${path.relative(config.projectRoot, changedFile)}`,
+      );
       pendingRebuild = true;
       runSerializedBuild();
     }, debounceMs);
   }
 
   // For document mode, watch markdown files
-  if (args.mode === 'document') {
+  if (args.mode === "document") {
     const srcLangDir = path.join(config.srcDir, args.lang);
     if (fs.existsSync(srcLangDir)) {
       fs.watch(srcLangDir, { recursive: true }, (_event, filename) => {
         const name = filename?.toString();
-        if (name && (name.endsWith('.md') || name.endsWith('.yaml'))) {
+        if (name && (name.endsWith(".md") || name.endsWith(".yaml"))) {
           scheduleRebuild(path.join(srcLangDir, name));
         }
       });
@@ -311,12 +348,12 @@ export async function startPreviewServer(
   }
 
   // For sample/catalog modes, watch the sample content source
-  if (args.mode === 'sample' || args.mode === 'catalog') {
+  if (args.mode === "sample" || args.mode === "catalog") {
     // Watch the toolkit's own sample-content-markdown if running from source,
     // or watch project root for custom sample content
     const sampleContentPath = path.resolve(
       path.dirname(new URL(import.meta.url).pathname),
-      'sample-content-markdown.js',
+      "sample-content-markdown.js",
     );
     const watchDir = path.dirname(sampleContentPath);
     const targetFile = path.basename(sampleContentPath);
@@ -332,10 +369,12 @@ export async function startPreviewServer(
   }
 
   // Always watch config
-  fs.watch(configPath, () => { scheduleRebuild(configPath); });
+  fs.watch(configPath, () => {
+    scheduleRebuild(configPath);
+  });
 
   // Watch theme directory for changes
-  const themesDir = path.join(config.projectRoot, 'themes');
+  const themesDir = path.join(config.projectRoot, "themes");
   if (fs.existsSync(themesDir)) {
     fs.watch(themesDir, { recursive: true }, (_event, filename) => {
       const name = filename?.toString();
@@ -345,77 +384,87 @@ export async function startPreviewServer(
 
   // HTTP server
   const server = http.createServer(async (req, res) => {
-    const url = new URL(req.url || '/', `http://localhost:${args.port}`);
+    const url = new URL(req.url || "/", `http://localhost:${args.port}`);
 
     // Live-reload polling endpoint
-    if (url.pathname === '/__reload') {
-      res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' });
+    if (url.pathname === "/__reload") {
+      res.writeHead(200, {
+        "Content-Type": "application/json",
+        "Cache-Control": "no-cache",
+      });
       res.end(JSON.stringify({ etag: currentEtag, building: isBuilding }));
       return;
     }
 
     // All modes: / serves viewer, /preview.pdf serves actual PDF
-    if (url.pathname === '/' || url.pathname === '/index.html') {
+    if (url.pathname === "/" || url.pathname === "/index.html") {
       const viewerHtml = buildPdfViewerPage(title, args.mode);
-      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-cache' });
+      res.writeHead(200, {
+        "Content-Type": "text/html; charset=utf-8",
+        "Cache-Control": "no-cache",
+      });
       res.end(viewerHtml);
       return;
     }
 
-    if (url.pathname === '/preview.pdf') {
+    if (url.pathname === "/preview.pdf") {
       if (fs.existsSync(previewPdfPath)) {
         const stat = fs.statSync(previewPdfPath);
         res.writeHead(200, {
-          'Content-Type': 'application/pdf',
-          'Content-Length': stat.size,
-          'Cache-Control': 'no-cache',
+          "Content-Type": "application/pdf",
+          "Content-Length": stat.size,
+          "Cache-Control": "no-cache",
         });
         fs.createReadStream(previewPdfPath).pipe(res);
       } else {
-        res.writeHead(503, { 'Content-Type': 'text/plain' });
-        res.end('PDF is being generated...');
+        res.writeHead(503, { "Content-Type": "text/plain" });
+        res.end("PDF is being generated...");
       }
       return;
     }
 
     // Serve static files (images) from src/{lang}/
-    const safePath = path.normalize(url.pathname).replace(/^\/+/, '');
+    const safePath = path.normalize(url.pathname).replace(/^\/+/, "");
     const filePath = path.join(config.srcDir, args.lang, safePath);
     if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
       const ext = path.extname(filePath).toLowerCase();
       const mimeTypes: Record<string, string> = {
-        '.png': 'image/png',
-        '.jpg': 'image/jpeg',
-        '.jpeg': 'image/jpeg',
-        '.gif': 'image/gif',
-        '.svg': 'image/svg+xml',
-        '.webp': 'image/webp',
+        ".png": "image/png",
+        ".jpg": "image/jpeg",
+        ".jpeg": "image/jpeg",
+        ".gif": "image/gif",
+        ".svg": "image/svg+xml",
+        ".webp": "image/webp",
       };
-      res.writeHead(200, { 'Content-Type': mimeTypes[ext] || 'application/octet-stream' });
+      res.writeHead(200, {
+        "Content-Type": mimeTypes[ext] || "application/octet-stream",
+      });
       fs.createReadStream(filePath).pipe(res);
       return;
     }
 
-    res.writeHead(404, { 'Content-Type': 'text/plain' });
-    res.end('Not found');
+    res.writeHead(404, { "Content-Type": "text/plain" });
+    res.end("Not found");
   });
 
   server.listen(args.port, () => {
     const productName = config.productName;
-    console.log('');
+    console.log("");
     console.log(`  ${productName} Preview Server`);
     console.log(`  Mode:      ${args.mode} — ${MODE_LABELS[args.mode]}`);
     console.log(`  Theme:     ${theme.name}`);
     console.log(`  Language:  ${args.lang}`);
     console.log(`  URL:       http://localhost:${args.port}`);
     console.log(`  PDF:       http://localhost:${args.port}/preview.pdf`);
-    console.log('');
-    if (args.mode === 'document') {
-      console.log(`  Editing src/${args.lang}/**/*.md will regenerate the PDF.`);
+    console.log("");
+    if (args.mode === "document") {
+      console.log(
+        `  Editing src/${args.lang}/**/*.md will regenerate the PDF.`,
+      );
     } else {
       console.log(`  Editing sample-content-markdown will regenerate the PDF.`);
     }
-    console.log('');
+    console.log("");
     console.log(`  Press Ctrl+C to stop.`);
   });
 }

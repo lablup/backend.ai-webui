@@ -1,0 +1,172 @@
+# docs-toolkit example/boilerplate configuration.
+#
+# This file demonstrates every consumer-tunable knob the toolkit exposes.
+# Trim it down (or comment fields back in) to taste when copying the
+# example as a starter for a new docs project.
+
+title: "Docs Toolkit Example"
+subtitle: "Boilerplate"
+company: "Lablup Inc."
+
+# Custom logo (light variant; dark falls back when omitted).
+# Resolved relative to this project root.
+logoPath: "./assets/logo.svg"
+
+# Source and output directories (defaults shown for clarity).
+srcDir: "src"
+distDir: "dist"
+
+# Use this package's own version string for the version banner / PDF metadata.
+versionSource: "./package.json"
+
+# Languages — en + ko exercises both Latin and CJK font code paths in the
+# PDF pipeline (FR-2745) without inflating build time.
+languageLabels:
+  en: "English"
+  ko: "한국어"
+
+# ---------------------------------------------------------------------------
+# Home-page text overrides.
+#
+# The toolkit ships default home copy targeted at the Backend.AI WebUI
+# manual ("Welcome to the Backend.AI WebUI User Guide", etc.). Non-WebUI
+# consumers — including this boilerplate — override the strings here so
+# the rendered landing introduces THEIR project. Only set the keys you
+# want to replace; the rest fall back to the toolkit defaults.
+# ---------------------------------------------------------------------------
+localizedStrings:
+  en:
+    homeWelcome: "backend.ai-docs-toolkit"
+    homeIntro: >-
+      A reusable documentation engine that turns a directory of multilingual
+      Markdown into a production-ready static site and matching PDFs.
+      Air-gapped friendly, multi-version aware, and consumer-tunable from
+      logo to brand color to navigation grouping. This page is rendered by
+      the toolkit's example/boilerplate project — the same code path your
+      own docs site would use.
+    homeAboutWebUI: "What the toolkit does"
+    homeAboutWebUIBody: >-
+      Build-time syntax highlighting (Shiki), per-language sidebars with
+      grouped navigation, a right-rail "On this page" TOC with scroll-spy,
+      a built-in client-side search index (CJK-aware bigrams), per-version
+      routing with an opt-in version selector, SEO + Open Graph metadata,
+      and a PDF pipeline that embeds CJK fonts. No CDN, no runtime API
+      calls.
+    homeAboutDocs: "About this example"
+    homeAboutDocsBody: >-
+      You are looking at `packages/backend.ai-docs-toolkit-example/` — a
+      minimal copy-paste starter project. Edit the four chapters under
+      `src/<lang>/`, the `book.config.yaml` navigation, and the
+      `docs-toolkit.config.yaml` branding knobs to make it yours. The
+      same package doubles as the integration-test fixture for the
+      toolkit itself.
+    homeBrowse: "Browse the example"
+    homeQuickstartCta: "Read the Quickstart"
+    homeQuickstartHint: >-
+      First time here? Start with the Quickstart chapter — it walks
+      through the layout and the build commands.
+  ko:
+    homeWelcome: "backend.ai-docs-toolkit"
+    homeIntro: >-
+      다국어 마크다운 디렉토리를 프로덕션 수준의 정적 사이트와 PDF로
+      변환해주는 재사용 가능한 문서화 엔진입니다. 에어갭 환경 친화적이고,
+      다중 버전을 지원하며, 로고부터 브랜드 컬러, 내비게이션 그룹핑까지
+      소비자가 자유롭게 커스터마이징할 수 있습니다. 이 페이지는 툴킷의
+      예제/보일러플레이트 프로젝트가 렌더링한 것이며, 여러분의 문서 사이트도
+      동일한 경로로 빌드됩니다.
+    homeAboutWebUI: "툴킷이 제공하는 기능"
+    homeAboutWebUIBody: >-
+      빌드 시점 문법 하이라이팅(Shiki), 그룹핑된 사이드바와 우측 "이 페이지"
+      TOC + 스크롤 스파이, 빌트인 클라이언트 검색 인덱스(CJK 바이그램),
+      옵트인 방식의 버전 셀렉터를 통한 다중 버전 라우팅, SEO + Open Graph
+      메타데이터, CJK 폰트가 임베드된 PDF 파이프라인까지 — CDN도, 런타임
+      API 호출도 필요 없습니다.
+    homeAboutDocs: "이 예제 소개"
+    homeAboutDocsBody: >-
+      여러분이 보고 있는 페이지는 `packages/backend.ai-docs-toolkit-example/`
+      — 최소한의 복사-붙여넣기 시작 프로젝트입니다. `src/<lang>/` 아래의 네
+      챕터, `book.config.yaml`의 내비게이션, `docs-toolkit.config.yaml`의
+      브랜딩 노브를 편집해서 자신의 프로젝트로 만드세요. 이 패키지는
+      툴킷 자체의 통합 테스트 픽스처 역할도 함께 합니다.
+    homeBrowse: "예제 둘러보기"
+    homeQuickstartCta: "빠른 시작 보기"
+    homeQuickstartHint: >-
+      처음 오셨나요? Quickstart 챕터부터 시작하세요 — 디렉토리 구조와 빌드
+      명령을 한 페이지로 정리해 두었습니다.
+
+# PDF output.
+pdfFilenameTemplate: "DocsToolkitExample_{version}_{lang}.pdf"
+pdfMetadata:
+  author: "Lablup Inc."
+  subject: "docs-toolkit example/boilerplate project"
+  creator: "docs-toolkit"
+
+# Product name used in log messages.
+productName: "Docs Toolkit Example"
+
+# ---------------------------------------------------------------------------
+# Website generation
+# ---------------------------------------------------------------------------
+website:
+  editBaseUrl: "https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-docs-toolkit-example/src"
+  repoUrl: "https://github.com/lablup/backend.ai-webui"
+
+# ---------------------------------------------------------------------------
+# Branding overrides (FR-2726).
+# Demonstrates a non-default brand palette so the consumer can verify
+# their own overrides take effect end-to-end. The defaults below are
+# intentionally NOT Backend.AI orange so the override is visually obvious.
+# ---------------------------------------------------------------------------
+branding:
+  # Teal palette — chosen to be unambiguously distinct from the Backend.AI
+  # orange defaults so customization is visible without any other change.
+  primaryColor: "#0F766E"
+  primaryColorHover: "#14B8A6"
+  primaryColorActive: "#115E59"
+  primaryColorSoft: "#CCFBF1"
+  logoLight: "./assets/logo.svg"
+  subLabel:
+    en: "Example"
+    ko: "예제"
+    default: "Example"
+
+# ---------------------------------------------------------------------------
+# Code-block presentation (F4 / FR-2716).
+# ---------------------------------------------------------------------------
+code:
+  lightTheme: "github-light"
+
+# ---------------------------------------------------------------------------
+# Versions (F6 / FR-2718).
+#
+# Two entries are declared so the version selector renders in tests. Both
+# point at the same workspace content — that's intentional: the example
+# does not maintain real archive branches, but it still exercises the
+# selector's render and routing logic. To exercise archive-branch sourcing
+# in your own project, replace the second entry with
+#   { kind: archive-branch, ref: docs-archive/<minor> }.
+# ---------------------------------------------------------------------------
+versions:
+  - label: "next"
+    source:
+      kind: workspace
+  - label: "0.1"
+    source:
+      kind: workspace
+    latest: true
+    # pdfTag declared on the latest entry only — exercises the per-version
+    # "PDF download card" rendering path (FR-2731 / FR-2732) on the landing
+    # page. The tag is FAKE — no real GitHub Release exists for the
+    # example. The toolkit renders the URL from the tag without verifying
+    # it, which is exactly what the integration test checks: the card is
+    # present when pdfTag is set and absent when it is not (the `next`
+    # version intentionally has no pdfTag to verify the absent-case).
+    pdfTag: "v0.1.0"
+
+# ---------------------------------------------------------------------------
+# SEO / Open Graph (F2 / FR-2714).
+# `baseUrl` is intentionally omitted — air-gapped builds without a public
+# URL still work; canonical / og:url are skipped silently.
+# ---------------------------------------------------------------------------
+og:
+  siteName: "Docs Toolkit Example"

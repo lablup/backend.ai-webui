@@ -72,7 +72,6 @@ const SFTPServerButton: React.FC<SFTPServerButtonProps> = ({
     graphql`
       fragment SFTPServerButtonFragment on VirtualFolderNode {
         id
-        row_id
         host
       }
     `,

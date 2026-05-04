@@ -5,8 +5,12 @@
 import { VFolderDeployModalEndpointPollQuery } from '../__generated__/VFolderDeployModalEndpointPollQuery.graphql';
 import { VFolderDeployModalMutation } from '../__generated__/VFolderDeployModalMutation.graphql';
 import { VFolderDeployModalQuery } from '../__generated__/VFolderDeployModalQuery.graphql';
+import { useWebUINavigate } from '../hooks';
+import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import { App, Form, Typography, theme } from 'antd';
+import useDeploymentLauncher from '../hooks/useDeploymentLauncher';
+import { EllipsisOutlined } from '@ant-design/icons';
+import { App, Dropdown, Form, Space, Typography, theme } from 'antd';
 import type { DefaultOptionType } from 'antd/es/select';
 import {
   BAIButton,
@@ -35,7 +39,6 @@ import {
   useMutation,
   useRelayEnvironment,
 } from 'react-relay';
-import { useNavigate } from 'react-router-dom';
 
 /**
  * Poll-before-navigate configuration for the post-deploy handoff to the
@@ -85,10 +88,12 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { message } = App.useApp();
-  const navigate = useNavigate();
+  const navigate = useWebUINavigate();
   const { id: projectId, name: projectName } = useCurrentProjectValue();
   const relayEnvironment = useRelayEnvironment();
   const { logger } = useBAILogger();
+  const { openLauncher, supportsQuickDeploy } = useDeploymentLauncher();
+  const { upsertNotification } = useSetBAINotification();
 
   // Fetch resource groups accessible to the current project. Shares the React
   // Query cache with BAIProjectResourceGroupSelect below, so no duplicate
@@ -230,6 +235,27 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
 
   const hasNoPresets = availablePresets.length === 0;
 
+  // When no presets are available, skip the modal and redirect to the service
+  // launcher with an info notification so the user can configure manually.
+  const onRedirectToLauncher = useEffectEvent(() => {
+    if (!vfolderId) return;
+    upsertNotification({
+      key: `no-presets-redirect-${vfolderId}`,
+      open: true,
+      message: t('modelStore.NoCompatiblePresetsRedirectingToLauncher'),
+      backgroundTask: { status: 'pending' },
+      duration: 4,
+    });
+    openLauncher({ modelFolderId: vfolderId });
+    onClose();
+  });
+
+  useEffect(() => {
+    if (hasNoPresets && vfolderId) {
+      onRedirectToLauncher();
+    }
+  }, [hasNoPresets, vfolderId]);
+
   // TODO(needs-backend): FR-2599 — auto-deploy is disabled until presets are
   // scoped to this vfolder's compatibility. `deploymentRevisionPresets` shows
   // the full project-level list; auto-deploying without user confirmation could
@@ -310,6 +336,11 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
     }
   }, [isAutoDeployScenario]);
 
+  // All hooks are declared above. Early returns come after all hook calls.
+  if (hasNoPresets) {
+    return null;
+  }
+
   // Auto-deploy: don't render a modal at all — the effect above will trigger
   // the mutation and navigation. Returning null here means the parent never
   // mounts any modal chrome, avoiding a flash of an empty modal before the
@@ -374,19 +405,61 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
       </Form>
       <BAIFlex justify="end" gap="sm">
         <BAIButton onClick={onClose}>{t('button.Cancel')}</BAIButton>
-        <BAIButton
-          type="primary"
-          action={handleDeploy}
-          disabled={
-            !vfolderId ||
-            !projectId ||
-            !effectivePresetId ||
-            !effectiveResourceGroup ||
-            hasNoPresets
-          }
-        >
-          {t('modelStore.Deploy')}
-        </BAIButton>
+        {supportsQuickDeploy && vfolderId ? (
+          // Flow 7 (FR-2684): [Deploy | ▼] split button. Primary fires
+          // deployVfolderV2 with selected preset/resource group; the dropdown
+          // item navigates to the full launcher at /deployments/start?model=<id>.
+          <Space.Compact>
+            <BAIButton
+              type="primary"
+              action={handleDeploy}
+              disabled={
+                !vfolderId ||
+                !projectId ||
+                !effectivePresetId ||
+                !effectiveResourceGroup ||
+                hasNoPresets
+              }
+            >
+              {t('modelStore.Deploy')}
+            </BAIButton>
+            <Dropdown
+              disabled={hasNoPresets}
+              trigger={['click']}
+              menu={{
+                items: [
+                  {
+                    key: 'configure',
+                    label: t('modelStore.QuickDeployDetailed'),
+                    onClick: () => {
+                      openLauncher({
+                        modelFolderId: vfolderId,
+                        resourceGroup: effectiveResourceGroup,
+                        revisionPresetId: effectivePresetId,
+                      });
+                    },
+                  },
+                ],
+              }}
+            >
+              <BAIButton type="primary" icon={<EllipsisOutlined />} />
+            </Dropdown>
+          </Space.Compact>
+        ) : (
+          <BAIButton
+            type="primary"
+            action={handleDeploy}
+            disabled={
+              !vfolderId ||
+              !projectId ||
+              !effectivePresetId ||
+              !effectiveResourceGroup ||
+              hasNoPresets
+            }
+          >
+            {t('modelStore.Deploy')}
+          </BAIButton>
+        )}
       </BAIFlex>
     </BAIModal>
   );

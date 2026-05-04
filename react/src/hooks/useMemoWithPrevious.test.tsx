@@ -7,7 +7,7 @@ import { renderHook, act } from '@testing-library/react';
 
 describe('useMemoWithPrevious Hook', () => {
   it('should initialize with initialPrev', () => {
-    const factory = jest.fn(() => 'current value');
+    const factory = vi.fn(() => 'current value');
     const { result } = renderHook(() =>
       useMemoWithPrevious(factory, [], {
         initialPrev: 'initial previous value',
@@ -21,7 +21,7 @@ describe('useMemoWithPrevious Hook', () => {
 
   it('should update current and previous when dependencies change', () => {
     let dep = 1;
-    const factory = jest.fn(() => `current value ${dep}`);
+    const factory = vi.fn(() => `current value ${dep}`);
 
     const { result, rerender } = renderHook(() =>
       useMemoWithPrevious(factory, [dep]),
@@ -46,7 +46,7 @@ describe('useMemoWithPrevious Hook', () => {
 
   it('should reset previous when resetPrevious is called', () => {
     let dep = 1;
-    const factory = jest.fn(() => `current value ${dep}`);
+    const factory = vi.fn(() => `current value ${dep}`);
 
     const { result, rerender } = renderHook(() =>
       useMemoWithPrevious(factory, [dep], {
@@ -76,7 +76,7 @@ describe('useMemoWithPrevious Hook', () => {
   });
 
   it('should not update previous if dependencies do not change', () => {
-    const factory = jest.fn(() => 'current value');
+    const factory = vi.fn(() => 'current value');
     const { result, rerender } = renderHook(() =>
       useMemoWithPrevious(factory, []),
     );

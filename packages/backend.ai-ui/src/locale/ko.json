@@ -113,6 +113,7 @@
     "operator": {
       "After": "이후",
       "Before": "이전",
+      "Equals": "같음",
       "GreaterThan": "초과",
       "GreaterThanOrEqual": "이상",
       "IContains": "포함",
@@ -126,6 +127,7 @@
       "In": "포함됨",
       "LessThan": "미만",
       "LessThanOrEqual": "이하",
+      "NotEquals": "같지 않음",
       "NotIn": "포함되지 않음"
     }
   },
@@ -154,6 +156,28 @@
     "Maximize": "최대화",
     "Minimize": "최소화",
     "Restore": "복원"
+  },
+  "comp:BAIModelDeploymentNodes": {
+    "AreYouSureToDeleteDeployment": "배포 \"{{deploymentName}}\"을(를) 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.",
+    "CreatedAt": "생성 시각",
+    "CreatedUser": "생성자",
+    "CurrentRevisionID": "현재 리비전 ID",
+    "Delete": "삭제",
+    "DeleteDeployment": "배포 삭제",
+    "DeploymentDeleted": "배포가 삭제되었습니다.",
+    "DeploymentID": "배포 ID",
+    "DomainName": "도메인",
+    "EndpointURL": "엔드포인트 URL",
+    "FailedToDeleteDeployment": "배포 삭제에 실패했습니다.",
+    "Name": "이름",
+    "OpenToPublic": "공개",
+    "PreferredDomainName": "선호 도메인",
+    "ProjectID": "프로젝트 ID",
+    "Replicas": "복제본 수",
+    "Status": "상태",
+    "StrategyType": "전략",
+    "Tags": "태그",
+    "UpdatedAt": "수정 시각"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingFoldersWillBeUpdated": "다음 폴더(들)이 업데이트됩니다.",

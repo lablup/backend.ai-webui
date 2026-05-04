@@ -110,6 +110,7 @@
     "operator": {
       "After": "nach",
       "Before": "vor",
+      "Equals": "gleich",
       "GreaterThan": "größer als",
       "GreaterThanOrEqual": "größer oder gleich",
       "IContains": "enthält",
@@ -123,6 +124,7 @@
       "In": "enthalten in",
       "LessThan": "kleiner als",
       "LessThanOrEqual": "kleiner oder gleich",
+      "NotEquals": "ungleich",
       "NotIn": "nicht enthalten in"
     }
   },
@@ -151,6 +153,28 @@
     "Maximize": "Maximize",
     "Minimize": "Minimize",
     "Restore": "Restore"
+  },
+  "comp:BAIModelDeploymentNodes": {
+    "AreYouSureToDeleteDeployment": "Möchten Sie das Deployment \"{{deploymentName}}\" wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
+    "CreatedAt": "Erstellt am",
+    "CreatedUser": "Autor",
+    "CurrentRevisionID": "Aktuelle Revisions-ID",
+    "Delete": "Löschen",
+    "DeleteDeployment": "Deployment löschen",
+    "DeploymentDeleted": "Deployment gelöscht.",
+    "DeploymentID": "Deployment-ID",
+    "DomainName": "Domain",
+    "EndpointURL": "Endpunkt URL",
+    "FailedToDeleteDeployment": "Fehler beim Löschen des Deployments.",
+    "Name": "Name",
+    "OpenToPublic": "Öffentlich",
+    "PreferredDomainName": "Bevorzugte Domain",
+    "ProjectID": "Projekt-ID",
+    "Replicas": "Replikate",
+    "Status": "Status",
+    "StrategyType": "Strategie",
+    "Tags": "Stichworte",
+    "UpdatedAt": "Aktualisiert am"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingFoldersWillBeUpdated": "Die folgenden Ordner werden aktualisiert.",

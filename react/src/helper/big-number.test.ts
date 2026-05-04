@@ -3,12 +3,19 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { BigNumber } from './big-number';
-import { expect } from '@jest/globals';
 import Big from 'big.js';
 
-declare module '@jest/expect' {
-  interface Matchers<R> {
-    toEqualBigNumber(expected: unknown, unit?: string): R;
+// Custom matcher type augmentation. Targets the `jest.Matchers` namespace
+// from `@types/jest` because `@testing-library/jest-dom` (the default
+// entry, used in `setupTests.ts`) augments the same namespace, and `expect()`
+// in this codebase resolves to jest's `expect` for matcher types via the
+// auto-loaded `@types/jest`.
+declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
+  namespace jest {
+    interface Matchers<R> {
+      toEqualBigNumber(expected: unknown, unit?: string): R;
+    }
   }
 }
 

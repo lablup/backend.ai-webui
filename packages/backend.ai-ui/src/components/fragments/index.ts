@@ -54,6 +54,7 @@ export type {
   BAIActivateArtifactsModalArtifactsFragmentKey,
 } from './BAIActivateArtifactsModal';
 export { default as BAIVFolderDeleteButton } from './BAIVFolderDeleteButton';
+export { default as BAIVFolderDeleteButtonV2 } from './BAIVFolderDeleteButtonV2';
 export { default as BAIAdminResourceGroupSelect } from './BAIAdminResourceGroupSelect';
 export type { BAIAdminResourceGroupSelectProps } from './BAIAdminResourceGroupSelect';
 export {
@@ -124,6 +125,14 @@ export type {
 } from './BAIHuggingFaceRegistrySettingModal';
 export { default as BAIRouteNodes } from './BAIRouteNodes';
 export type { BAIRouteNodesProps, RouteNodeInList } from './BAIRouteNodes';
+export {
+  default as BAIModelDeploymentNodes,
+  availableDeploymentSorterValues,
+} from './BAIModelDeploymentNodes';
+export type {
+  BAIModelDeploymentNodesProps,
+  ModelDeploymentNodeInList,
+} from './BAIModelDeploymentNodes';
 export { default as BAISchedulingHistoryNodes } from './BAISchedulingHistoryNodes';
 export type {
   BAISchedulingHistoryNodesProps,

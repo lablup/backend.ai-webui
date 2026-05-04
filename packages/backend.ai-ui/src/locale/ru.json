@@ -110,6 +110,7 @@
     "operator": {
       "After": "после",
       "Before": "до",
+      "Equals": "равно",
       "GreaterThan": "больше",
       "GreaterThanOrEqual": "больше или равно",
       "IContains": "содержит",
@@ -123,6 +124,7 @@
       "In": "в",
       "LessThan": "меньше",
       "LessThanOrEqual": "меньше или равно",
+      "NotEquals": "не равно",
       "NotIn": "не в"
     }
   },
@@ -151,6 +153,28 @@
     "Maximize": "Maximize",
     "Minimize": "Minimize",
     "Restore": "Restore"
+  },
+  "comp:BAIModelDeploymentNodes": {
+    "AreYouSureToDeleteDeployment": "Вы уверены, что хотите удалить развёртывание \"{{deploymentName}}\"? Это действие нельзя отменить.",
+    "CreatedAt": "Создано",
+    "CreatedUser": "Автор",
+    "CurrentRevisionID": "ID текущей ревизии",
+    "Delete": "Удалить",
+    "DeleteDeployment": "Удалить развёртывание",
+    "DeploymentDeleted": "Развёртывание удалено.",
+    "DeploymentID": "ID развёртывания",
+    "DomainName": "Домен",
+    "EndpointURL": "URL конечной точки",
+    "FailedToDeleteDeployment": "Не удалось удалить развёртывание.",
+    "Name": "Имя",
+    "OpenToPublic": "Открыто для всех",
+    "PreferredDomainName": "Предпочтительный домен",
+    "ProjectID": "ID проекта",
+    "Replicas": "Реплики",
+    "Status": "Статус",
+    "StrategyType": "Стратегия",
+    "Tags": "Теги",
+    "UpdatedAt": "Обновлено"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingFoldersWillBeUpdated": "Будут обновлены следующие папки.",

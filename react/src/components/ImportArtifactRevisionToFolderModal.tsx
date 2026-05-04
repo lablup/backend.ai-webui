@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import FolderCreateModal from './FolderCreateModal';
+import FolderCreateModalV2 from './FolderCreateModalV2';
 import { useToggle } from 'ahooks';
 import {
   Alert,
@@ -317,21 +317,10 @@ const ImportArtifactRevisionToFolderModal = ({
           </BAIFlex>
         </Form>
       </BAIModal>
-      <FolderCreateModal
+      <FolderCreateModalV2
         open={isOpenCreateModal}
         initialValidate={true}
-        initialValues={{
-          usage_mode: 'model',
-          type: 'project',
-          permission: 'ro',
-          cloneable: true,
-        }}
-        hiddenFormItems={[
-          'usage_mode_general',
-          'usage_mode_automount',
-          'type_user',
-          'permission_rw',
-        ]}
+        folderType="model_project"
         onRequestClose={(result) => {
           toggleIsOpenCreateModal();
           if (result) {

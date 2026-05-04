@@ -113,6 +113,7 @@
     "operator": {
       "After": "after",
       "Before": "before",
+      "Equals": "equals",
       "GreaterThan": "greater than",
       "GreaterThanOrEqual": "greater or equal",
       "IContains": "contains",
@@ -126,6 +127,7 @@
       "In": "in",
       "LessThan": "less than",
       "LessThanOrEqual": "less or equal",
+      "NotEquals": "not equals",
       "NotIn": "not in"
     }
   },
@@ -154,6 +156,28 @@
     "Maximize": "Maximize",
     "Minimize": "Minimize",
     "Restore": "Restore"
+  },
+  "comp:BAIModelDeploymentNodes": {
+    "AreYouSureToDeleteDeployment": "Are you sure you want to delete deployment \"{{deploymentName}}\"? This action cannot be undone.",
+    "CreatedAt": "Created At",
+    "CreatedUser": "Author",
+    "CurrentRevisionID": "Current Revision ID",
+    "Delete": "Delete",
+    "DeleteDeployment": "Delete Deployment",
+    "DeploymentDeleted": "Deployment deleted.",
+    "DeploymentID": "Deployment ID",
+    "DomainName": "Domain",
+    "EndpointURL": "Endpoint URL",
+    "FailedToDeleteDeployment": "Failed to delete deployment.",
+    "Name": "Name",
+    "OpenToPublic": "Open to Public",
+    "PreferredDomainName": "Preferred Domain",
+    "ProjectID": "Project ID",
+    "Replicas": "Replicas",
+    "Status": "Status",
+    "StrategyType": "Strategy",
+    "Tags": "Tags",
+    "UpdatedAt": "Updated At"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingFoldersWillBeUpdated": "The following folder(s) will be updated.",

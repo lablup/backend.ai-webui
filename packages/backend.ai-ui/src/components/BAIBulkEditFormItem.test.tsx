@@ -5,7 +5,7 @@ import { Form, FormInstance, Select } from 'antd';
 import React, { useEffect } from 'react';
 
 // Mock react-i18next
-jest.mock('react-i18next', () => ({
+vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string) => {
       const translations: Record<string, string> = {
@@ -340,7 +340,7 @@ describe('BAIBulkEditFormItem', () => {
     });
 
     it('should allow user selection in edit mode', async () => {
-      const onValuesChange = jest.fn();
+      const onValuesChange = vi.fn();
       const user = setupUser();
       render(
         <FormWrapper onValuesChange={onValuesChange}>
