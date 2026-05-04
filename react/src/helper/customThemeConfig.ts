@@ -113,18 +113,18 @@ export const loadCustomThemeConfig = () => {
       }
       if (
         _customTheme &&
-        process.env.NODE_ENV === 'development' &&
-        process.env.REACT_APP_THEME_COLOR
+        import.meta.env.DEV &&
+        import.meta.env.VITE_THEME_HEADER_COLOR
       ) {
         _.set(
           _customTheme,
           'light.components.Layout.headerBg',
-          process.env.REACT_APP_THEME_COLOR,
+          import.meta.env.VITE_THEME_HEADER_COLOR,
         );
         _.set(
           _customTheme,
           'dark.components.Layout.headerBg',
-          process.env.REACT_APP_THEME_COLOR,
+          import.meta.env.VITE_THEME_HEADER_COLOR,
         );
       }
 

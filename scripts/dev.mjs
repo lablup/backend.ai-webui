@@ -1,26 +1,11 @@
 #!/usr/bin/env node
-// Bridges THEME_HEADER_COLOR from .env.development.local into REACT_APP_THEME_COLOR,
-// then spawns concurrently with three children (tsc watch, Relay watch, CRA via Portless).
+// Spawns concurrently with three children (tsc watch, Relay watch, Vite via Portless).
+// The dev-time header color override is exposed to the React app via
+// VITE_THEME_HEADER_COLOR — set it in `.env.development.local` or the shell
+// and Vite's loadEnv() picks it up natively (no bridge needed).
 import { spawn, spawnSync } from 'node:child_process';
-import { existsSync, readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
 
 const env = { ...process.env };
-const envFile = resolve(process.cwd(), '.env.development.local');
-if (!env.REACT_APP_THEME_COLOR && existsSync(envFile)) {
-  for (const line of readFileSync(envFile, 'utf8').split('\n')) {
-    const trimmed = line.trim();
-    if (!trimmed || trimmed.startsWith('#')) continue;
-    const eq = trimmed.indexOf('=');
-    if (eq === -1) continue;
-    const key = trimmed.slice(0, eq).trim();
-    const value = trimmed.slice(eq + 1).trim().replace(/^['"]|['"]$/g, '');
-    if (key === 'THEME_HEADER_COLOR' && value) {
-      env.REACT_APP_THEME_COLOR = value;
-      break;
-    }
-  }
-}
 
 // Ensure the Portless daemon is running. Portless 0.10+ defaults the daemon
 // to port 443 which requires sudo; we override that to an unprivileged 1355
