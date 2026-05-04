@@ -1949,6 +1949,7 @@
     "Rank": "Rank",
     "SuccessfullyCreated": "Prometheus query preset has been successfully created.",
     "SuccessfullyDeleted": "Prometheus query preset has been successfully deleted.",
+    "SuccessfullyUpdated": "Prometheus query preset has been successfully updated.",
     "TimeWindow": "Time Window",
     "UpdatedAt": "Updated At"
   },

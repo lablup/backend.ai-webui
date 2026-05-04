@@ -8,11 +8,18 @@ import {
   PrometheusQueryPresetEditorModalFragment$data,
   PrometheusQueryPresetEditorModalFragment$key,
 } from '../__generated__/PrometheusQueryPresetEditorModalFragment.graphql';
+import { PrometheusQueryPresetEditorModalUpdateMutation } from '../__generated__/PrometheusQueryPresetEditorModalUpdateMutation.graphql';
 import BAIErrorBoundary from './BAIErrorBoundary';
+import PrometheusPresetPreview from './PrometheusPresetPreview';
 import { App, Form, FormInstance, Input, InputNumber, Select } from 'antd';
-import { BAIModal, BAIModalProps, useBAILogger } from 'backend.ai-ui';
+import {
+  BAIModal,
+  BAIModalProps,
+  toLocalId,
+  useBAILogger,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import React, { useDeferredValue, useRef } from 'react';
+import React, { Suspense, useDeferredValue, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   graphql,
@@ -47,7 +54,7 @@ interface PrometheusQueryPresetEditorModalProps extends Omit<
  * Build the form's initial values.
  * - Create mode: minimal defaults; required fields stay empty so the user is
  *   prompted to fill them.
- * - Edit mode (Sub-task 4): hydrated from the row fragment.
+ * - Edit mode: hydrated from the row fragment.
  */
 const getInitialValues = (
   preset: PrometheusQueryPresetEditorModalFragment$data | null,
@@ -163,14 +170,105 @@ const PrometheusQueryPresetEditorModal: React.FC<
       }
     `);
 
+  const [commitUpdateMutation, isInflightUpdate] =
+    useMutation<PrometheusQueryPresetEditorModalUpdateMutation>(graphql`
+      mutation PrometheusQueryPresetEditorModalUpdateMutation(
+        $id: ID!
+        $input: ModifyQueryDefinitionInput!
+      ) {
+        adminModifyPrometheusQueryPreset(id: $id, input: $input) {
+          preset {
+            id
+            name
+            description
+            rank
+            categoryId
+            metricName
+            queryTemplate
+            timeWindow
+            options {
+              filterLabels
+              groupLabels
+            }
+          }
+        }
+      }
+    `);
+
   const handleOk = () => {
     return formRef.current
       ?.validateFields()
       .then((values) => {
         if (preset) {
-          // Edit mode is implemented in Sub-task 4. Guard here so the modal
-          // does not silently drop a save in the meantime.
-          // TODO(needs-frontend): wire up edit mutation in FR-2451 sub-task 4
+          // Edit mode: compute diff and send only changed fields.
+          const initial = getInitialValues(preset);
+
+          // Build partial input containing only fields that differ from initial.
+          const input: Record<string, unknown> = {};
+
+          if (values.name !== initial.name) {
+            input.name = values.name;
+          }
+          if (values.description !== initial.description) {
+            input.description = values.description ?? null;
+          }
+          if (values.categoryId !== initial.categoryId) {
+            input.categoryId = values.categoryId ?? null;
+          }
+          if (values.rank !== initial.rank) {
+            input.rank = values.rank ?? 0;
+          }
+          if (values.metricName !== initial.metricName) {
+            input.metricName = values.metricName;
+          }
+          if (values.queryTemplate !== initial.queryTemplate) {
+            input.queryTemplate = values.queryTemplate;
+          }
+          if (values.timeWindow !== initial.timeWindow) {
+            input.timeWindow = values.timeWindow ?? null;
+          }
+
+          // For label arrays, compare element-by-element. If the user explicitly
+          // clears to [], we must send [] (not omit). If unchanged, omit.
+          const currentFilterLabels = values.filterLabels ?? [];
+          const initialFilterLabels = initial.filterLabels ?? [];
+          if (!_.isEqual(currentFilterLabels, initialFilterLabels)) {
+            input.options = {
+              ...(input.options as object | undefined),
+              filterLabels: currentFilterLabels,
+            };
+          }
+          const currentGroupLabels = values.groupLabels ?? [];
+          const initialGroupLabels = initial.groupLabels ?? [];
+          if (!_.isEqual(currentGroupLabels, initialGroupLabels)) {
+            input.options = {
+              ...(input.options as object | undefined),
+              groupLabels: currentGroupLabels,
+            };
+          }
+
+          commitUpdateMutation({
+            variables: {
+              id: toLocalId(preset.id),
+              input,
+            },
+            onCompleted: (_res, errors) => {
+              if (errors && errors.length > 0) {
+                const errorMsgList = _.map(errors, (error) => error.message);
+                for (const error of errorMsgList) {
+                  message.error(error);
+                }
+                // Keep modal open so the user can correct the input and retry
+                return;
+              }
+              message.success(t('prometheusQueryPreset.SuccessfullyUpdated'));
+              onRequestClose(true);
+            },
+            onError: (error) => {
+              message.error(error.message);
+              // Keep modal open so the user can correct the input and retry
+            },
+          });
           return;
         }
 
@@ -234,7 +332,7 @@ const PrometheusQueryPresetEditorModal: React.FC<
           : t('prometheusQueryPreset.CreatePreset')
       }
       okText={preset ? t('button.Save') : t('button.Create')}
-      confirmLoading={isInflightCreate}
+      confirmLoading={isInflightCreate || isInflightUpdate}
     >
       <BAIErrorBoundary>
         <Form
@@ -302,6 +400,13 @@ const PrometheusQueryPresetEditorModal: React.FC<
                 message: t('prometheusQueryPreset.QueryTemplateRequired'),
               },
             ]}
+            extra={
+              preset ? (
+                <Suspense fallback={null}>
+                  <PrometheusPresetPreview presetGlobalId={preset.id} />
+                </Suspense>
+              ) : undefined
+            }
           >
             <TextArea autoSize={{ minRows: 4, maxRows: 12 }} />
           </Form.Item>
