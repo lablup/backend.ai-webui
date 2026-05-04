@@ -17,9 +17,9 @@ The WebUI dev server runs under [Portless](https://github.com/vercel-labs/portle
 - Branch contains an `FR-XXXX` token → `http://fr-XXXX.localhost:1355` (e.g. `04-24-feat_fr-2701_...` → `fr-2701.localhost`).
 - Otherwise → `<branch>.<project>.localhost:1355` (Portless's default `run` form).
 
-To find the actual URL for a running instance, run `portless list` or check the `pnpm run dev` terminal output. To pin the React port (e.g. for an existing browser tab), use `PORT=9081 pnpm run dev`.
+To find the actual URL for a running instance, run `portless list` or check the `pnpm run dev` terminal output.
 
-If no dev server is running, tell the user to start it with `pnpm run dev` (requires Portless: `npm install -g portless`). `pnpm run wsproxy` runs separately on fixed port 5050 (not wrapped by Portless).
+If no dev server is running, tell the user to start it with `pnpm run dev` (requires Portless: `npm install -g portless`).
 
 ## API Endpoint & Credentials
 

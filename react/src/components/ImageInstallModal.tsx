@@ -88,6 +88,7 @@ const ImageInstallModal: React.FC<ImageInstallModalInterface> = ({
           resource_opts: {
             shmem,
           },
+          scaling_group: 'default',
         },
       };
 

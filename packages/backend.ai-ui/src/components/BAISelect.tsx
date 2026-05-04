@@ -95,7 +95,7 @@ const useStyles = createStyles(({ css, token }) => ({
 export interface BAISelectProps<
   ValueType = any,
   OptionType extends BaseOptionType | DefaultOptionType = DefaultOptionType,
-> extends SelectProps<ValueType, OptionType> {
+> extends Omit<SelectProps<ValueType, OptionType>, 'onSearch'> {
   ref?: React.RefObject<GetRef<typeof Select<ValueType, OptionType>> | null>;
   ghost?: boolean;
   autoSelectOption?:
@@ -172,26 +172,32 @@ function BAISelect<
     }
   };
 
+  const composedShowSearch = (() => {
+    if (selectProps.showSearch === false) return false;
+    const baseShowSearch = _.isObject(selectProps.showSearch)
+      ? selectProps.showSearch
+      : undefined;
+    const callerOnSearch = baseShowSearch?.onSearch;
+    if (!callerOnSearch && !searchAction) {
+      return baseShowSearch ?? true;
+    }
+    return {
+      ...baseShowSearch,
+      onSearch: (value: string) => {
+        callerOnSearch?.(value);
+        startTransition(async () => {
+          await searchAction?.(value);
+        });
+      },
+    };
+  })();
+
   return (
     <Tooltip title={tooltip}>
       <Select<ValueType, OptionType>
         {...selectProps}
         loading={isPending || selectProps.loading}
-        showSearch={
-          selectProps.showSearch === false
-            ? false
-            : {
-                ...(_.isObject(selectProps.showSearch)
-                  ? selectProps.showSearch
-                  : {}),
-                onSearch: async (value) => {
-                  _.get(selectProps.showSearch, 'onSearch')?.(value);
-                  startTransition(async () => {
-                    await searchAction?.(value);
-                  });
-                },
-              }
-        }
+        showSearch={composedShowSearch}
         ref={ref}
         className={classNames(
           selectProps.className,

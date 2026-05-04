@@ -134,6 +134,9 @@
     "Token": "Token",
     "TokenUpdatedSuccessfully": "Token updated successfully."
   },
+  "comp:BAIImageSelect": {
+    "SelectImage": "Επιλογή Εικόνας"
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}} Οι εκδόσεις εξαιρούνται.",
     "FailedToPullVersions": "Απέτυχε να τραβήξει εκδόσεις.",

@@ -540,7 +540,7 @@ SGLang은 다음 탭을 제공합니다: **Model Loading**, **Resource Memory**,
 
 자동 스케일링 규칙(Auto Scaling Rules)은 실시간 메트릭을 기반으로 모델 서비스의 레플리카 수를 자동으로 증감시킵니다. 이를 통해 낮은 사용량일 때는 리소스를 절약하고, 높은 사용량일 때는 요청 지연이나 실패를 방지할 수 있습니다.
 
-![](../images/auto_scaling_rules_v2.png)
+![](../images/auto_scaling_rules.png)
 
 규칙 목록에서는 다음을 제공합니다:
 

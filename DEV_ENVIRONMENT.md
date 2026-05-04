@@ -74,10 +74,10 @@ Each worktree picks up its own branch's FR number, so two worktrees on different
 Create `.env.development.local` (copy from `.env.development.local.sample`) and set:
 
 ```bash
-THEME_HEADER_COLOR=#7C3AED
+VITE_THEME_HEADER_COLOR=#7C3AED
 ```
 
-`scripts/dev.mjs` forwards this value as `REACT_APP_THEME_COLOR` to the CRA process, tinting the header so you can tell multiple instances apart at a glance.
+Vite auto-loads `VITE_*` vars from this file and exposes them on `import.meta.env` for the React app, tinting the header so you can tell multiple instances apart at a glance. You can also export `VITE_THEME_HEADER_COLOR` in the shell — same effect, no file edit needed.
 
 ## Storybook
 
@@ -93,7 +93,7 @@ Runs behind Portless on a fixed internal port 6006. Open the printed `*.localhos
 - **Service-worker error like `Script .../sw.js load failed`** — fixed in this branch (`index.html` now skips SW registration on `*.localhost`). If you still see it, unregister the stale SW via DevTools → Application → Service Workers.
 - **`already registered by a running process`** — Portless route from a previously killed dev server still exists. `dev.mjs` passes `--force` so this should self-heal; if not, run `pnpm exec portless proxy stop && pnpm exec portless proxy start -p 1355` once.
 - **HTTPS request hangs / `HTTP 000`** — TLS cert generation can fail for very long hostnames. Either rename the branch to include `FR-XXXX`, or switch the daemon to HTTP with `pnpm exec portless proxy start -p 1355 --no-tls`.
-- **Theme color not applied** — confirm `THEME_HEADER_COLOR` is set in `.env.development.local` (not just exported in the shell) and restart `pnpm run dev`. The bridge only runs on start.
+- **Theme color not applied** — confirm `VITE_THEME_HEADER_COLOR` is set in `.env.development.local` or the shell, and restart `pnpm run dev`. Vite reads env at server start, so existing dev servers won't pick up changes until restarted.
 - **Watchers seem stuck** — all three dev children (tsc, Relay watch, CRA) run under `concurrently` with `--kill-others`; Ctrl+C tears them down together.
 
 ## Commands reference

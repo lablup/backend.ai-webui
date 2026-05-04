@@ -11,7 +11,6 @@ import CreatePermissionModal from './CreatePermissionModal';
 import { App, Tag } from 'antd';
 import {
   BAIButton,
-  BAIDeleteConfirmModal,
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
@@ -59,15 +58,11 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { message } = App.useApp();
+  const { message, modal } = App.useApp();
   const { logger } = useBAILogger();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [editingPermission, setEditingPermission] =
     useState<EditingPermission | null>(null);
-  const [deletingPermission, setDeletingPermission] = useState<{
-    id: string;
-    label: string;
-  } | null>(null);
   const [isPendingRefetch, startRefetchTransition] = useTransition();
 
   const [queryParams, setQueryParams] = useQueryStates(
@@ -233,7 +228,33 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
     scopeType: string;
   }) => {
     const permissionLabel = `${t(`rbac.types.${record.entityType}`, { defaultValue: record.entityType })} - ${t(`rbac.operations.${record.operation}`, { defaultValue: record.operation })} (${t(`rbac.types.${record.scopeType}`, { defaultValue: record.scopeType })})`;
-    setDeletingPermission({ id: toLocalId(record.id), label: permissionLabel });
+    const localId = toLocalId(record.id);
+    modal.confirm({
+      title: t('rbac.RemovePermission'),
+      content: (
+        <BAIFlex direction="column" align="stretch" gap="xs">
+          <span>{t('rbac.ConfirmDeletePermissionWithDetail')}</span>
+          <ul style={{ margin: 0, paddingInlineStart: 20 }}>
+            <li>{permissionLabel}</li>
+          </ul>
+        </BAIFlex>
+      ),
+      okText: t('rbac.RemovePermission'),
+      okButtonProps: { danger: true },
+      onOk: () =>
+        mutateDeletePermission({
+          input: { id: localId },
+        })
+          .then(() => {
+            message.success(t('rbac.PermissionRemoved'));
+            handleRefresh();
+            onPermissionChange?.();
+          })
+          .catch((error) => {
+            logger.error('Failed to delete permission', error);
+            message.error(error?.message || t('general.ErrorOccurred'));
+          }),
+    });
   };
 
   return (
@@ -388,7 +409,7 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
                     },
                     {
                       key: 'delete',
-                      title: t('rbac.DeletePermission'),
+                      title: t('rbac.RemovePermission'),
                       icon: <BAITrashBinIcon />,
                       type: 'danger',
                       onClick: () => handleDelete(record),
@@ -432,40 +453,6 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
             onPermissionChange?.();
           }
         }}
-      />
-      <BAIDeleteConfirmModal
-        open={!!deletingPermission}
-        items={
-          deletingPermission
-            ? [
-                {
-                  key: deletingPermission.id,
-                  label: deletingPermission.label,
-                },
-              ]
-            : []
-        }
-        title={t('rbac.DeletePermission')}
-        description={t('rbac.ConfirmDeletePermissionWithDetail')}
-        onOk={() => {
-          if (deletingPermission) {
-            return mutateDeletePermission({
-              input: { id: deletingPermission.id },
-            })
-              .then(() => {
-                message.success(t('rbac.PermissionDeleted'));
-                handleRefresh();
-                onPermissionChange?.();
-                setDeletingPermission(null);
-              })
-              .catch((error) => {
-                logger.error('Failed to delete permission', error);
-                message.error(error?.message || t('general.ErrorOccurred'));
-                setDeletingPermission(null);
-              });
-          }
-        }}
-        onCancel={() => setDeletingPermission(null)}
       />
     </>
   );

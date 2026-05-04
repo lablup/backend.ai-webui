@@ -11,6 +11,7 @@ import { ModelStoreListPageV2_ModelCardV2Fragment$key } from '../__generated__/M
 import AuthorIcon from '../components/AuthorIcon';
 import ModelBrandIcon from '../components/ModelBrandIcon';
 import ModelCardDrawer from '../components/ModelCardDrawer';
+import StorageHostFilterInput from '../components/StorageHostFilterInput';
 import TextHighlighter from '../components/TextHighlighter';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useModelStoreProject } from '../hooks/useModelStoreProject';
@@ -64,11 +65,28 @@ const parseSortValue = (value: string) => {
 };
 
 // Walk the filter tree (including AND/OR branches) and return the first
-// `name.iContains` value found, for use as a highlight keyword.
+// name string-match value found (across iContains/iEquals/equals/contains),
+// for use as a highlight keyword.
+const NAME_KEYWORD_OPERATORS = [
+  'iContains',
+  'iEquals',
+  'contains',
+  'equals',
+] as const;
+
 const extractFirstNameKeyword = (filter: GraphQLFilter | undefined): string => {
   if (!filter) return '';
-  const name = (filter as { name?: { iContains?: string | null } }).name;
-  if (name?.iContains) return name.iContains;
+  const name = (
+    filter as {
+      name?: Partial<Record<(typeof NAME_KEYWORD_OPERATORS)[number], string>>;
+    }
+  ).name;
+  if (name) {
+    for (const op of NAME_KEYWORD_OPERATORS) {
+      const v = name[op];
+      if (v) return v;
+    }
+  }
   const branches = [
     (filter as { AND?: GraphQLFilter | GraphQLFilter[] }).AND,
     (filter as { OR?: GraphQLFilter | GraphQLFilter[] }).OR,
@@ -401,10 +419,24 @@ const ModelStoreListPageV2: React.FC = () => {
             }}
             filterProperties={[
               {
-                fixedOperator: 'iContains',
                 key: 'name',
                 propertyLabel: t('modelStore.ModelName'),
                 type: 'string',
+              },
+              {
+                key: 'domainName',
+                propertyLabel: t('adminModelCard.Domain'),
+                type: 'string',
+              },
+              {
+                key: 'storageHost',
+                propertyLabel: t('import.StorageHost'),
+                type: 'string',
+                operators: ['equals', 'notEquals'],
+                defaultOperator: 'equals',
+                renderInput: ({ onConfirm }) => (
+                  <StorageHostFilterInput onConfirm={onConfirm} />
+                ),
               },
             ]}
           />

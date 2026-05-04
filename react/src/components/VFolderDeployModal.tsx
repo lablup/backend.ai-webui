@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import type { DeploymentPresetDetailContentFragment$key } from '../__generated__/DeploymentPresetDetailContentFragment.graphql';
 import { VFolderDeployModalEndpointPollQuery } from '../__generated__/VFolderDeployModalEndpointPollQuery.graphql';
 import { VFolderDeployModalMutation } from '../__generated__/VFolderDeployModalMutation.graphql';
 import { VFolderDeployModalQuery } from '../__generated__/VFolderDeployModalQuery.graphql';
@@ -9,8 +10,20 @@ import { useWebUINavigate } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import useDeploymentLauncher from '../hooks/useDeploymentLauncher';
-import { EllipsisOutlined } from '@ant-design/icons';
-import { App, Dropdown, Form, Space, Typography, theme } from 'antd';
+import DeploymentPresetDetailContent from './DeploymentPresetDetailContent';
+import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
+import { EllipsisOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import {
+  App,
+  Button,
+  Dropdown,
+  Form,
+  Skeleton,
+  Space,
+  Tooltip,
+  Typography,
+  theme,
+} from 'antd';
 import type { DefaultOptionType } from 'antd/es/select';
 import {
   BAIButton,
@@ -121,6 +134,22 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
                 description
                 rank
                 runtimeVariantId
+                runtimeVariant {
+                  name
+                }
+                execution {
+                  imageId
+                  startupCommand
+                }
+                cluster {
+                  clusterMode
+                  clusterSize
+                }
+                deploymentDefaults {
+                  openToPublic
+                  replicaCount
+                }
+                ...DeploymentPresetDetailContentFragment
               }
             }
           }
@@ -142,17 +171,7 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
     return (
       deploymentRevisionPresets?.edges
         ?.map((edge) => edge?.node)
-        .filter(
-          (
-            node,
-          ): node is {
-            readonly id: string;
-            readonly name: string;
-            readonly description: string | null;
-            readonly rank: number;
-            readonly runtimeVariantId: string;
-          } => node != null,
-        ) ?? []
+        .filter((node): node is NonNullable<typeof node> => node != null) ?? []
     );
   }, [deploymentRevisionPresets]);
 
@@ -268,6 +287,8 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
   const [userSelectedPresetId, setUserSelectedPresetId] = useState<
     string | undefined
   >(undefined);
+  const [presetDetailFrgmt, setPresetDetailFrgmt] =
+    useState<DeploymentPresetDetailContentFragment$key | null>(null);
   const effectivePresetId =
     userSelectedPresetId ??
     (availablePresets[0]?.id ? toLocalId(availablePresets[0].id) : undefined);
@@ -365,30 +386,46 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
           tooltip={t('modelStore.PresetTooltip')}
           required
         >
-          <BAISelect
-            value={effectivePresetId}
-            onChange={(value: string) => setUserSelectedPresetId(value)}
-            options={presetOptions}
-            disabled={hasNoPresets}
-            placeholder={
-              hasNoPresets ? t('modelStore.NoCompatiblePresets') : undefined
-            }
-            optionRender={(option) => (
-              <BAIFlex direction="column" align="start">
-                {option.label}
-                {option.data.description && (
-                  <Typography.Text
-                    type="secondary"
-                    style={{ fontSize: token.fontSizeSM }}
-                    ellipsis
-                  >
-                    {option.data.description}
-                  </Typography.Text>
-                )}
-              </BAIFlex>
-            )}
-            style={{ width: '100%' }}
-          />
+          <BAIFlex direction="row" gap="xs">
+            <BAISelect
+              value={effectivePresetId}
+              onChange={(value: string) => setUserSelectedPresetId(value)}
+              options={presetOptions}
+              disabled={hasNoPresets}
+              placeholder={
+                hasNoPresets ? t('modelStore.NoCompatiblePresets') : undefined
+              }
+              optionRender={(option) => (
+                <BAIFlex direction="column" align="start">
+                  {option.label}
+                  {option.data.description && (
+                    <Typography.Text
+                      type="secondary"
+                      style={{ fontSize: token.fontSizeSM }}
+                      ellipsis
+                    >
+                      {option.data.description}
+                    </Typography.Text>
+                  )}
+                </BAIFlex>
+              )}
+              style={{ flex: 1 }}
+            />
+            <Space.Compact>
+              <Tooltip title={t('modelService.DeploymentPresetDetail')}>
+                <Button
+                  icon={<InfoCircleOutlined />}
+                  disabled={!effectivePresetId}
+                  onClick={() => {
+                    const node = deploymentRevisionPresets?.edges?.find(
+                      (e) => toLocalId(e?.node?.id ?? '') === effectivePresetId,
+                    )?.node;
+                    if (node) setPresetDetailFrgmt(node);
+                  }}
+                />
+              </Tooltip>
+            </Space.Compact>
+          </BAIFlex>
         </Form.Item>
         <Form.Item
           label={t('modelStore.ResourceGroup')}
@@ -403,6 +440,20 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
           />
         </Form.Item>
       </Form>
+      <BAIModal
+        open={!!presetDetailFrgmt}
+        centered
+        title={t('modelService.DeploymentPresetDetail')}
+        onCancel={() => setPresetDetailFrgmt(null)}
+        destroyOnHidden
+        footer={null}
+      >
+        <ErrorBoundaryWithNullFallback>
+          <Suspense fallback={<Skeleton active paragraph={{ rows: 6 }} />}>
+            <DeploymentPresetDetailContent presetFrgmt={presetDetailFrgmt} />
+          </Suspense>
+        </ErrorBoundaryWithNullFallback>
+      </BAIModal>
       <BAIFlex justify="end" gap="sm">
         <BAIButton onClick={onClose}>{t('button.Cancel')}</BAIButton>
         {supportsQuickDeploy && vfolderId ? (
@@ -432,10 +483,34 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
                     key: 'configure',
                     label: t('modelStore.QuickDeployDetailed'),
                     onClick: () => {
+                      const selectedPreset = availablePresets.find(
+                        (p) => toLocalId(p.id) === effectivePresetId,
+                      );
                       openLauncher({
                         modelFolderId: vfolderId,
                         resourceGroup: effectiveResourceGroup,
                         revisionPresetId: effectivePresetId,
+                        launcherFormValues: {
+                          imageId:
+                            selectedPreset?.execution?.imageId ?? undefined,
+                          startCommand:
+                            selectedPreset?.execution?.startupCommand ??
+                            undefined,
+                          runtimeVariant:
+                            selectedPreset?.runtimeVariant?.name ?? undefined,
+                          runtimeVariantId:
+                            selectedPreset?.runtimeVariantId ?? undefined,
+                          clusterMode:
+                            selectedPreset?.cluster?.clusterMode ?? undefined,
+                          clusterSize:
+                            selectedPreset?.cluster?.clusterSize ?? undefined,
+                          desiredReplicaCount:
+                            selectedPreset?.deploymentDefaults?.replicaCount ??
+                            undefined,
+                          openToPublic:
+                            selectedPreset?.deploymentDefaults?.openToPublic ??
+                            undefined,
+                        },
                       });
                     },
                   },

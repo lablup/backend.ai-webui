@@ -12,6 +12,7 @@ import {
   QuestionCircleOutlined,
 } from '@ant-design/icons';
 import {
+  Alert,
   App,
   Button,
   DatePicker,
@@ -24,6 +25,7 @@ import {
 } from 'antd';
 import {
   BAICard,
+  BAIConfirmModalWithInput,
   BAIFetchKeyButton,
   BAIFlex,
   BAIModal,
@@ -253,8 +255,13 @@ const DeploymentAccessTokensTable: React.FC<
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { message, modal } = App.useApp();
+  const { message } = App.useApp();
+  const { token } = theme.useToken();
   const { logger } = useBAILogger();
+  const [deletingToken, setDeletingToken] = useState<{
+    id: string;
+    token: string;
+  } | null>(null);
 
   const { deployment: listData } =
     useLazyLoadQuery<DeploymentAccessTokensTabListQuery>(
@@ -301,100 +308,125 @@ const DeploymentAccessTokensTable: React.FC<
     `);
 
   return (
-    <BAITable<AccessTokenNode>
-      scroll={{ x: 'max-content' }}
-      rowKey="id"
-      loading={isPendingRefetch || isDeletingToken}
-      dataSource={accessTokens}
-      pagination={false}
-      columns={[
-        {
-          key: 'token',
-          title: t('deployment.accessToken.Token'),
-          dataIndex: 'token',
-          render: (_text, row) => {
-            if (!row) return '-';
-            return (
-              <BAINameActionCell
-                title={
-                  <BAIText
-                    copyable={{ text: row.token }}
-                    ellipsis
-                    code
-                    style={{ maxWidth: 120 }}
-                  >
-                    {row.token}
-                  </BAIText>
-                }
-                showActions="always"
-                actions={[
-                  {
-                    key: 'delete',
-                    title: t('deployment.accessToken.Delete'),
-                    icon: <DeleteOutlined />,
-                    type: 'danger',
-                    disabled: isDeleteDisabled,
-                    onClick: () => {
-                      modal.confirm({
-                        title: t('deployment.accessToken.Delete'),
-                        content: t('deployment.accessToken.DeleteConfirm'),
-                        okText: t('button.Delete'),
-                        okButtonProps: { danger: true },
-                        onOk: () => {
-                          commitDelete({
-                            variables: {
-                              input: {
-                                id: toLocalId(row.id) ?? row.id,
-                              },
-                            },
-                            onCompleted: (_res, errors) => {
-                              if (errors && errors.length > 0) {
-                                logger.error(errors[0]);
-                                message.error(
-                                  errors[0]?.message ??
-                                    t('dialog.ErrorOccurred'),
-                                );
-                                return;
-                              }
-                              message.success(
-                                t('deployment.accessToken.Deleted'),
-                              );
-                              onAfterDelete();
-                            },
-                            onError: (err) => {
-                              logger.error(err);
-                              message.error(
-                                err.message ?? t('dialog.ErrorOccurred'),
-                              );
-                            },
-                          });
-                        },
-                      });
+    <>
+      <BAITable<AccessTokenNode>
+        scroll={{ x: 'max-content' }}
+        rowKey="id"
+        loading={isPendingRefetch || isDeletingToken}
+        dataSource={accessTokens}
+        pagination={false}
+        resizable
+        columns={[
+          {
+            key: 'token',
+            title: t('deployment.accessToken.Token'),
+            dataIndex: 'token',
+            render: (_text, row) => {
+              if (!row) return '-';
+              return (
+                <BAINameActionCell
+                  title={
+                    <BAIText
+                      copyable={{ text: row.token }}
+                      ellipsis
+                      style={{ maxWidth: 200 }}
+                    >
+                      {row.token}
+                    </BAIText>
+                  }
+                  showActions="always"
+                  actions={[
+                    {
+                      key: 'delete',
+                      title: t('deployment.accessToken.Delete'),
+                      icon: <DeleteOutlined />,
+                      type: 'danger',
+                      disabled: isDeleteDisabled,
+                      onClick: () =>
+                        setDeletingToken({
+                          id: row.id,
+                          token: row.token ?? '',
+                        }),
                     },
-                  },
-                ]}
-              />
-            );
+                  ]}
+                />
+              );
+            },
           },
-        },
-        {
-          key: 'createdAt',
-          title: t('deployment.CreatedAt'),
-          dataIndex: 'createdAt',
-          render: (_text, row) =>
-            row?.createdAt ? dayjs(row.createdAt).format('ll LT') : '-',
-        },
-        {
-          key: 'expiresAt',
-          title: t('deployment.accessToken.Expiration'),
-          dataIndex: 'expiresAt',
-          render: (_text, row) =>
-            row?.expiresAt
-              ? dayjs(row.expiresAt).format('ll LT')
-              : t('deployment.accessToken.NoExpiration'),
-        },
-      ]}
-    />
+          {
+            key: 'createdAt',
+            title: t('deployment.CreatedAt'),
+            dataIndex: 'createdAt',
+            render: (_text, row) =>
+              row?.createdAt ? dayjs(row.createdAt).format('ll LT') : '-',
+          },
+          {
+            key: 'expiresAt',
+            title: t('deployment.accessToken.Expiration'),
+            dataIndex: 'expiresAt',
+            render: (_text, row) =>
+              row?.expiresAt
+                ? dayjs(row.expiresAt).format('ll LT')
+                : t('deployment.accessToken.NoExpiration'),
+          },
+        ]}
+      />
+      <BAIConfirmModalWithInput
+        open={!!deletingToken}
+        title={t('deployment.accessToken.Delete')}
+        content={
+          <BAIFlex
+            direction="column"
+            gap="md"
+            align="stretch"
+            style={{ marginBottom: token.marginXS, width: '100%' }}
+          >
+            <Alert
+              type="warning"
+              title={t('dialog.warning.DeleteForeverDesc')}
+              style={{ width: '100%' }}
+            />
+            <BAIFlex>
+              <Typography.Text style={{ marginRight: token.marginXXS }}>
+                {t('data.folders.TypeToConfirmDeleteForever')}
+              </Typography.Text>
+              (
+              <Typography.Text code>
+                {t('data.folders.DeleteForeverConfirmText')}
+              </Typography.Text>
+              )
+            </BAIFlex>
+          </BAIFlex>
+        }
+        confirmText={t('data.folders.DeleteForeverConfirmText')}
+        inputProps={{ placeholder: t('data.folders.DeleteForeverConfirmText') }}
+        okText={t('button.Delete')}
+        okButtonProps={{ loading: isDeletingToken }}
+        onOk={() => {
+          if (!deletingToken) return;
+          commitDelete({
+            variables: {
+              input: { id: toLocalId(deletingToken.id) ?? deletingToken.id },
+            },
+            onCompleted: (_res, errors) => {
+              if (errors && errors.length > 0) {
+                logger.error(errors[0]);
+                message.error(errors[0]?.message ?? t('dialog.ErrorOccurred'));
+                return;
+              }
+              message.success(t('deployment.accessToken.Deleted'));
+              setDeletingToken(null);
+              onAfterDelete();
+            },
+            onError: (err) => {
+              logger.error(err);
+              message.error(err.message ?? t('dialog.ErrorOccurred'));
+            },
+          });
+        }}
+        onCancel={() => setDeletingToken(null)}
+      />
+    </>
   );
 };
 

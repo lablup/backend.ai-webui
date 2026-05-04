@@ -5,6 +5,7 @@
 import { DeploymentConfigurationSectionQuery } from '../__generated__/DeploymentConfigurationSectionQuery.graphql';
 import { useWebUINavigate } from '../hooks';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
+import FolderLink from './FolderLink';
 import SourceCodeView from './SourceCodeView';
 import {
   CheckOutlined,
@@ -58,7 +59,7 @@ type ModelDef = {
 
 const descriptionsProps = {
   bordered: true,
-  column: { xxl: 3, xl: 2, lg: 2, md: 1, sm: 1, xs: 1 },
+  column: { xs: 1, sm: 1, md: 2, lg: 2, xl: 2, xxl: 2 },
 } as const;
 
 const renderFallback = () => (
@@ -220,7 +221,6 @@ const DeploymentRevisionInfoContent: React.FC<{
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
-
   const currentRevision = deployment?.currentRevision;
   const deployingRevision = deployment?.deployingRevision;
 
@@ -250,13 +250,21 @@ const DeploymentRevisionInfoContent: React.FC<{
       label: t('deployment.ModelFolder'),
       children: mountConfig?.vfolder?.name ? (
         <BAIFlex direction="column" align="start">
-          <Typography.Text>{mountConfig.vfolder.name}</Typography.Text>
+          <FolderLink
+            folderId={toLocalId(mountConfig.vfolder.id) ?? ''}
+            folderName={mountConfig.vfolder.name}
+            showIcon
+          />
           {mountConfig.mountDestination && (
             <Typography.Text type="secondary">
               {mountConfig.mountDestination}
             </Typography.Text>
           )}
         </BAIFlex>
+      ) : mountConfig?.vfolderId ? (
+        <Typography.Text type="secondary">
+          {mountConfig.vfolderId}
+        </Typography.Text>
       ) : (
         renderFallback()
       ),

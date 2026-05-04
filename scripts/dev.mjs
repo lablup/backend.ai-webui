@@ -1,26 +1,11 @@
 #!/usr/bin/env node
-// Bridges THEME_HEADER_COLOR from .env.development.local into REACT_APP_THEME_COLOR,
-// then spawns concurrently with three children (tsc watch, Relay watch, CRA via Portless).
+// Spawns concurrently with three children (tsc watch, Relay watch, Vite via Portless).
+// The dev-time header color override is exposed to the React app via
+// VITE_THEME_HEADER_COLOR — set it in `.env.development.local` or the shell
+// and Vite's loadEnv() picks it up natively (no bridge needed).
 import { spawn, spawnSync } from 'node:child_process';
-import { existsSync, readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
 
 const env = { ...process.env };
-const envFile = resolve(process.cwd(), '.env.development.local');
-if (!env.REACT_APP_THEME_COLOR && existsSync(envFile)) {
-  for (const line of readFileSync(envFile, 'utf8').split('\n')) {
-    const trimmed = line.trim();
-    if (!trimmed || trimmed.startsWith('#')) continue;
-    const eq = trimmed.indexOf('=');
-    if (eq === -1) continue;
-    const key = trimmed.slice(0, eq).trim();
-    const value = trimmed.slice(eq + 1).trim().replace(/^['"]|['"]$/g, '');
-    if (key === 'THEME_HEADER_COLOR' && value) {
-      env.REACT_APP_THEME_COLOR = value;
-      break;
-    }
-  }
-}
 
 // Ensure the Portless daemon is running. Portless 0.10+ defaults the daemon
 // to port 443 which requires sudo; we override that to an unprivileged 1355
@@ -40,14 +25,29 @@ spawnSync('portless', proxyArgs, { stdio: 'inherit' });
 const portFlag = process.env.PORT ? `--app-port ${process.env.PORT} ` : '';
 delete env.PORT; // Avoid leaking to portless / CRA before Portless reassigns it.
 
-// If the current branch contains an FR-XXXX issue number, use that as the
-// portless app name (e.g. `https://fr-2701.localhost:1355`). This avoids the
-// long branch-prefixed hostnames that break `portless run` HTTPS cert
-// generation. Falls back to `portless run` (auto-derived) when no issue
-// number is found.
+// Decide the portless app name (`https://<name>.localhost:1355`).
+// Priority:
+//   1. PORTLESS_APP_NAME env var (caller-provided; sanitized here so callers
+//      can pass arbitrary strings — e.g. a Claude Code session name — without
+//      worrying about subdomain validity).
+//   2. FR-XXXX issue number in the current git branch (e.g. `fr-2701`).
+//   3. `portless run` (auto-derived from branch — long branch-prefixed
+//      hostnames may break Portless's HTTPS cert generation, so prefer 1 or 2).
+function sanitizeAppName(raw) {
+  if (!raw) return null;
+  const slug = raw
+    .toString()
+    .toLowerCase()
+    .replace(/[^a-z0-9-]+/g, '-')
+    .replace(/-{2,}/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 40);
+  return slug || null;
+}
 const branch = spawnSync('git', ['branch', '--show-current'], { encoding: 'utf8' }).stdout?.trim() || '';
 const issueMatch = branch.match(/(?:^|[-_/])(fr-?\d+)/i);
-const appName = issueMatch ? issueMatch[1].toLowerCase().replace(/^fr/, 'fr-').replace(/-{2,}/g, '-') : null;
+const branchAppName = issueMatch ? issueMatch[1].toLowerCase().replace(/^fr/, 'fr-').replace(/-{2,}/g, '-') : null;
+const appName = sanitizeAppName(process.env.PORTLESS_APP_NAME) ?? branchAppName;
 const portlessSpec = appName
   ? `portless ${appName} --force ${portFlag}`
   : `portless run --force ${portFlag}`;

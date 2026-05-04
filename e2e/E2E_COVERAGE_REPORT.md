@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-04-23
+> **Last Updated:** 2026-04-28
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -12,7 +12,7 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 261 / 408 features covered (64%)**
+**Overall (in-scope routes): 293 / 441 features covered (66%)**
 
 | Page              | Route                                  | Features | Covered | Status  |
 | ----------------- | -------------------------------------- | :------: | :-----: | :-----: |
@@ -47,7 +47,8 @@
 | Chat              | `/chat/:id?`                           |    6     |    6    | ✅ 100% |
 | Plugin System     | (config-based)                         |    12    |   12    | ✅ 100% |
 | RBAC Management   | `/rbac`                                |    22    |   21    | 🔶 95%  |
-| **Total**         |                                        | **408**  | **261** | **64%** |
+| Auto Scaling Rule Preset | `/admin-serving?tab=auto-scaling-rule` | 33 | 32 | 🔶 97% |
+| **Total**         |                                        | **441**  | **293** | **66%** |
 
 ---
 
@@ -997,6 +998,86 @@
 
 ---
 
+### 29. Admin Serving - Auto Scaling Rule Preset (`/admin-serving?tab=auto-scaling-rule`)
+
+**Test files:** [`e2e/auto-scaling-rule-preset/preset-crud.spec.ts`](auto-scaling-rule-preset/preset-crud.spec.ts), [`e2e/auto-scaling-rule-preset/preset-filter-sort.spec.ts`](auto-scaling-rule-preset/preset-filter-sort.spec.ts), [`e2e/auto-scaling-rule-preset/preset-integration.spec.ts`](auto-scaling-rule-preset/preset-integration.spec.ts), [`e2e/auto-scaling-rule-preset/preset-table-settings.spec.ts`](auto-scaling-rule-preset/preset-table-settings.spec.ts)
+
+**Requires:** Superadmin login, `prometheus-auto-scaling-rule` feature flag (manager ≥ 26.4.0)
+**Primary action:** "Create Preset" → `AutoScalingRulePresetModal`
+**Row actions (via hover):** Edit (pencil icon), Delete (trash icon) → `BAIConfirmModalWithInput`
+
+#### Preset List
+
+| Feature                                                             | Status | Test                                                                                               |
+| ------------------------------------------------------------------- | ------ | -------------------------------------------------------------------------------------------------- |
+| Tab visibility and toolbar (search, create button, refresh)         | ✅     | `Superadmin can view the Auto Scaling Rule tab with all toolbar elements and table columns`        |
+| Preset list pagination                                              | ✅     | `Superadmin can see pagination controls on the preset list`                                        |
+
+#### Create Preset
+
+| Feature                                  | Status | Test                                                                                 |
+| ---------------------------------------- | ------ | ------------------------------------------------------------------------------------ |
+| Open Create Preset modal with all fields | ✅     | `Superadmin can open the Create Preset modal with all form fields`                   |
+| Create with required fields only         | ✅     | `Superadmin can create a new preset with only required fields`                       |
+| Create with all fields                   | ✅     | `Superadmin can create a new preset with all fields populated`                       |
+| Validation: Name required                | ✅     | `Superadmin cannot create a preset without a Name`                                   |
+| Validation: Metric Name required         | ✅     | `Superadmin cannot create a preset without a Metric Name`                            |
+| Validation: Query Template required      | ✅     | `Superadmin cannot create a preset without a Query Template`                         |
+| Cancel Create modal                      | ✅     | `Superadmin can cancel the Create Preset modal without creating anything`             |
+| Duplicate name rejected                  | 🚧     | Skipped: `Superadmin cannot create a preset with a duplicate name`                   |
+
+#### Edit Preset
+
+| Feature                                           | Status | Test                                                                                             |
+| ------------------------------------------------- | ------ | ------------------------------------------------------------------------------------------------ |
+| Open Edit modal with pre-filled values & preview  | ✅     | `Superadmin can open the Edit Preset modal with pre-filled values and live preview`              |
+| Update Metric Name                                | ✅     | `Superadmin can update the Metric Name of an existing preset`                                    |
+| Update Time Window                                | ✅     | `Superadmin can update the Time Window of an existing preset`                                    |
+| Add Filter Labels and Group Labels                | ✅     | `Superadmin can add Filter Labels and Group Labels when editing a preset`                        |
+| Validation: Name required                         | ✅     | `Superadmin cannot save an edited preset without a Name`                                         |
+| Validation: Metric Name required                  | ✅     | `Superadmin cannot save an edited preset without a Metric Name`                                  |
+| Cancel Edit modal                                 | ✅     | `Superadmin can cancel the Edit Preset modal without saving changes`                             |
+
+#### Delete Preset
+
+| Feature                              | Status | Test                                                                                         |
+| ------------------------------------ | ------ | -------------------------------------------------------------------------------------------- |
+| Delete with exact name confirmation  | ✅     | `Superadmin can delete a preset by typing its exact name in the confirmation modal`          |
+| Delete blocked by wrong confirmation | ✅     | `Superadmin cannot delete a preset with an incorrect confirmation string`                    |
+| Cancel delete confirmation           | ✅     | `Superadmin can cancel the delete confirmation modal without deleting the preset`            |
+
+#### Filter & Sort
+
+| Feature                                | Status | Test                                                                                     |
+| -------------------------------------- | ------ | ---------------------------------------------------------------------------------------- |
+| Filter presets by name                 | ✅     | `Superadmin can filter presets by name using the property filter bar`                    |
+| Empty state when no presets match      | ✅     | `Superadmin sees an empty table when no presets match the filter`                        |
+| Clear active filter                    | ✅     | `Superadmin can clear an active filter to restore the full list`                         |
+| Sort by Name ascending                 | ✅     | `Superadmin can sort presets by Name in ascending order`                                 |
+| Sort by Name descending                | ✅     | `Superadmin can sort presets by Name in descending order`                                |
+| Sort by Created At (hidden column)     | ✅     | `Superadmin can sort presets by Created At after enabling the hidden column`             |
+| Sort by Updated At (hidden column)     | ✅     | `Superadmin can sort presets by Updated At after enabling the hidden column`             |
+
+#### Table Settings
+
+| Feature                                      | Status | Test                                                                                         |
+| -------------------------------------------- | ------ | -------------------------------------------------------------------------------------------- |
+| Show hidden Created At / Updated At columns  | ✅     | `Superadmin can show the hidden Created At and Updated At columns via table settings`        |
+| Hide columns after enabling                  | ✅     | `Superadmin can hide the Created At and Updated At columns after enabling them`              |
+| Refresh preset list                          | ✅     | `Superadmin can refresh the preset list using the refresh button`                            |
+| Copy Query Template via copy icon            | ✅     | `Superadmin can copy the Query Template text from the table row via copy icon`               |
+
+#### Integration
+
+| Feature                                                          | Status | Test                                                                                                           |
+| ---------------------------------------------------------------- | ------ | -------------------------------------------------------------------------------------------------------------- |
+| Preset appears in Auto Scaling Rule Editor Prometheus dropdown   | ✅     | `Superadmin can find a newly created preset in the auto-scaling rule editor Prometheus dropdown`               |
+| Metric Name auto-filled when selecting preset with Time Window   | ✅     | `Superadmin sees Metric Name auto-filled when selecting a preset with Time Window in the editor`               |
+
+**Coverage: 🔶 32/33 features (1 skipped)**
+
+---
+
 ## Visual Regression Tests
 
 Visual regression tests exist for most pages but only capture screenshots, not functional behavior.
@@ -1134,6 +1215,7 @@ To efficiently build new E2E tests, these POMs should be created:
 | `/chat/:id?`                  |        ✅        |      ✅      |    -     |
 | App Launcher (modal)          |        🔶        |      ❌      |    -     |
 | Plugin System (config-based)  |        ✅        |      ❌      |    -     |
+| `/admin-serving?tab=auto-scaling-rule` | 🔶      |      ❌      |    -     |
 
 ---
 

@@ -212,12 +212,6 @@ const DeploymentRevisionHistoryTab: React.FC<
       { fetchKey, fetchPolicy: 'network-only' },
     );
 
-  // Use the dedicated `activateDeploymentRevision` mutation rather than
-  // the generic `updateModelDeployment` so the server can apply the
-  // deployment's policy and surface the previous/next revision ids in
-  // the payload. Both `deploymentId` and `revisionId` are typed as `ID!`
-  // in the schema but are parsed as UUIDs server-side, so pass the
-  // local-id form (consistent with the rest of this PR).
   const [commitActivate] =
     useMutation<DeploymentRevisionHistoryTabActivateMutation>(graphql`
       mutation DeploymentRevisionHistoryTabActivateMutation(

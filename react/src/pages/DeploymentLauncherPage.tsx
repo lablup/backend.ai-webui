@@ -231,12 +231,6 @@ const DeploymentLauncherPageLayout: React.FC<
     runtimeVariantList.map((n) => [n.name, n]),
   );
 
-  // Track form dirtiness to guard cancel with a confirm dialog. We use
-  // form.isFieldsTouched() via a lightweight state mirror so the button
-  // can react to edits without forcing the whole page to re-render on
-  // every keystroke (`onValuesChange` on the content form updates it).
-  const [isDirty, setIsDirty] = React.useState(false);
-
   const [commitCreate, isCreating] =
     useMutation<DeploymentLauncherPageCreateMutation>(graphql`
       mutation DeploymentLauncherPageCreateMutation(
@@ -281,26 +275,6 @@ const DeploymentLauncherPageLayout: React.FC<
     `);
 
   const isSubmitting = isCreating || isEditing;
-
-  const navigateBack = () => {
-    if (mode === 'edit' && deploymentId) {
-      navigate(`/deployments/${deploymentId}`);
-    } else {
-      navigate('/deployments');
-    }
-  };
-
-  const handleCancel = async () => {
-    if (isDirty) {
-      const ok = await app.modal.confirm({
-        title: t('dialog.title.Notice'),
-        content: t('dialog.ask.DoYouWantToResetChanges'),
-        closable: true,
-      });
-      if (!ok) return;
-    }
-    navigateBack();
-  };
 
   /** Convert a resource_slots JSON string to ResourceSlotInput entries. */
   const parseResourceSlotEntries = (resourceSlotsJson: string | null) => {
@@ -603,7 +577,6 @@ const DeploymentLauncherPageLayout: React.FC<
           duration: 2,
           backgroundTask: { status: 'resolved', percent: 100 },
         });
-        setIsDirty(false);
         // Navigate via webuiNavigate so legacy listeners get a chance to
         // tear down before the detail page mounts (mirrors FR-2683).
         webuiNavigate(`/deployments/${newId}`);
@@ -668,8 +641,6 @@ const DeploymentLauncherPageLayout: React.FC<
         form={form}
         deploymentFrgmt={deploymentFrgmt}
         runtimeVariants={runtimeVariantList}
-        onValuesChange={() => setIsDirty(true)}
-        onCancel={handleCancel}
         onSubmit={handleSubmit}
         isSubmitting={isSubmitting}
         serializerRef={serializerRef}

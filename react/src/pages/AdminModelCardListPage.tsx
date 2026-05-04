@@ -7,10 +7,10 @@ import type { AdminModelCardListPageDeleteMutation } from '../__generated__/Admi
 import type {
   AdminModelCardListPageQuery,
   AdminModelCardListPageQuery$data,
-  ModelCardV2Filter,
   ModelCardV2OrderBy,
 } from '../__generated__/AdminModelCardListPageQuery.graphql';
 import AdminModelCardSettingModal from '../components/AdminModelCardSettingModal';
+import StorageHostFilterInput from '../components/StorageHostFilterInput';
 import { convertToOrderBy, handleRowSelectionChange } from '../helper';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
@@ -27,6 +27,7 @@ import {
   BAINameActionCell,
   BAISelectionLabel,
   BAITable,
+  BAIText,
   BAITag,
   BAITrashBinIcon,
   BAIUnmountAfterClose,
@@ -34,6 +35,7 @@ import {
   filterOutNullAndUndefined,
   type GraphQLFilter,
   INITIAL_FETCH_KEY,
+  isValidUUID,
   toLocalId,
   useBAILogger,
   useFetchKey,
@@ -99,22 +101,8 @@ const AdminModelCardListPage: React.FC = () => {
 
   const [fetchKey, updateFetchKey] = useFetchKey();
 
-  // Helper to flatten AND/OR wrappers since ModelCardV2Filter doesn't support them
-  const flattenGraphQLFilter = (
-    filter: GraphQLFilter | undefined,
-  ): ModelCardV2Filter | undefined => {
-    if (!filter) return undefined;
-    if (filter.AND && Array.isArray(filter.AND)) {
-      return Object.assign({}, ...filter.AND) as ModelCardV2Filter;
-    }
-    if (filter.OR && Array.isArray(filter.OR)) {
-      return Object.assign({}, ...filter.OR) as ModelCardV2Filter;
-    }
-    return filter as ModelCardV2Filter;
-  };
-
   const queryVariables = {
-    filter: flattenGraphQLFilter(queryParams.filter ?? undefined),
+    filter: queryParams.filter,
     orderBy: convertToOrderBy<ModelCardV2OrderBy>(queryParams.order),
     limit: baiPaginationOption.limit,
     offset: baiPaginationOption.offset,
@@ -296,9 +284,9 @@ const AdminModelCardListPage: React.FC = () => {
       title: t('adminModelCard.Project'),
       dataIndex: 'projectId',
       render: (projectId) => (
-        <Typography.Text ellipsis style={{ maxWidth: 150 }}>
+        <BAIText copyable ellipsis style={{ maxWidth: 150 }}>
           {projectId}
-        </Typography.Text>
+        </BAIText>
       ),
     },
     {
@@ -321,6 +309,30 @@ const AdminModelCardListPage: React.FC = () => {
                 key: 'name',
                 propertyLabel: t('adminModelCard.Name'),
                 type: 'string',
+              },
+              {
+                key: 'domainName',
+                propertyLabel: t('adminModelCard.Domain'),
+                type: 'string',
+              },
+              {
+                key: 'projectId',
+                propertyLabel: t('adminModelCard.Project'),
+                type: 'uuid',
+                rule: {
+                  message: t('project.ProjectIDFilterRuleMessage'),
+                  validate: (value) => isValidUUID(value),
+                },
+              },
+              {
+                key: 'storageHost',
+                propertyLabel: t('import.StorageHost'),
+                type: 'string',
+                operators: ['equals', 'notEquals'],
+                defaultOperator: 'equals',
+                renderInput: ({ onConfirm }) => (
+                  <StorageHostFilterInput onConfirm={onConfirm} />
+                ),
               },
             ]}
             value={queryParams.filter ?? undefined}

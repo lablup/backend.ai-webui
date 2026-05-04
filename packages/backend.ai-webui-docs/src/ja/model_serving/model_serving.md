@@ -542,7 +542,7 @@ SGLangは次のタブを提供します：**Model Loading**、**Resource Memory*
 
 自動スケーリングルール（Auto Scaling Rules）は、ライブメトリックに基づいてモデルサービスのレプリカ数を自動的に増減します。これにより、使用率が低いときはリソースを節約し、使用率が高いときはリクエストの遅延や失敗を防ぎます。
 
-![](../images/auto_scaling_rules_v2.png)
+![](../images/auto_scaling_rules.png)
 
 ルール一覧には以下が含まれます：
 

@@ -136,12 +136,12 @@ before. You can see that TensorFlow 1.15(.4) version is installed.
 
 ![](../images/tf115_version_print.png)
 
-Finally, create a compute session using PyTorch version 1.7.
+Finally, create a compute session using PyTorch version 1.9.
 
 ![](../images/session_launch_dialog_pytorch17.png)
 
 Open the web terminal of the created session and run the following Python
-command. You can see that PyTorch 1.8 version is installed.
+command. You can see that PyTorch 1.9 version is installed.
 
 ![](../images/pytorch17_version_print.png)
 

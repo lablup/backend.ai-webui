@@ -131,7 +131,9 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
     filter: queryParams.rFilter
       ? parseReplicaFilter(queryParams.rFilter)
       : null,
-    orderBy: convertToOrderBy<ReplicaOrderBy>(queryParams.order),
+    orderBy: convertToOrderBy<ReplicaOrderBy>(
+      queryParams.order ?? '-createdAt',
+    ),
     limit: queryParams.pageSize,
     offset:
       queryParams.current > 1
@@ -237,6 +239,9 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
       title: t('deployment.HealthStatus'),
       dataIndex: 'livenessStatus',
       render: (value: string | null | undefined) => (
+        // TODO(needs-backend): FR-2787 — expose failure reason / error message
+        // from the replica once the backend adds a `failureReason` field to
+        // `ModelReplica` so unhealthy replicas surface actionable error info.
         <ReplicaStatusTag status={toReplicaTagStatus(value)} />
       ),
     },
