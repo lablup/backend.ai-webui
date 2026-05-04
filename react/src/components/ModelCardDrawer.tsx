@@ -117,17 +117,7 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
   const presets =
     modelCard?.availablePresets?.edges
       ?.map((e) => e?.node)
-      .filter(
-        (
-          node,
-        ): node is {
-          readonly id: string;
-          readonly name: string;
-          readonly description: string | null;
-          readonly rank: number;
-          readonly runtimeVariantId: string;
-        } => node != null,
-      ) ?? [];
+      .filter((node): node is NonNullable<typeof node> => node != null) ?? [];
 
   return (
     <>
@@ -405,7 +395,10 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
         open={deployModalOpen}
         onClose={() => setDeployModalOpen(false)}
         modelCardRowId={modelCard?.id ? toLocalId(modelCard.id) : undefined}
-        availablePresets={presets}
+        availablePresets={presets.map((p) => ({
+          ...p,
+          description: p.description ?? null,
+        }))}
         onDeployed={(_deploymentId) => {
           setDeployModalOpen(false);
           onClose();

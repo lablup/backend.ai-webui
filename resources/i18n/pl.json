@@ -1755,6 +1755,7 @@
     "CustomExpirationDate": "Niestandardowa data ważności",
     "CustomExpiredDate": "Niestandardowa data wygasła",
     "DeployAsService": "Wdróż jako usługę",
+    "DeploymentPresetDetail": "Szczegóły presetu wdrożenia",
     "DesiredSessionCount": "Pożądana liczba sesji",
     "Destroyed": "Zniszczony",
     "EditModelService": "Edytuj usługę modelu",
