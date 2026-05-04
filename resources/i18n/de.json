@@ -2064,6 +2064,7 @@
       "RESOURCE_GROUP": "Ressourcengruppe",
       "RESOURCE_PRESET": "Ressourcenvorlage",
       "ROLE": "Rolle",
+      "ROLE_ASSIGNMENT": "Rollenzuweisung",
       "ROUTING": "Routing",
       "SESSION": "Sitzung",
       "SESSION_TEMPLATE": "Sitzungsvorlage",

@@ -2062,6 +2062,7 @@
       "RESOURCE_GROUP": "Resurssiryhmä",
       "RESOURCE_PRESET": "Resurssiasiasetus",
       "ROLE": "Rooli",
+      "ROLE_ASSIGNMENT": "Roolin määritys",
       "ROUTING": "Reititys",
       "SESSION": "Istunto",
       "SESSION_TEMPLATE": "Istuntomalli",

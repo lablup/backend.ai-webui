@@ -83,6 +83,43 @@ const CreatePermissionModal: React.FC<CreatePermissionModalProps> = ({
             node {
               scopeType
               scopeId
+              scope {
+                ... on DomainV2 {
+                  basicInfo {
+                    domainName: name
+                  }
+                }
+                ... on ProjectV2 {
+                  basicInfo {
+                    projectName: name
+                  }
+                }
+                ... on UserV2 {
+                  basicInfo {
+                    email
+                  }
+                }
+                ... on VirtualFolderNode {
+                  vfolderName: name
+                }
+                ... on SessionV2 {
+                  metadata {
+                    sessionName: name
+                  }
+                }
+                ... on ModelDeployment {
+                  metadata {
+                    deploymentName: name
+                  }
+                }
+                ... on ResourceGroup {
+                  resourceGroupName: name
+                }
+                ... on ContainerRegistryV2 {
+                  registryName
+                  project
+                }
+              }
             }
           }
         }
@@ -108,10 +145,7 @@ const CreatePermissionModal: React.FC<CreatePermissionModalProps> = ({
 
   const roleScopes = (roleScope?.allScopes?.edges ?? [])
     .map((e) => e?.node)
-    .filter(
-      (n): n is { scopeType: RBACElementType; scopeId: string } =>
-        !!n && !!n.scopeType && !!n.scopeId,
-    );
+    .filter((n): n is NonNullable<typeof n> => !!n);
 
   const hasRoleScopes = roleScopes.length > 0;
   const watchedRoleScopeKey = Form.useWatch('roleScopeKey', form) as
@@ -368,12 +402,47 @@ const CreatePermissionModal: React.FC<CreatePermissionModalProps> = ({
             <BAISelect
               showSearch
               placeholder={t('rbac.ScopeTypeAndId')}
-              options={actionableRoleScopes.map((s) => ({
-                value: makeScopeKey(s.scopeType, s.scopeId),
-                label: `${t(`rbac.types.${s.scopeType}`, {
-                  defaultValue: s.scopeType,
-                })} / ${s.scopeId}`,
-              }))}
+              options={actionableRoleScopes.map((s) => {
+                const scope = s.scope;
+                let resolvedName: string | null | undefined = null;
+                if (scope) {
+                  switch (s.scopeType) {
+                    case 'DOMAIN':
+                      resolvedName = scope.basicInfo?.domainName;
+                      break;
+                    case 'PROJECT':
+                      resolvedName = scope.basicInfo?.projectName;
+                      break;
+                    case 'USER':
+                      resolvedName = scope.basicInfo?.email;
+                      break;
+                    case 'VFOLDER':
+                      resolvedName = scope.vfolderName;
+                      break;
+                    case 'SESSION':
+                      resolvedName = scope.metadata?.sessionName;
+                      break;
+                    case 'MODEL_DEPLOYMENT':
+                      resolvedName = scope.metadata?.deploymentName;
+                      break;
+                    case 'RESOURCE_GROUP':
+                      resolvedName = scope.resourceGroupName;
+                      break;
+                    case 'CONTAINER_REGISTRY':
+                      resolvedName = scope.project
+                        ? `${scope.registryName} - ${scope.project}`
+                        : scope.registryName;
+                      break;
+                  }
+                }
+                const displayName = resolvedName || s.scopeId;
+                return {
+                  value: makeScopeKey(s.scopeType, s.scopeId),
+                  label: `${t(`rbac.types.${s.scopeType}`, {
+                    defaultValue: s.scopeType,
+                  })} / ${displayName}`,
+                };
+              })}
             />
           </Form.Item>
         ) : (

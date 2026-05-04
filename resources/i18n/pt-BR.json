@@ -2062,6 +2062,7 @@
       "RESOURCE_GROUP": "Grupo de recursos",
       "RESOURCE_PRESET": "Predefinição de recursos",
       "ROLE": "Função",
+      "ROLE_ASSIGNMENT": "Atribuição de função",
       "ROUTING": "Roteamento",
       "SESSION": "Sessão",
       "SESSION_TEMPLATE": "Modelo de sessão",

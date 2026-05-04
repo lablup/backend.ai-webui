@@ -2062,6 +2062,7 @@
       "RESOURCE_GROUP": "Grupo de recursos",
       "RESOURCE_PRESET": "Preajuste de recursos",
       "ROLE": "Rol",
+      "ROLE_ASSIGNMENT": "Asignación de rol",
       "ROUTING": "Enrutamiento",
       "SESSION": "Sesión",
       "SESSION_TEMPLATE": "Plantilla de sesión",

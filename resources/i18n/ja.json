@@ -2064,6 +2064,7 @@
       "RESOURCE_GROUP": "リソースグループ",
       "RESOURCE_PRESET": "リソースプリセット",
       "ROLE": "ロール",
+      "ROLE_ASSIGNMENT": "ロールの割り当て",
       "ROUTING": "ルーティング",
       "SESSION": "セッション",
       "SESSION_TEMPLATE": "セッションテンプレート",

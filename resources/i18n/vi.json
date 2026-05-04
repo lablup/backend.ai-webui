@@ -2064,6 +2064,7 @@
       "RESOURCE_GROUP": "Nhóm tài nguyên",
       "RESOURCE_PRESET": "Cài đặt sẵn tài nguyên",
       "ROLE": "Vai trò",
+      "ROLE_ASSIGNMENT": "Gán vai trò",
       "ROUTING": "Định tuyến",
       "SESSION": "Phiên",
       "SESSION_TEMPLATE": "Mẫu phiên",

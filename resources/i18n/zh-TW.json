@@ -2066,6 +2066,7 @@
       "RESOURCE_GROUP": "資源群組",
       "RESOURCE_PRESET": "資源預設",
       "ROLE": "角色",
+      "ROLE_ASSIGNMENT": "角色指派",
       "ROUTING": "路由",
       "SESSION": "工作階段",
       "SESSION_TEMPLATE": "工作階段範本",
