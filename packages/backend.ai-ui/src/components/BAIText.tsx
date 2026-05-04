@@ -48,6 +48,7 @@ const BAIText: React.FC<BAITextProps> = ({
   keyboardWithLightBorder,
   ...restProps
 }) => {
+  'use memo';
   const { token } = theme.useToken();
   const { t } = useTranslation();
   const textRef = useRef<HTMLSpanElement>(null);
@@ -57,13 +58,15 @@ const BAIText: React.FC<BAITextProps> = ({
   const expandable = typeof ellipsis === 'object' ? ellipsis.expandable : false;
   const onExpand = typeof ellipsis === 'object' ? ellipsis.onExpand : undefined;
 
+  const ellipsisEnabled = !!ellipsis;
+  const ellipsisRows = typeof ellipsis === 'object' ? (ellipsis.rows ?? 1) : 1;
+
   useEffect(() => {
-    if (!ellipsis || !textRef.current || isExpanded) return;
+    if (!ellipsisEnabled || !textRef.current || isExpanded) return;
     const element = textRef.current;
-    const rows = typeof ellipsis === 'object' ? ellipsis.rows || 1 : 1;
     const check = () => {
       if (!element) return;
-      if (rows === 1) {
+      if (ellipsisRows === 1) {
         setIsOverflowing(element.scrollWidth > element.clientWidth);
       } else {
         setIsOverflowing(element.scrollHeight > element.clientHeight);
@@ -73,7 +76,7 @@ const BAIText: React.FC<BAITextProps> = ({
     const ro = new ResizeObserver(check);
     ro.observe(element);
     return () => ro.disconnect();
-  }, [ellipsis, children, isExpanded]);
+  }, [ellipsisEnabled, ellipsisRows, isExpanded, children]);
 
   const handleExpand = (e: React.MouseEvent<HTMLElement>) => {
     const newExpandedState = !isExpanded;

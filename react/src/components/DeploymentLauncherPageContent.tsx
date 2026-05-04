@@ -4,6 +4,7 @@
  */
 import { DeploymentLauncherPageContentPresetSummaryQuery } from '../__generated__/DeploymentLauncherPageContentPresetSummaryQuery.graphql';
 import { DeploymentLauncherPageContent_deployment$key } from '../__generated__/DeploymentLauncherPageContent_deployment.graphql';
+import { compareNumberWithUnits, convertToBinaryUnit } from '../helper';
 import { parseCliCommand } from '../helper/parseCliCommand';
 import {
   mergeExtraArgs,
@@ -20,14 +21,17 @@ import {
   getExtraArgsEnvVarName,
   type RuntimeParameterGroup,
 } from '../hooks/useRuntimeParameterSchema';
+import { ResourceNumbersOfSession } from '../pages/SessionLauncherPage';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import ImageEnvironmentSelectFormItems, {
   ImageEnvironmentFormInput,
 } from './ImageEnvironmentSelectFormItems';
-import ResourcePresetSelect from './ResourcePresetSelect';
 import RuntimeParameterFormSection, {
   RuntimeParameterValues,
 } from './RuntimeParameterFormSection';
+import ResourceAllocationFormItems, {
+  type ResourceAllocationFormValue,
+} from './SessionFormItems/ResourceAllocationFormItems';
 import SourceCodeView from './SourceCodeView';
 import VFolderLazyView from './VFolderLazyView';
 import VFolderSelect from './VFolderSelect';
@@ -132,7 +136,9 @@ export type DeploymentLauncherFormValue = ImageEnvironmentFormInput & {
 
   // Step 3 — Resources & Replicas
   resourceGroup: string;
-  resourcePresetId?: string;
+  allocationPreset?: string;
+  resource?: ResourceAllocationFormValue['resource'];
+  enabledAutomaticShmem?: boolean;
   desiredReplicaCount: number;
 };
 
@@ -146,6 +152,15 @@ export interface DeploymentLauncherPageContentProps {
   deploymentFrgmt?: DeploymentLauncherPageContent_deployment$key | null;
   /** Available runtime variants fetched by the parent page layout. */
   runtimeVariants?: ReadonlyArray<{ name: string; id: string }>;
+  /** Available resource presets — used in edit mode to detect custom allocation. */
+  resourcePresets?: ReadonlyArray<
+    | {
+        name?: string | null;
+        resource_slots?: string | null;
+      }
+    | null
+    | undefined
+  >;
   /**
    * Optional change observer forwarded to the underlying antd `<Form>`.
    * Useful for parent pages that want to persist the draft state
@@ -174,6 +189,102 @@ export interface DeploymentLauncherPageContentProps {
 }
 
 /**
+ * Compare revision resourceSlots against available presets to detect custom
+ * allocation, and return the matching form fields. Returns `allocationPreset:
+ * 'custom'` with populated `resource.*` values when no preset matches.
+ *
+ * TODO(needs-backend): Remove this function once `ModelRevision.revisionPresetId`
+ * is exposed by the API. At that point, the fragment can query the field directly
+ * and the allocationPreset can be set with a single line:
+ *   allocationPreset: revision.revisionPresetId ?? 'custom'
+ */
+const resolveEditModeResourcePreset = (
+  revisionSlots: ReadonlyArray<{
+    slotName: string;
+    quantity: string;
+  } | null> | null,
+  resourceOptsEntries: ReadonlyArray<{
+    name: string;
+    value: string;
+  } | null> | null,
+  presets: ReadonlyArray<
+    | {
+        name?: string | null;
+        resource_slots?: string | null;
+      }
+    | null
+    | undefined
+  > | null,
+): Partial<DeploymentLauncherFormValue> => {
+  // When slots are unavailable, return 'custom' to prevent ResourceAllocationFormItems
+  // from triggering auto-select (which only skips when allocationPreset === 'custom').
+  if (!revisionSlots || revisionSlots.length === 0) {
+    return { allocationPreset: 'custom' };
+  }
+
+  const slots = revisionSlots.filter(
+    (s): s is { slotName: string; quantity: string } => s !== null,
+  );
+
+  const matchingPreset = presets?.find((p) => {
+    if (!p?.name || !p?.resource_slots) return false;
+    let presetSlots: Record<string, string>;
+    try {
+      presetSlots = JSON.parse(p.resource_slots);
+    } catch {
+      return false;
+    }
+    const presetKeys = Object.keys(presetSlots);
+    if (presetKeys.length !== slots.length) return false;
+    return presetKeys.every((key) => {
+      const revSlot = slots.find((s) => s.slotName === key);
+      if (!revSlot) return false;
+      return key === 'mem'
+        ? compareNumberWithUnits(revSlot.quantity, presetSlots[key]) === 0
+        : revSlot.quantity === String(presetSlots[key]);
+    });
+  });
+
+  // Reconstruct resource.* fields from revision slots (used for both custom
+  // and named-preset cases so sliders are pre-populated on edit).
+  const cpu = Number(slots.find((s) => s.slotName === 'cpu')?.quantity ?? 0);
+  const rawMem = slots.find((s) => s.slotName === 'mem')?.quantity ?? '0g';
+  // Server returns mem in bytes; convert to "Xg" format for the slider.
+  const mem = convertToBinaryUnit(rawMem, 'g', 4)?.value ?? rawMem;
+  const shmemEntry = resourceOptsEntries
+    ?.filter((e): e is { name: string; value: string } => e !== null)
+    .find((e) => e.name === 'shmem');
+  const acceleratorSlot = slots.find(
+    (s) => s.slotName !== 'cpu' && s.slotName !== 'mem',
+  );
+  const resourceFields = {
+    resource: {
+      cpu,
+      mem,
+      shmem: shmemEntry?.value ?? '0g',
+      accelerator: acceleratorSlot ? Number(acceleratorSlot.quantity) : 0,
+      acceleratorType: acceleratorSlot?.slotName,
+    },
+    enabledAutomaticShmem: !shmemEntry,
+  };
+
+  // A revision with custom shmem (explicit resourceOpts entry) cannot be
+  // represented by any preset, even if the slot counts happen to match.
+  // Treating it as custom ensures the shmem value is preserved on save.
+  if (matchingPreset?.name && !shmemEntry) {
+    return {
+      allocationPreset: matchingPreset.name,
+      ...resourceFields,
+    };
+  }
+
+  return {
+    allocationPreset: 'custom',
+    ...resourceFields,
+  };
+};
+
+/**
  * Default values applied when neither `deploymentFrgmt` nor
  * `preFilledModel` is provided. Also used as the merge base for
  * edit-mode pre-fill so that un-populated fields get safe defaults.
@@ -196,7 +307,9 @@ const DEFAULT_FORM_VALUES: DeploymentLauncherFormValue = {
   clusterMode: 'SINGLE_NODE',
   clusterSize: 1,
   resourceGroup: '',
-  resourcePresetId: undefined,
+  allocationPreset: 'auto-select',
+  resource: { cpu: 0, mem: '0g', shmem: '0g', accelerator: 0 },
+  enabledAutomaticShmem: true,
   desiredReplicaCount: 1,
   environments: {
     environment: '',
@@ -227,6 +340,7 @@ const DeploymentLauncherPageContent: React.FC<
   form,
   deploymentFrgmt,
   runtimeVariants = [],
+  resourcePresets,
   onValuesChange,
   onSubmit,
   isSubmitting,
@@ -388,6 +502,16 @@ const DeploymentLauncherPageContent: React.FC<
           }
           resourceConfig {
             resourceGroupName
+            resourceOpts {
+              entries {
+                name
+                value
+              }
+            }
+          }
+          resourceSlots @since(version: "26.4.2") {
+            slotName
+            quantity
           }
           modelRuntimeConfig {
             runtimeVariantId
@@ -468,18 +592,26 @@ const DeploymentLauncherPageContent: React.FC<
           revision?.clusterConfig?.size ?? DEFAULT_FORM_VALUES.clusterSize,
         resourceGroup: revision?.resourceConfig?.resourceGroupName ?? '',
         desiredReplicaCount: deployment.replicaState.desiredReplicaCount,
-        // TODO(needs-backend): FR-2787 — resourcePresetId is not exposed in the
-        // ModelRevision schema, so the preset selector cannot be pre-populated in
-        // edit mode. Once the backend exposes resourcePresetName/id on the
-        // revision, add it here.
+        ...resolveEditModeResourcePreset(
+          revision?.resourceSlots ?? null,
+          revision?.resourceConfig?.resourceOpts?.entries ?? null,
+          resourcePresets ?? null,
+        ),
       } satisfies Partial<DeploymentLauncherFormValue>);
     }
     return _.merge({}, DEFAULT_FORM_VALUES, {
       ...(urlModel && { modelFolderId: urlModel }),
       ...(urlResourceGroup && { resourceGroup: urlResourceGroup }),
-      ...(urlResourcePresetId && { resourcePresetId: urlResourcePresetId }),
+      ...(urlResourcePresetId && { allocationPreset: urlResourcePresetId }),
     });
-  }, [mode, deployment, urlModel, urlResourceGroup, urlResourcePresetId]);
+  }, [
+    mode,
+    deployment,
+    urlModel,
+    urlResourceGroup,
+    urlResourcePresetId,
+    resourcePresets,
+  ]);
 
   // Apply initial values to the parent-owned form instance exactly once
   // per mount / deployment change. Using `useEffectEvent` keeps the
@@ -506,11 +638,10 @@ const DeploymentLauncherPageContent: React.FC<
     //
     // Membership rule: add a field here only if its step-2/3 Select passes
     // `autoSelectDefault`. Currently: BAIProjectResourceGroupSelect (step 3)
-    // and ResourcePresetSelect (step 3). VFolderSelect (step 2) does not pass
+    // and BAIProjectResourceGroupSelect (step 3). VFolderSelect (step 2) does not pass
     // autoSelectDefault; if that ever changes, add 'modelFolderId' here.
     const autoSelectKeys: Array<keyof DeploymentLauncherFormValue> = [
       'resourceGroup',
-      'resourcePresetId',
     ];
     const omitKeys =
       mode === 'create' ? autoSelectKeys.filter((k) => !merged[k]) : [];
@@ -867,37 +998,31 @@ const DeploymentLauncherPageContent: React.FC<
             }}
           >
             <Form.Item
-              name="resourceGroup"
-              label={t('session.ResourceGroup')}
-              rules={[{ required: true }]}
-            >
-              <BAIProjectResourceGroupSelect
-                projectName={currentProject.name ?? ''}
-                autoSelectDefault
-                showSearch
-              />
-            </Form.Item>
-            <Form.Item dependencies={['resourceGroup']} noStyle>
-              {({ getFieldValue }) => (
-                <Form.Item
-                  name="resourcePresetId"
-                  label={t('resourcePreset.ResourcePresets')}
-                >
-                  <ResourcePresetSelect
-                    resourceGroup={getFieldValue('resourceGroup')}
-                    autoSelectDefault
-                    showSearch
-                  />
-                </Form.Item>
-              )}
-            </Form.Item>
-            <Form.Item
               name="desiredReplicaCount"
               label={t('deployment.DesiredReplicas')}
               rules={[{ required: true, type: 'number', min: 1 }]}
             >
               <InputNumber min={1} style={{ width: '100%' }} />
             </Form.Item>
+            <Form.Item
+              name="resourceGroup"
+              label={t('session.ResourceGroup')}
+              rules={[{ required: true }]}
+            >
+              <BAIProjectResourceGroupSelect
+                projectName={currentProject.name ?? ''}
+                autoSelectDefault={mode === 'create'}
+                showSearch
+              />
+            </Form.Item>
+            <Suspense>
+              <ResourceAllocationFormItems
+                enableResourcePresets
+                hideClusterFormItems
+                hideResourceGroup
+                autoSelectPreset={mode === 'create'}
+              />
+            </Suspense>
           </Card>
 
           {/* --- Step 4: Review & Create --- */}
@@ -1301,11 +1426,27 @@ const DeploymentReviewSummary: React.FC<{
             {values.resourceGroup || '-'}
           </Descriptions.Item>
           <Descriptions.Item label={t('resourcePreset.ResourcePresets')}>
-            {values.resourcePresetId ? (
-              <Suspense fallback={<>{values.resourcePresetId}</>}>
+            {values.allocationPreset === 'custom' ||
+            values.allocationPreset === 'minimum-required' ? (
+              <BAIFlex direction="column" gap="xs" align="start">
+                <Typography.Text>
+                  {t('session.launcher.CustomAllocation')}
+                </Typography.Text>
+                {values.resource && (
+                  <BAIFlex
+                    direction="row"
+                    gap="xxs"
+                    style={{ flexWrap: 'wrap' }}
+                  >
+                    <ResourceNumbersOfSession resource={values.resource} />
+                  </BAIFlex>
+                )}
+              </BAIFlex>
+            ) : values.allocationPreset ? (
+              <Suspense fallback={<>{values.allocationPreset}</>}>
                 <ErrorBoundaryWithNullFallback>
                   <ResourcePresetReviewDisplay
-                    presetName={values.resourcePresetId}
+                    presetName={values.allocationPreset}
                   />
                 </ErrorBoundaryWithNullFallback>
               </Suspense>

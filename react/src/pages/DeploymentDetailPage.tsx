@@ -20,6 +20,7 @@ import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useParams } from 'react-router-dom';
+import BAIErrorBoundary from 'src/components/BAIErrorBoundary';
 
 const DeploymentDetailPage: React.FC = () => {
   'use memo';
@@ -132,23 +133,27 @@ const DeploymentDetailPage: React.FC = () => {
           },
         ]}
       >
-        <div hidden={activeTab !== 'replicas'}>
-          <Suspense fallback={<Skeleton active />}>
-            <DeploymentReplicasTab
-              deploymentFrgmt={deployment}
-              deploymentId={toGlobalId('ModelDeployment', deploymentId)}
-            />
-          </Suspense>
-        </div>
-        <div hidden={activeTab !== 'revisions'}>
-          <Suspense fallback={<Skeleton active />}>
-            <DeploymentRevisionHistoryTab
-              deploymentFrgmt={deployment}
-              deploymentId={toGlobalId('ModelDeployment', deploymentId)}
-              isDeploymentDestroying={isDeploymentDestroying}
-            />
-          </Suspense>
-        </div>
+        {activeTab === 'replicas' && (
+          <BAIErrorBoundary>
+            <Suspense fallback={<Skeleton active />}>
+              <DeploymentReplicasTab
+                deploymentFrgmt={deployment}
+                deploymentId={toGlobalId('ModelDeployment', deploymentId)}
+              />
+            </Suspense>
+          </BAIErrorBoundary>
+        )}
+        {activeTab === 'revisions' && (
+          <BAIErrorBoundary>
+            <Suspense fallback={<Skeleton active />}>
+              <DeploymentRevisionHistoryTab
+                deploymentFrgmt={deployment}
+                deploymentId={toGlobalId('ModelDeployment', deploymentId)}
+                isDeploymentDestroying={isDeploymentDestroying}
+              />
+            </Suspense>
+          </BAIErrorBoundary>
+        )}
       </BAICard>
       <DeploymentAutoScalingTab deploymentFrgmt={deployment} />
       <DeploymentAccessTokensTab

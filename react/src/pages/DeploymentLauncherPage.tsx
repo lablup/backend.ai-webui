@@ -298,10 +298,32 @@ const DeploymentLauncherPageLayout: React.FC<
     targetDeploymentId: string,
     imageId: string,
   ): Promise<void> => {
-    const preset = resource_presets?.find(
-      (p) => p?.name === values.resourcePresetId,
-    );
-    const entries = parseResourceSlotEntries(preset?.resource_slots ?? null);
+    const isCustomAllocation =
+      values.allocationPreset === 'custom' ||
+      values.allocationPreset === 'minimum-required';
+    const entries = isCustomAllocation
+      ? (() => {
+          const r = values.resource;
+          const slots: Array<{ resourceType: string; quantity: string }> = [];
+          if (r?.cpu !== undefined)
+            slots.push({ resourceType: 'cpu', quantity: String(r.cpu) });
+          if (r?.mem !== undefined)
+            slots.push({ resourceType: 'mem', quantity: String(r.mem) });
+          if (
+            r?.accelerator !== undefined &&
+            r.accelerator > 0 &&
+            r.acceleratorType
+          )
+            slots.push({
+              resourceType: r.acceleratorType,
+              quantity: String(r.accelerator),
+            });
+          return slots;
+        })()
+      : parseResourceSlotEntries(
+          resource_presets?.find((p) => p?.name === values.allocationPreset)
+            ?.resource_slots ?? null,
+        );
 
     // Resolve runtimeVariantId: prefer value stored in form (edit pre-fill),
     // fall back to decoding the Strawberry global id from the runtimeVariants
@@ -403,6 +425,16 @@ const DeploymentLauncherPageLayout: React.FC<
             resourceConfig: {
               resourceGroup: { name: values.resourceGroup },
               resourceSlots: { entries },
+              resourceOpts:
+                isCustomAllocation &&
+                values.resource?.shmem &&
+                !values.enabledAutomaticShmem
+                  ? {
+                      entries: [
+                        { name: 'shmem', value: values.resource.shmem },
+                      ],
+                    }
+                  : null,
             },
             image: { id: decodedImageId },
             modelRuntimeConfig: {
@@ -641,6 +673,7 @@ const DeploymentLauncherPageLayout: React.FC<
         form={form}
         deploymentFrgmt={deploymentFrgmt}
         runtimeVariants={runtimeVariantList}
+        resourcePresets={resource_presets ?? undefined}
         onSubmit={handleSubmit}
         isSubmitting={isSubmitting}
         serializerRef={serializerRef}

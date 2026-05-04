@@ -25,7 +25,6 @@ import {
   populateRouterPaths,
 } from './hooks/useWebUIMenuItems';
 import { pluginApiEndpointState } from './hooks/useWebUIPluginState';
-// High priority to import the component
 import ComputeSessionListPage from './pages/ComputeSessionListPage';
 import Page404 from './pages/Page404';
 import VFolderNodeListPage from './pages/VFolderNodeListPage';
@@ -316,9 +315,11 @@ export const mainLayoutChildRoutes: RouteObject[] = [
         path: ':deploymentId',
         handle: { labelKey: 'modelService.RoutingInfo' },
         element: (
-          <Suspense fallback={<Skeleton active />}>
-            <DeploymentDetailPage />
-          </Suspense>
+          <BAIErrorBoundary>
+            <Suspense fallback={<Skeleton active />}>
+              <DeploymentDetailPage />
+            </Suspense>
+          </BAIErrorBoundary>
         ),
       },
       {

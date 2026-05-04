@@ -27,6 +27,7 @@ import {
   BAINameActionCell,
   BAITable,
   BAITag,
+  BAIText,
   BAIUnmountAfterClose,
   type GraphQLFilter,
   filterOutNullAndUndefined,
@@ -422,13 +423,13 @@ const DeploymentRevisionHistoryTab: React.FC<
         const canonicalName = record.imageV2?.identity?.canonicalName;
         if (!canonicalName) return '-';
         return (
-          <Typography.Text
+          <BAIText
             copyable={{ text: canonicalName }}
-            ellipsis={{ tooltip: canonicalName }}
+            ellipsis={{ tooltip: true }}
             style={{ maxWidth: 240 }}
           >
             {canonicalName}
-          </Typography.Text>
+          </BAIText>
         );
       },
     },

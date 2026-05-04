@@ -4,6 +4,7 @@
  */
 import { DeploymentOwnerInfo_deployment$key } from '../__generated__/DeploymentOwnerInfo_deployment.graphql';
 import { Tooltip, Typography } from 'antd';
+import { BAIText } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -55,9 +56,9 @@ const DeploymentOwnerInfo: React.FC<DeploymentOwnerInfoProps> = ({
     <Tooltip
       title={<span style={{ whiteSpace: 'pre-line' }}>{tooltipLines}</span>}
     >
-      <Typography.Text ellipsis={{ tooltip: false }} style={{ maxWidth: 200 }}>
+      <BAIText ellipsis style={{ maxWidth: 200 }}>
         {email}
-      </Typography.Text>
+      </BAIText>
     </Tooltip>
   );
 };

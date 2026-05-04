@@ -3,6 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { DeploymentRevisionDetailDrawerQuery } from '../__generated__/DeploymentRevisionDetailDrawerQuery.graphql';
+import { convertToBinaryUnit } from '../helper';
+import { useResourceSlots } from '../hooks/backendai';
 import FolderLink from './FolderLink';
 import SourceCodeView from './SourceCodeView';
 import {
@@ -18,11 +20,13 @@ import { DescriptionsItemType } from 'antd/es/descriptions';
 import { DrawerProps } from 'antd/lib';
 import {
   BAIFlex,
+  BAIResourceNumberWithIcon,
   filterOutEmpty,
   filterOutNullAndUndefined,
   toLocalId,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
+import * as _ from 'lodash-es';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -52,6 +56,16 @@ const DeploymentRevisionDetailDrawerContent: React.FC<{
           }
           resourceConfig {
             resourceGroupName
+            resourceOpts {
+              entries {
+                name
+                value
+              }
+            }
+          }
+          resourceSlots @since(version: "26.4.2") {
+            slotName
+            quantity
           }
           modelRuntimeConfig {
             runtimeVariant {
@@ -126,9 +140,18 @@ const DeploymentRevisionDetailDrawerContent: React.FC<{
     !!revision?.id &&
     !!currentRevisionId &&
     safeToLocalId(revision.id) === safeToLocalId(currentRevisionId);
+  const [resourceSlotsMeta] = useResourceSlots();
   const clusterConfig = revision?.clusterConfig;
   const resourceConfig = revision?.resourceConfig;
   const runtimeConfig = revision?.modelRuntimeConfig;
+
+  const shmem = resourceConfig?.resourceOpts?.entries?.find(
+    (e) => e.name === 'shmem',
+  )?.value;
+  const allocatedSlots = _.keyBy(
+    filterOutNullAndUndefined(revision?.resourceSlots ?? []),
+    'slotName',
+  );
   const mountConfig = revision?.modelMountConfig;
   const environEntries = runtimeConfig?.environ?.entries ?? [];
 
@@ -165,6 +188,39 @@ const DeploymentRevisionDetailDrawerContent: React.FC<{
       label: t('deployment.ResourceGroup'),
       children: resourceConfig?.resourceGroupName || renderFallback(),
     },
+    Object.keys(allocatedSlots).length > 0
+      ? {
+          key: 'resource-slots',
+          label: t('session.launcher.ResourceAllocation'),
+          children: (
+            <BAIFlex direction="row" gap="xxs" style={{ flexWrap: 'wrap' }}>
+              {_.map(allocatedSlots, ({ slotName, quantity }) => {
+                if (
+                  !resourceSlotsMeta[slotName as keyof typeof resourceSlotsMeta]
+                )
+                  return null;
+                return (
+                  <BAIResourceNumberWithIcon
+                    key={slotName}
+                    // @ts-ignore
+                    type={slotName}
+                    value={parseFloat(String(quantity)).toString()}
+                    opts={
+                      slotName === 'mem' && shmem
+                        ? {
+                            shmem:
+                              convertToBinaryUnit(shmem, '')?.number ??
+                              undefined,
+                          }
+                        : undefined
+                    }
+                  />
+                );
+              })}
+            </BAIFlex>
+          ),
+        }
+      : null,
     {
       key: 'model-folder',
       label: t('deployment.ModelFolder'),
@@ -236,7 +292,7 @@ const DeploymentRevisionDetailDrawerContent: React.FC<{
         ) : (
           renderFallback()
         ),
-      span: 2,
+      span: screens.md ? 2 : 1,
     },
   ]);
 
@@ -269,7 +325,7 @@ const DeploymentRevisionDetailDrawerContent: React.FC<{
               ) : (
                 renderFallback()
               ),
-              span: 2,
+              span: screens.md ? 2 : 1,
             },
             {
               key: `model-port-${idx}`,

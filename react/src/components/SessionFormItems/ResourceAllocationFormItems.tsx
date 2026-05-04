@@ -88,6 +88,10 @@ interface ResourceAllocationFormItemsProps {
   showRemainingWarning?: boolean;
   forceImageMinValues?: boolean;
   hideClusterFormItems?: boolean;
+  hideResourceGroup?: boolean;
+  /** When false, suppresses the auto-select-preset behaviour on mount.
+   *  Pass false in edit mode so a pre-filled allocationPreset is not overwritten. */
+  autoSelectPreset?: boolean;
   extraAcceleratorRules?: Array<{
     warningOnly?: boolean;
     validator: (rule: unknown, value: number) => Promise<void>;
@@ -102,6 +106,8 @@ const ResourceAllocationFormItems: React.FC<
   forceImageMinValues = false,
   showRemainingWarning = false,
   hideClusterFormItems = false,
+  hideResourceGroup = false,
+  autoSelectPreset = true,
   extraAcceleratorRules,
 }) => {
   const form = Form.useFormInstance<MergedResourceAllocationFormValue>();
@@ -224,6 +230,7 @@ const ResourceAllocationFormItems: React.FC<
 
   useEffect(() => {
     if (
+      autoSelectPreset &&
       !currentResourceValue &&
       form.getFieldValue('allocationPreset') !== 'custom'
     ) {
@@ -238,7 +245,12 @@ const ResourceAllocationFormItems: React.FC<
         },
       });
     }
-  }, [supportedAcceleratorTypesInRGByImage, form, currentResourceValue]);
+  }, [
+    supportedAcceleratorTypesInRGByImage,
+    form,
+    currentResourceValue,
+    autoSelectPreset,
+  ]);
 
   const allocatablePresetNames = useMemo(() => {
     return getAllocatablePresetNames(
@@ -523,20 +535,22 @@ const ResourceAllocationFormItems: React.FC<
 
   return (
     <>
-      <Form.Item
-        name="resourceGroup"
-        label={t('session.ResourceGroup')}
-        rules={[
-          {
-            required: true,
-          },
-        ]}
-      >
-        <BAIProjectResourceGroupSelect
-          projectName={currentProject.name}
-          showSearch
-        />
-      </Form.Item>
+      {!hideResourceGroup && (
+        <Form.Item
+          name="resourceGroup"
+          label={t('session.ResourceGroup')}
+          rules={[
+            {
+              required: true,
+            },
+          ]}
+        >
+          <BAIProjectResourceGroupSelect
+            projectName={currentProject.name}
+            showSearch
+          />
+        </Form.Item>
+      )}
 
       {enableResourcePresets ? (
         <Form.Item
