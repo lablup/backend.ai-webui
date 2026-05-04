@@ -1,5 +1,6 @@
 import BAIGraphQLPropertyFilter from './BAIGraphQLPropertyFilter';
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { Select } from 'antd';
 import { action } from 'storybook/actions';
 
 const meta: Meta<typeof BAIGraphQLPropertyFilter> = {
@@ -21,7 +22,9 @@ const meta: Meta<typeof BAIGraphQLPropertyFilter> = {
 
 New in this version:
 - **DateTime support**: When a property has type 'datetime', a DatePicker with time selection is rendered instead of a text input. Values are serialized as ISO strings and displayed in filter tags as 'YYYY-MM-DD HH:mm'.
-- Operatorless fields via valueMode: 'scalar' for properties that should emit direct scalar values (e.g., { isUrgent: true }). Use implicitOperator (defaults to 'eq') to control how tags are displayed in the UI.
+- **UUID support**: UUID type properties use \`equals\`, \`notEquals\`, \`in\`, \`notIn\` operators and support validation rules.
+- **Custom input via renderInput**: Replace the default AutoComplete input with any component (e.g., an async select). Call \`onConfirm(value)\` to add the condition.
+- Operatorless fields via valueMode: 'scalar' for properties that should emit direct scalar values (e.g., { isUrgent: true }). Use implicitOperator (defaults to 'equals') to control how tags are displayed in the UI.
 
 The component generates GraphQL-compatible filter objects that can be directly used in GraphQL queries, enabling powerful and flexible data filtering across the platform.
 
@@ -85,6 +88,14 @@ FilterProperty = {
   valueMode?: 'scalar' | 'operator';
   // Visual operator for UI tags when valueMode='scalar' (default 'equals')
   implicitOperator?: FilterOperator;
+  // Custom input renderer — replaces the default AutoComplete.
+  // Call onConfirm(value) to submit the condition. \`isValid\` / \`errorMessage\`
+  // reflect the latest rule.validate outcome so custom inputs can show errors.
+  renderInput?: (props: {
+    onConfirm: (value: string) => void;
+    isValid: boolean;
+    errorMessage?: string;
+  }) => ReactNode;
 }
         `,
       },
@@ -785,6 +796,89 @@ export const WithDateTimePrefiltered: Story = {
       ],
     },
     onChange: action('DateTime pre-filtered changed'),
+  },
+};
+
+export const WithUUIDFilters: Story = {
+  name: 'UUID Filters',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'UUID type properties use `equals`, `notEquals`, `in`, `notIn` operators. Combine with a `rule` for format validation.',
+      },
+    },
+  },
+  args: {
+    filterProperties: [
+      {
+        key: 'projectId',
+        propertyLabel: 'Project ID',
+        type: 'uuid',
+        rule: {
+          message: 'Must be a valid UUID.',
+          validate: (value: string) =>
+            /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+              value,
+            ),
+        },
+      },
+      {
+        key: 'domainId',
+        propertyLabel: 'Domain ID',
+        type: 'uuid',
+        defaultOperator: 'notEquals',
+      },
+    ],
+    combinationMode: 'AND',
+    value: {
+      projectId: { equals: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890' },
+    },
+    onChange: action('UUID filter changed'),
+  },
+};
+
+export const WithRenderInput: Story = {
+  name: 'Custom Input via renderInput',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'When `renderInput` is provided, the default AutoComplete is replaced with a custom component. Call `onConfirm(value)` to add the condition. Useful for async selects (e.g., fetching options from an API).',
+      },
+    },
+  },
+  args: {
+    filterProperties: [
+      {
+        key: 'name',
+        propertyLabel: 'Name',
+        type: 'string',
+        defaultOperator: 'iContains',
+      },
+      {
+        key: 'storageHost',
+        propertyLabel: 'Storage Host',
+        type: 'string',
+        defaultOperator: 'equals',
+        renderInput: ({ onConfirm }) => (
+          <Select
+            placeholder="Select storage host"
+            style={{ minWidth: 180 }}
+            options={[
+              { label: 'local:volume1', value: 'local:volume1' },
+              { label: 'local:volume2', value: 'local:volume2' },
+              { label: 'nfs:data', value: 'nfs:data' },
+            ]}
+            onChange={(value) => {
+              if (value) onConfirm(value);
+            }}
+          />
+        ),
+      },
+    ],
+    combinationMode: 'AND',
+    onChange: action('renderInput filter changed'),
   },
 };
 

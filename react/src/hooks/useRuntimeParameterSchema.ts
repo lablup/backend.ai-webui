@@ -108,7 +108,7 @@ export function useRuntimeParameterSchema(
     variantData.runtimeVariantsResult?.ok === true
       ? (variantData.runtimeVariantsResult.value?.edges?.[0]?.node?.id ?? null)
       : null;
-  const variantRowId = variantGlobalId ? toLocalId(variantGlobalId) : null;
+  const variantId = variantGlobalId ? toLocalId(variantGlobalId) : null;
 
   // Step 2: Fetch presets for the resolved variant
   const presetsData = useLazyLoadQuery<useRuntimeParameterSchemaPresetsQuery>(
@@ -162,8 +162,8 @@ export function useRuntimeParameterSchema(
       }
     `,
     {
-      filter: variantRowId
-        ? { runtimeVariantId: { equals: variantRowId } }
+      filter: variantId
+        ? { runtimeVariantId: { equals: variantId } }
         : // When no variant UUID, use an impossible filter to get 0 results
           { name: { equals: '__none__' } },
       orderBy: [{ field: 'RANK', direction: 'ASC' }],
@@ -172,7 +172,7 @@ export function useRuntimeParameterSchema(
   );
 
   return useMemo(() => {
-    if (!runtimeVariant || !variantRowId) return null;
+    if (!runtimeVariant || !variantId) return null;
 
     const edges =
       presetsData.runtimeVariantPresetsResult?.ok === true
@@ -236,7 +236,7 @@ export function useRuntimeParameterSchema(
       category,
       params,
     }));
-  }, [runtimeVariant, variantRowId, presetsData]);
+  }, [runtimeVariant, variantId, presetsData]);
 }
 
 /**

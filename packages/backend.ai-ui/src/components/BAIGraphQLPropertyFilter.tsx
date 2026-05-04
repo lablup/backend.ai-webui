@@ -145,6 +145,15 @@ type BaseFilterProperty = {
   valueMode?: 'scalar' | 'operator';
   // For UI/tag display when valueMode='scalar', use this operator symbol (default 'equals').
   implicitOperator?: FilterOperator;
+  // Custom input renderer. When provided, replaces the default AutoComplete input.
+  // Call onConfirm(value) to add the condition. `isValid` and `errorMessage`
+  // reflect the latest `rule.validate` outcome so the custom input can surface
+  // the same error UX the default AutoComplete shows via Tooltip.
+  renderInput?: (props: {
+    onConfirm: (value: string) => void;
+    isValid: boolean;
+    errorMessage?: string;
+  }) => React.ReactNode;
 };
 
 // fixedOperator and defaultOperator are mutually exclusive
@@ -356,7 +365,7 @@ function extractNestedConditions(
         conditions.push({
           id: generateId(),
           property: fullPath,
-          operator: propertyConfig.implicitOperator || 'eq',
+          operator: propertyConfig.implicitOperator || 'equals',
           value: String(filterValue),
           propertyLabel: propertyConfig.propertyLabel || fullPath,
           type: propertyConfig.type || 'string',
@@ -581,7 +590,7 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
     const mode = getEffectiveValueMode(selectedProperty);
     const operatorToUse =
       mode === 'scalar'
-        ? selectedProperty.implicitOperator || 'eq'
+        ? selectedProperty.implicitOperator || 'equals'
         : selectedProperty.fixedOperator || selectedOperator;
 
     const newCondition: FilterCondition = {
@@ -684,7 +693,13 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
             onChange={setSelectedOperator}
           />
         )}
-        {selectedProperty?.type === 'datetime' ? (
+        {selectedProperty?.renderInput ? (
+          selectedProperty.renderInput({
+            onConfirm: addCondition,
+            isValid,
+            errorMessage: selectedProperty.rule?.message,
+          })
+        ) : selectedProperty?.type === 'datetime' ? (
           <DatePicker
             value={selectedDate}
             showTime
