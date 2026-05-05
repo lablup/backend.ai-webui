@@ -3,10 +3,10 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import type {
-  DeploymentPresetNodesFragment$data,
-  DeploymentPresetNodesFragment$key,
-} from '../__generated__/DeploymentPresetNodesFragment.graphql';
-import type { DeploymentPresetNodesImageQuery } from '../__generated__/DeploymentPresetNodesImageQuery.graphql';
+  AdminDeploymentPresetNodesFragment$data,
+  AdminDeploymentPresetNodesFragment$key,
+} from '../__generated__/AdminDeploymentPresetNodesFragment.graphql';
+import type { AdminDeploymentPresetNodesImagesQuery } from '../__generated__/AdminDeploymentPresetNodesImagesQuery.graphql';
 import { SettingOutlined } from '@ant-design/icons';
 import {
   BAIColumnType,
@@ -16,15 +16,16 @@ import {
   BAITrashBinIcon,
   filterOutEmpty,
   filterOutNullAndUndefined,
+  toLocalId,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import React, { Suspense } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 
 export type DeploymentPresetNodeInList = NonNullable<
-  DeploymentPresetNodesFragment$data[number]
+  AdminDeploymentPresetNodesFragment$data[number]
 >;
 
 const availablePresetSorterKeys = ['name', 'rank', 'createdAt'] as const;
@@ -38,29 +39,11 @@ const isEnableSorter = (key: string) => {
   return _.includes(availablePresetSorterKeys, key);
 };
 
-const ImageCanonicalName: React.FC<{ imageId: string }> = ({ imageId }) => {
-  'use memo';
-  const data = useLazyLoadQuery<DeploymentPresetNodesImageQuery>(
-    graphql`
-      query DeploymentPresetNodesImageQuery($id: ID!) {
-        imageV2(id: $id) {
-          identity {
-            canonicalName
-          }
-        }
-      }
-    `,
-    { id: imageId },
-    { fetchPolicy: 'store-or-network' },
-  );
-  return <>{data.imageV2?.identity?.canonicalName ?? imageId}</>;
-};
-
-interface DeploymentPresetNodesProps extends Omit<
+interface AdminDeploymentPresetNodesProps extends Omit<
   BAITableProps<DeploymentPresetNodeInList>,
   'dataSource' | 'columns' | 'onChangeOrder'
 > {
-  presetsFrgmt: DeploymentPresetNodesFragment$key;
+  presetsFrgmt: AdminDeploymentPresetNodesFragment$key;
   customizeColumns?: (
     baseColumns: BAIColumnType<DeploymentPresetNodeInList>[],
   ) => BAIColumnType<DeploymentPresetNodeInList>[];
@@ -72,7 +55,7 @@ interface DeploymentPresetNodesProps extends Omit<
   ) => void;
 }
 
-const DeploymentPresetNodes: React.FC<DeploymentPresetNodesProps> = ({
+const AdminDeploymentPresetNodes: React.FC<AdminDeploymentPresetNodesProps> = ({
   presetsFrgmt,
   customizeColumns,
   disableSorter,
@@ -86,7 +69,7 @@ const DeploymentPresetNodes: React.FC<DeploymentPresetNodesProps> = ({
 
   const presets = useFragment(
     graphql`
-      fragment DeploymentPresetNodesFragment on DeploymentRevisionPreset
+      fragment AdminDeploymentPresetNodesFragment on DeploymentRevisionPreset
       @relay(plural: true) {
         id @required(action: NONE)
         name @required(action: NONE)
@@ -115,7 +98,46 @@ const DeploymentPresetNodes: React.FC<DeploymentPresetNodesProps> = ({
     presetsFrgmt,
   );
 
-  const baseColumns = _.map(
+  const filteredPresets = filterOutNullAndUndefined(presets);
+
+  const imageIds = _.uniq(
+    filteredPresets
+      .map((p) => p.execution?.imageId)
+      .filter((id): id is string => id != null),
+  );
+
+  const imagesData = useLazyLoadQuery<AdminDeploymentPresetNodesImagesQuery>(
+    graphql`
+      query AdminDeploymentPresetNodesImagesQuery(
+        $ids: [UUID!]!
+        $limit: Int!
+      ) {
+        adminImagesV2(filter: { id: { in: $ids } }, limit: $limit) {
+          edges {
+            node {
+              id
+              identity {
+                canonicalName
+              }
+            }
+          }
+        }
+      }
+    `,
+    { ids: imageIds, limit: imageIds.length || 1 },
+    { fetchPolicy: 'store-or-network' },
+  );
+
+  // PresetExecutionSpec.imageId is a raw UUID, but ImageV2.id is a Relay
+  // global ID — toLocalId is required to match results back to imageIds.
+  const imageNameById: Record<string, string> = {};
+  for (const edge of imagesData.adminImagesV2?.edges ?? []) {
+    if (edge?.node?.id && edge.node.identity?.canonicalName) {
+      imageNameById[toLocalId(edge.node.id)] = edge.node.identity.canonicalName;
+    }
+  }
+
+  const baseColumns: BAIColumnType<DeploymentPresetNodeInList>[] = _.map(
     filterOutEmpty<BAIColumnType<DeploymentPresetNodeInList>>([
       {
         key: 'name',
@@ -160,14 +182,11 @@ const DeploymentPresetNodes: React.FC<DeploymentPresetNodesProps> = ({
       {
         key: 'image',
         title: t('adminDeploymentPreset.Image'),
-        render: (__, record) =>
-          record.execution?.imageId ? (
-            <Suspense fallback={record.execution.imageId}>
-              <ImageCanonicalName imageId={record.execution.imageId} />
-            </Suspense>
-          ) : (
-            '-'
-          ),
+        render: (__, record) => {
+          const imageId = record.execution?.imageId;
+          if (!imageId) return '-';
+          return imageNameById[imageId] ?? imageId;
+        },
       },
       {
         key: 'cluster',
@@ -212,7 +231,7 @@ const DeploymentPresetNodes: React.FC<DeploymentPresetNodesProps> = ({
   return (
     <BAITable
       rowKey="id"
-      dataSource={filterOutNullAndUndefined(presets)}
+      dataSource={filteredPresets}
       columns={allColumns}
       scroll={{ x: 'max-content' }}
       onChangeOrder={(order) => {
@@ -225,4 +244,4 @@ const DeploymentPresetNodes: React.FC<DeploymentPresetNodesProps> = ({
   );
 };
 
-export default DeploymentPresetNodes;
+export default AdminDeploymentPresetNodes;

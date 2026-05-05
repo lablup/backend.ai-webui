@@ -8,10 +8,10 @@ import type {
   DeploymentRevisionPresetFilter,
   DeploymentRevisionPresetOrderBy,
 } from '../__generated__/AdminDeploymentPresetListPageQuery.graphql';
-import DeploymentPresetNodes, {
+import AdminDeploymentPresetNodes, {
   availablePresetSorterValues,
   type DeploymentPresetNodeInList,
-} from '../components/DeploymentPresetNodes';
+} from '../components/AdminDeploymentPresetNodes';
 import { convertToOrderBy } from '../helper';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
@@ -106,7 +106,7 @@ const AdminDeploymentPresetListPage: React.FC = () => {
             node {
               id
               name
-              ...DeploymentPresetNodesFragment
+              ...AdminDeploymentPresetNodesFragment
             }
           }
         }
@@ -189,7 +189,7 @@ const AdminDeploymentPresetListPage: React.FC = () => {
         </BAIFlex>
       </BAIFlex>
       {isSupported ? (
-        <DeploymentPresetNodes
+        <AdminDeploymentPresetNodes
           presetsFrgmt={filterOutNullAndUndefined(
             _.map(queryRef.deploymentRevisionPresets?.edges, 'node'),
           )}
