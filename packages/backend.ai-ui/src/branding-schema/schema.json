@@ -1,0 +1,102 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://lablup.com/schemas/backend-ai-branding.json",
+  "title": "Backend.AI Branding Config",
+  "description": "Configuration consumed by @lablup/backend-ai-app-shell. All fields optional; unspecified values fall back to defaults.",
+  "type": "object",
+  "additionalProperties": true,
+  "properties": {
+    "logo": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "src": {
+          "type": "string",
+          "description": "Logo URL for expanded sider on light background."
+        },
+        "srcDark": {
+          "type": "string",
+          "description": "Logo URL for expanded sider on dark background."
+        },
+        "srcCollapsed": {
+          "type": "string",
+          "description": "Logo URL for collapsed sider on light background."
+        },
+        "srcCollapsedDark": {
+          "type": "string",
+          "description": "Logo URL for collapsed sider on dark background."
+        },
+        "size": { "$ref": "#/definitions/logoSize" },
+        "sizeCollapsed": { "$ref": "#/definitions/logoSize" },
+        "href": {
+          "type": "string",
+          "description": "Click target for the logo."
+        },
+        "alt": { "type": "string" }
+      },
+      "required": ["src"]
+    },
+    "branding": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "companyName": { "type": "string" },
+        "brandName": { "type": "string" },
+        "productName": { "type": "string" }
+      }
+    },
+    "colors": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "light": { "$ref": "#/definitions/colorTokens" },
+        "dark": { "$ref": "#/definitions/colorTokens" }
+      }
+    },
+    "fontFamily": { "type": "string" },
+    "sider": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "widthExpanded": { "type": "number", "minimum": 0 },
+        "widthCollapsed": { "type": "number", "minimum": 0 }
+      }
+    },
+    "header": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "height": { "type": "number", "minimum": 0 }
+      }
+    }
+  },
+  "definitions": {
+    "logoSize": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "width": { "type": "number", "minimum": 0 },
+        "height": { "type": "number", "minimum": 0 }
+      },
+      "required": ["width", "height"]
+    },
+    "colorTokens": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "primary": { "type": "string" },
+        "primaryHover": { "type": "string" },
+        "headerBg": { "type": "string" },
+        "headerText": { "type": "string" },
+        "siderBg": { "type": "string" },
+        "siderText": { "type": "string" },
+        "siderActiveBg": { "type": "string" },
+        "siderActiveText": { "type": "string" },
+        "siderBorder": { "type": "string" },
+        "contentBg": { "type": "string" },
+        "contentText": { "type": "string" },
+        "borderColor": { "type": "string" }
+      }
+    }
+  }
+}

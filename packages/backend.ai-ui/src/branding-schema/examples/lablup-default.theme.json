@@ -1,0 +1,50 @@
+{
+  "$schema": "../schema.json",
+  "logo": {
+    "src": "/manifest/backend.ai-webui-white.svg",
+    "srcDark": "/manifest/backend.ai-webui-black.svg",
+    "srcCollapsed": "/manifest/backend.ai-brand-simple-white.svg",
+    "srcCollapsedDark": "/manifest/backend.ai-brand-simple-black.svg",
+    "size": { "width": 159, "height": 24 },
+    "sizeCollapsed": { "width": 32, "height": 32 },
+    "href": "/",
+    "alt": "Backend.AI"
+  },
+  "branding": {
+    "companyName": "Lablup Inc.",
+    "brandName": "Backend.AI"
+  },
+  "colors": {
+    "light": {
+      "primary": "#FF7A00",
+      "primaryHover": "#FF9729",
+      "headerBg": "#FF9729",
+      "headerText": "#FFFFFF",
+      "siderBg": "#FFFFFF",
+      "siderText": "#141414",
+      "siderActiveBg": "#FFF1E0",
+      "siderActiveText": "#FF7A00",
+      "siderBorder": "#DEE1E7",
+      "contentBg": "#F5F7FA",
+      "contentText": "#141414",
+      "borderColor": "#DEE1E7"
+    },
+    "dark": {
+      "primary": "#DC6B03",
+      "primaryHover": "#FF7A00",
+      "headerBg": "#1F1F1F",
+      "headerText": "#FFFFFF",
+      "siderBg": "#1F1F1F",
+      "siderText": "#FFFFFF",
+      "siderActiveBg": "#2A1A0A",
+      "siderActiveText": "#FF9729",
+      "siderBorder": "#303030",
+      "contentBg": "#141414",
+      "contentText": "#FFFFFF",
+      "borderColor": "#303030"
+    }
+  },
+  "fontFamily": "'Ubuntu', system-ui, -apple-system, sans-serif",
+  "sider": { "widthExpanded": 240, "widthCollapsed": 74 },
+  "header": { "height": 60 }
+}
