@@ -300,6 +300,7 @@
     "NoDataAvailable": "無可用資料",
     "PrometheusPreset": "Prometheus 預設",
     "PrometheusPresetRequired": "請選擇 Prometheus 預設。",
+    "QueryExecutionFailed": "查詢執行失敗",
     "QueryTemplate": "查詢範本",
     "Range": "範圍",
     "RefreshCurrentValue": "重新整理目前值",

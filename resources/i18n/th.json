@@ -300,6 +300,7 @@
     "NoDataAvailable": "ไม่มีข้อมูล",
     "PrometheusPreset": "Prometheus Preset",
     "PrometheusPresetRequired": "กรุณาเลือก Prometheus preset",
+    "QueryExecutionFailed": "การดำเนินการคิวรีล้มเหลว",
     "QueryTemplate": "เทมเพลตคิวรี",
     "Range": "ช่วง",
     "RefreshCurrentValue": "รีเฟรชค่าปัจจุบัน",

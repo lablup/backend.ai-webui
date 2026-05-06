@@ -300,6 +300,7 @@
     "NoDataAvailable": "Aucune donnée disponible",
     "PrometheusPreset": "Préréglage Prometheus",
     "PrometheusPresetRequired": "Veuillez sélectionner un préréglage Prometheus.",
+    "QueryExecutionFailed": "Échec de l'exécution de la requête",
     "QueryTemplate": "Modèle de requête",
     "Range": "Plage",
     "RefreshCurrentValue": "Actualiser la valeur actuelle",

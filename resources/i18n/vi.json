@@ -300,6 +300,7 @@
     "NoDataAvailable": "Không có dữ liệu",
     "PrometheusPreset": "Cài đặt sẵn Prometheus",
     "PrometheusPresetRequired": "Vui lòng chọn cài đặt sẵn Prometheus.",
+    "QueryExecutionFailed": "Thực thi truy vấn thất bại",
     "QueryTemplate": "Mẫu truy vấn",
     "Range": "Phạm vi",
     "RefreshCurrentValue": "Làm mới giá trị hiện tại",

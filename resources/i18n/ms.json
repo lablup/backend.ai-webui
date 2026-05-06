@@ -300,6 +300,7 @@
     "NoDataAvailable": "Tiada data tersedia",
     "PrometheusPreset": "Pratetap Prometheus",
     "PrometheusPresetRequired": "Sila pilih pratetap Prometheus.",
+    "QueryExecutionFailed": "Pelaksanaan pertanyaan gagal",
     "QueryTemplate": "Templat Pertanyaan",
     "Range": "Julat",
     "RefreshCurrentValue": "Muat semula nilai semasa",

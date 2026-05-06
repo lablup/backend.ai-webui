@@ -300,6 +300,7 @@
     "NoDataAvailable": "Ei tietoja saatavilla",
     "PrometheusPreset": "Prometheus-esiasetus",
     "PrometheusPresetRequired": "Valitse Prometheus-esiasetus.",
+    "QueryExecutionFailed": "Kyselyn suoritus epäonnistui",
     "QueryTemplate": "Kyselymalli",
     "Range": "Alue",
     "RefreshCurrentValue": "Päivitä nykyinen arvo",

@@ -300,6 +300,7 @@
     "NoDataAvailable": "Данные недоступны",
     "PrometheusPreset": "Шаблон Prometheus",
     "PrometheusPresetRequired": "Выберите шаблон Prometheus.",
+    "QueryExecutionFailed": "Ошибка выполнения запроса",
     "QueryTemplate": "Шаблон запроса",
     "Range": "Диапазон",
     "RefreshCurrentValue": "Обновить текущее значение",

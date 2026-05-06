@@ -300,6 +300,7 @@
     "NoDataAvailable": "データがありません",
     "PrometheusPreset": "Prometheusプリセット",
     "PrometheusPresetRequired": "Prometheusプリセットを選択してください。",
+    "QueryExecutionFailed": "クエリの実行に失敗しました",
     "QueryTemplate": "クエリテンプレート",
     "Range": "範囲",
     "RefreshCurrentValue": "現在の値を更新",

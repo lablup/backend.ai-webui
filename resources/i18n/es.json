@@ -300,6 +300,7 @@
     "NoDataAvailable": "No hay datos disponibles",
     "PrometheusPreset": "Preset de Prometheus",
     "PrometheusPresetRequired": "Por favor, seleccione un preset de Prometheus.",
+    "QueryExecutionFailed": "Error al ejecutar la consulta",
     "QueryTemplate": "Plantilla de consulta",
     "Range": "Rango",
     "RefreshCurrentValue": "Actualizar valor actual",

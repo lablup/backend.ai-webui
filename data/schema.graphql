@@ -1951,6 +1951,41 @@ input BulkCreateUserV2Input
   users: [CreateUserV2Input!]!
 }
 
+"""Added in UNRELEASED. Input for bulk-deleting multiple model cards."""
+input BulkDeleteModelCardsV2Input
+  @join__type(graph: STRAWBERRY)
+{
+  """List of model card UUIDs to delete."""
+  ids: [UUID!]!
+
+  """Options for the delete operation."""
+  options: DeleteModelCardV2Options = null
+}
+
+"""Added in UNRELEASED. Payload for bulk model card deletion."""
+type BulkDeleteModelCardsV2Payload
+  @join__type(graph: STRAWBERRY)
+{
+  """UUIDs of model cards that were successfully deleted."""
+  successes: [UUID!]!
+
+  """List of errors for model cards that failed to delete."""
+  failed: [BulkDeleteModelCardV2Error!]!
+}
+
+"""
+Added in UNRELEASED. Error information for a model card that failed during bulk deletion.
+"""
+type BulkDeleteModelCardV2Error
+  @join__type(graph: STRAWBERRY)
+{
+  """UUID of the model card that failed to delete."""
+  cardId: UUID!
+
+  """Error message describing the failure."""
+  message: String!
+}
+
 """Added in 26.4.2. Input for soft-deleting multiple virtual folders."""
 input BulkDeleteVFoldersV2Input
   @join__type(graph: STRAWBERRY)
@@ -2023,6 +2058,11 @@ input BulkPurgeVFoldersV2Input
 {
   """List of VFolder UUIDs to purge."""
   ids: [UUID!]!
+
+  """
+  Added in UNRELEASED. Optional behavior flags applied to every vfolder in the batch. Defaults to all-false when omitted.
+  """
+  options: PurgeVFolderOptionsInput!
 }
 
 """Added in 26.4.2. Payload for bulk virtual folder purge."""
@@ -2031,6 +2071,22 @@ type BulkPurgeVFoldersV2Payload
 {
   """Number of virtual folders successfully purged."""
   purgedCount: Int!
+
+  """List of errors for vfolders that failed to purge."""
+  failed: [BulkPurgeVFolderV2Error!]!
+}
+
+"""
+Added in UNRELEASED. Failure detail for a single vfolder in a bulk purge.
+"""
+type BulkPurgeVFolderV2Error
+  @join__type(graph: STRAWBERRY)
+{
+  """UUID of the vfolder that failed to purge."""
+  vfolderId: UUID!
+
+  """Error message describing the failure."""
+  message: String!
 }
 
 """
@@ -4689,25 +4745,6 @@ type DeleteModelCardPayloadGQL
   id: UUID!
 }
 
-"""Added in 26.4.2. Input for deleting multiple model cards."""
-input DeleteModelCardsV2Input
-  @join__type(graph: STRAWBERRY)
-{
-  """List of model card UUIDs to delete."""
-  ids: [UUID!]!
-
-  """Added in UNRELEASED. Options for the delete operation."""
-  options: DeleteModelCardV2Options = null
-}
-
-"""Added in 26.4.2. Payload for bulk model card deletion."""
-type DeleteModelCardsV2Payload
-  @join__type(graph: STRAWBERRY)
-{
-  """Number of model cards successfully deleted."""
-  deletedCount: Int!
-}
-
 """Added in UNRELEASED. Options for the model card delete operation."""
 input DeleteModelCardV2Options
   @join__type(graph: STRAWBERRY)
@@ -5279,6 +5316,9 @@ type DeploymentRevisionPresetEnvironEntry
 input DeploymentRevisionPresetFilter
   @join__type(graph: STRAWBERRY)
 {
+  """Added in UNRELEASED. Filter by preset ID."""
+  id: UUIDFilter = null
+
   """Name filter."""
   name: StringFilter = null
 
@@ -9552,6 +9592,11 @@ type ModelRevision implements Node
   """Additional volume folder mounts."""
   extraMounts: [ExtraVFolderMountInfoGQL!]!
 
+  """
+  Added in UNRELEASED. ID of the deployment-level preset that produced this revision. ``None`` when the revision was created without a preset, when the originating preset row has since been deleted (SET NULL FK), or for legacy rows that predate this field.
+  """
+  revisionPresetId: UUID
+
   """Timestamp when the revision was created."""
   createdAt: DateTime!
 
@@ -9562,6 +9607,11 @@ type ModelRevision implements Node
   Added in 26.4.3. The container image used by this revision, resolved via DataLoader.
   """
   imageV2: ImageV2
+
+  """
+  Added in UNRELEASED. The deployment-level preset that produced this revision, resolved via DataLoader. ``None`` when the revision was created without a preset, when the originating preset row has since been deleted (SET NULL FK), or for legacy rows that predate this field.
+  """
+  revisionPreset: DeploymentRevisionPreset
 
   """Added in 26.4.2. Resource slot allocations for this revision."""
   resourceSlots(filter: AllocatedResourceSlotFilter = null, orderBy: [AllocatedResourceSlotOrderBy!] = null): [AllocatedResourceSlot!]!
@@ -11294,8 +11344,10 @@ type Mutation
   """Added in 26.4.2. Delete a model card (admin only)."""
   adminDeleteModelCardV2(id: UUID!, options: DeleteModelCardV2Options = null): DeleteModelCardPayloadGQL! @join__field(graph: STRAWBERRY)
 
-  """Added in 26.4.2. Delete multiple model cards (admin only)."""
-  adminDeleteModelCardsV2(input: DeleteModelCardsV2Input!): DeleteModelCardsV2Payload! @join__field(graph: STRAWBERRY)
+  """
+  Added in UNRELEASED. Bulk-delete model cards (admin only) with per-card partial-failure reporting.
+  """
+  adminBulkDeleteModelCardsV2(input: BulkDeleteModelCardsV2Input!): BulkDeleteModelCardsV2Payload @join__field(graph: STRAWBERRY)
 
   """
   Added in 26.4.2. Scan a MODEL_STORE project and upsert model cards from vfolder model-definition.yaml files.
@@ -11319,7 +11371,7 @@ type Mutation
   deleteVfolderV2(vfolderId: UUID!): DeleteVFolderV2Payload! @join__field(graph: STRAWBERRY)
 
   """Added in 26.4.2. Permanently purge a virtual folder."""
-  purgeVfolderV2(vfolderId: UUID!): PurgeVFolderV2Payload! @join__field(graph: STRAWBERRY)
+  purgeVfolderV2(vfolderId: UUID!, options: PurgeVFolderOptionsInput = null): PurgeVFolderV2Payload! @join__field(graph: STRAWBERRY)
 
   """
   Added in UNRELEASED. Restore a trashed virtual folder. RBAC enforced via scope chain.
@@ -12111,6 +12163,16 @@ input PreStartActionInput
 
   """Arguments for the pre-start action."""
   args: JSON!
+}
+
+"""
+Added in UNRELEASED. Input for previewing a prometheus query template (admin only).
+"""
+input PreviewQueryDefinitionInput
+  @join__type(graph: STRAWBERRY)
+{
+  """PromQL template to validate."""
+  queryTemplate: String!
 }
 
 """
@@ -13035,12 +13097,24 @@ type PurgeUserV2Payload
 }
 
 """
+Added in UNRELEASED. Optional behavior flags for vfolder purge operations.
+"""
+input PurgeVFolderOptionsInput
+  @join__type(graph: STRAWBERRY)
+{
+  """
+  If true, also delete model card record(s) referencing the vfolder. If false, the request is rejected when any model card still references it.
+  """
+  cascadeModelCard: Boolean! = false
+}
+
+"""
 Added in 26.4.2. Payload returned after permanently purging a virtual folder.
 """
 type PurgeVFolderV2Payload
   @join__type(graph: STRAWBERRY)
 {
-  """ID of the purged virtual folder"""
+  """ID of the purged virtual folder."""
   id: UUID!
 }
 
@@ -13688,6 +13762,11 @@ type Query
   Added in 26.4.2. Execute a prometheus query preset by ID and return the result. Available to any authenticated user; the underlying preset query is the same regardless of who runs it.
   """
   prometheusQueryPresetResult(id: ID!, timeRange: QueryTimeRangeInput = null, options: ExecuteQueryDefinitionOptionsInput = null, timeWindow: String = null): QueryDefinitionExecuteResult! @join__field(graph: STRAWBERRY)
+
+  """
+  Added in UNRELEASED. Preview a prometheus query template before saving it as a preset (admin only).
+  """
+  adminPreviewPrometheusQueryPreset(input: PreviewQueryDefinitionInput!): QueryDefinitionExecuteResult @join__field(graph: STRAWBERRY)
 
   """
   Added in 26.4.2. Get a single query preset category by ID. Available to any authenticated user.

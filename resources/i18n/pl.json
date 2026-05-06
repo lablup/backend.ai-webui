@@ -300,6 +300,7 @@
     "NoDataAvailable": "Brak dostępnych danych",
     "PrometheusPreset": "Szablon Prometheus",
     "PrometheusPresetRequired": "Proszę wybrać szablon Prometheus.",
+    "QueryExecutionFailed": "Wykonanie zapytania nie powiodło się",
     "QueryTemplate": "Szablon zapytania",
     "Range": "Zakres",
     "RefreshCurrentValue": "Odśwież bieżącą wartość",

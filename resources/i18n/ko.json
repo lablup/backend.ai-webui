@@ -300,6 +300,7 @@
     "NoDataAvailable": "사용 가능한 데이터가 없습니다",
     "PrometheusPreset": "프로메테우스 프리셋",
     "PrometheusPresetRequired": "프로메테우스 프리셋을 선택해 주세요.",
+    "QueryExecutionFailed": "쿼리 실행 실패",
     "QueryTemplate": "쿼리 템플릿",
     "Range": "범위",
     "RefreshCurrentValue": "현재 값 새로 고침",

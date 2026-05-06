@@ -300,6 +300,7 @@
     "NoDataAvailable": "Өгөгдөл байхгүй байна",
     "PrometheusPreset": "Prometheus Урьдчилан тохиргоо",
     "PrometheusPresetRequired": "Prometheus урьдчилан тохиргоог сонгоно уу.",
+    "QueryExecutionFailed": "Хайлт гүйцэтгэхэд алдаа гарлаа",
     "QueryTemplate": "Хайлтын загвар",
     "Range": "Хязгаар",
     "RefreshCurrentValue": "Одоогийн утгыг шинэчлэх",

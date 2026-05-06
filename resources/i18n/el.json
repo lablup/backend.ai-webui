@@ -300,6 +300,7 @@
     "NoDataAvailable": "Δεν υπάρχουν διαθέσιμα δεδομένα",
     "PrometheusPreset": "Προεπιλογή Prometheus",
     "PrometheusPresetRequired": "Επιλέξτε μια προεπιλογή Prometheus.",
+    "QueryExecutionFailed": "Η εκτέλεση ερωτήματος απέτυχε",
     "QueryTemplate": "Πρότυπο Ερωτήματος",
     "Range": "Εύρος",
     "RefreshCurrentValue": "Ανανέωση τρέχουσας τιμής",

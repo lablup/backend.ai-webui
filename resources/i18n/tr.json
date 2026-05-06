@@ -300,6 +300,7 @@
     "NoDataAvailable": "Veri mevcut değil",
     "PrometheusPreset": "Prometheus Ön Ayarı",
     "PrometheusPresetRequired": "Lütfen bir Prometheus ön ayarı seçin.",
+    "QueryExecutionFailed": "Sorgu yürütme başarısız oldu",
     "QueryTemplate": "Sorgu Şablonu",
     "Range": "Aralık",
     "RefreshCurrentValue": "Geçerli değeri yenile",

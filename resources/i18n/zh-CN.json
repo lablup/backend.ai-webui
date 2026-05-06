@@ -300,6 +300,7 @@
     "NoDataAvailable": "暂无数据",
     "PrometheusPreset": "Prometheus 预设",
     "PrometheusPresetRequired": "请选择 Prometheus 预设。",
+    "QueryExecutionFailed": "查询执行失败",
     "QueryTemplate": "查询模板",
     "Range": "范围",
     "RefreshCurrentValue": "刷新当前值",
