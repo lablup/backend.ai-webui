@@ -952,6 +952,7 @@
     "ModelMountDestination": "모델 폴더 마운트 대상",
     "ModelVersion": "모델 이름",
     "Name": "이름",
+    "NameAndID": "이름 (ID)",
     "NamePlaceholder": "배포 이름을 입력하세요",
     "NameRequired": "배포 이름은 필수입니다.",
     "NewDeployment": "새 배포",

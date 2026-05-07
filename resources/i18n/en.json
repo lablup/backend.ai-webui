@@ -953,6 +953,7 @@
     "ModelMountDestination": "Mount Destination For Model Folder",
     "ModelVersion": "Model Name",
     "Name": "Name",
+    "NameAndID": "Name (ID)",
     "NamePlaceholder": "Enter a deployment name",
     "NameRequired": "Deployment name is required.",
     "NewDeployment": "New Deployment",

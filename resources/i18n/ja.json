@@ -951,6 +951,7 @@
     "ModelMountDestination": "モデルフォルダーのマウント先",
     "ModelVersion": "モデル名",
     "Name": "名前",
+    "NameAndID": "名前 (ID)",
     "NamePlaceholder": "デプロイ名を入力",
     "NameRequired": "デプロイ名は必須です。",
     "NewDeployment": "新規デプロイ",

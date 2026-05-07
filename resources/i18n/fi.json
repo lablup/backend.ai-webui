@@ -951,6 +951,7 @@
     "ModelMountDestination": "Mallikansion liitäntäkohde",
     "ModelVersion": "Mallin nimi",
     "Name": "Nimi",
+    "NameAndID": "Nimi (ID)",
     "NamePlaceholder": "Anna käyttöönoton nimi",
     "NameRequired": "Käyttöönoton nimi vaaditaan.",
     "NewDeployment": "Uusi käyttöönotto",

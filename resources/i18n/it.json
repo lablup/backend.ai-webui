@@ -951,6 +951,7 @@
     "ModelMountDestination": "Destinazione mount per cartella modello",
     "ModelVersion": "Nome modello",
     "Name": "Nome",
+    "NameAndID": "Nome (ID)",
     "NamePlaceholder": "Inserisci un nome distribuzione",
     "NameRequired": "Il nome della distribuzione è obbligatorio.",
     "NewDeployment": "Nuova distribuzione",

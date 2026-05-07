@@ -951,6 +951,7 @@
     "ModelMountDestination": "Destino de montagem para a pasta do modelo",
     "ModelVersion": "Nome do modelo",
     "Name": "Nome",
+    "NameAndID": "Nome (ID)",
     "NamePlaceholder": "Introduza um nome de implementação",
     "NameRequired": "O nome da implementação é obrigatório.",
     "NewDeployment": "Nova implementação",

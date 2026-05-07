@@ -951,6 +951,7 @@
     "ModelMountDestination": "Cel montowania dla folderu modelu",
     "ModelVersion": "Nazwa modelu",
     "Name": "Nazwa",
+    "NameAndID": "Nazwa (ID)",
     "NamePlaceholder": "Wprowadź nazwę wdrożenia",
     "NameRequired": "Nazwa wdrożenia jest wymagana.",
     "NewDeployment": "Nowe wdrożenie",

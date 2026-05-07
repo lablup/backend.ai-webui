@@ -951,6 +951,7 @@
     "ModelMountDestination": "Προορισμός τοποθέτησης για φάκελο μοντέλου",
     "ModelVersion": "Όνομα μοντέλου",
     "Name": "Όνομα",
+    "NameAndID": "Όνομα (ID)",
     "NamePlaceholder": "Εισάγετε όνομα ανάπτυξης",
     "NameRequired": "Το όνομα ανάπτυξης είναι απαραίτητο.",
     "NewDeployment": "Νέα ανάπτυξη",

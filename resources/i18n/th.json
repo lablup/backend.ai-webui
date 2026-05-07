@@ -951,6 +951,7 @@
     "ModelMountDestination": "ปลายทางการเมาท์สำหรับโฟลเดอร์โมเดล",
     "ModelVersion": "ชื่อโมเดล",
     "Name": "ชื่อ",
+    "NameAndID": "ชื่อ (ID)",
     "NamePlaceholder": "กรอกชื่อการปรับใช้",
     "NameRequired": "ต้องระบุชื่อการปรับใช้",
     "NewDeployment": "การปรับใช้ใหม่",

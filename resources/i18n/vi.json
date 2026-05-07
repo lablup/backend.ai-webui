@@ -951,6 +951,7 @@
     "ModelMountDestination": "Điểm gắn kết cho thư mục mô hình",
     "ModelVersion": "Tên mô hình",
     "Name": "Tên",
+    "NameAndID": "Tên (ID)",
     "NamePlaceholder": "Nhập tên triển khai",
     "NameRequired": "Tên triển khai là bắt buộc.",
     "NewDeployment": "Triển khai mới",

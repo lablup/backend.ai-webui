@@ -951,6 +951,7 @@
     "ModelMountDestination": "Destination de montage pour le dossier du modèle",
     "ModelVersion": "Nom du modèle",
     "Name": "Nom",
+    "NameAndID": "Nom (ID)",
     "NamePlaceholder": "Saisir un nom de déploiement",
     "NameRequired": "Le nom du déploiement est obligatoire.",
     "NewDeployment": "Nouveau déploiement",

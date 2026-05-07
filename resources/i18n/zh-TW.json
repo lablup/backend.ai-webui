@@ -952,6 +952,7 @@
     "ModelMountDestination": "模型資料夾掛載目標",
     "ModelVersion": "模型名稱",
     "Name": "名稱",
+    "NameAndID": "名稱 (ID)",
     "NamePlaceholder": "輸入部署名稱",
     "NameRequired": "部署名稱為必填項。",
     "NewDeployment": "新建部署",

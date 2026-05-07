@@ -951,6 +951,7 @@
     "ModelMountDestination": "Точка монтирования для папки модели",
     "ModelVersion": "Имя модели",
     "Name": "Имя",
+    "NameAndID": "Имя (ID)",
     "NamePlaceholder": "Введите имя развёртывания",
     "NameRequired": "Имя развёртывания обязательно.",
     "NewDeployment": "Новое развёртывание",

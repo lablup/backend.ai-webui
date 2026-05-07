@@ -68,7 +68,7 @@ const DeploymentOverviewContent: React.FC<{
   const deploymentItems = filterOutEmpty([
     {
       key: 'name',
-      label: `${t('deployment.Name')} (${t('general.ID')})`,
+      label: t('deployment.NameAndID'),
       children: deployment?.metadata.name ? (
         <>
           <BAIText copyable>{deployment.metadata.name}</BAIText>
@@ -104,7 +104,12 @@ const DeploymentOverviewContent: React.FC<{
       key: 'open-to-public',
       label: t('deployment.OpenToPublic'),
       children: (
-        <BooleanTag value={deployment?.networkAccess.openToPublic ?? false} />
+        <BooleanTag
+          value={deployment?.networkAccess.openToPublic}
+          trueLabel={t('button.Yes')}
+          falseLabel={t('button.No')}
+          fallback={renderFallback()}
+        />
       ),
     },
     {

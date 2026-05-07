@@ -951,6 +951,7 @@
     "ModelMountDestination": "Einhängeziel für Modellordner",
     "ModelVersion": "Modellname",
     "Name": "Name",
+    "NameAndID": "Name (ID)",
     "NamePlaceholder": "Bereitstellungsname eingeben",
     "NameRequired": "Bereitstellungsname ist erforderlich.",
     "NewDeployment": "Neue Bereitstellung",

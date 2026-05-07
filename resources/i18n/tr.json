@@ -951,6 +951,7 @@
     "ModelMountDestination": "Model Klasörü için Bağlama Hedefi",
     "ModelVersion": "Model Adı",
     "Name": "Ad",
+    "NameAndID": "Ad (ID)",
     "NamePlaceholder": "Bir dağıtım adı girin",
     "NameRequired": "Dağıtım adı gereklidir.",
     "NewDeployment": "Yeni Dağıtım",

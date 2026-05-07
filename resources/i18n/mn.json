@@ -951,6 +951,7 @@
     "ModelMountDestination": "Загварын хавтасны маунтын зорилтот хавтас",
     "ModelVersion": "Загварын нэр",
     "Name": "Нэр",
+    "NameAndID": "Нэр (ID)",
     "NamePlaceholder": "Байршуулалтын нэр оруулна уу",
     "NameRequired": "Байршуулалтын нэр шаардлагатай.",
     "NewDeployment": "Шинэ байршуулалт",
