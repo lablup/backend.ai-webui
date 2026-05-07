@@ -4,6 +4,7 @@
  */
 import { DeploymentConfigurationSectionQuery } from '../__generated__/DeploymentConfigurationSectionQuery.graphql';
 import type { DeploymentRevisionDetail_revision$key } from '../__generated__/DeploymentRevisionDetail_revision.graphql';
+import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import DeploymentAddRevisionModal from './DeploymentAddRevisionModal';
 import DeploymentRevisionDetail from './DeploymentRevisionDetail';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
@@ -35,9 +36,11 @@ import {
   BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
   filterOutEmpty,
+  toLocalId,
   useFetchKey,
   useInterval,
 } from 'backend.ai-ui';
+import { BotMessageSquareIcon } from 'lucide-react';
 import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import React, { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -261,6 +264,9 @@ const DeploymentConfigurationCards: React.FC<{
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
+  const webuiNavigate = useWebUINavigate();
+  const baiClient = useSuspendedBackendaiClient();
+  const isChatBlocked = !!baiClient?._config?.blockList?.includes('chat');
 
   const [activeRevisionTab, setActiveRevisionTab] = useQueryState(
     'revisionTab',
@@ -291,6 +297,7 @@ const DeploymentConfigurationCards: React.FC<{
             name
             projectId
             domainName
+            status
             projectV2 @since(version: "26.4.3") {
               basicInfo {
                 name
@@ -332,6 +339,7 @@ const DeploymentConfigurationCards: React.FC<{
   const deployingRevision = deployment?.deployingRevision;
   const isDeployingDifferentRevision =
     !!deployingRevision && deployingRevision.id !== currentRevision?.id;
+  const isDeploymentReady = deployment?.metadata.status === 'READY';
 
   // While a different revision is being applied, poll so the UI moves off
   // the "applying" state once the deployment finishes rolling out. We don't
@@ -341,6 +349,31 @@ const DeploymentConfigurationCards: React.FC<{
 
   return (
     <>
+      {isDeploymentReady && !hasNoRevision && (
+        <Alert
+          type="success"
+          showIcon
+          title={t('deployment.DeploymentReady')}
+          action={
+            !isChatBlocked && (
+              <Button
+                type="primary"
+                icon={<BotMessageSquareIcon size={token.fontSizeLG} />}
+                onClick={() => {
+                  webuiNavigate({
+                    pathname: '/chat',
+                    search: new URLSearchParams({
+                      endpointId: toLocalId(deploymentId),
+                    }).toString(),
+                  });
+                }}
+              >
+                {t('deployment.StartChatTest')}
+              </Button>
+            )
+          }
+        />
+      )}
       {hasNoRevision && (
         <Alert
           type="info"
