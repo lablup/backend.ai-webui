@@ -9,20 +9,14 @@ import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import ModelBrandIcon from './ModelBrandIcon';
 import ModelCardDeployModal from './ModelCardDeployModal';
-import {
-  BankOutlined,
-  EllipsisOutlined,
-  FileOutlined,
-} from '@ant-design/icons';
+import { BankOutlined, FileOutlined } from '@ant-design/icons';
 import { shapes } from '@dicebear/collection';
 import { createAvatar } from '@dicebear/core';
 import {
   Card,
   Descriptions,
   Drawer,
-  Dropdown,
   Skeleton,
-  Space,
   Tag,
   Typography,
   theme,
@@ -60,7 +54,7 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
 
   const [imageMetaData] = useBackendAIImageMetaData();
   const { generateFolderPath } = useFolderExplorerOpener();
-  const { deployInstantly, openLauncher, isDeploying, supportsQuickDeploy } =
+  const { deployInstantly, isDeploying, supportsQuickDeploy } =
     useDeploymentLauncher();
 
   const modelCard = useFragment(
@@ -102,6 +96,21 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
               description
               rank
               runtimeVariantId
+              runtimeVariant {
+                name
+              }
+              execution {
+                imageId
+                startupCommand
+              }
+              cluster {
+                clusterMode
+                clusterSize
+              }
+              deploymentDefaults {
+                openToPublic
+                replicaCount
+              }
             }
           }
         }
@@ -117,17 +126,7 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
   const presets =
     modelCard?.availablePresets?.edges
       ?.map((e) => e?.node)
-      .filter(
-        (
-          node,
-        ): node is {
-          readonly id: string;
-          readonly name: string;
-          readonly description: string | null;
-          readonly rank: number;
-          readonly runtimeVariantId: string;
-        } => node != null,
-      ) ?? [];
+      .filter((node): node is NonNullable<typeof node> => node != null) ?? [];
 
   return (
     <>
@@ -146,70 +145,26 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
           </BAIFlex>
         }
         extra={
-          hasNoAvailablePresets ? (
-            // When no presets are available, show a single "Configure and
-            // deploy" button that navigates to the full launcher so the user
-            // can set up a deployment manually.
+          supportsQuickDeploy &&
+          modelCard?.vfolder?.id &&
+          !hasNoAvailablePresets ? (
             <BAIButton
               type="primary"
-              disabled={!modelCard?.vfolder?.id}
-              onClick={() => {
-                const modelFolderId = toLocalId(modelCard?.vfolder?.id ?? '');
+              loading={isDeploying}
+              disabled={!modelCard?.id}
+              action={async () => {
+                const modelFolderId = toLocalId(modelCard.vfolder?.id ?? '');
                 if (!modelFolderId) return;
-                openLauncher({ modelFolderId });
+                const revisionPresetId = toLocalId(presets[0]?.id ?? '');
+                await deployInstantly({
+                  modelFolderId,
+                  revisionPresetId: revisionPresetId ?? undefined,
+                });
               }}
             >
-              {t('modelStore.QuickDeployDetailed')}
+              {t('modelStore.Deploy')}
             </BAIButton>
-          ) : supportsQuickDeploy && modelCard?.vfolder?.id ? (
-            // Flow 7 (FR-2684): [Deploy | ▼] split button backed by
-            // useDeploymentLauncher. Primary action fires Quick Deploy via
-            // createModelDeployment; the dropdown item navigates to the
-            // full launcher page at /deployments/start?model=<folderId>.
-            <Space.Compact>
-              <BAIButton
-                type="primary"
-                loading={isDeploying}
-                disabled={!modelCard?.id}
-                action={async () => {
-                  const modelFolderId = toLocalId(modelCard.vfolder?.id ?? '');
-                  if (!modelFolderId) return;
-                  const revisionPresetId = toLocalId(presets[0]?.id ?? '');
-                  await deployInstantly({
-                    modelFolderId,
-                    revisionPresetId: revisionPresetId ?? undefined,
-                  });
-                }}
-              >
-                {t('modelStore.Deploy')}
-              </BAIButton>
-              <Dropdown
-                disabled={!modelCard?.id || isDeploying}
-                trigger={['click']}
-                menu={{
-                  items: [
-                    {
-                      key: 'configure',
-                      label: t('modelStore.QuickDeployDetailed'),
-                      onClick: () => {
-                        const modelFolderId = toLocalId(
-                          modelCard.vfolder?.id ?? '',
-                        );
-                        if (!modelFolderId) return;
-                        openLauncher({ modelFolderId });
-                      },
-                    },
-                  ],
-                }}
-              >
-                <BAIButton type="primary" icon={<EllipsisOutlined />} />
-              </Dropdown>
-            </Space.Compact>
           ) : (
-            // Legacy path (< manager 26.4.3): keep the pre-FR-2684
-            // single-button behavior that opens the ModelCardDeployModal
-            // so older backends remain functional until Quick Deploy is
-            // universally available.
             <BAIButton
               type="primary"
               disabled={!modelCard?.id}
@@ -405,7 +360,10 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
         open={deployModalOpen}
         onClose={() => setDeployModalOpen(false)}
         modelCardRowId={modelCard?.id ? toLocalId(modelCard.id) : undefined}
-        availablePresets={presets}
+        availablePresets={presets.map((p) => ({
+          ...p,
+          description: p.description ?? null,
+        }))}
         onDeployed={(_deploymentId) => {
           setDeployModalOpen(false);
           onClose();

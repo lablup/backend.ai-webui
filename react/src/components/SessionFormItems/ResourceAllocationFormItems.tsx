@@ -665,7 +665,7 @@ const ResourceAllocationFormItems: React.FC<
                       sliderProps={{
                         marks: {
                           // remaining mark code should be located before max mark code to prevent overlapping when it is same value
-                          ...(remaining.cpu
+                          ...(remaining.cpu && showRemainingWarning
                             ? {
                                 [remaining.cpu]: {
                                   label: <RemainingMark />,
@@ -841,7 +841,7 @@ const ResourceAllocationFormItems: React.FC<
                               max={resourceLimits.mem?.max}
                               min={resourceLimits.mem?.min}
                               extraMarks={{
-                                ...(remaining.mem
+                                ...(remaining.mem && showRemainingWarning
                                   ? {
                                       //@ts-ignore
                                       [convertToBinaryUnit(
@@ -1102,7 +1102,8 @@ const ResourceAllocationFormItems: React.FC<
                             marks: {
                               0: 0,
                               // remaining mark code should be located before max mark code to prevent overlapping when it is same value
-                              ...(adjustedRemainingMarkValue
+                              ...(adjustedRemainingMarkValue &&
+                              showRemainingWarning
                                 ? {
                                     [adjustedRemainingMarkValue]: {
                                       label: <RemainingMark />,
@@ -1473,7 +1474,7 @@ const ResourceAllocationFormItems: React.FC<
                                 marks: {
                                   1: '1',
                                   // remaining mark code should be located before max mark code to prevent overlapping when it is same value
-                                  ...(remainingMarkValue
+                                  ...(remainingMarkValue && showRemainingWarning
                                     ? {
                                         [remainingMarkValue]: {
                                           label: <RemainingMark />,

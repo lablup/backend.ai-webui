@@ -176,10 +176,10 @@ const AdminModelCardListPage: React.FC = () => {
   const [commitBulkDeleteModelCards, isBulkDeleteInFlight] =
     useMutation<AdminModelCardListPageBulkDeleteMutation>(graphql`
       mutation AdminModelCardListPageBulkDeleteMutation(
-        $input: DeleteModelCardsV2Input!
+        $input: BulkDeleteModelCardsV2Input!
       ) {
-        adminDeleteModelCardsV2(input: $input) {
-          deletedCount
+        adminBulkDeleteModelCardsV2(input: $input) {
+          successes
         }
       }
     `);
@@ -496,7 +496,8 @@ const AdminModelCardListPage: React.FC = () => {
                 }
                 message.success(
                   t('adminModelCard.BulkDeleteCompleted', {
-                    count: data.adminDeleteModelCardsV2.deletedCount,
+                    count:
+                      data.adminBulkDeleteModelCardsV2?.successes?.length ?? 0,
                   }),
                 );
                 setSelectedModelCards([]);

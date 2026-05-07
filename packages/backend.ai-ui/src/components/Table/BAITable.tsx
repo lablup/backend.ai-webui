@@ -339,7 +339,7 @@ const BAITable = <RecordType extends AnyObject = AnyObject>({
             ({
               ...column,
               width:
-                resizedColumnWidths[columnKeyOrIndexKey(column, index)] ||
+                resizedColumnWidths[columnKeyOrIndexKey(column, index)] ??
                 column.width,
               onHeaderCell: (column: ColumnType<RecordType>) => {
                 return {
@@ -624,17 +624,24 @@ const ResizableTitle = (
   const [isResizing, setIsResizing] = useState(false);
   const debouncedIsResizing = useDebounce(isResizing, { wait: 100 });
 
-  // This is a workaround for the initial width of resizable columns if the width is not specified
+  // This is a workaround for the initial width of resizable columns if the width is not specified.
+  // Skip when the measured width is 0 — that happens inside hidden ancestors
+  // (display:none, detached subtrees, etc.) and would otherwise loop because
+  // the parent stores the measured 0 and the next render falls back to
+  // `width = undefined`, re-firing this effect every render (FR-2815).
   useEffect(() => {
     if (wrapRef.current && _.isUndefined(width)) {
-      onResize?.(undefined, {
-        size: {
-          width: wrapRef.current.offsetWidth,
-          height: wrapRef.current.offsetHeight,
-        },
-        node: wrapRef.current,
-        handle: 'e',
-      });
+      const measuredWidth = wrapRef.current.offsetWidth;
+      if (measuredWidth > 0) {
+        onResize?.(undefined, {
+          size: {
+            width: measuredWidth,
+            height: wrapRef.current.offsetHeight,
+          },
+          node: wrapRef.current,
+          handle: 'e',
+        });
+      }
     }
   });
 

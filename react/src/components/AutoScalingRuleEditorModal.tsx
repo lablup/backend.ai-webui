@@ -12,7 +12,7 @@ import { AutoScalingRuleEditorModalUpdateMutation } from '../__generated__/AutoS
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { useSuspendedBackendaiClient } from '../hooks';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
-import { PrometheusPresetPreview } from './PrometheusPresetPreview';
+import PrometheusQueryTemplatePreview from './PrometheusQueryTemplatePreview';
 import {
   App,
   AutoComplete,
@@ -340,9 +340,9 @@ const AutoScalingRuleEditorModalContent: React.FC<{
             ]}
             extra={
               selectedPreset ? (
-                <PrometheusPresetPreview
+                <PrometheusQueryTemplatePreview
                   key={selectedPreset.id}
-                  presetGlobalId={selectedPreset.id}
+                  queryTemplate={selectedPreset.queryTemplate}
                 />
               ) : undefined
             }

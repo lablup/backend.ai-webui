@@ -244,7 +244,6 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
   const validationRules = useValidateServiceName();
   const [isOpenServiceValidationModal, setIsOpenServiceValidationModal] =
     useState(false);
-
   const [form] = Form.useForm<ServiceLauncherFormValue>();
   const [wantToChangeResource, setWantToChangeResource] = useState(false);
   const [currentGlobalResourceGroup, setCurrentGlobalResourceGroup] =

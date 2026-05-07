@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useDeploymentLauncherDeployVFolderMutation } from '../__generated__/useDeploymentLauncherDeployVFolderMutation.graphql';
-import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import {
   useCurrentProjectValue,
@@ -33,25 +33,21 @@ export interface DeployInstantlyResult {
 
 /**
  * Hook that encapsulates Quick Deploy logic for model folders (Flow 7 of
- * FR-1368). Exposes two entry points:
+ * FR-1368). Exposes:
  *
  * - `deployInstantly`: fires `deployVfolderV2` which creates the deployment
  *   and initial revision in a single server-side operation using the supplied
  *   `revisionPresetId`. Requires manager 26.4.2+ (gated by
  *   `model-deployment-extended-filter`).
- * - `openLauncher`: navigates to `/deployments/start?model=<folderId>` so the
- *   user can configure a deployment in the full launcher UI.
  */
 export const useDeploymentLauncher = (): {
   deployInstantly: (input: QuickDeployInput) => Promise<DeployInstantlyResult>;
-  openLauncher: (input: QuickDeployInput) => void;
   isDeploying: boolean;
   supportsQuickDeploy: boolean;
 } => {
   'use memo';
 
   const { t } = useTranslation();
-  const navigate = useWebUINavigate();
   const baiClient = useSuspendedBackendaiClient();
   const { id: projectId } = useCurrentProjectValue();
   const currentResourceGroup = useCurrentResourceGroupValue();
@@ -185,17 +181,8 @@ export const useDeploymentLauncher = (): {
     });
   };
 
-  const openLauncher = (input: QuickDeployInput): void => {
-    const params = new URLSearchParams({ model: input.modelFolderId });
-    if (input.resourceGroup) params.set('resourceGroup', input.resourceGroup);
-    if (input.revisionPresetId)
-      params.set('revisionPresetId', input.revisionPresetId);
-    navigate(`/deployments/start?${params.toString()}`);
-  };
-
   return {
     deployInstantly,
-    openLauncher,
     isDeploying,
     supportsQuickDeploy,
   };

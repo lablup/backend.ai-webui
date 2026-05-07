@@ -2,15 +2,26 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import type { DeploymentPresetDetailContentFragment$key } from '../__generated__/DeploymentPresetDetailContentFragment.graphql';
 import { VFolderDeployModalEndpointPollQuery } from '../__generated__/VFolderDeployModalEndpointPollQuery.graphql';
 import { VFolderDeployModalMutation } from '../__generated__/VFolderDeployModalMutation.graphql';
 import { VFolderDeployModalQuery } from '../__generated__/VFolderDeployModalQuery.graphql';
 import { useWebUINavigate } from '../hooks';
-import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import useDeploymentLauncher from '../hooks/useDeploymentLauncher';
-import { EllipsisOutlined } from '@ant-design/icons';
-import { App, Dropdown, Form, Space, Typography, theme } from 'antd';
+import DeploymentPresetDetailContent from './DeploymentPresetDetailContent';
+import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
+import { InfoCircleOutlined } from '@ant-design/icons';
+import {
+  App,
+  Button,
+  Form,
+  Skeleton,
+  Space,
+  Tooltip,
+  Typography,
+  theme,
+} from 'antd';
 import type { DefaultOptionType } from 'antd/es/select';
 import {
   BAIButton,
@@ -92,8 +103,7 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
   const { id: projectId, name: projectName } = useCurrentProjectValue();
   const relayEnvironment = useRelayEnvironment();
   const { logger } = useBAILogger();
-  const { openLauncher, supportsQuickDeploy } = useDeploymentLauncher();
-  const { upsertNotification } = useSetBAINotification();
+  const { supportsQuickDeploy } = useDeploymentLauncher();
 
   // Fetch resource groups accessible to the current project. Shares the React
   // Query cache with BAIProjectResourceGroupSelect below, so no duplicate
@@ -121,6 +131,22 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
                 description
                 rank
                 runtimeVariantId
+                runtimeVariant {
+                  name
+                }
+                execution {
+                  imageId
+                  startupCommand
+                }
+                cluster {
+                  clusterMode
+                  clusterSize
+                }
+                deploymentDefaults {
+                  openToPublic
+                  replicaCount
+                }
+                ...DeploymentPresetDetailContentFragment
               }
             }
           }
@@ -142,17 +168,7 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
     return (
       deploymentRevisionPresets?.edges
         ?.map((edge) => edge?.node)
-        .filter(
-          (
-            node,
-          ): node is {
-            readonly id: string;
-            readonly name: string;
-            readonly description: string | null;
-            readonly rank: number;
-            readonly runtimeVariantId: string;
-          } => node != null,
-        ) ?? []
+        .filter((node): node is NonNullable<typeof node> => node != null) ?? []
     );
   }, [deploymentRevisionPresets]);
 
@@ -235,24 +251,15 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
 
   const hasNoPresets = availablePresets.length === 0;
 
-  // When no presets are available, skip the modal and redirect to the service
-  // launcher with an info notification so the user can configure manually.
-  const onRedirectToLauncher = useEffectEvent(() => {
+  // When there are no compatible presets, close the modal automatically.
+  const onHandleNoPresets = useEffectEvent(() => {
     if (!vfolderId) return;
-    upsertNotification({
-      key: `no-presets-redirect-${vfolderId}`,
-      open: true,
-      message: t('modelStore.NoCompatiblePresetsRedirectingToLauncher'),
-      backgroundTask: { status: 'pending' },
-      duration: 4,
-    });
-    openLauncher({ modelFolderId: vfolderId });
     onClose();
   });
 
   useEffect(() => {
     if (hasNoPresets && vfolderId) {
-      onRedirectToLauncher();
+      onHandleNoPresets();
     }
   }, [hasNoPresets, vfolderId]);
 
@@ -268,6 +275,8 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
   const [userSelectedPresetId, setUserSelectedPresetId] = useState<
     string | undefined
   >(undefined);
+  const [presetDetailFrgmt, setPresetDetailFrgmt] =
+    useState<DeploymentPresetDetailContentFragment$key | null>(null);
   const effectivePresetId =
     userSelectedPresetId ??
     (availablePresets[0]?.id ? toLocalId(availablePresets[0].id) : undefined);
@@ -365,30 +374,46 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
           tooltip={t('modelStore.PresetTooltip')}
           required
         >
-          <BAISelect
-            value={effectivePresetId}
-            onChange={(value: string) => setUserSelectedPresetId(value)}
-            options={presetOptions}
-            disabled={hasNoPresets}
-            placeholder={
-              hasNoPresets ? t('modelStore.NoCompatiblePresets') : undefined
-            }
-            optionRender={(option) => (
-              <BAIFlex direction="column" align="start">
-                {option.label}
-                {option.data.description && (
-                  <Typography.Text
-                    type="secondary"
-                    style={{ fontSize: token.fontSizeSM }}
-                    ellipsis
-                  >
-                    {option.data.description}
-                  </Typography.Text>
-                )}
-              </BAIFlex>
-            )}
-            style={{ width: '100%' }}
-          />
+          <BAIFlex direction="row" gap="xs">
+            <BAISelect
+              value={effectivePresetId}
+              onChange={(value: string) => setUserSelectedPresetId(value)}
+              options={presetOptions}
+              disabled={hasNoPresets}
+              placeholder={
+                hasNoPresets ? t('modelStore.NoCompatiblePresets') : undefined
+              }
+              optionRender={(option) => (
+                <BAIFlex direction="column" align="start">
+                  {option.label}
+                  {option.data.description && (
+                    <Typography.Text
+                      type="secondary"
+                      style={{ fontSize: token.fontSizeSM }}
+                      ellipsis
+                    >
+                      {option.data.description}
+                    </Typography.Text>
+                  )}
+                </BAIFlex>
+              )}
+              style={{ flex: 1 }}
+            />
+            <Space.Compact>
+              <Tooltip title={t('modelService.DeploymentPresetDetail')}>
+                <Button
+                  icon={<InfoCircleOutlined />}
+                  disabled={!effectivePresetId}
+                  onClick={() => {
+                    const node = deploymentRevisionPresets?.edges?.find(
+                      (e) => toLocalId(e?.node?.id ?? '') === effectivePresetId,
+                    )?.node;
+                    if (node) setPresetDetailFrgmt(node);
+                  }}
+                />
+              </Tooltip>
+            </Space.Compact>
+          </BAIFlex>
         </Form.Item>
         <Form.Item
           label={t('modelStore.ResourceGroup')}
@@ -403,48 +428,38 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
           />
         </Form.Item>
       </Form>
+      <BAIModal
+        open={!!presetDetailFrgmt}
+        centered
+        title={t('modelService.DeploymentPresetDetail')}
+        onCancel={() => setPresetDetailFrgmt(null)}
+        destroyOnHidden
+        footer={null}
+      >
+        <ErrorBoundaryWithNullFallback>
+          <Suspense fallback={<Skeleton active paragraph={{ rows: 6 }} />}>
+            {presetDetailFrgmt && (
+              <DeploymentPresetDetailContent presetFrgmt={presetDetailFrgmt} />
+            )}
+          </Suspense>
+        </ErrorBoundaryWithNullFallback>
+      </BAIModal>
       <BAIFlex justify="end" gap="sm">
         <BAIButton onClick={onClose}>{t('button.Cancel')}</BAIButton>
         {supportsQuickDeploy && vfolderId ? (
-          // Flow 7 (FR-2684): [Deploy | ▼] split button. Primary fires
-          // deployVfolderV2 with selected preset/resource group; the dropdown
-          // item navigates to the full launcher at /deployments/start?model=<id>.
-          <Space.Compact>
-            <BAIButton
-              type="primary"
-              action={handleDeploy}
-              disabled={
-                !vfolderId ||
-                !projectId ||
-                !effectivePresetId ||
-                !effectiveResourceGroup ||
-                hasNoPresets
-              }
-            >
-              {t('modelStore.Deploy')}
-            </BAIButton>
-            <Dropdown
-              disabled={hasNoPresets}
-              trigger={['click']}
-              menu={{
-                items: [
-                  {
-                    key: 'configure',
-                    label: t('modelStore.QuickDeployDetailed'),
-                    onClick: () => {
-                      openLauncher({
-                        modelFolderId: vfolderId,
-                        resourceGroup: effectiveResourceGroup,
-                        revisionPresetId: effectivePresetId,
-                      });
-                    },
-                  },
-                ],
-              }}
-            >
-              <BAIButton type="primary" icon={<EllipsisOutlined />} />
-            </Dropdown>
-          </Space.Compact>
+          <BAIButton
+            type="primary"
+            action={handleDeploy}
+            disabled={
+              !vfolderId ||
+              !projectId ||
+              !effectivePresetId ||
+              !effectiveResourceGroup ||
+              hasNoPresets
+            }
+          >
+            {t('modelStore.Deploy')}
+          </BAIButton>
         ) : (
           <BAIButton
             type="primary"

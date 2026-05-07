@@ -219,7 +219,7 @@ const StartPage: React.FC = () => {
               description={t('start.ModelServiceDesc')}
               buttonText={t('start.button.ModelService')}
               icon={<AppstoreAddOutlined />}
-              onClick={() => webuiNavigate('/service/start')}
+              onClick={() => webuiNavigate('/deployments')}
             />
           </ThemeSecondaryProvider>
         ),

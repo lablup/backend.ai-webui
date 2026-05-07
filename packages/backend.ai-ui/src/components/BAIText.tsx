@@ -22,14 +22,12 @@ function resolveTooltipProps(
 
   const { tooltip } = ellipsis;
   if (tooltip === true) return { title: children };
-  if (
-    tooltip &&
-    typeof tooltip === 'object' &&
-    !React.isValidElement(tooltip)
-  ) {
+  if (!tooltip) return null;
+  if (typeof tooltip === 'object' && !React.isValidElement(tooltip)) {
     return { title: children, ...(tooltip as TooltipProps) };
   }
-  return null;
+  // string or ReactNode — use directly as tooltip title
+  return { title: tooltip as ReactNode };
 }
 
 const BAIText: React.FC<BAITextProps> = ({

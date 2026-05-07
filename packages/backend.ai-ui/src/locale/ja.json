@@ -134,6 +134,9 @@
     "Token": "トークン",
     "TokenUpdatedSuccessfully": "トークンが正常に更新されました。"
   },
+  "comp:BAIImageSelect": {
+    "SelectImage": "イメージを選択"
+  },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}}バージョンは除外されます。",
     "FailedToPullVersions": "バージョンを引くことができませんでした。",

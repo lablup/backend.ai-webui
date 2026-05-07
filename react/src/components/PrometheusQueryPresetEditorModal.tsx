@@ -9,8 +9,8 @@ import {
   PrometheusQueryPresetEditorModalFragment$key,
 } from '../__generated__/PrometheusQueryPresetEditorModalFragment.graphql';
 import { PrometheusQueryPresetEditorModalUpdateMutation } from '../__generated__/PrometheusQueryPresetEditorModalUpdateMutation.graphql';
-import PrometheusPresetPreview from './PrometheusPresetPreview';
-import { App, Form, FormInstance, Input } from 'antd';
+import PrometheusQueryTemplatePreview from './PrometheusQueryTemplatePreview';
+import { App, Form, Input } from 'antd';
 import {
   BAIModal,
   BAIModalProps,
@@ -19,7 +19,7 @@ import {
   useBAILogger,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import React, { Suspense, useDeferredValue, useRef } from 'react';
+import React, { useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   graphql,
@@ -125,7 +125,9 @@ const PrometheusQueryPresetEditorModal: React.FC<
       {},
       {
         fetchPolicy:
-          deferredOpen && baiModalProps.open ? 'network-only' : 'store-only',
+          deferredOpen && baiModalProps.open
+            ? 'store-and-network'
+            : 'store-only',
       },
     );
 
@@ -140,7 +142,8 @@ const PrometheusQueryPresetEditorModal: React.FC<
     }),
   );
 
-  const formRef = useRef<FormInstance<PrometheusQueryPresetFormValues>>(null);
+  const [form] = Form.useForm<PrometheusQueryPresetFormValues>();
+  const watchedQueryTemplate = Form.useWatch('queryTemplate', form);
 
   const [commitCreateMutation, isInflightCreate] =
     useMutation<PrometheusQueryPresetEditorModalCreateMutation>(graphql`
@@ -192,8 +195,8 @@ const PrometheusQueryPresetEditorModal: React.FC<
     `);
 
   const handleOk = () => {
-    return formRef.current
-      ?.validateFields()
+    return form
+      .validateFields()
       .then((values) => {
         if (preset) {
           // Edit mode: compute diff and send only changed fields.
@@ -327,7 +330,7 @@ const PrometheusQueryPresetEditorModal: React.FC<
       confirmLoading={isInflightCreate || isInflightUpdate}
     >
       <Form
-        ref={formRef}
+        form={form}
         layout="vertical"
         preserve={false}
         scrollToFirstError
@@ -389,11 +392,16 @@ const PrometheusQueryPresetEditorModal: React.FC<
             },
           ]}
           extra={
-            preset ? (
-              <Suspense fallback={null}>
-                <PrometheusPresetPreview presetGlobalId={preset.id} />
-              </Suspense>
-            ) : undefined
+            <PrometheusQueryTemplatePreview
+              queryTemplate={
+                // `Form.useWatch` returns `undefined` on the very first render
+                // before `initialValues` are applied. In edit mode that would
+                // hide the preview for a tick and then trigger the 800ms
+                // debounce; falling back to the fragment value lets the
+                // preview start fetching the existing template immediately.
+                watchedQueryTemplate ?? preset?.queryTemplate ?? ''
+              }
+            />
           }
         >
           <TextArea autoSize={{ minRows: 4, maxRows: 12 }} />
