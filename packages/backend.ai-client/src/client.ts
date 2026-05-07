@@ -762,6 +762,14 @@ export class Client {
     if (this.isManagerVersionCompatibleWith('26.4.3')) {
       this._features['model-deployment-extended-filter'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('26.4.4')) {
+      // PresetExecutionSpec.imageId was renamed to `image` on the server, so
+      // the V2 model-store fragments (which still query `imageId`) hit
+      // GRAPHQL_VALIDATION_FAILED. Disable model-card-v2 here until the
+      // fragments migrate to the new field name; consumers fall back to the
+      // legacy model-store flow.
+      this._features['model-card-v2'] = false;
+    }
   }
 
   /**
