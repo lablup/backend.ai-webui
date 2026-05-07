@@ -178,7 +178,7 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
       refetch(
         {
           filter: {
-            roleId,
+            roleId: { equals: roleId },
             ...(overrides?.filter !== undefined
               ? overrides.filter
               : queryParams.filter),
@@ -272,7 +272,6 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
               key: 'scopeType',
               propertyLabel: t('rbac.ScopeType'),
               type: 'enum',
-              valueMode: 'scalar',
               options: [
                 'DOMAIN',
                 'PROJECT',
@@ -292,7 +291,6 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
               key: 'entityType',
               propertyLabel: t('rbac.EntityType'),
               type: 'enum',
-              valueMode: 'scalar',
               options: [
                 'DOMAIN',
                 'PROJECT',
