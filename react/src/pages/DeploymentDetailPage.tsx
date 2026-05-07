@@ -7,7 +7,6 @@ import DeploymentAccessTokensTab from '../components/DeploymentAccessTokensTab';
 import DeploymentAutoScalingTab from '../components/DeploymentAutoScalingTab';
 import DeploymentConfigurationSection from '../components/DeploymentConfigurationSection';
 import DeploymentReplicasTab from '../components/DeploymentReplicasTab';
-import DeploymentRevisionHistoryTab from '../components/DeploymentRevisionHistoryTab';
 import DeploymentStatusTag, {
   DeploymentStatus,
 } from '../components/DeploymentStatusTag';
@@ -15,7 +14,6 @@ import { useCurrentUserInfo } from '../hooks/backendai';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Skeleton, Tooltip, Typography, theme } from 'antd';
 import { BAICard, BAIFlex, toGlobalId } from 'backend.ai-ui';
-import { parseAsString, useQueryState } from 'nuqs';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -33,12 +31,6 @@ const DeploymentDetailPage: React.FC = () => {
   }>();
   const deploymentId = deploymentIdParam ?? '';
 
-  const [activeTab, setActiveTab] = useQueryState('tab', {
-    ...parseAsString.withDefault('replicas'),
-    history: 'replace',
-    scroll: false,
-  });
-
   const { deployment } = useLazyLoadQuery<DeploymentDetailPageQuery>(
     graphql`
       query DeploymentDetailPageQuery($deploymentId: ID!) {
@@ -54,7 +46,6 @@ const DeploymentDetailPage: React.FC = () => {
             }
           }
           ...DeploymentReplicasTab_deployment
-          ...DeploymentRevisionHistoryTab_deployment
           ...DeploymentAccessTokensTab_deployment
           ...DeploymentAutoScalingTab_deployment
         }
@@ -96,64 +87,26 @@ const DeploymentDetailPage: React.FC = () => {
         isDeploymentDestroying={isDeploymentDestroying}
       />
       <BAICard
-        activeTabKey={activeTab}
-        onTabChange={(key) => setActiveTab(key)}
-        tabList={[
-          {
-            key: 'replicas',
-            label: (
-              <>
-                {t('deployment.tab.Replicas')}
-                <Tooltip title={t('deployment.tab.description.Replicas')}>
-                  <QuestionCircleOutlined
-                    style={{
-                      marginLeft: token.marginXXS,
-                      color: token.colorTextDescription,
-                    }}
-                  />
-                </Tooltip>
-              </>
-            ),
-          },
-          {
-            key: 'revisions',
-            label: (
-              <>
-                {t('deployment.tab.Revision')}
-                <Tooltip title={t('deployment.tab.description.Revision')}>
-                  <QuestionCircleOutlined
-                    style={{
-                      marginLeft: token.marginXXS,
-                      color: token.colorTextDescription,
-                    }}
-                  />
-                </Tooltip>
-              </>
-            ),
-          },
-        ]}
+        title={
+          <BAIFlex gap="xs" align="center">
+            {t('deployment.tab.Replicas')}
+            <Tooltip title={t('deployment.tab.description.Replicas')}>
+              <QuestionCircleOutlined
+                style={{ color: token.colorTextDescription }}
+              />
+            </Tooltip>
+          </BAIFlex>
+        }
+        styles={{ body: { paddingTop: 0 } }}
       >
-        {activeTab === 'replicas' && (
-          <BAIErrorBoundary>
-            <Suspense fallback={<Skeleton active />}>
-              <DeploymentReplicasTab
-                deploymentFrgmt={deployment}
-                deploymentId={toGlobalId('ModelDeployment', deploymentId)}
-              />
-            </Suspense>
-          </BAIErrorBoundary>
-        )}
-        {activeTab === 'revisions' && (
-          <BAIErrorBoundary>
-            <Suspense fallback={<Skeleton active />}>
-              <DeploymentRevisionHistoryTab
-                deploymentFrgmt={deployment}
-                deploymentId={toGlobalId('ModelDeployment', deploymentId)}
-                isDeploymentDestroying={isDeploymentDestroying}
-              />
-            </Suspense>
-          </BAIErrorBoundary>
-        )}
+        <BAIErrorBoundary>
+          <Suspense fallback={<Skeleton active />}>
+            <DeploymentReplicasTab
+              deploymentFrgmt={deployment}
+              deploymentId={toGlobalId('ModelDeployment', deploymentId)}
+            />
+          </Suspense>
+        </BAIErrorBoundary>
       </BAICard>
       <DeploymentAutoScalingTab deploymentFrgmt={deployment} />
       <DeploymentAccessTokensTab

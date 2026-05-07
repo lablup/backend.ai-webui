@@ -3,16 +3,19 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { DeploymentConfigurationSectionQuery } from '../__generated__/DeploymentConfigurationSectionQuery.graphql';
+import type { DeploymentRevisionDetail_revision$key } from '../__generated__/DeploymentRevisionDetail_revision.graphql';
 import DeploymentAddRevisionModal from './DeploymentAddRevisionModal';
+import DeploymentRevisionDetail from './DeploymentRevisionDetail';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
+import DeploymentRevisionHistoryTab from './DeploymentRevisionHistoryTab';
 import DeploymentSettingModal from './DeploymentSettingModal';
-import FolderLink from './FolderLink';
-import SourceCodeView from './SourceCodeView';
+import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import {
   CheckOutlined,
   CloseOutlined,
   EditOutlined,
   LoadingOutlined,
+  PlusOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import {
@@ -25,7 +28,6 @@ import {
   Typography,
   theme,
 } from 'antd';
-import { DescriptionsItemType } from 'antd/es/descriptions';
 import {
   BAICard,
   BAIFetchKeyButton,
@@ -33,10 +35,9 @@ import {
   BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
   filterOutEmpty,
-  filterOutNullAndUndefined,
-  toLocalId,
   useFetchKey,
 } from 'backend.ai-ui';
+import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import React, { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -46,100 +47,12 @@ interface DeploymentConfigurationSectionProps {
   isDeploymentDestroying?: boolean;
 }
 
-type ModelDef = {
-  readonly name: string | null | undefined;
-  readonly modelPath: string | null | undefined;
-  readonly service?: {
-    readonly startCommand: unknown;
-    readonly port: number | null | undefined;
-    readonly healthCheck?: {
-      readonly path: string | null | undefined;
-      readonly initialDelay: number | null | undefined;
-      readonly maxRetries: number | null | undefined;
-    } | null;
-  } | null;
-};
-
-const descriptionsProps = {
-  bordered: true,
-  column: { xs: 1, sm: 1, md: 2, lg: 2, xl: 2, xxl: 2 },
-} as const;
+type DeploymentSectionData =
+  DeploymentConfigurationSectionQuery['response']['deployment'];
 
 const renderFallback = () => (
   <Typography.Text type="secondary">-</Typography.Text>
 );
-
-const buildModelDefinitionItems = (
-  rawModels: ReadonlyArray<ModelDef | null> | null | undefined,
-  t: (key: string) => string,
-): DescriptionsItemType[] => {
-  const models = filterOutNullAndUndefined(rawModels);
-  if (!models || models.length === 0) return [];
-  return models.flatMap((model, idx) => {
-    const prefix = models.length > 1 ? `[${idx}] ` : '';
-    const modelItems: DescriptionsItemType[] = [
-      {
-        key: `model-name-${idx}`,
-        label: `${prefix}${t('modelStore.ModelName')}`,
-        children: model.name || renderFallback(),
-      },
-      {
-        key: `model-path-${idx}`,
-        label: `${prefix}${t('modelStore.ModelPath')}`,
-        children: model.modelPath || renderFallback(),
-      },
-      ...(model.service
-        ? ([
-            {
-              key: `model-start-command-${idx}`,
-              label: `${prefix}${t('modelService.StartCommand')}`,
-              children: model.service.startCommand ? (
-                <SourceCodeView language="shell">
-                  {typeof model.service.startCommand === 'string'
-                    ? model.service.startCommand
-                    : JSON.stringify(model.service.startCommand, null, 2)}
-                </SourceCodeView>
-              ) : (
-                renderFallback()
-              ),
-            },
-            {
-              key: `model-port-${idx}`,
-              label: `${prefix}${t('modelService.Port')}`,
-              children: model.service.port ?? renderFallback(),
-            },
-            ...(model.service.healthCheck
-              ? ([
-                  {
-                    key: `model-healthcheck-path-${idx}`,
-                    label: `${prefix}${t('modelService.HealthCheck')}`,
-                    children:
-                      model.service.healthCheck.path || renderFallback(),
-                  },
-                  {
-                    key: `model-initial-delay-${idx}`,
-                    label: `${prefix}${t('modelService.InitialDelay')}`,
-                    children:
-                      model.service.healthCheck.initialDelay ??
-                      renderFallback(),
-                  },
-                  {
-                    key: `model-max-retries-${idx}`,
-                    label: `${prefix}${t('modelService.MaxRetries')}`,
-                    children:
-                      model.service.healthCheck.maxRetries ?? renderFallback(),
-                  },
-                ] as DescriptionsItemType[])
-              : []),
-          ] as DescriptionsItemType[])
-        : []),
-    ];
-    return modelItems;
-  });
-};
-
-type DeploymentSectionData =
-  DeploymentConfigurationSectionQuery['response']['deployment'];
 
 const DeploymentOverviewContent: React.FC<{
   deployment: DeploymentSectionData;
@@ -150,14 +63,9 @@ const DeploymentOverviewContent: React.FC<{
   const projectName =
     deployment?.metadata.projectV2?.basicInfo?.name ??
     deployment?.metadata.projectId;
-  const tags = (deployment?.metadata.tags ?? []).flatMap((tag) =>
-    tag
-      .split(',')
-      .map((t) => t.trim())
-      .filter(Boolean),
-  );
+  const tags = deployment?.metadata.tags ?? [];
 
-  const deploymentItems: DescriptionsItemType[] = filterOutEmpty([
+  const deploymentItems = filterOutEmpty([
     {
       key: 'name',
       label: t('deployment.Name'),
@@ -219,166 +127,12 @@ const DeploymentOverviewContent: React.FC<{
     },
   ]);
 
-  return <Descriptions {...descriptionsProps} items={deploymentItems} />;
-};
-
-const DeploymentRevisionInfoContent: React.FC<{
-  deployment: DeploymentSectionData;
-  onShowRevisionDrawer: (revisionId: string) => void;
-}> = ({ deployment, onShowRevisionDrawer }) => {
-  'use memo';
-  const { t } = useTranslation();
-  const { token } = theme.useToken();
-  const currentRevision = deployment?.currentRevision;
-  const deployingRevision = deployment?.deployingRevision;
-
-  if (!currentRevision) {
-    return (
-      <Empty
-        image={Empty.PRESENTED_IMAGE_SIMPLE}
-        description={t('deployment.NoCurrentRevisionDeployed')}
-      />
-    );
-  }
-
-  const clusterConfig = currentRevision.clusterConfig;
-  const resourceConfig = currentRevision.resourceConfig;
-  const runtimeConfig = currentRevision.modelRuntimeConfig;
-  const mountConfig = currentRevision.modelMountConfig;
-  const environEntries = runtimeConfig?.environ?.entries ?? [];
-
-  const revisionItems: DescriptionsItemType[] = filterOutEmpty([
-    {
-      key: 'resource-group',
-      label: t('deployment.ResourceGroup'),
-      children: resourceConfig?.resourceGroupName || renderFallback(),
-    },
-    {
-      key: 'model-folder',
-      label: t('deployment.ModelFolder'),
-      children: mountConfig?.vfolder?.name ? (
-        <BAIFlex direction="column" align="start">
-          <FolderLink
-            folderId={toLocalId(mountConfig.vfolder.id) ?? ''}
-            folderName={mountConfig.vfolder.name}
-            showIcon
-          />
-          {mountConfig.mountDestination && (
-            <Typography.Text type="secondary">
-              {mountConfig.mountDestination}
-            </Typography.Text>
-          )}
-        </BAIFlex>
-      ) : mountConfig?.vfolderId ? (
-        <Typography.Text type="secondary">
-          {mountConfig.vfolderId}
-        </Typography.Text>
-      ) : (
-        renderFallback()
-      ),
-    },
-    {
-      key: 'model-definition-path',
-      label: t('deployment.ModelDefinitionPath'),
-      children: mountConfig?.definitionPath || renderFallback(),
-    },
-    {
-      key: 'runtime-variant',
-      label: t('deployment.RuntimeVariant'),
-      children: runtimeConfig?.runtimeVariant?.name || renderFallback(),
-    },
-    {
-      key: 'cluster-mode',
-      label: t('deployment.ClusterMode'),
-      children: clusterConfig ? (
-        <Typography.Text>
-          {clusterConfig.mode} / {clusterConfig.size}
-        </Typography.Text>
-      ) : (
-        renderFallback()
-      ),
-    },
-    // `image` and `environ` are intentionally placed last with a full-row
-    // span. antd v6's Descriptions truncates a span when there isn't
-    // enough room left in the row instead of wrapping the item to a new
-    // row, so a span-2 item that lands in column 2 silently shrinks back
-    // to a single column. Putting these items at row boundaries (an even
-    // number of single-column items precedes them, including the leading
-    // `revision-id`) lets their span actually take effect.
-    {
-      key: 'image',
-      label: t('deployment.Image'),
-      children: currentRevision.imageV2?.identity?.canonicalName ? (
-        <Typography.Text copyable>
-          {currentRevision.imageV2.identity.canonicalName}
-        </Typography.Text>
-      ) : (
-        renderFallback()
-      ),
-      span: { xxl: 3, xl: 2, lg: 2, md: 1, sm: 1, xs: 1 },
-    },
-    {
-      key: 'environ',
-      label: t('deployment.Environ'),
-      children:
-        environEntries.length > 0 ? (
-          <BAIFlex direction="column" align="start">
-            {environEntries.map((entry) => (
-              <Typography.Text key={entry.name} code>
-                {entry.name}={entry.value}
-              </Typography.Text>
-            ))}
-          </BAIFlex>
-        ) : (
-          renderFallback()
-        ),
-    },
-  ]);
-
-  const currentModelDefItems = buildModelDefinitionItems(
-    currentRevision.modelDefinition?.models,
-    t,
-  );
-
-  // Only show the "deploying" banner while the deploying revision is
-  // actually different from the active one. The server can leave
-  // `deployingRevision` populated for a brief window after promotion
-  // (until the reconciler clears it), in which case current === deploying
-  // means the rollout has already finished and no banner is needed.
-  const isDeployingDifferentRevision =
-    !!deployingRevision && deployingRevision.id !== currentRevision.id;
-
   return (
-    <>
-      {isDeployingDifferentRevision && (
-        <Alert
-          type="info"
-          icon={<LoadingOutlined spin />}
-          showIcon
-          title={t('deployment.DeployingRevisionApplying', {
-            name: deployingRevision.name ?? '',
-          })}
-          action={
-            <Button onClick={() => onShowRevisionDrawer(deployingRevision.id)}>
-              {t('deployment.ViewRevision')}
-            </Button>
-          }
-          style={{ marginBottom: token.marginMD }}
-        />
-      )}
-      <Descriptions
-        {...descriptionsProps}
-        items={[
-          {
-            key: 'revision-id',
-            label: t('modelService.RevisionID'),
-            children: currentRevision.name || renderFallback(),
-          },
-          ...revisionItems,
-          ...currentModelDefItems,
-        ]}
-      />
-    </>
+    <Descriptions
+      bordered
+      column={{ xs: 1, sm: 1, md: 2, lg: 2, xl: 2, xxl: 2 }}
+      items={deploymentItems}
+    />
   );
 };
 
@@ -390,24 +144,30 @@ const DeploymentConfigurationSection: React.FC<
   const { t } = useTranslation();
   const [isPendingRefetch, startRefetchTransition] = useTransition();
   const [fetchKey, updateFetchKey] = useFetchKey();
+  const [revisionFetchKey, updateRevisionFetchKey] = useFetchKey();
   const [drawerState, setDrawerState] = useState<{
-    revisionId: string;
-    currentRevisionId: string | null;
+    revisionFrgmt: DeploymentRevisionDetail_revision$key;
+    status?: 'current' | 'deploying' | 'none';
+    title?: string;
   } | null>(null);
-  const [
-    addRevisionOpen,
-    { setLeft: closeAddRevision, setRight: openAddRevision },
-  ] = useToggle(false);
 
   const handleShowRevisionDrawer = (
-    revisionId: string,
-    currentRevisionId: string | null,
+    frgmt: DeploymentRevisionDetail_revision$key,
+    status?: 'current' | 'deploying' | 'none',
+    title?: string,
   ) => {
-    setDrawerState({ revisionId, currentRevisionId });
+    setDrawerState({ revisionFrgmt: frgmt, status, title });
   };
 
   const handleRefetch = () => {
     startRefetchTransition(() => updateFetchKey());
+  };
+
+  const handleRevisionAdded = () => {
+    startRefetchTransition(() => {
+      updateFetchKey();
+      updateRevisionFetchKey();
+    });
   };
 
   const overviewExtra = (
@@ -433,8 +193,16 @@ const DeploymentConfigurationSection: React.FC<
               <Skeleton active />
             </BAICard>
             <BAICard
-              title={t('modelService.RevisionInfo')}
-              styles={{ body: { paddingTop: 0 } }}
+              tabList={[
+                {
+                  key: 'currentRevision',
+                  label: t('deployment.CurrentRevision'),
+                },
+                {
+                  key: 'revisionHistory',
+                  label: t('deployment.RevisionHistory'),
+                },
+              ]}
             >
               <Skeleton active />
             </BAICard>
@@ -444,67 +212,78 @@ const DeploymentConfigurationSection: React.FC<
         <DeploymentConfigurationCards
           deploymentId={deploymentId}
           fetchKey={fetchKey}
+          revisionFetchKey={revisionFetchKey}
           overviewExtra={overviewExtra}
           onShowRevisionDrawer={handleShowRevisionDrawer}
-          onAddRevision={openAddRevision}
+          onRevisionAdded={handleRevisionAdded}
           isDeploymentDestroying={isDeploymentDestroying}
           onRefetch={handleRefetch}
         />
       </Suspense>
       <BAIUnmountAfterClose>
         <DeploymentRevisionDetailDrawer
-          revisionId={drawerState?.revisionId}
-          currentRevisionId={drawerState?.currentRevisionId}
+          revisionFrgmt={drawerState?.revisionFrgmt}
+          status={drawerState?.status}
+          title={drawerState?.title}
           open={!!drawerState}
           onClose={() => setDrawerState(null)}
         />
       </BAIUnmountAfterClose>
-      <DeploymentAddRevisionModal
-        open={addRevisionOpen}
-        onClose={closeAddRevision}
-        onSuccess={() => {
-          closeAddRevision();
-          handleRefetch();
-        }}
-        deploymentId={deploymentId}
-      />
     </>
   );
 };
 
 /**
  * Wrapper that issues the single combined query for both Overview and
- * RevisionInfo cards. The two cards used to fire separate queries; merging
- * them removes a redundant network roundtrip and keeps the GraphQL surface
- * area in one place. The Suspense boundary lives above this wrapper (in
+ * RevisionInfo cards. The Suspense boundary lives above this wrapper (in
  * the parent section), and the parent's fallback renders the same card
  * chrome with skeletons so the visual layout is preserved during loading.
  */
 const DeploymentConfigurationCards: React.FC<{
   deploymentId: string;
   fetchKey: string;
+  revisionFetchKey: string;
   overviewExtra: React.ReactNode;
   onShowRevisionDrawer: (
-    revisionId: string,
-    currentRevisionId: string | null,
+    frgmt: DeploymentRevisionDetail_revision$key,
+    status?: 'current' | 'deploying' | 'none',
+    title?: string,
   ) => void;
-  onAddRevision: () => void;
+  onRevisionAdded: () => void;
   isDeploymentDestroying?: boolean;
   onRefetch: () => void;
 }> = ({
   deploymentId,
   fetchKey,
+  revisionFetchKey,
   overviewExtra,
   onShowRevisionDrawer,
-  onAddRevision,
+  onRevisionAdded,
   isDeploymentDestroying = false,
   onRefetch,
 }) => {
   'use memo';
   const { t } = useTranslation();
+  const { token } = theme.useToken();
+
+  const [activeRevisionTab, setActiveRevisionTab] = useQueryState(
+    'revisionTab',
+    {
+      ...parseAsStringLiteral([
+        'currentRevision',
+        'revisionHistory',
+      ] as const).withDefault('currentRevision'),
+      history: 'replace' as const,
+      scroll: false,
+    },
+  );
   const [
     settingModalOpen,
     { setLeft: closeSettingModal, setRight: openSettingModal },
+  ] = useToggle(false);
+  const [
+    addRevisionOpen,
+    { toggle: toggleAddRevision, setLeft: closeAddRevision },
   ] = useToggle(false);
 
   const { deployment } = useLazyLoadQuery<DeploymentConfigurationSectionQuery>(
@@ -533,59 +312,14 @@ const DeploymentConfigurationCards: React.FC<{
           currentRevision @since(version: "26.4.3") {
             id
             name
-            clusterConfig {
-              mode
-              size
-            }
-            resourceConfig {
-              resourceGroupName
-            }
-            modelRuntimeConfig {
-              runtimeVariant {
-                name
-              }
-              environ {
-                entries {
-                  name
-                  value
-                }
-              }
-            }
-            modelMountConfig {
-              vfolderId
-              mountDestination
-              definitionPath
-              vfolder {
-                id
-                name
-              }
-            }
-            imageV2 @since(version: "26.4.3") {
-              id
-              identity {
-                canonicalName
-              }
-            }
-            modelDefinition {
-              models {
-                name
-                modelPath
-                service {
-                  startCommand
-                  port
-                  healthCheck {
-                    path
-                    initialDelay
-                    maxRetries
-                  }
-                }
-              }
-            }
+            ...DeploymentRevisionDetail_revision
           }
           deployingRevision @since(version: "26.4.3") {
             id
             name
+            ...DeploymentRevisionDetail_revision
           }
+          ...DeploymentRevisionHistoryTab_deployment
         }
       }
     `,
@@ -598,6 +332,10 @@ const DeploymentConfigurationCards: React.FC<{
   );
 
   const hasNoRevision = !deployment?.currentRevision;
+  const currentRevision = deployment?.currentRevision;
+  const deployingRevision = deployment?.deployingRevision;
+  const isDeployingDifferentRevision =
+    !!deployingRevision && deployingRevision.id !== currentRevision?.id;
 
   return (
     <>
@@ -608,7 +346,10 @@ const DeploymentConfigurationCards: React.FC<{
           title={t('deployment.NoCurrentRevisionDeployed')}
           description={t('deployment.NoCurrentRevisionDeployedDescription')}
           action={
-            <Button onClick={onAddRevision} disabled={isDeploymentDestroying}>
+            <Button
+              onClick={toggleAddRevision}
+              disabled={isDeploymentDestroying}
+            >
               {t('deployment.AddRevision')}
             </Button>
           }
@@ -634,18 +375,84 @@ const DeploymentConfigurationCards: React.FC<{
         <DeploymentOverviewContent deployment={deployment} />
       </BAICard>
       <BAICard
-        title={t('modelService.RevisionInfo')}
-        styles={{ body: { paddingTop: 0 } }}
-      >
-        <DeploymentRevisionInfoContent
-          deployment={deployment}
-          onShowRevisionDrawer={(revisionId) =>
-            onShowRevisionDrawer(
-              revisionId,
-              deployment?.currentRevision?.id ?? null,
-            )
+        activeTabKey={activeRevisionTab}
+        onTabChange={(key) => {
+          if (key === 'currentRevision' || key === 'revisionHistory') {
+            void setActiveRevisionTab(key);
           }
-        />
+        }}
+        tabList={[
+          {
+            key: 'currentRevision',
+            label: t('deployment.CurrentRevision'),
+          },
+          {
+            key: 'revisionHistory',
+            label: t('deployment.RevisionHistory'),
+          },
+        ]}
+        tabBarExtraContent={
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            disabled={isDeploymentDestroying}
+            onClick={toggleAddRevision}
+          >
+            {t('deployment.AddRevision')}
+          </Button>
+        }
+      >
+        {activeRevisionTab === 'currentRevision' && (
+          <>
+            {isDeployingDifferentRevision && (
+              <Alert
+                type="info"
+                icon={<LoadingOutlined spin />}
+                showIcon
+                title={t('deployment.DeployingRevisionApplying', {
+                  name: deployingRevision.name ?? '',
+                })}
+                action={
+                  <Button
+                    onClick={() =>
+                      onShowRevisionDrawer(
+                        deployingRevision,
+                        'deploying',
+                        t('deployment.DeployingRevisionDetail'),
+                      )
+                    }
+                  >
+                    {t('deployment.ViewRevision')}
+                  </Button>
+                }
+                style={{ marginBottom: token.marginMD }}
+              />
+            )}
+            {currentRevision ? (
+              <DeploymentRevisionDetail
+                revisionFrgmt={currentRevision}
+                status="current"
+              />
+            ) : (
+              <Empty
+                image={Empty.PRESENTED_IMAGE_SIMPLE}
+                description={t('deployment.NoCurrentRevisionDeployed')}
+              />
+            )}
+          </>
+        )}
+        {activeRevisionTab === 'revisionHistory' && deployment && (
+          <ErrorBoundaryWithNullFallback>
+            <Suspense fallback={<Skeleton active paragraph={{ rows: 4 }} />}>
+              <DeploymentRevisionHistoryTab
+                deploymentFrgmt={deployment}
+                deploymentId={deploymentId}
+                isDeploymentDestroying={isDeploymentDestroying}
+                fetchKey={revisionFetchKey}
+              />
+            </Suspense>
+          </ErrorBoundaryWithNullFallback>
+        )}
       </BAICard>
       <DeploymentSettingModal
         open={settingModalOpen}
@@ -655,6 +462,17 @@ const DeploymentConfigurationCards: React.FC<{
           if (success) onRefetch();
         }}
       />
+      <BAIUnmountAfterClose>
+        <DeploymentAddRevisionModal
+          open={addRevisionOpen}
+          onCancel={closeAddRevision}
+          onSuccess={() => {
+            closeAddRevision();
+            onRevisionAdded();
+          }}
+          deploymentId={deploymentId}
+        />
+      </BAIUnmountAfterClose>
     </>
   );
 };
