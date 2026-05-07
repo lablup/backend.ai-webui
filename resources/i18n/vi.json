@@ -944,6 +944,7 @@
     "NewRevisionWillBeCreated": "Một Revision mới sẽ được tạo. Revision trước đó sẽ được bảo tồn.",
     "NewRevisionWillBeCreatedConfirm": "Lưu sẽ tạo Revision mới. Tiếp tục?",
     "NoCurrentRevisionDeployed": "Hiện tại không có Revision nào được triển khai.",
+    "NoCurrentRevisionDeployedDescription": "Không có dịch vụ hoạt động nào khả dụng. Tạo một bản sửa đổi để kích hoạt dịch vụ này.",
     "NoDeployments": "Không tìm thấy triển khai.",
     "NumberOfReplicas": "Số lượng bản sao",
     "OpenToPublic": "Công khai",

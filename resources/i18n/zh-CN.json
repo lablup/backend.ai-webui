@@ -944,6 +944,7 @@
     "NewRevisionWillBeCreated": "将创建新的 Revision。之前的 Revision 将被保留。",
     "NewRevisionWillBeCreatedConfirm": "保存将创建新的 Revision。是否继续？",
     "NoCurrentRevisionDeployed": "当前没有已部署的 Revision。",
+    "NoCurrentRevisionDeployedDescription": "没有可用的活跃服务。请创建一个修订版本以激活此服务。",
     "NoDeployments": "未找到部署。",
     "NumberOfReplicas": "副本数量",
     "OpenToPublic": "公开",

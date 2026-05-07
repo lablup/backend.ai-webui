@@ -8,15 +8,18 @@ import {
   DeploymentOrderBy,
   DeploymentStatus,
 } from '../__generated__/DeploymentListPageQuery.graphql';
+import { DeploymentSettingModal_deployment$key } from '../__generated__/DeploymentSettingModal_deployment.graphql';
 import DeploymentList, {
   availableDeploymentOrderValues,
   tableOrderToSort,
   type DeploymentOrderValue,
   type DeploymentStatusCategory,
 } from '../components/DeploymentList';
+import DeploymentSettingModal from '../components/DeploymentSettingModal';
 import { useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
+import { useToggle } from 'ahooks';
 import { Button, Skeleton } from 'antd';
 import {
   BAICard,
@@ -27,7 +30,7 @@ import {
   useFetchKey,
 } from 'backend.ai-ui';
 import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
-import React, { Suspense, useDeferredValue } from 'react';
+import React, { Suspense, useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
@@ -50,6 +53,10 @@ const DeploymentListPageContent: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
   const webuiNavigate = useWebUINavigate();
+  const [isCreating, { setLeft: closeCreate, setRight: openCreate }] =
+    useToggle(false);
+  const [editingDeploymentFrgmt, setEditingDeploymentFrgmt] =
+    useState<DeploymentSettingModal_deployment$key | null>(null);
 
   const {
     baiPaginationOption,
@@ -134,59 +141,65 @@ const DeploymentListPageContent: React.FC = () => {
     deferredQueryVariables !== queryVariables || deferredFetchKey !== fetchKey;
 
   return (
-    <DeploymentList
-      deploymentsFrgmt={myDeployments}
-      filter={queryParams.filter ?? undefined}
-      setFilter={(value) => {
-        setQueryParams({ filter: value || null });
-        setTablePaginationOption({ current: 1 });
-      }}
-      order={queryParams.order ?? undefined}
-      onChangeOrder={(order) => {
-        setQueryParams({
-          order: (order as DeploymentOrderValue) ?? null,
-        });
-      }}
-      statusCategory={queryParams.statusCategory}
-      onStatusCategoryChange={(value) => {
-        setQueryParams({ statusCategory: value });
-        setTablePaginationOption({ current: 1 });
-      }}
-      pagination={{
-        ...tablePaginationOption,
-        onChange: (current, pageSize) => {
-          setTablePaginationOption({ current, pageSize });
-        },
-      }}
-      tableSettings={{
-        columnOverrides,
-        onColumnOverridesChange: setColumnOverrides,
-      }}
-      mode="user"
-      loading={isPending}
-      onRowClick={(deploymentId) => {
-        webuiNavigate(`/deployments/${toLocalId(deploymentId)}`);
-      }}
-      onEditClick={(deploymentId) => {
-        webuiNavigate(`/deployments/${toLocalId(deploymentId)}/edit`);
-      }}
-      onDeleteComplete={updateFetchKey}
-      toolbarEnd={
-        <BAIFlex gap="xs" align="center">
-          <BAIFetchKeyButton
-            value={fetchKey}
-            onChange={updateFetchKey}
-            loading={isPending}
-          />
-          <Button
-            type="primary"
-            onClick={() => webuiNavigate('/deployments/start')}
-          >
-            {t('deployment.CreateDeployment')}
-          </Button>
-        </BAIFlex>
-      }
-    />
+    <>
+      <DeploymentList
+        deploymentsFrgmt={myDeployments}
+        filter={queryParams.filter ?? undefined}
+        setFilter={(value) => {
+          setQueryParams({ filter: value || null });
+          setTablePaginationOption({ current: 1 });
+        }}
+        order={queryParams.order ?? undefined}
+        onChangeOrder={(order) => {
+          setQueryParams({
+            order: (order as DeploymentOrderValue) ?? null,
+          });
+        }}
+        statusCategory={queryParams.statusCategory}
+        onStatusCategoryChange={(value) => {
+          setQueryParams({ statusCategory: value });
+          setTablePaginationOption({ current: 1 });
+        }}
+        pagination={{
+          ...tablePaginationOption,
+          onChange: (current, pageSize) => {
+            setTablePaginationOption({ current, pageSize });
+          },
+        }}
+        tableSettings={{
+          columnOverrides,
+          onColumnOverridesChange: setColumnOverrides,
+        }}
+        mode="user"
+        loading={isPending}
+        onRowClick={(deploymentId) => {
+          webuiNavigate(`/deployments/${toLocalId(deploymentId)}`);
+        }}
+        onEditClick={(frgmt) => setEditingDeploymentFrgmt(frgmt)}
+        onDeleteComplete={updateFetchKey}
+        toolbarEnd={
+          <BAIFlex gap="xs" align="center">
+            <BAIFetchKeyButton
+              value={fetchKey}
+              onChange={updateFetchKey}
+              loading={isPending}
+            />
+            <Button type="primary" onClick={openCreate}>
+              {t('deployment.CreateDeployment')}
+            </Button>
+          </BAIFlex>
+        }
+      />
+      <DeploymentSettingModal
+        open={isCreating || !!editingDeploymentFrgmt}
+        deploymentFrgmt={editingDeploymentFrgmt}
+        onRequestClose={(success) => {
+          closeCreate();
+          setEditingDeploymentFrgmt(null);
+          if (success) updateFetchKey();
+        }}
+      />
+    </>
   );
 };
 

@@ -944,6 +944,7 @@
     "NewRevisionWillBeCreated": "新しい Revision が作成されます。以前の Revision は保持されます。",
     "NewRevisionWillBeCreatedConfirm": "保存すると新しい Revision が作成されます。続行しますか？",
     "NoCurrentRevisionDeployed": "現在デプロイされている Revision はありません。",
+    "NoCurrentRevisionDeployedDescription": "有効なサービスがありません。リビジョンを作成してサービスを有効化してください。",
     "NoDeployments": "デプロイが見つかりません。",
     "NumberOfReplicas": "レプリカ数",
     "OpenToPublic": "公開",

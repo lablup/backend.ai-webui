@@ -944,6 +944,7 @@
     "NewRevisionWillBeCreated": "Eine neue Revision wird erstellt. Die vorherige Revision wird aufbewahrt.",
     "NewRevisionWillBeCreatedConfirm": "Beim Speichern wird eine neue Revision erstellt. Fortfahren?",
     "NoCurrentRevisionDeployed": "Derzeit ist keine Revision bereitgestellt.",
+    "NoCurrentRevisionDeployedDescription": "Kein aktiver Dienst verfügbar. Erstellen Sie eine Revision, um diesen Dienst zu aktivieren.",
     "NoDeployments": "Keine Bereitstellungen gefunden.",
     "NumberOfReplicas": "Anzahl der Replikate",
     "OpenToPublic": "Öffentlich",

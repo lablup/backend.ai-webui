@@ -3,8 +3,9 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { DeploymentConfigurationSectionQuery } from '../__generated__/DeploymentConfigurationSectionQuery.graphql';
-import { useWebUINavigate } from '../hooks';
+import DeploymentAddRevisionModal from './DeploymentAddRevisionModal';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
+import DeploymentSettingModal from './DeploymentSettingModal';
 import FolderLink from './FolderLink';
 import SourceCodeView from './SourceCodeView';
 import {
@@ -13,6 +14,7 @@ import {
   EditOutlined,
   LoadingOutlined,
 } from '@ant-design/icons';
+import { useToggle } from 'ahooks';
 import {
   Alert,
   Button,
@@ -25,14 +27,15 @@ import {
 } from 'antd';
 import { DescriptionsItemType } from 'antd/es/descriptions';
 import {
-  filterOutEmpty,
-  filterOutNullAndUndefined,
-  BAIButton,
   BAICard,
   BAIFetchKeyButton,
   BAIFlex,
   BAIUnmountAfterClose,
+  INITIAL_FETCH_KEY,
+  filterOutEmpty,
+  filterOutNullAndUndefined,
   toLocalId,
+  useFetchKey,
 } from 'backend.ai-ui';
 import React, { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -147,7 +150,12 @@ const DeploymentOverviewContent: React.FC<{
   const projectName =
     deployment?.metadata.projectV2?.basicInfo?.name ??
     deployment?.metadata.projectId;
-  const tags = deployment?.metadata.tags ?? [];
+  const tags = (deployment?.metadata.tags ?? []).flatMap((tag) =>
+    tag
+      .split(',')
+      .map((t) => t.trim())
+      .filter(Boolean),
+  );
 
   const deploymentItems: DescriptionsItemType[] = filterOutEmpty([
     {
@@ -380,28 +388,26 @@ const DeploymentConfigurationSection: React.FC<
   'use memo';
 
   const { t } = useTranslation();
-  const webuiNavigate = useWebUINavigate();
   const [isPendingRefetch, startRefetchTransition] = useTransition();
-  const [fetchKey, setFetchKey] = useState(0);
-  const [drawerRevisionId, setDrawerRevisionId] = useState<string | null>(null);
-  const [drawerCurrentRevisionId, setDrawerCurrentRevisionId] = useState<
-    string | null
-  >(null);
-
-  const deploymentLocalId = toLocalId(deploymentId);
+  const [fetchKey, updateFetchKey] = useFetchKey();
+  const [drawerState, setDrawerState] = useState<{
+    revisionId: string;
+    currentRevisionId: string | null;
+  } | null>(null);
+  const [
+    addRevisionOpen,
+    { setLeft: closeAddRevision, setRight: openAddRevision },
+  ] = useToggle(false);
 
   const handleShowRevisionDrawer = (
     revisionId: string,
     currentRevisionId: string | null,
   ) => {
-    setDrawerRevisionId(revisionId);
-    setDrawerCurrentRevisionId(currentRevisionId);
+    setDrawerState({ revisionId, currentRevisionId });
   };
 
   const handleRefetch = () => {
-    startRefetchTransition(() => {
-      setFetchKey((k) => k + 1);
-    });
+    startRefetchTransition(() => updateFetchKey());
   };
 
   const overviewExtra = (
@@ -411,16 +417,6 @@ const DeploymentConfigurationSection: React.FC<
         value=""
         onChange={handleRefetch}
       />
-      <BAIButton
-        type="primary"
-        icon={<EditOutlined />}
-        disabled={isDeploymentDestroying}
-        onClick={() => {
-          webuiNavigate(`/deployments/${deploymentLocalId}/edit`);
-        }}
-      >
-        {t('deployment.EditConfiguration')}
-      </BAIButton>
     </BAIFlex>
   );
 
@@ -450,16 +446,28 @@ const DeploymentConfigurationSection: React.FC<
           fetchKey={fetchKey}
           overviewExtra={overviewExtra}
           onShowRevisionDrawer={handleShowRevisionDrawer}
+          onAddRevision={openAddRevision}
+          isDeploymentDestroying={isDeploymentDestroying}
+          onRefetch={handleRefetch}
         />
       </Suspense>
       <BAIUnmountAfterClose>
         <DeploymentRevisionDetailDrawer
-          revisionId={drawerRevisionId}
-          currentRevisionId={drawerCurrentRevisionId}
-          open={!!drawerRevisionId}
-          onClose={() => setDrawerRevisionId(null)}
+          revisionId={drawerState?.revisionId}
+          currentRevisionId={drawerState?.currentRevisionId}
+          open={!!drawerState}
+          onClose={() => setDrawerState(null)}
         />
       </BAIUnmountAfterClose>
+      <DeploymentAddRevisionModal
+        open={addRevisionOpen}
+        onClose={closeAddRevision}
+        onSuccess={() => {
+          closeAddRevision();
+          handleRefetch();
+        }}
+        deploymentId={deploymentId}
+      />
     </>
   );
 };
@@ -474,20 +482,36 @@ const DeploymentConfigurationSection: React.FC<
  */
 const DeploymentConfigurationCards: React.FC<{
   deploymentId: string;
-  fetchKey: number;
+  fetchKey: string;
   overviewExtra: React.ReactNode;
   onShowRevisionDrawer: (
     revisionId: string,
     currentRevisionId: string | null,
   ) => void;
-}> = ({ deploymentId, fetchKey, overviewExtra, onShowRevisionDrawer }) => {
+  onAddRevision: () => void;
+  isDeploymentDestroying?: boolean;
+  onRefetch: () => void;
+}> = ({
+  deploymentId,
+  fetchKey,
+  overviewExtra,
+  onShowRevisionDrawer,
+  onAddRevision,
+  isDeploymentDestroying = false,
+  onRefetch,
+}) => {
   'use memo';
   const { t } = useTranslation();
+  const [
+    settingModalOpen,
+    { setLeft: closeSettingModal, setRight: openSettingModal },
+  ] = useToggle(false);
 
   const { deployment } = useLazyLoadQuery<DeploymentConfigurationSectionQuery>(
     graphql`
       query DeploymentConfigurationSectionQuery($deploymentId: ID!) {
         deployment(id: $deploymentId) {
+          ...DeploymentSettingModal_deployment
           metadata {
             name
             tags
@@ -566,14 +590,45 @@ const DeploymentConfigurationCards: React.FC<{
       }
     `,
     { deploymentId },
-    { fetchKey, fetchPolicy: 'network-only' },
+    {
+      fetchKey,
+      fetchPolicy:
+        fetchKey === INITIAL_FETCH_KEY ? 'store-and-network' : 'network-only',
+    },
   );
+
+  const hasNoRevision = !deployment?.currentRevision;
 
   return (
     <>
+      {hasNoRevision && (
+        <Alert
+          type="info"
+          showIcon
+          title={t('deployment.NoCurrentRevisionDeployed')}
+          description={t('deployment.NoCurrentRevisionDeployedDescription')}
+          action={
+            <Button onClick={onAddRevision} disabled={isDeploymentDestroying}>
+              {t('deployment.AddRevision')}
+            </Button>
+          }
+        />
+      )}
       <BAICard
         title={t('deployment.Overview')}
-        extra={overviewExtra}
+        extra={
+          <BAIFlex gap="xs" align="center">
+            {overviewExtra}
+            <Button
+              type="primary"
+              icon={<EditOutlined />}
+              disabled={isDeploymentDestroying}
+              onClick={openSettingModal}
+            >
+              {t('deployment.EditDeployment')}
+            </Button>
+          </BAIFlex>
+        }
         styles={{ body: { paddingTop: 0 } }}
       >
         <DeploymentOverviewContent deployment={deployment} />
@@ -592,6 +647,14 @@ const DeploymentConfigurationCards: React.FC<{
           }
         />
       </BAICard>
+      <DeploymentSettingModal
+        open={settingModalOpen}
+        deploymentFrgmt={deployment}
+        onRequestClose={(success) => {
+          closeSettingModal();
+          if (success) onRefetch();
+        }}
+      />
     </>
   );
 };

@@ -944,6 +944,7 @@
     "NewRevisionWillBeCreated": "Une nouvelle Revision sera créée. La Revision précédente sera conservée.",
     "NewRevisionWillBeCreatedConfirm": "L'enregistrement créera une nouvelle Revision. Continuer ?",
     "NoCurrentRevisionDeployed": "Aucune Revision n'est actuellement déployée.",
+    "NoCurrentRevisionDeployedDescription": "Aucun service actif n'est disponible. Créez une révision pour activer ce service.",
     "NoDeployments": "Aucun déploiement trouvé.",
     "NumberOfReplicas": "Nombre de répliques",
     "OpenToPublic": "Public",

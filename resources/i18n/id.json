@@ -944,6 +944,7 @@
     "NewRevisionWillBeCreated": "Revision baru akan dibuat. Revision sebelumnya akan dipertahankan.",
     "NewRevisionWillBeCreatedConfirm": "Menyimpan akan membuat Revision baru. Lanjutkan?",
     "NoCurrentRevisionDeployed": "Saat ini tidak ada Revision yang diterapkan.",
+    "NoCurrentRevisionDeployedDescription": "Tidak ada layanan aktif yang tersedia. Buat revisi untuk mengaktifkan layanan ini.",
     "NoDeployments": "Tidak ada penerapan ditemukan.",
     "NumberOfReplicas": "Jumlah Replika",
     "OpenToPublic": "Terbuka untuk Publik",

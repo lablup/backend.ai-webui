@@ -944,6 +944,7 @@
     "NewRevisionWillBeCreated": "Zostanie utworzona nowa Revision. Poprzednia Revision zostanie zachowana.",
     "NewRevisionWillBeCreatedConfirm": "Zapisanie spowoduje utworzenie nowej Revision. Kontynuować?",
     "NoCurrentRevisionDeployed": "Żadna Revision nie jest obecnie wdrożona.",
+    "NoCurrentRevisionDeployedDescription": "Żadna aktywna usługa nie jest dostępna. Utwórz rewizję, aby aktywować tę usługę.",
     "NoDeployments": "Nie znaleziono wdrożeń.",
     "NumberOfReplicas": "Liczba replik",
     "OpenToPublic": "Publiczne",

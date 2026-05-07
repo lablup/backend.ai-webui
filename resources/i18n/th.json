@@ -944,6 +944,7 @@
     "NewRevisionWillBeCreated": "จะสร้าง Revision ใหม่ Revision ก่อนหน้าจะถูกเก็บไว้",
     "NewRevisionWillBeCreatedConfirm": "การบันทึกจะสร้าง Revision ใหม่ ดำเนินการต่อหรือไม่?",
     "NoCurrentRevisionDeployed": "ขณะนี้ยังไม่มี Revision ที่ถูกปรับใช้",
+    "NoCurrentRevisionDeployedDescription": "ไม่มีบริการที่ใช้งานอยู่ สร้างการแก้ไขเพื่อเปิดใช้งานบริการนี้",
     "NoDeployments": "ไม่พบการปรับใช้",
     "NumberOfReplicas": "จำนวนเรพลิกา",
     "OpenToPublic": "เปิดสาธารณะ",

@@ -944,6 +944,7 @@
     "NewRevisionWillBeCreated": "Yeni bir Revision oluşturulacak. Önceki Revision korunacak.",
     "NewRevisionWillBeCreatedConfirm": "Kaydetme yeni bir Revision oluşturacak. Devam edilsin mi?",
     "NoCurrentRevisionDeployed": "Şu anda dağıtılmış bir Revision yok.",
+    "NoCurrentRevisionDeployedDescription": "Etkin bir servis mevcut değil. Bu servisi etkinleştirmek için bir revizyon oluşturun.",
     "NoDeployments": "Dağıtım bulunamadı.",
     "NumberOfReplicas": "Replika Sayısı",
     "OpenToPublic": "Herkese Açık",

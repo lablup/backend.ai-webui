@@ -67,19 +67,16 @@ const FolderInvitationResponseModalOpener = React.lazy(
 const FileUploadManager = React.lazy(
   () => import('./components/FileUploadManager'),
 );
-// FR-2675 — The legacy `ServiceLauncherCreatePage` / `ServiceLauncherUpdatePage`
-// routes have been redirected to the new Deployment launcher below so the
-// new `/deployments/start` + `/deployments/:deploymentId/edit` paths are the
-// sole launcher entry points. The underlying `ServiceLauncherPageContent`
-// component is still imported transitively (by `useModelServiceLauncher`,
-// `LegacyModelTryContentButton`, etc.) and is scheduled for removal in a
-// follow-up cleanup once those call sites migrate to the new hook.
+// FR-2675 / FR-2822 — The legacy `ServiceLauncherCreatePage` /
+// `ServiceLauncherUpdatePage` routes have been removed in favor of the
+// in-page `DeploymentCreateModal` opened from `/deployments`. The
+// underlying `ServiceLauncherPageContent` component is still imported
+// transitively (by `useModelServiceLauncher`, `LegacyModelTryContentButton`,
+// etc.) and is scheduled for removal in a follow-up cleanup once those
+// call sites migrate to the new modal-based create flow.
 
 const DeploymentListPage = React.lazy(
   () => import('./pages/DeploymentListPage'),
-);
-const DeploymentLauncherPage = React.lazy(
-  () => import('./pages/DeploymentLauncherPage'),
 );
 const DeploymentDetailPage = React.lazy(
   () => import('./pages/DeploymentDetailPage'),
@@ -298,41 +295,11 @@ export const mainLayoutChildRoutes: RouteObject[] = [
         },
       },
       {
-        path: 'start',
-        handle: { labelKey: 'modelService.StartNewService' },
-        element: (
-          <Suspense
-            fallback={
-              <BAIFlex direction="column" style={{ maxWidth: 700 }}>
-                <Skeleton active />
-              </BAIFlex>
-            }
-          >
-            <DeploymentLauncherPage />
-          </Suspense>
-        ),
-      },
-      {
         path: ':deploymentId',
         handle: { labelKey: 'modelService.RoutingInfo' },
         element: (
           <Suspense fallback={<Skeleton active />}>
             <DeploymentDetailPage />
-          </Suspense>
-        ),
-      },
-      {
-        path: ':deploymentId/edit',
-        handle: { labelKey: 'modelService.UpdateService' },
-        element: (
-          <Suspense
-            fallback={
-              <BAIFlex direction="column" style={{ maxWidth: 700 }}>
-                <Skeleton active />
-              </BAIFlex>
-            }
-          >
-            <DeploymentLauncherPage />
           </Suspense>
         ),
       },
@@ -377,34 +344,6 @@ export const mainLayoutChildRoutes: RouteObject[] = [
         element: <WebUINavigate to="/deployments" replace />,
       },
       {
-        // FR-2675 — Legacy `/service/start` → new `/deployments/start`.
-        path: 'start',
-        Component: () => {
-          const location = useLocation();
-          return (
-            <WebUINavigate
-              to={'/deployments/start' + location.search}
-              replace
-            />
-          );
-        },
-      },
-      {
-        // FR-2675 — Legacy `/service/update/:endpointId` →
-        // `/deployments/:deploymentId/edit`.
-        path: 'update/:endpointId',
-        Component: () => {
-          const { endpointId } = useParams<{ endpointId: string }>();
-          const location = useLocation();
-          return (
-            <WebUINavigate
-              to={`/deployments/${endpointId}/edit${location.search}`}
-              replace
-            />
-          );
-        },
-      },
-      {
         // FR-2664 — Legacy fallback: /service/:endpointId → /deployments/:deploymentId
         path: ':endpointId',
         Component: () => {
@@ -413,20 +352,6 @@ export const mainLayoutChildRoutes: RouteObject[] = [
           return (
             <WebUINavigate
               to={`/deployments/${endpointId}${location.search}`}
-              replace
-            />
-          );
-        },
-      },
-      {
-        // FR-2664 — Legacy fallback: /service/:endpointId/edit → /deployments/:deploymentId/edit
-        path: ':endpointId/edit',
-        Component: () => {
-          const { endpointId } = useParams<{ endpointId: string }>();
-          const location = useLocation();
-          return (
-            <WebUINavigate
-              to={`/deployments/${endpointId}/edit${location.search}`}
               replace
             />
           );

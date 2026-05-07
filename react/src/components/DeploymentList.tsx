@@ -7,6 +7,7 @@ import {
   DeploymentList_modelDeploymentConnection$data,
   DeploymentList_modelDeploymentConnection$key,
 } from '../__generated__/DeploymentList_modelDeploymentConnection.graphql';
+import { DeploymentSettingModal_deployment$key } from '../__generated__/DeploymentSettingModal_deployment.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
 import BAIRadioGroup from './BAIRadioGroup';
 import DeploymentOwnerInfo from './DeploymentOwnerInfo';
@@ -126,8 +127,8 @@ export interface DeploymentListProps extends Omit<
   mode: 'user' | 'admin';
   /** Called when a row name is clicked. Receives the deployment global ID. */
   onRowClick?: (deploymentId: string) => void;
-  /** Called when the edit action button is clicked. Receives the deployment global ID. */
-  onEditClick?: (deploymentId: string) => void;
+  /** Called when the edit action button is clicked. Receives the deployment fragment ref. */
+  onEditClick?: (frgmt: DeploymentSettingModal_deployment$key) => void;
   /** Called after a deployment is successfully deleted. Use to refresh the list. */
   onDeleteComplete?: () => void;
   /** Extra elements rendered at the end of the toolbar row (e.g. refresh + create buttons). */
@@ -189,6 +190,7 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
             replicaState {
               desiredReplicaCount
             }
+            ...DeploymentSettingModal_deployment
             totalReplicas: replicas {
               count
             }
@@ -288,7 +290,7 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
             title: t('deployment.EditDeployment'),
             icon: <EditOutlined />,
             disabled: isDestroying,
-            onClick: () => onEditClick(row.id),
+            onClick: () => onEditClick(row),
           });
         }
         actions.push({
@@ -371,11 +373,16 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
       key: 'tags',
       title: t('deployment.Tags'),
       render: (_text, row) => {
-        const tags = row.metadata?.tags ?? [];
+        const tags = (row.metadata?.tags ?? []).flatMap((tag) =>
+          tag
+            .split(',')
+            .map((t) => t.trim())
+            .filter(Boolean),
+        );
         if (tags.length === 0)
           return <Typography.Text type="secondary">-</Typography.Text>;
         return (
-          <BAIFlex wrap="wrap" gap="xs">
+          <BAIFlex wrap="wrap" gap="xxs">
             {tags.map((tag) => (
               <Tag key={tag}>{tag}</Tag>
             ))}
