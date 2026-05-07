@@ -236,14 +236,6 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
         >
           <Input placeholder={t('deployment.NamePlaceholder')} />
         </Form.Item>
-        <Form.Item name="tags" label={t('deployment.Tags')}>
-          <Select
-            mode="tags"
-            placeholder={t('deployment.TagsPlaceholder')}
-            tokenSeparators={[',', '\n']}
-            notFoundContent={null}
-          />
-        </Form.Item>
         <Form.Item
           name="replicaCount"
           label={t('deployment.DesiredReplicas')}
@@ -256,8 +248,20 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
         >
           <InputNumber min={1} style={{ width: '100%' }} />
         </Form.Item>
-        <Form.Item name="openToPublic" valuePropName="checked">
-          <Checkbox>{t('deployment.OpenToPublic')}</Checkbox>
+        <Form.Item name="tags" label={t('deployment.Tags')}>
+          <Select
+            mode="tags"
+            placeholder={t('deployment.TagsPlaceholder')}
+            tokenSeparators={[',', '\n']}
+            notFoundContent={null}
+          />
+        </Form.Item>
+        <Form.Item
+          name="openToPublic"
+          valuePropName="checked"
+          label={t('deployment.OpenToPublic')}
+        >
+          <Checkbox>{t('deployment.Public')}</Checkbox>
         </Form.Item>
       </Form>
     </BAIModal>
