@@ -12,13 +12,7 @@ import DeploymentRevisionHistoryTab from './DeploymentRevisionHistoryTab';
 import DeploymentSettingModal from './DeploymentSettingModal';
 import DeploymentTagChips from './DeploymentTagChips';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
-import {
-  CheckOutlined,
-  CloseOutlined,
-  EditOutlined,
-  LoadingOutlined,
-  PlusOutlined,
-} from '@ant-design/icons';
+import { EditOutlined, LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import {
   Alert,
@@ -33,7 +27,10 @@ import {
   BAICard,
   BAIFetchKeyButton,
   BAIFlex,
+  BAIId,
+  BAIText,
   BAIUnmountAfterClose,
+  BooleanTag,
   INITIAL_FETCH_KEY,
   filterOutEmpty,
   toLocalId,
@@ -71,9 +68,13 @@ const DeploymentOverviewContent: React.FC<{
   const deploymentItems = filterOutEmpty([
     {
       key: 'name',
-      label: t('deployment.Name'),
+      label: t('deployment.NameAndID'),
       children: deployment?.metadata.name ? (
-        <Typography.Text copyable>{deployment.metadata.name}</Typography.Text>
+        <>
+          <BAIText copyable>{deployment.metadata.name}</BAIText>
+          &nbsp;(
+          <BAIId globalId={deployment.id} />)
+        </>
       ) : (
         renderFallback()
       ),
@@ -102,11 +103,20 @@ const DeploymentOverviewContent: React.FC<{
     {
       key: 'open-to-public',
       label: t('deployment.OpenToPublic'),
-      children: deployment?.networkAccess.openToPublic ? (
-        <CheckOutlined />
-      ) : (
-        <CloseOutlined />
+      children: (
+        <BooleanTag
+          value={deployment?.networkAccess.openToPublic}
+          trueLabel={t('button.Yes')}
+          falseLabel={t('button.No')}
+          fallback={renderFallback()}
+        />
       ),
+    },
+    {
+      key: 'desired-replicas',
+      label: t('deployment.DesiredReplicas'),
+      children:
+        deployment?.replicaState?.desiredReplicaCount ?? renderFallback(),
     },
     {
       key: 'tags',
@@ -117,12 +127,6 @@ const DeploymentOverviewContent: React.FC<{
           fallback={renderFallback()}
         />
       ),
-    },
-    {
-      key: 'desired-replicas',
-      label: t('deployment.DesiredReplicas'),
-      children:
-        deployment?.replicaState?.desiredReplicaCount ?? renderFallback(),
     },
   ]);
 
@@ -292,6 +296,7 @@ const DeploymentConfigurationCards: React.FC<{
     graphql`
       query DeploymentConfigurationSectionQuery($deploymentId: ID!) {
         deployment(id: $deploymentId) {
+          id
           ...DeploymentSettingModal_deployment
           metadata {
             name
