@@ -30,30 +30,16 @@ import {
   BAICard,
   BAIFetchKeyButton,
   filterOutEmpty,
+  GraphQLFilter,
   INITIAL_FETCH_KEY,
   toLocalId,
   useFetchKey,
 } from 'backend.ai-ui';
-import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
+import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import React, { Suspense, useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useSearchParams } from 'react-router-dom';
-
-const parseFilterVariable = (
-  filter: string | null | undefined,
-): DeploymentFilter | undefined => {
-  if (!filter) return undefined;
-  try {
-    const parsed = JSON.parse(filter);
-    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
-      return parsed as DeploymentFilter;
-    }
-    return undefined;
-  } catch {
-    return undefined;
-  }
-};
 
 const AdminDeploymentListPageContent: React.FC = () => {
   'use memo';
@@ -72,7 +58,11 @@ const AdminDeploymentListPageContent: React.FC = () => {
 
   const [queryParams, setQueryParams] = useQueryStates(
     {
-      filter: parseAsString.withDefault(''),
+      filter: parseAsJson<GraphQLFilter>((value) =>
+        typeof value === 'object' && value !== null && !Array.isArray(value)
+          ? (value as GraphQLFilter)
+          : ({} as GraphQLFilter),
+      ),
       order: parseAsStringLiteral(availableDeploymentOrderValues),
       statusCategory: parseAsStringLiteral<DeploymentStatusCategory>([
         'running',
@@ -96,7 +86,7 @@ const AdminDeploymentListPageContent: React.FC = () => {
       : { status: { notIn: finishedStatuses } };
   const queryVariables = {
     filter: {
-      ...parseFilterVariable(queryParams.filter),
+      ...((queryParams.filter ?? {}) as DeploymentFilter),
       ...statusCategoryFilter,
     },
     orderBy: sort
@@ -150,9 +140,9 @@ const AdminDeploymentListPageContent: React.FC = () => {
       <DeploymentList
         mode="admin"
         deploymentsFrgmt={adminDeployments}
-        filter={queryParams.filter}
+        filter={queryParams.filter ?? undefined}
         setFilter={(value) => {
-          setQueryParams({ filter: value || null });
+          setQueryParams({ filter: value ?? null });
           setTablePaginationOption({ current: 1 });
         }}
         order={queryParams.order ?? undefined}

@@ -9,6 +9,7 @@ import DeploymentRevisionDetail from './DeploymentRevisionDetail';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
 import DeploymentRevisionHistoryTab from './DeploymentRevisionHistoryTab';
 import DeploymentSettingModal from './DeploymentSettingModal';
+import DeploymentTagChips from './DeploymentTagChips';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import {
   CheckOutlined,
@@ -24,7 +25,6 @@ import {
   Descriptions,
   Empty,
   Skeleton,
-  Tag,
   Typography,
   theme,
 } from 'antd';
@@ -64,12 +64,6 @@ const DeploymentOverviewContent: React.FC<{
   const projectName =
     deployment?.metadata.projectV2?.basicInfo?.name ??
     deployment?.metadata.projectId;
-  const tags = (deployment?.metadata.tags ?? []).flatMap((tag) =>
-    tag
-      .split(',')
-      .map((t) => t.trim())
-      .filter(Boolean),
-  );
 
   const deploymentItems = filterOutEmpty([
     {
@@ -114,16 +108,12 @@ const DeploymentOverviewContent: React.FC<{
     {
       key: 'tags',
       label: t('deployment.Tags'),
-      children:
-        tags.length > 0 ? (
-          <BAIFlex direction="row" wrap="wrap" gap="xxs">
-            {tags.map((tag) => (
-              <Tag key={tag}>{tag}</Tag>
-            ))}
-          </BAIFlex>
-        ) : (
-          renderFallback()
-        ),
+      children: (
+        <DeploymentTagChips
+          metadataFrgmt={deployment?.metadata ?? null}
+          fallback={renderFallback()}
+        />
+      ),
     },
     {
       key: 'desired-replicas',
@@ -299,7 +289,6 @@ const DeploymentConfigurationCards: React.FC<{
           ...DeploymentSettingModal_deployment
           metadata {
             name
-            tags
             projectId
             domainName
             projectV2 @since(version: "26.4.3") {
@@ -307,6 +296,7 @@ const DeploymentConfigurationCards: React.FC<{
                 name
               }
             }
+            ...DeploymentTagChips_metadata
           }
           networkAccess {
             openToPublic

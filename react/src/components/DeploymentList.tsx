@@ -12,8 +12,9 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import BAIRadioGroup from './BAIRadioGroup';
 import DeploymentOwnerInfo from './DeploymentOwnerInfo';
 import DeploymentStatusTag, { DeploymentStatus } from './DeploymentStatusTag';
+import DeploymentTagChips from './DeploymentTagChips';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { Alert, App, Tag, Typography, theme } from 'antd';
+import { Alert, App, Typography, theme } from 'antd';
 import {
   BAIConfirmModalWithInput,
   BAIFlex,
@@ -83,26 +84,6 @@ export const tableOrderToSort = (
   return { field, order: descending ? 'DESC' : 'ASC' };
 };
 
-const parseFilterString = (
-  filter: string | undefined,
-): GraphQLFilter | undefined => {
-  if (!filter) return undefined;
-  try {
-    const parsed = JSON.parse(filter);
-    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
-      return parsed as GraphQLFilter;
-    }
-    return undefined;
-  } catch {
-    return undefined;
-  }
-};
-
-const stringifyFilter = (filter: GraphQLFilter | undefined): string => {
-  if (!filter || Object.keys(filter).length === 0) return '';
-  return JSON.stringify(filter);
-};
-
 export type DeploymentStatusCategory = 'running' | 'finished';
 
 export interface DeploymentListProps extends Omit<
@@ -113,8 +94,8 @@ export interface DeploymentListProps extends Omit<
     | DeploymentList_modelDeploymentConnection$key
     | null
     | undefined;
-  filter?: string;
-  setFilter: (value: string) => void;
+  filter?: GraphQLFilter;
+  setFilter: (value: GraphQLFilter | null | undefined) => void;
   onChangeOrder?: (order: string | null) => void;
   statusCategory?: DeploymentStatusCategory;
   onStatusCategoryChange?: (value: DeploymentStatusCategory) => void;
@@ -182,7 +163,7 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
               createdAt
               domainName
               projectId
-              tags
+              ...DeploymentTagChips_metadata
             }
             networkAccess {
               endpointUrl
@@ -222,8 +203,6 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
   const isAdminMode = mode === 'admin';
   const supportsExtendedFilter =
     baiClient?.supports('model-deployment-extended-filter') ?? false;
-
-  const filterValue = parseFilterString(filter);
 
   const baseFilterProperties = [
     {
@@ -372,23 +351,13 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
     {
       key: 'tags',
       title: t('deployment.Tags'),
-      render: (_text, row) => {
-        const tags = (row.metadata?.tags ?? []).flatMap((tag) =>
-          tag
-            .split(',')
-            .map((t) => t.trim())
-            .filter(Boolean),
-        );
-        if (tags.length === 0)
-          return <Typography.Text type="secondary">-</Typography.Text>;
-        return (
-          <BAIFlex wrap="wrap" gap="xxs">
-            {tags.map((tag) => (
-              <Tag key={tag}>{tag}</Tag>
-            ))}
-          </BAIFlex>
-        );
-      },
+      render: (_text, row) => (
+        <DeploymentTagChips
+          metadataFrgmt={row.metadata}
+          stopRowClick
+          fallback={<Typography.Text type="secondary">-</Typography.Text>}
+        />
+      ),
     },
     {
       key: 'createdAt',
@@ -441,9 +410,9 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
             />
             <BAIGraphQLPropertyFilter
               filterProperties={filterProperties}
-              value={filterValue}
+              value={filter}
               onChange={(next) => {
-                setFilter(stringifyFilter(next));
+                setFilter(next);
               }}
             />
           </BAIFlex>

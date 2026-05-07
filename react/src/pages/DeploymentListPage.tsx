@@ -25,29 +25,15 @@ import {
   BAICard,
   BAIFetchKeyButton,
   BAIFlex,
+  GraphQLFilter,
   INITIAL_FETCH_KEY,
   toLocalId,
   useFetchKey,
 } from 'backend.ai-ui';
-import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
+import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import React, { Suspense, useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-
-const parseFilterForQuery = (
-  filter: string | null,
-): DeploymentFilter | undefined => {
-  if (!filter) return undefined;
-  try {
-    const parsed = JSON.parse(filter);
-    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
-      return parsed as DeploymentFilter;
-    }
-    return undefined;
-  } catch {
-    return undefined;
-  }
-};
 
 const DeploymentListPageContent: React.FC = () => {
   'use memo';
@@ -66,7 +52,11 @@ const DeploymentListPageContent: React.FC = () => {
 
   const [queryParams, setQueryParams] = useQueryStates(
     {
-      filter: parseAsString,
+      filter: parseAsJson<GraphQLFilter>((value) =>
+        typeof value === 'object' && value !== null && !Array.isArray(value)
+          ? (value as GraphQLFilter)
+          : ({} as GraphQLFilter),
+      ),
       order: parseAsStringLiteral(availableDeploymentOrderValues),
       statusCategory: parseAsStringLiteral<DeploymentStatusCategory>([
         'running',
@@ -98,7 +88,7 @@ const DeploymentListPageContent: React.FC = () => {
       : { status: { notIn: finishedStatuses } };
   const queryVariables = {
     filter: {
-      ...parseFilterForQuery(queryParams.filter),
+      ...((queryParams.filter ?? {}) as DeploymentFilter),
       ...statusCategoryFilter,
     },
     orderBy,
@@ -146,7 +136,7 @@ const DeploymentListPageContent: React.FC = () => {
         deploymentsFrgmt={myDeployments}
         filter={queryParams.filter ?? undefined}
         setFilter={(value) => {
-          setQueryParams({ filter: value || null });
+          setQueryParams({ filter: value ?? null });
           setTablePaginationOption({ current: 1 });
         }}
         order={queryParams.order ?? undefined}

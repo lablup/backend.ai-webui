@@ -475,9 +475,12 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
     onChange: propOnChange,
   });
 
-  const [conditions, setConditions] = useState<FilterCondition[]>(() =>
-    convertGraphQLFilterToConditions(value, filterProperties),
-  );
+  // Reassign sequential ids: the converter generates random ids per call,
+  // which would change every render and remount every Tag.
+  const conditions = convertGraphQLFilterToConditions(
+    value,
+    filterProperties,
+  ).map((c, i) => ({ ...c, id: `cond-${i}` }));
 
   const [search, setSearch] = useState<string>('');
   const [selectedDate, setSelectedDate] = useState<dayjs.Dayjs | null>(null);
@@ -505,15 +508,11 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
   const [isValid, setIsValid] = useState(true);
   const [isFocused, setIsFocused] = useState(false);
 
-  const propertyOptions = useMemo(
-    () =>
-      filterProperties.map((property) => ({
-        label: property.propertyLabel,
-        value: property.key,
-        filter: property,
-      })),
-    [filterProperties],
-  );
+  const propertyOptions = filterProperties.map((property) => ({
+    label: property.propertyLabel,
+    value: property.key,
+    filter: property,
+  }));
 
   const availableOperators = useMemo(() => {
     const mode = getEffectiveValueMode(selectedProperty);
@@ -536,7 +535,6 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
   }, [availableOperators, t]);
 
   const updateConditions = (newConditions: FilterCondition[]) => {
-    setConditions(newConditions);
     const filter = convertConditionsToGraphQLFilter(
       newConditions,
       filterProperties,
