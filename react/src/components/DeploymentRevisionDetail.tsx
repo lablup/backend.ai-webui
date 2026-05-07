@@ -4,6 +4,7 @@
  */
 import type { DeploymentRevisionDetail_revision$key } from '../__generated__/DeploymentRevisionDetail_revision.graphql';
 import { convertToBinaryUnit } from '../helper';
+import { formatShellCommand } from '../helper/parseCliCommand';
 import FolderLink from './FolderLink';
 import SourceCodeView from './SourceCodeView';
 import { LoadingOutlined } from '@ant-design/icons';
@@ -114,6 +115,11 @@ const DeploymentRevisionDetail: React.FC<{
   const mountConfig = revision.modelMountConfig;
   const extraMounts = revision.extraMounts ?? [];
   const environEntries = runtimeConfig?.environ?.entries ?? [];
+  // Drop empty / unnamed entries so the rendered shell block doesn't show
+  // bare `="value"` lines if the backend ever returns one.
+  const namedEnvironEntries = environEntries.filter(
+    (entry): entry is typeof entry & { name: string } => !!entry.name,
+  );
   const resourceSlots = revision.resourceSlots ?? [];
 
   const descriptionsProps = {
@@ -276,14 +282,23 @@ const DeploymentRevisionDetail: React.FC<{
       key: 'environ',
       label: t('deployment.Environ'),
       children:
-        environEntries.length > 0 ? (
-          <BAIFlex direction="column" align="start">
-            {environEntries.map((entry) => (
-              <Typography.Text key={entry.name} code>
-                {entry.name}={entry.value}
-              </Typography.Text>
-            ))}
-          </BAIFlex>
+        namedEnvironEntries.length > 0 ? (
+          <SourceCodeView language="shell">
+            {namedEnvironEntries
+              .map((entry) => {
+                // Render `KEY="VALUE"` with shell escaping so a value
+                // containing a literal `"`, `\`, `$`, backtick, or newline
+                // stays valid (and copy-pasteable) shell.
+                const value = (entry.value ?? '')
+                  .replace(/\\/g, '\\\\')
+                  .replace(/"/g, '\\"')
+                  .replace(/\$/g, '\\$')
+                  .replace(/`/g, '\\`')
+                  .replace(/\n/g, '\\n');
+                return `${entry.name}="${value}"`;
+              })
+              .join('\n')}
+          </SourceCodeView>
         ) : (
           renderFallback()
         ),
@@ -313,9 +328,16 @@ const DeploymentRevisionDetail: React.FC<{
               label: `${prefix}${t('modelService.StartCommand')}`,
               children: model.service.startCommand ? (
                 <SourceCodeView language="shell">
-                  {typeof model.service.startCommand === 'string'
-                    ? model.service.startCommand
-                    : JSON.stringify(model.service.startCommand, null, 2)}
+                  {/* Use the same shell-quoting as the Add Revision form's
+                      prefill (see DeploymentAddRevisionModal), so a token
+                      list with whitespace or shell-significant chars
+                      round-trips to a valid shell command instead of being
+                      flattened by a plain `.join(' ')`. */}
+                  {Array.isArray(model.service.startCommand)
+                    ? formatShellCommand(model.service.startCommand)
+                    : typeof model.service.startCommand === 'string'
+                      ? model.service.startCommand
+                      : JSON.stringify(model.service.startCommand)}
                 </SourceCodeView>
               ) : (
                 renderFallback()

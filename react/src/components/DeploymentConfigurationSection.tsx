@@ -36,6 +36,7 @@ import {
   INITIAL_FETCH_KEY,
   filterOutEmpty,
   useFetchKey,
+  useInterval,
 } from 'backend.ai-ui';
 import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import React, { Suspense, useState, useTransition } from 'react';
@@ -63,7 +64,12 @@ const DeploymentOverviewContent: React.FC<{
   const projectName =
     deployment?.metadata.projectV2?.basicInfo?.name ??
     deployment?.metadata.projectId;
-  const tags = deployment?.metadata.tags ?? [];
+  const tags = (deployment?.metadata.tags ?? []).flatMap((tag) =>
+    tag
+      .split(',')
+      .map((t) => t.trim())
+      .filter(Boolean),
+  );
 
   const deploymentItems = filterOutEmpty([
     {
@@ -186,7 +192,7 @@ const DeploymentConfigurationSection: React.FC<
         fallback={
           <>
             <BAICard
-              title={t('deployment.Overview')}
+              title={t('deployment.BasicInformation')}
               extra={overviewExtra}
               styles={{ body: { paddingTop: 0 } }}
             >
@@ -337,6 +343,12 @@ const DeploymentConfigurationCards: React.FC<{
   const isDeployingDifferentRevision =
     !!deployingRevision && deployingRevision.id !== currentRevision?.id;
 
+  // While a different revision is being applied, poll so the UI moves off
+  // the "applying" state once the deployment finishes rolling out. We don't
+  // know up-front how long the rollout takes, so we keep refetching until
+  // the deploying revision matches the current revision.
+  useInterval(onRefetch, isDeployingDifferentRevision ? 5000 : null);
+
   return (
     <>
       {hasNoRevision && (
@@ -347,6 +359,8 @@ const DeploymentConfigurationCards: React.FC<{
           description={t('deployment.NoCurrentRevisionDeployedDescription')}
           action={
             <Button
+              type="primary"
+              icon={<PlusOutlined />}
               onClick={toggleAddRevision}
               disabled={isDeploymentDestroying}
             >
@@ -356,17 +370,16 @@ const DeploymentConfigurationCards: React.FC<{
         />
       )}
       <BAICard
-        title={t('deployment.Overview')}
+        title={t('deployment.BasicInformation')}
         extra={
           <BAIFlex gap="xs" align="center">
             {overviewExtra}
             <Button
-              type="primary"
               icon={<EditOutlined />}
               disabled={isDeploymentDestroying}
               onClick={openSettingModal}
             >
-              {t('deployment.EditDeployment')}
+              {t('button.Edit')}
             </Button>
           </BAIFlex>
         }

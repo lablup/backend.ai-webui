@@ -5,7 +5,10 @@
 import { DeploymentAddRevisionModalAddMutation } from '../__generated__/DeploymentAddRevisionModalAddMutation.graphql';
 import { DeploymentAddRevisionModalQuery } from '../__generated__/DeploymentAddRevisionModalQuery.graphql';
 import { convertToBinaryUnit } from '../helper';
-import { tokenizeShellCommand } from '../helper/parseCliCommand';
+import {
+  formatShellCommand,
+  tokenizeShellCommand,
+} from '../helper/parseCliCommand';
 import {
   mergeExtraArgs,
   reverseMapExtraArgs,
@@ -90,14 +93,6 @@ const safeDecodeUuid = (idOrGlobalId: string): string | undefined => {
     return undefined;
   }
 };
-
-/**
- * Inverse of `tokenizeShellCommand` for prefill. Joins token list back to a
- * shell-command-like string, quoting any token that contains whitespace or
- * shell-significant characters so a subsequent re-tokenize round-trips.
- */
-const formatShellCommand = (tokens: readonly string[]): string =>
-  tokens.map((t) => (/[\s'"\\$`]/.test(t) ? JSON.stringify(t) : t)).join(' ');
 
 const SectionHeader: React.FC<{ children: React.ReactNode }> = ({
   children,
