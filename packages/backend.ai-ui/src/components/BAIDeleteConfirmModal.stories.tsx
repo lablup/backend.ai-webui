@@ -20,15 +20,15 @@ const meta: Meta<typeof BAIDeleteConfirmModal> = {
 **BAIDeleteConfirmModal** is a unified delete confirmation modal for table row deletion.
 
 ## Behavior
-- **Single item**: Simple confirm dialog with item name displayed. OK button is immediately enabled.
-- **Multiple items (2+)**: Requires typing confirmation text (localized "Delete") before OK is enabled.
-- **\`requireConfirmInput\`**: Forces text-input confirmation even for a single item.
+- **Single item**: Simple confirm dialog. OK button is immediately enabled.
+- **Single item + \`requireConfirmInput\`**: Requires typing the item name. Item list is hidden — the name already appears in the description.
+- **Multiple items (2+)**: Shows scrollable item list followed by a confirmation input requiring "Delete" to be typed.
 
 ## Key Features
 - Accepts \`React.ReactNode\` for item labels (icons, tags, custom rendering)
-- Scrollable item list for large selections
+- Scrollable item list for multi-item selections
 - \`extraContent\` slot for domain-specific additions (checkboxes, warnings)
-- Built on \`BAIConfirmModalWithInput\` (multi) and \`BAIModal\` (single)
+- Built on \`BAIModal\`
         `,
       },
     },
@@ -74,7 +74,7 @@ export const SingleItemWithInput: Story = {
     docs: {
       description: {
         story:
-          'Single item with `requireConfirmInput={true}`. User must type the item name to confirm.',
+          'Single item with `requireConfirmInput={true}`. Item list is hidden (name already appears in description). User must type the item name into the confirmation input to enable the Delete button.',
       },
     },
   },
@@ -106,7 +106,7 @@ export const MultipleItems: Story = {
     docs: {
       description: {
         story:
-          'Multiple items require typing "Delete" to confirm. Shows scrollable item list.',
+          'Multiple items require typing "Delete" to confirm. Shows scrollable item list above the confirmation input.',
       },
     },
   },

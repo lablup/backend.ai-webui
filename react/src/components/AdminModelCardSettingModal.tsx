@@ -11,8 +11,7 @@ import {
 } from '../hooks/useCurrentProject';
 import FolderCreateModalV2 from './FolderCreateModalV2';
 import FolderLink from './FolderLink';
-import { shapes } from '@dicebear/collection';
-import { createAvatar } from '@dicebear/core';
+import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
 import {
   App,
   Button,
@@ -23,7 +22,6 @@ import {
   Popconfirm,
   Select,
   Typography,
-  theme,
 } from 'antd';
 import {
   BAIButton,
@@ -83,7 +81,6 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
   const { t } = useTranslation();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
-  const { token } = theme.useToken();
   const formRef = useRef<FormInstance<FormInputType>>(null);
   const vfolderSelectRef = useRef<BAIVFolderSelectRef>(null);
   const [isOpenCreateFolderModal, setIsOpenCreateFolderModal] = useState(false);
@@ -101,6 +98,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
           metadata {
             name
           }
+          ...VFolderNodeIdenticonV2Fragment
         }
         domainName
         projectId
@@ -307,21 +305,11 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
           {isEditMode ? (
             <Form.Item label={t('adminModelCard.ModelStorageFolder')}>
               <BAIFlex gap="xs" align="center">
-                <img
-                  src={createAvatar(shapes, {
-                    seed: modelCard.vfolderId,
-                    shape3: [],
-                  })?.toDataUri()}
-                  alt="VFolder Identicon"
-                  style={{
-                    borderRadius: '0.25em',
-                    width: '1em',
-                    height: '1em',
-                    borderWidth: 0.5,
-                    borderStyle: 'solid',
-                    borderColor: token.colorBorder,
-                  }}
-                />
+                {modelCard.vfolder && (
+                  <VFolderNodeIdenticonV2
+                    vfolderNodeIdenticonFrgmt={modelCard.vfolder}
+                  />
+                )}
                 <FolderLink
                   folderId={modelCard.vfolderId}
                   folderName={
