@@ -31,7 +31,6 @@ import {
   BAIVFolderSelect,
   BAIVFolderSelectRef,
   convertToUUID,
-  mergeFilterValues,
   toGlobalId,
   toLocalId,
   useBAILogger,
@@ -335,8 +334,8 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
                     <BAIVFolderSelect
                       ref={vfolderSelectRef}
                       excludeDeleted
-                      currentProjectId={currentProject.id ?? undefined}
-                      filter={mergeFilterValues(['ownership_type == "group"'])}
+                      filter='ownership_type == "group"'
+                      currentProjectId={modelStoreProject?.id ?? undefined}
                       style={{ flex: 1 }}
                     />
                   </Form.Item>
