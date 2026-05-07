@@ -2,6 +2,12 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { FolderExplorerModalV2Query } from '../__generated__/FolderExplorerModalV2Query.graphql';
+import { formatToUUID } from '../helper';
+import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
+import { useSetBAINotification } from '../hooks/useBAINotification';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { useMergedAllowedStorageHostPermission } from '../hooks/useMergedAllowedStorageHostPermission';
 import { useFileUploadManager } from './FileUploadManager';
 import FolderExplorerHeaderV2 from './FolderExplorerHeaderV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
@@ -26,12 +32,6 @@ import * as _ from 'lodash-es';
 import { Suspense, useDeferredValue, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-import { FolderExplorerModalV2Query } from 'src/__generated__/FolderExplorerModalV2Query.graphql';
-import { formatToUUID } from 'src/helper';
-import { useCurrentDomainValue, useSuspendedBackendaiClient } from 'src/hooks';
-import { useSetBAINotification } from 'src/hooks/useBAINotification';
-import { useCurrentProjectValue } from 'src/hooks/useCurrentProject';
-import { useMergedAllowedStorageHostPermission } from 'src/hooks/useMergedAllowedStorageHostPermission';
 
 const useStyles = createStyles(({ css }) => ({
   baiModalHeader: css`

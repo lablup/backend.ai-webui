@@ -2,6 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { useSuspendedBackendaiClient } from '../../hooks';
+import { useTanQuery } from '../../hooks/reactQueryAlias';
 import SourceCodeView from '../SourceCodeView';
 import { ReloadOutlined } from '@ant-design/icons';
 import { Descriptions, Skeleton, Typography } from 'antd';
@@ -14,8 +16,6 @@ import {
   BAIText,
 } from 'backend.ai-ui';
 import { useTranslation } from 'react-i18next';
-import { useSuspendedBackendaiClient } from 'src/hooks';
-import { useTanQuery } from 'src/hooks/reactQueryAlias';
 
 const PASSWORD_FILE_PATH = '/home/work/.password';
 

@@ -33,6 +33,7 @@ import SessionDetailDrawer from '../components/SessionDetailDrawer';
 import SourceCodeView from '../components/SourceCodeView';
 import SwitchToProjectButton from '../components/SwitchToProjectButton';
 import VFolderLazyViewV2 from '../components/VFolderLazyViewV2';
+import VFolderNodeIdenticon from '../components/VFolderNodeIdenticon';
 import { baiSignedRequestWithPromise, convertToOrderBy } from '../helper';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
@@ -102,7 +103,6 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 import { useParams } from 'react-router-dom';
 import { PayloadError } from 'relay-runtime';
-import VFolderNodeIdenticon from 'src/components/VFolderNodeIdenticon';
 
 interface RoutingInfo {
   route_id: string;

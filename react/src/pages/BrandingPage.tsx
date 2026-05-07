@@ -2,12 +2,12 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import BAIErrorBoundary from '../components/BAIErrorBoundary';
+import BrandingSettingList from '../components/BrandingSettingList';
 import { Skeleton } from 'antd';
 import { BAICard } from 'backend.ai-ui';
 import { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
-import BAIErrorBoundary from 'src/components/BAIErrorBoundary';
-import BrandingSettingList from 'src/components/BrandingSettingList';
 import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 
 const tabParam = withDefault(StringParam, 'branding');

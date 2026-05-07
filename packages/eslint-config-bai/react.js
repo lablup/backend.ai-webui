@@ -37,6 +37,20 @@ export const react = [
   },
 
   {
+    files: ["**/*.ts", "**/*.tsx"],
+    rules: {
+      "no-restricted-syntax": [
+        "warn",
+        {
+          selector: "ImportDeclaration[source.value=/^src\\u002F.+/]",
+          message:
+            "Use a relative import path instead of 'src/...'. Mixing absolute and relative paths in the same file is inconsistent; prefer relative paths.",
+        },
+      ],
+    },
+  },
+
+  {
     files: ["**/*.tsx", "**/*.jsx"],
     rules: {
       "react/react-in-jsx-scope": "off",

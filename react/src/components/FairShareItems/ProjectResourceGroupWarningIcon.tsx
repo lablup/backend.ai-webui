@@ -1,10 +1,10 @@
+import type { ProjectResourceGroupWarningIconFragment$key } from '../../__generated__/ProjectResourceGroupWarningIconFragment.graphql';
+import type { ProjectResourceGroupWarningIconQuery } from '../../__generated__/ProjectResourceGroupWarningIconQuery.graphql';
 import { Tooltip, theme } from 'antd';
 import * as _ from 'lodash-es';
 import { TriangleAlert } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
-import type { ProjectResourceGroupWarningIconFragment$key } from 'src/__generated__/ProjectResourceGroupWarningIconFragment.graphql';
-import type { ProjectResourceGroupWarningIconQuery } from 'src/__generated__/ProjectResourceGroupWarningIconQuery.graphql';
 
 interface ProjectResourceGroupWarningIconProps {
   projectFairShareFrgmt: ProjectResourceGroupWarningIconFragment$key;

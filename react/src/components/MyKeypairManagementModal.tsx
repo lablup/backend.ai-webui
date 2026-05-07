@@ -13,6 +13,7 @@ import { MyKeypairManagementModalRevokeMyKeypairMutation } from '../__generated_
 import { MyKeypairManagementModalSwitchMainKeyMutation } from '../__generated__/MyKeypairManagementModalSwitchMainKeyMutation.graphql';
 import { convertToOrderBy } from '../helper';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
+import { useBAISettingUserState } from '../hooks/useBAISetting';
 import BAIRadioGroup from './BAIRadioGroup';
 import {
   Alert,
@@ -54,7 +55,6 @@ import {
 import { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
-import { useBAISettingUserState } from 'src/hooks/useBAISetting';
 
 type ActiveFilter = 'active' | 'inactive';
 

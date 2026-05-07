@@ -2,16 +2,16 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import UserCredentialList from '../components/UserCredentialList';
 import UserManagement from '../components/UserManagement';
+import { useWebUINavigate } from '../hooks';
 import { Skeleton } from 'antd';
 import { CardTabListType } from 'antd/es/card';
 import { BAIFlex, BAICard } from 'backend.ai-ui';
 import { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
-import BAIErrorBoundary from 'src/components/BAIErrorBoundary';
-import { useWebUINavigate } from 'src/hooks';
 
 const UserCredentialsPage: React.FC = () => {
   const { t } = useTranslation();

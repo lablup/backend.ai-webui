@@ -15,6 +15,8 @@ import RestoreVFolderModal from '../components/RestoreVFolderModal';
 import VFolderNodes, { VFolderNodeInList } from '../components/VFolderNodes';
 import { handleRowSelectionChange } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
+import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
+import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { isDeletedCategory } from './VFolderNodeListPage';
 import { useToggle } from 'ahooks';
 import { Badge, theme, Tooltip } from 'antd';
@@ -37,8 +39,6 @@ import { PlusIcon } from 'lucide-react';
 import React, { useDeferredValue, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-import { useBAIPaginationOptionStateOnSearchParamLegacy } from 'src/hooks/reactPaginationQueryOptions';
-import { useBAISettingUserState } from 'src/hooks/useBAISetting';
 import { StringParam, useQueryParams, withDefault } from 'use-query-params';
 
 type VFolderNodesType = NonNullableNodeOnEdges<

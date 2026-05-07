@@ -8,6 +8,7 @@ import { RoleAssignmentTabFragment$key } from '../__generated__/RoleAssignmentTa
 import { RoleAssignmentOrderBy } from '../__generated__/RoleAssignmentTabRefetchQuery.graphql';
 import { RoleAssignmentTab_roleScopeFragment$key } from '../__generated__/RoleAssignmentTab_roleScopeFragment.graphql';
 import { convertToOrderBy } from '../helper';
+import { useSetBAINotification } from '../hooks/useBAINotification';
 import AssignRoleModal from './AssignRoleModal';
 import { App, Tooltip, theme } from 'antd';
 import {
@@ -40,7 +41,6 @@ import {
   useRefetchableFragment,
   useMutation,
 } from 'react-relay';
-import { useSetBAINotification } from 'src/hooks/useBAINotification';
 
 const assignmentOrderValues = [
   'EMAIL_ASC',

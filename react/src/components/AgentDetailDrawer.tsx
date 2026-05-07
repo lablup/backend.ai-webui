@@ -2,13 +2,13 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { AgentDetailDrawerFragment$key } from '../__generated__/AgentDetailDrawerFragment.graphql';
 import AgentDetailDrawerContent from './AgentDetailDrawerContent';
 import { Drawer, type DrawerProps, Skeleton } from 'antd';
 import { BAIFetchKeyButton, toLocalId, useBAILogger } from 'backend.ai-ui';
 import { Suspense, useEffect, useEffectEvent, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useMutation, useRefetchableFragment } from 'react-relay';
-import { AgentDetailDrawerFragment$key } from 'src/__generated__/AgentDetailDrawerFragment.graphql';
 
 interface AgentDetailDrawerProps extends DrawerProps {
   onRequestClose?: () => void;

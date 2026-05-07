@@ -11,6 +11,8 @@ import ThemeSecondaryProvider from '../components/ThemeSecondaryProvider';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
+import { useVFolderInvitations } from '../hooks/useVFolderInvitations';
+import { MenuKeys } from '../hooks/useWebUIMenuItems';
 import { SessionLauncherFormValue } from './SessionLauncherPage';
 import { AppstoreAddOutlined } from '@ant-design/icons';
 import {
@@ -27,8 +29,6 @@ import * as _ from 'lodash-es';
 import { useEffect, useState, useMemo, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
-import { useVFolderInvitations } from 'src/hooks/useVFolderInvitations';
-import { MenuKeys } from 'src/hooks/useWebUIMenuItems';
 import {
   useQueryParams,
   withDefault,

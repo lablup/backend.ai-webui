@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { AgentActionButtonsFragment$key } from '../../__generated__/AgentActionButtonsFragment.graphql';
 import AgentSettingModal from '../AgentSettingModal';
 import { SettingOutlined } from '@ant-design/icons';
 import { Space, Tooltip } from 'antd';
@@ -9,7 +10,6 @@ import { BAIButton, BAIButtonProps } from 'backend.ai-ui';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
-import { AgentActionButtonsFragment$key } from 'src/__generated__/AgentActionButtonsFragment.graphql';
 
 interface AgentActionButtonsProps {
   size?: BAIButtonProps['size'];

@@ -3,7 +3,9 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { TotalResourceWithinResourceGroupFragment$key } from '../__generated__/TotalResourceWithinResourceGroupFragment.graphql';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
+import { useCurrentResourceGroupValue } from '../hooks/useCurrentProject';
 import SharedResourceGroupSelectForCurrentProject from './SharedResourceGroupSelectForCurrentProject';
 import { useControllableValue } from 'ahooks';
 import { Segmented, theme, Typography } from 'antd';
@@ -30,8 +32,6 @@ import {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useRefetchableFragment } from 'react-relay';
-import { useSuspendedBackendaiClient } from 'src/hooks';
-import { useCurrentResourceGroupValue } from 'src/hooks/useCurrentProject';
 
 interface TotalResourceWithinResourceGroupProps extends BAIFlexProps {
   queryRef: TotalResourceWithinResourceGroupFragment$key;

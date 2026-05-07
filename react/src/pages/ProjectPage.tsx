@@ -2,6 +2,13 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import {
+  ProjectPageQuery,
+  ProjectPageQuery$data,
+  ProjectPageQuery$variables,
+} from '../__generated__/ProjectPageQuery.graphql';
+import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
+import { useCSVExport } from '../hooks/useCSVExport';
 import { PlusOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import { App } from 'antd';
@@ -27,13 +34,6 @@ import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-import {
-  ProjectPageQuery,
-  ProjectPageQuery$data,
-  ProjectPageQuery$variables,
-} from 'src/__generated__/ProjectPageQuery.graphql';
-import { useBAIPaginationOptionStateOnSearchParam } from 'src/hooks/reactPaginationQueryOptions';
-import { useCSVExport } from 'src/hooks/useCSVExport';
 
 type ProjectNode = NonNullable<
   NonNullable<

@@ -9,6 +9,7 @@ import {
 } from '../__generated__/ImageListQuery.graphql';
 import { getImageFullName, localeCompare } from '../helper';
 import { useBackendAIImageMetaData } from '../hooks';
+import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import AliasedImageDoubleTags from './AliasedImageDoubleTags';
@@ -40,7 +41,6 @@ import * as _ from 'lodash-es';
 import { Key, useDeferredValue, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-import { useBAIPaginationOptionStateOnSearchParam } from 'src/hooks/reactPaginationQueryOptions';
 
 export type EnvironmentImage = NonNullableNodeOnEdges<
   ImageListQuery$data['image_nodes']

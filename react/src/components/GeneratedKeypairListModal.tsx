@@ -2,6 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import {
+  GeneratedKeypairListModalFragment$data,
+  GeneratedKeypairListModalFragment$key,
+} from '../__generated__/GeneratedKeypairListModalFragment.graphql';
 import { localeCompare } from '../helper';
 import { exportCSVWithFormattingRules } from '../helper/csv-util';
 import { Alert } from 'antd';
@@ -17,10 +21,6 @@ import { DownloadIcon } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
-import {
-  GeneratedKeypairListModalFragment$data,
-  GeneratedKeypairListModalFragment$key,
-} from 'src/__generated__/GeneratedKeypairListModalFragment.graphql';
 
 type KeypairType = NonNullable<
   NonNullable<GeneratedKeypairListModalFragment$data>[number]

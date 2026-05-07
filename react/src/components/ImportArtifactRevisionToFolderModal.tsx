@@ -2,6 +2,13 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { ImportArtifactRevisionToFolderModalArtifactRevisionFragment$key } from '../__generated__/ImportArtifactRevisionToFolderModalArtifactRevisionFragment.graphql';
+import { ImportArtifactRevisionToFolderModalModelStoreProjectsFragment$key } from '../__generated__/ImportArtifactRevisionToFolderModalModelStoreProjectsFragment.graphql';
+import { ImportArtifactRevisionToFolderModalMutation } from '../__generated__/ImportArtifactRevisionToFolderModalMutation.graphql';
+import {
+  useCurrentProjectValue,
+  useSetCurrentProject,
+} from '../hooks/useCurrentProject';
 import FolderCreateModalV2 from './FolderCreateModalV2';
 import { useToggle } from 'ahooks';
 import {
@@ -30,13 +37,6 @@ import { PlusIcon } from 'lucide-react';
 import { startTransition, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useMutation, useFragment } from 'react-relay';
-import { ImportArtifactRevisionToFolderModalArtifactRevisionFragment$key } from 'src/__generated__/ImportArtifactRevisionToFolderModalArtifactRevisionFragment.graphql';
-import { ImportArtifactRevisionToFolderModalModelStoreProjectsFragment$key } from 'src/__generated__/ImportArtifactRevisionToFolderModalModelStoreProjectsFragment.graphql';
-import { ImportArtifactRevisionToFolderModalMutation } from 'src/__generated__/ImportArtifactRevisionToFolderModalMutation.graphql';
-import {
-  useCurrentProjectValue,
-  useSetCurrentProject,
-} from 'src/hooks/useCurrentProject';
 
 export interface ImportArtifactRevisionToFolderModalProps extends Omit<
   BAIModalProps,

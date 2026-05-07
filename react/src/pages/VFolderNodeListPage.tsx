@@ -15,7 +15,10 @@ import RestoreVFolderModal from '../components/RestoreVFolderModal';
 import VFolderNodes, { VFolderNodeInList } from '../components/VFolderNodes';
 import { handleRowSelectionChange } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
+import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
+import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { useVFolderInvitations } from '../hooks/useVFolderInvitations';
 import { useToggle } from 'ahooks';
 import { Badge, theme, Tooltip } from 'antd';
 import {
@@ -36,9 +39,6 @@ import * as _ from 'lodash-es';
 import React, { useDeferredValue, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-import { useBAIPaginationOptionStateOnSearchParamLegacy } from 'src/hooks/reactPaginationQueryOptions';
-import { useBAISettingUserState } from 'src/hooks/useBAISetting';
-import { useVFolderInvitations } from 'src/hooks/useVFolderInvitations';
 import { StringParam, useQueryParams, withDefault } from 'use-query-params';
 
 export const isDeletedCategory = (status?: string | null) => {

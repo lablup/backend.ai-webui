@@ -2,6 +2,12 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { UpdateUsersModalFragment$key } from '../__generated__/UpdateUsersModalFragment.graphql';
+import {
+  ModifyUserInput,
+  UpdateUsersModalMutation,
+} from '../__generated__/UpdateUsersModalMutation.graphql';
+import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import ProjectSelect from './ProjectSelect';
 import UserResourcePolicySelect from './UserResourcePolicySelect';
 import { App, Form, InputNumber, theme } from 'antd';
@@ -22,12 +28,6 @@ import { Suspense, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 import { PayloadError } from 'relay-runtime';
-import { UpdateUsersModalFragment$key } from 'src/__generated__/UpdateUsersModalFragment.graphql';
-import {
-  ModifyUserInput,
-  UpdateUsersModalMutation,
-} from 'src/__generated__/UpdateUsersModalMutation.graphql';
-import { SIGNED_32BIT_MAX_INT } from 'src/helper/const-vars';
 
 interface UpdateUsersFormValues {
   domain_name?: string;

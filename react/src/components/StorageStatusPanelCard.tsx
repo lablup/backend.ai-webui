@@ -6,6 +6,7 @@ import { StorageStatusPanelCardQuery } from '../__generated__/StorageStatusPanel
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { useVFolderInvitations } from '../hooks/useVFolderInvitations';
 import BAIPanelItem from './BAIPanelItem';
 import { useUpdateEffect } from 'ahooks';
 import { Badge, theme, Tooltip, Typography } from 'antd';
@@ -20,7 +21,6 @@ import * as _ from 'lodash-es';
 import React, { useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-import { useVFolderInvitations } from 'src/hooks/useVFolderInvitations';
 
 const useStyles = createStyles(({ css, token }) => ({
   invitationTooltip: css`

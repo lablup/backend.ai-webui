@@ -3,10 +3,10 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useSuspendedBackendaiClient } from '.';
+import { useMergedAllowedStorageHostPermission_AllowedVFolderHostsQuery } from '../__generated__/useMergedAllowedStorageHostPermission_AllowedVFolderHostsQuery.graphql';
+import { useMergedAllowedStorageHostPermission_KeypairQuery } from '../__generated__/useMergedAllowedStorageHostPermission_KeypairQuery.graphql';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-import { useMergedAllowedStorageHostPermission_AllowedVFolderHostsQuery } from 'src/__generated__/useMergedAllowedStorageHostPermission_AllowedVFolderHostsQuery.graphql';
-import { useMergedAllowedStorageHostPermission_KeypairQuery } from 'src/__generated__/useMergedAllowedStorageHostPermission_KeypairQuery.graphql';
 
 export const useMergedAllowedStorageHostPermission = (
   domain: string,

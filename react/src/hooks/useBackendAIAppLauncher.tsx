@@ -3,12 +3,12 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useSuspendedBackendaiClient, useWebUINavigate } from '.';
+import { useBackendAIAppLauncherFragment$key } from '../__generated__/useBackendAIAppLauncherFragment.graphql';
 import { useSetBAINotification } from './useBAINotification';
 import { BAILink, useBAILogger, useErrorMessageResolver } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
-import { useBackendAIAppLauncherFragment$key } from 'src/__generated__/useBackendAIAppLauncherFragment.graphql';
 
 export const TCP_APPS = ['sshd', 'vscode-desktop', 'xrdp', 'vnc'];
 export const useBackendAIAppLauncher = (
