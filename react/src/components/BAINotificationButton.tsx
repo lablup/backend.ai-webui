@@ -6,6 +6,7 @@ import {
   useBAINotificationEffect,
   useBAINotificationState,
 } from '../hooks/useBAINotification';
+import useKeyboardShortcut from '../hooks/useKeyboardShortcut';
 import ReverseThemeProvider from './ReverseThemeProvider';
 import WEBUINotificationDrawer from './WEBUINotificationDrawer';
 import { BellOutlined } from '@ant-design/icons';
@@ -15,7 +16,6 @@ import { t } from 'i18next';
 import { atom, useAtom } from 'jotai';
 import * as _ from 'lodash-es';
 import React, { useEffect } from 'react';
-import useKeyboardShortcut from 'src/hooks/useKeyboardShortcut';
 
 export const isOpenDrawerState = atom(false);
 

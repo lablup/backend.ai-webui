@@ -2,11 +2,11 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { AgentStatusTagFragment$key } from '../../__generated__/AgentStatusTagFragment.graphql';
 import { BAIDoubleTag, BAIDoubleTagProps, BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
-import { AgentStatusTagFragment$key } from 'src/__generated__/AgentStatusTagFragment.graphql';
 
 interface AgentStatusTagProps extends Omit<BAIDoubleTagProps, 'values'> {
   agentNodeFrgmt?: AgentStatusTagFragment$key | null;

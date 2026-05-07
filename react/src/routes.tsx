@@ -278,7 +278,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
     // FR-2664 — New Deployment UI routes. Replaces the legacy /serving
     // routes (see fallback redirects below).
     path: '/deployments',
-    handle: { labelKey: 'webui.menu.Serving' },
+    handle: { labelKey: 'webui.menu.Deployments' },
     children: [
       {
         path: '',
@@ -287,7 +287,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
           useSuspendedBackendaiClient();
           return (
             <Suspense
-              fallback={<BAICard title={t('webui.menu.Serving')} loading />}
+              fallback={<BAICard title={t('webui.menu.Deployments')} loading />}
             >
               <DeploymentListPage />
             </Suspense>
@@ -296,7 +296,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
       },
       {
         path: ':deploymentId',
-        handle: { labelKey: 'modelService.RoutingInfo' },
+        handle: { labelKey: 'webui.menu.DeploymentDetail' },
         element: (
           <Suspense fallback={<Skeleton active />}>
             <DeploymentDetailPage />
@@ -309,7 +309,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
     // FR-2664 — Legacy /serving fallback. Transient redirect; remove once
     // all internal links + external references have been migrated.
     path: '/serving',
-    handle: { labelKey: 'webui.menu.Serving' },
+    handle: { labelKey: 'webui.menu.Deployments' },
     children: [
       {
         path: '',

@@ -13,6 +13,7 @@ import {
 } from '../helper';
 import { ResourceSlotName } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
+import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useResourceGroupsForCurrentProject } from '../hooks/useCurrentProject';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import BAIRadioGroup from './BAIRadioGroup';
@@ -42,7 +43,6 @@ import * as _ from 'lodash-es';
 import React, { useDeferredValue, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-import { useBAISettingUserState } from 'src/hooks/useBAISetting';
 import { StringParam, useQueryParams, withDefault } from 'use-query-params';
 
 type AgentSummary = NonNullable<

@@ -2,13 +2,13 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { useUserCustomThemeConfig } from '../../hooks/useUserCustomThemeConfig';
 import { Col, ColorPicker, type ColorPickerProps, Row, theme } from 'antd';
 import { ComponentTokenMap } from 'antd/es/theme/interface';
 import { AliasToken } from 'antd/lib/theme/internal';
 import { BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
-import { useUserCustomThemeConfig } from 'src/hooks/useUserCustomThemeConfig';
 
 type TokenPath = `token.${keyof AliasToken & string}`;
 type ComponentPath = `components.${keyof ComponentTokenMap & string}.${string}`;

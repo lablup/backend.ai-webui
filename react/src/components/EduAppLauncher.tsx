@@ -8,6 +8,8 @@
  * Handles token-based authentication, session management, and app launching
  * for education-specific use cases.
  */
+import { EduAppLauncherSessionQuery } from '../__generated__/EduAppLauncherSessionQuery.graphql';
+import { useBackendAIAppLauncherFragment$key } from '../__generated__/useBackendAIAppLauncherFragment.graphql';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useBackendAIAppLauncher } from '../hooks/useBackendAIAppLauncher';
 import { fetchAndParseConfig } from '../hooks/useWebUIConfig';
@@ -17,8 +19,6 @@ import React, { useEffect, useEffectEvent, useRef, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-import { EduAppLauncherSessionQuery } from 'src/__generated__/EduAppLauncherSessionQuery.graphql';
-import { useBackendAIAppLauncherFragment$key } from 'src/__generated__/useBackendAIAppLauncherFragment.graphql';
 
 interface EduAppLauncherProps {
   apiEndpoint: string;

@@ -7,7 +7,10 @@ import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import { useCustomThemeConfig } from '../../hooks/useCustomThemeConfig';
 import useKeyboardShortcut from '../../hooks/useKeyboardShortcut';
 import { useLogoutEventListeners } from '../../hooks/useLogout';
+import usePrimaryColors from '../../hooks/usePrimaryColors';
 import { useThemeMode } from '../../hooks/useThemeMode';
+import { useWebUIMenuItems } from '../../hooks/useWebUIMenuItems';
+import { useSetupWebUIPluginEffect } from '../../hooks/useWebUIPluginState';
 import Page401 from '../../pages/Page401';
 import Page404 from '../../pages/Page404';
 import BAIContentWithDrawerArea from '../BAIContentWithDrawerArea';
@@ -37,9 +40,6 @@ import React, {
   useState,
 } from 'react';
 import { Outlet, useMatches, useLocation } from 'react-router-dom';
-import usePrimaryColors from 'src/hooks/usePrimaryColors';
-import { useWebUIMenuItems } from 'src/hooks/useWebUIMenuItems';
-import { useSetupWebUIPluginEffect } from 'src/hooks/useWebUIPluginState';
 
 // Z-index for header in MainLayout. Should be higher than any other elements in the page content.
 // Since fixed column z-index in antd table is dynamically calculated based on the number of columns,

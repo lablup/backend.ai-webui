@@ -2,6 +2,9 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { TensorboardPathModalFragment$key } from '../../__generated__/TensorboardPathModalFragment.graphql';
+import { useSuspendedBackendaiClient } from '../../hooks';
+import { useBackendAIAppLauncher } from '../../hooks/useBackendAIAppLauncher';
 import { App, Form, Input, Typography } from 'antd';
 import {
   BAIButton,
@@ -13,9 +16,6 @@ import {
 } from 'backend.ai-ui';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
-import { TensorboardPathModalFragment$key } from 'src/__generated__/TensorboardPathModalFragment.graphql';
-import { useSuspendedBackendaiClient } from 'src/hooks';
-import { useBackendAIAppLauncher } from 'src/hooks/useBackendAIAppLauncher';
 
 interface TensorboardPathModalProps extends BAIModalProps {
   sessionFrgmt: TensorboardPathModalFragment$key;

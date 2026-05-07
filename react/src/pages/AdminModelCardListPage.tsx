@@ -10,13 +10,16 @@ import type {
   ModelCardV2OrderBy,
 } from '../__generated__/AdminModelCardListPageQuery.graphql';
 import AdminModelCardSettingModal from '../components/AdminModelCardSettingModal';
+import { useFolderExplorerOpener } from '../components/FolderExplorerOpener';
 import StorageHostFilterInput from '../components/StorageHostFilterInput';
+import VFolderNodeIdenticonV2 from '../components/VFolderNodeIdenticonV2';
 import { convertToOrderBy, handleRowSelectionChange } from '../helper';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
+import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { SettingOutlined } from '@ant-design/icons';
-import { App, Typography } from 'antd';
+import { App, Checkbox, Tooltip, Typography, theme } from 'antd';
 import {
   BAIButton,
   BAIColumnType,
@@ -24,6 +27,7 @@ import {
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
+  BAILink,
   BAINameActionCell,
   BAISelectionLabel,
   BAITable,
@@ -64,7 +68,10 @@ const AdminModelCardListPage: React.FC = () => {
 
   const { t } = useTranslation();
   const { message } = App.useApp();
+  const { token } = theme.useToken();
   const { logger } = useBAILogger();
+  const { upsertNotification } = useSetBAINotification();
+  const { generateFolderPath } = useFolderExplorerOpener();
   const currentProject = useCurrentProjectValue();
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
     'table_column_overrides.AdminModelCardListPage',
@@ -79,7 +86,9 @@ const AdminModelCardListPage: React.FC = () => {
   );
   const [deletingModelCard, setDeletingModelCard] =
     useState<ModelCardNode | null>(null);
+  const [alsoDeleteFolder, setAlsoDeleteFolder] = useState(false);
   const [isBulkDeleteOpen, setIsBulkDeleteOpen] = useState(false);
+  const [alsoDeleteFoldersBulk, setAlsoDeleteFoldersBulk] = useState(false);
   const {
     baiPaginationOption,
     tablePaginationOption,
@@ -132,6 +141,14 @@ const AdminModelCardListPage: React.FC = () => {
             node {
               id
               name
+              vfolderId
+              vfolder {
+                id
+                metadata {
+                  name
+                }
+                ...VFolderNodeIdenticonV2Fragment
+              }
               domainName
               projectId
               accessLevel
@@ -166,8 +183,11 @@ const AdminModelCardListPage: React.FC = () => {
 
   const [commitDeleteModelCard] =
     useMutation<AdminModelCardListPageDeleteMutation>(graphql`
-      mutation AdminModelCardListPageDeleteMutation($id: UUID!) {
-        adminDeleteModelCardV2(id: $id) {
+      mutation AdminModelCardListPageDeleteMutation(
+        $id: UUID!
+        $options: DeleteModelCardV2Options
+      ) {
+        adminDeleteModelCardV2(id: $id, options: $options) {
           id
         }
       }
@@ -180,6 +200,10 @@ const AdminModelCardListPage: React.FC = () => {
       ) {
         adminBulkDeleteModelCardsV2(input: $input) {
           successes
+          failed {
+            cardId
+            message
+          }
         }
       }
     `);
@@ -440,11 +464,56 @@ const AdminModelCardListPage: React.FC = () => {
         description={t('adminModelCard.ConfirmDelete', {
           name: deletingModelCard?.name,
         })}
+        requireConfirmInput
+        extraContent={
+          <BAIFlex align="center" gap="xs">
+            <Tooltip title={t('adminModelCard.AlsoDeleteModelFolderTooltip')}>
+              <Checkbox
+                checked={alsoDeleteFolder}
+                onChange={(e) => setAlsoDeleteFolder(e.target.checked)}
+              />
+            </Tooltip>
+            <span>
+              {t('adminModelCard.AlsoDeleteModelFolder')}
+              {deletingModelCard?.vfolder && (
+                <span style={{ marginLeft: token.marginXXS }}>
+                  {'('}
+                  <VFolderNodeIdenticonV2
+                    vfolderNodeIdenticonFrgmt={deletingModelCard.vfolder}
+                    style={{
+                      verticalAlign: 'middle',
+                      marginInline: token.marginXXS,
+                    }}
+                  />
+                  <BAILink
+                    to={generateFolderPath(deletingModelCard.vfolderId)}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {deletingModelCard.vfolder.metadata.name}
+                  </BAILink>
+                  {')'}
+                </span>
+              )}
+            </span>
+          </BAIFlex>
+        }
         onOk={() => {
           if (deletingModelCard) {
             return new Promise<void>((resolve, reject) => {
+              const vfolderId = deletingModelCard.vfolderId;
+              const folderName = deletingModelCard.vfolder?.metadata.name;
+              const folderTrashSearch = new URLSearchParams({
+                statusCategory: 'deleted',
+                filter: folderName
+                  ? `name == "${folderName}"`
+                  : `id == "${vfolderId}"`,
+              }).toString();
+
               commitDeleteModelCard({
-                variables: { id: toLocalId(deletingModelCard.id) },
+                variables: {
+                  id: toLocalId(deletingModelCard.id),
+                  options: { deleteAssociatedVfolder: alsoDeleteFolder },
+                },
                 onCompleted: (_data, errors) => {
                   if (errors && errors.length > 0) {
                     logger.error(errors[0]);
@@ -454,8 +523,27 @@ const AdminModelCardListPage: React.FC = () => {
                     reject();
                     return;
                   }
-                  message.success(t('adminModelCard.ModelCardDeleted'));
+
+                  if (alsoDeleteFolder) {
+                    upsertNotification({
+                      type: 'success',
+                      message: t('adminModelCard.ModelCardAndFolderDeleted'),
+                      to: {
+                        pathname: '/admin-data',
+                        search: folderTrashSearch,
+                      },
+                      toText: t('adminModelCard.GoToTrash'),
+                      open: true,
+                      extraData: null,
+                    });
+                  } else {
+                    message.success(
+                      t('adminModelCard.ModelCardDeletedFolderKept'),
+                    );
+                  }
+
                   setDeletingModelCard(null);
+                  setAlsoDeleteFolder(false);
                   updateFetchKey();
                   resolve();
                 },
@@ -468,10 +556,14 @@ const AdminModelCardListPage: React.FC = () => {
             });
           }
         }}
-        onCancel={() => setDeletingModelCard(null)}
+        onCancel={() => {
+          setDeletingModelCard(null);
+          setAlsoDeleteFolder(false);
+        }}
       />
       <BAIDeleteConfirmModal
         open={isBulkDeleteOpen}
+        confirmLoading={isBulkDeleteInFlight}
         items={selectedModelCards.map((mc) => ({
           key: mc.id,
           label: mc.name,
@@ -480,11 +572,27 @@ const AdminModelCardListPage: React.FC = () => {
         description={t('adminModelCard.ConfirmBulkDelete', {
           count: selectedModelCards.length,
         })}
+        extraContent={
+          <BAIFlex align="center" gap="xs">
+            <Tooltip title={t('adminModelCard.AlsoDeleteModelFolderTooltip')}>
+              <Checkbox
+                checked={alsoDeleteFoldersBulk}
+                onChange={(e) => setAlsoDeleteFoldersBulk(e.target.checked)}
+              />
+            </Tooltip>
+            <span>{t('adminModelCard.AlsoDeleteModelFolders')}</span>
+          </BAIFlex>
+        }
         onOk={() => {
           const ids = selectedModelCards.map((mc) => toLocalId(mc.id));
           return new Promise<void>((resolve, reject) => {
             commitBulkDeleteModelCards({
-              variables: { input: { ids } },
+              variables: {
+                input: {
+                  ids,
+                  options: { deleteAssociatedVfolder: alsoDeleteFoldersBulk },
+                },
+              },
               onCompleted: (data, errors) => {
                 if (errors && errors.length > 0) {
                   logger.error(errors[0]);
@@ -494,13 +602,83 @@ const AdminModelCardListPage: React.FC = () => {
                   reject();
                   return;
                 }
-                message.success(
-                  t('adminModelCard.BulkDeleteCompleted', {
-                    count:
-                      data.adminBulkDeleteModelCardsV2?.successes?.length ?? 0,
-                  }),
-                );
-                setSelectedModelCards([]);
+                const { successes, failed } =
+                  data.adminBulkDeleteModelCardsV2 ?? {
+                    successes: [],
+                    failed: [],
+                  };
+                if (failed.length > 0) {
+                  const failedIds = new Set(
+                    failed.map((f: { cardId: string }) => f.cardId),
+                  );
+                  setSelectedModelCards(
+                    selectedModelCards.filter((mc) =>
+                      failedIds.has(toLocalId(mc.id)),
+                    ),
+                  );
+                  upsertNotification({
+                    type: 'warning',
+                    message: t('adminModelCard.BulkDeletePartiallyCompleted', {
+                      successCount: successes.length,
+                      failureCount: failed.length,
+                    }),
+                    description: (
+                      <BAIFlex direction="column" gap="xs">
+                        {failed.map((f) => {
+                          const cardName =
+                            selectedModelCards.find(
+                              (mc) => toLocalId(mc.id) === f.cardId,
+                            )?.name ?? f.cardId;
+                          return (
+                            <div key={f.cardId}>
+                              <Typography.Text strong>
+                                {cardName}
+                              </Typography.Text>
+                              <Typography.Text type="secondary">
+                                {' — '}
+                              </Typography.Text>
+                              <Typography.Text
+                                type="danger"
+                                style={{ fontSize: token.fontSizeSM }}
+                              >
+                                {f.message}
+                              </Typography.Text>
+                            </div>
+                          );
+                        })}
+                      </BAIFlex>
+                    ),
+                    open: true,
+                    duration: 0,
+                    extraData: null,
+                  });
+                } else if (alsoDeleteFoldersBulk) {
+                  upsertNotification({
+                    type: 'success',
+                    message: t(
+                      'adminModelCard.BulkDeleteModelCardsAndFoldersCompleted',
+                      { count: successes.length },
+                    ),
+                    to: {
+                      pathname: '/admin-data',
+                      search: new URLSearchParams({
+                        statusCategory: 'deleted',
+                      }).toString(),
+                    },
+                    toText: t('adminModelCard.GoToTrash'),
+                    open: true,
+                    extraData: null,
+                  });
+                  setSelectedModelCards([]);
+                } else {
+                  message.success(
+                    t('adminModelCard.BulkDeleteCompleted', {
+                      count: successes.length,
+                    }),
+                  );
+                  setSelectedModelCards([]);
+                }
+                setAlsoDeleteFoldersBulk(false);
                 setIsBulkDeleteOpen(false);
                 updateFetchKey();
                 resolve();
@@ -513,7 +691,10 @@ const AdminModelCardListPage: React.FC = () => {
             });
           });
         }}
-        onCancel={() => setIsBulkDeleteOpen(false)}
+        onCancel={() => {
+          setIsBulkDeleteOpen(false);
+          setAlsoDeleteFoldersBulk(false);
+        }}
       />
     </BAIFlex>
   );

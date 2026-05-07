@@ -2,6 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { useCustomThemeConfig } from '../hooks/useCustomThemeConfig';
+import { useUserCustomThemeConfig } from '../hooks/useUserCustomThemeConfig';
 import FontFamilySettingItem from './BrandingSettingItems/FontFamilySettingItem';
 import LogoPreviewer, {
   getLogoThemeKey,
@@ -24,8 +26,6 @@ import * as _ from 'lodash-es';
 import { Fullscreen } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useCustomThemeConfig } from 'src/hooks/useCustomThemeConfig';
-import { useUserCustomThemeConfig } from 'src/hooks/useUserCustomThemeConfig';
 
 interface BrandingSettingListProps {}
 

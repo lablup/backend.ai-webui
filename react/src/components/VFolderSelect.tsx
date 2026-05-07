@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { VFolderSelectFallbackProbeQuery } from '../__generated__/VFolderSelectFallbackProbeQuery.graphql';
 import { useBaiSignedRequestWithPromise } from '../helper';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import useControllableState_deprecated from '../hooks/useControllableState';
@@ -28,7 +29,6 @@ import React, {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-import { VFolderSelectFallbackProbeQuery } from 'src/__generated__/VFolderSelectFallbackProbeQuery.graphql';
 
 export type VFolder = {
   name: string;

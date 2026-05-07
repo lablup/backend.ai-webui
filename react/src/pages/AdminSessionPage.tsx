@@ -2,15 +2,15 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import BAIErrorBoundary from '../components/BAIErrorBoundary';
+import PendingSessionNodeList from '../components/PendingSessionNodeList';
+import SessionDetailAndContainerLogOpenerLegacy from '../components/SessionDetailAndContainerLogOpenerLegacy';
+import { useWebUINavigate } from '../hooks';
 import { Skeleton } from 'antd';
 import { BAICard, filterOutEmpty } from 'backend.ai-ui';
 import { parseAsString, useQueryStates } from 'nuqs';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
-import BAIErrorBoundary from 'src/components/BAIErrorBoundary';
-import PendingSessionNodeList from 'src/components/PendingSessionNodeList';
-import SessionDetailAndContainerLogOpenerLegacy from 'src/components/SessionDetailAndContainerLogOpenerLegacy';
-import { useWebUINavigate } from 'src/hooks';
 
 const AdminComputeSessionListPage = React.lazy(
   () => import('./AdminComputeSessionListPage'),

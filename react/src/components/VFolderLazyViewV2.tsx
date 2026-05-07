@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { VFolderLazyViewV2Query } from '../__generated__/VFolderLazyViewV2Query.graphql';
 import { useWebUINavigate } from '../hooks';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
 import { Typography } from 'antd';
@@ -9,7 +10,6 @@ import { BAIFlex, toLocalId } from 'backend.ai-ui';
 import React from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useLocation } from 'react-router-dom';
-import { VFolderLazyViewV2Query } from 'src/__generated__/VFolderLazyViewV2Query.graphql';
 
 interface VFolderLazyViewV2Props {
   uuid: string;

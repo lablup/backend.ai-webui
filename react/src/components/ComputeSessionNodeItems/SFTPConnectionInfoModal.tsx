@@ -2,6 +2,9 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { SFTPConnectionInfoModalFragment$key } from '../../__generated__/SFTPConnectionInfoModalFragment.graphql';
+import { useSuspendedBackendaiClient } from '../../hooks';
+import { useTanQuery } from '../../hooks/reactQueryAlias';
 import SourceCodeView from '../SourceCodeView';
 import { Alert, Descriptions } from 'antd';
 import { createStyles } from 'antd-style';
@@ -9,9 +12,6 @@ import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { useTranslation, Trans } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
-import { SFTPConnectionInfoModalFragment$key } from 'src/__generated__/SFTPConnectionInfoModalFragment.graphql';
-import { useSuspendedBackendaiClient } from 'src/hooks';
-import { useTanQuery } from 'src/hooks/reactQueryAlias';
 
 const useStyles = createStyles(({ css, token }) => ({
   description: css`

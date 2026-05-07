@@ -2,6 +2,20 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import {
+  RGProjectFairShareFilter,
+  DomainFairShareOrderBy,
+  FairShareListQuery,
+  FairShareListQuery$variables,
+  RGDomainFairShareFilter,
+  ProjectFairShareOrderBy,
+  ResourceGroupFilter,
+  ResourceGroupOrderBy,
+  RGUserFairShareFilter,
+  UserFairShareOrderBy,
+} from '../../__generated__/FairShareListQuery.graphql';
+import { convertToOrderBy, handleRowSelectionChange } from '../../helper';
+import { useBAIPaginationOptionStateOnSearchParam } from '../../hooks/reactPaginationQueryOptions';
 import QuestionIconWithTooltip from '../QuestionIconWithTooltip';
 import DomainFairShareTable, {
   availableDomainFairShareSorterValues,
@@ -55,20 +69,6 @@ import {
 } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-import {
-  RGProjectFairShareFilter,
-  DomainFairShareOrderBy,
-  FairShareListQuery,
-  FairShareListQuery$variables,
-  RGDomainFairShareFilter,
-  ProjectFairShareOrderBy,
-  ResourceGroupFilter,
-  ResourceGroupOrderBy,
-  RGUserFairShareFilter,
-  UserFairShareOrderBy,
-} from 'src/__generated__/FairShareListQuery.graphql';
-import { convertToOrderBy, handleRowSelectionChange } from 'src/helper';
-import { useBAIPaginationOptionStateOnSearchParam } from 'src/hooks/reactPaginationQueryOptions';
 
 const useStyles = createStyles(({ css, token }) => ({
   step: css`

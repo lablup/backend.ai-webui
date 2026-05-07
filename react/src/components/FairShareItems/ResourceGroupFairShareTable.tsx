@@ -2,6 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import {
+  ResourceGroupFairShareTableFragment$data,
+  ResourceGroupFairShareTableFragment$key,
+} from '../../__generated__/ResourceGroupFairShareTableFragment.graphql';
 import QuestionIconWithTooltip from '../QuestionIconWithTooltip';
 import ResourceGroupFairShareSettingModal from './ResourceGroupFairShareSettingModal';
 import { SettingOutlined } from '@ant-design/icons';
@@ -22,10 +26,6 @@ import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
-import {
-  ResourceGroupFairShareTableFragment$data,
-  ResourceGroupFairShareTableFragment$key,
-} from 'src/__generated__/ResourceGroupFairShareTableFragment.graphql';
 
 type ResourceGroup = NonNullable<
   ResourceGroupFairShareTableFragment$data[number]

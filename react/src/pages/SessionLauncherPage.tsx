@@ -37,6 +37,7 @@ import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useCurrentResourceGroupState } from '../hooks/useCurrentProject';
 import { useRecentSessionHistory } from '../hooks/useRecentSessionHistory';
+import { useStartSession } from '../hooks/useStartSession';
 // @ts-ignore
 import customCSS from './SessionLauncherPage.css?raw';
 import {
@@ -98,7 +99,6 @@ import React, {
 import { ErrorBoundary } from 'react-error-boundary';
 import { Trans, useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
-import { useStartSession } from 'src/hooks/useStartSession';
 import {
   JsonParam,
   NumberParam,

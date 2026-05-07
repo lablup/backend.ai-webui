@@ -2,7 +2,17 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { ImportArtifactRevisionToFolderModalArtifactRevisionFragment$key } from '../__generated__/ImportArtifactRevisionToFolderModalArtifactRevisionFragment.graphql';
+import {
+  ArtifactStatus,
+  ReservoirArtifactDetailPageQuery,
+  ReservoirArtifactDetailPageQuery$data,
+  ReservoirArtifactDetailPageQuery$variables,
+} from '../__generated__/ReservoirArtifactDetailPageQuery.graphql';
 import ImportArtifactRevisionToFolderButton from '../components/ImportArtifactRevisionToFolderButton';
+import ImportArtifactRevisionToFolderModal from '../components/ImportArtifactRevisionToFolderModal';
+import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
+import { useSetBAINotification } from '../hooks/useBAINotification';
 import { Button, Typography, Descriptions, theme, Tooltip } from 'antd';
 import {
   BAIArtifactRevisionDeleteButton,
@@ -35,16 +45,6 @@ import { useDeferredValue, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useParams } from 'react-router-dom';
-import { ImportArtifactRevisionToFolderModalArtifactRevisionFragment$key } from 'src/__generated__/ImportArtifactRevisionToFolderModalArtifactRevisionFragment.graphql';
-import {
-  ArtifactStatus,
-  ReservoirArtifactDetailPageQuery,
-  ReservoirArtifactDetailPageQuery$data,
-  ReservoirArtifactDetailPageQuery$variables,
-} from 'src/__generated__/ReservoirArtifactDetailPageQuery.graphql';
-import ImportArtifactRevisionToFolderModal from 'src/components/ImportArtifactRevisionToFolderModal';
-import { useBAIPaginationOptionStateOnSearchParamLegacy } from 'src/hooks/reactPaginationQueryOptions';
-import { useSetBAINotification } from 'src/hooks/useBAINotification';
 import { JsonParam, useQueryParams, withDefault } from 'use-query-params';
 
 dayjs.extend(relativeTime);

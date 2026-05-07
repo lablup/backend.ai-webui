@@ -5,12 +5,12 @@
 import { BAIBoardItem } from '../components/BAIBoard';
 import { jotaiStore } from '../components/DefaultProviders';
 import { backendaiOptions } from '../global-stores';
+import { CustomThemeConfig } from '../helper/customThemeConfig';
 import type { AIAgent } from './useAIAgent';
 import { BAITableColumnOverrideRecord } from 'backend.ai-ui';
 import { atom, useAtom } from 'jotai';
 import { atomFamily } from 'jotai-family';
 import { SetStateAction } from 'react';
-import { CustomThemeConfig } from 'src/helper/customThemeConfig';
 
 export interface UserSettings {
   has_opened_tour_neo_session_validation?: boolean;

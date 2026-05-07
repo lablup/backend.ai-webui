@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { DeploymentDetailPageQuery } from '../__generated__/DeploymentDetailPageQuery.graphql';
+import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import DeploymentAccessTokensTab from '../components/DeploymentAccessTokensTab';
 import DeploymentAutoScalingTab from '../components/DeploymentAutoScalingTab';
 import DeploymentConfigurationSection from '../components/DeploymentConfigurationSection';
@@ -18,7 +19,6 @@ import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useParams } from 'react-router-dom';
-import BAIErrorBoundary from 'src/components/BAIErrorBoundary';
 
 const DeploymentDetailPage: React.FC = () => {
   'use memo';

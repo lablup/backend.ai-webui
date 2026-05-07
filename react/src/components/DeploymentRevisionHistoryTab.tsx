@@ -10,6 +10,7 @@ import {
 } from '../__generated__/DeploymentRevisionHistoryTabListQuery.graphql';
 import type { DeploymentRevisionHistoryTab_deployment$key } from '../__generated__/DeploymentRevisionHistoryTab_deployment.graphql';
 import { convertToOrderBy } from '../helper';
+import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
 import { LoadingOutlined, PlayCircleOutlined } from '@ant-design/icons';
@@ -46,7 +47,6 @@ import {
   useLazyLoadQuery,
   useMutation,
 } from 'react-relay';
-import { useSetBAINotification } from 'src/hooks/useBAINotification';
 
 type RevisionNode = NonNullable<
   NonNullable<

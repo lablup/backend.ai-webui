@@ -2,6 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import {
+  DomainFairShareTableFragment$data,
+  DomainFairShareTableFragment$key,
+} from '../../__generated__/DomainFairShareTableFragment.graphql';
 import QuestionIconWithTooltip from '../QuestionIconWithTooltip';
 import DomainResourceGroupWarningIcon from './DomainResourceGroupWarningIcon';
 import { SettingOutlined } from '@ant-design/icons';
@@ -20,10 +24,6 @@ import * as _ from 'lodash-es';
 import { parseAsStringLiteral, useQueryStates } from 'nuqs';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
-import {
-  DomainFairShareTableFragment$data,
-  DomainFairShareTableFragment$key,
-} from 'src/__generated__/DomainFairShareTableFragment.graphql';
 
 export type Domain = NonNullable<
   NonNullable<DomainFairShareTableFragment$data[number]>

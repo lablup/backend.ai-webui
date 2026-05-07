@@ -3,6 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { DashboardPageQuery } from '../__generated__/DashboardPageQuery.graphql';
+import ActiveAgents from '../components/ActiveAgents';
+import AgentStats from '../components/AgentStats';
 import BAIBoard, { BAIBoardItem } from '../components/BAIBoard';
 import MyResource from '../components/MyResource';
 import MyResourceWithinResourceGroup from '../components/MyResourceWithinResourceGroup';
@@ -14,6 +16,7 @@ import TotalResourceWithinResourceGroup, {
   useIsAvailableTotalResourceWithinResourceGroup,
 } from '../components/TotalResourceWithinResourceGroup';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
+import { useCurrentUserRole } from '../hooks/backendai';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import {
   useCurrentProjectValue,
@@ -31,9 +34,6 @@ import * as _ from 'lodash-es';
 import { Suspense, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-import ActiveAgents from 'src/components/ActiveAgents';
-import AgentStats from 'src/components/AgentStats';
-import { useCurrentUserRole } from 'src/hooks/backendai';
 
 const DashboardPage: React.FC = () => {
   const { token } = theme.useToken();

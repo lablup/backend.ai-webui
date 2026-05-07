@@ -2,6 +2,11 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { FolderExplorerModalQuery } from '../__generated__/FolderExplorerModalQuery.graphql';
+import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
+import { useSetBAINotification } from '../hooks/useBAINotification';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { useMergedAllowedStorageHostPermission } from '../hooks/useMergedAllowedStorageHostPermission';
 import { useFileUploadManager } from './FileUploadManager';
 import FolderExplorerHeader from './FolderExplorerHeader';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
@@ -27,11 +32,6 @@ import * as _ from 'lodash-es';
 import { Suspense, useDeferredValue, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-import { FolderExplorerModalQuery } from 'src/__generated__/FolderExplorerModalQuery.graphql';
-import { useCurrentDomainValue, useSuspendedBackendaiClient } from 'src/hooks';
-import { useSetBAINotification } from 'src/hooks/useBAINotification';
-import { useCurrentProjectValue } from 'src/hooks/useCurrentProject';
-import { useMergedAllowedStorageHostPermission } from 'src/hooks/useMergedAllowedStorageHostPermission';
 
 const useStyles = createStyles(({ css }) => ({
   baiModalHeader: css`

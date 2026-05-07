@@ -242,7 +242,7 @@ const EndpointSelect: React.FC<EndpointSelectProps> = ({
           }
         />
         {showInfoButton ? (
-          <Tooltip title={t('general.NavigateToDetailPage')}>
+          <Tooltip title={t('deployment.GoToDetailPage')}>
             <Button
               icon={<InfoIcon />}
               disabled={!controllableValue}

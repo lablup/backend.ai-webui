@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useSuspendedBackendaiClient } from '.';
+import WebUILink from '../components/WebUILink';
 import { useCurrentUserRole } from './backendai';
 import { useDiagnosticsBadgeSeverity } from './useAutoDiagnostics';
 import { useBAISettingUserState } from './useBAISetting';
@@ -56,7 +57,6 @@ import {
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
-import WebUILink from 'src/components/WebUILink';
 
 // Mutable registry populated by routes.tsx at module initialization time.
 // Using mutable objects (Set / Array) means importers share the same reference

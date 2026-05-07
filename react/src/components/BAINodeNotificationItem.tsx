@@ -2,13 +2,13 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { BAINodeNotificationItemFragment$key } from '../__generated__/BAINodeNotificationItemFragment.graphql';
 import { NotificationState } from '../hooks/useBAINotification';
 import BAIComputeSessionNodeNotificationItem from './BAIComputeSessionNodeNotificationItem';
 import BAIVFolderNotificationItem from './BAIVFolderNotificationItem';
 import BAIVirtualFolderNodeNotificationItem from './BAIVirtualFolderNodeNotificationItem';
 import React from 'react';
 import { graphql, useRefetchableFragment } from 'react-relay';
-import { BAINodeNotificationItemFragment$key } from 'src/__generated__/BAINodeNotificationItemFragment.graphql';
 
 // `... on VFolder` is the V2 (Strawberry GraphQL, FR-2573) branch and the
 // preferred path for new VFolder list/mutation flows.

@@ -3,8 +3,10 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useWebUINavigate } from '.';
+import { BAINodeNotificationItemFragment$key } from '../__generated__/BAINodeNotificationItemFragment.graphql';
 import BAIGeneralNotificationItem from '../components/BAIGeneralNotificationItem';
 import BAIMultiStepNotificationItem from '../components/BAIMultiStepNotificationItem';
+import BAINodeNotificationItem from '../components/BAINodeNotificationItem';
 import { SSEEventHandlerTypes, listenToBackgroundTask } from '../helper';
 import { useBAISettingUserState } from './useBAISetting';
 import { App } from 'antd';
@@ -21,8 +23,6 @@ import React, {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { To, createPath } from 'react-router-dom';
-import { BAINodeNotificationItemFragment$key } from 'src/__generated__/BAINodeNotificationItemFragment.graphql';
-import BAINodeNotificationItem from 'src/components/BAINodeNotificationItem';
 import { v4 as uuidv4 } from 'uuid';
 
 const _activeNotificationKeys: Key[] = [];

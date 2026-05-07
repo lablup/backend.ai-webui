@@ -4,11 +4,13 @@
  */
 import { DeploymentConfigurationSectionQuery } from '../__generated__/DeploymentConfigurationSectionQuery.graphql';
 import type { DeploymentRevisionDetail_revision$key } from '../__generated__/DeploymentRevisionDetail_revision.graphql';
+import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import DeploymentAddRevisionModal from './DeploymentAddRevisionModal';
 import DeploymentRevisionDetail from './DeploymentRevisionDetail';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
 import DeploymentRevisionHistoryTab from './DeploymentRevisionHistoryTab';
 import DeploymentSettingModal from './DeploymentSettingModal';
+import DeploymentTagChips from './DeploymentTagChips';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import {
   CheckOutlined,
@@ -24,7 +26,6 @@ import {
   Descriptions,
   Empty,
   Skeleton,
-  Tag,
   Typography,
   theme,
 } from 'antd';
@@ -35,9 +36,11 @@ import {
   BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
   filterOutEmpty,
+  toLocalId,
   useFetchKey,
   useInterval,
 } from 'backend.ai-ui';
+import { BotMessageSquareIcon } from 'lucide-react';
 import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import React, { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -64,12 +67,6 @@ const DeploymentOverviewContent: React.FC<{
   const projectName =
     deployment?.metadata.projectV2?.basicInfo?.name ??
     deployment?.metadata.projectId;
-  const tags = (deployment?.metadata.tags ?? []).flatMap((tag) =>
-    tag
-      .split(',')
-      .map((t) => t.trim())
-      .filter(Boolean),
-  );
 
   const deploymentItems = filterOutEmpty([
     {
@@ -114,16 +111,12 @@ const DeploymentOverviewContent: React.FC<{
     {
       key: 'tags',
       label: t('deployment.Tags'),
-      children:
-        tags.length > 0 ? (
-          <BAIFlex direction="row" wrap="wrap" gap="xxs">
-            {tags.map((tag) => (
-              <Tag key={tag}>{tag}</Tag>
-            ))}
-          </BAIFlex>
-        ) : (
-          renderFallback()
-        ),
+      children: (
+        <DeploymentTagChips
+          metadataFrgmt={deployment?.metadata ?? null}
+          fallback={renderFallback()}
+        />
+      ),
     },
     {
       key: 'desired-replicas',
@@ -271,6 +264,9 @@ const DeploymentConfigurationCards: React.FC<{
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
+  const webuiNavigate = useWebUINavigate();
+  const baiClient = useSuspendedBackendaiClient();
+  const isChatBlocked = !!baiClient?._config?.blockList?.includes('chat');
 
   const [activeRevisionTab, setActiveRevisionTab] = useQueryState(
     'revisionTab',
@@ -299,14 +295,15 @@ const DeploymentConfigurationCards: React.FC<{
           ...DeploymentSettingModal_deployment
           metadata {
             name
-            tags
             projectId
             domainName
+            status
             projectV2 @since(version: "26.4.3") {
               basicInfo {
                 name
               }
             }
+            ...DeploymentTagChips_metadata
           }
           networkAccess {
             openToPublic
@@ -342,6 +339,7 @@ const DeploymentConfigurationCards: React.FC<{
   const deployingRevision = deployment?.deployingRevision;
   const isDeployingDifferentRevision =
     !!deployingRevision && deployingRevision.id !== currentRevision?.id;
+  const isDeploymentReady = deployment?.metadata.status === 'READY';
 
   // While a different revision is being applied, poll so the UI moves off
   // the "applying" state once the deployment finishes rolling out. We don't
@@ -351,6 +349,31 @@ const DeploymentConfigurationCards: React.FC<{
 
   return (
     <>
+      {isDeploymentReady && !hasNoRevision && (
+        <Alert
+          type="success"
+          showIcon
+          title={t('deployment.DeploymentReady')}
+          action={
+            !isChatBlocked && (
+              <Button
+                type="primary"
+                icon={<BotMessageSquareIcon size={token.fontSizeLG} />}
+                onClick={() => {
+                  webuiNavigate({
+                    pathname: '/chat',
+                    search: new URLSearchParams({
+                      endpointId: toLocalId(deploymentId),
+                    }).toString(),
+                  });
+                }}
+              >
+                {t('deployment.StartChatTest')}
+              </Button>
+            )
+          }
+        />
+      )}
       {hasNoRevision && (
         <Alert
           type="info"

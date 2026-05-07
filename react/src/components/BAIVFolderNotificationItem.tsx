@@ -2,6 +2,12 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { BAIVFolderNotificationItemFragment$key } from '../__generated__/BAIVFolderNotificationItemFragment.graphql';
+import { useWebUINavigate } from '../hooks';
+import {
+  NotificationState,
+  useSetBAINotification,
+} from '../hooks/useBAINotification';
 import BAINotificationBackgroundProgress from './BAINotificationBackgroundProgress';
 import { useToggle } from 'ahooks';
 import { Card, List, theme, Typography } from 'antd';
@@ -16,12 +22,6 @@ import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
-import { BAIVFolderNotificationItemFragment$key } from 'src/__generated__/BAIVFolderNotificationItemFragment.graphql';
-import { useWebUINavigate } from 'src/hooks';
-import {
-  NotificationState,
-  useSetBAINotification,
-} from 'src/hooks/useBAINotification';
 
 interface BAIVFolderNotificationItemProps {
   notification: NotificationState;
