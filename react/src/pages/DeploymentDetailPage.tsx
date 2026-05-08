@@ -160,10 +160,9 @@ const DeploymentDetailPage: React.FC = () => {
       )}
       {hasNoRevision && (
         <Alert
-          type="info"
+          type="warning"
           showIcon
           title={t('deployment.NoCurrentRevisionDeployed')}
-          description={t('deployment.NoCurrentRevisionDeployedDescription')}
           action={
             <Button
               type="primary"
@@ -181,7 +180,6 @@ const DeploymentDetailPage: React.FC = () => {
           type="info"
           showIcon
           title={t('deployment.PrivateDeploymentAlertTitle')}
-          description={t('deployment.PrivateDeploymentAlertDescription')}
           action={
             <Button onClick={scrollToAccessTokens}>
               {t('deployment.ManageAccessTokens')}
