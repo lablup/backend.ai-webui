@@ -2318,6 +2318,8 @@
     "Active": "Active",
     "ActiveStatus": "Active Status",
     "AllowedSessionTypes": "Allowed session types",
+    "AppProxyAPIToken": "App Proxy API Token",
+    "AppProxyAddress": "App Proxy Server Address",
     "CreateResourceGroup": "Create Resource Group",
     "Deactivate": "Deactivate",
     "DeactivateResourceGroup": "Deactivate resource group",
@@ -2354,9 +2356,7 @@
     "SelectDomain": "Select Domain",
     "SelectScheduler": "Select Scheduler",
     "TimeoutSeconds": "Seconds",
-    "TypeResourceGroupNameToDelete": "Type resource group name to delete",
-    "WsproxyAPIToken": "WSProxy API Token",
-    "WsproxyAddress": "WSProxy Server Address"
+    "TypeResourceGroupNameToDelete": "Type resource group name to delete"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "You are about to delete this resource policy: ",

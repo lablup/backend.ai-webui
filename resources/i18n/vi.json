@@ -2311,6 +2311,8 @@
     "Active": "Hoạt động",
     "ActiveStatus": "Trạng thái hoạt động",
     "AllowedSessionTypes": "Các loại phiên được phép",
+    "AppProxyAPIToken": "Token API App Proxy",
+    "AppProxyAddress": "Địa chỉ máy chủ App Proxy",
     "CreateResourceGroup": "Tạo nhóm tài nguyên",
     "Deactivate": "Vô hiệu hóa",
     "DeactivateResourceGroup": "Vô hiệu hóa nhóm tài nguyên",
@@ -2347,9 +2349,7 @@
     "SelectDomain": "Chọn miền",
     "SelectScheduler": "Chọn bộ lập lịch",
     "TimeoutSeconds": "Giây",
-    "TypeResourceGroupNameToDelete": "Nhập tên nhóm tài nguyên để xóa",
-    "WsproxyAPIToken": "Token API WSProxy",
-    "WsproxyAddress": "Địa chỉ máy chủ WSProxy"
+    "TypeResourceGroupNameToDelete": "Nhập tên nhóm tài nguyên để xóa"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Bạn sắp xóa chính sách tài nguyên này:",

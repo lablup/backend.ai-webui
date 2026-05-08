@@ -2309,6 +2309,8 @@
     "Active": "Активный",
     "ActiveStatus": "Активный статус",
     "AllowedSessionTypes": "Разрешенные типы сессий",
+    "AppProxyAPIToken": "API-токен App Proxy",
+    "AppProxyAddress": "Адрес сервера App Proxy",
     "CreateResourceGroup": "Создать группу ресурсов",
     "Deactivate": "Деактивировать",
     "DeactivateResourceGroup": "Деактивировать ресурсную группу",
@@ -2345,9 +2347,7 @@
     "SelectDomain": "Выбрать домен",
     "SelectScheduler": "Выберите планировщик",
     "TimeoutSeconds": "Секунды",
-    "TypeResourceGroupNameToDelete": "Введите имя группы ресурсов для удаления",
-    "WsproxyAPIToken": "API-токен WSProxy",
-    "WsproxyAddress": "Адрес WSProxy-сервера"
+    "TypeResourceGroupNameToDelete": "Введите имя группы ресурсов для удаления"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Вы собираетесь удалить эту политику ресурсов:",

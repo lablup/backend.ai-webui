@@ -90,7 +90,7 @@ const ResourceGroupInfoModal: React.FC<ResourceGroupInfoModalProps> = ({
         <Descriptions.Item label={t('resourceGroup.Scheduler')}>
           {_.toUpper(resourceGroup?.scheduler ?? '')}
         </Descriptions.Item>
-        <Descriptions.Item label={t('resourceGroup.WsproxyAddress')}>
+        <Descriptions.Item label={t('resourceGroup.AppProxyAddress')}>
           {resourceGroup?.wsproxy_addr || '-'}
         </Descriptions.Item>
       </Descriptions>

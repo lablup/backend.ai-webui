@@ -2309,6 +2309,8 @@
     "Active": "Aktif",
     "ActiveStatus": "Aktif Durum",
     "AllowedSessionTypes": "İzin verilen oturum türleri",
+    "AppProxyAPIToken": "App Proxy API Jetonu",
+    "AppProxyAddress": "App Proxy Sunucu Adresi",
     "CreateResourceGroup": "Kaynak Grubu Oluştur",
     "Deactivate": "Devre dışı bırakmak",
     "DeactivateResourceGroup": "Kaynak grubunu devre dışı bırak",
@@ -2345,9 +2347,7 @@
     "SelectDomain": "Etki Alanı Seç",
     "SelectScheduler": "Zamanlayıcı Seç",
     "TimeoutSeconds": "saniye",
-    "TypeResourceGroupNameToDelete": "Silmek için kaynak grubu adını yazın",
-    "WsproxyAPIToken": "WSProxy API Jetonu",
-    "WsproxyAddress": "WSProxy Sunucu Adresi"
+    "TypeResourceGroupNameToDelete": "Silmek için kaynak grubu adını yazın"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Bu kaynak politikasını silmek üzeresiniz:",

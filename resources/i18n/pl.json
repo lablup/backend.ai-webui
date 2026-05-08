@@ -2311,6 +2311,8 @@
     "Active": "Aktywny",
     "ActiveStatus": "Stan aktywny",
     "AllowedSessionTypes": "Dozwolone typy sesji",
+    "AppProxyAPIToken": "Token API App Proxy",
+    "AppProxyAddress": "Adres serwera App Proxy",
     "CreateResourceGroup": "Utwórz grupę zasobów",
     "Deactivate": "Dezaktywować",
     "DeactivateResourceGroup": "Dezaktywna grupa zasobów",
@@ -2347,9 +2349,7 @@
     "SelectDomain": "Wybierz domenę",
     "SelectScheduler": "Wybierz harmonogram",
     "TimeoutSeconds": "sekundy",
-    "TypeResourceGroupNameToDelete": "Wpisz nazwę grupy zasobów do usunięcia",
-    "WsproxyAPIToken": "Token API WSProxy",
-    "WsproxyAddress": "Adres serwera WSProxy"
+    "TypeResourceGroupNameToDelete": "Wpisz nazwę grupy zasobów do usunięcia"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Zamierzasz usunąć tę zasadę dotyczącą zasobów:",

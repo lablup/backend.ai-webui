@@ -2309,6 +2309,8 @@
     "Active": "Aktiivinen",
     "ActiveStatus": "Aktiivinen tila",
     "AllowedSessionTypes": "Sallitut istuntotyypit",
+    "AppProxyAPIToken": "App Proxy API -avain",
+    "AppProxyAddress": "App Proxy-palvelimen osoite",
     "CreateResourceGroup": "Luo resurssiryhmä",
     "Deactivate": "Deaktivoida",
     "DeactivateResourceGroup": "Deaktivoi resurssiryhmä",
@@ -2345,9 +2347,7 @@
     "SelectDomain": "Valitse verkkotunnus",
     "SelectScheduler": "Valitse Ajastin",
     "TimeoutSeconds": "Sekuntia",
-    "TypeResourceGroupNameToDelete": "Kirjoita poistettavan resurssiryhmän nimi",
-    "WsproxyAPIToken": "WSProxy API -avain",
-    "WsproxyAddress": "WSProxy-palvelimen osoite"
+    "TypeResourceGroupNameToDelete": "Kirjoita poistettavan resurssiryhmän nimi"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Olet poistamassa tätä resurssikäytäntöä:",

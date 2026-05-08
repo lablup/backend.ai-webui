@@ -2310,6 +2310,8 @@
     "Active": "Идэвхтэй",
     "ActiveStatus": "Идэвхтэй байдал",
     "AllowedSessionTypes": "Зөвшөөрөгдсөн сессийн төрлүүд",
+    "AppProxyAPIToken": "App Proxy API токен",
+    "AppProxyAddress": "App Proxy серверийн хаяг",
     "CreateResourceGroup": "Нөөцийн бүлэг үүсгэх",
     "Deactivate": "Идэвхгүй болгох",
     "DeactivateResourceGroup": "Нөөцийн бүлгийг идэвхгүй болгох",
@@ -2346,9 +2348,7 @@
     "SelectDomain": "Домэйн сонгоно уу",
     "SelectScheduler": "Цагийн хуваарийг сонгоно уу",
     "TimeoutSeconds": "Секунд",
-    "TypeResourceGroupNameToDelete": "Устгахын тулд нөөцийн бүлгийн нэрийг бичнэ үү",
-    "WsproxyAPIToken": "WSProxy API токен",
-    "WsproxyAddress": "WSProxy серверийн хаяг"
+    "TypeResourceGroupNameToDelete": "Устгахын тулд нөөцийн бүлгийн нэрийг бичнэ үү"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Та энэ нөөцийн бодлогыг устгах гэж байна:",

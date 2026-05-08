@@ -2319,6 +2319,8 @@
     "Active": "활성",
     "ActiveStatus": "활성 상태",
     "AllowedSessionTypes": "허용된 세션 타입",
+    "AppProxyAPIToken": "App Proxy API 토큰",
+    "AppProxyAddress": "App Proxy 서버 주소",
     "CreateResourceGroup": "자원 그룹 추가",
     "Deactivate": "비활성화",
     "DeactivateResourceGroup": "자원 그룹 비활성화",
@@ -2355,9 +2357,7 @@
     "SelectDomain": "도메인 선택",
     "SelectScheduler": "스케줄러 선택",
     "TimeoutSeconds": "초",
-    "TypeResourceGroupNameToDelete": "삭제하려는 자원 그룹 이름을 다시 한번 입력하세요.",
-    "WsproxyAPIToken": "WSProxy API 토큰",
-    "WsproxyAddress": "WSProxy 서버 주소"
+    "TypeResourceGroupNameToDelete": "삭제하려는 자원 그룹 이름을 다시 한번 입력하세요."
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "아래의 자원 정책을 삭제하려고 합니다: ",

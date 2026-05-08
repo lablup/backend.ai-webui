@@ -2311,6 +2311,8 @@
     "Active": "ใช้งาน",
     "ActiveStatus": "สถานะใช้งาน",
     "AllowedSessionTypes": "ประเภทเซสชันที่อนุญาต",
+    "AppProxyAPIToken": "โทเค็น API ของ App Proxy",
+    "AppProxyAddress": "ที่อยู่เซิร์ฟเวอร์ App Proxy",
     "CreateResourceGroup": "สร้างกลุ่มทรัพยากร",
     "Deactivate": "ปิดใช้งาน",
     "DeactivateResourceGroup": "ปิดการใช้งานกลุ่มทรัพยากร",
@@ -2347,9 +2349,7 @@
     "SelectDomain": "เลือกโดเมน",
     "SelectScheduler": "เลือกตัวจัดกำหนดการ",
     "TimeoutSeconds": "วินาที",
-    "TypeResourceGroupNameToDelete": "พิมพ์ชื่อกลุ่มทรัพยากรเพื่อลบ",
-    "WsproxyAPIToken": "โทเค็น API ของ WSProxy",
-    "WsproxyAddress": "ที่อยู่เซิร์ฟเวอร์ WSProxy"
+    "TypeResourceGroupNameToDelete": "พิมพ์ชื่อกลุ่มทรัพยากรเพื่อลบ"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "คุณกำลังจะลบนโยบายทรัพยากรนี้: ",

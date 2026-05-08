@@ -2309,6 +2309,8 @@
     "Active": "Ativo",
     "ActiveStatus": "Status Ativo",
     "AllowedSessionTypes": "Tipos de sessão permitidos",
+    "AppProxyAPIToken": "Token da API do App Proxy",
+    "AppProxyAddress": "Endereço do servidor App Proxy",
     "CreateResourceGroup": "Criar Grupo de Recursos",
     "Deactivate": "Desativar",
     "DeactivateResourceGroup": "Grupo de Recursos Desativados",
@@ -2345,9 +2347,7 @@
     "SelectDomain": "Selecione o domínio",
     "SelectScheduler": "Selecione o Agendador",
     "TimeoutSeconds": "Segundos",
-    "TypeResourceGroupNameToDelete": "Digite o nome do grupo de recursos para excluir",
-    "WsproxyAPIToken": "Token da API do WSProxy",
-    "WsproxyAddress": "Endereço do servidor WSProxy"
+    "TypeResourceGroupNameToDelete": "Digite o nome do grupo de recursos para excluir"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Você está prestes a excluir esta política de recursos:",

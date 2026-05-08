@@ -2311,6 +2311,8 @@
     "Active": "アクティブ",
     "ActiveStatus": "アクティブステータス",
     "AllowedSessionTypes": "許可されたセッションタイプ",
+    "AppProxyAPIToken": "App Proxy APIトークン",
+    "AppProxyAddress": "App Proxy サーバアドレス",
     "CreateResourceGroup": "リソースグループの作成",
     "Deactivate": "無効にします",
     "DeactivateResourceGroup": "リソースグループを無効にします",
@@ -2347,9 +2349,7 @@
     "SelectDomain": "ドメインを選択",
     "SelectScheduler": "スケジューラを選択",
     "TimeoutSeconds": "秒",
-    "TypeResourceGroupNameToDelete": "削除するリソースグループ名を入力します",
-    "WsproxyAPIToken": "WSProxy APIトークン",
-    "WsproxyAddress": "WSProxy サーバアドレス"
+    "TypeResourceGroupNameToDelete": "削除するリソースグループ名を入力します"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "このリソースポリシーを削除しようとしています。",

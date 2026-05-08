@@ -2311,6 +2311,8 @@
     "Active": "积极的",
     "ActiveStatus": "活动状态",
     "AllowedSessionTypes": "允许的会话类型",
+    "AppProxyAPIToken": "App Proxy API令牌",
+    "AppProxyAddress": "App Proxy 服务器地址",
     "CreateResourceGroup": "创建资源组",
     "Deactivate": "停用",
     "DeactivateResourceGroup": "停用资源组",
@@ -2347,9 +2349,7 @@
     "SelectDomain": "选择域",
     "SelectScheduler": "选择调度程序",
     "TimeoutSeconds": "秒",
-    "TypeResourceGroupNameToDelete": "输入要删除的资源组名称",
-    "WsproxyAPIToken": "WSProxy API令牌",
-    "WsproxyAddress": "WSProxy 服务器地址"
+    "TypeResourceGroupNameToDelete": "输入要删除的资源组名称"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "您即将删除此资源策略：",

@@ -2309,6 +2309,8 @@
     "Active": "Aktif",
     "ActiveStatus": "Status Aktif",
     "AllowedSessionTypes": "Jenis sesi yang dibenarkan",
+    "AppProxyAPIToken": "Token API App Proxy",
+    "AppProxyAddress": "Alamat Pelayan App Proxy",
     "CreateResourceGroup": "Buat Kumpulan Sumber",
     "Deactivate": "Menyahaktifkan",
     "DeactivateResourceGroup": "Kumpulan sumber menyahaktifkan",
@@ -2345,9 +2347,7 @@
     "SelectDomain": "Pilih Domain",
     "SelectScheduler": "Pilih Penjadual",
     "TimeoutSeconds": "Detik",
-    "TypeResourceGroupNameToDelete": "Taipkan nama kumpulan sumber untuk dipadamkan",
-    "WsproxyAPIToken": "Token API WSProxy",
-    "WsproxyAddress": "Alamat Pelayan WSProxy"
+    "TypeResourceGroupNameToDelete": "Taipkan nama kumpulan sumber untuk dipadamkan"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Anda akan memadamkan dasar sumber ini:",

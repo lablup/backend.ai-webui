@@ -254,7 +254,7 @@ const ResourceGroupList: React.FC = () => {
     },
     {
       key: 'wsproxy_addr',
-      title: t('resourceGroup.WsproxyAddress'),
+      title: t('resourceGroup.AppProxyAddress'),
       dataIndex: 'wsproxy_addr',
       render: (value) => value || '-',
     },

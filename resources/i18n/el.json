@@ -2309,6 +2309,8 @@
     "Active": "Ενεργός",
     "ActiveStatus": "Ενεργή κατάσταση",
     "AllowedSessionTypes": "Επιτρεπόμενοι τύποι συνόδου",
+    "AppProxyAPIToken": "Διακριτικό API App Proxy",
+    "AppProxyAddress": "Διεύθυνση διακομιστή App Proxy",
     "CreateResourceGroup": "Δημιουργία ομάδας πόρων",
     "Deactivate": "Απενεργοποιούμαι",
     "DeactivateResourceGroup": "Απενεργοποίηση ομάδας πόρων",
@@ -2345,9 +2347,7 @@
     "SelectDomain": "Επιλέξτε τομέα",
     "SelectScheduler": "Επιλέξτε Προγραμματιστής",
     "TimeoutSeconds": "δευτερόλεπτα",
-    "TypeResourceGroupNameToDelete": "Πληκτρολογήστε όνομα ομάδας πόρων για διαγραφή",
-    "WsproxyAPIToken": "Διακριτικό API WSProxy",
-    "WsproxyAddress": "Διεύθυνση διακομιστή WSProxy"
+    "TypeResourceGroupNameToDelete": "Πληκτρολογήστε όνομα ομάδας πόρων για διαγραφή"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Πρόκειται να διαγράψετε αυτήν την πολιτική πόρων:",
