@@ -986,8 +986,6 @@
     "RevisionHistory": "Revision 历史",
     "RevisionId": "Revision ID",
     "RevisionIdPlaceholder": "输入 Revision ID（可选）",
-    "RevisionName": "Revision 名称",
-    "RevisionNamePlaceholder": "留空以自动生成",
     "RevisionNumber": "Revision 编号",
     "Revisions": "Revision",
     "Running": "运行中",

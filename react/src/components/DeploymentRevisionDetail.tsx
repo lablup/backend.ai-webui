@@ -40,7 +40,6 @@ const DeploymentRevisionDetail: React.FC<{
     graphql`
       fragment DeploymentRevisionDetail_revision on ModelRevision {
         id
-        name
         createdAt
         clusterConfig {
           mode
@@ -132,9 +131,9 @@ const DeploymentRevisionDetail: React.FC<{
     {
       key: 'revision-name',
       label: t('modelService.RevisionID'),
-      children: revision.name ? (
+      children: revision.id ? (
         <BAIFlex gap="xs" align="center">
-          <Typography.Text>{revision.name}</Typography.Text>
+          <Typography.Text>{toLocalId(revision.id)}</Typography.Text>
           {status === 'current' && (
             <BAITag color="success">{t('deployment.Current')}</BAITag>
           )}

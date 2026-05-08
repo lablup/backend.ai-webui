@@ -81,6 +81,7 @@ import {
   GraphQLFilter,
   SemanticColor,
   toGlobalId,
+  toLocalId,
   useFetchKey,
   useSemanticColorMap,
   BAITable,
@@ -365,7 +366,6 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
           }
           currentRevision {
             id
-            name
             modelDefinition {
               models {
                 name
@@ -389,7 +389,6 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
             edges {
               node {
                 id
-                name
                 modelDefinition {
                   models {
                     name
@@ -807,9 +806,13 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
   const latestRevisionItems = buildModelDefinitionItems(
     modelDeployment?.revisionHistory?.edges?.[0]?.node?.modelDefinition?.models,
   );
-  const currentRevisionName = modelDeployment?.currentRevision?.name;
-  const latestRevisionName =
-    modelDeployment?.revisionHistory?.edges?.[0]?.node?.name;
+  const currentRevisionName = modelDeployment?.currentRevision?.id
+    ? toLocalId(modelDeployment.currentRevision.id)
+    : undefined;
+  const latestRevisionName = modelDeployment?.revisionHistory?.edges?.[0]?.node
+    ?.id
+    ? toLocalId(modelDeployment.revisionHistory.edges[0].node.id)
+    : undefined;
   const isRevisionMismatch =
     modelDeployment?.currentRevision?.id != null &&
     modelDeployment?.revisionHistory?.edges?.[0]?.node?.id != null &&

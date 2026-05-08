@@ -986,8 +986,6 @@
     "RevisionHistory": "История Revision",
     "RevisionId": "ID Revision",
     "RevisionIdPlaceholder": "Введите ID Revision (необязательно)",
-    "RevisionName": "Название Revision",
-    "RevisionNamePlaceholder": "Оставьте пустым для автоматической генерации",
     "RevisionNumber": "Номер ревизии",
     "Revisions": "Revision",
     "Running": "Выполняется",

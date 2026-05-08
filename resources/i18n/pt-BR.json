@@ -986,8 +986,6 @@
     "RevisionHistory": "Histórico de Revision",
     "RevisionId": "ID de Revision",
     "RevisionIdPlaceholder": "Insira um ID de Revision (opcional)",
-    "RevisionName": "Nome da Revision",
-    "RevisionNamePlaceholder": "Deixe em branco para gerar automaticamente",
     "RevisionNumber": "Número de Revisão",
     "Revisions": "Revision",
     "Running": "Em execução",

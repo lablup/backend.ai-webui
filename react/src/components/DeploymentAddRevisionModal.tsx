@@ -116,7 +116,6 @@ interface DeploymentAddRevisionModalProps extends BAIModalProps {
 type FormValues = ImageEnvironmentFormInput &
   ResourceAllocationFormValue &
   VFolderTableFormValues & {
-    name?: string;
     runtimeVariantId: string;
     modelFolderId: string;
     mountDestination: string;
@@ -294,7 +293,6 @@ const DeploymentAddRevisionModalFormBody: React.FC<
         addModelRevision(input: $input) {
           revision {
             id
-            name
             clusterConfig {
               mode
               size
@@ -783,7 +781,6 @@ const DeploymentAddRevisionModalFormBody: React.FC<
       variables: {
         input: {
           deploymentId: toLocalId(deploymentId) ?? deploymentId,
-          name: values.name || undefined,
           clusterConfig: {
             mode: clusterMode,
             size: values.cluster_size,
@@ -902,9 +899,6 @@ const DeploymentAddRevisionModalFormBody: React.FC<
         autoActivate: true,
       })}
     >
-      <Form.Item name="name" label={t('deployment.RevisionName')}>
-        <Input placeholder={t('deployment.RevisionNamePlaceholder')} />
-      </Form.Item>
       <Form.Item name="autoActivate" valuePropName="checked">
         <Checkbox>{t('deployment.AutoActivate')}</Checkbox>
       </Form.Item>

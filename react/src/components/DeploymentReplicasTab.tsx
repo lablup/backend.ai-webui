@@ -23,6 +23,7 @@ import {
   BAIUnmountAfterClose,
   type GraphQLFilter,
   filterOutEmpty,
+  toLocalId,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -175,7 +176,6 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
                   createdAt
                   revision {
                     id
-                    name
                   }
                 }
               }
@@ -288,7 +288,9 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
       key: 'revision',
       title: t('deployment.Revision'),
       render: (_: unknown, record: ReplicaNode) =>
-        record.revision?.name ?? (
+        record.revision?.id ? (
+          toLocalId(record.revision.id)
+        ) : (
           <Typography.Text type="secondary">—</Typography.Text>
         ),
     },

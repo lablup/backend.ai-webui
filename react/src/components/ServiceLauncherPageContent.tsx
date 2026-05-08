@@ -1405,7 +1405,6 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
             ) {
               edges {
                 node {
-                  name
                   modelDefinition {
                     models {
                       service {

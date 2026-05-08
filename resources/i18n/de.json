@@ -986,8 +986,6 @@
     "RevisionHistory": "Revisionsverlauf",
     "RevisionId": "Revisions-ID",
     "RevisionIdPlaceholder": "Revisions-ID eingeben (optional)",
-    "RevisionName": "Revisionsname",
-    "RevisionNamePlaceholder": "Leer lassen für automatische Generierung",
     "RevisionNumber": "Revisionsnummer",
     "Revisions": "Revisionen",
     "Running": "Läuft",

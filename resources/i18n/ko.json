@@ -987,8 +987,6 @@
     "RevisionHistory": "리비전 히스토리",
     "RevisionId": "리비전 ID",
     "RevisionIdPlaceholder": "리비전 ID를 입력하세요 (선택 사항)",
-    "RevisionName": "리비전 이름",
-    "RevisionNamePlaceholder": "비워두면 자동 생성",
     "RevisionNumber": "리비전 번호",
     "Revisions": "리비전",
     "Running": "실행 중",

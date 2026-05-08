@@ -195,8 +195,8 @@ const DeploymentRevisionHistoryTab: React.FC<
               edges {
                 node {
                   id
-                  name
                   createdAt
+
                   clusterConfig {
                     mode
                     size
@@ -245,7 +245,6 @@ const DeploymentRevisionHistoryTab: React.FC<
             currentRevisionId
             currentRevision {
               id
-              name
             }
           }
           previousRevisionId
@@ -278,10 +277,7 @@ const DeploymentRevisionHistoryTab: React.FC<
   };
 
   const handleRollback = (revision: RevisionNode): Promise<boolean> => {
-    // The `name` field is the human-readable revision number label
-    // ("#3"). Fall back to the trimmed UUID if absent so the confirm
-    // text is never blank.
-    const revisionLabel = revision.name ?? toLocalId(revision.id);
+    const revisionLabel = toLocalId(revision.id);
     return new Promise<boolean>((resolveOuter) => {
       modal.confirm({
         title: t('deployment.Deploy'),
@@ -382,7 +378,7 @@ const DeploymentRevisionHistoryTab: React.FC<
                     })
                   }
                 >
-                  {record.name ?? '-'}
+                  {recordLocalId ?? '-'}
                 </Typography.Link>
                 {isCurrent ? (
                   <BAITag color="success">{t('deployment.Current')}</BAITag>

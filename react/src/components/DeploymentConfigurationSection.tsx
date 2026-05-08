@@ -202,12 +202,10 @@ const DeploymentConfigurationSection: React.FC<
         }
         currentRevision @since(version: "26.4.3") {
           id
-          name
           ...DeploymentRevisionDetail_revision
         }
         deployingRevision @since(version: "26.4.3") {
           id
-          name
           ...DeploymentRevisionDetail_revision
         }
         ...DeploymentRevisionHistoryTab_deployment
@@ -378,7 +376,7 @@ const DeploymentConfigurationSection: React.FC<
                 icon={<LoadingOutlined spin />}
                 showIcon
                 title={t('deployment.DeployingRevisionApplying', {
-                  name: deployingRevision.name ?? '',
+                  name: toLocalId(deployingRevision.id) ?? '',
                 })}
                 action={
                   <Button
