@@ -21,6 +21,7 @@ import {
   BAICard,
   BAIFlex,
   BAIUnmountAfterClose,
+  INITIAL_FETCH_KEY,
   toGlobalId,
   useFetchKey,
 } from 'backend.ai-ui';
@@ -73,6 +74,7 @@ const DeploymentDetailPage: React.FC = () => {
               email
             }
           }
+          ...DeploymentConfigurationSection_deployment
           ...DeploymentReplicasTab_deployment
           ...DeploymentAccessTokensTab_deployment
           ...DeploymentAutoScalingTab_deployment
@@ -82,7 +84,11 @@ const DeploymentDetailPage: React.FC = () => {
     {
       deploymentId: deploymentGlobalId,
     },
-    { fetchKey },
+    {
+      fetchKey,
+      fetchPolicy:
+        fetchKey === INITIAL_FETCH_KEY ? 'store-and-network' : 'network-only',
+    },
   );
 
   if (!deployment) {
@@ -188,9 +194,8 @@ const DeploymentDetailPage: React.FC = () => {
         />
       )}
       <DeploymentConfigurationSection
-        deploymentId={deploymentGlobalId}
+        deploymentFrgmt={deployment}
         isDeploymentDestroying={isDeploymentDestroying}
-        fetchKey={fetchKey}
         revisionFetchKey={revisionFetchKey}
         isPendingRefetch={isPendingRefetch}
         onRefetch={handleRefetch}
