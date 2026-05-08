@@ -45,7 +45,7 @@ jobs:
       - uses: pnpm/action-setup@v5
         name: Install pnpm
         with:
-          version: latest
+          version: 10
           run_install: false
 
       - name: Install Node.js
@@ -100,7 +100,7 @@ jobs:
       - uses: pnpm/action-setup@v5
         name: Install pnpm
         with:
-          version: latest
+          version: 10
           run_install: false
 
       - name: Install Node.js
@@ -168,7 +168,7 @@ jobs:
       - uses: pnpm/action-setup@v5
         name: Install pnpm
         with:
-          version: latest
+          version: 10
           run_install: false
 
       - name: Install Node.js
@@ -234,7 +234,7 @@ jobs:
       - uses: pnpm/action-setup@v5
         name: Install pnpm
         with:
-          version: latest
+          version: 10
           run_install: false
 
       - name: Install Node.js
