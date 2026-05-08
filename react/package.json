@@ -114,7 +114,7 @@
   },
   "devDependencies": {
     "@babel/core": "catalog:",
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@babel/plugin-transform-private-property-in-object": "^7.25.9",
     "@babel/plugin-syntax-import-attributes": "^7.28.6",
     "@babel/preset-env": "^7.29.2",
     "@babel/preset-react": "^7.28.5",
