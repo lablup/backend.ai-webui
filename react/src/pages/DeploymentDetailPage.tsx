@@ -21,6 +21,7 @@ import {
   BAICard,
   BAIFlex,
   BAIUnmountAfterClose,
+  INITIAL_FETCH_KEY,
   toGlobalId,
   useFetchKey,
 } from 'backend.ai-ui';
@@ -83,7 +84,11 @@ const DeploymentDetailPage: React.FC = () => {
     {
       deploymentId: deploymentGlobalId,
     },
-    { fetchKey },
+    {
+      fetchKey,
+      fetchPolicy:
+        fetchKey === INITIAL_FETCH_KEY ? 'store-and-network' : 'network-only',
+    },
   );
 
   if (!deployment) {
