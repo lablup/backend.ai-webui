@@ -8,7 +8,7 @@ runs:
     - name: Install pnpm
       uses: pnpm/action-setup@v5
       with:
-        version: 10
+        version: 11
         run_install: false
 
     - name: Setup Node.js
@@ -36,7 +36,7 @@ runs:
       shell: bash
       run: |
         echo "Step: Installing dependencies..." >> coverage-steps.log
-        pnpm install --no-frozen-lockfile 2>&1 | tee -a coverage-steps.log
+        pnpm install --frozen-lockfile 2>&1 | tee -a coverage-steps.log
 
     # Step 3: Build and test React project with coverage
     - name: Build React GraphQL types

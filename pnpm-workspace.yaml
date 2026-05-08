@@ -76,25 +76,21 @@ gitBranchLockfile: true
 
 minimumReleaseAge: 10080
 
-minimumReleaseAgeExclude:
-  - node-forge@1.3.2
-  - react@19.2.4
-  - react-dom@19.2.4
-  - '@ant-design/x@2.1.3'
-  - react-i18next@16.5.1
-  - i18next@25.7.4
-  - antd@6.1.3
+allowBuilds:
+  bufferutil: true
+  core-js: true
+  core-js-pure: true
+  electron: true
+  es5-ext: true
+  esbuild: true
+  sharp: true
+  unrs-resolver: true
+  utf-8-validate: true
 
-onlyBuiltDependencies:
-  - bufferutil
-  - core-js
-  - core-js-pure
-  - electron
-  - es5-ext
-  - esbuild
-  - sharp
-  - unrs-resolver
-  - utf-8-validate
+overrides:
+  tar-fs@2: 2.1.4
+  node-forge: '>=1.3.2'
+  '@codemirror/state': 6.5.4
 
 patchedDependencies:
   '@cloudscape-design/board-components@3.0.60': react/patches/@cloudscape-design__board-components@3.0.60.patch

@@ -22,7 +22,7 @@ jobs:
       - uses: pnpm/action-setup@v5
         name: Install pnpm
         with:
-          version: 10
+          version: 11
           run_install: false
 
       - uses: actions/setup-node@v5
@@ -31,7 +31,7 @@ jobs:
           cache: "pnpm"
 
       - name: Merge branch lockfiles into pnpm-lock.yaml
-        run: pnpm install --merge-git-branch-lockfiles --no-frozen-lockfile
+        run: pnpm install --merge-git-branch-lockfiles --no-frozen-lockfile --config.minimum-release-age=0
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v7
