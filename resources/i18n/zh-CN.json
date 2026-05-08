@@ -958,7 +958,7 @@
     "NewDeployment": "新建部署",
     "NewRevisionWillBeCreated": "将创建新的 Revision。之前的 Revision 将被保留。",
     "NewRevisionWillBeCreatedConfirm": "保存将创建新的 Revision。是否继续？",
-    "NoCurrentRevisionDeployed": "尚未部署任何修订版 — 添加修订版以激活此服务。",
+    "NoCurrentRevisionDeployed": "尚未部署任何 Revision — 添加 Revision 以激活此服务。",
     "NoDeployments": "未找到部署。",
     "NumberOfReplicas": "副本数量",
     "OpenToPublic": "公开",
