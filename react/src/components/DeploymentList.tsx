@@ -13,7 +13,7 @@ import BAIRadioGroup from './BAIRadioGroup';
 import DeploymentOwnerInfo from './DeploymentOwnerInfo';
 import DeploymentStatusTag, { DeploymentStatus } from './DeploymentStatusTag';
 import DeploymentTagChips from './DeploymentTagChips';
-import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { DeleteFilled, EditOutlined } from '@ant-design/icons';
 import { Alert, App, Typography, theme } from 'antd';
 import {
   BAIConfirmModalWithInput,
@@ -275,7 +275,7 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
         actions.push({
           key: 'delete',
           title: t('deployment.DeleteDeployment'),
-          icon: <DeleteOutlined />,
+          icon: <DeleteFilled />,
           type: 'danger',
           disabled: isDestroying,
           onClick: () => setDeletingDeployment({ id: row.id, name }),

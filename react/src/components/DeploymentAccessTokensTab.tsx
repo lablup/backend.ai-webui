@@ -7,7 +7,7 @@ import { DeploymentAccessTokensTabDeleteMutation } from '../__generated__/Deploy
 import { DeploymentAccessTokensTabListQuery } from '../__generated__/DeploymentAccessTokensTabListQuery.graphql';
 import { DeploymentAccessTokensTab_deployment$key } from '../__generated__/DeploymentAccessTokensTab_deployment.graphql';
 import {
-  DeleteOutlined,
+  DeleteFilled,
   PlusOutlined,
   QuestionCircleOutlined,
 } from '@ant-design/icons';
@@ -339,7 +339,7 @@ const DeploymentAccessTokensTable: React.FC<
                     {
                       key: 'delete',
                       title: t('deployment.accessToken.Delete'),
-                      icon: <DeleteOutlined />,
+                      icon: <DeleteFilled />,
                       type: 'danger',
                       disabled: isDeleteDisabled,
                       onClick: () =>

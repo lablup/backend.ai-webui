@@ -23,7 +23,12 @@ import SharedFolderPermissionInfoModalV2 from './SharedFolderPermissionInfoModal
 import VFolderDeployModal from './VFolderDeployModal';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
 import VFolderPermissionCellV2 from './VFolderPermissionCellV2';
-import { QuestionCircleOutlined, UserOutlined } from '@ant-design/icons';
+import {
+  DeleteFilled,
+  DeleteOutlined,
+  QuestionCircleOutlined,
+  UserOutlined,
+} from '@ant-design/icons';
 import { App, Modal, Skeleton, theme, Tooltip, Typography } from 'antd';
 import {
   filterOutNullAndUndefined,
@@ -32,7 +37,6 @@ import {
   BAILink,
   BAIRestoreIcon,
   BAIShareAltIcon,
-  BAITrashBinIcon,
   BAIUserUnionIcon,
   BAITable,
   BAITableProps,
@@ -160,7 +164,7 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
       ? {
           key: 'delete',
           title: t('data.folders.MoveToTrash'),
-          icon: <BAITrashBinIcon />,
+          icon: <DeleteOutlined />,
           type: 'danger' as const,
           // TODO(needs-backend): V2 `VFolder` does not expose a per-user
           // action permission (legacy `VirtualFolderNode.permissions` had
@@ -201,7 +205,7 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
       ? {
           key: 'delete-forever',
           title: t('data.folders.Delete'),
-          icon: <BAITrashBinIcon />,
+          icon: <DeleteFilled />,
           type: 'danger' as const,
           disabled: vfolder?.vfolderStatus !== 'DELETE_PENDING',
           onClick: onDeleteForever,

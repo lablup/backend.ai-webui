@@ -18,7 +18,7 @@ import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginati
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import { SettingOutlined } from '@ant-design/icons';
+import { DeleteFilled, SettingOutlined } from '@ant-design/icons';
 import { App, Checkbox, Tooltip, Typography, theme } from 'antd';
 import {
   BAIButton,
@@ -33,7 +33,6 @@ import {
   BAITable,
   BAIText,
   BAITag,
-  BAITrashBinIcon,
   BAIUnmountAfterClose,
   filterOutEmpty,
   filterOutNullAndUndefined,
@@ -255,7 +254,7 @@ const AdminModelCardListPage: React.FC = () => {
             {
               key: 'delete',
               title: t('button.Delete'),
-              icon: <BAITrashBinIcon />,
+              icon: <DeleteFilled />,
               type: 'danger' as const,
               onClick: () => handleDeleteModelCard(modelCard),
             },
@@ -375,7 +374,7 @@ const AdminModelCardListPage: React.FC = () => {
               />
               <BAIButton
                 danger
-                icon={<BAITrashBinIcon />}
+                icon={<DeleteFilled />}
                 onClick={handleBulkDelete}
                 loading={isBulkDeleteInFlight}
               />

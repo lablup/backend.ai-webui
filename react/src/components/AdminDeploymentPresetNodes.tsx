@@ -7,13 +7,12 @@ import type {
   AdminDeploymentPresetNodesFragment$key,
 } from '../__generated__/AdminDeploymentPresetNodesFragment.graphql';
 import type { AdminDeploymentPresetNodesImagesQuery } from '../__generated__/AdminDeploymentPresetNodesImagesQuery.graphql';
-import { SettingOutlined } from '@ant-design/icons';
+import { DeleteFilled, SettingOutlined } from '@ant-design/icons';
 import {
   BAIColumnType,
   BAINameActionCell,
   BAITable,
   BAITableProps,
-  BAITrashBinIcon,
   filterOutEmpty,
   filterOutNullAndUndefined,
   toLocalId,
@@ -159,7 +158,7 @@ const AdminDeploymentPresetNodes: React.FC<AdminDeploymentPresetNodesProps> = ({
               {
                 key: 'delete',
                 title: t('button.Delete'),
-                icon: <BAITrashBinIcon />,
+                icon: <DeleteFilled />,
                 type: 'danger' as const,
                 onClick: () => onDelete?.(preset),
               },

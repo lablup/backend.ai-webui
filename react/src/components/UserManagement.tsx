@@ -17,6 +17,7 @@ import UpdateUsersModal from './UpdateUsersModal';
 import UserInfoModal from './UserInfoModal';
 import UserSettingModal from './UserSettingModal';
 import {
+  DeleteFilled,
   EllipsisOutlined,
   InfoCircleOutlined,
   SettingOutlined,
@@ -36,7 +37,6 @@ import {
   BAIUserNodes,
   BAIButton,
   BAISelectionLabel,
-  BAITrashBinIcon,
   BAINameActionCell,
   BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
@@ -249,7 +249,7 @@ const UserManagement: React.FC<UserManagementProps> = () => {
           !isActive && {
             key: 'purge',
             title: t('credential.PermanentlyDelete'),
-            icon: <BAITrashBinIcon />,
+            icon: <DeleteFilled />,
             type: 'danger' as const,
             onClick: () => {
               if (record?.id) {
@@ -389,7 +389,7 @@ const UserManagement: React.FC<UserManagementProps> = () => {
               />
               {queryParams.status === 'inactive' && (
                 <BAIButton
-                  icon={<BAITrashBinIcon />}
+                  icon={<DeleteFilled />}
                   style={{
                     color: token.colorError,
                     background: token.colorErrorBg,

@@ -12,7 +12,7 @@ import BAIRadioGroup from '../components/BAIRadioGroup';
 import { convertToOrderBy } from '../helper';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import { DeleteOutlined } from '@ant-design/icons';
+import { DeleteFilled } from '@ant-design/icons';
 import { App, Skeleton } from 'antd';
 import {
   availableDeploymentSorterValues,
@@ -236,7 +236,7 @@ const ProjectAdminDeploymentsContent: React.FC<
               {
                 key: 'delete',
                 title: t('button.Delete'),
-                icon: <DeleteOutlined />,
+                icon: <DeleteFilled />,
                 type: 'danger',
                 disabled: isDeleteDisabled,
                 onClick: () => {

@@ -15,7 +15,7 @@ import BAIRadioGroup from './BAIRadioGroup';
 import KeypairInfoModal from './KeypairInfoModal';
 import KeypairSettingModal from './KeypairSettingModal';
 import {
-  DeleteOutlined,
+  DeleteFilled,
   InfoCircleOutlined,
   ReloadOutlined,
   SettingOutlined,
@@ -407,7 +407,7 @@ const UserCredentialList: React.FC = () => {
                       {
                         key: 'delete',
                         title: t('button.Delete'),
-                        icon: <DeleteOutlined />,
+                        icon: <DeleteFilled />,
                         type: 'danger' as const,
                         onClick: () => {
                           modal.confirm({

@@ -12,11 +12,7 @@ import { AutoScalingRuleListQuery } from '../__generated__/AutoScalingRuleListQu
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import AutoScalingRuleEditorModal from './AutoScalingRuleEditorModal';
-import {
-  DeleteOutlined,
-  PlusOutlined,
-  SettingOutlined,
-} from '@ant-design/icons';
+import { DeleteFilled, PlusOutlined, SettingOutlined } from '@ant-design/icons';
 import { App, Button, Tag, Tooltip, Typography } from 'antd';
 import {
   BAIFetchKeyButton,
@@ -218,7 +214,7 @@ const AutoScalingRuleListNodes: React.FC<AutoScalingRuleListNodesProps> = ({
                   {
                     key: 'delete',
                     title: t('button.Delete'),
-                    icon: <DeleteOutlined />,
+                    icon: <DeleteFilled />,
                     type: 'danger',
                     disabled: isEndpointDestroying || !isOwnedByCurrentUser,
                     onClick: () => onDeleteRule(row.id, row.metricName ?? ''),

@@ -18,6 +18,7 @@ import RoleNodes, {
 } from '../components/RoleNodes';
 import { convertToOrderBy } from '../helper';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
+import { DeleteFilled } from '@ant-design/icons';
 import { App } from 'antd';
 import {
   BAIButton,
@@ -27,7 +28,6 @@ import {
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAINameActionCell,
-  BAITrashBinIcon,
   filterOutEmpty,
   type GraphQLFilter,
   INITIAL_FETCH_KEY,
@@ -327,7 +327,7 @@ const RBACManagementPage: React.FC = () => {
                                 {
                                   key: 'purge',
                                   title: t('rbac.PurgeRole'),
-                                  icon: <BAITrashBinIcon />,
+                                  icon: <DeleteFilled />,
                                   type: 'danger' as const,
                                   onClick: () => handlePurgeRole(role),
                                 },

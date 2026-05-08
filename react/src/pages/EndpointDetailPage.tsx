@@ -45,7 +45,7 @@ import {
   CheckCircleOutlined,
   CheckOutlined,
   CloseOutlined,
-  DeleteOutlined,
+  DeleteFilled,
   ExclamationCircleOutlined,
   LoadingOutlined,
   PlusOutlined,
@@ -1172,7 +1172,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
                         <Button
                           type="text"
                           icon={
-                            <DeleteOutlined
+                            <DeleteFilled
                               style={
                                 isEndpointInDestroyingCategory(endpoint)
                                   ? undefined

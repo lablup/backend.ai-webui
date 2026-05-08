@@ -15,7 +15,7 @@ import EndpointStatusTag from './EndpointStatusTag';
 import {
   CheckOutlined,
   CloseOutlined,
-  DeleteOutlined,
+  DeleteFilled,
   SettingOutlined,
 } from '@ant-design/icons';
 import { Typography, theme, App, TablePaginationConfig, Alert } from 'antd';
@@ -155,7 +155,7 @@ const EndpointList: React.FC<EndpointListProps> = ({
             {
               key: 'delete',
               title: t('button.Delete'),
-              icon: <DeleteOutlined />,
+              icon: <DeleteFilled />,
               type: 'danger',
               disabled: isEndpointInDestroyingCategory(row),
               onClick: () => {

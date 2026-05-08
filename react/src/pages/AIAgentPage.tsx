@@ -7,7 +7,7 @@ import { FluentEmojiIcon } from '../components/FluentEmojiIcon';
 import { useWebUINavigate } from '../hooks';
 import { AIAgent, useAIAgent } from '../hooks/useAIAgent';
 import {
-  DeleteOutlined,
+  DeleteFilled,
   EditOutlined,
   MoreOutlined,
   PlusOutlined,
@@ -111,7 +111,7 @@ const AIAgentCard: React.FC<AIAgentCardProps> = ({
         key: 'delete',
         danger: true,
         label: t('aiAgent.DeleteAgent'),
-        icon: <DeleteOutlined />,
+        icon: <DeleteFilled />,
         onClick: (e: { domEvent: React.MouseEvent | React.KeyboardEvent }) => {
           e.domEvent.stopPropagation();
           onDelete(agent);

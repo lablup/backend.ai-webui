@@ -18,7 +18,7 @@ import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting'
 import TableColumnsSettingModal from './TableColumnsSettingModal';
 import UserResourcePolicySettingModal from './UserResourcePolicySettingModal';
 import {
-  DeleteOutlined,
+  DeleteFilled,
   PlusOutlined,
   ReloadOutlined,
   SettingOutlined,
@@ -126,7 +126,7 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
             {
               key: 'delete',
               title: t('button.Delete'),
-              icon: <DeleteOutlined />,
+              icon: <DeleteFilled />,
               type: 'danger',
               onClick: () => {
                 setDeletingPolicyName(row?.name ?? null);

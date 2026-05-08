@@ -15,7 +15,7 @@ import {
   ReloadOutlined,
   PlusOutlined,
   SettingOutlined,
-  DeleteOutlined,
+  DeleteFilled,
 } from '@ant-design/icons';
 import {
   Tooltip,
@@ -118,7 +118,7 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
             {
               key: 'delete',
               title: t('button.Delete'),
-              icon: <DeleteOutlined />,
+              icon: <DeleteFilled />,
               type: 'danger',
               onClick: () => {
                 setDeletingPresetName(record?.name ?? null);

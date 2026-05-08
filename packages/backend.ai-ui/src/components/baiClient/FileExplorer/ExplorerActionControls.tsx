@@ -1,6 +1,5 @@
 import { initiateDownload } from '../../../helper';
 import { useTanMutation } from '../../../helper/reactQueryAlias';
-import { BAITrashBinIcon } from '../../../icons';
 import BAIButton from '../../BAIButton';
 import BAIFlex from '../../BAIFlex';
 import BAISelectionLabel from '../../BAISelectionLabel';
@@ -14,6 +13,7 @@ import DeleteSelectedItemsModal, {
 } from './DeleteSelectedItemsModal';
 import { useUploadVFolderFiles } from './hooks';
 import {
+  DeleteFilled,
   FileAddOutlined,
   FolderAddOutlined,
   UploadOutlined,
@@ -128,7 +128,7 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
             <Tooltip title={t('general.button.Delete')} placement="topLeft">
               <Button
                 disabled={!enableDelete}
-                icon={<BAITrashBinIcon style={{ color: token.colorError }} />}
+                icon={<DeleteFilled style={{ color: token.colorError }} />}
                 onClick={() => {
                   toggleDeleteModal();
                 }}
