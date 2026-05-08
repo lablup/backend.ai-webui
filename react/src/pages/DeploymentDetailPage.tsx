@@ -73,6 +73,7 @@ const DeploymentDetailPage: React.FC = () => {
               email
             }
           }
+          ...DeploymentConfigurationSection_deployment
           ...DeploymentReplicasTab_deployment
           ...DeploymentAccessTokensTab_deployment
           ...DeploymentAutoScalingTab_deployment
@@ -190,9 +191,8 @@ const DeploymentDetailPage: React.FC = () => {
         />
       )}
       <DeploymentConfigurationSection
-        deploymentId={deploymentGlobalId}
+        deploymentFrgmt={deployment}
         isDeploymentDestroying={isDeploymentDestroying}
-        fetchKey={fetchKey}
         revisionFetchKey={revisionFetchKey}
         isPendingRefetch={isPendingRefetch}
         onRefetch={handleRefetch}

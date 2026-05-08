@@ -2,7 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { DeploymentConfigurationSectionQuery } from '../__generated__/DeploymentConfigurationSectionQuery.graphql';
+import type {
+  DeploymentConfigurationSection_deployment$data,
+  DeploymentConfigurationSection_deployment$key,
+} from '../__generated__/DeploymentConfigurationSection_deployment.graphql';
 import type { DeploymentRevisionDetail_revision$key } from '../__generated__/DeploymentRevisionDetail_revision.graphql';
 import DeploymentRevisionDetail from './DeploymentRevisionDetail';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
@@ -29,19 +32,17 @@ import {
   BAIText,
   BAIUnmountAfterClose,
   BooleanTag,
-  INITIAL_FETCH_KEY,
   filterOutEmpty,
   useInterval,
 } from 'backend.ai-ui';
 import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery } from 'react-relay';
+import { graphql, useFragment } from 'react-relay';
 
 interface DeploymentConfigurationSectionProps {
-  deploymentId: string;
+  deploymentFrgmt: DeploymentConfigurationSection_deployment$key | null;
   isDeploymentDestroying?: boolean;
-  fetchKey: string;
   revisionFetchKey: string;
   isPendingRefetch: boolean;
   onRefetch: () => void;
@@ -49,7 +50,9 @@ interface DeploymentConfigurationSectionProps {
 }
 
 type DeploymentSectionData =
-  DeploymentConfigurationSectionQuery['response']['deployment'];
+  | DeploymentConfigurationSection_deployment$data
+  | null
+  | undefined;
 
 const renderFallback = () => (
   <Typography.Text type="secondary">-</Typography.Text>
@@ -142,9 +145,8 @@ const DeploymentOverviewContent: React.FC<{
 const DeploymentConfigurationSection: React.FC<
   DeploymentConfigurationSectionProps
 > = ({
-  deploymentId,
+  deploymentFrgmt,
   isDeploymentDestroying = false,
-  fetchKey,
   revisionFetchKey,
   isPendingRefetch,
   onRefetch,
@@ -153,115 +155,53 @@ const DeploymentConfigurationSection: React.FC<
   'use memo';
 
   const { t } = useTranslation();
+  const { token } = theme.useToken();
+
+  const deployment = useFragment(
+    graphql`
+      fragment DeploymentConfigurationSection_deployment on ModelDeployment {
+        id
+        ...DeploymentSettingModal_deployment
+        metadata {
+          name
+          projectId
+          domainName
+          status
+          projectV2 @since(version: "26.4.3") {
+            basicInfo {
+              name
+            }
+          }
+          ...DeploymentTagChips_metadata
+        }
+        networkAccess {
+          openToPublic
+          endpointUrl
+        }
+        replicaState {
+          desiredReplicaCount
+        }
+        currentRevision @since(version: "26.4.3") {
+          id
+          name
+          ...DeploymentRevisionDetail_revision
+        }
+        deployingRevision @since(version: "26.4.3") {
+          id
+          name
+          ...DeploymentRevisionDetail_revision
+        }
+        ...DeploymentRevisionHistoryTab_deployment
+      }
+    `,
+    deploymentFrgmt,
+  );
+
   const [drawerState, setDrawerState] = useState<{
     revisionFrgmt: DeploymentRevisionDetail_revision$key;
     status?: 'current' | 'deploying' | 'none';
     title?: string;
   } | null>(null);
-
-  const handleShowRevisionDrawer = (
-    frgmt: DeploymentRevisionDetail_revision$key,
-    status?: 'current' | 'deploying' | 'none',
-    title?: string,
-  ) => {
-    setDrawerState({ revisionFrgmt: frgmt, status, title });
-  };
-
-  const overviewExtra = (
-    <BAIFlex gap="xs" align="center">
-      <BAIFetchKeyButton
-        loading={isPendingRefetch}
-        value=""
-        onChange={onRefetch}
-      />
-    </BAIFlex>
-  );
-
-  return (
-    <>
-      <Suspense
-        fallback={
-          <>
-            <BAICard
-              title={t('deployment.BasicInformation')}
-              extra={overviewExtra}
-              styles={{ body: { paddingTop: 0 } }}
-            >
-              <Skeleton active />
-            </BAICard>
-            <BAICard
-              tabList={[
-                {
-                  key: 'currentRevision',
-                  label: t('deployment.CurrentRevision'),
-                },
-                {
-                  key: 'revisionHistory',
-                  label: t('deployment.RevisionHistory'),
-                },
-              ]}
-            >
-              <Skeleton active />
-            </BAICard>
-          </>
-        }
-      >
-        <DeploymentConfigurationCards
-          deploymentId={deploymentId}
-          fetchKey={fetchKey}
-          revisionFetchKey={revisionFetchKey}
-          overviewExtra={overviewExtra}
-          onShowRevisionDrawer={handleShowRevisionDrawer}
-          onAddRevision={onAddRevision}
-          isDeploymentDestroying={isDeploymentDestroying}
-          onRefetch={onRefetch}
-        />
-      </Suspense>
-      <BAIUnmountAfterClose>
-        <DeploymentRevisionDetailDrawer
-          revisionFrgmt={drawerState?.revisionFrgmt}
-          status={drawerState?.status}
-          title={drawerState?.title}
-          open={!!drawerState}
-          onClose={() => setDrawerState(null)}
-        />
-      </BAIUnmountAfterClose>
-    </>
-  );
-};
-
-/**
- * Wrapper that issues the single combined query for both Overview and
- * RevisionInfo cards. The Suspense boundary lives above this wrapper (in
- * the parent section), and the parent's fallback renders the same card
- * chrome with skeletons so the visual layout is preserved during loading.
- */
-const DeploymentConfigurationCards: React.FC<{
-  deploymentId: string;
-  fetchKey: string;
-  revisionFetchKey: string;
-  overviewExtra: React.ReactNode;
-  onShowRevisionDrawer: (
-    frgmt: DeploymentRevisionDetail_revision$key,
-    status?: 'current' | 'deploying' | 'none',
-    title?: string,
-  ) => void;
-  onAddRevision: () => void;
-  isDeploymentDestroying?: boolean;
-  onRefetch: () => void;
-}> = ({
-  deploymentId,
-  fetchKey,
-  revisionFetchKey,
-  overviewExtra,
-  onShowRevisionDrawer,
-  onAddRevision,
-  isDeploymentDestroying = false,
-  onRefetch,
-}) => {
-  'use memo';
-  const { t } = useTranslation();
-  const { token } = theme.useToken();
 
   const [activeRevisionTab, setActiveRevisionTab] = useQueryState(
     'revisionTab',
@@ -279,52 +219,13 @@ const DeploymentConfigurationCards: React.FC<{
     { setLeft: closeSettingModal, setRight: openSettingModal },
   ] = useToggle(false);
 
-  const { deployment } = useLazyLoadQuery<DeploymentConfigurationSectionQuery>(
-    graphql`
-      query DeploymentConfigurationSectionQuery($deploymentId: ID!) {
-        deployment(id: $deploymentId) {
-          id
-          ...DeploymentSettingModal_deployment
-          metadata {
-            name
-            projectId
-            domainName
-            status
-            projectV2 @since(version: "26.4.3") {
-              basicInfo {
-                name
-              }
-            }
-            ...DeploymentTagChips_metadata
-          }
-          networkAccess {
-            openToPublic
-            endpointUrl
-          }
-          replicaState {
-            desiredReplicaCount
-          }
-          currentRevision @since(version: "26.4.3") {
-            id
-            name
-            ...DeploymentRevisionDetail_revision
-          }
-          deployingRevision @since(version: "26.4.3") {
-            id
-            name
-            ...DeploymentRevisionDetail_revision
-          }
-          ...DeploymentRevisionHistoryTab_deployment
-        }
-      }
-    `,
-    { deploymentId },
-    {
-      fetchKey,
-      fetchPolicy:
-        fetchKey === INITIAL_FETCH_KEY ? 'store-and-network' : 'network-only',
-    },
-  );
+  const handleShowRevisionDrawer = (
+    frgmt: DeploymentRevisionDetail_revision$key,
+    status?: 'current' | 'deploying' | 'none',
+    title?: string,
+  ) => {
+    setDrawerState({ revisionFrgmt: frgmt, status, title });
+  };
 
   const currentRevision = deployment?.currentRevision;
   const deployingRevision = deployment?.deployingRevision;
@@ -343,7 +244,11 @@ const DeploymentConfigurationCards: React.FC<{
         title={t('deployment.BasicInformation')}
         extra={
           <BAIFlex gap="xs" align="center">
-            {overviewExtra}
+            <BAIFetchKeyButton
+              loading={isPendingRefetch}
+              value=""
+              onChange={onRefetch}
+            />
             <Button
               icon={<EditOutlined />}
               disabled={isDeploymentDestroying}
@@ -398,7 +303,7 @@ const DeploymentConfigurationCards: React.FC<{
                 action={
                   <Button
                     onClick={() =>
-                      onShowRevisionDrawer(
+                      handleShowRevisionDrawer(
                         deployingRevision,
                         'deploying',
                         t('deployment.DeployingRevisionDetail'),
@@ -429,7 +334,7 @@ const DeploymentConfigurationCards: React.FC<{
             <Suspense fallback={<Skeleton active paragraph={{ rows: 4 }} />}>
               <DeploymentRevisionHistoryTab
                 deploymentFrgmt={deployment}
-                deploymentId={deploymentId}
+                deploymentId={deployment.id}
                 isDeploymentDestroying={isDeploymentDestroying}
                 fetchKey={revisionFetchKey}
               />
@@ -445,6 +350,15 @@ const DeploymentConfigurationCards: React.FC<{
           if (success) onRefetch();
         }}
       />
+      <BAIUnmountAfterClose>
+        <DeploymentRevisionDetailDrawer
+          revisionFrgmt={drawerState?.revisionFrgmt}
+          status={drawerState?.status}
+          title={drawerState?.title}
+          open={!!drawerState}
+          onClose={() => setDrawerState(null)}
+        />
+      </BAIUnmountAfterClose>
     </>
   );
 };
