@@ -790,6 +790,7 @@
       "MultipleFolderDeletedForever": "ลบถาวรแล้ว {{count}} จาก {{total}} โฟลเดอร์",
       "MultipleFolderRestored": "โฟลเดอร์ที่เลือก {{ folderLength }} ได้รับการกู้คืนแล้ว",
       "Name": "ชื่อ",
+      "NoCompatibleDeploymentPresets": "ไม่มีการตั้งค่าล่วงหน้าสำหรับการปรับใช้.",
       "NoDeletePermission": "ไม่มีการลบการอนุญาต",
       "NoFolderToDisplay": "ไม่มีโฟลเดอร์ที่จะแสดง",
       "NoRestorePermission": "ไม่มีการกู้คืนการอนุญาต",

@@ -790,6 +790,7 @@
       "MultipleFolderDeletedForever": "{{total}} klasörden {{count}} tanesi kalıcı olarak silindi.",
       "MultipleFolderRestored": "Seçilen {{ folderLength }} klasörleri geri yüklendi.",
       "Name": "isim",
+      "NoCompatibleDeploymentPresets": "Kullanılabilir dağıtım ön ayarı yok.",
       "NoDeletePermission": "Silme izni yok",
       "NoFolderToDisplay": "Görüntülenecek Klasör Yok",
       "NoRestorePermission": "Geri yükleme izni yok",

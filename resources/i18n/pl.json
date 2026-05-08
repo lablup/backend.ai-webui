@@ -790,6 +790,7 @@
       "MultipleFolderDeletedForever": "Trwale usunięto {{count}} z {{total}} folderów.",
       "MultipleFolderRestored": "Wybrane foldery {{ folderLength }} zostały przywrócone.",
       "Name": "Nazwa",
+      "NoCompatibleDeploymentPresets": "Brak dostępnych ustawień wstępnych wdrożenia.",
       "NoDeletePermission": "Brak uprawnień do usuwania",
       "NoFolderToDisplay": "Brak wyświetlanych folderów",
       "NoRestorePermission": "Brak uprawnień do przywracania",

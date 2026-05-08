@@ -790,6 +790,7 @@
       "MultipleFolderDeletedForever": "{{count}} de {{total}} pastas foram excluídas permanentemente.",
       "MultipleFolderRestored": "As pastas selecionadas {{ folderLength }} foram restauradas.",
       "Name": "Nome",
+      "NoCompatibleDeploymentPresets": "Não há predefinições de implantação disponíveis.",
       "NoDeletePermission": "Sem permissão de eliminação",
       "NoFolderToDisplay": "Não há pastas a apresentar",
       "NoRestorePermission": "Sem permissão de restauração",

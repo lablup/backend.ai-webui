@@ -790,6 +790,7 @@
       "MultipleFolderDeletedForever": "Poistettiin pysyvästi {{count}}/{{total}} kansiota.",
       "MultipleFolderRestored": "Valitut {{ folderLength }} kansiot on palautettu.",
       "Name": "Nimi",
+      "NoCompatibleDeploymentPresets": "Ei käytettävissä olevia käyttöönottoesiasetuksia.",
       "NoDeletePermission": "Ei poistolupaa",
       "NoFolderToDisplay": "Ei näytettäviä kansioita",
       "NoRestorePermission": "Ei palautuslupaa",

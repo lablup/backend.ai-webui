@@ -790,6 +790,7 @@
       "MultipleFolderDeletedForever": "Διαγράφηκαν οριστικά {{count}} από τους {{total}} φακέλους.",
       "MultipleFolderRestored": "Επιλεγμένα {{ folderLength }} Φάκελοι έχει αποκατασταθεί.",
       "Name": "Ονομα",
+      "NoCompatibleDeploymentPresets": "Δεν υπάρχουν διαθέσιμα προεπιλογές ανάπτυξης.",
       "NoDeletePermission": "Δεν υπάρχει δικαίωμα διαγραφής",
       "NoFolderToDisplay": "Δεν εμφανίζονται φάκελοι",
       "NoRestorePermission": "Δεν υπάρχει δικαίωμα επαναφοράς",

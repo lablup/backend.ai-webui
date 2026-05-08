@@ -147,7 +147,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
   const deferredQueryVariables = useDeferredValue(queryVariables);
   const deferredFetchKey = useDeferredValue(fetchKey);
 
-  const { vfolder_nodes, ...folderCounts } =
+  const { vfolder_nodes, deploymentRevisionPresets, ...folderCounts } =
     useLazyLoadQuery<AdminVFolderNodeListPageQuery>(
       graphql`
         query AdminVFolderNodeListPageQuery(
@@ -196,6 +196,17 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
             filter: $filterForDeletedCount
             permission: $permission
           ) {
+            count
+          }
+          # Project-scoped check: gates the row-level Deploy as service
+          # action so model folders show a disabled tooltip instead of a
+          # fully interactive button that opens a modal which then returns
+          # null (FR-2831). Hoisted to the page-level query so we do not
+          # fire one query per row or per table.
+          # first: 1 rather than 0 because the backend's
+          # SearchDeploymentRevisionPresetsInput validates first >= 1.
+          # We only read count, so the single returned edge is unused.
+          deploymentRevisionPresets(first: 1) {
             count
           }
         }
@@ -459,6 +470,10 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
           <VFolderNodes
             order={queryParams.order}
             loading={deferredQueryVariables !== queryVariables}
+            // True only when we have a definitive zero — `null`/`undefined`
+            // (loading or query error) keeps the action enabled so we don't
+            // surface a misleading "no presets" tooltip in those cases.
+            hasNoCompatiblePresets={deploymentRevisionPresets?.count === 0}
             vfoldersFrgmt={filterOutNullAndUndefined(
               _.map(vfolder_nodes?.edges, 'node'),
             )}

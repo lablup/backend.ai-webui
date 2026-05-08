@@ -185,7 +185,7 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
   const deferredQueryVariables = useDeferredValue(queryVariables);
   const deferredFetchKey = useDeferredValue(fetchKey);
 
-  const { projectVfolders, ...folderCounts } =
+  const { projectVfolders, deploymentRevisionPresets, ...folderCounts } =
     useLazyLoadQuery<ProjectAdminDataPageQuery>(
       graphql`
         query ProjectAdminDataPageQuery(
@@ -227,6 +227,17 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
             projectId: $projectId
             filter: $filterForDeletedCount
           ) {
+            count
+          }
+          # Project-scoped check: gates the row-level Deploy as service
+          # action so model folders show a disabled tooltip instead of a
+          # fully interactive button that opens a modal which then returns
+          # null (FR-2831). Hoisted to the page-level query so we do not
+          # fire one query per row or per table.
+          # first: 1 rather than 0 because the backend's
+          # SearchDeploymentRevisionPresetsInput validates first >= 1.
+          # We only read count, so the single returned edge is unused.
+          deploymentRevisionPresets(first: 1) {
             count
           }
         }
@@ -433,6 +444,10 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
         <VFolderNodesV2
           order={queryParams.order}
           loading={deferredQueryVariables !== queryVariables}
+          // True only when we have a definitive zero — `null`/`undefined`
+          // (loading or query error) keeps the action enabled so we don't
+          // surface a misleading "no presets" tooltip in those cases.
+          hasNoCompatiblePresets={deploymentRevisionPresets?.count === 0}
           vfoldersFrgmt={filterOutNullAndUndefined(
             _.map(projectVfolders?.edges, 'node'),
           )}

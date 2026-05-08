@@ -790,6 +790,7 @@
       "MultipleFolderDeletedForever": "Đã xóa vĩnh viễn {{count}} thư mục trong tổng số {{total}}.",
       "MultipleFolderRestored": "Đã chọn {{ folderLength }} Các thư mục đã được khôi phục.",
       "Name": "Tên",
+      "NoCompatibleDeploymentPresets": "Không có cài đặt triển khai sẵn có.",
       "NoDeletePermission": "Không xóa quyền",
       "NoFolderToDisplay": "Không có thư mục nào để hiển thị",
       "NoRestorePermission": "Không có quyền khôi phục",

@@ -790,6 +790,7 @@
       "MultipleFolderDeletedForever": "{{count}} daripada {{total}} folder telah dipadam secara kekal.",
       "MultipleFolderRestored": "Dipilih {{ folderLength }} Folder telah dipulihkan.",
       "Name": "Nama",
+      "NoCompatibleDeploymentPresets": "Tiada pratetap penggunaan yang tersedia.",
       "NoDeletePermission": "Tiada kebenaran memadam",
       "NoFolderToDisplay": "Tiada Folder untuk dipaparkan",
       "NoRestorePermission": "Tiada kebenaran memulihkan",

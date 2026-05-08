@@ -790,6 +790,7 @@
       "MultipleFolderDeletedForever": "Нийт {{total}} хавтаснаас {{count}} хавтасыг бүрмөсөн устгасан.",
       "MultipleFolderRestored": "Сонгосон {{ folderLength }} хавтасыг сэргээв.",
       "Name": "Нэр",
+      "NoCompatibleDeploymentPresets": "Байршуулах урьдчилан тохиргоо байхгүй байна.",
       "NoDeletePermission": "Устгах зөвшөөрөл байхгүй байна",
       "NoFolderToDisplay": "Харуулах хавтас байхгүй",
       "NoRestorePermission": "Сэргээх зөвшөөрөл байхгүй байна",

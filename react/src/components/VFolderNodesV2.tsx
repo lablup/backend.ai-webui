@@ -119,6 +119,23 @@ interface VFolderNameCellProps {
    * (FR-2599) for the given vfolder instead of navigating away.
    */
   onStartServiceFallback: (vfolderId: string) => void;
+  /**
+   * When true, the row-level "Deploy as service" action for model folders
+   * is rendered disabled with a tooltip explaining that no deployment
+   * presets are available. Computed once at the page level (via the page's
+   * `useLazyLoadQuery` selecting `deploymentRevisionPresets(first: 0) { count }`)
+   * and forwarded down through `VFolderNodesV2` so we don't fire one query
+   * per row. The `VFolderDeployModal` retains a `null`-return fallback for
+   * the same condition as defense in depth.
+   *
+   * TODO(needs-backend): the schema exposes
+   * `modelCardAvailablePresets(scope: { modelCardId })`, but we have a
+   * vfolder, not a model card, in this row. Either add a vfolder scope
+   * (`VFolderAvailablePresetsScope`) or expose a vfolder→modelCard link
+   * so we can narrow this check per row. Today this boolean reflects
+   * "any preset exists in this project."
+   */
+  hasNoCompatiblePresets?: boolean;
 }
 
 const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
@@ -128,6 +145,7 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
   onRestore,
   onDeleteForever,
   onStartServiceFallback,
+  hasNoCompatiblePresets = false,
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -147,6 +165,10 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
           key: 'start-service',
           title: t('modelService.DeployAsService'),
           icon: <BAIEndpointsIcon />,
+          disabled: hasNoCompatiblePresets,
+          disabledReason: hasNoCompatiblePresets
+            ? t('data.folders.NoCompatibleDeploymentPresets')
+            : undefined,
           onClick: () => onStartServiceFallback(vfolderId),
         }
       : null,
@@ -409,11 +431,28 @@ interface VFolderNodesV2Props extends Omit<
   vfoldersFrgmt: VFolderNodesV2Fragment$key;
   // Callback when a row is removed from current list
   onRemoveRow?: (updatedFolderId?: string) => void;
+  /**
+   * When true, the row-level "Deploy as service" action for model folders
+   * is rendered disabled with a tooltip explaining that no deployment
+   * presets are available. Derived at the page-level `useLazyLoadQuery`
+   * from `deploymentRevisionPresets(first: 0) { count }` so we don't fire
+   * one query per row. Defaults to `false` so existing call sites are
+   * additive — page hosts opt in by passing the derived value.
+   *
+   * TODO(needs-backend): the schema exposes
+   * `modelCardAvailablePresets(scope: { modelCardId })`, but we have a
+   * vfolder, not a model card, in this row. Either add a vfolder scope
+   * (`VFolderAvailablePresetsScope`) or expose a vfolder→modelCard link
+   * so we can narrow this check per row. Today this boolean reflects
+   * "any preset exists in this project."
+   */
+  hasNoCompatiblePresets?: boolean;
 }
 
 const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
   vfoldersFrgmt,
   onRemoveRow,
+  hasNoCompatiblePresets = false,
   ...tableProps
 }) => {
   'use memo';
@@ -570,6 +609,7 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
               return (
                 <VFolderNameCell
                   vfolder={vfolder}
+                  hasNoCompatiblePresets={hasNoCompatiblePresets}
                   onShare={() => {
                     vfolder?.ownership?.userId === currentUser?.uuid
                       ? setInviteFolderId(toLocalId(vfolder?.id ?? null))

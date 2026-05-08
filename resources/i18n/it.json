@@ -790,6 +790,7 @@
       "MultipleFolderDeletedForever": "Eliminate definitivamente {{count}} cartelle su {{total}}.",
       "MultipleFolderRestored": "Le cartelle selezionate {{ folderLength }} sono state ripristinate.",
       "Name": "Nome",
+      "NoCompatibleDeploymentPresets": "Nessun preset di distribuzione disponibile.",
       "NoDeletePermission": "Nessun permesso di cancellazione",
       "NoFolderToDisplay": "Nessuna cartella da visualizzare",
       "NoRestorePermission": "Nessun permesso di ripristino",

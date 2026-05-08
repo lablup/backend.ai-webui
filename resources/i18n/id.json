@@ -790,6 +790,7 @@
       "MultipleFolderDeletedForever": "Berhasil menghapus permanen {{count}} dari {{total}} folder.",
       "MultipleFolderRestored": "Folder {{ folderLength }} yang dipilih telah dipulihkan.",
       "Name": "Nama",
+      "NoCompatibleDeploymentPresets": "Tidak ada preset deployment yang tersedia.",
       "NoDeletePermission": "Tidak ada izin hapus",
       "NoFolderToDisplay": "Tidak ada Folder untuk ditampilkan",
       "NoRestorePermission": "Tidak ada izin pemulihan",

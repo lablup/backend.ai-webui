@@ -790,6 +790,7 @@
       "MultipleFolderDeletedForever": "Навсегда удалено {{count}} из {{total}} папок.",
       "MultipleFolderRestored": "Выбранные папки {{ folderLength }} были восстановлены.",
       "Name": "Имя",
+      "NoCompatibleDeploymentPresets": "Нет доступных предустановок развёртывания.",
       "NoDeletePermission": "Нет разрешения на удаление",
       "NoFolderToDisplay": "Нет папок для отображения",
       "NoRestorePermission": "Нет разрешения на восстановление",

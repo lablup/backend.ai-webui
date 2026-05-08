@@ -791,6 +791,7 @@
       "MultipleFolderDeletedForever": "Permanently deleted {{count}} folders out of {{total}}.",
       "MultipleFolderRestored": "Selected {{ folderLength }} folders has been restored.",
       "Name": "Name",
+      "NoCompatibleDeploymentPresets": "No deployment presets available.",
       "NoDeletePermission": "No delete permission",
       "NoFolderToDisplay": "No Folders to display",
       "NoRestorePermission": "No restore permission",

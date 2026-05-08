@@ -791,6 +791,7 @@
       "MultipleFolderDeletedForever": "총 {{total}}개 중 {{count}}개의 폴더를 영구 삭제했습니다.",
       "MultipleFolderRestored": "선택한 {{ folderLength }} 폴더가 복원되었습니다.",
       "Name": "이름",
+      "NoCompatibleDeploymentPresets": "사용 가능한 배포 프리셋이 없습니다.",
       "NoDeletePermission": "삭제 권한이 없습니다",
       "NoFolderToDisplay": "폴더 정보가 없습니다.",
       "NoRestorePermission": "복원 권한이 없습니다.",

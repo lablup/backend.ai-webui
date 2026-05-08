@@ -790,6 +790,7 @@
       "MultipleFolderDeletedForever": "已从 {{total}} 个文件夹中永久删除 {{count}} 个。",
       "MultipleFolderRestored": "所选{{ folderLength }}文件夹已还原。",
       "Name": "名称",
+      "NoCompatibleDeploymentPresets": "没有可用的部署预设。",
       "NoDeletePermission": "无删除权限",
       "NoFolderToDisplay": "无文件夹显示",
       "NoRestorePermission": "无恢复权限",

@@ -790,6 +790,7 @@
       "MultipleFolderDeletedForever": "{{total}}個中{{count}}個のフォルダを完全に削除しました。",
       "MultipleFolderRestored": "選択された{{ folderLength }}フォルダーが復元されました。",
       "Name": "名前",
+      "NoCompatibleDeploymentPresets": "利用可能なデプロイメントプリセットがありません。",
       "NoDeletePermission": "削除許可なし",
       "NoFolderToDisplay": "フォルダ情報がありません。",
       "NoRestorePermission": "復元許可なし",

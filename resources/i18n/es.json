@@ -790,6 +790,7 @@
       "MultipleFolderDeletedForever": "Se eliminaron permanentemente {{count}} carpetas de {{total}}.",
       "MultipleFolderRestored": "Se han restaurado las carpetas seleccionadas {{ folderLength }}.",
       "Name": "Nombre",
+      "NoCompatibleDeploymentPresets": "No hay preajustes de implementación disponibles.",
       "NoDeletePermission": "Sin permiso de eliminación",
       "NoFolderToDisplay": "No hay carpetas que mostrar",
       "NoRestorePermission": "Sin permiso de restauración",

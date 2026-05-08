@@ -790,6 +790,7 @@
       "MultipleFolderDeletedForever": "{{count}} dossiers sur {{total}} ont été supprimés définitivement.",
       "MultipleFolderRestored": "Les dossiers sélectionnés {{ folderLength }} ont été restaurés.",
       "Name": "Nom",
+      "NoCompatibleDeploymentPresets": "Aucun préréglage de déploiement disponible.",
       "NoDeletePermission": "Pas d'autorisation de suppression",
       "NoFolderToDisplay": "Aucun dossier à afficher",
       "NoRestorePermission": "Pas d'autorisation de restauration",

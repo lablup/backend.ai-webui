@@ -790,6 +790,7 @@
       "MultipleFolderDeletedForever": "{{count}} von {{total}} Ordnern wurden dauerhaft gelöscht.",
       "MultipleFolderRestored": "Ausgewählte {{ folderLength }} Ordner wurden wiederhergestellt.",
       "Name": "Name",
+      "NoCompatibleDeploymentPresets": "Keine Deployment-Presets verfügbar.",
       "NoDeletePermission": "Keine Löschberechtigung",
       "NoFolderToDisplay": "Keine Ordner anzeigen",
       "NoRestorePermission": "Keine Wiederherstellungsberechtigung",
