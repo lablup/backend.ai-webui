@@ -4,8 +4,6 @@
  */
 import { DeploymentConfigurationSectionQuery } from '../__generated__/DeploymentConfigurationSectionQuery.graphql';
 import type { DeploymentRevisionDetail_revision$key } from '../__generated__/DeploymentRevisionDetail_revision.graphql';
-import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
-import DeploymentAddRevisionModal from './DeploymentAddRevisionModal';
 import DeploymentRevisionDetail from './DeploymentRevisionDetail';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
 import DeploymentRevisionHistoryTab from './DeploymentRevisionHistoryTab';
@@ -33,19 +31,21 @@ import {
   BooleanTag,
   INITIAL_FETCH_KEY,
   filterOutEmpty,
-  toLocalId,
-  useFetchKey,
   useInterval,
 } from 'backend.ai-ui';
-import { BotMessageSquareIcon } from 'lucide-react';
 import { parseAsStringLiteral, useQueryState } from 'nuqs';
-import React, { Suspense, useState, useTransition } from 'react';
+import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 interface DeploymentConfigurationSectionProps {
   deploymentId: string;
   isDeploymentDestroying?: boolean;
+  fetchKey: string;
+  revisionFetchKey: string;
+  isPendingRefetch: boolean;
+  onRefetch: () => void;
+  onAddRevision: () => void;
 }
 
 type DeploymentSectionData =
@@ -141,13 +141,18 @@ const DeploymentOverviewContent: React.FC<{
 
 const DeploymentConfigurationSection: React.FC<
   DeploymentConfigurationSectionProps
-> = ({ deploymentId, isDeploymentDestroying = false }) => {
+> = ({
+  deploymentId,
+  isDeploymentDestroying = false,
+  fetchKey,
+  revisionFetchKey,
+  isPendingRefetch,
+  onRefetch,
+  onAddRevision,
+}) => {
   'use memo';
 
   const { t } = useTranslation();
-  const [isPendingRefetch, startRefetchTransition] = useTransition();
-  const [fetchKey, updateFetchKey] = useFetchKey();
-  const [revisionFetchKey, updateRevisionFetchKey] = useFetchKey();
   const [drawerState, setDrawerState] = useState<{
     revisionFrgmt: DeploymentRevisionDetail_revision$key;
     status?: 'current' | 'deploying' | 'none';
@@ -162,23 +167,12 @@ const DeploymentConfigurationSection: React.FC<
     setDrawerState({ revisionFrgmt: frgmt, status, title });
   };
 
-  const handleRefetch = () => {
-    startRefetchTransition(() => updateFetchKey());
-  };
-
-  const handleRevisionAdded = () => {
-    startRefetchTransition(() => {
-      updateFetchKey();
-      updateRevisionFetchKey();
-    });
-  };
-
   const overviewExtra = (
     <BAIFlex gap="xs" align="center">
       <BAIFetchKeyButton
         loading={isPendingRefetch}
         value=""
-        onChange={handleRefetch}
+        onChange={onRefetch}
       />
     </BAIFlex>
   );
@@ -218,9 +212,9 @@ const DeploymentConfigurationSection: React.FC<
           revisionFetchKey={revisionFetchKey}
           overviewExtra={overviewExtra}
           onShowRevisionDrawer={handleShowRevisionDrawer}
-          onRevisionAdded={handleRevisionAdded}
+          onAddRevision={onAddRevision}
           isDeploymentDestroying={isDeploymentDestroying}
-          onRefetch={handleRefetch}
+          onRefetch={onRefetch}
         />
       </Suspense>
       <BAIUnmountAfterClose>
@@ -252,7 +246,7 @@ const DeploymentConfigurationCards: React.FC<{
     status?: 'current' | 'deploying' | 'none',
     title?: string,
   ) => void;
-  onRevisionAdded: () => void;
+  onAddRevision: () => void;
   isDeploymentDestroying?: boolean;
   onRefetch: () => void;
 }> = ({
@@ -261,16 +255,13 @@ const DeploymentConfigurationCards: React.FC<{
   revisionFetchKey,
   overviewExtra,
   onShowRevisionDrawer,
-  onRevisionAdded,
+  onAddRevision,
   isDeploymentDestroying = false,
   onRefetch,
 }) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const webuiNavigate = useWebUINavigate();
-  const baiClient = useSuspendedBackendaiClient();
-  const isChatBlocked = !!baiClient?._config?.blockList?.includes('chat');
 
   const [activeRevisionTab, setActiveRevisionTab] = useQueryState(
     'revisionTab',
@@ -286,10 +277,6 @@ const DeploymentConfigurationCards: React.FC<{
   const [
     settingModalOpen,
     { setLeft: closeSettingModal, setRight: openSettingModal },
-  ] = useToggle(false);
-  const [
-    addRevisionOpen,
-    { toggle: toggleAddRevision, setLeft: closeAddRevision },
   ] = useToggle(false);
 
   const { deployment } = useLazyLoadQuery<DeploymentConfigurationSectionQuery>(
@@ -339,12 +326,10 @@ const DeploymentConfigurationCards: React.FC<{
     },
   );
 
-  const hasNoRevision = !deployment?.currentRevision;
   const currentRevision = deployment?.currentRevision;
   const deployingRevision = deployment?.deployingRevision;
   const isDeployingDifferentRevision =
     !!deployingRevision && deployingRevision.id !== currentRevision?.id;
-  const isDeploymentReady = deployment?.metadata.status === 'READY';
 
   // While a different revision is being applied, poll so the UI moves off
   // the "applying" state once the deployment finishes rolling out. We don't
@@ -354,49 +339,6 @@ const DeploymentConfigurationCards: React.FC<{
 
   return (
     <>
-      {isDeploymentReady && !hasNoRevision && (
-        <Alert
-          type="success"
-          showIcon
-          title={t('deployment.DeploymentReady')}
-          action={
-            !isChatBlocked && (
-              <Button
-                type="primary"
-                icon={<BotMessageSquareIcon size={token.fontSizeLG} />}
-                onClick={() => {
-                  webuiNavigate({
-                    pathname: '/chat',
-                    search: new URLSearchParams({
-                      endpointId: toLocalId(deploymentId),
-                    }).toString(),
-                  });
-                }}
-              >
-                {t('deployment.StartChatTest')}
-              </Button>
-            )
-          }
-        />
-      )}
-      {hasNoRevision && (
-        <Alert
-          type="info"
-          showIcon
-          title={t('deployment.NoCurrentRevisionDeployed')}
-          description={t('deployment.NoCurrentRevisionDeployedDescription')}
-          action={
-            <Button
-              type="primary"
-              icon={<PlusOutlined />}
-              onClick={toggleAddRevision}
-              disabled={isDeploymentDestroying}
-            >
-              {t('deployment.AddRevision')}
-            </Button>
-          }
-        />
-      )}
       <BAICard
         title={t('deployment.BasicInformation')}
         extra={
@@ -437,7 +379,7 @@ const DeploymentConfigurationCards: React.FC<{
             type="primary"
             icon={<PlusOutlined />}
             disabled={isDeploymentDestroying}
-            onClick={toggleAddRevision}
+            onClick={onAddRevision}
           >
             {t('deployment.AddRevision')}
           </Button>
@@ -503,17 +445,6 @@ const DeploymentConfigurationCards: React.FC<{
           if (success) onRefetch();
         }}
       />
-      <BAIUnmountAfterClose>
-        <DeploymentAddRevisionModal
-          open={addRevisionOpen}
-          onCancel={closeAddRevision}
-          onSuccess={() => {
-            closeAddRevision();
-            onRevisionAdded();
-          }}
-          deploymentId={deploymentId}
-        />
-      </BAIUnmountAfterClose>
     </>
   );
 };
