@@ -2,30 +2,42 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { DeploymentConfigurationSectionDeleteMutation } from '../__generated__/DeploymentConfigurationSectionDeleteMutation.graphql';
 import type {
   DeploymentConfigurationSection_deployment$data,
   DeploymentConfigurationSection_deployment$key,
 } from '../__generated__/DeploymentConfigurationSection_deployment.graphql';
 import type { DeploymentRevisionDetail_revision$key } from '../__generated__/DeploymentRevisionDetail_revision.graphql';
+import { useWebUINavigate } from '../hooks';
 import DeploymentRevisionDetail from './DeploymentRevisionDetail';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
 import DeploymentRevisionHistoryTab from './DeploymentRevisionHistoryTab';
 import DeploymentSettingModal from './DeploymentSettingModal';
 import DeploymentTagChips from './DeploymentTagChips';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
-import { EditOutlined, LoadingOutlined, PlusOutlined } from '@ant-design/icons';
+import {
+  DeleteFilled,
+  EditOutlined,
+  LoadingOutlined,
+  MoreOutlined,
+  PlusOutlined,
+} from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import {
   Alert,
+  App,
   Button,
   Descriptions,
+  Dropdown,
   Empty,
   Skeleton,
+  Space,
   Typography,
   theme,
 } from 'antd';
 import {
   BAICard,
+  BAIConfirmModalWithInput,
   BAIFetchKeyButton,
   BAIFlex,
   BAIId,
@@ -33,12 +45,15 @@ import {
   BAIUnmountAfterClose,
   BooleanTag,
   filterOutEmpty,
+  toLocalId,
+  useBAILogger,
   useInterval,
 } from 'backend.ai-ui';
 import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useFragment } from 'react-relay';
+import { graphql, useFragment, useMutation } from 'react-relay';
+import { useLocation } from 'react-router-dom';
 
 interface DeploymentConfigurationSectionProps {
   deploymentFrgmt: DeploymentConfigurationSection_deployment$key | null;
@@ -156,6 +171,10 @@ const DeploymentConfigurationSection: React.FC<
 
   const { t } = useTranslation();
   const { token } = theme.useToken();
+  const { message } = App.useApp();
+  const { logger } = useBAILogger();
+  const webuiNavigate = useWebUINavigate();
+  const location = useLocation();
 
   const deployment = useFragment(
     graphql`
@@ -218,6 +237,47 @@ const DeploymentConfigurationSection: React.FC<
     settingModalOpen,
     { setLeft: closeSettingModal, setRight: openSettingModal },
   ] = useToggle(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+  const [commitDeleteMutation, isInFlightDeleteMutation] =
+    useMutation<DeploymentConfigurationSectionDeleteMutation>(graphql`
+      mutation DeploymentConfigurationSectionDeleteMutation(
+        $input: DeleteDeploymentInput!
+      ) {
+        deleteModelDeployment(input: $input) {
+          id
+        }
+      }
+    `);
+
+  const deploymentName = deployment?.metadata.name ?? '';
+  const isAdminContext = location.pathname.startsWith('/admin-deployments');
+  const listPath = isAdminContext ? '/admin-deployments' : '/deployments';
+
+  const handleDelete = () => {
+    if (!deployment?.id) return;
+    commitDeleteMutation({
+      variables: {
+        input: {
+          id: toLocalId(deployment.id) ?? deployment.id,
+        },
+      },
+      onCompleted: (_response, errors) => {
+        if (errors && errors.length > 0) {
+          logger.error('Failed to delete deployment', errors);
+          message.error(t('deployment.FailedToDeleteDeployment'));
+          return;
+        }
+        message.success(t('deployment.DeploymentDeleted'));
+        setIsDeleteModalOpen(false);
+        webuiNavigate(listPath);
+      },
+      onError: (error) => {
+        logger.error('Failed to delete deployment', error);
+        message.error(t('deployment.FailedToDeleteDeployment'));
+      },
+    });
+  };
 
   const handleShowRevisionDrawer = (
     frgmt: DeploymentRevisionDetail_revision$key,
@@ -249,13 +309,33 @@ const DeploymentConfigurationSection: React.FC<
               value=""
               onChange={onRefetch}
             />
-            <Button
-              icon={<EditOutlined />}
-              disabled={isDeploymentDestroying}
-              onClick={openSettingModal}
-            >
-              {t('button.Edit')}
-            </Button>
+            <Space.Compact>
+              <Button
+                icon={<EditOutlined />}
+                disabled={isDeploymentDestroying}
+                onClick={openSettingModal}
+              >
+                {t('button.Edit')}
+              </Button>
+              <Dropdown
+                trigger={['click']}
+                menu={{
+                  items: [
+                    {
+                      key: 'delete',
+                      label: t('deployment.DeleteDeployment'),
+                      icon: <DeleteFilled />,
+                      danger: true,
+                      disabled:
+                        isDeploymentDestroying || isInFlightDeleteMutation,
+                      onClick: () => setIsDeleteModalOpen(true),
+                    },
+                  ],
+                }}
+              >
+                <Button icon={<MoreOutlined />} aria-label={t('button.More')} />
+              </Dropdown>
+            </Space.Compact>
           </BAIFlex>
         }
         styles={{ body: { paddingTop: 0 } }}
@@ -359,6 +439,27 @@ const DeploymentConfigurationSection: React.FC<
           onClose={() => setDrawerState(null)}
         />
       </BAIUnmountAfterClose>
+      <BAIConfirmModalWithInput
+        open={isDeleteModalOpen}
+        title={t('deployment.DeleteDeployment')}
+        content={
+          <BAIFlex direction="column" gap="md" align="stretch">
+            <Alert type="warning" title={t('dialog.warning.CannotBeUndone')} />
+            <BAIFlex>
+              <Typography.Text style={{ marginRight: token.marginXXS }}>
+                {t('dialog.TypeNameToConfirmDeletion')}
+              </Typography.Text>
+              (<Typography.Text code>{deploymentName}</Typography.Text>)
+            </BAIFlex>
+          </BAIFlex>
+        }
+        confirmText={deploymentName}
+        inputProps={{ placeholder: deploymentName }}
+        okText={t('button.Delete')}
+        okButtonProps={{ loading: isInFlightDeleteMutation }}
+        onOk={handleDelete}
+        onCancel={() => setIsDeleteModalOpen(false)}
+      />
     </>
   );
 };
