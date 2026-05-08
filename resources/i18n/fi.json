@@ -964,6 +964,7 @@
     "OpenToPublic": "Julkinen",
     "Overview": "Yleiskatsaus",
     "Owner": "Omistaja",
+    "Private": "Yksityinen",
     "Project": "Projekti",
     "Public": "Julkinen",
     "QuickDeploy": "Ota käyttöön",
@@ -997,6 +998,7 @@
     "UpdateDeployment": "Päivitä käyttöönotto",
     "UpdatedAt": "Päivitetty",
     "ViewRevision": "Näytä Revision",
+    "Visibility": "Näkyvyys",
     "accessToken": {
       "Create": "Luo pääsytunnus",
       "Created": "Pääsytunnus on luotu.",

@@ -964,6 +964,7 @@
     "OpenToPublic": "Δημόσιο",
     "Overview": "Επισκόπηση",
     "Owner": "Ιδιοκτήτης",
+    "Private": "Ιδιωτικό",
     "Project": "Έργο",
     "Public": "Δημόσιο",
     "QuickDeploy": "Ανάπτυξη",
@@ -997,6 +998,7 @@
     "UpdateDeployment": "Ενημέρωση ανάπτυξης",
     "UpdatedAt": "Ενημερώθηκε",
     "ViewRevision": "Προβολή Revision",
+    "Visibility": "Ορατότητα",
     "accessToken": {
       "Create": "Δημιουργία διακριτικού πρόσβασης",
       "Created": "Το διακριτικό πρόσβασης δημιουργήθηκε.",

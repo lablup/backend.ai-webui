@@ -964,6 +964,7 @@
     "OpenToPublic": "Public",
     "Overview": "Aperçu",
     "Owner": "Propriétaire",
+    "Private": "Privé",
     "Project": "Projet",
     "Public": "Public",
     "QuickDeploy": "Déployer",
@@ -997,6 +998,7 @@
     "UpdateDeployment": "Mettre à jour le déploiement",
     "UpdatedAt": "Mis à jour le",
     "ViewRevision": "Voir la Revision",
+    "Visibility": "Visibilité",
     "accessToken": {
       "Create": "Créer un jeton d'accès",
       "Created": "Le jeton d'accès a été créé.",

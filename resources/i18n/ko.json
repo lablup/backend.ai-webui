@@ -965,6 +965,7 @@
     "OpenToPublic": "외부에 공개",
     "Overview": "개요",
     "Owner": "소유자",
+    "Private": "비공개",
     "Project": "프로젝트",
     "Public": "공개",
     "QuickDeploy": "배포",
@@ -998,6 +999,7 @@
     "UpdateDeployment": "배포 업데이트",
     "UpdatedAt": "수정일",
     "ViewRevision": "리비전 보기",
+    "Visibility": "공개 범위",
     "accessToken": {
       "Create": "액세스 토큰 생성",
       "Created": "액세스 토큰이 생성되었습니다.",

@@ -965,6 +965,7 @@
     "OpenToPublic": "公開",
     "Overview": "概覽",
     "Owner": "擁有者",
+    "Private": "私有",
     "Project": "專案",
     "Public": "公開",
     "QuickDeploy": "部署",
@@ -998,6 +999,7 @@
     "UpdateDeployment": "更新部署",
     "UpdatedAt": "更新時間",
     "ViewRevision": "查看 Revision",
+    "Visibility": "可見性",
     "accessToken": {
       "Create": "建立存取令牌",
       "Created": "存取令牌已建立。",

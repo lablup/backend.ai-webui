@@ -964,6 +964,7 @@
     "OpenToPublic": "Công khai",
     "Overview": "Tổng quan",
     "Owner": "Chủ sở hữu",
+    "Private": "Riêng tư",
     "Project": "Dự án",
     "Public": "Công khai",
     "QuickDeploy": "Triển khai",
@@ -997,6 +998,7 @@
     "UpdateDeployment": "Cập nhật triển khai",
     "UpdatedAt": "Ngày cập nhật",
     "ViewRevision": "Xem Revision",
+    "Visibility": "Khả năng hiển thị",
     "accessToken": {
       "Create": "Tạo mã thông báo truy cập",
       "Created": "Mã thông báo truy cập đã được tạo.",

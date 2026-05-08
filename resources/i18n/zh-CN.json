@@ -964,6 +964,7 @@
     "OpenToPublic": "公开",
     "Overview": "概览",
     "Owner": "所有者",
+    "Private": "私有",
     "Project": "项目",
     "Public": "公开",
     "QuickDeploy": "部署",
@@ -997,6 +998,7 @@
     "UpdateDeployment": "更新部署",
     "UpdatedAt": "更新时间",
     "ViewRevision": "查看 Revision",
+    "Visibility": "可见性",
     "accessToken": {
       "Create": "创建访问令牌",
       "Created": "访问令牌已创建。",

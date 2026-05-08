@@ -964,6 +964,7 @@
     "OpenToPublic": "เปิดสาธารณะ",
     "Overview": "ภาพรวม",
     "Owner": "เจ้าของ",
+    "Private": "ส่วนตัว",
     "Project": "โปรเจกต์",
     "Public": "สาธารณะ",
     "QuickDeploy": "ปรับใช้",
@@ -997,6 +998,7 @@
     "UpdateDeployment": "อัปเดตการปรับใช้",
     "UpdatedAt": "อัปเดตเมื่อ",
     "ViewRevision": "ดู Revision",
+    "Visibility": "การมองเห็น",
     "accessToken": {
       "Create": "สร้างโทเค็นการเข้าถึง",
       "Created": "สร้างโทเค็นการเข้าถึงเรียบร้อยแล้ว",

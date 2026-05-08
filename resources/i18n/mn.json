@@ -964,6 +964,7 @@
     "OpenToPublic": "Нийтэд нээлттэй",
     "Overview": "Ерөнхий мэдэгдэл",
     "Owner": "Эзэмшигч",
+    "Private": "Хувийн",
     "Project": "Төсөл",
     "Public": "Нийтийн",
     "QuickDeploy": "Байршуулах",
@@ -997,6 +998,7 @@
     "UpdateDeployment": "Байршуулалт шинэчлэх",
     "UpdatedAt": "Шинэчилсэн огноо",
     "ViewRevision": "Revision харах",
+    "Visibility": "Харагдац",
     "accessToken": {
       "Create": "Хандалтын токен үүсгэх",
       "Created": "Хандалтын токен үүсгэгдлээ.",

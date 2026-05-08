@@ -964,6 +964,7 @@
     "OpenToPublic": "公開",
     "Overview": "概要",
     "Owner": "オーナー",
+    "Private": "非公開",
     "Project": "プロジェクト",
     "Public": "公開",
     "QuickDeploy": "デプロイ",
@@ -997,6 +998,7 @@
     "UpdateDeployment": "デプロイを更新",
     "UpdatedAt": "更新日時",
     "ViewRevision": "Revision を表示",
+    "Visibility": "公開範囲",
     "accessToken": {
       "Create": "アクセストークンを作成",
       "Created": "アクセストークンが作成されました。",

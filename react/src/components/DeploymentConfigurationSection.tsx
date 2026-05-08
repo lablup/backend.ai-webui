@@ -101,13 +101,13 @@ const DeploymentOverviewContent: React.FC<{
       ),
     },
     {
-      key: 'open-to-public',
-      label: t('deployment.OpenToPublic'),
+      key: 'visibility',
+      label: t('deployment.Visibility'),
       children: (
         <BooleanTag
           value={deployment?.networkAccess.openToPublic}
-          trueLabel={t('button.Yes')}
-          falseLabel={t('button.No')}
+          trueLabel={t('deployment.Public')}
+          falseLabel={t('deployment.Private')}
           fallback={renderFallback()}
         />
       ),

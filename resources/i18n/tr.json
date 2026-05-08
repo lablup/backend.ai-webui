@@ -964,6 +964,7 @@
     "OpenToPublic": "Herkese Açık",
     "Overview": "Genel Bakış",
     "Owner": "Sahibi",
+    "Private": "Özel",
     "Project": "Proje",
     "Public": "Genel",
     "QuickDeploy": "Dağıt",
@@ -997,6 +998,7 @@
     "UpdateDeployment": "Dağıtımı Güncelle",
     "UpdatedAt": "Güncellenme Tarihi",
     "ViewRevision": "Revision'ı Görüntüle",
+    "Visibility": "Görünürlük",
     "accessToken": {
       "Create": "Erişim Jetonu Oluştur",
       "Created": "Erişim jetonu oluşturuldu.",

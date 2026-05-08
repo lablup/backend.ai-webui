@@ -964,6 +964,7 @@
     "OpenToPublic": "Terbuka untuk Publik",
     "Overview": "Ikhtisar",
     "Owner": "Pemilik",
+    "Private": "Privat",
     "Project": "Proyek",
     "Public": "Publik",
     "QuickDeploy": "Terapkan",
@@ -997,6 +998,7 @@
     "UpdateDeployment": "Perbarui Penerapan",
     "UpdatedAt": "Diperbarui Pada",
     "ViewRevision": "Lihat Revision",
+    "Visibility": "Visibilitas",
     "accessToken": {
       "Create": "Buat Token Akses",
       "Created": "Token akses telah dibuat.",

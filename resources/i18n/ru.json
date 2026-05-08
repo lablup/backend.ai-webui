@@ -964,6 +964,7 @@
     "OpenToPublic": "Публичное",
     "Overview": "Обзор",
     "Owner": "Владелец",
+    "Private": "Приватный",
     "Project": "Проект",
     "Public": "Публичный",
     "QuickDeploy": "Развернуть",
@@ -997,6 +998,7 @@
     "UpdateDeployment": "Обновить развёртывание",
     "UpdatedAt": "Обновлено",
     "ViewRevision": "Просмотреть Revision",
+    "Visibility": "Видимость",
     "accessToken": {
       "Create": "Создать токен доступа",
       "Created": "Токен доступа создан.",

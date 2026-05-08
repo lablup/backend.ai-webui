@@ -964,6 +964,7 @@
     "OpenToPublic": "Público",
     "Overview": "Resumen",
     "Owner": "Propietario",
+    "Private": "Privado",
     "Project": "Proyecto",
     "Public": "Público",
     "QuickDeploy": "Desplegar",
@@ -997,6 +998,7 @@
     "UpdateDeployment": "Actualizar despliegue",
     "UpdatedAt": "Actualizado el",
     "ViewRevision": "Ver Revision",
+    "Visibility": "Visibilidad",
     "accessToken": {
       "Create": "Crear token de acceso",
       "Created": "El token de acceso ha sido creado.",
