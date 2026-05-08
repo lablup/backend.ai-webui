@@ -96,7 +96,6 @@
     "build:only": "pnpm run relay && vite build",
     "test": "vitest run",
     "relay": "relay-compiler",
-    "relay:watch": "nodemon --watch schema.graphql --watch client-directives.graphql --exec 'pnpm run relay --watch'",
     "lint": "eslint ./src --max-warnings=0",
     "format": "prettier --check 'src/**/*.{js,jsx,ts,tsx}'",
     "format-fix": "prettier --write './src/**/*.{js,jsx,ts,tsx}'"
@@ -150,7 +149,6 @@
     "eslint-plugin-relay": "^2.0.0",
     "globals": "catalog:",
     "jsdom": "^29.0.2",
-    "nodemon": "^3.1.14",
     "prop-types": "^15.8.1",
     "react-grab": "^0.1.32",
     "react-test-renderer": "^19.2.5",
