@@ -483,6 +483,21 @@ export const mainLayoutChildRoutes: RouteObject[] = [
           </BAIErrorBoundary>
         ),
       },
+      {
+        // FR-2847 — Admin deployment detail route. Reuses the shared
+        // `DeploymentDetailPage` component but keeps admins under the
+        // `/admin-deployments/*` URL space so that breadcrumbs and back
+        // navigation preserve the admin context.
+        path: ':deploymentId',
+        handle: { labelKey: 'webui.menu.DeploymentDetail' },
+        element: (
+          <BAIErrorBoundary>
+            <Suspense fallback={<Skeleton active />}>
+              <DeploymentDetailPage />
+            </Suspense>
+          </BAIErrorBoundary>
+        ),
+      },
     ],
   },
   {
@@ -504,16 +519,17 @@ export const mainLayoutChildRoutes: RouteObject[] = [
         },
       },
       {
-        // /admin-deployments has no nested detail route — the deployment
-        // detail page is shared at /deployments/:deploymentId regardless
-        // of the viewer's role.
+        // FR-2847 — Legacy `/admin-serving/:serviceId` redirects to the
+        // admin-scoped detail route so admins stay under
+        // `/admin-deployments/*` instead of the user-facing
+        // `/deployments/:deploymentId`.
         path: ':serviceId',
         Component: () => {
           const { serviceId } = useParams<{ serviceId: string }>();
           const location = useLocation();
           return (
             <WebUINavigate
-              to={`/deployments/${serviceId}${location.search}`}
+              to={`/admin-deployments/${serviceId}${location.search}`}
               replace
             />
           );

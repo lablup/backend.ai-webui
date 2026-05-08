@@ -134,7 +134,10 @@ const EndpointList: React.FC<EndpointListProps> = ({
         <BAINameActionCell
           title={name}
           showActions="always"
-          to={(isAdminMode ? '/deployments/' : '/serving/') + row.endpoint_id}
+          to={
+            (isAdminMode ? '/admin-deployments/' : '/serving/') +
+            row.endpoint_id
+          }
           actions={[
             {
               key: 'settings',
