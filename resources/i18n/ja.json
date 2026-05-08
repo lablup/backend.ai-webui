@@ -896,6 +896,7 @@
     "AddRevision": "Revision を追加",
     "AdditionalMounts": "追加マウント",
     "AnotherDeploymentInProgress": "別のデプロイ更新が既に進行中です。再試行する前に完了するまでお待ちください。",
+    "AutoActivate": "追加後に自動的にアクティブにする",
     "AutoScaling": "自動スケーリング",
     "AutoScalingRules": "自動スケーリングルール",
     "BasicInformation": "基本情報",

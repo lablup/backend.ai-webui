@@ -897,6 +897,7 @@
     "AddRevision": "Add Revision",
     "AdditionalMounts": "Additional Mounts",
     "AnotherDeploymentInProgress": "Another deployment update is already in progress. Please wait for it to complete before trying again.",
+    "AutoActivate": "Auto-activate after adding",
     "AutoScaling": "Auto-scaling",
     "AutoScalingRules": "Auto-scaling Rules",
     "BasicInformation": "Basic Information",

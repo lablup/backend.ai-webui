@@ -896,6 +896,7 @@
     "AddRevision": "เพิ่ม Revision",
     "AdditionalMounts": "การเมาท์เพิ่มเติม",
     "AnotherDeploymentInProgress": "การอัปเดตการปรับใช้อื่นกำลังดำเนินอยู่แล้ว โปรดรอให้เสร็จสิ้นก่อนลองอีกครั้ง",
+    "AutoActivate": "เปิดใช้งานอัตโนมัติหลังจากเพิ่ม",
     "AutoScaling": "การปรับขนาดอัตโนมัติ",
     "AutoScalingRules": "กฎการปรับขนาดอัตโนมัติ",
     "BasicInformation": "ข้อมูลพื้นฐาน",

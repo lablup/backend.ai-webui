@@ -896,6 +896,7 @@
     "AddRevision": "Tambah Revision",
     "AdditionalMounts": "Pemasangan Tambahan",
     "AnotherDeploymentInProgress": "Pembaruan deployment lain sedang berlangsung. Harap tunggu hingga selesai sebelum mencoba lagi.",
+    "AutoActivate": "Aktifkan otomatis setelah menambahkan",
     "AutoScaling": "Skala Otomatis",
     "AutoScalingRules": "Aturan Skala Otomatis",
     "BasicInformation": "Informasi Dasar",

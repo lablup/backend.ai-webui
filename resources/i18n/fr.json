@@ -896,6 +896,7 @@
     "AddRevision": "Ajouter une Revision",
     "AdditionalMounts": "Montages supplémentaires",
     "AnotherDeploymentInProgress": "Une autre mise à jour de déploiement est déjà en cours. Veuillez attendre qu'elle se termine avant de réessayer.",
+    "AutoActivate": "Activer automatiquement après ajout",
     "AutoScaling": "Mise à l'échelle automatique",
     "AutoScalingRules": "Règles de mise à l'échelle automatique",
     "BasicInformation": "Informations de base",

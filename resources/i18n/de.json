@@ -896,6 +896,7 @@
     "AddRevision": "Revision hinzufügen",
     "AdditionalMounts": "Zusätzliche Einhängepunkte",
     "AnotherDeploymentInProgress": "Ein weiteres Deployment-Update wird bereits durchgeführt. Bitte warten Sie, bis es abgeschlossen ist, bevor Sie es erneut versuchen.",
+    "AutoActivate": "Nach dem Hinzufügen automatisch aktivieren",
     "AutoScaling": "Automatische Skalierung",
     "AutoScalingRules": "Regeln für automatische Skalierung",
     "BasicInformation": "Grundlegende Informationen",

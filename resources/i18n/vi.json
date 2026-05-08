@@ -896,6 +896,7 @@
     "AddRevision": "Thêm Revision",
     "AdditionalMounts": "Gắn Kết Bổ Sung",
     "AnotherDeploymentInProgress": "Một bản cập nhật triển khai khác đang được thực hiện. Vui lòng chờ cho đến khi hoàn thành trước khi thử lại.",
+    "AutoActivate": "Tự động kích hoạt sau khi thêm",
     "AutoScaling": "Tự động mở rộng",
     "AutoScalingRules": "Quy tắc tự động mở rộng",
     "BasicInformation": "Thông tin cơ bản",

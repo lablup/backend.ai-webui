@@ -896,6 +896,7 @@
     "AddRevision": "Revision Ekle",
     "AdditionalMounts": "Ek Bağlama Noktaları",
     "AnotherDeploymentInProgress": "Başka bir dağıtım güncellemesi zaten devam ediyor. Tekrar denemeden önce tamamlanmasını bekleyin.",
+    "AutoActivate": "Ekledikten sonra otomatik etkinleştir",
     "AutoScaling": "Otomatik Ölçeklendirme",
     "AutoScalingRules": "Otomatik Ölçeklendirme Kuralları",
     "BasicInformation": "Temel Bilgiler",

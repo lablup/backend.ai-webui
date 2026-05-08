@@ -896,6 +896,7 @@
     "AddRevision": "添加 Revision",
     "AdditionalMounts": "附加挂载",
     "AnotherDeploymentInProgress": "另一个部署更新已在进行中。请等待其完成后再重试。",
+    "AutoActivate": "添加后自动激活",
     "AutoScaling": "自动扩缩容",
     "AutoScalingRules": "自动扩缩容规则",
     "BasicInformation": "基本信息",

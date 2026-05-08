@@ -896,6 +896,7 @@
     "AddRevision": "Lisää Revision",
     "AdditionalMounts": "Lisäliitokset",
     "AnotherDeploymentInProgress": "Toinen käyttöönoton päivitys on jo käynnissä. Odota sen valmistumista ennen kuin yrität uudelleen.",
+    "AutoActivate": "Aktivoi automaattisesti lisäyksen jälkeen",
     "AutoScaling": "Automaattinen skaalaus",
     "AutoScalingRules": "Automaattisen skaalauksen säännöt",
     "BasicInformation": "Perustiedot",

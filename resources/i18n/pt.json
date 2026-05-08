@@ -896,6 +896,7 @@
     "AddRevision": "Adicionar Revision",
     "AdditionalMounts": "Montagens adicionais",
     "AnotherDeploymentInProgress": "Outra atualização de implementação já está em curso. Por favor, aguarde a sua conclusão antes de tentar novamente.",
+    "AutoActivate": "Ativar automaticamente após adicionar",
     "AutoScaling": "Dimensionamento automático",
     "AutoScalingRules": "Regras de dimensionamento automático",
     "BasicInformation": "Informações básicas",

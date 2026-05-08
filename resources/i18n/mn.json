@@ -896,6 +896,7 @@
     "AddRevision": "Revision нэмэх",
     "AdditionalMounts": "Нэмэлт холболтууд",
     "AnotherDeploymentInProgress": "Өөр байршуулалтын шинэчлэлт аль хэдийн явагдаж байна. Дахин оролдохоос өмнө дуусахыг хүлээнэ үү.",
+    "AutoActivate": "Нэмсний дараа автоматаар идэвхжүүлэх",
     "AutoScaling": "Автомат масштабжуулалт",
     "AutoScalingRules": "Автомат масштабжуулалтын дүрмүүд",
     "BasicInformation": "Үндсэн мэдээлэл",

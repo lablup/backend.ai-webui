@@ -39,6 +39,7 @@ import VFolderTableFormItem, {
 } from './VFolderTableFormItem';
 import {
   App,
+  Checkbox,
   Collapse,
   Divider,
   Form,
@@ -128,6 +129,7 @@ type FormValues = ImageEnvironmentFormInput &
     commandInitialDelay?: number;
     commandMaxRetries?: number;
     environ: EnvVarFormListValue[];
+    autoActivate: boolean;
   };
 
 interface DeploymentAddRevisionModalFormBodyProps {
@@ -809,7 +811,7 @@ const DeploymentAddRevisionModalFormBody: React.FC<
           },
           modelDefinition,
           extraMounts: extraMounts.length > 0 ? extraMounts : null,
-          options: { autoActivate: true },
+          options: { autoActivate: values.autoActivate },
         },
       },
       onCompleted: (_, errors) => {
@@ -897,10 +899,14 @@ const DeploymentAddRevisionModalFormBody: React.FC<
         commandInitialDelay: 60,
         commandMaxRetries: 10,
         environ: [],
+        autoActivate: true,
       })}
     >
       <Form.Item name="name" label={t('deployment.RevisionName')}>
         <Input placeholder={t('deployment.RevisionNamePlaceholder')} />
+      </Form.Item>
+      <Form.Item name="autoActivate" valuePropName="checked">
+        <Checkbox>{t('deployment.AutoActivate')}</Checkbox>
       </Form.Item>
 
       <SectionHeader>{t('deployment.step.ModelAndRuntime')}</SectionHeader>
