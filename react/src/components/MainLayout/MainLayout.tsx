@@ -359,6 +359,8 @@ const LayoutWithPageTestId: React.FC<LayoutProps> = (props) => {
   const pageTest = useMemo(() => {
     const cleanPath = location.pathname.replace(/^\//, '').replace(/\//g, '-');
     return cleanPath ? `page-${cleanPath}` : 'page-root';
+    // `location` is from react-router useLocation() — pathname is reactive across navigations.
+    // react-doctor-disable-next-line react-doctor/no-mutable-in-deps
   }, [location.pathname]);
   return <Layout {...props} data-testid={pageTest} />;
 };

@@ -227,6 +227,7 @@ const ImportNotebookForm: React.FC<ImportNotebookFormProps> = ({
               <BAIFlex justify="start" gap={'sm'} wrap="wrap">
                 <img
                   src="/resources/badge.svg"
+                  alt="Run on Backend.AI"
                   style={{ marginTop: 5, marginBottom: 5 }}
                   width="147"
                 />

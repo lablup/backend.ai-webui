@@ -140,6 +140,9 @@ const ServiceValidationView: React.FC<ServiceValidationModalProps> = ({
   });
 
   const isRunningRef = useRef<boolean>(false);
+  const validationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
   useEffect(() => {
     if (isRunningRef.current) return;
 
@@ -154,6 +157,7 @@ const ServiceValidationView: React.FC<ServiceValidationModalProps> = ({
           setValidationStatus('error');
           message.error(t('modelService.CannotValidateNow'));
         }, 60000);
+        validationTimeoutRef.current = timeoutId;
 
         const SSEEventHandlers: SSEEventHandlerTypes<BackgroundTaskEvent> = {
           onUpdated: async (data, controller) => {
@@ -211,6 +215,12 @@ const ServiceValidationView: React.FC<ServiceValidationModalProps> = ({
         isRunningRef.current = false;
       });
     isRunningRef.current = true;
+    return () => {
+      if (validationTimeoutRef.current !== null) {
+        clearTimeout(validationTimeoutRef.current);
+        validationTimeoutRef.current = null;
+      }
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

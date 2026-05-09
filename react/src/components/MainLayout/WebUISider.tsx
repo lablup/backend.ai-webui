@@ -95,6 +95,8 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
     if (!isCurrentPathAdminCategory) {
       setGoBackPath(location.pathname);
     }
+    // `location` is from react-router useLocation() — pathname is reactive across navigations.
+    // react-doctor-disable-next-line react-doctor/no-mutable-in-deps
   }, [setGoBackPath, location.pathname, isCurrentPathAdminCategory]);
 
   const adminHeader = (

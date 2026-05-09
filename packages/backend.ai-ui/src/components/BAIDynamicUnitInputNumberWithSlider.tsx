@@ -55,9 +55,10 @@ const BAIDynamicUnitInputNumberWithSlider: React.FC<
   // FIXME: this is a workaround to fix the issue that the value is not updated when the value is controlled
   const [key, updateKey] = useUpdatableState('first');
   useEffect(() => {
-    setTimeout(() => {
+    const timeoutId = setTimeout(() => {
       updateKey(value?.toString());
     }, 0);
+    return () => clearTimeout(timeoutId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

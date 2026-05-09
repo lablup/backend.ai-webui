@@ -240,6 +240,8 @@ function PluginLoader() {
         element.style.minHeight = '';
       }
     });
+    // `location` is from react-router useLocation() — pathname is reactive across navigations.
+    // react-doctor-disable-next-line react-doctor/no-mutable-in-deps
   }, [location.pathname]);
 
   return (

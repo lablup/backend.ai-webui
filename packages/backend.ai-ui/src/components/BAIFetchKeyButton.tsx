@@ -5,7 +5,7 @@ import { useControllableValue } from 'ahooks';
 import { Button, Tooltip, type ButtonProps } from 'antd';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import React, { useEffect, useLayoutEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface BAIFetchKeyButtonProps extends Omit<
@@ -62,9 +62,14 @@ const BAIFetchKeyButton: React.FC<BAIFetchKeyButtonProps> = ({
 
   // display loading icon for at least "some ms" to avoid flickering
   const [displayLoading, setDisplayLoading] = useState(false);
+  const turnOffTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {
     if (loading) {
       const startTime = Date.now();
+      if (turnOffTimeoutRef.current !== null) {
+        clearTimeout(turnOffTimeoutRef.current);
+        turnOffTimeoutRef.current = null;
+      }
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setDisplayLoading(true);
 
@@ -72,8 +77,9 @@ const BAIFetchKeyButton: React.FC<BAIFetchKeyButtonProps> = ({
         const elapsedTime = Date.now() - startTime;
         const remainingTime = Math.max(700 - elapsedTime, 0);
 
-        setTimeout(() => {
+        turnOffTimeoutRef.current = setTimeout(() => {
           setDisplayLoading(false);
+          turnOffTimeoutRef.current = null;
         }, remainingTime);
       };
     }
