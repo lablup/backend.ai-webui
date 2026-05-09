@@ -61,9 +61,10 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
   const [key, updateKey] = useUpdatableState('first');
   useEffect(() => {
     if (!allowNegative) {
-      setTimeout(() => {
+      const timeoutId = setTimeout(() => {
         updateKey(value);
       }, 0);
+      return () => clearTimeout(timeoutId);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
