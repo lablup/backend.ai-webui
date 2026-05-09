@@ -19,7 +19,7 @@
     "vitest": "vitest run",
     "vitest:watch": "vitest",
     "wsproxy": "node ./src/wsproxy/local_proxy.js",
-    "build": "rm -rf build/web dist && mkdir -p build/web && pnpm run copyindex && pnpm run copyresource && pnpm run copyconfig && tsc && pnpm run -r --stream build",
+    "build": "rm -rf build/web dist && mkdir -p build/web && pnpm run copyindex && pnpm run copyresource && pnpm run copyconfig && pnpm run copymonaco && tsc && pnpm run -r --stream build",
     "build:react-only": "pnpm run --prefix ./react build:only",
     "server:p": "serve build/web",
     "dev": "node scripts/dev.mjs",
@@ -29,6 +29,7 @@
     "copyresource": "cp -Rp resources build/web && cp -Rp manifest build/web",
     "copyconfig": "./scripts/copy-config.js && cp version.json build/web && cp manifest.json build/web",
     "copyindex": "cp index.html build/web",
+    "copymonaco": "mkdir -p build/web/resources/monaco/vs && cp -R react/node_modules/monaco-editor/min/vs/. build/web/resources/monaco/vs/",
     "prepare": "husky",
     "theme-schema:update": "node scripts/gen-theme-schema.cjs"
   },
