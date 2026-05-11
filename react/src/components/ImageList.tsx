@@ -7,7 +7,7 @@ import {
   ImageListQuery$data,
   ImageListQuery$variables,
 } from '../__generated__/ImageListQuery.graphql';
-import { getImageFullName, localeCompare } from '../helper';
+import { getImageFullName } from '../helper';
 import { useBackendAIImageMetaData } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
@@ -38,6 +38,7 @@ import {
   INITIAL_FETCH_KEY,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { parseAsStringLiteral, useQueryStates } from 'nuqs';
 import { Key, useDeferredValue, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -45,6 +46,19 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
 export type EnvironmentImage = NonNullableNodeOnEdges<
   ImageListQuery$data['image_nodes']
 >;
+
+const availableImageSorterKeys = [
+  'registry',
+  'architecture',
+  'namespace',
+  'base_image_name',
+] as const;
+const availableImageSorterValues = [
+  ...availableImageSorterKeys,
+  ...availableImageSorterKeys.map((key) => `-${key}` as const),
+] as const;
+const isEnableSorter = (key: string) =>
+  _.includes(availableImageSorterKeys, key);
 
 const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
   'use memo';
@@ -65,7 +79,6 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
   const [visibleColumnSettingModal, { toggle: toggleColumnSettingModal }] =
     useToggle();
   const [isPendingRefreshTransition, startRefreshTransition] = useTransition();
-  const [isPendingFilterTransition, startFilterTransition] = useTransition();
   const currentProject = useCurrentProjectValue();
 
   const {
@@ -77,12 +90,19 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
     pageSize: 20,
   });
 
+  const [queryParams, setQueryParams] = useQueryStates(
+    {
+      order: parseAsStringLiteral(availableImageSorterValues),
+    },
+    { history: 'replace' },
+  );
+
   const queryVariables: ImageListQuery$variables = {
     scopeId: `project:${currentProject.id}`,
     offset: baiPaginationOption.offset,
     first: baiPaginationOption.first,
     filter: imageFilter || undefined,
-    order: undefined,
+    order: queryParams.order || undefined,
   };
   const deferredQueryVariables = useDeferredValue(queryVariables);
   const deferredFetchKey = useDeferredValue(fetchKey);
@@ -157,10 +177,6 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
       title: t('environment.Status'),
       dataIndex: 'installed',
       key: 'installed',
-      defaultSortOrder: 'descend',
-      sorter: (a, b) => {
-        return _.toNumber(a?.installed || 0) - _.toNumber(b?.installed || 0);
-      },
       render: (_text, row) =>
         row?.id && installingImages.includes(row.id) ? (
           <Tag color="gold">{t('environment.Installing')}</Tag>
@@ -180,39 +196,38 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
           {getImageFullName(row) || ''}
         </Typography.Text>
       ),
-      sorter: (a, b) => localeCompare(getImageFullName(a), getImageFullName(b)),
+      // Computed (`getImageFullName`) — not orderable on the server.
       width: token.screenXS,
     },
     {
       title: t('environment.Registry'),
       dataIndex: 'registry',
       key: 'registry',
-      sorter: (a, b) => localeCompare(a?.registry, b?.registry),
+      sorter: isEnableSorter('registry'),
     },
     {
       title: t('environment.Architecture'),
       dataIndex: 'architecture',
       key: 'architecture',
-      sorter: (a, b) => localeCompare(a?.architecture, b?.architecture),
+      sorter: isEnableSorter('architecture'),
     },
     {
       title: t('environment.Namespace'),
       key: 'namespace',
       dataIndex: 'namespace',
-      sorter: (a, b) => localeCompare(a?.namespace, b?.namespace),
+      sorter: isEnableSorter('namespace'),
     },
     {
       title: t('environment.BaseImageName'),
       key: 'base_image_name',
       dataIndex: 'base_image_name',
-      sorter: (a, b) => localeCompare(a?.base_image_name, b?.base_image_name),
+      sorter: isEnableSorter('base_image_name'),
       render: (text) => tagAlias(text),
     },
     {
       title: t('environment.Version'),
       key: 'version',
       dataIndex: 'version',
-      sorter: (a, b) => localeCompare(a?.version, b?.version),
     },
     {
       title: t('environment.Tags'),
@@ -226,7 +241,6 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
       title: t('environment.Digest'),
       dataIndex: 'digest',
       key: 'digest',
-      sorter: (a, b) => localeCompare(a?.digest || '', b?.digest || ''),
       render: (_text, row) => (
         <Typography.Text ellipsis={{ tooltip: true }} style={{ maxWidth: 200 }}>
           {row.digest}
@@ -390,10 +404,8 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
             ])}
             value={imageFilter || undefined}
             onChange={(value) => {
-              startFilterTransition(() => {
-                setImageFilter(value || '');
-                setTablePaginationOption({ current: 1 });
-              });
+              setImageFilter(value || '');
+              setTablePaginationOption({ current: 1 });
             }}
           />
           <BAIFlex gap={'xs'}>
@@ -458,7 +470,19 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
             columns,
             (column) => !_.includes(hiddenColumnKeys, _.toString(column?.key)),
           )}
-          loading={isPendingFilterTransition}
+          loading={
+            deferredFetchKey !== fetchKey ||
+            deferredQueryVariables !== queryVariables
+          }
+          order={queryParams.order}
+          onChangeOrder={(order) => {
+            setQueryParams({
+              order: order as
+                | (typeof availableImageSorterValues)[number]
+                | null,
+            });
+            setTablePaginationOption({ current: 1 });
+          }}
           rowSelection={{
             type: 'checkbox',
             onChange: (_, selectedRows) => {
