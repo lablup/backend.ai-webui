@@ -16,16 +16,16 @@ import {
   CloseOutlined,
   DeleteFilled,
   InfoCircleOutlined,
-  PlusOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { Alert, App, Button, Typography, theme } from 'antd';
+import { Alert, App, Typography, theme } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import {
   useUpdatableState,
   filterOutEmpty,
   filterOutNullAndUndefined,
+  BAIButton,
   BAITable,
   BAIFlex,
   BAIConfirmModalWithInput,
@@ -33,7 +33,7 @@ import {
   BAINameActionCell,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { BanIcon, UndoIcon } from 'lucide-react';
+import { BanIcon, PlusIcon, UndoIcon } from 'lucide-react';
 import { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
@@ -292,13 +292,13 @@ const ResourceGroupList: React.FC = () => {
               });
             }}
           />
-          <Button
+          <BAIButton
             type="primary"
-            icon={<PlusOutlined />}
+            icon={<PlusIcon />}
             onClick={() => toggleOpenCreateModal()}
           >
             {t('button.Create')}
-          </Button>
+          </BAIButton>
         </BAIFlex>
       </BAIFlex>
 

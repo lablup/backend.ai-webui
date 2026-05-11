@@ -5,7 +5,7 @@
 import { QuotaScopeCardFragment$key } from '../__generated__/QuotaScopeCardFragment.graphql';
 import { QuotaScopeCardUnsetMutation } from '../__generated__/QuotaScopeCardUnsetMutation.graphql';
 import { bytesToGB } from '../helper/index';
-import { EditFilled, PlusOutlined, CloseOutlined } from '@ant-design/icons';
+import { EditFilled, CloseOutlined } from '@ant-design/icons';
 import {
   CardProps,
   Table,
@@ -15,7 +15,8 @@ import {
   Empty,
   theme,
 } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIButton, BAIFlex } from 'backend.ai-ui';
+import { PlusIcon } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
@@ -87,12 +88,12 @@ const QuotaScopeCard: React.FC<Props> = ({
           <div style={{ margin: 10 }}>
             {t('storageHost.quotaSettings.ClickSettingButton')}
           </div>
-          <Button
-            icon={<PlusOutlined />}
+          <BAIButton
+            icon={<PlusIcon />}
             onClick={() => onClickEdit && onClickEdit()}
           >
             {t('storageHost.quotaSettings.AddQuotaConfigs')}
-          </Button>
+          </BAIButton>
         </>
       }
     />

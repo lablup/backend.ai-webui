@@ -48,7 +48,6 @@ import {
   DeleteFilled,
   ExclamationCircleOutlined,
   LoadingOutlined,
-  PlusOutlined,
   SettingOutlined,
   SyncOutlined,
   WarningOutlined,
@@ -70,6 +69,7 @@ import {
 import { DescriptionsItemType } from 'antd/es/descriptions';
 import {
   filterOutNullAndUndefined,
+  BAIButton,
   BAIFlex,
   BAIModal,
   BAIGraphQLPropertyFilter,
@@ -93,6 +93,7 @@ import {
   BotMessageSquareIcon,
   CircleArrowDownIcon,
   CircleArrowUpIcon,
+  PlusIcon,
 } from 'lucide-react';
 import React, {
   Suspense,
@@ -1034,16 +1035,16 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
           <Card
             title={t('modelService.AutoScalingRules')}
             extra={
-              <Button
+              <BAIButton
                 type="primary"
-                icon={<PlusOutlined />}
+                icon={<PlusIcon />}
                 disabled={isEndpointInDestroyingCategory(endpoint)}
                 onClick={() => {
                   setIsOpenAutoScalingRuleModal(true);
                 }}
               >
                 {t('modelService.AddRules')}
-              </Button>
+              </BAIButton>
             }
           >
             <BAITable
@@ -1272,16 +1273,16 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
       <Card
         title={t('modelService.GeneratedTokens')}
         extra={
-          <Button
+          <BAIButton
             type="primary"
-            icon={<PlusOutlined />}
+            icon={<PlusIcon />}
             disabled={isEndpointInDestroyingCategory(endpoint)}
             onClick={() => {
               setIsOpenTokenGenerationModal(true);
             }}
           >
             {t('modelService.GenerateToken')}
-          </Button>
+          </BAIButton>
         }
       >
         <BAITable

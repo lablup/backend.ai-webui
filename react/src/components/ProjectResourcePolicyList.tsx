@@ -20,7 +20,6 @@ import ProjectResourcePolicySettingModal from './ProjectResourcePolicySettingMod
 import TableColumnsSettingModal from './TableColumnsSettingModal';
 import {
   DeleteFilled,
-  PlusOutlined,
   ReloadOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
@@ -30,6 +29,7 @@ import type { ColumnType } from 'antd/es/table';
 import {
   filterOutEmpty,
   filterOutNullAndUndefined,
+  BAIButton,
   BAITable,
   BAIFlex,
   useUpdatableState,
@@ -38,7 +38,7 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { EllipsisIcon } from 'lucide-react';
+import { EllipsisIcon, PlusIcon } from 'lucide-react';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
@@ -255,15 +255,15 @@ const ProjectResourcePolicyList: React.FC<
                 }}
               />
             </Tooltip>
-            <Button
+            <BAIButton
               type="primary"
-              icon={<PlusOutlined />}
+              icon={<PlusIcon />}
               onClick={() => {
                 setIsCreatingPolicySetting(true);
               }}
             >
               {t('button.Create')}
-            </Button>
+            </BAIButton>
           </BAIFlex>
         </BAIFlex>
       </BAIFlex>

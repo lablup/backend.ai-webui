@@ -12,9 +12,10 @@ import { AutoScalingRuleListQuery } from '../__generated__/AutoScalingRuleListQu
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import AutoScalingRuleEditorModal from './AutoScalingRuleEditorModal';
-import { DeleteFilled, PlusOutlined, SettingOutlined } from '@ant-design/icons';
-import { App, Button, Tag, Tooltip, Typography } from 'antd';
+import { DeleteFilled, SettingOutlined } from '@ant-design/icons';
+import { App, Tag, Tooltip, Typography } from 'antd';
 import {
+  BAIButton,
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
@@ -29,6 +30,7 @@ import {
 import type { BAITableProps, GraphQLFilter } from 'backend.ai-ui';
 import { default as dayjs } from 'dayjs';
 import * as _ from 'lodash-es';
+import { PlusIcon } from 'lucide-react';
 import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import React, {
   useDeferredValue,
@@ -575,9 +577,9 @@ const AutoScalingRuleList: React.FC<AutoScalingRuleListProps> = ({
             />
           )}
           {!hideInlineAddButton && (
-            <Button
+            <BAIButton
               type="primary"
-              icon={<PlusOutlined />}
+              icon={<PlusIcon />}
               disabled={isEndpointDestroying || !isOwnedByCurrentUser}
               onClick={() => {
                 setEditingRuleId(null);
@@ -585,7 +587,7 @@ const AutoScalingRuleList: React.FC<AutoScalingRuleListProps> = ({
               }}
             >
               {t('modelService.AddRules')}
-            </Button>
+            </BAIButton>
           )}
         </BAIFlex>
         <AutoScalingRuleListNodes

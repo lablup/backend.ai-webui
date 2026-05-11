@@ -14,10 +14,11 @@ import DeploymentStatusTag, {
 } from '../components/DeploymentStatusTag';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
-import { PlusOutlined, QuestionCircleOutlined } from '@ant-design/icons';
+import { QuestionCircleOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import { Alert, Button, Skeleton, Tooltip, Typography, theme } from 'antd';
 import {
+  BAIButton,
   BAICard,
   BAIFlex,
   BAIUnmountAfterClose,
@@ -25,7 +26,7 @@ import {
   toGlobalId,
   useFetchKey,
 } from 'backend.ai-ui';
-import { BotMessageSquareIcon } from 'lucide-react';
+import { BotMessageSquareIcon, PlusIcon } from 'lucide-react';
 import React, { Suspense, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -170,14 +171,14 @@ const DeploymentDetailPage: React.FC = () => {
           showIcon
           title={t('deployment.NoCurrentRevisionDeployed')}
           action={
-            <Button
+            <BAIButton
               type="primary"
-              icon={<PlusOutlined />}
+              icon={<PlusIcon />}
               onClick={openAddRevision}
               disabled={isDeploymentDestroying}
             >
               {t('deployment.AddRevision')}
-            </Button>
+            </BAIButton>
           }
         />
       )}

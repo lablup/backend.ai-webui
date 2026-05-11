@@ -9,7 +9,7 @@ import { RoleFormModalFragment$key } from '../__generated__/RoleFormModalFragmen
 import { RoleFormModalPermissionMatrixQuery } from '../__generated__/RoleFormModalPermissionMatrixQuery.graphql';
 import { RoleFormModalResourceGroupQuery } from '../__generated__/RoleFormModalResourceGroupQuery.graphql';
 import { RoleFormModalUpdateMutation } from '../__generated__/RoleFormModalUpdateMutation.graphql';
-import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import { DeleteOutlined } from '@ant-design/icons';
 import { App, Button, Form, Input, type SelectProps } from 'antd';
 import {
   BAIAdminContainerRegistrySelect,
@@ -17,6 +17,7 @@ import {
   BAIAdminProjectSelect,
   BAIAdminResourceGroupSelect,
   BAIAdminSessionSelect,
+  BAIButton,
   BAIFlex,
   BAIKeypairSelect,
   BAIModal,
@@ -28,6 +29,7 @@ import {
   toLocalId,
   useBAILogger,
 } from 'backend.ai-ui';
+import { PlusIcon } from 'lucide-react';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -572,14 +574,14 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
                       onRemove={() => remove(name)}
                     />
                   ))}
-                  <Button
+                  <BAIButton
                     type="dashed"
                     block
-                    icon={<PlusOutlined />}
+                    icon={<PlusIcon />}
                     onClick={() => add({})}
                   >
                     {t('button.Add')}
-                  </Button>
+                  </BAIButton>
                   <Form.ErrorList errors={errors} />
                 </BAIFlex>
               )}

@@ -423,13 +423,6 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
               />
             </BAIFlex>
             <BAIFlex gap="xs">
-              <BAIButton
-                type="primary"
-                icon={<PlusIcon />}
-                onClick={handleIssueKeypair}
-              >
-                {t('credential.IssueNewKeypair')}
-              </BAIButton>
               <BAIFetchKeyButton
                 loading={
                   deferredQueryVariables !== queryVariables ||
@@ -440,6 +433,13 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
                   updateFetchKey(newFetchKey);
                 }}
               />
+              <BAIButton
+                type="primary"
+                icon={<PlusIcon />}
+                onClick={handleIssueKeypair}
+              >
+                {t('credential.IssueNewKeypair')}
+              </BAIButton>
             </BAIFlex>
           </BAIFlex>
           <BAITable<KeypairNode>

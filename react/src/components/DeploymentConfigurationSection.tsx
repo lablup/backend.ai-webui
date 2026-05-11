@@ -20,7 +20,6 @@ import {
   EditOutlined,
   LoadingOutlined,
   MoreOutlined,
-  PlusOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import {
@@ -36,6 +35,7 @@ import {
   theme,
 } from 'antd';
 import {
+  BAIButton,
   BAICard,
   BAIConfirmModalWithInput,
   BAIFetchKeyButton,
@@ -49,6 +49,7 @@ import {
   useBAILogger,
   useInterval,
 } from 'backend.ai-ui';
+import { PlusIcon } from 'lucide-react';
 import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -358,14 +359,14 @@ const DeploymentConfigurationSection: React.FC<
           },
         ]}
         tabBarExtraContent={
-          <Button
+          <BAIButton
             type="primary"
-            icon={<PlusOutlined />}
+            icon={<PlusIcon />}
             disabled={isDeploymentDestroying}
             onClick={onAddRevision}
           >
             {t('deployment.AddRevision')}
-          </Button>
+          </BAIButton>
         }
       >
         {activeRevisionTab === 'currentRevision' && (

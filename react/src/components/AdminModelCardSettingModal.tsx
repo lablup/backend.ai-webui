@@ -14,7 +14,6 @@ import FolderLink from './FolderLink';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
 import {
   App,
-  Button,
   Form,
   type FormInstance,
   Input,
@@ -342,7 +341,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
                 </Suspense>
                 {isModelStoreProject ? (
                   <BAIButton
-                    icon={<PlusIcon size={16} />}
+                    icon={<PlusIcon />}
                     onClick={() => setIsOpenCreateFolderModal(true)}
                   />
                 ) : (
@@ -378,7 +377,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
                       }
                     }}
                   >
-                    <Button icon={<PlusIcon size={16} />} />
+                    <BAIButton icon={<PlusIcon />} />
                   </Popconfirm>
                 )}
               </BAIFlex>

@@ -2,18 +2,12 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
-import {
-  AutoComplete,
-  Button,
-  Form,
-  FormItemProps,
-  Input,
-  InputRef,
-} from 'antd';
+import { MinusCircleOutlined } from '@ant-design/icons';
+import { AutoComplete, Form, FormItemProps, Input, InputRef } from 'antd';
 import { FormListProps } from 'antd/lib/form';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIButton, BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { PlusIcon } from 'lucide-react';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -240,7 +234,7 @@ const EnvVarFormList: React.FC<EnvVarFormListProps> = ({
               </BAIFlex>
             ))}
             <Form.Item noStyle>
-              <Button
+              <BAIButton
                 type="dashed"
                 onClick={() => {
                   add();
@@ -250,11 +244,11 @@ const EnvVarFormList: React.FC<EnvVarFormListProps> = ({
                     }
                   }, 0);
                 }}
-                icon={<PlusOutlined />}
+                icon={<PlusIcon />}
                 block
               >
                 {t('session.launcher.AddEnvironmentVariable')}
-              </Button>
+              </BAIButton>
             </Form.Item>
             <Form.ErrorList errors={errors} />
           </BAIFlex>

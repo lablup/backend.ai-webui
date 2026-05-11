@@ -16,7 +16,7 @@ import { convertToOrderBy } from '../helper';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
-import { App } from 'antd';
+import { App, theme } from 'antd';
 import {
   BAIButton,
   BAIDeleteConfirmModal,
@@ -31,6 +31,7 @@ import {
   filterOutNullAndUndefined,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { PlusIcon } from 'lucide-react';
 import { parseAsJson, parseAsString, useQueryStates } from 'nuqs';
 import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -42,6 +43,7 @@ const AdminDeploymentPresetListPage: React.FC = () => {
   const { t } = useTranslation();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
+  const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
   const webuiNavigate = useWebUINavigate();
 
@@ -176,9 +178,6 @@ const AdminDeploymentPresetListPage: React.FC = () => {
           />
         </BAIFlex>
         <BAIFlex gap={'sm'}>
-          <BAIButton type="primary" onClick={handleOpenCreateModal}>
-            {t('adminDeploymentPreset.CreatePreset')}
-          </BAIButton>
           <BAIFetchKeyButton
             loading={isLoading}
             value={fetchKey}
@@ -186,6 +185,13 @@ const AdminDeploymentPresetListPage: React.FC = () => {
               updateFetchKey(newFetchKey);
             }}
           />
+          <BAIButton
+            type="primary"
+            onClick={handleOpenCreateModal}
+            icon={<PlusIcon />}
+          >
+            {t('adminDeploymentPreset.CreatePreset')}
+          </BAIButton>
         </BAIFlex>
       </BAIFlex>
       {isSupported ? (
@@ -216,7 +222,7 @@ const AdminDeploymentPresetListPage: React.FC = () => {
           }}
         />
       ) : (
-        <BAIFlex justify="center" style={{ padding: 32 }}>
+        <BAIFlex justify="center" style={{ padding: token.paddingXL }}>
           {t('adminDeploymentPreset.NotSupported')}
         </BAIFlex>
       )}

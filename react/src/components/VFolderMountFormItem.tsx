@@ -21,6 +21,7 @@ import {
   theme,
 } from 'antd';
 import {
+  BAIButton,
   BAIFlex,
   BAIVFolderSelect,
   BAIVFolderSelectRef,
@@ -188,7 +189,7 @@ const VFolderMountFormItem: React.FC<VFolderMountFormItemProps> = ({
                     />
                   </Tooltip>
                   <Tooltip title={t('data.CreateANewStorageFolder')}>
-                    <Button
+                    <BAIButton
                       type="text"
                       size="small"
                       icon={<PlusIcon />}

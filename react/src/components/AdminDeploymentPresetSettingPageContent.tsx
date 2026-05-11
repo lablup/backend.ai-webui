@@ -21,7 +21,6 @@ import {
   DoubleRightOutlined,
   LeftOutlined,
   MinusCircleOutlined,
-  PlusOutlined,
   RightOutlined,
 } from '@ant-design/icons';
 import { useDebounceFn } from 'ahooks';
@@ -47,6 +46,7 @@ import {
   toLocalId,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { PlusIcon } from 'lucide-react';
 import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import React, {
   Suspense,
@@ -587,14 +587,14 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                         />
                       ))}
                       <Form.Item noStyle>
-                        <Button
+                        <BAIButton
                           type="dashed"
                           onClick={() => add()}
-                          icon={<PlusOutlined />}
+                          icon={<PlusIcon />}
                           block
                         >
                           {t('adminDeploymentPreset.AddResourceSlot')}
-                        </Button>
+                        </BAIButton>
                       </Form.Item>
                     </>
                   )}
@@ -643,14 +643,14 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                       </BAIFlex>
                     ))}
                     <Form.Item noStyle>
-                      <Button
+                      <BAIButton
                         type="dashed"
                         onClick={() => add()}
-                        icon={<PlusOutlined />}
+                        icon={<PlusIcon />}
                         block
                       >
                         {t('adminDeploymentPreset.AddResourceOpt')}
-                      </Button>
+                      </BAIButton>
                     </Form.Item>
                   </BAIFlex>
                 )}
@@ -764,14 +764,14 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                         onRemove={() => remove(name)}
                       />
                     ))}
-                    <Button
+                    <BAIButton
                       type="dashed"
                       onClick={() => add({ name: '', modelPath: '' })}
-                      icon={<PlusOutlined />}
+                      icon={<PlusIcon />}
                       block
                     >
                       {t('adminDeploymentPreset.modelDef.AddModel')}
-                    </Button>
+                    </BAIButton>
                   </BAIFlex>
                 )}
               </Form.List>
