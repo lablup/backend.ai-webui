@@ -14,7 +14,7 @@ interface ChatAgentSelectProps extends Omit<SelectProps, 'options'> {}
 function makeAgentOptions(agents: AIAgent[], filter?: string) {
   return agents
     .map((agent) => ({
-      label: agent.meta.title,
+      label: agent.name,
       value: agent.id,
       ...agent,
     }))
@@ -41,7 +41,7 @@ const AIAgentSelect: React.FC<ChatAgentSelectProps> = ({
       {selectedAgent && (
         <BAIFlex gap="xs">
           <FluentEmojiIcon
-            emoji={selectedAgent.meta.avatar}
+            emoji={selectedAgent.icon}
             height={token.sizeXL}
             width={token.sizeXL}
           />

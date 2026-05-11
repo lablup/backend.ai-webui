@@ -15,7 +15,6 @@ import {
   ChatModel,
   getLatestUserMessage,
   ChatMessage,
-  mapAgentParamsToChatParams,
 } from './ChatModel';
 import { CustomModelForm } from './CustomModelForm';
 import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
@@ -240,10 +239,11 @@ const PureChatCard: React.FC<ChatCardProps> = ({
   const [startTime, setStartTime] = useState<number | null>(null);
   const [endTime, setEndTime] = useState<number | null>(null);
 
-  const { agents } = useAIAgent();
+  const { agents, getEndpointBinding } = useAIAgent();
   const agent = agents.find((a) => a.id === chat.provider.agentId);
-  const effectiveApiKey = agent?.endpoint_token || chat.provider.apiKey;
-  const agentEndpointUrl = agent?.endpoint_url;
+  const agentEndpoint = agent ? getEndpointBinding(agent.id) : undefined;
+  const effectiveApiKey = agentEndpoint?.endpoint_token || chat.provider.apiKey;
+  const agentEndpointUrl = agentEndpoint?.endpoint_url;
 
   const baseURL = createBaseURL(
     logger,
@@ -293,7 +293,7 @@ const PureChatCard: React.FC<ChatCardProps> = ({
                 }),
               }),
               messages: convertToModelMessages(body?.messages),
-              system: agent?.config.system_prompt || undefined,
+              system: agent?.systemPrompt || undefined,
               ...(chat.usingParameters ? chat.parameters : {}),
             });
 
@@ -335,12 +335,14 @@ const PureChatCard: React.FC<ChatCardProps> = ({
   // vLLM, Ollama, NVIDIA GenAI-Perf, etc.
   useEffect(() => {
     if (status === 'streaming' && startTime === null) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- TPS timer; pre-existing in FR-2854 scope, refactor in follow-up
       setStartTime(Date.now());
     }
   }, [status, startTime]);
 
   useEffect(() => {
     if (!isStreaming && startTime !== null && endTime === null) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- TPS timer; pre-existing in FR-2854 scope, refactor in follow-up
       setEndTime(Date.now());
     }
   }, [isStreaming, startTime, endTime]);
@@ -385,23 +387,6 @@ const PureChatCard: React.FC<ChatCardProps> = ({
       appMessage.error(`Error fetching models: ${modelsError}`, 5);
     }
   }, [modelsError, fetchKey, appMessage]);
-
-  // Apply agent params to chat parameters on initial load (e.g., navigating from agent page)
-  const hasAppliedInitialAgentParams = useRef(false);
-  useEffect(() => {
-    if (
-      agent?.params &&
-      !hasAppliedInitialAgentParams.current &&
-      !chat.usingParameters
-    ) {
-      hasAppliedInitialAgentParams.current = true;
-      onUpdateChat?.({
-        usingParameters: true,
-        parameters: mapAgentParamsToChatParams(agent.params),
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [agent?.id]);
 
   useEffect(() => {
     if (chat.messages.length > 0) {
@@ -455,19 +440,14 @@ const PureChatCard: React.FC<ChatCardProps> = ({
           agents={agents}
           agent={agent}
           onChangeAgent={(agent) => {
+            const binding = getEndpointBinding(agent.id);
             onUpdateChat?.({
               provider: {
                 agentId: agent.id,
-                endpointId: agent.endpoint_url ? '' : agent.endpoint_id,
-                apiKey: agent.endpoint_token || undefined,
-                modelId: agent.config?.default_model || undefined,
+                endpointId: binding?.endpoint_url ? '' : binding?.endpoint_id,
+                apiKey: binding?.endpoint_token || undefined,
+                modelId: agent.modelPreferences?.preferredModelId || undefined,
               },
-              ...(agent.params
-                ? {
-                    usingParameters: true,
-                    parameters: mapAgentParamsToChatParams(agent.params),
-                  }
-                : {}),
             });
           }}
           // endpoint
