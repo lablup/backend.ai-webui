@@ -77,6 +77,8 @@ minimumReleaseAgeExclude:
   - react@19.2.6
   - react-dom@19.2.6
 
+minimumReleaseAgeIgnoreMissingTime: true
+
 allowBuilds:
   bufferutil: true
   core-js: true
