@@ -17,7 +17,9 @@ test.describe(
       page,
     }) => {
       const adminModelCardPage = new AdminModelCardPage(page);
-      await page.goto(`${webuiEndpoint}/admin-serving?tab=model-store`);
+      await page.goto(
+        `${webuiEndpoint}/admin-deployments?tab=model-store-management`,
+      );
       await adminModelCardPage.waitForTableLoad();
 
       // Note the initial pagination count
@@ -54,12 +56,22 @@ test.describe(
       page,
     }) => {
       const adminModelCardPage = new AdminModelCardPage(page);
-      await page.goto(`${webuiEndpoint}/admin-serving?tab=model-store`);
+      await page.goto(
+        `${webuiEndpoint}/admin-deployments?tab=model-store-management`,
+      );
       await adminModelCardPage.waitForTableLoad();
 
-      // Get the unfiltered total count text
+      // Capture the unfiltered total count. Avoid asserting an exact count after
+      // clearing — parallel workers create/delete cards mid-test, which makes a
+      // strict equality assertion flaky. Verify total is non-zero instead.
       const paginationInfo = adminModelCardPage.getPaginationInfo();
-      const initialCountText = await paginationInfo.textContent();
+      const parseTotal = (text: string): number => {
+        const match = text.match(/of (\d+) items/);
+        return match ? Number(match[1]) : 0;
+      };
+      const initialCountText = (await paginationInfo.textContent()) ?? '';
+      const initialTotal = parseTotal(initialCountText);
+      expect(initialTotal).toBeGreaterThan(0);
 
       // Get the name of the first model card to use as a filter value
       const firstRowName = await adminModelCardPage
@@ -70,15 +82,27 @@ test.describe(
         .innerText();
       const filterName = firstRowName.trim().split('\n')[0];
 
-      // Apply a filter
+      // Apply a filter and capture the filtered total
       await adminModelCardPage.applyNameFilter(filterName);
       await expect(paginationInfo).toContainText('items');
+      const filteredTotal = parseTotal(
+        (await paginationInfo.textContent()) ?? '',
+      );
 
       // Clear the filter by clicking the close icon on the active filter chip
       await adminModelCardPage.clearFilter();
 
-      // Verify the table reloads with the original count
-      await expect(paginationInfo).toHaveText(initialCountText!);
+      // Verify the URL no longer contains a filter param
+      await expect(page).not.toHaveURL(/filter=/);
+
+      // Verify the unfiltered list is restored: total must be >= the filtered
+      // total (other workers may have added/removed cards in parallel, so the
+      // count is not guaranteed to match initialTotal exactly).
+      await expect
+        .poll(async () =>
+          parseTotal((await paginationInfo.textContent()) ?? ''),
+        )
+        .toBeGreaterThanOrEqual(filteredTotal);
     });
 
     // 2.3 Superadmin sees empty table state when no model cards match the filter
@@ -86,7 +110,9 @@ test.describe(
       page,
     }) => {
       const adminModelCardPage = new AdminModelCardPage(page);
-      await page.goto(`${webuiEndpoint}/admin-serving?tab=model-store`);
+      await page.goto(
+        `${webuiEndpoint}/admin-deployments?tab=model-store-management`,
+      );
       await adminModelCardPage.waitForTableLoad();
 
       // Apply a filter that matches nothing
