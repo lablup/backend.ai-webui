@@ -112,15 +112,15 @@ applications:
             # lives at the repo root; nvm walks up to find it.
             - nvm install
             - nvm use
-            # Pin pnpm to the major declared by `package.json#engines.pnpm`
-            # (currently ^10.16.0). `pnpm@latest` would be non-reproducible —
-            # a future major could change install behavior without warning.
-            # When the repo root adds a `packageManager` field to
-            # `package.json`, corepack will auto-use it and the explicit
-            # `prepare` line below can be dropped (just `corepack enable`
-            # would suffice).
+            # Pin pnpm to the version declared by `package.json#packageManager`
+            # (currently `pnpm@11.0.8`). With that field present, `corepack
+            # enable` is sufficient — corepack auto-resolves the pinned
+            # version on the first pnpm invocation. Do NOT add a
+            # `corepack prepare pnpm@<major> --activate` line here: a stale
+            # major (e.g. `@10` left behind after `package.json` bumped to v11)
+            # silently overrides `packageManager` and produces broken
+            # workspace bin links (FR-2840 follow-up).
             - corepack enable
-            - corepack prepare pnpm@10 --activate
             # Reproducible installs only — never `--no-frozen-lockfile`.
             # `pnpm install` from anywhere in the workspace installs the
             # entire monorepo by default (it locates the workspace root
@@ -242,8 +242,9 @@ applications:
           commands:
             - nvm install
             - nvm use
+            # `corepack enable` is sufficient when `package.json#packageManager`
+            # is set (see the docs entry above for the rationale).
             - corepack enable
-            - corepack prepare pnpm@10 --activate
             - pnpm install --frozen-lockfile
         build:
           commands:
@@ -282,8 +283,9 @@ applications:
           commands:
             - nvm install
             - nvm use
+            # `corepack enable` is sufficient when `package.json#packageManager`
+            # is set (see the docs entry above for the rationale).
             - corepack enable
-            - corepack prepare pnpm@10 --activate
             - pnpm install --frozen-lockfile
             # Relay codegen for both projects, invoked at the
             # workspace root via pnpm's `-w` flag so the current
