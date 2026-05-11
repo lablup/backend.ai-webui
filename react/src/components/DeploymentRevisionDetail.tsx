@@ -8,12 +8,13 @@ import { formatShellCommand } from '../helper/parseCliCommand';
 import FolderLink from './FolderLink';
 import SourceCodeView from './SourceCodeView';
 import { LoadingOutlined } from '@ant-design/icons';
-import { Descriptions, Grid, Typography, theme } from 'antd';
+import { Descriptions, Grid, Typography } from 'antd';
 import { DescriptionsItemType } from 'antd/es/descriptions';
 import {
   BAIFlex,
   BAIResourceNumberWithIcon,
   BAITag,
+  BAIText,
   filterOutEmpty,
   filterOutNullAndUndefined,
   toLocalId,
@@ -33,13 +34,13 @@ const DeploymentRevisionDetail: React.FC<{
 }> = ({ revisionFrgmt, status = 'none' }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const screens = Grid.useBreakpoint();
 
   const revision = useFragment(
     graphql`
       fragment DeploymentRevisionDetail_revision on ModelRevision {
         id
+        revisionNumber
         createdAt
         clusterConfig {
           mode
@@ -124,16 +125,25 @@ const DeploymentRevisionDetail: React.FC<{
   const descriptionsProps = {
     bordered: true,
     column: screens.md ? 2 : 1,
-    style: { backgroundColor: token.colorBgBase },
   } as const;
 
   const baseItems: DescriptionsItemType[] = filterOutEmpty([
     {
-      key: 'revision-name',
+      key: 'revision-number',
+      label: t('deployment.RevisionNumber'),
+      children:
+        revision.revisionNumber != null ? (
+          <BAIText>{`#${revision.revisionNumber}`}</BAIText>
+        ) : (
+          renderFallback()
+        ),
+    },
+    {
+      key: 'revision-id',
       label: t('modelService.RevisionID'),
       children: revision.id ? (
         <BAIFlex gap="xs" align="center">
-          <Typography.Text>{toLocalId(revision.id)}</Typography.Text>
+          <BAIText copyable>{toLocalId(revision.id)}</BAIText>
           {status === 'current' && (
             <BAITag color="success">{t('deployment.Current')}</BAITag>
           )}

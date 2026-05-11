@@ -24,12 +24,15 @@ import {
   BAITable,
   BAITag,
   BAIUnmountAfterClose,
+  BAIId,
   INITIAL_FETCH_KEY,
   type GraphQLFilter,
   filterOutNullAndUndefined,
+  isValidUUID,
   toLocalId,
   useBAILogger,
   useFetchKey,
+  BAIText,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -51,12 +54,20 @@ import {
 type RevisionNode = NonNullable<
   NonNullable<
     NonNullable<
-      DeploymentRevisionHistoryTabListQuery['response']['deployment']
-    >['revisionHistory']['edges'][number]
+      NonNullable<
+        DeploymentRevisionHistoryTabListQuery['response']['deployment']
+      >['revisionHistory']
+    >['edges'][number]
   >['node']
 >;
 
-const availableRevisionSorterKeys = ['createdAt'] as const;
+const availableRevisionSorterKeys = [
+  'revisionNumber',
+  'createdAt',
+  'resourceGroup',
+  'clusterMode',
+  'runtimeVariantName',
+] as const;
 const availableRevisionSorterValues = [
   ...availableRevisionSorterKeys,
   ...availableRevisionSorterKeys.map((key) => `-${key}` as const),
@@ -195,11 +206,15 @@ const DeploymentRevisionHistoryTab: React.FC<
               edges {
                 node {
                   id
+                  revisionNumber
                   createdAt
 
                   clusterConfig {
                     mode
                     size
+                  }
+                  resourceConfig {
+                    resourceGroupName
                   }
                   modelRuntimeConfig {
                     runtimeVariant {
@@ -218,6 +233,13 @@ const DeploymentRevisionHistoryTab: React.FC<
                     id
                     identity {
                       canonicalName
+                    }
+                  }
+                  modelMountConfig {
+                    vfolderId
+                    vfolder {
+                      id
+                      name
                     }
                   }
                   ...DeploymentRevisionDetail_revision
@@ -277,12 +299,11 @@ const DeploymentRevisionHistoryTab: React.FC<
   };
 
   const handleRollback = (revision: RevisionNode): Promise<boolean> => {
-    const revisionLabel = toLocalId(revision.id);
     return new Promise<boolean>((resolveOuter) => {
       modal.confirm({
         title: t('deployment.Deploy'),
         content: t('deployment.DeployConfirm', {
-          revisionNumber: revisionLabel,
+          revisionNumber: revision.revisionNumber,
         }),
         okText: t('deployment.Deploy'),
         okButtonProps: {
@@ -315,7 +336,7 @@ const DeploymentRevisionHistoryTab: React.FC<
                 upsertNotification({
                   open: true,
                   message: t('deployment.DeploySuccess', {
-                    revisionNumber: revisionLabel,
+                    revisionNumber: revision.revisionNumber,
                   }),
                 });
                 handleRefresh();
@@ -342,10 +363,11 @@ const DeploymentRevisionHistoryTab: React.FC<
 
   const columns: BAIColumnType<RevisionNode>[] = [
     {
-      title: t('deployment.RevisionNumber'),
+      title: t('deployment.RevisionNumberWithID'),
       dataIndex: 'revisionNumber',
       key: 'revisionNumber',
       fixed: 'left',
+      sorter: true,
       render: (_value, record) => {
         // `currentRevisionId` and `deployingRevisionId` come back as raw
         // UUIDs from the scalar fields, while `record.id` is the
@@ -378,8 +400,15 @@ const DeploymentRevisionHistoryTab: React.FC<
                     })
                   }
                 >
-                  {recordLocalId ?? '-'}
+                  {record.revisionNumber != null
+                    ? `#${record.revisionNumber}`
+                    : '-'}
                 </Typography.Link>
+                <BAIFlex gap={0} align="center">
+                  {'('}
+                  <BAIId globalId={record.id} />
+                  {')'}
+                </BAIFlex>
                 {isCurrent ? (
                   <BAITag color="success">{t('deployment.Current')}</BAITag>
                 ) : null}
@@ -423,6 +452,7 @@ const DeploymentRevisionHistoryTab: React.FC<
     {
       title: t('deployment.ModelVersion'),
       key: 'modelVersion',
+      defaultHidden: true,
       render: (_value, record) => {
         const model = record.modelDefinition?.models?.[0];
         if (!model) return '-';
@@ -441,39 +471,97 @@ const DeploymentRevisionHistoryTab: React.FC<
     },
     {
       title: t('deployment.RuntimeVariant'),
-      key: 'runtimeVariant',
-      dataIndex: 'runtimeVariant',
+      key: 'runtimeVariantName',
+      dataIndex: 'runtimeVariantName',
+      sorter: true,
       render: (_value, record) =>
         record.modelRuntimeConfig?.runtimeVariant?.name ?? '-',
     },
     {
       title: t('deployment.Image'),
       key: 'image',
+      defaultHidden: true,
       render: (_value, record) => {
         const canonicalName = record.imageV2?.identity?.canonicalName;
-        if (!canonicalName) return '-';
+        const imageGlobalId = record.imageV2?.id;
+        if (!canonicalName && !imageGlobalId) return '-';
         return (
-          <Typography.Text
-            copyable={{ text: canonicalName }}
-            ellipsis={{ tooltip: canonicalName }}
-            style={{ maxWidth: 240 }}
-          >
-            {canonicalName}
-          </Typography.Text>
+          <BAIFlex gap="xs" align="center" wrap="wrap">
+            {canonicalName ? (
+              <BAIText
+                copyable
+                ellipsis={{ tooltip: canonicalName }}
+                style={{ maxWidth: 180 }}
+              >
+                {canonicalName}
+              </BAIText>
+            ) : null}
+            {imageGlobalId ? (
+              <BAIFlex gap={0} align="center">
+                {'('}
+                <BAIId globalId={imageGlobalId} />
+                {')'}
+              </BAIFlex>
+            ) : null}
+          </BAIFlex>
         );
       },
     },
     {
-      title: t('deployment.ClusterSize'),
-      key: 'clusterSize',
+      title: t('deployment.ModelFolder'),
+      key: 'modelFolder',
+      defaultHidden: true,
+      render: (_value, record) => {
+        const vfolder = record.modelMountConfig?.vfolder;
+        const vfolderId = record.modelMountConfig?.vfolderId;
+        if (!vfolder?.name && !vfolderId) return '-';
+        return (
+          <BAIFlex gap="xs" align="center" wrap="wrap">
+            {vfolder?.name ? (
+              <Typography.Text>{vfolder.name}</Typography.Text>
+            ) : null}
+            {vfolder?.id ? (
+              <BAIFlex gap={0} align="center">
+                {'('}
+                <BAIId globalId={vfolder.id} />
+                {')'}
+              </BAIFlex>
+            ) : vfolderId ? (
+              <Typography.Text type="secondary">{vfolderId}</Typography.Text>
+            ) : null}
+          </BAIFlex>
+        );
+      },
+    },
+    {
+      title: t('deployment.ClusterMode'),
+      key: 'clusterMode',
+      dataIndex: 'clusterMode',
+      sorter: true,
       render: (_value, record) => {
         const mode = record.clusterConfig?.mode;
         const size = record.clusterConfig?.size;
-        if (size == null) return '-';
-        return mode ? `${size} (${mode})` : `${size}`;
+        if (mode == null && size == null) return '-';
+        if (mode == null) return `${size}`;
+        if (size == null) return mode;
+        return `${mode} / ${size}`;
       },
     },
+    {
+      title: t('deployment.ResourceGroup'),
+      key: 'resourceGroup',
+      dataIndex: 'resourceGroup',
+      sorter: true,
+      defaultHidden: true,
+      render: (_value, record) =>
+        record.resourceConfig?.resourceGroupName ?? '-',
+    },
   ];
+
+  const uuidRule = {
+    message: t('general.InvalidUUID'),
+    validate: (value: string) => isValidUUID(value.toLowerCase()),
+  };
 
   const filterProperties = [
     {
@@ -487,6 +575,30 @@ const DeploymentRevisionHistoryTab: React.FC<
       type: 'datetime' as const,
       operators: ['after' as const, 'before' as const],
       defaultOperator: 'after' as const,
+    },
+    {
+      key: 'resourceGroup',
+      propertyLabel: t('deployment.ResourceGroup'),
+      type: 'string' as const,
+    },
+    {
+      key: 'clusterMode',
+      propertyLabel: t('deployment.ClusterMode'),
+      type: 'string' as const,
+    },
+    {
+      key: 'imageId',
+      propertyLabel: t('deployment.Image'),
+      type: 'uuid' as const,
+      fixedOperator: 'equals' as const,
+      rule: uuidRule,
+    },
+    {
+      key: 'modelVfolderId',
+      propertyLabel: t('deployment.ModelFolder'),
+      type: 'uuid' as const,
+      fixedOperator: 'equals' as const,
+      rule: uuidRule,
     },
   ];
 
