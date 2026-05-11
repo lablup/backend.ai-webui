@@ -130,13 +130,23 @@ applications:
             # the package bin, but it lives at dist/cli.js which only
             # exists after `tsc` runs. On a fresh `pnpm install` the
             # dist directory is empty, so pnpm cannot create the
-            # .bin/docs-toolkit symlink and the later `build:web` step
-            # fails with `spawn ENOENT`. Building the toolkit and
-            # re-running install populates dist/ and lets pnpm wire
-            # the bin link. (Same pattern as FR-2719's build_docs job
-            # in package.yml and the docs-archive workflow.)
+            # `.bin/docs-toolkit` symlink — it emits a warning and skips
+            # the link. After building the toolkit we have to ask pnpm
+            # to (re)wire the bin links.
+            #
+            # Subtle pnpm-v11 behavior: a second `pnpm install
+            # --frozen-lockfile` here is a no-op (`Already up to date`,
+            # ~100ms) because the lockfile is already satisfied — it
+            # does NOT revisit bin links. `pnpm rebuild` is what
+            # actually re-runs link creation against the now-populated
+            # `dist/`. Without this the later `pnpm exec docs-toolkit`
+            # call fails with `[ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL]
+            # Command "docs-toolkit" not found`. (Same chicken-and-egg
+            # pattern as FR-2719's build_docs job in package.yml and
+            # the docs-archive workflow; the v10→v11 bump in #7307
+            # silently regressed the old install/build/install dance.)
             - pnpm --filter backend.ai-docs-toolkit run build
-            - pnpm install --frozen-lockfile
+            - pnpm rebuild
         build:
           commands:
             # The toolkit's website-generator (FR-2710 F6) iterates
