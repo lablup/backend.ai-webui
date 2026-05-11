@@ -1,11 +1,6 @@
 packages:
   - react
-  - packages/backend.ai-ui
-  - packages/backend.ai-client
-  - packages/eslint-config-bai
-  - packages/backend.ai-docs-toolkit
-  - packages/backend.ai-docs-toolkit-example
-  - packages/backend.ai-webui-docs
+  - packages/*
 
 catalog:
   '@ant-design/icons': ^6.1.1
@@ -75,6 +70,12 @@ catalog:
 gitBranchLockfile: true
 
 minimumReleaseAge: 10080
+
+# Exclude packages that must be installable before they age out of the
+# `minimumReleaseAge` quarantine. Remove entries once they exceed 7 days.
+minimumReleaseAgeExclude:
+  - react@19.2.6
+  - react-dom@19.2.6
 
 allowBuilds:
   bufferutil: true
