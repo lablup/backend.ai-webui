@@ -1,12 +1,15 @@
 import { defineConfig, devices } from '@playwright/test';
+import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 /**
  * Playwright configuration for the `bai-smoke` runner.
  *
- * This config is invoked by `bai-smoke run` (`src/runner.ts`) via
- * `npx playwright test --config <this-file>`. The runner is the single
+ * This config is invoked by `bai-smoke run` (`src/runner.ts`), which
+ * spawns Node directly with the resolved `@playwright/test` CLI
+ * entrypoint and passes `--config <this-file>`. No `npx` is involved.
+ * The runner is the single
  * place that translates CLI arguments into the env vars consumed here —
  * we deliberately do NOT load `e2e/envs/.env.playwright` from this file
  * because the smoke CLI runs against arbitrary customer endpoints, not
@@ -16,7 +19,7 @@ import { fileURLToPath } from 'node:url';
  *   BAI_SMOKE_REPORT_DIR    — output directory for html / json reports
  *   BAI_SMOKE_WORKERS       — playwright worker count (optional)
  *   BAI_SMOKE_TIMEOUT_MS    — per-test timeout in ms (default 180000)
- *   BAI_SMOKE_GREP          — grep regex source (no slashes), e.g. `@smoke(-any|-admin)?\b`
+ *   BAI_SMOKE_GREP          — grep regex source (no slashes), e.g. `@smoke\b|@smoke-admin\b`
  *   BAI_SMOKE_GREP_INVERT   — grepInvert regex source (optional)
  *   BAI_SMOKE_PAGES         — comma-separated page directory names (optional)
  *   BAI_SMOKE_HEADED        — '1' to launch a headed browser
@@ -30,6 +33,18 @@ import { fileURLToPath } from 'node:url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const E2E_DIR = path.resolve(__dirname, '..', '..', 'e2e');
+
+// FR-2877 MVP limitation: the smoke runner discovers specs from the
+// monorepo's e2e/ tree. A bundled tarball / standalone binary distribution
+// is tracked in FR-2881. Fail loudly when the directory is missing so the
+// user gets a clear message instead of a cryptic Playwright "no tests
+// found" output.
+if (!existsSync(E2E_DIR)) {
+  throw new Error(
+    `bai-smoke MVP requires running from a backend.ai-webui checkout. Expected e2e dir at: ${E2E_DIR}. ` +
+      `Tarball / single-binary distribution lands in FR-2881.`,
+  );
+}
 
 const reportDir = process.env.BAI_SMOKE_REPORT_DIR ?? path.resolve(process.cwd(), 'smoke-report');
 
@@ -75,7 +90,7 @@ export default defineConfig({
     trace: 'retain-on-failure',
     video: 'retain-on-failure',
     headless: !headed,
-    ignoreHTTPSErrors: true,
+    ignoreHTTPSErrors: process.env.BAI_SMOKE_INSECURE_TLS === '1',
   },
   projects: [
     {
