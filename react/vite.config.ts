@@ -536,7 +536,27 @@ export default defineConfig(({ mode }) => {
       nodePolyfills({
         include: ['buffer', 'stream'],
         globals: {
-          Buffer: true,
+          // Why not `Buffer: true` in dev:
+          //   With `true`, the plugin prepends
+          //     `import __buffer_polyfill from 'vite-plugin-node-polyfills/shims/buffer';`
+          //     `globalThis.Buffer = globalThis.Buffer || __buffer_polyfill;`
+          //   to every chunk that touches Buffer. Vite's dep optimizer also
+          //   wraps that same shim into a CJS-interop chunk — so the chunk
+          //   that *exports* `__vite__cjsImport0_vitePluginNodePolyfills_
+          //   shims_buffer` also *imports* it (via the injected prelude),
+          //   and the import lands in the same chunk before the export is
+          //   initialized → TDZ on first browser load. `'build'` scopes
+          //   the injection to the production rollup build only.
+          //
+          // Why this is safe to do here:
+          //   No app code under `react/src` or `packages/backend.ai-ui/src`
+          //   references the Buffer global. The only Buffer.* call that
+          //   survives into the prod bundle is `Buffer.byteLength` inside
+          //   `cross-fetch/dist/browser-ponyfill.js` (pulled transitively
+          //   by `i18next-http-backend`), and that lives on a Node-only
+          //   code path the browser ponyfill never enters. The polyfill
+          //   itself could likely be removed entirely; see follow-up.
+          Buffer: 'build',
           global: false,
           process: false,
         },
