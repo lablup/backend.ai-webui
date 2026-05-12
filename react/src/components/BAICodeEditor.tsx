@@ -6,7 +6,7 @@ import { loadMonacoEditor } from '../helper/monacoEditor';
 import useControllableState_deprecated from '../hooks/useControllableState';
 import { useThemeMode } from '../hooks/useThemeMode';
 import type { EditorProps } from '@monaco-editor/react';
-import { Skeleton } from 'antd';
+import { Skeleton, theme } from 'antd';
 import React, { Suspense } from 'react';
 
 const MonacoEditor: React.LazyExoticComponent<React.FC<EditorProps>> =
@@ -54,6 +54,7 @@ const BAICodeEditor: React.FC<BAICodeEditorProps> = ({
 }) => {
   'use memo';
   const { isDarkMode } = useThemeMode();
+  const { token } = theme.useToken();
 
   const [script, setScript] = useControllableState_deprecated<string>({
     defaultValue: '',
@@ -61,16 +62,33 @@ const BAICodeEditor: React.FC<BAICodeEditorProps> = ({
     onChange,
   });
 
+  const loadingFallback = (
+    <Skeleton
+      active
+      style={{
+        paddingInline: token.paddingContentHorizontal,
+        paddingBlock: token.paddingContentVertical,
+      }}
+    />
+  );
+
   return (
-    <div style={style}>
-      <Suspense fallback={<Skeleton active />}>
+    <div
+      style={{
+        border: `1px solid ${token.colorBorder}`,
+        borderRadius: token.borderRadius,
+        overflow: 'hidden',
+        ...style,
+      }}
+    >
+      <Suspense fallback={loadingFallback}>
         <MonacoEditor
           language={MONACO_LANGUAGE_MAP[language]}
           height={height}
           theme={isDarkMode ? 'vs-dark' : 'vs'}
           value={script}
           onChange={(v: string | undefined) => setScript(v ?? '')}
-          loading={<Skeleton active />}
+          loading={loadingFallback}
           options={{
             readOnly: !editable,
             lineNumbers: showLineNumbers ? 'on' : 'off',
