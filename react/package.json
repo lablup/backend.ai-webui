@@ -11,7 +11,7 @@
     "@ant-design/icons": "catalog:",
     "@ant-design/x": "^2.5.0",
     "@cloudscape-design/board-components": "3.0.60",
-    "@codemirror/lang-jinja": "^6.0.0",
+    "@codemirror/lang-jinja": "^6.0.1",
     "@codemirror/lang-liquid": "^6.3.2",
     "@codemirror/language": "^6.12.3",
     "@dicebear/collection": "^9.4.2",
@@ -113,8 +113,8 @@
   },
   "devDependencies": {
     "@babel/core": "catalog:",
-    "@babel/plugin-transform-private-property-in-object": "^7.25.9",
     "@babel/plugin-syntax-import-attributes": "^7.28.6",
+    "@babel/plugin-transform-private-property-in-object": "^7.25.9",
     "@babel/preset-env": "^7.29.2",
     "@babel/preset-react": "^7.28.5",
     "@babel/preset-typescript": "catalog:",
@@ -135,6 +135,7 @@
     "@types/relay-runtime": "catalog:",
     "@types/relay-test-utils": "catalog:",
     "@vitejs/plugin-react": "^4.7.0",
+    "@vitest/coverage-v8": "^4.1.4",
     "babel-plugin-react-compiler": "catalog:",
     "babel-plugin-relay": "^20.1.1",
     "babel-preset-react-app": "^10.1.0",
@@ -155,10 +156,9 @@
     "relay-test-utils": "catalog:",
     "typescript-eslint": "catalog:",
     "vite": "^6.4.1",
-    "vite-plugin-node-polyfills": "^0.24.0",
+    "vite-plugin-node-polyfills": "^0.26.0",
     "vite-plugin-pwa": "^1.2.0",
     "vite-plugin-svgr": "^4.5.0",
-    "vitest": "^4.1.4",
-    "@vitest/coverage-v8": "^4.1.4"
+    "vitest": "^4.1.4"
   }
 }
