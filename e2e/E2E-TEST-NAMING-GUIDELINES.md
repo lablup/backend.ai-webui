@@ -412,10 +412,14 @@ that may be air-gapped.
 | Tag | Meaning |
 |-----|---------|
 | `@smoke` | Base smoke set. Included in every run. |
-| `@smoke-any` | Role-agnostic (works whether the supplied account is admin or user). |
 | `@smoke-admin` | Requires admin role. Skipped when running as a regular user. |
 | `@smoke-user` | Requires user-level access only. Admin accounts can run these too. |
-| `@smoke-extended` | Opt-in via `--profile extended`; excluded from the default run. |
+
+> `@smoke-any` and `@smoke-extended` are intentionally **not** part of the
+> MVP taxonomy. The first turned out unworkable in practice (every e2e
+> helper hard-codes a role via `loginAsAdmin` / `loginAsUser`, so no
+> describe is genuinely role-agnostic at the helper level), and the second
+> requires a `--profile` flag the CLI does not implement yet.
 
 These are **additive metadata** — existing tags (`@critical`, `@regression`,
 `@functional`, etc.) are preserved. Existing CI jobs that grep by other tags
@@ -442,6 +446,11 @@ following:
 5. **No outbound dependencies.** Smoke runs on air-gapped hosts. Specs must
    not call `fetch('https://...')` for any host other than the WebUI endpoint
    itself.
+6. **Describe-level tags apply to every nested test.** A describe that
+   mixes `loginAsAdmin` and `loginAsUser` is **not** taggable as smoke at
+   the describe level — split the describe so each one uses a single
+   account, then tag only the role-uniform half. This keeps rule 1
+   ("single account") consistent with the role tags.
 
 ### How to apply
 
@@ -451,22 +460,16 @@ Add the tag to the existing `tag: [...]` array on the outermost
 ```typescript
 // Before
 test.describe(
-  'Session Lifecycle Management',
-  { tag: ['@critical', '@session', '@functional'] },
+  'Login',
+  { tag: ['@auth', '@functional'] },
   () => { /* ... */ },
 );
 
-// After — added @smoke and @smoke-user
+// After — added @smoke and @smoke-admin (beforeEach uses loginAsAdmin)
 test.describe(
-  'Session Lifecycle Management',
+  'Login',
   {
-    tag: [
-      '@critical',
-      '@session',
-      '@functional',
-      '@smoke',
-      '@smoke-user',
-    ],
+    tag: ['@auth', '@functional', '@smoke', '@smoke-admin'],
   },
   () => { /* ... */ },
 );
@@ -478,11 +481,15 @@ A spec without a `tag:` option needs one added — never strip existing tags.
 
 The initial smoke set covers the highest-signal flows:
 
-- Login / authentication → `@smoke-any`
-- Dashboard render → `@smoke-any`
-- Session lifecycle (create → running → terminate) → `@smoke-user`
+- Login / authentication → `@smoke-admin` (`loginAsAdmin`)
+- Dashboard render (admin describe only; user-role checks live in a sibling describe without `@smoke*`) → `@smoke-admin`
 - VFolder basic CRUD → `@smoke-user`
 - Agent list (admin signal) → `@smoke-admin`
+
+Session lifecycle is intentionally **not** in the MVP smoke set: its
+scenarios use 240s timeouts and `test.fixme(no agents)` skips, which
+violates the bounded-runtime rule. A trimmed-down session smoke
+scenario is tracked as a follow-up.
 
 Pick **quality over quantity**: do not tag every spec in a folder. The smoke
 suite's value is its short runtime and high signal-to-noise ratio.
