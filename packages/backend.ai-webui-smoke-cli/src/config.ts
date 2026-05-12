@@ -20,7 +20,10 @@ export interface SmokeRunOptions {
   password: string;
   /** Role selection mode (`--role`). */
   role: SmokeRoleSelection;
-  /** Extra include tags (`--include @critical,@dashboard` → `['@critical','@dashboard']`). */
+  /**
+   * Extra tags to OR onto the smoke selection. Populated from
+   * `--also-include` (preferred) or the deprecated `--include` alias.
+   */
   include?: string[];
   /** Exclude tags (`--exclude`). */
   exclude?: string[];
@@ -42,27 +45,31 @@ export interface SmokeRunOptions {
  * Build the grep / grepInvert regex pair forwarded to Playwright via env.
  *
  * The base smoke set is `@smoke`; on top of that, each test may carry
- * a role-scoped tag (`@smoke-admin`, `@smoke-user`) or the role-agnostic
- * `@smoke-any`. We compose a regex that accepts:
+ * a role-scoped tag (`@smoke-admin`, `@smoke-user`). We compose a regex
+ * that accepts:
  *
- *   - bare `@smoke` (with no -admin/-user/-any suffix), OR
- *   - `@smoke-any`, OR
+ *   - bare `@smoke` (with no role suffix), OR
  *   - `@smoke-<effectiveRole>`
  *
- * so a `user` run picks up `@smoke`, `@smoke-any`, and `@smoke-user` —
- * but NOT `@smoke-admin`.
+ * so a `user` run picks up `@smoke` and `@smoke-user` — but NOT
+ * `@smoke-admin`.
  *
- * Additional `--include` tags are OR-ed in. `--exclude` tags become
+ * (`@smoke-any` was dropped from the taxonomy in FR-2875 / FR-2876
+ * because every e2e helper hard-codes a role via `loginAsAdmin` /
+ * `loginAsUser`, so no describe is genuinely role-agnostic at the
+ * helper level.)
+ *
+ * Additional `--also-include` tags are OR-ed in. `--exclude` tags become
  * `grepInvert`.
  */
 export function buildGrepExpression(
   opts: SmokeRunOptions,
   effectiveRole: EffectiveRole,
 ): { grep?: string; grepInvert?: string } {
-  // `@smoke\b` matches the bare base tag and we cover `@smoke-any` /
-  // `@smoke-<role>` explicitly so we don't accidentally pick up
-  // future tags like `@smoke-extended`.
-  const roleAlt = `@smoke-any\\b|@smoke-${effectiveRole}\\b`;
+  // `@smoke\b` matches the bare base tag; we match `@smoke-<role>`
+  // explicitly so we don't accidentally pick up future tags like
+  // `@smoke-extended`.
+  const roleAlt = `@smoke-${effectiveRole}\\b`;
   const baseAlt = `@smoke\\b`;
   const includeAlt = (opts.include ?? [])
     .map((t) => escapeRegex(t.trim()))
@@ -122,8 +129,11 @@ export function buildPlaywrightEnv(
 
   if (opts.insecureTls) {
     // Forward to both the runner's spawned children and any fetches
-    // inside the test harness. Only set when explicitly requested.
+    // inside the test harness. Only set on the spawned child env — we
+    // intentionally do NOT mutate process.env in the host runner.
     env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+    // Gate Playwright's `ignoreHTTPSErrors` in playwright.smoke.config.ts.
+    env.BAI_SMOKE_INSECURE_TLS = '1';
   }
 
   return env;

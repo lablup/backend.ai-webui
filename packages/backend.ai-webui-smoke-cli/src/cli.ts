@@ -96,7 +96,16 @@ program
       .choices(['auto', 'admin', 'user'])
       .default('auto'),
   )
-  .option('--include <tags>', 'Comma-separated extra tags to include (e.g. "@critical").')
+  .option(
+    '--also-include <tags>',
+    'Additional tag pattern(s) to OR onto the smoke selection (e.g. "@critical"). ' +
+      'To NARROW the smoke set, use --pages instead.',
+  )
+  // Backwards-compat alias for the original `--include` name. Deprecated —
+  // will be removed in a future release. Kept hidden from the main help.
+  .addOption(
+    new Option('--include <tags>', '(deprecated) alias for --also-include.').hideHelp(),
+  )
   .option('--exclude <tags>', 'Comma-separated tags to exclude.')
   .option(
     '--pages <names>',
@@ -108,12 +117,7 @@ program
     'Per-test timeout. Accepts "180s", "3m", or raw ms.',
     '180s',
   )
-  .option(
-    '--output <dir>',
-    'Output directory for the smoke report.',
-    () => defaultOutputDir(),
-    defaultOutputDir(),
-  )
+  .option('--output <dir>', 'Output directory for the smoke report.')
   .option('--headed', 'Run the browser in headed mode (debugging only).', false)
   .option('--insecure-tls', 'Accept self-signed TLS certificates.', false)
   .action(async (raw: Record<string, unknown>) => {
@@ -124,6 +128,9 @@ program
       );
       process.exit(2);
     }
+    // Scrub the password value from process.argv so accidental introspection
+    // (logs, crash dumps, `ps`-style helpers reading argv) cannot leak it.
+    scrubPasswordFromArgv();
 
     const endpoint = String(raw.endpoint);
     const webserver =
@@ -145,18 +152,25 @@ program
       return;
     }
 
+    // `--also-include` is the canonical flag; `--include` is a hidden alias.
+    const alsoIncludeRaw =
+      (raw.alsoInclude as string | string[] | undefined) ??
+      (raw.include as string | string[] | undefined);
+
+    const outputDir = path.resolve(String(raw.output ?? defaultOutputDir()));
+
     const opts: SmokeRunOptions = {
       endpoint,
       webserver,
       email: String(raw.email),
       password,
       role: (raw.role as SmokeRoleSelection) ?? 'auto',
-      include: splitCsvArg(raw.include as string | string[] | undefined),
+      include: splitCsvArg(alsoIncludeRaw),
       exclude: splitCsvArg(raw.exclude as string | string[] | undefined),
       pages: splitCsvArg(raw.pages as string | string[] | undefined),
       workers: typeof raw.workers === 'number' && raw.workers > 0 ? raw.workers : undefined,
       timeoutMs,
-      outputDir: path.resolve(String(raw.output ?? defaultOutputDir())),
+      outputDir,
       headed: raw.headed === true,
       insecureTls: raw.insecureTls === true,
     };
@@ -201,6 +215,27 @@ async function resolvePassword(raw: Record<string, unknown>): Promise<string | u
     return readStdin();
   }
   return undefined;
+}
+
+/**
+ * Replace the resolved password value in `process.argv` with `***` so
+ * downstream introspection (crash dumps, logs that dump argv, child
+ * processes inheriting argv via APIs that read the parent's command
+ * line) cannot leak the secret. Covers both `--password VALUE` and
+ * `--password=VALUE` forms.
+ */
+function scrubPasswordFromArgv(): void {
+  for (let i = 0; i < process.argv.length; i++) {
+    const a = process.argv[i];
+    if (a == null) continue;
+    if (a.startsWith('--password=')) {
+      process.argv[i] = '--password=***';
+      continue;
+    }
+    if (a === '--password' && process.argv[i + 1] != null) {
+      process.argv[i + 1] = '***';
+    }
+  }
 }
 
 function readStdin(): Promise<string> {
