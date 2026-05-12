@@ -343,13 +343,15 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                 }
               : undefined),
           },
-          resource_opts: {
-            shmem:
-              compareNumberWithUnits(values.resource.mem, '4g') > 0 &&
-              compareNumberWithUnits(values.resource.shmem, '1g') < 0
-                ? '1g'
-                : values.resource.shmem,
-          },
+          ...(values.resource.shmem && {
+            resource_opts: {
+              shmem:
+                compareNumberWithUnits(values.resource.mem, '4g') > 0 &&
+                compareNumberWithUnits(values.resource.shmem, '1g') < 0
+                  ? '1g'
+                  : values.resource.shmem,
+            },
+          }),
         },
       };
       return baiSignedRequestWithPromise({

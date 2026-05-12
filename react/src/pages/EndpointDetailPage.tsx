@@ -60,6 +60,7 @@ import {
   filterOutNullAndUndefined,
   BAIFlex,
   BAIUnmountAfterClose,
+  convertToBinaryUnit,
 } from 'backend.ai-ui';
 import { default as dayjs } from 'dayjs';
 import _ from 'lodash';
@@ -342,7 +343,12 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
     return edge?.node;
   });
 
-  const resource_opts = JSON.parse(endpoint?.resource_opts || '{}');
+  const parsedResourceOpts = JSON.parse(endpoint?.resource_opts || '{}');
+  const resource_opts = {
+    shmem: parsedResourceOpts.shmem
+      ? convertToBinaryUnit(parsedResourceOpts.shmem, '')?.number
+      : undefined,
+  };
 
   const items: DescriptionsItemType[] = [
     {
