@@ -398,13 +398,103 @@ test.describe.serial('FolderExplorerModal - User VFolder Access', () => {
 5. **Test Coverage**: Easier to spot gaps in test coverage
 6. **AI Integration**: AI agents can better understand test intent and generate meaningful tests
 
+## Smoke tags
+
+The **`@smoke`** family identifies specs that are part of the post-install smoke
+suite run by the `backend.ai-webui-smoke-cli` tool (Epic FR-2871). Smoke specs
+are a curated subset of the full e2e suite that a Field-Ops engineer can run
+against a freshly installed Backend.AI cluster to verify the WebUI is
+functional — within 5–10 minutes, using only one account, against an endpoint
+that may be air-gapped.
+
+### Tags
+
+| Tag | Meaning |
+|-----|---------|
+| `@smoke` | Base smoke set. Included in every run. |
+| `@smoke-any` | Role-agnostic (works whether the supplied account is admin or user). |
+| `@smoke-admin` | Requires admin role. Skipped when running as a regular user. |
+| `@smoke-user` | Requires user-level access only. Admin accounts can run these too. |
+| `@smoke-extended` | Opt-in via `--profile extended`; excluded from the default run. |
+
+These are **additive metadata** — existing tags (`@critical`, `@regression`,
+`@functional`, etc.) are preserved. Existing CI jobs that grep by other tags
+are unaffected.
+
+### Rules for smoke specs
+
+A spec is only eligible for an `@smoke*` tag if it satisfies **all** of the
+following:
+
+1. **Single account.** The entire `describe` block must run with one logged-in
+   account. Specs that call `loginAsUser2`, `loginAsCreatedAccount`, or
+   otherwise switch identities mid-test are **not** smoke candidates. (Those
+   belong in the full e2e suite.)
+2. **Self-cleanup.** Any resource the spec creates (vfolder, session, user)
+   must be cleaned up in `afterEach` / `afterAll`, even on failure. Smoke runs
+   happen against customer clusters — leftover artifacts are not acceptable.
+3. **Bounded runtime.** Each tagged describe must finish in under ~2 minutes,
+   so the whole smoke run stays within the 5–10 minute envelope.
+4. **No visual regression.** Pixel diffs and screenshot comparisons depend on
+   theme and viewport assumptions that vary across customer installs.
+   `@smoke*` specs must rely on role/text/data-testid selectors and value
+   assertions only.
+5. **No outbound dependencies.** Smoke runs on air-gapped hosts. Specs must
+   not call `fetch('https://...')` for any host other than the WebUI endpoint
+   itself.
+
+### How to apply
+
+Add the tag to the existing `tag: [...]` array on the outermost
+`test.describe` you want to include. Do not replace existing tags.
+
+```typescript
+// Before
+test.describe(
+  'Session Lifecycle Management',
+  { tag: ['@critical', '@session', '@functional'] },
+  () => { /* ... */ },
+);
+
+// After — added @smoke and @smoke-user
+test.describe(
+  'Session Lifecycle Management',
+  {
+    tag: [
+      '@critical',
+      '@session',
+      '@functional',
+      '@smoke',
+      '@smoke-user',
+    ],
+  },
+  () => { /* ... */ },
+);
+```
+
+A spec without a `tag:` option needs one added — never strip existing tags.
+
+### Coverage targets (MVP)
+
+The initial smoke set covers the highest-signal flows:
+
+- Login / authentication → `@smoke-any`
+- Dashboard render → `@smoke-any`
+- Session lifecycle (create → running → terminate) → `@smoke-user`
+- VFolder basic CRUD → `@smoke-user`
+- Agent list (admin signal) → `@smoke-admin`
+
+Pick **quality over quantity**: do not tag every spec in a folder. The smoke
+suite's value is its short runtime and high signal-to-noise ratio.
+
 ## References
 
 - Playwright Best Practices: https://playwright.dev/docs/best-practices
 - BDD (Behavior-Driven Development) naming conventions
 - User Story format: "As a [role], I can [action] so that [benefit]"
+- WebUI Smoke CLI spec: `.specs/FR-2871-webui-smoke-cli/spec.md`
 
 ---
 
-**Last Updated**: 2025-11-26
+**Last Updated**: 2026-05-12
 **Applies to**: All E2E tests in `/e2e` directory, especially AI-generated tests using Playwright MCP server

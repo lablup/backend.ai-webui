@@ -16,7 +16,9 @@ test.beforeEach(async ({ page, request }) => {
 
 test.describe(
   'Agent list',
-  { tag: ['@regression', '@agent', '@functional'] },
+  {
+    tag: ['@regression', '@agent', '@functional', '@smoke', '@smoke-admin'],
+  },
   () => {
     let agentListTable: Locator;
 
