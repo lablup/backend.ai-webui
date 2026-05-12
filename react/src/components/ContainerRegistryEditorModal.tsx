@@ -6,7 +6,6 @@ import { ContainerRegistryEditorModalCreateMutation } from '../__generated__/Con
 import { ContainerRegistryEditorModalFragment$key } from '../__generated__/ContainerRegistryEditorModalFragment.graphql';
 import { ContainerRegistryEditorModalModifyRegistryMutation } from '../__generated__/ContainerRegistryEditorModalModifyRegistryMutation.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { useThemeMode } from '../hooks/useThemeMode';
 import BAICodeEditor from './BAICodeEditor';
 import HiddenFormItem from './HiddenFormItem';
 import ProjectSelectForAdminPage from './ProjectSelectForAdminPage';
@@ -52,7 +51,6 @@ const ContainerRegistryEditorModal: React.FC<
 > = ({ containerRegistryFrgmt = null, onOk, ...modalProps }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { isDarkMode } = useThemeMode();
   const { message, modal } = App.useApp();
 
   const baiClient = useSuspendedBackendaiClient();
@@ -544,7 +542,6 @@ const ContainerRegistryEditorModal: React.FC<
                 <BAICodeEditor
                   editable
                   language="json"
-                  theme={isDarkMode ? 'dark' : 'light'}
                   style={{ width: '100%' }}
                 />
               </Form.Item>
