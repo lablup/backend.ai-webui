@@ -6,7 +6,6 @@
   "dependencies": {
     "@ai-sdk/openai-compatible": "^1.0.35",
     "@ai-sdk/react": "^2.0.175",
-    "@ant-design/charts": "^2.6.7",
     "@ant-design/colors": "^7.2.1",
     "@ant-design/cssinjs": "^2.1.2",
     "@ant-design/icons": "catalog:",
