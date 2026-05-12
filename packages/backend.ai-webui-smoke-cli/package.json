@@ -19,6 +19,7 @@
   "files": [
     "bin",
     "dist",
+    "playwright.smoke.config.ts",
     "README.md"
   ],
   "scripts": {
@@ -30,6 +31,7 @@
     "version:print": "node ./bin/bai-smoke.cjs version"
   },
   "dependencies": {
+    "@playwright/test": "^1.58.2",
     "commander": "^12.1.0"
   },
   "devDependencies": {
