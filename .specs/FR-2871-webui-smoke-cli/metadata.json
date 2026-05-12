@@ -6,6 +6,18 @@
   "specTaskUrl": "https://lablup.atlassian.net/browse/FR-2872",
   "stories": [],
   "sourceIssues": [],
+  "subtasks": {
+    "FR-A": "FR-2875",
+    "FR-B": "FR-2876",
+    "FR-C": "FR-2877",
+    "FR-D": "FR-2878",
+    "FR-E": "FR-2879",
+    "FR-F": "FR-2880",
+    "FR-G": "FR-2881",
+    "FR-H": "FR-2882",
+    "FR-I": "FR-2883",
+    "FR-J": "FR-2884"
+  },
   "createdAt": "2026-05-12T00:00:00Z",
   "verification": {
     "verifiedAt": "2026-05-12T11:30:00Z",
