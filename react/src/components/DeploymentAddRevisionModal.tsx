@@ -1112,13 +1112,14 @@ const DeploymentAddRevisionModalFormBody: React.FC<
         `ResourceAllocationFormItems` internally uses several
         `useLazyLoadQuery` calls that suspend whenever the watched
         form values (resource group, image, allocation preset) change.
-        Those throws are caught by the modal-level Suspense fallback
-        above the form body — combined with the deployment query's
-        default `store-or-network` policy, the body remounts re-read
-        the cached deployment instead of re-fetching it, so the
-        previously observed infinite-fetch loop does not recur.
+        Wrap it in a dedicated Suspense boundary so that only the
+        resource-allocation section shows a loading skeleton on
+        resource-group changes — rather than the modal-level fallback
+        unmounting the entire form body and losing user input.
       */}
-      <ResourceAllocationFormItems enableResourcePresets />
+      <Suspense fallback={<Skeleton active />}>
+        <ResourceAllocationFormItems enableResourcePresets />
+      </Suspense>
 
       <Collapse
         items={[
