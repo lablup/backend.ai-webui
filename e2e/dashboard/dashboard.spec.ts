@@ -12,7 +12,7 @@ const WIDGET_TIMEOUT = 30_000;
 test.describe(
   'Dashboard Page',
   {
-    tag: ['@regression', '@dashboard', '@functional', '@smoke', '@smoke-any'],
+    tag: ['@regression', '@dashboard', '@functional', '@smoke', '@smoke-admin'],
   },
   () => {
     // -----------------------------------------------------------------------
@@ -53,79 +53,6 @@ test.describe(
         ).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
         // 5. Verify the "Recently Created Sessions" widget is visible
-        await expect(
-          page
-            .locator('.bai_grid_item')
-            .filter({ hasText: 'Recently Created Sessions' })
-            .first(),
-        ).toBeVisible({ timeout: WIDGET_TIMEOUT });
-      });
-
-      test('Regular user sees "My Sessions" title instead of "Active Sessions" on the session count widget', async ({
-        page,
-        request,
-      }) => {
-        // 1. Login as regular user and navigate to /summary
-        await loginAsUser(page, request);
-        await navigateTo(page, 'summary');
-
-        // 2. Verify the widget title reads "My Sessions" (not "Active Sessions")
-        await expect(
-          page
-            .locator('.bai_grid_item')
-            .filter({ hasText: 'My Sessions' })
-            .first(),
-        ).toBeVisible({ timeout: WIDGET_TIMEOUT });
-        await expect(
-          page
-            .locator('.bai_grid_item')
-            .filter({ hasText: 'Active Sessions' })
-            .first(),
-        ).not.toBeVisible();
-      });
-
-      test('Regular user sees dashboard without admin-only widgets', async ({
-        page,
-        request,
-      }) => {
-        // 1. Login as regular user and navigate to /summary
-        await loginAsUser(page, request);
-        await navigateTo(page, 'summary');
-
-        // 2. Verify the "My Sessions" widget is visible
-        await expect(
-          page
-            .locator('.bai_grid_item')
-            .filter({ hasText: 'My Sessions' })
-            .first(),
-        ).toBeVisible({ timeout: WIDGET_TIMEOUT });
-
-        // 3. Verify the "My Resources" widget is visible
-        await expect(
-          page
-            .locator('.bai_grid_item')
-            .filter({ hasText: 'My Total Resources Limit' })
-            .first(),
-        ).toBeVisible({ timeout: WIDGET_TIMEOUT });
-
-        // 4. Verify the "My Resources in Resource Group" widget is visible
-        // The widget title is "My Resources in" followed by a resource group selector
-        await expect(
-          page
-            .locator('.bai_grid_item')
-            .filter({ hasText: 'My Resources in' })
-            .first(),
-        ).toBeVisible({ timeout: WIDGET_TIMEOUT });
-
-        // 5. Verify the "Agent Stats" widget is NOT present (admin only)
-        await expect(
-          page
-            .locator('.bai_grid_item')
-            .filter({ hasText: 'Agent Statistics' })
-            .first(),
-        ).not.toBeVisible();
-
-        // 6. Verify the "Recently Created Sessions" table is visible
         await expect(
           page
             .locator('.bai_grid_item')
@@ -404,6 +331,13 @@ test.describe(
     // -----------------------------------------------------------------------
     // 12. Board Layout (Resize and Move - smoke tests)
     // -----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
+    // User-role dashboard tests
+    //
+    // Kept outside the @smoke / @smoke-admin describe because the smoke set
+    // must use a single account; these tests log in as a regular user.
+    // -----------------------------------------------------------------------
+
     test.describe('Board Layout', () => {
       test('Admin can see resizable and movable widgets on the Dashboard', async ({
         page,
@@ -432,6 +366,89 @@ test.describe(
         const resizeHandles = page.locator('.bai_board_resizer');
         await expect(resizeHandles.first()).toBeVisible();
       });
+    });
+  },
+);
+
+// Regular-user dashboard checks live in a separate describe so they are
+// excluded from `@smoke` / `@smoke-admin` runs (smoke runs use a single
+// logged-in account, here admin).
+test.describe(
+  'Dashboard Page (user role)',
+  {
+    tag: ['@regression', '@dashboard', '@functional'],
+  },
+  () => {
+    test('Regular user sees "My Sessions" title instead of "Active Sessions" on the session count widget', async ({
+      page,
+      request,
+    }) => {
+      // 1. Login as regular user and navigate to /summary
+      await loginAsUser(page, request);
+      await navigateTo(page, 'summary');
+
+      // 2. Verify the widget title reads "My Sessions" (not "Active Sessions")
+      await expect(
+        page
+          .locator('.bai_grid_item')
+          .filter({ hasText: 'My Sessions' })
+          .first(),
+      ).toBeVisible({ timeout: WIDGET_TIMEOUT });
+      await expect(
+        page
+          .locator('.bai_grid_item')
+          .filter({ hasText: 'Active Sessions' })
+          .first(),
+      ).not.toBeVisible();
+    });
+
+    test('Regular user sees dashboard without admin-only widgets', async ({
+      page,
+      request,
+    }) => {
+      // 1. Login as regular user and navigate to /summary
+      await loginAsUser(page, request);
+      await navigateTo(page, 'summary');
+
+      // 2. Verify the "My Sessions" widget is visible
+      await expect(
+        page
+          .locator('.bai_grid_item')
+          .filter({ hasText: 'My Sessions' })
+          .first(),
+      ).toBeVisible({ timeout: WIDGET_TIMEOUT });
+
+      // 3. Verify the "My Resources" widget is visible
+      await expect(
+        page
+          .locator('.bai_grid_item')
+          .filter({ hasText: 'My Total Resources Limit' })
+          .first(),
+      ).toBeVisible({ timeout: WIDGET_TIMEOUT });
+
+      // 4. Verify the "My Resources in Resource Group" widget is visible
+      await expect(
+        page
+          .locator('.bai_grid_item')
+          .filter({ hasText: 'My Resources in' })
+          .first(),
+      ).toBeVisible({ timeout: WIDGET_TIMEOUT });
+
+      // 5. Verify the "Agent Stats" widget is NOT present (admin only)
+      await expect(
+        page
+          .locator('.bai_grid_item')
+          .filter({ hasText: 'Agent Statistics' })
+          .first(),
+      ).not.toBeVisible();
+
+      // 6. Verify the "Recently Created Sessions" table is visible
+      await expect(
+        page
+          .locator('.bai_grid_item')
+          .filter({ hasText: 'Recently Created Sessions' })
+          .first(),
+      ).toBeVisible({ timeout: WIDGET_TIMEOUT });
     });
   },
 );

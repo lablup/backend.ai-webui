@@ -26,7 +26,11 @@ import { test, expect } from '@playwright/test';
 test.describe(
   'Session Lifecycle Management',
   {
-    tag: ['@critical', '@session', '@functional', '@smoke', '@smoke-user'],
+    // NOTE: not tagged @smoke for MVP — multiple scenarios use 240s timeouts
+    // and `test.fixme(no agents)` skips, which makes the spec too heavy /
+    // environment-dependent for a 5–10 minute smoke run. Tracked as a
+    // follow-up to introduce a lightweight session smoke scenario.
+    tag: ['@critical', '@session', '@functional'],
   },
   () => {
     // Run tests sequentially to avoid resource exhaustion
