@@ -14,7 +14,7 @@ import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
 import { LoadingOutlined, PlayCircleOutlined } from '@ant-design/icons';
-import { App, Button, Typography, theme } from 'antd';
+import { Button, Popconfirm, theme, Typography } from 'antd';
 import {
   type BAIColumnType,
   BAIFetchKeyButton,
@@ -101,7 +101,6 @@ const DeploymentRevisionHistoryTab: React.FC<
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { modal } = App.useApp();
   const { logger } = useBAILogger();
   const { upsertNotification } = useSetBAINotification();
   const [isPending, startTransition] = useTransition();
@@ -299,63 +298,45 @@ const DeploymentRevisionHistoryTab: React.FC<
   };
 
   const handleRollback = (revision: RevisionNode): Promise<boolean> => {
-    return new Promise<boolean>((resolveOuter) => {
-      modal.confirm({
-        title: t('deployment.Deploy'),
-        content: t('deployment.DeployConfirm', {
-          revisionNumber: revision.revisionNumber,
-        }),
-        okText: t('deployment.Deploy'),
-        okButtonProps: {
-          danger: true,
+    return new Promise<boolean>((resolve) => {
+      setRollingBackRevisionId(revision.id);
+      commitActivate({
+        variables: {
+          input: {
+            deploymentId: toLocalId(deployment.id),
+            revisionId: toLocalId(revision.id),
+          },
         },
-        onCancel: () => resolveOuter(false),
-        onOk: () => {
-          return new Promise<void>((resolve) => {
-            setRollingBackRevisionId(revision.id);
-            commitActivate({
-              variables: {
-                input: {
-                  deploymentId: toLocalId(deployment.id),
-                  revisionId: toLocalId(revision.id),
-                },
-              },
-              onCompleted: (_res, errors) => {
-                setRollingBackRevisionId(null);
-                if (errors && errors.length > 0) {
-                  logger.error(errors[0]);
-                  upsertNotification({
-                    open: true,
-                    message: errors[0]?.message || t('general.ErrorOccurred'),
-                    type: 'error',
-                  });
-                  resolveOuter(false);
-                  resolve();
-                  return;
-                }
-                upsertNotification({
-                  open: true,
-                  message: t('deployment.DeploySuccess', {
-                    revisionNumber: revision.revisionNumber,
-                  }),
-                });
-                handleRefresh();
-                resolveOuter(true);
-                resolve();
-              },
-              onError: (error) => {
-                setRollingBackRevisionId(null);
-                logger.error(error);
-                upsertNotification({
-                  open: true,
-                  message: error?.message || t('general.ErrorOccurred'),
-                  type: 'error',
-                });
-                resolveOuter(false);
-                resolve();
-              },
+        onCompleted: (_res, errors) => {
+          setRollingBackRevisionId(null);
+          if (errors && errors.length > 0) {
+            logger.error(errors[0]);
+            upsertNotification({
+              open: true,
+              message: errors[0]?.message || t('general.ErrorOccurred'),
+              type: 'error',
             });
+            resolve(false);
+            return;
+          }
+          upsertNotification({
+            open: true,
+            message: t('deployment.DeploySuccess', {
+              revisionNumber: revision.revisionNumber,
+            }),
           });
+          handleRefresh();
+          resolve(true);
+        },
+        onError: (error) => {
+          setRollingBackRevisionId(null);
+          logger.error(error);
+          upsertNotification({
+            open: true,
+            message: error?.message || t('general.ErrorOccurred'),
+            type: 'error',
+          });
+          resolve(false);
         },
       });
     });
@@ -432,8 +413,19 @@ const DeploymentRevisionHistoryTab: React.FC<
                 icon: <PlayCircleOutlined />,
                 disabled: isDeployDisabled,
                 disabledReason: deployDisabledReason,
-                onClick: () => {
-                  void handleRollback(record);
+                popConfirm: {
+                  title: t('deployment.Deploy'),
+                  description: t('deployment.DeployConfirm', {
+                    revisionNumber: record.revisionNumber,
+                  }),
+                  okText: t('deployment.Deploy'),
+                  cancelText: t('button.Cancel'),
+                  okButtonProps: {
+                    danger: true,
+                  },
+                  onConfirm: () => {
+                    void handleRollback(record);
+                  },
                 },
               },
             ]}
@@ -616,22 +608,32 @@ const DeploymentRevisionHistoryTab: React.FC<
           onClose={() => setDrawerRevision(null)}
           extra={
             drawerRevision ? (
-              <Button
-                type="primary"
-                icon={<PlayCircleOutlined />}
-                disabled={
-                  drawerRevision.status === 'current' ||
-                  drawerRevision.status === 'deploying' ||
-                  isDeploymentDestroying ||
-                  !!rollingBackRevisionId
-                }
-                onClick={async () => {
+              <Popconfirm
+                title={t('deployment.Deploy')}
+                description={t('deployment.DeployConfirm', {
+                  revisionNumber: drawerRevision.frgmt.revisionNumber,
+                })}
+                okText={t('deployment.Deploy')}
+                cancelText={t('button.Cancel')}
+                okButtonProps={{ danger: true }}
+                onConfirm={async () => {
                   const success = await handleRollback(drawerRevision.frgmt);
                   if (success) setDrawerRevision(null);
                 }}
               >
-                {t('deployment.Deploy')}
-              </Button>
+                <Button
+                  type="primary"
+                  icon={<PlayCircleOutlined />}
+                  disabled={
+                    drawerRevision.status === 'current' ||
+                    drawerRevision.status === 'deploying' ||
+                    isDeploymentDestroying ||
+                    !!rollingBackRevisionId
+                  }
+                >
+                  {t('deployment.Deploy')}
+                </Button>
+              </Popconfirm>
             ) : undefined
           }
         />
