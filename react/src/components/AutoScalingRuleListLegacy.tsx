@@ -8,17 +8,14 @@ import AutoScalingRuleEditorModalLegacy, {
   COMPARATOR_LABELS,
 } from './AutoScalingRuleEditorModalLegacy';
 import { DeleteFilled, PlusOutlined, SettingOutlined } from '@ant-design/icons';
+import { App, Button, Tag, Tooltip, Typography, theme } from 'antd';
 import {
-  App,
-  Button,
-  Card,
-  Popconfirm,
-  Tag,
-  Tooltip,
-  Typography,
-  theme,
-} from 'antd';
-import { BAIFlex, BAITable, BAIUnmountAfterClose } from 'backend.ai-ui';
+  BAICard,
+  BAIConfirmModalWithInput,
+  BAIFlex,
+  BAITable,
+  BAIUnmountAfterClose,
+} from 'backend.ai-ui';
 import { default as dayjs } from 'dayjs';
 import * as _ from 'lodash-es';
 import { CircleArrowDownIcon, CircleArrowUpIcon } from 'lucide-react';
@@ -102,6 +99,9 @@ const AutoScalingRuleListLegacy: React.FC<AutoScalingRuleListLegacyProps> = ({
     useState<AutoScalingRuleEditorModalLegacyFragment$key | null>(null);
   const [isOpenAutoScalingRuleModal, setIsOpenAutoScalingRuleModal] =
     useState(false);
+  const [deletingRule, setDeletingRule] = useState<Record<string, any> | null>(
+    null,
+  );
 
   const [
     commitDeleteAutoScalingRuleMutation,
@@ -117,7 +117,7 @@ const AutoScalingRuleListLegacy: React.FC<AutoScalingRuleListLegacyProps> = ({
 
   return (
     <>
-      <Card
+      <BAICard
         title={t('modelService.AutoScalingRules')}
         extra={
           <Button
@@ -131,6 +131,7 @@ const AutoScalingRuleListLegacy: React.FC<AutoScalingRuleListLegacyProps> = ({
             {t('modelService.AddRules')}
           </Button>
         }
+        styles={{ body: { paddingTop: 0 } }}
       >
         <BAITable
           scroll={{ x: 'max-content' }}
@@ -180,79 +181,26 @@ const AutoScalingRuleListLegacy: React.FC<AutoScalingRuleListLegacyProps> = ({
                       }
                     }}
                   />
-                  <Popconfirm
-                    title={t('dialog.warning.CannotBeUndone')}
-                    okText={t('button.Delete')}
-                    okButtonProps={{
-                      danger: true,
-                    }}
-                    disabled={isInFlightDeleteAutoScalingRuleMutation}
-                    onConfirm={() => {
-                      if (autoScalingRules) {
-                        commitDeleteAutoScalingRuleMutation({
-                          variables: {
-                            id: row?.id as string,
-                          },
-                          onCompleted: (res, errors) => {
-                            if (
-                              !res?.delete_endpoint_auto_scaling_rule_node?.ok
-                            ) {
-                              message.error(
-                                res?.delete_endpoint_auto_scaling_rule_node
-                                  ?.msg,
-                              );
-                            } else if (errors && errors.length > 0) {
-                              const errorMsgList = _.map(
-                                errors,
-                                (error) =>
-                                  error.message || t('dialog.ErrorOccurred'),
-                              );
-                              for (const error of errorMsgList) {
-                                message.error(error);
+                  <Button
+                    type="text"
+                    icon={
+                      <DeleteFilled
+                        style={
+                          isEndpointDestroying
+                            ? undefined
+                            : {
+                                color: token.colorError,
                               }
-                            } else {
-                              setEditingAutoScalingRule(null);
-                              startRefetchTransition(() => {
-                                onRefetch();
-                              });
-                              message.success({
-                                key: 'autoscaling-rule-deleted',
-                                content: t(
-                                  'autoScalingRule.SuccessfullyDeleted',
-                                ),
-                              });
-                            }
-                          },
-                          onError: (error) => {
-                            message.error(
-                              error?.message || t('dialog.ErrorOccurred'),
-                            );
-                          },
-                        });
+                        }
+                      />
+                    }
+                    disabled={isEndpointDestroying || !isOwnedByCurrentUser}
+                    onClick={() => {
+                      if (row) {
+                        setDeletingRule(row);
                       }
                     }}
-                  >
-                    <Button
-                      type="text"
-                      icon={
-                        <DeleteFilled
-                          style={
-                            isEndpointDestroying
-                              ? undefined
-                              : {
-                                  color: token.colorError,
-                                }
-                          }
-                        />
-                      }
-                      disabled={false}
-                      onClick={() => {
-                        if (row) {
-                          setEditingAutoScalingRule(row);
-                        }
-                      }}
-                    />
-                  </Popconfirm>
+                  />
                 </BAIFlex>
               ),
             },
@@ -322,7 +270,7 @@ const AutoScalingRuleListLegacy: React.FC<AutoScalingRuleListLegacyProps> = ({
           showSorterTooltip={false}
           dataSource={autoScalingRules}
         ></BAITable>
-      </Card>
+      </BAICard>
       <BAIUnmountAfterClose>
         <AutoScalingRuleEditorModalLegacy
           open={isOpenAutoScalingRuleModal}
@@ -339,6 +287,64 @@ const AutoScalingRuleListLegacy: React.FC<AutoScalingRuleListLegacyProps> = ({
           }}
         />
       </BAIUnmountAfterClose>
+      <BAIConfirmModalWithInput
+        open={!!deletingRule}
+        title={t('autoScalingRule.ConfirmDeleteAutoScalingRule', {
+          autoScalingRule: deletingRule?.metric_name ?? '',
+        })}
+        content={
+          <Typography.Text type="danger">
+            {t('dialog.warning.CannotBeUndone')}
+          </Typography.Text>
+        }
+        confirmText={deletingRule?.metric_name ?? ''}
+        inputLabel={t('autoScalingRule.TypeMetricNameToDelete', {
+          metricName: deletingRule?.metric_name ?? '',
+        })}
+        okText={t('button.Delete')}
+        okButtonProps={{ loading: isInFlightDeleteAutoScalingRuleMutation }}
+        onOk={() => {
+          if (deletingRule && autoScalingRules) {
+            commitDeleteAutoScalingRuleMutation({
+              variables: {
+                id: deletingRule.id as string,
+              },
+              onCompleted: (res, errors) => {
+                if (!res?.delete_endpoint_auto_scaling_rule_node?.ok) {
+                  message.error(
+                    res?.delete_endpoint_auto_scaling_rule_node?.msg,
+                  );
+                  setDeletingRule(null);
+                } else if (errors && errors.length > 0) {
+                  const errorMsgList = _.map(
+                    errors,
+                    (error) => error.message || t('dialog.ErrorOccurred'),
+                  );
+                  for (const error of errorMsgList) {
+                    message.error(error);
+                  }
+                  setDeletingRule(null);
+                } else {
+                  setDeletingRule(null);
+                  setEditingAutoScalingRule(null);
+                  startRefetchTransition(() => {
+                    onRefetch();
+                  });
+                  message.success({
+                    key: 'autoscaling-rule-deleted',
+                    content: t('autoScalingRule.SuccessfullyDeleted'),
+                  });
+                }
+              },
+              onError: (error) => {
+                message.error(error?.message || t('dialog.ErrorOccurred'));
+                setDeletingRule(null);
+              },
+            });
+          }
+        }}
+        onCancel={() => setDeletingRule(null)}
+      />
     </>
   );
 };

@@ -562,6 +562,7 @@
     "StatusInfo": "ข้อมูลสถานะ",
     "StatusUpdatedSuccessfully": "สถานะผู้ใช้มีการเปลี่ยนแปลง",
     "TooltipForRequirePasswordChange": "หากเปิดใช้งานตัวเลือกนี้ ผู้ใช้จะต้องเปลี่ยนรหัสผ่านเมื่อเข้าสู่ระบบครั้งถัดไป",
+    "TypeAccessKeyToDelete": "Type the access key to confirm deletion",
     "TypePermanentlyDelete": "กรุณาพิมพ์ \"{{text}}\".",
     "UpdateUsers": "อัปเดตผู้ใช้",
     "UpdateUsersWarningAlertTitle": "การตั้งค่า UID หรือ GID อาจทำให้ไม่สามารถใช้งานการเมานท์โฟลเดอร์ที่สร้างไว้ก่อนหน้านี้ได้",

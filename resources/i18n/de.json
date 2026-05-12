@@ -562,6 +562,7 @@
     "StatusInfo": "Statusinfo",
     "StatusUpdatedSuccessfully": "Der Benutzerstatus hat sich geändert.",
     "TooltipForRequirePasswordChange": "Wenn Sie diese Option aktivieren, muss der Benutzer bei der nächsten Anmeldung sein Passwort ändern.",
+    "TypeAccessKeyToDelete": "Type the access key to confirm deletion",
     "TypePermanentlyDelete": "Bitte geben Sie \"{{text}}\" ein.",
     "UpdateUsers": "Benutzer aktualisieren",
     "UpdateUsersWarningAlertTitle": "Das Festlegen von UID oder GID(s) kann die Verwendung zuvor erstellter Ordner-Mounts einschränken.",

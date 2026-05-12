@@ -562,6 +562,7 @@
     "StatusInfo": "상태 정보",
     "StatusUpdatedSuccessfully": "사용자 상태가 변경되었습니다.",
     "TooltipForRequirePasswordChange": "이 옵션을 켜면 사용자는 다음 로그인 시 비밀번호를 변경해야 합니다.",
+    "TypeAccessKeyToDelete": "Type the access key to confirm deletion",
     "TypePermanentlyDelete": "\"{{text}}\"를 입력해 주세요.",
     "UpdateUsers": "사용자 업데이트",
     "UpdateUsersWarningAlertTitle": "UID 또는 GID을 설정하면 기존에 생성된 폴더 마운트의 사용이 제한될 수 있습니다.",

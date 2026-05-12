@@ -562,6 +562,7 @@
     "StatusInfo": "Información de estado",
     "StatusUpdatedSuccessfully": "El estado del usuario ha cambiado.",
     "TooltipForRequirePasswordChange": "Si activa esta opción, los usuarios deberán cambiar su contraseña en el próximo inicio de sesión.",
+    "TypeAccessKeyToDelete": "Type the access key to confirm deletion",
     "TypePermanentlyDelete": "Por favor, escriba \"{{text}}\".",
     "UpdateUsers": "Actualizar usuarios",
     "UpdateUsersWarningAlertTitle": "Establecer UID o GID(s) puede restringir el uso de montajes de carpetas creados previamente.",

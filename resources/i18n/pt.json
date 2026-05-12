@@ -562,6 +562,7 @@
     "StatusInfo": "Informações de status",
     "StatusUpdatedSuccessfully": "O estado do utilizador foi alterado.",
     "TooltipForRequirePasswordChange": "Ao ativar esta opção, o usuário deverá alterar a senha no próximo login.",
+    "TypeAccessKeyToDelete": "Type the access key to confirm deletion",
     "TypePermanentlyDelete": "Por favor, digite \"{{text}}\".",
     "UpdateUsers": "Atualizar utilizadores",
     "UpdateUsersWarningAlertTitle": "Definir UID ou GID(s) pode restringir o uso de montagens de pastas criadas anteriormente.",

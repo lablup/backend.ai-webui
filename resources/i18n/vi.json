@@ -562,6 +562,7 @@
     "StatusInfo": "Thông tin trạng thái",
     "StatusUpdatedSuccessfully": "Trạng thái người dùng đã thay đổi.",
     "TooltipForRequirePasswordChange": "Khi bật tùy chọn này, người dùng sẽ phải thay đổi mật khẩu ở lần đăng nhập tiếp theo.",
+    "TypeAccessKeyToDelete": "Type the access key to confirm deletion",
     "TypePermanentlyDelete": "Vui lòng nhập \"{{text}}\".",
     "UpdateUsers": "Cập nhật người dùng",
     "UpdateUsersWarningAlertTitle": "Thiết lập UID hoặc GID có thể giới hạn việc sử dụng các mount thư mục đã tạo trước đó.",

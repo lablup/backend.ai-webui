@@ -562,6 +562,7 @@
     "StatusInfo": "Info Status",
     "StatusUpdatedSuccessfully": "Status pengguna telah berubah.",
     "TooltipForRequirePasswordChange": "Jika opsi ini diaktifkan, pengguna harus mengganti kata sandi saat masuk berikutnya.",
+    "TypeAccessKeyToDelete": "Type the access key to confirm deletion",
     "TypePermanentlyDelete": "Silakan ketik \"{{text}}\".",
     "UpdateUsers": "Perbarui Pengguna",
     "UpdateUsersWarningAlertTitle": "Menetapkan UID atau GID(s) dapat membatasi penggunaan mount folder yang telah dibuat sebelumnya.",

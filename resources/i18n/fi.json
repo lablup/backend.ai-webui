@@ -562,6 +562,7 @@
     "StatusInfo": "Tilatiedot",
     "StatusUpdatedSuccessfully": "Käyttäjän tila on muuttunut.",
     "TooltipForRequirePasswordChange": "Kun tämä asetus on päällä, käyttäjän on vaihdettava salasanansa seuraavalla kirjautumiskerralla.",
+    "TypeAccessKeyToDelete": "Type the access key to confirm deletion",
     "TypePermanentlyDelete": "Kirjoita \"{{text}}\".",
     "UpdateUsers": "Päivitä käyttäjät",
     "UpdateUsersWarningAlertTitle": "UID:n tai GID:ien asettaminen saattaa rajoittaa aiemmin liitettyjen kansioiden käyttöä.",

@@ -562,6 +562,7 @@
     "StatusInfo": "狀態資訊",
     "StatusUpdatedSuccessfully": "用户状态已更改。",
     "TooltipForRequirePasswordChange": "啟用此選項後，使用者在下次登入時需更改密碼。",
+    "TypeAccessKeyToDelete": "Type the access key to confirm deletion",
     "TypePermanentlyDelete": "請輸入 \"{{text}}\".",
     "UpdateUsers": "更新使用者",
     "UpdateUsersWarningAlertTitle": "設定 UID 或 GID（或多個）可能會限制先前建立之資料夾掛載的使用。",

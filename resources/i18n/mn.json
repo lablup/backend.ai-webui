@@ -562,6 +562,7 @@
     "StatusInfo": "Төлөвийн мэдээлэл",
     "StatusUpdatedSuccessfully": "Хэрэглэгчийн статус өөрчлөгдсөн.",
     "TooltipForRequirePasswordChange": "Энэхүү сонголтыг идэвхжүүлбэл хэрэглэгч дараагийн нэвтрэхдээ нууц үгээ өөрчлөх шаардлагатай болно.",
+    "TypeAccessKeyToDelete": "Type the access key to confirm deletion",
     "TypePermanentlyDelete": "Та \"{{text}}\" гэж оруулна уу.",
     "UpdateUsers": "Хэрэглэгчдийг шинэчлэх",
     "UpdateUsersWarningAlertTitle": "UID эсвэл GID(үүд)-г тогтоох нь өмнө үүсгэсэн хавтасны маунтуудыг ашиглахад хязгаарлалт үүсгэж болно.",

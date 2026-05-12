@@ -562,6 +562,7 @@
     "StatusInfo": "ステータス情報",
     "StatusUpdatedSuccessfully": "ユーザーステータスが変更されました。",
     "TooltipForRequirePasswordChange": "このオプションをオンにすると、ユーザーは次回ログイン時にパスワードを変更する必要があります。",
+    "TypeAccessKeyToDelete": "Type the access key to confirm deletion",
     "TypePermanentlyDelete": "\"{{text}}\"と入力してください。",
     "UpdateUsers": "ユーザーを更新",
     "UpdateUsersWarningAlertTitle": "UID または GID を設定すると、既存のフォルダマウントの使用が制限される場合があります。",

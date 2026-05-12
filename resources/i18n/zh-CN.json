@@ -562,6 +562,7 @@
     "StatusInfo": "状态信息",
     "StatusUpdatedSuccessfully": "用户状态已更改。",
     "TooltipForRequirePasswordChange": "启用此选项后，用户下次登录时需更改密码。",
+    "TypeAccessKeyToDelete": "Type the access key to confirm deletion",
     "TypePermanentlyDelete": "请输入“{{text}}”。",
     "UpdateUsers": "更新用户",
     "UpdateUsersWarningAlertTitle": "设置 UID 或 GID 可能会限制对已创建文件夹挂载的访问。",
