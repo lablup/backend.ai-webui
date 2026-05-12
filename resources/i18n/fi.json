@@ -2990,6 +2990,7 @@
       "TensorBoardPrepared": "TensorBoard-sovellus valmis.",
       "TitleSession": "Istunto (Backend.AI)",
       "TotalAllocation": "Kokonaismääräraha",
+      "UnifiedAcceleratorMemoryNote": "Tässä laitteessa ei ole erillistä kiihdyttimen muistia; se käyttää isäntämuistivarantoa, eikä sitä voi määrittää erikseen.",
       "UserResourceLimit": "Käyttäjän resurssirajoitus",
       "UsingBootstrapScriptInfo": "Bootstrap-skripti on mukana.",
       "Version": "Versio",

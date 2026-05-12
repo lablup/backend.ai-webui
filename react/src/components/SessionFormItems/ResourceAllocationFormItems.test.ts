@@ -8,7 +8,78 @@ import {
   ResourcePreset,
 } from '../../hooks/useResourceLimitAndRemaining';
 import { Image } from '../ImageEnvironmentSelectFormItems';
-import { getAllocatablePresetNames } from './ResourceAllocationFormItems';
+import {
+  getAllocatablePresetNames,
+  getUnifiedAcceleratorValueFromMem,
+  isUnifiedAcceleratorSlot,
+} from './ResourceAllocationFormItems';
+
+describe('getUnifiedAcceleratorValueFromMem', () => {
+  const slotsGiB = { 'cuda.unified': { display_unit: 'GiB' } };
+  const slotsMiB = { 'cuda.unified': { display_unit: 'MiB' } };
+  const slotsTiB = { 'cuda.unified': { display_unit: 'TiB' } };
+  const slotsNoMeta = { 'cuda.unified': {} };
+  const slotsUnknownUnit = { 'cuda.unified': { display_unit: 'foo' } };
+
+  it('returns mem converted to the slot display unit (GiB)', () => {
+    expect(
+      getUnifiedAcceleratorValueFromMem('8g', 'cuda.unified', slotsGiB),
+    ).toBe(8);
+  });
+
+  it('returns mem converted to the slot display unit (MiB)', () => {
+    expect(
+      getUnifiedAcceleratorValueFromMem('8g', 'cuda.unified', slotsMiB),
+    ).toBe(8192);
+  });
+
+  it('returns mem converted to the slot display unit (TiB)', () => {
+    expect(
+      getUnifiedAcceleratorValueFromMem('2048g', 'cuda.unified', slotsTiB),
+    ).toBe(2);
+  });
+
+  it('falls back to GiB when slot metadata has no display_unit', () => {
+    expect(
+      getUnifiedAcceleratorValueFromMem('8g', 'cuda.unified', slotsNoMeta),
+    ).toBe(8);
+  });
+
+  it('falls back to GiB when display_unit is unrecognized', () => {
+    expect(
+      getUnifiedAcceleratorValueFromMem('8g', 'cuda.unified', slotsUnknownUnit),
+    ).toBe(8);
+  });
+
+  it('returns 0 for undefined or zero mem', () => {
+    expect(
+      getUnifiedAcceleratorValueFromMem(undefined, 'cuda.unified', slotsGiB),
+    ).toBe(0);
+    expect(getUnifiedAcceleratorValueFromMem(0, 'cuda.unified', slotsGiB)).toBe(
+      0,
+    );
+  });
+});
+
+describe('isUnifiedAcceleratorSlot', () => {
+  it('returns true for slot names ending with .unified', () => {
+    expect(isUnifiedAcceleratorSlot('cuda.unified')).toBe(true);
+    expect(isUnifiedAcceleratorSlot('rocm.unified')).toBe(true);
+  });
+
+  it('returns false for discrete accelerator slot names', () => {
+    expect(isUnifiedAcceleratorSlot('cuda.shares')).toBe(false);
+    expect(isUnifiedAcceleratorSlot('cuda.device')).toBe(false);
+    expect(isUnifiedAcceleratorSlot('cuda.mem')).toBe(false);
+    expect(isUnifiedAcceleratorSlot('rocm.device')).toBe(false);
+  });
+
+  it('returns false for nullish or empty input', () => {
+    expect(isUnifiedAcceleratorSlot(undefined)).toBe(false);
+    expect(isUnifiedAcceleratorSlot(null)).toBe(false);
+    expect(isUnifiedAcceleratorSlot('')).toBe(false);
+  });
+});
 
 describe('getAllocatablePresetNames', () => {
   const presets: Array<ResourcePreset> = [

@@ -2990,6 +2990,7 @@
       "TensorBoardPrepared": "Aplicativo TensorBoard preparado.",
       "TitleSession": "Sessão (Backend.AI)",
       "TotalAllocation": "Alocação Total",
+      "UnifiedAcceleratorMemoryNote": "Este dispositivo não tem memória de acelerador separada; usa o pool de memória do host e não pode ser definida separadamente.",
       "UserResourceLimit": "Limite de recursos do usuário",
       "UsingBootstrapScriptInfo": "O script de bootstrap está incluído.",
       "Version": "Versão",

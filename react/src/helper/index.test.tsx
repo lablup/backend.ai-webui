@@ -24,7 +24,33 @@ import {
   toFixedWithTypeValidation,
   addNumberWithUnits,
   subNumberWithUnits,
+  getDisplayUnitToInputSizeUnit,
 } from './index';
+
+describe('getDisplayUnitToInputSizeUnit', () => {
+  it('maps known binary display units to InputSizeUnit', () => {
+    expect(getDisplayUnitToInputSizeUnit('KiB')).toBe('k');
+    expect(getDisplayUnitToInputSizeUnit('MiB')).toBe('m');
+    expect(getDisplayUnitToInputSizeUnit('GiB')).toBe('g');
+    expect(getDisplayUnitToInputSizeUnit('TiB')).toBe('t');
+    expect(getDisplayUnitToInputSizeUnit('PiB')).toBe('p');
+    expect(getDisplayUnitToInputSizeUnit('EiB')).toBe('e');
+  });
+
+  it('accepts the short binary form and is case-insensitive', () => {
+    expect(getDisplayUnitToInputSizeUnit('gi')).toBe('g');
+    expect(getDisplayUnitToInputSizeUnit('Mi')).toBe('m');
+    expect(getDisplayUnitToInputSizeUnit('gib')).toBe('g');
+  });
+
+  it('returns an empty string for unknown or nullish values', () => {
+    expect(getDisplayUnitToInputSizeUnit('foo')).toBe('');
+    expect(getDisplayUnitToInputSizeUnit('GB')).toBe('');
+    expect(getDisplayUnitToInputSizeUnit('')).toBe('');
+    expect(getDisplayUnitToInputSizeUnit(null)).toBe('');
+    expect(getDisplayUnitToInputSizeUnit(undefined)).toBe('');
+  });
+});
 
 describe('isOutsideRange', () => {
   it('should return true if the value is less than the minimum', () => {

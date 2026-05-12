@@ -86,6 +86,26 @@ export type InputSizeUnit = '' | 'k' | 'm' | 'g' | 't' | 'p' | 'e';
 export type SizeUnit = InputSizeUnit;
 
 /**
+ * Maps a human-readable binary display unit (e.g. `GiB`, `Gi`, `MiB`) to the
+ * corresponding `InputSizeUnit` accepted by `convertToBinaryUnit`. Returns an
+ * empty string (bytes) when the display unit is missing or not a recognized
+ * binary size unit.
+ */
+export const getDisplayUnitToInputSizeUnit = (
+  displayUnit: string | undefined | null,
+): InputSizeUnit => {
+  if (!displayUnit) return '';
+  const unit = displayUnit.toLowerCase();
+  if (['kib', 'ki'].includes(unit)) return 'k';
+  if (['mib', 'mi'].includes(unit)) return 'm';
+  if (['gib', 'gi'].includes(unit)) return 'g';
+  if (['tib', 'ti'].includes(unit)) return 't';
+  if (['pib', 'pi'].includes(unit)) return 'p';
+  if (['eib', 'ei'].includes(unit)) return 'e';
+  return '';
+};
+
+/**
  * Converts a value with a unit to a different unit or automatically selects the most appropriate unit.
  *
  * @param inputValue - The input string value with or without a unit (e.g., '1024m', '2g', '500').

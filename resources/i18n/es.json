@@ -2990,6 +2990,7 @@
       "TensorBoardPrepared": "Aplicación TensorBoard preparada.",
       "TitleSession": "Sesión (Backend.AI)",
       "TotalAllocation": "Asignación total",
+      "UnifiedAcceleratorMemoryNote": "Este dispositivo no tiene memoria de acelerador independiente; utiliza el grupo de memoria del host y no se puede configurar por separado.",
       "UserResourceLimit": "Límite de recursos de usuario",
       "UsingBootstrapScriptInfo": "Script de arranque incluido.",
       "Version": "Versión",

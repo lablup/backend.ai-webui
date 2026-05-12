@@ -2990,6 +2990,7 @@
       "TensorBoardPrepared": "Aplikasi TensorBoard disediakan.",
       "TitleSession": "Sesi (Backend.AI)",
       "TotalAllocation": "Jumlah Peruntukan",
+      "UnifiedAcceleratorMemoryNote": "Peranti ini tidak mempunyai memori pemecut yang berasingan; ia menggunakan kumpulan memori hos dan tidak boleh ditetapkan secara berasingan.",
       "UserResourceLimit": "Had Sumber Pengguna",
       "UsingBootstrapScriptInfo": "Skrip bootstrap disertakan.",
       "Version": "Versi",

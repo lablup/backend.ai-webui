@@ -2992,6 +2992,7 @@
       "TensorBoardPrepared": "Ứng dụng TensorBoard đã sẵn sàng.",
       "TitleSession": "Phiên (Backend.AI)",
       "TotalAllocation": "Tổng phân bổ",
+      "UnifiedAcceleratorMemoryNote": "Thiết bị này không có bộ nhớ máy gia tốc riêng; nó sử dụng nhóm bộ nhớ máy chủ và không thể được đặt riêng.",
       "UserResourceLimit": "Giới hạn tài nguyên người dùng",
       "UsingBootstrapScriptInfo": "Đã bao gồm tập lệnh khởi tạo.",
       "Version": "Phiên bản",

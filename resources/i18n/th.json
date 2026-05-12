@@ -2992,6 +2992,7 @@
       "TensorBoardPrepared": "แอป TensorBoard พร้อมแล้ว.",
       "TitleSession": "เซสชัน (Backend.AI)",
       "TotalAllocation": "การจัดสรรทั้งหมด",
+      "UnifiedAcceleratorMemoryNote": "อุปกรณ์นี้ไม่มีหน่วยความจำของตัวเร่งแยกต่างหาก แต่ใช้พูลหน่วยความจำของโฮสต์ จึงไม่สามารถตั้งค่าแยกต่างหากได้",
       "UserResourceLimit": "ขีดจำกัดทรัพยากรผู้ใช้",
       "UsingBootstrapScriptInfo": "สคริปต์ Bootstrap ถูกรวมไว้",
       "Version": "เวอร์ชัน",
