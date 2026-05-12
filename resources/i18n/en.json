@@ -854,6 +854,7 @@
       "NoOneWasInvited": "No one invited since invitation already exists",
       "NoOneWasShared": "Failed to share the group folder",
       "NoValidEmails": "No valid emails were entered",
+      "PendingInvitations": "Pending invitations",
       "Shared": "Successfully shared the group folder",
       "SharingError": "Sharing failed. User may already be shared or does not belong to appropriate project.",
       "SuccessfullyAcceptedInvitation": "Successfully accepted invitation",

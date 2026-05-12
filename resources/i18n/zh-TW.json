@@ -837,6 +837,7 @@
       "NoOneWasInvited": "沒有人被邀請，因為邀請已經存在",
       "NoOneWasShared": "無法共享群組文件夾",
       "NoValidEmails": "沒有輸入有效的電子郵件",
+      "PendingInvitations": "待處理的邀請",
       "Shared": "已成功共享群組文件夾",
       "SharingError": "分享失敗。用戶可能已被共享或不屬於適當的項目。",
       "SuccessfullyAcceptedInvitation": "成功接受的邀請",

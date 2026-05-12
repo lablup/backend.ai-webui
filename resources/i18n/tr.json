@@ -836,6 +836,7 @@
       "NoOneWasInvited": "Davetiye zaten mevcut olduğundan kimse davet edilmedi",
       "NoOneWasShared": "Grup klasörü paylaşılamadı",
       "NoValidEmails": "Geçerli e-posta girilmedi",
+      "PendingInvitations": "Bekleyen davetler",
       "Shared": "Grup klasörü başarıyla paylaşıldı",
       "SharingError": "Paylaşım başarısız oldu. Kullanıcı zaten paylaşılmış olabilir veya uygun projeye ait değil.",
       "SuccessfullyAcceptedInvitation": "Başarılı bir şekilde kabul edilen davetiye",

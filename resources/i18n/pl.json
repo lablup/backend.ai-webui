@@ -836,6 +836,7 @@
       "NoOneWasInvited": "Nikt nie został zaproszony, ponieważ zaproszenie już istnieje",
       "NoOneWasShared": "Nie udało się udostępnić folderu grupy",
       "NoValidEmails": "Nie wprowadzono poprawnych adresów e-mail",
+      "PendingInvitations": "Oczekujące zaproszenia",
       "Shared": "Pomyślnie udostępniono folder grupy",
       "SharingError": "Udostępnianie nie powiodło się. Użytkownik może już być udostępniony lub nie należy do odpowiedniego projektu.",
       "SuccessfullyAcceptedInvitation": "Pomyślnie przyjęte zaproszenie",

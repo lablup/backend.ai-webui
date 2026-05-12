@@ -837,6 +837,7 @@
       "NoOneWasInvited": "초대장이 이미 존재하여 초대에 실패했습니다",
       "NoOneWasShared": "그룹 폴더 공유에 실패했습니다",
       "NoValidEmails": "입력하신 이메일이 존재하지 않는 것 같습니다. 주소를 다시 확인해 주세요.",
+      "PendingInvitations": "응답 대기 중인 초대",
       "Shared": "그룹 폴더를 공유했습니다",
       "SharingError": "공유에 실패했습니다. 이미 공유받은 사용자거나 프로젝트에 소속된 사용자가 아닐 수 있습니다.",
       "SuccessfullyAcceptedInvitation": "성공적으로 초대를 수락했습니다",

@@ -836,6 +836,7 @@
       "NoOneWasInvited": "Personne n'a été invité car l'invitation existe déjà",
       "NoOneWasShared": "Échec du partage du dossier de groupe",
       "NoValidEmails": "Aucun e-mail valide n'a été saisi",
+      "PendingInvitations": "Invitations en attente",
       "Shared": "Le dossier de groupe a été partagé avec succès",
       "SharingError": "Le partage a échoué. L'utilisateur est peut-être déjà partagé ou n'appartient pas au projet approprié.",
       "SuccessfullyAcceptedInvitation": "Invitation acceptée avec succès",

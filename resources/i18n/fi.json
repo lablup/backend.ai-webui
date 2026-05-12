@@ -836,6 +836,7 @@
       "NoOneWasInvited": "Ketään ei ole kutsuttu, koska kutsu on jo olemassa",
       "NoOneWasShared": "Ryhmäkansion jakaminen epäonnistui",
       "NoValidEmails": "Kelvollisia sähköposteja ei ole syötetty",
+      "PendingInvitations": "Odottavat kutsut",
       "Shared": "Ryhmäkansion jakaminen onnistui",
       "SharingError": "Jakaminen epäonnistui. Käyttäjä on ehkä jo jaettu tai ei kuulu asianmukaiseen projektiin.",
       "SuccessfullyAcceptedInvitation": "Onnistuneesti hyväksytty kutsu",

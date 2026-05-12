@@ -836,6 +836,7 @@
       "NoOneWasInvited": "Không ai được mời vì lời mời đã tồn tại",
       "NoOneWasShared": "Không chia sẻ được thư mục nhóm",
       "NoValidEmails": "Không có email hợp lệ nào được nhập",
+      "PendingInvitations": "Lời mời đang chờ",
       "Shared": "Đã chia sẻ thành công thư mục nhóm",
       "SharingError": "Chia sẻ không thành công. Người dùng có thể đã được chia sẻ hoặc không thuộc dự án thích hợp.",
       "SuccessfullyAcceptedInvitation": "Lời mời được chấp nhận thành công",

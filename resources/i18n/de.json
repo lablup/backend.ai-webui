@@ -836,6 +836,7 @@
       "NoOneWasInvited": "Niemand eingeladen, da Einladung bereits existiert",
       "NoOneWasShared": "Fehler beim Freigeben des Gruppenordners",
       "NoValidEmails": "Es wurden keine gültigen E-Mails eingegeben",
+      "PendingInvitations": "Ausstehende Einladungen",
       "Shared": "Gruppenordner erfolgreich freigegeben",
       "SharingError": "Die Freigabe ist fehlgeschlagen. Der Benutzer ist möglicherweise bereits freigegeben oder gehört nicht zu dem entsprechenden Projekt.",
       "SuccessfullyAcceptedInvitation": "Erfolgreich akzeptierte Einladung",

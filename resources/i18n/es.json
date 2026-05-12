@@ -836,6 +836,7 @@
       "NoOneWasInvited": "No se invita a nadie puesto que la invitación ya existe",
       "NoOneWasShared": "Error al compartir la carpeta de grupo",
       "NoValidEmails": "No se han introducido correos electrónicos válidos",
+      "PendingInvitations": "Invitaciones pendientes",
       "Shared": "Compartida con éxito la carpeta de grupo",
       "SharingError": "Error al compartir. Es posible que el usuario ya esté compartido o que no pertenezca al proyecto adecuado.",
       "SuccessfullyAcceptedInvitation": "Invitación aceptada con éxito",

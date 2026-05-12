@@ -836,6 +836,7 @@
       "NoOneWasInvited": "Ninguém foi convidado porque o convite já existe",
       "NoOneWasShared": "Falha ao compartilhar a pasta do grupo",
       "NoValidEmails": "Nenhum e-mail válido foi inserido",
+      "PendingInvitations": "Convites pendentes",
       "Shared": "Compartilhou com sucesso a pasta do grupo",
       "SharingError": "O compartilhamento falhou. O usuário pode já estar compartilhado ou não pertencer ao projeto apropriado.",
       "SuccessfullyAcceptedInvitation": "Convite aceito com sucesso",

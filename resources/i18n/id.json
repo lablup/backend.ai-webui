@@ -836,6 +836,7 @@
       "NoOneWasInvited": "Tidak ada yang diundang karena undangan sudah ada",
       "NoOneWasShared": "Gagal membagikan folder grup",
       "NoValidEmails": "Tidak ada email valid yang dimasukkan",
+      "PendingInvitations": "Undangan tertunda",
       "Shared": "Folder grup berhasil dibagikan",
       "SharingError": "Gagal berbagi. Pengguna mungkin sudah dibagikan atau tidak ada dalamm proyek yang sesuai.",
       "SuccessfullyAcceptedInvitation": "Undangan yang berhasil diterima",
