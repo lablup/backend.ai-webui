@@ -2249,6 +2249,8 @@
     "RegistryUpdateFinished": "Rekisterin päivitys valmis.",
     "RescanFailed": "Uudelleentarkistus epäonnistui.",
     "RescanImages": "Kuvien uudelleen skannaaminen...",
+    "SSLVerify": "SSL-varmennus",
+    "SSLVerifyDescription": "Tarkista SSL-varmenne, kun muodostetaan yhteys tähän rekisteriin",
     "Type": "Tyyppi",
     "TypeRegistryNameToDelete": "Kirjoita rekisterin isäntänimi, jonka haluat poistaa",
     "UpdatingRegistryInfo": "Rekisteritietojen päivittäminen...",

@@ -2249,6 +2249,8 @@
     "RegistryUpdateFinished": "Обновление реестра завершено.",
     "RescanFailed": "Ошибка повторного сканирования.",
     "RescanImages": "Повторное сканирование изображений ...",
+    "SSLVerify": "Проверка SSL",
+    "SSLVerifyDescription": "Проверять SSL-сертификат при подключении к этому реестру",
     "Type": "Тип",
     "TypeRegistryNameToDelete": "Введите имя хоста реестра для удаления",
     "UpdatingRegistryInfo": "Обновление информации реестра ...",

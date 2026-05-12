@@ -2251,6 +2251,8 @@
     "RegistryUpdateFinished": "La mise à jour du registre est terminée.",
     "RescanFailed": "Échec de la réanalyse.",
     "RescanImages": "Nouvelle numérisation des images...",
+    "SSLVerify": "Vérification SSL",
+    "SSLVerifyDescription": "Vérifier le certificat SSL lors de la connexion à ce registre",
     "Type": "Taper",
     "TypeRegistryNameToDelete": "Tapez le nom d'hôte du registre à supprimer",
     "UpdatingRegistryInfo": "Mise à jour des informations du registre...",

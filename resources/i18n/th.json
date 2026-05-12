@@ -2251,6 +2251,8 @@
     "RegistryUpdateFinished": "อัปเดตทะเบียนเสร็จสิ้น",
     "RescanFailed": "การสแกนใหม่ล้มเหลว",
     "RescanImages": "กำลังสแกนอิมเมจใหม่...",
+    "SSLVerify": "การตรวจสอบ SSL",
+    "SSLVerifyDescription": "ตรวจสอบใบรับรอง SSL เมื่อเชื่อมต่อกับรีจิสทรีนี้",
     "Type": "ประเภท",
     "TypeRegistryNameToDelete": "พิมพ์ชื่อโฮสต์ทะเบียนเพื่อลบ",
     "UpdatingRegistryInfo": "กำลังอัปเดตข้อมูลทะเบียน...",

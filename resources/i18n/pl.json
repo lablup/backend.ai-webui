@@ -2251,6 +2251,8 @@
     "RegistryUpdateFinished": "Aktualizacja rejestru zakończona.",
     "RescanFailed": "Ponowne skanowanie nie powiodło się.",
     "RescanImages": "Ponowne skanowanie obrazów...",
+    "SSLVerify": "Weryfikacja SSL",
+    "SSLVerifyDescription": "Weryfikuj certyfikat SSL podczas łączenia się z tym rejestrem",
     "Type": "Rodzaj",
     "TypeRegistryNameToDelete": "Wpisz nazwę hosta rejestru do usunięcia",
     "UpdatingRegistryInfo": "Aktualizuję informacje w rejestrze...",

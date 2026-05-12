@@ -2249,6 +2249,8 @@
     "RegistryUpdateFinished": "Kayıt defteri güncellemesi tamamlandı.",
     "RescanFailed": "Yeniden Tarama Başarısız.",
     "RescanImages": "Görüntüler Yeniden Taranıyor...",
+    "SSLVerify": "SSL Doğrulaması",
+    "SSLVerifyDescription": "Bu kayıt deposuna bağlanırken SSL sertifikasını doğrula",
     "Type": "Tür",
     "TypeRegistryNameToDelete": "Silmek için kayıt defteri ana bilgisayar adını yazın",
     "UpdatingRegistryInfo": "Kayıt defteri bilgileri güncelleniyor...",

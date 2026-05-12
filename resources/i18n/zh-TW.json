@@ -2253,6 +2253,8 @@
     "RegistryUpdateFinished": "註冊表更新完成。",
     "RescanFailed": "重新掃描失敗。",
     "RescanImages": "正在重新掃描圖像...",
+    "SSLVerify": "SSL 驗證",
+    "SSLVerifyDescription": "連接到此登錄檔時驗證 SSL 憑證",
     "Type": "類型",
     "TypeRegistryNameToDelete": "鍵入要刪除的註冊表主機名",
     "UpdatingRegistryInfo": "正在更新註冊表信息...",

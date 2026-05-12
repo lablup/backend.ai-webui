@@ -2251,6 +2251,8 @@
     "RegistryUpdateFinished": "Registrierungsupdate abgeschlossen.",
     "RescanFailed": "Erneutes Scannen fehlgeschlagen.",
     "RescanImages": "Bilder erneut scannen...",
+    "SSLVerify": "SSL-Verifizierung",
+    "SSLVerifyDescription": "SSL-Zertifikat beim Verbinden mit dieser Registry überprüfen",
     "Type": "Art",
     "TypeRegistryNameToDelete": "Geben Sie den zu löschenden Registrierungs-Hostnamen ein",
     "UpdatingRegistryInfo": "Registrierungsinformationen werden aktualisiert...",

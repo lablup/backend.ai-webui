@@ -2251,6 +2251,8 @@
     "RegistryUpdateFinished": "注册表更新完成。",
     "RescanFailed": "重新扫描失败。",
     "RescanImages": "正在重新扫描图像...",
+    "SSLVerify": "SSL 验证",
+    "SSLVerifyDescription": "连接到此注册表时验证 SSL 证书",
     "Type": "类型",
     "TypeRegistryNameToDelete": "键入要删除的注册表主机名",
     "UpdatingRegistryInfo": "正在更新注册表信息...",

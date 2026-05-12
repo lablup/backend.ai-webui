@@ -2251,6 +2251,8 @@
     "RegistryUpdateFinished": "Cập nhật sổ đăng ký đã hoàn tất.",
     "RescanFailed": "Quét lại không thành công.",
     "RescanImages": "Đang quét lại hình ảnh ...",
+    "SSLVerify": "Xác minh SSL",
+    "SSLVerifyDescription": "Xác minh chứng chỉ SSL khi kết nối với đăng ký này",
     "Type": "Kiểu",
     "TypeRegistryNameToDelete": "Nhập tên máy chủ đăng ký để xóa",
     "UpdatingRegistryInfo": "Đang cập nhật thông tin đăng ký ...",

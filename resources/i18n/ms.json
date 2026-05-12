@@ -2249,6 +2249,8 @@
     "RegistryUpdateFinished": "Kemas kini pendaftaran selesai.",
     "RescanFailed": "Imbas Semula Gagal.",
     "RescanImages": "Menyusun semula Imej ...",
+    "SSLVerify": "Pengesahan SSL",
+    "SSLVerifyDescription": "Sahkan sijil SSL semasa menyambung ke pendaftaran ini",
     "Type": "Jenis",
     "TypeRegistryNameToDelete": "Taip nama hos pendaftaran untuk dipadamkan",
     "UpdatingRegistryInfo": "Mengemas kini maklumat pendaftaran ...",

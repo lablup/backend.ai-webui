@@ -2275,6 +2275,8 @@
     "RegistryUpdateFinished": "Registry update finished.",
     "RescanFailed": "Rescan Failed.",
     "RescanImages": "Rescanning Images...",
+    "SSLVerify": "SSL Verification",
+    "SSLVerifyDescription": "Verify SSL certificate when connecting to this registry",
     "Type": "Type",
     "TypeRegistryNameToDelete": "Type registry hostname to delete",
     "UpdatingRegistryInfo": "Updating registry information...",

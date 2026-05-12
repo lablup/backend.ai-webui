@@ -2249,6 +2249,8 @@
     "RegistryUpdateFinished": "Η ενημέρωση μητρώου ολοκληρώθηκε.",
     "RescanFailed": "Η σάρωση απέτυχε.",
     "RescanImages": "Επανασύνδεση εικόνων ...",
+    "SSLVerify": "Επαλήθευση SSL",
+    "SSLVerifyDescription": "Επαλήθευση πιστοποιητικού SSL κατά τη σύνδεση με αυτό το μητρώο",
     "Type": "Τύπος",
     "TypeRegistryNameToDelete": "Πληκτρολογήστε το όνομα κεντρικού υπολογιστή μητρώου για διαγραφή",
     "UpdatingRegistryInfo": "Ενημέρωση πληροφοριών μητρώου ...",

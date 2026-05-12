@@ -2259,6 +2259,8 @@
     "RegistryUpdateFinished": "레지스트리 업데이트가 완료되었습니다.",
     "RescanFailed": "리스캔 작업이 실패했습니다.",
     "RescanImages": "이미지 리스캔중...",
+    "SSLVerify": "SSL 검증",
+    "SSLVerifyDescription": "이 레지스트리에 연결할 때 SSL 인증서를 검증합니다",
     "Type": "유형",
     "TypeRegistryNameToDelete": "삭제 확인을 위해 레지스트리 이름을 입력하세요.",
     "UpdatingRegistryInfo": "레지스트리 정보를 갱신하는 중입니다...",

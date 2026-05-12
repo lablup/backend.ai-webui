@@ -2250,6 +2250,8 @@
     "RegistryUpdateFinished": "Бүртгэлийн шинэчлэлт дууссан.",
     "RescanFailed": "Дахин шалгаж чадсангүй.",
     "RescanImages": "Зургуудыг дахин шалгаж байна ...",
+    "SSLVerify": "SSL баталгаажуулалт",
+    "SSLVerifyDescription": "Энэ бүртгэлд холбогдох үед SSL гэрчилгээг баталгаажуулах",
     "Type": "Төрөл",
     "TypeRegistryNameToDelete": "Устгахын тулд бүртгэлийн хостын нэрийг бичнэ үү",
     "UpdatingRegistryInfo": "Бүртгэлийн мэдээллийг шинэчилж байна ...",

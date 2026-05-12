@@ -2249,6 +2249,8 @@
     "RegistryUpdateFinished": "Actualización del registro finalizada.",
     "RescanFailed": "Fallo en la reexploración.",
     "RescanImages": "Volver a escanear imágenes...",
+    "SSLVerify": "Verificación SSL",
+    "SSLVerifyDescription": "Verificar el certificado SSL al conectarse a este registro",
     "Type": "Tipo",
     "TypeRegistryNameToDelete": "Escriba el nombre de host del registro que desea eliminar",
     "UpdatingRegistryInfo": "Actualización de la información del registro...",

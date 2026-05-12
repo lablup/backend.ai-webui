@@ -2251,6 +2251,8 @@
     "RegistryUpdateFinished": "レジストリの更新が完了しました。",
     "RescanFailed": "再スキャンに失敗しました。",
     "RescanImages": "画像の再スキャン...",
+    "SSLVerify": "SSL検証",
+    "SSLVerifyDescription": "このレジストリに接続する際にSSL証明書を検証する",
     "Type": "タイプ",
     "TypeRegistryNameToDelete": "削除するレジストリホスト名を入力します",
     "UpdatingRegistryInfo": "レジストリ情報を更新しています...",

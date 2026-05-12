@@ -2252,6 +2252,8 @@
     "RegistryUpdateFinished": "Pembaruan registri selesai.",
     "RescanFailed": "Pemindaian Ulang Gagal.",
     "RescanImages": "Memindai Ulang Gambar...",
+    "SSLVerify": "Verifikasi SSL",
+    "SSLVerifyDescription": "Verifikasi sertifikat SSL saat menghubungkan ke registri ini",
     "Type": "Tipe",
     "TypeRegistryNameToDelete": "Ketik nama host registri untuk dihapus",
     "UpdatingRegistryInfo": "Memperbarui informasi registri...",
