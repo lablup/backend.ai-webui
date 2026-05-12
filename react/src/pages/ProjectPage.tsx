@@ -26,6 +26,7 @@ import {
   filterOutEmpty,
   INITIAL_FETCH_KEY,
   isValidUUID,
+  mergeFilterValues,
   useBAILogger,
   useUpdatableState,
 } from 'backend.ai-ui';
@@ -67,6 +68,9 @@ const ProjectPage = () => {
     {
       order: parseAsStringLiteral(availableProjectSorterValues),
       filter: parseAsString.withDefault(''),
+      status: parseAsStringLiteral(['active', 'inactive']).withDefault(
+        'active',
+      ),
     },
     {
       history: 'replace',
@@ -77,11 +81,14 @@ const ProjectPage = () => {
 
   const { supportedFields, exportCSV } = useCSVExport('projects');
 
+  const isActiveTab = queryParams.status === 'active';
+  const statusFilter = isActiveTab ? 'is_active == true' : 'is_active == false';
+
   const queryVariables: ProjectPageQuery$variables = {
     offset: baiPaginationOption.offset,
     first: baiPaginationOption.limit,
     order: queryParams.order || '-created_at',
-    filter: queryParams.filter || null,
+    filter: mergeFilterValues([queryParams.filter, statusFilter]) || null,
   };
 
   const deferredValueQueryVariables = useDeferredValue(queryVariables);
@@ -129,11 +136,20 @@ const ProjectPage = () => {
   );
   return (
     <BAICard
-      activeTabKey="project"
+      activeTabKey={queryParams.status}
+      onTabChange={(key) => {
+        setQueryParams({ status: key as 'active' | 'inactive' });
+        setTablePaginationOption({ current: 1 });
+        setSelectedProjectList([]);
+      }}
       tabList={[
         {
-          key: 'project',
-          tab: t('project.Project'),
+          key: 'active',
+          label: t('general.Active'),
+        },
+        {
+          key: 'inactive',
+          label: t('general.Inactive'),
         },
       ]}
     >
@@ -150,11 +166,6 @@ const ProjectPage = () => {
                 key: 'domain_name',
                 propertyLabel: t('project.Domain'),
                 type: 'string',
-              },
-              {
-                key: 'is_active',
-                propertyLabel: t('project.Active'),
-                type: 'boolean',
               },
               {
                 key: 'resource_policy',
@@ -209,6 +220,7 @@ const ProjectPage = () => {
         </BAIFlex>
         <BAIProjectTable
           updateFetchKey={updateFetchKey}
+          isActiveTab={isActiveTab}
           projectFragment={filterOutEmpty(
             group_nodes?.edges.map((e) => e?.node) ?? [],
           )}
