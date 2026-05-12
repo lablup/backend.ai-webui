@@ -86,6 +86,7 @@ import {
   useSemanticColorMap,
   BAITable,
   BAIFetchKeyButton,
+  convertToBinaryUnit,
 } from 'backend.ai-ui';
 import { default as dayjs } from 'dayjs';
 import * as _ from 'lodash-es';
@@ -530,7 +531,12 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
     _.map(endpoint_auto_scaling_rules?.edges, (edge) => edge?.node),
   );
 
-  const resource_opts = JSON.parse(endpoint?.resource_opts || '{}');
+  const parsedResourceOpts = JSON.parse(endpoint?.resource_opts || '{}');
+  const resource_opts = {
+    shmem: parsedResourceOpts.shmem
+      ? convertToBinaryUnit(parsedResourceOpts.shmem, '')?.number
+      : undefined,
+  };
 
   const items: DescriptionsItemType[] = [
     {
