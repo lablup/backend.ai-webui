@@ -67,8 +67,6 @@ catalog:
   uuid: ^13.0.0
   webpack: ^5.106.1
 
-gitBranchLockfile: true
-
 enableGlobalVirtualStore: true
 
 minimumReleaseAge: 10080
