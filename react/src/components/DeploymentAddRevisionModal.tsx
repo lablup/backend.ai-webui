@@ -815,13 +815,19 @@ const DeploymentAddRevisionModalFormBody: React.FC<
         onIsAddingChange(false);
         if (errors && errors.length > 0) {
           const err = errors[0];
-          const isInProgress = err?.message?.includes(
+          const errMsg = err?.message ?? '';
+          const isInProgress = errMsg.includes(
             'Another deployment is already in progress',
+          );
+          const isModelDefMissing = errMsg.includes(
+            'ModelConfig.name is required',
           );
           message.error(
             isInProgress
               ? t('deployment.AnotherDeploymentInProgress')
-              : (err?.message ?? t('general.ErrorOccurred')),
+              : isModelDefMissing
+                ? t('deployment.ModelDefinitionNotFound')
+                : errMsg || t('general.ErrorOccurred'),
           );
           return;
         }
@@ -845,13 +851,19 @@ const DeploymentAddRevisionModalFormBody: React.FC<
       },
       onError: (err) => {
         onIsAddingChange(false);
-        const isInProgress = err.message?.includes(
+        const errMsg = err.message ?? '';
+        const isInProgress = errMsg.includes(
           'Another deployment is already in progress',
+        );
+        const isModelDefMissing = errMsg.includes(
+          'ModelConfig.name is required',
         );
         message.error(
           isInProgress
             ? t('deployment.AnotherDeploymentInProgress')
-            : (err.message ?? t('general.ErrorOccurred')),
+            : isModelDefMissing
+              ? t('deployment.ModelDefinitionNotFound')
+              : errMsg || t('general.ErrorOccurred'),
         );
       },
     });

@@ -952,6 +952,7 @@
     "LivenessStatus": "Status de Liveness",
     "ManageAccessTokens": "Gerenciar tokens de acesso",
     "Model": "Modelo",
+    "ModelDefinitionNotFound": "The selected model folder does not contain a model-definition.yaml (or .yml) at the configured path. Please add the file or update the model-definition path before retrying.",
     "ModelDefinitionPath": "Caminho do arquivo de definição do modelo",
     "ModelFolder": "Pasta do modelo",
     "ModelMountDestination": "Destino de montagem para a pasta do modelo",

@@ -953,6 +953,7 @@
     "LivenessStatus": "활성 상태 (Liveness)",
     "ManageAccessTokens": "액세스 토큰 관리",
     "Model": "모델",
+    "ModelDefinitionNotFound": "선택한 모델 폴더에 설정된 경로에 model-definition.yaml (또는 .yml) 파일이 없습니다. 파일을 추가하거나 모델 정의 경로를 수정한 후 다시 시도해 주세요.",
     "ModelDefinitionPath": "모델 정의 파일 경로",
     "ModelFolder": "모델 폴더",
     "ModelMountDestination": "모델 폴더 마운트 대상",

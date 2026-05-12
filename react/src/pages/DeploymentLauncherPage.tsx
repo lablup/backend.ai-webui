@@ -586,6 +586,7 @@ const DeploymentLauncherPageLayout: React.FC<
         const isInProgress = msg.includes(
           'Another deployment is already in progress',
         );
+        const isModelDefMissing = msg.includes('ModelConfig.name is required');
         if (mode === 'edit' && isInProgress) {
           upsertNotification({
             key: notificationKey,
@@ -605,7 +606,9 @@ const DeploymentLauncherPageLayout: React.FC<
               mode === 'edit'
                 ? t('deployment.FailedToUpdateDeployment')
                 : t('deployment.FailedToCreateDeployment'),
-            description: msg,
+            description: isModelDefMissing
+              ? t('deployment.ModelDefinitionNotFound')
+              : msg,
             duration: 0,
             backgroundTask: { status: 'rejected', percent: 99 },
           });

@@ -952,6 +952,7 @@
     "LivenessStatus": "Liveness төлөв",
     "ManageAccessTokens": "Хандалтын токен удирдах",
     "Model": "Загвар",
+    "ModelDefinitionNotFound": "The selected model folder does not contain a model-definition.yaml (or .yml) at the configured path. Please add the file or update the model-definition path before retrying.",
     "ModelDefinitionPath": "Загварын тодорхойлолтын файлын зам",
     "ModelFolder": "Загварын хавтас",
     "ModelMountDestination": "Загварын хавтасны маунтын зорилтот хавтас",

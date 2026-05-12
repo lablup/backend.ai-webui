@@ -952,6 +952,7 @@
     "LivenessStatus": "Trạng thái Liveness",
     "ManageAccessTokens": "Quản lý mã thông báo truy cập",
     "Model": "Mô hình",
+    "ModelDefinitionNotFound": "The selected model folder does not contain a model-definition.yaml (or .yml) at the configured path. Please add the file or update the model-definition path before retrying.",
     "ModelDefinitionPath": "Đường dẫn tệp định nghĩa mô hình",
     "ModelFolder": "Thư mục mô hình",
     "ModelMountDestination": "Điểm gắn kết cho thư mục mô hình",

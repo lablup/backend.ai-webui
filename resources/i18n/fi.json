@@ -952,6 +952,7 @@
     "LivenessStatus": "Liveness-tila",
     "ManageAccessTokens": "Hallitse käyttöoikeustunnuksia",
     "Model": "Malli",
+    "ModelDefinitionNotFound": "The selected model folder does not contain a model-definition.yaml (or .yml) at the configured path. Please add the file or update the model-definition path before retrying.",
     "ModelDefinitionPath": "Mallimäärittelytiedoston polku",
     "ModelFolder": "Mallikansio",
     "ModelMountDestination": "Mallikansion liitäntäkohde",

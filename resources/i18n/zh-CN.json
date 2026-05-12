@@ -952,6 +952,7 @@
     "LivenessStatus": "Liveness 状态",
     "ManageAccessTokens": "管理访问令牌",
     "Model": "模型",
+    "ModelDefinitionNotFound": "The selected model folder does not contain a model-definition.yaml (or .yml) at the configured path. Please add the file or update the model-definition path before retrying.",
     "ModelDefinitionPath": "模型定义文件路径",
     "ModelFolder": "模型文件夹",
     "ModelMountDestination": "模型文件夹挂载目标",
