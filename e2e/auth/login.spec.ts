@@ -32,7 +32,7 @@ test.beforeEach(async ({ page, request }) => {
 
 test.describe(
   'Before Login',
-  { tag: ['@smoke', '@auth', '@functional'] },
+  { tag: ['@smoke', '@smoke-any', '@auth', '@functional'] },
   () => {
     test('should display the login form', async ({ page }) => {
       await expect(page.getByLabel('Email or Username')).toBeVisible();
@@ -42,18 +42,22 @@ test.describe(
   },
 );
 
-test.describe('Login', { tag: ['@smoke', '@auth', '@functional'] }, () => {
-  test.beforeEach(async ({ page, request }) => {
-    await loginAsAdmin(page, request);
-  });
+test.describe(
+  'Login',
+  { tag: ['@smoke', '@smoke-any', '@auth', '@functional'] },
+  () => {
+    test.beforeEach(async ({ page, request }) => {
+      await loginAsAdmin(page, request);
+    });
 
-  test('should redirect to the Summary', async ({ page }) => {
-    await expect(page).toHaveURL(/\/start/);
-    await expect(
-      page.getByTestId('webui-breadcrumb').getByText('Start'),
-    ).toBeVisible();
-  });
-});
+    test('should redirect to the Summary', async ({ page }) => {
+      await expect(page).toHaveURL(/\/start/);
+      await expect(
+        page.getByTestId('webui-breadcrumb').getByText('Start'),
+      ).toBeVisible();
+    });
+  },
+);
 
 /**
  * Regression tests for FR-2199: endpoint URL normalization.
