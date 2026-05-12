@@ -536,7 +536,17 @@ export default defineConfig(({ mode }) => {
       nodePolyfills({
         include: ['buffer', 'stream'],
         globals: {
-          Buffer: true,
+          // `Buffer: true` injects `globalThis.Buffer = ... __buffer_polyfill`
+          // at the top of every chunk that touches Buffer. Vite's dep
+          // optimizer also wraps the polyfill shim itself into a chunk, so
+          // when that chunk gets the same injection prepended it ends up
+          // importing its own default export → TDZ access on
+          // `__vite__cjsImport0_vitePluginNodePolyfills_shims_buffer`.
+          // `'build'` scopes the injection to the production build only;
+          // dev relies on explicit `import { Buffer } from 'buffer'` (the
+          // `include: ['buffer']` line above still pre-bundles the polyfill
+          // so those imports resolve).
+          Buffer: 'build',
           global: false,
           process: false,
         },
