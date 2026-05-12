@@ -23,21 +23,15 @@ export const SMOKE_CATALOG: ReadonlyArray<SmokeCategory> = [
   {
     category: 'auth',
     description: 'Login form rendering and successful sign-in flow.',
-    tags: ['@smoke', '@smoke-any'],
+    tags: ['@smoke', '@smoke-admin'],
     specs: ['e2e/auth/login.spec.ts'],
   },
   {
     category: 'dashboard',
-    description: 'Dashboard widgets render after login.',
-    tags: ['@smoke', '@smoke-any'],
-    specs: ['e2e/dashboard/dashboard.spec.ts'],
-  },
-  {
-    category: 'session',
     description:
-      'Session lifecycle: create batch session, wait for RUNNING, terminate.',
-    tags: ['@smoke', '@smoke-user'],
-    specs: ['e2e/session/session-lifecycle.spec.ts'],
+      'Dashboard widgets render after admin login. Regular-user dashboard checks live in a separate (non-smoke) describe.',
+    tags: ['@smoke', '@smoke-admin'],
+    specs: ['e2e/dashboard/dashboard.spec.ts'],
   },
   {
     category: 'vfolder',

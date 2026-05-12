@@ -32,7 +32,7 @@ test.beforeEach(async ({ page, request }) => {
 
 test.describe(
   'Before Login',
-  { tag: ['@smoke', '@smoke-any', '@auth', '@functional'] },
+  { tag: ['@smoke', '@smoke-admin', '@auth', '@functional'] },
   () => {
     test('should display the login form', async ({ page }) => {
       await expect(page.getByLabel('Email or Username')).toBeVisible();
@@ -44,7 +44,7 @@ test.describe(
 
 test.describe(
   'Login',
-  { tag: ['@smoke', '@smoke-any', '@auth', '@functional'] },
+  { tag: ['@smoke', '@smoke-admin', '@auth', '@functional'] },
   () => {
     test.beforeEach(async ({ page, request }) => {
       await loginAsAdmin(page, request);
