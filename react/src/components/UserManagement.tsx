@@ -23,7 +23,7 @@ import {
   SettingOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { App, Button, Dropdown, Space, theme } from 'antd';
+import { App, Button, Dropdown, Space, Tag, Tooltip, theme } from 'antd';
 import {
   filterOutEmpty,
   filterOutNullAndUndefined,
@@ -43,9 +43,20 @@ import {
   useFetchKey,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { BanIcon, EditIcon, PlusIcon, UndoIcon } from 'lucide-react';
+import {
+  BanIcon,
+  EditIcon,
+  PlusIcon,
+  ShieldUser,
+  UndoIcon,
+} from 'lucide-react';
 import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
-import React, { useState, useTransition, useDeferredValue } from 'react';
+import React, {
+  useMemo,
+  useState,
+  useTransition,
+  useDeferredValue,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 
@@ -122,42 +133,100 @@ const UserManagement: React.FC<UserManagementProps> = () => {
 
   const { supportedFields, exportCSV } = useCSVExport('users');
 
-  const { user_nodes } = useLazyLoadQuery<UserManagementQuery>(
-    graphql`
-      query UserManagementQuery(
-        $first: Int
-        $offset: Int
-        $filter: String
-        $order: String
-      ) {
-        user_nodes(
-          first: $first
-          offset: $offset
-          filter: $filter
-          order: $order
+  const { user_nodes, projectAdminAssignments } =
+    useLazyLoadQuery<UserManagementQuery>(
+      graphql`
+        query UserManagementQuery(
+          $first: Int
+          $offset: Int
+          $filter: String
+          $order: String
         ) {
-          count
-          edges {
-            node {
-              id @required(action: THROW)
-              email @required(action: THROW)
-              ...BAIUserNodesFragment
-              ...PurgeUsersModalFragment
-              ...UpdateUsersModalFragment
+          user_nodes(
+            first: $first
+            offset: $offset
+            filter: $filter
+            order: $order
+          ) {
+            count
+            edges {
+              node {
+                id @required(action: THROW)
+                email @required(action: THROW)
+                ...BAIUserNodesFragment
+                ...PurgeUsersModalFragment
+                ...UpdateUsersModalFragment
+              }
+            }
+          }
+          projectAdminAssignments: adminRoleAssignments(
+            first: 1000
+            filter: {
+              permission: { entityType: { equals: PROJECT_ADMIN_PAGE } }
+            }
+          ) @catch(to: RESULT) {
+            edges {
+              node {
+                user {
+                  basicInfo {
+                    email
+                  }
+                }
+                role {
+                  scopes(first: 10) {
+                    edges {
+                      node {
+                        scopeType
+                        scope {
+                          ... on ProjectV2 {
+                            basicInfo {
+                              name
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
             }
           }
         }
+      `,
+      deferredQueryVariables,
+      {
+        fetchKey: deferredFetchKey,
+        fetchPolicy:
+          deferredFetchKey === INITIAL_FETCH_KEY
+            ? 'store-and-network'
+            : 'network-only',
+      },
+    );
+
+  // Build a map from user email to list of project names where the user
+  // holds a project-admin role. Used by the role column to display
+  // project-scoped roles alongside the global role.
+  const projectAdminByEmail = useMemo(() => {
+    const map = new Map<string, string[]>();
+    if (projectAdminAssignments?.ok !== true) return map;
+    for (const edge of projectAdminAssignments.value?.edges ?? []) {
+      const email = edge?.node?.user?.basicInfo?.email;
+      if (!email) continue;
+      const scopes = edge?.node?.role?.scopes?.edges ?? [];
+      for (const scopeEdge of scopes) {
+        const scope = scopeEdge?.node;
+        if (scope?.scopeType === 'PROJECT') {
+          const projectName = scope?.scope?.basicInfo?.name ?? scope?.scopeType;
+          const existing = map.get(email) ?? [];
+          if (!existing.includes(projectName)) {
+            existing.push(projectName);
+          }
+          map.set(email, existing);
+        }
       }
-    `,
-    deferredQueryVariables,
-    {
-      fetchKey: deferredFetchKey,
-      fetchPolicy:
-        deferredFetchKey === INITIAL_FETCH_KEY
-          ? 'store-and-network'
-          : 'network-only',
-    },
-  );
+    }
+    return map;
+  }, [projectAdminAssignments]);
 
   const [commitModifyUser] = useMutation<UserManagementModifyMutation>(graphql`
     mutation UserManagementModifyMutation(
@@ -438,13 +507,47 @@ const UserManagement: React.FC<UserManagementProps> = () => {
       </BAIFlex>
       <BAIUserNodes
         usersFrgmt={filterOutNullAndUndefined(_.map(user_nodes?.edges, 'node'))}
-        customizeColumns={(baseColumns) => [
-          {
-            ...baseColumns[0],
-            render: renderEmailWithActions,
-          },
-          ...baseColumns.slice(1),
-        ]}
+        customizeColumns={(baseColumns) => {
+          return baseColumns.map((col) => {
+            if (col.key === 'email') {
+              return { ...col, render: renderEmailWithActions };
+            }
+            if (col.key === 'role') {
+              return {
+                ...col,
+                render: (__: unknown, record: UserNodeInList) => {
+                  const projectNames = projectAdminByEmail.get(record.email);
+                  return (
+                    <BAIFlex gap="xs" align="center" wrap="wrap">
+                      <span>{record.role}</span>
+                      {projectNames && projectNames.length > 0 && (
+                        <Tooltip title={projectNames.join(', ')}>
+                          <Tag
+                            icon={
+                              <ShieldUser
+                                style={{
+                                  width: 12,
+                                  height: 12,
+                                  verticalAlign: '-0.1em',
+                                  marginInlineEnd: 4,
+                                }}
+                              />
+                            }
+                            color="geekblue"
+                            style={{ marginInlineEnd: 0 }}
+                          >
+                            {t('projectSelect.ProjectAdminBadge')}
+                          </Tag>
+                        </Tooltip>
+                      )}
+                    </BAIFlex>
+                  );
+                },
+              };
+            }
+            return col;
+          });
+        }}
         scroll={{ x: 'max-content' }}
         pagination={{
           pageSize: tablePaginationOption.pageSize,
