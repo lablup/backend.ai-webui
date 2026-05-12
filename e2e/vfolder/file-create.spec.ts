@@ -27,7 +27,9 @@ const openFolderExplorer = async (
 
 test.describe(
   'File Creation in VFolder Explorer',
-  { tag: ['@critical', '@vfolder', '@functional'] },
+  {
+    tag: ['@critical', '@vfolder', '@functional', '@smoke', '@smoke-user'],
+  },
   () => {
     const testFolderName = 'e2e-test-file-create-' + new Date().getTime();
 

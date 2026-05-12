@@ -11,7 +11,9 @@ const WIDGET_TIMEOUT = 30_000;
 
 test.describe(
   'Dashboard Page',
-  { tag: ['@regression', '@dashboard', '@functional'] },
+  {
+    tag: ['@regression', '@dashboard', '@functional', '@smoke', '@smoke-any'],
+  },
   () => {
     // -----------------------------------------------------------------------
     // 6. Widget Rendering

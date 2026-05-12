@@ -1,0 +1,40 @@
+{
+  "name": "backend.ai-webui-smoke-cli",
+  "version": "0.1.0-alpha.0",
+  "private": true,
+  "description": "Post-install smoke test CLI for Backend.AI WebUI. Runs a curated @smoke subset of the e2e suite against a customer endpoint and emits a self-contained HTML report.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lablup/backend.ai-webui/tree/main/packages/backend.ai-webui-smoke-cli"
+  },
+  "bugs": {
+    "url": "https://github.com/lablup/backend.ai-webui/issues"
+  },
+  "author": "Lablup Inc. <contact@lablup.com>",
+  "license": "LGPL-3.0-or-later",
+  "type": "module",
+  "bin": {
+    "bai-smoke": "./bin/bai-smoke.cjs"
+  },
+  "files": [
+    "bin",
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsc -p tsconfig.json --watch",
+    "clean": "rimraf dist",
+    "smoke": "node ./bin/bai-smoke.cjs",
+    "list": "node ./bin/bai-smoke.cjs list",
+    "version:print": "node ./bin/bai-smoke.cjs version"
+  },
+  "dependencies": {
+    "commander": "^12.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.9.3"
+  }
+}
