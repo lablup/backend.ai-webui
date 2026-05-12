@@ -13,16 +13,16 @@ GitHub mirror issue numbers are populated by the Jira → GitHub webhook clone; 
 
 | FR | Jira | Tier | GitHub | Title |
 |----|------|------|--------|-------|
-| FR-A | [FR-2875](https://lablup.atlassian.net/browse/FR-2875) | MVP | pending | chore(WebUI Smoke CLI): introduce @smoke tag convention for e2e specs |
-| FR-B | [FR-2876](https://lablup.atlassian.net/browse/FR-2876) | MVP | pending | feat(WebUI Smoke CLI): scaffold backend.ai-webui-smoke-cli workspace package |
-| FR-C | [FR-2877](https://lablup.atlassian.net/browse/FR-2877) | MVP | pending | feat(WebUI Smoke CLI): implement runner with tag filter and external endpoint support |
-| FR-D | [FR-2878](https://lablup.atlassian.net/browse/FR-2878) | Phase 2 | pending | feat(WebUI Smoke CLI): add preflight/doctor subcommand and role auto-detection |
-| FR-E | [FR-2879](https://lablup.atlassian.net/browse/FR-2879) | Phase 2 | pending | feat(WebUI Smoke CLI): post-process report with summary.json and diagnostic block |
-| FR-F | [FR-2880](https://lablup.atlassian.net/browse/FR-2880) | Phase 2 | pending | refactor(WebUI Smoke CLI): extract single-account-safe e2e utilities |
-| FR-G | [FR-2881](https://lablup.atlassian.net/browse/FR-2881) | Phase 2 | pending | feat(WebUI Smoke CLI): bundle Chromium and add air-gap + insecure-tls support |
-| FR-H | [FR-2882](https://lablup.atlassian.net/browse/FR-2882) | Phase 2 | pending | chore(WebUI Smoke CLI): SEA/pkg binary build and internal release workflow |
-| FR-I | [FR-2883](https://lablup.atlassian.net/browse/FR-2883) | Phase 2 | pending | docs(WebUI Smoke CLI): operator README in English and Korean |
-| FR-J | [FR-2884](https://lablup.atlassian.net/browse/FR-2884) | Phase 2 | pending | feat(WebUI Smoke CLI): expand smoke coverage (App launcher P1, model serving, RBAC basics) |
+| FR-A | [FR-2875](https://lablup.atlassian.net/browse/FR-2875) | MVP | #7379 | chore(WebUI Smoke CLI): introduce @smoke tag convention for e2e specs |
+| FR-B | [FR-2876](https://lablup.atlassian.net/browse/FR-2876) | MVP | #7380 | feat(WebUI Smoke CLI): scaffold backend.ai-webui-smoke-cli workspace package |
+| FR-C | [FR-2877](https://lablup.atlassian.net/browse/FR-2877) | MVP | #7381 | feat(WebUI Smoke CLI): implement runner with tag filter and external endpoint support |
+| FR-D | [FR-2878](https://lablup.atlassian.net/browse/FR-2878) | Phase 2 | #7382 | feat(WebUI Smoke CLI): add preflight/doctor subcommand and role auto-detection |
+| FR-E | [FR-2879](https://lablup.atlassian.net/browse/FR-2879) | Phase 2 | #7383 | feat(WebUI Smoke CLI): post-process report with summary.json and diagnostic block |
+| FR-F | [FR-2880](https://lablup.atlassian.net/browse/FR-2880) | Phase 2 | #7384 | refactor(WebUI Smoke CLI): extract single-account-safe e2e utilities |
+| FR-G | [FR-2881](https://lablup.atlassian.net/browse/FR-2881) | Phase 2 | #7385 | feat(WebUI Smoke CLI): bundle Chromium and add air-gap + insecure-tls support |
+| FR-H | [FR-2882](https://lablup.atlassian.net/browse/FR-2882) | Phase 2 | #7386 | chore(WebUI Smoke CLI): SEA/pkg binary build and internal release workflow |
+| FR-I | [FR-2883](https://lablup.atlassian.net/browse/FR-2883) | Phase 2 | #7387 | docs(WebUI Smoke CLI): operator README in English and Korean |
+| FR-J | [FR-2884](https://lablup.atlassian.net/browse/FR-2884) | Phase 2 | #7388 | feat(WebUI Smoke CLI): expand smoke coverage (App launcher P1, model serving, RBAC basics) |
 
 ## Dependency Graph
 
@@ -70,8 +70,8 @@ Encoded Jira links (`blocks` unless noted):
 
 | FR | Files touched | Verification |
 |----|---------------|--------------|
-| FR-A | `E2E-TEST-NAMING-GUIDELINES.md`, `e2e/tests/**` (tag annotations only) | `pnpm --filter ./e2e exec playwright test --grep @smoke --list` lists starter specs; existing e2e CI run count unchanged |
-| FR-B | `packages/backend.ai-webui-smoke-cli/` (new), `pnpm-workspace.yaml` | `pnpm install && pnpm --filter backend.ai-webui-smoke-cli run build`; `bai-smoke list|version|run --help` |
+| FR-A | `e2e/E2E-TEST-NAMING-GUIDELINES.md`, `e2e/**` (tag annotations only) | `pnpm exec playwright test --grep @smoke --list` (run at the repo root) lists starter specs; existing e2e CI run count unchanged |
+| FR-B | `packages/backend.ai-webui-smoke-cli/` (new), `pnpm-workspace.yaml` | `pnpm install && pnpm --filter backend.ai-webui-smoke-cli run build`; verify `bai-smoke list`, `bai-smoke version`, and `bai-smoke run --help` |
 
 ### Wave 2 — MVP runner
 
