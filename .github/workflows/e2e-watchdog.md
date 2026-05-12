@@ -4,8 +4,6 @@ description: |
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "0 0 * * 1-5"
 
 permissions: read-all
 

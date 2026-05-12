@@ -23,8 +23,6 @@
 
 name: "E2E Watchdog"
 "on":
-  schedule:
-  - cron: "0 0 * * 1-5"
   workflow_dispatch:
 
 permissions: read-all

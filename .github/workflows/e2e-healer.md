@@ -9,8 +9,6 @@ on:
     paths:
       - '.github/workflows/e2e-healer.md'
       - '.github/workflows/e2e-healer.lock.yml'
-  schedule:
-    - cron: "0 0 * * 1-5"
 
 permissions: read-all
 
