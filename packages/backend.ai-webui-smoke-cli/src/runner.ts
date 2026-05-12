@@ -32,7 +32,8 @@ export interface SmokeSummary {
   webserver: string;
   role: EffectiveRole;
   roleSelection: SmokeRunOptions['role'];
-  include?: string[];
+  /** Tags OR-ed onto the smoke selection via `--also-include`. */
+  alsoInclude?: string[];
   exclude?: string[];
   pages?: string[];
   grep?: string;
@@ -56,27 +57,54 @@ export interface SmokeSummary {
 /**
  * Auto-detect role by hitting the webserver's /server/login endpoint.
  *
- * On failure we conservatively default to `'user'` — fewer privileged
- * specs attempted is safer than running admin-only specs against a
- * misclassified account.
+ * On any failure (network error, non-200 status, malformed JSON,
+ * `authenticated !== true`) we throw. Silently defaulting to `'user'`
+ * was masking real misconfiguration — operators ended up with a green
+ * smoke run that had skipped every admin-tagged spec without saying so.
+ *
+ * The body shape we POST here (`{ username, password }`) mirrors what
+ * the SESSION-mode browser fixture submits to `/server/login`. The
+ * proper signed-request based detection — using the post-login
+ * `/func/auth/role` endpoint — is tracked in TODO(FR-2878).
  */
 export async function detectRole(opts: SmokeRunOptions): Promise<EffectiveRole> {
   const url = `${opts.webserver.replace(/\/$/, '')}/server/login`;
   // Honour --insecure-tls for the detection call so self-signed certs
   // don't crash detection before we even reach Playwright.
+  //
+  // Note: this temporarily mutates the *current* (host) process env —
+  // `NODE_TLS_REJECT_UNAUTHORIZED` is a Node-wide knob and there is no
+  // per-call switch for the built-in `fetch`. We restore the previous
+  // value (or delete the key if it was unset) in `finally`, so the
+  // mutation is scoped to the duration of this detection request.
+  // The same flag is also forwarded to the spawned Playwright process
+  // via `buildPlaywrightEnv` so the in-browser HTTPS calls inherit it.
   const previousTlsReject = process.env.NODE_TLS_REJECT_UNAUTHORIZED;
   if (opts.insecureTls) process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
   try {
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username: opts.email, password: opts.password }),
-    });
-    if (!res.ok) {
-      process.stderr.write(
-        `[bai-smoke] role detection: webserver returned HTTP ${res.status}; defaulting to "user".\n`,
+    let res: Response;
+    try {
+      res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        // TODO(FR-2878): switch to signed-request /func/auth/role for a
+        // proper detection. This naive form matches what the SESSION-mode
+        // browser fixture submits to /server/login and works against the
+        // current staging cluster.
+        body: JSON.stringify({ username: opts.email, password: opts.password }),
+      });
+    } catch (err) {
+      throw new Error(
+        `Failed to auto-detect role for ${opts.email} against ${opts.webserver}: ` +
+          `${(err as Error).message}. Pass --role admin or --role user explicitly and retry.`,
       );
-      return 'user';
+    }
+    if (!res.ok) {
+      throw new Error(
+        `Failed to auto-detect role for ${opts.email} against ${opts.webserver}: ` +
+          `webserver returned HTTP ${res.status}. ` +
+          `Pass --role admin or --role user explicitly and retry.`,
+      );
     }
     const json = (await res.json().catch(() => null)) as
       | {
@@ -85,21 +113,17 @@ export async function detectRole(opts: SmokeRunOptions): Promise<EffectiveRole> 
         }
       | null;
     if (!json || json.authenticated !== true) {
-      process.stderr.write(
-        '[bai-smoke] role detection: login not authenticated; defaulting to "user".\n',
+      throw new Error(
+        `Failed to auto-detect role for ${opts.email} against ${opts.webserver}: ` +
+          `login not authenticated (unexpected response shape or wrong credentials). ` +
+          `Pass --role admin or --role user explicitly and retry.`,
       );
-      return 'user';
     }
     const role = json.data?.role;
     const isAdmin = json.data?.is_admin === true;
     if (role === 'admin' || role === 'superadmin' || isAdmin) {
       return 'admin';
     }
-    return 'user';
-  } catch (err) {
-    process.stderr.write(
-      `[bai-smoke] role detection failed: ${(err as Error).message}; defaulting to "user".\n`,
-    );
     return 'user';
   } finally {
     if (opts.insecureTls) {
@@ -175,7 +199,7 @@ export async function runSmoke(opts: SmokeRunOptions): Promise<SmokeRunResult> {
     webserver: opts.webserver,
     role: effectiveRole,
     roleSelection: opts.role,
-    include: opts.include,
+    alsoInclude: opts.include,
     exclude: opts.exclude,
     pages: opts.pages,
     grep,
