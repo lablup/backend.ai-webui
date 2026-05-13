@@ -11,6 +11,7 @@ import {
 } from 'node:path';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
+import compression from 'compression';
 import { defineConfig, loadEnv, type Plugin } from 'vite';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import { VitePWA } from 'vite-plugin-pwa';
@@ -304,6 +305,51 @@ function projectRootStaticPlugin(): Plugin {
  * tree because `@monaco-editor/react` consumes the AMD form to keep the
  * Monaco worker chunks intact for runtime lazy-loading.
  */
+/**
+ * Gzip-compress every dev-server response. Vite's dev server does NOT compress
+ * by default — source modules, optimized dep bundles, even multi-MB chunks all
+ * go over the wire raw. On a local LAN that's fine; on a high-RTT remote
+ * connection the total session payload (typically 20–40MB on a hard refresh of
+ * this app) saturates available throughput and pulls every parallel HTTP/2
+ * stream's completion time up to the same `total_bytes / bandwidth` value —
+ * which is exactly the "every chunk takes ~8 s regardless of size" pattern.
+ *
+ * Plain `compression` middleware (the same one Express uses) drops aggregate
+ * JS payload by ~75–80%. It's `apply: 'serve'` so the production build is
+ * untouched.
+ *
+ * Why this is placed BEFORE the other middlewares: connect runs middlewares
+ * in registration order, and compression needs to wrap the response stream
+ * before any later middleware writes to it (it hooks `res.write` /
+ * `res.end`). Placing it first means everything downstream — projectRoot
+ * static, Monaco static, Vite's own internal middlewares — flows through
+ * the gzip transform.
+ *
+ * Portless passes through `Content-Encoding` unchanged (verified via curl),
+ * so the gzip frames reach the browser intact and the browser inflates.
+ */
+function devCompressionPlugin(): Plugin {
+  return {
+    name: 'bai-dev-compression',
+    apply: 'serve',
+    configureServer(server) {
+      // `threshold: 0`: compress even tiny responses. The CPU cost of
+      // compressing 1–2 KB is negligible (sub-millisecond) and the benefit
+      // accrues on aggregate session bytes, not per-file.
+      //
+      // Brotli quality stays at the `compression` package default (q4).
+      //
+      // Tried q6 — it produces ~10% smaller wire bytes for a 2.8MB chunk
+      // (508KB → 457KB), but on a hard refresh (100+ concurrent module
+      // requests) the per-request CPU cost climbed enough that libuv's
+      // default 4-thread pool saturated, and total wall time for the slowest
+      // chunk regressed from ~4s to ~6s. The wire-size win is dwarfed by
+      // the compression-queue tail under burst load. q4 is the sweet spot.
+      server.middlewares.use(compression({ threshold: 0 }));
+    },
+  };
+}
+
 function monacoStaticPlugin(): Plugin {
   const monacoRoot = resolve(__dirname, 'node_modules/monaco-editor/min/vs');
   const URL_PREFIX = '/resources/monaco/vs/';
@@ -445,6 +491,46 @@ export default defineConfig(({ mode }) => {
         'src/index.tsx',
         'src/**/*.{ts,tsx}',
       ],
+      // Pre-declare the heavy dependencies that are imported on the first-paint
+      // path. Without this list, Vite still finds them via the `entries` scan,
+      // but only AFTER scanning the source tree — and the scan + optimize are
+      // serialised. Listing them here lets the dep optimizer kick off immediately
+      // at startup in parallel with the source scan, so by the time the browser
+      // requests `/src/index.tsx` the bundled deps are already on disk.
+      //
+      // Listing rules:
+      // - Top-level packages used by the eagerly-imported component graph
+      //   (index.tsx → App → DefaultProviders → routes → MainLayout / LoginView).
+      // - Subpath imports whose specifier is the actual entry the app uses —
+      //   e.g. `react-dom/client` (for `createRoot`) and
+      //   `nuqs/adapters/react-router/v6` (the only nuqs entry that ships the
+      //   adapter). Listing these saves the optimizer a discover-and-reload
+      //   cycle the first time the source scan reaches them. Pure deep-import
+      //   conveniences with no separate entry (e.g. `antd/es/locale/ko_KR`)
+      //   are NOT listed — the entries scan picks them up automatically.
+      // - Do NOT list anything in `exclude` below (`backend.ai-ui`,
+      //   `backend.ai-client`, `i18next`, `react-i18next`).
+      // - When a new heavy top-level dep starts being imported on the first
+      //   render path, add it here.
+      include: [
+        'react',
+        'react-dom',
+        'react-dom/client',
+        'react-router-dom',
+        'antd',
+        'antd-style',
+        '@ant-design/icons',
+        '@ant-design/colors',
+        'jotai',
+        'react-relay',
+        'relay-runtime',
+        '@tanstack/react-query',
+        'nuqs',
+        'nuqs/adapters/react-router/v6',
+        'dayjs',
+        'lodash',
+        'ahooks',
+      ],
       exclude: [
         'backend.ai-ui',
         // backend.ai-client is dev-aliased to its source entry (see
@@ -496,6 +582,65 @@ export default defineConfig(({ mode }) => {
           // watches it explicitly for full-page-reload on change.
         ],
       },
+      // Pre-transform the modules that are *eagerly* imported on first paint,
+      // so they are ready before the browser asks for them. This mainly helps
+      // remote dev sessions where the request waterfall (browser → server →
+      // transform → response, per file) is dominated by RTT: with warmup the
+      // transform cost has already been paid and the response is served from
+      // Vite's in-memory module cache.
+      //
+      // Rules of thumb (per Vite docs):
+      // - Only warm up files on the FIRST-PAINT critical path. Anything
+      //   behind `React.lazy()` / dynamic import will be transformed when
+      //   the user navigates there and warming it up just steals startup CPU.
+      // - Paths are relative to the config root (`react/`).
+      // - Cross-root paths (`../packages/...`) are supported.
+      //
+      // Reference: https://vite.dev/guide/performance#warm-up-frequently-used-files
+      warmup: {
+        clientFiles: [
+          // Entry module the browser fetches first.
+          './src/index.tsx',
+          // index.tsx's synchronous imports.
+          './src/App.tsx',
+          './src/global-stores.ts',
+          './src/RelayEnvironment.ts',
+          './src/helper/customThemeConfig.ts',
+          './src/hooks/useThemeMode.tsx',
+          './src/components/DefaultProviders.tsx',
+          // App.tsx → routes.tsx and everything routes.tsx imports eagerly.
+          // Lazy-loaded pages are intentionally NOT listed here — they are
+          // fetched on navigation. Only the non-lazy imports at the top of
+          // routes.tsx need warmup.
+          './src/routes.tsx',
+          './src/components/BAIErrorBoundary.tsx',
+          './src/components/ErrorBoundaryWithNullFallback.tsx',
+          './src/components/FlexActivityIndicator.tsx',
+          './src/components/LocationStateBreadCrumb.tsx',
+          './src/components/LoginView.tsx',
+          './src/components/MainLayout/MainLayout.tsx',
+          './src/components/MainLayout/WebUIHeader.tsx',
+          './src/components/MainLayout/WebUISider.tsx',
+          './src/components/STokenLoginBoundary.tsx',
+          './src/components/WebUINavigate.tsx',
+          // Pages marked "High priority" in routes.tsx (eagerly imported,
+          // not behind React.lazy).
+          './src/pages/ComputeSessionListPage.tsx',
+          './src/pages/Page404.tsx',
+          './src/pages/VFolderNodeListPage.tsx',
+          // Hooks barrel — pulled in by virtually every page/component the
+          // first render touches (useSuspendedBackendaiClient, useCurrentProject,
+          // useBAISetting, etc. all re-export from here).
+          './src/hooks/index.tsx',
+          // backend.ai-ui is excluded from `optimizeDeps` (see the long note
+          // above on i18n Context isolation), so its barrel is served as
+          // on-the-fly source modules every time. Warming the barrel — which
+          // is `export *` over components/helper/hooks/icons — primes the
+          // most-frequently-touched BUI surface during startup instead of on
+          // the browser's critical path.
+          '../packages/backend.ai-ui/src/index.ts',
+        ],
+      },
     },
 
     plugins: [
@@ -503,6 +648,9 @@ export default defineConfig(({ mode }) => {
       // and the index.html resolution. Monaco's narrower prefix is matched
       // first so the more general projectRoot middleware never has to
       // reach into the filesystem for a `/resources/monaco/vs/*` request.
+      // Compression must come first so its res.write/res.end hooks wrap
+      // every downstream middleware's writes (see comment on the plugin).
+      devCompressionPlugin(),
       monacoStaticPlugin(),
       projectRootStaticPlugin(),
       devAssetsReloadPlugin(),
