@@ -5,8 +5,8 @@
 import { BAINodeNotificationItemFragment$key } from '../__generated__/BAINodeNotificationItemFragment.graphql';
 import { NotificationState } from '../hooks/useBAINotification';
 import BAIComputeSessionNodeNotificationItem from './BAIComputeSessionNodeNotificationItem';
-import BAIVFolderNotificationItem from './BAIVFolderNotificationItem';
 import BAIVirtualFolderNodeNotificationItem from './BAIVirtualFolderNodeNotificationItem';
+import BAIVirtualFolderNodeNotificationItemV2 from './BAIVirtualFolderNodeNotificationItemV2';
 import React from 'react';
 import { graphql, useRefetchableFragment } from 'react-relay';
 
@@ -28,7 +28,8 @@ const nodeFragmentOperation = graphql`
     }
     ... on VFolder {
       __typename
-      ...BAIVFolderNotificationItemFragment @alias(as: "vfolderFrgmt")
+      ...BAIVirtualFolderNodeNotificationItemV2Fragment
+        @alias(as: "vfolderFrgmt")
     }
     ... on VirtualFolderNode {
       __typename
@@ -57,7 +58,7 @@ const BAINodeNotificationItem: React.FC<{
     );
   } else if (node?.__typename === 'VFolder') {
     return (
-      <BAIVFolderNotificationItem
+      <BAIVirtualFolderNodeNotificationItemV2
         notification={notification}
         vfolderFrgmt={node.vfolderFrgmt || null}
         showDate={showDate}

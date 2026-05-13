@@ -2,13 +2,13 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { BAIVFolderNotificationItemFragment$key } from '../__generated__/BAIVFolderNotificationItemFragment.graphql';
-import { useWebUINavigate } from '../hooks';
+import { BAIVirtualFolderNodeNotificationItemV2Fragment$key } from '../__generated__/BAIVirtualFolderNodeNotificationItemV2Fragment.graphql';
 import {
   NotificationState,
   useSetBAINotification,
 } from '../hooks/useBAINotification';
 import BAINotificationBackgroundProgress from './BAINotificationBackgroundProgress';
+import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import { useToggle } from 'ahooks';
 import { Card, List, theme, Typography } from 'antd';
 import {
@@ -23,9 +23,9 @@ import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
-interface BAIVFolderNotificationItemProps {
+interface BAIVirtualFolderNodeNotificationItemV2Props {
   notification: NotificationState;
-  vfolderFrgmt: BAIVFolderNotificationItemFragment$key | null;
+  vfolderFrgmt: BAIVirtualFolderNodeNotificationItemV2Fragment$key | null;
   showDate?: boolean;
 }
 
@@ -34,14 +34,12 @@ interface BAIVFolderNotificationItemProps {
 // list/mutation flows can pass `node: vfolder` to `upsertNotification` and
 // get the same rich folder-link + extra-description rendering as the legacy
 // V1 path. The V1 component stays in place until all callers migrate.
-const BAIVFolderNotificationItem: React.FC<BAIVFolderNotificationItemProps> = ({
-  notification,
-  vfolderFrgmt,
-  showDate,
-}) => {
+const BAIVirtualFolderNodeNotificationItemV2: React.FC<
+  BAIVirtualFolderNodeNotificationItemV2Props
+> = ({ notification, vfolderFrgmt, showDate }) => {
   'use memo';
 
-  const navigate = useWebUINavigate();
+  const { open: openFolderExplorer } = useFolderExplorerOpener();
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { closeNotification } = useSetBAINotification();
@@ -50,7 +48,7 @@ const BAIVFolderNotificationItem: React.FC<BAIVFolderNotificationItemProps> = ({
 
   const node = useFragment(
     graphql`
-      fragment BAIVFolderNotificationItemFragment on VFolder {
+      fragment BAIVirtualFolderNodeNotificationItemV2Fragment on VFolder {
         id
         metadata {
           name
@@ -76,9 +74,9 @@ const BAIVFolderNotificationItem: React.FC<BAIVFolderNotificationItemProps> = ({
             }}
             title={folderName || ''}
             onClick={() => {
-              navigate(
-                `/data${localId ? `?${new URLSearchParams({ folder: localId }).toString()}` : ''}`,
-              );
+              if (localId) {
+                openFolderExplorer(localId);
+              }
               closeNotification(notification.key);
             }}
           >
@@ -148,4 +146,4 @@ const BAIVFolderNotificationItem: React.FC<BAIVFolderNotificationItemProps> = ({
   );
 };
 
-export default BAIVFolderNotificationItem;
+export default BAIVirtualFolderNodeNotificationItemV2;

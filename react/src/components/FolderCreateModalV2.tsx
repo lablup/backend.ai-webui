@@ -2,8 +2,14 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { FolderCreateModalV2Mutation } from '../__generated__/FolderCreateModalV2Mutation.graphql';
-import { FolderCreateModalV2ProjectMutation } from '../__generated__/FolderCreateModalV2ProjectMutation.graphql';
+import {
+  FolderCreateModalV2Mutation,
+  FolderCreateModalV2Mutation$data,
+} from '../__generated__/FolderCreateModalV2Mutation.graphql';
+import {
+  FolderCreateModalV2ProjectMutation,
+  FolderCreateModalV2ProjectMutation$data,
+} from '../__generated__/FolderCreateModalV2ProjectMutation.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanQuery } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
@@ -12,7 +18,6 @@ import { useEffectiveAdminRole } from '../hooks/useCurrentUserProjectRoles';
 import QuestionIconWithTooltip from './QuestionIconWithTooltip';
 import StorageSelect from './StorageSelect';
 import {
-  App,
   Divider,
   Form,
   Input,
@@ -77,6 +82,14 @@ interface FolderCreateFormItemsType {
   cloneable: boolean;
 }
 
+// Both mutations return the same vfolder selection set; alias either generated
+// type so callers don't need to know which mutation produced the value.
+export type FolderCreationResponse =
+  | NonNullable<FolderCreateModalV2Mutation$data['createVfolderV2']>['vfolder']
+  | NonNullable<
+      FolderCreateModalV2ProjectMutation$data['createVFolderInProject']
+    >['vfolder'];
+
 export interface FolderCreateModalProps extends BAIModalProps {
   onRequestClose: (response?: FolderCreationResponse) => void;
   initialValidate?: boolean;
@@ -108,21 +121,6 @@ export interface FolderCreateModalProps extends BAIModalProps {
   alertMessage?: React.ReactNode;
 }
 
-export interface FolderCreationResponse {
-  id: string;
-  name: string;
-  quota_scope_id: string;
-  host: string;
-  usage_mode: 'general' | 'model' | 'automount';
-  permission: 'rw' | 'ro';
-  creator: string;
-  ownership_type: 'user' | 'project';
-  user: string;
-  group: string | null;
-  cloneable: boolean;
-  status: string;
-}
-
 const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
   onRequestClose,
   initialValidate = false,
@@ -136,7 +134,6 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
   const { t } = useTranslation();
   const { styles } = useStyles();
   const { token } = theme.useToken();
-  const { message } = App.useApp();
   const { logger } = useBAILogger();
   const { getErrorMessage } = useErrorMessageResolver();
 
@@ -197,7 +194,7 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
         createVfolderV2(input: $input) {
           vfolder {
             id
-            status
+            vfolderStatus: status
             host
             metadata {
               name
@@ -214,6 +211,7 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
               projectId
               creatorEmail
             }
+            ...BAINodeNotificationItemFragment @alias(as: "notificationFrgmt")
           }
         }
       }
@@ -232,7 +230,7 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
         createVFolderInProject(projectId: $projectId, input: $input) {
           vfolder {
             id
-            status
+            vfolderStatus: status
             host
             metadata {
               name
@@ -249,108 +247,103 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
               projectId
               creatorEmail
             }
+            ...BAINodeNotificationItemFragment @alias(as: "notificationFrgmt")
           }
         }
       }
     `);
 
   const handleOk = async () => {
+    let values: FolderCreateFormItemsType | undefined;
     try {
-      const values = await formRef.current?.validateFields();
-      if (!values) return;
+      values = await formRef.current?.validateFields();
+    } catch (error) {
+      // antd Form renders inline errors for validation failures; just log.
+      logger.error(error);
+      return;
+    }
+    if (!values) return;
 
-      const isAutomount = values.usage_mode === 'automount';
-      const folderName =
-        isAutomount && !_.startsWith(values.name, '.')
-          ? `.${values.name}`
-          : values.name;
-      const isProjectFolder = values.type === 'project';
+    const isAutomount = values.usage_mode === 'automount';
+    const folderName =
+      isAutomount && !_.startsWith(values.name, '.')
+        ? `.${values.name}`
+        : values.name;
+    const isProjectFolder = values.type === 'project';
 
-      // Fields shared in shape (but not in enum typing) between the two
-      // mutation inputs. `CreateVFolderV2Input` keeps lowercase strings
-      // (`'general'`/`'rw'` …), while `CreateVFolderInScopeInput` expects
-      // the `VFolderUsageMode` / `VFolderMountPermission` enums
-      // (`GENERAL`/`READ_WRITE` …). The common fields go here; each
-      // mutation path then attaches its own enum-typed values below.
-      const baseInput = {
-        name: folderName,
-        host: values.host ?? null,
-        cloneable: !!values.cloneable,
-      };
-      const legacyUsageMode = isAutomount ? 'general' : values.usage_mode;
+    // Fields shared in shape (but not in enum typing) between the two
+    // mutation inputs. `CreateVFolderV2Input` keeps lowercase strings
+    // (`'general'`/`'rw'` …), while `CreateVFolderInScopeInput` expects
+    // the `VFolderUsageMode` / `VFolderMountPermission` enums
+    // (`GENERAL`/`READ_WRITE` …). The common fields go here; each
+    // mutation path then attaches its own enum-typed values below.
+    const baseInput = {
+      name: folderName,
+      host: values.host ?? null,
+      cloneable: !!values.cloneable,
+    };
+    const legacyUsageMode = isAutomount ? 'general' : values.usage_mode;
 
-      const vfolder = isProjectFolder
-        ? (
-            await commitCreateInProjectMutation({
-              projectId: values.group ?? '',
-              input: {
-                ...baseInput,
-                // `CreateVFolderInScopeInput` takes enum-typed values.
-                usageMode: legacyUsageMode === 'model' ? 'MODEL' : 'GENERAL',
-                permission:
-                  values.permission === 'ro' ? 'READ_ONLY' : 'READ_WRITE',
-              },
-            })
-          ).createVFolderInProject.vfolder
-        : (
-            await commitCreateMutation({
-              input: {
-                ...baseInput,
-                // `CreateVFolderV2Input` keeps the lowercase legacy strings.
-                usageMode: legacyUsageMode,
-                permission: values.permission,
-                projectId: null,
-              },
-            })
-          ).createVfolderV2.vfolder;
-
-      const rawId = toLocalId(vfolder.id);
-      const result: FolderCreationResponse = {
-        id: rawId,
-        name: vfolder.metadata.name,
-        quota_scope_id: vfolder.metadata.quotaScopeId ?? '',
-        host: vfolder.host ?? '',
-        usage_mode: isAutomount
-          ? 'automount'
-          : vfolder.metadata.usageMode === 'MODEL'
-            ? 'model'
-            : 'general',
-        permission:
-          vfolder.accessControl.permission === 'READ_ONLY' ? 'ro' : 'rw',
-        creator: vfolder.ownership.creatorEmail ?? '',
-        ownership_type:
-          vfolder.accessControl.ownershipType === 'USER' ? 'user' : 'project',
-        user: vfolder.ownership.userId ?? '',
-        group: vfolder.ownership.projectId ?? null,
-        cloneable: vfolder.metadata.cloneable,
-        status: vfolder.status ?? '',
-      };
-
+    let vfolderResults: FolderCreationResponse | undefined;
+    try {
+      if (isProjectFolder) {
+        vfolderResults = await commitCreateInProjectMutation({
+          projectId: values.group ?? '',
+          input: {
+            ...baseInput,
+            // `CreateVFolderInScopeInput` takes enum-typed values.
+            usageMode: legacyUsageMode === 'model' ? 'MODEL' : 'GENERAL',
+            permission: values.permission === 'ro' ? 'READ_ONLY' : 'READ_WRITE',
+          },
+        }).then((res) => res?.createVFolderInProject?.vfolder);
+      } else {
+        vfolderResults = await commitCreateMutation({
+          input: {
+            ...baseInput,
+            // `CreateVFolderV2Input` keeps the lowercase legacy strings.
+            usageMode: legacyUsageMode,
+            permission: values.permission,
+            projectId: null,
+          },
+        }).then((res) => res?.createVfolderV2?.vfolder);
+      }
+    } catch (error) {
+      const errorDetail = Array.isArray(error)
+        ? _.map(error, 'message').join('\n')
+        : error instanceof Error
+          ? getErrorMessage(error)
+          : undefined;
       upsertNotification({
-        key: `folder-create-success-${result.id}`,
+        key: `folder-create-failure-${folderName}-${Date.now()}`,
         icon: 'folder',
-        message: `${result.name}: ${t('data.folders.FolderCreated')}`,
-        toText: t('data.folders.OpenAFolder'),
-        to: {
-          search: new URLSearchParams({
-            folder: result.id,
-          }).toString(),
-        },
+        message: `${t('general.Folder')}: ${folderName}`,
+        description: t('data.folders.FolderCreationFailed'),
+        extraDescription: errorDetail,
         open: true,
       });
-      document.dispatchEvent(new CustomEvent('backend-ai-folder-list-changed'));
-      document.dispatchEvent(new CustomEvent('backend-ai-folder-created'));
-      onRequestClose(result);
-    } catch (error) {
-      if (Array.isArray(error)) {
-        for (const err of error) {
-          message.error(err.message);
-        }
-      } else if (error instanceof Error) {
-        message.error(getErrorMessage(error));
-      }
       logger.error(error);
+      return;
     }
+
+    if (vfolderResults) {
+      upsertNotification({
+        key: `folder-create-success-${toLocalId(vfolderResults.id)}`,
+        icon: 'folder',
+        node: vfolderResults.notificationFrgmt,
+        description: t('data.folders.FolderCreated'),
+        open: true,
+      });
+    } else {
+      upsertNotification({
+        key: `folder-create-success-${folderName}-${Date.now()}`,
+        icon: 'folder',
+        message: `${t('general.Folder')}: ${folderName}`,
+        description: t('data.folders.FolderCreated'),
+        open: true,
+      });
+    }
+
+    onRequestClose(vfolderResults);
   };
 
   return (

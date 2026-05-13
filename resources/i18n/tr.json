@@ -756,6 +756,7 @@
       "FolderClonePending": "Klasörün klonlanması devam ediyor.",
       "FolderCloned": "Klasör klonlandı",
       "FolderCreated": "Klasör oluşturuldu",
+      "FolderCreationFailed": "Klasör oluşturulamadı.",
       "FolderDeleted": "{{ folderName }} klasörü silindi.",
       "FolderDeletedForever": "{{ folderName }} klasörü kalıcı olarak silindi.",
       "FolderDisconnected": "Klasörün bağlantısı kesildi.",

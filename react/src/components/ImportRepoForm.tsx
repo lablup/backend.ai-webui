@@ -2,6 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import {
+  ImportRepoFormCreateVFolderMutation,
+  ImportRepoFormCreateVFolderMutation$data,
+} from '../__generated__/ImportRepoFormCreateVFolderMutation.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import {
@@ -20,13 +24,27 @@ import {
 } from 'antd';
 import {
   BAIButton,
+  toLocalId,
   useBAILogger,
   useErrorMessageResolver,
   useGetAvailableFolderName,
+  useMutationWithPromise,
 } from 'backend.ai-ui';
 import { FolderInput } from 'lucide-react';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { graphql } from 'react-relay';
+
+const IMPORT_REPO_FORM_CREATE_VFOLDER_MUTATION = graphql`
+  mutation ImportRepoFormCreateVFolderMutation($input: CreateVFolderV2Input!) {
+    createVfolderV2(input: $input) {
+      vfolder {
+        id
+        ...BAINodeNotificationItemFragment @alias(as: "notificationFrgmt")
+      }
+    }
+  }
+`;
 
 type URLType = 'github' | 'gitlab';
 
@@ -103,6 +121,11 @@ const ImportRepoForm: React.FC<ImportFromURLFormProps> = ({
 
   const { startSessionWithDefault, upsertSessionNotification } =
     useStartSession();
+
+  const commitCreateMutation =
+    useMutationWithPromise<ImportRepoFormCreateVFolderMutation>(
+      IMPORT_REPO_FORM_CREATE_VFOLDER_MUTATION,
+    );
 
   const prepareGitHubArchive = async (inputUrl: string) => {
     const sanitizedUrl = inputUrl.trim().replace(/\.git$/, '');
@@ -204,42 +227,81 @@ const ImportRepoForm: React.FC<ImportFromURLFormProps> = ({
   };
 
   const handleRepoImport = async (values: ImportFromURLFormValues) => {
+    const repoInfo =
+      urlType === 'github'
+        ? await prepareGitHubArchive(values.url)
+        : urlType === 'gitlab'
+          ? prepareGitLabArchive(values.url, values.gitlabBranch)
+          : null;
+    if (!repoInfo) return;
+
+    const folderName = await getAvailableFolderName(
+      repoInfo.repoName || 'imported-from-repo',
+    );
+
+    // Create the virtual folder via the V2 mutation; its payload already
+    // includes the rich folder-card fragment, so the notification can be
+    // driven directly without a separate `vfolder_node` lookup.
+    let vfolder:
+      | NonNullable<
+          ImportRepoFormCreateVFolderMutation$data['createVfolderV2']
+        >['vfolder']
+      | undefined;
     try {
-      const repoInfo =
-        urlType === 'github'
-          ? await prepareGitHubArchive(values.url)
-          : urlType === 'gitlab'
-            ? prepareGitLabArchive(values.url, values.gitlabBranch)
-            : null;
-      if (!repoInfo) return;
-
-      const folderName = await getAvailableFolderName(
-        repoInfo.repoName || 'imported-from-repo',
-      );
-
-      // create virtual folder
-      const vfolderInfo = await baiClient.vfolder.create(
-        folderName,
-        values.storageHost,
-        '', // group
-        values.vfolder_usage_mode ?? 'general', // usage mode
-        'rw', // permission
-      );
-
-      upsertNotification({
-        key: `folder-create-success-${vfolderInfo.id}`,
-        icon: 'folder',
-        message: `${vfolderInfo.name}: ${t('data.folders.FolderCreated')}`,
-        toText: t('data.folders.OpenAFolder'),
-        to: {
-          search: new URLSearchParams({
-            folder: vfolderInfo.id,
-          }).toString(),
+      vfolder = await commitCreateMutation({
+        input: {
+          name: folderName,
+          host: values.storageHost,
+          cloneable: false,
+          usageMode: values.vfolder_usage_mode ?? 'general',
+          permission: 'rw',
+          projectId: null,
         },
+      }).then((res) => res?.createVfolderV2?.vfolder);
+    } catch (error) {
+      const errorDetail = Array.isArray(error)
+        ? (error as Array<{ message: string }>).map((e) => e.message).join('\n')
+        : error instanceof Error
+          ? getErrorMessage(error)
+          : undefined;
+      upsertNotification({
+        key: `folder-create-failure-${folderName}-${Date.now()}`,
+        icon: 'folder',
+        message: `${t('general.Folder')}: ${folderName}`,
+        description: t('data.folders.FolderCreationFailed'),
+        extraDescription: errorDetail,
+        open: true,
+      });
+      logger.error(error);
+      return;
+    }
+
+    // No vfolder payload — creation likely went through but we lack the id
+    // needed to mount it; surface a plain success and stop before launching
+    // the import session.
+    if (!vfolder) {
+      upsertNotification({
+        key: `folder-create-success-${folderName}-${Date.now()}`,
+        icon: 'folder',
+        message: `${t('general.Folder')}: ${folderName}`,
+        description: t('data.folders.FolderCreated'),
         open: true,
         duration: 0,
       });
+      return;
+    }
 
+    const vfolderLocalId = toLocalId(vfolder.id);
+    upsertNotification({
+      key: `folder-create-success-${vfolderLocalId}`,
+      icon: 'folder',
+      node: vfolder.notificationFrgmt,
+      description: t('data.folders.FolderCreated'),
+      open: true,
+      duration: 0,
+    });
+
+    try {
       const launcherValue: StartSessionWithDefaultValue = {
         sessionName: `importing-files-to-${folderName}`,
         environments: {
@@ -254,7 +316,7 @@ const ImportRepoForm: React.FC<ImportFromURLFormProps> = ({
           ),
           enabled: true,
         },
-        mount_ids: [vfolderInfo.id],
+        mount_ids: [vfolderLocalId],
       };
 
       const results = await startSessionWithDefault(launcherValue);

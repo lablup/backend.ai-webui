@@ -756,6 +756,7 @@
       "FolderClonePending": "กำลังดำเนินการโคลนโฟลเดอร์",
       "FolderCloned": "โคลนโฟลเดอร์แล้ว",
       "FolderCreated": "สร้างโฟลเดอร์แล้ว",
+      "FolderCreationFailed": "ไม่สามารถสร้างโฟลเดอร์ได้",
       "FolderDeleted": "ลบโฟลเดอร์ {{ folderName }} แล้ว",
       "FolderDeletedForever": "ลบโฟลเดอร์ {{ folderName }} ถาวรแล้ว",
       "FolderDisconnected": "ยกเลิกการเชื่อมต่อโฟลเดอร์แล้ว",
