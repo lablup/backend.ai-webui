@@ -63,6 +63,21 @@ export default [
     },
   },
 
+  // Branding-schema JSON assets (the JSON Schema itself + the example
+  // theme files). They are not source code, but lint-staged passes them
+  // through eslint anyway when they live under `src/`. Use the JSONC
+  // parser so eslint accepts them; no rules are applied — the contents
+  // are verified at runtime by the schema instead.
+  {
+    files: [
+      "src/branding-schema/schema.json",
+      "src/branding-schema/examples/*.json",
+    ],
+    languageOptions: {
+      parser: jsoncParser,
+    },
+  },
+
   {
     ignores: ["**/*.graphql.*", "dist/**"],
   },
