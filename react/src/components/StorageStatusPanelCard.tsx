@@ -209,6 +209,7 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
                   <Badge
                     count={`+${invitationCount}`}
                     offset={[-`${token.sizeXS}`, -`${token.sizeXS}`]}
+                    style={{ zIndex: 50 }}
                   >
                     <Typography.Text
                       style={{ fontSize: token.fontSizeHeading5 }}

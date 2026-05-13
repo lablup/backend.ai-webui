@@ -9,6 +9,7 @@ import {
   relative,
   resolve,
 } from 'node:path';
+import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import { defineConfig, loadEnv, type Plugin } from 'vite';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
@@ -17,6 +18,20 @@ import svgr from 'vite-plugin-svgr';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const projectRoot = resolve(__dirname, '..');
+const require = createRequire(import.meta.url);
+
+// `vite-plugin-node-polyfills` injects bare-specifier imports of its own shim
+// paths (`vite-plugin-node-polyfills/shims/{buffer,global,process}`) during
+// production build via `@rollup/plugin-inject`. With
+// `enableGlobalVirtualStore: true` (pnpm-workspace.yaml) the importer of those
+// injected statements lives under `~/Library/pnpm/store/v11/links/...`, and
+// Rollup's walk-up resolution from there cannot reach the plugin in the
+// project tree. Pre-resolving each shim's absolute entry via Node's require
+// once and aliasing makes resolution independent of importer location.
+const polyfillShimAlias = (name: 'buffer' | 'global' | 'process') => ({
+  find: new RegExp(`^vite-plugin-node-polyfills/shims/${name}$`),
+  replacement: require.resolve(`vite-plugin-node-polyfills/shims/${name}`),
+});
 const buiSrc = resolve(projectRoot, 'packages/backend.ai-ui/src');
 const buiArtifactDir = resolve(buiSrc, '__generated__');
 const reactSrc = resolve(__dirname, 'src');
@@ -413,6 +428,11 @@ export default defineConfig(({ mode }) => {
             'vite-shims/use-sync-external-store-shim.mjs',
           ),
         },
+
+        // See `polyfillShimAlias` definition at the top of this file.
+        polyfillShimAlias('buffer'),
+        polyfillShimAlias('global'),
+        polyfillShimAlias('process'),
       ],
     },
 
@@ -516,7 +536,27 @@ export default defineConfig(({ mode }) => {
       nodePolyfills({
         include: ['buffer', 'stream'],
         globals: {
-          Buffer: true,
+          // Why not `Buffer: true` in dev:
+          //   With `true`, the plugin prepends
+          //     `import __buffer_polyfill from 'vite-plugin-node-polyfills/shims/buffer';`
+          //     `globalThis.Buffer = globalThis.Buffer || __buffer_polyfill;`
+          //   to every chunk that touches Buffer. Vite's dep optimizer also
+          //   wraps that same shim into a CJS-interop chunk — so the chunk
+          //   that *exports* `__vite__cjsImport0_vitePluginNodePolyfills_
+          //   shims_buffer` also *imports* it (via the injected prelude),
+          //   and the import lands in the same chunk before the export is
+          //   initialized → TDZ on first browser load. `'build'` scopes
+          //   the injection to the production rollup build only.
+          //
+          // Why this is safe to do here:
+          //   No app code under `react/src` or `packages/backend.ai-ui/src`
+          //   references the Buffer global. The only Buffer.* call that
+          //   survives into the prod bundle is `Buffer.byteLength` inside
+          //   `cross-fetch/dist/browser-ponyfill.js` (pulled transitively
+          //   by `i18next-http-backend`), and that lives on a Node-only
+          //   code path the browser ponyfill never enters. The polyfill
+          //   itself could likely be removed entirely; see follow-up.
+          Buffer: 'build',
           global: false,
           process: false,
         },

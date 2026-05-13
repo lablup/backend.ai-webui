@@ -6,7 +6,7 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { ShellScriptType } from '../pages/UserSettingsPage';
 import BAICodeEditor from './BAICodeEditor';
-import { DeleteOutlined, DownOutlined } from '@ant-design/icons';
+import { DeleteFilled, DownOutlined } from '@ant-design/icons';
 import {
   App,
   Alert,
@@ -213,7 +213,7 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
                   setIsDeleteConfirmOpen(true);
                 }}
               >
-                <DeleteOutlined />
+                <DeleteFilled />
               </Button>
               <Popconfirm
                 open={isResetConfirmOpen}

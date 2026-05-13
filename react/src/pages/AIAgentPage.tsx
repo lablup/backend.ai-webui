@@ -7,7 +7,7 @@ import { FluentEmojiIcon } from '../components/FluentEmojiIcon';
 import { useWebUINavigate } from '../hooks';
 import { AIAgent, useAIAgent } from '../hooks/useAIAgent';
 import {
-  DeleteOutlined,
+  DeleteFilled,
   EditOutlined,
   MoreOutlined,
   PlusOutlined,
@@ -16,9 +16,9 @@ import {
 import {
   Alert,
   Button,
-  Card,
+  Col,
   Dropdown,
-  List,
+  Row,
   Skeleton,
   Tag,
   Typography,
@@ -26,6 +26,7 @@ import {
 } from 'antd';
 import { createStyles } from 'antd-style';
 import {
+  BAICard,
   BAIFlex,
   BAIUnmountAfterClose,
   BAIConfirmModalWithInput,
@@ -47,23 +48,12 @@ const useStyles = createStyles(({ css, token }) => {
         opacity: 1 !important;
       }
     `,
-    meta: css`
-      .ant-card-meta-description {
-        max-height: 6.4em; // Adjusted for 4 lines
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-      .ant-card-meta-title {
-        white-space: normal;
-      }
-    `,
   };
 });
 
-const { Meta } = Card;
-
 interface AIAgentCardProps {
   agent: AIAgent;
+  endpointLabel?: string;
   isOverridden?: boolean;
   onEdit?: (agent: AIAgent) => void;
   onDelete?: (agent: AIAgent) => void;
@@ -72,14 +62,14 @@ interface AIAgentCardProps {
 
 const AIAgentCard: React.FC<AIAgentCardProps> = ({
   agent,
+  endpointLabel,
   isOverridden,
   onEdit,
   onDelete,
   onReset,
 }) => {
   const { t } = useTranslation();
-  const tags = agent.meta.tags || [];
-  const { styles } = useStyles();
+  const tags = agent.tags || [];
   const { token } = theme.useToken();
 
   const menuItems = _.compact([
@@ -111,7 +101,7 @@ const AIAgentCard: React.FC<AIAgentCardProps> = ({
         key: 'delete',
         danger: true,
         label: t('aiAgent.DeleteAgent'),
-        icon: <DeleteOutlined />,
+        icon: <DeleteFilled />,
         onClick: (e: { domEvent: React.MouseEvent | React.KeyboardEvent }) => {
           e.domEvent.stopPropagation();
           onDelete(agent);
@@ -120,7 +110,7 @@ const AIAgentCard: React.FC<AIAgentCardProps> = ({
   ]);
 
   return (
-    <Card hoverable style={{ position: 'relative' }}>
+    <BAICard hoverable style={{ position: 'relative', width: '100%' }}>
       {menuItems.length > 0 && (
         <Dropdown menu={{ items: menuItems }} trigger={['click']}>
           <Button
@@ -145,20 +135,28 @@ const AIAgentCard: React.FC<AIAgentCardProps> = ({
         align="stretch"
         gap="xs"
         justify="between"
-        style={{ minHeight: '200px' }}
+        style={{ minHeight: '160px' }}
       >
-        <Meta
-          title={agent.meta.title}
-          avatar={
-            <FluentEmojiIcon
-              emoji={agent.meta.avatar}
-              height={150}
-              width={150}
-            />
-          }
-          description={agent.meta.descriptions}
-          className={styles.meta}
-        />
+        <BAIFlex direction="row" gap="md" align="start">
+          <FluentEmojiIcon emoji={agent.icon} height={64} width={64} />
+          <BAIFlex
+            direction="column"
+            align="stretch"
+            gap="xxs"
+            style={{ flex: 1, minWidth: 0 }}
+          >
+            <Typography.Text strong style={{ whiteSpace: 'normal' }}>
+              {agent.name}
+            </Typography.Text>
+            <Typography.Paragraph
+              type="secondary"
+              ellipsis={{ rows: 3 }}
+              style={{ marginBottom: 0 }}
+            >
+              {agent.description}
+            </Typography.Paragraph>
+          </BAIFlex>
+        </BAIFlex>
         <BAIFlex
           direction="row"
           justify="start"
@@ -166,21 +164,21 @@ const AIAgentCard: React.FC<AIAgentCardProps> = ({
           gap={6}
           wrap="wrap"
         >
-          {agent.endpoint && (
-            <Tag key={agent.endpoint} color="orange-inverse">
-              {agent.endpoint}
+          {endpointLabel && (
+            <Tag key={endpointLabel} color="orange-inverse">
+              {endpointLabel}
             </Tag>
           )}
           {agent.isCustom && !isOverridden && (
             <Tag color="blue-inverse">{t('aiAgent.Custom')}</Tag>
           )}
           {isOverridden && <Tag color="orange">{t('aiAgent.Edited')}</Tag>}
-          {tags.map((tag, index) => (
-            <Tag key={index}>{tag}</Tag>
+          {tags.map((tag) => (
+            <Tag key={tag}>{tag}</Tag>
           ))}
         </BAIFlex>
       </BAIFlex>
-    </Card>
+    </BAICard>
   );
 };
 
@@ -189,7 +187,8 @@ const AIAgentPage: React.FC = () => {
 
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { agents, builtInAgents, deleteAgent } = useAIAgent();
+  const { agents, builtInAgents, deleteAgent, getEndpointBinding } =
+    useAIAgent();
   const webuiNavigate = useWebUINavigate();
   const { styles } = useStyles();
 
@@ -229,23 +228,29 @@ const AIAgentPage: React.FC = () => {
             {t('button.Add')}
           </Button>
         </BAIFlex>
-        <List
-          className={styles.cardList}
-          grid={{ gutter: 16, xs: 1, sm: 1, md: 2, lg: 2, xl: 3, xxl: 4 }}
-          dataSource={agents}
-          renderItem={(agent) => {
+        <Row gutter={[16, 16]} className={styles.cardList}>
+          {agents.map((agent) => {
             const isOverridden = !agent.isCustom
               ? false
               : builtInIds.has(agent.id);
             return (
-              <List.Item
-                style={{ height: '100%' }}
+              <Col
+                key={agent.id}
+                xs={24}
+                sm={24}
+                md={24}
+                lg={12}
+                xl={12}
+                xxl={8}
+                xxxl={6}
+                style={{ display: 'flex' }}
                 onClick={() => {
                   const searchParams: Record<string, string> = {
                     agentId: agent.id,
                   };
-                  if (agent.endpoint_id) {
-                    searchParams.endpointId = agent.endpoint_id;
+                  const binding = getEndpointBinding(agent.id);
+                  if (binding?.endpoint_id) {
+                    searchParams.endpointId = binding.endpoint_id;
                   }
                   webuiNavigate({
                     pathname: '/chat',
@@ -255,6 +260,9 @@ const AIAgentPage: React.FC = () => {
               >
                 <AIAgentCard
                   agent={agent}
+                  endpointLabel={
+                    getEndpointBinding(agent.id)?.endpoint ?? undefined
+                  }
                   isOverridden={isOverridden}
                   onEdit={handleEdit}
                   onDelete={
@@ -262,10 +270,10 @@ const AIAgentPage: React.FC = () => {
                   }
                   onReset={isOverridden ? handleReset : undefined}
                 />
-              </List.Item>
+              </Col>
             );
-          }}
-        />
+          })}
+        </Row>
         <BAIUnmountAfterClose>
           <AgentEditorModal
             open={isEditorOpen}
@@ -289,16 +297,12 @@ const AIAgentPage: React.FC = () => {
                 <Typography.Text style={{ marginRight: token.marginXXS }}>
                   {t('dialog.TypeNameToConfirmDeletion')}
                 </Typography.Text>
-                (
-                <Typography.Text code>
-                  {deletingAgent?.meta.title}
-                </Typography.Text>
-                )
+                (<Typography.Text code>{deletingAgent?.name}</Typography.Text>)
               </BAIFlex>
             </BAIFlex>
           }
-          confirmText={deletingAgent?.meta.title ?? ''}
-          inputProps={{ placeholder: deletingAgent?.meta.title ?? '' }}
+          confirmText={deletingAgent?.name ?? ''}
+          inputProps={{ placeholder: deletingAgent?.name ?? '' }}
           okText={t('button.Delete')}
           onOk={() => {
             if (deletingAgent) {
@@ -321,16 +325,12 @@ const AIAgentPage: React.FC = () => {
                 <Typography.Text style={{ marginRight: token.marginXXS }}>
                   {t('dialog.TypeNameToConfirmDeletion')}
                 </Typography.Text>
-                (
-                <Typography.Text code>
-                  {resettingAgent?.meta.title}
-                </Typography.Text>
-                )
+                (<Typography.Text code>{resettingAgent?.name}</Typography.Text>)
               </BAIFlex>
             </BAIFlex>
           }
-          confirmText={resettingAgent?.meta.title ?? ''}
-          inputProps={{ placeholder: resettingAgent?.meta.title ?? '' }}
+          confirmText={resettingAgent?.name ?? ''}
+          inputProps={{ placeholder: resettingAgent?.name ?? '' }}
           okText={t('button.Reset')}
           onOk={() => {
             if (resettingAgent) {

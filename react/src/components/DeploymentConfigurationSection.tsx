@@ -2,10 +2,13 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { DeploymentConfigurationSectionQuery } from '../__generated__/DeploymentConfigurationSectionQuery.graphql';
+import { DeploymentConfigurationSectionDeleteMutation } from '../__generated__/DeploymentConfigurationSectionDeleteMutation.graphql';
+import type {
+  DeploymentConfigurationSection_deployment$data,
+  DeploymentConfigurationSection_deployment$key,
+} from '../__generated__/DeploymentConfigurationSection_deployment.graphql';
 import type { DeploymentRevisionDetail_revision$key } from '../__generated__/DeploymentRevisionDetail_revision.graphql';
-import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
-import DeploymentAddRevisionModal from './DeploymentAddRevisionModal';
+import { useWebUINavigate } from '../hooks';
 import DeploymentRevisionDetail from './DeploymentRevisionDetail';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
 import DeploymentRevisionHistoryTab from './DeploymentRevisionHistoryTab';
@@ -13,46 +16,58 @@ import DeploymentSettingModal from './DeploymentSettingModal';
 import DeploymentTagChips from './DeploymentTagChips';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import {
-  CheckOutlined,
-  CloseOutlined,
+  DeleteFilled,
   EditOutlined,
   LoadingOutlined,
+  MoreOutlined,
   PlusOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import {
   Alert,
+  App,
   Button,
   Descriptions,
+  Dropdown,
   Empty,
   Skeleton,
+  Space,
   Typography,
   theme,
 } from 'antd';
 import {
   BAICard,
+  BAIConfirmModalWithInput,
   BAIFetchKeyButton,
   BAIFlex,
+  BAIId,
+  BAIText,
   BAIUnmountAfterClose,
-  INITIAL_FETCH_KEY,
+  BooleanTag,
   filterOutEmpty,
   toLocalId,
-  useFetchKey,
+  useBAILogger,
   useInterval,
 } from 'backend.ai-ui';
-import { BotMessageSquareIcon } from 'lucide-react';
 import { parseAsStringLiteral, useQueryState } from 'nuqs';
-import React, { Suspense, useState, useTransition } from 'react';
+import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery } from 'react-relay';
+import { graphql, useFragment, useMutation } from 'react-relay';
+import { useLocation } from 'react-router-dom';
 
 interface DeploymentConfigurationSectionProps {
-  deploymentId: string;
+  deploymentFrgmt: DeploymentConfigurationSection_deployment$key | null;
   isDeploymentDestroying?: boolean;
+  revisionFetchKey: string;
+  isPendingRefetch: boolean;
+  onRefetch: () => void;
+  onAddRevision: () => void;
 }
 
 type DeploymentSectionData =
-  DeploymentConfigurationSectionQuery['response']['deployment'];
+  | DeploymentConfigurationSection_deployment$data
+  | null
+  | undefined;
 
 const renderFallback = () => (
   <Typography.Text type="secondary">-</Typography.Text>
@@ -71,9 +86,13 @@ const DeploymentOverviewContent: React.FC<{
   const deploymentItems = filterOutEmpty([
     {
       key: 'name',
-      label: t('deployment.Name'),
+      label: t('deployment.NameAndID'),
       children: deployment?.metadata.name ? (
-        <Typography.Text copyable>{deployment.metadata.name}</Typography.Text>
+        <>
+          <BAIText copyable>{deployment.metadata.name}</BAIText>
+          &nbsp;(
+          <BAIId globalId={deployment.id} />)
+        </>
       ) : (
         renderFallback()
       ),
@@ -100,13 +119,22 @@ const DeploymentOverviewContent: React.FC<{
       ),
     },
     {
-      key: 'open-to-public',
-      label: t('deployment.OpenToPublic'),
-      children: deployment?.networkAccess.openToPublic ? (
-        <CheckOutlined />
-      ) : (
-        <CloseOutlined />
+      key: 'visibility',
+      label: t('deployment.Visibility'),
+      children: (
+        <BooleanTag
+          value={deployment?.networkAccess.openToPublic}
+          trueLabel={t('deployment.Public')}
+          falseLabel={t('deployment.Private')}
+          fallback={renderFallback()}
+        />
       ),
+    },
+    {
+      key: 'desired-replicas',
+      label: t('deployment.DesiredReplicas'),
+      children:
+        deployment?.replicaState?.desiredReplicaCount ?? renderFallback(),
     },
     {
       key: 'tags',
@@ -117,12 +145,6 @@ const DeploymentOverviewContent: React.FC<{
           fallback={renderFallback()}
         />
       ),
-    },
-    {
-      key: 'desired-replicas',
-      label: t('deployment.DesiredReplicas'),
-      children:
-        deployment?.replicaState?.desiredReplicaCount ?? renderFallback(),
     },
   ]);
 
@@ -137,136 +159,68 @@ const DeploymentOverviewContent: React.FC<{
 
 const DeploymentConfigurationSection: React.FC<
   DeploymentConfigurationSectionProps
-> = ({ deploymentId, isDeploymentDestroying = false }) => {
+> = ({
+  deploymentFrgmt,
+  isDeploymentDestroying = false,
+  revisionFetchKey,
+  isPendingRefetch,
+  onRefetch,
+  onAddRevision,
+}) => {
   'use memo';
 
   const { t } = useTranslation();
-  const [isPendingRefetch, startRefetchTransition] = useTransition();
-  const [fetchKey, updateFetchKey] = useFetchKey();
-  const [revisionFetchKey, updateRevisionFetchKey] = useFetchKey();
+  const { token } = theme.useToken();
+  const { message } = App.useApp();
+  const { logger } = useBAILogger();
+  const webuiNavigate = useWebUINavigate();
+  const location = useLocation();
+
+  const deployment = useFragment(
+    graphql`
+      fragment DeploymentConfigurationSection_deployment on ModelDeployment {
+        id
+        ...DeploymentSettingModal_deployment
+        metadata {
+          name
+          projectId
+          domainName
+          status
+          projectV2 @since(version: "26.4.3") {
+            basicInfo {
+              name
+            }
+          }
+          ...DeploymentTagChips_metadata
+        }
+        networkAccess {
+          openToPublic
+          endpointUrl
+        }
+        replicaState {
+          desiredReplicaCount
+        }
+        currentRevision @since(version: "26.4.3") {
+          id
+          revisionNumber
+          ...DeploymentRevisionDetail_revision
+        }
+        deployingRevision @since(version: "26.4.3") {
+          id
+          revisionNumber
+          ...DeploymentRevisionDetail_revision
+        }
+        ...DeploymentRevisionHistoryTab_deployment
+      }
+    `,
+    deploymentFrgmt,
+  );
+
   const [drawerState, setDrawerState] = useState<{
     revisionFrgmt: DeploymentRevisionDetail_revision$key;
     status?: 'current' | 'deploying' | 'none';
     title?: string;
   } | null>(null);
-
-  const handleShowRevisionDrawer = (
-    frgmt: DeploymentRevisionDetail_revision$key,
-    status?: 'current' | 'deploying' | 'none',
-    title?: string,
-  ) => {
-    setDrawerState({ revisionFrgmt: frgmt, status, title });
-  };
-
-  const handleRefetch = () => {
-    startRefetchTransition(() => updateFetchKey());
-  };
-
-  const handleRevisionAdded = () => {
-    startRefetchTransition(() => {
-      updateFetchKey();
-      updateRevisionFetchKey();
-    });
-  };
-
-  const overviewExtra = (
-    <BAIFlex gap="xs" align="center">
-      <BAIFetchKeyButton
-        loading={isPendingRefetch}
-        value=""
-        onChange={handleRefetch}
-      />
-    </BAIFlex>
-  );
-
-  return (
-    <>
-      <Suspense
-        fallback={
-          <>
-            <BAICard
-              title={t('deployment.BasicInformation')}
-              extra={overviewExtra}
-              styles={{ body: { paddingTop: 0 } }}
-            >
-              <Skeleton active />
-            </BAICard>
-            <BAICard
-              tabList={[
-                {
-                  key: 'currentRevision',
-                  label: t('deployment.CurrentRevision'),
-                },
-                {
-                  key: 'revisionHistory',
-                  label: t('deployment.RevisionHistory'),
-                },
-              ]}
-            >
-              <Skeleton active />
-            </BAICard>
-          </>
-        }
-      >
-        <DeploymentConfigurationCards
-          deploymentId={deploymentId}
-          fetchKey={fetchKey}
-          revisionFetchKey={revisionFetchKey}
-          overviewExtra={overviewExtra}
-          onShowRevisionDrawer={handleShowRevisionDrawer}
-          onRevisionAdded={handleRevisionAdded}
-          isDeploymentDestroying={isDeploymentDestroying}
-          onRefetch={handleRefetch}
-        />
-      </Suspense>
-      <BAIUnmountAfterClose>
-        <DeploymentRevisionDetailDrawer
-          revisionFrgmt={drawerState?.revisionFrgmt}
-          status={drawerState?.status}
-          title={drawerState?.title}
-          open={!!drawerState}
-          onClose={() => setDrawerState(null)}
-        />
-      </BAIUnmountAfterClose>
-    </>
-  );
-};
-
-/**
- * Wrapper that issues the single combined query for both Overview and
- * RevisionInfo cards. The Suspense boundary lives above this wrapper (in
- * the parent section), and the parent's fallback renders the same card
- * chrome with skeletons so the visual layout is preserved during loading.
- */
-const DeploymentConfigurationCards: React.FC<{
-  deploymentId: string;
-  fetchKey: string;
-  revisionFetchKey: string;
-  overviewExtra: React.ReactNode;
-  onShowRevisionDrawer: (
-    frgmt: DeploymentRevisionDetail_revision$key,
-    status?: 'current' | 'deploying' | 'none',
-    title?: string,
-  ) => void;
-  onRevisionAdded: () => void;
-  isDeploymentDestroying?: boolean;
-  onRefetch: () => void;
-}> = ({
-  deploymentId,
-  fetchKey,
-  revisionFetchKey,
-  overviewExtra,
-  onShowRevisionDrawer,
-  onRevisionAdded,
-  isDeploymentDestroying = false,
-  onRefetch,
-}) => {
-  'use memo';
-  const { t } = useTranslation();
-  const { token } = theme.useToken();
-  const webuiNavigate = useWebUINavigate();
-  const baiClient = useSuspendedBackendaiClient();
-  const isChatBlocked = !!baiClient?._config?.blockList?.includes('chat');
 
   const [activeRevisionTab, setActiveRevisionTab] = useQueryState(
     'revisionTab',
@@ -283,63 +237,60 @@ const DeploymentConfigurationCards: React.FC<{
     settingModalOpen,
     { setLeft: closeSettingModal, setRight: openSettingModal },
   ] = useToggle(false);
-  const [
-    addRevisionOpen,
-    { toggle: toggleAddRevision, setLeft: closeAddRevision },
-  ] = useToggle(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-  const { deployment } = useLazyLoadQuery<DeploymentConfigurationSectionQuery>(
-    graphql`
-      query DeploymentConfigurationSectionQuery($deploymentId: ID!) {
-        deployment(id: $deploymentId) {
-          ...DeploymentSettingModal_deployment
-          metadata {
-            name
-            projectId
-            domainName
-            status
-            projectV2 @since(version: "26.4.3") {
-              basicInfo {
-                name
-              }
-            }
-            ...DeploymentTagChips_metadata
-          }
-          networkAccess {
-            openToPublic
-            endpointUrl
-          }
-          replicaState {
-            desiredReplicaCount
-          }
-          currentRevision @since(version: "26.4.3") {
-            id
-            name
-            ...DeploymentRevisionDetail_revision
-          }
-          deployingRevision @since(version: "26.4.3") {
-            id
-            name
-            ...DeploymentRevisionDetail_revision
-          }
-          ...DeploymentRevisionHistoryTab_deployment
+  const [commitDeleteMutation, isInFlightDeleteMutation] =
+    useMutation<DeploymentConfigurationSectionDeleteMutation>(graphql`
+      mutation DeploymentConfigurationSectionDeleteMutation(
+        $input: DeleteDeploymentInput!
+      ) {
+        deleteModelDeployment(input: $input) {
+          id
         }
       }
-    `,
-    { deploymentId },
-    {
-      fetchKey,
-      fetchPolicy:
-        fetchKey === INITIAL_FETCH_KEY ? 'store-and-network' : 'network-only',
-    },
-  );
+    `);
 
-  const hasNoRevision = !deployment?.currentRevision;
+  const deploymentName = deployment?.metadata.name ?? '';
+  const isAdminContext = location.pathname.startsWith('/admin-deployments');
+  const listPath = isAdminContext ? '/admin-deployments' : '/deployments';
+
+  const handleDelete = () => {
+    if (!deployment?.id) return;
+    commitDeleteMutation({
+      variables: {
+        input: {
+          id: toLocalId(deployment.id) ?? deployment.id,
+        },
+      },
+      onCompleted: (_response, errors) => {
+        if (errors && errors.length > 0) {
+          logger.error('Failed to delete deployment', errors);
+          message.error(t('deployment.FailedToDeleteDeployment'));
+          return;
+        }
+        message.success(t('deployment.DeploymentDeleted'));
+        setIsDeleteModalOpen(false);
+        webuiNavigate(listPath);
+      },
+      onError: (error) => {
+        logger.error('Failed to delete deployment', error);
+        message.error(t('deployment.FailedToDeleteDeployment'));
+      },
+    });
+  };
+
+  const handleShowRevisionDrawer = (
+    frgmt: DeploymentRevisionDetail_revision$key,
+    status?: 'current' | 'deploying' | 'none',
+    title?: string,
+  ) => {
+    setDrawerState({ revisionFrgmt: frgmt, status, title });
+  };
+
   const currentRevision = deployment?.currentRevision;
   const deployingRevision = deployment?.deployingRevision;
   const isDeployingDifferentRevision =
     !!deployingRevision && deployingRevision.id !== currentRevision?.id;
-  const isDeploymentReady = deployment?.metadata.status === 'READY';
 
   // While a different revision is being applied, poll so the UI moves off
   // the "applying" state once the deployment finishes rolling out. We don't
@@ -349,61 +300,42 @@ const DeploymentConfigurationCards: React.FC<{
 
   return (
     <>
-      {isDeploymentReady && !hasNoRevision && (
-        <Alert
-          type="success"
-          showIcon
-          title={t('deployment.DeploymentReady')}
-          action={
-            !isChatBlocked && (
-              <Button
-                type="primary"
-                icon={<BotMessageSquareIcon size={token.fontSizeLG} />}
-                onClick={() => {
-                  webuiNavigate({
-                    pathname: '/chat',
-                    search: new URLSearchParams({
-                      endpointId: toLocalId(deploymentId),
-                    }).toString(),
-                  });
-                }}
-              >
-                {t('deployment.StartChatTest')}
-              </Button>
-            )
-          }
-        />
-      )}
-      {hasNoRevision && (
-        <Alert
-          type="info"
-          showIcon
-          title={t('deployment.NoCurrentRevisionDeployed')}
-          description={t('deployment.NoCurrentRevisionDeployedDescription')}
-          action={
-            <Button
-              type="primary"
-              icon={<PlusOutlined />}
-              onClick={toggleAddRevision}
-              disabled={isDeploymentDestroying}
-            >
-              {t('deployment.AddRevision')}
-            </Button>
-          }
-        />
-      )}
       <BAICard
         title={t('deployment.BasicInformation')}
         extra={
           <BAIFlex gap="xs" align="center">
-            {overviewExtra}
-            <Button
-              icon={<EditOutlined />}
-              disabled={isDeploymentDestroying}
-              onClick={openSettingModal}
-            >
-              {t('button.Edit')}
-            </Button>
+            <BAIFetchKeyButton
+              loading={isPendingRefetch}
+              value=""
+              onChange={onRefetch}
+            />
+            <Space.Compact>
+              <Button
+                icon={<EditOutlined />}
+                disabled={isDeploymentDestroying}
+                onClick={openSettingModal}
+              >
+                {t('button.Edit')}
+              </Button>
+              <Dropdown
+                trigger={['click']}
+                menu={{
+                  items: [
+                    {
+                      key: 'delete',
+                      label: t('deployment.DeleteDeployment'),
+                      icon: <DeleteFilled />,
+                      danger: true,
+                      disabled:
+                        isDeploymentDestroying || isInFlightDeleteMutation,
+                      onClick: () => setIsDeleteModalOpen(true),
+                    },
+                  ],
+                }}
+              >
+                <Button icon={<MoreOutlined />} aria-label={t('button.More')} />
+              </Dropdown>
+            </Space.Compact>
           </BAIFlex>
         }
         styles={{ body: { paddingTop: 0 } }}
@@ -432,7 +364,7 @@ const DeploymentConfigurationCards: React.FC<{
             type="primary"
             icon={<PlusOutlined />}
             disabled={isDeploymentDestroying}
-            onClick={toggleAddRevision}
+            onClick={onAddRevision}
           >
             {t('deployment.AddRevision')}
           </Button>
@@ -446,12 +378,15 @@ const DeploymentConfigurationCards: React.FC<{
                 icon={<LoadingOutlined spin />}
                 showIcon
                 title={t('deployment.DeployingRevisionApplying', {
-                  name: deployingRevision.name ?? '',
+                  revisionNumber:
+                    deployingRevision.revisionNumber != null
+                      ? `#${deployingRevision.revisionNumber}`
+                      : (toLocalId(deployingRevision.id) ?? ''),
                 })}
                 action={
                   <Button
                     onClick={() =>
-                      onShowRevisionDrawer(
+                      handleShowRevisionDrawer(
                         deployingRevision,
                         'deploying',
                         t('deployment.DeployingRevisionDetail'),
@@ -482,7 +417,7 @@ const DeploymentConfigurationCards: React.FC<{
             <Suspense fallback={<Skeleton active paragraph={{ rows: 4 }} />}>
               <DeploymentRevisionHistoryTab
                 deploymentFrgmt={deployment}
-                deploymentId={deploymentId}
+                deploymentId={deployment.id}
                 isDeploymentDestroying={isDeploymentDestroying}
                 fetchKey={revisionFetchKey}
               />
@@ -499,16 +434,35 @@ const DeploymentConfigurationCards: React.FC<{
         }}
       />
       <BAIUnmountAfterClose>
-        <DeploymentAddRevisionModal
-          open={addRevisionOpen}
-          onCancel={closeAddRevision}
-          onSuccess={() => {
-            closeAddRevision();
-            onRevisionAdded();
-          }}
-          deploymentId={deploymentId}
+        <DeploymentRevisionDetailDrawer
+          revisionFrgmt={drawerState?.revisionFrgmt}
+          status={drawerState?.status}
+          title={drawerState?.title}
+          open={!!drawerState}
+          onClose={() => setDrawerState(null)}
         />
       </BAIUnmountAfterClose>
+      <BAIConfirmModalWithInput
+        open={isDeleteModalOpen}
+        title={t('deployment.DeleteDeployment')}
+        content={
+          <BAIFlex direction="column" gap="md" align="stretch">
+            <Alert type="warning" title={t('dialog.warning.CannotBeUndone')} />
+            <BAIFlex>
+              <Typography.Text style={{ marginRight: token.marginXXS }}>
+                {t('dialog.TypeNameToConfirmDeletion')}
+              </Typography.Text>
+              (<Typography.Text code>{deploymentName}</Typography.Text>)
+            </BAIFlex>
+          </BAIFlex>
+        }
+        confirmText={deploymentName}
+        inputProps={{ placeholder: deploymentName }}
+        okText={t('button.Delete')}
+        okButtonProps={{ loading: isInFlightDeleteMutation }}
+        onOk={handleDelete}
+        onCancel={() => setIsDeleteModalOpen(false)}
+      />
     </>
   );
 };

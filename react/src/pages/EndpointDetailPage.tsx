@@ -45,7 +45,7 @@ import {
   CheckCircleOutlined,
   CheckOutlined,
   CloseOutlined,
-  DeleteOutlined,
+  DeleteFilled,
   ExclamationCircleOutlined,
   LoadingOutlined,
   PlusOutlined,
@@ -81,10 +81,12 @@ import {
   GraphQLFilter,
   SemanticColor,
   toGlobalId,
+  toLocalId,
   useFetchKey,
   useSemanticColorMap,
   BAITable,
   BAIFetchKeyButton,
+  convertToBinaryUnit,
 } from 'backend.ai-ui';
 import { default as dayjs } from 'dayjs';
 import * as _ from 'lodash-es';
@@ -365,7 +367,6 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
           }
           currentRevision {
             id
-            name
             modelDefinition {
               models {
                 name
@@ -389,7 +390,6 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
             edges {
               node {
                 id
-                name
                 modelDefinition {
                   models {
                     name
@@ -531,7 +531,12 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
     _.map(endpoint_auto_scaling_rules?.edges, (edge) => edge?.node),
   );
 
-  const resource_opts = JSON.parse(endpoint?.resource_opts || '{}');
+  const parsedResourceOpts = JSON.parse(endpoint?.resource_opts || '{}');
+  const resource_opts = {
+    shmem: parsedResourceOpts.shmem
+      ? convertToBinaryUnit(parsedResourceOpts.shmem, '')?.number
+      : undefined,
+  };
 
   const items: DescriptionsItemType[] = [
     {
@@ -807,9 +812,13 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
   const latestRevisionItems = buildModelDefinitionItems(
     modelDeployment?.revisionHistory?.edges?.[0]?.node?.modelDefinition?.models,
   );
-  const currentRevisionName = modelDeployment?.currentRevision?.name;
-  const latestRevisionName =
-    modelDeployment?.revisionHistory?.edges?.[0]?.node?.name;
+  const currentRevisionName = modelDeployment?.currentRevision?.id
+    ? toLocalId(modelDeployment.currentRevision.id)
+    : undefined;
+  const latestRevisionName = modelDeployment?.revisionHistory?.edges?.[0]?.node
+    ?.id
+    ? toLocalId(modelDeployment.revisionHistory.edges[0].node.id)
+    : undefined;
   const isRevisionMismatch =
     modelDeployment?.currentRevision?.id != null &&
     modelDeployment?.revisionHistory?.edges?.[0]?.node?.id != null &&
@@ -1172,7 +1181,7 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
                         <Button
                           type="text"
                           icon={
-                            <DeleteOutlined
+                            <DeleteFilled
                               style={
                                 isEndpointInDestroyingCategory(endpoint)
                                   ? undefined

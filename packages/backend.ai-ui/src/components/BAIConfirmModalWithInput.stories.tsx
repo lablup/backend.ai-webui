@@ -3,7 +3,7 @@
 import BAIButton from './BAIButton';
 import BAIConfirmModalWithInput from './BAIConfirmModalWithInput';
 import BAIText from './BAIText';
-import { DeleteOutlined } from '@ant-design/icons';
+import { DeleteFilled } from '@ant-design/icons';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { theme } from 'antd';
 import { useState } from 'react';
@@ -117,9 +117,7 @@ export const CustomIcon: Story = {
           {...args}
           open={open}
           icon={
-            <DeleteOutlined
-              style={{ color: token.colorError, marginRight: 5 }}
-            />
+            <DeleteFilled style={{ color: token.colorError, marginRight: 5 }} />
           }
           content={
             <BAIText>

@@ -13,7 +13,7 @@ import BAITag from '../BAITag';
 import BAIText from '../BAIText';
 import { BAIColumnsType, BAITable, BAITableProps } from '../Table';
 import AllowedVfolderHostsWithPermission from './BAIAllowedVfolderHostsWithPermission';
-import { DeleteOutlined, SettingOutlined } from '@ant-design/icons';
+import { DeleteFilled, SettingOutlined } from '@ant-design/icons';
 import { App, Popconfirm, Tag, theme } from 'antd';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -209,7 +209,7 @@ const BAIProjectTable = ({
             <BAIButton
               type="text"
               icon={
-                <DeleteOutlined
+                <DeleteFilled
                   style={{
                     color:
                       _.get(record, 'type') === 'MODEL_STORE'

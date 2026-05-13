@@ -16,7 +16,7 @@ import { usePainKiller } from '../hooks/usePainKiller';
 import ContainerRegistryEditorModal from './ContainerRegistryEditorModal';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
 import {
-  DeleteOutlined,
+  DeleteFilled,
   ExclamationCircleOutlined,
   PlusOutlined,
   ReloadOutlined,
@@ -295,7 +295,7 @@ const ContainerRegistryList: React.FC<{
             {
               key: 'delete',
               title: t('button.Delete'),
-              icon: <DeleteOutlined />,
+              icon: <DeleteFilled />,
               type: 'danger',
               onClick: () => {
                 setDeletingRegistry(record);

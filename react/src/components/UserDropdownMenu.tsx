@@ -234,9 +234,7 @@ const UserDropdownMenu: React.FC<{
                   backgroundColor: token.colorBgBase,
                 }}
               >
-                <UserOutlined
-                  style={{ fontSize: 10, color: token.colorPrimary }}
-                />
+                <UserOutlined style={{ color: token.colorPrimary }} />
               </Avatar>
             }
           >

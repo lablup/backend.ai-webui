@@ -26,6 +26,7 @@ import {
   BAICard,
   BAIFetchKeyButton,
   BAIFlex,
+  BAILink,
   BAIPropertyFilter,
   BAIRestoreIcon,
   BAISelectionLabel,
@@ -39,7 +40,12 @@ import * as _ from 'lodash-es';
 import React, { useDeferredValue, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-import { StringParam, useQueryParams, withDefault } from 'use-query-params';
+import {
+  StringParam,
+  useQueryParam,
+  useQueryParams,
+  withDefault,
+} from 'use-query-params';
 
 export const isDeletedCategory = (status?: string | null) => {
   return _.includes(
@@ -93,6 +99,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
   const currentProject = useCurrentProjectValue();
   const baiClient = useSuspendedBackendaiClient();
   const [invitations] = useVFolderInvitations();
+  const [, setInvitationOpen] = useQueryParam('invitation', StringParam);
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
     'table_column_overrides.VFolderNodeListPage',
@@ -291,6 +298,18 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
             );
             setSelectedFolderList([]);
           }}
+          tabBarExtraContent={
+            invitations.length > 0 ? (
+              <BAILink
+                type="hover"
+                onClick={() => {
+                  setInvitationOpen('true', 'replaceIn');
+                }}
+              >
+                {`${t('data.invitation.PendingInvitations')} (${invitations.length})`}
+              </BAILink>
+            ) : undefined
+          }
           items={_.map(
             {
               active: t('data.Active'),

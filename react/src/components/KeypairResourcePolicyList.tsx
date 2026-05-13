@@ -17,7 +17,7 @@ import KeypairResourcePolicyInfoModal from './KeypairResourcePolicyInfoModal';
 import KeypairResourcePolicySettingModal from './KeypairResourcePolicySettingModal';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
 import {
-  DeleteOutlined,
+  DeleteFilled,
   InfoCircleOutlined,
   PlusOutlined,
   ReloadOutlined,
@@ -143,7 +143,7 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
             {
               key: 'delete',
               title: t('button.Delete'),
-              icon: <DeleteOutlined />,
+              icon: <DeleteFilled />,
               type: 'danger',
               onClick: () => {
                 setDeletingPolicyName(row?.name ?? null);

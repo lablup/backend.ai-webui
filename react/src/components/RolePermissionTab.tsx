@@ -8,6 +8,7 @@ import { RolePermissionTabFragment$key } from '../__generated__/RolePermissionTa
 import { PermissionOrderBy } from '../__generated__/RolePermissionTabRefetchQuery.graphql';
 import { convertToOrderBy } from '../helper';
 import CreatePermissionModal from './CreatePermissionModal';
+import { DeleteFilled } from '@ant-design/icons';
 import { App, Tag } from 'antd';
 import {
   BAIButton,
@@ -16,7 +17,6 @@ import {
   BAIGraphQLPropertyFilter,
   BAINameActionCell,
   BAITable,
-  BAITrashBinIcon,
   type GraphQLFilter,
   toLocalId,
   useBAILogger,
@@ -408,7 +408,7 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
                     {
                       key: 'delete',
                       title: t('rbac.RemovePermission'),
-                      icon: <BAITrashBinIcon />,
+                      icon: <DeleteFilled />,
                       type: 'danger',
                       onClick: () => handleDelete(record),
                     },

@@ -345,14 +345,14 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
             />
           </Form.Item>
           <Form.Item
-            label={t('resourceGroup.WsproxyAddress')}
+            label={t('resourceGroup.AppProxyAddress')}
             name="wsProxyAddress"
             rules={[{ type: 'url', message: t('error.InvalidUrl') }]}
           >
             <Input placeholder="http://localhost:10200" />
           </Form.Item>
           <Form.Item
-            label={t('resourceGroup.WsproxyAPIToken')}
+            label={t('resourceGroup.AppProxyAPIToken')}
             name="wsProxyAPIToken"
           >
             <Input.Password placeholder={t('resourceGroup.EnterAPIToken')} />

@@ -18,7 +18,11 @@ import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginati
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import { SettingOutlined } from '@ant-design/icons';
+import {
+  DeleteFilled,
+  ExclamationCircleFilled,
+  SettingOutlined,
+} from '@ant-design/icons';
 import { App, Checkbox, Tooltip, Typography, theme } from 'antd';
 import {
   BAIButton,
@@ -33,7 +37,6 @@ import {
   BAITable,
   BAIText,
   BAITag,
-  BAITrashBinIcon,
   BAIUnmountAfterClose,
   filterOutEmpty,
   filterOutNullAndUndefined,
@@ -43,6 +46,7 @@ import {
   toLocalId,
   useBAILogger,
   useFetchKey,
+  BAIAlert,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -255,7 +259,7 @@ const AdminModelCardListPage: React.FC = () => {
             {
               key: 'delete',
               title: t('button.Delete'),
-              icon: <BAITrashBinIcon />,
+              icon: <DeleteFilled />,
               type: 'danger' as const,
               onClick: () => handleDeleteModelCard(modelCard),
             },
@@ -375,7 +379,7 @@ const AdminModelCardListPage: React.FC = () => {
               />
               <BAIButton
                 danger
-                icon={<BAITrashBinIcon />}
+                icon={<DeleteFilled />}
                 onClick={handleBulkDelete}
                 loading={isBulkDeleteInFlight}
               />
@@ -466,35 +470,47 @@ const AdminModelCardListPage: React.FC = () => {
         })}
         requireConfirmInput
         extraContent={
-          <BAIFlex align="center" gap="xs">
-            <Tooltip title={t('adminModelCard.AlsoDeleteModelFolderTooltip')}>
-              <Checkbox
-                checked={alsoDeleteFolder}
-                onChange={(e) => setAlsoDeleteFolder(e.target.checked)}
+          <BAIFlex direction="column" align="stretch" gap="xs">
+            <BAIFlex align="start" gap="xs">
+              <Tooltip title={t('adminModelCard.AlsoDeleteModelFolderTooltip')}>
+                <Checkbox
+                  checked={alsoDeleteFolder}
+                  onChange={(e) => setAlsoDeleteFolder(e.target.checked)}
+                />
+              </Tooltip>
+              <span>
+                {t('adminModelCard.AlsoDeleteModelFolder')}
+                {deletingModelCard?.vfolder && (
+                  <span style={{ marginLeft: token.marginXXS }}>
+                    {'('}
+                    <VFolderNodeIdenticonV2
+                      vfolderNodeIdenticonFrgmt={deletingModelCard.vfolder}
+                      style={{
+                        verticalAlign: 'middle',
+                        marginInline: token.marginXXS,
+                      }}
+                    />
+                    <BAILink
+                      to={generateFolderPath(deletingModelCard.vfolderId)}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {deletingModelCard.vfolder.metadata.name}
+                    </BAILink>
+                    {')'}
+                  </span>
+                )}
+              </span>
+            </BAIFlex>
+            {alsoDeleteFolder && (
+              <BAIAlert
+                type="error"
+                icon={<ExclamationCircleFilled />}
+                showIcon
+                description={t(
+                  'adminModelCard.AlsoDeleteModelFolderCascadeWarning',
+                )}
               />
-            </Tooltip>
-            <span>
-              {t('adminModelCard.AlsoDeleteModelFolder')}
-              {deletingModelCard?.vfolder && (
-                <span style={{ marginLeft: token.marginXXS }}>
-                  {'('}
-                  <VFolderNodeIdenticonV2
-                    vfolderNodeIdenticonFrgmt={deletingModelCard.vfolder}
-                    style={{
-                      verticalAlign: 'middle',
-                      marginInline: token.marginXXS,
-                    }}
-                  />
-                  <BAILink
-                    to={generateFolderPath(deletingModelCard.vfolderId)}
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    {deletingModelCard.vfolder.metadata.name}
-                  </BAILink>
-                  {')'}
-                </span>
-              )}
-            </span>
+            )}
           </BAIFlex>
         }
         onOk={() => {
@@ -573,14 +589,26 @@ const AdminModelCardListPage: React.FC = () => {
           count: selectedModelCards.length,
         })}
         extraContent={
-          <BAIFlex align="center" gap="xs">
-            <Tooltip title={t('adminModelCard.AlsoDeleteModelFolderTooltip')}>
-              <Checkbox
-                checked={alsoDeleteFoldersBulk}
-                onChange={(e) => setAlsoDeleteFoldersBulk(e.target.checked)}
+          <BAIFlex direction="column" align="stretch" gap="xs">
+            <BAIFlex align="center" gap="xs">
+              <Tooltip title={t('adminModelCard.AlsoDeleteModelFolderTooltip')}>
+                <Checkbox
+                  checked={alsoDeleteFoldersBulk}
+                  onChange={(e) => setAlsoDeleteFoldersBulk(e.target.checked)}
+                />
+              </Tooltip>
+              <span>{t('adminModelCard.AlsoDeleteModelFolders')}</span>
+            </BAIFlex>
+            {alsoDeleteFoldersBulk && (
+              <BAIAlert
+                type="error"
+                icon={<ExclamationCircleFilled />}
+                showIcon
+                description={t(
+                  'adminModelCard.AlsoDeleteModelFoldersCascadeWarning',
+                )}
               />
-            </Tooltip>
-            <span>{t('adminModelCard.AlsoDeleteModelFolders')}</span>
+            )}
           </BAIFlex>
         }
         onOk={() => {

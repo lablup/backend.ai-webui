@@ -45,7 +45,6 @@ jobs:
       - uses: pnpm/action-setup@v5
         name: Install pnpm
         with:
-          version: latest
           run_install: false
 
       - name: Install Node.js
@@ -55,7 +54,7 @@ jobs:
           cache: 'pnpm'
 
       - name: Install Dependencies
-        run: pnpm install --no-frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       - name: Build web assets
         run: make dep_web
@@ -100,7 +99,6 @@ jobs:
       - uses: pnpm/action-setup@v5
         name: Install pnpm
         with:
-          version: latest
           run_install: false
 
       - name: Install Node.js
@@ -110,7 +108,7 @@ jobs:
           cache: 'pnpm'
 
       - name: Install Dependencies
-        run: pnpm install --no-frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       - name: Download web build artifacts
         uses: actions/download-artifact@v5
@@ -168,7 +166,6 @@ jobs:
       - uses: pnpm/action-setup@v5
         name: Install pnpm
         with:
-          version: latest
           run_install: false
 
       - name: Install Node.js
@@ -178,7 +175,7 @@ jobs:
           cache: 'pnpm'
 
       - name: Install Dependencies
-        run: pnpm install --no-frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       - name: Download web build artifacts
         uses: actions/download-artifact@v5
@@ -234,7 +231,6 @@ jobs:
       - uses: pnpm/action-setup@v5
         name: Install pnpm
         with:
-          version: latest
           run_install: false
 
       - name: Install Node.js
@@ -244,7 +240,7 @@ jobs:
           cache: 'pnpm'
 
       - name: Install Dependencies
-        run: pnpm install --no-frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       # backend.ai-docs-toolkit ships its `docs-toolkit` CLI as the package
       # bin, but it lives at dist/cli.js which only exists after `tsc` runs.
@@ -255,7 +251,7 @@ jobs:
       - name: Build docs-toolkit and link CLI
         run: |
           pnpm --filter backend.ai-docs-toolkit run build
-          pnpm install --no-frozen-lockfile
+          pnpm install --frozen-lockfile
 
       # Cache the Playwright browser binaries (~150 MB Chromium download).
       # The lockfile hash keys the cache so a Playwright version bump

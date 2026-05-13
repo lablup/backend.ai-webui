@@ -166,7 +166,7 @@ const AdminDeploymentListPageContent: React.FC = () => {
         }}
         loading={isLoading}
         onRowClick={(deploymentId) => {
-          webUINavigate(`/deployments/${toLocalId(deploymentId)}`);
+          webUINavigate(`/admin-deployments/${toLocalId(deploymentId)}`);
         }}
         onEditClick={(frgmt) => setEditingDeploymentFrgmt(frgmt)}
         onDeleteComplete={updateFetchKey}

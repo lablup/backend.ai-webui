@@ -10,6 +10,7 @@ import { RoleAssignmentTab_roleScopeFragment$key } from '../__generated__/RoleAs
 import { convertToOrderBy } from '../helper';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import AssignRoleModal from './AssignRoleModal';
+import { DeleteFilled } from '@ant-design/icons';
 import { App, Tooltip, theme } from 'antd';
 import {
   BAIButton,
@@ -19,7 +20,6 @@ import {
   BAINameActionCell,
   BAISelectionLabel,
   BAITable,
-  BAITrashBinIcon,
   type GraphQLFilter,
   useBAILogger,
   useMutationWithPromise,
@@ -357,7 +357,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
               <Tooltip title={t('rbac.RevokeUser')}>
                 <BAIButton
                   danger
-                  icon={<BAITrashBinIcon />}
+                  icon={<DeleteFilled />}
                   style={{
                     borderColor: token.colorBorder,
                     background: token.colorErrorBg,
@@ -428,7 +428,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
                   {
                     key: 'delete',
                     title: t('rbac.RevokeUser'),
-                    icon: <BAITrashBinIcon />,
+                    icon: <DeleteFilled />,
                     type: 'danger',
                     onClick: () => handleBulkRevoke([record?.userId]),
                   },

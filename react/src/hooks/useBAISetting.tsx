@@ -6,7 +6,7 @@ import { BAIBoardItem } from '../components/BAIBoard';
 import { jotaiStore } from '../components/DefaultProviders';
 import { backendaiOptions } from '../global-stores';
 import { CustomThemeConfig } from '../helper/customThemeConfig';
-import type { AIAgent } from './useAIAgent';
+import type { AgentEndpointBindings, AgentProfile } from './useAIAgent';
 import { BAITableColumnOverrideRecord } from 'backend.ai-ui';
 import { atom, useAtom } from 'jotai';
 import { atomFamily } from 'jotai-family';
@@ -31,7 +31,8 @@ export interface UserSettings {
   start_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
   start_page_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
   experimental_ai_agents?: boolean;
-  extra_ai_agents?: Array<AIAgent>;
+  extra_ai_agents?: Array<AgentProfile>;
+  agent_endpoints?: AgentEndpointBindings;
   session_metrics_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
   dashboard_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
   admin_dashboard_board_items?: Array<Omit<BAIBoardItem, 'data'>>;

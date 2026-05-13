@@ -18,14 +18,13 @@ import SharedFolderPermissionInfoModal from './SharedFolderPermissionInfoModal';
 import VFolderDeployModal from './VFolderDeployModal';
 import VFolderNodeIdenticon from './VFolderNodeIdenticon';
 import VFolderPermissionCell from './VFolderPermissionCell';
-import { UserOutlined } from '@ant-design/icons';
+import { DeleteFilled, DeleteOutlined, UserOutlined } from '@ant-design/icons';
 import { Alert, App, theme, Typography } from 'antd';
 import {
   filterOutNullAndUndefined,
   BAIEndpointsIcon,
   BAIRestoreIcon,
   BAIShareAltIcon,
-  BAITrashBinIcon,
   BAIUserUnionIcon,
   BAITable,
   BAITableProps,
@@ -166,7 +165,7 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
       ? {
           key: 'delete',
           title: t('data.folders.MoveToTrash'),
-          icon: <BAITrashBinIcon />,
+          icon: <DeleteOutlined />,
           type: 'danger' as const,
           disabled:
             !hasDeletePermission ||
@@ -202,7 +201,7 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
       ? {
           key: 'delete-forever',
           title: t('data.folders.Delete'),
-          icon: <BAITrashBinIcon />,
+          icon: <DeleteFilled />,
           type: 'danger' as const,
           disabled:
             vfolder?.status !== 'delete-pending' ||

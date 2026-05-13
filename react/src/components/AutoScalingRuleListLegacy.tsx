@@ -7,11 +7,7 @@ import { AutoScalingRuleListLegacyDeleteMutation } from '../__generated__/AutoSc
 import AutoScalingRuleEditorModalLegacy, {
   COMPARATOR_LABELS,
 } from './AutoScalingRuleEditorModalLegacy';
-import {
-  DeleteOutlined,
-  PlusOutlined,
-  SettingOutlined,
-} from '@ant-design/icons';
+import { DeleteFilled, PlusOutlined, SettingOutlined } from '@ant-design/icons';
 import {
   App,
   Button,
@@ -239,7 +235,7 @@ const AutoScalingRuleListLegacy: React.FC<AutoScalingRuleListLegacyProps> = ({
                     <Button
                       type="text"
                       icon={
-                        <DeleteOutlined
+                        <DeleteFilled
                           style={
                             isEndpointDestroying
                               ? undefined

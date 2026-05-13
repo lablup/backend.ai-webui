@@ -19,7 +19,7 @@ import AliasedImageDoubleTags from './AliasedImageDoubleTags';
 import { ImageTags } from './ImageTags';
 import TextHighlighter from './TextHighlighter';
 import {
-  DeleteOutlined,
+  DeleteFilled,
   ReloadOutlined,
   SearchOutlined,
   SettingOutlined,
@@ -245,7 +245,7 @@ const CustomizedImageList: React.FC = () => {
         <BAIFlex direction="row" align="stretch" justify="center" gap="xxs">
           <Button
             type="text"
-            icon={<DeleteOutlined />}
+            icon={<DeleteFilled />}
             onClick={() => {
               setImageToDelete(row || null);
             }}

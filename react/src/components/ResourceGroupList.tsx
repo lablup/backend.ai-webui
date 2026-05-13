@@ -14,7 +14,7 @@ import ResourceGroupSettingModal from './ResourceGroupSettingModal';
 import {
   CheckOutlined,
   CloseOutlined,
-  DeleteOutlined,
+  DeleteFilled,
   InfoCircleOutlined,
   PlusOutlined,
   SettingOutlined,
@@ -213,7 +213,7 @@ const ResourceGroupList: React.FC = () => {
             {
               key: 'delete',
               title: t('button.Delete'),
-              icon: <DeleteOutlined />,
+              icon: <DeleteFilled />,
               type: 'danger',
               onClick: () => {
                 setSelectedResourceGroupName(record?.name || '');
@@ -254,7 +254,7 @@ const ResourceGroupList: React.FC = () => {
     },
     {
       key: 'wsproxy_addr',
-      title: t('resourceGroup.WsproxyAddress'),
+      title: t('resourceGroup.AppProxyAddress'),
       dataIndex: 'wsproxy_addr',
       render: (value) => value || '-',
     },

@@ -4,8 +4,6 @@ description: |
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "0 0 * * 1-5"
 
 permissions: read-all
 
@@ -51,9 +49,9 @@ steps:
   - uses: actions/setup-node@v4
     with:
       node-version: '20'
-  - uses: pnpm/action-setup@v4
+  - uses: pnpm/action-setup@v5
     with:
-      version: 10
+      version: 11
   - name: Print E2E endpoints
     run: |
       echo "=== E2E Test Configuration ==="

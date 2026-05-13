@@ -402,9 +402,10 @@ export async function verifyVFolder(
   page: Page,
   folderName: string,
   statusTab: 'Active' | 'Trash' = 'Active',
+  dataPath: string = 'data',
 ) {
   // Use navigateTo for reliable navigation regardless of current page state
-  await navigateTo(page, 'data');
+  await navigateTo(page, dataPath);
   await page.getByRole('tab', { name: statusTab }).click();
   await clearAllFilters(page);
   await selectPropertyFilter(page, 'Name', folderName);
@@ -477,16 +478,26 @@ export async function createVFolderAndVerify(
   await verifyVFolder(page, folderName);
 }
 
-export async function moveToTrashAndVerify(page: Page, folderName: string) {
+export async function moveToTrashAndVerify(
+  page: Page,
+  folderName: string,
+  dataPath: string = 'data',
+) {
   // Use navigateTo to ensure a clean navigation to the data page regardless of current state
-  await navigateTo(page, 'data');
+  await navigateTo(page, dataPath);
   await page.getByRole('tab', { name: 'Active' }).click();
   await selectPropertyFilter(page, 'Name', folderName);
 
-  await page
-    .getByRole('row', { name: `VFolder Identicon ${folderName}` })
-    .getByRole('button', { name: 'trash bin' })
-    .click();
+  // Fail fast (with a bounded wait) if the folder is not in Active — for example,
+  // a test already moved it to Trash. The Playwright config does not set a global
+  // actionTimeout, so a bare .click() on a non-existent row would hang for the
+  // entire test timeout, defeating the try/catch in callers.
+  const folderRow = page.getByRole('row', {
+    name: `VFolder Identicon ${folderName}`,
+  });
+  await expect(folderRow).toBeVisible({ timeout: 10000 });
+
+  await folderRow.getByRole('button', { name: 'delete' }).click();
   // The "Move to trash" confirmation modal uses a standardized "Confirm"
   // button (t('button.Confirm')) instead of "Move".
   const confirmButton = page
@@ -495,15 +506,16 @@ export async function moveToTrashAndVerify(page: Page, folderName: string) {
   await expect(confirmButton).toBeVisible();
   await confirmButton.click();
   await removeSearchButton(page, folderName);
-  await verifyVFolder(page, folderName, 'Trash');
+  await verifyVFolder(page, folderName, 'Trash', dataPath);
 }
 
 export async function deleteForeverAndVerifyFromTrash(
   page: Page,
   folderName: string,
+  dataPath: string = 'data',
 ) {
   // Use navigateTo to ensure a clean navigation to the data page regardless of current state
-  await navigateTo(page, 'data');
+  await navigateTo(page, dataPath);
   await page.getByRole('tab', { name: 'Trash' }).click();
 
   // Clear any existing filters before searching for the folder to delete

@@ -18,13 +18,15 @@ test.describe(
     }) => {
       const adminModelCardPage = new AdminModelCardPage(page);
 
-      // Navigate to /admin-serving?tab=model-store
-      await page.goto(`${webuiEndpoint}/admin-serving?tab=model-store`);
+      // Navigate to /admin-deployments?tab=model-store-management
+      await page.goto(
+        `${webuiEndpoint}/admin-deployments?tab=model-store-management`,
+      );
 
       // Verify the "Model Store Management" tab is active
       await expect(
         page.getByText('Model Store Management').first(),
-      ).toBeVisible();
+      ).toBeVisible({ timeout: 15000 });
 
       // Verify the "Create Model Card" button is visible
       await expect(adminModelCardPage.getCreateModelCardButton()).toBeVisible();
@@ -60,36 +62,52 @@ test.describe(
     });
 
     // 1.2 Superadmin can see model card rows with correct data in the table
+    // This test creates its own model card to guarantee data exists in the table.
     test('Superadmin can see model card rows with correct data in the table', async ({
       page,
-    }) => {
+    }, testInfo) => {
       const adminModelCardPage = new AdminModelCardPage(page);
+      const cardName = `e2e-test-pageload-${testInfo.workerIndex}-${Date.now()}`;
 
-      // Navigate and wait for at least one row
-      await page.goto(`${webuiEndpoint}/admin-serving?tab=model-store`);
+      // Create a dedicated model card so the table is guaranteed to have data
+      await page.goto(
+        `${webuiEndpoint}/admin-deployments?tab=model-store-management`,
+      );
       await adminModelCardPage.waitForTableLoad();
+      await adminModelCardPage.createModelCard({ name: cardName });
 
-      // Wait for at least one data row to appear
-      const firstRow = adminModelCardPage.getDataRows().first();
-      await expect(firstRow).toBeVisible();
+      // Navigate back and filter to the created card
+      await page.goto(
+        `${webuiEndpoint}/admin-deployments?tab=model-store-management`,
+      );
+      await adminModelCardPage.waitForTableLoad();
+      await adminModelCardPage.applyNameFilter(cardName);
 
-      // Verify the name cell has setting and trash bin buttons
+      // Wait for the filtered row to appear
+      const firstRow = adminModelCardPage.getRowByName(cardName);
+      await expect(firstRow).toBeVisible({ timeout: 15000 });
+
+      // Verify the name cell has setting and delete buttons
       await expect(
         firstRow.getByRole('button', { name: 'setting' }),
       ).toBeVisible();
       await expect(
-        firstRow.getByRole('button', { name: 'trash bin' }),
+        firstRow.getByRole('button', { name: 'delete' }),
       ).toBeVisible();
 
-      // Verify Access Level cell shows a tag (Public or Internal)
+      // Verify Access Level cell shows a tag (Public, Private, or Internal)
+      // "Private" is the display label for the INTERNAL access level in the UI
       const accessLevelCell = firstRow.getByRole('cell', {
-        name: /Public|Internal/,
+        name: /Public|Private|Internal/,
       });
       await expect(accessLevelCell).toBeVisible();
 
       // Verify Created At cell shows a date in YYYY-MM-DD HH:mm format
       const createdAtCell = firstRow.locator('td').last();
       await expect(createdAtCell).toHaveText(/\d{4}-\d{2}-\d{2} \d{2}:\d{2}/);
+
+      // Cleanup: delete the created model card
+      await adminModelCardPage.deleteModelCardByName(cardName);
     });
 
     // 1.3 Superadmin can see pagination controls
@@ -99,7 +117,9 @@ test.describe(
       const adminModelCardPage = new AdminModelCardPage(page);
 
       // Navigate to the page
-      await page.goto(`${webuiEndpoint}/admin-serving?tab=model-store`);
+      await page.goto(
+        `${webuiEndpoint}/admin-deployments?tab=model-store-management`,
+      );
       await adminModelCardPage.waitForTableLoad();
 
       // Verify pagination control is visible with total count
@@ -126,7 +146,9 @@ test.describe(
       const adminModelCardPage = new AdminModelCardPage(page);
 
       // Navigate to the page
-      await page.goto(`${webuiEndpoint}/admin-serving?tab=model-store`);
+      await page.goto(
+        `${webuiEndpoint}/admin-deployments?tab=model-store-management`,
+      );
       await adminModelCardPage.waitForTableLoad();
 
       // Change page size from 10 to 20

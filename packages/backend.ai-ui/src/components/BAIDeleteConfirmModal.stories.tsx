@@ -3,7 +3,7 @@
 import BAIButton from './BAIButton';
 import BAIDeleteConfirmModal from './BAIDeleteConfirmModal';
 import BAIFlex from './BAIFlex';
-import { DeleteOutlined, FolderOutlined } from '@ant-design/icons';
+import { DeleteFilled, FolderOutlined } from '@ant-design/icons';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Checkbox, Space, Tag } from 'antd';
 import { useState } from 'react';
@@ -51,11 +51,7 @@ export const SingleItem: Story = {
     const [open, setOpen] = useState(false);
     return (
       <>
-        <BAIButton
-          danger
-          icon={<DeleteOutlined />}
-          onClick={() => setOpen(true)}
-        >
+        <BAIButton danger icon={<DeleteFilled />} onClick={() => setOpen(true)}>
           Delete Item
         </BAIButton>
         <BAIDeleteConfirmModal
@@ -82,11 +78,7 @@ export const SingleItemWithInput: Story = {
     const [open, setOpen] = useState(false);
     return (
       <>
-        <BAIButton
-          danger
-          icon={<DeleteOutlined />}
-          onClick={() => setOpen(true)}
-        >
+        <BAIButton danger icon={<DeleteFilled />} onClick={() => setOpen(true)}>
           Delete (Confirm Required)
         </BAIButton>
         <BAIDeleteConfirmModal
@@ -121,11 +113,7 @@ export const MultipleItems: Story = {
     ];
     return (
       <>
-        <BAIButton
-          danger
-          icon={<DeleteOutlined />}
-          onClick={() => setOpen(true)}
-        >
+        <BAIButton danger icon={<DeleteFilled />} onClick={() => setOpen(true)}>
           Delete 5 Items
         </BAIButton>
         <BAIDeleteConfirmModal
@@ -156,11 +144,7 @@ export const ManyItems: Story = {
     }));
     return (
       <>
-        <BAIButton
-          danger
-          icon={<DeleteOutlined />}
-          onClick={() => setOpen(true)}
-        >
+        <BAIButton danger icon={<DeleteFilled />} onClick={() => setOpen(true)}>
           Delete 50 Items
         </BAIButton>
         <BAIDeleteConfirmModal
@@ -219,11 +203,7 @@ export const CustomRenderedItems: Story = {
     ];
     return (
       <>
-        <BAIButton
-          danger
-          icon={<DeleteOutlined />}
-          onClick={() => setOpen(true)}
-        >
+        <BAIButton danger icon={<DeleteFilled />} onClick={() => setOpen(true)}>
           Delete Folders
         </BAIButton>
         <BAIDeleteConfirmModal
@@ -254,11 +234,7 @@ export const WithExtraContent: Story = {
     ];
     return (
       <>
-        <BAIButton
-          danger
-          icon={<DeleteOutlined />}
-          onClick={() => setOpen(true)}
-        >
+        <BAIButton danger icon={<DeleteFilled />} onClick={() => setOpen(true)}>
           Purge Users
         </BAIButton>
         <BAIDeleteConfirmModal
@@ -290,11 +266,7 @@ export const EmptyItems: Story = {
     const [open, setOpen] = useState(false);
     return (
       <>
-        <BAIButton
-          danger
-          icon={<DeleteOutlined />}
-          onClick={() => setOpen(true)}
-        >
+        <BAIButton danger icon={<DeleteFilled />} onClick={() => setOpen(true)}>
           Delete (No Selection)
         </BAIButton>
         <BAIDeleteConfirmModal
