@@ -3,8 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { VFolderNodeIdenticonFragment$key } from '../__generated__/VFolderNodeIdenticonFragment.graphql';
-import { shapes } from '@dicebear/collection';
 import { createAvatar } from '@dicebear/core';
+import * as shapes from '@dicebear/shapes';
 import { theme } from 'antd';
 import React from 'react';
 import { graphql, useFragment } from 'react-relay';
