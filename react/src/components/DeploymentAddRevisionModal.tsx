@@ -502,8 +502,11 @@ const DeploymentAddRevisionModalFormBody: React.FC<
         ? rev.modelMountConfig.vfolderId.replace(/-/g, '')
         : undefined,
       mountDestination: rev.modelMountConfig?.mountDestination ?? '/models',
-      definitionPath:
-        rev.modelMountConfig?.definitionPath ?? 'model-definition.yaml',
+      // FR-2832: don't fall back to `'model-definition.yaml'` here — when
+      // the previous revision left `definitionPath` empty/null, keep the
+      // form field empty so a re-submit continues to send `null` instead
+      // of re-introducing the hardcoded default.
+      definitionPath: rev.modelMountConfig?.definitionPath,
       // `ImageEnvironmentSelectFormItems` matches the form's
       // `environments.version` against its image catalog by canonical
       // name; setting this is enough to drive the rest of the
@@ -771,10 +774,15 @@ const DeploymentAddRevisionModalFormBody: React.FC<
       isCustom && isCommandMode
         ? (values.commandModelMount ?? '/models')
         : values.mountDestination || '/models';
-    const definitionPath =
+    // FR-2832: see TODO at the modelMountConfig spread below for backend
+    // coordination details. Trim user input so whitespace-only values
+    // (`'   '`) collapse to "not customized" and let the backend pick
+    // the default filename.
+    const trimmedDefinitionPath = values.definitionPath?.trim();
+    const resolvedDefinitionPath =
       isCustom && isCommandMode
         ? 'model-definition.yaml'
-        : values.definitionPath || 'model-definition.yaml';
+        : trimmedDefinitionPath || null;
 
     onIsAddingChange(true);
     commitAdd({
@@ -804,7 +812,12 @@ const DeploymentAddRevisionModalFormBody: React.FC<
             // normalize before submitting (same as `extraMounts`).
             vfolderId: convertToUUID(values.modelFolderId),
             mountDestination,
-            definitionPath,
+            // FR-2832: send `null` for `definitionPath` when the user
+            // hasn't customized it so the backend can resolve either
+            // `model-definition.yaml` or `model-definition.yml`.
+            // `ModelMountConfigInput.definitionPath` is nullable in the
+            // schema (default `null`).
+            definitionPath: resolvedDefinitionPath,
           },
           modelDefinition,
           extraMounts: extraMounts.length > 0 ? extraMounts : null,
@@ -888,7 +901,11 @@ const DeploymentAddRevisionModalFormBody: React.FC<
       onFinishFailed={handleFinishFailed}
       initialValues={_.merge({}, RESOURCE_ALLOCATION_INITIAL_FORM_VALUES, {
         mountDestination: '/models',
-        definitionPath: 'model-definition.yaml',
+        // FR-2832: don't seed `definitionPath` — leave it empty so the
+        // submit handler can send `null` and let the backend resolve
+        // either `model-definition.yaml` or `model-definition.yml`.
+        // The Input below shows `model-definition.yaml` as a placeholder
+        // so users still see the default hint.
         customDefinitionMode: 'command',
         commandPort: 8000,
         commandHealthCheck: '/health',
@@ -1083,7 +1100,6 @@ const DeploymentAddRevisionModalFormBody: React.FC<
                       <Form.Item
                         name="definitionPath"
                         label={t('deployment.ModelDefinitionPath')}
-                        rules={[{ required: true }]}
                         style={{ flex: 1 }}
                       >
                         <Input allowClear placeholder="model-definition.yaml" />
