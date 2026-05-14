@@ -211,7 +211,6 @@
     "UpdateProject": "Actualizar proyecto"
   },
   "comp:BAIProjectTable": {
-    "AreYouSureToDeactivateProject": "¿Está seguro de que desea desactivar el proyecto {{projectName}}?",
     "AreYouSureToPurgeProject": "¿Está seguro de que desea purgar {{projectName}}? Esta acción es irreversible.",
     "ContainerRegistry": "Registro de contenedores",
     "Controls": "Controles",

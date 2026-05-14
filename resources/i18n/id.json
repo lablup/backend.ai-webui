@@ -915,7 +915,6 @@
     "CurrentRevision": "Revision Saat Ini",
     "DeleteDeployment": "Hapus Penerapan",
     "Deploy": "Terapkan",
-    "DeployConfirm": "Apakah Anda yakin ingin menerapkan Revision #{{revisionNumber}}? Revision saat ini akan diganti.",
     "DeployDisabled": "Tidak dapat memilih Revision yang sedang diterapkan atau sudah diterapkan saat ini.",
     "DeploySuccess": "Penerapan Revision #{{revisionNumber}} telah diminta.",
     "Deploying": "Sedang Diterapkan",

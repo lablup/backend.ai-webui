@@ -915,7 +915,6 @@
     "CurrentRevision": "Revision Actuelle",
     "DeleteDeployment": "Supprimer le déploiement",
     "Deploy": "Déployer",
-    "DeployConfirm": "Êtes-vous sûr de vouloir déployer la Revision #{{revisionNumber}} ? La Revision actuelle sera remplacée.",
     "DeployDisabled": "Impossible de sélectionner une Revision en cours de déploiement ou déjà déployée.",
     "DeploySuccess": "Le déploiement de la Revision #{{revisionNumber}} a été demandé.",
     "Deploying": "En déploiement",

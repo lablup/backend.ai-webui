@@ -933,7 +933,6 @@
     "CurrentRevision": "Current Revision",
     "DeleteDeployment": "Delete Deployment",
     "Deploy": "Deploy",
-    "DeployConfirm": "Are you sure you want to deploy revision #{{revisionNumber}}? The current revision will be replaced.",
     "DeployDisabled": "Cannot select a revision that is being deployed or is currently deployed.",
     "DeploySuccess": "Deploy of revision #{{revisionNumber}} has been requested.",
     "Deploying": "Deploying",

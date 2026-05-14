@@ -915,7 +915,6 @@
     "CurrentRevision": "Revision Corrente",
     "DeleteDeployment": "Elimina distribuzione",
     "Deploy": "Distribuisci",
-    "DeployConfirm": "Sei sicuro di voler distribuire la Revision #{{revisionNumber}}? La Revision attuale verrà sostituita.",
     "DeployDisabled": "Non è possibile selezionare una Revision che è in fase di distribuzione o già distribuita.",
     "DeploySuccess": "La distribuzione della Revision #{{revisionNumber}} è stata richiesta.",
     "Deploying": "In distribuzione",

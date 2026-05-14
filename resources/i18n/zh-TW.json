@@ -916,7 +916,6 @@
     "CurrentRevision": "目前 Revision",
     "DeleteDeployment": "刪除部署",
     "Deploy": "部署",
-    "DeployConfirm": "確定要部署 Revision #{{revisionNumber}} 嗎？當前 Revision 將被替換。",
     "DeployDisabled": "無法選取正在部署或目前已部署的 Revision。",
     "DeploySuccess": "已請求部署 Revision #{{revisionNumber}}。",
     "Deploying": "部署中",

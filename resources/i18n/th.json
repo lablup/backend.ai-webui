@@ -915,7 +915,6 @@
     "CurrentRevision": "Revision ปัจจุบัน",
     "DeleteDeployment": "ลบการปรับใช้",
     "Deploy": "ปรับใช้",
-    "DeployConfirm": "คุณแน่ใจหรือไม่ว่าต้องการปรับใช้ Revision #{{revisionNumber}}? Revision ปัจจุบันจะถูกแทนที่",
     "DeployDisabled": "ไม่สามารถเลือก Revision ที่กำลังถูกปรับใช้หรือถูกปรับใช้อยู่ในปัจจุบันได้",
     "DeploySuccess": "ส่งคำขอปรับใช้ Revision #{{revisionNumber}} แล้ว",
     "Deploying": "กำลังปรับใช้",

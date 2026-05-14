@@ -915,7 +915,6 @@
     "CurrentRevision": "Revision Semasa",
     "DeleteDeployment": "Padam Penggunaan",
     "Deploy": "Gunakan",
-    "DeployConfirm": "Adakah anda pasti mahu menggunakan Revision #{{revisionNumber}}? Revision semasa akan digantikan.",
     "DeployDisabled": "Tidak boleh memilih Revision yang sedang digunakan atau sedang digunakan pada masa ini.",
     "DeploySuccess": "Penggunaan Revision #{{revisionNumber}} telah diminta.",
     "Deploying": "Sedang Digunakan",

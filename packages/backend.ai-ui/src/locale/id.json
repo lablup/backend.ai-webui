@@ -211,7 +211,6 @@
     "UpdateProject": "Perbarui Proyek"
   },
   "comp:BAIProjectTable": {
-    "AreYouSureToDeactivateProject": "Anda yakin ingin menonaktifkan proyek {{projectName}}?",
     "AreYouSureToPurgeProject": "Apakah Anda yakin ingin menghapus {{projectName}}? Tindakan ini tidak dapat dibatalkan.",
     "ContainerRegistry": "Registri Kontainer",
     "Controls": "Kontrol",

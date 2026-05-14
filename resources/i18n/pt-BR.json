@@ -915,7 +915,6 @@
     "CurrentRevision": "Revision Atual",
     "DeleteDeployment": "Excluir implantação",
     "Deploy": "Implantar",
-    "DeployConfirm": "Tem certeza de que deseja implantar a Revision #{{revisionNumber}}? A Revision atual será substituída.",
     "DeployDisabled": "Não é possível selecionar uma Revision que está sendo implantada ou que já está implantada.",
     "DeploySuccess": "A implantação da Revision #{{revisionNumber}} foi solicitada.",
     "Deploying": "Implantando",

@@ -211,7 +211,6 @@
     "UpdateProject": "Kemas kini Projek"
   },
   "comp:BAIProjectTable": {
-    "AreYouSureToDeactivateProject": "Adakah anda pasti mahu nyahaktifkan projek {{projectName}}?",
     "AreYouSureToPurgeProject": "Adakah anda pasti mahu memadam sepenuhnya {{projectName}}? Tindakan ini tidak boleh dipulihkan.",
     "ContainerRegistry": "Registri Kontena",
     "Controls": "Kawalan",

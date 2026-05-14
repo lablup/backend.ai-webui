@@ -214,7 +214,6 @@
     "UpdateProject": "Update Project"
   },
   "comp:BAIProjectTable": {
-    "AreYouSureToDeactivateProject": "Are you sure to deactivate project {{projectName}}?",
     "AreYouSureToPurgeProject": "Are you sure to purge {{projectName}}? This action is irreversible.",
     "ContainerRegistry": "Container Registry",
     "Controls": "Controls",

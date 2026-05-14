@@ -211,7 +211,6 @@
     "UpdateProject": "อัปเดตโปรเจกต์"
   },
   "comp:BAIProjectTable": {
-    "AreYouSureToDeactivateProject": "คุณแน่ใจว่าต้องการปิดใช้งานโปรเจ็กต์ {{projectName}}?",
     "AreYouSureToPurgeProject": "คุณแน่ใจหรือว่าต้องการลบออกอย่างถาวร {{projectName}}? การดำเนินการนี้ไม่สามารถย้อนกลับได้.",
     "ContainerRegistry": "รีจิสทรีคอนเทนเนอร์",
     "Controls": "การควบคุม",

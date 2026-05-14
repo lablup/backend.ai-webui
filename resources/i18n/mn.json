@@ -915,7 +915,6 @@
     "CurrentRevision": "Одоогийн Revision",
     "DeleteDeployment": "Байршуулалт устгах",
     "Deploy": "Байршуулах",
-    "DeployConfirm": "Revision #{{revisionNumber}}-ыг байршуулахдаа итгэлтэй байна уу? Одоогийн Revision солигдох болно.",
     "DeployDisabled": "Байршуулагдаж байгаа эсвэл одоо байршуулсан Revision-ыг сонгох боломжгүй.",
     "DeploySuccess": "Revision #{{revisionNumber}}-ыг байршуулах хүсэлт гаргагдлаа.",
     "Deploying": "Байршуулж байна",

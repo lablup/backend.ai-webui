@@ -915,7 +915,6 @@
     "CurrentRevision": "Τρέχουσα Revision",
     "DeleteDeployment": "Διαγραφή ανάπτυξης",
     "Deploy": "Ανάπτυξη",
-    "DeployConfirm": "Είστε σίγουροι ότι θέλετε να αναπτύξετε τη Revision #{{revisionNumber}}; Η τρέχουσα Revision θα αντικατασταθεί.",
     "DeployDisabled": "Δεν είναι δυνατή η επιλογή Revision που βρίσκεται σε ανάπτυξη ή είναι ήδη αναπτυγμένη.",
     "DeploySuccess": "Το αίτημα ανάπτυξης για τη Revision #{{revisionNumber}} υποβλήθηκε.",
     "Deploying": "Σε ανάπτυξη",

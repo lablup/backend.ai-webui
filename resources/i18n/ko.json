@@ -916,7 +916,6 @@
     "CurrentRevision": "현재 리비전",
     "DeleteDeployment": "배포 삭제",
     "Deploy": "배포",
-    "DeployConfirm": "리비전 #{{revisionNumber}}을(를) 배포하시겠습니까? 현재 리비전이 교체됩니다.",
     "DeployDisabled": "배포중이거나 현재 배포된 리비전은 선택할 수 없습니다.",
     "DeploySuccess": "리비전 #{{revisionNumber}} 배포가 요청되었습니다.",
     "Deploying": "배포중",

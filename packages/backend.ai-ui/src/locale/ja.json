@@ -211,7 +211,6 @@
     "UpdateProject": "プロジェクトの更新"
   },
   "comp:BAIProjectTable": {
-    "AreYouSureToDeactivateProject": "プロジェクト「{{projectName}}」を無効化してもよろしいですか？",
     "AreYouSureToPurgeProject": "本当に{{projectName}}を完全に削除しますか？この操作は取り消せません。",
     "ContainerRegistry": "コンテナレジストリ",
     "Controls": "操作",

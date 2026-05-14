@@ -915,7 +915,6 @@
     "CurrentRevision": "Revision Hiện Tại",
     "DeleteDeployment": "Xóa triển khai",
     "Deploy": "Triển khai",
-    "DeployConfirm": "Bạn có chắc chắn muốn triển khai Revision #{{revisionNumber}} không? Revision hiện tại sẽ được thay thế.",
     "DeployDisabled": "Không thể chọn Revision đang được triển khai hoặc đã được triển khai hiện tại.",
     "DeploySuccess": "Đã yêu cầu triển khai Revision #{{revisionNumber}}.",
     "Deploying": "Đang triển khai",

@@ -211,7 +211,6 @@
     "UpdateProject": "Cập nhật dự án"
   },
   "comp:BAIProjectTable": {
-    "AreYouSureToDeactivateProject": "Bạn có chắc chắn muốn vô hiệu hóa dự án {{projectName}}?",
     "AreYouSureToPurgeProject": "Bạn có chắc chắn muốn xóa vĩnh viễn {{projectName}}? Hành động này không thể hoàn tác.",
     "ContainerRegistry": "Kho lưu trữ container",
     "Controls": "Điều khiển",

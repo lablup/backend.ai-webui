@@ -211,7 +211,6 @@
     "UpdateProject": "更新项目"
   },
   "comp:BAIProjectTable": {
-    "AreYouSureToDeactivateProject": "您确定要停用项目 {{projectName}} 吗？",
     "AreYouSureToPurgeProject": "确定要永久清除 {{projectName}}? 此操作不可恢复。",
     "ContainerRegistry": "容器镜像仓库",
     "Controls": "控制",

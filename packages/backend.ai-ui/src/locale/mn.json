@@ -211,7 +211,6 @@
     "UpdateProject": "Төслийг шинэчлэх"
   },
   "comp:BAIProjectTable": {
-    "AreYouSureToDeactivateProject": "Та {{projectName}} төслийг идэвхгүй болгохыг баталж байна уу?",
     "AreYouSureToPurgeProject": "Та {{projectName}} бүрмөсөн устгахдаа итгэлтэй байна уу? Энэ үйлдэл буцаашгүй.",
     "ContainerRegistry": "Контейнерийн бүртгэл",
     "Controls": "Удирдлага",

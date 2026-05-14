@@ -915,7 +915,6 @@
     "CurrentRevision": "Mevcut Revision",
     "DeleteDeployment": "Dağıtımı Sil",
     "Deploy": "Dağıt",
-    "DeployConfirm": "Revision #{{revisionNumber}}'ı dağıtmak istediğinizden emin misiniz? Mevcut Revision değiştirilecek.",
     "DeployDisabled": "Dağıtılmakta olan veya şu anda dağıtılmış Revision seçilemez.",
     "DeploySuccess": "Revision #{{revisionNumber}} dağıtım talebi oluşturuldu.",
     "Deploying": "Dağıtılıyor",
