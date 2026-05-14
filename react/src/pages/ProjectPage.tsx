@@ -16,6 +16,7 @@ import { App } from 'antd';
 import {
   availableProjectSorterValues,
   BAIButton,
+  BAICard,
   BAIFetchKeyButton,
   BAIFlex,
   BAIProjectBulkEditModal,
@@ -135,177 +136,182 @@ const ProjectPage = () => {
     },
   );
   return (
-    <BAIFlex direction="column" align="stretch" gap="sm">
-      <BAIFlex justify="between" align="start" wrap="wrap" gap="xs">
-        <BAIFlex direction="row" gap="sm" align="start" wrap="wrap">
-          <BAIRadioGroup
-            value={queryParams.status}
-            onChange={(e) => {
-              setQueryParams({ status: e.target.value });
-              setTablePaginationOption({ current: 1 });
-              setSelectedProjectList([]);
-            }}
-            optionType="button"
-            options={[
-              { label: t('general.Active'), value: 'active' },
-              { label: t('general.Inactive'), value: 'inactive' },
-            ]}
-          />
-          <BAIPropertyFilter
-            filterProperties={[
-              {
-                key: 'name',
-                propertyLabel: t('project.Name'),
-                type: 'string',
-              },
-              {
-                key: 'domain_name',
-                propertyLabel: t('project.Domain'),
-                type: 'string',
-              },
-              {
-                key: 'resource_policy',
-                propertyLabel: t('project.ResourcePolicy'),
-                type: 'string',
-              },
-              {
-                key: 'id',
-                propertyLabel: t('project.ProjectID'),
-                type: 'string',
-                defaultOperator: '==',
-                rule: {
-                  message: t('project.ProjectIDFilterRuleMessage'),
-                  validate: (value) => isValidUUID(value),
+    <BAICard
+      activeTabKey="projects"
+      tabList={[{ key: 'projects', label: t('webui.menu.Projects') }]}
+    >
+      <BAIFlex direction="column" align="stretch" gap="sm">
+        <BAIFlex justify="between" align="start" wrap="wrap" gap="xs">
+          <BAIFlex direction="row" gap="sm" align="start" wrap="wrap">
+            <BAIRadioGroup
+              value={queryParams.status}
+              onChange={(e) => {
+                setQueryParams({ status: e.target.value });
+                setTablePaginationOption({ current: 1 });
+                setSelectedProjectList([]);
+              }}
+              optionType="button"
+              options={[
+                { label: t('general.Active'), value: 'active' },
+                { label: t('general.Inactive'), value: 'inactive' },
+              ]}
+            />
+            <BAIPropertyFilter
+              filterProperties={[
+                {
+                  key: 'name',
+                  propertyLabel: t('project.Name'),
+                  type: 'string',
                 },
-              },
-            ]}
-            value={queryParams.filter}
-            onChange={(filter) => {
-              setQueryParams({ filter: filter || '' });
-              setSelectedProjectList([]);
-            }}
-          />
+                {
+                  key: 'domain_name',
+                  propertyLabel: t('project.Domain'),
+                  type: 'string',
+                },
+                {
+                  key: 'resource_policy',
+                  propertyLabel: t('project.ResourcePolicy'),
+                  type: 'string',
+                },
+                {
+                  key: 'id',
+                  propertyLabel: t('project.ProjectID'),
+                  type: 'string',
+                  defaultOperator: '==',
+                  rule: {
+                    message: t('project.ProjectIDFilterRuleMessage'),
+                    validate: (value) => isValidUUID(value),
+                  },
+                },
+              ]}
+              value={queryParams.filter}
+              onChange={(filter) => {
+                setQueryParams({ filter: filter || '' });
+                setSelectedProjectList([]);
+              }}
+            />
+          </BAIFlex>
+          <BAIFlex gap="xs">
+            {selectedProjectList.length > 0 && (
+              <>
+                <BAISelectionLabel
+                  count={selectedProjectList.length}
+                  onClearSelection={() => setSelectedProjectList([])}
+                />
+                <BAIButton onClick={toggleBulkEditModal}>
+                  {t('project.BulkEdit')}
+                </BAIButton>
+              </>
+            )}
+            <BAIFetchKeyButton
+              value={fetchKey}
+              autoUpdateDelay={null}
+              loading={deferredFetchKey !== fetchKey}
+              onChange={() => {
+                updateFetchKey();
+              }}
+            />
+            <BAIButton
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={toggleSettingModal}
+            >
+              {t('project.CreateProject')}
+            </BAIButton>
+          </BAIFlex>
         </BAIFlex>
-        <BAIFlex gap="xs">
-          {selectedProjectList.length > 0 && (
-            <>
-              <BAISelectionLabel
-                count={selectedProjectList.length}
-                onClearSelection={() => setSelectedProjectList([])}
-              />
-              <BAIButton onClick={toggleBulkEditModal}>
-                {t('project.BulkEdit')}
-              </BAIButton>
-            </>
+        <BAIProjectTable
+          updateFetchKey={updateFetchKey}
+          isActiveTab={isActiveTab}
+          projectFragment={filterOutEmpty(
+            group_nodes?.edges.map((e) => e?.node) ?? [],
           )}
-          <BAIFetchKeyButton
-            value={fetchKey}
-            autoUpdateDelay={null}
-            loading={deferredFetchKey !== fetchKey}
-            onChange={() => {
-              updateFetchKey();
-            }}
-          />
-          <BAIButton
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={toggleSettingModal}
-          >
-            {t('project.CreateProject')}
-          </BAIButton>
-        </BAIFlex>
-      </BAIFlex>
-      <BAIProjectTable
-        updateFetchKey={updateFetchKey}
-        isActiveTab={isActiveTab}
-        projectFragment={filterOutEmpty(
-          group_nodes?.edges.map((e) => e?.node) ?? [],
-        )}
-        loading={
-          deferredFetchKey !== fetchKey ||
-          deferredValueQueryVariables !== queryVariables
-        }
-        pagination={{
-          pageSize: tablePaginationOption.pageSize,
-          current: tablePaginationOption.current,
-          total: group_nodes?.count ?? 0,
-          onChange: (current, pageSize) => {
-            if (_.isNumber(pageSize) && _.isNumber(current)) {
-              setTablePaginationOption({ current, pageSize });
-              setSelectedProjectList([]);
-            }
-          },
-        }}
-        order={queryParams.order}
-        onChangeOrder={(order) => {
-          setQueryParams({ order });
-        }}
-        onClickProjectEditButton={(project) => {
-          group_nodes?.edges.forEach((edge) => {
-            if (edge?.node?.id === project.id) {
-              setSelectedProject(edge.node);
-              toggleSettingModal();
-            }
-          });
-        }}
-        exportSettings={
-          !_.isEmpty(supportedFields)
-            ? {
-                supportedFields,
-                onExport: async (selectedExportKeys) => {
-                  await exportCSV(selectedExportKeys).catch((err) => {
-                    message.error(t('general.ErrorOccurred'));
-                    logger.error(err);
-                  });
-                },
+          loading={
+            deferredFetchKey !== fetchKey ||
+            deferredValueQueryVariables !== queryVariables
+          }
+          pagination={{
+            pageSize: tablePaginationOption.pageSize,
+            current: tablePaginationOption.current,
+            total: group_nodes?.count ?? 0,
+            onChange: (current, pageSize) => {
+              if (_.isNumber(pageSize) && _.isNumber(current)) {
+                setTablePaginationOption({ current, pageSize });
+                setSelectedProjectList([]);
               }
-            : undefined
-        }
-        rowSelection={{
-          type: 'checkbox',
-          onChange: (keys) => {
-            if (!group_nodes) {
-              return;
-            }
-            setSelectedProjectList(
-              _.filter(
-                _.compact(_.map(group_nodes.edges, (e) => e?.node)),
-                (node) => keys.includes(node.id),
-              ),
-            );
-          },
-          selectedRowKeys: _.map(selectedProjectList, 'id'),
-          getCheckboxProps: (record) => ({
-            disabled: _.get(record, 'type') === 'MODEL_STORE',
-          }),
-        }}
-      />
-      <BAIProjectSettingModal
-        open={openSettingModal}
-        onOk={() => {
-          updateFetchKey();
-          toggleSettingModal();
-          setSelectedProject(null);
-        }}
-        onCancel={() => {
-          toggleSettingModal();
-          setSelectedProject(null);
-        }}
-        projectFragment={selectedProject}
-      />
-      <BAIProjectBulkEditModal
-        open={openBulkEditModal}
-        selectedProjectFragments={selectedProjectList}
-        onOk={() => {
-          updateFetchKey();
-          toggleBulkEditModal();
-          setSelectedProjectList([]);
-        }}
-        onCancel={() => {
-          toggleBulkEditModal();
-        }}
-      />
-    </BAIFlex>
+            },
+          }}
+          order={queryParams.order}
+          onChangeOrder={(order) => {
+            setQueryParams({ order });
+          }}
+          onClickProjectEditButton={(project) => {
+            group_nodes?.edges.forEach((edge) => {
+              if (edge?.node?.id === project.id) {
+                setSelectedProject(edge.node);
+                toggleSettingModal();
+              }
+            });
+          }}
+          exportSettings={
+            !_.isEmpty(supportedFields)
+              ? {
+                  supportedFields,
+                  onExport: async (selectedExportKeys) => {
+                    await exportCSV(selectedExportKeys).catch((err) => {
+                      message.error(t('general.ErrorOccurred'));
+                      logger.error(err);
+                    });
+                  },
+                }
+              : undefined
+          }
+          rowSelection={{
+            type: 'checkbox',
+            onChange: (keys) => {
+              if (!group_nodes) {
+                return;
+              }
+              setSelectedProjectList(
+                _.filter(
+                  _.compact(_.map(group_nodes.edges, (e) => e?.node)),
+                  (node) => keys.includes(node.id),
+                ),
+              );
+            },
+            selectedRowKeys: _.map(selectedProjectList, 'id'),
+            getCheckboxProps: (record) => ({
+              disabled: _.get(record, 'type') === 'MODEL_STORE',
+            }),
+          }}
+        />
+        <BAIProjectSettingModal
+          open={openSettingModal}
+          onOk={() => {
+            updateFetchKey();
+            toggleSettingModal();
+            setSelectedProject(null);
+          }}
+          onCancel={() => {
+            toggleSettingModal();
+            setSelectedProject(null);
+          }}
+          projectFragment={selectedProject}
+        />
+        <BAIProjectBulkEditModal
+          open={openBulkEditModal}
+          selectedProjectFragments={selectedProjectList}
+          onOk={() => {
+            updateFetchKey();
+            toggleBulkEditModal();
+            setSelectedProjectList([]);
+          }}
+          onCancel={() => {
+            toggleBulkEditModal();
+          }}
+        />
+      </BAIFlex>
+    </BAICard>
   );
 };
 
