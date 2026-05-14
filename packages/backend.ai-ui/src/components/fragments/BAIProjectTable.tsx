@@ -248,17 +248,17 @@ const BAIProjectTable = ({
                         },
                       },
                     },
+                    {
+                      key: 'purge',
+                      title: t('comp:BAIProjectTable.Purge'),
+                      icon: <DeleteFilled />,
+                      type: 'danger' as const,
+                      disabled: isModelStore,
+                      onClick: () => {
+                        setPurgingProject(record);
+                      },
+                    },
                   ]),
-              {
-                key: 'purge',
-                title: t('comp:BAIProjectTable.Purge'),
-                icon: <DeleteFilled />,
-                type: 'danger' as const,
-                disabled: isModelStore,
-                onClick: () => {
-                  setPurgingProject(record);
-                },
-              },
             ]}
           />
         );
