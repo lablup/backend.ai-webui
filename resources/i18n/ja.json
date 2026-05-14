@@ -915,7 +915,6 @@
     "CurrentRevision": "現在の Revision",
     "DeleteDeployment": "デプロイを削除",
     "Deploy": "デプロイ",
-    "DeployConfirm": "Revision #{{revisionNumber}} をデプロイしてもよろしいですか？現在の Revision は置き換えられます。",
     "DeployDisabled": "デプロイ中または現在デプロイされている Revision は選択できません。",
     "DeploySuccess": "Revision #{{revisionNumber}} のデプロイが要求されました。",
     "Deploying": "デプロイ中",

@@ -915,7 +915,6 @@
     "CurrentRevision": "Aktuelle Revision",
     "DeleteDeployment": "Bereitstellung löschen",
     "Deploy": "Bereitstellen",
-    "DeployConfirm": "Möchten Sie wirklich Revision #{{revisionNumber}} bereitstellen? Die aktuelle Revision wird ersetzt.",
     "DeployDisabled": "Es kann keine Revision ausgewählt werden, die gerade bereitgestellt wird oder bereits bereitgestellt ist.",
     "DeploySuccess": "Die Bereitstellung von Revision #{{revisionNumber}} wurde angefordert.",
     "Deploying": "Wird bereitgestellt",

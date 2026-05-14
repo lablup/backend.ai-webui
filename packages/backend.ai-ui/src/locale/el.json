@@ -211,7 +211,6 @@
     "UpdateProject": "Ενημέρωση έργου"
   },
   "comp:BAIProjectTable": {
-    "AreYouSureToDeactivateProject": "Είστε βέβαιοι ότι θέλετε να απενεργοποιήσετε το έργο {{projectName}};",
     "AreYouSureToPurgeProject": "Είστε βέβαιοι ότι θέλετε να διαγράψετε οριστικά το {{projectName}}? Αυτή η ενέργεια είναι μη αναστρέψιμη.",
     "ContainerRegistry": "Αποθετήριο κοντέινερ",
     "Controls": "Έλεγχοι",

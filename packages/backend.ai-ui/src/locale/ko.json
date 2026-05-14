@@ -214,7 +214,6 @@
     "UpdateProject": "프로젝트 수정"
   },
   "comp:BAIProjectTable": {
-    "AreYouSureToDeactivateProject": "정말로 {{projectName}} 프로젝트를 비활성화 시키겠습니까?",
     "AreYouSureToPurgeProject": "정말로 {{projectName}} 프로젝트를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.",
     "ContainerRegistry": "컨테이너 레지스트리",
     "Controls": "제어",

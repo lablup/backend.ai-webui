@@ -205,45 +205,60 @@ const UserManagement: React.FC<UserManagementProps> = () => {
               : t('credential.Activate'),
             icon: isActive ? <BanIcon /> : <UndoIcon />,
             type: isActive ? ('danger' as const) : ('default' as const),
-            onClick: () => {
-              return new Promise<void>((resolve) => {
-                commitModifyUser({
-                  variables: {
-                    email: record?.email || '',
-                    props: {
-                      status: isActive ? 'inactive' : 'active',
+            popConfirm: {
+              title: isActive
+                ? t('credential.DeactivateUser')
+                : t('credential.ActivateUser'),
+              description: record.email,
+              okText: isActive
+                ? t('credential.Deactivate')
+                : t('credential.Activate'),
+              cancelText: t('button.Cancel'),
+              okButtonProps: isActive ? { danger: true } : undefined,
+              onConfirm: () => {
+                return new Promise<void>((resolve) => {
+                  commitModifyUser({
+                    variables: {
+                      email: record?.email || '',
+                      props: {
+                        status: isActive ? 'inactive' : 'active',
+                      },
                     },
-                  },
-                  onCompleted: (res, errors) => {
-                    const errorMessage = errors?.[0]?.message;
-                    const notOkMessage =
-                      res?.modify_user?.ok === false
-                        ? res.modify_user.msg
-                        : undefined;
-                    if (res.modify_user?.ok === false || errors?.[0]) {
-                      message.error(
-                        notOkMessage || errorMessage || t('error.UnknownError'),
+                    onCompleted: (res, errors) => {
+                      const errorMessage = errors?.[0]?.message;
+                      const notOkMessage =
+                        res?.modify_user?.ok === false
+                          ? res.modify_user.msg
+                          : undefined;
+                      if (res.modify_user?.ok === false || errors?.[0]) {
+                        message.error(
+                          notOkMessage ||
+                            errorMessage ||
+                            t('error.UnknownError'),
+                        );
+                        logger.error(res.modify_user?.msg, errorMessage);
+                        resolve();
+                        return;
+                      }
+                      message.success(
+                        t('credential.StatusUpdatedSuccessfully'),
                       );
-                      logger.error(res.modify_user?.msg, errorMessage);
+                      setSelectedUserList((prev) => {
+                        return prev.filter(
+                          (user) => user?.node?.id !== record?.id,
+                        );
+                      });
+                      updateFetchKey();
                       resolve();
-                      return;
-                    }
-                    message.success(t('credential.StatusUpdatedSuccessfully'));
-                    setSelectedUserList((prev) => {
-                      return prev.filter(
-                        (user) => user?.node?.id !== record?.id,
-                      );
-                    });
-                    updateFetchKey();
-                    resolve();
-                  },
-                  onError: (error) => {
-                    message.error(error?.message);
-                    logger.error(error);
-                    resolve();
-                  },
+                    },
+                    onError: (error) => {
+                      message.error(error?.message);
+                      logger.error(error);
+                      resolve();
+                    },
+                  });
                 });
-              });
+              },
             },
           },
           !isActive && {

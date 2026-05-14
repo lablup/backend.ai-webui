@@ -211,7 +211,6 @@
     "UpdateProject": "Päivitä projekti"
   },
   "comp:BAIProjectTable": {
-    "AreYouSureToDeactivateProject": "Haluatko varmasti poistaa projektin {{projectName}} käytöstä?",
     "AreYouSureToPurgeProject": "Haluatko varmasti poistaa {{projectName}}? Tämä toimenpide on peruuttamaton.",
     "ContainerRegistry": "Säiliörekisteri",
     "Controls": "Ohjaimet",

@@ -211,7 +211,6 @@
     "UpdateProject": "Projeyi Güncelle"
   },
   "comp:BAIProjectTable": {
-    "AreYouSureToDeactivateProject": "Proje {{projectName}}'i devre dışı bırakmak istediğinizden emin misiniz?",
     "AreYouSureToPurgeProject": "{{projectName}} öğesini kalıcı olarak silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
     "ContainerRegistry": "Konteyner Kayıt Deposu",
     "Controls": "Kontroller",

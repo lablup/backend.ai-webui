@@ -415,9 +415,7 @@ const DeploymentRevisionHistoryTab: React.FC<
                 disabledReason: deployDisabledReason,
                 popConfirm: {
                   title: t('deployment.Deploy'),
-                  description: t('deployment.DeployConfirm', {
-                    revisionNumber: record.revisionNumber,
-                  }),
+                  description: `#${record.revisionNumber}`,
                   okText: t('deployment.Deploy'),
                   cancelText: t('button.Cancel'),
                   okButtonProps: {
@@ -610,9 +608,7 @@ const DeploymentRevisionHistoryTab: React.FC<
             drawerRevision ? (
               <Popconfirm
                 title={t('deployment.Deploy')}
-                description={t('deployment.DeployConfirm', {
-                  revisionNumber: drawerRevision.frgmt.revisionNumber,
-                })}
+                description={`#${drawerRevision.frgmt.revisionNumber}`}
                 okText={t('deployment.Deploy')}
                 cancelText={t('button.Cancel')}
                 okButtonProps={{ danger: true }}

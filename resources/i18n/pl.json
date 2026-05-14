@@ -915,7 +915,6 @@
     "CurrentRevision": "Bieżąca Revision",
     "DeleteDeployment": "Usuń wdrożenie",
     "Deploy": "Wdróż",
-    "DeployConfirm": "Czy na pewno chcesz wdrożyć Revision #{{revisionNumber}}? Bieżąca Revision zostanie zastąpiona.",
     "DeployDisabled": "Nie można wybrać Revision, która jest właśnie wdrażana lub jest aktualnie wdrożona.",
     "DeploySuccess": "Żądanie wdrożenia Revision #{{revisionNumber}} zostało wysłane.",
     "Deploying": "Wdrażanie",

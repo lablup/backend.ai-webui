@@ -915,7 +915,6 @@
     "CurrentRevision": "Nykyinen Revision",
     "DeleteDeployment": "Poista käyttöönotto",
     "Deploy": "Ota käyttöön",
-    "DeployConfirm": "Haluatko varmasti ottaa käyttöön Revision #{{revisionNumber}}? Nykyinen Revision korvataan.",
     "DeployDisabled": "Revision-versiota, joka on käyttöönottovaiheessa tai jo käytössä, ei voi valita.",
     "DeploySuccess": "Revision #{{revisionNumber}} käyttöönotto on pyydetty.",
     "Deploying": "Käyttöönotetaan",

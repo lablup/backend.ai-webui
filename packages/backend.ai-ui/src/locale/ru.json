@@ -211,7 +211,6 @@
     "UpdateProject": "Обновить проект"
   },
   "comp:BAIProjectTable": {
-    "AreYouSureToDeactivateProject": "Вы уверены, что хотите деактивировать проект {{projectName}}?",
     "AreYouSureToPurgeProject": "Вы уверены, что хотите полностью удалить {{projectName}}? Это действие необратимо.",
     "ContainerRegistry": "Реестр контейнеров",
     "Controls": "Элементы управления",

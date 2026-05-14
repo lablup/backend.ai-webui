@@ -54,7 +54,7 @@ type Keypair = NonNullable<
 const UserCredentialList: React.FC = () => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { message, modal } = App.useApp();
+  const { message } = App.useApp();
   const { logger } = useBAILogger();
 
   const [action, setAction] = useQueryParam('action', StringParam);
