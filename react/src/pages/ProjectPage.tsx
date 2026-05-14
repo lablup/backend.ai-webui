@@ -7,6 +7,7 @@ import {
   ProjectPageQuery$data,
   ProjectPageQuery$variables,
 } from '../__generated__/ProjectPageQuery.graphql';
+import BAIRadioGroup from '../components/BAIRadioGroup';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useCSVExport } from '../hooks/useCSVExport';
 import { PlusOutlined } from '@ant-design/icons';
@@ -15,7 +16,6 @@ import { App } from 'antd';
 import {
   availableProjectSorterValues,
   BAIButton,
-  BAICard,
   BAIFetchKeyButton,
   BAIFlex,
   BAIProjectBulkEditModal,
@@ -135,26 +135,22 @@ const ProjectPage = () => {
     },
   );
   return (
-    <BAICard
-      activeTabKey={queryParams.status}
-      onTabChange={(key) => {
-        setQueryParams({ status: key as 'active' | 'inactive' });
-        setTablePaginationOption({ current: 1 });
-        setSelectedProjectList([]);
-      }}
-      tabList={[
-        {
-          key: 'active',
-          label: t('general.Active'),
-        },
-        {
-          key: 'inactive',
-          label: t('general.Inactive'),
-        },
-      ]}
-    >
-      <BAIFlex direction="column" align="stretch" gap="sm">
-        <BAIFlex justify="between" wrap="wrap" gap="sm">
+    <BAIFlex direction="column" align="stretch" gap="sm">
+      <BAIFlex justify="between" align="start" wrap="wrap" gap="xs">
+        <BAIFlex direction="row" gap="sm" align="start" wrap="wrap">
+          <BAIRadioGroup
+            value={queryParams.status}
+            onChange={(e) => {
+              setQueryParams({ status: e.target.value });
+              setTablePaginationOption({ current: 1 });
+              setSelectedProjectList([]);
+            }}
+            optionType="button"
+            options={[
+              { label: t('general.Active'), value: 'active' },
+              { label: t('general.Inactive'), value: 'inactive' },
+            ]}
+          />
           <BAIPropertyFilter
             filterProperties={[
               {
@@ -189,101 +185,101 @@ const ProjectPage = () => {
               setSelectedProjectList([]);
             }}
           />
-          <BAIFlex gap="xs">
-            {selectedProjectList.length > 0 && (
-              <>
-                <BAISelectionLabel
-                  count={selectedProjectList.length}
-                  onClearSelection={() => setSelectedProjectList([])}
-                />
-                <BAIButton onClick={toggleBulkEditModal}>
-                  {t('project.BulkEdit')}
-                </BAIButton>
-              </>
-            )}
-            <BAIFetchKeyButton
-              value={fetchKey}
-              autoUpdateDelay={null}
-              loading={deferredFetchKey !== fetchKey}
-              onChange={() => {
-                updateFetchKey();
-              }}
-            />
-            <BAIButton
-              type="primary"
-              icon={<PlusOutlined />}
-              onClick={toggleSettingModal}
-            >
-              {t('project.CreateProject')}
-            </BAIButton>
-          </BAIFlex>
         </BAIFlex>
-        <BAIProjectTable
-          updateFetchKey={updateFetchKey}
-          isActiveTab={isActiveTab}
-          projectFragment={filterOutEmpty(
-            group_nodes?.edges.map((e) => e?.node) ?? [],
+        <BAIFlex gap="xs">
+          {selectedProjectList.length > 0 && (
+            <>
+              <BAISelectionLabel
+                count={selectedProjectList.length}
+                onClearSelection={() => setSelectedProjectList([])}
+              />
+              <BAIButton onClick={toggleBulkEditModal}>
+                {t('project.BulkEdit')}
+              </BAIButton>
+            </>
           )}
-          loading={
-            deferredFetchKey !== fetchKey ||
-            deferredValueQueryVariables !== queryVariables
-          }
-          pagination={{
-            pageSize: tablePaginationOption.pageSize,
-            current: tablePaginationOption.current,
-            total: group_nodes?.count ?? 0,
-            onChange: (current, pageSize) => {
-              if (_.isNumber(pageSize) && _.isNumber(current)) {
-                setTablePaginationOption({ current, pageSize });
-                setSelectedProjectList([]);
-              }
-            },
-          }}
-          order={queryParams.order}
-          onChangeOrder={(order) => {
-            setQueryParams({ order });
-          }}
-          onClickProjectEditButton={(project) => {
-            group_nodes?.edges.forEach((edge) => {
-              if (edge?.node?.id === project.id) {
-                setSelectedProject(edge.node);
-                toggleSettingModal();
-              }
-            });
-          }}
-          exportSettings={
-            !_.isEmpty(supportedFields)
-              ? {
-                  supportedFields,
-                  onExport: async (selectedExportKeys) => {
-                    await exportCSV(selectedExportKeys).catch((err) => {
-                      message.error(t('general.ErrorOccurred'));
-                      logger.error(err);
-                    });
-                  },
-                }
-              : undefined
-          }
-          rowSelection={{
-            type: 'checkbox',
-            onChange: (keys) => {
-              if (!group_nodes) {
-                return;
-              }
-              setSelectedProjectList(
-                _.filter(
-                  _.compact(_.map(group_nodes.edges, (e) => e?.node)),
-                  (node) => keys.includes(node.id),
-                ),
-              );
-            },
-            selectedRowKeys: _.map(selectedProjectList, 'id'),
-            getCheckboxProps: (record) => ({
-              disabled: _.get(record, 'type') === 'MODEL_STORE',
-            }),
-          }}
-        />
+          <BAIFetchKeyButton
+            value={fetchKey}
+            autoUpdateDelay={null}
+            loading={deferredFetchKey !== fetchKey}
+            onChange={() => {
+              updateFetchKey();
+            }}
+          />
+          <BAIButton
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={toggleSettingModal}
+          >
+            {t('project.CreateProject')}
+          </BAIButton>
+        </BAIFlex>
       </BAIFlex>
+      <BAIProjectTable
+        updateFetchKey={updateFetchKey}
+        isActiveTab={isActiveTab}
+        projectFragment={filterOutEmpty(
+          group_nodes?.edges.map((e) => e?.node) ?? [],
+        )}
+        loading={
+          deferredFetchKey !== fetchKey ||
+          deferredValueQueryVariables !== queryVariables
+        }
+        pagination={{
+          pageSize: tablePaginationOption.pageSize,
+          current: tablePaginationOption.current,
+          total: group_nodes?.count ?? 0,
+          onChange: (current, pageSize) => {
+            if (_.isNumber(pageSize) && _.isNumber(current)) {
+              setTablePaginationOption({ current, pageSize });
+              setSelectedProjectList([]);
+            }
+          },
+        }}
+        order={queryParams.order}
+        onChangeOrder={(order) => {
+          setQueryParams({ order });
+        }}
+        onClickProjectEditButton={(project) => {
+          group_nodes?.edges.forEach((edge) => {
+            if (edge?.node?.id === project.id) {
+              setSelectedProject(edge.node);
+              toggleSettingModal();
+            }
+          });
+        }}
+        exportSettings={
+          !_.isEmpty(supportedFields)
+            ? {
+                supportedFields,
+                onExport: async (selectedExportKeys) => {
+                  await exportCSV(selectedExportKeys).catch((err) => {
+                    message.error(t('general.ErrorOccurred'));
+                    logger.error(err);
+                  });
+                },
+              }
+            : undefined
+        }
+        rowSelection={{
+          type: 'checkbox',
+          onChange: (keys) => {
+            if (!group_nodes) {
+              return;
+            }
+            setSelectedProjectList(
+              _.filter(
+                _.compact(_.map(group_nodes.edges, (e) => e?.node)),
+                (node) => keys.includes(node.id),
+              ),
+            );
+          },
+          selectedRowKeys: _.map(selectedProjectList, 'id'),
+          getCheckboxProps: (record) => ({
+            disabled: _.get(record, 'type') === 'MODEL_STORE',
+          }),
+        }}
+      />
       <BAIProjectSettingModal
         open={openSettingModal}
         onOk={() => {
@@ -309,7 +305,7 @@ const ProjectPage = () => {
           toggleBulkEditModal();
         }}
       />
-    </BAICard>
+    </BAIFlex>
   );
 };
 
