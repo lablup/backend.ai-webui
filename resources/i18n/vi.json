@@ -2663,6 +2663,7 @@
       "OpenVSCodeRemote": "Mở mã Visual Studio cục bộ",
       "Prepared": "Chuẩn bị",
       "SSHConnectionExampleClipboardCopy": "Ví dụ về kết nối SSH đã được sao chép vào bảng nhớ tạm.",
+      "SessionNotAccessible": "Không thể truy cập phiên này bằng access key hiện tại. Phiên có thể đã bị kết thúc hoặc được tạo bằng access key khác. Hãy chuyển sang access key sở hữu phiên này, hoặc tạo một phiên mới.",
       "TCPConnection": "Kết nối TCP"
     },
     "launcher": {

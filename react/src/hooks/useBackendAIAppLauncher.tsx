@@ -255,6 +255,18 @@ export const useBackendAIAppLauncher = (
       if (err instanceof AppLaunchError) {
         throw err;
       }
+      // Detect "session not accessible" on session lookup. The manager
+      // scopes session lookups by the *current* access key; if the
+      // session was created under a different AK (or was terminated
+      // between page render and click), the lookup returns 404 /
+      // "session not found", which is misleading to end users (FR-2586).
+      if (isSessionNotFoundError(err)) {
+        throw new AppLaunchError(
+          t('session.appLauncher.SessionNotAccessible'),
+          'configuring',
+          err instanceof Error ? err : undefined,
+        );
+      }
       throw new AppLaunchError(
         err instanceof Error
           ? err.message
@@ -954,6 +966,34 @@ export const useBackendAIAppLauncher = (
     closeWsproxy: _close_wsproxy,
   };
 };
+
+/**
+ * Detect a "session not found" response from the manager.
+ *
+ * The manager looks up sessions scoped by the *current* access key. The
+ * most common cause of a 404 from the `start-service` endpoint is an
+ * access-key mismatch — the session was created under a different keypair
+ * (e.g. the user switched access keys after creating it), so the lookup
+ * returns HTTP 404 even though the session still exists. The same 404
+ * also surfaces when the session was genuinely terminated between page
+ * render and the user's click; we cannot disambiguate the two cases from
+ * the response, so the user-facing copy covers both.
+ *
+ * Called exclusively from `_resolveV2ProxyUri`'s catch (the `startService`
+ * call site). At that endpoint any 404 is by definition "session lookup
+ * failed" — the manager produces a `SessionNotFound` exception there with
+ * varying English titles (`"No such session."`, `"Session ... not found"`,
+ * etc.). Keying off `statusCode === 404` alone is therefore the safest
+ * heuristic: it is robust against title wording changes, against
+ * locale-translated manager responses, and against `_wrapWithPromise`
+ * reformatting (it concatenates `statusText` into `title`, which is empty
+ * on some manager versions).
+ */
+function isSessionNotFoundError(err: unknown): boolean {
+  if (!err || typeof err !== 'object') return false;
+  const e = err as { statusCode?: unknown };
+  return e.statusCode === 404;
+}
 
 // Custom error class for app launch errors
 class AppLaunchError extends Error {

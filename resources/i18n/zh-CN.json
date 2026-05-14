@@ -2663,6 +2663,7 @@
       "OpenVSCodeRemote": "打开本地 Visual Studio 代码",
       "Prepared": "准备好了",
       "SSHConnectionExampleClipboardCopy": "SSH 连接示例已复制到剪贴板。",
+      "SessionNotAccessible": "当前访问密钥无法访问此会话。该会话可能已被终止，或者是使用其他访问密钥创建的。请切换到拥有该会话的访问密钥，或创建一个新会话。",
       "TCPConnection": "TCP连接"
     },
     "launcher": {

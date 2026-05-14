@@ -2661,6 +2661,7 @@
       "OpenVSCodeRemote": "Ανοίξτε τον τοπικό κώδικα του Visual Studio",
       "Prepared": "Ετοιμος",
       "SSHConnectionExampleClipboardCopy": "Το παράδειγμα σύνδεσης SSH έχει αντιγραφεί στο πρόχειρο.",
+      "SessionNotAccessible": "Αυτή η συνεδρία δεν είναι προσβάσιμη με το τρέχον access key. Ενδέχεται να έχει τερματιστεί ή να δημιουργήθηκε με διαφορετικό access key. Μεταβείτε στο access key που κατέχει τη συνεδρία ή δημιουργήστε μια νέα συνεδρία.",
       "TCPConnection": "Σύνδεση TCP"
     },
     "launcher": {

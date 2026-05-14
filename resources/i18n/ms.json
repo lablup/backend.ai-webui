@@ -2661,6 +2661,7 @@
       "OpenVSCodeRemote": "Buka Kod Visual Studio tempatan",
       "Prepared": "Bersedia",
       "SSHConnectionExampleClipboardCopy": "Contoh Sambungan SSH telah disalin ke papan keratan.",
+      "SessionNotAccessible": "Sesi ini tidak boleh dicapai dengan access key semasa. Ia mungkin telah ditamatkan atau dicipta dengan access key yang berbeza. Tukar kepada access key yang memiliki sesi tersebut, atau cipta sesi baharu.",
       "TCPConnection": "Sambungan TCP"
     },
     "launcher": {

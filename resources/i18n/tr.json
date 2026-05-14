@@ -2661,6 +2661,7 @@
       "OpenVSCodeRemote": "Yerel Visual Studio Kodunu açın",
       "Prepared": "Hazırlanmış",
       "SSHConnectionExampleClipboardCopy": "SSH Bağlantı Örneği panoya kopyalandı.",
+      "SessionNotAccessible": "Bu oturuma mevcut access key ile erişilemiyor. Oturum sonlandırılmış veya farklı bir access key ile oluşturulmuş olabilir. Oturumun sahibi olan access key'e geçin ya da yeni bir oturum oluşturun.",
       "TCPConnection": "TCP bağlantısı"
     },
     "launcher": {

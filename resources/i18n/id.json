@@ -2664,6 +2664,7 @@
       "OpenVSCodeRemote": "Buka kode Visual Studio lokal",
       "Prepared": "Siap",
       "SSHConnectionExampleClipboardCopy": "Contoh Koneksi SSH telah disalin ke clipboard.",
+      "SessionNotAccessible": "Sesi ini tidak dapat diakses dengan access key saat ini. Sesi mungkin telah dihentikan atau dibuat dengan access key yang berbeda. Beralihlah ke access key yang memiliki sesi tersebut, atau buat sesi baru.",
       "TCPConnection": "Koneksi TCP"
     },
     "launcher": {

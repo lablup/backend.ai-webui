@@ -2661,6 +2661,7 @@
       "OpenVSCodeRemote": "Avaa paikallinen Visual Studio Code",
       "Prepared": "Valmisteltu",
       "SSHConnectionExampleClipboardCopy": "SSH-yhteys Esimerkki on kopioitu leikepöydälle.",
+      "SessionNotAccessible": "Tähän istuntoon ei pääse nykyisellä access keylla. Se on saatettu lopettaa tai se on voitu luoda eri access keylla. Vaihda istunnon omistavaan access keyhin tai luo uusi istunto.",
       "TCPConnection": "TCP -yhteys"
     },
     "launcher": {

@@ -2664,6 +2664,7 @@
       "OpenVSCodeRemote": "Ouvrir le code local de Visual Studio",
       "Prepared": "Préparé",
       "SSHConnectionExampleClipboardCopy": "L'exemple de connexion SSH a été copié dans le presse-papiers.",
+      "SessionNotAccessible": "Cette session n'est pas accessible avec la clé d'accès actuelle. Elle a peut-être été terminée ou a été créée avec une clé d'accès différente. Passez à la clé d'accès qui possède la session, ou créez une nouvelle session.",
       "TCPConnection": "Connexion TCP"
     },
     "launcher": {

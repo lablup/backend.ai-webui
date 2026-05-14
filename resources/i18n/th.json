@@ -2663,6 +2663,7 @@
       "OpenVSCodeRemote": "เปิด Visual Studio Code ในเครื่อง",
       "Prepared": "เตรียมพร้อมแล้ว",
       "SSHConnectionExampleClipboardCopy": "คัดลอกตัวอย่างการเชื่อมต่อ SSH ไปยังคลิปบอร์ดแล้ว",
+      "SessionNotAccessible": "ไม่สามารถเข้าถึงเซสชันนี้ด้วย access key ปัจจุบันได้ เซสชันอาจถูกยุติไปแล้ว หรืออาจถูกสร้างด้วย access key อื่น กรุณาสลับไปยัง access key ที่เป็นเจ้าของเซสชันนี้ หรือสร้างเซสชันใหม่",
       "TCPConnection": "การเชื่อมต่อ TCP"
     },
     "launcher": {

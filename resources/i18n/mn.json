@@ -2662,6 +2662,7 @@
       "OpenVSCodeRemote": "Орон нутгийн Visual Studio кодыг нээнэ үү",
       "Prepared": "Бэлтгэсэн",
       "SSHConnectionExampleClipboardCopy": "SSH холболтын жишээг санах ой руу хуулсан.",
+      "SessionNotAccessible": "Одоогийн access key-гээр энэ сесст хандах боломжгүй байна. Энэ сесс дуусгавар болсон эсвэл өөр access key-гээр үүсгэгдсэн байж магадгүй. Тухайн сессыг эзэмшдэг access key руу шилжих эсвэл шинэ сесс үүсгэнэ үү.",
       "TCPConnection": "TCP холболт"
     },
     "launcher": {

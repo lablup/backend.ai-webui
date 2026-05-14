@@ -2665,6 +2665,7 @@
       "OpenVSCodeRemote": "打开本地 Visual Studio 代码",
       "Prepared": "準備好了",
       "SSHConnectionExampleClipboardCopy": "SSH 连接示例已复制到剪贴板。",
+      "SessionNotAccessible": "目前的存取金鑰無法存取此工作階段。該工作階段可能已被終止，或是使用其他存取金鑰建立的。請切換到擁有該工作階段的存取金鑰，或建立新的工作階段。",
       "TCPConnection": "TCP連接"
     },
     "launcher": {

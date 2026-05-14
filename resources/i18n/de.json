@@ -2663,6 +2663,7 @@
       "OpenVSCodeRemote": "Lokalen Visual Studio Code öffnen",
       "Prepared": "Bereit",
       "SSHConnectionExampleClipboardCopy": "SSH Connection Example wurde in die Zwischenablage kopiert.",
+      "SessionNotAccessible": "Diese Sitzung ist mit dem aktuellen Zugriffsschlüssel nicht erreichbar. Sie wurde möglicherweise beendet oder mit einem anderen Zugriffsschlüssel erstellt. Wechseln Sie zum Zugriffsschlüssel, der die Sitzung besitzt, oder erstellen Sie eine neue Sitzung.",
       "TCPConnection": "TCP -Verbindung"
     },
     "launcher": {

@@ -2663,6 +2663,7 @@
       "OpenVSCodeRemote": "ローカルVisual Studio Codeを開く",
       "Prepared": "準備",
       "SSHConnectionExampleClipboardCopy": "SSH接続例がクリップボードにコピーされました。",
+      "SessionNotAccessible": "現在のアクセスキーではこのセッションにアクセスできません。セッションが終了したか、別のアクセスキーで作成された可能性があります。セッションを所有するアクセスキーに切り替えるか、新しいセッションを作成してください。",
       "TCPConnection": "TCP接続"
     },
     "launcher": {
