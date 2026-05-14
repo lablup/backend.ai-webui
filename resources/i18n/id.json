@@ -362,6 +362,7 @@
     "Finish": "Selesai",
     "ForceTerminate": "Hentikan paksa",
     "Generate": "Hasilkan",
+    "GoBackToPreviousPage": "Kembali ke halaman sebelumnya",
     "GoBackToStartPage": "Kembali ke halaman {{title}}",
     "Info": "Info",
     "More": "Selengkapnya",
@@ -1358,6 +1359,7 @@
     "ReloadPage": "Muat ulang halaman",
     "ResetErrorBoundary": "Setel Ulang Batas Kesalahan",
     "StackTrace": "Jejak tumpukan:",
+    "StorageHostFetchFailedTitle": "Gagal mengambil informasi host penyimpanan.",
     "Title": "Telah terjadi kesalahan."
   },
   "explorer": {

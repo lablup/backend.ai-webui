@@ -362,6 +362,7 @@
     "Finish": "終了",
     "ForceTerminate": "強制終了",
     "Generate": "生む",
+    "GoBackToPreviousPage": "前のページに戻る",
     "GoBackToStartPage": "{{title}}ページに戻る",
     "Info": "情報",
     "More": "その他",
@@ -1357,6 +1358,7 @@
     "ReloadPage": "ページの更新",
     "ResetErrorBoundary": "ErrorBoundaryの初期化",
     "StackTrace": "スタックトレース:",
+    "StorageHostFetchFailedTitle": "ストレージホスト情報の取得に失敗しました。",
     "Title": "エラーが発生しました。"
   },
   "explorer": {

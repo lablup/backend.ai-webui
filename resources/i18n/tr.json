@@ -362,6 +362,7 @@
     "Finish": "Bitiş",
     "ForceTerminate": "Sonlandırmaya Zorla",
     "Generate": "üret",
+    "GoBackToPreviousPage": "Önceki sayfaya geri dön",
     "GoBackToStartPage": "{{title}} sayfasına geri dönün",
     "Info": "Bilgi",
     "More": "Daha fazla",
@@ -1357,6 +1358,7 @@
     "ReloadPage": "Sayfayı yeniden yükle",
     "ResetErrorBoundary": "ErrorBoundary'yi Sıfırla",
     "StackTrace": "Yığın İzleme:",
+    "StorageHostFetchFailedTitle": "Depolama ana bilgisayar bilgileri alınamadı.",
     "Title": "Bir hata oluştu."
   },
   "explorer": {

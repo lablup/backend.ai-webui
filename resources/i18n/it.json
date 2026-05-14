@@ -362,6 +362,7 @@
     "Finish": "finire",
     "ForceTerminate": "Termina forzata",
     "Generate": "creare",
+    "GoBackToPreviousPage": "Torna alla pagina precedente",
     "GoBackToStartPage": "Torna alla pagina {{title}}",
     "Info": "Info",
     "More": "Altro",
@@ -1357,6 +1358,7 @@
     "ReloadPage": "Ricarica la pagina",
     "ResetErrorBoundary": "Azzeramento di ErrorBoundary",
     "StackTrace": "Traccia dello stack:",
+    "StorageHostFetchFailedTitle": "Impossibile recuperare le informazioni sull'host di archiviazione.",
     "Title": "Si è verificato un errore."
   },
   "explorer": {

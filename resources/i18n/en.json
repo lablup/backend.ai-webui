@@ -379,6 +379,7 @@
     "Finish": "Finish",
     "ForceTerminate": "Force Terminate",
     "Generate": "Generate",
+    "GoBackToPreviousPage": "Go back to the previous page",
     "GoBackToStartPage": "Go back to the {{title}} page",
     "Info": "Info",
     "More": "More",
@@ -1376,6 +1377,7 @@
     "ReloadPage": "Reload the page",
     "ResetErrorBoundary": "Reset ErrorBoundary",
     "StackTrace": "Stack Trace:",
+    "StorageHostFetchFailedTitle": "Failed to fetch storage host information.",
     "Title": "An error has occurred."
   },
   "explorer": {

@@ -362,6 +362,7 @@
     "Finish": "結束",
     "ForceTerminate": "強制終止",
     "Generate": "產生",
+    "GoBackToPreviousPage": "返回上一頁",
     "GoBackToStartPage": "返回 {{title}} 頁面",
     "Info": "詳情",
     "More": "更多",
@@ -1358,6 +1359,7 @@
     "ReloadPage": "重新载入页面",
     "ResetErrorBoundary": "重置错误边界",
     "StackTrace": "堆疊追蹤：",
+    "StorageHostFetchFailedTitle": "無法取得儲存主機資訊。",
     "Title": "发生错误。"
   },
   "explorer": {
