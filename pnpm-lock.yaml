@@ -190,7 +190,7 @@ overrides:
   langium: ^4.2.4
 
 patchedDependencies:
-  '@cloudscape-design/board-components@3.0.60': e5f7292ea99891428ed900a78f687de7a439f023f0cdafae3322f7e22e19cb70
+  '@cloudscape-design/board-components@3.0.176': 06f6366f1016801dd543a4b968e088fbcbf34ee1a4473bc09a07e35206597a98
   '@lobehub/fluent-emoji@2.0.0': e3910174b171372f01ee0d0f41033c3aed501f7eba649e863c48e7a370886a88
   '@rc-component/form': e4841378d1c17439be3359cd395e44bb49a9b3d1f594e48cba191ea19ecf0b32
   ansi_up@6.0.6: 99856fc7fa4571c6ef4716cfd2dbf1151a025690c737775e248e8b7fe08a4459
@@ -610,7 +610,7 @@ importers:
         version: link:../eslint-config-bai
       eslint-plugin-import:
         specifier: 'catalog:'
-        version: 2.32.0(@typescript-eslint/parser@7.18.0(eslint@9.39.4)(typescript@5.5.4))(eslint@9.39.4)
+        version: 2.32.0(@typescript-eslint/parser@8.59.1(eslint@9.39.4)(typescript@5.9.3))(eslint@9.39.4)
       eslint-plugin-json-schema-validator:
         specifier: 'catalog:'
         version: 5.5.1(eslint@9.39.4)
@@ -717,8 +717,11 @@ importers:
         specifier: ^2.5.0
         version: 2.7.0(antd@6.3.7(date-fns@2.30.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       '@cloudscape-design/board-components':
-        specifier: 3.0.60
-        version: 3.0.60(patch_hash=e5f7292ea99891428ed900a78f687de7a439f023f0cdafae3322f7e22e19cb70)(@cloudscape-design/components@3.0.838(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(@cloudscape-design/design-tokens@3.0.51)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+        specifier: 3.0.176
+        version: 3.0.176(patch_hash=06f6366f1016801dd543a4b968e088fbcbf34ee1a4473bc09a07e35206597a98)(@cloudscape-design/components@3.0.1291(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react@19.2.6)
+      '@cloudscape-design/components':
+        specifier: ^3.0.1280
+        version: 3.0.1291(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       '@dicebear/collection':
         specifier: ^9.4.2
         version: 9.4.2(@dicebear/core@9.4.2)
@@ -1028,7 +1031,7 @@ importers:
         version: link:../packages/eslint-config-bai
       eslint-plugin-import:
         specifier: 'catalog:'
-        version: 2.32.0(@typescript-eslint/parser@8.59.1(eslint@9.39.4)(typescript@5.7.3))(eslint@9.39.4)
+        version: 2.32.0(@typescript-eslint/parser@7.18.0(eslint@9.39.4)(typescript@5.5.4))(eslint@9.39.4)
       eslint-plugin-react:
         specifier: 'catalog:'
         version: 7.37.5(eslint@9.39.4)
@@ -1930,13 +1933,11 @@ packages:
   '@chevrotain/utils@12.0.0':
     resolution: {integrity: sha512-lB59uJoaGIfOOL9knQqQRfhl9g7x8/wqFkp13zTdkRu1huG9kg6IJs1O8hqj9rs6h7orGxHJUKb+mX3rPbWGhA==}
 
-  '@cloudscape-design/board-components@3.0.60':
-    resolution: {integrity: sha512-uvsEHtIZWG3pQE3qz9QrBSGaiPlXxM3InrNE3YpzTcZpHvLuL4OolXtypp5DsORRF/fCiO34EoD4HwSaaWcp8Q==}
+  '@cloudscape-design/board-components@3.0.176':
+    resolution: {integrity: sha512-7bSXpTcHFki+At8KfU4hLQb522gpquA4JONnZeJhLltmcodRzneU2d33lyw4L8/g5PwY5pSwfqhwXwQmBgGwvQ==}
     peerDependencies:
       '@cloudscape-design/components': ^3
-      '@cloudscape-design/design-tokens': ^3
-      react: ^18.2.0
-      react-dom: ^18.2.0
+      react: '>=18.2.0'
 
   '@cloudscape-design/collection-hooks@1.0.85':
     resolution: {integrity: sha512-NiJfAxiwm/DZHNsCoJT+p06YfMvM74p4IYGDgo1BZm6bzWVBgibsfJVCbNuuHmppv554MVBlS2lJzLdBKmV4jQ==}
@@ -1948,14 +1949,10 @@ packages:
     peerDependencies:
       react: '>=16.8.0'
 
-  '@cloudscape-design/components@3.0.838':
-    resolution: {integrity: sha512-laH1urDup32ZTkZ//Y4XADz0meEOTIYFbpRXbKKX50JXyWBmileoDlIK2bO1AlONBIF5A9sXcPe4AAw2k3K4xA==}
+  '@cloudscape-design/components@3.0.1291':
+    resolution: {integrity: sha512-nTjUOHrOfJLRiISNgRr2hYCr7sSOVtLGYKfTUvJqmGMjgB21eErgZnPNy1Jk4DmuvA+lEqJpieO3xe44xiVM2g==}
     peerDependencies:
-      react: ^16.8 || ^17 || ^18
-      react-dom: ^16.8 || ^17 || ^18
-
-  '@cloudscape-design/design-tokens@3.0.51':
-    resolution: {integrity: sha512-s+qNFxw/FfdMCky86nz6xSIQV4UugRkNQYcT3h/EJAak3PUL37nE3tiPnV5OqOU6ZWfg4dcQMdQ+P1ohBnw9eQ==}
+      react: '>=16.8.0'
 
   '@cloudscape-design/test-utils-core@1.0.74':
     resolution: {integrity: sha512-PJH9fZCqOtLwjQSPG0ryorWsmqUfwwqZ7oLI7QTDFB3kyvvCUhY60zdC/IZcI4P0ICOsfUMTHlUaz653mN0vmQ==}
@@ -3035,9 +3032,6 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
-
-  '@juggle/resize-observer@3.4.0':
-    resolution: {integrity: sha512-dfLbk+PwWvFzSxwk3n5ySL0hfBog779o8h68wK/7/APo/7cgyWp5jcXockbxdk5kFRkbeXWm4Fbi9FrdN381sA==}
 
   '@lit-labs/ssr-dom-shim@1.5.1':
     resolution: {integrity: sha512-Aou5UdlSpr5whQe8AA/bZG0jMj96CoJIWbGfZ91qieWu5AWUMKw8VR/pAkQkJYvBNhmCcWnZlyyk5oze8JIqYA==}
@@ -9495,11 +9489,6 @@ packages:
   react-is@19.2.5:
     resolution: {integrity: sha512-Dn0t8IQhCmeIT3wu+Apm1/YVsJXsGWi6k4sPdnBIdqMVtHtv0IGi6dcpNpNkNac0zB2uUAqNX3MHzN8c+z2rwQ==}
 
-  react-keyed-flatten-children@1.3.0:
-    resolution: {integrity: sha512-qB7A6n+NHU0x88qTZGAJw6dsqwI941jcRPBB640c/CyWqjPQQ+YUmXOuzPziuHb7iqplM3xksWAbGYwkQT0tXA==}
-    peerDependencies:
-      react: '>=15.0.0'
-
   react-layout-kit@1.9.2:
     resolution: {integrity: sha512-fzmrwMBNGIAiDIrdFMV3NvJhUNl01QC9EMcI8SP7osg51N4j+z6w4tx9i2yWxEEXZ2armLV6EtkFd3KST8PYiA==}
     peerDependencies:
@@ -12536,16 +12525,14 @@ snapshots:
 
   '@chevrotain/utils@12.0.0': {}
 
-  '@cloudscape-design/board-components@3.0.60(patch_hash=e5f7292ea99891428ed900a78f687de7a439f023f0cdafae3322f7e22e19cb70)(@cloudscape-design/components@3.0.838(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(@cloudscape-design/design-tokens@3.0.51)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)':
+  '@cloudscape-design/board-components@3.0.176(patch_hash=06f6366f1016801dd543a4b968e088fbcbf34ee1a4473bc09a07e35206597a98)(@cloudscape-design/components@3.0.1291(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react@19.2.6)':
     dependencies:
       '@cloudscape-design/component-toolkit': 1.0.0-beta.140(react@19.2.6)
-      '@cloudscape-design/components': 3.0.838(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
-      '@cloudscape-design/design-tokens': 3.0.51
+      '@cloudscape-design/components': 3.0.1291(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       '@cloudscape-design/test-utils-core': 1.0.74
       '@dnd-kit/utilities': 3.2.2(react@19.2.6)
       clsx: 1.2.1
       react: 19.2.6
-      react-dom: 19.2.6(react@19.2.6)
 
   '@cloudscape-design/collection-hooks@1.0.85(react@19.2.6)':
     dependencies:
@@ -12558,7 +12545,7 @@ snapshots:
       tslib: 2.8.1
       weekstart: 2.0.0
 
-  '@cloudscape-design/components@3.0.838(react-dom@19.2.6(react@19.2.6))(react@19.2.6)':
+  '@cloudscape-design/components@3.0.1291(react-dom@19.2.6(react@19.2.6))(react@19.2.6)':
     dependencies:
       '@cloudscape-design/collection-hooks': 1.0.85(react@19.2.6)
       '@cloudscape-design/component-toolkit': 1.0.0-beta.140(react@19.2.6)
@@ -12567,22 +12554,19 @@ snapshots:
       '@dnd-kit/core': 6.3.1(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       '@dnd-kit/sortable': 7.0.2(@dnd-kit/core@6.3.1(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react@19.2.6)
       '@dnd-kit/utilities': 3.2.2(react@19.2.6)
-      '@juggle/resize-observer': 3.4.0
       ace-builds: 1.43.6
-      balanced-match: 1.0.2
       clsx: 1.2.1
       d3-shape: 1.3.7
       date-fns: 2.30.0
       intl-messageformat: 10.7.18
       mnth: 2.0.0
       react: 19.2.6
-      react-dom: 19.2.6(react@19.2.6)
-      react-keyed-flatten-children: 1.3.0(react@19.2.6)
+      react-is: 18.3.1
       react-transition-group: 4.4.5(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       tslib: 2.8.1
       weekstart: 1.1.0
-
-  '@cloudscape-design/design-tokens@3.0.51': {}
+    transitivePeerDependencies:
+      - react-dom
 
   '@cloudscape-design/test-utils-core@1.0.74':
     dependencies:
@@ -13568,8 +13552,6 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
-
-  '@juggle/resize-observer@3.4.0': {}
 
   '@lit-labs/ssr-dom-shim@1.5.1': {}
 
@@ -15996,7 +15978,7 @@ snapshots:
       obug: 2.1.1
       std-env: 4.0.0
       tinyrainbow: 3.1.0
-      vitest: 4.1.4(@opentelemetry/api@1.9.0)(@types/node@22.19.17)(@vitest/coverage-v8@4.1.5)(jsdom@29.0.2)(vite@6.4.1(@types/node@22.19.17)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.3))
+      vitest: 4.1.4(@opentelemetry/api@1.9.0)(@types/node@22.19.17)(@vitest/coverage-v8@4.1.5)(jsdom@29.0.2)(vite@6.4.2(@types/node@22.19.17)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.3))
 
   '@vitest/expect@3.2.4':
     dependencies:
@@ -18161,11 +18143,11 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-module-utils@2.12.1(@typescript-eslint/parser@8.59.1(eslint@9.39.4)(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint@9.39.4):
+  eslint-module-utils@2.12.1(@typescript-eslint/parser@8.59.1(eslint@9.39.4)(typescript@5.9.3))(eslint-import-resolver-node@0.3.9)(eslint@9.39.4):
     dependencies:
       debug: 3.2.7
     optionalDependencies:
-      '@typescript-eslint/parser': 8.59.1(eslint@9.39.4)(typescript@5.7.3)
+      '@typescript-eslint/parser': 8.59.1(eslint@9.39.4)(typescript@5.9.3)
       eslint: 9.39.4
       eslint-import-resolver-node: 0.3.9
     transitivePeerDependencies:
@@ -18200,7 +18182,7 @@ snapshots:
       - eslint-import-resolver-webpack
       - supports-color
 
-  eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.59.1(eslint@9.39.4)(typescript@5.7.3))(eslint@9.39.4):
+  eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.59.1(eslint@9.39.4)(typescript@5.9.3))(eslint@9.39.4):
     dependencies:
       '@rtsao/scc': 1.1.0
       array-includes: 3.1.9
@@ -18211,7 +18193,7 @@ snapshots:
       doctrine: 2.1.0
       eslint: 9.39.4
       eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.12.1(@typescript-eslint/parser@8.59.1(eslint@9.39.4)(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint@9.39.4)
+      eslint-module-utils: 2.12.1(@typescript-eslint/parser@8.59.1(eslint@9.39.4)(typescript@5.9.3))(eslint-import-resolver-node@0.3.9)(eslint@9.39.4)
       hasown: 2.0.2
       is-core-module: 2.16.1
       is-glob: 4.0.3
@@ -18223,7 +18205,7 @@ snapshots:
       string.prototype.trimend: 1.0.9
       tsconfig-paths: 3.15.0
     optionalDependencies:
-      '@typescript-eslint/parser': 8.59.1(eslint@9.39.4)(typescript@5.7.3)
+      '@typescript-eslint/parser': 8.59.1(eslint@9.39.4)(typescript@5.9.3)
     transitivePeerDependencies:
       - eslint-import-resolver-typescript
       - eslint-import-resolver-webpack
@@ -21733,11 +21715,6 @@ snapshots:
   react-is@18.3.1: {}
 
   react-is@19.2.5: {}
-
-  react-keyed-flatten-children@1.3.0(react@19.2.6):
-    dependencies:
-      react: 19.2.6
-      react-is: 16.13.1
 
   react-layout-kit@1.9.2(react@19.2.6):
     dependencies:
