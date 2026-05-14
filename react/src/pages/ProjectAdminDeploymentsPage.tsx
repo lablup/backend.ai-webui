@@ -257,6 +257,7 @@ const ProjectAdminDeploymentsContent: React.FC<
       />
       <BAIDeleteConfirmModal
         open={!!deploymentToDelete}
+        target={t('deployment.Deployment')}
         requireConfirmInput
         items={
           deploymentToDelete

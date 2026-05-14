@@ -90,6 +90,7 @@
   },
   "comp:BAIDeleteConfirmModal": {
     "AreYouSureToDelete": "Êtes-vous sûr de vouloir supprimer ?",
+    "AreYouSureToPermanentlyDeleteTarget": "Voulez-vous vraiment supprimer définitivement {{target}} ?",
     "CannotBeUndone": "Cette action est irréversible.",
     "DeleteItem": "Supprimer",
     "DeleteNItems": "Supprimer {{count}} éléments",
@@ -392,8 +393,10 @@
   },
   "general": {
     "DeselectAll": "Tout désélectionner",
+    "File": "Fichier",
     "NSelected": "{{count}} sélectionné",
     "Optional": "Facultatif",
+    "Project": "Projet",
     "TotalItems": "Éléments totaux {{total}}",
     "button": {
       "Cancel": "Annuler",

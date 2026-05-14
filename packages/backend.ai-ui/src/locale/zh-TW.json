@@ -90,6 +90,7 @@
   },
   "comp:BAIDeleteConfirmModal": {
     "AreYouSureToDelete": "您確定要刪除嗎？",
+    "AreYouSureToPermanentlyDeleteTarget": "確定要永久刪除{{target}}嗎？",
     "CannotBeUndone": "此操作無法復原。",
     "DeleteItem": "刪除",
     "DeleteNItems": "刪除 {{count}} 個項目",
@@ -392,8 +393,10 @@
   },
   "general": {
     "DeselectAll": "取消全選",
+    "File": "檔案",
     "NSelected": "{{count}}選擇",
     "Optional": "選填",
+    "Project": "專案",
     "TotalItems": "總計{{total}}項目",
     "button": {
       "Cancel": "取消",

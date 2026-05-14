@@ -90,6 +90,7 @@
   },
   "comp:BAIDeleteConfirmModal": {
     "AreYouSureToDelete": "Silmek istediğinizden emin misiniz?",
+    "AreYouSureToPermanentlyDeleteTarget": "{{target}} kalıcı olarak silinsin mi?",
     "CannotBeUndone": "Bu işlem geri alınamaz.",
     "DeleteItem": "Sil",
     "DeleteNItems": "{{count}} öğeyi sil",
@@ -387,8 +388,10 @@
   },
   "general": {
     "DeselectAll": "Tüm seçimi kaldır",
+    "File": "Dosya",
     "NSelected": "{{count}} seçildi",
     "Optional": "İsteğe bağlı",
+    "Project": "Proje",
     "TotalItems": "Total {{total}} öğeleri",
     "button": {
       "Cancel": "İptal etmek",

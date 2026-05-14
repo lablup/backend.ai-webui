@@ -9,11 +9,8 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { App, Checkbox, Form, theme } from 'antd';
 import { FormInstance } from 'antd/lib';
 import {
-  BAIAlert,
-  BAIConfirmModalWithInput,
-  BAIFlex,
-  BAIModalProps,
-  BAIText,
+  BAIDeleteConfirmModal,
+  BAIDeleteConfirmModalProps,
   toLocalId,
   useBAILogger,
   useErrorMessageResolver,
@@ -26,8 +23,8 @@ import { graphql, useFragment, useMutation } from 'react-relay';
 import { PayloadError } from 'relay-runtime';
 
 export interface PurgeUsersModalProps extends Omit<
-  BAIModalProps,
-  'title' | 'okText' | 'okButtonProps'
+  BAIDeleteConfirmModalProps,
+  'items' | 'title' | 'okText' | 'okButtonProps' | 'confirmText'
 > {
   usersFrgmt: PurgeUsersModalFragment$key;
 }
@@ -204,64 +201,41 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
   };
 
   return (
-    <BAIConfirmModalWithInput
+    <BAIDeleteConfirmModal
       {...baiModalProps}
       title={t('credential.PermanentlyDeleteUsers')}
-      okText={t('button.Delete')}
+      target={t('general.User')}
       onOk={(e) => handleOk(e)}
       confirmLoading={isPending || isInFlightBulkPurge}
+      items={_.map(_.compact(users), (user) => ({
+        key: user.id,
+        label: user.email ?? '',
+      }))}
+      requireConfirmInput
+      confirmText={t('credential.PermanentlyDelete')}
       inputLabel={t('credential.TypePermanentlyDelete', {
         text: t('credential.PermanentlyDelete'),
       })}
       inputProps={{
         placeholder: t('credential.PermanentlyDelete'),
       }}
-      confirmText={t('credential.PermanentlyDelete')}
-      content={
-        <BAIFlex direction="column" gap="sm" justify="start" align="stretch">
-          <BAIAlert
-            title={t('credential.PurgeUsersWarningAlertTitle')}
-            type="warning"
-            description={
-              <ul
-                style={{
-                  margin: 0,
-                  padding: 0,
-                  paddingTop: token.paddingXXS,
-                  listStyle: 'circle',
-                  listStylePosition: 'inside',
-                  maxHeight: 165,
-                  overflowY: 'auto',
-                }}
-              >
-                {_.map(users, (user) => (
-                  <li key={user.id}>{user.email}</li>
-                ))}
-              </ul>
-            }
-            showIcon
-          />
-
-          <BAIText>
-            {t('credential.UsersPermanentlyDeleteConfirmMessage')}
-          </BAIText>
-          <Form ref={formRef} style={{ marginBottom: token.marginSM }}>
-            <Form.Item
-              name="purgeSharedVfolders"
-              valuePropName="checked"
-              style={{ marginBottom: 0 }}
-            >
-              <Checkbox>{t('credential.DeleteSharedVirtualFolders')}</Checkbox>
-            </Form.Item>
-            <Form.Item
-              name="deleteModelServices"
-              valuePropName="checked"
-              style={{ marginBottom: 0 }}
-            >
-              <Checkbox>{t('credential.DeleteModelServicesAsWell')}</Checkbox>
-            </Form.Item>
-          </Form>
-        </BAIFlex>
+      extraContent={
+        <Form ref={formRef} style={{ marginBottom: token.marginSM }}>
+          <Form.Item
+            name="purgeSharedVfolders"
+            valuePropName="checked"
+            style={{ marginBottom: 0 }}
+          >
+            <Checkbox>{t('credential.DeleteSharedVirtualFolders')}</Checkbox>
+          </Form.Item>
+          <Form.Item
+            name="deleteModelServices"
+            valuePropName="checked"
+            style={{ marginBottom: 0 }}
+          >
+            <Checkbox>{t('credential.DeleteModelServicesAsWell')}</Checkbox>
+          </Form.Item>
+        </Form>
       }
     />
   );

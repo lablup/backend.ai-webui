@@ -90,6 +90,7 @@
   },
   "comp:BAIDeleteConfirmModal": {
     "AreYouSureToDelete": "Είστε σίγουροι ότι θέλετε να διαγράψετε;",
+    "AreYouSureToPermanentlyDeleteTarget": "Είστε βέβαιοι ότι θέλετε να διαγράψετε οριστικά {{target}};",
     "CannotBeUndone": "Αυτή η ενέργεια δεν μπορεί να αναιρεθεί.",
     "DeleteItem": "Διαγραφή",
     "DeleteNItems": "Διαγραφή {{count}} στοιχείων",
@@ -392,8 +393,10 @@
   },
   "general": {
     "DeselectAll": "Αποεπιλογή όλων",
+    "File": "Αρχείο",
     "NSelected": "{{count}} Επιλεγμένη",
     "Optional": "Προαιρετικό",
+    "Project": "Έργο",
     "TotalItems": "Σύνολο {{total}} στοιχεία",
     "button": {
       "Cancel": "Ματαίωση",

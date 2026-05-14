@@ -14,12 +14,7 @@ import {
   FormInstance,
   theme,
 } from 'antd';
-import {
-  BAIFlex,
-  BAIModal,
-  BAIModalProps,
-  BAIConfirmModalWithInput,
-} from 'backend.ai-ui';
+import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
@@ -323,15 +318,11 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
           </Form.List>
         </BAIFlex>
       </Form>
-      <BAIConfirmModalWithInput
+      <BAIModal
         open={isReinstallConfirmOpen}
         title={t('environment.ImageReinstallationRequired')}
-        content={
-          <Trans
-            i18nKey={'environment.ModifyImageResourceLimitReinstallRequired'}
-          />
-        }
-        confirmText={image?.name ?? image?.namespace ?? ''}
+        okText={t('button.Confirm')}
+        okButtonProps={{ danger: true }}
         onOk={() => {
           setIsReinstallConfirmOpen(false);
           pendingCommitRequest?.();
@@ -341,7 +332,11 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
           setIsReinstallConfirmOpen(false);
           setPendingCommitRequest(null);
         }}
-      />
+      >
+        <Trans
+          i18nKey={'environment.ModifyImageResourceLimitReinstallRequired'}
+        />
+      </BAIModal>
     </BAIModal>
   );
 };

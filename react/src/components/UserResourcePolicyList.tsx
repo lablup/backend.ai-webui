@@ -327,7 +327,9 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
             : []
         }
         title={t('resourcePolicy.DeletePolicy')}
-        description={t('resourcePolicy.DeletePolicyDescription')}
+        target={t('resourcePolicy.ResourcePolicy')}
+        confirmText={deletingPolicyName ?? ''}
+        requireConfirmInput
         onOk={() => {
           if (deletingPolicyName) {
             return new Promise<void>((resolve) => {

@@ -28,7 +28,7 @@ import {
   BAIFlex,
   BAIPropertyFilter,
   BAINameActionCell,
-  BAIConfirmModalWithInput,
+  BAIDeleteConfirmModal,
   useBAILogger,
   useUpdatableState,
   BAIText,
@@ -561,24 +561,22 @@ const UserCredentialList: React.FC = () => {
           }
         }}
       />
-      <BAIConfirmModalWithInput
+      <BAIDeleteConfirmModal
         open={!!deletingKeypair}
         title={t('credential.DeleteCredential')}
-        content={
-          <BAIFlex direction="column" align="stretch">
-            <Typography.Text>
-              {t('credential.YouAreAboutToDeleteCredential')}
-            </Typography.Text>
-            <Typography.Text strong>{deletingKeypair?.user_id}</Typography.Text>
-            <br />
-            <Typography.Text type="danger">
-              {t('dialog.warning.CannotBeUndone')}
-            </Typography.Text>
-          </BAIFlex>
+        target={t('general.Credential')}
+        items={
+          deletingKeypair
+            ? [
+                {
+                  key: deletingKeypair.access_key ?? '',
+                  label: deletingKeypair.access_key ?? '',
+                },
+              ]
+            : []
         }
         confirmText={deletingKeypair?.access_key ?? ''}
-        inputLabel={t('credential.TypeAccessKeyToDelete')}
-        okText={t('button.Delete')}
+        requireConfirmInput
         onOk={() => {
           if (deletingKeypair) {
             commitDeleteKeypair({

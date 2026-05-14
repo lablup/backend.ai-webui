@@ -90,6 +90,7 @@
   },
   "comp:BAIDeleteConfirmModal": {
     "AreYouSureToDelete": "คุณแน่ใจหรือไม่ว่าต้องการลบ?",
+    "AreYouSureToPermanentlyDeleteTarget": "คุณแน่ใจหรือไม่ว่าต้องการลบ {{target}} อย่างถาวร?",
     "CannotBeUndone": "การกระทำนี้ไม่สามารถยกเลิกได้",
     "DeleteItem": "ลบ",
     "DeleteNItems": "ลบ {{count}} รายการ",
@@ -392,8 +393,10 @@
   },
   "general": {
     "DeselectAll": "ยกเลิกการเลือกทั้งหมด",
+    "File": "ไฟล์",
     "NSelected": "{{count}} เลือก",
     "Optional": "ไม่บังคับ",
+    "Project": "โครงการ",
     "TotalItems": "รวม {{total}} รายการ",
     "button": {
       "Cancel": "ยกเลิก",

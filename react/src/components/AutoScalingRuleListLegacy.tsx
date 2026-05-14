@@ -11,7 +11,7 @@ import { DeleteFilled, PlusOutlined, SettingOutlined } from '@ant-design/icons';
 import { App, Button, Tag, Tooltip, Typography, theme } from 'antd';
 import {
   BAICard,
-  BAIConfirmModalWithInput,
+  BAIDeleteConfirmModal,
   BAIFlex,
   BAITable,
   BAIUnmountAfterClose,
@@ -287,21 +287,30 @@ const AutoScalingRuleListLegacy: React.FC<AutoScalingRuleListLegacyProps> = ({
           }}
         />
       </BAIUnmountAfterClose>
-      <BAIConfirmModalWithInput
+      <BAIDeleteConfirmModal
         open={!!deletingRule}
-        title={t('autoScalingRule.ConfirmDeleteAutoScalingRule', {
-          autoScalingRule: deletingRule?.metric_name ?? '',
+        title={t('dialog.title.DeleteSomething', {
+          name: (deletingRule?.metric_name as string) ?? '',
         })}
-        content={
-          <Typography.Text type="danger">
-            {t('dialog.warning.CannotBeUndone')}
-          </Typography.Text>
+        target={t('webui.menu.AutoScalingRule')}
+        items={
+          deletingRule
+            ? [
+                {
+                  key: deletingRule.id as string,
+                  label: deletingRule.metric_name as string,
+                },
+              ]
+            : []
         }
-        confirmText={deletingRule?.metric_name ?? ''}
-        inputLabel={t('autoScalingRule.TypeMetricNameToDelete', {
-          metricName: deletingRule?.metric_name ?? '',
+        confirmText={t('credential.PermanentlyDelete')}
+        requireConfirmInput
+        inputLabel={t('credential.TypePermanentlyDelete', {
+          text: t('credential.PermanentlyDelete'),
         })}
-        okText={t('button.Delete')}
+        inputProps={{
+          placeholder: t('credential.PermanentlyDelete'),
+        }}
         okButtonProps={{ loading: isInFlightDeleteAutoScalingRuleMutation }}
         onOk={() => {
           if (deletingRule && autoScalingRules) {

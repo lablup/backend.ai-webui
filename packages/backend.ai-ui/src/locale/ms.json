@@ -90,6 +90,7 @@
   },
   "comp:BAIDeleteConfirmModal": {
     "AreYouSureToDelete": "Adakah anda pasti mahu memadam?",
+    "AreYouSureToPermanentlyDeleteTarget": "Adakah anda pasti mahu memadam {{target}} secara kekal?",
     "CannotBeUndone": "Tindakan ini tidak dapat dibatalkan.",
     "DeleteItem": "Padam",
     "DeleteNItems": "Padam {{count}} item",
@@ -392,8 +393,10 @@
   },
   "general": {
     "DeselectAll": "Nyahpilih semua",
+    "File": "Fail",
     "NSelected": "{{count}} dipilih",
     "Optional": "Pilihan",
+    "Project": "Projek",
     "TotalItems": "Jumlah {{total}} item",
     "button": {
       "Cancel": "Batalkan",

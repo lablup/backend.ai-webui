@@ -14,9 +14,9 @@ import DeploymentOwnerInfo from './DeploymentOwnerInfo';
 import DeploymentStatusTag, { DeploymentStatus } from './DeploymentStatusTag';
 import DeploymentTagChips from './DeploymentTagChips';
 import { DeleteFilled, EditOutlined } from '@ant-design/icons';
-import { Alert, App, Typography, theme } from 'antd';
+import { App, Typography } from 'antd';
 import {
-  BAIConfirmModalWithInput,
+  BAIDeleteConfirmModal,
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAINameActionCell,
@@ -133,7 +133,6 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
   'use memo';
   const { t } = useTranslation();
   const { message } = App.useApp();
-  const { token } = theme.useToken();
   const { logger } = useBAILogger();
   const baiClient = useSuspendedBackendaiClient();
   const [deletingDeployment, setDeletingDeployment] = useState<{
@@ -433,25 +432,23 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
           />
         </div>
       </BAIFlex>
-      <BAIConfirmModalWithInput
+      <BAIDeleteConfirmModal
         open={!!deletingDeployment}
         title={t('deployment.DeleteDeployment')}
-        content={
-          <BAIFlex direction="column" gap="md" align="stretch">
-            <Alert type="warning" title={t('dialog.warning.CannotBeUndone')} />
-            <BAIFlex>
-              <Typography.Text style={{ marginRight: token.marginXXS }}>
-                {t('dialog.TypeNameToConfirmDeletion')}
-              </Typography.Text>
-              (
-              <Typography.Text code>{deletingDeployment?.name}</Typography.Text>
-              )
-            </BAIFlex>
-          </BAIFlex>
+        target={t('deployment.Deployment')}
+        items={
+          deletingDeployment
+            ? [
+                {
+                  key: deletingDeployment.id ?? deletingDeployment.name ?? '',
+                  label: deletingDeployment.name ?? '',
+                },
+              ]
+            : []
         }
         confirmText={deletingDeployment?.name ?? ''}
+        requireConfirmInput
         inputProps={{ placeholder: deletingDeployment?.name ?? '' }}
-        okText={t('button.Delete')}
         okButtonProps={{ loading: isInFlightDeleteMutation }}
         onOk={() => {
           if (!deletingDeployment) return;
