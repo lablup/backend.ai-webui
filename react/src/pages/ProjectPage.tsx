@@ -82,8 +82,10 @@ const ProjectPage = () => {
 
   const { supportedFields, exportCSV } = useCSVExport('projects');
 
-  const isActiveTab = queryParams.status === 'active';
-  const statusFilter = isActiveTab ? 'is_active == true' : 'is_active == false';
+  const statusFilter =
+    queryParams.status === 'active'
+      ? 'is_active == true'
+      : 'is_active == false';
 
   const queryVariables: ProjectPageQuery$variables = {
     offset: baiPaginationOption.offset,
@@ -222,7 +224,6 @@ const ProjectPage = () => {
         </BAIFlex>
         <BAIProjectTable
           updateFetchKey={updateFetchKey}
-          isActiveTab={isActiveTab}
           projectFragment={filterOutEmpty(
             group_nodes?.edges.map((e) => e?.node) ?? [],
           )}

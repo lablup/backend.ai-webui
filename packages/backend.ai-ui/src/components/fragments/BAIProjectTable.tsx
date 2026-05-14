@@ -52,7 +52,6 @@ export interface BAIProjectTableProps extends Omit<
   ) => void;
   onClickProjectEditButton: (project: Project) => void;
   updateFetchKey?: () => void;
-  isActiveTab?: boolean;
 }
 
 const BAIProjectTable = ({
@@ -60,7 +59,6 @@ const BAIProjectTable = ({
   onChangeOrder,
   onClickProjectEditButton,
   updateFetchKey,
-  isActiveTab = true,
   ...tableProps
 }: BAIProjectTableProps) => {
   'use memo';
@@ -148,7 +146,7 @@ const BAIProjectTable = ({
                   onClickProjectEditButton(record);
                 },
               },
-              ...(isActiveTab
+              ...(record.is_active
                 ? [
                     {
                       key: 'deactivate',
