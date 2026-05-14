@@ -164,36 +164,51 @@ const BAIProjectTable = ({
                         okText: t('comp:BAIProjectTable.Deactivate'),
                         onConfirm: () => {
                           if (!record.row_id) return;
-                          commitDeleteGroup({
-                            variables: { gid: record.row_id },
-                            onCompleted: (response, errors) => {
-                              if (errors && errors.length > 0) {
-                                errors.forEach((error) => {
+                          return new Promise<void>((resolve) => {
+                            commitDeleteGroup({
+                              variables: { gid: record.row_id },
+                              onCompleted: (response, errors) => {
+                                if (errors && errors.length > 0) {
+                                  errors.forEach((error) => {
+                                    message.error(
+                                      getErrorMessage(
+                                        error,
+                                        t(
+                                          'comp:BAIProjectTable.FailedToDeactivateProject',
+                                        ),
+                                      ),
+                                    );
+                                  });
+                                  resolve();
+                                  return;
+                                }
+                                if (response.delete_group?.ok) {
+                                  message.success(
+                                    t(
+                                      'comp:BAIProjectTable.ProjectDeactivated',
+                                    ),
+                                  );
+                                  updateFetchKey?.();
+                                } else {
                                   message.error(
-                                    getErrorMessage(
-                                      error,
+                                    response.delete_group?.msg ||
                                       t(
                                         'comp:BAIProjectTable.FailedToDeactivateProject',
                                       ),
-                                    ),
                                   );
-                                });
-                                return;
-                              }
-                              if (response.delete_group?.ok) {
-                                message.success(
-                                  t('comp:BAIProjectTable.ProjectDeactivated'),
-                                );
-                                updateFetchKey?.();
-                              } else {
+                                }
+                                resolve();
+                              },
+                              onError: (error) => {
                                 message.error(
-                                  response.delete_group?.msg ||
+                                  error?.message ||
                                     t(
                                       'comp:BAIProjectTable.FailedToDeactivateProject',
                                     ),
                                 );
-                              }
-                            },
+                                resolve();
+                              },
+                            });
                           });
                         },
                       },
@@ -211,39 +226,52 @@ const BAIProjectTable = ({
                         okText: t('comp:BAIProjectTable.Activate'),
                         onConfirm: () => {
                           if (!record.row_id) return;
-                          commitModifyGroup({
-                            variables: {
-                              gid: record.row_id,
-                              props: { is_active: true },
-                            },
-                            onCompleted: (response, errors) => {
-                              if (errors && errors.length > 0) {
-                                errors.forEach((error) => {
+                          return new Promise<void>((resolve) => {
+                            commitModifyGroup({
+                              variables: {
+                                gid: record.row_id,
+                                props: { is_active: true },
+                              },
+                              onCompleted: (response, errors) => {
+                                if (errors && errors.length > 0) {
+                                  errors.forEach((error) => {
+                                    message.error(
+                                      getErrorMessage(
+                                        error,
+                                        t(
+                                          'comp:BAIProjectTable.FailedToActivateProject',
+                                        ),
+                                      ),
+                                    );
+                                  });
+                                  resolve();
+                                  return;
+                                }
+                                if (response.modify_group?.ok) {
+                                  message.success(
+                                    t('comp:BAIProjectTable.ProjectActivated'),
+                                  );
+                                  updateFetchKey?.();
+                                } else {
                                   message.error(
-                                    getErrorMessage(
-                                      error,
+                                    response.modify_group?.msg ||
                                       t(
                                         'comp:BAIProjectTable.FailedToActivateProject',
                                       ),
-                                    ),
                                   );
-                                });
-                                return;
-                              }
-                              if (response.modify_group?.ok) {
-                                message.success(
-                                  t('comp:BAIProjectTable.ProjectActivated'),
-                                );
-                                updateFetchKey?.();
-                              } else {
+                                }
+                                resolve();
+                              },
+                              onError: (error) => {
                                 message.error(
-                                  response.modify_group?.msg ||
+                                  error?.message ||
                                     t(
                                       'comp:BAIProjectTable.FailedToActivateProject',
                                     ),
                                 );
-                              }
-                            },
+                                resolve();
+                              },
+                            });
                           });
                         },
                       },
