@@ -128,4 +128,50 @@ describe('useErrorMessageResolver', () => {
       getErrorMessage({ msg: 'something failed', error_code: 'E_FOO' }),
     ).toBe('something failed (E_FOO)');
   });
+
+  it('accepts an options object and keeps the string overload working', () => {
+    const { result } = renderHook(() => useGetErrorMessage());
+    const getErrorMessage = result.current;
+
+    expect(getErrorMessage(undefined, { defaultMessage: 'fallback' })).toBe(
+      'fallback',
+    );
+    expect(
+      getErrorMessage(
+        { msg: 'something failed', error_code: 'E_FOO' },
+        { verbosity: 'normal' },
+      ),
+    ).toBe('something failed (E_FOO)');
+  });
+
+  it('appends the HTTP status and error_code in detail verbosity', () => {
+    const { result } = renderHook(() => useGetErrorMessage());
+    const getErrorMessage = result.current;
+
+    expect(
+      getErrorMessage(
+        { msg: 'agent failed to start', statusCode: 500, error_code: 'E_FOO' },
+        { verbosity: 'detail' },
+      ),
+    ).toBe('agent failed to start (HTTP 500, E_FOO)');
+  });
+
+  it('omits absent parts of the detail suffix', () => {
+    const { result } = renderHook(() => useGetErrorMessage());
+    const getErrorMessage = result.current;
+
+    expect(
+      getErrorMessage({ msg: 'no codes here' }, { verbosity: 'detail' }),
+    ).toBe('no codes here');
+    expect(
+      getErrorMessage({ msg: 'only status', statusCode: 404 }, {
+        verbosity: 'detail',
+      }),
+    ).toBe('only status (HTTP 404)');
+    expect(
+      getErrorMessage({ msg: 'only code', error_code: 'E_BAR' }, {
+        verbosity: 'detail',
+      }),
+    ).toBe('only code (E_BAR)');
+  });
 });
