@@ -203,14 +203,14 @@ const BAIProjectTable = ({
                   ]
                 : [
                     {
-                      key: 'restore',
-                      title: t('comp:BAIProjectTable.Restore'),
+                      key: 'activate',
+                      title: t('comp:BAIProjectTable.Activate'),
                       icon: <UndoIcon />,
                       disabled: isModelStore,
                       popConfirm: {
-                        title: t('comp:BAIProjectTable.RestoreProject'),
+                        title: t('comp:BAIProjectTable.ActivateProject'),
                         description: record.name,
-                        okText: t('comp:BAIProjectTable.Restore'),
+                        okText: t('comp:BAIProjectTable.Activate'),
                         onConfirm: () => {
                           if (!record.row_id) return;
                           commitModifyGroup({
@@ -225,7 +225,7 @@ const BAIProjectTable = ({
                                     getErrorMessage(
                                       error,
                                       t(
-                                        'comp:BAIProjectTable.FailedToRestoreProject',
+                                        'comp:BAIProjectTable.FailedToActivateProject',
                                       ),
                                     ),
                                   );
@@ -234,14 +234,14 @@ const BAIProjectTable = ({
                               }
                               if (response.modify_group?.ok) {
                                 message.success(
-                                  t('comp:BAIProjectTable.ProjectRestored'),
+                                  t('comp:BAIProjectTable.ProjectActivated'),
                                 );
                                 updateFetchKey?.();
                               } else {
                                 message.error(
                                   response.modify_group?.msg ||
                                     t(
-                                      'comp:BAIProjectTable.FailedToRestoreProject',
+                                      'comp:BAIProjectTable.FailedToActivateProject',
                                     ),
                                 );
                               }
