@@ -1125,7 +1125,10 @@ export const DeploymentAddRevisionCustomContent: React.FC<
         stays visible during resource-group re-fetch.
       */}
       <Suspense fallback={<Skeleton active paragraph={{ rows: 4 }} />}>
-        <ResourceAllocationFormItems enableResourcePresets />
+        <ResourceAllocationFormItems
+          enableResourcePresets
+          autoSelectFirstResourceGroup
+        />
       </Suspense>
 
       <Collapse

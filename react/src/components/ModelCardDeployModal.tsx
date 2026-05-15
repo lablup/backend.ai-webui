@@ -105,11 +105,13 @@ const ModelCardDeployModalContent: React.FC<
     userSelectedPresetId ??
     (availablePresets[0]?.id ? toLocalId(availablePresets[0].id) : undefined);
 
-  const [userSelectedResourceGroup, setUserSelectedResourceGroup] = useState<
-    string | undefined
-  >(undefined);
-  const effectiveResourceGroup =
-    userSelectedResourceGroup ?? resourceGroups[0]?.name;
+  // The resource-group selection is held in an antd Form. `Form.useWatch`
+  // subscribes to changes on the `resourceGroup` field so the Deploy button's
+  // `disabled` prop reflects the current selection, and `form.getFieldValue`
+  // reads it at submit time. `BAIProjectResourceGroupSelect` auto-fills the
+  // "default" (or first available) group via its `autoSelectDefault` prop.
+  const [form] = Form.useForm<{ resourceGroup?: string }>();
+  const selectedResourceGroup = Form.useWatch('resourceGroup', form);
 
   const handleDeploy = (): Promise<void> => {
     if (!modelCardRowId || !projectId) return Promise.resolve();
@@ -119,7 +121,7 @@ const ModelCardDeployModalContent: React.FC<
       : effectivePresetId;
     const resourceGroup = isAutoDeployScenario
       ? resourceGroups[0]?.name
-      : effectiveResourceGroup;
+      : form.getFieldValue('resourceGroup');
 
     if (!presetId || !resourceGroup) return Promise.resolve();
 
@@ -225,7 +227,7 @@ const ModelCardDeployModalContent: React.FC<
       footer={null}
       width={480}
     >
-      <Form layout="vertical">
+      <Form form={form} layout="vertical">
         <Form.Item
           label={t('modelStore.Preset')}
           tooltip={t('modelStore.PresetTooltip')}
@@ -268,14 +270,14 @@ const ModelCardDeployModalContent: React.FC<
           </BAIFlex>
         </Form.Item>
         <Form.Item
+          name="resourceGroup"
           label={t('modelStore.ResourceGroup')}
           tooltip={t('modelStore.ResourceGroupTooltip')}
-          required
+          rules={[{ required: true }]}
         >
           <BAIProjectResourceGroupSelect
             projectName={projectName ?? ''}
-            value={effectiveResourceGroup}
-            onChange={(value: string) => setUserSelectedResourceGroup(value)}
+            autoSelectDefault
             style={{ width: '100%' }}
           />
         </Form.Item>
@@ -301,7 +303,7 @@ const ModelCardDeployModalContent: React.FC<
             !modelCardRowId ||
             !projectId ||
             !effectivePresetId ||
-            !effectiveResourceGroup
+            !selectedResourceGroup
           }
         >
           {t('modelStore.Deploy')}

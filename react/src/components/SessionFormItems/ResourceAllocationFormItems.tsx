@@ -88,6 +88,15 @@ interface ResourceAllocationFormItemsProps {
   showRemainingWarning?: boolean;
   forceImageMinValues?: boolean;
   hideClusterFormItems?: boolean;
+  /**
+   * Opt-in: when the form field has no value, auto-select the project's
+   * "default" resource group (or the first available one). Forwarded to
+   * `BAIProjectResourceGroupSelect`'s `autoSelectDefault` prop. Off by
+   * default to preserve existing behavior for shared callers like
+   * `SessionLauncherPage` / `ServiceLauncherPageContent` that pre-fill
+   * the form themselves.
+   */
+  autoSelectFirstResourceGroup?: boolean;
   extraAcceleratorRules?: Array<{
     warningOnly?: boolean;
     validator: (rule: unknown, value: number) => Promise<void>;
@@ -102,6 +111,7 @@ const ResourceAllocationFormItems: React.FC<
   forceImageMinValues = false,
   showRemainingWarning = false,
   hideClusterFormItems = false,
+  autoSelectFirstResourceGroup = false,
   extraAcceleratorRules,
 }) => {
   const form = Form.useFormInstance<MergedResourceAllocationFormValue>();
@@ -534,6 +544,7 @@ const ResourceAllocationFormItems: React.FC<
       >
         <BAIProjectResourceGroupSelect
           projectName={currentProject.name}
+          autoSelectDefault={autoSelectFirstResourceGroup}
           showSearch
         />
       </Form.Item>

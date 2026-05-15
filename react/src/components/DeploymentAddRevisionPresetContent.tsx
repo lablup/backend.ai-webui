@@ -264,6 +264,7 @@ export const DeploymentAddRevisionPresetContent: React.FC<
       >
         <BAIProjectResourceGroupSelect
           projectName={projectName ?? ''}
+          autoSelectDefault
           style={{ width: '100%' }}
         />
       </Form.Item>

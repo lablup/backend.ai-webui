@@ -148,17 +148,25 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
     userSelectedPresetId ??
     (availablePresets[0]?.id ? toLocalId(availablePresets[0].id) : undefined);
 
-  const [userSelectedResourceGroup, setUserSelectedResourceGroup] = useState<
-    string | undefined
-  >(undefined);
-  const effectiveResourceGroup =
-    userSelectedResourceGroup ?? resourceGroups[0]?.name;
+  // Hold the resource-group selection on the antd Form. `Form.useWatch`
+  // subscribes to changes so the Deploy button's `disabled` prop updates
+  // immediately, and `form.getFieldValue` reads it at submit time.
+  // `BAIProjectResourceGroupSelect` auto-fills the "default" (or first
+  // available) group via its `autoSelectDefault` prop.
+  const [form] = Form.useForm<{ resourceGroup?: string }>();
+  const selectedResourceGroup = Form.useWatch('resourceGroup', form);
 
   const handleDeploy = (): Promise<void> => {
     if (!vfolderId || !projectId) return Promise.resolve();
 
     const presetId = effectivePresetId;
-    const resourceGroup = effectiveResourceGroup;
+    // In `isAutoDeployScenario`, `BAIProjectResourceGroupSelect` is never
+    // mounted (the component returns `null` before reaching the form), so
+    // its `autoSelectDefault` cannot populate the form value. Fall back to
+    // the sole resource group here — same pattern as `ModelCardDeployModal`.
+    const resourceGroup = isAutoDeployScenario
+      ? resourceGroups[0]?.name
+      : form.getFieldValue('resourceGroup');
 
     if (!presetId || !resourceGroup) return Promise.resolve();
 
@@ -266,7 +274,7 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
       footer={null}
       width={480}
     >
-      <Form layout="vertical">
+      <Form form={form} layout="vertical">
         <Form.Item
           label={t('modelStore.Preset')}
           tooltip={t('modelStore.PresetTooltip')}
@@ -301,14 +309,14 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
           </BAIFlex>
         </Form.Item>
         <Form.Item
+          name="resourceGroup"
           label={t('modelStore.ResourceGroup')}
           tooltip={t('modelStore.ResourceGroupTooltip')}
-          required
+          rules={[{ required: true }]}
         >
           <BAIProjectResourceGroupSelect
             projectName={projectName ?? ''}
-            value={effectiveResourceGroup}
-            onChange={(value: string) => setUserSelectedResourceGroup(value)}
+            autoSelectDefault
             style={{ width: '100%' }}
           />
         </Form.Item>
@@ -339,7 +347,7 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
               !vfolderId ||
               !projectId ||
               !effectivePresetId ||
-              !effectiveResourceGroup ||
+              !selectedResourceGroup ||
               hasNoPresets
             }
           >
@@ -353,7 +361,7 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
               !vfolderId ||
               !projectId ||
               !effectivePresetId ||
-              !effectiveResourceGroup ||
+              !selectedResourceGroup ||
               hasNoPresets
             }
           >
