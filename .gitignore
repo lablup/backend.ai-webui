@@ -159,6 +159,7 @@ CLAUDE.local.md
 
 .claude/settings.local.json
 .claude/worktrees
+.claude/scheduled_tasks.lock
 packages/backend.ai-webui-docs/.claude/settings.local.json
 .serena
 

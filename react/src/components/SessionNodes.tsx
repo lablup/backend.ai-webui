@@ -96,6 +96,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         type
         service_ports
         user_id
+        access_key
         agent_ids
         ...SessionStatusTagFragment
         ...SessionReservationFragment
@@ -165,6 +166,19 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
               session.type || '',
             ) && !_.isEmpty(JSON.parse(session.service_ports ?? '{}'));
           const isOwner = userInfo?.uuid === session.user_id;
+          // 403 ("Only admins can perform operations on behalf of other
+          // users.") only hits owners on the wrong keypair. Admins acting
+          // on another user's session are permitted, so the gate is
+          // owner-only.
+          const shouldDisableForMismatch =
+            isOwner &&
+            !!session.access_key &&
+            !!baiClient._config.accessKey &&
+            session.access_key !== baiClient._config.accessKey;
+          const mismatchTitle =
+            shouldDisableForMismatch && isActive
+              ? t('session.AccessKeyMismatchTooltip')
+              : undefined;
           return (
             <BAINameActionCell
               title={name}
@@ -177,17 +191,21 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
               actions={filterOutEmpty([
                 session.type !== 'system' && {
                   key: 'appLauncher',
-                  title: t('session.SeeAppDialog'),
+                  title: mismatchTitle ?? t('session.SeeAppDialog'),
                   icon: <BAIAppIcon />,
-                  disabled: !isAppSupported || !isActive || !isOwner,
+                  disabled:
+                    !isAppSupported ||
+                    !isActive ||
+                    !isOwner ||
+                    shouldDisableForMismatch,
                   onClick: () => setAppLauncherTarget(session),
                 },
                 {
                   key: 'terminate',
-                  title: t('session.TerminateSession'),
+                  title: mismatchTitle ?? t('session.TerminateSession'),
                   icon: <PowerOffIcon />,
                   type: 'danger' as const,
-                  disabled: !isActive,
+                  disabled: !isActive || shouldDisableForMismatch,
                   onClick: () => setTerminateTarget(session),
                 },
               ])}
