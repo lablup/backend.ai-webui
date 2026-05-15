@@ -68,13 +68,14 @@ GUI 클라이언트입니다. Backend.AI 서버에 접속하여 연산 자원을
 - Web-UI: 웹 또는 독립 실행형 앱으로 제공되는 GUI 클라이언트입니다. Backend.AI
   서버의 주소를 지정하고 사용자 계정 정보를 입력하여 로그인한 후 서비스를 사용할
   수 있습니다.
-- 로컬 wsproxy: Web-UI 앱에 내장된 프록시 서버입니다. 로컬 wsproxy는 서버와
+- 로컬 `wsproxy`: Web-UI 앱에 내장된 프록시 서버입니다. 로컬 `wsproxy`는 서버와
   Web-UI 앱 간의 일반 HTTP 요청을 websocket으로 변환하여 메시지를 전달합니다.
-  Web-UI 앱과 wsproxy 간의 연결이 끊기거나 wsproxy 서버가 중단되면 Jupyter
-  Notebook, Terminal 등의 서비스에 접속할 수 없습니다.
-- 웹 wsproxy: 웹 형태로 제공되는 Web-UI의 경우, 브라우저의 특성상 내장 서버를
-  사용할 수 없습니다. 이 경우 wsproxy 서버를 별도의 웹 서버로 구성하여 Web-UI
-  앱이 웹 wsproxy를 바라보게 함으로써, 웹 환경에서도 Jupyter Notebook, Terminal
+  Web-UI 앱과 `wsproxy` 간의 연결이 끊기거나 `wsproxy` 서버가 중단되면 Jupyter
+  Notebook, Terminal 등의 서비스에 접속할 수 없습니다. WebUI 화면에서는 이
+  구성 요소를 **App Proxy**(이전 명칭 WSProxy)로 표기합니다.
+- 웹 `wsproxy`: 웹 형태로 제공되는 Web-UI의 경우, 브라우저의 특성상 내장 서버를
+  사용할 수 없습니다. 이 경우 `wsproxy` 서버를 별도의 웹 서버로 구성하여 Web-UI
+  앱이 웹 `wsproxy`를 바라보게 함으로써, 웹 환경에서도 Jupyter Notebook, Terminal
   등의 서비스를 사용할 수 있습니다.
 
 
