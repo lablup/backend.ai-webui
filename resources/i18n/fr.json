@@ -996,6 +996,7 @@
     "Private": "Privé",
     "PrivateDeploymentAlertTitle": "Déploiement privé — utilisez un jeton d'accès pour accéder au point de terminaison.",
     "Project": "Projet",
+    "ProjectId": "ID du projet",
     "Public": "Public",
     "QuickDeploy": "Déployer",
     "QuickDeployDetailed": "Configurer et déployer...",
@@ -1048,10 +1049,13 @@
     },
     "filter": {
       "CreatedAt": "Créé le",
+      "CreatedUserId": "ID du créateur",
+      "DestroyedAt": "Supprimé le",
       "DomainName": "Domaine",
       "EndpointUrl": "URL du point de terminaison",
       "Name": "Nom",
       "OpenToPublic": "Public",
+      "ProjectId": "ID du projet",
       "ResourceGroup": "Groupe de ressources",
       "Status": "Statut",
       "Tags": "Étiquettes"

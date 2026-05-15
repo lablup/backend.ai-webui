@@ -25,6 +25,7 @@ import {
   BAITable,
   filterOutEmpty,
   filterOutNullAndUndefined,
+  isValidUUID,
   toLocalId,
   useBAILogger,
   type BAIColumnType,
@@ -53,9 +54,9 @@ const COLUMN_KEY_TO_FIELD: Record<string, string> = {
   name: 'NAME',
   createdAt: 'CREATED_AT',
   domainName: 'DOMAIN',
-  projectName: 'PROJECT',
+  projectId: 'PROJECT',
   resourceGroup: 'RESOURCE_GROUP',
-  tag: 'TAG',
+  tags: 'TAG',
 };
 
 /** All valid order strings accepted by BAITable for deployments. */
@@ -64,6 +65,14 @@ export const availableDeploymentOrderValues = [
   '-name',
   'createdAt',
   '-createdAt',
+  'domainName',
+  '-domainName',
+  'projectId',
+  '-projectId',
+  'resourceGroup',
+  '-resourceGroup',
+  'tags',
+  '-tags',
 ] as const;
 
 export type DeploymentOrderValue =
@@ -159,16 +168,20 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
         edges {
           node {
             id
+            createdUserId
             metadata {
               name
               status
               createdAt
+              updatedAt
               domainName
               projectId
+              resourceGroupName
               ...DeploymentTagChips_metadata
             }
             networkAccess {
               endpointUrl
+              openToPublic
             }
             replicaState {
               desiredReplicaCount
@@ -207,6 +220,11 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
   const supportsExtendedFilter =
     baiClient?.supports('model-deployment-extended-filter') ?? false;
 
+  const uuidRule = {
+    message: t('general.InvalidUUID'),
+    validate: (value: string) => isValidUUID(value.toLowerCase()),
+  };
+
   const baseFilterProperties = [
     {
       key: 'name',
@@ -222,6 +240,11 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
       key: 'endpointUrl',
       propertyLabel: t('deployment.filter.EndpointUrl'),
       type: 'string' as const,
+    },
+    {
+      key: 'openToPublic',
+      propertyLabel: t('deployment.filter.OpenToPublic'),
+      type: 'boolean' as const,
     },
   ];
 
@@ -239,8 +262,29 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
             type: 'string' as const,
           },
           {
+            key: 'projectId',
+            propertyLabel: t('deployment.filter.ProjectId'),
+            type: 'uuid' as const,
+            fixedOperator: 'equals' as const,
+            rule: uuidRule,
+          },
+          {
+            key: 'createdUserId',
+            propertyLabel: t('deployment.filter.CreatedUserId'),
+            type: 'uuid' as const,
+            fixedOperator: 'equals' as const,
+            rule: uuidRule,
+          },
+          {
             key: 'createdAt',
             propertyLabel: t('deployment.filter.CreatedAt'),
+            type: 'datetime' as const,
+            operators: ['after' as const, 'before' as const],
+            defaultOperator: 'after' as const,
+          },
+          {
+            key: 'destroyedAt',
+            propertyLabel: t('deployment.filter.DestroyedAt'),
             type: 'datetime' as const,
             operators: ['after' as const, 'before' as const],
             defaultOperator: 'after' as const,
@@ -388,6 +432,7 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
       key: 'tags',
       title: t('deployment.Tags'),
       defaultHidden: true,
+      sorter: true,
       render: (_text, row) => (
         <DeploymentTagChips
           metadataFrgmt={row.metadata}
@@ -406,14 +451,78 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
         return createdAt ? dayjs(createdAt).format('ll LT') : '-';
       },
     },
+    {
+      key: 'updatedAt',
+      title: t('deployment.UpdatedAt'),
+      defaultHidden: true,
+      render: (_text, row) => {
+        const updatedAt = row.metadata?.updatedAt;
+        return updatedAt ? dayjs(updatedAt).format('ll LT') : '-';
+      },
+    },
+    {
+      key: 'openToPublic',
+      title: t('deployment.OpenToPublic'),
+      defaultHidden: true,
+      render: (_text, row) => {
+        const isPublic = row.networkAccess?.openToPublic;
+        return (
+          <Typography.Text>
+            {isPublic ? t('deployment.Public') : t('deployment.Private')}
+          </Typography.Text>
+        );
+      },
+    },
+    {
+      key: 'resourceGroup',
+      title: t('deployment.ResourceGroup'),
+      defaultHidden: true,
+      sorter: true,
+      render: (_text, row) => {
+        const resourceGroup = row.metadata?.resourceGroupName;
+        return resourceGroup ? (
+          <Typography.Text>{resourceGroup}</Typography.Text>
+        ) : (
+          <Typography.Text type="secondary">-</Typography.Text>
+        );
+      },
+    },
     isAdminMode && {
       key: 'domainName',
       title: t('deployment.Domain'),
       defaultHidden: true,
+      sorter: true,
       render: (_text, row) => {
         const domain = row.metadata?.domainName;
         return domain ? (
           <Typography.Text>{domain}</Typography.Text>
+        ) : (
+          <Typography.Text type="secondary">-</Typography.Text>
+        );
+      },
+    },
+    isAdminMode && {
+      key: 'projectId',
+      title: t('deployment.ProjectId'),
+      defaultHidden: true,
+      sorter: true,
+      render: (_text, row) => {
+        const projectId = row.metadata?.projectId;
+        return projectId ? (
+          <BAIId globalId={projectId} copyable />
+        ) : (
+          <Typography.Text type="secondary">-</Typography.Text>
+        );
+      },
+    },
+    isAdminMode && {
+      key: 'createdUserId',
+      title: t('deployment.CreatedBy'),
+      defaultHidden: true,
+      render: (_text, row) => {
+        const userId = row.createdUserId;
+        return userId ? (
+          <BAIId globalId={userId} copyable />
         ) : (
           <Typography.Text type="secondary">-</Typography.Text>
         );

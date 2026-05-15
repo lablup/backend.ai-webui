@@ -996,6 +996,7 @@
     "Private": "Приватный",
     "PrivateDeploymentAlertTitle": "Приватное развертывание — используйте токен доступа для обращения к конечной точке.",
     "Project": "Проект",
+    "ProjectId": "ID проекта",
     "Public": "Публичный",
     "QuickDeploy": "Развернуть",
     "QuickDeployDetailed": "Настроить и развернуть...",
@@ -1048,10 +1049,13 @@
     },
     "filter": {
       "CreatedAt": "Создано",
+      "CreatedUserId": "ID создателя",
+      "DestroyedAt": "Удалено",
       "DomainName": "Домен",
       "EndpointUrl": "URL конечной точки",
       "Name": "Имя",
       "OpenToPublic": "Публичное",
+      "ProjectId": "ID проекта",
       "ResourceGroup": "Группа ресурсов",
       "Status": "Статус",
       "Tags": "Теги"

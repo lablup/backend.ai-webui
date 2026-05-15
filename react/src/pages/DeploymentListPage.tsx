@@ -19,6 +19,7 @@ import DeploymentSettingModal from '../components/DeploymentSettingModal';
 import { useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useToggle } from 'ahooks';
 import { Button, Skeleton } from 'antd';
 import {
@@ -72,6 +73,8 @@ const DeploymentListPageContent: React.FC = () => {
 
   const [fetchKey, updateFetchKey] = useFetchKey();
 
+  const currentProject = useCurrentProjectValue();
+
   const sort = tableOrderToSort(queryParams.order);
   const orderBy: DeploymentOrderBy[] | undefined = sort
     ? [
@@ -86,10 +89,14 @@ const DeploymentListPageContent: React.FC = () => {
     queryParams.statusCategory === 'finished'
       ? { status: { in: finishedStatuses } }
       : { status: { notIn: finishedStatuses } };
+  const projectFilter: DeploymentFilter = currentProject.id
+    ? { projectId: { equals: currentProject.id } }
+    : {};
   const queryVariables = {
     filter: {
       ...((queryParams.filter ?? {}) as DeploymentFilter),
       ...statusCategoryFilter,
+      ...projectFilter,
     },
     orderBy,
     limit: baiPaginationOption.limit,

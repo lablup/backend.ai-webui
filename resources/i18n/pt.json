@@ -996,6 +996,7 @@
     "Private": "Privado",
     "PrivateDeploymentAlertTitle": "Implementação privada — utilize um token de acesso para aceder ao endpoint.",
     "Project": "Projeto",
+    "ProjectId": "ID do projeto",
     "Public": "Público",
     "QuickDeploy": "Implementar",
     "QuickDeployDetailed": "Configurar e implementar...",
@@ -1048,10 +1049,13 @@
     },
     "filter": {
       "CreatedAt": "Criado em",
+      "CreatedUserId": "ID do criador",
+      "DestroyedAt": "Eliminado em",
       "DomainName": "Domínio",
       "EndpointUrl": "URL do endpoint",
       "Name": "Nome",
       "OpenToPublic": "Público",
+      "ProjectId": "ID do projeto",
       "ResourceGroup": "Grupo de recursos",
       "Status": "Estado",
       "Tags": "Etiquetas"

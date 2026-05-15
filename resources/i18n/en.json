@@ -1015,6 +1015,7 @@
     "Private": "Private",
     "PrivateDeploymentAlertTitle": "Private deployment — use an access token to access the endpoint.",
     "Project": "Project",
+    "ProjectId": "Project ID",
     "Public": "Public",
     "QuickDeploy": "Deploy",
     "QuickDeployDetailed": "Configure and deploy",
@@ -1067,10 +1068,13 @@
     },
     "filter": {
       "CreatedAt": "Created At",
+      "CreatedUserId": "Creator ID",
+      "DestroyedAt": "Destroyed At",
       "DomainName": "Domain",
       "EndpointUrl": "Endpoint URL",
       "Name": "Name",
       "OpenToPublic": "Public",
+      "ProjectId": "Project ID",
       "ResourceGroup": "Resource Group",
       "Status": "Status",
       "Tags": "Tags"

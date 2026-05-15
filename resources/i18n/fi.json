@@ -996,6 +996,7 @@
     "Private": "Yksityinen",
     "PrivateDeploymentAlertTitle": "Yksityinen käyttöönotto — käytä käyttöoikeustunnusta päätepisteen käyttämiseen.",
     "Project": "Projekti",
+    "ProjectId": "Projektin tunnus",
     "Public": "Julkinen",
     "QuickDeploy": "Ota käyttöön",
     "QuickDeployDetailed": "Määritä ja ota käyttöön...",
@@ -1048,10 +1049,13 @@
     },
     "filter": {
       "CreatedAt": "Luotu",
+      "CreatedUserId": "Luojan tunnus",
+      "DestroyedAt": "Tuhottu",
       "DomainName": "Verkkotunnus",
       "EndpointUrl": "Päätepisteen URL",
       "Name": "Nimi",
       "OpenToPublic": "Julkinen",
+      "ProjectId": "Projektin tunnus",
       "ResourceGroup": "Resurssiryhmä",
       "Status": "Tila",
       "Tags": "Tunnisteet"

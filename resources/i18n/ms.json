@@ -996,6 +996,7 @@
     "Private": "Peribadi",
     "PrivateDeploymentAlertTitle": "Penerapan persendirian — gunakan token akses untuk mengakses titik akhir.",
     "Project": "Projek",
+    "ProjectId": "ID projek",
     "Public": "Awam",
     "QuickDeploy": "Gunakan",
     "QuickDeployDetailed": "Konfigurasi dan gunakan...",
@@ -1048,10 +1049,13 @@
     },
     "filter": {
       "CreatedAt": "Dicipta Pada",
+      "CreatedUserId": "ID Pencipta",
+      "DestroyedAt": "Dimusnahkan Pada",
       "DomainName": "Domain",
       "EndpointUrl": "URL Titik Akhir",
       "Name": "Nama",
       "OpenToPublic": "Awam",
+      "ProjectId": "ID projek",
       "ResourceGroup": "Kumpulan Sumber",
       "Status": "Status",
       "Tags": "Tag"

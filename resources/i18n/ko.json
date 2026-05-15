@@ -997,6 +997,7 @@
     "Private": "비공개",
     "PrivateDeploymentAlertTitle": "비공개 배포입니다. 엔드포인트를 사용하려면 액세스 토큰을 사용해야 합니다.",
     "Project": "프로젝트",
+    "ProjectId": "프로젝트 ID",
     "Public": "공개",
     "QuickDeploy": "배포",
     "QuickDeployDetailed": "구성 및 배포...",
@@ -1049,10 +1050,13 @@
     },
     "filter": {
       "CreatedAt": "생성일",
+      "CreatedUserId": "생성자 ID",
+      "DestroyedAt": "삭제일",
       "DomainName": "도메인",
       "EndpointUrl": "엔드포인트 URL",
       "Name": "이름",
       "OpenToPublic": "공개",
+      "ProjectId": "프로젝트 ID",
       "ResourceGroup": "리소스 그룹",
       "Status": "상태",
       "Tags": "태그"

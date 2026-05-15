@@ -996,6 +996,7 @@
     "Private": "Privat",
     "PrivateDeploymentAlertTitle": "Private Bereitstellung — verwenden Sie ein Zugriffstoken, um auf den Endpunkt zuzugreifen.",
     "Project": "Projekt",
+    "ProjectId": "Projekt-ID",
     "Public": "Öffentlich",
     "QuickDeploy": "Bereitstellen",
     "QuickDeployDetailed": "Konfigurieren und bereitstellen...",
@@ -1048,10 +1049,13 @@
     },
     "filter": {
       "CreatedAt": "Erstellt am",
+      "CreatedUserId": "Ersteller-ID",
+      "DestroyedAt": "Gelöscht am",
       "DomainName": "Domäne",
       "EndpointUrl": "Endpunkt-URL",
       "Name": "Name",
       "OpenToPublic": "Öffentlich",
+      "ProjectId": "Projekt-ID",
       "ResourceGroup": "Ressourcengruppe",
       "Status": "Status",
       "Tags": "Tags"

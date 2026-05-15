@@ -996,6 +996,7 @@
     "Private": "Хувийн",
     "PrivateDeploymentAlertTitle": "Хувийн хэрэгжүүлэлт — төгсгөлийн цэгт хандахын тулд хандалтын токен ашиглана уу.",
     "Project": "Төсөл",
+    "ProjectId": "Төслийн ID",
     "Public": "Нийтийн",
     "QuickDeploy": "Байршуулах",
     "QuickDeployDetailed": "Тохиргоо хийж байршуулах...",
@@ -1048,10 +1049,13 @@
     },
     "filter": {
       "CreatedAt": "Үүсгэсэн огноо",
+      "CreatedUserId": "Үүсгэгчийн ID",
+      "DestroyedAt": "Устгасан огноо",
       "DomainName": "Домайн",
       "EndpointUrl": "Endpoint URL",
       "Name": "Нэр",
       "OpenToPublic": "Нийтэд нээлттэй",
+      "ProjectId": "Төслийн ID",
       "ResourceGroup": "Нөөцийн бүлэг",
       "Status": "Төлөв",
       "Tags": "Шошго"

@@ -996,6 +996,7 @@
     "Private": "非公開",
     "PrivateDeploymentAlertTitle": "非公開デプロイメントです。エンドポイントの使用にはアクセストークンが必要です。",
     "Project": "プロジェクト",
+    "ProjectId": "プロジェクトID",
     "Public": "公開",
     "QuickDeploy": "デプロイ",
     "QuickDeployDetailed": "設定してデプロイ...",
@@ -1048,10 +1049,13 @@
     },
     "filter": {
       "CreatedAt": "作成日時",
+      "CreatedUserId": "作成者ID",
+      "DestroyedAt": "削除日時",
       "DomainName": "ドメイン",
       "EndpointUrl": "エンドポイントURL",
       "Name": "名前",
       "OpenToPublic": "公開",
+      "ProjectId": "プロジェクトID",
       "ResourceGroup": "リソースグループ",
       "Status": "状態",
       "Tags": "タグ"

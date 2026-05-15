@@ -997,6 +997,7 @@
     "Private": "私有",
     "PrivateDeploymentAlertTitle": "私有部署 — 使用存取權杖存取端點。",
     "Project": "專案",
+    "ProjectId": "專案 ID",
     "Public": "公開",
     "QuickDeploy": "部署",
     "QuickDeployDetailed": "設定並部署...",
@@ -1049,10 +1050,13 @@
     },
     "filter": {
       "CreatedAt": "建立時間",
+      "CreatedUserId": "建立者 ID",
+      "DestroyedAt": "刪除時間",
       "DomainName": "網域",
       "EndpointUrl": "端點 URL",
       "Name": "名稱",
       "OpenToPublic": "公開",
+      "ProjectId": "專案 ID",
       "ResourceGroup": "資源群組",
       "Status": "狀態",
       "Tags": "標籤"
