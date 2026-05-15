@@ -14,8 +14,7 @@ import {
   numberSorterWithInfinityValue,
 } from '../helper';
 import { exportCSVWithFormattingRules } from '../helper/csv-util';
-import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
-import TableColumnsSettingModal from './TableColumnsSettingModal';
+import { useBAISettingUserState } from '../hooks/useBAISetting';
 import UserResourcePolicySettingModal from './UserResourcePolicySettingModal';
 import {
   DeleteFilled,
@@ -23,8 +22,7 @@ import {
   ReloadOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
-import { useToggle } from 'ahooks';
-import { App, Button, Dropdown, Tooltip } from 'antd';
+import { App, Button, Tooltip } from 'antd';
 import type { ColumnType } from 'antd/es/table';
 import {
   useUpdatableState,
@@ -37,7 +35,6 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { EllipsisIcon } from 'lucide-react';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
@@ -58,8 +55,6 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
   const [userResourcePolicyFetchKey, updateUserResourcePolicyFetchKey] =
     useUpdatableState('initial-fetch');
   const [isCreatingPolicySetting, setIsCreatingPolicySetting] = useState(false);
-  const [visibleColumnSettingModal, { toggle: toggleColumnSettingModal }] =
-    useToggle();
   const [editingUserResourcePolicy, setEditingUserResourcePolicy] =
     useState<UserResourcePolicySettingModalFragment$key | null>();
   const [deletingPolicyName, setDeletingPolicyName] = useState<string | null>(
@@ -191,24 +186,28 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
     },
   ]);
 
-  const [hiddenColumnKeys, setHiddenColumnKeys] = useHiddenColumnKeysSetting(
-    'UserResourcePolicyList',
+  const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
+    'table_column_overrides.UserResourcePolicyList',
   );
 
-  const handleExportCSV = () => {
-    if (
-      !user_resource_policies ||
-      user_resource_policies.length === hiddenColumnKeys?.length
-    ) {
+  const supportedFields = _.compact(
+    _.map(columns, (column) => _.toString(column.key)),
+  );
+
+  const handleExportCSV = (selectedExportKeys: string[]) => {
+    if (selectedExportKeys.length === 0) {
+      message.error(t('resourcePolicy.NoDataToExport'));
+      return;
+    }
+    if (!user_resource_policies) {
       message.error(t('resourcePolicy.NoDataToExport'));
       return;
     }
 
-    const columnKeys = _.map(columns, (column) => _.toString(column.key));
     const responseData = _.map(user_resource_policies, (policy) => {
       return _.pick(
         policy,
-        columnKeys.map((key) => key as keyof UserResourcePolicies),
+        selectedExportKeys.map((key) => key as keyof UserResourcePolicies),
       );
     });
 
@@ -225,87 +224,45 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
   return (
     <BAIFlex direction="column" align="stretch" gap="sm">
       <BAIFlex direction="row" justify="end" wrap="wrap" gap={'xs'}>
-        <BAIFlex
-          direction="row"
-          gap={'xs'}
-          wrap="wrap"
-          style={{ flexShrink: 1 }}
-        >
-          <Dropdown
-            menu={{
-              items: [
-                {
-                  key: 'exportCSV',
-                  label: t('resourcePolicy.ExportCSV'),
-                  onClick: () => {
-                    handleExportCSV();
-                  },
-                },
-              ],
-            }}
-            trigger={['click']}
-          >
-            <Button icon={<EllipsisIcon />} />
-          </Dropdown>
-          <BAIFlex gap={'xs'}>
-            <Tooltip title={t('button.Refresh')}>
-              <Button
-                icon={<ReloadOutlined />}
-                loading={isRefetchPending}
-                onClick={() => {
-                  startRefetchTransition(() =>
-                    updateUserResourcePolicyFetchKey(),
-                  );
-                }}
-              />
-            </Tooltip>
+        <BAIFlex gap={'xs'}>
+          <Tooltip title={t('button.Refresh')}>
             <Button
-              type="primary"
-              icon={<PlusOutlined />}
+              icon={<ReloadOutlined />}
+              loading={isRefetchPending}
               onClick={() => {
-                setIsCreatingPolicySetting(true);
+                startRefetchTransition(() =>
+                  updateUserResourcePolicyFetchKey(),
+                );
               }}
-            >
-              {t('button.Create')}
-            </Button>
-          </BAIFlex>
+            />
+          </Tooltip>
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() => {
+              setIsCreatingPolicySetting(true);
+            }}
+          >
+            {t('button.Create')}
+          </Button>
         </BAIFlex>
       </BAIFlex>
       <BAITable
         rowKey="id"
         showSorterTooltip={false}
-        columns={_.filter(
-          columns,
-          (column) => !_.includes(hiddenColumnKeys, _.toString(column?.key)),
-        )}
+        columns={columns}
         dataSource={filterOutNullAndUndefined(user_resource_policies)}
         scroll={{ x: 'max-content' }}
-        pagination={{
-          extraContent: (
-            <Button
-              type="text"
-              icon={<SettingOutlined />}
-              onClick={() => {
-                toggleColumnSettingModal();
-              }}
-            />
-          ),
+        tableSettings={{
+          columnOverrides: columnOverrides,
+          onColumnOverridesChange: setColumnOverrides,
         }}
-      />
-      <TableColumnsSettingModal
-        open={visibleColumnSettingModal}
-        onRequestClose={(values) => {
-          values?.selectedColumnKeys &&
-            setHiddenColumnKeys(
-              _.difference(
-                columns.map((column) => _.toString(column.key)),
-                values?.selectedColumnKeys,
-              ),
-            );
-          toggleColumnSettingModal();
+        exportSettings={{
+          supportedFields,
+          onExport: async (selectedExportKeys) => {
+            handleExportCSV(selectedExportKeys);
+          },
         }}
-        columns={columns}
-        hiddenColumnKeys={hiddenColumnKeys}
       />
       <UserResourcePolicySettingModal
         existingPolicyNames={_.map(user_resource_policies, 'name')}

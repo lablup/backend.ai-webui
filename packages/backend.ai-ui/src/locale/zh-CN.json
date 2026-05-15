@@ -63,6 +63,9 @@
     "Updated": "更新",
     "Version": "版本"
   },
+  "comp:BAIAvailablePresetSelect": {
+    "SelectPreset": "选择预设"
+  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "发生意外错误。请稍后重试，若问题仍然存在，请联系支持。"
   },
@@ -237,6 +240,9 @@
     "TotalResourceSlots": "资源插槽总数",
     "Type": "类型"
   },
+  "comp:BAIProjectVfolderSelect": {
+    "SelectFolder": "选择文件夹"
+  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "搜索",
     "ResetFilter": "重置过滤器"
@@ -261,6 +267,9 @@
     "Status": "状态",
     "TrafficRatio": "流量比例",
     "TrafficStatus": "流量状态"
+  },
+  "comp:BAIRuntimeVariantSelect": {
+    "SelectRuntimeVariant": "选择运行时变体"
   },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "尝试次数",
@@ -333,6 +342,7 @@
     "ModifiedAt": "修改为",
     "MoreOptions": "更多选项",
     "Name": "姓名",
+    "NoUploadPermissionForHost": "您没有此存储主机的上传权限。",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "请输入文件夹名称。",
     "RenameSuccess": "该名称已成功更改。",

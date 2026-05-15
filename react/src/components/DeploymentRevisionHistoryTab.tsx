@@ -10,9 +10,9 @@ import {
 } from '../__generated__/DeploymentRevisionHistoryTabListQuery.graphql';
 import type { DeploymentRevisionHistoryTab_deployment$key } from '../__generated__/DeploymentRevisionHistoryTab_deployment.graphql';
 import { convertToOrderBy } from '../helper';
-import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
+import QuestionIconWithTooltip from './QuestionIconWithTooltip';
 import { LoadingOutlined, PlayCircleOutlined } from '@ant-design/icons';
 import { App, Button, Typography, theme } from 'antd';
 import {
@@ -64,7 +64,6 @@ type RevisionNode = NonNullable<
 const availableRevisionSorterKeys = [
   'revisionNumber',
   'createdAt',
-  'resourceGroup',
   'clusterMode',
   'runtimeVariantName',
 ] as const;
@@ -101,9 +100,8 @@ const DeploymentRevisionHistoryTab: React.FC<
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { modal } = App.useApp();
+  const { modal, message } = App.useApp();
   const { logger } = useBAILogger();
-  const { upsertNotification } = useSetBAINotification();
   const [isPending, startTransition] = useTransition();
   const [rollingBackRevisionId, setRollingBackRevisionId] = useState<
     string | null
@@ -213,9 +211,6 @@ const DeploymentRevisionHistoryTab: React.FC<
                     mode
                     size
                   }
-                  resourceConfig {
-                    resourceGroupName
-                  }
                   modelRuntimeConfig {
                     runtimeVariant {
                       name
@@ -265,8 +260,14 @@ const DeploymentRevisionHistoryTab: React.FC<
           deployment {
             id
             currentRevisionId
-            currentRevision {
+            deployingRevisionId
+            currentRevision @since(version: "26.4.3") {
               id
+              ...DeploymentRevisionDetail_revision
+            }
+            deployingRevision @since(version: "26.4.3") {
+              id
+              ...DeploymentRevisionDetail_revision
             }
           }
           previousRevisionId
@@ -301,11 +302,11 @@ const DeploymentRevisionHistoryTab: React.FC<
   const handleRollback = (revision: RevisionNode): Promise<boolean> => {
     return new Promise<boolean>((resolveOuter) => {
       modal.confirm({
-        title: t('deployment.Deploy'),
-        content: t('deployment.DeployConfirm', {
+        title: t('deployment.Apply'),
+        content: t('deployment.ApplyConfirm', {
           revisionNumber: revision.revisionNumber,
         }),
-        okText: t('deployment.Deploy'),
+        okText: t('deployment.Apply'),
         okButtonProps: {
           danger: true,
         },
@@ -324,21 +325,18 @@ const DeploymentRevisionHistoryTab: React.FC<
                 setRollingBackRevisionId(null);
                 if (errors && errors.length > 0) {
                   logger.error(errors[0]);
-                  upsertNotification({
-                    open: true,
-                    message: errors[0]?.message || t('general.ErrorOccurred'),
-                    type: 'error',
-                  });
+                  message.error(
+                    errors[0]?.message || t('general.ErrorOccurred'),
+                  );
                   resolveOuter(false);
                   resolve();
                   return;
                 }
-                upsertNotification({
-                  open: true,
-                  message: t('deployment.DeploySuccess', {
+                message.success(
+                  t('deployment.ApplySuccess', {
                     revisionNumber: revision.revisionNumber,
                   }),
-                });
+                );
                 handleRefresh();
                 resolveOuter(true);
                 resolve();
@@ -346,11 +344,7 @@ const DeploymentRevisionHistoryTab: React.FC<
               onError: (error) => {
                 setRollingBackRevisionId(null);
                 logger.error(error);
-                upsertNotification({
-                  open: true,
-                  message: error?.message || t('general.ErrorOccurred'),
-                  type: 'error',
-                });
+                message.error(error?.message || t('general.ErrorOccurred'));
                 resolveOuter(false);
                 resolve();
               },
@@ -363,7 +357,14 @@ const DeploymentRevisionHistoryTab: React.FC<
 
   const columns: BAIColumnType<RevisionNode>[] = [
     {
-      title: t('deployment.RevisionNumberWithID'),
+      title: (
+        <BAIFlex gap="xxs" align="center">
+          {t('deployment.RevisionNumberWithID')}
+          <QuestionIconWithTooltip
+            title={t('deployment.RevisionNumberTooltip')}
+          />
+        </BAIFlex>
+      ),
       dataIndex: 'revisionNumber',
       key: 'revisionNumber',
       fixed: 'left',
@@ -377,7 +378,7 @@ const DeploymentRevisionHistoryTab: React.FC<
         const isCurrent = recordLocalId === currentRevisionId;
         const isDeploying = recordLocalId === deployingRevisionId;
         const deployDisabledReason =
-          isCurrent || isDeploying ? t('deployment.DeployDisabled') : undefined;
+          isCurrent || isDeploying ? t('deployment.ApplyDisabled') : undefined;
         const isDeployDisabled =
           isCurrent ||
           isDeploying ||
@@ -419,7 +420,7 @@ const DeploymentRevisionHistoryTab: React.FC<
                   // reconciler clears it, and showing both tags side by
                   // side reads as a contradiction.
                   <BAITag color="warning" icon={<LoadingOutlined spin />}>
-                    {t('deployment.Deploying')}
+                    {t('deployment.Applying')}
                   </BAITag>
                 ) : null}
               </BAIFlex>
@@ -428,7 +429,7 @@ const DeploymentRevisionHistoryTab: React.FC<
             actions={[
               {
                 key: 'deploy',
-                title: t('deployment.Deploy'),
+                title: t('deployment.Apply'),
                 icon: <PlayCircleOutlined />,
                 disabled: isDeployDisabled,
                 disabledReason: deployDisabledReason,
@@ -534,7 +535,12 @@ const DeploymentRevisionHistoryTab: React.FC<
       },
     },
     {
-      title: t('deployment.ClusterMode'),
+      title: (
+        <BAIFlex gap="xxs" align="center">
+          {t('deployment.ClusterMode')}
+          <QuestionIconWithTooltip title={t('deployment.ClusterModeTooltip')} />
+        </BAIFlex>
+      ),
       key: 'clusterMode',
       dataIndex: 'clusterMode',
       sorter: true,
@@ -546,15 +552,6 @@ const DeploymentRevisionHistoryTab: React.FC<
         if (size == null) return mode;
         return `${mode} / ${size}`;
       },
-    },
-    {
-      title: t('deployment.ResourceGroup'),
-      key: 'resourceGroup',
-      dataIndex: 'resourceGroup',
-      sorter: true,
-      defaultHidden: true,
-      render: (_value, record) =>
-        record.resourceConfig?.resourceGroupName ?? '-',
     },
   ];
 
@@ -575,11 +572,6 @@ const DeploymentRevisionHistoryTab: React.FC<
       type: 'datetime' as const,
       operators: ['after' as const, 'before' as const],
       defaultOperator: 'after' as const,
-    },
-    {
-      key: 'resourceGroup',
-      propertyLabel: t('deployment.ResourceGroup'),
-      type: 'string' as const,
     },
     {
       key: 'clusterMode',
@@ -630,7 +622,7 @@ const DeploymentRevisionHistoryTab: React.FC<
                   if (success) setDrawerRevision(null);
                 }}
               >
-                {t('deployment.Deploy')}
+                {t('deployment.Apply')}
               </Button>
             ) : undefined
           }

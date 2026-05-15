@@ -63,6 +63,9 @@
     "Updated": "Diperbarui",
     "Version": "Versi"
   },
+  "comp:BAIAvailablePresetSelect": {
+    "SelectPreset": "Pilih Preset"
+  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Terjadi kesalahan tak terduga. Silakan coba lagi nanti atau hubungi dukungan jika masalah berlanjut."
   },
@@ -237,6 +240,9 @@
     "TotalResourceSlots": "Jumlah Slot Sumber Daya",
     "Type": "Tipe"
   },
+  "comp:BAIProjectVfolderSelect": {
+    "SelectFolder": "Pilih Folder"
+  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Pencarian",
     "ResetFilter": "Setel ulang filter"
@@ -261,6 +267,9 @@
     "Status": "Status",
     "TrafficRatio": "Rasio Lalu Lintas",
     "TrafficStatus": "Status Trafik"
+  },
+  "comp:BAIRuntimeVariantSelect": {
+    "SelectRuntimeVariant": "Pilih Varian Runtime"
   },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "Percobaan",
@@ -333,6 +342,7 @@
     "ModifiedAt": "Dimodifikasi di",
     "MoreOptions": "Opsi lainnya",
     "Name": "Nama",
+    "NoUploadPermissionForHost": "Anda tidak memiliki izin unggah untuk host ini.",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Harap masukkan nama folder.",
     "RenameSuccess": "Namanya telah berhasil diubah.",

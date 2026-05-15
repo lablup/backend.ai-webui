@@ -12,6 +12,7 @@ import { Descriptions, Grid, Typography } from 'antd';
 import { DescriptionsItemType } from 'antd/es/descriptions';
 import {
   BAIFlex,
+  BAIId,
   BAIResourceNumberWithIcon,
   BAITag,
   BAIText,
@@ -31,7 +32,14 @@ const renderFallback = () => (
 const DeploymentRevisionDetail: React.FC<{
   revisionFrgmt: DeploymentRevisionDetail_revision$key;
   status?: 'current' | 'deploying' | 'none';
-}> = ({ revisionFrgmt, status = 'none' }) => {
+  /**
+   * When `true`, render the revision number and revision ID together in a
+   * single "Revision (ID)" item, mirroring the revision history table.
+   * Defaults to `false`, which keeps the two-item layout used by the
+   * revision detail drawer.
+   */
+  mergeRevisionInfo?: boolean;
+}> = ({ revisionFrgmt, status = 'none', mergeRevisionInfo = false }) => {
   'use memo';
   const { t } = useTranslation();
   const screens = Grid.useBreakpoint();
@@ -45,9 +53,6 @@ const DeploymentRevisionDetail: React.FC<{
         clusterConfig {
           mode
           size
-        }
-        resourceConfig {
-          resourceGroupName
         }
         resourceSlots @since(version: "26.4.2") {
           slotName
@@ -100,6 +105,8 @@ const DeploymentRevisionDetail: React.FC<{
                 path
                 initialDelay
                 maxRetries
+                interval
+                maxWaitTime
               }
             }
           }
@@ -110,7 +117,6 @@ const DeploymentRevisionDetail: React.FC<{
   );
 
   const clusterConfig = revision.clusterConfig;
-  const resourceConfig = revision.resourceConfig;
   const runtimeConfig = revision.modelRuntimeConfig;
   const mountConfig = revision.modelMountConfig;
   const extraMounts = revision.extraMounts ?? [];
@@ -128,17 +134,47 @@ const DeploymentRevisionDetail: React.FC<{
   } as const;
 
   const baseItems: DescriptionsItemType[] = filterOutEmpty([
-    {
-      key: 'revision-number',
-      label: t('deployment.RevisionNumber'),
-      children:
-        revision.revisionNumber != null ? (
-          <BAIText>{`#${revision.revisionNumber}`}</BAIText>
-        ) : (
-          renderFallback()
-        ),
-    },
-    {
+    mergeRevisionInfo
+      ? {
+          key: 'revision',
+          label: t('deployment.RevisionNumberWithID'),
+          children:
+            revision.revisionNumber != null || revision.id ? (
+              <BAIFlex gap="xs" align="center">
+                {revision.revisionNumber != null ? (
+                  <BAIText>{`#${revision.revisionNumber}`}</BAIText>
+                ) : null}
+                {revision.id ? (
+                  <BAIFlex gap={0} align="center">
+                    {'('}
+                    <BAIId globalId={revision.id} />
+                    {')'}
+                  </BAIFlex>
+                ) : null}
+                {status === 'current' && (
+                  <BAITag color="success">{t('deployment.Current')}</BAITag>
+                )}
+                {status === 'deploying' && (
+                  <BAITag color="warning" icon={<LoadingOutlined spin />}>
+                    {t('deployment.Applying')}
+                  </BAITag>
+                )}
+              </BAIFlex>
+            ) : (
+              renderFallback()
+            ),
+        }
+      : {
+          key: 'revision-number',
+          label: t('deployment.RevisionNumber'),
+          children:
+            revision.revisionNumber != null ? (
+              <BAIText>{`#${revision.revisionNumber}`}</BAIText>
+            ) : (
+              renderFallback()
+            ),
+        },
+    !mergeRevisionInfo && {
       key: 'revision-id',
       label: t('modelService.RevisionID'),
       children: revision.id ? (
@@ -149,7 +185,7 @@ const DeploymentRevisionDetail: React.FC<{
           )}
           {status === 'deploying' && (
             <BAITag color="warning" icon={<LoadingOutlined spin />}>
-              {t('deployment.Deploying')}
+              {t('deployment.Applying')}
             </BAITag>
           )}
         </BAIFlex>
@@ -163,11 +199,6 @@ const DeploymentRevisionDetail: React.FC<{
       children: revision.createdAt
         ? dayjs(revision.createdAt).format('lll')
         : renderFallback(),
-    },
-    {
-      key: 'resource-group',
-      label: t('deployment.ResourceGroup'),
-      children: resourceConfig?.resourceGroupName || renderFallback(),
     },
     {
       key: 'resource-slots',
@@ -378,6 +409,18 @@ const DeploymentRevisionDetail: React.FC<{
                     label: `${prefix}${t('modelService.MaxRetries')}`,
                     children:
                       model.service.healthCheck.maxRetries ?? renderFallback(),
+                  },
+                  {
+                    key: `model-interval-${idx}`,
+                    label: `${prefix}${t('modelService.Interval')}`,
+                    children:
+                      model.service.healthCheck.interval ?? renderFallback(),
+                  },
+                  {
+                    key: `model-max-wait-time-${idx}`,
+                    label: `${prefix}${t('modelService.MaxWaitTime')}`,
+                    children:
+                      model.service.healthCheck.maxWaitTime ?? renderFallback(),
                   },
                 ] as DescriptionsItemType[])
               : []),

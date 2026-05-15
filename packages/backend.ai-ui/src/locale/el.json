@@ -63,6 +63,9 @@
     "Updated": "Ενημερωμένος",
     "Version": "Εκδοχή"
   },
+  "comp:BAIAvailablePresetSelect": {
+    "SelectPreset": "Επιλέξτε προεπιλογή"
+  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Προέκυψε απρόσμενο σφάλμα. Δοκιμάστε ξανά αργότερα ή επικοινωνήστε με την υποστήριξη εάν το πρόβλημα επιμένει."
   },
@@ -237,6 +240,9 @@
     "TotalResourceSlots": "Συνολικές θέσεις πόρων",
     "Type": "Τύπος"
   },
+  "comp:BAIProjectVfolderSelect": {
+    "SelectFolder": "Επιλογή φακέλου"
+  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Αναζήτηση",
     "ResetFilter": "Επαναφορά φίλτρων"
@@ -261,6 +267,9 @@
     "Status": "Κατάσταση",
     "TrafficRatio": "Αναλογία κυκλοφορίας",
     "TrafficStatus": "Κατάσταση δικτύου"
+  },
+  "comp:BAIRuntimeVariantSelect": {
+    "SelectRuntimeVariant": "Επιλογή παραλλαγής χρόνου εκτέλεσης"
   },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "Προσπάθειες",
@@ -333,6 +342,7 @@
     "ModifiedAt": "Τροποποιημένος",
     "MoreOptions": "Περισσότερες επιλογές",
     "Name": "Ονομα",
+    "NoUploadPermissionForHost": "Δεν έχετε άδεια μεταφόρτωσης για αυτόν τον κεντρικό χώρο αποθήκευσης.",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Εισαγάγετε το όνομα του φακέλου.",
     "RenameSuccess": "Το όνομα έχει αλλάξει με επιτυχία.",

@@ -63,6 +63,9 @@
     "Updated": "Updated",
     "Version": "Version"
   },
+  "comp:BAIAvailablePresetSelect": {
+    "SelectPreset": "Select Preset"
+  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "An unexpected error occurred. Please try again later or contact support if the problem persists."
   },
@@ -240,6 +243,9 @@
     "TotalResourceSlots": "Total Resource Slots",
     "Type": "Type"
   },
+  "comp:BAIProjectVfolderSelect": {
+    "SelectFolder": "Select Folder"
+  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Search",
     "ResetFilter": "Reset filters"
@@ -267,6 +273,9 @@
     "Status": "Status",
     "TrafficRatio": "Traffic Ratio",
     "TrafficStatus": "Traffic Status"
+  },
+  "comp:BAIRuntimeVariantSelect": {
+    "SelectRuntimeVariant": "Select Runtime Variant"
   },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "Attempts",
@@ -339,6 +348,7 @@
     "ModifiedAt": "Modified At",
     "MoreOptions": "More options",
     "Name": "Name",
+    "NoUploadPermissionForHost": "You don't have upload permission for this host.",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Please enter the folder name.",
     "RenameSuccess": "The name has been successfully changed.",

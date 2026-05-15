@@ -7,19 +7,23 @@ import {
   ReplicaOrderBy,
 } from '../__generated__/DeploymentReplicasTabListQuery.graphql';
 import { DeploymentReplicasTab_deployment$key } from '../__generated__/DeploymentReplicasTab_deployment.graphql';
+import type { DeploymentRevisionDetail_revision$key } from '../__generated__/DeploymentRevisionDetail_revision.graphql';
 import { convertToOrderBy } from '../helper';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
+import BAIRadioGroup from './BAIRadioGroup';
+import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
+import QuestionIconWithTooltip from './QuestionIconWithTooltip';
 import ReplicaStatusTag, { ReplicaStatus } from './ReplicaStatusTag';
 import SessionDetailDrawer from './SessionDetailDrawer';
-import { Tag, Typography } from 'antd';
+import { Typography } from 'antd';
 import {
   BAIColumnType,
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAIId,
-  BAINameActionCell,
   BAITable,
+  BAITag,
   BAIUnmountAfterClose,
   type GraphQLFilter,
   filterOutEmpty,
@@ -37,7 +41,21 @@ import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 
-const availableReplicaSorterKeys = ['createdAt'] as const;
+type ReplicaStatusCategory = 'running' | 'terminated';
+
+const TERMINATED_STATUSES = ['TERMINATED'] as const;
+
+const buildStatusFilter = (category: ReplicaStatusCategory) =>
+  category === 'terminated'
+    ? { status: { in: [...TERMINATED_STATUSES] } }
+    : { status: { notIn: [...TERMINATED_STATUSES] } };
+
+const mergeWithStatusFilter = (
+  userFilter: Record<string, unknown> | null,
+  category: ReplicaStatusCategory,
+) => ({ ...userFilter, ...buildStatusFilter(category) });
+
+const availableReplicaSorterKeys = ['createdAt', 'id'] as const;
 const availableReplicaSorterValues = [
   ...availableReplicaSorterKeys,
   ...availableReplicaSorterKeys.map((key) => `-${key}` as const),
@@ -46,24 +64,13 @@ const isEnableSorter = (key: string) =>
   _.includes(availableReplicaSorterKeys, key);
 
 /**
- * Maps the GraphQL `LivenessStatus` of a `ModelReplica` (plus the lifecycle
- * statuses exposed via `ReplicaStatus` enum) to the props accepted by
- * `ReplicaStatusTag`. Health states come from `livenessStatus` and lifecycle
- * states are overlaid from the replica's `status` field when available.
+ * Narrow the GraphQL-derived `healthStatus` / `status` enum value to the
+ * union accepted by `ReplicaStatusTag`. The schema enums are strict subsets,
+ * so this is a no-op cast with an `unknown` fallback when the backend later
+ * adds a value the tag does not yet render (e.g. `WARMING_UP` for `status`).
  */
-const toReplicaTagStatus = (livenessStatus?: string | null): ReplicaStatus => {
-  switch (livenessStatus) {
-    case 'HEALTHY':
-      return 'HEALTHY';
-    case 'UNHEALTHY':
-      return 'UNHEALTHY';
-    case 'DEGRADED':
-      return 'DEGRADED';
-    case 'NOT_CHECKED':
-    default:
-      return 'NOT_CHECKED';
-  }
-};
+const toReplicaTagStatus = (value?: string | null): ReplicaStatus =>
+  (value as ReplicaStatus) ?? 'NOT_CHECKED';
 
 interface DeploymentReplicasTabProps {
   deploymentFrgmt: DeploymentReplicasTab_deployment$key;
@@ -88,6 +95,10 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
       pageSize: parseAsInteger.withDefault(10),
       order: parseAsStringLiteral(availableReplicaSorterValues),
       rFilter: parseAsString,
+      rStatusCategory: parseAsStringLiteral<ReplicaStatusCategory>([
+        'running',
+        'terminated',
+      ]).withDefault('running'),
     },
     {
       history: 'replace',
@@ -96,6 +107,7 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
         pageSize: 'rPageSize',
         order: 'rOrder',
         rFilter: 'rFilter',
+        rStatusCategory: 'rStatusCategory',
       },
     },
   );
@@ -129,11 +141,12 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
   };
 
   const [queryVars, setQueryVars] = useState(() => ({
-    filter: queryParams.rFilter
-      ? parseReplicaFilter(queryParams.rFilter)
-      : null,
+    filter: mergeWithStatusFilter(
+      queryParams.rFilter ? parseReplicaFilter(queryParams.rFilter) : null,
+      queryParams.rStatusCategory,
+    ),
     orderBy: convertToOrderBy<ReplicaOrderBy>(
-      queryParams.order ?? '-createdAt',
+      queryParams.order || '-createdAt',
     ),
     limit: queryParams.pageSize,
     offset:
@@ -146,6 +159,8 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
   const [selectedSessionId, setSelectedSessionId] = useState<string | null>(
     null,
   );
+  const [drawerRevisionFrgmt, setDrawerRevisionFrgmt] =
+    useState<DeploymentRevisionDetail_revision$key | null>(null);
 
   const { deployment: listData } =
     useLazyLoadQuery<DeploymentReplicasTabListQuery>(
@@ -170,12 +185,20 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
                   id
                   sessionId
                   revisionId
-                  readinessStatus
-                  livenessStatus
-                  activenessStatus
+                  status
+                  trafficStatus
+                  healthStatus
                   createdAt
                   revision {
                     id
+                    revisionNumber
+                    ...DeploymentRevisionDetail_revision
+                  }
+                  sessionV2 @since(version: "26.4.3") {
+                    id
+                    metadata {
+                      name
+                    }
                   }
                 }
               }
@@ -205,20 +228,18 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
     });
   };
 
-  const replicaStatusOptions = [
-    { label: t('replicaStatus.Provisioning'), value: 'PROVISIONING' },
-    { label: t('replicaStatus.Running'), value: 'RUNNING' },
-    { label: t('replicaStatus.Terminating'), value: 'TERMINATING' },
-    { label: t('replicaStatus.Terminated'), value: 'TERMINATED' },
-    { label: t('replicaStatus.FailedToStart'), value: 'FAILED_TO_START' },
+  const trafficStatusOptions = [
+    { label: t('replicaStatus.Active'), value: 'ACTIVE' },
+    { label: t('replicaStatus.Inactive'), value: 'INACTIVE' },
   ];
 
   const filterProperties = [
     {
-      key: 'status',
-      propertyLabel: t('general.Status'),
+      key: 'trafficStatus',
+      propertyLabel: t('deployment.TrafficStatus'),
       type: 'enum' as const,
-      options: replicaStatusOptions,
+      options: trafficStatusOptions,
+      strictSelection: true,
     },
   ];
 
@@ -232,12 +253,41 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
       title: t('deployment.ReplicaId'),
       dataIndex: 'id',
       fixed: 'left',
+      sorter: isEnableSorter('id'),
       render: (value: string) => <BAIId globalId={value} copyable />,
     },
     {
-      key: 'livenessStatus',
-      title: t('deployment.HealthStatus'),
-      dataIndex: 'livenessStatus',
+      // Lifecycle status (PROVISIONING → RUNNING → TERMINATING …) shown
+      // separately from the health (`healthStatus`) and traffic
+      // (`trafficStatus`) columns below. The three columns answer different
+      // questions: this one is "where is the replica in its lifecycle?",
+      // HealthStatus is "is it currently healthy?", TrafficStatus is "is it
+      // taking traffic right now?".
+      key: 'status',
+      title: (
+        <BAIFlex gap="xxs" align="center">
+          {t('general.Status')}
+          <QuestionIconWithTooltip
+            title={t('deployment.ReplicaLifecycleStatusTooltip')}
+          />
+        </BAIFlex>
+      ),
+      dataIndex: 'status',
+      render: (value: string | null | undefined) => (
+        <ReplicaStatusTag status={toReplicaTagStatus(value)} />
+      ),
+    },
+    {
+      key: 'healthStatus',
+      title: (
+        <BAIFlex gap="xxs" align="center">
+          {t('deployment.HealthStatus')}
+          <QuestionIconWithTooltip
+            title={t('deployment.HealthStatusTooltip')}
+          />
+        </BAIFlex>
+      ),
+      dataIndex: 'healthStatus',
       render: (value: string | null | undefined) => (
         // TODO(needs-backend): FR-2787 — expose failure reason / error message
         // from the replica once the backend adds a `failureReason` field to
@@ -246,53 +296,92 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
       ),
     },
     {
-      key: 'activenessStatus',
-      title: t('deployment.ActivePool'),
-      dataIndex: 'activenessStatus',
+      key: 'trafficStatus',
+      title: (
+        <BAIFlex gap="xxs" align="center">
+          {t('deployment.TrafficStatus')}
+          <QuestionIconWithTooltip
+            title={t('deployment.TrafficStatusTooltip')}
+          />
+        </BAIFlex>
+      ),
+      dataIndex: 'trafficStatus',
       render: (value: string | null | undefined) => (
-        <Tag color={value === 'ACTIVE' ? 'green' : 'default'}>
+        <BAITag color={value === 'ACTIVE' ? 'success' : 'default'}>
           {value === 'ACTIVE'
-            ? t('deployment.status.Healthy')
-            : t('deployment.status.NotChecked')}
-        </Tag>
+            ? t('replicaStatus.Active')
+            : t('replicaStatus.Inactive')}
+        </BAITag>
       ),
     },
     {
-      // TODO(needs-backend): FR-2677 — expose `trafficRatio` on ModelReplica
-      // (or merge Route data) so the replica row can show per-replica load
-      // balancing weight.
-      key: 'trafficRatio',
-      title: t('deployment.TrafficRatio'),
-      defaultHidden: true,
-      render: (value) => value ?? '-',
-    },
-    {
-      // TODO(needs-backend): BA-5838 — ModelReplica.sessionId returns the
-      // replica's own route_id instead of the compute session ID. Hidden by
-      // default until the backend fix lands so users don't see wrong data.
-      key: 'sessionId',
-      title: t('deployment.SessionId'),
-      dataIndex: 'sessionId',
-      defaultHidden: true,
-      render: (value: string | null | undefined) =>
-        value ? (
-          <BAINameActionCell
-            title={value}
-            onTitleClick={() => setSelectedSessionId(value)}
-          />
-        ) : (
-          <Typography.Text type="secondary">—</Typography.Text>
-        ),
+      // Session column resolves through `sessionV2` (Added in 26.4.3) so we
+      // get the real compute session — `ModelReplica.sessionId` returns the
+      // replica's own route_id (BA-5838) and is unusable as a session ref.
+      key: 'session',
+      title: t('general.Session'),
+      onCell: () => ({ style: { maxWidth: 240 } }),
+      render: (_: unknown, record: ReplicaNode) => {
+        const session = record.sessionV2;
+        if (!session?.id) {
+          return <Typography.Text type="secondary">—</Typography.Text>;
+        }
+        const name = session.metadata?.name;
+        if (!name) {
+          return <BAIId globalId={session.id} />;
+        }
+        return (
+          <>
+            <Typography.Link
+              ellipsis={{ tooltip: name }}
+              onClick={() => setSelectedSessionId(toLocalId(session.id))}
+              style={{ maxWidth: 160 }}
+            >
+              {name}
+            </Typography.Link>
+            &nbsp;
+            <Typography.Text type="secondary">
+              (<BAIId globalId={session.id} type="secondary" />)
+            </Typography.Text>
+          </>
+        );
+      },
     },
     {
       key: 'revision',
-      title: t('deployment.Revision'),
-      render: (_: unknown, record: ReplicaNode) =>
-        record.revision?.id ? (
-          toLocalId(record.revision.id)
-        ) : (
-          <Typography.Text type="secondary">—</Typography.Text>
-        ),
+      title: (
+        <BAIFlex gap="xxs" align="center">
+          {t('deployment.RevisionNumberWithID')}
+          <QuestionIconWithTooltip
+            title={t('deployment.RevisionNumberTooltip')}
+          />
+        </BAIFlex>
+      ),
+      render: (_: unknown, record: ReplicaNode) => {
+        const revision = record.revision;
+        if (!revision?.id) {
+          return <Typography.Text type="secondary">—</Typography.Text>;
+        }
+        return (
+          <>
+            <Typography.Link
+              onClick={() =>
+                setDrawerRevisionFrgmt(
+                  revision as DeploymentRevisionDetail_revision$key,
+                )
+              }
+            >
+              {revision.revisionNumber != null
+                ? `#${revision.revisionNumber}`
+                : '-'}
+            </Typography.Link>
+            &nbsp;
+            <Typography.Text type="secondary">
+              (<BAIId globalId={revision.id} type="secondary" />)
+            </Typography.Text>
+          </>
+        );
+      },
     },
     {
       key: 'createdAt',
@@ -312,16 +401,41 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
         gap="xs"
         style={{ marginBottom: 12 }}
       >
-        <BAIGraphQLPropertyFilter
-          filterProperties={filterProperties}
-          value={filterValue}
-          onChange={(next) => {
-            const str = stringifyReplicaFilter(next);
-            const parsed = parseReplicaFilter(str || null);
-            setQueryParams({ rFilter: str || null, current: 1 });
-            doRefetch({ filter: parsed, offset: 0 });
-          }}
-        />
+        <BAIFlex gap="sm" align="start" wrap="wrap" style={{ flexShrink: 1 }}>
+          <BAIRadioGroup
+            value={queryParams.rStatusCategory}
+            onChange={(e) => {
+              const category = e.target.value as ReplicaStatusCategory;
+              const userFilter = queryParams.rFilter
+                ? parseReplicaFilter(queryParams.rFilter)
+                : null;
+              setQueryParams({ rStatusCategory: category, current: 1 });
+              doRefetch({
+                filter: mergeWithStatusFilter(userFilter, category),
+                offset: 0,
+              });
+            }}
+            options={[
+              { label: t('deployment.Running'), value: 'running' },
+              { label: t('deployment.status.Terminated'), value: 'terminated' },
+            ]}
+          />
+          <BAIGraphQLPropertyFilter
+            filterProperties={filterProperties}
+            value={filterValue}
+            onChange={(next) => {
+              const str = stringifyReplicaFilter(next);
+              setQueryParams({ rFilter: str || null, current: 1 });
+              doRefetch({
+                filter: mergeWithStatusFilter(
+                  next ?? null,
+                  queryParams.rStatusCategory,
+                ),
+                offset: 0,
+              });
+            }}
+          />
+        </BAIFlex>
         <BAIFetchKeyButton
           loading={isPending}
           value=""
@@ -341,14 +455,16 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
           columnOverrides,
           onColumnOverridesChange: setColumnOverrides,
         }}
-        order={queryParams.order ?? undefined}
+        order={queryParams.order}
         onChangeOrder={(newOrder) => {
           setQueryParams({
-            order: newOrder as
-              | (typeof availableReplicaSorterValues)[number]
-              | null,
+            order:
+              (newOrder as (typeof availableReplicaSorterValues)[number]) ??
+              null,
           });
-          doRefetch({ orderBy: convertToOrderBy<ReplicaOrderBy>(newOrder) });
+          doRefetch({
+            orderBy: convertToOrderBy<ReplicaOrderBy>(newOrder || '-createdAt'),
+          });
         }}
         pagination={{
           pageSize: queryParams.pageSize,
@@ -366,6 +482,13 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
           open={!!selectedSessionId}
           sessionId={selectedSessionId ?? undefined}
           onClose={() => setSelectedSessionId(null)}
+        />
+      </BAIUnmountAfterClose>
+      <BAIUnmountAfterClose>
+        <DeploymentRevisionDetailDrawer
+          open={!!drawerRevisionFrgmt}
+          revisionFrgmt={drawerRevisionFrgmt}
+          onClose={() => setDrawerRevisionFrgmt(null)}
         />
       </BAIUnmountAfterClose>
     </>

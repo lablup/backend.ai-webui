@@ -159,6 +159,16 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
     unitedAllowedPermissionByVolume[vfolderNode?.host ?? ''],
     'download-file',
   );
+  // `upload-file` on the storage host gates the actual upload pipeline:
+  // upload buttons (file/folder), drag-drop, and the in-app text editor save
+  // (which overwrites the file via the upload API). mkdir / create-file /
+  // rename are kept enabled — there is no corresponding host-level
+  // capability for them today, and FR-2619 will revisit the effective
+  // permission set.
+  const hasUploadContentPermission = _.includes(
+    unitedAllowedPermissionByVolume[vfolderNode?.host ?? ''],
+    'upload-file',
+  );
   // TODO(needs-backend): write/delete capability should be derived from the
   // caller's *effective* permission set on this entity (e.g.,
   // `delete_content`, `write_content`), not from the folder's mount
@@ -230,7 +240,8 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
       enableDownload={hasDownloadContentPermission}
       enableDelete={hasDeleteContentPermission}
       enableWrite={hasWriteContentPermission}
-      enableEdit={hasWriteContentPermission}
+      enableUpload={hasUploadContentPermission}
+      enableEdit={hasUploadContentPermission}
       tableProps={{
         scroll: xl
           ? { x: 'max-content' }

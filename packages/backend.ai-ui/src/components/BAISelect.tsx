@@ -95,7 +95,7 @@ const useStyles = createStyles(({ css, token }) => ({
 export interface BAISelectProps<
   ValueType = any,
   OptionType extends BaseOptionType | DefaultOptionType = DefaultOptionType,
-> extends Omit<SelectProps<ValueType, OptionType>, 'onSearch'> {
+> extends Omit<SelectProps<ValueType, OptionType>, 'onSearch' | 'role'> {
   ref?: React.RefObject<GetRef<typeof Select<ValueType, OptionType>> | null>;
   ghost?: boolean;
   autoSelectOption?:

@@ -63,6 +63,9 @@
     "Updated": "Mis à jour",
     "Version": "Version"
   },
+  "comp:BAIAvailablePresetSelect": {
+    "SelectPreset": "Sélectionner un preset"
+  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Une erreur inattendue s'est produite. Veuillez réessayer plus tard ou contacter le support si le problème persiste."
   },
@@ -237,6 +240,9 @@
     "TotalResourceSlots": "Nombre total de créneaux de ressources",
     "Type": "Type"
   },
+  "comp:BAIProjectVfolderSelect": {
+    "SelectFolder": "Sélectionner un dossier"
+  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Recherche",
     "ResetFilter": "Réinitialiser les filtres"
@@ -261,6 +267,9 @@
     "Status": "Statut",
     "TrafficRatio": "Ratio de trafic",
     "TrafficStatus": "État du trafic"
+  },
+  "comp:BAIRuntimeVariantSelect": {
+    "SelectRuntimeVariant": "Sélectionner la variante d'exécution"
   },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "Tentatives",
@@ -333,6 +342,7 @@
     "ModifiedAt": "Modifié à",
     "MoreOptions": "Plus d'options",
     "Name": "Nom",
+    "NoUploadPermissionForHost": "Vous n'avez pas la permission de téléverser sur cet hôte.",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Veuillez saisir le nom du dossier.",
     "RenameSuccess": "Le nom a été modifié avec succès.",

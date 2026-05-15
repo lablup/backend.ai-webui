@@ -14,6 +14,7 @@ import { useSuspenseTanQuery, useTanQuery } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { isDeletedCategory } from '../pages/VFolderNodeListPage';
 import DeleteForeverVFolderModalV2 from './DeleteForeverVFolderModalV2';
+import DeploymentSettingModal from './DeploymentSettingModal';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import InviteFolderSettingModal from './InviteFolderSettingModal';
 import QuotaPerStorageVolumePanelCard, {
@@ -29,6 +30,7 @@ import {
   QuestionCircleOutlined,
   UserOutlined,
 } from '@ant-design/icons';
+import { useToggle } from 'ahooks';
 import { App, Modal, Skeleton, theme, Tooltip, Typography } from 'antd';
 import {
   filterOutNullAndUndefined,
@@ -37,6 +39,7 @@ import {
   BAILink,
   BAIRestoreIcon,
   BAIShareAltIcon,
+  BAIUnmountAfterClose,
   BAIUserUnionIcon,
   BAITable,
   BAITableProps,
@@ -147,7 +150,14 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
           key: 'start-service',
           title: t('modelService.DeployAsService'),
           icon: <BAIEndpointsIcon />,
-          onClick: () => onStartServiceFallback(vfolderId),
+          // Use `action` (not `onClick`) so the state update that mounts
+          // `<VFolderDeployModal>` (which suspends on its Relay query)
+          // runs inside `startTransition` — the page stays interactive
+          // instead of falling into its Suspense fallback. The button
+          // itself shows a loading spinner until the modal renders.
+          action: async () => {
+            onStartServiceFallback(vfolderId);
+          },
         }
       : null,
     // Share (active folders only)
@@ -439,6 +449,11 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
   const [deployFallbackVfolderId, setDeployFallbackVfolderId] = useState<
     string | null
   >(null);
+  // FR-2862 — when the user hits the empty-preset state in
+  // VFolderDeployModal, escalate to the deployment shell creation modal
+  // (`DeploymentSettingModal`), same as the `/deployments` page entry.
+  const [isCreateDeploymentOpen, { toggle: toggleCreateDeployment }] =
+    useToggle(false);
   const [isHostQuotaModalOpen, setIsHostQuotaModalOpen] = useState(false);
 
   // `vfolderStatus: status` aliases the V2 `VFolder.status`
@@ -836,11 +851,27 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
           setCurrentSharedVFolder(null);
         }}
       />
-      <VFolderDeployModal
-        open={!!deployFallbackVfolderId}
-        vfolderId={deployFallbackVfolderId ?? undefined}
-        onClose={() => setDeployFallbackVfolderId(null)}
-        onDeployed={() => setDeployFallbackVfolderId(null)}
+      {/* Local Suspense around the lazily-mounted modal so its initial
+          `useLazyLoadQuery` doesn't bubble its suspend up to the page-level
+          Suspense fallback and blank the data page. The mount is triggered
+          from a `BAINameActionCell` action (transition), but
+          `BAIUnmountAfterClose` defers the mount via `useLayoutEffect` —
+          that state update is no longer inside the transition, so we still
+          need an explicit Suspense boundary here. */}
+      <Suspense fallback={null}>
+        <BAIUnmountAfterClose>
+          <VFolderDeployModal
+            open={!!deployFallbackVfolderId}
+            vfolderId={deployFallbackVfolderId ?? undefined}
+            onClose={() => setDeployFallbackVfolderId(null)}
+            onDeployed={() => setDeployFallbackVfolderId(null)}
+            onRequestCreateDeployment={toggleCreateDeployment}
+          />
+        </BAIUnmountAfterClose>
+      </Suspense>
+      <DeploymentSettingModal
+        open={isCreateDeploymentOpen}
+        onRequestClose={toggleCreateDeployment}
       />
       <HostQuotaModal
         open={isHostQuotaModalOpen}

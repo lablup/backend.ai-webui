@@ -151,17 +151,25 @@ type ActiveResourceOverview
 input AddRevisionInput
   @join__type(graph: STRAWBERRY)
 {
-  name: String = null
-
   """
   Added in 26.4.2. DeploymentRevisionPreset ID. When specified, preset values are used as defaults and can be overridden by explicitly provided fields.
   """
   revisionPresetId: UUID = null
   deploymentId: ID!
-  clusterConfig: ClusterConfigInput!
-  resourceConfig: ResourceConfigInput!
-  image: ImageInput!
-  modelRuntimeConfig: ModelRuntimeConfigInput!
+
+  """Cluster configuration"""
+  clusterConfig: ClusterConfigInput = null
+
+  """Resource configuration"""
+  resourceConfig: ResourceConfigInput = null
+
+  """Container image"""
+  image: ImageInput = null
+
+  """Runtime configuration"""
+  modelRuntimeConfig: ModelRuntimeConfigInput = null
+
+  """Model mount configuration"""
   modelMountConfig: ModelMountConfigInput!
 
   """
@@ -3843,8 +3851,6 @@ Added in 25.19.0. Input for specifying revision configuration within a deploymen
 input CreateRevisionInput
   @join__type(graph: STRAWBERRY)
 {
-  name: String = null
-
   """
   Added in 26.4.2. DeploymentRevisionPreset ID. When specified, preset values are used as defaults and can be overridden by explicitly provided fields.
   """
@@ -6772,6 +6778,11 @@ type ExtraVFolderMountInfoGQL
   The concrete permission snapshot fixed at revision-write time. ``INHERIT`` policies are resolved against the vfolder's current permission at that point, so this value is immutable and does not change when the vfolder's permission later changes. ``None`` when the caller left it unset to inherit the vfolder's stored permission at session-creation time (task #83).
   """
   mountPerm: MountPermission!
+
+  """
+  Added in UNRELEASED. Subpath within the vfolder. ``None`` means the vfolder root.
+  """
+  subpath: String
 }
 
 """Added in 25.19.0. """
@@ -6780,6 +6791,11 @@ input ExtraVFolderMountInput
 {
   vfolderId: ID!
   mountDestination: String
+
+  """
+  Added in UNRELEASED. Subpath within the vfolder. ``null`` (default) mounts the vfolder root.
+  """
+  subpath: String = null
 }
 
 """
@@ -9235,10 +9251,10 @@ input ModelConfigInput
   @join__type(graph: STRAWBERRY)
 {
   """Name of the model."""
-  name: String!
+  name: String = null
 
   """Path to the model file."""
-  modelPath: String!
+  modelPath: String = null
 
   """Configuration for the model service."""
   service: ModelServiceConfigInput = null
@@ -9264,7 +9280,7 @@ input ModelDefinitionInput
   @join__type(graph: STRAWBERRY)
 {
   """List of models in the model definition."""
-  models: [ModelConfigInput!]!
+  models: [ModelConfigInput!] = null
 }
 
 """
@@ -9350,6 +9366,11 @@ Added in 25.19.0. Contains metadata information for a model deployment including
 type ModelDeploymentMetadata
   @join__type(graph: STRAWBERRY)
 {
+  """
+  Added in UNRELEASED. The resource group this deployment runs in, resolved via DataLoader.
+  """
+  resourceGroup: ResourceGroup
+
   """The project of this entity."""
   project: GroupNode @deprecated(reason: "Use project_v2 instead.")
 
@@ -9370,6 +9391,7 @@ type ModelDeploymentMetadata
   name: String!
   status: DeploymentStatus!
   tags: [String!]!
+  resourceGroupName: String!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -9380,6 +9402,7 @@ input ModelDeploymentMetadataInput
 {
   projectId: ID!
   domainName: String!
+  resourceGroupName: String!
   name: String = null
   tags: [String!] = null
 }
@@ -9431,22 +9454,22 @@ input ModelHealthCheckInput
   @join__type(graph: STRAWBERRY)
 {
   """Interval in seconds between health checks."""
-  interval: Float! = 10
+  interval: Float = null
 
   """Path to check for health status."""
-  path: String!
+  path: String = null
 
   """Maximum number of retries for health check."""
-  maxRetries: Int! = 10
+  maxRetries: Int = null
 
   """Maximum time in seconds to wait for a health check response."""
-  maxWaitTime: Float! = 15
+  maxWaitTime: Float = null
 
   """Expected HTTP status code for a healthy response."""
-  expectedStatusCode: Int! = 200
+  expectedStatusCode: Int = null
 
   """Initial delay in seconds before the first health check."""
-  initialDelay: Float! = 60
+  initialDelay: Float = null
 }
 
 """Added in 26.4.2. Metadata describing a model entry."""
@@ -9550,6 +9573,11 @@ type ModelMountConfig
   vfolderId: ID!
   mountDestination: String!
   definitionPath: String!
+
+  """
+  Added in UNRELEASED. Subpath within the model vfolder. ``None`` means the vfolder root.
+  """
+  subpath: String
 }
 
 """Added in 25.19.0. """
@@ -9558,7 +9586,12 @@ input ModelMountConfigInput
 {
   vfolderId: ID!
   mountDestination: String!
-  definitionPath: String!
+  definitionPath: String = null
+
+  """
+  Added in UNRELEASED. Subpath within the model vfolder. ``null`` (default) mounts the vfolder root.
+  """
+  subpath: String = null
 }
 
 """
@@ -9581,6 +9614,17 @@ type ModelReplica implements Node
 
   """Whether the replica is actively receiving traffic."""
   activenessStatus: ActivenessStatus!
+
+  """
+  Added in UNRELEASED. Provisioning status of the replica (mirrors the underlying route status).
+  """
+  status: ReplicaStatus!
+
+  """Added in UNRELEASED. Traffic status of the replica."""
+  trafficStatus: TrafficStatus!
+
+  """Added in UNRELEASED. Health check status of the replica."""
+  healthStatus: ReplicaHealthStatus!
 
   """Timestamp when the replica was created."""
   createdAt: DateTime!
@@ -9681,6 +9725,14 @@ type ModelRevision implements Node
 
   """Added in 26.4.2. Resource slot allocations for this revision."""
   resourceSlots(filter: AllocatedResourceSlotFilter = null, orderBy: [AllocatedResourceSlotOrderBy!] = null): [AllocatedResourceSlot!]
+
+  """Added in UNRELEASED. ID of the parent deployment this revision belongs to."""
+  deploymentId: ID!
+
+  """
+  Added in UNRELEASED. The parent deployment this revision belongs to, resolved via DataLoader.
+  """
+  deployment: ModelDeployment
 }
 
 """Added in 25.19.0. Connection for model revisions."""
@@ -9771,7 +9823,6 @@ input ModelRuntimeConfigInput
   @join__type(graph: STRAWBERRY)
 {
   runtimeVariantId: UUID!
-  inferenceRuntimeConfig: JSON = null
 
   """Environment variables for the service."""
   environ: EnvironmentVariablesInput = null
@@ -9808,16 +9859,16 @@ input ModelServiceConfigInput
   """
   List of pre-start actions to execute before starting the model service.
   """
-  preStartActions: [PreStartActionInput!]!
+  preStartActions: [PreStartActionInput!] = null
 
   """Command to start the model service."""
   startCommand: [String!] = null
 
   """Shell configured for the model service."""
-  shell: String! = "/bin/bash"
+  shell: String = null
 
-  """Port number for the model service. Must be greater than 1."""
-  port: Int!
+  """Port number for the model service."""
+  port: Int = null
 
   """Health check configuration for the model service."""
   healthCheck: ModelHealthCheckInput = null
@@ -14049,10 +14100,10 @@ type Query
   """
   Added in 25.16.0. Get configuration JSON Schemas for all inference runtimes.
   """
-  inferenceRuntimeConfigs: JSON @join__field(graph: STRAWBERRY)
+  inferenceRuntimeConfigs: JSON @join__field(graph: STRAWBERRY) @deprecated(reason: "Deprecated since UNRELEASED. Use the runtime_variant resources instead.")
 
   """Added in 25.16.0. Get JSON Schema for inference runtime configuration"""
-  inferenceRuntimeConfig(name: String!): JSON @join__field(graph: STRAWBERRY)
+  inferenceRuntimeConfig(name: String!): JSON @join__field(graph: STRAWBERRY) @deprecated(reason: "Deprecated since UNRELEASED. Use the runtime_variant resources instead.")
 
   """Added in 25.19.0. Get a specific route by ID."""
   route(id: ID!): Route @join__field(graph: STRAWBERRY)
@@ -14729,6 +14780,18 @@ input ReplicaFilter
   NOT: [ReplicaFilter!] = null
 }
 
+"""
+Added in UNRELEASED. This enum represents the health check status of a replica.
+"""
+enum ReplicaHealthStatus
+  @join__type(graph: STRAWBERRY)
+{
+  NOT_CHECKED @join__enumValue(graph: STRAWBERRY)
+  HEALTHY @join__enumValue(graph: STRAWBERRY)
+  UNHEALTHY @join__enumValue(graph: STRAWBERRY)
+  DEGRADED @join__enumValue(graph: STRAWBERRY)
+}
+
 """Added in 25.19.0. """
 input ReplicaOrderBy
   @join__type(graph: STRAWBERRY)
@@ -14893,8 +14956,6 @@ type ResourceConfig
 input ResourceConfigInput
   @join__type(graph: STRAWBERRY)
 {
-  resourceGroup: ResourceGroupInput!
-
   """Added in 26.1.0. Resources allocated for the deployment."""
   resourceSlots: ResourceSlotInput!
 
@@ -14996,13 +15057,6 @@ input ResourceGroupFilter
   AND: [ResourceGroupFilter!] = null
   OR: [ResourceGroupFilter!] = null
   NOT: [ResourceGroupFilter!] = null
-}
-
-"""Added in 25.19.0. """
-input ResourceGroupInput
-  @join__type(graph: STRAWBERRY)
-{
-  name: String!
 }
 
 """Added in 26.2.0. Metadata for a resource group."""
@@ -17066,6 +17120,11 @@ input SessionMountItemInput
 
   """Mount permission ('rw' or 'ro')."""
   permission: String = null
+
+  """
+  Added in UNRELEASED. Subpath within the vfolder to mount. Null mounts the vfolder root.
+  """
+  subpath: String = null
 }
 
 """Added in 25.13.0."""

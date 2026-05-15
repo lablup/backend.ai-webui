@@ -63,6 +63,9 @@
     "Updated": "Zaktualizowane",
     "Version": "Wersja"
   },
+  "comp:BAIAvailablePresetSelect": {
+    "SelectPreset": "Wybierz preset"
+  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później lub skontaktuj się z pomocą techniczną, jeśli problem będzie się powtarzał."
   },
@@ -237,6 +240,9 @@
     "TotalResourceSlots": "Całkowita liczba slotów zasobów",
     "Type": "Typ"
   },
+  "comp:BAIProjectVfolderSelect": {
+    "SelectFolder": "Wybierz folder"
+  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Wyszukiwanie",
     "ResetFilter": "Zresetuj filtry"
@@ -261,6 +267,9 @@
     "Status": "Status",
     "TrafficRatio": "Udział ruchu",
     "TrafficStatus": "Status ruchu"
+  },
+  "comp:BAIRuntimeVariantSelect": {
+    "SelectRuntimeVariant": "Wybierz wariant środowiska uruchomieniowego"
   },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "Próby",
@@ -333,6 +342,7 @@
     "ModifiedAt": "Zmodyfikowany przy",
     "MoreOptions": "Więcej opcji",
     "Name": "Nazwa",
+    "NoUploadPermissionForHost": "Nie masz uprawnień do przesyłania plików na ten host.",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Wprowadź nazwę folderu.",
     "RenameSuccess": "Nazwa została pomyślnie zmieniona.",

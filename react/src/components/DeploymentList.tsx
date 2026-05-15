@@ -7,22 +7,28 @@ import {
   DeploymentList_modelDeploymentConnection$data,
   DeploymentList_modelDeploymentConnection$key,
 } from '../__generated__/DeploymentList_modelDeploymentConnection.graphql';
+import type { DeploymentRevisionDetail_revision$key } from '../__generated__/DeploymentRevisionDetail_revision.graphql';
 import { DeploymentSettingModal_deployment$key } from '../__generated__/DeploymentSettingModal_deployment.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
 import BAIRadioGroup from './BAIRadioGroup';
 import DeploymentOwnerInfo from './DeploymentOwnerInfo';
+import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
 import DeploymentStatusTag, { DeploymentStatus } from './DeploymentStatusTag';
 import DeploymentTagChips from './DeploymentTagChips';
+import QuestionIconWithTooltip from './QuestionIconWithTooltip';
 import { DeleteFilled, EditOutlined } from '@ant-design/icons';
 import { Alert, App, Typography, theme } from 'antd';
 import {
   BAIConfirmModalWithInput,
   BAIFlex,
   BAIGraphQLPropertyFilter,
+  BAIId,
   BAINameActionCell,
   BAITable,
+  BAIUnmountAfterClose,
   filterOutEmpty,
   filterOutNullAndUndefined,
+  isValidUUID,
   toLocalId,
   useBAILogger,
   type BAIColumnType,
@@ -51,9 +57,9 @@ const COLUMN_KEY_TO_FIELD: Record<string, string> = {
   name: 'NAME',
   createdAt: 'CREATED_AT',
   domainName: 'DOMAIN',
-  projectName: 'PROJECT',
+  projectId: 'PROJECT',
   resourceGroup: 'RESOURCE_GROUP',
-  tag: 'TAG',
+  tags: 'TAG',
 };
 
 /** All valid order strings accepted by BAITable for deployments. */
@@ -62,6 +68,14 @@ export const availableDeploymentOrderValues = [
   '-name',
   'createdAt',
   '-createdAt',
+  'domainName',
+  '-domainName',
+  'projectId',
+  '-projectId',
+  'resourceGroup',
+  '-resourceGroup',
+  'tags',
+  '-tags',
 ] as const;
 
 export type DeploymentOrderValue =
@@ -140,6 +154,8 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
     id: string;
     name: string;
   } | null>(null);
+  const [drawerRevisionFrgmt, setDrawerRevisionFrgmt] =
+    useState<DeploymentRevisionDetail_revision$key | null>(null);
 
   const [commitDeleteMutation, isInFlightDeleteMutation] =
     useMutation<DeploymentListDeleteMutation>(graphql`
@@ -161,12 +177,21 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
               name
               status
               createdAt
+              updatedAt
               domainName
               projectId
+              projectV2 @since(version: "26.4.3") {
+                basicInfo {
+                  name
+                }
+                id
+              }
+              resourceGroupName
               ...DeploymentTagChips_metadata
             }
             networkAccess {
               endpointUrl
+              openToPublic
             }
             replicaState {
               desiredReplicaCount
@@ -180,12 +205,14 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
             }
             currentRevision @since(version: "26.4.3") {
               id
+              revisionNumber
               modelMountConfig {
                 vfolder {
                   id
                   name
                 }
               }
+              ...DeploymentRevisionDetail_revision
             }
             ...DeploymentOwnerInfo_deployment
           }
@@ -204,6 +231,11 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
   const supportsExtendedFilter =
     baiClient?.supports('model-deployment-extended-filter') ?? false;
 
+  const uuidRule = {
+    message: t('general.InvalidUUID'),
+    validate: (value: string) => isValidUUID(value.toLowerCase()),
+  };
+
   const baseFilterProperties = [
     {
       key: 'name',
@@ -219,6 +251,11 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
       key: 'endpointUrl',
       propertyLabel: t('deployment.filter.EndpointUrl'),
       type: 'string' as const,
+    },
+    {
+      key: 'openToPublic',
+      propertyLabel: t('deployment.filter.OpenToPublic'),
+      type: 'boolean' as const,
     },
   ];
 
@@ -236,8 +273,22 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
             type: 'string' as const,
           },
           {
+            key: 'projectId',
+            propertyLabel: t('deployment.filter.ProjectId'),
+            type: 'uuid' as const,
+            fixedOperator: 'equals' as const,
+            rule: uuidRule,
+          },
+          {
             key: 'createdAt',
             propertyLabel: t('deployment.filter.CreatedAt'),
+            type: 'datetime' as const,
+            operators: ['after' as const, 'before' as const],
+            defaultOperator: 'after' as const,
+          },
+          {
+            key: 'destroyedAt',
+            propertyLabel: t('deployment.filter.DestroyedAt'),
             type: 'datetime' as const,
             operators: ['after' as const, 'before' as const],
             defaultOperator: 'after' as const,
@@ -286,9 +337,38 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
             onTitleClick={onRowClick ? () => onRowClick(row.id) : undefined}
             actions={actions}
             showActions="always"
+            copyable
           />
         );
       },
+    },
+    {
+      key: 'currentRevisionNumber',
+      title: (
+        <BAIFlex gap="xxs" align="center">
+          {t('deployment.RevisionNumber')}
+          <QuestionIconWithTooltip
+            title={t('deployment.RevisionNumberTooltip')}
+          />
+        </BAIFlex>
+      ),
+      render: (_text, row) => {
+        const revision = row.currentRevision;
+        if (revision?.revisionNumber == null)
+          return <Typography.Text type="secondary">-</Typography.Text>;
+        return (
+          <Typography.Link
+            onClick={() => setDrawerRevisionFrgmt(revision)}
+          >{`#${revision.revisionNumber}`}</Typography.Link>
+        );
+      },
+    },
+    {
+      key: 'id',
+      title: t('deployment.DeploymentId'),
+      dataIndex: 'id',
+      defaultHidden: true,
+      render: (_text, row) => <BAIId globalId={row.id} copyable />,
     },
     {
       key: 'status',
@@ -301,7 +381,14 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
     },
     {
       key: 'replicaSummary',
-      title: t('deployment.ReplicaSummary'),
+      title: (
+        <BAIFlex gap="xxs" align="center">
+          {t('deployment.ReplicaSummary')}
+          <QuestionIconWithTooltip
+            title={t('deployment.ReplicaSummaryTooltip')}
+          />
+        </BAIFlex>
+      ),
       render: (_text, row) => {
         const running = row.runningReplicas?.count ?? 0;
         const desired = row.replicaState?.desiredReplicaCount ?? 0;
@@ -338,6 +425,7 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
     {
       key: 'endpointUrl',
       title: t('deployment.EndpointUrl'),
+      defaultHidden: true,
       render: (_text, row) => {
         const url = row.networkAccess?.endpointUrl;
         if (!url) return <Typography.Text type="secondary">-</Typography.Text>;
@@ -351,6 +439,8 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
     {
       key: 'tags',
       title: t('deployment.Tags'),
+      defaultHidden: true,
+      sorter: true,
       render: (_text, row) => (
         <DeploymentTagChips
           metadataFrgmt={row.metadata}
@@ -369,15 +459,85 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
         return createdAt ? dayjs(createdAt).format('ll LT') : '-';
       },
     },
+    {
+      key: 'updatedAt',
+      title: t('deployment.UpdatedAt'),
+      defaultHidden: true,
+      render: (_text, row) => {
+        const updatedAt = row.metadata?.updatedAt;
+        return updatedAt ? dayjs(updatedAt).format('ll LT') : '-';
+      },
+    },
+    {
+      key: 'openToPublic',
+      title: t('deployment.OpenToPublic'),
+      defaultHidden: true,
+      render: (_text, row) => {
+        const isPublic = row.networkAccess?.openToPublic;
+        return isPublic == null ? (
+          <Typography.Text type="secondary">-</Typography.Text>
+        ) : (
+          <Typography.Text>
+            {isPublic ? t('deployment.Public') : t('deployment.Private')}
+          </Typography.Text>
+        );
+      },
+    },
+    {
+      key: 'resourceGroup',
+      title: t('deployment.ResourceGroup'),
+      defaultHidden: true,
+      sorter: true,
+      render: (_text, row) => {
+        const resourceGroup = row.metadata?.resourceGroupName;
+        return resourceGroup ? (
+          <Typography.Text>{resourceGroup}</Typography.Text>
+        ) : (
+          <Typography.Text type="secondary">-</Typography.Text>
+        );
+      },
+    },
     isAdminMode && {
       key: 'domainName',
       title: t('deployment.Domain'),
+      defaultHidden: true,
+      sorter: true,
       render: (_text, row) => {
         const domain = row.metadata?.domainName;
         return domain ? (
           <Typography.Text>{domain}</Typography.Text>
         ) : (
           <Typography.Text type="secondary">-</Typography.Text>
+        );
+      },
+    },
+    isAdminMode && {
+      key: 'projectId',
+      title: t('deployment.Project'),
+      defaultHidden: true,
+      sorter: true,
+      render: (_text, row) => {
+        const projectId = row.metadata?.projectId;
+        if (!projectId) {
+          return <Typography.Text type="secondary">-</Typography.Text>;
+        }
+        const projectName = row.metadata?.projectV2?.basicInfo?.name;
+        if (!projectName) {
+          return <BAIId globalId={projectId} copyable />;
+        }
+        return (
+          <>
+            <Typography.Text
+              ellipsis={{ tooltip: projectName }}
+              style={{ maxWidth: 160 }}
+            >
+              {projectName}
+            </Typography.Text>
+            &nbsp;
+            <Typography.Text type="secondary">
+              (<BAIId globalId={projectId} copyable type="secondary" />)
+            </Typography.Text>
+          </>
         );
       },
     },
@@ -479,6 +639,13 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
         }}
         onCancel={() => setDeletingDeployment(null)}
       />
+      <BAIUnmountAfterClose>
+        <DeploymentRevisionDetailDrawer
+          open={!!drawerRevisionFrgmt}
+          revisionFrgmt={drawerRevisionFrgmt}
+          onClose={() => setDrawerRevisionFrgmt(null)}
+        />
+      </BAIUnmountAfterClose>
     </>
   );
 };

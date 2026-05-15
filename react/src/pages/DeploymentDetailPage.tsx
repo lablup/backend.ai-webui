@@ -18,6 +18,7 @@ import { PlusOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import { Alert, Button, Skeleton, Tooltip, Typography, theme } from 'antd';
 import {
+  BAIButton,
   BAICard,
   BAIFlex,
   BAIUnmountAfterClose,
@@ -69,6 +70,9 @@ const DeploymentDetailPage: React.FC = () => {
           currentRevision @since(version: "26.4.3") {
             id
           }
+          deployingRevision @since(version: "26.4.3") {
+            id
+          }
           creator @since(version: "26.4.3") {
             basicInfo {
               email
@@ -102,7 +106,12 @@ const DeploymentDetailPage: React.FC = () => {
     deploymentStatus === 'STOPPED' ||
     deploymentStatus === 'TERMINATED';
   const isDeploymentReady = deploymentStatus === 'READY';
-  const hasNoRevision = !deployment.currentRevision;
+  // Hide the "no revision" warning while a first revision is being applied —
+  // the rollout is in flight, the user already knows about it from the
+  // "Applying revision …" Alert in the Configuration section, and the
+  // warning would otherwise contradict that state.
+  const hasNoRevision =
+    !deployment.currentRevision && !deployment.deployingRevision;
   const isPrivateDeployment =
     deployment.networkAccess.openToPublic === false && !isDeploymentDestroying;
 
@@ -117,12 +126,14 @@ const DeploymentDetailPage: React.FC = () => {
     startRefetchTransition(() => updateFetchKey());
   };
 
-  const handleRevisionAdded = () => {
+  const handleAddRevisionRequestClose = (success?: boolean) => {
     closeAddRevision();
-    startRefetchTransition(() => {
-      updateFetchKey();
-      updateRevisionFetchKey();
-    });
+    if (success) {
+      startRefetchTransition(() => {
+        updateFetchKey();
+        updateRevisionFetchKey();
+      });
+    }
   };
 
   const scrollToAccessTokens = () => {
@@ -170,14 +181,20 @@ const DeploymentDetailPage: React.FC = () => {
           showIcon
           title={t('deployment.NoCurrentRevisionDeployed')}
           action={
-            <Button
+            <BAIButton
               type="primary"
               icon={<PlusOutlined />}
-              onClick={openAddRevision}
+              // `action` (not `onClick`) wraps the state update that mounts
+              // `<DeploymentAddRevisionModal>` (which suspends on its Relay
+              // queries) in `startTransition`, so the page stays interactive
+              // instead of falling into its Suspense fallback.
+              action={async () => {
+                openAddRevision();
+              }}
               disabled={isDeploymentDestroying}
             >
               {t('deployment.AddRevision')}
-            </Button>
+            </BAIButton>
           }
         />
       )}
@@ -232,14 +249,22 @@ const DeploymentDetailPage: React.FC = () => {
           isDeploymentDestroying={isDeploymentDestroying}
         />
       </div>
-      <BAIUnmountAfterClose>
-        <DeploymentAddRevisionModal
-          open={addRevisionOpen}
-          onCancel={closeAddRevision}
-          onSuccess={handleRevisionAdded}
-          deploymentId={deploymentGlobalId}
-        />
-      </BAIUnmountAfterClose>
+      {/* Local Suspense around the lazily-mounted modal so its initial
+          `useLazyLoadQuery` doesn't bubble its suspend up to the page-level
+          Suspense fallback and blank the deployment detail page. The mount
+          itself is triggered from a `BAIButton.action` (transition), but
+          `BAIUnmountAfterClose` defers the mount via `useLayoutEffect` —
+          that state update is no longer inside the transition, so we still
+          need an explicit Suspense boundary here. */}
+      <Suspense fallback={null}>
+        <BAIUnmountAfterClose>
+          <DeploymentAddRevisionModal
+            open={addRevisionOpen}
+            onRequestClose={handleAddRevisionRequestClose}
+            deploymentId={deploymentGlobalId}
+          />
+        </BAIUnmountAfterClose>
+      </Suspense>
     </BAIFlex>
   );
 };

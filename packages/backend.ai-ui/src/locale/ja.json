@@ -63,6 +63,9 @@
     "Updated": "更新",
     "Version": "バージョン"
   },
+  "comp:BAIAvailablePresetSelect": {
+    "SelectPreset": "プリセットを選択"
+  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "予期しないエラーが発生しました。しばらくしてから再度お試しください。それでも問題が解決しない場合はサポートにお問い合わせください。"
   },
@@ -237,6 +240,9 @@
     "TotalResourceSlots": "合計リソーススロット数",
     "Type": "種類"
   },
+  "comp:BAIProjectVfolderSelect": {
+    "SelectFolder": "フォルダを選択"
+  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "検索",
     "ResetFilter": "フィルターをリセットする"
@@ -261,6 +267,9 @@
     "Status": "ステータス",
     "TrafficRatio": "トラフィック比率",
     "TrafficStatus": "トラフィック状況"
+  },
+  "comp:BAIRuntimeVariantSelect": {
+    "SelectRuntimeVariant": "ランタイムバリアントを選択"
   },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "試行回数",
@@ -333,6 +342,7 @@
     "ModifiedAt": "で変更されました",
     "MoreOptions": "その他のオプション",
     "Name": "名前",
+    "NoUploadPermissionForHost": "このホストへのアップロード権限がありません。",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "フォルダー名を入力してください。",
     "RenameSuccess": "名前は正常に変更されました。",

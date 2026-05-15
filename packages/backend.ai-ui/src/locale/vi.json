@@ -63,6 +63,9 @@
     "Updated": "Cập nhật",
     "Version": "Phiên bản"
   },
+  "comp:BAIAvailablePresetSelect": {
+    "SelectPreset": "Chọn cài đặt sẵn"
+  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Đã xảy ra lỗi bất ngờ. Vui lòng thử lại sau hoặc liên hệ bộ phận hỗ trợ nếu vấn đề vẫn tiếp diễn."
   },
@@ -237,6 +240,9 @@
     "TotalResourceSlots": "Tổng số khe tài nguyên",
     "Type": "Loại"
   },
+  "comp:BAIProjectVfolderSelect": {
+    "SelectFolder": "Chọn thư mục"
+  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Tìm kiếm",
     "ResetFilter": "Đặt lại bộ lọc"
@@ -261,6 +267,9 @@
     "Status": "Trạng thái",
     "TrafficRatio": "Tỷ lệ lưu lượng",
     "TrafficStatus": "Trạng thái lưu lượng"
+  },
+  "comp:BAIRuntimeVariantSelect": {
+    "SelectRuntimeVariant": "Chọn biến thể runtime"
   },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "Số lần thử",
@@ -333,6 +342,7 @@
     "ModifiedAt": "Sửa đổi tại",
     "MoreOptions": "Thêm tùy chọn",
     "Name": "Tên",
+    "NoUploadPermissionForHost": "Bạn không có quyền tải lên cho máy chủ lưu trữ này.",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Vui lòng nhập tên thư mục.",
     "RenameSuccess": "Tên đã được thay đổi thành công.",

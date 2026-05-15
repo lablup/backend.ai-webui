@@ -3,18 +3,21 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { ModelCardDrawerFragment$key } from '../__generated__/ModelCardDrawerFragment.graphql';
+import { ModelCardDrawerQuery } from '../__generated__/ModelCardDrawerQuery.graphql';
 import { useBackendAIImageMetaData } from '../hooks';
-import useDeploymentLauncher from '../hooks/useDeploymentLauncher';
+import DeploymentSettingModal from './DeploymentSettingModal';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import ModelBrandIcon from './ModelBrandIcon';
 import ModelCardDeployModal from './ModelCardDeployModal';
-import { BankOutlined, FileOutlined } from '@ant-design/icons';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
+import { BankOutlined, FileOutlined } from '@ant-design/icons';
+import { useToggle } from 'ahooks';
 import {
   Card,
   Descriptions,
   Drawer,
+  type DrawerProps,
   Skeleton,
   Tag,
   Typography,
@@ -24,34 +27,67 @@ import {
   BAIFlex,
   BAILink,
   BAIResourceNumberWithIcon,
+  BAIUnmountAfterClose,
   filterOutEmpty,
   toLocalId,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import Markdown from 'markdown-to-jsx';
-import React, { Suspense, useState } from 'react';
+import React, { Suspense, useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useFragment } from 'react-relay';
+import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 
-interface ModelCardDrawerProps {
-  modelCardDrawerFrgmt: ModelCardDrawerFragment$key | null;
-  open: boolean;
-  onClose: () => void;
+interface ModelCardDrawerProps extends Omit<DrawerProps, 'children'> {
+  modelCardId: string | undefined;
 }
 
 const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
-  modelCardDrawerFrgmt,
+  modelCardId,
   open,
   onClose,
+  ...drawerProps
 }) => {
   'use memo';
 
   const { t } = useTranslation();
   const [imageMetaData] = useBackendAIImageMetaData();
   const { generateFolderPath } = useFolderExplorerOpener();
-  const { deployInstantly, isDeploying, supportsQuickDeploy } =
-    useDeploymentLauncher();
+  const [deployModalOpen, setDeployModalOpen] = useState(false);
+  const [
+    isCreateDeploymentOpen,
+    { toggle: toggleCreateDeployment, setLeft: closeCreateDeployment },
+  ] = useToggle(false);
+
+  // Defer `open` so the lazy query only fires once the drawer has actually
+  // committed to opening. `loading={deferredOpen !== open}` then lets the
+  // drawer show its built-in skeleton during the transition instead of an
+  // inner Suspense fallback (FR-2869 review).
+  const deferredOpen = useDeferredValue(open);
+
+  const drawerData = useLazyLoadQuery<ModelCardDrawerQuery>(
+    graphql`
+      query ModelCardDrawerQuery($id: UUID!) {
+        modelCardV2(id: $id) {
+          ...ModelCardDrawerFragment
+        }
+      }
+    `,
+    { id: modelCardId ?? '' },
+    {
+      // Skip the network round-trip until the drawer has actually committed
+      // to opening and a model-card UUID is known. The empty-string fallback
+      // for `id` is never sent in that case because `store-only` short-
+      // circuits the fetch.
+      fetchPolicy:
+        deferredOpen && open && modelCardId
+          ? 'store-and-network'
+          : 'store-only',
+    },
+  );
+
+  const modelCardDrawerFrgmt: ModelCardDrawerFragment$key | null =
+    drawerData.modelCardV2 ?? null;
 
   const modelCard = useFragment(
     graphql`
@@ -84,57 +120,33 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
           }
           ...VFolderNodeIdenticonV2Fragment
         }
-        availablePresets(orderBy: [{ field: RANK, direction: "ASC" }]) {
-          count
-          edges {
-            node {
-              id
-              name
-              description
-              rank
-              runtimeVariantId
-              runtimeVariant {
-                name
-              }
-              execution {
-                imageId
-                startupCommand
-              }
-              cluster {
-                clusterMode
-                clusterSize
-              }
-              deploymentDefaults {
-                openToPublic
-                replicaCount
-              }
-            }
-          }
-        }
+        ...ModelCardDeployModalFragment
       }
     `,
     modelCardDrawerFrgmt,
   );
 
-  const hasNoAvailablePresets =
-    !modelCard?.availablePresets || modelCard.availablePresets.count === 0;
-  const [deployModalOpen, setDeployModalOpen] = useState(false);
-
-  const presets =
-    modelCard?.availablePresets?.edges
-      ?.map((e) => e?.node)
-      .filter((node): node is NonNullable<typeof node> => node != null) ?? [];
-
   return (
     <>
       <Drawer
-        open={open}
-        onClose={onClose}
         destroyOnHidden
         placement="right"
         size={800}
+        {...drawerProps}
+        open={open}
+        loading={deferredOpen !== open}
+        onClose={(e) => {
+          setDeployModalOpen(false);
+          closeCreateDeployment();
+          onClose?.(e);
+        }}
         title={
-          <BAIFlex direction="row" align="center" gap="xs">
+          <BAIFlex
+            direction="row"
+            align="center"
+            gap="xs"
+            style={{ flex: 1, minWidth: 0 }}
+          >
             <ModelBrandIcon modelName={modelCard?.name ?? ''} />
             <Typography.Text strong ellipsis>
               {modelCard?.metadata?.title || modelCard?.name}
@@ -142,34 +154,19 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
           </BAIFlex>
         }
         extra={
-          supportsQuickDeploy &&
-          modelCard?.vfolder?.id &&
-          !hasNoAvailablePresets ? (
-            <BAIButton
-              type="primary"
-              loading={isDeploying}
-              disabled={!modelCard?.id}
-              action={async () => {
-                const modelFolderId = toLocalId(modelCard.vfolder?.id ?? '');
-                if (!modelFolderId) return;
-                const revisionPresetId = toLocalId(presets[0]?.id ?? '');
-                await deployInstantly({
-                  modelFolderId,
-                  revisionPresetId: revisionPresetId ?? undefined,
-                });
-              }}
-            >
-              {t('modelStore.Deploy')}
-            </BAIButton>
-          ) : (
-            <BAIButton
-              type="primary"
-              disabled={!modelCard?.id}
-              onClick={() => setDeployModalOpen(true)}
-            >
-              {t('modelStore.Deploy')}
-            </BAIButton>
-          )
+          <BAIButton
+            type="primary"
+            disabled={!modelCard?.id}
+            // Use `action` (not `onClick`) so the state update that mounts
+            // `<ModelCardDeployModal>` (which suspends while its Relay
+            // query loads) runs inside `startTransition` — the drawer
+            // stays interactive instead of falling into Suspense fallback.
+            action={async () => {
+              setDeployModalOpen(true);
+            }}
+          >
+            {t('modelStore.Deploy')}
+          </BAIButton>
         }
       >
         {modelCard && (
@@ -338,18 +335,30 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
           </BAIFlex>
         )}
       </Drawer>
-      <ModelCardDeployModal
-        open={deployModalOpen}
-        onClose={() => setDeployModalOpen(false)}
-        modelCardRowId={modelCard?.id ? toLocalId(modelCard.id) : undefined}
-        availablePresets={presets.map((p) => ({
-          ...p,
-          description: p.description ?? null,
-        }))}
-        onDeployed={(_deploymentId) => {
-          setDeployModalOpen(false);
-          onClose();
-        }}
+      {/* Local Suspense around the lazily-mounted modal so its initial
+          Relay/`useProjectResourceGroups` suspend doesn't bubble up to the
+          drawer-level Suspense fallback. The mount is triggered from a
+          `BAIButton.action` (transition), but `BAIUnmountAfterClose` defers
+          the mount via `useLayoutEffect` — that state update is no longer
+          inside the transition, so we still need an explicit Suspense
+          boundary here. */}
+      <Suspense fallback={null}>
+        <BAIUnmountAfterClose>
+          <ModelCardDeployModal
+            open={deployModalOpen}
+            onClose={() => setDeployModalOpen(false)}
+            modelCardFrgmt={modelCard}
+            onDeployed={(_deploymentId) => {
+              setDeployModalOpen(false);
+              onClose();
+            }}
+            onRequestCreateDeployment={toggleCreateDeployment}
+          />
+        </BAIUnmountAfterClose>
+      </Suspense>
+      <DeploymentSettingModal
+        open={isCreateDeploymentOpen}
+        onRequestClose={toggleCreateDeployment}
       />
     </>
   );

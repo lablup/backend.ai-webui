@@ -63,6 +63,9 @@
     "Updated": "อัปเดต",
     "Version": "รุ่น"
   },
+  "comp:BAIAvailablePresetSelect": {
+    "SelectPreset": "เลือกการตั้งค่าล่วงหน้า"
+  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "เกิดข้อผิดพลาดที่ไม่คาดคิด กรุณาลองอีกครั้งภายหลัง หากปัญหายังคงมีอยู่ โปรดติดต่อฝ่ายสนับสนุน"
   },
@@ -237,6 +240,9 @@
     "TotalResourceSlots": "ช่องทรัพยากรทั้งหมด",
     "Type": "ประเภท"
   },
+  "comp:BAIProjectVfolderSelect": {
+    "SelectFolder": "เลือกโฟลเดอร์"
+  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "ค้นหา",
     "ResetFilter": "รีเซ็ตตัวกรอง"
@@ -261,6 +267,9 @@
     "Status": "สถานะ",
     "TrafficRatio": "สัดส่วนทราฟฟิก",
     "TrafficStatus": "สถานะการรับส่งข้อมูล"
+  },
+  "comp:BAIRuntimeVariantSelect": {
+    "SelectRuntimeVariant": "เลือกตัวแปรรันไทม์"
   },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "จำนวนครั้งที่ลอง",
@@ -333,6 +342,7 @@
     "ModifiedAt": "ดัดแปลงที่",
     "MoreOptions": "ตัวเลือกเพิ่มเติม",
     "Name": "ชื่อ",
+    "NoUploadPermissionForHost": "คุณไม่มีสิทธิ์อัปโหลดสำหรับโฮสต์นี้",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "กรุณากรอกชื่อโฟลเดอร์",
     "RenameSuccess": "ชื่อได้รับการเปลี่ยนแปลงสำเร็จ",

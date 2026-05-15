@@ -63,6 +63,9 @@
     "Updated": "Шинэчилсэн цаг нь",
     "Version": "Таамаглал"
   },
+  "comp:BAIAvailablePresetSelect": {
+    "SelectPreset": "Урьдчилан тохиргоо сонгох"
+  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Гэнэтийн алдаа гарлаа. Дахин оролдоно уу эсвэл асуудал үргэлжилбэл дэмжлэгт хандана уу."
   },
@@ -237,6 +240,9 @@
     "TotalResourceSlots": "Нийт нөөцийн слотууд",
     "Type": "Төрөл"
   },
+  "comp:BAIProjectVfolderSelect": {
+    "SelectFolder": "Хавтас сонгох"
+  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Хайх",
     "ResetFilter": "Шүүлтүүрийг дахин тохируулах"
@@ -261,6 +267,9 @@
     "Status": "Төлөв",
     "TrafficRatio": "Трафикийн харьцаа",
     "TrafficStatus": "Трафикийн төлөв"
+  },
+  "comp:BAIRuntimeVariantSelect": {
+    "SelectRuntimeVariant": "Ажиллах хувилбар сонгох"
   },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "Оролдлого",
@@ -333,6 +342,7 @@
     "ModifiedAt": "Өөрчлөгдсөн",
     "MoreOptions": "Нэмэлт сонголтууд",
     "Name": "Нэр",
+    "NoUploadPermissionForHost": "Энэ хостод байршуулах эрх байхгүй байна.",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Фолдерын нэрийг оруулна уу.",
     "RenameSuccess": "Энэ нэр амжилттай өөрчлөгдсөн байна.",

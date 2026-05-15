@@ -12,6 +12,7 @@ import { AutoScalingRuleListQuery } from '../__generated__/AutoScalingRuleListQu
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import AutoScalingRuleEditorModal from './AutoScalingRuleEditorModal';
+import QuestionIconWithTooltip from './QuestionIconWithTooltip';
 import { DeleteFilled, PlusOutlined, SettingOutlined } from '@ant-design/icons';
 import { App, Button, Tag, Tooltip, Typography } from 'antd';
 import {
@@ -189,13 +190,27 @@ const AutoScalingRuleListNodes: React.FC<AutoScalingRuleListNodesProps> = ({
       columns={[
         {
           key: 'metricSource',
-          title: t('autoScalingRule.MetricSource'),
+          title: (
+            <BAIFlex gap="xxs" align="center">
+              {t('autoScalingRule.MetricSource')}
+              <QuestionIconWithTooltip
+                title={t('autoScalingRule.MetricSourceTooltip')}
+              />
+            </BAIFlex>
+          ),
           dataIndex: 'metricSource',
           fixed: 'left',
         },
         {
           key: 'condition',
-          title: t('autoScalingRule.Condition'),
+          title: (
+            <BAIFlex gap="xxs" align="center">
+              {t('autoScalingRule.Condition')}
+              <QuestionIconWithTooltip
+                title={t('autoScalingRule.ConditionTooltip')}
+              />
+            </BAIFlex>
+          ),
           fixed: 'left',
           render: (_text, row) => {
             if (!row) return '-';
@@ -226,7 +241,14 @@ const AutoScalingRuleListNodes: React.FC<AutoScalingRuleListNodesProps> = ({
         },
         {
           key: 'timeWindow',
-          title: t('autoScalingRule.CoolDownSeconds'),
+          title: (
+            <BAIFlex gap="xxs" align="center">
+              {t('autoScalingRule.CoolDownSeconds')}
+              <QuestionIconWithTooltip
+                title={t('autoScalingRule.CoolDownTooltip')}
+              />
+            </BAIFlex>
+          ),
           dataIndex: 'timeWindow',
           render: (value: number) =>
             value != null
@@ -235,7 +257,14 @@ const AutoScalingRuleListNodes: React.FC<AutoScalingRuleListNodesProps> = ({
         },
         {
           key: 'stepSize',
-          title: t('autoScalingRule.StepSize'),
+          title: (
+            <BAIFlex gap="xxs" align="center">
+              {t('autoScalingRule.StepSize')}
+              <QuestionIconWithTooltip
+                title={t('autoScalingRule.StepSizeTooltip')}
+              />
+            </BAIFlex>
+          ),
           dataIndex: 'stepSize',
           render: (_text, row) => {
             if (!row?.stepSize) return '-';
@@ -253,7 +282,14 @@ const AutoScalingRuleListNodes: React.FC<AutoScalingRuleListNodesProps> = ({
         },
         {
           key: 'minMaxReplicas',
-          title: t('autoScalingRule.MIN/MAXReplicas'),
+          title: (
+            <BAIFlex gap="xxs" align="center">
+              {t('autoScalingRule.MIN/MAXReplicas')}
+              <QuestionIconWithTooltip
+                title={t('autoScalingRule.MinMaxReplicasTooltip')}
+              />
+            </BAIFlex>
+          ),
           render: (_text, row) => {
             if (!row?.stepSize) return '-';
             const hasMin = row.minThreshold != null;
@@ -303,7 +339,14 @@ const AutoScalingRuleListNodes: React.FC<AutoScalingRuleListNodesProps> = ({
         },
         {
           key: 'lastTriggeredAt',
-          title: t('autoScalingRule.LastTriggered'),
+          title: (
+            <BAIFlex gap="xxs" align="center">
+              {t('autoScalingRule.LastTriggered')}
+              <QuestionIconWithTooltip
+                title={t('autoScalingRule.LastTriggeredTooltip')}
+              />
+            </BAIFlex>
+          ),
           render: (_text, row) => (
             <span>
               {row?.lastTriggeredAt

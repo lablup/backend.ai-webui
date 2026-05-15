@@ -63,6 +63,9 @@
     "Updated": "Güncellenmiş",
     "Version": "Versiyon"
   },
+  "comp:BAIAvailablePresetSelect": {
+    "SelectPreset": "Ön ayar seçin"
+  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Beklenmeyen bir hata oluştu. Lütfen daha sonra tekrar deneyin veya sorun devam ederse destekle iletişime geçin."
   },
@@ -237,6 +240,9 @@
     "TotalResourceSlots": "Toplam Kaynak Slotları",
     "Type": "Tür"
   },
+  "comp:BAIProjectVfolderSelect": {
+    "SelectFolder": "Klasör Seç"
+  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Arama",
     "ResetFilter": "Filtreleri sıfırla"
@@ -261,6 +267,9 @@
     "Status": "Durum",
     "TrafficRatio": "Trafik Oranı",
     "TrafficStatus": "Trafik Durumu"
+  },
+  "comp:BAIRuntimeVariantSelect": {
+    "SelectRuntimeVariant": "Çalışma Zamanı Varyantını Seç"
   },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "Denemeler",
@@ -331,6 +340,7 @@
     "ModifiedAt": "Değiştirildi",
     "MoreOptions": "Daha fazla seçenek",
     "Name": "İsim",
+    "NoUploadPermissionForHost": "Bu depolama sunucusuna yükleme izniniz yok.",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Lütfen klasör adını girin.",
     "RenameSuccess": "İsim başarıyla değiştirildi.",

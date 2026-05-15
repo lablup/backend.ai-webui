@@ -12,10 +12,9 @@ import { KeypairResourcePolicySettingModalFragment$key } from '../__generated__/
 import { localeCompare, numberSorterWithInfinityValue } from '../helper';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { exportCSVWithFormattingRules } from '../helper/csv-util';
-import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
+import { useBAISettingUserState } from '../hooks/useBAISetting';
 import KeypairResourcePolicyInfoModal from './KeypairResourcePolicyInfoModal';
 import KeypairResourcePolicySettingModal from './KeypairResourcePolicySettingModal';
-import TableColumnsSettingModal from './TableColumnsSettingModal';
 import {
   DeleteFilled,
   InfoCircleOutlined,
@@ -23,8 +22,7 @@ import {
   ReloadOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
-import { useToggle } from 'ahooks';
-import { App, Button, Dropdown, Tooltip } from 'antd';
+import { App, Button, Tooltip } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
 import type { ColumnsType, ColumnType } from 'antd/es/table';
 import {
@@ -38,7 +36,6 @@ import {
   BAIDeleteConfirmModal,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { EllipsisIcon } from 'lucide-react';
 import React, { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
@@ -58,8 +55,6 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
   const [keypairResourcePolicyFetchKey, updateKeypairResourcePolicyFetchKey] =
     useUpdatableState('initial-fetch');
   const [isRefetchPending, startRefetchTransition] = useTransition();
-  const [visibleColumnSettingModal, { toggle: toggleColumnSettingModal }] =
-    useToggle();
   const [isCreatingPolicySetting, setIsCreatingPolicySetting] = useState(false);
   const [editingKeypairResourcePolicy, setEditingKeypairResourcePolicy] =
     useState<KeypairResourcePolicySettingModalFragment$key | null>();
@@ -263,21 +258,28 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
     },
   ]);
 
-  const [hiddenColumnKeys, setHiddenColumnKeys] = useHiddenColumnKeysSetting(
-    'KeypairResourcePolicyList',
+  const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
+    'table_column_overrides.KeypairResourcePolicyList',
   );
 
-  const handleExportCSV = () => {
+  const supportedFields = _.compact(
+    _.map(columns, (column) => _.toString(column.key)),
+  );
+
+  const handleExportCSV = (selectedExportKeys: string[]) => {
+    if (selectedExportKeys.length === 0) {
+      message.error(t('resourcePolicy.NoDataToExport'));
+      return;
+    }
     if (!keypair_resource_policies) {
       message.error(t('resourcePolicy.NoDataToExport'));
       return;
     }
 
-    const columnKeys = _.map(columns, (column) => _.toString(column.key));
     const responseData = _.map(keypair_resource_policies, (policy) => {
       return _.pick(
         policy,
-        columnKeys.map((key) => key as keyof KeypairResourcePolicies),
+        selectedExportKeys.map((key) => key as keyof KeypairResourcePolicies),
       );
     });
 
@@ -301,91 +303,47 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
   return (
     <BAIFlex direction="column" align="stretch" gap="sm" {...props}>
       <BAIFlex direction="row" justify="end" wrap="wrap" gap={'xs'}>
-        <Dropdown
-          menu={{
-            items: [
-              {
-                key: 'exportCSV',
-                label: t('resourcePolicy.ExportCSV'),
-                onClick: () => {
-                  handleExportCSV();
-                },
-              },
-            ],
-          }}
-          trigger={['click']}
-        >
-          <Button icon={<EllipsisIcon />} />
-        </Dropdown>
-        <BAIFlex
-          direction="row"
-          gap={'xs'}
-          wrap="wrap"
-          style={{ flexShrink: 1 }}
-        >
-          <BAIFlex gap={'xs'}>
-            <Tooltip title={t('button.Refresh')}>
-              <Button
-                icon={<ReloadOutlined />}
-                loading={isRefetchPending}
-                onClick={() => {
-                  startRefetchTransition(() =>
-                    updateKeypairResourcePolicyFetchKey(),
-                  );
-                }}
-              />
-            </Tooltip>
+        <BAIFlex gap={'xs'}>
+          <Tooltip title={t('button.Refresh')}>
             <Button
-              type="primary"
-              icon={<PlusOutlined />}
+              icon={<ReloadOutlined />}
+              loading={isRefetchPending}
               onClick={() => {
-                setIsCreatingPolicySetting(true);
+                startRefetchTransition(() =>
+                  updateKeypairResourcePolicyFetchKey(),
+                );
               }}
-            >
-              {t('button.Create')}
-            </Button>
-          </BAIFlex>
+            />
+          </Tooltip>
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() => {
+              setIsCreatingPolicySetting(true);
+            }}
+          >
+            {t('button.Create')}
+          </Button>
         </BAIFlex>
       </BAIFlex>
       <BAITable
-        columns={
-          _.filter(
-            columns,
-            (column) => !_.includes(hiddenColumnKeys, _.toString(column?.key)),
-          ) as ColumnType<AnyObject>[]
-        }
+        columns={columns as ColumnType<AnyObject>[]}
         dataSource={
           keypair_resource_policies as readonly AnyObject[] | undefined
         }
         rowKey="name"
         scroll={{ x: 'max-content' }}
-        pagination={{
-          extraContent: (
-            <Button
-              type="text"
-              icon={<SettingOutlined />}
-              onClick={() => {
-                toggleColumnSettingModal();
-              }}
-            />
-          ),
-        }}
         showSorterTooltip={false}
-      />
-      <TableColumnsSettingModal
-        open={visibleColumnSettingModal}
-        onRequestClose={(values) => {
-          values?.selectedColumnKeys &&
-            setHiddenColumnKeys(
-              _.difference(
-                columns.map((column) => _.toString(column.key)),
-                values?.selectedColumnKeys,
-              ),
-            );
-          toggleColumnSettingModal();
+        tableSettings={{
+          columnOverrides: columnOverrides,
+          onColumnOverridesChange: setColumnOverrides,
         }}
-        columns={columns}
-        hiddenColumnKeys={hiddenColumnKeys}
+        exportSettings={{
+          supportedFields,
+          onExport: async (selectedExportKeys) => {
+            handleExportCSV(selectedExportKeys);
+          },
+        }}
       />
       <Suspense>
         <KeypairResourcePolicySettingModal

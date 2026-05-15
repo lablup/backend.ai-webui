@@ -63,6 +63,9 @@
     "Updated": "Atualizado",
     "Version": "Versão"
   },
+  "comp:BAIAvailablePresetSelect": {
+    "SelectPreset": "Selecionar preset"
+  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Ocorreu um erro inesperado. Tente novamente mais tarde ou entre em contato com o suporte se o problema persistir."
   },
@@ -237,6 +240,9 @@
     "TotalResourceSlots": "Total de slots de recursos",
     "Type": "Tipo"
   },
+  "comp:BAIProjectVfolderSelect": {
+    "SelectFolder": "Selecionar pasta"
+  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Pesquisar",
     "ResetFilter": "Redefinir filtros"
@@ -261,6 +267,9 @@
     "Status": "Estado",
     "TrafficRatio": "Proporção de tráfego",
     "TrafficStatus": "Status do tráfego"
+  },
+  "comp:BAIRuntimeVariantSelect": {
+    "SelectRuntimeVariant": "Selecionar variante de execução"
   },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "Tentativas",
@@ -333,6 +342,7 @@
     "ModifiedAt": "Modificado em",
     "MoreOptions": "Mais opções",
     "Name": "Nome",
+    "NoUploadPermissionForHost": "Não tem permissão de upload para este anfitrião.",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Por favor, insira o nome da pasta.",
     "RenameSuccess": "O nome foi alterado com sucesso.",

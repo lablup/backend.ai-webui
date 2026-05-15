@@ -63,6 +63,9 @@
     "Updated": "Päivitetty",
     "Version": "Versio"
   },
+  "comp:BAIAvailablePresetSelect": {
+    "SelectPreset": "Valitse esiasetus"
+  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Tapahtui odottamaton virhe. Yritä uudelleen myöhemmin tai ota yhteyttä tukeen, jos ongelma jatkuu."
   },
@@ -237,6 +240,9 @@
     "TotalResourceSlots": "Resurssipaikat yhteensä",
     "Type": "Tyyppi"
   },
+  "comp:BAIProjectVfolderSelect": {
+    "SelectFolder": "Valitse kansio"
+  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Etsi",
     "ResetFilter": "Nollaa suodattimet"
@@ -261,6 +267,9 @@
     "Status": "Tila",
     "TrafficRatio": "Liikenteen suhde",
     "TrafficStatus": "Liikenteen tila"
+  },
+  "comp:BAIRuntimeVariantSelect": {
+    "SelectRuntimeVariant": "Valitse ajonaikainen variantti"
   },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "Yritykset",
@@ -333,6 +342,7 @@
     "ModifiedAt": "Muutettu",
     "MoreOptions": "Lisää vaihtoehtoja",
     "Name": "Nimi",
+    "NoUploadPermissionForHost": "Sinulla ei ole latausoikeutta tälle tallennuspalvelimelle.",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Anna kansionimi.",
     "RenameSuccess": "Nimi on muutettu onnistuneesti.",
