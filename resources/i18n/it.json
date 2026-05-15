@@ -2487,6 +2487,7 @@
     "PendingSessions": "Sessioni in sospeso"
   },
   "session": {
+    "AccessKeyMismatchTooltip": "Questa sessione è stata creata con una chiave di accesso diversa. Passa a quella chiave di accesso per gestire questa sessione.",
     "ActiveSessions": "Sessioni attive",
     "Agent": "Agente",
     "AgentId": "ID agente",

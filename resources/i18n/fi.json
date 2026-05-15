@@ -2487,6 +2487,7 @@
     "PendingSessions": "Vireillä olevat istunnot"
   },
   "session": {
+    "AccessKeyMismatchTooltip": "Tämä istunto luotiin eri käyttöavaimella. Vaihda kyseiseen käyttöavaimeen hallitaksesi tätä istuntoa.",
     "ActiveSessions": "Aktiiviset istunnot",
     "Agent": "Agentti",
     "AgentId": "Agenttitunnus",

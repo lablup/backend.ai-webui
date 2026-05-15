@@ -2491,6 +2491,7 @@
     "PendingSessions": "等待會議"
   },
   "session": {
+    "AccessKeyMismatchTooltip": "此工作階段是由其他存取金鑰建立。請切換至該存取金鑰後再管理此工作階段。",
     "ActiveSessions": "活動會話",
     "Agent": "代理人",
     "AgentId": "代理ID",

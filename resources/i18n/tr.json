@@ -2487,6 +2487,7 @@
     "PendingSessions": "Bekleyen seanslar"
   },
   "session": {
+    "AccessKeyMismatchTooltip": "Bu oturum farklı bir erişim anahtarıyla oluşturuldu. Bu oturumu yönetmek için o erişim anahtarına geçin.",
     "ActiveSessions": "Aktif oturumlar",
     "Agent": "Temsilci",
     "AgentId": "Ajan kimliği",

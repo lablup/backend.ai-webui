@@ -2489,6 +2489,7 @@
     "PendingSessions": "保留中のセッション"
   },
   "session": {
+    "AccessKeyMismatchTooltip": "このセッションは別のアクセスキーで作成されました。このセッションを操作するには、そのアクセスキーに切り替えてください。",
     "ActiveSessions": "アクティブセッション",
     "Agent": "エージェント",
     "AgentId": "エージェントID",

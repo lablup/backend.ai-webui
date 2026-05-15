@@ -2489,6 +2489,7 @@
     "PendingSessions": "Séances en attente"
   },
   "session": {
+    "AccessKeyMismatchTooltip": "Cette session a été créée avec une clé d’accès différente. Passez à cette clé d’accès pour gérer cette session.",
     "ActiveSessions": "Sessions actives",
     "Agent": "Agent",
     "AgentId": "ID d'agent",

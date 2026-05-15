@@ -2515,6 +2515,7 @@
     "PendingSessions": "Pending Sessions"
   },
   "session": {
+    "AccessKeyMismatchTooltip": "This session was created under a different access key. Switch to that access key to manage this session.",
     "ActiveSessions": "Active Sessions",
     "Agent": "Agent",
     "AgentId": "Agent ID",

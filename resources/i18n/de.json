@@ -2489,6 +2489,7 @@
     "PendingSessions": "Ausstehende Sitzungen"
   },
   "session": {
+    "AccessKeyMismatchTooltip": "Diese Sitzung wurde mit einem anderen Zugriffsschlüssel erstellt. Wechseln Sie zu diesem Zugriffsschlüssel, um diese Sitzung zu verwalten.",
     "ActiveSessions": "Aktive Sitzungen",
     "Agent": "Agent",
     "AgentId": "Agenten -ID",

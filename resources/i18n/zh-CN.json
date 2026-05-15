@@ -2489,6 +2489,7 @@
     "PendingSessions": "等待会议"
   },
   "session": {
+    "AccessKeyMismatchTooltip": "此会话由其他访问密钥创建。请切换至该访问密钥后再管理此会话。",
     "ActiveSessions": "活动会话",
     "Agent": "代理人",
     "AgentId": "代理ID",
