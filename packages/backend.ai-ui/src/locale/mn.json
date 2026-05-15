@@ -71,6 +71,9 @@
     "KeepAsIs": "Хэвээр үлдээх",
     "UndoChanges": "Өөрчлөлтийг буцаах"
   },
+  "comp:BAIContainerRegistrySelect": {
+    "SelectContainerRegistry": "Контейнер бүртгэл сонгох"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "Та {{name}} идэвхгүй болгохыг хүсч байна уу?}}?",
     "AreYouSureYouWantToDeactivateSome": "Та {{count}} олдворуудыг идэвхгүй болгохыг хүсч байна уу?",
@@ -181,7 +184,7 @@
     "UpdatedAt": "Шинэчлэгдсэн огноо"
   },
   "comp:BAIProjectBulkEditModal": {
-    "FollowingFoldersWillBeUpdated": "Дараах хавтас(ууд) шинэчлэгдэх болно.",
+    "FollowingProjectsWillBeUpdated": "Дараах төсөл(үүд) шинэчлэгдэх болно.",
     "ProjectResourcePolicy": "Төслийн нөөцийн бодлого",
     "UpdateMultipleProjects": "Олон төслийг шинэчлэх"
   },
@@ -255,6 +258,9 @@
   },
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Ресурсын бүлэг сонгох"
+  },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "Хязгааргүй"
   },
   "comp:BAIRouteNodes": {
     "CreatedAt": "Үүсгэсэн огноо",

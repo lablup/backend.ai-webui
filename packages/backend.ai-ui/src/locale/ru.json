@@ -71,6 +71,9 @@
     "KeepAsIs": "Оставить как есть",
     "UndoChanges": "Отменить изменения"
   },
+  "comp:BAIContainerRegistrySelect": {
+    "SelectContainerRegistry": "Выберите реестр контейнеров"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "Вы уверены, что хотите деактивировать {{name}}?",
     "AreYouSureYouWantToDeactivateSome": "Вы уверены, что хотите деактивировать {{count}} артефакты?",
@@ -181,7 +184,7 @@
     "UpdatedAt": "Обновлено"
   },
   "comp:BAIProjectBulkEditModal": {
-    "FollowingFoldersWillBeUpdated": "Будут обновлены следующие папки.",
+    "FollowingProjectsWillBeUpdated": "Будут обновлены следующие проекты.",
     "ProjectResourcePolicy": "Политика ресурсов проекта",
     "UpdateMultipleProjects": "Обновить несколько проектов"
   },
@@ -255,6 +258,9 @@
   },
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Выберите группу ресурсов"
+  },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "Неограниченный"
   },
   "comp:BAIRouteNodes": {
     "CreatedAt": "Дата создания",

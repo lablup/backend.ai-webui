@@ -71,6 +71,9 @@
     "KeepAsIs": "Manter como está",
     "UndoChanges": "Desfazer alterações"
   },
+  "comp:BAIContainerRegistrySelect": {
+    "SelectContainerRegistry": "Selecionar registro de contêiner"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "Tem certeza de que deseja desativar {{name}}?",
     "AreYouSureYouWantToDeactivateSome": "Tem certeza de que deseja desativar os artefatos {{count}}?",
@@ -181,7 +184,7 @@
     "UpdatedAt": "Atualizado em"
   },
   "comp:BAIProjectBulkEditModal": {
-    "FollowingFoldersWillBeUpdated": "A(s) pasta(s) a seguir será(ão) atualizada(s).",
+    "FollowingProjectsWillBeUpdated": "O(s) projeto(s) a seguir será(ão) atualizado(s).",
     "ProjectResourcePolicy": "Política de Recursos do Projeto",
     "UpdateMultipleProjects": "Atualizar vários projetos"
   },
@@ -255,6 +258,9 @@
   },
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Selecionar grupo de recursos"
+  },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "Ilimitado"
   },
   "comp:BAIRouteNodes": {
     "CreatedAt": "Criado em",

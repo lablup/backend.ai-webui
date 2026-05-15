@@ -71,6 +71,9 @@
     "KeepAsIs": "Pidä ennallaan",
     "UndoChanges": "Kumoa muutokset"
   },
+  "comp:BAIContainerRegistrySelect": {
+    "SelectContainerRegistry": "Valitse konttirekisteri"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "Oletko varma, että haluat deaktivoida {{name}}?",
     "AreYouSureYouWantToDeactivateSome": "Oletko varma, että haluat deaktivoida {{count}} esineitä?",
@@ -181,7 +184,7 @@
     "UpdatedAt": "Päivitetty"
   },
   "comp:BAIProjectBulkEditModal": {
-    "FollowingFoldersWillBeUpdated": "Seuraavat kansiot päivitetään.",
+    "FollowingProjectsWillBeUpdated": "Seuraavat projektit päivitetään.",
     "ProjectResourcePolicy": "Projektin resurssipolitiikka",
     "UpdateMultipleProjects": "Päivitä useita projekteja"
   },
@@ -255,6 +258,9 @@
   },
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Valitse resurssiryhmä"
+  },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "Rajoittamaton"
   },
   "comp:BAIRouteNodes": {
     "CreatedAt": "Luotu",

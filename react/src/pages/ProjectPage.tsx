@@ -2,6 +2,9 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { ProjectPageDeactivateMutation } from '../__generated__/ProjectPageDeactivateMutation.graphql';
+import { ProjectPageModifyMutation } from '../__generated__/ProjectPageModifyMutation.graphql';
+import { ProjectPagePurgeMutation } from '../__generated__/ProjectPagePurgeMutation.graphql';
 import {
   ProjectPageQuery,
   ProjectPageQuery$data,
@@ -10,13 +13,14 @@ import {
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useCSVExport } from '../hooks/useCSVExport';
-import { PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined, SettingOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { App } from 'antd';
+import { App, theme, Tooltip } from 'antd';
 import {
   availableProjectSorterValues,
   BAIButton,
   BAICard,
+  BAIDeleteConfirmModal,
   BAIFetchKeyButton,
   BAIFlex,
   BAIProjectBulkEditModal,
@@ -28,14 +32,16 @@ import {
   INITIAL_FETCH_KEY,
   isValidUUID,
   mergeFilterValues,
+  type ProjectInList,
   useBAILogger,
+  useErrorMessageResolver,
   useUpdatableState,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery } from 'react-relay';
+import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 
 type ProjectNode = NonNullable<
   NonNullable<
@@ -49,12 +55,17 @@ const ProjectPage = () => {
   const { t } = useTranslation();
   const { logger } = useBAILogger();
   const { message } = App.useApp();
+  const { token } = theme.useToken();
+  const { getErrorMessage } = useErrorMessageResolver();
   const [openSettingModal, { toggle: toggleSettingModal }] = useToggle(false);
   const [openBulkEditModal, { toggle: toggleBulkEditModal }] = useToggle(false);
   const [selectedProjectList, setSelectedProjectList] = useState<ProjectNode[]>(
     [],
   );
   const [selectedProject, setSelectedProject] = useState<ProjectNode | null>(
+    null,
+  );
+  const [purgingProject, setPurgingProject] = useState<ProjectInList | null>(
     null,
   );
   const {
@@ -137,6 +148,162 @@ const ProjectPage = () => {
           : 'network-only',
     },
   );
+
+  const [commitDeactivateGroup] = useMutation<ProjectPageDeactivateMutation>(
+    graphql`
+      mutation ProjectPageDeactivateMutation($gid: UUID!) {
+        delete_group(gid: $gid) {
+          msg
+          ok
+        }
+      }
+    `,
+  );
+
+  const [commitModifyGroup] = useMutation<ProjectPageModifyMutation>(graphql`
+    mutation ProjectPageModifyMutation($gid: UUID!, $props: ModifyGroupInput!) {
+      modify_group(gid: $gid, props: $props) {
+        ok
+        msg
+      }
+    }
+  `);
+
+  const [commitPurgeGroup] = useMutation<ProjectPagePurgeMutation>(graphql`
+    mutation ProjectPagePurgeMutation($gid: UUID!) {
+      purge_group(gid: $gid) {
+        ok
+        msg
+      }
+    }
+  `);
+
+  const removeFromSelection = (projectId: string) => {
+    setSelectedProjectList((prev) =>
+      prev.filter((project) => project.id !== projectId),
+    );
+  };
+
+  const handleDeactivateProject = (project: ProjectInList) =>
+    new Promise<void>((resolve) => {
+      if (!project.row_id) {
+        resolve();
+        return;
+      }
+      commitDeactivateGroup({
+        variables: { gid: project.row_id },
+        onCompleted: (response, errors) => {
+          if (errors && errors.length > 0) {
+            errors.forEach((error) => {
+              message.error(
+                getErrorMessage(error, t('project.FailedToDeactivateProject')),
+              );
+            });
+            resolve();
+            return;
+          }
+          if (response.delete_group?.ok) {
+            message.success(t('project.ProjectDeactivated'));
+            removeFromSelection(project.id);
+            updateFetchKey();
+          } else {
+            message.error(
+              response.delete_group?.msg ||
+                t('project.FailedToDeactivateProject'),
+            );
+          }
+          resolve();
+        },
+        onError: (error) => {
+          message.error(
+            error?.message || t('project.FailedToDeactivateProject'),
+          );
+          logger.error(error);
+          resolve();
+        },
+      });
+    });
+
+  const handleRestoreProject = (project: ProjectInList) =>
+    new Promise<void>((resolve) => {
+      if (!project.row_id) {
+        resolve();
+        return;
+      }
+      commitModifyGroup({
+        variables: {
+          gid: project.row_id,
+          props: { is_active: true },
+        },
+        onCompleted: (response, errors) => {
+          if (errors && errors.length > 0) {
+            errors.forEach((error) => {
+              message.error(
+                getErrorMessage(error, t('project.FailedToActivateProject')),
+              );
+            });
+            resolve();
+            return;
+          }
+          if (response.modify_group?.ok) {
+            message.success(t('project.ProjectActivated'));
+            removeFromSelection(project.id);
+            updateFetchKey();
+          } else {
+            message.error(
+              response.modify_group?.msg ||
+                t('project.FailedToActivateProject'),
+            );
+          }
+          resolve();
+        },
+        onError: (error) => {
+          message.error(error?.message || t('project.FailedToActivateProject'));
+          logger.error(error);
+          resolve();
+        },
+      });
+    });
+
+  const handlePurgeProject = () =>
+    new Promise<void>((resolve) => {
+      if (!purgingProject?.row_id) {
+        resolve();
+        return;
+      }
+      const projectId = purgingProject.id;
+      commitPurgeGroup({
+        variables: { gid: purgingProject.row_id },
+        onCompleted: (response, errors) => {
+          if (errors && errors.length > 0) {
+            errors.forEach((error) => {
+              message.error(
+                getErrorMessage(error, t('project.FailedToPurgeProject')),
+              );
+            });
+            resolve();
+            return;
+          }
+          if (response.purge_group?.ok) {
+            message.success(t('project.ProjectPurged'));
+            removeFromSelection(projectId);
+            setPurgingProject(null);
+            updateFetchKey();
+          } else {
+            message.error(
+              response.purge_group?.msg || t('project.FailedToPurgeProject'),
+            );
+          }
+          resolve();
+        },
+        onError: (error) => {
+          message.error(error?.message || t('project.FailedToPurgeProject'));
+          logger.error(error);
+          resolve();
+        },
+      });
+    });
+
   return (
     <BAICard
       activeTabKey="projects"
@@ -200,9 +367,15 @@ const ProjectPage = () => {
                   count={selectedProjectList.length}
                   onClearSelection={() => setSelectedProjectList([])}
                 />
-                <BAIButton onClick={toggleBulkEditModal}>
-                  {t('project.BulkEdit')}
-                </BAIButton>
+                <Tooltip title={t('project.BulkEdit')}>
+                  <BAIButton
+                    icon={
+                      <SettingOutlined style={{ color: token.colorInfo }} />
+                    }
+                    style={{ backgroundColor: token.colorInfoBg }}
+                    onClick={toggleBulkEditModal}
+                  />
+                </Tooltip>
               </>
             )}
             <BAIFetchKeyButton
@@ -223,7 +396,6 @@ const ProjectPage = () => {
           </BAIFlex>
         </BAIFlex>
         <BAIProjectTable
-          updateFetchKey={updateFetchKey}
           projectFragment={filterOutEmpty(
             group_nodes?.edges.map((e) => e?.node) ?? [],
           )}
@@ -253,6 +425,13 @@ const ProjectPage = () => {
                 toggleSettingModal();
               }
             });
+          }}
+          onClickDeactivateProject={(project) =>
+            handleDeactivateProject(project)
+          }
+          onClickRestoreProject={(project) => handleRestoreProject(project)}
+          onClickPurgeProject={(project) => {
+            setPurgingProject(project);
           }}
           exportSettings={
             !_.isEmpty(supportedFields)
@@ -310,6 +489,24 @@ const ProjectPage = () => {
           onCancel={() => {
             toggleBulkEditModal();
           }}
+        />
+        <BAIDeleteConfirmModal
+          open={!!purgingProject}
+          title={t('project.PurgeProject')}
+          target={t('general.Project')}
+          items={
+            purgingProject
+              ? [{ key: purgingProject.id, label: purgingProject.name ?? '' }]
+              : []
+          }
+          confirmText={purgingProject?.name ?? ''}
+          requireConfirmInput
+          inputProps={{
+            placeholder: purgingProject?.name ?? '',
+          }}
+          okText={t('project.Purge')}
+          onOk={handlePurgeProject}
+          onCancel={() => setPurgingProject(null)}
         />
       </BAIFlex>
     </BAICard>

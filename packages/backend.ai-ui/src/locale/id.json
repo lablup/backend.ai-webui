@@ -71,6 +71,9 @@
     "KeepAsIs": "Pertahankan",
     "UndoChanges": "Batalkan perubahan"
   },
+  "comp:BAIContainerRegistrySelect": {
+    "SelectContainerRegistry": "Pilih Registri Container"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "Anda yakin ingin menonaktifkan {{name}}?",
     "AreYouSureYouWantToDeactivateSome": "Anda yakin ingin menonaktifkan artefak {{count}}?",
@@ -181,7 +184,7 @@
     "UpdatedAt": "Diperbarui Pada"
   },
   "comp:BAIProjectBulkEditModal": {
-    "FollowingFoldersWillBeUpdated": "Folder berikut akan diperbarui.",
+    "FollowingProjectsWillBeUpdated": "Proyek berikut akan diperbarui.",
     "ProjectResourcePolicy": "Kebijakan Sumber Daya Proyek",
     "UpdateMultipleProjects": "Perbarui Beberapa Proyek"
   },
@@ -255,6 +258,9 @@
   },
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Pilih Grup Sumber Daya"
+  },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "Tak terbatas"
   },
   "comp:BAIRouteNodes": {
     "CreatedAt": "Dibuat pada",

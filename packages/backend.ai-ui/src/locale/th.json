@@ -71,6 +71,9 @@
     "KeepAsIs": "เก็บไว้ตามเดิม",
     "UndoChanges": "ยกเลิกการเปลี่ยนแปลง"
   },
+  "comp:BAIContainerRegistrySelect": {
+    "SelectContainerRegistry": "เลือกรีจิสทรีคอนเทนเนอร์"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "แน่ใจหรือว่าคุณต้องการปิดการใช้งาน {{name}}?",
     "AreYouSureYouWantToDeactivateSome": "คุณแน่ใจหรือไม่ว่าต้องการปิดการใช้งาน {{count}} สิ่งประดิษฐ์?",
@@ -181,7 +184,7 @@
     "UpdatedAt": "วันที่อัปเดต"
   },
   "comp:BAIProjectBulkEditModal": {
-    "FollowingFoldersWillBeUpdated": "โฟลเดอร์ต่อไปนี้จะถูกอัปเดต.",
+    "FollowingProjectsWillBeUpdated": "โครงการต่อไปนี้จะถูกอัปเดต.",
     "ProjectResourcePolicy": "นโยบายทรัพยากรโครงการ",
     "UpdateMultipleProjects": "อัปเดตหลายโครงการ"
   },
@@ -255,6 +258,9 @@
   },
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "เลือกกลุ่มทรัพยากร"
+  },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "ไม่ จำกัด"
   },
   "comp:BAIRouteNodes": {
     "CreatedAt": "สร้างเมื่อ",

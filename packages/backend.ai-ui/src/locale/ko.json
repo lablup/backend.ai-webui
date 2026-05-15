@@ -184,7 +184,7 @@
     "UpdatedAt": "수정 시각"
   },
   "comp:BAIProjectBulkEditModal": {
-    "FollowingFoldersWillBeUpdated": "다음 폴더(들)이 업데이트됩니다.",
+    "FollowingProjectsWillBeUpdated": "다음 프로젝트(들)이 업데이트됩니다.",
     "ProjectResourcePolicy": "프로젝트 리소스 정책",
     "UpdateMultipleProjects": "프로젝트 일괄 업데이트"
   },
@@ -258,6 +258,9 @@
   },
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "리소스 그룹을 선택해주세요"
+  },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "제한없음"
   },
   "comp:BAIRouteNodes": {
     "CreatedAt": "생성일",

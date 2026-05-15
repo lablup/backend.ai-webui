@@ -71,6 +71,9 @@
     "KeepAsIs": "保持原样",
     "UndoChanges": "撤销更改"
   },
+  "comp:BAIContainerRegistrySelect": {
+    "SelectContainerRegistry": "选择容器镜像仓库"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "您确定要停用{{name}}吗？",
     "AreYouSureYouWantToDeactivateSome": "您确定要停用{{count}}文物吗？",
@@ -181,7 +184,7 @@
     "UpdatedAt": "更新时间"
   },
   "comp:BAIProjectBulkEditModal": {
-    "FollowingFoldersWillBeUpdated": "以下文件夹将被更新。",
+    "FollowingProjectsWillBeUpdated": "以下项目将被更新。",
     "ProjectResourcePolicy": "项目资源策略",
     "UpdateMultipleProjects": "批量更新项目"
   },
@@ -255,6 +258,9 @@
   },
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "选择资源组"
+  },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "无限"
   },
   "comp:BAIRouteNodes": {
     "CreatedAt": "创建时间",

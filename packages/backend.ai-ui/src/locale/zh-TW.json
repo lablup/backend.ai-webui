@@ -71,6 +71,9 @@
     "KeepAsIs": "保持原樣",
     "UndoChanges": "撤銷更改"
   },
+  "comp:BAIContainerRegistrySelect": {
+    "SelectContainerRegistry": "選擇容器映像倉庫"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "您確定要停用{{name}}嗎？",
     "AreYouSureYouWantToDeactivateSome": "您確定要停用{{count}}文物嗎？",
@@ -181,7 +184,7 @@
     "UpdatedAt": "更新時間"
   },
   "comp:BAIProjectBulkEditModal": {
-    "FollowingFoldersWillBeUpdated": "下列資料夾將會更新。",
+    "FollowingProjectsWillBeUpdated": "下列專案將會更新。",
     "ProjectResourcePolicy": "專案資源政策",
     "UpdateMultipleProjects": "更新多個專案"
   },
@@ -255,6 +258,9 @@
   },
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "選擇資源群組"
+  },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "無限"
   },
   "comp:BAIRouteNodes": {
     "CreatedAt": "建立時間",

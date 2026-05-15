@@ -184,7 +184,7 @@
     "UpdatedAt": "Updated At"
   },
   "comp:BAIProjectBulkEditModal": {
-    "FollowingFoldersWillBeUpdated": "The following folder(s) will be updated.",
+    "FollowingProjectsWillBeUpdated": "The following project(s) will be updated.",
     "ProjectResourcePolicy": "Project Resource Policy",
     "UpdateMultipleProjects": "Update Multiple Projects"
   },

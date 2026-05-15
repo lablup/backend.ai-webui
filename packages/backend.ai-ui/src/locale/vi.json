@@ -71,6 +71,9 @@
     "KeepAsIs": "Giữ nguyên",
     "UndoChanges": "Hoàn tác thay đổi"
   },
+  "comp:BAIContainerRegistrySelect": {
+    "SelectContainerRegistry": "Chọn kho lưu trữ container"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "Bạn có chắc bạn muốn hủy kích hoạt {{name}}?",
     "AreYouSureYouWantToDeactivateSome": "Bạn có chắc là bạn muốn hủy kích hoạt {{count}} Artifacts?",
@@ -181,7 +184,7 @@
     "UpdatedAt": "Ngày cập nhật"
   },
   "comp:BAIProjectBulkEditModal": {
-    "FollowingFoldersWillBeUpdated": "Thư mục sau sẽ được cập nhật.",
+    "FollowingProjectsWillBeUpdated": "Dự án sau sẽ được cập nhật.",
     "ProjectResourcePolicy": "Chính sách tài nguyên dự án",
     "UpdateMultipleProjects": "Cập nhật nhiều dự án"
   },
@@ -255,6 +258,9 @@
   },
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Chọn nhóm tài nguyên"
+  },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "Không giới hạn"
   },
   "comp:BAIRouteNodes": {
     "CreatedAt": "Ngày tạo",

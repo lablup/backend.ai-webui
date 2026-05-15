@@ -71,6 +71,9 @@
     "KeepAsIs": "そのまま維持",
     "UndoChanges": "変更を元に戻す"
   },
+  "comp:BAIContainerRegistrySelect": {
+    "SelectContainerRegistry": "コンテナレジストリを選択"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "{{name}}を無効にしたいですか？",
     "AreYouSureYouWantToDeactivateSome": "{{count}}アーティファクトを無効にしたいですか？",
@@ -181,7 +184,7 @@
     "UpdatedAt": "更新日時"
   },
   "comp:BAIProjectBulkEditModal": {
-    "FollowingFoldersWillBeUpdated": "以下のフォルダーが更新されます.",
+    "FollowingProjectsWillBeUpdated": "以下のプロジェクトが更新されます.",
     "ProjectResourcePolicy": "プロジェクトのリソースポリシー",
     "UpdateMultipleProjects": "プロジェクトを一括更新"
   },
@@ -255,6 +258,9 @@
   },
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "リソースグループを選択"
+  },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "無制限"
   },
   "comp:BAIRouteNodes": {
     "CreatedAt": "作成日時",

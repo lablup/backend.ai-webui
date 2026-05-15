@@ -46,7 +46,9 @@ const meta: Meta<typeof BAIProjectTable> = {
 | \`projectFragment\` | \`BAIProjectTableFragment$key\` | - | GraphQL fragment reference (required) |
 | \`onChangeOrder\` | \`(order: ProjectSorterValue \\| null) => void\` | - | Callback when sort order changes |
 | \`onClickProjectEditButton\` | \`(project: Project) => void\` | - | Callback when edit button is clicked (required) |
-| \`updateFetchKey\` | \`() => void\` | - | Callback to trigger data refetch |
+| \`onClickDeactivateProject\` | \`(project: Project) => Promise<void>\` | - | Async callback when deactivate is confirmed (required) |
+| \`onClickRestoreProject\` | \`(project: Project) => Promise<void>\` | - | Async callback when restore is confirmed (required) |
+| \`onClickPurgeProject\` | \`(project: Project) => void\` | - | Callback when purge is clicked (required) |
 
 ## Pre-configured Columns
 - **Name**: Project name (sortable)
@@ -93,11 +95,25 @@ For other props (loading, pagination, etc.), refer to [BAITable](?path=/docs/tab
         type: { summary: '(project: Project) => void' },
       },
     },
-    updateFetchKey: {
-      action: 'fetch-triggered',
-      description: 'Callback to trigger data refetch',
+    onClickDeactivateProject: {
+      action: 'deactivate-confirmed',
+      description: 'Async callback when deactivate is confirmed',
       table: {
-        type: { summary: '() => void' },
+        type: { summary: '(project: Project) => Promise<void>' },
+      },
+    },
+    onClickRestoreProject: {
+      action: 'restore-confirmed',
+      description: 'Async callback when restore is confirmed',
+      table: {
+        type: { summary: '(project: Project) => Promise<void>' },
+      },
+    },
+    onClickPurgeProject: {
+      action: 'purge-clicked',
+      description: 'Callback when purge is clicked',
+      table: {
+        type: { summary: '(project: Project) => void' },
       },
     },
   },
@@ -126,19 +142,28 @@ For other props (loading, pagination, etc.), refer to [BAITable](?path=/docs/tab
 export default meta;
 type Story = StoryObj<typeof BAIProjectTable>;
 
-interface QueryResolverProps extends Pick<
-  React.ComponentProps<typeof BAIProjectTable>,
-  | 'onClickProjectEditButton'
-  | 'onChangeOrder'
-  | 'updateFetchKey'
-  | 'loading'
-  | 'order'
+interface QueryResolverProps extends Partial<
+  Pick<
+    React.ComponentProps<typeof BAIProjectTable>,
+    | 'onClickProjectEditButton'
+    | 'onClickDeactivateProject'
+    | 'onClickRestoreProject'
+    | 'onClickPurgeProject'
+    | 'onChangeOrder'
+    | 'loading'
+    | 'order'
+  >
 > {}
 
+const noop = () => {};
+const asyncNoop = async () => {};
+
 const QueryResolver: React.FC<QueryResolverProps> = ({
-  onClickProjectEditButton,
-  onChangeOrder,
-  updateFetchKey,
+  onClickProjectEditButton = noop,
+  onClickDeactivateProject = asyncNoop,
+  onClickRestoreProject = asyncNoop,
+  onClickPurgeProject = noop,
+  onChangeOrder = noop,
   loading,
   order,
 }) => {
@@ -170,8 +195,10 @@ const QueryResolver: React.FC<QueryResolverProps> = ({
     <BAIProjectTable
       projectFragment={projectNodes}
       onClickProjectEditButton={onClickProjectEditButton}
+      onClickDeactivateProject={onClickDeactivateProject}
+      onClickRestoreProject={onClickRestoreProject}
+      onClickPurgeProject={onClickPurgeProject}
       onChangeOrder={onChangeOrder}
-      updateFetchKey={updateFetchKey}
       loading={loading}
       order={order}
       pagination={{
@@ -315,7 +342,6 @@ export const DifferentTypes: Story = {
       <QueryResolver
         onClickProjectEditButton={() => {}}
         onChangeOrder={() => {}}
-        updateFetchKey={() => {}}
       />
     </RelayResolver>
   ),
@@ -374,7 +400,6 @@ export const ActiveInactiveStates: Story = {
       <QueryResolver
         onClickProjectEditButton={() => {}}
         onChangeOrder={() => {}}
-        updateFetchKey={() => {}}
       />
     </RelayResolver>
   ),
@@ -437,7 +462,6 @@ export const WithSorting: Story = {
             order={order}
             onChangeOrder={(newOrder) => setOrder(newOrder)}
             onClickProjectEditButton={() => {}}
-            updateFetchKey={() => {}}
           />
         </RelayResolver>
       </div>
@@ -477,7 +501,6 @@ export const Loading: Story = {
         loading={true}
         onClickProjectEditButton={() => {}}
         onChangeOrder={() => {}}
-        updateFetchKey={() => {}}
       />
     </RelayResolver>
   ),
@@ -510,7 +533,6 @@ export const Empty: Story = {
       <QueryResolver
         onClickProjectEditButton={() => {}}
         onChangeOrder={() => {}}
-        updateFetchKey={() => {}}
       />
     </RelayResolver>
   ),
@@ -580,7 +602,6 @@ export const VariousResourceAllocations: Story = {
       <QueryResolver
         onClickProjectEditButton={() => {}}
         onChangeOrder={() => {}}
-        updateFetchKey={() => {}}
       />
     </RelayResolver>
   ),
@@ -693,11 +714,19 @@ export const RealWorldExample: Story = {
             onClickProjectEditButton={(project) =>
               addAction(`Edit: ${project.name}`)
             }
+            onClickDeactivateProject={async (project) => {
+              addAction(`Deactivate: ${project.name}`);
+            }}
+            onClickRestoreProject={async (project) => {
+              addAction(`Restore: ${project.name}`);
+            }}
+            onClickPurgeProject={(project) =>
+              addAction(`Purge: ${project.name}`)
+            }
             onChangeOrder={(newOrder) => {
               setOrder(newOrder);
               addAction(`Sort: ${newOrder || 'default'}`);
             }}
-            updateFetchKey={() => addAction('Refetch data')}
           />
         </RelayResolver>
       </div>
