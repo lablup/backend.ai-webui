@@ -1049,7 +1049,6 @@
     },
     "filter": {
       "CreatedAt": "创建时间",
-      "CreatedUserId": "创建者 ID",
       "DestroyedAt": "删除时间",
       "DomainName": "域",
       "EndpointUrl": "端点 URL",

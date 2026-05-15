@@ -1049,7 +1049,6 @@
     },
     "filter": {
       "CreatedAt": "作成日時",
-      "CreatedUserId": "作成者ID",
       "DestroyedAt": "削除日時",
       "DomainName": "ドメイン",
       "EndpointUrl": "エンドポイントURL",

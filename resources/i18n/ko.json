@@ -1050,7 +1050,6 @@
     },
     "filter": {
       "CreatedAt": "생성일",
-      "CreatedUserId": "생성자 ID",
       "DestroyedAt": "삭제일",
       "DomainName": "도메인",
       "EndpointUrl": "엔드포인트 URL",

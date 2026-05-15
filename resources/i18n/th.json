@@ -1049,7 +1049,6 @@
     },
     "filter": {
       "CreatedAt": "สร้างเมื่อ",
-      "CreatedUserId": "ID ผู้สร้าง",
       "DestroyedAt": "ลบเมื่อ",
       "DomainName": "โดเมน",
       "EndpointUrl": "URL ปลายทาง",

@@ -1049,7 +1049,6 @@
     },
     "filter": {
       "CreatedAt": "Ngày tạo",
-      "CreatedUserId": "ID người tạo",
       "DestroyedAt": "Ngày xóa",
       "DomainName": "Miền",
       "EndpointUrl": "URL điểm cuối",

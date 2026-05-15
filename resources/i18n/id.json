@@ -1049,7 +1049,6 @@
     },
     "filter": {
       "CreatedAt": "Dibuat Pada",
-      "CreatedUserId": "ID Pembuat",
       "DestroyedAt": "Dihancurkan Pada",
       "DomainName": "Domain",
       "EndpointUrl": "URL Titik Akhir",

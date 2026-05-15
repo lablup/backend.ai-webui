@@ -1050,7 +1050,6 @@
     },
     "filter": {
       "CreatedAt": "建立時間",
-      "CreatedUserId": "建立者 ID",
       "DestroyedAt": "刪除時間",
       "DomainName": "網域",
       "EndpointUrl": "端點 URL",

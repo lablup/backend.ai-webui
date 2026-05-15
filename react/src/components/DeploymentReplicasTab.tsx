@@ -239,6 +239,7 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
       propertyLabel: t('deployment.TrafficStatus'),
       type: 'enum' as const,
       options: trafficStatusOptions,
+      strictSelection: true,
     },
   ];
 
@@ -326,23 +327,23 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
           return <Typography.Text type="secondary">—</Typography.Text>;
         }
         const name = session.metadata?.name;
+        if (!name) {
+          return <BAIId globalId={session.id} />;
+        }
         return (
-          <BAIFlex gap="xs" align="center" wrap="nowrap">
-            {name ? (
-              <Typography.Link
-                ellipsis={{ tooltip: name }}
-                onClick={() => setSelectedSessionId(toLocalId(session.id))}
-                style={{ maxWidth: 160 }}
-              >
-                {name}
-              </Typography.Link>
-            ) : null}
-            <BAIFlex gap={0} align="center">
-              {'('}
-              <BAIId globalId={session.id} />
-              {')'}
-            </BAIFlex>
-          </BAIFlex>
+          <>
+            <Typography.Link
+              ellipsis={{ tooltip: name }}
+              onClick={() => setSelectedSessionId(toLocalId(session.id))}
+              style={{ maxWidth: 160 }}
+            >
+              {name}
+            </Typography.Link>
+            &nbsp;
+            <Typography.Text type="secondary">
+              (<BAIId globalId={session.id} type="secondary" />)
+            </Typography.Text>
+          </>
         );
       },
     },
@@ -362,7 +363,7 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
           return <Typography.Text type="secondary">—</Typography.Text>;
         }
         return (
-          <BAIFlex gap="xs" align="center">
+          <>
             <Typography.Link
               onClick={() =>
                 setDrawerRevisionFrgmt(
@@ -374,12 +375,11 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
                 ? `#${revision.revisionNumber}`
                 : '-'}
             </Typography.Link>
-            <BAIFlex gap={0} align="center">
-              {'('}
-              <BAIId globalId={revision.id} />
-              {')'}
-            </BAIFlex>
-          </BAIFlex>
+            &nbsp;
+            <Typography.Text type="secondary">
+              (<BAIId globalId={revision.id} type="secondary" />)
+            </Typography.Text>
+          </>
         );
       },
     },

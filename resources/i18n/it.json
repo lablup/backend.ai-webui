@@ -1049,7 +1049,6 @@
     },
     "filter": {
       "CreatedAt": "Creato il",
-      "CreatedUserId": "ID creatore",
       "DestroyedAt": "Eliminato il",
       "DomainName": "Dominio",
       "EndpointUrl": "URL endpoint",

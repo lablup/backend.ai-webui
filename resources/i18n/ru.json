@@ -1049,7 +1049,6 @@
     },
     "filter": {
       "CreatedAt": "Создано",
-      "CreatedUserId": "ID создателя",
       "DestroyedAt": "Удалено",
       "DomainName": "Домен",
       "EndpointUrl": "URL конечной точки",

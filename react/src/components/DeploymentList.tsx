@@ -7,10 +7,12 @@ import {
   DeploymentList_modelDeploymentConnection$data,
   DeploymentList_modelDeploymentConnection$key,
 } from '../__generated__/DeploymentList_modelDeploymentConnection.graphql';
+import type { DeploymentRevisionDetail_revision$key } from '../__generated__/DeploymentRevisionDetail_revision.graphql';
 import { DeploymentSettingModal_deployment$key } from '../__generated__/DeploymentSettingModal_deployment.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
 import BAIRadioGroup from './BAIRadioGroup';
 import DeploymentOwnerInfo from './DeploymentOwnerInfo';
+import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
 import DeploymentStatusTag, { DeploymentStatus } from './DeploymentStatusTag';
 import DeploymentTagChips from './DeploymentTagChips';
 import QuestionIconWithTooltip from './QuestionIconWithTooltip';
@@ -23,6 +25,7 @@ import {
   BAIId,
   BAINameActionCell,
   BAITable,
+  BAIUnmountAfterClose,
   filterOutEmpty,
   filterOutNullAndUndefined,
   isValidUUID,
@@ -151,6 +154,8 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
     id: string;
     name: string;
   } | null>(null);
+  const [drawerRevisionFrgmt, setDrawerRevisionFrgmt] =
+    useState<DeploymentRevisionDetail_revision$key | null>(null);
 
   const [commitDeleteMutation, isInFlightDeleteMutation] =
     useMutation<DeploymentListDeleteMutation>(graphql`
@@ -168,7 +173,6 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
         edges {
           node {
             id
-            createdUserId
             metadata {
               name
               status
@@ -176,6 +180,12 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
               updatedAt
               domainName
               projectId
+              projectV2 @since(version: "26.4.3") {
+                basicInfo {
+                  name
+                }
+                id
+              }
               resourceGroupName
               ...DeploymentTagChips_metadata
             }
@@ -202,6 +212,7 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
                   name
                 }
               }
+              ...DeploymentRevisionDetail_revision
             }
             ...DeploymentOwnerInfo_deployment
           }
@@ -264,13 +275,6 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
           {
             key: 'projectId',
             propertyLabel: t('deployment.filter.ProjectId'),
-            type: 'uuid' as const,
-            fixedOperator: 'equals' as const,
-            rule: uuidRule,
-          },
-          {
-            key: 'createdUserId',
-            propertyLabel: t('deployment.filter.CreatedUserId'),
             type: 'uuid' as const,
             fixedOperator: 'equals' as const,
             rule: uuidRule,
@@ -349,10 +353,14 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
         </BAIFlex>
       ),
       render: (_text, row) => {
-        const revisionNumber = row.currentRevision?.revisionNumber;
-        if (revisionNumber == null)
+        const revision = row.currentRevision;
+        if (revision?.revisionNumber == null)
           return <Typography.Text type="secondary">-</Typography.Text>;
-        return <Typography.Text>{`#${revisionNumber}`}</Typography.Text>;
+        return (
+          <Typography.Link
+            onClick={() => setDrawerRevisionFrgmt(revision)}
+          >{`#${revision.revisionNumber}`}</Typography.Link>
+        );
       },
     },
     {
@@ -505,28 +513,31 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
     },
     isAdminMode && {
       key: 'projectId',
-      title: t('deployment.ProjectId'),
+      title: t('deployment.Project'),
       defaultHidden: true,
       sorter: true,
       render: (_text, row) => {
         const projectId = row.metadata?.projectId;
-        return projectId ? (
-          <BAIId globalId={projectId} copyable />
-        ) : (
-          <Typography.Text type="secondary">-</Typography.Text>
-        );
-      },
-    },
-    isAdminMode && {
-      key: 'createdUserId',
-      title: t('deployment.CreatedBy'),
-      defaultHidden: true,
-      render: (_text, row) => {
-        const userId = row.createdUserId;
-        return userId ? (
-          <BAIId globalId={userId} copyable />
-        ) : (
-          <Typography.Text type="secondary">-</Typography.Text>
+        if (!projectId) {
+          return <Typography.Text type="secondary">-</Typography.Text>;
+        }
+        const projectName = row.metadata?.projectV2?.basicInfo?.name;
+        if (!projectName) {
+          return <BAIId globalId={projectId} copyable />;
+        }
+        return (
+          <>
+            <Typography.Text
+              ellipsis={{ tooltip: projectName }}
+              style={{ maxWidth: 160 }}
+            >
+              {projectName}
+            </Typography.Text>
+            &nbsp;
+            <Typography.Text type="secondary">
+              (<BAIId globalId={projectId} copyable type="secondary" />)
+            </Typography.Text>
+          </>
         );
       },
     },
@@ -628,6 +639,13 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
         }}
         onCancel={() => setDeletingDeployment(null)}
       />
+      <BAIUnmountAfterClose>
+        <DeploymentRevisionDetailDrawer
+          open={!!drawerRevisionFrgmt}
+          revisionFrgmt={drawerRevisionFrgmt}
+          onClose={() => setDrawerRevisionFrgmt(null)}
+        />
+      </BAIUnmountAfterClose>
     </>
   );
 };

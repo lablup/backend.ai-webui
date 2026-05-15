@@ -22,7 +22,6 @@ import {
   MoreOutlined,
   PlusOutlined,
 } from '@ant-design/icons';
-import { useToggle } from 'ahooks';
 import {
   Alert,
   App,
@@ -250,10 +249,7 @@ const DeploymentConfigurationSection: React.FC<
       scroll: false,
     },
   );
-  const [
-    settingModalOpen,
-    { setLeft: closeSettingModal, setRight: openSettingModal },
-  ] = useToggle(false);
+  const [settingModalOpen, setSettingModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const [commitDeleteMutation, isInFlightDeleteMutation] =
@@ -327,13 +323,15 @@ const DeploymentConfigurationSection: React.FC<
               onChange={onRefetch}
             />
             <Space.Compact>
-              <Button
+              <BAIButton
                 icon={<EditOutlined />}
                 disabled={isDeploymentDestroying}
-                onClick={openSettingModal}
+                action={async () => {
+                  setSettingModalOpen(true);
+                }}
               >
                 {t('button.Edit')}
-              </Button>
+              </BAIButton>
               <Dropdown
                 trigger={['click']}
                 menu={{
@@ -455,7 +453,7 @@ const DeploymentConfigurationSection: React.FC<
         open={settingModalOpen}
         deploymentFrgmt={deployment}
         onRequestClose={(success) => {
-          closeSettingModal();
+          setSettingModalOpen(false);
           if (success) onRefetch();
         }}
       />

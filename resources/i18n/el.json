@@ -1049,7 +1049,6 @@
     },
     "filter": {
       "CreatedAt": "Δημιουργήθηκε",
-      "CreatedUserId": "ID δημιουργού",
       "DestroyedAt": "Καταστράφηκε στις",
       "DomainName": "Τομέας",
       "EndpointUrl": "URL τελικού σημείου",

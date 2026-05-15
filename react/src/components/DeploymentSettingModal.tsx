@@ -15,6 +15,7 @@ import {
   Input,
   InputNumber,
   Select,
+  Skeleton,
   theme,
   Typography,
 } from 'antd';
@@ -26,7 +27,7 @@ import {
   BAIProjectResourceGroupSelect,
   toLocalId,
 } from 'backend.ai-ui';
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
@@ -215,94 +216,97 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
         </BAIFlex>
       }
     >
-      <Form<FormValues>
-        form={form}
-        layout="vertical"
-        preserve={false}
-        initialValues={
-          deployment
-            ? {
-                name: deployment.metadata.name ?? '',
-                tags: (deployment.metadata.tags ?? []).flatMap((tag) =>
-                  tag
-                    .split(',')
-                    .map((t) => t.trim())
-                    .filter(Boolean),
-                ),
-                openToPublic: deployment.networkAccess.openToPublic ?? false,
-                replicaCount: deployment.replicaState?.desiredReplicaCount ?? 1,
-              }
-            : { openToPublic: false, replicaCount: 1, tags: [] }
-        }
-        style={{ marginTop: token.marginXS }}
-      >
-        <Form.Item
-          name="name"
-          label={t('deployment.DeploymentName')}
-          tooltip={t('deployment.DeploymentNameTooltip')}
-          rules={[{ required: true, message: t('deployment.NameRequired') }]}
+      <Suspense fallback={<Skeleton active />}>
+        <Form<FormValues>
+          form={form}
+          layout="vertical"
+          preserve={false}
+          initialValues={
+            deployment
+              ? {
+                  name: deployment.metadata.name ?? '',
+                  tags: (deployment.metadata.tags ?? []).flatMap((tag) =>
+                    tag
+                      .split(',')
+                      .map((t) => t.trim())
+                      .filter(Boolean),
+                  ),
+                  openToPublic: deployment.networkAccess.openToPublic ?? false,
+                  replicaCount:
+                    deployment.replicaState?.desiredReplicaCount ?? 1,
+                }
+              : { openToPublic: false, replicaCount: 1, tags: [] }
+          }
+          style={{ marginTop: token.marginXS }}
         >
-          <Input placeholder={t('deployment.NamePlaceholder')} />
-        </Form.Item>
-        {deployment ? (
           <Form.Item
-            label={t('modelStore.ResourceGroup')}
-            tooltip={t('modelStore.ResourceGroupTooltip')}
+            name="name"
+            label={t('deployment.DeploymentName')}
+            tooltip={t('deployment.DeploymentNameTooltip')}
+            rules={[{ required: true, message: t('deployment.NameRequired') }]}
           >
-            {currentResourceGroup ? (
-              <Typography.Text>{currentResourceGroup}</Typography.Text>
-            ) : (
-              <Typography.Text type="secondary">—</Typography.Text>
-            )}
+            <Input placeholder={t('deployment.NamePlaceholder')} />
           </Form.Item>
-        ) : (
+          {deployment ? (
+            <Form.Item
+              label={t('modelStore.ResourceGroup')}
+              tooltip={t('modelStore.ResourceGroupTooltip')}
+            >
+              {currentResourceGroup ? (
+                <Typography.Text>{currentResourceGroup}</Typography.Text>
+              ) : (
+                <Typography.Text type="secondary">—</Typography.Text>
+              )}
+            </Form.Item>
+          ) : (
+            <Form.Item
+              name="resourceGroup"
+              label={t('modelStore.ResourceGroup')}
+              tooltip={t('modelStore.ResourceGroupTooltip')}
+              rules={[{ required: true }]}
+            >
+              <BAIProjectResourceGroupSelect
+                projectName={projectName ?? ''}
+                autoSelectDefault
+                style={{ width: '100%' }}
+              />
+            </Form.Item>
+          )}
           <Form.Item
-            name="resourceGroup"
-            label={t('modelStore.ResourceGroup')}
-            tooltip={t('modelStore.ResourceGroupTooltip')}
-            rules={[{ required: true }]}
+            name="replicaCount"
+            label={t('deployment.DesiredReplicas')}
+            tooltip={t('deployment.DesiredReplicasTooltip')}
+            rules={[
+              {
+                required: true,
+                message: t('deployment.DesiredReplicasRequired'),
+              },
+            ]}
           >
-            <BAIProjectResourceGroupSelect
-              projectName={projectName ?? ''}
-              autoSelectDefault
-              style={{ width: '100%' }}
+            <InputNumber min={1} style={{ width: '100%' }} />
+          </Form.Item>
+          <Form.Item
+            name="tags"
+            label={t('deployment.Tags')}
+            tooltip={t('deployment.TagsTooltip')}
+          >
+            <Select
+              mode="tags"
+              placeholder={t('deployment.TagsPlaceholder')}
+              tokenSeparators={[',', '\n']}
+              notFoundContent={null}
             />
           </Form.Item>
-        )}
-        <Form.Item
-          name="replicaCount"
-          label={t('deployment.DesiredReplicas')}
-          tooltip={t('deployment.DesiredReplicasTooltip')}
-          rules={[
-            {
-              required: true,
-              message: t('deployment.DesiredReplicasRequired'),
-            },
-          ]}
-        >
-          <InputNumber min={1} style={{ width: '100%' }} />
-        </Form.Item>
-        <Form.Item
-          name="tags"
-          label={t('deployment.Tags')}
-          tooltip={t('deployment.TagsTooltip')}
-        >
-          <Select
-            mode="tags"
-            placeholder={t('deployment.TagsPlaceholder')}
-            tokenSeparators={[',', '\n']}
-            notFoundContent={null}
-          />
-        </Form.Item>
-        <Form.Item
-          name="openToPublic"
-          valuePropName="checked"
-          label={t('deployment.OpenToPublic')}
-          tooltip={t('deployment.OpenToPublicTooltip')}
-        >
-          <Checkbox>{t('deployment.Public')}</Checkbox>
-        </Form.Item>
-      </Form>
+          <Form.Item
+            name="openToPublic"
+            valuePropName="checked"
+            label={t('deployment.OpenToPublic')}
+            tooltip={t('deployment.OpenToPublicTooltip')}
+          >
+            <Checkbox>{t('deployment.Public')}</Checkbox>
+          </Form.Item>
+        </Form>
+      </Suspense>
     </BAIModal>
   );
 };
