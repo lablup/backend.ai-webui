@@ -268,6 +268,9 @@
     "TrafficRatio": "トラフィック比率",
     "TrafficStatus": "トラフィック状況"
   },
+  "comp:BAIRuntimeVariantSelect": {
+    "SelectRuntimeVariant": "ランタイムバリアントを選択"
+  },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "試行回数",
     "CreatedAt": "作成日時",

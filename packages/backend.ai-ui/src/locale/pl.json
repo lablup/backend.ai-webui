@@ -268,6 +268,9 @@
     "TrafficRatio": "Udział ruchu",
     "TrafficStatus": "Status ruchu"
   },
+  "comp:BAIRuntimeVariantSelect": {
+    "SelectRuntimeVariant": "Wybierz wariant środowiska uruchomieniowego"
+  },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "Próby",
     "CreatedAt": "Utworzono",

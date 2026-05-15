@@ -268,6 +268,9 @@
     "TrafficRatio": "流量比例",
     "TrafficStatus": "流量状态"
   },
+  "comp:BAIRuntimeVariantSelect": {
+    "SelectRuntimeVariant": "选择运行时变体"
+  },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "尝试次数",
     "CreatedAt": "创建时间",

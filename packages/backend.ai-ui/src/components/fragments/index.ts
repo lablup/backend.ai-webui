@@ -101,6 +101,12 @@ export type {
   BAIAvailablePresetSelectRef,
   DeploymentRevisionPresetNode,
 } from './BAIAvailablePresetSelect';
+export { default as BAIRuntimeVariantSelect } from './BAIRuntimeVariantSelect';
+export type {
+  BAIRuntimeVariantSelectProps,
+  BAIRuntimeVariantSelectRef,
+  RuntimeVariantNode,
+} from './BAIRuntimeVariantSelect';
 export { default as BAIUserSelect } from './BAIUserSelect';
 export type {
   BAIUserSelectProps,

@@ -268,6 +268,9 @@
     "TrafficRatio": "Rasio Lalu Lintas",
     "TrafficStatus": "Status Trafik"
   },
+  "comp:BAIRuntimeVariantSelect": {
+    "SelectRuntimeVariant": "Pilih Varian Runtime"
+  },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "Percobaan",
     "CreatedAt": "Dibuat pada",

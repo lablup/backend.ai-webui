@@ -4,7 +4,6 @@
  */
 import { DeploymentAddRevisionCustomContentAddMutation } from '../__generated__/DeploymentAddRevisionCustomContentAddMutation.graphql';
 import type { DeploymentAddRevisionCustomContentFragment$key } from '../__generated__/DeploymentAddRevisionCustomContentFragment.graphql';
-import type { DeploymentAddRevisionModalQuery$data } from '../__generated__/DeploymentAddRevisionModalQuery.graphql';
 import { convertToBinaryUnit } from '../helper';
 import {
   formatShellCommand,
@@ -49,7 +48,6 @@ import {
   Input,
   InputNumber,
   Segmented,
-  Select,
   Skeleton,
   Typography,
   theme,
@@ -57,8 +55,8 @@ import {
 import {
   BAIFlex,
   BAIProjectVfolderSelect,
+  BAIRuntimeVariantSelect,
   convertToUUID,
-  filterOutNullAndUndefined,
   safeDecodeUuid,
   toLocalId,
 } from 'backend.ai-ui';
@@ -111,7 +109,6 @@ interface DeploymentAddRevisionCustomContentProps {
     | DeploymentAddRevisionCustomContentFragment$key
     | null
     | undefined;
-  runtimeVariantsData: DeploymentAddRevisionModalQuery$data['runtimeVariants'];
   form: FormInstance<FormValues>;
   onRequestClose: (success?: boolean) => void;
   onIsAddingChange: (v: boolean) => void;
@@ -134,7 +131,6 @@ export const DeploymentAddRevisionCustomContent: React.FC<
 > = ({
   deploymentId,
   deploymentFrgmt,
-  runtimeVariantsData,
   form,
   onRequestClose,
   onIsAddingChange,
@@ -214,6 +210,9 @@ export const DeploymentAddRevisionCustomContent: React.FC<
           }
           modelRuntimeConfig {
             runtimeVariantId
+            runtimeVariant {
+              name
+            }
             environ {
               entries {
                 name
@@ -334,9 +333,14 @@ export const DeploymentAddRevisionCustomContent: React.FC<
 
   const currentRevision = deployment?.currentRevision;
 
-  const runtimeVariantOptions = filterOutNullAndUndefined(
-    (runtimeVariantsData?.edges ?? []).map((e) => e?.node),
-  ).map((node) => ({ value: toLocalId(node.id) ?? node.id, label: node.name }));
+  // Map of runtime variant id → name, populated by `BAIRuntimeVariantSelect`
+  // as it resolves the currently selected value (via its `runtimeVariant(id:)`
+  // point lookup) and the visible page of the paginated list. Used by the
+  // form to branch on `variantName === 'custom'` and to look up the human-
+  // readable name at submit time, without the parent owning the variant list.
+  const [runtimeVariantNameMap, setRuntimeVariantNameMap] = useState<
+    Record<string, string>
+  >({});
 
   // Build the form values that mirror the deployment's current revision and
   // push them into the antd Form. Called from the "Load current revision"
@@ -357,11 +361,21 @@ export const DeploymentAddRevisionCustomContent: React.FC<
       (e) => e.name === 'shmem',
     );
 
-    const variantName =
-      runtimeVariantOptions.find(
-        (o) => o.value === rev.modelRuntimeConfig?.runtimeVariantId,
-      )?.label ?? '';
+    // The fragment selects `modelRuntimeConfig.runtimeVariant.name`, so the
+    // prefill path knows the variant name without waiting for
+    // `BAIRuntimeVariantSelect` to resolve it.
+    const variantName = rev.modelRuntimeConfig?.runtimeVariant?.name ?? '';
     const isCustom = variantName === 'custom';
+    // Seed `runtimeVariantNameMap` so submit (line ~692) and any other
+    // consumers can resolve `runtimeVariantId → name` immediately, without
+    // waiting for `BAIRuntimeVariantSelect`'s point lookup to finish.
+    const variantId = rev.modelRuntimeConfig?.runtimeVariantId;
+    if (variantId && variantName) {
+      setRuntimeVariantNameMap((prev) => ({
+        ...prev,
+        [variantId]: variantName,
+      }));
+    }
     const service = rev.modelDefinition?.models?.[0]?.service;
     const customModelPath = rev.modelDefinition?.models?.[0]?.modelPath;
     // For custom + command mode: the saved revision carries a populated
@@ -685,9 +699,7 @@ export const DeploymentAddRevisionCustomContent: React.FC<
       };
     });
 
-    const variantName =
-      runtimeVariantOptions.find((o) => o.value === values.runtimeVariantId)
-        ?.label ?? '';
+    const variantName = runtimeVariantNameMap[values.runtimeVariantId] ?? '';
     const isCustom = variantName === 'custom';
     const isCommandMode = values.customDefinitionMode === 'command';
 
@@ -905,9 +917,7 @@ export const DeploymentAddRevisionCustomContent: React.FC<
           {
             warningOnly: true,
             validator: async (_rule, value: string) => {
-              const variantName = runtimeVariantOptions.find(
-                (o) => o.value === value,
-              )?.label;
+              const variantName = runtimeVariantNameMap[value];
               if (variantName && variantName !== 'custom') {
                 return Promise.reject(
                   t('modelService.RuntimeVariantDefaultCommandAppliedNote'),
@@ -918,16 +928,18 @@ export const DeploymentAddRevisionCustomContent: React.FC<
           },
         ]}
       >
-        <Select options={runtimeVariantOptions} showSearch />
+        <BAIRuntimeVariantSelect
+          onResolvedNamesChange={(map) =>
+            setRuntimeVariantNameMap((prev) => ({ ...prev, ...map }))
+          }
+        />
       </Form.Item>
 
       {/* Runtime parameter section — shown for non-custom variants */}
       <Form.Item dependencies={['runtimeVariantId']} noStyle>
         {({ getFieldValue }) => {
           const variantId = getFieldValue('runtimeVariantId');
-          const variantName = runtimeVariantOptions.find(
-            (o) => o.value === variantId,
-          )?.label;
+          const variantName = runtimeVariantNameMap[variantId];
           if (!variantName || variantName === 'custom') return null;
           return (
             <div style={{ marginBottom: token.marginMD }}>
@@ -959,9 +971,7 @@ export const DeploymentAddRevisionCustomContent: React.FC<
       <Form.Item dependencies={['runtimeVariantId']} noStyle>
         {({ getFieldValue }) => {
           const variantId = getFieldValue('runtimeVariantId');
-          const variantName = runtimeVariantOptions.find(
-            (o) => o.value === variantId,
-          )?.label;
+          const variantName = runtimeVariantNameMap[variantId];
           if (variantName !== 'custom') {
             return null;
           }

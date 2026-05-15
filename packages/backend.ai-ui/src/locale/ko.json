@@ -271,6 +271,9 @@
     "TrafficRatio": "트래픽 비율",
     "TrafficStatus": "트래픽 상태"
   },
+  "comp:BAIRuntimeVariantSelect": {
+    "SelectRuntimeVariant": "런타임 변형을 선택해주세요"
+  },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "시도 횟수",
     "CreatedAt": "생성일",

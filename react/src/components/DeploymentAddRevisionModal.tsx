@@ -261,14 +261,6 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           ...DeploymentAddRevisionPresetContentFragment
           ...DeploymentAddRevisionCustomContentFragment
         }
-        runtimeVariants {
-          edges {
-            node {
-              id
-              name
-            }
-          }
-        }
         deploymentRevisionPresets(
           orderBy: [{ field: RANK, direction: "ASC" }]
         ) {
@@ -366,7 +358,6 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
         <DeploymentAddRevisionCustomContent
           deploymentId={deploymentId}
           deploymentFrgmt={data.deployment}
-          runtimeVariantsData={data.runtimeVariants}
           form={customForm}
           autoActivate={autoActivate}
           onRequestClose={onRequestClose}

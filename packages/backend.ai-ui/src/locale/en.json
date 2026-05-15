@@ -274,6 +274,9 @@
     "TrafficRatio": "Traffic Ratio",
     "TrafficStatus": "Traffic Status"
   },
+  "comp:BAIRuntimeVariantSelect": {
+    "SelectRuntimeVariant": "Select Runtime Variant"
+  },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "Attempts",
     "CreatedAt": "Created At",
