@@ -90,6 +90,7 @@
   },
   "comp:BAIDeleteConfirmModal": {
     "AreYouSureToDelete": "Apakah Anda yakin ingin menghapus?",
+    "AreYouSureToPermanentlyDeleteTarget": "Apakah Anda yakin ingin menghapus {{target}} secara permanen?",
     "CannotBeUndone": "Tindakan ini tidak dapat dibatalkan.",
     "DeleteItem": "Hapus",
     "DeleteNItems": "Hapus {{count}} item",
@@ -393,8 +394,10 @@
   },
   "general": {
     "DeselectAll": "Batalkan semua pilihan",
+    "File": "Berkas",
     "NSelected": "{{count}} dipilih",
     "Optional": "Opsional",
+    "Project": "Proyek",
     "TotalItems": "Total {{total}} item",
     "button": {
       "Cancel": "Membatalkan",

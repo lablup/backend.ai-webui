@@ -25,14 +25,14 @@ import {
   SettingOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { Alert, App, Button, Input, theme, Typography } from 'antd';
+import { App, Button, Input, theme, Typography } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
 import type { ColumnsType, ColumnType } from 'antd/es/table';
 import {
   filterOutEmpty,
   filterOutNullAndUndefined,
   BAIFlex,
-  BAIModal,
+  BAIDeleteConfirmModal,
   BAITable,
   BAIText,
   useUpdatableState,
@@ -447,11 +447,30 @@ const CustomizedImageList: React.FC = () => {
         columns={columns}
         hiddenColumnKeys={hiddenColumnKeys}
       />
-      <BAIModal
+      <BAIDeleteConfirmModal
         open={imageToDelete !== null}
-        title={t('dialog.ask.DoYouWantToDelete')}
-        okText={t('button.Delete')}
-        okType="danger"
+        title={t('dialog.title.DeleteSomething', {
+          name: getImageFullName(imageToDelete) ?? '',
+        })}
+        target={t('general.Image')}
+        items={
+          imageToDelete
+            ? [
+                {
+                  key: imageToDelete.id,
+                  label: getImageFullName(imageToDelete) ?? imageToDelete.id,
+                },
+              ]
+            : []
+        }
+        confirmText={t('credential.PermanentlyDelete')}
+        requireConfirmInput
+        inputLabel={t('credential.TypePermanentlyDelete', {
+          text: t('credential.PermanentlyDelete'),
+        })}
+        inputProps={{
+          placeholder: t('credential.PermanentlyDelete'),
+        }}
         confirmLoading={isInFlightForget || isInFlightUntag}
         onOk={() => {
           if (imageToDelete) {
@@ -518,25 +537,7 @@ const CustomizedImageList: React.FC = () => {
         onCancel={() => {
           setImageToDelete(null);
         }}
-      >
-        <Alert
-          type="warning"
-          showIcon
-          title={t('dialog.warning.CannotBeUndone')}
-        />
-        {imageToDelete !== null && (
-          <ul
-            style={{
-              paddingInlineStart: token.marginSM,
-              listStyle: 'circle',
-            }}
-          >
-            <li>
-              <BAIText monospace>{getImageFullName(imageToDelete)}</BAIText>
-            </li>
-          </ul>
-        )}
-      </BAIModal>
+      />
     </BAIFlex>
   );
 };

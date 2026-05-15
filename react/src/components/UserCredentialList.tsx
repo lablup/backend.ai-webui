@@ -28,6 +28,7 @@ import {
   BAIFlex,
   BAIPropertyFilter,
   BAINameActionCell,
+  BAIDeleteConfirmModal,
   useBAILogger,
   useUpdatableState,
   BAIText,
@@ -74,6 +75,7 @@ const UserCredentialList: React.FC = () => {
     useTransition();
   const [isPendingSettingModalOpen, startSettingModalOpenTransition] =
     useTransition();
+  const [deletingKeypair, setDeletingKeypair] = useState<Keypair | null>(null);
 
   const {
     baiPaginationOption,
@@ -410,57 +412,7 @@ const UserCredentialList: React.FC = () => {
                         icon: <DeleteFilled />,
                         type: 'danger' as const,
                         onClick: () => {
-                          modal.confirm({
-                            title: t('credential.DeleteCredential'),
-                            content: (
-                              <BAIFlex direction="column" align="stretch">
-                                <Typography.Text>
-                                  {t(
-                                    'credential.YouAreAboutToDeleteCredential',
-                                  )}
-                                </Typography.Text>
-                                <Typography.Text strong>
-                                  {record.user_id}
-                                </Typography.Text>
-                                <br />
-                                <Typography.Text type="danger">
-                                  {t('dialog.warning.CannotBeUndone')}
-                                </Typography.Text>
-                              </BAIFlex>
-                            ),
-                            onOk: () => {
-                              return new Promise<void>((resolve) => {
-                                commitDeleteKeypair({
-                                  variables: {
-                                    access_key: record.access_key ?? '',
-                                  },
-                                  onCompleted: (res, errors) => {
-                                    if (!res?.delete_keypair?.ok || errors) {
-                                      message.error(res?.delete_keypair?.msg);
-                                      resolve();
-                                      return;
-                                    }
-                                    message.success(
-                                      t(
-                                        'credential.KeypairSuccessfullyDeleted',
-                                      ),
-                                    );
-                                    updateFetchKey();
-                                    resolve();
-                                  },
-                                  onError: (error) => {
-                                    message.error(error?.message);
-                                    logger.error(error);
-                                    resolve();
-                                  },
-                                });
-                              });
-                            },
-                            okButtonProps: {
-                              danger: true,
-                            },
-                            okText: t('button.Delete'),
-                          });
+                          setDeletingKeypair(record);
                         },
                       },
                     ]),
@@ -608,6 +560,48 @@ const UserCredentialList: React.FC = () => {
             updateFetchKey();
           }
         }}
+      />
+      <BAIDeleteConfirmModal
+        open={!!deletingKeypair}
+        title={t('credential.DeleteCredential')}
+        target={t('general.Credential')}
+        items={
+          deletingKeypair
+            ? [
+                {
+                  key: deletingKeypair.access_key ?? '',
+                  label: deletingKeypair.access_key ?? '',
+                },
+              ]
+            : []
+        }
+        confirmText={deletingKeypair?.access_key ?? ''}
+        requireConfirmInput
+        onOk={() => {
+          if (deletingKeypair) {
+            commitDeleteKeypair({
+              variables: {
+                access_key: deletingKeypair.access_key ?? '',
+              },
+              onCompleted: (res, errors) => {
+                if (!res?.delete_keypair?.ok || errors) {
+                  message.error(res?.delete_keypair?.msg);
+                  setDeletingKeypair(null);
+                  return;
+                }
+                message.success(t('credential.KeypairSuccessfullyDeleted'));
+                setDeletingKeypair(null);
+                updateFetchKey();
+              },
+              onError: (error) => {
+                message.error(error?.message);
+                logger.error(error);
+                setDeletingKeypair(null);
+              },
+            });
+          }
+        }}
+        onCancel={() => setDeletingKeypair(null)}
       />
     </BAIFlex>
   );

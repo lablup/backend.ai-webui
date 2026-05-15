@@ -12,7 +12,6 @@ import {
   QuestionCircleOutlined,
 } from '@ant-design/icons';
 import {
-  Alert,
   App,
   Button,
   DatePicker,
@@ -25,7 +24,7 @@ import {
 } from 'antd';
 import {
   BAICard,
-  BAIConfirmModalWithInput,
+  BAIDeleteConfirmModal,
   BAIFetchKeyButton,
   BAIFlex,
   BAIModal,
@@ -256,7 +255,6 @@ const DeploymentAccessTokensTable: React.FC<
   'use memo';
   const { t } = useTranslation();
   const { message } = App.useApp();
-  const { token } = theme.useToken();
   const { logger } = useBAILogger();
   const [deletingToken, setDeletingToken] = useState<{
     id: string;
@@ -371,36 +369,18 @@ const DeploymentAccessTokensTable: React.FC<
           },
         ]}
       />
-      <BAIConfirmModalWithInput
+      <BAIDeleteConfirmModal
         open={!!deletingToken}
         title={t('deployment.accessToken.Delete')}
-        content={
-          <BAIFlex
-            direction="column"
-            gap="md"
-            align="stretch"
-            style={{ marginBottom: token.marginXS, width: '100%' }}
-          >
-            <Alert
-              type="warning"
-              title={t('dialog.warning.DeleteForeverDesc')}
-              style={{ width: '100%' }}
-            />
-            <BAIFlex>
-              <Typography.Text style={{ marginRight: token.marginXXS }}>
-                {t('data.folders.TypeToConfirmDeleteForever')}
-              </Typography.Text>
-              (
-              <Typography.Text code>
-                {t('data.folders.DeleteForeverConfirmText')}
-              </Typography.Text>
-              )
-            </BAIFlex>
-          </BAIFlex>
+        target={t('deployment.AccessToken')}
+        items={
+          deletingToken
+            ? [{ key: deletingToken.id, label: deletingToken.id }]
+            : []
         }
         confirmText={t('data.folders.DeleteForeverConfirmText')}
+        requireConfirmInput
         inputProps={{ placeholder: t('data.folders.DeleteForeverConfirmText') }}
-        okText={t('button.Delete')}
         okButtonProps={{ loading: isDeletingToken }}
         onOk={() => {
           if (!deletingToken) return;

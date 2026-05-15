@@ -90,6 +90,7 @@
   },
   "comp:BAIDeleteConfirmModal": {
     "AreYouSureToDelete": "Вы уверены, что хотите удалить?",
+    "AreYouSureToPermanentlyDeleteTarget": "Вы действительно хотите окончательно удалить {{target}}?",
     "CannotBeUndone": "Это действие нельзя отменить.",
     "DeleteItem": "Удалить",
     "DeleteNItems": "Удалить {{count}} элементов",
@@ -393,8 +394,10 @@
   },
   "general": {
     "DeselectAll": "Снять выделение",
+    "File": "Файл",
     "NSelected": "{{count}} выбрал",
     "Optional": "Необязательно",
+    "Project": "Проект",
     "TotalItems": "Total {{total}} элементы",
     "button": {
       "Cancel": "Отмена",

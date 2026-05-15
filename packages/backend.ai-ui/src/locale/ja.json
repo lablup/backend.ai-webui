@@ -90,6 +90,7 @@
   },
   "comp:BAIDeleteConfirmModal": {
     "AreYouSureToDelete": "本当に削除しますか？",
+    "AreYouSureToPermanentlyDeleteTarget": "{{target}}を完全に削除してもよろしいですか？",
     "CannotBeUndone": "この操作は元に戻せません。",
     "DeleteItem": "削除",
     "DeleteNItems": "{{count}} 件を削除",
@@ -393,8 +394,10 @@
   },
   "general": {
     "DeselectAll": "すべて選択解除",
+    "File": "ファイル",
     "NSelected": "{{count}}選択",
     "Optional": "任意",
+    "Project": "プロジェクト",
     "TotalItems": "Total {{total}}アイテム",
     "button": {
       "Cancel": "キャンセル",

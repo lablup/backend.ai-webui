@@ -422,7 +422,9 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
             : []
         }
         title={t('resourcePolicy.DeletePolicy')}
-        description={t('resourcePolicy.DeletePolicyDescription')}
+        target={t('resourcePolicy.ResourcePolicy')}
+        confirmText={deletingPolicyName ?? ''}
+        requireConfirmInput
         onOk={() => {
           if (deletingPolicyName) {
             return new Promise<void>((resolve) => {

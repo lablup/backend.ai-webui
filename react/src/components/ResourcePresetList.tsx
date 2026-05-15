@@ -17,15 +17,7 @@ import {
   SettingOutlined,
   DeleteFilled,
 } from '@ant-design/icons';
-import {
-  Tooltip,
-  Button,
-  App,
-  Typography,
-  TableColumnsType,
-  Alert,
-  theme,
-} from 'antd';
+import { Tooltip, Button, App, TableColumnsType } from 'antd';
 import {
   filterOutEmpty,
   filterOutNullAndUndefined,
@@ -35,7 +27,7 @@ import {
   useUpdatableState,
   BAIResourceNumberWithIcon,
   BAINameActionCell,
-  BAIConfirmModalWithInput,
+  BAIDeleteConfirmModal,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { Suspense, useState, useTransition } from 'react';
@@ -50,7 +42,6 @@ interface ResourcePresetListProps {}
 
 const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const { message } = App.useApp();
   const [isRefetchPending, startRefetchTransition] = useTransition();
   const [resourcePresetsFetchKey, updateResourcePresetsFetchKey] =
@@ -204,23 +195,18 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
         showSorterTooltip={false}
         columns={columns}
       />
-      <BAIConfirmModalWithInput
+      <BAIDeleteConfirmModal
         open={!!deletingPresetName}
         title={t('resourcePreset.DeleteResourcePreset')}
-        content={
-          <BAIFlex direction="column" gap="md" align="stretch">
-            <Alert type="warning" title={t('dialog.warning.CannotBeUndone')} />
-            <BAIFlex>
-              <Typography.Text style={{ marginRight: token.marginXXS }}>
-                {t('dialog.TypeNameToConfirmDeletion')}
-              </Typography.Text>
-              (<Typography.Text code>{deletingPresetName}</Typography.Text>)
-            </BAIFlex>
-          </BAIFlex>
+        target={t('resourcePreset.ResourcePreset')}
+        items={
+          deletingPresetName
+            ? [{ key: deletingPresetName, label: deletingPresetName }]
+            : []
         }
         confirmText={deletingPresetName ?? ''}
+        requireConfirmInput
         inputProps={{ placeholder: deletingPresetName ?? '' }}
-        okText={t('button.Delete')}
         okButtonProps={{ loading: isDeleteInFlight }}
         onOk={() => {
           commitDelete({

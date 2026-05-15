@@ -90,6 +90,7 @@
   },
   "comp:BAIDeleteConfirmModal": {
     "AreYouSureToDelete": "Та устгахдаа итгэлтэй байна уу?",
+    "AreYouSureToPermanentlyDeleteTarget": "{{target}}-г бүрмөсөн устгахдаа итгэлтэй байна уу?",
     "CannotBeUndone": "Энэ үйлдлийг буцаах боломжгүй.",
     "DeleteItem": "Устгах",
     "DeleteNItems": "{{count}} зүйл устгах",
@@ -393,8 +394,10 @@
   },
   "general": {
     "DeselectAll": "Бүгдийг сонголтоос хасах",
+    "File": "Файл",
     "NSelected": "{{count}} сонгогдсон",
     "Optional": "Заавал биш",
+    "Project": "Төсөл",
     "TotalItems": "Нийт {{total}} зүйлүүд",
     "button": {
       "Cancel": "Цуаах",

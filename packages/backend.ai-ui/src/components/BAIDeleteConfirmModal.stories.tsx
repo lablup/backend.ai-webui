@@ -27,6 +27,7 @@ const meta: Meta<typeof BAIDeleteConfirmModal> = {
 ## Key Features
 - Accepts \`React.ReactNode\` for item labels (icons, tags, custom rendering)
 - Scrollable item list for multi-item selections
+- \`target\` prop produces a resource-type-aware default description ("Are you sure you want to permanently delete {target}?")
 - \`extraContent\` slot for domain-specific additions (checkboxes, warnings)
 - Built on \`BAIModal\`
         `,
@@ -85,6 +86,39 @@ export const SingleItemWithInput: Story = {
           open={open}
           items={[{ key: '1', label: 'production-database' }]}
           requireConfirmInput
+          onOk={() => setOpen(false)}
+          onCancel={() => setOpen(false)}
+        />
+      </>
+    );
+  },
+};
+
+export const WithTarget: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Resource-typed deletion using the `target` prop. The default description becomes "Are you sure you want to permanently delete {target}?", surfacing the resource type (e.g. "Resource Preset", "Resource Policy") in the dialog copy. Typically paired with `requireConfirmInput` for irreversible deletes.',
+      },
+    },
+  },
+  render: () => {
+    const [open, setOpen] = useState(false);
+    const itemName = 'gpu-large-preset';
+    return (
+      <>
+        <BAIButton danger icon={<DeleteFilled />} onClick={() => setOpen(true)}>
+          Delete Resource Preset
+        </BAIButton>
+        <BAIDeleteConfirmModal
+          open={open}
+          title="Delete Resource Preset"
+          target="Resource Preset"
+          items={[{ key: itemName, label: itemName }]}
+          confirmText={itemName}
+          requireConfirmInput
+          inputProps={{ placeholder: itemName }}
           onOk={() => setOpen(false)}
           onCancel={() => setOpen(false)}
         />

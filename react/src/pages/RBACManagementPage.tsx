@@ -385,7 +385,9 @@ const RBACManagementPage: React.FC = () => {
             : []
         }
         title={t('rbac.PurgeRole')}
-        description={t('rbac.ConfirmPurge')}
+        target={t('general.Role')}
+        confirmText={purgingRole?.name ?? ''}
+        requireConfirmInput
         onOk={() => {
           if (purgingRole) {
             return mutatePurgeRole({

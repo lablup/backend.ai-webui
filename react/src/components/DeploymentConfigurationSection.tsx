@@ -37,7 +37,7 @@ import {
 } from 'antd';
 import {
   BAICard,
-  BAIConfirmModalWithInput,
+  BAIDeleteConfirmModal,
   BAIFetchKeyButton,
   BAIFlex,
   BAIId,
@@ -442,23 +442,16 @@ const DeploymentConfigurationSection: React.FC<
           onClose={() => setDrawerState(null)}
         />
       </BAIUnmountAfterClose>
-      <BAIConfirmModalWithInput
+      <BAIDeleteConfirmModal
         open={isDeleteModalOpen}
         title={t('deployment.DeleteDeployment')}
-        content={
-          <BAIFlex direction="column" gap="md" align="stretch">
-            <Alert type="warning" title={t('dialog.warning.CannotBeUndone')} />
-            <BAIFlex>
-              <Typography.Text style={{ marginRight: token.marginXXS }}>
-                {t('dialog.TypeNameToConfirmDeletion')}
-              </Typography.Text>
-              (<Typography.Text code>{deploymentName}</Typography.Text>)
-            </BAIFlex>
-          </BAIFlex>
+        target={t('deployment.Deployment')}
+        items={
+          deploymentName ? [{ key: deploymentName, label: deploymentName }] : []
         }
         confirmText={deploymentName}
+        requireConfirmInput
         inputProps={{ placeholder: deploymentName }}
-        okText={t('button.Delete')}
         okButtonProps={{ loading: isInFlightDeleteMutation }}
         onOk={handleDelete}
         onCancel={() => setIsDeleteModalOpen(false)}

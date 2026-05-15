@@ -15,6 +15,7 @@ import AutoScalingRuleEditorModal from './AutoScalingRuleEditorModal';
 import { DeleteFilled, PlusOutlined, SettingOutlined } from '@ant-design/icons';
 import { App, Button, Tag, Tooltip, Typography } from 'antd';
 import {
+  BAIDeleteConfirmModal,
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
@@ -358,12 +359,16 @@ const AutoScalingRuleList: React.FC<AutoScalingRuleListProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { message, modal } = App.useApp();
+  const { message } = App.useApp();
   const [isPendingRefetch, startRefetchTransition] = useTransition();
   const [fetchKey, updateFetchKey] = useFetchKey();
 
   const [editingRuleId, setEditingRuleId] = useState<string | null>(null);
   const [isOpenEditorModal, setIsOpenEditorModal] = useState(false);
+  const [deletingRule, setDeletingRule] = useState<{
+    id: string;
+    metricName: string;
+  } | null>(null);
 
   useImperativeHandle(
     ref,
@@ -510,29 +515,7 @@ const AutoScalingRuleList: React.FC<AutoScalingRuleListProps> = ({
   };
 
   const handleDeleteRule = (ruleId: string, metricName: string) => {
-    modal.confirm({
-      title: t('dialog.warning.CannotBeUndone'),
-      content: t('autoScalingRule.ConfirmDeleteAutoScalingRule', {
-        autoScalingRule: metricName,
-      }),
-      okText: t('button.Delete'),
-      okButtonProps: { danger: true },
-      onOk: () =>
-        commitDeleteMutation({ input: { id: toLocalId(ruleId) } })
-          .then(() => {
-            handleRefetch();
-            message.success({
-              key: 'autoscaling-rule-deleted',
-              content: t('autoScalingRule.SuccessfullyDeleted'),
-            });
-          })
-          .catch((error) => {
-            const errors = Array.isArray(error) ? error : [error];
-            for (const err of errors) {
-              message.error(err?.message || t('dialog.ErrorOccurred'));
-            }
-          }),
-    });
+    setDeletingRule({ id: ruleId, metricName });
   };
 
   return (
@@ -644,6 +627,47 @@ const AutoScalingRuleList: React.FC<AutoScalingRuleListProps> = ({
           }}
         />
       </BAIUnmountAfterClose>
+      <BAIDeleteConfirmModal
+        open={!!deletingRule}
+        title={t('dialog.title.DeleteSomething', {
+          name: deletingRule?.metricName ?? '',
+        })}
+        target={t('webui.menu.AutoScalingRule')}
+        items={
+          deletingRule
+            ? [{ key: deletingRule.id, label: deletingRule.metricName }]
+            : []
+        }
+        confirmText={t('credential.PermanentlyDelete')}
+        requireConfirmInput
+        inputLabel={t('credential.TypePermanentlyDelete', {
+          text: t('credential.PermanentlyDelete'),
+        })}
+        inputProps={{
+          placeholder: t('credential.PermanentlyDelete'),
+        }}
+        onOk={() => {
+          if (!deletingRule) return;
+          return commitDeleteMutation({
+            input: { id: toLocalId(deletingRule.id) },
+          })
+            .then(() => {
+              setDeletingRule(null);
+              handleRefetch();
+              message.success({
+                key: 'autoscaling-rule-deleted',
+                content: t('autoScalingRule.SuccessfullyDeleted'),
+              });
+            })
+            .catch((error) => {
+              const errors = Array.isArray(error) ? error : [error];
+              for (const err of errors) {
+                message.error(err?.message || t('dialog.ErrorOccurred'));
+              }
+            });
+        }}
+        onCancel={() => setDeletingRule(null)}
+      />
     </>
   );
 };

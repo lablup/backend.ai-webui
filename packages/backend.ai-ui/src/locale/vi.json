@@ -90,6 +90,7 @@
   },
   "comp:BAIDeleteConfirmModal": {
     "AreYouSureToDelete": "Bạn có chắc chắn muốn xóa không?",
+    "AreYouSureToPermanentlyDeleteTarget": "Bạn có chắc muốn xóa vĩnh viễn {{target}} không?",
     "CannotBeUndone": "Hành động này không thể hoàn tác.",
     "DeleteItem": "Xóa",
     "DeleteNItems": "Xóa {{count}} mục",
@@ -393,8 +394,10 @@
   },
   "general": {
     "DeselectAll": "Bỏ chọn tất cả",
+    "File": "Tệp",
     "NSelected": "{{count}} Đã chọn",
     "Optional": "Không bắt buộc",
+    "Project": "Dự án",
     "TotalItems": "Tổng số {{total}} các mục",
     "button": {
       "Cancel": "Hủy bỏ",

@@ -14,7 +14,6 @@ import {
   BAIModal,
   BAIModalProps,
   BAIDynamicUnitInputNumber,
-  BAIConfirmModalWithInput,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useRef, useState, Fragment } from 'react';
@@ -232,15 +231,11 @@ const ManageImageResourceLimitModal: React.FC<
           )}
         </Row>
       </Form>
-      <BAIConfirmModalWithInput
+      <BAIModal
         open={isReinstallConfirmOpen}
         title={t('environment.ImageReinstallationRequired')}
-        content={
-          <Trans
-            i18nKey={'environment.ModifyImageResourceLimitReinstallRequired'}
-          />
-        }
-        confirmText={image?.name ?? image?.namespace ?? ''}
+        okText={t('button.Confirm')}
+        okButtonProps={{ danger: true }}
         onOk={() => {
           setIsReinstallConfirmOpen(false);
           pendingCommitRequest?.();
@@ -250,7 +245,11 @@ const ManageImageResourceLimitModal: React.FC<
           setIsReinstallConfirmOpen(false);
           setPendingCommitRequest(null);
         }}
-      />
+      >
+        <Trans
+          i18nKey={'environment.ModifyImageResourceLimitReinstallRequired'}
+        />
+      </BAIModal>
     </BAIModal>
   );
 };

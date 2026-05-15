@@ -90,6 +90,7 @@
   },
   "comp:BAIDeleteConfirmModal": {
     "AreYouSureToDelete": "¿Está seguro de que desea eliminar?",
+    "AreYouSureToPermanentlyDeleteTarget": "¿Está seguro de que desea eliminar permanentemente {{target}}?",
     "CannotBeUndone": "Esta acción no se puede deshacer.",
     "DeleteItem": "Eliminar",
     "DeleteNItems": "Eliminar {{count}} elementos",
@@ -393,8 +394,10 @@
   },
   "general": {
     "DeselectAll": "Deseleccionar todo",
+    "File": "Archivo",
     "NSelected": "{{count}} seleccionado",
     "Optional": "Opcional",
+    "Project": "Proyecto",
     "TotalItems": "Total {{total}} elementos",
     "button": {
       "Cancel": "Cancelar",

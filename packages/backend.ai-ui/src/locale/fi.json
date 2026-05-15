@@ -90,6 +90,7 @@
   },
   "comp:BAIDeleteConfirmModal": {
     "AreYouSureToDelete": "Haluatko varmasti poistaa?",
+    "AreYouSureToPermanentlyDeleteTarget": "Haluatko varmasti poistaa {{target}} pysyvästi?",
     "CannotBeUndone": "Tätä toimintoa ei voi peruuttaa.",
     "DeleteItem": "Poista",
     "DeleteNItems": "Poista {{count}} kohdetta",
@@ -393,8 +394,10 @@
   },
   "general": {
     "DeselectAll": "Poista kaikki valinnat",
+    "File": "Tiedosto",
     "NSelected": "{{count}} valittu",
     "Optional": "Valinnainen",
+    "Project": "Projekti",
     "TotalItems": "Yhteensä {{total}} kohteet",
     "button": {
       "Cancel": "Peruuttaa",

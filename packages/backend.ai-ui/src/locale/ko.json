@@ -93,10 +93,11 @@
   },
   "comp:BAIDeleteConfirmModal": {
     "AreYouSureToDelete": "정말 삭제하시겠습니까?",
+    "AreYouSureToPermanentlyDeleteTarget": "{{target}}을(를) 영구 삭제하시겠습니까?",
     "CannotBeUndone": "이 작업은 되돌릴 수 없습니다.",
     "DeleteItem": "삭제",
     "DeleteNItems": "{{count}}개 항목 삭제",
-    "TypeToConfirm": "삭제를 위해 <code>{{confirmText}}</code>을(를) 입력하세요."
+    "TypeToConfirm": "<code>{{confirmText}}</code>을(를) 입력해주세요."
   },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "배포를 선택해주세요"
@@ -396,8 +397,10 @@
   },
   "general": {
     "DeselectAll": "선택 취소",
+    "File": "파일",
     "NSelected": "{{count}}개 선택됨",
     "Optional": "선택",
+    "Project": "프로젝트",
     "TotalItems": "총 {{total}} 항목",
     "button": {
       "Cancel": "취소",
