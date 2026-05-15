@@ -117,6 +117,97 @@ if [[ -n "$WORKSPACE" ]]; then
   [[ -n "$VSCODE_URL" ]] && VSCODE_PART=$(link "$VSCODE_URL" "⧉ VS Code")
 fi
 
+# ── Portless URL detection ─────────────────────────────────
+# Maps the current workspace to its Portless route by checking each route
+# process's cwd. Subdomain-based guessing breaks when multiple worktrees
+# run dev servers concurrently (e.g. one auto-named route can match a
+# different worktree's slug). cwd is the source of truth — `dev.mjs` is
+# spawned from the workspace, so its portless child's cwd equals it.
+#
+# Cache: pid → cwd in CACHE_DIR for 30s. Portless restarts cycle pids
+# quickly, so a short TTL trades minimal staleness for avoiding lsof per
+# tick (lsof on macOS spawns ~30–100ms per call).
+PORTLESS_PART=""
+if [[ -n "$WORKSPACE" ]] && command -v portless >/dev/null 2>&1 && command -v lsof >/dev/null 2>&1; then
+  PORTLESS_TTL=30
+  WS_REAL=$(python3 -c 'import os,sys; print(os.path.realpath(sys.argv[1]))' "$WORKSPACE" 2>/dev/null || printf '%s' "$WORKSPACE")
+  PORTLESS_LIST=$(portless list 2>/dev/null || true)
+
+  PORTLESS_URL=""
+  PORTLESS_NOTE=""
+  if [[ -n "$PORTLESS_LIST" ]]; then
+    while IFS= read -r _line; do
+      [[ "$_line" =~ pid\ ([0-9]+) ]] || continue
+      _pid="${BASH_REMATCH[1]}"
+      _pid_cache="${CACHE_DIR}/portless-pid-${_pid}.cwd"
+      _cwd=""
+      if [[ -f "$_pid_cache" ]]; then
+        _age=$(( $(date +%s) - $(file_mtime "$_pid_cache") ))
+        if (( _age < PORTLESS_TTL )); then
+          _cwd=$(cat "$_pid_cache" 2>/dev/null) || _cwd=""
+        fi
+      fi
+      if [[ -z "$_cwd" ]]; then
+        _cwd=$(lsof -p "$_pid" -a -d cwd -Fn 2>/dev/null | awk '/^n/{print substr($0,2); exit}' || true)
+        if [[ -n "$_cwd" ]]; then
+          printf '%s' "$_cwd" > "$_pid_cache" 2>/dev/null || true
+        fi
+      fi
+      [[ -z "$_cwd" ]] && continue
+      _cwd_real=$(python3 -c 'import os,sys; print(os.path.realpath(sys.argv[1]))' "$_cwd" 2>/dev/null || printf '%s' "$_cwd")
+      if [[ "$_cwd_real" == "$WS_REAL" ]]; then
+        PORTLESS_URL=$(printf '%s' "$_line" | grep -oE 'https?://[a-z0-9-]+\.localhost:[0-9]+' | head -1 || true)
+        break
+      fi
+    done <<< "$PORTLESS_LIST"
+  fi
+
+  # Fallback: portless route not registered (e.g. lost via the 0.10.x race
+  # where a dying prior owner's onCleanup wipes the new owner's entry).
+  # Scan for any `portless` CLI process whose cwd matches this workspace —
+  # if found, the dev server IS running, just unrouted. Derive subdomain
+  # from argv (explicit `portless <name>`) or package.json (auto-name).
+  if [[ -z "$PORTLESS_URL" ]]; then
+    for _pid in $(pgrep -f 'portless/dist/cli\.js' 2>/dev/null || true); do
+      _cwd=$(lsof -p "$_pid" -a -d cwd -Fn 2>/dev/null | awk '/^n/{print substr($0,2); exit}' || true)
+      [[ -z "$_cwd" ]] && continue
+      _cwd_real=$(python3 -c 'import os,sys; print(os.path.realpath(sys.argv[1]))' "$_cwd" 2>/dev/null || printf '%s' "$_cwd")
+      [[ "$_cwd_real" != "$WS_REAL" ]] && continue
+      _argv=$(ps -o command= -p "$_pid" 2>/dev/null || true)
+      # Skip the proxy daemon itself (`portless proxy start ...`)
+      [[ "$_argv" =~ cli\.js[[:space:]]+proxy ]] && continue
+      _sub=$(printf '%s' "$_argv" | grep -oE 'cli\.js[[:space:]]+[a-zA-Z0-9_.-]+' | awk '{print $2}' | head -1 || true)
+      if [[ -z "$_sub" || "$_sub" == "run" ]]; then
+        if [[ -f "$WS_REAL/package.json" ]]; then
+          _sub=$(python3 - "$WS_REAL/package.json" <<'PYEOF' 2>/dev/null || true
+import json, re, sys
+try:
+    name = json.load(open(sys.argv[1])).get("name", "") or ""
+    name = re.sub(r"[^a-z0-9-]+", "-", name.lower())
+    name = re.sub(r"-+", "-", name).strip("-")
+    print(name)
+except Exception:
+    print("")
+PYEOF
+)
+        fi
+      fi
+      if [[ -n "$_sub" ]]; then
+        PORTLESS_URL="https://${_sub}.localhost:1355"
+        PORTLESS_NOTE=" (route lost)"
+        break
+      fi
+    done
+  fi
+
+  if [[ -n "$PORTLESS_URL" ]]; then
+    PORTLESS_LABEL=$(printf '\033[32mPortless\033[0m')
+    PORTLESS_PART=$(link "$PORTLESS_URL" "$PORTLESS_LABEL")
+  else
+    PORTLESS_PART=$(printf '\033[90mPortless\033[0m')
+  fi
+fi
+
 # Fallback output when there is no Jira/Teams context:
 #   line 1 = worktree info + VS Code link (if available), line 2 = model/tokens.
 emit_fallback() {
@@ -127,6 +218,10 @@ emit_fallback() {
   if [[ -n "$VSCODE_PART" ]]; then
     [[ -n "$line1" ]] && line1+="  "
     line1+="$VSCODE_PART"
+  fi
+  if [[ -n "${PORTLESS_PART:-}" ]]; then
+    [[ -n "$line1" ]] && line1+="  "
+    line1+="$PORTLESS_PART"
   fi
   if [[ -n "$line1" ]]; then
     printf '%b\n%b' "$line1" "$MODEL_PART"
@@ -250,6 +345,11 @@ fi
 
 if [[ -n "$VSCODE_PART" ]]; then
   LINE1+="$VSCODE_PART"
+  LINE1+="  "
+fi
+
+if [[ -n "${PORTLESS_PART:-}" ]]; then
+  LINE1+="$PORTLESS_PART"
   LINE1+="  "
 fi
 
