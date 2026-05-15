@@ -189,10 +189,11 @@ export const useCurrentLanguage = () => {
 
   useEffect(() => {
     // TODO: remove this hack to initialize i18next
-    setTimeout(() => i18n?.changeLanguage(lang), 0);
+    const timeoutId = setTimeout(() => i18n?.changeLanguage(lang), 0);
     // For changing locale globally, use dayjs.locale instead of dayjs().locale
     dayjs.locale(lang);
     document.documentElement.lang = lang;
+    return () => clearTimeout(timeoutId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

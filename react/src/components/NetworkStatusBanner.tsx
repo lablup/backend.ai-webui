@@ -44,6 +44,16 @@ const NetworkStatusBanner = () => {
       'backend-ai-network-success-without-soft-time-out',
       successHandler,
     );
+    return () => {
+      document.removeEventListener(
+        'backend-ai-network-soft-time-out',
+        softHandler,
+      );
+      document.removeEventListener(
+        'backend-ai-network-success-without-soft-time-out',
+        successHandler,
+      );
+    };
   }, []);
 
   const debouncedShowAlert = useDebounce(showSoftTimeoutAlert, {
