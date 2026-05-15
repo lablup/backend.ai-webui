@@ -27,6 +27,7 @@ import { loadConfigFromWebServer } from '../helper/loginSessionAuth';
 import TabCount from '../lib/TabCounter';
 import { INTENTIONAL_LOGOUT_FLAG } from './useLogout';
 import { autoLogoutState, configLoadedState } from './useWebUIConfig';
+import { useBAILogger } from 'backend.ai-ui';
 import { useAtomValue } from 'jotai';
 import { useEffect, useEffectEvent, useRef } from 'react';
 
@@ -66,6 +67,19 @@ function isClientConnected(): boolean {
     globalThis.backendaiclient !== null &&
     globalThis.backendaiclient.ready !== false
   );
+}
+
+/**
+ * Read the in-memory client's current endpoint (trailing slashes stripped),
+ * or `''` if no client is bound. `_config` is not part of the published
+ * BackendAIClient surface, so the structural escape hatch is contained here.
+ */
+function getConnectedEndpoint(): string {
+  const client = globalThis.backendaiclient as
+    | (BackendAIClient & { _config?: { endpoint?: string } })
+    | null
+    | undefined;
+  return (client?._config?.endpoint ?? '').replace(/\/+$/, '');
 }
 
 interface UseLoginOrchestrationOptions {
@@ -108,6 +122,17 @@ interface UseLoginOrchestrationOptions {
    * The current connection mode.
    */
   connectionMode: 'SESSION' | 'API';
+
+  /**
+   * Dev-only: when set, the orchestrator forces this endpoint. If a
+   * previously-connected backend client targets a different endpoint,
+   * it is logged out and the login panel is opened so the user lands
+   * on the dev-targeted backend instead of resuming a stale session.
+   *
+   * Sourced from VITE_DEFAULT_API_ENDPOINT in dev mode; ignored in
+   * production builds.
+   */
+  enforcedEndpoint?: string;
 }
 
 /**
@@ -124,22 +149,60 @@ export function useLoginOrchestration({
   onLogoutSession,
   apiEndpoint,
   connectionMode,
+  enforcedEndpoint,
 }: UseLoginOrchestrationOptions): void {
   const isConfigLoaded = useAtomValue(configLoadedState);
   const autoLogout = useAtomValue(autoLogoutState);
+  const { logger } = useBAILogger();
 
   // Guard against running the effect more than once
   const hasRunRef = useRef(false);
 
+  // Normalize the enforced endpoint the same way getConnectedEndpoint()
+  // normalizes the connected client's endpoint so a trailing-slash or
+  // surrounding-whitespace difference doesn't trigger a false mismatch.
+  const normalizedEnforcedEndpoint = enforcedEndpoint
+    ?.trim()
+    .replace(/\/+$/, '');
+
   // useEffectEvent captures the latest callback values without making
   // them dependencies of the useEffect below.
   const doOrchestrate = useEffectEvent(async () => {
-    // If the client is already connected, nothing to do.
-    if (isClientConnected()) return;
-
     // Edu-applauncher and applauncher pages are handled by React Router
     // routes that perform their own login flow.
     if (isAppLauncherPage()) return;
+
+    // Dev-only: when an enforced endpoint is supplied (from
+    // VITE_DEFAULT_API_ENDPOINT) and the in-memory client targets a
+    // different backend, log it out and surface the login panel rather
+    // than letting the orchestrator resume the stale session.
+    if (normalizedEnforcedEndpoint && isClientConnected()) {
+      const connectedEp = getConnectedEndpoint();
+      if (connectedEp !== normalizedEnforcedEndpoint) {
+        // Consume any pending intentional-logout flag so the next
+        // orchestration pass doesn't redundantly short-circuit on it.
+        sessionStorage.removeItem(INTENTIONAL_LOGOUT_FLAG);
+        try {
+          await onLogoutSession();
+        } catch (err) {
+          // Best-effort: the stale client may already be unreachable.
+          // Log so dev-only enforced-endpoint behavior stays debuggable.
+          logger.warn(
+            'enforcedEndpoint: stale-session logout failed; continuing to clear client and open login panel',
+            err,
+          );
+        }
+        // onLogoutSession only logs the client out on the server; it does
+        // not clear the global ref. Null it here so isClientConnected()
+        // returns false on the next orchestration pass.
+        globalThis.backendaiclient = null;
+        onOpen();
+        return;
+      }
+    }
+
+    // If the client is already connected, nothing to do.
+    if (isClientConnected()) return;
 
     // Check for intentional logout flag set by useLogout before the reload.
     // When present, skip silent re-login and show the login panel directly
