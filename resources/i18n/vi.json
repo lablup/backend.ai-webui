@@ -2487,6 +2487,7 @@
     "PendingSessions": "Phiên đang chờ xử lý"
   },
   "session": {
+    "AccessKeyMismatchTooltip": "Phiên này được tạo bằng khóa truy cập khác. Hãy chuyển sang khóa truy cập đó để quản lý phiên này.",
     "ActiveSessions": "Phiên hoạt động",
     "Agent": "Đặc vụ",
     "AgentId": "Id đại lý",

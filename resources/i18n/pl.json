@@ -2487,6 +2487,7 @@
     "PendingSessions": "Oczekujące sesje"
   },
   "session": {
+    "AccessKeyMismatchTooltip": "Ta sesja została utworzona przy użyciu innego klucza dostępu. Przełącz się na ten klucz dostępu, aby zarządzać sesją.",
     "ActiveSessions": "Aktywne sesje",
     "Agent": "Agent",
     "AgentId": "Identyfikator agenta",

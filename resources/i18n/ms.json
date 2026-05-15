@@ -2485,6 +2485,7 @@
     "PendingSessions": "Sesi yang belum selesai"
   },
   "session": {
+    "AccessKeyMismatchTooltip": "Sesi ini dicipta dengan kunci akses yang berbeza. Tukar ke kunci akses tersebut untuk mengurus sesi ini.",
     "ActiveSessions": "Sesi aktif",
     "Agent": "Ejen",
     "AgentId": "Id ejen",

@@ -2497,6 +2497,7 @@
     "PendingSessions": "대기 세션"
   },
   "session": {
+    "AccessKeyMismatchTooltip": "이 세션은 다른 액세스 키로 생성되었습니다. 이 세션을 관리하려면 해당 액세스 키로 전환하세요.",
     "ActiveSessions": "활성 세션",
     "Agent": "실행 노드",
     "AgentId": "에이전트 ID",

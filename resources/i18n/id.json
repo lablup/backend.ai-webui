@@ -2488,6 +2488,7 @@
     "PendingSessions": "Sesi yang tertunda"
   },
   "session": {
+    "AccessKeyMismatchTooltip": "Sesi ini dibuat dengan kunci akses yang berbeda. Beralihlah ke kunci akses tersebut untuk mengelola sesi ini.",
     "ActiveSessions": "Sesi aktif",
     "Agent": "Agen",
     "AgentId": "ID Agen",

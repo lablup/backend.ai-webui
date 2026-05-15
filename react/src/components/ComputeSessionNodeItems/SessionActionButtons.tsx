@@ -123,6 +123,17 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
 
   const userInfo = useCurrentUserInfo();
   const isOwner = userInfo[0]?.uuid === session?.user_id;
+  // The session row's access_key is set when the session was created.
+  // If the current keypair is different, manager APIs return 403
+  // ("Only admins can perform operations on behalf of other users.")
+  // for any per-session action — disable the buttons upfront instead.
+  const isAccessKeyMismatch =
+    !!session?.access_key &&
+    !!baiClient._config.accessKey &&
+    session.access_key !== baiClient._config.accessKey;
+
+  const resolveTooltip = (defaultTitle: string) =>
+    isAccessKeyMismatch ? t('session.AccessKeyMismatchTooltip') : defaultTitle;
 
   const hiddenButtons = React.useMemo(
     () => new Set(hiddenButtonKeys ?? []),
@@ -181,16 +192,21 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
                 title={
                   isButtonTitleMode
                     ? undefined
-                    : t('session.ExecuteSpecificApp', {
-                        appName: 'Jupyter Notebook',
-                      })
+                    : resolveTooltip(
+                        t('session.ExecuteSpecificApp', {
+                          appName: 'Jupyter Notebook',
+                        }),
+                      )
                 }
               >
                 <Button
                   size={size}
                   type={'primary'}
                   disabled={
-                    !isAppSupported(session) || !isActive(session) || !isOwner
+                    !isAppSupported(session) ||
+                    !isActive(session) ||
+                    !isOwner ||
+                    isAccessKeyMismatch
                   }
                   icon={<BAIJupyterIcon />}
                   onClick={() => {
@@ -198,9 +214,11 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
                   }}
                   title={
                     isButtonTitleMode
-                      ? t('session.ExecuteSpecificApp', {
-                          appName: 'Jupyter Notebook',
-                        })
+                      ? resolveTooltip(
+                          t('session.ExecuteSpecificApp', {
+                            appName: 'Jupyter Notebook',
+                          }),
+                        )
                       : undefined
                   }
                 />
@@ -211,16 +229,21 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
                 title={
                   isButtonTitleMode
                     ? undefined
-                    : t('session.ExecuteSpecificApp', {
-                        appName: 'File browser',
-                      })
+                    : resolveTooltip(
+                        t('session.ExecuteSpecificApp', {
+                          appName: 'File browser',
+                        }),
+                      )
                 }
               >
                 <Button
                   size={size}
                   type={'primary'}
                   disabled={
-                    !isAppSupported(session) || !isActive(session) || !isOwner
+                    !isAppSupported(session) ||
+                    !isActive(session) ||
+                    !isOwner ||
+                    isAccessKeyMismatch
                   }
                   icon={<BAIFileBrowserIcon />}
                   onClick={() => {
@@ -228,9 +251,11 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
                   }}
                   title={
                     isButtonTitleMode
-                      ? t('session.ExecuteSpecificApp', {
-                          appName: 'File browser',
-                        })
+                      ? resolveTooltip(
+                          t('session.ExecuteSpecificApp', {
+                            appName: 'File browser',
+                          }),
+                        )
                       : undefined
                   }
                 />
@@ -241,13 +266,20 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
         {isVisible('appLauncher') && (
           <>
             <Tooltip
-              title={isButtonTitleMode ? undefined : t('session.SeeAppDialog')}
+              title={
+                isButtonTitleMode
+                  ? undefined
+                  : resolveTooltip(t('session.SeeAppDialog'))
+              }
             >
               <Button
                 size={size}
                 type={primaryAppOption ? undefined : 'primary'}
                 disabled={
-                  !isAppSupported(session) || !isActive(session) || !isOwner
+                  !isAppSupported(session) ||
+                  !isActive(session) ||
+                  !isOwner ||
+                  isAccessKeyMismatch
                 }
                 icon={<BAIAppIcon />}
                 onClick={() => {
@@ -255,17 +287,19 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
                   setOpenAppLauncherModal(true);
                 }}
                 title={
-                  isButtonTitleMode ? t('session.SeeAppDialog') : undefined
+                  isButtonTitleMode
+                    ? resolveTooltip(t('session.SeeAppDialog'))
+                    : undefined
                 }
               />
             </Tooltip>
           </>
         )}
         {isVisible('sftp') && (
-          <Tooltip title={t('data.explorer.RunSSH/SFTPserver')}>
+          <Tooltip title={resolveTooltip(t('data.explorer.RunSSH/SFTPserver'))}>
             <Button
               type="primary"
-              disabled={!isActive(session) || !isOwner}
+              disabled={!isActive(session) || !isOwner || isAccessKeyMismatch}
               size={size}
               icon={<BAISftpIcon />}
               onClick={() => {
@@ -278,13 +312,18 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
           <>
             <Tooltip
               title={
-                isButtonTitleMode ? undefined : t('session.ExecuteTerminalApp')
+                isButtonTitleMode
+                  ? undefined
+                  : resolveTooltip(t('session.ExecuteTerminalApp'))
               }
             >
               <Button
                 size={size}
                 disabled={
-                  !isAppSupported(session) || !isActive(session) || !isOwner
+                  !isAppSupported(session) ||
+                  !isActive(session) ||
+                  !isOwner ||
+                  isAccessKeyMismatch
                 }
                 icon={<BAITerminalAppIcon />}
                 onClick={() => {
@@ -293,7 +332,7 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
                 }}
                 title={
                   isButtonTitleMode
-                    ? t('session.ExecuteTerminalApp')
+                    ? resolveTooltip(t('session.ExecuteTerminalApp'))
                     : undefined
                 }
               />
@@ -303,18 +342,23 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
         {isVisible('logs') && (
           <Tooltip
             title={
-              isButtonTitleMode ? undefined : t('session.SeeContainerLogs')
+              isButtonTitleMode
+                ? undefined
+                : resolveTooltip(t('session.SeeContainerLogs'))
             }
           >
             <Button
               size={size}
+              disabled={isAccessKeyMismatch}
               icon={<BAISessionLogIcon />}
               onClick={() => {
                 onAction?.('logs');
                 setOpenLogModal(true);
               }}
               title={
-                isButtonTitleMode ? t('session.SeeContainerLogs') : undefined
+                isButtonTitleMode
+                  ? resolveTooltip(t('session.SeeContainerLogs'))
+                  : undefined
               }
             />
           </Tooltip>
@@ -324,12 +368,14 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
             title={
               isButtonTitleMode
                 ? undefined
-                : t('session.RequestContainerCommit')
+                : resolveTooltip(t('session.RequestContainerCommit'))
             }
           >
             <Button
               size={size}
-              disabled={session?.status !== 'RUNNING' || !isOwner}
+              disabled={
+                session?.status !== 'RUNNING' || !isOwner || isAccessKeyMismatch
+              }
               icon={<BAIContainerCommitIcon />}
               onClick={() => {
                 onAction?.('containerCommit');
@@ -337,7 +383,7 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
               }}
               title={
                 isButtonTitleMode
-                  ? t('session.RequestContainerCommit')
+                  ? resolveTooltip(t('session.RequestContainerCommit'))
                   : undefined
               }
             />
@@ -346,16 +392,21 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
         {isVisible('terminate') && (
           <Tooltip
             title={
-              isButtonTitleMode ? undefined : t('session.TerminateSession')
+              isButtonTitleMode
+                ? undefined
+                : resolveTooltip(t('session.TerminateSession'))
             }
           >
             <Button
               size={size}
-              disabled={!isActive(session)}
+              disabled={!isActive(session) || isAccessKeyMismatch}
               icon={
                 <BAITerminateIcon
                   style={{
-                    color: isActive(session) ? token.colorError : undefined,
+                    color:
+                      isActive(session) && !isAccessKeyMismatch
+                        ? token.colorError
+                        : undefined,
                   }}
                 />
               }
@@ -364,7 +415,9 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
                 setOpenTerminateModal(true);
               }}
               title={
-                isButtonTitleMode ? t('session.TerminateSession') : undefined
+                isButtonTitleMode
+                  ? resolveTooltip(t('session.TerminateSession'))
+                  : undefined
               }
             />
           </Tooltip>
