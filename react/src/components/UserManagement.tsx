@@ -405,7 +405,7 @@ const UserManagement: React.FC<UserManagementProps> = () => {
             onChange={updateFetchKey}
           />
           <Space.Compact>
-            <Button
+            <BAIButton
               type="primary"
               icon={<PlusIcon />}
               onClick={() => {
@@ -413,7 +413,7 @@ const UserManagement: React.FC<UserManagementProps> = () => {
               }}
             >
               {t('credential.CreateUser')}
-            </Button>
+            </BAIButton>
             {bailClient.supports('bulk-create-user') && (
               <Dropdown
                 trigger={['click']}

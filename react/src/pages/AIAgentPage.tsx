@@ -10,7 +10,6 @@ import {
   DeleteFilled,
   EditOutlined,
   MoreOutlined,
-  PlusOutlined,
   UndoOutlined,
 } from '@ant-design/icons';
 import {
@@ -26,12 +25,14 @@ import {
 } from 'antd';
 import { createStyles } from 'antd-style';
 import {
+  BAIButton,
   BAICard,
   BAIFlex,
   BAIUnmountAfterClose,
   BAIConfirmModalWithInput,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { PlusIcon } from 'lucide-react';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -218,15 +219,15 @@ const AIAgentPage: React.FC = () => {
     >
       <BAIFlex direction="column" align="stretch" justify="center" gap="sm">
         <BAIFlex direction="row" justify="end" align="center">
-          <Button
-            icon={<PlusOutlined />}
+          <BAIButton
+            icon={<PlusIcon />}
             onClick={() => {
               setEditingAgent(undefined);
               setIsEditorOpen(true);
             }}
           >
             {t('button.Add')}
-          </Button>
+          </BAIButton>
         </BAIFlex>
         <Row gutter={[16, 16]} className={styles.cardList}>
           {agents.map((agent) => {

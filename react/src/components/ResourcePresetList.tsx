@@ -13,7 +13,6 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import ResourcePresetSettingModal from './ResourcePresetSettingModal';
 import {
   ReloadOutlined,
-  PlusOutlined,
   SettingOutlined,
   DeleteFilled,
 } from '@ant-design/icons';
@@ -29,6 +28,7 @@ import {
 import {
   filterOutEmpty,
   filterOutNullAndUndefined,
+  BAIButton,
   BAITable,
   BAIFlex,
   BAINumberWithUnit,
@@ -38,6 +38,7 @@ import {
   BAIConfirmModalWithInput,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { PlusIcon } from 'lucide-react';
 import React, { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
@@ -186,15 +187,15 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
               }}
             />
           </Tooltip>
-          <Button
+          <BAIButton
             type="primary"
-            icon={<PlusOutlined />}
+            icon={<PlusIcon />}
             onClick={() => {
               setIsCreating(true);
             }}
           >
             {t('resourcePreset.CreatePreset')}
-          </Button>
+          </BAIButton>
         </BAIFlex>
       </BAIFlex>
       <BAITable

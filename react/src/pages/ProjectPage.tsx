@@ -9,7 +9,6 @@ import {
 } from '../__generated__/ProjectPageQuery.graphql';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useCSVExport } from '../hooks/useCSVExport';
-import { PlusOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import { App } from 'antd';
 import {
@@ -30,6 +29,7 @@ import {
   useUpdatableState,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { PlusIcon } from 'lucide-react';
 import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -200,7 +200,7 @@ const ProjectPage = () => {
             />
             <BAIButton
               type="primary"
-              icon={<PlusOutlined />}
+              icon={<PlusIcon />}
               onClick={toggleSettingModal}
             >
               {t('project.CreateProject')}

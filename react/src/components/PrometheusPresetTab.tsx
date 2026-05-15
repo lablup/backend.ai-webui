@@ -13,7 +13,6 @@ import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginati
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import PrometheusQueryPresetEditorModal from './PrometheusQueryPresetEditorModal';
 import PrometheusQueryPresetNodes from './PrometheusQueryPresetNodes';
-import { PlusOutlined } from '@ant-design/icons';
 import { Alert, App, theme } from 'antd';
 import {
   BAIButton,
@@ -28,6 +27,7 @@ import {
   useFetchKey,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { PlusIcon } from 'lucide-react';
 import { parseAsJson, parseAsString, useQueryStates } from 'nuqs';
 import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -159,7 +159,7 @@ const PrometheusPresetTab: React.FC = () => {
           />
           <BAIButton
             type="primary"
-            icon={<PlusOutlined />}
+            icon={<PlusIcon />}
             onClick={() => setIsOpenEditorModal(true)}
           >
             {t('prometheusQueryPreset.AddPreset')}

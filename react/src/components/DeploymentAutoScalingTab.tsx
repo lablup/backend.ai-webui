@@ -7,9 +7,10 @@ import { useCurrentUserInfo } from '../hooks/backendai';
 import AutoScalingRuleList, {
   type AutoScalingRuleListRef,
 } from './AutoScalingRuleList';
-import { PlusOutlined, QuestionCircleOutlined } from '@ant-design/icons';
-import { Button, Skeleton, Tooltip, theme } from 'antd';
-import { BAICard, BAIFetchKeyButton, BAIFlex } from 'backend.ai-ui';
+import { QuestionCircleOutlined } from '@ant-design/icons';
+import { Skeleton, Tooltip, theme } from 'antd';
+import { BAIButton, BAICard, BAIFetchKeyButton, BAIFlex } from 'backend.ai-ui';
+import { PlusIcon } from 'lucide-react';
 import React, { Suspense, useRef, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -102,14 +103,14 @@ const DeploymentAutoScalingTab: React.FC<DeploymentAutoScalingTabProps> = ({
             value=""
             onChange={handleRefetch}
           />
-          <Button
+          <BAIButton
             type="primary"
-            icon={<PlusOutlined />}
+            icon={<PlusIcon />}
             disabled={isAddDisabled}
             onClick={() => autoScalingRef.current?.openAddModal()}
           >
             {t('modelService.AddRules')}
-          </Button>
+          </BAIButton>
         </BAIFlex>
       }
       styles={{ body: { paddingTop: 0 } }}

@@ -15,7 +15,7 @@ import WebUINavigate from '../components/WebUINavigate';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { Badge, Button, Card, Drawer, theme, Tooltip, Typography } from 'antd';
 import { createStyles } from 'antd-style';
-import { BAIFlex, BAICard, BAITable } from 'backend.ai-ui';
+import { BAIButton, BAIFlex, BAICard, BAITable } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { t } from 'i18next';
 import * as _ from 'lodash-es';
@@ -227,7 +227,7 @@ const PureChatPage = ({ id }: { id: string }) => {
         extra={
           <BAIFlex>
             <Tooltip title={t('chatui.NewChat')}>
-              <Button
+              <BAIButton
                 type="text"
                 icon={<PlusIcon />}
                 onClick={() => {

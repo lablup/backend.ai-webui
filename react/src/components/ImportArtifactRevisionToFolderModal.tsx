@@ -11,16 +11,9 @@ import {
 } from '../hooks/useCurrentProject';
 import FolderCreateModalV2 from './FolderCreateModalV2';
 import { useToggle } from 'ahooks';
+import { Alert, App, Form, FormInstance, Popconfirm, theme } from 'antd';
 import {
-  Alert,
-  App,
-  Button,
-  Form,
-  FormInstance,
-  Popconfirm,
-  theme,
-} from 'antd';
-import {
+  BAIButton,
   BAIModalProps,
   BAIVFolderSelectRef,
   BAIModal,
@@ -266,7 +259,7 @@ const ImportArtifactRevisionToFolderModal = ({
                   />
                 </Form.Item>
                 {currentProject.id === modelStoreProject?.id ? (
-                  <Button
+                  <BAIButton
                     icon={<PlusIcon />}
                     onClick={() => {
                       toggleIsOpenCreateModal();
@@ -309,7 +302,7 @@ const ImportArtifactRevisionToFolderModal = ({
                       }
                     }}
                   >
-                    <Button icon={<PlusIcon />} />
+                    <BAIButton icon={<PlusIcon />} />
                   </Popconfirm>
                 )}
               </BAIFlex>

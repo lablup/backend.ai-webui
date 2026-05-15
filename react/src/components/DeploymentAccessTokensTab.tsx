@@ -6,15 +6,10 @@ import { DeploymentAccessTokensTabCreateMutation } from '../__generated__/Deploy
 import { DeploymentAccessTokensTabDeleteMutation } from '../__generated__/DeploymentAccessTokensTabDeleteMutation.graphql';
 import { DeploymentAccessTokensTabListQuery } from '../__generated__/DeploymentAccessTokensTabListQuery.graphql';
 import { DeploymentAccessTokensTab_deployment$key } from '../__generated__/DeploymentAccessTokensTab_deployment.graphql';
-import {
-  DeleteFilled,
-  PlusOutlined,
-  QuestionCircleOutlined,
-} from '@ant-design/icons';
+import { DeleteFilled, QuestionCircleOutlined } from '@ant-design/icons';
 import {
   Alert,
   App,
-  Button,
   DatePicker,
   Form,
   Select,
@@ -24,6 +19,7 @@ import {
   theme,
 } from 'antd';
 import {
+  BAIButton,
   BAICard,
   BAIConfirmModalWithInput,
   BAIFetchKeyButton,
@@ -39,6 +35,7 @@ import {
   useMutationWithPromise,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
+import { PlusIcon } from 'lucide-react';
 import React, { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -129,14 +126,14 @@ const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
               value=""
               onChange={handleRefetch}
             />
-            <Button
+            <BAIButton
               type="primary"
-              icon={<PlusOutlined />}
+              icon={<PlusIcon />}
               disabled={isMutationDisabled}
               onClick={() => setIsCreateModalOpen(true)}
             >
               {t('deployment.accessToken.Create')}
-            </Button>
+            </BAIButton>
           </BAIFlex>
         }
         styles={{ body: { paddingTop: 0 } }}

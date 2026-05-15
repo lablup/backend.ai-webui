@@ -385,13 +385,6 @@ const AdminModelCardListPage: React.FC = () => {
               />
             </>
           )}
-          <BAIButton
-            type="primary"
-            icon={<PlusIcon size={16} />}
-            onClick={handleOpenCreateModal}
-          >
-            {t('adminModelCard.CreateModelCard')}
-          </BAIButton>
           <BAIFetchKeyButton
             loading={
               deferredQueryVariables !== queryVariables ||
@@ -402,6 +395,13 @@ const AdminModelCardListPage: React.FC = () => {
               updateFetchKey(newFetchKey);
             }}
           />
+          <BAIButton
+            type="primary"
+            icon={<PlusIcon />}
+            onClick={handleOpenCreateModal}
+          >
+            {t('adminModelCard.CreateModelCard')}
+          </BAIButton>
         </BAIFlex>
       </BAIFlex>
       <BAITable<ModelCardNode>
