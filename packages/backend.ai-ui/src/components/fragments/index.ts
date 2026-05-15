@@ -62,7 +62,7 @@ export {
   availableProjectSorterKeys,
   availableProjectSorterValues,
 } from './BAIProjectTable';
-export type { BAIProjectTableProps } from './BAIProjectTable';
+export type { BAIProjectTableProps, ProjectInList } from './BAIProjectTable';
 export { default as BAIAllowedVfolderHostsWithPermission } from './BAIAllowedVfolderHostsWithPermission';
 export type { BAIAllowedVfolderHostsWithPermissionProps } from './BAIAllowedVfolderHostsWithPermission';
 export { default as BAIAdminContainerRegistrySelect } from './BAIAdminContainerRegistrySelect';

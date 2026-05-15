@@ -71,6 +71,9 @@
     "KeepAsIs": "Manter como está",
     "UndoChanges": "Desfazer alterações"
   },
+  "comp:BAIContainerRegistrySelect": {
+    "SelectContainerRegistry": "Selecionar registro de contêiner"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "Tem certeza de que deseja desativar {{name}}?",
     "AreYouSureYouWantToDeactivateSome": "Tem certeza de que deseja desativar os artefatos {{count}}?",
@@ -140,12 +143,19 @@
   },
   "comp:BAIImportArtifactModal": {
     "Description": "Descrição",
+    "ExcludedVersions": "{{count}} versões são excluídas.",
+    "FailedToPullVersions": "Falhou ao puxar versões.",
     "Name": "Nome",
+    "OnlySCANNEDVersionsCanBePulled": "Somente versões digitalizadas podem ser puxadas.",
     "Pull": "Puxar",
     "PullArtifact": "Puxe artefato",
+    "PullVersion": "Puxar versão",
     "PulledVersionsAreExcluded": "As versões puxadas são excluídas.",
+    "Size": "Tamanho",
     "Source": "Fonte",
-    "Type": "Tipo"
+    "SuccessFullyPulled": "Pull solicitado com sucesso para {{count}} versões.",
+    "Type": "Tipo",
+    "Version": "Versão"
   },
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "Selecionar par de chaves"
@@ -180,7 +190,7 @@
     "UpdatedAt": "Atualizado em"
   },
   "comp:BAIProjectBulkEditModal": {
-    "FollowingFoldersWillBeUpdated": "A(s) pasta(s) a seguir será(ão) atualizada(s).",
+    "FollowingProjectsWillBeUpdated": "O(s) projeto(s) a seguir será(ão) atualizado(s).",
     "ProjectResourcePolicy": "Política de Recursos do Projeto",
     "UpdateMultipleProjects": "Atualizar vários projetos"
   },
@@ -210,20 +220,23 @@
     "UpdateProject": "Atualizar Projeto"
   },
   "comp:BAIProjectTable": {
+    "Activate": "Ativar",
+    "ActivateProject": "Ativar projeto",
     "AreYouSureToPurgeProject": "Tem certeza de que deseja excluir {{projectName}}? Esta ação é irreversível.",
     "ContainerRegistry": "Registro de Contêineres",
-    "Controls": "Controles",
     "CreatedAt": "Criado em",
     "Deactivate": "Desativar",
     "DeactivateProject": "Desativar projeto",
     "Description": "Descrição",
     "Domain": "Domínio",
+    "EditProject": "Editar",
+    "FailedToActivateProject": "Falha ao ativar o projeto.",
     "FailedToDeactivateProject": "Falha ao desativar o projeto.",
     "FailedToPurgeProject": "Não foi possível purgar o projeto.",
     "IntegrationID": "ID da Integração",
-    "IsActive": "Ativo",
     "Name": "Nome",
     "Project": "Projeto",
+    "ProjectActivated": "O projeto foi ativado.",
     "ProjectDeactivated": "O projeto foi desativado.",
     "ProjectID": "ID do projeto",
     "ProjectPurged": "O projeto foi excluído permanentemente.",
@@ -251,6 +264,9 @@
   },
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Selecionar grupo de recursos"
+  },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "Ilimitado"
   },
   "comp:BAIRouteNodes": {
     "CreatedAt": "Criado em",
@@ -285,6 +301,8 @@
     "SelectStorageHost": "Selecionar host de armazenamento"
   },
   "comp:BAITable": {
+    "Export": "Exportar",
+    "ExportCSV": "Exportar CSV",
     "GoToFirstPage": "Ir para a primeira página",
     "InvalidPageNumber": "Número de página inválido",
     "SearchTableColumn": "Pesquisar colunas da tabela",

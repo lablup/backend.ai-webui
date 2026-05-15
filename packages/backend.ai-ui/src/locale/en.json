@@ -184,7 +184,7 @@
     "UpdatedAt": "Updated At"
   },
   "comp:BAIProjectBulkEditModal": {
-    "FollowingFoldersWillBeUpdated": "The following folder(s) will be updated.",
+    "FollowingProjectsWillBeUpdated": "The following project(s) will be updated.",
     "ProjectResourcePolicy": "Project Resource Policy",
     "UpdateMultipleProjects": "Update Multiple Projects"
   },
@@ -214,23 +214,26 @@
     "UpdateProject": "Update Project"
   },
   "comp:BAIProjectTable": {
+    "Activate": "Activate",
+    "ActivateProject": "Activate Project",
     "AreYouSureToPurgeProject": "Are you sure to purge {{projectName}}? This action is irreversible.",
     "ContainerRegistry": "Container Registry",
-    "Controls": "Controls",
     "CreatedAt": "Created At",
     "Deactivate": "Deactivate",
     "DeactivateProject": "Deactivate Project",
     "Description": "Description",
     "Domain": "Domain",
+    "EditProject": "Edit",
+    "FailedToActivateProject": "Failed to activate the project.",
     "FailedToDeactivateProject": "Failed to deactivate the project.",
     "FailedToPurgeProject": "Failed to purge the project.",
     "IntegrationID": "Integration ID",
-    "IsActive": "Active",
     "Name": "Name",
     "Project": "Project",
+    "ProjectActivated": "The project has been activated.",
     "ProjectDeactivated": "The project has been deactivated.",
     "ProjectID": "Project ID",
-    "ProjectPurged": "The projecth has been purged",
+    "ProjectPurged": "The project has been purged.",
     "Purge": "Purge",
     "PurgeProject": "Purge Project",
     "Registry": "Registry",

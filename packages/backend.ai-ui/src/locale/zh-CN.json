@@ -71,6 +71,9 @@
     "KeepAsIs": "保持原样",
     "UndoChanges": "撤销更改"
   },
+  "comp:BAIContainerRegistrySelect": {
+    "SelectContainerRegistry": "选择容器镜像仓库"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "您确定要停用{{name}}吗？",
     "AreYouSureYouWantToDeactivateSome": "您确定要停用{{count}}文物吗？",
@@ -181,7 +184,7 @@
     "UpdatedAt": "更新时间"
   },
   "comp:BAIProjectBulkEditModal": {
-    "FollowingFoldersWillBeUpdated": "以下文件夹将被更新。",
+    "FollowingProjectsWillBeUpdated": "以下项目将被更新。",
     "ProjectResourcePolicy": "项目资源策略",
     "UpdateMultipleProjects": "批量更新项目"
   },
@@ -211,20 +214,23 @@
     "UpdateProject": "更新项目"
   },
   "comp:BAIProjectTable": {
+    "Activate": "激活",
+    "ActivateProject": "激活项目",
     "AreYouSureToPurgeProject": "确定要永久清除 {{projectName}}? 此操作不可恢复。",
     "ContainerRegistry": "容器镜像仓库",
-    "Controls": "控制",
     "CreatedAt": "创建时间",
     "Deactivate": "停用",
     "DeactivateProject": "停用项目",
     "Description": "描述",
     "Domain": "域",
+    "EditProject": "编辑",
+    "FailedToActivateProject": "无法激活该项目。",
     "FailedToDeactivateProject": "无法停用该项目。",
     "FailedToPurgeProject": "无法清除该项目。",
     "IntegrationID": "集成 ID",
-    "IsActive": "活跃",
     "Name": "名称",
     "Project": "项目",
+    "ProjectActivated": "该项目已激活。",
     "ProjectDeactivated": "该项目已被停用。",
     "ProjectID": "项目 ID",
     "ProjectPurged": "项目 \"projecth\" 已被清除",
@@ -252,6 +258,9 @@
   },
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "选择资源组"
+  },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "无限"
   },
   "comp:BAIRouteNodes": {
     "CreatedAt": "创建时间",

@@ -71,6 +71,9 @@
     "KeepAsIs": "そのまま維持",
     "UndoChanges": "変更を元に戻す"
   },
+  "comp:BAIContainerRegistrySelect": {
+    "SelectContainerRegistry": "コンテナレジストリを選択"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "{{name}}を無効にしたいですか？",
     "AreYouSureYouWantToDeactivateSome": "{{count}}アーティファクトを無効にしたいですか？",
@@ -181,7 +184,7 @@
     "UpdatedAt": "更新日時"
   },
   "comp:BAIProjectBulkEditModal": {
-    "FollowingFoldersWillBeUpdated": "以下のフォルダーが更新されます.",
+    "FollowingProjectsWillBeUpdated": "以下のプロジェクトが更新されます.",
     "ProjectResourcePolicy": "プロジェクトのリソースポリシー",
     "UpdateMultipleProjects": "プロジェクトを一括更新"
   },
@@ -211,20 +214,23 @@
     "UpdateProject": "プロジェクトの更新"
   },
   "comp:BAIProjectTable": {
+    "Activate": "有効化",
+    "ActivateProject": "プロジェクトを有効化",
     "AreYouSureToPurgeProject": "本当に{{projectName}}を完全に削除しますか？この操作は取り消せません。",
     "ContainerRegistry": "コンテナレジストリ",
-    "Controls": "操作",
     "CreatedAt": "作成日時",
     "Deactivate": "無効化",
     "DeactivateProject": "プロジェクトを無効化",
     "Description": "説明",
     "Domain": "ドメイン",
+    "EditProject": "編集",
+    "FailedToActivateProject": "プロジェクトの有効化に失敗しました。",
     "FailedToDeactivateProject": "プロジェクトの無効化に失敗しました。",
     "FailedToPurgeProject": "プロジェクトの完全削除に失敗しました。",
     "IntegrationID": "連携ID",
-    "IsActive": "アクティブ",
     "Name": "名前",
     "Project": "プロジェクト",
+    "ProjectActivated": "プロジェクトは有効化されました。",
     "ProjectDeactivated": "プロジェクトは無効化されました。",
     "ProjectID": "プロジェクトID",
     "ProjectPurged": "プロジェクトは完全に削除されました",
@@ -252,6 +258,9 @@
   },
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "リソースグループを選択"
+  },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "無制限"
   },
   "comp:BAIRouteNodes": {
     "CreatedAt": "作成日時",

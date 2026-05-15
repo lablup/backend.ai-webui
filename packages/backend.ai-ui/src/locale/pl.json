@@ -71,6 +71,9 @@
     "KeepAsIs": "Pozostaw bez zmian",
     "UndoChanges": "Cofnij zmiany"
   },
+  "comp:BAIContainerRegistrySelect": {
+    "SelectContainerRegistry": "Wybierz rejestr kontenerów"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "Czy na pewno chcesz dezaktywować {{name}}?",
     "AreYouSureYouWantToDeactivateSome": "Czy na pewno chcesz dezaktywować {{count}} artefakty?",
@@ -181,7 +184,7 @@
     "UpdatedAt": "Zaktualizowano"
   },
   "comp:BAIProjectBulkEditModal": {
-    "FollowingFoldersWillBeUpdated": "Poniższe foldery zostaną zaktualizowane.",
+    "FollowingProjectsWillBeUpdated": "Poniższe projekty zostaną zaktualizowane.",
     "ProjectResourcePolicy": "Polityka zasobów projektu",
     "UpdateMultipleProjects": "Aktualizuj wiele projektów"
   },
@@ -211,20 +214,23 @@
     "UpdateProject": "Aktualizuj projekt"
   },
   "comp:BAIProjectTable": {
+    "Activate": "Aktywuj",
+    "ActivateProject": "Aktywuj projekt",
     "AreYouSureToPurgeProject": "Czy na pewno chcesz trwale usunąć {{projectName}}? Ta operacja jest nieodwracalna.",
     "ContainerRegistry": "Rejestr kontenerów",
-    "Controls": "Sterowanie",
     "CreatedAt": "Utworzono",
     "Deactivate": "Dezaktywuj",
     "DeactivateProject": "Dezaktywuj projekt",
     "Description": "Opis",
     "Domain": "Domena",
+    "EditProject": "Edytuj",
+    "FailedToActivateProject": "Nie udało się aktywować projektu.",
     "FailedToDeactivateProject": "Nie udało się dezaktywować projektu.",
     "FailedToPurgeProject": "Nie udało się trwale usunąć projektu.",
     "IntegrationID": "ID integracji",
-    "IsActive": "Aktywny",
     "Name": "Nazwa",
     "Project": "Projekt",
+    "ProjectActivated": "Projekt został aktywowany.",
     "ProjectDeactivated": "Projekt został dezaktywowany.",
     "ProjectID": "ID projektu",
     "ProjectPurged": "Projekt został trwale usunięty.",
@@ -252,6 +258,9 @@
   },
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Wybierz grupę zasobów"
+  },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "Nieograniczony"
   },
   "comp:BAIRouteNodes": {
     "CreatedAt": "Utworzono",

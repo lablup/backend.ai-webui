@@ -71,6 +71,9 @@
     "KeepAsIs": "Giữ nguyên",
     "UndoChanges": "Hoàn tác thay đổi"
   },
+  "comp:BAIContainerRegistrySelect": {
+    "SelectContainerRegistry": "Chọn kho lưu trữ container"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "Bạn có chắc bạn muốn hủy kích hoạt {{name}}?",
     "AreYouSureYouWantToDeactivateSome": "Bạn có chắc là bạn muốn hủy kích hoạt {{count}} Artifacts?",
@@ -181,7 +184,7 @@
     "UpdatedAt": "Ngày cập nhật"
   },
   "comp:BAIProjectBulkEditModal": {
-    "FollowingFoldersWillBeUpdated": "Thư mục sau sẽ được cập nhật.",
+    "FollowingProjectsWillBeUpdated": "Dự án sau sẽ được cập nhật.",
     "ProjectResourcePolicy": "Chính sách tài nguyên dự án",
     "UpdateMultipleProjects": "Cập nhật nhiều dự án"
   },
@@ -211,20 +214,23 @@
     "UpdateProject": "Cập nhật dự án"
   },
   "comp:BAIProjectTable": {
+    "Activate": "Kích hoạt",
+    "ActivateProject": "Kích hoạt dự án",
     "AreYouSureToPurgeProject": "Bạn có chắc chắn muốn xóa vĩnh viễn {{projectName}}? Hành động này không thể hoàn tác.",
     "ContainerRegistry": "Kho lưu trữ container",
-    "Controls": "Điều khiển",
     "CreatedAt": "Ngày tạo",
     "Deactivate": "Vô hiệu hóa",
     "DeactivateProject": "Vô hiệu hóa dự án",
     "Description": "Mô tả",
     "Domain": "Miền",
+    "EditProject": "Chỉnh sửa",
+    "FailedToActivateProject": "Không thể kích hoạt dự án.",
     "FailedToDeactivateProject": "Không thể vô hiệu hóa dự án.",
     "FailedToPurgeProject": "Không thể xóa hoàn toàn dự án.",
     "IntegrationID": "ID tích hợp",
-    "IsActive": "Hoạt động",
     "Name": "Tên",
     "Project": "Dự án",
+    "ProjectActivated": "Dự án đã được kích hoạt.",
     "ProjectDeactivated": "Dự án đã bị vô hiệu hóa.",
     "ProjectID": "ID dự án",
     "ProjectPurged": "Dự án đã bị xóa vĩnh viễn",
@@ -252,6 +258,9 @@
   },
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Chọn nhóm tài nguyên"
+  },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "Không giới hạn"
   },
   "comp:BAIRouteNodes": {
     "CreatedAt": "Ngày tạo",

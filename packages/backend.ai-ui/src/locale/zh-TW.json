@@ -71,6 +71,9 @@
     "KeepAsIs": "保持原樣",
     "UndoChanges": "撤銷更改"
   },
+  "comp:BAIContainerRegistrySelect": {
+    "SelectContainerRegistry": "選擇容器映像倉庫"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "您確定要停用{{name}}嗎？",
     "AreYouSureYouWantToDeactivateSome": "您確定要停用{{count}}文物嗎？",
@@ -181,7 +184,7 @@
     "UpdatedAt": "更新時間"
   },
   "comp:BAIProjectBulkEditModal": {
-    "FollowingFoldersWillBeUpdated": "下列資料夾將會更新。",
+    "FollowingProjectsWillBeUpdated": "下列專案將會更新。",
     "ProjectResourcePolicy": "專案資源政策",
     "UpdateMultipleProjects": "更新多個專案"
   },
@@ -211,20 +214,23 @@
     "UpdateProject": "更新專案"
   },
   "comp:BAIProjectTable": {
+    "Activate": "啟用",
+    "ActivateProject": "啟用專案",
     "AreYouSureToPurgeProject": "您確定要清除 {{projectName}}? 此操作無法復原。",
     "ContainerRegistry": "容器映像庫",
-    "Controls": "控制項",
     "CreatedAt": "建立時間",
     "Deactivate": "停用",
     "DeactivateProject": "停用專案",
     "Description": "描述",
     "Domain": "網域",
+    "EditProject": "編輯",
+    "FailedToActivateProject": "無法啟用專案。",
     "FailedToDeactivateProject": "無法停用專案。",
     "FailedToPurgeProject": "無法清除專案。",
     "IntegrationID": "整合識別碼",
-    "IsActive": "啟用",
     "Name": "名稱",
     "Project": "專案",
+    "ProjectActivated": "該專案已啟用。",
     "ProjectDeactivated": "該專案已停用。",
     "ProjectID": "專案 ID",
     "ProjectPurged": "專案「projecth」已被清除",
@@ -252,6 +258,9 @@
   },
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "選擇資源群組"
+  },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "無限"
   },
   "comp:BAIRouteNodes": {
     "CreatedAt": "建立時間",

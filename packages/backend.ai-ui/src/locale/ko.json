@@ -184,7 +184,7 @@
     "UpdatedAt": "수정 시각"
   },
   "comp:BAIProjectBulkEditModal": {
-    "FollowingFoldersWillBeUpdated": "다음 폴더(들)이 업데이트됩니다.",
+    "FollowingProjectsWillBeUpdated": "다음 프로젝트(들)이 업데이트됩니다.",
     "ProjectResourcePolicy": "프로젝트 리소스 정책",
     "UpdateMultipleProjects": "프로젝트 일괄 업데이트"
   },
@@ -214,20 +214,23 @@
     "UpdateProject": "프로젝트 수정"
   },
   "comp:BAIProjectTable": {
+    "Activate": "활성화",
+    "ActivateProject": "프로젝트 활성화",
     "AreYouSureToPurgeProject": "정말로 {{projectName}} 프로젝트를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.",
     "ContainerRegistry": "컨테이너 레지스트리",
-    "Controls": "제어",
     "CreatedAt": "생성 시각",
     "Deactivate": "비활성화",
     "DeactivateProject": "프로젝트 비활성화",
     "Description": "설명",
     "Domain": "도메인",
+    "EditProject": "수정",
+    "FailedToActivateProject": "프로젝트 활성화에 실패했습니다.",
     "FailedToDeactivateProject": "프로젝트 비활성화에 실패했습니다.",
     "FailedToPurgeProject": "프로젝트 삭제에 실패했습니다.",
     "IntegrationID": "통합 ID",
-    "IsActive": "활성",
     "Name": "이름",
     "Project": "프로젝트",
+    "ProjectActivated": "프로젝트가 활성화됐습니다.",
     "ProjectDeactivated": "프로젝트가 비활성화됐습니다.",
     "ProjectID": "프로젝트 ID",
     "ProjectPurged": "프로젝트를 삭제했습니다.",
@@ -255,6 +258,9 @@
   },
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "리소스 그룹을 선택해주세요"
+  },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "제한없음"
   },
   "comp:BAIRouteNodes": {
     "CreatedAt": "생성일",

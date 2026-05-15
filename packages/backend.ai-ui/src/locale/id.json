@@ -71,6 +71,9 @@
     "KeepAsIs": "Pertahankan",
     "UndoChanges": "Batalkan perubahan"
   },
+  "comp:BAIContainerRegistrySelect": {
+    "SelectContainerRegistry": "Pilih Registri Container"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "Anda yakin ingin menonaktifkan {{name}}?",
     "AreYouSureYouWantToDeactivateSome": "Anda yakin ingin menonaktifkan artefak {{count}}?",
@@ -181,7 +184,7 @@
     "UpdatedAt": "Diperbarui Pada"
   },
   "comp:BAIProjectBulkEditModal": {
-    "FollowingFoldersWillBeUpdated": "Folder berikut akan diperbarui.",
+    "FollowingProjectsWillBeUpdated": "Proyek berikut akan diperbarui.",
     "ProjectResourcePolicy": "Kebijakan Sumber Daya Proyek",
     "UpdateMultipleProjects": "Perbarui Beberapa Proyek"
   },
@@ -211,20 +214,23 @@
     "UpdateProject": "Perbarui Proyek"
   },
   "comp:BAIProjectTable": {
+    "Activate": "Aktifkan",
+    "ActivateProject": "Aktifkan Proyek",
     "AreYouSureToPurgeProject": "Apakah Anda yakin ingin menghapus {{projectName}}? Tindakan ini tidak dapat dibatalkan.",
     "ContainerRegistry": "Registri Kontainer",
-    "Controls": "Kontrol",
     "CreatedAt": "Dibuat pada",
     "Deactivate": "Nonaktifkan",
     "DeactivateProject": "Nonaktifkan Proyek",
     "Description": "Deskripsi",
     "Domain": "Domain",
+    "EditProject": "Edit",
+    "FailedToActivateProject": "Gagal mengaktifkan proyek.",
     "FailedToDeactivateProject": "Gagal menonaktifkan proyek.",
     "FailedToPurgeProject": "Gagal menghapus proyek secara permanen.",
     "IntegrationID": "ID Integrasi",
-    "IsActive": "Aktif",
     "Name": "Nama",
     "Project": "Proyek",
+    "ProjectActivated": "Proyek telah diaktifkan.",
     "ProjectDeactivated": "Proyek telah dinonaktifkan.",
     "ProjectID": "ID Proyek",
     "ProjectPurged": "Proyek telah dihapus secara permanen.",
@@ -252,6 +258,9 @@
   },
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Pilih Grup Sumber Daya"
+  },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "Tak terbatas"
   },
   "comp:BAIRouteNodes": {
     "CreatedAt": "Dibuat pada",

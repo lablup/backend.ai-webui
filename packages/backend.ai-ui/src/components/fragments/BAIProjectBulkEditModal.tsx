@@ -82,7 +82,7 @@ const BAIProjectBulkEditModal = ({
           showIcon
           ghostInfoBg={false}
           title={t(
-            'comp:BAIProjectBulkEditModal.FollowingFoldersWillBeUpdated',
+            'comp:BAIProjectBulkEditModal.FollowingProjectsWillBeUpdated',
           )}
           description={
             <ul

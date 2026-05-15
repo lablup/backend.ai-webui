@@ -71,6 +71,9 @@
     "KeepAsIs": "Mantener como está",
     "UndoChanges": "Deshacer cambios"
   },
+  "comp:BAIContainerRegistrySelect": {
+    "SelectContainerRegistry": "Seleccionar registro de contenedores"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "¿Estás seguro de que quieres desactivar {{name}}?",
     "AreYouSureYouWantToDeactivateSome": "¿Estás seguro de que quieres desactivar {{count}} artefactos?",
@@ -181,7 +184,7 @@
     "UpdatedAt": "Actualizado en"
   },
   "comp:BAIProjectBulkEditModal": {
-    "FollowingFoldersWillBeUpdated": "Se actualizará(n) la(s) siguiente(s) carpeta(s).",
+    "FollowingProjectsWillBeUpdated": "Se actualizará(n) el(los) siguiente(s) proyecto(s).",
     "ProjectResourcePolicy": "Política de recursos del proyecto",
     "UpdateMultipleProjects": "Actualizar varios proyectos"
   },
@@ -211,20 +214,23 @@
     "UpdateProject": "Actualizar proyecto"
   },
   "comp:BAIProjectTable": {
+    "Activate": "Activar",
+    "ActivateProject": "Activar proyecto",
     "AreYouSureToPurgeProject": "¿Está seguro de que desea purgar {{projectName}}? Esta acción es irreversible.",
     "ContainerRegistry": "Registro de contenedores",
-    "Controls": "Controles",
     "CreatedAt": "Creado el",
     "Deactivate": "Desactivar",
     "DeactivateProject": "Desactivar proyecto",
     "Description": "Descripción",
     "Domain": "Dominio",
+    "EditProject": "Editar",
+    "FailedToActivateProject": "No se pudo activar el proyecto.",
     "FailedToDeactivateProject": "No se pudo desactivar el proyecto.",
     "FailedToPurgeProject": "No se pudo purgar el proyecto.",
     "IntegrationID": "ID de integración",
-    "IsActive": "Activo",
     "Name": "Nombre",
     "Project": "Proyecto",
+    "ProjectActivated": "El proyecto ha sido activado.",
     "ProjectDeactivated": "El proyecto ha sido desactivado.",
     "ProjectID": "ID del proyecto",
     "ProjectPurged": "El proyecto ha sido purgado.",
@@ -252,6 +258,9 @@
   },
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Seleccionar grupo de recursos"
+  },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "Ilimitado"
   },
   "comp:BAIRouteNodes": {
     "CreatedAt": "Fecha de creación",

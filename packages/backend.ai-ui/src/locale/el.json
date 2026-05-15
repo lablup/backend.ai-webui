@@ -71,6 +71,9 @@
     "KeepAsIs": "Διατήρηση ως έχει",
     "UndoChanges": "Αναίρεση αλλαγών"
   },
+  "comp:BAIContainerRegistrySelect": {
+    "SelectContainerRegistry": "Επιλέξτε μητρώο εμπορευματοκιβωτίων"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "Είστε βέβαιοι ότι θέλετε να απενεργοποιήσετε {{name}};",
     "AreYouSureYouWantToDeactivateSome": "Είστε βέβαιοι ότι θέλετε να απενεργοποιήσετε {{count}} τεχνουργήματα;",
@@ -181,7 +184,7 @@
     "UpdatedAt": "Ενημερώθηκε"
   },
   "comp:BAIProjectBulkEditModal": {
-    "FollowingFoldersWillBeUpdated": "Οι ακόλουθοι φάκελοι θα ενημερωθούν.",
+    "FollowingProjectsWillBeUpdated": "Τα ακόλουθα έργα θα ενημερωθούν.",
     "ProjectResourcePolicy": "Πολιτική πόρων έργου",
     "UpdateMultipleProjects": "Ενημέρωση πολλαπλών έργων"
   },
@@ -211,20 +214,23 @@
     "UpdateProject": "Ενημέρωση έργου"
   },
   "comp:BAIProjectTable": {
+    "Activate": "Ενεργοποίηση",
+    "ActivateProject": "Ενεργοποίηση έργου",
     "AreYouSureToPurgeProject": "Είστε βέβαιοι ότι θέλετε να διαγράψετε οριστικά το {{projectName}}? Αυτή η ενέργεια είναι μη αναστρέψιμη.",
     "ContainerRegistry": "Αποθετήριο κοντέινερ",
-    "Controls": "Έλεγχοι",
     "CreatedAt": "Δημιουργήθηκε στις",
     "Deactivate": "Απενεργοποίηση",
     "DeactivateProject": "Απενεργοποίηση έργου",
     "Description": "Περιγραφή",
     "Domain": "Τομέας",
+    "EditProject": "Επεξεργασία",
+    "FailedToActivateProject": "Η ενεργοποίηση του έργου απέτυχε.",
     "FailedToDeactivateProject": "Η απενεργοποίηση του έργου απέτυχε.",
     "FailedToPurgeProject": "Αποτυχία εκκαθάρισης του έργου.",
     "IntegrationID": "ID ενσωμάτωσης",
-    "IsActive": "Ενεργό",
     "Name": "Όνομα",
     "Project": "Έργο",
+    "ProjectActivated": "Το έργο έχει ενεργοποιηθεί.",
     "ProjectDeactivated": "Το έργο έχει απενεργοποιηθεί.",
     "ProjectID": "ID έργου",
     "ProjectPurged": "Το projecth έχει διαγραφεί.",
@@ -252,6 +258,9 @@
   },
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Επιλέξτε ομάδα πόρων"
+  },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "Απεριόριστος"
   },
   "comp:BAIRouteNodes": {
     "CreatedAt": "Δημιουργήθηκε",

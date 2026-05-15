@@ -71,6 +71,9 @@
     "KeepAsIs": "Unverändert lassen",
     "UndoChanges": "Änderungen rückgängig machen"
   },
+  "comp:BAIContainerRegistrySelect": {
+    "SelectContainerRegistry": "Container-Registry auswählen"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "Sind Sie sicher, dass Sie {{name}} deaktivieren möchten?",
     "AreYouSureYouWantToDeactivateSome": "Sind Sie sicher, dass Sie {{count}} Artefakte deaktivieren möchten?",
@@ -181,7 +184,7 @@
     "UpdatedAt": "Aktualisiert am"
   },
   "comp:BAIProjectBulkEditModal": {
-    "FollowingFoldersWillBeUpdated": "Die folgenden Ordner werden aktualisiert.",
+    "FollowingProjectsWillBeUpdated": "Die folgenden Projekte werden aktualisiert.",
     "ProjectResourcePolicy": "Projektressourcenrichtlinie",
     "UpdateMultipleProjects": "Mehrere Projekte aktualisieren"
   },
@@ -211,20 +214,23 @@
     "UpdateProject": "Projekt aktualisieren"
   },
   "comp:BAIProjectTable": {
+    "Activate": "Aktivieren",
+    "ActivateProject": "Projekt aktivieren",
     "AreYouSureToPurgeProject": "Sind Sie sicher, dass Sie {{projectName}} endgültig löschen möchten? Diese Aktion ist unwiderruflich.",
     "ContainerRegistry": "Container-Registry",
-    "Controls": "Steuerelemente",
     "CreatedAt": "Erstellt am",
     "Deactivate": "Deaktivieren",
     "DeactivateProject": "Projekt deaktivieren",
     "Description": "Beschreibung",
     "Domain": "Domäne",
+    "EditProject": "Bearbeiten",
+    "FailedToActivateProject": "Fehler beim Aktivieren des Projekts.",
     "FailedToDeactivateProject": "Fehler beim Deaktivieren des Projekts.",
     "FailedToPurgeProject": "Fehler beim Bereinigen des Projekts.",
     "IntegrationID": "Integrations‑ID",
-    "IsActive": "Aktiv",
     "Name": "Name",
     "Project": "Projekt",
+    "ProjectActivated": "Das Projekt wurde aktiviert.",
     "ProjectDeactivated": "Das Projekt wurde deaktiviert.",
     "ProjectID": "Projekt‑ID",
     "ProjectPurged": "Das Projekt wurde endgültig gelöscht.",
@@ -252,6 +258,9 @@
   },
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Ressourcengruppe auswählen"
+  },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "Unbegrenzt"
   },
   "comp:BAIRouteNodes": {
     "CreatedAt": "Erstellt am",
