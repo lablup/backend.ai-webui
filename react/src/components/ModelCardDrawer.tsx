@@ -4,21 +4,15 @@
  */
 import { ModelCardDrawerFragment$key } from '../__generated__/ModelCardDrawerFragment.graphql';
 import { useBackendAIImageMetaData } from '../hooks';
-import useDeploymentLauncher from '../hooks/useDeploymentLauncher';
+import DeploymentSettingModal from './DeploymentSettingModal';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import ModelBrandIcon from './ModelBrandIcon';
 import ModelCardDeployModal from './ModelCardDeployModal';
-import { BankOutlined, FileOutlined } from '@ant-design/icons';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
-import {
-  Card,
-  Descriptions,
-  Drawer,
-  Skeleton,
-  Tag,
-  Typography,
-} from 'antd';
+import { BankOutlined, FileOutlined } from '@ant-design/icons';
+import { useToggle } from 'ahooks';
+import { Card, Descriptions, Drawer, Skeleton, Tag, Typography } from 'antd';
 import {
   BAIButton,
   BAIFlex,
@@ -50,8 +44,6 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
   const { t } = useTranslation();
   const [imageMetaData] = useBackendAIImageMetaData();
   const { generateFolderPath } = useFolderExplorerOpener();
-  const { deployInstantly, isDeploying, supportsQuickDeploy } =
-    useDeploymentLauncher();
 
   const modelCard = useFragment(
     graphql`
@@ -108,6 +100,7 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
                 openToPublic
                 replicaCount
               }
+              ...DeploymentPresetDetailContentFragment
             }
           }
         }
@@ -116,9 +109,12 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
     modelCardDrawerFrgmt,
   );
 
-  const hasNoAvailablePresets =
-    !modelCard?.availablePresets || modelCard.availablePresets.count === 0;
   const [deployModalOpen, setDeployModalOpen] = useState(false);
+  // FR-2862 — when the user hits the empty-preset state in
+  // ModelCardDeployModal, escalate to the deployment shell creation modal
+  // (`DeploymentSettingModal`), same as the `/deployments` page entry.
+  const [isCreateDeploymentOpen, { toggle: toggleCreateDeployment }] =
+    useToggle(false);
 
   const presets =
     modelCard?.availablePresets?.edges
@@ -142,34 +138,13 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
           </BAIFlex>
         }
         extra={
-          supportsQuickDeploy &&
-          modelCard?.vfolder?.id &&
-          !hasNoAvailablePresets ? (
-            <BAIButton
-              type="primary"
-              loading={isDeploying}
-              disabled={!modelCard?.id}
-              action={async () => {
-                const modelFolderId = toLocalId(modelCard.vfolder?.id ?? '');
-                if (!modelFolderId) return;
-                const revisionPresetId = toLocalId(presets[0]?.id ?? '');
-                await deployInstantly({
-                  modelFolderId,
-                  revisionPresetId: revisionPresetId ?? undefined,
-                });
-              }}
-            >
-              {t('modelStore.Deploy')}
-            </BAIButton>
-          ) : (
-            <BAIButton
-              type="primary"
-              disabled={!modelCard?.id}
-              onClick={() => setDeployModalOpen(true)}
-            >
-              {t('modelStore.Deploy')}
-            </BAIButton>
-          )
+          <BAIButton
+            type="primary"
+            disabled={!modelCard?.id}
+            onClick={() => setDeployModalOpen(true)}
+          >
+            {t('modelStore.Deploy')}
+          </BAIButton>
         }
       >
         {modelCard && (
@@ -350,6 +325,11 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
           setDeployModalOpen(false);
           onClose();
         }}
+        onRequestCreateDeployment={toggleCreateDeployment}
+      />
+      <DeploymentSettingModal
+        open={isCreateDeploymentOpen}
+        onRequestClose={toggleCreateDeployment}
       />
     </>
   );

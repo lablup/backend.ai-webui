@@ -100,6 +100,8 @@ const DeploymentRevisionDetail: React.FC<{
                 path
                 initialDelay
                 maxRetries
+                interval
+                maxWaitTime
               }
             }
           }
@@ -378,6 +380,18 @@ const DeploymentRevisionDetail: React.FC<{
                     label: `${prefix}${t('modelService.MaxRetries')}`,
                     children:
                       model.service.healthCheck.maxRetries ?? renderFallback(),
+                  },
+                  {
+                    key: `model-interval-${idx}`,
+                    label: `${prefix}${t('modelService.Interval')}`,
+                    children:
+                      model.service.healthCheck.interval ?? renderFallback(),
+                  },
+                  {
+                    key: `model-max-wait-time-${idx}`,
+                    label: `${prefix}${t('modelService.MaxWaitTime')}`,
+                    children:
+                      model.service.healthCheck.maxWaitTime ?? renderFallback(),
                   },
                 ] as DescriptionsItemType[])
               : []),

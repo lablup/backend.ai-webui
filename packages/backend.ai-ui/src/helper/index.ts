@@ -430,6 +430,23 @@ export const isValidUUID = (uuid: string) => {
   return regex.test(uuid);
 };
 
+/**
+ * Resolve a UUID from either a raw UUID or a Strawberry global id like
+ * `ImageV2:<uuid>`. Useful for mutation inputs that are declared as `ID!`
+ * but parsed as `UUID!` server-side — callers can pass either form and get
+ * a clean UUID back. `toLocalId` calls `atob`, which throws on non-base64
+ * input, so we guard with try/catch and verify the decoded value is a UUID.
+ */
+export const safeDecodeUuid = (idOrGlobalId: string): string | undefined => {
+  if (isValidUUID(idOrGlobalId)) return idOrGlobalId;
+  try {
+    const decoded = toLocalId(idOrGlobalId);
+    return decoded && isValidUUID(decoded) ? decoded : undefined;
+  } catch {
+    return undefined;
+  }
+};
+
 export const convertToUUID = (id: string): string => {
   if (isValidUUID(id) && /^[0-9a-fA-F]{36}$/.test(id)) {
     return id;

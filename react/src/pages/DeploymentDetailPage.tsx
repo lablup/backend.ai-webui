@@ -69,6 +69,9 @@ const DeploymentDetailPage: React.FC = () => {
           currentRevision @since(version: "26.4.3") {
             id
           }
+          deployingRevision @since(version: "26.4.3") {
+            id
+          }
           creator @since(version: "26.4.3") {
             basicInfo {
               email
@@ -102,7 +105,12 @@ const DeploymentDetailPage: React.FC = () => {
     deploymentStatus === 'STOPPED' ||
     deploymentStatus === 'TERMINATED';
   const isDeploymentReady = deploymentStatus === 'READY';
-  const hasNoRevision = !deployment.currentRevision;
+  // Hide the "no revision" warning while a first revision is being applied —
+  // the rollout is in flight, the user already knows about it from the
+  // "Applying revision …" Alert in the Configuration section, and the
+  // warning would otherwise contradict that state.
+  const hasNoRevision =
+    !deployment.currentRevision && !deployment.deployingRevision;
   const isPrivateDeployment =
     deployment.networkAccess.openToPublic === false && !isDeploymentDestroying;
 
@@ -117,12 +125,14 @@ const DeploymentDetailPage: React.FC = () => {
     startRefetchTransition(() => updateFetchKey());
   };
 
-  const handleRevisionAdded = () => {
+  const handleAddRevisionRequestClose = (success?: boolean) => {
     closeAddRevision();
-    startRefetchTransition(() => {
-      updateFetchKey();
-      updateRevisionFetchKey();
-    });
+    if (success) {
+      startRefetchTransition(() => {
+        updateFetchKey();
+        updateRevisionFetchKey();
+      });
+    }
   };
 
   const scrollToAccessTokens = () => {
@@ -235,8 +245,7 @@ const DeploymentDetailPage: React.FC = () => {
       <BAIUnmountAfterClose>
         <DeploymentAddRevisionModal
           open={addRevisionOpen}
-          onCancel={closeAddRevision}
-          onSuccess={handleRevisionAdded}
+          onRequestClose={handleAddRevisionRequestClose}
           deploymentId={deploymentGlobalId}
         />
       </BAIUnmountAfterClose>

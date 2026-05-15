@@ -3,7 +3,6 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import type { DeploymentPresetDetailContentFragment$key } from '../__generated__/DeploymentPresetDetailContentFragment.graphql';
-import { VFolderDeployModalEndpointPollQuery } from '../__generated__/VFolderDeployModalEndpointPollQuery.graphql';
 import { VFolderDeployModalMutation } from '../__generated__/VFolderDeployModalMutation.graphql';
 import { VFolderDeployModalQuery } from '../__generated__/VFolderDeployModalQuery.graphql';
 import { useWebUINavigate } from '../hooks';
@@ -13,6 +12,7 @@ import DeploymentPresetDetailContent from './DeploymentPresetDetailContent';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import {
+  Alert,
   App,
   Button,
   Form,
@@ -30,10 +30,10 @@ import {
   BAIProjectResourceGroupSelect,
   BAISelect,
   toLocalId,
-  useBAILogger,
   useProjectResourceGroups,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { PlusIcon } from 'lucide-react';
 import React, {
   Suspense,
   useEffect,
@@ -43,41 +43,7 @@ import React, {
   useState,
 } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  fetchQuery,
-  graphql,
-  useLazyLoadQuery,
-  useMutation,
-  useRelayEnvironment,
-} from 'react-relay';
-
-/**
- * Poll-before-navigate configuration for the post-deploy handoff to the
- * serving detail page. The v2 `deployVfolderV2` mutation creates a
- * ModelDeployment, but the v1 `endpoint(endpoint_id: …)` projection — which
- * the serving detail page depends on — is populated a beat later. Navigating
- * immediately produces a page full of `-` because the v1 lookup returns
- * null (or an endpoint with null fields) until that propagation catches up.
- * We poll the same v1 query here so the Relay store is warm and the detail
- * page renders complete data on first paint. This mirrors
- * `ModelCardDeployModal` — they are two entry points to the same deployment
- * pipeline and share the same v1/v2 propagation gap.
- */
-const ENDPOINT_POLL_INTERVAL_MS = 300;
-const ENDPOINT_POLL_MAX_ATTEMPTS = 10;
-
-// Minimal v1 endpoint projection used only for the post-deploy poll.
-// Kept intentionally small — we only need to confirm the endpoint is
-// addressable before handing off to the detail page.
-const endpointPollQuery = graphql`
-  query VFolderDeployModalEndpointPollQuery($endpointId: UUID!) {
-    endpoint(endpoint_id: $endpointId) {
-      endpoint_id
-      name
-      status
-    }
-  }
-`;
+import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 
 interface VFolderDeployModalProps {
   open: boolean;
@@ -85,6 +51,13 @@ interface VFolderDeployModalProps {
   /** Local UUID of the VFolder to deploy. */
   vfolderId?: string;
   onDeployed?: (deploymentId: string) => void;
+  /**
+   * Called when the user wants to fall back to creating a new deployment
+   * (via `DeploymentSettingModal`) because no preset is available. The
+   * parent is expected to close this modal and open its own
+   * `DeploymentSettingModal`.
+   */
+  onRequestCreateDeployment?: () => void;
 }
 
 type VFolderDeployModalContentProps = Omit<VFolderDeployModalProps, 'open'>;
@@ -93,6 +66,7 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
   onClose,
   vfolderId,
   onDeployed,
+  onRequestCreateDeployment,
 }) => {
   'use memo';
 
@@ -101,8 +75,6 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
   const { message } = App.useApp();
   const navigate = useWebUINavigate();
   const { id: projectId, name: projectName } = useCurrentProjectValue();
-  const relayEnvironment = useRelayEnvironment();
-  const { logger } = useBAILogger();
   const { supportsQuickDeploy } = useDeploymentLauncher();
 
   // Fetch resource groups accessible to the current project. Shares the React
@@ -184,36 +156,6 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
     }
   `);
 
-  const waitForEndpointReady = async (endpointId: string): Promise<void> => {
-    for (let attempt = 0; attempt < ENDPOINT_POLL_MAX_ATTEMPTS; attempt++) {
-      try {
-        const result = await fetchQuery<VFolderDeployModalEndpointPollQuery>(
-          relayEnvironment,
-          endpointPollQuery,
-          { endpointId },
-          // Bypass the store on each attempt so we actually hit the server
-          // — the whole point of the poll is to observe fresh server state.
-          { fetchPolicy: 'network-only' },
-        ).toPromise();
-        if (result?.endpoint?.endpoint_id) {
-          return;
-        }
-      } catch (error) {
-        // Log transient errors at warn level but keep polling — on the
-        // last attempt we fall through and navigate anyway; the detail
-        // page will still render with whatever state the server can give
-        // us.
-        logger.warn(
-          `VFolderDeployModal: endpoint poll attempt ${attempt + 1} failed`,
-          error,
-        );
-      }
-      await new Promise((resolve) =>
-        setTimeout(resolve, ENDPOINT_POLL_INTERVAL_MS),
-      );
-    }
-  };
-
   // Build runtime variant ID → name map for preset grouping
   const runtimeVariantNameMap = useMemo(() => {
     const map = new Map<string, string>();
@@ -251,24 +193,11 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
 
   const hasNoPresets = availablePresets.length === 0;
 
-  // When there are no compatible presets, close the modal automatically.
-  const onHandleNoPresets = useEffectEvent(() => {
-    if (!vfolderId) return;
-    onClose();
-  });
-
-  useEffect(() => {
-    if (hasNoPresets && vfolderId) {
-      onHandleNoPresets();
-    }
-  }, [hasNoPresets, vfolderId]);
-
-  // TODO(needs-backend): FR-2599 — auto-deploy is disabled until presets are
-  // scoped to this vfolder's compatibility. `deploymentRevisionPresets` shows
-  // the full project-level list; auto-deploying without user confirmation could
-  // select an incompatible preset. Re-enable once the backend provides a
-  // per-vfolder preset filter (similar to `ModelCardV2.availablePresets`).
-  const isAutoDeployScenario = false;
+  // Auto-deploy on mount when there's exactly one preset and one resource
+  // group — same shortcut as ModelCardDeployModal. No modal is rendered;
+  // the user goes straight from the trigger to the serving detail page.
+  const isAutoDeployScenario =
+    availablePresets.length === 1 && resourceGroups.length === 1;
 
   // Track user-initiated selections separately from computed defaults.
   // Effective values fall back to computed defaults when user hasn't selected yet.
@@ -310,15 +239,8 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
           const deploymentId = response.deployVfolderV2.deploymentId;
           message.success(t('modelStore.DeploySuccess'));
           onDeployed?.(deploymentId);
-          // Wait for the v1 endpoint projection to become queryable before
-          // navigating, so the serving detail page doesn't render a blank
-          // page full of `-` placeholders during the v1/v2 propagation gap.
-          waitForEndpointReady(deploymentId)
-            .then(() => {
-              navigate(`/serving/${deploymentId}`);
-              resolve();
-            })
-            .catch(reject);
+          navigate(`/deployments/${deploymentId}`);
+          resolve();
         },
         onError: (error) => {
           message.error(error.message || t('modelStore.DeployFailed'));
@@ -346,8 +268,46 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
   }, [isAutoDeployScenario]);
 
   // All hooks are declared above. Early returns come after all hook calls.
+  // Empty-state: when no preset is available, the user can't proceed via
+  // the preset path. Show an inline Alert and a link to the deployment
+  // shell creation modal (`DeploymentSettingModal`) — same UX as the
+  // `/deployments` page "Create Deployment" entry. Per FR-2862 the
+  // modal stays open (used to auto-close, which felt like a dead-end).
   if (hasNoPresets) {
-    return null;
+    return (
+      <BAIModal
+        title={t('modelService.CreateNewDeploymentWithPreset')}
+        open
+        onCancel={onClose}
+        destroyOnHidden
+        footer={null}
+        width={480}
+      >
+        <Alert
+          type="info"
+          showIcon
+          title={t('deployment.NoPresetsAvailable')}
+          description={t('deployment.NoPresetsAvailableDescription')}
+          action={
+            onRequestCreateDeployment ? (
+              <BAIButton
+                type="primary"
+                icon={<PlusIcon />}
+                onClick={() => {
+                  onClose();
+                  onRequestCreateDeployment();
+                }}
+              >
+                {t('deployment.OpenCreateDeploymentModal')}
+              </BAIButton>
+            ) : undefined
+          }
+        />
+        <BAIFlex justify="end" gap="sm" style={{ marginTop: token.marginMD }}>
+          <BAIButton onClick={onClose}>{t('button.Cancel')}</BAIButton>
+        </BAIFlex>
+      </BAIModal>
+    );
   }
 
   // Auto-deploy: don't render a modal at all — the effect above will trigger
@@ -361,7 +321,7 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
   // Selection UI — render the modal only when selection is needed.
   return (
     <BAIModal
-      title={t('modelService.SelectDeploymentPreset')}
+      title={t('modelService.CreateNewDeploymentWithPreset')}
       open
       onCancel={onClose}
       destroyOnHidden
@@ -485,6 +445,7 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
   onClose,
   vfolderId,
   onDeployed,
+  onRequestCreateDeployment,
 }) => {
   'use memo';
 
@@ -504,6 +465,7 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
         onClose={onClose}
         vfolderId={vfolderId}
         onDeployed={onDeployed}
+        onRequestCreateDeployment={onRequestCreateDeployment}
       />
     </Suspense>
   );

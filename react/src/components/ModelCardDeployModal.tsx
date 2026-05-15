@@ -2,12 +2,23 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { ModelCardDeployModalEndpointPollQuery } from '../__generated__/ModelCardDeployModalEndpointPollQuery.graphql';
+import type { DeploymentPresetDetailContentFragment$key } from '../__generated__/DeploymentPresetDetailContentFragment.graphql';
 import { ModelCardDeployModalMutation } from '../__generated__/ModelCardDeployModalMutation.graphql';
 import { ModelCardDeployModalQuery } from '../__generated__/ModelCardDeployModalQuery.graphql';
 import { useWebUINavigate } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import { App, Form, Typography, theme } from 'antd';
+import DeploymentPresetDetailContent from './DeploymentPresetDetailContent';
+import { InfoCircleOutlined } from '@ant-design/icons';
+import {
+  Alert,
+  App,
+  Button,
+  Form,
+  Space,
+  Tooltip,
+  Typography,
+  theme,
+} from 'antd';
 import type { DefaultOptionType } from 'antd/es/select';
 import {
   BAIButton,
@@ -19,6 +30,7 @@ import {
   useProjectResourceGroups,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { PlusIcon } from 'lucide-react';
 import React, {
   Suspense,
   useEffect,
@@ -28,26 +40,8 @@ import React, {
   useState,
 } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  fetchQuery,
-  graphql,
-  useLazyLoadQuery,
-  useMutation,
-  useRelayEnvironment,
-} from 'react-relay';
-
-/**
- * Poll-before-navigate configuration for the post-deploy handoff to the
- * serving detail page. The v2 `deployModelCardV2` mutation creates a
- * ModelDeployment, but the v1 `endpoint(endpoint_id: …)` projection — which
- * the serving detail page depends on — is populated a beat later. Navigating
- * immediately produces a page full of `-` because the v1 lookup returns
- * null (or an endpoint with null fields) until that propagation catches up.
- * We poll the same v1 query here so the Relay store is warm and the detail
- * page renders complete data on first paint.
- */
-const ENDPOINT_POLL_INTERVAL_MS = 300;
-const ENDPOINT_POLL_MAX_ATTEMPTS = 10;
+import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
+import type { FragmentRefs } from 'relay-runtime';
 
 interface AvailablePreset {
   readonly id: string;
@@ -55,6 +49,7 @@ interface AvailablePreset {
   readonly description: string | null;
   readonly rank: number;
   readonly runtimeVariantId: string;
+  readonly ' $fragmentSpreads': FragmentRefs<'DeploymentPresetDetailContentFragment'>;
 }
 
 interface ModelCardDeployModalProps {
@@ -63,13 +58,26 @@ interface ModelCardDeployModalProps {
   modelCardRowId?: string;
   availablePresets: ReadonlyArray<AvailablePreset>;
   onDeployed: (deploymentId: string) => void;
+  /**
+   * Called when the user wants to fall back to creating a new deployment
+   * (via `DeploymentSettingModal`) because no preset is available. The
+   * parent is expected to close this modal and open its own
+   * `DeploymentSettingModal`.
+   */
+  onRequestCreateDeployment?: () => void;
 }
 
 type ModelCardDeployModalContentProps = Omit<ModelCardDeployModalProps, 'open'>;
 
 const ModelCardDeployModalContent: React.FC<
   ModelCardDeployModalContentProps
-> = ({ onClose, modelCardRowId, availablePresets, onDeployed }) => {
+> = ({
+  onClose,
+  modelCardRowId,
+  availablePresets,
+  onDeployed,
+  onRequestCreateDeployment,
+}) => {
   'use memo';
 
   const { t } = useTranslation();
@@ -77,7 +85,6 @@ const ModelCardDeployModalContent: React.FC<
   const { message } = App.useApp();
   const navigate = useWebUINavigate();
   const { id: projectId, name: projectName } = useCurrentProjectValue();
-  const relayEnvironment = useRelayEnvironment();
 
   // Fetch resource groups accessible to the current project. Uses the same
   // React Query cache as BAIProjectResourceGroupSelect below, so no duplicate
@@ -113,44 +120,6 @@ const ModelCardDeployModalContent: React.FC<
       }
     }
   `);
-
-  // Minimal v1 endpoint projection used only for the post-deploy poll.
-  // Kept intentionally small — we only need to confirm the endpoint is
-  // addressable before handing off to the detail page.
-  const endpointPollQuery = graphql`
-    query ModelCardDeployModalEndpointPollQuery($endpointId: UUID!) {
-      endpoint(endpoint_id: $endpointId) {
-        endpoint_id
-        name
-        status
-      }
-    }
-  `;
-
-  const waitForEndpointReady = async (endpointId: string): Promise<void> => {
-    for (let attempt = 0; attempt < ENDPOINT_POLL_MAX_ATTEMPTS; attempt++) {
-      try {
-        const result = await fetchQuery<ModelCardDeployModalEndpointPollQuery>(
-          relayEnvironment,
-          endpointPollQuery,
-          { endpointId },
-          // Bypass the store on each attempt so we actually hit the server
-          // — the whole point of the poll is to observe fresh server state.
-          { fetchPolicy: 'network-only' },
-        ).toPromise();
-        if (result?.endpoint?.endpoint_id) {
-          return;
-        }
-      } catch {
-        // Swallow transient errors and keep polling — on the last attempt
-        // we fall through and navigate anyway; the detail page will still
-        // render with whatever state the server can give us.
-      }
-      await new Promise((resolve) =>
-        setTimeout(resolve, ENDPOINT_POLL_INTERVAL_MS),
-      );
-    }
-  };
 
   // Build runtime variant ID → name map for preset grouping
   const runtimeVariantNameMap = useMemo(() => {
@@ -196,6 +165,8 @@ const ModelCardDeployModalContent: React.FC<
   const [userSelectedPresetId, setUserSelectedPresetId] = useState<
     string | undefined
   >(undefined);
+  const [presetDetailFrgmt, setPresetDetailFrgmt] =
+    useState<DeploymentPresetDetailContentFragment$key | null>(null);
   const effectivePresetId =
     userSelectedPresetId ??
     (availablePresets[0]?.id ? toLocalId(availablePresets[0].id) : undefined);
@@ -233,15 +204,8 @@ const ModelCardDeployModalContent: React.FC<
           const deploymentId = response.deployModelCardV2.deploymentId;
           message.success(t('modelStore.DeploySuccess'));
           onDeployed(deploymentId);
-          // Wait for the v1 endpoint projection to become queryable before
-          // navigating, so the serving detail page doesn't render a blank
-          // page full of `-` placeholders during the v1/v2 propagation gap.
-          waitForEndpointReady(deploymentId)
-            .then(() => {
-              navigate(`/serving/${deploymentId}`);
-              resolve();
-            })
-            .catch(reject);
+          navigate(`/deployments/${deploymentId}`);
+          resolve();
         },
         onError: (error) => {
           message.error(error.message || t('modelStore.DeployFailed'));
@@ -276,10 +240,51 @@ const ModelCardDeployModalContent: React.FC<
     return null;
   }
 
-  // Scenario 3: selection UI — render the modal only when selection is needed.
+  // Empty-state: per FR-2862, when no preset is available the modal stays
+  // open with an inline Alert and a link to the deployment shell creation
+  // modal (`DeploymentSettingModal`) — same UX as the `/deployments` page
+  // "Create Deployment" entry.
+  if (availablePresets.length === 0) {
+    return (
+      <BAIModal
+        title={t('modelService.CreateNewDeploymentWithPreset')}
+        open
+        onCancel={onClose}
+        destroyOnHidden
+        footer={null}
+        width={480}
+      >
+        <Alert
+          type="info"
+          showIcon
+          title={t('deployment.NoPresetsAvailable')}
+          description={t('deployment.NoPresetsAvailableDescription')}
+          action={
+            onRequestCreateDeployment ? (
+              <BAIButton
+                type="primary"
+                icon={<PlusIcon />}
+                onClick={() => {
+                  onClose();
+                  onRequestCreateDeployment();
+                }}
+              >
+                {t('deployment.OpenCreateDeploymentModal')}
+              </BAIButton>
+            ) : undefined
+          }
+        />
+        <BAIFlex justify="end" gap="sm" style={{ marginTop: token.marginMD }}>
+          <BAIButton onClick={onClose}>{t('button.Cancel')}</BAIButton>
+        </BAIFlex>
+      </BAIModal>
+    );
+  }
+
+  // Selection UI — the user picks a preset and a resource group.
   return (
     <BAIModal
-      title={t('modelStore.DeployModel')}
+      title={t('modelService.CreateNewDeploymentWithPreset')}
       open
       onCancel={onClose}
       destroyOnHidden
@@ -292,26 +297,42 @@ const ModelCardDeployModalContent: React.FC<
           tooltip={t('modelStore.PresetTooltip')}
           required
         >
-          <BAISelect
-            value={effectivePresetId}
-            onChange={(value: string) => setUserSelectedPresetId(value)}
-            options={presetOptions}
-            optionRender={(option) => (
-              <BAIFlex direction="column" align="start">
-                {option.label}
-                {option.data.description && (
-                  <Typography.Text
-                    type="secondary"
-                    style={{ fontSize: token.fontSizeSM }}
-                    ellipsis
-                  >
-                    {option.data.description}
-                  </Typography.Text>
-                )}
-              </BAIFlex>
-            )}
-            style={{ width: '100%' }}
-          />
+          <BAIFlex direction="row" gap="xs">
+            <BAISelect
+              value={effectivePresetId}
+              onChange={(value: string) => setUserSelectedPresetId(value)}
+              options={presetOptions}
+              optionRender={(option) => (
+                <BAIFlex direction="column" align="start">
+                  {option.label}
+                  {option.data.description && (
+                    <Typography.Text
+                      type="secondary"
+                      style={{ fontSize: token.fontSizeSM }}
+                      ellipsis
+                    >
+                      {option.data.description}
+                    </Typography.Text>
+                  )}
+                </BAIFlex>
+              )}
+              style={{ flex: 1 }}
+            />
+            <Space.Compact>
+              <Tooltip title={t('modelService.DeploymentPresetDetail')}>
+                <Button
+                  icon={<InfoCircleOutlined />}
+                  disabled={!effectivePresetId}
+                  onClick={() => {
+                    const node = availablePresets.find(
+                      (p) => toLocalId(p.id) === effectivePresetId,
+                    );
+                    if (node) setPresetDetailFrgmt(node);
+                  }}
+                />
+              </Tooltip>
+            </Space.Compact>
+          </BAIFlex>
         </Form.Item>
         <Form.Item
           label={t('modelStore.ResourceGroup')}
@@ -326,6 +347,18 @@ const ModelCardDeployModalContent: React.FC<
           />
         </Form.Item>
       </Form>
+      <BAIModal
+        open={!!presetDetailFrgmt}
+        centered
+        title={t('modelService.DeploymentPresetDetail')}
+        onCancel={() => setPresetDetailFrgmt(null)}
+        destroyOnHidden
+        footer={null}
+      >
+        {presetDetailFrgmt && (
+          <DeploymentPresetDetailContent presetFrgmt={presetDetailFrgmt} />
+        )}
+      </BAIModal>
       <BAIFlex justify="end" gap="sm">
         <BAIButton onClick={onClose}>{t('button.Cancel')}</BAIButton>
         <BAIButton
@@ -351,6 +384,7 @@ const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
   modelCardRowId,
   availablePresets,
   onDeployed,
+  onRequestCreateDeployment,
 }) => {
   'use memo';
 
@@ -370,6 +404,7 @@ const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
         modelCardRowId={modelCardRowId}
         availablePresets={availablePresets}
         onDeployed={onDeployed}
+        onRequestCreateDeployment={onRequestCreateDeployment}
       />
     </Suspense>
   );

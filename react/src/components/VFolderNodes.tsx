@@ -12,6 +12,7 @@ import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useEffectiveAdminRole } from '../hooks/useCurrentUserProjectRoles';
 import { isDeletedCategory } from '../pages/VFolderNodeListPage';
+import DeploymentSettingModal from './DeploymentSettingModal';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import InviteFolderSettingModal from './InviteFolderSettingModal';
 import SharedFolderPermissionInfoModal from './SharedFolderPermissionInfoModal';
@@ -19,6 +20,7 @@ import VFolderDeployModal from './VFolderDeployModal';
 import VFolderNodeIdenticon from './VFolderNodeIdenticon';
 import VFolderPermissionCell from './VFolderPermissionCell';
 import { DeleteFilled, DeleteOutlined, UserOutlined } from '@ant-design/icons';
+import { useToggle } from 'ahooks';
 import { Alert, App, theme, Typography } from 'antd';
 import {
   filterOutNullAndUndefined,
@@ -274,6 +276,11 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
   const [deployFallbackVfolderId, setDeployFallbackVfolderId] = useState<
     string | null
   >(null);
+  // FR-2862 — when the user hits the empty-preset state in
+  // VFolderDeployModal, escalate to the deployment shell creation modal
+  // (`DeploymentSettingModal`), same as the `/deployments` page entry.
+  const [isCreateDeploymentOpen, { toggle: toggleCreateDeployment }] =
+    useToggle(false);
 
   const vfolders = useFragment(
     graphql`
@@ -677,6 +684,11 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
         vfolderId={deployFallbackVfolderId ?? undefined}
         onClose={() => setDeployFallbackVfolderId(null)}
         onDeployed={() => setDeployFallbackVfolderId(null)}
+        onRequestCreateDeployment={toggleCreateDeployment}
+      />
+      <DeploymentSettingModal
+        open={isCreateDeploymentOpen}
+        onRequestClose={toggleCreateDeployment}
       />
     </>
   );
