@@ -996,6 +996,7 @@
     "Private": "Privat",
     "PrivateDeploymentAlertTitle": "Penerapan privat — gunakan token akses untuk mengakses endpoint.",
     "Project": "Proyek",
+    "ProjectId": "ID proyek",
     "Public": "Publik",
     "QuickDeploy": "Terapkan",
     "QuickDeployDetailed": "Konfigurasi dan terapkan...",
@@ -1048,10 +1049,13 @@
     },
     "filter": {
       "CreatedAt": "Dibuat Pada",
+      "CreatedUserId": "ID Pembuat",
+      "DestroyedAt": "Dihancurkan Pada",
       "DomainName": "Domain",
       "EndpointUrl": "URL Titik Akhir",
       "Name": "Nama",
       "OpenToPublic": "Publik",
+      "ProjectId": "ID proyek",
       "ResourceGroup": "Grup Sumber Daya",
       "Status": "Status",
       "Tags": "Tag"

@@ -996,6 +996,7 @@
     "Private": "ส่วนตัว",
     "PrivateDeploymentAlertTitle": "การปรับใช้แบบส่วนตัว — ใช้โทเค็นการเข้าถึงเพื่อเข้าถึงปลายทาง",
     "Project": "โปรเจกต์",
+    "ProjectId": "ID โปรเจกต์",
     "Public": "สาธารณะ",
     "QuickDeploy": "ปรับใช้",
     "QuickDeployDetailed": "กำหนดค่าและปรับใช้...",
@@ -1048,10 +1049,13 @@
     },
     "filter": {
       "CreatedAt": "สร้างเมื่อ",
+      "CreatedUserId": "ID ผู้สร้าง",
+      "DestroyedAt": "ลบเมื่อ",
       "DomainName": "โดเมน",
       "EndpointUrl": "URL ปลายทาง",
       "Name": "ชื่อ",
       "OpenToPublic": "สาธารณะ",
+      "ProjectId": "ID โปรเจกต์",
       "ResourceGroup": "กลุ่มทรัพยากร",
       "Status": "สถานะ",
       "Tags": "แท็ก"

@@ -996,6 +996,7 @@
     "Private": "Riêng tư",
     "PrivateDeploymentAlertTitle": "Triển khai riêng tư — sử dụng mã thông báo truy cập để truy cập điểm cuối.",
     "Project": "Dự án",
+    "ProjectId": "ID dự án",
     "Public": "Công khai",
     "QuickDeploy": "Triển khai",
     "QuickDeployDetailed": "Cấu hình và triển khai...",
@@ -1048,10 +1049,13 @@
     },
     "filter": {
       "CreatedAt": "Ngày tạo",
+      "CreatedUserId": "ID người tạo",
+      "DestroyedAt": "Ngày xóa",
       "DomainName": "Miền",
       "EndpointUrl": "URL điểm cuối",
       "Name": "Tên",
       "OpenToPublic": "Công khai",
+      "ProjectId": "ID dự án",
       "ResourceGroup": "Nhóm tài nguyên",
       "Status": "Trạng thái",
       "Tags": "Thẻ"

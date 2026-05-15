@@ -996,6 +996,7 @@
     "Private": "Özel",
     "PrivateDeploymentAlertTitle": "Özel dağıtım — uç noktasına erişmek için bir erişim belirteci kullanın.",
     "Project": "Proje",
+    "ProjectId": "Proje kimliği",
     "Public": "Genel",
     "QuickDeploy": "Dağıt",
     "QuickDeployDetailed": "Yapılandır ve dağıt...",
@@ -1048,10 +1049,13 @@
     },
     "filter": {
       "CreatedAt": "Oluşturulma Tarihi",
+      "CreatedUserId": "Oluşturan ID",
+      "DestroyedAt": "Silinme Tarihi",
       "DomainName": "Etki Alanı",
       "EndpointUrl": "Uç Nokta URL'si",
       "Name": "Ad",
       "OpenToPublic": "Herkese Açık",
+      "ProjectId": "Proje kimliği",
       "ResourceGroup": "Kaynak Grubu",
       "Status": "Durum",
       "Tags": "Etiketler"

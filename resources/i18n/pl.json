@@ -996,6 +996,7 @@
     "Private": "Prywatne",
     "PrivateDeploymentAlertTitle": "Wdrożenie prywatne — użyj tokenu dostępu, aby uzyskać dostęp do punktu końcowego.",
     "Project": "Projekt",
+    "ProjectId": "ID projektu",
     "Public": "Publiczny",
     "QuickDeploy": "Wdróż",
     "QuickDeployDetailed": "Konfiguruj i wdróż...",
@@ -1048,10 +1049,13 @@
     },
     "filter": {
       "CreatedAt": "Utworzono",
+      "CreatedUserId": "ID twórcy",
+      "DestroyedAt": "Usunięto",
       "DomainName": "Domena",
       "EndpointUrl": "URL punktu końcowego",
       "Name": "Nazwa",
       "OpenToPublic": "Publiczne",
+      "ProjectId": "ID projektu",
       "ResourceGroup": "Grupa zasobów",
       "Status": "Status",
       "Tags": "Tagi"

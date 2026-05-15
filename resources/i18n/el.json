@@ -996,6 +996,7 @@
     "Private": "Ιδιωτικό",
     "PrivateDeploymentAlertTitle": "Ιδιωτική ανάπτυξη — χρησιμοποιήστε ένα διακριτικό πρόσβασης για να αποκτήσετε πρόσβαση στο τελικό σημείο.",
     "Project": "Έργο",
+    "ProjectId": "ID έργου",
     "Public": "Δημόσιο",
     "QuickDeploy": "Ανάπτυξη",
     "QuickDeployDetailed": "Διαμόρφωση και ανάπτυξη...",
@@ -1048,10 +1049,13 @@
     },
     "filter": {
       "CreatedAt": "Δημιουργήθηκε",
+      "CreatedUserId": "ID δημιουργού",
+      "DestroyedAt": "Καταστράφηκε στις",
       "DomainName": "Τομέας",
       "EndpointUrl": "URL τελικού σημείου",
       "Name": "Όνομα",
       "OpenToPublic": "Δημόσιο",
+      "ProjectId": "ID έργου",
       "ResourceGroup": "Ομάδα πόρων",
       "Status": "Κατάσταση",
       "Tags": "Ετικέτες"

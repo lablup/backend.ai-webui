@@ -996,6 +996,7 @@
     "Private": "私有",
     "PrivateDeploymentAlertTitle": "私有部署 — 使用访问令牌访问端点。",
     "Project": "项目",
+    "ProjectId": "项目 ID",
     "Public": "公开",
     "QuickDeploy": "部署",
     "QuickDeployDetailed": "配置并部署...",
@@ -1048,10 +1049,13 @@
     },
     "filter": {
       "CreatedAt": "创建时间",
+      "CreatedUserId": "创建者 ID",
+      "DestroyedAt": "删除时间",
       "DomainName": "域",
       "EndpointUrl": "端点 URL",
       "Name": "名称",
       "OpenToPublic": "公开",
+      "ProjectId": "项目 ID",
       "ResourceGroup": "资源组",
       "Status": "状态",
       "Tags": "标签"
