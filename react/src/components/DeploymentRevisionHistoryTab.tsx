@@ -302,11 +302,11 @@ const DeploymentRevisionHistoryTab: React.FC<
   const handleRollback = (revision: RevisionNode): Promise<boolean> => {
     return new Promise<boolean>((resolveOuter) => {
       modal.confirm({
-        title: t('deployment.Deploy'),
-        content: t('deployment.DeployConfirm', {
+        title: t('deployment.Apply'),
+        content: t('deployment.ApplyConfirm', {
           revisionNumber: revision.revisionNumber,
         }),
-        okText: t('deployment.Deploy'),
+        okText: t('deployment.Apply'),
         okButtonProps: {
           danger: true,
         },
@@ -333,7 +333,7 @@ const DeploymentRevisionHistoryTab: React.FC<
                   return;
                 }
                 message.success(
-                  t('deployment.DeploySuccess', {
+                  t('deployment.ApplySuccess', {
                     revisionNumber: revision.revisionNumber,
                   }),
                 );
@@ -378,7 +378,7 @@ const DeploymentRevisionHistoryTab: React.FC<
         const isCurrent = recordLocalId === currentRevisionId;
         const isDeploying = recordLocalId === deployingRevisionId;
         const deployDisabledReason =
-          isCurrent || isDeploying ? t('deployment.DeployDisabled') : undefined;
+          isCurrent || isDeploying ? t('deployment.ApplyDisabled') : undefined;
         const isDeployDisabled =
           isCurrent ||
           isDeploying ||
@@ -420,7 +420,7 @@ const DeploymentRevisionHistoryTab: React.FC<
                   // reconciler clears it, and showing both tags side by
                   // side reads as a contradiction.
                   <BAITag color="warning" icon={<LoadingOutlined spin />}>
-                    {t('deployment.Deploying')}
+                    {t('deployment.Applying')}
                   </BAITag>
                 ) : null}
               </BAIFlex>
@@ -429,7 +429,7 @@ const DeploymentRevisionHistoryTab: React.FC<
             actions={[
               {
                 key: 'deploy',
-                title: t('deployment.Deploy'),
+                title: t('deployment.Apply'),
                 icon: <PlayCircleOutlined />,
                 disabled: isDeployDisabled,
                 disabledReason: deployDisabledReason,
@@ -622,7 +622,7 @@ const DeploymentRevisionHistoryTab: React.FC<
                   if (success) setDrawerRevision(null);
                 }}
               >
-                {t('deployment.Deploy')}
+                {t('deployment.Apply')}
               </Button>
             ) : undefined
           }

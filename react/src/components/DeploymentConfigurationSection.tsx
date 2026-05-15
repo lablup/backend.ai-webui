@@ -403,7 +403,7 @@ const DeploymentConfigurationSection: React.FC<
                 type="info"
                 icon={<LoadingOutlined spin />}
                 showIcon
-                title={t('deployment.DeployingRevisionApplying', {
+                title={t('deployment.ApplyingRevision', {
                   revisionNumber:
                     deployingRevision.revisionNumber != null
                       ? `#${deployingRevision.revisionNumber}`
@@ -415,7 +415,7 @@ const DeploymentConfigurationSection: React.FC<
                       handleShowRevisionDrawer(
                         deployingRevision,
                         'deploying',
-                        t('deployment.DeployingRevisionDetail'),
+                        t('deployment.ApplyingRevisionDetail'),
                       )
                     }
                   >

@@ -156,7 +156,7 @@ const DeploymentRevisionDetail: React.FC<{
                 )}
                 {status === 'deploying' && (
                   <BAITag color="warning" icon={<LoadingOutlined spin />}>
-                    {t('deployment.Deploying')}
+                    {t('deployment.Applying')}
                   </BAITag>
                 )}
               </BAIFlex>
@@ -185,7 +185,7 @@ const DeploymentRevisionDetail: React.FC<{
           )}
           {status === 'deploying' && (
             <BAITag color="warning" icon={<LoadingOutlined spin />}>
-              {t('deployment.Deploying')}
+              {t('deployment.Applying')}
             </BAITag>
           )}
         </BAIFlex>

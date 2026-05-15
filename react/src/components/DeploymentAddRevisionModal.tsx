@@ -1185,7 +1185,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
             }
             disabled={effectiveMode === 'preset' && hasNoPresets}
           >
-            {t('deployment.AutoActivate')}
+            {t('deployment.AutoApply')}
           </Checkbox>
           <BAIFlex direction="row" align="center" gap="xs">
             <Button onClick={() => onRequestClose()}>
