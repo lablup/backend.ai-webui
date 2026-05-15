@@ -126,19 +126,21 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
   // The session row's access_key is set when the session was created.
   // If the current keypair is different, manager APIs return 403
   // ("Only admins can perform operations on behalf of other users.")
-  // for any per-session action — disable the buttons upfront instead.
+  // — but only for the session's owner. Admins viewing another user's
+  // session (rendered here from SessionDetailContent) are allowed to act
+  // on behalf of that user, so the gate is owner-only.
   const isAccessKeyMismatch =
     !!session?.access_key &&
     !!baiClient._config.accessKey &&
     session.access_key !== baiClient._config.accessKey;
+  const shouldDisableForMismatch = isOwner && isAccessKeyMismatch;
 
   // Only swap to the mismatch tooltip when switching access keys would
-  // actually unblock the user — i.e. they own the session. For non-owners
-  // the button is already disabled for a different reason and the mismatch
-  // copy ("Switch to that access key to manage this session") would be
-  // misleading.
+  // actually unblock the user. The button is also disabled when the
+  // session is inactive — in that case the "switch access key" advice
+  // is misleading, so fall back to the default tooltip.
   const resolveTooltip = (defaultTitle: string) =>
-    isAccessKeyMismatch && isOwner
+    shouldDisableForMismatch && isActive(session)
       ? t('session.AccessKeyMismatchTooltip')
       : defaultTitle;
 
@@ -213,7 +215,7 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
                     !isAppSupported(session) ||
                     !isActive(session) ||
                     !isOwner ||
-                    isAccessKeyMismatch
+                    shouldDisableForMismatch
                   }
                   icon={<BAIJupyterIcon />}
                   onClick={() => {
@@ -250,7 +252,7 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
                     !isAppSupported(session) ||
                     !isActive(session) ||
                     !isOwner ||
-                    isAccessKeyMismatch
+                    shouldDisableForMismatch
                   }
                   icon={<BAIFileBrowserIcon />}
                   onClick={() => {
@@ -286,7 +288,7 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
                   !isAppSupported(session) ||
                   !isActive(session) ||
                   !isOwner ||
-                  isAccessKeyMismatch
+                  shouldDisableForMismatch
                 }
                 icon={<BAIAppIcon />}
                 onClick={() => {
@@ -306,7 +308,9 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
           <Tooltip title={resolveTooltip(t('data.explorer.RunSSH/SFTPserver'))}>
             <Button
               type="primary"
-              disabled={!isActive(session) || !isOwner || isAccessKeyMismatch}
+              disabled={
+                !isActive(session) || !isOwner || shouldDisableForMismatch
+              }
               size={size}
               icon={<BAISftpIcon />}
               onClick={() => {
@@ -330,7 +334,7 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
                   !isAppSupported(session) ||
                   !isActive(session) ||
                   !isOwner ||
-                  isAccessKeyMismatch
+                  shouldDisableForMismatch
                 }
                 icon={<BAITerminalAppIcon />}
                 onClick={() => {
@@ -356,7 +360,7 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
           >
             <Button
               size={size}
-              disabled={isAccessKeyMismatch}
+              disabled={shouldDisableForMismatch}
               icon={<BAISessionLogIcon />}
               onClick={() => {
                 onAction?.('logs');
@@ -381,7 +385,9 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
             <Button
               size={size}
               disabled={
-                session?.status !== 'RUNNING' || !isOwner || isAccessKeyMismatch
+                session?.status !== 'RUNNING' ||
+                !isOwner ||
+                shouldDisableForMismatch
               }
               icon={<BAIContainerCommitIcon />}
               onClick={() => {
@@ -406,12 +412,12 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
           >
             <Button
               size={size}
-              disabled={!isActive(session) || isAccessKeyMismatch}
+              disabled={!isActive(session) || shouldDisableForMismatch}
               icon={
                 <BAITerminateIcon
                   style={{
                     color:
-                      isActive(session) && !isAccessKeyMismatch
+                      isActive(session) && !shouldDisableForMismatch
                         ? token.colorError
                         : undefined,
                   }}
