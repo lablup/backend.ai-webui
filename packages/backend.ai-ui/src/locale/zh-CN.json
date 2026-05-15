@@ -63,6 +63,9 @@
     "Updated": "更新",
     "Version": "版本"
   },
+  "comp:BAIAvailablePresetSelect": {
+    "SelectPreset": "选择预设"
+  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "发生意外错误。请稍后重试，若问题仍然存在，请联系支持。"
   },
@@ -236,6 +239,9 @@
     "StorageNodes": "存储节点",
     "TotalResourceSlots": "资源插槽总数",
     "Type": "类型"
+  },
+  "comp:BAIProjectVfolderSelect": {
+    "SelectFolder": "选择文件夹"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "搜索",

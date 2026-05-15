@@ -63,6 +63,9 @@
     "Updated": "Aktualisiert",
     "Version": "Version"
   },
+  "comp:BAIAvailablePresetSelect": {
+    "SelectPreset": "Voreinstellung auswählen"
+  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es später erneut oder kontaktieren Sie den Support, wenn das Problem weiterhin besteht."
   },
@@ -236,6 +239,9 @@
     "StorageNodes": "Speicherknoten",
     "TotalResourceSlots": "Gesamtanzahl der Ressourcen-Slots",
     "Type": "Typ"
+  },
+  "comp:BAIProjectVfolderSelect": {
+    "SelectFolder": "Ordner auswählen"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Suche",

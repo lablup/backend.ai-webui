@@ -19,26 +19,22 @@ import {
   Skeleton,
   Space,
   Tooltip,
-  Typography,
   theme,
 } from 'antd';
-import type { DefaultOptionType } from 'antd/es/select';
 import {
+  BAIAvailablePresetSelect,
   BAIButton,
   BAIFlex,
   BAIModal,
   BAIProjectResourceGroupSelect,
-  BAISelect,
   toLocalId,
   useProjectResourceGroups,
 } from 'backend.ai-ui';
-import * as _ from 'lodash-es';
 import { PlusIcon } from 'lucide-react';
 import React, {
   Suspense,
   useEffect,
   useEffectEvent,
-  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -89,7 +85,13 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
   // available (e.g. a scope input similar to `modelCardAvailablePresets`),
   // filter by this vfolder's compatible presets here. For now we show the
   // full project-accessible list so the user can still select a preset.
-  const { deploymentRevisionPresets, runtimeVariants } =
+  //
+  // This top-level fetch is kept (rather than relying solely on the paginated
+  // query inside `BAIAvailablePresetSelect`) because we need:
+  //   • the total count to decide between the empty-state, auto-deploy, and
+  //     the selection-UI render paths,
+  //   • the preset node fragment refs for the detail-modal lookup.
+  const { deploymentRevisionPresets } =
     useLazyLoadQuery<VFolderDeployModalQuery>(
       graphql`
         query VFolderDeployModalQuery {
@@ -99,34 +101,7 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
             edges {
               node {
                 id
-                name
-                description
-                rank
-                runtimeVariantId
-                runtimeVariant {
-                  name
-                }
-                execution {
-                  imageId
-                  startupCommand
-                }
-                cluster {
-                  clusterMode
-                  clusterSize
-                }
-                deploymentDefaults {
-                  openToPublic
-                  replicaCount
-                }
                 ...DeploymentPresetDetailContentFragment
-              }
-            }
-          }
-          runtimeVariants {
-            edges {
-              node {
-                id
-                name
               }
             }
           }
@@ -136,13 +111,10 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
       {},
     );
 
-  const availablePresets = useMemo(() => {
-    return (
-      deploymentRevisionPresets?.edges
-        ?.map((edge) => edge?.node)
-        .filter((node): node is NonNullable<typeof node> => node != null) ?? []
-    );
-  }, [deploymentRevisionPresets]);
+  const availablePresets =
+    deploymentRevisionPresets?.edges
+      ?.map((edge) => edge?.node)
+      .filter((node): node is NonNullable<typeof node> => node != null) ?? [];
 
   const [commitDeploy] = useMutation<VFolderDeployModalMutation>(graphql`
     mutation VFolderDeployModalMutation(
@@ -155,41 +127,6 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
       }
     }
   `);
-
-  // Build runtime variant ID → name map for preset grouping
-  const runtimeVariantNameMap = useMemo(() => {
-    const map = new Map<string, string>();
-    for (const edge of runtimeVariants?.edges ?? []) {
-      const node = edge?.node;
-      if (node?.id) {
-        map.set(toLocalId(node.id), node.name ?? '');
-      }
-    }
-    return map;
-  }, [runtimeVariants]);
-
-  // Group presets by runtime variant for optgroup display
-  const presetOptions: DefaultOptionType[] = useMemo(() => {
-    const grouped = _.groupBy(availablePresets, 'runtimeVariantId');
-    const variantIds = Object.keys(grouped);
-
-    const toOption = (p: (typeof availablePresets)[number]) => ({
-      label: p.name,
-      value: toLocalId(p.id),
-      description: p.description,
-    });
-
-    // If all presets belong to the same runtime variant, show flat list
-    if (variantIds.length <= 1) {
-      return availablePresets.map(toOption);
-    }
-
-    // Multiple runtime variants: show grouped options
-    return variantIds.map((variantId) => ({
-      label: runtimeVariantNameMap.get(variantId) ?? variantId,
-      options: grouped[variantId].map(toOption),
-    }));
-  }, [availablePresets, runtimeVariantNameMap]);
 
   const hasNoPresets = availablePresets.length === 0;
 
@@ -336,28 +273,15 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
           required
         >
           <BAIFlex direction="row" gap="xs">
-            <BAISelect
+            <BAIAvailablePresetSelect
               value={effectivePresetId}
-              onChange={(value: string) => setUserSelectedPresetId(value)}
-              options={presetOptions}
+              onChange={(value) =>
+                setUserSelectedPresetId(value as string | undefined)
+              }
               disabled={hasNoPresets}
               placeholder={
                 hasNoPresets ? t('modelStore.NoCompatiblePresets') : undefined
               }
-              optionRender={(option) => (
-                <BAIFlex direction="column" align="start">
-                  {option.label}
-                  {option.data.description && (
-                    <Typography.Text
-                      type="secondary"
-                      style={{ fontSize: token.fontSizeSM }}
-                      ellipsis
-                    >
-                      {option.data.description}
-                    </Typography.Text>
-                  )}
-                </BAIFlex>
-              )}
               style={{ flex: 1 }}
             />
             <Space.Compact>

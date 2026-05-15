@@ -63,6 +63,9 @@
     "Updated": "Cập nhật",
     "Version": "Phiên bản"
   },
+  "comp:BAIAvailablePresetSelect": {
+    "SelectPreset": "Chọn cài đặt sẵn"
+  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Đã xảy ra lỗi bất ngờ. Vui lòng thử lại sau hoặc liên hệ bộ phận hỗ trợ nếu vấn đề vẫn tiếp diễn."
   },
@@ -236,6 +239,9 @@
     "StorageNodes": "Nút lưu trữ",
     "TotalResourceSlots": "Tổng số khe tài nguyên",
     "Type": "Loại"
+  },
+  "comp:BAIProjectVfolderSelect": {
+    "SelectFolder": "Chọn thư mục"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Tìm kiếm",

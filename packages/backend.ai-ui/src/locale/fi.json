@@ -63,6 +63,9 @@
     "Updated": "Päivitetty",
     "Version": "Versio"
   },
+  "comp:BAIAvailablePresetSelect": {
+    "SelectPreset": "Valitse esiasetus"
+  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Tapahtui odottamaton virhe. Yritä uudelleen myöhemmin tai ota yhteyttä tukeen, jos ongelma jatkuu."
   },
@@ -236,6 +239,9 @@
     "StorageNodes": "Tallennussolmut",
     "TotalResourceSlots": "Resurssipaikat yhteensä",
     "Type": "Tyyppi"
+  },
+  "comp:BAIProjectVfolderSelect": {
+    "SelectFolder": "Valitse kansio"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Etsi",

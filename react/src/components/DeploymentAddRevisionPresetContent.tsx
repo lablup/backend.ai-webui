@@ -9,8 +9,8 @@ import type { DeploymentAddRevisionPresetContentFragment$key } from '../__genera
 import type { DeploymentPresetDetailContentFragment$key } from '../__generated__/DeploymentPresetDetailContentFragment.graphql';
 import { useWebUINavigate } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { useModelStoreProject } from '../hooks/useModelStoreProject';
 import DeploymentPresetDetailContent from './DeploymentPresetDetailContent';
-import VFolderSelect from './VFolderSelect';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import {
   Alert,
@@ -20,20 +20,18 @@ import {
   type FormInstance,
   Space,
   Tooltip,
-  Typography,
   theme,
 } from 'antd';
-import type { DefaultOptionType } from 'antd/es/select';
 import {
+  BAIAvailablePresetSelect,
   BAIFlex,
   BAIModal,
   BAIProjectResourceGroupSelect,
-  BAISelect,
+  BAIProjectVfolderSelect,
   convertToUUID,
   toLocalId,
   useBAILogger,
 } from 'backend.ai-ui';
-import * as _ from 'lodash-es';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
@@ -50,7 +48,6 @@ interface DeploymentAddRevisionPresetContentProps {
     | null
     | undefined;
   deploymentRevisionPresetsData: DeploymentAddRevisionModalQuery$data['deploymentRevisionPresets'];
-  runtimeVariantsData: DeploymentAddRevisionModalQuery$data['runtimeVariants'];
   form: FormInstance<PresetFormValues>;
   onRequestClose: (success?: boolean) => void;
   onIsDeployingChange: (v: boolean) => void;
@@ -70,7 +67,6 @@ export const DeploymentAddRevisionPresetContent: React.FC<
 > = ({
   deploymentFrgmt,
   deploymentRevisionPresetsData,
-  runtimeVariantsData,
   form,
   onRequestClose,
   onIsDeployingChange,
@@ -83,6 +79,11 @@ export const DeploymentAddRevisionPresetContent: React.FC<
   const { message } = App.useApp();
   const navigate = useWebUINavigate();
   const { id: projectId, name: projectName } = useCurrentProjectValue();
+  // The model folder picker scopes to the MODEL_STORE project, not the
+  // user's currently selected project — model cards live in the
+  // domain-wide model store regardless of which project the user is
+  // browsing right now.
+  const { id: modelStoreProjectId } = useModelStoreProject();
   const { logger } = useBAILogger();
 
   // Preset-mode slice of the wrapper's `DeploymentAddRevisionModalQuery`.
@@ -111,39 +112,11 @@ export const DeploymentAddRevisionPresetContent: React.FC<
 
   const hasNoPresets = availablePresets.length === 0;
 
-  // Build runtime variant ID → name map for optgroup display
-  const runtimeVariantNameMap = new Map<string, string>();
-  for (const edge of runtimeVariantsData?.edges ?? []) {
-    const node = edge?.node;
-    if (node?.id) {
-      runtimeVariantNameMap.set(toLocalId(node.id), node.name ?? '');
-    }
-  }
-
-  // Group presets by runtime variant for optgroup display
-  const groupedPresets = _.groupBy(availablePresets, 'runtimeVariantId');
-  const variantIds = Object.keys(groupedPresets);
-  const toOption = (p: (typeof availablePresets)[number]) => ({
-    label: p.name,
-    value: toLocalId(p.id) ?? p.id,
-    description: p.description,
-  });
-  const presetOptions: DefaultOptionType[] =
-    variantIds.length <= 1
-      ? availablePresets.map(toOption)
-      : variantIds.map((variantId) => ({
-          label: runtimeVariantNameMap.get(variantId) ?? variantId,
-          options: groupedPresets[variantId].map(toOption),
-        }));
-
   // The parent deployment's vfolder is the default Model Folder. Users can
   // override it in this mode (in contrast to the VFolder/ModelStore entry
   // point where the folder is locked in by context).
-  const parentDeploymentVfolderId =
-    deployment?.currentRevision?.modelMountConfig?.vfolderId;
-  const defaultModelFolderId = parentDeploymentVfolderId
-    ? parentDeploymentVfolderId.replace(/-/g, '')
-    : undefined;
+  const defaultModelFolderId =
+    deployment?.currentRevision?.modelMountConfig?.vfolderId ?? undefined;
 
   const [commitDeploy] =
     useMutation<DeploymentAddRevisionPresetContentDeployMutation>(graphql`
@@ -254,23 +227,8 @@ export const DeploymentAddRevisionPresetContent: React.FC<
             noStyle
             rules={[{ required: true }]}
           >
-            <BAISelect
+            <BAIAvailablePresetSelect
               onChange={handlePresetChange}
-              options={presetOptions}
-              optionRender={(option) => (
-                <BAIFlex direction="column" align="start">
-                  {option.label}
-                  {option.data.description && (
-                    <Typography.Text
-                      type="secondary"
-                      style={{ fontSize: token.fontSizeSM }}
-                      ellipsis
-                    >
-                      {option.data.description}
-                    </Typography.Text>
-                  )}
-                </BAIFlex>
-              )}
               style={{ flex: 1 }}
             />
           </Form.Item>
@@ -315,12 +273,14 @@ export const DeploymentAddRevisionPresetContent: React.FC<
         label={t('deployment.ModelFolder')}
         rules={[{ required: true }]}
       >
-        <VFolderSelect
-          valuePropName="id"
-          filter={(vf) => vf.usage_mode === 'model' && vf.status === 'ready'}
-          showOpenButton
-          showCreateButton
-          showRefreshButton
+        <BAIProjectVfolderSelect
+          projectId={modelStoreProjectId ?? ''}
+          disabled={!modelStoreProjectId}
+          filter={{
+            usageMode: { equals: 'MODEL' },
+            status: { equals: 'READY' },
+          }}
+          style={{ width: '100%' }}
         />
       </Form.Item>
 

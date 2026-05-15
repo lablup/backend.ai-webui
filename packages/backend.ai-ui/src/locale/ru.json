@@ -63,6 +63,9 @@
     "Updated": "Обновлено",
     "Version": "Версия"
   },
+  "comp:BAIAvailablePresetSelect": {
+    "SelectPreset": "Выберите пресет"
+  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Произошла непредвиденная ошибка. Попробуйте ещё раз позже или обратитесь в службу поддержки, если проблема сохраняется."
   },
@@ -236,6 +239,9 @@
     "StorageNodes": "Узлы хранения",
     "TotalResourceSlots": "Всего ресурсных слотов",
     "Type": "Тип"
+  },
+  "comp:BAIProjectVfolderSelect": {
+    "SelectFolder": "Выбрать папку"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Поиск",

@@ -88,6 +88,19 @@ export type {
   VFolderNode,
   BAIVFolderSelectRef,
 } from './BAIVFolderSelect';
+export { default as BAIProjectVfolderSelect } from './BAIProjectVfolderSelect';
+export type {
+  BAIProjectVfolderSelectProps,
+  BAIProjectVfolderSelectFilter,
+  ProjectVfolderNode,
+  BAIProjectVfolderSelectRef,
+} from './BAIProjectVfolderSelect';
+export { default as BAIAvailablePresetSelect } from './BAIAvailablePresetSelect';
+export type {
+  BAIAvailablePresetSelectProps,
+  BAIAvailablePresetSelectRef,
+  DeploymentRevisionPresetNode,
+} from './BAIAvailablePresetSelect';
 export { default as BAIUserSelect } from './BAIUserSelect';
 export type {
   BAIUserSelectProps,

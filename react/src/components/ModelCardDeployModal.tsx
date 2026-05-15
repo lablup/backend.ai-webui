@@ -4,43 +4,30 @@
  */
 import type { DeploymentPresetDetailContentFragment$key } from '../__generated__/DeploymentPresetDetailContentFragment.graphql';
 import { ModelCardDeployModalMutation } from '../__generated__/ModelCardDeployModalMutation.graphql';
-import { ModelCardDeployModalQuery } from '../__generated__/ModelCardDeployModalQuery.graphql';
 import { useWebUINavigate } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import DeploymentPresetDetailContent from './DeploymentPresetDetailContent';
 import { InfoCircleOutlined } from '@ant-design/icons';
+import { Alert, App, Button, Form, Space, Tooltip, theme } from 'antd';
 import {
-  Alert,
-  App,
-  Button,
-  Form,
-  Space,
-  Tooltip,
-  Typography,
-  theme,
-} from 'antd';
-import type { DefaultOptionType } from 'antd/es/select';
-import {
+  BAIAvailablePresetSelect,
   BAIButton,
   BAIFlex,
   BAIModal,
   BAIProjectResourceGroupSelect,
-  BAISelect,
   toLocalId,
   useProjectResourceGroups,
 } from 'backend.ai-ui';
-import * as _ from 'lodash-es';
 import { PlusIcon } from 'lucide-react';
 import React, {
   Suspense,
   useEffect,
   useEffectEvent,
-  useMemo,
   useRef,
   useState,
 } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
+import { graphql, useMutation } from 'react-relay';
 import type { FragmentRefs } from 'relay-runtime';
 
 interface AvailablePreset {
@@ -91,23 +78,6 @@ const ModelCardDeployModalContent: React.FC<
   // to render the selection UI or auto-deploy.
   const { resourceGroups } = useProjectResourceGroups(projectName ?? '');
 
-  const { runtimeVariants } = useLazyLoadQuery<ModelCardDeployModalQuery>(
-    graphql`
-      query ModelCardDeployModalQuery {
-        runtimeVariants {
-          edges {
-            node {
-              id
-              name
-            }
-          }
-        }
-      }
-    `,
-    {},
-    {},
-  );
-
   const [commitDeploy] = useMutation<ModelCardDeployModalMutation>(graphql`
     mutation ModelCardDeployModalMutation(
       $cardId: UUID!
@@ -119,41 +89,6 @@ const ModelCardDeployModalContent: React.FC<
       }
     }
   `);
-
-  // Build runtime variant ID → name map for preset grouping
-  const runtimeVariantNameMap = useMemo(() => {
-    const map = new Map<string, string>();
-    for (const edge of runtimeVariants?.edges ?? []) {
-      const node = edge?.node;
-      if (node?.id) {
-        map.set(toLocalId(node.id), node.name ?? '');
-      }
-    }
-    return map;
-  }, [runtimeVariants]);
-
-  // Group presets by runtime variant for optgroup display
-  const presetOptions: DefaultOptionType[] = useMemo(() => {
-    const grouped = _.groupBy(availablePresets, 'runtimeVariantId');
-    const variantIds = Object.keys(grouped);
-
-    const toOption = (p: AvailablePreset) => ({
-      label: p.name,
-      value: toLocalId(p.id),
-      description: p.description,
-    });
-
-    // If all presets belong to the same runtime variant, show flat list
-    if (variantIds.length <= 1) {
-      return availablePresets.map(toOption);
-    }
-
-    // Multiple runtime variants: show grouped options
-    return variantIds.map((variantId) => ({
-      label: runtimeVariantNameMap.get(variantId) ?? variantId,
-      options: grouped[variantId].map(toOption),
-    }));
-  }, [availablePresets, runtimeVariantNameMap]);
 
   // Determine scenario: auto-deploy (scenario 2) vs selection (scenario 3)
   const isAutoDeployScenario =
@@ -297,24 +232,23 @@ const ModelCardDeployModalContent: React.FC<
           required
         >
           <BAIFlex direction="row" gap="xs">
-            <BAISelect
+            {/*
+              TODO(needs-backend): `BAIAvailablePresetSelect` fetches presets
+              from `deploymentRevisionPresets`, which currently has no
+              model-card-scoped filter (`DeploymentRevisionPresetFilter` only
+              supports `name` and `runtimeVariantId`). The `availablePresets`
+              prop passed by the parent is the server-filtered list scoped to
+              this specific model card. Once a model-card scope is exposed on
+              `DeploymentRevisionPresetFilter`, pass it to this select so the
+              dropdown matches the card's compatible-presets list. For now the
+              dropdown shows the full project-accessible list — auto-deploy
+              and the empty-state still use the scoped `availablePresets`.
+            */}
+            <BAIAvailablePresetSelect
               value={effectivePresetId}
-              onChange={(value: string) => setUserSelectedPresetId(value)}
-              options={presetOptions}
-              optionRender={(option) => (
-                <BAIFlex direction="column" align="start">
-                  {option.label}
-                  {option.data.description && (
-                    <Typography.Text
-                      type="secondary"
-                      style={{ fontSize: token.fontSizeSM }}
-                      ellipsis
-                    >
-                      {option.data.description}
-                    </Typography.Text>
-                  )}
-                </BAIFlex>
-              )}
+              onChange={(value) =>
+                setUserSelectedPresetId(value as string | undefined)
+              }
               style={{ flex: 1 }}
             />
             <Space.Compact>

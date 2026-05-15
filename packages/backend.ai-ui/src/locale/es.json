@@ -63,6 +63,9 @@
     "Updated": "Actualizado",
     "Version": "Versión"
   },
+  "comp:BAIAvailablePresetSelect": {
+    "SelectPreset": "Seleccionar preset"
+  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Se produjo un error inesperado. Inténtelo de nuevo más tarde o contacte con el soporte si el problema persiste."
   },
@@ -236,6 +239,9 @@
     "StorageNodes": "Nodos de almacenamiento",
     "TotalResourceSlots": "Total de ranuras de recursos",
     "Type": "Tipo"
+  },
+  "comp:BAIProjectVfolderSelect": {
+    "SelectFolder": "Seleccionar carpeta"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Buscar en",

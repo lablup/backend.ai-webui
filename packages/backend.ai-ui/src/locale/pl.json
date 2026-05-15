@@ -63,6 +63,9 @@
     "Updated": "Zaktualizowane",
     "Version": "Wersja"
   },
+  "comp:BAIAvailablePresetSelect": {
+    "SelectPreset": "Wybierz preset"
+  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później lub skontaktuj się z pomocą techniczną, jeśli problem będzie się powtarzał."
   },
@@ -236,6 +239,9 @@
     "StorageNodes": "Węzły pamięci masowej",
     "TotalResourceSlots": "Całkowita liczba slotów zasobów",
     "Type": "Typ"
+  },
+  "comp:BAIProjectVfolderSelect": {
+    "SelectFolder": "Wybierz folder"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Wyszukiwanie",

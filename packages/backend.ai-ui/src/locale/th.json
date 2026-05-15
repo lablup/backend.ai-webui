@@ -63,6 +63,9 @@
     "Updated": "อัปเดต",
     "Version": "รุ่น"
   },
+  "comp:BAIAvailablePresetSelect": {
+    "SelectPreset": "เลือกการตั้งค่าล่วงหน้า"
+  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "เกิดข้อผิดพลาดที่ไม่คาดคิด กรุณาลองอีกครั้งภายหลัง หากปัญหายังคงมีอยู่ โปรดติดต่อฝ่ายสนับสนุน"
   },
@@ -236,6 +239,9 @@
     "StorageNodes": "โหนดจัดเก็บข้อมูล",
     "TotalResourceSlots": "ช่องทรัพยากรทั้งหมด",
     "Type": "ประเภท"
+  },
+  "comp:BAIProjectVfolderSelect": {
+    "SelectFolder": "เลือกโฟลเดอร์"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "ค้นหา",

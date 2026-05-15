@@ -63,6 +63,9 @@
     "Updated": "Dikemas kini",
     "Version": "Versi"
   },
+  "comp:BAIAvailablePresetSelect": {
+    "SelectPreset": "Pilih Pratetap"
+  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Ralat tidak dijangka berlaku. Sila cuba lagi nanti atau hubungi sokongan jika masalah berterusan."
   },
@@ -236,6 +239,9 @@
     "StorageNodes": "Nod Storan",
     "TotalResourceSlots": "Jumlah Slot Sumber",
     "Type": "Jenis"
+  },
+  "comp:BAIProjectVfolderSelect": {
+    "SelectFolder": "Pilih Folder"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Cari",

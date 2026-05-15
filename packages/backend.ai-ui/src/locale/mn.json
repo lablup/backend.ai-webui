@@ -63,6 +63,9 @@
     "Updated": "Шинэчилсэн цаг нь",
     "Version": "Таамаглал"
   },
+  "comp:BAIAvailablePresetSelect": {
+    "SelectPreset": "Урьдчилан тохиргоо сонгох"
+  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Гэнэтийн алдаа гарлаа. Дахин оролдоно уу эсвэл асуудал үргэлжилбэл дэмжлэгт хандана уу."
   },
@@ -236,6 +239,9 @@
     "StorageNodes": "Хадгалах зангилаанууд",
     "TotalResourceSlots": "Нийт нөөцийн слотууд",
     "Type": "Төрөл"
+  },
+  "comp:BAIProjectVfolderSelect": {
+    "SelectFolder": "Хавтас сонгох"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Хайх",

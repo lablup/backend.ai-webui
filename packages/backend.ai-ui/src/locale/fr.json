@@ -63,6 +63,9 @@
     "Updated": "Mis à jour",
     "Version": "Version"
   },
+  "comp:BAIAvailablePresetSelect": {
+    "SelectPreset": "Sélectionner un preset"
+  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Une erreur inattendue s'est produite. Veuillez réessayer plus tard ou contacter le support si le problème persiste."
   },
@@ -236,6 +239,9 @@
     "StorageNodes": "Nœuds de stockage",
     "TotalResourceSlots": "Nombre total de créneaux de ressources",
     "Type": "Type"
+  },
+  "comp:BAIProjectVfolderSelect": {
+    "SelectFolder": "Sélectionner un dossier"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Recherche",

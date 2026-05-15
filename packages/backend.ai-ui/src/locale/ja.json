@@ -63,6 +63,9 @@
     "Updated": "更新",
     "Version": "バージョン"
   },
+  "comp:BAIAvailablePresetSelect": {
+    "SelectPreset": "プリセットを選択"
+  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "予期しないエラーが発生しました。しばらくしてから再度お試しください。それでも問題が解決しない場合はサポートにお問い合わせください。"
   },
@@ -236,6 +239,9 @@
     "StorageNodes": "ストレージノード",
     "TotalResourceSlots": "合計リソーススロット数",
     "Type": "種類"
+  },
+  "comp:BAIProjectVfolderSelect": {
+    "SelectFolder": "フォルダを選択"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "検索",

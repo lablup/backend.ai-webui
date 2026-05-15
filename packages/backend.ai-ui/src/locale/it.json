@@ -63,6 +63,9 @@
     "Updated": "Aggiornato",
     "Version": "Versione"
   },
+  "comp:BAIAvailablePresetSelect": {
+    "SelectPreset": "Seleziona preset"
+  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Si è verificato un errore imprevisto. Riprova più tardi o contatta l'assistenza se il problema persiste."
   },
@@ -236,6 +239,9 @@
     "StorageNodes": "Nodi di archiviazione",
     "TotalResourceSlots": "Slot risorse totali",
     "Type": "Tipo"
+  },
+  "comp:BAIProjectVfolderSelect": {
+    "SelectFolder": "Seleziona cartella"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Ricerca",

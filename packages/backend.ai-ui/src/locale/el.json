@@ -63,6 +63,9 @@
     "Updated": "Ενημερωμένος",
     "Version": "Εκδοχή"
   },
+  "comp:BAIAvailablePresetSelect": {
+    "SelectPreset": "Επιλέξτε προεπιλογή"
+  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Προέκυψε απρόσμενο σφάλμα. Δοκιμάστε ξανά αργότερα ή επικοινωνήστε με την υποστήριξη εάν το πρόβλημα επιμένει."
   },
@@ -236,6 +239,9 @@
     "StorageNodes": "Κόμβοι Αποθήκευσης",
     "TotalResourceSlots": "Συνολικές θέσεις πόρων",
     "Type": "Τύπος"
+  },
+  "comp:BAIProjectVfolderSelect": {
+    "SelectFolder": "Επιλογή φακέλου"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Αναζήτηση",

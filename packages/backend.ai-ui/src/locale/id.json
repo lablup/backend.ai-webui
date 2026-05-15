@@ -63,6 +63,9 @@
     "Updated": "Diperbarui",
     "Version": "Versi"
   },
+  "comp:BAIAvailablePresetSelect": {
+    "SelectPreset": "Pilih Preset"
+  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Terjadi kesalahan tak terduga. Silakan coba lagi nanti atau hubungi dukungan jika masalah berlanjut."
   },
@@ -236,6 +239,9 @@
     "StorageNodes": "Node Penyimpanan",
     "TotalResourceSlots": "Jumlah Slot Sumber Daya",
     "Type": "Tipe"
+  },
+  "comp:BAIProjectVfolderSelect": {
+    "SelectFolder": "Pilih Folder"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Pencarian",

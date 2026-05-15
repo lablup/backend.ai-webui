@@ -14,6 +14,7 @@ import {
   mergeExtraArgs,
   reverseMapExtraArgs,
 } from '../helper/runtimeExtraArgsParser';
+import { useModelStoreProject } from '../hooks/useModelStoreProject';
 import {
   buildArgsSchemaKeySet,
   buildDefaultsMap,
@@ -34,7 +35,6 @@ import ResourceAllocationFormItems, {
   RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
   type ResourceAllocationFormValue,
 } from './SessionFormItems/ResourceAllocationFormItems';
-import VFolderSelect from './VFolderSelect';
 import VFolderTableFormItem, {
   type VFolderTableFormValues,
 } from './VFolderTableFormItem';
@@ -56,6 +56,7 @@ import {
 } from 'antd';
 import {
   BAIFlex,
+  BAIProjectVfolderSelect,
   convertToUUID,
   filterOutNullAndUndefined,
   safeDecodeUuid,
@@ -145,6 +146,10 @@ export const DeploymentAddRevisionCustomContent: React.FC<
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { message } = App.useApp();
+  // The model folder picker scopes to the MODEL_STORE project, not the
+  // deployment's own project — model cards live in the domain-wide model
+  // store regardless of which project owns the deployment.
+  const { id: modelStoreProjectId } = useModelStoreProject();
 
   // Runtime parameter refs — kept outside form state so slider/input changes
   // don't re-render the modal. Read at submit time via serializeRuntimeParamsToEnviron.
@@ -448,18 +453,10 @@ export const DeploymentAddRevisionCustomContent: React.FC<
           ]),
       ),
       runtimeVariantId: rev.modelRuntimeConfig?.runtimeVariantId ?? undefined,
-      // VFolderSelect / VFolderTable's row data come from REST `/folders`
-      // which exposes `id` as 32-char hex without dashes, while the
-      // GraphQL `modelMountConfig.vfolderId` and `extraMounts.vfolderId`
-      // come back as canonical UUIDs. Strip dashes here so the form
-      // value matches existing options (and selectedRowKeys for the
-      // additional-mounts table) directly — without it, VFolderTable
-      // never highlights the prefilled rows and the alias map keys
-      // can't be looked up. `convertToUUID` in the submit re-adds
-      // dashes for the GraphQL input.
-      modelFolderId: rev.modelMountConfig?.vfolderId
-        ? rev.modelMountConfig.vfolderId.replace(/-/g, '')
-        : undefined,
+      // BAIProjectVfolderSelect returns the canonical dashed UUID, which
+      // matches `rev.modelMountConfig.vfolderId` directly. `convertToUUID`
+      // in the submit is idempotent on already-dashed values.
+      modelFolderId: rev.modelMountConfig?.vfolderId ?? undefined,
       mountDestination: rev.modelMountConfig?.mountDestination ?? '/models',
       definitionPath: rev.modelMountConfig?.definitionPath ?? undefined,
       // `ImageEnvironmentSelectFormItems` matches the form's
@@ -890,19 +887,14 @@ export const DeploymentAddRevisionCustomContent: React.FC<
         label={t('deployment.ModelFolder')}
         rules={[{ required: true }]}
       >
-        <VFolderSelect
-          // `autoSelectDefault` runs a mount-time effect inside
-          // VFolderSelect that writes the *first available* folder into
-          // the form, which races with `prefillFromCurrentRevision` and
-          // can clobber the deployment's actual model folder when more
-          // than one is available. We always have the model folder from
-          // the current revision here, so leave the field empty when
-          // the revision somehow lacks one rather than auto-picking.
-          valuePropName="id"
-          filter={(vf) => vf.usage_mode === 'model' && vf.status === 'ready'}
-          showOpenButton
-          showCreateButton
-          showRefreshButton
+        <BAIProjectVfolderSelect
+          projectId={modelStoreProjectId ?? ''}
+          disabled={!modelStoreProjectId}
+          filter={{
+            usageMode: { equals: 'MODEL' },
+            status: { equals: 'READY' },
+          }}
+          style={{ width: '100%' }}
         />
       </Form.Item>
       <Form.Item
@@ -1158,6 +1150,15 @@ export const DeploymentAddRevisionCustomContent: React.FC<
                   >
                     {({ getFieldValue }) => {
                       const modelFolderId = getFieldValue('modelFolderId');
+                      // `modelFolderId` comes from BAIProjectVfolderSelect
+                      // as a dashed UUID, while `vfolder.id` from
+                      // VFolderTable's REST source is 32-char hex without
+                      // dashes. Strip dashes for the
+                      // comparison so the model folder is correctly excluded
+                      // from the additional-mounts table.
+                      const modelFolderIdNoDash = modelFolderId
+                        ? String(modelFolderId).replace(/-/g, '')
+                        : undefined;
                       return (
                         <VFolderTableFormItem
                           label={t('modelService.AdditionalMounts')}
@@ -1169,7 +1170,7 @@ export const DeploymentAddRevisionCustomContent: React.FC<
                             vfolder.usage_mode !== 'model' &&
                             vfolder.status === 'ready' &&
                             !vfolder.name?.startsWith('.') &&
-                            vfolder.id !== modelFolderId
+                            vfolder.id !== modelFolderIdNoDash
                           }
                         />
                       );

@@ -63,6 +63,9 @@
     "Updated": "更新",
     "Version": "版本"
   },
+  "comp:BAIAvailablePresetSelect": {
+    "SelectPreset": "選擇預設"
+  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "發生未預期的錯誤。請稍後再試，若問題持續，請聯絡支援。"
   },
@@ -236,6 +239,9 @@
     "StorageNodes": "儲存節點",
     "TotalResourceSlots": "資源總槽位",
     "Type": "類型"
+  },
+  "comp:BAIProjectVfolderSelect": {
+    "SelectFolder": "選擇資料夾"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "搜索",

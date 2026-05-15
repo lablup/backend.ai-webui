@@ -63,6 +63,9 @@
     "Updated": "Updated",
     "Version": "Version"
   },
+  "comp:BAIAvailablePresetSelect": {
+    "SelectPreset": "Select Preset"
+  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "An unexpected error occurred. Please try again later or contact support if the problem persists."
   },
@@ -239,6 +242,9 @@
     "StorageNodes": "Storage Nodes",
     "TotalResourceSlots": "Total Resource Slots",
     "Type": "Type"
+  },
+  "comp:BAIProjectVfolderSelect": {
+    "SelectFolder": "Select Folder"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Search",

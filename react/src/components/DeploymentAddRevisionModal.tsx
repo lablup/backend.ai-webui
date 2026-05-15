@@ -357,7 +357,6 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
         <DeploymentAddRevisionPresetContent
           deploymentFrgmt={data.deployment}
           deploymentRevisionPresetsData={data.deploymentRevisionPresets}
-          runtimeVariantsData={data.runtimeVariants}
           form={presetForm}
           onRequestClose={onRequestClose}
           onIsDeployingChange={setIsSubmitting}

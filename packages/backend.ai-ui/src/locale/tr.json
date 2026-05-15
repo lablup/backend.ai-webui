@@ -63,6 +63,9 @@
     "Updated": "Güncellenmiş",
     "Version": "Versiyon"
   },
+  "comp:BAIAvailablePresetSelect": {
+    "SelectPreset": "Ön ayar seçin"
+  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Beklenmeyen bir hata oluştu. Lütfen daha sonra tekrar deneyin veya sorun devam ederse destekle iletişime geçin."
   },
@@ -236,6 +239,9 @@
     "StorageNodes": "Depolama Düğümleri",
     "TotalResourceSlots": "Toplam Kaynak Slotları",
     "Type": "Tür"
+  },
+  "comp:BAIProjectVfolderSelect": {
+    "SelectFolder": "Klasör Seç"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Arama",
