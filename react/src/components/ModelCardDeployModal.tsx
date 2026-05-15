@@ -2,11 +2,11 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import type { DeploymentPresetDetailContentFragment$key } from '../__generated__/DeploymentPresetDetailContentFragment.graphql';
+import type { DeploymentPresetDetailModalFragment$key } from '../__generated__/DeploymentPresetDetailModalFragment.graphql';
 import { ModelCardDeployModalMutation } from '../__generated__/ModelCardDeployModalMutation.graphql';
 import { useWebUINavigate } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import DeploymentPresetDetailContent from './DeploymentPresetDetailContent';
+import DeploymentPresetDetailModal from './DeploymentPresetDetailModal';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { Alert, App, Button, Form, Space, Tooltip, theme } from 'antd';
 import {
@@ -14,18 +14,13 @@ import {
   BAIButton,
   BAIFlex,
   BAIModal,
+  type BAIModalProps,
   BAIProjectResourceGroupSelect,
   toLocalId,
   useProjectResourceGroups,
 } from 'backend.ai-ui';
 import { PlusIcon } from 'lucide-react';
-import React, {
-  Suspense,
-  useEffect,
-  useEffectEvent,
-  useRef,
-  useState,
-} from 'react';
+import React, { useEffect, useEffectEvent, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useMutation } from 'react-relay';
 import type { FragmentRefs } from 'relay-runtime';
@@ -35,10 +30,13 @@ interface AvailablePreset {
   readonly name: string;
   readonly description: string | null;
   readonly runtimeVariantId: string;
-  readonly ' $fragmentSpreads': FragmentRefs<'DeploymentPresetDetailContentFragment'>;
+  readonly ' $fragmentSpreads': FragmentRefs<'DeploymentPresetDetailModalFragment'>;
 }
 
-interface ModelCardDeployModalProps {
+interface ModelCardDeployModalProps extends Omit<
+  BAIModalProps,
+  'children' | 'open' | 'onCancel'
+> {
   open: boolean;
   onClose: () => void;
   modelCardRowId?: string;
@@ -53,16 +51,14 @@ interface ModelCardDeployModalProps {
   onRequestCreateDeployment?: () => void;
 }
 
-type ModelCardDeployModalContentProps = Omit<ModelCardDeployModalProps, 'open'>;
-
-const ModelCardDeployModalContent: React.FC<
-  ModelCardDeployModalContentProps
-> = ({
+const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
+  open,
   onClose,
   modelCardRowId,
   availablePresets,
   onDeployed,
   onRequestCreateDeployment,
+  ...modalProps
 }) => {
   'use memo';
 
@@ -100,7 +96,7 @@ const ModelCardDeployModalContent: React.FC<
     string | undefined
   >(undefined);
   const [presetDetailFrgmt, setPresetDetailFrgmt] =
-    useState<DeploymentPresetDetailContentFragment$key | null>(null);
+    useState<DeploymentPresetDetailModalFragment$key | null>(null);
   const effectivePresetId =
     userSelectedPresetId ??
     (availablePresets[0]?.id ? toLocalId(availablePresets[0].id) : undefined);
@@ -184,11 +180,12 @@ const ModelCardDeployModalContent: React.FC<
     return (
       <BAIModal
         title={t('modelService.CreateNewDeploymentWithPreset')}
-        open
-        onCancel={onClose}
         destroyOnHidden
         footer={null}
         width={480}
+        {...modalProps}
+        open={open}
+        onCancel={onClose}
       >
         <Alert
           type="info"
@@ -221,11 +218,12 @@ const ModelCardDeployModalContent: React.FC<
   return (
     <BAIModal
       title={t('modelService.CreateNewDeploymentWithPreset')}
-      open
-      onCancel={onClose}
       destroyOnHidden
       footer={null}
       width={480}
+      {...modalProps}
+      open={open}
+      onCancel={onClose}
     >
       <Form form={form} layout="vertical">
         <Form.Item
@@ -282,18 +280,13 @@ const ModelCardDeployModalContent: React.FC<
           />
         </Form.Item>
       </Form>
-      <BAIModal
-        open={!!presetDetailFrgmt}
-        centered
-        title={t('modelService.DeploymentPresetDetail')}
-        onCancel={() => setPresetDetailFrgmt(null)}
-        destroyOnHidden
-        footer={null}
-      >
-        {presetDetailFrgmt && (
-          <DeploymentPresetDetailContent presetFrgmt={presetDetailFrgmt} />
-        )}
-      </BAIModal>
+      {presetDetailFrgmt && (
+        <DeploymentPresetDetailModal
+          open
+          presetFrgmt={presetDetailFrgmt}
+          onCancel={() => setPresetDetailFrgmt(null)}
+        />
+      )}
       <BAIFlex justify="end" gap="sm">
         <BAIButton onClick={onClose}>{t('button.Cancel')}</BAIButton>
         <BAIButton
@@ -310,39 +303,6 @@ const ModelCardDeployModalContent: React.FC<
         </BAIButton>
       </BAIFlex>
     </BAIModal>
-  );
-};
-
-const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
-  open,
-  onClose,
-  modelCardRowId,
-  availablePresets,
-  onDeployed,
-  onRequestCreateDeployment,
-}) => {
-  'use memo';
-
-  // Do not mount the content (or any modal chrome) until the user has clicked
-  // Deploy. The content component suspends on its data query, then decides
-  // whether to render the selection modal or auto-deploy silently — for the
-  // auto-deploy path no modal is ever rendered, so the user goes directly
-  // from the Deploy button to the new deployment detail page
-  // (`/deployments/${deploymentId}`) without a flash.
-  if (!open) {
-    return null;
-  }
-
-  return (
-    <Suspense fallback={null}>
-      <ModelCardDeployModalContent
-        onClose={onClose}
-        modelCardRowId={modelCardRowId}
-        availablePresets={availablePresets}
-        onDeployed={onDeployed}
-        onRequestCreateDeployment={onRequestCreateDeployment}
-      />
-    </Suspense>
   );
 };
 

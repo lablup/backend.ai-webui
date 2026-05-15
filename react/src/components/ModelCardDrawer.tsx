@@ -13,12 +13,21 @@ import ModelCardDeployModal from './ModelCardDeployModal';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
 import { BankOutlined, FileOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { Card, Descriptions, Drawer, Skeleton, Tag, Typography } from 'antd';
+import {
+  Card,
+  Descriptions,
+  Drawer,
+  type DrawerProps,
+  Skeleton,
+  Tag,
+  Typography,
+} from 'antd';
 import {
   BAIButton,
   BAIFlex,
   BAILink,
   BAIResourceNumberWithIcon,
+  BAIUnmountAfterClose,
   filterOutEmpty,
   toLocalId,
 } from 'backend.ai-ui';
@@ -29,16 +38,15 @@ import React, { Suspense, useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 
-interface ModelCardDrawerProps {
+interface ModelCardDrawerProps extends Omit<DrawerProps, 'children'> {
   modelCardId: string | undefined;
-  open: boolean;
-  onClose: () => void;
 }
 
 const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
   modelCardId,
   open,
   onClose,
+  ...drawerProps
 }) => {
   'use memo';
 
@@ -119,7 +127,7 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
               name
               description
               runtimeVariantId
-              ...DeploymentPresetDetailContentFragment
+              ...DeploymentPresetDetailModalFragment
             }
           }
         }
@@ -136,16 +144,17 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
   return (
     <>
       <Drawer
-        open={open}
-        loading={deferredOpen !== open}
-        onClose={() => {
-          setDeployModalOpen(false);
-          closeCreateDeployment();
-          onClose();
-        }}
         destroyOnHidden
         placement="right"
         size={800}
+        {...drawerProps}
+        open={open}
+        loading={deferredOpen !== open}
+        onClose={(e) => {
+          setDeployModalOpen(false);
+          closeCreateDeployment();
+          onClose?.(e);
+        }}
         title={
           <BAIFlex
             direction="row"
@@ -335,20 +344,22 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
           </BAIFlex>
         )}
       </Drawer>
-      <ModelCardDeployModal
-        open={deployModalOpen}
-        onClose={() => setDeployModalOpen(false)}
-        modelCardRowId={modelCard?.id ? toLocalId(modelCard.id) : undefined}
-        availablePresets={presets.map((p) => ({
-          ...p,
-          description: p.description ?? null,
-        }))}
-        onDeployed={(_deploymentId) => {
-          setDeployModalOpen(false);
-          onClose();
-        }}
-        onRequestCreateDeployment={toggleCreateDeployment}
-      />
+      <BAIUnmountAfterClose>
+        <ModelCardDeployModal
+          open={deployModalOpen}
+          onClose={() => setDeployModalOpen(false)}
+          modelCardRowId={modelCard?.id ? toLocalId(modelCard.id) : undefined}
+          availablePresets={presets.map((p) => ({
+            ...p,
+            description: p.description ?? null,
+          }))}
+          onDeployed={(_deploymentId) => {
+            setDeployModalOpen(false);
+            onClose();
+          }}
+          onRequestCreateDeployment={toggleCreateDeployment}
+        />
+      </BAIUnmountAfterClose>
       <DeploymentSettingModal
         open={isCreateDeploymentOpen}
         onRequestClose={toggleCreateDeployment}

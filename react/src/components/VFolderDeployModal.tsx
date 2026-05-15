@@ -2,46 +2,33 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import type { DeploymentPresetDetailContentFragment$key } from '../__generated__/DeploymentPresetDetailContentFragment.graphql';
+import type { DeploymentPresetDetailModalFragment$key } from '../__generated__/DeploymentPresetDetailModalFragment.graphql';
 import { VFolderDeployModalMutation } from '../__generated__/VFolderDeployModalMutation.graphql';
 import { VFolderDeployModalQuery } from '../__generated__/VFolderDeployModalQuery.graphql';
 import { useWebUINavigate } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import useDeploymentLauncher from '../hooks/useDeploymentLauncher';
-import DeploymentPresetDetailContent from './DeploymentPresetDetailContent';
-import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
+import DeploymentPresetDetailModal from './DeploymentPresetDetailModal';
 import { InfoCircleOutlined } from '@ant-design/icons';
-import {
-  Alert,
-  App,
-  Button,
-  Form,
-  Skeleton,
-  Space,
-  Tooltip,
-  theme,
-} from 'antd';
+import { Alert, App, Button, Form, Space, Tooltip, theme } from 'antd';
 import {
   BAIAvailablePresetSelect,
   BAIButton,
   BAIFlex,
   BAIModal,
+  type BAIModalProps,
   BAIProjectResourceGroupSelect,
   toLocalId,
   useProjectResourceGroups,
 } from 'backend.ai-ui';
 import { PlusIcon } from 'lucide-react';
-import React, {
-  Suspense,
-  useEffect,
-  useEffectEvent,
-  useRef,
-  useState,
-} from 'react';
+import React, { useEffect, useEffectEvent, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 
-interface VFolderDeployModalProps {
+interface VFolderDeployModalProps extends Omit<
+  BAIModalProps,
+  'children' | 'open' | 'onCancel'
+> {
   open: boolean;
   onClose: () => void;
   /** Local UUID of the VFolder to deploy. */
@@ -56,13 +43,13 @@ interface VFolderDeployModalProps {
   onRequestCreateDeployment?: () => void;
 }
 
-type VFolderDeployModalContentProps = Omit<VFolderDeployModalProps, 'open'>;
-
-const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
+const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
+  open,
   onClose,
   vfolderId,
   onDeployed,
   onRequestCreateDeployment,
+  ...modalProps
 }) => {
   'use memo';
 
@@ -71,7 +58,6 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
   const { message } = App.useApp();
   const navigate = useWebUINavigate();
   const { id: projectId, name: projectName } = useCurrentProjectValue();
-  const { supportsQuickDeploy } = useDeploymentLauncher();
 
   // Fetch resource groups accessible to the current project. Shares the React
   // Query cache with BAIProjectResourceGroupSelect below, so no duplicate
@@ -101,7 +87,7 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
             edges {
               node {
                 id
-                ...DeploymentPresetDetailContentFragment
+                ...DeploymentPresetDetailModalFragment
               }
             }
           }
@@ -143,7 +129,7 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
     string | undefined
   >(undefined);
   const [presetDetailFrgmt, setPresetDetailFrgmt] =
-    useState<DeploymentPresetDetailContentFragment$key | null>(null);
+    useState<DeploymentPresetDetailModalFragment$key | null>(null);
   const effectivePresetId =
     userSelectedPresetId ??
     (availablePresets[0]?.id ? toLocalId(availablePresets[0].id) : undefined);
@@ -213,7 +199,6 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
     }
   }, [isAutoDeployScenario]);
 
-  // All hooks are declared above. Early returns come after all hook calls.
   // Empty-state: when no preset is available, the user can't proceed via
   // the preset path. Show an inline Alert and a link to the deployment
   // shell creation modal (`DeploymentSettingModal`) — same UX as the
@@ -223,11 +208,12 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
     return (
       <BAIModal
         title={t('modelService.CreateNewDeploymentWithPreset')}
-        open
-        onCancel={onClose}
         destroyOnHidden
         footer={null}
         width={480}
+        {...modalProps}
+        open={open}
+        onCancel={onClose}
       >
         <Alert
           type="info"
@@ -268,11 +254,12 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
   return (
     <BAIModal
       title={t('modelService.CreateNewDeploymentWithPreset')}
-      open
-      onCancel={onClose}
       destroyOnHidden
       footer={null}
       width={480}
+      {...modalProps}
+      open={open}
+      onCancel={onClose}
     >
       <Form form={form} layout="vertical">
         <Form.Item
@@ -285,10 +272,6 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
               value={effectivePresetId}
               onChange={(value) =>
                 setUserSelectedPresetId(value as string | undefined)
-              }
-              disabled={hasNoPresets}
-              placeholder={
-                hasNoPresets ? t('modelStore.NoCompatiblePresets') : undefined
               }
               style={{ flex: 1 }}
             />
@@ -321,86 +304,29 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
           />
         </Form.Item>
       </Form>
-      <BAIModal
-        open={!!presetDetailFrgmt}
-        centered
-        title={t('modelService.DeploymentPresetDetail')}
-        onCancel={() => setPresetDetailFrgmt(null)}
-        destroyOnHidden
-        footer={null}
-      >
-        <ErrorBoundaryWithNullFallback>
-          <Suspense fallback={<Skeleton active paragraph={{ rows: 6 }} />}>
-            {presetDetailFrgmt && (
-              <DeploymentPresetDetailContent presetFrgmt={presetDetailFrgmt} />
-            )}
-          </Suspense>
-        </ErrorBoundaryWithNullFallback>
-      </BAIModal>
+      {presetDetailFrgmt && (
+        <DeploymentPresetDetailModal
+          open
+          presetFrgmt={presetDetailFrgmt}
+          onCancel={() => setPresetDetailFrgmt(null)}
+        />
+      )}
       <BAIFlex justify="end" gap="sm">
         <BAIButton onClick={onClose}>{t('button.Cancel')}</BAIButton>
-        {supportsQuickDeploy && vfolderId ? (
-          <BAIButton
-            type="primary"
-            action={handleDeploy}
-            disabled={
-              !vfolderId ||
-              !projectId ||
-              !effectivePresetId ||
-              !selectedResourceGroup ||
-              hasNoPresets
-            }
-          >
-            {t('modelStore.Deploy')}
-          </BAIButton>
-        ) : (
-          <BAIButton
-            type="primary"
-            action={handleDeploy}
-            disabled={
-              !vfolderId ||
-              !projectId ||
-              !effectivePresetId ||
-              !selectedResourceGroup ||
-              hasNoPresets
-            }
-          >
-            {t('modelStore.Deploy')}
-          </BAIButton>
-        )}
+        <BAIButton
+          type="primary"
+          action={handleDeploy}
+          disabled={
+            !vfolderId ||
+            !projectId ||
+            !effectivePresetId ||
+            !selectedResourceGroup
+          }
+        >
+          {t('modelStore.Deploy')}
+        </BAIButton>
       </BAIFlex>
     </BAIModal>
-  );
-};
-
-const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
-  open,
-  onClose,
-  vfolderId,
-  onDeployed,
-  onRequestCreateDeployment,
-}) => {
-  'use memo';
-
-  // Do not mount the content (or any modal chrome) until the caller has
-  // opened it. The content component suspends on its data query, then
-  // decides whether to render the selection modal or auto-deploy silently —
-  // for the auto-deploy path no modal is ever rendered, so the user goes
-  // directly from clicking Start Service to the new deployment detail page
-  // (`/deployments/${deploymentId}`) without a flash.
-  if (!open) {
-    return null;
-  }
-
-  return (
-    <Suspense fallback={null}>
-      <VFolderDeployModalContent
-        onClose={onClose}
-        vfolderId={vfolderId}
-        onDeployed={onDeployed}
-        onRequestCreateDeployment={onRequestCreateDeployment}
-      />
-    </Suspense>
   );
 };
 

@@ -27,6 +27,7 @@ import {
   BAIEndpointsIcon,
   BAIRestoreIcon,
   BAIShareAltIcon,
+  BAIUnmountAfterClose,
   BAIUserUnionIcon,
   BAITable,
   BAITableProps,
@@ -679,13 +680,15 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
           setCurrentSharedVFolder(null);
         }}
       />
-      <VFolderDeployModal
-        open={!!deployFallbackVfolderId}
-        vfolderId={deployFallbackVfolderId ?? undefined}
-        onClose={() => setDeployFallbackVfolderId(null)}
-        onDeployed={() => setDeployFallbackVfolderId(null)}
-        onRequestCreateDeployment={toggleCreateDeployment}
-      />
+      <BAIUnmountAfterClose>
+        <VFolderDeployModal
+          open={!!deployFallbackVfolderId}
+          vfolderId={deployFallbackVfolderId ?? undefined}
+          onClose={() => setDeployFallbackVfolderId(null)}
+          onDeployed={() => setDeployFallbackVfolderId(null)}
+          onRequestCreateDeployment={toggleCreateDeployment}
+        />
+      </BAIUnmountAfterClose>
       <DeploymentSettingModal
         open={isCreateDeploymentOpen}
         onRequestClose={toggleCreateDeployment}
