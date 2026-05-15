@@ -297,25 +297,66 @@ Click the `Start Service` button to open the service launcher and create a new m
 
 ## Creating a Model Service
 
-### Service Launcher
+Starting from the recent main branch, creating a model service is a two-step flow:
 
-Click the `Start Service` button on the Serving page to open the service launcher.
+1. **Create the deployment** — a lightweight container that defines the deployment's identity (name, visibility, deployment metadata, and resource group).
+2. **Add a revision** — a configuration snapshot that defines what actually runs (start command, environment variables, runtime variant, image, resources, model storage).
 
-#### Service Name and Basic Settings
+Each deployment can hold many revisions. Only one revision is *current* (serving traffic) at a time, and you can switch between revisions from the Revisions tab on the Endpoint Detail Page.
 
-First, provide a service name. The following fields are available:
+### Create Deployment Modal
 
-- **Service Name**: A unique name to identify the endpoint.
-- **Open To Public**: This option allows access to the model service without any separate token. By default, it is disabled.
-- **Model Storage Folder to Mount**: Select the storage folder containing the model files.
-- **Inference Runtime Variant**: Selects the runtime variant for the model service. The available variants are dynamically loaded from the backend and may include `vLLM`, `SGLang`, `NVIDIA NIM`, `Modular MAX`, `Custom`, and others depending on your installation.
-- **Environment / Version**: Configure the execution environment for the model service. Selecting a runtime variant automatically filters the environment images.
+Click the `New Deployment` button on the Serving page to open the **Create Deployment** modal. The modal collects only deployment-level metadata; no revision is created at this point.
 
-![](../images/service_launcher1.png)
+![](../images/model_serving_create_modal.png)
+<!-- TODO: Capture screenshot — FR-2822 deployment-only create modal -->
 
-For runtime variants such as `vLLM`, `SGLang`, `NVIDIA NIM`, or `Modular MAX`, there is no need to configure a `model-definition` file in your model folder. Instead, the system handles the model configuration automatically based on the selected variant.
+The modal contains the following fields:
 
-![](../images/service_launcher_runtime_variant.png)
+- **Deployment Name**: A unique name used to identify the deployment across the dashboard, API, and the endpoint URL.
+- **Open To Public**: When enabled, the endpoint is reachable without an access token. When disabled, every request must carry a token. See [Access Tokens](#generating-tokens).
+- **Resource Group**: The resource group where the deployment will run. If only one resource group is available to your project, the field is auto-selected and you can proceed without choosing one manually.
+
+Click `Create Deployment` to create the deployment. You are then taken to the Endpoint Detail Page, where the **No Current Revision** warning is shown until you add the first revision.
+
+### Add Revision
+
+A revision captures every setting needed to run the inference server — image, start command, resources, model mounts, and environment variables. From the Endpoint Detail Page, click `Add Revision` to open the modal.
+
+![](../images/model_serving_add_revision_modal.png)
+<!-- TODO: Capture screenshot — redesigned Add Revision modal -->
+
+The modal contains:
+
+- **Runtime Variant**: The serving runtime that runs the model (for example, `vLLM`, `SGLang`, `NVIDIA NIM`, `Modular MAX`, or `Custom`). Choose `Custom` to define your own start command. Available variants are loaded dynamically from the backend.
+- **Environment / Version**: The container image used for the inference server. Selecting a runtime variant filters this list down to compatible images.
+- **Model Storage Folder to Mount**: The storage folder that contains the model files.
+- **Start Command** (Custom variant): The command executed to launch the inference server. For non-Custom variants the runtime's default start command is applied automatically.
+- **Environment Variables**: Key/value pairs passed to the inference server container.
+- **Resource Preset**: A pre-configured bundle of CPU, memory, and accelerator allocations. Available presets are filtered by the deployment's resource group.
+- **Auto-activate after adding**: When enabled, the new revision is applied immediately after it is created and replaces the current revision. When disabled, the revision is added in an inactive state and you can apply it later from the Revisions tab.
+
+:::note
+The revision **name** field has been removed. Each revision is identified by its auto-assigned revision number; see the [Revisions Tab](#revisions-tab) below.
+:::
+
+### Preset Mode for Revision Creation
+
+When deployment presets are available, the Add Revision modal can run in **Preset mode**. Preset mode lets you start from a curated deployment preset instead of filling every field manually.
+
+In Preset mode:
+
+- A preset selector lists every deployment preset compatible with the deployment's runtime variant and resource group.
+- Selecting a preset pre-fills the runtime variant, image, start command, environment variables, resource preset, and model storage selection from the preset's defaults.
+- You can still adjust any field after the preset is applied — your edits are not written back to the preset.
+- A **Deployment Preset Detail** link opens a side panel showing the preset's full configuration so you can verify what will be applied.
+
+If your project has no compatible presets, the modal falls back to manual mode and you fill the fields directly. See [Deployment Presets](deployment_presets.md) for how to create and manage presets.
+<!-- TODO: Cross-reference Work Item 11 — Deployment Presets page will be added in PR C -->
+
+### Service Launcher (Legacy Fields)
+
+The following subsections describe revision-level fields in detail. They apply both when adding a revision manually and when reviewing a preset before applying it.
 
 #### Model Definition Mode (Custom Runtime Only)
 
@@ -481,36 +522,113 @@ follows:
 
 ## Endpoint Detail Page
 
-Click on an endpoint name in the serving list to view detailed information about the model service.
+Click on an endpoint name in the serving list to view detailed information about the deployment.
+
+### Deployment Alerts
+
+The Endpoint Detail Page shows contextual alert banners at the top, reflecting the current state of the deployment:
+
+- **Deployment is ready**: Shown when the deployment is `HEALTHY`. Includes a **Start Chat** button as a shortcut to the LLM Chat Test interface so you can test the model without leaving the page.
+
+![](../images/endpoint_detail_ready_alert.png)
+<!-- TODO: Capture screenshot — Deployment Ready alert with Start Chat shortcut -->
+
+- **Private deployment — use an access token to access the endpoint.**: Shown when **Open To Public** is disabled. Includes a shortcut to **Manage Access Tokens** so you can issue or copy a token. See [Access Tokens](#generating-tokens).
+
+![](../images/endpoint_detail_private_alert.png)
+<!-- TODO: Capture screenshot — Private deployment alert with access-token shortcut -->
+
+- **No revision is deployed — add a revision to activate this service.**: Shown when the deployment has no current revision. Click `Add Revision` to create the first revision and activate the service.
+
+- **Preparing your service**: Shown while the deployment is being created or transitioning between states. Indicates the service is not yet ready to handle requests.
+
+![](../images/endpoint_preparing_alert.png)
+
+- **Not In Project**: Shown when the endpoint belongs to a different project than the currently selected one. The Edit button is disabled while this alert is active. Click the **Switch Project** button in the alert to switch to the correct project and manage the endpoint.
 
 ### Service Information
 
 The Service Info card displays the following details:
 
-- **Endpoint Name** and **Status**
-- **Endpoint ID** and **Session Owner**
+- **Deployment Name** and **Status**
+- **Deployment ID** and **Session Owner**
+- **Visibility**: Shown as a Public / Private tag. **Public** means the endpoint is reachable without an access token; **Private** means callers must supply a valid access token.
 - **Number of Replicas**
-- **Service Endpoint**: The URL for accessing the model service. For LLM services, an `LLM Chat Test` button is available.
-- **Open To Public**: Whether the service is publicly accessible.
-- **Resources**: The resource group and allocated CPU/Memory/GPU.
+- **Service Endpoint**: The URL for accessing the deployment. For LLM deployments, a `Test in Chat` button is available.
+- **Resource Group**: The resource group the deployment runs in. Resource group is now part of the deployment metadata (set once when the deployment is created) rather than per-revision.
+- **Resources**: Allocated CPU, memory, accelerator, and **Shared Memory (SHM)**. The shared memory value is taken from the current revision and represents the size of `/dev/shm` available to the inference server — important for multi-GPU and multi-process inference workloads.
 - **Model Storage**: The mounted model storage folder and mount destination.
 - **Additional Mounts**: Any extra storage folders mounted.
 - **Environment Variables**: Displayed as a code block.
 - **Image**: The container image used for the service.
 
-Click the `Edit` button on the Service Info card to navigate to the update launcher and modify the service settings.
+![](../images/endpoint_detail_visibility.png)
+<!-- TODO: Capture screenshot — Visibility row with Public/Private tag and Deployment ID -->
 
-The Endpoint Detail Page displays contextual alert banners at the top, depending on the current state of the service:
+![](../images/endpoint_detail_shm.png)
+<!-- TODO: Capture screenshot — SHM displayed in endpoint detail config -->
 
-- **Preparing your service**: Shown while the service is being deployed or transitioning between states. Indicates the service is not yet ready to handle requests.
+#### More Menu (Edit and Delete)
 
-![](../images/endpoint_preparing_alert.png)
+The Service Info card's header exposes an **Edit** button alongside a **More** menu. The More menu currently contains the **Delete Deployment** action.
 
-- **Service is ready**: Shown when the service is `HEALTHY`. Includes a **Start Chat** button as a shortcut to the LLM Chat Test interface.
+![](../images/endpoint_detail_more_menu.png)
+<!-- TODO: Capture screenshot — More menu containing Delete action -->
 
-![](../images/endpoint_service_ready_alert.png)
+The delete and trash icons across the Model Serving pages follow a strict convention:
 
-- **Not In Project**: Shown when the endpoint belongs to a different project than the currently selected one. The Edit button is disabled while this alert is active. Click the **Switch Project** button in the alert to switch to the correct project and manage the endpoint.
+- **Filled trash icon (`DeleteFilled`)** — *permanent delete*. Confirming opens a typed-confirmation modal where you must type the deployment's name before the OK button is enabled. There is no undo path.
+- **Outlined trash icon (`DeleteOutlined`)** — *move to trash* (soft delete). Confirming sends the item to a trash bin from which it can be restored.
+
+Always read the icon style before confirming a delete action.
+
+### Replicas
+
+The Replicas tab shows the routing nodes that make up the deployment. Replica entries are filtered by a **Running / Terminated** radio control at the top of the tab, which replaced the previous enum-based status filter.
+
+![](../images/replica_status_filter.png)
+<!-- TODO: Capture screenshot — Running/Terminated radio filter -->
+
+- **Running**: Shows replicas that are currently provisioning, running, or otherwise active.
+- **Terminated**: Shows replicas that have completed their lifecycle.
+
+Each replica row carries three independent status fields:
+
+- **Lifecycle Status**: Where the replica is in its lifecycle (for example, *Provisioning*, *Running*, *Terminating*).
+- **Health Status**: The current health of the replica process (for example, *Healthy*, *Unhealthy*).
+- **Traffic Status**: Whether the replica is currently serving requests.
+
+Click on a replica node to open the session detail drawer, where you can view individual session details.
+
+If a replica has encountered an error, clicking the error indicator on the row opens a JSON viewer modal that displays the raw error data. This is useful for diagnosing issues with individual replicas.
+
+![](../images/route_error_json_viewer.png)
+
+<a id="revisions-tab"></a>
+
+### Revisions Tab
+
+The Revisions tab lists every revision that has been added to the deployment, ordered by revision number.
+
+![](../images/revision_history_tab.png)
+<!-- TODO: Capture screenshot — revision history with revision number column + filter/sort -->
+
+Columns include:
+
+- **Revision Number**: An incrementing integer assigned in creation order. Lower numbers are older revisions. Each row also shows the underlying Revision ID for reference.
+- **Status**: The current state of the revision (for example, *Active*, *Inactive*, *Applying*).
+- **Runtime Variant**, **Image**, and **Resource Preset**: Summary of the revision's configuration.
+- **Created At**
+
+You can filter and sort the list by every visible column, including revision number, status, runtime variant, and creation timestamp.
+
+#### Applying a Revision
+
+Every row carries an **Apply** action. Clicking `Apply` makes that revision the **current** revision; the deployment begins serving traffic with the new configuration and the previously active revision becomes inactive. While the new revision is rolling out, the deployment shows a *The next revision is being applied.* alert and the apply action remains disabled to prevent overlapping applies.
+
+:::note
+The action is named **Apply** in every revision-related UI surface (row action, modal confirmation, alert text). Earlier terms such as *Activate* or *Promote* have been unified to **Apply**.
+:::
 
 <a id="revision-info"></a>
 
@@ -658,11 +776,11 @@ Click the `Edit` button on the endpoint detail page to modify a model service. T
 The model service periodically runs a scheduler to adjust the routing
 count to match the desired session count. However, this puts a burden on
 the Backend.AI scheduler. Therefore, it is recommended to terminate the
-model service if it is no longer needed. To terminate the model service,
-click on the `Delete` button in the Controls column. A modal will appear asking
-for confirmation to terminate the model service. Clicking `Delete`
-will terminate the model service. The terminated model service will
-appear in the **Destroyed** filter view.
+deployment if it is no longer needed. To terminate the deployment, open
+the **More** menu on the Service Info card and select **Delete Deployment**.
+A typed-confirmation modal appears — type the deployment name to enable the
+**Permanently Delete** button. The terminated deployment then appears in the
+**Destroyed** filter view.
 
 ![](../images/terminate_model_service_dialog.png)
 
@@ -722,6 +840,8 @@ To use the model, you will need the following information:
   [Generating Tokens](#generating-tokens) section for instructions on how to generate tokens.
 
 ![](../images/LLM_chat_custom_model.png)
+
+<a id="model-store"></a>
 
 ## Model Store
 
