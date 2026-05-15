@@ -10,6 +10,7 @@ import { DeploymentReplicasTab_deployment$key } from '../__generated__/Deploymen
 import type { DeploymentRevisionDetail_revision$key } from '../__generated__/DeploymentRevisionDetail_revision.graphql';
 import { convertToOrderBy } from '../helper';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
+import BAIRadioGroup from './BAIRadioGroup';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
 import QuestionIconWithTooltip from './QuestionIconWithTooltip';
 import ReplicaStatusTag, { ReplicaStatus } from './ReplicaStatusTag';
@@ -39,6 +40,20 @@ import {
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
+
+type ReplicaStatusCategory = 'running' | 'terminated';
+
+const TERMINATED_STATUSES = ['TERMINATED'] as const;
+
+const buildStatusFilter = (category: ReplicaStatusCategory) =>
+  category === 'terminated'
+    ? { status: { in: [...TERMINATED_STATUSES] } }
+    : { status: { notIn: [...TERMINATED_STATUSES] } };
+
+const mergeWithStatusFilter = (
+  userFilter: Record<string, unknown> | null,
+  category: ReplicaStatusCategory,
+) => ({ ...userFilter, ...buildStatusFilter(category) });
 
 const availableReplicaSorterKeys = ['createdAt', 'id'] as const;
 const availableReplicaSorterValues = [
@@ -80,6 +95,10 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
       pageSize: parseAsInteger.withDefault(10),
       order: parseAsStringLiteral(availableReplicaSorterValues),
       rFilter: parseAsString,
+      rStatusCategory: parseAsStringLiteral<ReplicaStatusCategory>([
+        'running',
+        'terminated',
+      ]).withDefault('running'),
     },
     {
       history: 'replace',
@@ -88,6 +107,7 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
         pageSize: 'rPageSize',
         order: 'rOrder',
         rFilter: 'rFilter',
+        rStatusCategory: 'rStatusCategory',
       },
     },
   );
@@ -121,9 +141,10 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
   };
 
   const [queryVars, setQueryVars] = useState(() => ({
-    filter: queryParams.rFilter
-      ? parseReplicaFilter(queryParams.rFilter)
-      : null,
+    filter: mergeWithStatusFilter(
+      queryParams.rFilter ? parseReplicaFilter(queryParams.rFilter) : null,
+      queryParams.rStatusCategory,
+    ),
     orderBy: convertToOrderBy<ReplicaOrderBy>(
       queryParams.order || '-createdAt',
     ),
@@ -207,30 +228,12 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
     });
   };
 
-  const replicaStatusOptions = [
-    { label: t('replicaStatus.Provisioning'), value: 'PROVISIONING' },
-    // TODO(needs-backend): include `WARMING_UP` in the filter options once
-    // the `ReplicaStatus` enum exposes it. Listed here for UI completeness
-    // but the backend filter currently rejects it.
-    // { label: t('replicaStatus.WarmingUp'), value: 'WARMING_UP' },
-    { label: t('replicaStatus.Running'), value: 'RUNNING' },
-    { label: t('replicaStatus.Terminating'), value: 'TERMINATING' },
-    { label: t('replicaStatus.Terminated'), value: 'TERMINATED' },
-    { label: t('replicaStatus.FailedToStart'), value: 'FAILED_TO_START' },
-  ];
-
   const trafficStatusOptions = [
     { label: t('replicaStatus.Active'), value: 'ACTIVE' },
     { label: t('replicaStatus.Inactive'), value: 'INACTIVE' },
   ];
 
   const filterProperties = [
-    {
-      key: 'status',
-      propertyLabel: t('general.Status'),
-      type: 'enum' as const,
-      options: replicaStatusOptions,
-    },
     {
       key: 'trafficStatus',
       propertyLabel: t('deployment.TrafficStatus'),
@@ -398,16 +401,41 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
         gap="xs"
         style={{ marginBottom: 12 }}
       >
-        <BAIGraphQLPropertyFilter
-          filterProperties={filterProperties}
-          value={filterValue}
-          onChange={(next) => {
-            const str = stringifyReplicaFilter(next);
-            const parsed = parseReplicaFilter(str || null);
-            setQueryParams({ rFilter: str || null, current: 1 });
-            doRefetch({ filter: parsed, offset: 0 });
-          }}
-        />
+        <BAIFlex gap="sm" align="start" wrap="wrap" style={{ flexShrink: 1 }}>
+          <BAIRadioGroup
+            value={queryParams.rStatusCategory}
+            onChange={(e) => {
+              const category = e.target.value as ReplicaStatusCategory;
+              const userFilter = queryParams.rFilter
+                ? parseReplicaFilter(queryParams.rFilter)
+                : null;
+              setQueryParams({ rStatusCategory: category, current: 1 });
+              doRefetch({
+                filter: mergeWithStatusFilter(userFilter, category),
+                offset: 0,
+              });
+            }}
+            options={[
+              { label: t('deployment.Running'), value: 'running' },
+              { label: t('deployment.status.Terminated'), value: 'terminated' },
+            ]}
+          />
+          <BAIGraphQLPropertyFilter
+            filterProperties={filterProperties}
+            value={filterValue}
+            onChange={(next) => {
+              const str = stringifyReplicaFilter(next);
+              setQueryParams({ rFilter: str || null, current: 1 });
+              doRefetch({
+                filter: mergeWithStatusFilter(
+                  next ?? null,
+                  queryParams.rStatusCategory,
+                ),
+                offset: 0,
+              });
+            }}
+          />
+        </BAIFlex>
         <BAIFetchKeyButton
           loading={isPending}
           value=""
