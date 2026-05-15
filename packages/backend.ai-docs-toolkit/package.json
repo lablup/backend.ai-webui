@@ -23,7 +23,7 @@
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "bin": {
-    "docs-toolkit": "./dist/cli.js"
+    "docs-toolkit": "./bin/docs-toolkit.js"
   },
   "exports": {
     ".": {
@@ -32,6 +32,7 @@
     }
   },
   "files": [
+    "bin",
     "dist",
     "templates"
   ],
