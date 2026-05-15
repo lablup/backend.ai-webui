@@ -26,22 +26,49 @@ export type ESMClientErrorResponse = {
   response?: ErrorResponse;
 };
 
+type ErrorLike = Partial<ErrorResponse & Error & ESMClientErrorResponse>;
+
+export type GetErrorMessageOptions = {
+  defaultMessage?: string;
+  /**
+   * 'normal' (default) returns just the human-readable message, appending
+   * `(error_code)` when present — suitable for end-user surfaces.
+   *
+   * 'detail' additionally appends the HTTP `statusCode` and `error_code`
+   * in the existing parenthesized suffix style, e.g.
+   * `message text (HTTP 500, BAI_E0001)`. Use this on operator-facing
+   * failure surfaces (e.g. SFTP session creation) where classifying the
+   * failure (4xx policy/quota vs 5xx agent/storage) matters more than a
+   * clean copy.
+   */
+  verbosity?: 'normal' | 'detail';
+};
+
 const useErrorMessageResolver = () => {
   const { t } = useTranslation();
 
-  const isErrorLike = (
-    error: unknown,
-  ): error is Partial<ErrorResponse & Error> => {
+  const isErrorLike = (error: unknown): error is ErrorLike => {
     return typeof error === 'object' && error !== null;
   };
 
   /**
    * Resolves the error message for a given error object.
    * @param error - The error object to resolve.
-   * @param defaultMessage - (optional) The default message to return if no specific message is found.
+   * @param defaultMessageOrOptions - Either a default fallback string
+   *   (backwards compatible) or an options object with `defaultMessage`
+   *   and `verbosity`.
    * @returns - The resolved error message (string).
    */
-  const getErrorMessage = (error: unknown, defaultMessage?: string): string => {
+  const getErrorMessage = (
+    error: unknown,
+    defaultMessageOrOptions?: string | GetErrorMessageOptions,
+  ): string => {
+    const options: GetErrorMessageOptions =
+      typeof defaultMessageOrOptions === 'string'
+        ? { defaultMessage: defaultMessageOrOptions }
+        : (defaultMessageOrOptions ?? {});
+    const { defaultMessage, verbosity = 'normal' } = options;
+
     let errorMsg = defaultMessage || t('error.UnknownError');
     if (!error || !isErrorLike(error)) return errorMsg;
 
@@ -54,6 +81,19 @@ const useErrorMessageResolver = () => {
     } else if (error.title) {
       errorMsg = error.title;
     }
+
+    if (verbosity === 'detail') {
+      // Suffix style — aligns with the existing `(error_code)` idiom.
+      // e.g. `<message> (HTTP 500, BAI_E0001)`.
+      const suffixParts = _.compact([
+        _.isNumber(error.statusCode) ? `HTTP ${error.statusCode}` : null,
+        error.error_code || null,
+      ]);
+      return suffixParts.length > 0
+        ? `${errorMsg} (${suffixParts.join(', ')})`
+        : errorMsg;
+    }
+
     if (error.error_code) {
       errorMsg = _.join([errorMsg, `(${error.error_code})`], ' ');
     }
