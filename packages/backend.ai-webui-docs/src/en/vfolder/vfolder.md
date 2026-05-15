@@ -14,6 +14,22 @@ such as the folder name and ID, the NFS host name where the folder is located
 There are two types of storage folders: `User` and `Project`. You can
 distinguish between them in the 'Type' column.
 
+### Invitation Badge and Entry Point
+
+When another user invites you to share one of their storage folders, a small
+invitation badge appears on the Data page entry in the sidebar and next to the
+folder status summary. The badge displays the number of pending invitations
+that still need a response.
+
+![](../images/vfolder_invitation_badge.png)
+<!-- TODO: Capture screenshot of the invitation badge on the Data page -->
+
+Click the badge to open the invitation list, where you can accept or decline
+each pending invitation. Accepted folders immediately appear in your folder
+list with the `Invited` type. The `/data` page itself is also a valid entry
+point for reviewing invitations — open the Data page and the same invitation
+list is reachable from the folder status summary.
+
 A User folder is created directly by an individual user for personal use.
 A Project folder is created by a domain administrator for each project.
 Regular users cannot create project folders themselves; they can only use
@@ -97,6 +113,23 @@ You can create a new directory on the current path with the 'Create' button
 of these file operations can also be performed using the above-described method
 of mounting folders into a compute session.
 
+:::warning
+The 'Upload' button (and drag-and-drop upload) is **disabled** when your account
+does not have the `upload-file` permission on the storage host that hosts this
+folder. The button itself remains visible but is greyed out, and tooltips
+explain that uploads are not permitted.
+
+`upload-file` is a host-level capability granted through your **keypair
+resource policy**. If you need to upload files and the button is disabled, ask
+your administrator to add `upload-file` to the allowed sFTP / vfolder host
+permissions on your resource policy. You can identify which host the folder
+lives on from the **Location** column in the folder list or from the folder
+detail drawer; the required permission must be enabled for *that* host.
+:::
+
+![](../images/vfolder_upload_disabled.png)
+<!-- TODO: Capture screenshot of the disabled Upload button with permission tooltip -->
+
 The maximum length of file or directory inside a folder may depends on the host
 file system. But, it usually cannot exceed 255 characters.
 
@@ -152,6 +185,25 @@ an input field saying `Type folder name to delete`. Make sure you type the exact
 into the field, and click the red 'DELETE FOREVER' button to permanently delete the folder.
 
 ![](../images/vfolder_delete_dialog.png)
+
+:::warning[Cascading model card deletion]
+If the folder you are deleting is associated with a **model card**, the
+confirmation modal additionally surfaces the option *"Also delete the
+associated model folder"* with the warning *"Deleting the associated model
+folder will also delete every model card that uses it."* Proceeding with the
+deletion permanently removes every model card backed by this storage folder —
+not just the folder's files. Review the listed model cards before confirming;
+this action cannot be undone.
+:::
+
+![](../images/vfolder_cascading_delete_warning.png)
+<!-- TODO: Capture screenshot of the cascading delete warning dialog -->
+
+Administrators who delete model cards from the **Admin → Manage Model Cards**
+page can trigger the inverse flow — bulk-deleting model cards offers an option
+to also move the associated storage folders to the trash. See
+[Manage Model Cards](../admin_menu/admin_menu.md#manage-model-cards) for the
+admin-side bulk flow.
 
 ## Using FileBrowser
 
