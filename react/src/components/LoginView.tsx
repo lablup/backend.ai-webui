@@ -58,6 +58,13 @@ const extractErrorType = (typeUrl?: string): string => {
   return parts[parts.length - 1] || '';
 };
 
+// `src/plugins/` is .gitignored and often absent in dev trees. A plain dynamic
+// `import('../../../src/plugins/${name}')` would trigger esbuild's optimizeDeps
+// glob scan and break the dev server when the directory is missing. Vite's
+// `import.meta.glob` is rewritten at build/dev-start time into a static map of
+// `() => import(...)` loaders — a missing or empty folder simply yields `{}`.
+const loginPlugins = import.meta.glob('../../../src/plugins/*.js');
+
 const LoginView: React.FC<{
   /**
    * When true, delays closing the login panel until MainLayout signals
@@ -189,14 +196,12 @@ const LoginView: React.FC<{
     const sanitizedPlugin = loginPlugin.replace(/[^a-zA-Z0-9_-]/g, '');
     if (!sanitizedPlugin || sanitizedPlugin !== loginPlugin) return;
 
-    // Build the plugin path at runtime, in a variable, so neither Vite nor
-    // esbuild's optimizeDeps scanner can statically analyze the specifier.
-    // A template-literal with a static prefix (e.g. `../../../src/plugins/…`)
-    // is treated by esbuild as a glob and fails to resolve in dev because
-    // `webui-ai/src/plugins/` only exists in production builds. `@vite-ignore`
-    // alone is not enough — esbuild's scanner does not honor that comment.
-    const pluginUrl = `../../../src/plugins/${sanitizedPlugin}`;
-    import(/* @vite-ignore */ pluginUrl).catch(() => {
+    const loader = loginPlugins[`../../../src/plugins/${sanitizedPlugin}.js`];
+    if (!loader) {
+      setLoginError({ message: t('error.LoginFailed') });
+      return;
+    }
+    loader().catch(() => {
       setLoginError({ message: t('error.LoginFailed') });
     });
   }, [isConfigLoaded, loginPlugin, t]);
