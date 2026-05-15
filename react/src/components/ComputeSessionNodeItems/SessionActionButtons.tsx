@@ -132,8 +132,15 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
     !!baiClient._config.accessKey &&
     session.access_key !== baiClient._config.accessKey;
 
+  // Only swap to the mismatch tooltip when switching access keys would
+  // actually unblock the user — i.e. they own the session. For non-owners
+  // the button is already disabled for a different reason and the mismatch
+  // copy ("Switch to that access key to manage this session") would be
+  // misleading.
   const resolveTooltip = (defaultTitle: string) =>
-    isAccessKeyMismatch ? t('session.AccessKeyMismatchTooltip') : defaultTitle;
+    isAccessKeyMismatch && isOwner
+      ? t('session.AccessKeyMismatchTooltip')
+      : defaultTitle;
 
   const hiddenButtons = React.useMemo(
     () => new Set(hiddenButtonKeys ?? []),
