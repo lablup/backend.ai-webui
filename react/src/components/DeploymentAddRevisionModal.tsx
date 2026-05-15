@@ -459,6 +459,13 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     return preset;
   };
 
+  // The `revision.deployment` selection (added in BA-6056) lets the mutation
+  // update the parent deployment record in the Relay store atomically — so
+  // row tags in the revision history table and the Configuration Section's
+  // "current / deploying" panels stay consistent without a manual refresh.
+  // `currentRevisionId` / `deployingRevisionId` aren't in any deployment
+  // fragment yet (DeploymentRevisionHistoryTab reads them inline), so they
+  // are selected explicitly here.
   const [commitAdd, isAddInFlight] =
     useMutation<DeploymentAddRevisionModalAddMutation>(graphql`
       mutation DeploymentAddRevisionModalAddMutation(
@@ -467,67 +474,18 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
         addModelRevision(input: $input) {
           revision {
             id
-            clusterConfig {
-              mode
-              size
-            }
-            resourceConfig {
-              resourceOpts {
-                entries {
-                  name
-                  value
-                }
-              }
-            }
-            resourceSlots {
-              slotName
-              quantity
-            }
-            modelRuntimeConfig {
-              runtimeVariantId
-              environ {
-                entries {
-                  name
-                  value
-                }
-              }
-            }
-            modelMountConfig {
-              vfolderId
-              mountDestination
-              definitionPath
-            }
-            extraMounts {
-              vfolderId
-              mountDestination
-            }
-            modelDefinition {
-              models {
-                name
-                modelPath
-                service {
-                  preStartActions {
-                    action
-                    args
-                  }
-                  startCommand
-                  shell
-                  port
-                  healthCheck {
-                    interval
-                    path
-                    maxRetries
-                    maxWaitTime
-                    expectedStatusCode
-                    initialDelay
-                  }
-                }
-              }
-            }
-            imageV2 {
+            ...DeploymentRevisionDetail_revision
+            deployment @since(version: "26.4.4") {
               id
-              identity {
-                canonicalName
+              currentRevisionId
+              deployingRevisionId
+              currentRevision @since(version: "26.4.3") {
+                id
+                ...DeploymentRevisionDetail_revision
+              }
+              deployingRevision @since(version: "26.4.3") {
+                id
+                ...DeploymentRevisionDetail_revision
               }
             }
           }
@@ -1201,7 +1159,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           direction="row"
           align="center"
           justify="between"
-          gap="sm"
+          gap="md"
           wrap="wrap"
           style={{ paddingRight: token.paddingLG }}
         >
@@ -1213,6 +1171,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
               { label: t('deployment.PresetMode'), value: 'preset' },
               { label: t('deployment.CustomMode'), value: 'custom' },
             ]}
+            style={{ fontWeight: 'normal' }}
           />
         </BAIFlex>
       }

@@ -9725,6 +9725,14 @@ type ModelRevision implements Node
 
   """Added in 26.4.2. Resource slot allocations for this revision."""
   resourceSlots(filter: AllocatedResourceSlotFilter = null, orderBy: [AllocatedResourceSlotOrderBy!] = null): [AllocatedResourceSlot!]
+
+  """Added in UNRELEASED. ID of the parent deployment this revision belongs to."""
+  deploymentId: ID!
+
+  """
+  Added in UNRELEASED. The parent deployment this revision belongs to, resolved via DataLoader.
+  """
+  deployment: ModelDeployment
 }
 
 """Added in 25.19.0. Connection for model revisions."""

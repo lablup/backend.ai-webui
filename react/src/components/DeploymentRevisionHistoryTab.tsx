@@ -260,8 +260,14 @@ const DeploymentRevisionHistoryTab: React.FC<
           deployment {
             id
             currentRevisionId
-            currentRevision {
+            deployingRevisionId
+            currentRevision @since(version: "26.4.3") {
               id
+              ...DeploymentRevisionDetail_revision
+            }
+            deployingRevision @since(version: "26.4.3") {
+              id
+              ...DeploymentRevisionDetail_revision
             }
           }
           previousRevisionId
