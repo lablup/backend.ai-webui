@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { ModelCardDrawerFragment$key } from '../__generated__/ModelCardDrawerFragment.graphql';
+import { ModelCardDrawerQuery } from '../__generated__/ModelCardDrawerQuery.graphql';
 import { useBackendAIImageMetaData } from '../hooks';
 import DeploymentSettingModal from './DeploymentSettingModal';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
@@ -24,18 +25,18 @@ import {
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import Markdown from 'markdown-to-jsx';
-import React, { Suspense, useState } from 'react';
+import React, { Suspense, useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useFragment } from 'react-relay';
+import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 
 interface ModelCardDrawerProps {
-  modelCardDrawerFrgmt: ModelCardDrawerFragment$key | null;
+  modelCardId: string | undefined;
   open: boolean;
   onClose: () => void;
 }
 
 const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
-  modelCardDrawerFrgmt,
+  modelCardId,
   open,
   onClose,
 }) => {
@@ -44,6 +45,41 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
   const { t } = useTranslation();
   const [imageMetaData] = useBackendAIImageMetaData();
   const { generateFolderPath } = useFolderExplorerOpener();
+  const [deployModalOpen, setDeployModalOpen] = useState(false);
+  const [
+    isCreateDeploymentOpen,
+    { toggle: toggleCreateDeployment, setLeft: closeCreateDeployment },
+  ] = useToggle(false);
+
+  // Defer `open` so the lazy query only fires once the drawer has actually
+  // committed to opening. `loading={deferredOpen !== open}` then lets the
+  // drawer show its built-in skeleton during the transition instead of an
+  // inner Suspense fallback (FR-2869 review).
+  const deferredOpen = useDeferredValue(open);
+
+  const drawerData = useLazyLoadQuery<ModelCardDrawerQuery>(
+    graphql`
+      query ModelCardDrawerQuery($id: UUID!) {
+        modelCardV2(id: $id) {
+          ...ModelCardDrawerFragment
+        }
+      }
+    `,
+    { id: modelCardId ?? '' },
+    {
+      // Skip the network round-trip until the drawer has actually committed
+      // to opening and a model-card UUID is known. The empty-string fallback
+      // for `id` is never sent in that case because `store-only` short-
+      // circuits the fetch.
+      fetchPolicy:
+        deferredOpen && open && modelCardId
+          ? 'store-and-network'
+          : 'store-only',
+    },
+  );
+
+  const modelCardDrawerFrgmt: ModelCardDrawerFragment$key | null =
+    drawerData.modelCardV2 ?? null;
 
   const modelCard = useFragment(
     graphql`
@@ -77,29 +113,12 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
           ...VFolderNodeIdenticonV2Fragment
         }
         availablePresets(orderBy: [{ field: RANK, direction: "ASC" }]) {
-          count
           edges {
             node {
               id
               name
               description
-              rank
               runtimeVariantId
-              runtimeVariant {
-                name
-              }
-              execution {
-                imageId
-                startupCommand
-              }
-              cluster {
-                clusterMode
-                clusterSize
-              }
-              deploymentDefaults {
-                openToPublic
-                replicaCount
-              }
               ...DeploymentPresetDetailContentFragment
             }
           }
@@ -108,13 +127,6 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
     `,
     modelCardDrawerFrgmt,
   );
-
-  const [deployModalOpen, setDeployModalOpen] = useState(false);
-  // FR-2862 — when the user hits the empty-preset state in
-  // ModelCardDeployModal, escalate to the deployment shell creation modal
-  // (`DeploymentSettingModal`), same as the `/deployments` page entry.
-  const [isCreateDeploymentOpen, { toggle: toggleCreateDeployment }] =
-    useToggle(false);
 
   const presets =
     modelCard?.availablePresets?.edges
@@ -125,12 +137,22 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
     <>
       <Drawer
         open={open}
-        onClose={onClose}
+        loading={deferredOpen !== open}
+        onClose={() => {
+          setDeployModalOpen(false);
+          closeCreateDeployment();
+          onClose();
+        }}
         destroyOnHidden
         placement="right"
         size={800}
         title={
-          <BAIFlex direction="row" align="center" gap="xs">
+          <BAIFlex
+            direction="row"
+            align="center"
+            gap="xs"
+            style={{ flex: 1, minWidth: 0 }}
+          >
             <ModelBrandIcon modelName={modelCard?.name ?? ''} />
             <Typography.Text strong ellipsis>
               {modelCard?.metadata?.title || modelCard?.name}

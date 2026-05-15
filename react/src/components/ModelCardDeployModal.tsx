@@ -47,7 +47,6 @@ interface AvailablePreset {
   readonly id: string;
   readonly name: string;
   readonly description: string | null;
-  readonly rank: number;
   readonly runtimeVariantId: string;
   readonly ' $fragmentSpreads': FragmentRefs<'DeploymentPresetDetailContentFragment'>;
 }
@@ -392,7 +391,8 @@ const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
   // Deploy. The content component suspends on its data query, then decides
   // whether to render the selection modal or auto-deploy silently — for the
   // auto-deploy path no modal is ever rendered, so the user goes directly
-  // from the Deploy button to the serving detail page without a flash.
+  // from the Deploy button to the new deployment detail page
+  // (`/deployments/${deploymentId}`) without a flash.
   if (!open) {
     return null;
   }

@@ -2,7 +2,6 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { ModelCardDrawerFragment$key } from '../__generated__/ModelCardDrawerFragment.graphql';
 import {
   ModelCardV2Filter,
   ModelStoreListPageV2Query,
@@ -34,6 +33,7 @@ import {
   BAIGraphQLPropertyFilter,
   BAISelect,
   type GraphQLFilter,
+  safeDecodeUuid,
   useUpdatableState,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
@@ -43,7 +43,7 @@ import {
   parseAsStringLiteral,
   useQueryStates,
 } from 'nuqs';
-import React, { useDeferredValue, useEffectEvent, useState } from 'react';
+import React, { useDeferredValue, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 
@@ -204,9 +204,7 @@ const ModelCardV2Grid: React.FC<{
   pageSize: number;
   offset: number;
   onTotalChange: (total: number) => void;
-  onCardClick?: (id: string, frgmt: ModelCardDrawerFragment$key) => void;
-  selectedModelCardId?: string | null;
-  onSelectedModelCardFound?: (frgmt: ModelCardDrawerFragment$key) => void;
+  onCardClick?: (id: string) => void;
 }> = ({
   projectId,
   filter,
@@ -218,8 +216,6 @@ const ModelCardV2Grid: React.FC<{
   offset,
   onTotalChange,
   onCardClick,
-  selectedModelCardId,
-  onSelectedModelCardFound,
 }) => {
   'use memo';
 
@@ -246,7 +242,6 @@ const ModelCardV2Grid: React.FC<{
             node {
               id
               ...ModelStoreListPageV2_ModelCardV2Fragment
-              ...ModelCardDrawerFragment
             }
           }
         }
@@ -276,23 +271,6 @@ const ModelCardV2Grid: React.FC<{
     onTotalChanged();
   }, [total]);
 
-  // When items load and a selectedModelCardId is set (e.g. after refresh),
-  // find the matching fragment and report it to the parent.
-  const onResolveSelectedModelCard = useEffectEvent(() => {
-    if (selectedModelCardId) {
-      const match = items.find(
-        (edge) => edge?.node?.id === selectedModelCardId,
-      );
-      if (match?.node) {
-        onSelectedModelCardFound?.(match.node);
-      }
-    }
-  });
-
-  React.useEffect(() => {
-    onResolveSelectedModelCard();
-  }, [selectedModelCardId, result]);
-
   if (items.length === 0) {
     return (
       <Empty
@@ -312,7 +290,7 @@ const ModelCardV2Grid: React.FC<{
             <ModelCardV2Card
               modelCardV2Frgmt={item}
               searchKeyword={searchKeyword}
-              onClick={() => onCardClick?.(item.id, item)}
+              onClick={() => onCardClick?.(item.id)}
             />
           </Col>
         );
@@ -343,9 +321,6 @@ const ModelStoreListPageV2: React.FC = () => {
     queryParams.sort,
   );
 
-  const [selectedModelCard, setSelectedModelCard] =
-    useState<ModelCardDrawerFragment$key | null>(null);
-
   const filter: GraphQLFilter | undefined = queryParams.filter ?? undefined;
   const deferredFilter = useDeferredValue(filter);
   const deferredSortField = useDeferredValue(sortField);
@@ -363,6 +338,18 @@ const ModelStoreListPageV2: React.FC = () => {
 
   const deferredLimit = useDeferredValue(baiPaginationOption.limit);
   const deferredOffset = useDeferredValue(baiPaginationOption.offset);
+
+  // Drawer data is intentionally NOT fetched as part of the main list query
+  // — the per-card drawer fragment (readme, all presets, vfolder metadata)
+  // is heavy, and including it via `...ModelCardDrawerFragment` on every
+  // edge multiplies the list-page payload. `ModelCardDrawer` owns its own
+  // query and gates the fetch on `useDeferredValue(open)` so the network
+  // only kicks in once the drawer actually commits to opening.
+  const selectedModelCardId = queryParams.modelCard;
+  const drawerOpen = !!selectedModelCardId;
+  const localSelectedModelCardId = selectedModelCardId
+    ? safeDecodeUuid(selectedModelCardId)
+    : undefined;
 
   const isPendingPage =
     deferredLimit !== baiPaginationOption.limit ||
@@ -481,10 +468,7 @@ const ModelStoreListPageV2: React.FC = () => {
           pageSize={deferredLimit}
           offset={deferredOffset}
           onTotalChange={setTotal}
-          selectedModelCardId={queryParams.modelCard}
-          onSelectedModelCardFound={(frgmt) => setSelectedModelCard(frgmt)}
-          onCardClick={(id, frgmt) => {
-            setSelectedModelCard(frgmt);
+          onCardClick={(id) => {
             setQueryParams({ modelCard: id });
           }}
         />
@@ -525,10 +509,9 @@ const ModelStoreListPageV2: React.FC = () => {
       )}
 
       <ModelCardDrawer
-        modelCardDrawerFrgmt={selectedModelCard}
-        open={!!queryParams.modelCard && !!selectedModelCard}
+        modelCardId={localSelectedModelCardId}
+        open={drawerOpen}
         onClose={() => {
-          setSelectedModelCard(null);
           setQueryParams({ modelCard: null });
         }}
       />

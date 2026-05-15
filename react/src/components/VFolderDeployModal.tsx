@@ -195,7 +195,8 @@ const VFolderDeployModalContent: React.FC<VFolderDeployModalContentProps> = ({
 
   // Auto-deploy on mount when there's exactly one preset and one resource
   // group — same shortcut as ModelCardDeployModal. No modal is rendered;
-  // the user goes straight from the trigger to the serving detail page.
+  // the user goes straight from the trigger to the new deployment detail
+  // page (`/deployments/${deploymentId}`).
   const isAutoDeployScenario =
     availablePresets.length === 1 && resourceGroups.length === 1;
 
@@ -453,8 +454,8 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
   // opened it. The content component suspends on its data query, then
   // decides whether to render the selection modal or auto-deploy silently —
   // for the auto-deploy path no modal is ever rendered, so the user goes
-  // directly from clicking Start Service to the serving detail page without
-  // a flash.
+  // directly from clicking Start Service to the new deployment detail page
+  // (`/deployments/${deploymentId}`) without a flash.
   if (!open) {
     return null;
   }
