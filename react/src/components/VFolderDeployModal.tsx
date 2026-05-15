@@ -2,14 +2,13 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import type { DeploymentPresetDetailModalFragment$key } from '../__generated__/DeploymentPresetDetailModalFragment.graphql';
 import { VFolderDeployModalMutation } from '../__generated__/VFolderDeployModalMutation.graphql';
 import { VFolderDeployModalQuery } from '../__generated__/VFolderDeployModalQuery.graphql';
 import { useWebUINavigate } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import DeploymentPresetDetailModal from './DeploymentPresetDetailModal';
 import { InfoCircleOutlined } from '@ant-design/icons';
-import { Alert, App, Button, Form, Space, Tooltip, theme } from 'antd';
+import { Alert, App, Button, Form, Space, Tooltip } from 'antd';
 import {
   BAIAvailablePresetSelect,
   BAIButton,
@@ -21,15 +20,22 @@ import {
   useProjectResourceGroups,
 } from 'backend.ai-ui';
 import { PlusIcon } from 'lucide-react';
-import React, { useEffect, useEffectEvent, useRef, useState } from 'react';
+import React, {
+  Suspense,
+  useDeferredValue,
+  useEffect,
+  useEffectEvent,
+  useRef,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 
-interface VFolderDeployModalProps extends Omit<
+export interface VFolderDeployModalProps extends Omit<
   BAIModalProps,
-  'children' | 'open' | 'onCancel'
+  'children' | 'onCancel'
 > {
-  open: boolean;
+  /** Domain close callback — wired to `onCancel` on the underlying `BAIModal`. */
   onClose: () => void;
   /** Local UUID of the VFolder to deploy. */
   vfolderId?: string;
@@ -44,39 +50,39 @@ interface VFolderDeployModalProps extends Omit<
 }
 
 const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
-  open,
   onClose,
   vfolderId,
   onDeployed,
   onRequestCreateDeployment,
+  // `open` and `afterClose` come in via `BAIModalProps` (the latter is
+  // typically injected by `BAIUnmountAfterClose`'s `cloneElement`). We
+  // destructure them here so the auto-deploy effect can read `open` for
+  // its true→false edge check and fire `afterClose` imperatively on the
+  // null-return path where no `<BAIModal>` is rendered.
+  open,
+  afterClose,
   ...modalProps
 }) => {
   'use memo';
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const { message } = App.useApp();
-  const navigate = useWebUINavigate();
+  const webuiNavigate = useWebUINavigate();
   const { id: projectId, name: projectName } = useCurrentProjectValue();
 
-  // Fetch resource groups accessible to the current project. Shares the React
-  // Query cache with BAIProjectResourceGroupSelect below, so no duplicate
-  // network request is made — we only need the count here to decide whether
-  // to render the selection UI or auto-deploy.
-  const { resourceGroups } = useProjectResourceGroups(projectName ?? '');
+  // Loading UX: `useDeferredValue(open)` lets this modal stay mounted with
+  // `loading=true` (Ant Design skeleton) while the deferred re-render fetches
+  // fresh data in the background. The first synchronous render uses
+  // `store-only` so it never suspends; the deferred render upgrades to
+  // `store-and-network` and suspends only if the cache is empty. The parent
+  // wraps this component in `<Suspense>` to handle that first-time cache miss.
+  const deferredOpen = useDeferredValue(open);
 
   // TODO(needs-backend): FR-2599 — `deploymentRevisionPresets` currently has
-  // no per-vfolder scope; `DeploymentRevisionPresetFilter` only supports
-  // `name` and `runtimeVariantId`. Once a vfolder-compatibility scope is
-  // available (e.g. a scope input similar to `modelCardAvailablePresets`),
-  // filter by this vfolder's compatible presets here. For now we show the
-  // full project-accessible list so the user can still select a preset.
-  //
-  // This top-level fetch is kept (rather than relying solely on the paginated
-  // query inside `BAIAvailablePresetSelect`) because we need:
-  //   • the total count to decide between the empty-state, auto-deploy, and
-  //     the selection-UI render paths,
-  //   • the preset node fragment refs for the detail-modal lookup.
+  // no per-vfolder scope (`DeploymentRevisionPresetFilter` only supports
+  // `name` and `runtimeVariantId`). The list below is project-wide. Once a
+  // vfolder-compatibility scope is exposed (e.g. similar to
+  // `modelCardAvailablePresets`), wire it in here.
   const { deploymentRevisionPresets } =
     useLazyLoadQuery<VFolderDeployModalQuery>(
       graphql`
@@ -87,6 +93,8 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
             edges {
               node {
                 id
+                name
+                runtimeVariantId
                 ...DeploymentPresetDetailModalFragment
               }
             }
@@ -94,7 +102,9 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
         }
       `,
       {},
-      {},
+      {
+        fetchPolicy: deferredOpen ? 'store-and-network' : 'store-only',
+      },
     );
 
   const availablePresets =
@@ -102,24 +112,26 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
       ?.map((edge) => edge?.node)
       .filter((node): node is NonNullable<typeof node> => node != null) ?? [];
 
-  const [commitDeploy] = useMutation<VFolderDeployModalMutation>(graphql`
-    mutation VFolderDeployModalMutation(
-      $vfolderId: UUID!
-      $input: DeployVFolderV2Input!
-    ) {
-      deployVfolderV2(vfolderId: $vfolderId, input: $input) {
-        deploymentId
-        deploymentName
+  // Fetch resource groups accessible to the current project. Uses the same
+  // React Query cache as BAIProjectResourceGroupSelect below, so no duplicate
+  // network request is made — we only need the count here to decide whether
+  // to render the selection UI or auto-deploy.
+  const { resourceGroups } = useProjectResourceGroups(projectName ?? '');
+
+  const [commitDeploy, isInFlightDeploy] =
+    useMutation<VFolderDeployModalMutation>(graphql`
+      mutation VFolderDeployModalMutation(
+        $vfolderId: UUID!
+        $input: DeployVFolderV2Input!
+      ) {
+        deployVfolderV2(vfolderId: $vfolderId, input: $input) {
+          deploymentId
+          deploymentName
+        }
       }
-    }
-  `);
+    `);
 
-  const hasNoPresets = availablePresets.length === 0;
-
-  // Auto-deploy on mount when there's exactly one preset and one resource
-  // group — same shortcut as ModelCardDeployModal. No modal is rendered;
-  // the user goes straight from the trigger to the new deployment detail
-  // page (`/deployments/${deploymentId}`).
+  // Determine scenario: auto-deploy (scenario 2) vs selection (scenario 3)
   const isAutoDeployScenario =
     availablePresets.length === 1 && resourceGroups.length === 1;
 
@@ -128,24 +140,25 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
   const [userSelectedPresetId, setUserSelectedPresetId] = useState<
     string | undefined
   >(undefined);
-  const [presetDetailFrgmt, setPresetDetailFrgmt] =
-    useState<DeploymentPresetDetailModalFragment$key | null>(null);
+  const [presetDetailId, setPresetDetailId] = useState<string | null>(null);
   const effectivePresetId =
     userSelectedPresetId ??
     (availablePresets[0]?.id ? toLocalId(availablePresets[0].id) : undefined);
 
-  // Hold the resource-group selection on the antd Form. `Form.useWatch`
-  // subscribes to changes so the Deploy button's `disabled` prop updates
-  // immediately, and `form.getFieldValue` reads it at submit time.
-  // `BAIProjectResourceGroupSelect` auto-fills the "default" (or first
-  // available) group via its `autoSelectDefault` prop.
+  // The resource-group selection is held in an antd Form. `Form.useWatch`
+  // subscribes to changes on the `resourceGroup` field so the Deploy button's
+  // `disabled` prop reflects the current selection, and `form.getFieldValue`
+  // reads it at submit time. `BAIProjectResourceGroupSelect` auto-fills the
+  // "default" (or first available) group via its `autoSelectDefault` prop.
   const [form] = Form.useForm<{ resourceGroup?: string }>();
   const selectedResourceGroup = Form.useWatch('resourceGroup', form);
 
   const handleDeploy = (): Promise<void> => {
     if (!vfolderId || !projectId) return Promise.resolve();
 
-    const presetId = effectivePresetId;
+    const presetId = isAutoDeployScenario
+      ? toLocalId(availablePresets[0]?.id)
+      : effectivePresetId;
     // In `isAutoDeployScenario`, `BAIProjectResourceGroupSelect` is never
     // mounted (the component returns `null` before reaching the form), so
     // its `autoSelectDefault` cannot populate the form value. Fall back to
@@ -168,10 +181,16 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
           },
         },
         onCompleted: (response) => {
-          const deploymentId = response.deployVfolderV2.deploymentId;
+          const payload = response.deployVfolderV2;
+          if (!payload) {
+            const error = new Error(t('modelStore.DeployFailed'));
+            message.error(error.message);
+            reject(error);
+            return;
+          }
           message.success(t('modelStore.DeploySuccess'));
-          onDeployed?.(deploymentId);
-          navigate(`/deployments/${deploymentId}`);
+          onDeployed?.(payload.deploymentId);
+          webuiNavigate(`/deployments/${payload.deploymentId}`);
           resolve();
         },
         onError: (error) => {
@@ -182,7 +201,7 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
     });
   };
 
-  // Auto-deploy on mount when single preset + single resource group.
+  // Scenario 2: auto-deploy on mount when single preset + single resource group.
   // The ref guard keeps the mutation idempotent across StrictMode's double-
   // invocation of effects in dev — otherwise `handleDeploy` would fire twice
   // and the success toast would be shown twice.
@@ -199,20 +218,45 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
     }
   }, [isAutoDeployScenario]);
 
-  // Empty-state: when no preset is available, the user can't proceed via
-  // the preset path. Show an inline Alert and a link to the deployment
-  // shell creation modal (`DeploymentSettingModal`) — same UX as the
-  // `/deployments` page "Create Deployment" entry. Per FR-2862 the
-  // modal stays open (used to auto-close, which felt like a dead-end).
-  if (hasNoPresets) {
+  // Auto-deploy renders no `<BAIModal>` (returns `null` further below), so
+  // antd never fires `afterClose` when the parent flips `open` to false.
+  // Without this, `BAIUnmountAfterClose` would keep us mounted forever —
+  // `didAutoDeployRef` would stay `true` and the next click on the same
+  // VFolder would silently no-op. Mirror the close edge manually here.
+  const wasOpenRef = useRef(open);
+  const fireAfterCloseForAutoDeploy = useEffectEvent(() => {
+    afterClose?.();
+  });
+  useEffect(() => {
+    if (wasOpenRef.current && !open && isAutoDeployScenario) {
+      fireAfterCloseForAutoDeploy();
+    }
+    wasOpenRef.current = open;
+  }, [open, isAutoDeployScenario]);
+
+  // Scenario 2: don't render a modal at all — the effect above will trigger
+  // the mutation and navigation. Returning null here means the parent never
+  // mounts any modal chrome, avoiding a flash of an empty modal before the
+  // serving detail navigation kicks in.
+  if (isAutoDeployScenario) {
+    return null;
+  }
+
+  // Empty-state: per FR-2862, when no preset is available the modal stays
+  // open with an inline Alert and a link to the deployment shell creation
+  // modal (`DeploymentSettingModal`) — same UX as the `/deployments` page
+  // "Create Deployment" entry.
+  if (availablePresets.length === 0) {
     return (
       <BAIModal
         title={t('modelService.CreateNewDeploymentWithPreset')}
         destroyOnHidden
-        footer={null}
         width={480}
+        footer={null}
+        loading={deferredOpen !== open}
         {...modalProps}
         open={open}
+        afterClose={afterClose}
         onCancel={onClose}
       >
         <Alert
@@ -235,30 +279,30 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
             ) : undefined
           }
         />
-        <BAIFlex justify="end" gap="sm" style={{ marginTop: token.marginMD }}>
-          <BAIButton onClick={onClose}>{t('button.Cancel')}</BAIButton>
-        </BAIFlex>
       </BAIModal>
     );
   }
 
-  // Auto-deploy: don't render a modal at all — the effect above will trigger
-  // the mutation and navigation. Returning null here means the parent never
-  // mounts any modal chrome, avoiding a flash of an empty modal before the
-  // serving detail navigation kicks in.
-  if (isAutoDeployScenario) {
-    return null;
-  }
-
-  // Selection UI — render the modal only when selection is needed.
+  // Selection UI — the user picks a preset and a resource group.
   return (
     <BAIModal
       title={t('modelService.CreateNewDeploymentWithPreset')}
       destroyOnHidden
-      footer={null}
       width={480}
+      okText={t('modelStore.Deploy')}
+      okButtonProps={{
+        disabled:
+          !vfolderId ||
+          !projectId ||
+          !effectivePresetId ||
+          !selectedResourceGroup,
+      }}
+      confirmLoading={isInFlightDeploy}
+      loading={deferredOpen !== open}
       {...modalProps}
       open={open}
+      afterClose={afterClose}
+      onOk={handleDeploy}
       onCancel={onClose}
     >
       <Form form={form} layout="vertical">
@@ -281,10 +325,8 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
                   icon={<InfoCircleOutlined />}
                   disabled={!effectivePresetId}
                   onClick={() => {
-                    const node = deploymentRevisionPresets?.edges?.find(
-                      (e) => toLocalId(e?.node?.id ?? '') === effectivePresetId,
-                    )?.node;
-                    if (node) setPresetDetailFrgmt(node);
+                    if (!effectivePresetId) return;
+                    setPresetDetailId(effectivePresetId);
                   }}
                 />
               </Tooltip>
@@ -304,28 +346,17 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
           />
         </Form.Item>
       </Form>
-      {presetDetailFrgmt && (
+      <Suspense fallback={null}>
         <DeploymentPresetDetailModal
-          open
-          presetFrgmt={presetDetailFrgmt}
-          onCancel={() => setPresetDetailFrgmt(null)}
-        />
-      )}
-      <BAIFlex justify="end" gap="sm">
-        <BAIButton onClick={onClose}>{t('button.Cancel')}</BAIButton>
-        <BAIButton
-          type="primary"
-          action={handleDeploy}
-          disabled={
-            !vfolderId ||
-            !projectId ||
-            !effectivePresetId ||
-            !selectedResourceGroup
+          open={!!presetDetailId}
+          presetFrgmt={
+            presetDetailId
+              ? availablePresets.find((p) => toLocalId(p.id) === presetDetailId)
+              : null
           }
-        >
-          {t('modelStore.Deploy')}
-        </BAIButton>
-      </BAIFlex>
+          onCancel={() => setPresetDetailId(null)}
+        />
+      </Suspense>
     </BAIModal>
   );
 };

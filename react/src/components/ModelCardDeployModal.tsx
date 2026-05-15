@@ -2,13 +2,13 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import type { DeploymentPresetDetailModalFragment$key } from '../__generated__/DeploymentPresetDetailModalFragment.graphql';
+import type { ModelCardDeployModalFragment$key } from '../__generated__/ModelCardDeployModalFragment.graphql';
 import { ModelCardDeployModalMutation } from '../__generated__/ModelCardDeployModalMutation.graphql';
 import { useWebUINavigate } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import DeploymentPresetDetailModal from './DeploymentPresetDetailModal';
 import { InfoCircleOutlined } from '@ant-design/icons';
-import { Alert, App, Button, Form, Space, Tooltip, theme } from 'antd';
+import { Alert, App, Button, Form, Space, Tooltip } from 'antd';
 import {
   BAIAvailablePresetSelect,
   BAIButton,
@@ -20,27 +20,28 @@ import {
   useProjectResourceGroups,
 } from 'backend.ai-ui';
 import { PlusIcon } from 'lucide-react';
-import React, { useEffect, useEffectEvent, useRef, useState } from 'react';
+import React, {
+  Suspense,
+  useEffect,
+  useEffectEvent,
+  useRef,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useMutation } from 'react-relay';
-import type { FragmentRefs } from 'relay-runtime';
-
-interface AvailablePreset {
-  readonly id: string;
-  readonly name: string;
-  readonly description: string | null;
-  readonly runtimeVariantId: string;
-  readonly ' $fragmentSpreads': FragmentRefs<'DeploymentPresetDetailModalFragment'>;
-}
+import { graphql, useFragment, useMutation } from 'react-relay';
 
 interface ModelCardDeployModalProps extends Omit<
   BAIModalProps,
-  'children' | 'open' | 'onCancel'
+  'children' | 'onCancel'
 > {
-  open: boolean;
+  /** Domain close callback — wired to `onCancel` on the underlying `BAIModal`. */
   onClose: () => void;
-  modelCardRowId?: string;
-  availablePresets: ReadonlyArray<AvailablePreset>;
+  /**
+   * The model card the user wants to deploy. The fragment provides both the
+   * card's id (for the mutation) and the card-scoped `availablePresets` list
+   * — the modal does not query these itself.
+   */
+  modelCardFrgmt: ModelCardDeployModalFragment$key | null | undefined;
   onDeployed: (deploymentId: string) => void;
   /**
    * Called when the user wants to fall back to creating a new deployment
@@ -52,21 +53,55 @@ interface ModelCardDeployModalProps extends Omit<
 }
 
 const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
-  open,
   onClose,
-  modelCardRowId,
-  availablePresets,
+  modelCardFrgmt,
   onDeployed,
   onRequestCreateDeployment,
+  // `open` and `afterClose` come in via `BAIModalProps` (the latter is
+  // typically injected by `BAIUnmountAfterClose`'s `cloneElement`). We
+  // destructure them here so the auto-deploy effect can read `open` for
+  // its true→false edge check and fire `afterClose` imperatively on the
+  // null-return path where no `<BAIModal>` is rendered.
+  open,
+  afterClose,
   ...modalProps
 }) => {
   'use memo';
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const { message } = App.useApp();
-  const navigate = useWebUINavigate();
+  const webuiNavigate = useWebUINavigate();
   const { id: projectId, name: projectName } = useCurrentProjectValue();
+
+  // TODO(needs-backend): `availablePresets` here is the server-filtered list
+  // scoped to this specific model card. `BAIAvailablePresetSelect` below
+  // fetches from the project-wide `deploymentRevisionPresets` because
+  // `DeploymentRevisionPresetFilter` has no model-card-scoped filter yet.
+  // Once that filter exists, plumb it through the select so the dropdown
+  // matches this card's compatible-presets list.
+  const modelCard = useFragment(
+    graphql`
+      fragment ModelCardDeployModalFragment on ModelCardV2 {
+        id
+        availablePresets(orderBy: [{ field: RANK, direction: "ASC" }]) {
+          edges {
+            node {
+              id
+              name
+              runtimeVariantId
+              ...DeploymentPresetDetailModalFragment
+            }
+          }
+        }
+      }
+    `,
+    modelCardFrgmt ?? null,
+  );
+  const modelCardRowId = modelCard?.id ? toLocalId(modelCard.id) : undefined;
+  const availablePresets =
+    modelCard?.availablePresets?.edges
+      ?.map((edge) => edge?.node)
+      .filter((node): node is NonNullable<typeof node> => node != null) ?? [];
 
   // Fetch resource groups accessible to the current project. Uses the same
   // React Query cache as BAIProjectResourceGroupSelect below, so no duplicate
@@ -74,17 +109,18 @@ const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
   // to render the selection UI or auto-deploy.
   const { resourceGroups } = useProjectResourceGroups(projectName ?? '');
 
-  const [commitDeploy] = useMutation<ModelCardDeployModalMutation>(graphql`
-    mutation ModelCardDeployModalMutation(
-      $cardId: UUID!
-      $input: DeployModelCardV2Input!
-    ) {
-      deployModelCardV2(cardId: $cardId, input: $input) {
-        deploymentId
-        deploymentName
+  const [commitDeploy, isInFlightDeploy] =
+    useMutation<ModelCardDeployModalMutation>(graphql`
+      mutation ModelCardDeployModalMutation(
+        $cardId: UUID!
+        $input: DeployModelCardV2Input!
+      ) {
+        deployModelCardV2(cardId: $cardId, input: $input) {
+          deploymentId
+          deploymentName
+        }
       }
-    }
-  `);
+    `);
 
   // Determine scenario: auto-deploy (scenario 2) vs selection (scenario 3)
   const isAutoDeployScenario =
@@ -95,8 +131,7 @@ const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
   const [userSelectedPresetId, setUserSelectedPresetId] = useState<
     string | undefined
   >(undefined);
-  const [presetDetailFrgmt, setPresetDetailFrgmt] =
-    useState<DeploymentPresetDetailModalFragment$key | null>(null);
+  const [presetDetailId, setPresetDetailId] = useState<string | null>(null);
   const effectivePresetId =
     userSelectedPresetId ??
     (availablePresets[0]?.id ? toLocalId(availablePresets[0].id) : undefined);
@@ -133,10 +168,16 @@ const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
           },
         },
         onCompleted: (response) => {
-          const deploymentId = response.deployModelCardV2.deploymentId;
+          const payload = response.deployModelCardV2;
+          if (!payload) {
+            const error = new Error(t('modelStore.DeployFailed'));
+            message.error(error.message);
+            reject(error);
+            return;
+          }
           message.success(t('modelStore.DeploySuccess'));
-          onDeployed(deploymentId);
-          navigate(`/deployments/${deploymentId}`);
+          onDeployed(payload.deploymentId);
+          webuiNavigate(`/deployments/${payload.deploymentId}`);
           resolve();
         },
         onError: (error) => {
@@ -164,6 +205,22 @@ const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
     }
   }, [isAutoDeployScenario]);
 
+  // Auto-deploy renders no `<BAIModal>` (returns `null` further below), so
+  // antd never fires `afterClose` when the parent flips `open` to false.
+  // Without this, `BAIUnmountAfterClose` would keep us mounted forever —
+  // `didAutoDeployRef` would stay `true` and the next click on the same
+  // model card would silently no-op. Mirror the close edge manually here.
+  const wasOpenRef = useRef(open);
+  const fireAfterCloseForAutoDeploy = useEffectEvent(() => {
+    afterClose?.();
+  });
+  useEffect(() => {
+    if (wasOpenRef.current && !open && isAutoDeployScenario) {
+      fireAfterCloseForAutoDeploy();
+    }
+    wasOpenRef.current = open;
+  }, [open, isAutoDeployScenario]);
+
   // Scenario 2: don't render a modal at all — the effect above will trigger
   // the mutation and navigation. Returning null here means the parent never
   // mounts any modal chrome, avoiding a flash of an empty modal before the
@@ -181,10 +238,11 @@ const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
       <BAIModal
         title={t('modelService.CreateNewDeploymentWithPreset')}
         destroyOnHidden
-        footer={null}
         width={480}
+        footer={null}
         {...modalProps}
         open={open}
+        afterClose={afterClose}
         onCancel={onClose}
       >
         <Alert
@@ -207,9 +265,6 @@ const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
             ) : undefined
           }
         />
-        <BAIFlex justify="end" gap="sm" style={{ marginTop: token.marginMD }}>
-          <BAIButton onClick={onClose}>{t('button.Cancel')}</BAIButton>
-        </BAIFlex>
       </BAIModal>
     );
   }
@@ -219,10 +274,20 @@ const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
     <BAIModal
       title={t('modelService.CreateNewDeploymentWithPreset')}
       destroyOnHidden
-      footer={null}
       width={480}
+      okText={t('modelStore.Deploy')}
+      okButtonProps={{
+        disabled:
+          !modelCardRowId ||
+          !projectId ||
+          !effectivePresetId ||
+          !selectedResourceGroup,
+      }}
+      confirmLoading={isInFlightDeploy}
       {...modalProps}
       open={open}
+      afterClose={afterClose}
+      onOk={handleDeploy}
       onCancel={onClose}
     >
       <Form form={form} layout="vertical">
@@ -232,18 +297,6 @@ const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
           required
         >
           <BAIFlex direction="row" gap="xs">
-            {/*
-              TODO(needs-backend): `BAIAvailablePresetSelect` fetches presets
-              from `deploymentRevisionPresets`, which currently has no
-              model-card-scoped filter (`DeploymentRevisionPresetFilter` only
-              supports `name` and `runtimeVariantId`). The `availablePresets`
-              prop passed by the parent is the server-filtered list scoped to
-              this specific model card. Once a model-card scope is exposed on
-              `DeploymentRevisionPresetFilter`, pass it to this select so the
-              dropdown matches the card's compatible-presets list. For now the
-              dropdown shows the full project-accessible list — auto-deploy
-              and the empty-state still use the scoped `availablePresets`.
-            */}
             <BAIAvailablePresetSelect
               value={effectivePresetId}
               onChange={(value) =>
@@ -257,10 +310,8 @@ const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
                   icon={<InfoCircleOutlined />}
                   disabled={!effectivePresetId}
                   onClick={() => {
-                    const node = availablePresets.find(
-                      (p) => toLocalId(p.id) === effectivePresetId,
-                    );
-                    if (node) setPresetDetailFrgmt(node);
+                    if (!effectivePresetId) return;
+                    setPresetDetailId(effectivePresetId);
                   }}
                 />
               </Tooltip>
@@ -280,28 +331,17 @@ const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
           />
         </Form.Item>
       </Form>
-      {presetDetailFrgmt && (
+      <Suspense fallback={null}>
         <DeploymentPresetDetailModal
-          open
-          presetFrgmt={presetDetailFrgmt}
-          onCancel={() => setPresetDetailFrgmt(null)}
-        />
-      )}
-      <BAIFlex justify="end" gap="sm">
-        <BAIButton onClick={onClose}>{t('button.Cancel')}</BAIButton>
-        <BAIButton
-          type="primary"
-          action={handleDeploy}
-          disabled={
-            !modelCardRowId ||
-            !projectId ||
-            !effectivePresetId ||
-            !selectedResourceGroup
+          open={!!presetDetailId}
+          presetFrgmt={
+            presetDetailId
+              ? availablePresets.find((p) => toLocalId(p.id) === presetDetailId)
+              : null
           }
-        >
-          {t('modelStore.Deploy')}
-        </BAIButton>
-      </BAIFlex>
+          onCancel={() => setPresetDetailId(null)}
+        />
+      </Suspense>
     </BAIModal>
   );
 };

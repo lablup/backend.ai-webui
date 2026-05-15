@@ -3,11 +3,14 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { DeploymentAddRevisionModalAddMutation } from '../__generated__/DeploymentAddRevisionModalAddMutation.graphql';
-import { DeploymentAddRevisionModalDeployMutation } from '../__generated__/DeploymentAddRevisionModalDeployMutation.graphql';
 import { DeploymentAddRevisionModalImageNameQuery } from '../__generated__/DeploymentAddRevisionModalImageNameQuery.graphql';
-import type { DeploymentAddRevisionModalPresetTransferFragment$key } from '../__generated__/DeploymentAddRevisionModalPresetTransferFragment.graphql';
+import type { DeploymentAddRevisionModalPresetCountQuery } from '../__generated__/DeploymentAddRevisionModalPresetCountQuery.graphql';
+import type { DeploymentAddRevisionModalPresetDetailQuery } from '../__generated__/DeploymentAddRevisionModalPresetDetailQuery.graphql';
 import type { DeploymentAddRevisionModalQuery } from '../__generated__/DeploymentAddRevisionModalQuery.graphql';
-import type { DeploymentPresetDetailModalFragment$key } from '../__generated__/DeploymentPresetDetailModalFragment.graphql';
+import type {
+  DeploymentAddRevisionModalSelectedPresetQuery,
+  DeploymentAddRevisionModalSelectedPresetQuery$data,
+} from '../__generated__/DeploymentAddRevisionModalSelectedPresetQuery.graphql';
 import { convertToBinaryUnit } from '../helper';
 import {
   formatShellCommand,
@@ -17,9 +20,7 @@ import {
   mergeExtraArgs,
   reverseMapExtraArgs,
 } from '../helper/runtimeExtraArgsParser';
-import { useWebUINavigate } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
-import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useModelStoreProject } from '../hooks/useModelStoreProject';
 import {
   buildArgsSchemaKeySet,
@@ -70,7 +71,6 @@ import {
   BAIFlex,
   BAIModal,
   BAIModalProps,
-  BAIProjectResourceGroupSelect,
   BAIProjectVfolderSelect,
   BAIRuntimeVariantSelect,
   convertToUUID,
@@ -91,7 +91,6 @@ import { useTranslation } from 'react-i18next';
 import {
   fetchQuery,
   graphql,
-  readInlineData,
   useLazyLoadQuery,
   useMutation,
   useRelayEnvironment,
@@ -118,7 +117,6 @@ export type FormValues = ImageEnvironmentFormInput &
 
 export type PresetFormValues = {
   revisionPresetId: string;
-  resourceGroup: string;
   modelFolderId: string;
 };
 
@@ -141,41 +139,35 @@ const SectionHeader: React.FC<{ children: React.ReactNode }> = ({
   );
 };
 
-/**
- * `@inline` fragment carrying the preset fields needed to prefill the Custom
- * form on Preset → Custom transition. Defined as an inline fragment so the
- * modal can read its data synchronously via `readInlineData` without
- * threading another `useFragment` hook through a conditionally-rendered
- * subtree.
- */
-const presetTransferFragment = graphql`
-  fragment DeploymentAddRevisionModalPresetTransferFragment on DeploymentRevisionPreset
-  @inline {
-    id
-    runtimeVariantId
-    cluster {
-      clusterMode
-      clusterSize
-    }
-    execution {
-      imageId
-      environ {
-        key
-        value
+// Loader for the preset-detail modal in this paginated context. The Preset
+// selector here (`BAIAvailablePresetSelect`) paginates independently of the
+// modal's main query, so we cannot spread `DeploymentPresetDetailModalFragment`
+// on a list edge. Instead, when the user opens the detail view, fire a tiny
+// singular query keyed by the selected presetId and hand the fragment ref
+// directly to `DeploymentPresetDetailModal`.
+const PresetDetailLoader: React.FC<{
+  presetId: string;
+  onCancel: () => void;
+}> = ({ presetId, onCancel }) => {
+  'use memo';
+  const data = useLazyLoadQuery<DeploymentAddRevisionModalPresetDetailQuery>(
+    graphql`
+      query DeploymentAddRevisionModalPresetDetailQuery($id: UUID!) {
+        deploymentRevisionPreset(id: $id) {
+          ...DeploymentPresetDetailModalFragment
+        }
       }
-    }
-    resource {
-      resourceOpts {
-        name
-        value
-      }
-    }
-    resourceSlots {
-      slotName
-      quantity
-    }
-  }
-`;
+    `,
+    { id: presetId },
+  );
+  return (
+    <DeploymentPresetDetailModal
+      open
+      presetFrgmt={data.deploymentRevisionPreset}
+      onCancel={onCancel}
+    />
+  );
+};
 
 const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   onRequestClose,
@@ -187,9 +179,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { message } = App.useApp();
-  const navigate = useWebUINavigate();
   const relayEnvironment = useRelayEnvironment();
-  const { id: projectId, name: projectName } = useCurrentProjectValue();
   // The model folder picker scopes to the MODEL_STORE project, not the
   // deployment's own project — model cards live in the domain-wide model
   // store regardless of which project owns the deployment.
@@ -205,8 +195,8 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   const [customForm] = Form.useForm<FormValues>();
   const [presetForm] = Form.useForm<PresetFormValues>();
   // FR-2862 feedback: hoist `autoActivate` from the Custom body into the
-  // modal so it can be rendered in the modal footer (visible only in Custom
-  // mode, since Preset mode always auto-activates server-side).
+  // modal so it can be rendered in the modal footer. Both modes forward
+  // the value via `AddRevisionOptions.autoActivate` on `addModelRevision`.
   const [autoActivate, setAutoActivate] = useState(true);
 
   const [mode, setMode] = useBAISettingUserState(
@@ -214,21 +204,21 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   );
   const effectiveMode = mode ?? 'preset';
 
-  // Holds the currently selected preset's transfer-fragment ref. Resolved
-  // to typed data via `readInlineData` only when the user actually switches
-  // to Custom Mode, so the modal doesn't pay for it on every selection.
-  const [selectedPresetFrgmt, setSelectedPresetFrgmt] =
-    useState<DeploymentAddRevisionModalPresetTransferFragment$key | null>(null);
-
   // One-shot carry-over consumed by the Custom body on mount. Set when the
   // user transitions Preset → Custom with a preset selected.
   const [presetTransferPrefill, setPresetTransferPrefill] =
     useState<Partial<FormValues> | null>(null);
 
+  // One-shot carry-over consumed by the Preset body on mount. Set when the
+  // user transitions Custom → Preset; carries the selected model folder so
+  // the user does not have to re-pick it after switching modes.
+  const [customTransferPrefill, setCustomTransferPrefill] =
+    useState<Partial<PresetFormValues> | null>(null);
+
   // Preset detail modal target — opens DeploymentPresetDetailModal when the
-  // user clicks the (i) button next to the preset selector.
-  const [presetDetailFrgmt, setPresetDetailFrgmt] =
-    useState<DeploymentPresetDetailModalFragment$key | null>(null);
+  // user clicks the (i) button next to the preset selector. The modal owns
+  // its own Relay query keyed by this id.
+  const [presetDetailId, setPresetDetailId] = useState<string | null>(null);
 
   // Map of runtime variant id → name, populated by `BAIRuntimeVariantSelect`
   // as it resolves the currently selected value (via its `runtimeVariant(id:)`
@@ -274,6 +264,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
         deployment(id: $deploymentId) {
           metadata {
             projectId
+            resourceGroupName
           }
           currentRevision {
             clusterConfig {
@@ -281,7 +272,6 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
               size
             }
             resourceConfig {
-              resourceGroupName
               resourceOpts {
                 entries {
                   name
@@ -339,24 +329,6 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
             }
           }
         }
-        deploymentRevisionPresets(
-          orderBy: [{ field: RANK, direction: "ASC" }]
-        ) {
-          edges {
-            node {
-              id
-              name
-              description
-              rank
-              runtimeVariantId
-              runtimeVariant {
-                name
-              }
-              ...DeploymentAddRevisionModalPresetTransferFragment
-              ...DeploymentPresetDetailModalFragment
-            }
-          }
-        }
       }
     `,
     { deploymentId },
@@ -372,17 +344,120 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   const deployment = data.deployment;
   const currentRevision = deployment?.currentRevision;
 
-  const availablePresets = (data.deploymentRevisionPresets?.edges ?? [])
-    .map((edge) => edge?.node)
-    .filter((node): node is NonNullable<typeof node> => node != null);
-
-  const hasNoPresets = availablePresets.length === 0;
+  // The preset "empty state" probe runs as a side-effect fetchQuery rather
+  // than part of the main `useLazyLoadQuery`, because reading the count
+  // from the lazy query throws a Suspense up to the nearest parent
+  // boundary — which, with no inner boundary, lands in the deployment
+  // detail page and blanks the whole page while the modal opens.
+  // `undefined` means "still probing"; we render the form optimistically
+  // until the answer arrives.
+  const [hasNoPresets, setHasNoPresets] = useState<boolean | undefined>(
+    undefined,
+  );
+  useEffect(() => {
+    if (!open) return;
+    let cancelled = false;
+    fetchQuery<DeploymentAddRevisionModalPresetCountQuery>(
+      relayEnvironment,
+      graphql`
+        query DeploymentAddRevisionModalPresetCountQuery {
+          deploymentRevisionPresets(
+            orderBy: [{ field: RANK, direction: "ASC" }]
+            first: 1
+          ) {
+            count
+          }
+        }
+      `,
+      {},
+      { fetchPolicy: 'store-or-network' },
+    )
+      .toPromise()
+      .then((result) => {
+        if (cancelled) return;
+        setHasNoPresets((result?.deploymentRevisionPresets?.count ?? 0) === 0);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        // On error, assume presets exist — the BAIAvailablePresetSelect's
+        // own paginated query will surface a per-select empty state if it
+        // also fails.
+        setHasNoPresets(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [open, relayEnvironment]);
 
   // The parent deployment's vfolder is the default Model Folder. Users can
   // override it in this mode (in contrast to the VFolder/ModelStore entry
   // point where the folder is locked in by context).
   const defaultModelFolderId =
     currentRevision?.modelMountConfig?.vfolderId ?? undefined;
+
+  // The `BAIAvailablePresetSelect` paginates independently of this modal's
+  // main query (it can scroll past the first page on demand), so the user
+  // can select a preset that does not appear in any local list we hold.
+  // Resolve the selected preset's full data on demand via the singular
+  // `deploymentRevisionPreset(id:)` query — used by `handleModeChange` to
+  // prefill the Custom form. A small in-memory cache avoids refetching when
+  // the same preset is referenced multiple times during a session.
+  const presetDataCacheRef = useRef<
+    Map<
+      string,
+      NonNullable<
+        DeploymentAddRevisionModalSelectedPresetQuery$data['deploymentRevisionPreset']
+      >
+    >
+  >(new Map());
+  const fetchPresetData = async (
+    presetId: string,
+  ): Promise<NonNullable<
+    DeploymentAddRevisionModalSelectedPresetQuery$data['deploymentRevisionPreset']
+  > | null> => {
+    const cached = presetDataCacheRef.current.get(presetId);
+    if (cached) return cached;
+    const result =
+      await fetchQuery<DeploymentAddRevisionModalSelectedPresetQuery>(
+        relayEnvironment,
+        graphql`
+          query DeploymentAddRevisionModalSelectedPresetQuery($id: UUID!) {
+            deploymentRevisionPreset(id: $id) {
+              id
+              runtimeVariantId
+              cluster {
+                clusterMode
+                clusterSize
+              }
+              execution {
+                imageId
+                environ {
+                  key
+                  value
+                }
+              }
+              resource {
+                resourceOpts {
+                  name
+                  value
+                }
+              }
+              resourceSlots {
+                slotName
+                quantity
+              }
+            }
+          }
+        `,
+        { id: presetId },
+        { fetchPolicy: 'store-or-network' },
+      ).toPromise();
+    const preset = result?.deploymentRevisionPreset ?? null;
+    if (preset) {
+      presetDataCacheRef.current.set(presetId, preset);
+    }
+    return preset;
+  };
 
   const [commitAdd, isAddInFlight] =
     useMutation<DeploymentAddRevisionModalAddMutation>(graphql`
@@ -397,7 +472,6 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
               size
             }
             resourceConfig {
-              resourceGroupName
               resourceOpts {
                 entries {
                   name
@@ -461,31 +535,16 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       }
     `);
 
-  const [commitDeploy, isDeployInFlight] =
-    useMutation<DeploymentAddRevisionModalDeployMutation>(graphql`
-      mutation DeploymentAddRevisionModalDeployMutation(
-        $vfolderId: UUID!
-        $input: DeployVFolderV2Input!
-      ) {
-        deployVfolderV2(vfolderId: $vfolderId, input: $input) {
-          deploymentId
-          deploymentName
-        }
-      }
-    `);
-
-  // Derived loading flag: replaces a manual `useState`-based `isSubmitting` by
-  // composing the in-flight states of both mutations the modal can fire.
-  const isSubmitting = isAddInFlight || isDeployInFlight;
-
-  // Build a Custom-form prefill object from a preset's transfer-fragment ref.
-  // `image canonicalName` is fetched async because
+  // Build a Custom-form prefill object from a preset node read off the
+  // singular `deploymentRevisionPreset(id:)` query (resolved via
+  // `fetchPresetData`). `image canonicalName` is fetched async because
   // `ImageEnvironmentSelectFormItems` matches the form's `environments.version`
   // against canonical names.
   const buildPrefillFromPreset = async (
-    presetFrgmt: DeploymentAddRevisionModalPresetTransferFragment$key,
+    preset: NonNullable<
+      DeploymentAddRevisionModalSelectedPresetQuery$data['deploymentRevisionPreset']
+    >,
   ): Promise<Partial<FormValues>> => {
-    const preset = readInlineData(presetTransferFragment, presetFrgmt);
     const slots = preset.resourceSlots ?? [];
     const cpuSlot = slots.find((s) => s.slotName === 'cpu');
     const memSlot = slots.find((s) => s.slotName === 'mem');
@@ -576,15 +635,21 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
 
     if (effectiveMode === 'preset' && next === 'custom') {
       // Carry the currently selected preset (if any) into the Custom form.
-      // Also carry the resource group / model folder the user picked in
-      // Preset mode (spec (d)).
+      // Also carry the model folder the user picked in Preset mode (spec (d)).
+      //
+      // Read the preset id from the form (source of truth for the selection,
+      // since `BAIAvailablePresetSelect` is wrapped in a named `Form.Item`),
+      // then resolve the preset's full data via the singular
+      // `deploymentRevisionPreset(id:)` query so this works regardless of
+      // which page the select scrolled to.
       const presetValues = presetForm.getFieldsValue();
+      const selectedPresetId = presetValues.revisionPresetId;
       let prefill: Partial<FormValues> = {};
-      if (selectedPresetFrgmt) {
-        prefill = await buildPrefillFromPreset(selectedPresetFrgmt);
-      }
-      if (presetValues.resourceGroup) {
-        prefill.resourceGroup = presetValues.resourceGroup;
+      if (selectedPresetId) {
+        const preset = await fetchPresetData(selectedPresetId);
+        if (preset) {
+          prefill = await buildPrefillFromPreset(preset);
+        }
       }
       if (presetValues.modelFolderId) {
         prefill.modelFolderId = presetValues.modelFolderId;
@@ -596,20 +661,20 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       return;
     }
 
-    // Custom → Preset: discard custom edits (spec line 206)
+    // Custom → Preset: discard custom edits (spec line 206), but carry over
+    // the model folder the user picked in Custom mode so the selection is
+    // not lost across mode switches (parallel to Preset → Custom carry-over).
+    const customValues = customForm.getFieldsValue();
+    const carryOver: Partial<PresetFormValues> = {};
+    if (customValues.modelFolderId) {
+      carryOver.modelFolderId = customValues.modelFolderId;
+    }
     customForm.resetFields();
     setPresetTransferPrefill(null);
+    setCustomTransferPrefill(
+      Object.keys(carryOver).length > 0 ? carryOver : null,
+    );
     setMode('preset');
-  };
-
-  // Bridge form state: the modal needs the selected preset's transfer-fragment
-  // ref to build a Preset → Custom prefill via `readInlineData`. Each node
-  // already carries the fragment spread.
-  const handlePresetChange = (presetId: string) => {
-    const node =
-      availablePresets.find((p) => (toLocalId(p.id) ?? p.id) === presetId) ??
-      null;
-    setSelectedPresetFrgmt(node);
   };
 
   // Build the form values that mirror the deployment's current revision and
@@ -692,7 +757,6 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           ? 'single-node'
           : 'multi-node',
       cluster_size: rev.clusterConfig?.size ?? 1,
-      resourceGroup: rev.resourceConfig?.resourceGroupName ?? '',
       // Keep `ResourceAllocationFormItems`' auto-preset effect from
       // clobbering the prefilled resource values. That effect runs when
       // `allocationPreset === 'auto-select'` (the default) and rewrites
@@ -783,9 +847,20 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     setPresetTransferPrefill(null);
   });
 
+  // Mirror image of the above for Custom → Preset transitions. Applied after
+  // the Preset form mounts, since `setFieldsValue` before the fields are
+  // registered does not stick.
+  const consumeCustomTransferPrefill = useEffectEvent(() => {
+    if (!customTransferPrefill) return;
+    presetForm.setFieldsValue(customTransferPrefill as PresetFormValues);
+    setCustomTransferPrefill(null);
+  });
+
   useEffect(() => {
     if (effectiveMode === 'custom') {
       consumePresetTransferPrefill();
+    } else {
+      consumeCustomTransferPrefill();
     }
   }, [effectiveMode]);
 
@@ -977,7 +1052,6 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
             size: values.cluster_size,
           },
           resourceConfig: {
-            resourceGroup: { name: values.resourceGroup },
             resourceSlots: { entries: slotEntries },
             resourceOpts:
               optsEntries.length > 0 ? { entries: optsEntries } : null,
@@ -985,7 +1059,6 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           image: { id: decodedImageId },
           modelRuntimeConfig: {
             runtimeVariantId: values.runtimeVariantId,
-            inferenceRuntimeConfig: null,
             environ:
               environEntries.length > 0 ? { entries: environEntries } : null,
           },
@@ -1013,6 +1086,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           return;
         }
         customForm.resetFields();
+        message.success(t('deployment.RevisionAdded'));
         onRequestClose(true);
       },
       onError: (err) => {
@@ -1029,45 +1103,57 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   };
 
   const handlePresetFinish = (values: PresetFormValues): void => {
-    if (!projectId) {
-      message.error(t('general.ErrorOccurred'));
-      return;
-    }
-    commitDeploy({
+    // Preset mode adds a revision to the current deployment using the
+    // selected `revisionPresetId`. Cluster / resource / image / runtime
+    // configs are derived server-side from the preset; the client only
+    // forwards the user-picked model folder via `modelMountConfig` and the
+    // `autoActivate` option.
+    commitAdd({
       variables: {
-        vfolderId: convertToUUID(values.modelFolderId),
         input: {
-          projectId,
+          deploymentId: toLocalId(deploymentId) ?? deploymentId,
           revisionPresetId: values.revisionPresetId,
-          resourceGroup: values.resourceGroup,
-          desiredReplicaCount: 1,
+          modelMountConfig: {
+            vfolderId: convertToUUID(values.modelFolderId),
+            mountDestination: '/models',
+          },
+          options: { autoActivate },
         },
       },
-      onCompleted: (response, errors) => {
+      onCompleted: (_, errors) => {
         if (errors && errors.length > 0) {
-          const errMsg = errors.map((e) => e.message).join('\n');
+          const err = errors[0];
+          const isInProgress = err?.message?.includes(
+            'Another deployment is already in progress',
+          );
           logger.error(
-            '[DeploymentAddRevisionModal] deployVfolderV2 returned errors',
+            '[DeploymentAddRevisionModal] addModelRevision (preset) returned errors',
             errors,
           );
-          message.error(errMsg || t('modelStore.DeployFailed'));
+          message.error(
+            isInProgress
+              ? t('deployment.AnotherDeploymentInProgress')
+              : (err?.message ?? t('general.ErrorOccurred')),
+          );
           return;
         }
-        const newDeploymentId = response.deployVfolderV2?.deploymentId
-          ? String(response.deployVfolderV2.deploymentId)
-          : undefined;
-        message.success(t('modelStore.DeploySuccess'));
+        presetForm.resetFields();
+        message.success(t('deployment.RevisionAdded'));
         onRequestClose(true);
-        if (newDeploymentId) {
-          navigate(`/deployments/${newDeploymentId}`);
-        }
       },
       onError: (error) => {
+        const isInProgress = error.message?.includes(
+          'Another deployment is already in progress',
+        );
         logger.error(
-          '[DeploymentAddRevisionModal] deployVfolderV2 failed',
+          '[DeploymentAddRevisionModal] addModelRevision (preset) failed',
           error,
         );
-        message.error(error.message || t('modelStore.DeployFailed'));
+        message.error(
+          isInProgress
+            ? t('deployment.AnotherDeploymentInProgress')
+            : (error.message ?? t('general.ErrorOccurred')),
+        );
       },
     });
   };
@@ -1089,21 +1175,22 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     });
   };
 
-  const handleOk = () => {
-    // Let antd's built-in submit flow handle validation routing:
-    // success → `onFinish` (handle*Finish), failure → `onFinishFailed`
-    // (handleFinishFailed). Calling `validateFields()` separately and
-    // swallowing rejections in a `.catch` would silently drop submits
-    // when validation fails — including transient races during the
-    // BAIProjectResourceGroupSelect auto-select.
+  const handleOk = async () => {
+    // Explicitly `validateFields()` before triggering the mutation. The
+    // subsequent `form.submit()` will also validate, but routing through
+    // `onFinishFailed` only — without an awaitable pre-check here — would
+    // silently kick off `commitAdd` paths that depend on the user having
+    // first dismissed validation errors (project rule: always validate
+    // before deploy/commit mutations).
     const activeForm = effectiveMode === 'preset' ? presetForm : customForm;
+    try {
+      await activeForm.validateFields();
+    } catch {
+      handleFinishFailed();
+      return;
+    }
     activeForm.submit();
   };
-
-  const okText =
-    effectiveMode === 'preset'
-      ? t('modelStore.Deploy')
-      : t('deployment.AddRevision');
 
   return (
     <BAIModal
@@ -1132,35 +1219,32 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       width={720}
       footer={
         <BAIFlex direction="row" align="center" justify="between" gap="sm">
-          {effectiveMode === 'custom' ? (
-            <Checkbox
-              checked={autoActivate}
-              onChange={(e: CheckboxChangeEvent) =>
-                setAutoActivate(e.target.checked)
-              }
-            >
-              {t('deployment.AutoActivate')}
-            </Checkbox>
-          ) : (
-            <span />
-          )}
+          <Checkbox
+            checked={autoActivate}
+            onChange={(e: CheckboxChangeEvent) =>
+              setAutoActivate(e.target.checked)
+            }
+            disabled={effectiveMode === 'preset' && hasNoPresets}
+          >
+            {t('deployment.AutoActivate')}
+          </Checkbox>
           <BAIFlex direction="row" align="center" gap="xs">
             <Button onClick={() => onRequestClose()}>
               {t('button.Cancel')}
             </Button>
             <Button
               type="primary"
-              loading={isSubmitting}
+              loading={isAddInFlight}
               onClick={handleOk}
               disabled={effectiveMode === 'preset' && hasNoPresets}
             >
-              {okText}
+              {t('deployment.AddRevision')}
             </Button>
           </BAIFlex>
         </BAIFlex>
       }
       onCancel={() => onRequestClose()}
-      confirmLoading={isSubmitting}
+      confirmLoading={isAddInFlight}
       destroyOnHidden
       {...restModalProps}
     >
@@ -1177,6 +1261,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           />
         ) : (
           <Form<PresetFormValues>
+            key="preset-form"
             form={presetForm}
             layout="vertical"
             style={{ marginTop: token.marginXS }}
@@ -1197,10 +1282,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                   noStyle
                   rules={[{ required: true }]}
                 >
-                  <BAIAvailablePresetSelect
-                    onChange={handlePresetChange}
-                    style={{ flex: 1 }}
-                  />
+                  <BAIAvailablePresetSelect style={{ flex: 1 }} />
                 </Form.Item>
                 <Form.Item dependencies={['revisionPresetId']} noStyle>
                   {({ getFieldValue }: FormInstance<PresetFormValues>) => {
@@ -1214,10 +1296,8 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                             icon={<InfoCircleOutlined />}
                             disabled={!selectedId}
                             onClick={() => {
-                              const node = availablePresets.find(
-                                (p) => (toLocalId(p.id) ?? p.id) === selectedId,
-                              );
-                              if (node) setPresetDetailFrgmt(node);
+                              if (!selectedId) return;
+                              setPresetDetailId(selectedId);
                             }}
                           />
                         </Tooltip>
@@ -1229,21 +1309,9 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
             </Form.Item>
 
             <Form.Item
-              name="resourceGroup"
-              label={t('modelStore.ResourceGroup')}
-              tooltip={t('modelStore.ResourceGroupTooltip')}
-              rules={[{ required: true }]}
-            >
-              <BAIProjectResourceGroupSelect
-                projectName={projectName ?? ''}
-                autoSelectDefault
-                style={{ width: '100%' }}
-              />
-            </Form.Item>
-
-            <Form.Item
               name="modelFolderId"
               label={t('deployment.ModelFolder')}
+              tooltip={t('deployment.ModelFolderTooltip')}
               rules={[{ required: true }]}
             >
               <BAIProjectVfolderSelect
@@ -1260,12 +1328,14 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
         )
       ) : (
         <Form<FormValues>
+          key="custom-form"
           form={customForm}
           layout="vertical"
           style={{ marginTop: token.marginXS }}
           onFinish={handleCustomFinish}
           onFinishFailed={handleFinishFailed}
           initialValues={_.merge({}, RESOURCE_ALLOCATION_INITIAL_FORM_VALUES, {
+            resourceGroup: deployment?.metadata?.resourceGroupName,
             mountDestination: '/models',
             customDefinitionMode: 'command',
             commandPort: 8000,
@@ -1283,8 +1353,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
               type="info"
               showIcon
               style={{ marginBottom: token.marginMD }}
-              title={t('deployment.CurrentRevisionAvailableTitle')}
-              description={t('deployment.CurrentRevisionAvailableDescription')}
+              title={t('deployment.CurrentRevisionAvailableDescription')}
               action={
                 <Button
                   size="small"
@@ -1301,6 +1370,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           <Form.Item
             name="modelFolderId"
             label={t('deployment.ModelFolder')}
+            tooltip={t('deployment.ModelFolderTooltip')}
             rules={[{ required: true }]}
           >
             <BAIProjectVfolderSelect
@@ -1316,6 +1386,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           <Form.Item
             name="runtimeVariantId"
             label={t('deployment.RuntimeVariant')}
+            tooltip={t('deployment.RuntimeVariantTooltip')}
             rules={[
               { required: true },
               {
@@ -1401,6 +1472,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                           <Form.Item
                             name="startCommand"
                             label={t('modelService.StartCommand')}
+                            tooltip={t('modelService.StartCommandTooltip')}
                             rules={[{ required: true, whitespace: true }]}
                           >
                             <Input.TextArea
@@ -1413,6 +1485,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                           <Form.Item
                             name="commandModelMount"
                             label={t('modelService.ModelMountDestination')}
+                            tooltip={t('modelService.ModelMountTooltip')}
                           >
                             <Input placeholder="/models" allowClear />
                           </Form.Item>
@@ -1420,6 +1493,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                             <Form.Item
                               name="commandPort"
                               label={t('modelService.Port')}
+                              tooltip={t('modelService.PortTooltip')}
                               style={{ flex: 1 }}
                             >
                               <InputNumber
@@ -1431,6 +1505,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                             <Form.Item
                               name="commandHealthCheck"
                               label={t('modelService.HealthCheck')}
+                              tooltip={t('modelService.HealthCheckTooltip')}
                               style={{ flex: 1 }}
                             >
                               <Input placeholder="/health" allowClear />
@@ -1440,6 +1515,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                             <Form.Item
                               name="commandInitialDelay"
                               label={t('modelService.InitialDelay')}
+                              tooltip={t('modelService.InitialDelayTooltip')}
                               style={{ flex: 1 }}
                             >
                               <InputNumber
@@ -1451,6 +1527,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                             <Form.Item
                               name="commandMaxRetries"
                               label={t('modelService.MaxRetries')}
+                              tooltip={t('modelService.MaxRetriesTooltip')}
                               style={{ flex: 1 }}
                             >
                               <InputNumber min={0} style={{ width: '100%' }} />
@@ -1460,6 +1537,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                             <Form.Item
                               name="commandInterval"
                               label={t('modelService.Interval')}
+                              tooltip={t('modelService.IntervalTooltip')}
                               style={{ flex: 1 }}
                             >
                               <InputNumber
@@ -1471,6 +1549,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                             <Form.Item
                               name="commandMaxWaitTime"
                               label={t('modelService.MaxWaitTime')}
+                              tooltip={t('modelService.MaxWaitTimeTooltip')}
                               style={{ flex: 1 }}
                             >
                               <InputNumber
@@ -1486,6 +1565,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                           <Form.Item
                             name="mountDestination"
                             label={t('deployment.ModelMountDestination')}
+                            tooltip={t('modelService.ModelMountTooltip')}
                             rules={[{ required: true }]}
                             style={{ flex: 1 }}
                           >
@@ -1494,6 +1574,9 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                           <Form.Item
                             name="definitionPath"
                             label={t('deployment.ModelDefinitionPath')}
+                            tooltip={t(
+                              'modelService.ModelDefinitionPathTooltip',
+                            )}
                             style={{ flex: 1 }}
                           >
                             <Input
@@ -1528,7 +1611,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           <Suspense fallback={<Skeleton active paragraph={{ rows: 4 }} />}>
             <ResourceAllocationFormItems
               enableResourcePresets
-              autoSelectFirstResourceGroup
+              hideResourceGroupFormItem
             />
           </Suspense>
 
@@ -1555,6 +1638,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                         return (
                           <VFolderTableFormItem
                             label={t('modelService.AdditionalMounts')}
+                            tooltip={t('modelService.AdditionalMountsTooltip')}
                             rowKey="id"
                             tableProps={{
                               scroll: { x: 'max-content', y: 300 },
@@ -1576,12 +1660,13 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           />
         </Form>
       )}
-      {presetDetailFrgmt && (
-        <DeploymentPresetDetailModal
-          open
-          presetFrgmt={presetDetailFrgmt}
-          onCancel={() => setPresetDetailFrgmt(null)}
-        />
+      {presetDetailId && (
+        <Suspense fallback={null}>
+          <PresetDetailLoader
+            presetId={presetDetailId}
+            onCancel={() => setPresetDetailId(null)}
+          />
+        </Suspense>
       )}
     </BAIModal>
   );

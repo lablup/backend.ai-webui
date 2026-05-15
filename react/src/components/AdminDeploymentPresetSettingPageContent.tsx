@@ -34,6 +34,7 @@ import {
   Input,
   InputNumber,
   Select,
+  Skeleton,
   Steps,
   Typography,
   theme,
@@ -794,6 +795,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
               <Form.Item
                 name="replicaCount"
                 label={t('adminDeploymentPreset.Replicas')}
+                tooltip={t('adminDeploymentPreset.ReplicasTooltip')}
                 style={{ flex: 1, minWidth: 120 }}
                 rules={[{ required: true }]}
               >
@@ -806,6 +808,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
               <Form.Item
                 name="revisionHistoryLimit"
                 label={t('adminDeploymentPreset.RevisionHistoryLimit')}
+                tooltip={t('adminDeploymentPreset.RevisionHistoryLimitTooltip')}
                 style={{ flex: 1, minWidth: 120 }}
               >
                 <InputNumber
@@ -817,7 +820,11 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                 />
               </Form.Item>
             </BAIFlex>
-            <Form.Item name="openToPublic" valuePropName="checked">
+            <Form.Item
+              name="openToPublic"
+              valuePropName="checked"
+              tooltip={t('adminDeploymentPreset.OpenToPublicTooltip')}
+            >
               <Checkbox>{t('adminDeploymentPreset.OpenToPublic')}</Checkbox>
             </Form.Item>
           </BAICard>
@@ -828,13 +835,15 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
           {currentStepKey === 'review' && (
             <Form.Item noStyle shouldUpdate>
               {() => (
-                <PresetReviewSummary
-                  form={form}
-                  mode={mode}
-                  onGoToStep={goToStep}
-                  runtimeVariants={runtimeVariants}
-                  errorFieldNames={errorFieldNames}
-                />
+                <Suspense fallback={<Skeleton active />}>
+                  <PresetReviewSummary
+                    form={form}
+                    mode={mode}
+                    onGoToStep={goToStep}
+                    runtimeVariants={runtimeVariants}
+                    errorFieldNames={errorFieldNames}
+                  />
+                </Suspense>
               )}
             </Form.Item>
           )}

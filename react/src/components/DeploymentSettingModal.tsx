@@ -16,12 +16,14 @@ import {
   InputNumber,
   Select,
   theme,
+  Typography,
 } from 'antd';
 import {
   BAIButton,
   BAIFlex,
   BAIModal,
   BAIModalProps,
+  BAIProjectResourceGroupSelect,
   toLocalId,
 } from 'backend.ai-ui';
 import React from 'react';
@@ -33,6 +35,7 @@ interface FormValues {
   tags: string[];
   openToPublic: boolean;
   replicaCount: number;
+  resourceGroup: string;
 }
 
 export interface DeploymentSettingModalProps extends BAIModalProps {
@@ -52,7 +55,7 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
   const [form] = Form.useForm<FormValues>();
   const navigate = useWebUINavigate();
   const { message } = App.useApp();
-  const { id: projectId } = useCurrentProjectValue();
+  const { id: projectId, name: projectName } = useCurrentProjectValue();
   const currentDomain = useCurrentDomainValue();
 
   const deployment = useFragment(
@@ -62,6 +65,7 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
         metadata {
           name
           tags
+          resourceGroupName
         }
         networkAccess {
           openToPublic
@@ -73,6 +77,8 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
     `,
     deploymentFrgmt ?? null,
   );
+
+  const currentResourceGroup = deployment?.metadata.resourceGroupName ?? '';
 
   const [commitCreate, isCreating] =
     useMutation<DeploymentSettingModalCreateMutation>(graphql`
@@ -144,6 +150,7 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
                   domainName: currentDomain,
                   name: values.name,
                   tags: values.tags?.length ? values.tags : null,
+                  resourceGroupName: values.resourceGroup,
                 },
                 networkAccess: {
                   // TODO: expose preferredDomainName once backend business logic is in place
@@ -232,13 +239,40 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
         <Form.Item
           name="name"
           label={t('deployment.DeploymentName')}
+          tooltip={t('deployment.DeploymentNameTooltip')}
           rules={[{ required: true, message: t('deployment.NameRequired') }]}
         >
           <Input placeholder={t('deployment.NamePlaceholder')} />
         </Form.Item>
+        {deployment ? (
+          <Form.Item
+            label={t('modelStore.ResourceGroup')}
+            tooltip={t('modelStore.ResourceGroupTooltip')}
+          >
+            {currentResourceGroup ? (
+              <Typography.Text>{currentResourceGroup}</Typography.Text>
+            ) : (
+              <Typography.Text type="secondary">—</Typography.Text>
+            )}
+          </Form.Item>
+        ) : (
+          <Form.Item
+            name="resourceGroup"
+            label={t('modelStore.ResourceGroup')}
+            tooltip={t('modelStore.ResourceGroupTooltip')}
+            rules={[{ required: true }]}
+          >
+            <BAIProjectResourceGroupSelect
+              projectName={projectName ?? ''}
+              autoSelectDefault
+              style={{ width: '100%' }}
+            />
+          </Form.Item>
+        )}
         <Form.Item
           name="replicaCount"
           label={t('deployment.DesiredReplicas')}
+          tooltip={t('deployment.DesiredReplicasTooltip')}
           rules={[
             {
               required: true,
@@ -248,7 +282,11 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
         >
           <InputNumber min={1} style={{ width: '100%' }} />
         </Form.Item>
-        <Form.Item name="tags" label={t('deployment.Tags')}>
+        <Form.Item
+          name="tags"
+          label={t('deployment.Tags')}
+          tooltip={t('deployment.TagsTooltip')}
+        >
           <Select
             mode="tags"
             placeholder={t('deployment.TagsPlaceholder')}
@@ -260,6 +298,7 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
           name="openToPublic"
           valuePropName="checked"
           label={t('deployment.OpenToPublic')}
+          tooltip={t('deployment.OpenToPublicTooltip')}
         >
           <Checkbox>{t('deployment.Public')}</Checkbox>
         </Form.Item>

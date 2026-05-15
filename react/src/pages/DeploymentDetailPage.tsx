@@ -18,6 +18,7 @@ import { PlusOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import { Alert, Button, Skeleton, Tooltip, Typography, theme } from 'antd';
 import {
+  BAIButton,
   BAICard,
   BAIFlex,
   BAIUnmountAfterClose,
@@ -180,14 +181,20 @@ const DeploymentDetailPage: React.FC = () => {
           showIcon
           title={t('deployment.NoCurrentRevisionDeployed')}
           action={
-            <Button
+            <BAIButton
               type="primary"
               icon={<PlusOutlined />}
-              onClick={openAddRevision}
+              // `action` (not `onClick`) wraps the state update that mounts
+              // `<DeploymentAddRevisionModal>` (which suspends on its Relay
+              // queries) in `startTransition`, so the page stays interactive
+              // instead of falling into its Suspense fallback.
+              action={async () => {
+                openAddRevision();
+              }}
               disabled={isDeploymentDestroying}
             >
               {t('deployment.AddRevision')}
-            </Button>
+            </BAIButton>
           }
         />
       )}
@@ -242,13 +249,22 @@ const DeploymentDetailPage: React.FC = () => {
           isDeploymentDestroying={isDeploymentDestroying}
         />
       </div>
-      <BAIUnmountAfterClose>
-        <DeploymentAddRevisionModal
-          open={addRevisionOpen}
-          onRequestClose={handleAddRevisionRequestClose}
-          deploymentId={deploymentGlobalId}
-        />
-      </BAIUnmountAfterClose>
+      {/* Local Suspense around the lazily-mounted modal so its initial
+          `useLazyLoadQuery` doesn't bubble its suspend up to the page-level
+          Suspense fallback and blank the deployment detail page. The mount
+          itself is triggered from a `BAIButton.action` (transition), but
+          `BAIUnmountAfterClose` defers the mount via `useLayoutEffect` —
+          that state update is no longer inside the transition, so we still
+          need an explicit Suspense boundary here. */}
+      <Suspense fallback={null}>
+        <BAIUnmountAfterClose>
+          <DeploymentAddRevisionModal
+            open={addRevisionOpen}
+            onRequestClose={handleAddRevisionRequestClose}
+            deploymentId={deploymentGlobalId}
+          />
+        </BAIUnmountAfterClose>
+      </Suspense>
     </BAIFlex>
   );
 };

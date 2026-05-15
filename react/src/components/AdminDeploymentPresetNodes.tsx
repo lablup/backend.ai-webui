@@ -91,7 +91,6 @@ const AdminDeploymentPresetNodes: React.FC<AdminDeploymentPresetNodesProps> = ({
           deploymentStrategy
         }
         createdAt
-        ...DeploymentPresetDetailModalFragment
       }
     `,
     presetsFrgmt,

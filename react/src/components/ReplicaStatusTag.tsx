@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { LoadingOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
 import type { TagProps } from 'antd';
 import { BAITag, type SemanticColor } from 'backend.ai-ui';
@@ -14,14 +15,18 @@ export type ReplicaStatus =
   | 'DEGRADED'
   | 'NOT_CHECKED'
   | 'PROVISIONING'
+  | 'WARMING_UP'
+  | 'RUNNING'
   | 'TERMINATING'
-  | 'TERMINATED';
+  | 'TERMINATED'
+  | 'FAILED_TO_START';
 
 export interface ReplicaStatusTagProps extends Omit<TagProps, 'color'> {
   /**
    * Replica health/lifecycle state.
    * Health states: `HEALTHY`, `UNHEALTHY`, `DEGRADED`, `NOT_CHECKED`.
-   * Lifecycle states: `PROVISIONING`, `TERMINATING`, `TERMINATED`.
+   * Lifecycle states: `PROVISIONING`, `WARMING_UP`, `RUNNING`,
+   * `TERMINATING`, `TERMINATED`, `FAILED_TO_START`.
    */
   status: ReplicaStatus;
   /**
@@ -37,8 +42,11 @@ const replicaStatusColorMap: Record<ReplicaStatus, SemanticColor> = {
   DEGRADED: 'warning',
   NOT_CHECKED: 'default',
   PROVISIONING: 'info',
+  WARMING_UP: 'info',
+  RUNNING: 'success',
   TERMINATING: 'warning',
   TERMINATED: 'default',
+  FAILED_TO_START: 'error',
 };
 
 const replicaStatusI18nKey: Record<ReplicaStatus, string> = {
@@ -47,8 +55,11 @@ const replicaStatusI18nKey: Record<ReplicaStatus, string> = {
   DEGRADED: 'Degraded',
   NOT_CHECKED: 'NotChecked',
   PROVISIONING: 'Provisioning',
+  WARMING_UP: 'WarmingUp',
+  RUNNING: 'Running',
   TERMINATING: 'Terminating',
   TERMINATED: 'Terminated',
+  FAILED_TO_START: 'FailedToStart',
 };
 
 const ReplicaStatusTag: React.FC<ReplicaStatusTagProps> = ({
@@ -66,8 +77,13 @@ const ReplicaStatusTag: React.FC<ReplicaStatusTagProps> = ({
     ? t(`replicaStatus.tooltip.${i18nKey}`, { defaultValue: '' })
     : undefined;
 
+  // WARMING_UP and PROVISIONING share the `info` semantic color; render a
+  // spinner on WARMING_UP so the two states stay visually distinct in the
+  // status column.
+  const icon = status === 'WARMING_UP' ? <LoadingOutlined spin /> : undefined;
+
   const tag = (
-    <BAITag {...tagProps} color={color}>
+    <BAITag {...tagProps} color={color} icon={icon}>
       {label}
     </BAITag>
   );

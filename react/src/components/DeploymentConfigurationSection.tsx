@@ -36,6 +36,7 @@ import {
   theme,
 } from 'antd';
 import {
+  BAIButton,
   BAICard,
   BAIConfirmModalWithInput,
   BAIFetchKeyButton,
@@ -86,13 +87,23 @@ const DeploymentOverviewContent: React.FC<{
   const deploymentItems = filterOutEmpty([
     {
       key: 'name',
-      label: t('deployment.NameAndID'),
+      label: t('deployment.Name'),
       children: deployment?.metadata.name ? (
-        <>
-          <BAIText copyable>{deployment.metadata.name}</BAIText>
-          &nbsp;(
-          <BAIId globalId={deployment.id} />)
-        </>
+        <BAIText copyable>{deployment.metadata.name}</BAIText>
+      ) : (
+        renderFallback()
+      ),
+    },
+    {
+      key: 'id',
+      label: t('deployment.DeploymentId'),
+      children: deployment?.id ? (
+        <BAIId
+          globalId={deployment.id}
+          copyable
+          ellipsis={false}
+          style={{ maxWidth: 'none' }}
+        />
       ) : (
         renderFallback()
       ),
@@ -106,6 +117,11 @@ const DeploymentOverviewContent: React.FC<{
       key: 'domain',
       label: t('deployment.Domain'),
       children: deployment?.metadata.domainName || renderFallback(),
+    },
+    {
+      key: 'resource-group',
+      label: t('modelStore.ResourceGroup'),
+      children: deployment?.metadata.resourceGroupName || renderFallback(),
     },
     {
       key: 'endpoint-url',
@@ -186,6 +202,7 @@ const DeploymentConfigurationSection: React.FC<
           projectId
           domainName
           status
+          resourceGroupName
           projectV2 @since(version: "26.4.3") {
             basicInfo {
               name
@@ -360,14 +377,23 @@ const DeploymentConfigurationSection: React.FC<
           },
         ]}
         tabBarExtraContent={
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            disabled={isDeploymentDestroying}
-            onClick={onAddRevision}
-          >
-            {t('deployment.AddRevision')}
-          </Button>
+          <BAIFlex gap="xs" align="center">
+            <BAIButton
+              type="primary"
+              icon={<PlusOutlined />}
+              disabled={isDeploymentDestroying}
+              // `action` (not `onClick`) wraps the state update that mounts
+              // `<DeploymentAddRevisionModal>` (which suspends on its Relay
+              // queries) in `startTransition`, so the page stays interactive
+              // instead of falling into its Suspense fallback. The button
+              // itself shows a loading spinner until the modal renders.
+              action={async () => {
+                onAddRevision();
+              }}
+            >
+              {t('deployment.AddRevision')}
+            </BAIButton>
+          </BAIFlex>
         }
       >
         {activeRevisionTab === 'currentRevision' && (
@@ -404,7 +430,7 @@ const DeploymentConfigurationSection: React.FC<
                 revisionFrgmt={currentRevision}
                 status="current"
               />
-            ) : (
+            ) : isDeployingDifferentRevision ? null : (
               <Empty
                 image={Empty.PRESENTED_IMAGE_SIMPLE}
                 description={t('deployment.NoCurrentRevisionDeployed')}

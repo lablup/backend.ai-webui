@@ -97,6 +97,14 @@ interface ResourceAllocationFormItemsProps {
    * the form themselves.
    */
   autoSelectFirstResourceGroup?: boolean;
+  /**
+   * Hide the resource group selector while still mounting the underlying
+   * `BAIProjectResourceGroupSelect` (so `autoSelectFirstResourceGroup` and
+   * any external `form.setFieldValue('resourceGroup', ...)` still flow
+   * through). Used by the deployment-revision flow where the resource
+   * group is sourced from the parent deployment rather than chosen here.
+   */
+  hideResourceGroupFormItem?: boolean;
   extraAcceleratorRules?: Array<{
     warningOnly?: boolean;
     validator: (rule: unknown, value: number) => Promise<void>;
@@ -112,6 +120,7 @@ const ResourceAllocationFormItems: React.FC<
   showRemainingWarning = false,
   hideClusterFormItems = false,
   autoSelectFirstResourceGroup = false,
+  hideResourceGroupFormItem = false,
   extraAcceleratorRules,
 }) => {
   const form = Form.useFormInstance<MergedResourceAllocationFormValue>();
@@ -536,6 +545,7 @@ const ResourceAllocationFormItems: React.FC<
       <Form.Item
         name="resourceGroup"
         label={t('session.ResourceGroup')}
+        hidden={hideResourceGroupFormItem}
         rules={[
           {
             required: true,
@@ -732,7 +742,7 @@ const ResourceAllocationFormItems: React.FC<
                     <Form.Item
                       noStyle
                       shouldUpdate={(prev, next) =>
-                        prev.resource.shmem !== next.resource.shmem
+                        prev.resource?.shmem !== next.resource?.shmem
                       }
                       hidden={!baiClient._config.allowCustomResourceAllocation}
                     >

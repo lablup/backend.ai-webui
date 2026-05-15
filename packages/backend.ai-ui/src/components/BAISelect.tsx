@@ -108,11 +108,6 @@ export interface BAISelectProps<
   footer?: React.ReactNode;
   endReached?: () => void; // New prop for endReached
   searchAction?: (value: string) => Promise<void>;
-  // antd v6 made `role` required on SelectProps. We Omit it from the
-  // extended props and re-add it as optional with a sensible default so
-  // callers don't have to spell it out at every call site. Override
-  // (e.g. `role="listbox"`) when a specific ARIA role is needed.
-  role?: SelectProps<ValueType, OptionType>['role'];
 }
 
 function BAISelect<
@@ -128,7 +123,6 @@ function BAISelect<
   footer,
   endReached, // Destructure the new prop
   searchAction,
-  role = 'combobox',
   ...selectProps
 }: BAISelectProps<ValueType, OptionType>): React.ReactElement {
   const { value, options, onChange } = selectProps;
@@ -202,7 +196,6 @@ function BAISelect<
     <Tooltip title={tooltip}>
       <Select<ValueType, OptionType>
         {...selectProps}
-        role={role}
         loading={isPending || selectProps.loading}
         showSearch={composedShowSearch}
         ref={ref}

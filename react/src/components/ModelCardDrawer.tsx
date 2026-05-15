@@ -120,26 +120,11 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
           }
           ...VFolderNodeIdenticonV2Fragment
         }
-        availablePresets(orderBy: [{ field: RANK, direction: "ASC" }]) {
-          edges {
-            node {
-              id
-              name
-              description
-              runtimeVariantId
-              ...DeploymentPresetDetailModalFragment
-            }
-          }
-        }
+        ...ModelCardDeployModalFragment
       }
     `,
     modelCardDrawerFrgmt,
   );
-
-  const presets =
-    modelCard?.availablePresets?.edges
-      ?.map((e) => e?.node)
-      .filter((node): node is NonNullable<typeof node> => node != null) ?? [];
 
   return (
     <>
@@ -172,7 +157,13 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
           <BAIButton
             type="primary"
             disabled={!modelCard?.id}
-            onClick={() => setDeployModalOpen(true)}
+            // Use `action` (not `onClick`) so the state update that mounts
+            // `<ModelCardDeployModal>` (which suspends while its Relay
+            // query loads) runs inside `startTransition` — the drawer
+            // stays interactive instead of falling into Suspense fallback.
+            action={async () => {
+              setDeployModalOpen(true);
+            }}
           >
             {t('modelStore.Deploy')}
           </BAIButton>
@@ -344,22 +335,27 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
           </BAIFlex>
         )}
       </Drawer>
-      <BAIUnmountAfterClose>
-        <ModelCardDeployModal
-          open={deployModalOpen}
-          onClose={() => setDeployModalOpen(false)}
-          modelCardRowId={modelCard?.id ? toLocalId(modelCard.id) : undefined}
-          availablePresets={presets.map((p) => ({
-            ...p,
-            description: p.description ?? null,
-          }))}
-          onDeployed={(_deploymentId) => {
-            setDeployModalOpen(false);
-            onClose();
-          }}
-          onRequestCreateDeployment={toggleCreateDeployment}
-        />
-      </BAIUnmountAfterClose>
+      {/* Local Suspense around the lazily-mounted modal so its initial
+          Relay/`useProjectResourceGroups` suspend doesn't bubble up to the
+          drawer-level Suspense fallback. The mount is triggered from a
+          `BAIButton.action` (transition), but `BAIUnmountAfterClose` defers
+          the mount via `useLayoutEffect` — that state update is no longer
+          inside the transition, so we still need an explicit Suspense
+          boundary here. */}
+      <Suspense fallback={null}>
+        <BAIUnmountAfterClose>
+          <ModelCardDeployModal
+            open={deployModalOpen}
+            onClose={() => setDeployModalOpen(false)}
+            modelCardFrgmt={modelCard}
+            onDeployed={(_deploymentId) => {
+              setDeployModalOpen(false);
+              onClose();
+            }}
+            onRequestCreateDeployment={toggleCreateDeployment}
+          />
+        </BAIUnmountAfterClose>
+      </Suspense>
       <DeploymentSettingModal
         open={isCreateDeploymentOpen}
         onRequestClose={toggleCreateDeployment}

@@ -170,6 +170,7 @@ const DeploymentListPageContent: React.FC = () => {
         toolbarEnd={
           <BAIFlex gap="xs" align="center">
             <BAIFetchKeyButton
+              autoUpdateDelay={15_000}
               value={fetchKey}
               onChange={updateFetchKey}
               loading={isPending}

@@ -13,12 +13,14 @@ import BAIRadioGroup from './BAIRadioGroup';
 import DeploymentOwnerInfo from './DeploymentOwnerInfo';
 import DeploymentStatusTag, { DeploymentStatus } from './DeploymentStatusTag';
 import DeploymentTagChips from './DeploymentTagChips';
+import QuestionIconWithTooltip from './QuestionIconWithTooltip';
 import { DeleteFilled, EditOutlined } from '@ant-design/icons';
 import { Alert, App, Typography, theme } from 'antd';
 import {
   BAIConfirmModalWithInput,
   BAIFlex,
   BAIGraphQLPropertyFilter,
+  BAIId,
   BAINameActionCell,
   BAITable,
   filterOutEmpty,
@@ -180,6 +182,7 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
             }
             currentRevision @since(version: "26.4.3") {
               id
+              revisionNumber
               modelMountConfig {
                 vfolder {
                   id
@@ -286,9 +289,34 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
             onTitleClick={onRowClick ? () => onRowClick(row.id) : undefined}
             actions={actions}
             showActions="always"
+            copyable
           />
         );
       },
+    },
+    {
+      key: 'currentRevisionNumber',
+      title: (
+        <BAIFlex gap="xxs" align="center">
+          {t('deployment.RevisionNumber')}
+          <QuestionIconWithTooltip
+            title={t('deployment.RevisionNumberTooltip')}
+          />
+        </BAIFlex>
+      ),
+      render: (_text, row) => {
+        const revisionNumber = row.currentRevision?.revisionNumber;
+        if (revisionNumber == null)
+          return <Typography.Text type="secondary">-</Typography.Text>;
+        return <Typography.Text>{`#${revisionNumber}`}</Typography.Text>;
+      },
+    },
+    {
+      key: 'id',
+      title: t('deployment.DeploymentId'),
+      dataIndex: 'id',
+      defaultHidden: true,
+      render: (_text, row) => <BAIId globalId={row.id} copyable />,
     },
     {
       key: 'status',
@@ -301,7 +329,14 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
     },
     {
       key: 'replicaSummary',
-      title: t('deployment.ReplicaSummary'),
+      title: (
+        <BAIFlex gap="xxs" align="center">
+          {t('deployment.ReplicaSummary')}
+          <QuestionIconWithTooltip
+            title={t('deployment.ReplicaSummaryTooltip')}
+          />
+        </BAIFlex>
+      ),
       render: (_text, row) => {
         const running = row.runningReplicas?.count ?? 0;
         const desired = row.replicaState?.desiredReplicaCount ?? 0;
@@ -338,6 +373,7 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
     {
       key: 'endpointUrl',
       title: t('deployment.EndpointUrl'),
+      defaultHidden: true,
       render: (_text, row) => {
         const url = row.networkAccess?.endpointUrl;
         if (!url) return <Typography.Text type="secondary">-</Typography.Text>;
@@ -351,6 +387,7 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
     {
       key: 'tags',
       title: t('deployment.Tags'),
+      defaultHidden: true,
       render: (_text, row) => (
         <DeploymentTagChips
           metadataFrgmt={row.metadata}
@@ -372,6 +409,7 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
     isAdminMode && {
       key: 'domainName',
       title: t('deployment.Domain'),
+      defaultHidden: true,
       render: (_text, row) => {
         const domain = row.metadata?.domainName;
         return domain ? (

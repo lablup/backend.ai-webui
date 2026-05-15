@@ -150,7 +150,14 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
           key: 'start-service',
           title: t('modelService.DeployAsService'),
           icon: <BAIEndpointsIcon />,
-          onClick: () => onStartServiceFallback(vfolderId),
+          // Use `action` (not `onClick`) so the state update that mounts
+          // `<VFolderDeployModal>` (which suspends on its Relay query)
+          // runs inside `startTransition` — the page stays interactive
+          // instead of falling into its Suspense fallback. The button
+          // itself shows a loading spinner until the modal renders.
+          action: async () => {
+            onStartServiceFallback(vfolderId);
+          },
         }
       : null,
     // Share (active folders only)
@@ -844,15 +851,24 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
           setCurrentSharedVFolder(null);
         }}
       />
-      <BAIUnmountAfterClose>
-        <VFolderDeployModal
-          open={!!deployFallbackVfolderId}
-          vfolderId={deployFallbackVfolderId ?? undefined}
-          onClose={() => setDeployFallbackVfolderId(null)}
-          onDeployed={() => setDeployFallbackVfolderId(null)}
-          onRequestCreateDeployment={toggleCreateDeployment}
-        />
-      </BAIUnmountAfterClose>
+      {/* Local Suspense around the lazily-mounted modal so its initial
+          `useLazyLoadQuery` doesn't bubble its suspend up to the page-level
+          Suspense fallback and blank the data page. The mount is triggered
+          from a `BAINameActionCell` action (transition), but
+          `BAIUnmountAfterClose` defers the mount via `useLayoutEffect` —
+          that state update is no longer inside the transition, so we still
+          need an explicit Suspense boundary here. */}
+      <Suspense fallback={null}>
+        <BAIUnmountAfterClose>
+          <VFolderDeployModal
+            open={!!deployFallbackVfolderId}
+            vfolderId={deployFallbackVfolderId ?? undefined}
+            onClose={() => setDeployFallbackVfolderId(null)}
+            onDeployed={() => setDeployFallbackVfolderId(null)}
+            onRequestCreateDeployment={toggleCreateDeployment}
+          />
+        </BAIUnmountAfterClose>
+      </Suspense>
       <DeploymentSettingModal
         open={isCreateDeploymentOpen}
         onRequestClose={toggleCreateDeployment}
