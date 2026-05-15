@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { useResourceSlotsDetails } from '../../hooks/backendai';
 import { AgentResourcesFragment$key } from '../../__generated__/AgentResourcesFragment.graphql';
 import AgentDetailModal from '../AgentDetailModal';
 import SimpleProgressWithLabel from '../SimpleProgressWithLabel';
@@ -17,7 +18,6 @@ import {
   ResourceSlotName,
   ResourceTypeIcon,
   toFixedFloorWithoutTrailingZeros,
-  useResourceSlotsDetails,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { useState } from 'react';

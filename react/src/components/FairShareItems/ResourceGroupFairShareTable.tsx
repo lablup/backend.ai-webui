@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { useResourceSlotsDetails } from '../../hooks/backendai';
 import {
   ResourceGroupFairShareTableFragment$data,
   ResourceGroupFairShareTableFragment$key,
@@ -19,7 +20,6 @@ import {
   BAIUnmountAfterClose,
   convertToBinaryUnit,
   ResourceTypeIcon,
-  useResourceSlotsDetails,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
