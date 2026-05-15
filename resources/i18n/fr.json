@@ -362,6 +362,7 @@
     "Finish": "Finir",
     "ForceTerminate": "Forcer l'arrêt",
     "Generate": "produire",
+    "GoBackToPreviousPage": "Retour à la page précédente",
     "GoBackToStartPage": "Retour à la page {{title}}",
     "Info": "Info",
     "More": "Plus",
@@ -1358,6 +1359,7 @@
     "ReloadPage": "Recharger la page",
     "ResetErrorBoundary": "Réinitialisation de la limite d'erreur",
     "StackTrace": "Trace de la pile :",
+    "StorageHostFetchFailedTitle": "Échec de la récupération des informations sur l'hôte de stockage.",
     "Title": "Une erreur s'est produite."
   },
   "explorer": {

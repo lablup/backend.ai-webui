@@ -362,6 +362,7 @@
     "Finish": "Φινίρισμα",
     "ForceTerminate": "Δύναμη τερματισμού",
     "Generate": "Παράγω",
+    "GoBackToPreviousPage": "Επιστροφή στην προηγούμενη σελίδα",
     "GoBackToStartPage": "Επιστροφή στη σελίδα {{title}}",
     "Info": "Πληροφορίες",
     "More": "Περισσότερα",
@@ -1357,6 +1358,7 @@
     "ReloadPage": "Επαναφόρτωση της σελίδας",
     "ResetErrorBoundary": "Επαναφορά ErrorBoundary",
     "StackTrace": "Ιχνη στοίβας:",
+    "StorageHostFetchFailedTitle": "Αποτυχία ανάκτησης πληροφοριών κεντρικού υπολογιστή αποθήκευσης.",
     "Title": "Εμφανίστηκε σφάλμα."
   },
   "explorer": {

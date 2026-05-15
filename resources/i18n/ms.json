@@ -362,6 +362,7 @@
     "Finish": "Selesai",
     "ForceTerminate": "Paksa Tamatkan",
     "Generate": "Menjana",
+    "GoBackToPreviousPage": "Kembali ke halaman sebelumnya",
     "GoBackToStartPage": "Kembali ke halaman {{title}}",
     "Info": "Info",
     "More": "Lagi",
@@ -1357,6 +1358,7 @@
     "ReloadPage": "Muat semula halaman",
     "ResetErrorBoundary": "Tetapkan Semula ErrorBoundary",
     "StackTrace": "Jejak ralat:",
+    "StorageHostFetchFailedTitle": "Gagal mendapatkan maklumat hos storan.",
     "Title": "Ralat telah berlaku."
   },
   "explorer": {

@@ -362,6 +362,7 @@
     "Finish": "Acabado",
     "ForceTerminate": "Forzar finalización",
     "Generate": "Genere",
+    "GoBackToPreviousPage": "Volver a la página anterior",
     "GoBackToStartPage": "Volver a la página {{title}}",
     "Info": "Info",
     "More": "Más",
@@ -1357,6 +1358,7 @@
     "ReloadPage": "Recargar la página",
     "ResetErrorBoundary": "Restablecer ErrorBoundary",
     "StackTrace": "Traza de pila:",
+    "StorageHostFetchFailedTitle": "No se pudo obtener la información del host de almacenamiento.",
     "Title": "Se ha producido un error."
   },
   "explorer": {

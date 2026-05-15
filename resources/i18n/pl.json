@@ -362,6 +362,7 @@
     "Finish": "koniec",
     "ForceTerminate": "Wymuś zakończenie",
     "Generate": "Generować",
+    "GoBackToPreviousPage": "Wróć do poprzedniej strony",
     "GoBackToStartPage": "Wróć do strony {{title}}",
     "Info": "Info",
     "More": "Więcej",
@@ -1358,6 +1359,7 @@
     "ReloadPage": "Przeładuj stronę",
     "ResetErrorBoundary": "Reset ErrorBoundary",
     "StackTrace": "Stos wywołań:",
+    "StorageHostFetchFailedTitle": "Nie udało się pobrać informacji o hoście pamięci masowej.",
     "Title": "Wystąpił błąd."
   },
   "explorer": {

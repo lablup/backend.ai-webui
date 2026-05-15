@@ -362,6 +362,7 @@
     "Finish": "Дуусах",
     "ForceTerminate": "Хүчээр цуцлах",
     "Generate": "Үүсгэх",
+    "GoBackToPreviousPage": "Өмнөх хуудас руу буцах",
     "GoBackToStartPage": "{{title}} хуудас руу буцах",
     "Info": "Мэдээлэл",
     "More": "Дэлгэрэнгүй",
@@ -1357,6 +1358,7 @@
     "ReloadPage": "Хуудсыг дахин ачаална уу",
     "ResetErrorBoundary": "Алдааны хил хязгаарыг дахин тохируулах",
     "StackTrace": "Стэк мөр:",
+    "StorageHostFetchFailedTitle": "Хадгалалтын хостын мэдээллийг авах амжилтгүй боллоо.",
     "Title": "Алдаа гарсан байна."
   },
   "explorer": {

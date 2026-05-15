@@ -362,6 +362,7 @@
     "Finish": "완료",
     "ForceTerminate": "강제 종료",
     "Generate": "생성하기",
+    "GoBackToPreviousPage": "이전 페이지로 이동",
     "GoBackToStartPage": "{{title}} 페이지로 돌아가기",
     "Info": "정보",
     "More": "더보기",
@@ -1358,6 +1359,7 @@
     "ReloadPage": "페이지 새로고침",
     "ResetErrorBoundary": "ErrorBoundary 초기화",
     "StackTrace": "스택 트레이스:",
+    "StorageHostFetchFailedTitle": "스토리지 호스트 정보를 가져오는데 실패했습니다.",
     "Title": "에러가 발생했습니다."
   },
   "explorer": {

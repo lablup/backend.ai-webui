@@ -362,6 +362,7 @@
     "Finish": "Fertig",
     "ForceTerminate": "Beenden erzwingen",
     "Generate": "Generieren",
+    "GoBackToPreviousPage": "Zurück zur vorherigen Seite",
     "GoBackToStartPage": "Zurück zur Seite {{title}}",
     "Info": "Info",
     "More": "Mehr",
@@ -1357,6 +1358,7 @@
     "ReloadPage": "Laden Sie die Seite neu",
     "ResetErrorBoundary": "ErrorBoundary zurücksetzen",
     "StackTrace": "Stack-Trace:",
+    "StorageHostFetchFailedTitle": "Speicher-Host-Informationen konnten nicht abgerufen werden.",
     "Title": "Es ist ein Fehler aufgetreten."
   },
   "explorer": {

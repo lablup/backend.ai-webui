@@ -362,6 +362,7 @@
     "Finish": "เสร็จสิ้น",
     "ForceTerminate": "บังคับยุติ",
     "Generate": "สร้าง",
+    "GoBackToPreviousPage": "กลับไปยังหน้าก่อนหน้า",
     "GoBackToStartPage": "กลับไปยังหน้า {{title}}",
     "Info": "ข้อมูล",
     "More": "เพิ่มเติม",
@@ -1357,6 +1358,7 @@
     "ReloadPage": "โหลดหน้าใหม่",
     "ResetErrorBoundary": "รีเซ็ต ErrorBoundary",
     "StackTrace": "รายละเอียด Stack Trace:",
+    "StorageHostFetchFailedTitle": "ไม่สามารถดึงข้อมูลโฮสต์พื้นที่จัดเก็บได้",
     "Title": "เกิดข้อผิดพลาด"
   },
   "explorer": {

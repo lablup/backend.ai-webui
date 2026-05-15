@@ -362,6 +362,7 @@
     "Finish": "Hoàn thành",
     "ForceTerminate": "Buộc chấm dứt",
     "Generate": "Tạo ra",
+    "GoBackToPreviousPage": "Quay lại trang trước",
     "GoBackToStartPage": "Quay lại trang {{title}}",
     "Info": "Thông tin",
     "More": "Thêm",
@@ -1357,6 +1358,7 @@
     "ReloadPage": "Tải lại trang",
     "ResetErrorBoundary": "Đặt lại ranh giới lỗi",
     "StackTrace": "Dấu vết ngăn xếp:",
+    "StorageHostFetchFailedTitle": "Không thể tải thông tin máy chủ lưu trữ.",
     "Title": "Một lỗi đã xảy ra."
   },
   "explorer": {

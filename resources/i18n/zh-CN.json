@@ -362,6 +362,7 @@
     "Finish": "结束",
     "ForceTerminate": "强制终止",
     "Generate": "产生",
+    "GoBackToPreviousPage": "返回上一页",
     "GoBackToStartPage": "返回 {{title}} 页面",
     "Info": "详情",
     "More": "更多",
@@ -1357,6 +1358,7 @@
     "ReloadPage": "重新载入页面",
     "ResetErrorBoundary": "重置错误边界",
     "StackTrace": "堆栈跟踪：",
+    "StorageHostFetchFailedTitle": "无法获取存储主机信息。",
     "Title": "发生错误。"
   },
   "explorer": {

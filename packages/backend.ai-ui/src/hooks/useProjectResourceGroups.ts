@@ -6,6 +6,27 @@ export interface ScalingGroupItem {
   name: string;
 }
 
+/**
+ * Thrown when the vfolder host info fetch (`/folders/_/hosts`) inside
+ * `useProjectResourceGroups` fails. Tagging the failure lets callers wrap
+ * the hook with a dedicated error boundary that can distinguish this
+ * specific case from unrelated render errors and surface a targeted
+ * message (and discriminate it from the parallel scaling-groups fetch
+ * failure, which is re-thrown as-is so an outer boundary handles it).
+ */
+export class StorageHostFetchError extends Error {
+  readonly originalError: unknown;
+  constructor(originalError: unknown) {
+    super(
+      originalError instanceof Error
+        ? originalError.message
+        : 'Failed to fetch storage host information.',
+    );
+    this.name = 'StorageHostFetchError';
+    this.originalError = originalError;
+  }
+}
+
 interface VolumeInfo {
   backend: string;
   capabilities: string[];
@@ -60,15 +81,21 @@ export const useProjectResourceGroups = (
 
   const { data } = useSuspenseTanQuery<ProjectResourceGroupsQueryResult>({
     queryKey: ['ResourceGroupSelectQuery', projectName],
-    queryFn: () => {
+    queryFn: async () => {
       // Short-circuit when there is no project context yet — avoids hitting
       // `/scaling-groups?group=` and `/folders/_/hosts` with an unscoped query.
       if (!projectName) {
-        return Promise.resolve(null);
+        return null;
       }
       const search = new URLSearchParams();
       search.set('group', projectName);
-      return Promise.all([
+      // Run both fetches concurrently but discriminate failures: a host-info
+      // failure is tagged with `StorageHostFetchError` so a dedicated boundary
+      // can surface it, while a scaling-groups failure is re-thrown as-is and
+      // bubbles up to the generic error boundary. Host-info failure takes
+      // precedence when both fail because SFTP filtering depends on it and
+      // the result is otherwise unusable.
+      const [scalingGroupsResult, hostsResult] = await Promise.allSettled([
         baiRequestWithPromise({
           method: 'GET',
           url: `/scaling-groups?${search.toString()}`,
@@ -78,6 +105,16 @@ export const useProjectResourceGroups = (
           url: `/folders/_/hosts`,
         }),
       ]);
+      if (hostsResult.status === 'rejected') {
+        throw new StorageHostFetchError(hostsResult.reason);
+      }
+      if (scalingGroupsResult.status === 'rejected') {
+        throw scalingGroupsResult.reason;
+      }
+      return [
+        scalingGroupsResult.value,
+        hostsResult.value,
+      ] as unknown as NonNullable<ProjectResourceGroupsQueryResult>;
     },
     staleTime: 1000 * 60 * 5, // Cache for 5 minutes
   });

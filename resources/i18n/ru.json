@@ -362,6 +362,7 @@
     "Finish": "Заканчивать",
     "ForceTerminate": "Принудительно завершить",
     "Generate": "Генерировать",
+    "GoBackToPreviousPage": "Вернуться на предыдущую страницу",
     "GoBackToStartPage": "Вернуться на страницу {{title}}",
     "Info": "Информация",
     "More": "Ещё",
@@ -1357,6 +1358,7 @@
     "ReloadPage": "Перезагрузить страницу",
     "ResetErrorBoundary": "Сброс границы ошибки",
     "StackTrace": "Стек вызовов:",
+    "StorageHostFetchFailedTitle": "Не удалось получить информацию о хосте хранилища.",
     "Title": "Произошла ошибка."
   },
   "explorer": {
