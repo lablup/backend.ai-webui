@@ -583,6 +583,7 @@
     "WrongEmail": "Virheellinen sähköpostiosoite",
     "YouAreAboutToDeleteCredential": "Olet poistamassa tämän käyttäjän kirjautumistiedot:",
     "validation": {
+      "MaxUserCount": "Kerralla luotavien käyttäjien enimmäismäärä on {{count}}.",
       "PleaseEnterPositiveAndUnder2_31": "Syötä positiivinen arvo, joka on pienempi kuin 2^31",
       "PleaseEnterPositiveInteger": "Syötä positiivinen arvo.",
       "PleaseEnterUniqueNumbers": "Syötä yksilöllisiä numeroita",

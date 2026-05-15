@@ -583,6 +583,7 @@
     "WrongEmail": "Geçersiz e-posta adresi",
     "YouAreAboutToDeleteCredential": "Bu kullanıcının kimlik bilgilerini silmek üzeresiniz:",
     "validation": {
+      "MaxUserCount": "Bir seferde oluşturulabilecek maksimum kullanıcı sayısı {{count}} adettir.",
       "PleaseEnterPositiveAndUnder2_31": "Lütfen 2^31'den küçük pozitif bir değer girin.",
       "PleaseEnterPositiveInteger": "Lütfen pozitif bir değer girin.",
       "PleaseEnterUniqueNumbers": "Lütfen benzersiz sayılar girin",
