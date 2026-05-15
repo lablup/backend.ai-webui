@@ -1379,7 +1379,7 @@ export class Client {
     runId: string,
     mode: string,
     code: string,
-    opts: Object,
+    opts: object = {},
     timeout = 0,
   ): Promise<any> {
     let params = {
@@ -1872,7 +1872,7 @@ export class Client {
       .replace(/\s+/g, '-') // Replace spaces with -
       .replace(p, (c) => b.charAt(a.indexOf(c))) // Replace special chars
       .replace(/&/g, '-and-') // Replace & with 'and'
-      .replace(/[^\w\-]+/g, '') // Remove all non-word chars
+      .replace(/[^\w-]+/g, '') // Remove all non-word chars
       .replace(/--+/g, '-') // Replace multiple - with single -
       .replace(/^-+/, '') // Trim - from start of text
       .replace(/-+$/, ''); // Trim - from end of text
