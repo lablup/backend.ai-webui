@@ -333,6 +333,7 @@
     "ModifiedAt": "で変更されました",
     "MoreOptions": "その他のオプション",
     "Name": "名前",
+    "NoUploadPermissionForHost": "このホストへのアップロード権限がありません。",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "フォルダー名を入力してください。",
     "RenameSuccess": "名前は正常に変更されました。",

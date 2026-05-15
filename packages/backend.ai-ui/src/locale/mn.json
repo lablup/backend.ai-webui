@@ -333,6 +333,7 @@
     "ModifiedAt": "Өөрчлөгдсөн",
     "MoreOptions": "Нэмэлт сонголтууд",
     "Name": "Нэр",
+    "NoUploadPermissionForHost": "Энэ хостод байршуулах эрх байхгүй байна.",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Фолдерын нэрийг оруулна уу.",
     "RenameSuccess": "Энэ нэр амжилттай өөрчлөгдсөн байна.",

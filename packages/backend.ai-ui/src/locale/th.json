@@ -333,6 +333,7 @@
     "ModifiedAt": "ดัดแปลงที่",
     "MoreOptions": "ตัวเลือกเพิ่มเติม",
     "Name": "ชื่อ",
+    "NoUploadPermissionForHost": "คุณไม่มีสิทธิ์อัปโหลดสำหรับโฮสต์นี้",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "กรุณากรอกชื่อโฟลเดอร์",
     "RenameSuccess": "ชื่อได้รับการเปลี่ยนแปลงสำเร็จ",

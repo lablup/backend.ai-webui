@@ -51,6 +51,13 @@ interface ExplorerActionControlsProps {
   enableDownload?: boolean;
   enableDelete?: boolean;
   enableWrite?: boolean;
+  // Gates the upload entry points (dropdown + drag-drop). The corresponding
+  // server operation is `upload-file` on the storage host, which is distinct
+  // from generic write capability (mkdir / create-file / rename) and from
+  // file edit (which is also an upload underneath). Defaults to `enableWrite`
+  // so callers that don't pass it explicitly keep the previous bundled
+  // behavior.
+  enableUpload?: boolean;
   // onClickRefresh?: (key: string) => void;
   extra?: React.ReactNode;
 }
@@ -64,6 +71,7 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
   enableDownload = false,
   enableDelete = false,
   enableWrite = false,
+  enableUpload = enableWrite,
   extra,
 }) => {
   const { t } = useTranslation();
@@ -178,7 +186,7 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
           </Button>
         </Tooltip>
         <Dropdown
-          disabled={!enableWrite}
+          disabled={!enableUpload}
           trigger={['click']}
           open={openUploadDropdown}
           onOpenChange={toggleUploadDropdown}
@@ -237,8 +245,16 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
             );
           }}
         >
-          <Tooltip title={!lg && t('general.button.Upload')}>
-            <Button icon={<UploadOutlined />} disabled={!enableWrite}>
+          <Tooltip
+            title={
+              !enableUpload
+                ? t('comp:FileExplorer.NoUploadPermissionForHost')
+                : !lg
+                  ? t('general.button.Upload')
+                  : undefined
+            }
+          >
+            <Button icon={<UploadOutlined />} disabled={!enableUpload}>
               {lg && t('general.button.Upload')}
             </Button>
           </Tooltip>

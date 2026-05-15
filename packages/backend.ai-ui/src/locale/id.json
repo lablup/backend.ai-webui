@@ -333,6 +333,7 @@
     "ModifiedAt": "Dimodifikasi di",
     "MoreOptions": "Opsi lainnya",
     "Name": "Nama",
+    "NoUploadPermissionForHost": "Anda tidak memiliki izin unggah untuk host ini.",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Harap masukkan nama folder.",
     "RenameSuccess": "Namanya telah berhasil diubah.",

@@ -333,6 +333,7 @@
     "ModifiedAt": "Τροποποιημένος",
     "MoreOptions": "Περισσότερες επιλογές",
     "Name": "Ονομα",
+    "NoUploadPermissionForHost": "Δεν έχετε άδεια μεταφόρτωσης για αυτόν τον κεντρικό χώρο αποθήκευσης.",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Εισαγάγετε το όνομα του φακέλου.",
     "RenameSuccess": "Το όνομα έχει αλλάξει με επιτυχία.",

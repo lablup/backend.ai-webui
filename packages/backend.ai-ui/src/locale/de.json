@@ -333,6 +333,7 @@
     "ModifiedAt": "Modifiziert bei",
     "MoreOptions": "Weitere Optionen",
     "Name": "Name",
+    "NoUploadPermissionForHost": "Sie haben keine Hochlade-Berechtigung für diesen Host.",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Bitte geben Sie den Ordneramen ein.",
     "RenameSuccess": "Der Name wurde erfolgreich geändert.",

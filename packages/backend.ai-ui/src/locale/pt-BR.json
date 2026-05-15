@@ -330,6 +330,7 @@
     "ModifiedAt": "Modificado em",
     "MoreOptions": "Mais opções",
     "Name": "Nome",
+    "NoUploadPermissionForHost": "Você não tem permissão de upload para este host.",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Por favor, insira o nome da pasta.",
     "RenameSuccess": "O nome foi alterado com sucesso.",

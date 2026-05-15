@@ -333,6 +333,7 @@
     "ModifiedAt": "Modificato a",
     "MoreOptions": "Più opzioni",
     "Name": "Nome",
+    "NoUploadPermissionForHost": "Non si dispone del permesso di caricamento per questo host.",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Immettere il nome della cartella.",
     "RenameSuccess": "Il nome è stato cambiato con successo.",

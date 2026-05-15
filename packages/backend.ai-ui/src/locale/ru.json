@@ -333,6 +333,7 @@
     "ModifiedAt": "Модифицирован в",
     "MoreOptions": "Дополнительные параметры",
     "Name": "Имя",
+    "NoUploadPermissionForHost": "У вас нет разрешения на загрузку для данного хоста.",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Пожалуйста, введите имя папки.",
     "RenameSuccess": "Имя было успешно изменено.",

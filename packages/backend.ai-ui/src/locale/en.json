@@ -339,6 +339,7 @@
     "ModifiedAt": "Modified At",
     "MoreOptions": "More options",
     "Name": "Name",
+    "NoUploadPermissionForHost": "You don't have upload permission for this host.",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Please enter the folder name.",
     "RenameSuccess": "The name has been successfully changed.",

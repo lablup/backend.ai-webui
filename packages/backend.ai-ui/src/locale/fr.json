@@ -333,6 +333,7 @@
     "ModifiedAt": "Modifié à",
     "MoreOptions": "Plus d'options",
     "Name": "Nom",
+    "NoUploadPermissionForHost": "Vous n'avez pas la permission de téléverser sur cet hôte.",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Veuillez saisir le nom du dossier.",
     "RenameSuccess": "Le nom a été modifié avec succès.",

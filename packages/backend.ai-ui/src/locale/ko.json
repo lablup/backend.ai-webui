@@ -336,6 +336,7 @@
     "ModifiedAt": "수정일",
     "MoreOptions": "더 많은 옵션",
     "Name": "이름",
+    "NoUploadPermissionForHost": "호스트에 대한 업로드 권한이 없습니다.",
     "PleaseEnterAFileName": "파일 이름을 입력해 주세요.",
     "PleaseEnterAFolderName": "폴더 이름을 입력해 주세요.",
     "RenameSuccess": "이름이 성공적으로 변경되었습니다.",

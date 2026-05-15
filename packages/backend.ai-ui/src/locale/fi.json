@@ -333,6 +333,7 @@
     "ModifiedAt": "Muutettu",
     "MoreOptions": "Lisää vaihtoehtoja",
     "Name": "Nimi",
+    "NoUploadPermissionForHost": "Sinulla ei ole latausoikeutta tälle tallennuspalvelimelle.",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Anna kansionimi.",
     "RenameSuccess": "Nimi on muutettu onnistuneesti.",

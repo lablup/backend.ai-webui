@@ -333,6 +333,7 @@
     "ModifiedAt": "修改為",
     "MoreOptions": "更多選項",
     "Name": "姓名",
+    "NoUploadPermissionForHost": "您沒有此儲存主機的上傳權限。",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "請輸入文件夾名稱。",
     "RenameSuccess": "該名稱已成功更改。",

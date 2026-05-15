@@ -333,6 +333,7 @@
     "ModifiedAt": "Sửa đổi tại",
     "MoreOptions": "Thêm tùy chọn",
     "Name": "Tên",
+    "NoUploadPermissionForHost": "Bạn không có quyền tải lên cho máy chủ lưu trữ này.",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Vui lòng nhập tên thư mục.",
     "RenameSuccess": "Tên đã được thay đổi thành công.",
