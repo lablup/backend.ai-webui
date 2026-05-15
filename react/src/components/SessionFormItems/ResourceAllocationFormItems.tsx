@@ -7,6 +7,7 @@ import {
   addNumberWithUnits,
   compareNumberWithUnits,
   convertToBinaryUnit,
+  InputSizeUnit,
 } from '../../helper';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useResourceSlots } from '../../hooks/backendai';
@@ -60,6 +61,58 @@ export const RESOURCE_ALLOCATION_INITIAL_FORM_VALUES: DeepPartial<ResourceAlloca
 
 export const isMinOversMaxValue = (min: number, max: number) => {
   return min >= max;
+};
+
+/**
+ * Returns true when the given accelerator slot name represents a unified
+ * memory architecture, where the accelerator memory and the host memory
+ * share a single physical pool. Identified by a `.unified` suffix on the
+ * slot name (e.g. `cuda.unified`).
+ */
+export const isUnifiedAcceleratorSlot = (slotName?: string | null): boolean => {
+  return !!slotName && _.endsWith(slotName, '.unified');
+};
+
+/**
+ * Maps a slot's `display_unit` (e.g. `GiB`, `MiB`, `TiB`) to the
+ * corresponding `InputSizeUnit` accepted by `convertToBinaryUnit`. Falls
+ * back to `'g'` (GiB) when the display unit is missing or not a recognized
+ * binary size unit.
+ */
+export const displayUnitToInputSizeUnit = (
+  displayUnit?: string | null,
+): InputSizeUnit => {
+  const first = (_.first(displayUnit ?? '') ?? '').toLowerCase();
+  const validUnits: ReadonlyArray<InputSizeUnit> = [
+    'k',
+    'm',
+    'g',
+    't',
+    'p',
+    'e',
+  ];
+  const match = validUnits.find((u) => u === first);
+  return match ?? 'g';
+};
+
+/**
+ * Returns the accelerator-field number derived from the host memory value
+ * for a unified-memory slot. Reads the slot's `display_unit` from
+ * `mergedResourceSlots` and converts `mem` to that unit. Falls back to
+ * `'g'` (GiB) when the display unit is unavailable.
+ */
+export const getUnifiedAcceleratorValueFromMem = (
+  mem: string | number | undefined,
+  slotName: string | undefined,
+  mergedResourceSlots:
+    | Record<string, { display_unit?: string } | undefined>
+    | undefined,
+): number => {
+  const displayUnit = slotName
+    ? mergedResourceSlots?.[slotName]?.display_unit
+    : undefined;
+  const targetUnit = displayUnitToInputSizeUnit(displayUnit);
+  return convertToBinaryUnit(mem || '0g', targetUnit)?.number ?? 0;
 };
 
 export interface ResourceAllocationFormValue {
@@ -267,6 +320,28 @@ const ResourceAllocationFormItems: React.FC<
     }
   };
 
+  // Centralized helper that keeps the `resource.accelerator` field in sync
+  // with `resource.mem` whenever the active accelerator slot is a unified
+  // one. Call this from every code path that mutates `resource.mem` or
+  // `resource.acceleratorType` so submit-time form state is consistent.
+  const syncUnifiedAcceleratorIfNeeded = useEventNotStable(() => {
+    const activeAcceleratorType = form.getFieldValue([
+      'resource',
+      'acceleratorType',
+    ]);
+    if (!isUnifiedAcceleratorSlot(activeAcceleratorType)) {
+      return;
+    }
+    form.setFieldValue(
+      ['resource', 'accelerator'],
+      getUnifiedAcceleratorValueFromMem(
+        form.getFieldValue(['resource', 'mem']),
+        activeAcceleratorType,
+        mergedResourceSlots,
+      ),
+    );
+  });
+
   const ensureValidAcceleratorType = useEventNotStable(() => {
     const currentAcceleratorType = form.getFieldValue([
       'resource',
@@ -283,6 +358,9 @@ const ResourceAllocationFormItems: React.FC<
         acceleratorType: nextAcceleratorType || currentAcceleratorType,
       },
     });
+    // The accelerator type may have changed; mirror `mem` into the
+    // accelerator field if the resolved type is a unified slot.
+    syncUnifiedAcceleratorIfNeeded();
   });
 
   const updateResourceFieldsBasedOnImage = useEventNotStable(
@@ -388,6 +466,9 @@ const ResourceAllocationFormItems: React.FC<
       if (form.getFieldValue('enabledAutomaticShmem')) {
         runShmemAutomationRule(form.getFieldValue(['resource', 'mem']) || '0g');
       }
+      // mem and/or acceleratorType may have changed above; keep the
+      // accelerator field consistent for unified slots.
+      syncUnifiedAcceleratorIfNeeded();
       form
         .validateFields(['resource'], {
           recursive: true,
@@ -445,6 +526,9 @@ const ResourceAllocationFormItems: React.FC<
       if (!hasPresetShmem) {
         runShmemAutomationRule(mem || '0g');
       }
+      // mem and/or acceleratorType may have changed above; keep the
+      // accelerator field consistent for unified slots.
+      syncUnifiedAcceleratorIfNeeded();
 
       form
         .validateFields(['resource'], {
@@ -864,6 +948,13 @@ const ResourceAllocationFormItems: React.FC<
                                 ) {
                                   runShmemAutomationRule(M_plus_S || '0g');
                                 }
+                                // When the active accelerator slot is a
+                                // unified-memory slot, the accelerator field
+                                // shares a single pool with host memory.
+                                // Derive the accelerator value from `mem` at
+                                // the source of change so submit-time form
+                                // state is always consistent.
+                                syncUnifiedAcceleratorIfNeeded();
                               }}
                             />
                           </Form.Item>
@@ -921,6 +1012,10 @@ const ResourceAllocationFormItems: React.FC<
                         currentAcceleratorType as keyof typeof resourceSlots
                       ] === 'unique';
 
+                    const isUnifiedType = isUnifiedAcceleratorSlot(
+                      currentAcceleratorType,
+                    );
+
                     const isSingleCluster =
                       form.getFieldValue('cluster_size') < 2;
                     const hasQuantumSize = _.isNumber(
@@ -965,9 +1060,15 @@ const ResourceAllocationFormItems: React.FC<
                             />
                           ),
                         }}
+                        extra={
+                          isUnifiedType
+                            ? t('session.launcher.UnifiedAcceleratorMemoryNote')
+                            : undefined
+                        }
                         dependencies={[
                           ['resource', 'acceleratorType'],
                           'cluster_size',
+                          ['resource', 'mem'],
                         ]}
                         rules={[
                           {
@@ -1139,7 +1240,8 @@ const ResourceAllocationFormItems: React.FC<
                             },
                           }}
                           disabled={
-                            supportedAcceleratorTypesInRGByImage?.length === 0
+                            supportedAcceleratorTypesInRGByImage?.length ===
+                              0 || isUnifiedType
                           }
                           min={0}
                           max={
@@ -1193,6 +1295,58 @@ const ResourceAllocationFormItems: React.FC<
                                         };
                                       },
                                     )}
+                                    onChange={(nextType: string) => {
+                                      // Changing the slot type mutates the
+                                      // active allocation; the previously
+                                      // selected preset no longer matches.
+                                      form.setFieldValue(
+                                        'allocationPreset',
+                                        'custom',
+                                      );
+                                      // Keep the accelerator field consistent
+                                      // at the moment the slot type changes,
+                                      // rather than relying on a watcher
+                                      // effect that runs after render.
+                                      if (isUnifiedAcceleratorSlot(nextType)) {
+                                        // Switching INTO a unified slot:
+                                        // mirror the current `mem` value
+                                        // converted to the slot's display
+                                        // unit. Write acceleratorType first
+                                        // so the shared helper sees the new
+                                        // active slot when it reads from the
+                                        // form.
+                                        form.setFieldValue(
+                                          ['resource', 'acceleratorType'],
+                                          nextType,
+                                        );
+                                        syncUnifiedAcceleratorIfNeeded();
+                                      } else if (
+                                        isUnifiedAcceleratorSlot(
+                                          currentAcceleratorType,
+                                        )
+                                      ) {
+                                        // Switching OUT of a unified slot
+                                        // into a discrete one: reset to the
+                                        // discrete slot's min so the stale
+                                        // mirrored GiB value from unified
+                                        // mode does not bleed through as a
+                                        // device count.
+                                        //
+                                        // Discrete-to-discrete switches are
+                                        // intentionally NOT reset here:
+                                        // ensureValidAcceleratorType clamps
+                                        // the existing value if it falls
+                                        // outside the new slot's range, so
+                                        // the user's current allocation is
+                                        // preserved across discrete slot
+                                        // changes.
+                                        form.setFieldValue(
+                                          ['resource', 'accelerator'],
+                                          resourceLimits.accelerators[nextType]
+                                            ?.min ?? 0,
+                                        );
+                                      }
+                                    }}
                                   />
                                 </Form.Item>
                               ) : undefined,

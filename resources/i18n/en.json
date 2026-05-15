@@ -2889,6 +2889,7 @@
       "TensorBoardPrepared": "TensorBoard app prepared.",
       "TitleSession": "Session (Backend.AI)",
       "TotalAllocation": "Total Allocation",
+      "UnifiedAcceleratorMemoryNote": "Accelerator memory is shared with host memory on this device and cannot be set separately.",
       "UserResourceLimit": "User Resource Limit",
       "UsingBootstrapScriptInfo": "Bootstrap script is included.",
       "Version": "Version",
