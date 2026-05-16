@@ -70,7 +70,7 @@ jobs:
 
       # Share build artifacts with downstream desktop jobs
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: web-build
           path: |
@@ -318,7 +318,7 @@ jobs:
       # (handy during dry runs and when debugging the release path).
       - name: Upload PDFs as workflow artifact
         if: always()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: webui-docs-pdfs
           path: packages/backend.ai-webui-docs/dist/*.pdf
