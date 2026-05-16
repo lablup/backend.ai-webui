@@ -246,6 +246,8 @@ also displayed in the Permission panel.
 
 <a id="manage-models-cards"></a>
 
+<a id="manage-model-cards"></a>
+
 ## Manage Model Cards
 
 Model cards in the Model Store are created and managed through the [Admin Model Store Management](#admin-model-store-management) interface. Each model card is linked to a storage folder (vfolder) that contains the actual model files.
@@ -403,6 +405,20 @@ Click the edit icon next to the model card name to modify an existing model card
 #### Deleting Model Cards
 
 You can delete an individual model card by clicking the delete icon next to its name, or perform bulk deletion by selecting multiple model cards with the row checkboxes and clicking the red trash-bin button next to the selection count.
+
+![](../images/model_card_delete_with_folder.png)
+<!-- TODO: Recapture screenshot of the model card delete dialog showing the "Also delete the associated model folder" option -->
+
+The deletion confirmation dialog includes an **Also delete the associated model folder** option:
+
+- When this option is checked, the storage folder (vfolder) linked to the model card is moved to the trash at the same time the model card is removed. A trash notification appears so superadmins can confirm that the linked folder was sent to the trash, and the folder can be restored permanently from **Data > Trash** if needed. Note that deleting the associated folder also removes every other model card that references the same folder.
+- When this option is unchecked, only the model card record is removed; the linked storage folder remains untouched and can be reused for another model card.
+
+The same behavior applies to **bulk deletion** (the label becomes **Also delete all associated model folders**): each selected model card's linked storage folder is moved to the trash when the option is checked, and a trash notification is shown for each folder that was moved.
+
+:::note
+Each individual admin deployment now has its own dedicated route at `/admin-deployments/:id`. When you open a deployment from the Admin Serving page, the URL changes to this path so that the deployment detail can be linked to or bookmarked directly.
+:::
 
 <a id="prometheus-query-presets"></a>
 
@@ -678,7 +694,10 @@ so use it with caution.
 You can select and display only the columns you want by clicking the `Setting (Gear)` button at the
 bottom right of the table.
 
-To save the current resource policy as a file, click the 'more' button in the upper right of each tab and select the 'Export CSV' menu item.
+To save the current resource policy list as a CSV file, use the **Export CSV** action in the **bottom-right slot of the table**. This applies to the Keypair, User, and Project resource policy tabs alike — the CSV export control has been moved from the header area to the table's bottom-right toolbar for consistency with other admin lists.
+
+![](../images/resource_policy_list_csv.png)
+<!-- TODO: Recapture screenshot of the resource policy list showing the CSV export control at the BAITable bottom-right -->
 
 ![](../images/keypair_export.png)
 
@@ -973,6 +992,10 @@ button. The registry creation dialog contains the following fields:
 - **Registry Type**: Select the type of registry. Supported types include: `docker`, `harbor`, `harbor2`, `github`, `gitlab`, `ecr`, and `ecr-public`.
 - **Project Name**: The project or namespace in the registry (required). Use the full path including namespace and project name for GitLab registries.
 - **Extra Information**: A JSON string for additional configuration needed for each registry type. This field is available from version 24.09.3.
+- **SSL Verification**: Toggles whether Backend.AI verifies the registry's SSL certificate when connecting. **Enabled by default**, which is the recommended setting for any registry reachable over the public internet. Disable this only for a registry served with a self-signed certificate inside a trusted internal environment where you have already verified the network path; turning it off makes the connection vulnerable to man-in-the-middle attacks.
+
+![](../images/container_registry_editor_modal.png)
+<!-- TODO: Recapture screenshot of the Container Registry Editor modal including the SSL Verification checkbox -->
 
 ![](../images/add_registry_dialog.png)
 
