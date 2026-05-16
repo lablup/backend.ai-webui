@@ -17,7 +17,7 @@ To access the RBAC Management page, click **RBAC Management** in the **Admin Set
 The Role List page displays all roles in a table format. You can filter, search, and sort roles using the controls at the top of the page.
 
 - **Status filter**: A segmented control to toggle between **Active** and **Inactive** roles. Active is selected by default.
-- **Name search**: A property filter to search roles by name or filter by source (System or Custom).
+- **Name search**: A property filter to search roles by name or filter by source (System or Custom). The filter input adapts to the selected property — for example, the **Source** filter exposes the available values (System / Custom) as a typed selector rather than a free-form text box, while the **Name** filter accepts free text.
 - **Create Role**: A button to create a new custom role.
 
 The table displays the following columns:
@@ -165,21 +165,28 @@ Here are some common permission configurations to help you understand how the fo
 1. Open the role detail drawer and select the **Permissions** tab
 2. Click the **Add Permission** button
 3. In the modal, fill in the following fields:
-   - **Scope Type / Target**: Select one of the scope entries that were assigned to the role. The dropdown lists only scopes that have at least one actionable entity.
-   - **Permission Type**: Select the entity type. Only valid types for the selected scope type are shown.
+   - **Scope Type / Target**: Select one of the scope entries that were assigned to the role. The dropdown lists only scopes that have at least one actionable entity. The target is shown by its resolved, localized name (for example, the domain or project's display name) rather than its raw UUID, so you can recognize the scope at a glance.
+   - **Permission Type**: Select the entity type. Only valid types for the selected scope type are shown. Permission type labels (such as **Role Assignment**) are localized to match your UI language.
    - **Permission**: Select the operation (e.g., Create, Read, Update, Soft Delete, Hard Delete, or delegation operations)
 4. Click **Add** to create the permission
 
-![](../images/rbac_add_permission_modal.png)
+![](../images/rbac_permission_modal.png)
+<!-- TODO: Recapture screenshot of the Add Permission modal showing the resolved, localized scope target name and localized Permission Type labels (replaces rbac_add_permission_modal.png) -->
+
+:::note
+The filter controls in the permissions list now use input types tailored to each filter property — selectors for enumerated values (such as Permission Type, Permission), and free text for name-style fields — making it faster to narrow the list to the entries you care about.
+:::
 
 :::note
 If a role was created without any scopes (for example, a legacy role imported from an earlier version), the **Add Permission** modal falls back to showing separate **Scope Type** and **Target** fields so that administrators can still configure the permission target.
 :::
 
-### Delete a Permission
+### Remove a Permission
 
-1. In the **Permissions** tab, click the **Delete** button next to the permission you want to remove
-2. Confirm the deletion in the confirmation dialog
+1. In the **Permissions** tab, click the **Remove Permission** button next to the permission you want to remove
+2. A small confirmation popup appears anchored to the button. Click **OK** to confirm, or **Cancel** to dismiss.
+
+Removing a permission from a role only detaches it from the role's permission set — the role itself, its scopes, and its user assignments are kept. You can add the same permission back later from the same tab, so this action is treated as reversible and uses a lightweight popup confirmation rather than a typed-name confirmation modal.
 
 ## Manage User Assignments
 
@@ -197,9 +204,12 @@ The **Role Assignments** tab in the role detail drawer shows which users are ass
 
 ![](../images/rbac_add_user_modal.png)
 
-### Remove Users from a Role
+### Revoke Users from a Role
 
-1. In the **Role Assignments** tab, click the **Delete** button next to the user you want to remove
-2. Confirm the removal in the confirmation dialog
+1. In the **Role Assignments** tab, click the **Revoke User** button next to the user you want to remove
+2. A small confirmation popup appears anchored to the button. Click **OK** to revoke the assignment, or **Cancel** to dismiss.
 
-![](../images/rbac_remove_user_dialog.png)
+![](../images/rbac_revoke_popconfirm.png)
+<!-- TODO: Capture screenshot of the Popconfirm-style revoke confirmation anchored to the Revoke User button -->
+
+Revoking a user removes only that user's assignment to this role; the role itself and its other assignments are kept, and the user can be added back from **Add User** at any time. Because the action is reversible, it uses a lightweight popup confirmation rather than a typed-name confirmation modal.
