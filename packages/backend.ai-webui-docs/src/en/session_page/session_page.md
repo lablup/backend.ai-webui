@@ -39,3 +39,11 @@ From Backend.AI Manager v26.2.0, you can view the detailed scheduling history fo
 session detail panel. This helps you understand scheduling decisions, delays, and failures. For more details,
 refer to [Session Scheduling History](#session-scheduling-history).
 :::
+
+:::note
+The **Launch** button on the session launcher creates one session by default.
+To launch several sessions with the same configuration in one go, click the
+more (`...`) icon next to the **Launch** button to open its dropdown menu and
+select **Launch Multiple Sessions**. See [Confirm and Launch](#confirm-and-launch)
+for details.
+:::

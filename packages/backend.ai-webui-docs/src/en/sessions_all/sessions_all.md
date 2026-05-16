@@ -145,13 +145,14 @@ refer to the following:
     matrix/vector computations involved in machine learning. AI accelerators speed
     up training / inference algorithms by orders of magnitude, reducing running
     times from weeks to days.
-  * Sessions: Session is a unit of computational environment that is created
-    according to a specified environment and resources. If this value is set to a
-    value greater than 1, multiple sessions corresponding to the resource set above
-    are created. If there are not enough resources available, requests to create
-    sessions that cannot be created are put on the waiting queue.
-
   ![](../images/launch_session_resource_2.png)
+
+  :::note
+  The **Number of sessions** option is no longer set in this form. To launch
+  multiple sessions with the same configuration, use the start button's
+  dropdown menu on the **Confirm and Launch** step. See
+  [Confirm and Launch](#confirm-and-launch) for details.
+  :::
 
   * Select Agent: Select the agent to be assigned. By default, the agent is automatically selected
     by the scheduler. The agent selector displays the actual amount of available resources for each agent.
@@ -228,10 +229,26 @@ If you are done with the network setting, click the 'Next' button below, or
 On the last page, users could view information of session(s) to create,
 such as environment itself, allocated resources, mount information,
 environment variables set on the previous pages, preopen ports, etc.,
-Review the settings, users could launch the session by clicking 'Launch' button.
+Review the settings, users could launch the session by clicking the 'Launch' button.
 Click the 'Edit' button located at the top right of each card to redirect to relevant page.
 
 ![](../images/launch_session_confirm.png)
+
+To launch more than one session at once with the same configuration, click the
+more (`...`) icon next to the 'Launch' button to open its dropdown menu and
+select **Launch Multiple Sessions**. A dialog appears where you can set the
+**Number of sessions** to create; each session is created independently with
+the resources shown on the form. The single-click 'Launch' action still starts
+one session by default.
+
+![](../images/session_start_dropdown.png)
+<!-- TODO: Capture screenshot of the start button dropdown showing "Launch Multiple Sessions" -->
+
+:::note
+Concurrent session launch is capped by the system; if the requested total
+exceeds your remaining session quota, a warning is shown and some sessions may
+be queued until resources become available.
+:::
 
 If there is an issue with the settings, an error message will be displayed as follows.
 Users can edit their settings when this happens.
