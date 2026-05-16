@@ -404,6 +404,89 @@ Click the edit icon next to the model card name to modify an existing model card
 
 You can delete an individual model card by clicking the delete icon next to its name, or perform bulk deletion by selecting multiple model cards with the row checkboxes and clicking the red trash-bin button next to the selection count.
 
+<a id="prometheus-query-presets"></a>
+
+## Prometheus Query Presets
+
+Backend.AI lets administrators define reusable **Prometheus query presets** that auto-scaling rules and other monitoring features can reference by name. A preset bundles a metric name, a PromQL query template, an optional time window, and optional filter / group labels so operators do not have to retype the same query for every rule.
+
+The presets are managed from the **Prometheus Preset** tab on the Admin Serving page (`/admin-deployments?tab=prometheus-preset`).
+
+![](../images/admin_prometheus_preset_list.png)
+<!-- TODO: Capture screenshot of the Prometheus Query Preset list -->
+
+:::note
+This tab is **admin-only** and is visible only when the Backend.AI Manager advertises the `prometheus-query-preset` capability. If the tab does not appear in your environment, your Manager build does not yet support this feature.
+:::
+
+<a id="prometheus-preset-list-and-filter"></a>
+
+### List & Filter
+
+The preset table lists all Prometheus query presets across the cluster. Each row shows:
+
+- **Name**: A unique, human-readable identifier for the preset. The cell also exposes inline **Edit** and **Delete** actions.
+- **ID**: The preset's internal identifier.
+- **Metric Name**: The metric this preset reports (used as the display label by consumers such as auto-scaling rules).
+- **Query Template**: The PromQL expression that will be executed. The cell is **copyable** — hover over the value and click the copy icon to copy the full template to the clipboard. This is useful when you want to paste the template into a Prometheus UI to verify the result.
+- **Time Window**: The default look-back window (for example, `5m`) used when the query references a range vector.
+- **Category**: The optional category the preset belongs to (with the resolved category name and the category ID).
+- **Options**: The optional **Filter Labels** and **Group Labels** that consumers can apply on top of the preset.
+- **Created At** / **Updated At**: Timestamps maintained automatically by the server.
+
+You can search and narrow the list with the property filter above the table, and click any column header to change the sort order.
+
+<a id="prometheus-preset-column-settings"></a>
+
+### Column Settings Persistence
+
+The table includes a column-settings control that lets you hide columns you do not need and reorder the visible columns. Your choices are **persisted across sessions** per browser, so the table opens with your preferred layout the next time you visit the tab. Resetting the column settings restores the default Backend.AI layout.
+
+<a id="prometheus-preset-create"></a>
+
+### Create a Preset
+
+Click **Add Preset** at the top right of the table to open the **Create Preset** modal.
+
+![](../images/admin_prometheus_preset_create_modal.png)
+<!-- TODO: Capture screenshot of the Create Preset modal with the live preview area visible -->
+
+The modal contains the following fields:
+
+- **Name**: The preset's unique name. Must be unique across all Prometheus query presets.
+- **Description**: A free-form description shown alongside the preset in selectors.
+- **Category**: An optional category for grouping related presets. Leave empty for **No category**.
+- **Metric Name**: The metric label that consumers (for example, auto-scaling rules) will display.
+- **Query Template**: The PromQL expression to execute. As you type, a **live preview** area below the field calls the server's `adminPrometheusQueryPresetPreview` query and shows the current value the query returns against your Prometheus instance, so you can verify the template works before saving. The preview is debounced and updates automatically as you edit.
+- **Time Window**: The default range-vector window, for example `5m`. Leave empty if the query does not use a range vector.
+- **Filter Labels**: Optional list of label selectors that consumers can apply on top of the preset.
+- **Group Labels**: Optional list of labels to group the query result by.
+
+Click **Create** to save the preset. On success, the preset appears in the list and a confirmation toast is shown.
+
+<a id="prometheus-preset-edit"></a>
+
+### Edit a Preset
+
+Click the **Edit** action in the **Name** cell of a preset row to open the **Edit Preset** modal. The modal is pre-populated with the preset's current values and exposes the same fields as the Create dialog, including the live preview area for the Query Template.
+
+![](../images/admin_prometheus_preset_edit_modal.png)
+<!-- TODO: Capture screenshot of the Edit Preset modal with the live preview reflecting the current template -->
+
+Click **Save** to apply your changes. Consumers of the preset (for example, auto-scaling rules referencing it) automatically pick up the new query template the next time they evaluate the metric.
+
+<a id="prometheus-preset-delete"></a>
+
+### Delete a Preset
+
+Click the **Delete** action in the **Name** cell of a preset row to open the deletion confirmation modal.
+
+:::danger
+Deleting a Prometheus query preset is **permanent and cannot be undone**. Auto-scaling rules and other features that reference the deleted preset will lose their query template and may stop functioning until they are reconfigured to point at a different preset.
+:::
+
+Because deletion is irreversible, the dialog requires you to **type the preset's name** into the confirmation input before the **Delete** button becomes enabled. This typed-confirmation pattern (`BAIConfirmModalWithInput`) is used consistently across Backend.AI for permanent-delete actions. Type the exact preset name shown in the dialog title and click **Delete** to confirm.
+
 <a id="manage-resource-policy"></a>
 
 ## Manage Resource Policies
