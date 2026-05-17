@@ -129,6 +129,42 @@ Open the browser and log in:
 - Full-page captures only for page overview screenshots
 - Use `browser_snapshot` to find the correct `ref` for the element you want to capture
 - When UI has icon-only buttons, **always verify the button's accessible name** in the snapshot before clicking — e.g., "trash bin" vs download icon can look similar
+- **Do NOT bake padding into the screenshot.** The docs renderer adds a matte (padding + soft background + outer border + radius) around every captured image, so an element-level capture with content flush to the PNG edges still has visible breathing room in the docs. Capture the raw element; let the matte frame it.
+- **Do NOT try to "fix" the inner-vs-outer border-radius mismatch at capture time.** Inside the matte, the inner `<img>` is bare — the matte owns the only outer radius, so a screenshot of a card/modal with its own rounded corners sits cleanly on the matte instead of competing with a second radius.
+
+**Parent-container-preferred rule (modals, dialogs, panels):**
+
+Climb one DOM level whenever picking the tightest element would produce a cramped capture:
+
+- Modal/dialog: prefer `.ant-modal-wrap` (the wrapper) over `.ant-modal` (the dialog itself). Use the inner element only when the dialog is large enough that its own padding already gives the captured content breathing room.
+- Card / wizard step: prefer the containing `<section>` / panel over the tight card.
+- Toolbar / form row: prefer the panel that the row lives inside, not the row itself.
+
+The matte adds outer padding regardless, so picking the parent costs nothing visually but lets the capture pick up the application's intra-component spacing (and avoids clipping floating elements that overflow the inner element, like dropdown indicators or focus rings).
+
+**Small-element rule (≤ 600 CSS px in either dimension):**
+
+For tiny widgets — notifications, badges, button rows, toasts, status pills — pick one of two paths:
+
+1. **Capture as-is and trust the renderer's auto size cap.** The web/PDF renderers read the PNG header and cap the display width at `pixel_width × 0.5` (the 2× zoom convention from SCREENSHOT-GUIDELINES). A 760×190 notification renders at ~380 CSS px wide on web and PDF, framed by the matte. This is usually correct.
+2. **Reposition with `browser_evaluate` for a deliberately larger capture** when the auto-capped display feels too small for the surrounding documentation context. Apply temporary CSS to move the widget to the viewport center with extra padding around it, then capture, then reset the style. Example:
+   ```js
+   () => {
+     const el = document.querySelector('.target-notification');
+     el.dataset.originalStyle = el.getAttribute('style') ?? '';
+     el.style.cssText += 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 32px; background: var(--bai-bg-muted); z-index: 9999;';
+     return 'ok';
+   }
+   // …take screenshot…
+   () => {
+     const el = document.querySelector('.target-notification');
+     el.setAttribute('style', el.dataset.originalStyle ?? '');
+     delete el.dataset.originalStyle;
+     return 'ok';
+   }
+   ```
+
+Default to path 1. Use path 2 only when you have a specific reason to fill more of the column.
 
 **Re-capture preflight (when overwriting an existing screenshot):**
 
@@ -141,9 +177,10 @@ The filename of an existing screenshot encodes a contract about what it shows. S
    ```
 2. Open `/tmp/old.png` and identify its scope:
    - Header strip: very wide, ≤300 px tall (e.g., 2358×222) → use `ref` of `[data-testid="webui-header"]`
-   - Modal/dialog only: medium, no chrome (e.g., 988×804) → use `ref` of `.ant-modal-wrap .ant-modal` or `[role="dialog"]`
+   - Modal/dialog: medium, no chrome (e.g., 988×804) → prefer `ref` of `.ant-modal-wrap` (parent-container rule) and fall back to `.ant-modal-wrap .ant-modal` / `[role="dialog"]` only when the dialog has enough internal padding
    - Sidebar segment: narrow column → use `ref` of `.ant-layout-sider`
    - Wizard step / panel: capture the specific panel `ref`, not the layout root
+   - Small widget (≤ 600 px / notification / badge / button row) → see **Small-element rule** above
    - Full page (~viewport × viewport): `fullPage: true` is acceptable
 3. After capture, sanity-check dimensions match the same order of magnitude as the old. If new dimensions differ by more than ~2× in either axis, you broke the framing — recapture with `ref`.
 

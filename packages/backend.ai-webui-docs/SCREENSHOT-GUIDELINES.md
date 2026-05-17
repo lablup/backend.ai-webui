@@ -114,10 +114,39 @@ The resulting PNG will be ~2× the natural CSS dimensions in pixels (e.g., a 450
 ### Focused Cropping
 
 - **Prefer element-level screenshots over full-page captures** when documenting a specific feature or interaction
-- **For modals and dialogs: capture only the modal element itself**, not the full page. Use the modal's DOM element as the screenshot target (e.g., `.ant-modal-wrap .ant-modal`, `[role="dialog"]`)
+- **For modals and dialogs: prefer the modal wrapper, not the modal itself.** Use `ref` of `.ant-modal-wrap .ant-modal` (or `[role="dialog"]`) only when the inner element is large enough that its own padding gives the captured content breathing room. Otherwise, capture the surrounding wrapper element (e.g., `.ant-modal-wrap`, a `<section>` panel) so the screenshot picks up the application's natural spacing around the dialog.
 - Use `ref` parameter in `browser_take_screenshot` to capture only the relevant element (e.g., a modal, a toolbar section, a specific panel)
 - Full-page captures are appropriate for page overview screenshots, but for feature-specific documentation, crop to the relevant area so users can clearly identify what is being described
 - Include just enough surrounding context for users to orient themselves
+
+### Padding & Framing
+
+The docs renderer wraps every captured image in a "matte" frame — a soft off-white background with padding, an outer border, and rounded corners. The matte provides **visual breathing room** even when the captured PNG itself has no internal padding, so a tight element-level capture no longer reads as cramped. Two implications for authors:
+
+- **Border-radius on the matte is the only outer radius**. Inside the matte, the inner `<img>` is bare (no border, no radius). This is intentional: if a captured screen has its own rounded corners (a modal, a card), they sit cleanly on the matte and no longer compete with a second outer radius. **Do not** try to "fix" inner radius mismatches at capture time — capture the raw element and let the matte frame it.
+- **You do not need to bake padding into the screenshot.** The matte gives every image equal breathing room. The capture should still avoid clipping content (don't crop a button's last pixel column), but you do not need to expand the bounding box just to leave whitespace.
+
+#### Parent-container-preferred rule
+
+When in doubt about which element to capture, climb one level: `.ant-modal-wrap` over `.ant-modal`, a containing `<section>` over a tightly-bounded card, a wizard step's outer panel over the inner form. The renderer's matte adds outer padding regardless, so picking the parent costs nothing visually but gives the capture access to the application's own intra-component spacing.
+
+#### Small-element rule
+
+When the target element's bounding box is **≤ 600 CSS px** in either dimension (notifications, badges, button rows, toasts, small status pills), an unmodified element capture will produce a tiny PNG that the renderer would otherwise display proportionally small. Two acceptable handling paths:
+
+1. **Capture as-is and trust the auto size cap.** The renderer reads the PNG header and caps the display width at `pixel_width × 0.5` (the 2× zoom convention). A 760×190 notification capture will render at ~380 CSS px wide on the web and PDF, framed by the matte — usually fine.
+2. **Reposition the element on a neutral surface before capture** when you want the capture to *fill* the docs column. Use `browser_evaluate` to apply temporary CSS — e.g., move a floating notification to the viewport center with extra padding so the bounding box is larger and includes deliberate whitespace around the widget. Reset the style after capture.
+
+Pick path (2) only when the auto-capped display feels too small for the surrounding documentation context. Most small-element captures look correct with path (1).
+
+#### Image size caps (renderer-side, automatic)
+
+The web and PDF renderers automatically size images based on the captured PNG's pixel dimensions (assuming the 2× zoom convention):
+
+- Display width = `pixel_width × 0.5`, capped at the article column width.
+- Explicit overrides via the `![alt =<width>](url)` size hint take precedence (`=380px`, `=50%`, `=auto`). Use these sparingly — only when the automatic cap produces a visibly wrong result.
+
+Authors do not normally need to think about this. Capture at 2× zoom, the renderer handles the display size.
 
 ### Match the Existing Screenshot's Framing (for re-captures)
 
@@ -141,9 +170,10 @@ Then capture the new screenshot at the **same scope**:
 | Old image scope | Capture method |
 |---|---|
 | Header strip (e.g., `header.png`) | `ref` of `header`/top-bar element only — never `fullPage: true` |
-| Modal/dialog only | `ref` of `.ant-modal-wrap .ant-modal` or `[role="dialog"]` |
+| Modal/dialog | `ref` of `.ant-modal-wrap` (wrapper, preferred — see [Parent-container-preferred rule](#parent-container-preferred-rule)) or `.ant-modal-wrap .ant-modal` / `[role="dialog"]` |
 | Sidebar segment | `ref` of the sidebar element |
 | Page region (e.g., a step in a wizard) | `ref` of the specific panel, not the whole layout |
+| Small widget (notification, badge, ≤ 600 CSS px) | See [Small-element rule](#small-element-rule) — capture as-is and trust the auto size cap, or reposition with `browser_evaluate` for full-column rendering |
 | Full page overview | `fullPage: true` is acceptable |
 
 **Anti-pattern observed in PR #6708**: `header.png` was 2358×222 (header strip only) on `main`, recaptured as 2880×1800 (full viewport including sidebar + main content + breadcrumbs). The filename promises "header" but the new image shows everything. **Always run the preflight above before re-capturing.**

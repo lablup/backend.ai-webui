@@ -14,6 +14,8 @@ import {
   normalizeRstTables,
   convertIndentedNotes,
   resolveMarkdownPath,
+  getImageDimensions,
+  IMAGE_SCALE_FACTOR,
 } from "./markdown-processor.js";
 import type { Chapter, Heading } from "./markdown-processor.js";
 import {
@@ -331,12 +333,32 @@ function reportLinkDiagnostics(diagnostics: LinkDiagnostic[]): void {
  * misses (defensive: should not happen because the pre-pass walks the
  * exact same tokens marked will render).
  */
+/**
+ * Convert a web-absolute image URL (e.g. `/sessions_all/images/foo.png`,
+ * the form `rewriteImagePathsForWeb` produces) back to a disk path under
+ * `<srcDir>/<lang>/…` so we can read the PNG header for natural-size
+ * auto-capping. Returns null for off-tree URLs (http(s):, leading-slash
+ * paths outside the lang dir, etc.) — the caller must fall back to
+ * unsized rendering in that case.
+ */
+function resolveWebImageDiskPath(
+  href: string,
+  srcDir: string | undefined,
+  lang: string | undefined,
+): string | null {
+  if (!srcDir || !lang) return null;
+  if (/^(?:https?|file):\/\//.test(href)) return null;
+  if (!href.startsWith("/")) return null;
+  return path.resolve(srcDir, lang, "." + href);
+}
+
 function buildWebRenderer(
   chapterSlug: string,
   headings: Heading[],
   options?: {
     chapterIndex?: number;
     lang?: string;
+    srcDir?: string;
     figureLabels?: Record<string, string>;
     /** Pre-rendered Shiki HTML keyed by `${lang}\0${code}`. */
     highlightedCode?: Map<string, string>;
@@ -346,6 +368,8 @@ function buildWebRenderer(
   const chapterIndex = options?.chapterIndex ?? 0;
   const figureLabel = getFigureLabel(options?.lang, options?.figureLabels);
   const highlightedCode = options?.highlightedCode;
+  const srcDir = options?.srcDir;
+  const lang = options?.lang;
 
   return {
     heading(text: string, level: number, _raw: string): string {
@@ -359,9 +383,28 @@ function buildWebRenderer(
       const titleAttr = title ? ` title="${title}"` : "";
       const { cleanAlt, sizeHint } = parseImageSizeHint(text || "");
 
+      // Size resolution order (matches the PDF renderer):
+      //   1. Explicit `![alt =<w>](url)` hint wins absolutely.
+      //   2. Otherwise, read the PNG/JPEG header and cap at the natural
+      //      CSS display width (pixel width × IMAGE_SCALE_FACTOR, which
+      //      undoes the 2× zoom capture convention). This keeps small
+      //      captures (a 760-px-wide notification → 380 CSS px) from
+      //      stretching to fill the full article column.
+      //   3. If neither path produces a size, emit no style — the
+      //      `.doc-image { max-width: 100% }` rule still prevents
+      //      horizontal overflow for legacy (non-2× / oversize) images.
       let styleAttr = "";
       if (sizeHint && sizeHint !== "auto") {
         styleAttr = ` style="width:${sizeHint}"`;
+      } else if (!sizeHint) {
+        const diskPath = resolveWebImageDiskPath(href, srcDir, lang);
+        if (diskPath) {
+          const dims = getImageDimensions(diskPath);
+          if (dims) {
+            const cap = Math.round(dims.width * IMAGE_SCALE_FACTOR);
+            styleAttr = ` style="max-width:${cap}px"`;
+          }
+        }
       }
 
       if (chapterIndex > 0) {
@@ -657,6 +700,7 @@ export async function processMarkdownFilesForWeb(
       renderer: buildWebRenderer(chapterSlug, headings, {
         chapterIndex,
         lang,
+        srcDir,
         figureLabels,
         highlightedCode,
       }),

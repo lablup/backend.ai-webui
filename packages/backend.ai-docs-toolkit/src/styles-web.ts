@@ -1856,48 +1856,63 @@ li > ul, li > ol {
 }
 
 /* ==========================================================================
-   Images (FR-2726 Phase 3 — BAI figure styling)
+   Images (FR-2726 Phase 3 / FR-2907 — BAI figure styling with matte)
    --------------------------------------------------------------------------
-   The doc-image wrapper acts as a clean BAI-style figure: 1px border,
-   12px radius, soft shadow. Captions (when produced by the markdown
-   pipeline as <figcaption>) sit centered below the image. Stat cards
-   and other content components opt into the BAI palette via the
-   .bai-stat-grid / .bai-stat-card classes below.
+   The doc-figure wrapper acts as a "matte" frame around captured UI:
+   - Border + radius + soft shadow live on the FIGURE, not the IMG,
+     so an inner card/modal screenshot's own rounded corners don't
+     visually clash with the outer wrapper radius.
+   - Padding + a subtly off-white background provide breathing room
+     around element-level captures whose content is flush to the
+     PNG's edges (Playwright ref screenshots have no padding by
+     default).
+   - The img is bare inside the matte (no border/radius/background)
+     so it sits cleanly on the matte surface.
+
+   For bare <img class="doc-image"> (catalog/sample contexts that
+   don't wrap in <figure>), keep a minimal border + radius as a
+   fallback so the image still reads as a framed figure.
    ========================================================================== */
 .doc-image {
   max-width: 100%;
   height: auto;
   display: block;
   margin: 1.25rem auto;
+  /* Bare-img fallback (no enclosing figure). Inside .doc-figure,
+     the matte rules below strip these. */
   border: 1px solid var(--bai-border);
-  border-radius: var(--bai-radius-lg);
-  box-shadow: var(--bai-shadow-sm);
+  border-radius: var(--bai-radius);
   background: var(--bai-bg);
 }
 
-figure {
-  /* Figure owns the outer vertical rhythm only. The image is
-     centered horizontally by the figure .doc-image rule below
-     (margin: 0 auto), and the caption is centered by figcaption's
-     own text-align rule — so this block intentionally avoids
-     setting text-align (which would only catch stray inline
-     content and could surprise authors). */
+figure.doc-figure {
+  /* Matte/frame around captured UI. Padding is the headline behavior
+     change here: it gives element-level Playwright captures (where
+     the screenshot bounding box has zero internal padding) visible
+     breathing room without recapture. */
   margin: 1.25rem 0;
+  padding: 16px;
+  background: var(--bai-bg-muted);
+  border: 1px solid var(--bai-border);
+  border-radius: var(--bai-radius-lg);
+  box-shadow: var(--bai-shadow-sm);
 }
 
-figure .doc-image {
-  /* Override .doc-image's default block centering only on the
-     vertical axis (figure owns the outer top/bottom margin); keep
-     auto on the horizontal axis so narrow images stay centered
-     instead of left-aligning to the figure's edge. */
+figure.doc-figure .doc-image {
+  /* Inside the matte: bare image. The wrapper owns the border and
+     radius so a screenshot of a card/modal with its own rounded
+     corners does not visually compete with a second outer radius. */
   margin: 0 auto;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
 }
 
 figcaption {
   text-align: center;
   font-size: 12.5px;
   color: var(--bai-text-3);
-  padding: 12px;
+  padding: 12px 0 0;
 }
 
 /* Stat-card grid (opt-in HTML). Authors who need a quick numeric

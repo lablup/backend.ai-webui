@@ -36,7 +36,7 @@ function renderShellSessionForPdf(code: string): string {
 /**
  * Read image dimensions from a PNG or JPEG file header.
  */
-function getImageDimensions(filePath: string): { width: number; height: number } | null {
+export function getImageDimensions(filePath: string): { width: number; height: number } | null {
   try {
     const buf = Buffer.alloc(32);
     const fd = fs.openSync(filePath, 'r');
@@ -76,7 +76,18 @@ function getImageDimensions(filePath: string): { width: number; height: number }
   return null;
 }
 
-const IMAGE_SCALE_FACTOR = 0.5;
+/**
+ * Display scaling factor for captured screenshots.
+ *
+ * Capture convention (SCREENSHOT-GUIDELINES.md): screenshots are taken
+ * at 2× CSS zoom for sharper text, so the PNG's pixel width is roughly
+ * twice the intended display width. Multiplying by 0.5 converts the
+ * captured pixel width back to its intended CSS display width.
+ *
+ * Used by both the PDF and web renderers when no explicit size hint is
+ * given via `![alt =<w>](url)`.
+ */
+export const IMAGE_SCALE_FACTOR = 0.5;
 
 function resolveImageFilePath(src: string): string | null {
   try {

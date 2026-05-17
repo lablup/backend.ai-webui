@@ -317,13 +317,22 @@ p {
 }
 
 /* ==========================================================================
-   Images – figure with caption and shadow
+   Images – figure with caption and matte (FR-2907)
+   --------------------------------------------------------------------------
+   The matte (padding + light off-white background + outer border) mirrors
+   the web build's .doc-figure treatment so PDF and HTML stay visually
+   aligned. Border and radius live on the figure, not the inner img, so
+   a screenshot of an already-rounded card/modal does not show a second
+   competing radius around it.
    ========================================================================== */
 .doc-figure {
   margin: 16px 0;
-  padding: 0;
+  padding: 12px;
   page-break-inside: avoid;
   text-align: center;
+  background: #fafafa;
+  border: 0.5px solid ${theme.borderColor};
+  border-radius: 8px;
 }
 
 .doc-figure figcaption {
@@ -345,8 +354,19 @@ p {
   max-width: 100%;
   height: auto;
   display: inline-block;
+  /* Bare-img fallback for catalog / non-figure contexts. Inside a
+     .doc-figure the matte wrapper above owns the border + radius and
+     this rule is visually neutralised (img sits on the matte). */
   border-radius: 4px;
   border: 0.5px solid #d0d0d0;
+}
+
+.doc-figure .doc-image {
+  /* Inside the matte the image is bare. Strips the bare-img border /
+     radius so the screenshot's own rounded corners (modal, card) are
+     not surrounded by a second mismatched radius. */
+  border: 0;
+  border-radius: 0;
 }
 
 /* ==========================================================================
