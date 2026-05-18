@@ -57,7 +57,7 @@ type ResourceGroup = NonNullable<
 const ResourceGroupList: React.FC = () => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { message, modal } = App.useApp();
+  const { message } = App.useApp();
   const [activeType, setActiveType] = useState<'active' | 'inactive'>('active');
   const [openCreateModal, { toggle: toggleOpenCreateModal }] = useToggle(false);
   const [openInfoModal, { toggle: toggleOpenInfoModal }] = useToggle(false);
@@ -153,61 +153,59 @@ const ResourceGroupList: React.FC = () => {
                 : t('resourceGroup.Activate'),
               icon: record.is_active ? <BanIcon /> : <UndoIcon />,
               type: record.is_active ? 'danger' : 'default',
-              onClick: () => {
-                modal.confirm({
-                  title: record.is_active
-                    ? t('resourceGroup.DeactivateResourceGroup')
-                    : t('resourceGroup.ActivateResourceGroup'),
-                  content: record?.name,
-                  okType: record.is_active ? 'danger' : 'primary',
-                  okText: record.is_active
-                    ? t('resourceGroup.Deactivate')
-                    : t('resourceGroup.Activate'),
-                  onOk: () => {
-                    return new Promise<void>((resolve) => {
-                      commitUpdateResourceGroup({
-                        variables: {
-                          name: record.name ?? '',
-                          input: {
-                            is_active: !record.is_active,
-                          },
+              popConfirm: {
+                title: record.is_active
+                  ? t('resourceGroup.DeactivateResourceGroup')
+                  : t('resourceGroup.ActivateResourceGroup'),
+                description: record?.name,
+                okButtonProps: {
+                  danger: !!record.is_active,
+                },
+                okText: record.is_active
+                  ? t('resourceGroup.Deactivate')
+                  : t('resourceGroup.Activate'),
+                cancelText: t('button.Cancel'),
+                onConfirm: () => {
+                  return new Promise<void>((resolve) => {
+                    commitUpdateResourceGroup({
+                      variables: {
+                        name: record.name ?? '',
+                        input: {
+                          is_active: !record.is_active,
                         },
-                        onCompleted: (
-                          { modify_scaling_group: res },
-                          errors,
-                        ) => {
-                          if (!res?.ok) {
-                            message.error(res?.msg);
-                            resolve();
-                            return;
-                          }
-                          if (errors && errors.length > 0) {
-                            const errorMsgList = _.map(
-                              errors,
-                              (error: PayloadError) => error.message,
-                            );
-                            for (const error of errorMsgList) {
-                              message.error(error);
-                            }
-                            resolve();
-                            return;
-                          }
-                          message.success(
-                            t('resourceGroup.ResourceGroupModified'),
+                      },
+                      onCompleted: ({ modify_scaling_group: res }, errors) => {
+                        if (!res?.ok) {
+                          message.error(res?.msg);
+                          resolve();
+                          return;
+                        }
+                        if (errors && errors.length > 0) {
+                          const errorMsgList = _.map(
+                            errors,
+                            (error: PayloadError) => error.message,
                           );
-                          startRefetchTransition(() => {
-                            updateFetchKey();
-                          });
+                          for (const error of errorMsgList) {
+                            message.error(error);
+                          }
                           resolve();
-                        },
-                        onError: (err) => {
-                          message.error(err.message);
-                          resolve();
-                        },
-                      });
+                          return;
+                        }
+                        message.success(
+                          t('resourceGroup.ResourceGroupModified'),
+                        );
+                        startRefetchTransition(() => {
+                          updateFetchKey();
+                        });
+                        resolve();
+                      },
+                      onError: (err) => {
+                        message.error(err.message);
+                        resolve();
+                      },
                     });
-                  },
-                });
+                  });
+                },
               },
             },
             {

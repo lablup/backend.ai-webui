@@ -143,12 +143,7 @@ const BAIProjectTable = ({
             />
             <Popconfirm
               title={t('comp:BAIProjectTable.DeactivateProject')}
-              description={t(
-                'comp:BAIProjectTable.AreYouSureToDeactivateProject',
-                {
-                  projectName: value?.name,
-                },
-              )}
+              description={value?.name}
               okButtonProps={{
                 danger: true,
                 loading: isInFlightCommitDeleteGroup,
