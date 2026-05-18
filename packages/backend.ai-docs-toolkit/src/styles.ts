@@ -326,8 +326,13 @@ p {
    competing radius around it.
    ========================================================================== */
 .doc-figure {
-  margin: 16px 0;
+  /* Shrink to the largest child (image at its capped width, or the
+     caption text) so a small capture is not surrounded by a printable-
+     column-wide matte. margin: ... auto keeps the frame centered. */
+  margin: 16px auto;
   padding: 12px;
+  width: fit-content;
+  max-width: 100%;
   page-break-inside: avoid;
   text-align: center;
   background: #fafafa;

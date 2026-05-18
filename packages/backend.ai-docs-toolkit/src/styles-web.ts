@@ -1889,9 +1889,19 @@ figure.doc-figure {
   /* Matte/frame around captured UI. Padding is the headline behavior
      change here: it gives element-level Playwright captures (where
      the screenshot bounding box has zero internal padding) visible
-     breathing room without recapture. */
-  margin: 1.25rem 0;
+     breathing room without recapture.
+
+     width: fit-content makes the matte shrink to its largest
+     child — the inner img (capped by the renderer's natural-size
+     style) or the figcaption text, whichever is wider. Without this,
+     the figure would default to full article-column width and a
+     capped 380-px notification would sit inside a column-wide matte
+     instead of a 380-px frame. margin: 0 auto keeps the frame
+     centered in the column. */
+  margin: 1.25rem auto;
   padding: 16px;
+  width: fit-content;
+  max-width: 100%;
   background: var(--bai-bg-muted);
   border: 1px solid var(--bai-border);
   border-radius: var(--bai-radius-lg);

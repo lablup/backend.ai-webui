@@ -338,8 +338,8 @@ function reportLinkDiagnostics(diagnostics: LinkDiagnostic[]): void {
  * the form `rewriteImagePathsForWeb` produces) back to a disk path under
  * `<srcDir>/<lang>/…` so we can read the PNG header for natural-size
  * auto-capping. Returns null for off-tree URLs (http(s):, leading-slash
- * paths outside the lang dir, etc.) — the caller must fall back to
- * unsized rendering in that case.
+ * paths outside the lang dir, paths that escape the lang root via `..`)
+ * — the caller must fall back to unsized rendering in that case.
  */
 function resolveWebImageDiskPath(
   href: string,
@@ -349,7 +349,16 @@ function resolveWebImageDiskPath(
   if (!srcDir || !lang) return null;
   if (/^(?:https?|file):\/\//.test(href)) return null;
   if (!href.startsWith("/")) return null;
-  return path.resolve(srcDir, lang, "." + href);
+  const langRoot = path.resolve(srcDir, lang);
+  const resolved = path.resolve(langRoot, "." + href);
+  // Defense in depth: rewriteImagePathsForWeb already drops out-of-tree
+  // markdown image refs, but a path like `/../other-lang/foo.png` that
+  // slipped past it would otherwise let the renderer read PNG headers
+  // outside the language root just to compute display dimensions.
+  if (resolved !== langRoot && !resolved.startsWith(langRoot + path.sep)) {
+    return null;
+  }
+  return resolved;
 }
 
 function buildWebRenderer(
