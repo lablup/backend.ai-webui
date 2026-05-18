@@ -21,7 +21,7 @@ import {
   reverseMapExtraArgs,
 } from '../helper/runtimeExtraArgsParser';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
-import { useModelStoreProject } from '../hooks/useModelStoreProject';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import {
   buildArgsSchemaKeySet,
   buildDefaultsMap,
@@ -71,8 +71,8 @@ import {
   BAIFlex,
   BAIModal,
   BAIModalProps,
-  BAIProjectVfolderSelect,
   BAIRuntimeVariantSelect,
+  BAIVFolderSelect,
   convertToUUID,
   safeDecodeUuid,
   toLocalId,
@@ -180,10 +180,11 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   const { token } = theme.useToken();
   const { message } = App.useApp();
   const relayEnvironment = useRelayEnvironment();
-  // The model folder picker scopes to the MODEL_STORE project, not the
-  // deployment's own project — model cards live in the domain-wide model
-  // store regardless of which project owns the deployment.
-  const { id: modelStoreProjectId } = useModelStoreProject();
+  // The model folder picker scopes to the user's current project so the
+  // listing matches what the user has access to in the active project
+  // context, consistent with the rest of the model-deployment UI
+  // (ServiceLauncherPageContent, ModelCardDeployModal).
+  const { id: currentProjectId } = useCurrentProjectValue();
   const { logger } = useBAILogger();
 
   // Defer `open` so the lazy query only fires once the modal has actually
@@ -263,7 +264,6 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       query DeploymentAddRevisionModalQuery($deploymentId: ID!) {
         deployment(id: $deploymentId) {
           metadata {
-            projectId
             resourceGroupName
           }
           currentRevision {
@@ -758,9 +758,10 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           ]),
       ),
       runtimeVariantId: rev.modelRuntimeConfig?.runtimeVariantId ?? undefined,
-      // BAIProjectVfolderSelect returns the canonical dashed UUID, which
-      // matches `rev.modelMountConfig.vfolderId` directly. `convertToUUID`
-      // in the submit is idempotent on already-dashed values.
+      // BAIVFolderSelect with `valuePropName="row_id"` returns the
+      // canonical dashed UUID, which matches `rev.modelMountConfig.vfolderId`
+      // directly. `convertToUUID` in the submit is idempotent on already-
+      // dashed values.
       modelFolderId: rev.modelMountConfig?.vfolderId ?? undefined,
       mountDestination: rev.modelMountConfig?.mountDestination ?? '/models',
       definitionPath: rev.modelMountConfig?.definitionPath ?? undefined,
@@ -1273,13 +1274,12 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
               tooltip={t('deployment.ModelFolderTooltip')}
               rules={[{ required: true }]}
             >
-              <BAIProjectVfolderSelect
-                projectId={modelStoreProjectId ?? ''}
-                disabled={!modelStoreProjectId}
-                filter={{
-                  usageMode: { equals: 'MODEL' },
-                  status: { equals: 'READY' },
-                }}
+              <BAIVFolderSelect
+                currentProjectId={currentProjectId ?? undefined}
+                excludeDeleted
+                filter='usage_mode == "model"'
+                valuePropName="row_id"
+                labelRender={({ label, value }) => label ?? value}
                 style={{ width: '100%' }}
               />
             </Form.Item>
@@ -1332,13 +1332,12 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
             tooltip={t('deployment.ModelFolderTooltip')}
             rules={[{ required: true }]}
           >
-            <BAIProjectVfolderSelect
-              projectId={modelStoreProjectId ?? ''}
-              disabled={!modelStoreProjectId}
-              filter={{
-                usageMode: { equals: 'MODEL' },
-                status: { equals: 'READY' },
-              }}
+            <BAIVFolderSelect
+              currentProjectId={currentProjectId ?? undefined}
+              excludeDeleted
+              filter='usage_mode == "model"'
+              valuePropName="row_id"
+              labelRender={({ label, value }) => label ?? value}
               style={{ width: '100%' }}
             />
           </Form.Item>

@@ -60,6 +60,7 @@ const BAIVFolderSelect: React.FC<BAIVFolderSelectProps> = ({
   valuePropName = 'id',
   onResolvedNamesChange,
   ref,
+  labelRender: userLabelRender,
   ...selectProps
 }) => {
   'use memo';
@@ -288,33 +289,36 @@ const BAIVFolderSelect: React.FC<BAIVFolderSelectProps> = ({
               filterOption: false,
             }
       }
-      labelRender={({ label, value }) => {
-        return onClickVFolder ? (
-          <BAILink onClick={() => onClickVFolder(_.toString(value))}>
-            {label}
-          </BAILink>
-        ) : (
-          <>
-            {label}
-            <BAIText type="secondary">
-              &nbsp; (
-              <BAIText
-                ellipsis
-                type="secondary"
-                style={{
-                  width: 80,
-                }}
-                monospace
-              >
-                {valuePropName === 'id'
-                  ? toLocalId(_.toString(value))
-                  : _.toString(value)}
+      labelRender={
+        userLabelRender ??
+        (({ label, value }) => {
+          return onClickVFolder ? (
+            <BAILink onClick={() => onClickVFolder(_.toString(value))}>
+              {label}
+            </BAILink>
+          ) : (
+            <>
+              {label}
+              <BAIText type="secondary">
+                &nbsp; (
+                <BAIText
+                  ellipsis
+                  type="secondary"
+                  style={{
+                    width: 80,
+                  }}
+                  monospace
+                >
+                  {valuePropName === 'id'
+                    ? toLocalId(_.toString(value))
+                    : _.toString(value)}
+                </BAIText>
+                )
               </BAIText>
-              )
-            </BAIText>
-          </>
-        );
-      }}
+            </>
+          );
+        })
+      }
       optionRender={({ label, value }) => (
         <>
           {label}
