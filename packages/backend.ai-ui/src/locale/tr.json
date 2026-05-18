@@ -310,6 +310,9 @@
     "SelectUser": "Kullanıcıyı Seç"
   },
   "comp:BAIVFolderSelect": {
+    "CreateANewStorageFolder": "Yeni bir depolama klasörü oluşturun",
+    "OpenFolder": "Klasöre git",
+    "Refresh": "Yenile",
     "SelectFolder": "Klasör Seç"
   },
   "comp:FileExplorer": {

@@ -310,6 +310,9 @@
     "SelectUser": "Выберите пользователя"
   },
   "comp:BAIVFolderSelect": {
+    "CreateANewStorageFolder": "Создать новую папку для хранения",
+    "OpenFolder": "Перейти в папку",
+    "Refresh": "Обновить",
     "SelectFolder": "Выбрать папку"
   },
   "comp:FileExplorer": {

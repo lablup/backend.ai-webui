@@ -1,17 +1,21 @@
+import FolderCreateModalV2 from '../../../../../react/src/components/FolderCreateModalV2';
 import { BAIVFolderSelectPaginatedQuery } from '../../__generated__/BAIVFolderSelectPaginatedQuery.graphql';
 import { BAIVFolderSelectValueQuery } from '../../__generated__/BAIVFolderSelectValueQuery.graphql';
 import { toLocalId } from '../../helper';
 import useDebouncedDeferredValue from '../../helper/useDebouncedDeferredValue';
 import { useFetchKey } from '../../hooks';
 import { useLazyPaginatedQuery } from '../../hooks/usePaginatedQuery';
+import BAIFlex from '../BAIFlex';
 import BAILink from '../BAILink';
 import { mergeFilterValues } from '../BAIPropertyFilter';
 import BAISelect, { BAISelectProps } from '../BAISelect';
 import BAIText from '../BAIText';
 import TotalFooter from '../TotalFooter';
+import { ReloadOutlined } from '@ant-design/icons';
 import { useControllableValue } from 'ahooks';
-import { GetRef, Skeleton } from 'antd';
+import { Button, GetRef, Skeleton, Space, Tooltip } from 'antd';
 import * as _ from 'lodash-es';
+import { FolderOpenIcon, PlusIcon } from 'lucide-react';
 import {
   useDeferredValue,
   useEffect,
@@ -23,6 +27,7 @@ import {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
+import { useSearchParams } from 'react-router-dom';
 
 export type VFolderNode = NonNullable<
   NonNullable<
@@ -44,6 +49,9 @@ export interface BAIVFolderSelectProps extends Omit<
   valuePropName?: 'id' | 'row_id';
   excludeDeleted?: boolean;
   onResolvedNamesChange?: (nameMap: Record<string, string>) => void;
+  showOpenButton?: boolean;
+  showCreateButton?: boolean;
+  showRefreshButton?: boolean;
   ref?: React.Ref<BAIVFolderSelectRef>;
 }
 
@@ -59,6 +67,9 @@ const BAIVFolderSelect: React.FC<BAIVFolderSelectProps> = ({
   excludeDeleted,
   valuePropName = 'id',
   onResolvedNamesChange,
+  showOpenButton,
+  showCreateButton,
+  showRefreshButton,
   ref,
   labelRender: userLabelRender,
   ...selectProps
@@ -66,6 +77,8 @@ const BAIVFolderSelect: React.FC<BAIVFolderSelectProps> = ({
   'use memo';
   const { t } = useTranslation();
   const selectRef = useRef<GetRef<typeof BAISelect>>(null);
+  const [, setSearchParams] = useSearchParams();
+  const [isOpenCreateModal, setIsOpenCreateModal] = useState(false);
   const [controllableValue, setControllableValue] = useControllableValue<
     string | string[] | undefined
   >(selectProps);
@@ -261,7 +274,13 @@ const BAIVFolderSelect: React.FC<BAIVFolderSelectProps> = ({
     controllableValueWithLabel,
   );
 
-  return (
+  const hasActionButton =
+    showOpenButton || showCreateButton || showRefreshButton;
+  const singleValueForOpen = _.toString(
+    _.isArray(controllableValue) ? controllableValue[0] : controllableValue,
+  );
+
+  const baiSelectElement = (
     <BAISelect
       ref={selectRef}
       placeholder={t('comp:BAIVFolderSelect.SelectFolder')}
@@ -391,6 +410,79 @@ const BAIVFolderSelect: React.FC<BAIVFolderSelectProps> = ({
         ) : undefined
       }
     />
+  );
+
+  if (!hasActionButton) {
+    return baiSelectElement;
+  }
+
+  return (
+    <BAIFlex direction="row" gap="xs">
+      {baiSelectElement}
+      <Space.Compact>
+        {showOpenButton ? (
+          <Tooltip title={t('comp:BAIVFolderSelect.OpenFolder')}>
+            <Button
+              icon={<FolderOpenIcon />}
+              disabled={!singleValueForOpen}
+              onClick={() => {
+                const folderId =
+                  valuePropName === 'id'
+                    ? toLocalId(singleValueForOpen)
+                    : singleValueForOpen;
+                if (folderId) {
+                  setSearchParams(
+                    (prev) => {
+                      prev.set('folder', folderId);
+                      return prev;
+                    },
+                    { replace: false },
+                  );
+                }
+              }}
+            />
+          </Tooltip>
+        ) : null}
+        {showCreateButton ? (
+          <Tooltip title={t('comp:BAIVFolderSelect.CreateANewStorageFolder')}>
+            <Button
+              icon={<PlusIcon />}
+              variant="text"
+              onClick={() => {
+                setIsOpenCreateModal(true);
+              }}
+            />
+          </Tooltip>
+        ) : null}
+        {showRefreshButton ? (
+          <Tooltip title={t('comp:BAIVFolderSelect.Refresh')}>
+            <Button
+              icon={<ReloadOutlined />}
+              variant="text"
+              onClick={() => {
+                startRefetchTransition(() => {
+                  updateFetchKey();
+                });
+              }}
+            />
+          </Tooltip>
+        ) : null}
+      </Space.Compact>
+      {showCreateButton ? (
+        <FolderCreateModalV2
+          open={isOpenCreateModal}
+          initialValues={{ usage_mode: 'model' }}
+          onRequestClose={(result) => {
+            setIsOpenCreateModal(false);
+            if (result) {
+              startRefetchTransition(() => {
+                updateFetchKey();
+              });
+            }
+          }}
+        />
+      ) : null}
+    </BAIFlex>
   );
 };
 

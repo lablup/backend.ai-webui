@@ -310,6 +310,9 @@
     "SelectUser": "Pilih Pengguna"
   },
   "comp:BAIVFolderSelect": {
+    "CreateANewStorageFolder": "Buat folder penyimpanan baru",
+    "OpenFolder": "Buka folder",
+    "Refresh": "Segarkan",
     "SelectFolder": "Pilih Folder"
   },
   "comp:FileExplorer": {

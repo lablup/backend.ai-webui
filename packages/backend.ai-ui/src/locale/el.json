@@ -310,6 +310,9 @@
     "SelectUser": "Επιλογή χρήστη"
   },
   "comp:BAIVFolderSelect": {
+    "CreateANewStorageFolder": "Δημιουργήστε έναν νέο φάκελο αποθήκευσης",
+    "OpenFolder": "Μετάβαση στον φάκελο",
+    "Refresh": "Φρεσκάρω",
     "SelectFolder": "Επιλογή φακέλου"
   },
   "comp:FileExplorer": {

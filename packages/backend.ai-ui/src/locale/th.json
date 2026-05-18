@@ -310,6 +310,9 @@
     "SelectUser": "เลือกผู้ใช้"
   },
   "comp:BAIVFolderSelect": {
+    "CreateANewStorageFolder": "สร้างโฟลเดอร์จัดเก็บใหม่",
+    "OpenFolder": "ไปยังโฟลเดอร์",
+    "Refresh": "รีเฟรช",
     "SelectFolder": "เลือกโฟลเดอร์"
   },
   "comp:FileExplorer": {

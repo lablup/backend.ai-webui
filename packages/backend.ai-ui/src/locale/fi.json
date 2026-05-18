@@ -310,6 +310,9 @@
     "SelectUser": "Valitse käyttäjä"
   },
   "comp:BAIVFolderSelect": {
+    "CreateANewStorageFolder": "Luo uusi tallennuskansio",
+    "OpenFolder": "Siirry kansioon",
+    "Refresh": "Päivitä",
     "SelectFolder": "Valitse kansio"
   },
   "comp:FileExplorer": {

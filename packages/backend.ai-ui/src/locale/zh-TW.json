@@ -310,6 +310,9 @@
     "SelectUser": "選擇使用者"
   },
   "comp:BAIVFolderSelect": {
+    "CreateANewStorageFolder": "創建一個新的存儲文件夾",
+    "OpenFolder": "前往資料夾",
+    "Refresh": "刷新",
     "SelectFolder": "選擇資料夾"
   },
   "comp:FileExplorer": {

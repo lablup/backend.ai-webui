@@ -1281,6 +1281,9 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                 valuePropName="row_id"
                 labelRender={({ label, value }) => label ?? value}
                 style={{ width: '100%' }}
+                showOpenButton
+                showCreateButton
+                showRefreshButton
               />
             </Form.Item>
           </Form>
@@ -1339,6 +1342,9 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
               valuePropName="row_id"
               labelRender={({ label, value }) => label ?? value}
               style={{ width: '100%' }}
+              showOpenButton
+              showCreateButton
+              showRefreshButton
             />
           </Form.Item>
           <Form.Item

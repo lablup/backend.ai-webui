@@ -310,6 +310,9 @@
     "SelectUser": "Хэрэглэгч сонгох"
   },
   "comp:BAIVFolderSelect": {
+    "CreateANewStorageFolder": "Шинэ хадгалах фолдер үүсгэх",
+    "OpenFolder": "Хавтас руу очих",
+    "Refresh": "Сэргээх",
     "SelectFolder": "Хавтас сонгох"
   },
   "comp:FileExplorer": {

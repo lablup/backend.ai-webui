@@ -111,6 +111,9 @@ const meta: Meta<typeof BAIVFolderSelect> = {
 | \`filter\` | \`string\` | - | Additional filter string for vfolder query |
 | \`valuePropName\` | \`'id' \\| 'row_id'\` | \`'id'\` | Which field to use as option value |
 | \`excludeDeleted\` | \`boolean\` | \`false\` | Exclude deleted or deleting vfolders |
+| \`showOpenButton\` | \`boolean\` | \`false\` | Show button that opens the selected folder in the explorer |
+| \`showCreateButton\` | \`boolean\` | \`false\` | Show button that opens \`FolderCreateModalV2\` to create a new folder |
+| \`showRefreshButton\` | \`boolean\` | \`false\` | Show button that re-fetches the vfolder list |
 | \`ref\` | \`React.Ref<BAIVFolderSelectRef>\` | - | Ref exposing \`refetch()\` method |
 
 ## Features
@@ -249,6 +252,31 @@ For all other props, refer to [BAISelect](/?path=/docs/components-input-baiselec
     excludeDeleted: {
       control: { type: 'boolean' },
       description: 'Exclude deleted or deleting vfolders from the list',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+      },
+    },
+    showOpenButton: {
+      control: { type: 'boolean' },
+      description: 'Show button that opens the selected folder in the explorer',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+      },
+    },
+    showCreateButton: {
+      control: { type: 'boolean' },
+      description:
+        'Show button that opens FolderCreateModalV2 to create a new folder',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+      },
+    },
+    showRefreshButton: {
+      control: { type: 'boolean' },
+      description: 'Show button that re-fetches the vfolder list',
       table: {
         type: { summary: 'boolean' },
         defaultValue: { summary: 'false' },
@@ -414,6 +442,41 @@ export const WithClickableNames: Story = {
         onClickVFolder={(id: string) => alert(`Clicked vfolder: ${id}`)}
         style={{ width: '400px' }}
       />
+    </VFolderRelayResolver>
+  ),
+};
+
+/**
+ * Select with the open, create, and refresh action buttons enabled.
+ */
+export const WithActionButtons: Story = {
+  name: 'WithActionButtons',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Demonstrates `showOpenButton`, `showCreateButton`, and `showRefreshButton`. The open button writes a `folder` query param via `react-router-dom`. The create button opens the project `FolderCreateModalV2`. The refresh button re-fetches the paginated list.',
+      },
+    },
+  },
+  args: {
+    allowClear: true,
+    showOpenButton: true,
+    showCreateButton: true,
+    showRefreshButton: true,
+  },
+  render: (args) => (
+    <VFolderRelayResolver
+      mockResolvers={{
+        Query: () => ({
+          vfolder_nodes: {
+            count: 5,
+            edges: sampleVFolders,
+          },
+        }),
+      }}
+    >
+      <BAIVFolderSelect {...args} style={{ width: '400px' }} />
     </VFolderRelayResolver>
   ),
 };

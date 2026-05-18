@@ -313,6 +313,9 @@
     "SelectUser": "사용자를 선택해주세요"
   },
   "comp:BAIVFolderSelect": {
+    "CreateANewStorageFolder": "새 폴더 추가",
+    "OpenFolder": "폴더 열기",
+    "Refresh": "새로고침",
     "SelectFolder": "폴더를 선택해주세요"
   },
   "comp:FileExplorer": {
