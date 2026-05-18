@@ -43,7 +43,7 @@ import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 
 type ReplicaStatusCategory = 'running' | 'terminated';
 
-const TERMINATED_STATUSES = ['TERMINATED'] as const;
+const TERMINATED_STATUSES = ['TERMINATED', 'FAILED_TO_START'] as const;
 
 const buildStatusFilter = (category: ReplicaStatusCategory) =>
   category === 'terminated'
