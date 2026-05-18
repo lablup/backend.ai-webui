@@ -242,17 +242,6 @@ jobs:
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
 
-      # backend.ai-docs-toolkit ships its `docs-toolkit` CLI as the package
-      # bin, but it lives at dist/cli.js which only exists after `tsc` runs.
-      # On a fresh `pnpm install` the dist directory is empty, so pnpm
-      # cannot create the .bin/docs-toolkit symlink and later `pdf:all`
-      # fails with `spawn ENOENT`. Building the toolkit and re-running
-      # install populates dist/ and lets pnpm wire the bin link.
-      - name: Build docs-toolkit and link CLI
-        run: |
-          pnpm --filter backend.ai-docs-toolkit run build
-          pnpm install --frozen-lockfile
-
       # Cache the Playwright browser binaries (~150 MB Chromium download).
       # The lockfile hash keys the cache so a Playwright version bump
       # naturally invalidates the cache without manual intervention.
