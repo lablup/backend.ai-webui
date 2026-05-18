@@ -17,24 +17,13 @@ import ContainerRegistryEditorModal from './ContainerRegistryEditorModal';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
 import {
   DeleteFilled,
-  ExclamationCircleOutlined,
   PlusOutlined,
   ReloadOutlined,
   SettingOutlined,
   SyncOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import {
-  Button,
-  Form,
-  Input,
-  Switch,
-  Tag,
-  Tooltip,
-  Typography,
-  theme,
-  App,
-} from 'antd';
+import { Button, Switch, Tag, Tooltip, App } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
 import type { ColumnsType, ColumnType } from 'antd/es/table';
 import {
@@ -42,7 +31,7 @@ import {
   BAITable,
   BAIFlex,
   BAIPropertyFilter,
-  BAIModal,
+  BAIDeleteConfirmModal,
   BAINameActionCell,
   useBAILogger,
   useFetchKey,
@@ -191,12 +180,10 @@ const ContainerRegistryList: React.FC<{
     `);
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const [editingRegistry, setEditingRegistry] =
     useState<ContainerRegistry | null>();
   const [deletingRegistry, setDeletingRegistry] =
     useState<ContainerRegistry | null>();
-  const [deletingConfirmText, setDeletingConfirmText] = useState('');
   const [isNewModalOpen, setIsNewModalOpen] = useState(false);
 
   const [inFlightHostName, setInFlightHostName] = useState<string>();
@@ -536,22 +523,25 @@ const ContainerRegistryList: React.FC<{
         }}
         centered={false}
       />
-      <BAIModal
-        title={
-          <>
-            <ExclamationCircleOutlined
-              style={{
-                color: token.colorWarning,
-              }}
-            />{' '}
-            {t('dialog.warning.CannotBeUndone')}
-          </>
+      <BAIDeleteConfirmModal
+        open={!!deletingRegistry}
+        title={t('dialog.title.DeleteSomething', {
+          name: deletingRegistry?.registry_name,
+        })}
+        target={t('general.ContainerRegistry')}
+        items={
+          deletingRegistry
+            ? [
+                {
+                  key: deletingRegistry.id,
+                  label: deletingRegistry.registry_name ?? '',
+                },
+              ]
+            : []
         }
-        okText={t('button.Delete')}
-        okButtonProps={{
-          danger: true,
-          disabled: deletingConfirmText !== deletingRegistry?.registry_name,
-        }}
+        confirmText={deletingRegistry?.registry_name ?? ''}
+        requireConfirmInput
+        confirmLoading={isInFlightDeleteMutation}
         onOk={() => {
           if (deletingRegistry) {
             commitDeleteMutation({
@@ -585,54 +575,10 @@ const ContainerRegistryList: React.FC<{
             setDeletingRegistry(null);
           }
         }}
-        confirmLoading={isInFlightDeleteMutation}
         onCancel={() => {
           setDeletingRegistry(null);
         }}
-        destroyOnHidden
-        open={!!deletingRegistry}
-      >
-        <BAIFlex
-          direction="column"
-          align="stretch"
-          gap="sm"
-          style={{
-            marginTop: token.marginMD,
-          }}
-        >
-          <Typography.Text>
-            <Typography.Text code>
-              {deletingRegistry?.registry_name}
-            </Typography.Text>{' '}
-            {t('registry.TypeRegistryNameToDelete')}
-          </Typography.Text>
-          <Form>
-            <Form.Item
-              name={'confirmText'}
-              rules={[
-                {
-                  required: true,
-                  message: t('registry.HostnameDoesNotMatch'),
-                  validator: () => {
-                    if (
-                      deletingConfirmText === deletingRegistry?.registry_name
-                    ) {
-                      return Promise.resolve();
-                    }
-                    return Promise.reject();
-                  },
-                },
-              ]}
-            >
-              <Input
-                autoComplete="off"
-                value={deletingConfirmText}
-                onChange={(e) => setDeletingConfirmText(e.target.value)}
-              />
-            </Form.Item>
-          </Form>
-        </BAIFlex>
-      </BAIModal>
+      />
       <TableColumnsSettingModal
         open={visibleColumnSettingModal}
         onRequestClose={(values) => {

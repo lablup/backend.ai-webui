@@ -18,7 +18,7 @@ import {
   DeleteFilled,
   SettingOutlined,
 } from '@ant-design/icons';
-import { Typography, theme, App, TablePaginationConfig, Alert } from 'antd';
+import { Typography, theme, App, TablePaginationConfig } from 'antd';
 import type { ColumnType } from 'antd/lib/table';
 import {
   filterOutEmpty,
@@ -26,8 +26,7 @@ import {
   BAITable,
   BAITableProps,
   BAINameActionCell,
-  BAIConfirmModalWithInput,
-  BAIFlex,
+  BAIDeleteConfirmModal,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -262,25 +261,26 @@ const EndpointList: React.FC<EndpointListProps> = ({
         pagination={pagination}
         {...tableProps}
       />
-      <BAIConfirmModalWithInput
+      <BAIDeleteConfirmModal
         open={!!deletingEndpoint}
-        title={t('dialog.ask.DoYouWantToDeleteSomething', {
+        title={t('dialog.title.DeleteSomething', {
           name: deletingEndpoint?.name,
         })}
-        content={
-          <BAIFlex direction="column" gap="md" align="stretch">
-            <Alert type="warning" title={t('dialog.warning.CannotBeUndone')} />
-            <BAIFlex>
-              <Typography.Text style={{ marginRight: token.marginXXS }}>
-                {t('dialog.TypeNameToConfirmDeletion')}
-              </Typography.Text>
-              (<Typography.Text code>{deletingEndpoint?.name}</Typography.Text>)
-            </BAIFlex>
-          </BAIFlex>
+        target={t('webui.menu.Endpoint')}
+        items={
+          deletingEndpoint
+            ? [
+                {
+                  key:
+                    deletingEndpoint.endpoint_id ?? deletingEndpoint.name ?? '',
+                  label: deletingEndpoint.name ?? '',
+                },
+              ]
+            : []
         }
         confirmText={deletingEndpoint?.name ?? ''}
+        requireConfirmInput
         inputProps={{ placeholder: deletingEndpoint?.name ?? '' }}
-        okText={t('button.Delete')}
         okButtonProps={{ loading: terminateModelServiceMutation.isPending }}
         onOk={() => {
           if (deletingEndpoint?.endpoint_id) {

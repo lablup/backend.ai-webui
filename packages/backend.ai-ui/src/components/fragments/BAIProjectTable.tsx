@@ -7,6 +7,7 @@ import { BAIProjectTablePurgeMutation } from '../../__generated__/BAIProjectTabl
 import { toLocalId } from '../../helper';
 import { useErrorMessageResolver } from '../../hooks';
 import BAIButton from '../BAIButton';
+import BAIDeleteConfirmModal from '../BAIDeleteConfirmModal';
 import BAIFlex from '../BAIFlex';
 import BAIResourceNumberWithIcon from '../BAIResourceNumberWithIcon';
 import BAITag from '../BAITag';
@@ -18,6 +19,7 @@ import { App, Popconfirm, Tag, theme } from 'antd';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { BanIcon } from 'lucide-react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
@@ -62,8 +64,9 @@ const BAIProjectTable = ({
 }: BAIProjectTableProps) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { modal, message } = App.useApp();
+  const { message } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
+  const [purgingProject, setPurgingProject] = useState<Project | null>(null);
 
   const projects = useFragment<BAIProjectTableFragment$key>(
     graphql`
@@ -219,50 +222,7 @@ const BAIProjectTable = ({
                 />
               }
               onClick={() => {
-                modal.confirm({
-                  title: t('comp:BAIProjectTable.PurgeProject'),
-                  content: t('comp:BAIProjectTable.AreYouSureToPurgeProject', {
-                    projectName: value?.name,
-                  }),
-                  okButtonProps: {
-                    danger: true,
-                  },
-                  okText: t('comp:BAIProjectTable.Purge'),
-                  onOk: () => {
-                    if (!record?.row_id) {
-                      return;
-                    }
-                    commitPurgeGroup({
-                      variables: {
-                        gid: record.row_id,
-                      },
-                      onCompleted: (response, errors) => {
-                        if (errors && errors.length > 0) {
-                          errors.forEach((error) => {
-                            message.error(
-                              getErrorMessage(
-                                error,
-                                t('comp:BAIProjectTable.FailedToPurgeProject'),
-                              ),
-                            );
-                          });
-                          return;
-                        }
-                        if (response.purge_group?.ok) {
-                          message.success(
-                            t('comp:BAIProjectTable.ProjectPurged'),
-                          );
-                          updateFetchKey?.();
-                        } else {
-                          message.error(
-                            response.purge_group?.msg ||
-                              t('comp:BAIProjectTable.FailedToPurgeProject'),
-                          );
-                        }
-                      },
-                    });
-                  },
-                });
+                setPurgingProject(record);
               }}
               disabled={_.get(record, 'type') === 'MODEL_STORE'}
             />
@@ -386,18 +346,70 @@ const BAIProjectTable = ({
     },
   ];
   return (
-    <BAITable<Project>
-      scroll={{ x: 'max-content' }}
-      {...tableProps}
-      rowKey={(record) => record.id}
-      dataSource={projects}
-      columns={columns}
-      onChangeOrder={(order) => {
-        onChangeOrder?.(
-          (order as (typeof availableProjectSorterValues)[number]) || null,
-        );
-      }}
-    />
+    <>
+      <BAITable<Project>
+        scroll={{ x: 'max-content' }}
+        {...tableProps}
+        rowKey={(record) => record.id}
+        dataSource={projects}
+        columns={columns}
+        onChangeOrder={(order) => {
+          onChangeOrder?.(
+            (order as (typeof availableProjectSorterValues)[number]) || null,
+          );
+        }}
+      />
+      <BAIDeleteConfirmModal
+        open={!!purgingProject}
+        title={t('comp:BAIProjectTable.PurgeProject')}
+        target={t('general.Project')}
+        items={
+          purgingProject
+            ? [{ key: purgingProject.id, label: purgingProject.name ?? '' }]
+            : []
+        }
+        confirmText={purgingProject?.name ?? ''}
+        requireConfirmInput
+        inputProps={{
+          placeholder: purgingProject?.name ?? '',
+        }}
+        okText={t('comp:BAIProjectTable.Purge')}
+        onOk={() => {
+          if (!purgingProject?.row_id) return;
+          return new Promise<void>((resolve) => {
+            commitPurgeGroup({
+              variables: { gid: purgingProject.row_id! },
+              onCompleted: (response, errors) => {
+                if (errors && errors.length > 0) {
+                  errors.forEach((error) => {
+                    message.error(
+                      getErrorMessage(
+                        error,
+                        t('comp:BAIProjectTable.FailedToPurgeProject'),
+                      ),
+                    );
+                  });
+                  resolve();
+                  return;
+                }
+                if (response.purge_group?.ok) {
+                  message.success(t('comp:BAIProjectTable.ProjectPurged'));
+                  setPurgingProject(null);
+                  updateFetchKey?.();
+                } else {
+                  message.error(
+                    response.purge_group?.msg ||
+                      t('comp:BAIProjectTable.FailedToPurgeProject'),
+                  );
+                }
+                resolve();
+              },
+            });
+          });
+        }}
+        onCancel={() => setPurgingProject(null)}
+      />
+    </>
   );
 };
 

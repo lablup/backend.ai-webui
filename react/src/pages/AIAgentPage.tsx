@@ -14,7 +14,6 @@ import {
   UndoOutlined,
 } from '@ant-design/icons';
 import {
-  Alert,
   Button,
   Col,
   Dropdown,
@@ -29,7 +28,7 @@ import {
   BAICard,
   BAIFlex,
   BAIUnmountAfterClose,
-  BAIConfirmModalWithInput,
+  BAIDeleteConfirmModal,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { Suspense, useState } from 'react';
@@ -284,26 +283,18 @@ const AIAgentPage: React.FC = () => {
             }}
           />
         </BAIUnmountAfterClose>
-        <BAIConfirmModalWithInput
+        <BAIDeleteConfirmModal
           open={!!deletingAgent}
           title={t('aiAgent.DeleteConfirmTitle')}
-          content={
-            <BAIFlex direction="column" gap="md" align="stretch">
-              <Alert
-                type="warning"
-                title={t('dialog.warning.CannotBeUndone')}
-              />
-              <BAIFlex>
-                <Typography.Text style={{ marginRight: token.marginXXS }}>
-                  {t('dialog.TypeNameToConfirmDeletion')}
-                </Typography.Text>
-                (<Typography.Text code>{deletingAgent?.name}</Typography.Text>)
-              </BAIFlex>
-            </BAIFlex>
+          target={t('general.AIAgent')}
+          items={
+            deletingAgent
+              ? [{ key: deletingAgent.id, label: deletingAgent.name }]
+              : []
           }
           confirmText={deletingAgent?.name ?? ''}
+          requireConfirmInput
           inputProps={{ placeholder: deletingAgent?.name ?? '' }}
-          okText={t('button.Delete')}
           onOk={() => {
             if (deletingAgent) {
               deleteAgent(deletingAgent.id);
@@ -312,24 +303,17 @@ const AIAgentPage: React.FC = () => {
           }}
           onCancel={() => setDeletingAgent(null)}
         />
-        <BAIConfirmModalWithInput
+        <BAIDeleteConfirmModal
           open={!!resettingAgent}
           title={t('aiAgent.ResetConfirmTitle')}
-          content={
-            <BAIFlex direction="column" gap="md" align="stretch">
-              <Alert
-                type="warning"
-                title={t('dialog.warning.CannotBeUndone')}
-              />
-              <BAIFlex>
-                <Typography.Text style={{ marginRight: token.marginXXS }}>
-                  {t('dialog.TypeNameToConfirmDeletion')}
-                </Typography.Text>
-                (<Typography.Text code>{resettingAgent?.name}</Typography.Text>)
-              </BAIFlex>
-            </BAIFlex>
+          target={t('general.AIAgent')}
+          items={
+            resettingAgent
+              ? [{ key: resettingAgent.id, label: resettingAgent.name }]
+              : []
           }
           confirmText={resettingAgent?.name ?? ''}
+          requireConfirmInput
           inputProps={{ placeholder: resettingAgent?.name ?? '' }}
           okText={t('button.Reset')}
           onOk={() => {

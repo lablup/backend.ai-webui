@@ -54,8 +54,6 @@ export type {
 } from './BAINotificationItem';
 export { default as BAIModal } from './BAIModal';
 export type { BAIModalProps } from './BAIModal';
-export { default as BAIConfirmModalWithInput } from './BAIConfirmModalWithInput';
-export type { BAIConfirmModalWithInputProps } from './BAIConfirmModalWithInput';
 export { default as BAIDeleteConfirmModal } from './BAIDeleteConfirmModal';
 export type {
   BAIDeleteConfirmModalProps,

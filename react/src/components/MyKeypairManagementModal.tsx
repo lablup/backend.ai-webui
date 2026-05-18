@@ -15,18 +15,10 @@ import { convertToOrderBy } from '../helper';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import BAIRadioGroup from './BAIRadioGroup';
-import {
-  Alert,
-  App,
-  Empty,
-  Popconfirm,
-  theme,
-  Tooltip,
-  Typography,
-} from 'antd';
+import { Alert, App, Empty, Popconfirm, theme, Tooltip } from 'antd';
 import {
   BAIButton,
-  BAIConfirmModalWithInput,
+  BAIDeleteConfirmModal,
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
@@ -695,24 +687,28 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
           </BAIFlex>
         </BAIFlex>
       </BAIModal>
-      <BAIConfirmModalWithInput
+      <BAIDeleteConfirmModal
         open={!!deletingKeypairAccessKey}
         title={t('credential.DeleteKeypair')}
-        content={
-          <Typography.Text style={{ marginBottom: token.marginSM }}>
-            {t('credential.DeleteKeypairWarning', {
-              accessKey: deletingKeypairAccessKey,
-            })}
-          </Typography.Text>
+        target={t('general.Keypair')}
+        items={
+          deletingKeypairAccessKey
+            ? [
+                {
+                  key: deletingKeypairAccessKey,
+                  label: deletingKeypairAccessKey,
+                },
+              ]
+            : []
         }
         confirmText={t('credential.PermanentlyDelete')}
+        requireConfirmInput
         inputLabel={t('credential.TypePermanentlyDelete', {
           text: t('credential.PermanentlyDelete'),
         })}
         inputProps={{
           placeholder: t('credential.PermanentlyDelete'),
         }}
-        okText={t('button.Delete')}
         cancelText={t('button.Cancel')}
         onOk={() => {
           if (deletingKeypairAccessKey) {

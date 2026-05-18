@@ -9,7 +9,6 @@ import BAICodeEditor from './BAICodeEditor';
 import { DeleteFilled, DownOutlined } from '@ant-design/icons';
 import {
   App,
-  Alert,
   Button,
   Dropdown,
   Form,
@@ -17,13 +16,12 @@ import {
   Select,
   Space,
   Typography,
-  theme,
 } from 'antd';
 import {
   BAIModal,
   BAIModalProps,
   BAIFlex,
-  BAIConfirmModalWithInput,
+  BAIDeleteConfirmModal,
   useErrorMessageResolver,
   useBAILogger,
 } from 'backend.ai-ui';
@@ -48,7 +46,6 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
   ...modalProps
 }) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const { logger } = useBAILogger();
   const { message } = App.useApp();
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
@@ -323,32 +320,24 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
           value={script}
         />
       </BAIFlex>
-      <BAIConfirmModalWithInput
+      <BAIDeleteConfirmModal
         open={isDeleteConfirmOpen}
         title={t('dialog.title.LetsDouble-Check')}
-        content={
-          <BAIFlex direction="column" gap="md" align="stretch">
-            <Alert type="warning" title={t('dialog.warning.CannotBeUndone')} />
-            <BAIFlex>
-              <Typography.Text style={{ marginRight: token.marginXXS }}>
-                {t('dialog.TypeNameToConfirmDeletion')}
-              </Typography.Text>
-              (
-              <Typography.Text code>
-                {shellInfo === 'bootstrap' ? t('button.Delete') : rcfileNames}
-              </Typography.Text>
-              )
-            </BAIFlex>
-          </BAIFlex>
-        }
+        target={t('general.ShellScript')}
+        items={[
+          {
+            key: shellInfo ?? '',
+            label: shellInfo === 'bootstrap' ? t('button.Delete') : rcfileNames,
+          },
+        ]}
         confirmText={
           shellInfo === 'bootstrap' ? t('button.Delete') : rcfileNames
         }
+        requireConfirmInput
         inputProps={{
           placeholder:
             shellInfo === 'bootstrap' ? t('button.Delete') : rcfileNames,
         }}
-        okText={t('button.Delete')}
         onOk={() => {
           setIsDeleteConfirmOpen(false);
           deleteScript();

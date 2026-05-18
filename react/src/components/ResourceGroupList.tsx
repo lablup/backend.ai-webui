@@ -20,7 +20,7 @@ import {
   SettingOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { Alert, App, Button, Typography, theme } from 'antd';
+import { App, Button, theme } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import {
   useUpdatableState,
@@ -28,7 +28,7 @@ import {
   filterOutNullAndUndefined,
   BAITable,
   BAIFlex,
-  BAIConfirmModalWithInput,
+  BAIDeleteConfirmModal,
   BAIFetchKeyButton,
   BAINameActionCell,
 } from 'backend.ai-ui';
@@ -312,34 +312,21 @@ const ResourceGroupList: React.FC = () => {
         loading={isActiveTypePending}
       />
 
-      <BAIConfirmModalWithInput
+      <BAIDeleteConfirmModal
         open={!!selectedResourceGroupName}
         title={t('resourceGroup.DeleteResourceGroup')}
-        content={
-          <BAIFlex
-            direction="column"
-            gap="md"
-            align="stretch"
-            style={{ marginBottom: token.marginXS, width: '100%' }}
-          >
-            <Alert
-              type="warning"
-              title={t('dialog.warning.DeleteForeverDesc')}
-              style={{ width: '100%' }}
-            />
-            <BAIFlex>
-              <Typography.Text style={{ marginRight: token.marginXXS }}>
-                {t('resourceGroup.TypeResourceGroupNameToDelete')}
-              </Typography.Text>
-              (
-              <Typography.Text code>
-                {selectedResourceGroupName}
-              </Typography.Text>
-              )
-            </BAIFlex>
-          </BAIFlex>
+        target={t('general.ResourceGroup')}
+        items={
+          selectedResourceGroupName
+            ? [
+                {
+                  key: selectedResourceGroupName,
+                  label: selectedResourceGroupName,
+                },
+              ]
+            : []
         }
-        confirmText={selectedResourceGroupName ?? ''}
+        requireConfirmInput
         onOk={() => {
           commitDeleteResourceGroup({
             variables: {

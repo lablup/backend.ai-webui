@@ -222,6 +222,7 @@ const AdminDeploymentPresetListPage: React.FC = () => {
       )}
       <BAIDeleteConfirmModal
         open={!!deletingPreset}
+        target={t('deployment.ResourcePreset')}
         requireConfirmInput
         items={
           deletingPreset
