@@ -23,29 +23,37 @@ const projectRoot = resolve(__dirname, '..');
 const require = createRequire(import.meta.url);
 
 // With `enableGlobalVirtualStore: true` (pnpm-workspace.yaml), pnpm hard-links
-// every dependency into a single global store outside this repo
-// (e.g. `~/Library/pnpm/store/v11/links/...` on macOS,
-// `~/.local/share/pnpm/store/v11/links/...` on Linux). Vite resolves
-// `server.fs.allow` against each request's realpath, so allowing only
-// `projectRoot` rejects every dependency CSS/asset served from that store
+// every dependency into a single global store outside this repo, with the
+// virtual `links/` directory living under the store root reported by
+// `pnpm store path` (e.g. `~/Library/pnpm/store/v11` on macOS,
+// `~/.local/share/pnpm/store/v11` on Linux — `links/<pkg>/...` lives inside).
+// Vite resolves `server.fs.allow` against each request's realpath, so allowing
+// only `projectRoot` rejects every dependency CSS/asset served from that store
 // with "outside of Vite serving allow list".
 //
-// Resolve the store root dynamically via `pnpm store path` (pnpm's officially
-// supported way to discover it) and add it to `fs.allow` below. We resolve
-// once at config load — the path is stable for the lifetime of the dev
-// server, and falling back to `undefined` keeps non-pnpm environments
-// working.
+// `pnpm store path` is pnpm's officially supported discovery command; its
+// output is an ancestor of the `links/` realpaths, so adding it to `fs.allow`
+// admits every hard-linked dependency. We resolve once at dev-server start
+// (the path is stable for that lifetime) and only when actually serving —
+// `vite build` never reads `server.fs.allow`, so we skip the subprocess there.
+// `shell: true` makes the call work on Windows where `pnpm` is a `.cmd` shim.
 function resolvePnpmStorePath(): string | undefined {
   try {
     return execSync('pnpm store path --silent', {
       encoding: 'utf-8',
       stdio: ['ignore', 'pipe', 'ignore'],
+      shell: true,
     }).trim();
-  } catch {
+  } catch (err) {
+    // Leave a breadcrumb so the resulting "outside of Vite serving allow list"
+    // errors are self-diagnosing instead of looking like a fresh regression.
+    console.warn(
+      '[vite] could not resolve pnpm store path; dependencies served from outside projectRoot may be rejected by server.fs.allow:',
+      err instanceof Error ? err.message : err,
+    );
     return undefined;
   }
 }
-const pnpmStorePath = resolvePnpmStorePath();
 
 // `vite-plugin-node-polyfills` injects bare-specifier imports of its own shim
 // paths (`vite-plugin-node-polyfills/shims/{buffer,global,process}`) during
@@ -406,9 +414,15 @@ function monacoStaticPlugin(): Plugin {
   };
 }
 
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ command, mode }) => {
   const env = loadEnv(mode, projectRoot, '');
   Object.assign(process.env, env);
+
+  // Only resolve the pnpm store when actually serving — `vite build` does not
+  // use `server.fs.allow`, so the subprocess is wasted there. See the
+  // `resolvePnpmStorePath` definition above for the full rationale.
+  const pnpmStorePath =
+    command === 'serve' ? resolvePnpmStorePath() : undefined;
 
   // Comma-separated list of additional hostnames to whitelist for the dev
   // server's host check (Vite 6 default-blocks anything outside localhost
