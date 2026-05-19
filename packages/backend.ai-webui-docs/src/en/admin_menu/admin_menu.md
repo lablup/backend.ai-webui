@@ -1046,8 +1046,8 @@ You can deactivate a resource policy by turning off Active Status.
 The resource group edit dialog contains the following additional fields:
 
 - **Allowed session types**: Since users can choose the type of session, the resource group can allow certain types. You should allow at least one session type. The allowed session types are Interactive, Batch, Inference, and System.
-- **WSProxy Server Address**: Sets the WSProxy address for the resource group's Agents to use. If you set a URL in this field, WSProxy will relay the traffic of an app like Jupyter directly to the compute session via Agent bypassing Manager (v2 API). By enabling the v2 API, you can lower the Manager's burden when using app services. If a direct connection from WSProxy to the Agent node is not available, leave this field blank to fall back to the v1 API.
-- **WSProxy API Token**: The API token for authenticating with the WSProxy server.
+- **App Proxy Server Address**: Sets the App Proxy (formerly WSProxy) address for the resource group's Agents to use. If you set a URL in this field, App Proxy will relay the traffic of an app like Jupyter directly to the compute session via Agent bypassing Manager (v2 API). By enabling the v2 API, you can lower the Manager's burden when using app services. If a direct connection from App Proxy to the Agent node is not available, leave this field blank to fall back to the v1 API.
+- **App Proxy API Token**: The API token for authenticating with the App Proxy server.
 - **Active**: Toggle the active status of the resource group.
 - **Public**: When enabled, the resource group is visible to all users.
 - **Pending timeout**:

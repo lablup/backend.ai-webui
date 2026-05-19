@@ -77,16 +77,17 @@ achieves more intuitive use.
 - Web-UI: A GUI client that is served as a web or stand-alone app.
   You can use the service after logging in by specifying the address of the
   Backend.AI server and entering the user account information.
-- Local wsproxy: Proxy server built into the Web-UI app. Local wsproxy converts
-  general HTTP requests between the server and Web-UI app to websocket and
-  delivers the messages. If the Web-UI app loses its connection to wsproxy or
-  the wsproxy server is dead, it will not be possible to access services such as
-  Jupyter Notebook and Terminal.
-- Web wsproxy: In the case of the Web-UI provided in a web, the built-in
+- Local `wsproxy`: Proxy server built into the Web-UI app. The local `wsproxy`
+  daemon converts general HTTP requests between the server and Web-UI app to
+  websocket and delivers the messages. If the Web-UI app loses its connection
+  to `wsproxy` or the `wsproxy` server is dead, it will not be possible to
+  access services such as Jupyter Notebook and Terminal. In the WebUI, this
+  component is surfaced as **App Proxy** (formerly WSProxy).
+- Web `wsproxy`: In the case of the Web-UI provided in a web, the built-in
   server cannot be used due to the nature of the browser. In this case, you
   can use services such as Jupyter Notebook, Terminal, etc. in the web
-  environment by making the wsproxy server as a separate web server
-  so that the Web-UI app can see the web wsproxy.
+  environment by making the `wsproxy` server a separate web server
+  so that the Web-UI app can see the web `wsproxy`.
 
 
 <a id="backend-ai-feature-details"></a>

@@ -123,7 +123,7 @@ Backend.AI มีภาพเคอร์เนล ML และ HPC ที่ส
 - Manager: 2 คอร์, 4 GiB หน่วยความจำ
 - Agent: 4 คอร์, 32 GiB หน่วยความจำ, NVIDIA GPU (สำหรับ GPU workload), > 512 GiB SSD
 - Webserver: 2 คอร์, 4 GiB หน่วยความจำ
-- WSProxy: 2 คอร์, 4 GiB หน่วยความจำ
+- App Proxy: 2 คอร์, 4 GiB หน่วยความจำ
 - PostgreSQL DB: 2 คอร์, 4 GiB หน่วยความจำ
 - Redis: 1 คอร์, 2 GiB หน่วยความจำ
 - Etcd: 1 คอร์, 2 GiB หน่วยความจำ
@@ -134,7 +134,7 @@ Backend.AI มีภาพเคอร์เนล ML และ HPC ที่ส
 - Manager: Python (≥3.8), pyenv/pyenv-virtualenv (≥1.2)
 - Agent: docker (≥19.03), CUDA/CUDA Toolkit (≥8, แนะนำ 11), nvidia-docker v2, Python (≥3.8), pyenv/pyenv-virtualenv (≥1.2)
 - Webserver: Python (≥3.8), pyenv/pyenv-virtualenv (≥1.2)
-- WSProxy: docker (≥19.03), docker-compose (≥1.24)
+- App Proxy: docker (≥19.03), docker-compose (≥1.24)
 - PostgreSQL DB: docker (≥19.03), docker-compose (≥1.24)
 - Redis: docker (≥19.03), docker-compose (≥1.24)
 - Etcd: docker (≥19.03), docker-compose (≥1.24)
