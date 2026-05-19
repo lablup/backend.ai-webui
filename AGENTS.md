@@ -110,7 +110,7 @@ Production build (`pnpm run build`) runs these steps sequentially:
     - style: Design changes without functional changes
     - chore: Other small tasks
   - Format: `prefix(JIRA-ISSUE-NUMBER): title`
-  - GitHub PR content starts with `Resolves #1234(FR-1234)` where #1234 is the cloned issue number and FR-1234 is the Jira issue number
+  - GitHub PR content starts with `Resolves #1234 (FR-1234)` where #1234 is the cloned issue number and FR-1234 is the Jira issue number. The space between `#1234` and `(FR-1234)` is required — without it GitHub does not auto-link the issue reference and downstream tooling (Graphite, the `.github/workflows/project-status-sync.yml` workflow) fails to detect the link.
 
 - **Tool Requirements**:
   - **Jira**: Use `jira-workflow` skill (fw plugin). Project config in `.jira.config`.
