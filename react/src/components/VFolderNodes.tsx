@@ -21,7 +21,7 @@ import VFolderNodeIdenticon from './VFolderNodeIdenticon';
 import VFolderPermissionCell from './VFolderPermissionCell';
 import { DeleteFilled, DeleteOutlined, UserOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { Alert, App, theme, Typography } from 'antd';
+import { App, theme, Typography } from 'antd';
 import {
   filterOutNullAndUndefined,
   BAIEndpointsIcon,
