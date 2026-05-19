@@ -1891,17 +1891,19 @@ figure.doc-figure {
      the screenshot bounding box has zero internal padding) visible
      breathing room without recapture.
 
-     width: fit-content makes the matte shrink to its largest
-     child — the inner img (capped by the renderer's natural-size
-     style) or the figcaption text, whichever is wider. Without this,
-     the figure would default to full article-column width and a
-     capped 380-px notification would sit inside a column-wide matte
-     instead of a 380-px frame. margin: 0 auto keeps the frame
-     centered in the column. */
+     The matte is sized by the renderer via an inline
+     style="max-width: min(<cap+padding>px, 100%)" on each figure
+     (see markdown-processor-web.ts). We do NOT use width: fit-content
+     here because fit-content sizes the figure from the img's MAX-
+     CONTENT (intrinsic pixel width), ignoring any inline max-width
+     constraint on the img — leaving the matte at column width with
+     a smaller image floating inside.
+
+     margin: ... auto centers the frame when it is narrower than the
+     column (small captures). For full-column figures the auto
+     margins collapse to zero, so no offset. */
   margin: 1.25rem auto;
   padding: 16px;
-  width: fit-content;
-  max-width: 100%;
   background: var(--bai-bg-muted);
   border: 1px solid var(--bai-border);
   border-radius: var(--bai-radius-lg);

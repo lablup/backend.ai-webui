@@ -392,26 +392,52 @@ function buildWebRenderer(
       const titleAttr = title ? ` title="${title}"` : "";
       const { cleanAlt, sizeHint } = parseImageSizeHint(text || "");
 
+      // Size resolution: the cap is applied to the FIGURE (matte
+      // wrapper), not the inner <img>. The inner <img> keeps the CSS
+      // default `max-width: 100%` and naturally fills the figure.
+      //
+      // Why on the figure: `figure { width: fit-content }` computes
+      // its preferred size from the img's MAX-CONTENT (intrinsic
+      // pixel width), not from any inline `max-width` constraint on
+      // the img. So sizing the img alone with `max-width: <cap>px`
+      // does not shrink the matte — the matte still spans the column
+      // and the img floats inside. Putting the cap on the figure as
+      // `max-width: min(<cap+padding>px, 100%)` shrinks the matte
+      // itself to hug the image at its capped display size, while
+      // still gracefully degrading to column width on narrower
+      // viewports.
+      //
+      // The `+ FIGURE_PADDING_TOTAL` reserves room for the matte
+      // padding so the visible image width still matches the cap.
+      // Keep this number in sync with `styles-web.ts` (currently
+      // `padding: 16px` on `figure.doc-figure`, i.e. 32 px total).
+      //
       // Size resolution order (matches the PDF renderer):
       //   1. Explicit `![alt =<w>](url)` hint wins absolutely.
-      //   2. Otherwise, read the PNG/JPEG header and cap at the natural
-      //      CSS display width (pixel width × IMAGE_SCALE_FACTOR, which
-      //      undoes the 2× zoom capture convention). This keeps small
-      //      captures (a 760-px-wide notification → 380 CSS px) from
-      //      stretching to fill the full article column.
-      //   3. If neither path produces a size, emit no style — the
-      //      `.doc-image { max-width: 100% }` rule still prevents
-      //      horizontal overflow for legacy (non-2× / oversize) images.
-      let styleAttr = "";
+      //   2. Otherwise, read the PNG/JPEG header and cap at the
+      //      natural CSS display width (pixel width × IMAGE_SCALE_FACTOR,
+      //      which undoes the 2× zoom capture convention).
+      //   3. If neither path produces a size, emit no figure style —
+      //      the matte spans the full article column and the img
+      //      sits at column width (legacy / pre-2x captures).
+      const FIGURE_PADDING_TOTAL = 32;
+      let figureStyle = "";
       if (sizeHint && sizeHint !== "auto") {
-        styleAttr = ` style="width:${sizeHint}"`;
+        if (sizeHint.endsWith("%")) {
+          figureStyle = ` style="width:${sizeHint}"`;
+        } else {
+          const px = parseInt(sizeHint, 10);
+          if (Number.isFinite(px)) {
+            figureStyle = ` style="max-width:min(${px + FIGURE_PADDING_TOTAL}px,100%)"`;
+          }
+        }
       } else if (!sizeHint) {
         const diskPath = resolveWebImageDiskPath(href, srcDir, lang);
         if (diskPath) {
           const dims = getImageDimensions(diskPath);
           if (dims) {
             const cap = Math.round(dims.width * IMAGE_SCALE_FACTOR);
-            styleAttr = ` style="max-width:${cap}px"`;
+            figureStyle = ` style="max-width:min(${cap + FIGURE_PADDING_TOTAL}px,100%)"`;
           }
         }
       }
@@ -422,10 +448,10 @@ function buildWebRenderer(
         const caption = cleanAlt
           ? `<figcaption>${figNum} &mdash; ${escapeHtml(cleanAlt)}</figcaption>`
           : `<figcaption>${figNum}</figcaption>`;
-        return `<figure class="doc-figure"><img src="${href}" alt="${cleanAlt}" class="doc-image"${titleAttr}${styleAttr} />${caption}</figure>\n`;
+        return `<figure class="doc-figure"${figureStyle}><img src="${href}" alt="${cleanAlt}" class="doc-image"${titleAttr} />${caption}</figure>\n`;
       }
 
-      return `<img src="${href}" alt="${cleanAlt}" class="doc-image"${titleAttr}${styleAttr} />\n`;
+      return `<img src="${href}" alt="${cleanAlt}" class="doc-image"${titleAttr} />\n`;
     },
     code(code: string, infostring: string | undefined): string {
       const info = infostring || "";

@@ -494,20 +494,29 @@ export async function processMarkdownFiles(
         const titleAttr = title ? ` title="${title}"` : '';
         const { cleanAlt, sizeHint } = parseImageSizeHint(text || '');
 
-        let styleAttr = '';
-        if (sizeHint) {
-          if (sizeHint === 'auto') {
-            styleAttr = '';
+        // The size cap is applied to the FIGURE (matte wrapper), not
+        // the inner <img>. See markdown-processor-web.ts for the
+        // rationale (fit-content uses the img's intrinsic, so an inline
+        // max-width on the img would not shrink the matte). PDF padding
+        // total: 12px × 2 = 24px, kept in sync with styles.ts.
+        const FIGURE_PADDING_TOTAL = 24;
+        let figureStyle = '';
+        if (sizeHint && sizeHint !== 'auto') {
+          if (sizeHint.endsWith('%')) {
+            figureStyle = ` style="width:${sizeHint}"`;
           } else {
-            styleAttr = ` style="width:${sizeHint}"`;
+            const px = parseInt(sizeHint, 10);
+            if (Number.isFinite(px)) {
+              figureStyle = ` style="max-width:min(${px + FIGURE_PADDING_TOTAL}px,100%)"`;
+            }
           }
-        } else {
+        } else if (!sizeHint) {
           const localPath = resolveImageFilePath(href);
           if (localPath) {
             const dims = getImageDimensions(localPath);
             if (dims) {
-              const scaledWidth = Math.round(dims.width * IMAGE_SCALE_FACTOR);
-              styleAttr = ` style="width:${scaledWidth}px"`;
+              const cap = Math.round(dims.width * IMAGE_SCALE_FACTOR);
+              figureStyle = ` style="max-width:min(${cap + FIGURE_PADDING_TOTAL}px,100%)"`;
             }
           }
         }
@@ -518,7 +527,7 @@ export async function processMarkdownFiles(
           ? `<figcaption>${figNum} &mdash; ${escapeHtmlExt(cleanAlt)}</figcaption>`
           : `<figcaption>${figNum}</figcaption>`;
 
-        return `<figure class="doc-figure"><img src="${href}" alt="${cleanAlt}" class="doc-image"${titleAttr}${styleAttr} />${caption}</figure>\n`;
+        return `<figure class="doc-figure"${figureStyle}><img src="${href}" alt="${cleanAlt}" class="doc-image"${titleAttr} />${caption}</figure>\n`;
       },
       code(code: string, infostring: string | undefined): string {
         const info = infostring || '';

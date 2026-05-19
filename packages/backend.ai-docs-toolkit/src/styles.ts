@@ -326,13 +326,15 @@ p {
    competing radius around it.
    ========================================================================== */
 .doc-figure {
-  /* Shrink to the largest child (image at its capped width, or the
-     caption text) so a small capture is not surrounded by a printable-
-     column-wide matte. margin: ... auto keeps the frame centered. */
+  /* The matte is sized by the renderer via an inline
+     style="max-width: min(<cap+padding>px, 100%)" per figure. We
+     intentionally do NOT use width: fit-content here — fit-content
+     sizes from the img's intrinsic width, ignoring any inline cap on
+     the img and leaving the matte at column width with a smaller
+     image floating inside. margin: ... auto centers the matte when
+     narrower than the printable column. */
   margin: 16px auto;
   padding: 12px;
-  width: fit-content;
-  max-width: 100%;
   page-break-inside: avoid;
   text-align: center;
   background: #fafafa;
