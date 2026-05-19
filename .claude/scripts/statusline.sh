@@ -98,7 +98,9 @@ except Exception: pass
 #          invokes ssh which only matches `Host <alias>` blocks against the literal string,
 #          so an alias keeps your IdentityFile, ControlMaster, keepalive, etc.
 #       2. `<whoami>@<server-ip>` from SSH_CONNECTION — zero-config default; the third field is
-#          the exact address the client connected to, which is always reachable back.
+#          the server-side address of the SSH TCP connection. It is usually reachable from the
+#          client, but on NATed / multi-homed / DNAT'd hosts it may be an internal address that
+#          the client cannot route back to — set CLAUDE_STATUSLINE_SSH_HOST in that case.
 #   Local (no SSH and no override): vscode://file<path>
 VSCODE_PART=""
 if [[ -n "$WORKSPACE" ]]; then
