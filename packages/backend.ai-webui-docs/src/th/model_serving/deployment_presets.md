@@ -78,7 +78,6 @@
 3. ปรับค่าตามต้องการ แล้วคลิก **แก้ไขค่าตั้งล่วงหน้า** เพื่อบันทึก
 
 ![](../images/deployment_preset_edit_modal.png)
-<!-- TODO: Capture screenshot of the deployment preset edit modal (optional, same layout as create) -->
 
 การแก้ไขพรีเซ็ตจะเปลี่ยนเฉพาะค่าเริ่มต้นของ deployment ที่จะสร้าง **ในอนาคต** เท่านั้น deployment ที่สร้างจากพรีเซ็ตนี้อยู่แล้วจะไม่ถูกแก้ไข
 

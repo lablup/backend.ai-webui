@@ -78,7 +78,6 @@ If a required field is missing or invalid, the **Create Preset** button stays di
 3. Adjust the fields as needed, then click **Edit Preset** to save your changes.
 
 ![](../images/deployment_preset_edit_modal.png)
-<!-- TODO: Capture screenshot of the deployment preset edit modal (optional, same layout as create) -->
 
 Editing a preset only changes the defaults for **future** deployments. Existing deployments that were already created from this preset are not modified.
 

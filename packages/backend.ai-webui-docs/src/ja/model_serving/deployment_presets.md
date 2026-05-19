@@ -78,7 +78,6 @@
 3. 必要な値を変更し、**プリセットを編集** ボタンをクリックして保存します。
 
 ![](../images/deployment_preset_edit_modal.png)
-<!-- TODO: Capture screenshot of the deployment preset edit modal (optional, same layout as create) -->
 
 プリセットを編集すると、**今後** 作成されるデプロイの既定値のみが変更されます。すでにこのプリセットから作成された既存のデプロイには影響しません。
 

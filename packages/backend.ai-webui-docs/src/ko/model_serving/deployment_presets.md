@@ -78,7 +78,6 @@
 3. 필요한 값을 수정한 뒤 **프리셋 편집** 버튼을 클릭하여 저장합니다.
 
 ![](../images/deployment_preset_edit_modal.png)
-<!-- TODO: Capture screenshot of the deployment preset edit modal (optional, same layout as create) -->
 
 프리셋을 편집하면 **이후** 생성되는 배포의 기본값만 변경됩니다. 이미 해당 프리셋으로 생성된 기존 배포에는 영향을 주지 않습니다.
 
