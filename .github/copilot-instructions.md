@@ -82,7 +82,7 @@ Follow conventional commit format:
 ### PR Guidelines
 
 - PR titles follow format: `prefix(JIRA-ISSUE-NUMBER): title`
-- PR description starts with: `Resolves #1234(FR-1234)`
+- PR description starts with: `Resolves #1234 (FR-1234)` — the space between `#1234` and `(FR-1234)` is required so GitHub auto-links the issue and the `project-status-sync` workflow can parse the reference
 - Use **Squash merge** as default merge strategy
 - Follow Graphite's Stacked PR strategy for complex features
 
