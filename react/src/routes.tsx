@@ -13,6 +13,7 @@ import LocationStateBreadCrumb from './components/LocationStateBreadCrumb';
 import LoginView from './components/LoginView';
 import MainLayout from './components/MainLayout/MainLayout';
 import { STokenLoginBoundary } from './components/STokenLoginBoundary';
+import StorageHostFetchErrorBoundary from './components/StorageHostFetchErrorBoundary';
 import WebUINavigate from './components/WebUINavigate';
 import { persistPostLoginState } from './helper/loginSessionAuth';
 import { useSuspendedBackendaiClient } from './hooks';
@@ -258,15 +259,17 @@ export const mainLayoutChildRoutes: RouteObject[] = [
               style={{ paddingBottom: token.paddingContentVerticalLG }}
             >
               <LocationStateBreadCrumb />
-              <Suspense
-                fallback={
-                  <BAIFlex direction="column" style={{ maxWidth: 700 }}>
-                    <Skeleton active />
-                  </BAIFlex>
-                }
-              >
-                <SessionLauncherPage />
-              </Suspense>
+              <StorageHostFetchErrorBoundary>
+                <Suspense
+                  fallback={
+                    <BAIFlex direction="column" style={{ maxWidth: 700 }}>
+                      <Skeleton active />
+                    </BAIFlex>
+                  }
+                >
+                  <SessionLauncherPage />
+                </Suspense>
+              </StorageHostFetchErrorBoundary>
             </BAIFlex>
           );
         },

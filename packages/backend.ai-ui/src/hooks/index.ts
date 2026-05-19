@@ -166,5 +166,8 @@ export {
 } from './useBAILogger';
 export type { LoggerPlugin, LogContext, BAILogger } from './useBAILogger';
 export { useEventNotStable } from './useEventNotStable';
-export { useProjectResourceGroups } from './useProjectResourceGroups';
+export {
+  useProjectResourceGroups,
+  StorageHostFetchError,
+} from './useProjectResourceGroups';
 export type { ScalingGroupItem } from './useProjectResourceGroups';
