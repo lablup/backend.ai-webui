@@ -83,7 +83,7 @@ connection.
 
 ### Users cannot launch apps like Jupyter Notebook
 
-There may be a problem on connecting the App Proxy (formerly WSProxy) service.
+There may be a problem connecting to the App Proxy service.
 Try to stop and restart the service by referencing the guide on
 start/stop/restart App Proxy service.
 

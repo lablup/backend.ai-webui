@@ -131,14 +131,21 @@ Backend.AI's GPU virtualization technology that allows sharing a single physical
 
 ### App Proxy (formerly WSProxy)
 
-The proxy component that relays in-container application traffic (Jupyter, Terminal, TensorBoard, etc.) between the user's browser and the compute session. Renamed from **WSProxy** to **App Proxy** in the UI in FR-2841. The internal binary / daemon is still named `wsproxy`; only the user-facing label changed.
+The standalone, per-resource-group proxy service that relays in-container application traffic (Jupyter, Terminal, TensorBoard, etc.) directly between the user's browser and the compute session's Agent (the **v2** path, bypassing the Manager). Renamed from **WSProxy** to **App Proxy** in the UI in FR-2841.
+
+There is **no** standalone `wsproxy` daemon. In Backend.AI core, App Proxy is a separate service family (App Proxy **Coordinator** + **Worker**); the legacy **v1** path is not a daemon at all but a stream proxy embedded in the Manager process. The lowercase `wsproxy` token survives only as **internal identifiers** — never a user-facing component name:
+
+- DB columns: `scaling_groups.wsproxy_addr`, `wsproxy_api_token`
+- API route: `/scaling-groups/{sg}/wsproxy-version`
+- Constant: `WSPROXY_V1_VERSION = "v1"`
+- The WebUI's own client-side embedded proxy (`src/wsproxy/`) and its `config.toml` key `wsproxy.proxyURL`
 
 | Language | Term | Notes |
 |----------|------|-------|
-| English | App Proxy | Use "App Proxy (formerly WSProxy)" on first mention for users familiar with the old term. |
-| Korean | App Proxy | UI 라벨은 영문 그대로 사용합니다. 처음 언급할 때 "App Proxy(이전 명칭 WSProxy)"로 적어 줍니다. |
-| Japanese | App Proxy | UIラベルは英語のまま使用します。初出時は「App Proxy（旧称 WSProxy）」と表記します。 |
-| Thai | App Proxy | ใช้ป้ายภาษาอังกฤษเดิม เมื่อกล่าวถึงครั้งแรกให้เขียนว่า "App Proxy (ชื่อเดิม WSProxy)" |
+| English | App Proxy | Use "App Proxy" only. Do not reference the old "WSProxy" name in user-facing documentation. |
+| Korean | App Proxy | UI 라벨은 영문 그대로 "App Proxy"를 사용합니다. 사용자 문서에 옛 명칭 "WSProxy"를 병기하지 않습니다. |
+| Japanese | App Proxy | UIラベルは英語のまま「App Proxy」を使用します。ユーザー向け文書で旧称「WSProxy」を併記しません。 |
+| Thai | App Proxy | ใช้ป้ายภาษาอังกฤษ "App Proxy" และไม่อ้างถึงชื่อเดิม "WSProxy" ในเอกสารสำหรับผู้ใช้ |
 
 **Field labels** (Resource Group settings):
 
@@ -147,7 +154,7 @@ The proxy component that relays in-container application traffic (Jupyter, Termi
 | App Proxy Server Address | App Proxy 서버 주소 | App Proxy サーバアドレス | ที่อยู่เซิร์ฟเวอร์ App Proxy |
 | App Proxy API Token | App Proxy API 토큰 | App Proxy APIトークン | โทเค็น API ของ App Proxy |
 
-**Do NOT use** "WSProxy" as the user-facing label in new documentation. Keep `wsproxy` (lowercase, in `code` style) only when referring to the internal binary, daemon, or config key (e.g., `wsproxy.proxyURL` in `config.toml`).
+**Do NOT use** "WSProxy" as the user-facing label in new documentation, and do **not** describe `wsproxy` as a server-side binary or daemon (it isn't one). Keep `wsproxy` (lowercase, `code` style) only for the internal identifiers listed above — DB columns, the API route, the `WSPROXY_V1_VERSION` constant, the WebUI's own client-side proxy (`src/wsproxy/`), and the `config.toml` key `wsproxy.proxyURL`.
 
 ### Container vs Kernel / Image
 
@@ -206,4 +213,4 @@ These terms match sidebar menu items. Keep documentation references consistent w
 | data folder | storage folder / vfolder | Non-standard |
 | worker node | agent node | Reserve "worker node" for model serving context only |
 | compute node | agent node | Non-standard in docs |
-| WSProxy (as a UI label) | App Proxy | Renamed in FR-2841; use `wsproxy` (code style) only for the internal binary/daemon |
+| WSProxy (as a UI label) | App Proxy | Renamed in FR-2841; `wsproxy` (code style) survives only as internal identifiers (DB columns, API route, constants), not a daemon |
