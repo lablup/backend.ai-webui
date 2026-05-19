@@ -5,7 +5,7 @@
 RBAC (Role-Based Access Control) Management allows superadmins to define roles with fine-grained permissions and assign them to users. With RBAC, you can control which actions specific users are allowed to perform on various resources throughout the Backend.AI system.
 
 :::note
-RBAC Management is only available to superadmins and requires Backend.AI Manager version 25.4.0 or later.
+RBAC Management is only available to superadmins and requires Backend.AI Manager version 26.4.0 or later.
 :::
 
 To access the RBAC Management page, click **RBAC Management** in the **Admin Settings** section of the sidebar menu.
@@ -95,19 +95,6 @@ To edit a custom role's name or description:
 
 :::note
 The Edit button is only available for Custom roles. System roles cannot have their name or description modified. Scopes cannot be modified after role creation in either case.
-:::
-
-### Role Status Management
-
-Roles have two statuses that you can manage from the role list:
-
-- **Active**: The role is currently in effect. You can **Deactivate** an active role to temporarily suspend it.
-- **Inactive**: The role is suspended. You can **Activate** an inactive role to restore it, or **Purge** it to permanently remove it.
-
-Each role row displays a **Deactivate** action button when viewing **Active** roles, or **Activate** and **Purge Role** action buttons when viewing **Inactive** roles.
-
-:::danger
-Purging a role is irreversible. The role and all its associated data will be permanently removed. You must remove all user assignments and permissions from the role before purging.
 :::
 
 ## View Role Scopes
@@ -205,9 +192,13 @@ The **Role Assignments** tab in the role detail drawer shows which users are ass
 
 ### Revoke Users from a Role
 
-1. In the **Role Assignments** tab, click the **Revoke User** button next to the user you want to remove
-2. A small confirmation popup appears anchored to the button. Click **OK** to revoke the assignment, or **Cancel** to dismiss.
+1. In the **Role Assignments** tab, click the revoke (trash) icon button next to the user you want to remove
+2. A **Revoke User** confirmation modal opens. Type **`Permanently Delete`** into the input field exactly as shown — the **Revoke User** button stays disabled until the entered text matches. Click **Revoke User** to confirm, or **Cancel** to dismiss.
 
 ![](../images/rbac_revoke_popconfirm.png)
 
-Revoking a user removes only that user's assignment to this role; the role itself and its other assignments are kept, and the user can be added back from **Add User** at any time. Because the action is reversible, it uses a lightweight popup confirmation rather than a typed-name confirmation modal.
+Revoking a user removes only that user's assignment to this role; the role itself and its other assignments remain unchanged.
+
+:::danger
+Revoking a user from a role cannot be undone. The confirmation modal requires you to type `Permanently Delete` before the **Revoke User** button is enabled.
+:::
