@@ -14,8 +14,6 @@ import {
   normalizeRstTables,
   convertIndentedNotes,
   resolveMarkdownPath,
-  getImageDimensions,
-  IMAGE_SCALE_FACTOR,
 } from "./markdown-processor.js";
 import type { Chapter, Heading } from "./markdown-processor.js";
 import {
@@ -333,41 +331,12 @@ function reportLinkDiagnostics(diagnostics: LinkDiagnostic[]): void {
  * misses (defensive: should not happen because the pre-pass walks the
  * exact same tokens marked will render).
  */
-/**
- * Convert a web-absolute image URL (e.g. `/sessions_all/images/foo.png`,
- * the form `rewriteImagePathsForWeb` produces) back to a disk path under
- * `<srcDir>/<lang>/…` so we can read the PNG header for natural-size
- * auto-capping. Returns null for off-tree URLs (http(s):, leading-slash
- * paths outside the lang dir, paths that escape the lang root via `..`)
- * — the caller must fall back to unsized rendering in that case.
- */
-function resolveWebImageDiskPath(
-  href: string,
-  srcDir: string | undefined,
-  lang: string | undefined,
-): string | null {
-  if (!srcDir || !lang) return null;
-  if (/^(?:https?|file):\/\//.test(href)) return null;
-  if (!href.startsWith("/")) return null;
-  const langRoot = path.resolve(srcDir, lang);
-  const resolved = path.resolve(langRoot, "." + href);
-  // Defense in depth: rewriteImagePathsForWeb already drops out-of-tree
-  // markdown image refs, but a path like `/../other-lang/foo.png` that
-  // slipped past it would otherwise let the renderer read PNG headers
-  // outside the language root just to compute display dimensions.
-  if (resolved !== langRoot && !resolved.startsWith(langRoot + path.sep)) {
-    return null;
-  }
-  return resolved;
-}
-
 function buildWebRenderer(
   chapterSlug: string,
   headings: Heading[],
   options?: {
     chapterIndex?: number;
     lang?: string;
-    srcDir?: string;
     figureLabels?: Record<string, string>;
     /** Pre-rendered Shiki HTML keyed by `${lang}\0${code}`. */
     highlightedCode?: Map<string, string>;
@@ -377,8 +346,6 @@ function buildWebRenderer(
   const chapterIndex = options?.chapterIndex ?? 0;
   const figureLabel = getFigureLabel(options?.lang, options?.figureLabels);
   const highlightedCode = options?.highlightedCode;
-  const srcDir = options?.srcDir;
-  const lang = options?.lang;
 
   return {
     heading(text: string, level: number, _raw: string): string {
@@ -392,54 +359,9 @@ function buildWebRenderer(
       const titleAttr = title ? ` title="${title}"` : "";
       const { cleanAlt, sizeHint } = parseImageSizeHint(text || "");
 
-      // Size resolution: the cap is applied to the FIGURE (matte
-      // wrapper), not the inner <img>. The inner <img> keeps the CSS
-      // default `max-width: 100%` and naturally fills the figure.
-      //
-      // Why on the figure: `figure { width: fit-content }` computes
-      // its preferred size from the img's MAX-CONTENT (intrinsic
-      // pixel width), not from any inline `max-width` constraint on
-      // the img. So sizing the img alone with `max-width: <cap>px`
-      // does not shrink the matte — the matte still spans the column
-      // and the img floats inside. Putting the cap on the figure as
-      // `max-width: min(<cap+padding>px, 100%)` shrinks the matte
-      // itself to hug the image at its capped display size, while
-      // still gracefully degrading to column width on narrower
-      // viewports.
-      //
-      // The `+ FIGURE_PADDING_TOTAL` reserves room for the matte
-      // padding so the visible image width still matches the cap.
-      // Keep this number in sync with `styles-web.ts` (currently
-      // `padding: 16px` on `figure.doc-figure`, i.e. 32 px total).
-      //
-      // Size resolution order (matches the PDF renderer):
-      //   1. Explicit `![alt =<w>](url)` hint wins absolutely.
-      //   2. Otherwise, read the PNG/JPEG header and cap at the
-      //      natural CSS display width (pixel width × IMAGE_SCALE_FACTOR,
-      //      which undoes the 2× zoom capture convention).
-      //   3. If neither path produces a size, emit no figure style —
-      //      the matte spans the full article column and the img
-      //      sits at column width (legacy / pre-2x captures).
-      const FIGURE_PADDING_TOTAL = 32;
-      let figureStyle = "";
+      let styleAttr = "";
       if (sizeHint && sizeHint !== "auto") {
-        if (sizeHint.endsWith("%")) {
-          figureStyle = ` style="width:${sizeHint}"`;
-        } else {
-          const px = parseInt(sizeHint, 10);
-          if (Number.isFinite(px)) {
-            figureStyle = ` style="max-width:min(${px + FIGURE_PADDING_TOTAL}px,100%)"`;
-          }
-        }
-      } else if (!sizeHint) {
-        const diskPath = resolveWebImageDiskPath(href, srcDir, lang);
-        if (diskPath) {
-          const dims = getImageDimensions(diskPath);
-          if (dims) {
-            const cap = Math.round(dims.width * IMAGE_SCALE_FACTOR);
-            figureStyle = ` style="max-width:min(${cap + FIGURE_PADDING_TOTAL}px,100%)"`;
-          }
-        }
+        styleAttr = ` style="width:${sizeHint}"`;
       }
 
       if (chapterIndex > 0) {
@@ -448,10 +370,10 @@ function buildWebRenderer(
         const caption = cleanAlt
           ? `<figcaption>${figNum} &mdash; ${escapeHtml(cleanAlt)}</figcaption>`
           : `<figcaption>${figNum}</figcaption>`;
-        return `<figure class="doc-figure"${figureStyle}><img src="${href}" alt="${cleanAlt}" class="doc-image"${titleAttr} />${caption}</figure>\n`;
+        return `<figure class="doc-figure"><img src="${href}" alt="${cleanAlt}" class="doc-image"${titleAttr}${styleAttr} />${caption}</figure>\n`;
       }
 
-      return `<img src="${href}" alt="${cleanAlt}" class="doc-image"${titleAttr} />\n`;
+      return `<img src="${href}" alt="${cleanAlt}" class="doc-image"${titleAttr}${styleAttr} />\n`;
     },
     code(code: string, infostring: string | undefined): string {
       const info = infostring || "";
@@ -735,7 +657,6 @@ export async function processMarkdownFilesForWeb(
       renderer: buildWebRenderer(chapterSlug, headings, {
         chapterIndex,
         lang,
-        srcDir,
         figureLabels,
         highlightedCode,
       }),

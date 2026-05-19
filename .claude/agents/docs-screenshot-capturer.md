@@ -129,8 +129,7 @@ Open the browser and log in:
 - Full-page captures only for page overview screenshots
 - Use `browser_snapshot` to find the correct `ref` for the element you want to capture
 - When UI has icon-only buttons, **always verify the button's accessible name** in the snapshot before clicking — e.g., "trash bin" vs download icon can look similar
-- **Do NOT bake padding into the screenshot.** The docs renderer adds a matte (padding + soft background + outer border + radius) around every captured image, so an element-level capture with content flush to the PNG edges still has visible breathing room in the docs. Capture the raw element; let the matte frame it.
-- **Do NOT try to "fix" the inner-vs-outer border-radius mismatch at capture time.** Inside the matte, the inner `<img>` is bare — the matte owns the only outer radius, so a screenshot of a card/modal with its own rounded corners sits cleanly on the matte instead of competing with a second radius.
+- **The PNG you save is what the reader sees.** The docs renderer does not add padding, a matte, or auto-sizing — it just draws a thin border. Build any breathing room you want **into the capture itself** via the parent-container-preferred rule and the small-element rule below.
 
 **Parent-container-preferred rule (modals, dialogs, panels):**
 
@@ -140,22 +139,25 @@ Climb one DOM level whenever picking the tightest element would produce a crampe
 - Card / wizard step: prefer the containing `<section>` / panel over the tight card.
 - Toolbar / form row: prefer the panel that the row lives inside, not the row itself.
 
-The matte adds outer padding regardless, so picking the parent costs nothing visually but lets the capture pick up the application's intra-component spacing (and avoids clipping floating elements that overflow the inner element, like dropdown indicators or focus rings).
+Parent containers usually already include the application's intra-component spacing, so the captured PNG arrives with natural whitespace around the element (and floating bits like dropdown indicators or focus rings are not clipped).
 
 **Small-element rule (≤ 600 CSS px in either dimension):**
 
-For tiny widgets — notifications, badges, button rows, toasts, status pills — pick one of two paths:
+Tiny widgets — notifications, badges, button rows, toasts, status pills — produce a tight, edgeless PNG when captured by `ref` alone, and the renderer will display them at that full natural width (no auto-cap). Pick one of two paths:
 
-1. **Capture as-is and trust the renderer's auto size cap.** The web/PDF renderers read the PNG header and cap the display width at `pixel_width × 0.5` (the 2× zoom convention from SCREENSHOT-GUIDELINES). A 760×190 notification renders at ~380 CSS px wide on web and PDF, framed by the matte. This is usually correct.
-2. **Reposition with `browser_evaluate` for a deliberately larger capture** when the auto-capped display feels too small for the surrounding documentation context. Apply temporary CSS to move the widget to the viewport center with extra padding around it, then capture, then reset the style. Example:
+1. **Capture a roomy parent.** If a wrapper element exists with deliberate padding around the widget, capture it. Often the simplest fix.
+2. **Reposition with `browser_evaluate`** when no suitable parent exists. Apply temporary CSS to move the widget to the viewport center, wrap it (or pad it) with a neutral surface, take the screenshot, then reset the style. The PNG you save carries the padding. Example:
    ```js
+   // Before capture: wrap and pad
    () => {
      const el = document.querySelector('.target-notification');
      el.dataset.originalStyle = el.getAttribute('style') ?? '';
-     el.style.cssText += 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 32px; background: var(--bai-bg-muted); z-index: 9999;';
+     el.style.cssText += 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 32px; background: #fafafa; border-radius: 8px; z-index: 9999;';
      return 'ok';
    }
    // …take screenshot…
+
+   // After capture: restore
    () => {
      const el = document.querySelector('.target-notification');
      el.setAttribute('style', el.dataset.originalStyle ?? '');
@@ -164,7 +166,16 @@ For tiny widgets — notifications, badges, button rows, toasts, status pills �
    }
    ```
 
-Default to path 1. Use path 2 only when you have a specific reason to fill more of the column.
+A bare `ref` screenshot of a sub-600-CSS-px element is not acceptable for the docs. Always pick path 1 or path 2.
+
+**If a finished capture still renders too wide or too narrow in the docs**, use the inline size hint in the markdown reference:
+
+```markdown
+![ =50%](images/foo.png)
+![ =380px](images/foo.png)
+```
+
+Prefer fixing the capture; reach for the size hint only when the capture cannot provide what you need.
 
 **Re-capture preflight (when overwriting an existing screenshot):**
 

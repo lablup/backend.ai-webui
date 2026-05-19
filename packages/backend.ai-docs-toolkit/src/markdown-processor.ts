@@ -36,7 +36,7 @@ function renderShellSessionForPdf(code: string): string {
 /**
  * Read image dimensions from a PNG or JPEG file header.
  */
-export function getImageDimensions(filePath: string): { width: number; height: number } | null {
+function getImageDimensions(filePath: string): { width: number; height: number } | null {
   try {
     const buf = Buffer.alloc(32);
     const fd = fs.openSync(filePath, 'r');
@@ -76,18 +76,7 @@ export function getImageDimensions(filePath: string): { width: number; height: n
   return null;
 }
 
-/**
- * Display scaling factor for captured screenshots.
- *
- * Capture convention (SCREENSHOT-GUIDELINES.md): screenshots are taken
- * at 2× CSS zoom for sharper text, so the PNG's pixel width is roughly
- * twice the intended display width. Multiplying by 0.5 converts the
- * captured pixel width back to its intended CSS display width.
- *
- * Used by both the PDF and web renderers when no explicit size hint is
- * given via `![alt =<w>](url)`.
- */
-export const IMAGE_SCALE_FACTOR = 0.5;
+const IMAGE_SCALE_FACTOR = 0.5;
 
 function resolveImageFilePath(src: string): string | null {
   try {
@@ -494,29 +483,20 @@ export async function processMarkdownFiles(
         const titleAttr = title ? ` title="${title}"` : '';
         const { cleanAlt, sizeHint } = parseImageSizeHint(text || '');
 
-        // The size cap is applied to the FIGURE (matte wrapper), not
-        // the inner <img>. See markdown-processor-web.ts for the
-        // rationale (fit-content uses the img's intrinsic, so an inline
-        // max-width on the img would not shrink the matte). PDF padding
-        // total: 12px × 2 = 24px, kept in sync with styles.ts.
-        const FIGURE_PADDING_TOTAL = 24;
-        let figureStyle = '';
-        if (sizeHint && sizeHint !== 'auto') {
-          if (sizeHint.endsWith('%')) {
-            figureStyle = ` style="width:${sizeHint}"`;
+        let styleAttr = '';
+        if (sizeHint) {
+          if (sizeHint === 'auto') {
+            styleAttr = '';
           } else {
-            const px = parseInt(sizeHint, 10);
-            if (Number.isFinite(px)) {
-              figureStyle = ` style="max-width:min(${px + FIGURE_PADDING_TOTAL}px,100%)"`;
-            }
+            styleAttr = ` style="width:${sizeHint}"`;
           }
-        } else if (!sizeHint) {
+        } else {
           const localPath = resolveImageFilePath(href);
           if (localPath) {
             const dims = getImageDimensions(localPath);
             if (dims) {
-              const cap = Math.round(dims.width * IMAGE_SCALE_FACTOR);
-              figureStyle = ` style="max-width:min(${cap + FIGURE_PADDING_TOTAL}px,100%)"`;
+              const scaledWidth = Math.round(dims.width * IMAGE_SCALE_FACTOR);
+              styleAttr = ` style="width:${scaledWidth}px"`;
             }
           }
         }
@@ -527,7 +507,7 @@ export async function processMarkdownFiles(
           ? `<figcaption>${figNum} &mdash; ${escapeHtmlExt(cleanAlt)}</figcaption>`
           : `<figcaption>${figNum}</figcaption>`;
 
-        return `<figure class="doc-figure"${figureStyle}><img src="${href}" alt="${cleanAlt}" class="doc-image"${titleAttr} />${caption}</figure>\n`;
+        return `<figure class="doc-figure"><img src="${href}" alt="${cleanAlt}" class="doc-image"${titleAttr}${styleAttr} />${caption}</figure>\n`;
       },
       code(code: string, infostring: string | undefined): string {
         const info = infostring || '';
