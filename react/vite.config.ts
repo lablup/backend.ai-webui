@@ -36,14 +36,22 @@ const require = createRequire(import.meta.url);
 // admits every hard-linked dependency. We resolve once at dev-server start
 // (the path is stable for that lifetime) and only when actually serving —
 // `vite build` never reads `server.fs.allow`, so we skip the subprocess there.
-// `shell: true` makes the call work on Windows where `pnpm` is a `.cmd` shim.
+// We only shell out on Windows (where `pnpm` is typically a `.cmd` shim that
+// Node cannot execute directly); on POSIX a direct exec avoids the shell's
+// quoting and overhead. The result is also sanity-checked — an empty or
+// non-absolute path would silently widen the allowlist, which is the bug we
+// are trying to fix in the first place.
 function resolvePnpmStorePath(): string | undefined {
   try {
-    return execSync('pnpm store path --silent', {
+    const raw = execSync('pnpm store path --silent', {
       encoding: 'utf-8',
       stdio: ['ignore', 'pipe', 'ignore'],
-      shell: true,
+      shell: process.platform === 'win32',
     }).trim();
+    if (!raw || !isAbsolute(raw) || !existsSync(raw) || !statSync(raw).isDirectory()) {
+      return undefined;
+    }
+    return raw;
   } catch (err) {
     // Leave a breadcrumb so the resulting "outside of Vite serving allow list"
     // errors are self-diagnosing instead of looking like a fresh regression.
