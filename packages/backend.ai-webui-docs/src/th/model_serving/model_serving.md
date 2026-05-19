@@ -493,7 +493,6 @@ SGLang มีแท็บดังต่อไปนี้: **Model Loading**, *
 - **การปรับใช้พร้อมแล้ว**: แสดงเมื่อการปรับใช้มีสถานะ `HEALTHY` แบนเนอร์นี้มีปุ่ม **Start Chat** เป็นทางลัดไปยังอินเทอร์เฟซ LLM Chat Test เพื่อให้คุณทดสอบโมเดลได้โดยไม่ต้องออกจากหน้า
 
 ![](../images/endpoint_detail_ready_alert.png)
-<!-- TODO: Capture screenshot — Deployment Ready alert with Start Chat shortcut -->
 
 - **การปรับใช้แบบส่วนตัว — ใช้โทเค็นการเข้าถึงเพื่อเข้าถึงปลายทาง**: แสดงเมื่อ **เปิดให้สาธารณะ** ถูกปิดใช้งาน แบนเนอร์นี้มีทางลัดไปยัง **จัดการโทเค็นการเข้าถึง** เพื่อให้คุณออกหรือคัดลอกโทเค็นได้ ดูรายละเอียดที่ [การสร้างโทเค็น](#generating-tokens)
 
@@ -546,7 +545,6 @@ SGLang มีแท็บดังต่อไปนี้: **Model Loading**, *
 แท็บเรพลิกาแสดง routing node ที่ประกอบกันเป็นการปรับใช้ รายการเรพลิกาจะถูกกรองด้วยตัวควบคุมแบบ radio **Running / Terminated** ที่ด้านบนของแท็บ ซึ่งแทนที่ตัวกรองสถานะแบบ enum เดิม
 
 ![](../images/replica_status_filter.png)
-<!-- TODO: Capture screenshot — Running/Terminated radio filter -->
 
 - **Running**: แสดงเรพลิกาที่กำลังเตรียม กำลังทำงาน หรืออยู่ในสถานะใช้งานอื่น ๆ
 - **Terminated**: แสดงเรพลิกาที่สิ้นสุด lifecycle แล้ว

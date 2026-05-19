@@ -529,7 +529,6 @@ The Endpoint Detail Page shows contextual alert banners at the top, reflecting t
 - **Deployment is ready**: Shown when the deployment is `HEALTHY`. Includes a **Start Chat** button as a shortcut to the LLM Chat Test interface so you can test the model without leaving the page.
 
 ![](../images/endpoint_detail_ready_alert.png)
-<!-- TODO: Capture screenshot — Deployment Ready alert with Start Chat shortcut -->
 
 - **Private deployment — use an access token to access the endpoint.**: Shown when **Open To Public** is disabled. Includes a shortcut to **Manage Access Tokens** so you can issue or copy a token. See [Access Tokens](#generating-tokens).
 
@@ -582,7 +581,6 @@ Always read the icon style before confirming a delete action.
 The Replicas tab shows the routing nodes that make up the deployment. Replica entries are filtered by a **Running / Terminated** radio control at the top of the tab, which replaced the previous enum-based status filter.
 
 ![](../images/replica_status_filter.png)
-<!-- TODO: Capture screenshot — Running/Terminated radio filter -->
 
 - **Running**: Shows replicas that are currently provisioning, running, or otherwise active.
 - **Terminated**: Shows replicas that have completed their lifecycle.

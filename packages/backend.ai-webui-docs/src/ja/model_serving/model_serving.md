@@ -505,7 +505,6 @@ SGLangは次のタブを提供します：**Model Loading**、**Resource Memory*
 - **デプロイの準備が完了しました**: デプロイメントのステータスが `HEALTHY` の場合に表示されます。ページを離れずにモデルをテストできるよう、LLM チャットテストインターフェースへのショートカットとして **Start Chat** ボタンが含まれます。
 
 ![](../images/endpoint_detail_ready_alert.png)
-<!-- TODO: Capture screenshot — Deployment Ready alert with Start Chat shortcut -->
 
 - **非公開デプロイメントです。エンドポイントの使用にはアクセストークンが必要です。**: **アプリを外部公開** が無効な場合に表示されます。トークンの発行やコピーができるよう、**アクセストークンを管理** へのショートカットが含まれます。詳細は [トークンの生成](#generating-tokens) を参照してください。
 
@@ -558,7 +557,6 @@ SGLangは次のタブを提供します：**Model Loading**、**Resource Memory*
 レプリカタブには、デプロイメントを構成するルーティングノードが表示されます。タブ上部の **Running / Terminated** ラジオコントロールで項目をフィルタリングします。これは以前の列挙型ステータスフィルタを置き換えるものです。
 
 ![](../images/replica_status_filter.png)
-<!-- TODO: Capture screenshot — Running/Terminated radio filter -->
 
 - **Running**: 現在プロビジョニング中、実行中、またはアクティブなレプリカを表示します。
 - **Terminated**: ライフサイクルが終了したレプリカを表示します。

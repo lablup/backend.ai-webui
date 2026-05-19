@@ -507,7 +507,6 @@ SGLang은 다음 탭을 제공합니다: **Model Loading**, **Resource Memory**,
 - **배포가 준비되었습니다**: 배포 상태가 `HEALTHY`일 때 표시됩니다. 페이지를 떠나지 않고 모델을 테스트할 수 있도록 LLM 채팅 테스트 인터페이스로 이동하는 **Start Chat** 버튼이 포함됩니다.
 
 ![](../images/endpoint_detail_ready_alert.png)
-<!-- TODO: Capture screenshot — Deployment Ready alert with Start Chat shortcut -->
 
 - **비공개 배포입니다. 엔드포인트를 사용하려면 액세스 토큰을 사용해야 합니다.**: **앱을 외부에 공개** 옵션이 비활성화된 경우 표시됩니다. 토큰을 발급하거나 복사할 수 있도록 **액세스 토큰 관리**로 이동하는 바로가기가 포함됩니다. 자세한 내용은 [토큰 생성](#generating-tokens)을 참고하세요.
 
@@ -560,7 +559,6 @@ SGLang은 다음 탭을 제공합니다: **Model Loading**, **Resource Memory**,
 레플리카 탭은 배포를 구성하는 라우팅 노드를 보여줍니다. 탭 상단의 **Running / Terminated** 라디오 컨트롤로 항목을 필터링하며, 이는 기존의 열거형 상태 필터를 대체합니다.
 
 ![](../images/replica_status_filter.png)
-<!-- TODO: Capture screenshot — Running/Terminated radio filter -->
 
 - **Running**: 현재 프로비저닝 중이거나 실행 중인, 또는 활성 상태의 레플리카를 표시합니다.
 - **Terminated**: 라이프사이클이 종료된 레플리카를 표시합니다.
