@@ -49,16 +49,22 @@ Each language directory mirrors the same structure:
 
 ## AI Agent Workflow
 
-Four agents handle the documentation lifecycle:
+**Single entry point**: For any docs work (updates, periodic health checks, terminology cleanup, translation parity), invoke the **`docs-lead`** skill from the main context. docs-lead runs `docs-lint` for diagnosis, surfaces a prioritized work queue via `AskUserQuestion`, and then orchestrates the four workers below with explicit approval gates. **Do not invoke the workers directly** — go through docs-lead so prior state, lint findings, and worker hand-offs stay coherent.
 
-1. **docs-update-planner** - Analyzes PR changes or feature descriptions to create a documentation update plan (`.agent-output/docs-update-plan-{topic}.md`)
-2. **docs-update-writer** - Writes documentation content across all 4 languages following the plan
-3. **docs-update-reviewer** - Reviews for accuracy, consistency, style, and translation quality; auto-fixes issues (`.agent-output/docs-review-report-{topic}.md`)
-4. **docs-screenshot-capturer** - Captures screenshots using Playwright MCP by navigating the live application, saves to all language image directories
+The full agent set:
+
+- **`docs-lead`** (skill, main context) — Triage, prioritization, decision gates, worker orchestration, accumulating state in `.agent-output/docs-state.md`. The single entry point. Adopts Karpathy's LLM Wiki Ingest + Lint operations (Query is intentionally not adopted — the manual stays human-curated).
+- **`docs-lint`** (subagent, diagnosis-only) — Health diagnosis across five checks: terminology drift (parses `TERMINOLOGY.md` "Terms to Avoid"), translation parity gap, stale screenshot candidates, broken cross-ref / image link, PR coverage gap. Writes `.agent-output/docs-lint-report.md` with a 10-run rolling history. **Never modifies docs.**
+- **`docs-update-planner`** (subagent) — Analyzes PR changes or feature descriptions to create a documentation update plan (`.agent-output/docs-update-plan-{topic}.md`)
+- **`docs-update-writer`** (subagent) — Writes documentation content across all 4 languages following the plan
+- **`docs-update-reviewer`** (subagent) — Reviews for accuracy, consistency, style, and translation quality; auto-fixes issues (`.agent-output/docs-review-report-{topic}.md`)
+- **`docs-screenshot-capturer`** (subagent) — Captures screenshots using Playwright MCP by navigating the live application, saves to all language image directories
 
 ### Agent Working Files
 
-Agent output files (plans, review reports) are stored in `.agent-output/` (gitignored). Files use topic-specific names to avoid collisions:
+Agent output files (plans, review reports, lint reports, state) are stored in `.agent-output/` (gitignored). Files use topic-specific names where applicable to avoid collisions:
+- `.agent-output/docs-state.md` — docs-lead's accumulating work log (last 30 entries; older entries rotated to `.agent-output/archive/docs-state-YYYY-QN.md`)
+- `.agent-output/docs-lint-report.md` — last 10 lint runs (rewrite-with-rotation, 256 KB cap)
 - `.agent-output/docs-update-plan-{topic}.md` — Documentation update plans
 - `.agent-output/docs-review-report-{topic}.md` — Review reports
 
