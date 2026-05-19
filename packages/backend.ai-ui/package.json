@@ -42,7 +42,7 @@
     "vitest:watch": "vitest",
     "storybook": "portless run --force --app-port 6006 -- storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "lint": "eslint ./src --ignore-pattern '**.graphql.**' --max-warnings=0",
+    "lint": "eslint ./src --ignore-pattern '**.graphql.**' --max-warnings=0 --no-warn-ignored",
     "prepublishOnly": "pnpm lint && pnpm test && pnpm build"
   },
   "peerDependencies": {

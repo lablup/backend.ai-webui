@@ -92,7 +92,7 @@
     "build:only": "pnpm run relay && vite build",
     "test": "vitest run",
     "relay": "relay-compiler",
-    "lint": "eslint ./src --max-warnings=0",
+    "lint": "eslint ./src --max-warnings=0 --no-warn-ignored",
     "format": "prettier --check 'src/**/*.{js,jsx,ts,tsx}'",
     "format-fix": "prettier --write './src/**/*.{js,jsx,ts,tsx}'"
   },
