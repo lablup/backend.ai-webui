@@ -67,6 +67,10 @@ catalog:
   uuid: ^13.0.0
   webpack: ^5.106.1
 
+# Dependencies hard-link into a global store outside this repo
+# (e.g. `~/Library/pnpm/store/v11/...`). `react/vite.config.ts` extends
+# `server.fs.allow` with `pnpm store path` so Vite can serve assets from
+# the store; do not remove that extension without also reverting this flag.
 enableGlobalVirtualStore: true
 
 minimumReleaseAge: 10080

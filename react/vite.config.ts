@@ -1,4 +1,5 @@
 import react from '@vitejs/plugin-react';
+import { execSync } from 'node:child_process';
 import { createReadStream, existsSync, readFileSync, statSync } from 'node:fs';
 import {
   basename,
@@ -20,6 +21,31 @@ import svgr from 'vite-plugin-svgr';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const projectRoot = resolve(__dirname, '..');
 const require = createRequire(import.meta.url);
+
+// With `enableGlobalVirtualStore: true` (pnpm-workspace.yaml), pnpm hard-links
+// every dependency into a single global store outside this repo
+// (e.g. `~/Library/pnpm/store/v11/links/...` on macOS,
+// `~/.local/share/pnpm/store/v11/links/...` on Linux). Vite resolves
+// `server.fs.allow` against each request's realpath, so allowing only
+// `projectRoot` rejects every dependency CSS/asset served from that store
+// with "outside of Vite serving allow list".
+//
+// Resolve the store root dynamically via `pnpm store path` (pnpm's officially
+// supported way to discover it) and add it to `fs.allow` below. We resolve
+// once at config load — the path is stable for the lifetime of the dev
+// server, and falling back to `undefined` keeps non-pnpm environments
+// working.
+function resolvePnpmStorePath(): string | undefined {
+  try {
+    return execSync('pnpm store path --silent', {
+      encoding: 'utf-8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    }).trim();
+  } catch {
+    return undefined;
+  }
+}
+const pnpmStorePath = resolvePnpmStorePath();
 
 // `vite-plugin-node-polyfills` injects bare-specifier imports of its own shim
 // paths (`vite-plugin-node-polyfills/shims/{buffer,global,process}`) during
@@ -569,8 +595,11 @@ export default defineConfig(({ mode }) => {
       fs: {
         // Allow Vite to read files from the whole monorepo so that the
         // alias to `../dist/lib/...` and `../packages/backend.ai-ui/src`
-        // resolves without FS sandbox 403s.
-        allow: [projectRoot],
+        // resolves without FS sandbox 403s. Additionally allow the pnpm
+        // global virtual store root (resolved dynamically above) so that
+        // dependencies hard-linked outside the repo can be served — see
+        // `resolvePnpmStorePath` for the full rationale.
+        allow: [projectRoot, ...(pnpmStorePath ? [pnpmStorePath] : [])],
       },
       watch: {
         ignored: [
