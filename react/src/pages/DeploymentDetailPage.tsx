@@ -12,6 +12,7 @@ import DeploymentReplicasTab from '../components/DeploymentReplicasTab';
 import DeploymentStatusTag, {
   DeploymentStatus,
 } from '../components/DeploymentStatusTag';
+import SwitchToProjectButton from '../components/SwitchToProjectButton';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
@@ -167,6 +168,13 @@ const DeploymentDetailPage: React.FC = () => {
           showIcon
           title={t('deployment.NotCurrentProjectAlertTitle')}
           description={t('deployment.NotCurrentProjectAlertDescription')}
+          action={
+            deployment.metadata.projectId ? (
+              <SwitchToProjectButton
+                projectId={deployment.metadata.projectId}
+              />
+            ) : undefined
+          }
         />
       )}
       {isDeploymentReady && !hasNoRevision && (
