@@ -147,12 +147,12 @@ refer to the following:
     times from weeks to days.
   ![](../images/launch_session_resource_2.png)
 
-  :::note
-  The **Number of sessions** option is no longer set in this form. To launch
-  multiple sessions with the same configuration, use the start button's
-  dropdown menu on the **Confirm and Launch** step. See
-  [Confirm and Launch](#confirm-and-launch) for details.
-  :::
+:::note
+The **Number of sessions** option is no longer set in this form. To launch
+multiple sessions with the same configuration, use the start button's
+dropdown menu on the **Confirm and Launch** step. See
+[Confirm and Launch](#confirm-and-launch) for details.
+:::
 
   * Select Agent: Select the agent to be assigned. By default, the agent is automatically selected
     by the scheduler. The agent selector displays the actual amount of available resources for each agent.
