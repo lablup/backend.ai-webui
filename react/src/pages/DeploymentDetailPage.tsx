@@ -14,6 +14,7 @@ import DeploymentStatusTag, {
 } from '../components/DeploymentStatusTag';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { PlusOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import { Alert, Button, Skeleton, Tooltip, Typography, theme } from 'antd';
@@ -37,6 +38,7 @@ const DeploymentDetailPage: React.FC = () => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const [currentUser] = useCurrentUserInfo();
+  const currentProject = useCurrentProjectValue();
   const webuiNavigate = useWebUINavigate();
   const baiClient = useSuspendedBackendaiClient();
   const isChatBlocked = !!baiClient?._config?.blockList?.includes('chat');
@@ -63,6 +65,7 @@ const DeploymentDetailPage: React.FC = () => {
           metadata {
             name
             status
+            projectId
           }
           networkAccess {
             openToPublic
@@ -122,6 +125,14 @@ const DeploymentDetailPage: React.FC = () => {
   const isOwnedByCurrentUser =
     !creatorEmail || creatorEmail === currentUser.email;
 
+  // Folder selection inside the add-revision flow is scoped to the currently
+  // selected project. Disable revision addition when the deployment belongs to
+  // a different project so the user isn't shown an incorrect folder list.
+  const isNotCurrentProject =
+    !!currentProject.id &&
+    !!deployment.metadata.projectId &&
+    deployment.metadata.projectId !== currentProject.id;
+
   const handleRefetch = () => {
     startRefetchTransition(() => updateFetchKey());
   };
@@ -150,6 +161,14 @@ const DeploymentDetailPage: React.FC = () => {
         </Typography.Title>
         <DeploymentStatusTag status={deploymentStatus} />
       </BAIFlex>
+      {isNotCurrentProject && (
+        <Alert
+          type="warning"
+          showIcon
+          title={t('deployment.NotCurrentProjectAlertTitle')}
+          description={t('deployment.NotCurrentProjectAlertDescription')}
+        />
+      )}
       {isDeploymentReady && !hasNoRevision && (
         <Alert
           type="success"
@@ -191,7 +210,7 @@ const DeploymentDetailPage: React.FC = () => {
               action={async () => {
                 openAddRevision();
               }}
-              disabled={isDeploymentDestroying}
+              disabled={isDeploymentDestroying || isNotCurrentProject}
             >
               {t('deployment.AddRevision')}
             </BAIButton>
@@ -213,6 +232,7 @@ const DeploymentDetailPage: React.FC = () => {
       <DeploymentConfigurationSection
         deploymentFrgmt={deployment}
         isDeploymentDestroying={isDeploymentDestroying}
+        isNotCurrentProject={isNotCurrentProject}
         revisionFetchKey={revisionFetchKey}
         isPendingRefetch={isPendingRefetch}
         onRefetch={handleRefetch}

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f646eece35b528604f228cf08be07b27>>
+ * @generated SignedSource<<b374ced1535380d46d6cd4e67f3a7ccd>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -78,7 +78,6 @@ export type DeploymentAddRevisionModalQuery$data = {
       }> | null | undefined;
     } | null | undefined;
     readonly metadata: {
-      readonly projectId: string;
       readonly resourceGroupName: string;
     };
   } | null | undefined;
@@ -111,13 +110,6 @@ v2 = {
   "name": "metadata",
   "plural": false,
   "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "projectId",
-      "storageKey": null
-    },
     {
       "alias": null,
       "args": null,
@@ -573,16 +565,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "866cfab3340f261e3ea0c333ba2d8f67",
+    "cacheID": "41e3a773e5a73cca06b5dfb852a433a6",
     "id": null,
     "metadata": {},
     "name": "DeploymentAddRevisionModalQuery",
     "operationKind": "query",
-    "text": "query DeploymentAddRevisionModalQuery(\n  $deploymentId: ID!\n) {\n  deployment(id: $deploymentId) {\n    metadata {\n      projectId\n      resourceGroupName\n    }\n    currentRevision {\n      clusterConfig {\n        mode\n        size\n      }\n      resourceConfig {\n        resourceOpts {\n          entries {\n            name\n            value\n          }\n        }\n      }\n      resourceSlots {\n        slotName\n        quantity\n      }\n      extraMounts {\n        vfolderId\n        mountDestination\n      }\n      modelRuntimeConfig {\n        runtimeVariantId\n        runtimeVariant {\n          name\n          id\n        }\n        environ {\n          entries {\n            name\n            value\n          }\n        }\n      }\n      modelMountConfig {\n        vfolderId\n        mountDestination\n        definitionPath\n      }\n      modelDefinition {\n        models {\n          name\n          modelPath\n          service {\n            startCommand\n            port\n            healthCheck {\n              path\n              maxRetries\n              initialDelay\n              interval\n              maxWaitTime\n            }\n          }\n        }\n      }\n      imageV2 {\n        id\n        identity {\n          canonicalName\n        }\n      }\n      id\n    }\n    id\n  }\n}\n"
+    "text": "query DeploymentAddRevisionModalQuery(\n  $deploymentId: ID!\n) {\n  deployment(id: $deploymentId) {\n    metadata {\n      resourceGroupName\n    }\n    currentRevision {\n      clusterConfig {\n        mode\n        size\n      }\n      resourceConfig {\n        resourceOpts {\n          entries {\n            name\n            value\n          }\n        }\n      }\n      resourceSlots {\n        slotName\n        quantity\n      }\n      extraMounts {\n        vfolderId\n        mountDestination\n      }\n      modelRuntimeConfig {\n        runtimeVariantId\n        runtimeVariant {\n          name\n          id\n        }\n        environ {\n          entries {\n            name\n            value\n          }\n        }\n      }\n      modelMountConfig {\n        vfolderId\n        mountDestination\n        definitionPath\n      }\n      modelDefinition {\n        models {\n          name\n          modelPath\n          service {\n            startCommand\n            port\n            healthCheck {\n              path\n              maxRetries\n              initialDelay\n              interval\n              maxWaitTime\n            }\n          }\n        }\n      }\n      imageV2 {\n        id\n        identity {\n          canonicalName\n        }\n      }\n      id\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "67c95f213fb1beea3d27a257efda7f14";
+(node as any).hash = "3cbc34145af86f08792b27b9e14fd580";
 
 export default node;

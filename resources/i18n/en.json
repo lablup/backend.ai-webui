@@ -1001,6 +1001,8 @@
     "NoPresetsAvailable": "No deployment preset available",
     "NoPresetsAvailableDescription": "There is no preset to deploy with. Create a new deployment instead.",
     "NoPresetsAvailableSwitchToCustom": "There is no preset available. Switch to Custom mode to add a revision manually.",
+    "NotCurrentProjectAlertDescription": "Switch to the project this deployment belongs to in order to add a revision.",
+    "NotCurrentProjectAlertTitle": "This deployment belongs to a different project.",
     "NumberOfReplicas": "Number of Replicas",
     "OpenCreateDeploymentModal": "Open create deployment modal",
     "OpenToPublic": "Open To Public",

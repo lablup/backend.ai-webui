@@ -58,6 +58,7 @@ import { useLocation } from 'react-router-dom';
 interface DeploymentConfigurationSectionProps {
   deploymentFrgmt: DeploymentConfigurationSection_deployment$key | null;
   isDeploymentDestroying?: boolean;
+  isNotCurrentProject?: boolean;
   revisionFetchKey: string;
   isPendingRefetch: boolean;
   onRefetch: () => void;
@@ -177,6 +178,7 @@ const DeploymentConfigurationSection: React.FC<
 > = ({
   deploymentFrgmt,
   isDeploymentDestroying = false,
+  isNotCurrentProject = false,
   revisionFetchKey,
   isPendingRefetch,
   onRefetch,
@@ -379,7 +381,7 @@ const DeploymentConfigurationSection: React.FC<
             <BAIButton
               type="primary"
               icon={<PlusOutlined />}
-              disabled={isDeploymentDestroying}
+              disabled={isDeploymentDestroying || isNotCurrentProject}
               // `action` (not `onClick`) wraps the state update that mounts
               // `<DeploymentAddRevisionModal>` (which suspends on its Relay
               // queries) in `startTransition`, so the page stays interactive
