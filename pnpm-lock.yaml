@@ -194,6 +194,7 @@ patchedDependencies:
   '@lobehub/fluent-emoji@2.0.0': e3910174b171372f01ee0d0f41033c3aed501f7eba649e863c48e7a370886a88
   '@rc-component/form': e4841378d1c17439be3359cd395e44bb49a9b3d1f594e48cba191ea19ecf0b32
   ansi_up@6.0.6: 99856fc7fa4571c6ef4716cfd2dbf1151a025690c737775e248e8b7fe08a4459
+  relay-runtime@20.1.1: cc791a2ea160bc7c87571401d2f1430d50527847c44039d45579a5bfa60effa6
 
 importers:
 
@@ -540,7 +541,7 @@ importers:
         version: 6.30.3(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       relay-runtime:
         specifier: 'catalog:'
-        version: 20.1.1
+        version: 20.1.1(patch_hash=cc791a2ea160bc7c87571401d2f1430d50527847c44039d45579a5bfa60effa6)
     devDependencies:
       '@eslint/js':
         specifier: 'catalog:'
@@ -619,7 +620,7 @@ importers:
         version: link:../eslint-config-bai
       eslint-plugin-import:
         specifier: 'catalog:'
-        version: 2.32.0(@typescript-eslint/parser@8.59.1(eslint@9.39.4)(typescript@5.9.3))(eslint@9.39.4)
+        version: 2.32.0(@typescript-eslint/parser@7.18.0(eslint@9.39.4)(typescript@5.5.4))(eslint@9.39.4)
       eslint-plugin-json-schema-validator:
         specifier: 'catalog:'
         version: 5.5.1(eslint@9.39.4)
@@ -898,7 +899,7 @@ importers:
         version: 7.0.1
       relay-runtime:
         specifier: 'catalog:'
-        version: 20.1.1
+        version: 20.1.1(patch_hash=cc791a2ea160bc7c87571401d2f1430d50527847c44039d45579a5bfa60effa6)
       remark-gfm:
         specifier: ^4.0.1
         version: 4.0.1
@@ -18152,16 +18153,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-module-utils@2.12.1(@typescript-eslint/parser@8.59.1(eslint@9.39.4)(typescript@5.9.3))(eslint-import-resolver-node@0.3.9)(eslint@9.39.4):
-    dependencies:
-      debug: 3.2.7
-    optionalDependencies:
-      '@typescript-eslint/parser': 8.59.1(eslint@9.39.4)(typescript@5.9.3)
-      eslint: 9.39.4
-      eslint-import-resolver-node: 0.3.9
-    transitivePeerDependencies:
-      - supports-color
-
   eslint-plugin-import@2.32.0(@typescript-eslint/parser@7.18.0(eslint@9.39.4)(typescript@5.5.4))(eslint@9.39.4):
     dependencies:
       '@rtsao/scc': 1.1.0
@@ -18186,35 +18177,6 @@ snapshots:
       tsconfig-paths: 3.15.0
     optionalDependencies:
       '@typescript-eslint/parser': 7.18.0(eslint@9.39.4)(typescript@5.5.4)
-    transitivePeerDependencies:
-      - eslint-import-resolver-typescript
-      - eslint-import-resolver-webpack
-      - supports-color
-
-  eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.59.1(eslint@9.39.4)(typescript@5.9.3))(eslint@9.39.4):
-    dependencies:
-      '@rtsao/scc': 1.1.0
-      array-includes: 3.1.9
-      array.prototype.findlastindex: 1.2.6
-      array.prototype.flat: 1.3.3
-      array.prototype.flatmap: 1.3.3
-      debug: 3.2.7
-      doctrine: 2.1.0
-      eslint: 9.39.4
-      eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.12.1(@typescript-eslint/parser@8.59.1(eslint@9.39.4)(typescript@5.9.3))(eslint-import-resolver-node@0.3.9)(eslint@9.39.4)
-      hasown: 2.0.2
-      is-core-module: 2.16.1
-      is-glob: 4.0.3
-      minimatch: 3.1.5
-      object.fromentries: 2.0.8
-      object.groupby: 1.0.3
-      object.values: 1.2.1
-      semver: 6.3.1
-      string.prototype.trimend: 1.0.9
-      tsconfig-paths: 3.15.0
-    optionalDependencies:
-      '@typescript-eslint/parser': 8.59.1(eslint@9.39.4)(typescript@5.9.3)
     transitivePeerDependencies:
       - eslint-import-resolver-typescript
       - eslint-import-resolver-webpack
@@ -21773,7 +21735,7 @@ snapshots:
       invariant: 2.2.4
       nullthrows: 1.1.1
       react: 19.2.6
-      relay-runtime: 20.1.1
+      relay-runtime: 20.1.1(patch_hash=cc791a2ea160bc7c87571401d2f1430d50527847c44039d45579a5bfa60effa6)
     transitivePeerDependencies:
       - encoding
 
@@ -22070,7 +22032,7 @@ snapshots:
 
   relay-compiler@20.1.1: {}
 
-  relay-runtime@20.1.1:
+  relay-runtime@20.1.1(patch_hash=cc791a2ea160bc7c87571401d2f1430d50527847c44039d45579a5bfa60effa6):
     dependencies:
       '@babel/runtime': 7.29.2
       fbjs: 3.0.5
@@ -22083,7 +22045,7 @@ snapshots:
       '@babel/runtime': 7.29.2
       fbjs: 3.0.5
       invariant: 2.2.4
-      relay-runtime: 20.1.1
+      relay-runtime: 20.1.1(patch_hash=cc791a2ea160bc7c87571401d2f1430d50527847c44039d45579a5bfa60effa6)
     transitivePeerDependencies:
       - encoding
 
