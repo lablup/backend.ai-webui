@@ -1,0 +1,19 @@
+diff --git a/lib/store/RelayReader.js b/lib/store/RelayReader.js
+index 4210351f48d90aab7d71afdfeb417663105ddaaf..dd3cac512561aa9dc122f3bfff46370314410f57 100644
+--- a/lib/store/RelayReader.js
++++ b/lib/store/RelayReader.js
+@@ -248,10 +248,10 @@ var RelayReader = /*#__PURE__*/function () {
+     var errors = this._fieldErrors.map(function (error) {
+       switch (error.kind) {
+         case 'relay_field_payload.error':
+-          var _error$error = error.error,
+-            message = _error$error.message,
+-            displayError = (0, _objectWithoutPropertiesLoose2["default"])(_error$error, _excluded);
+-          return displayError;
++          // Patched (lablup/webui): expose full GraphQL error (message, extensions, etc.)
++          // instead of stripping `message`. Upstream removes `message` for PII safety;
++          // we accept that risk in exchange for usable error UX.
++          return error.error;
+         case 'missing_expected_data.throw':
+         case 'missing_expected_data.log':
+           return {
