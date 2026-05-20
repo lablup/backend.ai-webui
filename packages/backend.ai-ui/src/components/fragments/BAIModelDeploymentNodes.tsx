@@ -2,14 +2,12 @@ import {
   BAIModelDeploymentNodesFragment$data,
   BAIModelDeploymentNodesFragment$key,
 } from '../../__generated__/BAIModelDeploymentNodesFragment.graphql';
-import {
-  SemanticColor,
-  filterOutEmpty,
-  filterOutNullAndUndefined,
-  toLocalId,
-  useSemanticColorMap,
-} from '../../helper';
-import BAITag from '../BAITag';
+import { filterOutEmpty, filterOutNullAndUndefined } from '../../helper';
+import BAIDeploymentStatusTag, {
+  BAIDeploymentStatus,
+} from '../BAIDeploymentStatusTag';
+import BAIFlex from '../BAIFlex';
+import BAIId from '../BAIId';
 import BAIText from '../BAIText';
 import BooleanTag from '../BooleanTag';
 import {
@@ -20,6 +18,9 @@ import {
   BAITable,
   BAITableProps,
 } from '../Table';
+import BAIDeploymentOwnerInfo from './BAIDeploymentOwnerInfo';
+import BAIDeploymentTagChips from './BAIDeploymentTagChips';
+import { Tooltip, Typography } from 'antd';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import React from 'react';
@@ -30,6 +31,27 @@ export type ModelDeploymentNodeInList = NonNullable<
   BAIModelDeploymentNodesFragment$data[number]
 >;
 
+interface DeploymentSort {
+  field: string;
+  order: 'ASC' | 'DESC';
+}
+
+/** Maps BAITable column keys (camelCase) → server-side enum field. */
+const COLUMN_KEY_TO_FIELD: Record<string, string> = {
+  name: 'NAME',
+  createdAt: 'CREATED_AT',
+  updatedAt: 'UPDATED_AT',
+  domainName: 'DOMAIN',
+  projectId: 'PROJECT',
+  resourceGroup: 'RESOURCE_GROUP',
+  tags: 'TAG',
+};
+
+/**
+ * @deprecated Use `nameColumnActionProps` via `customizeColumns` instead.
+ * Kept temporarily for backward compatibility while migrating away from
+ * the prop.
+ */
 export type BAIModelDeploymentNodesNameColumnActionProps =
   | BAINameActionCellProps
   | ((
@@ -42,6 +64,10 @@ const availableDeploymentSorterKeys = [
   'name',
   'createdAt',
   'updatedAt',
+  'domainName',
+  'projectId',
+  'resourceGroup',
+  'tags',
 ] as const;
 
 export const availableDeploymentSorterValues = [
@@ -49,19 +75,28 @@ export const availableDeploymentSorterValues = [
   ...availableDeploymentSorterKeys.map((key) => `-${key}` as const),
 ] as const;
 
+export type DeploymentOrderValue =
+  (typeof availableDeploymentSorterValues)[number];
+
 const isEnableSorter = (key: string) => {
   return _.includes(availableDeploymentSorterKeys, key);
 };
 
-const deploymentStatusSemanticMap: Record<string, SemanticColor> = {
-  PENDING: 'info',
-  SCALING: 'info',
-  DEPLOYING: 'info',
-  READY: 'success',
-  STOPPING: 'warning',
-  STOPPED: 'default',
-  DESTROYING: 'warning',
-  DESTROYED: 'default',
+/**
+ * Convert a BAITable order string (e.g. `'-createdAt'`) to the structured
+ * `DeploymentSort` shape expected by the server `DeploymentOrderBy` input.
+ * Returns `undefined` for unrecognised keys so callers can safely skip
+ * building the `orderBy` variable.
+ */
+export const tableOrderToSort = (
+  order: string | null | undefined,
+): DeploymentSort | undefined => {
+  if (!order) return undefined;
+  const descending = order.startsWith('-');
+  const columnKey = descending ? order.slice(1) : order;
+  const field = COLUMN_KEY_TO_FIELD[columnKey];
+  if (!field) return undefined;
+  return { field, order: descending ? 'DESC' : 'ASC' };
 };
 
 export interface BAIModelDeploymentNodesProps extends Omit<
@@ -80,6 +115,9 @@ export interface BAIModelDeploymentNodesProps extends Omit<
    * Props forwarded to the `BAINameActionCell` used in the `name` column.
    * Accepts either a static object or a function receiving the column
    * render arguments `(value, record, index)` and returning props.
+   *
+   * @deprecated Prefer `customizeColumns` to override the name column's
+   * render. Will be removed once existing consumers migrate.
    */
   nameColumnActionProps?: BAIModelDeploymentNodesNameColumnActionProps;
 }
@@ -94,7 +132,6 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const semanticColorMap = useSemanticColorMap();
 
   const deployments = useFragment<BAIModelDeploymentNodesFragment$key>(
     graphql`
@@ -110,6 +147,14 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
           tags
           createdAt
           updatedAt
+          resourceGroupName
+          projectV2 @since(version: "26.4.3") {
+            basicInfo {
+              name
+            }
+            id
+          }
+          ...BAIDeploymentTagChips_metadata
         }
         networkAccess {
           endpointUrl
@@ -122,12 +167,23 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
         replicaState {
           desiredReplicaCount
         }
-        # creator {
-        #   id
-        #   basicInfo {
-        #     email
-        #   }
-        # }
+        totalReplicas: replicas {
+          count
+        }
+        runningReplicas: replicas(filter: { status: { equals: RUNNING } }) {
+          count
+        }
+        currentRevision @since(version: "26.4.3") {
+          id
+          revisionNumber
+          modelMountConfig {
+            vfolder {
+              id
+              name
+            }
+          }
+        }
+        ...BAIDeploymentOwnerInfo_deployment
       }
     `,
     deploymentsFrgmt,
@@ -156,6 +212,28 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
         },
       },
       {
+        key: 'currentRevisionNumber',
+        title: (
+          <BAIFlex gap="xxs" align="center">
+            {t('comp:BAIModelDeploymentNodes.RevisionNumber')}
+            <Tooltip
+              title={t('comp:BAIModelDeploymentNodes.RevisionNumberTooltip')}
+            >
+              <Typography.Text type="secondary">?</Typography.Text>
+            </Tooltip>
+          </BAIFlex>
+        ),
+        render: (__, record) => {
+          const revision = record.currentRevision;
+          if (revision?.revisionNumber == null) {
+            return <Typography.Text type="secondary">-</Typography.Text>;
+          }
+          return (
+            <Typography.Text>{`#${revision.revisionNumber}`}</Typography.Text>
+          );
+        },
+      },
+      {
         key: 'status',
         title: t('comp:BAIModelDeploymentNodes.Status'),
         dataIndex: ['metadata', 'status'],
@@ -165,22 +243,60 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
             return '-';
           }
           return (
-            <BAITag
-              color={
-                semanticColorMap[
-                  deploymentStatusSemanticMap[status] ?? 'default'
-                ]
-              }
-              style={{ marginRight: 0 }}
+            <BAIDeploymentStatusTag status={status as BAIDeploymentStatus} />
+          );
+        },
+      },
+      {
+        key: 'replicaSummary',
+        title: (
+          <BAIFlex gap="xxs" align="center">
+            {t('comp:BAIModelDeploymentNodes.ReplicaSummary')}
+            <Tooltip
+              title={t('comp:BAIModelDeploymentNodes.ReplicaSummaryTooltip')}
             >
-              {status}
-            </BAITag>
+              <Typography.Text type="secondary">?</Typography.Text>
+            </Tooltip>
+          </BAIFlex>
+        ),
+        render: (__, record) => {
+          const running = record.runningReplicas?.count ?? 0;
+          const desired = record.replicaState?.desiredReplicaCount ?? 0;
+          const total = record.totalReplicas?.count ?? desired;
+          const denominator = desired > 0 ? desired : total;
+          return (
+            <Typography.Text>
+              {t('comp:BAIModelDeploymentNodes.HealthySummary', {
+                healthy: running,
+                total: denominator,
+              })}
+            </Typography.Text>
+          );
+        },
+      },
+      {
+        key: 'model',
+        title: t('comp:BAIModelDeploymentNodes.Model'),
+        render: (__, record) => {
+          const modelName =
+            record.currentRevision?.modelMountConfig?.vfolder?.name ?? null;
+          if (!modelName) {
+            return <Typography.Text type="secondary">-</Typography.Text>;
+          }
+          return (
+            <Typography.Text
+              ellipsis={{ tooltip: modelName }}
+              style={{ maxWidth: 200 }}
+            >
+              {modelName}
+            </Typography.Text>
           );
         },
       },
       {
         key: 'replicas',
         title: t('comp:BAIModelDeploymentNodes.Replicas'),
+        defaultHidden: true,
         render: (__, record) => {
           const desired = record.replicaState?.desiredReplicaCount;
           if (!_.isNumber(desired)) {
@@ -189,57 +305,80 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
           return <span>{desired}</span>;
         },
       },
-      // {
-      //   key: 'basicInfo.email',
-      //   title: t('comp:BAIModelDeploymentNodes.CreatedUser'),
-      //   render: (__, record) => record.creator?.basicInfo?.email ?? '-',
-      // },
       {
         key: 'id',
         title: t('comp:BAIModelDeploymentNodes.DeploymentID'),
         defaultHidden: true,
-        render: (__, record) => (
-          <BAIText copyable ellipsis monospace style={{ maxWidth: 160 }}>
-            {toLocalId(record.id)}
-          </BAIText>
-        ),
-      },
-      {
-        key: 'projectId',
-        title: t('comp:BAIModelDeploymentNodes.ProjectID'),
-        defaultHidden: true,
-        render: (__, record) =>
-          record.metadata?.projectId ? (
-            <BAIText copyable ellipsis monospace style={{ maxWidth: 160 }}>
-              {record.metadata.projectId}
-            </BAIText>
-          ) : (
-            '-'
-          ),
-      },
-      {
-        key: 'domainName',
-        title: t('comp:BAIModelDeploymentNodes.DomainName'),
-        defaultHidden: true,
-        render: (__, record) => record.metadata?.domainName ?? '-',
+        render: (__, record) => <BAIId globalId={record.id} copyable />,
       },
       {
         key: 'tags',
         title: t('comp:BAIModelDeploymentNodes.Tags'),
         defaultHidden: true,
+        sorter: isEnableSorter('tags'),
+        render: (__, record) => (
+          <BAIDeploymentTagChips
+            metadataFrgmt={record.metadata}
+            stopRowClick
+            fallback={<Typography.Text type="secondary">-</Typography.Text>}
+          />
+        ),
+      },
+      {
+        key: 'projectId',
+        title: t('comp:BAIModelDeploymentNodes.Project'),
+        defaultHidden: true,
+        sorter: isEnableSorter('projectId'),
         render: (__, record) => {
-          const tags = record.metadata?.tags ?? [];
-          if (_.isEmpty(tags)) {
-            return '-';
+          const projectId = record.metadata?.projectId;
+          if (!projectId) {
+            return <Typography.Text type="secondary">-</Typography.Text>;
+          }
+          const projectName = record.metadata?.projectV2?.basicInfo?.name;
+          if (!projectName) {
+            return <BAIId globalId={projectId} copyable />;
           }
           return (
-            <span>
-              {tags.map((tag) => (
-                <BAITag key={tag} style={{ marginRight: 4 }}>
-                  {tag}
-                </BAITag>
-              ))}
-            </span>
+            <>
+              <Typography.Text
+                ellipsis={{ tooltip: projectName }}
+                style={{ maxWidth: 160 }}
+              >
+                {projectName}
+              </Typography.Text>
+              &nbsp;
+              <Typography.Text type="secondary">
+                (<BAIId globalId={projectId} copyable type="secondary" />)
+              </Typography.Text>
+            </>
+          );
+        },
+      },
+      {
+        key: 'domainName',
+        title: t('comp:BAIModelDeploymentNodes.DomainName'),
+        defaultHidden: true,
+        sorter: isEnableSorter('domainName'),
+        render: (__, record) => {
+          const domain = record.metadata?.domainName;
+          return domain ? (
+            <Typography.Text>{domain}</Typography.Text>
+          ) : (
+            <Typography.Text type="secondary">-</Typography.Text>
+          );
+        },
+      },
+      {
+        key: 'resourceGroup',
+        title: t('comp:BAIModelDeploymentNodes.ResourceGroup'),
+        defaultHidden: true,
+        sorter: isEnableSorter('resourceGroup'),
+        render: (__, record) => {
+          const resourceGroup = record.metadata?.resourceGroupName;
+          return resourceGroup ? (
+            <Typography.Text>{resourceGroup}</Typography.Text>
+          ) : (
+            <Typography.Text type="secondary">-</Typography.Text>
           );
         },
       },
@@ -268,14 +407,17 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
         key: 'endpointUrl',
         title: t('comp:BAIModelDeploymentNodes.EndpointURL'),
         defaultHidden: true,
-        render: (__, record) =>
-          record.networkAccess?.endpointUrl ? (
-            <BAIText copyable ellipsis style={{ maxWidth: 220 }}>
-              {record.networkAccess.endpointUrl}
-            </BAIText>
-          ) : (
-            '-'
-          ),
+        render: (__, record) => {
+          const url = record.networkAccess?.endpointUrl;
+          if (!url) {
+            return <Typography.Text type="secondary">-</Typography.Text>;
+          }
+          return (
+            <Typography.Link href={url} target="_blank" rel="noreferrer">
+              {url}
+            </Typography.Link>
+          );
+        },
       },
       {
         key: 'preferredDomainName',
@@ -295,6 +437,14 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
           }
           return type;
         },
+      },
+      {
+        key: 'owner',
+        title: t('comp:BAIModelDeploymentNodes.Owner'),
+        defaultHidden: true,
+        render: (__, record) => (
+          <BAIDeploymentOwnerInfo deploymentFrgmt={record} />
+        ),
       },
       {
         key: 'updatedAt',

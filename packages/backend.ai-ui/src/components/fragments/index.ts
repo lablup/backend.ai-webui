@@ -147,10 +147,12 @@ export type { BAIRouteNodesProps, RouteNodeInList } from './BAIRouteNodes';
 export {
   default as BAIModelDeploymentNodes,
   availableDeploymentSorterValues,
+  tableOrderToSort as deploymentTableOrderToSort,
 } from './BAIModelDeploymentNodes';
 export type {
   BAIModelDeploymentNodesProps,
   ModelDeploymentNodeInList,
+  DeploymentOrderValue,
 } from './BAIModelDeploymentNodes';
 export { default as BAIDeploymentTagChips } from './BAIDeploymentTagChips';
 export type { BAIDeploymentTagChipsProps } from './BAIDeploymentTagChips';
