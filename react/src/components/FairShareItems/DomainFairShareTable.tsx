@@ -163,7 +163,9 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
         return (
           <BAIFlex gap="xxs">
             <Typography.Text>
-              {weight ? toFixedFloorWithoutTrailingZeros(weight, 1) : '-'}
+              {_.isNil(weight)
+                ? '-'
+                : toFixedFloorWithoutTrailingZeros(weight, 1)}
             </Typography.Text>
             <Typography.Text
               type="secondary"
