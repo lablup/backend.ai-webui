@@ -991,8 +991,6 @@ button. The registry creation dialog contains the following fields:
 
 ![](../images/container_registry_editor_modal.png)
 
-![](../images/add_registry_dialog.png)
-
 
 ### GitLab Container Registry Configuration
 

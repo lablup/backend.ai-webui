@@ -957,8 +957,6 @@ Harborが提供するレジストリです。
 
 ![](../images/container_registry_editor_modal.png)
 
-![](../images/add_registry_dialog.png)
-
 
 <a id="gitlab-container-registry-configuration"></a>
 
