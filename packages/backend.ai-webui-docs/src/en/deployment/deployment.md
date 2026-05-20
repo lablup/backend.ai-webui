@@ -1,44 +1,31 @@
 <a id="model-serving"></a>
 
-# Model Serving
+# Deployments
 
-## Model Service
+## Deployment Overview
 
-:::note
-This feature is supported in Enterprise version only.
-:::
-
-Backend.AI not only facilitates the construction of development environments
-and resource management during the model training phase, but also supports
-the model service feature from version 23.09 onwards. This feature allows
-end-users (such as AI-based mobile apps and web service backends) to make
-inference API calls when they want to deploy the completed model as an
-inference service.
+Backend.AI lets you deploy AI models as inference services through the **Deployments** feature. A deployment exposes a model behind a stable endpoint URL that end-user applications (mobile apps, web service backends, internal tools, and so on) can call to run inference.
 
 ![](../images/model-serving-diagram.png)
 
-The Model Service extends the functionality of the existing training
-compute sessions, enabling automated maintenance, scaling, and permanent
-port and endpoint address mapping for production services. Developers or
-administrators only need to specify the scaling parameters required for
-the Model Service, without the need to manually create or delete compute
-sessions.
+A deployment extends a regular compute session with automated maintenance, replica scaling, and a permanent endpoint address that does not change as replicas come and go. You only specify the scaling parameters you want; Backend.AI creates, monitors, and terminates the underlying inference sessions automatically so you do not have to manage them by hand.
 
-## Guide to Steps for Using Model Service
+## How to Create and Use a Deployment
 
-Starting from version 26.4.0, you can deploy a model service easily without a separate configuration file.
+Starting from version 26.4.0, you can create a deployment easily without a separate configuration file.
 
 **Quick Deploy (Recommended)**: Browse pre-configured models in the [Model Store](#model-store) and click the `Deploy` button to deploy immediately.
 
-**Deploy via Service Launcher**: Click the `Start Service` button on the Serving page to open the service launcher, then select a runtime variant such as `vLLM` or `SGLang` to create a model service without a separate model definition file.
+**Manual Deploy**: Click the `New Deployment` button on the Deployments page to open the **Create Deployment** modal. After the deployment is created, add a revision by clicking `Add Revision` on the Deployment Detail Page and selecting a runtime variant such as `vLLM` or `SGLang`.
 
 The general workflow is as follows:
 
-1. Create a model service using the service launcher.
-2. (If the model service is not public) Generate a token.
-3. (For end users) Access the service endpoint to verify the service.
-4. (If needed) Modify the model service.
-5. (If needed) Terminate the model service.
+1. Create a deployment (name, visibility, and resource group).
+2. Add a revision (runtime variant, image, resources, and model storage).
+3. (If the deployment is not public) Generate a token.
+4. (For end users) Access the service endpoint to verify the service.
+5. (If needed) Add a new revision or apply a previous revision.
+6. (If needed) Terminate the deployment.
 
 <details>
 <summary>Advanced: Using Model Definition and Service Definition Files (Custom Runtime)</summary>
@@ -48,11 +35,14 @@ If you are using the `Custom` runtime variant or need finer control, you can cre
 1. Create a model definition file.
 2. Create a service definition file.
 3. Upload the definition files to the model type folder.
-4. Select the `Custom` runtime in the service launcher to create/validate the model service.
+4. When adding a revision, select the `Custom` runtime variant and choose **Use Config File** mode.
 
-For details, refer to the [Creating a Model Definition File](#model-definition-guide) and [Creating a Service Definition File](#service-definition-file) sections below.
+For details, refer to the [Creating a Model Definition File](#model-definition-guide) and [Creating a Service Definition File](#service-definition-file) sections.
 
 </details>
+
+<details>
+<summary>Reference: Configuration Files for Custom Runtime</summary>
 
 <a id="model-definition-guide"></a>
 
@@ -277,131 +267,119 @@ selected runtime variant when creating the service.
 When a service is created from the Model Store using the `Deploy` button, the
 settings from `service-definition.toml` are applied automatically. If you later
 need to adjust the resource allocation, you can modify the service through the
-Model Serving page.
+Deployments page.
 :::
 
-## Serving Page Overview
+</details>
 
-The Serving page displays a list of all model service endpoints in the current project. You can access it by clicking **Model Serving** in the sidebar menu.
+## Deployments Page Overview
+
+The Deployments page displays a list of all deployments in the current project. You can access it by clicking **Deployments** in the sidebar menu.
 
 ![](../images/serving_list_page.png)
 
-At the top of the page, you can filter endpoints by lifecycle stage:
+At the top of the page, you can filter deployments by lifecycle stage:
 
-- **Active**: Shows endpoints that are currently running or being created. This is the default view.
-- **Destroyed**: Shows endpoints that have been terminated.
+- **Active**: Shows deployments that are currently running or being created. This is the default view.
+- **Destroyed**: Shows deployments that have been terminated.
 
-You can also use the property filter bar to search endpoints by **Endpoint Name**, **Service Endpoint URL**, or **Owner** (available to admins and superadmins).
+You can also use the property filter bar to search deployments by **Deployment Name**, **Service Endpoint URL**, or **Owner** (available to admins and superadmins).
 
-Click the `Start Service` button to open the service launcher and create a new model service.
+Click the `New Deployment` button to open the **Create Deployment** modal.
 
-## Creating a Model Service
+## Creating a Deployment
 
-Creating a model service is a two-step flow:
+Creating a deployment is a two-step flow:
 
 1. **Create the deployment** — a lightweight container that defines the deployment's identity (name, visibility, deployment metadata, and resource group).
 2. **Add a revision** — a configuration snapshot that defines what actually runs (start command, environment variables, runtime variant, image, resources, model storage).
 
-Each deployment can hold many revisions. Only one revision is *current* (serving traffic) at a time, and you can switch between revisions from the Revisions tab on the Endpoint Detail Page.
+Each deployment can hold many revisions. Only one revision is *current* (serving traffic) at a time, and you can switch between revisions from the Revisions tab on the Deployment Detail Page.
 
 ### Create Deployment Modal
 
-Click the `New Deployment` button on the Serving page to open the **Create Deployment** modal. The modal collects only deployment-level metadata; no revision is created at this point.
+Click the `New Deployment` button on the Deployments page to open the **Create Deployment** modal. The modal collects only deployment-level metadata; no revision is created at this point.
 
 ![](../images/model_serving_create_modal.png)
 
 The modal contains the following fields:
 
 - **Deployment Name**: A unique name used to identify the deployment across the dashboard, API, and the endpoint URL.
-- **Open To Public**: When enabled, the endpoint is reachable without an access token. When disabled, every request must carry a token. See [Access Tokens](#generating-tokens).
 - **Resource Group**: The resource group where the deployment will run. If only one resource group is available to your project, the field is auto-selected and you can proceed without choosing one manually.
+- **Desired Replicas**: The number of replicas to keep running for this deployment. The system scales the active pool toward this target.
+- **Tags**: Optional labels for organizing and filtering deployments. Press Enter or comma to add.
+- **Open To Public**: When enabled, the endpoint is reachable without an access token. When disabled, every request must carry a token. See [Access Tokens](#generating-tokens).
 
-Click `Create Deployment` to create the deployment. You are then taken to the Endpoint Detail Page, where the **No Current Revision** warning is shown until you add the first revision.
+Click `Create Deployment` to create the deployment. You are then taken to the Deployment Detail Page, where the **No Current Revision** warning is shown until you add the first revision. To update deployment-level settings (name, visibility, desired replicas, or tags) after creation, click the **Edit** button on the Service Info card.
 
 ### Add Revision
 
-A revision captures every setting needed to run the inference server — image, start command, resources, model mounts, and environment variables. From the Endpoint Detail Page, click `Add Revision` to open the modal.
+A revision captures every setting needed to run the inference server — image, start command, resources, model mounts, and environment variables. From the Deployment Detail Page, click `Add Revision` to open the modal.
 
 ![](../images/model_serving_add_revision_modal.png)
 
-The modal contains:
+Use the **Preset Mode** / **Advanced Mode** switcher in the modal title to select how to configure the revision.
 
-- **Runtime Variant**: The serving runtime that runs the model (for example, `vLLM`, `SGLang`, `NVIDIA NIM`, `Modular MAX`, or `Custom`). Choose `Custom` to define your own start command. Available variants are loaded dynamically from the backend.
-- **Environment / Version**: The container image used for the inference server. Selecting a runtime variant filters this list down to compatible images.
-- **Model Storage Folder to Mount**: The storage folder that contains the model files.
-- **Start Command** (Custom variant): The command executed to launch the inference server. For non-Custom variants the runtime's default start command is applied automatically.
-- **Environment Variables**: Key/value pairs passed to the inference server container.
-- **Resource Preset**: A pre-configured bundle of CPU, memory, and accelerator allocations. Available presets are filtered by the deployment's resource group.
-- **Auto-activate after adding**: When enabled, the new revision is applied immediately after it is created and replaces the current revision. When disabled, the revision is added in an inactive state and you can apply it later from the Revisions tab.
+#### Preset Mode
 
-:::note
-The revision **name** field has been removed. Each revision is identified by its auto-assigned revision number; see the [Revisions Tab](#revisions-tab) below.
-:::
+Quickly add a revision using a pre-defined deployment preset.
 
-### Preset Mode for Revision Creation
+- **Preset**: A deployment preset compatible with the deployment's resource group. Click the ⓘ button next to the selector to view the preset details.
+- **Model Folder**: The storage folder to mount on each replica.
 
-When deployment presets are available, the Add Revision modal can run in **Preset mode**. Preset mode lets you start from a curated deployment preset instead of filling every field manually.
+If no presets are available for the deployment's resource group, an informational message is shown. Switch to Advanced Mode to configure the revision manually.
 
-In Preset mode:
+#### Advanced Mode
 
-- A preset selector lists every deployment preset compatible with the deployment's runtime variant and resource group.
-- Selecting a preset pre-fills the runtime variant, image, start command, environment variables, resource preset, and model storage selection from the preset's defaults.
-- You can still adjust any field after the preset is applied — your edits are not written back to the preset.
-- A **Deployment Preset Detail** link opens a side panel showing the preset's full configuration so you can verify what will be applied.
+Configure every revision setting directly. A **Load current revision** button lets you pre-fill the form from the currently active revision.
 
-If your project has no compatible presets, the modal falls back to manual mode and you fill the fields directly. See the Deployment Presets documentation for how to create and manage presets.
-<!-- TODO: Cross-reference Work Item 11 — restore the [Deployment Presets](deployment_presets.md) link once the page lands in PR C -->
+The form contains the following sections:
 
-### Service Launcher (Detailed Fields)
+- **Model & Runtime**: Select the model folder and runtime variant. For `vLLM` / `SGLang` variants, a Runtime Parameters panel appears; for the `Custom` variant, a Model Definition Mode control appears. See the sections below for details on runtime-specific fields.
+- **Environments**: Choose the container image (Environment / Version) and add environment variables.
+- **Cluster & Resources**: Allocate CPU, memory, and accelerator resources.
+- **Advanced Settings** *(collapsible)*: Mount additional storage folders alongside the model folder.
 
-The following subsections describe revision-level fields in detail. They apply both when adding a revision manually and when reviewing a preset before applying it.
+At the bottom of the modal, check **Apply immediately after adding** to activate the new revision immediately upon creation. If unchecked, the revision is saved in an inactive state and you can apply it later from the Revisions tab.
+
+### Add Revision: Field Reference
+
+The subsections below describe revision-level fields in detail. They apply both when adding a revision manually in **Advanced Mode** and when you want to understand what each field controls.
 
 #### Model Definition Mode (Custom Runtime Only)
 
-When you select the `Custom` runtime variant, you can choose between two modes for defining the model service:
+When you select the **Custom** runtime variant, a **Model Definition Mode** segmented control appears at the top of the form. It lets you choose how the inference server startup is defined:
 
 ##### Enter Command Mode
 
-Select `Enter Command` to paste a CLI command directly. For example:
+Select **Enter Command** to define the startup directly as a CLI command. The following fields are available:
 
-```shell
-vllm serve /models/my-model --tp 2
-```
-
-![](../images/service_launcher_command_mode.png)
-
-The system automatically parses the command and fills in the following fields:
-
-- **Start Command**: Enter the command to be executed in model serving directly.
-- **Model Mount**: The path where the model storage folder is mounted in the container (default `/models`).
-- **Port**: Auto-detected from the command (default `8000`). The port number that the model serving process listens on.
-- **Health Check URL**: Auto-detected from the command (default `/health`). The HTTP endpoint path called during service health checks.
-- **Initial Delay**: Seconds to wait before the first health check after the service starts (default `60.0`).
-- **Max Retries**: Maximum number of health check attempts before the service is considered failed (default `10`).
-
-:::tip
-If the command suggests multi-GPU usage (e.g., `--tp 2`), a GPU hint will appear
-to help you allocate the correct number of GPU resources.
-:::
+- **Start Command**: The shell command (or argument list) to launch the inference server. For example, `python -m http.server 8000`.
+- **Model Mount Destination**: The path inside the container where the model storage folder is mounted (default: `/models`).
+- **Port**: The container port that the inference server listens on (default: `8000`).
+- **Health Check URL**: The HTTP endpoint path called during service health checks (default: `/health`).
+- **Initial Delay**: Seconds to wait after container startup before the first health check (default: `60.0`). Increase this for large models that take longer to load.
+- **Max Retries**: Maximum consecutive health check failures before the replica is marked `UNHEALTHY` (default: `10`).
+- **Interval**: Seconds between consecutive health checks (default: `10.0`).
+- **Max Wait Time**: Timeout in seconds for each individual health check request (default: `15.0`).
 
 ##### Use Config File Mode
 
-Select `Use Config File` to use the traditional `model-definition.yaml` approach. This mode allows you to set:
+Select **Use Config File** to load the startup configuration from a `model-definition.yaml` file stored in the model storage folder. The following fields are available:
 
-- **Mount Destination For Model Folder**: The path where the model storage is mounted in the session. The default value is `/models`.
-- **Model Definition File Path**: The path to the model definition file you uploaded. The default value is `model-definition.yaml`.
-- **Additional Mounts**: You can mount additional storage folders. Note that only general/data usage mode folders can be mounted, not additional model folders.
+- **Mount Destination**: The path inside the container where the model storage folder is mounted (default: `/models`).
+- **Model Definition File Path**: The path to the model definition file within the model storage folder (default: `model-definition.yaml`).
 
-![](../images/service_launcher2.png)
+For instructions on creating a model definition file, refer to the [Creating a Model Definition File](#model-definition-guide) section.
 
 #### Runtime Parameters (vLLM / SGLang)
 
-When you select the `vLLM` or `SGLang` runtime variant, a **Runtime Parameters** section appears. This section lets you fine-tune the model serving behavior without manually editing configuration files.
+When you select the `vLLM` or `SGLang` runtime variant, a **Runtime Parameters** section appears in place of the Model Definition Mode selector. This section lets you configure the serving framework without editing configuration files manually.
 
-Parameters are organized into tab-separated categories. The tab list varies by runtime variant.
+Parameters are organized into tab-separated categories. The available tabs vary by runtime variant.
 
 :::note
-Unchanged parameters will use the runtime's default values.
+Unchanged parameters use the runtime's default values.
 :::
 
 **vLLM Runtime Parameters**
@@ -413,11 +391,11 @@ vLLM provides the following tabs: **Model Loading**, **Resource Memory**, **Serv
 Key fields in the **Model Loading** tab:
 
 - **Model**: The name or path of the model to use.
-- **DType**: The data type for model weights and computation (e.g., `Auto`, `float16`, `bfloat16`).
-- **Quantization**: The model quantization method (e.g., `awq`, `gptq`, `fp8`).
+- **DType**: The data type for model weights and computation (for example, `Auto`, `float16`, `bfloat16`).
+- **Quantization**: The model quantization method (for example, `awq`, `gptq`, `fp8`).
 - **Max Model Length**: The maximum context length (number of tokens) the model can process.
 - **Served Model Name**: The model name to expose at the API endpoint.
-- **Trust Remote Code**: Allow execution of custom model code from the model repository.
+- **Trust Remote Code**: Allows execution of custom model code from the model repository.
 
 **SGLang Runtime Parameters**
 
@@ -428,105 +406,47 @@ SGLang provides the following tabs: **Model Loading**, **Resource Memory**, **Se
 Key fields in the **Model Loading** tab:
 
 - **Model**: The name or path of the model to use.
-- **DType**: The data type for model weights and computation (e.g., `Auto`, `float16`, `bfloat16`).
-- **Quantization**: The model quantization method (e.g., `awq`, `gptq`, `fp8`).
+- **DType**: The data type for model weights and computation (for example, `Auto`, `float16`, `bfloat16`).
+- **Quantization**: The model quantization method (for example, `awq`, `gptq`, `fp8`).
 - **Context Length**: The maximum context length the model can process.
 - **Served Model Name**: The model name to expose at the API endpoint.
-- **Trust Remote Code**: Allow execution of custom model code from the model repository.
+- **Trust Remote Code**: Allows execution of custom model code from the model repository.
 
-In addition to runtime parameters, the `vLLM` and `SGLang` runtime variants expose specific environment variables in the **Environment Variables** section of the service launcher:
+In addition to runtime parameters, the `vLLM` and `SGLang` runtime variants pre-populate specific environment variables in the **Environments** section:
 
 - **vLLM**: `BACKEND_MODEL_NAME`, `VLLM_QUANTIZATION`, `VLLM_TP_SIZE` (tensor parallelism), `VLLM_PP_SIZE` (pipeline parallelism), `VLLM_EXTRA_ARGS` (extra CLI arguments)
 - **SGLang**: `BACKEND_MODEL_NAME`, `SGLANG_QUANTIZATION`, `SGLANG_TP_SIZE` (tensor parallelism), `SGLANG_PP_SIZE` (pipeline parallelism), `SGLANG_EXTRA_ARGS` (extra CLI arguments)
 
-:::note
-These environment variables appear in the **Environment Variables** section of the launcher,
-not in the Runtime Parameters section. They provide additional configuration options
-specific to each runtime variant.
-:::
+#### Environments
 
-#### Runtime Variant Comparison
+The **Environments** section is present for all runtime variants.
 
-The following table summarizes the key differences between the three main runtime variants:
+- **Environment / Version**: The container image used for the inference server. Selecting a runtime variant filters this list to images that are compatible with that runtime.
+- **Environment Variables**: Key/value pairs passed to the inference server container. For `vLLM` and `SGLang`, a set of runtime-specific variables (listed above) are pre-populated. You can add, edit, or remove entries freely.
 
-| Feature | Custom | vLLM | SGLang |
-|---------|--------|------|--------|
-| Runtime Parameters section | No | Yes | Yes |
-| Enter Command / Use Config File toggle | Yes | No | No |
-| Environment variable presets | Manual only | `VLLM_*` presets | `SGLANG_*` presets |
-| Form pre-populated on edit | Yes (from latest revision) | No | No |
+#### Cluster and Resources
 
-#### Environment and Resources
+The **Cluster and Resources** section lets you specify the compute resources to allocate to each replica.
 
-Set the number of replicas and select the environment and resource group.
+- **Resource Preset**: A pre-configured bundle of CPU, memory, and accelerator allocations. Available presets are filtered by the deployment's resource group. You can also configure resources manually (CPU, memory, GPU) without selecting a preset.
 
-- **Number of replicas**: Determines the number of routing sessions to maintain for the service. Changing this value causes the manager to create or terminate replica sessions accordingly.
-- **Environment / Version**: Configure the execution environment for the model service. Selecting a runtime variant such as vLLM automatically filters the environment images to show relevant ones.
+#### Advanced Settings
 
-![](../images/service_launcher3.png)
+Expand the **Advanced Settings** collapse panel to mount additional storage folders alongside the model storage folder.
 
-- **Resource Presets**: Select the amount of resources to allocate. Resources include CPU, RAM, and AI accelerator (GPU).
+- **Additional Mounts**: A table of storage folders to mount into the inference server container. Only general-purpose (non-model) folders in `ready` state are listed. Hidden folders (names starting with `.`) and the model storage folder itself are excluded.
 
-![](../images/service_launcher4.png)
+<a id="deployment-detail-page"></a>
 
-#### Cluster Mode and Environment Variables
+## Deployment Detail Page
 
-- **Single Node**: The managed node and worker nodes are placed on a single physical node or virtual machine.
-- **Multi Node**: One managed node and one or more worker nodes are split across multiple physical nodes or virtual machines.
-- **Variable**: Set environment variables when starting a model service. This is useful when using runtime variants that require certain environment variable settings before execution.
-
-![](../images/cluster_mode.png)
-
-#### Validating the Service
-
-Before creating a model service, Backend.AI supports a validation feature to check
-whether execution is available. Click the `Validate` button at the bottom-left of
-the service launcher, and a new popup for listening to validation events will appear.
-In the popup modal, you can check the status through the container log. When the
-result is set to `Finished`, the validation check is complete.
-
-![](../images/model-validation-dialog.png)
-
-:::note
-The result `Finished` doesn't guarantee that the execution is successfully done.
-Instead, please check the container log.
-:::
-
-### Handling Failed Model Service Creation
-
-If the status of the model service remains `UNHEALTHY`, it indicates
-that the model service cannot be executed properly.
-
-The common reasons for creation failure and their solutions are as
-follows:
-
--  Insufficient allocated resources for the routing when creating the
-   model service
-
-   -  Solution: Terminate the problematic service and recreate it with
-      an allocation of more sufficient resources than the previous
-      settings.
-
--  Incorrect format of the model definition file (`model-definition.yml`)
-
-   ![](../images/serving-route-error.png)
-
-   -  Solution: Verify [the format of the model definition file](#model-definition-guide) and
-      if any key-value pairs are incorrect, modify them and overwrite the file in the saved location.
-      Then, click `Clear error and retry` button to remove all the error stacked in routes info
-      table and ensure that the routing of the model service is set correctly.
-
-   ![](../images/refresh_button.png)
-
-## Endpoint Detail Page
-
-Click on an endpoint name in the serving list to view detailed information about the deployment.
+Click on a deployment name in the Deployments list to view detailed information about the deployment.
 
 ### Deployment Alerts
 
-The Endpoint Detail Page shows contextual alert banners at the top, reflecting the current state of the deployment:
+The Deployment Detail Page shows contextual alert banners at the top, reflecting the current state of the deployment:
 
-- **Deployment is ready**: Shown when the deployment is `HEALTHY`. Includes a **Start Chat** button as a shortcut to the LLM Chat Test interface so you can test the model without leaving the page.
+- **Deployment is ready**: Shown when the deployment is `HEALTHY`. Includes a **Test in Chat** button as a shortcut to the LLM Chat Test interface so you can test the model without leaving the page.
 
 ![](../images/endpoint_detail_ready_alert.png)
 
@@ -538,9 +458,9 @@ The Endpoint Detail Page shows contextual alert banners at the top, reflecting t
 
 - **Preparing your service**: Shown while the deployment is being created or transitioning between states. Indicates the service is not yet ready to handle requests.
 
-![](../images/endpoint_preparing_alert.png)
 
-- **Not In Project**: Shown when the endpoint belongs to a different project than the currently selected one. The Edit button is disabled while this alert is active. Click the **Switch Project** button in the alert to switch to the correct project and manage the endpoint.
+
+- **Not In Project**: Shown when the deployment belongs to a different project than the currently selected one. The Edit button is disabled while this alert is active. Click the **Switch Project** button in the alert to switch to the correct project and manage the deployment.
 
 ### Service Information
 
@@ -560,21 +480,12 @@ The Service Info card displays the following details:
 
 ![](../images/endpoint_detail_visibility.png)
 
-![](../images/endpoint_detail_shm.png)
-<!-- TODO: Capture screenshot — SHM displayed in endpoint detail config -->
-
 #### More Menu (Edit and Delete)
 
 The Service Info card's header exposes an **Edit** button alongside a **More** menu. The More menu currently contains the **Delete Deployment** action.
 
 ![](../images/endpoint_detail_more_menu.png)
 
-The delete and trash icons across the Model Serving pages follow a strict convention:
-
-- **Filled trash icon (`DeleteFilled`)** — *permanent delete*. Confirming opens a typed-confirmation modal where you must type the deployment's name before the OK button is enabled. There is no undo path.
-- **Outlined trash icon (`DeleteOutlined`)** — *move to trash* (soft delete). Confirming sends the item to a trash bin from which it can be restored.
-
-Always read the icon style before confirming a delete action.
 
 ### Replicas
 
@@ -601,76 +512,69 @@ If a replica has encountered an error, clicking the error indicator on the row o
 
 ### Revisions Tab
 
-The Revisions tab lists every revision that has been added to the deployment, ordered by revision number.
+The **Revisions** card on the deployment detail page has two tabs: **Current Revision** and **Revision History**. The `Add Revision` button at the top of the card is available from both tabs and opens the Add Revision modal (see [Add Revision](#add-revision)).
+
+#### Current Revision Tab
+
+The **Current Revision** tab shows the full configuration of the revision that is currently active and serving traffic.
+
+![](../images/current_revision_tab.png)
+
+The following fields are displayed:
+
+- **Revision Number**: The auto-assigned sequential number of this revision (for example, *#3*).
+- **Revision ID**: The UUID of this revision.
+- **Created At**
+- **Resources**: The resource allocation (CPU, memory, and accelerators) for each replica.
+- **Model Folder**: The model folder mounted into each replica, shown as a link, together with **Mount Destination For Model Folder**.
+- **Model Definition File Path**: Path to the model definition file within the model folder.
+- **Additional Mounts**: Extra storage folders mounted into each replica.
+- **Runtime**: The serving runtime (for example, `vLLM`, `SGLang`, or `Custom`).
+- **Image**: The container image used to run the replica.
+- **Cluster Mode**: The clustering layout of each replica's compute session (mode / size).
+- **Environment Variables**: Key-value pairs injected into the container, displayed as a shell script block.
+
+When the model definition file defines a model, the following fields are also shown:
+
+- **Model Name**, **Model Path**, **Start Command**, **Port**, **Health Check URL**, **Initial Delay**, **Max Retries**, **Interval (s)**, **Max Wait Time (s)**
+
+**Applying-in-progress state**
+
+While a different revision is being applied, the **Current Revision** tab shows an alert: *"Applying revision N."* A **View Revision** button in the alert opens a detail drawer for the revision currently being applied. The tab refreshes automatically every 5 seconds until the apply completes.
+
+**Empty state**
+
+If no revision has been deployed yet, the tab shows: *"No revision is deployed — add a revision to activate this service."*
+
+#### Revision History Tab
+
+The **Revision History** tab lists all revisions added to the deployment, sorted from newest to oldest by default.
 
 ![](../images/revision_history_tab.png)
 
-Columns include:
+The table includes the following columns:
 
-- **Revision Number**: An incrementing integer assigned in creation order. Lower numbers are older revisions. Each row also shows the underlying Revision ID for reference.
-- **Status**: The current state of the revision (for example, *Active*, *Inactive*, *Applying*).
-- **Runtime Variant**, **Image**, and **Resource Preset**: Summary of the revision's configuration.
+- **Revision (ID)**: The revision number and its UUID. The revision number is an incrementing integer; lower numbers are older revisions. Click the revision number to open the revision detail drawer.
 - **Created At**
+- **Cluster Mode**: The clustering layout formatted as "mode / size". Hover over the column header for a description.
 
-You can filter and sort the list by every visible column, including revision number, status, runtime variant, and creation timestamp.
+The following columns are hidden by default but can be enabled from the column settings:
 
-#### Applying a Revision
+- **Model Name**, **Runtime**, **Image**, **Model Folder**
 
-Every row carries an **Apply** action. Clicking `Apply` makes that revision the **current** revision; the deployment begins serving traffic with the new configuration and the previously active revision becomes inactive. While the new revision is rolling out, the deployment shows a *The next revision is being applied.* alert and the apply action remains disabled to prevent overlapping applies.
+**Filters**
 
-:::note
-The action is named **Apply** in every revision-related UI surface (row action, modal confirmation, alert text). Earlier terms such as *Activate* or *Promote* have been unified to **Apply**.
-:::
+The filter bar above the table lets you narrow the list by revision number, created-at date range, cluster mode, image, and model folder.
 
-<a id="revision-info"></a>
+**Applying a revision**
 
-### Revision Info
+Each row has an **Apply** action button. Click it to open a confirmation dialog. On confirm, the selected revision becomes the current revision and the deployment begins serving traffic with the new configuration. The previous revision is preserved in the history.
 
-:::note
-The Revision Info card is available when the server supports Model Card v2
-(Backend.AI version 26.4.0 and later).
-:::
+- A green **Current** tag marks the revision that is currently active.
+- A yellow **Applying** tag (with a loading spinner) marks a revision that is being applied.
+- The **Apply** button is disabled for the currently active revision and any revision that is being applied.
 
-The Revision Info card on the Endpoint Detail Page displays the configuration of the **latest revision** — the revision that is queued to be applied next. This may differ from the revision that is currently running on the service.
-
-![](../images/endpoint_revision_info.png)
-
-The card shows the following fields:
-
-- **Revision ID**: The identifier of the latest revision.
-- **Model Name**: The name of the model as defined in the model definition.
-- **Model Path**: The path where the model is mounted.
-- **Start Command**: The command used to start the inference server.
-- **Port**: The container port for the model service.
-- **Health Check Path**: The HTTP endpoint path for health checks.
-- **Initial Delay**: Seconds to wait before the first health check.
-- **Max Retries**: Maximum consecutive health check failures allowed.
-
-#### Revision Mismatch State
-
-When a new revision has been queued but the service is still running on the previous revision, a **"The next revision is being applied."** alert is displayed on the Revision Info card. This indicates that the latest revision values shown in the card do not yet match the currently running configuration.
-
-![](../images/endpoint_revision_mismatch.png)
-
-Click the **View Current Revision** button to open a modal that shows the model definition of the revision that is **currently running**. This allows you to compare the upcoming revision (shown in the Revision Info card) with the active revision (shown in the modal).
-
-![](../images/endpoint_current_revision_modal.png)
-
-:::tip
-To summarize: the **Revision Info card** always shows the **latest/upcoming** revision values,
-while the **View Current Revision modal** shows the **currently running** revision values.
-:::
-
-#### Edit Behavior With Revisions (Custom Variant Only)
-
-When you click the **Edit** button on the Service Info panel for a service using the `Custom` runtime variant, the service launcher form is pre-populated with the latest revision's model definition values as defaults. This makes it easy to adjust settings incrementally without re-entering all fields.
-
-:::note
-This pre-population of model definition values applies only to the `Custom` runtime variant.
-`vLLM` and `SGLang` variants do not use model definition fields at all — they expose a
-**Runtime Parameters** section (`inference_runtime_config`) for framework-specific configuration.
-Model definition and runtime parameters are distinct concepts stored separately in the revision.
-:::
+Clicking the revision number in any row opens the revision detail drawer, which shows the full configuration of that revision. The drawer also has an **Apply** button (disabled for the current and applying revisions).
 
 ### Auto Scaling Rules
 
@@ -717,14 +621,7 @@ When **Metric Source** is set to `Prometheus`, the editor shows the preset selec
 
 ### Generating Tokens
 
-Once the model service is successfully executed, the status will be set
-to `HEALTHY`. You can click on the corresponding endpoint name in the
-serving list to view detailed information. From there, you can check the
-service endpoint in the routing information. If the **Open To Public** option
-is enabled when the service is created, the endpoint will be publicly
-accessible without any separate token, and end users can access it.
-However, if it is disabled, you can issue a token as described below to
-verify that the service is running properly.
+Once the deployment is `HEALTHY`, you can click on its name in the Deployments list to open the Deployment Detail Page. The **Service Endpoint** URL is shown in the Service Info card. If **Open To Public** is enabled, end users can access the deployment without a token. If it is disabled, generate and share a token as described below.
 
 ![](../images/generate_token.png)
 
@@ -743,53 +640,19 @@ item to copy the token, and add it as the value of the following key.
 | Content-Type  | application/json |
 | Authorization | BackendAI        |
 
-### Routes Information
+### Terminating a Deployment
 
-The Routes Info card shows the routing status of the model service. You can filter routes by:
-
-- **Running / Finished**: Toggle between active and completed route nodes.
-- **Property filter**: Filter by health status and traffic status.
-
-
-Click on a route node to open the session detail drawer, where you can view individual session details.
-
-If a route has encountered an error, clicking the error indicator on the route row opens a JSON viewer modal that displays the raw error data for that route. This is useful for diagnosing issues with individual route nodes.
-
-![](../images/route_error_json_viewer.png)
-
-### Modifying a Service
-
-Click the `Edit` button on the endpoint detail page to modify a model service. The service launcher opens with previously entered fields already filled in. You can optionally modify only the fields you wish to change. After modifying the fields, click the `Update` button to apply the changes.
-
-![](../images/edit_model_service.png)
-
-### Terminating a Service
-
-The model service periodically runs a scheduler to adjust the routing
-count to match the desired session count. However, this puts a burden on
-the Backend.AI scheduler. Therefore, it is recommended to terminate the
-deployment if it is no longer needed. To terminate the deployment, open
-the **More** menu on the Service Info card and select **Delete Deployment**.
-A typed-confirmation modal appears — type the deployment name to enable the
-**Permanently Delete** button. The terminated deployment then appears in the
-**Destroyed** filter view.
+When a deployment is no longer needed, it is recommended to terminate it to free up scheduler resources. To terminate the deployment, open the **More** menu on the Service Info card and select **Delete Deployment**. A typed-confirmation modal appears — type the deployment name to enable the **Permanently Delete** button. The terminated deployment then appears in the **Destroyed** filter view.
 
 ![](../images/terminate_model_service_dialog.png)
 
-## Accessing the Service Endpoint
+## Accessing Your Deployment
 
 ### Making API Requests
 
-To complete the model serving, you need to share information with the
-actual end users so that they can access the server where the model
-service is running. If the **Open To Public** option is enabled when the
-service is created, you can share the service endpoint value from the
-endpoint detail page. If the service was created with the option
-disabled, you can share the service endpoint value along with the token
-previously generated.
+To allow end users to call your deployment, share the deployment URL with them. If the **Open To Public** option is enabled, you can share the **Service Endpoint** URL from the Deployment Detail Page directly. If the deployment is private, share the URL along with an access token.
 
-Here is a simple command using `curl` to check whether sending requests
-to the model serving endpoint is working properly:
+Here is a simple command using `curl` to verify that the deployment is responding:
 
 ```bash
 export API_TOKEN="<token>"
@@ -800,16 +663,13 @@ curl -H "Content-Type: application/json" -X GET \
 ```
 
 :::warning
-By default, end users must be on a network that can access the
-endpoint. If the service was created in a closed network, only end
-users who have access within that closed network can access the
-service.
+By default, end users must be on a network that can reach the deployment URL. If the deployment was created in a closed network, only end users with access to that network can reach the service.
 :::
 
 ### LLM Chat Test
 
 If you have created a Large Language Model (LLM) service, you can test the LLM in real-time.
-Click the `LLM Chat Test` button located in the Service Endpoint section of the endpoint detail page.
+When the deployment is ready, a `Test in Chat` button appears in the **Deployment is ready** banner at the top of the Deployment Detail Page. Click it to start the test.
 
 ![](../images/LLM_chat_test.png)
 
@@ -875,13 +735,13 @@ If the model card includes a README, it is rendered as a `README.md` card at the
 
 Click the **Deploy** button in the drawer header to deploy the model as a service. The deploy flow behaves in one of two ways:
 
-- **Auto-deploy**: If the model has exactly one available preset and the current project has exactly one accessible resource group, the deployment is created silently without showing a modal. After the endpoint becomes queryable, you are navigated to its endpoint detail page.
+- **Auto-deploy**: If the model has exactly one available preset and the current project has exactly one accessible resource group, the deployment is created silently without showing a modal. You are then navigated to the Deployment Detail Page.
 - **Deploy Model modal**: Otherwise, a **Deploy Model** modal opens with the following required fields:
 
    - **Preset**: A grouped dropdown of available resource presets. When presets span multiple runtime variants, options are grouped by runtime variant name; otherwise the options are shown as a flat list.
    - **Resource Group**: The resource group where the service will run.
 
-   Click the **Deploy** button in the modal to start the deployment. A success toast confirms that the model has been deployed, and you are navigated to the endpoint detail page.
+   Click the **Deploy** button in the modal to start the deployment. A success toast confirms that the model has been deployed, and you are navigated to the Deployment Detail Page.
 
 ![](../images/model_card_deploy_modal.png)
 

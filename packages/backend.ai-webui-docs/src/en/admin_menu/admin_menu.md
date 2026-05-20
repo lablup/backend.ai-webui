@@ -1,4 +1,4 @@
-# Admin Menus
+# User Management
 
 Logging in with an admin account will reveal an extra Administration menu on the bottom left of the sidebar.
 User information registered in Backend.AI is listed in the Users tab.
@@ -328,38 +328,41 @@ models:
         max_retries: 500
 ```
 
-For a full description of the model definition format, refer to the [Model Definition Guide](../model_serving/model_serving.md#model-definition-guide) in the Model Serving documentation.
+For a full description of the model definition format, refer to the [Model Definition Guide](../deployment/deployment.md#model-definition-guide) in the Model Serving documentation.
 
 :::note
-To enable the **Deploy** button on a model card in the Model Store, include `service-definition.toml` in the linked folder so Backend.AI can read the model service configuration. Add `model-definition.yaml` only when you use the `Custom` runtime variant; preset runtime variants (such as `vLLM`, `SGLang`, `NVIDIA NIM`, and `Modular MAX`) do not require it. For details on the service definition file, refer to the [Service Definition File](../model_serving/model_serving.md#service-definition-file) section in the Model Serving documentation.
+To enable the **Deploy** button on a model card in the Model Store, include `service-definition.toml` in the linked folder so Backend.AI can read the model service configuration. Add `model-definition.yaml` only when you use the `Custom` runtime variant; preset runtime variants (such as `vLLM`, `SGLang`, `NVIDIA NIM`, and `Modular MAX`) do not require it. For details on the service definition file, refer to the [Service Definition File](../deployment/deployment.md#service-definition-file) section in the Model Serving documentation.
 :::
 
 <a id="admin-features"></a>
 
-## Admin Features
+## Model Serving
 
+<a id="admin-deployments-page"></a>
 <a id="admin-serving-page"></a>
 
-### Admin Serving Page
+### Admin Deployments Page
 
-Administrators and superadmins can access the Admin Serving page, which provides a cross-project view of all endpoints. This page shows the **Project** column in addition to the standard endpoint list columns, allowing admins to manage services across all projects.
+Administrators and superadmins can access the Admin Deployments page at `/admin-deployments`, which provides a cross-project view of every deployment in the cluster. This page shows the **Project** column in addition to the standard deployment list columns, allowing admins to manage deployments across all projects.
 
 ![](../images/admin_serving_page.png)
 
-The Admin Serving page has two tabs:
+The Admin Deployments page has up to four tabs:
 
-- **Serving**: Displays the endpoint list across all projects, with the same lifecycle and property filters as the user-facing Serving page.
-- **Model Store Management**: Available to superadmins only. See the section below.
+- **Deployments**: Always shown. Displays the deployment list across all projects, with the same lifecycle and property filters as the user-facing Deployments page.
+- **Model Store Management**: Always shown. Available to superadmins only. See the [Admin Model Store Management](#admin-model-store-management) section below.
+- **Prometheus Preset**: Lets administrators manage reusable Prometheus query presets. See the [Prometheus Query Presets](#prometheus-query-presets) section below.
+- **Deployment Presets**: Lets administrators manage reusable deployment presets that end users can apply when deploying a model. See the [Deployment Presets](#deployment-presets) section below.
 
 :::note
-Each individual admin deployment now has its own dedicated route at `/admin-deployments/:id`. When you open a deployment from the Admin Serving page, the URL changes to this path so that the deployment detail can be linked to or bookmarked directly.
+Each individual admin deployment has its own dedicated route at `/admin-deployments/:id`. When you open a deployment from the Admin Deployments page, the URL changes to this path so that the deployment detail can be linked to or bookmarked directly.
 :::
 
 <a id="admin-model-store-management"></a>
 
 ### Admin Model Store Management
 
-Superadmins can manage model cards through the **Model Store Management** tab on the Admin Serving page.
+Superadmins can manage model cards through the **Model Store Management** tab on the Admin Deployments page.
 
 ![](../images/admin_model_card_list_v2.png)
 
@@ -374,7 +377,14 @@ The list provides the following columns:
 - **Project**: The project that owns the model card.
 - **Created At**: The timestamp when the model card was created.
 
-You can filter the list by **Name** using the property filter bar at the top. Edit and delete action icons are shown directly in the **Name** cell of each row.
+You can narrow the list using the property filter bar at the top, which supports filtering by the following properties:
+
+- **Name**: Filter by the model card's name (string match).
+- **Domain**: Filter by the owning domain (string match).
+- **Project**: Filter by the owning project's UUID.
+- **Storage Host**: Filter by the storage host of the linked folder, using the equals or not-equals operator with a custom value.
+
+Edit and delete action icons are shown directly in the **Name** cell of each row.
 
 To delete multiple model cards at once, select the rows you want to remove using the checkboxes and click the red trash-bin button next to the selection count. A confirmation dialog appears before the cards are deleted.
 
@@ -419,6 +429,147 @@ The deletion confirmation dialog includes an **Also delete the associated model 
 
 The same behavior applies to **bulk deletion** (the label becomes **Also delete all associated model folders**): each selected model card's linked storage folder is moved to the trash when the option is checked, and a trash notification is shown for each folder that was moved.
 
+<a id="deployment-presets"></a>
+
+## Deployment Presets
+
+A **Deployment Preset** is a reusable, administrator-curated bundle of deployment settings — image, runtime, resource slots, cluster mode, environment variables, startup command, replica count, visibility, and other defaults — that end users can apply when they create a model deployment from a storage folder. Presets let administrators publish a small set of vetted, known-good deployment shapes (for example, *vLLM-GPU-Large* or *SGLang-CPU-Small*) so that end users can deploy a model without having to choose every advanced field from scratch.
+
+![](../images/deployment_preset_list.png)
+
+### What Is a Deployment Preset?
+
+A Deployment Preset captures the defaults of a model deployment so that:
+
+- **Administrators** can offer end users a curated catalog of deployment shapes that match the organization's hardware and policy constraints.
+- **End users** can pick a preset when deploying a model from the Data page (via the *Create New Deployment with Preset* flow) and skip filling in advanced fields manually.
+- **Operators** can ensure that production deployments use consistent resource allocations, runtimes, and visibility defaults across the organization.
+
+When a deployment is created from a preset, the preset's values pre-populate the deployment launcher fields. Users can still review and adjust those fields before confirming the deployment.
+
+Each preset stores the following deployment defaults:
+
+- **Basic Info**: Name, description, runtime variant, rank (display ordering).
+- **Image**: The container image to deploy.
+- **Resources**: Resource slots (CPU, memory, GPU), shared memory (SHM), and resource options.
+- **Cluster**: Cluster mode (Single-Node or Multi-Node) and cluster size.
+- **Execution**: Startup command, environment variables, and bootstrap script.
+- **Deployment Defaults**: Replica count, revision history limit, and the *Open to Public* visibility default.
+- **Advanced**: Model definition JSON (when needed for a custom runtime).
+
+<a id="managing-deployment-presets"></a>
+
+### Managing Deployment Presets
+
+Only administrators can create, edit, or delete deployment presets. Administrators manage them from the **Deployment Presets** tab on the Admin Deployments page.
+
+![](../images/admin_deployment_preset_list.png)
+
+The list view shows each preset with its name, runtime, image, rank, and key resource fields. From this list, administrators can:
+
+- Filter presets by name, runtime, or tag.
+- Click a tag chip on any row to filter the list to presets sharing that tag.
+- Open a preset's detail view to inspect its full configuration.
+- Create, edit, or delete a preset.
+
+#### Create a Deployment Preset
+
+1. Click the **Create Preset** button at the top right of the preset list.
+2. Fill in the fields in the *Create Preset* dialog. The dialog is organized into the following sections:
+
+   - **Basic Info**:
+      * **Name**: A unique preset name (for example, `vLLM-GPU-Large`).
+      * **Description**: A short summary of the preset's intended use.
+      * **Runtime**: The runtime variant (for example, vLLM, SGLang, or Custom).
+      * **Rank**: Display ordering among presets of the same runtime. Lower values appear first.
+   - **Image**: The container image to use when deploying.
+   - **Resources**: Resource slots (CPU, memory, GPU), shared memory, and resource options (key/value pairs).
+   - **Cluster**: Cluster mode (Single-Node or Multi-Node) and cluster size.
+   - **Execution**: Startup command, environment variables, and bootstrap script.
+   - **Deployment Defaults**:
+      * **Replica Count**: Default number of replicas created from this preset.
+      * **Revision History Limit**: Number of past revisions kept for each deployment created from this preset.
+      * **Open to Public**: Whether the endpoint of deployments created from this preset is reachable without an access token by default.
+   - **Advanced** (optional): Model definition JSON for custom runtimes.
+
+   ![](../images/deployment_preset_create_modal.png)
+
+3. Click **Create Preset** to save. A success notification confirms the preset has been created.
+
+:::tip
+If a required field is missing or invalid, the **Create Preset** button stays disabled until the error is resolved. Required fields show inline validation messages as you type.
+:::
+
+#### Edit a Deployment Preset
+
+1. From the preset list, open the action menu on the preset row (or open the preset's detail view) and select **Edit Preset**.
+2. The *Edit Preset* dialog opens with the preset's current values pre-filled. The available sections are identical to the *Create Preset* dialog.
+3. Adjust the fields as needed, then click **Edit Preset** to save your changes.
+
+![](../images/deployment_preset_edit_modal.png)
+
+Editing a preset only changes the defaults for **future** deployments. Existing deployments that were already created from this preset are not modified.
+
+#### Delete a Deployment Preset
+
+1. From the preset list (or the preset's detail view), open the action menu on the preset and select **Delete Preset**.
+2. A typed-confirmation dialog appears asking you to type the preset's name to confirm. The **OK** button stays disabled until the typed value matches the preset name exactly.
+3. Type the preset's name, then click **OK** to confirm.
+
+:::danger
+Deleting a deployment preset is **irreversible**. The preset itself is removed, but deployments that were already created from it continue to run unaffected. Future deployments can no longer reference this preset.
+:::
+
+<a id="using-a-preset-when-deploying-a-model"></a>
+
+### Using a Preset When Deploying a Model
+
+End users apply a deployment preset through the **VFolder Deploy** modal, which opens when you deploy a model from a storage folder on the Data page.
+
+1. From the Data page, locate the model folder you want to deploy and click **Deploy as Service**.
+2. The VFolder Deploy modal opens, listing the deployment presets available for your project.
+3. Click a preset row to open its **Deployment Preset Detail** view. The detail view shows every field that the preset will apply when used — image, runtime, resources, cluster mode, replica count, visibility, and so on.
+
+   ![](../images/vfolder_deploy_preset_detail.png)
+
+4. From the detail view, choose how to proceed:
+
+   - **Auto-deploy**: Create the deployment immediately using the preset's values as-is. This is the fastest path; the deployment is created in one click with no further input required.
+   - **Manual deploy** (*Create New Deployment with Preset*): Open the deployment launcher with all fields pre-populated from the preset, so you can review and adjust before confirming.
+
+:::note
+The active preset, tab key, and other navigation state are preserved in the URL via `URLSearchParams`. You can share a link to a specific preset's detail view, and the recipient lands on the same screen.
+:::
+
+### Pre-Populated Launcher Fields
+
+When you choose the manual-deploy path, the deployment launcher opens with every field pre-filled from the selected preset:
+
+- Image, runtime variant, and resource group.
+- Resource slots, shared memory, and resource options.
+- Cluster mode and cluster size.
+- Startup command and environment variables.
+- Replica count, revision history limit, and **Open to Public** visibility.
+- Auto-selected resource preset, which is preserved across the launcher's initial-value resolution.
+
+You can edit any pre-populated field before deploying. Editing a field does **not** modify the underlying preset — it only changes the values used for this one deployment. The preset's defaults remain unchanged for future deployments.
+
+:::tip
+If the auto-selected resource preset is the right one for your workload, leave it as-is. The launcher preserves the auto-selection across the initial-values pass, so you do not need to re-select it after switching presets.
+:::
+
+### Filtering by Tags
+
+Both the user-facing preset list and the admin preset list support **clickable tag chips** that filter the list to presets sharing the clicked tag.
+
+![](../images/deployment_preset_tag_filter.png)
+
+1. Locate a preset row that has the tag you want to filter by.
+2. Click the tag chip on that row.
+3. The list refreshes to show only presets that include the selected tag. The active filter is reflected in the filter bar; clear it to return to the full list.
+
+This is useful when you have many presets and want to quickly narrow down to, for example, all GPU-backed presets or all presets for a specific runtime family.
+
 <a id="prometheus-query-presets"></a>
 
 ## Prometheus Query Presets
@@ -428,10 +579,6 @@ Backend.AI lets administrators define reusable **Prometheus query presets** that
 The presets are managed from the **Prometheus Preset** tab on the Admin Deployments page (`/admin-deployments?tab=prometheus-preset`).
 
 ![](../images/admin_prometheus_preset_list.png)
-
-:::note
-This tab is **admin-only** and is visible only when the Backend.AI Manager advertises the `prometheus-query-preset` capability. If the tab does not appear in your environment, your Manager build does not yet support this feature.
-:::
 
 <a id="prometheus-preset-list-and-filter"></a>
 
@@ -470,7 +617,7 @@ The modal contains the following fields:
 - **Description**: A free-form description shown alongside the preset in selectors.
 - **Category**: An optional category for grouping related presets. Leave empty for **No category**.
 - **Metric Name**: The metric label that consumers (for example, auto-scaling rules) will display.
-- **Query Template**: The PromQL expression to execute. As you type, a **live preview** area below the field calls the server's `adminPrometheusQueryPresetPreview` query and shows the current value the query returns against your Prometheus instance, so you can verify the template works before saving. The preview is debounced and updates automatically as you edit.
+- **Query Template**: The PromQL expression to execute. As you type, a **live preview** area below the field shows what value the template returns against your Prometheus instance, so you can verify the template works before saving. The preview is debounced and updates automatically as you edit.
 - **Time Window**: The default range-vector window, for example `5m`. Leave empty if the query does not use a range vector.
 - **Filter Labels**: Optional list of label selectors that consumers can apply on top of the preset.
 - **Group Labels**: Optional list of labels to group the query result by.

@@ -7,7 +7,7 @@ A **Deployment Preset** is a reusable, administrator-curated bundle of deploymen
 ![](../images/deployment_preset_list.png)
 
 :::info
-Deployment Presets are part of the Model Serving feature set introduced in version 26.4. Cross-references to preset-aware revision creation are documented in the [Model Serving](#model-serving) page.
+This page lives under the **Administration** section because only administrators can create, edit, and delete deployment presets. End users cannot manage presets themselves, but they can **apply** any preset that has been published to their project when they deploy a model. The two halves of this page reflect that split: [Managing Deployment Presets](#managing-deployment-presets) describes the admin workflow, and [Using a Preset When Deploying a Model](#using-a-preset-when-deploying-a-model) describes the end-user workflow. Preset-aware revision creation is also documented on the [Deployments](#model-serving) page.
 :::
 
 ## What Is a Deployment Preset?
@@ -30,9 +30,11 @@ Each preset stores the following deployment defaults:
 - **Deployment Defaults**: Replica count, revision history limit, and the *Open to Public* visibility default.
 - **Advanced**: Model definition JSON (when needed for a custom runtime).
 
-## (Admin) Manage Deployment Presets
+<a id="managing-deployment-presets"></a>
 
-Administrators manage deployment presets from the admin Model Serving area on the **Deployment Presets** tab.
+## Managing Deployment Presets
+
+Only administrators can create, edit, or delete deployment presets. Administrators manage them from the **Deployment Presets** tab on the Admin Deployments page.
 
 ![](../images/admin_deployment_preset_list.png)
 
@@ -132,7 +134,6 @@ If the auto-selected resource preset is the right one for your workload, leave i
 Both the user-facing preset list and the admin preset list support **clickable tag chips** that filter the list to presets sharing the clicked tag.
 
 ![](../images/deployment_preset_tag_filter.png)
-<!-- TODO: Capture screenshot of the deployment preset list filtered by a tag chip -->
 
 1. Locate a preset row that has the tag you want to filter by.
 2. Click the tag chip on that row.

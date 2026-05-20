@@ -67,10 +67,8 @@ navigation:
           path: sessions_all/sessions_all.md
         - title: Cluster Session
           path: cluster_session/cluster_session.md
-        - title: Model Serving
-          path: model_serving/model_serving.md
-        - title: Deployment Presets
-          path: model_serving/deployment_presets.md
+        - title: Deployments
+          path: deployment/deployment.md
         - title: Chat
           path: chat/chat.md
         - title: Import Run
@@ -138,10 +136,8 @@ navigation:
           path: sessions_all/sessions_all.md
         - title: クラスターセッション
           path: cluster_session/cluster_session.md
-        - title: モデルサービング
-          path: model_serving/model_serving.md
-        - title: デプロイメントプリセット
-          path: model_serving/deployment_presets.md
+        - title: デプロイ
+          path: deployment/deployment.md
         - title: チャット
           path: chat/chat.md
         - title: インポート＆実行
@@ -209,10 +205,8 @@ navigation:
           path: sessions_all/sessions_all.md
         - title: 클러스터 세션
           path: cluster_session/cluster_session.md
-        - title: 모델 서빙
-          path: model_serving/model_serving.md
-        - title: 배포 프리셋
-          path: model_serving/deployment_presets.md
+        - title: 배포
+          path: deployment/deployment.md
         - title: 채팅
           path: chat/chat.md
         - title: 가져오기 및 실행
@@ -280,10 +274,8 @@ navigation:
           path: sessions_all/sessions_all.md
         - title: เซสชันคลัสเตอร์
           path: cluster_session/cluster_session.md
-        - title: การให้บริการโมเดล
-          path: model_serving/model_serving.md
-        - title: พรีเซ็ตการดีพลอย
-          path: model_serving/deployment_presets.md
+        - title: การปรับใช้
+          path: deployment/deployment.md
         - title: แชท
           path: chat/chat.md
         - title: นำเข้าและรัน

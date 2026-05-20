@@ -27,7 +27,7 @@ Backend.AI WebUIは、Backend.AIサーバーと連携するための使いやす
 - [全セッション](sessions_all/sessions_all.md)
 - [ストレージフォルダのマウント](mount_vfolder/mount_vfolder.md)
 - [ストレージフォルダの共有](share_vfolder/share_vfolder.md)
-- [モデルサービング](model_serving/model_serving.md)
+- [デプロイ](deployment/deployment.md)
 - [チャット](chat/chat.md)
 - [インポート＆実行](import_run/import_run.md)
 - [マイ環境](my_environments/my_environments.md)

@@ -27,7 +27,7 @@ The latest versions of this document can be found from sites below:
 - [Sessions All](sessions_all/sessions_all.md)
 - [Mount Vfolder](mount_vfolder/mount_vfolder.md)
 - [Share Vfolder](share_vfolder/share_vfolder.md)
-- [Model Serving](model_serving/model_serving.md)
+- [Deployment](deployment/deployment.md)
 - [Chat](chat/chat.md)
 - [Import Run](import_run/import_run.md)
 - [My Environments](my_environments/my_environments.md)
