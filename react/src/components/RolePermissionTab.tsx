@@ -42,6 +42,60 @@ interface EditingPermission {
   operation: string;
 }
 
+interface PermissionScopeRecord {
+  scopeType: string;
+  scope?: {
+    basicInfo?: {
+      domainName?: string | null;
+      projectName?: string | null;
+      email?: string | null;
+    } | null;
+    vfolderName?: string | null;
+    metadata?: {
+      sessionName?: string | null;
+      deploymentName?: string | null;
+    } | null;
+    resourceGroupName?: string | null;
+    registryName?: string | null;
+    project?: string | null;
+  } | null;
+}
+
+/**
+ * Resolve a scope record to its human-readable target name (project name,
+ * user email, vfolder name, …). Single source of truth shared by the
+ * ScopeId table column and the delete-confirm modal label so the two never
+ * drift apart.
+ */
+const resolveScopeName = (
+  record: PermissionScopeRecord,
+): string | null | undefined => {
+  const scope = record?.scope;
+  if (!scope) return null;
+  switch (record.scopeType) {
+    case 'DOMAIN':
+      return scope.basicInfo?.domainName;
+    case 'PROJECT':
+      return scope.basicInfo?.projectName;
+    case 'USER':
+      return scope.basicInfo?.email;
+    case 'VFOLDER':
+      return scope.vfolderName;
+    case 'SESSION':
+      return scope.metadata?.sessionName;
+    case 'MODEL_DEPLOYMENT':
+      return scope.metadata?.deploymentName;
+    case 'RESOURCE_GROUP':
+      return scope.resourceGroupName;
+    case 'CONTAINER_REGISTRY':
+      return scope.project
+        ? `${scope.registryName} - ${scope.project}`
+        : scope.registryName;
+    default:
+      return null;
+  }
+};
+
 const permissionOrderValues = ['ENTITY_TYPE_ASC', 'ENTITY_TYPE_DESC'] as const;
 
 interface RolePermissionTabProps {
@@ -66,7 +120,10 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
     useState<EditingPermission | null>(null);
   const [deletingPermission, setDeletingPermission] = useState<{
     id: string;
-    label: string;
+    scopeType: string;
+    scopeTarget: string;
+    entityType: string;
+    operation: string;
   } | null>(null);
   const [isPendingRefetch, startRefetchTransition] = useTransition();
 
@@ -226,14 +283,22 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
     });
   };
 
-  const handleDelete = (record: {
-    id: string;
-    entityType: string;
-    operation: string;
-    scopeType: string;
-  }) => {
-    const permissionLabel = `${t(`rbac.types.${record.entityType}`, { defaultValue: record.entityType })} - ${t(`rbac.operations.${record.operation}`, { defaultValue: record.operation })} (${t(`rbac.types.${record.scopeType}`, { defaultValue: record.scopeType })})`;
-    setDeletingPermission({ id: toLocalId(record.id), label: permissionLabel });
+  const handleDelete = (
+    record: {
+      id: string;
+      entityType: string;
+      operation: string;
+      scopeId?: string;
+    } & PermissionScopeRecord,
+  ) => {
+    const scopeName = resolveScopeName(record);
+    setDeletingPermission({
+      id: toLocalId(record.id),
+      scopeType: record.scopeType,
+      scopeTarget: scopeName || record.scopeId || '-',
+      entityType: record.entityType,
+      operation: record.operation,
+    });
   };
 
   return (
@@ -340,38 +405,7 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
             title: t('rbac.ScopeId'),
             dataIndex: 'scopeId',
             render: (value: string, record) => {
-              const scope = record?.scope;
-              let label: string | null | undefined = null;
-              if (scope) {
-                switch (record.scopeType) {
-                  case 'DOMAIN':
-                    label = scope.basicInfo?.domainName;
-                    break;
-                  case 'PROJECT':
-                    label = scope.basicInfo?.projectName;
-                    break;
-                  case 'USER':
-                    label = scope.basicInfo?.email;
-                    break;
-                  case 'VFOLDER':
-                    label = scope.vfolderName;
-                    break;
-                  case 'SESSION':
-                    label = scope.metadata?.sessionName;
-                    break;
-                  case 'MODEL_DEPLOYMENT':
-                    label = scope.metadata?.deploymentName;
-                    break;
-                  case 'RESOURCE_GROUP':
-                    label = scope.resourceGroupName;
-                    break;
-                  case 'CONTAINER_REGISTRY':
-                    label = scope.project
-                      ? `${scope.registryName} - ${scope.project}`
-                      : scope.registryName;
-                    break;
-                }
-              }
+              const label = resolveScopeName(record);
               const displayValue = label || value || '-';
               return (
                 <BAINameActionCell
@@ -434,23 +468,67 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
       <BAIDeleteConfirmModal
         open={!!deletingPermission}
         title={t('rbac.RemovePermission')}
-        target={t('general.Permission')}
+        description={t('rbac.ConfirmDeletePermissionWithDetail')}
+        plainItems
         items={
           deletingPermission
             ? [
                 {
                   key: deletingPermission.id,
-                  label: deletingPermission.label,
+                  label: (
+                    <BAITable
+                      rowKey="id"
+                      size="small"
+                      resizable={false}
+                      pagination={false}
+                      style={{ width: '100%' }}
+                      columns={[
+                        {
+                          key: 'scopeType',
+                          title: t('rbac.ScopeType'),
+                          dataIndex: 'scopeType',
+                          render: (v: string) => (
+                            <Tag>
+                              {t(`rbac.types.${v}`, { defaultValue: v })}
+                            </Tag>
+                          ),
+                        },
+                        {
+                          key: 'scopeTarget',
+                          title: t('rbac.ScopeId'),
+                          dataIndex: 'scopeTarget',
+                        },
+                        {
+                          key: 'entityType',
+                          title: t('rbac.EntityType'),
+                          dataIndex: 'entityType',
+                          render: (v: string) => (
+                            <Tag>
+                              {t(`rbac.types.${v}`, { defaultValue: v })}
+                            </Tag>
+                          ),
+                        },
+                        {
+                          key: 'operation',
+                          title: t('rbac.Operation'),
+                          dataIndex: 'operation',
+                          render: (v: string) => (
+                            <Tag color="blue">
+                              {t(`rbac.operations.${v}`, {
+                                defaultValue: v,
+                              })}
+                            </Tag>
+                          ),
+                        },
+                      ]}
+                      dataSource={[deletingPermission]}
+                    />
+                  ),
                 },
               ]
             : []
         }
-        confirmText={t('credential.PermanentlyDelete')}
-        requireConfirmInput
-        inputLabel={t('credential.TypePermanentlyDelete', {
-          text: t('credential.PermanentlyDelete'),
-        })}
-        inputProps={{ placeholder: t('credential.PermanentlyDelete') }}
+        reversible
         okText={t('rbac.RemovePermission')}
         onOk={() => {
           if (!deletingPermission) return;

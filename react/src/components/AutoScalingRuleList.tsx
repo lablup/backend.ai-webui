@@ -672,23 +672,14 @@ const AutoScalingRuleList: React.FC<AutoScalingRuleListProps> = ({
       </BAIUnmountAfterClose>
       <BAIDeleteConfirmModal
         open={!!deletingRule}
-        title={t('dialog.title.DeleteSomething', {
-          name: deletingRule?.metricName ?? '',
-        })}
-        target={t('webui.menu.AutoScalingRule')}
+        title={t('autoScalingRule.DeleteAutoScalingRule')}
+        description={t('autoScalingRule.DeleteConfirmation')}
         items={
           deletingRule
             ? [{ key: deletingRule.id, label: deletingRule.metricName }]
             : []
         }
-        confirmText={t('credential.PermanentlyDelete')}
-        requireConfirmInput
-        inputLabel={t('credential.TypePermanentlyDelete', {
-          text: t('credential.PermanentlyDelete'),
-        })}
-        inputProps={{
-          placeholder: t('credential.PermanentlyDelete'),
-        }}
+        reversible
         onOk={() => {
           if (!deletingRule) return;
           return commitDeleteMutation({
