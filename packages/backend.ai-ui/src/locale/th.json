@@ -93,6 +93,7 @@
   },
   "comp:BAIDeleteConfirmModal": {
     "AreYouSureToDelete": "คุณแน่ใจหรือไม่ว่าต้องการลบ?",
+    "AreYouSureToPermanentlyDeleteTarget": "คุณแน่ใจหรือไม่ว่าต้องการลบ {{target}} อย่างถาวร?",
     "CannotBeUndone": "การกระทำนี้ไม่สามารถยกเลิกได้",
     "DeleteItem": "ลบ",
     "DeleteNItems": "ลบ {{count}} รายการ",
@@ -213,7 +214,6 @@
     "UpdateProject": "อัปเดตโปรเจกต์"
   },
   "comp:BAIProjectTable": {
-    "AreYouSureToDeactivateProject": "คุณแน่ใจว่าต้องการปิดใช้งานโปรเจ็กต์ {{projectName}}?",
     "AreYouSureToPurgeProject": "คุณแน่ใจหรือว่าต้องการลบออกอย่างถาวร {{projectName}}? การดำเนินการนี้ไม่สามารถย้อนกลับได้.",
     "ContainerRegistry": "รีจิสทรีคอนเทนเนอร์",
     "Controls": "การควบคุม",
@@ -402,8 +402,10 @@
   },
   "general": {
     "DeselectAll": "ยกเลิกการเลือกทั้งหมด",
+    "File": "ไฟล์",
     "NSelected": "{{count}} เลือก",
     "Optional": "ไม่บังคับ",
+    "Project": "โครงการ",
     "TotalItems": "รวม {{total}} รายการ",
     "button": {
       "Cancel": "ยกเลิก",

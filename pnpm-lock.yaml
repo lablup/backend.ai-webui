@@ -390,12 +390,21 @@ importers:
         specifier: ^2.1.0
         version: 2.1.0
     devDependencies:
+      '@eslint/js':
+        specifier: 'catalog:'
+        version: 9.39.4
+      eslint-config-bai:
+        specifier: workspace:*
+        version: link:../eslint-config-bai
       tsup:
         specifier: ^8.5.0
         version: 8.5.1(@microsoft/api-extractor@7.52.8(@types/node@25.3.5))(postcss@8.5.8)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.3)
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
+      typescript-eslint:
+        specifier: 'catalog:'
+        version: 8.59.1(eslint@9.39.4)(typescript@5.9.3)
       vitest:
         specifier: ^4.1.4
         version: 4.1.4(@opentelemetry/api@1.9.0)(@types/node@25.3.5)(@vitest/coverage-v8@4.1.5)(jsdom@29.0.2)(vite@6.4.2(@types/node@25.3.5)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.3))
@@ -24236,3 +24245,7 @@ snapshots:
       react: 19.2.6
 
   zwitch@2.0.4: {}
+
+time:
+  '@eslint/js@9.39.4': '2026-03-06T21:21:15.041Z'
+  typescript-eslint@8.59.1: '2026-04-27T17:31:57.870Z'

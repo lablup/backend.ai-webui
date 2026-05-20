@@ -286,7 +286,7 @@ const ModelCardV2Grid: React.FC<{
         const item = edge?.node;
         if (!item) return null;
         return (
-          <Col key={item.id} xs={24} sm={24} lg={12}>
+          <Col key={item.id} xs={24} sm={24} lg={12} xl={12} xxl={8} xxxl={6}>
             <ModelCardV2Card
               modelCardV2Frgmt={item}
               searchKeyword={searchKeyword}

@@ -93,6 +93,7 @@
   },
   "comp:BAIDeleteConfirmModal": {
     "AreYouSureToDelete": "Вы уверены, что хотите удалить?",
+    "AreYouSureToPermanentlyDeleteTarget": "Вы действительно хотите окончательно удалить {{target}}?",
     "CannotBeUndone": "Это действие нельзя отменить.",
     "DeleteItem": "Удалить",
     "DeleteNItems": "Удалить {{count}} элементов",
@@ -213,7 +214,6 @@
     "UpdateProject": "Обновить проект"
   },
   "comp:BAIProjectTable": {
-    "AreYouSureToDeactivateProject": "Вы уверены, что хотите деактивировать проект {{projectName}}?",
     "AreYouSureToPurgeProject": "Вы уверены, что хотите полностью удалить {{projectName}}? Это действие необратимо.",
     "ContainerRegistry": "Реестр контейнеров",
     "Controls": "Элементы управления",
@@ -402,8 +402,10 @@
   },
   "general": {
     "DeselectAll": "Снять выделение",
+    "File": "Файл",
     "NSelected": "{{count}} выбрал",
     "Optional": "Необязательно",
+    "Project": "Проект",
     "TotalItems": "Total {{total}} элементы",
     "button": {
       "Cancel": "Отмена",

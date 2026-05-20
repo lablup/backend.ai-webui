@@ -93,6 +93,7 @@
   },
   "comp:BAIDeleteConfirmModal": {
     "AreYouSureToDelete": "Bạn có chắc chắn muốn xóa không?",
+    "AreYouSureToPermanentlyDeleteTarget": "Bạn có chắc muốn xóa vĩnh viễn {{target}} không?",
     "CannotBeUndone": "Hành động này không thể hoàn tác.",
     "DeleteItem": "Xóa",
     "DeleteNItems": "Xóa {{count}} mục",
@@ -213,7 +214,6 @@
     "UpdateProject": "Cập nhật dự án"
   },
   "comp:BAIProjectTable": {
-    "AreYouSureToDeactivateProject": "Bạn có chắc chắn muốn vô hiệu hóa dự án {{projectName}}?",
     "AreYouSureToPurgeProject": "Bạn có chắc chắn muốn xóa vĩnh viễn {{projectName}}? Hành động này không thể hoàn tác.",
     "ContainerRegistry": "Kho lưu trữ container",
     "Controls": "Điều khiển",
@@ -402,8 +402,10 @@
   },
   "general": {
     "DeselectAll": "Bỏ chọn tất cả",
+    "File": "Tệp",
     "NSelected": "{{count}} Đã chọn",
     "Optional": "Không bắt buộc",
+    "Project": "Dự án",
     "TotalItems": "Tổng số {{total}} các mục",
     "button": {
       "Cancel": "Hủy bỏ",

@@ -93,6 +93,7 @@
   },
   "comp:BAIDeleteConfirmModal": {
     "AreYouSureToDelete": "Sind Sie sicher, dass Sie löschen möchten?",
+    "AreYouSureToPermanentlyDeleteTarget": "Möchten Sie {{target}} wirklich dauerhaft löschen?",
     "CannotBeUndone": "Diese Aktion kann nicht rückgängig gemacht werden.",
     "DeleteItem": "Löschen",
     "DeleteNItems": "{{count}} Elemente löschen",
@@ -213,7 +214,6 @@
     "UpdateProject": "Projekt aktualisieren"
   },
   "comp:BAIProjectTable": {
-    "AreYouSureToDeactivateProject": "Möchten Sie das Projekt {{projectName}} wirklich deaktivieren?",
     "AreYouSureToPurgeProject": "Sind Sie sicher, dass Sie {{projectName}} endgültig löschen möchten? Diese Aktion ist unwiderruflich.",
     "ContainerRegistry": "Container-Registry",
     "Controls": "Steuerelemente",
@@ -402,8 +402,10 @@
   },
   "general": {
     "DeselectAll": "Alle abwählen",
+    "File": "Datei",
     "NSelected": "{{count}} ausgewählt",
     "Optional": "Optional",
+    "Project": "Projekt",
     "TotalItems": "Total {{total}} Elemente",
     "button": {
       "Cancel": "Stornieren",

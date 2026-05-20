@@ -4,8 +4,10 @@
   "description": "Backend.AI API client library for JavaScript/TypeScript",
   "repository": {
     "type": "git",
-    "url": "https://github.com/lablup/backend.ai-webui/tree/main/packages/backend.ai-client"
+    "url": "git+https://github.com/lablup/backend.ai-webui.git",
+    "directory": "packages/backend.ai-client"
   },
+  "homepage": "https://github.com/lablup/backend.ai-webui/tree/main/packages/backend.ai-client#readme",
   "bugs": {
     "url": "https://github.com/lablup/backend.ai-webui/issues"
   },
@@ -23,28 +25,39 @@
   "sideEffects": false,
   "exports": {
     ".": {
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "README.md",
+    "LICENSE"
   ],
+  "engines": {
+    "node": ">=22"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "dev": "tsup --watch",
     "build": "tsup",
     "test": "vitest run",
     "vitest": "vitest run",
     "vitest:watch": "vitest",
-    "lint": "eslint ./src --max-warnings=0",
+    "lint": "eslint ./src",
     "prepublishOnly": "pnpm lint && pnpm test && pnpm build"
   },
   "dependencies": {
     "crypto-es": "^2.1.0"
   },
   "devDependencies": {
+    "@eslint/js": "catalog:",
+    "eslint-config-bai": "workspace:*",
     "tsup": "^8.5.0",
     "typescript": "^5.9.3",
+    "typescript-eslint": "catalog:",
     "vitest": "^4.1.4"
   },
   "type": "module"

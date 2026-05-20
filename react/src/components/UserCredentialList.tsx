@@ -28,6 +28,7 @@ import {
   BAIFlex,
   BAIPropertyFilter,
   BAINameActionCell,
+  BAIDeleteConfirmModal,
   useBAILogger,
   useUpdatableState,
   BAIText,
@@ -53,7 +54,7 @@ type Keypair = NonNullable<
 const UserCredentialList: React.FC = () => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { message, modal } = App.useApp();
+  const { message } = App.useApp();
   const { logger } = useBAILogger();
 
   const [action, setAction] = useQueryParam('action', StringParam);
@@ -74,6 +75,7 @@ const UserCredentialList: React.FC = () => {
     useTransition();
   const [isPendingSettingModalOpen, startSettingModalOpenTransition] =
     useTransition();
+  const [deletingKeypair, setDeletingKeypair] = useState<Keypair | null>(null);
 
   const {
     baiPaginationOption,
@@ -312,43 +314,42 @@ const UserCredentialList: React.FC = () => {
                         key: 'activate',
                         title: t('credential.Activate'),
                         icon: <UndoIcon />,
-                        onClick: () => {
-                          modal.confirm({
-                            title: t('credential.ActivateCredential'),
-                            content: record.user_id,
-                            okText: t('credential.Activate'),
-                            onOk: () => {
-                              return new Promise<void>((resolve) => {
-                                commitModifyKeypair({
-                                  variables: {
-                                    access_key: record.access_key ?? '',
-                                    props: {
-                                      is_active: true,
-                                    },
+                        popConfirm: {
+                          title: t('credential.ActivateCredential'),
+                          description: record.user_id,
+                          okText: t('credential.Activate'),
+                          cancelText: t('button.Cancel'),
+                          onConfirm: () => {
+                            return new Promise<void>((resolve) => {
+                              commitModifyKeypair({
+                                variables: {
+                                  access_key: record.access_key ?? '',
+                                  props: {
+                                    is_active: true,
                                   },
-                                  onCompleted: (res, errors) => {
-                                    if (!res?.modify_keypair?.ok || errors) {
-                                      message.error(res?.modify_keypair?.msg);
-                                      resolve();
-                                      return;
-                                    }
-                                    message.success(
-                                      t(
-                                        'credential.KeypairStatusUpdatedSuccessfully',
-                                      ),
-                                    );
-                                    updateFetchKey();
+                                },
+                                onCompleted: (res, errors) => {
+                                  if (!res?.modify_keypair?.ok || errors) {
+                                    message.error(res?.modify_keypair?.msg);
                                     resolve();
-                                  },
-                                  onError: (error) => {
-                                    message.error(error?.message);
-                                    logger.error(error);
-                                    resolve();
-                                  },
-                                });
+                                    return;
+                                  }
+                                  message.success(
+                                    t(
+                                      'credential.KeypairStatusUpdatedSuccessfully',
+                                    ),
+                                  );
+                                  updateFetchKey();
+                                  resolve();
+                                },
+                                onError: (error) => {
+                                  message.error(error?.message);
+                                  logger.error(error);
+                                  resolve();
+                                },
                               });
-                            },
-                          });
+                            });
+                          },
                         },
                       },
                     ]
@@ -360,46 +361,45 @@ const UserCredentialList: React.FC = () => {
                         title: t('credential.Deactivate'),
                         icon: <BanIcon />,
                         type: 'danger' as const,
-                        onClick: () => {
-                          modal.confirm({
-                            title: t('credential.DeactivateCredential'),
-                            content: record.user_id,
-                            okButtonProps: {
-                              danger: true,
-                            },
-                            okText: t('credential.Deactivate'),
-                            onOk: () => {
-                              return new Promise<void>((resolve) => {
-                                commitModifyKeypair({
-                                  variables: {
-                                    access_key: record.access_key ?? '',
-                                    props: {
-                                      is_active: false,
-                                    },
+                        popConfirm: {
+                          title: t('credential.DeactivateCredential'),
+                          description: record.user_id,
+                          okButtonProps: {
+                            danger: true,
+                          },
+                          okText: t('credential.Deactivate'),
+                          cancelText: t('button.Cancel'),
+                          onConfirm: () => {
+                            return new Promise<void>((resolve) => {
+                              commitModifyKeypair({
+                                variables: {
+                                  access_key: record.access_key ?? '',
+                                  props: {
+                                    is_active: false,
                                   },
-                                  onCompleted: (res, errors) => {
-                                    if (!res?.modify_keypair?.ok || errors) {
-                                      message.error(res?.modify_keypair?.msg);
-                                      resolve();
-                                      return;
-                                    }
-                                    message.success(
-                                      t(
-                                        'credential.KeypairStatusUpdatedSuccessfully',
-                                      ),
-                                    );
-                                    updateFetchKey();
+                                },
+                                onCompleted: (res, errors) => {
+                                  if (!res?.modify_keypair?.ok || errors) {
+                                    message.error(res?.modify_keypair?.msg);
                                     resolve();
-                                  },
-                                  onError: (error) => {
-                                    message.error(error?.message);
-                                    logger.error(error);
-                                    resolve();
-                                  },
-                                });
+                                    return;
+                                  }
+                                  message.success(
+                                    t(
+                                      'credential.KeypairStatusUpdatedSuccessfully',
+                                    ),
+                                  );
+                                  updateFetchKey();
+                                  resolve();
+                                },
+                                onError: (error) => {
+                                  message.error(error?.message);
+                                  logger.error(error);
+                                  resolve();
+                                },
                               });
-                            },
-                          });
+                            });
+                          },
                         },
                       },
                     ]
@@ -410,57 +410,7 @@ const UserCredentialList: React.FC = () => {
                         icon: <DeleteFilled />,
                         type: 'danger' as const,
                         onClick: () => {
-                          modal.confirm({
-                            title: t('credential.DeleteCredential'),
-                            content: (
-                              <BAIFlex direction="column" align="stretch">
-                                <Typography.Text>
-                                  {t(
-                                    'credential.YouAreAboutToDeleteCredential',
-                                  )}
-                                </Typography.Text>
-                                <Typography.Text strong>
-                                  {record.user_id}
-                                </Typography.Text>
-                                <br />
-                                <Typography.Text type="danger">
-                                  {t('dialog.warning.CannotBeUndone')}
-                                </Typography.Text>
-                              </BAIFlex>
-                            ),
-                            onOk: () => {
-                              return new Promise<void>((resolve) => {
-                                commitDeleteKeypair({
-                                  variables: {
-                                    access_key: record.access_key ?? '',
-                                  },
-                                  onCompleted: (res, errors) => {
-                                    if (!res?.delete_keypair?.ok || errors) {
-                                      message.error(res?.delete_keypair?.msg);
-                                      resolve();
-                                      return;
-                                    }
-                                    message.success(
-                                      t(
-                                        'credential.KeypairSuccessfullyDeleted',
-                                      ),
-                                    );
-                                    updateFetchKey();
-                                    resolve();
-                                  },
-                                  onError: (error) => {
-                                    message.error(error?.message);
-                                    logger.error(error);
-                                    resolve();
-                                  },
-                                });
-                              });
-                            },
-                            okButtonProps: {
-                              danger: true,
-                            },
-                            okText: t('button.Delete'),
-                          });
+                          setDeletingKeypair(record);
                         },
                       },
                     ]),
@@ -608,6 +558,48 @@ const UserCredentialList: React.FC = () => {
             updateFetchKey();
           }
         }}
+      />
+      <BAIDeleteConfirmModal
+        open={!!deletingKeypair}
+        title={t('credential.DeleteCredential')}
+        target={t('general.Credential')}
+        items={
+          deletingKeypair
+            ? [
+                {
+                  key: deletingKeypair.access_key ?? '',
+                  label: deletingKeypair.access_key ?? '',
+                },
+              ]
+            : []
+        }
+        confirmText={deletingKeypair?.access_key ?? ''}
+        requireConfirmInput
+        onOk={() => {
+          if (deletingKeypair) {
+            commitDeleteKeypair({
+              variables: {
+                access_key: deletingKeypair.access_key ?? '',
+              },
+              onCompleted: (res, errors) => {
+                if (!res?.delete_keypair?.ok || errors) {
+                  message.error(res?.delete_keypair?.msg);
+                  setDeletingKeypair(null);
+                  return;
+                }
+                message.success(t('credential.KeypairSuccessfullyDeleted'));
+                setDeletingKeypair(null);
+                updateFetchKey();
+              },
+              onError: (error) => {
+                message.error(error?.message);
+                logger.error(error);
+                setDeletingKeypair(null);
+              },
+            });
+          }
+        }}
+        onCancel={() => setDeletingKeypair(null)}
       />
     </BAIFlex>
   );

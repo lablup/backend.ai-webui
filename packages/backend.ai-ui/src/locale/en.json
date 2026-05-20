@@ -96,6 +96,7 @@
   },
   "comp:BAIDeleteConfirmModal": {
     "AreYouSureToDelete": "Are you sure you want to delete?",
+    "AreYouSureToPermanentlyDeleteTarget": "Are you sure you want to permanently delete {{target}}?",
     "CannotBeUndone": "This action cannot be undone.",
     "DeleteItem": "Delete",
     "DeleteNItems": "Delete {{count}} items",
@@ -216,7 +217,6 @@
     "UpdateProject": "Update Project"
   },
   "comp:BAIProjectTable": {
-    "AreYouSureToDeactivateProject": "Are you sure to deactivate project {{projectName}}?",
     "AreYouSureToPurgeProject": "Are you sure to purge {{projectName}}? This action is irreversible.",
     "ContainerRegistry": "Container Registry",
     "Controls": "Controls",
@@ -408,8 +408,10 @@
   },
   "general": {
     "DeselectAll": "Deselect all",
+    "File": "File",
     "NSelected": "{{count}} selected",
     "Optional": "Optional",
+    "Project": "Project",
     "TotalItems": "Total {{total}} items",
     "button": {
       "Cancel": "Cancel",

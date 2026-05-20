@@ -93,6 +93,7 @@
   },
   "comp:BAIDeleteConfirmModal": {
     "AreYouSureToDelete": "Adakah anda pasti mahu memadam?",
+    "AreYouSureToPermanentlyDeleteTarget": "Adakah anda pasti mahu memadam {{target}} secara kekal?",
     "CannotBeUndone": "Tindakan ini tidak dapat dibatalkan.",
     "DeleteItem": "Padam",
     "DeleteNItems": "Padam {{count}} item",
@@ -213,7 +214,6 @@
     "UpdateProject": "Kemas kini Projek"
   },
   "comp:BAIProjectTable": {
-    "AreYouSureToDeactivateProject": "Adakah anda pasti mahu nyahaktifkan projek {{projectName}}?",
     "AreYouSureToPurgeProject": "Adakah anda pasti mahu memadam sepenuhnya {{projectName}}? Tindakan ini tidak boleh dipulihkan.",
     "ContainerRegistry": "Registri Kontena",
     "Controls": "Kawalan",
@@ -402,8 +402,10 @@
   },
   "general": {
     "DeselectAll": "Nyahpilih semua",
+    "File": "Fail",
     "NSelected": "{{count}} dipilih",
     "Optional": "Pilihan",
+    "Project": "Projek",
     "TotalItems": "Jumlah {{total}} item",
     "button": {
       "Cancel": "Batalkan",

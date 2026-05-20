@@ -123,7 +123,7 @@ Backend.AIサーバーデーモン/サービスには、以下のハードウェ
 - Manager: 2コア、4 GiBメモリ
 - Agent: 4コア、32 GiBメモリ、NVIDIA GPU（GPUワークロード用）、> 512 GiB SSD
 - Webserver: 2コア、4 GiBメモリ
-- WSProxy: 2コア、4 GiBメモリ
+- App Proxy: 2コア、4 GiBメモリ
 - PostgreSQL DB: 2コア、4 GiBメモリ
 - Redis: 1コア、2 GiBメモリ
 - Etcd: 1コア、2 GiBメモリ
@@ -134,7 +134,7 @@ Backend.AIサーバーデーモン/サービスには、以下のハードウェ
 - Manager: Python (≥3.8)、pyenv/pyenv-virtualenv (≥1.2)
 - Agent: docker (≥19.03)、CUDA/CUDA Toolkit (≥8、11推奨)、nvidia-docker v2、Python (≥3.8)、pyenv/pyenv-virtualenv (≥1.2)
 - Webserver: Python (≥3.8)、pyenv/pyenv-virtualenv (≥1.2)
-- WSProxy: docker (≥19.03)、docker-compose (≥1.24)
+- App Proxy: docker (≥19.03)、docker-compose (≥1.24)
 - PostgreSQL DB: docker (≥19.03)、docker-compose (≥1.24)
 - Redis: docker (≥19.03)、docker-compose (≥1.24)
 - Etcd: docker (≥19.03)、docker-compose (≥1.24)

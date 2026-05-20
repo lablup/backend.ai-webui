@@ -21,7 +21,7 @@ import VFolderNodeIdenticon from './VFolderNodeIdenticon';
 import VFolderPermissionCell from './VFolderPermissionCell';
 import { DeleteFilled, DeleteOutlined, UserOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { Alert, App, theme, Typography } from 'antd';
+import { App, theme, Typography } from 'antd';
 import {
   filterOutNullAndUndefined,
   BAIEndpointsIcon,
@@ -37,7 +37,7 @@ import {
   toLocalId,
   useErrorMessageResolver,
   BAILink,
-  BAIConfirmModalWithInput,
+  BAIDeleteConfirmModal,
   BAITag,
   bytesToGB,
 } from 'backend.ai-ui';
@@ -618,7 +618,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
         ]}
         {...tableProps}
       />
-      <BAIConfirmModalWithInput
+      <BAIDeleteConfirmModal
         open={!!deletingVFolder}
         onOk={() => {
           deleteFromTrashBinMutation.mutate(deletingVFolder?.id ?? '', {
@@ -644,29 +644,21 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
         onCancel={() => {
           setDeletingVFolder(null);
         }}
-        confirmText={deletingVFolder?.name ?? ''}
-        inputProps={{ placeholder: deletingVFolder?.name ?? '' }}
-        content={
-          <BAIFlex
-            direction="column"
-            gap="md"
-            align="stretch"
-            style={{ marginBottom: token.marginXS, width: '100%' }}
-          >
-            <Alert
-              type="warning"
-              title={t('dialog.warning.DeleteForeverDesc')}
-              style={{ width: '100%' }}
-            />
-            <BAIFlex>
-              <Typography.Text style={{ marginRight: token.marginXXS }}>
-                {t('data.folders.TypeFolderNameToDelete')}
-              </Typography.Text>
-              (<Typography.Text code>{deletingVFolder?.name}</Typography.Text>)
-            </BAIFlex>
-          </BAIFlex>
+        items={
+          deletingVFolder
+            ? [
+                {
+                  key: deletingVFolder.id ?? '',
+                  label: deletingVFolder.name ?? '',
+                },
+              ]
+            : []
         }
+        confirmText={deletingVFolder?.name ?? ''}
+        requireConfirmInput
+        inputProps={{ placeholder: deletingVFolder?.name ?? '' }}
         title={t('dialog.title.DeleteForever')}
+        target={t('general.Folder')}
         okText={t('data.folders.DeleteForever')}
       />
       <InviteFolderSettingModal

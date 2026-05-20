@@ -123,7 +123,7 @@ Backend.AI 서버 데몬/서비스를 설치하려면 다음 하드웨어 사양
 - Manager: 2코어, 4 GiB 메모리
 - Agent: 4코어, 32 GiB 메모리, NVIDIA GPU (GPU 워크로드용), > 512 GiB SSD
 - Webserver: 2코어, 4 GiB 메모리
-- WSProxy: 2코어, 4 GiB 메모리
+- App Proxy: 2코어, 4 GiB 메모리
 - PostgreSQL DB: 2코어, 4 GiB 메모리
 - Redis: 1코어, 2 GiB 메모리
 - Etcd: 1코어, 2 GiB 메모리
@@ -134,7 +134,7 @@ Backend.AI 서버 데몬/서비스를 설치하려면 다음 하드웨어 사양
 - Manager: Python (≥3.8), pyenv/pyenv-virtualenv (≥1.2)
 - Agent: docker (≥19.03), CUDA/CUDA Toolkit (≥8, 11 권장), nvidia-docker v2, Python (≥3.8), pyenv/pyenv-virtualenv (≥1.2)
 - Webserver: Python (≥3.8), pyenv/pyenv-virtualenv (≥1.2)
-- WSProxy: docker (≥19.03), docker-compose (≥1.24)
+- App Proxy: docker (≥19.03), docker-compose (≥1.24)
 - PostgreSQL DB: docker (≥19.03), docker-compose (≥1.24)
 - Redis: docker (≥19.03), docker-compose (≥1.24)
 - Etcd: docker (≥19.03), docker-compose (≥1.24)

@@ -1,4 +1,5 @@
 import react from '@vitejs/plugin-react';
+import { execSync } from 'node:child_process';
 import { createReadStream, existsSync, readFileSync, statSync } from 'node:fs';
 import {
   basename,
@@ -20,6 +21,47 @@ import svgr from 'vite-plugin-svgr';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const projectRoot = resolve(__dirname, '..');
 const require = createRequire(import.meta.url);
+
+// With `enableGlobalVirtualStore: true` (pnpm-workspace.yaml), pnpm hard-links
+// every dependency into a single global store outside this repo, with the
+// virtual `links/` directory living under the store root reported by
+// `pnpm store path` (e.g. `~/Library/pnpm/store/v11` on macOS,
+// `~/.local/share/pnpm/store/v11` on Linux — `links/<pkg>/...` lives inside).
+// Vite resolves `server.fs.allow` against each request's realpath, so allowing
+// only `projectRoot` rejects every dependency CSS/asset served from that store
+// with "outside of Vite serving allow list".
+//
+// `pnpm store path` is pnpm's officially supported discovery command; its
+// output is an ancestor of the `links/` realpaths, so adding it to `fs.allow`
+// admits every hard-linked dependency. We resolve once at dev-server start
+// (the path is stable for that lifetime) and only when actually serving —
+// `vite build` never reads `server.fs.allow`, so we skip the subprocess there.
+// We only shell out on Windows (where `pnpm` is typically a `.cmd` shim that
+// Node cannot execute directly); on POSIX a direct exec avoids the shell's
+// quoting and overhead. The result is also sanity-checked — an empty or
+// non-absolute path would silently widen the allowlist, which is the bug we
+// are trying to fix in the first place.
+function resolvePnpmStorePath(): string | undefined {
+  try {
+    const raw = execSync('pnpm store path --silent', {
+      encoding: 'utf-8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+      shell: process.platform === 'win32',
+    }).trim();
+    if (!raw || !isAbsolute(raw) || !existsSync(raw) || !statSync(raw).isDirectory()) {
+      return undefined;
+    }
+    return raw;
+  } catch (err) {
+    // Leave a breadcrumb so the resulting "outside of Vite serving allow list"
+    // errors are self-diagnosing instead of looking like a fresh regression.
+    console.warn(
+      '[vite] could not resolve pnpm store path; dependencies served from outside projectRoot may be rejected by server.fs.allow:',
+      err instanceof Error ? err.message : err,
+    );
+    return undefined;
+  }
+}
 
 // `vite-plugin-node-polyfills` injects bare-specifier imports of its own shim
 // paths (`vite-plugin-node-polyfills/shims/{buffer,global,process}`) during
@@ -380,9 +422,15 @@ function monacoStaticPlugin(): Plugin {
   };
 }
 
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ command, mode }) => {
   const env = loadEnv(mode, projectRoot, '');
   Object.assign(process.env, env);
+
+  // Only resolve the pnpm store when actually serving — `vite build` does not
+  // use `server.fs.allow`, so the subprocess is wasted there. See the
+  // `resolvePnpmStorePath` definition above for the full rationale.
+  const pnpmStorePath =
+    command === 'serve' ? resolvePnpmStorePath() : undefined;
 
   // Comma-separated list of additional hostnames to whitelist for the dev
   // server's host check (Vite 6 default-blocks anything outside localhost
@@ -569,8 +617,11 @@ export default defineConfig(({ mode }) => {
       fs: {
         // Allow Vite to read files from the whole monorepo so that the
         // alias to `../dist/lib/...` and `../packages/backend.ai-ui/src`
-        // resolves without FS sandbox 403s.
-        allow: [projectRoot],
+        // resolves without FS sandbox 403s. Additionally allow the pnpm
+        // global virtual store root (resolved dynamically above) so that
+        // dependencies hard-linked outside the repo can be served — see
+        // `resolvePnpmStorePath` for the full rationale.
+        allow: [projectRoot, ...(pnpmStorePath ? [pnpmStorePath] : [])],
       },
       watch: {
         ignored: [
@@ -737,6 +788,12 @@ export default defineConfig(({ mode }) => {
           clientsClaim: true,
           maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
           globIgnores: ['**/*.map', '**/asset-manifest.json'],
+          // vite-plugin-pwa defaults navigateFallback to 'index.html', which
+          // makes the SW serve cached HTML for ANY GET navigation that doesn't
+          // match a precached asset — including OIDC/SAML callbacks like
+          // /func/openid/redirect. The retired workbox-webpack-plugin had no
+          // such default, so this restores pre-FR-2611 behavior.
+          navigateFallback: null,
         },
       }),
     ],

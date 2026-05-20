@@ -14,6 +14,7 @@ import { DeleteFilled } from '@ant-design/icons';
 import { App, Tooltip, theme } from 'antd';
 import {
   BAIButton,
+  BAIDeleteConfirmModal,
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
@@ -67,11 +68,14 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { message, modal } = App.useApp();
+  const { message } = App.useApp();
   const { logger } = useBAILogger();
   const { upsertNotification } = useSetBAINotification();
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [revokingTargets, setRevokingTargets] = useState<
+    { userId: string; label: string }[] | null
+  >(null);
   const [isPendingRefetch, startRefetchTransition] = useTransition();
 
   const roleScope = useFragment(
@@ -282,44 +286,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
         userId;
       return { userId, label };
     });
-    modal.confirm({
-      title: t('rbac.RevokeUser'),
-      content: (
-        <BAIFlex direction="column" align="stretch" gap="xs">
-          <span>{t('rbac.ConfirmRevokeWithName')}</span>
-          <ul style={{ margin: 0, paddingInlineStart: 20 }}>
-            {targets.map(({ userId, label }) => (
-              <li key={userId}>{label}</li>
-            ))}
-          </ul>
-        </BAIFlex>
-      ),
-      okText: t('rbac.RevokeUser'),
-      okButtonProps: { danger: true },
-      onOk: () =>
-        mutateBulkRevokeRole({
-          input: { userIds, roleId },
-        })
-          .then((data) => {
-            const failed = data.adminBulkRevokeRole?.failed ?? [];
-            if (failed.length > 0) {
-              message.warning(
-                t('rbac.BulkRevokePartialFailure', {
-                  count: failed.length,
-                }),
-              );
-            } else {
-              message.success(t('rbac.UserRevoked'));
-            }
-            setSelectedRowKeys([]);
-            handleRefresh();
-            onAssignmentChange?.();
-          })
-          .catch((error) => {
-            logger.error('Failed to bulk revoke role', error);
-            message.error(error?.message || t('general.ErrorOccurred'));
-          }),
-    });
+    setRevokingTargets(targets);
   };
 
   return (
@@ -466,6 +433,51 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
             setIsAssignModalOpen(false);
           }
         }}
+      />
+      <BAIDeleteConfirmModal
+        open={!!revokingTargets}
+        title={t('rbac.RevokeUser')}
+        description={t('rbac.ConfirmRevokeWithName')}
+        items={
+          revokingTargets?.map(({ userId, label }) => ({
+            key: userId,
+            label,
+          })) ?? []
+        }
+        confirmText={t('credential.PermanentlyDelete')}
+        requireConfirmInput
+        inputLabel={t('credential.TypePermanentlyDelete', {
+          text: t('credential.PermanentlyDelete'),
+        })}
+        inputProps={{ placeholder: t('credential.PermanentlyDelete') }}
+        okText={t('rbac.RevokeUser')}
+        onOk={() => {
+          if (!revokingTargets) return;
+          const userIds = revokingTargets.map((t) => t.userId);
+          return mutateBulkRevokeRole({
+            input: { userIds, roleId },
+          })
+            .then((data) => {
+              const failed = data.adminBulkRevokeRole?.failed ?? [];
+              if (failed.length > 0) {
+                message.warning(
+                  t('rbac.BulkRevokePartialFailure', { count: failed.length }),
+                );
+              } else {
+                message.success(t('rbac.UserRevoked'));
+              }
+              setRevokingTargets(null);
+              setSelectedRowKeys([]);
+              handleRefresh();
+              onAssignmentChange?.();
+            })
+            .catch((error) => {
+              logger.error('Failed to bulk revoke role', error);
+              message.error(error?.message || t('general.ErrorOccurred'));
+              setRevokingTargets(null);
+            });
+        }}
+        onCancel={() => setRevokingTargets(null)}
       />
     </>
   );

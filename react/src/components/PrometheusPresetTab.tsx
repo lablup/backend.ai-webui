@@ -14,14 +14,13 @@ import { useBAISettingUserState } from '../hooks/useBAISetting';
 import PrometheusQueryPresetEditorModal from './PrometheusQueryPresetEditorModal';
 import PrometheusQueryPresetNodes from './PrometheusQueryPresetNodes';
 import { PlusOutlined } from '@ant-design/icons';
-import { Alert, App, theme } from 'antd';
+import { App } from 'antd';
 import {
   BAIButton,
-  BAIConfirmModalWithInput,
+  BAIDeleteConfirmModal,
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
-  BAIText,
   type GraphQLFilter,
   INITIAL_FETCH_KEY,
   toLocalId,
@@ -38,7 +37,6 @@ type DeletingPresetTarget = { id: string; name: string };
 const PrometheusPresetTab: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const { message } = App.useApp();
 
   const [queryParam, setQueryParam] = useQueryStates(
@@ -206,28 +204,20 @@ const PrometheusPresetTab: React.FC = () => {
           }
         }}
       />
-      <BAIConfirmModalWithInput
+      <BAIDeleteConfirmModal
         open={!!deletingPreset}
         title={t('prometheusQueryPreset.PermanentlyDeletePreset', {
           name: deletingPreset?.name,
         })}
-        content={
-          <BAIFlex direction="column" gap="md" align="stretch">
-            <Alert
-              type="warning"
-              title={t('prometheusQueryPreset.DeleteWarning')}
-            />
-            <BAIFlex>
-              <BAIText style={{ marginRight: token.marginXXS }}>
-                {t('dialog.TypeNameToConfirmDeletion')}
-              </BAIText>
-              (<BAIText code>{deletingPreset?.name}</BAIText>)
-            </BAIFlex>
-          </BAIFlex>
+        target={t('webui.menu.PrometheusPreset')}
+        items={
+          deletingPreset
+            ? [{ key: deletingPreset.id, label: deletingPreset.name }]
+            : []
         }
         confirmText={deletingPreset?.name ?? ''}
+        requireConfirmInput
         inputProps={{ placeholder: deletingPreset?.name ?? '' }}
-        okText={t('button.Delete')}
         confirmLoading={isInflightDelete}
         onOk={() => {
           if (!deletingPreset) return;

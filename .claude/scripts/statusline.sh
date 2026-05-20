@@ -91,12 +91,17 @@ except Exception: pass
 # URL scheme:
 #   Remote (SSH): vscode://vscode-remote/ssh-remote+<host><path>
 #     Host resolution (first match wins):
-#       1. $CLAUDE_STATUSLINE_SSH_HOST — explicit override (ssh-config alias or public hostname),
-#          useful when the server IP from SSH_CONNECTION isn't reachable from the client
-#          (NAT, VPN, port forwarding) or when key-based auth is tied to a hostname.
+#       1. $CLAUDE_STATUSLINE_SSH_HOST — explicit override (ssh-config alias or public hostname).
+#          Honored even when SSH_CONNECTION is unset (tmux/screen detach, systemd, sudo -i,
+#          background jobs, etc. all drop SSH_CONNECTION but the host is still remote).
+#          Prefer an ssh-config alias (e.g. `jongeun2`) over a bare IP — VS Code Remote-SSH
+#          invokes ssh which only matches `Host <alias>` blocks against the literal string,
+#          so an alias keeps your IdentityFile, ControlMaster, keepalive, etc.
 #       2. `<whoami>@<server-ip>` from SSH_CONNECTION — zero-config default; the third field is
-#          the exact address the client connected to, which is always reachable back.
-#   Local (no SSH): vscode://file<path>
+#          the server-side address of the SSH TCP connection. It is usually reachable from the
+#          client, but on NATed / multi-homed / DNAT'd hosts it may be an internal address that
+#          the client cannot route back to — set CLAUDE_STATUSLINE_SSH_HOST in that case.
+#   Local (no SSH and no override): vscode://file<path>
 VSCODE_PART=""
 if [[ -n "$WORKSPACE" ]]; then
   VSCODE_WS=$(find "$WORKSPACE" -maxdepth 1 -name '*.code-workspace' -print -quit 2>/dev/null) || true
@@ -104,13 +109,15 @@ if [[ -n "$WORKSPACE" ]]; then
   # %-encode path segments (preserve /) so spaces and reserved chars survive OSC 8 / URI parsing.
   VSCODE_TARGET=$(python3 -c 'import sys,urllib.parse;print(urllib.parse.quote(sys.argv[1], safe="/"))' "$VSCODE_TARGET_RAW" 2>/dev/null) || VSCODE_TARGET="$VSCODE_TARGET_RAW"
   VSCODE_URL=""
-  if [[ -n "${SSH_CONNECTION:-}" ]]; then
-    VSCODE_HOST="${CLAUDE_STATUSLINE_SSH_HOST:-}"
-    if [[ -z "$VSCODE_HOST" ]]; then
-      VSCODE_IP=$(awk '{print $3}' <<< "$SSH_CONNECTION")
-      [[ -n "$VSCODE_IP" ]] && VSCODE_HOST="$(whoami)@${VSCODE_IP}"
-    fi
-    [[ -n "$VSCODE_HOST" ]] && VSCODE_URL="vscode://vscode-remote/ssh-remote+${VSCODE_HOST}${VSCODE_TARGET}"
+  VSCODE_HOST=""
+  if [[ -n "${CLAUDE_STATUSLINE_SSH_HOST:-}" ]]; then
+    VSCODE_HOST="$CLAUDE_STATUSLINE_SSH_HOST"
+  elif [[ -n "${SSH_CONNECTION:-}" ]]; then
+    VSCODE_IP=$(awk '{print $3}' <<< "$SSH_CONNECTION")
+    [[ -n "$VSCODE_IP" ]] && VSCODE_HOST="$(whoami)@${VSCODE_IP}"
+  fi
+  if [[ -n "$VSCODE_HOST" ]]; then
+    VSCODE_URL="vscode://vscode-remote/ssh-remote+${VSCODE_HOST}${VSCODE_TARGET}"
   else
     VSCODE_URL="vscode://file${VSCODE_TARGET}"
   fi

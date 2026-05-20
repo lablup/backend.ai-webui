@@ -23,8 +23,13 @@ export interface BAIDeleteConfirmModalProps extends Omit<
   items: BAIDeleteConfirmModalItem[];
   /** Custom modal title. Defaults to "Delete" / "Delete N items". */
   title?: React.ReactNode;
-  /** Description shown above the item list. Defaults to "Are you sure you want to delete?" */
+  /** Description shown above the item list. If omitted, falls back to a `target`-based or generic default. */
   description?: React.ReactNode;
+  /**
+   * Resource type label (e.g. "Credential", "Project"). When provided and `description` is not,
+   * the default description becomes "Are you sure you want to permanently delete {target}?".
+   */
+  target?: React.ReactNode;
   /** Force text-input confirmation even for a single item. Default: false */
   requireConfirmInput?: boolean;
   /**
@@ -54,6 +59,7 @@ const BAIDeleteConfirmModal: React.FC<BAIDeleteConfirmModalProps> = ({
   items,
   title,
   description,
+  target,
   requireConfirmInput = false,
   confirmText: confirmTextProp,
   inputLabel,
@@ -83,14 +89,19 @@ const BAIDeleteConfirmModal: React.FC<BAIDeleteConfirmModalProps> = ({
         })
       : t('comp:BAIDeleteConfirmModal.DeleteItem'));
 
-  const resolvedDescription =
-    description ?? t('comp:BAIDeleteConfirmModal.AreYouSureToDelete');
-
   const resolvedConfirmText =
     confirmTextProp ??
     (items.length === 1
       ? (extractTextFromNode(items[0]?.label) ?? t('general.button.Delete'))
       : t('general.button.Delete'));
+
+  const resolvedDescription =
+    description ??
+    (target
+      ? t('comp:BAIDeleteConfirmModal.AreYouSureToPermanentlyDeleteTarget', {
+          target,
+        })
+      : t('comp:BAIDeleteConfirmModal.AreYouSureToDelete'));
 
   const resolvedOkText = okText ?? t('general.button.Delete');
 
@@ -159,7 +170,7 @@ const BAIDeleteConfirmModal: React.FC<BAIDeleteConfirmModalProps> = ({
         }}
       >
         <BAIFlex direction="column" align="stretch" gap="xs">
-          <Text>{resolvedDescription}</Text>
+          {resolvedDescription && <Text>{resolvedDescription}</Text>}
           {items.length > 1 && itemListContent}
           <Form
             form={form}
@@ -199,7 +210,7 @@ const BAIDeleteConfirmModal: React.FC<BAIDeleteConfirmModalProps> = ({
       onCancel={onCancel}
     >
       <BAIFlex direction="column" align="stretch" gap="xs">
-        <Text>{resolvedDescription}</Text>
+        {resolvedDescription && <Text>{resolvedDescription}</Text>}
         {itemListContent}
         <Text type="danger">
           {t('comp:BAIDeleteConfirmModal.CannotBeUndone')}
