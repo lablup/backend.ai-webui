@@ -117,7 +117,9 @@ Production build (`pnpm run build`) runs these steps sequentially:
   - **GitHub**: Use `gh` CLI (preferred) or GitHub MCP (`mcp__github__*`)
   - **Git/PR**: Use Graphite MCP (`mcp__graphite__run_gt_cmd`) for branch/commit/push
     - Do NOT use `git commit`, `git push`, `git checkout -b` directly
-    - Allowed: `git status`, `git diff`, `git add`, `git log`, `git stash`
+    - Allowed: `git status`, `git diff`, `git add`, `git log`, `git stash`, `git worktree`
+    - When rebasing a child branch onto an updated parent in a stack, use `gt restack` — never plain `git rebase`. Plain `git rebase` rewrites commits without updating Graphite's stack metadata, which breaks `gt submit --stack` later. If the branch isn't tracked yet (`gt ls`), run `gt track --parent <parent>` first.
+    - When checking out a PR for review (e.g. for an agent session), land on the PR's actual **branch**, not a detached HEAD. Either create a worktree on the PR's head branch (`git worktree add <path> <head-branch>`), or run `gh pr checkout <N>` to check it out in the current working tree — never check out a bare commit SHA. Verify with `git status` that it reports `On branch <name>`.
 - Follow Graphite's Stacked PR strategy. Write work by appropriately stacking individual PRs.
 - When amending a PR with significant changes, update the PR description to reflect the new scope. Minor fixes don't need description updates, but new features, deleted files, or changed approach should be reflected.
 
