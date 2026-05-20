@@ -21,7 +21,7 @@ import {
   reverseMapExtraArgs,
 } from '../helper/runtimeExtraArgsParser';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
-import { useModelStoreProject } from '../hooks/useModelStoreProject';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import {
   buildArgsSchemaKeySet,
   buildDefaultsMap,
@@ -71,10 +71,11 @@ import {
   BAIFlex,
   BAIModal,
   BAIModalProps,
-  BAIProjectVfolderSelect,
   BAIRuntimeVariantSelect,
+  BAIVFolderSelect,
   convertToUUID,
   safeDecodeUuid,
+  toGlobalId,
   toLocalId,
   useBAILogger,
 } from 'backend.ai-ui';
@@ -180,10 +181,11 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   const { token } = theme.useToken();
   const { message } = App.useApp();
   const relayEnvironment = useRelayEnvironment();
-  // The model folder picker scopes to the MODEL_STORE project, not the
-  // deployment's own project — model cards live in the domain-wide model
-  // store regardless of which project owns the deployment.
-  const { id: modelStoreProjectId } = useModelStoreProject();
+  // The model folder picker scopes to the user's current project so the
+  // listing matches what the user has access to in the active project
+  // context, consistent with the rest of the model-deployment UI
+  // (ServiceLauncherPageContent, ModelCardDeployModal).
+  const { id: currentProjectId } = useCurrentProjectValue();
   const { logger } = useBAILogger();
 
   // Defer `open` so the lazy query only fires once the modal has actually
@@ -263,7 +265,6 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       query DeploymentAddRevisionModalQuery($deploymentId: ID!) {
         deployment(id: $deploymentId) {
           metadata {
-            projectId
             resourceGroupName
           }
           currentRevision {
@@ -392,8 +393,12 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   // The parent deployment's vfolder is the default Model Folder. Users can
   // override it in this mode (in contrast to the VFolder/ModelStore entry
   // point where the folder is locked in by context).
-  const defaultModelFolderId =
-    currentRevision?.modelMountConfig?.vfolderId ?? undefined;
+  const defaultModelFolderId = currentRevision?.modelMountConfig?.vfolderId
+    ? toGlobalId(
+        'VirtualFolderNode',
+        currentRevision?.modelMountConfig?.vfolderId,
+      )
+    : undefined;
 
   // The `BAIAvailablePresetSelect` paginates independently of this modal's
   // main query (it can scroll past the first page on demand), so the user
@@ -758,10 +763,9 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           ]),
       ),
       runtimeVariantId: rev.modelRuntimeConfig?.runtimeVariantId ?? undefined,
-      // BAIProjectVfolderSelect returns the canonical dashed UUID, which
-      // matches `rev.modelMountConfig.vfolderId` directly. `convertToUUID`
-      // in the submit is idempotent on already-dashed values.
-      modelFolderId: rev.modelMountConfig?.vfolderId ?? undefined,
+      modelFolderId: rev.modelMountConfig?.vfolderId
+        ? toGlobalId('VirtualFolderNode', rev.modelMountConfig.vfolderId)
+        : undefined,
       mountDestination: rev.modelMountConfig?.mountDestination ?? '/models',
       definitionPath: rev.modelMountConfig?.definitionPath ?? undefined,
       // `ImageEnvironmentSelectFormItems` matches the form's
@@ -1021,7 +1025,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
               environEntries.length > 0 ? { entries: environEntries } : null,
           },
           modelMountConfig: {
-            vfolderId: convertToUUID(values.modelFolderId),
+            vfolderId: toLocalId(values.modelFolderId),
             mountDestination,
             definitionPath: values.definitionPath,
           },
@@ -1072,7 +1076,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           deploymentId: toLocalId(deploymentId) ?? deploymentId,
           revisionPresetId: values.revisionPresetId,
           modelMountConfig: {
-            vfolderId: convertToUUID(values.modelFolderId),
+            vfolderId: toLocalId(values.modelFolderId),
             mountDestination: '/models',
           },
           options: { autoActivate },
@@ -1273,13 +1277,11 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
               tooltip={t('deployment.ModelFolderTooltip')}
               rules={[{ required: true }]}
             >
-              <BAIProjectVfolderSelect
-                projectId={modelStoreProjectId ?? ''}
-                disabled={!modelStoreProjectId}
-                filter={{
-                  usageMode: { equals: 'MODEL' },
-                  status: { equals: 'READY' },
-                }}
+              <BAIVFolderSelect
+                currentProjectId={currentProjectId ?? undefined}
+                disabled={!currentProjectId}
+                excludeDeleted
+                filter='usage_mode == "model"'
                 style={{ width: '100%' }}
               />
             </Form.Item>
@@ -1332,13 +1334,11 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
             tooltip={t('deployment.ModelFolderTooltip')}
             rules={[{ required: true }]}
           >
-            <BAIProjectVfolderSelect
-              projectId={modelStoreProjectId ?? ''}
-              disabled={!modelStoreProjectId}
-              filter={{
-                usageMode: { equals: 'MODEL' },
-                status: { equals: 'READY' },
-              }}
+            <BAIVFolderSelect
+              currentProjectId={currentProjectId ?? undefined}
+              disabled={!currentProjectId}
+              excludeDeleted
+              filter='usage_mode == "model"'
               style={{ width: '100%' }}
             />
           </Form.Item>
@@ -1592,7 +1592,10 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                       {({ getFieldValue }: FormInstance<FormValues>) => {
                         const modelFolderId = getFieldValue('modelFolderId');
                         const modelFolderIdNoDash = modelFolderId
-                          ? String(modelFolderId).replace(/-/g, '')
+                          ? safeDecodeUuid(String(modelFolderId))?.replace(
+                              /-/g,
+                              '',
+                            )
                           : undefined;
                         return (
                           <VFolderTableFormItem
