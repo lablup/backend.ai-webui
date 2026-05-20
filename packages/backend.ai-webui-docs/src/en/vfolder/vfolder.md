@@ -127,7 +127,6 @@ detail drawer; the required permission must be enabled for *that* host.
 :::
 
 ![](../images/vfolder_upload_disabled.png)
-<!-- TODO: Capture screenshot of the disabled Upload button with permission tooltip -->
 
 The maximum length of file or directory inside a folder may depends on the host
 file system. But, it usually cannot exceed 255 characters.
@@ -196,7 +195,6 @@ this action cannot be undone.
 :::
 
 ![](../images/vfolder_cascading_delete_warning.png)
-<!-- TODO: Capture screenshot of the cascading delete warning dialog -->
 
 Administrators who delete model cards from the **Admin → Manage Model Cards**
 page can trigger the inverse flow — bulk-deleting model cards offers an option
