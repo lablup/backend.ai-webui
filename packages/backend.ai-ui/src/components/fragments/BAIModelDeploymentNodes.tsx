@@ -14,7 +14,6 @@ import {
   BAIColumnType,
   BAIColumnsType,
   BAINameActionCell,
-  BAINameActionCellProps,
   BAITable,
   BAITableProps,
 } from '../Table';
@@ -46,19 +45,6 @@ const COLUMN_KEY_TO_FIELD: Record<string, string> = {
   resourceGroup: 'RESOURCE_GROUP',
   tags: 'TAG',
 };
-
-/**
- * @deprecated Use `nameColumnActionProps` via `customizeColumns` instead.
- * Kept temporarily for backward compatibility while migrating away from
- * the prop.
- */
-export type BAIModelDeploymentNodesNameColumnActionProps =
-  | BAINameActionCellProps
-  | ((
-      value: any,
-      record: ModelDeploymentNodeInList,
-      index: number,
-    ) => BAINameActionCellProps);
 
 const availableDeploymentSorterKeys = [
   'name',
@@ -111,15 +97,6 @@ export interface BAIModelDeploymentNodesProps extends Omit<
   onChangeOrder?: (
     order: (typeof availableDeploymentSorterValues)[number] | null,
   ) => void;
-  /**
-   * Props forwarded to the `BAINameActionCell` used in the `name` column.
-   * Accepts either a static object or a function receiving the column
-   * render arguments `(value, record, index)` and returning props.
-   *
-   * @deprecated Prefer `customizeColumns` to override the name column's
-   * render. Will be removed once existing consumers migrate.
-   */
-  nameColumnActionProps?: BAIModelDeploymentNodesNameColumnActionProps;
 }
 
 const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
@@ -127,7 +104,6 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
   customizeColumns,
   disableSorter,
   onChangeOrder,
-  nameColumnActionProps,
   ...tableProps
 }) => {
   'use memo';
@@ -197,19 +173,12 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
         fixed: 'left',
         required: true,
         sorter: isEnableSorter('name'),
-        render: (value, record, index) => {
-          const resolvedProps =
-            typeof nameColumnActionProps === 'function'
-              ? nameColumnActionProps(value, record, index)
-              : nameColumnActionProps;
-          return (
-            <BAINameActionCell
-              title={record.metadata?.name ?? '-'}
-              showActions="always"
-              {...resolvedProps}
-            />
-          );
-        },
+        render: (_value, record) => (
+          <BAINameActionCell
+            title={record.metadata?.name ?? '-'}
+            showActions="always"
+          />
+        ),
       },
       {
         key: 'currentRevisionNumber',
