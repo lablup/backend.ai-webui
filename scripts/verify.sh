@@ -50,7 +50,29 @@ check_warmup_paths() {
   return $missing
 }
 
-run_check "Relay" pnpm run relay
+check_relay_drift() {
+  # Relay generated artifacts are committed (see relay.dev production setup).
+  # Any change under __generated__ after compiling means sources or schema
+  # were updated without a matching `pnpm relay` run.
+  #
+  # Use `git status --porcelain` instead of `git diff --exit-code` so that
+  # *new* generated files (e.g. when a developer adds a fragment) are caught
+  # as drift too — `git diff` only sees tracked files.
+  pnpm run relay || return 1
+  local dirty
+  dirty=$(git status --porcelain -- \
+    'react/src/__generated__' \
+    'packages/backend.ai-ui/src/__generated__')
+  if [ -n "$dirty" ]; then
+    echo "$dirty"
+    echo "Relay generated artifacts are out of sync."
+    echo "Run \`pnpm relay\` and commit the changes under __generated__."
+    return 1
+  fi
+  return 0
+}
+
+run_check "Relay" check_relay_drift
 run_check "Lint" pnpm run lint
 run_check "Format" pnpm run format
 run_check "TypeScript" pnpm --prefix ./react exec tsc --noEmit
