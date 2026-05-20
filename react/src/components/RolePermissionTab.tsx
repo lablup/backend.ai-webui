@@ -257,7 +257,7 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
                 'USER',
                 'SESSION',
                 'VFOLDER',
-                'DEPLOYMENT',
+                'MODEL_DEPLOYMENT',
                 'RESOURCE_GROUP',
                 'IMAGE',
               ].map((type) => ({
@@ -276,7 +276,7 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
                 'USER',
                 'SESSION',
                 'VFOLDER',
-                'DEPLOYMENT',
+                'MODEL_DEPLOYMENT',
                 'RESOURCE_GROUP',
                 'IMAGE',
               ].map((type) => ({
