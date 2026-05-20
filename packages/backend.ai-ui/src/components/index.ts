@@ -97,6 +97,11 @@ export { default as BAIUncontrolledInput } from './BAIUncontrolledInput';
 export { default as BAITag } from './BAITag';
 export { default as BAITagList } from './BAITagList';
 export type { BAITagListProps } from './BAITagList';
+export { default as BAIDeploymentStatusTag } from './BAIDeploymentStatusTag';
+export type {
+  BAIDeploymentStatusTagProps,
+  BAIDeploymentStatus,
+} from './BAIDeploymentStatusTag';
 export { default as BAIIntervalView } from './BAIIntervalView';
 export { default as BAIDoubleTag } from './BAIDoubleTag';
 export type { DoubleTagObjectValue, BAIDoubleTagProps } from './BAIDoubleTag';

@@ -102,8 +102,24 @@
     "DeleteNItems": "Delete {{count}} items",
     "TypeToConfirm": "Type <code>{{confirmText}}</code> to confirm."
   },
+  "comp:BAIDeploymentOwnerInfo": {
+    "CreatedBy": "Created by"
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Select Deployment"
+  },
+  "comp:BAIDeploymentStatusTag": {
+    "Degraded": "Degraded",
+    "Deploying": "Deploying",
+    "Healthy": "Healthy",
+    "NotChecked": "Not Checked",
+    "Pending": "Pending",
+    "Ready": "Ready",
+    "Scaling": "Scaling",
+    "Stopped": "Stopped",
+    "Stopping": "Stopping",
+    "Terminated": "Terminated",
+    "Unhealthy": "Unhealthy"
   },
   "comp:BAIDomainSelect": {
     "SelectDomain": "Select Domain"

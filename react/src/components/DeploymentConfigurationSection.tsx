@@ -13,7 +13,6 @@ import DeploymentRevisionDetail from './DeploymentRevisionDetail';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
 import DeploymentRevisionHistoryTab from './DeploymentRevisionHistoryTab';
 import DeploymentSettingModal from './DeploymentSettingModal';
-import DeploymentTagChips from './DeploymentTagChips';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import {
   DeleteFilled,
@@ -38,6 +37,7 @@ import {
   BAIButton,
   BAICard,
   BAIDeleteConfirmModal,
+  BAIDeploymentTagChips,
   BAIFetchKeyButton,
   BAIFlex,
   BAIId,
@@ -78,6 +78,8 @@ const DeploymentOverviewContent: React.FC<{
 }> = ({ deployment }) => {
   'use memo';
   const { t } = useTranslation();
+  const webuiNavigate = useWebUINavigate();
+  const location = useLocation();
 
   const projectName =
     deployment?.metadata.projectV2?.basicInfo?.name ??
@@ -155,8 +157,21 @@ const DeploymentOverviewContent: React.FC<{
       key: 'tags',
       label: t('deployment.Tags'),
       children: (
-        <DeploymentTagChips
+        <BAIDeploymentTagChips
           metadataFrgmt={deployment?.metadata ?? null}
+          onTagClick={(tag) => {
+            const targetPathname = location.pathname.startsWith(
+              '/admin-deployments',
+            )
+              ? '/admin-deployments'
+              : '/deployments';
+            webuiNavigate({
+              pathname: targetPathname,
+              search: new URLSearchParams({
+                filter: JSON.stringify({ tags: { iContains: tag } }),
+              }).toString(),
+            });
+          }}
           fallback={renderFallback()}
         />
       ),
@@ -207,7 +222,7 @@ const DeploymentConfigurationSection: React.FC<
               name
             }
           }
-          ...DeploymentTagChips_metadata
+          ...BAIDeploymentTagChips_metadata
         }
         networkAccess {
           openToPublic

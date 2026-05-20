@@ -9,17 +9,18 @@ import {
 } from '../__generated__/DeploymentList_modelDeploymentConnection.graphql';
 import type { DeploymentRevisionDetail_revision$key } from '../__generated__/DeploymentRevisionDetail_revision.graphql';
 import { DeploymentSettingModal_deployment$key } from '../__generated__/DeploymentSettingModal_deployment.graphql';
-import { useSuspendedBackendaiClient } from '../hooks';
+import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import BAIRadioGroup from './BAIRadioGroup';
-import DeploymentOwnerInfo from './DeploymentOwnerInfo';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
-import DeploymentStatusTag, { DeploymentStatus } from './DeploymentStatusTag';
-import DeploymentTagChips from './DeploymentTagChips';
 import QuestionIconWithTooltip from './QuestionIconWithTooltip';
 import { DeleteFilled, EditOutlined } from '@ant-design/icons';
 import { App, Typography } from 'antd';
 import {
   BAIDeleteConfirmModal,
+  BAIDeploymentOwnerInfo,
+  BAIDeploymentStatus,
+  BAIDeploymentStatusTag,
+  BAIDeploymentTagChips,
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAIId,
@@ -41,6 +42,7 @@ import * as _ from 'lodash-es';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
+import { useLocation } from 'react-router-dom';
 
 type DeploymentEdge = NonNullable<
   NonNullable<DeploymentList_modelDeploymentConnection$data['edges']>[number]
@@ -149,6 +151,8 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const baiClient = useSuspendedBackendaiClient();
+  const webuiNavigate = useWebUINavigate();
+  const location = useLocation();
   const [deletingDeployment, setDeletingDeployment] = useState<{
     id: string;
     name: string;
@@ -186,7 +190,7 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
                 id
               }
               resourceGroupName
-              ...DeploymentTagChips_metadata
+              ...BAIDeploymentTagChips_metadata
             }
             networkAccess {
               endpointUrl
@@ -213,7 +217,7 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
               }
               ...DeploymentRevisionDetail_revision
             }
-            ...DeploymentOwnerInfo_deployment
+            ...BAIDeploymentOwnerInfo_deployment
           }
         }
       }
@@ -373,9 +377,9 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
       key: 'status',
       title: t('deployment.filter.Status'),
       render: (_text, row) => {
-        const status = row.metadata?.status as DeploymentStatus | undefined;
+        const status = row.metadata?.status as BAIDeploymentStatus | undefined;
         if (!status) return '-';
-        return <DeploymentStatusTag status={status} />;
+        return <BAIDeploymentStatusTag status={status} />;
       },
     },
     {
@@ -441,9 +445,22 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
       defaultHidden: true,
       sorter: true,
       render: (_text, row) => (
-        <DeploymentTagChips
+        <BAIDeploymentTagChips
           metadataFrgmt={row.metadata}
           stopRowClick
+          onTagClick={(tag) => {
+            const targetPathname = location.pathname.startsWith(
+              '/admin-deployments',
+            )
+              ? '/admin-deployments'
+              : '/deployments';
+            webuiNavigate({
+              pathname: targetPathname,
+              search: new URLSearchParams({
+                filter: JSON.stringify({ tags: { iContains: tag } }),
+              }).toString(),
+            });
+          }}
           fallback={<Typography.Text type="secondary">-</Typography.Text>}
         />
       ),
@@ -543,7 +560,7 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
     isAdminMode && {
       key: 'owner',
       title: t('deployment.Owner'),
-      render: (_text, row) => <DeploymentOwnerInfo deploymentFrgmt={row} />,
+      render: (_text, row) => <BAIDeploymentOwnerInfo deploymentFrgmt={row} />,
     },
   ]);
 

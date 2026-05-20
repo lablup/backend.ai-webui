@@ -9,9 +9,6 @@ import DeploymentAddRevisionModal from '../components/DeploymentAddRevisionModal
 import DeploymentAutoScalingTab from '../components/DeploymentAutoScalingTab';
 import DeploymentConfigurationSection from '../components/DeploymentConfigurationSection';
 import DeploymentReplicasTab from '../components/DeploymentReplicasTab';
-import DeploymentStatusTag, {
-  DeploymentStatus,
-} from '../components/DeploymentStatusTag';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { PlusOutlined, QuestionCircleOutlined } from '@ant-design/icons';
@@ -20,6 +17,8 @@ import { Alert, Button, Skeleton, Tooltip, Typography, theme } from 'antd';
 import {
   BAIButton,
   BAICard,
+  BAIDeploymentStatusTag,
+  BAIDeploymentStatus,
   BAIFlex,
   BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
@@ -100,7 +99,7 @@ const DeploymentDetailPage: React.FC = () => {
   }
 
   const deploymentName = deployment.metadata.name;
-  const deploymentStatus = deployment.metadata.status as DeploymentStatus;
+  const deploymentStatus = deployment.metadata.status as BAIDeploymentStatus;
   const isDeploymentDestroying =
     deploymentStatus === 'STOPPING' ||
     deploymentStatus === 'STOPPED' ||
@@ -148,7 +147,7 @@ const DeploymentDetailPage: React.FC = () => {
         <Typography.Title level={3} style={{ margin: 0 }}>
           {deploymentName}
         </Typography.Title>
-        <DeploymentStatusTag status={deploymentStatus} />
+        <BAIDeploymentStatusTag status={deploymentStatus} />
       </BAIFlex>
       {isDeploymentReady && !hasNoRevision && (
         <Alert
