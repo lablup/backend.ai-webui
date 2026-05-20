@@ -788,6 +788,12 @@ export default defineConfig(({ command, mode }) => {
           clientsClaim: true,
           maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
           globIgnores: ['**/*.map', '**/asset-manifest.json'],
+          // vite-plugin-pwa defaults navigateFallback to 'index.html', which
+          // makes the SW serve cached HTML for ANY GET navigation that doesn't
+          // match a precached asset — including OIDC/SAML callbacks like
+          // /func/openid/redirect. The retired workbox-webpack-plugin had no
+          // such default, so this restores pre-FR-2611 behavior.
+          navigateFallback: null,
         },
       }),
     ],
