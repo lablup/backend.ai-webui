@@ -4,6 +4,7 @@
  */
 import CspDiagnosticsSection from '../components/CspDiagnosticsSection';
 import EndpointDiagnosticsSection from '../components/EndpointDiagnosticsSection';
+import ErrorBoundaryWithNullFallback from '../components/ErrorBoundaryWithNullFallback';
 import StorageProxyDiagnosticsSection from '../components/StorageProxyDiagnosticsSection';
 import WebServerConfigDiagnosticsSection from '../components/WebServerConfigDiagnosticsSection';
 import { downloadBlob } from '../helper/csv-util';
@@ -24,7 +25,6 @@ import {
 import { BAIButton, BAICard, BAIFlex, useFetchKey } from 'backend.ai-ui';
 import { Suspense, useCallback, useRef, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import ErrorBoundaryWithNullFallback from 'src/components/ErrorBoundaryWithNullFallback';
 import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 
 type TabKey = 'diagnostics';

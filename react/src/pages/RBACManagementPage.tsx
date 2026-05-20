@@ -18,6 +18,7 @@ import RoleNodes, {
 } from '../components/RoleNodes';
 import { convertToOrderBy } from '../helper';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
+import { DeleteFilled } from '@ant-design/icons';
 import { App } from 'antd';
 import {
   BAIButton,
@@ -27,7 +28,6 @@ import {
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAINameActionCell,
-  BAITrashBinIcon,
   filterOutEmpty,
   type GraphQLFilter,
   INITIAL_FETCH_KEY,
@@ -317,17 +317,23 @@ const RBACManagementPage: React.FC = () => {
                                   key: 'activate',
                                   title: t('rbac.Activate'),
                                   icon: <UndoIcon />,
-                                  onClick: () => {
-                                    return new Promise<void>((resolve) => {
-                                      handleActivateRole(role);
-                                      resolve();
-                                    });
+                                  popConfirm: {
+                                    title: t('rbac.ActivateRole'),
+                                    description: role.name,
+                                    okText: t('rbac.Activate'),
+                                    cancelText: t('button.Cancel'),
+                                    onConfirm: () => {
+                                      return new Promise<void>((resolve) => {
+                                        handleActivateRole(role);
+                                        resolve();
+                                      });
+                                    },
                                   },
                                 },
                                 {
                                   key: 'purge',
                                   title: t('rbac.PurgeRole'),
-                                  icon: <BAITrashBinIcon />,
+                                  icon: <DeleteFilled />,
                                   type: 'danger' as const,
                                   onClick: () => handlePurgeRole(role),
                                 },
@@ -338,11 +344,18 @@ const RBACManagementPage: React.FC = () => {
                                   title: t('rbac.Deactivate'),
                                   icon: <BanIcon />,
                                   type: 'danger' as const,
-                                  onClick: () => {
-                                    return new Promise<void>((resolve) => {
-                                      handleDeactivateRole(role);
-                                      resolve();
-                                    });
+                                  popConfirm: {
+                                    title: t('rbac.DeactivateRole'),
+                                    description: role.name,
+                                    okText: t('rbac.Deactivate'),
+                                    cancelText: t('button.Cancel'),
+                                    okButtonProps: { danger: true },
+                                    onConfirm: () => {
+                                      return new Promise<void>((resolve) => {
+                                        handleDeactivateRole(role);
+                                        resolve();
+                                      });
+                                    },
                                   },
                                 },
                               ],
@@ -385,7 +398,9 @@ const RBACManagementPage: React.FC = () => {
             : []
         }
         title={t('rbac.PurgeRole')}
-        description={t('rbac.ConfirmPurge')}
+        target={t('general.Role')}
+        confirmText={purgingRole?.name ?? ''}
+        requireConfirmInput
         onOk={() => {
           if (purgingRole) {
             return mutatePurgeRole({

@@ -63,6 +63,9 @@
     "Updated": "Aktualisiert",
     "Version": "Version"
   },
+  "comp:BAIAvailablePresetSelect": {
+    "SelectPreset": "Voreinstellung auswählen"
+  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es später erneut oder kontaktieren Sie den Support, wenn das Problem weiterhin besteht."
   },
@@ -90,6 +93,7 @@
   },
   "comp:BAIDeleteConfirmModal": {
     "AreYouSureToDelete": "Sind Sie sicher, dass Sie löschen möchten?",
+    "AreYouSureToPermanentlyDeleteTarget": "Möchten Sie {{target}} wirklich dauerhaft löschen?",
     "CannotBeUndone": "Diese Aktion kann nicht rückgängig gemacht werden.",
     "DeleteItem": "Löschen",
     "DeleteNItems": "{{count}} Elemente löschen",
@@ -210,7 +214,6 @@
     "UpdateProject": "Projekt aktualisieren"
   },
   "comp:BAIProjectTable": {
-    "AreYouSureToDeactivateProject": "Möchten Sie das Projekt {{projectName}} wirklich deaktivieren?",
     "AreYouSureToPurgeProject": "Sind Sie sicher, dass Sie {{projectName}} endgültig löschen möchten? Diese Aktion ist unwiderruflich.",
     "ContainerRegistry": "Container-Registry",
     "Controls": "Steuerelemente",
@@ -237,6 +240,9 @@
     "TotalResourceSlots": "Gesamtanzahl der Ressourcen-Slots",
     "Type": "Typ"
   },
+  "comp:BAIProjectVfolderSelect": {
+    "SelectFolder": "Ordner auswählen"
+  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Suche",
     "ResetFilter": "Filter zurücksetzen"
@@ -261,6 +267,9 @@
     "Status": "Status",
     "TrafficRatio": "Traffic-Anteil",
     "TrafficStatus": "Datenverkehrsstatus"
+  },
+  "comp:BAIRuntimeVariantSelect": {
+    "SelectRuntimeVariant": "Laufzeitvariante auswählen"
   },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "Versuche",
@@ -333,6 +342,7 @@
     "ModifiedAt": "Modifiziert bei",
     "MoreOptions": "Weitere Optionen",
     "Name": "Name",
+    "NoUploadPermissionForHost": "Sie haben keine Hochlade-Berechtigung für diesen Host.",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Bitte geben Sie den Ordneramen ein.",
     "RenameSuccess": "Der Name wurde erfolgreich geändert.",
@@ -392,8 +402,10 @@
   },
   "general": {
     "DeselectAll": "Alle abwählen",
+    "File": "Datei",
     "NSelected": "{{count}} ausgewählt",
     "Optional": "Optional",
+    "Project": "Projekt",
     "TotalItems": "Total {{total}} Elemente",
     "button": {
       "Cancel": "Stornieren",

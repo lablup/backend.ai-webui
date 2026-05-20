@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useSuspendedBackendaiClient } from '../hooks';
+import { useSetBAINotification } from '../hooks/useBAINotification';
 import {
   InvitationItem,
   useVFolderInvitations,
@@ -19,7 +20,6 @@ import {
 } from 'backend.ai-ui';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSetBAINotification } from 'src/hooks/useBAINotification';
 
 interface FolderInvitationResponseModalProps extends BAIModalProps {}
 

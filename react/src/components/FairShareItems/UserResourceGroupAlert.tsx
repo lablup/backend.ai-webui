@@ -1,9 +1,9 @@
+import type { UserResourceGroupAlertQuery } from '../../__generated__/UserResourceGroupAlertQuery.graphql';
 import { Alert, AlertProps } from 'antd';
 import * as _ from 'lodash-es';
 import { parseAsString, useQueryStates } from 'nuqs';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-import type { UserResourceGroupAlertQuery } from 'src/__generated__/UserResourceGroupAlertQuery.graphql';
 
 interface UserResourceGroupAlertProps extends AlertProps {
   isModalOpen?: boolean;

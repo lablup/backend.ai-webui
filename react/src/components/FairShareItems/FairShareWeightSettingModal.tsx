@@ -2,6 +2,16 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { FairShareWeightSettingModal_BulkModifyDomainWeightMutation } from '../../__generated__/FairShareWeightSettingModal_BulkModifyDomainWeightMutation.graphql';
+import { FairShareWeightSettingModal_BulkModifyProjectWeightMutation } from '../../__generated__/FairShareWeightSettingModal_BulkModifyProjectWeightMutation.graphql';
+import { FairShareWeightSettingModal_BulkModifyUserWeightMutation } from '../../__generated__/FairShareWeightSettingModal_BulkModifyUserWeightMutation.graphql';
+import { FairShareWeightSettingModal_DomainFragment$key } from '../../__generated__/FairShareWeightSettingModal_DomainFragment.graphql';
+import { FairShareWeightSettingModal_ModifyDomainWeightMutation } from '../../__generated__/FairShareWeightSettingModal_ModifyDomainWeightMutation.graphql';
+import { FairShareWeightSettingModal_ModifyProjectWeightMutation } from '../../__generated__/FairShareWeightSettingModal_ModifyProjectWeightMutation.graphql';
+import { FairShareWeightSettingModal_ModifyUserWeightMutation } from '../../__generated__/FairShareWeightSettingModal_ModifyUserWeightMutation.graphql';
+import { FairShareWeightSettingModal_ProjectFragment$key } from '../../__generated__/FairShareWeightSettingModal_ProjectFragment.graphql';
+import { FairShareWeightSettingModal_ResourceGroupFragment$key } from '../../__generated__/FairShareWeightSettingModal_ResourceGroupFragment.graphql';
+import { FairShareWeightSettingModal_UserFragment$key } from '../../__generated__/FairShareWeightSettingModal_UserFragment.graphql';
 import QuestionIconWithTooltip from '../QuestionIconWithTooltip';
 import DomainResourceGroupAlert from './DomainResourceGroupAlert';
 import ProjectResourceGroupAlert from './ProjectResourceGroupAlert';
@@ -20,16 +30,6 @@ import * as _ from 'lodash-es';
 import { Suspense, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
-import { FairShareWeightSettingModal_BulkModifyDomainWeightMutation } from 'src/__generated__/FairShareWeightSettingModal_BulkModifyDomainWeightMutation.graphql';
-import { FairShareWeightSettingModal_BulkModifyProjectWeightMutation } from 'src/__generated__/FairShareWeightSettingModal_BulkModifyProjectWeightMutation.graphql';
-import { FairShareWeightSettingModal_BulkModifyUserWeightMutation } from 'src/__generated__/FairShareWeightSettingModal_BulkModifyUserWeightMutation.graphql';
-import { FairShareWeightSettingModal_DomainFragment$key } from 'src/__generated__/FairShareWeightSettingModal_DomainFragment.graphql';
-import { FairShareWeightSettingModal_ModifyDomainWeightMutation } from 'src/__generated__/FairShareWeightSettingModal_ModifyDomainWeightMutation.graphql';
-import { FairShareWeightSettingModal_ModifyProjectWeightMutation } from 'src/__generated__/FairShareWeightSettingModal_ModifyProjectWeightMutation.graphql';
-import { FairShareWeightSettingModal_ModifyUserWeightMutation } from 'src/__generated__/FairShareWeightSettingModal_ModifyUserWeightMutation.graphql';
-import { FairShareWeightSettingModal_ProjectFragment$key } from 'src/__generated__/FairShareWeightSettingModal_ProjectFragment.graphql';
-import { FairShareWeightSettingModal_ResourceGroupFragment$key } from 'src/__generated__/FairShareWeightSettingModal_ResourceGroupFragment.graphql';
-import { FairShareWeightSettingModal_UserFragment$key } from 'src/__generated__/FairShareWeightSettingModal_UserFragment.graphql';
 
 interface FairShareWeightSettingModalProps extends BAIModalProps {
   resourceGroupFrgmt?: FairShareWeightSettingModal_ResourceGroupFragment$key | null;

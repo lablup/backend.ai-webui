@@ -63,6 +63,9 @@
     "Updated": "Atualizado",
     "Version": "Versão"
   },
+  "comp:BAIAvailablePresetSelect": {
+    "SelectPreset": "Selecionar preset"
+  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Ocorreu um erro inesperado. Tente novamente mais tarde ou entre em contato com o suporte se o problema persistir."
   },
@@ -90,6 +93,7 @@
   },
   "comp:BAIDeleteConfirmModal": {
     "AreYouSureToDelete": "Tem certeza que deseja excluir?",
+    "AreYouSureToPermanentlyDeleteTarget": "Tem certeza de que deseja excluir permanentemente {{target}}?",
     "CannotBeUndone": "Esta ação não pode ser desfeita.",
     "DeleteItem": "Excluir",
     "DeleteNItems": "Excluir {{count}} itens",
@@ -209,7 +213,6 @@
     "UpdateProject": "Atualizar Projeto"
   },
   "comp:BAIProjectTable": {
-    "AreYouSureToDeactivateProject": "Tem certeza de que deseja desativar o projeto {{projectName}}?",
     "AreYouSureToPurgeProject": "Tem certeza de que deseja excluir {{projectName}}? Esta ação é irreversível.",
     "ContainerRegistry": "Registro de Contêineres",
     "Controls": "Controles",
@@ -236,6 +239,9 @@
     "TotalResourceSlots": "Total de slots de recursos",
     "Type": "Tipo"
   },
+  "comp:BAIProjectVfolderSelect": {
+    "SelectFolder": "Selecionar pasta"
+  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Pesquisar",
     "ResetFilter": "Redefinir filtros"
@@ -260,6 +266,9 @@
     "Status": "Status",
     "TrafficRatio": "Proporção de Tráfego",
     "TrafficStatus": "Status do Tráfego"
+  },
+  "comp:BAIRuntimeVariantSelect": {
+    "SelectRuntimeVariant": "Selecionar variante de execução"
   },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "Tentativas",
@@ -330,6 +339,7 @@
     "ModifiedAt": "Modificado em",
     "MoreOptions": "Mais opções",
     "Name": "Nome",
+    "NoUploadPermissionForHost": "Você não tem permissão de upload para este host.",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Por favor, insira o nome da pasta.",
     "RenameSuccess": "O nome foi alterado com sucesso.",
@@ -389,8 +399,10 @@
   },
   "general": {
     "DeselectAll": "Desmarcar tudo",
+    "File": "Arquivo",
     "NSelected": "{{count}} selecionado",
     "Optional": "Opcional",
+    "Project": "Projeto",
     "TotalItems": "Total {{total}} itens",
     "button": {
       "Cancel": "Cancelar",

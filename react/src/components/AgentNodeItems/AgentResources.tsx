@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { AgentResourcesFragment$key } from '../../__generated__/AgentResourcesFragment.graphql';
 import AgentDetailModal from '../AgentDetailModal';
 import SimpleProgressWithLabel from '../SimpleProgressWithLabel';
 import { InfoCircleOutlined } from '@ant-design/icons';
@@ -22,7 +23,6 @@ import * as _ from 'lodash-es';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
-import { AgentResourcesFragment$key } from 'src/__generated__/AgentResourcesFragment.graphql';
 
 interface AgentResourcesProps {
   agentNodeFrgmt?: AgentResourcesFragment$key | null;

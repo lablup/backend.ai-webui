@@ -296,22 +296,24 @@ const BAIVFolderSelect: React.FC<BAIVFolderSelectProps> = ({
         ) : (
           <>
             {label}
-            <BAIText type="secondary">
-              &nbsp; (
-              <BAIText
-                ellipsis
-                type="secondary"
-                style={{
-                  width: 80,
-                }}
-                monospace
-              >
-                {valuePropName === 'id'
-                  ? toLocalId(_.toString(value))
-                  : _.toString(value)}
+            {!optimisticSearchStr && (
+              <BAIText type="secondary">
+                &nbsp; (
+                <BAIText
+                  ellipsis
+                  type="secondary"
+                  style={{
+                    width: 80,
+                  }}
+                  monospace
+                >
+                  {valuePropName === 'id'
+                    ? toLocalId(_.toString(value))
+                    : _.toString(value)}
+                </BAIText>
+                )
               </BAIText>
-              )
-            </BAIText>
+            )}
           </>
         );
       }}

@@ -2,6 +2,9 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { type ErrorWithGraphQL } from '../components/BAIErrorBoundary';
+import FairShareList from '../components/FairShareItems/FairShareList';
+import { useWebUINavigate } from '../hooks';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Button, Result, Skeleton, theme, Tooltip } from 'antd';
 import { BAICard, BAIFlex } from 'backend.ai-ui';
@@ -10,9 +13,6 @@ import { parseAsString, useQueryStates } from 'nuqs';
 import { Suspense } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Trans, useTranslation } from 'react-i18next';
-import { type ErrorWithGraphQL } from 'src/components/BAIErrorBoundary';
-import FairShareList from 'src/components/FairShareItems/FairShareList';
-import { useWebUINavigate } from 'src/hooks';
 import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 
 const tabParam = withDefault(StringParam, 'fair-share');

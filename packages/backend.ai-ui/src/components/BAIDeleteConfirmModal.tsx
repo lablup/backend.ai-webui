@@ -1,9 +1,8 @@
-import BAIConfirmModalWithInput from './BAIConfirmModalWithInput';
 import BAIFlex from './BAIFlex';
 import BAIModal, { type BAIModalProps } from './BAIModal';
 import BAIText from './BAIText';
 import { ExclamationCircleFilled } from '@ant-design/icons';
-import { theme, Typography, type InputProps } from 'antd';
+import { Form, Input, theme, Typography, type InputProps } from 'antd';
 import React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
@@ -24,8 +23,13 @@ export interface BAIDeleteConfirmModalProps extends Omit<
   items: BAIDeleteConfirmModalItem[];
   /** Custom modal title. Defaults to "Delete" / "Delete N items". */
   title?: React.ReactNode;
-  /** Description shown above the item list. Defaults to "Are you sure you want to delete?" */
+  /** Description shown above the item list. If omitted, falls back to a `target`-based or generic default. */
   description?: React.ReactNode;
+  /**
+   * Resource type label (e.g. "Credential", "Project"). When provided and `description` is not,
+   * the default description becomes "Are you sure you want to permanently delete {target}?".
+   */
+  target?: React.ReactNode;
   /** Force text-input confirmation even for a single item. Default: false */
   requireConfirmInput?: boolean;
   /**
@@ -39,7 +43,7 @@ export interface BAIDeleteConfirmModalProps extends Omit<
   inputLabel?: React.ReactNode;
   /** Additional props for the confirmation Input. */
   inputProps?: InputProps;
-  /** Content rendered between the item list and the input field (e.g. checkboxes). */
+  /** Content rendered between the input field and "cannot be undone" text (e.g. checkboxes). */
   extraContent?: React.ReactNode;
   /** Max height (px) of the scrollable item list. Default: 200. Set 0 for no limit. */
   itemListMaxHeight?: number;
@@ -55,6 +59,7 @@ const BAIDeleteConfirmModal: React.FC<BAIDeleteConfirmModalProps> = ({
   items,
   title,
   description,
+  target,
   requireConfirmInput = false,
   confirmText: confirmTextProp,
   inputLabel,
@@ -71,6 +76,8 @@ const BAIDeleteConfirmModal: React.FC<BAIDeleteConfirmModalProps> = ({
 
   const { t } = useTranslation();
   const { token } = theme.useToken();
+  const [form] = Form.useForm();
+  const typedText = Form.useWatch('confirmText', form) ?? '';
 
   const needsInput = items.length > 1 || requireConfirmInput;
 
@@ -82,14 +89,19 @@ const BAIDeleteConfirmModal: React.FC<BAIDeleteConfirmModalProps> = ({
         })
       : t('comp:BAIDeleteConfirmModal.DeleteItem'));
 
-  const resolvedDescription =
-    description ?? t('comp:BAIDeleteConfirmModal.AreYouSureToDelete');
-
   const resolvedConfirmText =
     confirmTextProp ??
     (items.length === 1
       ? (extractTextFromNode(items[0]?.label) ?? t('general.button.Delete'))
       : t('general.button.Delete'));
+
+  const resolvedDescription =
+    description ??
+    (target
+      ? t('comp:BAIDeleteConfirmModal.AreYouSureToPermanentlyDeleteTarget', {
+          target,
+        })
+      : t('comp:BAIDeleteConfirmModal.AreYouSureToDelete'));
 
   const resolvedOkText = okText ?? t('general.button.Delete');
 
@@ -99,6 +111,17 @@ const BAIDeleteConfirmModal: React.FC<BAIDeleteConfirmModalProps> = ({
       values={{ confirmText: resolvedConfirmText }}
       components={{ code: <BAIText code /> }}
     />
+  );
+
+  const modalTitle = (
+    <BAIFlex direction="column" justify="start" align="start">
+      <Text strong>
+        <ExclamationCircleFilled
+          style={{ color: token.colorWarning, marginRight: token.sizeXXS }}
+        />
+        {resolvedTitle}
+      </Text>
+    </BAIFlex>
   );
 
   const itemListContent =
@@ -125,32 +148,50 @@ const BAIDeleteConfirmModal: React.FC<BAIDeleteConfirmModalProps> = ({
       </div>
     ) : null;
 
-  const bodyContent = (
-    <BAIFlex direction="column" align="stretch" gap="xs">
-      <Text>{resolvedDescription}</Text>
-      {itemListContent}
-      <Text type="danger">
-        {t('comp:BAIDeleteConfirmModal.CannotBeUndone')}
-      </Text>
-      {extraContent}
-    </BAIFlex>
-  );
-
   if (needsInput) {
     return (
-      <BAIConfirmModalWithInput
-        {...restModalProps}
+      <BAIModal
         destroyOnHidden
-        title={resolvedTitle}
-        confirmText={resolvedConfirmText}
-        content={bodyContent}
-        inputLabel={resolvedInputLabel}
-        inputProps={inputProps}
+        {...restModalProps}
+        title={modalTitle}
         okText={resolvedOkText}
-        okButtonProps={okButtonProps}
-        onOk={onOk}
-        onCancel={onCancel}
-      />
+        okButtonProps={{
+          danger: true,
+          disabled: typedText !== resolvedConfirmText,
+          ...okButtonProps,
+        }}
+        onOk={(e) => {
+          form.resetFields();
+          onOk?.(e);
+        }}
+        onCancel={(e) => {
+          form.resetFields();
+          onCancel?.(e);
+        }}
+      >
+        <BAIFlex direction="column" align="stretch" gap="xs">
+          {resolvedDescription && <Text>{resolvedDescription}</Text>}
+          {items.length > 1 && itemListContent}
+          <Form
+            form={form}
+            layout="vertical"
+            requiredMark={false}
+            preserve={false}
+          >
+            <Form.Item
+              name="confirmText"
+              label={resolvedInputLabel}
+              style={{ marginBottom: 0 }}
+            >
+              <Input autoFocus autoComplete="off" allowClear {...inputProps} />
+            </Form.Item>
+          </Form>
+          <Text type="danger">
+            {t('comp:BAIDeleteConfirmModal.CannotBeUndone')}
+          </Text>
+          {extraContent}
+        </BAIFlex>
+      </BAIModal>
     );
   }
 
@@ -158,16 +199,7 @@ const BAIDeleteConfirmModal: React.FC<BAIDeleteConfirmModalProps> = ({
     <BAIModal
       {...restModalProps}
       destroyOnHidden
-      title={
-        <BAIFlex direction="column" justify="start" align="start">
-          <Text strong>
-            <ExclamationCircleFilled
-              style={{ color: token.colorWarning, marginRight: 5 }}
-            />
-            {resolvedTitle}
-          </Text>
-        </BAIFlex>
-      }
+      title={modalTitle}
       okText={resolvedOkText}
       okButtonProps={{
         danger: true,
@@ -177,7 +209,14 @@ const BAIDeleteConfirmModal: React.FC<BAIDeleteConfirmModalProps> = ({
       onOk={onOk}
       onCancel={onCancel}
     >
-      {bodyContent}
+      <BAIFlex direction="column" align="stretch" gap="xs">
+        {resolvedDescription && <Text>{resolvedDescription}</Text>}
+        {itemListContent}
+        <Text type="danger">
+          {t('comp:BAIDeleteConfirmModal.CannotBeUndone')}
+        </Text>
+        {extraContent}
+      </BAIFlex>
     </BAIModal>
   );
 };

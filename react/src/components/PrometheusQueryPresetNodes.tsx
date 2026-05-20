@@ -7,7 +7,7 @@ import {
   PrometheusQueryPresetNodesFragment$data,
   PrometheusQueryPresetNodesFragment$key,
 } from '../__generated__/PrometheusQueryPresetNodesFragment.graphql';
-import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { DeleteFilled, EditOutlined } from '@ant-design/icons';
 import { Tag } from 'antd';
 import {
   BAIColumnsType,
@@ -120,7 +120,7 @@ const PrometheusQueryPresetNodes: React.FC<PrometheusQueryPresetNodesProps> = ({
             {
               key: 'delete',
               title: t('button.Delete'),
-              icon: <DeleteOutlined />,
+              icon: <DeleteFilled />,
               type: 'danger',
               onClick: () => onDeletePreset?.(row),
             },

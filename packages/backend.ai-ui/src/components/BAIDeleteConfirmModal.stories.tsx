@@ -3,7 +3,7 @@
 import BAIButton from './BAIButton';
 import BAIDeleteConfirmModal from './BAIDeleteConfirmModal';
 import BAIFlex from './BAIFlex';
-import { DeleteOutlined, FolderOutlined } from '@ant-design/icons';
+import { DeleteFilled, FolderOutlined } from '@ant-design/icons';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Checkbox, Space, Tag } from 'antd';
 import { useState } from 'react';
@@ -20,15 +20,16 @@ const meta: Meta<typeof BAIDeleteConfirmModal> = {
 **BAIDeleteConfirmModal** is a unified delete confirmation modal for table row deletion.
 
 ## Behavior
-- **Single item**: Simple confirm dialog with item name displayed. OK button is immediately enabled.
-- **Multiple items (2+)**: Requires typing confirmation text (localized "Delete") before OK is enabled.
-- **\`requireConfirmInput\`**: Forces text-input confirmation even for a single item.
+- **Single item**: Simple confirm dialog. OK button is immediately enabled.
+- **Single item + \`requireConfirmInput\`**: Requires typing the item name. Item list is hidden — the name already appears in the description.
+- **Multiple items (2+)**: Shows scrollable item list followed by a confirmation input requiring "Delete" to be typed.
 
 ## Key Features
 - Accepts \`React.ReactNode\` for item labels (icons, tags, custom rendering)
-- Scrollable item list for large selections
+- Scrollable item list for multi-item selections
+- \`target\` prop produces a resource-type-aware default description ("Are you sure you want to permanently delete {target}?")
 - \`extraContent\` slot for domain-specific additions (checkboxes, warnings)
-- Built on \`BAIConfirmModalWithInput\` (multi) and \`BAIModal\` (single)
+- Built on \`BAIModal\`
         `,
       },
     },
@@ -51,11 +52,7 @@ export const SingleItem: Story = {
     const [open, setOpen] = useState(false);
     return (
       <>
-        <BAIButton
-          danger
-          icon={<DeleteOutlined />}
-          onClick={() => setOpen(true)}
-        >
+        <BAIButton danger icon={<DeleteFilled />} onClick={() => setOpen(true)}>
           Delete Item
         </BAIButton>
         <BAIDeleteConfirmModal
@@ -74,7 +71,7 @@ export const SingleItemWithInput: Story = {
     docs: {
       description: {
         story:
-          'Single item with `requireConfirmInput={true}`. User must type the item name to confirm.',
+          'Single item with `requireConfirmInput={true}`. Item list is hidden (name already appears in description). User must type the item name into the confirmation input to enable the Delete button.',
       },
     },
   },
@@ -82,11 +79,7 @@ export const SingleItemWithInput: Story = {
     const [open, setOpen] = useState(false);
     return (
       <>
-        <BAIButton
-          danger
-          icon={<DeleteOutlined />}
-          onClick={() => setOpen(true)}
-        >
+        <BAIButton danger icon={<DeleteFilled />} onClick={() => setOpen(true)}>
           Delete (Confirm Required)
         </BAIButton>
         <BAIDeleteConfirmModal
@@ -101,12 +94,45 @@ export const SingleItemWithInput: Story = {
   },
 };
 
+export const WithTarget: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Resource-typed deletion using the `target` prop. The default description becomes "Are you sure you want to permanently delete {target}?", surfacing the resource type (e.g. "Resource Preset", "Resource Policy") in the dialog copy. Typically paired with `requireConfirmInput` for irreversible deletes.',
+      },
+    },
+  },
+  render: () => {
+    const [open, setOpen] = useState(false);
+    const itemName = 'gpu-large-preset';
+    return (
+      <>
+        <BAIButton danger icon={<DeleteFilled />} onClick={() => setOpen(true)}>
+          Delete Resource Preset
+        </BAIButton>
+        <BAIDeleteConfirmModal
+          open={open}
+          title="Delete Resource Preset"
+          target="Resource Preset"
+          items={[{ key: itemName, label: itemName }]}
+          confirmText={itemName}
+          requireConfirmInput
+          inputProps={{ placeholder: itemName }}
+          onOk={() => setOpen(false)}
+          onCancel={() => setOpen(false)}
+        />
+      </>
+    );
+  },
+};
+
 export const MultipleItems: Story = {
   parameters: {
     docs: {
       description: {
         story:
-          'Multiple items require typing "Delete" to confirm. Shows scrollable item list.',
+          'Multiple items require typing "Delete" to confirm. Shows scrollable item list above the confirmation input.',
       },
     },
   },
@@ -121,11 +147,7 @@ export const MultipleItems: Story = {
     ];
     return (
       <>
-        <BAIButton
-          danger
-          icon={<DeleteOutlined />}
-          onClick={() => setOpen(true)}
-        >
+        <BAIButton danger icon={<DeleteFilled />} onClick={() => setOpen(true)}>
           Delete 5 Items
         </BAIButton>
         <BAIDeleteConfirmModal
@@ -156,11 +178,7 @@ export const ManyItems: Story = {
     }));
     return (
       <>
-        <BAIButton
-          danger
-          icon={<DeleteOutlined />}
-          onClick={() => setOpen(true)}
-        >
+        <BAIButton danger icon={<DeleteFilled />} onClick={() => setOpen(true)}>
           Delete 50 Items
         </BAIButton>
         <BAIDeleteConfirmModal
@@ -219,11 +237,7 @@ export const CustomRenderedItems: Story = {
     ];
     return (
       <>
-        <BAIButton
-          danger
-          icon={<DeleteOutlined />}
-          onClick={() => setOpen(true)}
-        >
+        <BAIButton danger icon={<DeleteFilled />} onClick={() => setOpen(true)}>
           Delete Folders
         </BAIButton>
         <BAIDeleteConfirmModal
@@ -254,11 +268,7 @@ export const WithExtraContent: Story = {
     ];
     return (
       <>
-        <BAIButton
-          danger
-          icon={<DeleteOutlined />}
-          onClick={() => setOpen(true)}
-        >
+        <BAIButton danger icon={<DeleteFilled />} onClick={() => setOpen(true)}>
           Purge Users
         </BAIButton>
         <BAIDeleteConfirmModal
@@ -290,11 +300,7 @@ export const EmptyItems: Story = {
     const [open, setOpen] = useState(false);
     return (
       <>
-        <BAIButton
-          danger
-          icon={<DeleteOutlined />}
-          onClick={() => setOpen(true)}
-        >
+        <BAIButton danger icon={<DeleteFilled />} onClick={() => setOpen(true)}>
           Delete (No Selection)
         </BAIButton>
         <BAIDeleteConfirmModal

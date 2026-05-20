@@ -7,20 +7,28 @@ import {
   DeploymentList_modelDeploymentConnection$data,
   DeploymentList_modelDeploymentConnection$key,
 } from '../__generated__/DeploymentList_modelDeploymentConnection.graphql';
+import type { DeploymentRevisionDetail_revision$key } from '../__generated__/DeploymentRevisionDetail_revision.graphql';
+import { DeploymentSettingModal_deployment$key } from '../__generated__/DeploymentSettingModal_deployment.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
 import BAIRadioGroup from './BAIRadioGroup';
 import DeploymentOwnerInfo from './DeploymentOwnerInfo';
+import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
 import DeploymentStatusTag, { DeploymentStatus } from './DeploymentStatusTag';
-import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { Alert, App, Tag, Typography, theme } from 'antd';
+import DeploymentTagChips from './DeploymentTagChips';
+import QuestionIconWithTooltip from './QuestionIconWithTooltip';
+import { DeleteFilled, EditOutlined } from '@ant-design/icons';
+import { App, Typography } from 'antd';
 import {
-  BAIConfirmModalWithInput,
+  BAIDeleteConfirmModal,
   BAIFlex,
   BAIGraphQLPropertyFilter,
+  BAIId,
   BAINameActionCell,
   BAITable,
+  BAIUnmountAfterClose,
   filterOutEmpty,
   filterOutNullAndUndefined,
+  isValidUUID,
   toLocalId,
   useBAILogger,
   type BAIColumnType,
@@ -49,9 +57,9 @@ const COLUMN_KEY_TO_FIELD: Record<string, string> = {
   name: 'NAME',
   createdAt: 'CREATED_AT',
   domainName: 'DOMAIN',
-  projectName: 'PROJECT',
+  projectId: 'PROJECT',
   resourceGroup: 'RESOURCE_GROUP',
-  tag: 'TAG',
+  tags: 'TAG',
 };
 
 /** All valid order strings accepted by BAITable for deployments. */
@@ -60,6 +68,14 @@ export const availableDeploymentOrderValues = [
   '-name',
   'createdAt',
   '-createdAt',
+  'domainName',
+  '-domainName',
+  'projectId',
+  '-projectId',
+  'resourceGroup',
+  '-resourceGroup',
+  'tags',
+  '-tags',
 ] as const;
 
 export type DeploymentOrderValue =
@@ -82,26 +98,6 @@ export const tableOrderToSort = (
   return { field, order: descending ? 'DESC' : 'ASC' };
 };
 
-const parseFilterString = (
-  filter: string | undefined,
-): GraphQLFilter | undefined => {
-  if (!filter) return undefined;
-  try {
-    const parsed = JSON.parse(filter);
-    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
-      return parsed as GraphQLFilter;
-    }
-    return undefined;
-  } catch {
-    return undefined;
-  }
-};
-
-const stringifyFilter = (filter: GraphQLFilter | undefined): string => {
-  if (!filter || Object.keys(filter).length === 0) return '';
-  return JSON.stringify(filter);
-};
-
 export type DeploymentStatusCategory = 'running' | 'finished';
 
 export interface DeploymentListProps extends Omit<
@@ -112,8 +108,8 @@ export interface DeploymentListProps extends Omit<
     | DeploymentList_modelDeploymentConnection$key
     | null
     | undefined;
-  filter?: string;
-  setFilter: (value: string) => void;
+  filter?: GraphQLFilter;
+  setFilter: (value: GraphQLFilter | null | undefined) => void;
   onChangeOrder?: (order: string | null) => void;
   statusCategory?: DeploymentStatusCategory;
   onStatusCategoryChange?: (value: DeploymentStatusCategory) => void;
@@ -126,8 +122,8 @@ export interface DeploymentListProps extends Omit<
   mode: 'user' | 'admin';
   /** Called when a row name is clicked. Receives the deployment global ID. */
   onRowClick?: (deploymentId: string) => void;
-  /** Called when the edit action button is clicked. Receives the deployment global ID. */
-  onEditClick?: (deploymentId: string) => void;
+  /** Called when the edit action button is clicked. Receives the deployment fragment ref. */
+  onEditClick?: (frgmt: DeploymentSettingModal_deployment$key) => void;
   /** Called after a deployment is successfully deleted. Use to refresh the list. */
   onDeleteComplete?: () => void;
   /** Extra elements rendered at the end of the toolbar row (e.g. refresh + create buttons). */
@@ -151,13 +147,14 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
   'use memo';
   const { t } = useTranslation();
   const { message } = App.useApp();
-  const { token } = theme.useToken();
   const { logger } = useBAILogger();
   const baiClient = useSuspendedBackendaiClient();
   const [deletingDeployment, setDeletingDeployment] = useState<{
     id: string;
     name: string;
   } | null>(null);
+  const [drawerRevisionFrgmt, setDrawerRevisionFrgmt] =
+    useState<DeploymentRevisionDetail_revision$key | null>(null);
 
   const [commitDeleteMutation, isInFlightDeleteMutation] =
     useMutation<DeploymentListDeleteMutation>(graphql`
@@ -179,16 +176,26 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
               name
               status
               createdAt
+              updatedAt
               domainName
               projectId
-              tags
+              projectV2 @since(version: "26.4.3") {
+                basicInfo {
+                  name
+                }
+                id
+              }
+              resourceGroupName
+              ...DeploymentTagChips_metadata
             }
             networkAccess {
               endpointUrl
+              openToPublic
             }
             replicaState {
               desiredReplicaCount
             }
+            ...DeploymentSettingModal_deployment
             totalReplicas: replicas {
               count
             }
@@ -197,12 +204,14 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
             }
             currentRevision @since(version: "26.4.3") {
               id
+              revisionNumber
               modelMountConfig {
                 vfolder {
                   id
                   name
                 }
               }
+              ...DeploymentRevisionDetail_revision
             }
             ...DeploymentOwnerInfo_deployment
           }
@@ -221,7 +230,10 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
   const supportsExtendedFilter =
     baiClient?.supports('model-deployment-extended-filter') ?? false;
 
-  const filterValue = parseFilterString(filter);
+  const uuidRule = {
+    message: t('general.InvalidUUID'),
+    validate: (value: string) => isValidUUID(value.toLowerCase()),
+  };
 
   const baseFilterProperties = [
     {
@@ -239,6 +251,11 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
       propertyLabel: t('deployment.filter.EndpointUrl'),
       type: 'string' as const,
     },
+    {
+      key: 'openToPublic',
+      propertyLabel: t('deployment.filter.OpenToPublic'),
+      type: 'boolean' as const,
+    },
   ];
 
   const extendedAdminFilterProperties =
@@ -255,8 +272,22 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
             type: 'string' as const,
           },
           {
+            key: 'projectId',
+            propertyLabel: t('deployment.filter.ProjectId'),
+            type: 'uuid' as const,
+            fixedOperator: 'equals' as const,
+            rule: uuidRule,
+          },
+          {
             key: 'createdAt',
             propertyLabel: t('deployment.filter.CreatedAt'),
+            type: 'datetime' as const,
+            operators: ['after' as const, 'before' as const],
+            defaultOperator: 'after' as const,
+          },
+          {
+            key: 'destroyedAt',
+            propertyLabel: t('deployment.filter.DestroyedAt'),
             type: 'datetime' as const,
             operators: ['after' as const, 'before' as const],
             defaultOperator: 'after' as const,
@@ -288,13 +319,13 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
             title: t('deployment.EditDeployment'),
             icon: <EditOutlined />,
             disabled: isDestroying,
-            onClick: () => onEditClick(row.id),
+            onClick: () => onEditClick(row),
           });
         }
         actions.push({
           key: 'delete',
           title: t('deployment.DeleteDeployment'),
-          icon: <DeleteOutlined />,
+          icon: <DeleteFilled />,
           type: 'danger',
           disabled: isDestroying,
           onClick: () => setDeletingDeployment({ id: row.id, name }),
@@ -305,9 +336,38 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
             onTitleClick={onRowClick ? () => onRowClick(row.id) : undefined}
             actions={actions}
             showActions="always"
+            copyable
           />
         );
       },
+    },
+    {
+      key: 'currentRevisionNumber',
+      title: (
+        <BAIFlex gap="xxs" align="center">
+          {t('deployment.RevisionNumber')}
+          <QuestionIconWithTooltip
+            title={t('deployment.RevisionNumberTooltip')}
+          />
+        </BAIFlex>
+      ),
+      render: (_text, row) => {
+        const revision = row.currentRevision;
+        if (revision?.revisionNumber == null)
+          return <Typography.Text type="secondary">-</Typography.Text>;
+        return (
+          <Typography.Link
+            onClick={() => setDrawerRevisionFrgmt(revision)}
+          >{`#${revision.revisionNumber}`}</Typography.Link>
+        );
+      },
+    },
+    {
+      key: 'id',
+      title: t('deployment.DeploymentId'),
+      dataIndex: 'id',
+      defaultHidden: true,
+      render: (_text, row) => <BAIId globalId={row.id} copyable />,
     },
     {
       key: 'status',
@@ -320,7 +380,14 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
     },
     {
       key: 'replicaSummary',
-      title: t('deployment.ReplicaSummary'),
+      title: (
+        <BAIFlex gap="xxs" align="center">
+          {t('deployment.ReplicaSummary')}
+          <QuestionIconWithTooltip
+            title={t('deployment.ReplicaSummaryTooltip')}
+          />
+        </BAIFlex>
+      ),
       render: (_text, row) => {
         const running = row.runningReplicas?.count ?? 0;
         const desired = row.replicaState?.desiredReplicaCount ?? 0;
@@ -357,6 +424,7 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
     {
       key: 'endpointUrl',
       title: t('deployment.EndpointUrl'),
+      defaultHidden: true,
       render: (_text, row) => {
         const url = row.networkAccess?.endpointUrl;
         if (!url) return <Typography.Text type="secondary">-</Typography.Text>;
@@ -370,18 +438,15 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
     {
       key: 'tags',
       title: t('deployment.Tags'),
-      render: (_text, row) => {
-        const tags = row.metadata?.tags ?? [];
-        if (tags.length === 0)
-          return <Typography.Text type="secondary">-</Typography.Text>;
-        return (
-          <BAIFlex wrap="wrap" gap="xs">
-            {tags.map((tag) => (
-              <Tag key={tag}>{tag}</Tag>
-            ))}
-          </BAIFlex>
-        );
-      },
+      defaultHidden: true,
+      sorter: true,
+      render: (_text, row) => (
+        <DeploymentTagChips
+          metadataFrgmt={row.metadata}
+          stopRowClick
+          fallback={<Typography.Text type="secondary">-</Typography.Text>}
+        />
+      ),
     },
     {
       key: 'createdAt',
@@ -393,15 +458,85 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
         return createdAt ? dayjs(createdAt).format('ll LT') : '-';
       },
     },
+    {
+      key: 'updatedAt',
+      title: t('deployment.UpdatedAt'),
+      defaultHidden: true,
+      render: (_text, row) => {
+        const updatedAt = row.metadata?.updatedAt;
+        return updatedAt ? dayjs(updatedAt).format('ll LT') : '-';
+      },
+    },
+    {
+      key: 'openToPublic',
+      title: t('deployment.OpenToPublic'),
+      defaultHidden: true,
+      render: (_text, row) => {
+        const isPublic = row.networkAccess?.openToPublic;
+        return isPublic == null ? (
+          <Typography.Text type="secondary">-</Typography.Text>
+        ) : (
+          <Typography.Text>
+            {isPublic ? t('deployment.Public') : t('deployment.Private')}
+          </Typography.Text>
+        );
+      },
+    },
+    {
+      key: 'resourceGroup',
+      title: t('deployment.ResourceGroup'),
+      defaultHidden: true,
+      sorter: true,
+      render: (_text, row) => {
+        const resourceGroup = row.metadata?.resourceGroupName;
+        return resourceGroup ? (
+          <Typography.Text>{resourceGroup}</Typography.Text>
+        ) : (
+          <Typography.Text type="secondary">-</Typography.Text>
+        );
+      },
+    },
     isAdminMode && {
       key: 'domainName',
       title: t('deployment.Domain'),
+      defaultHidden: true,
+      sorter: true,
       render: (_text, row) => {
         const domain = row.metadata?.domainName;
         return domain ? (
           <Typography.Text>{domain}</Typography.Text>
         ) : (
           <Typography.Text type="secondary">-</Typography.Text>
+        );
+      },
+    },
+    isAdminMode && {
+      key: 'projectId',
+      title: t('deployment.Project'),
+      defaultHidden: true,
+      sorter: true,
+      render: (_text, row) => {
+        const projectId = row.metadata?.projectId;
+        if (!projectId) {
+          return <Typography.Text type="secondary">-</Typography.Text>;
+        }
+        const projectName = row.metadata?.projectV2?.basicInfo?.name;
+        if (!projectName) {
+          return <BAIId globalId={projectId} copyable />;
+        }
+        return (
+          <>
+            <Typography.Text
+              ellipsis={{ tooltip: projectName }}
+              style={{ maxWidth: 160 }}
+            >
+              {projectName}
+            </Typography.Text>
+            &nbsp;
+            <Typography.Text type="secondary">
+              (<BAIId globalId={projectId} copyable type="secondary" />)
+            </Typography.Text>
+          </>
         );
       },
     },
@@ -434,9 +569,9 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
             />
             <BAIGraphQLPropertyFilter
               filterProperties={filterProperties}
-              value={filterValue}
+              value={filter}
               onChange={(next) => {
-                setFilter(stringifyFilter(next));
+                setFilter(next);
               }}
             />
           </BAIFlex>
@@ -457,25 +592,23 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
           />
         </div>
       </BAIFlex>
-      <BAIConfirmModalWithInput
+      <BAIDeleteConfirmModal
         open={!!deletingDeployment}
         title={t('deployment.DeleteDeployment')}
-        content={
-          <BAIFlex direction="column" gap="md" align="stretch">
-            <Alert type="warning" title={t('dialog.warning.CannotBeUndone')} />
-            <BAIFlex>
-              <Typography.Text style={{ marginRight: token.marginXXS }}>
-                {t('dialog.TypeNameToConfirmDeletion')}
-              </Typography.Text>
-              (
-              <Typography.Text code>{deletingDeployment?.name}</Typography.Text>
-              )
-            </BAIFlex>
-          </BAIFlex>
+        target={t('deployment.Deployment')}
+        items={
+          deletingDeployment
+            ? [
+                {
+                  key: deletingDeployment.id ?? deletingDeployment.name ?? '',
+                  label: deletingDeployment.name ?? '',
+                },
+              ]
+            : []
         }
         confirmText={deletingDeployment?.name ?? ''}
+        requireConfirmInput
         inputProps={{ placeholder: deletingDeployment?.name ?? '' }}
-        okText={t('button.Delete')}
         okButtonProps={{ loading: isInFlightDeleteMutation }}
         onOk={() => {
           if (!deletingDeployment) return;
@@ -503,6 +636,13 @@ const DeploymentList: React.FC<DeploymentListProps> = ({
         }}
         onCancel={() => setDeletingDeployment(null)}
       />
+      <BAIUnmountAfterClose>
+        <DeploymentRevisionDetailDrawer
+          open={!!drawerRevisionFrgmt}
+          revisionFrgmt={drawerRevisionFrgmt}
+          onClose={() => setDrawerRevisionFrgmt(null)}
+        />
+      </BAIUnmountAfterClose>
     </>
   );
 };

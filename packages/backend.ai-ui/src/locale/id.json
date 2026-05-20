@@ -63,6 +63,9 @@
     "Updated": "Diperbarui",
     "Version": "Versi"
   },
+  "comp:BAIAvailablePresetSelect": {
+    "SelectPreset": "Pilih Preset"
+  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Terjadi kesalahan tak terduga. Silakan coba lagi nanti atau hubungi dukungan jika masalah berlanjut."
   },
@@ -90,6 +93,7 @@
   },
   "comp:BAIDeleteConfirmModal": {
     "AreYouSureToDelete": "Apakah Anda yakin ingin menghapus?",
+    "AreYouSureToPermanentlyDeleteTarget": "Apakah Anda yakin ingin menghapus {{target}} secara permanen?",
     "CannotBeUndone": "Tindakan ini tidak dapat dibatalkan.",
     "DeleteItem": "Hapus",
     "DeleteNItems": "Hapus {{count}} item",
@@ -210,7 +214,6 @@
     "UpdateProject": "Perbarui Proyek"
   },
   "comp:BAIProjectTable": {
-    "AreYouSureToDeactivateProject": "Anda yakin ingin menonaktifkan proyek {{projectName}}?",
     "AreYouSureToPurgeProject": "Apakah Anda yakin ingin menghapus {{projectName}}? Tindakan ini tidak dapat dibatalkan.",
     "ContainerRegistry": "Registri Kontainer",
     "Controls": "Kontrol",
@@ -237,6 +240,9 @@
     "TotalResourceSlots": "Jumlah Slot Sumber Daya",
     "Type": "Tipe"
   },
+  "comp:BAIProjectVfolderSelect": {
+    "SelectFolder": "Pilih Folder"
+  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Pencarian",
     "ResetFilter": "Setel ulang filter"
@@ -261,6 +267,9 @@
     "Status": "Status",
     "TrafficRatio": "Rasio Lalu Lintas",
     "TrafficStatus": "Status Trafik"
+  },
+  "comp:BAIRuntimeVariantSelect": {
+    "SelectRuntimeVariant": "Pilih Varian Runtime"
   },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "Percobaan",
@@ -333,6 +342,7 @@
     "ModifiedAt": "Dimodifikasi di",
     "MoreOptions": "Opsi lainnya",
     "Name": "Nama",
+    "NoUploadPermissionForHost": "Anda tidak memiliki izin unggah untuk host ini.",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Harap masukkan nama folder.",
     "RenameSuccess": "Namanya telah berhasil diubah.",
@@ -392,8 +402,10 @@
   },
   "general": {
     "DeselectAll": "Batalkan semua pilihan",
+    "File": "Berkas",
     "NSelected": "{{count}} dipilih",
     "Optional": "Opsional",
+    "Project": "Proyek",
     "TotalItems": "Total {{total}} item",
     "button": {
       "Cancel": "Membatalkan",

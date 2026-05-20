@@ -17,7 +17,9 @@ test.describe(
       await loginAsAdmin(page, request);
 
       // Create a test model card to edit
-      await page.goto(`${webuiEndpoint}/admin-serving?tab=model-store`);
+      await page.goto(
+        `${webuiEndpoint}/admin-deployments?tab=model-store-management`,
+      );
       const adminModelCardPage = new AdminModelCardPage(page);
       await adminModelCardPage.waitForTableLoad();
 
@@ -26,30 +28,43 @@ test.describe(
       await expect(modal).toBeVisible();
 
       await modal.getByRole('textbox', { name: 'Name' }).fill(testCardName);
-      await modal.getByRole('combobox').first().click();
+      // In antd v6 with BAISelect, click .ant-select-content to open the dropdown reliably.
+      await modal
+        .locator('.ant-form-item')
+        .filter({ hasText: 'Model Storage Folder' })
+        .locator('.ant-select-content')
+        .click();
       const vfolderDropdown = page
         .locator('.ant-select-dropdown:not(.ant-select-dropdown-hidden)')
         .first();
-      await expect(vfolderDropdown).toBeVisible();
+      await expect(vfolderDropdown).toBeVisible({ timeout: 10000 });
       await expect(vfolderDropdown.getByText(/Total \d+ items/)).toBeVisible({
         timeout: 10000,
       });
       await vfolderDropdown.locator('.ant-select-item-option').first().click();
       await expect(vfolderDropdown).toBeHidden();
 
-      // Select Access Level (required field)
-      await modal.getByRole('combobox', { name: 'Access Level' }).click();
+      // Select Access Level (required field). Access level options are "Private" (INTERNAL) and "Public".
+      await modal
+        .locator('.ant-form-item')
+        .filter({ hasText: 'Access Level' })
+        .locator('.ant-select-content')
+        .click();
       const accessDropdown = page
         .locator('.ant-select-dropdown:not(.ant-select-dropdown-hidden)')
         .first();
       await expect(accessDropdown).toBeVisible();
       await accessDropdown
         .locator('.ant-select-item-option')
-        .filter({ hasText: 'Internal' })
+        .filter({ hasText: 'Private' })
         .click();
 
+      // In antd v6, Form.Item tooltip icons contribute to the accessible name.
+      // Use the form item container to locate the textbox by label text.
       await modal
-        .getByRole('textbox', { name: 'Title (optional)' })
+        .locator('.ant-form-item')
+        .filter({ hasText: 'Title' })
+        .getByRole('textbox')
         .fill('Original Title');
       await adminModelCardPage.getCreateModalSubmitButton().click();
       await expect(page.getByText('Model card has been created.')).toBeVisible({
@@ -61,7 +76,9 @@ test.describe(
     test.afterEach(async ({ page }) => {
       // Cleanup: delete the test model card
       try {
-        await page.goto(`${webuiEndpoint}/admin-serving?tab=model-store`);
+        await page.goto(
+          `${webuiEndpoint}/admin-deployments?tab=model-store-management`,
+        );
         const adminModelCardPage = new AdminModelCardPage(page);
         await adminModelCardPage.waitForTableLoad();
         await adminModelCardPage.applyNameFilter(testCardName);
@@ -80,7 +97,9 @@ test.describe(
       page,
     }) => {
       const adminModelCardPage = new AdminModelCardPage(page);
-      await page.goto(`${webuiEndpoint}/admin-serving?tab=model-store`);
+      await page.goto(
+        `${webuiEndpoint}/admin-deployments?tab=model-store-management`,
+      );
       await adminModelCardPage.waitForTableLoad();
 
       // Refresh the table to ensure newly created card is visible
@@ -122,7 +141,9 @@ test.describe(
       page,
     }) => {
       const adminModelCardPage = new AdminModelCardPage(page);
-      await page.goto(`${webuiEndpoint}/admin-serving?tab=model-store`);
+      await page.goto(
+        `${webuiEndpoint}/admin-deployments?tab=model-store-management`,
+      );
       await adminModelCardPage.waitForTableLoad();
 
       // Refresh the table to ensure newly created card is visible
@@ -140,23 +161,31 @@ test.describe(
       await adminModelCardPage.openEditModal(testCardName);
       const modal = adminModelCardPage.getEditModal();
 
-      // Clear the Title field and type a new value
-      const titleInput = modal.getByRole('textbox', {
-        name: 'Title (optional)',
-      });
+      // Clear the Title field and type a new value.
+      // In antd v6, tooltip icons alter the accessible name — use form item container.
+      const titleInput = modal
+        .locator('.ant-form-item')
+        .filter({ hasText: 'Title' })
+        .getByRole('textbox');
       await titleInput.clear();
       await titleInput.fill('Updated Title');
 
-      // Change Access Level to Public
-      await modal.getByRole('combobox', { name: 'Access Level' }).click();
+      // Change Access Level to Public. The form is long, so scroll the field into view
+      // before opening the dropdown to ensure the option is also within the viewport.
+      const accessLevelFormItem = modal
+        .locator('.ant-form-item')
+        .filter({ hasText: 'Access Level' });
+      await accessLevelFormItem.scrollIntoViewIfNeeded();
+      await accessLevelFormItem.locator('.ant-select-content').click();
       const accessDropdown = page
         .locator('.ant-select-dropdown:not(.ant-select-dropdown-hidden)')
         .first();
       await expect(accessDropdown).toBeVisible();
-      await accessDropdown
+      const publicOption = accessDropdown
         .locator('.ant-select-item-option')
-        .filter({ hasText: 'Public' })
-        .click({ force: true });
+        .filter({ hasText: 'Public' });
+      await publicOption.scrollIntoViewIfNeeded();
+      await publicOption.click();
 
       // Click Update
       await adminModelCardPage.getEditModalUpdateButton().click();
@@ -173,10 +202,10 @@ test.describe(
       const updatedRow = adminModelCardPage.getRowByName(testCardName);
       await expect(
         updatedRow.getByRole('cell', { name: 'Updated Title' }),
-      ).toBeVisible();
+      ).toBeVisible({ timeout: 15000 });
       await expect(
         updatedRow.getByRole('cell', { name: 'Public' }),
-      ).toBeVisible();
+      ).toBeVisible({ timeout: 15000 });
     });
 
     // 4.3 Superadmin cannot save an edit when the Name field is cleared
@@ -184,7 +213,9 @@ test.describe(
       page,
     }) => {
       const adminModelCardPage = new AdminModelCardPage(page);
-      await page.goto(`${webuiEndpoint}/admin-serving?tab=model-store`);
+      await page.goto(
+        `${webuiEndpoint}/admin-deployments?tab=model-store-management`,
+      );
       await adminModelCardPage.waitForTableLoad();
 
       // Refresh the table to ensure newly created card is visible
@@ -223,7 +254,9 @@ test.describe(
       page,
     }) => {
       const adminModelCardPage = new AdminModelCardPage(page);
-      await page.goto(`${webuiEndpoint}/admin-serving?tab=model-store`);
+      await page.goto(
+        `${webuiEndpoint}/admin-deployments?tab=model-store-management`,
+      );
       await adminModelCardPage.waitForTableLoad();
 
       // Refresh the table to ensure newly created card is visible
@@ -241,10 +274,12 @@ test.describe(
       await adminModelCardPage.openEditModal(testCardName);
       const modal = adminModelCardPage.getEditModal();
 
-      // Change the Title to a value that should not be saved
-      const titleInput = modal.getByRole('textbox', {
-        name: 'Title (optional)',
-      });
+      // Change the Title to a value that should not be saved.
+      // In antd v6, tooltip icons alter the accessible name — use form item container.
+      const titleInput = modal
+        .locator('.ant-form-item')
+        .filter({ hasText: 'Title' })
+        .getByRole('textbox');
       await titleInput.clear();
       await titleInput.fill('Should Not Save');
 

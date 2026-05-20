@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { GeneratedKeypairListModalFragment$key } from '../__generated__/GeneratedKeypairListModalFragment.graphql';
 import {
   UserSettingModalBulkCreateMutation,
   UserRoleV2,
@@ -53,7 +54,6 @@ import * as _ from 'lodash-es';
 import React, { Suspense, useDeferredValue, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useMutation, useLazyLoadQuery } from 'react-relay';
-import { GeneratedKeypairListModalFragment$key } from 'src/__generated__/GeneratedKeypairListModalFragment.graphql';
 
 type UserRole = {
   [key: string]: string[];

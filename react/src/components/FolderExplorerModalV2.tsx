@@ -2,6 +2,12 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { FolderExplorerModalV2Query } from '../__generated__/FolderExplorerModalV2Query.graphql';
+import { formatToUUID } from '../helper';
+import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
+import { useSetBAINotification } from '../hooks/useBAINotification';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { useMergedAllowedStorageHostPermission } from '../hooks/useMergedAllowedStorageHostPermission';
 import { useFileUploadManager } from './FileUploadManager';
 import FolderExplorerHeaderV2 from './FolderExplorerHeaderV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
@@ -26,12 +32,6 @@ import * as _ from 'lodash-es';
 import { Suspense, useDeferredValue, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-import { FolderExplorerModalV2Query } from 'src/__generated__/FolderExplorerModalV2Query.graphql';
-import { formatToUUID } from 'src/helper';
-import { useCurrentDomainValue, useSuspendedBackendaiClient } from 'src/hooks';
-import { useSetBAINotification } from 'src/hooks/useBAINotification';
-import { useCurrentProjectValue } from 'src/hooks/useCurrentProject';
-import { useMergedAllowedStorageHostPermission } from 'src/hooks/useMergedAllowedStorageHostPermission';
 
 const useStyles = createStyles(({ css }) => ({
   baiModalHeader: css`
@@ -159,6 +159,16 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
     unitedAllowedPermissionByVolume[vfolderNode?.host ?? ''],
     'download-file',
   );
+  // `upload-file` on the storage host gates the actual upload pipeline:
+  // upload buttons (file/folder), drag-drop, and the in-app text editor save
+  // (which overwrites the file via the upload API). mkdir / create-file /
+  // rename are kept enabled — there is no corresponding host-level
+  // capability for them today, and FR-2619 will revisit the effective
+  // permission set.
+  const hasUploadContentPermission = _.includes(
+    unitedAllowedPermissionByVolume[vfolderNode?.host ?? ''],
+    'upload-file',
+  );
   // TODO(needs-backend): write/delete capability should be derived from the
   // caller's *effective* permission set on this entity (e.g.,
   // `delete_content`, `write_content`), not from the folder's mount
@@ -230,7 +240,8 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
       enableDownload={hasDownloadContentPermission}
       enableDelete={hasDeleteContentPermission}
       enableWrite={hasWriteContentPermission}
-      enableEdit={hasWriteContentPermission}
+      enableUpload={hasUploadContentPermission}
+      enableEdit={hasUploadContentPermission}
       tableProps={{
         scroll: xl
           ? { x: 'max-content' }

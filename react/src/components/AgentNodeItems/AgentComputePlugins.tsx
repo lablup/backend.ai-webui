@@ -2,10 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { AgentComputePluginsFragment$key } from '../../__generated__/AgentComputePluginsFragment.graphql';
 import { BAIDoubleTag, BAITag } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { graphql, useFragment } from 'react-relay';
-import { AgentComputePluginsFragment$key } from 'src/__generated__/AgentComputePluginsFragment.graphql';
 
 interface AgentComputePluginsProps {
   agentNodeFrgmt?: AgentComputePluginsFragment$key | null;

@@ -5,6 +5,10 @@
 import { AppLauncherModalFragment$key } from '../../__generated__/AppLauncherModalFragment.graphql';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import {
+  TCP_APPS,
+  useBackendAIAppLauncher,
+} from '../../hooks/useBackendAIAppLauncher';
+import {
   ServicePort,
   TemplateItem,
   useSuspendedFilteredAppTemplate,
@@ -44,10 +48,6 @@ import * as _ from 'lodash-es';
 import { useRef, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
-import {
-  TCP_APPS,
-  useBackendAIAppLauncher,
-} from 'src/hooks/useBackendAIAppLauncher';
 
 interface AppLauncherModalProps extends ModalProps {
   onRequestClose: () => void;

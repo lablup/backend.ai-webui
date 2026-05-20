@@ -63,6 +63,9 @@
     "Updated": "Обновлено",
     "Version": "Версия"
   },
+  "comp:BAIAvailablePresetSelect": {
+    "SelectPreset": "Выберите пресет"
+  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Произошла непредвиденная ошибка. Попробуйте ещё раз позже или обратитесь в службу поддержки, если проблема сохраняется."
   },
@@ -90,6 +93,7 @@
   },
   "comp:BAIDeleteConfirmModal": {
     "AreYouSureToDelete": "Вы уверены, что хотите удалить?",
+    "AreYouSureToPermanentlyDeleteTarget": "Вы действительно хотите окончательно удалить {{target}}?",
     "CannotBeUndone": "Это действие нельзя отменить.",
     "DeleteItem": "Удалить",
     "DeleteNItems": "Удалить {{count}} элементов",
@@ -210,7 +214,6 @@
     "UpdateProject": "Обновить проект"
   },
   "comp:BAIProjectTable": {
-    "AreYouSureToDeactivateProject": "Вы уверены, что хотите деактивировать проект {{projectName}}?",
     "AreYouSureToPurgeProject": "Вы уверены, что хотите полностью удалить {{projectName}}? Это действие необратимо.",
     "ContainerRegistry": "Реестр контейнеров",
     "Controls": "Элементы управления",
@@ -237,6 +240,9 @@
     "TotalResourceSlots": "Всего ресурсных слотов",
     "Type": "Тип"
   },
+  "comp:BAIProjectVfolderSelect": {
+    "SelectFolder": "Выбрать папку"
+  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Поиск",
     "ResetFilter": "Сбросить фильтры"
@@ -261,6 +267,9 @@
     "Status": "Статус",
     "TrafficRatio": "Доля трафика",
     "TrafficStatus": "Состояние трафика"
+  },
+  "comp:BAIRuntimeVariantSelect": {
+    "SelectRuntimeVariant": "Выбрать вариант среды выполнения"
   },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "Попытки",
@@ -333,6 +342,7 @@
     "ModifiedAt": "Модифицирован в",
     "MoreOptions": "Дополнительные параметры",
     "Name": "Имя",
+    "NoUploadPermissionForHost": "У вас нет разрешения на загрузку для данного хоста.",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Пожалуйста, введите имя папки.",
     "RenameSuccess": "Имя было успешно изменено.",
@@ -392,8 +402,10 @@
   },
   "general": {
     "DeselectAll": "Снять выделение",
+    "File": "Файл",
     "NSelected": "{{count}} выбрал",
     "Optional": "Необязательно",
+    "Project": "Проект",
     "TotalItems": "Total {{total}} элементы",
     "button": {
       "Cancel": "Отмена",

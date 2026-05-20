@@ -1,3 +1,4 @@
+import BAIText from './BAIText';
 import { theme, Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import React from 'react';
@@ -37,40 +38,41 @@ const BAILink: React.FC<BAILinkProps> = ({
 }) => {
   const { styles } = useStyles();
   const { token } = theme.useToken();
-  return type !== 'disabled' && to ? (
-    <Link
-      className={type ? styles?.[type] : undefined}
-      to={to}
-      {...linkProps}
-      style={{ fontFamily: token.fontFamily, ...linkProps.style }}
-    >
-      {children}
-      {icon}
-    </Link>
-  ) : (
+  if (type !== 'disabled' && to) {
+    return (
+      <Link
+        className={type ? styles?.[type] : undefined}
+        to={to}
+        {...linkProps}
+        style={{ fontFamily: token.fontFamily, ...linkProps.style }}
+      >
+        {children}
+        {icon}
+      </Link>
+    );
+  }
+
+  const link = (
     <Typography.Link
       className={type ? styles?.[type] : undefined}
       onClick={linkProps.onClick}
       disabled={type === 'disabled'}
-      ellipsis={!!ellipsis}
       {...linkProps}
     >
-      {typeof ellipsis === 'object' && ellipsis.tooltip ? (
-        <Typography.Text
-          className={type ? styles?.[type] : undefined}
-          ellipsis={ellipsis}
-        >
-          {children}
-          {icon}
-        </Typography.Text>
-      ) : (
-        <>
-          {children}
-          {icon}
-        </>
-      )}
+      {children}
+      {icon}
     </Typography.Link>
   );
+
+  if (ellipsis) {
+    return (
+      <BAIText ellipsis={ellipsis === true ? { tooltip: true } : ellipsis}>
+        {link}
+      </BAIText>
+    );
+  }
+
+  return link;
 };
 
 export default BAILink;

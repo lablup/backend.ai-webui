@@ -108,10 +108,7 @@ const ServingPage: React.FC = () => {
         variant="borderless"
         title={t('webui.menu.Serving')}
         extra={
-          <Button
-            type="primary"
-            onClick={() => webuiNavigate('/service/start')}
-          >
+          <Button type="primary" onClick={() => webuiNavigate('/deployments')}>
             {t('modelService.StartService')}
           </Button>
         }

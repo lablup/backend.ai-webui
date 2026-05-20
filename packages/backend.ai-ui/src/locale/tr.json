@@ -63,6 +63,9 @@
     "Updated": "Güncellenmiş",
     "Version": "Versiyon"
   },
+  "comp:BAIAvailablePresetSelect": {
+    "SelectPreset": "Ön ayar seçin"
+  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Beklenmeyen bir hata oluştu. Lütfen daha sonra tekrar deneyin veya sorun devam ederse destekle iletişime geçin."
   },
@@ -90,6 +93,7 @@
   },
   "comp:BAIDeleteConfirmModal": {
     "AreYouSureToDelete": "Silmek istediğinizden emin misiniz?",
+    "AreYouSureToPermanentlyDeleteTarget": "{{target}} kalıcı olarak silinsin mi?",
     "CannotBeUndone": "Bu işlem geri alınamaz.",
     "DeleteItem": "Sil",
     "DeleteNItems": "{{count}} öğeyi sil",
@@ -210,7 +214,6 @@
     "UpdateProject": "Projeyi Güncelle"
   },
   "comp:BAIProjectTable": {
-    "AreYouSureToDeactivateProject": "Proje {{projectName}}'i devre dışı bırakmak istediğinizden emin misiniz?",
     "AreYouSureToPurgeProject": "{{projectName}} öğesini kalıcı olarak silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
     "ContainerRegistry": "Konteyner Kayıt Deposu",
     "Controls": "Kontroller",
@@ -237,6 +240,9 @@
     "TotalResourceSlots": "Toplam Kaynak Slotları",
     "Type": "Tür"
   },
+  "comp:BAIProjectVfolderSelect": {
+    "SelectFolder": "Klasör Seç"
+  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Arama",
     "ResetFilter": "Filtreleri sıfırla"
@@ -261,6 +267,9 @@
     "Status": "Durum",
     "TrafficRatio": "Trafik Oranı",
     "TrafficStatus": "Trafik Durumu"
+  },
+  "comp:BAIRuntimeVariantSelect": {
+    "SelectRuntimeVariant": "Çalışma Zamanı Varyantını Seç"
   },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "Denemeler",
@@ -331,6 +340,7 @@
     "ModifiedAt": "Değiştirildi",
     "MoreOptions": "Daha fazla seçenek",
     "Name": "İsim",
+    "NoUploadPermissionForHost": "Bu depolama sunucusuna yükleme izniniz yok.",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Lütfen klasör adını girin.",
     "RenameSuccess": "İsim başarıyla değiştirildi.",
@@ -387,8 +397,10 @@
   },
   "general": {
     "DeselectAll": "Tüm seçimi kaldır",
+    "File": "Dosya",
     "NSelected": "{{count}} seçildi",
     "Optional": "İsteğe bağlı",
+    "Project": "Proje",
     "TotalItems": "Total {{total}} öğeleri",
     "button": {
       "Cancel": "İptal etmek",

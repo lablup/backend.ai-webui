@@ -4,11 +4,10 @@
  */
 import { DeleteForeverVFolderModalV2Fragment$key } from '../__generated__/DeleteForeverVFolderModalV2Fragment.graphql';
 import { DeleteForeverVFolderModalV2Mutation } from '../__generated__/DeleteForeverVFolderModalV2Mutation.graphql';
-import { Alert, App, theme, Typography } from 'antd';
+import { App } from 'antd';
 import {
-  BAIConfirmModalWithInput,
-  BAIConfirmModalWithInputProps,
-  BAIFlex,
+  BAIDeleteConfirmModal,
+  BAIDeleteConfirmModalProps,
   toLocalId,
   useErrorMessageResolver,
 } from 'backend.ai-ui';
@@ -18,8 +17,8 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
 interface DeleteForeverVFolderModalV2Props extends Omit<
-  BAIConfirmModalWithInputProps,
-  'confirmText' | 'content' | 'title' | 'onOk' | 'onCancel'
+  BAIDeleteConfirmModalProps,
+  'confirmText' | 'items' | 'title' | 'onOk' | 'onCancel'
 > {
   vfolderFrgmts?: DeleteForeverVFolderModalV2Fragment$key;
   onRequestClose?: (success: boolean) => void;
@@ -31,7 +30,6 @@ const DeleteForeverVFolderModalV2: React.FC<
   'use memo';
   const { t } = useTranslation();
   const { message } = App.useApp();
-  const { token } = theme.useToken();
   const { getErrorMessage } = useErrorMessageResolver();
 
   const vfolders = useFragment(
@@ -59,52 +57,19 @@ const DeleteForeverVFolderModalV2: React.FC<
     `);
 
   const purgeable = vfolders ?? [];
-  // For single-folder deletion the user must type the folder's own name —
-  // matches the BAIConfirmModalWithInput convention used elsewhere for
-  // irreversible per-resource actions. Bulk deletion falls back to a
-  // generic confirmation word since there is no single name to bind to.
-  const confirmText =
-    purgeable.length === 1
-      ? (purgeable[0]?.metadata?.name ??
-        t('data.folders.DeleteForeverConfirmText'))
-      : t('data.folders.DeleteForeverConfirmText');
 
   return (
-    <BAIConfirmModalWithInput
+    <BAIDeleteConfirmModal
       {...modalProps}
       title={t('dialog.title.DeleteForever')}
+      target={t('general.Folder')}
       okText={t('data.folders.DeleteForever')}
       confirmLoading={isInFlightBulkPurge}
-      confirmText={confirmText}
-      content={
-        <BAIFlex
-          direction="column"
-          gap="md"
-          align="stretch"
-          style={{ marginBottom: token.marginXS, width: '100%' }}
-        >
-          <Alert
-            type="warning"
-            title={t('dialog.warning.DeleteForeverDesc')}
-            style={{ width: '100%' }}
-          />
-          <Typography.Text>
-            {purgeable.length === 1
-              ? t('data.folders.DeleteForeverDescription', {
-                  folderName: purgeable[0]?.metadata?.name,
-                })
-              : t('data.folders.DeleteForeverMultipleDescription', {
-                  folderLength: purgeable.length,
-                })}
-          </Typography.Text>
-          <BAIFlex>
-            <Typography.Text style={{ marginRight: token.marginXXS }}>
-              {t('data.folders.TypeToConfirmDeleteForever')}
-            </Typography.Text>
-            (<Typography.Text code>{confirmText}</Typography.Text>)
-          </BAIFlex>
-        </BAIFlex>
-      }
+      items={_.map(purgeable, (vfolder) => ({
+        key: vfolder.id ?? '',
+        label: vfolder.metadata?.name ?? '',
+      }))}
+      requireConfirmInput
       onOk={() => {
         if (purgeable.length === 0) {
           onRequestClose?.(false);

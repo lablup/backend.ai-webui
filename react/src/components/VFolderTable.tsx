@@ -361,10 +361,16 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
   );
 
   const handleAliasUpdate = useEventNotStable(() => {
+    // Only carry aliases for currently-selected rows. The internal form
+    // intentionally preserves values for deselected rows (so re-selecting
+    // restores the user's previous alias), but `aliasMap` is the
+    // authoritative payload for the parent form's mount list and must
+    // mirror the selection.
+    const allValues = internalForm.getFieldsValue({ strict: false });
     setAliasMap(
       _.mapValues(
-        _.pickBy(internalForm.getFieldsValue({ strict: false }), (v) => !!v), //remove empty
-        (v, k) => inputToAliasPath(k, v), // add alias base path
+        _.pickBy(_.pick(allValues, selectedRowKeys), (v) => !!v),
+        (v, k) => inputToAliasPath(k, v),
       ),
     );
     internalForm.validateFields().catch(() => {});
@@ -659,7 +665,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
           </Tooltip>
         </Space.Compact>
       </BAIFlex>
-      <Form form={internalForm} component={false} preserve={false}>
+      <Form form={internalForm} component={false}>
         <BAITable
           // size="small"
           scroll={{ x: 'max-content' }}

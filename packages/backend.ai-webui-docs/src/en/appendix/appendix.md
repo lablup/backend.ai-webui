@@ -197,7 +197,7 @@ optimal performance, just double the amount of each resources.
 - Manager: 2 cores, 4 GiB memory
 - Agent: 4 cores, 32 GiB memory, NVIDIA GPU (for GPU workload), > 512 GiB SSD
 - Webserver: 2 cores, 4 GiB memory
-- WSProxy: 2 cores, 4 GiB memory
+- App Proxy: 2 cores, 4 GiB memory
 - PostgreSQL DB: 2 cores, 4 GiB memory
 - Redis: 1 core, 2 GiB memory
 - Etcd: 1 core, 2 GiB memory
@@ -211,7 +211,7 @@ each service are:
 - Agent: docker (≥19.03), CUDA/CUDA Toolkit (≥8, 11 recommend),
   nvidia-docker v2, Python (≥3.8), pyenv/pyenv-virtualenv (≥1.2)
 - Webserver: Python (≥3.8), pyenv/pyenv-virtualenv (≥1.2)
-- WSProxy: docker (≥19.03), docker-compose (≥1.24)
+- App Proxy: docker (≥19.03), docker-compose (≥1.24)
 - PostgreSQL DB: docker (≥19.03), docker-compose (≥1.24)
 - Redis: docker (≥19.03), docker-compose (≥1.24)
 - Etcd: docker (≥19.03), docker-compose (≥1.24)

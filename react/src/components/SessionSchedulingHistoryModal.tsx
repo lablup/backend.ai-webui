@@ -1,4 +1,10 @@
 import {
+  SessionSchedulingHistoryFilter,
+  SessionSchedulingHistoryModalQuery,
+  SessionSchedulingHistoryOrderBy,
+} from '../__generated__/SessionSchedulingHistoryModalQuery.graphql';
+import { convertToOrderBy } from '../helper';
+import {
   BAIButton,
   BAIFetchKeyButton,
   BAIFlex,
@@ -12,12 +18,6 @@ import * as _ from 'lodash-es';
 import { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-import {
-  SessionSchedulingHistoryFilter,
-  SessionSchedulingHistoryModalQuery,
-  SessionSchedulingHistoryOrderBy,
-} from 'src/__generated__/SessionSchedulingHistoryModalQuery.graphql';
-import { convertToOrderBy } from 'src/helper';
 
 interface SessionSchedulingHistoryModalProps extends Omit<
   BAIModalProps,

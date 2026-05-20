@@ -206,9 +206,58 @@ Reusable confirmation helpers that exist:
 - `BAIConfirmModalWithInput` — confirm by typing a token
 - `BAIDeleteConfirmModal` — dangerous delete flow with double-check
 
-## 6. Modal Footer Layout
+## 6. Modal Footer: prefer built-in props, custom `footer` is a last resort
 
-Use `BAIFlex` for footer layout, not `<Space>`:
+**Default: use the modal's built-in OK/Cancel props.** `BAIModal` (and antd
+`Modal`) already render a standard OK + Cancel footer wired to `onOk` /
+`onCancel`. Customize it through props before reaching for a custom `footer`:
+
+| Need | Prop |
+|---|---|
+| Submit handler | `onOk` (async supported) |
+| Cancel handler | `onCancel` |
+| Submit label | `okText` |
+| Cancel label | `cancelText` |
+| Submit button loading | `confirmLoading` — bind to the mutation's `isInFlight` / `isPending` |
+| Submit button danger / disabled / icon | `okButtonProps` |
+| Cancel button styling | `cancelButtonProps` |
+| Hide a button | `okButtonProps={{ style: { display: 'none' } }}` or `cancelButtonProps={{ ... }}` |
+
+```tsx
+<BAIModal
+  open={open}
+  title={t('data.CreateFolder')}
+  okText={t('data.Create')}
+  confirmLoading={isInFlightCreate}
+  onOk={async () => {
+    await form.validateFields();
+    await commitCreate({ variables: form.getFieldsValue() });
+    onRequestClose();
+  }}
+  onCancel={() => onRequestClose()}
+>
+  {/* body */}
+</BAIModal>
+```
+
+This keeps button placement, sizing, spacing, and i18n consistent with every
+other modal in the app, and `confirmLoading` handles the pending state without
+you wiring an action button by hand.
+
+### When to use a custom `footer` (last resort)
+
+Only override `footer` when the built-in props genuinely cannot express the
+layout, for example:
+
+- A **third button** beyond OK/Cancel (e.g. a `Reset` on the left).
+- A **non-standard layout** (e.g. left-aligned destructive action separated
+  from the right-aligned confirm pair).
+- A footer that must include **non-button content** (a hint, a checkbox like
+  "auto-activate after create", a status badge).
+
+If you do override `footer`, use `BAIFlex` for layout (not `<Space>`), keep
+the primary action rightmost, and use `BAIButton.action` on the submit button
+so loading state is automatic. Never pair `action` with `onClick`.
 
 ```tsx
 footer={
@@ -231,8 +280,42 @@ footer={
 }
 ```
 
-The primary submit button always uses `BAIButton.action` so loading state is
-automatic. Never pair `action` with `onClick`.
+### Anti-pattern: re-implementing the standard footer
+
+Don't hand-roll a `BAIFlex justify="end"` with Cancel + primary buttons inside
+the modal body (or as a custom `footer={…}`) when the built-in `onOk` /
+`onCancel` / `okText` / `confirmLoading` props cover it. Even if the submit
+button uses `BAIButton.action` (so it has a per-click loading state), bypassing
+the modal's footer slot still loses the standard footer semantics: position,
+sizing, gap, i18n alignment with every other modal, and the
+modal-level `confirmLoading` signal that callers expect to drive from the
+mutation's `isInFlight` / `isPending`. A modal that looks correct is still
+diverging from the project's footer contract.
+
+```tsx
+// ❌ Wrong — re-implements the standard footer inside the body
+<BAIModal open={open} title={t('...')} footer={null}>
+  <FormContent />
+  <BAIFlex justify="end" gap="sm">
+    <BAIButton onClick={onRequestClose}>{t('button.Cancel')}</BAIButton>
+    <BAIButton type="primary" action={handleDeploy}>
+      {t('modelStore.Deploy')}
+    </BAIButton>
+  </BAIFlex>
+</BAIModal>
+
+// ✅ Right — props give you the same footer with confirmLoading for free
+<BAIModal
+  open={open}
+  title={t('...')}
+  okText={t('modelStore.Deploy')}
+  confirmLoading={isInFlightDeploy}
+  onOk={handleDeploy}
+  onCancel={onRequestClose}
+>
+  <FormContent />
+</BAIModal>
+```
 
 ## 7. Loading Skeleton While Data Not Ready
 
@@ -280,5 +363,7 @@ Avoid `useEffect`-driven coordination between sibling modals. Instead:
 - [ ] Primary submit button uses `BAIButton.action` (not `loading={…}`).
 - [ ] `onRequestClose` convention used instead of split `onOk`/`onCancel` when no distinct success-vs-cancel path is needed.
 - [ ] Simple confirmations use `modal.confirm()` from `App.useApp()`, not an inline `<Modal>`.
-- [ ] Footer uses `BAIFlex`, not `<Space>`.
+- [ ] OK / Cancel are wired through `onOk` / `onCancel` / `okText` / `cancelText` / `okButtonProps` props — custom `footer` only when those genuinely cannot express the layout (extra button, non-button content).
+- [ ] Submit pending state goes through `confirmLoading` (bound to the mutation's `isInFlight` / `isPending`), not a hand-rolled `loading` button.
+- [ ] When a custom `footer` is justified, it uses `BAIFlex` (not `<Space>`) and the submit button uses `BAIButton.action`.
 - [ ] No `useEffect` chains between parent and modal — prefer lifted state + `onRequestClose`.

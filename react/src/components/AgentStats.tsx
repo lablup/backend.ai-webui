@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { AgentStatsFragment$key } from '../__generated__/AgentStatsFragment.graphql';
 import { useControllableValue } from 'ahooks';
 import { Segmented, Skeleton, theme, Typography } from 'antd';
 import {
@@ -18,7 +19,6 @@ import * as _ from 'lodash-es';
 import { useTransition, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useRefetchableFragment } from 'react-relay';
-import { AgentStatsFragment$key } from 'src/__generated__/AgentStatsFragment.graphql';
 
 interface AgentStatsProps extends BAIFlexProps {
   queryRef: AgentStatsFragment$key;

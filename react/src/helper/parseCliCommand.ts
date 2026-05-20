@@ -49,6 +49,18 @@ const RUNTIME_DEFAULTS: Record<DetectedRuntime, RuntimeDefaults> = {
 };
 
 /**
+ * Inverse of `tokenizeShellCommand` for prefill/display.
+ * Joins a token list back into a shell-command-like string, quoting any
+ * token that contains whitespace or shell-significant characters via
+ * `JSON.stringify` so a subsequent re-tokenize round-trips.
+ */
+export function formatShellCommand(tokens: readonly string[]): string {
+  return tokens
+    .map((t) => (/[\s'"\\$`]/.test(t) ? JSON.stringify(t) : t))
+    .join(' ');
+}
+
+/**
  * Tokenize a shell command string into an array of tokens.
  * Handles single quotes, double quotes, and escaped characters.
  */

@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import type { DeploymentRevisionDetail_revision$key } from '../__generated__/DeploymentRevisionDetail_revision.graphql';
 import { DeploymentRevisionHistoryTabActivateMutation } from '../__generated__/DeploymentRevisionHistoryTabActivateMutation.graphql';
 import {
   DeploymentRevisionHistoryTabListQuery,
@@ -10,17 +11,12 @@ import {
 import type { DeploymentRevisionHistoryTab_deployment$key } from '../__generated__/DeploymentRevisionHistoryTab_deployment.graphql';
 import { convertToOrderBy } from '../helper';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
-import DeploymentAddRevisionModal from './DeploymentAddRevisionModal';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
-import {
-  LoadingOutlined,
-  PlayCircleOutlined,
-  PlusOutlined,
-} from '@ant-design/icons';
-import { App, Typography } from 'antd';
+import QuestionIconWithTooltip from './QuestionIconWithTooltip';
+import { LoadingOutlined, PlayCircleOutlined } from '@ant-design/icons';
+import { App, Button, Popconfirm, theme, Typography } from 'antd';
 import {
   type BAIColumnType,
-  BAIButton,
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
@@ -28,10 +24,15 @@ import {
   BAITable,
   BAITag,
   BAIUnmountAfterClose,
+  BAIId,
+  INITIAL_FETCH_KEY,
   type GraphQLFilter,
   filterOutNullAndUndefined,
+  isValidUUID,
   toLocalId,
   useBAILogger,
+  useFetchKey,
+  BAIText,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -49,9 +50,23 @@ import {
   useLazyLoadQuery,
   useMutation,
 } from 'react-relay';
-import { useSetBAINotification } from 'src/hooks/useBAINotification';
 
-const availableRevisionSorterKeys = ['createdAt'] as const;
+type RevisionNode = NonNullable<
+  NonNullable<
+    NonNullable<
+      NonNullable<
+        DeploymentRevisionHistoryTabListQuery['response']['deployment']
+      >['revisionHistory']
+    >['edges'][number]
+  >['node']
+>;
+
+const availableRevisionSorterKeys = [
+  'revisionNumber',
+  'createdAt',
+  'clusterMode',
+  'runtimeVariantName',
+] as const;
 const availableRevisionSorterValues = [
   ...availableRevisionSorterKeys,
   ...availableRevisionSorterKeys.map((key) => `-${key}` as const),
@@ -61,6 +76,7 @@ export interface DeploymentRevisionHistoryTabProps {
   deploymentFrgmt: DeploymentRevisionHistoryTab_deployment$key;
   deploymentId: string;
   isDeploymentDestroying?: boolean;
+  fetchKey?: string;
 }
 
 /**
@@ -75,18 +91,25 @@ export interface DeploymentRevisionHistoryTabProps {
  */
 const DeploymentRevisionHistoryTab: React.FC<
   DeploymentRevisionHistoryTabProps
-> = ({ deploymentFrgmt, deploymentId, isDeploymentDestroying = false }) => {
+> = ({
+  deploymentFrgmt,
+  deploymentId,
+  isDeploymentDestroying = false,
+  fetchKey,
+}) => {
   'use memo';
   const { t } = useTranslation();
-  const { modal } = App.useApp();
+  const { token } = theme.useToken();
+  const { message } = App.useApp();
   const { logger } = useBAILogger();
-  const { upsertNotification } = useSetBAINotification();
   const [isPending, startTransition] = useTransition();
   const [rollingBackRevisionId, setRollingBackRevisionId] = useState<
     string | null
   >(null);
-  const [drawerRevisionId, setDrawerRevisionId] = useState<string | null>(null);
-  const [isAddRevisionModalOpen, setIsAddRevisionModalOpen] = useState(false);
+  const [drawerRevision, setDrawerRevision] = useState<{
+    frgmt: RevisionNode & DeploymentRevisionDetail_revision$key;
+    status: 'current' | 'deploying' | 'none';
+  } | null>(null);
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
     'table_column_overrides.DeploymentRevisionHistoryTab',
@@ -152,7 +175,11 @@ const DeploymentRevisionHistoryTab: React.FC<
         : 0,
   }));
 
-  const [fetchKey, setFetchKey] = useState(0);
+  const [internalFetchKey, updateInternalFetchKey] = useFetchKey();
+  const combinedFetchKey = `${fetchKey ?? ''}${internalFetchKey}`;
+  const isInitialFetch =
+    (fetchKey === undefined || fetchKey === INITIAL_FETCH_KEY) &&
+    internalFetchKey === INITIAL_FETCH_KEY;
 
   const { deployment: listData } =
     useLazyLoadQuery<DeploymentRevisionHistoryTabListQuery>(
@@ -177,8 +204,9 @@ const DeploymentRevisionHistoryTab: React.FC<
               edges {
                 node {
                   id
-                  name
+                  revisionNumber
                   createdAt
+
                   clusterConfig {
                     mode
                     size
@@ -202,6 +230,14 @@ const DeploymentRevisionHistoryTab: React.FC<
                       canonicalName
                     }
                   }
+                  modelMountConfig {
+                    vfolderId
+                    vfolder {
+                      id
+                      name
+                    }
+                  }
+                  ...DeploymentRevisionDetail_revision
                 }
               }
             }
@@ -209,7 +245,10 @@ const DeploymentRevisionHistoryTab: React.FC<
         }
       `,
       { deploymentId, ...queryVars },
-      { fetchKey, fetchPolicy: 'network-only' },
+      {
+        fetchKey: combinedFetchKey,
+        fetchPolicy: isInitialFetch ? 'store-and-network' : 'network-only',
+      },
     );
 
   const [commitActivate] =
@@ -221,9 +260,14 @@ const DeploymentRevisionHistoryTab: React.FC<
           deployment {
             id
             currentRevisionId
-            currentRevision {
+            deployingRevisionId
+            currentRevision @since(version: "26.4.3") {
               id
-              name
+              ...DeploymentRevisionDetail_revision
+            }
+            deployingRevision @since(version: "26.4.3") {
+              id
+              ...DeploymentRevisionDetail_revision
             }
           }
           previousRevisionId
@@ -235,10 +279,6 @@ const DeploymentRevisionHistoryTab: React.FC<
   const currentRevisionId = listData?.currentRevisionId;
   const deployingRevisionId = listData?.deployingRevisionId;
   const revisionHistory = listData?.revisionHistory;
-
-  type RevisionNode = NonNullable<
-    NonNullable<NonNullable<typeof revisionHistory>['edges'][number]>['node']
-  >;
 
   const revisions: RevisionNode[] = filterOutNullAndUndefined(
     _.map(revisionHistory?.edges, 'node'),
@@ -256,79 +296,59 @@ const DeploymentRevisionHistoryTab: React.FC<
   };
 
   const handleRefresh = () => {
-    startTransition(() => setFetchKey((k) => k + 1));
+    startTransition(() => updateInternalFetchKey());
   };
 
-  const handleRollback = (revision: RevisionNode) => {
-    // The `name` field is the human-readable revision number label
-    // ("#3"). Fall back to the trimmed UUID if absent so the confirm
-    // text is never blank.
-    const revisionLabel = revision.name ?? toLocalId(revision.id);
-    modal.confirm({
-      title: t('deployment.Deploy'),
-      content: t('deployment.DeployConfirm', {
-        revisionNumber: revisionLabel,
-      }),
-      okText: t('deployment.Deploy'),
-      okButtonProps: {
-        danger: true,
-      },
-      onOk: () => {
-        return new Promise<void>((resolve) => {
-          setRollingBackRevisionId(revision.id);
-          commitActivate({
-            variables: {
-              input: {
-                deploymentId: toLocalId(deployment.id),
-                revisionId: toLocalId(revision.id),
-              },
-            },
-            onCompleted: (_res, errors) => {
-              setRollingBackRevisionId(null);
-              if (errors && errors.length > 0) {
-                logger.error(errors[0]);
-                upsertNotification({
-                  open: true,
-                  duration: 4.5,
-                  message: errors[0]?.message || t('general.ErrorOccurred'),
-                  type: 'error',
-                });
-                resolve();
-                return;
-              }
-              upsertNotification({
-                open: true,
-                duration: 4.5,
-                message: t('deployment.DeploySuccess', {
-                  revisionNumber: revisionLabel,
-                }),
-              });
-              handleRefresh();
-              resolve();
-            },
-            onError: (error) => {
-              setRollingBackRevisionId(null);
-              logger.error(error);
-              upsertNotification({
-                open: true,
-                duration: 4.5,
-                message: error?.message || t('general.ErrorOccurred'),
-                type: 'error',
-              });
-              resolve();
-            },
-          });
-        });
-      },
+  const handleRollback = (revision: RevisionNode): Promise<boolean> => {
+    return new Promise<boolean>((resolve) => {
+      setRollingBackRevisionId(revision.id);
+      commitActivate({
+        variables: {
+          input: {
+            deploymentId: toLocalId(deployment.id),
+            revisionId: toLocalId(revision.id),
+          },
+        },
+        onCompleted: (_res, errors) => {
+          setRollingBackRevisionId(null);
+          if (errors && errors.length > 0) {
+            logger.error(errors[0]);
+            message.error(errors[0]?.message || t('general.ErrorOccurred'));
+            resolve(false);
+            return;
+          }
+          message.success(
+            t('deployment.ApplySuccess', {
+              revisionNumber: revision.revisionNumber,
+            }),
+          );
+          handleRefresh();
+          resolve(true);
+        },
+        onError: (error) => {
+          setRollingBackRevisionId(null);
+          logger.error(error);
+          message.error(error?.message || t('general.ErrorOccurred'));
+          resolve(false);
+        },
+      });
     });
   };
 
   const columns: BAIColumnType<RevisionNode>[] = [
     {
-      title: t('deployment.RevisionNumber'),
+      title: (
+        <BAIFlex gap="xxs" align="center">
+          {t('deployment.RevisionNumberWithID')}
+          <QuestionIconWithTooltip
+            title={t('deployment.RevisionNumberTooltip')}
+          />
+        </BAIFlex>
+      ),
       dataIndex: 'revisionNumber',
       key: 'revisionNumber',
       fixed: 'left',
+      sorter: true,
       render: (_value, record) => {
         // `currentRevisionId` and `deployingRevisionId` come back as raw
         // UUIDs from the scalar fields, while `record.id` is the
@@ -338,7 +358,7 @@ const DeploymentRevisionHistoryTab: React.FC<
         const isCurrent = recordLocalId === currentRevisionId;
         const isDeploying = recordLocalId === deployingRevisionId;
         const deployDisabledReason =
-          isCurrent || isDeploying ? t('deployment.DeployDisabled') : undefined;
+          isCurrent || isDeploying ? t('deployment.ApplyDisabled') : undefined;
         const isDeployDisabled =
           isCurrent ||
           isDeploying ||
@@ -348,9 +368,28 @@ const DeploymentRevisionHistoryTab: React.FC<
           <BAINameActionCell
             title={
               <BAIFlex gap="xs" align="center">
-                <Typography.Link onClick={() => setDrawerRevisionId(record.id)}>
-                  {record.name ?? '-'}
+                <Typography.Link
+                  onClick={() =>
+                    setDrawerRevision({
+                      frgmt: record as RevisionNode &
+                        DeploymentRevisionDetail_revision$key,
+                      status: isCurrent
+                        ? 'current'
+                        : isDeploying
+                          ? 'deploying'
+                          : 'none',
+                    })
+                  }
+                >
+                  {record.revisionNumber != null
+                    ? `#${record.revisionNumber}`
+                    : '-'}
                 </Typography.Link>
+                <BAIFlex gap={0} align="center">
+                  {'('}
+                  <BAIId globalId={record.id} />
+                  {')'}
+                </BAIFlex>
                 {isCurrent ? (
                   <BAITag color="success">{t('deployment.Current')}</BAITag>
                 ) : null}
@@ -361,7 +400,7 @@ const DeploymentRevisionHistoryTab: React.FC<
                   // reconciler clears it, and showing both tags side by
                   // side reads as a contradiction.
                   <BAITag color="warning" icon={<LoadingOutlined spin />}>
-                    {t('deployment.Deploying')}
+                    {t('deployment.Applying')}
                   </BAITag>
                 ) : null}
               </BAIFlex>
@@ -370,11 +409,22 @@ const DeploymentRevisionHistoryTab: React.FC<
             actions={[
               {
                 key: 'deploy',
-                title: t('deployment.Deploy'),
+                title: t('deployment.Apply'),
                 icon: <PlayCircleOutlined />,
                 disabled: isDeployDisabled,
                 disabledReason: deployDisabledReason,
-                onClick: () => handleRollback(record),
+                popConfirm: {
+                  title: t('deployment.Apply'),
+                  description: `#${record.revisionNumber}`,
+                  okText: t('deployment.Apply'),
+                  cancelText: t('button.Cancel'),
+                  okButtonProps: {
+                    danger: true,
+                  },
+                  onConfirm: () => {
+                    void handleRollback(record);
+                  },
+                },
               },
             ]}
           />
@@ -392,6 +442,7 @@ const DeploymentRevisionHistoryTab: React.FC<
     {
       title: t('deployment.ModelVersion'),
       key: 'modelVersion',
+      defaultHidden: true,
       render: (_value, record) => {
         const model = record.modelDefinition?.models?.[0];
         if (!model) return '-';
@@ -410,39 +461,93 @@ const DeploymentRevisionHistoryTab: React.FC<
     },
     {
       title: t('deployment.RuntimeVariant'),
-      key: 'runtimeVariant',
-      dataIndex: 'runtimeVariant',
+      key: 'runtimeVariantName',
+      dataIndex: 'runtimeVariantName',
+      sorter: true,
       render: (_value, record) =>
         record.modelRuntimeConfig?.runtimeVariant?.name ?? '-',
     },
     {
       title: t('deployment.Image'),
       key: 'image',
+      defaultHidden: true,
       render: (_value, record) => {
         const canonicalName = record.imageV2?.identity?.canonicalName;
-        if (!canonicalName) return '-';
+        const imageGlobalId = record.imageV2?.id;
+        if (!canonicalName && !imageGlobalId) return '-';
         return (
-          <Typography.Text
-            copyable={{ text: canonicalName }}
-            ellipsis={{ tooltip: canonicalName }}
-            style={{ maxWidth: 240 }}
-          >
-            {canonicalName}
-          </Typography.Text>
+          <BAIFlex gap="xs" align="center" wrap="wrap">
+            {canonicalName ? (
+              <BAIText
+                copyable
+                ellipsis={{ tooltip: canonicalName }}
+                style={{ maxWidth: 180 }}
+              >
+                {canonicalName}
+              </BAIText>
+            ) : null}
+            {imageGlobalId ? (
+              <BAIFlex gap={0} align="center">
+                {'('}
+                <BAIId globalId={imageGlobalId} />
+                {')'}
+              </BAIFlex>
+            ) : null}
+          </BAIFlex>
         );
       },
     },
     {
-      title: t('deployment.ClusterSize'),
-      key: 'clusterSize',
+      title: t('deployment.ModelFolder'),
+      key: 'modelFolder',
+      defaultHidden: true,
+      render: (_value, record) => {
+        const vfolder = record.modelMountConfig?.vfolder;
+        const vfolderId = record.modelMountConfig?.vfolderId;
+        if (!vfolder?.name && !vfolderId) return '-';
+        return (
+          <BAIFlex gap="xs" align="center" wrap="wrap">
+            {vfolder?.name ? (
+              <Typography.Text>{vfolder.name}</Typography.Text>
+            ) : null}
+            {vfolder?.id ? (
+              <BAIFlex gap={0} align="center">
+                {'('}
+                <BAIId globalId={vfolder.id} />
+                {')'}
+              </BAIFlex>
+            ) : vfolderId ? (
+              <Typography.Text type="secondary">{vfolderId}</Typography.Text>
+            ) : null}
+          </BAIFlex>
+        );
+      },
+    },
+    {
+      title: (
+        <BAIFlex gap="xxs" align="center">
+          {t('deployment.ClusterMode')}
+          <QuestionIconWithTooltip title={t('deployment.ClusterModeTooltip')} />
+        </BAIFlex>
+      ),
+      key: 'clusterMode',
+      dataIndex: 'clusterMode',
+      sorter: true,
       render: (_value, record) => {
         const mode = record.clusterConfig?.mode;
         const size = record.clusterConfig?.size;
-        if (size == null) return '-';
-        return mode ? `${size} (${mode})` : `${size}`;
+        if (mode == null && size == null) return '-';
+        if (mode == null) return `${size}`;
+        if (size == null) return mode;
+        return `${mode} / ${size}`;
       },
     },
   ];
+
+  const uuidRule = {
+    message: t('general.InvalidUUID'),
+    validate: (value: string) => isValidUUID(value.toLowerCase()),
+  };
 
   const filterProperties = [
     {
@@ -457,6 +562,25 @@ const DeploymentRevisionHistoryTab: React.FC<
       operators: ['after' as const, 'before' as const],
       defaultOperator: 'after' as const,
     },
+    {
+      key: 'clusterMode',
+      propertyLabel: t('deployment.ClusterMode'),
+      type: 'string' as const,
+    },
+    {
+      key: 'imageId',
+      propertyLabel: t('deployment.Image'),
+      type: 'uuid' as const,
+      fixedOperator: 'equals' as const,
+      rule: uuidRule,
+    },
+    {
+      key: 'modelVfolderId',
+      propertyLabel: t('deployment.ModelFolder'),
+      type: 'uuid' as const,
+      fixedOperator: 'equals' as const,
+      rule: uuidRule,
+    },
   ];
 
   const filterValue: GraphQLFilter | undefined = queryParams.rvFilter
@@ -467,23 +591,45 @@ const DeploymentRevisionHistoryTab: React.FC<
     <>
       <BAIUnmountAfterClose>
         <DeploymentRevisionDetailDrawer
-          revisionId={drawerRevisionId}
-          currentRevisionId={currentRevisionId}
-          open={!!drawerRevisionId}
-          onClose={() => setDrawerRevisionId(null)}
+          revisionFrgmt={drawerRevision?.frgmt}
+          status={drawerRevision?.status}
+          open={!!drawerRevision}
+          onClose={() => setDrawerRevision(null)}
+          extra={
+            drawerRevision ? (
+              <Popconfirm
+                title={t('deployment.Apply')}
+                description={`#${drawerRevision.frgmt.revisionNumber}`}
+                okText={t('deployment.Apply')}
+                cancelText={t('button.Cancel')}
+                okButtonProps={{ danger: true }}
+                onConfirm={async () => {
+                  const success = await handleRollback(drawerRevision.frgmt);
+                  if (success) setDrawerRevision(null);
+                }}
+              >
+                <Button
+                  type="primary"
+                  icon={<PlayCircleOutlined />}
+                  disabled={
+                    drawerRevision.status === 'current' ||
+                    drawerRevision.status === 'deploying' ||
+                    isDeploymentDestroying ||
+                    !!rollingBackRevisionId
+                  }
+                >
+                  {t('deployment.Apply')}
+                </Button>
+              </Popconfirm>
+            ) : undefined
+          }
         />
       </BAIUnmountAfterClose>
-      <DeploymentAddRevisionModal
-        open={isAddRevisionModalOpen}
-        onClose={() => setIsAddRevisionModalOpen(false)}
-        onSuccess={handleRefresh}
-        deploymentId={deploymentId}
-      />
       <BAIFlex
         justify="between"
         align="center"
         gap="xs"
-        style={{ marginBottom: 12 }}
+        style={{ marginBottom: token.marginSM }}
         wrap="wrap"
       >
         <BAIGraphQLPropertyFilter
@@ -496,21 +642,11 @@ const DeploymentRevisionHistoryTab: React.FC<
             doRefetch({ filter: parsed, offset: 0 });
           }}
         />
-        <BAIFlex gap="xs" align="center">
-          <BAIFetchKeyButton
-            loading={isPending}
-            value=""
-            onChange={() => handleRefresh()}
-          />
-          <BAIButton
-            type="primary"
-            icon={<PlusOutlined />}
-            disabled={isDeploymentDestroying}
-            onClick={() => setIsAddRevisionModalOpen(true)}
-          >
-            {t('deployment.AddRevision')}
-          </BAIButton>
-        </BAIFlex>
+        <BAIFetchKeyButton
+          loading={isPending}
+          value=""
+          onChange={() => handleRefresh()}
+        />
       </BAIFlex>
       <BAITable
         rowKey="id"

@@ -83,6 +83,56 @@ if ! command -v serve &> /dev/null; then
     exit 1
 fi
 
-echo "Server starting"
+# Pick the HTTP port `serve` will listen on. Honour SERVE_PORT if the caller
+# pinned one, otherwise default to the legacy 9091.
+SERVE_PORT="${SERVE_PORT:-9091}"
+
+# Derive a Portless-safe app slug from the version so the URL reflects the
+# released version (e.g. `26.4.8-rc.3` -> `v26-4-8-rc-3`). Portless cert
+# generation does not like dots / very long subdomains, so collapse anything
+# outside `[a-z0-9-]`, dedupe dashes, trim, and cap at 40 chars. We prefix `v`
+# so the subdomain doesn't start with a digit (some DNS-style validators
+# reject leading digits in labels even though browsers accept them).
+APP_NAME=$(echo "v${VERSION}" \
+    | tr '[:upper:]' '[:lower:]' \
+    | sed -E 's/[^a-z0-9-]+/-/g; s/-+/-/g; s/^-+//; s/-+$//' \
+    | cut -c1-40)
+
+# If portless isn't installed, fall back to plain `serve` on the chosen port.
+if ! command -v portless &> /dev/null; then
+    echo "Portless not found — serving directly on http://localhost:${SERVE_PORT}"
+    echo "Press Ctrl+C to stop the server"
+    serve -s -l "${SERVE_PORT}" .
+    exit $?
+fi
+
+# Ensure the Portless daemon is running on the project's standard port (1355).
+# `portless proxy start` is idempotent (no-op if already running on the same
+# port). We honour PORTLESS_PORT when set so Portless reads it directly, matching
+# `scripts/dev.mjs` conventions. We do NOT swallow every failure with `|| true`
+# — that would hide real problems (port held by another process, permission
+# error, broken binary) behind the URL announcement below and surface only as a
+# confusing failure inside `exec portless ...`. Instead we log a warning and
+# continue, so the user sees the root cause while the script still attempts the
+# normal start path (which is harmless when the daemon is genuinely up).
+PORTLESS_DAEMON_PORT="${PORTLESS_PORT:-1355}"
+if [ -n "${PORTLESS_PORT:-}" ]; then
+    portless proxy start \
+        || echo "Warning: 'portless proxy start' returned non-zero. Continuing under the assumption the daemon is already running on PORTLESS_PORT=${PORTLESS_PORT}." >&2
+else
+    portless proxy start -p "${PORTLESS_DAEMON_PORT}" \
+        || echo "Warning: 'portless proxy start -p ${PORTLESS_DAEMON_PORT}' returned non-zero. Continuing under the assumption the daemon is already running on ${PORTLESS_DAEMON_PORT}." >&2
+fi
+
+echo ""
+echo "Serving v${VERSION} via Portless:"
+echo "  https://${APP_NAME}.localhost:${PORTLESS_DAEMON_PORT}"
+echo "  (direct: http://localhost:${SERVE_PORT})"
 echo "Press Ctrl+C to stop the server"
-serve -s -l 9091 .
+echo ""
+
+# `portless <name> <cmd>` routes traffic from the named subdomain to <cmd>.
+# Pin --app-port so portless knows exactly where `serve` listens; this also
+# avoids portless picking a random port and confusing the "direct" fallback URL.
+exec portless "${APP_NAME}" --force --app-port "${SERVE_PORT}" -- \
+    serve -s -l "${SERVE_PORT}" .

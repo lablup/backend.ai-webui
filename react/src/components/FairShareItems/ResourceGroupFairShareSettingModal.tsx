@@ -2,6 +2,11 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { ResourceGroupFairShareSettingModalFragment$key } from '../../__generated__/ResourceGroupFairShareSettingModalFragment.graphql';
+import {
+  ResourceGroupFairShareSettingModalMutation,
+  ResourceGroupFairShareSettingModalMutation$variables,
+} from '../../__generated__/ResourceGroupFairShareSettingModalMutation.graphql';
 import QuestionIconWithTooltip from '../QuestionIconWithTooltip';
 import { App, Col, Form, Input, InputNumber, Row, theme } from 'antd';
 import { FormInstance } from 'antd/lib';
@@ -18,11 +23,6 @@ import * as _ from 'lodash-es';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
-import { ResourceGroupFairShareSettingModalFragment$key } from 'src/__generated__/ResourceGroupFairShareSettingModalFragment.graphql';
-import {
-  ResourceGroupFairShareSettingModalMutation,
-  ResourceGroupFairShareSettingModalMutation$variables,
-} from 'src/__generated__/ResourceGroupFairShareSettingModalMutation.graphql';
 
 interface ResourceGroupFairShareTableProps extends BAIModalProps {
   resourceGroupNodeFrgmt: ResourceGroupFairShareSettingModalFragment$key | null;

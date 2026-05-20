@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { StorageHostSettingPageQuery } from '../__generated__/StorageHostSettingPageQuery.graphql';
+import ErrorBoundaryWithNullFallback from '../components/ErrorBoundaryWithNullFallback';
 import StorageHostResourcePanel from '../components/StorageHostResourcePanel';
 import StorageHostSettingsPanel from '../components/StorageHostSettingsPanel';
 import { useWebUINavigate } from '../hooks';
@@ -12,7 +13,6 @@ import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useParams } from 'react-router-dom';
-import ErrorBoundaryWithNullFallback from 'src/components/ErrorBoundaryWithNullFallback';
 
 interface StorageHostSettingPageProps {
   // storageHostId: string;

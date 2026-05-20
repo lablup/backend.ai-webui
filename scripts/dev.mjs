@@ -57,7 +57,7 @@ const args = [
   '-c', 'auto',
   '--names', 'tsc,react-relay,react',
   'tsc --watch --preserveWatchOutput',
-  'cd react && pnpm run relay:watch',
+  'pnpm run relay:watch',
   `${portlessSpec}-- pnpm --prefix ./react run start`,
 ];
 

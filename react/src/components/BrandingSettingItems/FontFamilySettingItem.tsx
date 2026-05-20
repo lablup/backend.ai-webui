@@ -2,9 +2,9 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { useUserCustomThemeConfig } from '../../hooks/useUserCustomThemeConfig';
 import { theme } from 'antd';
 import { BAIUncontrolledInput } from 'backend.ai-ui';
-import { useUserCustomThemeConfig } from 'src/hooks/useUserCustomThemeConfig';
 
 const FontFamilySettingItem: React.FC = () => {
   'use memo';

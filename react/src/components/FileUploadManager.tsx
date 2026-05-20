@@ -2,7 +2,9 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
+import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import { theme, Typography } from 'antd';
 import { RcFile } from 'antd/es/upload';
@@ -19,8 +21,6 @@ import * as _ from 'lodash-es';
 import PQueue from 'p-queue';
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSuspendedBackendaiClient } from 'src/hooks';
-import { useBAISettingUserState } from 'src/hooks/useBAISetting';
 import * as tus from 'tus-js-client';
 
 type uploadStartFunction = (callbacks?: {

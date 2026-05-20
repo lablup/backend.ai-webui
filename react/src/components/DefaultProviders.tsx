@@ -10,6 +10,7 @@ import {
   createAnonymousBackendaiClient,
   useWebUINavigate,
 } from '../hooks';
+import { useDeviceMetaData } from '../hooks/backendai';
 import { useCustomThemeConfig } from '../hooks/useCustomThemeConfig';
 import { useThemeMode } from '../hooks/useThemeMode';
 // @ts-ignore
@@ -60,7 +61,6 @@ import React, {
 import { useTranslation, initReactI18next } from 'react-i18next';
 import { RelayEnvironmentProvider } from 'react-relay/hooks';
 import { useLocation } from 'react-router-dom';
-import { useDeviceMetaData } from 'src/hooks/backendai';
 import { QueryParamProvider } from 'use-query-params';
 import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
 

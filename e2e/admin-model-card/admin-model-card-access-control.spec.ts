@@ -15,8 +15,10 @@ test.describe(
       // Login as a regular user
       await loginAsUser(page, request);
 
-      // Attempt to navigate directly to /admin-serving?tab=model-store
-      await page.goto(`${webuiEndpoint}/admin-serving?tab=model-store`);
+      // Attempt to navigate directly to /admin-deployments?tab=model-store-management
+      await page.goto(
+        `${webuiEndpoint}/admin-deployments?tab=model-store-management`,
+      );
 
       // Verify the page does NOT show the Admin Model Card management table
       // The page should either redirect or show an access denied state

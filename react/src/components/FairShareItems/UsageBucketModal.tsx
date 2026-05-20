@@ -2,6 +2,9 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { UsageBucketModal_DomainFragment$key } from '../../__generated__/UsageBucketModal_DomainFragment.graphql';
+import { UsageBucketModal_ProjectFragment$key } from '../../__generated__/UsageBucketModal_ProjectFragment.graphql';
+import { UsageBucketModal_UserFragment$key } from '../../__generated__/UsageBucketModal_UserFragment.graphql';
 import UsageBucketChartContent from './UsageBucketChartContent';
 import { DatePicker, Descriptions, Skeleton } from 'antd';
 import {
@@ -18,9 +21,6 @@ import * as _ from 'lodash-es';
 import { Suspense, useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
-import { UsageBucketModal_DomainFragment$key } from 'src/__generated__/UsageBucketModal_DomainFragment.graphql';
-import { UsageBucketModal_ProjectFragment$key } from 'src/__generated__/UsageBucketModal_ProjectFragment.graphql';
-import { UsageBucketModal_UserFragment$key } from 'src/__generated__/UsageBucketModal_UserFragment.graphql';
 
 interface UsageBucketModalProps extends BAIModalProps {
   domainFairShareFrgmt?: UsageBucketModal_DomainFragment$key | null;

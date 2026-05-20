@@ -12,7 +12,7 @@ import { AutoScalingRuleEditorModalUpdateMutation } from '../__generated__/AutoS
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { useSuspendedBackendaiClient } from '../hooks';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
-import { PrometheusPresetPreview } from './PrometheusPresetPreview';
+import PrometheusQueryTemplatePreview from './PrometheusQueryTemplatePreview';
 import {
   App,
   AutoComplete,
@@ -253,6 +253,7 @@ const AutoScalingRuleEditorModalContent: React.FC<{
       <Form.Item
         label={t('autoScalingRule.MetricSource')}
         name={'metricSource'}
+        tooltip={t('autoScalingRule.MetricSourceTooltip')}
         rules={[{ required: true }]}
       >
         <Select
@@ -302,6 +303,7 @@ const AutoScalingRuleEditorModalContent: React.FC<{
         label={t('autoScalingRule.MetricName')}
         name={'metricName'}
         hidden={isPrometheus}
+        tooltip={t('autoScalingRule.MetricNameTooltip')}
         rules={[{ required: !isPrometheus }]}
       >
         <AutoComplete
@@ -332,6 +334,7 @@ const AutoScalingRuleEditorModalContent: React.FC<{
           <Form.Item
             label={`${t('autoScalingRule.MetricName')} (${t('autoScalingRule.PrometheusPreset')})`}
             name="prometheusQueryPresetId"
+            tooltip={t('autoScalingRule.PrometheusPresetTooltip')}
             rules={[
               {
                 required: true,
@@ -340,9 +343,9 @@ const AutoScalingRuleEditorModalContent: React.FC<{
             ]}
             extra={
               selectedPreset ? (
-                <PrometheusPresetPreview
+                <PrometheusQueryTemplatePreview
                   key={selectedPreset.id}
-                  presetGlobalId={selectedPreset.id}
+                  queryTemplate={selectedPreset.queryTemplate}
                 />
               ) : undefined
             }

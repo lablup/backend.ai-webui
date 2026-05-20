@@ -3,16 +3,16 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { backendaiClientPromise } from '.';
+import {
+  useDefaultImagesWithFallbackQuery,
+  useDefaultImagesWithFallbackQuery$data,
+} from '../__generated__/useDefaultImagesWithFallbackQuery.graphql';
+import { getImageFullName } from '../helper';
 import { atom, useAtom } from 'jotai';
 import { atomWithDefault } from 'jotai/utils';
 import * as _ from 'lodash-es';
 import { useEffect, useEffectEvent } from 'react';
 import { fetchQuery, graphql, useRelayEnvironment } from 'react-relay';
-import {
-  useDefaultImagesWithFallbackQuery,
-  useDefaultImagesWithFallbackQuery$data,
-} from 'src/__generated__/useDefaultImagesWithFallbackQuery.graphql';
-import { getImageFullName } from 'src/helper';
 
 const IMAGES_QUERY = graphql`
   query useDefaultImagesWithFallbackQuery($installed: Boolean) {

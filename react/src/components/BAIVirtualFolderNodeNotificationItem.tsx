@@ -2,7 +2,13 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { BAIVirtualFolderNodeNotificationItemFragment$key } from '../__generated__/BAIVirtualFolderNodeNotificationItemFragment.graphql';
+import {
+  NotificationState,
+  useSetBAINotification,
+} from '../hooks/useBAINotification';
 import BAINotificationBackgroundProgress from './BAINotificationBackgroundProgress';
+import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import { useToggle } from 'ahooks';
 import { Card, List, theme, Typography } from 'antd';
 import { BAIFlex, BAILink, BAINotificationItem, BAIText } from 'backend.ai-ui';
@@ -10,12 +16,6 @@ import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
-import { BAIVirtualFolderNodeNotificationItemFragment$key } from 'src/__generated__/BAIVirtualFolderNodeNotificationItemFragment.graphql';
-import { useWebUINavigate } from 'src/hooks';
-import {
-  NotificationState,
-  useSetBAINotification,
-} from 'src/hooks/useBAINotification';
 
 interface BAIVirtualFolderNodeNotificationItemProps {
   notification: NotificationState;
@@ -25,7 +25,7 @@ interface BAIVirtualFolderNodeNotificationItemProps {
 
 /**
  * @deprecated Renders V1 `VirtualFolderNode` notifications. The V2 counterpart
- * `BAIVFolderNotificationItem` (operating on `VFolder implements Node` from
+ * `BAIVirtualFolderNodeNotificationItemV2` (operating on `VFolder implements Node` from
  * the Strawberry GraphQL API, FR-2573) is the preferred path going forward.
  * This component will be removed once all V1 callers migrate.
  */
@@ -34,7 +34,7 @@ const BAIVirtualFolderNodeNotificationItem: React.FC<
 > = ({ notification, virtualFolderNodeFrgmt, showDate }) => {
   'use memo';
 
-  const navigate = useWebUINavigate();
+  const { open: openFolderExplorer } = useFolderExplorerOpener();
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { closeNotification } = useSetBAINotification();
@@ -65,9 +65,9 @@ const BAIVirtualFolderNodeNotificationItem: React.FC<
               }}
               title={node.name || ''}
               onClick={() => {
-                navigate(
-                  `/data${node.row_id ? `?${new URLSearchParams({ folder: node.row_id }).toString()}` : ''}`,
-                );
+                if (node.row_id) {
+                  openFolderExplorer(node.row_id);
+                }
                 closeNotification(notification.key);
               }}
             >

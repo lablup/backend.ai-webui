@@ -189,14 +189,14 @@ const LoginView: React.FC<{
     const sanitizedPlugin = loginPlugin.replace(/[^a-zA-Z0-9_-]/g, '');
     if (!sanitizedPlugin || sanitizedPlugin !== loginPlugin) return;
 
-    import(
-      // `@vite-ignore` = Vite's equivalent of webpack's `webpackIgnore`.
-      // The path interpolates a user-config'd plugin name at runtime and
-      // sits OUTSIDE react/src — Vite would otherwise warn about the
-      // un-analyzable specifier on every dev rebuild.
-      /* @vite-ignore */
-      `../../../src/plugins/${sanitizedPlugin}`
-    ).catch(() => {
+    // Build the plugin path at runtime, in a variable, so neither Vite nor
+    // esbuild's optimizeDeps scanner can statically analyze the specifier.
+    // A template-literal with a static prefix (e.g. `../../../src/plugins/…`)
+    // is treated by esbuild as a glob and fails to resolve in dev because
+    // `webui-ai/src/plugins/` only exists in production builds. `@vite-ignore`
+    // alone is not enough — esbuild's scanner does not honor that comment.
+    const pluginUrl = `../../../src/plugins/${sanitizedPlugin}`;
+    import(/* @vite-ignore */ pluginUrl).catch(() => {
       setLoginError({ message: t('error.LoginFailed') });
     });
   }, [isConfigLoaded, loginPlugin, t]);

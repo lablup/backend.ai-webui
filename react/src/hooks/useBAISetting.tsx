@@ -5,12 +5,12 @@
 import { BAIBoardItem } from '../components/BAIBoard';
 import { jotaiStore } from '../components/DefaultProviders';
 import { backendaiOptions } from '../global-stores';
-import type { AIAgent } from './useAIAgent';
+import { CustomThemeConfig } from '../helper/customThemeConfig';
+import type { AgentEndpointBindings, AgentProfile } from './useAIAgent';
 import { BAITableColumnOverrideRecord } from 'backend.ai-ui';
 import { atom, useAtom } from 'jotai';
 import { atomFamily } from 'jotai-family';
 import { SetStateAction } from 'react';
-import { CustomThemeConfig } from 'src/helper/customThemeConfig';
 
 export interface UserSettings {
   has_opened_tour_neo_session_validation?: boolean;
@@ -31,7 +31,8 @@ export interface UserSettings {
   start_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
   start_page_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
   experimental_ai_agents?: boolean;
-  extra_ai_agents?: Array<AIAgent>;
+  extra_ai_agents?: Array<AgentProfile>;
+  agent_endpoints?: AgentEndpointBindings;
   session_metrics_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
   dashboard_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
   admin_dashboard_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
@@ -47,6 +48,7 @@ export interface UserSettings {
   container_log_auto_refresh_enabled?: boolean;
   container_log_auto_refresh_interval?: number;
   custom_theme_config?: CustomThemeConfig;
+  deploymentRevisionCreationMode?: 'preset' | 'custom';
 }
 
 export type SessionHistory = {

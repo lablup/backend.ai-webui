@@ -63,6 +63,9 @@
     "Updated": "更新",
     "Version": "版本"
   },
+  "comp:BAIAvailablePresetSelect": {
+    "SelectPreset": "選擇預設"
+  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "發生未預期的錯誤。請稍後再試，若問題持續，請聯絡支援。"
   },
@@ -90,6 +93,7 @@
   },
   "comp:BAIDeleteConfirmModal": {
     "AreYouSureToDelete": "您確定要刪除嗎？",
+    "AreYouSureToPermanentlyDeleteTarget": "確定要永久刪除{{target}}嗎？",
     "CannotBeUndone": "此操作無法復原。",
     "DeleteItem": "刪除",
     "DeleteNItems": "刪除 {{count}} 個項目",
@@ -210,7 +214,6 @@
     "UpdateProject": "更新專案"
   },
   "comp:BAIProjectTable": {
-    "AreYouSureToDeactivateProject": "您確定要停用專案 {{projectName}} 嗎？",
     "AreYouSureToPurgeProject": "您確定要清除 {{projectName}}? 此操作無法復原。",
     "ContainerRegistry": "容器映像庫",
     "Controls": "控制項",
@@ -237,6 +240,9 @@
     "TotalResourceSlots": "資源總槽位",
     "Type": "類型"
   },
+  "comp:BAIProjectVfolderSelect": {
+    "SelectFolder": "選擇資料夾"
+  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "搜索",
     "ResetFilter": "重置過濾器"
@@ -261,6 +267,9 @@
     "Status": "狀態",
     "TrafficRatio": "流量比例",
     "TrafficStatus": "流量狀態"
+  },
+  "comp:BAIRuntimeVariantSelect": {
+    "SelectRuntimeVariant": "選擇執行階段變體"
   },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "嘗試次數",
@@ -333,6 +342,7 @@
     "ModifiedAt": "修改為",
     "MoreOptions": "更多選項",
     "Name": "姓名",
+    "NoUploadPermissionForHost": "您沒有此儲存主機的上傳權限。",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "請輸入文件夾名稱。",
     "RenameSuccess": "該名稱已成功更改。",
@@ -392,8 +402,10 @@
   },
   "general": {
     "DeselectAll": "取消全選",
+    "File": "檔案",
     "NSelected": "{{count}}選擇",
     "Optional": "選填",
+    "Project": "專案",
     "TotalItems": "總計{{total}}項目",
     "button": {
       "Cancel": "取消",

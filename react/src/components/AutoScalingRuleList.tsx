@@ -12,13 +12,11 @@ import { AutoScalingRuleListQuery } from '../__generated__/AutoScalingRuleListQu
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import AutoScalingRuleEditorModal from './AutoScalingRuleEditorModal';
-import {
-  DeleteOutlined,
-  PlusOutlined,
-  SettingOutlined,
-} from '@ant-design/icons';
+import QuestionIconWithTooltip from './QuestionIconWithTooltip';
+import { DeleteFilled, PlusOutlined, SettingOutlined } from '@ant-design/icons';
 import { App, Button, Tag, Tooltip, Typography } from 'antd';
 import {
+  BAIDeleteConfirmModal,
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
@@ -193,13 +191,27 @@ const AutoScalingRuleListNodes: React.FC<AutoScalingRuleListNodesProps> = ({
       columns={[
         {
           key: 'metricSource',
-          title: t('autoScalingRule.MetricSource'),
+          title: (
+            <BAIFlex gap="xxs" align="center">
+              {t('autoScalingRule.MetricSource')}
+              <QuestionIconWithTooltip
+                title={t('autoScalingRule.MetricSourceTooltip')}
+              />
+            </BAIFlex>
+          ),
           dataIndex: 'metricSource',
           fixed: 'left',
         },
         {
           key: 'condition',
-          title: t('autoScalingRule.Condition'),
+          title: (
+            <BAIFlex gap="xxs" align="center">
+              {t('autoScalingRule.Condition')}
+              <QuestionIconWithTooltip
+                title={t('autoScalingRule.ConditionTooltip')}
+              />
+            </BAIFlex>
+          ),
           fixed: 'left',
           render: (_text, row) => {
             if (!row) return '-';
@@ -218,7 +230,7 @@ const AutoScalingRuleListNodes: React.FC<AutoScalingRuleListNodesProps> = ({
                   {
                     key: 'delete',
                     title: t('button.Delete'),
-                    icon: <DeleteOutlined />,
+                    icon: <DeleteFilled />,
                     type: 'danger',
                     disabled: isEndpointDestroying || !isOwnedByCurrentUser,
                     onClick: () => onDeleteRule(row.id, row.metricName ?? ''),
@@ -230,7 +242,14 @@ const AutoScalingRuleListNodes: React.FC<AutoScalingRuleListNodesProps> = ({
         },
         {
           key: 'timeWindow',
-          title: t('autoScalingRule.CoolDownSeconds'),
+          title: (
+            <BAIFlex gap="xxs" align="center">
+              {t('autoScalingRule.CoolDownSeconds')}
+              <QuestionIconWithTooltip
+                title={t('autoScalingRule.CoolDownTooltip')}
+              />
+            </BAIFlex>
+          ),
           dataIndex: 'timeWindow',
           render: (value: number) =>
             value != null
@@ -239,7 +258,14 @@ const AutoScalingRuleListNodes: React.FC<AutoScalingRuleListNodesProps> = ({
         },
         {
           key: 'stepSize',
-          title: t('autoScalingRule.StepSize'),
+          title: (
+            <BAIFlex gap="xxs" align="center">
+              {t('autoScalingRule.StepSize')}
+              <QuestionIconWithTooltip
+                title={t('autoScalingRule.StepSizeTooltip')}
+              />
+            </BAIFlex>
+          ),
           dataIndex: 'stepSize',
           render: (_text, row) => {
             if (!row?.stepSize) return '-';
@@ -257,7 +283,14 @@ const AutoScalingRuleListNodes: React.FC<AutoScalingRuleListNodesProps> = ({
         },
         {
           key: 'minMaxReplicas',
-          title: t('autoScalingRule.MIN/MAXReplicas'),
+          title: (
+            <BAIFlex gap="xxs" align="center">
+              {t('autoScalingRule.MIN/MAXReplicas')}
+              <QuestionIconWithTooltip
+                title={t('autoScalingRule.MinMaxReplicasTooltip')}
+              />
+            </BAIFlex>
+          ),
           render: (_text, row) => {
             if (!row?.stepSize) return '-';
             const hasMin = row.minThreshold != null;
@@ -307,7 +340,14 @@ const AutoScalingRuleListNodes: React.FC<AutoScalingRuleListNodesProps> = ({
         },
         {
           key: 'lastTriggeredAt',
-          title: t('autoScalingRule.LastTriggered'),
+          title: (
+            <BAIFlex gap="xxs" align="center">
+              {t('autoScalingRule.LastTriggered')}
+              <QuestionIconWithTooltip
+                title={t('autoScalingRule.LastTriggeredTooltip')}
+              />
+            </BAIFlex>
+          ),
           render: (_text, row) => (
             <span>
               {row?.lastTriggeredAt
@@ -362,12 +402,16 @@ const AutoScalingRuleList: React.FC<AutoScalingRuleListProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { message, modal } = App.useApp();
+  const { message } = App.useApp();
   const [isPendingRefetch, startRefetchTransition] = useTransition();
   const [fetchKey, updateFetchKey] = useFetchKey();
 
   const [editingRuleId, setEditingRuleId] = useState<string | null>(null);
   const [isOpenEditorModal, setIsOpenEditorModal] = useState(false);
+  const [deletingRule, setDeletingRule] = useState<{
+    id: string;
+    metricName: string;
+  } | null>(null);
 
   useImperativeHandle(
     ref,
@@ -514,29 +558,7 @@ const AutoScalingRuleList: React.FC<AutoScalingRuleListProps> = ({
   };
 
   const handleDeleteRule = (ruleId: string, metricName: string) => {
-    modal.confirm({
-      title: t('dialog.warning.CannotBeUndone'),
-      content: t('autoScalingRule.ConfirmDeleteAutoScalingRule', {
-        autoScalingRule: metricName,
-      }),
-      okText: t('button.Delete'),
-      okButtonProps: { danger: true },
-      onOk: () =>
-        commitDeleteMutation({ input: { id: toLocalId(ruleId) } })
-          .then(() => {
-            handleRefetch();
-            message.success({
-              key: 'autoscaling-rule-deleted',
-              content: t('autoScalingRule.SuccessfullyDeleted'),
-            });
-          })
-          .catch((error) => {
-            const errors = Array.isArray(error) ? error : [error];
-            for (const err of errors) {
-              message.error(err?.message || t('dialog.ErrorOccurred'));
-            }
-          }),
-    });
+    setDeletingRule({ id: ruleId, metricName });
   };
 
   return (
@@ -648,6 +670,47 @@ const AutoScalingRuleList: React.FC<AutoScalingRuleListProps> = ({
           }}
         />
       </BAIUnmountAfterClose>
+      <BAIDeleteConfirmModal
+        open={!!deletingRule}
+        title={t('dialog.title.DeleteSomething', {
+          name: deletingRule?.metricName ?? '',
+        })}
+        target={t('webui.menu.AutoScalingRule')}
+        items={
+          deletingRule
+            ? [{ key: deletingRule.id, label: deletingRule.metricName }]
+            : []
+        }
+        confirmText={t('credential.PermanentlyDelete')}
+        requireConfirmInput
+        inputLabel={t('credential.TypePermanentlyDelete', {
+          text: t('credential.PermanentlyDelete'),
+        })}
+        inputProps={{
+          placeholder: t('credential.PermanentlyDelete'),
+        }}
+        onOk={() => {
+          if (!deletingRule) return;
+          return commitDeleteMutation({
+            input: { id: toLocalId(deletingRule.id) },
+          })
+            .then(() => {
+              setDeletingRule(null);
+              handleRefetch();
+              message.success({
+                key: 'autoscaling-rule-deleted',
+                content: t('autoScalingRule.SuccessfullyDeleted'),
+              });
+            })
+            .catch((error) => {
+              const errors = Array.isArray(error) ? error : [error];
+              for (const err of errors) {
+                message.error(err?.message || t('dialog.ErrorOccurred'));
+              }
+            });
+        }}
+        onCancel={() => setDeletingRule(null)}
+      />
     </>
   );
 };

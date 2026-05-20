@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import ErrorLogList from '../components/ErrorLogList';
 import MyKeypairInfoModalLegacy from '../components/MyKeypairInfoModalLegacy';
 import MyKeypairManagementModal from '../components/MyKeypairManagementModal';
@@ -22,7 +23,6 @@ import { filterOutEmpty } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { Suspense, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import BAIErrorBoundary from 'src/components/BAIErrorBoundary';
 import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 
 type TabKey = 'general' | 'logs';

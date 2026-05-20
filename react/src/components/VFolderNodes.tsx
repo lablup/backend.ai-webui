@@ -12,20 +12,22 @@ import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useEffectiveAdminRole } from '../hooks/useCurrentUserProjectRoles';
 import { isDeletedCategory } from '../pages/VFolderNodeListPage';
+import DeploymentSettingModal from './DeploymentSettingModal';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import InviteFolderSettingModal from './InviteFolderSettingModal';
 import SharedFolderPermissionInfoModal from './SharedFolderPermissionInfoModal';
 import VFolderDeployModal from './VFolderDeployModal';
 import VFolderNodeIdenticon from './VFolderNodeIdenticon';
 import VFolderPermissionCell from './VFolderPermissionCell';
-import { UserOutlined } from '@ant-design/icons';
-import { Alert, App, theme, Typography } from 'antd';
+import { DeleteFilled, DeleteOutlined, UserOutlined } from '@ant-design/icons';
+import { useToggle } from 'ahooks';
+import { App, theme, Typography } from 'antd';
 import {
   filterOutNullAndUndefined,
   BAIEndpointsIcon,
   BAIRestoreIcon,
   BAIShareAltIcon,
-  BAITrashBinIcon,
+  BAIUnmountAfterClose,
   BAIUserUnionIcon,
   BAITable,
   BAITableProps,
@@ -35,14 +37,14 @@ import {
   toLocalId,
   useErrorMessageResolver,
   BAILink,
-  BAIConfirmModalWithInput,
+  BAIDeleteConfirmModal,
   BAITag,
   bytesToGB,
 } from 'backend.ai-ui';
 import type { BAINameActionCellAction } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import React, { useState } from 'react';
+import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
@@ -149,7 +151,13 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
           key: 'start-service',
           title: t('modelService.DeployAsService'),
           icon: <BAIEndpointsIcon />,
-          onClick: () => onStartServiceFallback(vfolderId),
+          // Use `action` (not `onClick`) so the state update that mounts
+          // `<VFolderDeployModal>` (which suspends on its Relay query)
+          // runs inside `startTransition` — the page stays interactive
+          // instead of falling into its Suspense fallback.
+          action: async () => {
+            onStartServiceFallback(vfolderId);
+          },
         }
       : null,
     // Share (active folders only)
@@ -166,7 +174,7 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
       ? {
           key: 'delete',
           title: t('data.folders.MoveToTrash'),
-          icon: <BAITrashBinIcon />,
+          icon: <DeleteOutlined />,
           type: 'danger' as const,
           disabled:
             !hasDeletePermission ||
@@ -202,7 +210,7 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
       ? {
           key: 'delete-forever',
           title: t('data.folders.Delete'),
-          icon: <BAITrashBinIcon />,
+          icon: <DeleteFilled />,
           type: 'danger' as const,
           disabled:
             vfolder?.status !== 'delete-pending' ||
@@ -275,6 +283,11 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
   const [deployFallbackVfolderId, setDeployFallbackVfolderId] = useState<
     string | null
   >(null);
+  // FR-2862 — when the user hits the empty-preset state in
+  // VFolderDeployModal, escalate to the deployment shell creation modal
+  // (`DeploymentSettingModal`), same as the `/deployments` page entry.
+  const [isCreateDeploymentOpen, { toggle: toggleCreateDeployment }] =
+    useToggle(false);
 
   const vfolders = useFragment(
     graphql`
@@ -605,7 +618,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
         ]}
         {...tableProps}
       />
-      <BAIConfirmModalWithInput
+      <BAIDeleteConfirmModal
         open={!!deletingVFolder}
         onOk={() => {
           deleteFromTrashBinMutation.mutate(deletingVFolder?.id ?? '', {
@@ -631,29 +644,21 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
         onCancel={() => {
           setDeletingVFolder(null);
         }}
-        confirmText={deletingVFolder?.name ?? ''}
-        inputProps={{ placeholder: deletingVFolder?.name ?? '' }}
-        content={
-          <BAIFlex
-            direction="column"
-            gap="md"
-            align="stretch"
-            style={{ marginBottom: token.marginXS, width: '100%' }}
-          >
-            <Alert
-              type="warning"
-              title={t('dialog.warning.DeleteForeverDesc')}
-              style={{ width: '100%' }}
-            />
-            <BAIFlex>
-              <Typography.Text style={{ marginRight: token.marginXXS }}>
-                {t('data.folders.TypeFolderNameToDelete')}
-              </Typography.Text>
-              (<Typography.Text code>{deletingVFolder?.name}</Typography.Text>)
-            </BAIFlex>
-          </BAIFlex>
+        items={
+          deletingVFolder
+            ? [
+                {
+                  key: deletingVFolder.id ?? '',
+                  label: deletingVFolder.name ?? '',
+                },
+              ]
+            : []
         }
+        confirmText={deletingVFolder?.name ?? ''}
+        requireConfirmInput
+        inputProps={{ placeholder: deletingVFolder?.name ?? '' }}
         title={t('dialog.title.DeleteForever')}
+        target={t('general.Folder')}
         okText={t('data.folders.DeleteForever')}
       />
       <InviteFolderSettingModal
@@ -673,11 +678,24 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
           setCurrentSharedVFolder(null);
         }}
       />
-      <VFolderDeployModal
-        open={!!deployFallbackVfolderId}
-        vfolderId={deployFallbackVfolderId ?? undefined}
-        onClose={() => setDeployFallbackVfolderId(null)}
-        onDeployed={() => setDeployFallbackVfolderId(null)}
+      {/* `VFolderDeployModal` fetches presets via Relay internally and uses
+          `useDeferredValue(open)` to show an Ant Design skeleton while a
+          deferred update resolves. The first-time cache miss still suspends,
+          so wrap in `<Suspense>`. */}
+      <Suspense fallback={null}>
+        <BAIUnmountAfterClose>
+          <VFolderDeployModal
+            open={!!deployFallbackVfolderId}
+            vfolderId={deployFallbackVfolderId ?? undefined}
+            onClose={() => setDeployFallbackVfolderId(null)}
+            onDeployed={() => setDeployFallbackVfolderId(null)}
+            onRequestCreateDeployment={toggleCreateDeployment}
+          />
+        </BAIUnmountAfterClose>
+      </Suspense>
+      <DeploymentSettingModal
+        open={isCreateDeploymentOpen}
+        onRequestClose={toggleCreateDeployment}
       />
     </>
   );

@@ -1,9 +1,9 @@
+import type { ProjectResourceGroupAlertFragment$key } from '../../__generated__/ProjectResourceGroupAlertFragment.graphql';
+import type { ProjectResourceGroupAlertQuery } from '../../__generated__/ProjectResourceGroupAlertQuery.graphql';
 import { Alert, AlertProps } from 'antd';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
-import type { ProjectResourceGroupAlertFragment$key } from 'src/__generated__/ProjectResourceGroupAlertFragment.graphql';
-import type { ProjectResourceGroupAlertQuery } from 'src/__generated__/ProjectResourceGroupAlertQuery.graphql';
 
 interface ProjectResourceGroupAlertProps extends AlertProps {
   projectFairShareFrgmt: ProjectResourceGroupAlertFragment$key;

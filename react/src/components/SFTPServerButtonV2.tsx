@@ -2,7 +2,22 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useWebUINavigate } from '../hooks';
+import { SFTPServerButtonV2Fragment$key } from '../__generated__/SFTPServerButtonV2Fragment.graphql';
+import {
+  useCurrentDomainValue,
+  useSuspendedBackendaiClient,
+  useWebUINavigate,
+} from '../hooks';
+import {
+  useCurrentProjectValue,
+  useResourceGroupsForCurrentProject,
+} from '../hooks/useCurrentProject';
+import { useDefaultSystemSSHImageWithFallback } from '../hooks/useDefaultImagesWithFallback';
+import { useMergedAllowedStorageHostPermission } from '../hooks/useMergedAllowedStorageHostPermission';
+import {
+  StartSessionWithDefaultValue,
+  useStartSession,
+} from '../hooks/useStartSession';
 import { EllipsisOutlined } from '@ant-design/icons';
 import { App, Dropdown, Image, Space, Tooltip } from 'antd';
 import {
@@ -15,18 +30,6 @@ import {
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
-import { SFTPServerButtonV2Fragment$key } from 'src/__generated__/SFTPServerButtonV2Fragment.graphql';
-import { useCurrentDomainValue, useSuspendedBackendaiClient } from 'src/hooks';
-import {
-  useCurrentProjectValue,
-  useResourceGroupsForCurrentProject,
-} from 'src/hooks/useCurrentProject';
-import { useDefaultSystemSSHImageWithFallback } from 'src/hooks/useDefaultImagesWithFallback';
-import { useMergedAllowedStorageHostPermission } from 'src/hooks/useMergedAllowedStorageHostPermission';
-import {
-  StartSessionWithDefaultValue,
-  useStartSession,
-} from 'src/hooks/useStartSession';
 
 interface SFTPServerButtonV2Props extends BAIButtonProps {
   showTitle?: boolean;

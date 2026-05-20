@@ -63,6 +63,9 @@
     "Updated": "Actualizado",
     "Version": "Versión"
   },
+  "comp:BAIAvailablePresetSelect": {
+    "SelectPreset": "Seleccionar preset"
+  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Se produjo un error inesperado. Inténtelo de nuevo más tarde o contacte con el soporte si el problema persiste."
   },
@@ -90,6 +93,7 @@
   },
   "comp:BAIDeleteConfirmModal": {
     "AreYouSureToDelete": "¿Está seguro de que desea eliminar?",
+    "AreYouSureToPermanentlyDeleteTarget": "¿Está seguro de que desea eliminar permanentemente {{target}}?",
     "CannotBeUndone": "Esta acción no se puede deshacer.",
     "DeleteItem": "Eliminar",
     "DeleteNItems": "Eliminar {{count}} elementos",
@@ -210,7 +214,6 @@
     "UpdateProject": "Actualizar proyecto"
   },
   "comp:BAIProjectTable": {
-    "AreYouSureToDeactivateProject": "¿Está seguro de que desea desactivar el proyecto {{projectName}}?",
     "AreYouSureToPurgeProject": "¿Está seguro de que desea purgar {{projectName}}? Esta acción es irreversible.",
     "ContainerRegistry": "Registro de contenedores",
     "Controls": "Controles",
@@ -237,6 +240,9 @@
     "TotalResourceSlots": "Total de ranuras de recursos",
     "Type": "Tipo"
   },
+  "comp:BAIProjectVfolderSelect": {
+    "SelectFolder": "Seleccionar carpeta"
+  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Buscar en",
     "ResetFilter": "Restablecer filtros"
@@ -261,6 +267,9 @@
     "Status": "Estado",
     "TrafficRatio": "Proporción de tráfico",
     "TrafficStatus": "Estado del tráfico"
+  },
+  "comp:BAIRuntimeVariantSelect": {
+    "SelectRuntimeVariant": "Seleccionar variante de tiempo de ejecución"
   },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "Intentos",
@@ -333,6 +342,7 @@
     "ModifiedAt": "Modificado en",
     "MoreOptions": "Más opciones",
     "Name": "Nombre",
+    "NoUploadPermissionForHost": "No tiene permiso de carga para este host.",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Ingrese el nombre de la carpeta.",
     "RenameSuccess": "El nombre ha sido cambiado con éxito.",
@@ -392,8 +402,10 @@
   },
   "general": {
     "DeselectAll": "Deseleccionar todo",
+    "File": "Archivo",
     "NSelected": "{{count}} seleccionado",
     "Optional": "Opcional",
+    "Project": "Proyecto",
     "TotalItems": "Total {{total}} elementos",
     "button": {
       "Cancel": "Cancelar",

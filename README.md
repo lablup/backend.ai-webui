@@ -231,7 +231,7 @@ If your branch name contains an `FR-XXXX` issue number, the URL is `https://fr-X
 | `pnpm run build` | Full production build |
 | `pnpm run build:react-only` | Build only React app |
 | `pnpm run relay` | One-time Relay/GraphQL compile (project root) |
-| `cd react && pnpm run relay:watch` | Relay watch mode (uses nodemon) |
+| `pnpm run relay:watch` | Relay watch mode (uses nodemon) |
 | `pnpm run lint` | ESLint check |
 | `pnpm run lint-fix` | Auto-fix ESLint issues |
 | `pnpm run format` | Prettier format check |

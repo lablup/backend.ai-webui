@@ -6,7 +6,6 @@ import { ContainerRegistryEditorModalCreateMutation } from '../__generated__/Con
 import { ContainerRegistryEditorModalFragment$key } from '../__generated__/ContainerRegistryEditorModalFragment.graphql';
 import { ContainerRegistryEditorModalModifyRegistryMutation } from '../__generated__/ContainerRegistryEditorModalModifyRegistryMutation.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { useThemeMode } from '../hooks/useThemeMode';
 import BAICodeEditor from './BAICodeEditor';
 import HiddenFormItem from './HiddenFormItem';
 import ProjectSelectForAdminPage from './ProjectSelectForAdminPage';
@@ -36,6 +35,7 @@ type RegistryFormInput = {
   isChangedPassword?: boolean;
   extra?: string;
   is_global?: boolean;
+  ssl_verify?: boolean;
   allowed_group_ids?: string[];
 };
 
@@ -51,7 +51,6 @@ const ContainerRegistryEditorModal: React.FC<
 > = ({ containerRegistryFrgmt = null, onOk, ...modalProps }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { isDarkMode } = useThemeMode();
   const { message, modal } = App.useApp();
 
   const baiClient = useSuspendedBackendaiClient();
@@ -135,6 +134,7 @@ const ContainerRegistryEditorModal: React.FC<
             ? null
             : JSON.stringify(JSON.parse(values.extra ?? '{}')),
           is_global: values.is_global,
+          ssl_verify: values.ssl_verify,
           allowed_groups: values.is_global
             ? undefined
             : (() => {
@@ -266,12 +266,13 @@ const ContainerRegistryEditorModal: React.FC<
                     )
                   : '',
                 is_global: containerRegistry?.is_global ?? true,
+                ssl_verify: containerRegistry?.ssl_verify === true,
                 allowed_group_ids:
                   containerRegistry?.allowed_groups?.edges
                     ?.map((edge) => edge?.node?.row_id)
                     .filter(Boolean) ?? [],
               }
-            : { is_global: true }
+            : { is_global: true, ssl_verify: true }
         }
         preserve={false}
       >
@@ -461,6 +462,13 @@ const ContainerRegistryEditorModal: React.FC<
           }}
         </Form.Item>
         <Form.Item
+          name="ssl_verify"
+          label={t('registry.SSLVerify')}
+          valuePropName="checked"
+        >
+          <Checkbox>{t('registry.SSLVerifyDescription')}</Checkbox>
+        </Form.Item>
+        <Form.Item
           name="is_global"
           label={t('registry.IsGlobal')}
           valuePropName="checked"
@@ -534,7 +542,6 @@ const ContainerRegistryEditorModal: React.FC<
                 <BAICodeEditor
                   editable
                   language="json"
-                  theme={isDarkMode ? 'dark' : 'light'}
                   style={{ width: '100%' }}
                 />
               </Form.Item>

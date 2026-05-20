@@ -190,7 +190,6 @@ const RoleScopeTab: React.FC<RoleScopeTabProps> = ({ queryRef }) => {
               key: 'entityType',
               propertyLabel: t('rbac.ScopeType'),
               type: 'enum',
-              valueMode: 'scalar',
               options: [
                 'DOMAIN',
                 'PROJECT',

@@ -3,6 +3,10 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
+import {
+  StartSessionWithDefaultValue,
+  useStartSession,
+} from '../hooks/useStartSession';
 import CopyButton from './Chat/CopyButton';
 import { PrimaryAppOption } from './ComputeSessionNodeItems/SessionActionButtons';
 import { EllipsisOutlined } from '@ant-design/icons';
@@ -27,10 +31,6 @@ import {
 import { FolderInput } from 'lucide-react';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  StartSessionWithDefaultValue,
-  useStartSession,
-} from 'src/hooks/useStartSession';
 
 const regularizeGithubURL = (url: string) => {
   url = url.replace('/blob/', '/');

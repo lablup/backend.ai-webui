@@ -119,22 +119,23 @@ Once the server is up, tell the user **both** the Portless (HTTPS) URL and the u
 
 ### For backend.ai-webui
 
-- **Portless URL** — derived from the app name chosen in step 2b:
-  - If you passed `PORTLESS_APP_NAME=<slug>`, the URL is `https://<slug>.localhost:1355`.
-  - Else if the branch matches `/(?:^|[-_/])fr-?(\d+)/i`, the URL is `https://fr-<NNNN>.localhost:1355` (dev.mjs derives this).
-  - Else it's `https://<portless-app-name>.localhost:1355` where `<portless-app-name>` is whatever Portless printed on startup (read it from the background task's output; do not guess).
-  - The port is `1355` unless the user set `PORTLESS_PORT` to something else — in that case use that value.
+- **Portless URL** — **always read from Portless's stdout**, do not construct it yourself:
+  - Portless prints the full URL (scheme + host + port) on startup, e.g. `https://fr-2701.localhost:1356`. Read that line from the background task's output and use it verbatim.
+  - **Never assume port `1355`.** The `dev.mjs` script *requests* `-p 1355`, but if another Portless daemon is already bound there (e.g. another Claude session / worktree), the new instance ends up on a different port (1356, 1357, …). The skill author repeatedly got this wrong by quoting "1355" from this doc instead of reading the actual log line.
+  - Same rule for the subdomain: even though step 2b decided the app name, take the hostname Portless prints — it's the source of truth in case Portless re-sanitized or fell back.
 - **React URL** — the local Vite dev server URL:
   - The webui uses **Vite** (`VITE v6.x ready in <ms>` line), so the `Local:` URL is printed within ~1s of startup — no need to wait for a long bundle compile.
   - If the user passed `PORT=<n>`, the URL is `http://127.0.0.1:<n>/` (Portless launches Vite with `HOST=127.0.0.1`, so Vite prints `127.0.0.1` not `localhost`).
   - Otherwise Portless picks a free port and exports it via `PORT=<n>`; read the React dev server output for the `Local:   http://127.0.0.1:<port>/` line. Do not pick a port at random.
 
-Run a short Bash with an until-loop polling the background bash's output file for the `Local:` line (and a fallback bound of ~10–15s, since Vite is fast). Once both URLs are known, present them like this — exactly two lines, no preamble:
+Run a short Bash with an until-loop polling the background bash's output file for **both** the Portless URL line (the `https://…localhost:<port>` line Portless prints on startup) and Vite's `Local:` line (fallback bound ~10–15s, since Vite is fast). Once both URLs are known, present them like this — exactly two lines, no preamble:
 
 ```
-Portless: https://fr-2701.localhost:1355
+Portless: https://fr-2701.localhost:1356
 React:    http://127.0.0.1:4627/
 ```
+
+The Portless port shown above is just an example — use whatever Portless actually printed.
 
 If after ~15s the React URL still hasn't appeared (very rare with Vite), announce just the Portless URL and tell the user the React port hasn't been printed yet — don't block indefinitely.
 

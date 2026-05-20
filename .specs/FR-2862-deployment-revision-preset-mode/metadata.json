@@ -1,0 +1,9 @@
+{
+  "epicKey": "FR-2862",
+  "epicUrl": "https://lablup.atlassian.net/browse/FR-2862",
+  "slug": "deployment-revision-preset-mode",
+  "specTaskKey": "FR-2863",
+  "stories": [],
+  "sourceIssues": ["FR-2750"],
+  "createdAt": "2026-05-11T00:00:00Z"
+}

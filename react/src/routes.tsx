@@ -13,6 +13,7 @@ import LocationStateBreadCrumb from './components/LocationStateBreadCrumb';
 import LoginView from './components/LoginView';
 import MainLayout from './components/MainLayout/MainLayout';
 import { STokenLoginBoundary } from './components/STokenLoginBoundary';
+import StorageHostFetchErrorBoundary from './components/StorageHostFetchErrorBoundary';
 import WebUINavigate from './components/WebUINavigate';
 import { persistPostLoginState } from './helper/loginSessionAuth';
 import { useSuspendedBackendaiClient } from './hooks';
@@ -67,19 +68,16 @@ const FolderInvitationResponseModalOpener = React.lazy(
 const FileUploadManager = React.lazy(
   () => import('./components/FileUploadManager'),
 );
-// FR-2675 — The legacy `ServiceLauncherCreatePage` / `ServiceLauncherUpdatePage`
-// routes have been redirected to the new Deployment launcher below so the
-// new `/deployments/start` + `/deployments/:deploymentId/edit` paths are the
-// sole launcher entry points. The underlying `ServiceLauncherPageContent`
-// component is still imported transitively (by `useModelServiceLauncher`,
-// `LegacyModelTryContentButton`, etc.) and is scheduled for removal in a
-// follow-up cleanup once those call sites migrate to the new hook.
+// FR-2675 / FR-2822 — The legacy `ServiceLauncherCreatePage` /
+// `ServiceLauncherUpdatePage` routes have been removed in favor of the
+// in-page `DeploymentCreateModal` opened from `/deployments`. The
+// underlying `ServiceLauncherPageContent` component is still imported
+// transitively (by `useModelServiceLauncher`, `LegacyModelTryContentButton`,
+// etc.) and is scheduled for removal in a follow-up cleanup once those
+// call sites migrate to the new modal-based create flow.
 
 const DeploymentListPage = React.lazy(
   () => import('./pages/DeploymentListPage'),
-);
-const DeploymentLauncherPage = React.lazy(
-  () => import('./pages/DeploymentLauncherPage'),
 );
 const DeploymentDetailPage = React.lazy(
   () => import('./pages/DeploymentDetailPage'),
@@ -261,15 +259,17 @@ export const mainLayoutChildRoutes: RouteObject[] = [
               style={{ paddingBottom: token.paddingContentVerticalLG }}
             >
               <LocationStateBreadCrumb />
-              <Suspense
-                fallback={
-                  <BAIFlex direction="column" style={{ maxWidth: 700 }}>
-                    <Skeleton active />
-                  </BAIFlex>
-                }
-              >
-                <SessionLauncherPage />
-              </Suspense>
+              <StorageHostFetchErrorBoundary>
+                <Suspense
+                  fallback={
+                    <BAIFlex direction="column" style={{ maxWidth: 700 }}>
+                      <Skeleton active />
+                    </BAIFlex>
+                  }
+                >
+                  <SessionLauncherPage />
+                </Suspense>
+              </StorageHostFetchErrorBoundary>
             </BAIFlex>
           );
         },
@@ -281,7 +281,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
     // FR-2664 — New Deployment UI routes. Replaces the legacy /serving
     // routes (see fallback redirects below).
     path: '/deployments',
-    handle: { labelKey: 'webui.menu.Serving' },
+    handle: { labelKey: 'webui.menu.Deployments' },
     children: [
       {
         path: '',
@@ -290,7 +290,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
           useSuspendedBackendaiClient();
           return (
             <Suspense
-              fallback={<BAICard title={t('webui.menu.Serving')} loading />}
+              fallback={<BAICard title={t('webui.menu.Deployments')} loading />}
             >
               <DeploymentListPage />
             </Suspense>
@@ -298,41 +298,11 @@ export const mainLayoutChildRoutes: RouteObject[] = [
         },
       },
       {
-        path: 'start',
-        handle: { labelKey: 'modelService.StartNewService' },
-        element: (
-          <Suspense
-            fallback={
-              <BAIFlex direction="column" style={{ maxWidth: 700 }}>
-                <Skeleton active />
-              </BAIFlex>
-            }
-          >
-            <DeploymentLauncherPage />
-          </Suspense>
-        ),
-      },
-      {
         path: ':deploymentId',
-        handle: { labelKey: 'modelService.RoutingInfo' },
+        handle: { labelKey: 'webui.menu.DeploymentDetail' },
         element: (
           <Suspense fallback={<Skeleton active />}>
             <DeploymentDetailPage />
-          </Suspense>
-        ),
-      },
-      {
-        path: ':deploymentId/edit',
-        handle: { labelKey: 'modelService.UpdateService' },
-        element: (
-          <Suspense
-            fallback={
-              <BAIFlex direction="column" style={{ maxWidth: 700 }}>
-                <Skeleton active />
-              </BAIFlex>
-            }
-          >
-            <DeploymentLauncherPage />
           </Suspense>
         ),
       },
@@ -342,7 +312,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
     // FR-2664 — Legacy /serving fallback. Transient redirect; remove once
     // all internal links + external references have been migrated.
     path: '/serving',
-    handle: { labelKey: 'webui.menu.Serving' },
+    handle: { labelKey: 'webui.menu.Deployments' },
     children: [
       {
         path: '',
@@ -377,34 +347,6 @@ export const mainLayoutChildRoutes: RouteObject[] = [
         element: <WebUINavigate to="/deployments" replace />,
       },
       {
-        // FR-2675 — Legacy `/service/start` → new `/deployments/start`.
-        path: 'start',
-        Component: () => {
-          const location = useLocation();
-          return (
-            <WebUINavigate
-              to={'/deployments/start' + location.search}
-              replace
-            />
-          );
-        },
-      },
-      {
-        // FR-2675 — Legacy `/service/update/:endpointId` →
-        // `/deployments/:deploymentId/edit`.
-        path: 'update/:endpointId',
-        Component: () => {
-          const { endpointId } = useParams<{ endpointId: string }>();
-          const location = useLocation();
-          return (
-            <WebUINavigate
-              to={`/deployments/${endpointId}/edit${location.search}`}
-              replace
-            />
-          );
-        },
-      },
-      {
         // FR-2664 — Legacy fallback: /service/:endpointId → /deployments/:deploymentId
         path: ':endpointId',
         Component: () => {
@@ -413,20 +355,6 @@ export const mainLayoutChildRoutes: RouteObject[] = [
           return (
             <WebUINavigate
               to={`/deployments/${endpointId}${location.search}`}
-              replace
-            />
-          );
-        },
-      },
-      {
-        // FR-2664 — Legacy fallback: /service/:endpointId/edit → /deployments/:deploymentId/edit
-        path: ':endpointId/edit',
-        Component: () => {
-          const { endpointId } = useParams<{ endpointId: string }>();
-          const location = useLocation();
-          return (
-            <WebUINavigate
-              to={`/deployments/${endpointId}/edit${location.search}`}
               replace
             />
           );
@@ -558,6 +486,21 @@ export const mainLayoutChildRoutes: RouteObject[] = [
           </BAIErrorBoundary>
         ),
       },
+      {
+        // FR-2847 — Admin deployment detail route. Reuses the shared
+        // `DeploymentDetailPage` component but keeps admins under the
+        // `/admin-deployments/*` URL space so that breadcrumbs and back
+        // navigation preserve the admin context.
+        path: ':deploymentId',
+        handle: { labelKey: 'webui.menu.DeploymentDetail' },
+        element: (
+          <BAIErrorBoundary>
+            <Suspense fallback={<Skeleton active />}>
+              <DeploymentDetailPage />
+            </Suspense>
+          </BAIErrorBoundary>
+        ),
+      },
     ],
   },
   {
@@ -579,16 +522,17 @@ export const mainLayoutChildRoutes: RouteObject[] = [
         },
       },
       {
-        // /admin-deployments has no nested detail route — the deployment
-        // detail page is shared at /deployments/:deploymentId regardless
-        // of the viewer's role.
+        // FR-2847 — Legacy `/admin-serving/:serviceId` redirects to the
+        // admin-scoped detail route so admins stay under
+        // `/admin-deployments/*` instead of the user-facing
+        // `/deployments/:deploymentId`.
         path: ':serviceId',
         Component: () => {
           const { serviceId } = useParams<{ serviceId: string }>();
           const location = useLocation();
           return (
             <WebUINavigate
-              to={`/deployments/${serviceId}${location.search}`}
+              to={`/admin-deployments/${serviceId}${location.search}`}
               replace
             />
           );

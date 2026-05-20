@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import type { AdminDeploymentPresetReviewSummaryImageQuery } from '../__generated__/AdminDeploymentPresetReviewSummaryImageQuery.graphql';
+import { useAdminImageCanonicalName } from '../hooks/hooksUsingRelay';
 import { ResourceNumbersOfSession } from '../pages/SessionLauncherPage';
 import type { AdminDeploymentPresetFormValue } from './AdminDeploymentPresetFormTypes';
 import SourceCodeView from './SourceCodeView';
@@ -10,45 +10,8 @@ import { Button, Descriptions, Space, Tag, Typography, theme } from 'antd';
 import type { FormInstance } from 'antd';
 import { BAICard, BAIFlex, toLocalId } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import React, { Suspense } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery } from 'react-relay';
-
-// ---------------------------------------------------------------------------
-// Image canonical name resolver (for review step)
-// ---------------------------------------------------------------------------
-
-const ImageCanonicalName: React.FC<{ imageId: string }> = ({ imageId }) => {
-  'use memo';
-  const data = useLazyLoadQuery<AdminDeploymentPresetReviewSummaryImageQuery>(
-    graphql`
-      query AdminDeploymentPresetReviewSummaryImageQuery($id: UUID!) {
-        adminImagesV2(filter: { id: { equals: $id } }, limit: 1) {
-          edges {
-            node {
-              identity {
-                canonicalName
-              }
-            }
-          }
-        }
-      }
-    `,
-    { id: imageId },
-    { fetchPolicy: 'store-or-network' },
-  );
-  const canonicalName =
-    data.adminImagesV2?.edges?.[0]?.node?.identity?.canonicalName ?? imageId;
-  return (
-    <Typography.Text
-      code
-      style={{ wordBreak: 'break-all' }}
-      copyable={{ text: canonicalName }}
-    >
-      {canonicalName}
-    </Typography.Text>
-  );
-};
 
 // ---------------------------------------------------------------------------
 // PresetReviewSummary — read-only summary of all form fields on the review step
@@ -85,6 +48,7 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
   // enableMetadata) that have no registered Form.Item. The `true` overload
   // returns `any`; annotate the variable explicitly to restore type safety.
   const values: AdminDeploymentPresetFormValue = form.getFieldsValue(true);
+  const imageCanonicalName = useAdminImageCanonicalName(values.imageId);
 
   const basicInfoHasError = BASIC_INFO_FIELDS.some((f) =>
     errorFieldNames.includes(f),
@@ -145,16 +109,14 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
             </Descriptions.Item>
           )}
           <Descriptions.Item label={t('adminDeploymentPreset.Image')}>
-            {values.imageId ? (
-              <Suspense
-                fallback={
-                  <Typography.Text code style={{ wordBreak: 'break-all' }}>
-                    {values.imageId}
-                  </Typography.Text>
-                }
+            {imageCanonicalName ? (
+              <Typography.Text
+                code
+                style={{ wordBreak: 'break-all' }}
+                copyable={{ text: imageCanonicalName }}
               >
-                <ImageCanonicalName imageId={values.imageId} />
-              </Suspense>
+                {imageCanonicalName}
+              </Typography.Text>
             ) : (
               '-'
             )}

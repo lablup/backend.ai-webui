@@ -14,13 +14,13 @@ import ResourceGroupSettingModal from './ResourceGroupSettingModal';
 import {
   CheckOutlined,
   CloseOutlined,
-  DeleteOutlined,
+  DeleteFilled,
   InfoCircleOutlined,
   PlusOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { Alert, App, Button, Typography, theme } from 'antd';
+import { App, Button, theme } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import {
   useUpdatableState,
@@ -28,7 +28,7 @@ import {
   filterOutNullAndUndefined,
   BAITable,
   BAIFlex,
-  BAIConfirmModalWithInput,
+  BAIDeleteConfirmModal,
   BAIFetchKeyButton,
   BAINameActionCell,
 } from 'backend.ai-ui';
@@ -57,7 +57,7 @@ type ResourceGroup = NonNullable<
 const ResourceGroupList: React.FC = () => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { message, modal } = App.useApp();
+  const { message } = App.useApp();
   const [activeType, setActiveType] = useState<'active' | 'inactive'>('active');
   const [openCreateModal, { toggle: toggleOpenCreateModal }] = useToggle(false);
   const [openInfoModal, { toggle: toggleOpenInfoModal }] = useToggle(false);
@@ -153,67 +153,65 @@ const ResourceGroupList: React.FC = () => {
                 : t('resourceGroup.Activate'),
               icon: record.is_active ? <BanIcon /> : <UndoIcon />,
               type: record.is_active ? 'danger' : 'default',
-              onClick: () => {
-                modal.confirm({
-                  title: record.is_active
-                    ? t('resourceGroup.DeactivateResourceGroup')
-                    : t('resourceGroup.ActivateResourceGroup'),
-                  content: record?.name,
-                  okType: record.is_active ? 'danger' : 'primary',
-                  okText: record.is_active
-                    ? t('resourceGroup.Deactivate')
-                    : t('resourceGroup.Activate'),
-                  onOk: () => {
-                    return new Promise<void>((resolve) => {
-                      commitUpdateResourceGroup({
-                        variables: {
-                          name: record.name ?? '',
-                          input: {
-                            is_active: !record.is_active,
-                          },
+              popConfirm: {
+                title: record.is_active
+                  ? t('resourceGroup.DeactivateResourceGroup')
+                  : t('resourceGroup.ActivateResourceGroup'),
+                description: record?.name,
+                okButtonProps: {
+                  danger: !!record.is_active,
+                },
+                okText: record.is_active
+                  ? t('resourceGroup.Deactivate')
+                  : t('resourceGroup.Activate'),
+                cancelText: t('button.Cancel'),
+                onConfirm: () => {
+                  return new Promise<void>((resolve) => {
+                    commitUpdateResourceGroup({
+                      variables: {
+                        name: record.name ?? '',
+                        input: {
+                          is_active: !record.is_active,
                         },
-                        onCompleted: (
-                          { modify_scaling_group: res },
-                          errors,
-                        ) => {
-                          if (!res?.ok) {
-                            message.error(res?.msg);
-                            resolve();
-                            return;
-                          }
-                          if (errors && errors.length > 0) {
-                            const errorMsgList = _.map(
-                              errors,
-                              (error: PayloadError) => error.message,
-                            );
-                            for (const error of errorMsgList) {
-                              message.error(error);
-                            }
-                            resolve();
-                            return;
-                          }
-                          message.success(
-                            t('resourceGroup.ResourceGroupModified'),
+                      },
+                      onCompleted: ({ modify_scaling_group: res }, errors) => {
+                        if (!res?.ok) {
+                          message.error(res?.msg);
+                          resolve();
+                          return;
+                        }
+                        if (errors && errors.length > 0) {
+                          const errorMsgList = _.map(
+                            errors,
+                            (error: PayloadError) => error.message,
                           );
-                          startRefetchTransition(() => {
-                            updateFetchKey();
-                          });
+                          for (const error of errorMsgList) {
+                            message.error(error);
+                          }
                           resolve();
-                        },
-                        onError: (err) => {
-                          message.error(err.message);
-                          resolve();
-                        },
-                      });
+                          return;
+                        }
+                        message.success(
+                          t('resourceGroup.ResourceGroupModified'),
+                        );
+                        startRefetchTransition(() => {
+                          updateFetchKey();
+                        });
+                        resolve();
+                      },
+                      onError: (err) => {
+                        message.error(err.message);
+                        resolve();
+                      },
                     });
-                  },
-                });
+                  });
+                },
               },
             },
             {
               key: 'delete',
               title: t('button.Delete'),
-              icon: <DeleteOutlined />,
+              icon: <DeleteFilled />,
               type: 'danger',
               onClick: () => {
                 setSelectedResourceGroupName(record?.name || '');
@@ -254,7 +252,7 @@ const ResourceGroupList: React.FC = () => {
     },
     {
       key: 'wsproxy_addr',
-      title: t('resourceGroup.WsproxyAddress'),
+      title: t('resourceGroup.AppProxyAddress'),
       dataIndex: 'wsproxy_addr',
       render: (value) => value || '-',
     },
@@ -312,34 +310,21 @@ const ResourceGroupList: React.FC = () => {
         loading={isActiveTypePending}
       />
 
-      <BAIConfirmModalWithInput
+      <BAIDeleteConfirmModal
         open={!!selectedResourceGroupName}
         title={t('resourceGroup.DeleteResourceGroup')}
-        content={
-          <BAIFlex
-            direction="column"
-            gap="md"
-            align="stretch"
-            style={{ marginBottom: token.marginXS, width: '100%' }}
-          >
-            <Alert
-              type="warning"
-              title={t('dialog.warning.DeleteForeverDesc')}
-              style={{ width: '100%' }}
-            />
-            <BAIFlex>
-              <Typography.Text style={{ marginRight: token.marginXXS }}>
-                {t('resourceGroup.TypeResourceGroupNameToDelete')}
-              </Typography.Text>
-              (
-              <Typography.Text code>
-                {selectedResourceGroupName}
-              </Typography.Text>
-              )
-            </BAIFlex>
-          </BAIFlex>
+        target={t('general.ResourceGroup')}
+        items={
+          selectedResourceGroupName
+            ? [
+                {
+                  key: selectedResourceGroupName,
+                  label: selectedResourceGroupName,
+                },
+              ]
+            : []
         }
-        confirmText={selectedResourceGroupName ?? ''}
+        requireConfirmInput
         onOk={() => {
           commitDeleteResourceGroup({
             variables: {

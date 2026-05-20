@@ -4,7 +4,7 @@
  */
 import { ChatHeader_Endpoint$key } from '../../__generated__/ChatHeader_Endpoint.graphql';
 import { useWebUINavigate } from '../../hooks';
-import { AIAgent } from '../../hooks/useAIAgent';
+import { AIAgent, useAIAgent } from '../../hooks/useAIAgent';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import AIAgentSelect from './AIAgentSelect';
 import type { ChatModel, ChatParameters } from './ChatModel';
@@ -171,6 +171,8 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
   const [experimentalAIAgents] = useBAISettingUserState(
     'experimental_ai_agents',
   );
+  const { getEndpointBinding } = useAIAgent();
+  const agentBinding = agent ? getEndpointBinding(agent.id) : undefined;
 
   return (
     <BAIFlex
@@ -206,7 +208,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
             }}
           />
         )}
-        {!agent?.endpoint_url && (
+        {!agentBinding?.endpoint_url && (
           <EndpointSelect
             fetchKey={fetchKey}
             loading={isPendingEndpointTransition}

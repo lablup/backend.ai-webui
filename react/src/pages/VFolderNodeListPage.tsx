@@ -15,7 +15,10 @@ import RestoreVFolderModal from '../components/RestoreVFolderModal';
 import VFolderNodes, { VFolderNodeInList } from '../components/VFolderNodes';
 import { handleRowSelectionChange } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
+import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
+import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { useVFolderInvitations } from '../hooks/useVFolderInvitations';
 import { useToggle } from 'ahooks';
 import { Badge, theme, Tooltip } from 'antd';
 import {
@@ -23,6 +26,7 @@ import {
   BAICard,
   BAIFetchKeyButton,
   BAIFlex,
+  BAILink,
   BAIPropertyFilter,
   BAIRestoreIcon,
   BAISelectionLabel,
@@ -36,10 +40,12 @@ import * as _ from 'lodash-es';
 import React, { useDeferredValue, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-import { useBAIPaginationOptionStateOnSearchParamLegacy } from 'src/hooks/reactPaginationQueryOptions';
-import { useBAISettingUserState } from 'src/hooks/useBAISetting';
-import { useVFolderInvitations } from 'src/hooks/useVFolderInvitations';
-import { StringParam, useQueryParams, withDefault } from 'use-query-params';
+import {
+  StringParam,
+  useQueryParam,
+  useQueryParams,
+  withDefault,
+} from 'use-query-params';
 
 export const isDeletedCategory = (status?: string | null) => {
   return _.includes(
@@ -93,6 +99,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
   const currentProject = useCurrentProjectValue();
   const baiClient = useSuspendedBackendaiClient();
   const [invitations] = useVFolderInvitations();
+  const [, setInvitationOpen] = useQueryParam('invitation', StringParam);
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
     'table_column_overrides.VFolderNodeListPage',
@@ -291,6 +298,18 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
             );
             setSelectedFolderList([]);
           }}
+          tabBarExtraContent={
+            invitations.length > 0 ? (
+              <BAILink
+                type="hover"
+                onClick={() => {
+                  setInvitationOpen('true', 'replaceIn');
+                }}
+              >
+                {`${t('data.invitation.PendingInvitations')} (${invitations.length})`}
+              </BAILink>
+            ) : undefined
+          }
           items={_.map(
             {
               active: t('data.Active'),

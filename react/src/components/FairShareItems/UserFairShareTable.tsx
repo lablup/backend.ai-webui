@@ -2,6 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import {
+  UserFairShareTableFragment$data,
+  UserFairShareTableFragment$key,
+} from '../../__generated__/UserFairShareTableFragment.graphql';
 import QuestionIconWithTooltip from '../QuestionIconWithTooltip';
 import { SettingOutlined } from '@ant-design/icons';
 import { Divider, theme, Typography } from 'antd';
@@ -19,10 +23,6 @@ import * as _ from 'lodash-es';
 import { parseAsStringLiteral, useQueryStates } from 'nuqs';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
-import {
-  UserFairShareTableFragment$data,
-  UserFairShareTableFragment$key,
-} from 'src/__generated__/UserFairShareTableFragment.graphql';
 
 export type UserFairShare = NonNullable<
   UserFairShareTableFragment$data[number]

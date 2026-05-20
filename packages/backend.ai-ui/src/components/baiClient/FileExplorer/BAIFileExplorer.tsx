@@ -58,6 +58,11 @@ export interface BAIFileExplorerProps {
   enableDownload?: boolean;
   enableDelete?: boolean;
   enableWrite?: boolean;
+  // Gates upload entry points (upload dropdown + drag-drop). Defaults to
+  // `enableWrite` for backwards compatibility — callers that need to gate
+  // upload independently (e.g., on the `upload-file` host permission) should
+  // pass this explicitly.
+  enableUpload?: boolean;
   enableEdit?: boolean;
   onChangeFetchKey?: (fetchKey: string) => void;
   ref?: React.Ref<BAIFileExplorerRef>;
@@ -81,6 +86,7 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
   enableDownload = false,
   enableDelete = false,
   enableWrite = false,
+  enableUpload = false,
   enableEdit = false,
   onDeleteFilesInBackground,
   deletingFilePaths,
@@ -301,7 +307,7 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
         currentPath,
       }}
     >
-      {isDragMode && (
+      {isDragMode && enableUpload && (
         <DragAndDrop
           portalContainer={fileDropContainerRef?.current || undefined}
           onUpload={(files, currentPath) => onUpload(files, currentPath)}
@@ -326,6 +332,7 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
             enableDownload={enableDownload}
             enableDelete={enableDelete}
             enableWrite={enableWrite}
+            enableUpload={enableUpload}
             onUpload={(files, currentPath) => onUpload(files, currentPath)}
             onDeleteFilesInBackground={onDeleteFilesInBackground}
             onClearSelection={() => setSelectedItems([])}

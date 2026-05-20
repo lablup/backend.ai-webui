@@ -122,7 +122,7 @@ const RoleDetailDrawerInner: React.FC<RoleDetailDrawerInnerProps> = ({
     {
       id: localRoleId,
       assignmentFilter: { roleId: { equals: localRoleId } },
-      permissionFilter: { roleId: localRoleId },
+      permissionFilter: { roleId: { equals: localRoleId } },
       scopeFilter: null,
       scopeOrderBy: null,
       assignmentLimit: 10,

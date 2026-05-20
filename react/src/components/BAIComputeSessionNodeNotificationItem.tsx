@@ -2,6 +2,13 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { BAIComputeSessionNodeNotificationItemFragment$key } from '../__generated__/BAIComputeSessionNodeNotificationItemFragment.graphql';
+import { BAIComputeSessionNodeNotificationItemRefreshQuery } from '../__generated__/BAIComputeSessionNodeNotificationItemRefreshQuery.graphql';
+import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
+import {
+  NotificationState,
+  useSetBAINotification,
+} from '../hooks/useBAINotification';
 import SessionActionButtons, {
   PrimaryAppOption,
 } from './ComputeSessionNodeItems/SessionActionButtons';
@@ -24,13 +31,6 @@ import {
   useRelayEnvironment,
   useSubscription,
 } from 'react-relay';
-import { BAIComputeSessionNodeNotificationItemFragment$key } from 'src/__generated__/BAIComputeSessionNodeNotificationItemFragment.graphql';
-import { BAIComputeSessionNodeNotificationItemRefreshQuery } from 'src/__generated__/BAIComputeSessionNodeNotificationItemRefreshQuery.graphql';
-import { useSuspendedBackendaiClient, useWebUINavigate } from 'src/hooks';
-import {
-  NotificationState,
-  useSetBAINotification,
-} from 'src/hooks/useBAINotification';
 
 interface BAINodeNotificationItemProps {
   notification: NotificationState;

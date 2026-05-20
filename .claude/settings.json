@@ -30,7 +30,8 @@
   "statusLine": {
     "type": "command",
     "command": ".claude/scripts/statusline.sh",
-    "padding": 0
+    "padding": 0,
+    "refreshInterval": 10
   },
   "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [

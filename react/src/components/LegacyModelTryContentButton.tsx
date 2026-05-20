@@ -9,6 +9,7 @@ import {
   useBaiSignedRequestWithPromise,
 } from '../helper';
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
+import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import {
   useSetBAINotification,
@@ -33,7 +34,6 @@ import * as _ from 'lodash-es';
 import React, { useRef, useEffect } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
-import { useCurrentUserInfo, useCurrentUserRole } from 'src/hooks/backendai';
 
 interface LegacyModelTryContentButtonProps {
   vfolderNode: LegacyModelTryContentButtonVFolderFragment$key | null;

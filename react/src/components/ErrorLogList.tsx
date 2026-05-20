@@ -7,7 +7,7 @@ import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting'
 import TableColumnsSettingModal from './TableColumnsSettingModal';
 import TextHighlighter from './TextHighlighter';
 import {
-  DeleteOutlined,
+  DeleteFilled,
   SearchOutlined,
   SettingOutlined,
   LoadingOutlined,
@@ -249,7 +249,7 @@ const ErrorLogList: React.FC<{
             </Button>
             <Button
               danger
-              icon={<DeleteOutlined />}
+              icon={<DeleteFilled />}
               onClick={() => {
                 setIsOpenClearLogsModal(true);
               }}

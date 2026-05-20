@@ -2,7 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { ConfigurableResourceCardQuery } from '../__generated__/ConfigurableResourceCardQuery.graphql';
+import { useCurrentUserRole } from '../hooks/backendai';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
+import { useCurrentResourceGroupValue } from '../hooks/useCurrentProject';
 import MyResource from './MyResource';
 import MyResourceWithinResourceGroup from './MyResourceWithinResourceGroup';
 import TotalResourceWithinResourceGroup, {
@@ -15,9 +18,6 @@ import * as _ from 'lodash-es';
 import React, { Suspense, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-import { ConfigurableResourceCardQuery } from 'src/__generated__/ConfigurableResourceCardQuery.graphql';
-import { useCurrentUserRole } from 'src/hooks/backendai';
-import { useCurrentResourceGroupValue } from 'src/hooks/useCurrentProject';
 
 export type ResourcePanelType =
   | 'MyResource'

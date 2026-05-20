@@ -2,14 +2,14 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { useCustomThemeConfig } from '../../hooks/useCustomThemeConfig';
+import { useUserCustomThemeConfig } from '../../hooks/useUserCustomThemeConfig';
 import { App, Image, Space, Tooltip, Typography, Upload } from 'antd';
 import { createStyles } from 'antd-style';
 import { BAIButton, BAIFlex, BAIUncontrolledInput } from 'backend.ai-ui';
 import { t } from 'i18next';
 import * as _ from 'lodash-es';
 import { ImagePlus } from 'lucide-react';
-import { useCustomThemeConfig } from 'src/hooks/useCustomThemeConfig';
-import { useUserCustomThemeConfig } from 'src/hooks/useUserCustomThemeConfig';
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
 

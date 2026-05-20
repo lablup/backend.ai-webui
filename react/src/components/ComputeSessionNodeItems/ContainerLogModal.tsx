@@ -6,6 +6,7 @@ import { ContainerLogModalFragment$key } from '../../__generated__/ContainerLogM
 import { downloadBlob } from '../../helper/csv-util';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useTanQuery } from '../../hooks/reactQueryAlias';
+import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import { useMemoWithPrevious } from '../../hooks/useMemoWithPrevious';
 import AutoRefreshSwitch from '../AutoRefreshSwitch';
 import { ReloadOutlined } from '@ant-design/icons';
@@ -25,7 +26,6 @@ import { DownloadIcon } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
-import { useBAISettingUserState } from 'src/hooks/useBAISetting';
 
 interface ContainerLogModalProps extends BAIModalProps {
   sessionFrgmt: ContainerLogModalFragment$key | null;

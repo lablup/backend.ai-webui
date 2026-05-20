@@ -8,6 +8,7 @@ import {
   AgentListQuery$variables,
 } from '../__generated__/AgentListQuery.graphql';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
+import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useThemeMode } from '../hooks/useThemeMode';
 import AgentDetailDrawer from './AgentDetailDrawer';
 import BAIRadioGroup from './BAIRadioGroup';
@@ -32,7 +33,6 @@ import { parseAsString, useQueryStates } from 'nuqs';
 import React, { useState, useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-import { useBAISettingUserState } from 'src/hooks/useBAISetting';
 
 type Agent = NonNullable<
   NonNullable<AgentListQuery$data['agent_nodes']>['edges'][number]

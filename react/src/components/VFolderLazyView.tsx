@@ -2,13 +2,13 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { VFolderLazyViewQuery } from '../__generated__/VFolderLazyViewQuery.graphql';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import VFolderNodeIdenticon from './VFolderNodeIdenticon';
 import { Typography } from 'antd';
 import { BAIFlex, toGlobalId, toLocalId } from 'backend.ai-ui';
 import React from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-import { VFolderLazyViewQuery } from 'src/__generated__/VFolderLazyViewQuery.graphql';
 
 interface VFolderLazyViewProps {
   uuid: string;

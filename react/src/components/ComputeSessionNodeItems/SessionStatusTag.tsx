@@ -6,6 +6,7 @@ import {
   SessionStatusTagFragment$data,
   SessionStatusTagFragment$key,
 } from '../../__generated__/SessionStatusTagFragment.graphql';
+import { useSuspendedBackendaiClient } from '../../hooks';
 import { statusInfoTagColor } from './SessionStatusDetailModal';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Tag, Tooltip, theme } from 'antd';
@@ -15,7 +16,6 @@ import { CircleAlertIcon } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
-import { useSuspendedBackendaiClient } from 'src/hooks';
 
 interface SessionStatusTagProps {
   sessionFrgmt?: SessionStatusTagFragment$key | null;

@@ -1,10 +1,9 @@
-import BAIConfirmModalWithInput from '../../BAIConfirmModalWithInput';
-import BAIFlex from '../../BAIFlex';
+import BAIDeleteConfirmModal from '../../BAIDeleteConfirmModal';
 import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import { VFolderFile } from '../../provider/BAIClientProvider/types';
 import { FolderInfoContext } from './BAIFileExplorer';
 import { useMutation } from '@tanstack/react-query';
-import { Alert, App, theme, Typography, type ModalProps } from 'antd';
+import { App, type ModalProps } from 'antd';
 import * as _ from 'lodash-es';
 import { use } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -26,7 +25,6 @@ const DeleteSelectedItemsModal: React.FC<DeleteSelectedItemsModalProps> = ({
   ...modalProps
 }) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const { message } = App.useApp();
   const { currentPath, targetVFolderId } = use(FolderInfoContext);
   const baiClient = useConnectedBAIClient();
@@ -79,59 +77,18 @@ const DeleteSelectedItemsModal: React.FC<DeleteSelectedItemsModalProps> = ({
   };
 
   return (
-    <BAIConfirmModalWithInput
+    <BAIDeleteConfirmModal
       title={t('comp:FileExplorer.DeleteSelectedItemsDialog')}
-      okText={t('general.button.Delete')}
-      okButtonProps={{ danger: true, loading: deleteFilesMutation.isPending }}
+      target={t('general.File')}
+      items={_.map(selectedFiles, (item) => ({
+        key: item.name + item.created,
+        label: item.name,
+      }))}
+      requireConfirmInput
+      okButtonProps={{ loading: deleteFilesMutation.isPending }}
       inputProps={{ disabled: deleteFilesMutation.isPending }}
       onOk={handleDelete}
       onCancel={() => onRequestClose(false)}
-      confirmText={
-        selectedFiles.length > 1
-          ? t('general.button.Delete')
-          : selectedFiles[0]?.name
-      }
-      content={
-        <BAIFlex align="stretch" direction="column" gap="md">
-          <Alert type="warning" title={t('general.modal.DeleteForeverDesc')} />
-          {selectedFiles.length > 1 ? (
-            <BAIFlex gap="sm" direction="column" align="stretch">
-              <Typography.Text strong>
-                {t('general.modal.ItemSelectedWithCount', {
-                  count: selectedFiles.length,
-                })}
-              </Typography.Text>
-              <BAIFlex
-                direction="column"
-                align="stretch"
-                style={{ maxHeight: 200, overflowY: 'auto' }}
-              >
-                {_.map(selectedFiles, (item) => (
-                  <Typography.Text
-                    code
-                    key={item.name + item.created}
-                    style={{ width: '100%', wordBreak: 'keep-all' }}
-                  >
-                    {item.name}
-                  </Typography.Text>
-                ))}
-              </BAIFlex>
-              <Typography.Text style={{ marginRight: token.marginXXS }}>
-                {t('comp:FileExplorer.TypeDeleteToConfirm')}
-              </Typography.Text>
-            </BAIFlex>
-          ) : (
-            <BAIFlex>
-              <Typography.Text style={{ marginRight: token.marginXXS }}>
-                {t('comp:FileExplorer.TypeFolderNameToDelete')}
-                <Typography.Text code style={{ wordBreak: 'keep-all' }}>
-                  {selectedFiles[0]?.name}
-                </Typography.Text>
-              </Typography.Text>
-            </BAIFlex>
-          )}
-        </BAIFlex>
-      }
       {...modalProps}
     />
   );

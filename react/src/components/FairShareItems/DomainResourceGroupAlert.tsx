@@ -1,9 +1,9 @@
+import type { DomainResourceGroupAlertFragment$key } from '../../__generated__/DomainResourceGroupAlertFragment.graphql';
+import type { DomainResourceGroupAlertQuery } from '../../__generated__/DomainResourceGroupAlertQuery.graphql';
 import { Alert, AlertProps } from 'antd';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
-import type { DomainResourceGroupAlertFragment$key } from 'src/__generated__/DomainResourceGroupAlertFragment.graphql';
-import type { DomainResourceGroupAlertQuery } from 'src/__generated__/DomainResourceGroupAlertQuery.graphql';
 
 interface DomainResourceGroupAlertProps extends AlertProps {
   domainFairShareFrgmt: DomainResourceGroupAlertFragment$key;

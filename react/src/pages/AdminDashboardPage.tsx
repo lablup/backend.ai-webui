@@ -3,6 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { AdminDashboardPageQuery } from '../__generated__/AdminDashboardPageQuery.graphql';
+import ActiveAgents from '../components/ActiveAgents';
+import AgentStats from '../components/AgentStats';
 import BAIBoard, { BAIBoardItem } from '../components/BAIBoard';
 import RecentlyCreatedSession from '../components/RecentlyCreatedSession';
 import SessionCountDashboardItem from '../components/SessionCountDashboardItem';
@@ -10,6 +12,7 @@ import TotalResourceWithinResourceGroup, {
   useIsAvailableTotalResourceWithinResourceGroup,
 } from '../components/TotalResourceWithinResourceGroup';
 import { useSuspendedBackendaiClient } from '../hooks';
+import { useCurrentUserRole } from '../hooks/backendai';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import {
   useCurrentProjectValue,
@@ -26,9 +29,6 @@ import * as _ from 'lodash-es';
 import { Suspense, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-import ActiveAgents from 'src/components/ActiveAgents';
-import AgentStats from 'src/components/AgentStats';
-import { useCurrentUserRole } from 'src/hooks/backendai';
 
 const AdminDashboardPage: React.FC = () => {
   const { token } = theme.useToken();

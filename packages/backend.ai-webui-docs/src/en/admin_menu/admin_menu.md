@@ -246,6 +246,8 @@ also displayed in the Permission panel.
 
 <a id="manage-models-cards"></a>
 
+<a id="manage-model-cards"></a>
+
 ## Manage Model Cards
 
 Model cards in the Model Store are created and managed through the [Admin Model Store Management](#admin-model-store-management) interface. Each model card is linked to a storage folder (vfolder) that contains the actual model files.
@@ -349,6 +351,10 @@ The Admin Serving page has two tabs:
 - **Serving**: Displays the endpoint list across all projects, with the same lifecycle and property filters as the user-facing Serving page.
 - **Model Store Management**: Available to superadmins only. See the section below.
 
+:::note
+Each individual admin deployment now has its own dedicated route at `/admin-deployments/:id`. When you open a deployment from the Admin Serving page, the URL changes to this path so that the deployment detail can be linked to or bookmarked directly.
+:::
+
 <a id="admin-model-store-management"></a>
 
 ### Admin Model Store Management
@@ -403,6 +409,95 @@ Click the edit icon next to the model card name to modify an existing model card
 #### Deleting Model Cards
 
 You can delete an individual model card by clicking the delete icon next to its name, or perform bulk deletion by selecting multiple model cards with the row checkboxes and clicking the red trash-bin button next to the selection count.
+
+![](../images/model_card_delete_with_folder.png)
+
+The deletion confirmation dialog includes an **Also delete the associated model folder** option:
+
+- When this option is checked, the storage folder (vfolder) linked to the model card is moved to the trash at the same time the model card is removed. A trash notification appears so superadmins can confirm that the linked folder was sent to the trash, and the folder can be restored (or permanently deleted) from **Data > Trash** if needed. Note that deleting the associated folder also removes every other model card that references the same folder.
+- When this option is unchecked, only the model card record is removed; the linked storage folder remains untouched and can be reused for another model card.
+
+The same behavior applies to **bulk deletion** (the label becomes **Also delete all associated model folders**): each selected model card's linked storage folder is moved to the trash when the option is checked, and a trash notification is shown for each folder that was moved.
+
+<a id="prometheus-query-presets"></a>
+
+## Prometheus Query Presets
+
+Backend.AI lets administrators define reusable **Prometheus query presets** that auto-scaling rules and other monitoring features can reference by name. A preset bundles a metric name, a PromQL query template, an optional time window, and optional filter / group labels so operators do not have to retype the same query for every rule.
+
+The presets are managed from the **Prometheus Preset** tab on the Admin Deployments page (`/admin-deployments?tab=prometheus-preset`).
+
+![](../images/admin_prometheus_preset_list.png)
+
+:::note
+This tab is **admin-only** and is visible only when the Backend.AI Manager advertises the `prometheus-query-preset` capability. If the tab does not appear in your environment, your Manager build does not yet support this feature.
+:::
+
+<a id="prometheus-preset-list-and-filter"></a>
+
+### List & Filter
+
+The preset table lists all Prometheus query presets across the cluster. Each row shows:
+
+- **Name**: A unique, human-readable identifier for the preset. The cell also exposes inline **Edit** and **Delete** actions.
+- **ID**: The preset's internal identifier.
+- **Metric Name**: The metric this preset reports (used as the display label by consumers such as auto-scaling rules).
+- **Query Template**: The PromQL expression that will be executed. The cell is **copyable** — hover over the value and click the copy icon to copy the full template to the clipboard. This is useful when you want to paste the template into a Prometheus UI to verify the result.
+- **Time Window**: The default look-back window (for example, `5m`) used when the query references a range vector.
+- **Category**: The optional category the preset belongs to (with the resolved category name and the category ID).
+- **Options**: The optional **Filter Labels** and **Group Labels** that consumers can apply on top of the preset.
+- **Created At** / **Updated At**: Timestamps maintained automatically by the server.
+
+You can search and narrow the list with the property filter above the table, and click any column header to change the sort order.
+
+<a id="prometheus-preset-column-settings"></a>
+
+### Column Settings Persistence
+
+The table includes a column-settings control that lets you hide columns you do not need and reorder the visible columns. Your choices are **persisted across sessions** per browser, so the table opens with your preferred layout the next time you visit the tab. Resetting the column settings restores the default Backend.AI layout.
+
+<a id="prometheus-preset-create"></a>
+
+### Create a Preset
+
+Click **Add Preset** at the top right of the table to open the **Create Preset** modal.
+
+![](../images/admin_prometheus_preset_create_modal.png)
+
+The modal contains the following fields:
+
+- **Name**: The preset's unique name. Must be unique across all Prometheus query presets.
+- **Description**: A free-form description shown alongside the preset in selectors.
+- **Category**: An optional category for grouping related presets. Leave empty for **No category**.
+- **Metric Name**: The metric label that consumers (for example, auto-scaling rules) will display.
+- **Query Template**: The PromQL expression to execute. As you type, a **live preview** area below the field calls the server's `adminPrometheusQueryPresetPreview` query and shows the current value the query returns against your Prometheus instance, so you can verify the template works before saving. The preview is debounced and updates automatically as you edit.
+- **Time Window**: The default range-vector window, for example `5m`. Leave empty if the query does not use a range vector.
+- **Filter Labels**: Optional list of label selectors that consumers can apply on top of the preset.
+- **Group Labels**: Optional list of labels to group the query result by.
+
+Click **Create** to save the preset. On success, the preset appears in the list and a confirmation toast is shown.
+
+<a id="prometheus-preset-edit"></a>
+
+### Edit a Preset
+
+Click the **Edit** action in the **Name** cell of a preset row to open the **Edit Preset** modal. The modal is pre-populated with the preset's current values and exposes the same fields as the Create dialog, including the live preview area for the Query Template.
+
+![](../images/admin_prometheus_preset_edit_modal.png)
+
+Click **Save** to apply your changes. Consumers of the preset (for example, auto-scaling rules referencing it) automatically pick up the new query template the next time they evaluate the metric.
+
+<a id="prometheus-preset-delete"></a>
+
+### Delete a Preset
+
+Click the **Delete** action in the **Name** cell of a preset row to open the deletion confirmation modal.
+
+:::danger
+Deleting a Prometheus query preset is **permanent and cannot be undone**. Auto-scaling rules and other features that reference the deleted preset will lose their query template and may stop functioning until they are reconfigured to point at a different preset.
+:::
+
+Because deletion is irreversible, the dialog requires you to **type the preset's name** into the confirmation input before the **Delete** button becomes enabled. This typed-confirmation pattern (`BAIConfirmModalWithInput`) is used consistently across Backend.AI for permanent-delete actions. Type the exact preset name shown in the dialog title and click **Delete** to confirm.
 
 <a id="manage-resource-policy"></a>
 
@@ -595,7 +690,9 @@ so use it with caution.
 You can select and display only the columns you want by clicking the `Setting (Gear)` button at the
 bottom right of the table.
 
-To save the current resource policy as a file, click the 'more' button in the upper right of each tab and select the 'Export CSV' menu item.
+To save the current resource policy list as a CSV file, use the **Export CSV** action in the **bottom-right slot of the table**. This applies to the Keypair, User, and Project resource policy tabs alike — the CSV export control has been moved from the header area to the table's bottom-right toolbar for consistency with other admin lists.
+
+![](../images/resource_policy_list_csv.png)
 
 ![](../images/keypair_export.png)
 
@@ -890,8 +987,9 @@ button. The registry creation dialog contains the following fields:
 - **Registry Type**: Select the type of registry. Supported types include: `docker`, `harbor`, `harbor2`, `github`, `gitlab`, `ecr`, and `ecr-public`.
 - **Project Name**: The project or namespace in the registry (required). Use the full path including namespace and project name for GitLab registries.
 - **Extra Information**: A JSON string for additional configuration needed for each registry type. This field is available from version 24.09.3.
+- **SSL Verification**: Toggles whether Backend.AI verifies the registry's SSL certificate when connecting. **Enabled by default**, which is the recommended setting for any registry reachable over the public internet. Disable this only for a registry served with a self-signed certificate inside a trusted internal environment where you have already verified the network path; turning it off makes the connection vulnerable to man-in-the-middle attacks.
 
-![](../images/add_registry_dialog.png)
+![](../images/container_registry_editor_modal.png)
 
 
 ### GitLab Container Registry Configuration
@@ -1046,8 +1144,8 @@ You can deactivate a resource policy by turning off Active Status.
 The resource group edit dialog contains the following additional fields:
 
 - **Allowed session types**: Since users can choose the type of session, the resource group can allow certain types. You should allow at least one session type. The allowed session types are Interactive, Batch, Inference, and System.
-- **WSProxy Server Address**: Sets the WSProxy address for the resource group's Agents to use. If you set a URL in this field, WSProxy will relay the traffic of an app like Jupyter directly to the compute session via Agent bypassing Manager (v2 API). By enabling the v2 API, you can lower the Manager's burden when using app services. If a direct connection from WSProxy to the Agent node is not available, leave this field blank to fall back to the v1 API.
-- **WSProxy API Token**: The API token for authenticating with the WSProxy server.
+- **App Proxy Server Address**: Sets the App Proxy address for the resource group's Agents to use. If you set a URL in this field, App Proxy will relay the traffic of an app like Jupyter directly to the compute session via Agent bypassing Manager.
+- **App Proxy API Token**: The API token for authenticating with the App Proxy server.
 - **Active**: Toggle the active status of the resource group.
 - **Public**: When enabled, the resource group is visible to all users.
 - **Pending timeout**:
@@ -1336,7 +1434,7 @@ This page is only for showing current information.
 RBAC (Role-Based Access Control) Management allows superadmins to define roles with fine-grained permissions and assign them to users. You can control which actions specific users are allowed to perform on various resources throughout the Backend.AI system.
 
 :::note
-RBAC Management is only available to superadmins and requires Backend.AI Manager version 25.4.0 or later.
+RBAC Management is only available to superadmins and requires Backend.AI Manager version 26.4.0 or later.
 :::
 
 For detailed information about managing roles, permissions, and user assignments, refer to the dedicated [RBAC Management](#rbac-management) page.

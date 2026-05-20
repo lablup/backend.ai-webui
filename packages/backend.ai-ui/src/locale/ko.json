@@ -63,6 +63,9 @@
     "Updated": "업데이트",
     "Version": "버전"
   },
+  "comp:BAIAvailablePresetSelect": {
+    "SelectPreset": "프리셋을 선택해주세요"
+  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "예기치 못한 오류가 발생했습니다. 잠시 후 다시 시도하거나 문제가 지속되면 지원팀에 문의하세요."
   },
@@ -93,10 +96,11 @@
   },
   "comp:BAIDeleteConfirmModal": {
     "AreYouSureToDelete": "정말 삭제하시겠습니까?",
+    "AreYouSureToPermanentlyDeleteTarget": "{{target}}을(를) 영구 삭제하시겠습니까?",
     "CannotBeUndone": "이 작업은 되돌릴 수 없습니다.",
     "DeleteItem": "삭제",
     "DeleteNItems": "{{count}}개 항목 삭제",
-    "TypeToConfirm": "<code>{{confirmText}}</code>을(를) 입력하여 확인하세요."
+    "TypeToConfirm": "<code>{{confirmText}}</code>을(를) 입력해주세요."
   },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "배포를 선택해주세요"
@@ -213,7 +217,6 @@
     "UpdateProject": "프로젝트 수정"
   },
   "comp:BAIProjectTable": {
-    "AreYouSureToDeactivateProject": "정말로 {{projectName}} 프로젝트를 비활성화 시키겠습니까?",
     "AreYouSureToPurgeProject": "정말로 {{projectName}} 프로젝트를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.",
     "ContainerRegistry": "컨테이너 레지스트리",
     "Controls": "제어",
@@ -240,6 +243,9 @@
     "TotalResourceSlots": "총 리소스 슬롯",
     "Type": "타입"
   },
+  "comp:BAIProjectVfolderSelect": {
+    "SelectFolder": "폴더를 선택해주세요"
+  },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "검색",
     "ResetFilter": "필터 초기화"
@@ -264,6 +270,9 @@
     "Status": "라우트 상태",
     "TrafficRatio": "트래픽 비율",
     "TrafficStatus": "트래픽 상태"
+  },
+  "comp:BAIRuntimeVariantSelect": {
+    "SelectRuntimeVariant": "런타임 변형을 선택해주세요"
   },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "시도 횟수",
@@ -336,6 +345,7 @@
     "ModifiedAt": "수정일",
     "MoreOptions": "더 많은 옵션",
     "Name": "이름",
+    "NoUploadPermissionForHost": "호스트에 대한 업로드 권한이 없습니다.",
     "PleaseEnterAFileName": "파일 이름을 입력해 주세요.",
     "PleaseEnterAFolderName": "폴더 이름을 입력해 주세요.",
     "RenameSuccess": "이름이 성공적으로 변경되었습니다.",
@@ -395,8 +405,10 @@
   },
   "general": {
     "DeselectAll": "선택 취소",
+    "File": "파일",
     "NSelected": "{{count}}개 선택됨",
     "Optional": "선택",
+    "Project": "프로젝트",
     "TotalItems": "총 {{total}} 항목",
     "button": {
       "Cancel": "취소",

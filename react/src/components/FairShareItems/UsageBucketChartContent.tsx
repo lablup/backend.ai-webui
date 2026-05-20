@@ -2,6 +2,16 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import {
+  DomainV2Filter,
+  ProjectV2Filter,
+  UserV2Filter,
+  UsageBucketChartContentQuery,
+  UsageBucketChartContentQuery$variables,
+} from '../../__generated__/UsageBucketChartContentQuery.graphql';
+import { UsageBucketChartContent_DomainFragment$key } from '../../__generated__/UsageBucketChartContent_DomainFragment.graphql';
+import { UsageBucketChartContent_ProjectFragment$key } from '../../__generated__/UsageBucketChartContent_ProjectFragment.graphql';
+import { UsageBucketChartContent_UserFragment$key } from '../../__generated__/UsageBucketChartContent_UserFragment.graphql';
 import { presetPalettes } from '@ant-design/colors';
 import { Empty, Tabs, Typography, theme } from 'antd';
 import { createStyles } from 'antd-style';
@@ -27,16 +37,6 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-import {
-  DomainV2Filter,
-  ProjectV2Filter,
-  UserV2Filter,
-  UsageBucketChartContentQuery,
-  UsageBucketChartContentQuery$variables,
-} from 'src/__generated__/UsageBucketChartContentQuery.graphql';
-import { UsageBucketChartContent_DomainFragment$key } from 'src/__generated__/UsageBucketChartContent_DomainFragment.graphql';
-import { UsageBucketChartContent_ProjectFragment$key } from 'src/__generated__/UsageBucketChartContent_ProjectFragment.graphql';
-import { UsageBucketChartContent_UserFragment$key } from 'src/__generated__/UsageBucketChartContent_UserFragment.graphql';
 
 interface UsageBucketChartContentProps {
   domainFairShareFrgmt?: UsageBucketChartContent_DomainFragment$key | null;

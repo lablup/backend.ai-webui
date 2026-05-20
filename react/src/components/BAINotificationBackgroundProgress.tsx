@@ -2,9 +2,9 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { NotificationState } from '../hooks/useBAINotification';
 import { Progress, theme } from 'antd';
 import * as _ from 'lodash-es';
-import { NotificationState } from 'src/hooks/useBAINotification';
 
 interface BAINotificationBackgroundProgressProps {
   backgroundTask: NotificationState['backgroundTask'];

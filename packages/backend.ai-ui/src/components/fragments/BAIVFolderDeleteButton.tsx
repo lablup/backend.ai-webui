@@ -1,6 +1,6 @@
 import { BAIVFolderDeleteButtonFragment$key } from '../../__generated__/BAIVFolderDeleteButtonFragment.graphql';
-import { BAITrashBinIcon } from '../../icons';
 import BAIButton from '../BAIButton';
+import { DeleteOutlined } from '@ant-design/icons';
 import { theme, type ButtonProps } from 'antd';
 import * as _ from 'lodash-es';
 import { graphql, useFragment } from 'react-relay';
@@ -30,7 +30,7 @@ const BAIVFolderDeleteButton = ({
 
   return (
     <BAIButton
-      icon={<BAITrashBinIcon />}
+      icon={<DeleteOutlined />}
       disabled={buttonProps.disabled || !isDeletable}
       style={{
         color:

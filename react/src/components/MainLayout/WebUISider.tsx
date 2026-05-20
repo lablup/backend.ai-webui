@@ -5,6 +5,10 @@
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
 import { useCustomThemeConfig } from '../../hooks/useCustomThemeConfig';
 import usePrimaryColors from '../../hooks/usePrimaryColors';
+import {
+  getPathFromMenuKey,
+  useWebUIMenuItems,
+} from '../../hooks/useWebUIMenuItems';
 import AboutBackendAIModal from '../AboutBackendAIModal';
 import BAIMenu from '../BAIMenu';
 import BAISider, { BAISiderProps } from '../BAISider';
@@ -31,10 +35,6 @@ import { ArrowLeftIcon, ShieldUserIcon } from 'lucide-react';
 import React, { useContext, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
-import {
-  getPathFromMenuKey,
-  useWebUIMenuItems,
-} from 'src/hooks/useWebUIMenuItems';
 
 interface WebUISiderProps extends Pick<
   BAISiderProps,

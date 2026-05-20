@@ -28,6 +28,7 @@ const useStyles = createStyles(({ css, token }) => {
       .bai_board_header {
         padding: 0 !important;
         padding-top: ${token.padding - 1}px !important;
+        padding-left: ${token.paddingXS}px !important;
       }
       .bai_board_resizer button span {
         color: ${token.colorTextQuaternary} !important;
@@ -37,6 +38,20 @@ const useStyles = createStyles(({ css, token }) => {
         > div:nth-child(2)
         > div:first-child {
         padding: 0 !important;
+      }
+      /*
+       * Upstream renders the drag/resize "active" outline as a ::before pseudo
+       * on .container-override.active (content only set on the active variant,
+       * so the pseudo is invisible at rest). Two corrections:
+       *  1. radius — upstream hardcodes 16px; align with BAICard token.borderRadius.
+       *  2. stacking — the pseudo has implicit z-index 0, so the sticky
+       *     BAIBoardItemTitle (z-index 50) paints over the outline near the top.
+       *     Lift it above the title and keep it click-through.
+       */
+      .bai_board_container-override::before {
+        border-radius: ${token.borderRadius}px !important;
+        z-index: 60;
+        pointer-events: none;
       }
     `,
     disableResize: css`

@@ -2,8 +2,18 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import {
+  ReservoirPageQuery,
+  ReservoirPageQuery$data,
+  ReservoirPageQuery$variables,
+  ArtifactType,
+} from '../__generated__/ReservoirPageQuery.graphql';
+import BAIRadioGroup from '../components/BAIRadioGroup';
+import ScanArtifactModelsFromHuggingFaceModal from '../components/ScanArtifactModelsFromHuggingFaceModal';
 import { useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
+import { useSetBAINotification } from '../hooks/useBAINotification';
+import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useToggle } from 'ahooks';
 import { theme, Col, Row, Statistic, Card, Button, Tooltip } from 'antd';
 import {
@@ -32,16 +42,6 @@ import { BanIcon, Brain, UndoIcon } from 'lucide-react';
 import React, { useMemo, useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-import {
-  ReservoirPageQuery,
-  ReservoirPageQuery$data,
-  ReservoirPageQuery$variables,
-  ArtifactType,
-} from 'src/__generated__/ReservoirPageQuery.graphql';
-import BAIRadioGroup from 'src/components/BAIRadioGroup';
-import ScanArtifactModelsFromHuggingFaceModal from 'src/components/ScanArtifactModelsFromHuggingFaceModal';
-import { useSetBAINotification } from 'src/hooks/useBAINotification';
-import { useBAISettingUserState } from 'src/hooks/useBAISetting';
 import {
   withDefault,
   JsonParam,

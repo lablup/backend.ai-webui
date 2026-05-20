@@ -2,12 +2,12 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { AppLaunchConfirmationModalFragment$key } from '../../__generated__/AppLaunchConfirmationModalFragment.graphql';
+import { useBackendAIAppLauncher } from '../../hooks/useBackendAIAppLauncher';
 import { Typography } from 'antd';
 import { BAIButton, BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
-import { AppLaunchConfirmationModalFragment$key } from 'src/__generated__/AppLaunchConfirmationModalFragment.graphql';
-import { useBackendAIAppLauncher } from 'src/hooks/useBackendAIAppLauncher';
 
 interface AppLaunchConfirmationModalProps extends BAIModalProps {
   sessionFrgmt: AppLaunchConfirmationModalFragment$key;

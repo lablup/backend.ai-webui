@@ -1,6 +1,6 @@
 import { BAIArtifactRevisionDeleteButtonFragment$key } from '../../__generated__/BAIArtifactRevisionDeleteButtonFragment.graphql';
-import { BAITrashBinIcon } from '../../icons';
 import BAIButton, { BAIButtonProps } from '../BAIButton';
+import { DeleteFilled } from '@ant-design/icons';
 import { theme } from 'antd';
 import * as _ from 'lodash-es';
 import { graphql, useFragment } from 'react-relay';
@@ -39,7 +39,7 @@ const BAIArtifactRevisionDeleteButton = ({
 
   return (
     <BAIButton
-      icon={<BAITrashBinIcon />}
+      icon={<DeleteFilled />}
       disabled={isDisabled}
       type="text"
       style={{

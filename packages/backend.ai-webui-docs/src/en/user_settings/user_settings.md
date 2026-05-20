@@ -122,6 +122,14 @@ a table view with additional management options such as issuing new keypairs,
 deactivating, or revoking existing ones.
 :::
 
+:::note[Re-Login Required]
+When the main access key changes (for example, after issuing a new keypair
+and designating it as the main one), the WebUI shows a **Re-Login Required**
+notification with the message *"The main access key has been changed. Please
+log in again to apply the change."* Log out and sign in again so that the
+new main access key is applied to your session.
+:::
+
 <a id="user-ssh-keypair-management"></a>
 
 ### SSH Keypair Management

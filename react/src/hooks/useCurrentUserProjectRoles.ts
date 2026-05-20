@@ -41,7 +41,7 @@ export const useCurrentUserProjectRoles = (): CurrentUserProjectRolesResult => {
       query useCurrentUserProjectRolesQuery {
         myRolesResult: myRoles(
           first: 100
-          filter: { permission: { entityType: PROJECT_ADMIN_PAGE } }
+          filter: { permission: { entityType: { equals: PROJECT_ADMIN_PAGE } } }
         ) @catch(to: RESULT) {
           edges {
             node {

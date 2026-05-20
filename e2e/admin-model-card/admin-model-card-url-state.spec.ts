@@ -8,8 +8,36 @@ test.describe(
   'Admin Model Card Management - URL State Persistence',
   { tag: ['@admin-model-card', '@admin', '@functional'] },
   () => {
-    test.beforeEach(async ({ page, request }) => {
+    let testCardName: string;
+
+    test.beforeEach(async ({ page, request }, testInfo) => {
+      testCardName = `e2e-test-url-${testInfo.workerIndex}-${Date.now()}`;
       await loginAsAdmin(page, request);
+
+      // Create a test model card so the table is guaranteed to have data
+      await page.goto(
+        `${webuiEndpoint}/admin-deployments?tab=model-store-management`,
+      );
+      const adminModelCardPage = new AdminModelCardPage(page);
+      await adminModelCardPage.waitForTableLoad();
+      await adminModelCardPage.createModelCard({ name: testCardName });
+    });
+
+    test.afterEach(async ({ page }) => {
+      try {
+        await page.goto(
+          `${webuiEndpoint}/admin-deployments?tab=model-store-management`,
+        );
+        const adminModelCardPage = new AdminModelCardPage(page);
+        await adminModelCardPage.waitForTableLoad();
+        await adminModelCardPage.applyNameFilter(testCardName);
+        const row = adminModelCardPage.getRowByName(testCardName);
+        if ((await row.count()) > 0) {
+          await adminModelCardPage.deleteModelCardByName(testCardName);
+        }
+      } catch {
+        // Ignore cleanup errors
+      }
     });
 
     // 10.1 Filter state is persisted in the URL query parameters
@@ -17,20 +45,13 @@ test.describe(
       page,
     }) => {
       const adminModelCardPage = new AdminModelCardPage(page);
-      await page.goto(`${webuiEndpoint}/admin-serving?tab=model-store`);
+      await page.goto(
+        `${webuiEndpoint}/admin-deployments?tab=model-store-management`,
+      );
       await adminModelCardPage.waitForTableLoad();
 
-      // Get the name of the first model card to use as a filter value
-      const firstRowName = await adminModelCardPage
-        .getDataRows()
-        .first()
-        .locator('td')
-        .nth(1)
-        .innerText();
-      const filterName = firstRowName.trim().split('\n')[0];
-
-      // Apply a name filter
-      await adminModelCardPage.applyNameFilter(filterName);
+      // Apply a name filter using the card created in beforeEach (guaranteed to exist)
+      await adminModelCardPage.applyNameFilter(testCardName);
 
       // Verify the URL updates to include the filter parameter
       await expect(page).toHaveURL(/filter=/);
@@ -42,7 +63,7 @@ test.describe(
 
       // Verify the filter chip is visible (filter persisted from URL)
       const filterChipPattern = new RegExp(
-        `Name.*${filterName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`,
+        `Name.*${testCardName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`,
       );
       await expect(
         page
@@ -63,7 +84,9 @@ test.describe(
       page,
     }) => {
       const adminModelCardPage = new AdminModelCardPage(page);
-      await page.goto(`${webuiEndpoint}/admin-serving?tab=model-store`);
+      await page.goto(
+        `${webuiEndpoint}/admin-deployments?tab=model-store-management`,
+      );
       await adminModelCardPage.waitForTableLoad();
 
       // Click the "Name" column to sort ascending
@@ -80,7 +103,9 @@ test.describe(
       await expect(page).toHaveURL(/order=name/);
 
       // Verify rows are still displayed (sort preserved)
-      await expect(adminModelCardPage.getDataRows().first()).toBeVisible();
+      await expect(adminModelCardPage.getDataRows().first()).toBeVisible({
+        timeout: 15000,
+      });
     });
 
     // 10.3 Pagination state is persisted in the URL query parameters
@@ -88,7 +113,9 @@ test.describe(
       page,
     }) => {
       const adminModelCardPage = new AdminModelCardPage(page);
-      await page.goto(`${webuiEndpoint}/admin-serving?tab=model-store`);
+      await page.goto(
+        `${webuiEndpoint}/admin-deployments?tab=model-store-management`,
+      );
       await adminModelCardPage.waitForTableLoad();
 
       // Only proceed if there are multiple pages

@@ -2,7 +2,19 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useWebUINavigate } from '../hooks';
+import { FileBrowserButtonV2Fragment$key } from '../__generated__/FileBrowserButtonV2Fragment.graphql';
+import {
+  useCurrentDomainValue,
+  useSuspendedBackendaiClient,
+  useWebUINavigate,
+} from '../hooks';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { useDefaultFileBrowserImageWithFallback } from '../hooks/useDefaultImagesWithFallback';
+import { useMergedAllowedStorageHostPermission } from '../hooks/useMergedAllowedStorageHostPermission';
+import {
+  StartSessionWithDefaultValue,
+  useStartSession,
+} from '../hooks/useStartSession';
 import { PrimaryAppOption } from './ComputeSessionNodeItems/SessionActionButtons';
 import { EllipsisOutlined } from '@ant-design/icons';
 import { App, Dropdown, Image, Space, Tooltip } from 'antd';
@@ -17,15 +29,6 @@ import * as _ from 'lodash-es';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
-import { FileBrowserButtonV2Fragment$key } from 'src/__generated__/FileBrowserButtonV2Fragment.graphql';
-import { useCurrentDomainValue, useSuspendedBackendaiClient } from 'src/hooks';
-import { useCurrentProjectValue } from 'src/hooks/useCurrentProject';
-import { useDefaultFileBrowserImageWithFallback } from 'src/hooks/useDefaultImagesWithFallback';
-import { useMergedAllowedStorageHostPermission } from 'src/hooks/useMergedAllowedStorageHostPermission';
-import {
-  StartSessionWithDefaultValue,
-  useStartSession,
-} from 'src/hooks/useStartSession';
 
 interface FileBrowserButtonV2Props extends BAIButtonProps {
   showTitle?: boolean;
