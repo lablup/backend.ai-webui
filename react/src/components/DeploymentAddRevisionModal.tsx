@@ -32,6 +32,8 @@ import {
 } from '../hooks/useRuntimeParameterSchema';
 import DeploymentPresetDetailModal from './DeploymentPresetDetailModal';
 import EnvVarFormList, { type EnvVarFormListValue } from './EnvVarFormList';
+import FolderCreateModalV2 from './FolderCreateModalV2';
+import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import ImageEnvironmentSelectFormItems, {
   type ImageEnvironmentFormInput,
 } from './ImageEnvironmentSelectFormItems';
@@ -46,7 +48,7 @@ import ResourceAllocationFormItems, {
 import VFolderTableFormItem, {
   type VFolderTableFormValues,
 } from './VFolderTableFormItem';
-import { InfoCircleOutlined } from '@ant-design/icons';
+import { InfoCircleOutlined, ReloadOutlined } from '@ant-design/icons';
 import {
   Alert,
   App,
@@ -73,6 +75,7 @@ import {
   BAIModalProps,
   BAIRuntimeVariantSelect,
   BAIVFolderSelect,
+  BAIVFolderSelectRef,
   convertToUUID,
   safeDecodeUuid,
   toGlobalId,
@@ -80,8 +83,10 @@ import {
   useBAILogger,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { FolderOpenIcon, PlusIcon } from 'lucide-react';
 import React, {
   Suspense,
+  startTransition,
   useDeferredValue,
   useEffect,
   useEffectEvent,
@@ -187,6 +192,15 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   // (ServiceLauncherPageContent, ModelCardDeployModal).
   const { id: currentProjectId } = useCurrentProjectValue();
   const { logger } = useBAILogger();
+  const { open: openFolderExplorer } = useFolderExplorerOpener();
+
+  // Refs to refetch each form's model folder select after creating a new
+  // model-usage folder, or via the manual refresh button. Two refs because
+  // the Preset and Custom forms each mount their own BAIVFolderSelect.
+  const presetVFolderSelectRef = useRef<BAIVFolderSelectRef>(null);
+  const customVFolderSelectRef = useRef<BAIVFolderSelectRef>(null);
+  const [isModelFolderCreateModalOpen, setIsModelFolderCreateModalOpen] =
+    useState(false);
 
   // Defer `open` so the lazy query only fires once the modal has actually
   // committed to opening. `loading={deferredOpen !== open}` then lets the
@@ -1272,18 +1286,64 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
             </Form.Item>
 
             <Form.Item
-              name="modelFolderId"
               label={t('deployment.ModelFolder')}
               tooltip={t('deployment.ModelFolderTooltip')}
-              rules={[{ required: true }]}
+              required
             >
-              <BAIVFolderSelect
-                currentProjectId={currentProjectId ?? undefined}
-                disabled={!currentProjectId}
-                excludeDeleted
-                filter='usage_mode == "model"'
-                style={{ width: '100%' }}
-              />
+              <BAIFlex direction="row" gap="xs">
+                <Form.Item
+                  name="modelFolderId"
+                  noStyle
+                  rules={[{ required: true }]}
+                >
+                  <BAIVFolderSelect
+                    ref={presetVFolderSelectRef}
+                    currentProjectId={currentProjectId ?? undefined}
+                    disabled={!currentProjectId}
+                    excludeDeleted
+                    filter='usage_mode == "model"'
+                    style={{ flex: 1 }}
+                  />
+                </Form.Item>
+                <Form.Item dependencies={['modelFolderId']} noStyle>
+                  {({ getFieldValue }: FormInstance<PresetFormValues>) => {
+                    const modelFolderId = getFieldValue('modelFolderId');
+                    return (
+                      <Space.Compact>
+                        <Tooltip title={t('modelService.OpenFolder')}>
+                          <Button
+                            icon={<FolderOpenIcon />}
+                            disabled={!modelFolderId}
+                            onClick={() => {
+                              if (modelFolderId) {
+                                openFolderExplorer(toLocalId(modelFolderId));
+                              }
+                            }}
+                          />
+                        </Tooltip>
+                        <Tooltip title={t('data.CreateANewStorageFolder')}>
+                          <Button
+                            icon={<PlusIcon />}
+                            onClick={() =>
+                              setIsModelFolderCreateModalOpen(true)
+                            }
+                          />
+                        </Tooltip>
+                        <Tooltip title={t('button.Refresh')}>
+                          <Button
+                            icon={<ReloadOutlined />}
+                            onClick={() => {
+                              startTransition(() => {
+                                presetVFolderSelectRef.current?.refetch();
+                              });
+                            }}
+                          />
+                        </Tooltip>
+                      </Space.Compact>
+                    );
+                  }}
+                </Form.Item>
+              </BAIFlex>
             </Form.Item>
           </Form>
         )
@@ -1329,18 +1389,62 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
 
           <SectionHeader>{t('deployment.step.ModelAndRuntime')}</SectionHeader>
           <Form.Item
-            name="modelFolderId"
             label={t('deployment.ModelFolder')}
             tooltip={t('deployment.ModelFolderTooltip')}
-            rules={[{ required: true }]}
+            required
           >
-            <BAIVFolderSelect
-              currentProjectId={currentProjectId ?? undefined}
-              disabled={!currentProjectId}
-              excludeDeleted
-              filter='usage_mode == "model"'
-              style={{ width: '100%' }}
-            />
+            <BAIFlex direction="row" gap="xs">
+              <Form.Item
+                name="modelFolderId"
+                noStyle
+                rules={[{ required: true }]}
+              >
+                <BAIVFolderSelect
+                  ref={customVFolderSelectRef}
+                  currentProjectId={currentProjectId ?? undefined}
+                  disabled={!currentProjectId}
+                  excludeDeleted
+                  filter='usage_mode == "model"'
+                  style={{ flex: 1 }}
+                />
+              </Form.Item>
+              <Form.Item dependencies={['modelFolderId']} noStyle>
+                {({ getFieldValue }: FormInstance<FormValues>) => {
+                  const modelFolderId = getFieldValue('modelFolderId');
+                  return (
+                    <Space.Compact>
+                      <Tooltip title={t('modelService.OpenFolder')}>
+                        <Button
+                          icon={<FolderOpenIcon />}
+                          disabled={!modelFolderId}
+                          onClick={() => {
+                            if (modelFolderId) {
+                              openFolderExplorer(toLocalId(modelFolderId));
+                            }
+                          }}
+                        />
+                      </Tooltip>
+                      <Tooltip title={t('data.CreateANewStorageFolder')}>
+                        <Button
+                          icon={<PlusIcon />}
+                          onClick={() => setIsModelFolderCreateModalOpen(true)}
+                        />
+                      </Tooltip>
+                      <Tooltip title={t('button.Refresh')}>
+                        <Button
+                          icon={<ReloadOutlined />}
+                          onClick={() => {
+                            startTransition(() => {
+                              customVFolderSelectRef.current?.refetch();
+                            });
+                          }}
+                        />
+                      </Tooltip>
+                    </Space.Compact>
+                  );
+                }}
+              </Form.Item>
+            </BAIFlex>
           </Form.Item>
           <Form.Item
             name="runtimeVariantId"
@@ -1630,6 +1734,38 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           />
         </Suspense>
       )}
+      <FolderCreateModalV2
+        open={isModelFolderCreateModalOpen}
+        initialValues={{ usage_mode: 'model' }}
+        onRequestClose={(result) => {
+          setIsModelFolderCreateModalOpen(false);
+          if (result?.id) {
+            // `createVfolderV2` returns a `VFolder` (Strawberry) global ID,
+            // but BAIVFolderSelect's value query reads from `vfolder_nodes`
+            // (`VirtualFolderNode`, Graphene). Both encode the same UUID
+            // but with different `__typename:` prefixes, so the select's
+            // option matching (`edge.node.id === value`) would fail if we
+            // set the raw mutation id directly. Re-encode to the
+            // VirtualFolderNode global ID form.
+            const newFolderUuid = safeDecodeUuid(result.id);
+            if (!newFolderUuid) return;
+            const newFolderGlobalId = toGlobalId(
+              'VirtualFolderNode',
+              newFolderUuid,
+            );
+            const activeForm =
+              effectiveMode === 'preset' ? presetForm : customForm;
+            const activeRef =
+              effectiveMode === 'preset'
+                ? presetVFolderSelectRef
+                : customVFolderSelectRef;
+            activeForm.setFieldValue('modelFolderId', newFolderGlobalId);
+            startTransition(() => {
+              activeRef.current?.refetch();
+            });
+          }
+        }}
+      />
     </BAIModal>
   );
 };
