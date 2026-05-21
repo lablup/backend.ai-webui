@@ -394,6 +394,23 @@
     "StartedAt": "Başlama zamanı",
     "Step": "Adım"
   },
+  "comp:SessionV2Nodes": {
+    "AIAccelerator": "AI Hızlandırıcı",
+    "CPU": "CPU",
+    "ClusterMode": "Küme Modu",
+    "CreatedAt": "Oluşturulma Tarihi",
+    "ElapsedTime": "Geçen Süre",
+    "Environments": "Ortamlar",
+    "Memory": "Bellek",
+    "OwnerEmail": "Sahip E-postası",
+    "Project": "Proje",
+    "ResourceGroup": "Kaynak Grubu",
+    "SessionId": "Oturum ID",
+    "SessionName": "Oturum Adı",
+    "SessionType": "Oturum Türü",
+    "Status": "Durum",
+    "TerminateSession": "Oturumu Sonlandır"
+  },
   "comp:UserNodes": {
     "AllowedClientIps": "İzin Verilen İstemci IP'leri",
     "ContainerGIDs": "Konteyner GID'leri",

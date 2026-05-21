@@ -394,6 +394,23 @@
     "StartedAt": "시작일",
     "Step": "세부단계"
   },
+  "comp:SessionV2Nodes": {
+    "AIAccelerator": "AI 가속기",
+    "CPU": "CPU",
+    "ClusterMode": "클러스터 모드",
+    "CreatedAt": "생성 시각",
+    "ElapsedTime": "경과 시간",
+    "Environments": "환경",
+    "Memory": "메모리",
+    "OwnerEmail": "소유자 이메일",
+    "Project": "프로젝트",
+    "ResourceGroup": "리소스 그룹",
+    "SessionId": "세션 ID",
+    "SessionName": "세션 이름",
+    "SessionType": "세션 유형",
+    "Status": "상태",
+    "TerminateSession": "세션 종료"
+  },
   "comp:UserNodes": {
     "AllowedClientIps": "허용된 클라이언트 IP",
     "ContainerGIDs": "컨테이너 GID",

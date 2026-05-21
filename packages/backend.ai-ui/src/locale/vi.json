@@ -394,6 +394,23 @@
     "StartedAt": "Bắt đầu lúc",
     "Step": "Bước"
   },
+  "comp:SessionV2Nodes": {
+    "AIAccelerator": "Bộ gia tốc AI",
+    "CPU": "CPU",
+    "ClusterMode": "Chế độ Cluster",
+    "CreatedAt": "Ngày tạo",
+    "ElapsedTime": "Thời gian đã trôi",
+    "Environments": "Môi trường",
+    "Memory": "Bộ nhớ",
+    "OwnerEmail": "Email chủ sở hữu",
+    "Project": "Dự án",
+    "ResourceGroup": "Nhóm tài nguyên",
+    "SessionId": "ID phiên",
+    "SessionName": "Tên phiên",
+    "SessionType": "Loại phiên",
+    "Status": "Trạng thái",
+    "TerminateSession": "Kết thúc phiên"
+  },
   "comp:UserNodes": {
     "AllowedClientIps": "IP khách hàng được phép",
     "ContainerGIDs": "GID của container",

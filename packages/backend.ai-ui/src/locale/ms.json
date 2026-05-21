@@ -394,6 +394,23 @@
     "StartedAt": "Mula pada",
     "Step": "Langkah"
   },
+  "comp:SessionV2Nodes": {
+    "AIAccelerator": "Pemecut AI",
+    "CPU": "CPU",
+    "ClusterMode": "Mod Kluster",
+    "CreatedAt": "Dicipta Pada",
+    "ElapsedTime": "Masa Berlalu",
+    "Environments": "Persekitaran",
+    "Memory": "Memori",
+    "OwnerEmail": "E-mel Pemilik",
+    "Project": "Projek",
+    "ResourceGroup": "Kumpulan Sumber",
+    "SessionId": "ID Sesi",
+    "SessionName": "Nama Sesi",
+    "SessionType": "Jenis Sesi",
+    "Status": "Status",
+    "TerminateSession": "Tamatkan Sesi"
+  },
   "comp:UserNodes": {
     "AllowedClientIps": "IP Pelanggan yang Dibenarkan",
     "ContainerGIDs": "GID Bekas",

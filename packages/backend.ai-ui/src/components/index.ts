@@ -92,6 +92,11 @@ export {
   availableUserV2SorterValues,
 } from './BAIUserV2Nodes';
 export type { UserV2InList } from './BAIUserV2Nodes';
+export {
+  default as BAISessionNodesV2,
+  availableSessionV2SorterValues,
+} from './BAISessionNodesV2';
+export type { SessionV2InList } from './BAISessionNodesV2';
 export type { BAIUncontrolledInputProps } from './BAIUncontrolledInput';
 export { default as BAIUncontrolledInput } from './BAIUncontrolledInput';
 export { default as BAITag } from './BAITag';

@@ -394,6 +394,23 @@
     "StartedAt": "开始时间",
     "Step": "步骤"
   },
+  "comp:SessionV2Nodes": {
+    "AIAccelerator": "AI加速器",
+    "CPU": "CPU",
+    "ClusterMode": "集群模式",
+    "CreatedAt": "创建时间",
+    "ElapsedTime": "已用时间",
+    "Environments": "环境",
+    "Memory": "内存",
+    "OwnerEmail": "所有者邮箱",
+    "Project": "项目",
+    "ResourceGroup": "资源组",
+    "SessionId": "会话 ID",
+    "SessionName": "会话名称",
+    "SessionType": "会话类型",
+    "Status": "状态",
+    "TerminateSession": "终止会话"
+  },
   "comp:UserNodes": {
     "AllowedClientIps": "允许的客户端IP",
     "ContainerGIDs": "容器GID",

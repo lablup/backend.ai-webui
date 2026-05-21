@@ -394,6 +394,23 @@
     "StartedAt": "Эхэлсэн цаг",
     "Step": "Алхам"
   },
+  "comp:SessionV2Nodes": {
+    "AIAccelerator": "AI хурдасгуур",
+    "CPU": "CPU",
+    "ClusterMode": "Кластерийн горим",
+    "CreatedAt": "Үүсгэсэн огноо",
+    "ElapsedTime": "Өнгөрсөн хугацаа",
+    "Environments": "Орчнууд",
+    "Memory": "Санах ой",
+    "OwnerEmail": "Эзний и-мэйл",
+    "Project": "Төсөл",
+    "ResourceGroup": "Нөөцийн бүлэг",
+    "SessionId": "Сессийн ID",
+    "SessionName": "Сессийн нэр",
+    "SessionType": "Сессийн төрөл",
+    "Status": "Статус",
+    "TerminateSession": "Сессийг дуусгах"
+  },
   "comp:UserNodes": {
     "AllowedClientIps": "Зөвшөөрөгдсөн үйлчлүүлэгч IP",
     "ContainerGIDs": "Контейнерийн GID",

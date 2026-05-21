@@ -394,6 +394,23 @@
     "StartedAt": "開始日時",
     "Step": "ステップ"
   },
+  "comp:SessionV2Nodes": {
+    "AIAccelerator": "AIアクセラレータ",
+    "CPU": "CPU",
+    "ClusterMode": "クラスターモード",
+    "CreatedAt": "作成日時",
+    "ElapsedTime": "経過時間",
+    "Environments": "環境",
+    "Memory": "メモリ",
+    "OwnerEmail": "オーナーメール",
+    "Project": "プロジェクト",
+    "ResourceGroup": "リソースグループ",
+    "SessionId": "セッション ID",
+    "SessionName": "セッション名",
+    "SessionType": "セッションタイプ",
+    "Status": "ステータス",
+    "TerminateSession": "セッション終了"
+  },
   "comp:UserNodes": {
     "AllowedClientIps": "許可されたクライアントIP",
     "ContainerGIDs": "コンテナGID",

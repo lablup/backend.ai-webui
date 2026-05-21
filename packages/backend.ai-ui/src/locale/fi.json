@@ -394,6 +394,23 @@
     "StartedAt": "Aloitusaika",
     "Step": "Vaihe"
   },
+  "comp:SessionV2Nodes": {
+    "AIAccelerator": "AI-kiihdytin",
+    "CPU": "CPU",
+    "ClusterMode": "Klusteritila",
+    "CreatedAt": "Luotu",
+    "ElapsedTime": "Kulunut aika",
+    "Environments": "Ympäristöt",
+    "Memory": "Muisti",
+    "OwnerEmail": "Omistajan sähköposti",
+    "Project": "Projekti",
+    "ResourceGroup": "Resurssiryhmä",
+    "SessionId": "Istunnon ID",
+    "SessionName": "Istunnon nimi",
+    "SessionType": "Istunnon tyyppi",
+    "Status": "Tila",
+    "TerminateSession": "Lopeta istunto"
+  },
   "comp:UserNodes": {
     "AllowedClientIps": "Sallitut asiakkaan IP-osoitteet",
     "ContainerGIDs": "Kontin GID:t",

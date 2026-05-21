@@ -394,6 +394,23 @@
     "StartedAt": "Начато в",
     "Step": "Шаг"
   },
+  "comp:SessionV2Nodes": {
+    "AIAccelerator": "ИИ-ускоритель",
+    "CPU": "CPU",
+    "ClusterMode": "Режим кластера",
+    "CreatedAt": "Создано",
+    "ElapsedTime": "Прошедшее время",
+    "Environments": "Окружения",
+    "Memory": "Память",
+    "OwnerEmail": "E-mail владельца",
+    "Project": "Проект",
+    "ResourceGroup": "Группа ресурсов",
+    "SessionId": "ID сессии",
+    "SessionName": "Имя сессии",
+    "SessionType": "Тип сессии",
+    "Status": "Статус",
+    "TerminateSession": "Завершить сессию"
+  },
   "comp:UserNodes": {
     "AllowedClientIps": "Разрешенные IP клиентов",
     "ContainerGIDs": "GID контейнера",

@@ -394,6 +394,23 @@
     "StartedAt": "Ξεκίνησε στις",
     "Step": "Βήμα"
   },
+  "comp:SessionV2Nodes": {
+    "AIAccelerator": "Επιταχυντής AI",
+    "CPU": "CPU",
+    "ClusterMode": "Λειτουργία Συστάδας",
+    "CreatedAt": "Δημιουργήθηκε στις",
+    "ElapsedTime": "Χρόνος που παρήλθε",
+    "Environments": "Περιβάλλοντα",
+    "Memory": "Μνήμη",
+    "OwnerEmail": "Email ιδιοκτήτη",
+    "Project": "Έργο",
+    "ResourceGroup": "Ομάδα πόρων",
+    "SessionId": "ID συνεδρίας",
+    "SessionName": "Όνομα συνεδρίας",
+    "SessionType": "Τύπος συνεδρίας",
+    "Status": "Κατάσταση",
+    "TerminateSession": "Τερματισμός συνεδρίας"
+  },
   "comp:UserNodes": {
     "AllowedClientIps": "Επιτρεπόμενες IP πελατών",
     "ContainerGIDs": "GID περιέκτη",

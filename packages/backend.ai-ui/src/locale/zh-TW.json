@@ -394,6 +394,23 @@
     "StartedAt": "開始時間",
     "Step": "步驟"
   },
+  "comp:SessionV2Nodes": {
+    "AIAccelerator": "AI 加速器",
+    "CPU": "CPU",
+    "ClusterMode": "叢集模式",
+    "CreatedAt": "建立時間",
+    "ElapsedTime": "已用時間",
+    "Environments": "環境",
+    "Memory": "記憶體",
+    "OwnerEmail": "擁有者電子郵件",
+    "Project": "專案",
+    "ResourceGroup": "資源群組",
+    "SessionId": "工作階段 ID",
+    "SessionName": "工作階段名稱",
+    "SessionType": "工作階段類型",
+    "Status": "狀態",
+    "TerminateSession": "終止工作階段"
+  },
   "comp:UserNodes": {
     "AllowedClientIps": "允許的用戶端IP",
     "ContainerGIDs": "容器GID",

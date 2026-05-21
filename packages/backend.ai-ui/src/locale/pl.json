@@ -394,6 +394,23 @@
     "StartedAt": "Rozpoczęto",
     "Step": "Krok"
   },
+  "comp:SessionV2Nodes": {
+    "AIAccelerator": "Akcelerator AI",
+    "CPU": "CPU",
+    "ClusterMode": "Tryb klastra",
+    "CreatedAt": "Utworzono",
+    "ElapsedTime": "Czas trwania",
+    "Environments": "Środowiska",
+    "Memory": "Pamięć",
+    "OwnerEmail": "E-mail właściciela",
+    "Project": "Projekt",
+    "ResourceGroup": "Grupa zasobów",
+    "SessionId": "ID sesji",
+    "SessionName": "Nazwa sesji",
+    "SessionType": "Typ sesji",
+    "Status": "Status",
+    "TerminateSession": "Zakończ sesję"
+  },
   "comp:UserNodes": {
     "AllowedClientIps": "Dozwolone IP klientów",
     "ContainerGIDs": "GID kontenerów",

@@ -394,6 +394,23 @@
     "StartedAt": "เริ่มเมื่อ",
     "Step": "ขั้นตอน"
   },
+  "comp:SessionV2Nodes": {
+    "AIAccelerator": "ตัวเร่ง AI",
+    "CPU": "CPU",
+    "ClusterMode": "โหมดคลัสเตอร์",
+    "CreatedAt": "สร้างเมื่อ",
+    "ElapsedTime": "เวลาที่ผ่านไป",
+    "Environments": "สภาพแวดล้อม",
+    "Memory": "หน่วยความจำ",
+    "OwnerEmail": "อีเมลเจ้าของ",
+    "Project": "โครงการ",
+    "ResourceGroup": "กลุ่มทรัพยากร",
+    "SessionId": "ID เซสชัน",
+    "SessionName": "ชื่อเซสชัน",
+    "SessionType": "ประเภทเซสชัน",
+    "Status": "สถานะ",
+    "TerminateSession": "ยุติเซสชัน"
+  },
   "comp:UserNodes": {
     "AllowedClientIps": "IP ไคลเอนต์ที่อนุญาต",
     "ContainerGIDs": "GID ของคอนเทนเนอร์",

@@ -394,6 +394,23 @@
     "StartedAt": "Started At",
     "Step": "Step"
   },
+  "comp:SessionV2Nodes": {
+    "AIAccelerator": "AI Accelerator",
+    "CPU": "CPU",
+    "ClusterMode": "Cluster Mode",
+    "CreatedAt": "Created At",
+    "ElapsedTime": "Elapsed Time",
+    "Environments": "Environments",
+    "Memory": "Memory",
+    "OwnerEmail": "Owner Email",
+    "Project": "Project",
+    "ResourceGroup": "Resource Group",
+    "SessionId": "Session ID",
+    "SessionName": "Session Name",
+    "SessionType": "Session Type",
+    "Status": "Status",
+    "TerminateSession": "Terminate Session"
+  },
   "comp:UserNodes": {
     "AllowedClientIps": "Allowed Client IPs",
     "ContainerGIDs": "Container GIDs",
