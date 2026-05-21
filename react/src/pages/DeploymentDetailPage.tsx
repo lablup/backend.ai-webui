@@ -6,7 +6,9 @@ import { DeploymentDetailPageQuery } from '../__generated__/DeploymentDetailPage
 import BAIErrorBoundary, {
   ErrorWithGraphQL,
 } from '../components/BAIErrorBoundary';
-import DeploymentAccessTokensTab from '../components/DeploymentAccessTokensTab';
+import DeploymentAccessTokensTab, {
+  type DeploymentAccessTokensTabHandle,
+} from '../components/DeploymentAccessTokensTab';
 import DeploymentAddRevisionModal from '../components/DeploymentAddRevisionModal';
 import DeploymentAutoScalingTab from '../components/DeploymentAutoScalingTab';
 import DeploymentConfigurationSection from '../components/DeploymentConfigurationSection';
@@ -42,7 +44,7 @@ import {
 } from 'backend.ai-ui';
 import type { GraphQLFormattedError } from 'graphql';
 import { BotMessageSquareIcon } from 'lucide-react';
-import React, { Suspense, useTransition } from 'react';
+import React, { Suspense, useRef, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useParams } from 'react-router-dom';
@@ -76,13 +78,7 @@ const DeploymentDetailPage: React.FC = () => {
     addRevisionOpen,
     { setLeft: closeAddRevision, setRight: openAddRevision },
   ] = useToggle(false);
-  // Lifted here so the "Private deployment" alert can open the same
-  // create-access-token modal that DeploymentAccessTokensTab owns — the alert
-  // CTA and the section's "+" button share one flow.
-  const [
-    createAccessTokenOpen,
-    { setLeft: closeCreateAccessToken, setRight: openCreateAccessToken },
-  ] = useToggle(false);
+  const accessTokensTabRef = useRef<DeploymentAccessTokensTabHandle>(null);
 
   const { deployment: deploymentResult } =
     useLazyLoadQuery<DeploymentDetailPageQuery>(
@@ -209,6 +205,11 @@ const DeploymentDetailPage: React.FC = () => {
     }
   };
 
+  const handleOpenCreateAccessToken = () => {
+    accessTokensTabRef.current?.openCreateModal();
+    scrollToElementId('deployment-access-tokens');
+  };
+
   const handleAccessTokenCreated = () => {
     scrollToElementId('deployment-access-tokens');
   };
@@ -285,7 +286,7 @@ const DeploymentDetailPage: React.FC = () => {
               // transition so the page stays interactive while the modal
               // suspends on its initial render.
               action={async () => {
-                openCreateAccessToken();
+                handleOpenCreateAccessToken();
               }}
               disabled={isDeploymentDestroying}
             >
@@ -332,18 +333,11 @@ const DeploymentDetailPage: React.FC = () => {
       <DeploymentAutoScalingTab deploymentFrgmt={deployment} />
       <div id="deployment-access-tokens">
         <DeploymentAccessTokensTab
+          ref={accessTokensTabRef}
           deploymentFrgmt={deployment}
           deploymentId={deploymentGlobalId}
           isOwnedByCurrentUser={isOwnedByCurrentUser}
           isDeploymentDestroying={isDeploymentDestroying}
-          isCreateModalOpen={createAccessTokenOpen}
-          onCreateModalOpenChange={(open) => {
-            if (open) {
-              openCreateAccessToken();
-            } else {
-              closeCreateAccessToken();
-            }
-          }}
           onTokenCreated={handleAccessTokenCreated}
         />
       </div>

@@ -38,7 +38,13 @@ import {
   useMutationWithPromise,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
-import React, { Suspense, useState, useTransition } from 'react';
+import React, {
+  Suspense,
+  forwardRef,
+  useImperativeHandle,
+  useState,
+  useTransition,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   graphql,
@@ -47,29 +53,31 @@ import {
   useMutation,
 } from 'react-relay';
 
+export interface DeploymentAccessTokensTabHandle {
+  openCreateModal: () => void;
+}
+
 interface DeploymentAccessTokensTabProps {
   deploymentFrgmt: DeploymentAccessTokensTab_deployment$key;
   deploymentId: string;
   isOwnedByCurrentUser?: boolean;
   isDeploymentDestroying?: boolean;
-  // Optional controlled open state for the create-access-token modal.
-  // When omitted, the tab manages its own state via the header "+" button.
-  // The deployment detail page passes these so the private-deployment
-  // alert can open the same modal without rebuilding the create flow.
-  isCreateModalOpen?: boolean;
-  onCreateModalOpenChange?: (open: boolean) => void;
   onTokenCreated?: () => void;
 }
 
-const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
-  deploymentFrgmt,
-  deploymentId,
-  isOwnedByCurrentUser = true,
-  isDeploymentDestroying = false,
-  isCreateModalOpen: isCreateModalOpenProp,
-  onCreateModalOpenChange,
-  onTokenCreated,
-}) => {
+const DeploymentAccessTokensTab = forwardRef<
+  DeploymentAccessTokensTabHandle,
+  DeploymentAccessTokensTabProps
+>(function DeploymentAccessTokensTab(
+  {
+    deploymentFrgmt,
+    deploymentId,
+    isOwnedByCurrentUser = true,
+    isDeploymentDestroying = false,
+    onTokenCreated,
+  },
+  ref,
+) {
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -78,16 +86,11 @@ const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
   const [isPendingRefetch, startRefetchTransition] = useTransition();
   const [fetchKey, setFetchKey] = useState(0);
 
-  const [isCreateModalOpenInternal, setIsCreateModalOpenInternal] =
-    useState(false);
-  const isCreateModalOpen = isCreateModalOpenProp ?? isCreateModalOpenInternal;
-  const setIsCreateModalOpen = (open: boolean) => {
-    if (onCreateModalOpenChange) {
-      onCreateModalOpenChange(open);
-    } else {
-      setIsCreateModalOpenInternal(open);
-    }
-  };
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
+  useImperativeHandle(ref, () => ({
+    openCreateModal: () => setIsCreateModalOpen(true),
+  }));
   // After successful creation, show the plaintext token once in a modal.
   const [createdToken, setCreatedToken] = useState<{
     token: string;
@@ -248,7 +251,7 @@ const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
       </BAIUnmountAfterClose>
     </>
   );
-};
+});
 
 // ---------------------------------------------------------------------------
 // Inner table component — owns the data fetch and per-row delete mutation so
