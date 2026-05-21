@@ -2,10 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { DeploymentAccessTokensTabCreateMutation } from '../__generated__/DeploymentAccessTokensTabCreateMutation.graphql';
 import { DeploymentAccessTokensTabDeleteMutation } from '../__generated__/DeploymentAccessTokensTabDeleteMutation.graphql';
 import { DeploymentAccessTokensTabListQuery } from '../__generated__/DeploymentAccessTokensTabListQuery.graphql';
-import { DeploymentAccessTokensTab_deployment$key } from '../__generated__/DeploymentAccessTokensTab_deployment.graphql';
 import {
   DeleteFilled,
   PlusOutlined,
@@ -19,7 +17,6 @@ import {
   Select,
   Skeleton,
   Tooltip,
-  Typography,
   theme,
 } from 'antd';
 import {
@@ -31,227 +28,93 @@ import {
   BAINameActionCell,
   BAITable,
   BAIText,
-  BAIUnmountAfterClose,
   filterOutNullAndUndefined,
   toLocalId,
   useBAILogger,
-  useMutationWithPromise,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
-import React, {
-  Suspense,
-  forwardRef,
-  useImperativeHandle,
-  useState,
-  useTransition,
-} from 'react';
+import React, { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  graphql,
-  useFragment,
-  useLazyLoadQuery,
-  useMutation,
-} from 'react-relay';
-
-export interface DeploymentAccessTokensTabHandle {
-  openCreateModal: () => void;
-}
+import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 
 interface DeploymentAccessTokensTabProps {
-  deploymentFrgmt: DeploymentAccessTokensTab_deployment$key;
   deploymentId: string;
   isOwnedByCurrentUser?: boolean;
   isDeploymentDestroying?: boolean;
-  onTokenCreated?: () => void;
+  onClickCreate: () => void;
+  // Incremented by the parent after a successful token creation so the list
+  // refetches without the tab needing to know about the creation flow.
+  createKey?: number;
 }
 
-const DeploymentAccessTokensTab = forwardRef<
-  DeploymentAccessTokensTabHandle,
-  DeploymentAccessTokensTabProps
->(function DeploymentAccessTokensTab(
-  {
-    deploymentFrgmt,
-    deploymentId,
-    isOwnedByCurrentUser = true,
-    isDeploymentDestroying = false,
-    onTokenCreated,
-  },
-  ref,
-) {
+const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
+  deploymentId,
+  isOwnedByCurrentUser = true,
+  isDeploymentDestroying = false,
+  onClickCreate,
+  createKey = 0,
+}) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { message } = App.useApp();
-  const { logger } = useBAILogger();
   const [isPendingRefetch, startRefetchTransition] = useTransition();
-  const [fetchKey, setFetchKey] = useState(0);
+  const [internalFetchKey, setInternalFetchKey] = useState(0);
 
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-
-  useImperativeHandle(ref, () => ({
-    openCreateModal: () => setIsCreateModalOpen(true),
-  }));
-  // After successful creation, show the plaintext token once in a modal.
-  const [createdToken, setCreatedToken] = useState<{
-    token: string;
-    expiresAt: string | null;
-  } | null>(null);
-
-  const deployment = useFragment(
-    graphql`
-      fragment DeploymentAccessTokensTab_deployment on ModelDeployment {
-        id
-      }
-    `,
-    deploymentFrgmt,
-  );
-
-  const commitCreateMutation =
-    useMutationWithPromise<DeploymentAccessTokensTabCreateMutation>(graphql`
-      mutation DeploymentAccessTokensTabCreateMutation(
-        $input: CreateAccessTokenInput!
-      ) {
-        createAccessToken(input: $input) {
-          accessToken {
-            id
-            token
-            createdAt
-            expiresAt
-          }
-        }
-      }
-    `);
+  // Combines the internal key (delete / manual refresh) with the external key
+  // (creation triggered by the page) so either event re-fetches the list.
+  const fetchKey = internalFetchKey + createKey;
 
   const handleRefetch = () => {
     startRefetchTransition(() => {
-      setFetchKey((k) => k + 1);
+      setInternalFetchKey((k) => k + 1);
     });
   };
 
   const isMutationDisabled = isDeploymentDestroying || !isOwnedByCurrentUser;
 
   return (
-    <>
-      <BAICard
-        title={
-          <BAIFlex gap="xs" align="center">
-            {t('deployment.tab.AccessTokens')}
-            <Tooltip title={t('deployment.tab.description.AccessTokens')}>
-              <QuestionCircleOutlined
-                style={{ color: token.colorTextDescription }}
-              />
-            </Tooltip>
-          </BAIFlex>
-        }
-        extra={
-          <BAIFlex gap="xs" align="center">
-            <BAIFetchKeyButton
-              loading={isPendingRefetch}
-              value=""
-              onChange={handleRefetch}
+    <BAICard
+      title={
+        <BAIFlex gap="xs" align="center">
+          {t('deployment.tab.AccessTokens')}
+          <Tooltip title={t('deployment.tab.description.AccessTokens')}>
+            <QuestionCircleOutlined
+              style={{ color: token.colorTextDescription }}
             />
-            <Button
-              type="primary"
-              icon={<PlusOutlined />}
-              disabled={isMutationDisabled}
-              onClick={() => setIsCreateModalOpen(true)}
-            >
-              {t('deployment.accessToken.Create')}
-            </Button>
-          </BAIFlex>
-        }
-        styles={{ body: { paddingTop: 0 } }}
-      >
-        <Suspense fallback={<Skeleton active />}>
-          <DeploymentAccessTokensTable
-            deploymentId={deploymentId}
-            fetchKey={fetchKey}
-            isPendingRefetch={isPendingRefetch}
-            isDeleteDisabled={isMutationDisabled}
-            onAfterDelete={handleRefetch}
+          </Tooltip>
+        </BAIFlex>
+      }
+      extra={
+        <BAIFlex gap="xs" align="center">
+          <BAIFetchKeyButton
+            loading={isPendingRefetch}
+            value=""
+            onChange={handleRefetch}
           />
-        </Suspense>
-      </BAICard>
-
-      <BAIUnmountAfterClose>
-        <CreateAccessTokenModal
-          open={isCreateModalOpen}
-          confirmLoading={false}
-          onRequestClose={(result) => {
-            setIsCreateModalOpen(false);
-            if (result) {
-              // Kick off the mutation after the modal closes to avoid
-              // overlapping dialogs.
-              commitCreateMutation({
-                input: {
-                  modelDeploymentId: toLocalId(deployment.id),
-                  // Schema requires DateTime! (non-null); map "no expiration" to a far-future date.
-                  expiresAt:
-                    result.expiresAt ?? new Date('2099-12-31').toISOString(),
-                },
-              })
-                .then((response) => {
-                  const created = response.createAccessToken?.accessToken;
-                  if (created) {
-                    setCreatedToken({
-                      token: created.token,
-                      expiresAt: created.expiresAt ?? null,
-                    });
-                  }
-                  message.success({
-                    key: 'access-token-created',
-                    content: t('deployment.accessToken.Created'),
-                  });
-                  handleRefetch();
-                  onTokenCreated?.();
-                })
-                .catch((error) => {
-                  const errors = Array.isArray(error) ? error : [error];
-                  for (const err of errors) {
-                    message.error(err?.message || t('dialog.ErrorOccurred'));
-                  }
-                  logger.error(error);
-                });
-            }
-          }}
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            disabled={isMutationDisabled}
+            onClick={onClickCreate}
+          >
+            {t('deployment.accessToken.Create')}
+          </Button>
+        </BAIFlex>
+      }
+      styles={{ body: { paddingTop: 0 } }}
+    >
+      <Suspense fallback={<Skeleton active />}>
+        <DeploymentAccessTokensTable
+          deploymentId={deploymentId}
+          fetchKey={fetchKey}
+          isPendingRefetch={isPendingRefetch}
+          isDeleteDisabled={isMutationDisabled}
+          onAfterDelete={handleRefetch}
         />
-      </BAIUnmountAfterClose>
-
-      <BAIUnmountAfterClose>
-        <BAIModal
-          open={createdToken !== null}
-          destroyOnHidden
-          title={t('deployment.accessToken.Token')}
-          onCancel={() => setCreatedToken(null)}
-          footer={null}
-          width={520}
-        >
-          <BAIFlex direction="column" align="stretch" gap="sm">
-            <Typography.Text>
-              {t('deployment.accessToken.Created')}
-            </Typography.Text>
-            {createdToken ? (
-              <BAIText copyable={{ text: createdToken.token }} ellipsis code>
-                {createdToken.token}
-              </BAIText>
-            ) : null}
-            {createdToken?.expiresAt ? (
-              <Typography.Text type="secondary">
-                {`${t('deployment.accessToken.Expiration')}: ${dayjs(
-                  createdToken.expiresAt,
-                ).format('ll LT')}`}
-              </Typography.Text>
-            ) : (
-              <Typography.Text type="secondary">
-                {t('deployment.accessToken.NoExpiration')}
-              </Typography.Text>
-            )}
-          </BAIFlex>
-        </BAIModal>
-      </BAIUnmountAfterClose>
-    </>
+      </Suspense>
+    </BAICard>
   );
-});
+};
 
 // ---------------------------------------------------------------------------
 // Inner table component — owns the data fetch and per-row delete mutation so
@@ -435,6 +298,8 @@ const DeploymentAccessTokensTable: React.FC<
 
 // ---------------------------------------------------------------------------
 // Create Access Token modal — presets (7/30/90 days, custom, no expiration).
+// Exported so the page can render it at the top level and own the creation
+// flow (mutation, token display, refetch) without coupling to the tab.
 // ---------------------------------------------------------------------------
 
 type ExpiryOption = 7 | 30 | 90 | 'custom' | 'none';
@@ -450,7 +315,7 @@ interface CreateAccessTokenModalProps {
   onRequestClose: (result?: { expiresAt: string | null }) => void;
 }
 
-const CreateAccessTokenModal: React.FC<CreateAccessTokenModalProps> = ({
+export const CreateAccessTokenModal: React.FC<CreateAccessTokenModalProps> = ({
   open,
   confirmLoading,
   onRequestClose,
