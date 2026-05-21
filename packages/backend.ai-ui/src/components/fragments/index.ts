@@ -1,6 +1,12 @@
 export { default as BAISessionTypeTag } from './BAISessionTypeTag';
 export { default as BAISessionAgentIds } from './BAISessionAgentIds';
 export type { BAISessionTypeTagProps } from './BAISessionTypeTag';
+export { default as BAISessionTypeTagV2 } from './BAISessionTypeTagV2';
+export type { BAISessionTypeTagV2Props } from './BAISessionTypeTagV2';
+export { default as BAISessionClusterModeV2 } from './BAISessionClusterModeV2';
+export type { BAISessionClusterModeV2Props } from './BAISessionClusterModeV2';
+export { default as BAIImageNodeSimpleTagV2 } from './BAIImageNodeSimpleTagV2';
+export type { BAIImageNodeSimpleTagV2Props } from './BAIImageNodeSimpleTagV2';
 export { default as BAIArtifactRevisionTable } from './BAIArtifactRevisionTable';
 export type {
   BAIArtifactRevisionTableProps,

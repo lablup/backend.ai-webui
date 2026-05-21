@@ -332,8 +332,11 @@ const ProjectAdminSessionContent: React.FC<ProjectAdminSessionContentProps> = ({
         }}
         tableSettings={{
           columnOverrides: columnOverrides,
-          // Match the default-visible columns of the admin session list
-          // (AdminComputeSessionListPage).
+          // BAISessionNodesV2 hides these columns by default
+          // (defaultHidden: true) to keep the shared component compact for
+          // future consumers. Intentionally override them to visible here so
+          // this page matches the default-visible columns of the v1 admin
+          // session list (AdminComputeSessionListPage).
           defaultColumnOverrides: {
             environment: { hidden: false },
             resourceGroup: { hidden: false },

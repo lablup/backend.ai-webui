@@ -6,9 +6,10 @@ import {
   BAIColumnType,
   BAIFlex,
   BAIId,
+  BAIImageNodeSimpleTagV2,
   BAIIntervalView,
-  BAISessionClusterMode,
-  BAISessionTypeTag,
+  BAISessionClusterModeV2,
+  BAISessionTypeTagV2,
   BAITable,
   BAITableProps,
   BAITag,
@@ -159,9 +160,8 @@ const BAISessionNodesV2: React.FC<BAISessionNodesV2Props> = ({
         }
         metadata {
           name
-          sessionType
-          clusterMode
-          clusterSize
+          ...BAISessionTypeTagV2Fragment
+          ...BAISessionClusterModeV2Fragment
         }
         lifecycle {
           status
@@ -189,10 +189,7 @@ const BAISessionNodesV2: React.FC<BAISessionNodesV2Props> = ({
           edges {
             node {
               id
-              identity {
-                canonicalName
-                namespace
-              }
+              ...BAIImageNodeSimpleTagV2Fragment
             }
           }
         }
@@ -314,11 +311,13 @@ const BAISessionNodesV2: React.FC<BAISessionNodesV2Props> = ({
         render: (__, session) => {
           const firstImage = session.images?.edges?.[0]?.node;
           if (!firstImage) return '-';
-          const displayName =
-            firstImage.identity?.canonicalName ||
-            firstImage.identity?.namespace ||
-            '-';
-          return <BAITag>{displayName}</BAITag>;
+          return (
+            <BAIImageNodeSimpleTagV2
+              imageFrgmt={firstImage}
+              copyable={false}
+              withoutTag
+            />
+          );
         },
       },
       {
@@ -327,17 +326,13 @@ const BAISessionNodesV2: React.FC<BAISessionNodesV2Props> = ({
         defaultHidden: true,
         render: (__, session) => session.resource?.resourceGroupName || '-',
       },
-      // TODO: `BAISessionTypeTag` / `BAISessionClusterMode` are v1
-      // (`ComputeSessionNode`) fragment components and currently receive the
-      // values via props. They should be reworked to consume the v2 `SessionV2`
-      // query/fragment directly.
       {
         key: 'sessionType',
         title: t('comp:SessionV2Nodes.SessionType'),
         defaultHidden: true,
         render: (__, session) =>
-          session.metadata?.sessionType ? (
-            <BAISessionTypeTag type={session.metadata.sessionType} />
+          session.metadata ? (
+            <BAISessionTypeTagV2 metadataFrgmt={session.metadata} />
           ) : (
             '-'
           ),
@@ -347,11 +342,8 @@ const BAISessionNodesV2: React.FC<BAISessionNodesV2Props> = ({
         title: t('comp:SessionV2Nodes.ClusterMode'),
         defaultHidden: true,
         render: (__, session) =>
-          session.metadata?.clusterMode ? (
-            <BAISessionClusterMode
-              clusterMode={session.metadata.clusterMode}
-              clusterSize={session.metadata.clusterSize}
-            />
+          session.metadata ? (
+            <BAISessionClusterModeV2 metadataFrgmt={session.metadata} />
           ) : (
             '-'
           ),
