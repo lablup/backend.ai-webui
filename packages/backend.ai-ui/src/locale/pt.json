@@ -74,6 +74,9 @@
     "KeepAsIs": "Manter como está",
     "UndoChanges": "Desfazer alterações"
   },
+  "comp:BAIContainerRegistrySelect": {
+    "SelectContainerRegistry": "Selecionar registro de contêiner"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "Tem certeza de que deseja desativar {{name}}?",
     "AreYouSureYouWantToDeactivateSome": "Tem certeza de que deseja desativar os artefatos {{count}}?",
@@ -209,7 +212,7 @@
     "UpdatedAt": "Atualizado em"
   },
   "comp:BAIProjectBulkEditModal": {
-    "FollowingFoldersWillBeUpdated": "A(s) pasta(s) a seguir será(ão) atualizada(s).",
+    "FollowingProjectsWillBeUpdated": "O(s) projeto(s) a seguir será(ão) atualizado(s).",
     "ProjectResourcePolicy": "Política de Recursos do Projeto",
     "UpdateMultipleProjects": "Atualizar vários projetos"
   },
@@ -239,25 +242,16 @@
     "UpdateProject": "Atualizar projeto"
   },
   "comp:BAIProjectTable": {
-    "AreYouSureToPurgeProject": "Tem certeza de que deseja purgar {{projectName}}? Esta ação é irreversível.",
     "ContainerRegistry": "Registro de Contêineres",
     "ContainerRegistryProject": "Projeto do Registro de Contêineres",
-    "Controls": "Controles",
     "CreatedAt": "Criado em",
-    "Deactivate": "Desativar",
-    "DeactivateProject": "Desativar projeto",
     "Description": "Descrição",
     "Domain": "Domínio",
-    "FailedToDeactivateProject": "Falha ao desativar o projeto.",
-    "FailedToPurgeProject": "Não foi possível purgar o projeto.",
     "IntegrationID": "ID da Integração",
-    "IsActive": "Ativo",
     "Name": "Nome",
-    "ProjectDeactivated": "O projeto foi desativado.",
+    "Project": "Projeto",
     "ProjectID": "ID do Projeto",
-    "ProjectPurged": "O projeto foi purgado",
-    "Purge": "Limpar",
-    "PurgeProject": "Purgar Projeto",
+    "Registry": "Registo",
     "ResourcePolicy": "Política de Recursos",
     "ScalingGroups": "Grupos de Recursos",
     "StorageNodes": "Nós de Armazenamento",

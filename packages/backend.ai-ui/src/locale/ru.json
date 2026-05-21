@@ -74,6 +74,9 @@
     "KeepAsIs": "Оставить как есть",
     "UndoChanges": "Отменить изменения"
   },
+  "comp:BAIContainerRegistrySelect": {
+    "SelectContainerRegistry": "Выберите реестр контейнеров"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "Вы уверены, что хотите деактивировать {{name}}?",
     "AreYouSureYouWantToDeactivateSome": "Вы уверены, что хотите деактивировать {{count}} артефакты?",
@@ -209,7 +212,7 @@
     "UpdatedAt": "Обновлено"
   },
   "comp:BAIProjectBulkEditModal": {
-    "FollowingFoldersWillBeUpdated": "Будут обновлены следующие папки.",
+    "FollowingProjectsWillBeUpdated": "Будут обновлены следующие проекты.",
     "ProjectResourcePolicy": "Политика ресурсов проекта",
     "UpdateMultipleProjects": "Обновить несколько проектов"
   },
@@ -239,25 +242,16 @@
     "UpdateProject": "Обновить проект"
   },
   "comp:BAIProjectTable": {
-    "AreYouSureToPurgeProject": "Вы уверены, что хотите полностью удалить {{projectName}}? Это действие необратимо.",
     "ContainerRegistry": "Реестр контейнеров",
     "ContainerRegistryProject": "Проект реестра контейнеров",
-    "Controls": "Элементы управления",
     "CreatedAt": "Создано",
-    "Deactivate": "Деактивировать",
-    "DeactivateProject": "Деактивировать проект",
     "Description": "Описание",
     "Domain": "Домен",
-    "FailedToDeactivateProject": "Не удалось деактивировать проект.",
-    "FailedToPurgeProject": "Не удалось очистить проект.",
     "IntegrationID": "ID интеграции",
-    "IsActive": "Активный",
     "Name": "Имя",
-    "ProjectDeactivated": "Проект деактивирован.",
+    "Project": "Проект",
     "ProjectID": "ID проекта",
-    "ProjectPurged": "Проект был окончательно удалён.",
-    "Purge": "Очистить",
-    "PurgeProject": "Полностью удалить проект",
+    "Registry": "Реестр",
     "ResourcePolicy": "Политика ресурсов",
     "ScalingGroups": "Группы ресурсов",
     "StorageNodes": "Узлы хранения",

@@ -22,10 +22,13 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
  * Key features:
  * - GraphQL/Relay integration for project data
  * - Pre-configured columns for project details (name, domain, description, resource slots, etc.)
- * - Project management controls (edit, deactivate, purge)
  * - Sortable columns support
  * - Resource slots visualization
  * - Container registry information
+ *
+ * Per-row actions (edit / deactivate / activate / purge) are intentionally NOT
+ * shown in these stories — the component itself ships only the data columns,
+ * and pages compose actions via `customizeColumns` (see `ProjectPage.tsx`).
  *
  * @see BAIProjectTable.tsx for implementation details
  */
@@ -45,12 +48,10 @@ const meta: Meta<typeof BAIProjectTable> = {
 |------|------|---------|-------------|
 | \`projectFragment\` | \`BAIProjectTableFragment$key\` | - | GraphQL fragment reference (required) |
 | \`onChangeOrder\` | \`(order: ProjectSorterValue \\| null) => void\` | - | Callback when sort order changes |
-| \`onClickProjectEditButton\` | \`(project: Project) => void\` | - | Callback when edit button is clicked (required) |
-| \`updateFetchKey\` | \`() => void\` | - | Callback to trigger data refetch |
+| \`customizeColumns\` | \`(columns) => columns\` | - | Customize base columns (insert, filter, reorder, or override a column's \`render\`). The page composes the per-row action list (edit / deactivate / activate / purge) by overriding the \`name\` column here so action logic stays in the app layer |
 
 ## Pre-configured Columns
-- **Name**: Project name (sortable)
-- **Controls**: Edit, Deactivate, and Purge buttons
+- **Name**: Project name (sortable) — override via \`customizeColumns\` to compose row actions
 - **Domain**: Domain name (sortable)
 - **Description**: Project description
 - **Created At**: Creation timestamp (sortable)
@@ -86,18 +87,14 @@ For other props (loading, pagination, etc.), refer to [BAITable](?path=/docs/tab
         },
       },
     },
-    onClickProjectEditButton: {
-      action: 'edit-clicked',
-      description: 'Callback when edit button is clicked',
+    customizeColumns: {
+      control: false,
+      description:
+        'Function to customize columns (insert, filter, reorder, or override a column render). Receives base columns array and returns modified array. The page composes the per-row action list (edit / deactivate / activate / purge) by overriding the name column here.',
       table: {
-        type: { summary: '(project: Project) => void' },
-      },
-    },
-    updateFetchKey: {
-      action: 'fetch-triggered',
-      description: 'Callback to trigger data refetch',
-      table: {
-        type: { summary: '() => void' },
+        type: {
+          summary: '(columns) => columns',
+        },
       },
     },
   },
@@ -128,17 +125,12 @@ type Story = StoryObj<typeof BAIProjectTable>;
 
 interface QueryResolverProps extends Pick<
   React.ComponentProps<typeof BAIProjectTable>,
-  | 'onClickProjectEditButton'
-  | 'onChangeOrder'
-  | 'updateFetchKey'
-  | 'loading'
-  | 'order'
+  'customizeColumns' | 'onChangeOrder' | 'loading' | 'order'
 > {}
 
 const QueryResolver: React.FC<QueryResolverProps> = ({
-  onClickProjectEditButton,
+  customizeColumns,
   onChangeOrder,
-  updateFetchKey,
   loading,
   order,
 }) => {
@@ -169,9 +161,8 @@ const QueryResolver: React.FC<QueryResolverProps> = ({
   return (
     <BAIProjectTable
       projectFragment={projectNodes}
-      onClickProjectEditButton={onClickProjectEditButton}
+      customizeColumns={customizeColumns}
       onChangeOrder={onChangeOrder}
-      updateFetchKey={updateFetchKey}
       loading={loading}
       order={order}
       pagination={{
@@ -220,7 +211,9 @@ const generateMockProject = (id: number, overrides = {}) => ({
 });
 
 /**
- * Basic project table with multiple projects showing various types and statuses.
+ * Basic project table showing the default `active` view used in ProjectPage —
+ * all rows share the same Edit + Deactivate action set. The last row is a
+ * MODEL_STORE project, which keeps its buttons visible but disabled.
  */
 export const Default: Story = {
   name: 'Basic',
@@ -228,7 +221,7 @@ export const Default: Story = {
     docs: {
       description: {
         story:
-          'Basic project table displaying multiple projects with their details, resource allocations, and control buttons.',
+          'Default project table view as seen on the ProjectPage `Active` tab. All projects are active; the final MODEL_STORE row demonstrates the disabled action state.',
       },
     },
   },
@@ -239,7 +232,12 @@ export const Default: Story = {
           vfolder_host_permissions: mockVfolderHostPermissions,
           group_nodes: {
             edges: [
-              { node: generateMockProject(1, { type: 'GENERAL' }) },
+              {
+                node: generateMockProject(1, {
+                  type: 'GENERAL',
+                  is_active: true,
+                }),
+              },
               {
                 node: generateMockProject(2, {
                   type: 'GENERAL',
@@ -249,11 +247,21 @@ export const Default: Story = {
               {
                 node: generateMockProject(3, {
                   type: 'GENERAL',
-                  is_active: false,
+                  is_active: true,
                 }),
               },
-              { node: generateMockProject(4, { type: 'GENERAL' }) },
-              { node: generateMockProject(5, { type: 'MODEL_STORE' }) },
+              {
+                node: generateMockProject(4, {
+                  type: 'GENERAL',
+                  is_active: true,
+                }),
+              },
+              {
+                node: generateMockProject(5, {
+                  type: 'MODEL_STORE',
+                  is_active: true,
+                }),
+              },
             ],
             count: 5,
           },
@@ -312,11 +320,7 @@ export const DifferentTypes: Story = {
         }),
       }}
     >
-      <QueryResolver
-        onClickProjectEditButton={() => {}}
-        onChangeOrder={() => {}}
-        updateFetchKey={() => {}}
-      />
+      <QueryResolver />
     </RelayResolver>
   ),
 };
@@ -371,11 +375,7 @@ export const ActiveInactiveStates: Story = {
         }),
       }}
     >
-      <QueryResolver
-        onClickProjectEditButton={() => {}}
-        onChangeOrder={() => {}}
-        updateFetchKey={() => {}}
-      />
+      <QueryResolver />
     </RelayResolver>
   ),
 };
@@ -436,8 +436,6 @@ export const WithSorting: Story = {
           <QueryResolver
             order={order}
             onChangeOrder={(newOrder) => setOrder(newOrder)}
-            onClickProjectEditButton={() => {}}
-            updateFetchKey={() => {}}
           />
         </RelayResolver>
       </div>
@@ -473,12 +471,7 @@ export const Loading: Story = {
         }),
       }}
     >
-      <QueryResolver
-        loading={true}
-        onClickProjectEditButton={() => {}}
-        onChangeOrder={() => {}}
-        updateFetchKey={() => {}}
-      />
+      <QueryResolver loading={true} />
     </RelayResolver>
   ),
 };
@@ -507,11 +500,7 @@ export const Empty: Story = {
         }),
       }}
     >
-      <QueryResolver
-        onClickProjectEditButton={() => {}}
-        onChangeOrder={() => {}}
-        updateFetchKey={() => {}}
-      />
+      <QueryResolver />
     </RelayResolver>
   ),
 };
@@ -577,17 +566,14 @@ export const VariousResourceAllocations: Story = {
         }),
       }}
     >
-      <QueryResolver
-        onClickProjectEditButton={() => {}}
-        onChangeOrder={() => {}}
-        updateFetchKey={() => {}}
-      />
+      <QueryResolver />
     </RelayResolver>
   ),
 };
 
 /**
- * Real-world example combining multiple features.
+ * Real-world example with realistic project names, mixed types, and sort
+ * tracking.
  */
 export const RealWorldExample: Story = {
   name: 'RealWorldUsage',
@@ -595,19 +581,14 @@ export const RealWorldExample: Story = {
     docs: {
       description: {
         story:
-          'Demonstrates a realistic use case combining edit, sort, and refetch actions.',
+          'Demonstrates a realistic use case combining mixed project types and sort interaction.',
       },
     },
   },
   render: () => {
-    const [actions, setActions] = useState<string[]>([]);
     const [order, setOrder] = useState<
       (typeof availableProjectSorterValues)[number] | null
     >(null);
-
-    const addAction = (action: string) => {
-      setActions((prev) => [action, ...prev].slice(0, 5));
-    };
 
     return (
       <div>
@@ -619,19 +600,7 @@ export const RealWorldExample: Story = {
             borderRadius: 4,
           }}
         >
-          <strong>Recent Actions:</strong>
-          {actions.length > 0 ? (
-            <ul style={{ margin: '8px 0 0 0', paddingLeft: 20 }}>
-              {actions.map((action, idx) => (
-                <li key={idx}>{action}</li>
-              ))}
-            </ul>
-          ) : (
-            <div style={{ marginTop: 8 }}>No actions yet</div>
-          )}
-          <div style={{ marginTop: 8 }}>
-            <strong>Current Order:</strong> {order || 'None'}
-          </div>
+          <strong>Current Order:</strong> {order || 'None'}
         </div>
         <RelayResolver
           mockResolvers={{
@@ -690,14 +659,7 @@ export const RealWorldExample: Story = {
         >
           <QueryResolver
             order={order}
-            onClickProjectEditButton={(project) =>
-              addAction(`Edit: ${project.name}`)
-            }
-            onChangeOrder={(newOrder) => {
-              setOrder(newOrder);
-              addAction(`Sort: ${newOrder || 'default'}`);
-            }}
-            updateFetchKey={() => addAction('Refetch data')}
+            onChangeOrder={(newOrder) => setOrder(newOrder)}
           />
         </RelayResolver>
       </div>

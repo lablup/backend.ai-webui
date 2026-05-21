@@ -74,6 +74,9 @@
     "KeepAsIs": "Хэвээр үлдээх",
     "UndoChanges": "Өөрчлөлтийг буцаах"
   },
+  "comp:BAIContainerRegistrySelect": {
+    "SelectContainerRegistry": "Контейнер бүртгэл сонгох"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "Та {{name}} идэвхгүй болгохыг хүсч байна уу?}}?",
     "AreYouSureYouWantToDeactivateSome": "Та {{count}} олдворуудыг идэвхгүй болгохыг хүсч байна уу?",
@@ -209,7 +212,7 @@
     "UpdatedAt": "Шинэчлэгдсэн огноо"
   },
   "comp:BAIProjectBulkEditModal": {
-    "FollowingFoldersWillBeUpdated": "Дараах хавтас(ууд) шинэчлэгдэх болно.",
+    "FollowingProjectsWillBeUpdated": "Дараах төсөл(үүд) шинэчлэгдэх болно.",
     "ProjectResourcePolicy": "Төслийн нөөцийн бодлого",
     "UpdateMultipleProjects": "Олон төслийг шинэчлэх"
   },
@@ -239,25 +242,16 @@
     "UpdateProject": "Төслийг шинэчлэх"
   },
   "comp:BAIProjectTable": {
-    "AreYouSureToPurgeProject": "Та {{projectName}} бүрмөсөн устгахдаа итгэлтэй байна уу? Энэ үйлдэл буцаашгүй.",
     "ContainerRegistry": "Контейнерийн бүртгэл",
     "ContainerRegistryProject": "Контейнерийн бүртгэлийн төсөл",
-    "Controls": "Удирдлага",
     "CreatedAt": "Үүсгэсэн огноо",
-    "Deactivate": "Идэвхгүй болгох",
-    "DeactivateProject": "Төслийг идэвхгүй болгох",
     "Description": "Тайлбар",
     "Domain": "Домен",
-    "FailedToDeactivateProject": "Төслийг идэвхгүй болгоход амжилтгүй боллоо.",
-    "FailedToPurgeProject": "Төслийг бүрмөсөн устгахад амжилтгүй боллоо.",
     "IntegrationID": "Интеграцийн ID",
-    "IsActive": "Идэвхтэй",
     "Name": "Нэр",
-    "ProjectDeactivated": "Төсөл идэвхгүй боллоо.",
+    "Project": "Төсөл",
     "ProjectID": "Төслийн ID",
-    "ProjectPurged": "Төсөл бүрмөсөн устгагдсан.",
-    "Purge": "Устгах",
-    "PurgeProject": "Төслийг бүрэн устгах",
+    "Registry": "Регистри",
     "ResourcePolicy": "Ресурсын бодлого",
     "ScalingGroups": "Нөөцийн бүлгүүд",
     "StorageNodes": "Хадгалах зангилаанууд",

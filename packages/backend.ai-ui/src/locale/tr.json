@@ -74,6 +74,9 @@
     "KeepAsIs": "Olduğu gibi bırak",
     "UndoChanges": "Değişiklikleri geri al"
   },
+  "comp:BAIContainerRegistrySelect": {
+    "SelectContainerRegistry": "Konteyner Kayıt Defteri Seç"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "{{name}} 'ı devre dışı bırakmak istediğinizden emin misiniz?",
     "AreYouSureYouWantToDeactivateSome": "{{count}} artefaktları devre dışı bırakmak istediğinizden emin misiniz?",
@@ -209,7 +212,7 @@
     "UpdatedAt": "Güncellenme Tarihi"
   },
   "comp:BAIProjectBulkEditModal": {
-    "FollowingFoldersWillBeUpdated": "Aşağıdaki klasör(ler) güncellenecek.",
+    "FollowingProjectsWillBeUpdated": "Aşağıdaki proje(ler) güncellenecek.",
     "ProjectResourcePolicy": "Proje Kaynak Politikası",
     "UpdateMultipleProjects": "Birden Çok Projeyi Güncelle"
   },
@@ -239,25 +242,16 @@
     "UpdateProject": "Projeyi Güncelle"
   },
   "comp:BAIProjectTable": {
-    "AreYouSureToPurgeProject": "{{projectName}} öğesini kalıcı olarak silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
     "ContainerRegistry": "Konteyner Kayıt Deposu",
     "ContainerRegistryProject": "Konteyner Kayıt Deposu Projesi",
-    "Controls": "Kontroller",
     "CreatedAt": "Oluşturulma Tarihi",
-    "Deactivate": "Devre dışı bırak",
-    "DeactivateProject": "Projeyi devre dışı bırak",
     "Description": "Açıklama",
     "Domain": "Etki Alanı",
-    "FailedToDeactivateProject": "Proje devre dışı bırakılamadı.",
-    "FailedToPurgeProject": "Proje temizlenemedi.",
     "IntegrationID": "Entegrasyon Kimliği",
-    "IsActive": "Aktif",
     "Name": "Ad",
-    "ProjectDeactivated": "Proje devre dışı bırakıldı.",
+    "Project": "Proje",
     "ProjectID": "Proje Kimliği",
-    "ProjectPurged": "Proje kalıcı olarak silindi.",
-    "Purge": "Temizle",
-    "PurgeProject": "Projeyi Temizle",
+    "Registry": "Kayıt Deposu",
     "ResourcePolicy": "Kaynak Politikası",
     "ScalingGroups": "Kaynak Grupları",
     "StorageNodes": "Depolama Düğümleri",
@@ -341,6 +335,8 @@
   },
   "comp:FileExplorer": {
     "ArchiveDownloadStarted": "{{count}} öğe indirilmeye başlandı.",
+    "ChangeFileExtension": "Dosya Uzantısını Değiştir",
+    "ChangeFileExtensionDesc": "Dosya uzantısını değiştirmek dosyanın kullanılamaz hale gelmesine veya hatalı açılmasına neden olabilir. Devam etmek istiyor musunuz?",
     "Controls": "Kontroller",
     "CreateANewFile": "Create a new file",
     "CreateANewFolder": "Yeni bir klasör oluşturun",
@@ -378,7 +374,10 @@
     "UnsupportedFileFormat": "Bu dosya biçimi düzenlemeyi desteklemiyor.",
     "UploadFiles": "Dosyaları Yükle",
     "UploadFolder": "Klasörü Yükle",
-    "error": {}
+    "error": {
+      "DuplicatedName": "Bu isim zaten kullanılıyor. Lütfen farklı bir isim girin.",
+      "FileNameRequired": "Lütfen bir dosya veya klasör adı girin."
+    }
   },
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} öğelerinin {{total}}"

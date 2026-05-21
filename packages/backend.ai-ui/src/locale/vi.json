@@ -74,6 +74,9 @@
     "KeepAsIs": "Giữ nguyên",
     "UndoChanges": "Hoàn tác thay đổi"
   },
+  "comp:BAIContainerRegistrySelect": {
+    "SelectContainerRegistry": "Chọn kho lưu trữ container"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "Bạn có chắc bạn muốn hủy kích hoạt {{name}}?",
     "AreYouSureYouWantToDeactivateSome": "Bạn có chắc là bạn muốn hủy kích hoạt {{count}} Artifacts?",
@@ -209,7 +212,7 @@
     "UpdatedAt": "Ngày cập nhật"
   },
   "comp:BAIProjectBulkEditModal": {
-    "FollowingFoldersWillBeUpdated": "Thư mục sau sẽ được cập nhật.",
+    "FollowingProjectsWillBeUpdated": "Dự án sau sẽ được cập nhật.",
     "ProjectResourcePolicy": "Chính sách tài nguyên dự án",
     "UpdateMultipleProjects": "Cập nhật nhiều dự án"
   },
@@ -239,25 +242,16 @@
     "UpdateProject": "Cập nhật dự án"
   },
   "comp:BAIProjectTable": {
-    "AreYouSureToPurgeProject": "Bạn có chắc chắn muốn xóa vĩnh viễn {{projectName}}? Hành động này không thể hoàn tác.",
     "ContainerRegistry": "Kho lưu trữ container",
     "ContainerRegistryProject": "Dự án kho lưu trữ container",
-    "Controls": "Điều khiển",
     "CreatedAt": "Ngày tạo",
-    "Deactivate": "Vô hiệu hóa",
-    "DeactivateProject": "Vô hiệu hóa dự án",
     "Description": "Mô tả",
     "Domain": "Miền",
-    "FailedToDeactivateProject": "Không thể vô hiệu hóa dự án.",
-    "FailedToPurgeProject": "Không thể xóa hoàn toàn dự án.",
     "IntegrationID": "ID tích hợp",
-    "IsActive": "Hoạt động",
     "Name": "Tên",
-    "ProjectDeactivated": "Dự án đã bị vô hiệu hóa.",
+    "Project": "Dự án",
     "ProjectID": "ID dự án",
-    "ProjectPurged": "Dự án đã bị xóa vĩnh viễn",
-    "Purge": "Xóa sạch",
-    "PurgeProject": "Xóa vĩnh viễn dự án",
+    "Registry": "Kho chứa",
     "ResourcePolicy": "Chính sách tài nguyên",
     "ScalingGroups": "Nhóm tài nguyên",
     "StorageNodes": "Nút lưu trữ",

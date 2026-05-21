@@ -74,6 +74,9 @@
     "KeepAsIs": "Unverändert lassen",
     "UndoChanges": "Änderungen rückgängig machen"
   },
+  "comp:BAIContainerRegistrySelect": {
+    "SelectContainerRegistry": "Container-Registry auswählen"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "Sind Sie sicher, dass Sie {{name}} deaktivieren möchten?",
     "AreYouSureYouWantToDeactivateSome": "Sind Sie sicher, dass Sie {{count}} Artefakte deaktivieren möchten?",
@@ -209,7 +212,7 @@
     "UpdatedAt": "Aktualisiert am"
   },
   "comp:BAIProjectBulkEditModal": {
-    "FollowingFoldersWillBeUpdated": "Die folgenden Ordner werden aktualisiert.",
+    "FollowingProjectsWillBeUpdated": "Die folgenden Projekte werden aktualisiert.",
     "ProjectResourcePolicy": "Projektressourcenrichtlinie",
     "UpdateMultipleProjects": "Mehrere Projekte aktualisieren"
   },
@@ -239,25 +242,16 @@
     "UpdateProject": "Projekt aktualisieren"
   },
   "comp:BAIProjectTable": {
-    "AreYouSureToPurgeProject": "Sind Sie sicher, dass Sie {{projectName}} endgültig löschen möchten? Diese Aktion ist unwiderruflich.",
     "ContainerRegistry": "Container-Registry",
     "ContainerRegistryProject": "Container-Registry-Projekt",
-    "Controls": "Steuerelemente",
     "CreatedAt": "Erstellt am",
-    "Deactivate": "Deaktivieren",
-    "DeactivateProject": "Projekt deaktivieren",
     "Description": "Beschreibung",
     "Domain": "Domäne",
-    "FailedToDeactivateProject": "Fehler beim Deaktivieren des Projekts.",
-    "FailedToPurgeProject": "Fehler beim Bereinigen des Projekts.",
     "IntegrationID": "Integrations‑ID",
-    "IsActive": "Aktiv",
     "Name": "Name",
-    "ProjectDeactivated": "Das Projekt wurde deaktiviert.",
+    "Project": "Projekt",
     "ProjectID": "Projekt‑ID",
-    "ProjectPurged": "Das Projekt wurde endgültig gelöscht.",
-    "Purge": "Bereinigen",
-    "PurgeProject": "Projekt bereinigen",
+    "Registry": "Registry",
     "ResourcePolicy": "Ressourcenrichtlinie",
     "ScalingGroups": "Ressourcengruppen",
     "StorageNodes": "Speicherknoten",

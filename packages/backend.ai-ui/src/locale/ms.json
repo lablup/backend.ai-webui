@@ -74,6 +74,9 @@
     "KeepAsIs": "Kekalkan seperti semula",
     "UndoChanges": "Batal perubahan"
   },
+  "comp:BAIContainerRegistrySelect": {
+    "SelectContainerRegistry": "Pilih Registri Kontena"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "Adakah anda pasti mahu menyahaktifkan {{name}}?",
     "AreYouSureYouWantToDeactivateSome": "Adakah anda pasti mahu menyahaktifkan {{count}} artifak?",
@@ -209,7 +212,7 @@
     "UpdatedAt": "Dikemas kini Pada"
   },
   "comp:BAIProjectBulkEditModal": {
-    "FollowingFoldersWillBeUpdated": "Folder berikut akan dikemas kini.",
+    "FollowingProjectsWillBeUpdated": "Projek berikut akan dikemas kini.",
     "ProjectResourcePolicy": "Polisi Sumber Projek",
     "UpdateMultipleProjects": "Kemas kini Beberapa Projek"
   },
@@ -239,25 +242,16 @@
     "UpdateProject": "Kemas kini Projek"
   },
   "comp:BAIProjectTable": {
-    "AreYouSureToPurgeProject": "Adakah anda pasti mahu memadam sepenuhnya {{projectName}}? Tindakan ini tidak boleh dipulihkan.",
     "ContainerRegistry": "Registri Kontena",
     "ContainerRegistryProject": "Projek Registri Kontena",
-    "Controls": "Kawalan",
     "CreatedAt": "Dibuat pada",
-    "Deactivate": "Nyahaktifkan",
-    "DeactivateProject": "Nyahaktifkan Projek",
     "Description": "Keterangan",
     "Domain": "Domain",
-    "FailedToDeactivateProject": "Gagal menyahaktifkan projek.",
-    "FailedToPurgeProject": "Gagal memadam projek.",
     "IntegrationID": "ID Integrasi",
-    "IsActive": "Aktif",
     "Name": "Nama",
-    "ProjectDeactivated": "Projek ini telah dinyahaktifkan.",
+    "Project": "Projek",
     "ProjectID": "ID Projek",
-    "ProjectPurged": "Projek telah dipadam",
-    "Purge": "Padam",
-    "PurgeProject": "Padam Projek",
+    "Registry": "Registri",
     "ResourcePolicy": "Dasar Sumber",
     "ScalingGroups": "Kumpulan Sumber",
     "StorageNodes": "Nod Storan",

@@ -2117,14 +2117,27 @@
     "Total": "{{start}} - {{end}} of {{total}} items"
   },
   "project": {
+    "Activate": "Activate",
+    "ActivateProject": "Activate Project",
     "Active": "Active",
     "BulkEdit": "Bulk Edit",
     "CreateProject": "Create Project",
+    "Deactivate": "Deactivate",
+    "DeactivateProject": "Deactivate Project",
     "Domain": "Domain",
+    "EditProject": "Edit",
+    "FailedToActivateProject": "Failed to activate the project.",
+    "FailedToDeactivateProject": "Failed to deactivate the project.",
+    "FailedToPurgeProject": "Failed to purge the project.",
     "Name": "Name",
     "Project": "Project",
+    "ProjectActivated": "The project has been activated.",
+    "ProjectDeactivated": "The project has been deactivated.",
     "ProjectID": "Project ID",
     "ProjectIDFilterRuleMessage": "Invalid UUID.",
+    "ProjectPurged": "The project has been purged.",
+    "Purge": "Purge",
+    "PurgeProject": "Purge Project",
     "ResourcePolicy": "Resource Policy"
   },
   "projectMembers": {
