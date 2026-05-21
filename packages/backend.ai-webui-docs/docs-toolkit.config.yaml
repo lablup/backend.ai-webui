@@ -48,7 +48,7 @@ pdfMetadata:
 #   3. Keep the `next` entry at the TOP of the list (FR-2765 — surfaces
 #      `next` at the top of the version <select>); it never carries
 #      `latest: true`.
-#   See the docs release runbook for the full procedure.
+#   See RELEASE-RUNBOOK.md (in this package) for the full procedure.
 versions:
   # FR-2765: `next` is intentionally listed first so it appears at the
   # top of the version `<select>` dropdown. Readers visiting `next` see

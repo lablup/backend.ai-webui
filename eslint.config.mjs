@@ -11,7 +11,6 @@ export default [
     ignores: [
       'node_modules/**',
       'dist/**',
-      'docs/**',
       'src/app/**',
       'src/plugin*/**',
       'src/wsproxy*/**',
