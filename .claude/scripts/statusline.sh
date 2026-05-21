@@ -187,7 +187,18 @@ if [[ -n "$WORKSPACE" ]] && command -v portless >/dev/null 2>&1 && command -v ls
         case "$_cwd_real" in
           "$WS_REAL"/scripts/temp-releases/*) _sub_label="Release" ;;
           "$WS_REAL"/packages/backend.ai-ui*) _sub_label="Storybook" ;;
-          "$WS_REAL"/packages/backend.ai-webui-docs*) _sub_label="Docs" ;;
+          "$WS_REAL"/packages/backend.ai-webui-docs*)
+            # The docs package runs several concurrent route flavors that each
+            # claim their own portless subdomain (docs-preview / docs-html /
+            # docs-web). Derive the label from the route's leading subdomain so
+            # they render as distinguishable links instead of identical "Docs".
+            _host="${_url#*://}"; _host="${_host%%.*}"
+            case "$_host" in
+              docs-html) _sub_label="Docs HTML" ;;
+              docs-web) _sub_label="Docs Web" ;;
+              *) _sub_label="Docs" ;;
+            esac
+            ;;
           *) _sub_label="Portless" ;;
         esac
         PORTLESS_SUBS+=("${_sub_label}"$'\t'"${_url}")
