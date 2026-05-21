@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c44473304604493031780dd3a3f4972c>>
+ * @generated SignedSource<<37c0672a91a98e598a977a98eeeeb3d2>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,18 +9,18 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type BAIProjectTableDeleteMutation$variables = {
+export type ProjectPagePurgeMutation$variables = {
   gid: string;
 };
-export type BAIProjectTableDeleteMutation$data = {
-  readonly delete_group: {
+export type ProjectPagePurgeMutation$data = {
+  readonly purge_group: {
     readonly msg: string | null | undefined;
     readonly ok: boolean | null | undefined;
   } | null | undefined;
 };
-export type BAIProjectTableDeleteMutation = {
-  response: BAIProjectTableDeleteMutation$data;
-  variables: BAIProjectTableDeleteMutation$variables;
+export type ProjectPagePurgeMutation = {
+  response: ProjectPagePurgeMutation$data;
+  variables: ProjectPagePurgeMutation$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -41,23 +41,23 @@ v1 = [
         "variableName": "gid"
       }
     ],
-    "concreteType": "DeleteGroup",
+    "concreteType": "PurgeGroup",
     "kind": "LinkedField",
-    "name": "delete_group",
+    "name": "purge_group",
     "plural": false,
     "selections": [
       {
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "msg",
+        "name": "ok",
         "storageKey": null
       },
       {
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "ok",
+        "name": "msg",
         "storageKey": null
       }
     ],
@@ -69,7 +69,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "BAIProjectTableDeleteMutation",
+    "name": "ProjectPagePurgeMutation",
     "selections": (v1/*: any*/),
     "type": "Mutation",
     "abstractKey": null
@@ -78,20 +78,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "BAIProjectTableDeleteMutation",
+    "name": "ProjectPagePurgeMutation",
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "a3273c373e5d0024a1b67cc1cf435328",
+    "cacheID": "2b7041be70850a44e664027677b56872",
     "id": null,
     "metadata": {},
-    "name": "BAIProjectTableDeleteMutation",
+    "name": "ProjectPagePurgeMutation",
     "operationKind": "mutation",
-    "text": "mutation BAIProjectTableDeleteMutation(\n  $gid: UUID!\n) {\n  delete_group(gid: $gid) {\n    msg\n    ok\n  }\n}\n"
+    "text": "mutation ProjectPagePurgeMutation(\n  $gid: UUID!\n) {\n  purge_group(gid: $gid) {\n    ok\n    msg\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "eec554cf44d6c703eab651f80ec4ccf9";
+(node as any).hash = "76ab9c9d44f872f3b6928c61c5bdabb2";
 
 export default node;

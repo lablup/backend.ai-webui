@@ -296,6 +296,7 @@
     "Attempts": "Yritykset",
     "CreatedAt": "Luotu",
     "From": "Alkaen",
+    "Message": "Viesti",
     "Phase": "Vaihe",
     "Result": "Tulos",
     "StatusTransition": "Tilan siirtymä",

@@ -296,6 +296,7 @@
     "Attempts": "จำนวนครั้งที่ลอง",
     "CreatedAt": "สร้างเมื่อ",
     "From": "จาก",
+    "Message": "ข้อความ",
     "Phase": "ระยะ",
     "Result": "ผลลัพธ์",
     "StatusTransition": "การเปลี่ยนสถานะ",

@@ -296,6 +296,7 @@
     "Attempts": "尝试次数",
     "CreatedAt": "创建时间",
     "From": "从",
+    "Message": "消息",
     "Phase": "阶段",
     "Result": "结果",
     "StatusTransition": "状态转换",

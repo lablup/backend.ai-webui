@@ -296,6 +296,7 @@
     "Attempts": "Attempts",
     "CreatedAt": "Created At",
     "From": "From",
+    "Message": "Message",
     "Phase": "Phase",
     "Result": "Result",
     "StatusTransition": "Status Transition",

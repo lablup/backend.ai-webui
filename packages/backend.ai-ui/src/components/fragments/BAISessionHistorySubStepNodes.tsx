@@ -2,7 +2,11 @@ import {
   BAISessionHistorySubStepNodesFragment$data,
   BAISessionHistorySubStepNodesFragment$key,
 } from '../../__generated__/BAISessionHistorySubStepNodesFragment.graphql';
-import { filterOutEmpty, filterOutNullAndUndefined } from '../../helper';
+import {
+  filterOutEmpty,
+  filterOutNullAndUndefined,
+  newLineToBrElement,
+} from '../../helper';
 import BAISchedulingResultBadge, {
   SchedulingResult,
 } from '../BAISchedulingResultBadge';
@@ -13,6 +17,7 @@ import {
   BAITable,
   BAITableProps,
 } from '../Table';
+import { theme } from 'antd';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import * as _ from 'lodash-es';
@@ -28,6 +33,12 @@ export type SubStepInList = NonNullable<
 const availableSubStepSorterKeys = [] as const;
 
 export const availableSubStepSorterValues = [] as const;
+
+const FAILURE_RESULTS: ReadonlyArray<SchedulingResult> = [
+  'FAILURE',
+  'EXPIRED',
+  'GIVE_UP',
+];
 
 const isEnableSorter = (key: string) => {
   return _.includes(availableSubStepSorterKeys, key);
@@ -52,6 +63,7 @@ const BAISessionHistorySubStepNodes = ({
 }: BAISessionHistorySubStepNodesProps) => {
   'use memo';
   const { t } = useTranslation();
+  const { token } = theme.useToken();
 
   const subSteps = useFragment<BAISessionHistorySubStepNodesFragment$key>(
     graphql`
@@ -76,6 +88,18 @@ const BAISessionHistorySubStepNodes = ({
         dataIndex: 'step',
         fixed: 'left',
         sorter: isEnableSorter('step'),
+        render: (_value, record) => {
+          const result =
+            record.result && record.result !== '%future added value'
+              ? (record.result as SchedulingResult)
+              : null;
+          const isFailure = result != null && FAILURE_RESULTS.includes(result);
+          return (
+            <span style={isFailure ? { color: token.colorError } : undefined}>
+              {record.step}
+            </span>
+          );
+        },
       },
       {
         key: 'result',
@@ -86,7 +110,15 @@ const BAISessionHistorySubStepNodes = ({
             record.result && record.result !== '%future added value'
               ? (record.result as SchedulingResult)
               : null;
-          return <BAISchedulingResultBadge result={result} />;
+          const isFailure = result != null && FAILURE_RESULTS.includes(result);
+          return (
+            <BAISchedulingResultBadge
+              result={result}
+              style={{
+                color: isFailure ? token.colorError : undefined,
+              }}
+            />
+          );
         },
         sorter: isEnableSorter('result'),
       },
@@ -94,11 +126,11 @@ const BAISessionHistorySubStepNodes = ({
         key: 'message',
         title: t('comp:SessionHistorySubStepNodes.Message'),
         dataIndex: 'message',
-        onCell: () => ({ style: { maxWidth: 300 } }),
+        onCell: () => ({ style: { maxWidth: 500 } }),
         render: (__, record) =>
           record.message ? (
-            <BAIText ellipsis title={record.message} style={{ width: '100%' }}>
-              {record.message}
+            <BAIText title={record.message} style={{ width: '100%' }}>
+              {newLineToBrElement(record.message)}
             </BAIText>
           ) : (
             '-'

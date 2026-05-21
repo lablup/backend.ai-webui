@@ -2,10 +2,15 @@ import {
   BAISchedulingHistoryNodesFragment$data,
   BAISchedulingHistoryNodesFragment$key,
 } from '../../__generated__/BAISchedulingHistoryNodesFragment.graphql';
-import { filterOutEmpty, filterOutNullAndUndefined } from '../../helper';
+import {
+  filterOutEmpty,
+  filterOutNullAndUndefined,
+  newLineToBrElement,
+} from '../../helper';
 import BAISchedulingResultBadge, {
   SchedulingResult,
 } from '../BAISchedulingResultBadge';
+import BAIText from '../BAIText';
 import {
   BAIColumnsType,
   BAIColumnType,
@@ -86,6 +91,20 @@ const BAISchedulingHistoryNodes = ({
       | BAIColumnGroupType<SchedulingHistoryNodeInList>
     >([
       {
+        dataIndex: 'updatedAt',
+        title: t('comp:BAISchedulingHistoryNodes.UpdatedAt'),
+        key: 'updatedAt',
+        render: (value) => <span>{dayjs(value).format('ll LTS')}</span>,
+        sorter: isEnableSorter('updated_at'),
+      },
+      {
+        dataIndex: 'createdAt',
+        title: t('comp:BAISchedulingHistoryNodes.CreatedAt'),
+        key: 'createdAt',
+        render: (value) => <span>{dayjs(value).format('ll LTS')}</span>,
+        sorter: isEnableSorter('created_at'),
+      },
+      {
         dataIndex: 'phase',
         title: t('comp:BAISchedulingHistoryNodes.Phase'),
         key: 'phase',
@@ -129,18 +148,19 @@ const BAISchedulingHistoryNodes = ({
         sorter: isEnableSorter('attempts'),
       },
       {
-        dataIndex: 'updatedAt',
-        title: t('comp:BAISchedulingHistoryNodes.UpdatedAt'),
-        key: 'updatedAt',
-        render: (value) => <span>{dayjs(value).format('ll LTS')}</span>,
-        sorter: isEnableSorter('updated_at'),
-      },
-      {
-        dataIndex: 'createdAt',
-        title: t('comp:BAISchedulingHistoryNodes.CreatedAt'),
-        key: 'createdAt',
-        render: (value) => <span>{dayjs(value).format('ll LTS')}</span>,
-        sorter: isEnableSorter('created_at'),
+        key: 'message',
+        title: t('comp:BAISchedulingHistoryNodes.Message'),
+        dataIndex: 'message',
+        onCell: () => ({ style: { maxWidth: 500 } }),
+        render: (__, record) =>
+          record.message ? (
+            <BAIText title={record.message} style={{ width: '100%' }}>
+              {newLineToBrElement(record.message)}
+            </BAIText>
+          ) : (
+            '-'
+          ),
+        sorter: isEnableSorter('message'),
       },
     ]),
     (column) => {

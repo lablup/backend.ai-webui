@@ -296,6 +296,7 @@
     "Attempts": "試行回数",
     "CreatedAt": "作成日時",
     "From": "送信元",
+    "Message": "メッセージ",
     "Phase": "フェーズ",
     "Result": "結果",
     "StatusTransition": "ステータス遷移",

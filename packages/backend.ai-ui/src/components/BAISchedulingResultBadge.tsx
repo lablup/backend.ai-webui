@@ -35,7 +35,14 @@ const BAISchedulingResultBadge = ({
   'use memo';
   const semanticColor = result ? _.get(resultSemanticMap, result) : undefined;
 
-  return <BAIBadge {...badgeProps} color={semanticColor} text={result} />;
+  return (
+    <BAIBadge
+      {...badgeProps}
+      color={semanticColor}
+      text={result}
+      style={{ whiteSpace: 'nowrap', ...badgeProps.style }}
+    />
+  );
 };
 
 export default BAISchedulingResultBadge;
