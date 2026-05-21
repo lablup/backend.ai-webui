@@ -29,7 +29,10 @@ jobs:
       - uses: pnpm/action-setup@v4
         name: Install pnpm
         with:
-          version: latest
+          # Pin pnpm: `version: latest` resolves to pnpm 11.x (requires Node >=22.13)
+          # and is installed before setup-node, on the runner's bundled Node 20 ->
+          # ERR_PNPM_UNSUPPORTED_ENGINE. 10.16.0 installs on Node 20. See FR-2945.
+          version: 10.16.0
           run_install: false
       - name: Install Node.js
         uses: actions/setup-node@v4
