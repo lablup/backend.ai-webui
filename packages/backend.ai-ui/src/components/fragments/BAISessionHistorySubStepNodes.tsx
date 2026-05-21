@@ -179,7 +179,7 @@ const BAISessionHistorySubStepNodes = ({
     <BAITable
       rowKey="step"
       size="small"
-      dataSource={filterOutNullAndUndefined(subSteps)}
+      dataSource={filterOutNullAndUndefined(subSteps).reverse()}
       columns={allColumns}
       scroll={{ x: 'max-content' }}
       {...tableProps}

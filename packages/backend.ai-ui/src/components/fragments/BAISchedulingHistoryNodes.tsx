@@ -28,7 +28,7 @@ export type SchedulingHistoryNodeInList = NonNullable<
   BAISchedulingHistoryNodesFragment$data[number]
 >;
 
-const availableHistorySorterKeys = ['created_at', 'updated_at'] as const;
+const availableHistorySorterKeys = [] as const;
 
 export const availableHistorySorterValues = [
   ...availableHistorySorterKeys,
