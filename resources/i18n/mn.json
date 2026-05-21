@@ -589,6 +589,7 @@
     "WarningLessRateLimit": "Хэрэв ханшийн хязгаарын утга бага байвал нэвтрэх гэх мэт API үйлдлүүдийг хааж болно.",
     "WrongEmail": "Имэйл хаяг буруу байна",
     "validation": {
+      "MaxUserCount": "Нэг удаад үүсгэх боломжтой хэрэглэгчдийн дээд тоо нь {{count}} байна.",
       "PleaseEnterPositiveAndUnder2_31": "2^31-аас бага эерэг утга оруулна уу",
       "PleaseEnterPositiveInteger": "Эерэг утга оруулна уу.",
       "PleaseEnterUniqueNumbers": "Давтагдаагүй тоо оруулна уу",

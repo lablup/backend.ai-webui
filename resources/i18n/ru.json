@@ -589,6 +589,7 @@
     "WarningLessRateLimit": "Если значение Rate Limit мало, то такие операции API, как вход в систему, могут быть заблокированы.",
     "WrongEmail": "Неверный адрес электронной почты",
     "validation": {
+      "MaxUserCount": "Максимальное количество пользователей, которых можно создать за один раз — {{count}}.",
       "PleaseEnterPositiveAndUnder2_31": "Введите положительное значение меньше 2^31",
       "PleaseEnterPositiveInteger": "Введите положительное значение.",
       "PleaseEnterUniqueNumbers": "Пожалуйста, введите уникальные числа",

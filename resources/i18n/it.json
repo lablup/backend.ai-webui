@@ -589,6 +589,7 @@
     "WarningLessRateLimit": "Se il valore di Rate Limit è piccolo, le operazioni API come il login possono essere bloccate.",
     "WrongEmail": "Indirizzo e-mail non valido",
     "validation": {
+      "MaxUserCount": "Il numero massimo di utenti che possono essere creati contemporaneamente è {{count}}.",
       "PleaseEnterPositiveAndUnder2_31": "Inserisci un valore positivo inferiore a 2^31",
       "PleaseEnterPositiveInteger": "Inserisci un valore positivo.",
       "PleaseEnterUniqueNumbers": "Inserisci numeri univoci",

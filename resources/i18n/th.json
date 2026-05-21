@@ -589,6 +589,7 @@
     "WarningLessRateLimit": "หากค่าขีดจำกัดอัตราน้อยเกินไป การดำเนินการ API เช่น การเข้าสู่ระบบอาจถูกบล็อก",
     "WrongEmail": "ที่อยู่อีเมลไม่ถูกต้อง",
     "validation": {
+      "MaxUserCount": "จำนวนผู้ใช้สูงสุดที่สามารถสร้างได้ในครั้งเดียวคือ {{count}} คน",
       "PleaseEnterPositiveAndUnder2_31": "กรุณาใส่จำนวนบวกที่น้อยกว่า 2^31",
       "PleaseEnterPositiveInteger": "กรุณาใส่ค่าที่เป็นจำนวนบวก",
       "PleaseEnterUniqueNumbers": "กรุณากรอกตัวเลขที่ไม่ซ้ำกัน",

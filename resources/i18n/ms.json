@@ -589,6 +589,7 @@
     "WarningLessRateLimit": "Jika nilai Had Kadar adalah kecil, operasi API seperti log masuk mungkin disekat.",
     "WrongEmail": "Alamat e-mel tidak sah",
     "validation": {
+      "MaxUserCount": "Bilangan maksimum pengguna yang boleh dicipta sekaligus ialah {{count}}.",
       "PleaseEnterPositiveAndUnder2_31": "Sila masukkan nilai positif kurang daripada 2^31",
       "PleaseEnterPositiveInteger": "Sila masukkan nilai positif.",
       "PleaseEnterUniqueNumbers": "Sila masukkan nombor yang unik",

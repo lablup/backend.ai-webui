@@ -589,6 +589,7 @@
     "WarningLessRateLimit": "Nếu giá trị Giới hạn tốc độ nhỏ, các hoạt động API như đăng nhập có thể bị chặn.",
     "WrongEmail": "Địa chỉ email không hợp lệ",
     "validation": {
+      "MaxUserCount": "Số lượng người dùng tối đa có thể tạo cùng lúc là {{count}}.",
       "PleaseEnterPositiveAndUnder2_31": "Vui lòng nhập một giá trị dương nhỏ hơn 2^31",
       "PleaseEnterPositiveInteger": "Vui lòng nhập một giá trị dương.",
       "PleaseEnterUniqueNumbers": "Vui lòng nhập các số không trùng lặp",

@@ -589,6 +589,7 @@
     "WarningLessRateLimit": "Si la valeur de la limite de débit est faible, les opérations API telles que la connexion peuvent être bloquées.",
     "WrongEmail": "Adresse e-mail invalide",
     "validation": {
+      "MaxUserCount": "Le nombre maximum d'utilisateurs pouvant être créés en une fois est de {{count}}.",
       "PleaseEnterPositiveAndUnder2_31": "Veuillez saisir une valeur positive inférieure à 2^31",
       "PleaseEnterPositiveInteger": "Veuillez saisir une valeur positive.",
       "PleaseEnterUniqueNumbers": "Veuillez entrer des nombres uniques",
