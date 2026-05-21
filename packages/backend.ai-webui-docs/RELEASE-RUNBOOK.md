@@ -2,8 +2,8 @@
 
 Operational checklist for the release manager. This file documents what to
 do *during* a release that goes beyond "tag the commit". Background and
-design decisions live in the spec docs under `.specs/`; this file is the
-short, testable checklist.
+design decisions live in the spec docs under `.specs/` (at the repo root);
+this file is the short, testable checklist.
 
 ---
 

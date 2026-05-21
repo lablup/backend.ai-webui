@@ -129,6 +129,13 @@ The document version is derived from the monorepo root `package.json` version fi
 
 For pre-release versions, the git short hash is appended so that PDFs generated from different commits are distinguishable.
 
+## Release Runbook
+
+When publishing a new version, the docs site requires a few release-time steps
+(archive the released minor on its orphan branch, verify the per-language PDFs,
+and update `versions:` in `docs-toolkit.config.yaml`). See
+[`RELEASE-RUNBOOK.md`](RELEASE-RUNBOOK.md) for the full release-manager checklist.
+
 ## Project Structure
 
 ```
