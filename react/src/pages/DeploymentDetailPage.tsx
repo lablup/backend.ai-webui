@@ -47,6 +47,12 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useParams } from 'react-router-dom';
 
+const scrollToElementId = (id: string) => {
+  document
+    .getElementById(id)
+    ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+};
+
 const DeploymentDetailPage: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
@@ -69,6 +75,13 @@ const DeploymentDetailPage: React.FC = () => {
   const [
     addRevisionOpen,
     { setLeft: closeAddRevision, setRight: openAddRevision },
+  ] = useToggle(false);
+  // Lifted here so the "Private deployment" alert can open the same
+  // create-access-token modal that DeploymentAccessTokensTab owns — the alert
+  // CTA and the section's "+" button share one flow.
+  const [
+    createAccessTokenOpen,
+    { setLeft: closeCreateAccessToken, setRight: openCreateAccessToken },
   ] = useToggle(false);
 
   const { deployment: deploymentResult } =
@@ -192,13 +205,12 @@ const DeploymentDetailPage: React.FC = () => {
         updateFetchKey();
         updateRevisionFetchKey();
       });
+      scrollToElementId('deployment-revisions');
     }
   };
 
-  const scrollToAccessTokens = () => {
-    document
-      .getElementById('deployment-access-tokens')
-      ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  const handleAccessTokenCreated = () => {
+    scrollToElementId('deployment-access-tokens');
   };
 
   return (
@@ -265,9 +277,20 @@ const DeploymentDetailPage: React.FC = () => {
           showIcon
           title={t('deployment.PrivateDeploymentAlertTitle')}
           action={
-            <Button onClick={scrollToAccessTokens}>
-              {t('deployment.ManageAccessTokens')}
-            </Button>
+            <BAIButton
+              type="primary"
+              icon={<PlusOutlined />}
+              // Match the Add-Revision CTA above: open the create modal
+              // directly. `action` (not `onClick`) defers the mount in a
+              // transition so the page stays interactive while the modal
+              // suspends on its initial render.
+              action={async () => {
+                openCreateAccessToken();
+              }}
+              disabled={isDeploymentDestroying}
+            >
+              {t('deployment.AddAccessToken')}
+            </BAIButton>
           }
         />
       )}
@@ -313,6 +336,15 @@ const DeploymentDetailPage: React.FC = () => {
           deploymentId={deploymentGlobalId}
           isOwnedByCurrentUser={isOwnedByCurrentUser}
           isDeploymentDestroying={isDeploymentDestroying}
+          isCreateModalOpen={createAccessTokenOpen}
+          onCreateModalOpenChange={(open) => {
+            if (open) {
+              openCreateAccessToken();
+            } else {
+              closeCreateAccessToken();
+            }
+          }}
+          onTokenCreated={handleAccessTokenCreated}
         />
       </div>
       {/* Local Suspense around the lazily-mounted modal so its initial

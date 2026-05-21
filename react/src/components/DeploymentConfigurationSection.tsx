@@ -481,6 +481,7 @@ const DeploymentConfigurationSection: React.FC<
         />
       )}
       <BAICard
+        id="deployment-revisions"
         activeTabKey={activeRevisionTab}
         onTabChange={(key) => {
           if (key === 'currentRevision' || key === 'revisionHistory') {

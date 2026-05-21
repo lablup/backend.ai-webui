@@ -52,6 +52,13 @@ interface DeploymentAccessTokensTabProps {
   deploymentId: string;
   isOwnedByCurrentUser?: boolean;
   isDeploymentDestroying?: boolean;
+  // Optional controlled open state for the create-access-token modal.
+  // When omitted, the tab manages its own state via the header "+" button.
+  // The deployment detail page passes these so the private-deployment
+  // alert can open the same modal without rebuilding the create flow.
+  isCreateModalOpen?: boolean;
+  onCreateModalOpenChange?: (open: boolean) => void;
+  onTokenCreated?: () => void;
 }
 
 const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
@@ -59,6 +66,9 @@ const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
   deploymentId,
   isOwnedByCurrentUser = true,
   isDeploymentDestroying = false,
+  isCreateModalOpen: isCreateModalOpenProp,
+  onCreateModalOpenChange,
+  onTokenCreated,
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -68,7 +78,16 @@ const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
   const [isPendingRefetch, startRefetchTransition] = useTransition();
   const [fetchKey, setFetchKey] = useState(0);
 
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isCreateModalOpenInternal, setIsCreateModalOpenInternal] =
+    useState(false);
+  const isCreateModalOpen = isCreateModalOpenProp ?? isCreateModalOpenInternal;
+  const setIsCreateModalOpen = (open: boolean) => {
+    if (onCreateModalOpenChange) {
+      onCreateModalOpenChange(open);
+    } else {
+      setIsCreateModalOpenInternal(open);
+    }
+  };
   // After successful creation, show the plaintext token once in a modal.
   const [createdToken, setCreatedToken] = useState<{
     token: string;
@@ -181,6 +200,7 @@ const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
                     content: t('deployment.accessToken.Created'),
                   });
                   handleRefetch();
+                  onTokenCreated?.();
                 })
                 .catch((error) => {
                   const errors = Array.isArray(error) ? error : [error];
