@@ -175,77 +175,60 @@ const PrometheusQueryPresetNodes: React.FC<PrometheusQueryPresetNodesProps> = ({
       render: (timeWindow: string | null | undefined) => timeWindow ?? '-',
     },
     {
-      title: t('prometheusQueryPreset.Category'),
-      key: 'category',
-      children: [
-        {
-          title: t('prometheusQueryPreset.Id'),
-          dataIndex: ['category', 'id'],
-          key: 'categoryId',
-          sorter: isEnableSorter('categoryId'),
-          onCell: () => ({ style: { maxWidth: 120 } }),
-
-          render: (_value: unknown, row) => (
-            <BAIText
-              ellipsis
-              copyable
-              monospace
-              title={row.category?.id ?? '-'}
-            >
-              {row.category?.id ?? '-'}
-            </BAIText>
-          ),
-        },
-        {
-          title: t('prometheusQueryPreset.Name'),
-          dataIndex: ['category', 'name'],
-          key: 'categoryName',
-          sorter: isEnableSorter('categoryName'),
-          render: (_value: unknown, row) => row.category?.name ?? '-',
-        },
-      ],
+      title: t('prometheusQueryPreset.CategoryId'),
+      dataIndex: ['category', 'id'],
+      key: 'categoryId',
+      defaultHidden: true,
+      sorter: isEnableSorter('categoryId'),
+      onCell: () => ({ style: { maxWidth: 120 } }),
+      render: (_value: unknown, row) => (
+        <BAIText ellipsis copyable monospace title={row.category?.id ?? '-'}>
+          {row.category?.id ?? '-'}
+        </BAIText>
+      ),
     },
     {
-      title: t('prometheusQueryPreset.Options'),
-      key: 'options',
-      children: [
-        {
-          title: t('prometheusQueryPreset.FilterLabels'),
-          dataIndex: ['options', 'filterLabels'],
-          key: 'filterLabels',
-          sorter: isEnableSorter('filterLabels'),
-          width: 200,
-          render: (_value: unknown, row) => {
-            const labels = row.options?.filterLabels;
-            if (!labels || labels.length === 0) return '-';
-            return (
-              <BAIFlex wrap="wrap" gap="xxs">
-                {_.map(labels, (label) => (
-                  <Tag key={label}>{label}</Tag>
-                ))}
-              </BAIFlex>
-            );
-          },
-        },
-        {
-          title: t('prometheusQueryPreset.GroupLabels'),
-          dataIndex: ['options', 'groupLabels'],
-          key: 'groupLabels',
-          sorter: isEnableSorter('groupLabels'),
-          width: 200,
-          render: (_value: unknown, row) => {
-            const labels = row.options?.groupLabels;
-            if (!labels || labels.length === 0) return '-';
-            return (
-              <BAIFlex wrap="wrap" gap="xxs">
-                {_.map(labels, (label) => (
-                  <Tag key={label}>{label}</Tag>
-                ))}
-              </BAIFlex>
-            );
-          },
-        },
-      ],
+      title: t('prometheusQueryPreset.CategoryName'),
+      dataIndex: ['category', 'name'],
+      key: 'categoryName',
+      sorter: isEnableSorter('categoryName'),
+      render: (_value: unknown, row) => row.category?.name ?? '-',
+    },
+    {
+      title: t('prometheusQueryPreset.FilterLabels'),
+      dataIndex: ['options', 'filterLabels'],
+      key: 'filterLabels',
+      sorter: isEnableSorter('filterLabels'),
+      width: 200,
+      render: (_value: unknown, row) => {
+        const labels = row.options?.filterLabels;
+        if (!labels || labels.length === 0) return '-';
+        return (
+          <BAIFlex wrap="wrap" gap="xxs">
+            {_.map(labels, (label) => (
+              <Tag key={label}>{label}</Tag>
+            ))}
+          </BAIFlex>
+        );
+      },
+    },
+    {
+      title: t('prometheusQueryPreset.GroupLabels'),
+      dataIndex: ['options', 'groupLabels'],
+      key: 'groupLabels',
+      sorter: isEnableSorter('groupLabels'),
+      width: 200,
+      render: (_value: unknown, row) => {
+        const labels = row.options?.groupLabels;
+        if (!labels || labels.length === 0) return '-';
+        return (
+          <BAIFlex wrap="wrap" gap="xxs">
+            {_.map(labels, (label) => (
+              <Tag key={label}>{label}</Tag>
+            ))}
+          </BAIFlex>
+        );
+      },
     },
     {
       title: t('prometheusQueryPreset.Rank'),

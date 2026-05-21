@@ -306,25 +306,17 @@ const BAIProjectTable = ({
       render: (value) => _.join(value, ', ') || '-',
     },
     {
-      key: 'container_registry',
+      key: 'registry',
       title: t('comp:BAIProjectTable.ContainerRegistry'),
+      dataIndex: 'container_registry',
       exportKey: 'container_registry',
-      children: [
-        {
-          key: 'registry',
-          title: t('comp:BAIProjectTable.Registry'),
-          dataIndex: 'container_registry',
-          render: (value) => {
-            return _.get(JSON.parse(value), 'registry') || '-';
-          },
-        },
-        {
-          key: 'project',
-          title: t('comp:BAIProjectTable.Project'),
-          dataIndex: 'container_registry',
-          render: (value) => _.get(JSON.parse(value), 'project') || '-',
-        },
-      ],
+      render: (value) => _.get(JSON.parse(value), 'registry') || '-',
+    },
+    {
+      key: 'project',
+      title: t('comp:BAIProjectTable.ContainerRegistryProject'),
+      dataIndex: 'container_registry',
+      render: (value) => _.get(JSON.parse(value), 'project') || '-',
     },
     {
       key: 'id',
