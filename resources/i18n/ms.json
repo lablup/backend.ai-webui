@@ -2115,6 +2115,7 @@
     "RoleMember": "Ahli"
   },
   "projectSelect": {
+    "NoAccessibleProjects": "Tiada projek yang boleh diakses.",
     "ProjectAdminBadge": "Pentadbir Projek"
   },
   "prometheusQueryPreset": {

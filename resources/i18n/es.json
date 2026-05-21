@@ -2115,6 +2115,7 @@
     "RoleMember": "Miembro"
   },
   "projectSelect": {
+    "NoAccessibleProjects": "No hay proyectos accesibles.",
     "ProjectAdminBadge": "Administrador del proyecto"
   },
   "prometheusQueryPreset": {

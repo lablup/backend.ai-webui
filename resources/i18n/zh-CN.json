@@ -2117,6 +2117,7 @@
     "RoleMember": "成员"
   },
   "projectSelect": {
+    "NoAccessibleProjects": "没有可访问的项目。",
     "ProjectAdminBadge": "项目管理员"
   },
   "prometheusQueryPreset": {

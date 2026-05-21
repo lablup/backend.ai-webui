@@ -2115,6 +2115,7 @@
     "RoleMember": "Jäsen"
   },
   "projectSelect": {
+    "NoAccessibleProjects": "Ei saatavilla olevia projekteja.",
     "ProjectAdminBadge": "Projektin ylläpitäjä"
   },
   "prometheusQueryPreset": {

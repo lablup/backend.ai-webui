@@ -2117,6 +2117,7 @@
     "RoleMember": "Thành viên"
   },
   "projectSelect": {
+    "NoAccessibleProjects": "Không có dự án nào có thể truy cập.",
     "ProjectAdminBadge": "Quản trị dự án"
   },
   "prometheusQueryPreset": {

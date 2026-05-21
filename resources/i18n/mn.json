@@ -2116,6 +2116,7 @@
     "RoleMember": "Гишүүн"
   },
   "projectSelect": {
+    "NoAccessibleProjects": "Боломжтой төсөл байхгүй байна.",
     "ProjectAdminBadge": "Төслийн администратор"
   },
   "prometheusQueryPreset": {

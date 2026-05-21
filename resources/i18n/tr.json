@@ -2115,6 +2115,7 @@
     "RoleMember": "Üye"
   },
   "projectSelect": {
+    "NoAccessibleProjects": "Erişilebilir proje bulunmuyor.",
     "ProjectAdminBadge": "Proje Yöneticisi"
   },
   "prometheusQueryPreset": {

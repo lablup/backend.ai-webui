@@ -2117,6 +2117,7 @@
     "RoleMember": "สมาชิก"
   },
   "projectSelect": {
+    "NoAccessibleProjects": "ไม่มีโปรเจกต์ที่สามารถเข้าถึงได้",
     "ProjectAdminBadge": "ผู้ดูแลโปรเจกต์"
   },
   "prometheusQueryPreset": {

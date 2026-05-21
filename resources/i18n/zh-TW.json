@@ -2119,6 +2119,7 @@
     "RoleMember": "成員"
   },
   "projectSelect": {
+    "NoAccessibleProjects": "沒有可存取的專案。",
     "ProjectAdminBadge": "專案管理員"
   },
   "prometheusQueryPreset": {

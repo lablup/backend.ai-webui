@@ -2118,6 +2118,7 @@
     "RoleMember": "구성원"
   },
   "projectSelect": {
+    "NoAccessibleProjects": "선택 가능한 프로젝트가 없습니다.",
     "ProjectAdminBadge": "프로젝트 관리자"
   },
   "prometheusQueryPreset": {

@@ -2118,6 +2118,7 @@
     "RoleMember": "Anggota"
   },
   "projectSelect": {
+    "NoAccessibleProjects": "Tidak ada proyek yang dapat diakses.",
     "ProjectAdminBadge": "Admin Proyek"
   },
   "prometheusQueryPreset": {
