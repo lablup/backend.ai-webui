@@ -99,8 +99,24 @@
     "DeleteNItems": "{{count}} 件を削除",
     "TypeToConfirm": "<code>{{confirmText}}</code> と入力して確認してください。"
   },
+  "comp:BAIDeploymentOwnerInfo": {
+    "CreatedBy": "作成者"
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "デプロイメントを選択"
+  },
+  "comp:BAIDeploymentStatusTag": {
+    "Degraded": "低下中",
+    "Deploying": "デプロイ中",
+    "Healthy": "正常",
+    "NotChecked": "未確認",
+    "Pending": "保留中",
+    "Ready": "準備完了",
+    "Scaling": "スケーリング中",
+    "Stopped": "停止済み",
+    "Stopping": "停止中",
+    "Terminated": "終了済み",
+    "Unhealthy": "異常"
   },
   "comp:BAIDomainSelect": {
     "SelectDomain": "ドメインを選択"
@@ -173,11 +189,20 @@
     "DomainName": "ドメイン",
     "EndpointURL": "エンドポイントURL",
     "FailedToDeleteDeployment": "デプロイメントの削除に失敗しました。",
+    "HealthySummary": "{{healthy}} / {{total}}",
+    "Model": "モデル",
     "Name": "名前",
     "OpenToPublic": "公開",
+    "Owner": "所有者",
     "PreferredDomainName": "優先ドメイン",
+    "Project": "プロジェクト",
     "ProjectID": "プロジェクトID",
+    "ReplicaSummary": "レプリカ",
+    "ReplicaSummaryTooltip": "希望する（または合計の）レプリカ数に対して実行中のレプリカ数。",
     "Replicas": "レプリカ",
+    "ResourceGroup": "リソースグループ",
+    "RevisionNumber": "リビジョン",
+    "RevisionNumberTooltip": "デプロイメントの現在のリビジョン番号。",
     "Status": "状態",
     "StrategyType": "戦略",
     "Tags": "タグ",
@@ -258,6 +283,9 @@
   },
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "リソースグループを選択"
+  },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "無制限"
   },
   "comp:BAIRouteNodes": {
     "CreatedAt": "作成日時",

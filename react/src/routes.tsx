@@ -577,16 +577,36 @@ export const mainLayoutChildRoutes: RouteObject[] = [
     },
   },
   {
+    // FR-2930 — Project-admin deployment list + detail. The detail route
+    // intentionally lives under `/project-admin-deployments/*` (rather than
+    // reusing `/deployments/:id`) to preserve breadcrumb / back-navigation
+    // context, mirroring the admin precedent established in FR-2847.
     path: '/project-admin-deployments',
     handle: { labelKey: 'webui.menu.ProjectDeployments' },
-    Component: () => {
-      useSuspendedBackendaiClient();
-      return (
-        <Suspense fallback={<Skeleton active />}>
-          <ProjectAdminDeploymentsPage />
-        </Suspense>
-      );
-    },
+    children: [
+      {
+        index: true,
+        Component: () => {
+          useSuspendedBackendaiClient();
+          return (
+            <Suspense fallback={<Skeleton active />}>
+              <ProjectAdminDeploymentsPage />
+            </Suspense>
+          );
+        },
+      },
+      {
+        path: ':deploymentId',
+        handle: { labelKey: 'webui.menu.DeploymentDetail' },
+        element: (
+          <BAIErrorBoundary>
+            <Suspense fallback={<Skeleton active />}>
+              <DeploymentDetailPage />
+            </Suspense>
+          </BAIErrorBoundary>
+        ),
+      },
+    ],
   },
   {
     path: '/environment',

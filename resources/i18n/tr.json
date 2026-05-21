@@ -984,6 +984,7 @@
     "NoPresetsAvailable": "Kullanılabilir dağıtım ön ayarı yok",
     "NoPresetsAvailableDescription": "Dağıtım için kullanılabilecek ön ayar bulunmuyor. Bunun yerine yeni bir dağıtım oluşturun.",
     "NoPresetsAvailableSwitchToCustom": "Kullanılabilir ön ayar yok. Revision'ı manuel olarak eklemek için Özel moda geçin.",
+    "NotInProject": "Bu dağıtım başka bir projeye aittir.",
     "NumberOfReplicas": "Replika Sayısı",
     "OpenCreateDeploymentModal": "Dağıtım oluşturma modalını aç",
     "OpenToPublic": "Herkese Açık",

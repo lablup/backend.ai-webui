@@ -99,8 +99,24 @@
     "DeleteNItems": "Hapus {{count}} item",
     "TypeToConfirm": "Ketik <code>{{confirmText}}</code> untuk mengonfirmasi."
   },
+  "comp:BAIDeploymentOwnerInfo": {
+    "CreatedBy": "Dibuat oleh"
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Pilih Deployment"
+  },
+  "comp:BAIDeploymentStatusTag": {
+    "Degraded": "Terdegradasi",
+    "Deploying": "Sedang Diterapkan",
+    "Healthy": "Sehat",
+    "NotChecked": "Belum Diperiksa",
+    "Pending": "Tertunda",
+    "Ready": "Siap",
+    "Scaling": "Sedang Diskalakan",
+    "Stopped": "Dihentikan",
+    "Stopping": "Sedang Dihentikan",
+    "Terminated": "Diakhiri",
+    "Unhealthy": "Tidak Sehat"
   },
   "comp:BAIDomainSelect": {
     "SelectDomain": "Pilih Domain"
@@ -173,11 +189,20 @@
     "DomainName": "Domain",
     "EndpointURL": "URL Titik Akhir",
     "FailedToDeleteDeployment": "Gagal menghapus penerapan.",
+    "HealthySummary": "{{healthy}} / {{total}}",
+    "Model": "Model",
     "Name": "Nama",
     "OpenToPublic": "Terbuka untuk Umum",
+    "Owner": "Pemilik",
     "PreferredDomainName": "Domain Pilihan",
+    "Project": "Proyek",
     "ProjectID": "ID Proyek",
+    "ReplicaSummary": "Replika",
+    "ReplicaSummaryTooltip": "Replika yang berjalan dari jumlah replika yang diinginkan (atau total).",
     "Replicas": "Replika",
+    "ResourceGroup": "Grup Sumber Daya",
+    "RevisionNumber": "Revisi",
+    "RevisionNumberTooltip": "Nomor revisi saat ini dari penerapan.",
     "Status": "Status",
     "StrategyType": "Strategi",
     "Tags": "Tag",
@@ -258,6 +283,9 @@
   },
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Pilih Grup Sumber Daya"
+  },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "Tak terbatas"
   },
   "comp:BAIRouteNodes": {
     "CreatedAt": "Dibuat pada",

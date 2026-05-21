@@ -984,6 +984,7 @@
     "NoPresetsAvailable": "Байршуулалтын урьдчилсан тохиргоо байхгүй",
     "NoPresetsAvailableDescription": "Байршуулахад ашиглах урьдчилсан тохиргоо байхгүй. Үүний оронд шинэ байршуулалт үүсгэнэ үү.",
     "NoPresetsAvailableSwitchToCustom": "Боломжтой урьдчилсан тохиргоо байхгүй. Revision-ыг гараар нэмэхийн тулд Тусгай горим руу шилжинэ үү.",
+    "NotInProject": "Энэ байршуулалт өөр төсөлд хамаарна.",
     "NumberOfReplicas": "Репликийн тоо",
     "OpenCreateDeploymentModal": "Байршуулалт үүсгэх цонхыг нээх",
     "OpenToPublic": "Нийтэд нээлттэй",

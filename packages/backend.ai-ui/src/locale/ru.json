@@ -99,8 +99,24 @@
     "DeleteNItems": "Удалить {{count}} элементов",
     "TypeToConfirm": "Введите <code>{{confirmText}}</code> для подтверждения."
   },
+  "comp:BAIDeploymentOwnerInfo": {
+    "CreatedBy": "Создано"
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Выберите развёртывание"
+  },
+  "comp:BAIDeploymentStatusTag": {
+    "Degraded": "Ухудшено",
+    "Deploying": "Развёртывается",
+    "Healthy": "Работает",
+    "NotChecked": "Не проверено",
+    "Pending": "Ожидание",
+    "Ready": "Готово",
+    "Scaling": "Масштабируется",
+    "Stopped": "Остановлено",
+    "Stopping": "Останавливается",
+    "Terminated": "Завершено",
+    "Unhealthy": "Не работает"
   },
   "comp:BAIDomainSelect": {
     "SelectDomain": "Выберите домен"
@@ -173,11 +189,20 @@
     "DomainName": "Домен",
     "EndpointURL": "URL конечной точки",
     "FailedToDeleteDeployment": "Не удалось удалить развёртывание.",
+    "HealthySummary": "{{healthy}} / {{total}}",
+    "Model": "Модель",
     "Name": "Имя",
     "OpenToPublic": "Открыто для всех",
+    "Owner": "Владелец",
     "PreferredDomainName": "Предпочтительный домен",
+    "Project": "Проект",
     "ProjectID": "ID проекта",
+    "ReplicaSummary": "Реплики",
+    "ReplicaSummaryTooltip": "Запущенные реплики относительно желаемого (или общего) количества реплик.",
     "Replicas": "Реплики",
+    "ResourceGroup": "Группа ресурсов",
+    "RevisionNumber": "Ревизия",
+    "RevisionNumberTooltip": "Текущий номер ревизии развёртывания.",
     "Status": "Статус",
     "StrategyType": "Стратегия",
     "Tags": "Теги",
@@ -258,6 +283,9 @@
   },
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Выберите группу ресурсов"
+  },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "Неограниченный"
   },
   "comp:BAIRouteNodes": {
     "CreatedAt": "Дата создания",

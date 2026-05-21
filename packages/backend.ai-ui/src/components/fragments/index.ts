@@ -147,11 +147,17 @@ export type { BAIRouteNodesProps, RouteNodeInList } from './BAIRouteNodes';
 export {
   default as BAIModelDeploymentNodes,
   availableDeploymentSorterValues,
+  parseDeploymentOrder,
 } from './BAIModelDeploymentNodes';
 export type {
   BAIModelDeploymentNodesProps,
   ModelDeploymentNodeInList,
+  DeploymentOrderValue,
 } from './BAIModelDeploymentNodes';
+export { default as BAIDeploymentTagChips } from './BAIDeploymentTagChips';
+export type { BAIDeploymentTagChipsProps } from './BAIDeploymentTagChips';
+export { default as BAIDeploymentOwnerInfo } from './BAIDeploymentOwnerInfo';
+export type { BAIDeploymentOwnerInfoProps } from './BAIDeploymentOwnerInfo';
 export { default as BAISchedulingHistoryNodes } from './BAISchedulingHistoryNodes';
 export type {
   BAISchedulingHistoryNodesProps,

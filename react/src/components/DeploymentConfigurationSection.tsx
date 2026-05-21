@@ -9,11 +9,11 @@ import type {
 } from '../__generated__/DeploymentConfigurationSection_deployment.graphql';
 import type { DeploymentRevisionDetail_revision$key } from '../__generated__/DeploymentRevisionDetail_revision.graphql';
 import { useWebUINavigate } from '../hooks';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import DeploymentRevisionDetail from './DeploymentRevisionDetail';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
 import DeploymentRevisionHistoryTab from './DeploymentRevisionHistoryTab';
 import DeploymentSettingModal from './DeploymentSettingModal';
-import DeploymentTagChips from './DeploymentTagChips';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import {
   DeleteFilled,
@@ -38,6 +38,7 @@ import {
   BAIButton,
   BAICard,
   BAIDeleteConfirmModal,
+  BAIDeploymentTagChips,
   BAIFetchKeyButton,
   BAIFlex,
   BAIId,
@@ -78,6 +79,8 @@ const DeploymentOverviewContent: React.FC<{
 }> = ({ deployment }) => {
   'use memo';
   const { t } = useTranslation();
+  const webuiNavigate = useWebUINavigate();
+  const location = useLocation();
 
   const projectName =
     deployment?.metadata.projectV2?.basicInfo?.name ??
@@ -155,8 +158,28 @@ const DeploymentOverviewContent: React.FC<{
       key: 'tags',
       label: t('deployment.Tags'),
       children: (
-        <DeploymentTagChips
+        <BAIDeploymentTagChips
           metadataFrgmt={deployment?.metadata ?? null}
+          onTagClick={(tag) => {
+            // Stay within the same deployment-list URL space the user came
+            // from (`/admin-deployments`, `/project-admin-deployments`, or
+            // the user-facing `/deployments`) so breadcrumb / back navigation
+            // remain coherent — see FR-2847 (admin) and FR-2930 (project
+            // admin) for the per-scope detail-route precedent.
+            const targetPathname = location.pathname.startsWith(
+              '/admin-deployments',
+            )
+              ? '/admin-deployments'
+              : location.pathname.startsWith('/project-admin-deployments')
+                ? '/project-admin-deployments'
+                : '/deployments';
+            webuiNavigate({
+              pathname: targetPathname,
+              search: new URLSearchParams({
+                filter: JSON.stringify({ tags: { iContains: tag } }),
+              }).toString(),
+            });
+          }}
           fallback={renderFallback()}
         />
       ),
@@ -190,6 +213,7 @@ const DeploymentConfigurationSection: React.FC<
   const { logger } = useBAILogger();
   const webuiNavigate = useWebUINavigate();
   const location = useLocation();
+  const currentProject = useCurrentProjectValue();
 
   const deployment = useFragment(
     graphql`
@@ -207,7 +231,7 @@ const DeploymentConfigurationSection: React.FC<
               name
             }
           }
-          ...DeploymentTagChips_metadata
+          ...BAIDeploymentTagChips_metadata
         }
         networkAccess {
           openToPublic
@@ -264,8 +288,19 @@ const DeploymentConfigurationSection: React.FC<
     `);
 
   const deploymentName = deployment?.metadata.name ?? '';
-  const isAdminContext = location.pathname.startsWith('/admin-deployments');
-  const listPath = isAdminContext ? '/admin-deployments' : '/deployments';
+  const listPath = location.pathname.startsWith('/admin-deployments')
+    ? '/admin-deployments'
+    : location.pathname.startsWith('/project-admin-deployments')
+      ? '/project-admin-deployments'
+      : '/deployments';
+
+  // Resolve project mismatch directly here (rather than threading the flag
+  // through props) so callers don't need to know about this guard. When the
+  // viewer's current project differs from the deployment's, the Add Revision
+  // call-to-action below is disabled — switching projects is required first.
+  const deploymentProjectId = deployment?.metadata.projectId ?? null;
+  const isProjectMismatch =
+    !!deploymentProjectId && deploymentProjectId !== currentProject.id;
 
   const handleDelete = () => {
     if (!deployment?.id) return;
@@ -379,7 +414,7 @@ const DeploymentConfigurationSection: React.FC<
             <BAIButton
               type="primary"
               icon={<PlusOutlined />}
-              disabled={isDeploymentDestroying}
+              disabled={isDeploymentDestroying || isProjectMismatch}
               // `action` (not `onClick`) wraps the state update that mounts
               // `<DeploymentAddRevisionModal>` (which suspends on its Relay
               // queries) in `startTransition`, so the page stays interactive

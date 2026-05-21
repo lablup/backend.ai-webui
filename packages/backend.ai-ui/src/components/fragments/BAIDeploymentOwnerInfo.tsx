@@ -1,18 +1,18 @@
-/**
- @license
- Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
- */
-import { DeploymentOwnerInfo_deployment$key } from '../__generated__/DeploymentOwnerInfo_deployment.graphql';
+import { BAIDeploymentOwnerInfo_deployment$key } from '../../__generated__/BAIDeploymentOwnerInfo_deployment.graphql';
 import { Tooltip, Typography } from 'antd';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
-interface DeploymentOwnerInfoProps {
-  deploymentFrgmt: DeploymentOwnerInfo_deployment$key | null | undefined;
+export interface BAIDeploymentOwnerInfoProps {
+  deploymentFrgmt: BAIDeploymentOwnerInfo_deployment$key | null | undefined;
 }
 
-const DeploymentOwnerInfo: React.FC<DeploymentOwnerInfoProps> = ({
+/**
+ * BAIDeploymentOwnerInfo — render the creator of a deployment as the
+ * email with a tooltip exposing full name / username for admin views.
+ */
+const BAIDeploymentOwnerInfo: React.FC<BAIDeploymentOwnerInfoProps> = ({
   deploymentFrgmt,
 }) => {
   'use memo';
@@ -20,7 +20,7 @@ const DeploymentOwnerInfo: React.FC<DeploymentOwnerInfoProps> = ({
 
   const deployment = useFragment(
     graphql`
-      fragment DeploymentOwnerInfo_deployment on ModelDeployment {
+      fragment BAIDeploymentOwnerInfo_deployment on ModelDeployment {
         id
         creator @since(version: "26.4.3") {
           id
@@ -44,7 +44,7 @@ const DeploymentOwnerInfo: React.FC<DeploymentOwnerInfoProps> = ({
   }
 
   const tooltipLines = [
-    t('deployment.CreatedBy'),
+    t('comp:BAIDeploymentOwnerInfo.CreatedBy'),
     fullName || username || email,
     email,
   ]
@@ -62,4 +62,4 @@ const DeploymentOwnerInfo: React.FC<DeploymentOwnerInfoProps> = ({
   );
 };
 
-export default DeploymentOwnerInfo;
+export default BAIDeploymentOwnerInfo;

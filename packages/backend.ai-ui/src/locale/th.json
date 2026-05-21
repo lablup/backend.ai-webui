@@ -99,8 +99,24 @@
     "DeleteNItems": "ลบ {{count}} รายการ",
     "TypeToConfirm": "พิมพ์ <code>{{confirmText}}</code> เพื่อยืนยัน"
   },
+  "comp:BAIDeploymentOwnerInfo": {
+    "CreatedBy": "สร้างโดย"
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "เลือกการปรับใช้"
+  },
+  "comp:BAIDeploymentStatusTag": {
+    "Degraded": "ลดลง",
+    "Deploying": "กำลังปรับใช้",
+    "Healthy": "ปกติ",
+    "NotChecked": "ยังไม่ตรวจสอบ",
+    "Pending": "รอดำเนินการ",
+    "Ready": "พร้อม",
+    "Scaling": "กำลังปรับขนาด",
+    "Stopped": "หยุดแล้ว",
+    "Stopping": "กำลังหยุด",
+    "Terminated": "สิ้นสุดแล้ว",
+    "Unhealthy": "ผิดปกติ"
   },
   "comp:BAIDomainSelect": {
     "SelectDomain": "เลือกโดเมน"
@@ -173,11 +189,20 @@
     "DomainName": "โดเมน",
     "EndpointURL": "URL ปลายทาง",
     "FailedToDeleteDeployment": "ไม่สามารถลบการปรับใช้ได้",
+    "HealthySummary": "{{healthy}} / {{total}}",
+    "Model": "โมเดล",
     "Name": "ชื่อ",
     "OpenToPublic": "เปิดสาธารณะ",
+    "Owner": "เจ้าของ",
     "PreferredDomainName": "โดเมนที่ต้องการ",
+    "Project": "โปรเจกต์",
     "ProjectID": "รหัสโปรเจกต์",
+    "ReplicaSummary": "จำนวนสำเนา",
+    "ReplicaSummaryTooltip": "จำนวนสำเนาที่กำลังทำงานเทียบกับจำนวนสำเนาที่ต้องการ (หรือทั้งหมด)",
     "Replicas": "จำนวนสำเนา",
+    "ResourceGroup": "กลุ่มทรัพยากร",
+    "RevisionNumber": "ฉบับแก้ไข",
+    "RevisionNumberTooltip": "หมายเลขฉบับแก้ไขปัจจุบันของการปรับใช้",
     "Status": "สถานะ",
     "StrategyType": "กลยุทธ์",
     "Tags": "แท็ก",
@@ -258,6 +283,9 @@
   },
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "เลือกกลุ่มทรัพยากร"
+  },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "ไม่จำกัด"
   },
   "comp:BAIRouteNodes": {
     "CreatedAt": "สร้างเมื่อ",

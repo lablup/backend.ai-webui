@@ -102,8 +102,24 @@
     "DeleteNItems": "{{count}}개 항목 삭제",
     "TypeToConfirm": "<code>{{confirmText}}</code>을(를) 입력해주세요."
   },
+  "comp:BAIDeploymentOwnerInfo": {
+    "CreatedBy": "생성자"
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "배포를 선택해주세요"
+  },
+  "comp:BAIDeploymentStatusTag": {
+    "Degraded": "저하됨",
+    "Deploying": "배포 중",
+    "Healthy": "정상",
+    "NotChecked": "미확인",
+    "Pending": "대기 중",
+    "Ready": "준비됨",
+    "Scaling": "스케일링 중",
+    "Stopped": "중지됨",
+    "Stopping": "중지 중",
+    "Terminated": "종료됨",
+    "Unhealthy": "비정상"
   },
   "comp:BAIDomainSelect": {
     "SelectDomain": "도메인 선택"
@@ -176,11 +192,20 @@
     "DomainName": "도메인",
     "EndpointURL": "엔드포인트 URL",
     "FailedToDeleteDeployment": "배포 삭제에 실패했습니다.",
+    "HealthySummary": "{{healthy}} / {{total}}",
+    "Model": "모델",
     "Name": "이름",
     "OpenToPublic": "공개",
+    "Owner": "소유자",
     "PreferredDomainName": "선호 도메인",
+    "Project": "프로젝트",
     "ProjectID": "프로젝트 ID",
+    "ReplicaSummary": "복제본 수",
+    "ReplicaSummaryTooltip": "원하는 (또는 전체) 복제본 수 대비 실행 중인 복제본 수입니다.",
     "Replicas": "복제본 수",
+    "ResourceGroup": "리소스 그룹",
+    "RevisionNumber": "리비전",
+    "RevisionNumberTooltip": "배포의 현재 리비전 번호입니다.",
     "Status": "상태",
     "StrategyType": "전략",
     "Tags": "태그",
@@ -261,6 +286,9 @@
   },
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "리소스 그룹을 선택해주세요"
+  },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "제한없음"
   },
   "comp:BAIRouteNodes": {
     "CreatedAt": "생성일",

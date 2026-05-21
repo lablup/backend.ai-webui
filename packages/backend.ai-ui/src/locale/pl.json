@@ -99,8 +99,24 @@
     "DeleteNItems": "Usuń {{count}} elementów",
     "TypeToConfirm": "Wpisz <code>{{confirmText}}</code>, aby potwierdzić."
   },
+  "comp:BAIDeploymentOwnerInfo": {
+    "CreatedBy": "Utworzono przez"
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Wybierz wdrożenie"
+  },
+  "comp:BAIDeploymentStatusTag": {
+    "Degraded": "Zdegradowany",
+    "Deploying": "Wdrażanie",
+    "Healthy": "Sprawny",
+    "NotChecked": "Niesprawdzony",
+    "Pending": "Oczekujący",
+    "Ready": "Gotowy",
+    "Scaling": "Skalowanie",
+    "Stopped": "Zatrzymany",
+    "Stopping": "Zatrzymywanie",
+    "Terminated": "Zakończony",
+    "Unhealthy": "Niesprawny"
   },
   "comp:BAIDomainSelect": {
     "SelectDomain": "Wybierz domenę"
@@ -173,11 +189,20 @@
     "DomainName": "Domena",
     "EndpointURL": "URL punktu końcowego",
     "FailedToDeleteDeployment": "Nie udało się usunąć wdrożenia.",
+    "HealthySummary": "{{healthy}} / {{total}}",
+    "Model": "Model",
     "Name": "Nazwa",
     "OpenToPublic": "Otwarty dla wszystkich",
+    "Owner": "Właściciel",
     "PreferredDomainName": "Preferowana domena",
+    "Project": "Projekt",
     "ProjectID": "ID projektu",
+    "ReplicaSummary": "Repliki",
+    "ReplicaSummaryTooltip": "Liczba uruchomionych replik w stosunku do żądanej (lub całkowitej) liczby replik.",
     "Replicas": "Repliki",
+    "ResourceGroup": "Grupa zasobów",
+    "RevisionNumber": "Rewizja",
+    "RevisionNumberTooltip": "Bieżący numer rewizji wdrożenia.",
     "Status": "Status",
     "StrategyType": "Strategia",
     "Tags": "Tagi",
@@ -258,6 +283,9 @@
   },
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Wybierz grupę zasobów"
+  },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "Nieograniczony"
   },
   "comp:BAIRouteNodes": {
     "CreatedAt": "Utworzono",

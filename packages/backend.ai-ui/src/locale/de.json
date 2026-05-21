@@ -99,8 +99,24 @@
     "DeleteNItems": "{{count}} Elemente löschen",
     "TypeToConfirm": "Geben Sie <code>{{confirmText}}</code> ein, um zu bestätigen."
   },
+  "comp:BAIDeploymentOwnerInfo": {
+    "CreatedBy": "Erstellt von"
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Deployment auswählen"
+  },
+  "comp:BAIDeploymentStatusTag": {
+    "Degraded": "Beeinträchtigt",
+    "Deploying": "Wird bereitgestellt",
+    "Healthy": "Fehlerfrei",
+    "NotChecked": "Nicht geprüft",
+    "Pending": "Ausstehend",
+    "Ready": "Bereit",
+    "Scaling": "Wird skaliert",
+    "Stopped": "Gestoppt",
+    "Stopping": "Wird gestoppt",
+    "Terminated": "Beendet",
+    "Unhealthy": "Fehlerhaft"
   },
   "comp:BAIDomainSelect": {
     "SelectDomain": "Domäne auswählen"
@@ -173,11 +189,20 @@
     "DomainName": "Domain",
     "EndpointURL": "Endpunkt URL",
     "FailedToDeleteDeployment": "Fehler beim Löschen des Deployments.",
+    "HealthySummary": "{{healthy}} / {{total}}",
+    "Model": "Modell",
     "Name": "Name",
     "OpenToPublic": "Öffentlich",
+    "Owner": "Eigentümer",
     "PreferredDomainName": "Bevorzugte Domain",
+    "Project": "Projekt",
     "ProjectID": "Projekt-ID",
+    "ReplicaSummary": "Replikate",
+    "ReplicaSummaryTooltip": "Laufende Replikate im Verhältnis zur gewünschten (oder Gesamt-)Anzahl.",
     "Replicas": "Replikate",
+    "ResourceGroup": "Ressourcengruppe",
+    "RevisionNumber": "Revision",
+    "RevisionNumberTooltip": "Die aktuelle Revisionsnummer des Deployments.",
     "Status": "Status",
     "StrategyType": "Strategie",
     "Tags": "Stichworte",
@@ -258,6 +283,9 @@
   },
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Ressourcengruppe auswählen"
+  },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "Unbegrenzt"
   },
   "comp:BAIRouteNodes": {
     "CreatedAt": "Erstellt am",

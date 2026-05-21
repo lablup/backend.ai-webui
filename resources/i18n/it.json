@@ -984,6 +984,7 @@
     "NoPresetsAvailable": "Nessun preset di distribuzione disponibile",
     "NoPresetsAvailableDescription": "Non c'è nessun preset con cui distribuire. Crea invece una nuova distribuzione.",
     "NoPresetsAvailableSwitchToCustom": "Nessun preset disponibile. Passa alla modalità Personalizzata per aggiungere una Revision manualmente.",
+    "NotInProject": "Questa distribuzione appartiene a un altro progetto.",
     "NumberOfReplicas": "Numero di repliche",
     "OpenCreateDeploymentModal": "Apri modale di creazione distribuzione",
     "OpenToPublic": "Pubblico",

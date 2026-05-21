@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<9636fce98b1212f4b8a248e7493aa7cb>>
+ * @generated SignedSource<<a63b256662ceb6f614675154340d2d4c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,6 +13,16 @@ export type DeploymentStatus = "DEPLOYING" | "PENDING" | "READY" | "SCALING" | "
 export type DeploymentStrategyType = "BLUE_GREEN" | "ROLLING" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
 export type BAIModelDeploymentNodesFragment$data = ReadonlyArray<{
+  readonly currentRevision: {
+    readonly id: string;
+    readonly modelMountConfig: {
+      readonly vfolder: {
+        readonly id: string;
+        readonly name: string | null | undefined;
+      } | null | undefined;
+    } | null | undefined;
+    readonly revisionNumber: number;
+  } | null | undefined;
   readonly currentRevisionId: string | null | undefined;
   readonly defaultDeploymentStrategy: {
     readonly type: DeploymentStrategyType;
@@ -23,9 +33,17 @@ export type BAIModelDeploymentNodesFragment$data = ReadonlyArray<{
     readonly domainName: string;
     readonly name: string;
     readonly projectId: string;
+    readonly projectV2: {
+      readonly basicInfo: {
+        readonly name: string;
+      };
+      readonly id: string;
+    } | null | undefined;
+    readonly resourceGroupName: string;
     readonly status: DeploymentStatus;
     readonly tags: ReadonlyArray<string>;
     readonly updatedAt: string;
+    readonly " $fragmentSpreads": FragmentRefs<"BAIDeploymentTagChips_metadata">;
   };
   readonly networkAccess: {
     readonly endpointUrl: string | null | undefined;
@@ -35,6 +53,13 @@ export type BAIModelDeploymentNodesFragment$data = ReadonlyArray<{
   readonly replicaState: {
     readonly desiredReplicaCount: number;
   };
+  readonly runningReplicas: {
+    readonly count: number;
+  } | null | undefined;
+  readonly totalReplicas: {
+    readonly count: number;
+  } | null | undefined;
+  readonly " $fragmentSpreads": FragmentRefs<"BAIDeploymentOwnerInfo_deployment">;
   readonly " $fragmentType": "BAIModelDeploymentNodesFragment";
 }>;
 export type BAIModelDeploymentNodesFragment$key = ReadonlyArray<{
@@ -42,7 +67,31 @@ export type BAIModelDeploymentNodesFragment$key = ReadonlyArray<{
   readonly " $fragmentSpreads": FragmentRefs<"BAIModelDeploymentNodesFragment">;
 }>;
 
-const node: ReaderFragment = {
+const node: ReaderFragment = (function(){
+var v0 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+},
+v1 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "name",
+  "storageKey": null
+},
+v2 = [
+  {
+    "alias": null,
+    "args": null,
+    "kind": "ScalarField",
+    "name": "count",
+    "storageKey": null
+  }
+];
+return {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": {
@@ -50,13 +99,7 @@ const node: ReaderFragment = {
   },
   "name": "BAIModelDeploymentNodesFragment",
   "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "id",
-      "storageKey": null
-    },
+    (v0/*: any*/),
     {
       "alias": null,
       "args": null,
@@ -86,13 +129,7 @@ const node: ReaderFragment = {
           "name": "domainName",
           "storageKey": null
         },
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "name",
-          "storageKey": null
-        },
+        (v1/*: any*/),
         {
           "alias": null,
           "args": null,
@@ -120,6 +157,42 @@ const node: ReaderFragment = {
           "kind": "ScalarField",
           "name": "updatedAt",
           "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "resourceGroupName",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "ProjectV2",
+          "kind": "LinkedField",
+          "name": "projectV2",
+          "plural": false,
+          "selections": [
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "ProjectBasicInfo",
+              "kind": "LinkedField",
+              "name": "basicInfo",
+              "plural": false,
+              "selections": [
+                (v1/*: any*/)
+              ],
+              "storageKey": null
+            },
+            (v0/*: any*/)
+          ],
+          "storageKey": null
+        },
+        {
+          "args": null,
+          "kind": "FragmentSpread",
+          "name": "BAIDeploymentTagChips_metadata"
         }
       ],
       "storageKey": null
@@ -191,12 +264,91 @@ const node: ReaderFragment = {
         }
       ],
       "storageKey": null
+    },
+    {
+      "alias": "totalReplicas",
+      "args": null,
+      "concreteType": "ModelReplicaConnection",
+      "kind": "LinkedField",
+      "name": "replicas",
+      "plural": false,
+      "selections": (v2/*: any*/),
+      "storageKey": null
+    },
+    {
+      "alias": "runningReplicas",
+      "args": [
+        {
+          "kind": "Literal",
+          "name": "filter",
+          "value": {
+            "status": {
+              "equals": "RUNNING"
+            }
+          }
+        }
+      ],
+      "concreteType": "ModelReplicaConnection",
+      "kind": "LinkedField",
+      "name": "replicas",
+      "plural": false,
+      "selections": (v2/*: any*/),
+      "storageKey": "replicas(filter:{\"status\":{\"equals\":\"RUNNING\"}})"
+    },
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "ModelRevision",
+      "kind": "LinkedField",
+      "name": "currentRevision",
+      "plural": false,
+      "selections": [
+        (v0/*: any*/),
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "revisionNumber",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "ModelMountConfig",
+          "kind": "LinkedField",
+          "name": "modelMountConfig",
+          "plural": false,
+          "selections": [
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "VirtualFolderNode",
+              "kind": "LinkedField",
+              "name": "vfolder",
+              "plural": false,
+              "selections": [
+                (v0/*: any*/),
+                (v1/*: any*/)
+              ],
+              "storageKey": null
+            }
+          ],
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    },
+    {
+      "args": null,
+      "kind": "FragmentSpread",
+      "name": "BAIDeploymentOwnerInfo_deployment"
     }
   ],
   "type": "ModelDeployment",
   "abstractKey": null
 };
+})();
 
-(node as any).hash = "69b4f093cbd02868f78b114c388526eb";
+(node as any).hash = "d7e2e42d651a342fde7c1a32802c0ff1";
 
 export default node;

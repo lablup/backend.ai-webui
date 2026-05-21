@@ -99,8 +99,24 @@
     "DeleteNItems": "Poista {{count}} kohdetta",
     "TypeToConfirm": "Kirjoita <code>{{confirmText}}</code> vahvistaaksesi."
   },
+  "comp:BAIDeploymentOwnerInfo": {
+    "CreatedBy": "Luonut"
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Valitse käyttöönotto"
+  },
+  "comp:BAIDeploymentStatusTag": {
+    "Degraded": "Heikentynyt",
+    "Deploying": "Käyttöönottaminen",
+    "Healthy": "Terve",
+    "NotChecked": "Ei tarkistettu",
+    "Pending": "Odottaa",
+    "Ready": "Valmis",
+    "Scaling": "Skaalaaminen",
+    "Stopped": "Pysäytetty",
+    "Stopping": "Pysäyttäminen",
+    "Terminated": "Lopetettu",
+    "Unhealthy": "Epäterve"
   },
   "comp:BAIDomainSelect": {
     "SelectDomain": "Valitse toimialue"
@@ -173,11 +189,20 @@
     "DomainName": "Toimialue",
     "EndpointURL": "Päätepisteen URL",
     "FailedToDeleteDeployment": "Käyttöönoton poistaminen epäonnistui.",
+    "HealthySummary": "{{healthy}} / {{total}}",
+    "Model": "Malli",
     "Name": "Nimi",
     "OpenToPublic": "Avoin julkisesti",
+    "Owner": "Omistaja",
     "PreferredDomainName": "Ensisijainen toimialue",
+    "Project": "Projekti",
     "ProjectID": "Projektin tunnus",
+    "ReplicaSummary": "Kopioita",
+    "ReplicaSummaryTooltip": "Käynnissä olevat kopiot suhteessa haluttuun (tai kokonais-) kopioiden määrään.",
     "Replicas": "Kopioita",
+    "ResourceGroup": "Resurssiryhmä",
+    "RevisionNumber": "Revisio",
+    "RevisionNumberTooltip": "Käyttöönoton nykyinen revisionumero.",
     "Status": "Tila",
     "StrategyType": "Strategia",
     "Tags": "Tunnisteet",
@@ -258,6 +283,9 @@
   },
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Valitse resurssiryhmä"
+  },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "Rajoittamaton"
   },
   "comp:BAIRouteNodes": {
     "CreatedAt": "Luotu",

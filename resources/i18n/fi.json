@@ -984,6 +984,7 @@
     "NoPresetsAvailable": "Ei käyttöönottomalleja saatavilla",
     "NoPresetsAvailableDescription": "Käyttöönottoon ei ole saatavilla mallia. Luo uusi käyttöönotto sen sijaan.",
     "NoPresetsAvailableSwitchToCustom": "Malleja ei ole saatavilla. Vaihda mukautettuun tilaan lisätäksesi Revision manuaalisesti.",
+    "NotInProject": "Tämä käyttöönotto kuuluu toiseen projektiin.",
     "NumberOfReplicas": "Replikoiden määrä",
     "OpenCreateDeploymentModal": "Avaa käyttöönoton luontimodaali",
     "OpenToPublic": "Julkinen",

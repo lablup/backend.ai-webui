@@ -99,8 +99,24 @@
     "DeleteNItems": "刪除 {{count}} 個項目",
     "TypeToConfirm": "輸入 <code>{{confirmText}}</code> 以確認。"
   },
+  "comp:BAIDeploymentOwnerInfo": {
+    "CreatedBy": "建立者"
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "選擇部署"
+  },
+  "comp:BAIDeploymentStatusTag": {
+    "Degraded": "已降級",
+    "Deploying": "部署中",
+    "Healthy": "正常",
+    "NotChecked": "未檢查",
+    "Pending": "等待中",
+    "Ready": "就緒",
+    "Scaling": "擴縮容中",
+    "Stopped": "已停止",
+    "Stopping": "停止中",
+    "Terminated": "已終止",
+    "Unhealthy": "異常"
   },
   "comp:BAIDomainSelect": {
     "SelectDomain": "選擇網域"
@@ -173,11 +189,20 @@
     "DomainName": "網域",
     "EndpointURL": "端點URL",
     "FailedToDeleteDeployment": "刪除部署失敗。",
+    "HealthySummary": "{{healthy}} / {{total}}",
+    "Model": "模型",
     "Name": "名稱",
     "OpenToPublic": "公開",
+    "Owner": "擁有者",
     "PreferredDomainName": "偏好網域",
+    "Project": "專案",
     "ProjectID": "專案ID",
+    "ReplicaSummary": "副本數",
+    "ReplicaSummaryTooltip": "正在執行的副本數與所需（或總）副本數之比。",
     "Replicas": "副本數",
+    "ResourceGroup": "資源群組",
+    "RevisionNumber": "修訂版本",
+    "RevisionNumberTooltip": "部署的目前修訂版本號碼。",
     "Status": "狀態",
     "StrategyType": "策略",
     "Tags": "標籤",
@@ -258,6 +283,9 @@
   },
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "選擇資源群組"
+  },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "無限制"
   },
   "comp:BAIRouteNodes": {
     "CreatedAt": "建立時間",

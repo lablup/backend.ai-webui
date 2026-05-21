@@ -99,8 +99,24 @@
     "DeleteNItems": "Padam {{count}} item",
     "TypeToConfirm": "Taip <code>{{confirmText}}</code> untuk mengesahkan."
   },
+  "comp:BAIDeploymentOwnerInfo": {
+    "CreatedBy": "Dibuat oleh"
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Pilih Penggunaan"
+  },
+  "comp:BAIDeploymentStatusTag": {
+    "Degraded": "Merosot",
+    "Deploying": "Sedang menggunakan",
+    "Healthy": "Sihat",
+    "NotChecked": "Tidak Diperiksa",
+    "Pending": "Menunggu",
+    "Ready": "Sedia",
+    "Scaling": "Menskalakan",
+    "Stopped": "Dihentikan",
+    "Stopping": "Sedang berhenti",
+    "Terminated": "Ditamatkan",
+    "Unhealthy": "Tidak sihat"
   },
   "comp:BAIDomainSelect": {
     "SelectDomain": "Pilih Domain"
@@ -173,11 +189,20 @@
     "DomainName": "Domain",
     "EndpointURL": "URL Titik Akhir",
     "FailedToDeleteDeployment": "Gagal memadamkan penggunaan.",
+    "HealthySummary": "{{healthy}} / {{total}}",
+    "Model": "Model",
     "Name": "Nama",
     "OpenToPublic": "Terbuka untuk Awam",
+    "Owner": "Pemilik",
     "PreferredDomainName": "Domain Pilihan",
+    "Project": "Projek",
     "ProjectID": "ID Projek",
+    "ReplicaSummary": "Replika",
+    "ReplicaSummaryTooltip": "Bilangan replika yang berjalan berbanding bilangan replika yang dikehendaki (atau jumlah).",
     "Replicas": "Replika",
+    "ResourceGroup": "Kumpulan Sumber",
+    "RevisionNumber": "Semakan",
+    "RevisionNumberTooltip": "Nombor semakan semasa penggunaan.",
     "Status": "Status",
     "StrategyType": "Strategi",
     "Tags": "Tag",
@@ -258,6 +283,9 @@
   },
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Pilih Kumpulan Sumber"
+  },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "Tidak terhad"
   },
   "comp:BAIRouteNodes": {
     "CreatedAt": "Dicipta pada",

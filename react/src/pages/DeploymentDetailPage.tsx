@@ -9,17 +9,18 @@ import DeploymentAddRevisionModal from '../components/DeploymentAddRevisionModal
 import DeploymentAutoScalingTab from '../components/DeploymentAutoScalingTab';
 import DeploymentConfigurationSection from '../components/DeploymentConfigurationSection';
 import DeploymentReplicasTab from '../components/DeploymentReplicasTab';
-import DeploymentStatusTag, {
-  DeploymentStatus,
-} from '../components/DeploymentStatusTag';
+import SwitchToProjectButton from '../components/SwitchToProjectButton';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { PlusOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import { Alert, Button, Skeleton, Tooltip, Typography, theme } from 'antd';
 import {
   BAIButton,
   BAICard,
+  BAIDeploymentStatusTag,
+  BAIDeploymentStatus,
   BAIFlex,
   BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
@@ -39,6 +40,7 @@ const DeploymentDetailPage: React.FC = () => {
   const [currentUser] = useCurrentUserInfo();
   const webuiNavigate = useWebUINavigate();
   const baiClient = useSuspendedBackendaiClient();
+  const currentProject = useCurrentProjectValue();
   const isChatBlocked = !!baiClient?._config?.blockList?.includes('chat');
 
   const { deploymentId: deploymentIdParam } = useParams<{
@@ -63,6 +65,7 @@ const DeploymentDetailPage: React.FC = () => {
           metadata {
             name
             status
+            projectId
           }
           networkAccess {
             openToPublic
@@ -100,12 +103,19 @@ const DeploymentDetailPage: React.FC = () => {
   }
 
   const deploymentName = deployment.metadata.name;
-  const deploymentStatus = deployment.metadata.status as DeploymentStatus;
+  const deploymentStatus = deployment.metadata.status as BAIDeploymentStatus;
   const isDeploymentDestroying =
     deploymentStatus === 'STOPPING' ||
     deploymentStatus === 'STOPPED' ||
     deploymentStatus === 'TERMINATED';
   const isDeploymentReady = deploymentStatus === 'READY';
+  // The deployment belongs to a different project than the currently
+  // selected one — surface a project-mismatch alert (with a switch shortcut)
+  // and suppress the "add revision" call-to-action below, which the user
+  // cannot act on without switching projects anyway.
+  const deploymentProjectId = deployment.metadata.projectId ?? null;
+  const isProjectMismatch =
+    !!deploymentProjectId && deploymentProjectId !== currentProject.id;
   // Hide the "no revision" warning while a first revision is being applied —
   // the rollout is in flight, the user already knows about it from the
   // "Applying revision …" Alert in the Configuration section, and the
@@ -148,8 +158,16 @@ const DeploymentDetailPage: React.FC = () => {
         <Typography.Title level={3} style={{ margin: 0 }}>
           {deploymentName}
         </Typography.Title>
-        <DeploymentStatusTag status={deploymentStatus} />
+        <BAIDeploymentStatusTag status={deploymentStatus} />
       </BAIFlex>
+      {isProjectMismatch && deploymentProjectId && (
+        <Alert
+          type="warning"
+          showIcon
+          title={t('deployment.NotInProject')}
+          action={<SwitchToProjectButton projectId={deploymentProjectId} />}
+        />
+      )}
       {isDeploymentReady && !hasNoRevision && (
         <Alert
           type="success"
@@ -175,7 +193,7 @@ const DeploymentDetailPage: React.FC = () => {
           }
         />
       )}
-      {hasNoRevision && (
+      {hasNoRevision && !isProjectMismatch && (
         <Alert
           type="warning"
           showIcon

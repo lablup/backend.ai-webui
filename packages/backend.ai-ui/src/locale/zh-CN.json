@@ -99,8 +99,24 @@
     "DeleteNItems": "删除 {{count}} 个项目",
     "TypeToConfirm": "输入 <code>{{confirmText}}</code> 以确认。"
   },
+  "comp:BAIDeploymentOwnerInfo": {
+    "CreatedBy": "创建者"
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "选择部署"
+  },
+  "comp:BAIDeploymentStatusTag": {
+    "Degraded": "已降级",
+    "Deploying": "部署中",
+    "Healthy": "正常",
+    "NotChecked": "未检查",
+    "Pending": "等待中",
+    "Ready": "就绪",
+    "Scaling": "扩缩容中",
+    "Stopped": "已停止",
+    "Stopping": "停止中",
+    "Terminated": "已终止",
+    "Unhealthy": "异常"
   },
   "comp:BAIDomainSelect": {
     "SelectDomain": "选择域"
@@ -173,11 +189,20 @@
     "DomainName": "域",
     "EndpointURL": "端点URL",
     "FailedToDeleteDeployment": "删除部署失败。",
+    "HealthySummary": "{{healthy}} / {{total}}",
+    "Model": "模型",
     "Name": "名称",
     "OpenToPublic": "公开",
+    "Owner": "所有者",
     "PreferredDomainName": "首选域",
+    "Project": "项目",
     "ProjectID": "项目ID",
+    "ReplicaSummary": "副本数",
+    "ReplicaSummaryTooltip": "正在运行的副本数与所需（或总）副本数之比。",
     "Replicas": "副本数",
+    "ResourceGroup": "资源组",
+    "RevisionNumber": "修订版本",
+    "RevisionNumberTooltip": "部署的当前修订版本号。",
     "Status": "状态",
     "StrategyType": "策略",
     "Tags": "标签",
@@ -258,6 +283,9 @@
   },
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "选择资源组"
+  },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "无限"
   },
   "comp:BAIRouteNodes": {
     "CreatedAt": "创建时间",

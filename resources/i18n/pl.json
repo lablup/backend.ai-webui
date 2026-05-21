@@ -984,6 +984,7 @@
     "NoPresetsAvailable": "Brak dostępnych presetów wdrożenia",
     "NoPresetsAvailableDescription": "Nie ma presetu do wdrożenia. Zamiast tego utwórz nowe wdrożenie.",
     "NoPresetsAvailableSwitchToCustom": "Brak dostępnych presetów. Przełącz się na tryb niestandardowy, aby dodać Revision ręcznie.",
+    "NotInProject": "To wdrożenie należy do innego projektu.",
     "NumberOfReplicas": "Liczba replik",
     "OpenCreateDeploymentModal": "Otwórz modal tworzenia wdrożenia",
     "OpenToPublic": "Publiczne",

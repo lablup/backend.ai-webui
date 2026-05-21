@@ -99,8 +99,24 @@
     "DeleteNItems": "Excluir {{count}} itens",
     "TypeToConfirm": "Digite <code>{{confirmText}}</code> para confirmar."
   },
+  "comp:BAIDeploymentOwnerInfo": {
+    "CreatedBy": "Criado por"
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Selecionar implantação"
+  },
+  "comp:BAIDeploymentStatusTag": {
+    "Degraded": "Degradado",
+    "Deploying": "Implantando",
+    "Healthy": "Saudável",
+    "NotChecked": "Não verificado",
+    "Pending": "Pendente",
+    "Ready": "Pronto",
+    "Scaling": "Escalando",
+    "Stopped": "Parado",
+    "Stopping": "Parando",
+    "Terminated": "Encerrado",
+    "Unhealthy": "Não saudável"
   },
   "comp:BAIDomainSelect": {
     "SelectDomain": "Selecionar Domínio"
@@ -172,11 +188,20 @@
     "DomainName": "Domínio",
     "EndpointURL": "URL do ponto final",
     "FailedToDeleteDeployment": "Falha ao excluir o deployment.",
+    "HealthySummary": "{{healthy}} / {{total}}",
+    "Model": "Modelo",
     "Name": "Nome",
     "OpenToPublic": "Aberto ao público",
+    "Owner": "Proprietário",
     "PreferredDomainName": "Domínio preferido",
+    "Project": "Projeto",
     "ProjectID": "ID do projeto",
+    "ReplicaSummary": "Réplicas",
+    "ReplicaSummaryTooltip": "Réplicas em execução em relação ao número desejado (ou total) de réplicas.",
     "Replicas": "Réplicas",
+    "ResourceGroup": "Grupo de Recursos",
+    "RevisionNumber": "Revisão",
+    "RevisionNumberTooltip": "O número de revisão atual do deployment.",
     "Status": "Status",
     "StrategyType": "Estratégia",
     "Tags": "Tag",
@@ -257,6 +282,9 @@
   },
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Selecionar grupo de recursos"
+  },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "Ilimitado"
   },
   "comp:BAIRouteNodes": {
     "CreatedAt": "Criado em",

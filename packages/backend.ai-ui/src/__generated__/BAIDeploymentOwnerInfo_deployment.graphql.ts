@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<bf4a1d60766939ff5203e19c0e70adec>>
+ * @generated SignedSource<<7d5eb20b77bed16fb654fd24245e4b33>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,7 +10,7 @@
 
 import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
-export type DeploymentOwnerInfo_deployment$data = {
+export type BAIDeploymentOwnerInfo_deployment$data = {
   readonly creator: {
     readonly basicInfo: {
       readonly email: string;
@@ -20,11 +20,11 @@ export type DeploymentOwnerInfo_deployment$data = {
     readonly id: string;
   } | null | undefined;
   readonly id: string;
-  readonly " $fragmentType": "DeploymentOwnerInfo_deployment";
+  readonly " $fragmentType": "BAIDeploymentOwnerInfo_deployment";
 };
-export type DeploymentOwnerInfo_deployment$key = {
-  readonly " $data"?: DeploymentOwnerInfo_deployment$data;
-  readonly " $fragmentSpreads": FragmentRefs<"DeploymentOwnerInfo_deployment">;
+export type BAIDeploymentOwnerInfo_deployment$key = {
+  readonly " $data"?: BAIDeploymentOwnerInfo_deployment$data;
+  readonly " $fragmentSpreads": FragmentRefs<"BAIDeploymentOwnerInfo_deployment">;
 };
 
 const node: ReaderFragment = (function(){
@@ -39,7 +39,7 @@ return {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
-  "name": "DeploymentOwnerInfo_deployment",
+  "name": "BAIDeploymentOwnerInfo_deployment",
   "selections": [
     (v0/*: any*/),
     {
@@ -92,6 +92,6 @@ return {
 };
 })();
 
-(node as any).hash = "e25df89cdc75a297d45202942245c84f";
+(node as any).hash = "2136bedc1441155605215b125c4ff041";
 
 export default node;

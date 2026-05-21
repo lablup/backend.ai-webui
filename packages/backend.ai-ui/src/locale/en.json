@@ -102,8 +102,24 @@
     "DeleteNItems": "Delete {{count}} items",
     "TypeToConfirm": "Type <code>{{confirmText}}</code> to confirm."
   },
+  "comp:BAIDeploymentOwnerInfo": {
+    "CreatedBy": "Created by"
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Select Deployment"
+  },
+  "comp:BAIDeploymentStatusTag": {
+    "Degraded": "Degraded",
+    "Deploying": "Deploying",
+    "Healthy": "Healthy",
+    "NotChecked": "Not Checked",
+    "Pending": "Pending",
+    "Ready": "Ready",
+    "Scaling": "Scaling",
+    "Stopped": "Stopped",
+    "Stopping": "Stopping",
+    "Terminated": "Terminated",
+    "Unhealthy": "Unhealthy"
   },
   "comp:BAIDomainSelect": {
     "SelectDomain": "Select Domain"
@@ -176,11 +192,20 @@
     "DomainName": "Domain",
     "EndpointURL": "Endpoint URL",
     "FailedToDeleteDeployment": "Failed to delete deployment.",
+    "HealthySummary": "{{healthy}} / {{total}}",
+    "Model": "Model",
     "Name": "Name",
     "OpenToPublic": "Open to Public",
+    "Owner": "Owner",
     "PreferredDomainName": "Preferred Domain",
+    "Project": "Project",
     "ProjectID": "Project ID",
+    "ReplicaSummary": "Replicas",
+    "ReplicaSummaryTooltip": "Running replicas over the desired (or total) replica count.",
     "Replicas": "Replicas",
+    "ResourceGroup": "Resource Group",
+    "RevisionNumber": "Revision",
+    "RevisionNumberTooltip": "The current revision number of the deployment.",
     "Status": "Status",
     "StrategyType": "Strategy",
     "Tags": "Tags",

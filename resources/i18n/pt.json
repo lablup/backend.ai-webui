@@ -984,6 +984,7 @@
     "NoPresetsAvailable": "Nenhum preset de implementação disponível",
     "NoPresetsAvailableDescription": "Não existe nenhum preset para implementar. Crie uma nova implementação.",
     "NoPresetsAvailableSwitchToCustom": "Nenhum preset disponível. Mude para o modo Personalizado para adicionar uma Revision manualmente.",
+    "NotInProject": "Esta implantação pertence a outro projeto.",
     "NumberOfReplicas": "Número de réplicas",
     "OpenCreateDeploymentModal": "Abrir modal de criação de implementação",
     "OpenToPublic": "Público",

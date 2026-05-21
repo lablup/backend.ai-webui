@@ -99,8 +99,24 @@
     "DeleteNItems": "Xóa {{count}} mục",
     "TypeToConfirm": "Nhập <code>{{confirmText}}</code> để xác nhận."
   },
+  "comp:BAIDeploymentOwnerInfo": {
+    "CreatedBy": "Được tạo bởi"
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Chọn triển khai"
+  },
+  "comp:BAIDeploymentStatusTag": {
+    "Degraded": "Bị suy giảm",
+    "Deploying": "Đang triển khai",
+    "Healthy": "Bình thường",
+    "NotChecked": "Chưa kiểm tra",
+    "Pending": "Đang chờ",
+    "Ready": "Sẵn sàng",
+    "Scaling": "Đang mở rộng",
+    "Stopped": "Đã dừng",
+    "Stopping": "Đang dừng",
+    "Terminated": "Đã kết thúc",
+    "Unhealthy": "Không bình thường"
   },
   "comp:BAIDomainSelect": {
     "SelectDomain": "Chọn miền"
@@ -173,11 +189,20 @@
     "DomainName": "Tên miền",
     "EndpointURL": "URL điểm cuối",
     "FailedToDeleteDeployment": "Không thể xóa triển khai.",
+    "HealthySummary": "{{healthy}} / {{total}}",
+    "Model": "Mô hình",
     "Name": "Tên",
     "OpenToPublic": "Mở cho công khai",
+    "Owner": "Chủ sở hữu",
     "PreferredDomainName": "Tên miền ưa thích",
+    "Project": "Dự án",
     "ProjectID": "ID dự án",
+    "ReplicaSummary": "Số bản sao",
+    "ReplicaSummaryTooltip": "Số bản sao đang chạy so với số bản sao mong muốn (hoặc tổng số).",
     "Replicas": "Số bản sao",
+    "ResourceGroup": "Nhóm tài nguyên",
+    "RevisionNumber": "Phiên bản",
+    "RevisionNumberTooltip": "Số phiên bản hiện tại của triển khai.",
     "Status": "Trạng thái",
     "StrategyType": "Chiến lược",
     "Tags": "Thẻ",
@@ -258,6 +283,9 @@
   },
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Chọn nhóm tài nguyên"
+  },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "Không giới hạn"
   },
   "comp:BAIRouteNodes": {
     "CreatedAt": "Ngày tạo",

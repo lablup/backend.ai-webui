@@ -99,8 +99,24 @@
     "DeleteNItems": "{{count}} зүйл устгах",
     "TypeToConfirm": "Баталгаажуулахын тулд <code>{{confirmText}}</code> гэж бичнэ үү."
   },
+  "comp:BAIDeploymentOwnerInfo": {
+    "CreatedBy": "Үүсгэсэн"
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Байршуулалт сонгох"
+  },
+  "comp:BAIDeploymentStatusTag": {
+    "Degraded": "Муудсан",
+    "Deploying": "Байршуулж байна",
+    "Healthy": "Эрүүл",
+    "NotChecked": "Шалгаагүй",
+    "Pending": "Хүлээгдэж байна",
+    "Ready": "Бэлэн",
+    "Scaling": "Хэмжээ өөрчлөгдөж байна",
+    "Stopped": "Зогссон",
+    "Stopping": "Зогсож байна",
+    "Terminated": "Дуусгавар болсон",
+    "Unhealthy": "Эрүүл бус"
   },
   "comp:BAIDomainSelect": {
     "SelectDomain": "Домен сонгох"
@@ -173,11 +189,20 @@
     "DomainName": "Домайн",
     "EndpointURL": "Төгсгөлийн цэгийн URL",
     "FailedToDeleteDeployment": "Байршуулалт устгаж чадсангүй.",
+    "HealthySummary": "{{healthy}} / {{total}}",
+    "Model": "Загвар",
     "Name": "Нэр",
     "OpenToPublic": "Нийтэд нээлттэй",
+    "Owner": "Эзэн",
     "PreferredDomainName": "Давуу домайн",
+    "Project": "Төсөл",
     "ProjectID": "Төслийн ID",
+    "ReplicaSummary": "Хуулбар",
+    "ReplicaSummaryTooltip": "Гүйцэтгэж байгаа хуулбарын тоо хүссэн (эсвэл нийт) хуулбарын тоотой харьцуулсан.",
     "Replicas": "Хуулбар",
+    "ResourceGroup": "Нөөцийн бүлэг",
+    "RevisionNumber": "Засвар",
+    "RevisionNumberTooltip": "Байршуулалтын одоогийн засварын дугаар.",
     "Status": "Төлөв",
     "StrategyType": "Стратеги",
     "Tags": "Шошго",
@@ -258,6 +283,9 @@
   },
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Ресурсын бүлэг сонгох"
+  },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "Хязгааргүй"
   },
   "comp:BAIRouteNodes": {
     "CreatedAt": "Үүсгэсэн огноо",
