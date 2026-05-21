@@ -3,7 +3,9 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { DeploymentDetailPageQuery } from '../__generated__/DeploymentDetailPageQuery.graphql';
-import BAIErrorBoundary from '../components/BAIErrorBoundary';
+import BAIErrorBoundary, {
+  ErrorWithGraphQL,
+} from '../components/BAIErrorBoundary';
 import DeploymentAccessTokensTab from '../components/DeploymentAccessTokensTab';
 import DeploymentAddRevisionModal from '../components/DeploymentAddRevisionModal';
 import DeploymentAutoScalingTab from '../components/DeploymentAutoScalingTab';
@@ -13,9 +15,21 @@ import SwitchToProjectButton from '../components/SwitchToProjectButton';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import {
+  getPathFromMenuKey,
+  useWebUIMenuItems,
+} from '../hooks/useWebUIMenuItems';
 import { PlusOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { Alert, Button, Skeleton, Tooltip, Typography, theme } from 'antd';
+import {
+  Alert,
+  Button,
+  Result,
+  Skeleton,
+  Tooltip,
+  Typography,
+  theme,
+} from 'antd';
 import {
   BAIButton,
   BAICard,
@@ -27,6 +41,7 @@ import {
   toGlobalId,
   useFetchKey,
 } from 'backend.ai-ui';
+import type { GraphQLFormattedError } from 'graphql';
 import { BotMessageSquareIcon } from 'lucide-react';
 import React, { Suspense, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -57,50 +72,85 @@ const DeploymentDetailPage: React.FC = () => {
     { setLeft: closeAddRevision, setRight: openAddRevision },
   ] = useToggle(false);
 
-  const { deployment } = useLazyLoadQuery<DeploymentDetailPageQuery>(
-    graphql`
-      query DeploymentDetailPageQuery($deploymentId: ID!) {
-        deployment(id: $deploymentId) {
-          id
-          metadata {
-            name
-            status
-            projectId
-          }
-          networkAccess {
-            openToPublic
-          }
-          currentRevision @since(version: "26.4.3") {
+  const { deployment: deploymentResult } =
+    useLazyLoadQuery<DeploymentDetailPageQuery>(
+      graphql`
+        query DeploymentDetailPageQuery($deploymentId: ID!) {
+          # @catch turns a partial-success response (e.g. RBAC denial that
+          # comes back as { deployment: null, errors: [...] }) into a
+          # Result<T, unknown> we can inspect inline: permission errors
+          # render the "deleted or no permission" UI below; other errors
+          # bubble up to the surrounding BAIErrorBoundary by re-throwing.
+          deployment(id: $deploymentId) @catch {
             id
-          }
-          deployingRevision @since(version: "26.4.3") {
-            id
-          }
-          creator @since(version: "26.4.3") {
-            basicInfo {
-              email
+            metadata {
+              name
+              status
+              projectId
             }
+            networkAccess {
+              openToPublic
+            }
+            currentRevision @since(version: "26.4.3") {
+              id
+            }
+            deployingRevision @since(version: "26.4.3") {
+              id
+            }
+            creator @since(version: "26.4.3") {
+              basicInfo {
+                email
+              }
+            }
+            ...DeploymentConfigurationSection_deployment
+            ...DeploymentReplicasTab_deployment
+            ...DeploymentAccessTokensTab_deployment
+            ...DeploymentAutoScalingTab_deployment
           }
-          ...DeploymentConfigurationSection_deployment
-          ...DeploymentReplicasTab_deployment
-          ...DeploymentAccessTokensTab_deployment
-          ...DeploymentAutoScalingTab_deployment
         }
-      }
-    `,
-    {
-      deploymentId: deploymentGlobalId,
-    },
-    {
-      fetchKey,
-      fetchPolicy:
-        fetchKey === INITIAL_FETCH_KEY ? 'store-and-network' : 'network-only',
-    },
-  );
+      `,
+      {
+        deploymentId: deploymentGlobalId,
+      },
+      {
+        fetchKey,
+        fetchPolicy:
+          fetchKey === INITIAL_FETCH_KEY ? 'store-and-network' : 'network-only',
+      },
+    );
 
-  if (!deployment) {
-    return <Skeleton active />;
+  if (!deploymentResult.ok) {
+    // The manager returns a partial-success GraphQL response for RBAC
+    // denials ("Insufficient permission ... lacks permission read on ...")
+    // and for deleted deployments. Treat both as "user can't see this
+    // deployment" and render the inaccessible UI inline. Anything else
+    // (schema errors, network-mapped server errors surfacing as field
+    // errors, etc.) is a real bug — re-throw so the outer BAIErrorBoundary
+    // gets it.
+    const errors =
+      deploymentResult.errors as ReadonlyArray<GraphQLFormattedError>;
+    const isInaccessible = errors.some((error) =>
+      /Insufficient permission/i.test(error?.message ?? ''),
+    );
+    if (isInaccessible) {
+      return <DeploymentInaccessibleResult />;
+    }
+    const messages = errors
+      .map((error) => error?.message ?? '')
+      .filter(Boolean);
+    const error: ErrorWithGraphQL = new Error(
+      messages.join('; ') || 'DeploymentDetailPageQuery failed.',
+    );
+    error.errors = errors;
+    throw error;
   }
+
+  // `value` is typed as `T | null | undefined` because `@catch` does not
+  // require non-null. The manager always returns either a populated object
+  // or an error, so the non-null assertion is safe — and if the invariant
+  // ever breaks, the resulting null-access TypeError propagates to the
+  // outer BAIErrorBoundary anyway.
+  const deployment = deploymentResult.value!;
 
   const deploymentName = deployment.metadata.name;
   const deploymentStatus = deployment.metadata.status as BAIDeploymentStatus;
@@ -283,6 +333,45 @@ const DeploymentDetailPage: React.FC = () => {
           />
         </BAIUnmountAfterClose>
       </Suspense>
+    </BAIFlex>
+  );
+};
+
+/**
+ * Renders the warning Result shown when the deployment is deleted or the
+ * current user lacks permission to read it. Mirrors `BAIErrorBoundary`'s
+ * fallback layout (centered warning Result + primary action button) so
+ * the visual treatment is consistent across error states.
+ */
+const DeploymentInaccessibleResult: React.FC = () => {
+  'use memo';
+  const { t } = useTranslation();
+  const webuiNavigate = useWebUINavigate();
+  const { firstAvailableMenuItem } = useWebUIMenuItems();
+  // Mirror Page401 — route to the user's first available menu item so the
+  // button takes them somewhere actionable instead of bouncing through the
+  // index redirect.
+  const defaultPagePath = firstAvailableMenuItem
+    ? getPathFromMenuKey(firstAvailableMenuItem.key)
+    : '/start';
+  const defaultPageTitle =
+    firstAvailableMenuItem?.labelText ?? t('webui.menu.FirstPageNameAlias');
+  return (
+    <BAIFlex style={{ margin: 'auto' }} justify="center" align="center">
+      <Result
+        status="warning"
+        title={t('deployment.NotAccessibleOrDeleted')}
+        extra={
+          <Button
+            type="primary"
+            onClick={() => {
+              webuiNavigate(defaultPagePath);
+            }}
+          >
+            {t('button.GoBackToStartPage', { title: defaultPageTitle })}
+          </Button>
+        }
+      />
     </BAIFlex>
   );
 };

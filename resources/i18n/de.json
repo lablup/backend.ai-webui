@@ -984,6 +984,7 @@
     "NoPresetsAvailable": "Kein Bereitstellungs-Preset verfügbar",
     "NoPresetsAvailableDescription": "Es gibt kein Preset für die Bereitstellung. Erstellen Sie stattdessen eine neue Bereitstellung.",
     "NoPresetsAvailableSwitchToCustom": "Es ist kein Preset verfügbar. Wechseln Sie in den benutzerdefinierten Modus, um eine Revision manuell hinzuzufügen.",
+    "NotAccessibleOrDeleted": "Diese Bereitstellung wurde gelöscht oder Sie haben keine Berechtigung, darauf zuzugreifen.",
     "NotInProject": "Diese Bereitstellung gehört zu einem anderen Projekt.",
     "NumberOfReplicas": "Anzahl der Replikate",
     "OpenCreateDeploymentModal": "Modal zum Erstellen einer Bereitstellung öffnen",

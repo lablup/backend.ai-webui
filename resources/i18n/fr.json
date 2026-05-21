@@ -984,6 +984,7 @@
     "NoPresetsAvailable": "Aucun preset de déploiement disponible",
     "NoPresetsAvailableDescription": "Il n'existe aucun preset pour déployer. Créez plutôt un nouveau déploiement.",
     "NoPresetsAvailableSwitchToCustom": "Aucun preset disponible. Passez en mode Personnalisé pour ajouter une Revision manuellement.",
+    "NotAccessibleOrDeleted": "Ce déploiement a été supprimé ou vous n'avez pas l'autorisation d'y accéder.",
     "NotInProject": "Ce déploiement appartient à un autre projet.",
     "NumberOfReplicas": "Nombre de répliques",
     "OpenCreateDeploymentModal": "Ouvrir le modal de création de déploiement",

@@ -494,11 +494,9 @@ export const mainLayoutChildRoutes: RouteObject[] = [
         path: ':deploymentId',
         handle: { labelKey: 'webui.menu.DeploymentDetail' },
         element: (
-          <BAIErrorBoundary>
-            <Suspense fallback={<Skeleton active />}>
-              <DeploymentDetailPage />
-            </Suspense>
-          </BAIErrorBoundary>
+          <Suspense fallback={<Skeleton active />}>
+            <DeploymentDetailPage />
+          </Suspense>
         ),
       },
     ],
@@ -599,11 +597,9 @@ export const mainLayoutChildRoutes: RouteObject[] = [
         path: ':deploymentId',
         handle: { labelKey: 'webui.menu.DeploymentDetail' },
         element: (
-          <BAIErrorBoundary>
-            <Suspense fallback={<Skeleton active />}>
-              <DeploymentDetailPage />
-            </Suspense>
-          </BAIErrorBoundary>
+          <Suspense fallback={<Skeleton active />}>
+            <DeploymentDetailPage />
+          </Suspense>
         ),
       },
     ],

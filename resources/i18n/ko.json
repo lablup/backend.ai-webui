@@ -985,6 +985,7 @@
     "NoPresetsAvailable": "사용 가능한 배포 프리셋이 없습니다",
     "NoPresetsAvailableDescription": "배포에 사용할 프리셋이 없습니다. 대신 새 배포를 생성하세요.",
     "NoPresetsAvailableSwitchToCustom": "사용 가능한 프리셋이 없습니다. 직접 설정 모드로 전환하여 리비전을 수동으로 추가하세요.",
+    "NotAccessibleOrDeleted": "삭제된 배포이거나 접근 권한이 없습니다.",
     "NotInProject": "이 배포는 다른 프로젝트에 속해 있습니다.",
     "NumberOfReplicas": "레플리카 수",
     "OpenCreateDeploymentModal": "배포 생성 모달 열기",

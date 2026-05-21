@@ -984,6 +984,7 @@
     "NoPresetsAvailable": "Tidak ada preset penerapan tersedia",
     "NoPresetsAvailableDescription": "Tidak ada preset untuk melakukan penerapan. Buat penerapan baru sebagai gantinya.",
     "NoPresetsAvailableSwitchToCustom": "Tidak ada preset yang tersedia. Alihkan ke mode Kustom untuk menambahkan revision secara manual.",
+    "NotAccessibleOrDeleted": "Penerapan ini telah dihapus atau Anda tidak memiliki izin untuk mengaksesnya.",
     "NotInProject": "Penerapan ini termasuk dalam proyek lain.",
     "NumberOfReplicas": "Jumlah Replika",
     "OpenCreateDeploymentModal": "Buka modal buat penerapan",

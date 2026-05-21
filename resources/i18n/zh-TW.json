@@ -985,6 +985,7 @@
     "NoPresetsAvailable": "沒有可用的部署預設",
     "NoPresetsAvailableDescription": "沒有可用於部署的預設。請改為建立新部署。",
     "NoPresetsAvailableSwitchToCustom": "沒有可用的預設。請切換至自訂模式手動新增 Revision。",
+    "NotAccessibleOrDeleted": "此部署已被刪除，或您沒有存取權限。",
     "NotInProject": "此部署屬於其他專案。",
     "NumberOfReplicas": "副本數量",
     "OpenCreateDeploymentModal": "開啟建立部署視窗",

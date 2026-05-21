@@ -984,6 +984,7 @@
     "NoPresetsAvailable": "Không có preset triển khai nào",
     "NoPresetsAvailableDescription": "Không có preset nào để triển khai. Hãy tạo một triển khai mới.",
     "NoPresetsAvailableSwitchToCustom": "Không có preset nào. Hãy chuyển sang chế độ Tùy chỉnh để thêm Revision thủ công.",
+    "NotAccessibleOrDeleted": "Triển khai này đã bị xóa hoặc bạn không có quyền truy cập.",
     "NotInProject": "Triển khai này thuộc về một dự án khác.",
     "NumberOfReplicas": "Số lượng bản sao",
     "OpenCreateDeploymentModal": "Mở hộp thoại tạo triển khai",

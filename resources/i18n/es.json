@@ -984,6 +984,7 @@
     "NoPresetsAvailable": "No hay preset de despliegue disponible",
     "NoPresetsAvailableDescription": "No hay ningún preset con el que desplegar. Cree un nuevo despliegue en su lugar.",
     "NoPresetsAvailableSwitchToCustom": "No hay preset disponible. Cambie al modo Personalizado para agregar una Revision manualmente.",
+    "NotAccessibleOrDeleted": "Este despliegue se ha eliminado o no tiene permiso para acceder a él.",
     "NotInProject": "Este despliegue pertenece a otro proyecto.",
     "NumberOfReplicas": "Número de réplicas",
     "OpenCreateDeploymentModal": "Abrir modal de creación de despliegue",

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<445895fc88aa9a785bfb7f23ff95bfe3>>
+ * @generated SignedSource<<396d042a5db71261ae1634e399abead4>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,13 +9,13 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-import { FragmentRefs } from "relay-runtime";
+import { FragmentRefs, Result } from "relay-runtime";
 export type DeploymentStatus = "DEPLOYING" | "PENDING" | "READY" | "SCALING" | "STOPPED" | "STOPPING" | "%future added value";
 export type DeploymentDetailPageQuery$variables = {
   deploymentId: string;
 };
 export type DeploymentDetailPageQuery$data = {
-  readonly deployment: {
+  readonly deployment: Result<{
     readonly creator: {
       readonly basicInfo: {
         readonly email: string;
@@ -37,7 +37,7 @@ export type DeploymentDetailPageQuery$data = {
       readonly openToPublic: boolean;
     };
     readonly " $fragmentSpreads": FragmentRefs<"DeploymentAccessTokensTab_deployment" | "DeploymentAutoScalingTab_deployment" | "DeploymentConfigurationSection_deployment" | "DeploymentReplicasTab_deployment">;
-  } | null | undefined;
+  } | null | undefined, unknown>;
 };
 export type DeploymentDetailPageQuery = {
   response: DeploymentDetailPageQuery$data;
@@ -462,94 +462,98 @@ return {
     "name": "DeploymentDetailPageQuery",
     "selections": [
       {
-        "alias": null,
-        "args": (v1/*: any*/),
-        "concreteType": "ModelDeployment",
-        "kind": "LinkedField",
-        "name": "deployment",
-        "plural": false,
-        "selections": [
-          (v2/*: any*/),
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "ModelDeploymentMetadata",
-            "kind": "LinkedField",
-            "name": "metadata",
-            "plural": false,
-            "selections": [
-              (v3/*: any*/),
-              (v4/*: any*/),
-              (v5/*: any*/)
-            ],
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "ModelDeploymentNetworkAccess",
-            "kind": "LinkedField",
-            "name": "networkAccess",
-            "plural": false,
-            "selections": [
-              (v6/*: any*/)
-            ],
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "ModelRevision",
-            "kind": "LinkedField",
-            "name": "currentRevision",
-            "plural": false,
-            "selections": (v7/*: any*/),
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "ModelRevision",
-            "kind": "LinkedField",
-            "name": "deployingRevision",
-            "plural": false,
-            "selections": (v7/*: any*/),
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "UserV2",
-            "kind": "LinkedField",
-            "name": "creator",
-            "plural": false,
-            "selections": [
-              (v8/*: any*/)
-            ],
-            "storageKey": null
-          },
-          {
-            "args": null,
-            "kind": "FragmentSpread",
-            "name": "DeploymentConfigurationSection_deployment"
-          },
-          {
-            "args": null,
-            "kind": "FragmentSpread",
-            "name": "DeploymentReplicasTab_deployment"
-          },
-          {
-            "args": null,
-            "kind": "FragmentSpread",
-            "name": "DeploymentAccessTokensTab_deployment"
-          },
-          {
-            "args": null,
-            "kind": "FragmentSpread",
-            "name": "DeploymentAutoScalingTab_deployment"
-          }
-        ],
-        "storageKey": null
+        "kind": "CatchField",
+        "field": {
+          "alias": null,
+          "args": (v1/*: any*/),
+          "concreteType": "ModelDeployment",
+          "kind": "LinkedField",
+          "name": "deployment",
+          "plural": false,
+          "selections": [
+            (v2/*: any*/),
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "ModelDeploymentMetadata",
+              "kind": "LinkedField",
+              "name": "metadata",
+              "plural": false,
+              "selections": [
+                (v3/*: any*/),
+                (v4/*: any*/),
+                (v5/*: any*/)
+              ],
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "ModelDeploymentNetworkAccess",
+              "kind": "LinkedField",
+              "name": "networkAccess",
+              "plural": false,
+              "selections": [
+                (v6/*: any*/)
+              ],
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "ModelRevision",
+              "kind": "LinkedField",
+              "name": "currentRevision",
+              "plural": false,
+              "selections": (v7/*: any*/),
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "ModelRevision",
+              "kind": "LinkedField",
+              "name": "deployingRevision",
+              "plural": false,
+              "selections": (v7/*: any*/),
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "UserV2",
+              "kind": "LinkedField",
+              "name": "creator",
+              "plural": false,
+              "selections": [
+                (v8/*: any*/)
+              ],
+              "storageKey": null
+            },
+            {
+              "args": null,
+              "kind": "FragmentSpread",
+              "name": "DeploymentConfigurationSection_deployment"
+            },
+            {
+              "args": null,
+              "kind": "FragmentSpread",
+              "name": "DeploymentReplicasTab_deployment"
+            },
+            {
+              "args": null,
+              "kind": "FragmentSpread",
+              "name": "DeploymentAccessTokensTab_deployment"
+            },
+            {
+              "args": null,
+              "kind": "FragmentSpread",
+              "name": "DeploymentAutoScalingTab_deployment"
+            }
+          ],
+          "storageKey": null
+        },
+        "to": "RESULT"
       }
     ],
     "type": "Query",
@@ -715,6 +719,6 @@ return {
 };
 })();
 
-(node as any).hash = "34d6b01c2963997caff182213908d483";
+(node as any).hash = "0bd8fb41f3a634a80a073b0c1bc8eede";
 
 export default node;

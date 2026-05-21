@@ -984,6 +984,7 @@
     "NoPresetsAvailable": "利用可能なデプロイプリセットがありません",
     "NoPresetsAvailableDescription": "デプロイに使用できるプリセットがありません。代わりに新しいデプロイを作成してください。",
     "NoPresetsAvailableSwitchToCustom": "利用可能なプリセットがありません。カスタムモードに切り替えて、手動で Revision を追加してください。",
+    "NotAccessibleOrDeleted": "このデプロイは削除されたか、アクセスする権限がありません。",
     "NotInProject": "このデプロイは別のプロジェクトに属しています。",
     "NumberOfReplicas": "レプリカ数",
     "OpenCreateDeploymentModal": "デプロイ作成モーダルを開く",

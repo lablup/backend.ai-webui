@@ -984,6 +984,7 @@
     "NoPresetsAvailable": "没有可用的部署预设",
     "NoPresetsAvailableDescription": "没有可用于部署的预设。请改为创建新部署。",
     "NoPresetsAvailableSwitchToCustom": "没有可用的预设。请切换到自定义模式手动添加 Revision。",
+    "NotAccessibleOrDeleted": "此部署已被删除，或者您没有访问权限。",
     "NotInProject": "此部署属于其他项目。",
     "NumberOfReplicas": "副本数量",
     "OpenCreateDeploymentModal": "打开创建部署弹窗",
