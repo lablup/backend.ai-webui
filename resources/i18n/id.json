@@ -3505,6 +3505,7 @@
       "PrivacyPolicy": "Kebijakan Privasi",
       "ProfileUpdated": "Profil berhasil diperbarui.",
       "Project": "Proyek",
+      "ProjectAdminScopeAlert": "Di halaman pengaturan admin proyek, hanya item yang termasuk dalam proyek yang dipilih saat ini yang ditampilkan.",
       "ProjectDeployments": "Penerapan",
       "ProjectMembers": "Pengguna",
       "Projects": "Proyek",

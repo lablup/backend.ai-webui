@@ -3505,6 +3505,7 @@
       "PrivacyPolicy": "隱私政策",
       "ProfileUpdated": "個人資料已成功更新。",
       "Project": "項目",
+      "ProjectAdminScopeAlert": "在專案管理員設定頁面，僅顯示屬於目前所選專案的項目。",
       "ProjectDeployments": "部署",
       "ProjectMembers": "使用者",
       "Projects": "項目",

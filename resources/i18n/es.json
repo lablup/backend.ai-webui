@@ -3501,6 +3501,7 @@
       "PrivacyPolicy": "Política de privacidad",
       "ProfileUpdated": "El perfil se ha actualizado correctamente.",
       "Project": "Proyecto",
+      "ProjectAdminScopeAlert": "En la página de configuración del administrador del proyecto, solo se muestran los elementos que pertenecen al proyecto seleccionado actualmente.",
       "ProjectDeployments": "Implementaciones",
       "ProjectMembers": "Usuarios",
       "Projects": "Proyectos",

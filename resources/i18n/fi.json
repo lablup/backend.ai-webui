@@ -3502,6 +3502,7 @@
       "PrivacyPolicy": "Tietosuojakäytäntö",
       "ProfileUpdated": "Profiili on päivitetty onnistuneesti.",
       "Project": "Hanke",
+      "ProjectAdminScopeAlert": "Projektinhallintasivulla näytetään vain ne kohteet, jotka kuuluvat valittuun projektiin.",
       "ProjectDeployments": "Käyttöönotot",
       "ProjectMembers": "Käyttäjät",
       "Projects": "Hankkeet",

@@ -3503,6 +3503,7 @@
       "PrivacyPolicy": "Datenschutz-Bestimmungen",
       "ProfileUpdated": "Das Profil wurde erfolgreich aktualisiert.",
       "Project": "Projekt",
+      "ProjectAdminScopeAlert": "Auf der Einstellungsseite für Projektadministratoren werden nur Elemente angezeigt, die zum aktuell ausgewählten Projekt gehören.",
       "ProjectDeployments": "Bereitstellungen",
       "ProjectMembers": "Benutzer",
       "Projects": "Projekte",

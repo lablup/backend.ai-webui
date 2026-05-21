@@ -3503,6 +3503,7 @@
       "PrivacyPolicy": "個人情報保護方針",
       "ProfileUpdated": "プロフィールが正常に更新されました。",
       "Project": "プロジェクト",
+      "ProjectAdminScopeAlert": "プロジェクト管理者設定ページでは、現在選択されているプロジェクトに属するアイテムのみが表示されます。",
       "ProjectDeployments": "デプロイメント",
       "ProjectMembers": "ユーザー",
       "Projects": "プロジェクト",

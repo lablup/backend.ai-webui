@@ -3503,6 +3503,7 @@
       "PrivacyPolicy": "隐私政策",
       "ProfileUpdated": "个人资料已成功更新。",
       "Project": "项目",
+      "ProjectAdminScopeAlert": "在项目管理员设置页面，仅显示属于当前所选项目的条目。",
       "ProjectDeployments": "部署",
       "ProjectMembers": "用户",
       "Projects": "项目",

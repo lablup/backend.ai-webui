@@ -3503,6 +3503,7 @@
       "PrivacyPolicy": "Chính sách bảo mật",
       "ProfileUpdated": "Hồ sơ đã được cập nhật thành công.",
       "Project": "Dự án",
+      "ProjectAdminScopeAlert": "Trên trang cài đặt dành cho quản trị viên dự án, chỉ hiển thị các mục thuộc về dự án hiện đang được chọn.",
       "ProjectDeployments": "Triển khai",
       "ProjectMembers": "Người dùng",
       "Projects": "Dự án",

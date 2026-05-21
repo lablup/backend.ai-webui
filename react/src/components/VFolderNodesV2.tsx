@@ -189,7 +189,7 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
             : t('data.folders.NoDeletePermission'),
           popConfirm: {
             title: t('data.folders.MoveToTrash'),
-            description: t('data.folders.MoveToTrashRestoreHint'),
+            description: vfolder?.metadata?.name,
             okText: t('button.Confirm'),
             okButtonProps: { danger: true },
             onConfirm: onDelete,
@@ -207,7 +207,12 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
           disabledReason: isPipelineFolder
             ? t('data.folders.CannotRestorePipelineFolder')
             : undefined,
-          onClick: onRestore,
+          popConfirm: {
+            title: t('data.folders.Restore'),
+            description: vfolder?.metadata?.name,
+            okText: t('button.Confirm'),
+            onConfirm: onRestore,
+          },
         }
       : null,
     // Delete from trash bin (deleted folders only)

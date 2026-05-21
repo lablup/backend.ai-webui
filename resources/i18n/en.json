@@ -3522,6 +3522,7 @@
       "PrivacyPolicy": "Privacy Policy",
       "ProfileUpdated": "Profile has been successfully updated.",
       "Project": "Project",
+      "ProjectAdminScopeAlert": "On the project admin settings page, only items belonging to the currently selected project are shown.",
       "ProjectDeployments": "Deployments",
       "ProjectMembers": "Users",
       "Projects": "Projects",
