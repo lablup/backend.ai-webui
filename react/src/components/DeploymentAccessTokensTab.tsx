@@ -28,9 +28,11 @@ import {
   BAINameActionCell,
   BAITable,
   BAIText,
+  INITIAL_FETCH_KEY,
   filterOutNullAndUndefined,
   toLocalId,
   useBAILogger,
+  useFetchKey,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import React, { Suspense, useState, useTransition } from 'react';
@@ -42,9 +44,9 @@ interface DeploymentAccessTokensTabProps {
   isOwnedByCurrentUser?: boolean;
   isDeploymentDestroying?: boolean;
   onClickCreate: () => void;
-  // Incremented by the parent after a successful token creation so the list
+  // Updated by the parent after a successful token creation so the list
   // refetches without the tab needing to know about the creation flow.
-  createKey?: number;
+  fetchKey?: string;
 }
 
 const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
@@ -52,21 +54,21 @@ const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
   isOwnedByCurrentUser = true,
   isDeploymentDestroying = false,
   onClickCreate,
-  createKey = 0,
+  fetchKey: externalFetchKey = INITIAL_FETCH_KEY,
 }) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const [isPendingRefetch, startRefetchTransition] = useTransition();
-  const [internalFetchKey, setInternalFetchKey] = useState(0);
+  const [localFetchKey, updateLocalFetchKey] = useFetchKey();
 
-  // Combines the internal key (delete / manual refresh) with the external key
+  // Combines the local key (delete / manual refresh) with the external key
   // (creation triggered by the page) so either event re-fetches the list.
-  const fetchKey = internalFetchKey + createKey;
+  const fetchKey = `${localFetchKey}-${externalFetchKey}`;
 
   const handleRefetch = () => {
     startRefetchTransition(() => {
-      setInternalFetchKey((k) => k + 1);
+      updateLocalFetchKey();
     });
   };
 
@@ -123,7 +125,7 @@ const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
 
 interface DeploymentAccessTokensTableProps {
   deploymentId: string;
-  fetchKey: number;
+  fetchKey: string;
   isPendingRefetch: boolean;
   isDeleteDisabled: boolean;
   onAfterDelete: () => void;

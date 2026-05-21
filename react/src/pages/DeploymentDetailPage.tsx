@@ -99,7 +99,7 @@ const DeploymentDetailPage: React.FC = () => {
     token: string;
     expiresAt: string | null;
   } | null>(null);
-  const [createKey, setCreateKey] = useState(0);
+  const [accessTokenFetchKey, updateAccessTokenFetchKey] = useFetchKey();
 
   const commitCreateAccessTokenMutation =
     useMutationWithPromise<DeploymentDetailPageCreateAccessTokenMutation>(
@@ -274,7 +274,7 @@ const DeploymentDetailPage: React.FC = () => {
             key: 'access-token-created',
             content: t('deployment.accessToken.Created'),
           });
-          setCreateKey((k) => k + 1);
+          updateAccessTokenFetchKey();
           scrollToElementId('deployment-access-tokens');
         })
         .catch((error) => {
@@ -409,7 +409,7 @@ const DeploymentDetailPage: React.FC = () => {
           isOwnedByCurrentUser={isOwnedByCurrentUser}
           isDeploymentDestroying={isDeploymentDestroying}
           onClickCreate={handleOpenCreateAccessToken}
-          createKey={createKey}
+          fetchKey={accessTokenFetchKey}
         />
       </div>
       {/* Local Suspense around the lazily-mounted modal so its initial
