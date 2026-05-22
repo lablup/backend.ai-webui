@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<75f7de35d9e1f9b0ea7921f22a19f28e>>
+ * @generated SignedSource<<5f8baaa322e59baa963f6af3524731d1>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,10 +13,10 @@ export type CreateAccessTokenInput = {
   expiresAt: string;
   modelDeploymentId: string;
 };
-export type DeploymentDetailPageCreateAccessTokenMutation$variables = {
+export type DeploymentAccessTokensTabCreateMutation$variables = {
   input: CreateAccessTokenInput;
 };
-export type DeploymentDetailPageCreateAccessTokenMutation$data = {
+export type DeploymentAccessTokensTabCreateMutation$data = {
   readonly createAccessToken: {
     readonly accessToken: {
       readonly createdAt: string;
@@ -26,9 +26,9 @@ export type DeploymentDetailPageCreateAccessTokenMutation$data = {
     };
   } | null | undefined;
 };
-export type DeploymentDetailPageCreateAccessTokenMutation = {
-  response: DeploymentDetailPageCreateAccessTokenMutation$data;
-  variables: DeploymentDetailPageCreateAccessTokenMutation$variables;
+export type DeploymentAccessTokensTabCreateMutation = {
+  response: DeploymentAccessTokensTabCreateMutation$data;
+  variables: DeploymentAccessTokensTabCreateMutation$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -102,7 +102,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "DeploymentDetailPageCreateAccessTokenMutation",
+    "name": "DeploymentAccessTokensTabCreateMutation",
     "selections": (v1/*: any*/),
     "type": "Mutation",
     "abstractKey": null
@@ -111,20 +111,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "DeploymentDetailPageCreateAccessTokenMutation",
+    "name": "DeploymentAccessTokensTabCreateMutation",
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "2be30e29aaa4ac3729cdfe8554bc5c92",
+    "cacheID": "ad0b1632c09adadb34c59dfacd183923",
     "id": null,
     "metadata": {},
-    "name": "DeploymentDetailPageCreateAccessTokenMutation",
+    "name": "DeploymentAccessTokensTabCreateMutation",
     "operationKind": "mutation",
-    "text": "mutation DeploymentDetailPageCreateAccessTokenMutation(\n  $input: CreateAccessTokenInput!\n) {\n  createAccessToken(input: $input) {\n    accessToken {\n      id\n      token\n      createdAt\n      expiresAt\n    }\n  }\n}\n"
+    "text": "mutation DeploymentAccessTokensTabCreateMutation(\n  $input: CreateAccessTokenInput!\n) {\n  createAccessToken(input: $input) {\n    accessToken {\n      id\n      token\n      createdAt\n      expiresAt\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "245804206c96df39ab841dfcc0e74d3b";
+(node as any).hash = "df1b417c9205070e2bf82168815c312e";
 
 export default node;

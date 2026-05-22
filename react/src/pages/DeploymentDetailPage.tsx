@@ -2,14 +2,11 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { DeploymentDetailPageCreateAccessTokenMutation } from '../__generated__/DeploymentDetailPageCreateAccessTokenMutation.graphql';
 import { DeploymentDetailPageQuery } from '../__generated__/DeploymentDetailPageQuery.graphql';
 import BAIErrorBoundary, {
   ErrorWithGraphQL,
 } from '../components/BAIErrorBoundary';
-import DeploymentAccessTokensTab, {
-  CreateAccessTokenModal,
-} from '../components/DeploymentAccessTokensTab';
+import DeploymentAccessTokensTab from '../components/DeploymentAccessTokensTab';
 import DeploymentAddRevisionModal from '../components/DeploymentAddRevisionModal';
 import DeploymentAutoScalingTab from '../components/DeploymentAutoScalingTab';
 import DeploymentConfigurationSection from '../components/DeploymentConfigurationSection';
@@ -26,7 +23,6 @@ import { PlusOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import {
   Alert,
-  App,
   Button,
   Result,
   Skeleton,
@@ -39,19 +35,14 @@ import {
   BAICard,
   BAIDeploymentStatus,
   BAIFlex,
-  BAIModal,
-  BAIText,
   BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
   toGlobalId,
-  useBAILogger,
   useFetchKey,
-  useMutationWithPromise,
 } from 'backend.ai-ui';
-import dayjs from 'dayjs';
 import type { GraphQLFormattedError } from 'graphql';
 import { BotMessageSquareIcon } from 'lucide-react';
-import React, { Suspense, useState, useTransition } from 'react';
+import React, { Suspense, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useParams } from 'react-router-dom';
@@ -66,8 +57,6 @@ const DeploymentDetailPage: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { message } = App.useApp();
-  const { logger } = useBAILogger();
   const [currentUser] = useCurrentUserInfo();
   const webuiNavigate = useWebUINavigate();
   const baiClient = useSuspendedBackendaiClient();
@@ -87,37 +76,13 @@ const DeploymentDetailPage: React.FC = () => {
     addRevisionOpen,
     { setLeft: closeAddRevision, setRight: openAddRevision },
   ] = useToggle(false);
-
-  // Access-token creation state — owned at the page level so the creation
-  // flow (modal → mutation → token display → refetch) is colocated and the
-  // tab itself remains a pure display component.
+  // Lifted here so the "Private deployment" alert can open the same
+  // create-access-token modal that DeploymentAccessTokensTab owns — the alert
+  // CTA and the section's "+" button share one flow.
   const [
     createAccessTokenOpen,
     { setLeft: closeCreateAccessToken, setRight: openCreateAccessToken },
   ] = useToggle(false);
-  const [createdToken, setCreatedToken] = useState<{
-    token: string;
-    expiresAt: string | null;
-  } | null>(null);
-  const [accessTokenFetchKey, updateAccessTokenFetchKey] = useFetchKey();
-
-  const commitCreateAccessTokenMutation =
-    useMutationWithPromise<DeploymentDetailPageCreateAccessTokenMutation>(
-      graphql`
-        mutation DeploymentDetailPageCreateAccessTokenMutation(
-          $input: CreateAccessTokenInput!
-        ) {
-          createAccessToken(input: $input) {
-            accessToken {
-              id
-              token
-              createdAt
-              expiresAt
-            }
-          }
-        }
-      `,
-    );
 
   const { deployment: deploymentResult } =
     useLazyLoadQuery<DeploymentDetailPageQuery>(
@@ -151,6 +116,7 @@ const DeploymentDetailPage: React.FC = () => {
             }
             ...DeploymentConfigurationSection_deployment
             ...DeploymentReplicasTab_deployment
+            ...DeploymentAccessTokensTab_deployment
             ...DeploymentAutoScalingTab_deployment
           }
         }
@@ -243,48 +209,8 @@ const DeploymentDetailPage: React.FC = () => {
     }
   };
 
-  const handleOpenCreateAccessToken = () => {
-    openCreateAccessToken();
+  const handleAccessTokenCreated = () => {
     scrollToElementId('deployment-access-tokens');
-  };
-
-  const handleCreateAccessTokenRequestClose = (result?: {
-    expiresAt: string | null;
-  }) => {
-    closeCreateAccessToken();
-    if (result) {
-      // Kick off the mutation after the modal closes to avoid
-      // overlapping dialogs.
-      commitCreateAccessTokenMutation({
-        input: {
-          modelDeploymentId: deploymentId,
-          // Schema requires DateTime! (non-null); map "no expiration" to a far-future date.
-          expiresAt: result.expiresAt ?? new Date('2099-12-31').toISOString(),
-        },
-      })
-        .then((response) => {
-          const created = response.createAccessToken?.accessToken;
-          if (created) {
-            setCreatedToken({
-              token: created.token,
-              expiresAt: created.expiresAt ?? null,
-            });
-          }
-          message.success({
-            key: 'access-token-created',
-            content: t('deployment.accessToken.Created'),
-          });
-          updateAccessTokenFetchKey();
-          scrollToElementId('deployment-access-tokens');
-        })
-        .catch((error) => {
-          const errors = Array.isArray(error) ? error : [error];
-          for (const err of errors) {
-            message.error(err?.message || t('dialog.ErrorOccurred'));
-          }
-          logger.error(error);
-        });
-    }
   };
 
   return (
@@ -354,11 +280,12 @@ const DeploymentDetailPage: React.FC = () => {
             <BAIButton
               type="primary"
               icon={<PlusOutlined />}
-              // Opens the create modal directly and scrolls to the access
-              // tokens section. `action` (not `onClick`) defers the mount in
-              // a transition so the page stays interactive.
+              // Match the Add-Revision CTA above: open the create modal
+              // directly. `action` (not `onClick`) defers the mount in a
+              // transition so the page stays interactive while the modal
+              // suspends on its initial render.
               action={async () => {
-                handleOpenCreateAccessToken();
+                openCreateAccessToken();
               }}
               disabled={isDeploymentDestroying}
             >
@@ -405,11 +332,19 @@ const DeploymentDetailPage: React.FC = () => {
       <DeploymentAutoScalingTab deploymentFrgmt={deployment} />
       <div id="deployment-access-tokens">
         <DeploymentAccessTokensTab
+          deploymentFrgmt={deployment}
           deploymentId={deploymentGlobalId}
           isOwnedByCurrentUser={isOwnedByCurrentUser}
           isDeploymentDestroying={isDeploymentDestroying}
-          onClickCreate={handleOpenCreateAccessToken}
-          fetchKey={accessTokenFetchKey}
+          isCreateModalOpen={createAccessTokenOpen}
+          onCreateModalOpenChange={(open) => {
+            if (open) {
+              openCreateAccessToken();
+            } else {
+              closeCreateAccessToken();
+            }
+          }}
+          onTokenCreated={handleAccessTokenCreated}
         />
       </div>
       {/* Local Suspense around the lazily-mounted modal so its initial
@@ -428,45 +363,6 @@ const DeploymentDetailPage: React.FC = () => {
           />
         </BAIUnmountAfterClose>
       </Suspense>
-      <BAIUnmountAfterClose>
-        <CreateAccessTokenModal
-          open={createAccessTokenOpen}
-          confirmLoading={false}
-          onRequestClose={handleCreateAccessTokenRequestClose}
-        />
-      </BAIUnmountAfterClose>
-      <BAIUnmountAfterClose>
-        <BAIModal
-          open={createdToken !== null}
-          destroyOnHidden
-          title={t('deployment.accessToken.Token')}
-          onCancel={() => setCreatedToken(null)}
-          footer={null}
-          width={520}
-        >
-          <BAIFlex direction="column" align="stretch" gap="sm">
-            <Typography.Text>
-              {t('deployment.accessToken.Created')}
-            </Typography.Text>
-            {createdToken ? (
-              <BAIText copyable={{ text: createdToken.token }} ellipsis code>
-                {createdToken.token}
-              </BAIText>
-            ) : null}
-            {createdToken?.expiresAt ? (
-              <Typography.Text type="secondary">
-                {`${t('deployment.accessToken.Expiration')}: ${dayjs(
-                  createdToken.expiresAt,
-                ).format('ll LT')}`}
-              </Typography.Text>
-            ) : (
-              <Typography.Text type="secondary">
-                {t('deployment.accessToken.NoExpiration')}
-              </Typography.Text>
-            )}
-          </BAIFlex>
-        </BAIModal>
-      </BAIUnmountAfterClose>
     </BAIFlex>
   );
 };
