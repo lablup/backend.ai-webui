@@ -7,6 +7,7 @@ import {
   useBackendAIImageMetaData,
   useSuspendedBackendaiClient,
 } from '../hooks';
+import { useCurrentUserRole } from '../hooks/backendai';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import {
   SessionLauncherFormValue,
@@ -41,7 +42,8 @@ import { useTranslation } from 'react-i18next';
 
 const SessionLauncherPreview: React.FC<{
   onClickEditStep: (stepKey: SessionLauncherStepKey) => void;
-}> = ({ onClickEditStep }) => {
+  onExpandStateChange?: (allCollapsed: boolean, toggleAll: () => void) => void;
+}> = ({ onClickEditStep, onExpandStateChange }) => {
   const app = App.useApp();
   const { t } = useTranslation();
   const form = Form.useFormInstance<SessionLauncherFormValue>();
@@ -54,6 +56,14 @@ const SessionLauncherPreview: React.FC<{
   const currentProject = useCurrentProjectValue();
   const [, { getBaseVersion, getBaseImage, tagAlias }] =
     useBackendAIImageMetaData();
+
+  // The owner card is only rendered for admins when owner assignment is on;
+  // mirror that here so it only participates in expand/collapse when visible.
+  const currentUserRole = useCurrentUserRole();
+  const ownerEnabled = Form.useWatch(['owner', 'enabled'], form);
+  const ownerVisible =
+    (currentUserRole === 'admin' || currentUserRole === 'superadmin') &&
+    !!ownerEnabled;
 
   // Per-section validation status. A section is "non-success" when it holds a
   // field error; those sections are expanded by default so the user lands on
@@ -85,7 +95,7 @@ const SessionLauncherPreview: React.FC<{
 
   const sectionErrors: Record<string, boolean> = {
     sessionType: sessionTypeHasError,
-    owner: ownerHasError,
+    ...(ownerVisible ? { owner: ownerHasError } : {}),
     environments: environmentsHasError,
     resourceAllocation: resourceAllocationHasError,
     dataStorage: dataStorageHasError,
@@ -97,7 +107,7 @@ const SessionLauncherPreview: React.FC<{
   const nonSuccessSignature = nonSuccessKeys.join('|');
   const [expandedKeys, setExpandedKeys] = useState<string[]>(nonSuccessKeys);
   const syncExpandedToNonSuccess = useEffectEvent(() => {
-    setExpandedKeys(_.keys(_.pickBy(sectionErrors)));
+    setExpandedKeys(nonSuccessKeys);
   });
   useEffect(() => {
     syncExpandedToNonSuccess();
@@ -109,6 +119,22 @@ const SessionLauncherPreview: React.FC<{
       collapsed ? prev.filter((k) => k !== key) : _.uniq([...prev, key]),
     );
   };
+
+  const allKeys = _.keys(sectionErrors);
+  // Only count keys for sections that are currently visible — a now-hidden
+  // section (e.g. `owner` after owner assignment is turned off) may linger in
+  // `expandedKeys` and would otherwise make the toggle read "Collapse all"
+  // even though every visible card is collapsed.
+  const allCollapsed = _.intersection(expandedKeys, allKeys).length === 0;
+
+  const notifyExpandState = useEffectEvent(() => {
+    onExpandStateChange?.(allCollapsed, () =>
+      setExpandedKeys(allCollapsed ? allKeys : []),
+    );
+  });
+  useEffect(() => {
+    notifyExpandState();
+  }, [allCollapsed]);
 
   return (
     <>

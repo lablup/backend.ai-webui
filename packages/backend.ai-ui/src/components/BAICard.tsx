@@ -152,8 +152,8 @@ const BAICard: React.FC<BAICardProps> = ({
                 : style?.borderColor, // default
       })}
       styles={_.merge(
-        // Auto-enable divider when tabList is specified
-        !showDivider && !cardProps.tabList
+        // Auto-enable divider when tabList is specified; hide divider when collapsed
+        (!showDivider || (collapsible && mergedCollapsed)) && !cardProps.tabList
           ? {
               header: {
                 borderBottom: 'none',

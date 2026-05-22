@@ -12,8 +12,8 @@ import AdminDeploymentPresetSettingPageContent, {
   type ModelDefinitionFormValue,
 } from '../components/AdminDeploymentPresetSettingPageContent';
 import { useWebUINavigate } from '../hooks';
-import { App, Form, Typography, theme } from 'antd';
-import { BAIFlex, useBAILogger, useMutationWithPromise } from 'backend.ai-ui';
+import { App, Form, theme } from 'antd';
+import { useBAILogger, useMutationWithPromise } from 'backend.ai-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -317,20 +317,7 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
   };
 
   return (
-    <BAIFlex
-      direction="column"
-      align="stretch"
-      gap="md"
-      style={{ paddingBottom: token.paddingContentVerticalLG }}
-    >
-      <BAIFlex direction="row" justify="between" align="center">
-        <Typography.Title level={3} style={{ margin: 0 }}>
-          {mode === 'edit'
-            ? t('adminDeploymentPreset.EditPreset')
-            : t('adminDeploymentPreset.CreatePreset')}
-        </Typography.Title>
-      </BAIFlex>
-
+    <div style={{ paddingBottom: token.paddingContentVerticalLG }}>
       <AdminDeploymentPresetSettingPageContent
         mode={mode}
         form={form}
@@ -341,7 +328,7 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
         onSubmit={handleSubmit}
         isSubmitting={isSubmitting}
       />
-    </BAIFlex>
+    </div>
   );
 };
 

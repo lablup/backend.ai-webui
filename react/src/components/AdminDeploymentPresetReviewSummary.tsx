@@ -32,6 +32,7 @@ interface PresetReviewSummaryProps {
   onGoToStep: (index: number) => void;
   runtimeVariants: ReadonlyArray<{ id: string; name: string }>;
   errorFieldNames: string[];
+  onExpandStateChange?: (allCollapsed: boolean, toggleAll: () => void) => void;
 }
 
 const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
@@ -40,6 +41,7 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
   onGoToStep,
   runtimeVariants,
   errorFieldNames,
+  onExpandStateChange,
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -75,7 +77,7 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
   const nonSuccessSignature = nonSuccessKeys.join('|');
   const [expandedKeys, setExpandedKeys] = useState<string[]>(nonSuccessKeys);
   const syncExpandedToNonSuccess = useEffectEvent(() => {
-    setExpandedKeys(_.keys(_.pickBy(sectionErrors)));
+    setExpandedKeys(nonSuccessKeys);
   });
   useEffect(() => {
     syncExpandedToNonSuccess();
@@ -87,6 +89,20 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
       collapsed ? prev.filter((k) => k !== key) : _.uniq([...prev, key]),
     );
   };
+
+  const allKeys = _.keys(sectionErrors);
+  // Count only currently-visible section keys so the toggle label stays
+  // accurate even if a key lingers in `expandedKeys` for a hidden section.
+  const allCollapsed = _.intersection(expandedKeys, allKeys).length === 0;
+
+  const notifyExpandState = useEffectEvent(() => {
+    onExpandStateChange?.(allCollapsed, () =>
+      setExpandedKeys(allCollapsed ? allKeys : []),
+    );
+  });
+  useEffect(() => {
+    notifyExpandState();
+  }, [allCollapsed]);
 
   const runtimeName =
     runtimeVariants.find((r) => toLocalId(r.id) === values.runtimeVariantId)

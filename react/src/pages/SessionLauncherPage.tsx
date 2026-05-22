@@ -44,10 +44,12 @@ import {
   DoubleRightOutlined,
   EllipsisOutlined,
   LeftOutlined,
+  ArrowsAltOutlined,
   PlayCircleFilled,
   PlayCircleOutlined,
   QuestionCircleOutlined,
   RightOutlined,
+  ShrinkOutlined,
 } from '@ant-design/icons';
 import { useDebounceFn, useToggle } from 'ahooks';
 import {
@@ -242,6 +244,10 @@ const SessionLauncherPage = () => {
 
   const [isOpenTemplateModal, { toggle: toggleIsOpenTemplateModal }] =
     useToggle();
+  const [previewExpandState, setPreviewExpandState] = useState<{
+    allCollapsed: boolean;
+    toggle: () => void;
+  } | null>(null);
   const [, { push: pushSessionHistory }] = useRecentSessionHistory();
 
   const { run: syncFormToURLWithDebounce } = useDebounceFn(
@@ -384,6 +390,12 @@ const SessionLauncherPage = () => {
 
   const currentStepKey = steps[currentStep]?.key;
 
+  useEffect(() => {
+    if (currentStepKey !== 'review') {
+      setPreviewExpandState(null);
+    }
+  }, [currentStepKey]);
+
   const hasError = _.some(
     form.getFieldsError(),
     (item) => item.errors.length > 0,
@@ -511,18 +523,47 @@ const SessionLauncherPage = () => {
           align="stretch"
           style={{ flex: 1, maxWidth: 700 }}
         >
-          <BAIFlex direction="row" justify="between">
-            <Typography.Title level={4} style={{ marginTop: 0 }}>
+          <BAIFlex
+            direction="row"
+            justify="between"
+            align="center"
+            style={{ marginBottom: token.margin }}
+          >
+            <Typography.Title
+              level={4}
+              style={{ marginTop: 0, marginBottom: 0 }}
+            >
               {t('session.launcher.StartNewSession')}
             </Typography.Title>
-            <BAIFlex direction="row" gap={'sm'}>
-              <Button
-                type="link"
-                // icon={<BlockOutlined />}
-                // disabled
-                style={{ paddingRight: 0, paddingLeft: 0 }}
-                onClick={() => toggleIsOpenTemplateModal()}
-              >
+            <BAIFlex direction="row" gap="xs" align="center">
+              {previewExpandState && (
+                <Tooltip
+                  title={
+                    previewExpandState.allCollapsed
+                      ? t('button.ExpandAll')
+                      : t('button.CollapseAll')
+                  }
+                >
+                  <Button
+                    size="small"
+                    type="text"
+                    aria-label={
+                      previewExpandState.allCollapsed
+                        ? t('button.ExpandAll')
+                        : t('button.CollapseAll')
+                    }
+                    icon={
+                      previewExpandState.allCollapsed ? (
+                        <ArrowsAltOutlined />
+                      ) : (
+                        <ShrinkOutlined />
+                      )
+                    }
+                    onClick={previewExpandState.toggle}
+                  />
+                </Tooltip>
+              )}
+              <Button size="small" onClick={toggleIsOpenTemplateModal}>
                 {t('session.launcher.RecentHistory')}
               </Button>
             </BAIFlex>
@@ -1207,6 +1248,9 @@ const SessionLauncherPage = () => {
                       const nextStep = _.findIndex(steps, { key: stepKey });
                       setCurrentStep(nextStep);
                     }}
+                    onExpandStateChange={(allCollapsed, toggle) =>
+                      setPreviewExpandState({ allCollapsed, toggle })
+                    }
                   />
                 )}
 

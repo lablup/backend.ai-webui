@@ -18,11 +18,13 @@ import {
 import PresetReviewSummary from './AdminDeploymentPresetReviewSummary';
 import PresetValidationTour from './AdminDeploymentPresetValidationTour';
 import {
+  ArrowsAltOutlined,
   DoubleRightOutlined,
   LeftOutlined,
   MinusCircleOutlined,
   PlusOutlined,
   RightOutlined,
+  ShrinkOutlined,
 } from '@ant-design/icons';
 import { useDebounceFn } from 'ahooks';
 import {
@@ -36,6 +38,7 @@ import {
   Select,
   Skeleton,
   Steps,
+  Tooltip,
   Typography,
   theme,
 } from 'antd';
@@ -386,6 +389,10 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
   const [validationTourOpen, setValidationTourOpen] = useState(false);
   const [reviewHasError, setReviewHasError] = useState(false);
   const [errorFieldNames, setErrorFieldNames] = useState<string[]>([]);
+  const [previewExpandState, setPreviewExpandState] = useState<{
+    allCollapsed: boolean;
+    toggle: () => void;
+  } | null>(null);
 
   // Trigger full form validation and update review-step error state.
   // Called both when navigating to the review step (synchronous, before render)
@@ -408,14 +415,16 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
       });
   };
 
-  const onEnterReview = useEffectEvent(() => {
-    triggerValidation();
+  const onStepChanged = useEffectEvent(() => {
+    if (currentStepKey === 'review') {
+      triggerValidation();
+    } else {
+      setPreviewExpandState(null);
+    }
   });
 
   useEffect(() => {
-    if (currentStepKey === 'review') {
-      onEnterReview();
-    }
+    onStepChanged();
   }, [currentStepKey]);
 
   const setCurrentStep = (nextKey: StepKey) => {
@@ -470,8 +479,47 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
       <BAIFlex
         direction="column"
         align="stretch"
-        style={{ flex: 1, maxWidth: 800 }}
+        style={{ flex: 1, maxWidth: 700 }}
       >
+        <BAIFlex
+          direction="row"
+          justify="between"
+          align="center"
+          style={{ marginBottom: token.margin }}
+        >
+          <Typography.Title level={3} style={{ margin: 0 }}>
+            {mode === 'edit'
+              ? t('adminDeploymentPreset.EditPreset')
+              : t('adminDeploymentPreset.CreatePreset')}
+          </Typography.Title>
+          {previewExpandState && (
+            <Tooltip
+              title={
+                previewExpandState.allCollapsed
+                  ? t('button.ExpandAll')
+                  : t('button.CollapseAll')
+              }
+            >
+              <Button
+                size="small"
+                type="text"
+                aria-label={
+                  previewExpandState.allCollapsed
+                    ? t('button.ExpandAll')
+                    : t('button.CollapseAll')
+                }
+                icon={
+                  previewExpandState.allCollapsed ? (
+                    <ArrowsAltOutlined />
+                  ) : (
+                    <ShrinkOutlined />
+                  )
+                }
+                onClick={previewExpandState.toggle}
+              />
+            </Tooltip>
+          )}
+        </BAIFlex>
         <Form<AdminDeploymentPresetFormValue>
           form={form}
           initialValues={initialValues}
@@ -842,6 +890,9 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                     onGoToStep={goToStep}
                     runtimeVariants={runtimeVariants}
                     errorFieldNames={errorFieldNames}
+                    onExpandStateChange={(allCollapsed, toggle) =>
+                      setPreviewExpandState({ allCollapsed, toggle })
+                    }
                   />
                 </Suspense>
               )}
