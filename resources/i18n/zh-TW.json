@@ -1086,6 +1086,7 @@
       "Delete": "刪除存取令牌",
       "DeleteConfirm": "確定要刪除此存取令牌嗎？此操作無法復原。",
       "Deleted": "存取令牌已刪除。",
+      "EndpointNotIssuedYet": "網路端點尚未發行。",
       "Expiration": "到期時間",
       "NoExpiration": "永不到期",
       "Token": "令牌"

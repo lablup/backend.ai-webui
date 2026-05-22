@@ -1085,6 +1085,7 @@
       "Delete": "액세스 토큰 삭제",
       "DeleteConfirm": "이 액세스 토큰을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.",
       "Deleted": "액세스 토큰이 삭제되었습니다.",
+      "EndpointNotIssuedYet": "아직 네트워크 엔드포인트가 발급되지 않았습니다.",
       "Expiration": "만료일",
       "NoExpiration": "만료 없음",
       "Token": "토큰"

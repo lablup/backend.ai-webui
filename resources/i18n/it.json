@@ -1085,6 +1085,7 @@
       "Delete": "Elimina token di accesso",
       "DeleteConfirm": "Sei sicuro di voler eliminare questo token di accesso? Questa azione non può essere annullata.",
       "Deleted": "Il token di accesso è stato eliminato.",
+      "EndpointNotIssuedYet": "L'endpoint di rete non è ancora stato emesso.",
       "Expiration": "Scadenza",
       "NoExpiration": "Nessuna scadenza",
       "Token": "Token"

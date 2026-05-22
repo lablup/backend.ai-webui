@@ -1085,6 +1085,7 @@
       "Delete": "Padam Token Akses",
       "DeleteConfirm": "Adakah anda pasti mahu memadam token akses ini? Tindakan ini tidak boleh dibatalkan.",
       "Deleted": "Token akses telah dipadam.",
+      "EndpointNotIssuedYet": "Titik akhir rangkaian belum dikeluarkan.",
       "Expiration": "Tamat Tempoh",
       "NoExpiration": "Tanpa Tamat Tempoh",
       "Token": "Token"

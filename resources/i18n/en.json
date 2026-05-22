@@ -1072,6 +1072,7 @@
       "Delete": "Delete Access Token",
       "DeleteConfirm": "Are you sure you want to delete this access token? This action cannot be undone.",
       "Deleted": "Access token has been deleted.",
+      "EndpointNotIssuedYet": "The network endpoint has not been issued yet.",
       "Expiration": "Expiration",
       "NoExpiration": "No Expiration",
       "Token": "Token"

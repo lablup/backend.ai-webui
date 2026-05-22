@@ -102,6 +102,10 @@ const DeploymentDetailPage: React.FC = () => {
             }
             networkAccess {
               openToPublic
+              endpointUrl
+            }
+            accessTokens {
+              count
             }
             currentRevision @since(version: "26.4.3") {
               id
@@ -184,8 +188,17 @@ const DeploymentDetailPage: React.FC = () => {
   // warning would otherwise contradict that state.
   const hasNoRevision =
     !deployment.currentRevision && !deployment.deployingRevision;
+  const hasEndpointUrl = !!deployment.networkAccess.endpointUrl;
+  const hasAccessTokens = (deployment.accessTokens?.count ?? 0) > 0;
+  // The private-deployment alert prompts the user to create a token so the
+  // endpoint is actually reachable. Suppress it when the endpoint has not
+  // been issued yet (creating a token would be premature) or when the user
+  // has already created at least one token.
   const isPrivateDeployment =
-    deployment.networkAccess.openToPublic === false && !isDeploymentDestroying;
+    deployment.networkAccess.openToPublic === false &&
+    !isDeploymentDestroying &&
+    hasEndpointUrl &&
+    !hasAccessTokens;
 
   const creatorEmail = deployment.creator?.basicInfo?.email ?? null;
   // When the creator email is unresolvable (e.g. manager versions < 26.4.3),

@@ -1085,6 +1085,7 @@
       "Delete": "Supprimer le jeton d'accès",
       "DeleteConfirm": "Êtes-vous sûr de vouloir supprimer ce jeton d'accès ? Cette action est irréversible.",
       "Deleted": "Le jeton d'accès a été supprimé.",
+      "EndpointNotIssuedYet": "Le point d'accès réseau n'a pas encore été émis.",
       "Expiration": "Expiration",
       "NoExpiration": "Sans expiration",
       "Token": "Jeton"

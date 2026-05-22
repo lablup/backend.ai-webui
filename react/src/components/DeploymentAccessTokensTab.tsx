@@ -98,6 +98,9 @@ const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
     graphql`
       fragment DeploymentAccessTokensTab_deployment on ModelDeployment {
         id
+        networkAccess {
+          endpointUrl
+        }
       }
     `,
     deploymentFrgmt,
@@ -125,7 +128,12 @@ const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
     });
   };
 
+  const hasEndpointUrl = !!deployment.networkAccess?.endpointUrl;
   const isMutationDisabled = isDeploymentDestroying || !isOwnedByCurrentUser;
+  // The create button is also blocked while the manager has not yet
+  // issued a network endpoint — a token would have nothing to authenticate
+  // against. Surface the reason via a Tooltip on the disabled button.
+  const isCreateDisabled = isMutationDisabled || !hasEndpointUrl;
 
   return (
     <>
@@ -147,14 +155,22 @@ const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
               value=""
               onChange={handleRefetch}
             />
-            <Button
-              type="primary"
-              icon={<PlusOutlined />}
-              disabled={isMutationDisabled}
-              onClick={() => setIsCreateModalOpen(true)}
+            <Tooltip
+              title={
+                !hasEndpointUrl
+                  ? t('deployment.accessToken.EndpointNotIssuedYet')
+                  : ''
+              }
             >
-              {t('deployment.accessToken.Create')}
-            </Button>
+              <Button
+                type="primary"
+                icon={<PlusOutlined />}
+                disabled={isCreateDisabled}
+                onClick={() => setIsCreateModalOpen(true)}
+              >
+                {t('deployment.accessToken.Create')}
+              </Button>
+            </Tooltip>
           </BAIFlex>
         }
         styles={{ body: { paddingTop: 0 } }}

@@ -1085,6 +1085,7 @@
       "Delete": "Poista pääsytunnus",
       "DeleteConfirm": "Haluatko varmasti poistaa tämän pääsytunnuksen? Tätä toimintoa ei voi peruuttaa.",
       "Deleted": "Pääsytunnus on poistettu.",
+      "EndpointNotIssuedYet": "Verkkopäätepistettä ei ole vielä myönnetty.",
       "Expiration": "Vanhentuminen",
       "NoExpiration": "Ei vanhentumista",
       "Token": "Tunnus"

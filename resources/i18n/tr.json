@@ -1085,6 +1085,7 @@
       "Delete": "Erişim Jetonunu Sil",
       "DeleteConfirm": "Bu erişim jetonunu silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
       "Deleted": "Erişim jetonu silindi.",
+      "EndpointNotIssuedYet": "Ağ uç noktası henüz oluşturulmadı.",
       "Expiration": "Son Kullanma Tarihi",
       "NoExpiration": "Son Kullanma Tarihi Yok",
       "Token": "Jeton"

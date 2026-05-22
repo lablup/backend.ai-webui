@@ -1085,6 +1085,7 @@
       "Delete": "Usuń token dostępu",
       "DeleteConfirm": "Czy na pewno chcesz usunąć ten token dostępu? Tej operacji nie można cofnąć.",
       "Deleted": "Token dostępu został usunięty.",
+      "EndpointNotIssuedYet": "Punkt końcowy sieci nie został jeszcze wydany.",
       "Expiration": "Wygaśnięcie",
       "NoExpiration": "Bez wygaśnięcia",
       "Token": "Token"
