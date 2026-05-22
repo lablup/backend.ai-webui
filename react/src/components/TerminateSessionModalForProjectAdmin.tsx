@@ -34,7 +34,6 @@ export interface TerminateSessionModalForProjectAdminProps extends Omit<
   ModalProps,
   'onOk' | 'onCancel'
 > {
-  projectId: string;
   /** Sessions to terminate. A single-element list terminates one session;
    *  multiple elements perform a bulk terminate via the same mutation. */
   sessionsFrgmt?: TerminateSessionModalForProjectAdminFragment$key;
@@ -44,13 +43,14 @@ export interface TerminateSessionModalForProjectAdminProps extends Omit<
 /**
  * Terminate confirmation modal for the project-admin session list. Mirrors the
  * v1 `TerminateSessionModal` UI (message + highlighted name(s) + force-terminate
- * checkbox + per-agent container cleanup list), but drives the v2
- * `terminateProjectSessionsV2` mutation, which accepts an id array — so the same
- * modal handles single and bulk terminate.
+ * checkbox + per-agent container cleanup list), but drives the scope-agnostic
+ * `terminateSessionsV2` mutation, which accepts an id array — so the same modal
+ * handles single and bulk terminate. Per-session RBAC permission is enforced by
+ * the backend bulk validator; any denial fails the whole request.
  */
 const TerminateSessionModalForProjectAdmin: React.FC<
   TerminateSessionModalForProjectAdminProps
-> = ({ projectId, sessionsFrgmt, onRequestClose, ...modalProps }) => {
+> = ({ sessionsFrgmt, onRequestClose, ...modalProps }) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -88,15 +88,10 @@ const TerminateSessionModalForProjectAdmin: React.FC<
   const [commitTerminate, isInFlight] =
     useMutation<TerminateSessionModalForProjectAdminMutation>(graphql`
       mutation TerminateSessionModalForProjectAdminMutation(
-        $scope: ProjectSessionV2Scope!
         $sessionIds: [ID!]!
         $forced: Boolean!
       ) {
-        terminateProjectSessionsV2(
-          scope: $scope
-          sessionIds: $sessionIds
-          forced: $forced
-        ) {
+        terminateSessionsV2(sessionIds: $sessionIds, forced: $forced) {
           cancelled
           terminating
           forceTerminated
@@ -136,7 +131,6 @@ const TerminateSessionModalForProjectAdmin: React.FC<
         }
         commitTerminate({
           variables: {
-            scope: { projectId },
             sessionIds: sessions.map((session) => toLocalId(session.id)),
             forced: isForce,
           },

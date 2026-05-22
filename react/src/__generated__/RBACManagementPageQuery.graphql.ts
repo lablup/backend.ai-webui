@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<95663cc889046dd04f566eadfc3006dd>>
+ * @generated SignedSource<<afccb43679c638477b961c247400ff78>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -18,6 +18,7 @@ export type RoleFilter = {
   AND?: ReadonlyArray<RoleFilter> | null | undefined;
   NOT?: ReadonlyArray<RoleFilter> | null | undefined;
   OR?: ReadonlyArray<RoleFilter> | null | undefined;
+  assignedUser?: RoleUserNestedFilter | null | undefined;
   name?: StringFilter | null | undefined;
   source?: RoleSourceFilter | null | undefined;
   status?: RoleStatusFilter | null | undefined;
@@ -55,6 +56,18 @@ export type RoleStatusFilter = {
   in?: ReadonlyArray<RoleStatus> | null | undefined;
   notEquals?: RoleStatus | null | undefined;
   notIn?: ReadonlyArray<RoleStatus> | null | undefined;
+};
+export type RoleUserNestedFilter = {
+  AND?: ReadonlyArray<RoleUserNestedFilter> | null | undefined;
+  NOT?: ReadonlyArray<RoleUserNestedFilter> | null | undefined;
+  OR?: ReadonlyArray<RoleUserNestedFilter> | null | undefined;
+  userId?: UUIDFilter | null | undefined;
+};
+export type UUIDFilter = {
+  equals?: string | null | undefined;
+  in?: ReadonlyArray<string> | null | undefined;
+  notEquals?: string | null | undefined;
+  notIn?: ReadonlyArray<string> | null | undefined;
 };
 export type RoleOrderBy = {
   direction?: OrderDirection;

@@ -345,7 +345,6 @@ const ProjectAdminSessionContent: React.FC<ProjectAdminSessionContentProps> = ({
       />
       <TerminateSessionModalForProjectAdmin
         open={isTerminateOpen}
-        projectId={projectId}
         sessionsFrgmt={terminateTargets}
         onRequestClose={(success) => {
           setIsTerminateOpen(false);

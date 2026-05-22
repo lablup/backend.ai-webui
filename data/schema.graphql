@@ -1435,6 +1435,7 @@ input AuditLogFilter
   @join__type(graph: STRAWBERRY)
 {
   entityType: StringFilter = null
+  entityId: StringFilter = null
   operation: StringFilter = null
   status: AuditLogStatusFilter = null
   createdAt: DateTimeFilter = null
@@ -1522,6 +1523,19 @@ type AuditLogSchema
   Possible values of "AuditLogNode.status"
   """
   status_variants: [String]
+}
+
+"""
+Added in UNRELEASED. Scope for the scoped audit log query. All items are OR'd; raises an error if every field is empty.
+"""
+input AuditLogScope
+  @join__type(graph: STRAWBERRY)
+{
+  """Entity-tagged scope items."""
+  entity: [EntityTypeScope!] = null
+
+  """Actor UUIDs (matches audit_logs.triggered_by)."""
+  triggeredUser: [UUIDScope!] = null
 }
 
 """Added in 26.3.0. Status of an audit log entry."""
@@ -2070,7 +2084,7 @@ input BulkPurgeVFoldersV2Input
   """
   Added in UNRELEASED. Optional behavior flags applied to every vfolder in the batch. Defaults to all-false when omitted.
   """
-  options: PurgeVFolderOptionsInput!
+  options: PurgeVFolderOptionsInput
 }
 
 """Added in 26.4.2. Payload for bulk virtual folder purge."""
@@ -6684,6 +6698,19 @@ type EntityTimestamps
 }
 
 """
+Added in UNRELEASED. Entity reference parametrized by RBAC element type.
+"""
+input EntityTypeScope
+  @join__type(graph: STRAWBERRY)
+{
+  """RBAC element type of the entity."""
+  entityType: RBACElementType!
+
+  """ID of the entity."""
+  entityId: String!
+}
+
+"""
 Added in UNRELEASED. A single environment variable entry with key and value.
 """
 input EnvironEntryInput
@@ -9707,6 +9734,11 @@ type ModelRevision implements Node
   """
   revisionPresetId: UUID
 
+  """
+  Added in UNRELEASED. ID of the parent deployment that owns this revision. Exposed alongside the resolved ``deployment`` node so clients can navigate without re-fetching.
+  """
+  deploymentId: ID!
+
   """Timestamp when the revision was created."""
   createdAt: DateTime!
 
@@ -9723,16 +9755,13 @@ type ModelRevision implements Node
   """
   revisionPreset: DeploymentRevisionPreset
 
-  """Added in 26.4.2. Resource slot allocations for this revision."""
-  resourceSlots(filter: AllocatedResourceSlotFilter = null, orderBy: [AllocatedResourceSlotOrderBy!] = null): [AllocatedResourceSlot!]
-
-  """Added in UNRELEASED. ID of the parent deployment this revision belongs to."""
-  deploymentId: ID!
-
   """
-  Added in UNRELEASED. The parent deployment this revision belongs to, resolved via DataLoader.
+  Added in UNRELEASED. The parent deployment owning this revision, resolved via DataLoader.
   """
   deployment: ModelDeployment
+
+  """Added in 26.4.2. Resource slot allocations for this revision."""
+  resourceSlots(filter: AllocatedResourceSlotFilter = null, orderBy: [AllocatedResourceSlotOrderBy!] = null): [AllocatedResourceSlot!]
 }
 
 """Added in 25.19.0. Connection for model revisions."""
@@ -11528,8 +11557,10 @@ type Mutation
   """Added in 26.4.2. Enqueue a new compute session."""
   enqueueSession(input: EnqueueSessionInput!): EnqueueSessionPayload @join__field(graph: STRAWBERRY)
 
-  """Added in 26.4.2. Terminate sessions within a project scope."""
-  terminateProjectSessionsV2(scope: ProjectSessionV2Scope!, sessionIds: [ID!]!, forced: Boolean! = false): TerminateSessionsPayload @join__field(graph: STRAWBERRY)
+  """
+  Added in UNRELEASED. Terminate one or more sessions by ID. Per-session RBAC permission is enforced by the bulk validator; any denial fails the whole request.
+  """
+  terminateSessionsV2(sessionIds: [ID!]!, forced: Boolean! = false): TerminateSessionsPayload @join__field(graph: STRAWBERRY)
 }
 
 """
@@ -13835,6 +13866,11 @@ type Query
   adminAuditLogsV2(filter: AuditLogFilter = null, orderBy: [AuditLogOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): AuditLogV2Connection @join__field(graph: STRAWBERRY)
 
   """
+  Added in UNRELEASED. Query audit logs within a scope (non-admin accessible, subject to RBAC). All scope items are OR'd; raises an error if every field is empty.
+  """
+  scopedAuditLogsV2(scope: AuditLogScope!, filter: AuditLogFilter = null, orderBy: [AuditLogOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): AuditLogV2Connection @join__field(graph: STRAWBERRY)
+
+  """
   Added in 26.4.2. List container registries with filtering, ordering, and pagination (admin only).
   """
   adminContainerRegistriesV2(filter: ContainerRegistryV2Filter = null, orderBy: [ContainerRegistryV2OrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ContainerRegistryV2Connection @join__field(graph: STRAWBERRY)
@@ -15854,6 +15890,7 @@ input RoleFilter
   name: StringFilter = null
   source: RoleSourceFilter = null
   status: RoleStatusFilter = null
+  assignedUser: RoleUserNestedFilter = null
   AND: [RoleFilter!] = null
   OR: [RoleFilter!] = null
   NOT: [RoleFilter!] = null
@@ -16067,6 +16104,16 @@ input RoleStatusFilter
 
   """Excludes roles whose status is in this list."""
   notIn: [RoleStatus!] = null
+}
+
+"""Added in UNRELEASED. Filter roles by their user assignments."""
+input RoleUserNestedFilter
+  @join__type(graph: STRAWBERRY)
+{
+  userId: UUIDFilter = null
+  AND: [RoleUserNestedFilter!] = null
+  OR: [RoleUserNestedFilter!] = null
+  NOT: [RoleUserNestedFilter!] = null
 }
 
 """
@@ -18798,8 +18845,8 @@ input UpdateRuntimeVariantInput
   """New name."""
   name: String = null
 
-  """New description."""
-  description: String = null
+  """New description. Set to null to clear."""
+  description: String
 }
 
 """Added in 26.4.2. Payload for runtime variant update."""
@@ -20143,6 +20190,14 @@ Verifies that the key is a UUID (represented as a string) and the value is a flo
 """
 scalar UUIDFloatMap
   @join__type(graph: GRAPHENE)
+
+"""Added in UNRELEASED. Single-UUID scope item wrapper."""
+input UUIDScope
+  @join__type(graph: STRAWBERRY)
+{
+  """UUID value."""
+  value: UUID!
+}
 
 """Added in 24.09.0. Input for validate notification channel mutation"""
 input ValidateNotificationChannelInput
