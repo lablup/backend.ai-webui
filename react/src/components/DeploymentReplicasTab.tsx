@@ -88,11 +88,16 @@ const toReplicaTagStatus = (value?: string | null): ReplicaStatus =>
 interface DeploymentReplicasTabProps {
   deploymentFrgmt: DeploymentReplicasTab_deployment$key;
   deploymentId: string;
+  // External fetch key (e.g. bumped by the page when a new revision is added
+  // and replicas are spawned) — combined with the local manual-refresh key so
+  // either event re-issues the list query.
+  replicaFetchKey?: string;
 }
 
 const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
   deploymentFrgmt,
   deploymentId,
+  replicaFetchKey,
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -229,7 +234,10 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
         }
       `,
       { deploymentId, ...queryVars },
-      { fetchKey, fetchPolicy: 'network-only' },
+      {
+        fetchKey: `${fetchKey}-${replicaFetchKey ?? ''}`,
+        fetchPolicy: 'network-only',
+      },
     );
 
   const replicas =

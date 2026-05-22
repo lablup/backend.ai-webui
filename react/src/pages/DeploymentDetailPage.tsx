@@ -72,6 +72,7 @@ const DeploymentDetailPage: React.FC = () => {
   const [isPendingRefetch, startRefetchTransition] = useTransition();
   const [fetchKey, updateFetchKey] = useFetchKey();
   const [revisionFetchKey, updateRevisionFetchKey] = useFetchKey();
+  const [replicaFetchKey, updateReplicaFetchKey] = useFetchKey();
   const [
     addRevisionOpen,
     { setLeft: closeAddRevision, setRight: openAddRevision },
@@ -217,6 +218,10 @@ const DeploymentDetailPage: React.FC = () => {
       startRefetchTransition(() => {
         updateFetchKey();
         updateRevisionFetchKey();
+        // A new revision spawns new replicas — refresh the replicas list so
+        // they appear immediately instead of waiting for the next manual
+        // refresh or a tab re-mount.
+        updateReplicaFetchKey();
       });
       scrollToElementId('deployment-revisions');
     }
@@ -335,6 +340,7 @@ const DeploymentDetailPage: React.FC = () => {
             <DeploymentReplicasTab
               deploymentFrgmt={deployment}
               deploymentId={deploymentGlobalId}
+              replicaFetchKey={replicaFetchKey}
             />
           </Suspense>
         </BAIErrorBoundary>
