@@ -1387,6 +1387,7 @@
     "InvalidUrl": "Đó không phải là một URL hợp lệ",
     "LoginFailed": "Đăng nhập thất bại. \nKiểm tra thông tin đăng nhập.",
     "LoginInformationMismatch": "Thông tin đăng nhập không khớp. \nKiểm tra thông tin của bạn",
+    "LoginPluginLoadFailed": "Không thể tải plugin đăng nhập.",
     "LoginSucceededManagerNotResponding": "Đăng nhập thành công nhưng người quản lý không phản hồi.",
     "MaximumVfolderCreation": "Bạn không thể tạo thêm vfolder do chính sách tài nguyên",
     "NetworkConnectionFailed": "Kết nối mạng không thành công. \nKiểm tra trạng thái mạng.",

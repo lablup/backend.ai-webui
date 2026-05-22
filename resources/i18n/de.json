@@ -1387,6 +1387,7 @@
     "InvalidUrl": "Es handelt sich nicht um eine gültige URL",
     "LoginFailed": "Anmeldung fehlgeschlagen. Überprüfen Sie die Anmeldeinformationen.",
     "LoginInformationMismatch": "Die Anmeldeinformationen stimmen nicht überein. Prüfen Sie Ihre Informationen",
+    "LoginPluginLoadFailed": "Das Anmelde-Plugin konnte nicht geladen werden.",
     "LoginSucceededManagerNotResponding": "Anmeldung erfolgreich, aber Manager antwortet nicht.",
     "MaximumVfolderCreation": "Sie können aufgrund von Ressourcenrichtlinien keine weiteren vOrdner erstellen",
     "NetworkConnectionFailed": "Netzwerkverbindung fehlgeschlagen. Überprüfen Sie den Netzwerkstatus.",

@@ -1387,6 +1387,7 @@
     "InvalidUrl": "Non è un URL valido",
     "LoginFailed": "Accesso non riuscito. Controllare le informazioni di accesso.",
     "LoginInformationMismatch": "Le informazioni di accesso non corrispondono. Controllare le informazioni",
+    "LoginPluginLoadFailed": "Impossibile caricare il plugin di accesso.",
     "LoginSucceededManagerNotResponding": "Accesso riuscito ma il gestore non risponde.",
     "MaximumVfolderCreation": "Non è possibile creare altre vfolders a causa del criterio delle risorse.",
     "NetworkConnectionFailed": "Connessione di rete fallita. Controllare lo stato della rete.",

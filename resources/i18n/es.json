@@ -1387,6 +1387,7 @@
     "InvalidUrl": "No es una URL válida",
     "LoginFailed": "Error en el inicio de sesión. Compruebe la información de inicio de sesión.",
     "LoginInformationMismatch": "La información de inicio de sesión no coincide. Compruebe sus datos",
+    "LoginPluginLoadFailed": "No se pudo cargar el complemento de inicio de sesión.",
     "LoginSucceededManagerNotResponding": "El inicio de sesión se ha realizado correctamente, pero el administrador no responde.",
     "MaximumVfolderCreation": "No se pueden crear más vfolders debido a la política de recursos",
     "NetworkConnectionFailed": "Ha fallado la conexión de red. Compruebe el estado de la red.",

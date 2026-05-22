@@ -1388,6 +1388,7 @@
     "InvalidUrl": "Ce n'est pas une URL valide",
     "LoginFailed": "La connexion a échoué. Vérifier les informations de connexion.",
     "LoginInformationMismatch": "Les informations de connexion ne correspondent pas. Vérifiez vos informations",
+    "LoginPluginLoadFailed": "Impossible de charger le plugin de connexion.",
     "LoginSucceededManagerNotResponding": "La connexion a réussi mais le gestionnaire ne répond pas.",
     "MaximumVfolderCreation": "Vous ne pouvez pas créer d'autres dossiers virtuels en raison de la politique de ressources.",
     "NetworkConnectionFailed": "La connexion réseau a échoué. Vérifier l'état du réseau.",

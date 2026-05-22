@@ -1387,6 +1387,7 @@
     "InvalidUrl": "有効な URL ではありません",
     "LoginFailed": "ログインに失敗しました。ログイン情報を確認してください。",
     "LoginInformationMismatch": "ログイン情報が一致しません。情報を確認する",
+    "LoginPluginLoadFailed": "ログインプラグインを読み込めませんでした。",
     "LoginSucceededManagerNotResponding": "ログインは成功しましたが、マネージャーが応答していません。",
     "MaximumVfolderCreation": "リソースポリシーのため、Vフォルダーをさらに作成することはできません。",
     "NetworkConnectionFailed": "ネットワーク接続に失敗しました。ネットワークの状態を確認してください。",

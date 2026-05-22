@@ -216,7 +216,12 @@ const LoginView: React.FC<{
     }
   }, [isConfigLoaded, atomLoginConfig]);
 
-  // Load login plugin when config is ready
+  // Load login plugin when config is ready.
+  // Mirrors `PluginLoader.tsx`'s URL resolution so login plugins follow
+  // the same deployment model as page plugins: the file is served by the
+  // backend WebServer (or a Vite/static host that mounts `/dist/plugins/`).
+  // No build-time bundling — plugins can be deployed independently of the
+  // WebUI bundle.
   useEffect(() => {
     if (!isConfigLoaded || !loginPlugin) return;
 
@@ -225,17 +230,19 @@ const LoginView: React.FC<{
     const sanitizedPlugin = loginPlugin.replace(/[^a-zA-Z0-9_-]/g, '');
     if (!sanitizedPlugin || sanitizedPlugin !== loginPlugin) return;
 
-    // Build the plugin path at runtime, in a variable, so neither Vite nor
-    // esbuild's optimizeDeps scanner can statically analyze the specifier.
-    // A template-literal with a static prefix (e.g. `../../../src/plugins/…`)
-    // is treated by esbuild as a glob and fails to resolve in dev because
-    // `webui-ai/src/plugins/` only exists in production builds. `@vite-ignore`
-    // alone is not enough — esbuild's scanner does not honor that comment.
-    const pluginUrl = `../../../src/plugins/${sanitizedPlugin}`;
+    const isElectronEnv = (globalThis as Record<string, unknown>).isElectron;
+    const pluginUrl =
+      isElectronEnv && apiEndpoint
+        ? `${apiEndpoint}/dist/plugins/${sanitizedPlugin}.js`
+        : `/dist/plugins/${sanitizedPlugin}.js`;
+
+    // `@vite-ignore` opts out of Vite's static analysis. The URL is an
+    // absolute path (no relative `..` traversal), so esbuild's
+    // optimizeDeps scanner does not treat it as a module specifier.
     import(/* @vite-ignore */ pluginUrl).catch(() => {
-      setLoginError({ message: t('error.LoginFailed') });
+      setLoginError({ message: t('error.LoginPluginLoadFailed') });
     });
-  }, [isConfigLoaded, loginPlugin, t]);
+  }, [isConfigLoaded, loginPlugin, apiEndpoint, t]);
 
   // Keep configRef in sync
   useEffect(() => {

@@ -1387,6 +1387,7 @@
     "InvalidUrl": "ไม่ใช่ URL ที่ถูกต้อง",
     "LoginFailed": "เข้าสู่ระบบล้มเหลว ตรวจสอบข้อมูลการเข้าสู่ระบบ",
     "LoginInformationMismatch": "ข้อมูลการเข้าสู่ระบบไม่ตรงกัน ตรวจสอบข้อมูลของคุณ",
+    "LoginPluginLoadFailed": "โหลดปลั๊กอินเข้าสู่ระบบล้มเหลว",
     "LoginSucceededManagerNotResponding": "เข้าสู่ระบบสำเร็จแต่ผู้จัดการไม่ตอบสนอง",
     "MaximumVfolderCreation": "คุณไม่สามารถสร้าง vfolder เพิ่มได้เนื่องจากนโยบายทรัพยากร",
     "NetworkConnectionFailed": "การเชื่อมต่อเครือข่ายล้มเหลว ตรวจสอบสถานะเครือข่าย",

@@ -1387,6 +1387,7 @@
     "InvalidUrl": "Geçerli bir URL değil",
     "LoginFailed": "Giriş başarısız oldu. Giriş bilgilerini kontrol edin.",
     "LoginInformationMismatch": "Giriş bilgileri uyuşmazlığı. Bilgilerinizi kontrol edin",
+    "LoginPluginLoadFailed": "Giriş eklentisi yüklenemedi.",
     "LoginSucceededManagerNotResponding": "Giriş başarılı ancak yönetici yanıt vermiyor.",
     "MaximumVfolderCreation": "Kaynak ilkesi nedeniyle daha fazla vfolder oluşturamazsınız",
     "NetworkConnectionFailed": "Ağ bağlantısı başarısız oldu. Ağ durumunu kontrol edin.",

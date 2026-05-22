@@ -1387,6 +1387,7 @@
     "InvalidUrl": "Ia bukan URL yang sah",
     "LoginFailed": "Daftar masuk gagal. \nSemak maklumat log masuk.",
     "LoginInformationMismatch": "Maklumat log masuk tidak sepadan. \nSemak maklumat anda",
+    "LoginPluginLoadFailed": "Gagal memuatkan pemalam log masuk.",
     "LoginSucceededManagerNotResponding": "Log masuk berjaya tetapi pengurus tidak bertindak balas.",
     "MaximumVfolderCreation": "Anda tidak boleh membuat lebih banyak vfolder kerana dasar sumber",
     "NetworkConnectionFailed": "Sambungan rangkaian gagal. \nSemak status rangkaian.",

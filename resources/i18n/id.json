@@ -1388,6 +1388,7 @@
     "InvalidUrl": "Ini bukan URL yang valid",
     "LoginFailed": "Login gagal. Periksa informasi login.",
     "LoginInformationMismatch": "Ketidakcocokan informasi login. Periksa informasi Anda",
+    "LoginPluginLoadFailed": "Gagal memuat plugin login.",
     "LoginSucceededManagerNotResponding": "Login berhasil tetapi pengelola tidak merespons.",
     "MaximumVfolderCreation": "Anda tidak dapat membuat lebih banyak vfolder karena kebijakan sumber daya",
     "NetworkConnectionFailed": "Koneksi jaringan gagal. Periksa status jaringan.",

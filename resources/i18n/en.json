@@ -1374,6 +1374,7 @@
     "InvalidUrl": "It is not a valid URL",
     "LoginFailed": "Login failed. Check login information.",
     "LoginInformationMismatch": "Login information mismatch. Check your information",
+    "LoginPluginLoadFailed": "Failed to load login plugin.",
     "LoginSucceededManagerNotResponding": "Login succeed but manager is not responding.",
     "MaximumVfolderCreation": "You cannot create more vfolders due to resource policy",
     "NetworkConnectionFailed": "Network connection failed. Check network status.",

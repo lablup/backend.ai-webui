@@ -1387,6 +1387,7 @@
     "InvalidUrl": "Não é um URL válido",
     "LoginFailed": "O início de sessão falhou. Verificar as informações de início de sessão.",
     "LoginInformationMismatch": "Incompatibilidade de informações de início de sessão. Verifique as suas informações",
+    "LoginPluginLoadFailed": "Falha ao carregar o plugin de login.",
     "LoginSucceededManagerNotResponding": "Login bem-sucedido, mas o gerente não está respondendo.",
     "MaximumVfolderCreation": "Não é possível criar mais vfolders devido à política de recursos",
     "NetworkConnectionFailed": "A ligação de rede falhou. Verificar o estado da rede.",

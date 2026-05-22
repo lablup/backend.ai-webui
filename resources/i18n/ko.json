@@ -1387,6 +1387,7 @@
     "InvalidUrl": "유효한 URL이 아닙니다.",
     "LoginFailed": "로그인하지 못했습니다. 로그인 정보를 확인하세요.",
     "LoginInformationMismatch": "로그인에 실패했습니다. 이메일(또는 사용자 이름)과 비밀번호를 다시 확인해 주세요.",
+    "LoginPluginLoadFailed": "로그인 플러그인을 가져오지 못했습니다.",
     "LoginSucceededManagerNotResponding": "로그인은 성공했으나 매니저 서버가 응답하지 않습니다.",
     "MaximumVfolderCreation": "자원 정책에 따라 더 이상 폴더를 만들 수 없습니다.",
     "NetworkConnectionFailed": "네트워크 연결 실패. 네트워크 상태를 확인하세요.",

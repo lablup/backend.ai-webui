@@ -1387,6 +1387,7 @@
     "InvalidUrl": "这不是一个有效的 URL",
     "LoginFailed": "登录失败。检查登录信息。",
     "LoginInformationMismatch": "登录信息不匹配。检查您的信息",
+    "LoginPluginLoadFailed": "无法加载登录插件。",
     "LoginSucceededManagerNotResponding": "登录成功，但经理没有响应。",
     "MaximumVfolderCreation": "由于资源政策原因，无法创建更多 v 文件夹",
     "NetworkConnectionFailed": "网络连接失败。检查网络状态。",
