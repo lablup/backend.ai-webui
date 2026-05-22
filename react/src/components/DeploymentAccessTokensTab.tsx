@@ -11,6 +11,7 @@ import {
   PlusOutlined,
   QuestionCircleOutlined,
 } from '@ant-design/icons';
+import { useControllableValue } from 'ahooks';
 import {
   App,
   Button,
@@ -66,9 +67,8 @@ const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
   deploymentId,
   isOwnedByCurrentUser = true,
   isDeploymentDestroying = false,
-  isCreateModalOpen: isCreateModalOpenProp,
-  onCreateModalOpenChange,
   onTokenCreated,
+  ...controlledModalProps
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -78,16 +78,12 @@ const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
   const [isPendingRefetch, startRefetchTransition] = useTransition();
   const [fetchKey, setFetchKey] = useState(0);
 
-  const [isCreateModalOpenInternal, setIsCreateModalOpenInternal] =
-    useState(false);
-  const isCreateModalOpen = isCreateModalOpenProp ?? isCreateModalOpenInternal;
-  const setIsCreateModalOpen = (open: boolean) => {
-    if (onCreateModalOpenChange) {
-      onCreateModalOpenChange(open);
-    } else {
-      setIsCreateModalOpenInternal(open);
-    }
-  };
+  const [isCreateModalOpen, setIsCreateModalOpen] =
+    useControllableValue<boolean>(controlledModalProps, {
+      defaultValue: false,
+      valuePropName: 'isCreateModalOpen',
+      trigger: 'onCreateModalOpenChange',
+    });
   // After successful creation, show the plaintext token once in a modal.
   const [createdToken, setCreatedToken] = useState<{
     token: string;

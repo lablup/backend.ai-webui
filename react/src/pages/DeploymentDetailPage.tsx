@@ -222,10 +222,6 @@ const DeploymentDetailPage: React.FC = () => {
     }
   };
 
-  const handleAccessTokenCreated = () => {
-    scrollToElementId('deployment-access-tokens');
-  };
-
   return (
     <BAIFlex direction="column" align="stretch" gap="md">
       {isProjectMismatch && deploymentProjectId && (
@@ -358,7 +354,13 @@ const DeploymentDetailPage: React.FC = () => {
               closeCreateAccessToken();
             }
           }}
-          onTokenCreated={handleAccessTokenCreated}
+          onTokenCreated={() => {
+            // Refresh the page-level query so `accessTokens.count` updates;
+            // otherwise the "Private deployment" alert (which is gated on
+            // `hasAccessTokens === false`) stays visible after creation.
+            handleRefetch();
+            scrollToElementId('deployment-access-tokens');
+          }}
         />
       </div>
       {/* Local Suspense around the lazily-mounted modal so its initial
