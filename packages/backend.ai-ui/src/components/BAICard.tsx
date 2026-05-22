@@ -1,9 +1,14 @@
 import BAIFlex from './BAIFlex';
-import { CloseCircleTwoTone, WarningTwoTone } from '@ant-design/icons';
+import {
+  CloseCircleTwoTone,
+  RightOutlined,
+  WarningTwoTone,
+} from '@ant-design/icons';
 import { Button, Card, theme, type CardProps } from 'antd';
 import * as _ from 'lodash-es';
-import React, { cloneElement, isValidElement } from 'react';
+import React, { cloneElement, isValidElement, useState } from 'react';
 import type { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 
 /**
  * Props interface for BAICard component.
@@ -20,6 +25,17 @@ export interface BAICardProps extends Omit<CardProps, 'extra'> {
   showDivider?: boolean;
   /** Callback function triggered when the extra button is clicked */
   onClickExtraButton?: () => void;
+  /**
+   * When true, the card body can be collapsed/expanded via a chevron toggle
+   * in the header. Existing usages are unaffected unless this is set.
+   */
+  collapsible?: boolean;
+  /** Controlled collapsed state. Use together with `onCollapsedChange`. */
+  collapsed?: boolean;
+  /** Initial collapsed state for uncontrolled usage. Defaults to `false`. */
+  defaultCollapsed?: boolean;
+  /** Callback fired with the next collapsed state when the header is toggled. */
+  onCollapsedChange?: (collapsed: boolean) => void;
   /** React ref for the card container */
   ref?: React.Ref<HTMLDivElement> | undefined;
 }
@@ -73,9 +89,29 @@ const BAICard: React.FC<BAICardProps> = ({
   style,
   styles,
   showDivider,
+  collapsible,
+  collapsed,
+  defaultCollapsed,
+  onCollapsedChange,
   ...cardProps
 }) => {
   const { token } = theme.useToken();
+  const { t } = useTranslation();
+
+  const [internalCollapsed, setInternalCollapsed] = useState(
+    defaultCollapsed ?? false,
+  );
+  // Controlled when `collapsed` is provided, otherwise uncontrolled.
+  const mergedCollapsed = collapsible
+    ? (collapsed ?? internalCollapsed)
+    : false;
+  const toggleCollapsed = () => {
+    const next = !mergedCollapsed;
+    if (collapsed === undefined) {
+      setInternalCollapsed(next);
+    }
+    onCollapsedChange?.(next);
+  };
 
   const extraWithoutFontWeight = isValidElement(extra)
     ? cloneElement(extra as React.ReactElement<any>, {
@@ -137,17 +173,54 @@ const BAICard: React.FC<BAICardProps> = ({
             }
           : {},
         styles,
+        // Hide the body while collapsed (kept last so it wins the merge).
+        collapsible && mergedCollapsed ? { body: { display: 'none' } } : {},
       )}
       {...cardProps}
       title={
-        cardProps.title || extra ? (
+        cardProps.title || extra || collapsible ? (
           <BAIFlex
-            justify={cardProps.title ? 'between' : 'end'}
+            justify={cardProps.title || collapsible ? 'between' : 'end'}
             align="center"
             wrap="wrap"
             gap="sm"
           >
-            {cardProps.title}
+            {collapsible ? (
+              <BAIFlex
+                align="center"
+                gap="xs"
+                style={{ cursor: 'pointer', flex: 1, minWidth: 0 }}
+                role="button"
+                tabIndex={0}
+                aria-expanded={!mergedCollapsed}
+                aria-label={
+                  cardProps.title
+                    ? undefined
+                    : mergedCollapsed
+                      ? t('general.button.Expand')
+                      : t('general.button.Collapse')
+                }
+                onClick={toggleCollapsed}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    toggleCollapsed();
+                  }
+                }}
+              >
+                <RightOutlined
+                  rotate={mergedCollapsed ? 0 : 90}
+                  style={{
+                    fontSize: token.fontSizeSM,
+                    color: token.colorTextTertiary,
+                    transition: 'transform 0.2s',
+                  }}
+                />
+                {cardProps.title}
+              </BAIFlex>
+            ) : (
+              cardProps.title
+            )}
             <BAIFlex>{_extra}</BAIFlex>
           </BAIFlex>
         ) : null

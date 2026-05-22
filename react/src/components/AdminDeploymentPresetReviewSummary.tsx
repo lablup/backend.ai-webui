@@ -10,7 +10,7 @@ import { Button, Descriptions, Space, Tag, Typography, theme } from 'antd';
 import type { FormInstance } from 'antd';
 import { BAICard, BAIFlex, toLocalId } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import React from 'react';
+import React, { useEffect, useEffectEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 // ---------------------------------------------------------------------------
@@ -61,6 +61,33 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
   );
   const step2HasError = STEP2_FIELDS.some((f) => errorFieldNames.includes(f));
 
+  // Sections with validation errors are "non-success" and expanded by default
+  // so the user lands on what needs fixing.
+  const sectionErrors: Record<string, boolean> = {
+    basicInfo: basicInfoHasError,
+    resources: resourcesHasError,
+    deployment: deploymentHasError,
+    modelAndExecution: step2HasError,
+  };
+  const nonSuccessKeys = _.keys(_.pickBy(sectionErrors));
+  // Resync expansion to the non-success sections whenever the failing set
+  // changes (e.g. after validation completes on entering the review step).
+  const nonSuccessSignature = nonSuccessKeys.join('|');
+  const [expandedKeys, setExpandedKeys] = useState<string[]>(nonSuccessKeys);
+  const syncExpandedToNonSuccess = useEffectEvent(() => {
+    setExpandedKeys(_.keys(_.pickBy(sectionErrors)));
+  });
+  useEffect(() => {
+    syncExpandedToNonSuccess();
+  }, [nonSuccessSignature]);
+
+  const isExpanded = (key: string) => expandedKeys.includes(key);
+  const handleCollapsedChange = (key: string) => (collapsed: boolean) => {
+    setExpandedKeys((prev) =>
+      collapsed ? prev.filter((k) => k !== key) : _.uniq([...prev, key]),
+    );
+  };
+
   const runtimeName =
     runtimeVariants.find((r) => toLocalId(r.id) === values.runtimeVariantId)
       ?.name ?? values.runtimeVariantId;
@@ -93,6 +120,9 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
         }
         title={t('adminDeploymentPreset.step.BasicInfo')}
         extra={editLink(0, 'preset-form-card-basic')}
+        collapsible
+        collapsed={!isExpanded('basicInfo')}
+        onCollapsedChange={handleCollapsedChange('basicInfo')}
       >
         <Descriptions column={1} size="small">
           <Descriptions.Item label={t('adminDeploymentPreset.Name')}>
@@ -133,6 +163,9 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
         }
         title={t('adminDeploymentPreset.step.Resources')}
         extra={editLink(0, 'preset-form-card-resources')}
+        collapsible
+        collapsed={!isExpanded('resources')}
+        onCollapsedChange={handleCollapsedChange('resources')}
       >
         <Descriptions column={1} size="small">
           <Descriptions.Item label={t('adminDeploymentPreset.ResourceSlots')}>
@@ -175,6 +208,9 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
         }
         title={t('adminDeploymentPreset.step.Deployment')}
         extra={editLink(0, 'preset-form-card-deployment')}
+        collapsible
+        collapsed={!isExpanded('deployment')}
+        onCollapsedChange={handleCollapsedChange('deployment')}
       >
         <Descriptions column={2} size="small">
           <Descriptions.Item label={t('adminDeploymentPreset.Replicas')}>
@@ -202,6 +238,9 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
         style={step2HasError ? { borderColor: token.colorError } : undefined}
         title={t('adminDeploymentPreset.step.ModelAndExecution')}
         extra={editLink(1, 'preset-form-card-model')}
+        collapsible
+        collapsed={!isExpanded('modelAndExecution')}
+        onCollapsedChange={handleCollapsedChange('modelAndExecution')}
       >
         <Descriptions column={1} size="small">
           <Descriptions.Item label={t('adminDeploymentPreset.StartupCommand')}>

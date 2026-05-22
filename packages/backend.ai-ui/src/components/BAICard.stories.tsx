@@ -31,6 +31,10 @@ The component extends all standard Ant Design Card properties while adding Backe
 | extraButtonTitle | \`string \\| ReactNode\` | - | Title for the extra action button in the header |
 | showDivider | \`boolean\` | \`false\` | Show divider between header and body. Auto-enabled with tabs |
 | onClickExtraButton | \`() => void\` | - | Callback when extra button is clicked |
+| collapsible | \`boolean\` | \`false\` | Render a header chevron that collapses/expands the body |
+| collapsed | \`boolean\` | - | Controlled collapsed state (pair with onCollapsedChange) |
+| defaultCollapsed | \`boolean\` | \`false\` | Initial collapsed state for uncontrolled usage |
+| onCollapsedChange | \`(collapsed: boolean) => void\` | - | Fired with the next collapsed state on toggle |
         `,
       },
     },
@@ -100,6 +104,39 @@ The component extends all standard Ant Design Card properties while adding Backe
       table: {
         type: { summary: 'boolean' },
         defaultValue: { summary: 'false' },
+      },
+    },
+    collapsible: {
+      control: { type: 'boolean' },
+      description:
+        'Allow the card body to be collapsed/expanded via a header chevron toggle',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+      },
+    },
+    defaultCollapsed: {
+      control: { type: 'boolean' },
+      description: 'Initial collapsed state for uncontrolled collapsible cards',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+      },
+    },
+    collapsed: {
+      control: { type: 'boolean' },
+      description:
+        'Controlled collapsed state for collapsible cards. Use together with onCollapsedChange',
+      table: {
+        type: { summary: 'boolean' },
+      },
+    },
+    onCollapsedChange: {
+      action: 'collapsedChanged',
+      description:
+        'Callback fired with the next collapsed state when the header toggle is clicked',
+      table: {
+        type: { summary: '(collapsed: boolean) => void' },
       },
     },
     onClickExtraButton: {
@@ -344,6 +381,39 @@ export const WithDivider: Story = {
   args: {
     title: 'Card with Header Divider',
     showDivider: true,
+    children: sampleContent,
+  },
+};
+
+export const Collapsible: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'A collapsible card. Click the header chevron to expand or collapse the body. Useful for review/validation sections where successful items can stay collapsed and only the ones needing attention are expanded.',
+      },
+    },
+  },
+  args: {
+    title: 'Collapsible Card',
+    collapsible: true,
+    children: sampleContent,
+  },
+};
+
+export const CollapsibleCollapsedByDefault: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'An uncontrolled collapsible card that starts collapsed via `defaultCollapsed`. Only the header is shown until the user expands it.',
+      },
+    },
+  },
+  args: {
+    title: 'Collapsed by Default',
+    collapsible: true,
+    defaultCollapsed: true,
     children: sampleContent,
   },
 };

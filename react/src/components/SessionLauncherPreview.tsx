@@ -36,6 +36,7 @@ import {
 import { BAIAlert, BAICard, BAIDoubleTag, BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
+import { useEffect, useEffectEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const SessionLauncherPreview: React.FC<{
@@ -53,6 +54,61 @@ const SessionLauncherPreview: React.FC<{
   const currentProject = useCurrentProjectValue();
   const [, { getBaseVersion, getBaseImage, tagAlias }] =
     useBackendAIImageMetaData();
+
+  // Per-section validation status. A section is "non-success" when it holds a
+  // field error; those sections are expanded by default so the user lands on
+  // what needs fixing.
+  const sessionTypeHasError =
+    form.getFieldError('sessionName').length > 0 ||
+    form.getFieldError(['batch', 'command']).length > 0 ||
+    form.getFieldError(['batch', 'scheduleDate']).length > 0;
+  const ownerHasError =
+    form.getFieldError(['owner', 'email']).length > 0 ||
+    form.getFieldError(['owner', 'accesskey']).length > 0 ||
+    form.getFieldError(['owner', 'project']).length > 0 ||
+    form.getFieldError(['owner', 'resourceGroup']).length > 0;
+  const environmentsHasError = _.some(
+    form.getFieldValue('envvars') as SessionLauncherFormValue['envvars'],
+    (_v, idx) =>
+      form.getFieldError(['envvars', idx, 'variable']).length > 0 ||
+      form.getFieldError(['envvars', idx, 'value']).length > 0,
+  );
+  const resourceAllocationHasError =
+    _.some(form.getFieldValue('resource'), (_v, key) => {
+      // @ts-ignore
+      return form.getFieldError(['resource', key]).length > 0;
+    }) ||
+    form.getFieldError(['num_of_sessions']).length > 0 ||
+    form.getFieldError('resourceGroup').length > 0;
+  const dataStorageHasError = form.getFieldError('mount_id_map').length > 0;
+  const networkHasError = form.getFieldError('ports').length > 0;
+
+  const sectionErrors: Record<string, boolean> = {
+    sessionType: sessionTypeHasError,
+    owner: ownerHasError,
+    environments: environmentsHasError,
+    resourceAllocation: resourceAllocationHasError,
+    dataStorage: dataStorageHasError,
+    network: networkHasError,
+  };
+  const nonSuccessKeys = _.keys(_.pickBy(sectionErrors));
+  // Resync expansion to the non-success sections whenever the set of failing
+  // sections changes (e.g. after validation completes on entering the step).
+  const nonSuccessSignature = nonSuccessKeys.join('|');
+  const [expandedKeys, setExpandedKeys] = useState<string[]>(nonSuccessKeys);
+  const syncExpandedToNonSuccess = useEffectEvent(() => {
+    setExpandedKeys(_.keys(_.pickBy(sectionErrors)));
+  });
+  useEffect(() => {
+    syncExpandedToNonSuccess();
+  }, [nonSuccessSignature]);
+
+  const isExpanded = (key: string) => expandedKeys.includes(key);
+  const handleCollapsedChange = (key: string) => (collapsed: boolean) => {
+    setExpandedKeys((prev) =>
+      collapsed ? prev.filter((k) => k !== key) : _.uniq([...prev, key]),
+    );
+  };
 
   return (
     <>
@@ -92,13 +148,10 @@ const SessionLauncherPreview: React.FC<{
         title={t('session.launcher.SessionType')}
         showDivider
         size="small"
-        status={
-          form.getFieldError('sessionName').length > 0 ||
-          form.getFieldError(['batch', 'command']).length > 0 ||
-          form.getFieldError(['batch', 'scheduleDate']).length > 0
-            ? 'error'
-            : undefined
-        }
+        status={sessionTypeHasError ? 'error' : undefined}
+        collapsible
+        collapsed={!isExpanded('sessionType')}
+        onCollapsedChange={handleCollapsedChange('sessionType')}
         extraButtonTitle={t('button.Edit')}
         onClickExtraButton={() => {
           onClickEditStep('sessionType');
@@ -169,6 +222,9 @@ const SessionLauncherPreview: React.FC<{
         </Descriptions>
       </BAICard>
       <SessionOwnerSetterPreviewCard
+        collapsible
+        collapsed={!isExpanded('owner')}
+        onCollapsedChange={handleCollapsedChange('owner')}
         onClickExtraButton={() => {
           onClickEditStep('sessionType');
         }}
@@ -177,21 +233,10 @@ const SessionLauncherPreview: React.FC<{
         title={t('session.launcher.Environments')}
         showDivider
         size="small"
-        status={
-          _.some(
-            form.getFieldValue(
-              'envvars',
-            ) as SessionLauncherFormValue['envvars'],
-            (_v, idx) => {
-              return (
-                form.getFieldError(['envvars', idx, 'variable']).length > 0 ||
-                form.getFieldError(['envvars', idx, 'value']).length > 0
-              );
-            },
-          )
-            ? 'error'
-            : undefined
-        }
+        status={environmentsHasError ? 'error' : undefined}
+        collapsible
+        collapsed={!isExpanded('environments')}
+        onCollapsedChange={handleCollapsedChange('environments')}
         extraButtonTitle={t('button.Edit')}
         onClickExtraButton={() => {
           onClickEditStep('environment');
@@ -410,18 +455,10 @@ const SessionLauncherPreview: React.FC<{
       <BAICard
         title={t('session.launcher.ResourceAllocation')}
         showDivider
-        status={
-          _.some(form.getFieldValue('resource'), (_v, key) => {
-            return (
-              // @ts-ignore
-              form.getFieldError(['resource', key]).length > 0
-            );
-          }) ||
-          form.getFieldError(['num_of_sessions']).length > 0 ||
-          form.getFieldError('resourceGroup').length > 0
-            ? 'error'
-            : undefined
-        }
+        status={resourceAllocationHasError ? 'error' : undefined}
+        collapsible
+        collapsed={!isExpanded('resourceAllocation')}
+        onCollapsedChange={handleCollapsedChange('resourceAllocation')}
         size="small"
         extraButtonTitle={t('button.Edit')}
         onClickExtraButton={() => {
@@ -556,9 +593,10 @@ const SessionLauncherPreview: React.FC<{
         title={t('webui.menu.Data&Storage')}
         showDivider
         size="small"
-        status={
-          form.getFieldError('mount_id_map').length > 0 ? 'error' : undefined
-        }
+        status={dataStorageHasError ? 'error' : undefined}
+        collapsible
+        collapsed={!isExpanded('dataStorage')}
+        onCollapsedChange={handleCollapsedChange('dataStorage')}
         extraButtonTitle={t('button.Edit')}
         onClickExtraButton={() => {
           onClickEditStep('storage');
@@ -629,7 +667,10 @@ const SessionLauncherPreview: React.FC<{
         title="Network"
         showDivider
         size="small"
-        status={form.getFieldError('ports').length > 0 ? 'error' : undefined}
+        status={networkHasError ? 'error' : undefined}
+        collapsible
+        collapsed={!isExpanded('network')}
+        onCollapsedChange={handleCollapsedChange('network')}
         extraButtonTitle={t('button.Edit')}
         onClickExtraButton={() => {
           onClickEditStep('network');

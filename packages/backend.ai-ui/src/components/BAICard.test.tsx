@@ -578,4 +578,95 @@ describe('BAICard', () => {
       expect(container.querySelector('.ant-card-small')).toBeInTheDocument();
     });
   });
+
+  describe('Collapsible', () => {
+    // A collapsible card with no `extra` renders exactly one role="button"
+    // (the header toggle); query it directly rather than by accessible name,
+    // which would otherwise fold in the chevron icon's own aria-label.
+    const getToggle = () => screen.getByRole('button');
+
+    it('should render expanded by default when collapsible', () => {
+      render(
+        <BAICard collapsible title="Section">
+          Collapsible content
+        </BAICard>,
+      );
+      expect(screen.getByText('Collapsible content')).toBeVisible();
+      expect(getToggle()).toHaveAttribute('aria-expanded', 'true');
+    });
+
+    it('should start collapsed when defaultCollapsed is set (uncontrolled)', () => {
+      render(
+        <BAICard collapsible defaultCollapsed title="Section">
+          Hidden content
+        </BAICard>,
+      );
+      expect(getToggle()).toHaveAttribute('aria-expanded', 'false');
+    });
+
+    it('should toggle collapsed state on header click (uncontrolled)', async () => {
+      const user = userEvent.setup();
+      render(
+        <BAICard collapsible title="Section">
+          Toggle content
+        </BAICard>,
+      );
+      const toggle = getToggle();
+      expect(toggle).toHaveAttribute('aria-expanded', 'true');
+      await user.click(toggle);
+      expect(toggle).toHaveAttribute('aria-expanded', 'false');
+      await user.click(toggle);
+      expect(toggle).toHaveAttribute('aria-expanded', 'true');
+    });
+
+    it('should respect controlled collapsed prop and fire onCollapsedChange', async () => {
+      const user = userEvent.setup();
+      const onCollapsedChange = vi.fn();
+      const { rerender } = render(
+        <BAICard
+          collapsible
+          collapsed={false}
+          onCollapsedChange={onCollapsedChange}
+          title="Section"
+        >
+          Controlled content
+        </BAICard>,
+      );
+      const toggle = getToggle();
+      expect(toggle).toHaveAttribute('aria-expanded', 'true');
+
+      // Clicking requests the next state via the callback but does not
+      // change the rendered state until the controlling prop updates.
+      await user.click(toggle);
+      expect(onCollapsedChange).toHaveBeenCalledWith(true);
+      expect(toggle).toHaveAttribute('aria-expanded', 'true');
+
+      rerender(
+        <BAICard
+          collapsible
+          collapsed={true}
+          onCollapsedChange={onCollapsedChange}
+          title="Section"
+        >
+          Controlled content
+        </BAICard>,
+      );
+      expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    });
+
+    it('should provide an aria-label fallback when title is absent', () => {
+      render(<BAICard collapsible>Untitled collapsible content</BAICard>);
+      // No title → the toggle relies on an aria-label for its accessible name.
+      expect(getToggle()).toHaveAttribute('aria-label');
+    });
+
+    it('should not set aria-label when a title provides the accessible name', () => {
+      render(
+        <BAICard collapsible title="Section">
+          Content
+        </BAICard>,
+      );
+      expect(getToggle()).not.toHaveAttribute('aria-label');
+    });
+  });
 });
