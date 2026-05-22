@@ -139,13 +139,16 @@ function buildLiveReloadScript(): string {
 <script>
 (function() {
   // Theme toggle — production uses interactions.js; preview uses this inline stub.
-  const stored = localStorage.getItem('bai-theme');
-  if (stored) document.documentElement.setAttribute('data-theme', stored);
+  // The head bootstrap script already applied the stored/OS preference; no need
+  // to re-read localStorage here. We only handle interactive toggling.
   document.addEventListener('click', function(e) {
     if (e.target.closest('[data-theme-toggle]')) {
-      const next = (document.documentElement.getAttribute('data-theme') || 'light') === 'dark' ? 'light' : 'dark';
+      // Detect the effective theme (data-theme attribute, or OS fallback when unset).
+      const isOSDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const current = document.documentElement.getAttribute('data-theme') || (isOSDark ? 'dark' : 'light');
+      const next = current === 'dark' ? 'light' : 'dark';
       document.documentElement.setAttribute('data-theme', next);
-      localStorage.setItem('bai-theme', next);
+      localStorage.setItem('docs-theme', next);
     }
   });
 
@@ -214,12 +217,15 @@ export function buildWebDocument(
     th: 'ภาษาไทย',
   };
 
+  const themeBootstrap = `<script>(function(){try{var t=localStorage.getItem('docs-theme');if(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches){t='dark';}if(t){document.documentElement.setAttribute('data-theme',t);}}catch(_){ }})();</script>`;
+
   return `<!DOCTYPE html>
 <html lang="${metadata.lang}">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>${metadata.title} - ${languageLabels[metadata.lang] || metadata.lang}</title>
+  ${themeBootstrap}
   <style>${styles}</style>
 </head>
 <body>

@@ -222,6 +222,8 @@
 ถูกสร้างขึ้นอย่างอิสระด้วยทรัพยากรที่แสดงในฟอร์ม การคลิกปุ่ม 'Launch' เพียงครั้งเดียว
 จะเริ่มเซสชันเพียงหนึ่งเซสชันตามค่าเริ่มต้น
 
+![](../images/session_start_multiple_dropdown.png)
+
 ![](../images/session_start_dropdown.png)
 
 :::note
