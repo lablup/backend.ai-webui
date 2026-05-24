@@ -168,11 +168,11 @@ export type {
   BAIDeploymentSchedulingHistoryNodesProps,
   DeploymentSchedulingHistoryNodeInList,
 } from './BAIDeploymentSchedulingHistoryNodes';
-export { default as BAIRouteSchedulingHistoryNodes } from './BAIRouteSchedulingHistoryNodes';
+export { default as BAIRouteSchedulingHistoryNodeTable } from './BAIRouteSchedulingHistoryNodeTable';
 export type {
   BAIRouteSchedulingHistoryNodesProps,
   RouteSchedulingHistoryNodeInList,
-} from './BAIRouteSchedulingHistoryNodes';
+} from './BAIRouteSchedulingHistoryNodeTable';
 export { default as BAIDeploymentSelect } from './BAIDeploymentSelect';
 export type {
   BAIDeploymentSelectProps,

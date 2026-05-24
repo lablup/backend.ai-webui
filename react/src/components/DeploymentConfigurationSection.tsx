@@ -8,12 +8,15 @@ import type {
   DeploymentConfigurationSection_deployment$key,
 } from '../__generated__/DeploymentConfigurationSection_deployment.graphql';
 import type { DeploymentRevisionDetail_revision$key } from '../__generated__/DeploymentRevisionDetail_revision.graphql';
+import { DeploymentSchedulingHistoryModalQuery } from '../__generated__/DeploymentSchedulingHistoryModalQuery.graphql';
 import { useWebUINavigate } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import DeploymentRevisionDetail from './DeploymentRevisionDetail';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
 import DeploymentRevisionHistoryTab from './DeploymentRevisionHistoryTab';
-import DeploymentSchedulingHistoryModal from './DeploymentSchedulingHistoryModal';
+import DeploymentSchedulingHistoryModal, {
+  DeploymentSchedulingHistoryQuery,
+} from './DeploymentSchedulingHistoryModal';
 import DeploymentSettingModal from './DeploymentSettingModal';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import {
@@ -58,7 +61,7 @@ import type { BAIDeploymentStatus } from 'backend.ai-ui';
 import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useFragment, useMutation } from 'react-relay';
+import { graphql, useFragment, useMutation, useQueryLoader } from 'react-relay';
 import { useLocation } from 'react-router-dom';
 
 interface DeploymentConfigurationSectionProps {
@@ -81,8 +84,11 @@ const renderFallback = () => (
 
 const DeploymentOverviewContent: React.FC<{
   deployment: DeploymentSectionData;
-  onClickSchedulingHistory?: () => void;
-}> = ({ deployment, onClickSchedulingHistory }) => {
+  onClickSchedulingHistoryAction?: () => Promise<void>;
+}> = ({
+  deployment,
+  onClickSchedulingHistoryAction: onClickSchedulingHistory,
+}) => {
   'use memo';
   const { t } = useTranslation();
   const webuiNavigate = useWebUINavigate();
@@ -108,7 +114,10 @@ const DeploymentOverviewContent: React.FC<{
                 type="link"
                 size="small"
                 icon={<HistoryOutlined />}
-                onClick={onClickSchedulingHistory}
+                style={{ padding: 0 }}
+                action={async () => {
+                  await onClickSchedulingHistory();
+                }}
               >
                 {t('deployment.SchedulingHistory')}
               </BAIButton>
@@ -298,6 +307,10 @@ const DeploymentConfigurationSection: React.FC<
   const [settingModalOpen, setSettingModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [historyModalOpen, setHistoryModalOpen] = useState(false);
+  const [deploymentHistoryQueryRef, loadDeploymentHistoryQuery] =
+    useQueryLoader<DeploymentSchedulingHistoryModalQuery>(
+      DeploymentSchedulingHistoryQuery,
+    );
   const baiClient = useConnectedBAIClient();
   const supportsDeploymentSchedulingHistory =
     baiClient?.supports('deployment-scheduling-history') ?? false;
@@ -418,9 +431,25 @@ const DeploymentConfigurationSection: React.FC<
       >
         <DeploymentOverviewContent
           deployment={deployment}
-          onClickSchedulingHistory={
-            supportsDeploymentSchedulingHistory
-              ? () => setHistoryModalOpen(true)
+          onClickSchedulingHistoryAction={
+            supportsDeploymentSchedulingHistory && deployment?.id
+              ? async () => {
+                  // Render-as-you-fetch: start the request in the open event.
+                  const rawId = deployment.id;
+                  if (!rawId) {
+                    return;
+                  }
+                  loadDeploymentHistoryQuery(
+                    {
+                      scope: {
+                        deploymentId: safeDecodeUuid(rawId) ?? rawId,
+                      },
+                      orderBy: [{ field: 'UPDATED_AT', direction: 'DESC' }],
+                    },
+                    { fetchPolicy: 'store-and-network' },
+                  );
+                  setHistoryModalOpen(true);
+                }
               : undefined
           }
         />
@@ -547,12 +576,15 @@ const DeploymentConfigurationSection: React.FC<
         onOk={handleDelete}
         onCancel={() => setIsDeleteModalOpen(false)}
       />
-      {deployment?.id && (
-        <DeploymentSchedulingHistoryModal
-          open={historyModalOpen}
-          deploymentId={safeDecodeUuid(deployment.id) ?? deployment.id}
-          onCancel={() => setHistoryModalOpen(false)}
-        />
+      {deploymentHistoryQueryRef != null && (
+        <BAIUnmountAfterClose>
+          <DeploymentSchedulingHistoryModal
+            open={historyModalOpen}
+            queryRef={deploymentHistoryQueryRef}
+            onReload={loadDeploymentHistoryQuery}
+            onCancel={() => setHistoryModalOpen(false)}
+          />
+        </BAIUnmountAfterClose>
       )}
     </>
   );

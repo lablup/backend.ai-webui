@@ -1,7 +1,7 @@
 import {
-  BAIRouteSchedulingHistoryNodesFragment$data,
-  BAIRouteSchedulingHistoryNodesFragment$key,
-} from '../../__generated__/BAIRouteSchedulingHistoryNodesFragment.graphql';
+  BAIRouteSchedulingHistoryNodeTableFragment$data,
+  BAIRouteSchedulingHistoryNodeTableFragment$key,
+} from '../../__generated__/BAIRouteSchedulingHistoryNodeTableFragment.graphql';
 import {
   filterOutEmpty,
   filterOutNullAndUndefined,
@@ -25,7 +25,7 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
 export type RouteSchedulingHistoryNodeInList = NonNullable<
-  BAIRouteSchedulingHistoryNodesFragment$data[number]
+  BAIRouteSchedulingHistoryNodeTableFragment$data[number]
 >;
 
 const availableHistorySorterKeys = [] as const;
@@ -43,7 +43,7 @@ export interface BAIRouteSchedulingHistoryNodesProps extends Omit<
   BAITableProps<RouteSchedulingHistoryNodeInList>,
   'dataSource' | 'onChangeOrder' | 'columns'
 > {
-  schedulingHistoryFrgmt: BAIRouteSchedulingHistoryNodesFragment$key;
+  schedulingHistoryFrgmt: BAIRouteSchedulingHistoryNodeTableFragment$key;
   disableSorter?: boolean;
   customizeColumns?: (
     baseColumns: BAIColumnsType<RouteSchedulingHistoryNodeInList>,
@@ -53,7 +53,7 @@ export interface BAIRouteSchedulingHistoryNodesProps extends Omit<
   ) => void;
 }
 
-const BAIRouteSchedulingHistoryNodes = ({
+const BAIRouteSchedulingHistoryNodeTable = ({
   schedulingHistoryFrgmt,
   disableSorter,
   customizeColumns,
@@ -63,9 +63,9 @@ const BAIRouteSchedulingHistoryNodes = ({
   'use memo';
   const { t } = useTranslation();
 
-  const histories = useFragment<BAIRouteSchedulingHistoryNodesFragment$key>(
+  const histories = useFragment<BAIRouteSchedulingHistoryNodeTableFragment$key>(
     graphql`
-      fragment BAIRouteSchedulingHistoryNodesFragment on RouteHistory
+      fragment BAIRouteSchedulingHistoryNodeTableFragment on RouteHistory
       @relay(plural: true) {
         id
         routeId
@@ -221,4 +221,4 @@ const BAIRouteSchedulingHistoryNodes = ({
   );
 };
 
-export default BAIRouteSchedulingHistoryNodes;
+export default BAIRouteSchedulingHistoryNodeTable;

@@ -8,13 +8,16 @@ import {
 } from '../__generated__/DeploymentReplicasTabListQuery.graphql';
 import { DeploymentReplicasTab_deployment$key } from '../__generated__/DeploymentReplicasTab_deployment.graphql';
 import type { DeploymentRevisionDetail_revision$key } from '../__generated__/DeploymentRevisionDetail_revision.graphql';
+import { RouteSchedulingHistoryModalQuery } from '../__generated__/RouteSchedulingHistoryModalQuery.graphql';
 import { convertToOrderBy } from '../helper';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import BAIRadioGroup from './BAIRadioGroup';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
 import QuestionIconWithTooltip from './QuestionIconWithTooltip';
 import ReplicaStatusTag, { ReplicaStatus } from './ReplicaStatusTag';
-import RouteSchedulingHistoryModal from './RouteSchedulingHistoryModal';
+import RouteSchedulingHistoryModal, {
+  RouteSchedulingHistoryQuery,
+} from './RouteSchedulingHistoryModal';
 import SessionDetailDrawer from './SessionDetailDrawer';
 import { HistoryOutlined } from '@ant-design/icons';
 import { Tooltip, Typography } from 'antd';
@@ -44,7 +47,12 @@ import {
 } from 'nuqs';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
+import {
+  graphql,
+  useFragment,
+  useLazyLoadQuery,
+  useQueryLoader,
+} from 'react-relay';
 
 type ReplicaStatusCategory = 'running' | 'terminated';
 
@@ -165,7 +173,11 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
   const supportsRouteSchedulingHistory = baiClient.supports(
     'route-scheduling-history',
   );
-  const [historyRouteId, setHistoryRouteId] = useState<string | null>(null);
+  const [isRouteHistoryOpen, setIsRouteHistoryOpen] = useState(false);
+  const [routeHistoryQueryRef, loadRouteHistoryQuery] =
+    useQueryLoader<RouteSchedulingHistoryModalQuery>(
+      RouteSchedulingHistoryQuery,
+    );
   const [selectedSessionId, setSelectedSessionId] = useState<string | null>(
     null,
   );
@@ -293,9 +305,20 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
                 icon={<HistoryOutlined />}
                 size="small"
                 style={{ padding: 0 }}
-                onClick={() =>
-                  setHistoryRouteId(safeDecodeUuid(record.id) ?? record.id)
-                }
+                action={async () => {
+                  const id = safeDecodeUuid(record.id) ?? record.id;
+                  // Render-as-you-fetch: start the request in the open event.
+                  loadRouteHistoryQuery(
+                    {
+                      scope: { routeId: id },
+                      orderBy: [{ field: 'UPDATED_AT', direction: 'DESC' }],
+                    },
+                    {
+                      fetchPolicy: 'store-and-network',
+                    },
+                  );
+                  setIsRouteHistoryOpen(true);
+                }}
               />
             </Tooltip>
           )}
@@ -516,11 +539,16 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
           onClose={() => setDrawerRevisionFrgmt(null)}
         />
       </BAIUnmountAfterClose>
-      <RouteSchedulingHistoryModal
-        open={!!historyRouteId}
-        routeId={historyRouteId ?? ''}
-        onCancel={() => setHistoryRouteId(null)}
-      />
+      {routeHistoryQueryRef != null && (
+        <BAIUnmountAfterClose>
+          <RouteSchedulingHistoryModal
+            open={isRouteHistoryOpen}
+            queryRef={routeHistoryQueryRef}
+            onReload={loadRouteHistoryQuery}
+            onCancel={() => setIsRouteHistoryOpen(false)}
+          />
+        </BAIUnmountAfterClose>
+      )}
     </>
   );
 };

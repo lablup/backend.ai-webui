@@ -33,7 +33,6 @@ import {
 import {
   BAIButton,
   BAICard,
-  BAIDeploymentStatusTag,
   BAIDeploymentStatus,
   BAIFlex,
   BAIUnmountAfterClose,
@@ -276,7 +275,6 @@ const DeploymentDetailPage: React.FC = () => {
         <Typography.Title level={3} style={{ margin: 0 }}>
           {deploymentName}
         </Typography.Title>
-        <BAIDeploymentStatusTag status={deploymentStatus} />
       </BAIFlex>
       <DeploymentConfigurationSection
         deploymentFrgmt={deployment}

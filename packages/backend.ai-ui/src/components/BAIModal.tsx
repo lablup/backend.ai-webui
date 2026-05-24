@@ -30,7 +30,24 @@ export type MinimizedPlacement =
   | 'topRight'
   | 'topLeft';
 
-export interface BAIModalProps extends ModalProps {
+/**
+ * Footer render-function form, re-typed from antd's `ModalProps['footer']`.
+ * antd's footer union does not let TypeScript contextually type the render
+ * function's parameters (they fall back to implicit `any`), so callers are
+ * forced to annotate `(originNode, { OkBtn, CancelBtn }) => ...`. This clean
+ * named signature restores parameter inference.
+ */
+export type BAIModalFooterRender = (
+  originNode: React.ReactNode,
+  extra: { OkBtn: React.FC; CancelBtn: React.FC },
+) => React.ReactNode;
+
+export interface BAIModalProps extends Omit<ModalProps, 'footer'> {
+  /**
+   * Modal footer. Re-typed (vs antd's `ModalProps['footer']`) so the
+   * render-function form infers its parameter types without manual annotation.
+   */
+  footer?: React.ReactNode | BAIModalFooterRender;
   /** Enable dragging modal by header */
   draggable?: boolean;
   /**

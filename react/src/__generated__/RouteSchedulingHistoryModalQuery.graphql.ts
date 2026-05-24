@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b16df7a175ad48283f610c5ff36fd64a>>
+ * @generated SignedSource<<5d0ef863d0714f49059be1797b0c4c60>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -85,7 +85,7 @@ export type RouteSchedulingHistoryModalQuery$data = {
   readonly routeScopedSchedulingHistories: {
     readonly edges: ReadonlyArray<{
       readonly node: {
-        readonly " $fragmentSpreads": FragmentRefs<"BAIRouteSchedulingHistoryNodesFragment">;
+        readonly " $fragmentSpreads": FragmentRefs<"BAIRouteSchedulingHistoryNodeTableFragment">;
       };
     }>;
   } | null | undefined;
@@ -187,7 +187,7 @@ return {
                   {
                     "args": null,
                     "kind": "FragmentSpread",
-                    "name": "BAIRouteSchedulingHistoryNodesFragment"
+                    "name": "BAIRouteSchedulingHistoryNodeTableFragment"
                   }
                 ],
                 "storageKey": null
@@ -356,16 +356,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "29c038756b4243a1e47b62a67235b457",
+    "cacheID": "5db4b1d03cdc23ddcee7e24da57e934d",
     "id": null,
     "metadata": {},
     "name": "RouteSchedulingHistoryModalQuery",
     "operationKind": "query",
-    "text": "query RouteSchedulingHistoryModalQuery(\n  $scope: RouteScope!\n  $filter: RouteHistoryFilter\n  $orderBy: [RouteHistoryOrderBy!]\n) {\n  routeScopedSchedulingHistories(scope: $scope, filter: $filter, orderBy: $orderBy) {\n    edges {\n      node {\n        ...BAIRouteSchedulingHistoryNodesFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAIRouteSchedulingHistoryNodesFragment on RouteHistory {\n  id\n  routeId\n  deploymentId\n  category\n  phase\n  fromStatus\n  toStatus\n  result\n  errorCode\n  message\n  subSteps {\n    ...BAISubStepNodesFragment\n  }\n  attempts\n  createdAt\n  updatedAt\n}\n\nfragment BAISubStepNodesFragment on SubStepResultGQL {\n  step\n  result\n  errorCode\n  message\n  startedAt\n  endedAt\n}\n"
+    "text": "query RouteSchedulingHistoryModalQuery(\n  $scope: RouteScope!\n  $filter: RouteHistoryFilter\n  $orderBy: [RouteHistoryOrderBy!]\n) {\n  routeScopedSchedulingHistories(scope: $scope, filter: $filter, orderBy: $orderBy) {\n    edges {\n      node {\n        ...BAIRouteSchedulingHistoryNodeTableFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAIRouteSchedulingHistoryNodeTableFragment on RouteHistory {\n  id\n  routeId\n  deploymentId\n  category\n  phase\n  fromStatus\n  toStatus\n  result\n  errorCode\n  message\n  subSteps {\n    ...BAISubStepNodesFragment\n  }\n  attempts\n  createdAt\n  updatedAt\n}\n\nfragment BAISubStepNodesFragment on SubStepResultGQL {\n  step\n  result\n  errorCode\n  message\n  startedAt\n  endedAt\n}\n"
   }
 };
 })();
 
-(node as any).hash = "7be39a383677ce5c2d3413fe1d719830";
+(node as any).hash = "d718b55942730d51c42ce434352c4e59";
 
 export default node;

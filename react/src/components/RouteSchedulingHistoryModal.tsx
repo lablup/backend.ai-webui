@@ -5,31 +5,67 @@ import {
 } from '../__generated__/RouteSchedulingHistoryModalQuery.graphql';
 import { convertToOrderBy } from '../helper';
 import {
-  BAIButton,
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAIModal,
   BAIModalProps,
-  BAIRouteSchedulingHistoryNodes,
+  BAIRouteSchedulingHistoryNodeTable,
   useFetchKey,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery } from 'react-relay';
+import {
+  graphql,
+  PreloadedQuery,
+  usePreloadedQuery,
+  UseQueryLoaderLoadQueryOptions,
+} from 'react-relay';
+
+// Exported so the opener can `loadQuery` it in the click event (render-as-you-
+// fetch). Operation name must match the generated artifact; the const name only
+// differs to avoid clashing with the imported generated type.
+export const RouteSchedulingHistoryQuery = graphql`
+  query RouteSchedulingHistoryModalQuery(
+    $scope: RouteScope!
+    $filter: RouteHistoryFilter
+    $orderBy: [RouteHistoryOrderBy!]
+  ) {
+    routeScopedSchedulingHistories(
+      scope: $scope
+      filter: $filter
+      orderBy: $orderBy
+    ) {
+      edges {
+        node {
+          ...BAIRouteSchedulingHistoryNodeTableFragment
+        }
+      }
+    }
+  }
+`;
 
 interface RouteSchedulingHistoryModalProps extends Omit<
   BAIModalProps,
   'children' | 'title'
 > {
-  routeId: string;
+  /** Preloaded query reference produced by the opener via `useQueryLoader`. */
+  queryRef: PreloadedQuery<RouteSchedulingHistoryModalQuery>;
+  /**
+   * Re-run the query when filter / order / refresh changes. Same signature as
+   * `useQueryLoader`'s `loadQuery`, so the opener can pass it directly.
+   */
+  onReload: (
+    variables: RouteSchedulingHistoryModalQuery['variables'],
+    options?: UseQueryLoaderLoadQueryOptions,
+  ) => void;
 }
 
 const RouteSchedulingHistoryModal = ({
   open,
-  loading,
-  routeId,
+  queryRef,
+  onReload,
   onCancel,
   ...modalProps
 }: RouteSchedulingHistoryModalProps) => {
@@ -39,48 +75,26 @@ const RouteSchedulingHistoryModal = ({
   const [filter, setFilter] = useState<RouteHistoryFilter>();
   const [order, setOrder] = useState<string | null>('-updatedAt');
 
-  const deferredOpenValue = useDeferredValue(open);
-  const deferredFetchKey = useDeferredValue(fetchKey);
-  const deferredFilter = useDeferredValue(filter);
-  const deferredOrder = useDeferredValue(order);
-  const queryRef = useLazyLoadQuery<RouteSchedulingHistoryModalQuery>(
-    graphql`
-      query RouteSchedulingHistoryModalQuery(
-        $scope: RouteScope!
-        $filter: RouteHistoryFilter
-        $orderBy: [RouteHistoryOrderBy!]
-      ) {
-        routeScopedSchedulingHistories(
-          scope: $scope
-          filter: $filter
-          orderBy: $orderBy
-        ) {
-          edges {
-            node {
-              ...BAIRouteSchedulingHistoryNodesFragment
-            }
-          }
-        }
-      }
-    `,
-    {
-      scope: {
-        routeId: routeId,
-      },
-      filter: deferredFilter ?? undefined,
-      orderBy: convertToOrderBy<RouteHistoryOrderBy>(deferredOrder) ?? [
-        { field: 'UPDATED_AT', direction: 'DESC' },
-      ],
-    },
-    {
-      fetchKey: deferredFetchKey,
-      fetchPolicy: deferredOpenValue ? 'network-only' : 'store-only',
-    },
+  // Re-fetches happen from event handlers (filter / order / refresh), never from
+  // render or an effect. We carry the existing variables forward via
+  // `...queryRef.variables` (scope/routeId already live there) and override only
+  // what changed, so no separate variable builder is needed.
+
+  // Keep the previous result visible while the next one loads so re-fetches show
+  // the old data with an inline loading indicator instead of flashing the
+  // Suspense fallback. `deferredQueryRef !== queryRef` is the "additional
+  // loading in progress" signal.
+  const deferredQueryRef = useDeferredValue(queryRef);
+  const isRefetchingInTransition = deferredQueryRef !== queryRef;
+
+  const data = usePreloadedQuery<RouteSchedulingHistoryModalQuery>(
+    RouteSchedulingHistoryQuery,
+    deferredQueryRef,
   );
+
   return (
     <BAIModal
       title={t('route.RouteSchedulingHistory')}
-      loading={loading || deferredOpenValue !== open}
       open={open}
       width={'90%'}
       style={{
@@ -91,17 +105,8 @@ const RouteSchedulingHistoryModal = ({
           minHeight: '80vh',
         },
       }}
-      footer={
-        <BAIButton
-          onClick={(e) =>
-            onCancel?.(
-              e as Parameters<NonNullable<BAIModalProps['onCancel']>>[0],
-            )
-          }
-        >
-          {t('button.Close')}
-        </BAIButton>
-      }
+      cancelText={t('button.Close')}
+      footer={(_originNode, { CancelBtn }) => <CancelBtn />}
       onCancel={onCancel}
       {...modalProps}
     >
@@ -109,7 +114,13 @@ const RouteSchedulingHistoryModal = ({
         <BAIFlex justify="between" wrap="wrap" gap="sm">
           <BAIGraphQLPropertyFilter
             value={filter}
-            onChange={setFilter}
+            onChange={(next) => {
+              setFilter(next);
+              onReload(
+                { ...queryRef.variables, filter: next },
+                { fetchPolicy: 'network-only' },
+              );
+            }}
             filterProperties={[
               {
                 key: 'id',
@@ -179,23 +190,31 @@ const RouteSchedulingHistoryModal = ({
           <BAIFlex>
             <BAIFetchKeyButton
               value={fetchKey}
-              onChange={updateFetchKey}
-              loading={deferredFetchKey !== fetchKey}
+              onChange={(key) => {
+                updateFetchKey(key);
+                onReload(queryRef.variables, { fetchPolicy: 'network-only' });
+              }}
+              loading={isRefetchingInTransition}
               autoUpdateDelay={null}
             />
           </BAIFlex>
         </BAIFlex>
-        <BAIRouteSchedulingHistoryNodes
+        <BAIRouteSchedulingHistoryNodeTable
           resizable
-          loading={
-            deferredFetchKey !== fetchKey ||
-            deferredFilter !== filter ||
-            deferredOrder !== order
-          }
+          loading={isRefetchingInTransition}
           order={order}
-          onChangeOrder={setOrder}
+          onChangeOrder={(nextOrder) => {
+            setOrder(nextOrder);
+            onReload(
+              {
+                ...queryRef.variables,
+                orderBy: convertToOrderBy<RouteHistoryOrderBy>(nextOrder),
+              },
+              { fetchPolicy: 'network-only' },
+            );
+          }}
           schedulingHistoryFrgmt={_.map(
-            queryRef.routeScopedSchedulingHistories?.edges,
+            data.routeScopedSchedulingHistories?.edges,
             'node',
           )}
         />
@@ -203,5 +222,4 @@ const RouteSchedulingHistoryModal = ({
     </BAIModal>
   );
 };
-
 export default RouteSchedulingHistoryModal;

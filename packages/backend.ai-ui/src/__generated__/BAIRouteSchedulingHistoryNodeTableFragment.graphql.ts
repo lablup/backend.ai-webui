@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<561adf7e0b25fe3b06afa2208e51e9dd>>
+ * @generated SignedSource<<7826d64cc35baebfbae84de866de9d0e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,7 +11,7 @@
 import { ReaderFragment } from 'relay-runtime';
 export type SchedulingResult = "EXPIRED" | "FAILURE" | "GIVE_UP" | "NEED_RETRY" | "SKIPPED" | "STALE" | "SUCCESS" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
-export type BAIRouteSchedulingHistoryNodesFragment$data = ReadonlyArray<{
+export type BAIRouteSchedulingHistoryNodeTableFragment$data = ReadonlyArray<{
   readonly attempts: number;
   readonly category: string;
   readonly createdAt: string;
@@ -28,11 +28,11 @@ export type BAIRouteSchedulingHistoryNodesFragment$data = ReadonlyArray<{
   }>;
   readonly toStatus: string | null | undefined;
   readonly updatedAt: string;
-  readonly " $fragmentType": "BAIRouteSchedulingHistoryNodesFragment";
+  readonly " $fragmentType": "BAIRouteSchedulingHistoryNodeTableFragment";
 }>;
-export type BAIRouteSchedulingHistoryNodesFragment$key = ReadonlyArray<{
-  readonly " $data"?: BAIRouteSchedulingHistoryNodesFragment$data;
-  readonly " $fragmentSpreads": FragmentRefs<"BAIRouteSchedulingHistoryNodesFragment">;
+export type BAIRouteSchedulingHistoryNodeTableFragment$key = ReadonlyArray<{
+  readonly " $data"?: BAIRouteSchedulingHistoryNodeTableFragment$data;
+  readonly " $fragmentSpreads": FragmentRefs<"BAIRouteSchedulingHistoryNodeTableFragment">;
 }>;
 
 const node: ReaderFragment = {
@@ -41,7 +41,7 @@ const node: ReaderFragment = {
   "metadata": {
     "plural": true
   },
-  "name": "BAIRouteSchedulingHistoryNodesFragment",
+  "name": "BAIRouteSchedulingHistoryNodeTableFragment",
   "selections": [
     {
       "alias": null,
@@ -155,6 +155,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "8aa21d0647efcd639e380be63f1c6c9a";
+(node as any).hash = "3f283b3e8ef039a11e41ade44a38092f";
 
 export default node;

@@ -5,7 +5,6 @@ import {
 } from '../__generated__/DeploymentSchedulingHistoryModalQuery.graphql';
 import { convertToOrderBy } from '../helper';
 import {
-  BAIButton,
   BAIDeploymentSchedulingHistoryNodes,
   BAIFetchKeyButton,
   BAIFlex,
@@ -17,19 +16,56 @@ import {
 import * as _ from 'lodash-es';
 import { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery } from 'react-relay';
+import {
+  graphql,
+  PreloadedQuery,
+  usePreloadedQuery,
+  UseQueryLoaderLoadQueryOptions,
+} from 'react-relay';
+
+// Exported so the opener can `loadQuery` it in the click event (render-as-you-
+// fetch). Operation name must match the generated artifact; the const name only
+// differs to avoid clashing with the imported generated type.
+export const DeploymentSchedulingHistoryQuery = graphql`
+  query DeploymentSchedulingHistoryModalQuery(
+    $scope: DeploymentScope!
+    $filter: DeploymentHistoryFilter
+    $orderBy: [DeploymentHistoryOrderBy!]
+  ) {
+    deploymentScopedSchedulingHistories(
+      scope: $scope
+      filter: $filter
+      orderBy: $orderBy
+    ) {
+      edges {
+        node {
+          ...BAIDeploymentSchedulingHistoryNodesFragment
+        }
+      }
+    }
+  }
+`;
 
 interface DeploymentSchedulingHistoryModalProps extends Omit<
   BAIModalProps,
   'children' | 'title'
 > {
-  deploymentId: string;
+  /** Preloaded query reference produced by the opener via `useQueryLoader`. */
+  queryRef: PreloadedQuery<DeploymentSchedulingHistoryModalQuery>;
+  /**
+   * Re-run the query when filter / order / refresh changes. Same signature as
+   * `useQueryLoader`'s `loadQuery`, so the opener can pass it directly.
+   */
+  onReload: (
+    variables: DeploymentSchedulingHistoryModalQuery['variables'],
+    options?: UseQueryLoaderLoadQueryOptions,
+  ) => void;
 }
 
 const DeploymentSchedulingHistoryModal = ({
   open,
-  loading,
-  deploymentId,
+  queryRef,
+  onReload,
   onCancel,
   ...modalProps
 }: DeploymentSchedulingHistoryModalProps) => {
@@ -39,48 +75,26 @@ const DeploymentSchedulingHistoryModal = ({
   const [filter, setFilter] = useState<DeploymentHistoryFilter>();
   const [order, setOrder] = useState<string | null>('-updatedAt');
 
-  const deferredOpenValue = useDeferredValue(open);
-  const deferredFetchKey = useDeferredValue(fetchKey);
-  const deferredFilter = useDeferredValue(filter);
-  const deferredOrder = useDeferredValue(order);
-  const queryRef = useLazyLoadQuery<DeploymentSchedulingHistoryModalQuery>(
-    graphql`
-      query DeploymentSchedulingHistoryModalQuery(
-        $scope: DeploymentScope!
-        $filter: DeploymentHistoryFilter
-        $orderBy: [DeploymentHistoryOrderBy!]
-      ) {
-        deploymentScopedSchedulingHistories(
-          scope: $scope
-          filter: $filter
-          orderBy: $orderBy
-        ) {
-          edges {
-            node {
-              ...BAIDeploymentSchedulingHistoryNodesFragment
-            }
-          }
-        }
-      }
-    `,
-    {
-      scope: {
-        deploymentId: deploymentId,
-      },
-      filter: deferredFilter ?? undefined,
-      orderBy: convertToOrderBy<DeploymentHistoryOrderBy>(deferredOrder) ?? [
-        { field: 'UPDATED_AT', direction: 'DESC' },
-      ],
-    },
-    {
-      fetchKey: deferredFetchKey,
-      fetchPolicy: deferredOpenValue ? 'network-only' : 'store-only',
-    },
+  // Re-fetches happen from event handlers (filter / order / refresh), never from
+  // render or an effect. We carry the existing variables forward via
+  // `...queryRef.variables` (scope/deploymentId already live there) and override
+  // only what changed, so no separate variable builder is needed.
+
+  // Keep the previous result visible while the next one loads so re-fetches show
+  // the old data with an inline loading indicator instead of flashing the
+  // Suspense fallback. `deferredQueryRef !== queryRef` is the "additional
+  // loading in progress" signal.
+  const deferredQueryRef = useDeferredValue(queryRef);
+  const isRefetchingInTransition = deferredQueryRef !== queryRef;
+
+  const data = usePreloadedQuery<DeploymentSchedulingHistoryModalQuery>(
+    DeploymentSchedulingHistoryQuery,
+    deferredQueryRef,
   );
+
   return (
     <BAIModal
       title={t('deployment.DeploymentSchedulingHistory')}
-      loading={loading || deferredOpenValue !== open}
       open={open}
       width={'90%'}
       style={{
@@ -91,17 +105,8 @@ const DeploymentSchedulingHistoryModal = ({
           minHeight: '80vh',
         },
       }}
-      footer={
-        <BAIButton
-          onClick={(e) =>
-            onCancel?.(
-              e as Parameters<NonNullable<BAIModalProps['onCancel']>>[0],
-            )
-          }
-        >
-          {t('button.Close')}
-        </BAIButton>
-      }
+      cancelText={t('button.Close')}
+      footer={(_originNode, { CancelBtn }) => <CancelBtn />}
       onCancel={onCancel}
       {...modalProps}
     >
@@ -109,7 +114,13 @@ const DeploymentSchedulingHistoryModal = ({
         <BAIFlex justify="between" wrap="wrap" gap="sm">
           <BAIGraphQLPropertyFilter
             value={filter}
-            onChange={setFilter}
+            onChange={(next) => {
+              setFilter(next);
+              onReload(
+                { ...queryRef.variables, filter: next },
+                { fetchPolicy: 'network-only' },
+              );
+            }}
             filterProperties={[
               {
                 key: 'id',
@@ -179,23 +190,31 @@ const DeploymentSchedulingHistoryModal = ({
           <BAIFlex>
             <BAIFetchKeyButton
               value={fetchKey}
-              onChange={updateFetchKey}
-              loading={deferredFetchKey !== fetchKey}
+              onChange={(key) => {
+                updateFetchKey(key);
+                onReload(queryRef.variables, { fetchPolicy: 'network-only' });
+              }}
+              loading={isRefetchingInTransition}
               autoUpdateDelay={null}
             />
           </BAIFlex>
         </BAIFlex>
         <BAIDeploymentSchedulingHistoryNodes
           resizable
-          loading={
-            deferredFetchKey !== fetchKey ||
-            deferredFilter !== filter ||
-            deferredOrder !== order
-          }
+          loading={isRefetchingInTransition}
           order={order}
-          onChangeOrder={setOrder}
+          onChangeOrder={(nextOrder) => {
+            setOrder(nextOrder);
+            onReload(
+              {
+                ...queryRef.variables,
+                orderBy: convertToOrderBy<DeploymentHistoryOrderBy>(nextOrder),
+              },
+              { fetchPolicy: 'network-only' },
+            );
+          }}
           schedulingHistoryFrgmt={_.map(
-            queryRef.deploymentScopedSchedulingHistories?.edges,
+            data.deploymentScopedSchedulingHistories?.edges,
             'node',
           )}
         />
