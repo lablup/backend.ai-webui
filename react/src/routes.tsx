@@ -133,6 +133,9 @@ const ProjectAdminDataPage = React.lazy(
 const ProjectAdminDeploymentsPage = React.lazy(
   () => import('./pages/ProjectAdminDeploymentsPage'),
 );
+const ProjectAdminSessionPage = React.lazy(
+  () => import('./pages/ProjectAdminSessionPage'),
+);
 const EmailVerificationPage = React.lazy(
   () => import('./pages/EmailVerificationPage'),
 );
@@ -494,11 +497,9 @@ export const mainLayoutChildRoutes: RouteObject[] = [
         path: ':deploymentId',
         handle: { labelKey: 'webui.menu.DeploymentDetail' },
         element: (
-          <BAIErrorBoundary>
-            <Suspense fallback={<Skeleton active />}>
-              <DeploymentDetailPage />
-            </Suspense>
-          </BAIErrorBoundary>
+          <Suspense fallback={<Skeleton active />}>
+            <DeploymentDetailPage />
+          </Suspense>
         ),
       },
     ],
@@ -577,16 +578,46 @@ export const mainLayoutChildRoutes: RouteObject[] = [
     },
   },
   {
-    path: '/project-admin-deployments',
-    handle: { labelKey: 'webui.menu.ProjectDeployments' },
+    path: '/project-admin-session',
+    handle: { labelKey: 'webui.menu.ProjectSessions' },
     Component: () => {
       useSuspendedBackendaiClient();
       return (
         <Suspense fallback={<Skeleton active />}>
-          <ProjectAdminDeploymentsPage />
+          <ProjectAdminSessionPage />
         </Suspense>
       );
     },
+  },
+  {
+    // FR-2930 — Project-admin deployment list + detail. The detail route
+    // intentionally lives under `/project-admin-deployments/*` (rather than
+    // reusing `/deployments/:id`) to preserve breadcrumb / back-navigation
+    // context, mirroring the admin precedent established in FR-2847.
+    path: '/project-admin-deployments',
+    handle: { labelKey: 'webui.menu.ProjectDeployments' },
+    children: [
+      {
+        index: true,
+        Component: () => {
+          useSuspendedBackendaiClient();
+          return (
+            <Suspense fallback={<Skeleton active />}>
+              <ProjectAdminDeploymentsPage />
+            </Suspense>
+          );
+        },
+      },
+      {
+        path: ':deploymentId',
+        handle: { labelKey: 'webui.menu.DeploymentDetail' },
+        element: (
+          <Suspense fallback={<Skeleton active />}>
+            <DeploymentDetailPage />
+          </Suspense>
+        ),
+      },
+    ],
   },
   {
     path: '/environment',

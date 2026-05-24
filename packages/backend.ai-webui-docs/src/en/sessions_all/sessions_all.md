@@ -241,6 +241,8 @@ select **Launch Multiple Sessions**. A dialog appears where you can set the
 the resources shown on the form. The single-click 'Launch' action still starts
 one session by default.
 
+![](../images/session_start_multiple_dropdown.png)
+
 ![](../images/session_start_dropdown.png)
 
 :::note

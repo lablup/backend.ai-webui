@@ -102,8 +102,37 @@
     "DeleteNItems": "Delete {{count}} items",
     "TypeToConfirm": "Type <code>{{confirmText}}</code> to confirm."
   },
+  "comp:BAIDeploymentOwnerInfo": {
+    "CreatedBy": "Created by"
+  },
+  "comp:BAIDeploymentSchedulingHistoryNodes": {
+    "Attempts": "Attempts",
+    "Category": "Category",
+    "CreatedAt": "Created At",
+    "ErrorCode": "Error Code",
+    "From": "From",
+    "Message": "Message",
+    "Phase": "Phase",
+    "Result": "Result",
+    "StatusTransition": "Status Transition",
+    "To": "To",
+    "UpdatedAt": "Updated At"
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Select Deployment"
+  },
+  "comp:BAIDeploymentStatusTag": {
+    "Degraded": "Degraded",
+    "Deploying": "Deploying",
+    "Healthy": "Healthy",
+    "NotChecked": "Not Checked",
+    "Pending": "Pending",
+    "Ready": "Ready",
+    "Scaling": "Scaling",
+    "Stopped": "Stopped",
+    "Stopping": "Stopping",
+    "Terminated": "Terminated",
+    "Unhealthy": "Unhealthy"
   },
   "comp:BAIDomainSelect": {
     "SelectDomain": "Select Domain"
@@ -176,18 +205,27 @@
     "DomainName": "Domain",
     "EndpointURL": "Endpoint URL",
     "FailedToDeleteDeployment": "Failed to delete deployment.",
+    "HealthySummary": "{{healthy}} / {{total}}",
+    "Model": "Model",
     "Name": "Name",
     "OpenToPublic": "Open to Public",
+    "Owner": "Owner",
     "PreferredDomainName": "Preferred Domain",
+    "Project": "Project",
     "ProjectID": "Project ID",
+    "ReplicaSummary": "Replicas",
+    "ReplicaSummaryTooltip": "Running replicas over the desired (or total) replica count.",
     "Replicas": "Replicas",
+    "ResourceGroup": "Resource Group",
+    "RevisionNumber": "Revision",
+    "RevisionNumberTooltip": "The current revision number of the deployment.",
     "Status": "Status",
     "StrategyType": "Strategy",
     "Tags": "Tags",
     "UpdatedAt": "Updated At"
   },
   "comp:BAIProjectBulkEditModal": {
-    "FollowingFoldersWillBeUpdated": "The following folder(s) will be updated.",
+    "FollowingProjectsWillBeUpdated": "The following project(s) will be updated.",
     "ProjectResourcePolicy": "Project Resource Policy",
     "UpdateMultipleProjects": "Update Multiple Projects"
   },
@@ -217,25 +255,15 @@
     "UpdateProject": "Update Project"
   },
   "comp:BAIProjectTable": {
-    "AreYouSureToPurgeProject": "Are you sure to purge {{projectName}}? This action is irreversible.",
     "ContainerRegistry": "Container Registry",
-    "Controls": "Controls",
+    "ContainerRegistryProject": "Container Registry Project",
     "CreatedAt": "Created At",
-    "Deactivate": "Deactivate",
-    "DeactivateProject": "Deactivate Project",
     "Description": "Description",
     "Domain": "Domain",
-    "FailedToDeactivateProject": "Failed to deactivate the project.",
-    "FailedToPurgeProject": "Failed to purge the project.",
     "IntegrationID": "Integration ID",
-    "IsActive": "Active",
     "Name": "Name",
     "Project": "Project",
-    "ProjectDeactivated": "The project has been deactivated.",
     "ProjectID": "Project ID",
-    "ProjectPurged": "The projecth has been purged",
-    "Purge": "Purge",
-    "PurgeProject": "Purge Project",
     "Registry": "Registry",
     "ResourcePolicy": "Resource Policy",
     "ScalingGroups": "Resource Groups",
@@ -269,18 +297,35 @@
     "CreatedAt": "Created At",
     "HealthStatus": "Health Status",
     "RouteId": "Route ID",
+    "SchedulingHistory": "Scheduling History",
     "SessionId": "Session ID",
     "Status": "Status",
     "TrafficRatio": "Traffic Ratio",
     "TrafficStatus": "Traffic Status"
+  },
+  "comp:BAIRouteSchedulingHistoryNodes": {
+    "Attempts": "Attempts",
+    "Category": "Category",
+    "CreatedAt": "Created At",
+    "ErrorCode": "Error Code",
+    "From": "From",
+    "Message": "Message",
+    "Phase": "Phase",
+    "Result": "Result",
+    "StatusTransition": "Status Transition",
+    "To": "To",
+    "UpdatedAt": "Updated At"
   },
   "comp:BAIRuntimeVariantSelect": {
     "SelectRuntimeVariant": "Select Runtime Variant"
   },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "Attempts",
+    "Category": "Category",
     "CreatedAt": "Created At",
+    "ErrorCode": "Error Code",
     "From": "From",
+    "Message": "Message",
     "Phase": "Phase",
     "Result": "Result",
     "StatusTransition": "Status Transition",
@@ -299,6 +344,14 @@
   },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Select Storage Host"
+  },
+  "comp:BAISubStepNodes": {
+    "EndedAt": "Ended At",
+    "ErrorCode": "Error Code",
+    "Message": "Message",
+    "Result": "Result",
+    "StartedAt": "Started At",
+    "Step": "Step"
   },
   "comp:BAITable": {
     "Export": "Export",
@@ -370,13 +423,22 @@
   "comp:ResourceStatistics": {
     "NoResourcesData": "No resource data available"
   },
-  "comp:SessionHistorySubStepNodes": {
-    "EndedAt": "Ended At",
-    "ErrorCode": "Error Code",
-    "Message": "Message",
-    "Result": "Result",
-    "StartedAt": "Started At",
-    "Step": "Step"
+  "comp:SessionV2Nodes": {
+    "AIAccelerator": "AI Accelerator",
+    "CPU": "CPU",
+    "ClusterMode": "Cluster Mode",
+    "CreatedAt": "Created At",
+    "ElapsedTime": "Elapsed Time",
+    "Environments": "Environments",
+    "Memory": "Memory",
+    "OwnerEmail": "Owner Email",
+    "Project": "Project",
+    "ResourceGroup": "Resource Group",
+    "SessionId": "Session ID",
+    "SessionName": "Session Name",
+    "SessionType": "Session Type",
+    "Status": "Status",
+    "TerminateSession": "Terminate Session"
   },
   "comp:UserNodes": {
     "AllowedClientIps": "Allowed Client IPs",

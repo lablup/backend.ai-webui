@@ -8,15 +8,21 @@ import {
 } from '../__generated__/DeploymentReplicasTabListQuery.graphql';
 import { DeploymentReplicasTab_deployment$key } from '../__generated__/DeploymentReplicasTab_deployment.graphql';
 import type { DeploymentRevisionDetail_revision$key } from '../__generated__/DeploymentRevisionDetail_revision.graphql';
+import { RouteSchedulingHistoryModalQuery } from '../__generated__/RouteSchedulingHistoryModalQuery.graphql';
 import { convertToOrderBy } from '../helper';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import BAIRadioGroup from './BAIRadioGroup';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
 import QuestionIconWithTooltip from './QuestionIconWithTooltip';
 import ReplicaStatusTag, { ReplicaStatus } from './ReplicaStatusTag';
+import RouteSchedulingHistoryModal, {
+  RouteSchedulingHistoryQuery,
+} from './RouteSchedulingHistoryModal';
 import SessionDetailDrawer from './SessionDetailDrawer';
-import { Typography } from 'antd';
+import { HistoryOutlined } from '@ant-design/icons';
+import { Tooltip, Typography } from 'antd';
 import {
+  BAIButton,
   BAIColumnType,
   BAIFetchKeyButton,
   BAIFlex,
@@ -25,9 +31,11 @@ import {
   BAITable,
   BAITag,
   BAIUnmountAfterClose,
-  type GraphQLFilter,
   filterOutEmpty,
+  safeDecodeUuid,
   toLocalId,
+  type GraphQLFilter,
+  useConnectedBAIClient,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -39,7 +47,12 @@ import {
 } from 'nuqs';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
+import {
+  graphql,
+  useFragment,
+  useLazyLoadQuery,
+  useQueryLoader,
+} from 'react-relay';
 
 type ReplicaStatusCategory = 'running' | 'terminated';
 
@@ -156,6 +169,15 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
   }));
 
   const [fetchKey, setFetchKey] = useState(0);
+  const baiClient = useConnectedBAIClient();
+  const supportsRouteSchedulingHistory = baiClient.supports(
+    'route-scheduling-history',
+  );
+  const [isRouteHistoryOpen, setIsRouteHistoryOpen] = useState(false);
+  const [routeHistoryQueryRef, loadRouteHistoryQuery] =
+    useQueryLoader<RouteSchedulingHistoryModalQuery>(
+      RouteSchedulingHistoryQuery,
+    );
   const [selectedSessionId, setSelectedSessionId] = useState<string | null>(
     null,
   );
@@ -273,8 +295,34 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
         </BAIFlex>
       ),
       dataIndex: 'status',
-      render: (value: string | null | undefined) => (
-        <ReplicaStatusTag status={toReplicaTagStatus(value)} />
+      render: (value: string | null | undefined, record: ReplicaNode) => (
+        <BAIFlex align="center" gap="xs">
+          <ReplicaStatusTag status={toReplicaTagStatus(value)} />
+          {supportsRouteSchedulingHistory && (
+            <Tooltip title={t('route.RouteSchedulingHistory')}>
+              <BAIButton
+                type="link"
+                icon={<HistoryOutlined />}
+                size="small"
+                style={{ padding: 0 }}
+                action={async () => {
+                  const id = safeDecodeUuid(record.id) ?? record.id;
+                  // Render-as-you-fetch: start the request in the open event.
+                  loadRouteHistoryQuery(
+                    {
+                      scope: { routeId: id },
+                      orderBy: [{ field: 'UPDATED_AT', direction: 'DESC' }],
+                    },
+                    {
+                      fetchPolicy: 'store-and-network',
+                    },
+                  );
+                  setIsRouteHistoryOpen(true);
+                }}
+              />
+            </Tooltip>
+          )}
+        </BAIFlex>
       ),
     },
     {
@@ -491,6 +539,16 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
           onClose={() => setDrawerRevisionFrgmt(null)}
         />
       </BAIUnmountAfterClose>
+      {routeHistoryQueryRef != null && (
+        <BAIUnmountAfterClose>
+          <RouteSchedulingHistoryModal
+            open={isRouteHistoryOpen}
+            queryRef={routeHistoryQueryRef}
+            onReload={loadRouteHistoryQuery}
+            onCancel={() => setIsRouteHistoryOpen(false)}
+          />
+        </BAIUnmountAfterClose>
+      )}
     </>
   );
 };

@@ -74,6 +74,9 @@
     "KeepAsIs": "Оставить как есть",
     "UndoChanges": "Отменить изменения"
   },
+  "comp:BAIContainerRegistrySelect": {
+    "SelectContainerRegistry": "Выберите реестр контейнеров"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "Вы уверены, что хотите деактивировать {{name}}?",
     "AreYouSureYouWantToDeactivateSome": "Вы уверены, что хотите деактивировать {{count}} артефакты?",
@@ -99,8 +102,37 @@
     "DeleteNItems": "Удалить {{count}} элементов",
     "TypeToConfirm": "Введите <code>{{confirmText}}</code> для подтверждения."
   },
+  "comp:BAIDeploymentOwnerInfo": {
+    "CreatedBy": "Создано"
+  },
+  "comp:BAIDeploymentSchedulingHistoryNodes": {
+    "Attempts": "Попытки",
+    "Category": "Категория",
+    "CreatedAt": "Дата создания",
+    "ErrorCode": "Код ошибки",
+    "From": "От",
+    "Message": "Сообщение",
+    "Phase": "Этап",
+    "Result": "Результат",
+    "StatusTransition": "Смена статуса",
+    "To": "До",
+    "UpdatedAt": "Обновлено"
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Выберите развёртывание"
+  },
+  "comp:BAIDeploymentStatusTag": {
+    "Degraded": "Ухудшено",
+    "Deploying": "Развёртывается",
+    "Healthy": "Работает",
+    "NotChecked": "Не проверено",
+    "Pending": "Ожидание",
+    "Ready": "Готово",
+    "Scaling": "Масштабируется",
+    "Stopped": "Остановлено",
+    "Stopping": "Останавливается",
+    "Terminated": "Завершено",
+    "Unhealthy": "Не работает"
   },
   "comp:BAIDomainSelect": {
     "SelectDomain": "Выберите домен"
@@ -173,18 +205,27 @@
     "DomainName": "Домен",
     "EndpointURL": "URL конечной точки",
     "FailedToDeleteDeployment": "Не удалось удалить развёртывание.",
+    "HealthySummary": "{{healthy}} / {{total}}",
+    "Model": "Модель",
     "Name": "Имя",
     "OpenToPublic": "Открыто для всех",
+    "Owner": "Владелец",
     "PreferredDomainName": "Предпочтительный домен",
+    "Project": "Проект",
     "ProjectID": "ID проекта",
+    "ReplicaSummary": "Реплики",
+    "ReplicaSummaryTooltip": "Запущенные реплики относительно желаемого (или общего) количества реплик.",
     "Replicas": "Реплики",
+    "ResourceGroup": "Группа ресурсов",
+    "RevisionNumber": "Ревизия",
+    "RevisionNumberTooltip": "Текущий номер ревизии развёртывания.",
     "Status": "Статус",
     "StrategyType": "Стратегия",
     "Tags": "Теги",
     "UpdatedAt": "Обновлено"
   },
   "comp:BAIProjectBulkEditModal": {
-    "FollowingFoldersWillBeUpdated": "Будут обновлены следующие папки.",
+    "FollowingProjectsWillBeUpdated": "Будут обновлены следующие проекты.",
     "ProjectResourcePolicy": "Политика ресурсов проекта",
     "UpdateMultipleProjects": "Обновить несколько проектов"
   },
@@ -214,25 +255,15 @@
     "UpdateProject": "Обновить проект"
   },
   "comp:BAIProjectTable": {
-    "AreYouSureToPurgeProject": "Вы уверены, что хотите полностью удалить {{projectName}}? Это действие необратимо.",
     "ContainerRegistry": "Реестр контейнеров",
-    "Controls": "Элементы управления",
+    "ContainerRegistryProject": "Проект реестра контейнеров",
     "CreatedAt": "Создано",
-    "Deactivate": "Деактивировать",
-    "DeactivateProject": "Деактивировать проект",
     "Description": "Описание",
     "Domain": "Домен",
-    "FailedToDeactivateProject": "Не удалось деактивировать проект.",
-    "FailedToPurgeProject": "Не удалось очистить проект.",
     "IntegrationID": "ID интеграции",
-    "IsActive": "Активный",
     "Name": "Имя",
     "Project": "Проект",
-    "ProjectDeactivated": "Проект деактивирован.",
     "ProjectID": "ID проекта",
-    "ProjectPurged": "Проект был окончательно удалён.",
-    "Purge": "Очистить",
-    "PurgeProject": "Полностью удалить проект",
     "Registry": "Реестр",
     "ResourcePolicy": "Политика ресурсов",
     "ScalingGroups": "Группы ресурсов",
@@ -259,22 +290,42 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Выберите группу ресурсов"
   },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "Неограниченный"
+  },
   "comp:BAIRouteNodes": {
     "CreatedAt": "Дата создания",
     "HealthStatus": "Состояние системы",
     "RouteId": "ID маршрута",
+    "SchedulingHistory": "История планирования",
     "SessionId": "ID сессии",
     "Status": "Статус",
     "TrafficRatio": "Доля трафика",
     "TrafficStatus": "Состояние трафика"
+  },
+  "comp:BAIRouteSchedulingHistoryNodes": {
+    "Attempts": "Попытки",
+    "Category": "Категория",
+    "CreatedAt": "Дата создания",
+    "ErrorCode": "Код ошибки",
+    "From": "От",
+    "Message": "Сообщение",
+    "Phase": "Этап",
+    "Result": "Результат",
+    "StatusTransition": "Смена статуса",
+    "To": "До",
+    "UpdatedAt": "Обновлено"
   },
   "comp:BAIRuntimeVariantSelect": {
     "SelectRuntimeVariant": "Выбрать вариант среды выполнения"
   },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "Попытки",
+    "Category": "Категория",
     "CreatedAt": "Дата создания",
+    "ErrorCode": "Код ошибки",
     "From": "От",
+    "Message": "Сообщение",
     "Phase": "Этап",
     "Result": "Результат",
     "StatusTransition": "Смена статуса",
@@ -293,6 +344,14 @@
   },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Выберите хост хранилища"
+  },
+  "comp:BAISubStepNodes": {
+    "EndedAt": "Завершено в",
+    "ErrorCode": "Код ошибки",
+    "Message": "Сообщение",
+    "Result": "Результат",
+    "StartedAt": "Начато в",
+    "Step": "Шаг"
   },
   "comp:BAITable": {
     "Export": "Экспорт",
@@ -364,13 +423,22 @@
   "comp:ResourceStatistics": {
     "NoResourcesData": "Недоступные данные о ресурсах"
   },
-  "comp:SessionHistorySubStepNodes": {
-    "EndedAt": "Завершено в",
-    "ErrorCode": "Код ошибки",
-    "Message": "Сообщение",
-    "Result": "Результат",
-    "StartedAt": "Начато в",
-    "Step": "Шаг"
+  "comp:SessionV2Nodes": {
+    "AIAccelerator": "ИИ-ускоритель",
+    "CPU": "CPU",
+    "ClusterMode": "Режим кластера",
+    "CreatedAt": "Создано",
+    "ElapsedTime": "Прошедшее время",
+    "Environments": "Окружения",
+    "Memory": "Память",
+    "OwnerEmail": "E-mail владельца",
+    "Project": "Проект",
+    "ResourceGroup": "Группа ресурсов",
+    "SessionId": "ID сессии",
+    "SessionName": "Имя сессии",
+    "SessionType": "Тип сессии",
+    "Status": "Статус",
+    "TerminateSession": "Завершить сессию"
   },
   "comp:UserNodes": {
     "AllowedClientIps": "Разрешенные IP клиентов",

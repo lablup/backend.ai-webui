@@ -6,10 +6,12 @@ import {
   SemanticColor,
   filterOutEmpty,
   filterOutNullAndUndefined,
+  safeDecodeUuid,
   toLocalId,
   useSemanticColorMap,
 } from '../../helper';
 import BAIButton from '../BAIButton';
+import BAIFlex from '../BAIFlex';
 import BAILink from '../BAILink';
 import BAITag from '../BAITag';
 import BAIText from '../BAIText';
@@ -20,8 +22,8 @@ import {
   BAITableProps,
 } from '../Table';
 import useConnectedBAIClient from '../provider/BAIClientProvider/hooks/useConnectedBAIClient';
-import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { theme } from 'antd';
+import { ExclamationCircleOutlined, HistoryOutlined } from '@ant-design/icons';
+import { Tooltip, theme } from 'antd';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
@@ -77,6 +79,7 @@ export interface BAIRouteNodesProps extends Omit<
   ) => void;
   onClickSessionId?: (sessionId: string) => void;
   onClickErrorData?: (errorData: unknown) => void;
+  onClickSchedulingHistory?: (routeId: string) => void;
 }
 
 const BAIRouteNodes = ({
@@ -86,6 +89,7 @@ const BAIRouteNodes = ({
   onChangeOrder,
   onClickSessionId,
   onClickErrorData,
+  onClickSchedulingHistory,
   ...tableProps
 }: BAIRouteNodesProps) => {
   'use memo';
@@ -162,17 +166,34 @@ const BAIRouteNodes = ({
         dataIndex: 'status',
         key: 'status',
         sorter: isEnableSorter('status'),
-        render: (status) =>
-          status && status !== '%future added value' ? (
-            <BAITag
-              color={
-                semanticColorMap[routeStatusSemanticMap[status] ?? 'default']
-              }
-              style={{ marginRight: 0 }}
-            >
-              {status}
-            </BAITag>
-          ) : null,
+        render: (status, record) => (
+          <BAIFlex align="center" gap="xs">
+            {status && status !== '%future added value' ? (
+              <BAITag
+                color={
+                  semanticColorMap[routeStatusSemanticMap[status] ?? 'default']
+                }
+                style={{ marginRight: 0 }}
+              >
+                {status}
+              </BAITag>
+            ) : null}
+            {onClickSchedulingHistory && (
+              <Tooltip title={t('comp:BAIRouteNodes.SchedulingHistory')}>
+                <BAIButton
+                  type="text"
+                  icon={<HistoryOutlined />}
+                  size="small"
+                  onClick={() =>
+                    onClickSchedulingHistory(
+                      safeDecodeUuid(record.id) ?? record.id,
+                    )
+                  }
+                />
+              </Tooltip>
+            )}
+          </BAIFlex>
+        ),
       },
       isSupportRouteHealthStatus
         ? {

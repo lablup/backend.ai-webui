@@ -74,6 +74,9 @@
     "KeepAsIs": "Pidä ennallaan",
     "UndoChanges": "Kumoa muutokset"
   },
+  "comp:BAIContainerRegistrySelect": {
+    "SelectContainerRegistry": "Valitse konttirekisteri"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "Oletko varma, että haluat deaktivoida {{name}}?",
     "AreYouSureYouWantToDeactivateSome": "Oletko varma, että haluat deaktivoida {{count}} esineitä?",
@@ -99,8 +102,37 @@
     "DeleteNItems": "Poista {{count}} kohdetta",
     "TypeToConfirm": "Kirjoita <code>{{confirmText}}</code> vahvistaaksesi."
   },
+  "comp:BAIDeploymentOwnerInfo": {
+    "CreatedBy": "Luonut"
+  },
+  "comp:BAIDeploymentSchedulingHistoryNodes": {
+    "Attempts": "Yritykset",
+    "Category": "Luokka",
+    "CreatedAt": "Luotu",
+    "ErrorCode": "Virhekoodi",
+    "From": "Alkaen",
+    "Message": "Viesti",
+    "Phase": "Vaihe",
+    "Result": "Tulos",
+    "StatusTransition": "Tilan siirtymä",
+    "To": "Saakka",
+    "UpdatedAt": "Päivitetty"
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Valitse käyttöönotto"
+  },
+  "comp:BAIDeploymentStatusTag": {
+    "Degraded": "Heikentynyt",
+    "Deploying": "Käyttöönottaminen",
+    "Healthy": "Terve",
+    "NotChecked": "Ei tarkistettu",
+    "Pending": "Odottaa",
+    "Ready": "Valmis",
+    "Scaling": "Skaalaaminen",
+    "Stopped": "Pysäytetty",
+    "Stopping": "Pysäyttäminen",
+    "Terminated": "Lopetettu",
+    "Unhealthy": "Epäterve"
   },
   "comp:BAIDomainSelect": {
     "SelectDomain": "Valitse toimialue"
@@ -173,18 +205,27 @@
     "DomainName": "Toimialue",
     "EndpointURL": "Päätepisteen URL",
     "FailedToDeleteDeployment": "Käyttöönoton poistaminen epäonnistui.",
+    "HealthySummary": "{{healthy}} / {{total}}",
+    "Model": "Malli",
     "Name": "Nimi",
     "OpenToPublic": "Avoin julkisesti",
+    "Owner": "Omistaja",
     "PreferredDomainName": "Ensisijainen toimialue",
+    "Project": "Projekti",
     "ProjectID": "Projektin tunnus",
+    "ReplicaSummary": "Kopioita",
+    "ReplicaSummaryTooltip": "Käynnissä olevat kopiot suhteessa haluttuun (tai kokonais-) kopioiden määrään.",
     "Replicas": "Kopioita",
+    "ResourceGroup": "Resurssiryhmä",
+    "RevisionNumber": "Revisio",
+    "RevisionNumberTooltip": "Käyttöönoton nykyinen revisionumero.",
     "Status": "Tila",
     "StrategyType": "Strategia",
     "Tags": "Tunnisteet",
     "UpdatedAt": "Päivitetty"
   },
   "comp:BAIProjectBulkEditModal": {
-    "FollowingFoldersWillBeUpdated": "Seuraavat kansiot päivitetään.",
+    "FollowingProjectsWillBeUpdated": "Seuraavat projektit päivitetään.",
     "ProjectResourcePolicy": "Projektin resurssipolitiikka",
     "UpdateMultipleProjects": "Päivitä useita projekteja"
   },
@@ -214,25 +255,15 @@
     "UpdateProject": "Päivitä projekti"
   },
   "comp:BAIProjectTable": {
-    "AreYouSureToPurgeProject": "Haluatko varmasti poistaa {{projectName}}? Tämä toimenpide on peruuttamaton.",
     "ContainerRegistry": "Säiliörekisteri",
-    "Controls": "Ohjaimet",
+    "ContainerRegistryProject": "Säiliörekisteriprojekti",
     "CreatedAt": "Luotu",
-    "Deactivate": "Poista käytöstä",
-    "DeactivateProject": "Poista projekti käytöstä",
     "Description": "Kuvaus",
     "Domain": "Toimialue",
-    "FailedToDeactivateProject": "Projektin poistaminen käytöstä epäonnistui.",
-    "FailedToPurgeProject": "Projektin tyhjennys epäonnistui.",
     "IntegrationID": "Integraation tunnus",
-    "IsActive": "Aktiivinen",
     "Name": "Nimi",
     "Project": "Projekti",
-    "ProjectDeactivated": "Projekti on poistettu käytöstä.",
     "ProjectID": "Projektin tunnus",
-    "ProjectPurged": "Projekti on poistettu pysyvästi.",
-    "Purge": "Tyhjennä",
-    "PurgeProject": "Poista projekti pysyvästi",
     "Registry": "Rekisteri",
     "ResourcePolicy": "Resurssipolitiikka",
     "ScalingGroups": "Resurssiryhmät",
@@ -259,22 +290,42 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Valitse resurssiryhmä"
   },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "Rajoittamaton"
+  },
   "comp:BAIRouteNodes": {
     "CreatedAt": "Luotu",
     "HealthStatus": "Terveystila",
     "RouteId": "Reitti-ID",
+    "SchedulingHistory": "Ajoitushistoria",
     "SessionId": "Istunnon tunnus",
     "Status": "Tila",
     "TrafficRatio": "Liikenteen suhde",
     "TrafficStatus": "Liikenteen tila"
+  },
+  "comp:BAIRouteSchedulingHistoryNodes": {
+    "Attempts": "Yritykset",
+    "Category": "Luokka",
+    "CreatedAt": "Luotu",
+    "ErrorCode": "Virhekoodi",
+    "From": "Alkaen",
+    "Message": "Viesti",
+    "Phase": "Vaihe",
+    "Result": "Tulos",
+    "StatusTransition": "Tilan siirtymä",
+    "To": "Saakka",
+    "UpdatedAt": "Päivitetty"
   },
   "comp:BAIRuntimeVariantSelect": {
     "SelectRuntimeVariant": "Valitse ajonaikainen variantti"
   },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "Yritykset",
+    "Category": "Luokka",
     "CreatedAt": "Luotu",
+    "ErrorCode": "Virhekoodi",
     "From": "Alkaen",
+    "Message": "Viesti",
     "Phase": "Vaihe",
     "Result": "Tulos",
     "StatusTransition": "Tilan siirtymä",
@@ -293,6 +344,14 @@
   },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Valitse tallennuspalvelin"
+  },
+  "comp:BAISubStepNodes": {
+    "EndedAt": "Päättymisaika",
+    "ErrorCode": "Virhekoodi",
+    "Message": "Viesti",
+    "Result": "Tulos",
+    "StartedAt": "Aloitusaika",
+    "Step": "Vaihe"
   },
   "comp:BAITable": {
     "Export": "Vie",
@@ -364,13 +423,22 @@
   "comp:ResourceStatistics": {
     "NoResourcesData": "Resurssitietoja ei ole käytettävissä"
   },
-  "comp:SessionHistorySubStepNodes": {
-    "EndedAt": "Päättymisaika",
-    "ErrorCode": "Virhekoodi",
-    "Message": "Viesti",
-    "Result": "Tulos",
-    "StartedAt": "Aloitusaika",
-    "Step": "Vaihe"
+  "comp:SessionV2Nodes": {
+    "AIAccelerator": "AI-kiihdytin",
+    "CPU": "CPU",
+    "ClusterMode": "Klusteritila",
+    "CreatedAt": "Luotu",
+    "ElapsedTime": "Kulunut aika",
+    "Environments": "Ympäristöt",
+    "Memory": "Muisti",
+    "OwnerEmail": "Omistajan sähköposti",
+    "Project": "Projekti",
+    "ResourceGroup": "Resurssiryhmä",
+    "SessionId": "Istunnon ID",
+    "SessionName": "Istunnon nimi",
+    "SessionType": "Istunnon tyyppi",
+    "Status": "Tila",
+    "TerminateSession": "Lopeta istunto"
   },
   "comp:UserNodes": {
     "AllowedClientIps": "Sallitut asiakkaan IP-osoitteet",

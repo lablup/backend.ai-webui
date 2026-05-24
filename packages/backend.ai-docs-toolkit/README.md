@@ -18,6 +18,23 @@ pnpm build:web
 
 > See the example's [`README.md`](../backend.ai-docs-toolkit-example/README.md#using-the-example-outside-this-monorepo) for the standalone-repo recipe (the `pnpm --filter` build step needs to be replaced).
 
+### Troubleshooting: `docs-toolkit: not found`
+
+`docs-toolkit` is the `bin` of this workspace package. pnpm creates the `node_modules/.bin/docs-toolkit` symlink **at install time**, and only if the toolkit's compiled entrypoint (`dist/cli.js`) already exists. In a fresh clone or new git worktree, `pnpm install` usually runs *before* the toolkit is built, so pnpm skips the symlink. Building the toolkit afterwards (`pnpm --filter backend.ai-docs-toolkit build`) produces `dist/cli.js` but does **not** re-link the bin — so every `docs-toolkit …` invocation (including the `preview:html`, `build:web`, `serve:web` scripts) fails with `docs-toolkit: not found`.
+
+A plain `pnpm install` (even `pnpm install --force`) reports *"Already up to date"* and skips bin-linking, so it does not fix this. Re-link the bin by rebuilding the **consumer** package that depends on the toolkit:
+
+```bash
+# from the monorepo root — replace the package name with your docs package
+pnpm --filter backend.ai-webui-docs rebuild
+```
+
+Verify the command resolves:
+
+```bash
+pnpm --filter backend.ai-webui-docs exec docs-toolkit --help
+```
+
 ## Quick Start
 
 ```bash
@@ -34,6 +51,13 @@ docs-toolkit preview --mode document --lang ko
 
 # Preview (HTML, live-reload)
 docs-toolkit preview:html --lang en
+
+# Build a static multi-page website
+docs-toolkit build:web --lang all
+docs-toolkit build:web --lang en --optimize-images
+
+# Serve the static website (live-reload)
+docs-toolkit serve:web --lang en
 
 # Generate Claude AI agent files
 docs-toolkit agents
@@ -80,25 +104,44 @@ agents:
 |---------|-------------|
 | `docs-toolkit pdf` | Generate PDF documents |
 | `docs-toolkit preview` | PDF preview server with live-reload |
-| `docs-toolkit preview:html` | HTML preview server with live-reload |
+| `docs-toolkit preview:html` | HTML preview server with live-reload (no PDF) |
+| `docs-toolkit build:web` | Generate a static multi-page website |
+| `docs-toolkit serve:web` | Static website dev server with live-reload |
 | `docs-toolkit init` | Scaffold a new documentation project |
 | `docs-toolkit agents` | Generate Claude AI agent files from templates |
+| `docs-toolkit help` | Show the CLI help message |
 
 ### Common Options
 
 ```bash
 # PDF generation
-docs-toolkit pdf --lang <all|en|ko|...> --theme <name>
+docs-toolkit pdf --lang <all|en|ko|...> --theme <name> \
+  --chapters <comma,separated,names> --note <cover-page note>
 
 # PDF preview
 docs-toolkit preview --mode <sample|catalog|document> --lang <lang> --port <port>
 
 # HTML preview
-docs-toolkit preview:html --lang <lang> --port <port>
+docs-toolkit preview:html --mode <document|catalog> --lang <lang> --port <port>
+
+# Static website build
+docs-toolkit build:web --lang <all|en|ko|...> \
+  --strict|--no-strict --optimize-images --optimize-images-avif
+
+# Static website dev server
+docs-toolkit serve:web --lang <lang> --port <port>
 
 # Agent generation
 docs-toolkit agents --force   # overwrite existing files
 ```
+
+Notes:
+
+- `pdf --chapters` limits the build to the listed chapter names (default: all chapters).
+- `pdf --note` prints a short note on the cover page (e.g. `"Draft — internal review"`).
+- `build:web --strict` (default) fails the build on broken links; `--no-strict` downgrades them to warnings.
+- `build:web --optimize-images` generates `.webp` variants for PNGs over 50 KB and wraps them in `<picture>`; `--optimize-images-avif` adds `.avif` variants. Both require the optional `sharp` peer dependency.
+- Default ports: `preview` → `3456`, `preview:html` → `3457`, `serve:web` → `3458`.
 
 ## Agent Template System
 
@@ -171,12 +214,18 @@ import {
   loadToolkitConfig,
   resolveConfig,
   generatePdf,
+  generateWebsite,
   startPreviewServer,
   startHtmlPreviewServer,
 } from 'backend.ai-docs-toolkit';
 
 const config = resolveConfig(loadToolkitConfig(process.cwd()));
+
+// PDF (CLI equivalent: docs-toolkit pdf --lang en)
 await generatePdf(config, { lang: 'en' });
+
+// Static website (CLI equivalent: docs-toolkit build:web --lang all)
+await generateWebsite(config, { lang: 'all', optimizeImages: true });
 ```
 
 ## Consumer Project Structure

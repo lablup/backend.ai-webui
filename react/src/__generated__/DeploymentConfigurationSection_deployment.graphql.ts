@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f3435d937fa298cb895ae3a88ec6c5c0>>
+ * @generated SignedSource<<b769c4514d444fdb6dcdba4b435e99d9>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -34,7 +34,7 @@ export type DeploymentConfigurationSection_deployment$data = {
     } | null | undefined;
     readonly resourceGroupName: string;
     readonly status: DeploymentStatus;
-    readonly " $fragmentSpreads": FragmentRefs<"DeploymentTagChips_metadata">;
+    readonly " $fragmentSpreads": FragmentRefs<"BAIDeploymentTagChips_metadata">;
   };
   readonly networkAccess: {
     readonly endpointUrl: string | null | undefined;
@@ -156,7 +156,7 @@ return {
         {
           "args": null,
           "kind": "FragmentSpread",
-          "name": "DeploymentTagChips_metadata"
+          "name": "BAIDeploymentTagChips_metadata"
         }
       ],
       "storageKey": null
@@ -235,6 +235,6 @@ return {
 };
 })();
 
-(node as any).hash = "9534b13462a6b065fa91132d54556187";
+(node as any).hash = "021c9e11d0201fb948249c5b903b8992";
 
 export default node;

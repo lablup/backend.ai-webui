@@ -1,27 +1,17 @@
-import { BAIProjectTableDeleteMutation } from '../../__generated__/BAIProjectTableDeleteMutation.graphql';
 import {
   BAIProjectTableFragment$data,
   BAIProjectTableFragment$key,
 } from '../../__generated__/BAIProjectTableFragment.graphql';
-import { BAIProjectTablePurgeMutation } from '../../__generated__/BAIProjectTablePurgeMutation.graphql';
 import { toLocalId } from '../../helper';
-import { useErrorMessageResolver } from '../../hooks';
-import BAIButton from '../BAIButton';
-import BAIDeleteConfirmModal from '../BAIDeleteConfirmModal';
-import BAIFlex from '../BAIFlex';
 import BAIResourceNumberWithIcon from '../BAIResourceNumberWithIcon';
-import BAITag from '../BAITag';
 import BAIText from '../BAIText';
 import { BAIColumnsType, BAITable, BAITableProps } from '../Table';
 import AllowedVfolderHostsWithPermission from './BAIAllowedVfolderHostsWithPermission';
-import { DeleteFilled, SettingOutlined } from '@ant-design/icons';
-import { App, Popconfirm, Tag, theme } from 'antd';
+import { Tag } from 'antd';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { BanIcon } from 'lucide-react';
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useFragment, useMutation } from 'react-relay';
+import { graphql, useFragment } from 'react-relay';
 
 export const availableProjectSorterKeys = [
   'name',
@@ -41,32 +31,39 @@ const isEnableSorter = (key: string) => {
   return _.includes(availableProjectSorterKeys, key);
 };
 
-type Project = NonNullable<NonNullable<BAIProjectTableFragment$data>[number]>;
+export type ProjectInList = NonNullable<
+  NonNullable<BAIProjectTableFragment$data>[number]
+>;
 
 export interface BAIProjectTableProps extends Omit<
-  BAITableProps<Project>,
+  BAITableProps<ProjectInList>,
   'dataSource' | 'columns' | 'rowKey' | 'onChangeOrder'
 > {
   projectFragment: BAIProjectTableFragment$key;
+  /**
+   * Customize the base columns (insert, filter, reorder, or override a
+   * column's `render`). Receives the base columns array and returns the
+   * modified array. The page composes the per-row action list (edit /
+   * deactivate / activate / purge) by overriding the `name` column's
+   * `render` here, so the action logic stays in the app layer rather than
+   * being injected through individual callback props.
+   */
+  customizeColumns?: (
+    baseColumns: BAIColumnsType<ProjectInList>,
+  ) => BAIColumnsType<ProjectInList>;
   onChangeOrder?: (
     order: (typeof availableProjectSorterValues)[number] | null,
   ) => void;
-  onClickProjectEditButton: (project: Project) => void;
-  updateFetchKey?: () => void;
 }
 
 const BAIProjectTable = ({
   projectFragment,
+  customizeColumns,
   onChangeOrder,
-  onClickProjectEditButton,
-  updateFetchKey,
   ...tableProps
 }: BAIProjectTableProps) => {
+  'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
-  const { message } = App.useApp();
-  const { getErrorMessage } = useErrorMessageResolver();
-  const [purgingProject, setPurgingProject] = useState<Project | null>(null);
 
   const projects = useFragment<BAIProjectTableFragment$key>(
     graphql`
@@ -90,140 +87,13 @@ const BAIProjectTable = ({
     projectFragment,
   );
 
-  const [commitDeleteGroup, isInFlightCommitDeleteGroup] =
-    useMutation<BAIProjectTableDeleteMutation>(graphql`
-      mutation BAIProjectTableDeleteMutation($gid: UUID!) {
-        delete_group(gid: $gid) {
-          msg
-          ok
-        }
-      }
-    `);
-
-  const [commitPurgeGroup] = useMutation<BAIProjectTablePurgeMutation>(graphql`
-    mutation BAIProjectTablePurgeMutation($gid: UUID!) {
-      purge_group(gid: $gid) {
-        ok
-        msg
-      }
-    }
-  `);
-
-  const columns: BAIColumnsType<Project> = [
+  const columns: BAIColumnsType<ProjectInList> = [
     {
       key: 'name',
       title: t('comp:BAIProjectTable.Name'),
       dataIndex: 'name',
       fixed: 'left',
       sorter: isEnableSorter('name'),
-    },
-    {
-      key: 'controls',
-      title: t('comp:BAIProjectTable.Controls'),
-      fixed: 'left',
-      render: (value, record) => {
-        return (
-          <BAIFlex>
-            <BAIButton
-              type="text"
-              icon={
-                <SettingOutlined
-                  style={{
-                    color:
-                      _.get(record, 'type') === 'MODEL_STORE'
-                        ? token.colorTextDisabled
-                        : token.colorInfo,
-                  }}
-                />
-              }
-              disabled={_.get(record, 'type') === 'MODEL_STORE'}
-              onClick={() => {
-                onClickProjectEditButton(value);
-              }}
-            />
-            <Popconfirm
-              title={t('comp:BAIProjectTable.DeactivateProject')}
-              description={value?.name}
-              okButtonProps={{
-                danger: true,
-                loading: isInFlightCommitDeleteGroup,
-              }}
-              okText={t('comp:BAIProjectTable.Deactivate')}
-              onConfirm={() => {
-                if (!record?.row_id) {
-                  return;
-                }
-                commitDeleteGroup({
-                  variables: {
-                    gid: record.row_id,
-                  },
-                  onCompleted: (response, errors) => {
-                    if (errors && errors.length > 0) {
-                      errors.forEach((error) => {
-                        message.error(
-                          getErrorMessage(
-                            error,
-                            t('comp:BAIProjectTable.FailedToDeactivateProject'),
-                          ),
-                        );
-                      });
-                      return;
-                    }
-                    if (response.delete_group?.ok) {
-                      message.success(
-                        t('comp:BAIProjectTable.ProjectDeactivated'),
-                      );
-                      updateFetchKey?.();
-                    } else {
-                      message.error(
-                        response.delete_group?.msg ||
-                          t('comp:BAIProjectTable.FailedToDeactivateProject'),
-                      );
-                    }
-                  },
-                });
-              }}
-            >
-              <BAIButton
-                type="text"
-                danger
-                icon={
-                  <BanIcon
-                    size={token.fontSize}
-                    style={{
-                      color:
-                        _.get(record, 'type') === 'MODEL_STORE'
-                          ? token.colorTextDisabled
-                          : undefined,
-                    }}
-                  />
-                }
-                disabled={
-                  _.get(record, 'type') === 'MODEL_STORE' ||
-                  _.get(record, 'is_active') === false
-                }
-              />
-            </Popconfirm>
-            <BAIButton
-              type="text"
-              icon={
-                <DeleteFilled
-                  style={{
-                    color:
-                      _.get(record, 'type') === 'MODEL_STORE'
-                        ? token.colorTextDisabled
-                        : token.colorError,
-                  }}
-                />
-              }
-              onClick={() => {
-                setPurgingProject(record);
-              }}
-              disabled={_.get(record, 'type') === 'MODEL_STORE'}
-            />
-          </BAIFlex>
-        );
-      },
     },
     {
       key: 'domain',
@@ -243,14 +113,6 @@ const BAIProjectTable = ({
       dataIndex: 'created_at',
       render: (value) => dayjs(value).format('lll'),
       sorter: isEnableSorter('created_at'),
-    },
-    {
-      key: 'is_active',
-      title: t('comp:BAIProjectTable.IsActive'),
-      dataIndex: 'is_active',
-      render: (value) =>
-        value ? <BAITag color="green">true</BAITag> : <BAITag>false</BAITag>,
-      sorter: isEnableSorter('is_active'),
     },
     {
       key: 'type',
@@ -306,25 +168,17 @@ const BAIProjectTable = ({
       render: (value) => _.join(value, ', ') || '-',
     },
     {
-      key: 'container_registry',
+      key: 'registry',
       title: t('comp:BAIProjectTable.ContainerRegistry'),
+      dataIndex: 'container_registry',
       exportKey: 'container_registry',
-      children: [
-        {
-          key: 'registry',
-          title: t('comp:BAIProjectTable.Registry'),
-          dataIndex: 'container_registry',
-          render: (value) => {
-            return _.get(JSON.parse(value), 'registry') || '-';
-          },
-        },
-        {
-          key: 'project',
-          title: t('comp:BAIProjectTable.Project'),
-          dataIndex: 'container_registry',
-          render: (value) => _.get(JSON.parse(value), 'project') || '-',
-        },
-      ],
+      render: (value) => _.get(JSON.parse(value), 'registry') || '-',
+    },
+    {
+      key: 'project',
+      title: t('comp:BAIProjectTable.ContainerRegistryProject'),
+      dataIndex: 'container_registry',
+      render: (value) => _.get(JSON.parse(value), 'project') || '-',
     },
     {
       key: 'id',
@@ -340,71 +194,22 @@ const BAIProjectTable = ({
       render: (value) => value || '-',
     },
   ];
+
+  const allColumns = customizeColumns ? customizeColumns(columns) : columns;
+
   return (
-    <>
-      <BAITable<Project>
-        scroll={{ x: 'max-content' }}
-        {...tableProps}
-        rowKey={(record) => record.id}
-        dataSource={projects}
-        columns={columns}
-        onChangeOrder={(order) => {
-          onChangeOrder?.(
-            (order as (typeof availableProjectSorterValues)[number]) || null,
-          );
-        }}
-      />
-      <BAIDeleteConfirmModal
-        open={!!purgingProject}
-        title={t('comp:BAIProjectTable.PurgeProject')}
-        target={t('general.Project')}
-        items={
-          purgingProject
-            ? [{ key: purgingProject.id, label: purgingProject.name ?? '' }]
-            : []
-        }
-        confirmText={purgingProject?.name ?? ''}
-        requireConfirmInput
-        inputProps={{
-          placeholder: purgingProject?.name ?? '',
-        }}
-        okText={t('comp:BAIProjectTable.Purge')}
-        onOk={() => {
-          if (!purgingProject?.row_id) return;
-          return new Promise<void>((resolve) => {
-            commitPurgeGroup({
-              variables: { gid: purgingProject.row_id! },
-              onCompleted: (response, errors) => {
-                if (errors && errors.length > 0) {
-                  errors.forEach((error) => {
-                    message.error(
-                      getErrorMessage(
-                        error,
-                        t('comp:BAIProjectTable.FailedToPurgeProject'),
-                      ),
-                    );
-                  });
-                  resolve();
-                  return;
-                }
-                if (response.purge_group?.ok) {
-                  message.success(t('comp:BAIProjectTable.ProjectPurged'));
-                  setPurgingProject(null);
-                  updateFetchKey?.();
-                } else {
-                  message.error(
-                    response.purge_group?.msg ||
-                      t('comp:BAIProjectTable.FailedToPurgeProject'),
-                  );
-                }
-                resolve();
-              },
-            });
-          });
-        }}
-        onCancel={() => setPurgingProject(null)}
-      />
-    </>
+    <BAITable<ProjectInList>
+      scroll={{ x: 'max-content' }}
+      {...tableProps}
+      rowKey={(record) => record.id}
+      dataSource={projects}
+      columns={allColumns}
+      onChangeOrder={(order) => {
+        onChangeOrder?.(
+          (order as (typeof availableProjectSorterValues)[number]) || null,
+        );
+      }}
+    />
   );
 };
 

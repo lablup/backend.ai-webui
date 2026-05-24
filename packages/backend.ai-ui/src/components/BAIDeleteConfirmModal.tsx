@@ -30,6 +30,17 @@ export interface BAIDeleteConfirmModalProps extends Omit<
    * the default description becomes "Are you sure you want to permanently delete {target}?".
    */
   target?: React.ReactNode;
+  /**
+   * Marks the confirmed action as reversible (e.g. revoke a role assignment,
+   * remove a permission from a role). When true the modal keeps the exact same
+   * header / footer / body design as the irreversible-delete modal, but never
+   * renders the typed-confirmation input (even for multiple items or when
+   * `requireConfirmInput` is set) and omits the "This action cannot be undone."
+   * warning. Use for actions the user can recover from in <30s without
+   * contacting support — see `.claude/rules/destructive-confirmation.md`.
+   * Default: false
+   */
+  reversible?: boolean;
   /** Force text-input confirmation even for a single item. Default: false */
   requireConfirmInput?: boolean;
   /**
@@ -47,6 +58,13 @@ export interface BAIDeleteConfirmModalProps extends Omit<
   extraContent?: React.ReactNode;
   /** Max height (px) of the scrollable item list. Default: 200. Set 0 for no limit. */
   itemListMaxHeight?: number;
+  /**
+   * Render items without the default surface (background / border / padding /
+   * scroll) container. Use when an item's `label` is already a self-contained
+   * block (e.g. a table) so the default box does not create a redundant
+   * double border. Default: false
+   */
+  plainItems?: boolean;
 }
 
 function extractTextFromNode(node: React.ReactNode): string | undefined {
@@ -60,12 +78,14 @@ const BAIDeleteConfirmModal: React.FC<BAIDeleteConfirmModalProps> = ({
   title,
   description,
   target,
+  reversible = false,
   requireConfirmInput = false,
   confirmText: confirmTextProp,
   inputLabel,
   inputProps,
   extraContent,
   itemListMaxHeight = 200,
+  plainItems = false,
   onOk,
   onCancel,
   okText,
@@ -79,7 +99,7 @@ const BAIDeleteConfirmModal: React.FC<BAIDeleteConfirmModalProps> = ({
   const [form] = Form.useForm();
   const typedText = Form.useWatch('confirmText', form) ?? '';
 
-  const needsInput = items.length > 1 || requireConfirmInput;
+  const needsInput = !reversible && (items.length > 1 || requireConfirmInput);
 
   const resolvedTitle =
     title ??
@@ -114,8 +134,16 @@ const BAIDeleteConfirmModal: React.FC<BAIDeleteConfirmModalProps> = ({
   );
 
   const modalTitle = (
-    <BAIFlex direction="column" justify="start" align="start">
-      <Text strong>
+    <BAIFlex
+      direction="column"
+      justify="start"
+      align="stretch"
+      style={{ width: '100%' }}
+    >
+      <Text
+        strong
+        style={{ overflowWrap: 'anywhere', wordBreak: 'break-word' }}
+      >
         <ExclamationCircleFilled
           style={{ color: token.colorWarning, marginRight: token.sizeXXS }}
         />
@@ -128,15 +156,19 @@ const BAIDeleteConfirmModal: React.FC<BAIDeleteConfirmModalProps> = ({
     items.length > 0 ? (
       <div
         role="list"
-        style={{
-          maxHeight: itemListMaxHeight || undefined,
-          overflowY: itemListMaxHeight ? 'auto' : undefined,
-          backgroundColor: token.colorFillQuaternary,
-          border: `1px solid ${token.colorBorderSecondary}`,
-          borderRadius: token.borderRadiusSM,
-          padding: token.paddingXS,
-          paddingInline: token.padding,
-        }}
+        style={
+          plainItems
+            ? undefined
+            : {
+                maxHeight: itemListMaxHeight || undefined,
+                overflowY: itemListMaxHeight ? 'auto' : undefined,
+                backgroundColor: token.colorFillQuaternary,
+                border: `1px solid ${token.colorBorderSecondary}`,
+                borderRadius: token.borderRadiusSM,
+                padding: token.paddingXS,
+                paddingInline: token.padding,
+              }
+        }
       >
         <BAIFlex direction="column" align="stretch" gap="xxs">
           {items.map((item) => (
@@ -212,9 +244,11 @@ const BAIDeleteConfirmModal: React.FC<BAIDeleteConfirmModalProps> = ({
       <BAIFlex direction="column" align="stretch" gap="xs">
         {resolvedDescription && <Text>{resolvedDescription}</Text>}
         {itemListContent}
-        <Text type="danger">
-          {t('comp:BAIDeleteConfirmModal.CannotBeUndone')}
-        </Text>
+        {!reversible && (
+          <Text type="danger">
+            {t('comp:BAIDeleteConfirmModal.CannotBeUndone')}
+          </Text>
+        )}
         {extraContent}
       </BAIFlex>
     </BAIModal>

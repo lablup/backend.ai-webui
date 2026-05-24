@@ -26,7 +26,7 @@ Backend.AI WebUI เป็นเว็บหรือแอปที่ให้
 - [เซสชันทั้งหมด](sessions_all/sessions_all.md)
 - [การเมาท์โฟลเดอร์จัดเก็บ](mount_vfolder/mount_vfolder.md)
 - [การแชร์โฟลเดอร์จัดเก็บ](share_vfolder/share_vfolder.md)
-- [การให้บริการโมเดล](model_serving/model_serving.md)
+- [การปรับใช้](deployment/deployment.md)
 - [แชท](chat/chat.md)
 - [นำเข้าและรัน](import_run/import_run.md)
 - [สภาพแวดล้อมของฉัน](my_environments/my_environments.md)

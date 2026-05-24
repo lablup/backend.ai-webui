@@ -1,5 +1,5 @@
 import type { DrawerProps, ModalProps } from 'antd';
-import React, { useState, useLayoutEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface BAIUnmountModalAfterCloseProps {
   children: React.ReactElement<ModalProps | DrawerProps>;
@@ -31,16 +31,24 @@ const BAIUnmountAfterClose: React.FC<BAIUnmountModalAfterCloseProps> = ({
   const childElement = React.Children.only(children);
   const isOpen = childElement.props.open;
 
-  // Manage internal rendering state
-  const [isMount, setIsMount] = useState(isOpen);
+  // Track whether the exit animation has finished. While open, the child is
+  // always mounted; once closed, it stays mounted until the close animation
+  // completes (afterClose / afterOpenChange) so the exit transition is shown.
+  // Initialize from `isOpen` so a child that mounts already-open does not start
+  // in the "closed" state (which could unmount it before its effect runs).
+  const [afterClosed, setAfterClosed] = useState(() => !isOpen);
 
-  // Update internal state when the child's open prop becomes true
-  useLayoutEffect(() => {
+  // Reset the afterClosed state to false whenever the modal is opened, so it can be unmounted after the next close.
+  useEffect(() => {
     if (isOpen) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      setIsMount(true);
+      setAfterClosed(false);
     }
   }, [isOpen]);
+
+  // Derive synchronously so the child mounts on the same render `open` flips to
+  // true (no one-render delay), while still surviving the close animation.
+  const isMount = isOpen || !afterClosed;
 
   // Return null if the modal should not be rendered
   if (!isMount) {
@@ -56,7 +64,7 @@ const BAIUnmountAfterClose: React.FC<BAIUnmountModalAfterCloseProps> = ({
       originalAfterClose(...args);
     }
     // Set internal state to false after the exit animation completes
-    setIsMount(false);
+    setAfterClosed(true);
   };
 
   // Preserve the original afterOpenChange callback if it exists
@@ -69,7 +77,7 @@ const BAIUnmountAfterClose: React.FC<BAIUnmountModalAfterCloseProps> = ({
     }
     // Set internal state to false after the exit animation completes
     if (!open) {
-      setIsMount(false);
+      setAfterClosed(true);
     }
   };
 

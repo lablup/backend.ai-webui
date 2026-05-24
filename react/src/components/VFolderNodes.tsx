@@ -202,7 +202,12 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
               ? (projectFolderAdminHint ??
                 t('data.folders.NoRestorePermission'))
               : undefined,
-          onClick: onRestore,
+          popConfirm: {
+            title: t('data.folders.Restore'),
+            description: vfolder?.name,
+            okText: t('button.Confirm'),
+            onConfirm: onRestore,
+          },
         }
       : null,
     // Delete from trash bin (deleted folders only)

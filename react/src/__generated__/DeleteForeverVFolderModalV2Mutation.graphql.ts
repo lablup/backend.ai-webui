@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<07109957e77c46c76f33d3676b1f6117>>
+ * @generated SignedSource<<d39ed56195bf60b52197ce2e391ea950>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,7 +11,7 @@
 import { ConcreteRequest } from 'relay-runtime';
 export type BulkPurgeVFoldersV2Input = {
   ids: ReadonlyArray<string>;
-  options: PurgeVFolderOptionsInput;
+  options?: PurgeVFolderOptionsInput | null | undefined;
 };
 export type PurgeVFolderOptionsInput = {
   cascadeModelCard?: boolean;

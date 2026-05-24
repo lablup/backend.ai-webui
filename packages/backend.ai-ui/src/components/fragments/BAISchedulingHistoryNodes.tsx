@@ -2,10 +2,15 @@ import {
   BAISchedulingHistoryNodesFragment$data,
   BAISchedulingHistoryNodesFragment$key,
 } from '../../__generated__/BAISchedulingHistoryNodesFragment.graphql';
-import { filterOutEmpty, filterOutNullAndUndefined } from '../../helper';
+import {
+  filterOutEmpty,
+  filterOutNullAndUndefined,
+  newLineToBrElement,
+} from '../../helper';
 import BAISchedulingResultBadge, {
   SchedulingResult,
 } from '../BAISchedulingResultBadge';
+import BAIText from '../BAIText';
 import {
   BAIColumnsType,
   BAIColumnType,
@@ -13,7 +18,7 @@ import {
   BAITableProps,
 } from '../Table';
 import { BAIColumnGroupType } from '../Table/BAITable';
-import BAISessionHistorySubStepNodes from './BAISessionHistorySubStepNodes';
+import BAISubStepNodes from './BAISubStepNodes';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
@@ -23,7 +28,7 @@ export type SchedulingHistoryNodeInList = NonNullable<
   BAISchedulingHistoryNodesFragment$data[number]
 >;
 
-const availableHistorySorterKeys = ['created_at', 'updated_at'] as const;
+const availableHistorySorterKeys = [] as const;
 
 export const availableHistorySorterValues = [
   ...availableHistorySorterKeys,
@@ -73,7 +78,7 @@ const BAISchedulingHistoryNodes = ({
         phase
         result
         subSteps {
-          ...BAISessionHistorySubStepNodesFragment
+          ...BAISubStepNodesFragment
         }
       }
     `,
@@ -85,6 +90,20 @@ const BAISchedulingHistoryNodes = ({
       | BAIColumnType<SchedulingHistoryNodeInList>
       | BAIColumnGroupType<SchedulingHistoryNodeInList>
     >([
+      {
+        dataIndex: 'updatedAt',
+        title: t('comp:BAISchedulingHistoryNodes.UpdatedAt'),
+        key: 'updatedAt',
+        render: (value) => <span>{dayjs(value).format('ll LTS')}</span>,
+        sorter: isEnableSorter('updated_at'),
+      },
+      {
+        dataIndex: 'createdAt',
+        title: t('comp:BAISchedulingHistoryNodes.CreatedAt'),
+        key: 'createdAt',
+        render: (value) => <span>{dayjs(value).format('ll LTS')}</span>,
+        sorter: isEnableSorter('created_at'),
+      },
       {
         dataIndex: 'phase',
         title: t('comp:BAISchedulingHistoryNodes.Phase'),
@@ -129,18 +148,19 @@ const BAISchedulingHistoryNodes = ({
         sorter: isEnableSorter('attempts'),
       },
       {
-        dataIndex: 'updatedAt',
-        title: t('comp:BAISchedulingHistoryNodes.UpdatedAt'),
-        key: 'updatedAt',
-        render: (value) => <span>{dayjs(value).format('ll LTS')}</span>,
-        sorter: isEnableSorter('updated_at'),
-      },
-      {
-        dataIndex: 'createdAt',
-        title: t('comp:BAISchedulingHistoryNodes.CreatedAt'),
-        key: 'createdAt',
-        render: (value) => <span>{dayjs(value).format('ll LTS')}</span>,
-        sorter: isEnableSorter('created_at'),
+        key: 'message',
+        title: t('comp:BAISchedulingHistoryNodes.Message'),
+        dataIndex: 'message',
+        onCell: () => ({ style: { maxWidth: 500 } }),
+        render: (__, record) =>
+          record.message ? (
+            <BAIText title={record.message} style={{ width: '100%' }}>
+              {newLineToBrElement(record.message)}
+            </BAIText>
+          ) : (
+            '-'
+          ),
+        sorter: isEnableSorter('message'),
       },
     ]),
     (column) => {
@@ -166,7 +186,7 @@ const BAISchedulingHistoryNodes = ({
         rowExpandable: (record) => !_.isEmpty(record.subSteps),
         expandedRowRender: (record) => {
           return (
-            <BAISessionHistorySubStepNodes
+            <BAISubStepNodes
               resizable
               subStepsFrgmt={record.subSteps}
               pagination={false}

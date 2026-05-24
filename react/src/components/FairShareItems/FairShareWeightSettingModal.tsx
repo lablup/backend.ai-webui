@@ -258,10 +258,10 @@ const FairShareWeightSettingModal: React.FC<
     userEmail: userFairShares?.[0]?.user?.basicInfo?.email || '',
     weight: isBulkEdit
       ? undefined
-      : domainsFairShares?.[0]?.spec?.weight ||
-        projectFairShares?.[0]?.spec?.weight ||
-        userFairShares?.[0]?.spec?.weight ||
-        1,
+      : (domainsFairShares?.[0]?.spec?.weight ??
+        projectFairShares?.[0]?.spec?.weight ??
+        userFairShares?.[0]?.spec?.weight ??
+        1),
   };
 
   const formRef = useRef<FormInstance<typeof INITIAL_FORM_VALUES>>(null);
@@ -640,7 +640,7 @@ const FairShareWeightSettingModal: React.FC<
               }
               name="weight"
             >
-              <InputNumber min={1} step={0.1} style={{ width: '100%' }} />
+              <InputNumber min={0} step={0.1} style={{ width: '100%' }} />
             </BAIBulkEditFormItem>
           ) : (
             <Form.Item
@@ -654,7 +654,7 @@ const FairShareWeightSettingModal: React.FC<
               }
               name="weight"
             >
-              <InputNumber min={1} step={0.1} style={{ width: '100%' }} />
+              <InputNumber min={0} step={0.1} style={{ width: '100%' }} />
             </Form.Item>
           )}
         </Form>

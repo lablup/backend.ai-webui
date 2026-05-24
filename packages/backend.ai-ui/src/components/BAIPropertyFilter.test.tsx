@@ -3,6 +3,7 @@ import BAIPropertyFilter, {
   parseFilterValue,
 } from './BAIPropertyFilter';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { useState } from 'react';
 
 describe('parseFilterValue', () => {
   it('should correctly parse filter with binary operators', () => {
@@ -416,5 +417,75 @@ describe('BAIPropertyFilter Component', () => {
 
     // Should not call onChange for invalid value
     expect(mockOnChange).not.toHaveBeenCalled();
+  });
+});
+
+describe('BAIPropertyFilter tag removal (FR-2965)', () => {
+  const filterProperties = [
+    {
+      key: 'name',
+      propertyLabel: 'Name',
+      type: 'string' as const,
+      defaultOperator: 'ilike',
+    },
+    {
+      key: 'description',
+      propertyLabel: 'Description',
+      type: 'string' as const,
+      defaultOperator: 'ilike',
+    },
+  ];
+
+  // Controlled wrapper so closing a tag triggers a real re-render with the
+  // updated value (mirrors how consumers pass value/onChange).
+  const Controlled = ({ initial }: { initial: string }) => {
+    const [value, setValue] = useState<string>(initial);
+    return (
+      <BAIPropertyFilter
+        filterProperties={filterProperties}
+        value={value}
+        onChange={setValue}
+      />
+    );
+  };
+
+  it('keeps the surviving tag visible when two filters share the same value', async () => {
+    // Same parsed value "%dup%" for two different properties. The positional
+    // part of the tag key would otherwise reuse the just-hidden instance.
+    render(
+      <Controlled initial={'name ilike "%dup%" & description ilike "%dup%"'} />,
+    );
+
+    expect(screen.getByText(/Name:/)).toBeVisible();
+    expect(screen.getByText(/Description:/)).toBeVisible();
+
+    const closeIcons = document.querySelectorAll('.ant-tag-close-icon');
+    expect(closeIcons.length).toBe(2);
+    fireEvent.click(closeIcons[0]); // close the "Name" tag
+
+    await waitFor(() => {
+      expect(screen.queryByText(/Name:/)).not.toBeInTheDocument();
+    });
+    const remaining = screen.getByText(/Description:/);
+    expect(remaining).toBeVisible();
+    expect(remaining.closest('.ant-tag')).not.toHaveClass('ant-tag-hidden');
+  });
+
+  it('emits the remaining filter via onChange when one of two tags is closed', async () => {
+    const onChange = vi.fn();
+    render(
+      <BAIPropertyFilter
+        filterProperties={filterProperties}
+        value={'name ilike "%alpha%" & description ilike "%beta%"'}
+        onChange={onChange}
+      />,
+    );
+
+    const closeIcons = document.querySelectorAll('.ant-tag-close-icon');
+    fireEvent.click(closeIcons[0]);
+
+    await waitFor(() => {
+      expect(onChange).toHaveBeenCalledWith('description ilike "%beta%"');
+    });
   });
 });

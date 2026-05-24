@@ -291,7 +291,7 @@ const ResourceGroupFairShareSettingModal: React.FC<
                 },
               ]}
             >
-              <InputNumber min={1} step={0.1} style={{ width: '100%' }} />
+              <InputNumber min={0} step={0.1} style={{ width: '100%' }} />
             </Form.Item>
           </Col>
         </Row>
@@ -327,7 +327,7 @@ const ResourceGroupFairShareSettingModal: React.FC<
                       name={['resourceWeights', entry?.resourceType]}
                     >
                       <InputNumber
-                        min={1}
+                        min={0}
                         step={0.1}
                         style={{ width: '100%' }}
                       />

@@ -74,6 +74,9 @@
     "KeepAsIs": "Olduğu gibi bırak",
     "UndoChanges": "Değişiklikleri geri al"
   },
+  "comp:BAIContainerRegistrySelect": {
+    "SelectContainerRegistry": "Konteyner Kayıt Defteri Seç"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "{{name}} 'ı devre dışı bırakmak istediğinizden emin misiniz?",
     "AreYouSureYouWantToDeactivateSome": "{{count}} artefaktları devre dışı bırakmak istediğinizden emin misiniz?",
@@ -99,8 +102,37 @@
     "DeleteNItems": "{{count}} öğeyi sil",
     "TypeToConfirm": "Onaylamak için <code>{{confirmText}}</code> yazın."
   },
+  "comp:BAIDeploymentOwnerInfo": {
+    "CreatedBy": "Oluşturan"
+  },
+  "comp:BAIDeploymentSchedulingHistoryNodes": {
+    "Attempts": "Denemeler",
+    "Category": "Kategori",
+    "CreatedAt": "Oluşturulma Tarihi",
+    "ErrorCode": "Hata Kodu",
+    "From": "Kaynak",
+    "Message": "Mesaj",
+    "Phase": "Aşama",
+    "Result": "Sonuç",
+    "StatusTransition": "Durum Geçişi",
+    "To": "Bitiş",
+    "UpdatedAt": "Güncelleme Tarihi"
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Dağıtım seçin"
+  },
+  "comp:BAIDeploymentStatusTag": {
+    "Degraded": "Bozulmuş",
+    "Deploying": "Dağıtılıyor",
+    "Healthy": "Sağlıklı",
+    "NotChecked": "Kontrol Edilmedi",
+    "Pending": "Bekliyor",
+    "Ready": "Hazır",
+    "Scaling": "Ölçekleniyor",
+    "Stopped": "Durduruldu",
+    "Stopping": "Durduruluyor",
+    "Terminated": "Sonlandırıldı",
+    "Unhealthy": "Sağlıksız"
   },
   "comp:BAIDomainSelect": {
     "SelectDomain": "Etki Alanı Seçin"
@@ -173,18 +205,27 @@
     "DomainName": "Alan Adı",
     "EndpointURL": "Uç Nokta URL'si",
     "FailedToDeleteDeployment": "Dağıtım silinemedi.",
+    "HealthySummary": "{{healthy}} / {{total}}",
+    "Model": "Model",
     "Name": "Ad",
     "OpenToPublic": "Herkese Açık",
+    "Owner": "Sahip",
     "PreferredDomainName": "Tercih Edilen Alan Adı",
+    "Project": "Proje",
     "ProjectID": "Proje Kimliği",
+    "ReplicaSummary": "Kopyalar",
+    "ReplicaSummaryTooltip": "İstenen (veya toplam) kopya sayısına karşılık çalışan kopyalar.",
     "Replicas": "Kopyalar",
+    "ResourceGroup": "Kaynak Grubu",
+    "RevisionNumber": "Revizyon",
+    "RevisionNumberTooltip": "Dağıtımın mevcut revizyon numarası.",
     "Status": "Durum",
     "StrategyType": "Strateji",
     "Tags": "Etiketler",
     "UpdatedAt": "Güncellenme Tarihi"
   },
   "comp:BAIProjectBulkEditModal": {
-    "FollowingFoldersWillBeUpdated": "Aşağıdaki klasör(ler) güncellenecek.",
+    "FollowingProjectsWillBeUpdated": "Aşağıdaki proje(ler) güncellenecek.",
     "ProjectResourcePolicy": "Proje Kaynak Politikası",
     "UpdateMultipleProjects": "Birden Çok Projeyi Güncelle"
   },
@@ -214,25 +255,15 @@
     "UpdateProject": "Projeyi Güncelle"
   },
   "comp:BAIProjectTable": {
-    "AreYouSureToPurgeProject": "{{projectName}} öğesini kalıcı olarak silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
     "ContainerRegistry": "Konteyner Kayıt Deposu",
-    "Controls": "Kontroller",
+    "ContainerRegistryProject": "Konteyner Kayıt Deposu Projesi",
     "CreatedAt": "Oluşturulma Tarihi",
-    "Deactivate": "Devre dışı bırak",
-    "DeactivateProject": "Projeyi devre dışı bırak",
     "Description": "Açıklama",
     "Domain": "Etki Alanı",
-    "FailedToDeactivateProject": "Proje devre dışı bırakılamadı.",
-    "FailedToPurgeProject": "Proje temizlenemedi.",
     "IntegrationID": "Entegrasyon Kimliği",
-    "IsActive": "Aktif",
     "Name": "Ad",
     "Project": "Proje",
-    "ProjectDeactivated": "Proje devre dışı bırakıldı.",
     "ProjectID": "Proje Kimliği",
-    "ProjectPurged": "Proje kalıcı olarak silindi.",
-    "Purge": "Temizle",
-    "PurgeProject": "Projeyi Temizle",
     "Registry": "Kayıt Deposu",
     "ResourcePolicy": "Kaynak Politikası",
     "ScalingGroups": "Kaynak Grupları",
@@ -259,22 +290,42 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Kaynak Grubu Seç"
   },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "Sınırsız"
+  },
   "comp:BAIRouteNodes": {
     "CreatedAt": "Oluşturulma tarihi",
     "HealthStatus": "Sağlık Durumu",
     "RouteId": "Rota Kimliği",
+    "SchedulingHistory": "Zamanlama Geçmişi",
     "SessionId": "Oturum Kimliği",
     "Status": "Durum",
     "TrafficRatio": "Trafik Oranı",
     "TrafficStatus": "Trafik Durumu"
+  },
+  "comp:BAIRouteSchedulingHistoryNodes": {
+    "Attempts": "Denemeler",
+    "Category": "Kategori",
+    "CreatedAt": "Oluşturulma Tarihi",
+    "ErrorCode": "Hata Kodu",
+    "From": "Kaynak",
+    "Message": "Mesaj",
+    "Phase": "Aşama",
+    "Result": "Sonuç",
+    "StatusTransition": "Durum Geçişi",
+    "To": "Bitiş",
+    "UpdatedAt": "Güncelleme Tarihi"
   },
   "comp:BAIRuntimeVariantSelect": {
     "SelectRuntimeVariant": "Çalışma Zamanı Varyantını Seç"
   },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "Denemeler",
+    "Category": "Kategori",
     "CreatedAt": "Oluşturulma Tarihi",
+    "ErrorCode": "Hata Kodu",
     "From": "Kaynak",
+    "Message": "Mesaj",
     "Phase": "Aşama",
     "Result": "Sonuç",
     "StatusTransition": "Durum Geçişi",
@@ -293,6 +344,14 @@
   },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Depolama Sunucusu Seç"
+  },
+  "comp:BAISubStepNodes": {
+    "EndedAt": "Bitiş Zamanı",
+    "ErrorCode": "Hata Kodu",
+    "Message": "Mesaj",
+    "Result": "Sonuç",
+    "StartedAt": "Başlama zamanı",
+    "Step": "Adım"
   },
   "comp:BAITable": {
     "Export": "Dışa aktar",
@@ -314,6 +373,8 @@
   },
   "comp:FileExplorer": {
     "ArchiveDownloadStarted": "{{count}} öğe indirilmeye başlandı.",
+    "ChangeFileExtension": "Dosya Uzantısını Değiştir",
+    "ChangeFileExtensionDesc": "Dosya uzantısını değiştirmek dosyanın kullanılamaz hale gelmesine veya hatalı açılmasına neden olabilir. Devam etmek istiyor musunuz?",
     "Controls": "Kontroller",
     "CreateANewFile": "Create a new file",
     "CreateANewFolder": "Yeni bir klasör oluşturun",
@@ -351,7 +412,10 @@
     "UnsupportedFileFormat": "Bu dosya biçimi düzenlemeyi desteklemiyor.",
     "UploadFiles": "Dosyaları Yükle",
     "UploadFolder": "Klasörü Yükle",
-    "error": {}
+    "error": {
+      "DuplicatedName": "Bu isim zaten kullanılıyor. Lütfen farklı bir isim girin.",
+      "FileNameRequired": "Lütfen bir dosya veya klasör adı girin."
+    }
   },
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} öğelerinin {{total}}"
@@ -359,13 +423,22 @@
   "comp:ResourceStatistics": {
     "NoResourcesData": "Kaynak verisi yok"
   },
-  "comp:SessionHistorySubStepNodes": {
-    "EndedAt": "Bitiş Zamanı",
-    "ErrorCode": "Hata Kodu",
-    "Message": "Mesaj",
-    "Result": "Sonuç",
-    "StartedAt": "Başlama zamanı",
-    "Step": "Adım"
+  "comp:SessionV2Nodes": {
+    "AIAccelerator": "AI Hızlandırıcı",
+    "CPU": "CPU",
+    "ClusterMode": "Küme Modu",
+    "CreatedAt": "Oluşturulma Tarihi",
+    "ElapsedTime": "Geçen Süre",
+    "Environments": "Ortamlar",
+    "Memory": "Bellek",
+    "OwnerEmail": "Sahip E-postası",
+    "Project": "Proje",
+    "ResourceGroup": "Kaynak Grubu",
+    "SessionId": "Oturum ID",
+    "SessionName": "Oturum Adı",
+    "SessionType": "Oturum Türü",
+    "Status": "Durum",
+    "TerminateSession": "Oturumu Sonlandır"
   },
   "comp:UserNodes": {
     "AllowedClientIps": "İzin Verilen İstemci IP'leri",

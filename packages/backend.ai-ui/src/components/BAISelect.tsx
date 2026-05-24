@@ -43,6 +43,24 @@ const useStyles = createStyles(({ css, token }) => ({
         color: ${token.colorBgBase};
       }
     }
+
+    /* In ghost mode the border-color is hard-overridden with !important,
+       which would otherwise swallow antd's status="error" red border.
+       Restore the error treatment with a higher-specificity rule so a
+       ghost select (e.g. the header ProjectSelect) can still surface an
+       error state. */
+    &.ant-select.ant-select-status-error {
+      border-color: ${token.colorError} !important;
+
+      .ant-select-suffix {
+        color: ${token.colorError};
+      }
+
+      &:hover .ant-select-suffix,
+      &:active .ant-select-suffix {
+        color: ${token.colorError};
+      }
+    }
   `,
   customStyle: css`
     /* Hide selected value content (except search input) when the user is typing a search query.

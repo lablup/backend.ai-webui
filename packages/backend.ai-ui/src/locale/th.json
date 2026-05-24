@@ -74,6 +74,9 @@
     "KeepAsIs": "เก็บไว้ตามเดิม",
     "UndoChanges": "ยกเลิกการเปลี่ยนแปลง"
   },
+  "comp:BAIContainerRegistrySelect": {
+    "SelectContainerRegistry": "เลือกรีจิสทรีคอนเทนเนอร์"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "แน่ใจหรือว่าคุณต้องการปิดการใช้งาน {{name}}?",
     "AreYouSureYouWantToDeactivateSome": "คุณแน่ใจหรือไม่ว่าต้องการปิดการใช้งาน {{count}} สิ่งประดิษฐ์?",
@@ -99,8 +102,37 @@
     "DeleteNItems": "ลบ {{count}} รายการ",
     "TypeToConfirm": "พิมพ์ <code>{{confirmText}}</code> เพื่อยืนยัน"
   },
+  "comp:BAIDeploymentOwnerInfo": {
+    "CreatedBy": "สร้างโดย"
+  },
+  "comp:BAIDeploymentSchedulingHistoryNodes": {
+    "Attempts": "จำนวนครั้งที่ลอง",
+    "Category": "หมวดหมู่",
+    "CreatedAt": "สร้างเมื่อ",
+    "ErrorCode": "รหัสข้อผิดพลาด",
+    "From": "จาก",
+    "Message": "ข้อความ",
+    "Phase": "ระยะ",
+    "Result": "ผลลัพธ์",
+    "StatusTransition": "การเปลี่ยนสถานะ",
+    "To": "ถึง",
+    "UpdatedAt": "อัปเดตเมื่อ"
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "เลือกการปรับใช้"
+  },
+  "comp:BAIDeploymentStatusTag": {
+    "Degraded": "ลดลง",
+    "Deploying": "กำลังปรับใช้",
+    "Healthy": "ปกติ",
+    "NotChecked": "ยังไม่ตรวจสอบ",
+    "Pending": "รอดำเนินการ",
+    "Ready": "พร้อม",
+    "Scaling": "กำลังปรับขนาด",
+    "Stopped": "หยุดแล้ว",
+    "Stopping": "กำลังหยุด",
+    "Terminated": "สิ้นสุดแล้ว",
+    "Unhealthy": "ผิดปกติ"
   },
   "comp:BAIDomainSelect": {
     "SelectDomain": "เลือกโดเมน"
@@ -173,18 +205,27 @@
     "DomainName": "โดเมน",
     "EndpointURL": "URL ปลายทาง",
     "FailedToDeleteDeployment": "ไม่สามารถลบการปรับใช้ได้",
+    "HealthySummary": "{{healthy}} / {{total}}",
+    "Model": "โมเดล",
     "Name": "ชื่อ",
     "OpenToPublic": "เปิดสาธารณะ",
+    "Owner": "เจ้าของ",
     "PreferredDomainName": "โดเมนที่ต้องการ",
+    "Project": "โปรเจกต์",
     "ProjectID": "รหัสโปรเจกต์",
+    "ReplicaSummary": "จำนวนสำเนา",
+    "ReplicaSummaryTooltip": "จำนวนสำเนาที่กำลังทำงานเทียบกับจำนวนสำเนาที่ต้องการ (หรือทั้งหมด)",
     "Replicas": "จำนวนสำเนา",
+    "ResourceGroup": "กลุ่มทรัพยากร",
+    "RevisionNumber": "ฉบับแก้ไข",
+    "RevisionNumberTooltip": "หมายเลขฉบับแก้ไขปัจจุบันของการปรับใช้",
     "Status": "สถานะ",
     "StrategyType": "กลยุทธ์",
     "Tags": "แท็ก",
     "UpdatedAt": "วันที่อัปเดต"
   },
   "comp:BAIProjectBulkEditModal": {
-    "FollowingFoldersWillBeUpdated": "โฟลเดอร์ต่อไปนี้จะถูกอัปเดต.",
+    "FollowingProjectsWillBeUpdated": "โครงการต่อไปนี้จะถูกอัปเดต.",
     "ProjectResourcePolicy": "นโยบายทรัพยากรโครงการ",
     "UpdateMultipleProjects": "อัปเดตหลายโครงการ"
   },
@@ -214,25 +255,15 @@
     "UpdateProject": "อัปเดตโปรเจกต์"
   },
   "comp:BAIProjectTable": {
-    "AreYouSureToPurgeProject": "คุณแน่ใจหรือว่าต้องการลบออกอย่างถาวร {{projectName}}? การดำเนินการนี้ไม่สามารถย้อนกลับได้.",
     "ContainerRegistry": "รีจิสทรีคอนเทนเนอร์",
-    "Controls": "การควบคุม",
+    "ContainerRegistryProject": "โปรเจ็กต์รีจิสทรีคอนเทนเนอร์",
     "CreatedAt": "สร้างเมื่อ",
-    "Deactivate": "ปิดใช้งาน",
-    "DeactivateProject": "ปิดการใช้งานโครงการ",
     "Description": "คำอธิบาย",
     "Domain": "โดเมน",
-    "FailedToDeactivateProject": "ไม่สามารถปิดใช้งานโปรเจ็กต์ได้",
-    "FailedToPurgeProject": "ไม่สามารถล้างโปรเจกต์ได้",
     "IntegrationID": "รหัสการผสานระบบ",
-    "IsActive": "ใช้งาน",
     "Name": "ชื่อ",
     "Project": "โปรเจ็กต์",
-    "ProjectDeactivated": "โครงการถูกปิดการใช้งานแล้ว",
     "ProjectID": "รหัสโครงการ",
-    "ProjectPurged": "โครงการถูกลบอย่างถาวร",
-    "Purge": "ลบถาวร",
-    "PurgeProject": "ลบโปรเจกต์อย่างถาวร",
     "Registry": "รีจิสทรี",
     "ResourcePolicy": "นโยบายทรัพยากร",
     "ScalingGroups": "กลุ่มทรัพยากร",
@@ -259,22 +290,42 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "เลือกกลุ่มทรัพยากร"
   },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "ไม่ จำกัด"
+  },
   "comp:BAIRouteNodes": {
     "CreatedAt": "สร้างเมื่อ",
     "HealthStatus": "สถานะระบบ",
     "RouteId": "รหัสเส้นทาง",
+    "SchedulingHistory": "ประวัติการจัดตาราง",
     "SessionId": "รหัสเซสชัน",
     "Status": "สถานะ",
     "TrafficRatio": "สัดส่วนทราฟฟิก",
     "TrafficStatus": "สถานะการรับส่งข้อมูล"
+  },
+  "comp:BAIRouteSchedulingHistoryNodes": {
+    "Attempts": "จำนวนครั้งที่ลอง",
+    "Category": "หมวดหมู่",
+    "CreatedAt": "สร้างเมื่อ",
+    "ErrorCode": "รหัสข้อผิดพลาด",
+    "From": "จาก",
+    "Message": "ข้อความ",
+    "Phase": "ระยะ",
+    "Result": "ผลลัพธ์",
+    "StatusTransition": "การเปลี่ยนสถานะ",
+    "To": "ถึง",
+    "UpdatedAt": "อัปเดตเมื่อ"
   },
   "comp:BAIRuntimeVariantSelect": {
     "SelectRuntimeVariant": "เลือกตัวแปรรันไทม์"
   },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "จำนวนครั้งที่ลอง",
+    "Category": "หมวดหมู่",
     "CreatedAt": "สร้างเมื่อ",
+    "ErrorCode": "รหัสข้อผิดพลาด",
     "From": "จาก",
+    "Message": "ข้อความ",
     "Phase": "ระยะ",
     "Result": "ผลลัพธ์",
     "StatusTransition": "การเปลี่ยนสถานะ",
@@ -293,6 +344,14 @@
   },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "เลือกโฮสต์จัดเก็บข้อมูล"
+  },
+  "comp:BAISubStepNodes": {
+    "EndedAt": "สิ้นสุดเมื่อ",
+    "ErrorCode": "รหัสข้อผิดพลาด",
+    "Message": "ข้อความ",
+    "Result": "ผลลัพธ์",
+    "StartedAt": "เริ่มเมื่อ",
+    "Step": "ขั้นตอน"
   },
   "comp:BAITable": {
     "Export": "ส่งออก",
@@ -364,13 +423,22 @@
   "comp:ResourceStatistics": {
     "NoResourcesData": "ไม่มีข้อมูลทรัพยากร"
   },
-  "comp:SessionHistorySubStepNodes": {
-    "EndedAt": "สิ้นสุดเมื่อ",
-    "ErrorCode": "รหัสข้อผิดพลาด",
-    "Message": "ข้อความ",
-    "Result": "ผลลัพธ์",
-    "StartedAt": "เริ่มเมื่อ",
-    "Step": "ขั้นตอน"
+  "comp:SessionV2Nodes": {
+    "AIAccelerator": "ตัวเร่ง AI",
+    "CPU": "CPU",
+    "ClusterMode": "โหมดคลัสเตอร์",
+    "CreatedAt": "สร้างเมื่อ",
+    "ElapsedTime": "เวลาที่ผ่านไป",
+    "Environments": "สภาพแวดล้อม",
+    "Memory": "หน่วยความจำ",
+    "OwnerEmail": "อีเมลเจ้าของ",
+    "Project": "โครงการ",
+    "ResourceGroup": "กลุ่มทรัพยากร",
+    "SessionId": "ID เซสชัน",
+    "SessionName": "ชื่อเซสชัน",
+    "SessionType": "ประเภทเซสชัน",
+    "Status": "สถานะ",
+    "TerminateSession": "ยุติเซสชัน"
   },
   "comp:UserNodes": {
     "AllowedClientIps": "IP ไคลเอนต์ที่อนุญาต",

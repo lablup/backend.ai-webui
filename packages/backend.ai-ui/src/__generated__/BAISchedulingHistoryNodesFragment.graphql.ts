@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<39861bc6ac529e26786c85c4c7456a22>>
+ * @generated SignedSource<<ce6f00b122f73ac787c18a8f27b6222b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -21,7 +21,7 @@ export type BAISchedulingHistoryNodesFragment$data = ReadonlyArray<{
   readonly result: SchedulingResult;
   readonly sessionId: string;
   readonly subSteps: ReadonlyArray<{
-    readonly " $fragmentSpreads": FragmentRefs<"BAISessionHistorySubStepNodesFragment">;
+    readonly " $fragmentSpreads": FragmentRefs<"BAISubStepNodesFragment">;
   }>;
   readonly toStatus: string | null | undefined;
   readonly updatedAt: string;
@@ -121,7 +121,7 @@ const node: ReaderFragment = {
         {
           "args": null,
           "kind": "FragmentSpread",
-          "name": "BAISessionHistorySubStepNodesFragment"
+          "name": "BAISubStepNodesFragment"
         }
       ],
       "storageKey": null
@@ -131,6 +131,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "a7e81b6ac9e19f17ed716da9ac3d1fee";
+(node as any).hash = "d9ace8d5059e208cc256c1f0c236d273";
 
 export default node;

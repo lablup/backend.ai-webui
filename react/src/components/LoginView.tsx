@@ -58,6 +58,26 @@ const extractErrorType = (typeUrl?: string): string => {
   return parts[parts.length - 1] || '';
 };
 
+/**
+ * Dev-only override for the API endpoint shown on the login screen.
+ *
+ * Set `VITE_DEFAULT_API_ENDPOINT` to a full URL (e.g. `http://1.2.3.4:8090`)
+ * to pre-fill the login endpoint field and skip silent re-login when a
+ * stale session targets a different backend. The dev-server skill derives
+ * this value from the current branch's PR description automatically; see
+ * `.claude/skills/dev-server/SKILL.md`.
+ *
+ * Production builds (`import.meta.env.DEV === false`) ignore the variable.
+ */
+const devApiEndpointOverride: string | undefined =
+  import.meta.env.DEV &&
+  typeof import.meta.env.VITE_DEFAULT_API_ENDPOINT === 'string' &&
+  import.meta.env.VITE_DEFAULT_API_ENDPOINT.trim() !== ''
+    ? import.meta.env.VITE_DEFAULT_API_ENDPOINT.trim().replace(/\/+$/, '')
+    : undefined;
+
+const STORED_API_ENDPOINT_KEY = 'backendaiwebui.api_endpoint';
+
 const LoginView: React.FC<{
   /**
    * When true, delays closing the login panel until MainLayout signals
@@ -101,9 +121,20 @@ const LoginView: React.FC<{
   const [connectionMode, setConnectionMode] =
     useState<ConnectionMode>('SESSION');
   const [apiEndpoint, setApiEndpoint] = useState(() => {
-    const stored = localStorage.getItem('backendaiwebui.api_endpoint');
+    if (devApiEndpointOverride) return devApiEndpointOverride;
+    const stored = localStorage.getItem(STORED_API_ENDPOINT_KEY);
     return stored ? stored.replace(/^"+|"+$/g, '') : '';
   });
+  // Persist the dev override so other modules that read
+  // backendaiwebui.api_endpoint (e.g., orchestration's Electron fallback)
+  // observe it too. Kept in an effect — not the useState initializer — so
+  // the initializer stays pure and StrictMode's double-invocation can't
+  // surprise future readers.
+  useEffect(() => {
+    if (devApiEndpointOverride) {
+      localStorage.setItem(STORED_API_ENDPOINT_KEY, devApiEndpointOverride);
+    }
+  }, []);
   const [otpRequired, setOtpRequired] = useState(false);
   const [needsOtpRegistration, setNeedsOtpRegistration] = useState(false);
   const [totpRegistrationToken, setTotpRegistrationToken] = useState('');
@@ -168,10 +199,15 @@ const LoginView: React.FC<{
     const newCfg = atomLoginConfig;
     setLoginConfig(newCfg);
     setConnectionMode(newCfg.connection_mode);
-    setApiEndpoint((prev) => newCfg.api_endpoint || prev);
+    // The dev-only env-var override (VITE_DEFAULT_API_ENDPOINT) wins over
+    // both the config.toml api_endpoint and the previously-stored value so
+    // that PR-targeted dev sessions land on the right backend.
+    setApiEndpoint(
+      (prev) => devApiEndpointOverride || newCfg.api_endpoint || prev,
+    );
 
     // Handle endpoint visibility
-    if (newCfg.api_endpoint === '') {
+    if (newCfg.api_endpoint === '' || devApiEndpointOverride) {
       setShowEndpointInput(true);
       setIsEndpointDisabled(false);
     } else {
@@ -180,7 +216,12 @@ const LoginView: React.FC<{
     }
   }, [isConfigLoaded, atomLoginConfig]);
 
-  // Load login plugin when config is ready
+  // Load login plugin when config is ready.
+  // Mirrors `PluginLoader.tsx`'s URL resolution so login plugins follow
+  // the same deployment model as page plugins: the file is served by the
+  // backend WebServer (or a Vite/static host that mounts `/dist/plugins/`).
+  // No build-time bundling — plugins can be deployed independently of the
+  // WebUI bundle.
   useEffect(() => {
     if (!isConfigLoaded || !loginPlugin) return;
 
@@ -189,17 +230,19 @@ const LoginView: React.FC<{
     const sanitizedPlugin = loginPlugin.replace(/[^a-zA-Z0-9_-]/g, '');
     if (!sanitizedPlugin || sanitizedPlugin !== loginPlugin) return;
 
-    // Build the plugin path at runtime, in a variable, so neither Vite nor
-    // esbuild's optimizeDeps scanner can statically analyze the specifier.
-    // A template-literal with a static prefix (e.g. `../../../src/plugins/…`)
-    // is treated by esbuild as a glob and fails to resolve in dev because
-    // `webui-ai/src/plugins/` only exists in production builds. `@vite-ignore`
-    // alone is not enough — esbuild's scanner does not honor that comment.
-    const pluginUrl = `../../../src/plugins/${sanitizedPlugin}`;
+    const isElectronEnv = (globalThis as Record<string, unknown>).isElectron;
+    const pluginUrl =
+      isElectronEnv && apiEndpoint
+        ? `${apiEndpoint}/dist/plugins/${sanitizedPlugin}.js`
+        : `/dist/plugins/${sanitizedPlugin}.js`;
+
+    // `@vite-ignore` opts out of Vite's static analysis. The URL is an
+    // absolute path (no relative `..` traversal), so esbuild's
+    // optimizeDeps scanner does not treat it as a module specifier.
     import(/* @vite-ignore */ pluginUrl).catch(() => {
-      setLoginError({ message: t('error.LoginFailed') });
+      setLoginError({ message: t('error.LoginPluginLoadFailed') });
     });
-  }, [isConfigLoaded, loginPlugin, t]);
+  }, [isConfigLoaded, loginPlugin, apiEndpoint, t]);
 
   // Keep configRef in sync
   useEffect(() => {
@@ -933,6 +976,7 @@ const LoginView: React.FC<{
     onLogoutSession: logoutSession,
     apiEndpoint,
     connectionMode,
+    enforcedEndpoint: devApiEndpointOverride,
   });
 
   const handleConnectionModeChange = useCallback(

@@ -74,6 +74,9 @@
     "KeepAsIs": "Kekalkan seperti semula",
     "UndoChanges": "Batal perubahan"
   },
+  "comp:BAIContainerRegistrySelect": {
+    "SelectContainerRegistry": "Pilih Registri Kontena"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "Adakah anda pasti mahu menyahaktifkan {{name}}?",
     "AreYouSureYouWantToDeactivateSome": "Adakah anda pasti mahu menyahaktifkan {{count}} artifak?",
@@ -99,8 +102,37 @@
     "DeleteNItems": "Padam {{count}} item",
     "TypeToConfirm": "Taip <code>{{confirmText}}</code> untuk mengesahkan."
   },
+  "comp:BAIDeploymentOwnerInfo": {
+    "CreatedBy": "Dibuat oleh"
+  },
+  "comp:BAIDeploymentSchedulingHistoryNodes": {
+    "Attempts": "Percubaan",
+    "Category": "Kategori",
+    "CreatedAt": "Dicipta pada",
+    "ErrorCode": "Kod Ralat",
+    "From": "Dari",
+    "Message": "Mesej",
+    "Phase": "Fasa",
+    "Result": "Hasil",
+    "StatusTransition": "Peralihan Status",
+    "To": "Kepada",
+    "UpdatedAt": "Dikemas kini pada"
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Pilih Penggunaan"
+  },
+  "comp:BAIDeploymentStatusTag": {
+    "Degraded": "Merosot",
+    "Deploying": "Sedang menggunakan",
+    "Healthy": "Sihat",
+    "NotChecked": "Tidak Diperiksa",
+    "Pending": "Menunggu",
+    "Ready": "Sedia",
+    "Scaling": "Menskalakan",
+    "Stopped": "Dihentikan",
+    "Stopping": "Sedang berhenti",
+    "Terminated": "Ditamatkan",
+    "Unhealthy": "Tidak sihat"
   },
   "comp:BAIDomainSelect": {
     "SelectDomain": "Pilih Domain"
@@ -173,18 +205,27 @@
     "DomainName": "Domain",
     "EndpointURL": "URL Titik Akhir",
     "FailedToDeleteDeployment": "Gagal memadamkan penggunaan.",
+    "HealthySummary": "{{healthy}} / {{total}}",
+    "Model": "Model",
     "Name": "Nama",
     "OpenToPublic": "Terbuka untuk Awam",
+    "Owner": "Pemilik",
     "PreferredDomainName": "Domain Pilihan",
+    "Project": "Projek",
     "ProjectID": "ID Projek",
+    "ReplicaSummary": "Replika",
+    "ReplicaSummaryTooltip": "Bilangan replika yang berjalan berbanding bilangan replika yang dikehendaki (atau jumlah).",
     "Replicas": "Replika",
+    "ResourceGroup": "Kumpulan Sumber",
+    "RevisionNumber": "Semakan",
+    "RevisionNumberTooltip": "Nombor semakan semasa penggunaan.",
     "Status": "Status",
     "StrategyType": "Strategi",
     "Tags": "Tag",
     "UpdatedAt": "Dikemas kini Pada"
   },
   "comp:BAIProjectBulkEditModal": {
-    "FollowingFoldersWillBeUpdated": "Folder berikut akan dikemas kini.",
+    "FollowingProjectsWillBeUpdated": "Projek berikut akan dikemas kini.",
     "ProjectResourcePolicy": "Polisi Sumber Projek",
     "UpdateMultipleProjects": "Kemas kini Beberapa Projek"
   },
@@ -214,25 +255,15 @@
     "UpdateProject": "Kemas kini Projek"
   },
   "comp:BAIProjectTable": {
-    "AreYouSureToPurgeProject": "Adakah anda pasti mahu memadam sepenuhnya {{projectName}}? Tindakan ini tidak boleh dipulihkan.",
     "ContainerRegistry": "Registri Kontena",
-    "Controls": "Kawalan",
+    "ContainerRegistryProject": "Projek Registri Kontena",
     "CreatedAt": "Dibuat pada",
-    "Deactivate": "Nyahaktifkan",
-    "DeactivateProject": "Nyahaktifkan Projek",
     "Description": "Keterangan",
     "Domain": "Domain",
-    "FailedToDeactivateProject": "Gagal menyahaktifkan projek.",
-    "FailedToPurgeProject": "Gagal memadam projek.",
     "IntegrationID": "ID Integrasi",
-    "IsActive": "Aktif",
     "Name": "Nama",
     "Project": "Projek",
-    "ProjectDeactivated": "Projek ini telah dinyahaktifkan.",
     "ProjectID": "ID Projek",
-    "ProjectPurged": "Projek telah dipadam",
-    "Purge": "Padam",
-    "PurgeProject": "Padam Projek",
     "Registry": "Registri",
     "ResourcePolicy": "Dasar Sumber",
     "ScalingGroups": "Kumpulan Sumber",
@@ -259,22 +290,42 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Pilih Kumpulan Sumber"
   },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "Tidak terhad"
+  },
   "comp:BAIRouteNodes": {
     "CreatedAt": "Dicipta pada",
     "HealthStatus": "Status Kesihatan",
     "RouteId": "ID Laluan",
+    "SchedulingHistory": "Sejarah Penjadualan",
     "SessionId": "ID Sesi",
     "Status": "Status",
     "TrafficRatio": "Nisbah Trafik",
     "TrafficStatus": "Status Trafik"
+  },
+  "comp:BAIRouteSchedulingHistoryNodes": {
+    "Attempts": "Percubaan",
+    "Category": "Kategori",
+    "CreatedAt": "Dicipta pada",
+    "ErrorCode": "Kod Ralat",
+    "From": "Dari",
+    "Message": "Mesej",
+    "Phase": "Fasa",
+    "Result": "Hasil",
+    "StatusTransition": "Peralihan Status",
+    "To": "Kepada",
+    "UpdatedAt": "Dikemas kini pada"
   },
   "comp:BAIRuntimeVariantSelect": {
     "SelectRuntimeVariant": "Pilih Varian Runtime"
   },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "Percubaan",
+    "Category": "Kategori",
     "CreatedAt": "Dicipta pada",
+    "ErrorCode": "Kod Ralat",
     "From": "Dari",
+    "Message": "Mesej",
     "Phase": "Fasa",
     "Result": "Hasil",
     "StatusTransition": "Peralihan Status",
@@ -293,6 +344,14 @@
   },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Pilih Hos Storan"
+  },
+  "comp:BAISubStepNodes": {
+    "EndedAt": "Berakhir pada",
+    "ErrorCode": "Kod Ralat",
+    "Message": "Mesej",
+    "Result": "Hasil",
+    "StartedAt": "Mula pada",
+    "Step": "Langkah"
   },
   "comp:BAITable": {
     "Export": "Eksport",
@@ -364,13 +423,22 @@
   "comp:ResourceStatistics": {
     "NoResourcesData": "Tiada data sumber tersedia"
   },
-  "comp:SessionHistorySubStepNodes": {
-    "EndedAt": "Berakhir pada",
-    "ErrorCode": "Kod Ralat",
-    "Message": "Mesej",
-    "Result": "Hasil",
-    "StartedAt": "Mula pada",
-    "Step": "Langkah"
+  "comp:SessionV2Nodes": {
+    "AIAccelerator": "Pemecut AI",
+    "CPU": "CPU",
+    "ClusterMode": "Mod Kluster",
+    "CreatedAt": "Dicipta Pada",
+    "ElapsedTime": "Masa Berlalu",
+    "Environments": "Persekitaran",
+    "Memory": "Memori",
+    "OwnerEmail": "E-mel Pemilik",
+    "Project": "Projek",
+    "ResourceGroup": "Kumpulan Sumber",
+    "SessionId": "ID Sesi",
+    "SessionName": "Nama Sesi",
+    "SessionType": "Jenis Sesi",
+    "Status": "Status",
+    "TerminateSession": "Tamatkan Sesi"
   },
   "comp:UserNodes": {
     "AllowedClientIps": "IP Pelanggan yang Dibenarkan",

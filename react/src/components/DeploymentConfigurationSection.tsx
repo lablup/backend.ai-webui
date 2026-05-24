@@ -8,16 +8,21 @@ import type {
   DeploymentConfigurationSection_deployment$key,
 } from '../__generated__/DeploymentConfigurationSection_deployment.graphql';
 import type { DeploymentRevisionDetail_revision$key } from '../__generated__/DeploymentRevisionDetail_revision.graphql';
+import { DeploymentSchedulingHistoryModalQuery } from '../__generated__/DeploymentSchedulingHistoryModalQuery.graphql';
 import { useWebUINavigate } from '../hooks';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import DeploymentRevisionDetail from './DeploymentRevisionDetail';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
 import DeploymentRevisionHistoryTab from './DeploymentRevisionHistoryTab';
+import DeploymentSchedulingHistoryModal, {
+  DeploymentSchedulingHistoryQuery,
+} from './DeploymentSchedulingHistoryModal';
 import DeploymentSettingModal from './DeploymentSettingModal';
-import DeploymentTagChips from './DeploymentTagChips';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import {
   DeleteFilled,
   EditOutlined,
+  HistoryOutlined,
   LoadingOutlined,
   MoreOutlined,
   PlusOutlined,
@@ -27,32 +32,36 @@ import {
   App,
   Button,
   Descriptions,
+  Divider,
   Dropdown,
   Empty,
   Skeleton,
   Space,
   Typography,
-  theme,
 } from 'antd';
 import {
   BAIButton,
   BAICard,
   BAIDeleteConfirmModal,
+  BAIDeploymentStatusTag,
+  BAIDeploymentTagChips,
   BAIFetchKeyButton,
   BAIFlex,
   BAIId,
-  BAIText,
   BAIUnmountAfterClose,
   BooleanTag,
   filterOutEmpty,
+  safeDecodeUuid,
   toLocalId,
   useBAILogger,
+  useConnectedBAIClient,
   useInterval,
 } from 'backend.ai-ui';
+import type { BAIDeploymentStatus } from 'backend.ai-ui';
 import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useFragment, useMutation } from 'react-relay';
+import { graphql, useFragment, useMutation, useQueryLoader } from 'react-relay';
 import { useLocation } from 'react-router-dom';
 
 interface DeploymentConfigurationSectionProps {
@@ -75,9 +84,15 @@ const renderFallback = () => (
 
 const DeploymentOverviewContent: React.FC<{
   deployment: DeploymentSectionData;
-}> = ({ deployment }) => {
+  onClickSchedulingHistoryAction?: () => Promise<void>;
+}> = ({
+  deployment,
+  onClickSchedulingHistoryAction: onClickSchedulingHistory,
+}) => {
   'use memo';
   const { t } = useTranslation();
+  const webuiNavigate = useWebUINavigate();
+  const location = useLocation();
 
   const projectName =
     deployment?.metadata.projectV2?.basicInfo?.name ??
@@ -85,10 +100,30 @@ const DeploymentOverviewContent: React.FC<{
 
   const deploymentItems = filterOutEmpty([
     {
-      key: 'name',
-      label: t('deployment.Name'),
-      children: deployment?.metadata.name ? (
-        <BAIText copyable>{deployment.metadata.name}</BAIText>
+      key: 'status',
+      label: t('deployment.Status'),
+      children: deployment?.metadata.status ? (
+        <BAIFlex align="center" gap="xs">
+          <BAIDeploymentStatusTag
+            status={deployment.metadata.status as BAIDeploymentStatus}
+          />
+          {onClickSchedulingHistory && (
+            <>
+              <Divider type="vertical" style={{ margin: 0 }} />
+              <BAIButton
+                type="link"
+                size="small"
+                icon={<HistoryOutlined />}
+                style={{ padding: 0 }}
+                action={async () => {
+                  await onClickSchedulingHistory();
+                }}
+              >
+                {t('deployment.SchedulingHistory')}
+              </BAIButton>
+            </>
+          )}
+        </BAIFlex>
       ) : (
         renderFallback()
       ),
@@ -126,7 +161,7 @@ const DeploymentOverviewContent: React.FC<{
       key: 'endpoint-url',
       label: t('deployment.EndpointUrl'),
       children: deployment?.networkAccess.endpointUrl ? (
-        <Typography.Text copyable>
+        <Typography.Text copyable style={{ wordBreak: 'break-all' }}>
           {deployment.networkAccess.endpointUrl}
         </Typography.Text>
       ) : (
@@ -155,8 +190,28 @@ const DeploymentOverviewContent: React.FC<{
       key: 'tags',
       label: t('deployment.Tags'),
       children: (
-        <DeploymentTagChips
+        <BAIDeploymentTagChips
           metadataFrgmt={deployment?.metadata ?? null}
+          onTagClick={(tag) => {
+            // Stay within the same deployment-list URL space the user came
+            // from (`/admin-deployments`, `/project-admin-deployments`, or
+            // the user-facing `/deployments`) so breadcrumb / back navigation
+            // remain coherent — see FR-2847 (admin) and FR-2930 (project
+            // admin) for the per-scope detail-route precedent.
+            const targetPathname = location.pathname.startsWith(
+              '/admin-deployments',
+            )
+              ? '/admin-deployments'
+              : location.pathname.startsWith('/project-admin-deployments')
+                ? '/project-admin-deployments'
+                : '/deployments';
+            webuiNavigate({
+              pathname: targetPathname,
+              search: new URLSearchParams({
+                filter: JSON.stringify({ tags: { iContains: tag } }),
+              }).toString(),
+            });
+          }}
           fallback={renderFallback()}
         />
       ),
@@ -185,11 +240,11 @@ const DeploymentConfigurationSection: React.FC<
   'use memo';
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const webuiNavigate = useWebUINavigate();
   const location = useLocation();
+  const currentProject = useCurrentProjectValue();
 
   const deployment = useFragment(
     graphql`
@@ -207,7 +262,7 @@ const DeploymentConfigurationSection: React.FC<
               name
             }
           }
-          ...DeploymentTagChips_metadata
+          ...BAIDeploymentTagChips_metadata
         }
         networkAccess {
           openToPublic
@@ -251,6 +306,14 @@ const DeploymentConfigurationSection: React.FC<
   );
   const [settingModalOpen, setSettingModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [historyModalOpen, setHistoryModalOpen] = useState(false);
+  const [deploymentHistoryQueryRef, loadDeploymentHistoryQuery] =
+    useQueryLoader<DeploymentSchedulingHistoryModalQuery>(
+      DeploymentSchedulingHistoryQuery,
+    );
+  const baiClient = useConnectedBAIClient();
+  const supportsDeploymentSchedulingHistory =
+    baiClient?.supports('deployment-scheduling-history') ?? false;
 
   const [commitDeleteMutation, isInFlightDeleteMutation] =
     useMutation<DeploymentConfigurationSectionDeleteMutation>(graphql`
@@ -264,8 +327,19 @@ const DeploymentConfigurationSection: React.FC<
     `);
 
   const deploymentName = deployment?.metadata.name ?? '';
-  const isAdminContext = location.pathname.startsWith('/admin-deployments');
-  const listPath = isAdminContext ? '/admin-deployments' : '/deployments';
+  const listPath = location.pathname.startsWith('/admin-deployments')
+    ? '/admin-deployments'
+    : location.pathname.startsWith('/project-admin-deployments')
+      ? '/project-admin-deployments'
+      : '/deployments';
+
+  // Resolve project mismatch directly here (rather than threading the flag
+  // through props) so callers don't need to know about this guard. When the
+  // viewer's current project differs from the deployment's, the Add Revision
+  // call-to-action below is disabled — switching projects is required first.
+  const deploymentProjectId = deployment?.metadata.projectId ?? null;
+  const isProjectMismatch =
+    !!deploymentProjectId && deploymentProjectId !== currentProject.id;
 
   const handleDelete = () => {
     if (!deployment?.id) return;
@@ -355,8 +429,57 @@ const DeploymentConfigurationSection: React.FC<
         }
         styles={{ body: { paddingTop: 0 } }}
       >
-        <DeploymentOverviewContent deployment={deployment} />
+        <DeploymentOverviewContent
+          deployment={deployment}
+          onClickSchedulingHistoryAction={
+            supportsDeploymentSchedulingHistory && deployment?.id
+              ? async () => {
+                  // Render-as-you-fetch: start the request in the open event.
+                  const rawId = deployment.id;
+                  if (!rawId) {
+                    return;
+                  }
+                  loadDeploymentHistoryQuery(
+                    {
+                      scope: {
+                        deploymentId: safeDecodeUuid(rawId) ?? rawId,
+                      },
+                      orderBy: [{ field: 'UPDATED_AT', direction: 'DESC' }],
+                    },
+                    { fetchPolicy: 'store-and-network' },
+                  );
+                  setHistoryModalOpen(true);
+                }
+              : undefined
+          }
+        />
       </BAICard>
+      {isDeployingDifferentRevision && (
+        <Alert
+          type="info"
+          icon={<LoadingOutlined spin />}
+          showIcon
+          title={t('deployment.ApplyingRevision', {
+            revisionNumber:
+              deployingRevision.revisionNumber != null
+                ? `#${deployingRevision.revisionNumber}`
+                : (toLocalId(deployingRevision.id) ?? ''),
+          })}
+          action={
+            <Button
+              onClick={() =>
+                handleShowRevisionDrawer(
+                  deployingRevision,
+                  'deploying',
+                  t('deployment.ApplyingRevisionDetail'),
+                )
+              }
+            >
+              {t('deployment.ViewRevision')}
+            </Button>
+          }
+        />
+      )}
       <BAICard
         activeTabKey={activeRevisionTab}
         onTabChange={(key) => {
@@ -379,7 +502,7 @@ const DeploymentConfigurationSection: React.FC<
             <BAIButton
               type="primary"
               icon={<PlusOutlined />}
-              disabled={isDeploymentDestroying}
+              disabled={isDeploymentDestroying || isProjectMismatch}
               // `action` (not `onClick`) wraps the state update that mounts
               // `<DeploymentAddRevisionModal>` (which suspends on its Relay
               // queries) in `startTransition`, so the page stays interactive
@@ -396,33 +519,6 @@ const DeploymentConfigurationSection: React.FC<
       >
         {activeRevisionTab === 'currentRevision' && (
           <>
-            {isDeployingDifferentRevision && (
-              <Alert
-                type="info"
-                icon={<LoadingOutlined spin />}
-                showIcon
-                title={t('deployment.ApplyingRevision', {
-                  revisionNumber:
-                    deployingRevision.revisionNumber != null
-                      ? `#${deployingRevision.revisionNumber}`
-                      : (toLocalId(deployingRevision.id) ?? ''),
-                })}
-                action={
-                  <Button
-                    onClick={() =>
-                      handleShowRevisionDrawer(
-                        deployingRevision,
-                        'deploying',
-                        t('deployment.ApplyingRevisionDetail'),
-                      )
-                    }
-                  >
-                    {t('deployment.ViewRevision')}
-                  </Button>
-                }
-                style={{ marginBottom: token.marginMD }}
-              />
-            )}
             {currentRevision ? (
               <DeploymentRevisionDetail
                 revisionFrgmt={currentRevision}
@@ -480,6 +576,16 @@ const DeploymentConfigurationSection: React.FC<
         onOk={handleDelete}
         onCancel={() => setIsDeleteModalOpen(false)}
       />
+      {deploymentHistoryQueryRef != null && (
+        <BAIUnmountAfterClose>
+          <DeploymentSchedulingHistoryModal
+            open={historyModalOpen}
+            queryRef={deploymentHistoryQueryRef}
+            onReload={loadDeploymentHistoryQuery}
+            onCancel={() => setHistoryModalOpen(false)}
+          />
+        </BAIUnmountAfterClose>
+      )}
     </>
   );
 };

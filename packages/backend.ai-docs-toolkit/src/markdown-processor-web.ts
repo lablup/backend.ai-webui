@@ -223,7 +223,11 @@ function rewriteCrossPageLinks(
   multiPage: boolean = false,
 ): string {
   const reportedAnchors = new Set<string>();
-  return html.replace(/href="#([^"]+)"/g, (fullMatch, anchorId: string) => {
+  return html.replace(/href="#([^"]+)"/g, (fullMatch, rawAnchorId: string) => {
+    // Marked URL-encodes non-ASCII characters in href attributes (e.g. Korean,
+    // Japanese). Decode here so the registry lookup uses the same unencoded
+    // form that slugify() and buildAnchorRegistryFromRendered() produce.
+    const anchorId = decodeURIComponent(rawAnchorId);
     // Already a resolved ID (e.g., heading hash-links from the renderer) → skip
     // But only if the ID belongs to the current chapter; otherwise fall through
     // to cross-chapter resolution below.

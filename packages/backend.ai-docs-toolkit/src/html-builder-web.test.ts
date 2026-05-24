@@ -59,3 +59,23 @@ test("buildWebDocument — works without config (preview-mode default branding)"
   const html = buildWebDocument(sampleChapters, meta);
   assert.ok(html.length > 0);
 });
+
+test("buildWebDocument — wraps sidebar nav inside .doc-sidebar__scroll (FR-2768 regression guard)", () => {
+  // FR-2768 made .doc-sidebar a fixed-height, overflow:hidden flex column and
+  // delegated scrolling to an inner .doc-sidebar__scroll element. If the nav
+  // is not wrapped in that element, the sidebar can't scroll on overflow.
+  const html = buildWebDocument(sampleChapters, meta);
+
+  const sidebarMatch = html.match(/<aside class="doc-sidebar">[\s\S]*?<\/aside>/);
+  assert.ok(sidebarMatch, ".doc-sidebar aside not found");
+  const sidebarHtml = sidebarMatch[0];
+
+  const scrollIdx = sidebarHtml.indexOf('class="doc-sidebar__scroll"');
+  const navIdx = sidebarHtml.indexOf('class="doc-sidebar-nav"');
+  assert.notStrictEqual(scrollIdx, -1, ".doc-sidebar__scroll wrapper missing from sidebar");
+  assert.notStrictEqual(navIdx, -1, ".doc-sidebar-nav missing from sidebar");
+  assert.ok(
+    scrollIdx < navIdx,
+    ".doc-sidebar-nav must be nested inside the .doc-sidebar__scroll wrapper",
+  );
+});

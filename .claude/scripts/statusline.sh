@@ -140,7 +140,22 @@ if [[ -n "$WORKSPACE" ]] && command -v portless >/dev/null 2>&1 && command -v ls
   WS_REAL=$(python3 -c 'import os,sys; print(os.path.realpath(sys.argv[1]))' "$WORKSPACE" 2>/dev/null || printf '%s' "$WORKSPACE")
   PORTLESS_LIST=$(portless list 2>/dev/null || true)
 
-  PORTLESS_URL=""
+  # Collect every portless route that belongs to this workspace, matched by the
+  # route process's cwd:
+  #   - exact match (cwd == workspace root) is the main dev server (dev.mjs) —
+  #     the primary, rendered first as "Portless".
+  #   - a cwd *under* the workspace root is a sub-project server launched from a
+  #     subdir: storybook (packages/backend.ai-ui), the docs preview/serve
+  #     servers (packages/backend.ai-webui-docs), serve-release
+  #     (scripts/temp-releases/webui-*), etc. Each is rendered as its own labeled
+  #     link after the primary, so a single root session can see and click all of
+  #     the servers it is currently running.
+  #   - exclude the worktrees subtree (<root>/.claude/worktrees/*): those routes
+  #     belong to their own worktree sessions, so a root session must not claim
+  #     them (this preserves the cwd-is-source-of-truth guarantee).
+  WS_WORKTREES="${WS_REAL}/.claude/worktrees/"
+  PORTLESS_PRIMARY=""   # url of the exact-root (main dev) match
+  PORTLESS_SUBS=()      # "<label>\t<url>" for each sub-project route
   PORTLESS_NOTE=""
   if [[ -n "$PORTLESS_LIST" ]]; then
     while IFS= read -r _line; do
@@ -162,9 +177,31 @@ if [[ -n "$WORKSPACE" ]] && command -v portless >/dev/null 2>&1 && command -v ls
       fi
       [[ -z "$_cwd" ]] && continue
       _cwd_real=$(python3 -c 'import os,sys; print(os.path.realpath(sys.argv[1]))' "$_cwd" 2>/dev/null || printf '%s' "$_cwd")
+      # Multi-level subdomains (worktree prefix, e.g. branch.app.localhost) contain
+      # dots, so the host class must allow '.' as well as '-'.
+      _url=$(printf '%s' "$_line" | grep -oE 'https?://[a-z0-9.-]+\.localhost:[0-9]+' | head -1 || true)
+      [[ -z "$_url" ]] && continue
       if [[ "$_cwd_real" == "$WS_REAL" ]]; then
-        PORTLESS_URL=$(printf '%s' "$_line" | grep -oE 'https?://[a-z0-9-]+\.localhost:[0-9]+' | head -1 || true)
-        break
+        PORTLESS_PRIMARY="$_url"
+      elif [[ "$_cwd_real" == "$WS_REAL"/* && "$_cwd_real" != "$WS_WORKTREES"* ]]; then
+        case "$_cwd_real" in
+          "$WS_REAL"/scripts/temp-releases/*) _sub_label="Release" ;;
+          "$WS_REAL"/packages/backend.ai-ui*) _sub_label="Storybook" ;;
+          "$WS_REAL"/packages/backend.ai-webui-docs*)
+            # The docs package runs several concurrent route flavors that each
+            # claim their own portless subdomain (docs-preview / docs-html /
+            # docs-web). Derive the label from the route's leading subdomain so
+            # they render as distinguishable links instead of identical "Docs".
+            _host="${_url#*://}"; _host="${_host%%.*}"
+            case "$_host" in
+              docs-html) _sub_label="Docs HTML" ;;
+              docs-web) _sub_label="Docs Web" ;;
+              *) _sub_label="Docs" ;;
+            esac
+            ;;
+          *) _sub_label="Portless" ;;
+        esac
+        PORTLESS_SUBS+=("${_sub_label}"$'\t'"${_url}")
       fi
     done <<< "$PORTLESS_LIST"
   fi
@@ -174,7 +211,7 @@ if [[ -n "$WORKSPACE" ]] && command -v portless >/dev/null 2>&1 && command -v ls
   # Scan for any `portless` CLI process whose cwd matches this workspace —
   # if found, the dev server IS running, just unrouted. Derive subdomain
   # from argv (explicit `portless <name>`) or package.json (auto-name).
-  if [[ -z "$PORTLESS_URL" ]]; then
+  if [[ -z "$PORTLESS_PRIMARY" && ${#PORTLESS_SUBS[@]} -eq 0 ]]; then
     for _pid in $(pgrep -f 'portless/dist/cli\.js' 2>/dev/null || true); do
       _cwd=$(lsof -p "$_pid" -a -d cwd -Fn 2>/dev/null | awk '/^n/{print substr($0,2); exit}' || true)
       [[ -z "$_cwd" ]] && continue
@@ -200,17 +237,31 @@ PYEOF
         fi
       fi
       if [[ -n "$_sub" ]]; then
-        PORTLESS_URL="https://${_sub}.localhost:1355"
+        PORTLESS_PRIMARY="https://${_sub}.localhost:1355"
         PORTLESS_NOTE=" (route lost)"
         break
       fi
     done
   fi
 
-  if [[ -n "$PORTLESS_URL" ]]; then
-    PORTLESS_LABEL=$(printf '\033[32mPortless\033[0m')
-    PORTLESS_PART=$(link "$PORTLESS_URL" "$PORTLESS_LABEL")
-  else
+  # Render: primary (main dev) first as "Portless", then each sub-project link.
+  PORTLESS_PART=""
+  if [[ -n "$PORTLESS_PRIMARY" ]]; then
+    PORTLESS_PART=$(link "$PORTLESS_PRIMARY" "$(printf '\033[32mPortless%s\033[0m' "$PORTLESS_NOTE")")
+  fi
+  if [[ ${#PORTLESS_SUBS[@]} -gt 0 ]]; then
+    for _entry in "${PORTLESS_SUBS[@]}"; do
+      _e_label="${_entry%%$'\t'*}"
+      _e_url="${_entry#*$'\t'}"
+      _e_link=$(link "$_e_url" "$(printf '\033[32m%s\033[0m' "$_e_label")")
+      if [[ -n "$PORTLESS_PART" ]]; then
+        PORTLESS_PART+="  $_e_link"
+      else
+        PORTLESS_PART="$_e_link"
+      fi
+    done
+  fi
+  if [[ -z "$PORTLESS_PART" ]]; then
     PORTLESS_PART=$(printf '\033[90mPortless\033[0m')
   fi
 fi

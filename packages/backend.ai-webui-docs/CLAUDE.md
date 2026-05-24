@@ -30,7 +30,7 @@ Each language directory mirrors the same structure:
 ├── sessions_all/sessions_all.md
 ├── mount_vfolder/mount_vfolder.md
 ├── share_vfolder/share_vfolder.md
-├── model_serving/model_serving.md
+├── deployment/deployment.md
 ├── chat/chat.md
 ├── import_run/import_run.md
 ├── my_environments/my_environments.md

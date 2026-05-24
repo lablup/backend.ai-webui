@@ -74,6 +74,9 @@
     "KeepAsIs": "Manter como está",
     "UndoChanges": "Desfazer alterações"
   },
+  "comp:BAIContainerRegistrySelect": {
+    "SelectContainerRegistry": "Selecionar registro de contêiner"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "Tem certeza de que deseja desativar {{name}}?",
     "AreYouSureYouWantToDeactivateSome": "Tem certeza de que deseja desativar os artefatos {{count}}?",
@@ -99,8 +102,37 @@
     "DeleteNItems": "Excluir {{count}} itens",
     "TypeToConfirm": "Digite <code>{{confirmText}}</code> para confirmar."
   },
+  "comp:BAIDeploymentOwnerInfo": {
+    "CreatedBy": "Criado por"
+  },
+  "comp:BAIDeploymentSchedulingHistoryNodes": {
+    "Attempts": "Tentativas",
+    "Category": "Categoria",
+    "CreatedAt": "Criado em",
+    "ErrorCode": "Código de erro",
+    "From": "De",
+    "Message": "Mensagem",
+    "Phase": "Fase",
+    "Result": "Resultado",
+    "StatusTransition": "Transição de status",
+    "To": "Até",
+    "UpdatedAt": "Atualizado em"
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Selecionar implantação"
+  },
+  "comp:BAIDeploymentStatusTag": {
+    "Degraded": "Degradado",
+    "Deploying": "Implantando",
+    "Healthy": "Saudável",
+    "NotChecked": "Não verificado",
+    "Pending": "Pendente",
+    "Ready": "Pronto",
+    "Scaling": "Escalando",
+    "Stopped": "Parado",
+    "Stopping": "Parando",
+    "Terminated": "Encerrado",
+    "Unhealthy": "Não saudável"
   },
   "comp:BAIDomainSelect": {
     "SelectDomain": "Selecionar Domínio"
@@ -143,12 +175,19 @@
   },
   "comp:BAIImportArtifactModal": {
     "Description": "Descrição",
+    "ExcludedVersions": "{{count}} versões são excluídas.",
+    "FailedToPullVersions": "Falhou ao puxar versões.",
     "Name": "Nome",
+    "OnlySCANNEDVersionsCanBePulled": "Somente versões digitalizadas podem ser puxadas.",
     "Pull": "Puxar",
     "PullArtifact": "Puxe artefato",
+    "PullVersion": "Puxar versão",
     "PulledVersionsAreExcluded": "As versões puxadas são excluídas.",
+    "Size": "Tamanho",
     "Source": "Fonte",
-    "Type": "Tipo"
+    "SuccessFullyPulled": "Pull solicitado com sucesso para {{count}} versões.",
+    "Type": "Tipo",
+    "Version": "Versão"
   },
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "Selecionar par de chaves"
@@ -172,18 +211,27 @@
     "DomainName": "Domínio",
     "EndpointURL": "URL do ponto final",
     "FailedToDeleteDeployment": "Falha ao excluir o deployment.",
+    "HealthySummary": "{{healthy}} / {{total}}",
+    "Model": "Modelo",
     "Name": "Nome",
     "OpenToPublic": "Aberto ao público",
+    "Owner": "Proprietário",
     "PreferredDomainName": "Domínio preferido",
+    "Project": "Projeto",
     "ProjectID": "ID do projeto",
+    "ReplicaSummary": "Réplicas",
+    "ReplicaSummaryTooltip": "Réplicas em execução em relação ao número desejado (ou total) de réplicas.",
     "Replicas": "Réplicas",
+    "ResourceGroup": "Grupo de Recursos",
+    "RevisionNumber": "Revisão",
+    "RevisionNumberTooltip": "O número de revisão atual do deployment.",
     "Status": "Status",
     "StrategyType": "Estratégia",
     "Tags": "Tag",
     "UpdatedAt": "Atualizado em"
   },
   "comp:BAIProjectBulkEditModal": {
-    "FollowingFoldersWillBeUpdated": "A(s) pasta(s) a seguir será(ão) atualizada(s).",
+    "FollowingProjectsWillBeUpdated": "O(s) projeto(s) a seguir será(ão) atualizado(s).",
     "ProjectResourcePolicy": "Política de Recursos do Projeto",
     "UpdateMultipleProjects": "Atualizar vários projetos"
   },
@@ -213,25 +261,15 @@
     "UpdateProject": "Atualizar Projeto"
   },
   "comp:BAIProjectTable": {
-    "AreYouSureToPurgeProject": "Tem certeza de que deseja excluir {{projectName}}? Esta ação é irreversível.",
     "ContainerRegistry": "Registro de Contêineres",
-    "Controls": "Controles",
+    "ContainerRegistryProject": "Projeto do Registro de Contêineres",
     "CreatedAt": "Criado em",
-    "Deactivate": "Desativar",
-    "DeactivateProject": "Desativar projeto",
     "Description": "Descrição",
     "Domain": "Domínio",
-    "FailedToDeactivateProject": "Falha ao desativar o projeto.",
-    "FailedToPurgeProject": "Não foi possível purgar o projeto.",
     "IntegrationID": "ID da Integração",
-    "IsActive": "Ativo",
     "Name": "Nome",
     "Project": "Projeto",
-    "ProjectDeactivated": "O projeto foi desativado.",
     "ProjectID": "ID do projeto",
-    "ProjectPurged": "O projeto foi excluído permanentemente.",
-    "Purge": "Limpar",
-    "PurgeProject": "Excluir projeto",
     "Registry": "Registro",
     "ResourcePolicy": "Política de Recursos",
     "ScalingGroups": "Grupos de Recursos",
@@ -258,22 +296,42 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Selecionar grupo de recursos"
   },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "Ilimitado"
+  },
   "comp:BAIRouteNodes": {
     "CreatedAt": "Criado em",
     "HealthStatus": "Status de integridade",
     "RouteId": "ID da rota",
+    "SchedulingHistory": "Histórico de Agendamento",
     "SessionId": "ID da sessão",
     "Status": "Status",
     "TrafficRatio": "Proporção de Tráfego",
     "TrafficStatus": "Status do Tráfego"
+  },
+  "comp:BAIRouteSchedulingHistoryNodes": {
+    "Attempts": "Tentativas",
+    "Category": "Categoria",
+    "CreatedAt": "Criado em",
+    "ErrorCode": "Código de erro",
+    "From": "De",
+    "Message": "Mensagem",
+    "Phase": "Fase",
+    "Result": "Resultado",
+    "StatusTransition": "Transição de status",
+    "To": "Até",
+    "UpdatedAt": "Atualizado em"
   },
   "comp:BAIRuntimeVariantSelect": {
     "SelectRuntimeVariant": "Selecionar variante de execução"
   },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "Tentativas",
+    "Category": "Categoria",
     "CreatedAt": "Criado em",
+    "ErrorCode": "Código de erro",
     "From": "De",
+    "Message": "Mensagem",
     "Phase": "Fase",
     "Result": "Resultado",
     "StatusTransition": "Transição de status",
@@ -293,7 +351,17 @@
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Selecionar host de armazenamento"
   },
+  "comp:BAISubStepNodes": {
+    "EndedAt": "Finalizado em",
+    "ErrorCode": "Código de erro",
+    "Message": "Mensagem",
+    "Result": "Resultado",
+    "StartedAt": "Iniciado em",
+    "Step": "Etapa"
+  },
   "comp:BAITable": {
+    "Export": "Exportar",
+    "ExportCSV": "Exportar CSV",
     "GoToFirstPage": "Ir para a primeira página",
     "InvalidPageNumber": "Número de página inválido",
     "SearchTableColumn": "Pesquisar colunas da tabela",
@@ -361,13 +429,22 @@
   "comp:ResourceStatistics": {
     "NoResourcesData": "Sem dados de recurso disponíveis"
   },
-  "comp:SessionHistorySubStepNodes": {
-    "EndedAt": "Finalizado em",
-    "ErrorCode": "Código de erro",
-    "Message": "Mensagem",
-    "Result": "Resultado",
-    "StartedAt": "Iniciado em",
-    "Step": "Etapa"
+  "comp:SessionV2Nodes": {
+    "AIAccelerator": "Acelerador de IA",
+    "CPU": "CPU",
+    "ClusterMode": "Modo Cluster",
+    "CreatedAt": "Criado em",
+    "ElapsedTime": "Tempo decorrido",
+    "Environments": "Ambientes",
+    "Memory": "Memória",
+    "OwnerEmail": "E-mail do proprietário",
+    "Project": "Projeto",
+    "ResourceGroup": "Grupo de recursos",
+    "SessionId": "ID da sessão",
+    "SessionName": "Nome da sessão",
+    "SessionType": "Tipo de sessão",
+    "Status": "Status",
+    "TerminateSession": "Encerrar sessão"
   },
   "comp:UserNodes": {
     "AllowedClientIps": "IPs de cliente permitidos",

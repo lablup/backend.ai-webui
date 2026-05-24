@@ -7,6 +7,7 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
 import useControllableState_deprecated from '../hooks/useControllableState';
 import { useCurrentUserProjectRoles } from '../hooks/useCurrentUserProjectRoles';
+import { InfoCircleOutlined } from '@ant-design/icons';
 import { theme, Tooltip } from 'antd';
 import { BAIFlex, BAISelect, BAISelectProps } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -28,6 +29,7 @@ export interface ProjectSelectProps extends BAISelectProps {
   autoSelectDefault?: boolean;
   disableDefaultFilter?: boolean;
   lockedProjectTypes?: string[];
+  'aria-label'?: string;
 }
 
 const ProjectSelect: React.FC<ProjectSelectProps> = ({
@@ -35,6 +37,7 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
   domain,
   disableDefaultFilter,
   lockedProjectTypes,
+  'aria-label': ariaLabel,
   ...selectProps
 }) => {
   const { t } = useTranslation();
@@ -153,6 +156,13 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
     },
   );
 
+  const showNoProjectError =
+    !accessibleProjects?.length &&
+    !selectProps.disabled &&
+    !selectProps.loading;
+
+  const noAccessibleProjectsMessage = t('projectSelect.NoAccessibleProjects');
+
   return (
     <BAISelect
       onChange={(value, option) => {
@@ -169,6 +179,25 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
       options={
         _.size(groupOptions) > 1 ? groupOptions : groupOptions[0]?.options
       }
+      status={showNoProjectError ? 'error' : selectProps.status}
+      // Surface the empty-state reason on the focusable control itself,
+      // not only on the non-focusable suffix icon. `tooltip` wraps the
+      // whole BAISelect in an antd Tooltip (hover over the entire control,
+      // not just the tiny icon), and `aria-label` gives keyboard /
+      // screen-reader users a persistent accessible description that does
+      // not depend on the tooltip being open.
+      tooltip={
+        showNoProjectError ? noAccessibleProjectsMessage : selectProps.tooltip
+      }
+      aria-label={showNoProjectError ? noAccessibleProjectsMessage : ariaLabel}
+      suffixIcon={
+        showNoProjectError ? <InfoCircleOutlined /> : selectProps.suffixIcon
+      }
+      // Prevent the dropdown from opening in the empty-error state so it
+      // does not visually overlap the explanation tooltip. The tooltip
+      // alone communicates why the control is unusable; an empty popup
+      // beneath it just looks broken.
+      open={showNoProjectError ? false : selectProps.open}
     />
   );
 };

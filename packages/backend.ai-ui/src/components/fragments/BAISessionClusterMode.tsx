@@ -6,13 +6,23 @@ import { useTranslation } from 'react-i18next';
 import { useFragment, graphql } from 'react-relay';
 
 export interface BAISessionClusterModeProps {
-  sessionFrgmt: BAISessionClusterModeFragment$key;
+  /** v1 `ComputeSessionNode` fragment. Omit when passing values directly. */
+  sessionFrgmt?: BAISessionClusterModeFragment$key | null;
+  /**
+   * Cluster mode value (e.g. from the v2 `SessionV2` API). Takes precedence
+   * over `sessionFrgmt` when provided.
+   */
+  clusterMode?: string | null;
+  /** Cluster size value. Takes precedence over `sessionFrgmt` when provided. */
+  clusterSize?: number | null;
   showSize?: boolean;
   mode?: 'text' | 'tag';
 }
 
 const BAISessionClusterMode: React.FC<BAISessionClusterModeProps> = ({
   sessionFrgmt,
+  clusterMode,
+  clusterSize,
   showSize = true,
   mode = 'text',
 }) => {
@@ -25,25 +35,29 @@ const BAISessionClusterMode: React.FC<BAISessionClusterModeProps> = ({
         cluster_size
       }
     `,
-    sessionFrgmt,
+    sessionFrgmt ?? null,
   );
 
+  const resolvedClusterMode = clusterMode ?? session?.cluster_mode;
+  const resolvedClusterSize = clusterSize ?? session?.cluster_size;
+  const canShowSize = showSize && !_.isNil(resolvedClusterSize);
+
   const modeTitle = _.startsWith(
-    session.cluster_mode?.toUpperCase() || '',
+    resolvedClusterMode?.toUpperCase() || '',
     'SINGLE',
   )
     ? t('comp:BAISessionClusterMode.SingleNodeShort')
-    : _.startsWith(session.cluster_mode?.toUpperCase() || '', 'MULTI')
+    : _.startsWith(resolvedClusterMode?.toUpperCase() || '', 'MULTI')
       ? t('comp:BAISessionClusterMode.MultiNodeShort')
       : '-';
   return mode === 'text' ? (
     <Typography.Text>
       {modeTitle}
-      {showSize && (
+      {canShowSize && (
         <>
           &nbsp;
           <Typography.Text type="secondary">
-            ({session.cluster_size})
+            ({resolvedClusterSize})
           </Typography.Text>
         </>
       )}
@@ -51,7 +65,7 @@ const BAISessionClusterMode: React.FC<BAISessionClusterModeProps> = ({
   ) : (
     <Tag>
       {modeTitle}
-      {showSize && (
+      {canShowSize && (
         <>
           &nbsp;
           <Typography.Text
@@ -60,7 +74,7 @@ const BAISessionClusterMode: React.FC<BAISessionClusterModeProps> = ({
               fontSize: token.fontSizeSM,
             }}
           >
-            ({session.cluster_size})
+            ({resolvedClusterSize})
           </Typography.Text>
         </>
       )}

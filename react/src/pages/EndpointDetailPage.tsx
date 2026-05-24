@@ -16,6 +16,7 @@ import {
   RouteTrafficStatus,
 } from '../__generated__/EndpointDetailPageQuery.graphql';
 import { InferenceSessionErrorModalFragment$key } from '../__generated__/InferenceSessionErrorModalFragment.graphql';
+import { RouteSchedulingHistoryModalQuery } from '../__generated__/RouteSchedulingHistoryModalQuery.graphql';
 import AutoScalingRuleEditorModalLegacy, {
   COMPARATOR_LABELS,
 } from '../components/AutoScalingRuleEditorModalLegacy';
@@ -29,6 +30,9 @@ import EndpointTokenGenerationModal from '../components/EndpointTokenGenerationM
 import { useFolderExplorerOpener } from '../components/FolderExplorerOpener';
 import ImageNodeSimpleTag from '../components/ImageNodeSimpleTag';
 import InferenceSessionErrorModal from '../components/InferenceSessionErrorModal';
+import RouteSchedulingHistoryModal, {
+  RouteSchedulingHistoryQuery,
+} from '../components/RouteSchedulingHistoryModal';
 import SessionDetailDrawer from '../components/SessionDetailDrawer';
 import SourceCodeView from '../components/SourceCodeView';
 import SwitchToProjectButton from '../components/SwitchToProjectButton';
@@ -96,13 +100,19 @@ import {
   CircleArrowUpIcon,
 } from 'lucide-react';
 import React, {
+  startTransition,
   Suspense,
   useDeferredValue,
   useState,
   useTransition,
 } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
+import {
+  graphql,
+  useLazyLoadQuery,
+  useMutation,
+  useQueryLoader,
+} from 'react-relay';
 import { useParams } from 'react-router-dom';
 import { PayloadError } from 'relay-runtime';
 
@@ -196,6 +206,14 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
     'prometheus-auto-scaling-rule',
   );
   const isSupportRouteHealthStatus = baiClient.supports('route-health-status');
+  const supportsRouteSchedulingHistory = baiClient.supports(
+    'route-scheduling-history',
+  );
+  const [isRouteHistoryOpen, setIsRouteHistoryOpen] = useState(false);
+  const [routeHistoryQueryRef, loadRouteHistoryQuery] =
+    useQueryLoader<RouteSchedulingHistoryModalQuery>(
+      RouteSchedulingHistoryQuery,
+    );
   const [errorDataForJSONModal, setErrorDataForJSONModal] = useState<string>();
   const {
     endpoint,
@@ -1456,6 +1474,28 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
                     : JSON.stringify(errorData),
                 )
               }
+              onClickSchedulingHistory={
+                supportsRouteSchedulingHistory
+                  ? (routeId) => {
+                      // Open as a transition so a first-open suspend does not
+                      // flash the page-level Suspense fallback (the row icon
+                      // fires this as an urgent onClick).
+                      startTransition(() => {
+                        // Render-as-you-fetch: start the request in the open event.
+                        loadRouteHistoryQuery(
+                          {
+                            scope: { routeId },
+                            orderBy: [
+                              { field: 'UPDATED_AT', direction: 'DESC' },
+                            ],
+                          },
+                          { fetchPolicy: 'network-only' },
+                        );
+                        setIsRouteHistoryOpen(true);
+                      });
+                    }
+                  : undefined
+              }
               pagination={{
                 ...routePagination,
                 total: routes?.count,
@@ -1611,6 +1651,16 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
           setErrorDataForJSONModal(undefined);
         }}
       />
+      {routeHistoryQueryRef != null && (
+        <BAIUnmountAfterClose>
+          <RouteSchedulingHistoryModal
+            open={isRouteHistoryOpen}
+            queryRef={routeHistoryQueryRef}
+            onReload={loadRouteHistoryQuery}
+            onCancel={() => setIsRouteHistoryOpen(false)}
+          />
+        </BAIUnmountAfterClose>
+      )}
     </BAIFlex>
   );
 };

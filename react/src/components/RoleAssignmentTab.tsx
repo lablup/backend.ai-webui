@@ -444,12 +444,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
             label,
           })) ?? []
         }
-        confirmText={t('credential.PermanentlyDelete')}
-        requireConfirmInput
-        inputLabel={t('credential.TypePermanentlyDelete', {
-          text: t('credential.PermanentlyDelete'),
-        })}
-        inputProps={{ placeholder: t('credential.PermanentlyDelete') }}
+        reversible
         okText={t('rbac.RevokeUser')}
         onOk={() => {
           if (!revokingTargets) return;

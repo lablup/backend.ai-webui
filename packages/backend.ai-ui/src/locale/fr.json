@@ -74,6 +74,9 @@
     "KeepAsIs": "Conserver tel quel",
     "UndoChanges": "Annuler les modifications"
   },
+  "comp:BAIContainerRegistrySelect": {
+    "SelectContainerRegistry": "Sélectionner un registre de conteneurs"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "Êtes-vous sûr de vouloir désactiver {{name}}?",
     "AreYouSureYouWantToDeactivateSome": "Êtes-vous sûr de vouloir désactiver les artefacts {{count}}?",
@@ -99,8 +102,37 @@
     "DeleteNItems": "Supprimer {{count}} éléments",
     "TypeToConfirm": "Saisissez <code>{{confirmText}}</code> pour confirmer."
   },
+  "comp:BAIDeploymentOwnerInfo": {
+    "CreatedBy": "Créé par"
+  },
+  "comp:BAIDeploymentSchedulingHistoryNodes": {
+    "Attempts": "Tentatives",
+    "Category": "Catégorie",
+    "CreatedAt": "Créé le",
+    "ErrorCode": "Code d'erreur",
+    "From": "De",
+    "Message": "Message",
+    "Phase": "Phase",
+    "Result": "Résultat",
+    "StatusTransition": "Transition d'état",
+    "To": "À",
+    "UpdatedAt": "Mis à jour le"
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Sélectionner un déploiement"
+  },
+  "comp:BAIDeploymentStatusTag": {
+    "Degraded": "Dégradé",
+    "Deploying": "En déploiement",
+    "Healthy": "En bonne santé",
+    "NotChecked": "Non vérifié",
+    "Pending": "En attente",
+    "Ready": "Prêt",
+    "Scaling": "En mise à l'échelle",
+    "Stopped": "Arrêté",
+    "Stopping": "En arrêt",
+    "Terminated": "Terminé",
+    "Unhealthy": "En mauvaise santé"
   },
   "comp:BAIDomainSelect": {
     "SelectDomain": "Sélectionner un domaine"
@@ -173,18 +205,27 @@
     "DomainName": "Domaine",
     "EndpointURL": "URL du point final",
     "FailedToDeleteDeployment": "Échec de la suppression du déploiement.",
+    "HealthySummary": "{{healthy}} / {{total}}",
+    "Model": "Modèle",
     "Name": "Nom",
     "OpenToPublic": "Ouvert au public",
+    "Owner": "Propriétaire",
     "PreferredDomainName": "Domaine préféré",
+    "Project": "Projet",
     "ProjectID": "ID du projet",
+    "ReplicaSummary": "Réplicas",
+    "ReplicaSummaryTooltip": "Réplicas en cours d'exécution par rapport au nombre souhaité (ou total) de réplicas.",
     "Replicas": "Réplicas",
+    "ResourceGroup": "Groupe de Ressources",
+    "RevisionNumber": "Révision",
+    "RevisionNumberTooltip": "Le numéro de révision actuel du déploiement.",
     "Status": "Statut",
     "StrategyType": "Stratégie",
     "Tags": "Tags",
     "UpdatedAt": "Mis à jour le"
   },
   "comp:BAIProjectBulkEditModal": {
-    "FollowingFoldersWillBeUpdated": "Le(s) dossier(s) suivant(s) sera(ont) mis à jour.",
+    "FollowingProjectsWillBeUpdated": "Le(s) projet(s) suivant(s) sera(ont) mis à jour.",
     "ProjectResourcePolicy": "Politique de ressources du projet",
     "UpdateMultipleProjects": "Mettre à jour plusieurs projets"
   },
@@ -214,25 +255,15 @@
     "UpdateProject": "Mettre à jour le projet"
   },
   "comp:BAIProjectTable": {
-    "AreYouSureToPurgeProject": "Voulez-vous vraiment purger {{projectName}}? Cette action est irréversible.",
     "ContainerRegistry": "Registre de conteneurs",
-    "Controls": "Contrôles",
+    "ContainerRegistryProject": "Projet du registre de conteneurs",
     "CreatedAt": "Créé le",
-    "Deactivate": "Désactiver",
-    "DeactivateProject": "Désactiver le projet",
     "Description": "Description",
     "Domain": "Domaine",
-    "FailedToDeactivateProject": "Impossible de désactiver le projet.",
-    "FailedToPurgeProject": "Échec de la purge du projet.",
     "IntegrationID": "ID d'intégration",
-    "IsActive": "Actif",
     "Name": "Nom",
     "Project": "Projet",
-    "ProjectDeactivated": "Le projet a été désactivé.",
     "ProjectID": "ID du projet",
-    "ProjectPurged": "Le projet a été purgé.",
-    "Purge": "Purger",
-    "PurgeProject": "Purger le projet",
     "Registry": "Registre",
     "ResourcePolicy": "Politique des ressources",
     "ScalingGroups": "Groupes de ressources",
@@ -259,22 +290,42 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Sélectionner un groupe de ressources"
   },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "Illimité"
+  },
   "comp:BAIRouteNodes": {
     "CreatedAt": "Créé le",
     "HealthStatus": "État de santé",
     "RouteId": "ID de route",
+    "SchedulingHistory": "Historique de planification",
     "SessionId": "ID de session",
     "Status": "Statut",
     "TrafficRatio": "Ratio de trafic",
     "TrafficStatus": "État du trafic"
+  },
+  "comp:BAIRouteSchedulingHistoryNodes": {
+    "Attempts": "Tentatives",
+    "Category": "Catégorie",
+    "CreatedAt": "Créé le",
+    "ErrorCode": "Code d'erreur",
+    "From": "De",
+    "Message": "Message",
+    "Phase": "Phase",
+    "Result": "Résultat",
+    "StatusTransition": "Transition d'état",
+    "To": "À",
+    "UpdatedAt": "Mis à jour le"
   },
   "comp:BAIRuntimeVariantSelect": {
     "SelectRuntimeVariant": "Sélectionner la variante d'exécution"
   },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "Tentatives",
+    "Category": "Catégorie",
     "CreatedAt": "Créé le",
+    "ErrorCode": "Code d'erreur",
     "From": "De",
+    "Message": "Message",
     "Phase": "Phase",
     "Result": "Résultat",
     "StatusTransition": "Transition d'état",
@@ -293,6 +344,14 @@
   },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Sélectionner un hôte de stockage"
+  },
+  "comp:BAISubStepNodes": {
+    "EndedAt": "Terminé le",
+    "ErrorCode": "Code d'erreur",
+    "Message": "Message",
+    "Result": "Résultat",
+    "StartedAt": "Démarré le",
+    "Step": "Étape"
   },
   "comp:BAITable": {
     "Export": "Exporter",
@@ -364,13 +423,22 @@
   "comp:ResourceStatistics": {
     "NoResourcesData": "Aucune données de ressources disponibles"
   },
-  "comp:SessionHistorySubStepNodes": {
-    "EndedAt": "Terminé le",
-    "ErrorCode": "Code d'erreur",
-    "Message": "Message",
-    "Result": "Résultat",
-    "StartedAt": "Démarré le",
-    "Step": "Étape"
+  "comp:SessionV2Nodes": {
+    "AIAccelerator": "Accélérateur IA",
+    "CPU": "CPU",
+    "ClusterMode": "Mode Cluster",
+    "CreatedAt": "Créé le",
+    "ElapsedTime": "Temps écoulé",
+    "Environments": "Environnements",
+    "Memory": "Mémoire",
+    "OwnerEmail": "E-mail du propriétaire",
+    "Project": "Projet",
+    "ResourceGroup": "Groupe de ressources",
+    "SessionId": "ID de la session",
+    "SessionName": "Nom de la session",
+    "SessionType": "Type de session",
+    "Status": "Statut",
+    "TerminateSession": "Terminer la session"
   },
   "comp:UserNodes": {
     "AllowedClientIps": "IPs clients autorisés",

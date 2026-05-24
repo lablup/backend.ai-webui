@@ -25,8 +25,8 @@ const useStyles = createStyles(({ token }) => ({
       padding: `${token.paddingSM}px !important`,
     },
     '& pre': {
-      whiteSpace: 'pre-wrap',
-      wordBreak: 'break-all',
+      whiteSpace: 'pre',
+      wordBreak: 'normal',
     },
   },
 }));

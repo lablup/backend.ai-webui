@@ -74,6 +74,9 @@
     "KeepAsIs": "Giữ nguyên",
     "UndoChanges": "Hoàn tác thay đổi"
   },
+  "comp:BAIContainerRegistrySelect": {
+    "SelectContainerRegistry": "Chọn kho lưu trữ container"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "Bạn có chắc bạn muốn hủy kích hoạt {{name}}?",
     "AreYouSureYouWantToDeactivateSome": "Bạn có chắc là bạn muốn hủy kích hoạt {{count}} Artifacts?",
@@ -99,8 +102,37 @@
     "DeleteNItems": "Xóa {{count}} mục",
     "TypeToConfirm": "Nhập <code>{{confirmText}}</code> để xác nhận."
   },
+  "comp:BAIDeploymentOwnerInfo": {
+    "CreatedBy": "Được tạo bởi"
+  },
+  "comp:BAIDeploymentSchedulingHistoryNodes": {
+    "Attempts": "Số lần thử",
+    "Category": "Danh mục",
+    "CreatedAt": "Ngày tạo",
+    "ErrorCode": "Mã lỗi",
+    "From": "Từ",
+    "Message": "Tin nhắn",
+    "Phase": "Giai đoạn",
+    "Result": "Kết quả",
+    "StatusTransition": "Chuyển đổi trạng thái",
+    "To": "Đến",
+    "UpdatedAt": "Cập nhật lúc"
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Chọn triển khai"
+  },
+  "comp:BAIDeploymentStatusTag": {
+    "Degraded": "Bị suy giảm",
+    "Deploying": "Đang triển khai",
+    "Healthy": "Bình thường",
+    "NotChecked": "Chưa kiểm tra",
+    "Pending": "Đang chờ",
+    "Ready": "Sẵn sàng",
+    "Scaling": "Đang mở rộng",
+    "Stopped": "Đã dừng",
+    "Stopping": "Đang dừng",
+    "Terminated": "Đã kết thúc",
+    "Unhealthy": "Không bình thường"
   },
   "comp:BAIDomainSelect": {
     "SelectDomain": "Chọn miền"
@@ -173,18 +205,27 @@
     "DomainName": "Tên miền",
     "EndpointURL": "URL điểm cuối",
     "FailedToDeleteDeployment": "Không thể xóa triển khai.",
+    "HealthySummary": "{{healthy}} / {{total}}",
+    "Model": "Mô hình",
     "Name": "Tên",
     "OpenToPublic": "Mở cho công khai",
+    "Owner": "Chủ sở hữu",
     "PreferredDomainName": "Tên miền ưa thích",
+    "Project": "Dự án",
     "ProjectID": "ID dự án",
+    "ReplicaSummary": "Số bản sao",
+    "ReplicaSummaryTooltip": "Số bản sao đang chạy so với số bản sao mong muốn (hoặc tổng số).",
     "Replicas": "Số bản sao",
+    "ResourceGroup": "Nhóm tài nguyên",
+    "RevisionNumber": "Phiên bản",
+    "RevisionNumberTooltip": "Số phiên bản hiện tại của triển khai.",
     "Status": "Trạng thái",
     "StrategyType": "Chiến lược",
     "Tags": "Thẻ",
     "UpdatedAt": "Ngày cập nhật"
   },
   "comp:BAIProjectBulkEditModal": {
-    "FollowingFoldersWillBeUpdated": "Thư mục sau sẽ được cập nhật.",
+    "FollowingProjectsWillBeUpdated": "Dự án sau sẽ được cập nhật.",
     "ProjectResourcePolicy": "Chính sách tài nguyên dự án",
     "UpdateMultipleProjects": "Cập nhật nhiều dự án"
   },
@@ -214,25 +255,15 @@
     "UpdateProject": "Cập nhật dự án"
   },
   "comp:BAIProjectTable": {
-    "AreYouSureToPurgeProject": "Bạn có chắc chắn muốn xóa vĩnh viễn {{projectName}}? Hành động này không thể hoàn tác.",
     "ContainerRegistry": "Kho lưu trữ container",
-    "Controls": "Điều khiển",
+    "ContainerRegistryProject": "Dự án kho lưu trữ container",
     "CreatedAt": "Ngày tạo",
-    "Deactivate": "Vô hiệu hóa",
-    "DeactivateProject": "Vô hiệu hóa dự án",
     "Description": "Mô tả",
     "Domain": "Miền",
-    "FailedToDeactivateProject": "Không thể vô hiệu hóa dự án.",
-    "FailedToPurgeProject": "Không thể xóa hoàn toàn dự án.",
     "IntegrationID": "ID tích hợp",
-    "IsActive": "Hoạt động",
     "Name": "Tên",
     "Project": "Dự án",
-    "ProjectDeactivated": "Dự án đã bị vô hiệu hóa.",
     "ProjectID": "ID dự án",
-    "ProjectPurged": "Dự án đã bị xóa vĩnh viễn",
-    "Purge": "Xóa sạch",
-    "PurgeProject": "Xóa vĩnh viễn dự án",
     "Registry": "Kho chứa",
     "ResourcePolicy": "Chính sách tài nguyên",
     "ScalingGroups": "Nhóm tài nguyên",
@@ -259,22 +290,42 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Chọn nhóm tài nguyên"
   },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "Không giới hạn"
+  },
   "comp:BAIRouteNodes": {
     "CreatedAt": "Ngày tạo",
     "HealthStatus": "Trạng thái sức khỏe",
     "RouteId": "ID tuyến",
+    "SchedulingHistory": "Lịch sử lập lịch",
     "SessionId": "ID phiên",
     "Status": "Trạng thái",
     "TrafficRatio": "Tỷ lệ lưu lượng",
     "TrafficStatus": "Trạng thái lưu lượng"
+  },
+  "comp:BAIRouteSchedulingHistoryNodes": {
+    "Attempts": "Số lần thử",
+    "Category": "Danh mục",
+    "CreatedAt": "Ngày tạo",
+    "ErrorCode": "Mã lỗi",
+    "From": "Từ",
+    "Message": "Tin nhắn",
+    "Phase": "Giai đoạn",
+    "Result": "Kết quả",
+    "StatusTransition": "Chuyển đổi trạng thái",
+    "To": "Đến",
+    "UpdatedAt": "Cập nhật lúc"
   },
   "comp:BAIRuntimeVariantSelect": {
     "SelectRuntimeVariant": "Chọn biến thể runtime"
   },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "Số lần thử",
+    "Category": "Danh mục",
     "CreatedAt": "Ngày tạo",
+    "ErrorCode": "Mã lỗi",
     "From": "Từ",
+    "Message": "Tin nhắn",
     "Phase": "Giai đoạn",
     "Result": "Kết quả",
     "StatusTransition": "Chuyển đổi trạng thái",
@@ -293,6 +344,14 @@
   },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Chọn máy chủ lưu trữ"
+  },
+  "comp:BAISubStepNodes": {
+    "EndedAt": "Kết thúc lúc",
+    "ErrorCode": "Mã lỗi",
+    "Message": "Tin nhắn",
+    "Result": "Kết quả",
+    "StartedAt": "Bắt đầu lúc",
+    "Step": "Bước"
   },
   "comp:BAITable": {
     "Export": "Xuất",
@@ -364,13 +423,22 @@
   "comp:ResourceStatistics": {
     "NoResourcesData": "Không có dữ liệu tài nguyên"
   },
-  "comp:SessionHistorySubStepNodes": {
-    "EndedAt": "Kết thúc lúc",
-    "ErrorCode": "Mã lỗi",
-    "Message": "Tin nhắn",
-    "Result": "Kết quả",
-    "StartedAt": "Bắt đầu lúc",
-    "Step": "Bước"
+  "comp:SessionV2Nodes": {
+    "AIAccelerator": "Bộ gia tốc AI",
+    "CPU": "CPU",
+    "ClusterMode": "Chế độ Cluster",
+    "CreatedAt": "Ngày tạo",
+    "ElapsedTime": "Thời gian đã trôi",
+    "Environments": "Môi trường",
+    "Memory": "Bộ nhớ",
+    "OwnerEmail": "Email chủ sở hữu",
+    "Project": "Dự án",
+    "ResourceGroup": "Nhóm tài nguyên",
+    "SessionId": "ID phiên",
+    "SessionName": "Tên phiên",
+    "SessionType": "Loại phiên",
+    "Status": "Trạng thái",
+    "TerminateSession": "Kết thúc phiên"
   },
   "comp:UserNodes": {
     "AllowedClientIps": "IP khách hàng được phép",

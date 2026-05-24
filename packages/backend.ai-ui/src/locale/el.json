@@ -74,6 +74,9 @@
     "KeepAsIs": "Διατήρηση ως έχει",
     "UndoChanges": "Αναίρεση αλλαγών"
   },
+  "comp:BAIContainerRegistrySelect": {
+    "SelectContainerRegistry": "Επιλέξτε μητρώο εμπορευματοκιβωτίων"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "Είστε βέβαιοι ότι θέλετε να απενεργοποιήσετε {{name}};",
     "AreYouSureYouWantToDeactivateSome": "Είστε βέβαιοι ότι θέλετε να απενεργοποιήσετε {{count}} τεχνουργήματα;",
@@ -99,8 +102,37 @@
     "DeleteNItems": "Διαγραφή {{count}} στοιχείων",
     "TypeToConfirm": "Πληκτρολογήστε <code>{{confirmText}}</code> για επιβεβαίωση."
   },
+  "comp:BAIDeploymentOwnerInfo": {
+    "CreatedBy": "Δημιουργήθηκε από"
+  },
+  "comp:BAIDeploymentSchedulingHistoryNodes": {
+    "Attempts": "Προσπάθειες",
+    "Category": "Κατηγορία",
+    "CreatedAt": "Δημιουργήθηκε στις",
+    "ErrorCode": "Κωδικός σφάλματος",
+    "From": "Από",
+    "Message": "Μήνυμα",
+    "Phase": "Φάση",
+    "Result": "Αποτέλεσμα",
+    "StatusTransition": "Αλλαγή κατάστασης",
+    "To": "Έως",
+    "UpdatedAt": "Ενημερώθηκε στις"
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Επιλέξτε ανάπτυξη"
+  },
+  "comp:BAIDeploymentStatusTag": {
+    "Degraded": "Υποβαθμισμένο",
+    "Deploying": "Αναπτύσσεται",
+    "Healthy": "Υγιές",
+    "NotChecked": "Δεν ελέγχθηκε",
+    "Pending": "Σε αναμονή",
+    "Ready": "Έτοιμο",
+    "Scaling": "Κλιμακώνεται",
+    "Stopped": "Σταματημένο",
+    "Stopping": "Σταματά",
+    "Terminated": "Τερματισμένο",
+    "Unhealthy": "Ανθυγιεινό"
   },
   "comp:BAIDomainSelect": {
     "SelectDomain": "Επιλέξτε τομέα"
@@ -173,18 +205,27 @@
     "DomainName": "Τομέας",
     "EndpointURL": "URL Τελικού Σημείου",
     "FailedToDeleteDeployment": "Αποτυχία διαγραφής ανάπτυξης.",
+    "HealthySummary": "{{healthy}} / {{total}}",
+    "Model": "Μοντέλο",
     "Name": "Όνομα",
     "OpenToPublic": "Ανοιχτό στο Κοινό",
+    "Owner": "Ιδιοκτήτης",
     "PreferredDomainName": "Προτιμώμενος Τομέας",
+    "Project": "Έργο",
     "ProjectID": "ID Έργου",
+    "ReplicaSummary": "Αντίγραφα",
+    "ReplicaSummaryTooltip": "Εκτελούμενα αντίγραφα σε σχέση με τον επιθυμητό (ή συνολικό) αριθμό αντιγράφων.",
     "Replicas": "Αντίγραφα",
+    "ResourceGroup": "Ομάδα Πόρων",
+    "RevisionNumber": "Αναθεώρηση",
+    "RevisionNumberTooltip": "Ο τρέχων αριθμός αναθεώρησης της ανάπτυξης.",
     "Status": "Κατάσταση",
     "StrategyType": "Στρατηγική",
     "Tags": "Ετικέτες",
     "UpdatedAt": "Ενημερώθηκε"
   },
   "comp:BAIProjectBulkEditModal": {
-    "FollowingFoldersWillBeUpdated": "Οι ακόλουθοι φάκελοι θα ενημερωθούν.",
+    "FollowingProjectsWillBeUpdated": "Τα ακόλουθα έργα θα ενημερωθούν.",
     "ProjectResourcePolicy": "Πολιτική πόρων έργου",
     "UpdateMultipleProjects": "Ενημέρωση πολλαπλών έργων"
   },
@@ -214,25 +255,15 @@
     "UpdateProject": "Ενημέρωση έργου"
   },
   "comp:BAIProjectTable": {
-    "AreYouSureToPurgeProject": "Είστε βέβαιοι ότι θέλετε να διαγράψετε οριστικά το {{projectName}}? Αυτή η ενέργεια είναι μη αναστρέψιμη.",
     "ContainerRegistry": "Αποθετήριο κοντέινερ",
-    "Controls": "Έλεγχοι",
+    "ContainerRegistryProject": "Έργο αποθετηρίου κοντέινερ",
     "CreatedAt": "Δημιουργήθηκε στις",
-    "Deactivate": "Απενεργοποίηση",
-    "DeactivateProject": "Απενεργοποίηση έργου",
     "Description": "Περιγραφή",
     "Domain": "Τομέας",
-    "FailedToDeactivateProject": "Η απενεργοποίηση του έργου απέτυχε.",
-    "FailedToPurgeProject": "Αποτυχία εκκαθάρισης του έργου.",
     "IntegrationID": "ID ενσωμάτωσης",
-    "IsActive": "Ενεργό",
     "Name": "Όνομα",
     "Project": "Έργο",
-    "ProjectDeactivated": "Το έργο έχει απενεργοποιηθεί.",
     "ProjectID": "ID έργου",
-    "ProjectPurged": "Το projecth έχει διαγραφεί.",
-    "Purge": "Εκκαθάριση",
-    "PurgeProject": "Μόνιμη διαγραφή έργου",
     "Registry": "Μητρώο",
     "ResourcePolicy": "Πολιτική πόρων",
     "ScalingGroups": "Ομάδες πόρων",
@@ -259,22 +290,42 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Επιλέξτε ομάδα πόρων"
   },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "Απεριόριστος"
+  },
   "comp:BAIRouteNodes": {
     "CreatedAt": "Δημιουργήθηκε",
     "HealthStatus": "Κατάσταση υγείας",
     "RouteId": "ID διαδρομής",
+    "SchedulingHistory": "Ιστορικό προγραμματισμού",
     "SessionId": "ID συνεδρίας",
     "Status": "Κατάσταση",
     "TrafficRatio": "Αναλογία κυκλοφορίας",
     "TrafficStatus": "Κατάσταση δικτύου"
+  },
+  "comp:BAIRouteSchedulingHistoryNodes": {
+    "Attempts": "Προσπάθειες",
+    "Category": "Κατηγορία",
+    "CreatedAt": "Δημιουργήθηκε στις",
+    "ErrorCode": "Κωδικός σφάλματος",
+    "From": "Από",
+    "Message": "Μήνυμα",
+    "Phase": "Φάση",
+    "Result": "Αποτέλεσμα",
+    "StatusTransition": "Αλλαγή κατάστασης",
+    "To": "Έως",
+    "UpdatedAt": "Ενημερώθηκε στις"
   },
   "comp:BAIRuntimeVariantSelect": {
     "SelectRuntimeVariant": "Επιλογή παραλλαγής χρόνου εκτέλεσης"
   },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "Προσπάθειες",
+    "Category": "Κατηγορία",
     "CreatedAt": "Δημιουργήθηκε στις",
+    "ErrorCode": "Κωδικός σφάλματος",
     "From": "Από",
+    "Message": "Μήνυμα",
     "Phase": "Φάση",
     "Result": "Αποτέλεσμα",
     "StatusTransition": "Αλλαγή κατάστασης",
@@ -293,6 +344,14 @@
   },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Επιλέξτε κεντρικό αποθηκευτικό χώρο"
+  },
+  "comp:BAISubStepNodes": {
+    "EndedAt": "Έληξε στις",
+    "ErrorCode": "Κωδικός σφάλματος",
+    "Message": "Μήνυμα",
+    "Result": "Αποτέλεσμα",
+    "StartedAt": "Ξεκίνησε στις",
+    "Step": "Βήμα"
   },
   "comp:BAITable": {
     "Export": "Εξαγωγή",
@@ -364,13 +423,22 @@
   "comp:ResourceStatistics": {
     "NoResourcesData": "Δεν υπάρχουν διαθέσιμα δεδομένα πόρων"
   },
-  "comp:SessionHistorySubStepNodes": {
-    "EndedAt": "Έληξε στις",
-    "ErrorCode": "Κωδικός σφάλματος",
-    "Message": "Μήνυμα",
-    "Result": "Αποτέλεσμα",
-    "StartedAt": "Ξεκίνησε στις",
-    "Step": "Βήμα"
+  "comp:SessionV2Nodes": {
+    "AIAccelerator": "Επιταχυντής AI",
+    "CPU": "CPU",
+    "ClusterMode": "Λειτουργία Συστάδας",
+    "CreatedAt": "Δημιουργήθηκε στις",
+    "ElapsedTime": "Χρόνος που παρήλθε",
+    "Environments": "Περιβάλλοντα",
+    "Memory": "Μνήμη",
+    "OwnerEmail": "Email ιδιοκτήτη",
+    "Project": "Έργο",
+    "ResourceGroup": "Ομάδα πόρων",
+    "SessionId": "ID συνεδρίας",
+    "SessionName": "Όνομα συνεδρίας",
+    "SessionType": "Τύπος συνεδρίας",
+    "Status": "Κατάσταση",
+    "TerminateSession": "Τερματισμός συνεδρίας"
   },
   "comp:UserNodes": {
     "AllowedClientIps": "Επιτρεπόμενες IP πελατών",

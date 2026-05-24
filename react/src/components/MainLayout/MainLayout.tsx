@@ -21,6 +21,7 @@ import NetworkStatusBanner from '../NetworkStatusBanner';
 import NoResourceGroupAlert from '../NoResourceGroupAlert';
 import PasswordChangeRequestAlert from '../PasswordChangeRequestAlert';
 import PluginLoader from '../PluginLoader';
+import ProjectAdminScopeAlert from '../ProjectAdminScopeAlert';
 import ThemePreviewModeAlert from '../ThemePreviewModeAlert';
 import { DRAWER_WIDTH } from '../WEBUINotificationDrawer';
 import WebUIBreadcrumb from '../WebUIBreadcrumb';
@@ -228,6 +229,9 @@ function MainLayout() {
                   >
                     <ErrorBoundaryWithNullFallback>
                       <ThemePreviewModeAlert />
+                    </ErrorBoundaryWithNullFallback>
+                    <ErrorBoundaryWithNullFallback>
+                      <ProjectAdminScopeAlert />
                     </ErrorBoundaryWithNullFallback>
                     <ErrorBoundaryWithNullFallback>
                       <NoResourceGroupAlert />

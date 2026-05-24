@@ -74,6 +74,9 @@
     "KeepAsIs": "保持原樣",
     "UndoChanges": "撤銷更改"
   },
+  "comp:BAIContainerRegistrySelect": {
+    "SelectContainerRegistry": "選擇容器映像倉庫"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "您確定要停用{{name}}嗎？",
     "AreYouSureYouWantToDeactivateSome": "您確定要停用{{count}}文物嗎？",
@@ -99,8 +102,37 @@
     "DeleteNItems": "刪除 {{count}} 個項目",
     "TypeToConfirm": "輸入 <code>{{confirmText}}</code> 以確認。"
   },
+  "comp:BAIDeploymentOwnerInfo": {
+    "CreatedBy": "建立者"
+  },
+  "comp:BAIDeploymentSchedulingHistoryNodes": {
+    "Attempts": "嘗試次數",
+    "Category": "類別",
+    "CreatedAt": "建立時間",
+    "ErrorCode": "錯誤代碼",
+    "From": "從",
+    "Message": "訊息",
+    "Phase": "階段",
+    "Result": "結果",
+    "StatusTransition": "狀態轉換",
+    "To": "至",
+    "UpdatedAt": "更新時間"
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "選擇部署"
+  },
+  "comp:BAIDeploymentStatusTag": {
+    "Degraded": "已降級",
+    "Deploying": "部署中",
+    "Healthy": "正常",
+    "NotChecked": "未檢查",
+    "Pending": "等待中",
+    "Ready": "就緒",
+    "Scaling": "擴縮容中",
+    "Stopped": "已停止",
+    "Stopping": "停止中",
+    "Terminated": "已終止",
+    "Unhealthy": "異常"
   },
   "comp:BAIDomainSelect": {
     "SelectDomain": "選擇網域"
@@ -173,18 +205,27 @@
     "DomainName": "網域",
     "EndpointURL": "端點URL",
     "FailedToDeleteDeployment": "刪除部署失敗。",
+    "HealthySummary": "{{healthy}} / {{total}}",
+    "Model": "模型",
     "Name": "名稱",
     "OpenToPublic": "公開",
+    "Owner": "擁有者",
     "PreferredDomainName": "偏好網域",
+    "Project": "專案",
     "ProjectID": "專案ID",
+    "ReplicaSummary": "副本數",
+    "ReplicaSummaryTooltip": "正在執行的副本數與所需（或總）副本數之比。",
     "Replicas": "副本數",
+    "ResourceGroup": "資源群組",
+    "RevisionNumber": "修訂版本",
+    "RevisionNumberTooltip": "部署的目前修訂版本號碼。",
     "Status": "狀態",
     "StrategyType": "策略",
     "Tags": "標籤",
     "UpdatedAt": "更新時間"
   },
   "comp:BAIProjectBulkEditModal": {
-    "FollowingFoldersWillBeUpdated": "下列資料夾將會更新。",
+    "FollowingProjectsWillBeUpdated": "下列專案將會更新。",
     "ProjectResourcePolicy": "專案資源政策",
     "UpdateMultipleProjects": "更新多個專案"
   },
@@ -214,25 +255,15 @@
     "UpdateProject": "更新專案"
   },
   "comp:BAIProjectTable": {
-    "AreYouSureToPurgeProject": "您確定要清除 {{projectName}}? 此操作無法復原。",
     "ContainerRegistry": "容器映像庫",
-    "Controls": "控制項",
+    "ContainerRegistryProject": "容器映像庫專案",
     "CreatedAt": "建立時間",
-    "Deactivate": "停用",
-    "DeactivateProject": "停用專案",
     "Description": "描述",
     "Domain": "網域",
-    "FailedToDeactivateProject": "無法停用專案。",
-    "FailedToPurgeProject": "無法清除專案。",
     "IntegrationID": "整合識別碼",
-    "IsActive": "啟用",
     "Name": "名稱",
     "Project": "專案",
-    "ProjectDeactivated": "該專案已停用。",
     "ProjectID": "專案 ID",
-    "ProjectPurged": "專案「projecth」已被清除",
-    "Purge": "清除",
-    "PurgeProject": "永久刪除專案",
     "Registry": "映像註冊表",
     "ResourcePolicy": "資源策略",
     "ScalingGroups": "資源群組",
@@ -259,22 +290,42 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "選擇資源群組"
   },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "無限"
+  },
   "comp:BAIRouteNodes": {
     "CreatedAt": "建立時間",
     "HealthStatus": "健康狀態",
     "RouteId": "路由 ID",
+    "SchedulingHistory": "排程記錄",
     "SessionId": "工作階段 ID",
     "Status": "狀態",
     "TrafficRatio": "流量比例",
     "TrafficStatus": "流量狀態"
+  },
+  "comp:BAIRouteSchedulingHistoryNodes": {
+    "Attempts": "嘗試次數",
+    "Category": "類別",
+    "CreatedAt": "建立時間",
+    "ErrorCode": "錯誤代碼",
+    "From": "從",
+    "Message": "訊息",
+    "Phase": "階段",
+    "Result": "結果",
+    "StatusTransition": "狀態轉換",
+    "To": "至",
+    "UpdatedAt": "更新時間"
   },
   "comp:BAIRuntimeVariantSelect": {
     "SelectRuntimeVariant": "選擇執行階段變體"
   },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "嘗試次數",
+    "Category": "類別",
     "CreatedAt": "建立時間",
+    "ErrorCode": "錯誤代碼",
     "From": "從",
+    "Message": "訊息",
     "Phase": "階段",
     "Result": "結果",
     "StatusTransition": "狀態轉換",
@@ -293,6 +344,14 @@
   },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "選擇儲存主機"
+  },
+  "comp:BAISubStepNodes": {
+    "EndedAt": "結束時間",
+    "ErrorCode": "錯誤代碼",
+    "Message": "訊息",
+    "Result": "結果",
+    "StartedAt": "開始時間",
+    "Step": "步驟"
   },
   "comp:BAITable": {
     "Export": "匯出",
@@ -364,13 +423,22 @@
   "comp:ResourceStatistics": {
     "NoResourcesData": "沒有可用的資源數據"
   },
-  "comp:SessionHistorySubStepNodes": {
-    "EndedAt": "結束時間",
-    "ErrorCode": "錯誤代碼",
-    "Message": "訊息",
-    "Result": "結果",
-    "StartedAt": "開始時間",
-    "Step": "步驟"
+  "comp:SessionV2Nodes": {
+    "AIAccelerator": "AI 加速器",
+    "CPU": "CPU",
+    "ClusterMode": "叢集模式",
+    "CreatedAt": "建立時間",
+    "ElapsedTime": "已用時間",
+    "Environments": "環境",
+    "Memory": "記憶體",
+    "OwnerEmail": "擁有者電子郵件",
+    "Project": "專案",
+    "ResourceGroup": "資源群組",
+    "SessionId": "工作階段 ID",
+    "SessionName": "工作階段名稱",
+    "SessionType": "工作階段類型",
+    "Status": "狀態",
+    "TerminateSession": "終止工作階段"
   },
   "comp:UserNodes": {
     "AllowedClientIps": "允許的用戶端IP",

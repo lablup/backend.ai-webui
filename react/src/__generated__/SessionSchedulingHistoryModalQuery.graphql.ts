@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<06f07d8ab228f2240ffbd637b1cbb31a>>
+ * @generated SignedSource<<723b1f0a84f6919a10784d3ce95e2a6c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -339,12 +339,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "851c610d6e5b4ca317f8e6f573444bb0",
+    "cacheID": "5b9e35a12fc771527f808842f63b593b",
     "id": null,
     "metadata": {},
     "name": "SessionSchedulingHistoryModalQuery",
     "operationKind": "query",
-    "text": "query SessionSchedulingHistoryModalQuery(\n  $scope: SessionScope!\n  $filter: SessionSchedulingHistoryFilter\n  $orderBy: [SessionSchedulingHistoryOrderBy!]\n) {\n  sessionScopedSchedulingHistories(scope: $scope, filter: $filter, orderBy: $orderBy) {\n    edges {\n      node {\n        ...BAISchedulingHistoryNodesFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAISchedulingHistoryNodesFragment on SessionSchedulingHistory {\n  id\n  sessionId\n  attempts\n  createdAt\n  updatedAt\n  fromStatus\n  toStatus\n  message\n  phase\n  result\n  subSteps {\n    ...BAISessionHistorySubStepNodesFragment\n  }\n}\n\nfragment BAISessionHistorySubStepNodesFragment on SubStepResultGQL {\n  step\n  result\n  errorCode\n  message\n  startedAt\n  endedAt\n}\n"
+    "text": "query SessionSchedulingHistoryModalQuery(\n  $scope: SessionScope!\n  $filter: SessionSchedulingHistoryFilter\n  $orderBy: [SessionSchedulingHistoryOrderBy!]\n) {\n  sessionScopedSchedulingHistories(scope: $scope, filter: $filter, orderBy: $orderBy) {\n    edges {\n      node {\n        ...BAISchedulingHistoryNodesFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAISchedulingHistoryNodesFragment on SessionSchedulingHistory {\n  id\n  sessionId\n  attempts\n  createdAt\n  updatedAt\n  fromStatus\n  toStatus\n  message\n  phase\n  result\n  subSteps {\n    ...BAISubStepNodesFragment\n  }\n}\n\nfragment BAISubStepNodesFragment on SubStepResultGQL {\n  step\n  result\n  errorCode\n  message\n  startedAt\n  endedAt\n}\n"
   }
 };
 })();

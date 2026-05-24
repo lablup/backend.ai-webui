@@ -743,6 +743,8 @@ export class Client {
     }
     if (this.isManagerVersionCompatibleWith('26.3.0')) {
       this._features['session-scheduling-history'] = true;
+      this._features['deployment-scheduling-history'] = true;
+      this._features['route-scheduling-history'] = true;
       this._features['download-archive'] = true;
     }
     if (this.isManagerVersionCompatibleWith('26.4.0')) {

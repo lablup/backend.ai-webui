@@ -26,7 +26,7 @@ Backend.AI Web-UI는 웹 또는 앱 형태의 GUI 클라이언트로, Backend.AI
 - [전체 세션](sessions_all/sessions_all.md)
 - [스토리지 폴더 마운트](mount_vfolder/mount_vfolder.md)
 - [스토리지 폴더 공유](share_vfolder/share_vfolder.md)
-- [모델 서빙](model_serving/model_serving.md)
+- [배포](deployment/deployment.md)
 - [채팅](chat/chat.md)
 - [가져오기 및 실행](import_run/import_run.md)
 - [내 환경](my_environments/my_environments.md)

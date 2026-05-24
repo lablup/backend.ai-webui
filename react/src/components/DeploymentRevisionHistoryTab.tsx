@@ -125,8 +125,12 @@ const DeploymentRevisionHistoryTab: React.FC<
     {
       history: 'replace',
       urlKeys: {
-        current: 'rCurrent',
-        pageSize: 'rPageSize',
+        // Use an `rv*` prefix distinct from the replica tab's `r*` keys
+        // (rCurrent/rPageSize). Both tabs live on the same deployment
+        // detail URL, so sharing pagination keys made switching tabs carry
+        // over an out-of-range page index and render an empty table.
+        current: 'rvCurrent',
+        pageSize: 'rvPageSize',
         order: 'rvOrder',
         rvFilter: 'rvFilter',
       },

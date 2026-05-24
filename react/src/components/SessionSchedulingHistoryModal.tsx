@@ -36,7 +36,7 @@ const SessionSchedulingHistoryModal = ({
   const { t } = useTranslation();
   const [fetchKey, updateFetchKey] = useFetchKey();
   const [filter, setFilter] = useState<SessionSchedulingHistoryFilter>();
-  const [order, setOrder] = useState<string | null>('createdAt');
+  const [order, setOrder] = useState<string | null>('-updatedAt');
 
   const deferredOpenValue = useDeferredValue(open);
   const deferredFetchKey = useDeferredValue(fetchKey);
@@ -69,7 +69,7 @@ const SessionSchedulingHistoryModal = ({
       filter: deferredFilter ?? undefined,
       orderBy: convertToOrderBy<SessionSchedulingHistoryOrderBy>(
         deferredOrder,
-      ) ?? [{ field: 'CREATED_AT', direction: 'ASC' }],
+      ) ?? [{ field: 'UPDATED_AT', direction: 'DESC' }],
     },
     {
       fetchKey: deferredFetchKey,
@@ -126,7 +126,6 @@ const SessionSchedulingHistoryModal = ({
                 key: 'result',
                 propertyLabel: t('session.Result'),
                 type: 'enum',
-                valueMode: 'scalar',
                 strictSelection: true,
                 options: [
                   { label: 'SUCCESS', value: 'SUCCESS' },

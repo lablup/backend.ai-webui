@@ -102,8 +102,37 @@
     "DeleteNItems": "{{count}}개 항목 삭제",
     "TypeToConfirm": "<code>{{confirmText}}</code>을(를) 입력해주세요."
   },
+  "comp:BAIDeploymentOwnerInfo": {
+    "CreatedBy": "생성자"
+  },
+  "comp:BAIDeploymentSchedulingHistoryNodes": {
+    "Attempts": "시도 횟수",
+    "Category": "카테고리",
+    "CreatedAt": "생성일",
+    "ErrorCode": "오류 코드",
+    "From": "이전",
+    "Message": "메시지",
+    "Phase": "단계",
+    "Result": "결과",
+    "StatusTransition": "상태 전환",
+    "To": "이후",
+    "UpdatedAt": "수정일"
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "배포를 선택해주세요"
+  },
+  "comp:BAIDeploymentStatusTag": {
+    "Degraded": "저하됨",
+    "Deploying": "배포 중",
+    "Healthy": "정상",
+    "NotChecked": "미확인",
+    "Pending": "대기 중",
+    "Ready": "준비됨",
+    "Scaling": "스케일링 중",
+    "Stopped": "중지됨",
+    "Stopping": "중지 중",
+    "Terminated": "종료됨",
+    "Unhealthy": "비정상"
   },
   "comp:BAIDomainSelect": {
     "SelectDomain": "도메인 선택"
@@ -176,18 +205,27 @@
     "DomainName": "도메인",
     "EndpointURL": "엔드포인트 URL",
     "FailedToDeleteDeployment": "배포 삭제에 실패했습니다.",
+    "HealthySummary": "{{healthy}} / {{total}}",
+    "Model": "모델",
     "Name": "이름",
     "OpenToPublic": "공개",
+    "Owner": "소유자",
     "PreferredDomainName": "선호 도메인",
+    "Project": "프로젝트",
     "ProjectID": "프로젝트 ID",
+    "ReplicaSummary": "복제본 수",
+    "ReplicaSummaryTooltip": "원하는 (또는 전체) 복제본 수 대비 실행 중인 복제본 수입니다.",
     "Replicas": "복제본 수",
+    "ResourceGroup": "리소스 그룹",
+    "RevisionNumber": "리비전",
+    "RevisionNumberTooltip": "배포의 현재 리비전 번호입니다.",
     "Status": "상태",
     "StrategyType": "전략",
     "Tags": "태그",
     "UpdatedAt": "수정 시각"
   },
   "comp:BAIProjectBulkEditModal": {
-    "FollowingFoldersWillBeUpdated": "다음 폴더(들)이 업데이트됩니다.",
+    "FollowingProjectsWillBeUpdated": "다음 프로젝트(들)이 업데이트됩니다.",
     "ProjectResourcePolicy": "프로젝트 리소스 정책",
     "UpdateMultipleProjects": "프로젝트 일괄 업데이트"
   },
@@ -217,25 +255,15 @@
     "UpdateProject": "프로젝트 수정"
   },
   "comp:BAIProjectTable": {
-    "AreYouSureToPurgeProject": "정말로 {{projectName}} 프로젝트를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.",
     "ContainerRegistry": "컨테이너 레지스트리",
-    "Controls": "제어",
+    "ContainerRegistryProject": "컨테이너 레지스트리 프로젝트",
     "CreatedAt": "생성 시각",
-    "Deactivate": "비활성화",
-    "DeactivateProject": "프로젝트 비활성화",
     "Description": "설명",
     "Domain": "도메인",
-    "FailedToDeactivateProject": "프로젝트 비활성화에 실패했습니다.",
-    "FailedToPurgeProject": "프로젝트 삭제에 실패했습니다.",
     "IntegrationID": "통합 ID",
-    "IsActive": "활성",
     "Name": "이름",
     "Project": "프로젝트",
-    "ProjectDeactivated": "프로젝트가 비활성화됐습니다.",
     "ProjectID": "프로젝트 ID",
-    "ProjectPurged": "프로젝트를 삭제했습니다.",
-    "Purge": "삭제",
-    "PurgeProject": "프로젝트 삭제",
     "Registry": "레지스트리",
     "ResourcePolicy": "자원 정책",
     "ScalingGroups": "자원 그룹",
@@ -262,22 +290,42 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "리소스 그룹을 선택해주세요"
   },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "제한없음"
+  },
   "comp:BAIRouteNodes": {
     "CreatedAt": "생성일",
     "HealthStatus": "상태 확인 결과",
     "RouteId": "라우트 ID",
+    "SchedulingHistory": "스케줄링 기록",
     "SessionId": "세션 ID",
     "Status": "라우트 상태",
     "TrafficRatio": "트래픽 비율",
     "TrafficStatus": "트래픽 상태"
+  },
+  "comp:BAIRouteSchedulingHistoryNodes": {
+    "Attempts": "시도 횟수",
+    "Category": "카테고리",
+    "CreatedAt": "생성일",
+    "ErrorCode": "오류 코드",
+    "From": "이전",
+    "Message": "메시지",
+    "Phase": "단계",
+    "Result": "결과",
+    "StatusTransition": "상태 전환",
+    "To": "이후",
+    "UpdatedAt": "수정일"
   },
   "comp:BAIRuntimeVariantSelect": {
     "SelectRuntimeVariant": "런타임 변형을 선택해주세요"
   },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "시도 횟수",
+    "Category": "카테고리",
     "CreatedAt": "생성일",
+    "ErrorCode": "오류 코드",
     "From": "이전",
+    "Message": "메시지",
     "Phase": "단계",
     "Result": "결과",
     "StatusTransition": "상태 전환",
@@ -296,6 +344,14 @@
   },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "스토리지 호스트를 선택해주세요"
+  },
+  "comp:BAISubStepNodes": {
+    "EndedAt": "종료일",
+    "ErrorCode": "오류 코드",
+    "Message": "메시지",
+    "Result": "결과",
+    "StartedAt": "시작일",
+    "Step": "세부단계"
   },
   "comp:BAITable": {
     "Export": "내보내기",
@@ -367,13 +423,22 @@
   "comp:ResourceStatistics": {
     "NoResourcesData": "표시할 리소스 데이터가 없습니다"
   },
-  "comp:SessionHistorySubStepNodes": {
-    "EndedAt": "종료일",
-    "ErrorCode": "오류 코드",
-    "Message": "메시지",
-    "Result": "결과",
-    "StartedAt": "시작일",
-    "Step": "세부단계"
+  "comp:SessionV2Nodes": {
+    "AIAccelerator": "AI 가속기",
+    "CPU": "CPU",
+    "ClusterMode": "클러스터 모드",
+    "CreatedAt": "생성 시각",
+    "ElapsedTime": "경과 시간",
+    "Environments": "환경",
+    "Memory": "메모리",
+    "OwnerEmail": "소유자 이메일",
+    "Project": "프로젝트",
+    "ResourceGroup": "리소스 그룹",
+    "SessionId": "세션 ID",
+    "SessionName": "세션 이름",
+    "SessionType": "세션 유형",
+    "Status": "상태",
+    "TerminateSession": "세션 종료"
   },
   "comp:UserNodes": {
     "AllowedClientIps": "허용된 클라이언트 IP",

@@ -74,6 +74,9 @@
     "KeepAsIs": "Хэвээр үлдээх",
     "UndoChanges": "Өөрчлөлтийг буцаах"
   },
+  "comp:BAIContainerRegistrySelect": {
+    "SelectContainerRegistry": "Контейнер бүртгэл сонгох"
+  },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "Та {{name}} идэвхгүй болгохыг хүсч байна уу?}}?",
     "AreYouSureYouWantToDeactivateSome": "Та {{count}} олдворуудыг идэвхгүй болгохыг хүсч байна уу?",
@@ -99,8 +102,37 @@
     "DeleteNItems": "{{count}} зүйл устгах",
     "TypeToConfirm": "Баталгаажуулахын тулд <code>{{confirmText}}</code> гэж бичнэ үү."
   },
+  "comp:BAIDeploymentOwnerInfo": {
+    "CreatedBy": "Үүсгэсэн"
+  },
+  "comp:BAIDeploymentSchedulingHistoryNodes": {
+    "Attempts": "Оролдлого",
+    "Category": "Ангилал",
+    "CreatedAt": "Үүссэн огноо",
+    "ErrorCode": "Алдааны код",
+    "From": "Эхлэх",
+    "Message": "Зурвас",
+    "Phase": "Шат",
+    "Result": "Үр дүн",
+    "StatusTransition": "Статусын шилжилт",
+    "To": "Хүртэл",
+    "UpdatedAt": "Шинэчлэгдсэн огноо"
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Байршуулалт сонгох"
+  },
+  "comp:BAIDeploymentStatusTag": {
+    "Degraded": "Муудсан",
+    "Deploying": "Байршуулж байна",
+    "Healthy": "Эрүүл",
+    "NotChecked": "Шалгаагүй",
+    "Pending": "Хүлээгдэж байна",
+    "Ready": "Бэлэн",
+    "Scaling": "Хэмжээ өөрчлөгдөж байна",
+    "Stopped": "Зогссон",
+    "Stopping": "Зогсож байна",
+    "Terminated": "Дуусгавар болсон",
+    "Unhealthy": "Эрүүл бус"
   },
   "comp:BAIDomainSelect": {
     "SelectDomain": "Домен сонгох"
@@ -173,18 +205,27 @@
     "DomainName": "Домайн",
     "EndpointURL": "Төгсгөлийн цэгийн URL",
     "FailedToDeleteDeployment": "Байршуулалт устгаж чадсангүй.",
+    "HealthySummary": "{{healthy}} / {{total}}",
+    "Model": "Загвар",
     "Name": "Нэр",
     "OpenToPublic": "Нийтэд нээлттэй",
+    "Owner": "Эзэн",
     "PreferredDomainName": "Давуу домайн",
+    "Project": "Төсөл",
     "ProjectID": "Төслийн ID",
+    "ReplicaSummary": "Хуулбар",
+    "ReplicaSummaryTooltip": "Гүйцэтгэж байгаа хуулбарын тоо хүссэн (эсвэл нийт) хуулбарын тоотой харьцуулсан.",
     "Replicas": "Хуулбар",
+    "ResourceGroup": "Нөөцийн бүлэг",
+    "RevisionNumber": "Засвар",
+    "RevisionNumberTooltip": "Байршуулалтын одоогийн засварын дугаар.",
     "Status": "Төлөв",
     "StrategyType": "Стратеги",
     "Tags": "Шошго",
     "UpdatedAt": "Шинэчлэгдсэн огноо"
   },
   "comp:BAIProjectBulkEditModal": {
-    "FollowingFoldersWillBeUpdated": "Дараах хавтас(ууд) шинэчлэгдэх болно.",
+    "FollowingProjectsWillBeUpdated": "Дараах төсөл(үүд) шинэчлэгдэх болно.",
     "ProjectResourcePolicy": "Төслийн нөөцийн бодлого",
     "UpdateMultipleProjects": "Олон төслийг шинэчлэх"
   },
@@ -214,25 +255,15 @@
     "UpdateProject": "Төслийг шинэчлэх"
   },
   "comp:BAIProjectTable": {
-    "AreYouSureToPurgeProject": "Та {{projectName}} бүрмөсөн устгахдаа итгэлтэй байна уу? Энэ үйлдэл буцаашгүй.",
     "ContainerRegistry": "Контейнерийн бүртгэл",
-    "Controls": "Удирдлага",
+    "ContainerRegistryProject": "Контейнерийн бүртгэлийн төсөл",
     "CreatedAt": "Үүсгэсэн огноо",
-    "Deactivate": "Идэвхгүй болгох",
-    "DeactivateProject": "Төслийг идэвхгүй болгох",
     "Description": "Тайлбар",
     "Domain": "Домен",
-    "FailedToDeactivateProject": "Төслийг идэвхгүй болгоход амжилтгүй боллоо.",
-    "FailedToPurgeProject": "Төслийг бүрмөсөн устгахад амжилтгүй боллоо.",
     "IntegrationID": "Интеграцийн ID",
-    "IsActive": "Идэвхтэй",
     "Name": "Нэр",
     "Project": "Төсөл",
-    "ProjectDeactivated": "Төсөл идэвхгүй боллоо.",
     "ProjectID": "Төслийн ID",
-    "ProjectPurged": "Төсөл бүрмөсөн устгагдсан.",
-    "Purge": "Устгах",
-    "PurgeProject": "Төслийг бүрэн устгах",
     "Registry": "Регистри",
     "ResourcePolicy": "Ресурсын бодлого",
     "ScalingGroups": "Нөөцийн бүлгүүд",
@@ -259,22 +290,42 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Ресурсын бүлэг сонгох"
   },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "Хязгааргүй"
+  },
   "comp:BAIRouteNodes": {
     "CreatedAt": "Үүсгэсэн огноо",
     "HealthStatus": "Эрүүл мэндийн төлөв",
     "RouteId": "Маршрутын ID",
+    "SchedulingHistory": "Хуваарилалтын түүх",
     "SessionId": "Сессийн ID",
     "Status": "Төлөв",
     "TrafficRatio": "Трафикийн харьцаа",
     "TrafficStatus": "Трафикийн төлөв"
+  },
+  "comp:BAIRouteSchedulingHistoryNodes": {
+    "Attempts": "Оролдлого",
+    "Category": "Ангилал",
+    "CreatedAt": "Үүссэн огноо",
+    "ErrorCode": "Алдааны код",
+    "From": "Эхлэх",
+    "Message": "Зурвас",
+    "Phase": "Шат",
+    "Result": "Үр дүн",
+    "StatusTransition": "Статусын шилжилт",
+    "To": "Хүртэл",
+    "UpdatedAt": "Шинэчлэгдсэн огноо"
   },
   "comp:BAIRuntimeVariantSelect": {
     "SelectRuntimeVariant": "Ажиллах хувилбар сонгох"
   },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "Оролдлого",
+    "Category": "Ангилал",
     "CreatedAt": "Үүссэн огноо",
+    "ErrorCode": "Алдааны код",
     "From": "Эхлэх",
+    "Message": "Зурвас",
     "Phase": "Шат",
     "Result": "Үр дүн",
     "StatusTransition": "Статусын шилжилт",
@@ -293,6 +344,14 @@
   },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Хадгалах хост сонгох"
+  },
+  "comp:BAISubStepNodes": {
+    "EndedAt": "Дууссан цаг",
+    "ErrorCode": "Алдааны код",
+    "Message": "Зурвас",
+    "Result": "Үр дүн",
+    "StartedAt": "Эхэлсэн цаг",
+    "Step": "Алхам"
   },
   "comp:BAITable": {
     "Export": "Экспорт",
@@ -364,13 +423,22 @@
   "comp:ResourceStatistics": {
     "NoResourcesData": "Нөөцийн мэдээлэл байхгүй байна"
   },
-  "comp:SessionHistorySubStepNodes": {
-    "EndedAt": "Дууссан цаг",
-    "ErrorCode": "Алдааны код",
-    "Message": "Зурвас",
-    "Result": "Үр дүн",
-    "StartedAt": "Эхэлсэн цаг",
-    "Step": "Алхам"
+  "comp:SessionV2Nodes": {
+    "AIAccelerator": "AI хурдасгуур",
+    "CPU": "CPU",
+    "ClusterMode": "Кластерийн горим",
+    "CreatedAt": "Үүсгэсэн огноо",
+    "ElapsedTime": "Өнгөрсөн хугацаа",
+    "Environments": "Орчнууд",
+    "Memory": "Санах ой",
+    "OwnerEmail": "Эзний и-мэйл",
+    "Project": "Төсөл",
+    "ResourceGroup": "Нөөцийн бүлэг",
+    "SessionId": "Сессийн ID",
+    "SessionName": "Сессийн нэр",
+    "SessionType": "Сессийн төрөл",
+    "Status": "Статус",
+    "TerminateSession": "Сессийг дуусгах"
   },
   "comp:UserNodes": {
     "AllowedClientIps": "Зөвшөөрөгдсөн үйлчлүүлэгч IP",

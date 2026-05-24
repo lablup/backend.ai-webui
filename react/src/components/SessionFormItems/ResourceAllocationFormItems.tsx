@@ -1180,15 +1180,18 @@ const ResourceAllocationFormItems: React.FC<
                               (supportedAcceleratorTypesInRGByImage?.length ??
                                 0) > 0 ? (
                                 <Form.Item
-                                  noStyle
                                   name={['resource', 'acceleratorType']}
                                   initialValue={_.first(
                                     _.keys(acceleratorSlotsInRG),
                                   )}
+                                  style={{
+                                    marginBottom: 0,
+                                    maxWidth: 100,
+                                  }}
                                 >
                                   <BAISelect
                                     style={{
-                                      width: 75,
+                                      width: '100%',
                                     }}
                                     autoSelectOption
                                     tabIndex={-1}

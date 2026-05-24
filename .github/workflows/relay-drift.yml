@@ -1,0 +1,66 @@
+name: Relay Drift Check
+
+on:
+  pull_request:
+    paths:
+      - 'react/src/**'
+      - 'packages/backend.ai-ui/src/**'
+      - 'data/schema.graphql'
+      - 'data/client-directives.graphql'
+      - 'relay.config.js'
+      - 'relay-base.config.js'
+      - 'package.json'
+      - 'react/package.json'
+      - 'packages/backend.ai-ui/package.json'
+      - '.github/workflows/relay-drift.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  relay-drift:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v5
+        name: Install pnpm
+        with:
+          run_install: false
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: ".nvmrc"
+          cache: "pnpm"
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+      - uses: actions/cache@v5
+        name: Setup pnpm cache
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Run Relay compiler
+        run: pnpm run relay
+      - name: Check for drift in __generated__
+        # Mirrors `check_relay_drift` in scripts/verify.sh. Uses
+        # `git status --porcelain` (not `git diff`) so newly-added
+        # generated files — e.g. when a PR adds a new fragment — are
+        # detected too; plain diff only sees tracked files.
+        run: |
+          dirty=$(git status --porcelain -- \
+            'react/src/__generated__' \
+            'packages/backend.ai-ui/src/__generated__')
+          if [ -n "$dirty" ]; then
+            echo "$dirty"
+            echo ""
+            echo "::error title=Relay drift::Relay generated artifacts are out of sync. Run \`pnpm relay\` locally and commit the changes under __generated__."
+            git diff -- \
+              'react/src/__generated__' \
+              'packages/backend.ai-ui/src/__generated__' || true
+            exit 1
+          fi
+          echo "Relay generated artifacts are up to date."

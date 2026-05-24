@@ -129,7 +129,7 @@ Backend.AI's GPU virtualization technology that allows sharing a single physical
 | Endpoint | The access point created for a served model |
 | Inference | The operation of running predictions through a served model |
 
-### App Proxy (formerly WSProxy)
+### App Proxy
 
 The standalone, per-resource-group proxy service that relays in-container application traffic (Jupyter, Terminal, TensorBoard, etc.) directly between the user's browser and the compute session's Agent (the **v2** path, bypassing the Manager). Renamed from **WSProxy** to **App Proxy** in the UI in FR-2841.
 
@@ -195,7 +195,7 @@ These terms match sidebar menu items. Keep documentation references consistent w
 | Summary | 요약 | サマリー | summary/summary.md |
 | Sessions | 세션 | セッション | session_page/session_page.md |
 | Data | 데이터 | データ | vfolder/vfolder.md |
-| Model Serving | 모델 서빙 | モデルサービス | model_serving/model_serving.md |
+| Deployment | 배포 | モデルサービス | deployment/deployment.md |
 | Statistics | 통계 | 統計 | statistics/statistics.md |
 | User Settings | 사용자 설정 | ユーザー設定 | user_settings/user_settings.md |
 | RBAC Management | RBAC 관리 | RBAC管理 | rbac_management/rbac_management.md |

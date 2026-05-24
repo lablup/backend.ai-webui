@@ -459,6 +459,123 @@ describe('useLoginOrchestration - error handling', () => {
 });
 
 // ---------------------------------------------------------------------------
+// Tests: dev-only enforced endpoint (VITE_DEFAULT_API_ENDPOINT)
+// ---------------------------------------------------------------------------
+
+/**
+ * Set up a fake, already-connected client that reports the given endpoint
+ * via `_config.endpoint`. Mirrors how the real backend.ai-client populates
+ * `_config` after `createBackendAIClient`.
+ */
+function makeConnectedClientAt(endpoint: string) {
+  (globalThis as any).backendaiclient = {
+    ready: true,
+    _config: { endpoint },
+    logout: vi.fn().mockResolvedValue(undefined),
+  };
+}
+
+describe('useLoginOrchestration - enforcedEndpoint (dev-only)', () => {
+  beforeEach(() => {
+    sessionStorage.clear();
+  });
+
+  afterEach(() => {
+    sessionStorage.clear();
+  });
+
+  it('logs out the stale client and opens the panel when the connected endpoint differs', async () => {
+    makeConnectedClientAt('http://OLD:8090');
+
+    const { options } = await renderOrchestrationHook(true, false, {
+      enforcedEndpoint: 'http://NEW:8090',
+    });
+
+    expect(options.onLogoutSession).toHaveBeenCalledTimes(1);
+    expect(options.onOpen).toHaveBeenCalledTimes(1);
+    expect(options.onLogin).not.toHaveBeenCalled();
+    // Global client ref must be cleared so isClientConnected() returns false
+    // on the next pass.
+    expect(globalThis.backendaiclient).toBeNull();
+  });
+
+  it('treats trailing slashes as equivalent (strips before compare)', async () => {
+    makeConnectedClientAt('http://NEW:8090/');
+
+    const { options } = await renderOrchestrationHook(true, false, {
+      enforcedEndpoint: 'http://NEW:8090',
+    });
+
+    // Endpoint matches once normalized — orchestrator must NOT log out.
+    expect(options.onLogoutSession).not.toHaveBeenCalled();
+    expect(options.onOpen).not.toHaveBeenCalled();
+  });
+
+  it('normalizes the enforced endpoint too (trailing slash and whitespace)', async () => {
+    makeConnectedClientAt('http://NEW:8090');
+
+    const { options } = await renderOrchestrationHook(true, false, {
+      enforcedEndpoint: '  http://NEW:8090/  ',
+    });
+
+    // Both sides normalize to 'http://NEW:8090' — no false mismatch logout.
+    expect(options.onLogoutSession).not.toHaveBeenCalled();
+    expect(options.onOpen).not.toHaveBeenCalled();
+  });
+
+  it('does nothing special when enforcedEndpoint is undefined (production parity)', async () => {
+    makeConnectedClientAt('http://OLD:8090');
+
+    const { options } = await renderOrchestrationHook(true, false, {
+      enforcedEndpoint: undefined,
+    });
+
+    // Falls through to the existing isClientConnected() early-return.
+    expect(options.onLogoutSession).not.toHaveBeenCalled();
+    expect(options.onOpen).not.toHaveBeenCalled();
+    expect(options.onLogin).not.toHaveBeenCalled();
+  });
+
+  it('still opens the login panel even if onLogoutSession throws (best-effort)', async () => {
+    makeConnectedClientAt('http://OLD:8090');
+
+    const { options } = await renderOrchestrationHook(true, false, {
+      enforcedEndpoint: 'http://NEW:8090',
+      onLogoutSession: vi.fn().mockRejectedValue(new Error('unreachable')),
+    });
+
+    expect(options.onLogoutSession).toHaveBeenCalledTimes(1);
+    expect(options.onOpen).toHaveBeenCalledTimes(1);
+    expect(globalThis.backendaiclient).toBeNull();
+  });
+
+  it('consumes INTENTIONAL_LOGOUT_FLAG so the next pass does not double-handle it', async () => {
+    sessionStorage.setItem(INTENTIONAL_LOGOUT_FLAG, '1');
+    makeConnectedClientAt('http://OLD:8090');
+
+    await renderOrchestrationHook(true, false, {
+      enforcedEndpoint: 'http://NEW:8090',
+    });
+
+    expect(sessionStorage.getItem(INTENTIONAL_LOGOUT_FLAG)).toBeNull();
+  });
+
+  it('skips entirely on applauncher routes (no logout side-effect from a deep link)', async () => {
+    setWindowPathname('/edu-applauncher/some-app');
+    makeConnectedClientAt('http://OLD:8090');
+
+    const { options } = await renderOrchestrationHook(true, false, {
+      enforcedEndpoint: 'http://NEW:8090',
+    });
+
+    expect(options.onLogoutSession).not.toHaveBeenCalled();
+    expect(options.onOpen).not.toHaveBeenCalled();
+    // Global client untouched.
+    expect((globalThis as any).backendaiclient).not.toBeNull();
+  });
+});
+
+// ---------------------------------------------------------------------------
 // Tests: idempotency (runs only once)
 // ---------------------------------------------------------------------------
 

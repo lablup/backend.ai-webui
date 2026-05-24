@@ -118,12 +118,13 @@ does not have the `upload-file` permission on the storage host that hosts this
 folder. The button itself remains visible but is greyed out, and tooltips
 explain that uploads are not permitted.
 
-`upload-file` is a host-level capability granted through your **keypair
-resource policy**. If you need to upload files and the button is disabled, ask
-your administrator to add `upload-file` to the allowed SFTP / vfolder host
-permissions on your resource policy. You can identify which host the folder
-lives on from the **Location** column in the folder list or from the folder
-detail drawer; the required permission must be enabled for *that* host.
+`upload-file` is a host-level capability granted through domain-level
+permissions, project-level permissions, or your keypair resource policy — you
+receive it if **any one** of these grants it for the storage host. If the button
+is disabled, ask your administrator to grant you `upload-file` permission for
+the host that stores this folder. You can identify which host the folder lives
+on from the **Location** column in the folder list or from the folder detail
+drawer.
 :::
 
 ![](../images/vfolder_upload_disabled.png)
