@@ -105,6 +105,19 @@
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Được tạo bởi"
   },
+  "comp:BAIDeploymentSchedulingHistoryNodes": {
+    "Attempts": "Số lần thử",
+    "Category": "Danh mục",
+    "CreatedAt": "Ngày tạo",
+    "ErrorCode": "Mã lỗi",
+    "From": "Từ",
+    "Message": "Tin nhắn",
+    "Phase": "Giai đoạn",
+    "Result": "Kết quả",
+    "StatusTransition": "Chuyển đổi trạng thái",
+    "To": "Đến",
+    "UpdatedAt": "Cập nhật lúc"
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Chọn triển khai"
   },
@@ -284,17 +297,33 @@
     "CreatedAt": "Ngày tạo",
     "HealthStatus": "Trạng thái sức khỏe",
     "RouteId": "ID tuyến",
+    "SchedulingHistory": "Lịch sử lập lịch",
     "SessionId": "ID phiên",
     "Status": "Trạng thái",
     "TrafficRatio": "Tỷ lệ lưu lượng",
     "TrafficStatus": "Trạng thái lưu lượng"
+  },
+  "comp:BAIRouteSchedulingHistoryNodes": {
+    "Attempts": "Số lần thử",
+    "Category": "Danh mục",
+    "CreatedAt": "Ngày tạo",
+    "ErrorCode": "Mã lỗi",
+    "From": "Từ",
+    "Message": "Tin nhắn",
+    "Phase": "Giai đoạn",
+    "Result": "Kết quả",
+    "StatusTransition": "Chuyển đổi trạng thái",
+    "To": "Đến",
+    "UpdatedAt": "Cập nhật lúc"
   },
   "comp:BAIRuntimeVariantSelect": {
     "SelectRuntimeVariant": "Chọn biến thể runtime"
   },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "Số lần thử",
+    "Category": "Danh mục",
     "CreatedAt": "Ngày tạo",
+    "ErrorCode": "Mã lỗi",
     "From": "Từ",
     "Message": "Tin nhắn",
     "Phase": "Giai đoạn",
@@ -315,6 +344,14 @@
   },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Chọn máy chủ lưu trữ"
+  },
+  "comp:BAISubStepNodes": {
+    "EndedAt": "Kết thúc lúc",
+    "ErrorCode": "Mã lỗi",
+    "Message": "Tin nhắn",
+    "Result": "Kết quả",
+    "StartedAt": "Bắt đầu lúc",
+    "Step": "Bước"
   },
   "comp:BAITable": {
     "Export": "Xuất",
@@ -385,14 +422,6 @@
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "Không có dữ liệu tài nguyên"
-  },
-  "comp:SessionHistorySubStepNodes": {
-    "EndedAt": "Kết thúc lúc",
-    "ErrorCode": "Mã lỗi",
-    "Message": "Tin nhắn",
-    "Result": "Kết quả",
-    "StartedAt": "Bắt đầu lúc",
-    "Step": "Bước"
   },
   "comp:SessionV2Nodes": {
     "AIAccelerator": "Bộ gia tốc AI",

@@ -105,6 +105,19 @@
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "建立者"
   },
+  "comp:BAIDeploymentSchedulingHistoryNodes": {
+    "Attempts": "嘗試次數",
+    "Category": "類別",
+    "CreatedAt": "建立時間",
+    "ErrorCode": "錯誤代碼",
+    "From": "從",
+    "Message": "訊息",
+    "Phase": "階段",
+    "Result": "結果",
+    "StatusTransition": "狀態轉換",
+    "To": "至",
+    "UpdatedAt": "更新時間"
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "選擇部署"
   },
@@ -284,17 +297,33 @@
     "CreatedAt": "建立時間",
     "HealthStatus": "健康狀態",
     "RouteId": "路由 ID",
+    "SchedulingHistory": "排程記錄",
     "SessionId": "工作階段 ID",
     "Status": "狀態",
     "TrafficRatio": "流量比例",
     "TrafficStatus": "流量狀態"
+  },
+  "comp:BAIRouteSchedulingHistoryNodes": {
+    "Attempts": "嘗試次數",
+    "Category": "類別",
+    "CreatedAt": "建立時間",
+    "ErrorCode": "錯誤代碼",
+    "From": "從",
+    "Message": "訊息",
+    "Phase": "階段",
+    "Result": "結果",
+    "StatusTransition": "狀態轉換",
+    "To": "至",
+    "UpdatedAt": "更新時間"
   },
   "comp:BAIRuntimeVariantSelect": {
     "SelectRuntimeVariant": "選擇執行階段變體"
   },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "嘗試次數",
+    "Category": "類別",
     "CreatedAt": "建立時間",
+    "ErrorCode": "錯誤代碼",
     "From": "從",
     "Message": "訊息",
     "Phase": "階段",
@@ -315,6 +344,14 @@
   },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "選擇儲存主機"
+  },
+  "comp:BAISubStepNodes": {
+    "EndedAt": "結束時間",
+    "ErrorCode": "錯誤代碼",
+    "Message": "訊息",
+    "Result": "結果",
+    "StartedAt": "開始時間",
+    "Step": "步驟"
   },
   "comp:BAITable": {
     "Export": "匯出",
@@ -385,14 +422,6 @@
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "沒有可用的資源數據"
-  },
-  "comp:SessionHistorySubStepNodes": {
-    "EndedAt": "結束時間",
-    "ErrorCode": "錯誤代碼",
-    "Message": "訊息",
-    "Result": "結果",
-    "StartedAt": "開始時間",
-    "Step": "步驟"
   },
   "comp:SessionV2Nodes": {
     "AIAccelerator": "AI 加速器",

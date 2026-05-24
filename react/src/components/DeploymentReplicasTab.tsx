@@ -14,9 +14,12 @@ import BAIRadioGroup from './BAIRadioGroup';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
 import QuestionIconWithTooltip from './QuestionIconWithTooltip';
 import ReplicaStatusTag, { ReplicaStatus } from './ReplicaStatusTag';
+import RouteSchedulingHistoryModal from './RouteSchedulingHistoryModal';
 import SessionDetailDrawer from './SessionDetailDrawer';
-import { Typography } from 'antd';
+import { HistoryOutlined } from '@ant-design/icons';
+import { Tooltip, Typography } from 'antd';
 import {
+  BAIButton,
   BAIColumnType,
   BAIFetchKeyButton,
   BAIFlex,
@@ -25,9 +28,11 @@ import {
   BAITable,
   BAITag,
   BAIUnmountAfterClose,
-  type GraphQLFilter,
   filterOutEmpty,
+  safeDecodeUuid,
   toLocalId,
+  type GraphQLFilter,
+  useConnectedBAIClient,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -156,6 +161,11 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
   }));
 
   const [fetchKey, setFetchKey] = useState(0);
+  const baiClient = useConnectedBAIClient();
+  const supportsRouteSchedulingHistory = baiClient.supports(
+    'route-scheduling-history',
+  );
+  const [historyRouteId, setHistoryRouteId] = useState<string | null>(null);
   const [selectedSessionId, setSelectedSessionId] = useState<string | null>(
     null,
   );
@@ -273,8 +283,23 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
         </BAIFlex>
       ),
       dataIndex: 'status',
-      render: (value: string | null | undefined) => (
-        <ReplicaStatusTag status={toReplicaTagStatus(value)} />
+      render: (value: string | null | undefined, record: ReplicaNode) => (
+        <BAIFlex align="center" gap="xs">
+          <ReplicaStatusTag status={toReplicaTagStatus(value)} />
+          {supportsRouteSchedulingHistory && (
+            <Tooltip title={t('route.RouteSchedulingHistory')}>
+              <BAIButton
+                type="link"
+                icon={<HistoryOutlined />}
+                size="small"
+                style={{ padding: 0 }}
+                onClick={() =>
+                  setHistoryRouteId(safeDecodeUuid(record.id) ?? record.id)
+                }
+              />
+            </Tooltip>
+          )}
+        </BAIFlex>
       ),
     },
     {
@@ -491,6 +516,11 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
           onClose={() => setDrawerRevisionFrgmt(null)}
         />
       </BAIUnmountAfterClose>
+      <RouteSchedulingHistoryModal
+        open={!!historyRouteId}
+        routeId={historyRouteId ?? ''}
+        onCancel={() => setHistoryRouteId(null)}
+      />
     </>
   );
 };

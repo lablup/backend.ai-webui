@@ -105,6 +105,19 @@
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "作成者"
   },
+  "comp:BAIDeploymentSchedulingHistoryNodes": {
+    "Attempts": "試行回数",
+    "Category": "カテゴリ",
+    "CreatedAt": "作成日時",
+    "ErrorCode": "エラーコード",
+    "From": "送信元",
+    "Message": "メッセージ",
+    "Phase": "フェーズ",
+    "Result": "結果",
+    "StatusTransition": "ステータス遷移",
+    "To": "宛先",
+    "UpdatedAt": "更新日時"
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "デプロイメントを選択"
   },
@@ -284,17 +297,33 @@
     "CreatedAt": "作成日時",
     "HealthStatus": "ヘルスステータス",
     "RouteId": "ルートID",
+    "SchedulingHistory": "スケジュール履歴",
     "SessionId": "セッションID",
     "Status": "ステータス",
     "TrafficRatio": "トラフィック比率",
     "TrafficStatus": "トラフィック状況"
+  },
+  "comp:BAIRouteSchedulingHistoryNodes": {
+    "Attempts": "試行回数",
+    "Category": "カテゴリ",
+    "CreatedAt": "作成日時",
+    "ErrorCode": "エラーコード",
+    "From": "送信元",
+    "Message": "メッセージ",
+    "Phase": "フェーズ",
+    "Result": "結果",
+    "StatusTransition": "ステータス遷移",
+    "To": "宛先",
+    "UpdatedAt": "更新日時"
   },
   "comp:BAIRuntimeVariantSelect": {
     "SelectRuntimeVariant": "ランタイムバリアントを選択"
   },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "試行回数",
+    "Category": "カテゴリ",
     "CreatedAt": "作成日時",
+    "ErrorCode": "エラーコード",
     "From": "送信元",
     "Message": "メッセージ",
     "Phase": "フェーズ",
@@ -315,6 +344,14 @@
   },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "ストレージホストを選択"
+  },
+  "comp:BAISubStepNodes": {
+    "EndedAt": "終了日時",
+    "ErrorCode": "エラーコード",
+    "Message": "メッセージ",
+    "Result": "結果",
+    "StartedAt": "開始日時",
+    "Step": "ステップ"
   },
   "comp:BAITable": {
     "Export": "エクスポート",
@@ -385,14 +422,6 @@
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "利用可能なリソースデータはありません"
-  },
-  "comp:SessionHistorySubStepNodes": {
-    "EndedAt": "終了日時",
-    "ErrorCode": "エラーコード",
-    "Message": "メッセージ",
-    "Result": "結果",
-    "StartedAt": "開始日時",
-    "Step": "ステップ"
   },
   "comp:SessionV2Nodes": {
     "AIAccelerator": "AIアクセラレータ",

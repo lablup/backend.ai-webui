@@ -204,12 +204,6 @@ const DeploymentDetailPage: React.FC = () => {
 
   return (
     <BAIFlex direction="column" align="stretch" gap="md">
-      <BAIFlex direction="row" align="center" gap="sm">
-        <Typography.Title level={3} style={{ margin: 0 }}>
-          {deploymentName}
-        </Typography.Title>
-        <BAIDeploymentStatusTag status={deploymentStatus} />
-      </BAIFlex>
       {isProjectMismatch && deploymentProjectId && (
         <Alert
           type="warning"
@@ -278,6 +272,12 @@ const DeploymentDetailPage: React.FC = () => {
           }
         />
       )}
+      <BAIFlex direction="row" align="center" gap="sm">
+        <Typography.Title level={3} style={{ margin: 0 }}>
+          {deploymentName}
+        </Typography.Title>
+        <BAIDeploymentStatusTag status={deploymentStatus} />
+      </BAIFlex>
       <DeploymentConfigurationSection
         deploymentFrgmt={deployment}
         isDeploymentDestroying={isDeploymentDestroying}

@@ -105,6 +105,19 @@
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Created by"
   },
+  "comp:BAIDeploymentSchedulingHistoryNodes": {
+    "Attempts": "Attempts",
+    "Category": "Category",
+    "CreatedAt": "Created At",
+    "ErrorCode": "Error Code",
+    "From": "From",
+    "Message": "Message",
+    "Phase": "Phase",
+    "Result": "Result",
+    "StatusTransition": "Status Transition",
+    "To": "To",
+    "UpdatedAt": "Updated At"
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Select Deployment"
   },
@@ -284,17 +297,33 @@
     "CreatedAt": "Created At",
     "HealthStatus": "Health Status",
     "RouteId": "Route ID",
+    "SchedulingHistory": "Scheduling History",
     "SessionId": "Session ID",
     "Status": "Status",
     "TrafficRatio": "Traffic Ratio",
     "TrafficStatus": "Traffic Status"
+  },
+  "comp:BAIRouteSchedulingHistoryNodes": {
+    "Attempts": "Attempts",
+    "Category": "Category",
+    "CreatedAt": "Created At",
+    "ErrorCode": "Error Code",
+    "From": "From",
+    "Message": "Message",
+    "Phase": "Phase",
+    "Result": "Result",
+    "StatusTransition": "Status Transition",
+    "To": "To",
+    "UpdatedAt": "Updated At"
   },
   "comp:BAIRuntimeVariantSelect": {
     "SelectRuntimeVariant": "Select Runtime Variant"
   },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "Attempts",
+    "Category": "Category",
     "CreatedAt": "Created At",
+    "ErrorCode": "Error Code",
     "From": "From",
     "Message": "Message",
     "Phase": "Phase",
@@ -315,6 +344,14 @@
   },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Select Storage Host"
+  },
+  "comp:BAISubStepNodes": {
+    "EndedAt": "Ended At",
+    "ErrorCode": "Error Code",
+    "Message": "Message",
+    "Result": "Result",
+    "StartedAt": "Started At",
+    "Step": "Step"
   },
   "comp:BAITable": {
     "Export": "Export",
@@ -385,14 +422,6 @@
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "No resource data available"
-  },
-  "comp:SessionHistorySubStepNodes": {
-    "EndedAt": "Ended At",
-    "ErrorCode": "Error Code",
-    "Message": "Message",
-    "Result": "Result",
-    "StartedAt": "Started At",
-    "Step": "Step"
   },
   "comp:SessionV2Nodes": {
     "AIAccelerator": "AI Accelerator",

@@ -1,17 +1,17 @@
 import {
-  SessionSchedulingHistoryFilter,
-  SessionSchedulingHistoryModalQuery,
-  SessionSchedulingHistoryOrderBy,
-} from '../__generated__/SessionSchedulingHistoryModalQuery.graphql';
+  DeploymentHistoryFilter,
+  DeploymentHistoryOrderBy,
+  DeploymentSchedulingHistoryModalQuery,
+} from '../__generated__/DeploymentSchedulingHistoryModalQuery.graphql';
 import { convertToOrderBy } from '../helper';
 import {
   BAIButton,
+  BAIDeploymentSchedulingHistoryNodes,
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAIModal,
   BAIModalProps,
-  BAISchedulingHistoryNodes,
   useFetchKey,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -19,44 +19,45 @@ import { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-interface SessionSchedulingHistoryModalProps extends Omit<
+interface DeploymentSchedulingHistoryModalProps extends Omit<
   BAIModalProps,
   'children' | 'title'
 > {
-  sessionId: string;
+  deploymentId: string;
 }
 
-const SessionSchedulingHistoryModal = ({
+const DeploymentSchedulingHistoryModal = ({
   open,
   loading,
-  sessionId,
+  deploymentId,
   onCancel,
   ...modalProps
-}: SessionSchedulingHistoryModalProps) => {
+}: DeploymentSchedulingHistoryModalProps) => {
+  'use memo';
   const { t } = useTranslation();
   const [fetchKey, updateFetchKey] = useFetchKey();
-  const [filter, setFilter] = useState<SessionSchedulingHistoryFilter>();
+  const [filter, setFilter] = useState<DeploymentHistoryFilter>();
   const [order, setOrder] = useState<string | null>('-updatedAt');
 
   const deferredOpenValue = useDeferredValue(open);
   const deferredFetchKey = useDeferredValue(fetchKey);
   const deferredFilter = useDeferredValue(filter);
   const deferredOrder = useDeferredValue(order);
-  const queryRef = useLazyLoadQuery<SessionSchedulingHistoryModalQuery>(
+  const queryRef = useLazyLoadQuery<DeploymentSchedulingHistoryModalQuery>(
     graphql`
-      query SessionSchedulingHistoryModalQuery(
-        $scope: SessionScope!
-        $filter: SessionSchedulingHistoryFilter
-        $orderBy: [SessionSchedulingHistoryOrderBy!]
+      query DeploymentSchedulingHistoryModalQuery(
+        $scope: DeploymentScope!
+        $filter: DeploymentHistoryFilter
+        $orderBy: [DeploymentHistoryOrderBy!]
       ) {
-        sessionScopedSchedulingHistories(
+        deploymentScopedSchedulingHistories(
           scope: $scope
           filter: $filter
           orderBy: $orderBy
         ) {
           edges {
             node {
-              ...BAISchedulingHistoryNodesFragment
+              ...BAIDeploymentSchedulingHistoryNodesFragment
             }
           }
         }
@@ -64,12 +65,12 @@ const SessionSchedulingHistoryModal = ({
     `,
     {
       scope: {
-        sessionId: sessionId,
+        deploymentId: deploymentId,
       },
       filter: deferredFilter ?? undefined,
-      orderBy: convertToOrderBy<SessionSchedulingHistoryOrderBy>(
-        deferredOrder,
-      ) ?? [{ field: 'UPDATED_AT', direction: 'DESC' }],
+      orderBy: convertToOrderBy<DeploymentHistoryOrderBy>(deferredOrder) ?? [
+        { field: 'UPDATED_AT', direction: 'DESC' },
+      ],
     },
     {
       fetchKey: deferredFetchKey,
@@ -78,7 +79,7 @@ const SessionSchedulingHistoryModal = ({
   );
   return (
     <BAIModal
-      title={t('session.SessionSchedulingHistory')}
+      title={t('deployment.DeploymentSchedulingHistory')}
       loading={loading || deferredOpenValue !== open}
       open={open}
       width={'90%'}
@@ -112,19 +113,19 @@ const SessionSchedulingHistoryModal = ({
             filterProperties={[
               {
                 key: 'id',
-                propertyLabel: t('session.ID'),
+                propertyLabel: t('deployment.ID'),
                 type: 'uuid',
                 fixedOperator: 'equals',
               },
               {
                 key: 'phase',
-                propertyLabel: t('session.Phase'),
+                propertyLabel: t('deployment.Phase'),
                 type: 'string',
                 fixedOperator: 'contains',
               },
               {
                 key: 'result',
-                propertyLabel: t('session.Result'),
+                propertyLabel: t('deployment.Result'),
                 type: 'enum',
                 strictSelection: true,
                 options: [
@@ -139,37 +140,37 @@ const SessionSchedulingHistoryModal = ({
               },
               {
                 key: 'fromStatus',
-                propertyLabel: t('session.FromStatus'),
+                propertyLabel: t('deployment.FromStatus'),
                 type: 'string',
                 valueMode: 'scalar',
               },
               {
                 key: 'toStatus',
-                propertyLabel: t('session.ToStatus'),
+                propertyLabel: t('deployment.ToStatus'),
                 type: 'string',
                 valueMode: 'scalar',
               },
               {
                 key: 'errorCode',
-                propertyLabel: t('session.ErrorCode'),
+                propertyLabel: t('deployment.ErrorCode'),
                 type: 'string',
                 fixedOperator: 'contains',
               },
               {
                 key: 'message',
-                propertyLabel: t('session.Message'),
+                propertyLabel: t('deployment.Message'),
                 type: 'string',
                 fixedOperator: 'contains',
               },
               {
                 key: 'createdAt',
-                propertyLabel: t('session.CreatedAt'),
+                propertyLabel: t('deployment.CreatedAt'),
                 type: 'datetime',
                 defaultOperator: 'after',
               },
               {
                 key: 'updatedAt',
-                propertyLabel: t('session.UpdatedAt'),
+                propertyLabel: t('deployment.UpdatedAt'),
                 type: 'datetime',
                 defaultOperator: 'after',
               },
@@ -184,7 +185,7 @@ const SessionSchedulingHistoryModal = ({
             />
           </BAIFlex>
         </BAIFlex>
-        <BAISchedulingHistoryNodes
+        <BAIDeploymentSchedulingHistoryNodes
           resizable
           loading={
             deferredFetchKey !== fetchKey ||
@@ -194,7 +195,7 @@ const SessionSchedulingHistoryModal = ({
           order={order}
           onChangeOrder={setOrder}
           schedulingHistoryFrgmt={_.map(
-            queryRef.sessionScopedSchedulingHistories?.edges,
+            queryRef.deploymentScopedSchedulingHistories?.edges,
             'node',
           )}
         />
@@ -203,4 +204,4 @@ const SessionSchedulingHistoryModal = ({
   );
 };
 
-export default SessionSchedulingHistoryModal;
+export default DeploymentSchedulingHistoryModal;

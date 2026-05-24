@@ -1,8 +1,8 @@
 import {
-  SessionSchedulingHistoryFilter,
-  SessionSchedulingHistoryModalQuery,
-  SessionSchedulingHistoryOrderBy,
-} from '../__generated__/SessionSchedulingHistoryModalQuery.graphql';
+  RouteHistoryFilter,
+  RouteHistoryOrderBy,
+  RouteSchedulingHistoryModalQuery,
+} from '../__generated__/RouteSchedulingHistoryModalQuery.graphql';
 import { convertToOrderBy } from '../helper';
 import {
   BAIButton,
@@ -11,7 +11,7 @@ import {
   BAIGraphQLPropertyFilter,
   BAIModal,
   BAIModalProps,
-  BAISchedulingHistoryNodes,
+  BAIRouteSchedulingHistoryNodes,
   useFetchKey,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -19,44 +19,45 @@ import { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-interface SessionSchedulingHistoryModalProps extends Omit<
+interface RouteSchedulingHistoryModalProps extends Omit<
   BAIModalProps,
   'children' | 'title'
 > {
-  sessionId: string;
+  routeId: string;
 }
 
-const SessionSchedulingHistoryModal = ({
+const RouteSchedulingHistoryModal = ({
   open,
   loading,
-  sessionId,
+  routeId,
   onCancel,
   ...modalProps
-}: SessionSchedulingHistoryModalProps) => {
+}: RouteSchedulingHistoryModalProps) => {
+  'use memo';
   const { t } = useTranslation();
   const [fetchKey, updateFetchKey] = useFetchKey();
-  const [filter, setFilter] = useState<SessionSchedulingHistoryFilter>();
+  const [filter, setFilter] = useState<RouteHistoryFilter>();
   const [order, setOrder] = useState<string | null>('-updatedAt');
 
   const deferredOpenValue = useDeferredValue(open);
   const deferredFetchKey = useDeferredValue(fetchKey);
   const deferredFilter = useDeferredValue(filter);
   const deferredOrder = useDeferredValue(order);
-  const queryRef = useLazyLoadQuery<SessionSchedulingHistoryModalQuery>(
+  const queryRef = useLazyLoadQuery<RouteSchedulingHistoryModalQuery>(
     graphql`
-      query SessionSchedulingHistoryModalQuery(
-        $scope: SessionScope!
-        $filter: SessionSchedulingHistoryFilter
-        $orderBy: [SessionSchedulingHistoryOrderBy!]
+      query RouteSchedulingHistoryModalQuery(
+        $scope: RouteScope!
+        $filter: RouteHistoryFilter
+        $orderBy: [RouteHistoryOrderBy!]
       ) {
-        sessionScopedSchedulingHistories(
+        routeScopedSchedulingHistories(
           scope: $scope
           filter: $filter
           orderBy: $orderBy
         ) {
           edges {
             node {
-              ...BAISchedulingHistoryNodesFragment
+              ...BAIRouteSchedulingHistoryNodesFragment
             }
           }
         }
@@ -64,12 +65,12 @@ const SessionSchedulingHistoryModal = ({
     `,
     {
       scope: {
-        sessionId: sessionId,
+        routeId: routeId,
       },
       filter: deferredFilter ?? undefined,
-      orderBy: convertToOrderBy<SessionSchedulingHistoryOrderBy>(
-        deferredOrder,
-      ) ?? [{ field: 'UPDATED_AT', direction: 'DESC' }],
+      orderBy: convertToOrderBy<RouteHistoryOrderBy>(deferredOrder) ?? [
+        { field: 'UPDATED_AT', direction: 'DESC' },
+      ],
     },
     {
       fetchKey: deferredFetchKey,
@@ -78,7 +79,7 @@ const SessionSchedulingHistoryModal = ({
   );
   return (
     <BAIModal
-      title={t('session.SessionSchedulingHistory')}
+      title={t('route.RouteSchedulingHistory')}
       loading={loading || deferredOpenValue !== open}
       open={open}
       width={'90%'}
@@ -112,19 +113,19 @@ const SessionSchedulingHistoryModal = ({
             filterProperties={[
               {
                 key: 'id',
-                propertyLabel: t('session.ID'),
+                propertyLabel: t('route.ID'),
                 type: 'uuid',
                 fixedOperator: 'equals',
               },
               {
                 key: 'phase',
-                propertyLabel: t('session.Phase'),
+                propertyLabel: t('route.Phase'),
                 type: 'string',
                 fixedOperator: 'contains',
               },
               {
                 key: 'result',
-                propertyLabel: t('session.Result'),
+                propertyLabel: t('route.Result'),
                 type: 'enum',
                 strictSelection: true,
                 options: [
@@ -139,37 +140,37 @@ const SessionSchedulingHistoryModal = ({
               },
               {
                 key: 'fromStatus',
-                propertyLabel: t('session.FromStatus'),
+                propertyLabel: t('route.FromStatus'),
                 type: 'string',
                 valueMode: 'scalar',
               },
               {
                 key: 'toStatus',
-                propertyLabel: t('session.ToStatus'),
+                propertyLabel: t('route.ToStatus'),
                 type: 'string',
                 valueMode: 'scalar',
               },
               {
                 key: 'errorCode',
-                propertyLabel: t('session.ErrorCode'),
+                propertyLabel: t('route.ErrorCode'),
                 type: 'string',
                 fixedOperator: 'contains',
               },
               {
                 key: 'message',
-                propertyLabel: t('session.Message'),
+                propertyLabel: t('route.Message'),
                 type: 'string',
                 fixedOperator: 'contains',
               },
               {
                 key: 'createdAt',
-                propertyLabel: t('session.CreatedAt'),
+                propertyLabel: t('route.CreatedAt'),
                 type: 'datetime',
                 defaultOperator: 'after',
               },
               {
                 key: 'updatedAt',
-                propertyLabel: t('session.UpdatedAt'),
+                propertyLabel: t('route.UpdatedAt'),
                 type: 'datetime',
                 defaultOperator: 'after',
               },
@@ -184,7 +185,7 @@ const SessionSchedulingHistoryModal = ({
             />
           </BAIFlex>
         </BAIFlex>
-        <BAISchedulingHistoryNodes
+        <BAIRouteSchedulingHistoryNodes
           resizable
           loading={
             deferredFetchKey !== fetchKey ||
@@ -194,7 +195,7 @@ const SessionSchedulingHistoryModal = ({
           order={order}
           onChangeOrder={setOrder}
           schedulingHistoryFrgmt={_.map(
-            queryRef.sessionScopedSchedulingHistories?.edges,
+            queryRef.routeScopedSchedulingHistories?.edges,
             'node',
           )}
         />
@@ -203,4 +204,4 @@ const SessionSchedulingHistoryModal = ({
   );
 };
 
-export default SessionSchedulingHistoryModal;
+export default RouteSchedulingHistoryModal;

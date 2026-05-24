@@ -13,11 +13,13 @@ import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import DeploymentRevisionDetail from './DeploymentRevisionDetail';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
 import DeploymentRevisionHistoryTab from './DeploymentRevisionHistoryTab';
+import DeploymentSchedulingHistoryModal from './DeploymentSchedulingHistoryModal';
 import DeploymentSettingModal from './DeploymentSettingModal';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import {
   DeleteFilled,
   EditOutlined,
+  HistoryOutlined,
   LoadingOutlined,
   MoreOutlined,
   PlusOutlined,
@@ -27,29 +29,32 @@ import {
   App,
   Button,
   Descriptions,
+  Divider,
   Dropdown,
   Empty,
   Skeleton,
   Space,
   Typography,
-  theme,
 } from 'antd';
 import {
   BAIButton,
   BAICard,
   BAIDeleteConfirmModal,
+  BAIDeploymentStatusTag,
   BAIDeploymentTagChips,
   BAIFetchKeyButton,
   BAIFlex,
   BAIId,
-  BAIText,
   BAIUnmountAfterClose,
   BooleanTag,
   filterOutEmpty,
+  safeDecodeUuid,
   toLocalId,
   useBAILogger,
+  useConnectedBAIClient,
   useInterval,
 } from 'backend.ai-ui';
+import type { BAIDeploymentStatus } from 'backend.ai-ui';
 import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -76,7 +81,8 @@ const renderFallback = () => (
 
 const DeploymentOverviewContent: React.FC<{
   deployment: DeploymentSectionData;
-}> = ({ deployment }) => {
+  onClickSchedulingHistory?: () => void;
+}> = ({ deployment, onClickSchedulingHistory }) => {
   'use memo';
   const { t } = useTranslation();
   const webuiNavigate = useWebUINavigate();
@@ -88,10 +94,27 @@ const DeploymentOverviewContent: React.FC<{
 
   const deploymentItems = filterOutEmpty([
     {
-      key: 'name',
-      label: t('deployment.Name'),
-      children: deployment?.metadata.name ? (
-        <BAIText copyable>{deployment.metadata.name}</BAIText>
+      key: 'status',
+      label: t('deployment.Status'),
+      children: deployment?.metadata.status ? (
+        <BAIFlex align="center" gap="xs">
+          <BAIDeploymentStatusTag
+            status={deployment.metadata.status as BAIDeploymentStatus}
+          />
+          {onClickSchedulingHistory && (
+            <>
+              <Divider type="vertical" style={{ margin: 0 }} />
+              <BAIButton
+                type="link"
+                size="small"
+                icon={<HistoryOutlined />}
+                onClick={onClickSchedulingHistory}
+              >
+                {t('deployment.SchedulingHistory')}
+              </BAIButton>
+            </>
+          )}
+        </BAIFlex>
       ) : (
         renderFallback()
       ),
@@ -129,7 +152,7 @@ const DeploymentOverviewContent: React.FC<{
       key: 'endpoint-url',
       label: t('deployment.EndpointUrl'),
       children: deployment?.networkAccess.endpointUrl ? (
-        <Typography.Text copyable>
+        <Typography.Text copyable style={{ wordBreak: 'break-all' }}>
           {deployment.networkAccess.endpointUrl}
         </Typography.Text>
       ) : (
@@ -208,7 +231,6 @@ const DeploymentConfigurationSection: React.FC<
   'use memo';
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const webuiNavigate = useWebUINavigate();
@@ -275,6 +297,10 @@ const DeploymentConfigurationSection: React.FC<
   );
   const [settingModalOpen, setSettingModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [historyModalOpen, setHistoryModalOpen] = useState(false);
+  const baiClient = useConnectedBAIClient();
+  const supportsDeploymentSchedulingHistory =
+    baiClient?.supports('deployment-scheduling-history') ?? false;
 
   const [commitDeleteMutation, isInFlightDeleteMutation] =
     useMutation<DeploymentConfigurationSectionDeleteMutation>(graphql`
@@ -390,8 +416,41 @@ const DeploymentConfigurationSection: React.FC<
         }
         styles={{ body: { paddingTop: 0 } }}
       >
-        <DeploymentOverviewContent deployment={deployment} />
+        <DeploymentOverviewContent
+          deployment={deployment}
+          onClickSchedulingHistory={
+            supportsDeploymentSchedulingHistory
+              ? () => setHistoryModalOpen(true)
+              : undefined
+          }
+        />
       </BAICard>
+      {isDeployingDifferentRevision && (
+        <Alert
+          type="info"
+          icon={<LoadingOutlined spin />}
+          showIcon
+          title={t('deployment.ApplyingRevision', {
+            revisionNumber:
+              deployingRevision.revisionNumber != null
+                ? `#${deployingRevision.revisionNumber}`
+                : (toLocalId(deployingRevision.id) ?? ''),
+          })}
+          action={
+            <Button
+              onClick={() =>
+                handleShowRevisionDrawer(
+                  deployingRevision,
+                  'deploying',
+                  t('deployment.ApplyingRevisionDetail'),
+                )
+              }
+            >
+              {t('deployment.ViewRevision')}
+            </Button>
+          }
+        />
+      )}
       <BAICard
         activeTabKey={activeRevisionTab}
         onTabChange={(key) => {
@@ -431,33 +490,6 @@ const DeploymentConfigurationSection: React.FC<
       >
         {activeRevisionTab === 'currentRevision' && (
           <>
-            {isDeployingDifferentRevision && (
-              <Alert
-                type="info"
-                icon={<LoadingOutlined spin />}
-                showIcon
-                title={t('deployment.ApplyingRevision', {
-                  revisionNumber:
-                    deployingRevision.revisionNumber != null
-                      ? `#${deployingRevision.revisionNumber}`
-                      : (toLocalId(deployingRevision.id) ?? ''),
-                })}
-                action={
-                  <Button
-                    onClick={() =>
-                      handleShowRevisionDrawer(
-                        deployingRevision,
-                        'deploying',
-                        t('deployment.ApplyingRevisionDetail'),
-                      )
-                    }
-                  >
-                    {t('deployment.ViewRevision')}
-                  </Button>
-                }
-                style={{ marginBottom: token.marginMD }}
-              />
-            )}
             {currentRevision ? (
               <DeploymentRevisionDetail
                 revisionFrgmt={currentRevision}
@@ -515,6 +547,13 @@ const DeploymentConfigurationSection: React.FC<
         onOk={handleDelete}
         onCancel={() => setIsDeleteModalOpen(false)}
       />
+      {deployment?.id && (
+        <DeploymentSchedulingHistoryModal
+          open={historyModalOpen}
+          deploymentId={safeDecodeUuid(deployment.id) ?? deployment.id}
+          onCancel={() => setHistoryModalOpen(false)}
+        />
+      )}
     </>
   );
 };

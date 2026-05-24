@@ -105,6 +105,19 @@
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Luonut"
   },
+  "comp:BAIDeploymentSchedulingHistoryNodes": {
+    "Attempts": "Yritykset",
+    "Category": "Luokka",
+    "CreatedAt": "Luotu",
+    "ErrorCode": "Virhekoodi",
+    "From": "Alkaen",
+    "Message": "Viesti",
+    "Phase": "Vaihe",
+    "Result": "Tulos",
+    "StatusTransition": "Tilan siirtymä",
+    "To": "Saakka",
+    "UpdatedAt": "Päivitetty"
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Valitse käyttöönotto"
   },
@@ -284,17 +297,33 @@
     "CreatedAt": "Luotu",
     "HealthStatus": "Terveystila",
     "RouteId": "Reitti-ID",
+    "SchedulingHistory": "Ajoitushistoria",
     "SessionId": "Istunnon tunnus",
     "Status": "Tila",
     "TrafficRatio": "Liikenteen suhde",
     "TrafficStatus": "Liikenteen tila"
+  },
+  "comp:BAIRouteSchedulingHistoryNodes": {
+    "Attempts": "Yritykset",
+    "Category": "Luokka",
+    "CreatedAt": "Luotu",
+    "ErrorCode": "Virhekoodi",
+    "From": "Alkaen",
+    "Message": "Viesti",
+    "Phase": "Vaihe",
+    "Result": "Tulos",
+    "StatusTransition": "Tilan siirtymä",
+    "To": "Saakka",
+    "UpdatedAt": "Päivitetty"
   },
   "comp:BAIRuntimeVariantSelect": {
     "SelectRuntimeVariant": "Valitse ajonaikainen variantti"
   },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "Yritykset",
+    "Category": "Luokka",
     "CreatedAt": "Luotu",
+    "ErrorCode": "Virhekoodi",
     "From": "Alkaen",
     "Message": "Viesti",
     "Phase": "Vaihe",
@@ -315,6 +344,14 @@
   },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Valitse tallennuspalvelin"
+  },
+  "comp:BAISubStepNodes": {
+    "EndedAt": "Päättymisaika",
+    "ErrorCode": "Virhekoodi",
+    "Message": "Viesti",
+    "Result": "Tulos",
+    "StartedAt": "Aloitusaika",
+    "Step": "Vaihe"
   },
   "comp:BAITable": {
     "Export": "Vie",
@@ -385,14 +422,6 @@
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "Resurssitietoja ei ole käytettävissä"
-  },
-  "comp:SessionHistorySubStepNodes": {
-    "EndedAt": "Päättymisaika",
-    "ErrorCode": "Virhekoodi",
-    "Message": "Viesti",
-    "Result": "Tulos",
-    "StartedAt": "Aloitusaika",
-    "Step": "Vaihe"
   },
   "comp:SessionV2Nodes": {
     "AIAccelerator": "AI-kiihdytin",

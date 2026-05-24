@@ -29,6 +29,7 @@ import EndpointTokenGenerationModal from '../components/EndpointTokenGenerationM
 import { useFolderExplorerOpener } from '../components/FolderExplorerOpener';
 import ImageNodeSimpleTag from '../components/ImageNodeSimpleTag';
 import InferenceSessionErrorModal from '../components/InferenceSessionErrorModal';
+import RouteSchedulingHistoryModal from '../components/RouteSchedulingHistoryModal';
 import SessionDetailDrawer from '../components/SessionDetailDrawer';
 import SourceCodeView from '../components/SourceCodeView';
 import SwitchToProjectButton from '../components/SwitchToProjectButton';
@@ -196,6 +197,10 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
     'prometheus-auto-scaling-rule',
   );
   const isSupportRouteHealthStatus = baiClient.supports('route-health-status');
+  const supportsRouteSchedulingHistory = baiClient.supports(
+    'route-scheduling-history',
+  );
+  const [historyRouteId, setHistoryRouteId] = useState<string | null>(null);
   const [errorDataForJSONModal, setErrorDataForJSONModal] = useState<string>();
   const {
     endpoint,
@@ -1456,6 +1461,11 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
                     : JSON.stringify(errorData),
                 )
               }
+              onClickSchedulingHistory={
+                supportsRouteSchedulingHistory
+                  ? (routeId) => setHistoryRouteId(routeId)
+                  : undefined
+              }
               pagination={{
                 ...routePagination,
                 total: routes?.count,
@@ -1610,6 +1620,11 @@ const EndpointDetailPage: React.FC<EndpointDetailPageProps> = () => {
         onCancel={() => {
           setErrorDataForJSONModal(undefined);
         }}
+      />
+      <RouteSchedulingHistoryModal
+        open={!!historyRouteId}
+        routeId={historyRouteId ?? ''}
+        onCancel={() => setHistoryRouteId(null)}
       />
     </BAIFlex>
   );

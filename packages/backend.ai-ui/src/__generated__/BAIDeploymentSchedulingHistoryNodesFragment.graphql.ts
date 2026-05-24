@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ce6f00b122f73ac787c18a8f27b6222b>>
+ * @generated SignedSource<<99de343c87eba570df6b2b85270538f5>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,25 +11,26 @@
 import { ReaderFragment } from 'relay-runtime';
 export type SchedulingResult = "EXPIRED" | "FAILURE" | "GIVE_UP" | "NEED_RETRY" | "SKIPPED" | "STALE" | "SUCCESS" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
-export type BAISchedulingHistoryNodesFragment$data = ReadonlyArray<{
+export type BAIDeploymentSchedulingHistoryNodesFragment$data = ReadonlyArray<{
   readonly attempts: number;
+  readonly category: string;
   readonly createdAt: string;
+  readonly errorCode: string | null | undefined;
   readonly fromStatus: string | null | undefined;
   readonly id: string;
   readonly message: string | null | undefined;
   readonly phase: string;
   readonly result: SchedulingResult;
-  readonly sessionId: string;
   readonly subSteps: ReadonlyArray<{
     readonly " $fragmentSpreads": FragmentRefs<"BAISubStepNodesFragment">;
   }>;
   readonly toStatus: string | null | undefined;
   readonly updatedAt: string;
-  readonly " $fragmentType": "BAISchedulingHistoryNodesFragment";
+  readonly " $fragmentType": "BAIDeploymentSchedulingHistoryNodesFragment";
 }>;
-export type BAISchedulingHistoryNodesFragment$key = ReadonlyArray<{
-  readonly " $data"?: BAISchedulingHistoryNodesFragment$data;
-  readonly " $fragmentSpreads": FragmentRefs<"BAISchedulingHistoryNodesFragment">;
+export type BAIDeploymentSchedulingHistoryNodesFragment$key = ReadonlyArray<{
+  readonly " $data"?: BAIDeploymentSchedulingHistoryNodesFragment$data;
+  readonly " $fragmentSpreads": FragmentRefs<"BAIDeploymentSchedulingHistoryNodesFragment">;
 }>;
 
 const node: ReaderFragment = {
@@ -38,7 +39,7 @@ const node: ReaderFragment = {
   "metadata": {
     "plural": true
   },
-  "name": "BAISchedulingHistoryNodesFragment",
+  "name": "BAIDeploymentSchedulingHistoryNodesFragment",
   "selections": [
     {
       "alias": null,
@@ -51,7 +52,65 @@ const node: ReaderFragment = {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
-      "name": "sessionId",
+      "name": "category",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "phase",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "fromStatus",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "toStatus",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "result",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "errorCode",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "message",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "SubStepResultGQL",
+      "kind": "LinkedField",
+      "name": "subSteps",
+      "plural": true,
+      "selections": [
+        {
+          "args": null,
+          "kind": "FragmentSpread",
+          "name": "BAISubStepNodesFragment"
+        }
+      ],
       "storageKey": null
     },
     {
@@ -74,63 +133,12 @@ const node: ReaderFragment = {
       "kind": "ScalarField",
       "name": "updatedAt",
       "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "fromStatus",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "toStatus",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "message",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "phase",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "result",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "concreteType": "SubStepResultGQL",
-      "kind": "LinkedField",
-      "name": "subSteps",
-      "plural": true,
-      "selections": [
-        {
-          "args": null,
-          "kind": "FragmentSpread",
-          "name": "BAISubStepNodesFragment"
-        }
-      ],
-      "storageKey": null
     }
   ],
-  "type": "SessionSchedulingHistory",
+  "type": "DeploymentHistory",
   "abstractKey": null
 };
 
-(node as any).hash = "d9ace8d5059e208cc256c1f0c236d273";
+(node as any).hash = "993394664d6af0ea9ee225d992cff972";
 
 export default node;

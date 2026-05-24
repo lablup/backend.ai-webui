@@ -105,6 +105,19 @@
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "생성자"
   },
+  "comp:BAIDeploymentSchedulingHistoryNodes": {
+    "Attempts": "시도 횟수",
+    "Category": "카테고리",
+    "CreatedAt": "생성일",
+    "ErrorCode": "오류 코드",
+    "From": "이전",
+    "Message": "메시지",
+    "Phase": "단계",
+    "Result": "결과",
+    "StatusTransition": "상태 전환",
+    "To": "이후",
+    "UpdatedAt": "수정일"
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "배포를 선택해주세요"
   },
@@ -284,17 +297,33 @@
     "CreatedAt": "생성일",
     "HealthStatus": "상태 확인 결과",
     "RouteId": "라우트 ID",
+    "SchedulingHistory": "스케줄링 기록",
     "SessionId": "세션 ID",
     "Status": "라우트 상태",
     "TrafficRatio": "트래픽 비율",
     "TrafficStatus": "트래픽 상태"
+  },
+  "comp:BAIRouteSchedulingHistoryNodes": {
+    "Attempts": "시도 횟수",
+    "Category": "카테고리",
+    "CreatedAt": "생성일",
+    "ErrorCode": "오류 코드",
+    "From": "이전",
+    "Message": "메시지",
+    "Phase": "단계",
+    "Result": "결과",
+    "StatusTransition": "상태 전환",
+    "To": "이후",
+    "UpdatedAt": "수정일"
   },
   "comp:BAIRuntimeVariantSelect": {
     "SelectRuntimeVariant": "런타임 변형을 선택해주세요"
   },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "시도 횟수",
+    "Category": "카테고리",
     "CreatedAt": "생성일",
+    "ErrorCode": "오류 코드",
     "From": "이전",
     "Message": "메시지",
     "Phase": "단계",
@@ -315,6 +344,14 @@
   },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "스토리지 호스트를 선택해주세요"
+  },
+  "comp:BAISubStepNodes": {
+    "EndedAt": "종료일",
+    "ErrorCode": "오류 코드",
+    "Message": "메시지",
+    "Result": "결과",
+    "StartedAt": "시작일",
+    "Step": "세부단계"
   },
   "comp:BAITable": {
     "Export": "내보내기",
@@ -385,14 +422,6 @@
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "표시할 리소스 데이터가 없습니다"
-  },
-  "comp:SessionHistorySubStepNodes": {
-    "EndedAt": "종료일",
-    "ErrorCode": "오류 코드",
-    "Message": "메시지",
-    "Result": "결과",
-    "StartedAt": "시작일",
-    "Step": "세부단계"
   },
   "comp:SessionV2Nodes": {
     "AIAccelerator": "AI 가속기",

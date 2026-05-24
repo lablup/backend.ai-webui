@@ -105,6 +105,19 @@
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Utworzono przez"
   },
+  "comp:BAIDeploymentSchedulingHistoryNodes": {
+    "Attempts": "Próby",
+    "Category": "Kategoria",
+    "CreatedAt": "Utworzono",
+    "ErrorCode": "Kod błędu",
+    "From": "Od",
+    "Message": "Wiadomość",
+    "Phase": "Faza",
+    "Result": "Wynik",
+    "StatusTransition": "Zmiana statusu",
+    "To": "Do",
+    "UpdatedAt": "Zaktualizowano"
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Wybierz wdrożenie"
   },
@@ -284,17 +297,33 @@
     "CreatedAt": "Utworzono",
     "HealthStatus": "Stan zdrowia",
     "RouteId": "ID trasy",
+    "SchedulingHistory": "Historia planowania",
     "SessionId": "ID sesji",
     "Status": "Status",
     "TrafficRatio": "Udział ruchu",
     "TrafficStatus": "Status ruchu"
+  },
+  "comp:BAIRouteSchedulingHistoryNodes": {
+    "Attempts": "Próby",
+    "Category": "Kategoria",
+    "CreatedAt": "Utworzono",
+    "ErrorCode": "Kod błędu",
+    "From": "Od",
+    "Message": "Wiadomość",
+    "Phase": "Faza",
+    "Result": "Wynik",
+    "StatusTransition": "Zmiana statusu",
+    "To": "Do",
+    "UpdatedAt": "Zaktualizowano"
   },
   "comp:BAIRuntimeVariantSelect": {
     "SelectRuntimeVariant": "Wybierz wariant środowiska uruchomieniowego"
   },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "Próby",
+    "Category": "Kategoria",
     "CreatedAt": "Utworzono",
+    "ErrorCode": "Kod błędu",
     "From": "Od",
     "Message": "Wiadomość",
     "Phase": "Faza",
@@ -315,6 +344,14 @@
   },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Wybierz host pamięci masowej"
+  },
+  "comp:BAISubStepNodes": {
+    "EndedAt": "Zakończono o",
+    "ErrorCode": "Kod błędu",
+    "Message": "Wiadomość",
+    "Result": "Wynik",
+    "StartedAt": "Rozpoczęto",
+    "Step": "Krok"
   },
   "comp:BAITable": {
     "Export": "Eksportuj",
@@ -385,14 +422,6 @@
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "Brak danych dotyczących zasobów"
-  },
-  "comp:SessionHistorySubStepNodes": {
-    "EndedAt": "Zakończono o",
-    "ErrorCode": "Kod błędu",
-    "Message": "Wiadomość",
-    "Result": "Wynik",
-    "StartedAt": "Rozpoczęto",
-    "Step": "Krok"
   },
   "comp:SessionV2Nodes": {
     "AIAccelerator": "Akcelerator AI",

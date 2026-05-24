@@ -62,10 +62,7 @@ export {
   availableProjectSorterKeys,
   availableProjectSorterValues,
 } from './BAIProjectTable';
-export type {
-  BAIProjectTableProps,
-  ProjectInList,
-} from './BAIProjectTable';
+export type { BAIProjectTableProps, ProjectInList } from './BAIProjectTable';
 export { default as BAIAllowedVfolderHostsWithPermission } from './BAIAllowedVfolderHostsWithPermission';
 export type { BAIAllowedVfolderHostsWithPermissionProps } from './BAIAllowedVfolderHostsWithPermission';
 export { default as BAIAdminContainerRegistrySelect } from './BAIAdminContainerRegistrySelect';
@@ -166,6 +163,16 @@ export type {
   BAISchedulingHistoryNodesProps,
   SchedulingHistoryNodeInList,
 } from './BAISchedulingHistoryNodes';
+export { default as BAIDeploymentSchedulingHistoryNodes } from './BAIDeploymentSchedulingHistoryNodes';
+export type {
+  BAIDeploymentSchedulingHistoryNodesProps,
+  DeploymentSchedulingHistoryNodeInList,
+} from './BAIDeploymentSchedulingHistoryNodes';
+export { default as BAIRouteSchedulingHistoryNodes } from './BAIRouteSchedulingHistoryNodes';
+export type {
+  BAIRouteSchedulingHistoryNodesProps,
+  RouteSchedulingHistoryNodeInList,
+} from './BAIRouteSchedulingHistoryNodes';
 export { default as BAIDeploymentSelect } from './BAIDeploymentSelect';
 export type {
   BAIDeploymentSelectProps,
@@ -184,8 +191,5 @@ export type {
   BAIAdminImageSelectRef,
   ImageV2Node,
 } from './BAIAdminImageSelect';
-export { default as BAISessionHistorySubStepNodes } from './BAISessionHistorySubStepNodes';
-export type {
-  BAISessionHistorySubStepNodesProps,
-  SubStepInList,
-} from './BAISessionHistorySubStepNodes';
+export { default as BAISubStepNodes } from './BAISubStepNodes';
+export type { BAISubStepNodesProps, SubStepInList } from './BAISubStepNodes';

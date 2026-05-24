@@ -1,7 +1,7 @@
 import {
-  BAISchedulingHistoryNodesFragment$data,
-  BAISchedulingHistoryNodesFragment$key,
-} from '../../__generated__/BAISchedulingHistoryNodesFragment.graphql';
+  BAIDeploymentSchedulingHistoryNodesFragment$data,
+  BAIDeploymentSchedulingHistoryNodesFragment$key,
+} from '../../__generated__/BAIDeploymentSchedulingHistoryNodesFragment.graphql';
 import {
   filterOutEmpty,
   filterOutNullAndUndefined,
@@ -24,13 +24,13 @@ import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
-export type SchedulingHistoryNodeInList = NonNullable<
-  BAISchedulingHistoryNodesFragment$data[number]
+export type DeploymentSchedulingHistoryNodeInList = NonNullable<
+  BAIDeploymentSchedulingHistoryNodesFragment$data[number]
 >;
 
 const availableHistorySorterKeys = [] as const;
 
-export const availableHistorySorterValues = [
+export const availableDeploymentHistorySorterValues = [
   ...availableHistorySorterKeys,
   ...availableHistorySorterKeys.map((key) => `-${key}` as const),
 ] as const;
@@ -39,80 +39,82 @@ const isEnableSorter = (key: string) => {
   return _.includes(availableHistorySorterKeys, key);
 };
 
-export interface BAISchedulingHistoryNodesProps extends Omit<
-  BAITableProps<SchedulingHistoryNodeInList>,
+export interface BAIDeploymentSchedulingHistoryNodesProps extends Omit<
+  BAITableProps<DeploymentSchedulingHistoryNodeInList>,
   'dataSource' | 'onChangeOrder' | 'columns'
 > {
-  schedulingHistoryFrgmt: BAISchedulingHistoryNodesFragment$key;
+  schedulingHistoryFrgmt: BAIDeploymentSchedulingHistoryNodesFragment$key;
   disableSorter?: boolean;
   customizeColumns?: (
-    baseColumns: BAIColumnsType<SchedulingHistoryNodeInList>,
-  ) => BAIColumnsType<SchedulingHistoryNodeInList>;
+    baseColumns: BAIColumnsType<DeploymentSchedulingHistoryNodeInList>,
+  ) => BAIColumnsType<DeploymentSchedulingHistoryNodeInList>;
   onChangeOrder?: (
-    order: (typeof availableHistorySorterValues)[number] | null,
+    order: (typeof availableDeploymentHistorySorterValues)[number] | null,
   ) => void;
 }
 
-const BAISchedulingHistoryNodes = ({
+const BAIDeploymentSchedulingHistoryNodes = ({
   schedulingHistoryFrgmt,
   disableSorter,
   customizeColumns,
   onChangeOrder,
   ...tableProps
-}: BAISchedulingHistoryNodesProps) => {
+}: BAIDeploymentSchedulingHistoryNodesProps) => {
   'use memo';
   const { t } = useTranslation();
 
-  const histories = useFragment<BAISchedulingHistoryNodesFragment$key>(
-    graphql`
-      fragment BAISchedulingHistoryNodesFragment on SessionSchedulingHistory
-      @relay(plural: true) {
-        id
-        sessionId
-        attempts
-        createdAt
-        updatedAt
-        fromStatus
-        toStatus
-        message
-        phase
-        result
-        subSteps {
-          ...BAISubStepNodesFragment
+  const histories =
+    useFragment<BAIDeploymentSchedulingHistoryNodesFragment$key>(
+      graphql`
+        fragment BAIDeploymentSchedulingHistoryNodesFragment on DeploymentHistory
+        @relay(plural: true) {
+          id
+          category
+          phase
+          fromStatus
+          toStatus
+          result
+          errorCode
+          message
+          subSteps {
+            ...BAISubStepNodesFragment
+          }
+          attempts
+          createdAt
+          updatedAt
         }
-      }
-    `,
-    schedulingHistoryFrgmt,
-  );
+      `,
+      schedulingHistoryFrgmt,
+    );
 
   const baseColumns = _.map(
     filterOutEmpty<
-      | BAIColumnType<SchedulingHistoryNodeInList>
-      | BAIColumnGroupType<SchedulingHistoryNodeInList>
+      | BAIColumnType<DeploymentSchedulingHistoryNodeInList>
+      | BAIColumnGroupType<DeploymentSchedulingHistoryNodeInList>
     >([
       {
         dataIndex: 'updatedAt',
-        title: t('comp:BAISchedulingHistoryNodes.UpdatedAt'),
+        title: t('comp:BAIDeploymentSchedulingHistoryNodes.UpdatedAt'),
         key: 'updatedAt',
         render: (value) => <span>{dayjs(value).format('ll LTS')}</span>,
         sorter: isEnableSorter('updated_at'),
       },
       {
         dataIndex: 'createdAt',
-        title: t('comp:BAISchedulingHistoryNodes.CreatedAt'),
+        title: t('comp:BAIDeploymentSchedulingHistoryNodes.CreatedAt'),
         key: 'createdAt',
         render: (value) => <span>{dayjs(value).format('ll LTS')}</span>,
         sorter: isEnableSorter('created_at'),
       },
       {
         dataIndex: 'phase',
-        title: t('comp:BAISchedulingHistoryNodes.Phase'),
+        title: t('comp:BAIDeploymentSchedulingHistoryNodes.Phase'),
         key: 'phase',
         sorter: isEnableSorter('phase'),
       },
       {
         dataIndex: 'result',
-        title: t('comp:BAISchedulingHistoryNodes.Result'),
+        title: t('comp:BAIDeploymentSchedulingHistoryNodes.Result'),
         key: 'result',
         render: (_value, record) => {
           const result =
@@ -124,18 +126,24 @@ const BAISchedulingHistoryNodes = ({
         sorter: isEnableSorter('result'),
       },
       {
-        title: t('comp:BAISchedulingHistoryNodes.StatusTransition'),
+        dataIndex: 'category',
+        title: t('comp:BAIDeploymentSchedulingHistoryNodes.Category'),
+        key: 'category',
+        sorter: isEnableSorter('category'),
+      },
+      {
+        title: t('comp:BAIDeploymentSchedulingHistoryNodes.StatusTransition'),
         key: 'statusTransition',
         children: [
           {
             key: 'fromStatus',
-            title: t('comp:BAISchedulingHistoryNodes.From'),
+            title: t('comp:BAIDeploymentSchedulingHistoryNodes.From'),
             dataIndex: 'fromStatus',
             sorter: isEnableSorter('from_status'),
           },
           {
             key: 'toStatus',
-            title: t('comp:BAISchedulingHistoryNodes.To'),
+            title: t('comp:BAIDeploymentSchedulingHistoryNodes.To'),
             dataIndex: 'toStatus',
             sorter: isEnableSorter('to_status'),
           },
@@ -143,13 +151,25 @@ const BAISchedulingHistoryNodes = ({
       },
       {
         dataIndex: 'attempts',
-        title: t('comp:BAISchedulingHistoryNodes.Attempts'),
+        title: t('comp:BAIDeploymentSchedulingHistoryNodes.Attempts'),
         key: 'attempts',
         sorter: isEnableSorter('attempts'),
       },
       {
+        key: 'errorCode',
+        title: t('comp:BAIDeploymentSchedulingHistoryNodes.ErrorCode'),
+        dataIndex: 'errorCode',
+        render: (__, record) =>
+          record.errorCode ? (
+            <BAIText monospace>{record.errorCode}</BAIText>
+          ) : (
+            '-'
+          ),
+        sorter: isEnableSorter('errorCode'),
+      },
+      {
         key: 'message',
-        title: t('comp:BAISchedulingHistoryNodes.Message'),
+        title: t('comp:BAIDeploymentSchedulingHistoryNodes.Message'),
         dataIndex: 'message',
         onCell: () => ({ style: { maxWidth: 500 } }),
         render: (__, record) =>
@@ -171,6 +191,7 @@ const BAISchedulingHistoryNodes = ({
   const allColumns = customizeColumns
     ? customizeColumns(baseColumns)
     : baseColumns;
+
   return (
     <BAITable
       rowKey={'id'}
@@ -179,7 +200,8 @@ const BAISchedulingHistoryNodes = ({
       scroll={{ x: 'max-content' }}
       onChangeOrder={(order) => {
         onChangeOrder?.(
-          (order as (typeof availableHistorySorterValues)[number]) || null,
+          (order as (typeof availableDeploymentHistorySorterValues)[number]) ||
+            null,
         );
       }}
       expandable={{
@@ -195,8 +217,8 @@ const BAISchedulingHistoryNodes = ({
         },
       }}
       {...tableProps}
-    ></BAITable>
+    />
   );
 };
 
-export default BAISchedulingHistoryNodes;
+export default BAIDeploymentSchedulingHistoryNodes;

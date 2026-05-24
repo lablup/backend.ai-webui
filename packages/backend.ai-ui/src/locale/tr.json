@@ -105,6 +105,19 @@
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Oluşturan"
   },
+  "comp:BAIDeploymentSchedulingHistoryNodes": {
+    "Attempts": "Denemeler",
+    "Category": "Kategori",
+    "CreatedAt": "Oluşturulma Tarihi",
+    "ErrorCode": "Hata Kodu",
+    "From": "Kaynak",
+    "Message": "Mesaj",
+    "Phase": "Aşama",
+    "Result": "Sonuç",
+    "StatusTransition": "Durum Geçişi",
+    "To": "Bitiş",
+    "UpdatedAt": "Güncelleme Tarihi"
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Dağıtım seçin"
   },
@@ -284,17 +297,33 @@
     "CreatedAt": "Oluşturulma tarihi",
     "HealthStatus": "Sağlık Durumu",
     "RouteId": "Rota Kimliği",
+    "SchedulingHistory": "Zamanlama Geçmişi",
     "SessionId": "Oturum Kimliği",
     "Status": "Durum",
     "TrafficRatio": "Trafik Oranı",
     "TrafficStatus": "Trafik Durumu"
+  },
+  "comp:BAIRouteSchedulingHistoryNodes": {
+    "Attempts": "Denemeler",
+    "Category": "Kategori",
+    "CreatedAt": "Oluşturulma Tarihi",
+    "ErrorCode": "Hata Kodu",
+    "From": "Kaynak",
+    "Message": "Mesaj",
+    "Phase": "Aşama",
+    "Result": "Sonuç",
+    "StatusTransition": "Durum Geçişi",
+    "To": "Bitiş",
+    "UpdatedAt": "Güncelleme Tarihi"
   },
   "comp:BAIRuntimeVariantSelect": {
     "SelectRuntimeVariant": "Çalışma Zamanı Varyantını Seç"
   },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "Denemeler",
+    "Category": "Kategori",
     "CreatedAt": "Oluşturulma Tarihi",
+    "ErrorCode": "Hata Kodu",
     "From": "Kaynak",
     "Message": "Mesaj",
     "Phase": "Aşama",
@@ -315,6 +344,14 @@
   },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Depolama Sunucusu Seç"
+  },
+  "comp:BAISubStepNodes": {
+    "EndedAt": "Bitiş Zamanı",
+    "ErrorCode": "Hata Kodu",
+    "Message": "Mesaj",
+    "Result": "Sonuç",
+    "StartedAt": "Başlama zamanı",
+    "Step": "Adım"
   },
   "comp:BAITable": {
     "Export": "Dışa aktar",
@@ -385,14 +422,6 @@
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "Kaynak verisi yok"
-  },
-  "comp:SessionHistorySubStepNodes": {
-    "EndedAt": "Bitiş Zamanı",
-    "ErrorCode": "Hata Kodu",
-    "Message": "Mesaj",
-    "Result": "Sonuç",
-    "StartedAt": "Başlama zamanı",
-    "Step": "Adım"
   },
   "comp:SessionV2Nodes": {
     "AIAccelerator": "AI Hızlandırıcı",

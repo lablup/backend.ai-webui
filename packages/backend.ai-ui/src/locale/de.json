@@ -105,6 +105,19 @@
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Erstellt von"
   },
+  "comp:BAIDeploymentSchedulingHistoryNodes": {
+    "Attempts": "Versuche",
+    "Category": "Kategorie",
+    "CreatedAt": "Erstellt am",
+    "ErrorCode": "Fehlercode",
+    "From": "Von",
+    "Message": "Nachricht",
+    "Phase": "Phase",
+    "Result": "Ergebnis",
+    "StatusTransition": "Statuswechsel",
+    "To": "An",
+    "UpdatedAt": "Aktualisiert am"
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Deployment auswählen"
   },
@@ -284,17 +297,33 @@
     "CreatedAt": "Erstellt am",
     "HealthStatus": "Gesundheitsstatus",
     "RouteId": "Routen-ID",
+    "SchedulingHistory": "Planungsverlauf",
     "SessionId": "Sitzungs-ID",
     "Status": "Status",
     "TrafficRatio": "Traffic-Anteil",
     "TrafficStatus": "Datenverkehrsstatus"
+  },
+  "comp:BAIRouteSchedulingHistoryNodes": {
+    "Attempts": "Versuche",
+    "Category": "Kategorie",
+    "CreatedAt": "Erstellt am",
+    "ErrorCode": "Fehlercode",
+    "From": "Von",
+    "Message": "Nachricht",
+    "Phase": "Phase",
+    "Result": "Ergebnis",
+    "StatusTransition": "Statuswechsel",
+    "To": "An",
+    "UpdatedAt": "Aktualisiert am"
   },
   "comp:BAIRuntimeVariantSelect": {
     "SelectRuntimeVariant": "Laufzeitvariante auswählen"
   },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "Versuche",
+    "Category": "Kategorie",
     "CreatedAt": "Erstellt am",
+    "ErrorCode": "Fehlercode",
     "From": "Von",
     "Message": "Nachricht",
     "Phase": "Phase",
@@ -315,6 +344,14 @@
   },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Speicher-Host auswählen"
+  },
+  "comp:BAISubStepNodes": {
+    "EndedAt": "Beendet um",
+    "ErrorCode": "Fehlercode",
+    "Message": "Nachricht",
+    "Result": "Ergebnis",
+    "StartedAt": "Gestartet am",
+    "Step": "Schritt"
   },
   "comp:BAITable": {
     "Export": "Exportieren",
@@ -385,14 +422,6 @@
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "Keine Ressourcendaten verfügbar"
-  },
-  "comp:SessionHistorySubStepNodes": {
-    "EndedAt": "Beendet um",
-    "ErrorCode": "Fehlercode",
-    "Message": "Nachricht",
-    "Result": "Ergebnis",
-    "StartedAt": "Gestartet am",
-    "Step": "Schritt"
   },
   "comp:SessionV2Nodes": {
     "AIAccelerator": "AI-Beschleuniger",

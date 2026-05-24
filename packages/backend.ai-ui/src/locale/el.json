@@ -105,6 +105,19 @@
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Δημιουργήθηκε από"
   },
+  "comp:BAIDeploymentSchedulingHistoryNodes": {
+    "Attempts": "Προσπάθειες",
+    "Category": "Κατηγορία",
+    "CreatedAt": "Δημιουργήθηκε στις",
+    "ErrorCode": "Κωδικός σφάλματος",
+    "From": "Από",
+    "Message": "Μήνυμα",
+    "Phase": "Φάση",
+    "Result": "Αποτέλεσμα",
+    "StatusTransition": "Αλλαγή κατάστασης",
+    "To": "Έως",
+    "UpdatedAt": "Ενημερώθηκε στις"
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Επιλέξτε ανάπτυξη"
   },
@@ -284,17 +297,33 @@
     "CreatedAt": "Δημιουργήθηκε",
     "HealthStatus": "Κατάσταση υγείας",
     "RouteId": "ID διαδρομής",
+    "SchedulingHistory": "Ιστορικό προγραμματισμού",
     "SessionId": "ID συνεδρίας",
     "Status": "Κατάσταση",
     "TrafficRatio": "Αναλογία κυκλοφορίας",
     "TrafficStatus": "Κατάσταση δικτύου"
+  },
+  "comp:BAIRouteSchedulingHistoryNodes": {
+    "Attempts": "Προσπάθειες",
+    "Category": "Κατηγορία",
+    "CreatedAt": "Δημιουργήθηκε στις",
+    "ErrorCode": "Κωδικός σφάλματος",
+    "From": "Από",
+    "Message": "Μήνυμα",
+    "Phase": "Φάση",
+    "Result": "Αποτέλεσμα",
+    "StatusTransition": "Αλλαγή κατάστασης",
+    "To": "Έως",
+    "UpdatedAt": "Ενημερώθηκε στις"
   },
   "comp:BAIRuntimeVariantSelect": {
     "SelectRuntimeVariant": "Επιλογή παραλλαγής χρόνου εκτέλεσης"
   },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "Προσπάθειες",
+    "Category": "Κατηγορία",
     "CreatedAt": "Δημιουργήθηκε στις",
+    "ErrorCode": "Κωδικός σφάλματος",
     "From": "Από",
     "Message": "Μήνυμα",
     "Phase": "Φάση",
@@ -315,6 +344,14 @@
   },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Επιλέξτε κεντρικό αποθηκευτικό χώρο"
+  },
+  "comp:BAISubStepNodes": {
+    "EndedAt": "Έληξε στις",
+    "ErrorCode": "Κωδικός σφάλματος",
+    "Message": "Μήνυμα",
+    "Result": "Αποτέλεσμα",
+    "StartedAt": "Ξεκίνησε στις",
+    "Step": "Βήμα"
   },
   "comp:BAITable": {
     "Export": "Εξαγωγή",
@@ -385,14 +422,6 @@
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "Δεν υπάρχουν διαθέσιμα δεδομένα πόρων"
-  },
-  "comp:SessionHistorySubStepNodes": {
-    "EndedAt": "Έληξε στις",
-    "ErrorCode": "Κωδικός σφάλματος",
-    "Message": "Μήνυμα",
-    "Result": "Αποτέλεσμα",
-    "StartedAt": "Ξεκίνησε στις",
-    "Step": "Βήμα"
   },
   "comp:SessionV2Nodes": {
     "AIAccelerator": "Επιταχυντής AI",

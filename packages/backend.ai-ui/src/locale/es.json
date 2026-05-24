@@ -105,6 +105,19 @@
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Creado por"
   },
+  "comp:BAIDeploymentSchedulingHistoryNodes": {
+    "Attempts": "Intentos",
+    "Category": "Categoría",
+    "CreatedAt": "Creado el",
+    "ErrorCode": "Código de error",
+    "From": "De",
+    "Message": "Mensaje",
+    "Phase": "Fase",
+    "Result": "Resultado",
+    "StatusTransition": "Transición de estado",
+    "To": "Para",
+    "UpdatedAt": "Actualizado el"
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Seleccionar despliegue"
   },
@@ -284,17 +297,33 @@
     "CreatedAt": "Fecha de creación",
     "HealthStatus": "Estado de salud",
     "RouteId": "ID de ruta",
+    "SchedulingHistory": "Historial de programación",
     "SessionId": "ID de sesión",
     "Status": "Estado",
     "TrafficRatio": "Proporción de tráfico",
     "TrafficStatus": "Estado del tráfico"
+  },
+  "comp:BAIRouteSchedulingHistoryNodes": {
+    "Attempts": "Intentos",
+    "Category": "Categoría",
+    "CreatedAt": "Creado el",
+    "ErrorCode": "Código de error",
+    "From": "De",
+    "Message": "Mensaje",
+    "Phase": "Fase",
+    "Result": "Resultado",
+    "StatusTransition": "Transición de estado",
+    "To": "Para",
+    "UpdatedAt": "Actualizado el"
   },
   "comp:BAIRuntimeVariantSelect": {
     "SelectRuntimeVariant": "Seleccionar variante de tiempo de ejecución"
   },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "Intentos",
+    "Category": "Categoría",
     "CreatedAt": "Creado el",
+    "ErrorCode": "Código de error",
     "From": "De",
     "Message": "Mensaje",
     "Phase": "Fase",
@@ -315,6 +344,14 @@
   },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Seleccionar host de almacenamiento"
+  },
+  "comp:BAISubStepNodes": {
+    "EndedAt": "Finalizado en",
+    "ErrorCode": "Código de error",
+    "Message": "Mensaje",
+    "Result": "Resultado",
+    "StartedAt": "Fecha de inicio",
+    "Step": "Paso"
   },
   "comp:BAITable": {
     "Export": "Exportar",
@@ -385,14 +422,6 @@
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "No hay datos de recursos disponibles"
-  },
-  "comp:SessionHistorySubStepNodes": {
-    "EndedAt": "Finalizado en",
-    "ErrorCode": "Código de error",
-    "Message": "Mensaje",
-    "Result": "Resultado",
-    "StartedAt": "Fecha de inicio",
-    "Step": "Paso"
   },
   "comp:SessionV2Nodes": {
     "AIAccelerator": "Acelerador de IA",

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<5238ebecce3df033c130da0e8d57e9dc>>
+ * @generated SignedSource<<8cf1e784b5e08d460a2ad081f8f9682d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,18 +11,18 @@
 import { ReaderFragment } from 'relay-runtime';
 export type SchedulingResult = "EXPIRED" | "FAILURE" | "GIVE_UP" | "NEED_RETRY" | "SKIPPED" | "STALE" | "SUCCESS" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
-export type BAISessionHistorySubStepNodesFragment$data = ReadonlyArray<{
+export type BAISubStepNodesFragment$data = ReadonlyArray<{
   readonly endedAt: string | null | undefined;
   readonly errorCode: string | null | undefined;
   readonly message: string | null | undefined;
   readonly result: SchedulingResult;
   readonly startedAt: string | null | undefined;
   readonly step: string;
-  readonly " $fragmentType": "BAISessionHistorySubStepNodesFragment";
+  readonly " $fragmentType": "BAISubStepNodesFragment";
 }>;
-export type BAISessionHistorySubStepNodesFragment$key = ReadonlyArray<{
-  readonly " $data"?: BAISessionHistorySubStepNodesFragment$data;
-  readonly " $fragmentSpreads": FragmentRefs<"BAISessionHistorySubStepNodesFragment">;
+export type BAISubStepNodesFragment$key = ReadonlyArray<{
+  readonly " $data"?: BAISubStepNodesFragment$data;
+  readonly " $fragmentSpreads": FragmentRefs<"BAISubStepNodesFragment">;
 }>;
 
 const node: ReaderFragment = {
@@ -31,7 +31,7 @@ const node: ReaderFragment = {
   "metadata": {
     "plural": true
   },
-  "name": "BAISessionHistorySubStepNodesFragment",
+  "name": "BAISubStepNodesFragment",
   "selections": [
     {
       "alias": null,
@@ -80,6 +80,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "60aa6030b046b74d04561f51bcacd545";
+(node as any).hash = "b293ef89b3c67ebb0a3733e1c22f6df9";
 
 export default node;

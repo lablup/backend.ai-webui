@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<723b1f0a84f6919a10784d3ce95e2a6c>>
+ * @generated SignedSource<<b16df7a175ad48283f610c5ff36fd64a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,23 +11,24 @@
 import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type OrderDirection = "ASC" | "DESC" | "%future added value";
+export type RouteHistoryOrderField = "CREATED_AT" | "UPDATED_AT" | "%future added value";
 export type SchedulingResult = "EXPIRED" | "FAILURE" | "GIVE_UP" | "NEED_RETRY" | "SKIPPED" | "STALE" | "SUCCESS" | "%future added value";
-export type SessionSchedulingHistoryOrderField = "CREATED_AT" | "UPDATED_AT" | "%future added value";
-export type SessionScope = {
-  sessionId: string;
+export type RouteScope = {
+  routeId: string;
 };
-export type SessionSchedulingHistoryFilter = {
-  AND?: ReadonlyArray<SessionSchedulingHistoryFilter> | null | undefined;
-  NOT?: ReadonlyArray<SessionSchedulingHistoryFilter> | null | undefined;
-  OR?: ReadonlyArray<SessionSchedulingHistoryFilter> | null | undefined;
+export type RouteHistoryFilter = {
+  AND?: ReadonlyArray<RouteHistoryFilter> | null | undefined;
+  NOT?: ReadonlyArray<RouteHistoryFilter> | null | undefined;
+  OR?: ReadonlyArray<RouteHistoryFilter> | null | undefined;
   createdAt?: DateTimeFilter | null | undefined;
+  deploymentId?: UUIDFilter | null | undefined;
   errorCode?: StringFilter | null | undefined;
   fromStatus?: ReadonlyArray<string> | null | undefined;
   id?: UUIDFilter | null | undefined;
   message?: StringFilter | null | undefined;
   phase?: StringFilter | null | undefined;
   result?: SchedulingResultFilter | null | undefined;
-  sessionId?: UUIDFilter | null | undefined;
+  routeId?: UUIDFilter | null | undefined;
   toStatus?: ReadonlyArray<string> | null | undefined;
   updatedAt?: DateTimeFilter | null | undefined;
 };
@@ -71,27 +72,27 @@ export type DateTimeFilter = {
   equals?: string | null | undefined;
   notEquals?: string | null | undefined;
 };
-export type SessionSchedulingHistoryOrderBy = {
+export type RouteHistoryOrderBy = {
   direction?: OrderDirection;
-  field: SessionSchedulingHistoryOrderField;
+  field: RouteHistoryOrderField;
 };
-export type SessionSchedulingHistoryModalQuery$variables = {
-  filter?: SessionSchedulingHistoryFilter | null | undefined;
-  orderBy?: ReadonlyArray<SessionSchedulingHistoryOrderBy> | null | undefined;
-  scope: SessionScope;
+export type RouteSchedulingHistoryModalQuery$variables = {
+  filter?: RouteHistoryFilter | null | undefined;
+  orderBy?: ReadonlyArray<RouteHistoryOrderBy> | null | undefined;
+  scope: RouteScope;
 };
-export type SessionSchedulingHistoryModalQuery$data = {
-  readonly sessionScopedSchedulingHistories: {
+export type RouteSchedulingHistoryModalQuery$data = {
+  readonly routeScopedSchedulingHistories: {
     readonly edges: ReadonlyArray<{
       readonly node: {
-        readonly " $fragmentSpreads": FragmentRefs<"BAISchedulingHistoryNodesFragment">;
+        readonly " $fragmentSpreads": FragmentRefs<"BAIRouteSchedulingHistoryNodesFragment">;
       };
     }>;
   } | null | undefined;
 };
-export type SessionSchedulingHistoryModalQuery = {
-  response: SessionSchedulingHistoryModalQuery$data;
-  variables: SessionSchedulingHistoryModalQuery$variables;
+export type RouteSchedulingHistoryModalQuery = {
+  response: RouteSchedulingHistoryModalQuery$data;
+  variables: RouteSchedulingHistoryModalQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -131,14 +132,21 @@ v4 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "message",
+  "name": "result",
   "storageKey": null
 },
 v5 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "result",
+  "name": "errorCode",
+  "storageKey": null
+},
+v6 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "message",
   "storageKey": null
 };
 return {
@@ -150,20 +158,20 @@ return {
     ],
     "kind": "Fragment",
     "metadata": null,
-    "name": "SessionSchedulingHistoryModalQuery",
+    "name": "RouteSchedulingHistoryModalQuery",
     "selections": [
       {
         "alias": null,
         "args": (v3/*: any*/),
-        "concreteType": "SessionSchedulingHistoryConnection",
+        "concreteType": "RouteHistoryConnection",
         "kind": "LinkedField",
-        "name": "sessionScopedSchedulingHistories",
+        "name": "routeScopedSchedulingHistories",
         "plural": false,
         "selections": [
           {
             "alias": null,
             "args": null,
-            "concreteType": "SessionSchedulingHistoryEdge",
+            "concreteType": "RouteHistoryEdge",
             "kind": "LinkedField",
             "name": "edges",
             "plural": true,
@@ -171,7 +179,7 @@ return {
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "SessionSchedulingHistory",
+                "concreteType": "RouteHistory",
                 "kind": "LinkedField",
                 "name": "node",
                 "plural": false,
@@ -179,7 +187,7 @@ return {
                   {
                     "args": null,
                     "kind": "FragmentSpread",
-                    "name": "BAISchedulingHistoryNodesFragment"
+                    "name": "BAIRouteSchedulingHistoryNodesFragment"
                   }
                 ],
                 "storageKey": null
@@ -202,20 +210,20 @@ return {
       (v1/*: any*/)
     ],
     "kind": "Operation",
-    "name": "SessionSchedulingHistoryModalQuery",
+    "name": "RouteSchedulingHistoryModalQuery",
     "selections": [
       {
         "alias": null,
         "args": (v3/*: any*/),
-        "concreteType": "SessionSchedulingHistoryConnection",
+        "concreteType": "RouteHistoryConnection",
         "kind": "LinkedField",
-        "name": "sessionScopedSchedulingHistories",
+        "name": "routeScopedSchedulingHistories",
         "plural": false,
         "selections": [
           {
             "alias": null,
             "args": null,
-            "concreteType": "SessionSchedulingHistoryEdge",
+            "concreteType": "RouteHistoryEdge",
             "kind": "LinkedField",
             "name": "edges",
             "plural": true,
@@ -223,7 +231,7 @@ return {
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "SessionSchedulingHistory",
+                "concreteType": "RouteHistory",
                 "kind": "LinkedField",
                 "name": "node",
                 "plural": false,
@@ -239,7 +247,80 @@ return {
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
-                    "name": "sessionId",
+                    "name": "routeId",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "deploymentId",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "category",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "phase",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "fromStatus",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "toStatus",
+                    "storageKey": null
+                  },
+                  (v4/*: any*/),
+                  (v5/*: any*/),
+                  (v6/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "SubStepResultGQL",
+                    "kind": "LinkedField",
+                    "name": "subSteps",
+                    "plural": true,
+                    "selections": [
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "step",
+                        "storageKey": null
+                      },
+                      (v4/*: any*/),
+                      (v5/*: any*/),
+                      (v6/*: any*/),
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "startedAt",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "endedAt",
+                        "storageKey": null
+                      }
+                    ],
                     "storageKey": null
                   },
                   {
@@ -262,70 +343,6 @@ return {
                     "kind": "ScalarField",
                     "name": "updatedAt",
                     "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "fromStatus",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "toStatus",
-                    "storageKey": null
-                  },
-                  (v4/*: any*/),
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "phase",
-                    "storageKey": null
-                  },
-                  (v5/*: any*/),
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "SubStepResultGQL",
-                    "kind": "LinkedField",
-                    "name": "subSteps",
-                    "plural": true,
-                    "selections": [
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "step",
-                        "storageKey": null
-                      },
-                      (v5/*: any*/),
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "errorCode",
-                        "storageKey": null
-                      },
-                      (v4/*: any*/),
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "startedAt",
-                        "storageKey": null
-                      },
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "endedAt",
-                        "storageKey": null
-                      }
-                    ],
-                    "storageKey": null
                   }
                 ],
                 "storageKey": null
@@ -339,16 +356,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "5b9e35a12fc771527f808842f63b593b",
+    "cacheID": "29c038756b4243a1e47b62a67235b457",
     "id": null,
     "metadata": {},
-    "name": "SessionSchedulingHistoryModalQuery",
+    "name": "RouteSchedulingHistoryModalQuery",
     "operationKind": "query",
-    "text": "query SessionSchedulingHistoryModalQuery(\n  $scope: SessionScope!\n  $filter: SessionSchedulingHistoryFilter\n  $orderBy: [SessionSchedulingHistoryOrderBy!]\n) {\n  sessionScopedSchedulingHistories(scope: $scope, filter: $filter, orderBy: $orderBy) {\n    edges {\n      node {\n        ...BAISchedulingHistoryNodesFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAISchedulingHistoryNodesFragment on SessionSchedulingHistory {\n  id\n  sessionId\n  attempts\n  createdAt\n  updatedAt\n  fromStatus\n  toStatus\n  message\n  phase\n  result\n  subSteps {\n    ...BAISubStepNodesFragment\n  }\n}\n\nfragment BAISubStepNodesFragment on SubStepResultGQL {\n  step\n  result\n  errorCode\n  message\n  startedAt\n  endedAt\n}\n"
+    "text": "query RouteSchedulingHistoryModalQuery(\n  $scope: RouteScope!\n  $filter: RouteHistoryFilter\n  $orderBy: [RouteHistoryOrderBy!]\n) {\n  routeScopedSchedulingHistories(scope: $scope, filter: $filter, orderBy: $orderBy) {\n    edges {\n      node {\n        ...BAIRouteSchedulingHistoryNodesFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAIRouteSchedulingHistoryNodesFragment on RouteHistory {\n  id\n  routeId\n  deploymentId\n  category\n  phase\n  fromStatus\n  toStatus\n  result\n  errorCode\n  message\n  subSteps {\n    ...BAISubStepNodesFragment\n  }\n  attempts\n  createdAt\n  updatedAt\n}\n\nfragment BAISubStepNodesFragment on SubStepResultGQL {\n  step\n  result\n  errorCode\n  message\n  startedAt\n  endedAt\n}\n"
   }
 };
 })();
 
-(node as any).hash = "abbb837538ecf66fee1c3fb466b6c147";
+(node as any).hash = "7be39a383677ce5c2d3413fe1d719830";
 
 export default node;

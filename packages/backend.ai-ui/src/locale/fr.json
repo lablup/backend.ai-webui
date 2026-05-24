@@ -105,6 +105,19 @@
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Créé par"
   },
+  "comp:BAIDeploymentSchedulingHistoryNodes": {
+    "Attempts": "Tentatives",
+    "Category": "Catégorie",
+    "CreatedAt": "Créé le",
+    "ErrorCode": "Code d'erreur",
+    "From": "De",
+    "Message": "Message",
+    "Phase": "Phase",
+    "Result": "Résultat",
+    "StatusTransition": "Transition d'état",
+    "To": "À",
+    "UpdatedAt": "Mis à jour le"
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Sélectionner un déploiement"
   },
@@ -284,17 +297,33 @@
     "CreatedAt": "Créé le",
     "HealthStatus": "État de santé",
     "RouteId": "ID de route",
+    "SchedulingHistory": "Historique de planification",
     "SessionId": "ID de session",
     "Status": "Statut",
     "TrafficRatio": "Ratio de trafic",
     "TrafficStatus": "État du trafic"
+  },
+  "comp:BAIRouteSchedulingHistoryNodes": {
+    "Attempts": "Tentatives",
+    "Category": "Catégorie",
+    "CreatedAt": "Créé le",
+    "ErrorCode": "Code d'erreur",
+    "From": "De",
+    "Message": "Message",
+    "Phase": "Phase",
+    "Result": "Résultat",
+    "StatusTransition": "Transition d'état",
+    "To": "À",
+    "UpdatedAt": "Mis à jour le"
   },
   "comp:BAIRuntimeVariantSelect": {
     "SelectRuntimeVariant": "Sélectionner la variante d'exécution"
   },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "Tentatives",
+    "Category": "Catégorie",
     "CreatedAt": "Créé le",
+    "ErrorCode": "Code d'erreur",
     "From": "De",
     "Message": "Message",
     "Phase": "Phase",
@@ -315,6 +344,14 @@
   },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Sélectionner un hôte de stockage"
+  },
+  "comp:BAISubStepNodes": {
+    "EndedAt": "Terminé le",
+    "ErrorCode": "Code d'erreur",
+    "Message": "Message",
+    "Result": "Résultat",
+    "StartedAt": "Démarré le",
+    "Step": "Étape"
   },
   "comp:BAITable": {
     "Export": "Exporter",
@@ -385,14 +422,6 @@
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "Aucune données de ressources disponibles"
-  },
-  "comp:SessionHistorySubStepNodes": {
-    "EndedAt": "Terminé le",
-    "ErrorCode": "Code d'erreur",
-    "Message": "Message",
-    "Result": "Résultat",
-    "StartedAt": "Démarré le",
-    "Step": "Étape"
   },
   "comp:SessionV2Nodes": {
     "AIAccelerator": "Accélérateur IA",

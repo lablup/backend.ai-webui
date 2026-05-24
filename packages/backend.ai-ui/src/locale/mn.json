@@ -105,6 +105,19 @@
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Үүсгэсэн"
   },
+  "comp:BAIDeploymentSchedulingHistoryNodes": {
+    "Attempts": "Оролдлого",
+    "Category": "Ангилал",
+    "CreatedAt": "Үүссэн огноо",
+    "ErrorCode": "Алдааны код",
+    "From": "Эхлэх",
+    "Message": "Зурвас",
+    "Phase": "Шат",
+    "Result": "Үр дүн",
+    "StatusTransition": "Статусын шилжилт",
+    "To": "Хүртэл",
+    "UpdatedAt": "Шинэчлэгдсэн огноо"
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Байршуулалт сонгох"
   },
@@ -284,17 +297,33 @@
     "CreatedAt": "Үүсгэсэн огноо",
     "HealthStatus": "Эрүүл мэндийн төлөв",
     "RouteId": "Маршрутын ID",
+    "SchedulingHistory": "Хуваарилалтын түүх",
     "SessionId": "Сессийн ID",
     "Status": "Төлөв",
     "TrafficRatio": "Трафикийн харьцаа",
     "TrafficStatus": "Трафикийн төлөв"
+  },
+  "comp:BAIRouteSchedulingHistoryNodes": {
+    "Attempts": "Оролдлого",
+    "Category": "Ангилал",
+    "CreatedAt": "Үүссэн огноо",
+    "ErrorCode": "Алдааны код",
+    "From": "Эхлэх",
+    "Message": "Зурвас",
+    "Phase": "Шат",
+    "Result": "Үр дүн",
+    "StatusTransition": "Статусын шилжилт",
+    "To": "Хүртэл",
+    "UpdatedAt": "Шинэчлэгдсэн огноо"
   },
   "comp:BAIRuntimeVariantSelect": {
     "SelectRuntimeVariant": "Ажиллах хувилбар сонгох"
   },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "Оролдлого",
+    "Category": "Ангилал",
     "CreatedAt": "Үүссэн огноо",
+    "ErrorCode": "Алдааны код",
     "From": "Эхлэх",
     "Message": "Зурвас",
     "Phase": "Шат",
@@ -315,6 +344,14 @@
   },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Хадгалах хост сонгох"
+  },
+  "comp:BAISubStepNodes": {
+    "EndedAt": "Дууссан цаг",
+    "ErrorCode": "Алдааны код",
+    "Message": "Зурвас",
+    "Result": "Үр дүн",
+    "StartedAt": "Эхэлсэн цаг",
+    "Step": "Алхам"
   },
   "comp:BAITable": {
     "Export": "Экспорт",
@@ -385,14 +422,6 @@
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "Нөөцийн мэдээлэл байхгүй байна"
-  },
-  "comp:SessionHistorySubStepNodes": {
-    "EndedAt": "Дууссан цаг",
-    "ErrorCode": "Алдааны код",
-    "Message": "Зурвас",
-    "Result": "Үр дүн",
-    "StartedAt": "Эхэлсэн цаг",
-    "Step": "Алхам"
   },
   "comp:SessionV2Nodes": {
     "AIAccelerator": "AI хурдасгуур",

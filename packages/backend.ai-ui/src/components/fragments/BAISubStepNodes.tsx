@@ -1,7 +1,7 @@
 import {
-  BAISessionHistorySubStepNodesFragment$data,
-  BAISessionHistorySubStepNodesFragment$key,
-} from '../../__generated__/BAISessionHistorySubStepNodesFragment.graphql';
+  BAISubStepNodesFragment$data,
+  BAISubStepNodesFragment$key,
+} from '../../__generated__/BAISubStepNodesFragment.graphql';
 import {
   filterOutEmpty,
   filterOutNullAndUndefined,
@@ -26,9 +26,7 @@ import { graphql, useFragment } from 'react-relay';
 
 dayjs.extend(duration);
 
-export type SubStepInList = NonNullable<
-  BAISessionHistorySubStepNodesFragment$data[number]
->;
+export type SubStepInList = NonNullable<BAISubStepNodesFragment$data[number]>;
 
 const availableSubStepSorterKeys = [] as const;
 
@@ -44,30 +42,30 @@ const isEnableSorter = (key: string) => {
   return _.includes(availableSubStepSorterKeys, key);
 };
 
-export interface BAISessionHistorySubStepNodesProps extends Omit<
+export interface BAISubStepNodesProps extends Omit<
   BAITableProps<SubStepInList>,
   'dataSource' | 'columns' | 'onChangeOrder'
 > {
-  subStepsFrgmt: BAISessionHistorySubStepNodesFragment$key;
+  subStepsFrgmt: BAISubStepNodesFragment$key;
   customizeColumns?: (
     baseColumns: BAIColumnsType<SubStepInList>,
   ) => BAIColumnsType<SubStepInList>;
   disableSorter?: boolean;
 }
 
-const BAISessionHistorySubStepNodes = ({
+const BAISubStepNodes = ({
   subStepsFrgmt,
   customizeColumns,
   disableSorter,
   ...tableProps
-}: BAISessionHistorySubStepNodesProps) => {
+}: BAISubStepNodesProps) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
 
-  const subSteps = useFragment<BAISessionHistorySubStepNodesFragment$key>(
+  const subSteps = useFragment<BAISubStepNodesFragment$key>(
     graphql`
-      fragment BAISessionHistorySubStepNodesFragment on SubStepResultGQL
+      fragment BAISubStepNodesFragment on SubStepResultGQL
       @relay(plural: true) {
         step
         result
@@ -84,7 +82,7 @@ const BAISessionHistorySubStepNodes = ({
     filterOutEmpty<BAIColumnType<SubStepInList>>([
       {
         key: 'step',
-        title: t('comp:SessionHistorySubStepNodes.Step'),
+        title: t('comp:BAISubStepNodes.Step'),
         dataIndex: 'step',
         fixed: 'left',
         sorter: isEnableSorter('step'),
@@ -103,8 +101,9 @@ const BAISessionHistorySubStepNodes = ({
       },
       {
         key: 'result',
-        title: t('comp:SessionHistorySubStepNodes.Result'),
+        title: t('comp:BAISubStepNodes.Result'),
         dataIndex: 'result',
+        onCell: () => ({ style: { minWidth: 100 } }),
         render: (_value, record) => {
           const result =
             record.result && record.result !== '%future added value'
@@ -124,7 +123,7 @@ const BAISessionHistorySubStepNodes = ({
       },
       {
         key: 'message',
-        title: t('comp:SessionHistorySubStepNodes.Message'),
+        title: t('comp:BAISubStepNodes.Message'),
         dataIndex: 'message',
         onCell: () => ({ style: { maxWidth: 500 } }),
         render: (__, record) =>
@@ -139,7 +138,7 @@ const BAISessionHistorySubStepNodes = ({
       },
       {
         key: 'errorCode',
-        title: t('comp:SessionHistorySubStepNodes.ErrorCode'),
+        title: t('comp:BAISubStepNodes.ErrorCode'),
         dataIndex: 'errorCode',
         render: (__, record) =>
           record.errorCode ? (
@@ -151,7 +150,7 @@ const BAISessionHistorySubStepNodes = ({
       },
       {
         key: 'startedAt',
-        title: t('comp:SessionHistorySubStepNodes.StartedAt'),
+        title: t('comp:BAISubStepNodes.StartedAt'),
         dataIndex: 'startedAt',
         render: (__, record) =>
           record.startedAt ? dayjs(record.startedAt).format('ll LTS') : '-',
@@ -159,7 +158,7 @@ const BAISessionHistorySubStepNodes = ({
       },
       {
         key: 'endedAt',
-        title: t('comp:SessionHistorySubStepNodes.EndedAt'),
+        title: t('comp:BAISubStepNodes.EndedAt'),
         dataIndex: 'endedAt',
         render: (__, record) =>
           record.endedAt ? dayjs(record.endedAt).format('ll LTS') : '-',
@@ -187,4 +186,4 @@ const BAISessionHistorySubStepNodes = ({
   );
 };
 
-export default BAISessionHistorySubStepNodes;
+export default BAISubStepNodes;

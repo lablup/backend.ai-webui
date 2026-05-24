@@ -105,6 +105,19 @@
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "สร้างโดย"
   },
+  "comp:BAIDeploymentSchedulingHistoryNodes": {
+    "Attempts": "จำนวนครั้งที่ลอง",
+    "Category": "หมวดหมู่",
+    "CreatedAt": "สร้างเมื่อ",
+    "ErrorCode": "รหัสข้อผิดพลาด",
+    "From": "จาก",
+    "Message": "ข้อความ",
+    "Phase": "ระยะ",
+    "Result": "ผลลัพธ์",
+    "StatusTransition": "การเปลี่ยนสถานะ",
+    "To": "ถึง",
+    "UpdatedAt": "อัปเดตเมื่อ"
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "เลือกการปรับใช้"
   },
@@ -284,17 +297,33 @@
     "CreatedAt": "สร้างเมื่อ",
     "HealthStatus": "สถานะระบบ",
     "RouteId": "รหัสเส้นทาง",
+    "SchedulingHistory": "ประวัติการจัดตาราง",
     "SessionId": "รหัสเซสชัน",
     "Status": "สถานะ",
     "TrafficRatio": "สัดส่วนทราฟฟิก",
     "TrafficStatus": "สถานะการรับส่งข้อมูล"
+  },
+  "comp:BAIRouteSchedulingHistoryNodes": {
+    "Attempts": "จำนวนครั้งที่ลอง",
+    "Category": "หมวดหมู่",
+    "CreatedAt": "สร้างเมื่อ",
+    "ErrorCode": "รหัสข้อผิดพลาด",
+    "From": "จาก",
+    "Message": "ข้อความ",
+    "Phase": "ระยะ",
+    "Result": "ผลลัพธ์",
+    "StatusTransition": "การเปลี่ยนสถานะ",
+    "To": "ถึง",
+    "UpdatedAt": "อัปเดตเมื่อ"
   },
   "comp:BAIRuntimeVariantSelect": {
     "SelectRuntimeVariant": "เลือกตัวแปรรันไทม์"
   },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "จำนวนครั้งที่ลอง",
+    "Category": "หมวดหมู่",
     "CreatedAt": "สร้างเมื่อ",
+    "ErrorCode": "รหัสข้อผิดพลาด",
     "From": "จาก",
     "Message": "ข้อความ",
     "Phase": "ระยะ",
@@ -315,6 +344,14 @@
   },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "เลือกโฮสต์จัดเก็บข้อมูล"
+  },
+  "comp:BAISubStepNodes": {
+    "EndedAt": "สิ้นสุดเมื่อ",
+    "ErrorCode": "รหัสข้อผิดพลาด",
+    "Message": "ข้อความ",
+    "Result": "ผลลัพธ์",
+    "StartedAt": "เริ่มเมื่อ",
+    "Step": "ขั้นตอน"
   },
   "comp:BAITable": {
     "Export": "ส่งออก",
@@ -385,14 +422,6 @@
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "ไม่มีข้อมูลทรัพยากร"
-  },
-  "comp:SessionHistorySubStepNodes": {
-    "EndedAt": "สิ้นสุดเมื่อ",
-    "ErrorCode": "รหัสข้อผิดพลาด",
-    "Message": "ข้อความ",
-    "Result": "ผลลัพธ์",
-    "StartedAt": "เริ่มเมื่อ",
-    "Step": "ขั้นตอน"
   },
   "comp:SessionV2Nodes": {
     "AIAccelerator": "ตัวเร่ง AI",

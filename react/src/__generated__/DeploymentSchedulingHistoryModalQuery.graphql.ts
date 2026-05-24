@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<723b1f0a84f6919a10784d3ce95e2a6c>>
+ * @generated SignedSource<<9e0263ab0ebb2358b611f0d8cc490846>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,24 +10,24 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
+export type DeploymentHistoryOrderField = "CREATED_AT" | "UPDATED_AT" | "%future added value";
 export type OrderDirection = "ASC" | "DESC" | "%future added value";
 export type SchedulingResult = "EXPIRED" | "FAILURE" | "GIVE_UP" | "NEED_RETRY" | "SKIPPED" | "STALE" | "SUCCESS" | "%future added value";
-export type SessionSchedulingHistoryOrderField = "CREATED_AT" | "UPDATED_AT" | "%future added value";
-export type SessionScope = {
-  sessionId: string;
+export type DeploymentScope = {
+  deploymentId: string;
 };
-export type SessionSchedulingHistoryFilter = {
-  AND?: ReadonlyArray<SessionSchedulingHistoryFilter> | null | undefined;
-  NOT?: ReadonlyArray<SessionSchedulingHistoryFilter> | null | undefined;
-  OR?: ReadonlyArray<SessionSchedulingHistoryFilter> | null | undefined;
+export type DeploymentHistoryFilter = {
+  AND?: ReadonlyArray<DeploymentHistoryFilter> | null | undefined;
+  NOT?: ReadonlyArray<DeploymentHistoryFilter> | null | undefined;
+  OR?: ReadonlyArray<DeploymentHistoryFilter> | null | undefined;
   createdAt?: DateTimeFilter | null | undefined;
+  deploymentId?: UUIDFilter | null | undefined;
   errorCode?: StringFilter | null | undefined;
   fromStatus?: ReadonlyArray<string> | null | undefined;
   id?: UUIDFilter | null | undefined;
   message?: StringFilter | null | undefined;
   phase?: StringFilter | null | undefined;
   result?: SchedulingResultFilter | null | undefined;
-  sessionId?: UUIDFilter | null | undefined;
   toStatus?: ReadonlyArray<string> | null | undefined;
   updatedAt?: DateTimeFilter | null | undefined;
 };
@@ -71,27 +71,27 @@ export type DateTimeFilter = {
   equals?: string | null | undefined;
   notEquals?: string | null | undefined;
 };
-export type SessionSchedulingHistoryOrderBy = {
+export type DeploymentHistoryOrderBy = {
   direction?: OrderDirection;
-  field: SessionSchedulingHistoryOrderField;
+  field: DeploymentHistoryOrderField;
 };
-export type SessionSchedulingHistoryModalQuery$variables = {
-  filter?: SessionSchedulingHistoryFilter | null | undefined;
-  orderBy?: ReadonlyArray<SessionSchedulingHistoryOrderBy> | null | undefined;
-  scope: SessionScope;
+export type DeploymentSchedulingHistoryModalQuery$variables = {
+  filter?: DeploymentHistoryFilter | null | undefined;
+  orderBy?: ReadonlyArray<DeploymentHistoryOrderBy> | null | undefined;
+  scope: DeploymentScope;
 };
-export type SessionSchedulingHistoryModalQuery$data = {
-  readonly sessionScopedSchedulingHistories: {
+export type DeploymentSchedulingHistoryModalQuery$data = {
+  readonly deploymentScopedSchedulingHistories: {
     readonly edges: ReadonlyArray<{
       readonly node: {
-        readonly " $fragmentSpreads": FragmentRefs<"BAISchedulingHistoryNodesFragment">;
+        readonly " $fragmentSpreads": FragmentRefs<"BAIDeploymentSchedulingHistoryNodesFragment">;
       };
     }>;
   } | null | undefined;
 };
-export type SessionSchedulingHistoryModalQuery = {
-  response: SessionSchedulingHistoryModalQuery$data;
-  variables: SessionSchedulingHistoryModalQuery$variables;
+export type DeploymentSchedulingHistoryModalQuery = {
+  response: DeploymentSchedulingHistoryModalQuery$data;
+  variables: DeploymentSchedulingHistoryModalQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -131,14 +131,21 @@ v4 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "message",
+  "name": "result",
   "storageKey": null
 },
 v5 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "result",
+  "name": "errorCode",
+  "storageKey": null
+},
+v6 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "message",
   "storageKey": null
 };
 return {
@@ -150,20 +157,20 @@ return {
     ],
     "kind": "Fragment",
     "metadata": null,
-    "name": "SessionSchedulingHistoryModalQuery",
+    "name": "DeploymentSchedulingHistoryModalQuery",
     "selections": [
       {
         "alias": null,
         "args": (v3/*: any*/),
-        "concreteType": "SessionSchedulingHistoryConnection",
+        "concreteType": "DeploymentHistoryConnection",
         "kind": "LinkedField",
-        "name": "sessionScopedSchedulingHistories",
+        "name": "deploymentScopedSchedulingHistories",
         "plural": false,
         "selections": [
           {
             "alias": null,
             "args": null,
-            "concreteType": "SessionSchedulingHistoryEdge",
+            "concreteType": "DeploymentHistoryEdge",
             "kind": "LinkedField",
             "name": "edges",
             "plural": true,
@@ -171,7 +178,7 @@ return {
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "SessionSchedulingHistory",
+                "concreteType": "DeploymentHistory",
                 "kind": "LinkedField",
                 "name": "node",
                 "plural": false,
@@ -179,7 +186,7 @@ return {
                   {
                     "args": null,
                     "kind": "FragmentSpread",
-                    "name": "BAISchedulingHistoryNodesFragment"
+                    "name": "BAIDeploymentSchedulingHistoryNodesFragment"
                   }
                 ],
                 "storageKey": null
@@ -202,20 +209,20 @@ return {
       (v1/*: any*/)
     ],
     "kind": "Operation",
-    "name": "SessionSchedulingHistoryModalQuery",
+    "name": "DeploymentSchedulingHistoryModalQuery",
     "selections": [
       {
         "alias": null,
         "args": (v3/*: any*/),
-        "concreteType": "SessionSchedulingHistoryConnection",
+        "concreteType": "DeploymentHistoryConnection",
         "kind": "LinkedField",
-        "name": "sessionScopedSchedulingHistories",
+        "name": "deploymentScopedSchedulingHistories",
         "plural": false,
         "selections": [
           {
             "alias": null,
             "args": null,
-            "concreteType": "SessionSchedulingHistoryEdge",
+            "concreteType": "DeploymentHistoryEdge",
             "kind": "LinkedField",
             "name": "edges",
             "plural": true,
@@ -223,7 +230,7 @@ return {
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "SessionSchedulingHistory",
+                "concreteType": "DeploymentHistory",
                 "kind": "LinkedField",
                 "name": "node",
                 "plural": false,
@@ -239,7 +246,66 @@ return {
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
-                    "name": "sessionId",
+                    "name": "category",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "phase",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "fromStatus",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "toStatus",
+                    "storageKey": null
+                  },
+                  (v4/*: any*/),
+                  (v5/*: any*/),
+                  (v6/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "SubStepResultGQL",
+                    "kind": "LinkedField",
+                    "name": "subSteps",
+                    "plural": true,
+                    "selections": [
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "step",
+                        "storageKey": null
+                      },
+                      (v4/*: any*/),
+                      (v5/*: any*/),
+                      (v6/*: any*/),
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "startedAt",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "endedAt",
+                        "storageKey": null
+                      }
+                    ],
                     "storageKey": null
                   },
                   {
@@ -262,70 +328,6 @@ return {
                     "kind": "ScalarField",
                     "name": "updatedAt",
                     "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "fromStatus",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "toStatus",
-                    "storageKey": null
-                  },
-                  (v4/*: any*/),
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "phase",
-                    "storageKey": null
-                  },
-                  (v5/*: any*/),
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "SubStepResultGQL",
-                    "kind": "LinkedField",
-                    "name": "subSteps",
-                    "plural": true,
-                    "selections": [
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "step",
-                        "storageKey": null
-                      },
-                      (v5/*: any*/),
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "errorCode",
-                        "storageKey": null
-                      },
-                      (v4/*: any*/),
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "startedAt",
-                        "storageKey": null
-                      },
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "endedAt",
-                        "storageKey": null
-                      }
-                    ],
-                    "storageKey": null
                   }
                 ],
                 "storageKey": null
@@ -339,16 +341,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "5b9e35a12fc771527f808842f63b593b",
+    "cacheID": "6cc521a7daf46bd6ff23d8369e069d7c",
     "id": null,
     "metadata": {},
-    "name": "SessionSchedulingHistoryModalQuery",
+    "name": "DeploymentSchedulingHistoryModalQuery",
     "operationKind": "query",
-    "text": "query SessionSchedulingHistoryModalQuery(\n  $scope: SessionScope!\n  $filter: SessionSchedulingHistoryFilter\n  $orderBy: [SessionSchedulingHistoryOrderBy!]\n) {\n  sessionScopedSchedulingHistories(scope: $scope, filter: $filter, orderBy: $orderBy) {\n    edges {\n      node {\n        ...BAISchedulingHistoryNodesFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAISchedulingHistoryNodesFragment on SessionSchedulingHistory {\n  id\n  sessionId\n  attempts\n  createdAt\n  updatedAt\n  fromStatus\n  toStatus\n  message\n  phase\n  result\n  subSteps {\n    ...BAISubStepNodesFragment\n  }\n}\n\nfragment BAISubStepNodesFragment on SubStepResultGQL {\n  step\n  result\n  errorCode\n  message\n  startedAt\n  endedAt\n}\n"
+    "text": "query DeploymentSchedulingHistoryModalQuery(\n  $scope: DeploymentScope!\n  $filter: DeploymentHistoryFilter\n  $orderBy: [DeploymentHistoryOrderBy!]\n) {\n  deploymentScopedSchedulingHistories(scope: $scope, filter: $filter, orderBy: $orderBy) {\n    edges {\n      node {\n        ...BAIDeploymentSchedulingHistoryNodesFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAIDeploymentSchedulingHistoryNodesFragment on DeploymentHistory {\n  id\n  category\n  phase\n  fromStatus\n  toStatus\n  result\n  errorCode\n  message\n  subSteps {\n    ...BAISubStepNodesFragment\n  }\n  attempts\n  createdAt\n  updatedAt\n}\n\nfragment BAISubStepNodesFragment on SubStepResultGQL {\n  step\n  result\n  errorCode\n  message\n  startedAt\n  endedAt\n}\n"
   }
 };
 })();
 
-(node as any).hash = "abbb837538ecf66fee1c3fb466b6c147";
+(node as any).hash = "4386ab0845d3e5ba13c6f60075522b52";
 
 export default node;

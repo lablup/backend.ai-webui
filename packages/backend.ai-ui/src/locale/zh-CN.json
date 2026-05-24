@@ -105,6 +105,19 @@
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "创建者"
   },
+  "comp:BAIDeploymentSchedulingHistoryNodes": {
+    "Attempts": "尝试次数",
+    "Category": "类别",
+    "CreatedAt": "创建时间",
+    "ErrorCode": "错误代码",
+    "From": "从",
+    "Message": "消息",
+    "Phase": "阶段",
+    "Result": "结果",
+    "StatusTransition": "状态转换",
+    "To": "到",
+    "UpdatedAt": "更新时间"
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "选择部署"
   },
@@ -284,17 +297,33 @@
     "CreatedAt": "创建时间",
     "HealthStatus": "健康状态",
     "RouteId": "路由 ID",
+    "SchedulingHistory": "调度历史",
     "SessionId": "会话 ID",
     "Status": "状态",
     "TrafficRatio": "流量比例",
     "TrafficStatus": "流量状态"
+  },
+  "comp:BAIRouteSchedulingHistoryNodes": {
+    "Attempts": "尝试次数",
+    "Category": "类别",
+    "CreatedAt": "创建时间",
+    "ErrorCode": "错误代码",
+    "From": "从",
+    "Message": "消息",
+    "Phase": "阶段",
+    "Result": "结果",
+    "StatusTransition": "状态转换",
+    "To": "到",
+    "UpdatedAt": "更新时间"
   },
   "comp:BAIRuntimeVariantSelect": {
     "SelectRuntimeVariant": "选择运行时变体"
   },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "尝试次数",
+    "Category": "类别",
     "CreatedAt": "创建时间",
+    "ErrorCode": "错误代码",
     "From": "从",
     "Message": "消息",
     "Phase": "阶段",
@@ -315,6 +344,14 @@
   },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "选择存储主机"
+  },
+  "comp:BAISubStepNodes": {
+    "EndedAt": "结束时间",
+    "ErrorCode": "错误代码",
+    "Message": "消息",
+    "Result": "结果",
+    "StartedAt": "开始时间",
+    "Step": "步骤"
   },
   "comp:BAITable": {
     "Export": "导出",
@@ -385,14 +422,6 @@
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "没有可用的资源数据"
-  },
-  "comp:SessionHistorySubStepNodes": {
-    "EndedAt": "结束时间",
-    "ErrorCode": "错误代码",
-    "Message": "消息",
-    "Result": "结果",
-    "StartedAt": "开始时间",
-    "Step": "步骤"
   },
   "comp:SessionV2Nodes": {
     "AIAccelerator": "AI加速器",

@@ -105,6 +105,19 @@
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Dibuat oleh"
   },
+  "comp:BAIDeploymentSchedulingHistoryNodes": {
+    "Attempts": "Percubaan",
+    "Category": "Kategori",
+    "CreatedAt": "Dicipta pada",
+    "ErrorCode": "Kod Ralat",
+    "From": "Dari",
+    "Message": "Mesej",
+    "Phase": "Fasa",
+    "Result": "Hasil",
+    "StatusTransition": "Peralihan Status",
+    "To": "Kepada",
+    "UpdatedAt": "Dikemas kini pada"
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Pilih Penggunaan"
   },
@@ -284,17 +297,33 @@
     "CreatedAt": "Dicipta pada",
     "HealthStatus": "Status Kesihatan",
     "RouteId": "ID Laluan",
+    "SchedulingHistory": "Sejarah Penjadualan",
     "SessionId": "ID Sesi",
     "Status": "Status",
     "TrafficRatio": "Nisbah Trafik",
     "TrafficStatus": "Status Trafik"
+  },
+  "comp:BAIRouteSchedulingHistoryNodes": {
+    "Attempts": "Percubaan",
+    "Category": "Kategori",
+    "CreatedAt": "Dicipta pada",
+    "ErrorCode": "Kod Ralat",
+    "From": "Dari",
+    "Message": "Mesej",
+    "Phase": "Fasa",
+    "Result": "Hasil",
+    "StatusTransition": "Peralihan Status",
+    "To": "Kepada",
+    "UpdatedAt": "Dikemas kini pada"
   },
   "comp:BAIRuntimeVariantSelect": {
     "SelectRuntimeVariant": "Pilih Varian Runtime"
   },
   "comp:BAISchedulingHistoryNodes": {
     "Attempts": "Percubaan",
+    "Category": "Kategori",
     "CreatedAt": "Dicipta pada",
+    "ErrorCode": "Kod Ralat",
     "From": "Dari",
     "Message": "Mesej",
     "Phase": "Fasa",
@@ -315,6 +344,14 @@
   },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Pilih Hos Storan"
+  },
+  "comp:BAISubStepNodes": {
+    "EndedAt": "Berakhir pada",
+    "ErrorCode": "Kod Ralat",
+    "Message": "Mesej",
+    "Result": "Hasil",
+    "StartedAt": "Mula pada",
+    "Step": "Langkah"
   },
   "comp:BAITable": {
     "Export": "Eksport",
@@ -385,14 +422,6 @@
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "Tiada data sumber tersedia"
-  },
-  "comp:SessionHistorySubStepNodes": {
-    "EndedAt": "Berakhir pada",
-    "ErrorCode": "Kod Ralat",
-    "Message": "Mesej",
-    "Result": "Hasil",
-    "StartedAt": "Mula pada",
-    "Step": "Langkah"
   },
   "comp:SessionV2Nodes": {
     "AIAccelerator": "Pemecut AI",

@@ -9,6 +9,7 @@ import FolderLink from './FolderLink';
 import SourceCodeView from './SourceCodeView';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Descriptions, Grid, Typography } from 'antd';
+import { createStyles } from 'antd-style';
 import { DescriptionsItemType } from 'antd/es/descriptions';
 import {
   BAIFlex,
@@ -29,6 +30,23 @@ const renderFallback = () => (
   <Typography.Text type="secondary">-</Typography.Text>
 );
 
+const useStyles = createStyles(({ css }) => ({
+  // antd applies the `style` prop to the Descriptions root only, so setting
+  // `table-layout: fixed` there is a no-op. Pin the actual <table> to the
+  // container width with a fixed layout so the columns stay bounded and long
+  // values (model paths, image refs, shell commands) wrap or scroll inside
+  // their cell instead of widening the table past the drawer's right edge.
+  // `!important` is required because antd's own table style otherwise keeps
+  // the layout `auto`, letting content blow the table out to its intrinsic
+  // width.
+  descriptions: css`
+    .ant-descriptions-view table {
+      table-layout: fixed !important;
+      width: 100% !important;
+    }
+  `,
+}));
+
 const DeploymentRevisionDetail: React.FC<{
   revisionFrgmt: DeploymentRevisionDetail_revision$key;
   status?: 'current' | 'deploying' | 'none';
@@ -42,6 +60,7 @@ const DeploymentRevisionDetail: React.FC<{
 }> = ({ revisionFrgmt, status = 'none', mergeRevisionInfo = false }) => {
   'use memo';
   const { t } = useTranslation();
+  const { styles } = useStyles();
   const screens = Grid.useBreakpoint();
 
   const revision = useFragment(
@@ -131,6 +150,14 @@ const DeploymentRevisionDetail: React.FC<{
   const descriptionsProps = {
     bordered: true,
     column: screens.md ? 2 : 1,
+    className: styles.descriptions,
+    styles: {
+      label: { width: screens.md ? 160 : 120, wordBreak: 'keep-all' as const },
+      content: {
+        wordBreak: 'break-word' as const,
+        overflowWrap: 'anywhere' as const,
+      },
+    },
   } as const;
 
   const baseItems: DescriptionsItemType[] = filterOutEmpty([
@@ -300,7 +327,7 @@ const DeploymentRevisionDetail: React.FC<{
       key: 'image',
       label: t('deployment.Image'),
       children: revision.imageV2?.identity?.canonicalName ? (
-        <Typography.Text copyable>
+        <Typography.Text copyable style={{ wordBreak: 'break-all' }}>
           {revision.imageV2.identity.canonicalName}
         </Typography.Text>
       ) : (
