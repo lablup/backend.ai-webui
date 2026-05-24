@@ -477,6 +477,12 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
 
   // Reassign sequential ids: the converter generates random ids per call,
   // which would change every render and remount every Tag.
+  // NOTE: these ids are positional, so closing a tag re-keys the survivors.
+  // The Tag's `onClose` therefore calls `e.preventDefault()` to stop antd's
+  // internal self-hide — otherwise the hidden instance would be reused for a
+  // surviving condition (see `renderConditionTag`). Positional (not
+  // content-based) ids are intentional: duplicate conditions are allowed, so
+  // content-based keys would collide.
   const conditions = convertGraphQLFilterToConditions(
     value,
     filterProperties,
@@ -629,7 +635,16 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
       <Tag
         key={condition.id}
         closable
-        onClose={() => removeCondition(condition.id)}
+        onClose={(e) => {
+          // antd Tag self-hides via its internal `visible` state on close
+          // unless the close event is prevented. Because tags are re-keyed
+          // positionally (`cond-${i}`), the self-hidden instance gets reused
+          // for the surviving condition after the re-render, making the wrong
+          // tag (or every tag) vanish. Prevent the default self-hide and let
+          // removal be driven purely by the conditions array.
+          e.preventDefault();
+          removeCondition(condition.id);
+        }}
         style={{ margin: 0 }}
         title={`${condition.propertyLabel} ${getOperatorLabel(condition.operator)} ${condition.value}`}
       >

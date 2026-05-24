@@ -402,7 +402,17 @@ const BAIPropertyFilter: React.FC<BAIPropertyFilterProps> = ({
             <Tag
               key={item.key}
               closable
-              onClose={() => remove(item.key)}
+              onClose={(e) => {
+                // antd Tag self-hides via its internal `visible` state on
+                // close unless the event is prevented. `item.key` is
+                // `index + value`, so after a removal the survivors are
+                // re-indexed; a remaining tag that shares the same value as
+                // the removed one inherits its old key and reuses the
+                // just-hidden instance, hiding the wrong tag. Prevent the
+                // default self-hide so removal is driven solely by the value.
+                e.preventDefault();
+                remove(item.key);
+              }}
               style={{ margin: 0 }}
             >
               {item.propertyLabel}:{' '}
