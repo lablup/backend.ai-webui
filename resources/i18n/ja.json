@@ -2992,6 +2992,7 @@
       "TensorBoardPrepared": "TensorBoard アプリの準備ができました。",
       "TitleSession": "セッション（Backend.AI）",
       "TotalAllocation": "総割り当て",
+      "Unified": "統合",
       "UnifiedAcceleratorMemoryNote": "このデバイスには専用のアクセラレータメモリがなく、ホストメモリプールを共用するため、個別に設定できません。",
       "UserResourceLimit": "ユーザーリソース制限",
       "UsingBootstrapScriptInfo": "ブートストラップスクリプトが含まれています。",

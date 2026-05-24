@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { convertToBinaryUnit } from '../helper';
-import { ResourceSlotName } from '../hooks/backendai';
+import { isUnifiedAcceleratorSlot, ResourceSlotName } from '../hooks/backendai';
 import { useCurrentResourceGroupValue } from '../hooks/useCurrentProject';
 import ImageWithFallback from './ImageWithFallback';
 import { Tooltip, Typography, theme } from 'antd';
@@ -15,6 +15,7 @@ import {
 import * as _ from 'lodash-es';
 import { CpuIcon, MemoryStickIcon, MicrochipIcon } from 'lucide-react';
 import React, { ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export type ResourceOpts = {
   shmem?: number;
@@ -36,11 +37,38 @@ const ResourceNumber: React.FC<ResourceNumberProps> = ({
   hideTooltip = false,
   max,
 }) => {
+  'use memo';
+  const { t } = useTranslation();
   const { token } = theme.useToken();
   const currentGroup = useCurrentResourceGroupValue();
   const { mergedResourceSlots } = useResourceSlotsDetails(
     currentGroup || undefined,
   );
+
+  // Unified-memory accelerator slots (e.g. `cuda.unified`) have no dedicated
+  // memory — they share the host memory pool. Rendering their numeric value
+  // alongside `mem` would double-count the same physical memory, so show a
+  // "Unified" label instead, with the explanation in a tooltip.
+  if (isUnifiedAcceleratorSlot(type)) {
+    const label = (
+      <Typography.Text type="secondary">
+        {t('session.launcher.Unified')}
+      </Typography.Text>
+    );
+    return (
+      <BAIFlex direction="row" gap="xxs">
+        <ResourceTypeIcon type={type} showTooltip={!hideTooltip} />
+        {hideTooltip ? (
+          label
+        ) : (
+          <Tooltip title={t('session.launcher.UnifiedAcceleratorMemoryNote')}>
+            {label}
+          </Tooltip>
+        )}
+        {extra}
+      </BAIFlex>
+    );
+  }
 
   const formatAmount = (amount: string) => {
     const roundLength =

@@ -2994,6 +2994,7 @@
       "TensorBoardPrepared": "Aplikasi TensorBoard siap.",
       "TitleSession": "Sesi (Backend.AI)",
       "TotalAllocation": "Alokasi Total",
+      "Unified": "Terpadu",
       "UnifiedAcceleratorMemoryNote": "Perangkat ini tidak memiliki memori akselerator terpisah; perangkat menggunakan kumpulan memori host dan tidak dapat diatur secara terpisah.",
       "UserResourceLimit": "Batas Sumber Daya Pengguna",
       "UsingBootstrapScriptInfo": "Skrip bootstrap disertakan.",

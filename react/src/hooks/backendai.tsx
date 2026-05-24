@@ -41,6 +41,17 @@ export type KnownAcceleratorResourceSlotName =
 export type ResourceSlotName =
   | BaseResourceSlotName
   | KnownAcceleratorResourceSlotName;
+
+/**
+ * Returns true when the given accelerator slot name represents a unified
+ * memory architecture, where the accelerator memory and the host memory
+ * share a single physical pool (e.g. NVIDIA Jetson — no dedicated VRAM).
+ * Identified by a `.unified` suffix on the slot name (e.g. `cuda.unified`).
+ */
+export const isUnifiedAcceleratorSlot = (slotName?: string | null): boolean => {
+  return !!slotName && _.endsWith(slotName, '.unified');
+};
+
 export interface QuotaScope {
   id: string;
   quota_scope_id: string;

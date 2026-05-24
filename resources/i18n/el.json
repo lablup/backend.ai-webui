@@ -2990,6 +2990,7 @@
       "TensorBoardPrepared": "Η εφαρμογή TensorBoard είναι έτοιμη.",
       "TitleSession": "Συνεδρία (Backend.AI)",
       "TotalAllocation": "Συνολική κατανομή",
+      "Unified": "Ενοποιημένη",
       "UnifiedAcceleratorMemoryNote": "Αυτή η συσκευή δεν διαθέτει ξεχωριστή μνήμη επιταχυντή· χρησιμοποιεί τη δεξαμενή μνήμης του κεντρικού υπολογιστή και δεν μπορεί να οριστεί ξεχωριστά.",
       "UserResourceLimit": "Όριο πόρων χρήστη",
       "UsingBootstrapScriptInfo": "Το Bootstrap script περιλαμβάνεται.",

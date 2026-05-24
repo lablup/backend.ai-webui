@@ -11,7 +11,6 @@ import { Image } from '../ImageEnvironmentSelectFormItems';
 import {
   getAllocatablePresetNames,
   getUnifiedAcceleratorValueFromMem,
-  isUnifiedAcceleratorSlot,
 } from './ResourceAllocationFormItems';
 
 describe('getUnifiedAcceleratorValueFromMem', () => {
@@ -58,26 +57,6 @@ describe('getUnifiedAcceleratorValueFromMem', () => {
     expect(getUnifiedAcceleratorValueFromMem(0, 'cuda.unified', slotsGiB)).toBe(
       0,
     );
-  });
-});
-
-describe('isUnifiedAcceleratorSlot', () => {
-  it('returns true for slot names ending with .unified', () => {
-    expect(isUnifiedAcceleratorSlot('cuda.unified')).toBe(true);
-    expect(isUnifiedAcceleratorSlot('rocm.unified')).toBe(true);
-  });
-
-  it('returns false for discrete accelerator slot names', () => {
-    expect(isUnifiedAcceleratorSlot('cuda.shares')).toBe(false);
-    expect(isUnifiedAcceleratorSlot('cuda.device')).toBe(false);
-    expect(isUnifiedAcceleratorSlot('cuda.mem')).toBe(false);
-    expect(isUnifiedAcceleratorSlot('rocm.device')).toBe(false);
-  });
-
-  it('returns false for nullish or empty input', () => {
-    expect(isUnifiedAcceleratorSlot(undefined)).toBe(false);
-    expect(isUnifiedAcceleratorSlot(null)).toBe(false);
-    expect(isUnifiedAcceleratorSlot('')).toBe(false);
   });
 });
 

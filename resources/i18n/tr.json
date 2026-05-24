@@ -2990,6 +2990,7 @@
       "TensorBoardPrepared": "TensorBoard uygulaması hazır.",
       "TitleSession": "Oturum (Arka Uç.AI)",
       "TotalAllocation": "Toplam Tahsis",
+      "Unified": "Birleşik",
       "UnifiedAcceleratorMemoryNote": "Bu cihazda ayrı bir hızlandırıcı belleği yoktur; ana makine bellek havuzunu kullanır ve ayrı olarak ayarlanamaz.",
       "UserResourceLimit": "Kullanıcı Kaynak Sınırı",
       "UsingBootstrapScriptInfo": "Bootstrap betiği dahil edildi.",

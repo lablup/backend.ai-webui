@@ -2992,6 +2992,7 @@
       "TensorBoardPrepared": "TensorBoard програм бэлэн боллоо.",
       "TitleSession": "Чуулган (Backend.AI)",
       "TotalAllocation": "Нийт хуваарилалт",
+      "Unified": "Нэгдсэн",
       "UnifiedAcceleratorMemoryNote": "Энэ төхөөрөмжид тусдаа хурдасгуурын санах ой байхгүй бөгөөд хостын санах ойн санг ашигладаг тул тусад нь тохируулах боломжгүй.",
       "UserResourceLimit": "Хэрэглэгчийн нөөцийн хязгаарлалт",
       "UsingBootstrapScriptInfo": "Bootstrap скрипт багтсан.",

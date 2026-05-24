@@ -10,7 +10,10 @@ import {
   getDisplayUnitToInputSizeUnit,
 } from '../../helper';
 import { useSuspendedBackendaiClient } from '../../hooks';
-import { useResourceSlots } from '../../hooks/backendai';
+import {
+  isUnifiedAcceleratorSlot,
+  useResourceSlots,
+} from '../../hooks/backendai';
 import { useCurrentKeyPairResourcePolicyLazyLoadQuery } from '../../hooks/hooksUsingRelay';
 import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
 import {
@@ -28,7 +31,7 @@ import ResourcePresetSelect from '../ResourcePresetSelect';
 import RemainingMark from './RemainingMark';
 import SharedMemoryFormItems from './SharedMemoryFormItems';
 import { QuestionCircleOutlined, ReloadOutlined } from '@ant-design/icons';
-import { Button, Card, Col, Form, Radio, Row, Tooltip, theme } from 'antd';
+import { Button, Card, Col, Form, Radio, Row, Tag, Tooltip, theme } from 'antd';
 import {
   useResourceSlotsDetails,
   BAIFlex,
@@ -64,16 +67,6 @@ export const isMinOversMaxValue = (min: number, max: number) => {
 };
 
 /**
- * Returns true when the given accelerator slot name represents a unified
- * memory architecture, where the accelerator memory and the host memory
- * share a single physical pool. Identified by a `.unified` suffix on the
- * slot name (e.g. `cuda.unified`).
- */
-export const isUnifiedAcceleratorSlot = (slotName?: string | null): boolean => {
-  return !!slotName && _.endsWith(slotName, '.unified');
-};
-
-/**
  * Returns the accelerator-field number derived from the host memory value
  * for a unified-memory slot. Reads the slot's `display_unit` from
  * `mergedResourceSlots` and converts `mem` to that unit. Falls back to
@@ -91,6 +84,27 @@ export const getUnifiedAcceleratorValueFromMem = (
     : undefined;
   const targetUnit = getDisplayUnitToInputSizeUnit(displayUnit) || 'g';
   return convertToBinaryUnit(mem || '0g', targetUnit)?.number ?? 0;
+};
+
+/**
+ * Read-only stand-in for the accelerator number input when a unified-memory
+ * slot is selected. The accelerator value is derived from host memory and
+ * managed by the form, so instead of an editable number we render a "Unified"
+ * tag alongside the accelerator-type selector (kept available so the user can
+ * still switch slot types). Accepts and ignores the `value` / `onChange`
+ * props injected by the enclosing `Form.Item`.
+ */
+const UnifiedAcceleratorInput: React.FC<{
+  addonAfter?: React.ReactNode;
+}> = ({ addonAfter }) => {
+  'use memo';
+  const { t } = useTranslation();
+  return (
+    <BAIFlex gap="xs" align="center">
+      <Tag>{t('session.launcher.Unified')}</Tag>
+      {addonAfter}
+    </BAIFlex>
+  );
 };
 
 export interface ResourceAllocationFormValue {
@@ -252,10 +266,7 @@ const ResourceAllocationFormItems: React.FC<
 
   // Get supported accelerator types in resource group by image
   const supportedAcceleratorTypesInRGByImage = useMemo(() => {
-    if (
-      _.isUndefined(acceleratorSlotsInRG) ||
-      (_.isNil(currentImage) && _.isEmpty(currentEnvironmentManual))
-    ) {
+    if (_.isUndefined(acceleratorSlotsInRG) || _.isNil(currentImage)) {
       return undefined;
     }
     return _.keys(acceleratorSlotsInRG).filter((acceleratorTypeName) => {
@@ -1050,6 +1061,93 @@ const ResourceAllocationFormItems: React.FC<
                         ) * currentAcceleratorStep
                       : undefined;
 
+                    // Accelerator type selector. Shared between the discrete
+                    // slider (rendered as the input's `addonAfter`) and the
+                    // unified-memory indicator, so switching slot types stays
+                    // available in both modes.
+                    const acceleratorTypeSelect =
+                      (supportedAcceleratorTypesInRGByImage?.length ?? 0) >
+                      0 ? (
+                        <Form.Item
+                          noStyle
+                          name={['resource', 'acceleratorType']}
+                          initialValue={_.first(_.keys(acceleratorSlotsInRG))}
+                        >
+                          <BAISelect
+                            style={{
+                              width: 75,
+                            }}
+                            autoSelectOption
+                            tabIndex={-1}
+                            // Do not delete disabled prop. It is necessary to prevent the user from changing the value.
+                            suffixIcon={
+                              _.size(acceleratorSlotsInRG) > 1
+                                ? undefined
+                                : null
+                            }
+                            popupMatchSelectWidth={false}
+                            options={_.map(
+                              acceleratorSlotsInRG,
+                              (_value, name) => {
+                                return {
+                                  value: name,
+                                  label:
+                                    mergedResourceSlots?.[name]?.display_unit ||
+                                    'UNIT',
+                                  disabled: !_.includes(
+                                    supportedAcceleratorTypesInRGByImage,
+                                    name,
+                                  ),
+                                };
+                              },
+                            )}
+                            onChange={(nextType: string) => {
+                              // Changing the slot type mutates the active
+                              // allocation; the previously selected preset no
+                              // longer matches.
+                              form.setFieldValue('allocationPreset', 'custom');
+                              // Keep the accelerator field consistent at the
+                              // moment the slot type changes, rather than
+                              // relying on a watcher effect that runs after
+                              // render.
+                              if (isUnifiedAcceleratorSlot(nextType)) {
+                                // Switching INTO a unified slot: mirror the
+                                // current `mem` value converted to the slot's
+                                // display unit. Write acceleratorType first so
+                                // the shared helper sees the new active slot
+                                // when it reads from the form.
+                                form.setFieldValue(
+                                  ['resource', 'acceleratorType'],
+                                  nextType,
+                                );
+                                syncUnifiedAcceleratorIfNeeded();
+                              } else if (
+                                isUnifiedAcceleratorSlot(currentAcceleratorType)
+                              ) {
+                                // Switching OUT of a unified slot into a
+                                // discrete one: reset to the discrete slot's
+                                // min so the stale mirrored GiB value from
+                                // unified mode does not bleed through as a
+                                // device count.
+                                //
+                                // Discrete-to-discrete switches are
+                                // intentionally NOT reset here:
+                                // ensureValidAcceleratorType clamps the
+                                // existing value if it falls outside the new
+                                // slot's range, so the user's current
+                                // allocation is preserved across discrete slot
+                                // changes.
+                                form.setFieldValue(
+                                  ['resource', 'accelerator'],
+                                  resourceLimits.accelerators[nextType]?.min ??
+                                    0,
+                                );
+                              }
+                            }}
+                          />
+                        </Form.Item>
+                      ) : undefined;
+
                     return (
                       <Form.Item
                         name={['resource', 'accelerator']}
@@ -1223,164 +1321,75 @@ const ResourceAllocationFormItems: React.FC<
                               ]
                         }
                       >
-                        <InputNumberWithSlider
-                          inputContainerMinWidth={190}
-                          sliderProps={{
-                            marks: {
-                              0: 0,
-                              // remaining mark code should be located before max mark code to prevent overlapping when it is same value
-                              ...(adjustedRemainingMarkValue &&
-                              showRemainingWarning
-                                ? {
-                                    [adjustedRemainingMarkValue]: {
-                                      label: <RemainingMark />,
-                                    },
-                                  }
-                                : {}),
-                              ...(_.isNumber(
-                                resourceLimits.accelerators[
-                                  currentAcceleratorType
-                                ]?.max,
-                              )
-                                ? {
-                                    // @ts-ignore
-                                    [resourceLimits.accelerators[
-                                      currentAcceleratorType
-                                    ]?.max]:
-                                      resourceLimits.accelerators[
-                                        currentAcceleratorType
-                                      ]?.max,
-                                  }
-                                : {}),
-                              ...(isUniqueType ? { 1: 1 } : {}),
-                            },
-                            tooltip: {
-                              formatter: (value = 0) => {
-                                return `${value} ${mergedResourceSlots?.[currentAcceleratorType]?.display_unit || ''}`;
-                              },
-                              open:
-                                supportedAcceleratorTypesInRGByImage?.length ===
-                                0
-                                  ? false
-                                  : undefined,
-                            },
-                          }}
-                          disabled={
-                            supportedAcceleratorTypesInRGByImage?.length ===
-                              0 || isUnifiedType
-                          }
-                          min={0}
-                          max={
-                            // Unique type should only allow 0 or 1
-                            isUniqueType
-                              ? 1
-                              : resourceLimits.accelerators[
-                                  currentAcceleratorType
-                                ]?.max
-                          }
-                          step={currentAcceleratorStep}
-                          onChange={() => {
-                            form.setFieldValue('allocationPreset', 'custom');
-                          }}
-                          inputNumberProps={{
-                            addonAfter:
-                              (supportedAcceleratorTypesInRGByImage?.length ??
-                                0) > 0 ? (
-                                <Form.Item
-                                  name={['resource', 'acceleratorType']}
-                                  initialValue={_.first(
-                                    _.keys(acceleratorSlotsInRG),
-                                  )}
-                                  style={{
-                                    marginBottom: 0,
-                                    maxWidth: 100,
-                                  }}
-                                >
-                                  <BAISelect
-                                    style={{
-                                      width: '100%',
-                                    }}
-                                    autoSelectOption
-                                    tabIndex={-1}
-                                    // Do not delete disabled prop. It is necessary to prevent the user from changing the value.
-                                    suffixIcon={
-                                      _.size(acceleratorSlotsInRG) > 1
-                                        ? undefined
-                                        : null
-                                    }
-                                    popupMatchSelectWidth={false}
-                                    options={_.map(
-                                      acceleratorSlotsInRG,
-                                      (_value, name) => {
-                                        return {
-                                          value: name,
-                                          label:
-                                            mergedResourceSlots?.[name]
-                                              ?.display_unit || 'UNIT',
-                                          disabled: !_.includes(
-                                            supportedAcceleratorTypesInRGByImage,
-                                            name,
-                                          ),
-                                        };
+                        {isUnifiedType ? (
+                          <UnifiedAcceleratorInput
+                            addonAfter={acceleratorTypeSelect}
+                          />
+                        ) : (
+                          <InputNumberWithSlider
+                            inputContainerMinWidth={190}
+                            sliderProps={{
+                              marks: {
+                                0: 0,
+                                // remaining mark code should be located before max mark code to prevent overlapping when it is same value
+                                ...(adjustedRemainingMarkValue &&
+                                showRemainingWarning
+                                  ? {
+                                      [adjustedRemainingMarkValue]: {
+                                        label: <RemainingMark />,
                                       },
-                                    )}
-                                    onChange={(nextType: string) => {
-                                      // Changing the slot type mutates the
-                                      // active allocation; the previously
-                                      // selected preset no longer matches.
-                                      form.setFieldValue(
-                                        'allocationPreset',
-                                        'custom',
-                                      );
-                                      // Keep the accelerator field consistent
-                                      // at the moment the slot type changes,
-                                      // rather than relying on a watcher
-                                      // effect that runs after render.
-                                      if (isUnifiedAcceleratorSlot(nextType)) {
-                                        // Switching INTO a unified slot:
-                                        // mirror the current `mem` value
-                                        // converted to the slot's display
-                                        // unit. Write acceleratorType first
-                                        // so the shared helper sees the new
-                                        // active slot when it reads from the
-                                        // form.
-                                        form.setFieldValue(
-                                          ['resource', 'acceleratorType'],
-                                          nextType,
-                                        );
-                                        syncUnifiedAcceleratorIfNeeded();
-                                      } else if (
-                                        isUnifiedAcceleratorSlot(
-                                          currentAcceleratorType,
-                                        )
-                                      ) {
-                                        // Switching OUT of a unified slot
-                                        // into a discrete one: reset to the
-                                        // discrete slot's min so the stale
-                                        // mirrored GiB value from unified
-                                        // mode does not bleed through as a
-                                        // device count.
-                                        //
-                                        // Discrete-to-discrete switches are
-                                        // intentionally NOT reset here:
-                                        // ensureValidAcceleratorType clamps
-                                        // the existing value if it falls
-                                        // outside the new slot's range, so
-                                        // the user's current allocation is
-                                        // preserved across discrete slot
-                                        // changes.
-                                        form.setFieldValue(
-                                          ['resource', 'accelerator'],
-                                          resourceLimits.accelerators[nextType]
-                                            ?.min ?? 0,
-                                        );
-                                      }
-                                    }}
-                                  />
-                                </Form.Item>
-                              ) : undefined,
-                          }}
-                        />
+                                    }
+                                  : {}),
+                                ...(_.isNumber(
+                                  resourceLimits.accelerators[
+                                    currentAcceleratorType
+                                  ]?.max,
+                                )
+                                  ? {
+                                      // @ts-ignore
+                                      [resourceLimits.accelerators[
+                                        currentAcceleratorType
+                                      ]?.max]:
+                                        resourceLimits.accelerators[
+                                          currentAcceleratorType
+                                        ]?.max,
+                                    }
+                                  : {}),
+                                ...(isUniqueType ? { 1: 1 } : {}),
+                              },
+                              tooltip: {
+                                formatter: (value = 0) => {
+                                  return `${value} ${mergedResourceSlots?.[currentAcceleratorType]?.display_unit || ''}`;
+                                },
+                                open:
+                                  supportedAcceleratorTypesInRGByImage?.length ===
+                                  0
+                                    ? false
+                                    : undefined,
+                              },
+                            }}
+                            disabled={
+                              supportedAcceleratorTypesInRGByImage?.length ===
+                                0 || isUnifiedType
+                            }
+                            min={0}
+                            max={
+                              // Unique type should only allow 0 or 1
+                              isUniqueType
+                                ? 1
+                                : resourceLimits.accelerators[
+                                    currentAcceleratorType
+                                  ]?.max
+                            }
+                            step={currentAcceleratorStep}
+                            onChange={() => {
+                              form.setFieldValue('allocationPreset', 'custom');
+                            }}
+                            inputNumberProps={{
+                              addonAfter: acceleratorTypeSelect,
+                            }}
+                          />
+                        )}
                       </Form.Item>
                     );
                   }}

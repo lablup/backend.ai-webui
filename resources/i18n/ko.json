@@ -2993,6 +2993,7 @@
       "TensorBoardPrepared": "TensorBoard 앱이 준비되었습니다.",
       "TitleSession": "세션 (Backend.AI)",
       "TotalAllocation": "총 자원 할당량",
+      "Unified": "통합",
       "UnifiedAcceleratorMemoryNote": "이 장치는 별도의 가속기 메모리가 없으며, 호스트 메모리 풀을 함께 사용하므로 따로 설정할 수 없습니다.",
       "UserResourceLimit": "사용자 자원 제한",
       "UsingBootstrapScriptInfo": "부트스트랩 스크립트가 포함되어 있습니다.",

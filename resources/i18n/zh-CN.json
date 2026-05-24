@@ -2992,6 +2992,7 @@
       "TensorBoardPrepared": "TensorBoard 应用已准备就绪。",
       "TitleSession": "会话（后端.AI）",
       "TotalAllocation": "总分配",
+      "Unified": "统一",
       "UnifiedAcceleratorMemoryNote": "此设备没有独立的加速器内存，它使用主机内存池，因此无法单独设置。",
       "UserResourceLimit": "用户资源限制",
       "UsingBootstrapScriptInfo": "已包含引导脚本。",
