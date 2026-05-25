@@ -48,8 +48,14 @@ interface BAITablePaginationConfig extends Omit<
 export interface BAITableColumnOverrideItem {
   /** Override the default visibility of a column */
   hidden?: boolean;
+  /**
+   * Override the column display order. Lower values come first. Persisted in
+   * the same overrides record as `hidden`, so reordering needs no extra
+   * persistence plumbing. Only set when the user has reordered columns away
+   * from their natural (declaration) order; see `disableColumnReorder`.
+   */
+  order?: number;
   // Future extensibility: width?, pinned?, etc.
-  // order?: number; // Override column order
 }
 /**
  * Record type mapping column keys to their override configurations
@@ -72,6 +78,15 @@ export interface BAITableSettings {
   onColumnOverridesChange?: (
     overrides: Record<string, BAITableColumnOverrideItem>,
   ) => void;
+  /**
+   * Disable drag-to-reorder in the settings modal. Reorder is **on by default**
+   * for every table that passes `tableSettings`: users can reorder columns via
+   * drag-and-drop, and the chosen order is persisted in
+   * `columnOverrides[key].order` (riding the same record as `hidden`, so no
+   * extra persistence plumbing is needed). Set to `true` only when reorder is
+   * not appropriate — e.g. a table whose column order is semantically fixed.
+   */
+  disableColumnReorder?: boolean;
 }
 
 export interface BAIExportSettings {
@@ -267,11 +282,28 @@ const BAITable = <RecordType extends AnyObject = AnyObject>({
   );
   // Merge defaultColumnOverrides with columnOverrides so that defaults apply
   // for columns not explicitly overridden by the user.
-  const effectiveColumnOverrides = useMemo(() => {
-    const defaults = tableSettings?.defaultColumnOverrides ?? {};
-    const overrides = columnOverrides ?? {};
-    return { ...defaults, ...overrides };
-  }, [tableSettings, columnOverrides]);
+  const effectiveColumnOverrides: Record<string, BAITableColumnOverrideItem> =
+    useMemo(() => {
+      const defaults = tableSettings?.defaultColumnOverrides ?? {};
+      const overrides = columnOverrides ?? {};
+      return { ...defaults, ...overrides };
+    }, [tableSettings, columnOverrides]);
+  // Column reorder is on by default for every table that wires `tableSettings`;
+  // an opt-out flag (`disableColumnReorder`) handles the rare table whose
+  // column order is semantically fixed. Tables without `tableSettings` have no
+  // settings modal at all, so the question doesn't apply.
+  const isColumnReorderEnabled =
+    !!tableSettings && !tableSettings.disableColumnReorder;
+  // Order of column keys shown in the settings modal, reflecting any persisted
+  // reordering. Undefined when reordering is disabled so the modal keeps the
+  // natural declaration order.
+  const initialColumnOrder = isColumnReorderEnabled
+    ? _.sortBy(
+        _.compact((columns ?? []).map((column) => column.key?.toString())),
+        (columnKey) =>
+          effectiveColumnOverrides[columnKey]?.order ?? Number.MAX_SAFE_INTEGER,
+      )
+    : undefined;
   const [isColumnSettingModalOpen, setIsColumnSettingModalOpen] =
     useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
@@ -301,6 +333,21 @@ const BAITable = <RecordType extends AnyObject = AnyObject>({
         const columnKey = column.key?.toString();
         if (!columnKey) return true;
         return isColumnVisible(column, columnKey, effectiveColumnOverrides);
+      });
+    }
+
+    // Apply persisted column display order from overrides. Order indices were
+    // assigned over the full column set, so sorting the (already visibility-
+    // filtered) columns by them preserves the correct relative order. Columns
+    // without an order override (e.g. ones added in a newer version) fall back
+    // to the end while keeping their declaration order (stable sort).
+    if (isColumnReorderEnabled && processedColumns) {
+      processedColumns = _.sortBy(processedColumns, (column) => {
+        const columnKey = column.key?.toString();
+        const columnOrder = columnKey
+          ? effectiveColumnOverrides[columnKey]?.order
+          : undefined;
+        return columnOrder ?? Number.MAX_SAFE_INTEGER;
       });
     }
 
@@ -361,6 +408,7 @@ const BAITable = <RecordType extends AnyObject = AnyObject>({
     order,
     tableSettings,
     effectiveColumnOverrides,
+    isColumnReorderEnabled,
   ]);
 
   const isValidPageNumber = () => {
@@ -530,20 +578,46 @@ const BAITable = <RecordType extends AnyObject = AnyObject>({
               setIsColumnSettingModalOpen(false);
               if (formValues) {
                 const selectedKeys = formValues.selectedColumnKeys || [];
+                // The modal emits a key for every column, using '' for keyless
+                // ones. Compact it so it lines up with `naturalOrder` (which
+                // drops keyless columns) — otherwise a table with a keyless
+                // column would always look "reordered".
+                const columnOrder = _.compact(formValues.columnOrder || []);
+                // Natural (declaration) order of all column keys, used to decide
+                // whether the user actually reordered anything.
+                const naturalOrder = _.compact(
+                  (columns ?? []).map((col) => col.key?.toString()),
+                );
+                const isReordered =
+                  isColumnReorderEnabled &&
+                  !_.isEqual(columnOrder, naturalOrder);
                 const newOverrides: Record<string, BAITableColumnOverrideItem> =
                   {};
 
                 // Only store in overrides when different from default values
                 columns?.forEach((col) => {
                   const key = col.key?.toString();
-                  if (key) {
-                    const shouldBeVisible = selectedKeys.includes(key);
-                    const defaultVisible = !col.defaultHidden;
+                  if (!key) return;
 
-                    // Only store when different from default
-                    if (shouldBeVisible !== defaultVisible) {
-                      newOverrides[key] = { hidden: !shouldBeVisible };
+                  const override: BAITableColumnOverrideItem = {};
+
+                  // Visibility: only store when different from default
+                  const shouldBeVisible = selectedKeys.includes(key);
+                  const defaultVisible = !col.defaultHidden;
+                  if (shouldBeVisible !== defaultVisible) {
+                    override.hidden = !shouldBeVisible;
+                  }
+
+                  // Order: only store when the user reordered away from natural
+                  if (isReordered) {
+                    const orderIndex = columnOrder.indexOf(key);
+                    if (orderIndex !== -1) {
+                      override.order = orderIndex;
                     }
+                  }
+
+                  if (!_.isEmpty(override)) {
+                    newOverrides[key] = override;
                   }
                 });
 
@@ -552,7 +626,8 @@ const BAITable = <RecordType extends AnyObject = AnyObject>({
             }}
             columns={columns || []}
             columnOverrides={effectiveColumnOverrides}
-            disableSorter
+            disableReorder={!isColumnReorderEnabled}
+            initialColumnOrder={initialColumnOrder}
           />
         </BAIUnmountAfterClose>
       )}
