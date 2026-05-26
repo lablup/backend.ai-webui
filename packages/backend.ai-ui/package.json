@@ -112,7 +112,7 @@
     "prettier-plugin-sort-json": "catalog:",
     "relay-test-utils": "catalog:",
     "storybook": "^10.3.5",
-    "typescript": "^5.9.3",
+    "typescript": "~6.0.3",
     "typescript-eslint": "catalog:",
     "vite": "^6.4.2",
     "vite-plugin-dts": "^4.5.4",
