@@ -25,7 +25,7 @@ const AboutBackendAIModal = ({
   // @ts-ignore
   const packageEdition = globalThis.packageEdition;
   // @ts-ignore
-  const buildVersion = globalThis.buildVersion;
+  const buildNumber = globalThis.buildNumber;
   // @ts-ignore
   const isElectron = globalThis.isElectron;
 
@@ -88,7 +88,7 @@ const AboutBackendAIModal = ({
       <Typography.Paragraph>
         Backend.AI Cluster {baiClient.managerVersion}
         <br />
-        {isElectron ? 'App' : 'WebServer'} Build {buildVersion}
+        {isElectron ? 'App' : 'WebServer'} Build {buildNumber}
       </Typography.Paragraph>
       <Typography.Paragraph>
         Powered by{' '}

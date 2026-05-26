@@ -45,7 +45,7 @@ declare module globalThis {
   // eslint-disable-next-line no-var
   var packageValidUntil: string;
   // eslint-disable-next-line no-var
-  var buildVersion: string;
+  var buildNumber: string;
   // eslint-disable-next-line no-var
   var appLauncher: {
     showLauncher?: (sessionId: {
