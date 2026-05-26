@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { ResourceSlotName } from '../hooks/backendai';
+import { ResourceSlotName, useResourceSlotsDetails } from '../hooks/backendai';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useResourceLimitAndRemaining } from '../hooks/useResourceLimitAndRemaining';
 import { Segmented, theme } from 'antd';
@@ -14,7 +14,6 @@ import {
   convertToNumber,
   processMemoryValue,
   BAIFetchKeyButton,
-  useResourceSlotsDetails,
   useFetchKey,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -33,6 +32,7 @@ const MyResource: React.FC<MyResourceProps> = ({
   extra,
   ...props
 }) => {
+  'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const currentProject = useCurrentProjectValue();

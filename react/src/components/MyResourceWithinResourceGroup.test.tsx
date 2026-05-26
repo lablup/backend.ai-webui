@@ -11,11 +11,15 @@ import { render, screen } from '@testing-library/react';
 import React from 'react';
 
 // Mock all the required hooks and dependencies
-vi.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => key,
-  }),
-}));
+vi.mock('react-i18next', async (importOriginal) => {
+  const originalModule = await importOriginal<typeof import('react-i18next')>();
+  return {
+    ...originalModule,
+    useTranslation: () => ({
+      t: (key: string) => key,
+    }),
+  };
+});
 
 vi.mock('antd', () => ({
   Segmented: ({ children }: any) => (
@@ -135,9 +139,11 @@ vi.mock('../hooks/useResourceLimitAndRemaining', () => ({
   ]),
 }));
 
-vi.mock('backend.ai-ui', () => {
-  const isoDate = new Date().toISOString();
+vi.mock('../hooks/backendai', async (importOriginal) => {
+  const originalModule =
+    await importOriginal<typeof import('../hooks/backendai')>();
   return {
+    ...originalModule,
     useResourceSlotsDetails: () => ({
       isLoading: false,
       resourceSlotsInRG: {
@@ -148,7 +154,18 @@ vi.mock('backend.ai-ui', () => {
           display_unit: 'GPU',
         },
       },
+      deviceMetaData: undefined,
+      mergedResourceSlots: {},
+      refresh: vi.fn(),
     }),
+  };
+});
+
+vi.mock('backend.ai-ui', async (importOriginal) => {
+  const originalModule = await importOriginal<typeof import('backend.ai-ui')>();
+  const isoDate = new Date().toISOString();
+  return {
+    ...originalModule,
     useFetchKey: () => [isoDate, vi.fn(), isoDate],
     convertToNumber: (value: any) => parseFloat(value) || 0,
     processMemoryValue: (value: any) => {

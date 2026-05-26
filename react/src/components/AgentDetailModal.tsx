@@ -7,9 +7,9 @@ import {
   convertToDecimalUnit,
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
+import { useResourceSlotsDetails } from '../hooks/backendai';
 import { Col, Row, theme, Typography } from 'antd';
 import {
-  useResourceSlotsDetails,
   BAIFlex,
   BAIModal,
   BAIModalProps,
@@ -40,6 +40,7 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
   onRequestClose,
   ...modalProps
 }) => {
+  'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { mergedResourceSlots } = useResourceSlotsDetails();

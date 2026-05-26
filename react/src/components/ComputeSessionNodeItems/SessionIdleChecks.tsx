@@ -8,14 +8,10 @@ import {
   formatDurationAsDays,
   toFixedFloorWithoutTrailingZeros,
 } from '../../helper';
+import { useResourceSlotsDetails } from '../../hooks/backendai';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { Tooltip, Typography, theme } from 'antd';
-import {
-  useResourceSlotsDetails,
-  useMemoizedJSONParse,
-  BAIFlex,
-  BAIDoubleTag,
-} from 'backend.ai-ui';
+import { useMemoizedJSONParse, BAIFlex, BAIDoubleTag } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
@@ -132,6 +128,7 @@ const SessionIdleChecks: React.FC<SessionIdleChecksProps> = ({
   direction = 'row',
   fetchKeyForLegacyLoadQuery,
 }) => {
+  'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { mergedResourceSlots } = useResourceSlotsDetails();
