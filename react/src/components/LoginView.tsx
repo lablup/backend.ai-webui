@@ -35,13 +35,8 @@ import { pluginApiEndpointState } from '../hooks/useWebUIPluginState';
 import { preloadPostLoginChunks } from '../preload';
 import { jotaiStore } from './DefaultProviders';
 import LoginFormPanel from './LoginFormPanel';
-import { App, Button, Form, type MenuProps } from 'antd';
-import {
-  BAIModal,
-  BAIFlex,
-  BAIConfigProvider,
-  useBAILogger,
-} from 'backend.ai-ui';
+import { App, Button, ConfigProvider, Form, type MenuProps } from 'antd';
+import { BAIModal, BAIFlex, useBAILogger } from 'backend.ai-ui';
 import { useAtomValue, useSetAtom } from 'jotai';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -1075,9 +1070,12 @@ const LoginView: React.FC<{
   // Zero-sized so it doesn't intercept pointer events. Child modals use
   // position:fixed internally so they are visible and interactive.
   return (
-    // ConfigProvider is needed to override Message z-index for error notifications
-    // so they appear above the block panel (z-index 10000) instead of behind it.
-    <BAIConfigProvider
+    // antd's plain ConfigProvider is used here (not BAIConfigProvider) so we
+    // don't re-introduce BUI's <I18nextProvider i18n={buiI18n}> shadow inside
+    // the host tree. Purpose is purely to override Message z-index for error
+    // notifications so they appear above the block panel (z-index 10000)
+    // instead of behind it.
+    <ConfigProvider
       theme={{
         components: {
           Message: { zIndexPopup: 10001 },
@@ -1158,7 +1156,7 @@ const LoginView: React.FC<{
           </BAIModal>
         </div>
       </App>
-    </BAIConfigProvider>
+    </ConfigProvider>
   );
 };
 
