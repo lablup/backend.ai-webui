@@ -870,7 +870,6 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
             vfolderId={deployFallbackVfolderId ?? undefined}
             onClose={() => setDeployFallbackVfolderId(null)}
             onDeployed={() => setDeployFallbackVfolderId(null)}
-            onRequestCreateDeployment={toggleCreateDeployment}
           />
         </BAIUnmountAfterClose>
       </Suspense>

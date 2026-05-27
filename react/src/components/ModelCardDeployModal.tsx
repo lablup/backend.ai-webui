@@ -8,18 +8,17 @@ import { useWebUINavigate } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import DeploymentPresetDetailModal from './DeploymentPresetDetailModal';
 import { InfoCircleOutlined } from '@ant-design/icons';
-import { Alert, App, Button, Form, Space, Tooltip } from 'antd';
+import { Alert, App, Button, Form, Space, theme, Tooltip } from 'antd';
 import {
   BAIAvailablePresetSelect,
-  BAIButton,
   BAIFlex,
+  BAILink,
   BAIModal,
   type BAIModalProps,
   BAIProjectResourceGroupSelect,
   toLocalId,
   useProjectResourceGroups,
 } from 'backend.ai-ui';
-import { PlusIcon } from 'lucide-react';
 import React, {
   Suspense,
   useEffect,
@@ -27,7 +26,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
 interface ModelCardDeployModalProps extends Omit<
@@ -43,20 +42,12 @@ interface ModelCardDeployModalProps extends Omit<
    */
   modelCardFrgmt: ModelCardDeployModalFragment$key | null | undefined;
   onDeployed: (deploymentId: string) => void;
-  /**
-   * Called when the user wants to fall back to creating a new deployment
-   * (via `DeploymentSettingModal`) because no preset is available. The
-   * parent is expected to close this modal and open its own
-   * `DeploymentSettingModal`.
-   */
-  onRequestCreateDeployment?: () => void;
 }
 
 const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
   onClose,
   modelCardFrgmt,
   onDeployed,
-  onRequestCreateDeployment,
   // `open` and `afterClose` come in via `BAIModalProps` (the latter is
   // typically injected by `BAIUnmountAfterClose`'s `cloneElement`). We
   // destructure them here so the auto-deploy effect can read `open` for
@@ -71,6 +62,7 @@ const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
   const { t } = useTranslation();
   const { message } = App.useApp();
   const webuiNavigate = useWebUINavigate();
+  const { token } = theme.useToken();
   const { id: projectId, name: projectName } = useCurrentProjectValue();
 
   // TODO(needs-backend): `availablePresets` here is the server-filtered list
@@ -229,45 +221,7 @@ const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
     return null;
   }
 
-  // Empty-state: per FR-2862, when no preset is available the modal stays
-  // open with an inline Alert and a link to the deployment shell creation
-  // modal (`DeploymentSettingModal`) — same UX as the `/deployments` page
-  // "Create Deployment" entry.
-  if (availablePresets.length === 0) {
-    return (
-      <BAIModal
-        title={t('modelService.CreateNewDeploymentWithPreset')}
-        destroyOnHidden
-        width={480}
-        footer={null}
-        {...modalProps}
-        open={open}
-        afterClose={afterClose}
-        onCancel={onClose}
-      >
-        <Alert
-          type="info"
-          showIcon
-          title={t('deployment.NoPresetsAvailable')}
-          description={t('deployment.NoPresetsAvailableDescription')}
-          action={
-            onRequestCreateDeployment ? (
-              <BAIButton
-                type="primary"
-                icon={<PlusIcon />}
-                onClick={() => {
-                  onClose();
-                  onRequestCreateDeployment();
-                }}
-              >
-                {t('deployment.OpenCreateDeploymentModal')}
-              </BAIButton>
-            ) : undefined
-          }
-        />
-      </BAIModal>
-    );
-  }
+  const noAvailablePresets = availablePresets.length === 0;
 
   // Selection UI — the user picks a preset and a resource group.
   return (
@@ -281,7 +235,8 @@ const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
           !modelCardRowId ||
           !projectId ||
           !effectivePresetId ||
-          !selectedResourceGroup,
+          !selectedResourceGroup ||
+          noAvailablePresets,
       }}
       confirmLoading={isInFlightDeploy}
       {...modalProps}
@@ -290,6 +245,29 @@ const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
       onOk={handleDeploy}
       onCancel={onClose}
     >
+      {noAvailablePresets && (
+        <Alert
+          type="info"
+          showIcon
+          title={t('deployment.NoPresetsAvailable')}
+          description={
+            <Trans
+              i18nKey="deployment.NoPresetsAvailableDescription"
+              components={{
+                a: (
+                  <BAILink
+                    onClick={() => {
+                      onClose();
+                      webuiNavigate('/deployments');
+                    }}
+                  />
+                ),
+              }}
+            />
+          }
+          style={{ marginBottom: token.marginMD }}
+        />
+      )}
       <Form form={form} layout="vertical">
         <Form.Item
           label={t('modelStore.Preset')}
@@ -303,12 +281,13 @@ const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
                 setUserSelectedPresetId(value as string | undefined)
               }
               style={{ flex: 1 }}
+              disabled={noAvailablePresets}
             />
             <Space.Compact>
               <Tooltip title={t('modelService.DeploymentPresetDetail')}>
                 <Button
                   icon={<InfoCircleOutlined />}
-                  disabled={!effectivePresetId}
+                  disabled={!effectivePresetId || noAvailablePresets}
                   onClick={() => {
                     if (!effectivePresetId) return;
                     setPresetDetailId(effectivePresetId);
@@ -328,6 +307,7 @@ const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
             projectName={projectName ?? ''}
             autoSelectDefault
             style={{ width: '100%' }}
+            disabled={noAvailablePresets}
           />
         </Form.Item>
       </Form>

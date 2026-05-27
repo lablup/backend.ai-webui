@@ -352,7 +352,6 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
               setDeployModalOpen(false);
               onClose();
             }}
-            onRequestCreateDeployment={toggleCreateDeployment}
           />
         </BAIUnmountAfterClose>
       </Suspense>
