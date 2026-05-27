@@ -25,7 +25,8 @@ import '@material/mwc-icon-button';
 import '@material/mwc-select';
 import { css, CSSResultGroup, html } from 'lit';
 import { get as _text, translate as _t } from 'lit-translate';
-import { customElement, property, query } from 'lit/decorators.js';
+import { customElement, property, query, state } from 'lit/decorators.js';
+import { repeat } from 'lit/directives/repeat.js';
 
 /* FIXME:
  * This type definition is a workaround for resolving both Type error and Importing error.
@@ -83,6 +84,7 @@ export default class BackendAISummary extends BackendAIPage {
   @property({ type: Object }) notification = Object();
   @property({ type: Object }) resourcePolicy;
   @property({ type: Object }) invitations = Object();
+  @state() protected _processingInvitations: Set<string> = new Set();
   @property({ type: Object }) appDownloadMap;
   @property({ type: String }) appDownloadUrl;
   @property({ type: Boolean }) allowAppDownloadPanel = true;
@@ -386,25 +388,19 @@ export default class BackendAISummary extends BackendAIPage {
     if (!this.activeConnected) {
       return;
     }
-    const panel = e.target.closest('lablup-activity-panel');
+    this._markInvitationProcessing(invitation.id, true);
     try {
-      panel.setAttribute('disabled', 'true');
-      panel.querySelectorAll('mwc-button').forEach((btn) => {
-        btn.setAttribute('disabled', 'true');
-      });
       await globalThis.backendaiclient.vfolder.accept_invitation(invitation.id);
       this.notification.text =
         _text('summary.AcceptSharedVFolder') + `${invitation.vfolder_name}`;
       this.notification.show();
       this._refreshInvitations();
     } catch (err) {
-      panel.setAttribute('disabled', 'false');
-      panel.querySelectorAll('mwc-button').forEach((btn) => {
-        btn.setAttribute('disabled', 'false');
-      });
       this.notification.text = PainKiller.relieve(err.title);
       this.notification.detail = err.message;
       this.notification.show(true, err);
+    } finally {
+      this._markInvitationProcessing(invitation.id, false);
     }
   }
 
@@ -418,27 +414,39 @@ export default class BackendAISummary extends BackendAIPage {
     if (!this.activeConnected) {
       return;
     }
-    const panel = e.target.closest('lablup-activity-panel');
-
+    this._markInvitationProcessing(invitation.id, true);
     try {
-      panel.setAttribute('disabled', 'true');
-      panel.querySelectorAll('mwc-button').forEach((btn) => {
-        btn.setAttribute('disabled', 'true');
-      });
       await globalThis.backendaiclient.vfolder.delete_invitation(invitation.id);
       this.notification.text =
         _text('summary.DeclineSharedVFolder') + `${invitation.vfolder_name}`;
       this.notification.show();
       this._refreshInvitations();
     } catch (err) {
-      panel.setAttribute('disabled', 'false');
-      panel.querySelectorAll('mwc-button').forEach((btn) => {
-        btn.setAttribute('disabled', 'false');
-      });
       this.notification.text = PainKiller.relieve(err.title);
       this.notification.detail = err.message;
       this.notification.show(true, err);
+    } finally {
+      this._markInvitationProcessing(invitation.id, false);
     }
+  }
+
+  /**
+   * Mark an invitation as currently being processed so its panel/buttons
+   * render as disabled. Uses state-based tracking instead of imperative
+   * DOM mutation, which previously leaked across nodes when Lit reused
+   * keyless map() entries after `_refreshInvitations()` rebuilt the list.
+   *
+   * @param {string} invitationId
+   * @param {boolean} processing
+   */
+  private _markInvitationProcessing(invitationId: string, processing: boolean) {
+    const next = new Set(this._processingInvitations);
+    if (processing) {
+      next.add(invitationId);
+    } else {
+      next.delete(invitationId);
+    }
+    this._processingInvitations = next;
   }
 
   _stripHTMLTags(str) {
@@ -569,61 +577,71 @@ export default class BackendAISummary extends BackendAIPage {
             >
               <div slot="message">
                 ${this.invitations.length > 0
-                  ? this.invitations.map(
-                      (invitation, index) => html`
-                        <lablup-activity-panel
-                          class="inner-panel"
-                          noheader
-                          autowidth
-                          elevation="0"
-                          height="130"
-                        >
-                          <div slot="message">
-                            <div class="wrap layout">
-                              <h3 style="padding-top:10px;">
-                                From ${invitation.inviter}
-                              </h3>
-                              <span class="invitation_folder_name">
-                                ${_t('summary.FolderName')}:
-                                ${invitation.vfolder_name}
-                              </span>
-                              <div class="horizontal center layout">
-                                ${_t('summary.Permission')}:
-                                ${[...invitation.perm].map(
-                                  (c) => html`
-                                    <lablup-shields
-                                      app=""
-                                      color="${['green', 'blue', 'red'][
-                                        ['r', 'w', 'd'].indexOf(c)
-                                      ]}"
-                                      description="${c.toUpperCase()}"
-                                      ui="flat"
-                                    ></lablup-shields>
-                                  `,
-                                )}
-                              </div>
-                              <div
-                                style="margin:15px auto;"
-                                class="horizontal layout end-justified"
-                              >
-                                <mwc-button
-                                  outlined
-                                  label="${_t('summary.Decline')}"
-                                  @click="${(e) =>
-                                    this._deleteInvitation(e, invitation)}"
-                                ></mwc-button>
-                                <mwc-button
-                                  unelevated
-                                  label="${_t('summary.Accept')}"
-                                  @click="${(e) =>
-                                    this._acceptInvitation(e, invitation)}"
-                                ></mwc-button>
-                                <span class="flex"></span>
+                  ? repeat(
+                      this.invitations,
+                      (invitation: any) => invitation.id,
+                      (invitation: any) => {
+                        const isProcessing = this._processingInvitations.has(
+                          invitation.id,
+                        );
+                        return html`
+                          <lablup-activity-panel
+                            class="inner-panel"
+                            noheader
+                            autowidth
+                            elevation="0"
+                            height="130"
+                            ?disabled="${isProcessing}"
+                          >
+                            <div slot="message">
+                              <div class="wrap layout">
+                                <h3 style="padding-top:10px;">
+                                  From ${invitation.inviter}
+                                </h3>
+                                <span class="invitation_folder_name">
+                                  ${_t('summary.FolderName')}:
+                                  ${invitation.vfolder_name}
+                                </span>
+                                <div class="horizontal center layout">
+                                  ${_t('summary.Permission')}:
+                                  ${[...invitation.perm].map(
+                                    (c) => html`
+                                      <lablup-shields
+                                        app=""
+                                        color="${['green', 'blue', 'red'][
+                                          ['r', 'w', 'd'].indexOf(c)
+                                        ]}"
+                                        description="${c.toUpperCase()}"
+                                        ui="flat"
+                                      ></lablup-shields>
+                                    `,
+                                  )}
+                                </div>
+                                <div
+                                  style="margin:15px auto;"
+                                  class="horizontal layout end-justified"
+                                >
+                                  <mwc-button
+                                    outlined
+                                    label="${_t('summary.Decline')}"
+                                    ?disabled="${isProcessing}"
+                                    @click="${(e) =>
+                                      this._deleteInvitation(e, invitation)}"
+                                  ></mwc-button>
+                                  <mwc-button
+                                    unelevated
+                                    label="${_t('summary.Accept')}"
+                                    ?disabled="${isProcessing}"
+                                    @click="${(e) =>
+                                      this._acceptInvitation(e, invitation)}"
+                                  ></mwc-button>
+                                  <span class="flex"></span>
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        </lablup-activity-panel>
-                      `,
+                          </lablup-activity-panel>
+                        `;
+                      },
                     )
                   : html`
                       <p>${_text('summary.NoInvitations')}</p>
