@@ -71,6 +71,7 @@ interface DeploymentConfigurationSectionProps {
   isPendingRefetch: boolean;
   onRefetch: () => void;
   onAddRevision: () => void;
+  revisionCardRef?: React.RefObject<HTMLDivElement | null>;
 }
 
 type DeploymentSectionData =
@@ -236,6 +237,7 @@ const DeploymentConfigurationSection: React.FC<
   isPendingRefetch,
   onRefetch,
   onAddRevision,
+  revisionCardRef,
 }) => {
   'use memo';
 
@@ -481,7 +483,7 @@ const DeploymentConfigurationSection: React.FC<
         />
       )}
       <BAICard
-        id="deployment-revisions"
+        ref={revisionCardRef}
         activeTabKey={activeRevisionTab}
         onTabChange={(key) => {
           if (key === 'currentRevision' || key === 'revisionHistory') {

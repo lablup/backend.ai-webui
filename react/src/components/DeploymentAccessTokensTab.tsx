@@ -60,6 +60,7 @@ interface DeploymentAccessTokensTabProps {
   isCreateModalOpen?: boolean;
   onCreateModalOpenChange?: (open: boolean) => void;
   onTokenCreated?: () => void;
+  cardRef?: React.RefObject<HTMLDivElement | null>;
 }
 
 const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
@@ -68,6 +69,7 @@ const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
   isOwnedByCurrentUser = true,
   isDeploymentDestroying = false,
   onTokenCreated,
+  cardRef,
   ...controlledModalProps
 }) => {
   'use memo';
@@ -134,6 +136,7 @@ const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
   return (
     <>
       <BAICard
+        ref={cardRef}
         title={
           <BAIFlex gap="xs" align="center">
             {t('deployment.tab.AccessTokens')}

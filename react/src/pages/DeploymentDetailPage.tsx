@@ -34,6 +34,7 @@ import {
   BAIButton,
   BAICard,
   BAIDeploymentStatus,
+  BAIDeploymentStatusTag,
   BAIFlex,
   BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
@@ -42,16 +43,10 @@ import {
 } from 'backend.ai-ui';
 import type { GraphQLFormattedError } from 'graphql';
 import { BotMessageSquareIcon } from 'lucide-react';
-import React, { Suspense, useTransition } from 'react';
+import React, { Suspense, useRef, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useParams } from 'react-router-dom';
-
-const scrollToElementId = (id: string) => {
-  document
-    .getElementById(id)
-    ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-};
 
 const DeploymentDetailPage: React.FC = () => {
   'use memo';
@@ -84,6 +79,9 @@ const DeploymentDetailPage: React.FC = () => {
     createAccessTokenOpen,
     { setLeft: closeCreateAccessToken, setRight: openCreateAccessToken },
   ] = useToggle(false);
+
+  const revisionsSectionRef = useRef<HTMLDivElement>(null);
+  const accessTokensSectionRef = useRef<HTMLDivElement>(null);
 
   const { deployment: deploymentResult } =
     useLazyLoadQuery<DeploymentDetailPageQuery>(
@@ -223,7 +221,13 @@ const DeploymentDetailPage: React.FC = () => {
         // refresh or a tab re-mount.
         updateReplicaFetchKey();
       });
-      scrollToElementId('deployment-revisions');
+      if (revisionsSectionRef.current) {
+        revisionsSectionRef.current.style.scrollMarginTop = `${token.Layout?.headerHeight ?? 60}px`;
+        revisionsSectionRef.current.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
+        });
+      }
     }
   };
 
@@ -321,6 +325,7 @@ const DeploymentDetailPage: React.FC = () => {
         isPendingRefetch={isPendingRefetch}
         onRefetch={handleRefetch}
         onAddRevision={openAddRevision}
+        revisionCardRef={revisionsSectionRef}
       />
       <BAICard
         title={
@@ -346,29 +351,34 @@ const DeploymentDetailPage: React.FC = () => {
         </BAIErrorBoundary>
       </BAICard>
       <DeploymentAutoScalingTab deploymentFrgmt={deployment} />
-      <div id="deployment-access-tokens">
-        <DeploymentAccessTokensTab
-          deploymentFrgmt={deployment}
-          deploymentId={deploymentGlobalId}
-          isOwnedByCurrentUser={isOwnedByCurrentUser}
-          isDeploymentDestroying={isDeploymentDestroying}
-          isCreateModalOpen={createAccessTokenOpen}
-          onCreateModalOpenChange={(open) => {
-            if (open) {
-              openCreateAccessToken();
-            } else {
-              closeCreateAccessToken();
-            }
-          }}
-          onTokenCreated={() => {
-            // Refresh the page-level query so `accessTokens.count` updates;
-            // otherwise the "Private deployment" alert (which is gated on
-            // `hasAccessTokens === false`) stays visible after creation.
-            handleRefetch();
-            scrollToElementId('deployment-access-tokens');
-          }}
-        />
-      </div>
+      <DeploymentAccessTokensTab
+        cardRef={accessTokensSectionRef}
+        deploymentFrgmt={deployment}
+        deploymentId={deploymentGlobalId}
+        isOwnedByCurrentUser={isOwnedByCurrentUser}
+        isDeploymentDestroying={isDeploymentDestroying}
+        isCreateModalOpen={createAccessTokenOpen}
+        onCreateModalOpenChange={(open) => {
+          if (open) {
+            openCreateAccessToken();
+          } else {
+            closeCreateAccessToken();
+          }
+        }}
+        onTokenCreated={() => {
+          // Refresh the page-level query so `accessTokens.count` updates;
+          // otherwise the "Private deployment" alert (which is gated on
+          // `hasAccessTokens === false`) stays visible after creation.
+          handleRefetch();
+          if (accessTokensSectionRef.current) {
+            accessTokensSectionRef.current.style.scrollMarginTop = `${token.Layout?.headerHeight ?? 60}px`;
+            accessTokensSectionRef.current.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start',
+            });
+          }
+        }}
+      />
       {/* Local Suspense around the lazily-mounted modal so its initial
           `useLazyLoadQuery` doesn't bubble its suspend up to the page-level
           Suspense fallback and blank the deployment detail page. The mount
