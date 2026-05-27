@@ -5,6 +5,7 @@
     "Architecture": "Seni Bina",
     "DiskPerc": "Cakera %",
     "Endpoint": "Titik akhir",
+    "FailedToLoadCellData": "Gagal memuatkan data.",
     "NoAvailableLiveStat": "Tiada statistik langsung tersedia",
     "Region": "Wilayah",
     "ResourceGroup": "Kumpulan Sumber",

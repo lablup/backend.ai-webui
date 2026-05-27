@@ -5,6 +5,7 @@
     "Architecture": "Arsitektur",
     "DiskPerc": "Disk %",
     "Endpoint": "Endpoint",
+    "FailedToLoadCellData": "Gagal memuat data.",
     "NoAvailableLiveStat": "Tidak ada statistik langsung yang tersedia",
     "Region": "Wilayah",
     "ResourceGroup": "Grup Sumber Daya",

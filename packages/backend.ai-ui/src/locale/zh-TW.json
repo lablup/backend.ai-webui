@@ -5,6 +5,7 @@
     "Architecture": "架構",
     "DiskPerc": "磁碟使用率 (%)",
     "Endpoint": "端點",
+    "FailedToLoadCellData": "資料載入失敗。",
     "NoAvailableLiveStat": "沒有可用的即時統計",
     "Region": "區域",
     "ResourceGroup": "資源群組",

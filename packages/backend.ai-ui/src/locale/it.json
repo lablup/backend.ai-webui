@@ -5,6 +5,7 @@
     "Architecture": "Architettura",
     "DiskPerc": "Disco %",
     "Endpoint": "Endpoint",
+    "FailedToLoadCellData": "Impossibile caricare i dati.",
     "NoAvailableLiveStat": "Nessuna statistica in tempo reale disponibile",
     "Region": "Regione",
     "ResourceGroup": "Gruppo di risorse",

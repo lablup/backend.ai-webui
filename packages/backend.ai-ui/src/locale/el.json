@@ -5,6 +5,7 @@
     "Architecture": "Αρχιτεκτονική",
     "DiskPerc": "Χρήση δίσκου %",
     "Endpoint": "Σημείο τερματισμού",
+    "FailedToLoadCellData": "Αποτυχία φόρτωσης δεδομένων.",
     "NoAvailableLiveStat": "Καμία διαθέσιμη ζωντανή στατιστική",
     "Region": "Περιοχή",
     "ResourceGroup": "Ομάδα πόρων",

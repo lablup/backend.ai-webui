@@ -5,6 +5,7 @@
     "Architecture": "아키텍처",
     "DiskPerc": "디스크 %",
     "Endpoint": "엔드포인트",
+    "FailedToLoadCellData": "데이터를 불러오는데 실패했습니다.",
     "NoAvailableLiveStat": "표시할 사용량 없음",
     "Region": "지역",
     "ResourceGroup": "자원 그룹",
