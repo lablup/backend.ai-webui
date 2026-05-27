@@ -89,9 +89,11 @@ navigation:
       items:
         - title: User Settings
           path: user_settings/user_settings.md
+        - title: Project Admin Features
+          path: project_admin/project_admin.md
         - title: RBAC Management
           path: rbac_management/rbac_management.md
-        - title: Admin Menu
+        - title: Admin Features
           path: admin_menu/admin_menu.md
         - title: Agent Summary
           path: agent_summary/agent_summary.md
@@ -158,9 +160,11 @@ navigation:
       items:
         - title: ユーザー設定
           path: user_settings/user_settings.md
+        - title: プロジェクト管理者機能
+          path: project_admin/project_admin.md
         - title: RBAC管理
           path: rbac_management/rbac_management.md
-        - title: 管理者メニュー
+        - title: 管理者機能
           path: admin_menu/admin_menu.md
         - title: エージェントサマリー
           path: agent_summary/agent_summary.md
@@ -227,9 +231,11 @@ navigation:
       items:
         - title: 사용자 설정
           path: user_settings/user_settings.md
+        - title: 프로젝트 관리자 기능
+          path: project_admin/project_admin.md
         - title: RBAC 관리
           path: rbac_management/rbac_management.md
-        - title: 관리자 메뉴
+        - title: 관리자 기능
           path: admin_menu/admin_menu.md
         - title: 에이전트 요약
           path: agent_summary/agent_summary.md
@@ -296,9 +302,11 @@ navigation:
       items:
         - title: ตั้งค่าผู้ใช้
           path: user_settings/user_settings.md
+        - title: ฟีเจอร์ผู้ดูแลโปรเจกต์
+          path: project_admin/project_admin.md
         - title: การจัดการ RBAC
           path: rbac_management/rbac_management.md
-        - title: เมนูผู้ดูแลระบบ
+        - title: ฟีเจอร์ผู้ดูแลระบบ
           path: admin_menu/admin_menu.md
         - title: สรุปเอเจนต์
           path: agent_summary/agent_summary.md

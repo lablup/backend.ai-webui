@@ -1,3 +1,5 @@
+<a id="session-page"></a>
+
 # Session Page
 
 In Backend.AI, a `session` represents an isolated compute environment where users can run code, train models, or perform data analysis using allocated resources.

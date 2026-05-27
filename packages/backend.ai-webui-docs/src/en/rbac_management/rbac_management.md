@@ -12,6 +12,8 @@ To access the RBAC Management page, click **RBAC Management** in the **Admin Set
 
 ![](../images/rbac_role_list_page.png)
 
+<a id="role-list"></a>
+
 ## Role List
 
 The Role List page displays all roles in a table format. You can filter, search, and sort roles using the controls at the top of the page.
@@ -180,6 +182,8 @@ The **Role Assignments** tab in the role detail drawer shows which users are ass
 
 ![](../images/rbac_assignments_tab.png)
 
+<a id="add-users-to-a-role"></a>
+
 ### Add Users to a Role
 
 1. Open the role detail drawer and select the **Role Assignments** tab
@@ -189,6 +193,8 @@ The **Role Assignments** tab in the role detail drawer shows which users are ass
 5. Click **Add** to assign the selected users to the role
 
 ![](../images/rbac_add_user_modal.png)
+
+<a id="revoke-users-from-a-role"></a>
 
 ### Revoke Users from a Role
 
@@ -202,3 +208,23 @@ Revoking a user removes only that user's assignment to this role; the role itsel
 :::danger
 Revoking a user from a role cannot be undone. The confirmation modal requires you to type `Permanently Delete` before the **Revoke User** button is enabled.
 :::
+
+<a id="grant-project-admin"></a>
+
+## Grant Project Admin Authority
+
+Creating a project also creates a dedicated role named `project-<project_id>-admin`, where `<project_id>` is the UUID of that project. Assigning a user to this role grants them [Project Admin](#project-admin-features) authority over that specific project — they can manage the project's users, sessions, deployments, and storage folders without holding system-wide superadmin privileges.
+
+![](../images/rbac_project_admin_role_in_list.png)
+
+To grant Project Admin authority to a user:
+
+1. Open the [Role List](#role-list) and locate the `project-<project_id>-admin` role for the target project. Use the property filter to search by role name (e.g. enter `project-` to narrow the list).
+2. Click the role name to open the role detail view.
+3. Follow [Add Users to a Role](#add-users-to-a-role) on this role to assign the user.
+
+![](../images/rbac_project_admin_role_detail.png)
+
+The user gains Project Admin authority immediately. The next time they open the header's project dropdown they will see the project-admin badge next to the corresponding project, and the project-admin sidebar entries described in the [Project Admin Features](#project-admin-features) chapter.
+
+To revoke Project Admin authority, follow [Revoke Users from a Role](#revoke-users-from-a-role) on the same `project-<project_id>-admin` role.
