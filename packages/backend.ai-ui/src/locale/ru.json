@@ -5,6 +5,7 @@
     "Architecture": "Архитектура",
     "DiskPerc": "Диск %",
     "Endpoint": "Конечная точка",
+    "FailedToLoadCellData": "Не удалось загрузить данные.",
     "NoAvailableLiveStat": "Живая статистика недоступна",
     "Region": "Регион",
     "ResourceGroup": "Группа ресурсов",

@@ -107,7 +107,7 @@
     <!-- Backend.AI client classes are now initialized by React global-stores.ts -->
     <script nonce="{{nonce}}">
       document.getElementById('version-detail').innerText = globalThis.packageVersion;
-      document.getElementById('build-detail').innerText = ' Build ' + globalThis.buildVersion;
+      document.getElementById('build-detail').innerText = ' Build ' + globalThis.buildNumber;
       document.getElementById('license-detail').innerText = '';
       if (globalThis.isElectron) {
         document.getElementById('mode-detail').innerText = 'App';

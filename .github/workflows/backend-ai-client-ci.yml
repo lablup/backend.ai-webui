@@ -3,14 +3,14 @@ name: backend.ai-client CI
 on:
   pull_request:
     paths:
-      - 'packages/backend.ai-client/**'
-      - 'pnpm-lock.yaml'
-      - '.github/workflows/backend-ai-client-ci.yml'
+      - "packages/backend.ai-client/**"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/backend-ai-client-ci.yml"
   push:
     branches: [main]
     paths:
-      - 'packages/backend.ai-client/**'
-      - 'pnpm-lock.yaml'
+      - "packages/backend.ai-client/**"
+      - "pnpm-lock.yaml"
 
 permissions:
   contents: read
@@ -33,8 +33,8 @@ jobs:
 
       - uses: actions/setup-node@v5
         with:
-          node-version-file: '.nvmrc'
-          cache: 'pnpm'
+          node-version-file: ".nvmrc"
+          cache: "pnpm"
 
       - name: Get pnpm store directory
         shell: bash
@@ -50,7 +50,7 @@ jobs:
             ${{ runner.os }}-pnpm-store-
 
       - name: Install dependencies
-        run: pnpm install --merge-git-branch-lockfiles --no-frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       - name: Lint
         run: pnpm --filter backend.ai-client run lint

@@ -5,6 +5,7 @@
     "Architecture": "Arkkitehtuuri",
     "DiskPerc": "Levy %",
     "Endpoint": "Päätepiste",
+    "FailedToLoadCellData": "Tietojen lataaminen epäonnistui.",
     "NoAvailableLiveStat": "Reaaliaikaisia tilastoja ei ole saatavilla",
     "Region": "Alue",
     "ResourceGroup": "Resurssiryhmä",

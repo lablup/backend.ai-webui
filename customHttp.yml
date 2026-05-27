@@ -1,0 +1,102 @@
+# AWS Amplify Hosting — custom HTTP response headers (monorepo).
+#
+# LOCATION & SCHEMA
+#
+# This file must live at the **repo root** with the name
+# `customHttp.yml`. AWS Amplify reads it from the default branch and
+# applies the rules to every Amplify Hosting response served from any
+# `applications[].appRoot` matched below. The monorepo schema requires
+# the top-level `applications:` array; each entry's `appRoot` MUST
+# match the "App root" configured in that app's Amplify console.
+#
+# Why this file and not `amplify.yml`:
+#   AWS explicitly recommends migrating custom headers OUT of
+#   `amplify.yml` and into `customHttp.yml`. The amplify.yml-embedded
+#   form is the legacy path. See:
+#     https://docs.aws.amazon.com/amplify/latest/userguide/custom-headers.html
+#     https://docs.aws.amazon.com/amplify/latest/userguide/monorepo-custom-headers.html
+#     https://docs.aws.amazon.com/amplify/latest/userguide/custom-header-YAML-format.html
+#
+# Precedence:
+#   Values declared here OVERRIDE the same header set via the Amplify
+#   console "Custom headers" panel. Keep the per-app console panel
+#   empty so this file is the single source of truth.
+#
+# BASELINE HEADER SET (applied to all three apps)
+#
+#   Strict-Transport-Security      Pin HTTPS for 1y, includeSubDomains.
+#                                  Amplify always serves over HTTPS, so
+#                                  this is purely a downgrade-attack
+#                                  defense. `preload` intentionally
+#                                  omitted — needs lablup.com / *.app
+#                                  alignment before submitting to the
+#                                  HSTS preload list.
+#   X-Frame-Options: DENY          Clickjacking defense (legacy browsers).
+#   Content-Security-Policy:
+#     frame-ancestors 'none'       Modern clickjacking defense; this is
+#                                  the only CSP directive we set because
+#                                  the WebUI talks to user-supplied
+#                                  Backend.AI endpoints discovered at
+#                                  runtime, so `default-src` / `connect-src`
+#                                  whitelisting is not viable here.
+#                                  Tightening CSP further is a future FR.
+#   X-Content-Type-Options: nosniff   Block MIME sniffing.
+#   Referrer-Policy:
+#     strict-origin-when-cross-origin  Don't leak path/query cross-origin.
+#   Permissions-Policy             Disable camera / mic / geolocation; opt
+#                                  out of FLoC (interest-cohort).
+
+applications:
+  # WebUI docs site — App root: packages/backend.ai-webui-docs
+  - appRoot: packages/backend.ai-webui-docs
+    customHeaders:
+      - pattern: "**"
+        headers:
+          - key: "Strict-Transport-Security"
+            value: "max-age=31536000; includeSubDomains"
+          - key: "X-Frame-Options"
+            value: "DENY"
+          - key: "Content-Security-Policy"
+            value: "frame-ancestors 'none'"
+          - key: "X-Content-Type-Options"
+            value: "nosniff"
+          - key: "Referrer-Policy"
+            value: "strict-origin-when-cross-origin"
+          - key: "Permissions-Policy"
+            value: "camera=(), microphone=(), geolocation=(), interest-cohort=()"
+
+  # WebUI React app — App root: react
+  - appRoot: react
+    customHeaders:
+      - pattern: "**"
+        headers:
+          - key: "Strict-Transport-Security"
+            value: "max-age=31536000; includeSubDomains"
+          - key: "X-Frame-Options"
+            value: "DENY"
+          - key: "Content-Security-Policy"
+            value: "frame-ancestors 'none'"
+          - key: "X-Content-Type-Options"
+            value: "nosniff"
+          - key: "Referrer-Policy"
+            value: "strict-origin-when-cross-origin"
+          - key: "Permissions-Policy"
+            value: "camera=(), microphone=(), geolocation=(), interest-cohort=()"
+
+  # Storybook (backend.ai-ui) — App root: packages/backend.ai-ui
+  - appRoot: packages/backend.ai-ui
+    customHeaders:
+      - pattern: "**"
+        headers:
+          - key: "Strict-Transport-Security"
+            value: "max-age=31536000; includeSubDomains"
+          - key: "X-Frame-Options"
+            value: "DENY"
+          - key: "Content-Security-Policy"
+            value: "frame-ancestors 'none'"
+          - key: "X-Content-Type-Options"
+            value: "nosniff"
+          - key: "Referrer-Policy"
+            value: "strict-origin-when-cross-origin"
+          - key: "Permissions-Policy"
+            value: "camera=(), microphone=(), geolocation=(), interest-cohort=()"

@@ -4,7 +4,7 @@
  */
 import { RelayEnvironment } from '../RelayEnvironment';
 import { backendaiOptions } from '../global-stores';
-import { buiLanguages } from '../helper/bui-language';
+import { buiLanguages, buiTranslations } from '../helper/bui-language';
 import {
   backendaiClientPromise,
   createAnonymousBackendaiClient,
@@ -58,7 +58,11 @@ import React, {
   useLayoutEffect,
   useState,
 } from 'react';
-import { useTranslation, initReactI18next } from 'react-i18next';
+import {
+  I18nextProvider,
+  useTranslation,
+  initReactI18next,
+} from 'react-i18next';
 import { RelayEnvironmentProvider } from 'react-relay/hooks';
 import { useLocation } from 'react-router-dom';
 import { QueryParamProvider } from 'use-query-params';
@@ -136,6 +140,21 @@ i18n
       process.env.NODE_ENV === 'development' ? ['copyableI18nKey'] : [],
     lng: backendaiOptions?.get('language', 'default', 'general') || 'en',
     fallbackLng: 'en',
+    // BUI components are rendered inside the host React tree and (since
+    // react-i18next is physically deduped by pnpm) read the host i18n
+    // instance via the shared React Context. Routing missing keys to the
+    // `backend.ai-ui` namespace lets BUI's `useTranslation()` calls
+    // resolve their keys without changing every BUI call site.
+    fallbackNS: 'backend.ai-ui',
+    // BUI uses ':' literally inside its keys (top-level entries are
+    // prefixed with "comp" + colon) and configures its own i18next
+    // instance with nsSeparator '^' so the colon is NOT parsed as a
+    // namespace boundary. The host has to mirror that separator —
+    // otherwise i18next splits BUI keys on the colon, treats the prefix
+    // as a namespace, and never reaches the bundle we register under
+    // the `backend.ai-ui` namespace via the fallback path.
+    // Verified safe: host's own translation keys contain no colon.
+    nsSeparator: '^',
     interpolation: {
       escapeValue: false, // react already safes from xss => https://www.i18next.com/translation-function/interpolation#unescape
     },
@@ -144,6 +163,14 @@ i18n
       transKeepBasicHtmlNodesFor: ['br', 'strong', 'span', 'code', 'p'],
     },
   });
+
+// Populate the `backend.ai-ui` namespace on the host i18n instance with
+// BUI's static locale bundles. Pairs with the `fallbackNS` above so BUI
+// components calling `useTranslation()` resolve their keys via fallback
+// against the host's (single, deduped) react-i18next Context.
+Object.entries(buiTranslations).forEach(([lng, bundle]) => {
+  i18n.addResourceBundle(lng, 'backend.ai-ui', bundle, true, true);
+});
 
 // Dev-only: react to host i18n JSON edits without a full page reload.
 // `vite.config.ts:devAssetsReloadPlugin` watches `resources/i18n/*.json` and
@@ -324,20 +351,36 @@ export const DefaultProvidersForReactRoot: React.FC<{
                 variant: 'outlined',
               }}
             >
-              <BAIMetaDataWrapper>
-                <QueryParamProvider adapter={ReactRouter6Adapter}>
-                  <App {...commonAppProps}>
-                    {/* <StyleProvider container={shadowRoot} cache={cache}> */}
-                    <Suspense>
-                      {/* <BrowserRouter> */}
-                      {/* <RoutingEventHandler /> */}
-                      {children}
-                      {/* </BrowserRouter> */}
-                    </Suspense>
-                    {/* </StyleProvider> */}
-                  </App>
-                </QueryParamProvider>
-              </BAIMetaDataWrapper>
+              {/*
+               * Re-assert the host i18n React Context. BAIConfigProvider
+               * internally wraps its children with
+               * <I18nextProvider i18n={buiI18n}>; because pnpm dedupes
+               * react-i18next into a single physical copy (= a single
+               * React Context) across host and BUI, that BUI Provider
+               * would otherwise shadow the host i18n for every child and
+               * host keys would surface as raw strings.
+               *
+               * Convention: BAIConfigProvider is mounted only here, at
+               * the application root. Other call sites (e.g. the login
+               * screen) use antd's plain ConfigProvider so this shadow
+               * never enters the tree in the first place.
+               */}
+              <I18nextProvider i18n={i18n}>
+                <BAIMetaDataWrapper>
+                  <QueryParamProvider adapter={ReactRouter6Adapter}>
+                    <App {...commonAppProps}>
+                      {/* <StyleProvider container={shadowRoot} cache={cache}> */}
+                      <Suspense>
+                        {/* <BrowserRouter> */}
+                        {/* <RoutingEventHandler /> */}
+                        {children}
+                        {/* </BrowserRouter> */}
+                      </Suspense>
+                      {/* </StyleProvider> */}
+                    </App>
+                  </QueryParamProvider>
+                </BAIMetaDataWrapper>
+              </I18nextProvider>
             </BAIConfigProvider>
           </QueryClientProvider>
         </RelayEnvironmentProvider>

@@ -1,4 +1,6 @@
-# User Management
+<a id="admin-menus"></a>
+
+# Admin Features
 
 Logging in with an admin account will reveal an extra Administration menu on the bottom left of the sidebar.
 User information registered in Backend.AI is listed in the Users tab.

@@ -283,7 +283,7 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
               },
             ]}
           >
-            <InputNumber min={1} style={{ width: '100%' }} />
+            <InputNumber min={deployment ? 0 : 1} style={{ width: '100%' }} />
           </Form.Item>
           <Form.Item
             name="tags"

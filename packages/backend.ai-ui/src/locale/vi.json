@@ -5,6 +5,7 @@
     "Architecture": "Kiến trúc",
     "DiskPerc": "Sử dụng đĩa (%)",
     "Endpoint": "Điểm cuối",
+    "FailedToLoadCellData": "Không thể tải dữ liệu.",
     "NoAvailableLiveStat": "Không có số liệu trực tiếp",
     "Region": "Khu vực",
     "ResourceGroup": "Nhóm tài nguyên",

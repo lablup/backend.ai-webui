@@ -5,6 +5,7 @@
     "Architecture": "アーキテクチャ",
     "DiskPerc": "ディスク使用率",
     "Endpoint": "エンドポイント",
+    "FailedToLoadCellData": "データの読み込みに失敗しました。",
     "NoAvailableLiveStat": "ライブ統計は利用できません",
     "Region": "リージョン",
     "ResourceGroup": "リソースグループ",

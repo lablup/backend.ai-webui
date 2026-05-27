@@ -5,6 +5,7 @@
     "Architecture": "Mimari",
     "DiskPerc": "Disk %",
     "Endpoint": "Uç Nokta",
+    "FailedToLoadCellData": "Veriler yüklenemedi.",
     "NoAvailableLiveStat": "Canlı istatistik yok",
     "Region": "Bölge",
     "ResourceGroup": "Kaynak Grubu",

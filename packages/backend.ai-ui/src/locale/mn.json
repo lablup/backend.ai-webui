@@ -5,6 +5,7 @@
     "Architecture": "Архитектур",
     "DiskPerc": "Диск %",
     "Endpoint": "Эцсийн цэг",
+    "FailedToLoadCellData": "Өгөгдөл ачааллахад алдаа гарлаа.",
     "NoAvailableLiveStat": "Амьд статистик байхгүй",
     "Region": "Бүс",
     "ResourceGroup": "Ресурсын бүлэг",
