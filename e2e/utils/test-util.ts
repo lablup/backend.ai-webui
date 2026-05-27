@@ -766,6 +766,67 @@ export async function acceptAllInvitationAndVerifySpecificFolder(
   await verifyVFolder(page, folderName, 'Active');
 }
 
+/**
+ * Leave a shared (invited) vfolder via SharedFolderPermissionInfoModal.
+ *
+ * Regression guard for FR-2978: VFolder.leave_invited used to send `null`
+ * as the request body, which the manager's BodyParam[LeaveVFolderReq] rejected
+ * with a 400. Driving the full UI flow here ensures the client sends a valid
+ * JSON body end-to-end.
+ *
+ * Caller must already be logged in as the invitee and have accepted the
+ * invitation (see acceptAllInvitationAndVerifySpecificFolder).
+ */
+export async function leaveSharedFolderAndVerify(
+  page: Page,
+  folderName: string,
+) {
+  await navigateTo(page, 'data');
+  await page.getByRole('tab', { name: 'Active' }).click();
+  await clearAllFilters(page);
+  await selectPropertyFilter(page, 'Name', folderName);
+
+  // For folders the user does not own, the "share" action button opens the
+  // SharedFolderPermissionInfoModal instead of the invite modal (see
+  // VFolderNodes.tsx onShare). The button's aria-label is still "share".
+  const folderRow = page.getByRole('row', {
+    name: `VFolder Identicon ${folderName}`,
+  });
+  await expect(folderRow).toBeVisible({ timeout: 10000 });
+  await folderRow.getByRole('button', { name: 'share' }).first().click();
+
+  // The modal renders a Tooltip-wrapped Leave button whose accessible name is
+  // the tooltip's title ('Leave the shared folder').
+  const sharedFolderModal = page.locator('.ant-modal').filter({
+    hasText: folderName,
+  });
+  await expect(sharedFolderModal.first()).toBeVisible({ timeout: 10000 });
+  await sharedFolderModal
+    .getByRole('button', { name: 'Leave the shared folder' })
+    .first()
+    .click();
+
+  // Popconfirm OK button — confirm leaving.
+  await page
+    .locator('.ant-popover')
+    .getByRole('button', { name: /^OK$/i })
+    .click();
+
+  // Success toast should appear (no 400) and the folder should disappear from
+  // the user's Active list.
+  await expect(
+    page.getByText('Successfully left the shared folder'),
+  ).toBeVisible({ timeout: 15000 });
+
+  await removeSearchButton(page, folderName);
+  await clearAllFilters(page);
+  await selectPropertyFilter(page, 'Name', folderName);
+  await expect(
+    page.locator('tbody tr').filter({ hasText: folderName }),
+  ).toHaveCount(0, { timeout: 10000 });
+  await removeSearchButton(page, folderName);
+}
+
 export async function restoreVFolderAndVerify(page: Page, folderName: string) {
   await navigateTo(page, 'data');
   await page.getByRole('tab', { name: 'Trash' }).click();

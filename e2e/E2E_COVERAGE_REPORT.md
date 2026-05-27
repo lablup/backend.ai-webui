@@ -25,7 +25,7 @@
 | Serving           | `/serving`                             |    7     |    2    | 🔶 29%  |
 | Endpoint Detail   | `/serving/:serviceId`                  |    20    |    9    | 🔶 45%  |
 | Service Launcher  | `/service/start`                       |    5     |    1    | 🔶 20%  |
-| VFolder / Data    | `/data`                                |    45    |   32    | 🔶 71%  |
+| VFolder / Data    | `/data`                                |    46    |   33    | 🔶 72%  |
 | Model Store       | `/model-store`                         |    6     |    6    | ✅ 100% |
 | Admin Model Store | `/admin-model-store`                   |    28    |   28    | ✅ 100% |
 | Storage Host      | `/storage-settings/:hostname`          |    3     |    0    |  ❌ 0%  |
@@ -48,7 +48,7 @@
 | Plugin System     | (config-based)                         |    12    |   12    | ✅ 100% |
 | RBAC Management   | `/rbac`                                |    22    |   21    | 🔶 95%  |
 | Auto Scaling Rule Preset | `/admin-serving?tab=auto-scaling-rule` | 33 | 32 | 🔶 97% |
-| **Total**         |                                        | **447**  | **299** | **67%** |
+| **Total**         |                                        | **448**  | **300** | **67%** |
 
 ---
 
@@ -335,6 +335,7 @@
 | Delete / trash / restore / purge | ✅ | `User can create, delete(move to trash), restore, delete forever` |
 | Consecutive deletion | ✅ | `User can create and permanently delete multiple VFolders` |
 | Share folder → InviteFolderSettingModal | ✅ | `User can share vFolder` (also asserts inviter email shown in invitation modal — FR-2982) |
+| Leave shared folder → SharedFolderPermissionInfoModal | ✅ | `Invitee can leave a shared vFolder` |
 | File upload (button) | ✅ | `User can upload a single/multiple files via Upload button` |
 | File upload (drag & drop) | ✅ | `User can upload a file via drag and drop` |
 | File upload (duplicate handling) | ✅ | `User sees duplicate confirmation` / `User can cancel duplicate` |
