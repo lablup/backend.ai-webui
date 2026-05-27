@@ -5,6 +5,7 @@
 import { RelayEnvironment } from '../RelayEnvironment';
 import { backendaiOptions } from '../global-stores';
 import { buiLanguages } from '../helper/bui-language';
+import { resolveInitialLanguage } from '../helper/resolveInitialLanguage';
 import {
   backendaiClientPromise,
   createAnonymousBackendaiClient,
@@ -134,7 +135,13 @@ i18n
     },
     postProcess:
       process.env.NODE_ENV === 'development' ? ['copyableI18nKey'] : [],
-    lng: backendaiOptions?.get('language', 'default', 'general') || 'en',
+    // Resolve the initial language so first-paint screens (notably the login
+    // page) render in the user's browser language even when nothing has been
+    // persisted yet (e.g. private / incognito browsing). See
+    // `helper/resolveInitialLanguage.ts` for the supported-language list.
+    lng: resolveInitialLanguage(
+      backendaiOptions?.get('language', undefined, 'general'),
+    ),
     fallbackLng: 'en',
     interpolation: {
       escapeValue: false, // react already safes from xss => https://www.i18next.com/translation-function/interpolation#unescape
