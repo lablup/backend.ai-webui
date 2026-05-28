@@ -173,9 +173,12 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
                 );
                 return;
               }
-              const newId = toLocalId(
-                response.createModelDeployment.deployment.id,
-              );
+              const createModelDeployment = response.createModelDeployment;
+              if (!createModelDeployment) {
+                message.error(t('deployment.FailedToCreateDeployment'));
+                return;
+              }
+              const newId = toLocalId(createModelDeployment.deployment.id);
               onRequestClose(true);
               navigate(`/deployments/${newId}`);
             },

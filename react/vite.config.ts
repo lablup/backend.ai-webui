@@ -14,6 +14,7 @@ import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import compression from 'compression';
 import { defineConfig, loadEnv, type Plugin } from 'vite';
+import checker from 'vite-plugin-checker';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import { VitePWA } from 'vite-plugin-pwa';
 import svgr from 'vite-plugin-svgr';
@@ -765,6 +766,19 @@ export default defineConfig(({ command, mode }) => {
       // by craco's workbox-webpack-plugin GenerateSW call in
       // craco.config.cjs:390-400.
       //
+      // Run `tsc --noEmit` in a worker so type errors surface in the dev
+      // terminal and as a browser overlay during `vite dev`. Vite itself
+      // only strips types via esbuild, so without this plugin type
+      // errors are visible only in the IDE or via `scripts/verify.sh`.
+      // `tsconfigPath` pins the checker to the consumer's tsconfig
+      // (which has the `paths` workaround for pnpm-global-virtual-store
+      // type resolution — see FR-2925).
+      checker({
+        typescript: {
+          tsconfigPath: resolve(__dirname, 'tsconfig.json'),
+        },
+      }),
+
       // Strategy `generateSW` produces a standalone SW file that precaches
       // the build manifest. We opt out of `registerType: 'autoUpdate'` to
       // preserve the legacy behaviour where index.html's inline script

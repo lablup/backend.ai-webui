@@ -61,7 +61,7 @@ const CellErrorBoundary: React.FC<
   const { logger } = useBAILogger();
   return (
     <ErrorBoundary
-      onError={(error: Error, info: ErrorInfo) =>
+      onError={(error: unknown, info: ErrorInfo) =>
         logger.error(
           '[BAIAgentTable] Cell render failed:',
           error,

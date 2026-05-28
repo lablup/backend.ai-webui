@@ -36,6 +36,7 @@ import {
   toLocalId,
   type GraphQLFilter,
   useConnectedBAIClient,
+  BAILink,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -380,13 +381,13 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
         }
         return (
           <>
-            <Typography.Link
-              ellipsis={{ tooltip: name }}
+            <BAILink
+              ellipsis
               onClick={() => setSelectedSessionId(toLocalId(session.id))}
               style={{ maxWidth: 160 }}
             >
               {name}
-            </Typography.Link>
+            </BAILink>
             &nbsp;
             <Typography.Text type="secondary">
               (<BAIId globalId={session.id} type="secondary" />)

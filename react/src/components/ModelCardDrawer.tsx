@@ -38,8 +38,12 @@ import React, { Suspense, useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 
-interface ModelCardDrawerProps extends Omit<DrawerProps, 'children'> {
+interface ModelCardDrawerProps extends Omit<
+  DrawerProps,
+  'children' | 'onClose'
+> {
   modelCardId: string | undefined;
+  onClose?: () => void;
 }
 
 const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
@@ -135,10 +139,10 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
         {...drawerProps}
         open={open}
         loading={deferredOpen !== open}
-        onClose={(e) => {
+        onClose={() => {
           setDeployModalOpen(false);
           closeCreateDeployment();
-          onClose?.(e);
+          onClose?.();
         }}
         title={
           <BAIFlex
@@ -350,7 +354,7 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
             modelCardFrgmt={modelCard}
             onDeployed={(_deploymentId) => {
               setDeployModalOpen(false);
-              onClose();
+              onClose?.();
             }}
           />
         </BAIUnmountAfterClose>

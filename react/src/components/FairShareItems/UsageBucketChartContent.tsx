@@ -650,8 +650,10 @@ interface ResourceChartData {
 const CAPACITY_KEY = '_capacity';
 
 type _UsageBucketNode = NonNullable<
-  UsageBucketChartContentQuery['response']['users']
->['edges'][number]['node']['usageBuckets']['edges'][number]['node'];
+  NonNullable<
+    UsageBucketChartContentQuery['response']['users']
+  >['edges'][number]['node']['usageBuckets']
+>['edges'][number]['node'];
 
 type UsageBucketNode = Omit<_UsageBucketNode, 'projectId' | 'userUuid'> &
   Partial<Pick<_UsageBucketNode, 'projectId' | 'userUuid'>>;
@@ -707,7 +709,7 @@ const buildParentCapacityMap = (
     bucketNodes,
     (acc, node) => {
       const periodKey = node.metadata.periodStart;
-      node.averageDailyUsage.entries.forEach((entry) => {
+      node.averageDailyUsage?.entries.forEach((entry) => {
         const rt = entry.resourceType;
         if (!acc[rt]) acc[rt] = {};
         acc[rt][periodKey] =
@@ -749,7 +751,7 @@ const transformToChartData = (
     allPeriods.add(periodKey);
     allEntities.add(displayName);
 
-    for (const entry of node.averageDailyUsage.entries) {
+    for (const entry of node.averageDailyUsage?.entries ?? []) {
       const rt = entry.resourceType;
       allResourceTypes.add(rt);
 

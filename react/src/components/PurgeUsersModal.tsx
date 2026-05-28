@@ -114,8 +114,19 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
                 },
               },
             },
-            onCompleted: (res) => {
-              const { purgedCount, failed } = res.adminBulkPurgeUsersV2;
+            onCompleted: (res, errors) => {
+              if (errors && errors.length > 0) {
+                message.error(errors.map((e) => e.message).join(', '));
+                setIsPending(false);
+                return;
+              }
+              const adminBulkPurgeUsersV2 = res.adminBulkPurgeUsersV2;
+              if (!adminBulkPurgeUsersV2) {
+                message.error(t('error.UnknownError'));
+                setIsPending(false);
+                return;
+              }
+              const { purgedCount, failed } = adminBulkPurgeUsersV2;
 
               if (failed.length > 0) {
                 const failedMessages = failed.map((f) => f.message).join(', ');

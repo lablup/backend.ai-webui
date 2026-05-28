@@ -248,6 +248,10 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
         result: MyKeypairManagementModalIssueMyKeypairMutation['response'],
       ) => {
         const payload = result.issueMyKeypair;
+        if (!payload) {
+          message.error(t('error.UnknownError'));
+          return;
+        }
         setCredentialResult({
           accessKey: payload.keypair.accessKey,
           secretKey: payload.secretKey,

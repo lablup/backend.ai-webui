@@ -160,14 +160,21 @@ const BAIImportArtifactModal = ({
                 );
                 return;
               }
+              const importArtifacts = res.importArtifacts;
+              if (!importArtifacts) {
+                message.error(
+                  t('comp:BAIImportArtifactModal.FailedToPullVersions'),
+                );
+                return;
+              }
               message.success(
                 t('comp:BAIImportArtifactModal.SuccessFullyPulled', {
-                  count: res.importArtifacts.artifactRevisions.edges.length,
+                  count: importArtifacts.artifactRevisions.edges.length,
                 }),
               );
               onOk(
                 e,
-                res.importArtifacts.tasks
+                importArtifacts.tasks
                   .filter((task) => task.taskId != null)
                   .map((task) => ({
                     taskId: task.taskId!,

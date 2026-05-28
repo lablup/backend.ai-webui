@@ -139,10 +139,17 @@ const BAIDeleteArtifactRevisionsModal = ({
                 });
                 return;
               }
+              const cleanupArtifactRevisions = res.cleanupArtifactRevisions;
+              if (!cleanupArtifactRevisions) {
+                message.error(
+                  t('comp:BAIDeleteArtifactModal.FailedToRemoveVersions'),
+                );
+                return;
+              }
               message.success(
                 t('comp:BAIDeleteArtifactModal.SuccessFullyRemoved', {
                   count:
-                    res.cleanupArtifactRevisions.artifactRevisions.edges.length,
+                    cleanupArtifactRevisions.artifactRevisions.edges.length,
                 }),
               );
               onOk(e);

@@ -183,24 +183,34 @@ const ImportArtifactRevisionToFolderModal = ({
                     );
                     return;
                   }
+                  const importArtifacts = res.importArtifacts;
+                  if (!importArtifacts) {
+                    message.error(
+                      t('importArtifactRevisionToFolderModal.FailedToImport'),
+                    );
+                    return;
+                  }
 
-                  if (res.importArtifacts.artifactRevisions?.count > 0) {
+                  if (importArtifacts.artifactRevisions?.count > 0) {
                     message.success(
                       t(
                         'importArtifactRevisionToFolderModal.SuccessfullyImported',
                       ),
                     );
 
-                    const tasks = res.importArtifacts.tasks
+                    const tasks = importArtifacts.tasks
                       .filter((task) => task.taskId != null)
-                      .map((task) => ({
-                        taskId: task.taskId!,
-                        version: task.artifactRevision.version,
-                        artifact: {
-                          id: toLocalId(task.artifactRevision.artifact.id),
-                          name: task.artifactRevision.artifact.name,
-                        },
-                      }));
+                      .map((task) => {
+                        const artifact = task.artifactRevision.artifact!;
+                        return {
+                          taskId: task.taskId!,
+                          version: task.artifactRevision.version,
+                          artifact: {
+                            id: toLocalId(artifact.id ?? ''),
+                            name: artifact.name ?? '',
+                          },
+                        };
+                      });
 
                     onOk?.(e, tasks, values.vfolderId);
                   } else {

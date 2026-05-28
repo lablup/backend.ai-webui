@@ -170,7 +170,7 @@ const ResourceGroupFairShareTable: React.FC<
                       </Typography.Text>
                     </BAIFlex>
                   </BAIFlex>
-                  {index !== capacityEntries.length - 1 && (
+                  {index !== (capacityEntries?.length ?? 0) - 1 && (
                     <Divider orientation="vertical" />
                   )}
                 </React.Fragment>

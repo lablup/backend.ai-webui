@@ -197,14 +197,14 @@ export class Client {
     timeout: number = 0,
     retry: number = 0,
     opts = {},
-  ) {
+  ): Promise<any> {
     let errorType = Client.ERR_REQUEST;
     let errorTitle = '';
     let errorMsg;
     let errorDesc = '';
     let errorCode = '';
     let traceback = '';
-    let resp, body, requestTimer, requestTimerForSoftTimeout;
+    let resp: any, body: any, requestTimer: any, requestTimerForSoftTimeout: any;
     let isSoftTimeoutTriggered = false;
     try {
       if (rqst.method === 'GET') {
@@ -288,7 +288,7 @@ export class Client {
           opts,
         );
       }
-      let error_message;
+      let error_message: any;
       if (
         typeof err == 'object' &&
         err?.constructor === Object &&
@@ -299,7 +299,7 @@ export class Client {
         error_message = err;
       }
       if (typeof resp === 'undefined') {
-        resp = {};
+        resp = {} as any;
       }
       switch (errorType) {
         case Client.ERR_REQUEST:
@@ -492,7 +492,7 @@ export class Client {
   /**
    * Check compatibility of current manager
    */
-  supports(feature) {
+  supports(feature: any) {
     if (Object.keys(this._features).length === 0) {
       this._updateSupportList();
     }
@@ -503,8 +503,8 @@ export class Client {
     }
   }
 
-  _updateFieldCompatibilityByAPIVersion(fields) {
-    const v4_replacements = {
+  _updateFieldCompatibilityByAPIVersion(fields: any) {
+    const v4_replacements: any = {
       session_name: 'sess_id',
     };
     if (this._apiVersionMajor < 5) {
@@ -781,16 +781,16 @@ export class Client {
   /**
    * Return if api is compatible with given version.
    */
-  isAPIVersionCompatibleWith(version) {
+  isAPIVersionCompatibleWith(version: any) {
     let apiVersion = this._apiVersion;
     if (apiVersion !== null && version !== null) {
       apiVersion = apiVersion
         .split('.')
-        .map((s) => s.padStart(10))
+        .map((s: any) => s.padStart(10))
         .join('.');
       version = version
         .split('.')
-        .map((s) => s.padStart(10))
+        .map((s: any) => s.padStart(10))
         .join('.');
     }
     return version <= apiVersion;
@@ -857,7 +857,7 @@ export class Client {
       // the web proxy wraps the error in an envelope { authenticated: false,
       // data: { type, title, details } }. Recover that envelope and throw
       // it as a login error so the caller can classify by data.type.
-      const responseBody = err?.response;
+      const responseBody = (err as any)?.response;
       if (
         responseBody &&
         typeof responseBody === 'object' &&
@@ -968,7 +968,7 @@ export class Client {
           return Promise.resolve(false);
         }
       }
-    } catch (err) {
+    } catch (err: any) {
       // Manager / webserver down.
       if ('statusCode' in err && err.statusCode === 429) {
         throw {
@@ -991,7 +991,7 @@ export class Client {
    * Leave from manager user. This requires additional webserver package.
    *
    */
-  async signout(userid, password): Promise<any> {
+  async signout(userid: any, password: any): Promise<any> {
     let body = {
       username: userid,
       password: password,
@@ -1003,7 +1003,7 @@ export class Client {
   /**
    * Update user's full_name.
    */
-  async update_full_name(email, fullName): Promise<any> {
+  async update_full_name(email: any, fullName: any): Promise<any> {
     let body = {
       email: email,
       full_name: fullName,
@@ -1021,7 +1021,7 @@ export class Client {
    * Update user's password.
    *
    */
-  async update_password(oldPassword, newPassword, newPassword2): Promise<any> {
+  async update_password(oldPassword: any, newPassword: any, newPassword2: any): Promise<any> {
     let body = {
       old_password: oldPassword,
       new_password: newPassword,
@@ -1042,7 +1042,7 @@ export class Client {
     return this._wrapWithPromise(rqst);
   }
 
-  async initialize_totp_anon({ registration_token }): Promise<any> {
+  async initialize_totp_anon({ registration_token }: any): Promise<any> {
     let rqst = this.newSignedRequest(
       'POST',
       '/totp/anon',
@@ -1054,11 +1054,11 @@ export class Client {
     return this._wrapWithPromise(rqst);
   }
 
-  async activate_totp(otp): Promise<any> {
+  async activate_totp(otp: any): Promise<any> {
     let rqst = this.newSignedRequest('POST', '/totp/verify', { otp }, null);
     return this._wrapWithPromise(rqst);
   }
-  async activate_totp_anon({ otp, registration_token }): Promise<any> {
+  async activate_totp_anon({ otp, registration_token }: any): Promise<any> {
     let rqst = this.newSignedRequest(
       'POST',
       '/totp/anon/verify',
@@ -1159,16 +1159,16 @@ export class Client {
    * @param {number} timeout - Timeout to cancel creation
    */
   async createSessionFromTemplate(
-    templateId,
+    templateId: any,
     image = null,
     sessionName: undefined | string | null = null,
-    resources = {},
+    resources: any = {},
     timeout: number = 0,
   ) {
     if (typeof sessionName === 'undefined' || sessionName === null) {
       sessionName = this.generateSessionId();
     }
-    const params = { template_id: templateId };
+    const params: any = { template_id: templateId };
     if (image) {
       params['image'] = image;
     }
@@ -1176,7 +1176,7 @@ export class Client {
       params['name'] = sessionName;
     }
     if (resources && Object.keys(resources).length > 0) {
-      let config = {};
+      let config: any = {};
       if (resources['cpu']) {
         config['cpu'] = resources['cpu'];
       }
@@ -1265,7 +1265,7 @@ export class Client {
    * @param {string} sessionId - the sessionId given when created
    * @param {string | null} ownerKey - Owner API key to create
    */
-  async get_info(sessionId, ownerKey = null): Promise<any> {
+  async get_info(sessionId: any, ownerKey = null): Promise<any> {
     let queryString = `${this.kernelPrefix}/${sessionId}`;
     if (ownerKey != null) {
       queryString = `${queryString}?${new URLSearchParams({ owner_access_key: ownerKey }).toString()}`;
@@ -1279,7 +1279,7 @@ export class Client {
    *
    * @param {string} sessionId - the sessionId given when created
    */
-  async get_direct_access_info(sessionId): Promise<any> {
+  async get_direct_access_info(sessionId: any): Promise<any> {
     let queryString = `${this.kernelPrefix}/${sessionId}/direct-access-info`;
     let rqst = this.newSignedRequest('GET', queryString, null, null);
     return this._wrapWithPromise(rqst);
@@ -1293,7 +1293,7 @@ export class Client {
    * @param {number} timeout - timeout to wait log query. Set to 0 to use default value.
    */
   async get_logs(
-    sessionId,
+    sessionId: any,
     ownerKey = null,
     kernelId = null,
     timeout = 0,
@@ -1319,7 +1319,7 @@ export class Client {
    *
    * @param {string} sessionId - the sessionId given when created
    */
-  getTaskLogs(sessionId): Promise<any> {
+  getTaskLogs(sessionId: any): Promise<any> {
     const queryString = `${this.kernelPrefix}/_/logs?${new URLSearchParams({ session_name: sessionId }).toString()}`;
     let rqst = this.newSignedRequest('GET', queryString, null, null);
     return this._wrapWithPromise(rqst);
@@ -1333,7 +1333,7 @@ export class Client {
    * @param {boolean} forced - force destroy session. Requires admin privilege.
    */
   async destroy(
-    sessionId,
+    sessionId: any,
     ownerKey = null,
     forced: boolean = false,
   ): Promise<any> {
@@ -1353,7 +1353,7 @@ export class Client {
    * @param {string} sessionId - the sessionId given when created
    * @param {string | null} ownerKey - Owner API key to restart
    */
-  async restart(sessionId, ownerKey = null): Promise<any> {
+  async restart(sessionId: any, ownerKey = null): Promise<any> {
     let queryString = `${this.kernelPrefix}/${sessionId}`;
     if (ownerKey != null) {
       queryString = `${queryString}?${new URLSearchParams({ owner_access_key: ownerKey }).toString()}`;
@@ -1400,17 +1400,17 @@ export class Client {
   }
 
   // legacy aliases (DO NOT USE for new codes)
-  destroyKernel(sessionId, ownerKey = null): Promise<any> {
+  destroyKernel(sessionId: any, ownerKey = null): Promise<any> {
     return this.destroy(sessionId, ownerKey);
   }
 
   // legacy aliases (DO NOT USE for new codes)
-  refreshKernel(sessionId, ownerKey = null): Promise<any> {
+  refreshKernel(sessionId: any, ownerKey = null): Promise<any> {
     return this.restart(sessionId, ownerKey);
   }
 
   // legacy aliases (DO NOT USE for new codes)
-  runCode(code, sessionId, runId, mode): Promise<any> {
+  runCode(code: any, sessionId: any, runId: any, mode: any): Promise<any> {
     return this.execute(sessionId, runId, mode, code, {});
   }
 
@@ -1456,7 +1456,7 @@ export class Client {
     return this._wrapWithPromise(rqst, true);
   }
 
-  async upload(sessionId: string, path, fs): Promise<any> {
+  async upload(sessionId: string, path: any, fs: any): Promise<any> {
     const formData = new FormData();
     //formData.append('src', fs, {filepath: path});
     formData.append('src', fs, path);
@@ -1469,7 +1469,7 @@ export class Client {
     return this._wrapWithPromise(rqst);
   }
 
-  async download(sessionId: string, files): Promise<any> {
+  async download(sessionId: string, files: any): Promise<any> {
     let params = {
       files: files,
     };
@@ -1483,7 +1483,7 @@ export class Client {
     return this._wrapWithPromise(rqst, true);
   }
 
-  async download_single(sessionId, file) {
+  async download_single(sessionId: any, file: any) {
     let params = {
       file: file,
     };
@@ -1519,8 +1519,8 @@ export class Client {
    * @param {number} secure - Decide to encode the payload or not
    */
   async query(
-    q,
-    v,
+    q: any,
+    v: any,
     signal = null,
     timeout: number = 0,
     retry: number = 0,
@@ -1532,7 +1532,7 @@ export class Client {
     };
     let rqst = this.newSignedRequest('POST', `/admin/gql`, query, null, secure);
     return this._wrapWithPromise(rqst, false, signal, timeout, retry).then(
-      (r) => r.data,
+      (r: any) => r.data,
     );
   }
 
@@ -1548,7 +1548,7 @@ export class Client {
    */
   newSignedRequest(
     method: string,
-    queryString,
+    queryString: any,
     body: any = undefined,
     serviceName: string | null = null,
     secure: boolean = false,
@@ -1642,7 +1642,7 @@ export class Client {
       if (body instanceof FormData) {
       } else {
         hdrs.set('Content-Type', content_type);
-        hdrs.set('Content-Length', new TextEncoder().encode(authBody).length);
+        hdrs.set('Content-Length', String(new TextEncoder().encode(authBody).length));
       }
     } else {
       hdrs.set('Content-Type', content_type);
@@ -1656,7 +1656,7 @@ export class Client {
     }
     // Add session id header for non-cookie environment.
     if (this._loginSessionId !== '') {
-      hdrs.set('X-BackendAI-SessionID', this._loginSessionId);
+      hdrs.set('X-BackendAI-SessionID', this._loginSessionId as string);
     }
     return {
       method: method,
@@ -1676,7 +1676,7 @@ export class Client {
    * @param {string} queryString - the URI path and GET parameters
    * @param {any} body - an object that will be encoded as JSON in the request body
    */
-  newUnsignedRequest(method, queryString, body) {
+  newUnsignedRequest(method: any, queryString: any, body: any) {
     return this.newPublicRequest(
       method,
       queryString,
@@ -1736,10 +1736,10 @@ export class Client {
   }
 
   getAuthenticationString(
-    method,
-    queryString,
-    dateValue,
-    bodyValue,
+    method: any,
+    queryString: any,
+    dateValue: any,
+    bodyValue: any,
     content_type = 'application/json',
   ): string {
     let bodyHash = CryptoES.SHA256(bodyValue);
@@ -1765,14 +1765,14 @@ export class Client {
     );
   }
 
-  getCurrentDate(now): string {
+  getCurrentDate(now: any): string {
     let year = `0000${now.getUTCFullYear()}`.slice(-4);
     let month = `0${now.getUTCMonth() + 1}`.slice(-2);
     let day = `0${now.getUTCDate()}`.slice(-2);
     return year + month + day;
   }
 
-  getEncodedPayload(body): string {
+  getEncodedPayload(body: any): string {
     let iv = this.generateRandomStr(16);
     //let key = (btoa(this._config.endpoint) + iv + iv).substring(0,32); // btoa is deprecated. Now monitoring toString.
     let key = (
@@ -1814,7 +1814,7 @@ export class Client {
     return strBase64;
   }
 
-  sign(key, key_encoding, msg, digest_type) {
+  sign(key: any, key_encoding: any, msg: any, digest_type: any) {
     const hashDigest = CryptoES.enc.Utf8.parse(msg);
     let hmacDigest;
     if (key_encoding == 'utf8') {
@@ -1840,12 +1840,12 @@ export class Client {
     return hmac.digest(digest_type);*/
   }
 
-  getSignKey(secret_key, now) {
+  getSignKey(secret_key: any, now: any) {
     let k1 = this.sign(secret_key, 'utf8', this.getCurrentDate(now), 'binary');
     return this.sign(k1, 'binary', this._config.endpointHost, 'binary');
   }
 
-  generateRandomStr(length) {
+  generateRandomStr(length: any) {
     const possible =
       'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let result = '';
@@ -1863,7 +1863,7 @@ export class Client {
     return nosuffix ? text : text + '-jsSDK';
   }
 
-  slugify(text) {
+  slugify(text: any) {
     const a = 'àáäâèéëêìíïîòóöôùúüûñçßÿœæŕśńṕẃǵǹḿǘẍźḧ·/_,:;';
     const b = 'aaaaeeeeiiiioooouuuuncsyoarsnpwgnmuxzh------';
     const p = new RegExp(a.split('').join('|'), 'g');
@@ -1872,7 +1872,7 @@ export class Client {
       .toString()
       .toLowerCase()
       .replace(/\s+/g, '-') // Replace spaces with -
-      .replace(p, (c) => b.charAt(a.indexOf(c))) // Replace special chars
+      .replace(p, (c: any) => b.charAt(a.indexOf(c))) // Replace special chars
       .replace(/&/g, '-and-') // Replace & with 'and'
       .replace(/[^\w-]+/g, '') // Remove all non-word chars
       .replace(/--+/g, '-') // Replace multiple - with single -
@@ -1902,7 +1902,7 @@ export class Client {
    * post SSH Keypair to container
    * save the given keypair (both ssh_public_key and ssh_private_key)
    */
-  async postSSHKeypair(param): Promise<any> {
+  async postSSHKeypair(param: any): Promise<any> {
     let rqst = this.newSignedRequest('POST', '/auth/ssh-keypair', param, null);
     return this._wrapWithPromise(rqst, false);
   }

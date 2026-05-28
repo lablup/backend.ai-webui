@@ -199,8 +199,14 @@ export const useDeploymentLauncher = (): {
               reject(new Error(message));
               return;
             }
-
-            const deploymentId = String(response.deployVfolderV2.deploymentId);
+            const deployVfolderV2 = response.deployVfolderV2;
+            if (!deployVfolderV2) {
+              const errMsg = t('deployment.FailedToCreateDeployment');
+              handleErrors(errMsg);
+              reject(new Error(errMsg));
+              return;
+            }
+            const deploymentId = String(deployVfolderV2.deploymentId);
             handleSuccess(deploymentId);
             resolve({ deploymentId });
           },
@@ -230,10 +236,14 @@ export const useDeploymentLauncher = (): {
               reject(new Error(message));
               return;
             }
-
-            const deploymentId = String(
-              response.deployModelCardV2.deploymentId,
-            );
+            const deployModelCardV2 = response.deployModelCardV2;
+            if (!deployModelCardV2) {
+              const errMsg = t('deployment.FailedToCreateDeployment');
+              handleErrors(errMsg);
+              reject(new Error(errMsg));
+              return;
+            }
+            const deploymentId = String(deployModelCardV2.deploymentId);
             handleSuccess(deploymentId);
             resolve({ deploymentId });
           },

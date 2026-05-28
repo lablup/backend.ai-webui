@@ -77,7 +77,13 @@ const ChangePasswordView: React.FC<ChangePasswordViewProps> = ({
       setViewState('changed-success');
     } catch (e: unknown) {
       const error = e as ESMClientErrorResponse;
-      if (error?.response?.msg === 'Email mismatch') {
+      const response = error?.response;
+      if (
+        typeof response === 'object' &&
+        response !== null &&
+        'msg' in response &&
+        response.msg === 'Email mismatch'
+      ) {
         form.setFields([
           {
             name: 'email',
