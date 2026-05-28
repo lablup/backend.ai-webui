@@ -221,7 +221,10 @@ const ResourceAllocationFormItems: React.FC<
 
   // Get supported accelerator types in resource group by image
   const supportedAcceleratorTypesInRGByImage = useMemo(() => {
-    if (_.isUndefined(acceleratorSlotsInRG) || _.isNil(currentImage)) {
+    if (
+      _.isUndefined(acceleratorSlotsInRG) ||
+      (_.isNil(currentImage) && _.isEmpty(currentEnvironmentManual))
+    ) {
       return undefined;
     }
     return _.keys(acceleratorSlotsInRG).filter((acceleratorTypeName) => {
