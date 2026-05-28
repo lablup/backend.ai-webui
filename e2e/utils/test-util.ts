@@ -441,6 +441,9 @@ export async function createVFolderAndVerify(
   permission: 'rw' | 'ro' = 'rw',
 ) {
   await navigateTo(page, 'data');
+  // VFolderNodeListPage's BAICard extra renders a single "Create Folder" button.
+  // The previous `.nth(1)` assumed an older layout with a second header CTA and
+  // breaks against the current React build, so use the first match.
   await page.getByRole('button', { name: 'Create Folder' }).first().click();
 
   const modal = new FolderCreationModal(page);
