@@ -112,6 +112,7 @@ const DeploymentRevisionDetail: React.FC<{
           id
           identity {
             canonicalName
+            architecture
           }
         }
         modelDefinition {
@@ -147,6 +148,12 @@ const DeploymentRevisionDetail: React.FC<{
     (entry): entry is typeof entry & { name: string } => !!entry.name,
   );
   const resourceSlots = revision.resourceSlots ?? [];
+  const imageCanonicalName = revision.imageV2?.identity?.canonicalName;
+  const imageArchitecture = revision.imageV2?.identity?.architecture;
+  const imageFullName =
+    imageCanonicalName && imageArchitecture
+      ? `${imageCanonicalName}@${imageArchitecture}`
+      : imageCanonicalName;
 
   const descriptionsProps = {
     bordered: true,
@@ -323,9 +330,12 @@ const DeploymentRevisionDetail: React.FC<{
     {
       key: 'image',
       label: t('deployment.Image'),
-      children: revision.imageV2?.identity?.canonicalName ? (
-        <Typography.Text copyable style={{ wordBreak: 'break-all' }}>
-          {revision.imageV2.identity.canonicalName}
+      children: imageFullName ? (
+        <Typography.Text
+          copyable={{ text: imageFullName }}
+          style={{ wordBreak: 'break-all' }}
+        >
+          {imageFullName}
         </Typography.Text>
       ) : (
         renderFallback()

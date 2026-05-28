@@ -233,6 +233,7 @@ const DeploymentRevisionHistoryTab: React.FC<
                     id
                     identity {
                       canonicalName
+                      architecture
                     }
                   }
                   modelMountConfig {
@@ -481,14 +482,19 @@ const DeploymentRevisionHistoryTab: React.FC<
       defaultHidden: true,
       render: (_value, record) => {
         const canonicalName = record.imageV2?.identity?.canonicalName;
-        if (!canonicalName) return '-';
+        const architecture = record.imageV2?.identity?.architecture;
+        const fullName =
+          canonicalName && architecture
+            ? `${canonicalName}@${architecture}`
+            : canonicalName;
+        if (!fullName) return '-';
         return (
           <BAIText
-            copyable
-            ellipsis={{ tooltip: canonicalName }}
+            copyable={{ text: fullName }}
+            ellipsis={{ tooltip: fullName }}
             style={{ maxWidth: 180 }}
           >
-            {canonicalName}
+            {fullName}
           </BAIText>
         );
       },
