@@ -50,7 +50,6 @@ const MountedVFolderLinks: React.FC<MountedVFolderLinksProps> = ({
         vfolder?.node && (
           <FolderLink
             key={`mounted-vfolder-${idx}`}
-            showIcon
             vfolderNodeFragment={vfolder.node}
             // TODO: For now, disable state using VirtualFolderNode permissions in FolderLink component.
             // Currently shows Alert.error in Folder Explorer instead due to related bugs

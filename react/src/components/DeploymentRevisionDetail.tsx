@@ -95,6 +95,7 @@ const DeploymentRevisionDetail: React.FC<{
           vfolder {
             id
             name
+            ...FolderLink_vfolderNode
           }
         }
         extraMounts {
@@ -260,13 +261,9 @@ const DeploymentRevisionDetail: React.FC<{
     {
       key: 'model-folder',
       label: t('deployment.ModelFolder'),
-      children: mountConfig?.vfolder?.name ? (
+      children: mountConfig?.vfolder ? (
         <BAIFlex direction="column" align="start">
-          <FolderLink
-            folderId={toLocalId(mountConfig.vfolder.id) ?? ''}
-            folderName={mountConfig.vfolder.name}
-            showIcon
-          />
+          <FolderLink vfolderNodeFragment={mountConfig.vfolder} />
           {mountConfig.mountDestination && (
             <Typography.Text type="secondary">
               {mountConfig.mountDestination}
@@ -299,7 +296,7 @@ const DeploymentRevisionDetail: React.FC<{
                 align="start"
               >
                 {mount.vfolder ? (
-                  <FolderLink vfolderNodeFragment={mount.vfolder} showIcon />
+                  <FolderLink vfolderNodeFragment={mount.vfolder} />
                 ) : (
                   <Typography.Text type="secondary">
                     {mount.vfolderId}

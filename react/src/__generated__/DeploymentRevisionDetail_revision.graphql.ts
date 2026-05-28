@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<5923f44a67066ded77c6819ea9aab280>>
+ * @generated SignedSource<<08db8aa0fe9183ca35d8a7dfea895dd1>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -58,6 +58,7 @@ export type DeploymentRevisionDetail_revision$data = {
     readonly vfolder: {
       readonly id: string;
       readonly name: string | null | undefined;
+      readonly " $fragmentSpreads": FragmentRefs<"FolderLink_vfolderNode">;
     } | null | undefined;
     readonly vfolderId: string;
   } | null | undefined;
@@ -111,6 +112,24 @@ v3 = {
   "args": null,
   "kind": "ScalarField",
   "name": "mountDestination",
+  "storageKey": null
+},
+v4 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "VirtualFolderNode",
+  "kind": "LinkedField",
+  "name": "vfolder",
+  "plural": false,
+  "selections": [
+    (v0/*: any*/),
+    (v1/*: any*/),
+    {
+      "args": null,
+      "kind": "FragmentSpread",
+      "name": "FolderLink_vfolderNode"
+    }
+  ],
   "storageKey": null
 };
 return {
@@ -254,19 +273,7 @@ return {
           "name": "definitionPath",
           "storageKey": null
         },
-        {
-          "alias": null,
-          "args": null,
-          "concreteType": "VirtualFolderNode",
-          "kind": "LinkedField",
-          "name": "vfolder",
-          "plural": false,
-          "selections": [
-            (v0/*: any*/),
-            (v1/*: any*/)
-          ],
-          "storageKey": null
-        }
+        (v4/*: any*/)
       ],
       "storageKey": null
     },
@@ -287,24 +294,7 @@ return {
           "name": "mountPerm",
           "storageKey": null
         },
-        {
-          "alias": null,
-          "args": null,
-          "concreteType": "VirtualFolderNode",
-          "kind": "LinkedField",
-          "name": "vfolder",
-          "plural": false,
-          "selections": [
-            (v0/*: any*/),
-            (v1/*: any*/),
-            {
-              "args": null,
-              "kind": "FragmentSpread",
-              "name": "FolderLink_vfolderNode"
-            }
-          ],
-          "storageKey": null
-        }
+        (v4/*: any*/)
       ],
       "storageKey": null
     },
@@ -445,6 +435,6 @@ return {
 };
 })();
 
-(node as any).hash = "716950b133f2e7d7a73a3a3a65ab24c3";
+(node as any).hash = "e171018c4d701145fefe280dd9dbff6f";
 
 export default node;

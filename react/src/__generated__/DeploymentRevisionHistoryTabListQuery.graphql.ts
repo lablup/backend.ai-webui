@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c3cf78c3552fc5086ce5d291a9fd6e36>>
+ * @generated SignedSource<<57ac7669f56a9df0dab7332219e0c63f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -110,6 +110,7 @@ export type DeploymentRevisionHistoryTabListQuery$data = {
             readonly vfolder: {
               readonly id: string;
               readonly name: string | null | undefined;
+              readonly " $fragmentSpreads": FragmentRefs<"FolderLink_vfolderNode">;
             } | null | undefined;
             readonly vfolderId: string;
           } | null | undefined;
@@ -323,7 +324,14 @@ v18 = {
   "plural": false,
   "selections": [
     (v10/*: any*/),
-    (v14/*: any*/)
+    (v14/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "row_id",
+      "storageKey": null
+    }
   ],
   "storageKey": null
 },
@@ -443,7 +451,24 @@ return {
                         "plural": false,
                         "selections": [
                           (v17/*: any*/),
-                          (v18/*: any*/)
+                          {
+                            "alias": null,
+                            "args": null,
+                            "concreteType": "VirtualFolderNode",
+                            "kind": "LinkedField",
+                            "name": "vfolder",
+                            "plural": false,
+                            "selections": [
+                              (v10/*: any*/),
+                              (v14/*: any*/),
+                              {
+                                "args": null,
+                                "kind": "FragmentSpread",
+                                "name": "FolderLink_vfolderNode"
+                              }
+                            ],
+                            "storageKey": null
+                          }
                         ],
                         "storageKey": null
                       },
@@ -739,26 +764,7 @@ return {
                             "name": "mountPerm",
                             "storageKey": null
                           },
-                          {
-                            "alias": null,
-                            "args": null,
-                            "concreteType": "VirtualFolderNode",
-                            "kind": "LinkedField",
-                            "name": "vfolder",
-                            "plural": false,
-                            "selections": [
-                              (v10/*: any*/),
-                              (v14/*: any*/),
-                              {
-                                "alias": null,
-                                "args": null,
-                                "kind": "ScalarField",
-                                "name": "row_id",
-                                "storageKey": null
-                              }
-                            ],
-                            "storageKey": null
-                          }
+                          (v18/*: any*/)
                         ],
                         "storageKey": null
                       },
@@ -779,16 +785,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "8f9baffca07f51a11d591df89bdc6253",
+    "cacheID": "48fffc98be0533efa2c648756dda0dc6",
     "id": null,
     "metadata": {},
     "name": "DeploymentRevisionHistoryTabListQuery",
     "operationKind": "query",
-    "text": "query DeploymentRevisionHistoryTabListQuery(\n  $deploymentId: ID!\n  $filter: ModelRevisionFilter\n  $orderBy: [ModelRevisionOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  deployment(id: $deploymentId) {\n    currentRevisionId\n    deployingRevisionId\n    revisionHistory(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n      count\n      edges {\n        node {\n          id\n          revisionNumber\n          createdAt\n          clusterConfig {\n            mode\n            size\n          }\n          modelRuntimeConfig {\n            runtimeVariant {\n              name\n              id\n            }\n          }\n          modelDefinition {\n            models {\n              name\n              metadata {\n                version\n              }\n            }\n          }\n          imageV2 {\n            id\n            identity {\n              canonicalName\n            }\n          }\n          modelMountConfig {\n            vfolderId\n            vfolder {\n              id\n              name\n            }\n          }\n          ...DeploymentRevisionDetail_revision\n        }\n      }\n    }\n    id\n  }\n}\n\nfragment DeploymentRevisionDetail_revision on ModelRevision {\n  id\n  revisionNumber\n  createdAt\n  clusterConfig {\n    mode\n    size\n  }\n  resourceSlots @since(version: \"26.4.2\") {\n    slotName\n    quantity\n  }\n  modelRuntimeConfig {\n    runtimeVariant {\n      name\n      id\n    }\n    environ {\n      entries {\n        name\n        value\n      }\n    }\n  }\n  modelMountConfig {\n    vfolderId\n    mountDestination\n    definitionPath\n    vfolder {\n      id\n      name\n    }\n  }\n  extraMounts {\n    vfolderId\n    mountDestination\n    mountPerm\n    vfolder {\n      id\n      name\n      ...FolderLink_vfolderNode\n    }\n  }\n  imageV2 @since(version: \"26.4.3\") {\n    id\n    identity {\n      canonicalName\n    }\n  }\n  modelDefinition {\n    models {\n      name\n      modelPath\n      service {\n        startCommand\n        port\n        healthCheck {\n          path\n          initialDelay\n          maxRetries\n          interval\n          maxWaitTime\n        }\n      }\n    }\n  }\n}\n\nfragment FolderLink_vfolderNode on VirtualFolderNode {\n  row_id\n  name\n}\n"
+    "text": "query DeploymentRevisionHistoryTabListQuery(\n  $deploymentId: ID!\n  $filter: ModelRevisionFilter\n  $orderBy: [ModelRevisionOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  deployment(id: $deploymentId) {\n    currentRevisionId\n    deployingRevisionId\n    revisionHistory(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n      count\n      edges {\n        node {\n          id\n          revisionNumber\n          createdAt\n          clusterConfig {\n            mode\n            size\n          }\n          modelRuntimeConfig {\n            runtimeVariant {\n              name\n              id\n            }\n          }\n          modelDefinition {\n            models {\n              name\n              metadata {\n                version\n              }\n            }\n          }\n          imageV2 {\n            id\n            identity {\n              canonicalName\n            }\n          }\n          modelMountConfig {\n            vfolderId\n            vfolder {\n              id\n              name\n              ...FolderLink_vfolderNode\n            }\n          }\n          ...DeploymentRevisionDetail_revision\n        }\n      }\n    }\n    id\n  }\n}\n\nfragment DeploymentRevisionDetail_revision on ModelRevision {\n  id\n  revisionNumber\n  createdAt\n  clusterConfig {\n    mode\n    size\n  }\n  resourceSlots @since(version: \"26.4.2\") {\n    slotName\n    quantity\n  }\n  modelRuntimeConfig {\n    runtimeVariant {\n      name\n      id\n    }\n    environ {\n      entries {\n        name\n        value\n      }\n    }\n  }\n  modelMountConfig {\n    vfolderId\n    mountDestination\n    definitionPath\n    vfolder {\n      id\n      name\n      ...FolderLink_vfolderNode\n    }\n  }\n  extraMounts {\n    vfolderId\n    mountDestination\n    mountPerm\n    vfolder {\n      id\n      name\n      ...FolderLink_vfolderNode\n    }\n  }\n  imageV2 @since(version: \"26.4.3\") {\n    id\n    identity {\n      canonicalName\n    }\n  }\n  modelDefinition {\n    models {\n      name\n      modelPath\n      service {\n        startCommand\n        port\n        healthCheck {\n          path\n          initialDelay\n          maxRetries\n          interval\n          maxWaitTime\n        }\n      }\n    }\n  }\n}\n\nfragment FolderLink_vfolderNode on VirtualFolderNode {\n  row_id\n  name\n  ...VFolderNodeIdenticonFragment\n}\n\nfragment VFolderNodeIdenticonFragment on VirtualFolderNode {\n  id\n}\n"
   }
 };
 })();
 
-(node as any).hash = "61af55e11074ae04f4d7842a72a688db";
+(node as any).hash = "d8a91dbf45ae938429e2d1b82099623e";
 
 export default node;

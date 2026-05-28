@@ -12,6 +12,7 @@ import type { DeploymentRevisionHistoryTab_deployment$key } from '../__generated
 import { convertToOrderBy } from '../helper';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
+import FolderLink from './FolderLink';
 import QuestionIconWithTooltip from './QuestionIconWithTooltip';
 import { LoadingOutlined, PlayCircleOutlined } from '@ant-design/icons';
 import { App, Button, Popconfirm, theme, Typography } from 'antd';
@@ -239,6 +240,7 @@ const DeploymentRevisionHistoryTab: React.FC<
                     vfolder {
                       id
                       name
+                      ...FolderLink_vfolderNode
                     }
                   }
                   ...DeploymentRevisionDetail_revision
@@ -479,27 +481,15 @@ const DeploymentRevisionHistoryTab: React.FC<
       defaultHidden: true,
       render: (_value, record) => {
         const canonicalName = record.imageV2?.identity?.canonicalName;
-        const imageGlobalId = record.imageV2?.id;
-        if (!canonicalName && !imageGlobalId) return '-';
+        if (!canonicalName) return '-';
         return (
-          <BAIFlex gap="xs" align="center" wrap="wrap">
-            {canonicalName ? (
-              <BAIText
-                copyable
-                ellipsis={{ tooltip: canonicalName }}
-                style={{ maxWidth: 180 }}
-              >
-                {canonicalName}
-              </BAIText>
-            ) : null}
-            {imageGlobalId ? (
-              <BAIFlex gap={0} align="center">
-                {'('}
-                <BAIId globalId={imageGlobalId} />
-                {')'}
-              </BAIFlex>
-            ) : null}
-          </BAIFlex>
+          <BAIText
+            copyable
+            ellipsis={{ tooltip: canonicalName }}
+            style={{ maxWidth: 180 }}
+          >
+            {canonicalName}
+          </BAIText>
         );
       },
     },
@@ -510,23 +500,11 @@ const DeploymentRevisionHistoryTab: React.FC<
       render: (_value, record) => {
         const vfolder = record.modelMountConfig?.vfolder;
         const vfolderId = record.modelMountConfig?.vfolderId;
-        if (!vfolder?.name && !vfolderId) return '-';
-        return (
-          <BAIFlex gap="xs" align="center" wrap="wrap">
-            {vfolder?.name ? (
-              <Typography.Text>{vfolder.name}</Typography.Text>
-            ) : null}
-            {vfolder?.id ? (
-              <BAIFlex gap={0} align="center">
-                {'('}
-                <BAIId globalId={vfolder.id} />
-                {')'}
-              </BAIFlex>
-            ) : vfolderId ? (
-              <Typography.Text type="secondary">{vfolderId}</Typography.Text>
-            ) : null}
-          </BAIFlex>
-        );
+        if (!vfolder && !vfolderId) return '-';
+        if (vfolder) {
+          return <FolderLink vfolderNodeFragment={vfolder} />;
+        }
+        return <Typography.Text type="secondary">{vfolderId}</Typography.Text>;
       },
     },
     {

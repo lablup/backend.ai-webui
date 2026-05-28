@@ -4,11 +4,17 @@
  */
 import { FolderLink_vfolderNode$key } from '../__generated__/FolderLink_vfolderNode.graphql';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
+import VFolderNodeIdenticon from './VFolderNodeIdenticon';
 import { FolderOutlined } from '@ant-design/icons';
-import { BAILink, BAILinkProps } from 'backend.ai-ui';
+import { BAIFlex, BAILink, BAILinkProps } from 'backend.ai-ui';
 import { graphql, useFragment } from 'react-relay';
 
 interface FolderLinkBase extends BAILinkProps {
+  /**
+   * Legacy fallback icon for the id+name form (no fragment available).
+   * Has no effect when `vfolderNodeFragment` is provided — that form
+   * always renders the VFolder identicon.
+   */
   showIcon?: boolean;
 }
 
@@ -39,24 +45,30 @@ const FolderLink = ({
       fragment FolderLink_vfolderNode on VirtualFolderNode {
         row_id
         name
+        ...VFolderNodeIdenticonFragment
       }
     `,
     vfolderNodeFragment,
   );
 
   return (
-    <BAILink
-      to={generateFolderPath(folderId ?? vfolderNode?.row_id ?? '')}
-      style={{ wordBreak: 'break-all' }}
-      {...baiLinkProps}
-    >
-      {showIcon && (
-        <>
-          <FolderOutlined /> &nbsp;
-        </>
-      )}
-      {folderName ?? vfolderNode?.name ?? ''}
-    </BAILink>
+    <BAIFlex gap="xs" align="start" style={{ minWidth: 0, maxWidth: '100%' }}>
+      {vfolderNode ? (
+        <VFolderNodeIdenticon
+          vfolderNodeIdenticonFrgmt={vfolderNode}
+          style={{ flexShrink: 0, marginTop: '0.25em' }}
+        />
+      ) : showIcon ? (
+        <FolderOutlined style={{ flexShrink: 0, marginTop: '0.25em' }} />
+      ) : null}
+      <BAILink
+        to={generateFolderPath(folderId ?? vfolderNode?.row_id ?? '')}
+        style={{ wordBreak: 'break-all', minWidth: 0 }}
+        {...baiLinkProps}
+      >
+        {folderName ?? vfolderNode?.name ?? ''}
+      </BAILink>
+    </BAIFlex>
   );
 };
 

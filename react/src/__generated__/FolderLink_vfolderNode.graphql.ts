@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<3bc8cc0e76dc6b081b2f06c4c88d3051>>
+ * @generated SignedSource<<844b3016f6dc8d433abad29fe7785bf6>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,6 +13,7 @@ import { FragmentRefs } from "relay-runtime";
 export type FolderLink_vfolderNode$data = {
   readonly name: string | null | undefined;
   readonly row_id: string | null | undefined;
+  readonly " $fragmentSpreads": FragmentRefs<"VFolderNodeIdenticonFragment">;
   readonly " $fragmentType": "FolderLink_vfolderNode";
 };
 export type FolderLink_vfolderNode$key = {
@@ -39,12 +40,17 @@ const node: ReaderFragment = {
       "kind": "ScalarField",
       "name": "name",
       "storageKey": null
+    },
+    {
+      "args": null,
+      "kind": "FragmentSpread",
+      "name": "VFolderNodeIdenticonFragment"
     }
   ],
   "type": "VirtualFolderNode",
   "abstractKey": null
 };
 
-(node as any).hash = "a8ea258e8c3e20439b53af93ec37be13";
+(node as any).hash = "fcdabede98521b5a4d2b25506908e356";
 
 export default node;

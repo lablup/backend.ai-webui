@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<72627a80cbbe1fe486de7502b0ca4189>>
+ * @generated SignedSource<<39002cbd7f7230420cdd998ebc77e208>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -332,6 +332,26 @@ v14 = {
 v15 = {
   "alias": null,
   "args": null,
+  "concreteType": "VirtualFolderNode",
+  "kind": "LinkedField",
+  "name": "vfolder",
+  "plural": false,
+  "selections": [
+    (v2/*: any*/),
+    (v11/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "row_id",
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+},
+v16 = {
+  "alias": null,
+  "args": null,
   "concreteType": "ModelMountConfig",
   "kind": "LinkedField",
   "name": "modelMountConfig",
@@ -346,23 +366,11 @@ v15 = {
       "name": "definitionPath",
       "storageKey": null
     },
-    {
-      "alias": null,
-      "args": null,
-      "concreteType": "VirtualFolderNode",
-      "kind": "LinkedField",
-      "name": "vfolder",
-      "plural": false,
-      "selections": [
-        (v2/*: any*/),
-        (v11/*: any*/)
-      ],
-      "storageKey": null
-    }
+    (v15/*: any*/)
   ],
   "storageKey": null
 },
-v16 = {
+v17 = {
   "alias": null,
   "args": null,
   "concreteType": "ExtraVFolderMountInfoGQL",
@@ -379,30 +387,11 @@ v16 = {
       "name": "mountPerm",
       "storageKey": null
     },
-    {
-      "alias": null,
-      "args": null,
-      "concreteType": "VirtualFolderNode",
-      "kind": "LinkedField",
-      "name": "vfolder",
-      "plural": false,
-      "selections": [
-        (v2/*: any*/),
-        (v11/*: any*/),
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "row_id",
-          "storageKey": null
-        }
-      ],
-      "storageKey": null
-    }
+    (v15/*: any*/)
   ],
   "storageKey": null
 },
-v17 = {
+v18 = {
   "alias": null,
   "args": null,
   "concreteType": "ImageV2",
@@ -432,7 +421,7 @@ v17 = {
   ],
   "storageKey": null
 },
-v18 = {
+v19 = {
   "alias": null,
   "args": null,
   "concreteType": "ModelDefinition",
@@ -533,17 +522,17 @@ v18 = {
   ],
   "storageKey": null
 },
-v19 = [
+v20 = [
   (v2/*: any*/),
   (v7/*: any*/),
   (v8/*: any*/),
   (v9/*: any*/),
   (v10/*: any*/),
   (v12/*: any*/),
-  (v15/*: any*/),
   (v16/*: any*/),
   (v17/*: any*/),
-  (v18/*: any*/)
+  (v18/*: any*/),
+  (v19/*: any*/)
 ];
 return {
   "fragment": {
@@ -642,10 +631,10 @@ return {
               (v9/*: any*/),
               (v10/*: any*/),
               (v12/*: any*/),
-              (v15/*: any*/),
               (v16/*: any*/),
               (v17/*: any*/),
               (v18/*: any*/),
+              (v19/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -664,7 +653,7 @@ return {
                     "kind": "LinkedField",
                     "name": "currentRevision",
                     "plural": false,
-                    "selections": (v19/*: any*/),
+                    "selections": (v20/*: any*/),
                     "storageKey": null
                   },
                   {
@@ -674,7 +663,7 @@ return {
                     "kind": "LinkedField",
                     "name": "deployingRevision",
                     "plural": false,
-                    "selections": (v19/*: any*/),
+                    "selections": (v20/*: any*/),
                     "storageKey": null
                   }
                 ],
@@ -689,12 +678,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "506ca99250c89a17f4b53ad4f95bca60",
+    "cacheID": "440753449ecbe57105c1e5d772a06a83",
     "id": null,
     "metadata": {},
     "name": "DeploymentAddRevisionModalAddMutation",
     "operationKind": "mutation",
-    "text": "mutation DeploymentAddRevisionModalAddMutation(\n  $input: AddRevisionInput!\n) {\n  addModelRevision(input: $input) {\n    revision {\n      id\n      ...DeploymentRevisionDetail_revision\n      deployment @since(version: \"26.4.4\") {\n        id\n        currentRevisionId\n        deployingRevisionId\n        currentRevision @since(version: \"26.4.3\") {\n          id\n          ...DeploymentRevisionDetail_revision\n        }\n        deployingRevision @since(version: \"26.4.3\") {\n          id\n          ...DeploymentRevisionDetail_revision\n        }\n      }\n    }\n  }\n}\n\nfragment DeploymentRevisionDetail_revision on ModelRevision {\n  id\n  revisionNumber\n  createdAt\n  clusterConfig {\n    mode\n    size\n  }\n  resourceSlots @since(version: \"26.4.2\") {\n    slotName\n    quantity\n  }\n  modelRuntimeConfig {\n    runtimeVariant {\n      name\n      id\n    }\n    environ {\n      entries {\n        name\n        value\n      }\n    }\n  }\n  modelMountConfig {\n    vfolderId\n    mountDestination\n    definitionPath\n    vfolder {\n      id\n      name\n    }\n  }\n  extraMounts {\n    vfolderId\n    mountDestination\n    mountPerm\n    vfolder {\n      id\n      name\n      ...FolderLink_vfolderNode\n    }\n  }\n  imageV2 @since(version: \"26.4.3\") {\n    id\n    identity {\n      canonicalName\n    }\n  }\n  modelDefinition {\n    models {\n      name\n      modelPath\n      service {\n        startCommand\n        port\n        healthCheck {\n          path\n          initialDelay\n          maxRetries\n          interval\n          maxWaitTime\n        }\n      }\n    }\n  }\n}\n\nfragment FolderLink_vfolderNode on VirtualFolderNode {\n  row_id\n  name\n}\n"
+    "text": "mutation DeploymentAddRevisionModalAddMutation(\n  $input: AddRevisionInput!\n) {\n  addModelRevision(input: $input) {\n    revision {\n      id\n      ...DeploymentRevisionDetail_revision\n      deployment @since(version: \"26.4.4\") {\n        id\n        currentRevisionId\n        deployingRevisionId\n        currentRevision @since(version: \"26.4.3\") {\n          id\n          ...DeploymentRevisionDetail_revision\n        }\n        deployingRevision @since(version: \"26.4.3\") {\n          id\n          ...DeploymentRevisionDetail_revision\n        }\n      }\n    }\n  }\n}\n\nfragment DeploymentRevisionDetail_revision on ModelRevision {\n  id\n  revisionNumber\n  createdAt\n  clusterConfig {\n    mode\n    size\n  }\n  resourceSlots @since(version: \"26.4.2\") {\n    slotName\n    quantity\n  }\n  modelRuntimeConfig {\n    runtimeVariant {\n      name\n      id\n    }\n    environ {\n      entries {\n        name\n        value\n      }\n    }\n  }\n  modelMountConfig {\n    vfolderId\n    mountDestination\n    definitionPath\n    vfolder {\n      id\n      name\n      ...FolderLink_vfolderNode\n    }\n  }\n  extraMounts {\n    vfolderId\n    mountDestination\n    mountPerm\n    vfolder {\n      id\n      name\n      ...FolderLink_vfolderNode\n    }\n  }\n  imageV2 @since(version: \"26.4.3\") {\n    id\n    identity {\n      canonicalName\n    }\n  }\n  modelDefinition {\n    models {\n      name\n      modelPath\n      service {\n        startCommand\n        port\n        healthCheck {\n          path\n          initialDelay\n          maxRetries\n          interval\n          maxWaitTime\n        }\n      }\n    }\n  }\n}\n\nfragment FolderLink_vfolderNode on VirtualFolderNode {\n  row_id\n  name\n  ...VFolderNodeIdenticonFragment\n}\n\nfragment VFolderNodeIdenticonFragment on VirtualFolderNode {\n  id\n}\n"
   }
 };
 })();
