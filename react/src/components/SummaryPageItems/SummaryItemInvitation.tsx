@@ -16,6 +16,7 @@ import { BAICard, BAIFlex, useErrorMessageResolver } from 'backend.ai-ui';
 import { useTranslation } from 'react-i18next';
 
 const SummaryItemInvitation: React.FC = () => {
+  'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { message } = App.useApp();
@@ -93,7 +94,10 @@ const SummaryItemInvitation: React.FC = () => {
         <>
           {invitations.map((invitation: any) => (
             <BAICard key={invitation.id} showDivider style={{ width: '100%' }}>
-              <Descriptions title={`From: ${invitation.inviter}`} column={1}>
+              <Descriptions
+                title={`From: ${invitation.inviter_user_email || invitation.inviter || '-'}`}
+                column={1}
+              >
                 <Descriptions.Item
                   label={t('summary.FolderName')}
                   style={{ padding: 0 }}
