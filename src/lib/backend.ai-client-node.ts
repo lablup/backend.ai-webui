@@ -1316,7 +1316,12 @@ class Client {
     let authBody;
     let d = new Date();
     if (body === null || body === undefined) {
-      requestBody = '';
+      // Some backends require a valid JSON body even when empty.
+      // Send '{}' for methods that carry a body; keep '' for GET/HEAD.
+      // authBody must match the actual body: on legacy (v<4) backends the
+      // signature hashes the body, so a mismatch fails verification. On v4+
+      // the body is excluded from the signature (see below), so this is safe.
+      requestBody = method !== 'GET' && method !== 'HEAD' ? '{}' : '';
       authBody = requestBody;
     } else if (
       typeof body.getBoundary === 'function' ||

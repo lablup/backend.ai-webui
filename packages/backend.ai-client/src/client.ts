@@ -1680,7 +1680,11 @@ export class Client {
     let authBody: string;
     let d = new Date();
     if (body === null || body === undefined) {
-      requestBody = '';
+      // Some backends require a valid JSON body even when empty.
+      // Send '{}' for methods that carry a body; keep '' for GET/HEAD.
+      // authBody mirrors requestBody so the v<4 signature (which hashes the
+      // body) matches what is actually sent; v4+ excludes the body anyway.
+      requestBody = method !== 'GET' && method !== 'HEAD' ? '{}' : '';
       authBody = requestBody;
     } else if (
       typeof (body as { getBoundary?: () => string }).getBoundary ===
