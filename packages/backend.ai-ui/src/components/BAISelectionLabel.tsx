@@ -1,7 +1,7 @@
+import { useBAIi18n } from '../hooks/useBAIi18n';
 import { theme, Tooltip, Typography } from 'antd';
 import { CircleXIcon } from 'lucide-react';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 
 export interface BAISelectionLabelProps {
   count: number;
@@ -14,7 +14,7 @@ const BAISelectionLabel: React.FC<BAISelectionLabelProps> = ({
 }) => {
   'use memo';
 
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   const { token } = theme.useToken();
 
   if (count <= 0) return null;

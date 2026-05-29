@@ -1,9 +1,9 @@
 import { BAIDeactivateArtifactsModalArtifactsFragment$key } from '../../__generated__/BAIDeactivateArtifactsModalArtifactsFragment.graphql';
 import { BAIDeactivateArtifactsModalDeleteArtifactsMutation } from '../../__generated__/BAIDeactivateArtifactsModalDeleteArtifactsMutation.graphql';
 import { toLocalId } from '../../helper';
+import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIUnmountAfterClose from '../BAIUnmountAfterClose';
 import { App, Modal, Typography, type ModalProps } from 'antd';
-import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
 export type BAIDeactivateArtifactsModalArtifactsFragmentKey =
@@ -19,7 +19,7 @@ const BAIDeactivateArtifactsModal = ({
   onCancel,
   ...modalProps
 }: BAIDeactivateArtifactsModalProps) => {
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   const { message } = App.useApp();
   const selectedArtifacts =
     useFragment<BAIDeactivateArtifactsModalArtifactsFragment$key>(

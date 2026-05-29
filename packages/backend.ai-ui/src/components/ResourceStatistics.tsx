@@ -1,10 +1,10 @@
 import { convertToBinaryUnit, getDisplayUnitToInputSizeUnit } from '../helper';
+import { useBAIi18n } from '../hooks/useBAIi18n';
 import BAIFlex from './BAIFlex';
 import BAIRowWrapWithDividers from './BAIRowWrapWithDividers';
 import BAIStatistic, { BAIStatisticProps } from './BAIStatistic';
 import { Empty, theme } from 'antd';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 
 interface ResourceData {
   cpu: {
@@ -59,7 +59,7 @@ const ResourceStatistics: React.FC<ResourceStatisticsProps> = ({
   progressSteps,
   precision = 2,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   const { token } = theme.useToken();
 
   const hasResources =

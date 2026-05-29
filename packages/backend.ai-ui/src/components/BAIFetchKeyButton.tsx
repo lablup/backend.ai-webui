@@ -1,4 +1,5 @@
 import { omitNullAndUndefinedFields } from '../helper';
+import { useBAIi18n } from '../hooks/useBAIi18n';
 import { useInterval, useIntervalValue } from '../hooks/useIntervalValue';
 import { ReloadOutlined } from '@ant-design/icons';
 import { useControllableValue } from 'ahooks';
@@ -6,7 +7,6 @@ import { Button, Tooltip, type ButtonProps } from 'antd';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import React, { useEffect, useLayoutEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 
 interface BAIFetchKeyButtonProps extends Omit<
   ButtonProps,
@@ -49,7 +49,7 @@ const BAIFetchKeyButton: React.FC<BAIFetchKeyButtonProps> = ({
 }) => {
   'use memo';
 
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   const [lastLoadTime, setLastLoadTime] = useControllableValue(
     // To use the default value when lastLoadTimeProp is undefined, we need to omit the value field
     omitNullAndUndefinedFields({

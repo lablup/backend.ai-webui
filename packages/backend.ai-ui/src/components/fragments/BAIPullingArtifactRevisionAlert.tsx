@@ -1,10 +1,10 @@
 import { BAIPullingArtifactRevisionAlertCancelMutation } from '../../__generated__/BAIPullingArtifactRevisionAlertCancelMutation.graphql';
 import { BAIPullingArtifactRevisionAlertFragment$key } from '../../__generated__/BAIPullingArtifactRevisionAlertFragment.graphql';
 import { toLocalId } from '../../helper';
+import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIFlex from '../BAIFlex';
 import BAIText from '../BAIText';
 import { Alert, App, Button } from 'antd';
-import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
 export interface BAIPullingArtifactRevisionAlertProps {
@@ -16,7 +16,7 @@ const BAIPullingArtifactRevisionAlert = ({
   pullingArtifactRevisionFrgmt,
   onOk,
 }: BAIPullingArtifactRevisionAlertProps) => {
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   const { modal, message } = App.useApp();
 
   const pullingArtifactRevision =

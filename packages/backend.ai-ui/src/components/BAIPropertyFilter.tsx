@@ -1,4 +1,5 @@
 import { filterOutEmpty } from '../helper';
+import { useBAIi18n } from '../hooks/useBAIi18n';
 import BAIFlex from './BAIFlex';
 import { CloseCircleOutlined } from '@ant-design/icons';
 import { useControllableValue } from 'ahooks';
@@ -22,7 +23,6 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { useTranslation } from 'react-i18next';
 
 //github.com/lablup/backend.ai/blob/main/src/ai/backend/manager/models/minilang/queryfilter.py
 export type FilterProperty = {
@@ -251,7 +251,7 @@ const BAIPropertyFilter: React.FC<BAIPropertyFilterProps> = ({
     });
   }, [value, filterProperties]);
 
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   const options = _.map(filterProperties, (filterProperty) => ({
     label: filterProperty.propertyLabel,
     value: filterProperty.key,

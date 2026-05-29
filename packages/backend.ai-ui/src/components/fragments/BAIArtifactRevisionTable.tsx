@@ -4,6 +4,7 @@ import {
 } from '../../__generated__/BAIArtifactRevisionTableArtifactRevisionFragment.graphql';
 import { BAIArtifactRevisionTableLatestRevisionFragment$key } from '../../__generated__/BAIArtifactRevisionTableLatestRevisionFragment.graphql';
 import { convertToDecimalUnit, filterOutEmpty } from '../../helper';
+import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIFlex from '../BAIFlex';
 import BAITag from '../BAITag';
 import BAIText from '../BAIText';
@@ -13,7 +14,6 @@ import { Tag } from 'antd';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import * as _ from 'lodash-es';
-import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
 dayjs.extend(relativeTime);
@@ -42,7 +42,7 @@ const BAIArtifactRevisionTable = ({
   customizeColumns,
   ...tableProps
 }: BAIArtifactRevisionTableProps) => {
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
 
   const artifactRevision =
     useFragment<BAIArtifactRevisionTableArtifactRevisionFragment$key>(

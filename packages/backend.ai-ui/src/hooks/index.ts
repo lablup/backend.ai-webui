@@ -166,6 +166,13 @@ export {
 } from './useBAILogger';
 export type { LoggerPlugin, LogContext, BAILogger } from './useBAILogger';
 export { useEventNotStable } from './useEventNotStable';
+// `useBAIi18n` is intentionally NOT re-exported from the package's public
+// surface — it is an internal implementation detail of how BUI components
+// bind to BUI's own i18next instance (see ../hooks/useBAIi18n.ts and the
+// ESLint rule in eslint.config.js that forbids `useTranslation` imports
+// from 'react-i18next' inside packages/backend.ai-ui/src/**). Consumers
+// of the package use their own host i18n; they have no use for BUI's
+// instance binding.
 export {
   useProjectResourceGroups,
   StorageHostFetchError,

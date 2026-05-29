@@ -73,7 +73,7 @@ check_relay_drift() {
 }
 
 run_check "Relay" check_relay_drift
-run_check "Lint" pnpm run lint
+run_check "Lint" pnpm -r --stream lint
 run_check "Format" pnpm run format
 run_check "TypeScript" pnpm --prefix ./react exec tsc --noEmit
 run_check "Vite warmup paths" check_warmup_paths

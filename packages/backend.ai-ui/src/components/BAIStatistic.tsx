@@ -1,8 +1,8 @@
+import { useBAIi18n } from '../hooks/useBAIi18n';
 import BAIFlex from './BAIFlex';
 import { theme, Typography, Tooltip, Progress } from 'antd';
 import * as _ from 'lodash-es';
 import React, { type ReactNode } from 'react';
-import { useTranslation } from 'react-i18next';
 
 export interface BAIStatisticProps {
   title: ReactNode;
@@ -28,7 +28,7 @@ const BAIStatistic: React.FC<BAIStatisticProps> = ({
   style,
 }) => {
   const { token } = theme.useToken();
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   const showProgress = progressMode !== 'hidden';
 
   // Format number with precision

@@ -12,9 +12,9 @@ import {
   BAIUserNodesFragment$data,
   BAIUserNodesFragment$key,
 } from '../__generated__/BAIUserNodesFragment.graphql';
+import { useBAIi18n } from '../hooks/useBAIi18n';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { useTranslation } from 'react-i18next';
 import { useFragment } from 'react-relay';
 import { graphql } from 'relay-runtime';
 
@@ -66,7 +66,7 @@ const BAIUserNodes: React.FC<BAIUserNodesProps> = ({
   ...tableProps
 }) => {
   'use memo';
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
 
   const users = useFragment(
     graphql`

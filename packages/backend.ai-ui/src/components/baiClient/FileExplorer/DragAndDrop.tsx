@@ -1,10 +1,10 @@
+import { useBAIi18n } from '../../../hooks/useBAIi18n';
 import { useUploadVFolderFiles } from './hooks';
 import { InboxOutlined } from '@ant-design/icons';
 import { theme, Typography, Upload } from 'antd';
 import type { RcFile } from 'antd/es/upload';
 import { useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { useTranslation } from 'react-i18next';
 
 interface DragAndDropProps {
   onUpload: (files: Array<RcFile>, currentPath: string) => void;
@@ -16,7 +16,7 @@ const DragAndDrop: React.FC<DragAndDropProps> = ({
   onUpload,
   portalContainer,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   const { token } = theme.useToken();
   const { uploadFiles } = useUploadVFolderFiles();
   const lastFileListRef = useRef<Array<RcFile>>([]);

@@ -1,7 +1,7 @@
 import { BAIResourceGroupSelectQuery } from '../../__generated__/BAIResourceGroupSelectQuery.graphql';
+import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAISelect, { BAISelectProps } from '../BAISelect';
 import * as _ from 'lodash-es';
-import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 export interface BAIResourceGroupSelectProps extends Omit<
@@ -12,7 +12,7 @@ export interface BAIResourceGroupSelectProps extends Omit<
 const BAIResourceGroupSelect = ({
   ...selectProps
 }: BAIResourceGroupSelectProps) => {
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   // TODO: change it to use ScalingGroupNode
   const { scaling_groups } = useLazyLoadQuery<BAIResourceGroupSelectQuery>(
     graphql`

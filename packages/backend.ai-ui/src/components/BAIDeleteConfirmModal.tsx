@@ -1,10 +1,11 @@
+import { useBAIi18n } from '../hooks/useBAIi18n';
 import BAIFlex from './BAIFlex';
 import BAIModal, { type BAIModalProps } from './BAIModal';
 import BAIText from './BAIText';
+import { BAITrans } from './BAITrans';
 import { ExclamationCircleFilled } from '@ant-design/icons';
 import { Form, Input, theme, Typography, type InputProps } from 'antd';
 import React from 'react';
-import { Trans, useTranslation } from 'react-i18next';
 
 const { Text } = Typography;
 
@@ -94,7 +95,7 @@ const BAIDeleteConfirmModal: React.FC<BAIDeleteConfirmModalProps> = ({
 }) => {
   'use memo';
 
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   const { token } = theme.useToken();
   const [form] = Form.useForm();
   const typedText = Form.useWatch('confirmText', form) ?? '';
@@ -126,7 +127,7 @@ const BAIDeleteConfirmModal: React.FC<BAIDeleteConfirmModalProps> = ({
   const resolvedOkText = okText ?? t('general.button.Delete');
 
   const resolvedInputLabel = inputLabel ?? (
-    <Trans
+    <BAITrans
       i18nKey="comp:BAIDeleteConfirmModal.TypeToConfirm"
       values={{ confirmText: resolvedConfirmText }}
       components={{ code: <BAIText code /> }}

@@ -10,6 +10,7 @@ import {
   filterOutNullAndUndefined,
   toLocalId,
 } from '../../helper';
+import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIFlex from '../BAIFlex';
 import BAIText from '../BAIText';
 import BAIUnmountAfterClose from '../BAIUnmountAfterClose';
@@ -18,7 +19,6 @@ import BAIArtifactDescriptions from './BAIArtifactDescriptions';
 import { QuestionCircleFilled } from '@ant-design/icons';
 import { Alert, message, Modal, theme, Tooltip, type ModalProps } from 'antd';
 import * as _ from 'lodash-es';
-import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
 type ArtifactRevision =
@@ -47,7 +47,7 @@ const BAIDeleteArtifactRevisionsModal = ({
   onCancel,
   ...modalProps
 }: BAIDeleteArtifactRevisionsModalProps) => {
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   const { token } = theme.useToken();
 
   const [cleanupVersion, isInflightCleanupVersion] =

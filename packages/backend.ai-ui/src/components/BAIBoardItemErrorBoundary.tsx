@@ -1,3 +1,4 @@
+import { useBAIi18n } from '../hooks/useBAIi18n';
 import BAIAlertIconWithTooltip from './BAIAlertIconWithTooltip';
 import BAIBoardItemTitle, {
   type BAIBoardItemTitleProps,
@@ -5,7 +6,6 @@ import BAIBoardItemTitle, {
 import { theme } from 'antd';
 import React, { type PropsWithChildren } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
-import { useTranslation } from 'react-i18next';
 
 interface BAIBoardItemErrorBoundaryProps extends PropsWithChildren {
   title?: BAIBoardItemTitleProps['title'];
@@ -19,7 +19,7 @@ const BAIBoardItemErrorBoundary: React.FC<BAIBoardItemErrorBoundaryProps> = ({
   children,
   style,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   const { token } = theme.useToken();
   return (
     <ErrorBoundary

@@ -3,6 +3,7 @@ import {
   filterOutEmpty,
   localeCompare,
 } from '../../../helper';
+import { useBAIi18n } from '../../../hooks/useBAIi18n';
 import BAIFetchKeyButton from '../../BAIFetchKeyButton';
 import BAIFlex from '../../BAIFlex';
 import BAILink from '../../BAILink';
@@ -31,7 +32,6 @@ import {
   useMemo,
   useState,
 } from 'react';
-import { useTranslation } from 'react-i18next';
 
 export const FolderInfoContext = createContext<{
   targetVFolderId: string;
@@ -96,7 +96,7 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
 }) => {
   'use memo';
 
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   const { token } = theme.useToken();
 
   const [isDragMode, setIsDragMode] = useState(false);

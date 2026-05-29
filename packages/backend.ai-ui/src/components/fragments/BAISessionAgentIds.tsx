@@ -1,11 +1,11 @@
 import { BAISessionAgentIdsFragment$key } from '../../__generated__/BAISessionAgentIdsFragment.graphql';
+import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIFlex from '../BAIFlex';
 import { CopyOutlined } from '@ant-design/icons';
 import { Popover, Typography, Button, theme } from 'antd';
 import * as _ from 'lodash-es';
 import React, { useMemo } from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
 interface BAISessionAgentIdsProps {
@@ -18,7 +18,7 @@ const BAISessionAgentIds: React.FC<BAISessionAgentIdsProps> = ({
   maxInline = 3,
   emptyText = '-',
 }) => {
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   const { token } = theme.useToken();
   const session = useFragment(
     graphql`

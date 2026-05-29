@@ -1,3 +1,4 @@
+import { useBAIi18n } from '../../../hooks/useBAIi18n';
 import BAIFlex from '../../BAIFlex';
 import BAILink from '../../BAILink';
 import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useConnectedBAIClient';
@@ -10,7 +11,6 @@ import { createStyles } from 'antd-style';
 import * as _ from 'lodash-es';
 import { CornerDownLeftIcon } from 'lucide-react';
 import { use, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 
 interface ServerError extends Error {
   title?: string;
@@ -63,7 +63,7 @@ const EditableFileName: React.FC<EditableNameProps> = ({
   ...props
 }) => {
   'use memo';
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   const { token } = theme.useToken();
   const { modal, message } = App.useApp();
   const { styles } = useStyles();

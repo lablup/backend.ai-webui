@@ -1,6 +1,7 @@
 import { BAIProjectBulkEditModalFragment$key } from '../../__generated__/BAIProjectBulkEditModalFragment.graphql';
 import { BAIProjectBulkEditModalProjectMutation } from '../../__generated__/BAIProjectBulkEditModalProjectMutation.graphql';
 import { useMutationWithPromise } from '../../hooks';
+import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIAlert from '../BAIAlert';
 import BAIFlex from '../BAIFlex';
 import BAIModal, { BAIModalProps } from '../BAIModal';
@@ -9,7 +10,6 @@ import BAIProjectResourcePolicySelect from './BAIProjectResourcePolicySelect';
 import { Form, theme } from 'antd';
 import * as _ from 'lodash-es';
 import { Suspense, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
 export interface BAIProjectBulkEditModalProps extends BAIModalProps {
@@ -20,7 +20,7 @@ const BAIProjectBulkEditModal = ({
   selectedProjectFragments,
   ...tableProps
 }: BAIProjectBulkEditModalProps) => {
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   const { token } = theme.useToken();
   const [form] = Form.useForm();
   const [isSaving, setIsSaving] = useState(false);

@@ -1,3 +1,4 @@
+import { useBAIi18n } from '../../../hooks/useBAIi18n';
 import BAIModal, { type BAIModalProps } from '../../BAIModal';
 import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import { FolderInfoContext } from './BAIFileExplorer';
@@ -5,7 +6,6 @@ import { useMutation } from '@tanstack/react-query';
 import { App, Form, Input, type FormInstance } from 'antd';
 import * as _ from 'lodash-es';
 import React, { use, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
 
 interface CreateFileModalProps extends BAIModalProps {
   onRequestClose: (success: boolean) => void;
@@ -16,7 +16,7 @@ const CreateFileModal: React.FC<CreateFileModalProps> = ({
   ...modalProps
 }) => {
   'use memo';
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   const { message, modal } = App.useApp();
   const { targetVFolderId, currentPath } = use(FolderInfoContext);
   const baiClient = useConnectedBAIClient();

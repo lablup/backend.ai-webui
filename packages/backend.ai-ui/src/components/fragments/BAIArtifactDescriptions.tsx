@@ -1,10 +1,10 @@
 import { BAIArtifactDescriptionsFragment$key } from '../../__generated__/BAIArtifactDescriptionsFragment.graphql';
+import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAILink from '../BAILink';
 import BAIArtifactTypeTag from './BAIArtifactTypeTag';
 import { Descriptions, Typography, type DescriptionsProps } from 'antd';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
 export interface BAIArtifactDescriptionsProps {
@@ -16,7 +16,7 @@ dayjs.extend(relativeTime);
 const BAIArtifactDescriptions = ({
   artifactFrgmt,
 }: BAIArtifactDescriptionsProps) => {
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   const artifact = useFragment<BAIArtifactDescriptionsFragment$key>(
     graphql`
       fragment BAIArtifactDescriptionsFragment on Artifact {

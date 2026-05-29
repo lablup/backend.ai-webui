@@ -1,5 +1,6 @@
 import { initiateDownload } from '../../../helper';
 import { useTanMutation } from '../../../helper/reactQueryAlias';
+import { useBAIi18n } from '../../../hooks/useBAIi18n';
 import BAIButton from '../../BAIButton';
 import BAIFlex from '../../BAIFlex';
 import BAISelectionLabel from '../../BAISelectionLabel';
@@ -24,7 +25,6 @@ import { createStyles } from 'antd-style';
 import type { RcFile } from 'antd/es/upload';
 import { DownloadIcon } from 'lucide-react';
 import { use, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
 
 const useStyles = createStyles(({ css }) => ({
   upload: css`
@@ -74,7 +74,7 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
   enableUpload = enableWrite,
   extra,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   const { lg } = Grid.useBreakpoint();
   const { token } = theme.useToken();
   const { styles } = useStyles();

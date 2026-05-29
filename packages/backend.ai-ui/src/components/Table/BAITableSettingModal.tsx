@@ -1,3 +1,4 @@
+import { useBAIi18n } from '../../hooks/useBAIi18n';
 import {
   BAIColumnsType,
   isColumnVisible,
@@ -36,7 +37,6 @@ import React, {
   useContext,
   useMemo,
 } from 'react';
-import { useTranslation } from 'react-i18next';
 
 /**
  * Form values interface for the table setting modal
@@ -207,7 +207,7 @@ const BAITableSettingModal: React.FC<TableSettingProps> = ({
   'use memo';
 
   const formRef = useRef<FormInstance>(null);
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   const { token } = theme.useToken();
 
   const onChangeTitleToString: any = (element: any) => {

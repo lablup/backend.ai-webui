@@ -21,11 +21,11 @@ import type {
   SessionV2Status,
 } from '../__generated__/BAISessionNodesV2Fragment.graphql';
 import { convertToBinaryUnit } from '../helper';
+import { useBAIi18n } from '../hooks/useBAIi18n';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import * as _ from 'lodash-es';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
 dayjs.extend(duration);
@@ -145,7 +145,7 @@ const BAISessionNodesV2: React.FC<BAISessionNodesV2Props> = ({
   ...tableProps
 }) => {
   'use memo';
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
 
   const sessions = useFragment(
     graphql`

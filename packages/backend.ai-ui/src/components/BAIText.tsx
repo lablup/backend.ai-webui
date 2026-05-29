@@ -1,10 +1,10 @@
+import { useBAIi18n } from '../hooks/useBAIi18n';
 import { theme, Tooltip, Typography } from 'antd';
 import type { TooltipProps } from 'antd/es/tooltip';
 import type { EllipsisConfig } from 'antd/es/typography/Base';
 import type { TextProps as AntdTextProps } from 'antd/es/typography/Text';
 import React, { useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
-import { useTranslation } from 'react-i18next';
 
 export interface BAITextProps extends Omit<AntdTextProps, 'ellipsis'> {
   monospace?: boolean;
@@ -47,7 +47,7 @@ const BAIText: React.FC<BAITextProps> = ({
   ...restProps
 }) => {
   const { token } = theme.useToken();
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   const textRef = useRef<HTMLSpanElement>(null);
   const [isOverflowing, setIsOverflowing] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);

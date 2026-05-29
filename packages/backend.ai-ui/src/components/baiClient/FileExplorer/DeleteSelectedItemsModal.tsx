@@ -1,3 +1,4 @@
+import { useBAIi18n } from '../../../hooks/useBAIi18n';
 import BAIDeleteConfirmModal from '../../BAIDeleteConfirmModal';
 import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import { VFolderFile } from '../../provider/BAIClientProvider/types';
@@ -6,7 +7,6 @@ import { useMutation } from '@tanstack/react-query';
 import { App, type ModalProps } from 'antd';
 import * as _ from 'lodash-es';
 import { use } from 'react';
-import { useTranslation } from 'react-i18next';
 
 export interface DeleteSelectedItemsModalProps extends ModalProps {
   onRequestClose: (success: boolean, deletingFilePaths?: Array<string>) => void;
@@ -24,7 +24,7 @@ const DeleteSelectedItemsModal: React.FC<DeleteSelectedItemsModalProps> = ({
   selectedFiles,
   ...modalProps
 }) => {
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   const { message } = App.useApp();
   const { currentPath, targetVFolderId } = use(FolderInfoContext);
   const baiClient = useConnectedBAIClient();

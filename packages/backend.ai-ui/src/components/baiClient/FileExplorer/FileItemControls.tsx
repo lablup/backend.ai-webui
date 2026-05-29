@@ -1,5 +1,6 @@
 import { convertToBinaryUnit, initiateDownload } from '../../../helper';
 import { useTanMutation } from '../../../helper/reactQueryAlias';
+import { useBAIi18n } from '../../../hooks/useBAIi18n';
 import BAIButton, { BAIButtonProps } from '../../BAIButton';
 import BAIFlex from '../../BAIFlex';
 import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useConnectedBAIClient';
@@ -9,7 +10,6 @@ import { DeleteFilled, MoreOutlined } from '@ant-design/icons';
 import { App, theme, Dropdown, Tooltip } from 'antd';
 import { DownloadIcon, EditIcon } from 'lucide-react';
 import { use, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 
 const MAX_EDITABLE_FILE_SIZE = 1024 * 1024; // 1 MB
 
@@ -36,7 +36,7 @@ const FileItemControls: React.FC<FileItemControlsProps> = ({
 }) => {
   'use memo';
 
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   const { token } = theme.useToken();
   const { message } = App.useApp();
   const { targetVFolderId, currentPath } = use(FolderInfoContext);

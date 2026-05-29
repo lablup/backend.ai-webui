@@ -1,3 +1,4 @@
+import { useBAIi18n } from '../hooks/useBAIi18n';
 import BAIFlex from './BAIFlex';
 import BAISelect from './BAISelect';
 import { CloseCircleOutlined } from '@ant-design/icons';
@@ -23,7 +24,6 @@ import React, {
   useState,
 } from 'react';
 import type { ComponentProps } from 'react';
-import { useTranslation } from 'react-i18next';
 
 // GraphQL Filter Types (matching schema.graphql)
 export type StringFilter = {
@@ -456,7 +456,7 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
   'use memo';
 
   const { token } = theme.useToken();
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
 
   t('comp:BAIGraphQLPropertyFilter.operator.IContains');
 

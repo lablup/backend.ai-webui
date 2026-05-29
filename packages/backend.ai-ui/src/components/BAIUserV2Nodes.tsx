@@ -12,10 +12,10 @@ import type {
   BAIUserV2NodesFragment$data,
   BAIUserV2NodesFragment$key,
 } from '../__generated__/BAIUserV2NodesFragment.graphql';
+import { useBAIi18n } from '../hooks/useBAIi18n';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
 export type UserV2InList = NonNullable<BAIUserV2NodesFragment$data[number]>;
@@ -60,7 +60,7 @@ const BAIUserV2Nodes: React.FC<BAIUserV2NodesProps> = ({
   ...tableProps
 }) => {
   'use memo';
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
 
   const users = useFragment(
     graphql`

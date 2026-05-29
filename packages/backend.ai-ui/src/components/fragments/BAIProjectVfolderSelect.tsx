@@ -3,6 +3,7 @@ import { BAIProjectVfolderSelectValueQuery } from '../../__generated__/BAIProjec
 import { convertToUUID, toLocalId } from '../../helper';
 import useDebouncedDeferredValue from '../../helper/useDebouncedDeferredValue';
 import { useFetchKey } from '../../hooks';
+import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { useLazyPaginatedQuery } from '../../hooks/usePaginatedQuery';
 import BAILink from '../BAILink';
 import BAISelect, { BAISelectProps } from '../BAISelect';
@@ -19,7 +20,6 @@ import {
   useState,
   useTransition,
 } from 'react';
-import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 export type ProjectVfolderNode = NonNullable<
@@ -64,7 +64,7 @@ const BAIProjectVfolderSelect: React.FC<BAIProjectVfolderSelectProps> = ({
   ...selectProps
 }) => {
   'use memo';
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   const selectRef = useRef<GetRef<typeof BAISelect>>(null);
   const [controllableValue, setControllableValue] = useControllableValue<
     string | undefined

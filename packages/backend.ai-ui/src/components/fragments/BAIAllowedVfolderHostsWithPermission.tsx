@@ -2,6 +2,7 @@ import { BAIAllowedVfolderHostsWithPermissionFromGroupFragment$key } from '../..
 import { BAIAllowedVfolderHostsWithPermissionFromKeyPairResourcePolicyFragment$key } from '../../__generated__/BAIAllowedVfolderHostsWithPermissionFromKeyPairResourcePolicyFragment.graphql';
 import { BAIAllowedVfolderHostsWithPermissionQuery } from '../../__generated__/BAIAllowedVfolderHostsWithPermissionQuery.graphql';
 import { SemanticColor } from '../../helper';
+import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIFlex from '../BAIFlex';
 import BAILink from '../BAILink';
 import BAIModal from '../BAIModal';
@@ -11,7 +12,6 @@ import { theme } from 'antd';
 import * as _ from 'lodash-es';
 import { LockIcon, LockOpenIcon } from 'lucide-react';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 
 export type BAIAllowedVfolderHostsWithPermissionProps =
@@ -30,7 +30,7 @@ const BAIAllowedVfolderHostsWithPermission: React.FC<
   allowedHostPermissionFrgmtFromKeyPair,
   allowedHostPermissionFrgmtFromGroup,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   const { token } = theme.useToken();
   const [storageHost, setStorageHost] = React.useState<string | null>();
 

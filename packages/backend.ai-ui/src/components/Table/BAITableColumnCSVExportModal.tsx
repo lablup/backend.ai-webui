@@ -1,3 +1,4 @@
+import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIButton from '../BAIButton';
 import BAIModal, { BAIModalProps } from '../BAIModal';
 import { BAIColumnsType } from './BAITable';
@@ -6,7 +7,6 @@ import { Input, theme, Form, Table, Checkbox, Typography } from 'antd';
 import type { TableColumnsType } from 'antd';
 import * as _ from 'lodash-es';
 import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 
 interface BAITableColumnCSVExportModalProps<T = unknown> extends BAIModalProps {
   onRequestClose?: (success: boolean) => void;
@@ -24,7 +24,7 @@ const BAITableColumnCSVExportModal = <T,>({
 }: BAITableColumnCSVExportModalProps<T>): React.JSX.Element => {
   'use memo';
 
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   const { token } = theme.useToken();
 
   const extractTitleString = (element: React.ReactElement): string => {

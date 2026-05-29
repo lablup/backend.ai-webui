@@ -1,8 +1,8 @@
 import { SemanticColor, useSemanticColorMap } from '../helper';
+import { useBAIi18n } from '../hooks/useBAIi18n';
 import BAITag from './BAITag';
 import type { TagProps } from 'antd';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 
 export type BAIDeploymentStatus =
   | 'HEALTHY'
@@ -94,7 +94,7 @@ const BAIDeploymentStatusTag: React.FC<BAIDeploymentStatusTagProps> = ({
   ...tagProps
 }) => {
   'use memo';
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   const semanticColorMap = useSemanticColorMap();
 
   return (

@@ -10,6 +10,7 @@ import {
   toLocalId,
   useSemanticColorMap,
 } from '../../helper';
+import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIButton from '../BAIButton';
 import BAIFlex from '../BAIFlex';
 import BAILink from '../BAILink';
@@ -26,7 +27,6 @@ import { ExclamationCircleOutlined, HistoryOutlined } from '@ant-design/icons';
 import { Tooltip, theme } from 'antd';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
 export type RouteNodeInList = NonNullable<BAIRouteNodesFragment$data[number]>;
@@ -93,7 +93,7 @@ const BAIRouteNodes = ({
   ...tableProps
 }: BAIRouteNodesProps) => {
   'use memo';
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   const { token } = theme.useToken();
   const semanticColorMap = useSemanticColorMap();
   const baiClient = useConnectedBAIClient();

@@ -1,4 +1,5 @@
 import { transformSorterToOrderString } from '../../helper';
+import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIButton from '../BAIButton';
 import BAIFlex from '../BAIFlex';
 import BAIText from '../BAIText';
@@ -26,7 +27,6 @@ import type { ColumnType, ColumnsType } from 'antd/es/table';
 import classNames from 'classnames';
 import * as _ from 'lodash-es';
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Resizable, type ResizeCallbackData } from 'react-resizable';
 
 /**
@@ -266,7 +266,7 @@ const BAITable = <RecordType extends AnyObject = AnyObject>({
   ...tableProps
 }: BAITableProps<RecordType>): React.ReactElement => {
   'use memo';
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   const { styles } = useStyles();
   const [resizedColumnWidths, setResizedColumnWidths] = useState<
     Record<string, number>
