@@ -84,6 +84,8 @@ const StartPage: React.FC = () => {
       return pathAfterGithub;
     }
     return null;
+    // `location` is from react-router useLocation() — pathname/search are reactive across navigations.
+    // react-doctor-disable-next-line react-doctor/no-mutable-in-deps
   }, [location.search, queryParams.type]);
 
   const badgeEventHandler = useEffectEvent(() => {

@@ -6,7 +6,7 @@ import { useControllableValue } from 'ahooks';
 import { Button, Tooltip, type ButtonProps } from 'antd';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import React, { useEffect, useLayoutEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 interface BAIFetchKeyButtonProps extends Omit<
   ButtonProps,
@@ -62,21 +62,34 @@ const BAIFetchKeyButton: React.FC<BAIFetchKeyButtonProps> = ({
 
   // display loading icon for at least "some ms" to avoid flickering
   const [displayLoading, setDisplayLoading] = useState(false);
+  const turnOffTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const loadingStartTimeRef = useRef<number | null>(null);
   useEffect(() => {
     if (loading) {
-      const startTime = Date.now();
+      // a new load started: cancel any pending "turn-off" and show immediately
+      if (turnOffTimeoutRef.current !== null) {
+        clearTimeout(turnOffTimeoutRef.current);
+        turnOffTimeoutRef.current = null;
+      }
+      loadingStartTimeRef.current = Date.now();
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setDisplayLoading(true);
-
-      return () => {
-        const elapsedTime = Date.now() - startTime;
-        const remainingTime = Math.max(700 - elapsedTime, 0);
-
-        setTimeout(() => {
-          setDisplayLoading(false);
-        }, remainingTime);
-      };
+    } else if (loadingStartTimeRef.current !== null) {
+      // loading finished: keep the icon visible for at least 700ms total
+      const elapsedTime = Date.now() - loadingStartTimeRef.current;
+      const remainingTime = Math.max(700 - elapsedTime, 0);
+      loadingStartTimeRef.current = null;
+      turnOffTimeoutRef.current = setTimeout(() => {
+        setDisplayLoading(false);
+        turnOffTimeoutRef.current = null;
+      }, remainingTime);
     }
+    return () => {
+      if (turnOffTimeoutRef.current !== null) {
+        clearTimeout(turnOffTimeoutRef.current);
+        turnOffTimeoutRef.current = null;
+      }
+    };
   }, [loading]);
 
   const loadTimeMessage = useIntervalValue(

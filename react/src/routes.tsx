@@ -68,13 +68,6 @@ const FolderInvitationResponseModalOpener = React.lazy(
 const FileUploadManager = React.lazy(
   () => import('./components/FileUploadManager'),
 );
-// FR-2675 / FR-2822 — The legacy `ServiceLauncherCreatePage` /
-// `ServiceLauncherUpdatePage` routes have been removed in favor of the
-// in-page `DeploymentCreateModal` opened from `/deployments`. The
-// underlying `ServiceLauncherPageContent` component is still imported
-// transitively (by `useModelServiceLauncher`, `LegacyModelTryContentButton`,
-// etc.) and is scheduled for removal in a follow-up cleanup once those
-// call sites migrate to the new modal-based create flow.
 
 const DeploymentListPage = React.lazy(
   () => import('./pages/DeploymentListPage'),
