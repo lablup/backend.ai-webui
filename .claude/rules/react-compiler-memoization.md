@@ -31,6 +31,10 @@ This project runs **React 19.2** with **`babel-plugin-react-compiler` in annotat
 ```tsx
 const UserProfile: React.FC<Props> = ({ user, onSelect }) => {
   'use memo';
+  // Host component (`react/src/**`) — use `useTranslation` from
+  // `react-i18next`. Inside `packages/backend.ai-ui/src/**`, swap this
+  // for `useBAIi18n` from BUI's internal hook (see
+  // `.github/instructions/i18n.instructions.md` and FR-2986).
   const { t } = useTranslation();
 
   const fullName = `${user.firstName} ${user.lastName}`;

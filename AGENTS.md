@@ -153,7 +153,8 @@ Production build (`pnpm run build`) runs these steps sequentially:
 ### Internationalization
 
 - JSON translation files in `resources/i18n/` (22 languages supported)
-- React components use `useTranslation()` hook from `react-i18next`
+- **Host** components (`react/src/**`) use `useTranslation()` / `<Trans>` from `react-i18next`
+- **BUI** components (`packages/backend.ai-ui/src/**`) use `useBAIi18n()` / `<BAITrans>` — they bind explicitly to BUI's own i18next instance, bypassing React Context lookup. Direct imports of `useTranslation` / `Trans` / `withTranslation` / `Translation` / `I18nextProvider` from `react-i18next` inside BUI are blocked by ESLint (FR-2986).
 - Backend.AI UI package has own locale files in `packages/backend.ai-ui/src/locale/`
 - Run `make i18n` to extract translation strings
 
