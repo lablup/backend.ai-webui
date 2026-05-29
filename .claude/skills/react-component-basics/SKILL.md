@@ -40,6 +40,28 @@ guidance see the sibling skills: `react-form`, `react-modal-drawer`, `react-layo
 
 Every component file follows this shape. Deviating is a red flag in review.
 
+The example below is a **host** component (`react/src/**`). For a **BUI**
+component (`packages/backend.ai-ui/src/**`), swap the i18n hook:
+
+- Replace `import { useTranslation } from 'react-i18next'` with
+  `import { useBAIi18n } from '<relative-path>/hooks/useBAIi18n'`.
+- Replace `const { t } = useTranslation()` with `const { t } = useBAIi18n()`.
+- For rich-text interpolation, use `<BAITrans>` (not `<Trans>` from
+  `react-i18next`). Import path is also relative to where the new file
+  lives.
+
+The relative paths depend on file depth. From the most common destinations:
+
+| File lives in | `useBAIi18n` import | `BAITrans` import |
+|---|---|---|
+| `packages/backend.ai-ui/src/components/*.tsx` | `'../hooks/useBAIi18n'` | `'./BAITrans'` |
+| `packages/backend.ai-ui/src/components/fragments/*.tsx` | `'../../hooks/useBAIi18n'` | `'../BAITrans'` |
+| `packages/backend.ai-ui/src/components/Table/*.tsx` | `'../../hooks/useBAIi18n'` | `'../BAITrans'` |
+| `packages/backend.ai-ui/src/components/provider/<Provider>/*.tsx` | `'../../../hooks/useBAIi18n'` | `'../../BAITrans'` |
+
+ESLint inside BUI rejects direct `react-i18next` i18n primitives (see
+`.github/instructions/i18n.instructions.md` and FR-2986).
+
 ```tsx
 /**
  @license

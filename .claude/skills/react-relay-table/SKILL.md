@@ -92,11 +92,15 @@ interface BAIUserNodesProps extends Omit<
     void;
 }
 
+// `BAIUserNodes` lives in `packages/backend.ai-ui/src/components/`, so it
+// imports `useBAIi18n` from BUI's internal hook rather than `useTranslation`
+// from `react-i18next` (FR-2986). A host-side relay table would use
+// `useTranslation` instead — see the orchestrator example below.
 const BAIUserNodes: React.FC<BAIUserNodesProps> = ({
   usersFrgmt, customizeColumns, disableSorter, onChangeOrder, ...tableProps
 }) => {
   'use memo';
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
 
   const users = useFragment(graphql`
     fragment BAIUserNodesFragment on UserNode @relay(plural: true) {

@@ -59,7 +59,7 @@ When reviewing code:
 - All UI code is in `/react` (React) and `/packages/backend.ai-ui/` (shared components)
 - `/src` contains utilities and the websocket proxy
 - Check that GraphQL queries use Relay conventions in React components
-- Verify proper i18n usage with `useTranslation()` hook from `react-i18next`
+- Verify proper i18n usage: host components (`react/src/**`) use `useTranslation()` / `<Trans>` from `react-i18next`; BUI components (`packages/backend.ai-ui/src/**`) use `useBAIi18n()` / `<BAITrans>` from BUI's internal hook/wrapper (FR-2986). Direct imports of `useTranslation` / `Trans` / `withTranslation` / `Translation` / `I18nextProvider` from `react-i18next` inside BUI are blocked by ESLint.
 
 ### Build and Development
 
