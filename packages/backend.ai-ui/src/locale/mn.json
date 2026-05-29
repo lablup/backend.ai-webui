@@ -358,6 +358,8 @@
     "Step": "Алхам"
   },
   "comp:BAITable": {
+    "CollapseAll": "Бүгдийг хураах",
+    "ExpandAll": "Бүгдийг дэлгэх",
     "Export": "Экспорт",
     "ExportCSV": "CSV экспортлах",
     "GoToFirstPage": "Эх хуудас руу шилжих",

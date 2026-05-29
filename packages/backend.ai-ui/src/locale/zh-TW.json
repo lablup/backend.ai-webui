@@ -358,6 +358,8 @@
     "Step": "步驟"
   },
   "comp:BAITable": {
+    "CollapseAll": "收合全部",
+    "ExpandAll": "展開全部",
     "Export": "匯出",
     "ExportCSV": "匯出 CSV",
     "GoToFirstPage": "跳到第一頁",

@@ -358,6 +358,8 @@
     "Step": "ステップ"
   },
   "comp:BAITable": {
+    "CollapseAll": "すべて折りたたむ",
+    "ExpandAll": "すべて展開",
     "Export": "エクスポート",
     "ExportCSV": "CSV をエクスポート",
     "GoToFirstPage": "最初のページへ",

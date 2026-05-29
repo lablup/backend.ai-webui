@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<7826d64cc35baebfbae84de866de9d0e>>
+ * @generated SignedSource<<2801a61dc812d11763342c8561273e70>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -24,6 +24,10 @@ export type BAIRouteSchedulingHistoryNodeTableFragment$data = ReadonlyArray<{
   readonly result: SchedulingResult;
   readonly routeId: string;
   readonly subSteps: ReadonlyArray<{
+    readonly errorCode: string | null | undefined;
+    readonly message: string | null | undefined;
+    readonly result: SchedulingResult;
+    readonly step: string;
     readonly " $fragmentSpreads": FragmentRefs<"BAISubStepNodesFragment">;
   }>;
   readonly toStatus: string | null | undefined;
@@ -35,7 +39,29 @@ export type BAIRouteSchedulingHistoryNodeTableFragment$key = ReadonlyArray<{
   readonly " $fragmentSpreads": FragmentRefs<"BAIRouteSchedulingHistoryNodeTableFragment">;
 }>;
 
-const node: ReaderFragment = {
+const node: ReaderFragment = (function(){
+var v0 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "result",
+  "storageKey": null
+},
+v1 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "errorCode",
+  "storageKey": null
+},
+v2 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "message",
+  "storageKey": null
+};
+return {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": {
@@ -92,27 +118,9 @@ const node: ReaderFragment = {
       "name": "toStatus",
       "storageKey": null
     },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "result",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "errorCode",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "message",
-      "storageKey": null
-    },
+    (v0/*: any*/),
+    (v1/*: any*/),
+    (v2/*: any*/),
     {
       "alias": null,
       "args": null,
@@ -125,7 +133,17 @@ const node: ReaderFragment = {
           "args": null,
           "kind": "FragmentSpread",
           "name": "BAISubStepNodesFragment"
-        }
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "step",
+          "storageKey": null
+        },
+        (v0/*: any*/),
+        (v1/*: any*/),
+        (v2/*: any*/)
       ],
       "storageKey": null
     },
@@ -154,7 +172,8 @@ const node: ReaderFragment = {
   "type": "RouteHistory",
   "abstractKey": null
 };
+})();
 
-(node as any).hash = "3f283b3e8ef039a11e41ade44a38092f";
+(node as any).hash = "fe88c47424e5d1e63b942ef7ac6f9a86";
 
 export default node;

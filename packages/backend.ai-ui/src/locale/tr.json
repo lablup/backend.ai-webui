@@ -358,6 +358,8 @@
     "Step": "Adım"
   },
   "comp:BAITable": {
+    "CollapseAll": "Tümünü daralt",
+    "ExpandAll": "Tümünü genişlet",
     "Export": "Dışa aktar",
     "ExportCSV": "CSV Dışa Aktar",
     "GoToFirstPage": "İlk sayfaya git",

@@ -358,6 +358,8 @@
     "Step": "Vaihe"
   },
   "comp:BAITable": {
+    "CollapseAll": "Tiivistä kaikki",
+    "ExpandAll": "Laajenna kaikki",
     "Export": "Vie",
     "ExportCSV": "Vie CSV",
     "GoToFirstPage": "Siirry ensimmäiselle sivulle",

@@ -358,6 +358,8 @@
     "Step": "Βήμα"
   },
   "comp:BAITable": {
+    "CollapseAll": "Σύμπτυξη όλων",
+    "ExpandAll": "Ανάπτυξη όλων",
     "Export": "Εξαγωγή",
     "ExportCSV": "Εξαγωγή CSV",
     "GoToFirstPage": "Μετάβαση στην πρώτη σελίδα",

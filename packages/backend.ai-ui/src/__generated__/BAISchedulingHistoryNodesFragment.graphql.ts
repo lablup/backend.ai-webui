@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ce6f00b122f73ac787c18a8f27b6222b>>
+ * @generated SignedSource<<65325bef206033878abbeaadf3d19b70>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -21,6 +21,10 @@ export type BAISchedulingHistoryNodesFragment$data = ReadonlyArray<{
   readonly result: SchedulingResult;
   readonly sessionId: string;
   readonly subSteps: ReadonlyArray<{
+    readonly errorCode: string | null | undefined;
+    readonly message: string | null | undefined;
+    readonly result: SchedulingResult;
+    readonly step: string;
     readonly " $fragmentSpreads": FragmentRefs<"BAISubStepNodesFragment">;
   }>;
   readonly toStatus: string | null | undefined;
@@ -32,7 +36,22 @@ export type BAISchedulingHistoryNodesFragment$key = ReadonlyArray<{
   readonly " $fragmentSpreads": FragmentRefs<"BAISchedulingHistoryNodesFragment">;
 }>;
 
-const node: ReaderFragment = {
+const node: ReaderFragment = (function(){
+var v0 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "message",
+  "storageKey": null
+},
+v1 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "result",
+  "storageKey": null
+};
+return {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": {
@@ -89,13 +108,7 @@ const node: ReaderFragment = {
       "name": "toStatus",
       "storageKey": null
     },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "message",
-      "storageKey": null
-    },
+    (v0/*: any*/),
     {
       "alias": null,
       "args": null,
@@ -103,13 +116,7 @@ const node: ReaderFragment = {
       "name": "phase",
       "storageKey": null
     },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "result",
-      "storageKey": null
-    },
+    (v1/*: any*/),
     {
       "alias": null,
       "args": null,
@@ -122,7 +129,23 @@ const node: ReaderFragment = {
           "args": null,
           "kind": "FragmentSpread",
           "name": "BAISubStepNodesFragment"
-        }
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "step",
+          "storageKey": null
+        },
+        (v1/*: any*/),
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "errorCode",
+          "storageKey": null
+        },
+        (v0/*: any*/)
       ],
       "storageKey": null
     }
@@ -130,7 +153,8 @@ const node: ReaderFragment = {
   "type": "SessionSchedulingHistory",
   "abstractKey": null
 };
+})();
 
-(node as any).hash = "d9ace8d5059e208cc256c1f0c236d273";
+(node as any).hash = "e15e0fd6aa96ce517a043363f60fe2db";
 
 export default node;

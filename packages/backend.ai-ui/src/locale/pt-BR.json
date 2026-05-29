@@ -364,6 +364,8 @@
     "Step": "Etapa"
   },
   "comp:BAITable": {
+    "CollapseAll": "Recolher tudo",
+    "ExpandAll": "Expandir tudo",
     "Export": "Exportar",
     "ExportCSV": "Exportar CSV",
     "GoToFirstPage": "Ir para a primeira página",

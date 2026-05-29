@@ -8,9 +8,8 @@ import {
   newLineToBrElement,
 } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
-import BAISchedulingResultBadge, {
-  SchedulingResult,
-} from '../BAISchedulingResultBadge';
+import { SchedulingResult } from '../BAISchedulingResultBadge';
+import BAISchedulingResultCell from '../BAISchedulingResultCell';
 import BAIText from '../BAIText';
 import {
   BAIColumnsType,
@@ -20,6 +19,7 @@ import {
 } from '../Table';
 import { BAIColumnGroupType } from '../Table/BAITable';
 import BAISubStepNodes from './BAISubStepNodes';
+import { useSchedulingHistoryExpandable } from './useSchedulingHistoryExpandable';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { graphql, useFragment } from 'react-relay';
@@ -78,6 +78,10 @@ const BAIDeploymentSchedulingHistoryNodes = ({
           message
           subSteps {
             ...BAISubStepNodesFragment
+            step
+            result
+            errorCode
+            message
           }
           attempts
           createdAt
@@ -121,7 +125,12 @@ const BAIDeploymentSchedulingHistoryNodes = ({
             record.result && record.result !== '%future added value'
               ? (record.result as SchedulingResult)
               : null;
-          return <BAISchedulingResultBadge result={result} />;
+          return (
+            <BAISchedulingResultCell
+              result={result}
+              subSteps={record.subSteps}
+            />
+          );
         },
         sorter: isEnableSorter('result'),
       },
@@ -192,10 +201,18 @@ const BAIDeploymentSchedulingHistoryNodes = ({
     ? customizeColumns(baseColumns)
     : baseColumns;
 
+  const dataSource = filterOutNullAndUndefined(histories);
+  const { expandedRowKeys, onExpandedRowsChange, expandColumnTitle } =
+    useSchedulingHistoryExpandable(dataSource);
+
   return (
     <BAITable
+      // Spread caller props first so the component's controlled expansion
+      // state (`expandable`, `rowKey`) below stays authoritative and cannot
+      // be silently overridden by a passed-through prop.
+      {...tableProps}
       rowKey={'id'}
-      dataSource={filterOutNullAndUndefined(histories)}
+      dataSource={dataSource}
       columns={allColumns}
       scroll={{ x: 'max-content' }}
       onChangeOrder={(order) => {
@@ -205,6 +222,9 @@ const BAIDeploymentSchedulingHistoryNodes = ({
         );
       }}
       expandable={{
+        columnTitle: expandColumnTitle,
+        expandedRowKeys,
+        onExpandedRowsChange,
         rowExpandable: (record) => !_.isEmpty(record.subSteps),
         expandedRowRender: (record) => {
           return (
@@ -216,7 +236,6 @@ const BAIDeploymentSchedulingHistoryNodes = ({
           );
         },
       }}
-      {...tableProps}
     />
   );
 };

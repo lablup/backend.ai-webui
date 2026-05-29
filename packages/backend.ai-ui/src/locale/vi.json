@@ -358,6 +358,8 @@
     "Step": "Bước"
   },
   "comp:BAITable": {
+    "CollapseAll": "Thu gọn tất cả",
+    "ExpandAll": "Mở rộng tất cả",
     "Export": "Xuất",
     "ExportCSV": "Xuất CSV",
     "GoToFirstPage": "Đến trang đầu",

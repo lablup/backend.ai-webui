@@ -358,6 +358,8 @@
     "Step": "Langkah"
   },
   "comp:BAITable": {
+    "CollapseAll": "Ciutkan semua",
+    "ExpandAll": "Perluas semua",
     "Export": "Ekspor",
     "ExportCSV": "Ekspor CSV",
     "GoToFirstPage": "Ke halaman pertama",

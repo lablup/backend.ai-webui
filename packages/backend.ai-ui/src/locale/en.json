@@ -358,6 +358,8 @@
     "Step": "Step"
   },
   "comp:BAITable": {
+    "CollapseAll": "Collapse all",
+    "ExpandAll": "Expand all",
     "Export": "Export",
     "ExportCSV": "Export CSV",
     "GoToFirstPage": "Go to first page",

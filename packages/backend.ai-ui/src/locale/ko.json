@@ -358,6 +358,8 @@
     "Step": "세부단계"
   },
   "comp:BAITable": {
+    "CollapseAll": "모두 닫기",
+    "ExpandAll": "모두 열기",
     "Export": "내보내기",
     "ExportCSV": "CSV로 내보내기",
     "GoToFirstPage": "첫 페이지로 이동하기",
