@@ -102,7 +102,11 @@ export { default as BAIUncontrolledInput } from './BAIUncontrolledInput';
 export { default as BAITag } from './BAITag';
 export { default as BAITagList } from './BAITagList';
 export type { BAITagListProps } from './BAITagList';
-export { default as BAIDeploymentStatusTag } from './BAIDeploymentStatusTag';
+export {
+  default as BAIDeploymentStatusTag,
+  isDeploymentInStoppedCategory,
+  DEPLOYMENT_STOPPED_CATEGORY_STATUSES,
+} from './BAIDeploymentStatusTag';
 export type {
   BAIDeploymentStatusTagProps,
   BAIDeploymentStatus,

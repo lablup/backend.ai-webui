@@ -29,6 +29,7 @@ import {
   INITIAL_FETCH_KEY,
   type GraphQLFilter,
   filterOutNullAndUndefined,
+  isDeploymentInStoppedCategory,
   isValidUUID,
   toLocalId,
   useBAILogger,
@@ -76,7 +77,6 @@ const availableRevisionSorterValues = [
 export interface DeploymentRevisionHistoryTabProps {
   deploymentFrgmt: DeploymentRevisionHistoryTab_deployment$key;
   deploymentId: string;
-  isDeploymentDestroying?: boolean;
   fetchKey?: string;
 }
 
@@ -92,12 +92,7 @@ export interface DeploymentRevisionHistoryTabProps {
  */
 const DeploymentRevisionHistoryTab: React.FC<
   DeploymentRevisionHistoryTabProps
-> = ({
-  deploymentFrgmt,
-  deploymentId,
-  isDeploymentDestroying = false,
-  fetchKey,
-}) => {
+> = ({ deploymentFrgmt, deploymentId, fetchKey }) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -142,10 +137,17 @@ const DeploymentRevisionHistoryTab: React.FC<
     graphql`
       fragment DeploymentRevisionHistoryTab_deployment on ModelDeployment {
         id
+        metadata {
+          status
+        }
       }
     `,
     deploymentFrgmt,
   );
+
+  // Derive the stopped-category guard from this component's own fragment
+  // status rather than receiving it as a prop from the parent.
+  const deploymentStatus = deployment?.metadata?.status;
 
   const parseRevisionFilter = (filter: string | null) => {
     if (!filter) return null;
@@ -369,7 +371,7 @@ const DeploymentRevisionHistoryTab: React.FC<
         const isDeployDisabled =
           isCurrent ||
           isDeploying ||
-          isDeploymentDestroying ||
+          isDeploymentInStoppedCategory(deploymentStatus) ||
           rollingBackRevisionId === record.id;
         return (
           <BAINameActionCell
@@ -606,7 +608,7 @@ const DeploymentRevisionHistoryTab: React.FC<
                   disabled={
                     drawerRevision.status === 'current' ||
                     drawerRevision.status === 'deploying' ||
-                    isDeploymentDestroying ||
+                    isDeploymentInStoppedCategory(deploymentStatus) ||
                     !!rollingBackRevisionId
                   }
                 >

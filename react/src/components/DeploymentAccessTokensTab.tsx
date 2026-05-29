@@ -33,6 +33,7 @@ import {
   BAIText,
   BAIUnmountAfterClose,
   filterOutNullAndUndefined,
+  isDeploymentInStoppedCategory,
   toLocalId,
   useBAILogger,
   useMutationWithPromise,
@@ -51,14 +52,12 @@ interface DeploymentAccessTokensTabProps {
   deploymentFrgmt: DeploymentAccessTokensTab_deployment$key;
   deploymentId: string;
   isOwnedByCurrentUser?: boolean;
-  isDeploymentDestroying?: boolean;
 }
 
 const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
   deploymentFrgmt,
   deploymentId,
   isOwnedByCurrentUser = true,
-  isDeploymentDestroying = false,
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -79,6 +78,9 @@ const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
     graphql`
       fragment DeploymentAccessTokensTab_deployment on ModelDeployment {
         id
+        metadata {
+          status
+        }
       }
     `,
     deploymentFrgmt,
@@ -106,7 +108,9 @@ const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
     });
   };
 
-  const isMutationDisabled = isDeploymentDestroying || !isOwnedByCurrentUser;
+  const isMutationDisabled =
+    isDeploymentInStoppedCategory(deployment?.metadata?.status) ||
+    !isOwnedByCurrentUser;
 
   return (
     <>

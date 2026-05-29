@@ -51,6 +51,7 @@ import {
   BAIUnmountAfterClose,
   BooleanTag,
   filterOutEmpty,
+  isDeploymentInStoppedCategory,
   safeDecodeUuid,
   toLocalId,
   useBAILogger,
@@ -66,7 +67,6 @@ import { useLocation } from 'react-router-dom';
 
 interface DeploymentConfigurationSectionProps {
   deploymentFrgmt: DeploymentConfigurationSection_deployment$key | null;
-  isDeploymentDestroying?: boolean;
   revisionFetchKey: string;
   isPendingRefetch: boolean;
   onRefetch: () => void;
@@ -231,7 +231,6 @@ const DeploymentConfigurationSection: React.FC<
   DeploymentConfigurationSectionProps
 > = ({
   deploymentFrgmt,
-  isDeploymentDestroying = false,
   revisionFetchKey,
   isPendingRefetch,
   onRefetch,
@@ -327,6 +326,10 @@ const DeploymentConfigurationSection: React.FC<
     `);
 
   const deploymentName = deployment?.metadata.name ?? '';
+  // Derive the stopped-category guard locally from this component's own
+  // fragment status (rather than threading a boolean prop down from the page),
+  // consistent with the project-mismatch guard resolved below.
+  const deploymentStatus = deployment?.metadata.status;
   const listPath = location.pathname.startsWith('/admin-deployments')
     ? '/admin-deployments'
     : location.pathname.startsWith('/project-admin-deployments')
@@ -399,7 +402,7 @@ const DeploymentConfigurationSection: React.FC<
             <Space.Compact>
               <BAIButton
                 icon={<EditOutlined />}
-                disabled={isDeploymentDestroying}
+                disabled={isDeploymentInStoppedCategory(deploymentStatus)}
                 action={async () => {
                   setSettingModalOpen(true);
                 }}
@@ -416,7 +419,8 @@ const DeploymentConfigurationSection: React.FC<
                       icon: <DeleteFilled />,
                       danger: true,
                       disabled:
-                        isDeploymentDestroying || isInFlightDeleteMutation,
+                        isDeploymentInStoppedCategory(deploymentStatus) ||
+                        isInFlightDeleteMutation,
                       onClick: () => setIsDeleteModalOpen(true),
                     },
                   ],
@@ -502,7 +506,10 @@ const DeploymentConfigurationSection: React.FC<
             <BAIButton
               type="primary"
               icon={<PlusOutlined />}
-              disabled={isDeploymentDestroying || isProjectMismatch}
+              disabled={
+                isDeploymentInStoppedCategory(deploymentStatus) ||
+                isProjectMismatch
+              }
               // `action` (not `onClick`) wraps the state update that mounts
               // `<DeploymentAddRevisionModal>` (which suspends on its Relay
               // queries) in `startTransition`, so the page stays interactive
@@ -538,7 +545,6 @@ const DeploymentConfigurationSection: React.FC<
               <DeploymentRevisionHistoryTab
                 deploymentFrgmt={deployment}
                 deploymentId={deployment.id}
-                isDeploymentDestroying={isDeploymentDestroying}
                 fetchKey={revisionFetchKey}
               />
             </Suspense>

@@ -17,6 +17,35 @@ export type BAIDeploymentStatus =
   | 'PENDING'
   | 'READY';
 
+/**
+ * Deployment statuses that belong to the "stopped" lifecycle category — the
+ * deployment is stopping or already stopped/terminated, as opposed to an
+ * active/serving state.
+ */
+export const DEPLOYMENT_STOPPED_CATEGORY_STATUSES = [
+  'STOPPING',
+  'STOPPED',
+  'TERMINATED',
+] as const satisfies readonly BAIDeploymentStatus[];
+
+/**
+ * Single source of truth for "is this deployment stopping or already
+ * stopped/terminated?". Live-only call-to-actions (start chat, add revision)
+ * and lifecycle mutations should be hidden/disabled for these statuses.
+ * Mirrors `isEndpointInDestroyingCategory` for the legacy Endpoint API.
+ *
+ * The `'%future added value'` member is what Relay generates for
+ * forward-compat in enum field types; including it explicitly keeps
+ * autocomplete on `BAIDeploymentStatus` while still letting callers pass
+ * fragment status fields directly. Unknown / unrecognized values return
+ * `false`.
+ */
+export const isDeploymentInStoppedCategory = (
+  status: BAIDeploymentStatus | '%future added value' | null | undefined,
+): boolean =>
+  status != null &&
+  (DEPLOYMENT_STOPPED_CATEGORY_STATUSES as readonly string[]).includes(status);
+
 const deploymentStatusSemanticMap: Record<BAIDeploymentStatus, SemanticColor> =
   {
     HEALTHY: 'success',

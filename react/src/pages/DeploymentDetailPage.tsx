@@ -37,6 +37,7 @@ import {
   BAIFlex,
   BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
+  isDeploymentInStoppedCategory,
   toGlobalId,
   useFetchKey,
 } from 'backend.ai-ui';
@@ -153,10 +154,6 @@ const DeploymentDetailPage: React.FC = () => {
 
   const deploymentName = deployment.metadata.name;
   const deploymentStatus = deployment.metadata.status as BAIDeploymentStatus;
-  const isDeploymentDestroying =
-    deploymentStatus === 'STOPPING' ||
-    deploymentStatus === 'STOPPED' ||
-    deploymentStatus === 'TERMINATED';
   const isDeploymentReady = deploymentStatus === 'READY';
   // The deployment belongs to a different project than the currently
   // selected one — surface a project-mismatch alert (with a switch shortcut)
@@ -172,7 +169,8 @@ const DeploymentDetailPage: React.FC = () => {
   const hasNoRevision =
     !deployment.currentRevision && !deployment.deployingRevision;
   const isPrivateDeployment =
-    deployment.networkAccess.openToPublic === false && !isDeploymentDestroying;
+    deployment.networkAccess.openToPublic === false &&
+    !isDeploymentInStoppedCategory(deploymentStatus);
 
   const creatorEmail = deployment.creator?.basicInfo?.email ?? null;
   // When the creator email is unresolvable (e.g. manager versions < 26.4.3),
@@ -236,29 +234,34 @@ const DeploymentDetailPage: React.FC = () => {
           }
         />
       )}
-      {hasNoRevision && !isProjectMismatch && (
-        <Alert
-          type="warning"
-          showIcon
-          title={t('deployment.NoCurrentRevisionDeployed')}
-          action={
-            <BAIButton
-              type="primary"
-              icon={<PlusOutlined />}
-              // `action` (not `onClick`) wraps the state update that mounts
-              // `<DeploymentAddRevisionModal>` (which suspends on its Relay
-              // queries) in `startTransition`, so the page stays interactive
-              // instead of falling into its Suspense fallback.
-              action={async () => {
-                openAddRevision();
-              }}
-              disabled={isDeploymentDestroying}
-            >
-              {t('deployment.AddRevision')}
-            </BAIButton>
-          }
-        />
-      )}
+      {/* Also suppress the "no revision" warning once the deployment is
+          stopping/stopped/terminated: its only call-to-action ("Add Revision")
+          is already disabled in that state, so the warning is just noise the
+          user cannot act on. */}
+      {hasNoRevision &&
+        !isProjectMismatch &&
+        !isDeploymentInStoppedCategory(deploymentStatus) && (
+          <Alert
+            type="warning"
+            showIcon
+            title={t('deployment.NoCurrentRevisionDeployed')}
+            action={
+              <BAIButton
+                type="primary"
+                icon={<PlusOutlined />}
+                // `action` (not `onClick`) wraps the state update that mounts
+                // `<DeploymentAddRevisionModal>` (which suspends on its Relay
+                // queries) in `startTransition`, so the page stays interactive
+                // instead of falling into its Suspense fallback.
+                action={async () => {
+                  openAddRevision();
+                }}
+              >
+                {t('deployment.AddRevision')}
+              </BAIButton>
+            }
+          />
+        )}
       {isPrivateDeployment && (
         <Alert
           type="info"
@@ -278,7 +281,6 @@ const DeploymentDetailPage: React.FC = () => {
       </BAIFlex>
       <DeploymentConfigurationSection
         deploymentFrgmt={deployment}
-        isDeploymentDestroying={isDeploymentDestroying}
         revisionFetchKey={revisionFetchKey}
         isPendingRefetch={isPendingRefetch}
         onRefetch={handleRefetch}
@@ -312,7 +314,6 @@ const DeploymentDetailPage: React.FC = () => {
           deploymentFrgmt={deployment}
           deploymentId={deploymentGlobalId}
           isOwnedByCurrentUser={isOwnedByCurrentUser}
-          isDeploymentDestroying={isDeploymentDestroying}
         />
       </div>
       {/* Local Suspense around the lazily-mounted modal so its initial

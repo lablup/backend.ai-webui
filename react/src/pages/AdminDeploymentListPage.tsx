@@ -38,10 +38,10 @@ import {
   DeploymentOrderValue,
   GraphQLFilter,
   INITIAL_FETCH_KEY,
-  ModelDeploymentNodeInList,
   availableDeploymentSorterValues,
   filterOutEmpty,
   filterOutNullAndUndefined,
+  isDeploymentInStoppedCategory,
   isValidUUID,
   parseDeploymentOrder,
   toLocalId,
@@ -266,13 +266,6 @@ const AdminDeploymentListPageContent: React.FC = () => {
     },
   ]);
 
-  const isDestroying = (
-    status: ModelDeploymentNodeInList['metadata']['status'],
-  ): boolean => {
-    if (!status || status === '%future added value') return false;
-    return ['STOPPING', 'STOPPED', 'TERMINATED'].includes(status);
-  };
-
   return (
     <>
       <BAIFlex direction="column" align="stretch" gap="sm">
@@ -365,7 +358,9 @@ const AdminDeploymentListPageContent: React.FC = () => {
                   next = {
                     ...col,
                     render: (_value, record) => {
-                      const destroying = isDestroying(record.metadata?.status);
+                      const destroying = isDeploymentInStoppedCategory(
+                        record.metadata?.status,
+                      );
                       return (
                         <BAINameActionCell
                           title={record.metadata?.name ?? '-'}

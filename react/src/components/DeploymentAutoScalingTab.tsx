@@ -9,7 +9,12 @@ import AutoScalingRuleList, {
 } from './AutoScalingRuleList';
 import { PlusOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { Button, Skeleton, Tooltip, theme } from 'antd';
-import { BAICard, BAIFetchKeyButton, BAIFlex } from 'backend.ai-ui';
+import {
+  BAICard,
+  BAIFetchKeyButton,
+  BAIFlex,
+  isDeploymentInStoppedCategory,
+} from 'backend.ai-ui';
 import React, { Suspense, useRef, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -63,10 +68,6 @@ const DeploymentAutoScalingTab: React.FC<DeploymentAutoScalingTabProps> = ({
   }
 
   const status = deployment.metadata?.status;
-  // DeploymentStatus has no explicit DESTROYED state; STOPPING / STOPPED are
-  // the terminal lifecycle states that should disable mutations, mirroring
-  // `isEndpointInDestroyingCategory` from the legacy Endpoint API.
-  const isEndpointDestroying = status === 'STOPPING' || status === 'STOPPED';
 
   const creatorEmail = deployment.creator?.basicInfo?.email ?? null;
   // When the creator is unknown (e.g. on manager versions < 26.4.3 where the
@@ -75,7 +76,8 @@ const DeploymentAutoScalingTab: React.FC<DeploymentAutoScalingTabProps> = ({
   const isOwnedByCurrentUser =
     !creatorEmail || creatorEmail === currentUser.email;
 
-  const isAddDisabled = isEndpointDestroying || !isOwnedByCurrentUser;
+  const isAddDisabled =
+    isDeploymentInStoppedCategory(status) || !isOwnedByCurrentUser;
 
   const handleRefetch = () => {
     startRefetchTransition(() => {
@@ -118,7 +120,7 @@ const DeploymentAutoScalingTab: React.FC<DeploymentAutoScalingTabProps> = ({
         <AutoScalingRuleList
           ref={autoScalingRef}
           deploymentId={deployment.id}
-          isEndpointDestroying={isEndpointDestroying}
+          isEndpointDestroying={isDeploymentInStoppedCategory(status)}
           isOwnedByCurrentUser={isOwnedByCurrentUser}
           fetchKey={String(fetchKey)}
           hideInlineAddButton
