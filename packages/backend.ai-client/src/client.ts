@@ -33,23 +33,30 @@ import {
   EduApp,
   utils,
 } from './resources';
-import type { SessionResources, requestInfo } from './types';
+import type {
+  FeatureSet,
+  GraphQLVariables,
+  LoginEnvelope,
+  RequestBody,
+  SessionResources,
+  requestInfo,
+} from './types';
 import CryptoES from 'crypto-es';
 
 export class Client {
-  public code: any;
+  public code: string | null;
   public sessionId: string | null;
-  public kernelType: any;
+  public kernelType: string | null;
   public clientVersion: string;
-  public agentSignature: any;
-  public _config: any;
-  public _managerVersion: any;
-  public _apiVersion: any;
-  public _apiVersionMajor: any;
+  public agentSignature: string;
+  public _config: ClientConfig;
+  public _managerVersion: string | null;
+  public _apiVersion: string | null;
+  public _apiVersionMajor: string | null;
   public _loginSessionId: string | null;
   public is_admin: boolean;
   public is_superadmin: boolean;
-  public kernelPrefix: any;
+  public kernelPrefix: string;
   public resourcePreset: ResourcePreset;
   public vfolder: VFolder;
   public agent: Agent;
@@ -78,18 +85,23 @@ export class Client {
   public pipeline: Pipeline;
   public pipelineJob: PipelineJob;
   public pipelineTaskInstance: PipelineTaskInstance;
-  public _features: any;
+  public _features: FeatureSet;
   public ready: boolean = false;
-  public abortController: any;
-  public abortSignal: any;
+  public abortController: AbortController;
+  public abortSignal: AbortSignal;
   public requestTimeout: number;
   public requestSoftTimeout: number;
-  static ERR_REQUEST: any;
-  static ERR_RESPONSE: any;
-  static ERR_ABORT: any;
-  static ERR_TIMEOUT: any;
-  static ERR_SERVER: any;
-  static ERR_UNKNOWN: any;
+  // Numeric sentinel codes used by `_wrapWithPromise` to discriminate error
+  // categories. Values must stay aligned with the `ErrorTypeCode` union in
+  // `./types`. Defined as `readonly` literal-typed properties so consumers can
+  // use them in type narrowing without losing the original `Object.defineProperty`
+  // immutability semantics.
+  static readonly ERR_SERVER = 0 as const;
+  static readonly ERR_RESPONSE = 1 as const;
+  static readonly ERR_REQUEST = 2 as const;
+  static readonly ERR_ABORT = 3 as const;
+  static readonly ERR_TIMEOUT = 4 as const;
+  static readonly ERR_UNKNOWN = 99 as const;
 
   // Additional info related to current login user
   public email: string;
@@ -192,19 +204,31 @@ export class Client {
    */
   async _wrapWithPromise(
     rqst: requestInfo,
-    rawFile = false,
-    signal = null,
+    rawFile: boolean = false,
+    signal: AbortSignal | null = null,
     timeout: number = 0,
     retry: number = 0,
-    opts = {},
+    opts: Record<string, unknown> = {},
   ): Promise<any> {
-    let errorType = Client.ERR_REQUEST;
+    // `errorType` starts out as one of the numeric `Client.ERR_*` sentinels and
+    // may later be re-assigned to a URI-shaped string (e.g.
+    // `https://api.backend.ai/probs/client-request-error`) before being
+    // surfaced in the thrown `WrappedError`. Track both possibilities.
+    let errorType: number | string = Client.ERR_REQUEST;
     let errorTitle = '';
-    let errorMsg;
+    let errorMsg: string | undefined;
     let errorDesc = '';
     let errorCode = '';
     let traceback = '';
-    let resp: any, body: any, requestTimer: any, requestTimerForSoftTimeout: any;
+    let resp: Response | undefined;
+    // `body` is genuinely polymorphic: a parsed JSON object on the
+    // application/json path, a string on the text/* path, or a Blob
+    // otherwise. The callers downstream of this method also expect
+    // different shapes (most read JSON fields directly). Type as `any`
+    // here and document this in the type-mismatch follow-up file.
+    let body: any;
+    let requestTimer: ReturnType<typeof setTimeout> | undefined;
+    let requestTimerForSoftTimeout: ReturnType<typeof setTimeout> | undefined;
     let isSoftTimeoutTriggered = false;
     try {
       if (rqst.method === 'GET') {
@@ -288,26 +312,40 @@ export class Client {
           opts,
         );
       }
-      let error_message: any;
+      let error_message: string | unknown;
       if (
         typeof err == 'object' &&
-        err?.constructor === Object &&
+        err !== null &&
+        err.constructor === Object &&
         'title' in err
       ) {
-        error_message = err.title; // formatted message
+        error_message = (err as { title: unknown }).title; // formatted message
       } else {
         error_message = err;
       }
       if (typeof resp === 'undefined') {
-        resp = {} as any;
+        // No fetch response was produced (network error, abort, timeout).
+        // The catch block below overlays `status`, `statusText`, and `msg`
+        // onto this placeholder object.
+        resp = {} as Response;
       }
+      // The original code assigns to `resp.status` / `resp.statusText` and
+      // reads `resp.msg`, which are not assignable on a real `Response`.
+      // Treat `resp` as a mutable overlay shape inside this catch block.
+      // See `docs/type-mismatch-followups.md` for the underlying bug.
+      const respOverlay = resp as unknown as {
+        status?: number | string;
+        statusText?: string;
+        msg?: string;
+      };
+      const bodyAccess = body as Record<string, string> | undefined;
       switch (errorType) {
         case Client.ERR_REQUEST:
           errorType = 'https://api.backend.ai/probs/client-request-error';
           if (navigator.onLine) {
-            errorTitle = error_message;
-            errorMsg = `sending request has failed: ${error_message}`;
-            errorDesc = error_message;
+            errorTitle = String(error_message ?? '');
+            errorMsg = `sending request has failed: ${errorTitle}`;
+            errorDesc = errorTitle;
           } else {
             errorTitle = 'Network disconnected.';
             errorMsg = `sending request has failed: Network disconnected`;
@@ -316,22 +354,24 @@ export class Client {
           break;
         case Client.ERR_RESPONSE:
           errorType = 'https://api.backend.ai/probs/client-response-error';
-          errorTitle = error_message;
-          errorMsg = `reading response has failed: ${error_message}`;
-          errorDesc = error_message;
+          errorTitle = String(error_message ?? '');
+          errorMsg = `reading response has failed: ${errorTitle}`;
+          errorDesc = errorTitle;
           break;
         case Client.ERR_SERVER:
           errorType = 'https://api.backend.ai/probs/server-error';
-          errorTitle = `${resp.status} ${resp.statusText} - ${body.title}`;
+          errorTitle = `${respOverlay.status} ${respOverlay.statusText} - ${bodyAccess?.title}`;
           errorMsg = 'server responded failure: ';
-          if (body.msg) {
+          if (bodyAccess?.msg) {
             errorMsg =
-              errorMsg + `${resp.status} ${resp.statusText} - ${body.msg}`;
-            errorDesc = body.msg;
+              errorMsg +
+              `${respOverlay.status} ${respOverlay.statusText} - ${bodyAccess.msg}`;
+            errorDesc = bodyAccess.msg;
           } else {
             errorMsg =
-              errorMsg + `${resp.status} ${resp.statusText} - ${body.title}`;
-            errorDesc = body.title;
+              errorMsg +
+              `${respOverlay.status} ${respOverlay.statusText} - ${bodyAccess?.title}`;
+            errorDesc = bodyAccess?.title ?? '';
           }
           break;
         case Client.ERR_ABORT:
@@ -339,33 +379,33 @@ export class Client {
           errorTitle = `Request aborted`;
           errorMsg = 'Request aborted by user';
           errorDesc = errorMsg;
-          resp.status = 408;
-          resp.statusText = 'Request aborted by user';
+          respOverlay.status = 408;
+          respOverlay.statusText = 'Request aborted by user';
           break;
         case Client.ERR_TIMEOUT:
           errorType = 'https://api.backend.ai/probs/request-timeout-error';
           errorTitle = `Request timeout`;
           errorMsg = 'No response returned within timeout';
           errorDesc = errorMsg;
-          resp.status = 408;
-          resp.statusText = 'Timeout exceeded';
+          respOverlay.status = 408;
+          respOverlay.statusText = 'Timeout exceeded';
           break;
         default:
-          if (typeof resp.status === 'undefined') {
-            resp.status = 500;
-            resp.statusText = 'Server error';
+          if (typeof respOverlay.status === 'undefined') {
+            respOverlay.status = 500;
+            respOverlay.statusText = 'Server error';
           }
           if (errorType === '') {
             errorType = Client.ERR_UNKNOWN;
           }
           if (errorTitle === '') {
-            errorTitle = body.title;
+            errorTitle = bodyAccess?.title ?? '';
           }
           errorMsg =
             'server responded failure: ' +
-            `${resp.status} ${resp.statusText} - ${body.title}`;
-          if (body.title !== '') {
-            errorDesc = body.title;
+            `${respOverlay.status} ${respOverlay.statusText} - ${bodyAccess?.title}`;
+          if (bodyAccess?.title !== '') {
+            errorDesc = bodyAccess?.title ?? '';
           }
       }
       throw {
@@ -375,11 +415,11 @@ export class Client {
         requestUrl: rqst.uri,
         requestMethod: rqst.method,
         requestParameters: rqst.body,
-        statusCode: resp.status,
-        statusText: resp.statusText,
+        statusCode: respOverlay.status,
+        statusText: respOverlay.statusText,
         title: errorTitle,
         // `msg` field was introduced in v24.09.0
-        msg: resp.msg,
+        msg: respOverlay.msg,
         // `message` is deprecated, but it is kept for backward compatibility.
         // use `msg` field instead.
         message: errorMsg,
@@ -392,7 +432,7 @@ export class Client {
     }
 
     let previous_log = JSON.parse(
-      localStorage.getItem('backendaiwebui.logs') as any,
+      localStorage.getItem('backendaiwebui.logs') ?? 'null',
     );
     if (previous_log) {
       if (previous_log.length > 2000) {
@@ -401,25 +441,42 @@ export class Client {
     }
     let log_stack: Record<string, unknown>[] = [];
     if (typeof resp === 'undefined') {
+      // Mirror the catch-block pattern: when no fetch response exists,
+      // construct a stand-in object carrying placeholder status fields.
       resp = {
         status: 'No status',
         statusText: 'No response given.',
-      };
+      } as unknown as Response;
     }
-    let current_log = {
+    const respView = resp as unknown as {
+      status: number | string;
+      statusText: string;
+    };
+    const current_log: {
+      isError: boolean;
+      timestamp: string;
+      type: string;
+      requestUrl: string;
+      requestMethod: string;
+      requestParameters: unknown;
+      statusCode: number | string;
+      statusText: string;
+      title: unknown;
+      message: string;
+    } = {
       isError: false,
       timestamp: new Date().toUTCString(),
       type: '',
       requestUrl: rqst.uri,
       requestMethod: rqst.method,
       requestParameters: rqst.body,
-      statusCode: resp.status,
-      statusText: resp.statusText,
-      title: body.title,
+      statusCode: respView.status,
+      statusText: respView.statusText,
+      title: body?.title,
       message: '',
     };
     if ('log' in opts) {
-      current_log.requestParameters = opts['log'];
+      current_log.requestParameters = (opts as Record<string, unknown>)['log'];
     }
     log_stack.push(current_log);
 
@@ -464,9 +521,13 @@ export class Client {
   /**
    * Force API major version
    */
-  set APIMajorVersion(value) {
+  set APIMajorVersion(value: string | null) {
     this._apiVersionMajor = value;
-    this._config._apiVersionMajor = this._apiVersionMajor; // To upgrade API version with server version
+    // The mirror field on ClientConfig is non-null; only mirror when value
+    // is actually provided so the config retains a usable default.
+    if (value !== null) {
+      this._config._apiVersionMajor = value;
+    }
   }
 
   /**
@@ -479,11 +540,13 @@ export class Client {
       let v = await this.getServerVersion(signal);
       this._managerVersion = v.manager;
       this._apiVersion = v.version;
-      this._config._apiVersion = this._apiVersion; // To upgrade API version with server version
-      this._apiVersionMajor = v.version?.substring(1, 3);
-      this._config._apiVersionMajor = this._apiVersionMajor; // To upgrade API version with server version
-      if (this._apiVersionMajor > 4) {
-        this.kernelPrefix = '/session';
+      this._config._apiVersion = this._apiVersion ?? this._config._apiVersion; // To upgrade API version with server version
+      this._apiVersionMajor = v.version?.substring(1, 3) ?? null;
+      if (this._apiVersionMajor !== null) {
+        this._config._apiVersionMajor = this._apiVersionMajor; // To upgrade API version with server version
+        if (Number(this._apiVersionMajor) > 4) {
+          this.kernelPrefix = '/session';
+        }
       }
     }
     return this._managerVersion;
@@ -492,7 +555,7 @@ export class Client {
   /**
    * Check compatibility of current manager
    */
-  supports(feature: any) {
+  supports(feature: string): boolean {
     if (Object.keys(this._features).length === 0) {
       this._updateSupportList();
     }
@@ -503,11 +566,14 @@ export class Client {
     }
   }
 
-  _updateFieldCompatibilityByAPIVersion(fields: any) {
-    const v4_replacements: any = {
+  _updateFieldCompatibilityByAPIVersion(fields: string[]): string[] {
+    const v4_replacements: Record<string, string> = {
       session_name: 'sess_id',
     };
-    if (this._apiVersionMajor < 5) {
+    if (
+      this._apiVersionMajor !== null &&
+      Number(this._apiVersionMajor) < 5
+    ) {
       // For V3/V4 API compatibility
       Object.keys(v4_replacements).forEach((key) => {
         let index = fields.indexOf(key);
@@ -770,7 +836,7 @@ export class Client {
    * Return if manager is compatible with given version.
    */
   isManagerVersionCompatibleWith(version: string | Array<string>) {
-    let managerVersion = this._managerVersion;
+    const managerVersion = this._managerVersion ?? '';
     if (Array.isArray(version)) {
       return isCompatibleMultipleConditions(managerVersion, version);
     } else {
@@ -781,19 +847,19 @@ export class Client {
   /**
    * Return if api is compatible with given version.
    */
-  isAPIVersionCompatibleWith(version: any) {
-    let apiVersion = this._apiVersion;
+  isAPIVersionCompatibleWith(version: string | null): boolean {
+    let apiVersion: string | null = this._apiVersion;
     if (apiVersion !== null && version !== null) {
       apiVersion = apiVersion
         .split('.')
-        .map((s: any) => s.padStart(10))
+        .map((s) => s.padStart(10))
         .join('.');
       version = version
         .split('.')
-        .map((s: any) => s.padStart(10))
+        .map((s) => s.padStart(10))
         .join('.');
     }
-    return version <= apiVersion;
+    return (version ?? '') <= (apiVersion ?? '');
   }
 
   /**
@@ -857,7 +923,8 @@ export class Client {
       // the web proxy wraps the error in an envelope { authenticated: false,
       // data: { type, title, details } }. Recover that envelope and throw
       // it as a login error so the caller can classify by data.type.
-      const responseBody = (err as any)?.response;
+      const responseBody = (err as { response?: LoginEnvelope } | null)
+        ?.response;
       if (
         responseBody &&
         typeof responseBody === 'object' &&
@@ -968,11 +1035,16 @@ export class Client {
           return Promise.resolve(false);
         }
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       // Manager / webserver down.
-      if ('statusCode' in err && err.statusCode === 429) {
+      if (
+        err !== null &&
+        typeof err === 'object' &&
+        'statusCode' in err &&
+        (err as { statusCode?: number }).statusCode === 429
+      ) {
         throw {
-          title: err.description,
+          title: (err as { description?: string }).description,
           message: 'Too many failed login attempts.',
         };
       } else {
@@ -991,7 +1063,7 @@ export class Client {
    * Leave from manager user. This requires additional webserver package.
    *
    */
-  async signout(userid: any, password: any): Promise<any> {
+  async signout(userid: string, password: string): Promise<any> {
     let body = {
       username: userid,
       password: password,
@@ -1003,7 +1075,7 @@ export class Client {
   /**
    * Update user's full_name.
    */
-  async update_full_name(email: any, fullName: any): Promise<any> {
+  async update_full_name(email: string, fullName: string): Promise<any> {
     let body = {
       email: email,
       full_name: fullName,
@@ -1021,7 +1093,11 @@ export class Client {
    * Update user's password.
    *
    */
-  async update_password(oldPassword: any, newPassword: any, newPassword2: any): Promise<any> {
+  async update_password(
+    oldPassword: string,
+    newPassword: string,
+    newPassword2: string,
+  ): Promise<any> {
     let body = {
       old_password: oldPassword,
       new_password: newPassword,
@@ -1042,7 +1118,11 @@ export class Client {
     return this._wrapWithPromise(rqst);
   }
 
-  async initialize_totp_anon({ registration_token }: any): Promise<any> {
+  async initialize_totp_anon({
+    registration_token,
+  }: {
+    registration_token: string;
+  }): Promise<any> {
     let rqst = this.newSignedRequest(
       'POST',
       '/totp/anon',
@@ -1054,11 +1134,17 @@ export class Client {
     return this._wrapWithPromise(rqst);
   }
 
-  async activate_totp(otp: any): Promise<any> {
+  async activate_totp(otp: string): Promise<any> {
     let rqst = this.newSignedRequest('POST', '/totp/verify', { otp }, null);
     return this._wrapWithPromise(rqst);
   }
-  async activate_totp_anon({ otp, registration_token }: any): Promise<any> {
+  async activate_totp_anon({
+    otp,
+    registration_token,
+  }: {
+    otp: string;
+    registration_token: string;
+  }): Promise<any> {
     let rqst = this.newSignedRequest(
       'POST',
       '/totp/anon/verify',
@@ -1129,7 +1215,10 @@ export class Client {
       ...resources,
     };
     let rqst;
-    if (this._apiVersionMajor < 5) {
+    if (
+      this._apiVersionMajor !== null &&
+      Number(this._apiVersionMajor) < 5
+    ) {
       // For V3/V4 API compatibility
       rqst = this.newSignedRequest(
         'POST',
@@ -1159,16 +1248,16 @@ export class Client {
    * @param {number} timeout - Timeout to cancel creation
    */
   async createSessionFromTemplate(
-    templateId: any,
-    image = null,
+    templateId: string,
+    image: string | null = null,
     sessionName: undefined | string | null = null,
-    resources: any = {},
+    resources: Record<string, string | number> = {},
     timeout: number = 0,
   ) {
     if (typeof sessionName === 'undefined' || sessionName === null) {
       sessionName = this.generateSessionId();
     }
-    const params: any = { template_id: templateId };
+    const params: Record<string, unknown> = { template_id: templateId };
     if (image) {
       params['image'] = image;
     }
@@ -1176,7 +1265,7 @@ export class Client {
       params['name'] = sessionName;
     }
     if (resources && Object.keys(resources).length > 0) {
-      let config: any = {};
+      const config: Record<string, string | number> = {};
       if (resources['cpu']) {
         config['cpu'] = resources['cpu'];
       }
@@ -1184,13 +1273,17 @@ export class Client {
         config['mem'] = resources['mem'];
       }
       if (resources['cuda.device']) {
-        config['cuda.device'] = parseInt(resources['cuda.device']);
+        config['cuda.device'] = parseInt(String(resources['cuda.device']));
       }
       if (resources['fgpu']) {
-        config['cuda.shares'] = parseFloat(resources['fgpu']).toFixed(2); // 19.09 and above
+        config['cuda.shares'] = parseFloat(String(resources['fgpu'])).toFixed(
+          2,
+        ); // 19.09 and above
       }
       if (resources['cuda.shares']) {
-        config['cuda.shares'] = parseFloat(resources['cuda.shares']).toFixed(2);
+        config['cuda.shares'] = parseFloat(
+          String(resources['cuda.shares']),
+        ).toFixed(2);
       }
       if (resources['rocm']) {
         config['rocm.device'] = resources['rocm'];
@@ -1235,19 +1328,27 @@ export class Client {
         params['owner_access_key'] = resources['owner_access_key'];
       }
       // params['config'] = {};
-      params['config'] = { resources: config };
+      type SessionConfig = {
+        resources: Record<string, string | number>;
+        mounts?: string | number;
+        scaling_group?: string | number;
+        resource_opts?: { shmem?: string | number };
+        environ?: string | number;
+      };
+      const sessionConfig: SessionConfig = { resources: config };
+      params['config'] = sessionConfig;
       if (resources['mounts']) {
-        params['config'].mounts = resources['mounts'];
+        sessionConfig.mounts = resources['mounts'];
       }
       if (resources['scaling_group']) {
-        params['config'].scaling_group = resources['scaling_group'];
+        sessionConfig.scaling_group = resources['scaling_group'];
       }
       if (resources['shmem']) {
-        params['config'].resource_opts = {};
-        params['config'].resource_opts.shmem = resources['shmem'];
+        sessionConfig.resource_opts = {};
+        sessionConfig.resource_opts.shmem = resources['shmem'];
       }
       if (resources['env']) {
-        params['config'].environ = resources['env'];
+        sessionConfig.environ = resources['env'];
       }
     }
     const rqst = this.newSignedRequest(
@@ -1265,7 +1366,10 @@ export class Client {
    * @param {string} sessionId - the sessionId given when created
    * @param {string | null} ownerKey - Owner API key to create
    */
-  async get_info(sessionId: any, ownerKey = null): Promise<any> {
+  async get_info(
+    sessionId: string,
+    ownerKey: string | null = null,
+  ): Promise<any> {
     let queryString = `${this.kernelPrefix}/${sessionId}`;
     if (ownerKey != null) {
       queryString = `${queryString}?${new URLSearchParams({ owner_access_key: ownerKey }).toString()}`;
@@ -1279,7 +1383,7 @@ export class Client {
    *
    * @param {string} sessionId - the sessionId given when created
    */
-  async get_direct_access_info(sessionId: any): Promise<any> {
+  async get_direct_access_info(sessionId: string): Promise<any> {
     let queryString = `${this.kernelPrefix}/${sessionId}/direct-access-info`;
     let rqst = this.newSignedRequest('GET', queryString, null, null);
     return this._wrapWithPromise(rqst);
@@ -1293,10 +1397,10 @@ export class Client {
    * @param {number} timeout - timeout to wait log query. Set to 0 to use default value.
    */
   async get_logs(
-    sessionId: any,
-    ownerKey = null,
-    kernelId = null,
-    timeout = 0,
+    sessionId: string,
+    ownerKey: string | null = null,
+    kernelId: string | null = null,
+    timeout: number = 0,
   ): Promise<any> {
     const queryParams = new URLSearchParams();
     // let queryParams: Array<string> = [];
@@ -1319,7 +1423,7 @@ export class Client {
    *
    * @param {string} sessionId - the sessionId given when created
    */
-  getTaskLogs(sessionId: any): Promise<any> {
+  getTaskLogs(sessionId: string): Promise<any> {
     const queryString = `${this.kernelPrefix}/_/logs?${new URLSearchParams({ session_name: sessionId }).toString()}`;
     let rqst = this.newSignedRequest('GET', queryString, null, null);
     return this._wrapWithPromise(rqst);
@@ -1333,8 +1437,8 @@ export class Client {
    * @param {boolean} forced - force destroy session. Requires admin privilege.
    */
   async destroy(
-    sessionId: any,
-    ownerKey = null,
+    sessionId: string,
+    ownerKey: string | null = null,
     forced: boolean = false,
   ): Promise<any> {
     let queryString = `${this.kernelPrefix}/${sessionId}`;
@@ -1353,7 +1457,10 @@ export class Client {
    * @param {string} sessionId - the sessionId given when created
    * @param {string | null} ownerKey - Owner API key to restart
    */
-  async restart(sessionId: any, ownerKey = null): Promise<any> {
+  async restart(
+    sessionId: string,
+    ownerKey: string | null = null,
+  ): Promise<any> {
     let queryString = `${this.kernelPrefix}/${sessionId}`;
     if (ownerKey != null) {
       queryString = `${queryString}?${new URLSearchParams({ owner_access_key: ownerKey }).toString()}`;
@@ -1400,17 +1507,28 @@ export class Client {
   }
 
   // legacy aliases (DO NOT USE for new codes)
-  destroyKernel(sessionId: any, ownerKey = null): Promise<any> {
+  destroyKernel(
+    sessionId: string,
+    ownerKey: string | null = null,
+  ): Promise<any> {
     return this.destroy(sessionId, ownerKey);
   }
 
   // legacy aliases (DO NOT USE for new codes)
-  refreshKernel(sessionId: any, ownerKey = null): Promise<any> {
+  refreshKernel(
+    sessionId: string,
+    ownerKey: string | null = null,
+  ): Promise<any> {
     return this.restart(sessionId, ownerKey);
   }
 
   // legacy aliases (DO NOT USE for new codes)
-  runCode(code: any, sessionId: any, runId: any, mode: any): Promise<any> {
+  runCode(
+    code: string,
+    sessionId: string,
+    runId: string,
+    mode: string,
+  ): Promise<any> {
     return this.execute(sessionId, runId, mode, code, {});
   }
 
@@ -1456,7 +1574,7 @@ export class Client {
     return this._wrapWithPromise(rqst, true);
   }
 
-  async upload(sessionId: string, path: any, fs: any): Promise<any> {
+  async upload(sessionId: string, path: string, fs: Blob): Promise<any> {
     const formData = new FormData();
     //formData.append('src', fs, {filepath: path});
     formData.append('src', fs, path);
@@ -1469,11 +1587,15 @@ export class Client {
     return this._wrapWithPromise(rqst);
   }
 
-  async download(sessionId: string, files: any): Promise<any> {
-    let params = {
-      files: files,
-    };
-    const q = new URLSearchParams(params).toString();
+  async download(sessionId: string, files: string[]): Promise<any> {
+    // URLSearchParams stringifies the array to a comma-joined value
+    // (e.g. `files=a,b`). Preserve that legacy encoding rather than
+    // emitting a repeated key. Cast through the URLSearchParams init
+    // type so strict TS accepts the array value.
+    const params = { files: files };
+    const q = new URLSearchParams(
+      params as unknown as Record<string, string>,
+    ).toString();
     let rqst = this.newSignedRequest(
       'POST',
       `${this.kernelPrefix}/${sessionId}/download?${q}`,
@@ -1483,7 +1605,7 @@ export class Client {
     return this._wrapWithPromise(rqst, true);
   }
 
-  async download_single(sessionId: any, file: any) {
+  async download_single(sessionId: string, file: string) {
     let params = {
       file: file,
     };
@@ -1518,21 +1640,21 @@ export class Client {
    * @param {number} retry - The number of retry when request is failed
    * @param {number} secure - Decide to encode the payload or not
    */
-  async query(
-    q: any,
-    v: any,
-    signal = null,
+  async query<TData = unknown>(
+    q: string,
+    v: GraphQLVariables | null,
+    signal: AbortSignal | null = null,
     timeout: number = 0,
     retry: number = 0,
     secure: boolean = false,
-  ) {
+  ): Promise<TData> {
     let query = {
       query: q,
       variables: v,
     };
     let rqst = this.newSignedRequest('POST', `/admin/gql`, query, null, secure);
     return this._wrapWithPromise(rqst, false, signal, timeout, retry).then(
-      (r: any) => r.data,
+      (r: { data: TData }) => r.data,
     );
   }
 
@@ -1548,24 +1670,25 @@ export class Client {
    */
   newSignedRequest(
     method: string,
-    queryString: any,
-    body: any = undefined,
+    queryString: string,
+    body: RequestBody = undefined,
     serviceName: string | null = null,
     secure: boolean = false,
-  ) {
+  ): requestInfo {
     let content_type = 'application/json';
-    let requestBody;
-    let authBody;
+    let requestBody: string | FormData;
+    let authBody: string;
     let d = new Date();
     if (body === null || body === undefined) {
       requestBody = '';
       authBody = requestBody;
     } else if (
-      typeof body.getBoundary === 'function' ||
+      typeof (body as { getBoundary?: () => string }).getBoundary ===
+        'function' ||
       body instanceof FormData
     ) {
       // detect form data input from form-data module
-      requestBody = body;
+      requestBody = body as FormData;
       authBody = '';
       content_type = 'multipart/form-data';
     } else {
@@ -1591,7 +1714,11 @@ export class Client {
         uri = this._config.endpoint + '/func' + queryString;
       }
     } else {
-      if (this._config._apiVersion[1] < 4) {
+      // `_apiVersion` is shaped like `v8.20240915`; index [1] reads the
+      // numeric major version (still a single-char string). Coerce so
+      // strict TS accepts the inequality without changing the JS semantics
+      // it had before this typing pass.
+      if (Number(this._config._apiVersion[1]) < 4) {
         aStr = this.getAuthenticationString(
           method,
           queryString,
@@ -1636,13 +1763,28 @@ export class Client {
     }
 
     if (body != undefined) {
-      if (typeof body.getBoundary === 'function') {
-        hdrs.set('Content-Type', body.getHeaders()['content-type']);
+      // The legacy node `form-data` module (vs the DOM FormData) carries a
+      // `getBoundary()` method that produces the multipart boundary token.
+      // Treat it as a structural type.
+      type LegacyFormData = {
+        getBoundary: () => string;
+        getHeaders: () => Record<string, string>;
+      };
+      const maybeLegacyForm = body as Partial<LegacyFormData>;
+      if (typeof maybeLegacyForm.getBoundary === 'function') {
+        hdrs.set(
+          'Content-Type',
+          (maybeLegacyForm as LegacyFormData).getHeaders()['content-type'],
+        );
       }
       if (body instanceof FormData) {
+        // browser FormData — fetch sets the boundary automatically.
       } else {
         hdrs.set('Content-Type', content_type);
-        hdrs.set('Content-Length', String(new TextEncoder().encode(authBody).length));
+        hdrs.set(
+          'Content-Length',
+          String(new TextEncoder().encode(authBody).length),
+        );
       }
     } else {
       hdrs.set('Content-Type', content_type);
@@ -1655,15 +1797,15 @@ export class Client {
       }
     }
     // Add session id header for non-cookie environment.
-    if (this._loginSessionId !== '') {
-      hdrs.set('X-BackendAI-SessionID', this._loginSessionId as string);
+    if (this._loginSessionId !== '' && this._loginSessionId !== null) {
+      hdrs.set('X-BackendAI-SessionID', this._loginSessionId);
     }
     return {
       method: method,
-      headers: hdrs as Headers,
-      cache: 'default' as RequestCache,
+      headers: hdrs,
+      cache: 'default',
       body: requestBody,
-      uri: uri as string,
+      uri: uri,
     };
     // return requestInfo;
   }
@@ -1676,7 +1818,7 @@ export class Client {
    * @param {string} queryString - the URI path and GET parameters
    * @param {any} body - an object that will be encoded as JSON in the request body
    */
-  newUnsignedRequest(method: any, queryString: any, body: any) {
+  newUnsignedRequest(method: string, queryString: string, body: RequestBody) {
     return this.newPublicRequest(
       method,
       queryString,
@@ -1697,8 +1839,8 @@ export class Client {
   newPublicRequest(
     method: string,
     queryString: string,
-    body: any,
-    urlPrefix = '',
+    body: RequestBody,
+    urlPrefix: string = '',
   ) {
     let d = new Date();
     let hdrs = new Headers({
@@ -1736,11 +1878,11 @@ export class Client {
   }
 
   getAuthenticationString(
-    method: any,
-    queryString: any,
-    dateValue: any,
-    bodyValue: any,
-    content_type = 'application/json',
+    method: string,
+    queryString: string,
+    dateValue: string,
+    bodyValue: string,
+    content_type: string = 'application/json',
   ): string {
     let bodyHash = CryptoES.SHA256(bodyValue);
     // let bodyHash = crypto.createHash(this._config.hashType)
@@ -1765,14 +1907,14 @@ export class Client {
     );
   }
 
-  getCurrentDate(now: any): string {
+  getCurrentDate(now: Date): string {
     let year = `0000${now.getUTCFullYear()}`.slice(-4);
     let month = `0${now.getUTCMonth() + 1}`.slice(-2);
     let day = `0${now.getUTCDate()}`.slice(-2);
     return year + month + day;
   }
 
-  getEncodedPayload(body: any): string {
+  getEncodedPayload(body: string): string {
     let iv = this.generateRandomStr(16);
     //let key = (btoa(this._config.endpoint) + iv + iv).substring(0,32); // btoa is deprecated. Now monitoring toString.
     let key = (
@@ -1814,23 +1956,29 @@ export class Client {
     return strBase64;
   }
 
-  sign(key: any, key_encoding: any, msg: any, digest_type: any) {
+  sign(
+    key: string,
+    key_encoding: 'binary' | 'utf8',
+    msg: string,
+    digest_type: 'binary' | 'hex' | 'base64',
+  ): string {
     const hashDigest = CryptoES.enc.Utf8.parse(msg);
-    let hmacDigest;
+    let parsedKey: CryptoES.lib.WordArray;
     if (key_encoding == 'utf8') {
-      key = CryptoES.enc.Utf8.parse(key);
+      parsedKey = CryptoES.enc.Utf8.parse(key);
     } else if (key_encoding == 'binary') {
-      key = CryptoES.enc.Hex.parse(key);
+      parsedKey = CryptoES.enc.Hex.parse(key);
     } else {
-      key = CryptoES.enc.Utf8.parse(key);
+      parsedKey = CryptoES.enc.Utf8.parse(key);
     }
+    let hmacDigest: string;
     if (['binary', 'hex'].includes(digest_type)) {
       hmacDigest = CryptoES.enc.Hex.stringify(
-        CryptoES.HmacSHA256(hashDigest, key),
+        CryptoES.HmacSHA256(hashDigest, parsedKey),
       );
     } else {
       hmacDigest = CryptoES.enc.Base64.stringify(
-        CryptoES.HmacSHA256(hashDigest, key),
+        CryptoES.HmacSHA256(hashDigest, parsedKey),
       );
     }
     return hmacDigest;
@@ -1840,12 +1988,12 @@ export class Client {
     return hmac.digest(digest_type);*/
   }
 
-  getSignKey(secret_key: any, now: any) {
+  getSignKey(secret_key: string, now: Date): string {
     let k1 = this.sign(secret_key, 'utf8', this.getCurrentDate(now), 'binary');
     return this.sign(k1, 'binary', this._config.endpointHost, 'binary');
   }
 
-  generateRandomStr(length: any) {
+  generateRandomStr(length: number): string {
     const possible =
       'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let result = '';
@@ -1863,7 +2011,7 @@ export class Client {
     return nosuffix ? text : text + '-jsSDK';
   }
 
-  slugify(text: any) {
+  slugify(text: string): string {
     const a = 'àáäâèéëêìíïîòóöôùúüûñçßÿœæŕśńṕẃǵǹḿǘẍźḧ·/_,:;';
     const b = 'aaaaeeeeiiiioooouuuuncsyoarsnpwgnmuxzh------';
     const p = new RegExp(a.split('').join('|'), 'g');
@@ -1872,7 +2020,7 @@ export class Client {
       .toString()
       .toLowerCase()
       .replace(/\s+/g, '-') // Replace spaces with -
-      .replace(p, (c: any) => b.charAt(a.indexOf(c))) // Replace special chars
+      .replace(p, (c: string) => b.charAt(a.indexOf(c))) // Replace special chars
       .replace(/&/g, '-and-') // Replace & with 'and'
       .replace(/[^\w-]+/g, '') // Remove all non-word chars
       .replace(/--+/g, '-') // Replace multiple - with single -
@@ -1902,7 +2050,10 @@ export class Client {
    * post SSH Keypair to container
    * save the given keypair (both ssh_public_key and ssh_private_key)
    */
-  async postSSHKeypair(param: any): Promise<any> {
+  async postSSHKeypair(param: {
+    ssh_public_key: string;
+    ssh_private_key: string;
+  }): Promise<any> {
     let rqst = this.newSignedRequest('POST', '/auth/ssh-keypair', param, null);
     return this._wrapWithPromise(rqst, false);
   }
@@ -1910,7 +2061,12 @@ export class Client {
   // TODO: move attach_background_task function in Maintenance Class to here.
 }
 
-// below will become "static const" properties in ES7
+// `Client.ERR_*` are declared as `static readonly ... as const` inside the
+// class body so TypeScript can narrow them as literal types. The
+// `Object.defineProperty` calls below restore the original property
+// descriptors (writable: false, enumerable: true, configurable: false) so
+// `Object.keys(Client)` and other reflection-based consumers continue to
+// see the sentinels exactly as they did before this typing pass.
 Object.defineProperty(Client, 'ERR_SERVER', {
   value: 0,
   writable: false,

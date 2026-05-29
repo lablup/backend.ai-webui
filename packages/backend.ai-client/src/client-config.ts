@@ -1,4 +1,3 @@
-// @ts-nocheck
 class ClientConfig {
   public _apiVersionMajor: string;
   public _apiVersion: string;
@@ -9,9 +8,14 @@ class ClientConfig {
   public _secretKey: string;
   public _userId: string;
   public _password: string;
-  public _proxyURL: any;
-  public _proxyToken: any;
+  public _proxyURL: string | null;
+  public _proxyToken: string | null;
   public _connectionMode: string;
+  // Optional session id field, written by `Client.check_login` to mirror
+  // a legacy webserver response. Kept here so the assignment type-checks;
+  // the TODO comment at the call site notes that the X-BackendAI-SessionID
+  // header should eventually replace this.
+  public _session_id?: string;
 
   /**
    * The client Configuration object.
