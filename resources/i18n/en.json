@@ -2977,6 +2977,7 @@
       "TensorBoardPrepared": "TensorBoard app prepared.",
       "TitleSession": "Session (Backend.AI)",
       "TotalAllocation": "Total Allocation",
+      "UnifiedAcceleratorMemoryNote": "\"{{description}}\" has no separate accelerator memory; it uses the host memory pool and cannot be set separately.",
       "UserResourceLimit": "User Resource Limit",
       "UsingBootstrapScriptInfo": "Bootstrap script is included.",
       "Version": "Version",

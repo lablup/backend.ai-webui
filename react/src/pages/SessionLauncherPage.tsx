@@ -15,9 +15,11 @@ import { mainContentDivRefState } from '../components/MainLayout/MainLayout';
 import PortSelectFormItem, {
   PortSelectFormValues,
 } from '../components/PortSelectFormItem';
+import { ResourceTypeIcon } from '../components/ResourceNumber';
 import ResourceAllocationFormItems, {
   RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
   ResourceAllocationFormValue,
+  isUnifiedAcceleratorSlot,
 } from '../components/SessionFormItems/ResourceAllocationFormItems';
 import SessionLauncherValidationTour from '../components/SessionLauncherErrorTourProps';
 import SessionLauncherFormIncompatibleValueChecker from '../components/SessionLauncherFormIncompatibleValueChecker';
@@ -84,6 +86,7 @@ import {
   BAIUnmountAfterClose,
   useUpdatableState,
   BAIIntervalView,
+  useResourceSlotsDetails,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { useAtomValue } from 'jotai';
@@ -1449,6 +1452,56 @@ type FormOrResourceRequired = {
   containerCount?: number;
 };
 
+// Renders a unified-memory accelerator as "<device description>" with the same
+// explanatory tooltip as the launcher's accelerator field. Kept as a separate
+// component so its resource-slot metadata query runs only where it is used, and
+// so a long description wraps gracefully: the icon + text wrap as a unit, and
+// the text breaks onto multiple lines instead of overflowing.
+const UnifiedAcceleratorChip: React.FC<{ type: string }> = ({ type }) => {
+  'use memo';
+  const { t } = useTranslation();
+  const { token } = theme.useToken();
+  // Query slot details across all resource groups (no sgroup) so the unified
+  // slot's description is found regardless of the form's selected group — the
+  // description lives only in the backend slot-details response (it is not in
+  // the local device_metadata.json), so a group mismatch would otherwise drop
+  // it and fall back to the slot name.
+  const { mergedResourceSlots } = useResourceSlotsDetails();
+  const description = mergedResourceSlots?.[type]?.description ?? type;
+  // One line of the description text, so the icon can be vertically centered
+  // against the first line (not the whole wrapped block).
+  const lineHeightPx = token.fontSize * token.lineHeight;
+  return (
+    <Tooltip
+      title={t('session.launcher.UnifiedAcceleratorMemoryNote', {
+        description,
+      })}
+    >
+      <BAIFlex
+        direction="row"
+        gap="xxs"
+        align="start"
+        style={{ minWidth: 0, maxWidth: '100%' }}
+      >
+        {/* Match the icon box to one text line and center the icon so it stays
+            aligned with the first line when the description wraps. */}
+        <BAIFlex align="center" style={{ flexShrink: 0, height: lineHeightPx }}>
+          <ResourceTypeIcon type={type} showTooltip={false} />
+        </BAIFlex>
+        <Typography.Text
+          style={{
+            minWidth: 0,
+            whiteSpace: 'normal',
+            overflowWrap: 'anywhere',
+          }}
+        >
+          {description}
+        </Typography.Text>
+      </BAIFlex>
+    </Tooltip>
+  );
+};
+
 export const ResourceNumbersOfSession: React.FC<FormOrResourceRequired> = ({
   resource,
   containerCount = 1,
@@ -1480,10 +1533,16 @@ export const ResourceNumbersOfSession: React.FC<FormOrResourceRequired> = ({
           );
         },
       )}
-      {resource &&
-      resource.accelerator &&
-      resource.acceleratorType &&
-      _.isNumber(resource.accelerator) ? (
+      {resource?.acceleratorType &&
+      isUnifiedAcceleratorSlot(resource.acceleratorType) ? (
+        // Unified-memory accelerator: show the device description regardless of
+        // amount, with the same explanatory tooltip as the launcher's
+        // accelerator field on hover.
+        <UnifiedAcceleratorChip type={resource.acceleratorType} />
+      ) : resource &&
+        resource.accelerator &&
+        resource.acceleratorType &&
+        _.isNumber(resource.accelerator) ? (
         <BAIResourceNumberWithIcon
           // @ts-ignore
           type={resource.acceleratorType}

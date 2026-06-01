@@ -2993,6 +2993,7 @@
       "TensorBoardPrepared": "Aplikacja TensorBoard jest gotowa.",
       "TitleSession": "Sesja (Backend.AI)",
       "TotalAllocation": "Całkowity przydział",
+      "UnifiedAcceleratorMemoryNote": "\"{{description}}\" nie ma osobnej pamięci akceleratora; korzysta z puli pamięci hosta i nie można jej ustawić osobno.",
       "UserResourceLimit": "Limit zasobów użytkownika",
       "UsingBootstrapScriptInfo": "Skrypt bootstrap jest dołączony.",
       "Version": "Wersja",

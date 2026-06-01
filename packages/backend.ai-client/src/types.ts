@@ -18,6 +18,8 @@ export interface SessionResources {
   bootstrap_script?: string;
   owner_access_key?: string;
   reuseIfExists?: boolean;
+  /** Free-form session tag (Backend.AI session `tag` attribute). */
+  tag?: string;
   dependencies?: string[];
   config?: {
     resources?: {

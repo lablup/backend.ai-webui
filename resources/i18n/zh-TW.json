@@ -2994,6 +2994,7 @@
       "TensorBoardPrepared": "TensorBoard 應用程式已準備就緒。",
       "TitleSession": "會話（後端.AI）",
       "TotalAllocation": "總分配",
+      "UnifiedAcceleratorMemoryNote": "\"{{description}}\"沒有獨立的加速器記憶體，它使用主機記憶體池，因此無法單獨設定。",
       "UserResourceLimit": "用戶資源限制",
       "UsingBootstrapScriptInfo": "已包含啟動腳本。",
       "Version": "版本",

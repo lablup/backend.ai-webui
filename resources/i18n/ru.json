@@ -2990,6 +2990,7 @@
       "TensorBoardPrepared": "Приложение TensorBoard готово.",
       "TitleSession": "Сессия (Backend.AI)",
       "TotalAllocation": "Итого распределено",
+      "UnifiedAcceleratorMemoryNote": "На устройстве \"{{description}}\" нет отдельной памяти ускорителя; оно использует пул памяти хоста, поэтому её нельзя задать отдельно.",
       "UserResourceLimit": "Лимит ресурсов пользователя",
       "UsingBootstrapScriptInfo": "Скрипт Bootstrap включён.",
       "Version": "Версия",

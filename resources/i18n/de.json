@@ -2992,6 +2992,7 @@
       "TensorBoardPrepared": "TensorBoard-App ist bereit.",
       "TitleSession": "Sitzung (Backend.AI)",
       "TotalAllocation": "Gesamtzuweisung",
+      "UnifiedAcceleratorMemoryNote": "\"{{description}}\" hat keinen separaten Beschleunigerspeicher; es nutzt den Hostspeicher-Pool und kann nicht separat festgelegt werden.",
       "UserResourceLimit": "Beschränkung der Benutzerressourcen",
       "UsingBootstrapScriptInfo": "Bootstrap-Skript ist enthalten.",
       "Version": "Ausführung",

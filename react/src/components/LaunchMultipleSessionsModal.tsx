@@ -252,7 +252,12 @@ const LaunchMultipleSessionsModal: React.FC<
                       'session.launcher.LaunchMultipleSessionsPerSession',
                     )}
                   >
-                    <BAIFlex direction="row" gap="xxs" wrap="wrap">
+                    <BAIFlex
+                      direction="row"
+                      gap="xxs"
+                      wrap="wrap"
+                      style={{ width: '100%' }}
+                    >
                       <ResourcePreview
                         resource={resource}
                         containerCount={safeClusterSize}
@@ -262,7 +267,12 @@ const LaunchMultipleSessionsModal: React.FC<
                   <Descriptions.Item
                     label={t('session.launcher.LaunchMultipleSessionsTotal')}
                   >
-                    <BAIFlex direction="row" gap="xxs" wrap="wrap">
+                    <BAIFlex
+                      direction="row"
+                      gap="xxs"
+                      wrap="wrap"
+                      style={{ width: '100%' }}
+                    >
                       <ResourcePreview
                         resource={resource}
                         containerCount={totalContainers}
