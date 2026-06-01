@@ -10,6 +10,7 @@ import {
 import { Image } from '../ImageEnvironmentSelectFormItems';
 import {
   getAllocatablePresetNames,
+  getUnifiedSlotNameFromTag,
   isUnifiedAcceleratorSlot,
 } from './ResourceAllocationFormItems';
 
@@ -30,6 +31,50 @@ describe('isUnifiedAcceleratorSlot', () => {
     expect(isUnifiedAcceleratorSlot(undefined)).toBe(false);
     expect(isUnifiedAcceleratorSlot(null)).toBe(false);
     expect(isUnifiedAcceleratorSlot('')).toBe(false);
+  });
+});
+
+describe('getUnifiedSlotNameFromTag', () => {
+  it('extracts the slot name from a single unified-slot marker', () => {
+    expect(getUnifiedSlotNameFromTag('unified-slot:cuda.unified')).toBe(
+      'cuda.unified',
+    );
+    expect(getUnifiedSlotNameFromTag('unified-slot:rocm.unified')).toBe(
+      'rocm.unified',
+    );
+  });
+
+  it('finds the marker among comma- or whitespace-separated tags', () => {
+    expect(getUnifiedSlotNameFromTag('foo,unified-slot:cuda.unified')).toBe(
+      'cuda.unified',
+    );
+    expect(getUnifiedSlotNameFromTag('foo unified-slot:rocm.unified bar')).toBe(
+      'rocm.unified',
+    );
+    expect(
+      getUnifiedSlotNameFromTag('foo, unified-slot:cuda.unified , bar'),
+    ).toBe('cuda.unified');
+  });
+
+  it('returns undefined when no unified-slot marker is present', () => {
+    expect(getUnifiedSlotNameFromTag('foo,bar')).toBeUndefined();
+    expect(getUnifiedSlotNameFromTag('some-other-tag')).toBeUndefined();
+  });
+
+  it('returns undefined when the marked slot is not a unified slot', () => {
+    expect(
+      getUnifiedSlotNameFromTag('unified-slot:cuda.shares'),
+    ).toBeUndefined();
+    expect(
+      getUnifiedSlotNameFromTag('unified-slot:cuda.device'),
+    ).toBeUndefined();
+  });
+
+  it('returns undefined for an empty slot value or nullish input', () => {
+    expect(getUnifiedSlotNameFromTag('unified-slot:')).toBeUndefined();
+    expect(getUnifiedSlotNameFromTag('')).toBeUndefined();
+    expect(getUnifiedSlotNameFromTag(undefined)).toBeUndefined();
+    expect(getUnifiedSlotNameFromTag(null)).toBeUndefined();
   });
 });
 

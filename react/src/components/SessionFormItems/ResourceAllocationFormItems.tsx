@@ -72,6 +72,33 @@ export const isUnifiedAcceleratorSlot = (slotName?: string | null): boolean => {
   return !!slotName && _.endsWith(slotName, '.unified');
 };
 
+/**
+ * Prefix of the session `tag` that marks a session as using a unified-memory
+ * accelerator slot (e.g. `unified-slot:cuda.unified`). This is a temporary
+ * marker until the session model exposes unified-memory usage directly.
+ */
+export const UNIFIED_SLOT_TAG_PREFIX = 'unified-slot:';
+
+/**
+ * Extracts the unified-memory accelerator slot name from a session `tag`
+ * (e.g. `unified-slot:cuda.unified` -> `cuda.unified`). Returns `undefined`
+ * when the tag carries no unified-slot marker, or when the marked slot is not
+ * actually a unified-memory slot (i.e. does not end with `.unified`) — this
+ * guards the downstream UI, which assumes a genuine unified slot. The tag is
+ * treated as a comma/whitespace-separated list so it stays correct even if
+ * other markers are appended later.
+ */
+export const getUnifiedSlotNameFromTag = (
+  tag?: string | null,
+): string | undefined => {
+  if (!tag) return undefined;
+  const token = tag
+    .split(/[,\s]+/)
+    .find((part) => part.startsWith(UNIFIED_SLOT_TAG_PREFIX));
+  const slotName = token?.slice(UNIFIED_SLOT_TAG_PREFIX.length);
+  return isUnifiedAcceleratorSlot(slotName) ? slotName : undefined;
+};
+
 export interface ResourceAllocationFormValue {
   resource: {
     cpu: number;

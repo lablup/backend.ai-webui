@@ -7,6 +7,7 @@ import { useStartSessionCreationQuery } from '../__generated__/useStartSessionCr
 import { transformPortValuesToNumbers } from '../components/PortSelectFormItem';
 import {
   RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
+  UNIFIED_SLOT_TAG_PREFIX,
   isUnifiedAcceleratorSlot,
 } from '../components/SessionFormItems/ResourceAllocationFormItems';
 import {
@@ -238,7 +239,9 @@ export const useStartSession = () => {
         // uses a unified-memory accelerator, so tag it as
         // `unified-slot:<accelerator slot name>` (e.g. `unified-slot:cuda.unified`).
         ...(isUnifiedAcceleratorSlot(values.resource?.acceleratorType)
-          ? { tag: `unified-slot:${values.resource?.acceleratorType}` }
+          ? {
+              tag: `${UNIFIED_SLOT_TAG_PREFIX}${values.resource?.acceleratorType}`,
+            }
           : {}),
 
         config: {

@@ -6,6 +6,7 @@ import { SessionSlotCellFragment$key } from '../../__generated__/SessionSlotCell
 import { convertToBinaryUnit } from '../../helper';
 import { ResourceSlotName } from '../../hooks/backendai';
 import { useSessionLiveStat } from '../../hooks/useSessionNodeLiveStat';
+import { getUnifiedSlotNameFromTag } from '../SessionFormItems/ResourceAllocationFormItems';
 import { displayMemoryUsage } from '../SessionUsageMonitor';
 import { Divider, Tooltip, TooltipProps, Typography } from 'antd';
 import type { SemanticColor } from 'backend.ai-ui';
@@ -35,6 +36,7 @@ const SessionSlotCell: React.FC<OccupiedSlotViewProps> = ({
         status
         occupied_slots
         requested_slots
+        tag
         ...useSessionNodeLiveStatSessionFragment
       }
     `,
@@ -92,6 +94,25 @@ const SessionSlotCell: React.FC<OccupiedSlotViewProps> = ({
       />
     );
   } else if (type === 'accelerator') {
+    // Unified-memory accelerators have no separate quantity; if the session is
+    // tagged as unified, show the device description instead of a usage badge.
+    const unifiedSlotName = getUnifiedSlotNameFromTag(session.tag);
+    if (unifiedSlotName) {
+      const description =
+        mergedResourceSlots?.[unifiedSlotName]?.description ?? unifiedSlotName;
+      return (
+        // The session table renders with `scroll={{ x: 'max-content' }}`, so
+        // columns size to their content and `Typography.Text` ellipsis won't
+        // trigger on its own. Pin an explicit max width (and inline-block) so a
+        // long description actually truncates and surfaces the overflow tooltip.
+        <Typography.Text
+          ellipsis={{ tooltip: description }}
+          style={{ maxWidth: 200, display: 'inline-block' }}
+        >
+          {description}
+        </Typography.Text>
+      );
+    }
     const occupiedAccelerators = _.omit(occupiedSlots, ['cpu', 'mem']);
 
     const filteredAccelerators = _.omitBy(
