@@ -830,6 +830,9 @@ export class Client {
     if (this.isManagerVersionCompatibleWith('26.4.3')) {
       this._features['model-deployment-extended-filter'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('26.4.4')) {
+      this._features['session-app-by-user-uuid'] = true;
+    }
   }
 
   /**
