@@ -255,12 +255,20 @@ export const useBackendAIAppLauncher = (
       if (err instanceof AppLaunchError) {
         throw err;
       }
-      // Detect "session not accessible" on session lookup. The manager
-      // scopes session lookups by the *current* access key; if the
-      // session was created under a different AK (or was terminated
+      // Detect "session not accessible" on session lookup. Before manager
+      // 26.4.4, session lookups are scoped by the *current* access key; if
+      // the session was created under a different AK (or was terminated
       // between page render and click), the lookup returns 404 /
       // "session not found", which is misleading to end users (FR-2586).
-      if (isSessionNotFoundError(err)) {
+      // From 26.4.4 on (`session-app-by-user-uuid`), the manager scopes
+      // lookups by the owner's user id instead, so a user's sessions are
+      // reachable across all of their keypairs and this AK-mismatch case no
+      // longer occurs — hence we only force the friendly message when the
+      // manager lacks that capability.
+      if (
+        isSessionNotFoundError(err) &&
+        !baiClient.supports('session-app-by-user-uuid')
+      ) {
         throw new AppLaunchError(
           t('session.appLauncher.SessionNotAccessible'),
           'configuring',
