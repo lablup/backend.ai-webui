@@ -2,7 +2,6 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { UpdateUsersModalFragment$key } from '../__generated__/UpdateUsersModalFragment.graphql';
 import {
   ModifyUserInput,
   UpdateUsersModalMutation,
@@ -26,7 +25,7 @@ import {
 import * as _ from 'lodash-es';
 import { Suspense, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useFragment } from 'react-relay';
+import { graphql } from 'react-relay';
 import { PayloadError } from 'relay-runtime';
 
 interface UpdateUsersFormValues {
@@ -39,14 +38,19 @@ interface UpdateUsersFormValues {
   container_gids?: string[];
 }
 
-export interface UpdateUsersModalProps extends Omit<BAIModalProps, 'title'> {
-  userFrgmt: UpdateUsersModalFragment$key;
+// TODO(FR-3019): AdminUserManagement now uses the v2 (adminUsersV2) query, so
+// this modal should later be updated to receive data via a v2 UserV2 fragment
+// instead of a plain { id, email } list.
+export interface UpdateUsersModalUser {
+  id: string;
+  email: string;
 }
 
-const UpdateUsersModal = ({
-  userFrgmt,
-  ...modalProps
-}: UpdateUsersModalProps) => {
+export interface UpdateUsersModalProps extends Omit<BAIModalProps, 'title'> {
+  users: ReadonlyArray<UpdateUsersModalUser>;
+}
+
+const UpdateUsersModal = ({ users, ...modalProps }: UpdateUsersModalProps) => {
   'use memo';
   const formRef = useRef<FormInstance<UpdateUsersFormValues>>(null);
   const [isPending, setIsPending] = useState(false);
@@ -55,18 +59,6 @@ const UpdateUsersModal = ({
   const { message } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
   const { logger } = useBAILogger();
-
-  const users = useFragment<UpdateUsersModalFragment$key>(
-    graphql`
-      fragment UpdateUsersModalFragment on UserNode @relay(plural: true) {
-        id
-        email
-        username
-        full_name
-      }
-    `,
-    userFrgmt,
-  );
 
   // TODO: when backend supports batch update, change to batch mutation
   const mutateUpdateUsersWithPromise =

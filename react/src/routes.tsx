@@ -81,9 +81,7 @@ const AdminDeploymentListPage = React.lazy(
 const InteractiveLoginPage = React.lazy(
   () => import('./pages/InteractiveLoginPage'),
 );
-const UserCredentialsPage = React.lazy(
-  () => import('./pages/UserCredentialsPage'),
-);
+const AdminUsersPage = React.lazy(() => import('./pages/AdminUsersPage'));
 
 const AgentSummaryPage = React.lazy(() => import('./pages/AgentSummaryPage'));
 const MaintenancePage = React.lazy(() => import('./pages/MaintenancePage'));
@@ -799,7 +797,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
     handle: { labelKey: 'webui.menu.UserCredentials&Policies' },
     element: (
       <Suspense fallback={<Skeleton active />}>
-        <UserCredentialsPage />
+        <AdminUsersPage />
       </Suspense>
     ),
   },

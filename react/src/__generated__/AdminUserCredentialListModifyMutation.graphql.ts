@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<99619ff309884dfa5eca614323c69fcd>>
+ * @generated SignedSource<<b5f0a1dc21ebb8484d9c4bbd6c9c4883>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,18 +9,26 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type UserCredentialListDeleteMutation$variables = {
-  access_key: string;
+export type ModifyKeyPairInput = {
+  concurrency_limit?: number | null | undefined;
+  is_active?: boolean | null | undefined;
+  is_admin?: boolean | null | undefined;
+  rate_limit?: number | null | undefined;
+  resource_policy?: string | null | undefined;
 };
-export type UserCredentialListDeleteMutation$data = {
-  readonly delete_keypair: {
+export type AdminUserCredentialListModifyMutation$variables = {
+  access_key: string;
+  props: ModifyKeyPairInput;
+};
+export type AdminUserCredentialListModifyMutation$data = {
+  readonly modify_keypair: {
     readonly msg: string | null | undefined;
     readonly ok: boolean | null | undefined;
   } | null | undefined;
 };
-export type UserCredentialListDeleteMutation = {
-  response: UserCredentialListDeleteMutation$data;
-  variables: UserCredentialListDeleteMutation$variables;
+export type AdminUserCredentialListModifyMutation = {
+  response: AdminUserCredentialListModifyMutation$data;
+  variables: AdminUserCredentialListModifyMutation$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -29,6 +37,11 @@ var v0 = [
     "defaultValue": null,
     "kind": "LocalArgument",
     "name": "access_key"
+  },
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "props"
   }
 ],
 v1 = [
@@ -39,11 +52,16 @@ v1 = [
         "kind": "Variable",
         "name": "access_key",
         "variableName": "access_key"
+      },
+      {
+        "kind": "Variable",
+        "name": "props",
+        "variableName": "props"
       }
     ],
-    "concreteType": "DeleteKeyPair",
+    "concreteType": "ModifyKeyPair",
     "kind": "LinkedField",
-    "name": "delete_keypair",
+    "name": "modify_keypair",
     "plural": false,
     "selections": [
       {
@@ -69,7 +87,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "UserCredentialListDeleteMutation",
+    "name": "AdminUserCredentialListModifyMutation",
     "selections": (v1/*: any*/),
     "type": "Mutation",
     "abstractKey": null
@@ -78,20 +96,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "UserCredentialListDeleteMutation",
+    "name": "AdminUserCredentialListModifyMutation",
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "00d579de4db39e2f3e48067fb19aaf72",
+    "cacheID": "ab00fbd53ee7b0aeb266bbc87c7b653b",
     "id": null,
     "metadata": {},
-    "name": "UserCredentialListDeleteMutation",
+    "name": "AdminUserCredentialListModifyMutation",
     "operationKind": "mutation",
-    "text": "mutation UserCredentialListDeleteMutation(\n  $access_key: String!\n) {\n  delete_keypair(access_key: $access_key) {\n    ok\n    msg\n  }\n}\n"
+    "text": "mutation AdminUserCredentialListModifyMutation(\n  $access_key: String!\n  $props: ModifyKeyPairInput!\n) {\n  modify_keypair(access_key: $access_key, props: $props) {\n    ok\n    msg\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "b955bc28ed14b19b153f202b0f1e6e22";
+(node as any).hash = "86169244ef9796d1ba0b5d67e3682c70";
 
 export default node;

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a5f964ea5336ef75b1138ed5fff03439>>
+ * @generated SignedSource<<dfa52f4caeae7214538e84b9fc2d853b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,7 +10,7 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
-export type UserCredentialListQuery$variables = {
+export type AdminUserCredentialListQuery$variables = {
   domain_name?: string | null | undefined;
   email?: string | null | undefined;
   filter?: string | null | undefined;
@@ -19,7 +19,7 @@ export type UserCredentialListQuery$variables = {
   offset: number;
   order?: string | null | undefined;
 };
-export type UserCredentialListQuery$data = {
+export type AdminUserCredentialListQuery$data = {
   readonly keypair_list: {
     readonly items: ReadonlyArray<{
       readonly access_key: string | null | undefined;
@@ -36,9 +36,9 @@ export type UserCredentialListQuery$data = {
     readonly total_count: number;
   } | null | undefined;
 };
-export type UserCredentialListQuery = {
-  response: UserCredentialListQuery$data;
-  variables: UserCredentialListQuery$variables;
+export type AdminUserCredentialListQuery = {
+  response: AdminUserCredentialListQuery$data;
+  variables: AdminUserCredentialListQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -197,7 +197,7 @@ return {
     ],
     "kind": "Fragment",
     "metadata": null,
-    "name": "UserCredentialListQuery",
+    "name": "AdminUserCredentialListQuery",
     "selections": [
       {
         "alias": null,
@@ -257,7 +257,7 @@ return {
       (v3/*: any*/)
     ],
     "kind": "Operation",
-    "name": "UserCredentialListQuery",
+    "name": "AdminUserCredentialListQuery",
     "selections": [
       {
         "alias": null,
@@ -308,16 +308,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "3318983898774e0fa0110bbe3a8f1ad5",
+    "cacheID": "9b0b09e3aec9f280a70e92c7c588fe99",
     "id": null,
     "metadata": {},
-    "name": "UserCredentialListQuery",
+    "name": "AdminUserCredentialListQuery",
     "operationKind": "query",
-    "text": "query UserCredentialListQuery(\n  $limit: Int!\n  $offset: Int!\n  $filter: String\n  $order: String\n  $domain_name: String\n  $email: String\n  $is_active: Boolean\n) {\n  keypair_list(limit: $limit, offset: $offset, filter: $filter, order: $order, domain_name: $domain_name, email: $email, is_active: $is_active) {\n    items {\n      id\n      user_id\n      access_key\n      is_admin\n      resource_policy\n      created_at\n      rate_limit\n      num_queries\n      concurrency_used @since(version: \"24.09.0\")\n      ...KeypairSettingModalFragment\n      ...KeypairInfoModalFragment\n    }\n    total_count\n  }\n}\n\nfragment KeypairInfoModalFragment on KeyPair {\n  user_id\n  access_key\n  secret_key\n  is_admin\n  created_at\n  last_used\n  resource_policy\n  num_queries\n  rate_limit\n  concurrency_used @since(version: \"24.09.0\")\n}\n\nfragment KeypairSettingModalFragment on KeyPair {\n  rate_limit\n  access_key\n  resource_policy\n}\n"
+    "text": "query AdminUserCredentialListQuery(\n  $limit: Int!\n  $offset: Int!\n  $filter: String\n  $order: String\n  $domain_name: String\n  $email: String\n  $is_active: Boolean\n) {\n  keypair_list(limit: $limit, offset: $offset, filter: $filter, order: $order, domain_name: $domain_name, email: $email, is_active: $is_active) {\n    items {\n      id\n      user_id\n      access_key\n      is_admin\n      resource_policy\n      created_at\n      rate_limit\n      num_queries\n      concurrency_used @since(version: \"24.09.0\")\n      ...KeypairSettingModalFragment\n      ...KeypairInfoModalFragment\n    }\n    total_count\n  }\n}\n\nfragment KeypairInfoModalFragment on KeyPair {\n  user_id\n  access_key\n  secret_key\n  is_admin\n  created_at\n  last_used\n  resource_policy\n  num_queries\n  rate_limit\n  concurrency_used @since(version: \"24.09.0\")\n}\n\nfragment KeypairSettingModalFragment on KeyPair {\n  rate_limit\n  access_key\n  resource_policy\n}\n"
   }
 };
 })();
 
-(node as any).hash = "591117e6f6a9853325076522a5e68177";
+(node as any).hash = "fbddc986c4cbe89b00791f105de1772b";
 
 export default node;

@@ -2,14 +2,14 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { KeypairSettingModalFragment$key } from '../__generated__/KeypairSettingModalFragment.graphql';
-import { UserCredentialListDeleteMutation } from '../__generated__/UserCredentialListDeleteMutation.graphql';
-import { UserCredentialListModifyMutation } from '../__generated__/UserCredentialListModifyMutation.graphql';
+import { AdminUserCredentialListDeleteMutation } from '../__generated__/AdminUserCredentialListDeleteMutation.graphql';
+import { AdminUserCredentialListModifyMutation } from '../__generated__/AdminUserCredentialListModifyMutation.graphql';
 import {
-  UserCredentialListQuery,
-  UserCredentialListQuery$data,
-  UserCredentialListQuery$variables,
-} from '../__generated__/UserCredentialListQuery.graphql';
+  AdminUserCredentialListQuery,
+  AdminUserCredentialListQuery$data,
+  AdminUserCredentialListQuery$variables,
+} from '../__generated__/AdminUserCredentialListQuery.graphql';
+import { KeypairSettingModalFragment$key } from '../__generated__/KeypairSettingModalFragment.graphql';
 import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
 import BAIRadioGroup from './BAIRadioGroup';
 import KeypairInfoModal from './KeypairInfoModal';
@@ -48,10 +48,12 @@ import {
 } from 'use-query-params';
 
 type Keypair = NonNullable<
-  NonNullable<UserCredentialListQuery$data['keypair_list']>['items'][number]
+  NonNullable<
+    AdminUserCredentialListQuery$data['keypair_list']
+  >['items'][number]
 >;
 
-const UserCredentialList: React.FC = () => {
+const AdminUserCredentialList: React.FC = () => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { message } = App.useApp();
@@ -86,7 +88,7 @@ const UserCredentialList: React.FC = () => {
     pageSize: 20,
   });
 
-  const queryVariables: UserCredentialListQuery$variables = {
+  const queryVariables: AdminUserCredentialListQuery$variables = {
     limit: baiPaginationOption.limit,
     offset: baiPaginationOption.offset,
     is_active: queryParams.activeType === 'active',
@@ -96,9 +98,9 @@ const UserCredentialList: React.FC = () => {
   const deferredQueryVariables = useDeferredValue(queryVariables);
   const deferredFetchKey = useDeferredValue(fetchKey);
 
-  const { keypair_list } = useLazyLoadQuery<UserCredentialListQuery>(
+  const { keypair_list } = useLazyLoadQuery<AdminUserCredentialListQuery>(
     graphql`
-      query UserCredentialListQuery(
+      query AdminUserCredentialListQuery(
         $limit: Int!
         $offset: Int!
         $filter: String
@@ -144,9 +146,9 @@ const UserCredentialList: React.FC = () => {
     },
   );
 
-  const [commitModifyKeypair] = useMutation<UserCredentialListModifyMutation>(
-    graphql`
-      mutation UserCredentialListModifyMutation(
+  const [commitModifyKeypair] =
+    useMutation<AdminUserCredentialListModifyMutation>(graphql`
+      mutation AdminUserCredentialListModifyMutation(
         $access_key: String!
         $props: ModifyKeyPairInput!
       ) {
@@ -155,19 +157,17 @@ const UserCredentialList: React.FC = () => {
           msg
         }
       }
-    `,
-  );
+    `);
 
-  const [commitDeleteKeypair] = useMutation<UserCredentialListDeleteMutation>(
-    graphql`
-      mutation UserCredentialListDeleteMutation($access_key: String!) {
+  const [commitDeleteKeypair] =
+    useMutation<AdminUserCredentialListDeleteMutation>(graphql`
+      mutation AdminUserCredentialListDeleteMutation($access_key: String!) {
         delete_keypair(access_key: $access_key) {
           ok
           msg
         }
       }
-    `,
-  );
+    `);
 
   useEffect(() => {
     if (action === 'add') {
@@ -605,4 +605,4 @@ const UserCredentialList: React.FC = () => {
   );
 };
 
-export default UserCredentialList;
+export default AdminUserCredentialList;

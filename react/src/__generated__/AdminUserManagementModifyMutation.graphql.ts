@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<db83a58f39ebd9be1e4647069d56a440>>
+ * @generated SignedSource<<4ffd69aee965725f1f615c4260ccc4de>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -29,19 +29,19 @@ export type ModifyUserInput = {
   totp_activated?: boolean | null | undefined;
   username?: string | null | undefined;
 };
-export type UserManagementModifyMutation$variables = {
+export type AdminUserManagementModifyMutation$variables = {
   email: string;
   props: ModifyUserInput;
 };
-export type UserManagementModifyMutation$data = {
+export type AdminUserManagementModifyMutation$data = {
   readonly modify_user: {
     readonly msg: string | null | undefined;
     readonly ok: boolean | null | undefined;
   } | null | undefined;
 };
-export type UserManagementModifyMutation = {
-  response: UserManagementModifyMutation$data;
-  variables: UserManagementModifyMutation$variables;
+export type AdminUserManagementModifyMutation = {
+  response: AdminUserManagementModifyMutation$data;
+  variables: AdminUserManagementModifyMutation$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -100,7 +100,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "UserManagementModifyMutation",
+    "name": "AdminUserManagementModifyMutation",
     "selections": (v1/*: any*/),
     "type": "Mutation",
     "abstractKey": null
@@ -109,20 +109,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "UserManagementModifyMutation",
+    "name": "AdminUserManagementModifyMutation",
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "cd14b770d01d9b6e13257faa0f84f3cd",
+    "cacheID": "1daa76c8ec6e59c7ad8229984377932b",
     "id": null,
     "metadata": {},
-    "name": "UserManagementModifyMutation",
+    "name": "AdminUserManagementModifyMutation",
     "operationKind": "mutation",
-    "text": "mutation UserManagementModifyMutation(\n  $email: String!\n  $props: ModifyUserInput!\n) {\n  modify_user(email: $email, props: $props) {\n    ok\n    msg\n  }\n}\n"
+    "text": "mutation AdminUserManagementModifyMutation(\n  $email: String!\n  $props: ModifyUserInput!\n) {\n  modify_user(email: $email, props: $props) {\n    ok\n    msg\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "ebfe36ddd47871027ed7d1e84b98c347";
+(node as any).hash = "58e2becf792ef50bfc12eebea962154d";
 
 export default node;

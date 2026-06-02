@@ -2,11 +2,13 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { UserManagementModifyMutation } from '../__generated__/UserManagementModifyMutation.graphql';
+import { AdminUserManagementModifyMutation } from '../__generated__/AdminUserManagementModifyMutation.graphql';
 import {
-  UserManagementQuery,
-  UserManagementQuery$data,
-} from '../__generated__/UserManagementQuery.graphql';
+  AdminUserManagementQuery,
+  AdminUserManagementQuery$data,
+  UserV2OrderBy,
+} from '../__generated__/AdminUserManagementQuery.graphql';
+import { convertToOrderBy } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
@@ -28,13 +30,13 @@ import {
   filterOutEmpty,
   filterOutNullAndUndefined,
   BAIFlex,
-  BAIPropertyFilter,
-  mergeFilterValues,
+  BAIGraphQLPropertyFilter,
+  GraphQLFilter,
   useBAILogger,
-  UserNodeInList,
   BAIFetchKeyButton,
-  isValidUUID,
-  BAIUserNodes,
+  BAIUserV2Nodes,
+  UserV2InList,
+  availableUserV2SorterValues,
   BAIButton,
   BAISelectionLabel,
   BAINameActionCell,
@@ -44,18 +46,18 @@ import {
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { BanIcon, EditIcon, PlusIcon, UndoIcon } from 'lucide-react';
-import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
+import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import React, { useState, useTransition, useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 
-interface UserManagementProps {}
+interface AdminUserManagementProps {}
 
 type UserNode = NonNullable<
-  NonNullable<UserManagementQuery$data['user_nodes']>['edges']
+  NonNullable<AdminUserManagementQuery$data['adminUsersV2']>['edges']
 >[number];
 
-const UserManagement: React.FC<UserManagementProps> = () => {
+const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
   'use memo';
 
   const { logger } = useBAILogger();
@@ -65,11 +67,18 @@ const UserManagement: React.FC<UserManagementProps> = () => {
 
   const bailClient = useSuspendedBackendaiClient();
 
-  const [queryParams, setQueryParams] = useQueryStates({
-    filter: parseAsString.withDefault(''),
-    order: parseAsString, // the default order is handled in the queryVariables because to support ['ascend', 'descend', undefined] cycle
-    status: parseAsStringLiteral(['active', 'inactive']).withDefault('active'),
-  });
+  const [queryParams, setQueryParams] = useQueryStates(
+    {
+      filter: parseAsJson<GraphQLFilter>((value) => value as GraphQLFilter),
+      order: parseAsStringLiteral(availableUserV2SorterValues),
+      status: parseAsStringLiteral(['ACTIVE', 'INACTIVE']).withDefault(
+        'ACTIVE',
+      ),
+    },
+    {
+      history: 'replace',
+    },
+  );
   const { message } = App.useApp();
 
   const [emailForInfoModal, setEmailForInfoModal] = useState<string | null>(
@@ -102,48 +111,51 @@ const UserManagement: React.FC<UserManagementProps> = () => {
   });
 
   const statusFilter =
-    queryParams.status === 'active'
-      ? 'status == "active"'
-      : 'status != "active"';
+    queryParams.status === 'ACTIVE'
+      ? ({ equals: 'ACTIVE' } as const)
+      : ({ notEquals: 'ACTIVE' } as const);
 
   const queryVariables = {
-    first: baiPaginationOption.limit,
+    filter: {
+      ...(queryParams.filter ?? {}),
+      status: statusFilter,
+    },
+    orderBy: convertToOrderBy<Required<UserV2OrderBy>>(queryParams.order),
+    limit: baiPaginationOption.limit,
     offset: baiPaginationOption.offset,
-    filter: mergeFilterValues([queryParams.filter, statusFilter]),
-    order: queryParams.order || '-created_at',
   };
 
   const deferredQueryVariables = useDeferredValue(queryVariables);
   const deferredFetchKey = useDeferredValue(fetchKey);
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
-    'table_column_overrides.UserManagement',
+    'table_column_overrides.AdminUserManagement',
   );
 
   const { supportedFields, exportCSV } = useCSVExport('users');
 
-  const { user_nodes } = useLazyLoadQuery<UserManagementQuery>(
+  const { adminUsersV2 } = useLazyLoadQuery<AdminUserManagementQuery>(
     graphql`
-      query UserManagementQuery(
-        $first: Int
+      query AdminUserManagementQuery(
+        $filter: UserV2Filter
+        $orderBy: [UserV2OrderBy!]
+        $limit: Int
         $offset: Int
-        $filter: String
-        $order: String
       ) {
-        user_nodes(
-          first: $first
-          offset: $offset
+        adminUsersV2(
           filter: $filter
-          order: $order
+          orderBy: $orderBy
+          limit: $limit
+          offset: $offset
         ) {
           count
           edges {
             node {
-              id @required(action: THROW)
-              email @required(action: THROW)
-              ...BAIUserNodesFragment
-              ...PurgeUsersModalFragment
-              ...UpdateUsersModalFragment
+              id
+              basicInfo {
+                email
+              }
+              ...BAIUserV2NodesFragment
             }
           }
         }
@@ -159,23 +171,36 @@ const UserManagement: React.FC<UserManagementProps> = () => {
     },
   );
 
-  const [commitModifyUser] = useMutation<UserManagementModifyMutation>(graphql`
-    mutation UserManagementModifyMutation(
-      $email: String!
-      $props: ModifyUserInput!
-    ) {
-      modify_user(email: $email, props: $props) {
-        ok
-        msg
+  const [commitModifyUser] = useMutation<AdminUserManagementModifyMutation>(
+    graphql`
+      mutation AdminUserManagementModifyMutation(
+        $email: String!
+        $props: ModifyUserInput!
+      ) {
+        modify_user(email: $email, props: $props) {
+          ok
+          msg
+        }
       }
-    }
-  `);
+    `,
+  );
 
-  const renderEmailWithActions = (__: unknown, record: UserNodeInList) => {
-    const isActive = record?.status === 'active';
+  // Plain { id, email } list for the v1-based modals (Update / Purge).
+  // The list itself is migrated to v2, but the modals keep their existing
+  // (non-v2) mutations and only need id/email.
+  const selectedUsersForModal = _.compact(
+    selectedUserList.map((user) => user?.node),
+  ).map((node) => ({
+    id: node.id,
+    email: node.basicInfo.email,
+  }));
+
+  const renderEmailWithActions = (__: unknown, record: UserV2InList) => {
+    const email = record.basicInfo?.email ?? '';
+    const isActive = record.status?.status === 'ACTIVE';
     return (
       <BAINameActionCell
-        title={record.email}
+        title={email}
         showActions="always"
         actions={filterOutEmpty([
           {
@@ -184,7 +209,7 @@ const UserManagement: React.FC<UserManagementProps> = () => {
             icon: <InfoCircleOutlined />,
             onClick: () => {
               startInfoModalOpenTransition(() => {
-                setEmailForInfoModal(record?.email || null);
+                setEmailForInfoModal(email || null);
               });
             },
           },
@@ -194,7 +219,7 @@ const UserManagement: React.FC<UserManagementProps> = () => {
             icon: <SettingOutlined />,
             onClick: () => {
               startSettingModalOpenTransition(() => {
-                setEmailForSettingModal(record?.email || null);
+                setEmailForSettingModal(email || null);
               });
             },
           },
@@ -209,7 +234,7 @@ const UserManagement: React.FC<UserManagementProps> = () => {
               title: isActive
                 ? t('credential.DeactivateUser')
                 : t('credential.ActivateUser'),
-              description: record.email,
+              description: email,
               okText: isActive
                 ? t('credential.Deactivate')
                 : t('credential.Activate'),
@@ -219,7 +244,7 @@ const UserManagement: React.FC<UserManagementProps> = () => {
                 return new Promise<void>((resolve) => {
                   commitModifyUser({
                     variables: {
-                      email: record?.email || '',
+                      email: email,
                       props: {
                         status: isActive ? 'inactive' : 'active',
                       },
@@ -294,16 +319,16 @@ const UserManagement: React.FC<UserManagementProps> = () => {
             options={[
               {
                 label: t('general.Active'),
-                value: 'active',
+                value: 'ACTIVE',
               },
               {
                 label: t('general.Inactive'),
-                value: 'inactive',
+                value: 'INACTIVE',
               },
             ]}
           />
-          <BAIPropertyFilter
-            filterProperties={filterOutEmpty([
+          <BAIGraphQLPropertyFilter
+            filterProperties={[
               {
                 key: 'email',
                 propertyLabel: t('general.E-Mail'),
@@ -312,12 +337,7 @@ const UserManagement: React.FC<UserManagementProps> = () => {
               {
                 key: 'uuid',
                 propertyLabel: 'ID',
-                type: 'string',
-                defaultOperator: '==',
-                rule: {
-                  message: 'Invalid UUID.',
-                  validate: (value) => isValidUUID(value),
-                },
+                type: 'uuid',
               },
               {
                 key: 'username',
@@ -325,66 +345,32 @@ const UserManagement: React.FC<UserManagementProps> = () => {
                 type: 'string',
               },
               {
-                key: 'full_name',
-                propertyLabel: t('credential.FullName'),
-                type: 'string',
-              },
-              bailClient.supports('user-node-query-project-filter') && {
-                key: 'project_name',
+                key: 'project.name',
                 propertyLabel: t('general.Project'),
                 type: 'string',
               },
               {
                 key: 'role',
                 propertyLabel: t('credential.Role'),
-                type: 'string',
+                type: 'enum',
                 strictSelection: true,
-                defaultOperator: '==',
                 options: [
                   {
                     label: 'superadmin',
-                    value: 'superadmin',
+                    value: 'SUPERADMIN',
                   },
                   {
                     label: 'user',
-                    value: 'user',
+                    value: 'USER',
                   },
                 ],
               },
-              {
-                key: 'resource_policy',
-                propertyLabel: t('credential.ResourcePolicy'),
-                type: 'string',
-              },
-              {
-                key: 'description',
-                propertyLabel: t('credential.Description'),
-                type: 'string',
-              },
-              {
-                key: 'status_info',
-                propertyLabel: t('credential.StatusInfo'),
-                type: 'string',
-              },
-              {
-                key: 'need_password_change',
-                propertyLabel: t('credential.DescRequirePasswordChange'),
-                type: 'boolean',
-              },
-              {
-                key: 'totp_activated',
-                propertyLabel: t('credential.2FAEnabled'),
-                type: 'boolean',
-              },
-              {
-                key: 'sudo_session_enabled',
-                propertyLabel: t('credential.EnableSudoSession'),
-                type: 'boolean',
-              },
-            ])}
-            value={queryParams.filter || undefined}
+            ]}
+            value={queryParams.filter ?? undefined}
             onChange={(value) => {
-              setQueryParams({ filter: value || '' });
+              setQueryParams({ filter: value ?? null });
+              setTablePaginationOption({ current: 1 });
+              setSelectedUserList([]);
             }}
           />
         </BAIFlex>
@@ -402,7 +388,7 @@ const UserManagement: React.FC<UserManagementProps> = () => {
                 }}
                 onClick={toggleUpdateUsersModal}
               />
-              {queryParams.status === 'inactive' && (
+              {queryParams.status === 'INACTIVE' && (
                 <BAIButton
                   icon={<DeleteFilled />}
                   style={{
@@ -451,8 +437,10 @@ const UserManagement: React.FC<UserManagementProps> = () => {
           </Space.Compact>
         </BAIFlex>
       </BAIFlex>
-      <BAIUserNodes
-        usersFrgmt={filterOutNullAndUndefined(_.map(user_nodes?.edges, 'node'))}
+      <BAIUserV2Nodes
+        usersFrgmt={filterOutNullAndUndefined(
+          _.map(adminUsersV2?.edges, 'node'),
+        )}
         customizeColumns={(baseColumns) => [
           {
             ...baseColumns[0],
@@ -463,7 +451,7 @@ const UserManagement: React.FC<UserManagementProps> = () => {
         scroll={{ x: 'max-content' }}
         pagination={{
           pageSize: tablePaginationOption.pageSize,
-          total: user_nodes?.count || 0,
+          total: adminUsersV2?.count || 0,
           current: tablePaginationOption.current,
           style: { marginRight: token.marginXS },
           onChange: (current, pageSize) => {
@@ -479,7 +467,7 @@ const UserManagement: React.FC<UserManagementProps> = () => {
         rowSelection={{
           type: 'checkbox',
           onChange: (keys) => {
-            const userNodes = _.compact(user_nodes?.edges);
+            const userNodes = _.compact(adminUsersV2?.edges);
             setSelectedUserList(() => {
               return userNodes.filter(
                 (edge) => edge.node && keys.includes(edge?.node.id),
@@ -509,7 +497,7 @@ const UserManagement: React.FC<UserManagementProps> = () => {
                 supportedFields,
                 onExport: async (selectedExportKeys) => {
                   await exportCSV(selectedExportKeys, {
-                    status: [queryParams.status],
+                    status: [_.toLower(queryParams.status)],
                   }).catch((err) => {
                     message.error(t('general.ErrorOccurred'));
                     logger.error(err);
@@ -557,7 +545,7 @@ const UserManagement: React.FC<UserManagementProps> = () => {
           onCancel={() => {
             togglePurgeUsersModal();
           }}
-          usersFrgmt={_.compact(selectedUserList.map((user) => user?.node))}
+          users={selectedUsersForModal}
         />
       </BAIUnmountAfterClose>
       <BAIUnmountAfterClose>
@@ -573,10 +561,17 @@ const UserManagement: React.FC<UserManagementProps> = () => {
           onCancel={() => {
             setPurgeTargetId(null);
           }}
-          usersFrgmt={_.compact(
-            user_nodes?.edges
+          users={_.compact(
+            adminUsersV2?.edges
               ?.filter((edge) => edge?.node?.id === purgeTargetId)
-              .map((edge) => edge?.node),
+              .map((edge) =>
+                edge?.node
+                  ? {
+                      id: edge.node.id,
+                      email: edge.node.basicInfo.email,
+                    }
+                  : null,
+              ),
           )}
         />
       </BAIUnmountAfterClose>
@@ -591,11 +586,11 @@ const UserManagement: React.FC<UserManagementProps> = () => {
           onCancel={() => {
             toggleUpdateUsersModal();
           }}
-          userFrgmt={_.compact(selectedUserList.map((user) => user?.node))}
+          users={selectedUsersForModal}
         />
       </BAIUnmountAfterClose>
     </BAIFlex>
   );
 };
 
-export default UserManagement;
+export default AdminUserManagement;
