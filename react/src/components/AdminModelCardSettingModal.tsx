@@ -30,7 +30,6 @@ import {
   BAIModal,
   BAIVFolderSelect,
   BAIVFolderSelectRef,
-  convertToUUID,
   toGlobalId,
   toLocalId,
   useBAILogger,
@@ -533,10 +532,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
           setIsOpenCreateFolderModal(false);
           if (result) {
             formRef.current?.setFieldsValue({
-              vfolderId: toGlobalId(
-                'VirtualFolderNode',
-                convertToUUID(result.id),
-              ),
+              vfolderId: toGlobalId('VirtualFolderNode', toLocalId(result.id)),
             });
             vfolderSelectRef.current?.refetch();
           }
