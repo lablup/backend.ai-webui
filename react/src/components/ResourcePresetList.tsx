@@ -7,7 +7,6 @@ import {
   ResourcePresetListQuery,
   ResourcePresetListQuery$data,
 } from '../__generated__/ResourcePresetListQuery.graphql';
-import { ResourcePresetSettingModalFragment$key } from '../__generated__/ResourcePresetSettingModalFragment.graphql';
 import { localeCompare } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import ResourcePresetSettingModal from './ResourcePresetSettingModal';
@@ -47,7 +46,7 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
   const [resourcePresetsFetchKey, updateResourcePresetsFetchKey] =
     useUpdatableState('initial-fetch');
   const [editingResourcePreset, setEditingResourcePreset] =
-    useState<ResourcePresetSettingModalFragment$key | null>(null);
+    useState<ResourcePreset | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const [deletingPresetName, setDeletingPresetName] = useState<string | null>(
     null,

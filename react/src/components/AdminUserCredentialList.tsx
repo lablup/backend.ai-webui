@@ -9,7 +9,6 @@ import {
   AdminUserCredentialListQuery$data,
   AdminUserCredentialListQuery$variables,
 } from '../__generated__/AdminUserCredentialListQuery.graphql';
-import { KeypairSettingModalFragment$key } from '../__generated__/KeypairSettingModalFragment.graphql';
 import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
 import BAIRadioGroup from './BAIRadioGroup';
 import KeypairInfoModal from './KeypairInfoModal';
@@ -69,7 +68,7 @@ const AdminUserCredentialList: React.FC = () => {
   });
 
   const [keypairSettingModalFrgmt, setKeypairSettingModalFrgmt] =
-    useState<KeypairSettingModalFragment$key | null>(null);
+    useState<Keypair | null>(null);
   const [openUserKeypairSettingModal, setOpenUserKeypairSettingModal] =
     useState(false);
   const [keypairInfoModalFrgmt, setKeypairInfoModalFrgmt] = useState<any>(null);

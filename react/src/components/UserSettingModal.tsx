@@ -2,7 +2,6 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { GeneratedKeypairListModalFragment$key } from '../__generated__/GeneratedKeypairListModalFragment.graphql';
 import {
   UserSettingModalBulkCreateMutation,
   UserRoleV2,
@@ -54,6 +53,12 @@ import * as _ from 'lodash-es';
 import React, { Suspense, useDeferredValue, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useMutation, useLazyLoadQuery } from 'react-relay';
+
+type CreatedKeypair = NonNullable<
+  NonNullable<
+    UserSettingModalCreateMutation['response']['create_user']
+  >['keypair']
+>;
 
 type UserRole = {
   [key: string]: string[];
@@ -160,7 +165,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
   const deferredOpen = useDeferredValue(baiModalProps.open);
 
   const [createdKeypairs, setCreatedKeypairs] =
-    useState<GeneratedKeypairListModalFragment$key | null>();
+    useState<ReadonlyArray<CreatedKeypair> | null>();
 
   const { user } = useLazyLoadQuery<UserSettingModalQuery>(
     graphql`

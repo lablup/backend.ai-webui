@@ -1,6 +1,7 @@
 import reactPlugin from "eslint-plugin-react";
 import reactHooksPlugin from "eslint-plugin-react-hooks";
 import importPlugin from "eslint-plugin-import";
+import baiPlugin from "./bai-plugin.js";
 
 export const react = [
   reactPlugin.configs.flat.recommended,
@@ -55,6 +56,16 @@ export const react = [
     rules: {
       "react/react-in-jsx-scope": "off",
       "react/prop-types": "off",
+    },
+  },
+
+  {
+    files: ["**/*.ts", "**/*.tsx"],
+    plugins: {
+      bai: baiPlugin,
+    },
+    rules: {
+      "bai/no-fragment-key-at-spread-site": "error",
     },
   },
 ];

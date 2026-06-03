@@ -10,7 +10,6 @@ import type {
   DeploymentStatus,
   OrderDirection,
 } from '../__generated__/AdminDeploymentListPageQuery.graphql';
-import type { DeploymentRevisionDetail_revision$key } from '../__generated__/DeploymentRevisionDetail_revision.graphql';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import DeploymentRevisionDetailDrawer from '../components/DeploymentRevisionDetailDrawer';
@@ -57,6 +56,16 @@ import { useSearchParams } from 'react-router-dom';
 
 type DeploymentStatusCategory = 'running' | 'finished';
 
+type RevisionNode = NonNullable<
+  NonNullable<
+    NonNullable<
+      NonNullable<
+        AdminDeploymentListPageQuery['response']['adminDeployments']
+      >['edges'][number]
+    >['node']
+  >['currentRevision']
+>;
+
 const AdminDeploymentListPageContent: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
@@ -72,7 +81,7 @@ const AdminDeploymentListPageContent: React.FC = () => {
     string | null
   >(null);
   const [drawerRevisionFrgmt, setDrawerRevisionFrgmt] =
-    useState<DeploymentRevisionDetail_revision$key | null>(null);
+    useState<RevisionNode | null>(null);
 
   const supportsExtendedFilter = baiClient.supports(
     'model-deployment-extended-filter',
