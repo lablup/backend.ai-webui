@@ -109,8 +109,9 @@ const AdminDeploymentPresetNodes: React.FC<AdminDeploymentPresetNodesProps> = ({
   // ImageV2Filter.id is available only on 26.4.4+. On 26.4.3 we pass filter:null
   // to avoid GRAPHQL_VALIDATION_FAILED; imageIds will also be empty there because
   // imageId @since(version:"26.4.4") strips the field from the fragment.
-  const supportsImageIdFilter =
-    baiClient.isManagerVersionCompatibleWith('26.4.4');
+  const supportsImageIdFilter = baiClient.supports(
+    'model-deployment-revised-schema',
+  );
   const imageFilter = supportsImageIdFilter ? { id: { in: imageIds } } : null;
 
   const imagesData = useLazyLoadQuery<AdminDeploymentPresetNodesImagesQuery>(

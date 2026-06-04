@@ -41,6 +41,7 @@ import {
   isDeploymentInStoppedCategory,
   toGlobalId,
   useFetchKey,
+  useBAILogger,
 } from 'backend.ai-ui';
 import type { GraphQLFormattedError } from 'graphql';
 import { BotMessageSquareIcon } from 'lucide-react';
@@ -58,6 +59,7 @@ const DeploymentDetailPage: React.FC = () => {
   const baiClient = useSuspendedBackendaiClient();
   const currentProject = useCurrentProjectValue();
   const isChatBlocked = !!baiClient?._config?.blockList?.includes('chat');
+  const { logger } = useBAILogger();
   const isRevisedDeploymentSchema = baiClient.supports(
     'model-deployment-revised-schema',
   );
@@ -157,9 +159,9 @@ const DeploymentDetailPage: React.FC = () => {
     const messages = errors
       .map((error) => error?.message ?? '')
       .filter(Boolean);
-    const error: ErrorWithGraphQL = new Error(
-      messages.join('; ') || 'DeploymentDetailPageQuery failed.',
-    );
+    const errorMsg = messages.join('; ') || 'DeploymentDetailPageQuery failed.';
+    logger.error('DeploymentDetailPageQuery errors:', errors);
+    const error: ErrorWithGraphQL = new Error(errorMsg);
     error.errors = errors;
     throw error;
   }

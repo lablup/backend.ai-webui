@@ -143,8 +143,9 @@ export const useAdminImageCanonicalName = (
   const baiClient = useSuspendedBackendaiClient();
   // ImageV2Filter.id is available only on 26.4.4+; pass null on 26.4.3 to avoid
   // GRAPHQL_VALIDATION_FAILED (imageId is also absent on 26.4.3 at the call site).
-  const supportsImageIdFilter =
-    baiClient.isManagerVersionCompatibleWith('26.4.4');
+  const supportsImageIdFilter = baiClient.supports(
+    'model-deployment-revised-schema',
+  );
   const imageFilter =
     supportsImageIdFilter && imageId ? { id: { equals: imageId } } : null;
 

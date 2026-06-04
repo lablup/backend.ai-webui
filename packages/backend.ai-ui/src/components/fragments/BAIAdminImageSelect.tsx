@@ -99,8 +99,9 @@ const BAIAdminImageSelect: React.FC<BAIAdminImageSelectProps> = ({
   // ImageV2Filter.id is available only on 26.4.4+; pass null on 26.4.3 to avoid
   // GRAPHQL_VALIDATION_FAILED.
   const baiClient = useConnectedBAIClient();
-  const supportsImageIdFilter =
-    baiClient.isManagerVersionCompatibleWith('26.4.4');
+  const supportsImageIdFilter = baiClient.supports(
+    'model-deployment-revised-schema',
+  );
   const selectedFilter =
     supportsImageIdFilter && hasValue ? { id: { in: selectedUUIDs } } : null;
 

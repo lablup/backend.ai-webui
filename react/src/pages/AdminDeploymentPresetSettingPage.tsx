@@ -239,12 +239,14 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
             revisionHistoryLimit: values.revisionHistoryLimit ?? null,
             // TODO: Add BLUE_GREEN support when the backend implements it.
             deploymentStrategy: { type: 'ROLLING' as const },
-            // Fields below are UNRELEASED on 26.4.3; omit them on legacy managers.
+            // imageId/clusterMode/clusterSize became required after the 26.4.3 release;
+            // always send them regardless of schema version.
+            imageId: values.imageId ?? null,
+            clusterMode: values.clusterMode ?? null,
+            clusterSize: values.clusterSize ?? null,
+            // Fields below remain UNRELEASED on the original 26.4.3 release.
             ...(isRevisedDeploymentSchema && {
               description: values.description ?? null,
-              imageId: values.imageId ?? null,
-              clusterMode: values.clusterMode ?? null,
-              clusterSize: values.clusterSize ?? null,
               startupCommand: values.startupCommand ?? null,
               bootstrapScript: values.bootstrapScript ?? null,
               environ: values.environ?.length
@@ -283,12 +285,14 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
             revisionHistoryLimit: values.revisionHistoryLimit ?? null,
             // TODO: Add BLUE_GREEN support when the backend implements it.
             deploymentStrategy: { type: 'ROLLING' as const },
-            // Fields below are UNRELEASED on 26.4.3; omit them on legacy managers.
+            // imageId/clusterMode/clusterSize became required after the 26.4.3 release
+            // in a post-26.4.3 patch; always send them regardless of schema version.
+            imageId: values.imageId,
+            clusterMode: values.clusterMode!,
+            clusterSize: values.clusterSize!,
+            // Fields below remain UNRELEASED on the original 26.4.3 release.
             ...(isRevisedDeploymentSchema && {
-              imageId: values.imageId,
               description: values.description ?? null,
-              clusterMode: values.clusterMode!,
-              clusterSize: values.clusterSize!,
               startupCommand: values.startupCommand ?? null,
               bootstrapScript: values.bootstrapScript ?? null,
               environ: values.environ?.length
