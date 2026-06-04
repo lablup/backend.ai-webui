@@ -6,6 +6,7 @@ import { RoleAssignmentTabFragment$key } from '../__generated__/RoleAssignmentTa
 import { RoleDetailDrawerContentFragment$key } from '../__generated__/RoleDetailDrawerContentFragment.graphql';
 import { RolePermissionTabFragment$key } from '../__generated__/RolePermissionTabFragment.graphql';
 import { RoleScopeTabFragment$key } from '../__generated__/RoleScopeTabFragment.graphql';
+import { useSuspendedBackendaiClient } from '../hooks';
 import RoleAssignmentTab from './RoleAssignmentTab';
 import RolePermissionTab from './RolePermissionTab';
 import RoleScopeTab from './RoleScopeTab';
@@ -36,6 +37,9 @@ const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
+  const baiClient = useSuspendedBackendaiClient();
+  // Auto-assign is only supported on managers >= 26.4.4.
+  const supportsAutoAssign = baiClient.supports('role-auto-assign');
   const [activeTab, setActiveTab] = useState('scopes');
 
   const [, resetTabParams] = useQueryStates(
@@ -82,6 +86,7 @@ const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
         description
         source
         status
+        autoAssign @since(version: "26.4.4")
         createdAt
         updatedAt
         deletedAt
@@ -135,6 +140,13 @@ const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
             ? dayjs(role.updatedAt).format('YYYY-MM-DD HH:mm:ss')
             : '-'}
         </Descriptions.Item>
+        {supportsAutoAssign && (
+          <Descriptions.Item label={t('rbac.AutoAssign')} span={2}>
+            <Tag color={role.autoAssign ? 'green' : 'default'}>
+              {role.autoAssign ? t('general.Active') : t('general.Inactive')}
+            </Tag>
+          </Descriptions.Item>
+        )}
         <Descriptions.Item label={t('rbac.RoleDescription')} span={2}>
           {role.description || '-'}
         </Descriptions.Item>

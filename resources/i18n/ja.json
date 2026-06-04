@@ -2223,6 +2223,8 @@
     "AssignUser": "ユーザーを追加",
     "Assignments": "割り当て",
     "AtLeastOneScopeRequired": "少なくとも1つのスコープが必要です。",
+    "AutoAssign": "自動割り当て",
+    "AutoAssignDescription": "有効にすると、このロールが登録されているスコープにユーザーが追加されたときに、このロールが自動的にユーザーに付与されます。",
     "BulkAssignPartialFailure": "{{count}}人のユーザーの割り当てに失敗しました。",
     "BulkRevokePartialFailure": "{{count}}人のユーザーの取り消しに失敗しました。",
     "ConfirmDeletePermissionWithDetail": "以下の権限をこのロールから削除しますか？",

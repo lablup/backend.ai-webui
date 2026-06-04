@@ -2223,6 +2223,8 @@
     "AssignUser": "เพิ่มผู้ใช้",
     "Assignments": "การมอบหมาย",
     "AtLeastOneScopeRequired": "ต้องระบุขอบเขตอย่างน้อยหนึ่งรายการ",
+    "AutoAssign": "กำหนดอัตโนมัติ",
+    "AutoAssignDescription": "เมื่อเปิดใช้งาน บทบาทนี้จะถูกกำหนดให้ผู้ใช้โดยอัตโนมัติเมื่อผู้ใช้ถูกเพิ่มเข้าไปในขอบเขตที่บทบาทนี้ลงทะเบียนไว้",
     "BulkAssignPartialFailure": "{{count}} ผู้ใช้ไม่สามารถมอบหมายได้",
     "BulkRevokePartialFailure": "เพิกถอนผู้ใช้ {{count}} คนไม่สำเร็จ",
     "ConfirmDeletePermissionWithDetail": "นำสิทธิ์ต่อไปนี้ออกจากบทบาทนี้?",

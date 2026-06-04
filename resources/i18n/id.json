@@ -2224,6 +2224,8 @@
     "AssignUser": "Tambah Pengguna",
     "Assignments": "Penetapan",
     "AtLeastOneScopeRequired": "Setidaknya satu cakupan diperlukan.",
+    "AutoAssign": "Penetapan Otomatis",
+    "AutoAssignDescription": "Saat diaktifkan, peran ini secara otomatis diberikan kepada pengguna ketika pengguna ditambahkan ke cakupan tempat peran ini terdaftar.",
     "BulkAssignPartialFailure": "{{count}} pengguna gagal ditetapkan.",
     "BulkRevokePartialFailure": "Gagal mencabut {{count}} pengguna.",
     "ConfirmDeletePermissionWithDetail": "Hapus izin berikut dari peran ini?",

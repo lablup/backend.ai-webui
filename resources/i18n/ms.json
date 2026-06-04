@@ -2221,6 +2221,8 @@
     "AssignUser": "Tambah Pengguna",
     "Assignments": "Tugasan",
     "AtLeastOneScopeRequired": "Sekurang-kurangnya satu skop diperlukan.",
+    "AutoAssign": "Tugasan Automatik",
+    "AutoAssignDescription": "Apabila didayakan, peranan ini secara automatik diberikan kepada pengguna apabila pengguna ditambahkan ke skop di mana peranan ini didaftarkan.",
     "BulkAssignPartialFailure": "{{count}} pengguna gagal ditugaskan.",
     "BulkRevokePartialFailure": "Gagal membatalkan {{count}} pengguna.",
     "ConfirmDeletePermissionWithDetail": "Buang kebenaran berikut daripada peranan ini?",

@@ -13,6 +13,7 @@ type KnownSettingName =
   | 'ImageList'
   | 'KeypairResourcePolicyList'
   | 'ProjectResourcePolicyList'
+  | 'RoleList'
   | 'UserResourcePolicyList';
 
 export const useHiddenColumnKeysSetting = (listName: KnownSettingName) => {

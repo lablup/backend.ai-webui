@@ -2223,6 +2223,8 @@
     "AssignUser": "添加用户",
     "Assignments": "分配",
     "AtLeastOneScopeRequired": "至少需要一个范围。",
+    "AutoAssign": "自动分配",
+    "AutoAssignDescription": "启用后，当用户被添加到注册了此角色的范围时，将自动向该用户授予此角色。",
     "BulkAssignPartialFailure": "{{count}} 名用户分配失败。",
     "BulkRevokePartialFailure": "{{count}} 个用户撤销失败。",
     "ConfirmDeletePermissionWithDetail": "从此角色移除以下权限？",

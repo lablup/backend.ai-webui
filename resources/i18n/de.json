@@ -2223,6 +2223,8 @@
     "AssignUser": "Benutzer hinzufügen",
     "Assignments": "Zuweisungen",
     "AtLeastOneScopeRequired": "Mindestens ein Geltungsbereich ist erforderlich.",
+    "AutoAssign": "Automatisch zuweisen",
+    "AutoAssignDescription": "Wenn aktiviert, wird diese Rolle einem Benutzer automatisch zugewiesen, sobald der Benutzer zu einem Geltungsbereich hinzugefügt wird, in dem diese Rolle registriert ist.",
     "BulkAssignPartialFailure": "{{count}} Benutzer konnte(n) nicht zugewiesen werden.",
     "BulkRevokePartialFailure": "{{count}} Benutzer konnten nicht widerrufen werden.",
     "ConfirmDeletePermissionWithDetail": "Die folgende Berechtigung aus dieser Rolle entfernen?",

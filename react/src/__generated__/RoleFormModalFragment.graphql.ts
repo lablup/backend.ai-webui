@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<18e235c2fa45e237530446520045f126>>
+ * @generated SignedSource<<14e8407841a676da0fe1c9eb1931d7e2>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,6 +11,7 @@
 import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type RoleFormModalFragment$data = {
+  readonly autoAssign: boolean;
   readonly description: string | null | undefined;
   readonly id: string;
   readonly name: string;
@@ -47,12 +48,19 @@ const node: ReaderFragment = {
       "kind": "ScalarField",
       "name": "description",
       "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "autoAssign",
+      "storageKey": null
     }
   ],
   "type": "Role",
   "abstractKey": null
 };
 
-(node as any).hash = "5898707f51d7697e274823114edf9df5";
+(node as any).hash = "df3de6a4d3c343f75ae5351dfc65e7a4";
 
 export default node;

@@ -2223,6 +2223,8 @@
     "AssignUser": "Ajouter un utilisateur",
     "Assignments": "Attributions",
     "AtLeastOneScopeRequired": "Au moins une portée est requise.",
+    "AutoAssign": "Attribution automatique",
+    "AutoAssignDescription": "Lorsqu'elle est activée, ce rôle est automatiquement attribué à un utilisateur lorsqu'il est ajouté à une portée dans laquelle ce rôle est enregistré.",
     "BulkAssignPartialFailure": "{{count}} utilisateur(s) n'a(ont) pas pu être attribué(s).",
     "BulkRevokePartialFailure": "Échec de la révocation de {{count}} utilisateur(s).",
     "ConfirmDeletePermissionWithDetail": "Retirer la permission suivante de ce rôle ?",

@@ -2208,6 +2208,8 @@
     "AssignUser": "Add User",
     "Assignments": "Assignments",
     "AtLeastOneScopeRequired": "At least one scope is required.",
+    "AutoAssign": "Auto Assign",
+    "AutoAssignDescription": "When enabled, this role is automatically granted to a user when the user is added to a scope this role is registered in.",
     "BulkAssignPartialFailure": "{{count}} user(s) failed to be assigned.",
     "BulkRevokePartialFailure": "{{count}} user(s) failed to be revoked.",
     "ConfirmDeletePermissionWithDetail": "Remove the following permission from this role?",
