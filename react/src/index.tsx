@@ -9,6 +9,7 @@ import App from './App';
 import { jotaiStore } from './components/DefaultProviders';
 import './global-stores';
 import { loadCustomThemeConfig } from './helper/customThemeConfig';
+import { applyDevServerTitle } from './helper/devServerTitle';
 import { ThemeModeProvider } from './hooks/useThemeMode';
 import { Provider as JotaiProvider } from 'jotai';
 import React from 'react';
@@ -54,6 +55,10 @@ if (process.env.NODE_ENV === 'development') {
 
 // Load custom theme config once in react/index.tsx
 loadCustomThemeConfig();
+
+// In dev, distinguish multiple dev-server tabs by prefixing the tab title with
+// the Portless app name injected via VITE_DEV_SERVER_NAME (no-op in production).
+applyDevServerTitle();
 
 const root = ReactDOM.createRoot(
   document.getElementById('react-root') as HTMLElement,
