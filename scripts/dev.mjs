@@ -3,6 +3,9 @@
 // The dev-time header color override is exposed to the React app via
 // VITE_THEME_HEADER_COLOR — set it in `.env.development.local` or the shell
 // and Vite's loadEnv() picks it up natively (no bridge needed).
+// Similarly, the resolved Portless app name is exposed via
+// VITE_DEV_SERVER_NAME so the React app can show it in the browser tab title
+// (dev only), keeping multiple dev-server tabs distinguishable.
 import { spawn, spawnSync } from 'node:child_process';
 
 const env = { ...process.env };
@@ -48,6 +51,10 @@ const branch = spawnSync('git', ['branch', '--show-current'], { encoding: 'utf8'
 const issueMatch = branch.match(/(?:^|[-_/])(fr-?\d+)/i);
 const branchAppName = issueMatch ? issueMatch[1].toLowerCase().replace(/^fr/, 'fr-').replace(/-{2,}/g, '-') : null;
 const appName = sanitizeAppName(process.env.PORTLESS_APP_NAME) ?? branchAppName;
+if (appName) {
+  // Surface the app name to the React bundle for the dev-only tab title.
+  env.VITE_DEV_SERVER_NAME = appName;
+}
 const portlessSpec = appName
   ? `portless ${appName} --force ${portFlag}`
   : `portless run --force ${portFlag}`;
