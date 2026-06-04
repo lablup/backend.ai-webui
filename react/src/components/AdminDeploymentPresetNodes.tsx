@@ -75,7 +75,7 @@ const AdminDeploymentPresetNodes: React.FC<AdminDeploymentPresetNodesProps> = ({
         description
         rank
         runtimeVariantId
-        runtimeVariant {
+        runtimeVariant @since(version: "26.4.3") {
           id
           name
         }
@@ -84,7 +84,7 @@ const AdminDeploymentPresetNodes: React.FC<AdminDeploymentPresetNodesProps> = ({
           clusterSize
         }
         execution {
-          imageId
+          imageId @since(version: "26.4.4")
         }
         deploymentDefaults {
           replicaCount
