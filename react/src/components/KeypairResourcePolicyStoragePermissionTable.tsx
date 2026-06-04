@@ -7,7 +7,6 @@ import { KeypairResourcePolicyStoragePermissionTableUpdateMutation } from '../__
 import { KeypairResourcePolicyStoragePermissionTable_storageVolumeFrgmt$key } from '../__generated__/KeypairResourcePolicyStoragePermissionTable_storageVolumeFrgmt.graphql';
 import {
   PERMISSION_DISPLAY_MAP,
-  keyToV2Enum,
   v2PermissionToKey,
 } from '../helper/storageHostPermission';
 import StoragePermissionEditModal from './StoragePermissionEditModal';
@@ -136,7 +135,7 @@ const KeypairResourcePolicyStoragePermissionTable: React.FC<
       graphql`
         mutation KeypairResourcePolicyStoragePermissionTableUpdateMutation(
           $name: String!
-          $input: UpdateKeypairResourcePolicyInputGQL!
+          $input: UpdateKeypairResourcePolicyInput!
         ) {
           adminUpdateKeypairResourcePolicyV2(name: $name, input: $input) {
             keypairResourcePolicy {
@@ -159,17 +158,20 @@ const KeypairResourcePolicyStoragePermissionTable: React.FC<
       return { ok: false, msg: t('storageHost.permission.SaveFailed') };
     }
     // Rebuild the full host list, replacing only this host's permissions.
-    // `VFolderHostPermissionEntryInput.permissions` is typed `[String!]` but
-    // carries `VFolderHostPermissionV2` enum VALUES. Other hosts come back from
-    // the query already as enum values (keep verbatim); the edited host's
-    // newKeys are kebab keys, so convert them to enum values via the canonical
-    // `keyToV2Enum` helper — the single source of truth for the asymmetric
-    // `set-user-specific-permission` ↔ `SET_USER_PERM` mapping.
+    // The mutation input's `permissions` is `[String!]`, validated server-side
+    // against the V1 `VFolderHostPermission` enum — i.e. kebab values like
+    // `mount-in-session`, NOT the `VFolderHostPermissionV2` enum NAMES
+    // (`MOUNT_IN_SESSION`) the read returns. So normalize every host to kebab:
+    // other hosts via `v2PermissionToKey` (their read values are V2 enum
+    // names), and the edited host's `newKeys` are already kebab keys.
     const allowedVfolderHosts = [
       ...(editingRow?.allowedVfolderHosts ?? [])
         .filter((e) => e.host !== storageHostId)
-        .map((e) => ({ host: e.host, permissions: [...e.permissions] })),
-      { host: storageHostId, permissions: newKeys.map(keyToV2Enum) },
+        .map((e) => ({
+          host: e.host,
+          permissions: e.permissions.map(v2PermissionToKey),
+        })),
+      { host: storageHostId, permissions: newKeys },
     ];
     return new Promise((resolve) => {
       commitUpdateKrp({

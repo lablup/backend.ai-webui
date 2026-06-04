@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<0784827bf2bee46ef5778fb7c3355da7>>
+ * @generated SignedSource<<10e38611ce8de59486a435a84fcb8025>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -30,11 +30,11 @@ export type VFolderHostPermissionEntryInput = {
   host: string;
   permissions: ReadonlyArray<string>;
 };
-export type KeypairResourcePolicyStoragePermissionTableUpdateMutation$variables = {
+export type KeypairResourcePolicyStoragePermissionTableV2UpdateMutation$variables = {
   input: UpdateKeypairResourcePolicyInput;
   name: string;
 };
-export type KeypairResourcePolicyStoragePermissionTableUpdateMutation$data = {
+export type KeypairResourcePolicyStoragePermissionTableV2UpdateMutation$data = {
   readonly adminUpdateKeypairResourcePolicyV2: {
     readonly keypairResourcePolicy: {
       readonly allowedVfolderHosts: ReadonlyArray<{
@@ -45,9 +45,9 @@ export type KeypairResourcePolicyStoragePermissionTableUpdateMutation$data = {
     };
   } | null | undefined;
 };
-export type KeypairResourcePolicyStoragePermissionTableUpdateMutation = {
-  response: KeypairResourcePolicyStoragePermissionTableUpdateMutation$data;
-  variables: KeypairResourcePolicyStoragePermissionTableUpdateMutation$variables;
+export type KeypairResourcePolicyStoragePermissionTableV2UpdateMutation = {
+  response: KeypairResourcePolicyStoragePermissionTableV2UpdateMutation$data;
+  variables: KeypairResourcePolicyStoragePermissionTableV2UpdateMutation$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -136,7 +136,7 @@ return {
     ],
     "kind": "Fragment",
     "metadata": null,
-    "name": "KeypairResourcePolicyStoragePermissionTableUpdateMutation",
+    "name": "KeypairResourcePolicyStoragePermissionTableV2UpdateMutation",
     "selections": (v2/*: any*/),
     "type": "Mutation",
     "abstractKey": null
@@ -148,20 +148,20 @@ return {
       (v0/*: any*/)
     ],
     "kind": "Operation",
-    "name": "KeypairResourcePolicyStoragePermissionTableUpdateMutation",
+    "name": "KeypairResourcePolicyStoragePermissionTableV2UpdateMutation",
     "selections": (v2/*: any*/)
   },
   "params": {
-    "cacheID": "7e584ad4f67771aade7d7bac4fc555ce",
+    "cacheID": "b32c683c848359e0df4639c78848c9e0",
     "id": null,
     "metadata": {},
-    "name": "KeypairResourcePolicyStoragePermissionTableUpdateMutation",
+    "name": "KeypairResourcePolicyStoragePermissionTableV2UpdateMutation",
     "operationKind": "mutation",
-    "text": "mutation KeypairResourcePolicyStoragePermissionTableUpdateMutation(\n  $name: String!\n  $input: UpdateKeypairResourcePolicyInput!\n) {\n  adminUpdateKeypairResourcePolicyV2(name: $name, input: $input) {\n    keypairResourcePolicy {\n      id\n      allowedVfolderHosts {\n        host\n        permissions\n      }\n    }\n  }\n}\n"
+    "text": "mutation KeypairResourcePolicyStoragePermissionTableV2UpdateMutation(\n  $name: String!\n  $input: UpdateKeypairResourcePolicyInput!\n) {\n  adminUpdateKeypairResourcePolicyV2(name: $name, input: $input) {\n    keypairResourcePolicy {\n      id\n      allowedVfolderHosts {\n        host\n        permissions\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "88771b159e02a1b858d3f8aafea9262a";
+(node as any).hash = "77b6178578d763b06b51385effda09f6";
 
 export default node;

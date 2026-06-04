@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<2dcc27e935b6323ce19c277b80885e50>>
+ * @generated SignedSource<<fdc19c22cd2b8cf983872f1c570e9685>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -40,7 +40,7 @@ v1 = [
         "variableName": "id"
       }
     ],
-    "concreteType": "DeleteDeploymentRevisionPresetPayloadGQL",
+    "concreteType": "DeleteDeploymentRevisionPresetPayload",
     "kind": "LinkedField",
     "name": "adminDeleteDeploymentRevisionPreset",
     "plural": false,

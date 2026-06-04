@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d4c3a9b36eb1200ab652d0210ec5532d>>
+ * @generated SignedSource<<20d9b263090b0a48d012223231ba15f3>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -155,7 +155,7 @@ v5 = {
     {
       "alias": null,
       "args": null,
-      "concreteType": "KeyPairGQLEdge",
+      "concreteType": "KeyPairV2Edge",
       "kind": "LinkedField",
       "name": "edges",
       "plural": true,
@@ -163,7 +163,7 @@ v5 = {
         {
           "alias": null,
           "args": null,
-          "concreteType": "KeyPairGQL",
+          "concreteType": "KeyPairV2",
           "kind": "LinkedField",
           "name": "node",
           "plural": false,

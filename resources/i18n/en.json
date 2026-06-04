@@ -3203,6 +3203,7 @@
     "Used": "Used",
     "permission": {
       "All": "All",
+      "AssignedKeypairs": "Assigned Keypairs",
       "Create": "Create",
       "Delete": "Delete",
       "Domains": "Domains",
@@ -3223,6 +3224,7 @@
       "Name": "Name",
       "NoChanges": "No permission changes to save.",
       "NoDomainSelected": "Please select a domain.",
+      "NoKeypairResourcePolicies": "No keypair resource policies.",
       "NoKeypairResourcePolicySelected": "Please select a keypair resource policy.",
       "NoProjectsInDomain": "No projects under the selected domain.",
       "PartialSaveSuccess": "{{success}} of {{total}} updated.",
@@ -3235,13 +3237,13 @@
       "SelectAll": "Select All",
       "SelectDomain": "Select a domain",
       "SelectDomainFirst": "Select a domain to view the projects under it.",
-      "SelectionLimitExceeded": "You can select up to {{max}} items.",
+      "SelectUserToSeeKeypairs": "Select a user to see the applied keypairs.",
       "SetPermission": "Set Permission",
       "UnselectAll": "Unselect All",
       "Update": "Update",
       "Upload": "Upload",
       "UserFolder": "User Folder",
-      "UserFolderPermissionsNote": "Permissions for users' personal folders are controlled by the keypair resource policies they belong to.",
+      "UserFolderPermissionsNote": "User folder permissions are determined by the keypair resource policy linked to the user's main access key.",
       "Volume": "Volume"
     },
     "quotaSettings": {

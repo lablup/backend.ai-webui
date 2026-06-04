@@ -3219,6 +3219,7 @@
     "Used": "사용",
     "permission": {
       "All": "전체",
+      "AssignedKeypairs": "할당 키페어",
       "Create": "생성",
       "Delete": "삭제",
       "Domains": "도메인",
@@ -3239,6 +3240,7 @@
       "Name": "이름",
       "NoChanges": "저장할 권한 변경사항이 없습니다.",
       "NoDomainSelected": "도메인을 선택해주세요.",
+      "NoKeypairResourcePolicies": "키페어 자원 정책이 없습니다.",
       "NoKeypairResourcePolicySelected": "키페어 자원 정책을 선택해주세요.",
       "NoProjectsInDomain": "선택한 도메인에 프로젝트가 없습니다.",
       "PartialSaveSuccess": "{{total}}개 중 {{success}}개 업데이트됨.",
@@ -3251,13 +3253,13 @@
       "SelectAll": "전체 선택",
       "SelectDomain": "도메인 선택",
       "SelectDomainFirst": "도메인을 선택하면 해당 도메인 하위의 프로젝트가 표시됩니다.",
-      "SelectionLimitExceeded": "최대 {{max}}개까지 선택할 수 있습니다.",
+      "SelectUserToSeeKeypairs": "해당 자원 정책이 적용된 키페어를 확인하려면 사용자를 선택해주세요.",
       "SetPermission": "권한 설정",
       "UnselectAll": "전체 해제",
       "Update": "수정",
       "Upload": "업로드",
       "UserFolder": "사용자 폴더",
-      "UserFolderPermissionsNote": "사용자 개인 폴더의 권한은 사용자가 속한 키페어 자원 정책으로 제어됩니다.",
+      "UserFolderPermissionsNote": "사용자 폴더 권한은 해당 사용자의 메인 액세스 키에 연결된 키페어 자원 정책으로 결정됩니다.",
       "Volume": "볼륨"
     },
     "quotaSettings": {

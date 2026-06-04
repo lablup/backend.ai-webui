@@ -66,7 +66,9 @@ const KeypairInfoModal: React.FC<KeypairInfoModalProps> = ({
             {t('credential.KeypairDetail')}
           </Typography.Text>
           {user?.main_access_key === keypair?.access_key && (
-            <Tag color="red">{t('credential.MainAccessKey')}</Tag>
+            <Tag color={token.colorPrimary}>
+              {t('credential.MainAccessKey')}
+            </Tag>
           )}
         </BAIFlex>
       }
@@ -94,7 +96,7 @@ const KeypairInfoModal: React.FC<KeypairInfoModalProps> = ({
         <Descriptions.Item label={t('credential.Permission')}>
           {keypair?.is_admin ? (
             <BAIFlex gap="xs">
-              <Tag color="red">admin</Tag>
+              <Tag color={token.colorPrimary}>admin</Tag>
               <Tag color="green">user</Tag>
             </BAIFlex>
           ) : (

@@ -840,6 +840,10 @@ export class Client {
     // TODO(FR-3024): simplify to '26.4.4' once rc builds are out of use.
     if (this.isManagerVersionCompatibleWith('26.4.4rc6')) {
       this._features['user-v2-extended-filter'] = true;
+      // adminKeypairResourcePoliciesV2 gained the `keypair.userId` nested filter
+      // + the `keypairs` connection in 26.4.4 (FR-3020). Pinned to the rc6 tag
+      // for the same staging-manager reason as above.
+      this._features['keypair-resource-policy-user-filter'] = true;
     }
   }
 

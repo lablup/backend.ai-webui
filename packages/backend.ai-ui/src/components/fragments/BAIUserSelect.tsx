@@ -42,8 +42,11 @@ export interface BAIUserSelectProps extends Omit<
   ref?: React.Ref<BAIUserSelectRef>;
 }
 
-// Default filter for active users only
-const defaultActiveUserFilter = 'is_active == true';
+// Default filter for active users only. `user_nodes` filters on the `status`
+// enum (e.g. UserManagement uses `status == "active"`); there is no `is_active`
+// attribute on the backend's UserRow, so the legacy `is_active == true` form
+// fails filter parsing.
+const defaultActiveUserFilter = 'status == "active"';
 
 const BAIUserSelect: React.FC<BAIUserSelectProps> = ({
   loading,

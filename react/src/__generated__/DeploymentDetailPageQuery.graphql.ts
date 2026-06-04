@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<e4a78269b1e95811c295c69e0a1f4aa1>>
+ * @generated SignedSource<<a676a3127e3613a51f10ff3e9d5fa053>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -333,7 +333,7 @@ v13 = [
   {
     "alias": null,
     "args": null,
-    "concreteType": "ExtraVFolderMountInfoGQL",
+    "concreteType": "ExtraVFolderMountInfo",
     "kind": "LinkedField",
     "name": "extraMounts",
     "plural": true,

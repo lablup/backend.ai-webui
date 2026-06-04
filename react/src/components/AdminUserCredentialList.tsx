@@ -431,7 +431,7 @@ const AdminUserCredentialList: React.FC = () => {
             render: (isAdmin) =>
               isAdmin ? (
                 <BAIFlex gap="xs">
-                  <Tag color="red">admin</Tag>
+                  <Tag color={token.colorPrimary}>admin</Tag>
                   <Tag color="green">user</Tag>
                 </BAIFlex>
               ) : (

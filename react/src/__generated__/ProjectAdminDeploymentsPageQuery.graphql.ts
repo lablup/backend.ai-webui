@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<43cb27f6d76e3cb692efbf9376c920fa>>
+ * @generated SignedSource<<f32f4117ed30234f79156ed7648de52c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -496,7 +496,7 @@ return {
                   {
                     "alias": null,
                     "args": null,
-                    "concreteType": "DeploymentStrategyGQL",
+                    "concreteType": "DeploymentStrategy",
                     "kind": "LinkedField",
                     "name": "defaultDeploymentStrategy",
                     "plural": false,
@@ -698,7 +698,7 @@ return {
                       {
                         "alias": null,
                         "args": null,
-                        "concreteType": "ExtraVFolderMountInfoGQL",
+                        "concreteType": "ExtraVFolderMountInfo",
                         "kind": "LinkedField",
                         "name": "extraMounts",
                         "plural": true,
