@@ -1,5 +1,6 @@
 import {
   BAIColumnType,
+  BAIFlex,
   BAITable,
   BAITableProps,
   BAIText,
@@ -9,16 +10,20 @@ import {
   toLocalId,
 } from '..';
 import type {
-  BAIUserV2NodesFragment$data,
-  BAIUserV2NodesFragment$key,
-} from '../__generated__/BAIUserV2NodesFragment.graphql';
+  BAIAdminUserV2TableFragment$data,
+  BAIAdminUserV2TableFragment$key,
+} from '../__generated__/BAIAdminUserV2TableFragment.graphql';
 import { useBAIi18n } from '../hooks/useBAIi18n';
+import { QuestionCircleOutlined } from '@ant-design/icons';
+import { Tag, theme, Tooltip } from 'antd';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import React from 'react';
 import { graphql, useFragment } from 'react-relay';
 
-export type UserV2InList = NonNullable<BAIUserV2NodesFragment$data[number]>;
+export type UserV2InList = NonNullable<
+  BAIAdminUserV2TableFragment$data[number]
+>;
 
 const availableUserV2SorterKeys = [
   'email',
@@ -38,11 +43,11 @@ const isEnableSorter = (key: string) => {
   return _.includes(availableUserV2SorterKeys, key);
 };
 
-interface BAIUserV2NodesProps extends Omit<
+interface BAIAdminUserV2TableProps extends Omit<
   BAITableProps<UserV2InList>,
   'dataSource' | 'columns' | 'onChangeOrder'
 > {
-  usersFrgmt: BAIUserV2NodesFragment$key;
+  usersFrgmt: BAIAdminUserV2TableFragment$key;
   customizeColumns?: (
     baseColumns: BAIColumnType<UserV2InList>[],
   ) => BAIColumnType<UserV2InList>[];
@@ -52,7 +57,7 @@ interface BAIUserV2NodesProps extends Omit<
   ) => void;
 }
 
-const BAIUserV2Nodes: React.FC<BAIUserV2NodesProps> = ({
+const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
   usersFrgmt,
   customizeColumns,
   disableSorter,
@@ -61,10 +66,51 @@ const BAIUserV2Nodes: React.FC<BAIUserV2NodesProps> = ({
 }) => {
   'use memo';
   const { t } = useBAIi18n();
+  const { token } = theme.useToken();
+
+  const renderTitleWithTooltip = (label: string, tooltip: string) => (
+    <BAIFlex gap="xxs" align="center">
+      {label}
+      <Tooltip title={tooltip}>
+        <QuestionCircleOutlined
+          style={{ color: token.colorTextTertiary, cursor: 'help' }}
+        />
+      </Tooltip>
+    </BAIFlex>
+  );
+
+  // Show only the first item inline on a single line; collapse the rest into a
+  // `+N` tag whose tooltip reveals the full list (all items) on hover.
+  const renderOverflowList = (
+    items: ReadonlyArray<string | number> | null | undefined,
+  ) => {
+    if (!items || items.length === 0) return '-';
+    const [first, ...rest] = items;
+    return (
+      <BAIFlex gap="xxs" align="center">
+        <span style={{ whiteSpace: 'nowrap' }}>{first}</span>
+        {rest.length > 0 && (
+          <Tooltip
+            title={
+              <BAIFlex direction="column" align="start">
+                {items.map((item, index) => (
+                  <span key={index}>{item}</span>
+                ))}
+              </BAIFlex>
+            }
+          >
+            <Tag color="default" style={{ marginInlineEnd: 0, cursor: 'help' }}>
+              +{rest.length}
+            </Tag>
+          </Tooltip>
+        )}
+      </BAIFlex>
+    );
+  };
 
   const users = useFragment(
     graphql`
-      fragment BAIUserV2NodesFragment on UserV2 @relay(plural: true) {
+      fragment BAIAdminUserV2TableFragment on UserV2 @relay(plural: true) {
         id @required(action: NONE)
         basicInfo {
           email
@@ -77,14 +123,23 @@ const BAIUserV2Nodes: React.FC<BAIUserV2NodesProps> = ({
           domainName
           role
           resourcePolicy
+          mainAccessKey
         }
         security {
           totpActivated
+          totpActivatedAt
           sudoSessionEnabled
+          allowedClientIp
         }
         status {
           status
           statusInfo
+          needPasswordChange
+        }
+        container {
+          containerUid
+          containerMainGid
+          containerGids
         }
         timestamps {
           createdAt
@@ -153,6 +208,18 @@ const BAIUserV2Nodes: React.FC<BAIUserV2NodesProps> = ({
         render: (__, record) => record.organization?.resourcePolicy || '-',
       },
       {
+        key: 'main_access_key',
+        title: t('comp:UserNodes.MainAccessKey'),
+        render: (__, record) =>
+          record.organization?.mainAccessKey ? (
+            <BAIText copyable ellipsis monospace style={{ maxWidth: 120 }}>
+              {record.organization.mainAccessKey}
+            </BAIText>
+          ) : (
+            '-'
+          ),
+      },
+      {
         key: 'sudo_session_enabled',
         title: t('comp:UserNodes.SudoSessionEnabled'),
         render: (__, record) => (
@@ -171,6 +238,20 @@ const BAIUserV2Nodes: React.FC<BAIUserV2NodesProps> = ({
         ),
       },
       {
+        key: 'totp_activated_at',
+        title: t('comp:UserNodes.TwoFAActivatedAt'),
+        render: (__, record) =>
+          record.security?.totpActivatedAt
+            ? dayjs(record.security.totpActivatedAt).format('lll')
+            : '-',
+      },
+      {
+        key: 'allowed_client_ip',
+        title: t('comp:UserNodes.AllowedClientIps'),
+        render: (__, record) =>
+          renderOverflowList(record.security?.allowedClientIp),
+      },
+      {
         key: 'status',
         title: t('comp:UserNodes.Status'),
         dataIndex: 'status',
@@ -183,9 +264,41 @@ const BAIUserV2Nodes: React.FC<BAIUserV2NodesProps> = ({
         render: (__, record) => record.status?.statusInfo || '-',
       },
       {
+        key: 'need_password_change',
+        title: t('comp:UserNodes.NeedPasswordChange'),
+        render: (__, record) => (
+          <BooleanTag value={record.status?.needPasswordChange} />
+        ),
+      },
+      {
         key: 'description',
         title: t('comp:UserNodes.Description'),
         render: (__, record) => record.basicInfo?.description || '-',
+      },
+      {
+        key: 'container_uid',
+        title: renderTitleWithTooltip(
+          t('comp:UserNodes.ContainerUID'),
+          t('comp:UserNodes.ContainerUIDTooltip'),
+        ),
+        render: (__, record) => record.container?.containerUid ?? '-',
+      },
+      {
+        key: 'container_main_gid',
+        title: renderTitleWithTooltip(
+          t('comp:UserNodes.ContainerMainGID'),
+          t('comp:UserNodes.ContainerMainGIDTooltip'),
+        ),
+        render: (__, record) => record.container?.containerMainGid ?? '-',
+      },
+      {
+        key: 'container_gids',
+        title: renderTitleWithTooltip(
+          t('comp:UserNodes.ContainerGIDs'),
+          t('comp:UserNodes.ContainerGIDsTooltip'),
+        ),
+        render: (__, record) =>
+          renderOverflowList(record.container?.containerGids),
       },
       {
         key: 'created_at',
@@ -236,4 +349,4 @@ const BAIUserV2Nodes: React.FC<BAIUserV2NodesProps> = ({
   );
 };
 
-export default BAIUserV2Nodes;
+export default BAIAdminUserV2Table;

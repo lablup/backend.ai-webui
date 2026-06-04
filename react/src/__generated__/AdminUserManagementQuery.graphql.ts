@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<8dc4f0b6c4ffe302d3fa76829308a352>>
+ * @generated SignedSource<<0ec521ebe0f3a0ce4489a99d52b9b396>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -125,7 +125,7 @@ export type AdminUserManagementQuery$data = {
           readonly email: string;
         };
         readonly id: string;
-        readonly " $fragmentSpreads": FragmentRefs<"BAIUserV2NodesFragment">;
+        readonly " $fragmentSpreads": FragmentRefs<"BAIAdminUserV2TableFragment">;
       };
     }>;
   } | null | undefined;
@@ -252,7 +252,7 @@ return {
                   {
                     "args": null,
                     "kind": "FragmentSpread",
-                    "name": "BAIUserV2NodesFragment"
+                    "name": "BAIAdminUserV2TableFragment"
                   }
                 ],
                 "storageKey": null
@@ -372,6 +372,13 @@ return {
                         "kind": "ScalarField",
                         "name": "resourcePolicy",
                         "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "mainAccessKey",
+                        "storageKey": null
                       }
                     ],
                     "storageKey": null
@@ -395,7 +402,21 @@ return {
                         "alias": null,
                         "args": null,
                         "kind": "ScalarField",
+                        "name": "totpActivatedAt",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
                         "name": "sudoSessionEnabled",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "allowedClientIp",
                         "storageKey": null
                       }
                     ],
@@ -421,6 +442,45 @@ return {
                         "args": null,
                         "kind": "ScalarField",
                         "name": "statusInfo",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "needPasswordChange",
+                        "storageKey": null
+                      }
+                    ],
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "UserV2ContainerSettings",
+                    "kind": "LinkedField",
+                    "name": "container",
+                    "plural": false,
+                    "selections": [
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "containerUid",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "containerMainGid",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "containerGids",
                         "storageKey": null
                       }
                     ],
@@ -463,16 +523,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "fa8886e38447ae9c6452c9dc1cffde30",
+    "cacheID": "aa53d0c3cc9904a7c6cfac713e413023",
     "id": null,
     "metadata": {},
     "name": "AdminUserManagementQuery",
     "operationKind": "query",
-    "text": "query AdminUserManagementQuery(\n  $filter: UserV2Filter\n  $orderBy: [UserV2OrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  adminUsersV2(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        basicInfo {\n          email\n        }\n        ...BAIUserV2NodesFragment\n      }\n    }\n  }\n}\n\nfragment BAIUserV2NodesFragment on UserV2 {\n  id\n  basicInfo {\n    email\n    fullName\n    username\n    description\n    integrationName\n  }\n  organization {\n    domainName\n    role\n    resourcePolicy\n  }\n  security {\n    totpActivated\n    sudoSessionEnabled\n  }\n  status {\n    status\n    statusInfo\n  }\n  timestamps {\n    createdAt\n    modifiedAt\n  }\n}\n"
+    "text": "query AdminUserManagementQuery(\n  $filter: UserV2Filter\n  $orderBy: [UserV2OrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  adminUsersV2(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        basicInfo {\n          email\n        }\n        ...BAIAdminUserV2TableFragment\n      }\n    }\n  }\n}\n\nfragment BAIAdminUserV2TableFragment on UserV2 {\n  id\n  basicInfo {\n    email\n    fullName\n    username\n    description\n    integrationName\n  }\n  organization {\n    domainName\n    role\n    resourcePolicy\n    mainAccessKey\n  }\n  security {\n    totpActivated\n    totpActivatedAt\n    sudoSessionEnabled\n    allowedClientIp\n  }\n  status {\n    status\n    statusInfo\n    needPasswordChange\n  }\n  container {\n    containerUid\n    containerMainGid\n    containerGids\n  }\n  timestamps {\n    createdAt\n    modifiedAt\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "ebd7eb18169d725781dc92c7384ca147";
+(node as any).hash = "0ee4fde03c9d4d8e3e37da69122d809a";
 
 export default node;

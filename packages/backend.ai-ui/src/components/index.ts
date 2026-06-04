@@ -88,10 +88,10 @@ export {
 } from './BAIUserNodes';
 export type { UserNodeInList } from './BAIUserNodes';
 export {
-  default as BAIUserV2Nodes,
+  default as BAIAdminUserV2Table,
   availableUserV2SorterValues,
-} from './BAIUserV2Nodes';
-export type { UserV2InList } from './BAIUserV2Nodes';
+} from './BAIAdminUserV2Table';
+export type { UserV2InList } from './BAIAdminUserV2Table';
 export {
   default as BAISessionNodesV2,
   availableSessionV2SorterValues,

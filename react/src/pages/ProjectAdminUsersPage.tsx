@@ -18,7 +18,7 @@ import {
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
-  BAIUserV2Nodes,
+  BAIAdminUserV2Table,
   GraphQLFilter,
   INITIAL_FETCH_KEY,
   useFetchKey,
@@ -101,7 +101,7 @@ const ProjectAdminUsersContent: React.FC<ProjectAdminUsersContentProps> = ({
           edges {
             node {
               id
-              ...BAIUserV2NodesFragment
+              ...BAIAdminUserV2TableFragment
             }
           }
         }
@@ -186,7 +186,7 @@ const ProjectAdminUsersContent: React.FC<ProjectAdminUsersContentProps> = ({
           autoUpdateDelay={15_000}
         />
       </BAIFlex>
-      <BAIUserV2Nodes
+      <BAIAdminUserV2Table
         usersFrgmt={userNodes}
         loading={isLoading}
         order={queryParams.order}

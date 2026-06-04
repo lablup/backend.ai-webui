@@ -35,7 +35,7 @@ import {
   GraphQLFilter,
   useBAILogger,
   BAIFetchKeyButton,
-  BAIUserV2Nodes,
+  BAIAdminUserV2Table,
   UserV2InList,
   availableUserV2SorterValues,
   BAIButton,
@@ -156,7 +156,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
               basicInfo {
                 email
               }
-              ...BAIUserV2NodesFragment
+              ...BAIAdminUserV2TableFragment
             }
           }
         }
@@ -514,7 +514,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
           </Space.Compact>
         </BAIFlex>
       </BAIFlex>
-      <BAIUserV2Nodes
+      <BAIAdminUserV2Table
         usersFrgmt={filterOutNullAndUndefined(
           _.map(adminUsersV2?.edges, 'node'),
         )}
