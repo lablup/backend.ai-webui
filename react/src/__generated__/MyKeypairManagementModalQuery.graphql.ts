@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<32c5c26c6d032656e873cf32b75fbd20>>
+ * @generated SignedSource<<d4c3a9b36eb1200ab652d0210ec5532d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -21,6 +21,7 @@ export type KeypairFilter = {
   isAdmin?: boolean | null | undefined;
   lastUsed?: DateTimeFilter | null | undefined;
   resourcePolicy?: StringFilter | null | undefined;
+  userId?: UUIDFilter | null | undefined;
 };
 export type StringFilter = {
   contains?: string | null | undefined;
@@ -43,6 +44,12 @@ export type StringFilter = {
   notIn?: ReadonlyArray<string> | null | undefined;
   notStartsWith?: string | null | undefined;
   startsWith?: string | null | undefined;
+};
+export type UUIDFilter = {
+  equals?: string | null | undefined;
+  in?: ReadonlyArray<string> | null | undefined;
+  notEquals?: string | null | undefined;
+  notIn?: ReadonlyArray<string> | null | undefined;
 };
 export type DateTimeFilter = {
   after?: string | null | undefined;

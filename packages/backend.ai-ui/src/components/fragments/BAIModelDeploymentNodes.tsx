@@ -112,7 +112,7 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
           tags
           createdAt
           updatedAt
-          resourceGroupName
+          resourceGroupName @since(version: "26.4.4")
           projectV2 @since(version: "26.4.3") {
             basicInfo {
               name
@@ -140,7 +140,7 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
         }
         currentRevision @since(version: "26.4.3") {
           id
-          revisionNumber
+          revisionNumber @since(version: "26.4.4")
           modelMountConfig {
             vfolder {
               id

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<cc3f68018f58cdd87e80128e95dc4cfa>>
+ * @generated SignedSource<<c28862710cfecfb6d08fd1461200a9cb>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,6 +13,7 @@ export type RBACElementType = "AGENT" | "APP_CONFIG" | "ARTIFACT" | "ARTIFACT_RE
 export type RoleSource = "CUSTOM" | "SYSTEM" | "%future added value";
 export type RoleStatus = "ACTIVE" | "DELETED" | "INACTIVE" | "%future added value";
 export type CreateRoleInput = {
+  autoAssign?: boolean;
   description?: string | null | undefined;
   name: string;
   scopes?: ReadonlyArray<ScopeInput> | null | undefined;
