@@ -3,7 +3,11 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useSuspendedBackendaiClient } from '.';
-import { useCurrentUserProjectRolesQuery } from '../__generated__/useCurrentUserProjectRolesQuery.graphql';
+import {
+  useCurrentUserProjectRolesQuery,
+  PermissionNestedFilter,
+  RBACElementType,
+} from '../__generated__/useCurrentUserProjectRolesQuery.graphql';
 import { useCurrentProjectValue } from './useCurrentProject';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
@@ -36,12 +40,23 @@ export interface CurrentUserProjectRolesResult {
 export const useCurrentUserProjectRoles = (): CurrentUserProjectRolesResult => {
   const baiClient = useSuspendedBackendaiClient();
 
+  // <= 26.4.3 takes the bare enum; >= 26.4.4rc4 takes the wrapper. FR-3017.
+  const PROJECT_ADMIN_PAGE = 'PROJECT_ADMIN_PAGE' satisfies RBACElementType;
+  const permissionFilter: PermissionNestedFilter = {
+    // Cast confined to the one field the generated type can't model.
+    entityType: (baiClient.supports('rbac-element-type-filter')
+      ? { equals: PROJECT_ADMIN_PAGE }
+      : PROJECT_ADMIN_PAGE) as PermissionNestedFilter['entityType'],
+  };
+
   const data = useLazyLoadQuery<useCurrentUserProjectRolesQuery>(
     graphql`
-      query useCurrentUserProjectRolesQuery {
+      query useCurrentUserProjectRolesQuery(
+        $permissionFilter: PermissionNestedFilter
+      ) {
         myRolesResult: myRoles(
           first: 100
-          filter: { permission: { entityType: { equals: PROJECT_ADMIN_PAGE } } }
+          filter: { permission: $permissionFilter }
         ) @catch(to: RESULT) {
           edges {
             node {
@@ -62,7 +77,7 @@ export const useCurrentUserProjectRoles = (): CurrentUserProjectRolesResult => {
         }
       }
     `,
-    {},
+    { permissionFilter },
     {
       // store-or-network keeps the result cached across pages for the session.
       fetchPolicy: baiClient.supports('my-roles')

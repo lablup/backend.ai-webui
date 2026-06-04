@@ -570,10 +570,7 @@ export class Client {
     const v4_replacements: Record<string, string> = {
       session_name: 'sess_id',
     };
-    if (
-      this._apiVersionMajor !== null &&
-      Number(this._apiVersionMajor) < 5
-    ) {
+    if (this._apiVersionMajor !== null && Number(this._apiVersionMajor) < 5) {
       // For V3/V4 API compatibility
       Object.keys(v4_replacements).forEach((key) => {
         let index = fields.indexOf(key);
@@ -829,6 +826,13 @@ export class Client {
     }
     if (this.isManagerVersionCompatibleWith('26.4.3')) {
       this._features['model-deployment-extended-filter'] = true;
+    }
+    // entityType filter became the RBACElementTypeFilter wrapper in 26.4.4rc4
+    // (#11442); older cores take the direct enum. FR-3017.
+    // TODO(FR-3017): pinned to the rc tag since 26.4.4rcN < 26.4.4 in PEP440;
+    // simplify to '26.4.4' once rc builds are out of use.
+    if (this.isManagerVersionCompatibleWith('26.4.4rc4')) {
+      this._features['rbac-element-type-filter'] = true;
     }
   }
 
@@ -1215,10 +1219,7 @@ export class Client {
       ...resources,
     };
     let rqst;
-    if (
-      this._apiVersionMajor !== null &&
-      Number(this._apiVersionMajor) < 5
-    ) {
+    if (this._apiVersionMajor !== null && Number(this._apiVersionMajor) < 5) {
       // For V3/V4 API compatibility
       rqst = this.newSignedRequest(
         'POST',
