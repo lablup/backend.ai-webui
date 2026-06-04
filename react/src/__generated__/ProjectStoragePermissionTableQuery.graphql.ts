@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ca4c7aca32a3e6c5677d44e900e8eb32>>
+ * @generated SignedSource<<952a852316359de42824efff97db29ce>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,21 +11,25 @@
 import { ConcreteRequest } from 'relay-runtime';
 export type VFolderHostPermissionV2 = "CREATE_VFOLDER" | "DELETE_VFOLDER" | "DOWNLOAD_FILE" | "INVITE_OTHERS" | "MODIFY_VFOLDER" | "MOUNT_IN_SESSION" | "SET_USER_PERM" | "UPLOAD_FILE" | "%future added value";
 export type ProjectStoragePermissionTableQuery$variables = {
-  projectId: string;
+  projectIds: ReadonlyArray<string>;
   skip: boolean;
 };
 export type ProjectStoragePermissionTableQuery$data = {
-  readonly projectV2?: {
-    readonly basicInfo: {
-      readonly name: string;
-    };
-    readonly id: string;
-    readonly storage: {
-      readonly allowedVfolderHosts: ReadonlyArray<{
-        readonly host: string;
-        readonly permissions: ReadonlyArray<VFolderHostPermissionV2>;
-      }>;
-    };
+  readonly adminProjectsV2?: {
+    readonly edges: ReadonlyArray<{
+      readonly node: {
+        readonly basicInfo: {
+          readonly name: string;
+        };
+        readonly id: string;
+        readonly storage: {
+          readonly allowedVfolderHosts: ReadonlyArray<{
+            readonly host: string;
+            readonly permissions: ReadonlyArray<VFolderHostPermissionV2>;
+          }>;
+        };
+      };
+    }>;
   } | null | undefined;
 };
 export type ProjectStoragePermissionTableQuery = {
@@ -38,7 +42,7 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "projectId"
+    "name": "projectIds"
   },
   {
     "defaultValue": null,
@@ -56,69 +60,108 @@ v1 = [
         "alias": null,
         "args": [
           {
-            "kind": "Variable",
-            "name": "projectId",
-            "variableName": "projectId"
+            "fields": [
+              {
+                "fields": [
+                  {
+                    "kind": "Variable",
+                    "name": "in",
+                    "variableName": "projectIds"
+                  }
+                ],
+                "kind": "ObjectValue",
+                "name": "id"
+              }
+            ],
+            "kind": "ObjectValue",
+            "name": "filter"
+          },
+          {
+            "kind": "Literal",
+            "name": "limit",
+            "value": 10
           }
         ],
-        "concreteType": "ProjectV2",
+        "concreteType": "ProjectV2Connection",
         "kind": "LinkedField",
-        "name": "projectV2",
+        "name": "adminProjectsV2",
         "plural": false,
         "selections": [
           {
             "alias": null,
             "args": null,
-            "kind": "ScalarField",
-            "name": "id",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "ProjectBasicInfo",
+            "concreteType": "ProjectV2Edge",
             "kind": "LinkedField",
-            "name": "basicInfo",
-            "plural": false,
+            "name": "edges",
+            "plural": true,
             "selections": [
               {
                 "alias": null,
                 "args": null,
-                "kind": "ScalarField",
-                "name": "name",
-                "storageKey": null
-              }
-            ],
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "ProjectStorageInfo",
-            "kind": "LinkedField",
-            "name": "storage",
-            "plural": false,
-            "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "VFolderHostPermissionEntry",
+                "concreteType": "ProjectV2",
                 "kind": "LinkedField",
-                "name": "allowedVfolderHosts",
-                "plural": true,
+                "name": "node",
+                "plural": false,
                 "selections": [
                   {
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
-                    "name": "host",
+                    "name": "id",
                     "storageKey": null
                   },
                   {
                     "alias": null,
                     "args": null,
-                    "kind": "ScalarField",
-                    "name": "permissions",
+                    "concreteType": "ProjectBasicInfo",
+                    "kind": "LinkedField",
+                    "name": "basicInfo",
+                    "plural": false,
+                    "selections": [
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "name",
+                        "storageKey": null
+                      }
+                    ],
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "ProjectStorageInfo",
+                    "kind": "LinkedField",
+                    "name": "storage",
+                    "plural": false,
+                    "selections": [
+                      {
+                        "alias": null,
+                        "args": null,
+                        "concreteType": "VFolderHostPermissionEntry",
+                        "kind": "LinkedField",
+                        "name": "allowedVfolderHosts",
+                        "plural": true,
+                        "selections": [
+                          {
+                            "alias": null,
+                            "args": null,
+                            "kind": "ScalarField",
+                            "name": "host",
+                            "storageKey": null
+                          },
+                          {
+                            "alias": null,
+                            "args": null,
+                            "kind": "ScalarField",
+                            "name": "permissions",
+                            "storageKey": null
+                          }
+                        ],
+                        "storageKey": null
+                      }
+                    ],
                     "storageKey": null
                   }
                 ],
@@ -151,16 +194,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "90150490a11879d49fbe0975f8876189",
+    "cacheID": "dad7d931f435dd173257bc31ba7b790a",
     "id": null,
     "metadata": {},
     "name": "ProjectStoragePermissionTableQuery",
     "operationKind": "query",
-    "text": "query ProjectStoragePermissionTableQuery(\n  $projectId: UUID!\n  $skip: Boolean!\n) {\n  projectV2(projectId: $projectId) @skip(if: $skip) {\n    id\n    basicInfo {\n      name\n    }\n    storage {\n      allowedVfolderHosts {\n        host\n        permissions\n      }\n    }\n  }\n}\n"
+    "text": "query ProjectStoragePermissionTableQuery(\n  $projectIds: [UUID!]!\n  $skip: Boolean!\n) {\n  adminProjectsV2(filter: {id: {in: $projectIds}}, limit: 10) @skip(if: $skip) {\n    edges {\n      node {\n        id\n        basicInfo {\n          name\n        }\n        storage {\n          allowedVfolderHosts {\n            host\n            permissions\n          }\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "e14638f215f4e4fc0fc4091b964520ad";
+(node as any).hash = "b73bbef7e6755b0d701c701bfdf01801";
 
 export default node;

@@ -14,6 +14,7 @@ import {
   CheckCircleOutlined,
   CloseCircleOutlined,
   EditFilled,
+  MinusCircleOutlined,
 } from '@ant-design/icons';
 import { Typography, theme } from 'antd';
 import {
@@ -22,62 +23,82 @@ import {
   BAITable,
   type BAITableProps,
   BAIUnmountAfterClose,
+  toLocalId,
   useFetchKey,
 } from 'backend.ai-ui';
+import * as _ from 'lodash-es';
 import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 
 type ProjectRow = NonNullable<
-  ProjectStoragePermissionTableQueryType['response']['projectV2']
+  NonNullable<
+    NonNullable<
+      ProjectStoragePermissionTableQueryType['response']['adminProjectsV2']
+    >['edges'][number]
+  >['node']
 >;
 
 export interface ProjectStoragePermissionTableProps extends BAITableProps<ProjectRow> {
   storageHostId: string;
   /**
-   * Raw UUID returned by `BAIAdminProjectSelect`. Passed directly to
-   * `projectV2(projectId: UUID!)` and `modify_group(gid: UUID!)`.
+   * Raw UUIDs returned by `BAIAdminProjectSelect` (multi-mode). Empty array
+   * keeps the query skipped. Passed as `filter.id.in` to `adminProjectsV2`
+   * and as `gid` to `modify_group` (V1) on save.
    */
-  selectedProjectUuid?: string;
+  selectedProjectUuids: string[];
   permissionKeys: string[];
+  /**
+   * Called when the user clicks the row's deselect action. The panel should
+   * remove the UUID from its `selectedProjectUuids` array.
+   */
+  onDeselectItem?: (uuid: string) => void;
 }
 
 const ProjectStoragePermissionTable: React.FC<
   ProjectStoragePermissionTableProps
-> = ({ storageHostId, selectedProjectUuid, permissionKeys, ...tableProps }) => {
+> = ({
+  storageHostId,
+  selectedProjectUuids,
+  permissionKeys,
+  onDeselectItem,
+  ...tableProps
+}) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const [isEditOpen, setIsEditOpen] = useState<boolean>(false);
+  const [editingRow, setEditingRow] = useState<ProjectRow | null>(null);
 
-  // Bump on successful save to re-fetch the (otherwise cached) entity so the
-  // table reflects the new permissions immediately. Deferred so the previous
-  // row stays visible while the new data loads.
   const [fetchKey, updateFetchKey] = useFetchKey();
   const deferredFetchKey = useDeferredValue(fetchKey);
 
   const queryVariables = {
-    projectId: selectedProjectUuid ?? '',
-    skip: !selectedProjectUuid,
+    projectIds: selectedProjectUuids,
+    skip: selectedProjectUuids.length === 0,
   };
   const deferredQueryVariables = useDeferredValue(queryVariables);
 
-  const { projectV2 } =
+  const { adminProjectsV2 } =
     useLazyLoadQuery<ProjectStoragePermissionTableQueryType>(
       graphql`
         query ProjectStoragePermissionTableQuery(
-          $projectId: UUID!
+          $projectIds: [UUID!]!
           $skip: Boolean!
         ) {
-          projectV2(projectId: $projectId) @skip(if: $skip) {
-            id
-            basicInfo {
-              name
-            }
-            storage {
-              allowedVfolderHosts {
-                host
-                permissions
+          adminProjectsV2(filter: { id: { in: $projectIds } }, limit: 10)
+            @skip(if: $skip) {
+            edges {
+              node {
+                id
+                basicInfo {
+                  name
+                }
+                storage {
+                  allowedVfolderHosts {
+                    host
+                    permissions
+                  }
+                }
               }
             }
           }
@@ -92,11 +113,17 @@ const ProjectStoragePermissionTable: React.FC<
       },
     );
 
-  const allowedHosts = projectV2?.storage?.allowedVfolderHosts ?? [];
-  const hostEntry = allowedHosts.find((e) => e.host === storageHostId);
-  const isHostAllowed = !!hostEntry;
-  const enabledKeys = hostEntry?.permissions.map(v2PermissionToKey) ?? [];
-  const enabledSet = new Set(enabledKeys);
+  // Preserve the user's pick order: `adminProjectsV2` returns by its own
+  // ordering, but the consumer expects rows in the order they were selected.
+  const byUuid = new Map<string, ProjectRow>();
+  _.forEach(adminProjectsV2?.edges, (edge) => {
+    const node = edge?.node;
+    if (node?.id) byUuid.set(toLocalId(node.id), node);
+  });
+  const deferredSelected = useDeferredValue(selectedProjectUuids);
+  const rows: ProjectRow[] = _.compact(
+    deferredSelected.map((uuid) => byUuid.get(uuid) ?? null),
+  );
 
   const [commitModifyGroup] =
     useMutation<ProjectStoragePermissionTableModifyGroupMutation>(graphql`
@@ -114,28 +141,22 @@ const ProjectStoragePermissionTable: React.FC<
   const handleSave = async (
     newKeys: string[],
   ): Promise<{ ok: boolean; msg?: string | null }> => {
-    if (!selectedProjectUuid) {
+    const gid = editingRow?.id ? toLocalId(editingRow.id) : undefined;
+    if (!gid) {
       return { ok: false, msg: t('storageHost.permission.SaveFailed') };
     }
     const payload = buildAllowedHostsPayloadFromV2(
-      allowedHosts,
+      editingRow?.storage?.allowedVfolderHosts ?? [],
       storageHostId,
       newKeys,
     );
     return new Promise((resolve) => {
       commitModifyGroup({
-        variables: {
-          gid: selectedProjectUuid,
-          props: { allowed_vfolder_hosts: payload },
-        },
+        variables: { gid, props: { allowed_vfolder_hosts: payload } },
         onCompleted: (res, errors) => {
           if (errors?.length || !res?.modify_group?.ok) {
             resolve({ ok: false, msg: res?.modify_group?.msg });
           } else {
-            // Refetch so the table reflects the just-saved permissions.
-            // `modify_group` returns only `{ ok, msg }`, so Relay can't
-            // auto-update the cached `projectV2(projectId)` entry — we
-            // have to re-issue the read query.
             updateFetchKey();
             resolve({ ok: true });
           }
@@ -144,6 +165,13 @@ const ProjectStoragePermissionTable: React.FC<
       });
     });
   };
+
+  // Pre-compute the editing row's enabled set so the modal sees a stable Set.
+  const editingHosts = editingRow?.storage?.allowedVfolderHosts ?? [];
+  const editingEntry = editingHosts.find((e) => e.host === storageHostId);
+  const editingEnabledSet = new Set(
+    editingEntry?.permissions.map(v2PermissionToKey) ?? [],
+  );
 
   return (
     <>
@@ -155,50 +183,76 @@ const ProjectStoragePermissionTable: React.FC<
         resizable={false}
         pagination={false}
         loading={queryVariables !== deferredQueryVariables}
-        dataSource={projectV2 ? [projectV2] : []}
+        dataSource={rows}
         columns={[
           {
             title: t('storageHost.permission.Name'),
             key: 'name',
             fixed: 'left',
-            width: 220,
-            render: (_: unknown, row: ProjectRow) => (
-              <BAIFlex direction="column" align="start" gap="xxs">
-                <BAINameActionCell
-                  title={row.basicInfo?.name ?? ''}
-                  showActions="always"
-                  actions={[
-                    {
-                      key: 'edit',
-                      title: t('storageHost.permission.EditPermissionsAction'),
-                      icon: <EditFilled />,
-                      onClick: () => setIsEditOpen(true),
-                    },
-                  ]}
-                />
-                <BAIFlex gap="xxs" align="center">
-                  {isHostAllowed ? (
-                    <>
-                      <CheckCircleOutlined
-                        style={{ color: token.colorSuccess }}
-                      />
-                      <Typography.Text type="secondary">
-                        {t('storageHost.permission.HostAllowed')}
+            width: 240,
+            render: (_value: ProjectRow, row: ProjectRow) => {
+              const entry = row.storage?.allowedVfolderHosts?.find(
+                (e) => e.host === storageHostId,
+              );
+              const isHostAllowed = !!entry;
+              return (
+                <BAIFlex direction="column" align="start" gap="xxs">
+                  <BAINameActionCell
+                    title={
+                      <Typography.Text
+                        ellipsis={{ tooltip: row.basicInfo?.name }}
+                        style={{ maxWidth: 160 }}
+                      >
+                        {row.basicInfo?.name}
                       </Typography.Text>
-                    </>
-                  ) : (
-                    <>
-                      <CloseCircleOutlined
-                        style={{ color: token.colorError }}
-                      />
-                      <Typography.Text type="secondary">
-                        {t('storageHost.permission.HostNotAllowed')}
-                      </Typography.Text>
-                    </>
-                  )}
+                    }
+                    showActions="always"
+                    actions={[
+                      {
+                        key: 'edit',
+                        title: t(
+                          'storageHost.permission.EditPermissionsAction',
+                        ),
+                        icon: <EditFilled />,
+                        onClick: () => setEditingRow(row),
+                      },
+                      {
+                        key: 'deselect',
+                        title: t('storageHost.permission.DeselectItem'),
+                        icon: (
+                          <MinusCircleOutlined
+                            style={{ color: token.colorTextTertiary }}
+                          />
+                        ),
+                        onClick: () =>
+                          row.id && onDeselectItem?.(toLocalId(row.id)),
+                      },
+                    ]}
+                  />
+                  <BAIFlex gap="xxs" align="center">
+                    {isHostAllowed ? (
+                      <>
+                        <CheckCircleOutlined
+                          style={{ color: token.colorSuccess }}
+                        />
+                        <Typography.Text type="secondary">
+                          {t('storageHost.permission.HostAllowed')}
+                        </Typography.Text>
+                      </>
+                    ) : (
+                      <>
+                        <CloseCircleOutlined
+                          style={{ color: token.colorError }}
+                        />
+                        <Typography.Text type="secondary">
+                          {t('storageHost.permission.HostNotAllowed')}
+                        </Typography.Text>
+                      </>
+                    )}
+                  </BAIFlex>
                 </BAIFlex>
-              </BAIFlex>
-            ),
+              );
+            },
           },
           ...permissionKeys.map((permKey) => {
             const display = PERMISSION_DISPLAY_MAP[permKey];
@@ -206,27 +260,34 @@ const ProjectStoragePermissionTable: React.FC<
               title: display ? t(display.labelKey) : permKey,
               key: permKey,
               align: 'center' as const,
-              render: () =>
-                enabledSet.has(permKey) ? (
+              render: (_value: ProjectRow, row: ProjectRow) => {
+                const entry = row.storage?.allowedVfolderHosts?.find(
+                  (e) => e.host === storageHostId,
+                );
+                const enabled = new Set(
+                  entry?.permissions.map(v2PermissionToKey) ?? [],
+                );
+                return enabled.has(permKey) ? (
                   <CheckCircleOutlined style={{ color: token.colorSuccess }} />
                 ) : (
                   <CloseCircleOutlined
                     style={{ color: token.colorTextDisabled }}
                   />
-                ),
+                );
+              },
             };
           }),
         ]}
       />
       <BAIUnmountAfterClose>
         <StoragePermissionEditModal
-          open={isEditOpen}
+          open={!!editingRow}
           title={t('storageHost.permission.EditPermissions', {
-            name: projectV2?.basicInfo?.name ?? '',
+            name: editingRow?.basicInfo?.name ?? '',
           })}
           permissionKeys={permissionKeys}
-          initialEnabled={enabledSet}
-          onRequestClose={() => setIsEditOpen(false)}
+          initialEnabled={editingEnabledSet}
+          onRequestClose={() => setEditingRow(null)}
           onSave={handleSave}
         />
       </BAIUnmountAfterClose>

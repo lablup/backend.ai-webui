@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f9ecd4cb99f7d7ec4b85ea8c6e561ea5>>
+ * @generated SignedSource<<7e327183805cb7429279fc4e1ce7d63e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,14 +10,13 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 export type DomainStoragePermissionTableQuery$variables = {
-  name: string;
   skip: boolean;
 };
 export type DomainStoragePermissionTableQuery$data = {
-  readonly domain?: {
+  readonly domains?: ReadonlyArray<{
     readonly allowed_vfolder_hosts: string | null | undefined;
     readonly name: string | null | undefined;
-  } | null | undefined;
+  } | null | undefined> | null | undefined;
 };
 export type DomainStoragePermissionTableQuery = {
   response: DomainStoragePermissionTableQuery$data;
@@ -26,11 +25,6 @@ export type DomainStoragePermissionTableQuery = {
 
 const node: ConcreteRequest = (function(){
 var v0 = [
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "name"
-  },
   {
     "defaultValue": null,
     "kind": "LocalArgument",
@@ -47,15 +41,15 @@ v1 = [
         "alias": null,
         "args": [
           {
-            "kind": "Variable",
-            "name": "name",
-            "variableName": "name"
+            "kind": "Literal",
+            "name": "is_active",
+            "value": true
           }
         ],
         "concreteType": "Domain",
         "kind": "LinkedField",
-        "name": "domain",
-        "plural": false,
+        "name": "domains",
+        "plural": true,
         "selections": [
           {
             "alias": null,
@@ -72,7 +66,7 @@ v1 = [
             "storageKey": null
           }
         ],
-        "storageKey": null
+        "storageKey": "domains(is_active:true)"
       }
     ]
   }
@@ -95,16 +89,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "bf86612181b41a47c76fc2eeab7f81da",
+    "cacheID": "a70e5faa2963f887f536718b6456d3f2",
     "id": null,
     "metadata": {},
     "name": "DomainStoragePermissionTableQuery",
     "operationKind": "query",
-    "text": "query DomainStoragePermissionTableQuery(\n  $name: String!\n  $skip: Boolean!\n) {\n  domain(name: $name) @skip(if: $skip) {\n    name\n    allowed_vfolder_hosts\n  }\n}\n"
+    "text": "query DomainStoragePermissionTableQuery(\n  $skip: Boolean!\n) {\n  domains(is_active: true) @skip(if: $skip) {\n    name\n    allowed_vfolder_hosts\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "6005d9c92a827f83b65194bae33d6d2c";
+(node as any).hash = "73fabff6e853430d27f6bdcea46a293e";
 
 export default node;

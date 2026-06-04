@@ -6,6 +6,7 @@ import { StorageHostPermissionPanelQuery } from '../__generated__/StorageHostPer
 import DomainStoragePermissionTable from './DomainStoragePermissionTable';
 import KeypairResourcePolicyStoragePermissionTable from './KeypairResourcePolicyStoragePermissionTable';
 import ProjectStoragePermissionTable from './ProjectStoragePermissionTable';
+import { Typography, theme } from 'antd';
 import {
   BAIAdminKeypairResourcePolicySelect,
   BAIAdminProjectSelect,
@@ -23,14 +24,26 @@ interface StorageHostPermissionPanelProps {
   storageHostId: string;
 }
 
+/**
+ * Maximum number of entities a single permission card may show at once. The
+ * cap exists for two reasons: (a) the V2 list-with-filter queries
+ * (`adminProjectsV2` / `adminKeypairResourcePoliciesV2`) are paged and we want
+ * to avoid hidden pagination here, and (b) reviewing more than ~10 rows of
+ * permission matrices in one card defeats the purpose of the per-entity
+ * inspection UX.
+ */
+const MAX_SELECTION = 10;
+
 const StorageHostPermissionPanel: React.FC<StorageHostPermissionPanelProps> = ({
   storageHostId,
 }) => {
   'use memo';
   const { t } = useTranslation();
+  const { token } = theme.useToken();
 
   // Panel-level query for the canonical permission key list. Each card's
-  // table then issues its own single-entity lazy query keyed on its select.
+  // table then issues its own list-with-filter lazy query keyed on the card's
+  // multi-select.
   const { vfolder_host_permissions } =
     useLazyLoadQuery<StorageHostPermissionPanelQuery>(
       graphql`
@@ -47,15 +60,25 @@ const StorageHostPermissionPanel: React.FC<StorageHostPermissionPanelProps> = ({
     vfolder_host_permissions?.vfolder_host_permission_list ?? [],
   );
 
-  const [selectedDomainName, setSelectedDomainName] = useState<
-    string | undefined
-  >();
-  const [selectedProjectUuid, setSelectedProjectUuid] = useState<
-    string | undefined
-  >();
-  const [selectedPolicyName, setSelectedPolicyName] = useState<
-    string | undefined
-  >();
+  const [selectedDomainNames, setSelectedDomainNames] = useState<string[]>([]);
+  const [selectedProjectUuids, setSelectedProjectUuids] = useState<string[]>(
+    [],
+  );
+  const [selectedPolicyNames, setSelectedPolicyNames] = useState<string[]>([]);
+
+  // The select itself does not prevent the user from picking an 11th item —
+  // it just goes into an error state, and the corresponding table caps its
+  // fetched dataSource at `MAX_SELECTION` so over-selection never bloats the
+  // network or the rendered DOM. Clearing one selection brings the count
+  // back under the limit and the error state goes away.
+  const renderLimitMessage = (count: number) =>
+    count > MAX_SELECTION ? (
+      <Typography.Text type="danger" style={{ fontSize: token.fontSizeSM }}>
+        {t('storageHost.permission.SelectionLimitExceeded', {
+          max: MAX_SELECTION,
+        })}
+      </Typography.Text>
+    ) : null;
 
   return (
     <BAIFlex direction="column" align="stretch" gap="md">
@@ -64,21 +87,35 @@ const StorageHostPermissionPanel: React.FC<StorageHostPermissionPanelProps> = ({
         showIcon
         description={t('storageHost.permission.EffectivePermissionsNote')}
       />
+
       <BAICard
         title={t('storageHost.permission.Domains')}
         extra={
-          <BAIDomainSelect
-            value={selectedDomainName}
-            onChange={(value) => setSelectedDomainName(value)}
-            style={{ width: 210 }}
-          />
+          <BAIFlex direction="column" align="end" gap="xxs">
+            <BAIDomainSelect
+              mode="multiple"
+              maxTagCount="responsive"
+              value={selectedDomainNames}
+              onChange={(value) =>
+                setSelectedDomainNames((value as string[]) ?? [])
+              }
+              status={
+                selectedDomainNames.length > MAX_SELECTION ? 'error' : undefined
+              }
+              style={{ width: 320 }}
+            />
+            {renderLimitMessage(selectedDomainNames.length)}
+          </BAIFlex>
         }
         styles={{ body: { paddingTop: 0 } }}
       >
         <DomainStoragePermissionTable
           storageHostId={storageHostId}
-          selectedDomainName={selectedDomainName}
+          selectedDomainNames={selectedDomainNames.slice(0, MAX_SELECTION)}
           permissionKeys={permissionKeys}
+          onDeselectItem={(name) =>
+            setSelectedDomainNames((prev) => prev.filter((n) => n !== name))
+          }
           locale={{ emptyText: t('storageHost.permission.NoDomainSelected') }}
         />
       </BAICard>
@@ -86,18 +123,33 @@ const StorageHostPermissionPanel: React.FC<StorageHostPermissionPanelProps> = ({
       <BAICard
         title={t('storageHost.permission.Projects')}
         extra={
-          <BAIAdminProjectSelect
-            value={selectedProjectUuid}
-            onChange={(value) => setSelectedProjectUuid(value)}
-            style={{ width: 210 }}
-          />
+          <BAIFlex direction="column" align="end" gap="xxs">
+            <BAIAdminProjectSelect
+              mode="multiple"
+              maxTagCount="responsive"
+              value={selectedProjectUuids}
+              onChange={(value) =>
+                setSelectedProjectUuids((value as string[]) ?? [])
+              }
+              status={
+                selectedProjectUuids.length > MAX_SELECTION
+                  ? 'error'
+                  : undefined
+              }
+              style={{ width: 320 }}
+            />
+            {renderLimitMessage(selectedProjectUuids.length)}
+          </BAIFlex>
         }
         styles={{ body: { paddingTop: 0 } }}
       >
         <ProjectStoragePermissionTable
           storageHostId={storageHostId}
-          selectedProjectUuid={selectedProjectUuid}
+          selectedProjectUuids={selectedProjectUuids.slice(0, MAX_SELECTION)}
           permissionKeys={permissionKeys}
+          onDeselectItem={(uuid) =>
+            setSelectedProjectUuids((prev) => prev.filter((u) => u !== uuid))
+          }
           locale={{ emptyText: t('storageHost.permission.NoProjectSelected') }}
         />
       </BAICard>
@@ -105,18 +157,31 @@ const StorageHostPermissionPanel: React.FC<StorageHostPermissionPanelProps> = ({
       <BAICard
         title={t('storageHost.permission.KeypairResourcePolicies')}
         extra={
-          <BAIAdminKeypairResourcePolicySelect
-            value={selectedPolicyName}
-            onChange={(value) => setSelectedPolicyName(value)}
-            style={{ width: 210 }}
-          />
+          <BAIFlex direction="column" align="end" gap="xxs">
+            <BAIAdminKeypairResourcePolicySelect
+              mode="multiple"
+              maxTagCount="responsive"
+              value={selectedPolicyNames}
+              onChange={(value) =>
+                setSelectedPolicyNames((value as string[]) ?? [])
+              }
+              status={
+                selectedPolicyNames.length > MAX_SELECTION ? 'error' : undefined
+              }
+              style={{ width: 320 }}
+            />
+            {renderLimitMessage(selectedPolicyNames.length)}
+          </BAIFlex>
         }
         styles={{ body: { paddingTop: 0 } }}
       >
         <KeypairResourcePolicyStoragePermissionTable
           storageHostId={storageHostId}
-          selectedPolicyName={selectedPolicyName}
+          selectedPolicyNames={selectedPolicyNames.slice(0, MAX_SELECTION)}
           permissionKeys={permissionKeys}
+          onDeselectItem={(name) =>
+            setSelectedPolicyNames((prev) => prev.filter((n) => n !== name))
+          }
           locale={{
             emptyText: t(
               'storageHost.permission.NoKeypairResourcePolicySelected',

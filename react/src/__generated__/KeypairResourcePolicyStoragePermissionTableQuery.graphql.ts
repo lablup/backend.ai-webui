@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<5416d7204087d3f2a5c783810af00259>>
+ * @generated SignedSource<<abd79c9911ccfee4a4cdb0a98d1035dd>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,17 +11,21 @@
 import { ConcreteRequest } from 'relay-runtime';
 export type VFolderHostPermissionV2 = "CREATE_VFOLDER" | "DELETE_VFOLDER" | "DOWNLOAD_FILE" | "INVITE_OTHERS" | "MODIFY_VFOLDER" | "MOUNT_IN_SESSION" | "SET_USER_PERM" | "UPLOAD_FILE" | "%future added value";
 export type KeypairResourcePolicyStoragePermissionTableQuery$variables = {
-  name: string;
+  names: ReadonlyArray<string>;
   skip: boolean;
 };
 export type KeypairResourcePolicyStoragePermissionTableQuery$data = {
-  readonly adminKeypairResourcePolicyV2?: {
-    readonly allowedVfolderHosts: ReadonlyArray<{
-      readonly host: string;
-      readonly permissions: ReadonlyArray<VFolderHostPermissionV2>;
+  readonly adminKeypairResourcePoliciesV2?: {
+    readonly edges: ReadonlyArray<{
+      readonly node: {
+        readonly allowedVfolderHosts: ReadonlyArray<{
+          readonly host: string;
+          readonly permissions: ReadonlyArray<VFolderHostPermissionV2>;
+        }>;
+        readonly id: string;
+        readonly name: string;
+      };
     }>;
-    readonly id: string;
-    readonly name: string;
   } | null | undefined;
 };
 export type KeypairResourcePolicyStoragePermissionTableQuery = {
@@ -34,7 +38,7 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "name"
+    "name": "names"
   },
   {
     "defaultValue": null,
@@ -52,50 +56,89 @@ v1 = [
         "alias": null,
         "args": [
           {
-            "kind": "Variable",
-            "name": "name",
-            "variableName": "name"
+            "fields": [
+              {
+                "fields": [
+                  {
+                    "kind": "Variable",
+                    "name": "in",
+                    "variableName": "names"
+                  }
+                ],
+                "kind": "ObjectValue",
+                "name": "name"
+              }
+            ],
+            "kind": "ObjectValue",
+            "name": "filter"
+          },
+          {
+            "kind": "Literal",
+            "name": "limit",
+            "value": 10
           }
         ],
-        "concreteType": "KeypairResourcePolicyV2",
+        "concreteType": "KeypairResourcePolicyV2Connection",
         "kind": "LinkedField",
-        "name": "adminKeypairResourcePolicyV2",
+        "name": "adminKeypairResourcePoliciesV2",
         "plural": false,
         "selections": [
           {
             "alias": null,
             "args": null,
-            "kind": "ScalarField",
-            "name": "id",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "name",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "VFolderHostPermissionEntry",
+            "concreteType": "KeypairResourcePolicyV2Edge",
             "kind": "LinkedField",
-            "name": "allowedVfolderHosts",
+            "name": "edges",
             "plural": true,
             "selections": [
               {
                 "alias": null,
                 "args": null,
-                "kind": "ScalarField",
-                "name": "host",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "permissions",
+                "concreteType": "KeypairResourcePolicyV2",
+                "kind": "LinkedField",
+                "name": "node",
+                "plural": false,
+                "selections": [
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "id",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "name",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "VFolderHostPermissionEntry",
+                    "kind": "LinkedField",
+                    "name": "allowedVfolderHosts",
+                    "plural": true,
+                    "selections": [
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "host",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "permissions",
+                        "storageKey": null
+                      }
+                    ],
+                    "storageKey": null
+                  }
+                ],
                 "storageKey": null
               }
             ],
@@ -125,16 +168,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "fb14f1ec5edee501c698e38774bb468f",
+    "cacheID": "439f13931f2e1e8fe663825b5bad5a55",
     "id": null,
     "metadata": {},
     "name": "KeypairResourcePolicyStoragePermissionTableQuery",
     "operationKind": "query",
-    "text": "query KeypairResourcePolicyStoragePermissionTableQuery(\n  $name: String!\n  $skip: Boolean!\n) {\n  adminKeypairResourcePolicyV2(name: $name) @skip(if: $skip) {\n    id\n    name\n    allowedVfolderHosts {\n      host\n      permissions\n    }\n  }\n}\n"
+    "text": "query KeypairResourcePolicyStoragePermissionTableQuery(\n  $names: [String!]!\n  $skip: Boolean!\n) {\n  adminKeypairResourcePoliciesV2(filter: {name: {in: $names}}, limit: 10) @skip(if: $skip) {\n    edges {\n      node {\n        id\n        name\n        allowedVfolderHosts {\n          host\n          permissions\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "df868120b7ee3a3d59bae835b1c07802";
+(node as any).hash = "c7396bebbbe0fd0a7b54fa2c5e9f9ac8";
 
 export default node;

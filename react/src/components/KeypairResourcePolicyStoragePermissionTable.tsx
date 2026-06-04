@@ -14,6 +14,7 @@ import {
   CheckCircleOutlined,
   CloseCircleOutlined,
   EditFilled,
+  MinusCircleOutlined,
 } from '@ant-design/icons';
 import { Typography, theme } from 'antd';
 import {
@@ -24,58 +25,85 @@ import {
   BAIUnmountAfterClose,
   useFetchKey,
 } from 'backend.ai-ui';
+import * as _ from 'lodash-es';
 import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 
 type KeypairResourcePolicyRow = NonNullable<
-  KeypairResourcePolicyStoragePermissionTableQueryType['response']['adminKeypairResourcePolicyV2']
+  NonNullable<
+    NonNullable<
+      KeypairResourcePolicyStoragePermissionTableQueryType['response']['adminKeypairResourcePoliciesV2']
+    >['edges'][number]
+  >['node']
 >;
 
 export interface KeypairResourcePolicyStoragePermissionTableProps extends BAITableProps<KeypairResourcePolicyRow> {
   storageHostId: string;
   /**
-   * Policy name picked via `BAIAdminKeypairResourcePolicySelect`. Undefined
-   * keeps the query skipped (no network call). KRP `name` is both the
-   * identifier and the display label.
+   * Policy names picked via `BAIAdminKeypairResourcePolicySelect` (multi).
+   * Empty array keeps the query skipped. Passed as `filter.name.in` to
+   * `adminKeypairResourcePoliciesV2` and as `name` to V1
+   * `modify_keypair_resource_policy` on save.
    */
-  selectedPolicyName?: string;
+  selectedPolicyNames: string[];
   permissionKeys: string[];
+  /**
+   * Called when the user clicks the row's deselect action. The panel should
+   * remove the name from its `selectedPolicyNames` array.
+   */
+  onDeselectItem?: (name: string) => void;
 }
 
 const KeypairResourcePolicyStoragePermissionTable: React.FC<
   KeypairResourcePolicyStoragePermissionTableProps
-> = ({ storageHostId, selectedPolicyName, permissionKeys, ...tableProps }) => {
+> = ({
+  storageHostId,
+  selectedPolicyNames,
+  permissionKeys,
+  onDeselectItem,
+  ...tableProps
+}) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const [isEditOpen, setIsEditOpen] = useState<boolean>(false);
+  const [editingRow, setEditingRow] = useState<KeypairResourcePolicyRow | null>(
+    null,
+  );
 
-  // Bump on successful save to re-fetch the (otherwise cached) entity so the
-  // table reflects the new permissions immediately. Deferred so the previous
-  // row stays visible while the new data loads.
   const [fetchKey, updateFetchKey] = useFetchKey();
   const deferredFetchKey = useDeferredValue(fetchKey);
 
   const queryVariables = {
-    name: selectedPolicyName ?? '',
-    skip: !selectedPolicyName,
+    names: selectedPolicyNames,
+    skip: selectedPolicyNames.length === 0,
   };
   const deferredQueryVariables = useDeferredValue(queryVariables);
 
-  const { adminKeypairResourcePolicyV2 } =
+  // Read via V2 list-with-filter; write still goes through V1
+  // `modify_keypair_resource_policy` because no V2 update mutation has been
+  // wired yet. JSONString payload rebuilt from V2 structured entries via
+  // `buildAllowedHostsPayloadFromV2`, preserving all other hosts.
+  const { adminKeypairResourcePoliciesV2 } =
     useLazyLoadQuery<KeypairResourcePolicyStoragePermissionTableQueryType>(
       graphql`
         query KeypairResourcePolicyStoragePermissionTableQuery(
-          $name: String!
+          $names: [String!]!
           $skip: Boolean!
         ) {
-          adminKeypairResourcePolicyV2(name: $name) @skip(if: $skip) {
-            id
-            name
-            allowedVfolderHosts {
-              host
-              permissions
+          adminKeypairResourcePoliciesV2(
+            filter: { name: { in: $names } }
+            limit: 10
+          ) @skip(if: $skip) {
+            edges {
+              node {
+                id
+                name
+                allowedVfolderHosts {
+                  host
+                  permissions
+                }
+              }
             }
           }
         }
@@ -89,16 +117,17 @@ const KeypairResourcePolicyStoragePermissionTable: React.FC<
       },
     );
 
-  const allowedHosts = adminKeypairResourcePolicyV2?.allowedVfolderHosts ?? [];
-  const hostEntry = allowedHosts.find((e) => e.host === storageHostId);
-  const isHostAllowed = !!hostEntry;
-  const enabledKeys = hostEntry?.permissions.map(v2PermissionToKey) ?? [];
-  const enabledSet = new Set(enabledKeys);
+  // Preserve selection order.
+  const byName = new Map<string, KeypairResourcePolicyRow>();
+  _.forEach(adminKeypairResourcePoliciesV2?.edges, (edge) => {
+    const node = edge?.node;
+    if (node?.name) byName.set(node.name, node);
+  });
+  const deferredSelected = useDeferredValue(selectedPolicyNames);
+  const rows: KeypairResourcePolicyRow[] = _.compact(
+    deferredSelected.map((n) => byName.get(n) ?? null),
+  );
 
-  // Mutation still goes through V1 `modify_keypair_resource_policy` because the
-  // V2 update mutation has not been wired yet — V2 read, V1 write. The
-  // JSONString payload is rebuilt from V2 structured entries via
-  // `buildAllowedHostsPayloadFromV2`, preserving all other hosts.
   const [commitModifyKrp] =
     useMutation<KeypairResourcePolicyStoragePermissionTableModifyMutation>(
       graphql`
@@ -117,18 +146,19 @@ const KeypairResourcePolicyStoragePermissionTable: React.FC<
   const handleSave = async (
     newKeys: string[],
   ): Promise<{ ok: boolean; msg?: string | null }> => {
-    if (!selectedPolicyName) {
+    const policyName = editingRow?.name;
+    if (!policyName) {
       return { ok: false, msg: t('storageHost.permission.SaveFailed') };
     }
     const payload = buildAllowedHostsPayloadFromV2(
-      allowedHosts,
+      editingRow?.allowedVfolderHosts ?? [],
       storageHostId,
       newKeys,
     );
     return new Promise((resolve) => {
       commitModifyKrp({
         variables: {
-          name: selectedPolicyName,
+          name: policyName,
           props: { allowed_vfolder_hosts: payload },
         },
         onCompleted: (res, errors) => {
@@ -138,10 +168,6 @@ const KeypairResourcePolicyStoragePermissionTable: React.FC<
               msg: res?.modify_keypair_resource_policy?.msg,
             });
           } else {
-            // Refetch so the table reflects the just-saved permissions.
-            // `modify_keypair_resource_policy` returns only `{ ok, msg }`,
-            // so Relay can't auto-update the cached V2 entry — we have to
-            // re-issue the read query.
             updateFetchKey();
             resolve({ ok: true });
           }
@@ -150,6 +176,12 @@ const KeypairResourcePolicyStoragePermissionTable: React.FC<
       });
     });
   };
+
+  const editingHosts = editingRow?.allowedVfolderHosts ?? [];
+  const editingEntry = editingHosts.find((e) => e.host === storageHostId);
+  const editingEnabledSet = new Set(
+    editingEntry?.permissions.map(v2PermissionToKey) ?? [],
+  );
 
   return (
     <>
@@ -161,52 +193,78 @@ const KeypairResourcePolicyStoragePermissionTable: React.FC<
         resizable={false}
         pagination={false}
         loading={queryVariables !== deferredQueryVariables}
-        dataSource={
-          adminKeypairResourcePolicyV2 ? [adminKeypairResourcePolicyV2] : []
-        }
+        dataSource={rows}
         columns={[
           {
             title: t('storageHost.permission.Name'),
             key: 'name',
             fixed: 'left',
-            width: 220,
-            render: (_: unknown, row: KeypairResourcePolicyRow) => (
-              <BAIFlex direction="column" align="start" gap="xxs">
-                <BAINameActionCell
-                  title={row.name}
-                  showActions="always"
-                  actions={[
-                    {
-                      key: 'edit',
-                      title: t('storageHost.permission.EditPermissionsAction'),
-                      icon: <EditFilled />,
-                      onClick: () => setIsEditOpen(true),
-                    },
-                  ]}
-                />
-                <BAIFlex gap="xxs" align="center">
-                  {isHostAllowed ? (
-                    <>
-                      <CheckCircleOutlined
-                        style={{ color: token.colorSuccess }}
-                      />
-                      <Typography.Text type="secondary">
-                        {t('storageHost.permission.HostAllowed')}
+            width: 240,
+            render: (
+              _value: KeypairResourcePolicyRow,
+              row: KeypairResourcePolicyRow,
+            ) => {
+              const entry = row.allowedVfolderHosts?.find(
+                (e) => e.host === storageHostId,
+              );
+              const isHostAllowed = !!entry;
+              return (
+                <BAIFlex direction="column" align="start" gap="xxs">
+                  <BAINameActionCell
+                    title={
+                      <Typography.Text
+                        ellipsis={{ tooltip: row.name }}
+                        style={{ maxWidth: 160 }}
+                      >
+                        {row.name}
                       </Typography.Text>
-                    </>
-                  ) : (
-                    <>
-                      <CloseCircleOutlined
-                        style={{ color: token.colorError }}
-                      />
-                      <Typography.Text type="secondary">
-                        {t('storageHost.permission.HostNotAllowed')}
-                      </Typography.Text>
-                    </>
-                  )}
+                    }
+                    showActions="always"
+                    actions={[
+                      {
+                        key: 'edit',
+                        title: t(
+                          'storageHost.permission.EditPermissionsAction',
+                        ),
+                        icon: <EditFilled />,
+                        onClick: () => setEditingRow(row),
+                      },
+                      {
+                        key: 'deselect',
+                        title: t('storageHost.permission.DeselectItem'),
+                        icon: (
+                          <MinusCircleOutlined
+                            style={{ color: token.colorTextTertiary }}
+                          />
+                        ),
+                        onClick: () => onDeselectItem?.(row.name),
+                      },
+                    ]}
+                  />
+                  <BAIFlex gap="xxs" align="center">
+                    {isHostAllowed ? (
+                      <>
+                        <CheckCircleOutlined
+                          style={{ color: token.colorSuccess }}
+                        />
+                        <Typography.Text type="secondary">
+                          {t('storageHost.permission.HostAllowed')}
+                        </Typography.Text>
+                      </>
+                    ) : (
+                      <>
+                        <CloseCircleOutlined
+                          style={{ color: token.colorError }}
+                        />
+                        <Typography.Text type="secondary">
+                          {t('storageHost.permission.HostNotAllowed')}
+                        </Typography.Text>
+                      </>
+                    )}
+                  </BAIFlex>
                 </BAIFlex>
-              </BAIFlex>
-            ),
+              );
+            },
           },
           ...permissionKeys.map((permKey) => {
             const display = PERMISSION_DISPLAY_MAP[permKey];
@@ -214,27 +272,37 @@ const KeypairResourcePolicyStoragePermissionTable: React.FC<
               title: display ? t(display.labelKey) : permKey,
               key: permKey,
               align: 'center' as const,
-              render: () =>
-                enabledSet.has(permKey) ? (
+              render: (
+                _value: KeypairResourcePolicyRow,
+                row: KeypairResourcePolicyRow,
+              ) => {
+                const entry = row.allowedVfolderHosts?.find(
+                  (e) => e.host === storageHostId,
+                );
+                const enabled = new Set(
+                  entry?.permissions.map(v2PermissionToKey) ?? [],
+                );
+                return enabled.has(permKey) ? (
                   <CheckCircleOutlined style={{ color: token.colorSuccess }} />
                 ) : (
                   <CloseCircleOutlined
                     style={{ color: token.colorTextDisabled }}
                   />
-                ),
+                );
+              },
             };
           }),
         ]}
       />
       <BAIUnmountAfterClose>
         <StoragePermissionEditModal
-          open={isEditOpen}
+          open={!!editingRow}
           title={t('storageHost.permission.EditPermissions', {
-            name: adminKeypairResourcePolicyV2?.name ?? '',
+            name: editingRow?.name ?? '',
           })}
           permissionKeys={permissionKeys}
-          initialEnabled={enabledSet}
-          onRequestClose={() => setIsEditOpen(false)}
+          initialEnabled={editingEnabledSet}
+          onRequestClose={() => setEditingRow(null)}
           onSave={handleSave}
         />
       </BAIUnmountAfterClose>
