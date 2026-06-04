@@ -834,16 +834,20 @@ export class Client {
     if (this.isManagerVersionCompatibleWith('26.4.4rc4')) {
       this._features['rbac-element-type-filter'] = true;
     }
-    // BA-6247 / BA-6249 user filters merged after 26.4.4rc6, so they ship in
-    // 26.4.4 (final). Pinned to the rc6 tag so the flag also activates against
-    // the rc6 staging manager (a post-rc6 snapshot reporting the rc6 version).
-    // TODO(FR-3024): simplify to '26.4.4' once rc builds are out of use.
+    // Pinned to the rc6 tag so these flags also activate against the rc6
+    // staging manager (a post-rc6 snapshot reporting the rc6 version).
+    // TODO(FR-3024, FR-3037): simplify to '26.4.4' once rc builds are out of use.
     if (this.isManagerVersionCompatibleWith('26.4.4rc6')) {
+      // BA-6247 / BA-6249 user filters merged after 26.4.4rc6 (ship in 26.4.4).
       this._features['user-v2-extended-filter'] = true;
       // adminKeypairResourcePoliciesV2 gained the `keypair.userId` nested filter
       // + the `keypairs` connection in 26.4.4 (FR-3020). Pinned to the rc6 tag
       // for the same staging-manager reason as above.
       this._features['keypair-resource-policy-user-filter'] = true;
+      // createVFolderInProject / CreateVFolderInScopeInput landed after 26.4.3;
+      // 26.4.3 and older only expose createVfolderV2, which still creates a
+      // project-owned vfolder via its `projectId` field. FR-3037.
+      this._features['vfolder-create-in-scope'] = true;
     }
   }
 

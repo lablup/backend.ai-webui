@@ -286,7 +286,9 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
 
     let vfolderResults: FolderCreationResponse | undefined;
     try {
-      if (isProjectFolder) {
+      if (isProjectFolder && baiClient.supports('vfolder-create-in-scope')) {
+        // Dedicated project-scoped mutation (createVFolderInProject /
+        // CreateVFolderInScopeInput) exists only on managers >= 26.4.4rc6.
         vfolderResults = await commitCreateInProjectMutation({
           projectId: values.group ?? '',
           input: {
@@ -297,13 +299,19 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
           },
         }).then((res) => res?.createVFolderInProject?.vfolder);
       } else {
+        // User-scoped folders, and project folders on managers <= 26.4.3 that
+        // lack createVFolderInProject, both go through createVfolderV2.
+        // A project-owned vfolder is requested by passing `projectId`. FR-3037.
         vfolderResults = await commitCreateMutation({
           input: {
             ...baseInput,
             // `CreateVFolderV2Input` keeps the lowercase legacy strings.
             usageMode: legacyUsageMode,
             permission: values.permission,
-            projectId: null,
+            // Mirror the project-scoped path: a project folder always carries
+            // its project id (defaulted to the current project by the form);
+            // user folders pass null. Keeps both mutation paths consistent.
+            projectId: isProjectFolder ? (values.group ?? '') : null,
           },
         }).then((res) => res?.createVfolderV2?.vfolder);
       }
