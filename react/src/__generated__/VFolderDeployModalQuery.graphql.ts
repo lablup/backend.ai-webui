@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a897f0a92c55c29fb23ea6d6d2c64e0d>>
+ * @generated SignedSource<<e85270480026aefd2a82e34937dac162>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -369,12 +369,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "b639c5ceda298a0462f99b2c846b74d2",
+    "cacheID": "ffadb8246c1fa20e63f3ed355c3cd27a",
     "id": null,
     "metadata": {},
     "name": "VFolderDeployModalQuery",
     "operationKind": "query",
-    "text": "query VFolderDeployModalQuery {\n  deploymentRevisionPresets(orderBy: [{field: RANK, direction: \"ASC\"}]) {\n    edges {\n      node {\n        id\n        name\n        runtimeVariantId\n        ...DeploymentPresetDetailModalFragment\n      }\n    }\n  }\n}\n\nfragment DeploymentPresetDetailModalFragment on DeploymentRevisionPreset {\n  id\n  name\n  description\n  runtimeVariantId\n  runtimeVariant {\n    id\n    name\n  }\n  cluster {\n    clusterMode\n    clusterSize\n  }\n  execution {\n    imageId\n    startupCommand\n    bootstrapScript\n    environ {\n      key\n      value\n    }\n  }\n  resource {\n    resourceOpts {\n      name\n      value\n    }\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  deploymentDefaults {\n    openToPublic\n    replicaCount\n    revisionHistoryLimit\n    deploymentStrategy\n  }\n  presetValues {\n    presetId\n    value\n  }\n}\n"
+    "text": "query VFolderDeployModalQuery {\n  deploymentRevisionPresets(orderBy: [{field: RANK, direction: \"ASC\"}]) {\n    edges {\n      node {\n        id\n        name\n        runtimeVariantId\n        ...DeploymentPresetDetailModalFragment\n      }\n    }\n  }\n}\n\nfragment DeploymentPresetDetailModalFragment on DeploymentRevisionPreset {\n  id\n  name\n  description\n  runtimeVariantId\n  runtimeVariant {\n    id\n    name\n  }\n  cluster {\n    clusterMode\n    clusterSize\n  }\n  execution {\n    imageId @since(version: \"26.4.4rc6\")\n    startupCommand\n    bootstrapScript\n    environ @since(version: \"26.4.4rc6\") {\n      key\n      value\n    }\n  }\n  resource {\n    resourceOpts {\n      name\n      value\n    }\n  }\n  resourceSlots @since(version: \"26.4.4rc6\") {\n    slotName\n    quantity\n  }\n  deploymentDefaults {\n    openToPublic\n    replicaCount\n    revisionHistoryLimit\n    deploymentStrategy\n  }\n  presetValues {\n    presetId\n    value\n  }\n}\n"
   }
 };
 })();

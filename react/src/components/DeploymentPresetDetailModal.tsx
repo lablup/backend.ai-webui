@@ -49,10 +49,10 @@ const DeploymentPresetDetailModal: React.FC<
           clusterSize
         }
         execution {
-          imageId
+          imageId @since(version: "26.4.4rc6")
           startupCommand
           bootstrapScript
-          environ {
+          environ @since(version: "26.4.4rc6") {
             key
             value
           }
@@ -63,7 +63,7 @@ const DeploymentPresetDetailModal: React.FC<
             value
           }
         }
-        resourceSlots {
+        resourceSlots @since(version: "26.4.4rc6") {
           slotName
           quantity
         }
