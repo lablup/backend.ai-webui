@@ -834,6 +834,13 @@ export class Client {
     if (this.isManagerVersionCompatibleWith('26.4.4rc4')) {
       this._features['rbac-element-type-filter'] = true;
     }
+    // BA-6247 / BA-6249 user filters merged after 26.4.4rc6, so they ship in
+    // 26.4.4 (final). Pinned to the rc6 tag so the flag also activates against
+    // the rc6 staging manager (a post-rc6 snapshot reporting the rc6 version).
+    // TODO(FR-3024): simplify to '26.4.4' once rc builds are out of use.
+    if (this.isManagerVersionCompatibleWith('26.4.4rc6')) {
+      this._features['user-v2-extended-filter'] = true;
+    }
   }
 
   /**

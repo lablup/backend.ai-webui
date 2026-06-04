@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<06422b89b64682dd2bc7a123c2951f55>>
+ * @generated SignedSource<<8dc4f0b6c4ffe302d3fa76829308a352>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -18,14 +18,24 @@ export type UserV2Filter = {
   AND?: ReadonlyArray<UserV2Filter> | null | undefined;
   NOT?: ReadonlyArray<UserV2Filter> | null | undefined;
   OR?: ReadonlyArray<UserV2Filter> | null | undefined;
+  containerGids?: IntArrayFilter | null | undefined;
+  containerMainGid?: IntFilter | null | undefined;
+  containerUid?: IntFilter | null | undefined;
   createdAt?: DateTimeFilter | null | undefined;
+  description?: StringFilter | null | undefined;
   domain?: UserDomainNestedFilter | null | undefined;
   domainName?: StringFilter | null | undefined;
   email?: StringFilter | null | undefined;
+  fullName?: StringFilter | null | undefined;
   integrationName?: StringFilter | null | undefined;
+  needPasswordChange?: boolean | null | undefined;
   project?: UserProjectNestedFilter | null | undefined;
+  resourcePolicy?: StringFilter | null | undefined;
   role?: UserRoleV2EnumFilter | null | undefined;
   status?: UserStatusV2EnumFilter | null | undefined;
+  statusInfo?: StringFilter | null | undefined;
+  sudoSessionEnabled?: boolean | null | undefined;
+  totpActivated?: boolean | null | undefined;
   username?: StringFilter | null | undefined;
   uuid?: UUIDFilter | null | undefined;
 };
@@ -68,6 +78,19 @@ export type UserRoleV2EnumFilter = {
   in?: ReadonlyArray<UserRoleV2> | null | undefined;
   notEquals?: UserRoleV2 | null | undefined;
   notIn?: ReadonlyArray<UserRoleV2> | null | undefined;
+};
+export type IntFilter = {
+  equals?: number | null | undefined;
+  greaterThan?: number | null | undefined;
+  greaterThanOrEqual?: number | null | undefined;
+  lessThan?: number | null | undefined;
+  lessThanOrEqual?: number | null | undefined;
+  notEquals?: number | null | undefined;
+};
+export type IntArrayFilter = {
+  contains?: number | null | undefined;
+  containsAll?: ReadonlyArray<number> | null | undefined;
+  containsAny?: ReadonlyArray<number> | null | undefined;
 };
 export type DateTimeFilter = {
   after?: string | null | undefined;

@@ -30,6 +30,7 @@ import {
   filterOutEmpty,
   filterOutNullAndUndefined,
   BAIFlex,
+  BAIGraphQLFilterProperty,
   BAIGraphQLPropertyFilter,
   GraphQLFilter,
   useBAILogger,
@@ -302,6 +303,119 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
     );
   };
 
+  // Container UID/GID filters map to a raw GraphQL Int; reject non-integer
+  // input before BAIGraphQLPropertyFilter coerces it via Number(...), which
+  // would otherwise produce NaN / invalid Int variables.
+  const integerRule = {
+    message: t('error.OnlyIntegersAreAllowed'),
+    validate: (value: string) => /^-?\d+$/.test(String(value).trim()),
+  };
+
+  // Filters only supported by the v2 user search API from 26.4.4 (backend
+  // BA-6247 / BA-6249). Included only when the connected manager advertises
+  // the capability, so the UI never offers filters it cannot evaluate.
+  const extendedFilterProperties: Array<BAIGraphQLFilterProperty> = [
+    {
+      key: 'fullName',
+      propertyLabel: t('credential.FullName'),
+      type: 'string',
+    },
+    {
+      key: 'resourcePolicy',
+      propertyLabel: t('credential.ResourcePolicy'),
+      type: 'string',
+    },
+    {
+      key: 'description',
+      propertyLabel: t('credential.Description'),
+      type: 'string',
+    },
+    {
+      key: 'statusInfo',
+      propertyLabel: t('credential.StatusInfo'),
+      type: 'string',
+    },
+    {
+      key: 'needPasswordChange',
+      propertyLabel: t('credential.DescRequirePasswordChange'),
+      type: 'boolean',
+    },
+    {
+      key: 'totpActivated',
+      propertyLabel: t('credential.2FAEnabled'),
+      type: 'boolean',
+    },
+    {
+      key: 'sudoSessionEnabled',
+      propertyLabel: t('credential.EnableSudoSession'),
+      type: 'boolean',
+    },
+    {
+      key: 'containerUid',
+      propertyLabel: t('credential.ContainerUID'),
+      type: 'number',
+      rule: integerRule,
+    },
+    {
+      key: 'containerMainGid',
+      propertyLabel: t('credential.ContainerGID'),
+      type: 'number',
+      rule: integerRule,
+    },
+    {
+      // IntArrayFilter: only single-GID membership (`contains`) is exposed
+      // since BAIGraphQLPropertyFilter has no array-operator input for
+      // `containsAny` / `containsAll`.
+      key: 'containerGids',
+      propertyLabel: t('credential.ContainerSupplementaryGIDs'),
+      type: 'number',
+      fixedOperator: 'contains',
+      rule: integerRule,
+    },
+  ];
+
+  const filterProperties: Array<BAIGraphQLFilterProperty> = filterOutEmpty([
+    {
+      key: 'email',
+      propertyLabel: t('general.E-Mail'),
+      type: 'string',
+    },
+    {
+      key: 'uuid',
+      propertyLabel: 'ID',
+      type: 'uuid',
+    },
+    {
+      key: 'username',
+      propertyLabel: t('credential.Name'),
+      type: 'string',
+    },
+    {
+      key: 'project.name',
+      propertyLabel: t('general.Project'),
+      type: 'string',
+    },
+    {
+      key: 'role',
+      propertyLabel: t('credential.Role'),
+      type: 'enum',
+      strictSelection: true,
+      options: [
+        {
+          label: 'superadmin',
+          value: 'SUPERADMIN',
+        },
+        {
+          label: 'user',
+          value: 'USER',
+        },
+      ],
+    },
+    ...(bailClient.supports('user-v2-extended-filter')
+      ? extendedFilterProperties
+      : []),
+  ]);
+
   return (
     <BAIFlex direction="column" align="stretch" gap="sm">
       <BAIFlex justify="between" align="start" gap="xs" wrap="wrap">
@@ -328,44 +442,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
             ]}
           />
           <BAIGraphQLPropertyFilter
-            filterProperties={[
-              {
-                key: 'email',
-                propertyLabel: t('general.E-Mail'),
-                type: 'string',
-              },
-              {
-                key: 'uuid',
-                propertyLabel: 'ID',
-                type: 'uuid',
-              },
-              {
-                key: 'username',
-                propertyLabel: t('credential.Name'),
-                type: 'string',
-              },
-              {
-                key: 'project.name',
-                propertyLabel: t('general.Project'),
-                type: 'string',
-              },
-              {
-                key: 'role',
-                propertyLabel: t('credential.Role'),
-                type: 'enum',
-                strictSelection: true,
-                options: [
-                  {
-                    label: 'superadmin',
-                    value: 'SUPERADMIN',
-                  },
-                  {
-                    label: 'user',
-                    value: 'USER',
-                  },
-                ],
-              },
-            ]}
+            filterProperties={filterProperties}
             value={queryParams.filter ?? undefined}
             onChange={(value) => {
               setQueryParams({ filter: value ?? null });

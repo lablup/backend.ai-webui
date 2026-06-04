@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<325cfa51c470fac7b2232bf56f2fddce>>
+ * @generated SignedSource<<7895a665f0e2282efda82d736b223d8a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,6 +11,7 @@
 import { ConcreteRequest } from 'relay-runtime';
 export type RoleStatus = "ACTIVE" | "DELETED" | "INACTIVE" | "%future added value";
 export type UpdateRoleInput = {
+  autoAssign?: boolean | null | undefined;
   description?: string | null | undefined;
   id: string;
   name?: string | null | undefined;
