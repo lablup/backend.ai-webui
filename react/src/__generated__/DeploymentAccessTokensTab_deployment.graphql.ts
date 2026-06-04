@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c8bfcd5d65a2f88ba70ee6dbdf169ee5>>
+ * @generated SignedSource<<eb352084a2d3c5fa54fb8701b30c5228>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,12 +9,11 @@
 // @ts-nocheck
 
 import { ReaderFragment } from 'relay-runtime';
-export type DeploymentStatus = "DEPLOYING" | "PENDING" | "READY" | "SCALING" | "STOPPED" | "STOPPING" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
 export type DeploymentAccessTokensTab_deployment$data = {
   readonly id: string;
-  readonly metadata: {
-    readonly status: DeploymentStatus;
+  readonly networkAccess: {
+    readonly endpointUrl: string | null | undefined;
   };
   readonly " $fragmentType": "DeploymentAccessTokensTab_deployment";
 };
@@ -39,16 +38,16 @@ const node: ReaderFragment = {
     {
       "alias": null,
       "args": null,
-      "concreteType": "ModelDeploymentMetadata",
+      "concreteType": "ModelDeploymentNetworkAccess",
       "kind": "LinkedField",
-      "name": "metadata",
+      "name": "networkAccess",
       "plural": false,
       "selections": [
         {
           "alias": null,
           "args": null,
           "kind": "ScalarField",
-          "name": "status",
+          "name": "endpointUrl",
           "storageKey": null
         }
       ],
@@ -59,6 +58,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "1c51a30cf7b59b0cf8623a314b8025e7";
+(node as any).hash = "48a180522415b103a2e930a5abc7a973";
 
 export default node;

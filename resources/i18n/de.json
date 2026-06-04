@@ -936,6 +936,7 @@
     "ActivePool": "Aktiver Pool",
     "ActivePoolDescription": "Replikate, die derzeit über AppProxy Datenverkehr empfangen.",
     "ActivenessStatus": "Aktivitätsstatus",
+    "AddAccessToken": "Zugriffstoken hinzufügen",
     "AddRevision": "Revision hinzufügen",
     "AdditionalMounts": "Zusätzliche Einhängepunkte",
     "AnotherDeploymentInProgress": "Ein weiteres Deployment-Update wird bereits durchgeführt. Bitte warten Sie, bis es abgeschlossen ist, bevor Sie es erneut versuchen.",
@@ -1003,7 +1004,6 @@
     "LegacyRouteRedirected": "Die Endpunkt-URL wurde verschoben. Sie wurden zur neuen Bereitstellungsseite weitergeleitet.",
     "LivenessStatus": "Liveness-Status",
     "LoadCurrentRevision": "Aktuelle Revision laden",
-    "ManageAccessTokens": "Zugriffstoken verwalten",
     "Message": "Nachricht",
     "Model": "Modell",
     "ModelDefinitionPath": "Pfad zur Modelldefinitionsdatei",
@@ -1087,6 +1087,7 @@
       "Delete": "Zugriffstoken löschen",
       "DeleteConfirm": "Möchten Sie diesen Zugriffstoken wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
       "Deleted": "Zugriffstoken wurde gelöscht.",
+      "EndpointNotIssuedYet": "Der Netzwerk-Endpoint wurde noch nicht ausgegeben.",
       "Expiration": "Ablaufdatum",
       "NoExpiration": "Kein Ablaufdatum",
       "Token": "Token"

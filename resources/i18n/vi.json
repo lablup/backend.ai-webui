@@ -936,6 +936,7 @@
     "ActivePool": "Pool Hoạt Động",
     "ActivePoolDescription": "Các bản sao đang nhận lưu lượng truy cập qua AppProxy.",
     "ActivenessStatus": "Trạng thái hoạt động",
+    "AddAccessToken": "Thêm Token Truy Cập",
     "AddRevision": "Thêm Revision",
     "AdditionalMounts": "Gắn Kết Bổ Sung",
     "AnotherDeploymentInProgress": "Một bản cập nhật triển khai khác đang được thực hiện. Vui lòng chờ cho đến khi hoàn thành trước khi thử lại.",
@@ -1003,7 +1004,6 @@
     "LegacyRouteRedirected": "URL điểm cuối đã được di chuyển. Bạn đã được chuyển hướng đến trang Triển khai mới.",
     "LivenessStatus": "Trạng thái Liveness",
     "LoadCurrentRevision": "Tải Revision hiện tại",
-    "ManageAccessTokens": "Quản lý mã thông báo truy cập",
     "Message": "Tin nhắn",
     "Model": "Mô hình",
     "ModelDefinitionPath": "Đường dẫn tệp định nghĩa mô hình",
@@ -1087,6 +1087,7 @@
       "Delete": "Xóa mã thông báo truy cập",
       "DeleteConfirm": "Bạn có chắc chắn muốn xóa mã thông báo truy cập này không? Hành động này không thể hoàn tác.",
       "Deleted": "Mã thông báo truy cập đã được xóa.",
+      "EndpointNotIssuedYet": "Endpoint mạng chưa được phát hành.",
       "Expiration": "Hạn hết hạn",
       "NoExpiration": "Không hết hạn",
       "Token": "Mã thông báo"

@@ -936,6 +936,7 @@
     "ActivePool": "アクティブプール",
     "ActivePoolDescription": "AppProxy を通じてトラフィックを受信中のレプリカです。",
     "ActivenessStatus": "アクティブ状態",
+    "AddAccessToken": "アクセストークンを追加",
     "AddRevision": "Revision を追加",
     "AdditionalMounts": "追加マウント",
     "AnotherDeploymentInProgress": "別のデプロイ更新が既に進行中です。再試行する前に完了するまでお待ちください。",
@@ -1003,7 +1004,6 @@
     "LegacyRouteRedirected": "エンドポイントURLが変更されました。新しいデプロイページにリダイレクトされました。",
     "LivenessStatus": "Liveness 状態",
     "LoadCurrentRevision": "現在の Revision を読み込む",
-    "ManageAccessTokens": "アクセストークンを管理",
     "Message": "メッセージ",
     "Model": "モデル",
     "ModelDefinitionPath": "モデル定義ファイルパス",
@@ -1087,6 +1087,7 @@
       "Delete": "アクセストークンを削除",
       "DeleteConfirm": "このアクセストークンを削除してもよろしいですか？この操作は取り消せません。",
       "Deleted": "アクセストークンが削除されました。",
+      "EndpointNotIssuedYet": "ネットワークエンドポイントはまだ発行されていません。",
       "Expiration": "有効期限",
       "NoExpiration": "有効期限なし",
       "Token": "トークン"

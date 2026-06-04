@@ -936,6 +936,7 @@
     "ActivePool": "Активный пул",
     "ActivePoolDescription": "Реплики, в настоящее время получающие трафик через AppProxy.",
     "ActivenessStatus": "Статус активности",
+    "AddAccessToken": "Добавить токен доступа",
     "AddRevision": "Добавить Revision",
     "AdditionalMounts": "Дополнительные монтирования",
     "AnotherDeploymentInProgress": "Другое обновление развёртывания уже выполняется. Пожалуйста, дождитесь его завершения перед повторной попыткой.",
@@ -1003,7 +1004,6 @@
     "LegacyRouteRedirected": "URL конечной точки изменён. Вы перенаправлены на новую страницу развёртываний.",
     "LivenessStatus": "Статус Liveness",
     "LoadCurrentRevision": "Загрузить текущую Revision",
-    "ManageAccessTokens": "Управление токенами доступа",
     "Message": "сообщение",
     "Model": "Модель",
     "ModelDefinitionPath": "Путь к файлу определения модели",
@@ -1087,6 +1087,7 @@
       "Delete": "Удалить токен доступа",
       "DeleteConfirm": "Вы уверены, что хотите удалить этот токен доступа? Это действие нельзя отменить.",
       "Deleted": "Токен доступа удалён.",
+      "EndpointNotIssuedYet": "Сетевая конечная точка ещё не выдана.",
       "Expiration": "Срок действия",
       "NoExpiration": "Без срока действия",
       "Token": "Токен"

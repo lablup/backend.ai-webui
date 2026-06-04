@@ -11,6 +11,7 @@ import {
   PlusOutlined,
   QuestionCircleOutlined,
 } from '@ant-design/icons';
+import { useControllableValue } from 'ahooks';
 import {
   App,
   Button,
@@ -33,13 +34,17 @@ import {
   BAIText,
   BAIUnmountAfterClose,
   filterOutNullAndUndefined,
-  isDeploymentInStoppedCategory,
   toLocalId,
   useBAILogger,
   useMutationWithPromise,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
-import React, { Suspense, useState, useTransition } from 'react';
+import React, {
+  Suspense,
+  useDeferredValue,
+  useState,
+  useTransition,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   graphql,
@@ -52,12 +57,25 @@ interface DeploymentAccessTokensTabProps {
   deploymentFrgmt: DeploymentAccessTokensTab_deployment$key;
   deploymentId: string;
   isOwnedByCurrentUser?: boolean;
+  isDeploymentDestroying?: boolean;
+  // Optional controlled open state for the create-access-token modal.
+  // When omitted, the tab manages its own state via the header "+" button.
+  // The deployment detail page passes these so the private-deployment
+  // alert can open the same modal without rebuilding the create flow.
+  isCreateModalOpen?: boolean;
+  onCreateModalOpenChange?: (open: boolean) => void;
+  onTokenCreated?: () => void;
+  cardRef?: React.RefObject<HTMLDivElement | null>;
 }
 
 const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
   deploymentFrgmt,
   deploymentId,
   isOwnedByCurrentUser = true,
+  isDeploymentDestroying = false,
+  onTokenCreated,
+  cardRef,
+  ...controlledModalProps
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -67,19 +85,28 @@ const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
   const [isPendingRefetch, startRefetchTransition] = useTransition();
   const [fetchKey, setFetchKey] = useState(0);
 
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] =
+    useControllableValue<boolean>(controlledModalProps, {
+      defaultValue: false,
+      valuePropName: 'isCreateModalOpen',
+      trigger: 'onCreateModalOpenChange',
+    });
   // After successful creation, show the plaintext token once in a modal.
   const [createdToken, setCreatedToken] = useState<{
     token: string;
     expiresAt: string | null;
   } | null>(null);
 
+  // useDeferredValue schedules Relay re-renders at low priority so the card
+  // header stays interactive while the list suspends.
+  const deferredFetchKey = useDeferredValue(fetchKey);
+
   const deployment = useFragment(
     graphql`
       fragment DeploymentAccessTokensTab_deployment on ModelDeployment {
         id
-        metadata {
-          status
+        networkAccess {
+          endpointUrl
         }
       }
     `,
@@ -108,13 +135,17 @@ const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
     });
   };
 
-  const isMutationDisabled =
-    isDeploymentInStoppedCategory(deployment?.metadata?.status) ||
-    !isOwnedByCurrentUser;
+  const hasEndpointUrl = !!deployment.networkAccess?.endpointUrl;
+  const isMutationDisabled = isDeploymentDestroying || !isOwnedByCurrentUser;
+  // The create button is also blocked while the manager has not yet
+  // issued a network endpoint — a token would have nothing to authenticate
+  // against. Surface the reason via a Tooltip on the disabled button.
+  const isCreateDisabled = isMutationDisabled || !hasEndpointUrl;
 
   return (
     <>
       <BAICard
+        ref={cardRef}
         title={
           <BAIFlex gap="xs" align="center">
             {t('deployment.tab.AccessTokens')}
@@ -132,14 +163,22 @@ const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
               value=""
               onChange={handleRefetch}
             />
-            <Button
-              type="primary"
-              icon={<PlusOutlined />}
-              disabled={isMutationDisabled}
-              onClick={() => setIsCreateModalOpen(true)}
+            <Tooltip
+              title={
+                !hasEndpointUrl
+                  ? t('deployment.accessToken.EndpointNotIssuedYet')
+                  : ''
+              }
             >
-              {t('deployment.accessToken.Create')}
-            </Button>
+              <Button
+                type="primary"
+                icon={<PlusOutlined />}
+                disabled={isCreateDisabled}
+                onClick={() => setIsCreateModalOpen(true)}
+              >
+                {t('deployment.accessToken.Create')}
+              </Button>
+            </Tooltip>
           </BAIFlex>
         }
         styles={{ body: { paddingTop: 0 } }}
@@ -147,7 +186,7 @@ const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
         <Suspense fallback={<Skeleton active />}>
           <DeploymentAccessTokensTable
             deploymentId={deploymentId}
-            fetchKey={fetchKey}
+            fetchKey={deferredFetchKey}
             isPendingRefetch={isPendingRefetch}
             isDeleteDisabled={isMutationDisabled}
             onAfterDelete={handleRefetch}
@@ -185,6 +224,7 @@ const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
                     content: t('deployment.accessToken.Created'),
                   });
                   handleRefetch();
+                  onTokenCreated?.();
                 })
                 .catch((error) => {
                   const errors = Array.isArray(error) ? error : [error];

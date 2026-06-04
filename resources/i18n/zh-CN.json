@@ -936,6 +936,7 @@
     "ActivePool": "活跃池",
     "ActivePoolDescription": "当前通过 AppProxy 接收流量的副本。",
     "ActivenessStatus": "活跃状态",
+    "AddAccessToken": "添加访问令牌",
     "AddRevision": "添加 Revision",
     "AdditionalMounts": "附加挂载",
     "AnotherDeploymentInProgress": "另一个部署更新已在进行中。请等待其完成后再重试。",
@@ -1003,7 +1004,6 @@
     "LegacyRouteRedirected": "端点 URL 已迁移。您已被重定向到新的部署页面。",
     "LivenessStatus": "Liveness 状态",
     "LoadCurrentRevision": "加载当前 Revision",
-    "ManageAccessTokens": "管理访问令牌",
     "Message": "留言",
     "Model": "模型",
     "ModelDefinitionPath": "模型定义文件路径",
@@ -1087,6 +1087,7 @@
       "Delete": "删除访问令牌",
       "DeleteConfirm": "确定要删除此访问令牌吗？此操作无法撤销。",
       "Deleted": "访问令牌已删除。",
+      "EndpointNotIssuedYet": "网络端点尚未发布。",
       "Expiration": "到期时间",
       "NoExpiration": "永不到期",
       "Token": "令牌"

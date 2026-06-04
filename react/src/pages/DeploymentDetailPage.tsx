@@ -34,6 +34,7 @@ import {
   BAIButton,
   BAICard,
   BAIDeploymentStatus,
+  BAIDeploymentStatusTag,
   BAIFlex,
   BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
@@ -43,7 +44,7 @@ import {
 } from 'backend.ai-ui';
 import type { GraphQLFormattedError } from 'graphql';
 import { BotMessageSquareIcon } from 'lucide-react';
-import React, { Suspense, useTransition } from 'react';
+import React, { Suspense, useRef, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useParams } from 'react-router-dom';
@@ -67,10 +68,21 @@ const DeploymentDetailPage: React.FC = () => {
   const [isPendingRefetch, startRefetchTransition] = useTransition();
   const [fetchKey, updateFetchKey] = useFetchKey();
   const [revisionFetchKey, updateRevisionFetchKey] = useFetchKey();
+  const [replicaFetchKey, updateReplicaFetchKey] = useFetchKey();
   const [
     addRevisionOpen,
     { setLeft: closeAddRevision, setRight: openAddRevision },
   ] = useToggle(false);
+  // Lifted here so the "Private deployment" alert can open the same
+  // create-access-token modal that DeploymentAccessTokensTab owns — the alert
+  // CTA and the section's "+" button share one flow.
+  const [
+    createAccessTokenOpen,
+    { setLeft: closeCreateAccessToken, setRight: openCreateAccessToken },
+  ] = useToggle(false);
+
+  const revisionsSectionRef = useRef<HTMLDivElement>(null);
+  const accessTokensSectionRef = useRef<HTMLDivElement>(null);
 
   const { deployment: deploymentResult } =
     useLazyLoadQuery<DeploymentDetailPageQuery>(
@@ -90,6 +102,10 @@ const DeploymentDetailPage: React.FC = () => {
             }
             networkAccess {
               openToPublic
+              endpointUrl
+            }
+            accessTokens {
+              count
             }
             currentRevision @since(version: "26.4.3") {
               id
@@ -168,9 +184,18 @@ const DeploymentDetailPage: React.FC = () => {
   // warning would otherwise contradict that state.
   const hasNoRevision =
     !deployment.currentRevision && !deployment.deployingRevision;
+  const hasEndpointUrl = !!deployment.networkAccess.endpointUrl;
+  const hasAccessTokens = (deployment.accessTokens?.count ?? 0) > 0;
+  const isDeploymentDestroying = isDeploymentInStoppedCategory(deploymentStatus);
+  // The private-deployment alert prompts the user to create a token so the
+  // endpoint is actually reachable. Suppress it when the endpoint has not
+  // been issued yet (creating a token would be premature) or when the user
+  // has already created at least one token.
   const isPrivateDeployment =
     deployment.networkAccess.openToPublic === false &&
-    !isDeploymentInStoppedCategory(deploymentStatus);
+    !isDeploymentDestroying &&
+    hasEndpointUrl &&
+    !hasAccessTokens;
 
   const creatorEmail = deployment.creator?.basicInfo?.email ?? null;
   // When the creator email is unresolvable (e.g. manager versions < 26.4.3),
@@ -189,14 +214,19 @@ const DeploymentDetailPage: React.FC = () => {
       startRefetchTransition(() => {
         updateFetchKey();
         updateRevisionFetchKey();
+        // A new revision spawns new replicas — refresh the replicas list so
+        // they appear immediately instead of waiting for the next manual
+        // refresh or a tab re-mount.
+        updateReplicaFetchKey();
       });
+      if (revisionsSectionRef.current) {
+        revisionsSectionRef.current.style.scrollMarginTop = `${token.Layout?.headerHeight ?? 60}px`;
+        revisionsSectionRef.current.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
+        });
+      }
     }
-  };
-
-  const scrollToAccessTokens = () => {
-    document
-      .getElementById('deployment-access-tokens')
-      ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   return (
@@ -268,9 +298,18 @@ const DeploymentDetailPage: React.FC = () => {
           showIcon
           title={t('deployment.PrivateDeploymentAlertTitle')}
           action={
-            <Button onClick={scrollToAccessTokens}>
-              {t('deployment.ManageAccessTokens')}
-            </Button>
+            <BAIButton
+              type="primary"
+              icon={<PlusOutlined />}
+              // `action` (not `onClick`) defers the mount in a transition
+              // so the page stays interactive.
+              action={async () => {
+                openCreateAccessToken();
+              }}
+              disabled={isDeploymentDestroying}
+            >
+              {t('deployment.AddAccessToken')}
+            </BAIButton>
           }
         />
       )}
@@ -278,6 +317,7 @@ const DeploymentDetailPage: React.FC = () => {
         <Typography.Title level={3} style={{ margin: 0 }}>
           {deploymentName}
         </Typography.Title>
+        <BAIDeploymentStatusTag status={deploymentStatus} />
       </BAIFlex>
       <DeploymentConfigurationSection
         deploymentFrgmt={deployment}
@@ -285,6 +325,7 @@ const DeploymentDetailPage: React.FC = () => {
         isPendingRefetch={isPendingRefetch}
         onRefetch={handleRefetch}
         onAddRevision={openAddRevision}
+        revisionCardRef={revisionsSectionRef}
       />
       <BAICard
         title={
@@ -304,18 +345,40 @@ const DeploymentDetailPage: React.FC = () => {
             <DeploymentReplicasTab
               deploymentFrgmt={deployment}
               deploymentId={deploymentGlobalId}
+              replicaFetchKey={replicaFetchKey}
             />
           </Suspense>
         </BAIErrorBoundary>
       </BAICard>
       <DeploymentAutoScalingTab deploymentFrgmt={deployment} />
-      <div id="deployment-access-tokens">
-        <DeploymentAccessTokensTab
-          deploymentFrgmt={deployment}
-          deploymentId={deploymentGlobalId}
-          isOwnedByCurrentUser={isOwnedByCurrentUser}
-        />
-      </div>
+      <DeploymentAccessTokensTab
+        cardRef={accessTokensSectionRef}
+        deploymentFrgmt={deployment}
+        deploymentId={deploymentGlobalId}
+        isOwnedByCurrentUser={isOwnedByCurrentUser}
+        isDeploymentDestroying={isDeploymentDestroying}
+        isCreateModalOpen={createAccessTokenOpen}
+        onCreateModalOpenChange={(open) => {
+          if (open) {
+            openCreateAccessToken();
+          } else {
+            closeCreateAccessToken();
+          }
+        }}
+        onTokenCreated={() => {
+          // Refresh the page-level query so `accessTokens.count` updates;
+          // otherwise the "Private deployment" alert (which is gated on
+          // `hasAccessTokens === false`) stays visible after creation.
+          handleRefetch();
+          if (accessTokensSectionRef.current) {
+            accessTokensSectionRef.current.style.scrollMarginTop = `${token.Layout?.headerHeight ?? 60}px`;
+            accessTokensSectionRef.current.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start',
+            });
+          }
+        }}
+      />
       {/* Local Suspense around the lazily-mounted modal so its initial
           `useLazyLoadQuery` doesn't bubble its suspend up to the page-level
           Suspense fallback and blank the deployment detail page. The mount

@@ -936,6 +936,7 @@
     "ActivePool": "แอ็กทีฟพูล",
     "ActivePoolDescription": "เรพลิกาที่กำลังรับทราฟฟิกผ่าน AppProxy ในขณะนี้",
     "ActivenessStatus": "สถานะความเคลื่อนไหว",
+    "AddAccessToken": "เพิ่มโทเค็นการเข้าถึง",
     "AddRevision": "เพิ่ม Revision",
     "AdditionalMounts": "การเมาท์เพิ่มเติม",
     "AnotherDeploymentInProgress": "การอัปเดตการปรับใช้อื่นกำลังดำเนินอยู่แล้ว โปรดรอให้เสร็จสิ้นก่อนลองอีกครั้ง",
@@ -1003,7 +1004,6 @@
     "LegacyRouteRedirected": "URL ปลายทางถูกย้ายแล้ว คุณถูกนำไปยังหน้าการปรับใช้ใหม่",
     "LivenessStatus": "สถานะ Liveness",
     "LoadCurrentRevision": "โหลด Revision ปัจจุบัน",
-    "ManageAccessTokens": "จัดการโทเค็นการเข้าถึง",
     "Message": "ข้อความ",
     "Model": "โมเดล",
     "ModelDefinitionPath": "เส้นทางไฟล์นิยามโมเดล",
@@ -1087,6 +1087,7 @@
       "Delete": "ลบโทเค็นการเข้าถึง",
       "DeleteConfirm": "คุณแน่ใจหรือไม่ว่าต้องการลบโทเค็นการเข้าถึงนี้? การดำเนินการนี้ไม่สามารถเลิกทำได้",
       "Deleted": "ลบโทเค็นการเข้าถึงเรียบร้อยแล้ว",
+      "EndpointNotIssuedYet": "ยังไม่ได้ออก endpoint ของเครือข่าย",
       "Expiration": "วันหมดอายุ",
       "NoExpiration": "ไม่มีวันหมดอายุ",
       "Token": "โทเค็น"

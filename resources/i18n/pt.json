@@ -936,6 +936,7 @@
     "ActivePool": "Pool Ativo",
     "ActivePoolDescription": "Réplicas a receber tráfego atualmente através do AppProxy.",
     "ActivenessStatus": "Estado de atividade",
+    "AddAccessToken": "Adicionar Token de Acesso",
     "AddRevision": "Adicionar Revision",
     "AdditionalMounts": "Montagens adicionais",
     "AnotherDeploymentInProgress": "Outra atualização de implementação já está em curso. Por favor, aguarde a sua conclusão antes de tentar novamente.",
@@ -1003,7 +1004,6 @@
     "LegacyRouteRedirected": "O URL do endpoint foi movido. Foi redirecionado para a nova página de Implementações.",
     "LivenessStatus": "Estado de Liveness",
     "LoadCurrentRevision": "Carregar Revision atual",
-    "ManageAccessTokens": "Gerir tokens de acesso",
     "Message": "Mensagem",
     "Model": "Modelo",
     "ModelDefinitionPath": "Caminho do ficheiro de definição do modelo",
@@ -1087,6 +1087,7 @@
       "Delete": "Eliminar token de acesso",
       "DeleteConfirm": "Tem a certeza de que pretende eliminar este token de acesso? Esta ação não pode ser revertida.",
       "Deleted": "O token de acesso foi eliminado.",
+      "EndpointNotIssuedYet": "O endpoint de rede ainda não foi emitido.",
       "Expiration": "Expiração",
       "NoExpiration": "Sem expiração",
       "Token": "Token"

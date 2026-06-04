@@ -936,6 +936,7 @@
     "ActivePool": "Aktif Havuz",
     "ActivePoolDescription": "AppProxy aracılığıyla şu anda trafik alan replikalar.",
     "ActivenessStatus": "Etkinlik Durumu",
+    "AddAccessToken": "Erişim Tokenı Ekle",
     "AddRevision": "Revision Ekle",
     "AdditionalMounts": "Ek Bağlama Noktaları",
     "AnotherDeploymentInProgress": "Başka bir dağıtım güncellemesi zaten devam ediyor. Tekrar denemeden önce tamamlanmasını bekleyin.",
@@ -1003,7 +1004,6 @@
     "LegacyRouteRedirected": "Uç nokta URL'si taşındı. Yeni Dağıtımlar sayfasına yönlendirildiniz.",
     "LivenessStatus": "Liveness Durumu",
     "LoadCurrentRevision": "Mevcut Revision'ı yükle",
-    "ManageAccessTokens": "Erişim belirteçlerini yönet",
     "Message": "Mesaj",
     "Model": "Model",
     "ModelDefinitionPath": "Model Tanım Dosyası Yolu",
@@ -1087,6 +1087,7 @@
       "Delete": "Erişim Jetonunu Sil",
       "DeleteConfirm": "Bu erişim jetonunu silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
       "Deleted": "Erişim jetonu silindi.",
+      "EndpointNotIssuedYet": "Ağ uç noktası henüz oluşturulmadı.",
       "Expiration": "Son Kullanma Tarihi",
       "NoExpiration": "Son Kullanma Tarihi Yok",
       "Token": "Jeton"
