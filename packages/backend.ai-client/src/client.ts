@@ -834,17 +834,18 @@ export class Client {
     if (this.isManagerVersionCompatibleWith('26.4.4rc4')) {
       this._features['rbac-element-type-filter'] = true;
     }
-    // Model Deployment GraphQL schema was reworked into its "v2" shape across
-    // the 26.4.4 rc cycle (resource group moved from the revision's
-    // `ResourceConfigInput` to deployment `metadata`; `desiredReplicaCount` →
-    // `replicaCount`; `runtimeVariant` String → `runtimeVariantId` UUID;
-    // `add_model_revision` options moved into the input; add-revision configs
-    // made nullable; new replica status / revisionNumber / resourceSlots-list
-    // fields). We only support 26.4.3 (legacy) vs 26.4.4 (v2) — a single flag
-    // gates the whole v2 surface rather than branching per intermediate rc.
-    // TODO: pinned to the rc tag since 26.4.4rcN < 26.4.4 in PEP440; simplify to
-    // '26.4.4' once rc builds are out of use.
-    if (this.isManagerVersionCompatibleWith('26.4.4rc5')) {
+    // Model Deployment GraphQL schema was reworked across the 26.4.4 rc cycle
+    // (resource group moved from the revision's `ResourceConfigInput` to
+    // deployment `metadata`; `desiredReplicaCount` → `replicaCount`;
+    // `runtimeVariant` String → `runtimeVariantId` UUID; `add_model_revision`
+    // options moved into the input; add-revision configs made nullable; new
+    // replica status / revisionNumber / resourceSlots-list fields). We only
+    // support 26.4.3 (legacy) vs 26.4.4 (revised) — a single flag gates the
+    // whole revised surface rather than branching per intermediate rc. Note:
+    // since the threshold is `26.4.4` (not an rc tag), pre-release rc cores
+    // (26.4.4rcN < 26.4.4 in PEP440) are treated as legacy; the revised path
+    // activates only on the final 26.4.4 release and later.
+    if (this.isManagerVersionCompatibleWith('26.4.4')) {
       this._features['model-deployment-revised-schema'] = true;
     }
   }

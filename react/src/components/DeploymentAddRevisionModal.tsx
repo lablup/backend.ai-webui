@@ -257,7 +257,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   const [mode, setMode] = useBAISettingUserState(
     'deploymentRevisionCreationMode',
   );
-  // Preset mode requires nullable add-revision configs (26.4.4rc5+); older cores
+  // Preset mode requires nullable add-revision configs (26.4.4+); older cores
   // can only use the custom flow.
   const effectiveMode = !isRevisedDeploymentSchema
     ? 'custom'
@@ -322,7 +322,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       query DeploymentAddRevisionModalQuery($deploymentId: ID!) {
         deployment(id: $deploymentId) {
           metadata {
-            resourceGroupName @since(version: "26.4.4rc5")
+            resourceGroupName @since(version: "26.4.4")
           }
           currentRevision {
             clusterConfig {
@@ -337,7 +337,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                 }
               }
             }
-            resourceSlots @since(version: "26.4.4rc5") {
+            resourceSlots @since(version: "26.4.4") {
               slotName
               quantity
             }
@@ -346,8 +346,8 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
               mountDestination
             }
             modelRuntimeConfig {
-              runtimeVariantId @since(version: "26.4.4rc5")
-              runtimeVariant @since(version: "26.4.4rc5") {
+              runtimeVariantId @since(version: "26.4.4")
+              runtimeVariant @since(version: "26.4.4") {
                 name
               }
               environ {
@@ -504,7 +504,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                   value
                 }
               }
-              resourceSlots @since(version: "26.4.4rc5") {
+              resourceSlots @since(version: "26.4.4") {
                 slotName
                 quantity
               }
@@ -537,7 +537,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           revision {
             id
             ...DeploymentRevisionDetail_revision
-            deployment @since(version: "26.4.4rc5") {
+            deployment @since(version: "26.4.4") {
               id
               currentRevisionId
               deployingRevisionId
@@ -1136,7 +1136,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
             resourceSlots: { entries: slotEntries },
             resourceOpts:
               optsEntries.length > 0 ? { entries: optsEntries } : null,
-            // Pre-26.4.4rc5 cores require the resource group on the revision's
+            // Pre-26.4.4 cores require the resource group on the revision's
             // resourceConfig; rc5+ inherits it from the deployment metadata.
             ...buildLegacyResourceGroupConfig(values.resourceGroup),
           },
@@ -1302,7 +1302,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           style={{ paddingRight: token.paddingLG }}
         >
           <span>{t('deployment.AddRevision')}</span>
-          {/* Preset mode needs nullable add-revision configs (26.4.4rc5+);
+          {/* Preset mode needs nullable add-revision configs (26.4.4+);
               hide the mode switch on older cores so only Custom is offered. */}
           {isRevisedDeploymentSchema ? (
             <Segmented<'preset' | 'custom'>

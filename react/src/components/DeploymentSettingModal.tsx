@@ -74,8 +74,8 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
   const isRevisedDeploymentSchema = baiClient.supports(
     'model-deployment-revised-schema',
   );
-  // The legacy branch is cast to the v2 shape because the Relay-generated input
-  // types only model the current (`replicaCount`) schema.
+  // The legacy branch is cast to the revised shape because the Relay-generated
+  // input types only model the current (`replicaCount`) schema.
   const buildReplicaCountInput = (count: number): { replicaCount: number } =>
     isRevisedDeploymentSchema
       ? { replicaCount: count }
@@ -90,7 +90,7 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
         metadata {
           name
           tags
-          resourceGroupName @since(version: "26.4.4rc5")
+          resourceGroupName @since(version: "26.4.4")
         }
         networkAccess {
           openToPublic
@@ -175,7 +175,7 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
                   domainName: currentDomain,
                   name: values.name,
                   tags: values.tags?.length ? values.tags : null,
-                  // `resourceGroupName` only exists on metadata from 26.4.4rc5;
+                  // `resourceGroupName` only exists on metadata from 26.4.4;
                   // older cores take the resource group per revision instead.
                   // The legacy branch is cast to the new shape because the
                   // generated input type marks `resourceGroupName` required.
@@ -304,7 +304,7 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
                 style={{ width: '100%' }}
               />
             </Form.Item>
-          ) : // Pre-26.4.4rc5 cores have no deployment-level resource group;
+          ) : // Pre-26.4.4 cores have no deployment-level resource group;
           // it is selected per revision in the add-revision modal instead.
           null}
           <Form.Item

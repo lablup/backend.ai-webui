@@ -63,7 +63,7 @@ const DeploymentPresetDetailModal: React.FC<
             value
           }
         }
-        resourceSlots @since(version: "26.4.4rc5") {
+        resourceSlots @since(version: "26.4.4") {
           slotName
           quantity
         }

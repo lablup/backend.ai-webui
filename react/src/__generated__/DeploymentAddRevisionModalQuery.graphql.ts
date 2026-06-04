@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<7f8bc0a0950d85fd506a5bf402a86e8f>>
+ * @generated SignedSource<<8c9716717d1c54f5de26a7cb6fa59859>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -565,16 +565,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "497a1085ae38758ea6445199f349af85",
+    "cacheID": "27022fd87127220b0665302342b93831",
     "id": null,
     "metadata": {},
     "name": "DeploymentAddRevisionModalQuery",
     "operationKind": "query",
-    "text": "query DeploymentAddRevisionModalQuery(\n  $deploymentId: ID!\n) {\n  deployment(id: $deploymentId) {\n    metadata {\n      resourceGroupName @since(version: \"26.4.4rc5\")\n    }\n    currentRevision {\n      clusterConfig {\n        mode\n        size\n      }\n      resourceConfig {\n        resourceOpts {\n          entries {\n            name\n            value\n          }\n        }\n      }\n      resourceSlots @since(version: \"26.4.4rc5\") {\n        slotName\n        quantity\n      }\n      extraMounts {\n        vfolderId\n        mountDestination\n      }\n      modelRuntimeConfig {\n        runtimeVariantId @since(version: \"26.4.4rc5\")\n        runtimeVariant @since(version: \"26.4.4rc5\") {\n          name\n          id\n        }\n        environ {\n          entries {\n            name\n            value\n          }\n        }\n      }\n      modelMountConfig {\n        vfolderId\n        mountDestination\n        definitionPath\n      }\n      modelDefinition {\n        models {\n          name\n          modelPath\n          service {\n            startCommand\n            port\n            healthCheck {\n              path\n              maxRetries\n              initialDelay\n              interval\n              maxWaitTime\n            }\n          }\n        }\n      }\n      imageV2 {\n        id\n        identity {\n          canonicalName\n        }\n      }\n      id\n    }\n    id\n  }\n}\n"
+    "text": "query DeploymentAddRevisionModalQuery(\n  $deploymentId: ID!\n) {\n  deployment(id: $deploymentId) {\n    metadata {\n      resourceGroupName @since(version: \"26.4.4\")\n    }\n    currentRevision {\n      clusterConfig {\n        mode\n        size\n      }\n      resourceConfig {\n        resourceOpts {\n          entries {\n            name\n            value\n          }\n        }\n      }\n      resourceSlots @since(version: \"26.4.4\") {\n        slotName\n        quantity\n      }\n      extraMounts {\n        vfolderId\n        mountDestination\n      }\n      modelRuntimeConfig {\n        runtimeVariantId @since(version: \"26.4.4\")\n        runtimeVariant @since(version: \"26.4.4\") {\n          name\n          id\n        }\n        environ {\n          entries {\n            name\n            value\n          }\n        }\n      }\n      modelMountConfig {\n        vfolderId\n        mountDestination\n        definitionPath\n      }\n      modelDefinition {\n        models {\n          name\n          modelPath\n          service {\n            startCommand\n            port\n            healthCheck {\n              path\n              maxRetries\n              initialDelay\n              interval\n              maxWaitTime\n            }\n          }\n        }\n      }\n      imageV2 {\n        id\n        identity {\n          canonicalName\n        }\n      }\n      id\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "028cf653855d6e17766df41609c49ebf";
+(node as any).hash = "f8456523abf725ea18c7f37c19790e5b";
 
 export default node;
