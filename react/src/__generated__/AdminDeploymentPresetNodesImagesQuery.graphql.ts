@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<65edfb88908aad5cb9265eeec22282e6>>
+ * @generated SignedSource<<e2ff48d7aabce8bc1ee37803bd11ae6a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,8 +9,64 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
+export type ImageV2Status = "ALIVE" | "DELETED" | "%future added value";
+export type ImageV2Filter = {
+  AND?: ReadonlyArray<ImageV2Filter> | null | undefined;
+  NOT?: ReadonlyArray<ImageV2Filter> | null | undefined;
+  OR?: ReadonlyArray<ImageV2Filter> | null | undefined;
+  alias?: ImageAliasNestedFilter | null | undefined;
+  architecture?: StringFilter | null | undefined;
+  id?: UUIDFilter | null | undefined;
+  lastUsed?: DateTimeFilter | null | undefined;
+  name?: StringFilter | null | undefined;
+  registryId?: UUIDFilter | null | undefined;
+  status?: ImageV2StatusFilter | null | undefined;
+};
+export type ImageV2StatusFilter = {
+  equals?: ImageV2Status | null | undefined;
+  in?: ReadonlyArray<ImageV2Status> | null | undefined;
+  notEquals?: ImageV2Status | null | undefined;
+  notIn?: ReadonlyArray<ImageV2Status> | null | undefined;
+};
+export type StringFilter = {
+  contains?: string | null | undefined;
+  endsWith?: string | null | undefined;
+  equals?: string | null | undefined;
+  iContains?: string | null | undefined;
+  iEndsWith?: string | null | undefined;
+  iEquals?: string | null | undefined;
+  iIn?: ReadonlyArray<string> | null | undefined;
+  iNotContains?: string | null | undefined;
+  iNotEndsWith?: string | null | undefined;
+  iNotEquals?: string | null | undefined;
+  iNotIn?: ReadonlyArray<string> | null | undefined;
+  iNotStartsWith?: string | null | undefined;
+  iStartsWith?: string | null | undefined;
+  in?: ReadonlyArray<string> | null | undefined;
+  notContains?: string | null | undefined;
+  notEndsWith?: string | null | undefined;
+  notEquals?: string | null | undefined;
+  notIn?: ReadonlyArray<string> | null | undefined;
+  notStartsWith?: string | null | undefined;
+  startsWith?: string | null | undefined;
+};
+export type UUIDFilter = {
+  equals?: string | null | undefined;
+  in?: ReadonlyArray<string> | null | undefined;
+  notEquals?: string | null | undefined;
+  notIn?: ReadonlyArray<string> | null | undefined;
+};
+export type ImageAliasNestedFilter = {
+  alias?: StringFilter | null | undefined;
+};
+export type DateTimeFilter = {
+  after?: string | null | undefined;
+  before?: string | null | undefined;
+  equals?: string | null | undefined;
+  notEquals?: string | null | undefined;
+};
 export type AdminDeploymentPresetNodesImagesQuery$variables = {
-  ids: ReadonlyArray<string>;
+  filter?: ImageV2Filter | null | undefined;
   limit: number;
 };
 export type AdminDeploymentPresetNodesImagesQuery$data = {
@@ -35,7 +91,7 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "ids"
+    "name": "filter"
   },
   {
     "defaultValue": null,
@@ -48,21 +104,9 @@ v1 = [
     "alias": null,
     "args": [
       {
-        "fields": [
-          {
-            "fields": [
-              {
-                "kind": "Variable",
-                "name": "in",
-                "variableName": "ids"
-              }
-            ],
-            "kind": "ObjectValue",
-            "name": "id"
-          }
-        ],
-        "kind": "ObjectValue",
-        "name": "filter"
+        "kind": "Variable",
+        "name": "filter",
+        "variableName": "filter"
       },
       {
         "kind": "Variable",
@@ -144,16 +188,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "b16c3e55edc57c5e3de2cfb8b5a26a34",
+    "cacheID": "c77c08189254ccb1a2968afb6fa38fb4",
     "id": null,
     "metadata": {},
     "name": "AdminDeploymentPresetNodesImagesQuery",
     "operationKind": "query",
-    "text": "query AdminDeploymentPresetNodesImagesQuery(\n  $ids: [UUID!]!\n  $limit: Int!\n) {\n  adminImagesV2(filter: {id: {in: $ids}}, limit: $limit) {\n    edges {\n      node {\n        id\n        identity {\n          canonicalName\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query AdminDeploymentPresetNodesImagesQuery(\n  $filter: ImageV2Filter\n  $limit: Int!\n) {\n  adminImagesV2(filter: $filter, limit: $limit) {\n    edges {\n      node {\n        id\n        identity {\n          canonicalName\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "d8f2ec0224716ede95d74f0cc01629c0";
+(node as any).hash = "4fd4edab5c822583666a2b58b5b7c498";
 
 export default node;

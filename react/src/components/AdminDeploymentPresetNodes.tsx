@@ -7,6 +7,7 @@ import type {
   AdminDeploymentPresetNodesFragment$key,
 } from '../__generated__/AdminDeploymentPresetNodesFragment.graphql';
 import type { AdminDeploymentPresetNodesImagesQuery } from '../__generated__/AdminDeploymentPresetNodesImagesQuery.graphql';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { DeleteFilled, SettingOutlined } from '@ant-design/icons';
 import {
   BAIColumnType,
@@ -65,6 +66,7 @@ const AdminDeploymentPresetNodes: React.FC<AdminDeploymentPresetNodesProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
+  const baiClient = useSuspendedBackendaiClient();
 
   const presets = useFragment(
     graphql`
@@ -104,13 +106,20 @@ const AdminDeploymentPresetNodes: React.FC<AdminDeploymentPresetNodesProps> = ({
       .filter((id): id is string => id != null),
   );
 
+  // ImageV2Filter.id is available only on 26.4.4+. On 26.4.3 we pass filter:null
+  // to avoid GRAPHQL_VALIDATION_FAILED; imageIds will also be empty there because
+  // imageId @since(version:"26.4.4") strips the field from the fragment.
+  const supportsImageIdFilter =
+    baiClient.isManagerVersionCompatibleWith('26.4.4');
+  const imageFilter = supportsImageIdFilter ? { id: { in: imageIds } } : null;
+
   const imagesData = useLazyLoadQuery<AdminDeploymentPresetNodesImagesQuery>(
     graphql`
       query AdminDeploymentPresetNodesImagesQuery(
-        $ids: [UUID!]!
+        $filter: ImageV2Filter
         $limit: Int!
       ) {
-        adminImagesV2(filter: { id: { in: $ids } }, limit: $limit) {
+        adminImagesV2(filter: $filter, limit: $limit) {
           edges {
             node {
               id
@@ -122,7 +131,7 @@ const AdminDeploymentPresetNodes: React.FC<AdminDeploymentPresetNodesProps> = ({
         }
       }
     `,
-    { ids: imageIds, limit: imageIds.length || 1 },
+    { filter: imageFilter, limit: imageIds.length || 1 },
     { fetchPolicy: 'store-or-network' },
   );
 

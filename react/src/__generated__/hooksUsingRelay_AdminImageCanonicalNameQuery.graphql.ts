@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<061bc85889a29081260835fb878091f2>>
+ * @generated SignedSource<<71208193add74880b6350fb25397d506>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,8 +9,64 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
+export type ImageV2Status = "ALIVE" | "DELETED" | "%future added value";
+export type ImageV2Filter = {
+  AND?: ReadonlyArray<ImageV2Filter> | null | undefined;
+  NOT?: ReadonlyArray<ImageV2Filter> | null | undefined;
+  OR?: ReadonlyArray<ImageV2Filter> | null | undefined;
+  alias?: ImageAliasNestedFilter | null | undefined;
+  architecture?: StringFilter | null | undefined;
+  id?: UUIDFilter | null | undefined;
+  lastUsed?: DateTimeFilter | null | undefined;
+  name?: StringFilter | null | undefined;
+  registryId?: UUIDFilter | null | undefined;
+  status?: ImageV2StatusFilter | null | undefined;
+};
+export type ImageV2StatusFilter = {
+  equals?: ImageV2Status | null | undefined;
+  in?: ReadonlyArray<ImageV2Status> | null | undefined;
+  notEquals?: ImageV2Status | null | undefined;
+  notIn?: ReadonlyArray<ImageV2Status> | null | undefined;
+};
+export type StringFilter = {
+  contains?: string | null | undefined;
+  endsWith?: string | null | undefined;
+  equals?: string | null | undefined;
+  iContains?: string | null | undefined;
+  iEndsWith?: string | null | undefined;
+  iEquals?: string | null | undefined;
+  iIn?: ReadonlyArray<string> | null | undefined;
+  iNotContains?: string | null | undefined;
+  iNotEndsWith?: string | null | undefined;
+  iNotEquals?: string | null | undefined;
+  iNotIn?: ReadonlyArray<string> | null | undefined;
+  iNotStartsWith?: string | null | undefined;
+  iStartsWith?: string | null | undefined;
+  in?: ReadonlyArray<string> | null | undefined;
+  notContains?: string | null | undefined;
+  notEndsWith?: string | null | undefined;
+  notEquals?: string | null | undefined;
+  notIn?: ReadonlyArray<string> | null | undefined;
+  notStartsWith?: string | null | undefined;
+  startsWith?: string | null | undefined;
+};
+export type UUIDFilter = {
+  equals?: string | null | undefined;
+  in?: ReadonlyArray<string> | null | undefined;
+  notEquals?: string | null | undefined;
+  notIn?: ReadonlyArray<string> | null | undefined;
+};
+export type ImageAliasNestedFilter = {
+  alias?: StringFilter | null | undefined;
+};
+export type DateTimeFilter = {
+  after?: string | null | undefined;
+  before?: string | null | undefined;
+  equals?: string | null | undefined;
+  notEquals?: string | null | undefined;
+};
 export type hooksUsingRelay_AdminImageCanonicalNameQuery$variables = {
-  id: string;
+  filter?: ImageV2Filter | null | undefined;
 };
 export type hooksUsingRelay_AdminImageCanonicalNameQuery$data = {
   readonly adminImagesV2: {
@@ -33,26 +89,14 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "id"
+    "name": "filter"
   }
 ],
 v1 = [
   {
-    "fields": [
-      {
-        "fields": [
-          {
-            "kind": "Variable",
-            "name": "equals",
-            "variableName": "id"
-          }
-        ],
-        "kind": "ObjectValue",
-        "name": "id"
-      }
-    ],
-    "kind": "ObjectValue",
-    "name": "filter"
+    "kind": "Variable",
+    "name": "filter",
+    "variableName": "filter"
   },
   {
     "kind": "Literal",
@@ -173,16 +217,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "aa61d8950f022a65a74a32ab014bb7b3",
+    "cacheID": "5f76621633d3fbb3a5b27f16fc71407d",
     "id": null,
     "metadata": {},
     "name": "hooksUsingRelay_AdminImageCanonicalNameQuery",
     "operationKind": "query",
-    "text": "query hooksUsingRelay_AdminImageCanonicalNameQuery(\n  $id: UUID!\n) {\n  adminImagesV2(filter: {id: {equals: $id}}, limit: 1) {\n    edges {\n      node {\n        identity {\n          canonicalName\n        }\n        id\n      }\n    }\n  }\n}\n"
+    "text": "query hooksUsingRelay_AdminImageCanonicalNameQuery(\n  $filter: ImageV2Filter\n) {\n  adminImagesV2(filter: $filter, limit: 1) {\n    edges {\n      node {\n        identity {\n          canonicalName\n        }\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "0a0243b442f62df3f28e69e6c91eb93a";
+(node as any).hash = "bc9f759856442c3e8ff0480c1823529f";
 
 export default node;

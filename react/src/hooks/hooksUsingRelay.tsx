@@ -140,10 +140,20 @@ export const useAdminImageCanonicalName = (
   imageId: string | null | undefined,
   options: FetchOptions = { fetchPolicy: 'store-or-network' },
 ): string | undefined => {
+  const baiClient = useSuspendedBackendaiClient();
+  // ImageV2Filter.id is available only on 26.4.4+; pass null on 26.4.3 to avoid
+  // GRAPHQL_VALIDATION_FAILED (imageId is also absent on 26.4.3 at the call site).
+  const supportsImageIdFilter =
+    baiClient.isManagerVersionCompatibleWith('26.4.4');
+  const imageFilter =
+    supportsImageIdFilter && imageId ? { id: { equals: imageId } } : null;
+
   const data = useLazyLoadQuery<hooksUsingRelay_AdminImageCanonicalNameQuery>(
     graphql`
-      query hooksUsingRelay_AdminImageCanonicalNameQuery($id: UUID!) {
-        adminImagesV2(filter: { id: { equals: $id } }, limit: 1) {
+      query hooksUsingRelay_AdminImageCanonicalNameQuery(
+        $filter: ImageV2Filter
+      ) {
+        adminImagesV2(filter: $filter, limit: 1) {
           edges {
             node {
               identity {
@@ -154,7 +164,7 @@ export const useAdminImageCanonicalName = (
         }
       }
     `,
-    { id: imageId ?? '' },
+    { filter: imageFilter },
     options,
   );
   if (!imageId) return undefined;

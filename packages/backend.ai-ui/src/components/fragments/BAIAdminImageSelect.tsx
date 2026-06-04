@@ -10,6 +10,7 @@ import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { useLazyPaginatedQuery } from '../../hooks/usePaginatedQuery';
 import BAISelect, { BAISelectProps } from '../BAISelect';
 import TotalFooter from '../TotalFooter';
+import { useConnectedBAIClient } from '../provider/BAIClientProvider';
 import { useControllableValue } from 'ahooks';
 import { GetRef, Skeleton } from 'antd';
 import * as _ from 'lodash-es';
@@ -95,15 +96,22 @@ const BAIAdminImageSelect: React.FC<BAIAdminImageSelectProps> = ({
 
   // Resolve labels for the currently selected value(s) via adminImagesV2 so
   // admin users can see images that may be filtered by user-level permissions.
+  // ImageV2Filter.id is available only on 26.4.4+; pass null on 26.4.3 to avoid
+  // GRAPHQL_VALIDATION_FAILED.
+  const baiClient = useConnectedBAIClient();
+  const supportsImageIdFilter =
+    baiClient.isManagerVersionCompatibleWith('26.4.4');
+  const selectedFilter =
+    supportsImageIdFilter && hasValue ? { id: { in: selectedUUIDs } } : null;
+
   const { adminImagesV2: selectedImageResult } =
     useLazyLoadQuery<BAIAdminImageSelectValueQuery>(
       graphql`
         query BAIAdminImageSelectValueQuery(
-          $ids: [UUID!]
+          $filter: ImageV2Filter
           $skipSelected: Boolean!
         ) {
-          adminImagesV2(filter: { id: { in: $ids } }, limit: 100)
-            @skip(if: $skipSelected) {
+          adminImagesV2(filter: $filter, limit: 100) @skip(if: $skipSelected) {
             edges {
               node {
                 id
@@ -116,7 +124,7 @@ const BAIAdminImageSelect: React.FC<BAIAdminImageSelectProps> = ({
         }
       `,
       {
-        ids: selectedUUIDs,
+        filter: selectedFilter,
         skipSelected: !hasValue,
       },
       {

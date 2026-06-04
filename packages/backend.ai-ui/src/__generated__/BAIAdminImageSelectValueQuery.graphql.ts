@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a34cf1eabd5a75ee2c9655ba5631ce81>>
+ * @generated SignedSource<<05073af925efb818895d866705192a21>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,8 +9,64 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
+export type ImageV2Status = "ALIVE" | "DELETED" | "%future added value";
+export type ImageV2Filter = {
+  AND?: ReadonlyArray<ImageV2Filter> | null | undefined;
+  NOT?: ReadonlyArray<ImageV2Filter> | null | undefined;
+  OR?: ReadonlyArray<ImageV2Filter> | null | undefined;
+  alias?: ImageAliasNestedFilter | null | undefined;
+  architecture?: StringFilter | null | undefined;
+  id?: UUIDFilter | null | undefined;
+  lastUsed?: DateTimeFilter | null | undefined;
+  name?: StringFilter | null | undefined;
+  registryId?: UUIDFilter | null | undefined;
+  status?: ImageV2StatusFilter | null | undefined;
+};
+export type ImageV2StatusFilter = {
+  equals?: ImageV2Status | null | undefined;
+  in?: ReadonlyArray<ImageV2Status> | null | undefined;
+  notEquals?: ImageV2Status | null | undefined;
+  notIn?: ReadonlyArray<ImageV2Status> | null | undefined;
+};
+export type StringFilter = {
+  contains?: string | null | undefined;
+  endsWith?: string | null | undefined;
+  equals?: string | null | undefined;
+  iContains?: string | null | undefined;
+  iEndsWith?: string | null | undefined;
+  iEquals?: string | null | undefined;
+  iIn?: ReadonlyArray<string> | null | undefined;
+  iNotContains?: string | null | undefined;
+  iNotEndsWith?: string | null | undefined;
+  iNotEquals?: string | null | undefined;
+  iNotIn?: ReadonlyArray<string> | null | undefined;
+  iNotStartsWith?: string | null | undefined;
+  iStartsWith?: string | null | undefined;
+  in?: ReadonlyArray<string> | null | undefined;
+  notContains?: string | null | undefined;
+  notEndsWith?: string | null | undefined;
+  notEquals?: string | null | undefined;
+  notIn?: ReadonlyArray<string> | null | undefined;
+  notStartsWith?: string | null | undefined;
+  startsWith?: string | null | undefined;
+};
+export type UUIDFilter = {
+  equals?: string | null | undefined;
+  in?: ReadonlyArray<string> | null | undefined;
+  notEquals?: string | null | undefined;
+  notIn?: ReadonlyArray<string> | null | undefined;
+};
+export type ImageAliasNestedFilter = {
+  alias?: StringFilter | null | undefined;
+};
+export type DateTimeFilter = {
+  after?: string | null | undefined;
+  before?: string | null | undefined;
+  equals?: string | null | undefined;
+  notEquals?: string | null | undefined;
+};
 export type BAIAdminImageSelectValueQuery$variables = {
-  ids?: ReadonlyArray<string> | null | undefined;
+  filter?: ImageV2Filter | null | undefined;
   skipSelected: boolean;
 };
 export type BAIAdminImageSelectValueQuery$data = {
@@ -35,7 +91,7 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "ids"
+    "name": "filter"
   },
   {
     "defaultValue": null,
@@ -53,21 +109,9 @@ v1 = [
         "alias": null,
         "args": [
           {
-            "fields": [
-              {
-                "fields": [
-                  {
-                    "kind": "Variable",
-                    "name": "in",
-                    "variableName": "ids"
-                  }
-                ],
-                "kind": "ObjectValue",
-                "name": "id"
-              }
-            ],
-            "kind": "ObjectValue",
-            "name": "filter"
+            "kind": "Variable",
+            "name": "filter",
+            "variableName": "filter"
           },
           {
             "kind": "Literal",
@@ -151,16 +195,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "bdf4f10fcbd263a6bd1d728d9ff5792a",
+    "cacheID": "21c356d658df6ecb72bd9fc13bb5990e",
     "id": null,
     "metadata": {},
     "name": "BAIAdminImageSelectValueQuery",
     "operationKind": "query",
-    "text": "query BAIAdminImageSelectValueQuery(\n  $ids: [UUID!]\n  $skipSelected: Boolean!\n) {\n  adminImagesV2(filter: {id: {in: $ids}}, limit: 100) @skip(if: $skipSelected) {\n    edges {\n      node {\n        id\n        identity {\n          canonicalName\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query BAIAdminImageSelectValueQuery(\n  $filter: ImageV2Filter\n  $skipSelected: Boolean!\n) {\n  adminImagesV2(filter: $filter, limit: 100) @skip(if: $skipSelected) {\n    edges {\n      node {\n        id\n        identity {\n          canonicalName\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "3394b693b9cf130b5afe941b098a010b";
+(node as any).hash = "04eff7e7f963959f23faad77bbd3f6d9";
 
 export default node;
