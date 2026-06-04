@@ -155,7 +155,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
             value
           }
         }
-        resourceSlots {
+        resourceSlots @since(version: "26.4.4rc5") {
           slotName
           quantity
         }

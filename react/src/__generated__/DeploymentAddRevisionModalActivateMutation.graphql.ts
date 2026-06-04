@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c5f5aa23c5a0faf1e5793ef21a72b131>>
+ * @generated SignedSource<<e150699562409bd2f51fe9e1a82b242a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -14,10 +14,10 @@ export type ActivateRevisionInput = {
   deploymentId: string;
   revisionId: string;
 };
-export type DeploymentRevisionHistoryTabActivateMutation$variables = {
+export type DeploymentAddRevisionModalActivateMutation$variables = {
   input: ActivateRevisionInput;
 };
-export type DeploymentRevisionHistoryTabActivateMutation$data = {
+export type DeploymentAddRevisionModalActivateMutation$data = {
   readonly activateDeploymentRevision: {
     readonly activatedRevisionId: string;
     readonly deployment: {
@@ -36,9 +36,9 @@ export type DeploymentRevisionHistoryTabActivateMutation$data = {
     readonly previousRevisionId: string | null | undefined;
   } | null | undefined;
 };
-export type DeploymentRevisionHistoryTabActivateMutation = {
-  response: DeploymentRevisionHistoryTabActivateMutation$data;
-  variables: DeploymentRevisionHistoryTabActivateMutation$variables;
+export type DeploymentAddRevisionModalActivateMutation = {
+  response: DeploymentAddRevisionModalActivateMutation$data;
+  variables: DeploymentAddRevisionModalActivateMutation$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -446,7 +446,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "DeploymentRevisionHistoryTabActivateMutation",
+    "name": "DeploymentAddRevisionModalActivateMutation",
     "selections": [
       {
         "alias": null,
@@ -503,7 +503,7 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "DeploymentRevisionHistoryTabActivateMutation",
+    "name": "DeploymentAddRevisionModalActivateMutation",
     "selections": [
       {
         "alias": null,
@@ -555,16 +555,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "618a7bf3b41aaf941914c574396a78dc",
+    "cacheID": "0d85a8f743c2c44d1108911e17d585c0",
     "id": null,
     "metadata": {},
-    "name": "DeploymentRevisionHistoryTabActivateMutation",
+    "name": "DeploymentAddRevisionModalActivateMutation",
     "operationKind": "mutation",
-    "text": "mutation DeploymentRevisionHistoryTabActivateMutation(\n  $input: ActivateRevisionInput!\n) {\n  activateDeploymentRevision(input: $input) {\n    deployment {\n      id\n      currentRevisionId\n      deployingRevisionId\n      currentRevision @since(version: \"26.4.3\") {\n        id\n        ...DeploymentRevisionDetail_revision\n      }\n      deployingRevision @since(version: \"26.4.3\") {\n        id\n        ...DeploymentRevisionDetail_revision\n      }\n    }\n    previousRevisionId\n    activatedRevisionId\n  }\n}\n\nfragment DeploymentRevisionDetail_revision on ModelRevision {\n  id\n  revisionNumber @since(version: \"26.4.4rc5\")\n  createdAt\n  clusterConfig {\n    mode\n    size\n  }\n  resourceSlots @since(version: \"26.4.4rc5\") {\n    slotName\n    quantity\n  }\n  modelRuntimeConfig {\n    runtimeVariant @since(version: \"26.4.4rc5\") {\n      name\n      id\n    }\n    environ {\n      entries {\n        name\n        value\n      }\n    }\n  }\n  modelMountConfig {\n    vfolderId\n    mountDestination\n    definitionPath\n    vfolder {\n      id\n      name\n      ...FolderLink_vfolderNode\n    }\n  }\n  extraMounts {\n    vfolderId\n    mountDestination\n    mountPerm @since(version: \"26.4.4rc5\")\n    vfolder {\n      id\n      name\n      ...FolderLink_vfolderNode\n    }\n  }\n  imageV2 @since(version: \"26.4.3\") {\n    id\n    identity {\n      canonicalName\n      architecture\n    }\n  }\n  modelDefinition {\n    models {\n      name\n      modelPath\n      service {\n        startCommand\n        port\n        healthCheck {\n          path\n          initialDelay\n          maxRetries\n          interval\n          maxWaitTime\n        }\n      }\n    }\n  }\n}\n\nfragment FolderLink_vfolderNode on VirtualFolderNode {\n  row_id\n  name\n  ...VFolderNodeIdenticonFragment\n}\n\nfragment VFolderNodeIdenticonFragment on VirtualFolderNode {\n  id\n}\n"
+    "text": "mutation DeploymentAddRevisionModalActivateMutation(\n  $input: ActivateRevisionInput!\n) {\n  activateDeploymentRevision(input: $input) {\n    deployment {\n      id\n      currentRevisionId\n      deployingRevisionId\n      currentRevision @since(version: \"26.4.3\") {\n        id\n        ...DeploymentRevisionDetail_revision\n      }\n      deployingRevision @since(version: \"26.4.3\") {\n        id\n        ...DeploymentRevisionDetail_revision\n      }\n    }\n    previousRevisionId\n    activatedRevisionId\n  }\n}\n\nfragment DeploymentRevisionDetail_revision on ModelRevision {\n  id\n  revisionNumber @since(version: \"26.4.4rc5\")\n  createdAt\n  clusterConfig {\n    mode\n    size\n  }\n  resourceSlots @since(version: \"26.4.4rc5\") {\n    slotName\n    quantity\n  }\n  modelRuntimeConfig {\n    runtimeVariant @since(version: \"26.4.4rc5\") {\n      name\n      id\n    }\n    environ {\n      entries {\n        name\n        value\n      }\n    }\n  }\n  modelMountConfig {\n    vfolderId\n    mountDestination\n    definitionPath\n    vfolder {\n      id\n      name\n      ...FolderLink_vfolderNode\n    }\n  }\n  extraMounts {\n    vfolderId\n    mountDestination\n    mountPerm @since(version: \"26.4.4rc5\")\n    vfolder {\n      id\n      name\n      ...FolderLink_vfolderNode\n    }\n  }\n  imageV2 @since(version: \"26.4.3\") {\n    id\n    identity {\n      canonicalName\n      architecture\n    }\n  }\n  modelDefinition {\n    models {\n      name\n      modelPath\n      service {\n        startCommand\n        port\n        healthCheck {\n          path\n          initialDelay\n          maxRetries\n          interval\n          maxWaitTime\n        }\n      }\n    }\n  }\n}\n\nfragment FolderLink_vfolderNode on VirtualFolderNode {\n  row_id\n  name\n  ...VFolderNodeIdenticonFragment\n}\n\nfragment VFolderNodeIdenticonFragment on VirtualFolderNode {\n  id\n}\n"
   }
 };
 })();
 
-(node as any).hash = "153c096cf78b28827d7a04ef0f1610d4";
+(node as any).hash = "62c983f2bae48a0d6cf7b2230fd4397f";
 
 export default node;

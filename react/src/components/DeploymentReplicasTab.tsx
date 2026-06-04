@@ -213,13 +213,13 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
                   id
                   sessionId
                   revisionId
-                  status
-                  trafficStatus
-                  healthStatus
+                  status @since(version: "26.4.4rc5")
+                  trafficStatus @since(version: "26.4.4rc5")
+                  healthStatus @since(version: "26.4.4rc5")
                   createdAt
                   revision {
                     id
-                    revisionNumber @since(version: "26.4.4")
+                    revisionNumber @since(version: "26.4.4rc5")
                     ...DeploymentRevisionDetail_revision
                   }
                   sessionV2 @since(version: "26.4.3") {

@@ -67,18 +67,18 @@ const DeploymentRevisionDetail: React.FC<{
     graphql`
       fragment DeploymentRevisionDetail_revision on ModelRevision {
         id
-        revisionNumber @since(version: "26.4.4")
+        revisionNumber @since(version: "26.4.4rc5")
         createdAt
         clusterConfig {
           mode
           size
         }
-        resourceSlots @since(version: "26.4.4") {
+        resourceSlots @since(version: "26.4.4rc5") {
           slotName
           quantity
         }
         modelRuntimeConfig {
-          runtimeVariant @since(version: "26.4.4") {
+          runtimeVariant @since(version: "26.4.4rc5") {
             name
           }
           environ {
@@ -101,7 +101,7 @@ const DeploymentRevisionDetail: React.FC<{
         extraMounts {
           vfolderId
           mountDestination
-          mountPerm @since(version: "26.4.4")
+          mountPerm @since(version: "26.4.4rc5")
           vfolder {
             id
             name

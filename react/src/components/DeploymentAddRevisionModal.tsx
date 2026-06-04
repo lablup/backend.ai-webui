@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { DeploymentAddRevisionModalActivateMutation } from '../__generated__/DeploymentAddRevisionModalActivateMutation.graphql';
 import { DeploymentAddRevisionModalAddMutation } from '../__generated__/DeploymentAddRevisionModalAddMutation.graphql';
 import { DeploymentAddRevisionModalImageNameQuery } from '../__generated__/DeploymentAddRevisionModalImageNameQuery.graphql';
 import type { DeploymentAddRevisionModalPresetCountQuery } from '../__generated__/DeploymentAddRevisionModalPresetCountQuery.graphql';
@@ -20,6 +21,7 @@ import {
   mergeExtraArgs,
   reverseMapExtraArgs,
 } from '../helper/runtimeExtraArgsParser';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import {
@@ -193,6 +195,43 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   const { id: currentProjectId } = useCurrentProjectValue();
   const { logger } = useBAILogger();
   const { open: openFolderExplorer } = useFolderExplorerOpener();
+  const baiClient = useSuspendedBackendaiClient();
+  // The Model Deployment GraphQL surface was reworked in 26.4.4 (see the
+  // `model-deployment-revised-schema` capability). We branch the whole
+  // add-revision flow on this single flag — 26.4.3 (legacy) vs 26.4.4 (revised):
+  //  - revised: `options` (autoActivate) lives in the input; the resource group
+  //    is inherited from deployment `metadata` (RG picker hidden);
+  //    `modelRuntimeConfig` takes `runtimeVariantId`; preset mode is available.
+  //  - legacy: `options` does not exist on the input, so we omit it and
+  //    replicate auto-activation with a follow-up `activateDeploymentRevision`;
+  //    the resource group is required on `resourceConfig` (RG picker shown);
+  //    `modelRuntimeConfig` takes `runtimeVariant` (the variant name); preset
+  //    mode is unavailable (configs are required, not nullable).
+  const isRevisedDeploymentSchema = baiClient.supports(
+    'model-deployment-revised-schema',
+  );
+  // Legacy cores keep the resource group on the revision's resourceConfig (the
+  // field was removed from the generated schema in v2), so it is cast in.
+  const buildLegacyResourceGroupConfig = (
+    resourceGroupName: string,
+  ): Record<string, never> =>
+    isRevisedDeploymentSchema
+      ? {}
+      : ({
+          resourceGroup: { name: resourceGroupName },
+        } as unknown as Record<string, never>);
+  // Legacy cores take `runtimeVariant` (the variant *name*, String!) instead of
+  // `runtimeVariantId` (UUID). Cast into the v2 input shape since the generated
+  // type only models `runtimeVariantId`.
+  const buildRuntimeVariantConfig = (
+    runtimeVariantId: string,
+    runtimeVariantName: string,
+  ): { runtimeVariantId: string } =>
+    isRevisedDeploymentSchema
+      ? { runtimeVariantId }
+      : ({ runtimeVariant: runtimeVariantName } as unknown as {
+          runtimeVariantId: string;
+        });
 
   // Refs to refetch each form's model folder select after creating a new
   // model-usage folder, or via the manual refresh button. Two refs because
@@ -218,7 +257,11 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   const [mode, setMode] = useBAISettingUserState(
     'deploymentRevisionCreationMode',
   );
-  const effectiveMode = mode ?? 'preset';
+  // Preset mode requires nullable add-revision configs (26.4.4rc5+); older cores
+  // can only use the custom flow.
+  const effectiveMode = !isRevisedDeploymentSchema
+    ? 'custom'
+    : (mode ?? 'preset');
 
   // One-shot carry-over consumed by the Custom body on mount. Set when the
   // user transitions Preset → Custom with a preset selected.
@@ -279,7 +322,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       query DeploymentAddRevisionModalQuery($deploymentId: ID!) {
         deployment(id: $deploymentId) {
           metadata {
-            resourceGroupName @since(version: "26.4.4")
+            resourceGroupName @since(version: "26.4.4rc5")
           }
           currentRevision {
             clusterConfig {
@@ -294,7 +337,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                 }
               }
             }
-            resourceSlots @since(version: "26.4.4") {
+            resourceSlots @since(version: "26.4.4rc5") {
               slotName
               quantity
             }
@@ -303,8 +346,8 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
               mountDestination
             }
             modelRuntimeConfig {
-              runtimeVariantId
-              runtimeVariant @since(version: "26.4.4") {
+              runtimeVariantId @since(version: "26.4.4rc5")
+              runtimeVariant @since(version: "26.4.4rc5") {
                 name
               }
               environ {
@@ -461,7 +504,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                   value
                 }
               }
-              resourceSlots @since(version: "26.4.4") {
+              resourceSlots @since(version: "26.4.4rc5") {
                 slotName
                 quantity
               }
@@ -494,7 +537,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           revision {
             id
             ...DeploymentRevisionDetail_revision
-            deployment @since(version: "26.4.4") {
+            deployment @since(version: "26.4.4rc5") {
               id
               currentRevisionId
               deployingRevisionId
@@ -511,6 +554,68 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
         }
       }
     `);
+
+  // Used only on legacy (pre-26.4.4) cores (see `isRevisedDeploymentSchema`):
+  // those cores have no `options` field on AddRevisionInput, so they ignore the
+  // auto-activate option the revised flow embeds there. We activate the freshly
+  // added revision here to preserve the "add & apply" UX.
+  const [commitActivate] =
+    useMutation<DeploymentAddRevisionModalActivateMutation>(graphql`
+      mutation DeploymentAddRevisionModalActivateMutation(
+        $input: ActivateRevisionInput!
+      ) {
+        activateDeploymentRevision(input: $input) {
+          deployment {
+            id
+            currentRevisionId
+            deployingRevisionId
+            currentRevision @since(version: "26.4.3") {
+              id
+              ...DeploymentRevisionDetail_revision
+            }
+            deployingRevision @since(version: "26.4.3") {
+              id
+              ...DeploymentRevisionDetail_revision
+            }
+          }
+          previousRevisionId
+          activatedRevisionId
+        }
+      }
+    `);
+
+  // On legacy cores, activate the just-added revision when the user asked for
+  // auto-activation. No-op on the revised schema (the input already carries the
+  // option) or when auto-activation is unchecked.
+  const activateAddedRevisionIfLegacy = (
+    revisionId: string | null | undefined,
+  ) => {
+    if (isRevisedDeploymentSchema || !autoActivate || !revisionId) return;
+    commitActivate({
+      variables: {
+        input: {
+          deploymentId: toLocalId(deploymentId) ?? deploymentId,
+          revisionId: toLocalId(revisionId) ?? revisionId,
+        },
+      },
+      onCompleted: (_res, errors) => {
+        if (errors && errors.length > 0) {
+          logger.error(
+            '[DeploymentAddRevisionModal] legacy activate returned errors',
+            errors,
+          );
+          message.error(errors[0]?.message ?? t('general.ErrorOccurred'));
+        }
+      },
+      onError: (err) => {
+        logger.error(
+          '[DeploymentAddRevisionModal] legacy activate failed',
+          err,
+        );
+        message.error(err.message ?? t('general.ErrorOccurred'));
+      },
+    });
+  };
 
   // Build a Custom-form prefill object from a preset node read off the
   // singular `deploymentRevisionPreset(id:)` query (resolved via
@@ -1031,24 +1136,35 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
             resourceSlots: { entries: slotEntries },
             resourceOpts:
               optsEntries.length > 0 ? { entries: optsEntries } : null,
+            // Pre-26.4.4rc5 cores require the resource group on the revision's
+            // resourceConfig; rc5+ inherits it from the deployment metadata.
+            ...buildLegacyResourceGroupConfig(values.resourceGroup),
           },
           image: { id: decodedImageId },
           modelRuntimeConfig: {
-            runtimeVariantId: values.runtimeVariantId,
+            // Legacy cores take the runtime variant *name* (String!); revised
+            // cores take `runtimeVariantId` (UUID).
+            ...buildRuntimeVariantConfig(values.runtimeVariantId, variantName),
             environ:
               environEntries.length > 0 ? { entries: environEntries } : null,
           },
           modelMountConfig: {
             vfolderId: toLocalId(values.modelFolderId),
             mountDestination,
-            definitionPath: values.definitionPath,
+            // `definitionPath` is required on legacy cores (optional on revised
+            // ones), so fall back to an empty string there.
+            definitionPath: isRevisedDeploymentSchema
+              ? values.definitionPath
+              : (values.definitionPath ?? ''),
           },
           modelDefinition,
           extraMounts: extraMounts.length > 0 ? extraMounts : null,
-          options: { autoActivate },
+          // `options` only exists on AddRevisionInput on the revised schema;
+          // omit it on legacy cores and rely on the follow-up activate below.
+          ...(isRevisedDeploymentSchema ? { options: { autoActivate } } : {}),
         },
       },
-      onCompleted: (_, errors) => {
+      onCompleted: (response, errors) => {
         if (errors && errors.length > 0) {
           const err = errors[0];
           const isInProgress = err?.message?.includes(
@@ -1061,6 +1177,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           );
           return;
         }
+        activateAddedRevisionIfLegacy(response.addModelRevision?.revision?.id);
         customForm.resetFields();
         message.success(t('deployment.RevisionAdded'));
         onRequestClose(true);
@@ -1093,10 +1210,12 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
             vfolderId: toLocalId(values.modelFolderId),
             mountDestination: '/models',
           },
-          options: { autoActivate },
+          // `options` only exists on AddRevisionInput on the revised schema;
+          // omit it on legacy cores and rely on the follow-up activate below.
+          ...(isRevisedDeploymentSchema ? { options: { autoActivate } } : {}),
         },
       },
-      onCompleted: (_, errors) => {
+      onCompleted: (response, errors) => {
         if (errors && errors.length > 0) {
           const err = errors[0];
           const isInProgress = err?.message?.includes(
@@ -1113,6 +1232,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           );
           return;
         }
+        activateAddedRevisionIfLegacy(response.addModelRevision?.revision?.id);
         presetForm.resetFields();
         message.success(t('deployment.RevisionAdded'));
         onRequestClose(true);
@@ -1182,15 +1302,19 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           style={{ paddingRight: token.paddingLG }}
         >
           <span>{t('deployment.AddRevision')}</span>
-          <Segmented<'preset' | 'custom'>
-            value={effectiveMode}
-            onChange={handleModeChange}
-            options={[
-              { label: t('deployment.PresetMode'), value: 'preset' },
-              { label: t('deployment.CustomMode'), value: 'custom' },
-            ]}
-            style={{ fontWeight: 'normal' }}
-          />
+          {/* Preset mode needs nullable add-revision configs (26.4.4rc5+);
+              hide the mode switch on older cores so only Custom is offered. */}
+          {isRevisedDeploymentSchema ? (
+            <Segmented<'preset' | 'custom'>
+              value={effectiveMode}
+              onChange={handleModeChange}
+              options={[
+                { label: t('deployment.PresetMode'), value: 'preset' },
+                { label: t('deployment.CustomMode'), value: 'custom' },
+              ]}
+              style={{ fontWeight: 'normal' }}
+            />
+          ) : null}
         </BAIFlex>
       }
       width={720}
@@ -1674,7 +1798,9 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           <Suspense fallback={<Skeleton active paragraph={{ rows: 4 }} />}>
             <ResourceAllocationFormItems
               enableResourcePresets
-              hideResourceGroupFormItem
+              // rc5+ inherits the resource group from the deployment metadata
+              // (hidden); older cores require picking it per revision.
+              hideResourceGroupFormItem={isRevisedDeploymentSchema}
             />
           </Suspense>
 

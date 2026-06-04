@@ -5,7 +5,11 @@
 import { DeploymentSettingModalCreateMutation } from '../__generated__/DeploymentSettingModalCreateMutation.graphql';
 import { DeploymentSettingModalUpdateMutation } from '../__generated__/DeploymentSettingModalUpdateMutation.graphql';
 import { DeploymentSettingModal_deployment$key } from '../__generated__/DeploymentSettingModal_deployment.graphql';
-import { useCurrentDomainValue, useWebUINavigate } from '../hooks';
+import {
+  useCurrentDomainValue,
+  useSuspendedBackendaiClient,
+  useWebUINavigate,
+} from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import {
   App,
@@ -59,6 +63,25 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
   const { message } = App.useApp();
   const { id: projectId, name: projectName } = useCurrentProjectValue();
   const currentDomain = useCurrentDomainValue();
+  const baiClient = useSuspendedBackendaiClient();
+  // The Model Deployment GraphQL surface was reworked in 26.4.4 (see the
+  // `model-deployment-revised-schema` capability). We branch every deployment
+  // query/mutation on this single flag: 26.4.3 (legacy) vs 26.4.4 (revised).
+  // On the revised schema the deployment-level resource group lives on
+  // `metadata` and the replica-count input is `replicaCount`; on legacy the
+  // resource group is chosen per revision (add-revision modal) and the input is
+  // `desiredReplicaCount`.
+  const isRevisedDeploymentSchema = baiClient.supports(
+    'model-deployment-revised-schema',
+  );
+  // The legacy branch is cast to the v2 shape because the Relay-generated input
+  // types only model the current (`replicaCount`) schema.
+  const buildReplicaCountInput = (count: number): { replicaCount: number } =>
+    isRevisedDeploymentSchema
+      ? { replicaCount: count }
+      : ({ desiredReplicaCount: count } as unknown as {
+          replicaCount: number;
+        });
 
   const deployment = useFragment(
     graphql`
@@ -67,7 +90,7 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
         metadata {
           name
           tags
-          resourceGroupName @since(version: "26.4.4")
+          resourceGroupName @since(version: "26.4.4rc5")
         }
         networkAccess {
           openToPublic
@@ -120,7 +143,7 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
                 name: values.name,
                 tags: values.tags?.length ? values.tags : null,
                 openToPublic: values.openToPublic,
-                replicaCount: values.replicaCount,
+                ...buildReplicaCountInput(values.replicaCount),
               },
             },
             onCompleted: (_response, errors) => {
@@ -152,7 +175,13 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
                   domainName: currentDomain,
                   name: values.name,
                   tags: values.tags?.length ? values.tags : null,
-                  resourceGroupName: values.resourceGroup,
+                  // `resourceGroupName` only exists on metadata from 26.4.4rc5;
+                  // older cores take the resource group per revision instead.
+                  // The legacy branch is cast to the new shape because the
+                  // generated input type marks `resourceGroupName` required.
+                  ...(isRevisedDeploymentSchema
+                    ? { resourceGroupName: values.resourceGroup }
+                    : ({} as { resourceGroupName: string })),
                 },
                 networkAccess: {
                   // TODO: expose preferredDomainName once backend business logic is in place
@@ -161,7 +190,7 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
                 },
                 // TODO: expose strategy type selection once BLUE_GREEN is supported server-side
                 defaultDeploymentStrategy: { type: 'ROLLING' },
-                replicaCount: values.replicaCount,
+                ...buildReplicaCountInput(values.replicaCount),
                 initialRevision: null,
               },
             },
@@ -262,7 +291,7 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
                 <Typography.Text type="secondary">—</Typography.Text>
               )}
             </Form.Item>
-          ) : (
+          ) : isRevisedDeploymentSchema ? (
             <Form.Item
               name="resourceGroup"
               label={t('modelStore.ResourceGroup')}
@@ -275,7 +304,9 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
                 style={{ width: '100%' }}
               />
             </Form.Item>
-          )}
+          ) : // Pre-26.4.4rc5 cores have no deployment-level resource group;
+          // it is selected per revision in the add-revision modal instead.
+          null}
           <Form.Item
             name="replicaCount"
             label={t('deployment.DesiredReplicas')}

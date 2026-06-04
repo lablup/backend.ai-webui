@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<701d53468d69c27a783cc48a18fe65d6>>
+ * @generated SignedSource<<7a56f5b07728106c54941710d1658ff8>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -717,16 +717,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "1b0b3d784b9c295d4acb8347fcc83ddc",
+    "cacheID": "a18b12c1fbbc2ef54e471aaf3dc22c3f",
     "id": null,
     "metadata": {},
     "name": "DeploymentReplicasTabListQuery",
     "operationKind": "query",
-    "text": "query DeploymentReplicasTabListQuery(\n  $deploymentId: ID!\n  $filter: ReplicaFilter\n  $orderBy: [ReplicaOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  deployment(id: $deploymentId) {\n    replicas(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n      count\n      edges {\n        node {\n          id\n          sessionId\n          revisionId\n          status\n          trafficStatus\n          healthStatus\n          createdAt\n          revision {\n            id\n            revisionNumber @since(version: \"26.4.4\")\n            ...DeploymentRevisionDetail_revision\n          }\n          sessionV2 @since(version: \"26.4.3\") {\n            id\n            metadata {\n              name\n            }\n          }\n        }\n      }\n    }\n    id\n  }\n}\n\nfragment DeploymentRevisionDetail_revision on ModelRevision {\n  id\n  revisionNumber @since(version: \"26.4.4\")\n  createdAt\n  clusterConfig {\n    mode\n    size\n  }\n  resourceSlots @since(version: \"26.4.4\") {\n    slotName\n    quantity\n  }\n  modelRuntimeConfig {\n    runtimeVariant @since(version: \"26.4.4\") {\n      name\n      id\n    }\n    environ {\n      entries {\n        name\n        value\n      }\n    }\n  }\n  modelMountConfig {\n    vfolderId\n    mountDestination\n    definitionPath\n    vfolder {\n      id\n      name\n      ...FolderLink_vfolderNode\n    }\n  }\n  extraMounts {\n    vfolderId\n    mountDestination\n    mountPerm @since(version: \"26.4.4\")\n    vfolder {\n      id\n      name\n      ...FolderLink_vfolderNode\n    }\n  }\n  imageV2 @since(version: \"26.4.3\") {\n    id\n    identity {\n      canonicalName\n      architecture\n    }\n  }\n  modelDefinition {\n    models {\n      name\n      modelPath\n      service {\n        startCommand\n        port\n        healthCheck {\n          path\n          initialDelay\n          maxRetries\n          interval\n          maxWaitTime\n        }\n      }\n    }\n  }\n}\n\nfragment FolderLink_vfolderNode on VirtualFolderNode {\n  row_id\n  name\n  ...VFolderNodeIdenticonFragment\n}\n\nfragment VFolderNodeIdenticonFragment on VirtualFolderNode {\n  id\n}\n"
+    "text": "query DeploymentReplicasTabListQuery(\n  $deploymentId: ID!\n  $filter: ReplicaFilter\n  $orderBy: [ReplicaOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  deployment(id: $deploymentId) {\n    replicas(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n      count\n      edges {\n        node {\n          id\n          sessionId\n          revisionId\n          status @since(version: \"26.4.4rc5\")\n          trafficStatus @since(version: \"26.4.4rc5\")\n          healthStatus @since(version: \"26.4.4rc5\")\n          createdAt\n          revision {\n            id\n            revisionNumber @since(version: \"26.4.4rc5\")\n            ...DeploymentRevisionDetail_revision\n          }\n          sessionV2 @since(version: \"26.4.3\") {\n            id\n            metadata {\n              name\n            }\n          }\n        }\n      }\n    }\n    id\n  }\n}\n\nfragment DeploymentRevisionDetail_revision on ModelRevision {\n  id\n  revisionNumber @since(version: \"26.4.4rc5\")\n  createdAt\n  clusterConfig {\n    mode\n    size\n  }\n  resourceSlots @since(version: \"26.4.4rc5\") {\n    slotName\n    quantity\n  }\n  modelRuntimeConfig {\n    runtimeVariant @since(version: \"26.4.4rc5\") {\n      name\n      id\n    }\n    environ {\n      entries {\n        name\n        value\n      }\n    }\n  }\n  modelMountConfig {\n    vfolderId\n    mountDestination\n    definitionPath\n    vfolder {\n      id\n      name\n      ...FolderLink_vfolderNode\n    }\n  }\n  extraMounts {\n    vfolderId\n    mountDestination\n    mountPerm @since(version: \"26.4.4rc5\")\n    vfolder {\n      id\n      name\n      ...FolderLink_vfolderNode\n    }\n  }\n  imageV2 @since(version: \"26.4.3\") {\n    id\n    identity {\n      canonicalName\n      architecture\n    }\n  }\n  modelDefinition {\n    models {\n      name\n      modelPath\n      service {\n        startCommand\n        port\n        healthCheck {\n          path\n          initialDelay\n          maxRetries\n          interval\n          maxWaitTime\n        }\n      }\n    }\n  }\n}\n\nfragment FolderLink_vfolderNode on VirtualFolderNode {\n  row_id\n  name\n  ...VFolderNodeIdenticonFragment\n}\n\nfragment VFolderNodeIdenticonFragment on VirtualFolderNode {\n  id\n}\n"
   }
 };
 })();
 
-(node as any).hash = "90793942b65512f1896bb489c762859e";
+(node as any).hash = "7de006063420836e935502bff311185f";
 
 export default node;

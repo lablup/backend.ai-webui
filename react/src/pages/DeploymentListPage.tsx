@@ -155,7 +155,7 @@ const DeploymentListPageContent: React.FC = () => {
               }
               currentRevision @since(version: "26.4.3") {
                 id
-                revisionNumber @since(version: "26.4.4")
+                revisionNumber @since(version: "26.4.4rc5")
                 ...DeploymentRevisionDetail_revision
               }
             }

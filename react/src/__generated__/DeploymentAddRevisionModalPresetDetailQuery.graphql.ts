@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f67eba64a6e09d35a9daa331b3081add>>
+ * @generated SignedSource<<ca56f25c393ce473283c0cd18c4a50fa>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -318,12 +318,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "218b82beeca87da0b64539597ed3fe1b",
+    "cacheID": "249186bf30b029f7eef41b7ed7e13aa4",
     "id": null,
     "metadata": {},
     "name": "DeploymentAddRevisionModalPresetDetailQuery",
     "operationKind": "query",
-    "text": "query DeploymentAddRevisionModalPresetDetailQuery(\n  $id: UUID!\n) {\n  deploymentRevisionPreset(id: $id) {\n    ...DeploymentPresetDetailModalFragment\n    id\n  }\n}\n\nfragment DeploymentPresetDetailModalFragment on DeploymentRevisionPreset {\n  id\n  name\n  description\n  runtimeVariantId\n  runtimeVariant {\n    id\n    name\n  }\n  cluster {\n    clusterMode\n    clusterSize\n  }\n  execution {\n    imageId\n    startupCommand\n    bootstrapScript\n    environ {\n      key\n      value\n    }\n  }\n  resource {\n    resourceOpts {\n      name\n      value\n    }\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  deploymentDefaults {\n    openToPublic\n    replicaCount\n    revisionHistoryLimit\n    deploymentStrategy\n  }\n  presetValues {\n    presetId\n    value\n  }\n}\n"
+    "text": "query DeploymentAddRevisionModalPresetDetailQuery(\n  $id: UUID!\n) {\n  deploymentRevisionPreset(id: $id) {\n    ...DeploymentPresetDetailModalFragment\n    id\n  }\n}\n\nfragment DeploymentPresetDetailModalFragment on DeploymentRevisionPreset {\n  id\n  name\n  description\n  runtimeVariantId\n  runtimeVariant {\n    id\n    name\n  }\n  cluster {\n    clusterMode\n    clusterSize\n  }\n  execution {\n    imageId\n    startupCommand\n    bootstrapScript\n    environ {\n      key\n      value\n    }\n  }\n  resource {\n    resourceOpts {\n      name\n      value\n    }\n  }\n  resourceSlots @since(version: \"26.4.4rc5\") {\n    slotName\n    quantity\n  }\n  deploymentDefaults {\n    openToPublic\n    replicaCount\n    revisionHistoryLimit\n    deploymentStrategy\n  }\n  presetValues {\n    presetId\n    value\n  }\n}\n"
   }
 };
 })();
