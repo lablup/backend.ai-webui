@@ -40,7 +40,7 @@ const DeploymentPresetDetailModal: React.FC<
         name
         description
         runtimeVariantId
-        runtimeVariant {
+        runtimeVariant @since(version: "26.4.3") {
           id
           name
         }

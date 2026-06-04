@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<00ac1611ee85b165ea25b3f9c23ec9fc>>
+ * @generated SignedSource<<139891b73a687a749ec4f5e08f414691>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -243,16 +243,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "485b276a5f176eb72024d77324a03385",
+    "cacheID": "25067d2d1950a3c15b081df6213cc798",
     "id": null,
     "metadata": {},
     "name": "BAIAvailablePresetSelectValueQuery",
     "operationKind": "query",
-    "text": "query BAIAvailablePresetSelectValueQuery(\n  $ids: [UUID!]\n  $first: Int!\n  $skip: Boolean!\n) {\n  deploymentRevisionPresets(filter: {id: {in: $ids}}, first: $first) @skip(if: $skip) {\n    edges {\n      node {\n        id\n        name\n        description\n        runtimeVariantId\n        runtimeVariant {\n          name\n          id\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query BAIAvailablePresetSelectValueQuery(\n  $ids: [UUID!]\n  $first: Int!\n  $skip: Boolean!\n) {\n  deploymentRevisionPresets(filter: {id: {in: $ids}}, first: $first) @skip(if: $skip) {\n    edges {\n      node {\n        id\n        name\n        description\n        runtimeVariantId\n        runtimeVariant @since(version: \"26.4.3\") {\n          name\n          id\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "30d47ffa95cdf83936d962bb9d3e5ada";
+(node as any).hash = "070de30fb11a30a3201e36e01b1d374b";
 
 export default node;

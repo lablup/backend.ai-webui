@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ccd0b42128ee9876a6c925d590346f83>>
+ * @generated SignedSource<<2ce2e7da833c6e536ae7d146341f00c1>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -285,16 +285,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "9da417fb2ac8e507c2add0e8ea5c6008",
+    "cacheID": "0f851240a61904dba110da5ab973ff71",
     "id": null,
     "metadata": {},
     "name": "BAIAvailablePresetSelectPaginatedQuery",
     "operationKind": "query",
-    "text": "query BAIAvailablePresetSelectPaginatedQuery(\n  $offset: Int!\n  $limit: Int!\n  $filter: DeploymentRevisionPresetFilter\n) {\n  deploymentRevisionPresets(offset: $offset, limit: $limit, filter: $filter, orderBy: [{field: RANK, direction: \"ASC\"}]) {\n    count\n    edges {\n      node {\n        id\n        name\n        description\n        rank\n        runtimeVariantId\n        runtimeVariant {\n          name\n          id\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query BAIAvailablePresetSelectPaginatedQuery(\n  $offset: Int!\n  $limit: Int!\n  $filter: DeploymentRevisionPresetFilter\n) {\n  deploymentRevisionPresets(offset: $offset, limit: $limit, filter: $filter, orderBy: [{field: RANK, direction: \"ASC\"}]) {\n    count\n    edges {\n      node {\n        id\n        name\n        description\n        rank\n        runtimeVariantId\n        runtimeVariant @since(version: \"26.4.3\") {\n          name\n          id\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "da235ad4d7b554db2eb0632b7385930d";
+(node as any).hash = "9d5d960b5f7ff6403311fe5dd9cbb709";
 
 export default node;

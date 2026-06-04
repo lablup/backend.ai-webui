@@ -133,7 +133,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
         name
         description
         runtimeVariantId
-        runtimeVariant {
+        runtimeVariant @since(version: "26.4.3") {
           name
         }
         cluster {
@@ -141,7 +141,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
           clusterSize
         }
         execution {
-          imageId
+          imageId @since(version: "26.4.4")
           startupCommand
           bootstrapScript
           environ {

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<21a1ea5f08f696c97f61852c1d54720d>>
+ * @generated SignedSource<<b4b308247fee3da8c107c719f1f8ee7b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -505,12 +505,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "8f5b39e09e618c95d934be579fbb8c6a",
+    "cacheID": "e657a324a2cf0dfb700e13e9b3e3473c",
     "id": null,
     "metadata": {},
     "name": "ModelCardDrawerQuery",
     "operationKind": "query",
-    "text": "query ModelCardDrawerQuery(\n  $id: UUID!\n) {\n  modelCardV2(id: $id) {\n    ...ModelCardDrawerFragment\n    id\n  }\n}\n\nfragment DeploymentPresetDetailModalFragment on DeploymentRevisionPreset {\n  id\n  name\n  description\n  runtimeVariantId\n  runtimeVariant {\n    id\n    name\n  }\n  cluster {\n    clusterMode\n    clusterSize\n  }\n  execution {\n    imageId @since(version: \"26.4.4\")\n    startupCommand\n    bootstrapScript\n    environ {\n      key\n      value\n    }\n  }\n  resource {\n    resourceOpts {\n      name\n      value\n    }\n  }\n  resourceSlots @since(version: \"26.4.4\") {\n    slotName\n    quantity\n  }\n  deploymentDefaults {\n    openToPublic\n    replicaCount\n    revisionHistoryLimit\n    deploymentStrategy\n  }\n  presetValues {\n    presetId\n    value\n  }\n}\n\nfragment ModelCardDeployModalFragment on ModelCardV2 {\n  id\n  availablePresets(orderBy: [{field: RANK, direction: \"ASC\"}]) {\n    edges {\n      node {\n        id\n        name\n        runtimeVariantId\n        ...DeploymentPresetDetailModalFragment\n      }\n    }\n  }\n}\n\nfragment ModelCardDrawerFragment on ModelCardV2 {\n  id\n  name\n  metadata {\n    title\n    author\n    description\n    task\n    category\n    architecture\n    framework\n    label\n    license\n    modelVersion\n  }\n  minResource {\n    resourceType\n    quantity\n  }\n  readme\n  createdAt\n  updatedAt\n  vfolder {\n    id\n    metadata {\n      name\n    }\n    ...VFolderNodeIdenticonV2Fragment\n  }\n  ...ModelCardDeployModalFragment\n}\n\nfragment VFolderNodeIdenticonV2Fragment on VFolder {\n  id\n}\n"
+    "text": "query ModelCardDrawerQuery(\n  $id: UUID!\n) {\n  modelCardV2(id: $id) {\n    ...ModelCardDrawerFragment\n    id\n  }\n}\n\nfragment DeploymentPresetDetailModalFragment on DeploymentRevisionPreset {\n  id\n  name\n  description\n  runtimeVariantId\n  runtimeVariant @since(version: \"26.4.3\") {\n    id\n    name\n  }\n  cluster {\n    clusterMode\n    clusterSize\n  }\n  execution {\n    imageId @since(version: \"26.4.4\")\n    startupCommand\n    bootstrapScript\n    environ {\n      key\n      value\n    }\n  }\n  resource {\n    resourceOpts {\n      name\n      value\n    }\n  }\n  resourceSlots @since(version: \"26.4.4\") {\n    slotName\n    quantity\n  }\n  deploymentDefaults {\n    openToPublic\n    replicaCount\n    revisionHistoryLimit\n    deploymentStrategy\n  }\n  presetValues {\n    presetId\n    value\n  }\n}\n\nfragment ModelCardDeployModalFragment on ModelCardV2 {\n  id\n  availablePresets(orderBy: [{field: RANK, direction: \"ASC\"}]) {\n    edges {\n      node {\n        id\n        name\n        runtimeVariantId\n        ...DeploymentPresetDetailModalFragment\n      }\n    }\n  }\n}\n\nfragment ModelCardDrawerFragment on ModelCardV2 {\n  id\n  name\n  metadata {\n    title\n    author\n    description\n    task\n    category\n    architecture\n    framework\n    label\n    license\n    modelVersion\n  }\n  minResource {\n    resourceType\n    quantity\n  }\n  readme\n  createdAt\n  updatedAt\n  vfolder {\n    id\n    metadata {\n      name\n    }\n    ...VFolderNodeIdenticonV2Fragment\n  }\n  ...ModelCardDeployModalFragment\n}\n\nfragment VFolderNodeIdenticonV2Fragment on VFolder {\n  id\n}\n"
   }
 };
 })();

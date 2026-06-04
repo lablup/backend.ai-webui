@@ -105,7 +105,7 @@ const BAIAvailablePresetSelect: React.FC<BAIAvailablePresetSelectProps> = ({
                 name
                 description
                 runtimeVariantId
-                runtimeVariant {
+                runtimeVariant @since(version: "26.4.3") {
                   name
                 }
               }
@@ -167,7 +167,7 @@ const BAIAvailablePresetSelect: React.FC<BAIAvailablePresetSelectProps> = ({
                 description
                 rank
                 runtimeVariantId
-                runtimeVariant {
+                runtimeVariant @since(version: "26.4.3") {
                   name
                 }
               }
