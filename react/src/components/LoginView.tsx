@@ -971,7 +971,6 @@ const LoginView: React.FC<{
     onLogoutSession: logoutSession,
     apiEndpoint,
     connectionMode,
-    enforcedEndpoint: devApiEndpointOverride,
   });
 
   const handleConnectionModeChange = useCallback(
