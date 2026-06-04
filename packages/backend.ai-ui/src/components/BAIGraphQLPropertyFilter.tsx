@@ -261,6 +261,18 @@ function generateId(): string {
  */
 function buildNestedFilter(path: string, value: any): GraphQLFilter {
   const keys = path.split('.');
+  // Guard against prototype pollution. Property paths come from a
+  // developer-defined filter schema and never use these reserved keys, but a
+  // path segment of `__proto__` / `constructor` / `prototype` would otherwise
+  // let the assignments below walk into the object prototype chain.
+  if (
+    keys.some(
+      (key) =>
+        key === '__proto__' || key === 'constructor' || key === 'prototype',
+    )
+  ) {
+    return {};
+  }
   if (keys.length === 1) {
     return { [path]: value };
   }

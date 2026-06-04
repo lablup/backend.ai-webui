@@ -56,6 +56,34 @@ describe('parseFilterValue', () => {
       value: '%@example.com',
     });
   });
+
+  it('preserves whitespace inside a double-quoted value', () => {
+    expect(parseFilterValue('name ilike "%hello world%"')).toEqual({
+      property: 'name',
+      operator: 'ilike',
+      value: '%hello world%',
+    });
+  });
+
+  it('keeps quoted spans intact for list values', () => {
+    expect(
+      parseFilterValue('permission in ["READ_ONLY", "READ_WRITE"]'),
+    ).toEqual({
+      property: 'permission',
+      operator: 'in',
+      value: '["READ_ONLY", "READ_WRITE"]',
+    });
+  });
+
+  it('parses adversarial input in linear time (ReDoS guard)', () => {
+    // The previous lookahead regex exhibited catastrophic backtracking on
+    // inputs with many unbalanced quotes/spaces. The linear scan must stay
+    // fast regardless of input shape.
+    const adversarial = 'a ' + '"'.repeat(50000) + ' '.repeat(50000);
+    const start = performance.now();
+    parseFilterValue(adversarial);
+    expect(performance.now() - start).toBeLessThan(1000);
+  });
 });
 
 describe('mergeFilterValues', () => {

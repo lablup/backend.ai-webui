@@ -43,6 +43,78 @@ import type {
 } from './types';
 import CryptoES from 'crypto-es';
 
+/**
+ * Keys whose values may carry secrets (passwords, API secret keys, tokens,
+ * one-time codes, etc.). Request bodies are persisted to localStorage as part
+ * of the debug log (`backendaiwebui.logs`); any value stored under one of these
+ * keys is masked first so credentials are never written in clear text.
+ * Matched case-insensitively against object keys.
+ */
+const SENSITIVE_LOG_KEYS = new Set([
+  'password',
+  'new_password',
+  'old_password',
+  'current_password',
+  'secret_key',
+  'secret',
+  'token',
+  'access_token',
+  'refresh_token',
+  'otp',
+  'authorization',
+  'passphrase',
+  'private_key',
+  'ssh_private_key',
+]);
+
+const REDACTED_PLACEHOLDER = '********';
+
+/**
+ * Recursively replaces the values of sensitive keys with a placeholder.
+ * Accepts a parsed object/array and returns a redacted deep copy; primitives
+ * pass through unchanged. Reserved keys are skipped so the copy can never be
+ * used as a prototype-pollution vector.
+ */
+function redactSensitiveValues(value: unknown): unknown {
+  if (Array.isArray(value)) {
+    return value.map((item) => redactSensitiveValues(item));
+  }
+  if (value !== null && typeof value === 'object') {
+    const redacted: Record<string, unknown> = {};
+    for (const [key, val] of Object.entries(value)) {
+      if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
+        continue;
+      }
+      redacted[key] = SENSITIVE_LOG_KEYS.has(key.toLowerCase())
+        ? REDACTED_PLACEHOLDER
+        : redactSensitiveValues(val);
+    }
+    return redacted;
+  }
+  return value;
+}
+
+/**
+ * Masks sensitive fields in a request-parameter payload before it is written
+ * to the persisted debug log. Handles both already-parsed objects and JSON
+ * string bodies (the common case, since signed requests stringify the body).
+ * Non-JSON strings and primitives are returned unchanged.
+ */
+function redactRequestParameters(params: unknown): unknown {
+  if (typeof params === 'string') {
+    try {
+      const parsed = JSON.parse(params);
+      if (parsed !== null && typeof parsed === 'object') {
+        return JSON.stringify(redactSensitiveValues(parsed));
+      }
+    } catch {
+      // Not JSON (e.g. a query string or opaque body) — leave as-is.
+    }
+    return params;
+  }
+  return redactSensitiveValues(params);
+}
+
 export class Client {
   public code: string | null;
   public sessionId: string | null;
@@ -478,6 +550,11 @@ export class Client {
     if ('log' in opts) {
       current_log.requestParameters = (opts as Record<string, unknown>)['log'];
     }
+    // Mask credentials (passwords, secret keys, tokens, …) before the request
+    // body is persisted to localStorage, so they are never stored in clear text.
+    current_log.requestParameters = redactRequestParameters(
+      current_log.requestParameters,
+    );
     log_stack.push(current_log);
 
     if (previous_log) {
