@@ -11,7 +11,7 @@ import AdminDeploymentPresetSettingPageContent, {
   type AdminDeploymentPresetFormValue,
   type ModelDefinitionFormValue,
 } from '../components/AdminDeploymentPresetSettingPageContent';
-import { useWebUINavigate } from '../hooks';
+import { useWebUINavigate, useSuspendedBackendaiClient } from '../hooks';
 import { App, Form, Typography, theme } from 'antd';
 import { BAIFlex, useBAILogger, useMutationWithPromise } from 'backend.ai-ui';
 import React, { useState } from 'react';
@@ -94,6 +94,12 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
   const webuiNavigate = useWebUINavigate();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
+  const baiClient = useSuspendedBackendaiClient();
+  // Preset create/update inputs gained many fields in 26.4.4 (imageId, clusterMode,
+  // resourceSlots, etc.). On 26.4.3 those fields are absent; send only the base fields.
+  const isRevisedDeploymentSchema = baiClient.supports(
+    'model-deployment-revised-schema',
+  );
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -228,36 +234,41 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
           input: {
             id: presetId,
             name: values.name,
-            description: values.description ?? null,
-            imageId: values.imageId ?? null,
-            clusterMode: values.clusterMode ?? null,
-            clusterSize: values.clusterSize ?? null,
-            startupCommand: values.startupCommand ?? null,
-            bootstrapScript: values.bootstrapScript ?? null,
-            environ: values.environ?.length
-              ? values.environ.map((e) => ({
-                  key: e.variable,
-                  value: e.value,
-                }))
-              : null,
-            resourceSlots: [
-              ...(values.cpu
-                ? [{ resourceType: 'cpu', quantity: values.cpu }]
-                : []),
-              ...(values.mem
-                ? [{ resourceType: 'mem', quantity: values.mem }]
-                : []),
-              ...(values.resourceSlots ?? []),
-            ],
-            resourceOpts: values.resourceOpts?.length
-              ? values.resourceOpts
-              : null,
-            modelDefinition: buildModelDefinitionInput(values.modelDefinition),
             openToPublic: values.openToPublic ?? null,
             replicaCount: values.replicaCount ?? null,
             revisionHistoryLimit: values.revisionHistoryLimit ?? null,
             // TODO: Add BLUE_GREEN support when the backend implements it.
             deploymentStrategy: { type: 'ROLLING' as const },
+            // Fields below are UNRELEASED on 26.4.3; omit them on legacy managers.
+            ...(isRevisedDeploymentSchema && {
+              description: values.description ?? null,
+              imageId: values.imageId ?? null,
+              clusterMode: values.clusterMode ?? null,
+              clusterSize: values.clusterSize ?? null,
+              startupCommand: values.startupCommand ?? null,
+              bootstrapScript: values.bootstrapScript ?? null,
+              environ: values.environ?.length
+                ? values.environ.map((e) => ({
+                    key: e.variable,
+                    value: e.value,
+                  }))
+                : null,
+              resourceSlots: [
+                ...(values.cpu
+                  ? [{ resourceType: 'cpu', quantity: values.cpu }]
+                  : []),
+                ...(values.mem
+                  ? [{ resourceType: 'mem', quantity: values.mem }]
+                  : []),
+                ...(values.resourceSlots ?? []),
+              ],
+              resourceOpts: values.resourceOpts?.length
+                ? values.resourceOpts
+                : null,
+              modelDefinition: buildModelDefinitionInput(
+                values.modelDefinition,
+              ),
+            }),
           },
         });
         message.success(t('adminDeploymentPreset.PresetUpdated'));
@@ -266,38 +277,43 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
         await commitCreate({
           input: {
             runtimeVariantId: values.runtimeVariantId,
-            imageId: values.imageId,
             name: values.name,
-            description: values.description ?? null,
-            clusterMode: values.clusterMode!,
-            clusterSize: values.clusterSize!,
-            startupCommand: values.startupCommand ?? null,
-            bootstrapScript: values.bootstrapScript ?? null,
-            environ: values.environ?.length
-              ? values.environ.map((e) => ({
-                  key: e.variable,
-                  value: e.value,
-                }))
-              : null,
-            resourceSlots: [
-              ...(values.cpu
-                ? [{ resourceType: 'cpu', quantity: values.cpu }]
-                : []),
-              ...(values.mem
-                ? [{ resourceType: 'mem', quantity: values.mem }]
-                : []),
-              ...(values.resourceSlots ?? []),
-            ],
-            resourceOpts: values.resourceOpts?.length
-              ? values.resourceOpts
-              : null,
-            modelDefinition: buildModelDefinitionInput(values.modelDefinition),
             openToPublic: values.openToPublic ?? null,
             replicaCount: values.replicaCount!,
             revisionHistoryLimit: values.revisionHistoryLimit ?? null,
             // TODO: Add BLUE_GREEN support when the backend implements it.
             deploymentStrategy: { type: 'ROLLING' as const },
-          },
+            // Fields below are UNRELEASED on 26.4.3; omit them on legacy managers.
+            ...(isRevisedDeploymentSchema && {
+              imageId: values.imageId,
+              description: values.description ?? null,
+              clusterMode: values.clusterMode!,
+              clusterSize: values.clusterSize!,
+              startupCommand: values.startupCommand ?? null,
+              bootstrapScript: values.bootstrapScript ?? null,
+              environ: values.environ?.length
+                ? values.environ.map((e) => ({
+                    key: e.variable,
+                    value: e.value,
+                  }))
+                : null,
+              resourceSlots: [
+                ...(values.cpu
+                  ? [{ resourceType: 'cpu', quantity: values.cpu }]
+                  : []),
+                ...(values.mem
+                  ? [{ resourceType: 'mem', quantity: values.mem }]
+                  : []),
+                ...(values.resourceSlots ?? []),
+              ],
+              resourceOpts: values.resourceOpts?.length
+                ? values.resourceOpts
+                : null,
+              modelDefinition: buildModelDefinitionInput(
+                values.modelDefinition,
+              ),
+            }),
+          } as unknown as Parameters<typeof commitCreate>[0]['input'],
         });
         message.success(t('adminDeploymentPreset.PresetCreated'));
         navigateToList();
