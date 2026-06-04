@@ -30,7 +30,7 @@ The generated output is just those two inputs run through `pnpm relay`, and
 
 1. **Do not review the contents of these paths:**
    - `**/__generated__/**` — Relay compiler output
-   - `pnpm-lock.yaml`, `**/*.lock`, `**/*.lock.yml` — lockfiles (see [[pnpm-lockfile-conflicts]])
+   - `pnpm-lock.yaml`, `**/*.lock`, `**/*.lock.yml` — lockfiles (see `pnpm-lockfile-conflicts.md`)
    - `*.d.ts` and other artifacts under `dist/` or `build/`
 2. **Review the inputs, not the output.** For Relay changes, review the `graphql` tags
    and `data/schema.graphql`. For dependency changes, review `package.json` /
@@ -58,5 +58,5 @@ The generated output is just those two inputs run through `pnpm relay`, and
 
 - `.gitattributes` — the `linguist-generated=true` entries for `__generated__`.
 - `.github/copilot-instructions.md` — Copilot's matching skip list.
-- [[pnpm-lockfile-conflicts]] — why the lockfile is auto-generated and never hand-merged.
+- `pnpm-lockfile-conflicts.md` — why the lockfile is auto-generated and never hand-merged.
 - `relay-patterns` skill — the fragment architecture whose `graphql` tags ARE the review surface.
