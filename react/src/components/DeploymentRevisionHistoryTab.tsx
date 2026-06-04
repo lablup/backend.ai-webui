@@ -211,7 +211,7 @@ const DeploymentRevisionHistoryTab: React.FC<
               edges {
                 node {
                   id
-                  revisionNumber
+                  revisionNumber @since(version: "26.4.4")
                   createdAt
 
                   clusterConfig {
@@ -219,7 +219,7 @@ const DeploymentRevisionHistoryTab: React.FC<
                     size
                   }
                   modelRuntimeConfig {
-                    runtimeVariant {
+                    runtimeVariant @since(version: "26.4.4") {
                       name
                     }
                   }

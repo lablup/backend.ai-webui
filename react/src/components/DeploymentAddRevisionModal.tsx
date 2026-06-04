@@ -279,7 +279,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       query DeploymentAddRevisionModalQuery($deploymentId: ID!) {
         deployment(id: $deploymentId) {
           metadata {
-            resourceGroupName
+            resourceGroupName @since(version: "26.4.4")
           }
           currentRevision {
             clusterConfig {
@@ -294,7 +294,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                 }
               }
             }
-            resourceSlots {
+            resourceSlots @since(version: "26.4.4") {
               slotName
               quantity
             }
@@ -304,7 +304,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
             }
             modelRuntimeConfig {
               runtimeVariantId
-              runtimeVariant {
+              runtimeVariant @since(version: "26.4.4") {
                 name
               }
               environ {
@@ -461,7 +461,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                   value
                 }
               }
-              resourceSlots {
+              resourceSlots @since(version: "26.4.4") {
                 slotName
                 quantity
               }

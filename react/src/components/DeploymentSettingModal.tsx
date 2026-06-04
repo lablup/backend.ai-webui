@@ -67,7 +67,7 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
         metadata {
           name
           tags
-          resourceGroupName
+          resourceGroupName @since(version: "26.4.4")
         }
         networkAccess {
           openToPublic

@@ -257,7 +257,7 @@ const DeploymentConfigurationSection: React.FC<
           projectId
           domainName
           status
-          resourceGroupName
+          resourceGroupName @since(version: "26.4.4")
           projectV2 @since(version: "26.4.3") {
             basicInfo {
               name
@@ -274,12 +274,12 @@ const DeploymentConfigurationSection: React.FC<
         }
         currentRevision @since(version: "26.4.3") {
           id
-          revisionNumber
+          revisionNumber @since(version: "26.4.4")
           ...DeploymentRevisionDetail_revision
         }
         deployingRevision @since(version: "26.4.3") {
           id
-          revisionNumber
+          revisionNumber @since(version: "26.4.4")
           ...DeploymentRevisionDetail_revision
         }
         ...DeploymentRevisionHistoryTab_deployment

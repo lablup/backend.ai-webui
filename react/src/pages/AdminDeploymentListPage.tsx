@@ -162,7 +162,7 @@ const AdminDeploymentListPageContent: React.FC = () => {
               }
               currentRevision @since(version: "26.4.3") {
                 id
-                revisionNumber
+                revisionNumber @since(version: "26.4.4")
                 ...DeploymentRevisionDetail_revision
               }
             }

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<330827e86273ea9a761853482ecf6c82>>
+ * @generated SignedSource<<150d81dcac503a8caad2a9d376f26baa>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -227,16 +227,16 @@ return {
     "selections": (v2/*: any*/)
   },
   "params": {
-    "cacheID": "6728695a02d457f55b4cd4d3323823d8",
+    "cacheID": "fcb5d44eac39379147f2e4c8f701ff58",
     "id": null,
     "metadata": {},
     "name": "DeploymentAddRevisionModalSelectedPresetQuery",
     "operationKind": "query",
-    "text": "query DeploymentAddRevisionModalSelectedPresetQuery(\n  $id: UUID!\n) {\n  deploymentRevisionPreset(id: $id) {\n    id\n    runtimeVariantId\n    cluster {\n      clusterMode\n      clusterSize\n    }\n    execution {\n      imageId\n      environ {\n        key\n        value\n      }\n    }\n    resource {\n      resourceOpts {\n        name\n        value\n      }\n    }\n    resourceSlots {\n      slotName\n      quantity\n    }\n  }\n}\n"
+    "text": "query DeploymentAddRevisionModalSelectedPresetQuery(\n  $id: UUID!\n) {\n  deploymentRevisionPreset(id: $id) {\n    id\n    runtimeVariantId\n    cluster {\n      clusterMode\n      clusterSize\n    }\n    execution {\n      imageId\n      environ {\n        key\n        value\n      }\n    }\n    resource {\n      resourceOpts {\n        name\n        value\n      }\n    }\n    resourceSlots @since(version: \"26.4.4\") {\n      slotName\n      quantity\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "e9d60ac2d9540dae9c821fe3abd4b65e";
+(node as any).hash = "d80db364d448f1fc80f31d96aa4e5432";
 
 export default node;
