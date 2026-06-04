@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a63b256662ceb6f614675154340d2d4c>>
+ * @generated SignedSource<<660395b15bde0b90d7faccf5f04d0b1e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -232,7 +232,7 @@ return {
     {
       "alias": null,
       "args": null,
-      "concreteType": "DeploymentStrategyGQL",
+      "concreteType": "DeploymentStrategy",
       "kind": "LinkedField",
       "name": "defaultDeploymentStrategy",
       "plural": false,

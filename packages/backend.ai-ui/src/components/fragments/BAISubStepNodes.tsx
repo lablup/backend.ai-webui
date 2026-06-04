@@ -65,8 +65,7 @@ const BAISubStepNodes = ({
 
   const subSteps = useFragment<BAISubStepNodesFragment$key>(
     graphql`
-      fragment BAISubStepNodesFragment on SubStepResultGQL
-      @relay(plural: true) {
+      fragment BAISubStepNodesFragment on SubStepResult @relay(plural: true) {
         step
         result
         errorCode

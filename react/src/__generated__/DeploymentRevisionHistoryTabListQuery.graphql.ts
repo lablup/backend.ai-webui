@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<8f80265394db286560df6f857d814d3c>>
+ * @generated SignedSource<<6de7c36b3fc2f4518b007ae1e67609ec>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -758,7 +758,7 @@ return {
                       {
                         "alias": null,
                         "args": null,
-                        "concreteType": "ExtraVFolderMountInfoGQL",
+                        "concreteType": "ExtraVFolderMountInfo",
                         "kind": "LinkedField",
                         "name": "extraMounts",
                         "plural": true,

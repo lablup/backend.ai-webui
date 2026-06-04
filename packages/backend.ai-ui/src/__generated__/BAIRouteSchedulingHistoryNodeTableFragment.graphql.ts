@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<7826d64cc35baebfbae84de866de9d0e>>
+ * @generated SignedSource<<fdc09b9321574823527bae6839736570>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -116,7 +116,7 @@ const node: ReaderFragment = {
     {
       "alias": null,
       "args": null,
-      "concreteType": "SubStepResultGQL",
+      "concreteType": "SubStepResult",
       "kind": "LinkedField",
       "name": "subSteps",
       "plural": true,

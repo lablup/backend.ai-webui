@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<1efb9812636440b518114a35bab8ac8a>>
+ * @generated SignedSource<<9c53bdde3871926b4e69c7a0e7c5c35a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -74,7 +74,7 @@ v1 = [
         "variableName": "input"
       }
     ],
-    "concreteType": "UpdateModelCardPayloadGQL",
+    "concreteType": "UpdateModelCardPayload",
     "kind": "LinkedField",
     "name": "adminUpdateModelCardV2",
     "plural": false,

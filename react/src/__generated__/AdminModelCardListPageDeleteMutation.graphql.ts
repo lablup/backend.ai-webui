@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<e98842d1465b7579349880d822db291f>>
+ * @generated SignedSource<<93b75220d353e7ee0714bd0ab441e8ca>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -54,7 +54,7 @@ v1 = [
         "variableName": "options"
       }
     ],
-    "concreteType": "DeleteModelCardPayloadGQL",
+    "concreteType": "DeleteModelCardPayload",
     "kind": "LinkedField",
     "name": "adminDeleteModelCardV2",
     "plural": false,

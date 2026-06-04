@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<8da6286e62a423330ae819a90623e7d2>>
+ * @generated SignedSource<<146b12dd2f519882a8c91ecf66985700>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -68,7 +68,7 @@ return {
           {
             "alias": null,
             "args": null,
-            "concreteType": "KeyPairGQL",
+            "concreteType": "KeyPairV2",
             "kind": "LinkedField",
             "name": "keypair",
             "plural": false,
@@ -101,7 +101,7 @@ return {
           {
             "alias": null,
             "args": null,
-            "concreteType": "KeyPairGQL",
+            "concreteType": "KeyPairV2",
             "kind": "LinkedField",
             "name": "keypair",
             "plural": false,

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<723b1f0a84f6919a10784d3ce95e2a6c>>
+ * @generated SignedSource<<7a7068e9e6a754b44a337e6fa303c569>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -289,7 +289,7 @@ return {
                   {
                     "alias": null,
                     "args": null,
-                    "concreteType": "SubStepResultGQL",
+                    "concreteType": "SubStepResult",
                     "kind": "LinkedField",
                     "name": "subSteps",
                     "plural": true,
@@ -339,12 +339,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "5b9e35a12fc771527f808842f63b593b",
+    "cacheID": "6eeac0bafde3e3fc3e3dd00933c5e600",
     "id": null,
     "metadata": {},
     "name": "SessionSchedulingHistoryModalQuery",
     "operationKind": "query",
-    "text": "query SessionSchedulingHistoryModalQuery(\n  $scope: SessionScope!\n  $filter: SessionSchedulingHistoryFilter\n  $orderBy: [SessionSchedulingHistoryOrderBy!]\n) {\n  sessionScopedSchedulingHistories(scope: $scope, filter: $filter, orderBy: $orderBy) {\n    edges {\n      node {\n        ...BAISchedulingHistoryNodesFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAISchedulingHistoryNodesFragment on SessionSchedulingHistory {\n  id\n  sessionId\n  attempts\n  createdAt\n  updatedAt\n  fromStatus\n  toStatus\n  message\n  phase\n  result\n  subSteps {\n    ...BAISubStepNodesFragment\n  }\n}\n\nfragment BAISubStepNodesFragment on SubStepResultGQL {\n  step\n  result\n  errorCode\n  message\n  startedAt\n  endedAt\n}\n"
+    "text": "query SessionSchedulingHistoryModalQuery(\n  $scope: SessionScope!\n  $filter: SessionSchedulingHistoryFilter\n  $orderBy: [SessionSchedulingHistoryOrderBy!]\n) {\n  sessionScopedSchedulingHistories(scope: $scope, filter: $filter, orderBy: $orderBy) {\n    edges {\n      node {\n        ...BAISchedulingHistoryNodesFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAISchedulingHistoryNodesFragment on SessionSchedulingHistory {\n  id\n  sessionId\n  attempts\n  createdAt\n  updatedAt\n  fromStatus\n  toStatus\n  message\n  phase\n  result\n  subSteps {\n    ...BAISubStepNodesFragment\n  }\n}\n\nfragment BAISubStepNodesFragment on SubStepResult {\n  step\n  result\n  errorCode\n  message\n  startedAt\n  endedAt\n}\n"
   }
 };
 })();

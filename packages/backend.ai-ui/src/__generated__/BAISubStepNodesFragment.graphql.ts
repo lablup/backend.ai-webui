@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<8cf1e784b5e08d460a2ad081f8f9682d>>
+ * @generated SignedSource<<3863c621690587a7cacb0a84ac57a711>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -76,10 +76,10 @@ const node: ReaderFragment = {
       "storageKey": null
     }
   ],
-  "type": "SubStepResultGQL",
+  "type": "SubStepResult",
   "abstractKey": null
 };
 
-(node as any).hash = "b293ef89b3c67ebb0a3733e1c22f6df9";
+(node as any).hash = "d08345bcb1a939d04f09280993b0f1ce";
 
 export default node;
