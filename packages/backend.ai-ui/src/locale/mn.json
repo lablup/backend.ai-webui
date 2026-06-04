@@ -27,6 +27,9 @@
     "FailedToActivateArtifacts": "Олдворуудыг идэвхжүүлж чадсангүй.",
     "SuccessfullyActivated": "Амжилттай идэвхжүүлсэн олдворууд."
   },
+  "comp:BAIAdminKeypairResourcePolicySelect": {
+    "SelectKeypairResourcePolicy": "Keypair нөөцийн бодлого сонгох"
+  },
   "comp:BAIAdminModelServiceSelect": {
     "SelectModelService": "Моделийн үйлчилгээ сонгох"
   },

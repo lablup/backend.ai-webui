@@ -27,6 +27,9 @@
     "FailedToActivateArtifacts": "未能激活伪影。",
     "SuccessfullyActivated": "成功激活的工件。"
   },
+  "comp:BAIAdminKeypairResourcePolicySelect": {
+    "SelectKeypairResourcePolicy": "选择密钥对资源策略"
+  },
   "comp:BAIAdminModelServiceSelect": {
     "SelectModelService": "选择模型服务"
   },

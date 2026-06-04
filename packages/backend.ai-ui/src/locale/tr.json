@@ -27,6 +27,9 @@
     "FailedToActivateArtifacts": "Eserleri etkinleştiremedi.",
     "SuccessfullyActivated": "Başarıyla etkinleştirilmiş eserler."
   },
+  "comp:BAIAdminKeypairResourcePolicySelect": {
+    "SelectKeypairResourcePolicy": "Keypair kaynak politikası seçin"
+  },
   "comp:BAIAdminModelServiceSelect": {
     "SelectModelService": "Model hizmeti seçin"
   },

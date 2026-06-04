@@ -27,6 +27,9 @@
     "FailedToActivateArtifacts": "Không thể kích hoạt hiện vật.",
     "SuccessfullyActivated": "Cổ vật được kích hoạt thành công."
   },
+  "comp:BAIAdminKeypairResourcePolicySelect": {
+    "SelectKeypairResourcePolicy": "Chọn chính sách tài nguyên Keypair"
+  },
   "comp:BAIAdminModelServiceSelect": {
     "SelectModelService": "Chọn dịch vụ mô hình"
   },

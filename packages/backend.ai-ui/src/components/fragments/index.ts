@@ -131,6 +131,12 @@ export type {
   BAIAdminProjectSelectRef,
   AdminProjectNode,
 } from './BAIAdminProjectSelect';
+export { default as BAIAdminKeypairResourcePolicySelect } from './BAIAdminKeypairResourcePolicySelect';
+export type {
+  BAIAdminKeypairResourcePolicySelectProps,
+  BAIAdminKeypairResourcePolicySelectRef,
+  AdminKeypairResourcePolicyNode,
+} from './BAIAdminKeypairResourcePolicySelect';
 export { default as BAIAdminModelServiceSelect } from './BAIAdminModelServiceSelect';
 export type {
   BAIAdminModelServiceSelectProps,

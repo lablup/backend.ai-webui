@@ -27,6 +27,9 @@
     "FailedToActivateArtifacts": "Failed to activate artifacts.",
     "SuccessfullyActivated": "Successfully activated artifacts."
   },
+  "comp:BAIAdminKeypairResourcePolicySelect": {
+    "SelectKeypairResourcePolicy": "Select Keypair Resource Policy"
+  },
   "comp:BAIAdminModelServiceSelect": {
     "SelectModelService": "Select Model Service"
   },

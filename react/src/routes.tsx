@@ -48,9 +48,6 @@ const AdminDashboardPage = React.lazy(
 );
 const EnvironmentPage = React.lazy(() => import('./pages/EnvironmentPage'));
 const MyEnvironmentPage = React.lazy(() => import('./pages/MyEnvironmentPage'));
-const StorageHostSettingPage = React.lazy(
-  () => import('./pages/StorageHostSettingPage'),
-);
 const UserSettingsPage = React.lazy(() => import('./pages/UserSettingsPage'));
 const SessionLauncherPage = React.lazy(
   () => import('./pages/SessionLauncherPage'),
@@ -754,12 +751,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
   },
   {
     path: '/storage-settings/:hostname',
-    handle: { labelKey: 'storageHost.StorageSetting' },
-    element: (
-      <Suspense fallback={<Skeleton active />}>
-        <StorageHostSettingPage />
-      </Suspense>
-    ),
+    element: <WebUINavigate to="/agent?tab=storages" replace />,
   },
   {
     path: '/information',

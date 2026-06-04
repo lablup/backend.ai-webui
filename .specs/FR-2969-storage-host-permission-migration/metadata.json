@@ -1,0 +1,28 @@
+{
+  "epic_key": "FR-2969",
+  "epic_slug": "storage-host-permission-migration",
+  "stories": [],
+  "subtasks": [
+    {
+      "key": "FR-2969-1",
+      "title": "Drawer skeleton — StorageHostDetailDrawer + Capacity Setting tab",
+      "branch": "feat/fr-2969-storage-permission-drawer",
+      "depends_on": [],
+      "review_complexity": "Medium"
+    },
+    {
+      "key": "FR-2969-2",
+      "title": "Permissions tab — StorageHostPermissionPanel with Relay queries and mutations",
+      "branch": "feat/fr-2969-storage-permission-tab",
+      "depends_on": ["FR-2969-1"],
+      "review_complexity": "High"
+    },
+    {
+      "key": "FR-2969-3",
+      "title": "Old standalone page removal — delete StorageHostSettingPage, redirect route, prune sidebar/menu",
+      "branch": "feat/fr-2969-storage-permission-cleanup",
+      "depends_on": ["FR-2969-2"],
+      "review_complexity": "Low"
+    }
+  ]
+}

@@ -27,6 +27,9 @@
     "FailedToActivateArtifacts": "アーティファクトをアクティブにすることができませんでした。",
     "SuccessfullyActivated": "正常にアクティブ化されたアーティファクト。"
   },
+  "comp:BAIAdminKeypairResourcePolicySelect": {
+    "SelectKeypairResourcePolicy": "キーペアリソースポリシーを選択"
+  },
   "comp:BAIAdminModelServiceSelect": {
     "SelectModelService": "モデルサービスを選択"
   },

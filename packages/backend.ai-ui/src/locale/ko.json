@@ -27,6 +27,9 @@
     "FailedToActivateArtifacts": "아티팩트를 활성화하는 데 실패했습니다.",
     "SuccessfullyActivated": "성공적으로 아티팩트를 활성화했습니다."
   },
+  "comp:BAIAdminKeypairResourcePolicySelect": {
+    "SelectKeypairResourcePolicy": "키페어 자원 정책을 선택해주세요"
+  },
   "comp:BAIAdminModelServiceSelect": {
     "SelectModelService": "모델 서비스를 선택해주세요"
   },

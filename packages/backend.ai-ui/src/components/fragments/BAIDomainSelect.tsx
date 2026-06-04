@@ -6,7 +6,7 @@ import * as _ from 'lodash-es';
 import React from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-interface Props extends SelectProps {
+interface Props extends Omit<SelectProps, 'role'> {
   activeOnly?: boolean;
 }
 const BAIDomainSelect: React.FC<Props> = ({

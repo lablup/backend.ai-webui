@@ -27,6 +27,9 @@
     "FailedToActivateArtifacts": "Αποτυχία ενεργοποίησης αντικειμένων.",
     "SuccessfullyActivated": "Επιτυχώς ενεργοποιημένα αντικείμενα."
   },
+  "comp:BAIAdminKeypairResourcePolicySelect": {
+    "SelectKeypairResourcePolicy": "Επιλέξτε πολιτική πόρων Keypair"
+  },
   "comp:BAIAdminModelServiceSelect": {
     "SelectModelService": "Επιλέξτε Υπηρεσία Μοντέλου"
   },

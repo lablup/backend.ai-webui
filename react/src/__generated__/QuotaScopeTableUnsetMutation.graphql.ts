@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ad9d79887bbd506aefd24aeec8e10358>>
+ * @generated SignedSource<<9febf2f1dcb0ea010f10453b52b7a5e2>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,11 +9,11 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type QuotaScopeCardUnsetMutation$variables = {
+export type QuotaScopeTableUnsetMutation$variables = {
   quota_scope_id: string;
   storage_host_name: string;
 };
-export type QuotaScopeCardUnsetMutation$data = {
+export type QuotaScopeTableUnsetMutation$data = {
   readonly unset_quota_scope: {
     readonly quota_scope: {
       readonly details: {
@@ -25,9 +25,9 @@ export type QuotaScopeCardUnsetMutation$data = {
     } | null | undefined;
   } | null | undefined;
 };
-export type QuotaScopeCardUnsetMutation = {
-  response: QuotaScopeCardUnsetMutation$data;
-  variables: QuotaScopeCardUnsetMutation$variables;
+export type QuotaScopeTableUnsetMutation = {
+  response: QuotaScopeTableUnsetMutation$data;
+  variables: QuotaScopeTableUnsetMutation$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -122,7 +122,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "QuotaScopeCardUnsetMutation",
+    "name": "QuotaScopeTableUnsetMutation",
     "selections": (v1/*: any*/),
     "type": "Mutation",
     "abstractKey": null
@@ -131,20 +131,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "QuotaScopeCardUnsetMutation",
+    "name": "QuotaScopeTableUnsetMutation",
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "338836966362b14e823520f40fa56a73",
+    "cacheID": "5969785c083c45e6654bc357ec17d56f",
     "id": null,
     "metadata": {},
-    "name": "QuotaScopeCardUnsetMutation",
+    "name": "QuotaScopeTableUnsetMutation",
     "operationKind": "mutation",
-    "text": "mutation QuotaScopeCardUnsetMutation(\n  $quota_scope_id: String!\n  $storage_host_name: String!\n) {\n  unset_quota_scope(quota_scope_id: $quota_scope_id, storage_host_name: $storage_host_name) {\n    quota_scope {\n      id\n      quota_scope_id\n      storage_host_name\n      details {\n        hard_limit_bytes\n      }\n    }\n  }\n}\n"
+    "text": "mutation QuotaScopeTableUnsetMutation(\n  $quota_scope_id: String!\n  $storage_host_name: String!\n) {\n  unset_quota_scope(quota_scope_id: $quota_scope_id, storage_host_name: $storage_host_name) {\n    quota_scope {\n      id\n      quota_scope_id\n      storage_host_name\n      details {\n        hard_limit_bytes\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "272001cc642518fb66015dcc367b9f65";
+(node as any).hash = "07d0a40e74a8d276c58254f88325b145";
 
 export default node;

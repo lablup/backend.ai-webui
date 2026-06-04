@@ -77,9 +77,20 @@ const BAICard: React.FC<BAICardProps> = ({
 }) => {
   const { token } = theme.useToken();
 
-  const extraWithoutFontWeight = isValidElement(extra)
-    ? cloneElement(extra as React.ReactElement<any>, {
-        style: { fontWeight: 'normal' },
+  const extraElement = isValidElement(extra)
+    ? (extra as React.ReactElement<{ style?: React.CSSProperties }>)
+    : null;
+  const extraWithoutFontWeight = extraElement
+    ? cloneElement(extraElement, {
+        // Merge with the consumer's `style` rather than replacing it —
+        // otherwise sizing/positioning the consumer set (e.g. `width: 240`
+        // on a Select used as the card extra) gets wiped out and the only
+        // thing that reaches the rendered element is `fontWeight: 'normal'`.
+        // Consumer-set `fontWeight` still wins (spread after the default).
+        style: {
+          fontWeight: 'normal',
+          ...extraElement.props.style,
+        },
       })
     : extra;
 
