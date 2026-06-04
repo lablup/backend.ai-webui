@@ -6,22 +6,56 @@ import {
   PERMISSION_DISPLAY_MAP,
   hasMountWithoutFileOps,
 } from '../helper/storageHostPermission';
-import { App, Checkbox, Divider, Typography, theme } from 'antd';
+import { App, Checkbox, Divider, Tooltip, Typography, theme } from 'antd';
+import { createStyles } from 'antd-style';
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 import { BAIFlex, BAIModal, type BAIModalProps } from 'backend.ai-ui';
-import React, { useEffect, useState } from 'react';
+import * as _ from 'lodash-es';
+import React, { useEffect, useEffectEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+
+// `.ant-modal-title` shrinks to its content by default, so an inner flex's
+// `width: 100%` resolves against a content-sized parent and the title grows
+// past the modal instead of truncating. Forcing the title to fill the header
+// gives the inner flex a definite width so the name ellipsizes (same fix as
+// FolderExplorerModalV2). `padding-inline-end` then reserves room for the
+// absolutely-positioned close (X) button so the trailing `)` never collides
+// with it.
+const useStyles = createStyles(({ css, token }) => ({
+  modalHeader: css`
+    .ant-modal-title {
+      width: 100%;
+      padding-inline-end: ${token.marginXL}px;
+    }
+  `,
+}));
+
+/**
+ * One entity whose permissions are being edited. `id` is the opaque key the
+ * caller uses to fan out the save (domain name / project gid / KRP name);
+ * `name` is the display label; `enabled` is its currently-saved kebab keys for
+ * the storage host in scope.
+ */
+export interface PermissionEditTarget {
+  id: string;
+  name: string;
+  enabled: ReadonlySet<string>;
+}
 
 interface Props extends Omit<BAIModalProps, 'onOk' | 'okText' | 'cancelText'> {
   /** Canonical permission key list (driven by `vfolder_host_permissions`). */
   permissionKeys: string[];
-  /** Currently-saved enabled keys for this entity + storage host. */
-  initialEnabled: ReadonlySet<string>;
+  /**
+   * Entities to edit.
+   * - Length 1 → single-edit: prefills the entity's current permissions.
+   * - Length > 1 → bulk-edit: defaults to all permissions selected; saving
+   *   overwrites every selected target with the chosen set.
+   */
+  targets: PermissionEditTarget[];
   onRequestClose: () => void;
   /**
-   * Persist the user's edited keys. Implementations build the merged
-   * `allowed_vfolder_hosts` JSON payload and run the appropriate
-   * `modify_*` mutation, returning the result's ok/msg.
+   * Persist the edit. `enabledKeys` is the full set the user left ON; callers
+   * apply it directly to every target (overwrite).
    */
   onSave: (
     enabledKeys: string[],
@@ -30,32 +64,41 @@ interface Props extends Omit<BAIModalProps, 'onOk' | 'okText' | 'cancelText'> {
 
 const StoragePermissionEditModal: React.FC<Props> = ({
   permissionKeys,
-  initialEnabled,
+  targets,
   onRequestClose,
   onSave,
   open,
+  title,
   ...baiModalProps
 }) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
+  const { styles } = useStyles();
   const { message, modal } = App.useApp();
-  const [editedKeys, setEditedKeys] = useState<string[]>(() => [
-    ...initialEnabled,
-  ]);
+
+  // Single target → prefill its current permissions. Bulk (multiple targets)
+  // → default to all permissions selected.
+  const initialKeys = () =>
+    targets.length > 1 ? [...permissionKeys] : [...(targets[0]?.enabled ?? [])];
+
+  const [editedKeys, setEditedKeys] = useState<string[]>(initialKeys);
   const [isSaving, setIsSaving] = useState<boolean>(false);
 
-  // Reset the editable state when the modal is (re-)opened or when the
-  // baseline changes (e.g. after a successful save in a sibling card).
+  // Reset editable state when the modal (re-)opens. `targets`/`permissionKeys`
+  // are read via an effect event so a new array identity from the parent does
+  // not spuriously re-fire the reset while the modal is open.
+  const resetState = useEffectEvent(() => {
+    setEditedKeys(initialKeys());
+  });
   useEffect(() => {
     if (open) {
-      setEditedKeys([...initialEnabled]);
+      resetState();
     }
-  }, [open, initialEnabled]);
+  }, [open]);
 
   const handleOk = async (): Promise<void> => {
-    const enabledSet = new Set(editedKeys);
-    if (hasMountWithoutFileOps(enabledSet)) {
+    if (hasMountWithoutFileOps(new Set(editedKeys))) {
       const confirmed = await new Promise<boolean>((resolve) => {
         modal.confirm({
           title: t('storageHost.permission.MountSessionWarningTitle'),
@@ -71,7 +114,9 @@ const StoragePermissionEditModal: React.FC<Props> = ({
     try {
       const result = await onSave(editedKeys);
       if (result.ok) {
-        message.success(t('storageHost.permission.SaveSuccess'));
+        // `result.msg` carries a partial-success summary (e.g. bulk-edit where
+        // some targets failed); fall back to the generic success text.
+        message.success(result.msg || t('storageHost.permission.SaveSuccess'));
         onRequestClose();
       } else {
         message.error(result.msg || t('storageHost.permission.SaveFailed'));
@@ -82,13 +127,46 @@ const StoragePermissionEditModal: React.FC<Props> = ({
   };
 
   const totalCount = permissionKeys.length;
-  const selectedCount = editedKeys.length;
+  // Clamp to keys that are actually columns: a stale `enabled` key from the
+  // backend (not in `permissionKeys`) must not push `selectedCount` past
+  // `totalCount`, which would blank the master checkbox despite selections.
+  const selectedCount = _.intersection(editedKeys, permissionKeys).length;
   const allSelected = totalCount > 0 && selectedCount === totalCount;
   const indeterminate = selectedCount > 0 && selectedCount < totalCount;
+
+  // Single target → "Edit Permissions (name)" where only the name ellipsizes
+  // (long names would otherwise overflow the narrow modal header); hovering
+  // the name reveals the full text. Bulk edit keeps the caller's count label.
+  const resolvedTitle =
+    targets.length > 1 ? (
+      title
+    ) : (
+      <BAIFlex align="center" style={{ width: '100%', minWidth: 0 }}>
+        <Typography.Text style={{ flexShrink: 0 }}>
+          {`${t('storageHost.permission.EditPermissionsAction')} (`}
+        </Typography.Text>
+        <Tooltip title={targets[0]?.name}>
+          <span
+            style={{
+              flex: '0 1 auto',
+              minWidth: 0,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {targets[0]?.name}
+          </span>
+        </Tooltip>
+        <Typography.Text style={{ flexShrink: 0 }}>{')'}</Typography.Text>
+      </BAIFlex>
+    );
 
   return (
     <BAIModal
       {...baiModalProps}
+      className={styles.modalHeader}
+      title={resolvedTitle}
       open={open}
       destroyOnHidden
       okText={t('storageHost.permission.Update')}
@@ -121,7 +199,7 @@ const StoragePermissionEditModal: React.FC<Props> = ({
         </Typography.Text>
         <Checkbox.Group
           value={editedKeys}
-          onChange={(values: string[]) => setEditedKeys(values)}
+          onChange={(values) => setEditedKeys(values as string[])}
           style={{ width: '100%' }}
         >
           <BAIFlex direction="column" align="start" gap="xs">

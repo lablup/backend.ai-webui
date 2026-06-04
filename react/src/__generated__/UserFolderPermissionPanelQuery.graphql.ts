@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<2d8a5bfd6f1c8668bccc3871bd8ee023>>
+ * @generated SignedSource<<1e6781b6bad581f28cf68f8c9fc73a4a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,15 +9,15 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type StorageHostPermissionPanelQuery$variables = Record<PropertyKey, never>;
-export type StorageHostPermissionPanelQuery$data = {
+export type UserFolderPermissionPanelQuery$variables = Record<PropertyKey, never>;
+export type UserFolderPermissionPanelQuery$data = {
   readonly vfolder_host_permissions: {
     readonly vfolder_host_permission_list: ReadonlyArray<string | null | undefined> | null | undefined;
   } | null | undefined;
 };
-export type StorageHostPermissionPanelQuery = {
-  response: StorageHostPermissionPanelQuery$data;
-  variables: StorageHostPermissionPanelQuery$variables;
+export type UserFolderPermissionPanelQuery = {
+  response: UserFolderPermissionPanelQuery$data;
+  variables: UserFolderPermissionPanelQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -46,7 +46,7 @@ return {
     "argumentDefinitions": [],
     "kind": "Fragment",
     "metadata": null,
-    "name": "StorageHostPermissionPanelQuery",
+    "name": "UserFolderPermissionPanelQuery",
     "selections": (v0/*: any*/),
     "type": "Query",
     "abstractKey": null
@@ -55,20 +55,20 @@ return {
   "operation": {
     "argumentDefinitions": [],
     "kind": "Operation",
-    "name": "StorageHostPermissionPanelQuery",
+    "name": "UserFolderPermissionPanelQuery",
     "selections": (v0/*: any*/)
   },
   "params": {
-    "cacheID": "cd9edd6dd9e26ef46ca51ccedbc8d1f6",
+    "cacheID": "6b3bfe2330d336a38ea7a5eac3308955",
     "id": null,
     "metadata": {},
-    "name": "StorageHostPermissionPanelQuery",
+    "name": "UserFolderPermissionPanelQuery",
     "operationKind": "query",
-    "text": "query StorageHostPermissionPanelQuery {\n  vfolder_host_permissions {\n    vfolder_host_permission_list\n  }\n}\n"
+    "text": "query UserFolderPermissionPanelQuery {\n  vfolder_host_permissions {\n    vfolder_host_permission_list\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "bc907aefd3a9a8a71b286ecb647fcf9d";
+(node as any).hash = "9a7479aeeccc58376532d132f0b2713b";
 
 export default node;

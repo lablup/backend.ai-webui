@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<624c8ab5338d98ac418b8a7c7a946674>>
+ * @generated SignedSource<<2b5b92931bcdd529fcf5585ab52213c3>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,7 +11,6 @@
 import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type StorageHostDetailDrawerFragment$data = {
-  readonly id: string | null | undefined;
   readonly storageVolumeFrgmt: {
     readonly " $fragmentSpreads": FragmentRefs<"StorageHostDetailDrawerContentFragment">;
   };
@@ -28,13 +27,6 @@ const node: ReaderFragment = {
   "metadata": null,
   "name": "StorageHostDetailDrawerFragment",
   "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "id",
-      "storageKey": null
-    },
     {
       "fragment": {
         "kind": "InlineFragment",
@@ -56,6 +48,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "caea0fa239ef72a790234259ee47d950";
+(node as any).hash = "451c99f37bf7181aa2407810280fab57";
 
 export default node;

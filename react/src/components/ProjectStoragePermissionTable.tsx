@@ -3,90 +3,163 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { ProjectStoragePermissionTableModifyGroupMutation } from '../__generated__/ProjectStoragePermissionTableModifyGroupMutation.graphql';
-import { ProjectStoragePermissionTableQuery as ProjectStoragePermissionTableQueryType } from '../__generated__/ProjectStoragePermissionTableQuery.graphql';
+import {
+  ProjectStoragePermissionTableQuery as ProjectStoragePermissionTableQueryType,
+  type ProjectV2Filter,
+  type ProjectV2OrderBy,
+} from '../__generated__/ProjectStoragePermissionTableQuery.graphql';
+import { ProjectStoragePermissionTable_domainFrgmt$key } from '../__generated__/ProjectStoragePermissionTable_domainFrgmt.graphql';
+import { ProjectStoragePermissionTable_storageVolumeFrgmt$key } from '../__generated__/ProjectStoragePermissionTable_storageVolumeFrgmt.graphql';
+import { convertToOrderBy } from '../helper';
 import {
   PERMISSION_DISPLAY_MAP,
   buildAllowedHostsPayloadFromV2,
+  parseAllowedHosts,
   v2PermissionToKey,
 } from '../helper/storageHostPermission';
-import StoragePermissionEditModal from './StoragePermissionEditModal';
+import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
+import StoragePermissionEditModal, {
+  type PermissionEditTarget,
+} from './StoragePermissionEditModal';
 import {
   CheckCircleOutlined,
   CloseCircleOutlined,
-  EditFilled,
-  MinusCircleOutlined,
+  SettingOutlined,
 } from '@ant-design/icons';
-import { Typography, theme } from 'antd';
+import { Tooltip, Typography, theme } from 'antd';
 import {
+  BAIButton,
   BAIFlex,
+  BAIGraphQLPropertyFilter,
   BAINameActionCell,
+  BAISelectionLabel,
   BAITable,
   type BAITableProps,
   BAIUnmountAfterClose,
+  type GraphQLFilter,
   toLocalId,
   useFetchKey,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
+import {
+  graphql,
+  useFragment,
+  useLazyLoadQuery,
+  useMutation,
+} from 'react-relay';
 
 type ProjectRow = NonNullable<
   NonNullable<
     NonNullable<
-      ProjectStoragePermissionTableQueryType['response']['adminProjectsV2']
+      ProjectStoragePermissionTableQueryType['response']['domainProjectsV2']
     >['edges'][number]
   >['node']
 >;
 
 export interface ProjectStoragePermissionTableProps extends BAITableProps<ProjectRow> {
-  storageHostId: string;
+  /** Fragment for the storage host — its `id` is read internally. */
+  storageVolumeFrgmt: ProjectStoragePermissionTable_storageVolumeFrgmt$key;
   /**
-   * Raw UUIDs returned by `BAIAdminProjectSelect` (multi-mode). Empty array
-   * keeps the query skipped. Passed as `filter.id.in` to `adminProjectsV2`
-   * and as `gid` to `modify_group` (V1) on save.
+   * The single selected domain whose projects are listed (via
+   * `domainProjectsV2(scope)`). `undefined` keeps the query skipped and shows
+   * the select-a-domain empty state.
    */
-  selectedProjectUuids: string[];
+  selectedDomainName: string | undefined;
+  /**
+   * Fragment for the selected domain. Read internally to compute each project
+   * row's effective permission = union(project, domain) and the inherited
+   * host-allowed status. Null/undefined when no domain is selected.
+   */
+  domainFrgmt: ProjectStoragePermissionTable_domainFrgmt$key | null | undefined;
   permissionKeys: string[];
-  /**
-   * Called when the user clicks the row's deselect action. The panel should
-   * remove the UUID from its `selectedProjectUuids` array.
-   */
-  onDeselectItem?: (uuid: string) => void;
 }
 
 const ProjectStoragePermissionTable: React.FC<
   ProjectStoragePermissionTableProps
 > = ({
-  storageHostId,
-  selectedProjectUuids,
+  storageVolumeFrgmt,
+  selectedDomainName,
+  domainFrgmt,
   permissionKeys,
-  onDeselectItem,
   ...tableProps
 }) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const [editingRow, setEditingRow] = useState<ProjectRow | null>(null);
+
+  const storageVolume = useFragment(
+    graphql`
+      fragment ProjectStoragePermissionTable_storageVolumeFrgmt on StorageVolume {
+        id
+      }
+    `,
+    storageVolumeFrgmt,
+  );
+  const storageHostId = storageVolume?.id ?? '';
+
+  // The selected domain's permissions drive each project row's effective
+  // (union) state and its inherited host-allowed status.
+  const domain = useFragment(
+    graphql`
+      fragment ProjectStoragePermissionTable_domainFrgmt on Domain {
+        allowed_vfolder_hosts
+      }
+    `,
+    domainFrgmt ?? null,
+  );
+  const domainParsed = parseAllowedHosts(domain?.allowed_vfolder_hosts);
+  const domainPermissions = new Set(domainParsed[storageHostId] ?? []);
+
+  // Empty when the modal is closed. One row → single-edit; many → bulk-edit.
+  const [editingRows, setEditingRows] = useState<ProjectRow[]>([]);
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+
+  const {
+    baiPaginationOption,
+    tablePaginationOption,
+    setTablePaginationOption,
+  } = useBAIPaginationOptionState({ current: 1, pageSize: 10 });
+  const [filter, setFilter] = useState<GraphQLFilter | undefined>(undefined);
+  const [order, setOrder] = useState<string | undefined>(undefined);
 
   const [fetchKey, updateFetchKey] = useFetchKey();
   const deferredFetchKey = useDeferredValue(fetchKey);
 
   const queryVariables = {
-    projectIds: selectedProjectUuids,
-    skip: selectedProjectUuids.length === 0,
+    domainName: selectedDomainName ?? '',
+    skip: !selectedDomainName,
+    limit: baiPaginationOption.limit,
+    offset: baiPaginationOption.offset,
+    filter: (filter ?? null) as ProjectV2Filter | null,
+    orderBy: convertToOrderBy<ProjectV2OrderBy>(order) ?? null,
   };
   const deferredQueryVariables = useDeferredValue(queryVariables);
 
-  const { adminProjectsV2 } =
+  // Server-side paginated/filtered/ordered list of the selected domain's
+  // projects. `domainProjectsV2` returns the same `ProjectV2` node shape as
+  // `adminProjectsV2`, so the row type, V2 permission parsing, and
+  // `modify_group` save path are unchanged.
+  const { domainProjectsV2 } =
     useLazyLoadQuery<ProjectStoragePermissionTableQueryType>(
       graphql`
         query ProjectStoragePermissionTableQuery(
-          $projectIds: [UUID!]!
+          $domainName: String!
           $skip: Boolean!
+          $limit: Int
+          $offset: Int
+          $filter: ProjectV2Filter
+          $orderBy: [ProjectV2OrderBy!]
         ) {
-          adminProjectsV2(filter: { id: { in: $projectIds } }, limit: 10)
-            @skip(if: $skip) {
+          domainProjectsV2(
+            scope: { domainName: $domainName }
+            limit: $limit
+            offset: $offset
+            filter: $filter
+            orderBy: $orderBy
+          ) @skip(if: $skip) {
+            count
             edges {
               node {
                 id
@@ -113,16 +186,8 @@ const ProjectStoragePermissionTable: React.FC<
       },
     );
 
-  // Preserve the user's pick order: `adminProjectsV2` returns by its own
-  // ordering, but the consumer expects rows in the order they were selected.
-  const byUuid = new Map<string, ProjectRow>();
-  _.forEach(adminProjectsV2?.edges, (edge) => {
-    const node = edge?.node;
-    if (node?.id) byUuid.set(toLocalId(node.id), node);
-  });
-  const deferredSelected = useDeferredValue(selectedProjectUuids);
   const rows: ProjectRow[] = _.compact(
-    deferredSelected.map((uuid) => byUuid.get(uuid) ?? null),
+    (domainProjectsV2?.edges ?? []).map((edge) => edge?.node ?? null),
   );
 
   const [commitModifyGroup] =
@@ -138,121 +203,200 @@ const ProjectStoragePermissionTable: React.FC<
       }
     `);
 
-  const handleSave = async (
+  const enabledKeysOf = (row: ProjectRow): Set<string> => {
+    const entry = row.storage?.allowedVfolderHosts?.find(
+      (e) => e.host === storageHostId,
+    );
+    return new Set(entry?.permissions.map(v2PermissionToKey) ?? []);
+  };
+
+  const commitRow = (
+    row: ProjectRow,
     newKeys: string[],
   ): Promise<{ ok: boolean; msg?: string | null }> => {
-    const gid = editingRow?.id ? toLocalId(editingRow.id) : undefined;
+    const gid = row.id ? toLocalId(row.id) : undefined;
     if (!gid) {
-      return { ok: false, msg: t('storageHost.permission.SaveFailed') };
+      return Promise.resolve({ ok: false });
     }
     const payload = buildAllowedHostsPayloadFromV2(
-      editingRow?.storage?.allowedVfolderHosts ?? [],
+      row.storage?.allowedVfolderHosts ?? [],
       storageHostId,
       newKeys,
     );
     return new Promise((resolve) => {
       commitModifyGroup({
         variables: { gid, props: { allowed_vfolder_hosts: payload } },
-        onCompleted: (res, errors) => {
-          if (errors?.length || !res?.modify_group?.ok) {
-            resolve({ ok: false, msg: res?.modify_group?.msg });
-          } else {
-            updateFetchKey();
-            resolve({ ok: true });
-          }
-        },
+        onCompleted: (res, errors) =>
+          resolve({
+            ok: !errors?.length && !!res?.modify_group?.ok,
+            msg: res?.modify_group?.msg,
+          }),
         onError: (err) => resolve({ ok: false, msg: err?.message }),
       });
     });
   };
 
-  // Pre-compute the editing row's enabled set so the modal sees a stable Set.
-  const editingHosts = editingRow?.storage?.allowedVfolderHosts ?? [];
-  const editingEntry = editingHosts.find((e) => e.host === storageHostId);
-  const editingEnabledSet = new Set(
-    editingEntry?.permissions.map(v2PermissionToKey) ?? [],
-  );
+  const handleSave = async (
+    enabledKeys: string[],
+  ): Promise<{ ok: boolean; msg?: string | null }> => {
+    if (editingRows.length === 0) {
+      return { ok: false, msg: t('storageHost.permission.SaveFailed') };
+    }
+
+    // Apply the chosen permission set to every editing row (single or bulk
+    // overwrite).
+    const settled = await Promise.all(
+      editingRows.map((row) => commitRow(row, enabledKeys)),
+    );
+
+    const okCount = settled.filter((s) => s.ok).length;
+    const total = settled.length;
+    if (okCount > 0) {
+      updateFetchKey();
+      setSelectedRowKeys([]);
+    }
+    if (okCount === total) {
+      return { ok: true };
+    }
+    if (okCount === 0) {
+      return {
+        ok: false,
+        msg: settled.find((s) => !s.ok)?.msg,
+      };
+    }
+    return {
+      ok: true,
+      msg: t('storageHost.permission.PartialSaveSuccess', {
+        success: okCount,
+        total,
+      }),
+    };
+  };
+
+  const editingTargets: PermissionEditTarget[] = editingRows.map((row) => ({
+    id: row.id ? toLocalId(row.id) : '',
+    name: row.basicInfo?.name ?? '',
+    enabled: enabledKeysOf(row),
+  }));
+  // Single-target title is built inside the modal (the project name is
+  // ellipsized there); only the bulk-edit label is supplied from here.
+  const editingTitle =
+    editingRows.length > 1
+      ? t('storageHost.permission.EditPermissionsMulti', {
+          count: editingRows.length,
+        })
+      : undefined;
 
   return (
-    <>
+    <BAIFlex direction="column" align="stretch" gap="xs">
+      <BAIFlex align="center" gap="xs">
+        <BAIGraphQLPropertyFilter
+          style={{ flex: 1 }}
+          filterProperties={[
+            {
+              key: 'name',
+              propertyLabel: t('storageHost.permission.Name'),
+              type: 'string',
+            },
+          ]}
+          value={filter}
+          onChange={(value) => {
+            setFilter(value);
+            setTablePaginationOption({ current: 1 });
+            setSelectedRowKeys([]);
+          }}
+        />
+        {selectedRowKeys.length > 0 ? (
+          <BAIFlex align="center" gap="xs" style={{ flexShrink: 0 }}>
+            <BAISelectionLabel
+              count={selectedRowKeys.length}
+              onClearSelection={() => setSelectedRowKeys([])}
+            />
+            <Tooltip title={t('storageHost.permission.EditPermissionsAction')}>
+              <BAIButton
+                icon={<SettingOutlined style={{ color: token.colorInfo }} />}
+                style={{ backgroundColor: token.colorInfoBg }}
+                onClick={() =>
+                  setEditingRows(
+                    rows.filter((row) => selectedRowKeys.includes(row.id)),
+                  )
+                }
+              />
+            </Tooltip>
+          </BAIFlex>
+        ) : null}
+      </BAIFlex>
       <BAITable
         size="small"
         scroll={{ x: 'max-content' }}
         {...tableProps}
+        locale={{
+          // No domain picked yet vs. a domain picked that simply has no
+          // projects under it — distinct empty states.
+          emptyText: selectedDomainName
+            ? t('storageHost.permission.NoProjectsInDomain')
+            : t('storageHost.permission.SelectDomainFirst'),
+        }}
         rowKey="id"
         resizable={false}
-        pagination={false}
+        order={order}
+        onChangeOrder={(newOrder) => {
+          setOrder(newOrder);
+          setTablePaginationOption({ current: 1 });
+          setSelectedRowKeys([]);
+        }}
+        pagination={{
+          pageSize: tablePaginationOption.pageSize,
+          current: tablePaginationOption.current,
+          total: domainProjectsV2?.count ?? 0,
+          onChange: (current, pageSize) => {
+            if (_.isNumber(current) && _.isNumber(pageSize)) {
+              setTablePaginationOption({ current, pageSize });
+              setSelectedRowKeys([]);
+            }
+          },
+        }}
         loading={queryVariables !== deferredQueryVariables}
         dataSource={rows}
+        rowSelection={{
+          type: 'checkbox',
+          selectedRowKeys,
+          onChange: (keys) => setSelectedRowKeys(keys),
+        }}
         columns={[
           {
             title: t('storageHost.permission.Name'),
+            // `dataIndex` (not just `key`) is required so antd's sorter result
+            // carries `field: 'name'` → order string 'name'/'-name'. Without it
+            // `sorter.field` is undefined and the orderBy field becomes the
+            // invalid enum value "UNDEFINED". The custom `render` still drives
+            // display (the row has no top-level `name`; it lives at
+            // `basicInfo.name`).
+            dataIndex: 'name',
             key: 'name',
             fixed: 'left',
-            width: 240,
-            render: (_value: ProjectRow, row: ProjectRow) => {
-              const entry = row.storage?.allowedVfolderHosts?.find(
-                (e) => e.host === storageHostId,
-              );
-              const isHostAllowed = !!entry;
-              return (
-                <BAIFlex direction="column" align="start" gap="xxs">
-                  <BAINameActionCell
-                    title={
-                      <Typography.Text
-                        ellipsis={{ tooltip: row.basicInfo?.name }}
-                        style={{ maxWidth: 160 }}
-                      >
-                        {row.basicInfo?.name}
-                      </Typography.Text>
-                    }
-                    showActions="always"
-                    actions={[
-                      {
-                        key: 'edit',
-                        title: t(
-                          'storageHost.permission.EditPermissionsAction',
-                        ),
-                        icon: <EditFilled />,
-                        onClick: () => setEditingRow(row),
-                      },
-                      {
-                        key: 'deselect',
-                        title: t('storageHost.permission.DeselectItem'),
-                        icon: (
-                          <MinusCircleOutlined
-                            style={{ color: token.colorTextTertiary }}
-                          />
-                        ),
-                        onClick: () =>
-                          row.id && onDeselectItem?.(toLocalId(row.id)),
-                      },
-                    ]}
-                  />
-                  <BAIFlex gap="xxs" align="center">
-                    {isHostAllowed ? (
-                      <>
-                        <CheckCircleOutlined
-                          style={{ color: token.colorSuccess }}
-                        />
-                        <Typography.Text type="secondary">
-                          {t('storageHost.permission.HostAllowed')}
-                        </Typography.Text>
-                      </>
-                    ) : (
-                      <>
-                        <CloseCircleOutlined
-                          style={{ color: token.colorError }}
-                        />
-                        <Typography.Text type="secondary">
-                          {t('storageHost.permission.HostNotAllowed')}
-                        </Typography.Text>
-                      </>
-                    )}
-                  </BAIFlex>
-                </BAIFlex>
-              );
-            },
+            sorter: true,
+            render: (_value: ProjectRow, row: ProjectRow) => (
+              <BAINameActionCell
+                title={
+                  <Typography.Text
+                    ellipsis={{ tooltip: row.basicInfo?.name }}
+                    style={{ maxWidth: 160 }}
+                  >
+                    {row.basicInfo?.name}
+                  </Typography.Text>
+                }
+                showActions="always"
+                actions={[
+                  {
+                    key: 'edit',
+                    title: t('storageHost.permission.EditPermissionsAction'),
+                    icon: <SettingOutlined />,
+                    onClick: () => setEditingRows([row]),
+                  },
+                ]}
+              />
+            ),
           },
           ...permissionKeys.map((permKey) => {
             const display = PERMISSION_DISPLAY_MAP[permKey];
@@ -261,15 +405,22 @@ const ProjectStoragePermissionTable: React.FC<
               key: permKey,
               align: 'center' as const,
               render: (_value: ProjectRow, row: ProjectRow) => {
-                const entry = row.storage?.allowedVfolderHosts?.find(
-                  (e) => e.host === storageHostId,
-                );
-                const enabled = new Set(
-                  entry?.permissions.map(v2PermissionToKey) ?? [],
-                );
-                return enabled.has(permKey) ? (
-                  <CheckCircleOutlined style={{ color: token.colorSuccess }} />
-                ) : (
+                // Effective permission = union(project, domain): granted on the
+                // project → green; inherited from the domain only → purple;
+                // granted on neither → gray.
+                if (enabledKeysOf(row).has(permKey)) {
+                  return (
+                    <CheckCircleOutlined
+                      style={{ color: token.colorSuccess }}
+                    />
+                  );
+                }
+                if (domainPermissions.has(permKey)) {
+                  return (
+                    <CheckCircleOutlined style={{ color: token.purple5 }} />
+                  );
+                }
+                return (
                   <CloseCircleOutlined
                     style={{ color: token.colorTextDisabled }}
                   />
@@ -281,17 +432,15 @@ const ProjectStoragePermissionTable: React.FC<
       />
       <BAIUnmountAfterClose>
         <StoragePermissionEditModal
-          open={!!editingRow}
-          title={t('storageHost.permission.EditPermissions', {
-            name: editingRow?.basicInfo?.name ?? '',
-          })}
+          open={editingRows.length > 0}
+          title={editingTitle}
           permissionKeys={permissionKeys}
-          initialEnabled={editingEnabledSet}
-          onRequestClose={() => setEditingRow(null)}
+          targets={editingTargets}
+          onRequestClose={() => setEditingRows([])}
           onSave={handleSave}
         />
       </BAIUnmountAfterClose>
-    </>
+    </BAIFlex>
   );
 };
 

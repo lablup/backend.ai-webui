@@ -36,7 +36,6 @@ const StorageHostDetailDrawer: React.FC<StorageHostDetailDrawerProps> = ({
   const storageVolume = useFragment(
     graphql`
       fragment StorageHostDetailDrawerFragment on StorageVolume {
-        id
         ...StorageHostDetailDrawerContentFragment
           @alias(as: "storageVolumeFrgmt")
       }
@@ -68,7 +67,6 @@ const StorageHostDetailDrawer: React.FC<StorageHostDetailDrawerProps> = ({
         {storageVolume?.storageVolumeFrgmt ? (
           <StorageHostDetailDrawerContent
             storageVolumeFrgmt={storageVolume.storageVolumeFrgmt}
-            storageHostId={storageVolume.id ?? ''}
           />
         ) : null}
       </Suspense>

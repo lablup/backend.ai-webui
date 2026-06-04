@@ -2,33 +2,36 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { KeypairResourcePolicyStoragePermissionTableModifyMutation } from '../__generated__/KeypairResourcePolicyStoragePermissionTableModifyMutation.graphql';
 import { KeypairResourcePolicyStoragePermissionTableQuery as KeypairResourcePolicyStoragePermissionTableQueryType } from '../__generated__/KeypairResourcePolicyStoragePermissionTableQuery.graphql';
+import { KeypairResourcePolicyStoragePermissionTableUpdateMutation } from '../__generated__/KeypairResourcePolicyStoragePermissionTableUpdateMutation.graphql';
+import { KeypairResourcePolicyStoragePermissionTable_storageVolumeFrgmt$key } from '../__generated__/KeypairResourcePolicyStoragePermissionTable_storageVolumeFrgmt.graphql';
 import {
   PERMISSION_DISPLAY_MAP,
-  buildAllowedHostsPayloadFromV2,
+  keyToV2Enum,
   v2PermissionToKey,
 } from '../helper/storageHostPermission';
 import StoragePermissionEditModal from './StoragePermissionEditModal';
 import {
   CheckCircleOutlined,
   CloseCircleOutlined,
-  EditFilled,
-  MinusCircleOutlined,
+  SettingOutlined,
 } from '@ant-design/icons';
 import { Typography, theme } from 'antd';
 import {
-  BAIFlex,
   BAINameActionCell,
   BAITable,
   type BAITableProps,
   BAIUnmountAfterClose,
-  useFetchKey,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
+import {
+  graphql,
+  useFragment,
+  useLazyLoadQuery,
+  useMutation,
+} from 'react-relay';
 
 type KeypairResourcePolicyRow = NonNullable<
   NonNullable<
@@ -39,40 +42,41 @@ type KeypairResourcePolicyRow = NonNullable<
 >;
 
 export interface KeypairResourcePolicyStoragePermissionTableProps extends BAITableProps<KeypairResourcePolicyRow> {
-  storageHostId: string;
+  /** Fragment for the storage host — its `id` is read internally. */
+  storageVolumeFrgmt: KeypairResourcePolicyStoragePermissionTable_storageVolumeFrgmt$key;
   /**
    * Policy names picked via `BAIAdminKeypairResourcePolicySelect` (multi).
    * Empty array keeps the query skipped. Passed as `filter.name.in` to
-   * `adminKeypairResourcePoliciesV2` and as `name` to V1
-   * `modify_keypair_resource_policy` on save.
+   * `adminKeypairResourcePoliciesV2` and as `name` to
+   * `adminUpdateKeypairResourcePolicyV2` on save.
    */
   selectedPolicyNames: string[];
   permissionKeys: string[];
-  /**
-   * Called when the user clicks the row's deselect action. The panel should
-   * remove the name from its `selectedPolicyNames` array.
-   */
-  onDeselectItem?: (name: string) => void;
 }
 
 const KeypairResourcePolicyStoragePermissionTable: React.FC<
   KeypairResourcePolicyStoragePermissionTableProps
 > = ({
-  storageHostId,
+  storageVolumeFrgmt,
   selectedPolicyNames,
   permissionKeys,
-  onDeselectItem,
   ...tableProps
 }) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
+  const storageVolume = useFragment(
+    graphql`
+      fragment KeypairResourcePolicyStoragePermissionTable_storageVolumeFrgmt on StorageVolume {
+        id
+      }
+    `,
+    storageVolumeFrgmt,
+  );
+  const storageHostId = storageVolume?.id ?? '';
   const [editingRow, setEditingRow] = useState<KeypairResourcePolicyRow | null>(
     null,
   );
-
-  const [fetchKey, updateFetchKey] = useFetchKey();
-  const deferredFetchKey = useDeferredValue(fetchKey);
 
   const queryVariables = {
     names: selectedPolicyNames,
@@ -80,10 +84,10 @@ const KeypairResourcePolicyStoragePermissionTable: React.FC<
   };
   const deferredQueryVariables = useDeferredValue(queryVariables);
 
-  // Read via V2 list-with-filter; write still goes through V1
-  // `modify_keypair_resource_policy` because no V2 update mutation has been
-  // wired yet. JSONString payload rebuilt from V2 structured entries via
-  // `buildAllowedHostsPayloadFromV2`, preserving all other hosts.
+  // Read AND write via V2: `adminUpdateKeypairResourcePolicyV2` returns the
+  // updated entity, so requesting `allowedVfolderHosts` in the mutation
+  // response lets Relay update the normalized node in place — the table
+  // refreshes without a manual refetch (no fetchKey needed).
   const { adminKeypairResourcePoliciesV2 } =
     useLazyLoadQuery<KeypairResourcePolicyStoragePermissionTableQueryType>(
       graphql`
@@ -113,7 +117,6 @@ const KeypairResourcePolicyStoragePermissionTable: React.FC<
         fetchPolicy: deferredQueryVariables.skip
           ? 'store-only'
           : 'network-only',
-        fetchKey: deferredFetchKey,
       },
     );
 
@@ -128,16 +131,21 @@ const KeypairResourcePolicyStoragePermissionTable: React.FC<
     deferredSelected.map((n) => byName.get(n) ?? null),
   );
 
-  const [commitModifyKrp] =
-    useMutation<KeypairResourcePolicyStoragePermissionTableModifyMutation>(
+  const [commitUpdateKrp] =
+    useMutation<KeypairResourcePolicyStoragePermissionTableUpdateMutation>(
       graphql`
-        mutation KeypairResourcePolicyStoragePermissionTableModifyMutation(
+        mutation KeypairResourcePolicyStoragePermissionTableUpdateMutation(
           $name: String!
-          $props: ModifyKeyPairResourcePolicyInput!
+          $input: UpdateKeypairResourcePolicyInputGQL!
         ) {
-          modify_keypair_resource_policy(name: $name, props: $props) {
-            ok
-            msg
+          adminUpdateKeypairResourcePolicyV2(name: $name, input: $input) {
+            keypairResourcePolicy {
+              id
+              allowedVfolderHosts {
+                host
+                permissions
+              }
+            }
           }
         }
       `,
@@ -150,25 +158,31 @@ const KeypairResourcePolicyStoragePermissionTable: React.FC<
     if (!policyName) {
       return { ok: false, msg: t('storageHost.permission.SaveFailed') };
     }
-    const payload = buildAllowedHostsPayloadFromV2(
-      editingRow?.allowedVfolderHosts ?? [],
-      storageHostId,
-      newKeys,
-    );
+    // Rebuild the full host list, replacing only this host's permissions.
+    // `VFolderHostPermissionEntryInput.permissions` is typed `[String!]` but
+    // carries `VFolderHostPermissionV2` enum VALUES. Other hosts come back from
+    // the query already as enum values (keep verbatim); the edited host's
+    // newKeys are kebab keys, so convert them to enum values via the canonical
+    // `keyToV2Enum` helper — the single source of truth for the asymmetric
+    // `set-user-specific-permission` ↔ `SET_USER_PERM` mapping.
+    const allowedVfolderHosts = [
+      ...(editingRow?.allowedVfolderHosts ?? [])
+        .filter((e) => e.host !== storageHostId)
+        .map((e) => ({ host: e.host, permissions: [...e.permissions] })),
+      { host: storageHostId, permissions: newKeys.map(keyToV2Enum) },
+    ];
     return new Promise((resolve) => {
-      commitModifyKrp({
-        variables: {
-          name: policyName,
-          props: { allowed_vfolder_hosts: payload },
-        },
+      commitUpdateKrp({
+        variables: { name: policyName, input: { allowedVfolderHosts } },
         onCompleted: (res, errors) => {
-          if (errors?.length || !res?.modify_keypair_resource_policy?.ok) {
-            resolve({
-              ok: false,
-              msg: res?.modify_keypair_resource_policy?.msg,
-            });
+          if (
+            errors?.length ||
+            !res?.adminUpdateKeypairResourcePolicyV2?.keypairResourcePolicy
+          ) {
+            resolve({ ok: false, msg: errors?.[0]?.message });
           } else {
-            updateFetchKey();
+            // The mutation response carries the updated allowedVfolderHosts, so
+            // Relay refreshes this row from the normalized store — no refetch.
             resolve({ ok: true });
           }
         },
@@ -203,68 +217,27 @@ const KeypairResourcePolicyStoragePermissionTable: React.FC<
             render: (
               _value: KeypairResourcePolicyRow,
               row: KeypairResourcePolicyRow,
-            ) => {
-              const entry = row.allowedVfolderHosts?.find(
-                (e) => e.host === storageHostId,
-              );
-              const isHostAllowed = !!entry;
-              return (
-                <BAIFlex direction="column" align="start" gap="xxs">
-                  <BAINameActionCell
-                    title={
-                      <Typography.Text
-                        ellipsis={{ tooltip: row.name }}
-                        style={{ maxWidth: 160 }}
-                      >
-                        {row.name}
-                      </Typography.Text>
-                    }
-                    showActions="always"
-                    actions={[
-                      {
-                        key: 'edit',
-                        title: t(
-                          'storageHost.permission.EditPermissionsAction',
-                        ),
-                        icon: <EditFilled />,
-                        onClick: () => setEditingRow(row),
-                      },
-                      {
-                        key: 'deselect',
-                        title: t('storageHost.permission.DeselectItem'),
-                        icon: (
-                          <MinusCircleOutlined
-                            style={{ color: token.colorTextTertiary }}
-                          />
-                        ),
-                        onClick: () => onDeselectItem?.(row.name),
-                      },
-                    ]}
-                  />
-                  <BAIFlex gap="xxs" align="center">
-                    {isHostAllowed ? (
-                      <>
-                        <CheckCircleOutlined
-                          style={{ color: token.colorSuccess }}
-                        />
-                        <Typography.Text type="secondary">
-                          {t('storageHost.permission.HostAllowed')}
-                        </Typography.Text>
-                      </>
-                    ) : (
-                      <>
-                        <CloseCircleOutlined
-                          style={{ color: token.colorError }}
-                        />
-                        <Typography.Text type="secondary">
-                          {t('storageHost.permission.HostNotAllowed')}
-                        </Typography.Text>
-                      </>
-                    )}
-                  </BAIFlex>
-                </BAIFlex>
-              );
-            },
+            ) => (
+              <BAINameActionCell
+                title={
+                  <Typography.Text
+                    ellipsis={{ tooltip: row.name }}
+                    style={{ maxWidth: 160 }}
+                  >
+                    {row.name}
+                  </Typography.Text>
+                }
+                showActions="always"
+                actions={[
+                  {
+                    key: 'edit',
+                    title: t('storageHost.permission.EditPermissionsAction'),
+                    icon: <SettingOutlined />,
+                    onClick: () => setEditingRow(row),
+                  },
+                ]}
+              />
+            ),
           },
           ...permissionKeys.map((permKey) => {
             const display = PERMISSION_DISPLAY_MAP[permKey];
@@ -297,11 +270,18 @@ const KeypairResourcePolicyStoragePermissionTable: React.FC<
       <BAIUnmountAfterClose>
         <StoragePermissionEditModal
           open={!!editingRow}
-          title={t('storageHost.permission.EditPermissions', {
-            name: editingRow?.name ?? '',
-          })}
           permissionKeys={permissionKeys}
-          initialEnabled={editingEnabledSet}
+          targets={
+            editingRow
+              ? [
+                  {
+                    id: editingRow.name,
+                    name: editingRow.name,
+                    enabled: editingEnabledSet,
+                  },
+                ]
+              : []
+          }
           onRequestClose={() => setEditingRow(null)}
           onSave={handleSave}
         />

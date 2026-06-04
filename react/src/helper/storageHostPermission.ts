@@ -134,6 +134,20 @@ const V2_TO_V1_PERMISSION: Record<string, string> = {
 export const v2PermissionToKey = (perm: string): string =>
   V2_TO_V1_PERMISSION[perm] ?? perm.toLowerCase().replace(/_/g, '-');
 
+/**
+ * Inverse of {@link V2_TO_V1_PERMISSION}, derived from it so the asymmetric
+ * `set-user-specific-permission` ↔ `SET_USER_PERM` entry stays defined in one
+ * place. Adding a new asymmetric permission above automatically updates both
+ * directions.
+ */
+const V1_TO_V2_PERMISSION: Record<string, string> = Object.fromEntries(
+  Object.entries(V2_TO_V1_PERMISSION).map(([v2, v1]) => [v1, v2]),
+);
+
+/** Convert a canonical V1 kebab key to its V2 permission enum value. */
+export const keyToV2Enum = (key: string): string =>
+  V1_TO_V2_PERMISSION[key] ?? key.toUpperCase().replace(/-/g, '_');
+
 /** V2 `VFolderHostPermissionEntry` shape (host name + permission enum list). */
 export interface V2AllowedVfolderHostEntry {
   readonly host: string;

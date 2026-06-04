@@ -3,7 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { DomainStoragePermissionTableModifyDomainMutation } from '../__generated__/DomainStoragePermissionTableModifyDomainMutation.graphql';
-import { DomainStoragePermissionTableQuery as DomainStoragePermissionTableQueryType } from '../__generated__/DomainStoragePermissionTableQuery.graphql';
+import { DomainStoragePermissionTable_domainFrgmt$key } from '../__generated__/DomainStoragePermissionTable_domainFrgmt.graphql';
+import { DomainStoragePermissionTable_storageVolumeFrgmt$key } from '../__generated__/DomainStoragePermissionTable_storageVolumeFrgmt.graphql';
 import {
   PERMISSION_DISPLAY_MAP,
   buildAllowedHostsPayload,
@@ -13,101 +14,72 @@ import StoragePermissionEditModal from './StoragePermissionEditModal';
 import {
   CheckCircleOutlined,
   CloseCircleOutlined,
-  EditFilled,
-  MinusCircleOutlined,
+  SettingOutlined,
 } from '@ant-design/icons';
 import { Typography, theme } from 'antd';
 import {
-  BAIFlex,
   BAINameActionCell,
   BAITable,
   type BAITableProps,
   BAIUnmountAfterClose,
-  useFetchKey,
 } from 'backend.ai-ui';
-import * as _ from 'lodash-es';
-import React, { useDeferredValue, useState } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
+import { graphql, useFragment, useMutation } from 'react-relay';
 
-type DomainRow = NonNullable<
-  NonNullable<
-    DomainStoragePermissionTableQueryType['response']['domains']
-  >[number]
->;
+interface DomainRow {
+  name: string;
+  allowed_vfolder_hosts: string | null | undefined;
+}
 
 export interface DomainStoragePermissionTableProps extends BAITableProps<DomainRow> {
-  storageHostId: string;
+  /** Fragment for the storage host — its `id` is read internally. */
+  storageVolumeFrgmt: DomainStoragePermissionTable_storageVolumeFrgmt$key;
   /**
-   * Names picked via `BAIDomainSelect` (multi-mode). Empty array keeps the
-   * query skipped — `@skip` + `store-only` suppresses the network entirely.
-   *
-   * V1 `domains` has no name filter, so when at least one name is picked we
-   * fetch the full active-domains list and client-filter to the selection.
-   * Backend.AI domain counts are small (typically <20) so the cost is
-   * negligible.
-   *
-   * TODO(DomainV2): when `DomainV2` adds `allowedVfolderHosts`, switch this
-   *   table to `domainsV2(filter: { name: { in: $names } })` for parity with
-   *   the Project / KRP tables (which already use V2 list-with-filter).
+   * Fragment for the selected domain (name + `allowed_vfolder_hosts`), read
+   * internally. The parent owns the query (single source of truth, so the
+   * sibling project table's union recomputes when this domain is edited).
+   * Null/undefined renders the empty (select-a-domain) state.
    */
-  selectedDomainNames: string[];
+  domainFrgmt: DomainStoragePermissionTable_domainFrgmt$key | null | undefined;
   /** Canonical permission key list (driven by `vfolder_host_permissions`). */
   permissionKeys: string[];
-  /**
-   * Called when the user clicks the row's deselect action. The panel should
-   * remove the name from its `selectedDomainNames` array, which causes the
-   * row to disappear on next render.
-   */
-  onDeselectItem?: (name: string) => void;
+  /** Called after a successful save so the parent can refetch the domain. */
+  onSaved?: () => void;
 }
 
 const DomainStoragePermissionTable: React.FC<
   DomainStoragePermissionTableProps
 > = ({
-  storageHostId,
-  selectedDomainNames,
+  storageVolumeFrgmt,
+  domainFrgmt,
   permissionKeys,
-  onDeselectItem,
+  onSaved,
   ...tableProps
 }) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const [editingRow, setEditingRow] = useState<DomainRow | null>(null);
+  const [isEditing, setIsEditing] = useState<boolean>(false);
 
-  // Bump on successful save to re-fetch so the table reflects new permissions.
-  const [fetchKey, updateFetchKey] = useFetchKey();
-  const deferredFetchKey = useDeferredValue(fetchKey);
-
-  const queryVariables = { skip: selectedDomainNames.length === 0 };
-  const deferredQueryVariables = useDeferredValue(queryVariables);
-
-  const { domains } = useLazyLoadQuery<DomainStoragePermissionTableQueryType>(
+  const storageVolume = useFragment(
     graphql`
-      query DomainStoragePermissionTableQuery($skip: Boolean!) {
-        domains(is_active: true) @skip(if: $skip) {
-          name
-          allowed_vfolder_hosts
-        }
+      fragment DomainStoragePermissionTable_storageVolumeFrgmt on StorageVolume {
+        id
       }
     `,
-    deferredQueryVariables,
-    {
-      fetchPolicy: deferredQueryVariables.skip ? 'store-only' : 'network-only',
-      fetchKey: deferredFetchKey,
-    },
+    storageVolumeFrgmt,
   );
+  const storageHostId = storageVolume?.id ?? '';
 
-  // Client-side filter to the multi-selected names, ordered by the selection
-  // order so the user sees rows in the order they picked.
-  const deferredSelectedNames = useDeferredValue(selectedDomainNames);
-  const byName = new Map<string, DomainRow>();
-  _.forEach(domains, (d) => {
-    if (d?.name) byName.set(d.name, d);
-  });
-  const rows: DomainRow[] = _.compact(
-    deferredSelectedNames.map((name) => byName.get(name) ?? null),
+  const domain = useFragment(
+    graphql`
+      fragment DomainStoragePermissionTable_domainFrgmt on Domain {
+        name
+        allowed_vfolder_hosts
+      }
+    `,
+    domainFrgmt ?? null,
   );
 
   const [commitModifyDomain] =
@@ -123,17 +95,25 @@ const DomainStoragePermissionTable: React.FC<
       }
     `);
 
+  const domainName = domain?.name ?? undefined;
+  const allowedVfolderHostsRaw = domain?.allowed_vfolder_hosts;
+  const parsed = parseAllowedHosts(allowedVfolderHostsRaw);
+  const enabledSet = new Set(parsed[storageHostId] ?? []);
+
+  const rows: DomainRow[] = domainName
+    ? [{ name: domainName, allowed_vfolder_hosts: allowedVfolderHostsRaw }]
+    : [];
+
   const handleSave = async (
-    newKeys: string[],
+    enabledKeys: string[],
   ): Promise<{ ok: boolean; msg?: string | null }> => {
-    const domainName = editingRow?.name;
     if (!domainName) {
       return { ok: false, msg: t('storageHost.permission.SaveFailed') };
     }
     const payload = buildAllowedHostsPayload(
-      editingRow?.allowed_vfolder_hosts,
+      allowedVfolderHostsRaw,
       storageHostId,
-      newKeys,
+      enabledKeys,
     );
     return new Promise((resolve) => {
       commitModifyDomain({
@@ -145,7 +125,7 @@ const DomainStoragePermissionTable: React.FC<
           if (errors?.length || !res?.modify_domain?.ok) {
             resolve({ ok: false, msg: res?.modify_domain?.msg });
           } else {
-            updateFetchKey();
+            onSaved?.();
             resolve({ ok: true });
           }
         },
@@ -154,19 +134,16 @@ const DomainStoragePermissionTable: React.FC<
     });
   };
 
-  const editingParsed = parseAllowedHosts(editingRow?.allowed_vfolder_hosts);
-  const editingEnabledSet = new Set(editingParsed[storageHostId] ?? []);
-
   return (
     <>
       <BAITable
         size="small"
         scroll={{ x: 'max-content' }}
         {...tableProps}
+        locale={{ emptyText: t('storageHost.permission.NoDomainSelected') }}
         rowKey="name"
         resizable={false}
         pagination={false}
-        loading={queryVariables !== deferredQueryVariables}
         dataSource={rows}
         columns={[
           {
@@ -174,67 +151,27 @@ const DomainStoragePermissionTable: React.FC<
             dataIndex: 'name',
             key: 'name',
             fixed: 'left',
-            width: 240,
-            render: (name: string, row: DomainRow) => {
-              const parsed = parseAllowedHosts(row.allowed_vfolder_hosts);
-              const isHostAllowed = storageHostId in parsed;
-              return (
-                <BAIFlex direction="column" align="start" gap="xxs">
-                  <BAINameActionCell
-                    title={
-                      <Typography.Text
-                        ellipsis={{ tooltip: row.name }}
-                        style={{ maxWidth: 160 }}
-                      >
-                        {row.name}
-                      </Typography.Text>
-                    }
-                    showActions="always"
-                    actions={[
-                      {
-                        key: 'edit',
-                        title: t(
-                          'storageHost.permission.EditPermissionsAction',
-                        ),
-                        icon: <EditFilled />,
-                        onClick: () => setEditingRow(row),
-                      },
-                      {
-                        key: 'deselect',
-                        title: t('storageHost.permission.DeselectItem'),
-                        icon: (
-                          <MinusCircleOutlined
-                            style={{ color: token.colorTextTertiary }}
-                          />
-                        ),
-                        onClick: () => onDeselectItem?.(name),
-                      },
-                    ]}
-                  />
-                  <BAIFlex gap="xxs" align="center">
-                    {isHostAllowed ? (
-                      <>
-                        <CheckCircleOutlined
-                          style={{ color: token.colorSuccess }}
-                        />
-                        <Typography.Text type="secondary">
-                          {t('storageHost.permission.HostAllowed')}
-                        </Typography.Text>
-                      </>
-                    ) : (
-                      <>
-                        <CloseCircleOutlined
-                          style={{ color: token.colorError }}
-                        />
-                        <Typography.Text type="secondary">
-                          {t('storageHost.permission.HostNotAllowed')}
-                        </Typography.Text>
-                      </>
-                    )}
-                  </BAIFlex>
-                </BAIFlex>
-              );
-            },
+            render: (name: string) => (
+              <BAINameActionCell
+                title={
+                  <Typography.Text
+                    ellipsis={{ tooltip: name }}
+                    style={{ maxWidth: 160 }}
+                  >
+                    {name}
+                  </Typography.Text>
+                }
+                showActions="always"
+                actions={[
+                  {
+                    key: 'edit',
+                    title: t('storageHost.permission.EditPermissionsAction'),
+                    icon: <SettingOutlined />,
+                    onClick: () => setIsEditing(true),
+                  },
+                ]}
+              />
+            ),
           },
           ...permissionKeys.map((permKey) => {
             const display = PERMISSION_DISPLAY_MAP[permKey];
@@ -242,30 +179,28 @@ const DomainStoragePermissionTable: React.FC<
               title: display ? t(display.labelKey) : permKey,
               key: permKey,
               align: 'center' as const,
-              render: (_value: DomainRow, row: DomainRow) => {
-                const parsed = parseAllowedHosts(row.allowed_vfolder_hosts);
-                const enabled = new Set(parsed[storageHostId] ?? []);
-                return enabled.has(permKey) ? (
-                  <CheckCircleOutlined style={{ color: token.colorSuccess }} />
+              render: () =>
+                enabledSet.has(permKey) ? (
+                  <CheckCircleOutlined style={{ color: token.purple5 }} />
                 ) : (
                   <CloseCircleOutlined
                     style={{ color: token.colorTextDisabled }}
                   />
-                );
-              },
+                ),
             };
           }),
         ]}
       />
       <BAIUnmountAfterClose>
         <StoragePermissionEditModal
-          open={!!editingRow}
-          title={t('storageHost.permission.EditPermissions', {
-            name: editingRow?.name ?? '',
-          })}
+          open={isEditing}
           permissionKeys={permissionKeys}
-          initialEnabled={editingEnabledSet}
-          onRequestClose={() => setEditingRow(null)}
+          targets={
+            domainName
+              ? [{ id: domainName, name: domainName, enabled: enabledSet }]
+              : []
+          }
+          onRequestClose={() => setIsEditing(false)}
           onSave={handleSave}
         />
       </BAIUnmountAfterClose>
