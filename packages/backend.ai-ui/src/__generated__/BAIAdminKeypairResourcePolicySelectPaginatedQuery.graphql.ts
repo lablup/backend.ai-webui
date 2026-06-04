@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c1d99479c7d3f40764d07dfa47070567>>
+ * @generated SignedSource<<b7102066f31a29e34c374442f165e11d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,6 +12,7 @@ import { ConcreteRequest } from 'relay-runtime';
 export type KeypairResourcePolicyV2Filter = {
   createdAt?: DateTimeFilter | null | undefined;
   idleTimeout?: IntFilter | null | undefined;
+  keypair?: KeypairResourcePolicyKeypairNestedFilter | null | undefined;
   maxConcurrentSessions?: IntFilter | null | undefined;
   maxConcurrentSftpSessions?: IntFilter | null | undefined;
   maxContainersPerSession?: IntFilter | null | undefined;
@@ -54,6 +55,15 @@ export type IntFilter = {
   lessThan?: number | null | undefined;
   lessThanOrEqual?: number | null | undefined;
   notEquals?: number | null | undefined;
+};
+export type KeypairResourcePolicyKeypairNestedFilter = {
+  userId?: UUIDFilter | null | undefined;
+};
+export type UUIDFilter = {
+  equals?: string | null | undefined;
+  in?: ReadonlyArray<string> | null | undefined;
+  notEquals?: string | null | undefined;
+  notIn?: ReadonlyArray<string> | null | undefined;
 };
 export type BAIAdminKeypairResourcePolicySelectPaginatedQuery$variables = {
   filter?: KeypairResourcePolicyV2Filter | null | undefined;

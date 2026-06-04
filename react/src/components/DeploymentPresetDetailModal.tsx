@@ -49,7 +49,7 @@ const DeploymentPresetDetailModal: React.FC<
           clusterSize
         }
         execution {
-          imageId
+          imageId @since(version: "26.4.4")
           startupCommand
           bootstrapScript
           environ {

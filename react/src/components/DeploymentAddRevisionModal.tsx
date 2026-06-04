@@ -211,27 +211,24 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     'model-deployment-revised-schema',
   );
   // Legacy cores keep the resource group on the revision's resourceConfig (the
-  // field was removed from the generated schema in v2), so it is cast in.
+  // field was removed from the schema with model-deployment-revised-schema,
+  // 26.4.4+), so it is cast in.
   const buildLegacyResourceGroupConfig = (
     resourceGroupName: string,
-  ): Record<string, never> =>
+  ): { resourceGroup?: { name: string } } =>
     isRevisedDeploymentSchema
       ? {}
-      : ({
-          resourceGroup: { name: resourceGroupName },
-        } as unknown as Record<string, never>);
+      : { resourceGroup: { name: resourceGroupName } };
   // Legacy cores take `runtimeVariant` (the variant *name*, String!) instead of
-  // `runtimeVariantId` (UUID). Cast into the v2 input shape since the generated
-  // type only models `runtimeVariantId`.
+  // `runtimeVariantId` (UUID). Cast into the revised-schema input shape since the
+  // generated type only models `runtimeVariantId`.
   const buildRuntimeVariantConfig = (
     runtimeVariantId: string,
     runtimeVariantName: string,
-  ): { runtimeVariantId: string } =>
+  ): { runtimeVariantId: string } | { runtimeVariant: string } =>
     isRevisedDeploymentSchema
       ? { runtimeVariantId }
-      : ({ runtimeVariant: runtimeVariantName } as unknown as {
-          runtimeVariantId: string;
-        });
+      : { runtimeVariant: runtimeVariantName };
 
   // Refs to refetch each form's model folder select after creating a new
   // model-usage folder, or via the manual refresh button. Two refs because
@@ -492,7 +489,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                 clusterSize
               }
               execution {
-                imageId
+                imageId @since(version: "26.4.4")
                 environ {
                   key
                   value
@@ -1137,14 +1134,19 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
             resourceOpts:
               optsEntries.length > 0 ? { entries: optsEntries } : null,
             // Pre-26.4.4 cores require the resource group on the revision's
-            // resourceConfig; rc5+ inherits it from the deployment metadata.
+            // resourceConfig; 26.4.4+ inherits it from the deployment metadata.
             ...buildLegacyResourceGroupConfig(values.resourceGroup),
           },
           image: { id: decodedImageId },
           modelRuntimeConfig: {
             // Legacy cores take the runtime variant *name* (String!); revised
             // cores take `runtimeVariantId` (UUID).
-            ...buildRuntimeVariantConfig(values.runtimeVariantId, variantName),
+            ...(buildRuntimeVariantConfig(
+              values.runtimeVariantId,
+              variantName,
+            ) as {
+              runtimeVariantId: string;
+            }),
             environ:
               environEntries.length > 0 ? { entries: environEntries } : null,
           },
@@ -1798,7 +1800,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           <Suspense fallback={<Skeleton active paragraph={{ rows: 4 }} />}>
             <ResourceAllocationFormItems
               enableResourcePresets
-              // rc5+ inherits the resource group from the deployment metadata
+              // 26.4.4+ inherits the resource group from the deployment metadata
               // (hidden); older cores require picking it per revision.
               hideResourceGroupFormItem={isRevisedDeploymentSchema}
             />

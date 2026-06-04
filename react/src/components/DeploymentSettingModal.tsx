@@ -74,14 +74,12 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
   const isRevisedDeploymentSchema = baiClient.supports(
     'model-deployment-revised-schema',
   );
-  // The legacy branch is cast to the revised shape because the Relay-generated
-  // input types only model the current (`replicaCount`) schema.
-  const buildReplicaCountInput = (count: number): { replicaCount: number } =>
+  const buildReplicaCountInput = (
+    count: number,
+  ): { replicaCount: number } | { desiredReplicaCount: number } =>
     isRevisedDeploymentSchema
       ? { replicaCount: count }
-      : ({ desiredReplicaCount: count } as unknown as {
-          replicaCount: number;
-        });
+      : { desiredReplicaCount: count };
 
   const deployment = useFragment(
     graphql`
@@ -143,7 +141,9 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
                 name: values.name,
                 tags: values.tags?.length ? values.tags : null,
                 openToPublic: values.openToPublic,
-                ...buildReplicaCountInput(values.replicaCount),
+                ...(buildReplicaCountInput(values.replicaCount) as {
+                  replicaCount: number;
+                }),
               },
             },
             onCompleted: (_response, errors) => {
@@ -190,7 +190,9 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
                 },
                 // TODO: expose strategy type selection once BLUE_GREEN is supported server-side
                 defaultDeploymentStrategy: { type: 'ROLLING' },
-                ...buildReplicaCountInput(values.replicaCount),
+                ...(buildReplicaCountInput(values.replicaCount) as {
+                  replicaCount: number;
+                }),
                 initialRevision: null,
               },
             },

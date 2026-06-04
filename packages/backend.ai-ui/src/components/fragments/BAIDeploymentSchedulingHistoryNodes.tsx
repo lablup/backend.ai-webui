@@ -69,7 +69,7 @@ const BAIDeploymentSchedulingHistoryNodes = ({
         fragment BAIDeploymentSchedulingHistoryNodesFragment on DeploymentHistory
         @relay(plural: true) {
           id
-          category
+          category @since(version: "26.4.4")
           phase
           fromStatus
           toStatus

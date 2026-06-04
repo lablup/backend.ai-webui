@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<9e0263ab0ebb2358b611f0d8cc490846>>
+ * @generated SignedSource<<fdc069cef6133b71969ea3e0debfbba2>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -341,12 +341,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "6cc521a7daf46bd6ff23d8369e069d7c",
+    "cacheID": "c87290bdd958f9d7d807eeabe7275705",
     "id": null,
     "metadata": {},
     "name": "DeploymentSchedulingHistoryModalQuery",
     "operationKind": "query",
-    "text": "query DeploymentSchedulingHistoryModalQuery(\n  $scope: DeploymentScope!\n  $filter: DeploymentHistoryFilter\n  $orderBy: [DeploymentHistoryOrderBy!]\n) {\n  deploymentScopedSchedulingHistories(scope: $scope, filter: $filter, orderBy: $orderBy) {\n    edges {\n      node {\n        ...BAIDeploymentSchedulingHistoryNodesFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAIDeploymentSchedulingHistoryNodesFragment on DeploymentHistory {\n  id\n  category\n  phase\n  fromStatus\n  toStatus\n  result\n  errorCode\n  message\n  subSteps {\n    ...BAISubStepNodesFragment\n  }\n  attempts\n  createdAt\n  updatedAt\n}\n\nfragment BAISubStepNodesFragment on SubStepResultGQL {\n  step\n  result\n  errorCode\n  message\n  startedAt\n  endedAt\n}\n"
+    "text": "query DeploymentSchedulingHistoryModalQuery(\n  $scope: DeploymentScope!\n  $filter: DeploymentHistoryFilter\n  $orderBy: [DeploymentHistoryOrderBy!]\n) {\n  deploymentScopedSchedulingHistories(scope: $scope, filter: $filter, orderBy: $orderBy) {\n    edges {\n      node {\n        ...BAIDeploymentSchedulingHistoryNodesFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAIDeploymentSchedulingHistoryNodesFragment on DeploymentHistory {\n  id\n  category @since(version: \"26.4.4\")\n  phase\n  fromStatus\n  toStatus\n  result\n  errorCode\n  message\n  subSteps {\n    ...BAISubStepNodesFragment\n  }\n  attempts\n  createdAt\n  updatedAt\n}\n\nfragment BAISubStepNodesFragment on SubStepResultGQL {\n  step\n  result\n  errorCode\n  message\n  startedAt\n  endedAt\n}\n"
   }
 };
 })();
