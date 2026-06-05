@@ -6,6 +6,7 @@ import { DeploymentAccessTokensTabCreateMutation } from '../__generated__/Deploy
 import { DeploymentAccessTokensTabDeleteMutation } from '../__generated__/DeploymentAccessTokensTabDeleteMutation.graphql';
 import { DeploymentAccessTokensTabListQuery } from '../__generated__/DeploymentAccessTokensTabListQuery.graphql';
 import { DeploymentAccessTokensTab_deployment$key } from '../__generated__/DeploymentAccessTokensTab_deployment.graphql';
+import { useSuspendedBackendaiClient } from '../hooks';
 import {
   DeleteFilled,
   PlusOutlined,
@@ -300,6 +301,12 @@ const DeploymentAccessTokensTable: React.FC<
   const { t } = useTranslation();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
+  const baiClient = useSuspendedBackendaiClient();
+  // deleteAccessToken is unavailable on 26.4.3 (pre-revised schema); hide the
+  // delete action there so users can't trigger an unsupported mutation.
+  const isRevisedDeploymentSchema = baiClient.supports(
+    'model-deployment-revised-schema',
+  );
   const [deletingToken, setDeletingToken] = useState<{
     id: string;
     token: string;
@@ -377,20 +384,24 @@ const DeploymentAccessTokensTable: React.FC<
                     </BAIText>
                   }
                   showActions="always"
-                  actions={[
-                    {
-                      key: 'delete',
-                      title: t('deployment.accessToken.Delete'),
-                      icon: <DeleteFilled />,
-                      type: 'danger',
-                      disabled: isDeleteDisabled,
-                      onClick: () =>
-                        setDeletingToken({
-                          id: row.id,
-                          token: row.token ?? '',
-                        }),
-                    },
-                  ]}
+                  actions={
+                    isRevisedDeploymentSchema
+                      ? [
+                          {
+                            key: 'delete',
+                            title: t('deployment.accessToken.Delete'),
+                            icon: <DeleteFilled />,
+                            type: 'danger',
+                            disabled: isDeleteDisabled,
+                            onClick: () =>
+                              setDeletingToken({
+                                id: row.id,
+                                token: row.token ?? '',
+                              }),
+                          },
+                        ]
+                      : []
+                  }
                 />
               );
             },

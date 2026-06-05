@@ -60,9 +60,6 @@ const DeploymentDetailPage: React.FC = () => {
   const currentProject = useCurrentProjectValue();
   const isChatBlocked = !!baiClient?._config?.blockList?.includes('chat');
   const { logger } = useBAILogger();
-  const isRevisedDeploymentSchema = baiClient.supports(
-    'model-deployment-revised-schema',
-  );
 
   const { deploymentId: deploymentIdParam } = useParams<{
     deploymentId: string;
@@ -92,10 +89,7 @@ const DeploymentDetailPage: React.FC = () => {
   const { deployment: deploymentResult } =
     useLazyLoadQuery<DeploymentDetailPageQuery>(
       graphql`
-        query DeploymentDetailPageQuery(
-          $deploymentId: ID!
-          $skipAccessTokens: Boolean!
-        ) {
+        query DeploymentDetailPageQuery($deploymentId: ID!) {
           # @catch turns a partial-success response (e.g. RBAC denial that
           # comes back as { deployment: null, errors: [...] }) into a
           # Result<T, unknown> we can inspect inline: permission errors
@@ -112,12 +106,7 @@ const DeploymentDetailPage: React.FC = () => {
               openToPublic
               endpointUrl
             }
-            # accessTokens is only available on the revised schema (26.4.4+).
-            # Use Relay-native @skip (not the @since network transform) so the
-            # compiled normalization artifact also omits the field when skipped;
-            # otherwise @catch flags the absent field as an error on 26.4.3 and
-            # the whole deployment Result fails, tripping the error boundary.
-            accessTokens @skip(if: $skipAccessTokens) {
+            accessTokens {
               count
             }
             currentRevision @since(version: "26.4.3") {
@@ -140,7 +129,6 @@ const DeploymentDetailPage: React.FC = () => {
       `,
       {
         deploymentId: deploymentGlobalId,
-        skipAccessTokens: !isRevisedDeploymentSchema,
       },
       {
         fetchKey,
@@ -204,11 +192,9 @@ const DeploymentDetailPage: React.FC = () => {
     isDeploymentInStoppedCategory(deploymentStatus);
   // The private-deployment alert prompts the user to create a token so the
   // endpoint is actually reachable. Suppress it when the endpoint has not
-  // been issued yet (creating a token would be premature), when the user has
-  // already created at least one token, or when the backend is pre-26.4.4
-  // (createAccessToken is broken on 26.4.3 — field name mismatch fixed in 26.4.4).
+  // been issued yet (creating a token would be premature) or when the user
+  // has already created at least one token.
   const isPrivateDeployment =
-    isRevisedDeploymentSchema &&
     deployment.networkAccess.openToPublic === false &&
     !isDeploymentDestroying &&
     hasEndpointUrl &&
@@ -368,36 +354,34 @@ const DeploymentDetailPage: React.FC = () => {
         </BAIErrorBoundary>
       </BAICard>
       <DeploymentAutoScalingTab deploymentFrgmt={deployment} />
-      {isRevisedDeploymentSchema && (
-        <DeploymentAccessTokensTab
-          cardRef={accessTokensSectionRef}
-          deploymentFrgmt={deployment}
-          deploymentId={deploymentGlobalId}
-          isOwnedByCurrentUser={isOwnedByCurrentUser}
-          isDeploymentDestroying={isDeploymentDestroying}
-          isCreateModalOpen={createAccessTokenOpen}
-          onCreateModalOpenChange={(open) => {
-            if (open) {
-              openCreateAccessToken();
-            } else {
-              closeCreateAccessToken();
-            }
-          }}
-          onTokenCreated={() => {
-            // Refresh the page-level query so `accessTokens.count` updates;
-            // otherwise the "Private deployment" alert (which is gated on
-            // `hasAccessTokens === false`) stays visible after creation.
-            handleRefetch();
-            if (accessTokensSectionRef.current) {
-              accessTokensSectionRef.current.style.scrollMarginTop = `${token.Layout?.headerHeight ?? 60}px`;
-              accessTokensSectionRef.current.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start',
-              });
-            }
-          }}
-        />
-      )}
+      <DeploymentAccessTokensTab
+        cardRef={accessTokensSectionRef}
+        deploymentFrgmt={deployment}
+        deploymentId={deploymentGlobalId}
+        isOwnedByCurrentUser={isOwnedByCurrentUser}
+        isDeploymentDestroying={isDeploymentDestroying}
+        isCreateModalOpen={createAccessTokenOpen}
+        onCreateModalOpenChange={(open) => {
+          if (open) {
+            openCreateAccessToken();
+          } else {
+            closeCreateAccessToken();
+          }
+        }}
+        onTokenCreated={() => {
+          // Refresh the page-level query so `accessTokens.count` updates;
+          // otherwise the "Private deployment" alert (which is gated on
+          // `hasAccessTokens === false`) stays visible after creation.
+          handleRefetch();
+          if (accessTokensSectionRef.current) {
+            accessTokensSectionRef.current.style.scrollMarginTop = `${token.Layout?.headerHeight ?? 60}px`;
+            accessTokensSectionRef.current.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start',
+            });
+          }
+        }}
+      />
       {/* Local Suspense around the lazily-mounted modal so its initial
           `useLazyLoadQuery` doesn't bubble its suspend up to the page-level
           Suspense fallback and blank the deployment detail page. The mount

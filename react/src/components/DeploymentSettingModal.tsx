@@ -271,7 +271,7 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
                     deployment.replicaState?.desiredReplicaCount ?? 1,
                 }
               : {
-                  openToPublic: !isRevisedDeploymentSchema,
+                  openToPublic: false,
                   replicaCount: 1,
                   tags: [],
                 }
@@ -342,13 +342,9 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
               openToPublic after a deployment is created, so the field is
               forced read-only in edit mode. Drop the `disabled` + Tooltip
               wrapping once the backend supports updating this setting. */}
-          {/* On 26.4.3 (pre-revised schema) createAccessToken is broken, so
-              private deployments cannot issue tokens and are effectively
-              unusable. Force openToPublic=true by hiding the selector. */}
           <Form.Item
             label={t('deployment.OpenToPublic')}
             tooltip={t('deployment.OpenToPublicTooltip')}
-            hidden={!isRevisedDeploymentSchema}
           >
             <Tooltip
               title={

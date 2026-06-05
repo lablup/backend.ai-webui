@@ -837,14 +837,6 @@ export class Client {
     // BA-6247 / BA-6249 user filters merged after 26.4.4rc6, so they ship in
     // 26.4.4 (final). Pinned to the rc6 tag so the flag also activates against
     // the rc6 staging manager (a post-rc6 snapshot reporting the rc6 version).
-    // TODO(FR-3024): simplify to '26.4.4' once rc builds are out of use.
-    if (this.isManagerVersionCompatibleWith('26.4.4rc6')) {
-      this._features['user-v2-extended-filter'] = true;
-      // adminKeypairResourcePoliciesV2 gained the `keypair.userId` nested filter
-      // + the `keypairs` connection in 26.4.4 (FR-3020). Pinned to the rc6 tag
-      // for the same staging-manager reason as above.
-      this._features['keypair-resource-policy-user-filter'] = true;
-    }
     // Model Deployment GraphQL schema was reworked across the 26.4.4 rc cycle
     // (resource group moved from the revision's `ResourceConfigInput` to
     // deployment `metadata`; `desiredReplicaCount` → `replicaCount`;
@@ -853,11 +845,16 @@ export class Client {
     // replica status / revisionNumber / resourceSlots-list fields). We only
     // support 26.4.3 (legacy) vs 26.4.4 (revised) — a single flag gates the
     // whole revised surface rather than branching per intermediate rc.
-    // TODO(FR-3026): revert threshold back to '26.4.4' once rc testing is done.
     // `createVFolderInProject` (+ `CreateVFolderInScopeInput`) is supported from
     // 26.4.4. On 26.4.3 only `createVfolderV2` exists, which still creates
     // project-scoped folders via the `projectId` field of `CreateVFolderV2Input`.
+    // TODO(FR-3024, FR-3026): simplify threshold to '26.4.4' once rc builds are out of use.
     if (this.isManagerVersionCompatibleWith('26.4.4rc6')) {
+      this._features['user-v2-extended-filter'] = true;
+      // adminKeypairResourcePoliciesV2 gained the `keypair.userId` nested filter
+      // + the `keypairs` connection in 26.4.4 (FR-3020). Pinned to the rc6 tag
+      // for the same staging-manager reason as above.
+      this._features['keypair-resource-policy-user-filter'] = true;
       this._features['model-deployment-revised-schema'] = true;
       this._features['create-vfolder-in-project'] = true;
     }
