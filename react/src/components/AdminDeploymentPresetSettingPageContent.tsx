@@ -178,6 +178,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
               shell
               port
               healthCheck {
+                enable @since(version: "26.4.4")
                 interval
                 path
                 maxRetries
@@ -295,7 +296,12 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                       shell: m.service.shell ?? undefined,
                       startCommand:
                         m.service.startCommand?.join(' ') ?? undefined,
-                      enableHealthCheck: !!m.service.healthCheck,
+                      // On 26.4.4+ the health check object is always present and
+                      // `enable` is authoritative; on <=26.4.3 `enable` is stripped
+                      // (undefined), so fall back to presence of the object.
+                      enableHealthCheck:
+                        m.service.healthCheck?.enable ??
+                        !!m.service.healthCheck,
                       healthCheck: m.service.healthCheck
                         ? {
                             path: m.service.healthCheck.path,

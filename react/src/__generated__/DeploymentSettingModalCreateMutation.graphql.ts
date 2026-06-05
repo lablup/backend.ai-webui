@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<dd8e8a56b8b768ea656a73fe39a01e07>>
+ * @generated SignedSource<<1e39a9a35771e3b392636dac91e05c86>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -119,6 +119,7 @@ export type PreStartActionInput = {
   args: any;
 };
 export type ModelHealthCheckInput = {
+  enable?: boolean;
   expectedStatusCode?: number | null | undefined;
   initialDelay?: number | null | undefined;
   interval?: number | null | undefined;

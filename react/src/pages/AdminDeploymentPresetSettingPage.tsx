@@ -11,7 +11,7 @@ import AdminDeploymentPresetSettingPageContent, {
   type AdminDeploymentPresetFormValue,
   type ModelDefinitionFormValue,
 } from '../components/AdminDeploymentPresetSettingPageContent';
-import { useWebUINavigate } from '../hooks';
+import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { App, Form, Typography, theme } from 'antd';
 import { BAIFlex, useBAILogger, useMutationWithPromise } from 'backend.ai-ui';
 import React, { useState } from 'react';
@@ -21,6 +21,9 @@ import { useParams } from 'react-router-dom';
 
 const buildModelDefinitionInput = (
   value: ModelDefinitionFormValue | undefined,
+  // 26.4.4+ managers accept the `enable` flag on ModelHealthCheckInput; older
+  // managers (<= 26.4.3) reject it, so we keep the legacy null-when-disabled shape.
+  supportsHealthCheckEnable: boolean,
 ) => {
   if (!value?.models?.length) return null;
   return {
@@ -45,18 +48,27 @@ const buildModelDefinitionInput = (
                   }
                 })(),
               })),
-              healthCheck:
-                m.service.enableHealthCheck && m.service.healthCheck?.path
-                  ? {
-                      path: m.service.healthCheck.path,
-                      interval: m.service.healthCheck.interval,
-                      maxRetries: m.service.healthCheck.maxRetries,
-                      maxWaitTime: m.service.healthCheck.maxWaitTime,
-                      expectedStatusCode:
-                        m.service.healthCheck.expectedStatusCode,
-                      initialDelay: m.service.healthCheck.initialDelay,
-                    }
-                  : null,
+              healthCheck: (() => {
+                const hc = m.service?.healthCheck;
+                const enabled = !!(m.service?.enableHealthCheck && hc?.path);
+                const configuredFields = {
+                  path: hc?.path,
+                  interval: hc?.interval,
+                  maxRetries: hc?.maxRetries,
+                  maxWaitTime: hc?.maxWaitTime,
+                  expectedStatusCode: hc?.expectedStatusCode,
+                  initialDelay: hc?.initialDelay,
+                };
+                if (!supportsHealthCheckEnable) {
+                  // Legacy managers (<= 26.4.3): null disables the health check.
+                  return enabled ? configuredFields : null;
+                }
+                // 26.4.4+: always send the object so the server can seed
+                // defaults; leave the other fields unset when disabled.
+                return enabled
+                  ? { enable: true, ...configuredFields }
+                  : { enable: false };
+              })(),
             }
           : null,
       metadata:
@@ -94,6 +106,10 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
   const webuiNavigate = useWebUINavigate();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
+  const baiClient = useSuspendedBackendaiClient();
+  const supportsHealthCheckEnable = baiClient.supports(
+    'model-health-check-enable',
+  );
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -252,7 +268,10 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
             resourceOpts: values.resourceOpts?.length
               ? values.resourceOpts
               : null,
-            modelDefinition: buildModelDefinitionInput(values.modelDefinition),
+            modelDefinition: buildModelDefinitionInput(
+              values.modelDefinition,
+              supportsHealthCheckEnable,
+            ),
             openToPublic: values.openToPublic ?? null,
             replicaCount: values.replicaCount ?? null,
             revisionHistoryLimit: values.revisionHistoryLimit ?? null,
@@ -291,7 +310,10 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
             resourceOpts: values.resourceOpts?.length
               ? values.resourceOpts
               : null,
-            modelDefinition: buildModelDefinitionInput(values.modelDefinition),
+            modelDefinition: buildModelDefinitionInput(
+              values.modelDefinition,
+              supportsHealthCheckEnable,
+            ),
             openToPublic: values.openToPublic ?? null,
             replicaCount: values.replicaCount!,
             revisionHistoryLimit: values.revisionHistoryLimit ?? null,

@@ -143,10 +143,9 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
                     ...(values.cpu ? { cpu: Number(values.cpu) } : {}),
                     ...(values.mem ? { mem: values.mem } : {}),
                     ...Object.fromEntries(
-                      (values.resourceSlots ?? []).map((s) => [
-                        s.resourceType,
-                        s.quantity,
-                      ]),
+                      (values.resourceSlots ?? [])
+                        .filter(Boolean)
+                        .map((s) => [s?.resourceType, s?.quantity]),
                     ),
                   } as any
                 }
@@ -220,7 +219,7 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
               <SourceCodeView language="shell">
                 {_.map(
                   values.environ,
-                  (e) => `${e.variable ?? ''}="${e.value ?? ''}"`,
+                  (e) => `${e?.variable ?? ''}="${e?.value ?? ''}"`,
                 ).join('\n')}
               </SourceCodeView>
             ) : (
@@ -241,7 +240,7 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
             >
               {t('adminDeploymentPreset.ModelDefinition')}
             </Typography.Text>
-            {values.modelDefinition.models.map((m, i) => (
+            {values.modelDefinition.models.filter(Boolean).map((m, i) => (
               <BAICard key={i} size="small" title={m.name}>
                 <Descriptions column={1} size="small">
                   <Descriptions.Item
@@ -281,17 +280,31 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
                           'adminDeploymentPreset.modelDef.PreStartActions',
                         )}
                       >
-                        {m.service?.preStartActions?.map((a, ai) => (
-                          <Typography.Text
-                            key={ai}
-                            code
-                            style={{ display: 'block' }}
-                          >
-                            {a.action}
-                          </Typography.Text>
-                        ))}
+                        {m.service?.preStartActions
+                          ?.filter(Boolean)
+                          .map((a, ai) => (
+                            <Typography.Text
+                              key={ai}
+                              code
+                              style={{ display: 'block' }}
+                            >
+                              {a?.action}
+                            </Typography.Text>
+                          ))}
                       </Descriptions.Item>
                     )}
+                  {m.enableService && (
+                    <Descriptions.Item
+                      label={t(
+                        'adminDeploymentPreset.modelDef.EnableHealthCheck',
+                      )}
+                    >
+                      {m.service?.enableHealthCheck &&
+                      m.service.healthCheck?.path
+                        ? t('general.Enabled')
+                        : t('general.Disabled')}
+                    </Descriptions.Item>
+                  )}
                   {m.enableService &&
                     m.service?.enableHealthCheck &&
                     m.service.healthCheck?.path && (

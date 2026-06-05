@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<70fcaa48685ae57861069c9ffa4941c6>>
+ * @generated SignedSource<<2c7d0438a4c0b7d58e5dfd0289c2d312>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -32,6 +32,7 @@ export type DeploymentAddRevisionModal_revisionSource$data = {
       readonly name: string;
       readonly service: {
         readonly healthCheck: {
+          readonly enable: boolean;
           readonly initialDelay: number;
           readonly interval: number;
           readonly maxRetries: number;
@@ -341,6 +342,13 @@ return {
                       "alias": null,
                       "args": null,
                       "kind": "ScalarField",
+                      "name": "enable",
+                      "storageKey": null
+                    },
+                    {
+                      "alias": null,
+                      "args": null,
+                      "kind": "ScalarField",
                       "name": "path",
                       "storageKey": null
                     },
@@ -426,6 +434,6 @@ return {
 };
 })();
 
-(node as any).hash = "d5d51918866d0b82f8843dc8acb580ee";
+(node as any).hash = "1a880d393ca23b6ff55f346397ebda31";
 
 export default node;

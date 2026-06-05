@@ -924,6 +924,14 @@ export class Client {
       // for the same staging-manager reason as above.
       this._features['keypair-resource-policy-user-filter'] = true;
     }
+    // ModelHealthCheck gained an `enable` flag in 26.4.4 (BA-6242): health
+    // checks are opt-in via `enable: true/false` instead of nulling the whole
+    // object, so the server can seed defaults when disabled. Gated to 26.4.4 to
+    // match the `enable @since(version: "26.4.4")` fragment selections; older
+    // managers reject the unknown input field. (FR-3056)
+    if (this.isManagerVersionCompatibleWith('26.4.4')) {
+      this._features['model-health-check-enable'] = true;
+    }
   }
 
   /**

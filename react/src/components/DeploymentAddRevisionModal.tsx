@@ -27,6 +27,7 @@ import {
   mergeExtraArgs,
   reverseMapExtraArgs,
 } from '../helper/runtimeExtraArgsParser';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import {
@@ -296,6 +297,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
             startCommand
             port
             healthCheck {
+              enable @since(version: "26.4.4")
               path
               maxRetries
               initialDelay
@@ -331,6 +333,12 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   const { id: currentProjectId } = useCurrentProjectValue();
   const { logger } = useBAILogger();
   const { open: openFolderExplorer } = useFolderExplorerOpener();
+  const baiClient = useSuspendedBackendaiClient();
+  // 26.4.4+ managers accept the `enable` flag on ModelHealthCheckInput; older
+  // managers (<= 26.4.3) reject it, so we keep the legacy null-when-disabled shape.
+  const supportsHealthCheckEnable = baiClient.supports(
+    'model-health-check-enable',
+  );
 
   // Refs to refetch each form's model folder select after creating a new
   // model-usage folder, or via the manual refresh button. Two refs because
@@ -757,6 +765,14 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     }
     const service = rev.modelDefinition?.models?.[0]?.service;
     const customModelPath = rev.modelDefinition?.models?.[0]?.modelPath;
+    // On 26.4.4+ a disabled source revision keeps default health-check field
+    // values alongside `enable: false`; treat that as "no health check" for
+    // prefill so the form fields stay empty. On <=26.4.3 `enable` is stripped
+    // (undefined), so the presence of the object alone drives prefill.
+    const healthCheck =
+      service?.healthCheck && service.healthCheck.enable !== false
+        ? service.healthCheck
+        : undefined;
     // For custom + command mode: the saved revision carries a populated
     // `modelDefinition` with a `startCommand` token list. For custom +
     // file mode the form serializes to a null `modelDefinition`, so the
@@ -868,12 +884,12 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
             customDefinitionMode: 'command' as const,
             startCommand: formatShellCommand(service.startCommand ?? []),
             commandPort: service.port,
-            commandHealthCheck: service.healthCheck?.path ?? undefined,
+            commandHealthCheck: healthCheck?.path ?? undefined,
             commandModelMount: customModelPath ?? '/models',
-            commandInitialDelay: service.healthCheck?.initialDelay ?? undefined,
-            commandMaxRetries: service.healthCheck?.maxRetries ?? undefined,
-            commandInterval: service.healthCheck?.interval ?? undefined,
-            commandMaxWaitTime: service.healthCheck?.maxWaitTime ?? undefined,
+            commandInitialDelay: healthCheck?.initialDelay ?? undefined,
+            commandMaxRetries: healthCheck?.maxRetries ?? undefined,
+            commandInterval: healthCheck?.interval ?? undefined,
+            commandMaxWaitTime: healthCheck?.maxWaitTime ?? undefined,
           }
         : isCustom
           ? { customDefinitionMode: 'file' as const }
@@ -1110,15 +1126,33 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                   preStartActions: [],
                   startCommand: tokenizeShellCommand(values.startCommand),
                   port: values.commandPort ?? 8000,
-                  healthCheck: values.commandHealthCheck
-                    ? {
-                        path: values.commandHealthCheck,
-                        interval: values.commandInterval ?? 10,
-                        maxRetries: values.commandMaxRetries ?? 10,
-                        maxWaitTime: values.commandMaxWaitTime ?? 15,
-                        initialDelay: values.commandInitialDelay,
-                      }
-                    : null,
+                  healthCheck: (() => {
+                    // Health check is "on" when any of its fields is filled
+                    // (FR-3056); when on without an explicit path the server
+                    // falls back to its default health-check path.
+                    const enabled =
+                      !!values.commandHealthCheck ||
+                      values.commandInitialDelay != null ||
+                      values.commandMaxRetries != null ||
+                      values.commandInterval != null ||
+                      values.commandMaxWaitTime != null;
+                    const configuredFields = {
+                      path: values.commandHealthCheck,
+                      interval: values.commandInterval ?? 10,
+                      maxRetries: values.commandMaxRetries ?? 10,
+                      maxWaitTime: values.commandMaxWaitTime ?? 15,
+                      initialDelay: values.commandInitialDelay,
+                    };
+                    if (!supportsHealthCheckEnable) {
+                      // Legacy managers (<= 26.4.3): null disables the health check.
+                      return enabled ? configuredFields : null;
+                    }
+                    // 26.4.4+: always send the object so the server can seed
+                    // defaults; leave the other fields unset when disabled.
+                    return enabled
+                      ? { enable: true, ...configuredFields }
+                      : { enable: false };
+                  })(),
                 },
               },
             ],
