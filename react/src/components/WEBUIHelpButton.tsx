@@ -2,11 +2,11 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { useCurrentMenuKey } from '../hooks/useRouteScope';
 import { useCurrentLanguage } from './DefaultProviders';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Button, type ButtonProps } from 'antd';
 import React from 'react';
-import { useLocation } from 'react-router-dom';
 
 // Languages the hosted user manual (https://webui.docs.backend.ai) is
 // published in. Any other WebUI locale falls back to English.
@@ -138,7 +138,10 @@ const WEBUIHelpButton: React.FC<WEBUIHelpButtonProps> = ({ ...props }) => {
     : rawVersion.split('.').slice(0, 2).filter(Boolean).join('.') || 'next';
   const manualURL = `https://webui.docs.backend.ai/${docsVersion}/${docsLang}/`;
 
-  const matchingKey = location.pathname.split('/')[1] || '';
+  // Scope-aware menu key (route handle): under the `/admin/<feature>` and
+  // `/project/:name/<feature>` URLs the first pathname segment is the scope
+  // prefix, so the help-anchor lookup uses the matched route's menu key.
+  const matchingKey = useCurrentMenuKey() || '';
   // Prefer a tab-specific manual section when the active tab (`?tab=…`) has
   // one, otherwise use the page-level mapping.
   const activeTab = new URLSearchParams(location.search).get('tab');

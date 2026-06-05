@@ -6,6 +6,7 @@ import AgentEditorModal from '../components/AgentEditorModal';
 import { FluentEmojiIcon } from '../components/FluentEmojiIcon';
 import { useWebUINavigate } from '../hooks';
 import { AIAgent, useAIAgent } from '../hooks/useAIAgent';
+import { useProjectPath } from '../hooks/useRouteScope';
 import { DeleteFilled, MoreOutlined, UndoOutlined } from '@ant-design/icons';
 import {
   Button,
@@ -185,6 +186,7 @@ const AIAgentPage: React.FC = () => {
   const { agents, builtInAgents, deleteAgent, getEndpointBinding } =
     useAIAgent();
   const webuiNavigate = useWebUINavigate();
+  const buildProjectPath = useProjectPath();
   const { styles } = useStyles();
 
   const [isEditorOpen, setIsEditorOpen] = useState(false);
@@ -248,7 +250,7 @@ const AIAgentPage: React.FC = () => {
                     searchParams.endpointId = binding.endpoint_id;
                   }
                   webuiNavigate({
-                    pathname: '/chat',
+                    pathname: buildProjectPath('chat'),
                     search: new URLSearchParams(searchParams).toString(),
                   });
                 }}

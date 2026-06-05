@@ -6,6 +6,7 @@ import type { ModelCardDeployModalFragment$key } from '../__generated__/ModelCar
 import { ModelCardDeployModalMutation } from '../__generated__/ModelCardDeployModalMutation.graphql';
 import { useWebUINavigate } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { useProjectPath } from '../hooks/useRouteScope';
 import DeploymentPresetDetailModal from './DeploymentPresetDetailModal';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { Alert, App, Button, Form, Space, theme, Tooltip } from 'antd';
@@ -64,6 +65,7 @@ const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
   const { message } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
   const webuiNavigate = useWebUINavigate();
+  const buildProjectPath = useProjectPath();
   const { token } = theme.useToken();
   const { id: projectId, name: projectName } = useCurrentProjectValue();
 
@@ -182,7 +184,9 @@ const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
           }
           message.success(t('modelStore.DeploySuccess'));
           onDeployed(payload.deploymentId);
-          webuiNavigate(`/deployments/${payload.deploymentId}`);
+          webuiNavigate(
+            buildProjectPath(`deployments/${payload.deploymentId}`),
+          );
           resolve();
         },
         onError: (error) => {
@@ -280,7 +284,7 @@ const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
                   <BAILink
                     onClick={() => {
                       onClose();
-                      webuiNavigate('/deployments');
+                      webuiNavigate(buildProjectPath('deployments'));
                     }}
                   />
                 ),

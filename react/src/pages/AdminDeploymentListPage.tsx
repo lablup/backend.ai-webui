@@ -16,6 +16,7 @@ import BAIRadioGroup from '../components/BAIRadioGroup';
 import DeploymentRevisionDetailDrawer from '../components/DeploymentRevisionDetailDrawer';
 import DeploymentSettingModal from '../components/DeploymentSettingModal';
 import PrometheusPresetTab from '../components/PrometheusPresetTab';
+import { buildPath } from '../helper/pathBuilder';
 import {
   useSuspendedBackendaiClient,
   useTabQuerySnapshot,
@@ -431,7 +432,7 @@ const AdminDeploymentListPageContent: React.FC = () => {
                         stopRowClick
                         onTagClick={(tag) => {
                           webUINavigate({
-                            pathname: '/admin-deployments',
+                            pathname: buildPath('admin', 'deployments'),
                             search: new URLSearchParams({
                               filter: JSON.stringify({
                                 tags: { iContains: tag },

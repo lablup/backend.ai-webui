@@ -3,11 +3,13 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { BAIComputeSessionNodeNotificationItemFragment$key } from '../__generated__/BAIComputeSessionNodeNotificationItemFragment.graphql';
+import { buildPath } from '../helper/pathBuilder';
 import { useWebUINavigate } from '../hooks';
 import {
   NotificationState,
   useSetBAINotification,
 } from '../hooks/useBAINotification';
+import { useActiveProjectName } from '../hooks/useRouteScope';
 import SessionActionButtons, {
   PrimaryAppOption,
 } from './ComputeSessionNodeItems/SessionActionButtons';
@@ -41,6 +43,7 @@ const BAIComputeSessionNodeNotificationItem: React.FC<
   const { t } = useTranslation();
   const navigate = useWebUINavigate();
   const { token } = theme.useToken();
+  const activeProjectName = useActiveProjectName();
   const node = useFragment(
     graphql`
       fragment BAIComputeSessionNodeNotificationItemFragment on ComputeSessionNode {
@@ -94,7 +97,7 @@ const BAIComputeSessionNodeNotificationItem: React.FC<
                 title={node.name || ''}
                 onClick={() => {
                   navigate(
-                    `/session${node.id ? `?${new URLSearchParams({ sessionDetail: toLocalId(node.id) }).toString()}` : ''}`,
+                    `${buildPath('project', 'session', activeProjectName)}${node.id ? `?${new URLSearchParams({ sessionDetail: toLocalId(node.id) }).toString()}` : ''}`,
                   );
                   closeNotification(notification.key);
                 }}
