@@ -38,6 +38,7 @@ import {
   Skeleton,
   Space,
   Typography,
+  theme,
 } from 'antd';
 import {
   BAIButton,
@@ -241,6 +242,7 @@ const DeploymentConfigurationSection: React.FC<
   'use memo';
 
   const { t } = useTranslation();
+  const { token } = theme.useToken();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const webuiNavigate = useWebUINavigate();
@@ -460,32 +462,6 @@ const DeploymentConfigurationSection: React.FC<
           }
         />
       </BAICard>
-      {isDeployingDifferentRevision && (
-        <Alert
-          type="info"
-          icon={<LoadingOutlined spin />}
-          showIcon
-          title={t('deployment.ApplyingRevision', {
-            revisionNumber:
-              deployingRevision.revisionNumber != null
-                ? `#${deployingRevision.revisionNumber}`
-                : (toLocalId(deployingRevision.id) ?? ''),
-          })}
-          action={
-            <Button
-              onClick={() =>
-                handleShowRevisionDrawer(
-                  deployingRevision,
-                  'deploying',
-                  t('deployment.ApplyingRevisionDetail'),
-                )
-              }
-            >
-              {t('deployment.ViewRevision')}
-            </Button>
-          }
-        />
-      )}
       <BAICard
         ref={revisionCardRef}
         activeTabKey={activeRevisionTab}
@@ -529,6 +505,33 @@ const DeploymentConfigurationSection: React.FC<
       >
         {activeRevisionTab === 'currentRevision' && (
           <>
+            {isDeployingDifferentRevision && (
+              <Alert
+                type="info"
+                icon={<LoadingOutlined spin />}
+                showIcon
+                style={{ marginBottom: token.marginMD }}
+                title={t('deployment.ApplyingRevision', {
+                  revisionNumber:
+                    deployingRevision.revisionNumber != null
+                      ? `#${deployingRevision.revisionNumber}`
+                      : (toLocalId(deployingRevision.id) ?? ''),
+                })}
+                action={
+                  <Button
+                    onClick={() =>
+                      handleShowRevisionDrawer(
+                        deployingRevision,
+                        'deploying',
+                        t('deployment.ApplyingRevisionDetail'),
+                      )
+                    }
+                  >
+                    {t('deployment.ViewRevision')}
+                  </Button>
+                }
+              />
+            )}
             {currentRevision ? (
               <DeploymentRevisionDetail
                 revisionFrgmt={currentRevision}
