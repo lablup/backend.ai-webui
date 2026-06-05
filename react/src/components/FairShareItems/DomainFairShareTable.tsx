@@ -6,11 +6,11 @@ import {
   DomainFairShareTableFragment$data,
   DomainFairShareTableFragment$key,
 } from '../../__generated__/DomainFairShareTableFragment.graphql';
-import QuestionIconWithTooltip from '../QuestionIconWithTooltip';
 import DomainResourceGroupWarningIcon from './DomainResourceGroupWarningIcon';
 import { SettingOutlined } from '@ant-design/icons';
 import { Divider, theme, Typography } from 'antd';
 import {
+  BAIQuestionIconWithTooltip,
   BAIColumnsType,
   BAIFlex,
   BAINameActionCell,
@@ -149,7 +149,9 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
       title: (
         <BAIFlex gap="xxs">
           {t('fairShare.Weight')}
-          <QuestionIconWithTooltip title={t('fairShare.WeightDescription')} />
+          <BAIQuestionIconWithTooltip
+            title={t('fairShare.WeightDescription')}
+          />
         </BAIFlex>
       ),
       key: 'weight',
@@ -178,7 +180,7 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
       title: (
         <BAIFlex gap="xxs">
           {t('fairShare.FairShareFactor')}
-          <QuestionIconWithTooltip
+          <BAIQuestionIconWithTooltip
             title={t('fairShare.FairShareFactorDescription')}
           />
         </BAIFlex>
@@ -195,7 +197,7 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
       title: (
         <BAIFlex gap="xxs">
           {t('fairShare.AllocationAverage')}
-          <QuestionIconWithTooltip
+          <BAIQuestionIconWithTooltip
             title={t('fairShare.AllocationAverageDescription')}
           />
         </BAIFlex>

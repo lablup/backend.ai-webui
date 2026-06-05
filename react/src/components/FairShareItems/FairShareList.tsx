@@ -16,7 +16,6 @@ import {
 } from '../../__generated__/FairShareListQuery.graphql';
 import { convertToOrderBy, handleRowSelectionChange } from '../../helper';
 import { useBAIPaginationOptionStateOnSearchParam } from '../../hooks/reactPaginationQueryOptions';
-import QuestionIconWithTooltip from '../QuestionIconWithTooltip';
 import DomainFairShareTable, {
   availableDomainFairShareSorterValues,
   DomainFairShare,
@@ -40,6 +39,7 @@ import { Alert, Skeleton, Steps, theme, Tooltip, Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import { StepsProps } from 'antd/lib';
 import {
+  BAIQuestionIconWithTooltip,
   BAIBackButton,
   BAIButton,
   BAIFetchKeyButton,
@@ -927,7 +927,7 @@ const FairShareListTitle: React.FC<{
               ? t('fairShare.Project')
               : t('fairShare.User')}
       </Typography.Title>
-      <QuestionIconWithTooltip
+      <BAIQuestionIconWithTooltip
         style={{
           fontSize: token.fontSizeHeading4,
         }}

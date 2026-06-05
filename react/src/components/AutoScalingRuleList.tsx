@@ -12,10 +12,10 @@ import { AutoScalingRuleListQuery } from '../__generated__/AutoScalingRuleListQu
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import AutoScalingRuleEditorModal from './AutoScalingRuleEditorModal';
-import QuestionIconWithTooltip from './QuestionIconWithTooltip';
 import { DeleteFilled, PlusOutlined, SettingOutlined } from '@ant-design/icons';
 import { App, Button, Tag, Tooltip, Typography } from 'antd';
 import {
+  BAIQuestionIconWithTooltip,
   BAIDeleteConfirmModal,
   BAIFetchKeyButton,
   BAIFlex,
@@ -194,7 +194,7 @@ const AutoScalingRuleListNodes: React.FC<AutoScalingRuleListNodesProps> = ({
           title: (
             <BAIFlex gap="xxs" align="center">
               {t('autoScalingRule.MetricSource')}
-              <QuestionIconWithTooltip
+              <BAIQuestionIconWithTooltip
                 title={t('autoScalingRule.MetricSourceTooltip')}
               />
             </BAIFlex>
@@ -207,7 +207,7 @@ const AutoScalingRuleListNodes: React.FC<AutoScalingRuleListNodesProps> = ({
           title: (
             <BAIFlex gap="xxs" align="center">
               {t('autoScalingRule.Condition')}
-              <QuestionIconWithTooltip
+              <BAIQuestionIconWithTooltip
                 title={t('autoScalingRule.ConditionTooltip')}
               />
             </BAIFlex>
@@ -245,7 +245,7 @@ const AutoScalingRuleListNodes: React.FC<AutoScalingRuleListNodesProps> = ({
           title: (
             <BAIFlex gap="xxs" align="center">
               {t('autoScalingRule.CoolDownSeconds')}
-              <QuestionIconWithTooltip
+              <BAIQuestionIconWithTooltip
                 title={t('autoScalingRule.CoolDownTooltip')}
               />
             </BAIFlex>
@@ -261,7 +261,7 @@ const AutoScalingRuleListNodes: React.FC<AutoScalingRuleListNodesProps> = ({
           title: (
             <BAIFlex gap="xxs" align="center">
               {t('autoScalingRule.StepSize')}
-              <QuestionIconWithTooltip
+              <BAIQuestionIconWithTooltip
                 title={t('autoScalingRule.StepSizeTooltip')}
               />
             </BAIFlex>
@@ -286,7 +286,7 @@ const AutoScalingRuleListNodes: React.FC<AutoScalingRuleListNodesProps> = ({
           title: (
             <BAIFlex gap="xxs" align="center">
               {t('autoScalingRule.MIN/MAXReplicas')}
-              <QuestionIconWithTooltip
+              <BAIQuestionIconWithTooltip
                 title={t('autoScalingRule.MinMaxReplicasTooltip')}
               />
             </BAIFlex>
@@ -343,7 +343,7 @@ const AutoScalingRuleListNodes: React.FC<AutoScalingRuleListNodesProps> = ({
           title: (
             <BAIFlex gap="xxs" align="center">
               {t('autoScalingRule.LastTriggered')}
-              <QuestionIconWithTooltip
+              <BAIQuestionIconWithTooltip
                 title={t('autoScalingRule.LastTriggeredTooltip')}
               />
             </BAIFlex>

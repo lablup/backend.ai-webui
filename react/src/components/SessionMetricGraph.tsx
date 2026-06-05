@@ -11,10 +11,13 @@ import {
   convertToDecimalUnit,
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
-import QuestionIconWithTooltip from './QuestionIconWithTooltip';
 import { Empty, Typography, theme } from 'antd';
 import { createStyles } from 'antd-style';
-import { useResourceSlotsDetails, BAIFlex } from 'backend.ai-ui';
+import {
+  BAIQuestionIconWithTooltip,
+  useResourceSlotsDetails,
+  BAIFlex,
+} from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { useMemo } from 'react';
@@ -202,7 +205,7 @@ const SessionMetricGraph: React.FC<PrometheusMetricGraphProps> = ({
         <Typography.Text style={{ fontSize: token.fontSizeHeading5 }} strong>
           {getMetricTitle()}
         </Typography.Text>
-        {tooltip ? <QuestionIconWithTooltip title={tooltip} /> : null}
+        {tooltip ? <BAIQuestionIconWithTooltip title={tooltip} /> : null}
       </BAIFlex>
       {_.isEmpty(capacity_metric?.metrics) &&
       _.isEmpty(current_metric?.metrics) ? (

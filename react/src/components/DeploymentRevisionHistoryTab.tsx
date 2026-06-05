@@ -13,7 +13,6 @@ import { convertToOrderBy } from '../helper';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
 import FolderLink from './FolderLink';
-import QuestionIconWithTooltip from './QuestionIconWithTooltip';
 import { LoadingOutlined, PlayCircleOutlined } from '@ant-design/icons';
 import { App, Button, Popconfirm, theme, Typography } from 'antd';
 import {
@@ -22,6 +21,7 @@ import {
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAINameActionCell,
+  BAIQuestionIconWithTooltip,
   BAITable,
   BAITag,
   BAIUnmountAfterClose,
@@ -349,7 +349,7 @@ const DeploymentRevisionHistoryTab: React.FC<
       title: (
         <BAIFlex gap="xxs" align="center">
           {t('deployment.RevisionNumberWithID')}
-          <QuestionIconWithTooltip
+          <BAIQuestionIconWithTooltip
             title={t('deployment.RevisionNumberTooltip')}
           />
         </BAIFlex>
@@ -519,7 +519,9 @@ const DeploymentRevisionHistoryTab: React.FC<
       title: (
         <BAIFlex gap="xxs" align="center">
           {t('deployment.ClusterMode')}
-          <QuestionIconWithTooltip title={t('deployment.ClusterModeTooltip')} />
+          <BAIQuestionIconWithTooltip
+            title={t('deployment.ClusterModeTooltip')}
+          />
         </BAIFlex>
       ),
       key: 'clusterMode',

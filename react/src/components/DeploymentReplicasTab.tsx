@@ -13,7 +13,6 @@ import { convertToOrderBy } from '../helper';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import BAIRadioGroup from './BAIRadioGroup';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
-import QuestionIconWithTooltip from './QuestionIconWithTooltip';
 import ReplicaStatusTag, { ReplicaStatus } from './ReplicaStatusTag';
 import RouteSchedulingHistoryModal, {
   RouteSchedulingHistoryQuery,
@@ -28,6 +27,7 @@ import {
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAIId,
+  BAIQuestionIconWithTooltip,
   BAITable,
   BAITag,
   BAIUnmountAfterClose,
@@ -298,7 +298,7 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
       title: (
         <BAIFlex gap="xxs" align="center">
           {t('general.Status')}
-          <QuestionIconWithTooltip
+          <BAIQuestionIconWithTooltip
             title={t('deployment.ReplicaLifecycleStatusTooltip')}
           />
         </BAIFlex>
@@ -339,7 +339,7 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
       title: (
         <BAIFlex gap="xxs" align="center">
           {t('deployment.HealthStatus')}
-          <QuestionIconWithTooltip
+          <BAIQuestionIconWithTooltip
             title={t('deployment.HealthStatusTooltip')}
           />
         </BAIFlex>
@@ -357,7 +357,7 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
       title: (
         <BAIFlex gap="xxs" align="center">
           {t('deployment.TrafficStatus')}
-          <QuestionIconWithTooltip
+          <BAIQuestionIconWithTooltip
             title={t('deployment.TrafficStatusTooltip')}
           />
         </BAIFlex>
@@ -409,7 +409,7 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
       title: (
         <BAIFlex gap="xxs" align="center">
           {t('deployment.RevisionNumberWithID')}
-          <QuestionIconWithTooltip
+          <BAIQuestionIconWithTooltip
             title={t('deployment.RevisionNumberTooltip')}
           />
         </BAIFlex>

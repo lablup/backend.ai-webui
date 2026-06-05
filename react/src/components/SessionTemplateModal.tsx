@@ -13,10 +13,10 @@ import {
   SessionLauncherFormValue,
 } from '../pages/SessionLauncherPage';
 import ImageMetaIcon from './ImageMetaIcon';
-import QuestionIconWithTooltip from './QuestionIconWithTooltip';
 import { Button, theme, Tooltip, Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import {
+  BAIQuestionIconWithTooltip,
   BAIModal,
   BAIModalProps,
   BAITable,
@@ -132,7 +132,7 @@ const SessionTemplateModal: React.FC<SessionTemplateModalProps> = ({
               title: (
                 <BAIFlex gap={'xxs'}>
                   <PinIcon />
-                  <QuestionIconWithTooltip
+                  <BAIQuestionIconWithTooltip
                     title={t('session.launcher.PinnedHistoryTooltip')}
                   />
                 </BAIFlex>
