@@ -136,6 +136,14 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { generateFolderPath } = useFolderExplorerOpener();
+  const baiClient = useSuspendedBackendaiClient();
+  // The deploy-from-folder flow depends on the revised deployment schema
+  // (deploymentRevisionPresets + the `key`-shaped environ entry). On 26.4.3 the
+  // preset query type differs (EnvironmentVariableEntry has `name`, not `key`) and
+  // preset-based deployment is unsupported, so hide the action entirely there.
+  const isRevisedDeploymentSchema = baiClient.supports(
+    'model-deployment-revised-schema',
+  );
 
   const isPipelineFolder = vfolder?.metadata?.usageMode === 'DATA';
   const isModelFolder = vfolder?.metadata?.usageMode === 'MODEL';
@@ -144,8 +152,8 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
   const vfolderId = toLocalId(vfolder.id ?? '');
 
   const actions: BAINameActionCellAction[] = filterOutNullAndUndefined([
-    // Start Service (model folders only, active only)
-    isModelFolder && !isDeleted
+    // Start Service (model folders only, active only, revised schema only)
+    isModelFolder && !isDeleted && isRevisedDeploymentSchema
       ? {
           key: 'start-service',
           title: t('modelService.DeployAsService'),
