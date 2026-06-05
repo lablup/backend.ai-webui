@@ -4,7 +4,10 @@
  */
 import { ModelCardDrawerFragment$key } from '../__generated__/ModelCardDrawerFragment.graphql';
 import { ModelCardDrawerQuery } from '../__generated__/ModelCardDrawerQuery.graphql';
-import { useBackendAIImageMetaData, useSuspendedBackendaiClient } from '../hooks';
+import {
+  useBackendAIImageMetaData,
+  useSuspendedBackendaiClient,
+} from '../hooks';
 import DeploymentSettingModal from './DeploymentSettingModal';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
@@ -58,9 +61,12 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
   const [imageMetaData] = useBackendAIImageMetaData();
   const { generateFolderPath } = useFolderExplorerOpener();
   const baiClient = useSuspendedBackendaiClient();
-  // Model-store deploy relies on the revised deployment schema (preset query +
-  // `key`-shaped environ entry). On 26.4.3 the preset types differ and deployment
-  // presets are unsupported, so hide the Deploy button there.
+  // Model-store deploy relies on the revised deployment schema. On 26.4.3 the
+  // server requires `runtime_variant` explicitly when adding a revision (it
+  // checks `overrides.runtime_variant` before merging the preset — backend bug
+  // fixed in 26.4.4 via lablup/backend.ai#11250), and the deploy input has no
+  // field to carry it, so preset-based deploy cannot succeed on 26.4.3. Gate
+  // the Deploy button to 26.4.4+.
   const isRevisedDeploymentSchema = baiClient.supports(
     'model-deployment-revised-schema',
   );

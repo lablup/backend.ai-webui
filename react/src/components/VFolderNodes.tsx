@@ -123,9 +123,12 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
   const { generateFolderPath } = useFolderExplorerOpener();
   const effectiveAdminRole = useEffectiveAdminRole();
   const baiClient = useSuspendedBackendaiClient();
-  // Deploy-from-folder needs the revised deployment schema (preset query +
-  // `key`-shaped environ entry). On 26.4.3 those types differ and preset-based
-  // deployment is unsupported, so hide the action there.
+  // Deploy-from-folder needs the revised deployment schema. On 26.4.3 the
+  // server requires `runtime_variant` to be supplied explicitly when adding a
+  // revision (it checks `overrides.runtime_variant` before merging the preset —
+  // backend bug fixed in 26.4.4 via lablup/backend.ai#11250), and the deploy
+  // input has no field to carry it, so preset-based deploy cannot succeed on
+  // 26.4.3. Gate the action to 26.4.4+.
   const isRevisedDeploymentSchema = baiClient.supports(
     'model-deployment-revised-schema',
   );

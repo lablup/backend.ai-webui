@@ -136,6 +136,16 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { generateFolderPath } = useFolderExplorerOpener();
+  const baiClient = useSuspendedBackendaiClient();
+  // Deploy-from-folder needs the revised deployment schema. On 26.4.3 the
+  // server requires `runtime_variant` to be supplied explicitly when adding a
+  // revision (it checks `overrides.runtime_variant` before merging the preset —
+  // backend bug fixed in 26.4.4 via lablup/backend.ai#11250), and the deploy
+  // input has no field to carry it, so preset-based deploy cannot succeed on
+  // 26.4.3. Gate the action to 26.4.4+.
+  const isRevisedDeploymentSchema = baiClient.supports(
+    'model-deployment-revised-schema',
+  );
 
   const isPipelineFolder = vfolder?.metadata?.usageMode === 'DATA';
   const isModelFolder = vfolder?.metadata?.usageMode === 'MODEL';
@@ -144,10 +154,8 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
   const vfolderId = toLocalId(vfolder.id ?? '');
 
   const actions: BAINameActionCellAction[] = filterOutNullAndUndefined([
-    // Start Service (model folders only, active only). Deploy uses a preset id
-    // (`revisionPresetId`); the server expands image/runtime/resources/environ,
-    // so this works on both 26.4.3 and 26.4.4.
-    isModelFolder && !isDeleted
+    // Start Service (model folders only, active only, revised schema only).
+    isModelFolder && !isDeleted && isRevisedDeploymentSchema
       ? {
           key: 'start-service',
           title: t('modelService.DeployAsService'),
