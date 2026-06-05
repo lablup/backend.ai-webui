@@ -139,8 +139,8 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
 
   const formRef = useRef<FormInstance>(null);
   const baiClient = useSuspendedBackendaiClient();
-  // `createVFolderInProject` (the dedicated project-scoped mutation) only exists
-  // on 26.4.4rc1+. On 26.4.3 it is absent, so project folders are created through
+  // `createVFolderInProject` (the dedicated project-scoped mutation) is supported
+  // from 26.4.4. On 26.4.3 it is absent, so project folders are created through
   // `createVfolderV2` by passing `projectId` in `CreateVFolderV2Input` instead.
   const supportsCreateVFolderInProject = baiClient.supports(
     'create-vfolder-in-project',
@@ -293,7 +293,7 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
     let vfolderResults: FolderCreationResponse | undefined;
     try {
       if (isProjectFolder && supportsCreateVFolderInProject) {
-        // 26.4.4rc1+: dedicated project-scoped mutation with enum-typed input.
+        // 26.4.4+: dedicated project-scoped mutation with enum-typed input.
         vfolderResults = await commitCreateInProjectMutation({
           projectId: values.group ?? '',
           input: {
