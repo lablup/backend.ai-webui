@@ -6,10 +6,10 @@ import {
   UserFairShareTableFragment$data,
   UserFairShareTableFragment$key,
 } from '../../__generated__/UserFairShareTableFragment.graphql';
-import QuestionIconWithTooltip from '../QuestionIconWithTooltip';
 import { SettingOutlined } from '@ant-design/icons';
 import { Divider, theme, Typography } from 'antd';
 import {
+  BAIQuestionIconWithTooltip,
   BAIColumnsType,
   BAIFlex,
   BAINameActionCell,
@@ -147,7 +147,9 @@ const UserFairShareTable: React.FC<UserFairShareTableProps> = ({
       title: (
         <BAIFlex gap="xxs">
           {t('fairShare.Weight')}
-          <QuestionIconWithTooltip title={t('fairShare.WeightDescription')} />
+          <BAIQuestionIconWithTooltip
+            title={t('fairShare.WeightDescription')}
+          />
         </BAIFlex>
       ),
       key: 'weight',
@@ -172,7 +174,7 @@ const UserFairShareTable: React.FC<UserFairShareTableProps> = ({
       title: (
         <BAIFlex gap="xxs">
           {t('fairShare.FairShareFactor')}
-          <QuestionIconWithTooltip
+          <BAIQuestionIconWithTooltip
             title={t('fairShare.FairShareFactorDescription')}
           />
         </BAIFlex>
@@ -189,7 +191,7 @@ const UserFairShareTable: React.FC<UserFairShareTableProps> = ({
       title: (
         <BAIFlex gap="xxs">
           {t('fairShare.AllocationAverage')}
-          <QuestionIconWithTooltip
+          <BAIQuestionIconWithTooltip
             title={t('fairShare.AllocationAverageDescription')}
           />
         </BAIFlex>

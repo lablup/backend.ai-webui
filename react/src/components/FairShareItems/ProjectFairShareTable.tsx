@@ -6,11 +6,11 @@ import {
   ProjectFairShareTableFragment$data,
   ProjectFairShareTableFragment$key,
 } from '../../__generated__/ProjectFairShareTableFragment.graphql';
-import QuestionIconWithTooltip from '../QuestionIconWithTooltip';
 import ProjectResourceGroupWarningIcon from './ProjectResourceGroupWarningIcon';
 import { SettingOutlined } from '@ant-design/icons';
 import { Divider, theme, Typography } from 'antd';
 import {
+  BAIQuestionIconWithTooltip,
   BAIColumnsType,
   BAIFlex,
   BAINameActionCell,
@@ -143,7 +143,9 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
       title: (
         <BAIFlex gap="xxs">
           {t('fairShare.Weight')}
-          <QuestionIconWithTooltip title={t('fairShare.WeightDescription')} />
+          <BAIQuestionIconWithTooltip
+            title={t('fairShare.WeightDescription')}
+          />
         </BAIFlex>
       ),
       key: 'weight',
@@ -168,7 +170,7 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
       title: (
         <BAIFlex gap="xxs">
           {t('fairShare.FairShareFactor')}
-          <QuestionIconWithTooltip
+          <BAIQuestionIconWithTooltip
             title={t('fairShare.FairShareFactorDescription')}
           />
         </BAIFlex>
@@ -185,7 +187,7 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
       title: (
         <BAIFlex gap="xxs">
           {t('fairShare.AllocationAverage')}
-          <QuestionIconWithTooltip
+          <BAIQuestionIconWithTooltip
             title={t('fairShare.AllocationAverageDescription')}
           />
         </BAIFlex>

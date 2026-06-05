@@ -4,10 +4,14 @@
  */
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanQuery } from '../hooks/reactQueryAlias';
-import QuestionIconWithTooltip from './QuestionIconWithTooltip';
 import { App, Checkbox, Form, InputNumber } from 'antd';
 import { FormInstance } from 'antd/lib';
-import { BAIModal, BAIModalProps, BAIFlex } from 'backend.ai-ui';
+import {
+  BAIQuestionIconWithTooltip,
+  BAIModal,
+  BAIModalProps,
+  BAIFlex,
+} from 'backend.ai-ui';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -45,7 +49,7 @@ const OverlayNetworkSettingModal = ({
       title={
         <BAIFlex gap="xxs">
           {t('settings.OverlayNetworkSettings')}
-          <QuestionIconWithTooltip
+          <BAIQuestionIconWithTooltip
             title={t('settings.OverlayNetworkSettingsDescription')}
           />
         </BAIFlex>

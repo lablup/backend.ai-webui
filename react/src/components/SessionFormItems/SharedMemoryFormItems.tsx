@@ -3,7 +3,6 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { compareNumberWithUnits, convertToBinaryUnit } from '../../helper';
-import QuestionIconWithTooltip from '../QuestionIconWithTooltip';
 import { MergedResourceAllocationFormValue } from './ResourceAllocationFormItems';
 import {
   ConfigProvider,
@@ -15,6 +14,7 @@ import {
   theme,
 } from 'antd';
 import {
+  BAIQuestionIconWithTooltip,
   BAIDynamicUnitInputNumber,
   BAIDynamicUnitInputNumberProps,
   BAIFlex,
@@ -222,7 +222,7 @@ const SharedMemoryFormItems: React.FC<SharedMemoryFormItemsProps> = ({
                       onChange={onChangeAutomaticShmem}
                     />
                   </Form.Item>
-                  <QuestionIconWithTooltip
+                  <BAIQuestionIconWithTooltip
                     title={
                       <BAIFlex direction="column">
                         {t('session.launcher.AutoSharedMemoryTooltip')}

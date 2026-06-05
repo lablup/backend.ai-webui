@@ -4,11 +4,15 @@
  */
 import { useSuspendedBackendaiClient } from '../hooks';
 import { SchedulerType } from './ConfigurationsSettingList';
-import QuestionIconWithTooltip from './QuestionIconWithTooltip';
 import { App, Form, InputNumber, Select, theme, Typography } from 'antd';
 import Checkbox from 'antd/es/checkbox/Checkbox';
 import { FormInstance } from 'antd/lib';
-import { BAIModal, BAIModalProps, BAIFlex } from 'backend.ai-ui';
+import {
+  BAIQuestionIconWithTooltip,
+  BAIModal,
+  BAIModalProps,
+  BAIFlex,
+} from 'backend.ai-ui';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -35,7 +39,7 @@ const SchedulerSettingModal = ({
       title={
         <BAIFlex align="center" gap="xxs">
           {t('settings.ConfigPerJobSchduler')}
-          <QuestionIconWithTooltip
+          <BAIQuestionIconWithTooltip
             title={t('settings.ConfigPerJobSchdulerDescription')}
           />
         </BAIFlex>
