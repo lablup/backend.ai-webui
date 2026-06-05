@@ -524,7 +524,13 @@ const AdminDeploymentListPage: React.FC = () => {
   const isPrometheusPresetSupported = baiClient.supports(
     'prometheus-query-preset',
   );
-  const isDeploymentPresetSupported = baiClient.supports('deployment-preset');
+  // The deployment-preset tab requires the revised schema (26.4.4+). On 26.4.3 the
+  // backend's preset GraphQL input type is inconsistent with its Pydantic DTO
+  // (imageId not exposed in GQL but required by the DTO), so preset creation can never
+  // succeed — hide the whole tab there rather than surfacing an unusable form.
+  const isDeploymentPresetSupported = baiClient.supports(
+    'model-deployment-revised-schema',
+  );
 
   const tabItems: CardTabListType[] = filterOutEmpty([
     {
