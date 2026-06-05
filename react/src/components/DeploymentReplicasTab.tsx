@@ -20,7 +20,6 @@ import RouteSchedulingHistoryModal, {
 import SessionDetailDrawer from './SessionDetailDrawer';
 import { HistoryOutlined } from '@ant-design/icons';
 import { Tooltip, Typography } from 'antd';
-import { BAIQuestionIconWithTooltip } from 'backend.ai-ui';
 import {
   BAIButton,
   BAIColumnType,
@@ -28,6 +27,7 @@ import {
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAIId,
+  BAIQuestionIconWithTooltip,
   BAITable,
   BAITag,
   BAIUnmountAfterClose,
