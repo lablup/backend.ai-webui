@@ -185,16 +185,16 @@ Production build (`pnpm run build`) runs these steps sequentially:
 
 ### On-Demand Skills (loaded only when needed)
 
-- **Storybook**: `storybook-guide` skill (CSF 3, meta config, story patterns, checklists)
-- **i18n**: `i18n-guide` skill (translation keys, casing rules, language-specific guidelines)
-- **Documentation**: `docs-guide` skill (user manual structure, terminology, multilingual rules)
+- **Storybook**: `storybook-patterns` skill (fw plugin; CSF 3, meta config, story patterns, checklists)
+- **i18n**: `i18n-patterns` skill (fw plugin; translation keys, casing rules, language-specific guidelines)
+- **Documentation**: `docs-writing-guide` skill (fw plugin; user manual structure, terminology, multilingual rules)
 - **Relay**: `relay-patterns` skill (fragment architecture, naming conventions, query optimization)
 
 ### Auto-Applied Instructions (loaded when editing matching files)
 
 - `react.instructions.md` → `react/**/*.tsx,react/**/*.ts`
 - `storybook.instructions.md` → `packages/backend.ai-ui/**/*.stories.tsx,packages/backend.ai-ui/**/*.stories.ts`
-- `i18n.instructions.md` → `resources/i18n/**/*.json,packages/backend.ai-ui/src/locale/**/*.json` (use `i18n-guide` skill for tsx/ts context)
+- `i18n.instructions.md` → `resources/i18n/**/*.json,packages/backend.ai-ui/src/locale/**/*.json` (use `i18n-patterns` skill for tsx/ts context)
 - `e2e.instructions.md` → `e2e/**/*.ts`
 - `docs.instructions.md` → `packages/backend.ai-webui-docs/**/*.md`
 

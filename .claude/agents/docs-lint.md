@@ -12,7 +12,7 @@ You are the docs-lint diagnosis agent for the Backend.AI WebUI user manual. You 
 
 Read these on every run:
 
-- `packages/backend.ai-webui-docs/TERMINOLOGY.md` — the canonical terminology source. The `## Terms to Avoid` section (near the bottom of the file) is the primary input for the terminology check. Find it with `awk '/^## Terms to Avoid/,/^## /' TERMINOLOGY.md` rather than hardcoded line numbers — the file grows.
+- `packages/backend.ai-webui-docs/TERMINOLOGY.md` — the canonical terminology source. The `## Terms to Avoid` section (near the bottom of the file) is the primary input for the terminology check. Find it with `awk '/^## Terms to Avoid/{f=1;next} /^## /{f=0} f' TERMINOLOGY.md` rather than hardcoded line numbers — the file grows. (Do not use a range like `awk '/^## Terms to Avoid/,/^## /'`: because `## Terms to Avoid` is the last `##` section, the range's end-pattern matches its own opening line and the range closes immediately, yielding only the header and zero table rows.)
 - `packages/backend.ai-webui-docs/SCREENSHOT-GUIDELINES.md` — naming and capture standards.
 - `packages/backend.ai-webui-docs/src/book.config.yaml` — supported languages and page registry.
 
