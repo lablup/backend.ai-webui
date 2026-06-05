@@ -1,6 +1,7 @@
 import {
   BAIColumnType,
   BAIFlex,
+  BAIQuestionIconWithTooltip,
   BAITable,
   BAITableProps,
   BAIText,
@@ -14,8 +15,7 @@ import type {
   BAIAdminUserV2TableFragment$key,
 } from '../__generated__/BAIAdminUserV2TableFragment.graphql';
 import { useBAIi18n } from '../hooks/useBAIi18n';
-import { QuestionCircleOutlined } from '@ant-design/icons';
-import { Tag, theme, Tooltip } from 'antd';
+import { Tag, Tooltip } from 'antd';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import React from 'react';
@@ -66,18 +66,6 @@ const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
 }) => {
   'use memo';
   const { t } = useBAIi18n();
-  const { token } = theme.useToken();
-
-  const renderTitleWithTooltip = (label: string, tooltip: string) => (
-    <BAIFlex gap="xxs" align="center">
-      {label}
-      <Tooltip title={tooltip}>
-        <QuestionCircleOutlined
-          style={{ color: token.colorTextTertiary, cursor: 'help' }}
-        />
-      </Tooltip>
-    </BAIFlex>
-  );
 
   // Show only the first item inline on a single line; collapse the rest into a
   // `+N` tag whose tooltip reveals the full list (all items) on hover.
@@ -277,25 +265,37 @@ const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
       },
       {
         key: 'container_uid',
-        title: renderTitleWithTooltip(
-          t('comp:UserNodes.ContainerUID'),
-          t('comp:UserNodes.ContainerUIDTooltip'),
+        title: (
+          <BAIFlex gap="xxs" align="center">
+            {t('comp:UserNodes.ContainerUID')}
+            <BAIQuestionIconWithTooltip
+              title={t('comp:UserNodes.ContainerUIDTooltip')}
+            />
+          </BAIFlex>
         ),
         render: (__, record) => record.container?.containerUid ?? '-',
       },
       {
         key: 'container_main_gid',
-        title: renderTitleWithTooltip(
-          t('comp:UserNodes.ContainerMainGID'),
-          t('comp:UserNodes.ContainerMainGIDTooltip'),
+        title: (
+          <BAIFlex gap="xxs" align="center">
+            {t('comp:UserNodes.ContainerMainGID')}
+            <BAIQuestionIconWithTooltip
+              title={t('comp:UserNodes.ContainerMainGIDTooltip')}
+            />
+          </BAIFlex>
         ),
         render: (__, record) => record.container?.containerMainGid ?? '-',
       },
       {
         key: 'container_gids',
-        title: renderTitleWithTooltip(
-          t('comp:UserNodes.ContainerGIDs'),
-          t('comp:UserNodes.ContainerGIDsTooltip'),
+        title: (
+          <BAIFlex gap="xxs" align="center">
+            {t('comp:UserNodes.ContainerGIDs')}
+            <BAIQuestionIconWithTooltip
+              title={t('comp:UserNodes.ContainerGIDsTooltip')}
+            />
+          </BAIFlex>
         ),
         render: (__, record) =>
           renderOverflowList(record.container?.containerGids),
