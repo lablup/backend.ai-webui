@@ -13,6 +13,7 @@ import AdminDeploymentPresetNodes, {
   type DeploymentPresetNodeInList,
 } from '../components/AdminDeploymentPresetNodes';
 import { convertToOrderBy } from '../helper';
+import { buildPath } from '../helper/pathBuilder';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
@@ -139,12 +140,15 @@ const AdminDeploymentPresetListPage: React.FC = () => {
 
   const handleEditPreset = (preset: DeploymentPresetNodeInList) => {
     webuiNavigate(
-      `/admin-deployments/deployment-presets/${toLocalId(preset.id)}/edit`,
+      buildPath(
+        'admin',
+        `deployments/deployment-presets/${toLocalId(preset.id)}/edit`,
+      ),
     );
   };
 
   const handleOpenCreateModal = () => {
-    webuiNavigate('/admin-deployments/deployment-presets/new');
+    webuiNavigate(buildPath('admin', 'deployments/deployment-presets/new'));
   };
 
   const isSupported = baiClient.supports('deployment-preset');

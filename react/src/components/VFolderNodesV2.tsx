@@ -12,6 +12,7 @@ import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useSuspenseTanQuery, useTanQuery } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
+import { useProjectPath } from '../hooks/useRouteScope';
 import { isDeletedCategory } from '../pages/VFolderNodeListPage';
 import DeleteForeverVFolderModalV2 from './DeleteForeverVFolderModalV2';
 import DeploymentSettingModal from './DeploymentSettingModal';
@@ -439,6 +440,7 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
   const [inviteFolderId, setInviteFolderId] = useState<string | null>(null);
   const { getErrorMessage } = useErrorMessageResolver();
   const navigate = useWebUINavigate();
+  const buildProjectPath = useProjectPath();
   const { upsertNotification } = useSetBAINotification();
 
   // Row-level hard-delete reuses the same modal as the bulk toolbar
@@ -556,7 +558,7 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
               style={{ fontWeight: 'normal' }}
               onClick={() => {
                 navigate({
-                  pathname: '/session',
+                  pathname: buildProjectPath('session', { scope: 'project' }),
                   search: new URLSearchParams({
                     sessionDetail: sessionId,
                   }).toString(),

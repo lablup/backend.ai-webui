@@ -2,28 +2,24 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { PROJECT_ADMIN_PAGE_KEYS } from '../hooks/useWebUIMenuItems';
+import { useRouteScope } from '../hooks/useRouteScope';
 import { BAIAlert, BAIAlertProps } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation } from 'react-router-dom';
 
 interface ProjectAdminScopeAlertProps extends BAIAlertProps {}
 
 const ProjectAdminScopeAlert: React.FC<ProjectAdminScopeAlertProps> = (
   props,
 ) => {
+  'use memo';
   const { t } = useTranslation();
-  const location = useLocation();
-
-  // PROJECT_ADMIN_PAGE_KEYS is the single source of truth for which
-  // routes belong to the project-admin section. Project-admin paths
-  // are mounted at `/<key>` (e.g. `/project-admin-users`), so the
-  // first pathname segment is the menu key.
-  const firstSegment = location.pathname.split('/')[1];
-  const isProjectAdminPage = (
-    PROJECT_ADMIN_PAGE_KEYS as ReadonlyArray<string>
-  ).includes(firstSegment);
+  // Project-admin pages live under `/project/:name/admin/*`; the route handle
+  // marks them with `scope: 'projectAdmin'`. Reading the scope from the matched
+  // route (rather than parsing the pathname's first segment, which is now the
+  // `project` prefix) is the single source of truth for this gate.
+  const scope = useRouteScope();
+  const isProjectAdminPage = scope === 'projectAdmin';
 
   if (!isProjectAdminPage) return null;
 

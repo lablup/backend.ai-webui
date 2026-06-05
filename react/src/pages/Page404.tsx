@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
+import { useActiveProjectName } from '../hooks/useRouteScope';
 import {
   getPathFromMenuKey,
   useWebUIMenuItems,
@@ -15,10 +16,11 @@ const Page404 = () => {
   const { t } = useTranslation();
   const webuiNavigate = useWebUINavigate();
   const { firstAvailableMenuItem } = useWebUIMenuItems();
+  const activeProjectName = useActiveProjectName();
   useSuspendedBackendaiClient(); //monkey patch for flickering
 
   const defaultPagePath = firstAvailableMenuItem
-    ? getPathFromMenuKey(firstAvailableMenuItem.key)
+    ? getPathFromMenuKey(firstAvailableMenuItem.key, activeProjectName)
     : '/start';
   const defaultPageTitle =
     firstAvailableMenuItem?.labelText ?? t('webui.menu.FirstPageNameAlias');

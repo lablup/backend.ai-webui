@@ -19,6 +19,7 @@ import { useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { useProjectPath } from '../hooks/useRouteScope';
 import { DeleteFilled, EditOutlined } from '@ant-design/icons';
 import { App, Skeleton, Typography } from 'antd';
 import {
@@ -63,6 +64,7 @@ const ProjectAdminDeploymentsContent: React.FC<
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const webUINavigate = useWebUINavigate();
+  const buildProjectPath = useProjectPath();
 
   const [editingDeploymentId, setEditingDeploymentId] = useState<string | null>(
     null,
@@ -329,7 +331,9 @@ const ProjectAdminDeploymentsContent: React.FC<
                           title={record.metadata?.name ?? '-'}
                           onTitleClick={() =>
                             webUINavigate(
-                              `/project-admin-deployments/${toLocalId(record.id)}`,
+                              buildProjectPath(
+                                `deployments/${toLocalId(record.id)}`,
+                              ),
                             )
                           }
                           copyable
@@ -387,7 +391,7 @@ const ProjectAdminDeploymentsContent: React.FC<
                         stopRowClick
                         onTagClick={(tag) => {
                           webUINavigate({
-                            pathname: '/project-admin-deployments',
+                            pathname: buildProjectPath('deployments'),
                             search: new URLSearchParams({
                               filter: JSON.stringify({
                                 tags: { iContains: tag },

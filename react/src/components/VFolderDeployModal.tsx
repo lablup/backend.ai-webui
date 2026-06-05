@@ -6,6 +6,7 @@ import { VFolderDeployModalMutation } from '../__generated__/VFolderDeployModalM
 import { VFolderDeployModalQuery } from '../__generated__/VFolderDeployModalQuery.graphql';
 import { useWebUINavigate } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { useProjectPath } from '../hooks/useRouteScope';
 import DeploymentPresetDetailModal from './DeploymentPresetDetailModal';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { Alert, App, Button, Form, Space, theme, Tooltip } from 'antd';
@@ -61,6 +62,7 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
   const { message } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
   const webuiNavigate = useWebUINavigate();
+  const buildProjectPath = useProjectPath();
   const { token } = theme.useToken();
   const { id: projectId, name: projectName } = useCurrentProjectValue();
 
@@ -195,7 +197,9 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
           }
           message.success(t('modelStore.DeploySuccess'));
           onDeployed?.(payload.deploymentId);
-          webuiNavigate(`/deployments/${payload.deploymentId}`);
+          webuiNavigate(
+            buildProjectPath(`deployments/${payload.deploymentId}`),
+          );
           resolve();
         },
         onError: (error) => {
@@ -294,7 +298,7 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
                   <BAILink
                     onClick={() => {
                       onClose();
-                      webuiNavigate('/deployments');
+                      webuiNavigate(buildProjectPath('deployments'));
                     }}
                   />
                 ),
