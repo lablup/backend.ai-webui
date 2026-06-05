@@ -966,6 +966,7 @@
     "Current": "Текущая",
     "CurrentRevision": "Текущая Revision",
     "CurrentRevisionAvailableDescription": "Загрузите её конфигурацию, чтобы использовать её как отправную точку для новой Revision.",
+    "CurrentRevisionConfigurationLoaded": "Конфигурация текущей Revision загружена",
     "CustomMode": "Расширенный режим",
     "DeleteDeployment": "Удалить развёртывание",
     "Deployment": "Развёртывание",

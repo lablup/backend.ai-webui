@@ -966,6 +966,7 @@
     "Current": "Τρέχουσα",
     "CurrentRevision": "Τρέχουσα Revision",
     "CurrentRevisionAvailableDescription": "Φορτώστε τη διαμόρφωσή της για να τη χρησιμοποιήσετε ως σημείο εκκίνησης για τη νέα Revision.",
+    "CurrentRevisionConfigurationLoaded": "Η διαμόρφωση της τρέχουσας Revision φορτώθηκε",
     "CustomMode": "Σύνθετη Λειτουργία",
     "DeleteDeployment": "Διαγραφή ανάπτυξης",
     "Deployment": "Ανάπτυξη",

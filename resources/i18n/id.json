@@ -966,6 +966,7 @@
     "Current": "Saat Ini",
     "CurrentRevision": "Revision Saat Ini",
     "CurrentRevisionAvailableDescription": "Muat konfigurasinya untuk digunakan sebagai titik awal revision baru.",
+    "CurrentRevisionConfigurationLoaded": "Konfigurasi Revision saat ini telah dimuat",
     "CustomMode": "Mode Lanjutan",
     "DeleteDeployment": "Hapus Penerapan",
     "Deployment": "Penerapan",

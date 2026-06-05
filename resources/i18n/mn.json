@@ -966,6 +966,7 @@
     "Current": "Одоогийн",
     "CurrentRevision": "Одоогийн Revision",
     "CurrentRevisionAvailableDescription": "Шинэ Revision-ийн эхлэлийн цэг болгон ашиглахын тулд тохиргоог нь ачаалаарай.",
+    "CurrentRevisionConfigurationLoaded": "Одоогийн Revision-ийн тохиргоо ачааллагдлаа",
     "CustomMode": "Нарийвчилсан горим",
     "DeleteDeployment": "Байршуулалт устгах",
     "Deployment": "Байршуулалт",

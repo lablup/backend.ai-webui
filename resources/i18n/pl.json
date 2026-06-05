@@ -966,6 +966,7 @@
     "Current": "Bieżąca",
     "CurrentRevision": "Bieżąca Revision",
     "CurrentRevisionAvailableDescription": "Załaduj jej konfigurację, aby użyć jej jako punktu startowego nowej Revision.",
+    "CurrentRevisionConfigurationLoaded": "Konfiguracja bieżącej Revision została załadowana",
     "CustomMode": "Tryb zaawansowany",
     "DeleteDeployment": "Usuń wdrożenie",
     "Deployment": "Wdrożenie",

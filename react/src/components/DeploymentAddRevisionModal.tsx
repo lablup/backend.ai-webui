@@ -6,11 +6,15 @@ import { DeploymentAddRevisionModalAddMutation } from '../__generated__/Deployme
 import { DeploymentAddRevisionModalImageNameQuery } from '../__generated__/DeploymentAddRevisionModalImageNameQuery.graphql';
 import type { DeploymentAddRevisionModalPresetCountQuery } from '../__generated__/DeploymentAddRevisionModalPresetCountQuery.graphql';
 import type { DeploymentAddRevisionModalPresetDetailQuery } from '../__generated__/DeploymentAddRevisionModalPresetDetailQuery.graphql';
-import type { DeploymentAddRevisionModalQuery } from '../__generated__/DeploymentAddRevisionModalQuery.graphql';
 import type {
   DeploymentAddRevisionModalSelectedPresetQuery,
   DeploymentAddRevisionModalSelectedPresetQuery$data,
 } from '../__generated__/DeploymentAddRevisionModalSelectedPresetQuery.graphql';
+import type { DeploymentAddRevisionModal_deployment$key } from '../__generated__/DeploymentAddRevisionModal_deployment.graphql';
+import type {
+  DeploymentAddRevisionModal_revisionSource$data,
+  DeploymentAddRevisionModal_revisionSource$key,
+} from '../__generated__/DeploymentAddRevisionModal_revisionSource.graphql';
 import { convertToBinaryUnit } from '../helper';
 import {
   formatShellCommand,
@@ -87,7 +91,6 @@ import { FolderOpenIcon, PlusIcon } from 'lucide-react';
 import React, {
   Suspense,
   startTransition,
-  useDeferredValue,
   useEffect,
   useEffectEvent,
   useRef,
@@ -97,6 +100,7 @@ import { useTranslation } from 'react-i18next';
 import {
   fetchQuery,
   graphql,
+  useFragment,
   useLazyLoadQuery,
   useMutation,
   useRelayEnvironment,
@@ -128,9 +132,19 @@ export type PresetFormValues = {
 
 interface DeploymentAddRevisionModalProps extends BAIModalProps {
   onRequestClose: (success?: boolean) => void;
-  deploymentId: string;
+  deploymentFrgmt: DeploymentAddRevisionModal_deployment$key;
+  // Optional source revision. When provided (e.g. "Add new revision from
+  // this" / "Duplicate as new revision" in the revision detail drawer), the
+  // Custom form is pre-filled from this revision on first Custom-mode entry
+  // and the "Load current revision" alert is suppressed; the Preset/Custom
+  // toggle remains user-controlled and the modal still opens in the user's
+  // persisted mode. When omitted, the modal behaves as a plain "Add revision"
+  // entry — Custom mode shows the alert with a button that loads on demand.
+  sourceRevisionFrgmt?: DeploymentAddRevisionModal_revisionSource$key | null;
   open?: boolean;
 }
+
+type RevisionPrefillData = DeploymentAddRevisionModal_revisionSource$data;
 
 const SectionHeader: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -177,7 +191,8 @@ const PresetDetailLoader: React.FC<{
 
 const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   onRequestClose,
-  deploymentId,
+  deploymentFrgmt,
+  sourceRevisionFrgmt,
   open,
   ...restModalProps
 }) => {
@@ -186,6 +201,108 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   const { token } = theme.useToken();
   const { message } = App.useApp();
   const relayEnvironment = useRelayEnvironment();
+
+  // Deployment-scoped data (resourceGroupName for resource defaults,
+  // currentRevision for the optional "Load current" affordance). Fragment-
+  // based instead of an in-modal lazy query so callers can drive what they
+  // pass in and the modal does not pay a separate network round-trip.
+  const deployment = useFragment(
+    graphql`
+      fragment DeploymentAddRevisionModal_deployment on ModelDeployment {
+        id
+        metadata {
+          resourceGroupName
+        }
+        currentRevision @since(version: "26.4.3") {
+          modelMountConfig {
+            vfolderId
+          }
+          ...DeploymentAddRevisionModal_revisionSource
+        }
+      }
+    `,
+    deploymentFrgmt,
+  );
+
+  // Shared shape for the form-prefill source — used both for "Load current
+  // revision" (current revision off the deployment fragment) and for the
+  // "Add new revision from this" entry where an arbitrary source revision
+  // is passed in via `sourceRevisionFrgmt`.
+  const revisionPrefillFragment = graphql`
+    fragment DeploymentAddRevisionModal_revisionSource on ModelRevision {
+      clusterConfig {
+        mode
+        size
+      }
+      resourceConfig {
+        resourceOpts {
+          entries {
+            name
+            value
+          }
+        }
+      }
+      resourceSlots {
+        slotName
+        quantity
+      }
+      extraMounts {
+        vfolderId
+        mountDestination
+      }
+      modelRuntimeConfig {
+        runtimeVariantId
+        runtimeVariant {
+          name
+        }
+        environ {
+          entries {
+            name
+            value
+          }
+        }
+      }
+      modelMountConfig {
+        vfolderId
+        mountDestination
+        definitionPath
+      }
+      modelDefinition {
+        models {
+          name
+          modelPath
+          service {
+            startCommand
+            port
+            healthCheck {
+              path
+              maxRetries
+              initialDelay
+              interval
+              maxWaitTime
+            }
+          }
+        }
+      }
+      imageV2 {
+        id
+        identity {
+          canonicalName
+        }
+      }
+    }
+  `;
+
+  const currentRevision =
+    useFragment<DeploymentAddRevisionModal_revisionSource$key>(
+      revisionPrefillFragment,
+      deployment?.currentRevision ?? null,
+    );
+  const sourceRevision =
+    useFragment<DeploymentAddRevisionModal_revisionSource$key>(
+      revisionPrefillFragment,
+      sourceRevisionFrgmt ?? null,
+    );
   // The model folder picker scopes to the user's current project so the
   // listing matches what the user has access to in the active project
   // context, consistent with the rest of the model-deployment UI
@@ -202,12 +319,6 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   const [isModelFolderCreateModalOpen, setIsModelFolderCreateModalOpen] =
     useState(false);
 
-  // Defer `open` so the lazy query only fires once the modal has actually
-  // committed to opening. `loading={deferredOpen !== open}` then lets the
-  // modal show its built-in skeleton during the transition instead of an
-  // inner Suspense fallback (FR-2862 review).
-  const deferredOpen = useDeferredValue(open);
-
   const [customForm] = Form.useForm<FormValues>();
   const [presetForm] = Form.useForm<PresetFormValues>();
   // FR-2862 feedback: hoist `autoActivate` from the Custom body into the
@@ -219,6 +330,17 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     'deploymentRevisionCreationMode',
   );
   const effectiveMode = mode ?? 'preset';
+
+  // After the user clicks "Load current revision" the alert vanishes — there
+  // is nothing else to load and the form already reflects the prefill.
+  const [hasLoadedCurrent, setHasLoadedCurrent] = useState(false);
+  // Apply the source-revision prefill exactly once on first Custom-mode
+  // render so toggling Preset → Custom later does not re-stomp values the
+  // user has since edited. When the modal opens in Preset mode (per the
+  // user's saved preference), the prefill is deferred until they toggle
+  // to Custom — the mode choice is always the user's, never forced by the
+  // entry point.
+  const [hasAppliedSourcePrefill, setHasAppliedSourcePrefill] = useState(false);
 
   // One-shot carry-over consumed by the Custom body on mount. Set when the
   // user transitions Preset → Custom with a preset selected.
@@ -274,91 +396,6 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   // missing 1 required keyword-only argument: 'mount_destination'`.
   const prefilledMountAliasesRef = useRef<Record<string, string>>({});
 
-  const data = useLazyLoadQuery<DeploymentAddRevisionModalQuery>(
-    graphql`
-      query DeploymentAddRevisionModalQuery($deploymentId: ID!) {
-        deployment(id: $deploymentId) {
-          metadata {
-            resourceGroupName
-          }
-          currentRevision {
-            clusterConfig {
-              mode
-              size
-            }
-            resourceConfig {
-              resourceOpts {
-                entries {
-                  name
-                  value
-                }
-              }
-            }
-            resourceSlots {
-              slotName
-              quantity
-            }
-            extraMounts {
-              vfolderId
-              mountDestination
-            }
-            modelRuntimeConfig {
-              runtimeVariantId
-              runtimeVariant {
-                name
-              }
-              environ {
-                entries {
-                  name
-                  value
-                }
-              }
-            }
-            modelMountConfig {
-              vfolderId
-              mountDestination
-              definitionPath
-            }
-            modelDefinition {
-              models {
-                name
-                modelPath
-                service {
-                  startCommand
-                  port
-                  healthCheck {
-                    path
-                    maxRetries
-                    initialDelay
-                    interval
-                    maxWaitTime
-                  }
-                }
-              }
-            }
-            imageV2 {
-              id
-              identity {
-                canonicalName
-              }
-            }
-          }
-        }
-      }
-    `,
-    { deploymentId },
-    {
-      // Skip the network round-trip until the modal has actually committed
-      // to opening (`deferredOpen === open === true`); `store-and-network`
-      // afterwards so re-opening after a successful `addModelRevision`
-      // mutation pulls a fresh `currentRevision` instead of the cached one.
-      fetchPolicy: deferredOpen && open ? 'store-and-network' : 'store-only',
-    },
-  );
-
-  const deployment = data.deployment;
-  const currentRevision = deployment?.currentRevision;
-
   // The preset "empty state" probe runs as a side-effect fetchQuery rather
   // than part of the main `useLazyLoadQuery`, because reading the count
   // from the lazy query throws a Suspense up to the nearest parent
@@ -406,11 +443,15 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
 
   // The parent deployment's vfolder is the default Model Folder. Users can
   // override it in this mode (in contrast to the VFolder/ModelStore entry
-  // point where the folder is locked in by context).
-  const defaultModelFolderId = currentRevision?.modelMountConfig?.vfolderId
+  // point where the folder is locked in by context). Read off the deployment
+  // fragment's current revision (rather than the prefill source) so the
+  // Preset form's initial folder reflects the deployment, not whichever
+  // source revision was passed in.
+  const defaultModelFolderId = deployment?.currentRevision?.modelMountConfig
+    ?.vfolderId
     ? toGlobalId(
         'VirtualFolderNode',
-        currentRevision?.modelMountConfig?.vfolderId,
+        deployment.currentRevision.modelMountConfig.vfolderId,
       )
     : undefined;
 
@@ -654,14 +695,12 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     setMode('preset');
   };
 
-  // Build the form values that mirror the deployment's current revision and
-  // push them into the Custom antd Form. Called from the "Load current
-  // revision" button on the Alert; the React Compiler handles memoization
-  // under the `'use memo'` directive so a plain function suffices.
-  const prefillFromCurrentRevision = () => {
-    if (!currentRevision) return;
-    const rev = currentRevision;
-
+  // Build the form values that mirror a revision (either the deployment's
+  // current revision via the "Load current revision" button, or the source
+  // revision passed in via `sourceRevisionFrgmt`) and push them into the
+  // Custom antd Form. The React Compiler handles memoization under the
+  // `'use memo'` directive so a plain function suffices.
+  const applyRevisionToCustomForm = (rev: RevisionPrefillData) => {
     const slots = rev.resourceSlots ?? [];
     const cpuSlot = slots.find((s) => s.slotName === 'cpu');
     const memSlot = slots.find((s) => s.slotName === 'mem');
@@ -832,9 +871,23 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     setCustomTransferPrefill(null);
   });
 
+  // Apply the source-revision prefill exactly once on first Custom-mode
+  // mount when the modal was opened with a `sourceRevisionFrgmt`. Tracked
+  // via `hasAppliedSourcePrefill` so a subsequent Preset→Custom toggle
+  // does not stomp the user's edits, and the work runs through
+  // `useEffectEvent` so we read the latest closures without subscribing
+  // the effect to them.
+  const applySourcePrefillOnce = useEffectEvent(() => {
+    if (hasAppliedSourcePrefill) return;
+    if (!sourceRevision) return;
+    applyRevisionToCustomForm(sourceRevision);
+    setHasAppliedSourcePrefill(true);
+  });
+
   useEffect(() => {
     if (effectiveMode === 'custom') {
       consumePresetTransferPrefill();
+      applySourcePrefillOnce();
     } else {
       consumeCustomTransferPrefill();
     }
@@ -1022,7 +1075,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     commitAdd({
       variables: {
         input: {
-          deploymentId: toLocalId(deploymentId) ?? deploymentId,
+          deploymentId: toLocalId(deployment?.id ?? '') ?? deployment?.id ?? '',
           clusterConfig: {
             mode: clusterMode,
             size: values.cluster_size,
@@ -1087,7 +1140,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     commitAdd({
       variables: {
         input: {
-          deploymentId: toLocalId(deploymentId) ?? deploymentId,
+          deploymentId: toLocalId(deployment?.id ?? '') ?? deployment?.id ?? '',
           revisionPresetId: values.revisionPresetId,
           modelMountConfig: {
             vfolderId: toLocalId(values.modelFolderId),
@@ -1171,7 +1224,6 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   return (
     <BAIModal
       open={open}
-      loading={deferredOpen !== open}
       title={
         <BAIFlex
           direction="row"
@@ -1369,7 +1421,13 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
             environ: [],
           })}
         >
-          {currentRevision ? (
+          {/* The "Load current revision" affordance is for the plain
+              "Add revision" entry only — when the modal opens with a
+              source revision (`sourceRevisionFrgmt`) the form is already
+              prefilled, so the alert would be redundant. After the user
+              clicks Load once the alert vanishes too: there is nothing
+              left to load, and the prefill has already been applied. */}
+          {currentRevision && !sourceRevisionFrgmt && !hasLoadedCurrent ? (
             <Alert
               type="info"
               showIcon
@@ -1378,8 +1436,13 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
               action={
                 <Button
                   size="small"
-                  type="primary"
-                  onClick={() => prefillFromCurrentRevision()}
+                  onClick={() => {
+                    applyRevisionToCustomForm(currentRevision);
+                    setHasLoadedCurrent(true);
+                    message.success(
+                      t('deployment.CurrentRevisionConfigurationLoaded'),
+                    );
+                  }}
                 >
                   {t('deployment.LoadCurrentRevision')}
                 </Button>

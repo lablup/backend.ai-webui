@@ -966,6 +966,7 @@
     "Current": "Semasa",
     "CurrentRevision": "Revision Semasa",
     "CurrentRevisionAvailableDescription": "Muatkan konfigurasinya untuk digunakan sebagai titik permulaan Revision baharu.",
+    "CurrentRevisionConfigurationLoaded": "Konfigurasi Revision semasa telah dimuatkan",
     "CustomMode": "Mod Lanjutan",
     "DeleteDeployment": "Padam Penggunaan",
     "Deployment": "Penggunaan",

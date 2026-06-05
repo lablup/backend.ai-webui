@@ -966,6 +966,7 @@
     "Current": "ปัจจุบัน",
     "CurrentRevision": "Revision ปัจจุบัน",
     "CurrentRevisionAvailableDescription": "โหลดการกำหนดค่าเพื่อใช้เป็นจุดเริ่มต้นสำหรับ Revision ใหม่",
+    "CurrentRevisionConfigurationLoaded": "โหลดการกำหนดค่า Revision ปัจจุบันแล้ว",
     "CustomMode": "โหมดขั้นสูง",
     "DeleteDeployment": "ลบการปรับใช้",
     "Deployment": "การปรับใช้",

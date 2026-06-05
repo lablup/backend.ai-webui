@@ -953,6 +953,7 @@
     "Current": "Current",
     "CurrentRevision": "Current Revision",
     "CurrentRevisionAvailableDescription": "Load its configuration to use it as a starting point for the new revision.",
+    "CurrentRevisionConfigurationLoaded": "Current revision configuration loaded",
     "CustomMode": "Advanced Mode",
     "DeleteDeployment": "Delete Deployment",
     "Deployment": "Deployment",

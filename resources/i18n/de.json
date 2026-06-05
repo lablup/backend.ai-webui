@@ -966,6 +966,7 @@
     "Current": "Aktuell",
     "CurrentRevision": "Aktuelle Revision",
     "CurrentRevisionAvailableDescription": "Laden Sie die Konfiguration, um sie als Ausgangspunkt für die neue Revision zu verwenden.",
+    "CurrentRevisionConfigurationLoaded": "Konfiguration der aktuellen Revision wurde geladen",
     "CustomMode": "Erweiterter Modus",
     "DeleteDeployment": "Bereitstellung löschen",
     "Deployment": "Bereitstellung",

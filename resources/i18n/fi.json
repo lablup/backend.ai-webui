@@ -966,6 +966,7 @@
     "Current": "Nykyinen",
     "CurrentRevision": "Nykyinen Revision",
     "CurrentRevisionAvailableDescription": "Lataa sen konfiguraatio uuden Revision lähtökohdaksi.",
+    "CurrentRevisionConfigurationLoaded": "Nykyisen Revision konfiguraatio ladattu",
     "CustomMode": "Edistynyt tila",
     "DeleteDeployment": "Poista käyttöönotto",
     "Deployment": "Käyttöönotto",

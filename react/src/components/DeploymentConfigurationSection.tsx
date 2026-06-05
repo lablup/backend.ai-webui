@@ -513,11 +513,10 @@ const DeploymentConfigurationSection: React.FC<
                 isDeploymentInStoppedCategory(deploymentStatus) ||
                 isProjectMismatch
               }
-              // `action` (not `onClick`) wraps the state update that mounts
-              // `<DeploymentAddRevisionModal>` (which suspends on its Relay
-              // queries) in `startTransition`, so the page stays interactive
-              // instead of falling into its Suspense fallback. The button
-              // itself shows a loading spinner until the modal renders.
+              // `action` (not `onClick`) wraps the open state update in
+              // `startTransition` so the page stays interactive while
+              // the modal mounts. The button shows a loading spinner
+              // until the transition completes.
               action={async () => {
                 onAddRevision();
               }}

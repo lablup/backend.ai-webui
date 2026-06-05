@@ -966,6 +966,7 @@
     "Current": "Hiện tại",
     "CurrentRevision": "Revision Hiện Tại",
     "CurrentRevisionAvailableDescription": "Tải cấu hình của nó để sử dụng làm điểm khởi đầu cho Revision mới.",
+    "CurrentRevisionConfigurationLoaded": "Đã tải cấu hình Revision hiện tại",
     "CustomMode": "Chế độ nâng cao",
     "DeleteDeployment": "Xóa triển khai",
     "Deployment": "Triển khai",

@@ -966,6 +966,7 @@
     "Current": "当前",
     "CurrentRevision": "当前 Revision",
     "CurrentRevisionAvailableDescription": "加载其配置以作为新 Revision 的起点。",
+    "CurrentRevisionConfigurationLoaded": "当前 Revision 配置已加载",
     "CustomMode": "高级模式",
     "DeleteDeployment": "删除部署",
     "Deployment": "部署",

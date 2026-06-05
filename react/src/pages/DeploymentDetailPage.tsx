@@ -118,6 +118,7 @@ const DeploymentDetailPage: React.FC = () => {
                 email
               }
             }
+            ...DeploymentAddRevisionModal_deployment
             ...DeploymentConfigurationSection_deployment
             ...DeploymentReplicasTab_deployment
             ...DeploymentAccessTokensTab_deployment
@@ -279,10 +280,9 @@ const DeploymentDetailPage: React.FC = () => {
               <BAIButton
                 type="primary"
                 icon={<PlusOutlined />}
-                // `action` (not `onClick`) wraps the state update that mounts
-                // `<DeploymentAddRevisionModal>` (which suspends on its Relay
-                // queries) in `startTransition`, so the page stays interactive
-                // instead of falling into its Suspense fallback.
+                // `action` (not `onClick`) wraps the open state update in
+                // `startTransition` so the page stays interactive while
+                // the modal mounts.
                 action={async () => {
                   openAddRevision();
                 }}
@@ -379,22 +379,13 @@ const DeploymentDetailPage: React.FC = () => {
           }
         }}
       />
-      {/* Local Suspense around the lazily-mounted modal so its initial
-          `useLazyLoadQuery` doesn't bubble its suspend up to the page-level
-          Suspense fallback and blank the deployment detail page. The mount
-          itself is triggered from a `BAIButton.action` (transition), but
-          `BAIUnmountAfterClose` defers the mount via `useLayoutEffect` —
-          that state update is no longer inside the transition, so we still
-          need an explicit Suspense boundary here. */}
-      <Suspense fallback={null}>
-        <BAIUnmountAfterClose>
-          <DeploymentAddRevisionModal
-            open={addRevisionOpen}
-            onRequestClose={handleAddRevisionRequestClose}
-            deploymentId={deploymentGlobalId}
-          />
-        </BAIUnmountAfterClose>
-      </Suspense>
+      <BAIUnmountAfterClose>
+        <DeploymentAddRevisionModal
+          open={addRevisionOpen}
+          onRequestClose={handleAddRevisionRequestClose}
+          deploymentFrgmt={deployment}
+        />
+      </BAIUnmountAfterClose>
     </BAIFlex>
   );
 };

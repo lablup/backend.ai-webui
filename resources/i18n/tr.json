@@ -966,6 +966,7 @@
     "Current": "Mevcut",
     "CurrentRevision": "Mevcut Revision",
     "CurrentRevisionAvailableDescription": "Yeni Revision için başlangıç noktası olarak kullanmak üzere konfigürasyonunu yükleyin.",
+    "CurrentRevisionConfigurationLoaded": "Mevcut Revision konfigürasyonu yüklendi",
     "CustomMode": "Gelişmiş Mod",
     "DeleteDeployment": "Dağıtımı Sil",
     "Deployment": "Dağıtım",

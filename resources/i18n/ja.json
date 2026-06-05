@@ -966,6 +966,7 @@
     "Current": "現在",
     "CurrentRevision": "現在の Revision",
     "CurrentRevisionAvailableDescription": "その設定を読み込んで、新しい Revision の開始点として使用できます。",
+    "CurrentRevisionConfigurationLoaded": "現在のリビジョン設定を読み込みました",
     "CustomMode": "高度な設定モード",
     "DeleteDeployment": "デプロイを削除",
     "Deployment": "デプロイ",

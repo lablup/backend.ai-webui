@@ -966,6 +966,7 @@
     "Current": "Actuelle",
     "CurrentRevision": "Revision Actuelle",
     "CurrentRevisionAvailableDescription": "Chargez sa configuration pour l'utiliser comme point de départ de la nouvelle Revision.",
+    "CurrentRevisionConfigurationLoaded": "La configuration de la Revision actuelle a été chargée",
     "CustomMode": "Mode Avancé",
     "DeleteDeployment": "Supprimer le déploiement",
     "Deployment": "Déploiement",

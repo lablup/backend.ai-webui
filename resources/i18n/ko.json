@@ -966,6 +966,7 @@
     "Current": "현재",
     "CurrentRevision": "현재 리비전",
     "CurrentRevisionAvailableDescription": "현재 리비전의 설정을 불러와 새 리비전의 시작점으로 사용하세요.",
+    "CurrentRevisionConfigurationLoaded": "현재 리비전 설정을 불러왔습니다",
     "CustomMode": "고급 모드",
     "DeleteDeployment": "배포 삭제",
     "Deployment": "배포",
