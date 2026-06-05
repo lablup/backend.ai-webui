@@ -848,6 +848,17 @@ export class Client {
     if (this.isManagerVersionCompatibleWith('26.4.4')) {
       this._features['model-deployment-revised-schema'] = true;
     }
+    // BA-6247 / BA-6249 user filters merged after 26.4.4rc6, so they ship in
+    // 26.4.4 (final). Pinned to the rc6 tag so the flag also activates against
+    // the rc6 staging manager (a post-rc6 snapshot reporting the rc6 version).
+    // TODO(FR-3024): simplify to '26.4.4' once rc builds are out of use.
+    if (this.isManagerVersionCompatibleWith('26.4.4rc6')) {
+      this._features['user-v2-extended-filter'] = true;
+      // adminKeypairResourcePoliciesV2 gained the `keypair.userId` nested filter
+      // + the `keypairs` connection in 26.4.4 (FR-3020). Pinned to the rc6 tag
+      // for the same staging-manager reason as above.
+      this._features['keypair-resource-policy-user-filter'] = true;
+    }
     // `createVFolderInProject` (+ `CreateVFolderInScopeInput`) is supported from
     // 26.4.4. On 26.4.3 only `createVfolderV2` exists, which still creates
     // project-scoped folders via the `projectId` field of `CreateVFolderV2Input`.
