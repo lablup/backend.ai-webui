@@ -1,0 +1,6 @@
+{
+  "$comment": "Allowlist for scripts/check-terminology-i18n.mjs. Read-only checker; this file only suppresses known-legitimate findings so a false positive never hard-blocks a valid PR. ignoreValues: exact VALUE strings never flagged by CHECK 1. ignoreKeys: leaf key paths (dotted for resources/i18n, '^'-joined for backend.ai-ui, e.g. 'comp:Foo^Bar') never flagged by CHECK 1. ignoreSegments: final key segments excluded from CHECK 2 divergence reporting. Prefer fixing the string or the termbase over adding entries here.",
+  "ignoreValues": [],
+  "ignoreKeys": ["information.DescLicensee"],
+  "ignoreSegments": []
+}

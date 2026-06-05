@@ -1,6 +1,6 @@
 ---
 name: docs-lint
-description: Run periodic health diagnosis of the Backend.AI WebUI user manual. Invoke when docs-lead requests a fresh report, when the user asks for a docs health check / lint pass, or as part of a triage flow. Detects terminology drift (parses TERMINOLOGY.md "Terms to Avoid"), translation parity gaps (en vs ko/ja/th heading structure), stale screenshot candidates (MD5 collision + i18n key drift), broken cross-refs / image links, and PR coverage gaps (gh pr list against packages/backend.ai-webui-docs/). Writes packages/backend.ai-webui-docs/.agent-output/docs-lint-report.md with a 10-run rolling history — diagnosis only, never modifies docs. Examples - <example>Context, User wants a periodic docs health check. user, 'Run a docs health check' assistant, 'I'll use the docs-lint agent to diagnose terminology, parity, screenshots, and coverage issues.' <commentary>The user wants diagnosis, which is exactly this agent's job.</commentary></example> <example>Context, docs-lead skill is triaging. assistant, 'Let me invoke docs-lint to get a fresh health report before showing you the priority queue.' <commentary>docs-lead delegates the heavy diagnosis pass to this agent.</commentary></example>
+description: Run periodic health diagnosis of the Backend.AI WebUI user manual. Invoke when docs-lead requests a fresh report, when the user asks for a docs health check / lint pass, or as part of a triage flow. Detects terminology drift (reads terminology.json `avoid[]`), translation parity gaps (en vs ko/ja/th heading structure), stale screenshot candidates (MD5 collision + i18n key drift), broken cross-refs / image links, and PR coverage gaps (gh pr list against packages/backend.ai-webui-docs/). Writes packages/backend.ai-webui-docs/.agent-output/docs-lint-report.md with a 10-run rolling history — diagnosis only, never modifies docs. Examples - <example>Context, User wants a periodic docs health check. user, 'Run a docs health check' assistant, 'I'll use the docs-lint agent to diagnose terminology, parity, screenshots, and coverage issues.' <commentary>The user wants diagnosis, which is exactly this agent's job.</commentary></example> <example>Context, docs-lead skill is triaging. assistant, 'Let me invoke docs-lint to get a fresh health report before showing you the priority queue.' <commentary>docs-lead delegates the heavy diagnosis pass to this agent.</commentary></example>
 tools: Glob, Grep, Read, Bash
 model: opus
 color: purple
@@ -12,7 +12,11 @@ You are the docs-lint diagnosis agent for the Backend.AI WebUI user manual. You 
 
 Read these on every run:
 
-- `packages/backend.ai-webui-docs/TERMINOLOGY.md` — the canonical terminology source. The `## Terms to Avoid` section (near the bottom of the file) is the primary input for the terminology check. Find it with `awk '/^## Terms to Avoid/{f=1;next} /^## /{f=0} f' TERMINOLOGY.md` rather than hardcoded line numbers — the file grows. (Do not use a range like `awk '/^## Terms to Avoid/,/^## /'`: because `## Terms to Avoid` is the last `##` section, the range's end-pattern matches its own opening line and the range closes immediately, yielding only the header and zero table rows.)
+- `packages/backend.ai-webui-docs/terminology.json` — the canonical, machine-readable terminology source (single source of truth). Its top-level `avoid[]` array is the primary input for the terminology check. Each entry is an object `{ avoid, useInstead, reason, lang, context, conceptId }` — already one row per forbidden term (so `"key pair"` and `"key-pair"` are two separate entries; no comma-splitting needed). Parenthetical qualifiers live in the `context` field (e.g. `group` has `context: "for project"`, `WSProxy` has `context: "as a UI label"`), not mangled into the term. Parse it with native Node — there is no awk/markdown scraping anymore, and do not re-derive avoid terms from `TERMINOLOGY.md` prose:
+  ```bash
+  node -e 'const t=require("./packages/backend.ai-webui-docs/terminology.json"); for (const a of t.avoid) console.log([a.lang, a.avoid, a.useInstead, a.context ?? "", a.conceptId ?? ""].join("\t"));'
+  ```
+  The `concepts[]` array carries per-language `preferred.{en,ko,ja,th}` for every concept; use it for the per-language preferred/avoid extension described in the terminology-drift diagnostic. `TERMINOLOGY.md` remains a human-readable mirror but is **not** parsed by this agent.
 - `packages/backend.ai-webui-docs/SCREENSHOT-GUIDELINES.md` — naming and capture standards.
 - `packages/backend.ai-webui-docs/src/book.config.yaml` — supported languages and page registry.
 
@@ -62,24 +66,21 @@ Write to `packages/backend.ai-webui-docs/.agent-output/docs-lint-report.md`.
 
 ## Diagnostics
 
-### 1. Terminology drift (English-only in this pass)
+### 1. Terminology drift
 
-1. Parse the `## Terms to Avoid` table in `TERMINOLOGY.md`. Each row gives an `Avoid | Use Instead | Reason` tuple. The avoid cell may contain a comma-separated list ("key pair, key-pair") — split on `,` and trim.
-2. For each avoid term, run a word-boundary grep across `packages/backend.ai-webui-docs/src/en/**/*.md`:
+1. Load the `avoid[]` array from `packages/backend.ai-webui-docs/terminology.json` (see Reference Inputs for the `node -e` one-liner). Each entry is already `{ avoid, useInstead, reason, lang, context, conceptId }` — one row per forbidden term, so there is **no** comma-splitting and **no** markdown/awk scraping. Do not maintain any hardcoded avoid-term supplement in this file; if a term is missing, add it to `terminology.json` instead. The English-language entries (`lang: "en"`) drive the English pass below; the non-English entries, where present, drive the best-effort per-language pass in step 5.
+2. For each `lang: "en"` avoid term, run a word-boundary grep across `packages/backend.ai-webui-docs/src/en/**/*.md`:
    ```bash
    grep -rn -w --include="*.md" -i "<term>" packages/backend.ai-webui-docs/src/en/
    ```
-3. Apply per-term context filters to cut false positives:
-   - `group` — skip lines where `resource group`, `keypair group`, `group folder`, or `project group` is the actual phrase. Only flag bare `group` used in the sense of "project".
-   - `worker node` — skip lines under any H2 or H3 that contains "Model Serving" / "model_serving" (per TERMINOLOGY.md, "worker node" is allowed in model serving context).
-   - `key pair`, `key-pair` — flag unconditionally.
+3. Apply context filters to cut false positives. Drive them off the entry's `context` field plus the `conceptId`, not off hardcoded literals:
+   - `group` (entry `context: "for project"`, `conceptId: project`) — skip lines where `resource group`, `keypair group`, `group folder`, or `project group` is the actual phrase. Only flag bare `group` used in the sense of "project".
+   - `worker node` (`conceptId: agent`) — skip lines under any H2 or H3 that contains "Model Serving" / "model_serving" (the `agent` concept reserves "worker node" for the model-serving context only).
+   - `WSProxy` (entry `context: "as a UI label"`, `conceptId: app-proxy`) — flag user-facing prose, but skip lowercase `wsproxy` appearing as an internal identifier: backticked tokens, dotted config keys (`wsproxy.proxyURL`), API routes, DB columns, and `WSPROXY_V1_VERSION`. Match the canonical-cased `WSProxy` form, not a blanket case-insensitive `wsproxy`.
+   - Any entry whose `context` mentions a "running / start / launch"-style session qualifier (e.g. a `container` or `directory` avoid entry, if present) — only flag when the term is adjacent to "running" / "start" / "launch" and not inside a code block.
    - All other terms — flag unconditionally.
-4. Hardcoded inline-callout supplement (extracted from TERMINOLOGY.md prose; revisit when TERMINOLOGY.md changes — re-derive by grepping `"Do NOT use"` and similar callouts):
-   - "session instance" → "compute session"
-   - "container" (when used to mean session) — context filter: only flag when adjacent to "running" / "start" / "launch" and not inside a code block.
-   - "volume" → "storage folder"
-   - "directory" (when used to mean vfolder) — context filter: same as container.
-5. ko / ja / th drift is **out of scope** for this pass. Add a literal subsection heading `### Non-English (skipped — see roadmap)` in the report so the gap is visible.
+4. Report each hit as `path:line — <avoid> → <useInstead>` grouped by avoid term, annotating with the entry's `reason` where useful.
+5. Non-English (ko / ja / th) is **best-effort**. For each non-`en` `avoid[]` entry (when such entries exist), grep the matching `src/{lang}/**/*.md` tree the same way and, additionally, use `concepts[].preferred.{ko,ja,th}` to spot drift away from the preferred per-language term. Because most `avoid[]` rows are English-only today, treat absence of a non-English row as "nothing to check for that language" rather than a gap. Emit findings under a `### Non-English (best-effort)` subsection; when no non-English avoid/preferred data applies, fall back to the literal heading `### Non-English (skipped — see roadmap)` so the coverage gap stays visible.
 
 ### 2. Translation parity gap
 

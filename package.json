@@ -16,6 +16,8 @@
     "format-fix": "prettier --write 'src/**/*.{js,jsx,ts,tsx,json,css,scss,md}'",
     "format-fix:all": "prettier --write 'src/**/*.{js,jsx,ts,tsx,json,css,scss,md}' 'react/src/**/*.{js,jsx,ts,tsx,json,css,scss,md}'",
     "format-fix:i18n": "prettier --write 'resources/i18n/*.json'",
+    "lint:terminology": "node scripts/check-terminology-i18n.mjs",
+    "lint:terminology:strict": "node scripts/check-terminology-i18n.mjs --strict",
     "test": "vitest run",
     "vitest": "vitest run",
     "vitest:watch": "vitest",
