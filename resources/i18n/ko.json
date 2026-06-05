@@ -937,7 +937,7 @@
     "ActivePoolDescription": "App Proxy를 통해 현재 트래픽을 수신 중인 레플리카입니다.",
     "ActivenessStatus": "활성 상태",
     "AddAccessToken": "액세스 토큰 추가",
-    "AddNewRevisionFromThis": "이 리비전으로 추가",
+    "AddNewRevisionFromThis": "이 리비전 기반으로 리비전 생성",
     "AddRevision": "리비전 추가",
     "AdditionalMounts": "추가 마운트",
     "AnotherDeploymentInProgress": "다른 배포 업데이트가 이미 진행 중입니다. 다시 시도하기 전에 완료될 때까지 기다려 주세요.",

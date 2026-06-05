@@ -937,7 +937,7 @@
     "ActivePoolDescription": "Replikate, die derzeit über App Proxy Datenverkehr empfangen.",
     "ActivenessStatus": "Aktivitätsstatus",
     "AddAccessToken": "Zugriffstoken hinzufügen",
-    "AddNewRevisionFromThis": "Aus dieser Revision hinzufügen",
+    "AddNewRevisionFromThis": "Neue Revision basierend auf dieser",
     "AddRevision": "Revision hinzufügen",
     "AdditionalMounts": "Zusätzliche Einhängepunkte",
     "AnotherDeploymentInProgress": "Ein weiteres Deployment-Update wird bereits durchgeführt. Bitte warten Sie, bis es abgeschlossen ist, bevor Sie es erneut versuchen.",

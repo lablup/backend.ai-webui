@@ -937,7 +937,7 @@
     "ActivePoolDescription": "Реплики, в настоящее время получающие трафик через App Proxy.",
     "ActivenessStatus": "Статус активности",
     "AddAccessToken": "Добавить токен доступа",
-    "AddNewRevisionFromThis": "Добавить из этой Revision",
+    "AddNewRevisionFromThis": "Новая Revision на основе этой",
     "AddRevision": "Добавить Revision",
     "AdditionalMounts": "Дополнительные монтирования",
     "AnotherDeploymentInProgress": "Другое обновление развёртывания уже выполняется. Пожалуйста, дождитесь его завершения перед повторной попыткой.",

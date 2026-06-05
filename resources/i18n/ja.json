@@ -937,7 +937,7 @@
     "ActivePoolDescription": "App Proxy を通じてトラフィックを受信中のレプリカです。",
     "ActivenessStatus": "アクティブ状態",
     "AddAccessToken": "アクセストークンを追加",
-    "AddNewRevisionFromThis": "このリビジョンとして追加",
+    "AddNewRevisionFromThis": "この Revision を基に Revision を作成",
     "AddRevision": "Revision を追加",
     "AdditionalMounts": "追加マウント",
     "AnotherDeploymentInProgress": "別のデプロイ更新が既に進行中です。再試行する前に完了するまでお待ちください。",

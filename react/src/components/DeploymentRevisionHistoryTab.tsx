@@ -14,7 +14,6 @@ import DeploymentAddRevisionModal from './DeploymentAddRevisionModal';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
 import FolderLink from './FolderLink';
 import {
-  CopyOutlined,
   LoadingOutlined,
   MoreOutlined,
   PlayCircleOutlined,
@@ -52,6 +51,7 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
+import { CopyPlusIcon } from 'lucide-react';
 import {
   parseAsInteger,
   parseAsString,
@@ -469,7 +469,7 @@ const DeploymentRevisionHistoryTab: React.FC<
               {
                 key: 'duplicate',
                 title: t('deployment.AddNewRevisionFromThis'),
-                icon: <CopyOutlined />,
+                icon: <CopyPlusIcon size={token.fontSize} />,
                 showInMenu: 'always',
                 disabled: isDeploymentInStoppedCategory(deploymentStatus),
                 onClick: () => {
@@ -664,7 +664,7 @@ const DeploymentRevisionHistoryTab: React.FC<
                       {
                         key: 'duplicate',
                         label: t('deployment.AddNewRevisionFromThis'),
-                        icon: <CopyOutlined />,
+                        icon: <CopyPlusIcon size={token.fontSize} />,
                         disabled:
                           isDeploymentInStoppedCategory(deploymentStatus),
                         onClick: () => {

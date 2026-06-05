@@ -938,7 +938,7 @@
     "ActivePoolDescription": "目前透過 App Proxy 接收流量的副本。",
     "ActivenessStatus": "活躍狀態",
     "AddAccessToken": "新增存取令牌",
-    "AddNewRevisionFromThis": "從此 Revision 新增",
+    "AddNewRevisionFromThis": "基於此新增 Revision",
     "AddRevision": "新增 Revision",
     "AdditionalMounts": "附加掛載",
     "AnotherDeploymentInProgress": "另一個部署更新已在進行中。請等待完成後再重試。",

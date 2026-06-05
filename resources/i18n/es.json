@@ -937,7 +937,7 @@
     "ActivePoolDescription": "Réplicas que actualmente reciben tráfico a través de App Proxy.",
     "ActivenessStatus": "Estado de actividad",
     "AddAccessToken": "Agregar Token de Acceso",
-    "AddNewRevisionFromThis": "Agregar a partir de esta Revisión",
+    "AddNewRevisionFromThis": "Nueva Revision basada en esta",
     "AddRevision": "Agregar Revisión",
     "AdditionalMounts": "Montajes adicionales",
     "AnotherDeploymentInProgress": "Ya hay otra actualización de despliegue en curso. Por favor, espere a que se complete antes de intentarlo de nuevo.",
