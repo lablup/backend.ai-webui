@@ -96,7 +96,18 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
   const { logger } = useBAILogger();
   const baiClient = useSuspendedBackendaiClient();
   // Preset create/update inputs gained many fields in 26.4.4 (imageId, clusterMode,
-  // resourceSlots, etc.). On 26.4.3 those fields are absent; send only the base fields.
+  // resourceSlots, etc.). On 26.4.3 the GraphQL input type does not expose them, so
+  // send only the base fields.
+  //
+  // KNOWN BACKEND LIMITATION (26.4.3): the Strawberry input type
+  // `CreateDeploymentRevisionPresetInput` does NOT expose `imageId`, yet the Pydantic
+  // DTO it maps to declares `image_id` as required. The two layers are out of sync in
+  // the 26.4.3 release, so preset creation cannot succeed from any client on 26.4.3:
+  // sending imageId fails GraphQL validation ("Field imageId is not defined"), and
+  // omitting it fails Pydantic validation ("image_id Field required"). This is the same
+  // class of GQL-vs-DTO mismatch as the createAccessToken bug noted in the PR
+  // description; it was fixed in 26.4.4 (BA-5923 added imageId to the GQL input type).
+  // No client-side workaround exists.
   const isRevisedDeploymentSchema = baiClient.supports(
     'model-deployment-revised-schema',
   );
@@ -239,13 +250,14 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
             revisionHistoryLimit: values.revisionHistoryLimit ?? null,
             // TODO: Add BLUE_GREEN support when the backend implements it.
             deploymentStrategy: { type: 'ROLLING' as const },
-            // imageId/clusterMode/clusterSize became required after the 26.4.3 release;
-            // always send them regardless of schema version.
-            imageId: values.imageId ?? null,
-            clusterMode: values.clusterMode ?? null,
-            clusterSize: values.clusterSize ?? null,
-            // Fields below remain UNRELEASED on the original 26.4.3 release.
+            // The 26.4.3 input type only accepts the base fields above; every
+            // field below was added in the revised schema (26.4.4+). Sending any
+            // of them to a 26.4.3 manager fails GraphQL validation, so gate the
+            // whole block behind the model-deployment-revised-schema capability.
             ...(isRevisedDeploymentSchema && {
+              imageId: values.imageId ?? null,
+              clusterMode: values.clusterMode ?? null,
+              clusterSize: values.clusterSize ?? null,
               description: values.description ?? null,
               startupCommand: values.startupCommand ?? null,
               bootstrapScript: values.bootstrapScript ?? null,
@@ -285,13 +297,14 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
             revisionHistoryLimit: values.revisionHistoryLimit ?? null,
             // TODO: Add BLUE_GREEN support when the backend implements it.
             deploymentStrategy: { type: 'ROLLING' as const },
-            // imageId/clusterMode/clusterSize became required after the 26.4.3 release
-            // in a post-26.4.3 patch; always send them regardless of schema version.
-            imageId: values.imageId,
-            clusterMode: values.clusterMode!,
-            clusterSize: values.clusterSize!,
-            // Fields below remain UNRELEASED on the original 26.4.3 release.
+            // The 26.4.3 input type only accepts the base fields above; every
+            // field below was added in the revised schema (26.4.4+). Sending any
+            // of them to a 26.4.3 manager fails GraphQL validation, so gate the
+            // whole block behind the model-deployment-revised-schema capability.
             ...(isRevisedDeploymentSchema && {
+              imageId: values.imageId,
+              clusterMode: values.clusterMode!,
+              clusterSize: values.clusterSize!,
               description: values.description ?? null,
               startupCommand: values.startupCommand ?? null,
               bootstrapScript: values.bootstrapScript ?? null,

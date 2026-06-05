@@ -92,7 +92,10 @@ const DeploymentDetailPage: React.FC = () => {
   const { deployment: deploymentResult } =
     useLazyLoadQuery<DeploymentDetailPageQuery>(
       graphql`
-        query DeploymentDetailPageQuery($deploymentId: ID!) {
+        query DeploymentDetailPageQuery(
+          $deploymentId: ID!
+          $skipAccessTokens: Boolean!
+        ) {
           # @catch turns a partial-success response (e.g. RBAC denial that
           # comes back as { deployment: null, errors: [...] }) into a
           # Result<T, unknown> we can inspect inline: permission errors
@@ -109,7 +112,12 @@ const DeploymentDetailPage: React.FC = () => {
               openToPublic
               endpointUrl
             }
-            accessTokens @since(version: "26.4.4") {
+            # accessTokens is only available on the revised schema (26.4.4+).
+            # Use Relay-native @skip (not the @since network transform) so the
+            # compiled normalization artifact also omits the field when skipped;
+            # otherwise @catch flags the absent field as an error on 26.4.3 and
+            # the whole deployment Result fails, tripping the error boundary.
+            accessTokens @skip(if: $skipAccessTokens) {
               count
             }
             currentRevision @since(version: "26.4.3") {
@@ -132,6 +140,7 @@ const DeploymentDetailPage: React.FC = () => {
       `,
       {
         deploymentId: deploymentGlobalId,
+        skipAccessTokens: !isRevisedDeploymentSchema,
       },
       {
         fetchKey,
