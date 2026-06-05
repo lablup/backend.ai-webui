@@ -852,14 +852,12 @@ export class Client {
     // options moved into the input; add-revision configs made nullable; new
     // replica status / revisionNumber / resourceSlots-list fields). We only
     // support 26.4.3 (legacy) vs 26.4.4 (revised) — a single flag gates the
-    // whole revised surface rather than branching per intermediate rc. Note:
-    // since the threshold is `26.4.4` (not an rc tag), pre-release rc cores
-    // (26.4.4rcN < 26.4.4 in PEP440) are treated as legacy; the revised path
-    // activates only on the final 26.4.4 release and later.
+    // whole revised surface rather than branching per intermediate rc.
+    // TODO(FR-3026): revert threshold back to '26.4.4' once rc testing is done.
     // `createVFolderInProject` (+ `CreateVFolderInScopeInput`) is supported from
     // 26.4.4. On 26.4.3 only `createVfolderV2` exists, which still creates
     // project-scoped folders via the `projectId` field of `CreateVFolderV2Input`.
-    if (this.isManagerVersionCompatibleWith('26.4.4')) {
+    if (this.isManagerVersionCompatibleWith('26.4.4rc6')) {
       this._features['model-deployment-revised-schema'] = true;
       this._features['create-vfolder-in-project'] = true;
     }
