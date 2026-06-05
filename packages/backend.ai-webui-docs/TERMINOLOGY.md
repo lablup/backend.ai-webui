@@ -4,6 +4,12 @@ Standardized terminology for the Backend.AI WebUI user manual. Use these terms c
 
 > **This file is partially generated.** The term tables in the **Standardized Terms** section below and the **Terms to Avoid** table are generated from `terminology.json` (the single source of truth) by `scripts/generate-terminology.mjs`. Do **not** hand-edit anything between the `<!-- terminology:auto:... -->` markers — edit `terminology.json` and run `pnpm run build:terminology`. All prose outside the markers is human-curated and safe to edit directly.
 
+## Precedence
+
+When sources disagree on a term, precedence is: (1) the live UI i18n label in `resources/i18n/{lang}.json`, (2) `terminology.json`, (3) `DOCUMENTATION-STYLE-GUIDE.md`.
+
+The higher-precedence source wins because the i18n label is what users actually see (ground truth); `terminology.json` is the curated decision; the style guide is the fallback for what neither covers. When they disagree, fix the lower-precedence source to match — or, if the *label itself* is wrong, open an FR to change it. A half-applied rename (label changed but termbase not, or vice versa) silently reverts intent under this rule, so always complete a rename atomically (see [Rename / Deprecation Checklist](#rename--deprecation-checklist)).
+
 ## Standardized Terms
 
 The tables below list the approved term for each concept, per language, grouped by category. `EN`/`KO`/`JA`/`TH` are the preferred terms; `—` means the source does not define that language explicitly (fall back to the English term or the contextual prose under the matching section heading). The prose sections that follow each category (usage notes, "Do NOT use" callouts, spelling rules) provide the human guidance that the table cannot capture.
@@ -175,3 +181,63 @@ Each row lists one forbidden term, its canonical replacement, and the reason. Pa
 | worker node | agent node | Reserve "worker node" for model serving context only |
 
 <!-- terminology:auto:avoid END -->
+
+## Approved Verbs
+
+This table pins **one approved action verb per intent** so docs and UI use the same word for the same operation. Verb choice is **context-dependent**: "remove from a list" is not "delete permanently", and "deactivate an account" is not "purge it". Each row therefore states the **context** in which its approved verb is canonical, plus the near-synonyms to avoid in that context.
+
+The table below is generated from the `verbs` array in `terminology.json`. Edit `terminology.json` and run `pnpm run build:terminology`; do not hand-edit between the markers.
+
+:::warning[Lexical, not behavioral — keep the two axes orthogonal]
+This list governs only **which word** labels an action. It does **not** decide the confirmation UX. Whether an action needs a typed-confirmation modal (`BAIConfirmModalWithInput`) or a one-click `Popconfirm` is decided **per call site** by [`.claude/rules/destructive-confirmation.md`](../../.claude/rules/destructive-confirmation.md), keyed off the action's **reversibility** — never derived from the verb. "Delete" can be reversible (soft-delete with a reachable restore path) or irreversible; the same word can map to either confirmation pattern. The optional **Reversible** column below is documentation only — read the rule, not this column, when choosing the confirmation component.
+:::
+
+<!-- terminology:auto:verbs START -->
+
+| Intent | Approved Verb (EN) | Avoid | Context | Reversible | Deciding FR | Description |
+|---|---|---|---|---|---|---|
+| cancel | Cancel | Abort, Discard | Stop an in-flight or not-yet-committed operation (request, draft, running deployment rollout). | reversible | FR-3052 | Use "Cancel" for stopping an action that has not yet had a permanent effect (a pending request, a model-service request, an unsaved form). Does not destroy persisted data. Maps to i18n `button.Cancel` / `modelService.Cancel`. |
+| delete | Delete | Destroy, Erase, Wipe | Permanently remove a standalone resource the user owns (storage folder, image, token, resource preset). | irreversible | FR-3052 | Use "Delete" for permanent removal of a resource that exists on its own. Maps to i18n `button.Delete`, `data.folders.Delete`, `environment.Delete`. NOTE: lexical only — whether a given Delete needs a typed-confirm modal is decided by destructive-confirmation.md from the action's reversibility, NOT from this word. |
+| hide | Hide | Remove, Delete, Dismiss | Make an item invisible in the UI without deleting it (hide a column, hide a notice, hide a list entry). | reversible | FR-3052 | Use "Hide" for purely cosmetic visibility changes that keep the underlying data intact and can be reversed by un-hiding. Never use "Hide" when data is actually removed. |
+| inactivate | Deactivate | Inactivate, Disable, Suspend | Disable an account/credential/project/role so it can no longer be used, while keeping its data for later reactivation. | reversible | FR-3052 | Approved verb is "Deactivate" (not "Inactivate"): the UI uses "Deactivate" 13x vs "Inactivate" 1x. Maps to i18n `credential.Deactivate`, `project.Deactivate`, `rbac.Deactivate`, `resourceGroup.Deactivate`. The single `usersettings.InactivateTheFollowingUsers` value is the drift this entry pins. Reversible: pair with Activate. |
+| purge | Purge | Delete, Wipe, Destroy | Permanently and irrecoverably erase an already-deactivated account/project/role and all its records. | irreversible | FR-3052 | Use "Purge" for the final, irreversible erase that follows "Deactivate". Distinct from "Delete": Purge implies the entity was first deactivated and now has its records expunged. Maps to i18n `project.Purge`, `project.PurgeProject`, `rbac.PurgeRole`. |
+| remove | Remove | Delete, Unlink | Detach an item from a collection / relationship without destroying the item itself (permission from a role, version from a list, member from a project). | reversible | FR-3052 | Use "Remove" for taking an item out of a list or breaking an association — the underlying entity survives elsewhere. "Remove from list" is NOT "Delete permanently". Maps to i18n `rbac.RemovePermission`, `model.RemoveSelectedVersions`. Reserve "Delete" for destroying the standalone resource. |
+| stop | Stop | Pause, Halt, Terminate | Halt a process that can later be resumed or restarted (a service replica, a pausable job). | reversible | FR-3052 | Use "Stop" only when the workload can be started again afterward. If the resources are released and the session ends, use "Terminate" instead. |
+| terminate | Terminate | Kill, Destroy, End | End a running compute session (interactive / batch / inference) or model-service endpoint. | irreversible | FR-3052 | Use "Terminate" for ending a running session/endpoint and releasing its resources. Maps to i18n `session.Terminate`, `session.TerminateSession`, `session.ForceTerminate`. Do not use "Stop" for this; "Stop" is reserved for pausable workloads. |
+
+<!-- terminology:auto:verbs END -->
+
+### Verb usage notes
+
+- **delete vs remove** — Use **Delete** to destroy a standalone resource the user owns (a storage folder, an image, a token). Use **Remove** to take an item out of a collection or break an association (a permission from a role, a version from a list, a member from a project) where the underlying entity survives elsewhere. When in doubt, ask: *does the entity still exist after the action?* If yes → Remove; if no → Delete.
+- **terminate vs stop** — Use **Terminate** to end a running compute session/endpoint and release its resources (irreversible). Use **Stop** only for a workload that can be started again afterward. Backend.AI sessions are terminated, not stopped.
+- **inactivate → Deactivate** — The approved English verb for the *inactivate* intent is **Deactivate** (the UI uses "Deactivate" overwhelmingly; "Inactivate" appears once and is treated as drift to be fixed). Deactivation is reversible (pair with Activate); the irreversible follow-up is **Purge**.
+- **purge vs delete** — Use **Purge** for the final, irreversible erase of an already-**deactivated** account/project/role and all its records. It is distinct from **Delete** (which targets standalone resources without a prior deactivate step).
+- **cancel** — Use **Cancel** to stop an in-flight or not-yet-committed operation (a pending request, an unsaved form, a running rollout) that has not yet had a permanent effect.
+- **hide** — Use **Hide** only for cosmetic visibility changes (hide a column, a notice, a list entry) that keep the underlying data intact and can be reversed by un-hiding. Never use "Hide" when data is actually removed.
+
+Per-locale approved verb forms are **out of scope for v1**: the destructive-confirmation UX is language-agnostic, so one approved English verb plus normal translation is sufficient. Add other-language `preferred` keys to a `verbs[]` entry only if a specific locale needs a pinned form.
+
+## Governance
+
+### Term Owner of Record
+
+The **docs-lead** flow (`.claude/skills/docs-lead/SKILL.md`) is the term owner of record. Every `terminology.json` mutation — adding a concept, repointing a `preferred` term, adding an `avoid[]` row, deprecating a concept — flows through docs-lead, which assigns the `decidingFR` and runs the rename checklist below. "Owner" here means *editorial accountability*, not a merge gate: a human reviewer still has to approve the change.
+
+### New-Term Gate
+
+A new user-facing noun or verb requires a `terminology.json` entry — carrying a non-null `decidingFR` — **before it ships**. A label cannot appear in `resources/i18n/{lang}.json` as a user-facing term without a corresponding curated decision in the termbase.
+
+Enforcement is **best-effort, not a substitute for review.** `scripts/check-terminology-i18n.mjs` (wired into `scripts/verify.sh` and `pnpm run lint:terminology`) can WARN when an i18n value uses a term that is *forbidden* (an `avoid[]` row) or *unknown* (no matching `concepts[].preferred`), but the checker is heuristic and warn-only — it never blocks a merge and it cannot judge whether a new term is the *right* term. The gate is satisfied by the docs-lead review that lands the `terminology.json` entry, not by a green checker. Treat a checker warning as a prompt to add (or allowlist) the entry, never as the approval itself.
+
+## Rename / Deprecation Checklist
+
+Renaming or deprecating an established term is **atomic**: the termbase, all UI locales, and all doc languages change together, in one Graphite stack. A partial rename leaves the live label and the termbase disagreeing — and because [Precedence](#precedence) says the label wins, a half-done rename silently reverts the decision. Run every step below before submitting.
+
+1. **Deprecate in `terminology.json`.** Set the old concept's `status` to `deprecated`, point `preferred` at the new term (or add the new concept), and add an `avoid[]` row (`avoid` = old term, `useInstead` = new term, plus `reason`, `lang`, and `conceptId`). Set `decidingFR` on the changed concept(s) — the new-term gate requires it.
+2. **Retranslate the UI locales.** Update all 21 files in `resources/i18n/*.json` **and** all 21 in `packages/backend.ai-ui/src/locale/*.json`. Edit `en.json` by hand, then propagate the other 20 with the `fw` i18n-translator (`/fw:i18n`).
+3. **Update the 4 doc languages.** Replace prose occurrences of the old term under `src/{en,ko,ja,th}/`.
+4. **Regenerate the term tables.** Run `pnpm run build:terminology` to refresh the `<!-- terminology:auto:* -->` regions of this file, then `pnpm run check:terminology-md` (confirms the tables match `terminology.json`) and `pnpm run lint:terminology` (confirms no live label still uses the deprecated term).
+5. **Ship as one stack.** With `scripts/verify.sh` clean, submit the whole change as a single Graphite stack (`gt submit --stack`). Do not let any step land in a separate PR ahead of the others — the atomicity is the point.
+
+The App Proxy rename (FR-2841) is the cautionary precedent for skipping this: it landed partly in prose and partly in `avoid[]`, which is exactly the split-state this checklist exists to prevent.

@@ -8,7 +8,7 @@
  * writes, reorders, or reformats any JSON. It is meant to run AFTER prettier /
  * prettier-plugin-sort-json and the i18n merge driver, so it must not fight them.
  *
- * Two independent checks:
+ * Three independent checks:
  *
  *   CHECK 1 (terminology drift, needs the termbase):
  *     Flags i18n VALUES (never keys) that contain a forbidden term from
@@ -27,18 +27,40 @@
  *     check (e.g. near-duplicate values only, or termbase-linked segments) is a
  *     tracked follow-up.
  *
+ *   CHECK 3 (unknown capitalized user-facing noun, needs the termbase) — OFF by
+ *   default; opt in with --check3:
+ *     Surfaces a candidate NEW user-facing term that should probably be
+ *     registered in the termbase. For each ENGLISH i18n VALUE that reads like
+ *     prose (a sentence, not a short label), it mines embedded Title-Case
+ *     multiword phrases ("Resource Preset") and PascalCase product-like tokens
+ *     ("TensorBoard"), then WARNs when the phrase has no matching
+ *     terminology.json concept (preferred.en) or avoid[] term and is not in the
+ *     allowlist. This is inherently heuristic, so it is deliberately CONSERVATIVE:
+ *     it scans ONLY prose values (short UI labels / button microcopy are skipped),
+ *     peels leading imperative verbs and sentence-lead words, reuses
+ *     isInsideCodeContext() to skip identifiers / URLs / interpolation, and is
+ *     compared against the full preferred[] + avoid[] + approved-compound set
+ *     (case-insensitive). It is ALWAYS report-only ("warn"): it NEVER affects the
+ *     exit code, even under --strict, and stays OFF in verify.sh. Tune false
+ *     positives via the allowlist `ignoreNouns` array. The output is a manageable
+ *     short list, not a wall of label noise; broadening it (e.g. scanning the BUI
+ *     locale store too, or non-prose labels) is a tracked follow-up.
+ *
  * Modes:
  *   (default)  WARN  — report findings, exit 0.
  *   --warn           — same as default (explicit).
  *   --strict         — exit non-zero when there are blocking (error-severity)
- *                      CHECK 1 findings. CHECK 2 is always report-only and never
- *                      affects the exit code. Non-English and context-qualified
- *                      terminology findings are WARN-severity (never block),
- *                      because they need human judgement.
+ *                      CHECK 1 findings. CHECK 2 and CHECK 3 are always
+ *                      report-only and never affect the exit code. Non-English
+ *                      and context-qualified terminology findings are
+ *                      WARN-severity (never block), because they need human
+ *                      judgement.
  *
  * Other flags:
  *   --json           Emit machine-readable JSON instead of the text report.
  *   --check2         Enable CHECK 2 (OFF by default — see CHECK 2 note above).
+ *   --check3         Enable CHECK 3 (OFF by default — see CHECK 3 note above).
+ *                    Always report-only; never affects the exit code.
  *   --no-check1      Skip CHECK 1 (terminology drift).
  *   --help           Print usage.
  *
@@ -49,13 +71,17 @@
  *        {
  *          "ignoreValues":   ["exact string value to never flag", ...],
  *          "ignoreKeys":     ["dotted.leaf.key.path", "comp:Foo^Bar", ...],
- *          "ignoreSegments": ["Description", "Tooltip", ...]   // CHECK 2 only
+ *          "ignoreSegments": ["Description", "Tooltip", ...],  // CHECK 2 only
+ *          "ignoreNouns":    ["GitHub", "TensorBoard", ...]    // CHECK 3 only
  *        }
- *      Missing file => empty allowlist (no effect).
+ *      Missing file => empty allowlist (no effect). `ignoreNouns` entries are
+ *      matched case-insensitively against CHECK 3 candidate phrases (whole phrase
+ *      or as a contained multiword sub-phrase); seed it with known proper nouns
+ *      / product names that are not termbase concepts.
  *   2. An inline marker inside a VALUE: appending the literal token
  *      `[[i18n-term-ok]]` anywhere in a string value tells CHECK 1 to skip that
- *      value. (Used only when the canonical termbase genuinely cannot model the
- *      exception — prefer the allowlist file.)
+ *      value. (CHECK 3 honors the same marker.) Used only when the canonical
+ *      termbase genuinely cannot model the exception — prefer the allowlist file.
  *
  * Dependency-free: native Node ESM only. No npm package is imported. The output
  * JSON files (terminology.json, allowlist) are read with fs + JSON.parse — no
@@ -543,6 +569,258 @@ function runCheck2(stores, allow) {
 }
 
 // ---------------------------------------------------------------------------
+// CHECK 3 — unknown capitalized user-facing noun (candidate new term)
+//
+// Heuristic, report-only. For each ENGLISH prose VALUE, mine embedded Title-Case
+// multiword phrases and PascalCase product tokens that are NOT already a termbase
+// concept (preferred.en), NOT an avoid[] term, NOT an approved compound, and NOT
+// allowlisted (ignoreNouns). Emit a WARN suggesting the term be registered.
+//
+// Conservative by construction (see the header CHECK 3 note):
+//   - English only (store.lang === 'en'); the termbase preferred.en is English.
+//   - Prose only: a value must read like a sentence (>= 5 words, >= 3 lowercase
+//     words). Short labels / button microcopy ("Created At", "Start Service")
+//     are NOT mined — they are UI text, not candidate concepts.
+//   - Leading imperative verbs / sentence-lead words are peeled so an
+//     instruction like "Press Enter to confirm" does not surface "Press Enter".
+//   - isInsideCodeContext() skips identifiers / URLs / interpolation / backticks.
+// ---------------------------------------------------------------------------
+
+// Imperative / function verbs that lead UI labels and instructions — when one of
+// these starts a candidate phrase it is an action, not a noun concept.
+const CHECK3_LABEL_VERBS = new Set(
+  (
+    "add edit delete remove create update save cancel close open select choose " +
+    "set get start stop run view show hide upload download import export copy " +
+    "move rename clear reset apply submit confirm press click manage refresh " +
+    "reload restart launch connect disconnect install login logout register " +
+    "sign use change modify configure assign revoke grant deny allow check " +
+    "uncheck skip retry continue finish complete send receive request approve " +
+    "reject accept decline mount unmount attach detach pull push build deploy " +
+    "scale terminate purge restore archive duplicate generate validate verify " +
+    "enable disable provide requires require shutdown imported invalid"
+  ).split(/\s+/),
+);
+
+// Sentence-lead / function words that, capitalized at a sentence start, are not
+// the head of a term (peeled before evaluating a sentence-initial phrase).
+const CHECK3_SENTENCE_LEAD = new Set(
+  (
+    "the a an this that these those there here it you your we our please if when " +
+    "while after before once now then also and or but so to for of in on at by " +
+    "with from into as is are be can will would should could may might must not " +
+    "no yes all none some any each every other another same more less most least new"
+  ).split(/\s+/),
+);
+
+/**
+ * Does the value read like prose (a sentence) rather than a short label? Only
+ * prose values are mined for embedded candidate terms.
+ * @param {string} v
+ */
+function check3LooksLikeProse(v) {
+  const words = v.match(/[A-Za-z][A-Za-z'-]*/g) || [];
+  if (words.length < 5) return false;
+  const lower = words.filter((w) => /^[a-z]/.test(w)).length;
+  return lower >= 3;
+}
+
+/**
+ * Extract candidate phrases from a value:
+ *   - PascalCase single tokens with >= 2 humps (TensorBoard, FastTrack).
+ *   - Runs of >= 2 adjacent Title-Case words ("Resource Preset"), where adjacency
+ *     means separated by exactly one space (so a comma/period breaks the run).
+ * Each candidate carries whether it begins a sentence (so leading verbs / lead
+ * words can be peeled). Matches inside code context are dropped here.
+ * @param {string} value
+ */
+function check3FindCandidates(value) {
+  /** @type {Array<{text:string,start:number,end:number,kind:string,words?:string[],sentenceInitial?:boolean}>} */
+  const cands = [];
+
+  const pascalRe = /\b(?:[A-Z][a-z0-9]+){2,}\b/g;
+  let m;
+  while ((m = pascalRe.exec(value)) !== null) {
+    if (m[0].length === 0) {
+      pascalRe.lastIndex++;
+      continue;
+    }
+    const start = m.index;
+    const end = start + m[0].length;
+    if (isInsideCodeContext(value, start, end)) continue;
+    cands.push({ text: m[0], start, end, kind: "pascal" });
+  }
+
+  const wordRe = /[A-Za-z][A-Za-z'’-]*/g;
+  /** @type {Array<{text:string,start:number,end:number}>} */
+  const words = [];
+  let w;
+  while ((w = wordRe.exec(value)) !== null) {
+    words.push({ text: w[0], start: w.index, end: w.index + w[0].length });
+  }
+  let i = 0;
+  while (i < words.length) {
+    if (/^[A-Z][a-z]/.test(words[i].text)) {
+      let j = i;
+      while (
+        j + 1 < words.length &&
+        /^[A-Z][a-z]/.test(words[j + 1].text) &&
+        words[j + 1].start === words[j].end + 1 // exactly one space between
+      ) {
+        j++;
+      }
+      if (j > i) {
+        const start = words[i].start;
+        const end = words[j].end;
+        if (!isInsideCodeContext(value, start, end)) {
+          const prevChar =
+            start > 0 ? value.slice(0, start).trimEnd().slice(-1) : "";
+          const sentenceInitial = start === 0 || /[.!?:]/.test(prevChar);
+          cands.push({
+            text: value.slice(start, end),
+            start,
+            end,
+            kind: "phrase",
+            words: words.slice(i, j + 1).map((x) => x.text),
+            sentenceInitial,
+          });
+        }
+      }
+      i = j + 1;
+    } else {
+      i++;
+    }
+  }
+  return cands;
+}
+
+/**
+ * Build the set of phrases CHECK 3 treats as "already known" (lowercased): every
+ * termbase preferred.* value and avoid/useInstead term (split on , and /), plus
+ * the approved compounds, plus the allowlist ignoreNouns. A candidate is known
+ * if it equals a known phrase, or if a multiword known phrase contains it / it
+ * contains a multiword known phrase (so "Resource Preset Settings" is covered by
+ * a known "resource preset").
+ * @param {any} termbase
+ * @param {Set<string>} approvedCompounds
+ * @param {Set<string>} ignoreNouns lowercased allowlist nouns
+ */
+function buildCheck3Known(termbase, approvedCompounds, ignoreNouns) {
+  const known = new Set();
+  const add = (s) => {
+    if (typeof s !== "string") return;
+    for (const part of s.split(/[,/]/)) {
+      const norm = part.trim().toLowerCase().replace(/\s+/g, " ");
+      if (norm) known.add(norm);
+    }
+  };
+  if (termbase && Array.isArray(termbase.concepts)) {
+    for (const concept of termbase.concepts) {
+      if (concept && concept.preferred) {
+        for (const v of Object.values(concept.preferred)) add(v);
+      }
+    }
+  }
+  if (termbase && Array.isArray(termbase.avoid)) {
+    for (const row of termbase.avoid) {
+      add(row && row.avoid);
+      add(row && row.useInstead);
+    }
+  }
+  for (const p of approvedCompounds) known.add(p);
+  for (const n of ignoreNouns) known.add(n);
+  return known;
+}
+
+/**
+ * @param {string} phrase
+ * @param {Set<string>} known lowercased known phrases
+ */
+function check3IsKnown(phrase, known) {
+  const low = phrase.toLowerCase();
+  if (known.has(low)) return true;
+  for (const k of known) {
+    if (!k.includes(" ")) continue; // single tokens compared by exact match only
+    if (low.includes(k)) return true;
+    if (k.includes(low) && low.includes(" ")) return true;
+  }
+  return false;
+}
+
+/**
+ * @param {Array<{file:string,label:string,lang:string,leaves:Array<{key:string,segment:string,value:string}>}>} stores
+ * @param {Set<string>} known lowercased known phrases (preferred + avoid + compounds + ignoreNouns)
+ */
+function runCheck3(stores, known) {
+  /** phrase(lowercased) -> finding */
+  /** @type {Map<string, any>} */
+  const byPhrase = new Map();
+
+  for (const store of stores) {
+    // English only: the termbase preferred.en is the comparison key.
+    if (store.lang !== "en") continue;
+    for (const leaf of store.leaves) {
+      const value = leaf.value;
+      if (value.includes(INLINE_OK_MARKER)) continue;
+      if (!check3LooksLikeProse(value)) continue;
+
+      for (const cand of check3FindCandidates(value)) {
+        let text = cand.text;
+        if (cand.kind === "phrase") {
+          const phraseWords = cand.words.slice();
+          if (cand.sentenceInitial) {
+            // Peel leading sentence-lead / imperative words at a sentence start.
+            while (
+              phraseWords.length > 1 &&
+              (CHECK3_SENTENCE_LEAD.has(phraseWords[0].toLowerCase()) ||
+                CHECK3_LABEL_VERBS.has(phraseWords[0].toLowerCase()))
+            ) {
+              phraseWords.shift();
+            }
+          }
+          // An imperative verb still leading the phrase => it is an action label.
+          if (
+            phraseWords.length >= 1 &&
+            CHECK3_LABEL_VERBS.has(phraseWords[0].toLowerCase())
+          ) {
+            continue;
+          }
+          if (phraseWords.length < 2) continue; // need a multiword phrase
+          text = phraseWords.join(" ");
+        }
+        if (check3IsKnown(text, known)) continue;
+
+        const lowKey = text.toLowerCase();
+        let finding = byPhrase.get(lowKey);
+        if (!finding) {
+          finding = {
+            check: "unknown-noun",
+            severity: "report", // always report-only; never affects exit code
+            kind: cand.kind,
+            term: text,
+            occurrences: 0,
+            file: store.file,
+            fileLabel: store.label,
+            lang: store.lang,
+            sampleKey: leaf.key,
+            sampleValue: value,
+          };
+          byPhrase.set(lowKey, finding);
+        }
+        finding.occurrences++;
+      }
+    }
+  }
+
+  const findings = [...byPhrase.values()];
+  // Highest-signal first: most occurrences, then alphabetical for determinism.
+  findings.sort(
+    (a, b) => b.occurrences - a.occurrences || a.term.localeCompare(b.term),
+  );
+  return findings;
+}
+
+// ---------------------------------------------------------------------------
 // Reporting
 // ---------------------------------------------------------------------------
 
@@ -551,7 +829,7 @@ function shorten(s, n = 120) {
   return s.slice(0, n - 1) + "…";
 }
 
-function printTextReport(check1, check2, opts) {
+function printTextReport(check1, check2, check3, opts) {
   const errorCount = check1.filter((f) => f.severity === "error").length;
   const warnCount = check1.filter((f) => f.severity === "warn").length;
 
@@ -638,6 +916,36 @@ function printTextReport(check1, check2, opts) {
     console.log("");
   }
 
+  if (opts.runCheck3) {
+    console.log(
+      c.bold(
+        "CHECK 3 — unknown capitalized user-facing noun (report-only, candidate terms)",
+      ),
+    );
+    if (check3.length === 0) {
+      console.log(c.dim("  no unregistered capitalized nouns found in prose."));
+    } else {
+      for (const f of check3) {
+        const occ = f.occurrences > 1 ? c.dim(` (×${f.occurrences})`) : "";
+        console.log(
+          `  ${c.yellow("warn ")} [${f.fileLabel}/${f.lang}] ${c.cyan(
+            f.term,
+          )}${occ} — no terminology.json entry; add one (with decidingFR) or allowlist it (ignoreNouns)`,
+        );
+        console.log(
+          `        e.g. ${f.sampleKey}: ${shorten(f.sampleValue, 100)}`,
+        );
+      }
+    }
+    console.log("");
+    console.log(
+      c.dim(
+        `  CHECK 3 summary: ${check3.length} candidate noun(s) (report-only; never blocks).`,
+      ),
+    );
+    console.log("");
+  }
+
   console.log(c.bold("=== TERMINOLOGY SUMMARY ==="));
   console.log(
     `  blocking terminology findings: ${errorCount}` +
@@ -645,6 +953,7 @@ function printTextReport(check1, check2, opts) {
   );
   console.log(`  warn-only terminology findings: ${warnCount}`);
   console.log(`  key-divergence findings (report): ${check2.length}`);
+  console.log(`  unknown-noun findings (report): ${check3.length}`);
 }
 
 // ---------------------------------------------------------------------------
@@ -661,6 +970,10 @@ function parseArgs(argv) {
     // e.g. ModifiedAt -> "Modificado en" / "Modificado el"). Opt in with
     // --check2. Refining it into a high-signal check is tracked as a follow-up.
     runCheck2: false,
+    // CHECK 3 (unknown capitalized user-facing noun) is OFF by default: it is a
+    // heuristic candidate-term suggester. Opt in with --check3. It is always
+    // report-only and never affects the exit code (mirrors CHECK 2's gating).
+    runCheck3: false,
     help: false,
     // 0 = unlimited. --summary sets a sane default cap on CHECK 2 output so the
     // verify.sh harness stays readable; the full list is always available via
@@ -704,6 +1017,12 @@ function parseArgs(argv) {
       case "--no-check2":
         opts.runCheck2 = false;
         break;
+      case "--check3":
+        opts.runCheck3 = true;
+        break;
+      case "--no-check3":
+        opts.runCheck3 = false;
+        break;
       case "--no-check1":
         opts.runCheck1 = false;
         break;
@@ -723,12 +1042,13 @@ const USAGE = `check-terminology-i18n.mjs — deterministic i18n terminology che
 Usage:
   node scripts/check-terminology-i18n.mjs [--warn|--strict] [--json] [--summary]
                                           [--limit-check2=N] [--lang=en,ko]
-                                          [--no-check1] [--check2]
+                                          [--no-check1] [--check2] [--check3]
 
 Modes:
   (default) / --warn   Report findings, always exit 0.
   --strict             Exit non-zero when there are blocking (error-severity)
-                       CHECK 1 findings. CHECK 2 is always report-only.
+                       CHECK 1 findings. CHECK 2 and CHECK 3 are always
+                       report-only and never affect the exit code.
 
 Options:
   --summary            Cap CHECK 2 output at the top 20 highest-signal findings
@@ -737,14 +1057,22 @@ Options:
   --lang=en,ko         Restrict scanning to these locale files only.
   --json               Machine-readable output (always full, never capped).
   --check2             Enable CHECK 2 (OFF by default — broad/noisy today).
+  --check3             Enable CHECK 3 (OFF by default — heuristic candidate-term
+                       suggester; English prose only; always report-only).
   --no-check1          Skip CHECK 1 (terminology drift).
 
 CHECK 1  Terminology drift: i18n VALUES (never keys) vs terminology.json avoid[].
 CHECK 2  Key -> two-values divergence within each file (no termbase needed).
          OFF by default; enable with --check2. Currently low signal-to-noise.
+CHECK 3  Unknown capitalized user-facing noun: a Title-Case multiword phrase or
+         PascalCase product token in an English prose i18n VALUE with no matching
+         terminology.json concept / avoid term — a candidate to register in the
+         termbase. OFF by default; enable with --check3. WARN/report-only.
 
 Allowlist: scripts/terminology-i18n.allowlist.json (optional)
-Inline marker: append ${INLINE_OK_MARKER} to a value to skip it in CHECK 1.
+  ignoreNouns: phrases CHECK 3 must never flag (proper nouns, product names).
+Inline marker: append ${INLINE_OK_MARKER} to a value to skip it in CHECK 1
+  (CHECK 3 honors the same marker).
 `;
 
 function main() {
@@ -783,6 +1111,13 @@ function main() {
     ignoreSegments: new Set(
       Array.isArray(allowRaw.ignoreSegments) ? allowRaw.ignoreSegments : [],
     ),
+    // CHECK 3 only: lowercased phrases never flagged as candidate nouns.
+    ignoreNouns: new Set(
+      (Array.isArray(allowRaw.ignoreNouns) ? allowRaw.ignoreNouns : [])
+        .filter((s) => typeof s === "string")
+        .map((s) => s.trim().toLowerCase().replace(/\s+/g, " "))
+        .filter(Boolean),
+    ),
   };
 
   // Build the flat list of stores (one per locale file), collecting leaves.
@@ -811,6 +1146,15 @@ function main() {
     ? runCheck1(stores, avoidRows, allow, approvedCompounds)
     : [];
   const check2 = opts.runCheck2 ? runCheck2(stores, allow) : [];
+  // CHECK 3 needs the termbase (preferred.en) to know what is already "known".
+  // If the termbase failed to load, skip CHECK 3 rather than flag everything.
+  const check3 =
+    opts.runCheck3 && termbase
+      ? runCheck3(
+          stores,
+          buildCheck3Known(termbase, approvedCompounds, allow.ignoreNouns),
+        )
+      : [];
 
   if (opts.json) {
     const errorCount = check1.filter((f) => f.severity === "error").length;
@@ -823,20 +1167,22 @@ function main() {
             blocking: errorCount,
             warn: warnCount,
             keyDivergence: check2.length,
+            unknownNoun: check3.length,
           },
           check1,
           check2,
+          check3,
         },
         null,
         2,
       ) + "\n",
     );
   } else {
-    printTextReport(check1, check2, opts);
+    printTextReport(check1, check2, check3, opts);
   }
 
   const blocking = check1.filter((f) => f.severity === "error").length;
-  // CHECK 2 is always report-only and NEVER affects the exit code.
+  // CHECK 2 and CHECK 3 are always report-only and NEVER affect the exit code.
   if (opts.strict && blocking > 0) return 1;
   return 0;
 }
