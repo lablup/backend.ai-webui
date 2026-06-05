@@ -68,6 +68,8 @@ export interface BAINameActionCellProps {
   showActions?: 'hover' | 'always';
   /** Minimum number of action buttons to keep visible before overflow. Default: 0 */
   minVisibleActions?: number;
+  /** Disable the overflow More (…) button. Individual menu items remain visible. */
+  moreMenuDisabled?: boolean;
   /** Show a copy-to-clipboard icon on hover next to the title text */
   copyable?: boolean;
   style?: React.CSSProperties;
@@ -162,6 +164,7 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
   actions,
   showActions = 'hover',
   minVisibleActions = 0,
+  moreMenuDisabled,
   copyable,
   style,
   className,
@@ -428,6 +431,7 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
                 size="small"
                 icon={<MoreOutlined />}
                 aria-label="More actions"
+                disabled={moreMenuDisabled}
               />
             </Dropdown>
           )}

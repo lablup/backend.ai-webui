@@ -19,7 +19,6 @@ import {
   BAIText,
   filterOutEmpty,
   filterOutNullAndUndefined,
-  toLocalId,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import React from 'react';
@@ -202,6 +201,7 @@ const DeploymentRevisionDetail: React.FC<{
       : {
           key: 'revision-number',
           label: t('deployment.RevisionNumber'),
+          span: screens.md ? 2 : 1,
           children:
             revision.revisionNumber != null ? (
               <BAIText>{`#${revision.revisionNumber}`}</BAIText>
@@ -212,9 +212,10 @@ const DeploymentRevisionDetail: React.FC<{
     !mergeRevisionInfo && {
       key: 'revision-id',
       label: t('modelService.RevisionID'),
+      span: screens.md ? 2 : 1,
       children: revision.id ? (
         <BAIFlex gap="xs" align="center">
-          <BAIText copyable>{toLocalId(revision.id)}</BAIText>
+          <BAIId globalId={revision.id} style={{ maxWidth: '100%' }} />
           {status === 'current' && (
             <BAITag color="success">{t('deployment.Current')}</BAITag>
           )}

@@ -19,7 +19,15 @@ import {
   MoreOutlined,
   PlayCircleOutlined,
 } from '@ant-design/icons';
-import { App, Dropdown, Popconfirm, Space, theme, Typography } from 'antd';
+import {
+  App,
+  Dropdown,
+  Modal,
+  Popconfirm,
+  Space,
+  theme,
+  Typography,
+} from 'antd';
 import {
   type BAIColumnType,
   BAIButton,
@@ -50,7 +58,7 @@ import {
   parseAsStringLiteral,
   useQueryStates,
 } from 'nuqs';
-import React, { useState, useTransition } from 'react';
+import React, { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   graphql,
@@ -393,7 +401,7 @@ const DeploymentRevisionHistoryTab: React.FC<
         return (
           <BAINameActionCell
             title={
-              <BAIFlex gap="xs" align="center">
+              <BAIFlex gap="xs" align="center" wrap="nowrap">
                 <Typography.Link
                   onClick={() =>
                     setDrawerRevision({
@@ -431,6 +439,11 @@ const DeploymentRevisionHistoryTab: React.FC<
               </BAIFlex>
             }
             showActions="always"
+            // TODO: "AddNewRevisionFromThis" is currently the only menu item.
+            // The entire More button is disabled when stopped rather than
+            // per-item. When more menu items are added, switch to per-item
+            // disabled and remove moreMenuDisabled.
+            moreMenuDisabled={isDeploymentInStoppedCategory(deploymentStatus)}
             actions={[
               {
                 key: 'deploy',
@@ -458,6 +471,7 @@ const DeploymentRevisionHistoryTab: React.FC<
                 title: t('deployment.AddNewRevisionFromThis'),
                 icon: <CopyOutlined />,
                 showInMenu: 'always',
+                disabled: isDeploymentInStoppedCategory(deploymentStatus),
                 onClick: () => {
                   setSourceRevisionFrgmt(record);
                 },
@@ -651,6 +665,8 @@ const DeploymentRevisionHistoryTab: React.FC<
                         key: 'duplicate',
                         label: t('deployment.AddNewRevisionFromThis'),
                         icon: <CopyOutlined />,
+                        disabled:
+                          isDeploymentInStoppedCategory(deploymentStatus),
                         onClick: () => {
                           // Capture the fragment ref before closing the
                           // drawer so the source survives the drawer unmount.
@@ -662,10 +678,14 @@ const DeploymentRevisionHistoryTab: React.FC<
                     ],
                   }}
                 >
+                  {/* TODO: "AddNewRevisionFromThis" is the only menu item.
+                      Disable the entire button when stopped. When more items
+                      are added, disable per-item instead. */}
                   <BAIButton
                     type="primary"
                     icon={<MoreOutlined />}
                     aria-label={t('button.More')}
+                    disabled={isDeploymentInStoppedCategory(deploymentStatus)}
                   />
                 </Dropdown>
               </Space.Compact>
@@ -730,17 +750,31 @@ const DeploymentRevisionHistoryTab: React.FC<
           },
         }}
       />
-      <BAIUnmountAfterClose>
-        <DeploymentAddRevisionModal
-          open={!!sourceRevisionFrgmt}
-          deploymentFrgmt={deployment}
-          sourceRevisionFrgmt={sourceRevisionFrgmt}
-          onRequestClose={(success) => {
-            setSourceRevisionFrgmt(null);
-            if (success) handleRefresh();
-          }}
-        />
-      </BAIUnmountAfterClose>
+      <Suspense
+        // Render a loading modal shell while the modal's lazy chunks resolve,
+        // so the trigger click is visually acknowledged instead of producing a
+        // momentary no-op.
+        fallback={
+          <Modal
+            open={!!sourceRevisionFrgmt}
+            loading
+            footer={null}
+            onCancel={() => setSourceRevisionFrgmt(null)}
+          />
+        }
+      >
+        <BAIUnmountAfterClose>
+          <DeploymentAddRevisionModal
+            open={!!sourceRevisionFrgmt}
+            deploymentFrgmt={deployment}
+            sourceRevisionFrgmt={sourceRevisionFrgmt}
+            onRequestClose={(success) => {
+              setSourceRevisionFrgmt(null);
+              if (success) handleRefresh();
+            }}
+          />
+        </BAIUnmountAfterClose>
+      </Suspense>
     </>
   );
 };

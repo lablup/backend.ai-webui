@@ -4,18 +4,11 @@
  */
 import { DeploymentAutoScalingTab_deployment$key } from '../__generated__/DeploymentAutoScalingTab_deployment.graphql';
 import { useCurrentUserInfo } from '../hooks/backendai';
-import AutoScalingRuleList, {
-  type AutoScalingRuleListRef,
-} from './AutoScalingRuleList';
-import { PlusOutlined, QuestionCircleOutlined } from '@ant-design/icons';
-import { Button, Skeleton, Tooltip, theme } from 'antd';
-import {
-  BAICard,
-  BAIFetchKeyButton,
-  BAIFlex,
-  isDeploymentInStoppedCategory,
-} from 'backend.ai-ui';
-import React, { Suspense, useRef, useState, useTransition } from 'react';
+import AutoScalingRuleList from './AutoScalingRuleList';
+import { QuestionCircleOutlined } from '@ant-design/icons';
+import { Skeleton, Tooltip, theme } from 'antd';
+import { BAICard, BAIFlex, isDeploymentInStoppedCategory } from 'backend.ai-ui';
+import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
@@ -27,12 +20,10 @@ interface DeploymentAutoScalingTabProps {
  * DeploymentAutoScalingTab — section card on the Deployment detail page that
  * hosts the Auto-Scaling Rules management UI.
  *
- * The card owns the section title, the refresh button, and the primary "Add
- * rules" button — all rendered in the BAICard `extra` slot per project
- * convention. The actual rule list (`AutoScalingRuleList`) still owns the
- * editor modal; we drive it via an imperative `ref` so the trigger can live
- * in the card header while the modal stays co-located with the data it
- * mutates.
+ * The card owns the section title only. Both the refresh button
+ * (`BAIFetchKeyButton`) and the primary "Add rules" button live inside
+ * `AutoScalingRuleList`'s toolbar next to the property filter, so the table
+ * controls stay grouped together (per Jongeun's feedback).
  */
 const DeploymentAutoScalingTab: React.FC<DeploymentAutoScalingTabProps> = ({
   deploymentFrgmt,
@@ -41,10 +32,6 @@ const DeploymentAutoScalingTab: React.FC<DeploymentAutoScalingTabProps> = ({
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const [currentUser] = useCurrentUserInfo();
-  const autoScalingRef = useRef<AutoScalingRuleListRef>(null);
-
-  const [isPendingRefetch, startRefetchTransition] = useTransition();
-  const [fetchKey, setFetchKey] = useState(0);
 
   const deployment = useFragment(
     graphql`
@@ -76,15 +63,6 @@ const DeploymentAutoScalingTab: React.FC<DeploymentAutoScalingTabProps> = ({
   const isOwnedByCurrentUser =
     !creatorEmail || creatorEmail === currentUser.email;
 
-  const isAddDisabled =
-    isDeploymentInStoppedCategory(status) || !isOwnedByCurrentUser;
-
-  const handleRefetch = () => {
-    startRefetchTransition(() => {
-      setFetchKey((k) => k + 1);
-    });
-  };
-
   return (
     <BAICard
       title={
@@ -97,34 +75,13 @@ const DeploymentAutoScalingTab: React.FC<DeploymentAutoScalingTabProps> = ({
           </Tooltip>
         </BAIFlex>
       }
-      extra={
-        <BAIFlex gap="xs" align="center">
-          <BAIFetchKeyButton
-            loading={isPendingRefetch}
-            value=""
-            onChange={handleRefetch}
-          />
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            disabled={isAddDisabled}
-            onClick={() => autoScalingRef.current?.openAddModal()}
-          >
-            {t('modelService.AddRules')}
-          </Button>
-        </BAIFlex>
-      }
       styles={{ body: { paddingTop: 0 } }}
     >
       <Suspense fallback={<Skeleton active />}>
         <AutoScalingRuleList
-          ref={autoScalingRef}
           deploymentId={deployment.id}
           isEndpointDestroying={isDeploymentInStoppedCategory(status)}
           isOwnedByCurrentUser={isOwnedByCurrentUser}
-          fetchKey={String(fetchKey)}
-          hideInlineAddButton
-          hideInlineRefreshButton
         />
       </Suspense>
     </BAICard>

@@ -341,6 +341,13 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   // to Custom — the mode choice is always the user's, never forced by the
   // entry point.
   const [hasAppliedSourcePrefill, setHasAppliedSourcePrefill] = useState(false);
+  // True between "user clicked Load current revision while in Preset mode"
+  // and "the Custom form has mounted and we applied the prefill". setMode
+  // is async, so we can't `setFieldsValue` on the Custom form synchronously
+  // — it isn't mounted yet and antd Form drops calls made before
+  // registration. The mode-transition effect picks this flag up and applies
+  // once Custom is active.
+  const [pendingLoadCurrent, setPendingLoadCurrent] = useState(false);
 
   // One-shot carry-over consumed by the Custom body on mount. Set when the
   // user transitions Preset → Custom with a preset selected.
@@ -884,14 +891,44 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     setHasAppliedSourcePrefill(true);
   });
 
+  // Pair with `handleLoadCurrent` below — when the user clicks "Load
+  // current revision" while in Preset mode, we flip to Custom and queue the
+  // apply via `pendingLoadCurrent`. This effect drains the queue once the
+  // Custom form has actually mounted.
+  const applyPendingLoadCurrent = useEffectEvent(() => {
+    if (!pendingLoadCurrent) return;
+    if (!currentRevision) return;
+    applyRevisionToCustomForm(currentRevision);
+    setPendingLoadCurrent(false);
+    setHasLoadedCurrent(true);
+    message.success(t('deployment.CurrentRevisionConfigurationLoaded'));
+  });
+
   useEffect(() => {
     if (effectiveMode === 'custom') {
       consumePresetTransferPrefill();
       applySourcePrefillOnce();
+      applyPendingLoadCurrent();
     } else {
       consumeCustomTransferPrefill();
     }
   }, [effectiveMode]);
+
+  // "Load current revision" entry point — visible mode-independently as the
+  // alert above the modal forms. In Custom mode we apply immediately; in
+  // Preset mode we flip to Custom first and let the mode-transition effect
+  // drain the apply queue once the Custom form has mounted.
+  const handleLoadCurrent = () => {
+    if (!currentRevision) return;
+    if (effectiveMode === 'custom') {
+      applyRevisionToCustomForm(currentRevision);
+      setHasLoadedCurrent(true);
+      message.success(t('deployment.CurrentRevisionConfigurationLoaded'));
+      return;
+    }
+    setPendingLoadCurrent(true);
+    setMode('custom');
+  };
 
   // Serialize runtime parameter UI values (from RuntimeParameterFormSection)
   // into an environ map — mirrors ServiceLauncherPageContent logic.
@@ -1277,6 +1314,27 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       destroyOnHidden
       {...restModalProps}
     >
+      {/* "Load current revision" affordance — mode-independent, rendered
+          above both the Preset and Custom forms. Only for the plain
+          "Add revision" entry: when the modal opens with a source revision
+          (`sourceRevisionFrgmt`) the form is already prefilled, so the alert
+          would be redundant. After the user clicks Load once the alert
+          vanishes — there is nothing left to load. In Preset mode the click
+          flips to Custom first and applies once the form mounts (see
+          `handleLoadCurrent`). */}
+      {currentRevision && !sourceRevisionFrgmt && !hasLoadedCurrent ? (
+        <Alert
+          type="info"
+          showIcon
+          style={{ marginBottom: token.marginMD }}
+          title={t('deployment.CurrentRevisionAvailableDescription')}
+          action={
+            <Button size="small" onClick={handleLoadCurrent}>
+              {t('deployment.LoadCurrentRevision')}
+            </Button>
+          }
+        />
+      ) : null}
       {effectiveMode === 'preset' ? (
         hasNoPresets ? (
           // Empty-state: per spec, when no preset is available in Preset Mode,
@@ -1421,35 +1479,6 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
             environ: [],
           })}
         >
-          {/* The "Load current revision" affordance is for the plain
-              "Add revision" entry only — when the modal opens with a
-              source revision (`sourceRevisionFrgmt`) the form is already
-              prefilled, so the alert would be redundant. After the user
-              clicks Load once the alert vanishes too: there is nothing
-              left to load, and the prefill has already been applied. */}
-          {currentRevision && !sourceRevisionFrgmt && !hasLoadedCurrent ? (
-            <Alert
-              type="info"
-              showIcon
-              style={{ marginBottom: token.marginMD }}
-              title={t('deployment.CurrentRevisionAvailableDescription')}
-              action={
-                <Button
-                  size="small"
-                  onClick={() => {
-                    applyRevisionToCustomForm(currentRevision);
-                    setHasLoadedCurrent(true);
-                    message.success(
-                      t('deployment.CurrentRevisionConfigurationLoaded'),
-                    );
-                  }}
-                >
-                  {t('deployment.LoadCurrentRevision')}
-                </Button>
-              }
-            />
-          ) : null}
-
           <SectionHeader>{t('deployment.step.ModelAndRuntime')}</SectionHeader>
           <Form.Item
             label={t('deployment.ModelFolder')}
