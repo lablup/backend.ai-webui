@@ -139,6 +139,12 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
 
   const formRef = useRef<FormInstance>(null);
   const baiClient = useSuspendedBackendaiClient();
+  // `createVFolderInProject` (the dedicated project-scoped mutation) only exists
+  // on 26.4.4rc1+. On 26.4.3 it is absent, so project folders are created through
+  // `createVfolderV2` by passing `projectId` in `CreateVFolderV2Input` instead.
+  const supportsCreateVFolderInProject = baiClient.supports(
+    'create-vfolder-in-project',
+  );
   const effectiveAdminRole = useEffectiveAdminRole();
   const currentProject = useCurrentProjectValue();
 
@@ -286,7 +292,8 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
 
     let vfolderResults: FolderCreationResponse | undefined;
     try {
-      if (isProjectFolder) {
+      if (isProjectFolder && supportsCreateVFolderInProject) {
+        // 26.4.4rc1+: dedicated project-scoped mutation with enum-typed input.
         vfolderResults = await commitCreateInProjectMutation({
           projectId: values.group ?? '',
           input: {
@@ -297,13 +304,15 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
           },
         }).then((res) => res?.createVFolderInProject?.vfolder);
       } else {
+        // User folders, and project folders on 26.4.3 (no createVFolderInProject):
+        // `createVfolderV2` scopes the folder to a project via the `projectId`
+        // input field and keeps the lowercase legacy enum strings.
         vfolderResults = await commitCreateMutation({
           input: {
             ...baseInput,
-            // `CreateVFolderV2Input` keeps the lowercase legacy strings.
             usageMode: legacyUsageMode,
             permission: values.permission,
-            projectId: null,
+            projectId: isProjectFolder ? (values.group ?? null) : null,
           },
         }).then((res) => res?.createVfolderV2?.vfolder);
       }
@@ -444,7 +453,13 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
               <Radio
                 value={'automount'}
                 data-testid="automount-usage-mode"
-                disabled={folderType === 'project'}
+                // antd lets an individual Radio's `disabled` override the parent
+                // Radio.Group's `disabled`. When the group is locked
+                // (`isFolderTypeLocked`, i.e. model_project), a falsy value here
+                // would re-enable only automount and leave general/model disabled,
+                // making automount the sole selectable option. Keep automount
+                // disabled whenever the group is locked or the type is project.
+                disabled={isFolderTypeLocked || folderType === 'project'}
               >
                 <BAIFlex gap="xxs">
                   {t('data.AutoMount')}

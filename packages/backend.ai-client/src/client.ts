@@ -848,6 +848,14 @@ export class Client {
     if (this.isManagerVersionCompatibleWith('26.4.4')) {
       this._features['model-deployment-revised-schema'] = true;
     }
+    // `createVFolderInProject` (+ `CreateVFolderInScopeInput`) landed in 26.4.4rc1
+    // (#11xxx). On 26.4.3 only `createVfolderV2` exists, which still creates
+    // project-scoped folders via the `projectId` field of `CreateVFolderV2Input`.
+    // Gate at the rc tag (rc1) so rc cores that already ship the dedicated mutation
+    // use it; older cores fall back to `createVfolderV2`.
+    if (this.isManagerVersionCompatibleWith('26.4.4rc1')) {
+      this._features['create-vfolder-in-project'] = true;
+    }
   }
 
   /**
