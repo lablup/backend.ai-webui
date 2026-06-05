@@ -18,15 +18,7 @@ import {
   MoreOutlined,
   PlayCircleOutlined,
 } from '@ant-design/icons';
-import {
-  App,
-  Dropdown,
-  Modal,
-  Popconfirm,
-  Space,
-  theme,
-  Typography,
-} from 'antd';
+import { App, Dropdown, Popconfirm, Space, theme, Typography } from 'antd';
 import {
   type BAIColumnType,
   BAIButton,
@@ -750,19 +742,13 @@ const DeploymentRevisionHistoryTab: React.FC<
           },
         }}
       />
-      <Suspense
-        // Render a loading modal shell while the modal's lazy chunks resolve,
-        // so the trigger click is visually acknowledged instead of producing a
-        // momentary no-op.
-        fallback={
-          <Modal
-            open={!!sourceRevisionFrgmt}
-            loading
-            footer={null}
-            onCancel={() => setSourceRevisionFrgmt(null)}
-          />
-        }
-      >
+      {/* Local Suspense around the lazily-mounted modal so its lazy form
+          selects (preset / vfolder / runtime variant `useLazyLoadQuery`)
+          don't bubble their suspend up to the page-level boundary and blank
+          the page. `fallback={null}` so the modal simply appears once ready,
+          instead of a loading-modal shell that then swaps for the real modal.
+          Mirrors `DeploymentDetailPage` / `VFolderNodesV2`. */}
+      <Suspense fallback={null}>
         <BAIUnmountAfterClose>
           <DeploymentAddRevisionModal
             open={!!sourceRevisionFrgmt}
