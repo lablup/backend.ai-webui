@@ -145,7 +145,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
           startupCommand
           bootstrapScript
           environ {
-            key
+            key @since(version: "26.4.4")
             value
           }
         }

@@ -491,7 +491,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
               execution {
                 imageId @since(version: "26.4.4")
                 environ {
-                  key
+                  key @since(version: "26.4.4")
                   value
                 }
               }
