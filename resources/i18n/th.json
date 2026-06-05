@@ -937,6 +937,7 @@
     "ActivePoolDescription": "เรพลิกาที่กำลังรับทราฟฟิกผ่าน App Proxy ในขณะนี้",
     "ActivenessStatus": "สถานะความเคลื่อนไหว",
     "AddAccessToken": "เพิ่มโทเค็นการเข้าถึง",
+    "AddNewRevisionFromThis": "เพิ่มจาก Revision นี้",
     "AddRevision": "เพิ่ม Revision",
     "AdditionalMounts": "การเมาท์เพิ่มเติม",
     "AnotherDeploymentInProgress": "การอัปเดตการปรับใช้อื่นกำลังดำเนินอยู่แล้ว โปรดรอให้เสร็จสิ้นก่อนลองอีกครั้ง",

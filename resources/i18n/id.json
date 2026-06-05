@@ -937,6 +937,7 @@
     "ActivePoolDescription": "Replika yang saat ini menerima lalu lintas melalui App Proxy.",
     "ActivenessStatus": "Status Keaktifan",
     "AddAccessToken": "Tambah Token Akses",
+    "AddNewRevisionFromThis": "Tambah dari Revision ini",
     "AddRevision": "Tambah Revision",
     "AdditionalMounts": "Pemasangan Tambahan",
     "AnotherDeploymentInProgress": "Pembaruan deployment lain sedang berlangsung. Harap tunggu hingga selesai sebelum mencoba lagi.",

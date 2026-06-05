@@ -937,6 +937,7 @@
     "ActivePoolDescription": "App Proxy aracılığıyla şu anda trafik alan replikalar.",
     "ActivenessStatus": "Etkinlik Durumu",
     "AddAccessToken": "Erişim Tokenı Ekle",
+    "AddNewRevisionFromThis": "Bu Revision'dan ekle",
     "AddRevision": "Revision Ekle",
     "AdditionalMounts": "Ek Bağlama Noktaları",
     "AnotherDeploymentInProgress": "Başka bir dağıtım güncellemesi zaten devam ediyor. Tekrar denemeden önce tamamlanmasını bekleyin.",

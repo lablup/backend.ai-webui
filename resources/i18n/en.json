@@ -924,6 +924,7 @@
     "ActivePoolDescription": "Replicas currently receiving traffic through App Proxy.",
     "ActivenessStatus": "Activeness Status",
     "AddAccessToken": "Add Access Token",
+    "AddNewRevisionFromThis": "Add new revision from this",
     "AddRevision": "Add Revision",
     "AdditionalMounts": "Additional Mounts",
     "AnotherDeploymentInProgress": "Another deployment update is already in progress. Please wait for it to complete before trying again.",

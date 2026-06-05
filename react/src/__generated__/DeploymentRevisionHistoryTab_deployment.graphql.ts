@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<78409fe23ad9e090c8eeeea959eb93eb>>
+ * @generated SignedSource<<070209edea69829fc5a199ff491eead2>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -16,6 +16,7 @@ export type DeploymentRevisionHistoryTab_deployment$data = {
   readonly metadata: {
     readonly status: DeploymentStatus;
   };
+  readonly " $fragmentSpreads": FragmentRefs<"DeploymentAddRevisionModal_deployment">;
   readonly " $fragmentType": "DeploymentRevisionHistoryTab_deployment";
 };
 export type DeploymentRevisionHistoryTab_deployment$key = {
@@ -53,12 +54,17 @@ const node: ReaderFragment = {
         }
       ],
       "storageKey": null
+    },
+    {
+      "args": null,
+      "kind": "FragmentSpread",
+      "name": "DeploymentAddRevisionModal_deployment"
     }
   ],
   "type": "ModelDeployment",
   "abstractKey": null
 };
 
-(node as any).hash = "aacec4b1b75fc6fab4a24a0ee2952cee";
+(node as any).hash = "6d00d8056ec0eba0eea404e554242adf";
 
 export default node;

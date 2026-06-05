@@ -937,6 +937,7 @@
     "ActivePoolDescription": "App Proxy-р дамжуулан одоогоор трафик хүлээн авч буй репликүүд.",
     "ActivenessStatus": "Идэвхжилтийн төлөв",
     "AddAccessToken": "Хандалтын токен нэмэх",
+    "AddNewRevisionFromThis": "Энэ Revision-оос нэмэх",
     "AddRevision": "Revision нэмэх",
     "AdditionalMounts": "Нэмэлт холболтууд",
     "AnotherDeploymentInProgress": "Өөр байршуулалтын шинэчлэлт аль хэдийн явагдаж байна. Дахин оролдохоос өмнө дуусахыг хүлээнэ үү.",

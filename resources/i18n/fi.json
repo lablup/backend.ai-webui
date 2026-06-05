@@ -937,6 +937,7 @@
     "ActivePoolDescription": "Replikat, jotka vastaanottavat liikennettä App Proxyn kautta.",
     "ActivenessStatus": "Aktiivisuustila",
     "AddAccessToken": "Lisää käyttöoikeustunnus",
+    "AddNewRevisionFromThis": "Lisää tästä Revisionista",
     "AddRevision": "Lisää Revision",
     "AdditionalMounts": "Lisäliitokset",
     "AnotherDeploymentInProgress": "Toinen käyttöönoton päivitys on jo käynnissä. Odota sen valmistumista ennen kuin yrität uudelleen.",
