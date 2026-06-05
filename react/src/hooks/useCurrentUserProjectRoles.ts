@@ -44,7 +44,7 @@ export const useCurrentUserProjectRoles = (): CurrentUserProjectRolesResult => {
   const PROJECT_ADMIN_PAGE = 'PROJECT_ADMIN_PAGE' satisfies RBACElementType;
   const permissionFilter: PermissionNestedFilter = {
     // Cast confined to the one field the generated type can't model.
-    entityType: (baiClient.supports('rbac-element-type-filter')
+    entityType: (baiClient.supports('rbac-filter-wrapper')
       ? { equals: PROJECT_ADMIN_PAGE }
       : PROJECT_ADMIN_PAGE) as PermissionNestedFilter['entityType'],
   };

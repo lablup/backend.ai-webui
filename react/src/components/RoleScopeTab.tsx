@@ -5,6 +5,7 @@
 import { RoleScopeTabFragment$key } from '../__generated__/RoleScopeTabFragment.graphql';
 import { EntityOrderBy } from '../__generated__/RoleScopeTabRefetchQuery.graphql';
 import { convertToOrderBy } from '../helper';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { Tag } from 'antd';
 import {
   BAIColumnType,
@@ -40,6 +41,7 @@ interface RoleScopeTabProps {
 const RoleScopeTab: React.FC<RoleScopeTabProps> = ({ queryRef }) => {
   'use memo';
   const { t } = useTranslation();
+  const baiClient = useSuspendedBackendaiClient();
   const [isPendingRefetch, startRefetchTransition] = useTransition();
 
   const [queryParams, setQueryParams] = useQueryStates(
@@ -190,6 +192,11 @@ const RoleScopeTab: React.FC<RoleScopeTabProps> = ({ queryRef }) => {
               key: 'entityType',
               propertyLabel: t('rbac.ScopeType'),
               type: 'enum',
+              // <= 26.4.3 takes a bare RBACElementType enum here, not the
+              // { equals } wrapper. FR-3031.
+              valueMode: baiClient.supports('rbac-filter-wrapper')
+                ? 'operator'
+                : 'scalar',
               options: [
                 'DOMAIN',
                 'PROJECT',

@@ -827,12 +827,14 @@ export class Client {
     if (this.isManagerVersionCompatibleWith('26.4.3')) {
       this._features['model-deployment-extended-filter'] = true;
     }
-    // entityType filter became the RBACElementTypeFilter wrapper in 26.4.4rc4
-    // (#11442); older cores take the direct enum. FR-3017.
+    // RBAC list filters became their *Filter wrapper shapes in 26.4.4rc4
+    // (#11442): scope/entity type enums -> RBACElementTypeFilter, roleId UUID
+    // -> UUIDFilter, etc. Older cores take the bare scalar/enum. One flag for
+    // the whole migration. FR-3017 (entityType enum), FR-3031 (roleId UUID).
     // TODO(FR-3017): pinned to the rc tag since 26.4.4rcN < 26.4.4 in PEP440;
     // simplify to '26.4.4' once rc builds are out of use.
     if (this.isManagerVersionCompatibleWith('26.4.4rc4')) {
-      this._features['rbac-element-type-filter'] = true;
+      this._features['rbac-filter-wrapper'] = true;
     }
     // BA-6247 / BA-6249 user filters merged after 26.4.4rc6, so they ship in
     // 26.4.4 (final). Pinned to the rc6 tag so the flag also activates against
