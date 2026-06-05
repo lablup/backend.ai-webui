@@ -1,6 +1,26 @@
 {
-  "$comment": "Allowlist for scripts/check-terminology-i18n.mjs. Read-only checker; this file only suppresses known-legitimate findings so a false positive never hard-blocks a valid PR. ignoreValues: exact VALUE strings never flagged by CHECK 1. ignoreKeys: leaf key paths (dotted for resources/i18n, '^'-joined for backend.ai-ui, e.g. 'comp:Foo^Bar') never flagged by CHECK 1. ignoreSegments: final key segments excluded from CHECK 2 divergence reporting. Prefer fixing the string or the termbase over adding entries here.",
+  "$comment": "Allowlist for scripts/check-terminology-i18n.mjs. Read-only checker; this file only suppresses known-legitimate findings so a false positive never hard-blocks a valid PR. ignoreValues: exact VALUE strings never flagged by CHECK 1. ignoreKeys: leaf key paths (dotted for resources/i18n, '^'-joined for backend.ai-ui, e.g. 'comp:Foo^Bar') never flagged by CHECK 1. ignoreSegments: final key segments excluded from CHECK 2 divergence reporting. ignoreNouns: capitalized phrases / PascalCase tokens (proper nouns, product names, third-party tools) that CHECK 3 must never surface as candidate new terms — matched case-insensitively as the whole phrase or a contained multiword sub-phrase. Prefer registering a real term in terminology.json, or fixing the string, over adding entries here.",
   "ignoreValues": [],
   "ignoreKeys": ["information.DescLicensee"],
-  "ignoreSegments": []
+  "ignoreSegments": [],
+  "ignoreNouns": [
+    "Backend.AI",
+    "About Backend",
+    "GitHub",
+    "GitLab",
+    "Hugging Face",
+    "TensorBoard",
+    "TensorFlow",
+    "PyTorch",
+    "Visual Studio Code",
+    "WebSocket",
+    "Ant Design",
+    "Google Cloud",
+    "FastTrack",
+    "Central Processing Unit",
+    "Remote Desktop",
+    "File Explorer",
+    "Internal Server Error",
+    "Service Unavailable"
+  ]
 }
