@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<3cfad70084e55c43c6e2553a6f34aee7>>
+ * @generated SignedSource<<0f608d74562127034caa2731461c5879>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,7 +12,7 @@ import { ReaderFragment } from 'relay-runtime';
 export type UserRoleV2 = "ADMIN" | "MONITOR" | "SUPERADMIN" | "USER" | "%future added value";
 export type UserStatusV2 = "ACTIVE" | "BEFORE_VERIFICATION" | "DELETED" | "INACTIVE" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
-export type BAIUserV2NodesFragment$data = ReadonlyArray<{
+export type BAIAdminUserV2TableFragment$data = ReadonlyArray<{
   readonly basicInfo: {
     readonly description: string | null | undefined;
     readonly email: string;
@@ -20,17 +20,26 @@ export type BAIUserV2NodesFragment$data = ReadonlyArray<{
     readonly integrationName: string | null | undefined;
     readonly username: string | null | undefined;
   };
+  readonly container: {
+    readonly containerGids: ReadonlyArray<number> | null | undefined;
+    readonly containerMainGid: number | null | undefined;
+    readonly containerUid: number | null | undefined;
+  };
   readonly id: string;
   readonly organization: {
     readonly domainName: string | null | undefined;
+    readonly mainAccessKey: string | null | undefined;
     readonly resourcePolicy: string;
     readonly role: UserRoleV2 | null | undefined;
   };
   readonly security: {
+    readonly allowedClientIp: ReadonlyArray<string> | null | undefined;
     readonly sudoSessionEnabled: boolean;
     readonly totpActivated: boolean | null | undefined;
+    readonly totpActivatedAt: string | null | undefined;
   };
   readonly status: {
+    readonly needPasswordChange: boolean | null | undefined;
     readonly status: UserStatusV2;
     readonly statusInfo: string | null | undefined;
   };
@@ -38,11 +47,11 @@ export type BAIUserV2NodesFragment$data = ReadonlyArray<{
     readonly createdAt: string | null | undefined;
     readonly modifiedAt: string | null | undefined;
   };
-  readonly " $fragmentType": "BAIUserV2NodesFragment";
+  readonly " $fragmentType": "BAIAdminUserV2TableFragment";
 } | null | undefined>;
-export type BAIUserV2NodesFragment$key = ReadonlyArray<{
-  readonly " $data"?: BAIUserV2NodesFragment$data;
-  readonly " $fragmentSpreads": FragmentRefs<"BAIUserV2NodesFragment">;
+export type BAIAdminUserV2TableFragment$key = ReadonlyArray<{
+  readonly " $data"?: BAIAdminUserV2TableFragment$data;
+  readonly " $fragmentSpreads": FragmentRefs<"BAIAdminUserV2TableFragment">;
 }>;
 
 const node: ReaderFragment = {
@@ -51,7 +60,7 @@ const node: ReaderFragment = {
   "metadata": {
     "plural": true
   },
-  "name": "BAIUserV2NodesFragment",
+  "name": "BAIAdminUserV2TableFragment",
   "selections": [
     {
       "kind": "RequiredField",
@@ -138,6 +147,13 @@ const node: ReaderFragment = {
           "kind": "ScalarField",
           "name": "resourcePolicy",
           "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "mainAccessKey",
+          "storageKey": null
         }
       ],
       "storageKey": null
@@ -161,7 +177,21 @@ const node: ReaderFragment = {
           "alias": null,
           "args": null,
           "kind": "ScalarField",
+          "name": "totpActivatedAt",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
           "name": "sudoSessionEnabled",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "allowedClientIp",
           "storageKey": null
         }
       ],
@@ -187,6 +217,45 @@ const node: ReaderFragment = {
           "args": null,
           "kind": "ScalarField",
           "name": "statusInfo",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "needPasswordChange",
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "UserV2ContainerSettings",
+      "kind": "LinkedField",
+      "name": "container",
+      "plural": false,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "containerUid",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "containerMainGid",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "containerGids",
           "storageKey": null
         }
       ],
@@ -222,6 +291,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "31c9f004056f4dc241966e06bf5b828b";
+(node as any).hash = "62cfcc65f05626ead1298a3d96ec720c";
 
 export default node;
