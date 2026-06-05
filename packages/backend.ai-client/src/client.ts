@@ -834,20 +834,6 @@ export class Client {
     if (this.isManagerVersionCompatibleWith('26.4.4rc4')) {
       this._features['rbac-element-type-filter'] = true;
     }
-    // Model Deployment GraphQL schema was reworked across the 26.4.4 rc cycle
-    // (resource group moved from the revision's `ResourceConfigInput` to
-    // deployment `metadata`; `desiredReplicaCount` → `replicaCount`;
-    // `runtimeVariant` String → `runtimeVariantId` UUID; `add_model_revision`
-    // options moved into the input; add-revision configs made nullable; new
-    // replica status / revisionNumber / resourceSlots-list fields). We only
-    // support 26.4.3 (legacy) vs 26.4.4 (revised) — a single flag gates the
-    // whole revised surface rather than branching per intermediate rc. Note:
-    // since the threshold is `26.4.4` (not an rc tag), pre-release rc cores
-    // (26.4.4rcN < 26.4.4 in PEP440) are treated as legacy; the revised path
-    // activates only on the final 26.4.4 release and later.
-    if (this.isManagerVersionCompatibleWith('26.4.4')) {
-      this._features['model-deployment-revised-schema'] = true;
-    }
     // BA-6247 / BA-6249 user filters merged after 26.4.4rc6, so they ship in
     // 26.4.4 (final). Pinned to the rc6 tag so the flag also activates against
     // the rc6 staging manager (a post-rc6 snapshot reporting the rc6 version).
@@ -859,10 +845,22 @@ export class Client {
       // for the same staging-manager reason as above.
       this._features['keypair-resource-policy-user-filter'] = true;
     }
+    // Model Deployment GraphQL schema was reworked across the 26.4.4 rc cycle
+    // (resource group moved from the revision's `ResourceConfigInput` to
+    // deployment `metadata`; `desiredReplicaCount` → `replicaCount`;
+    // `runtimeVariant` String → `runtimeVariantId` UUID; `add_model_revision`
+    // options moved into the input; add-revision configs made nullable; new
+    // replica status / revisionNumber / resourceSlots-list fields). We only
+    // support 26.4.3 (legacy) vs 26.4.4 (revised) — a single flag gates the
+    // whole revised surface rather than branching per intermediate rc. Note:
+    // since the threshold is `26.4.4` (not an rc tag), pre-release rc cores
+    // (26.4.4rcN < 26.4.4 in PEP440) are treated as legacy; the revised path
+    // activates only on the final 26.4.4 release and later.
     // `createVFolderInProject` (+ `CreateVFolderInScopeInput`) is supported from
     // 26.4.4. On 26.4.3 only `createVfolderV2` exists, which still creates
     // project-scoped folders via the `projectId` field of `CreateVFolderV2Input`.
     if (this.isManagerVersionCompatibleWith('26.4.4')) {
+      this._features['model-deployment-revised-schema'] = true;
       this._features['create-vfolder-in-project'] = true;
     }
   }
