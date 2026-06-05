@@ -75,51 +75,35 @@ const BAIAvailablePresetSelect: React.FC<BAIAvailablePresetSelectProps> = ({
   // Defer query refetch to prevent flickering during user selection
   const deferredControllableValue = useDeferredValue(controllableValue);
 
-  // Resolved (typed) UUIDs of currently selected presets. Each entry should be
-  // a raw UUID so it can be fed into `DeploymentRevisionPresetFilter.id.in`.
-  const selectedIds = _.compact(
-    _.castArray(deferredControllableValue).map((v) =>
-      v ? convertToUUID(_.toString(v)) : null,
-    ),
-  );
-
-  // Fetch labels for the currently selected preset ids in one round-trip via
-  // the `id: { in: [...] }` filter. `@skip(if: $skip)` collapses the request
-  // when nothing is selected. We do not paginate this query — `first` is
-  // sized exactly to the selection so all labels arrive together.
-  const { deploymentRevisionPresets: selectedPresets } =
+  // The `id: { in: [...] }` filter on `deploymentRevisionPresets` is only
+  // available in UNRELEASED, so we use the singular `deploymentRevisionPreset`
+  // query which works on 26.4.3 and 26.4.4.
+  const firstSelectedId =
+    convertToUUID(_.toString(deferredControllableValue ?? '')) ?? '';
+  const { deploymentRevisionPreset: selectedPreset } =
     useLazyLoadQuery<BAIAvailablePresetSelectValueQuery>(
       graphql`
         query BAIAvailablePresetSelectValueQuery(
-          $ids: [UUID!]
-          $first: Int!
+          $id: UUID!
           $skip: Boolean!
         ) {
-          deploymentRevisionPresets(
-            filter: { id: { in: $ids } }
-            first: $first
-          ) @skip(if: $skip) {
-            edges {
-              node {
-                id
-                name
-                description
-                runtimeVariantId
-                runtimeVariant @since(version: "26.4.3") {
-                  name
-                }
-              }
+          deploymentRevisionPreset(id: $id) @skip(if: $skip) {
+            id
+            name
+            description
+            runtimeVariantId
+            runtimeVariant @since(version: "26.4.3") {
+              name
             }
           }
         }
       `,
       {
-        ids: selectedIds,
-        first: Math.max(selectedIds.length, 1),
-        skip: selectedIds.length === 0,
+        id: firstSelectedId,
+        skip: !firstSelectedId,
       },
       {
-        fetchPolicy: selectedIds.length > 0 ? 'store-or-network' : 'store-only',
+        fetchPolicy: firstSelectedId ? 'store-or-network' : 'store-only',
         fetchKey: deferredFetchKey,
       },
     );
@@ -250,11 +234,9 @@ const BAIAvailablePresetSelect: React.FC<BAIAvailablePresetSelectProps> = ({
   // Reconstruct labeled value objects for `labelInValue`. Falls back to the
   // raw id string when the label hasn't resolved yet.
   const selectedLabelMap: Record<string, string> = {};
-  for (const edge of selectedPresets?.edges ?? []) {
-    const node = edge?.node;
-    if (!node?.id) continue;
-    const uuid = toLocalId(node.id) ?? node.id;
-    if (node.name) selectedLabelMap[uuid] = node.name;
+  if (selectedPreset?.id && selectedPreset.name) {
+    const uuid = toLocalId(selectedPreset.id) ?? selectedPreset.id;
+    selectedLabelMap[uuid] = selectedPreset.name;
   }
   const controllableValueWithLabelArray = !_.isEmpty(deferredControllableValue)
     ? _.castArray(deferredControllableValue).map((value) => {
