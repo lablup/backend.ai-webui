@@ -8,13 +8,11 @@ import { DeploymentAccessTokensTabListQuery } from '../__generated__/DeploymentA
 import { DeploymentAccessTokensTab_deployment$key } from '../__generated__/DeploymentAccessTokensTab_deployment.graphql';
 import {
   DeleteFilled,
-  PlusOutlined,
   QuestionCircleOutlined,
 } from '@ant-design/icons';
 import { useControllableValue } from 'ahooks';
 import {
   App,
-  Button,
   DatePicker,
   Form,
   Select,
@@ -24,6 +22,7 @@ import {
   theme,
 } from 'antd';
 import {
+  BAIButton,
   BAICard,
   BAIDeleteConfirmModal,
   BAIFetchKeyButton,
@@ -39,6 +38,7 @@ import {
   useMutationWithPromise,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
+import { PlusIcon } from 'lucide-react';
 import React, {
   Suspense,
   useDeferredValue,
@@ -170,14 +170,14 @@ const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
                   : ''
               }
             >
-              <Button
+              <BAIButton
                 type="primary"
-                icon={<PlusOutlined />}
+                icon={<PlusIcon />}
                 disabled={isCreateDisabled}
                 onClick={() => setIsCreateModalOpen(true)}
               >
                 {t('deployment.accessToken.Create')}
-              </Button>
+              </BAIButton>
             </Tooltip>
           </BAIFlex>
         }

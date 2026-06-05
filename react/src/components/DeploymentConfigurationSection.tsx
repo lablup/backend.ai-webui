@@ -25,7 +25,6 @@ import {
   HistoryOutlined,
   LoadingOutlined,
   MoreOutlined,
-  PlusOutlined,
 } from '@ant-design/icons';
 import {
   Alert,
@@ -60,6 +59,7 @@ import {
   useInterval,
 } from 'backend.ai-ui';
 import type { BAIDeploymentStatus } from 'backend.ai-ui';
+import { PlusIcon } from 'lucide-react';
 import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -484,7 +484,7 @@ const DeploymentConfigurationSection: React.FC<
           <BAIFlex gap="xs" align="center">
             <BAIButton
               type="primary"
-              icon={<PlusOutlined />}
+              icon={<PlusIcon />}
               disabled={
                 isDeploymentInStoppedCategory(deploymentStatus) ||
                 isProjectMismatch

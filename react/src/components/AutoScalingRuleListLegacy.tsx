@@ -7,9 +7,10 @@ import { AutoScalingRuleListLegacyDeleteMutation } from '../__generated__/AutoSc
 import AutoScalingRuleEditorModalLegacy, {
   COMPARATOR_LABELS,
 } from './AutoScalingRuleEditorModalLegacy';
-import { DeleteFilled, PlusOutlined, SettingOutlined } from '@ant-design/icons';
+import { DeleteFilled, SettingOutlined } from '@ant-design/icons';
 import { App, Button, Tag, Tooltip, Typography, theme } from 'antd';
 import {
+  BAIButton,
   BAICard,
   BAIDeleteConfirmModal,
   BAIFlex,
@@ -18,7 +19,7 @@ import {
 } from 'backend.ai-ui';
 import { default as dayjs } from 'dayjs';
 import * as _ from 'lodash-es';
-import { CircleArrowDownIcon, CircleArrowUpIcon } from 'lucide-react';
+import { CircleArrowDownIcon, CircleArrowUpIcon, PlusIcon } from 'lucide-react';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useMutation } from 'react-relay';
@@ -120,16 +121,16 @@ const AutoScalingRuleListLegacy: React.FC<AutoScalingRuleListLegacyProps> = ({
       <BAICard
         title={t('modelService.AutoScalingRules')}
         extra={
-          <Button
+          <BAIButton
             type="primary"
-            icon={<PlusOutlined />}
+            icon={<PlusIcon />}
             disabled={isEndpointDestroying}
             onClick={() => {
               setIsOpenAutoScalingRuleModal(true);
             }}
           >
             {t('modelService.AddRules')}
-          </Button>
+          </BAIButton>
         }
         styles={{ body: { paddingTop: 0 } }}
       >

@@ -17,7 +17,6 @@ import ContainerRegistryEditorModal from './ContainerRegistryEditorModal';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
 import {
   DeleteFilled,
-  PlusOutlined,
   ReloadOutlined,
   SettingOutlined,
   SyncOutlined,
@@ -28,6 +27,7 @@ import { AnyObject } from 'antd/es/_util/type';
 import type { ColumnsType, ColumnType } from 'antd/es/table';
 import {
   filterOutNullAndUndefined,
+  BAIButton,
   BAITable,
   BAIFlex,
   BAIPropertyFilter,
@@ -38,6 +38,7 @@ import {
   INITIAL_FETCH_KEY,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { PlusIcon } from 'lucide-react';
 import { useState, useDeferredValue, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
@@ -446,15 +447,15 @@ const ContainerRegistryList: React.FC<{
               }}
             />
           </Tooltip>
-          <Button
+          <BAIButton
             type="primary"
-            icon={<PlusOutlined />}
+            icon={<PlusIcon />}
             onClick={() => {
               setIsNewModalOpen(true);
             }}
           >
             {t('registry.AddRegistry')}
-          </Button>
+          </BAIButton>
         </BAIFlex>
       </BAIFlex>
       <BAITable

@@ -19,7 +19,6 @@ import { useBAISettingUserState } from '../hooks/useBAISetting';
 import ProjectResourcePolicySettingModal from './ProjectResourcePolicySettingModal';
 import {
   DeleteFilled,
-  PlusOutlined,
   ReloadOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
@@ -28,6 +27,7 @@ import type { ColumnType } from 'antd/es/table';
 import {
   filterOutEmpty,
   filterOutNullAndUndefined,
+  BAIButton,
   BAITable,
   BAIFlex,
   useUpdatableState,
@@ -36,6 +36,7 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
+import { PlusIcon } from 'lucide-react';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
@@ -235,15 +236,15 @@ const ProjectResourcePolicyList: React.FC<
               }}
             />
           </Tooltip>
-          <Button
+          <BAIButton
             type="primary"
-            icon={<PlusOutlined />}
+            icon={<PlusIcon />}
             onClick={() => {
               setIsCreatingPolicySetting(true);
             }}
           >
             {t('button.Create')}
-          </Button>
+          </BAIButton>
         </BAIFlex>
       </BAIFlex>
       <BAITable

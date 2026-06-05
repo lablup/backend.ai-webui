@@ -33,6 +33,7 @@ import {
 } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
 import {
+  BAIButton,
   BAIUserUnionIcon,
   BAIFlex,
   BAILink,
@@ -645,7 +646,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
         />
         <Space.Compact>
           <Tooltip title={t('data.CreateANewStorageFolder')}>
-            <Button
+            <BAIButton
               icon={<PlusIcon />}
               onClick={() => {
                 setIsOpenCreateModal(true);

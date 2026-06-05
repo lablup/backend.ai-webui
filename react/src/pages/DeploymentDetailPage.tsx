@@ -19,7 +19,7 @@ import {
   getPathFromMenuKey,
   useWebUIMenuItems,
 } from '../hooks/useWebUIMenuItems';
-import { PlusOutlined, QuestionCircleOutlined } from '@ant-design/icons';
+import { QuestionCircleOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import {
   Alert,
@@ -43,7 +43,7 @@ import {
   useFetchKey,
 } from 'backend.ai-ui';
 import type { GraphQLFormattedError } from 'graphql';
-import { BotMessageSquareIcon } from 'lucide-react';
+import { BotMessageSquareIcon, PlusIcon } from 'lucide-react';
 import React, { Suspense, useRef, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -187,7 +187,8 @@ const DeploymentDetailPage: React.FC = () => {
     !deployment.currentRevision && !deployment.deployingRevision;
   const hasEndpointUrl = !!deployment.networkAccess.endpointUrl;
   const hasAccessTokens = (deployment.accessTokens?.count ?? 0) > 0;
-  const isDeploymentDestroying = isDeploymentInStoppedCategory(deploymentStatus);
+  const isDeploymentDestroying =
+    isDeploymentInStoppedCategory(deploymentStatus);
   // The private-deployment alert prompts the user to create a token so the
   // endpoint is actually reachable. Suppress it when the endpoint has not
   // been issued yet (creating a token would be premature) or when the user
@@ -279,7 +280,7 @@ const DeploymentDetailPage: React.FC = () => {
             action={
               <BAIButton
                 type="primary"
-                icon={<PlusOutlined />}
+                icon={<PlusIcon />}
                 // `action` (not `onClick`) wraps the open state update in
                 // `startTransition` so the page stays interactive while
                 // the modal mounts.
@@ -300,7 +301,7 @@ const DeploymentDetailPage: React.FC = () => {
           action={
             <BAIButton
               type="primary"
-              icon={<PlusOutlined />}
+              icon={<PlusIcon />}
               // `action` (not `onClick`) defers the mount in a transition
               // so the page stays interactive.
               action={async () => {

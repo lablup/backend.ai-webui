@@ -13,7 +13,7 @@ import {
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useCSVExport } from '../hooks/useCSVExport';
-import { DeleteFilled, PlusOutlined, SettingOutlined } from '@ant-design/icons';
+import { DeleteFilled, SettingOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import { App, theme, Tooltip } from 'antd';
 import {
@@ -39,7 +39,7 @@ import {
   useUpdatableState,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { BanIcon, UndoIcon } from 'lucide-react';
+import { BanIcon, PlusIcon, UndoIcon } from 'lucide-react';
 import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -390,7 +390,7 @@ const ProjectPage = () => {
             />
             <BAIButton
               type="primary"
-              icon={<PlusOutlined />}
+              icon={<PlusIcon />}
               onClick={toggleSettingModal}
             >
               {t('project.CreateProject')}

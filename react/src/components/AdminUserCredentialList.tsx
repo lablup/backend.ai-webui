@@ -24,6 +24,7 @@ import { App, Button, Tag, Tooltip, Typography, theme } from 'antd';
 import {
   filterOutEmpty,
   filterOutNullAndUndefined,
+  BAIButton,
   BAITable,
   BAIFlex,
   BAIPropertyFilter,
@@ -254,7 +255,7 @@ const AdminUserCredentialList: React.FC = () => {
               icon={<ReloadOutlined />}
             />
           </Tooltip>
-          <Button
+          <BAIButton
             type="primary"
             icon={<PlusIcon />}
             onClick={() => {
@@ -262,7 +263,7 @@ const AdminUserCredentialList: React.FC = () => {
             }}
           >
             {t('credential.AddCredential')}
-          </Button>
+          </BAIButton>
         </BAIFlex>
       </BAIFlex>
       <BAITable<Keypair>

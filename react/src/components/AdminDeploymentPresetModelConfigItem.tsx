@@ -6,7 +6,6 @@ import type { AdminDeploymentPresetFormValue } from './AdminDeploymentPresetForm
 import {
   DownOutlined,
   MinusCircleOutlined,
-  PlusOutlined,
   RightOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
@@ -20,7 +19,8 @@ import {
   theme,
 } from 'antd';
 import type { FormInstance } from 'antd';
-import { BAICard, BAIFlex } from 'backend.ai-ui';
+import { BAIButton, BAICard, BAIFlex } from 'backend.ai-ui';
+import { PlusIcon } from 'lucide-react';
 import React, { useEffect, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -247,16 +247,16 @@ const ModelConfigItem: React.FC<{
                         </BAIFlex>
                       ))}
                       <Form.Item noStyle>
-                        <Button
+                        <BAIButton
                           type="dashed"
                           onClick={() => add({ action: '', args: '{}' })}
-                          icon={<PlusOutlined />}
+                          icon={<PlusIcon />}
                           block
                         >
                           {t(
                             'adminDeploymentPreset.modelDef.AddPreStartAction',
                           )}
-                        </Button>
+                        </BAIButton>
                       </Form.Item>
                     </BAIFlex>
                   )}

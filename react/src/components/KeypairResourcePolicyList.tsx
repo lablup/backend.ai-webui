@@ -18,7 +18,6 @@ import KeypairResourcePolicySettingModal from './KeypairResourcePolicySettingMod
 import {
   DeleteFilled,
   InfoCircleOutlined,
-  PlusOutlined,
   ReloadOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
@@ -28,6 +27,7 @@ import type { ColumnsType, ColumnType } from 'antd/es/table';
 import {
   useUpdatableState,
   filterOutEmpty,
+  BAIButton,
   BAITable,
   BAIFlex,
   BAIAllowedVfolderHostsWithPermission,
@@ -36,6 +36,7 @@ import {
   BAIDeleteConfirmModal,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { PlusIcon } from 'lucide-react';
 import React, { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
@@ -315,15 +316,15 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
               }}
             />
           </Tooltip>
-          <Button
+          <BAIButton
             type="primary"
-            icon={<PlusOutlined />}
+            icon={<PlusIcon />}
             onClick={() => {
               setIsCreatingPolicySetting(true);
             }}
           >
             {t('button.Create')}
-          </Button>
+          </BAIButton>
         </BAIFlex>
       </BAIFlex>
       <BAITable
