@@ -4,6 +4,7 @@
  */
 import { type ErrorWithGraphQL } from '../components/BAIErrorBoundary';
 import FairShareList from '../components/FairShareItems/FairShareList';
+import { buildPath } from '../helper/pathBuilder';
 import { useWebUINavigate } from '../hooks';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Button, Result, Skeleton, theme, Tooltip } from 'antd';
@@ -30,7 +31,7 @@ const SchedulerPage: React.FC<SchedulerPageProps> = () => {
       activeTabKey={curTabKey}
       onTabChange={(key) => {
         webUINavigate({
-          pathname: '/fair-share',
+          pathname: buildPath('admin', 'scheduler'),
           search: new URLSearchParams({
             tab: key,
           }).toString(),

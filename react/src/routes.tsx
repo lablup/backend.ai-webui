@@ -11,7 +11,9 @@ import ErrorBoundaryWithNullFallback from './components/ErrorBoundaryWithNullFal
 import FlexActivityIndicator from './components/FlexActivityIndicator';
 import LocationStateBreadCrumb from './components/LocationStateBreadCrumb';
 import LoginView from './components/LoginView';
+import AdminScopeLayout from './components/MainLayout/AdminScopeLayout';
 import MainLayout from './components/MainLayout/MainLayout';
+import ProjectScopeLayout from './components/MainLayout/ProjectScopeLayout';
 import { STokenLoginBoundary } from './components/STokenLoginBoundary';
 import StorageHostFetchErrorBoundary from './components/StorageHostFetchErrorBoundary';
 import WebUINavigate from './components/WebUINavigate';
@@ -26,6 +28,7 @@ import {
   populateRouterPaths,
 } from './hooks/useWebUIMenuItems';
 import { pluginApiEndpointState } from './hooks/useWebUIPluginState';
+import { AdminRedirect, ProjectScopedRedirect } from './legacyRedirects';
 // High priority to import the component
 import ComputeSessionListPage from './pages/ComputeSessionListPage';
 import Page404 from './pages/Page404';
@@ -36,7 +39,7 @@ import { useSetAtom } from 'jotai';
 import { parseAsString, useQueryStates } from 'nuqs';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
-import { RouteObject, useLocation, useParams } from 'react-router-dom';
+import { RouteObject, useParams } from 'react-router-dom';
 
 const LoginViewLazy = React.lazy(() => import('./components/LoginView'));
 
@@ -140,6 +143,11 @@ const LegacyModelStoreListPage = React.lazy(
   () => import('./pages/LegacyModelStoreListPage'),
 );
 
+const DefaultMenuRedirect: React.FC = () => {
+  const { defaultMenuPath } = useWebUIMenuItems();
+  return <WebUINavigate to={defaultMenuPath} replace />;
+};
+
 /**
  * MainLayout children routes - these are the actual page routes
  */
@@ -147,110 +155,533 @@ export const mainLayoutChildRoutes: RouteObject[] = [
   {
     // Redirect to first available menu when accessing root path
     index: true,
-    Component: () => {
-      const { defaultMenuPath } = useWebUIMenuItems();
-      return <WebUINavigate to={defaultMenuPath} replace />;
-    },
+    Component: DefaultMenuRedirect,
   },
   {
     //for electron dev mode
     path: '/build/electron-app/app/index.html',
-    Component: () => {
-      const { defaultMenuPath } = useWebUIMenuItems();
-      return <WebUINavigate to={defaultMenuPath} replace />;
-    },
+    Component: DefaultMenuRedirect,
   },
   {
     //for electron prod mode
     path: '/app/index.html',
-    Component: () => {
-      const { defaultMenuPath } = useWebUIMenuItems();
-      return <WebUINavigate to={defaultMenuPath} replace />;
-    },
+    Component: DefaultMenuRedirect,
   },
+  // --- New scope-aware subtrees ---
+  // Project scope subtree: `/project/:projectName/*` (general user menu) plus
+  // the nested `admin` segment for project-admin pages. Relative child paths +
+  // `handle.{scope,menuKey}` metadata drive the scope-aware primitives
+  // (`useRouteScope`, `useCurrentMenuKey`).
   {
-    path: '/start',
-    element: (
-      <Suspense fallback={<Skeleton active />}>
-        <StartPage />
-      </Suspense>
-    ),
-    handle: { labelKey: 'webui.menu.Start' },
-  },
-  {
-    path: '/chat/:id?',
-    handle: { labelKey: 'webui.menu.Chat' },
-    Component: () => {
-      useSuspendedBackendaiClient();
-      return (
-        <Suspense fallback={<FlexActivityIndicator spinSize="large" />}>
-          <ChatPage />
-        </Suspense>
-      );
-    },
-  },
-  {
-    path: '/dashboard',
-    handle: { labelKey: 'webui.menu.Dashboard' },
-    Component: () => {
-      return (
-        <BAIErrorBoundary>
-          <Suspense fallback={<Skeleton active />}>
-            <DashboardPage />
-          </Suspense>
-        </BAIErrorBoundary>
-      );
-    },
-  },
-  {
-    // TODO: For the convenience of existing users, this path will be retained. It is scheduled for deletion in the future.
-    path: '/summary',
-    Component: () => {
-      const location = useLocation();
-      return <WebUINavigate to={'/dashboard' + location.search} replace />;
-    },
-    handle: { labelKey: 'webui.menu.Summary' },
-  },
-  {
-    // TODO: For the convenience of existing users, this path will be retained. It is scheduled for deletion in the future.
-    path: '/job',
-    handle: { labelKey: 'webui.menu.Sessions' },
-    Component: () => {
-      const location = useLocation();
-      return <WebUINavigate to={'/session' + location.search} replace />;
-    },
-  },
-  {
-    path: '/session',
-    handle: { labelKey: 'webui.menu.Sessions' },
+    path: 'project/:projectName',
+    element: <ProjectScopeLayout />,
     children: [
       {
-        path: '',
-        Component: () => {
-          useSuspendedBackendaiClient();
-
-          return (
-            <Suspense fallback={<Skeleton active />}>
-              <ComputeSessionListPage />
-              <SessionDetailAndContainerLogOpenerLegacy />
-            </Suspense>
-          );
+        path: 'start',
+        element: (
+          <Suspense fallback={<Skeleton active />}>
+            <StartPage />
+          </Suspense>
+        ),
+        handle: {
+          scope: 'project',
+          menuKey: 'start',
+          labelKey: 'webui.menu.Start',
         },
       },
       {
-        path: '/session/start',
-        // handle: { labelKey: 'session.launcher.StartNewSession' },
+        path: 'dashboard',
         Component: () => {
-          const { token } = theme.useToken();
           return (
-            <BAIFlex
-              direction="column"
-              gap={token.paddingContentVerticalLG}
-              align="stretch"
-              style={{ paddingBottom: token.paddingContentVerticalLG }}
+            <BAIErrorBoundary>
+              <Suspense fallback={<Skeleton active />}>
+                <DashboardPage />
+              </Suspense>
+            </BAIErrorBoundary>
+          );
+        },
+        handle: {
+          scope: 'project',
+          menuKey: 'dashboard',
+          labelKey: 'webui.menu.Dashboard',
+        },
+      },
+      {
+        path: 'session',
+        handle: {
+          scope: 'project',
+          menuKey: 'session',
+          labelKey: 'webui.menu.Sessions',
+        },
+        children: [
+          {
+            index: true,
+            Component: () => {
+              useSuspendedBackendaiClient();
+              return (
+                <Suspense fallback={<Skeleton active />}>
+                  <ComputeSessionListPage />
+                  <SessionDetailAndContainerLogOpenerLegacy />
+                </Suspense>
+              );
+            },
+            handle: { scope: 'project', menuKey: 'session' },
+          },
+          {
+            path: 'start',
+            Component: () => {
+              const { token } = theme.useToken();
+              return (
+                <BAIFlex
+                  direction="column"
+                  gap={token.paddingContentVerticalLG}
+                  align="stretch"
+                  style={{ paddingBottom: token.paddingContentVerticalLG }}
+                >
+                  <LocationStateBreadCrumb />
+                  <StorageHostFetchErrorBoundary>
+                    <Suspense
+                      fallback={
+                        <BAIFlex direction="column" style={{ maxWidth: 700 }}>
+                          <Skeleton active />
+                        </BAIFlex>
+                      }
+                    >
+                      <SessionLauncherPage />
+                    </Suspense>
+                  </StorageHostFetchErrorBoundary>
+                </BAIFlex>
+              );
+            },
+            handle: {
+              scope: 'project',
+              menuKey: 'session',
+              labelKey: 'session.launcher.StartNewSession',
+            },
+          },
+        ],
+      },
+      {
+        path: 'deployments',
+        handle: {
+          scope: 'project',
+          menuKey: 'deployments',
+          labelKey: 'webui.menu.Deployments',
+        },
+        children: [
+          {
+            index: true,
+            Component: () => {
+              const { t } = useTranslation();
+              useSuspendedBackendaiClient();
+              return (
+                <Suspense
+                  fallback={
+                    <BAICard title={t('webui.menu.Deployments')} loading />
+                  }
+                >
+                  <DeploymentListPage />
+                </Suspense>
+              );
+            },
+            handle: { scope: 'project', menuKey: 'deployments' },
+          },
+          {
+            path: ':deploymentId',
+            element: (
+              <Suspense fallback={<Skeleton active />}>
+                <DeploymentDetailPage />
+              </Suspense>
+            ),
+            handle: {
+              scope: 'project',
+              menuKey: 'deployments',
+              labelKey: 'webui.menu.DeploymentDetail',
+            },
+          },
+        ],
+      },
+      {
+        path: 'model-store',
+        Component: () => {
+          const baiClient = useSuspendedBackendaiClient();
+          return baiClient?.supports('model-card-v2') ? (
+            <Suspense fallback={<Skeleton active />}>
+              <ModelStoreListPageV2 />
+            </Suspense>
+          ) : (
+            <Suspense fallback={<Skeleton active />}>
+              <LegacyModelStoreListPage />
+            </Suspense>
+          );
+        },
+        handle: {
+          scope: 'project',
+          menuKey: 'model-store',
+          labelKey: 'data.ModelStore',
+        },
+      },
+      {
+        path: 'chat/:id?',
+        Component: () => {
+          useSuspendedBackendaiClient();
+          return (
+            <Suspense fallback={<FlexActivityIndicator spinSize="large" />}>
+              <ChatPage />
+            </Suspense>
+          );
+        },
+        handle: {
+          scope: 'project',
+          menuKey: 'chat',
+          labelKey: 'webui.menu.Chat',
+        },
+      },
+      {
+        path: 'data',
+        Component: () => {
+          return <VFolderNodeListPage />;
+        },
+        handle: {
+          scope: 'project',
+          menuKey: 'data',
+          labelKey: 'webui.menu.Data',
+        },
+      },
+      {
+        path: 'my-environment',
+        element: (
+          <Suspense fallback={<Skeleton active />}>
+            <MyEnvironmentPage />
+          </Suspense>
+        ),
+        handle: {
+          scope: 'project',
+          menuKey: 'my-environment',
+          labelKey: 'webui.menu.MyEnvironments',
+        },
+      },
+      {
+        path: 'agent-summary',
+        element: (
+          <Suspense fallback={<Skeleton active />}>
+            <AgentSummaryPage />
+          </Suspense>
+        ),
+        handle: {
+          scope: 'project',
+          menuKey: 'agent-summary',
+          labelKey: 'webui.menu.AgentSummary',
+        },
+      },
+      {
+        path: 'statistics',
+        Component: () => {
+          useSuspendedBackendaiClient();
+          return (
+            <Suspense
+              fallback={
+                <BAIFlex direction="column" style={{ maxWidth: 700 }}>
+                  <Skeleton active />
+                </BAIFlex>
+              }
             >
-              <LocationStateBreadCrumb />
-              <StorageHostFetchErrorBoundary>
+              <StatisticsPage />
+            </Suspense>
+          );
+        },
+        handle: {
+          scope: 'project',
+          menuKey: 'statistics',
+          labelKey: 'webui.menu.Statistics',
+        },
+      },
+      {
+        path: 'ai-agent',
+        Component: () => {
+          const [experimentalAIAgents] = useBAISettingUserState(
+            'experimental_ai_agents',
+          );
+          return experimentalAIAgents ? (
+            <Suspense fallback={<Skeleton active />}>
+              <AIAgentPage />
+            </Suspense>
+          ) : (
+            <WebUINavigate to={'/start'} replace />
+          );
+        },
+        handle: {
+          scope: 'project',
+          menuKey: 'ai-agent',
+          labelKey: 'webui.menu.AIAgents',
+        },
+      },
+      // --- project-admin scope: /project/:projectName/admin/* ---
+      {
+        path: 'admin',
+        children: [
+          {
+            path: 'session',
+            Component: () => {
+              useSuspendedBackendaiClient();
+              return (
+                <Suspense fallback={<Skeleton active />}>
+                  <ProjectAdminSessionPage />
+                </Suspense>
+              );
+            },
+            handle: {
+              scope: 'projectAdmin',
+              menuKey: 'project-admin-session',
+              labelKey: 'webui.menu.ProjectSessions',
+            },
+          },
+          {
+            path: 'deployments',
+            handle: {
+              scope: 'projectAdmin',
+              menuKey: 'project-admin-deployments',
+              labelKey: 'webui.menu.ProjectDeployments',
+            },
+            children: [
+              {
+                index: true,
+                Component: () => {
+                  useSuspendedBackendaiClient();
+                  return (
+                    <Suspense fallback={<Skeleton active />}>
+                      <ProjectAdminDeploymentsPage />
+                    </Suspense>
+                  );
+                },
+                handle: {
+                  scope: 'projectAdmin',
+                  menuKey: 'project-admin-deployments',
+                },
+              },
+              {
+                path: ':deploymentId',
+                element: (
+                  <Suspense fallback={<Skeleton active />}>
+                    <DeploymentDetailPage />
+                  </Suspense>
+                ),
+                handle: {
+                  scope: 'projectAdmin',
+                  menuKey: 'project-admin-deployments',
+                  labelKey: 'webui.menu.DeploymentDetail',
+                },
+              },
+            ],
+          },
+          {
+            path: 'data',
+            Component: () => {
+              useSuspendedBackendaiClient();
+              return (
+                <Suspense fallback={<Skeleton active />}>
+                  <ProjectAdminDataPage />
+                </Suspense>
+              );
+            },
+            handle: {
+              scope: 'projectAdmin',
+              menuKey: 'project-data',
+              labelKey: 'webui.menu.Data',
+            },
+          },
+          {
+            path: 'users',
+            Component: () => {
+              useSuspendedBackendaiClient();
+              return (
+                <Suspense fallback={<Skeleton active />}>
+                  <ProjectAdminUsersPage />
+                </Suspense>
+              );
+            },
+            handle: {
+              scope: 'projectAdmin',
+              menuKey: 'project-admin-users',
+              labelKey: 'webui.menu.ProjectMembers',
+            },
+          },
+        ],
+      },
+    ],
+  },
+  // Global admin subtree: `/admin/*`. Segment names follow the confirmed scope
+  // decisions (e.g. `credential -> users`, `admin-session -> session`,
+  // `admin-data -> data`). `handle.menuKey` preserves the legacy menu key so
+  // role gating / sider highlighting keep working unchanged.
+  {
+    path: 'admin',
+    element: <AdminScopeLayout />,
+    children: [
+      {
+        path: 'session',
+        element: (
+          <Suspense fallback={<Skeleton active />}>
+            <AdminSessionPage />
+          </Suspense>
+        ),
+        handle: {
+          scope: 'admin',
+          menuKey: 'admin-session',
+          labelKey: 'webui.menu.Sessions',
+        },
+      },
+      {
+        path: 'deployments',
+        handle: {
+          scope: 'admin',
+          menuKey: 'admin-deployments',
+          labelKey: 'webui.menu.Serving',
+        },
+        children: [
+          {
+            index: true,
+            Component: () => {
+              return (
+                <BAIErrorBoundary>
+                  <Suspense fallback={<BAICard loading />}>
+                    <AdminDeploymentListPage />
+                  </Suspense>
+                </BAIErrorBoundary>
+              );
+            },
+            handle: { scope: 'admin', menuKey: 'admin-deployments' },
+          },
+          {
+            path: 'deployment-presets/new',
+            element: (
+              <BAIErrorBoundary>
+                <Suspense fallback={<Skeleton active />}>
+                  <AdminDeploymentPresetSettingPage />
+                </Suspense>
+              </BAIErrorBoundary>
+            ),
+            handle: {
+              scope: 'admin',
+              menuKey: 'admin-deployments',
+              labelKey: 'adminDeploymentPreset.CreatePreset',
+            },
+          },
+          {
+            path: 'deployment-presets/:presetId/edit',
+            element: (
+              <BAIErrorBoundary>
+                <Suspense fallback={<Skeleton active />}>
+                  <AdminDeploymentPresetSettingPage />
+                </Suspense>
+              </BAIErrorBoundary>
+            ),
+            handle: {
+              scope: 'admin',
+              menuKey: 'admin-deployments',
+              labelKey: 'adminDeploymentPreset.EditPreset',
+            },
+          },
+          {
+            path: ':deploymentId',
+            element: (
+              <Suspense fallback={<Skeleton active />}>
+                <DeploymentDetailPage />
+              </Suspense>
+            ),
+            handle: {
+              scope: 'admin',
+              menuKey: 'admin-deployments',
+              labelKey: 'webui.menu.DeploymentDetail',
+            },
+          },
+        ],
+      },
+      {
+        path: 'data',
+        Component: () => {
+          useSuspendedBackendaiClient();
+          return (
+            <Suspense fallback={<Skeleton active />}>
+              <AdminVFolderNodeListPage />
+            </Suspense>
+          );
+        },
+        handle: {
+          scope: 'admin',
+          menuKey: 'admin-data',
+          labelKey: 'webui.menu.Data',
+        },
+      },
+      {
+        path: 'dashboard',
+        Component: () => {
+          return (
+            <BAIErrorBoundary>
+              <Suspense fallback={<Skeleton active />}>
+                <AdminDashboardPage />
+              </Suspense>
+            </BAIErrorBoundary>
+          );
+        },
+        handle: {
+          scope: 'admin',
+          menuKey: 'admin-dashboard',
+          labelKey: 'webui.menu.AdminDashboard',
+        },
+      },
+      {
+        path: 'users',
+        element: (
+          <Suspense fallback={<Skeleton active />}>
+            <AdminUsersPage />
+          </Suspense>
+        ),
+        handle: {
+          scope: 'admin',
+          menuKey: 'credential',
+          labelKey: 'webui.menu.UserCredentials&Policies',
+        },
+      },
+      {
+        path: 'environment',
+        element: (
+          <Suspense fallback={<Skeleton active />}>
+            <EnvironmentPage />
+          </Suspense>
+        ),
+        handle: {
+          scope: 'admin',
+          menuKey: 'environment',
+          labelKey: 'webui.menu.Environments',
+        },
+      },
+      {
+        path: 'resource-policy',
+        element: (
+          <Suspense fallback={<Skeleton active />}>
+            <ResourcePolicyPage />
+          </Suspense>
+        ),
+        handle: {
+          scope: 'admin',
+          menuKey: 'resource-policy',
+          labelKey: 'webui.menu.ResourcePolicies',
+        },
+      },
+      {
+        path: 'reservoir',
+        handle: {
+          scope: 'admin',
+          menuKey: 'reservoir',
+          labelKey: 'webui.menu.Reservoir',
+        },
+        children: [
+          {
+            index: true,
+            Component: () => {
+              const baiClient = useSuspendedBackendaiClient();
+              return baiClient?.supports('reservoir') ? (
                 <Suspense
                   fallback={
                     <BAIFlex direction="column" style={{ maxWidth: 700 }}>
@@ -258,74 +689,270 @@ export const mainLayoutChildRoutes: RouteObject[] = [
                     </BAIFlex>
                   }
                 >
-                  <SessionLauncherPage />
+                  <ReservoirPage />
                 </Suspense>
-              </StorageHostFetchErrorBoundary>
-            </BAIFlex>
+              ) : (
+                <WebUINavigate to={'/error'} replace />
+              );
+            },
+            handle: { scope: 'admin', menuKey: 'reservoir' },
+          },
+          {
+            path: ':artifactId',
+            Component: () => {
+              const baiClient = useSuspendedBackendaiClient();
+              return baiClient?.supports('reservoir') ? (
+                <Suspense fallback={<Skeleton active />}>
+                  <ReservoirArtifactDetailPage />
+                </Suspense>
+              ) : (
+                <WebUINavigate to={'/error'} replace />
+              );
+            },
+            handle: {
+              scope: 'admin',
+              menuKey: 'reservoir',
+              labelKey: 'webui.menu.ArtifactDetails',
+            },
+          },
+        ],
+      },
+      {
+        path: 'scheduler',
+        Component: () => {
+          const baiClient = useSuspendedBackendaiClient();
+          return baiClient?.supports('fair-share-scheduling') ? (
+            <Suspense fallback={<Skeleton active />}>
+              <SchedulerPage />
+              <SessionDetailAndContainerLogOpenerLegacy />
+            </Suspense>
+          ) : (
+            <WebUINavigate to={'/error'} replace />
           );
         },
+        handle: {
+          scope: 'admin',
+          menuKey: 'scheduler',
+          labelKey: 'webui.menu.Scheduler',
+        },
+      },
+      {
+        path: 'agent',
+        element: (
+          <Suspense fallback={<Skeleton active />}>
+            <ResourcesPage />
+          </Suspense>
+        ),
+        handle: {
+          scope: 'admin',
+          menuKey: 'agent',
+          labelKey: 'webui.menu.Resources',
+        },
+      },
+      {
+        path: 'project',
+        element: (
+          <BAIErrorBoundary>
+            <Suspense fallback={<Skeleton active />}>
+              <ProjectPage />
+            </Suspense>
+          </BAIErrorBoundary>
+        ),
+        handle: {
+          scope: 'admin',
+          menuKey: 'project',
+          labelKey: 'webui.menu.Projects',
+        },
+      },
+      {
+        path: 'settings',
+        element: (
+          <Suspense fallback={<Skeleton active />}>
+            <ConfigurationsPage />
+          </Suspense>
+        ),
+        handle: {
+          scope: 'admin',
+          menuKey: 'settings',
+          labelKey: 'webui.menu.Configurations',
+        },
+      },
+      {
+        path: 'maintenance',
+        element: (
+          <Suspense fallback={<Skeleton active />}>
+            <MaintenancePage />
+          </Suspense>
+        ),
+        handle: {
+          scope: 'admin',
+          menuKey: 'maintenance',
+          labelKey: 'webui.menu.Maintenance',
+        },
+      },
+      {
+        path: 'diagnostics',
+        element: (
+          <Suspense fallback={<Skeleton active />}>
+            <DiagnosticsPage />
+          </Suspense>
+        ),
+        handle: {
+          scope: 'admin',
+          menuKey: 'diagnostics',
+          labelKey: 'webui.menu.Diagnostics',
+        },
+      },
+      {
+        path: 'rbac',
+        Component: () => {
+          const baiClient = useSuspendedBackendaiClient();
+          return baiClient?.supports('rbac') ? (
+            <Suspense fallback={<Skeleton active />}>
+              <RBACManagementPage />
+            </Suspense>
+          ) : (
+            <WebUINavigate to={'/error'} replace />
+          );
+        },
+        handle: {
+          scope: 'admin',
+          menuKey: 'rbac',
+          labelKey: 'webui.menu.RBACManagement',
+        },
+      },
+      {
+        path: 'branding',
+        element: (
+          <Suspense fallback={<Skeleton active />}>
+            <BrandingPage />
+          </Suspense>
+        ),
+        handle: {
+          scope: 'admin',
+          menuKey: 'branding',
+          labelKey: 'webui.menu.Branding',
+        },
+      },
+      {
+        path: 'information',
+        element: (
+          <Suspense fallback={<Skeleton active />}>
+            <Information />
+          </Suspense>
+        ),
+        handle: {
+          scope: 'admin',
+          menuKey: 'information',
+          labelKey: 'webui.menu.Information',
+        },
+      },
+    ],
+  },
+  // --- Backward-compat redirect shims (old flat URLs -> canonical) ---
+  // Legacy flat redirect shims. Old, project-less URLs `replace`-redirect to
+  // the new canonical scope-aware paths so deep links / bookmarks / external
+  // `react-navigate` events keep working.
+  //
+  // Class A (static admin): no runtime project needed.
+  // Class B (runtime project): inject the current project NAME via
+  // `useActiveProjectName()`; fall back to `/start` when none is resolvable.
+  // --- Class B: user (project) scope ---
+  {
+    path: '/start',
+    Component: () => (
+      <ProjectScopedRedirect scope="project" featureKey="start" />
+    ),
+    handle: { labelKey: 'webui.menu.Start' },
+  },
+  {
+    path: '/dashboard',
+    Component: () => (
+      <ProjectScopedRedirect scope="project" featureKey="dashboard" />
+    ),
+    handle: { labelKey: 'webui.menu.Dashboard' },
+  },
+  {
+    // alias -> dashboard
+    path: '/summary',
+    Component: () => (
+      <ProjectScopedRedirect scope="project" featureKey="dashboard" />
+    ),
+    handle: { labelKey: 'webui.menu.Summary' },
+  },
+  {
+    path: '/session',
+    handle: { labelKey: 'webui.menu.Sessions' },
+    children: [
+      {
+        index: true,
+        Component: () => (
+          <ProjectScopedRedirect scope="project" featureKey="session" />
+        ),
+      },
+      {
+        path: '/session/start',
+        Component: () => (
+          <ProjectScopedRedirect
+            scope="project"
+            featureKey="session"
+            options={{ subPath: 'start' }}
+          />
+        ),
         handle: { labelKey: 'session.launcher.StartNewSession' },
       },
     ],
   },
   {
-    // FR-2664 — New Deployment UI routes. Replaces the legacy /serving
-    // routes (see fallback redirects below).
+    // alias -> session
+    path: '/job',
+    Component: () => (
+      <ProjectScopedRedirect scope="project" featureKey="session" />
+    ),
+    handle: { labelKey: 'webui.menu.Sessions' },
+  },
+  {
     path: '/deployments',
     handle: { labelKey: 'webui.menu.Deployments' },
     children: [
       {
-        path: '',
-        Component: () => {
-          const { t } = useTranslation();
-          useSuspendedBackendaiClient();
-          return (
-            <Suspense
-              fallback={<BAICard title={t('webui.menu.Deployments')} loading />}
-            >
-              <DeploymentListPage />
-            </Suspense>
-          );
-        },
+        index: true,
+        Component: () => (
+          <ProjectScopedRedirect scope="project" featureKey="deployments" />
+        ),
       },
       {
         path: ':deploymentId',
-        handle: { labelKey: 'webui.menu.DeploymentDetail' },
-        element: (
-          <Suspense fallback={<Skeleton active />}>
-            <DeploymentDetailPage />
-          </Suspense>
+        Component: () => (
+          <ProjectScopedRedirect
+            scope="project"
+            featureKey="deployments"
+            options={{ param: 'deploymentId' }}
+          />
         ),
       },
     ],
   },
   {
-    // FR-2664 — Legacy /serving fallback. Transient redirect; remove once
-    // all internal links + external references have been migrated.
+    // FR-2664 — Legacy /serving fallback -> project deployments.
     path: '/serving',
     handle: { labelKey: 'webui.menu.Deployments' },
     children: [
       {
-        path: '',
-        Component: () => {
-          const location = useLocation();
-          return (
-            <WebUINavigate to={'/deployments' + location.search} replace />
-          );
-        },
+        index: true,
+        Component: () => (
+          <ProjectScopedRedirect scope="project" featureKey="deployments" />
+        ),
       },
       {
         path: ':serviceId',
-        Component: () => {
-          const { serviceId } = useParams<{ serviceId: string }>();
-          const location = useLocation();
-          return (
-            <WebUINavigate
-              to={`/deployments/${serviceId}${location.search}`}
-              replace
-            />
-          );
-        },
+        Component: () => (
+          <ProjectScopedRedirect
+            scope="project"
+            featureKey="deployments"
+            options={{ param: 'serviceId' }}
+          />
+        ),
       },
     ],
   },
@@ -334,462 +961,305 @@ export const mainLayoutChildRoutes: RouteObject[] = [
     handle: { labelKey: 'webui.menu.Serving' },
     children: [
       {
-        path: '',
-        element: <WebUINavigate to="/deployments" replace />,
+        index: true,
+        Component: () => (
+          <ProjectScopedRedirect scope="project" featureKey="deployments" />
+        ),
       },
       {
-        // FR-2664 — Legacy fallback: /service/:endpointId → /deployments/:deploymentId
         path: ':endpointId',
-        Component: () => {
-          const { endpointId } = useParams<{ endpointId: string }>();
-          const location = useLocation();
-          return (
-            <WebUINavigate
-              to={`/deployments/${endpointId}${location.search}`}
-              replace
-            />
-          );
-        },
+        Component: () => (
+          <ProjectScopedRedirect
+            scope="project"
+            featureKey="deployments"
+            options={{ param: 'endpointId' }}
+          />
+        ),
       },
     ],
   },
   {
     path: '/model-store',
+    Component: () => (
+      <ProjectScopedRedirect scope="project" featureKey="model-store" />
+    ),
     handle: { labelKey: 'data.ModelStore' },
+  },
+  {
+    path: '/chat/:id?',
     Component: () => {
-      const baiClient = useSuspendedBackendaiClient();
-      return baiClient?.supports('model-card-v2') ? (
-        <Suspense fallback={<Skeleton active />}>
-          <ModelStoreListPageV2 />
-        </Suspense>
-      ) : (
-        <Suspense fallback={<Skeleton active />}>
-          <LegacyModelStoreListPage />
-        </Suspense>
+      const { id } = useParams<{ id: string }>();
+      return (
+        <ProjectScopedRedirect
+          scope="project"
+          featureKey={id ? `chat/${id}` : 'chat'}
+        />
       );
     },
-  },
-  // Redirect paths for backward compatibility
-  {
-    path: '/import',
-    Component: () => {
-      const location = useLocation();
-      return <WebUINavigate to={'/start' + location.search} replace />;
-    },
-  },
-  // Redirect paths for legacy support
-  {
-    path: '/github',
-    Component: () => {
-      const location = useLocation();
-      return <WebUINavigate to={'/start' + location.search} replace />;
-    },
+    handle: { labelKey: 'webui.menu.Chat' },
   },
   {
     path: '/data',
+    Component: () => (
+      <ProjectScopedRedirect scope="project" featureKey="data" />
+    ),
     handle: { labelKey: 'webui.menu.Data' },
-    Component: () => {
-      return <VFolderNodeListPage />;
-    },
   },
   {
     path: '/my-environment',
-    element: (
-      <Suspense fallback={<Skeleton active />}>
-        <MyEnvironmentPage />
-      </Suspense>
+    Component: () => (
+      <ProjectScopedRedirect scope="project" featureKey="my-environment" />
     ),
     handle: { labelKey: 'webui.menu.MyEnvironments' },
   },
   {
     path: '/agent-summary',
-    element: (
-      <Suspense fallback={<Skeleton active />}>
-        <AgentSummaryPage />
-      </Suspense>
+    Component: () => (
+      <ProjectScopedRedirect scope="project" featureKey="agent-summary" />
     ),
     handle: { labelKey: 'webui.menu.AgentSummary' },
   },
   {
     path: '/statistics',
+    Component: () => (
+      <ProjectScopedRedirect scope="project" featureKey="statistics" />
+    ),
     handle: { labelKey: 'webui.menu.Statistics' },
-    Component: () => {
-      useSuspendedBackendaiClient();
-      return (
-        <Suspense
-          fallback={
-            <BAIFlex direction="column" style={{ maxWidth: 700 }}>
-              <Skeleton active />
-            </BAIFlex>
-          }
-        >
-          <StatisticsPage />
-        </Suspense>
-      );
-    },
   },
   {
-    path: '/admin-session',
-    handle: { labelKey: 'webui.menu.Sessions' },
-    element: (
-      <Suspense fallback={<Skeleton active />}>
-        <AdminSessionPage />
-      </Suspense>
+    path: '/ai-agent',
+    Component: () => (
+      <ProjectScopedRedirect scope="project" featureKey="ai-agent" />
+    ),
+    handle: { labelKey: 'webui.menu.AIAgents' },
+  },
+  // legacy aliases that historically pointed at /start
+  {
+    path: '/import',
+    Component: () => (
+      <ProjectScopedRedirect scope="project" featureKey="start" />
     ),
   },
   {
-    // FR-2664 — New admin deployment list route. Replaces the legacy
-    // /admin-serving route (see fallback redirect below).
-    path: '/admin-deployments',
-    handle: { labelKey: 'webui.menu.Serving' },
-    children: [
-      {
-        index: true,
-        Component: () => {
-          return (
-            <BAIErrorBoundary>
-              <Suspense fallback={<BAICard loading />}>
-                <AdminDeploymentListPage />
-              </Suspense>
-            </BAIErrorBoundary>
-          );
-        },
-      },
-      {
-        path: 'deployment-presets/new',
-        handle: { labelKey: 'adminDeploymentPreset.CreatePreset' },
-        element: (
-          <BAIErrorBoundary>
-            <Suspense fallback={<Skeleton active />}>
-              <AdminDeploymentPresetSettingPage />
-            </Suspense>
-          </BAIErrorBoundary>
-        ),
-      },
-      {
-        path: 'deployment-presets/:presetId/edit',
-        handle: { labelKey: 'adminDeploymentPreset.EditPreset' },
-        element: (
-          <BAIErrorBoundary>
-            <Suspense fallback={<Skeleton active />}>
-              <AdminDeploymentPresetSettingPage />
-            </Suspense>
-          </BAIErrorBoundary>
-        ),
-      },
-      {
-        // FR-2847 — Admin deployment detail route. Reuses the shared
-        // `DeploymentDetailPage` component but keeps admins under the
-        // `/admin-deployments/*` URL space so that breadcrumbs and back
-        // navigation preserve the admin context.
-        path: ':deploymentId',
-        handle: { labelKey: 'webui.menu.DeploymentDetail' },
-        element: (
-          <Suspense fallback={<Skeleton active />}>
-            <DeploymentDetailPage />
-          </Suspense>
-        ),
-      },
-    ],
+    path: '/github',
+    Component: () => (
+      <ProjectScopedRedirect scope="project" featureKey="start" />
+    ),
   },
+  // --- Class B: project-admin scope ---
   {
-    // FR-2664 — Legacy /admin-serving fallback. Transient redirect; remove
-    // once all internal links + external references have been migrated.
-    path: '/admin-serving',
-    handle: { labelKey: 'webui.menu.Serving' },
-    children: [
-      {
-        index: true,
-        Component: () => {
-          const location = useLocation();
-          return (
-            <WebUINavigate
-              to={'/admin-deployments' + location.search}
-              replace
-            />
-          );
-        },
-      },
-      {
-        // FR-2847 — Legacy `/admin-serving/:serviceId` redirects to the
-        // admin-scoped detail route so admins stay under
-        // `/admin-deployments/*` instead of the user-facing
-        // `/deployments/:deploymentId`.
-        path: ':serviceId',
-        Component: () => {
-          const { serviceId } = useParams<{ serviceId: string }>();
-          const location = useLocation();
-          return (
-            <WebUINavigate
-              to={`/admin-deployments/${serviceId}${location.search}`}
-              replace
-            />
-          );
-        },
-      },
-    ],
-  },
-  {
-    path: '/admin-data',
-    handle: { labelKey: 'webui.menu.Data' },
-    Component: () => {
-      useSuspendedBackendaiClient();
-      return (
-        <Suspense fallback={<Skeleton active />}>
-          <AdminVFolderNodeListPage />
-        </Suspense>
-      );
-    },
-  },
-  {
-    path: '/project-admin-users',
-    handle: { labelKey: 'webui.menu.ProjectMembers' },
-    Component: () => {
-      useSuspendedBackendaiClient();
-      return (
-        <Suspense fallback={<Skeleton active />}>
-          <ProjectAdminUsersPage />
-        </Suspense>
-      );
-    },
+    path: '/project-admin-session',
+    Component: () => (
+      <ProjectScopedRedirect scope="projectAdmin" featureKey="session" />
+    ),
+    handle: { labelKey: 'webui.menu.ProjectSessions' },
   },
   {
     path: '/project-data',
+    Component: () => (
+      <ProjectScopedRedirect scope="projectAdmin" featureKey="data" />
+    ),
     handle: { labelKey: 'webui.menu.Data' },
-    Component: () => {
-      useSuspendedBackendaiClient();
-      return (
-        <Suspense fallback={<Skeleton active />}>
-          <ProjectAdminDataPage />
-        </Suspense>
-      );
-    },
   },
   {
-    path: '/project-admin-session',
-    handle: { labelKey: 'webui.menu.ProjectSessions' },
-    Component: () => {
-      useSuspendedBackendaiClient();
-      return (
-        <Suspense fallback={<Skeleton active />}>
-          <ProjectAdminSessionPage />
-        </Suspense>
-      );
-    },
+    path: '/project-admin-users',
+    Component: () => (
+      <ProjectScopedRedirect scope="projectAdmin" featureKey="users" />
+    ),
+    handle: { labelKey: 'webui.menu.ProjectMembers' },
   },
   {
-    // FR-2930 — Project-admin deployment list + detail. The detail route
-    // intentionally lives under `/project-admin-deployments/*` (rather than
-    // reusing `/deployments/:id`) to preserve breadcrumb / back-navigation
-    // context, mirroring the admin precedent established in FR-2847.
     path: '/project-admin-deployments',
     handle: { labelKey: 'webui.menu.ProjectDeployments' },
     children: [
       {
         index: true,
+        Component: () => (
+          <ProjectScopedRedirect
+            scope="projectAdmin"
+            featureKey="deployments"
+          />
+        ),
+      },
+      {
+        path: ':deploymentId',
+        Component: () => (
+          <ProjectScopedRedirect
+            scope="projectAdmin"
+            featureKey="deployments"
+            options={{ param: 'deploymentId' }}
+          />
+        ),
+      },
+    ],
+  },
+  // --- Class A: global admin scope ---
+  {
+    path: '/admin-session',
+    Component: () => <AdminRedirect featureKey="session" />,
+    handle: { labelKey: 'webui.menu.Sessions' },
+  },
+  {
+    path: '/admin-deployments',
+    handle: { labelKey: 'webui.menu.Serving' },
+    children: [
+      {
+        index: true,
+        Component: () => <AdminRedirect featureKey="deployments" />,
+      },
+      {
+        path: 'deployment-presets/new',
+        Component: () => (
+          <AdminRedirect
+            featureKey="deployments"
+            options={{ subPath: 'deployment-presets/new' }}
+          />
+        ),
+      },
+      {
+        path: 'deployment-presets/:presetId/edit',
         Component: () => {
-          useSuspendedBackendaiClient();
+          const { presetId } = useParams<{ presetId: string }>();
           return (
-            <Suspense fallback={<Skeleton active />}>
-              <ProjectAdminDeploymentsPage />
-            </Suspense>
+            <AdminRedirect
+              featureKey="deployments"
+              options={{ subPath: `deployment-presets/${presetId}/edit` }}
+            />
           );
         },
       },
       {
         path: ':deploymentId',
-        handle: { labelKey: 'webui.menu.DeploymentDetail' },
-        element: (
-          <Suspense fallback={<Skeleton active />}>
-            <DeploymentDetailPage />
-          </Suspense>
+        Component: () => (
+          <AdminRedirect
+            featureKey="deployments"
+            options={{ param: 'deploymentId' }}
+          />
         ),
       },
     ],
   },
   {
+    // FR-2664 — Legacy /admin-serving fallback -> admin deployments.
+    path: '/admin-serving',
+    handle: { labelKey: 'webui.menu.Serving' },
+    children: [
+      {
+        index: true,
+        Component: () => <AdminRedirect featureKey="deployments" />,
+      },
+      {
+        path: ':serviceId',
+        Component: () => (
+          <AdminRedirect
+            featureKey="deployments"
+            options={{ param: 'serviceId' }}
+          />
+        ),
+      },
+    ],
+  },
+  {
+    path: '/admin-data',
+    Component: () => <AdminRedirect featureKey="data" />,
+    handle: { labelKey: 'webui.menu.Data' },
+  },
+  {
+    path: '/admin-dashboard',
+    Component: () => <AdminRedirect featureKey="dashboard" />,
+    handle: { labelKey: 'webui.menu.AdminDashboard' },
+  },
+  {
+    path: '/credential',
+    Component: () => <AdminRedirect featureKey="users" />,
+    handle: { labelKey: 'webui.menu.UserCredentials&Policies' },
+  },
+  {
     path: '/environment',
+    Component: () => <AdminRedirect featureKey="environment" />,
     handle: { labelKey: 'webui.menu.Environments' },
-    element: (
-      <Suspense fallback={<Skeleton active />}>
-        <EnvironmentPage />
-      </Suspense>
-    ),
-  },
-  {
-    path: '/scheduler',
-    handle: { labelKey: 'webui.menu.Scheduler' },
-    Component: () => {
-      const baiClient = useSuspendedBackendaiClient();
-      return baiClient?.supports('fair-share-scheduling') ? (
-        <Suspense fallback={<Skeleton active />}>
-          <SchedulerPage />
-          <SessionDetailAndContainerLogOpenerLegacy />
-        </Suspense>
-      ) : (
-        <WebUINavigate to={'/error'} replace />
-      );
-    },
-  },
-  {
-    path: '/agent',
-    handle: { labelKey: 'webui.menu.Resources' },
-    element: (
-      <Suspense fallback={<Skeleton active />}>
-        <ResourcesPage />
-      </Suspense>
-    ),
   },
   {
     path: '/resource-policy',
+    Component: () => <AdminRedirect featureKey="resource-policy" />,
     handle: { labelKey: 'webui.menu.ResourcePolicies' },
-    element: (
-      <Suspense fallback={<Skeleton active />}>
-        <ResourcePolicyPage />
-      </Suspense>
-    ),
   },
   {
     path: '/reservoir',
     handle: { labelKey: 'webui.menu.Reservoir' },
     children: [
       {
-        path: '',
-        Component: () => {
-          const baiClient = useSuspendedBackendaiClient();
-          return baiClient?.supports('reservoir') ? (
-            <Suspense
-              fallback={
-                <BAIFlex direction="column" style={{ maxWidth: 700 }}>
-                  <Skeleton active />
-                </BAIFlex>
-              }
-            >
-              <ReservoirPage />
-            </Suspense>
-          ) : (
-            <WebUINavigate to={'/error'} replace />
-          );
-        },
+        index: true,
+        Component: () => <AdminRedirect featureKey="reservoir" />,
       },
       {
         path: '/reservoir/:artifactId',
-        Component: () => {
-          const baiClient = useSuspendedBackendaiClient();
-          return baiClient?.supports('reservoir') ? (
-            <Suspense fallback={<Skeleton active />}>
-              <ReservoirArtifactDetailPage />
-            </Suspense>
-          ) : (
-            <WebUINavigate to={'/error'} replace />
-          );
-        },
+        Component: () => (
+          <AdminRedirect
+            featureKey="reservoir"
+            options={{ param: 'artifactId' }}
+          />
+        ),
         handle: { labelKey: 'webui.menu.ArtifactDetails' },
       },
     ],
   },
   {
+    path: '/scheduler',
+    Component: () => <AdminRedirect featureKey="scheduler" />,
+    handle: { labelKey: 'webui.menu.Scheduler' },
+  },
+  {
+    path: '/agent',
+    Component: () => <AdminRedirect featureKey="agent" />,
+    handle: { labelKey: 'webui.menu.Resources' },
+  },
+  {
+    path: '/project',
+    Component: () => <AdminRedirect featureKey="project" />,
+    handle: { labelKey: 'webui.menu.Projects' },
+  },
+  {
     path: '/settings',
-    element: (
-      <Suspense fallback={<Skeleton active />}>
-        <ConfigurationsPage />
-      </Suspense>
-    ),
+    Component: () => <AdminRedirect featureKey="settings" />,
     handle: { labelKey: 'webui.menu.Configurations' },
   },
   {
     path: '/maintenance',
-    element: (
-      <Suspense fallback={<Skeleton active />}>
-        <MaintenancePage />
-      </Suspense>
-    ),
+    Component: () => <AdminRedirect featureKey="maintenance" />,
     handle: { labelKey: 'webui.menu.Maintenance' },
   },
   {
     path: '/diagnostics',
-    element: (
-      <Suspense fallback={<Skeleton active />}>
-        <DiagnosticsPage />
-      </Suspense>
-    ),
+    Component: () => <AdminRedirect featureKey="diagnostics" />,
     handle: { labelKey: 'webui.menu.Diagnostics' },
   },
   {
     path: '/rbac',
+    Component: () => <AdminRedirect featureKey="rbac" />,
     handle: { labelKey: 'webui.menu.RBACManagement' },
-    Component: () => {
-      const baiClient = useSuspendedBackendaiClient();
-      return baiClient?.supports('rbac') ? (
-        <Suspense fallback={<Skeleton active />}>
-          <RBACManagementPage />
-        </Suspense>
-      ) : (
-        <WebUINavigate to={'/error'} replace />
-      );
-    },
   },
   {
     path: '/branding',
-    element: (
-      <Suspense fallback={<Skeleton active />}>
-        <BrandingPage />
-      </Suspense>
-    ),
+    Component: () => <AdminRedirect featureKey="branding" />,
     handle: { labelKey: 'webui.menu.Branding' },
   },
   {
-    path: '/project',
-    element: (
-      <BAIErrorBoundary>
-        <Suspense fallback={<Skeleton active />}>
-          <ProjectPage />
-        </Suspense>
-      </BAIErrorBoundary>
-    ),
-    handle: { labelKey: 'webui.menu.Projects' },
+    path: '/information',
+    Component: () => <AdminRedirect featureKey="information" />,
+    handle: { labelKey: 'webui.menu.Information' },
   },
   {
     path: '/storage-settings/:hostname',
-    element: <WebUINavigate to="/agent?tab=storages" replace />,
+    element: <WebUINavigate to="/admin/agent?tab=storages" replace />,
   },
-  {
-    path: '/information',
-    handle: { labelKey: 'webui.menu.Information' },
-    element: (
-      <Suspense fallback={<Skeleton active />}>
-        <Information />
-      </Suspense>
-    ),
-  },
+  // --- Global, no-prefix, unchanged ---
   {
     path: '/usersettings',
     handle: { labelKey: 'webui.menu.Settings&Logs' },
     element: (
       <Suspense fallback={<Skeleton active />}>
         <UserSettingsPage />
-      </Suspense>
-    ),
-  },
-  {
-    path: '/admin-dashboard',
-    handle: { labelKey: 'webui.menu.AdminDashboard' },
-    Component: () => {
-      return (
-        <BAIErrorBoundary>
-          <Suspense fallback={<Skeleton active />}>
-            <AdminDashboardPage />
-          </Suspense>
-        </BAIErrorBoundary>
-      );
-    },
-  },
-  {
-    path: '/credential',
-    handle: { labelKey: 'webui.menu.UserCredentials&Policies' },
-    element: (
-      <Suspense fallback={<Skeleton active />}>
-        <AdminUsersPage />
       </Suspense>
     ),
   },
@@ -809,22 +1279,6 @@ export const mainLayoutChildRoutes: RouteObject[] = [
   {
     path: '*',
     element: <></>,
-  },
-  {
-    path: '/ai-agent',
-    handle: { labelKey: 'webui.menu.AIAgents' },
-    Component: () => {
-      const [experimentalAIAgents] = useBAISettingUserState(
-        'experimental_ai_agents',
-      );
-      return experimentalAIAgents ? (
-        <Suspense fallback={<Skeleton active />}>
-          <AIAgentPage />
-        </Suspense>
-      ) : (
-        <WebUINavigate to={'/start'} replace />
-      );
-    },
   },
 ];
 
@@ -1157,7 +1611,41 @@ function extractRoutePaths(
 // Populate the shared routerPaths registry so useWebUIMenuItems can read
 // valid paths without importing routes.tsx directly (which would create a
 // circular dependency: routes → useWebUIMenuItems → routes).
-const { staticPaths, dynamicPatterns } = extractRoutePaths(
-  mainLayoutChildRoutes,
+//
+// IMPORTANT (scope-aware routing): the registry must contain the FEATURE
+// segment (e.g. `session`, `data`, `users`, `deployments/:deploymentId`), NOT
+// the scope prefix (`project`/`admin`). `useWebUIMenuItems` derives the current
+// feature/menu key via `useCurrentMenuKey()` (route handle) and validates it
+// against this registry, so feeding it the raw first segment (`project`/
+// `admin`) would break 404 detection. We therefore run `extractRoutePaths` over
+// the un-nested feature route arrays (relative paths == feature keys) plus the
+// legacy redirect shims (so old flat URLs remain "valid" during the transition).
+//
+// The feature route arrays are read back out of the inline `mainLayoutChildRoutes`
+// tree: the `project/:projectName` and `admin` scope subtrees' own `children`
+// (relative feature paths), and the legacy redirect shims that sit between the
+// `admin` subtree and the global `/usersettings` route.
+const projectScopeChildren =
+  mainLayoutChildRoutes.find((route) => route.path === 'project/:projectName')
+    ?.children ?? [];
+const adminScopeChildren =
+  mainLayoutChildRoutes.find((route) => route.path === 'admin')?.children ?? [];
+const legacyRedirectStartIndex =
+  mainLayoutChildRoutes.findIndex((route) => route.path === 'admin') + 1;
+const legacyRedirectEndIndex = mainLayoutChildRoutes.findIndex(
+  (route) => route.path === '/usersettings',
+);
+const legacyRedirectRoutes = mainLayoutChildRoutes.slice(
+  legacyRedirectStartIndex,
+  legacyRedirectEndIndex,
+);
+const staticPaths = new Set<string>();
+const dynamicPatterns: RegExp[] = [];
+[projectScopeChildren, adminScopeChildren, legacyRedirectRoutes].forEach(
+  (routeArray) => {
+    const result = extractRoutePaths(routeArray);
+    result.staticPaths.forEach((p) => staticPaths.add(p));
+    dynamicPatterns.push(...result.dynamicPatterns);
+  },
 );
 populateRouterPaths(staticPaths, dynamicPatterns);

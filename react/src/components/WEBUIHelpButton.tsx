@@ -2,18 +2,22 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { useCurrentMenuKey } from '../hooks/useRouteScope';
 import { useCurrentLanguage } from './DefaultProviders';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Button, type ButtonProps } from 'antd';
 import React from 'react';
-import { useLocation } from 'react-router-dom';
 
 interface WEBUIHelpButtonProps extends ButtonProps {}
 const WEBUIHelpButton: React.FC<WEBUIHelpButtonProps> = ({ ...props }) => {
+  'use memo';
   const [lang] = useCurrentLanguage();
-  const location = useLocation();
+  // Scope-aware menu key (route handle) keyed the same as `URLMatchingTable`
+  // below. Under the new `/admin/<feature>` and `/project/:name/<feature>`
+  // URLs the first pathname segment is the scope prefix, so the help-anchor
+  // lookup must use the feature/menu key from the matched route instead.
+  const matchingKey = useCurrentMenuKey() || '';
   const manualURL = `https://webui.docs.backend.ai/${['en', 'ko'].includes(lang) ? lang : 'en'}/latest/`;
-  const matchingKey = location.pathname.split('/')[1] || '';
   const URLMatchingTable = {
     '': 'summary/summary.html',
     summary: 'summary/summary.html',

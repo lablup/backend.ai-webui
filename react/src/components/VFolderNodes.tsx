@@ -11,6 +11,7 @@ import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useEffectiveAdminRole } from '../hooks/useCurrentUserProjectRoles';
+import { useProjectPath } from '../hooks/useRouteScope';
 import { isDeletedCategory } from '../pages/VFolderNodeListPage';
 import DeploymentSettingModal from './DeploymentSettingModal';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
@@ -279,6 +280,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
   const { upsertNotification } = useSetBAINotification();
   const { getErrorMessage } = useErrorMessageResolver();
   const navigate = useWebUINavigate();
+  const buildProjectPath = useProjectPath();
 
   const [deletingVFolder, setDeletingVFolder] =
     useState<VFolderNodeInList | null>(null);
@@ -416,7 +418,10 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
                                       style={{ fontWeight: 'normal' }}
                                       onClick={() => {
                                         navigate({
-                                          pathname: '/session',
+                                          pathname: buildProjectPath(
+                                            'session',
+                                            { scope: 'project' },
+                                          ),
                                           search: new URLSearchParams({
                                             sessionDetail: sessionId,
                                           }).toString(),

@@ -23,6 +23,7 @@ import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginati
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCSVExport } from '../hooks/useCSVExport';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { useProjectPath } from '../hooks/useRouteScope';
 import {
   Alert,
   App,
@@ -92,6 +93,7 @@ const ComputeSessionListPage = () => {
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const webUINavigate = useWebUINavigate();
+  const buildProjectPath = useProjectPath();
   const location = useLocation();
   const [selectedSessionList, setSelectedSessionList] = useState<
     Array<SessionNode>
@@ -315,7 +317,7 @@ const ComputeSessionListPage = () => {
                 buttonText={t('start.button.StartSession')}
                 icon={<BAISessionsIcon />}
                 type="simple"
-                to={'/session/start'}
+                to={buildProjectPath('session/start')}
                 style={{
                   height: '100%',
                 }}
@@ -367,7 +369,7 @@ const ComputeSessionListPage = () => {
         variant="borderless"
         title={t('webui.menu.Sessions')}
         extra={
-          <BAILink to={'/session/start'}>
+          <BAILink to={buildProjectPath('session/start')}>
             <Button type="primary">{t('start.button.StartSession')}</Button>
           </BAILink>
         }

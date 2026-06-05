@@ -4,11 +4,13 @@
  */
 import { BAIComputeSessionNodeNotificationItemFragment$key } from '../__generated__/BAIComputeSessionNodeNotificationItemFragment.graphql';
 import { BAIComputeSessionNodeNotificationItemRefreshQuery } from '../__generated__/BAIComputeSessionNodeNotificationItemRefreshQuery.graphql';
+import { buildPath } from '../helper/pathBuilder';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import {
   NotificationState,
   useSetBAINotification,
 } from '../hooks/useBAINotification';
+import { useActiveProjectName } from '../hooks/useRouteScope';
 import SessionActionButtons, {
   PrimaryAppOption,
 } from './ComputeSessionNodeItems/SessionActionButtons';
@@ -45,6 +47,7 @@ const BAIComputeSessionNodeNotificationItem: React.FC<
   const { closeNotification } = useSetBAINotification();
   const { t } = useTranslation();
   const navigate = useWebUINavigate();
+  const activeProjectName = useActiveProjectName();
   const baiClient = useSuspendedBackendaiClient();
   const node = useFragment(
     graphql`
@@ -82,7 +85,7 @@ const BAIComputeSessionNodeNotificationItem: React.FC<
                 title={node.name || ''}
                 onClick={() => {
                   navigate(
-                    `/session${node.row_id ? `?${new URLSearchParams({ sessionDetail: node.row_id }).toString()}` : ''}`,
+                    `${buildPath('project', 'session', activeProjectName)}${node.row_id ? `?${new URLSearchParams({ sessionDetail: node.row_id }).toString()}` : ''}`,
                   );
                   closeNotification(notification.key);
                 }}

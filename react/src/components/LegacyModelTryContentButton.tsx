@@ -16,6 +16,7 @@ import {
   useBAINotificationState,
 } from '../hooks/useBAINotification';
 import { useCurrentResourceGroupValue } from '../hooks/useCurrentProject';
+import { useProjectPath } from '../hooks/useRouteScope';
 import { PlayCircleOutlined } from '@ant-design/icons';
 import { App, Button, Tooltip } from 'antd';
 import {
@@ -135,6 +136,7 @@ const LegacyModelTryContentButton: React.FC<
   const [fetchKey] = useUpdatableState(INITIAL_FETCH_KEY);
   const { upsertNotification } = useSetBAINotification();
   const [notifications] = useBAINotificationState();
+  const buildProjectPath = useProjectPath();
 
   const modelStoreVFolder =
     useFragment<LegacyModelTryContentButtonVFolderFragment$key>(
@@ -266,7 +268,7 @@ const LegacyModelTryContentButton: React.FC<
             },
             message: t('modelService.StartingModelService'),
             description: '',
-            to: `/chat?${new URLSearchParams({
+            to: `${buildProjectPath('chat')}?${new URLSearchParams({
               endpointId: result?.endpoint_id ?? '',
               modelId: modelId,
             }).toString()}`,
@@ -281,7 +283,7 @@ const LegacyModelTryContentButton: React.FC<
             },
             message: t('modelService.StartingModelService'),
             description: '',
-            to: `/serving/${result?.endpoint_id}`,
+            to: buildProjectPath(`deployments/${result?.endpoint_id}`),
             toText: t('modelService.GoToServiceDetailPage'),
           },
         },

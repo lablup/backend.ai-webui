@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
+import { useProjectPath } from '../hooks/useRouteScope';
 import {
   StartSessionWithDefaultValue,
   useStartSession,
@@ -66,6 +67,7 @@ const ImportNotebookForm: React.FC<ImportNotebookFormProps> = ({
   const { t } = useTranslation();
   const app = App.useApp();
   const webuiNavigate = useWebUINavigate();
+  const buildProjectPath = useProjectPath();
   const baiClient = useSuspendedBackendaiClient();
   const { startSessionWithDefault, upsertSessionNotification } =
     useStartSession();
@@ -92,7 +94,7 @@ const ImportNotebookForm: React.FC<ImportNotebookFormProps> = ({
           } as PrimaryAppOption,
         },
       ]);
-      webuiNavigate('/session');
+      webuiNavigate(buildProjectPath('session'));
     }
 
     if (results?.rejected && results.rejected.length > 0) {
@@ -171,7 +173,7 @@ const ImportNotebookForm: React.FC<ImportNotebookFormProps> = ({
                       params.set('formValues', JSON.stringify(launcherValue));
                       params.set('step', '4');
                       webuiNavigate({
-                        pathname: '/session/start',
+                        pathname: buildProjectPath('session/start'),
                         search: params.toString(),
                       });
                     })

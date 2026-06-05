@@ -6,6 +6,7 @@ import { ChatHeader_Endpoint$key } from '../../__generated__/ChatHeader_Endpoint
 import { useWebUINavigate } from '../../hooks';
 import { AIAgent, useAIAgent } from '../../hooks/useAIAgent';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
+import { useProjectPath } from '../../hooks/useRouteScope';
 import AIAgentSelect from './AIAgentSelect';
 import type { ChatModel, ChatParameters } from './ChatModel';
 import { ChatParametersSliders } from './ChatParametersSliders';
@@ -112,6 +113,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const webuiNavigate = useWebUINavigate();
+  const buildProjectPath = useProjectPath();
 
   const [isPendingEndpointTransition, startEndpointTransition] =
     useTransition();
@@ -134,7 +136,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
       icon: <ScaleIcon />,
       onClick: () => {
         webuiNavigate({
-          pathname: '/serving',
+          pathname: buildProjectPath('deployments'),
           search: new URLSearchParams({
             tab: 'chatting',
             endpointId: endpoint?.endpoint_id ?? '',

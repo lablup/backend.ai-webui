@@ -6,6 +6,11 @@ import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
 import { useCustomThemeConfig } from '../../hooks/useCustomThemeConfig';
 import usePrimaryColors from '../../hooks/usePrimaryColors';
 import {
+  rewriteProjectNameInPath,
+  useActiveProjectName,
+  useCurrentMenuKey,
+} from '../../hooks/useRouteScope';
+import {
   getPathFromMenuKey,
   useWebUIMenuItems,
 } from '../../hooks/useWebUIMenuItems';
@@ -53,6 +58,14 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
 
   const webuiNavigate = useWebUINavigate();
   const location = useLocation();
+  // Scope-aware current menu key (route handle), correct under the new
+  // `/project/:name/<feature>` and `/admin/<feature>` URL shapes where the
+  // first pathname segment is the scope prefix, not the feature key.
+  const currentMenuKey = useCurrentMenuKey();
+  // Active project NAME (URL `:projectName` if present, else current project
+  // atom). Used to build the scope-aware admin-settings link and to rewrite the
+  // stored `goBackPath` to the current project on read.
+  const activeProjectName = useActiveProjectName();
   const baiClient = useSuspendedBackendaiClient();
 
   const [isOpenSignoutModal, { toggle: toggleSignoutModal }] = useToggle(false);
@@ -79,7 +92,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
     hideGroupName: props.collapsed,
   });
 
-  const [goBackPath, setGoBackPath] = useSessionStorageState(
+  const [goBackPath, setGoBackPath] = useSessionStorageState<string>(
     'backendaiwebui.last_visited_general_path',
   );
 
@@ -119,7 +132,16 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
           shape="circle"
           icon={<ArrowLeftIcon />}
           onClick={() => {
-            webuiNavigate(goBackPath || defaultMenuPath);
+            // `goBackPath` stores the last visited general (project-scoped)
+            // path, e.g. `/project/<oldName>/session`. If the user switched
+            // projects while in admin mode, rewrite its `:projectName` segment
+            // to the current project so "go back" lands on the active project,
+            // not the stale one. Non-project paths pass through unchanged.
+            webuiNavigate(
+              goBackPath
+                ? rewriteProjectNameInPath(goBackPath, activeProjectName)
+                : defaultMenuPath,
+            );
           }}
           aria-label={t('webui.menu.GoBack')}
           style={{
@@ -216,10 +238,10 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
           <BAIMenu
             collapsed={props.collapsed}
             selectedKeys={[
-              location.pathname.split('/')[1] || 'start',
+              currentMenuKey || 'start',
               // TODO: After 'SessionListPage' is completed and used as the main page, remove this code
               //       and change 'job' key to 'session'
-              location.pathname.split('/')[1] === 'session' ? 'job' : '',
+              currentMenuKey === 'session' ? 'job' : '',
             ]}
             // @ts-ignore
             items={filterOutEmpty([
@@ -227,7 +249,10 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
                 // Go to first page of admin setting pages.
                 label: (
                   <WebUILink
-                    to={getPathFromMenuKey(firstAvailableAdminMenuItem.key)}
+                    to={getPathFromMenuKey(
+                      firstAvailableAdminMenuItem.key,
+                      activeProjectName,
+                    )}
                   >
                     {t('webui.menu.AdminSettings')}
                   </WebUILink>
@@ -250,7 +275,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
             {adminHeader}
             <BAIMenu
               collapsed={props.collapsed}
-              selectedKeys={[location.pathname.split('/')[1]]}
+              selectedKeys={currentMenuKey ? [currentMenuKey] : []}
               items={groupedAdminMenu as MenuProps['items']}
             />
           </ConfigProvider>

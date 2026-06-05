@@ -6,6 +6,7 @@ import { ModelCloneModalVFolderFragment$key } from '../__generated__/ModelCloneM
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
+import { useProjectPath } from '../hooks/useRouteScope';
 import StorageSelect from './StorageSelect';
 import {
   Alert,
@@ -39,6 +40,7 @@ const ModelCloneModal: React.FC<ModelCloneModalProps> = ({
 }) => {
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
+  const buildProjectPath = useProjectPath();
   const vfolder = useFragment(
     graphql`
       fragment ModelCloneModalVFolderFragment on VirtualFolderNode {
@@ -121,7 +123,7 @@ const ModelCloneModal: React.FC<ModelCloneModalProps> = ({
                       message: values.target_name,
                       toText: t('data.folders.OpenAFolder'),
                       to: {
-                        pathname: '/data',
+                        pathname: buildProjectPath('data'),
                         search: new URLSearchParams({
                           tab: 'model',
                           folder: data.id,

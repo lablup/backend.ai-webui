@@ -6,6 +6,7 @@ import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import KeypairResourcePolicyList from '../components/KeypairResourcePolicyList';
 import ProjectResourcePolicyList from '../components/ProjectResourcePolicyList';
 import UserResourcePolicyList from '../components/UserResourcePolicyList';
+import { buildPath } from '../helper/pathBuilder';
 import { useWebUINavigate } from '../hooks';
 import { Skeleton } from 'antd';
 import { filterOutEmpty, BAICard } from 'backend.ai-ui';
@@ -26,7 +27,7 @@ const ResourcePolicyPage: React.FC<ResourcePolicyPageProps> = () => {
       activeTabKey={curTabKey}
       onTabChange={(key) => {
         webUINavigate({
-          pathname: '/resource-policy',
+          pathname: buildPath('admin', 'resource-policy'),
           search: new URLSearchParams({
             tab: key,
           }).toString(),

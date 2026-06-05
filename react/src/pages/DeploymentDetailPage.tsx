@@ -15,9 +15,11 @@ import DeploymentConfigurationSection from '../components/DeploymentConfiguratio
 import DeploymentReplicasTab from '../components/DeploymentReplicasTab';
 import DeploymentRevisionDetailDrawer from '../components/DeploymentRevisionDetailDrawer';
 import SwitchToProjectButton from '../components/SwitchToProjectButton';
+import { buildPath } from '../helper/pathBuilder';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { useActiveProjectName } from '../hooks/useRouteScope';
 import {
   getPathFromMenuKey,
   useWebUIMenuItems,
@@ -60,6 +62,7 @@ const DeploymentDetailPage: React.FC = () => {
   const webuiNavigate = useWebUINavigate();
   const baiClient = useSuspendedBackendaiClient();
   const currentProject = useCurrentProjectValue();
+  const activeProjectName = useActiveProjectName();
   const isChatBlocked = !!baiClient?._config?.blockList?.includes('chat');
 
   const { deploymentId: deploymentIdParam } = useParams<{
@@ -269,7 +272,7 @@ const DeploymentDetailPage: React.FC = () => {
                 icon={<BotMessageSquareIcon size={token.fontSizeLG} />}
                 onClick={() => {
                   webuiNavigate({
-                    pathname: '/chat',
+                    pathname: buildPath('project', 'chat', activeProjectName),
                     search: new URLSearchParams({
                       endpointId: deploymentId,
                     }).toString(),
@@ -434,11 +437,12 @@ const DeploymentInaccessibleResult: React.FC = () => {
   const { t } = useTranslation();
   const webuiNavigate = useWebUINavigate();
   const { firstAvailableMenuItem } = useWebUIMenuItems();
+  const activeProjectName = useActiveProjectName();
   // Mirror Page401 — route to the user's first available menu item so the
   // button takes them somewhere actionable instead of bouncing through the
   // index redirect.
   const defaultPagePath = firstAvailableMenuItem
-    ? getPathFromMenuKey(firstAvailableMenuItem.key)
+    ? getPathFromMenuKey(firstAvailableMenuItem.key, activeProjectName)
     : '/start';
   const defaultPageTitle =
     firstAvailableMenuItem?.labelText ?? t('webui.menu.FirstPageNameAlias');
