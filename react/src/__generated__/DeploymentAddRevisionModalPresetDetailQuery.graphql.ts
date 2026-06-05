@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<92b861309e9bef644771840ac7633bc5>>
+ * @generated SignedSource<<4fdea8441d753d22afaddb8584ca9bc7>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -318,12 +318,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "3cd5360d55a3a08852095eb16f44dfc3",
+    "cacheID": "1d8adee189d9e2ee294d8eb6f42523ae",
     "id": null,
     "metadata": {},
     "name": "DeploymentAddRevisionModalPresetDetailQuery",
     "operationKind": "query",
-    "text": "query DeploymentAddRevisionModalPresetDetailQuery(\n  $id: UUID!\n) {\n  deploymentRevisionPreset(id: $id) {\n    ...DeploymentPresetDetailModalFragment\n    id\n  }\n}\n\nfragment DeploymentPresetDetailModalFragment on DeploymentRevisionPreset {\n  id\n  name\n  description\n  runtimeVariantId\n  runtimeVariant @since(version: \"26.4.3\") {\n    id\n    name\n  }\n  cluster {\n    clusterMode\n    clusterSize\n  }\n  execution {\n    imageId @since(version: \"26.4.4\")\n    startupCommand\n    bootstrapScript\n    environ {\n      key\n      value\n    }\n  }\n  resource {\n    resourceOpts {\n      name\n      value\n    }\n  }\n  resourceSlots @since(version: \"26.4.4\") {\n    slotName\n    quantity\n  }\n  deploymentDefaults {\n    openToPublic\n    replicaCount\n    revisionHistoryLimit\n    deploymentStrategy\n  }\n  presetValues {\n    presetId\n    value\n  }\n}\n"
+    "text": "query DeploymentAddRevisionModalPresetDetailQuery(\n  $id: UUID!\n) {\n  deploymentRevisionPreset(id: $id) {\n    ...DeploymentPresetDetailModalFragment\n    id\n  }\n}\n\nfragment DeploymentPresetDetailModalFragment on DeploymentRevisionPreset {\n  id\n  name\n  description\n  runtimeVariantId\n  runtimeVariant @since(version: \"26.4.3\") {\n    id\n    name\n  }\n  cluster {\n    clusterMode\n    clusterSize\n  }\n  execution {\n    imageId @since(version: \"26.4.4\")\n    startupCommand\n    bootstrapScript\n    environ {\n      key @since(version: \"26.4.4\")\n      value\n    }\n  }\n  resource {\n    resourceOpts {\n      name\n      value\n    }\n  }\n  resourceSlots @since(version: \"26.4.4\") {\n    slotName\n    quantity\n  }\n  deploymentDefaults {\n    openToPublic\n    replicaCount\n    revisionHistoryLimit\n    deploymentStrategy\n  }\n  presetValues {\n    presetId\n    value\n  }\n}\n"
   }
 };
 })();

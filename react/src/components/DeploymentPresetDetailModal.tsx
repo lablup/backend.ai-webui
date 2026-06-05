@@ -33,6 +33,13 @@ const DeploymentPresetDetailModal: React.FC<
 
   const { t } = useTranslation();
 
+  // `execution.environ.key` is guarded with `@since(version: "26.4.4")`: on
+  // 26.4.3 the preset environ entry is `EnvironmentVariableEntry` (`name`/`value`),
+  // not the `key`-shaped `DeploymentRevisionPresetEnvironEntry` introduced in
+  // 26.4.4. Stripping `key` lets the query resolve to `environ { value }` on
+  // legacy cores instead of failing with "Cannot query field key on type
+  // EnvironmentVariableEntry". (The modal does not render environ today, so the
+  // legacy gap is invisible.)
   const preset = useFragment(
     graphql`
       fragment DeploymentPresetDetailModalFragment on DeploymentRevisionPreset {
@@ -53,7 +60,7 @@ const DeploymentPresetDetailModal: React.FC<
           startupCommand
           bootstrapScript
           environ {
-            key
+            key @since(version: "26.4.4")
             value
           }
         }
