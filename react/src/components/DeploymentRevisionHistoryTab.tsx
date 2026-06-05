@@ -373,32 +373,39 @@ const DeploymentRevisionHistoryTab: React.FC<
           isDeploying ||
           isDeploymentInStoppedCategory(deploymentStatus) ||
           rollingBackRevisionId === record.id;
+        const openDetail = () =>
+          setDrawerRevision({
+            frgmt: record as RevisionNode &
+              DeploymentRevisionDetail_revision$key,
+            status: isCurrent ? 'current' : isDeploying ? 'deploying' : 'none',
+          });
         return (
           <BAINameActionCell
             title={
               <BAIFlex gap="xs" align="center">
-                <Typography.Link
-                  onClick={() =>
-                    setDrawerRevision({
-                      frgmt: record as RevisionNode &
-                        DeploymentRevisionDetail_revision$key,
-                      status: isCurrent
-                        ? 'current'
-                        : isDeploying
-                          ? 'deploying'
-                          : 'none',
-                    })
-                  }
-                >
-                  {record.revisionNumber != null
-                    ? `#${record.revisionNumber}`
-                    : '-'}
-                </Typography.Link>
-                <BAIFlex gap={0} align="center">
-                  {'('}
-                  <BAIId globalId={record.id} />
-                  {')'}
-                </BAIFlex>
+                {record.revisionNumber != null ? (
+                  <>
+                    <Typography.Link onClick={openDetail}>
+                      {`#${record.revisionNumber}`}
+                    </Typography.Link>
+                    <BAIFlex gap={0} align="center">
+                      {'('}
+                      <BAIId globalId={record.id} />
+                      {')'}
+                    </BAIFlex>
+                  </>
+                ) : (
+                  // 26.4.3 backend: the schema has no revision number
+                  // (`revisionNumber` is gated `@since(version: "26.4.4")`),
+                  // so the global id is the only stable identifier. Make the
+                  // id itself the clickable trigger that opens the detail
+                  // drawer instead of an inert "-". It stays copyable.
+                  <BAIId
+                    globalId={record.id}
+                    onClick={openDetail}
+                    style={{ color: token.colorLink, cursor: 'pointer' }}
+                  />
+                )}
                 {isCurrent ? (
                   <BAITag color="success">{t('deployment.Current')}</BAITag>
                 ) : null}
