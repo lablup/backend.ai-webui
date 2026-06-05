@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<139891b73a687a749ec4f5e08f414691>>
+ * @generated SignedSource<<5dc5e5fcdf9e78e60bcf0026ada2595a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,23 +10,18 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 export type BAIAvailablePresetSelectValueQuery$variables = {
-  first: number;
-  ids?: ReadonlyArray<string> | null | undefined;
+  id: string;
   skip: boolean;
 };
 export type BAIAvailablePresetSelectValueQuery$data = {
-  readonly deploymentRevisionPresets?: {
-    readonly edges: ReadonlyArray<{
-      readonly node: {
-        readonly description: string | null | undefined;
-        readonly id: string;
-        readonly name: string;
-        readonly runtimeVariant: {
-          readonly name: string;
-        } | null | undefined;
-        readonly runtimeVariantId: string;
-      };
-    }>;
+  readonly deploymentRevisionPreset?: {
+    readonly description: string | null | undefined;
+    readonly id: string;
+    readonly name: string;
+    readonly runtimeVariant: {
+      readonly name: string;
+    } | null | undefined;
+    readonly runtimeVariantId: string;
   } | null | undefined;
 };
 export type BAIAvailablePresetSelectValueQuery = {
@@ -35,67 +30,47 @@ export type BAIAvailablePresetSelectValueQuery = {
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "first"
-},
-v1 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "ids"
-},
-v2 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "skip"
-},
-v3 = [
+var v0 = [
   {
-    "fields": [
-      {
-        "fields": [
-          {
-            "kind": "Variable",
-            "name": "in",
-            "variableName": "ids"
-          }
-        ],
-        "kind": "ObjectValue",
-        "name": "id"
-      }
-    ],
-    "kind": "ObjectValue",
-    "name": "filter"
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "id"
   },
   {
-    "kind": "Variable",
-    "name": "first",
-    "variableName": "first"
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "skip"
   }
 ],
-v4 = {
+v1 = [
+  {
+    "kind": "Variable",
+    "name": "id",
+    "variableName": "id"
+  }
+],
+v2 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v5 = {
+v3 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "name",
   "storageKey": null
 },
-v6 = {
+v4 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "description",
   "storageKey": null
 },
-v7 = {
+v5 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -104,11 +79,7 @@ v7 = {
 };
 return {
   "fragment": {
-    "argumentDefinitions": [
-      (v0/*: any*/),
-      (v1/*: any*/),
-      (v2/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "BAIAvailablePresetSelectValueQuery",
@@ -120,47 +91,25 @@ return {
         "selections": [
           {
             "alias": null,
-            "args": (v3/*: any*/),
-            "concreteType": "DeploymentRevisionPresetConnection",
+            "args": (v1/*: any*/),
+            "concreteType": "DeploymentRevisionPreset",
             "kind": "LinkedField",
-            "name": "deploymentRevisionPresets",
+            "name": "deploymentRevisionPreset",
             "plural": false,
             "selections": [
+              (v2/*: any*/),
+              (v3/*: any*/),
+              (v4/*: any*/),
+              (v5/*: any*/),
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "DeploymentRevisionPresetEdge",
+                "concreteType": "RuntimeVariant",
                 "kind": "LinkedField",
-                "name": "edges",
-                "plural": true,
+                "name": "runtimeVariant",
+                "plural": false,
                 "selections": [
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "DeploymentRevisionPreset",
-                    "kind": "LinkedField",
-                    "name": "node",
-                    "plural": false,
-                    "selections": [
-                      (v4/*: any*/),
-                      (v5/*: any*/),
-                      (v6/*: any*/),
-                      (v7/*: any*/),
-                      {
-                        "alias": null,
-                        "args": null,
-                        "concreteType": "RuntimeVariant",
-                        "kind": "LinkedField",
-                        "name": "runtimeVariant",
-                        "plural": false,
-                        "selections": [
-                          (v5/*: any*/)
-                        ],
-                        "storageKey": null
-                      }
-                    ],
-                    "storageKey": null
-                  }
+                  (v3/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -175,11 +124,7 @@ return {
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": [
-      (v1/*: any*/),
-      (v0/*: any*/),
-      (v2/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "BAIAvailablePresetSelectValueQuery",
     "selections": [
@@ -190,48 +135,26 @@ return {
         "selections": [
           {
             "alias": null,
-            "args": (v3/*: any*/),
-            "concreteType": "DeploymentRevisionPresetConnection",
+            "args": (v1/*: any*/),
+            "concreteType": "DeploymentRevisionPreset",
             "kind": "LinkedField",
-            "name": "deploymentRevisionPresets",
+            "name": "deploymentRevisionPreset",
             "plural": false,
             "selections": [
+              (v2/*: any*/),
+              (v3/*: any*/),
+              (v4/*: any*/),
+              (v5/*: any*/),
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "DeploymentRevisionPresetEdge",
+                "concreteType": "RuntimeVariant",
                 "kind": "LinkedField",
-                "name": "edges",
-                "plural": true,
+                "name": "runtimeVariant",
+                "plural": false,
                 "selections": [
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "DeploymentRevisionPreset",
-                    "kind": "LinkedField",
-                    "name": "node",
-                    "plural": false,
-                    "selections": [
-                      (v4/*: any*/),
-                      (v5/*: any*/),
-                      (v6/*: any*/),
-                      (v7/*: any*/),
-                      {
-                        "alias": null,
-                        "args": null,
-                        "concreteType": "RuntimeVariant",
-                        "kind": "LinkedField",
-                        "name": "runtimeVariant",
-                        "plural": false,
-                        "selections": [
-                          (v5/*: any*/),
-                          (v4/*: any*/)
-                        ],
-                        "storageKey": null
-                      }
-                    ],
-                    "storageKey": null
-                  }
+                  (v3/*: any*/),
+                  (v2/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -243,16 +166,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "25067d2d1950a3c15b081df6213cc798",
+    "cacheID": "92db865fe873b089a396a9d6da95e3e3",
     "id": null,
     "metadata": {},
     "name": "BAIAvailablePresetSelectValueQuery",
     "operationKind": "query",
-    "text": "query BAIAvailablePresetSelectValueQuery(\n  $ids: [UUID!]\n  $first: Int!\n  $skip: Boolean!\n) {\n  deploymentRevisionPresets(filter: {id: {in: $ids}}, first: $first) @skip(if: $skip) {\n    edges {\n      node {\n        id\n        name\n        description\n        runtimeVariantId\n        runtimeVariant @since(version: \"26.4.3\") {\n          name\n          id\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query BAIAvailablePresetSelectValueQuery(\n  $id: UUID!\n  $skip: Boolean!\n) {\n  deploymentRevisionPreset(id: $id) @skip(if: $skip) {\n    id\n    name\n    description\n    runtimeVariantId\n    runtimeVariant @since(version: \"26.4.3\") {\n      name\n      id\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "070de30fb11a30a3201e36e01b1d374b";
+(node as any).hash = "fe30a86c0c706ac049c3b002751fc4de";
 
 export default node;

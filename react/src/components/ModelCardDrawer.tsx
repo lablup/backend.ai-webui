@@ -4,7 +4,7 @@
  */
 import { ModelCardDrawerFragment$key } from '../__generated__/ModelCardDrawerFragment.graphql';
 import { ModelCardDrawerQuery } from '../__generated__/ModelCardDrawerQuery.graphql';
-import { useBackendAIImageMetaData } from '../hooks';
+import { useBackendAIImageMetaData, useSuspendedBackendaiClient } from '../hooks';
 import DeploymentSettingModal from './DeploymentSettingModal';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
@@ -57,6 +57,13 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
   const { t } = useTranslation();
   const [imageMetaData] = useBackendAIImageMetaData();
   const { generateFolderPath } = useFolderExplorerOpener();
+  const baiClient = useSuspendedBackendaiClient();
+  // Model-store deploy relies on the revised deployment schema (preset query +
+  // `key`-shaped environ entry). On 26.4.3 the preset types differ and deployment
+  // presets are unsupported, so hide the Deploy button there.
+  const isRevisedDeploymentSchema = baiClient.supports(
+    'model-deployment-revised-schema',
+  );
   const [deployModalOpen, setDeployModalOpen] = useState(false);
   const [
     isCreateDeploymentOpen,
@@ -158,22 +165,21 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
           </BAIFlex>
         }
         extra={
-          // Deploy submits a preset id (`revisionPresetId`); the server expands
-          // image/runtime/resources/environ from the preset, so this works on
-          // both 26.4.3 and 26.4.4.
-          <BAIButton
-            type="primary"
-            disabled={!modelCard?.id}
-            // Use `action` (not `onClick`) so the state update that mounts
-            // `<ModelCardDeployModal>` (which suspends while its Relay
-            // query loads) runs inside `startTransition` — the drawer
-            // stays interactive instead of falling into Suspense fallback.
-            action={async () => {
-              setDeployModalOpen(true);
-            }}
-          >
-            {t('modelStore.Deploy')}
-          </BAIButton>
+          isRevisedDeploymentSchema ? (
+            <BAIButton
+              type="primary"
+              disabled={!modelCard?.id}
+              // Use `action` (not `onClick`) so the state update that mounts
+              // `<ModelCardDeployModal>` (which suspends while its Relay
+              // query loads) runs inside `startTransition` — the drawer
+              // stays interactive instead of falling into Suspense fallback.
+              action={async () => {
+                setDeployModalOpen(true);
+              }}
+            >
+              {t('modelStore.Deploy')}
+            </BAIButton>
+          ) : null
         }
       >
         {modelCard && (
