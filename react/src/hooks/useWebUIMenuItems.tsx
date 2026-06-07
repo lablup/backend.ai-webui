@@ -4,13 +4,21 @@
  */
 import { useSuspendedBackendaiClient } from '.';
 import WebUILink from '../components/WebUILink';
-import { buildPath, MENU_KEY_TO_SCOPE_FEATURE } from '../helper/pathBuilder';
+import {
+  buildPath,
+  MENU_KEY_TO_SCOPE_FEATURE,
+  scopeFeatureToMenuKey,
+} from '../helper/pathBuilder';
 import { useCurrentUserRole } from './backendai';
 import { useDiagnosticsBadgeSeverity } from './useAutoDiagnostics';
 import { useBAISettingUserState } from './useBAISetting';
 import { useEffectiveAdminRole } from './useCurrentUserProjectRoles';
 import { useCustomThemeConfig } from './useCustomThemeConfig';
-import { useActiveProjectName, useCurrentMenuKey } from './useRouteScope';
+import {
+  getRouteScopeAndKey,
+  useActiveProjectName,
+  useCurrentMenuKey,
+} from './useRouteScope';
 import {
   PluginPage,
   useWebUIPluginLoadedValue,
@@ -917,6 +925,28 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
 
     // If plugins haven't loaded yet, assume page is valid to prevent flickering
     if (!isPluginLoaded) return false;
+
+    // Scope-aware 404: under the `/admin/<feature>` and
+    // `/project/:name/<feature>` (incl. `/project/:name/admin/<feature>`)
+    // namespaces, a feature key that is valid in a *different* scope
+    // (e.g. `/admin/start` where `start` is a user feature, or
+    // `/project/x/agent` where `agent` is admin-only) matches no route and the
+    // scope subtree renders an empty <Outlet/>. Treat such cross-scope URLs as
+    // 404 instead of a blank page.
+    const { scope: pathScope, featureKey: pathFeatureKey } =
+      getRouteScopeAndKey(location.pathname);
+    const hasScopePrefix =
+      location.pathname.startsWith('/admin/') ||
+      location.pathname.startsWith('/project/');
+    if (
+      hasScopePrefix &&
+      pathFeatureKey &&
+      !scopeFeatureToMenuKey(pathScope, pathFeatureKey) &&
+      !matchesDynamicRoute &&
+      !plugins?.page?.some((page) => page?.url === pathFeatureKey)
+    ) {
+      return true;
+    }
 
     // Check if path is in valid paths set
     if (allValidPaths.has(currentPathKey)) return false;

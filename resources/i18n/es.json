@@ -2231,8 +2231,11 @@
     "RoleMember": "Miembro"
   },
   "projectSelect": {
+    "GoToProject": "Ir al proyecto {{project}}",
     "NoAccessibleProjects": "No hay proyectos accesibles.",
-    "ProjectAdminBadge": "Administrador del proyecto"
+    "ProjectAdminBadge": "Administrador del proyecto",
+    "ProjectNotFoundOrNoAccess": "El proyecto '{{project}}' no fue encontrado o no tienes acceso a él.",
+    "SwitchToAccessibleProject": "Selecciona un proyecto accesible desde el selector de proyectos en la parte superior de la página."
   },
   "prometheusQueryPreset": {
     "AddPreset": "Agregar preset",
