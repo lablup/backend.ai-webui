@@ -2086,8 +2086,11 @@
     "RoleMember": "Μέλος"
   },
   "projectSelect": {
+    "GoToProject": "Μετάβαση στο {{project}}",
     "NoAccessibleProjects": "Δεν υπάρχουν προσβάσιμα έργα.",
-    "ProjectAdminBadge": "Διαχειριστής έργου"
+    "ProjectAdminBadge": "Διαχειριστής έργου",
+    "ProjectNotFoundOrNoAccess": "Το έργο '{{project}}' δεν βρέθηκε ή δεν έχετε πρόσβαση σε αυτό.",
+    "SwitchToAccessibleProject": "Επιλέξτε ένα προσβάσιμο έργο από τον επιλογέα έργου στο επάνω μέρος της σελίδας."
   },
   "prometheusQueryPreset": {
     "AddPreset": "Προσθήκη προεπιλογής",
