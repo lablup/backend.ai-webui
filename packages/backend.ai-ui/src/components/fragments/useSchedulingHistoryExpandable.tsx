@@ -1,4 +1,6 @@
 import { useBAIi18n } from '../../hooks/useBAIi18n';
+import BAIFlex from '../BAIFlex';
+import { SchedulingResult } from '../BAISchedulingResultBadge';
 import { Tooltip } from 'antd';
 import * as _ from 'lodash-es';
 import * as React from 'react';
@@ -11,7 +13,7 @@ import { useEffect, useEffectEvent, useState } from 'react';
  */
 export interface SchedulingHistoryExpandableRow {
   readonly id: string;
-  readonly result?: string | null;
+  readonly result?: SchedulingResult | '%future added value' | null;
   readonly subSteps?: ReadonlyArray<unknown> | null;
 }
 
@@ -106,7 +108,7 @@ export const useSchedulingHistoryExpandable = <
     expandableRowKeys.length > 0 ? (
       // Center the toggle in the header cell so it lines up with the
       // per-row expand icons, which Ant Design centers in their column.
-      <div style={{ display: 'flex', justifyContent: 'center' }}>
+      <BAIFlex justify="center">
         <Tooltip title={toggleLabel}>
           <button
             type="button"
@@ -119,7 +121,7 @@ export const useSchedulingHistoryExpandable = <
             }`}
           />
         </Tooltip>
-      </div>
+      </BAIFlex>
     ) : null;
 
   return { expandedRowKeys, onExpandedRowsChange, expandColumnTitle };
