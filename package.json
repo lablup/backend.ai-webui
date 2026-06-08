@@ -83,7 +83,7 @@
     "i18next-scanner": "^4.6.0",
     "jsonc-eslint-parser": "catalog:",
     "lint-staged": "^15.5.2",
-    "lodash": "catalog:",
+    "lodash": "^4.18.0",
     "nodemon": "^3.1.14",
     "portless": "^0.10.3",
     "prettier": "catalog:",
