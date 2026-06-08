@@ -151,8 +151,8 @@ catalogs:
       specifier: ^20.1.1
       version: 20.1.1
     react-router-dom:
-      specifier: ^6.30.3
-      version: 6.30.3
+      specifier: ^6.30.4
+      version: 6.30.4
     relay-compiler:
       specifier: ^20.1.1
       version: 20.1.1
@@ -548,7 +548,7 @@ importers:
         version: 3.1.3(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       react-router-dom:
         specifier: 'catalog:'
-        version: 6.30.3(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+        version: 6.30.4(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       relay-runtime:
         specifier: 'catalog:'
         version: 20.1.1(patch_hash=cc791a2ea160bc7c87571401d2f1430d50527847c44039d45579a5bfa60effa6)
@@ -864,7 +864,7 @@ importers:
         version: 5.1.11
       nuqs:
         specifier: ^2.8.9
-        version: 2.8.9(react-router-dom@6.30.3(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react-router@6.30.3(react@19.2.6))(react@19.2.6)
+        version: 2.8.9(react-router-dom@6.30.4(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react-router@6.30.4(react@19.2.6))(react@19.2.6)
       p-queue:
         specifier: ^8.1.1
         version: 8.1.1
@@ -897,7 +897,7 @@ importers:
         version: 20.1.1(react@19.2.6)
       react-router-dom:
         specifier: 'catalog:'
-        version: 6.30.3(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+        version: 6.30.4(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       react-virtuoso:
         specifier: ^4.18.4
         version: 4.18.6(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
@@ -936,7 +936,7 @@ importers:
         version: 6.0.3
       use-query-params:
         specifier: ^2.2.2
-        version: 2.2.2(react-dom@19.2.6(react@19.2.6))(react-router-dom@6.30.3(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react@19.2.6)
+        version: 2.2.2(react-dom@19.2.6(react@19.2.6))(react-router-dom@6.30.4(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react@19.2.6)
       uuid:
         specifier: 'catalog:'
         version: 13.0.2
@@ -3874,8 +3874,8 @@ packages:
     peerDependencies:
       react: '>=18'
 
-  '@remix-run/router@1.23.2':
-    resolution: {integrity: sha512-Ic6m2U/rMjTkhERIa/0ZtXJP17QUi2CbWE7cqx4J58M8aA3QTfW+2UlQ4psvTX9IO1RfNVhK3pcpdjej7L+t2w==}
+  '@remix-run/router@1.23.3':
+    resolution: {integrity: sha512-4An71tdz9X8+3sI4Qqqd2LWd9vS39J7sqd9EU4Scw7TJE/qB10Flv/UuqbPVgfQV9XoK8Np6jNquZitnZq5i+Q==}
     engines: {node: '>=14.0.0'}
 
   '@rolldown/pluginutils@1.0.0-beta.27':
@@ -9521,15 +9521,15 @@ packages:
       react: '>=16.3.0'
       react-dom: '>=16.3.0'
 
-  react-router-dom@6.30.3:
-    resolution: {integrity: sha512-pxPcv1AczD4vso7G4Z3TKcvlxK7g7TNt3/FNGMhfqyntocvYKj+GCatfigGDjbLozC4baguJ0ReCigoDJXb0ag==}
+  react-router-dom@6.30.4:
+    resolution: {integrity: sha512-q4HvNl+mmDdkS0g+MqiBZNteQJCuimWoOyHMy4T/RQLAn9Z29+E91QXRaxOujeMl2HTzRSS0KFPd7lxX3PjV0Q==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
       react: '>=16.8'
       react-dom: '>=16.8'
 
-  react-router@6.30.3:
-    resolution: {integrity: sha512-XRnlbKMTmktBkjCLE8/XcZFlnHvr2Ltdr1eJX4idL55/9BbORzyZEaIkBFDhFGCEWBBItsVrDxwx3gnisMitdw==}
+  react-router@6.30.4:
+    resolution: {integrity: sha512-SVUsDe+DybHM/WmYKIVYhZh1o5Dcuf16yM6WjG02Q9XVFMZIJyHYhwrr6bFBXZkVP6z69kNkMyBCujt8FaFLJA==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
       react: '>=16.8'
@@ -14652,7 +14652,7 @@ snapshots:
       '@react-hook/passive-layout-effect': 1.2.1(react@19.2.6)
       react: 19.2.6
 
-  '@remix-run/router@1.23.2': {}
+  '@remix-run/router@1.23.3': {}
 
   '@rolldown/pluginutils@1.0.0-beta.27': {}
 
@@ -20767,13 +20767,13 @@ snapshots:
 
   numeral@2.0.6: {}
 
-  nuqs@2.8.9(react-router-dom@6.30.3(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react-router@6.30.3(react@19.2.6))(react@19.2.6):
+  nuqs@2.8.9(react-router-dom@6.30.4(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react-router@6.30.4(react@19.2.6))(react@19.2.6):
     dependencies:
       '@standard-schema/spec': 1.0.0
       react: 19.2.6
     optionalDependencies:
-      react-router: 6.30.3(react@19.2.6)
-      react-router-dom: 6.30.3(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+      react-router: 6.30.4(react@19.2.6)
+      react-router-dom: 6.30.4(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
 
   object-assign@4.1.1: {}
 
@@ -21602,16 +21602,16 @@ snapshots:
       react-draggable: 4.4.6(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       tslib: 2.6.2
 
-  react-router-dom@6.30.3(react-dom@19.2.6(react@19.2.6))(react@19.2.6):
+  react-router-dom@6.30.4(react-dom@19.2.6(react@19.2.6))(react@19.2.6):
     dependencies:
-      '@remix-run/router': 1.23.2
+      '@remix-run/router': 1.23.3
       react: 19.2.6
       react-dom: 19.2.6(react@19.2.6)
-      react-router: 6.30.3(react@19.2.6)
+      react-router: 6.30.4(react@19.2.6)
 
-  react-router@6.30.3(react@19.2.6):
+  react-router@6.30.4(react@19.2.6):
     dependencies:
-      '@remix-run/router': 1.23.2
+      '@remix-run/router': 1.23.3
       react: 19.2.6
 
   react-smooth@4.0.4(react-dom@19.2.6(react@19.2.6))(react@19.2.6):
@@ -23262,13 +23262,13 @@ snapshots:
     dependencies:
       react: 19.2.6
 
-  use-query-params@2.2.2(react-dom@19.2.6(react@19.2.6))(react-router-dom@6.30.3(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react@19.2.6):
+  use-query-params@2.2.2(react-dom@19.2.6(react@19.2.6))(react-router-dom@6.30.4(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react@19.2.6):
     dependencies:
       react: 19.2.6
       react-dom: 19.2.6(react@19.2.6)
       serialize-query-params: 2.0.4
     optionalDependencies:
-      react-router-dom: 6.30.3(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+      react-router-dom: 6.30.4(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
 
   use-sync-external-store@1.6.0(react@19.2.6):
     dependencies:
@@ -24016,6 +24016,7 @@ time:
   electron@39.8.10: '2026-05-05T20:55:08.499Z'
   handlebars@4.7.9: '2026-03-26T20:46:39.280Z'
   lodash@4.18.1: '2026-04-01T21:01:20.458Z'
+  react-router-dom@6.30.4: '2026-05-29T19:41:50.812Z'
   typescript-eslint@8.59.1: '2026-04-27T17:31:57.870Z'
   typescript@5.9.3: '2025-09-30T21:19:38.784Z'
   typescript@6.0.3: '2026-04-16T23:38:27.905Z'
