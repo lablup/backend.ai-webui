@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { BAIBoardItem } from '../components/BAIBoard';
+import type { PersistedPanel } from '../components/DashboardPanels/types';
 import { jotaiStore } from '../components/DefaultProviders';
 import { backendaiOptions } from '../global-stores';
 import { CustomThemeConfig } from '../helper/customThemeConfig';
@@ -36,6 +37,8 @@ export interface UserSettings {
   session_metrics_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
   dashboard_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
   admin_dashboard_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
+  /** Decoupled-dashboard custom panels (serialized descriptors + layout). */
+  custom_dashboard_panels?: Array<PersistedPanel>;
   resource_panel_type?:
     | 'MyResource'
     | 'MyResourceWithinResourceGroup'
