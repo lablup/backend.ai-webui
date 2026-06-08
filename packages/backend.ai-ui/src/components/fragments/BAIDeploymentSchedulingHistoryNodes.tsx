@@ -8,8 +8,9 @@ import {
   newLineToBrElement,
 } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
-import { SchedulingResult } from '../BAISchedulingResultBadge';
-import BAISchedulingResultCell from '../BAISchedulingResultCell';
+import BAISchedulingResultBadge, {
+  SchedulingResult,
+} from '../BAISchedulingResultBadge';
 import BAIText from '../BAIText';
 import {
   BAIColumnsType,
@@ -123,12 +124,7 @@ const BAIDeploymentSchedulingHistoryNodes = ({
             record.result && record.result !== '%future added value'
               ? (record.result as SchedulingResult)
               : null;
-          return (
-            <BAISchedulingResultCell
-              result={result}
-              subSteps={record.subSteps}
-            />
-          );
+          return <BAISchedulingResultBadge result={result} />;
         },
         sorter: isEnableSorter('result'),
       },
@@ -203,15 +199,10 @@ const BAIDeploymentSchedulingHistoryNodes = ({
 
   return (
     <BAITable
-      // Spread caller props first so the component's fixed props (`rowKey`,
-      // `dataSource`, `columns`, …) below stay authoritative. Optional features
-      // such as `expandable` are supplied by callers and flow through here.
-      {...tableProps}
       rowKey={'id'}
       dataSource={dataSource}
       columns={allColumns}
       scroll={{ x: 'max-content' }}
-      neoHeader={false}
       bordered
       onChangeOrder={(order) => {
         onChangeOrder?.(
@@ -219,6 +210,11 @@ const BAIDeploymentSchedulingHistoryNodes = ({
             null,
         );
       }}
+      // Spread caller props last so the consumer (e.g. the wrapper table) can
+      // override presentation props such as `neoHeader` and supply `expandable`.
+      // Data props (`dataSource` / `columns` / `onChangeOrder`) are Omitted from
+      // the props type, so callers can't clobber them.
+      {...tableProps}
     />
   );
 };

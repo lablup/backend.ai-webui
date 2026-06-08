@@ -112,8 +112,7 @@ const DeploymentSchedulingHistoryModal = ({
           minHeight: '80vh',
         },
       }}
-      cancelText={t('button.Close')}
-      footer={(_originNode, { CancelBtn }) => <CancelBtn />}
+      footer={null}
       onCancel={onCancel}
       {...modalProps}
     >

@@ -6,7 +6,6 @@ import {
 import { convertToOrderBy } from '../helper';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import {
-  BAIButton,
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
@@ -97,17 +96,7 @@ const SessionSchedulingHistoryModal = ({
           minHeight: '80vh',
         },
       }}
-      footer={
-        <BAIButton
-          onClick={(e) =>
-            onCancel?.(
-              e as Parameters<NonNullable<BAIModalProps['onCancel']>>[0],
-            )
-          }
-        >
-          {t('button.Close')}
-        </BAIButton>
-      }
+      footer={null}
       onCancel={onCancel}
       {...modalProps}
     >

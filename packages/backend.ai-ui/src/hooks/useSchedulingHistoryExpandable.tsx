@@ -1,6 +1,6 @@
-import { useBAIi18n } from '../../hooks/useBAIi18n';
-import BAIFlex from '../BAIFlex';
-import { SchedulingResult } from '../BAISchedulingResultBadge';
+import BAIFlex from '../components/BAIFlex';
+import { SchedulingResult } from '../components/BAISchedulingResultBadge';
+import { useBAIi18n } from './useBAIi18n';
 import { Dropdown, theme } from 'antd';
 import * as _ from 'lodash-es';
 import { EllipsisVerticalIcon } from 'lucide-react';

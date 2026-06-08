@@ -192,6 +192,7 @@ const BAISubStepNodes = ({
       dataSource={dataSource}
       columns={allColumns}
       scroll={{ x: 'max-content' }}
+      neoHeader={false}
       {...tableProps}
     />
   );

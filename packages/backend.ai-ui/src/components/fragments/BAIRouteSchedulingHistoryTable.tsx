@@ -1,14 +1,14 @@
 import { BAIRouteSchedulingHistoryTableFragment$key } from '../../__generated__/BAIRouteSchedulingHistoryTableFragment.graphql';
 import { filterOutNullAndUndefined } from '../../helper';
+import {
+  type SchedulingHistoryExpandMode,
+  useSchedulingHistoryExpandable,
+} from '../../hooks/useSchedulingHistoryExpandable';
 import BAIRouteSchedulingHistoryNodeTable, {
   BAIRouteSchedulingHistoryNodesProps,
   RouteSchedulingHistoryNodeInList,
 } from './BAIRouteSchedulingHistoryNodeTable';
 import BAISubStepNodes from './BAISubStepNodes';
-import {
-  type SchedulingHistoryExpandMode,
-  useSchedulingHistoryExpandable,
-} from './useSchedulingHistoryExpandable';
 import * as _ from 'lodash-es';
 import { graphql, useFragment } from 'react-relay';
 
@@ -75,6 +75,7 @@ const BAIRouteSchedulingHistoryTable = ({
           />
         ),
       }}
+      neoHeader={false}
       {...rest}
     />
   );
