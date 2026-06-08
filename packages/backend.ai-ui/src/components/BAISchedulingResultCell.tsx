@@ -1,4 +1,3 @@
-import { newLineToBrElement } from '../helper';
 import BAIFlex from './BAIFlex';
 import BAISchedulingResultBadge, {
   SchedulingResult,
@@ -22,8 +21,8 @@ export interface SchedulingSubStepLike {
 export interface BAISchedulingResultCellProps {
   result: SchedulingResult | null;
   /**
-   * The row's sub-steps. Problematic (non-success) sub-steps that carry a
-   * message / errorCode are surfaced through an info icon next to the badge.
+   * The row's sub-steps. Problematic (non-success) sub-steps that carry an
+   * errorCode are surfaced through an info icon next to the badge.
    */
   subSteps?: ReadonlyArray<SchedulingSubStepLike> | null;
 }
@@ -33,10 +32,10 @@ const isNonSuccessResult = (result?: string | null) =>
 
 /**
  * Renders a scheduling `result` badge. For a non-success row, if any of its
- * sub-steps failed (or need retry) with a message, an info icon is shown
- * whose tooltip lists those sub-step reasons — so the user can see *why* the
- * row is non-success without expanding it. (The row-level message is not
- * repeated here; it already has its own Message column.)
+ * sub-steps failed (or need retry) with an error code, an info icon is shown
+ * whose tooltip lists those sub-step error codes — so the user can see *why*
+ * the row is non-success without expanding it. The sub-step message is not
+ * shown here; the row already has its own Message column for that.
  */
 const BAISchedulingResultCell = ({
   result,
@@ -48,9 +47,7 @@ const BAISchedulingResultCell = ({
   const rowIsNonSuccess = isNonSuccessResult(result);
 
   const problemSteps = (subSteps ?? []).filter(
-    (subStep) =>
-      isNonSuccessResult(subStep.result) &&
-      (!!subStep.message || !!subStep.errorCode),
+    (subStep) => isNonSuccessResult(subStep.result) && !!subStep.errorCode,
   );
 
   const showInfo = rowIsNonSuccess && problemSteps.length > 0;
@@ -65,9 +62,7 @@ const BAISchedulingResultCell = ({
               {problemSteps.map((subStep, idx) => (
                 <div key={`${subStep.step ?? 'step'}-${idx}`}>
                   {subStep.step ? <strong>{subStep.step}: </strong> : null}
-                  {subStep.message
-                    ? newLineToBrElement(subStep.message)
-                    : subStep.errorCode}
+                  {subStep.errorCode}
                 </div>
               ))}
             </BAIFlex>
