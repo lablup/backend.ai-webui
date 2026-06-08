@@ -721,8 +721,24 @@
     }
   },
   "dashboard": {
+    "Edit": "编辑",
     "Free": "自由的",
-    "Used": "用过的"
+    "Used": "用过的",
+    "editSider": {
+      "Empty": "暂无自定义面板",
+      "RequiresSuperadmin": "仅限超级管理员",
+      "ResetLayout": "重置布局",
+      "ResetLayoutDescription": "将面板布局恢复为默认设置。自定义面板将被保留。",
+      "Title": "自定义面板"
+    },
+    "panelModal": {
+      "AddPanel": "添加面板",
+      "Condition": "条件",
+      "EditPanel": "编辑面板",
+      "Resource": "资源",
+      "TitleDescription": "显示为面板标题——建议用于描述筛选条件。",
+      "TitleOptional": "标题（可选）"
+    }
   },
   "data": {
     "Active": "积极的",
@@ -3511,6 +3527,7 @@
     "ClearSSHKeypairInput": "书面 SSH 密钥对将被删除。你确定你要继续吗？",
     "ConfigFilename": "配置文件名",
     "CurrentSSHPublicKey": "当前公钥：",
+    "CustomDashboardPanels": "自定义仪表板面板",
     "DarkMode": "深色模式",
     "DarkTheme": "深色模式",
     "Default": "默认",

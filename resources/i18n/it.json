@@ -721,8 +721,24 @@
     }
   },
   "dashboard": {
+    "Edit": "Modifica",
     "Free": "Gratuito",
-    "Used": "Usato"
+    "Used": "Usato",
+    "editSider": {
+      "Empty": "Non ci sono ancora pannelli personalizzati",
+      "RequiresSuperadmin": "Solo superamministratori",
+      "ResetLayout": "Reimposta layout",
+      "ResetLayoutDescription": "Ripristina la disposizione predefinita dei pannelli. I pannelli personalizzati vengono mantenuti.",
+      "Title": "Pannelli personalizzati"
+    },
+    "panelModal": {
+      "AddPanel": "Aggiungi pannello",
+      "Condition": "Condizione",
+      "EditPanel": "Modifica pannello",
+      "Resource": "Risorsa",
+      "TitleDescription": "Mostrato come intestazione del pannello — usalo per descrivere la condizione.",
+      "TitleOptional": "Titolo (facoltativo)"
+    }
   },
   "data": {
     "Active": "Attivo",
@@ -3509,6 +3525,7 @@
     "ClearSSHKeypairInput": "La coppia di chiavi SSH scritta verrà rimossa. Sei sicuro di voler continuare?",
     "ConfigFilename": "Nome del file di configurazione",
     "CurrentSSHPublicKey": "Chiave pubblica attuale:",
+    "CustomDashboardPanels": "Pannelli dashboard personalizzati",
     "DarkMode": "Modalità scura",
     "DarkTheme": "Modalità scura",
     "Default": "Predefinito",
