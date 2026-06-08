@@ -45,7 +45,6 @@ catalog:
   jest: ^30.3.0
   jest-environment-jsdom: ^30.3.0
   jsonc-eslint-parser: ^2.4.2
-  lodash: ^4.17.23
   lodash-es: ^4.18.1
   lucide-react: ^0.552.0
   marked: ^16.4.2
@@ -84,7 +83,6 @@ minimumReleaseAgeExclude:
   # release that declares its previously phantom imports as real dependencies.
   # Remove this entry once 4.2.4 ages past 7 days.
   - langium@4.2.4
-
 minimumReleaseAgeIgnoreMissingTime: false
 resolutionMode: time-based
 
@@ -118,6 +116,22 @@ overrides:
   "uuid@^11": ^11.1.1                              # buffer bounds check (#387) v11 line
   "uuid@^13": ^13.0.1                              # buffer bounds check (#374) — @lobehub/ui pulls 13.0.0
   dompurify: ^3.4.0                                # align transitives with catalog bump
+  # Dev-only transitive security overrides — FR-3014. These ship only in
+  # dev/build tooling (not the production bundle), but Dependabot still
+  # surfaces them. Remove an entry when every upstream consumer ranges to
+  # the patched version on its own.
+  qs: ^6.15.2                                      # crash on null in comma-format arrays (alert #388)
+  "@babel/plugin-transform-modules-systemjs": ^7.29.4  # arbitrary code on malicious input (#378 high)
+  "fast-uri@^3": ^3.1.2                            # host confusion + path traversal (#376, #377 high)
+  postcss: ^8.5.10                                 # XSS via unescaped </style> (#372)
+  "@xmldom/xmldom": ^0.8.13                        # XML injection (#318, #368, #369, #371 high)
+  "picomatch@^2": ^2.3.2                           # method injection in POSIX char classes (#296)
+  "picomatch@^4": ^4.0.4                           # same (#294)
+  "minimatch@^3": ^3.1.4                           # ReDoS (#267, #274, #278 high)
+  "js-yaml@^4": ^4.1.1                             # prototype pollution in merge (#226)
+  "flatted@^3": ^3.4.2                             # prototype pollution via parse() (#291 high)
+  "yaml@^1": ^1.10.3                               # stack overflow on deeply nested YAML (#292)
+  lodash: ^4.18.0                                  # _.template RCE + _.unset prototype pollution (#321, #322 high)
 
 patchedDependencies:
   "@cloudscape-design/board-components@3.0.176": react/patches/@cloudscape-design__board-components@3.0.176.patch
