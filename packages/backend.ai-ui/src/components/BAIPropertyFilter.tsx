@@ -109,21 +109,58 @@ export function mergeFilterValues(
  * @returns An object containing the parsed property, operator, and value.
  */
 export function parseFilterValue(filter: string) {
-  // Split the filter string into an array of strings using a regular expression.
-  // The regular expression splits the string at whitespace characters, but ignores whitespace within double quotes.
-  const [property, ...rest] = filter.split(/\s+(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-
-  // Join the remaining strings in the array and split them again using the same regular expression.
-  // This extracts the operator and the value from the filter string.
-  const [operator, ...valueParts] = rest
-    .join(' ')
-    .split(/\s+(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+  // Tokenize on whitespace that falls outside double quotes. Implemented as a
+  // single linear scan (O(n)) rather than a lookahead regex: the previous
+  // pattern `/\s+(?=(?:(?:[^"]*"){2})*[^"]*$)/` had nested quantifiers that are
+  // vulnerable to catastrophic backtracking (ReDoS) on adversarial input.
+  const [property, operator, ...valueParts] = splitOutsideDoubleQuotes(filter);
 
   // Join the value parts into a single string and remove any leading or trailing double quotes.
   const value = valueParts.join(' ').replace(/^"|"$/g, '');
 
   // Return an object containing the parsed property, operator, and value.
   return { property, operator, value };
+}
+
+// Matches a single whitespace character. Applied per-character (never against
+// the full input), so it is constant-time and cannot backtrack — it preserves
+// the full `\s` semantics of the original split (including Unicode whitespace
+// such as a non-breaking space) without the ReDoS risk of a quantified regex.
+const WHITESPACE_CHAR = /\s/;
+
+/**
+ * Splits a string on runs of whitespace, but treats whitespace inside
+ * double-quoted spans as literal. Consecutive whitespace is collapsed (empty
+ * tokens are dropped), matching the previous regex-split behavior. Whitespace
+ * is matched with the full `\s` class (including Unicode whitespace), applied
+ * one character at a time so it runs in linear time with no backtracking.
+ */
+function splitOutsideDoubleQuotes(input: string): string[] {
+  const tokens: string[] = [];
+  let current = '';
+  let inQuotes = false;
+  let hasToken = false;
+  for (let i = 0; i < input.length; i++) {
+    const ch = input[i];
+    if (ch === '"') {
+      inQuotes = !inQuotes;
+      current += ch;
+      hasToken = true;
+    } else if (!inQuotes && WHITESPACE_CHAR.test(ch)) {
+      if (hasToken) {
+        tokens.push(current);
+        current = '';
+        hasToken = false;
+      }
+    } else {
+      current += ch;
+      hasToken = true;
+    }
+  }
+  if (hasToken) {
+    tokens.push(current);
+  }
+  return tokens;
 }
 
 /**
