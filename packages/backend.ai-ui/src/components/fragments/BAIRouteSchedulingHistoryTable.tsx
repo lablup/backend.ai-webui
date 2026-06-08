@@ -51,11 +51,16 @@ const BAIRouteSchedulingHistoryTable = ({
   );
 
   const dataSource = filterOutNullAndUndefined(histories);
-  const { expandedRowKeys, onExpandedRowsChange, expandColumnTitle } =
-    useSchedulingHistoryExpandable(dataSource, {
-      mode: expandMode,
-      onModeChange: onExpandModeChange,
-    });
+  const {
+    mode,
+    expandedRowKeys,
+    onExpandedRowsChange,
+    expandColumnTitle,
+    getExpandIcon,
+  } = useSchedulingHistoryExpandable(dataSource, {
+    mode: expandMode,
+    onModeChange: onExpandModeChange,
+  });
 
   return (
     <BAIRouteSchedulingHistoryNodeTable
@@ -64,6 +69,7 @@ const BAIRouteSchedulingHistoryTable = ({
         columnTitle: expandColumnTitle,
         expandedRowKeys,
         onExpandedRowsChange,
+        expandIcon: getExpandIcon<RouteSchedulingHistoryNodeInList>(),
         rowExpandable: (record: RouteSchedulingHistoryNodeInList) =>
           !_.isEmpty(record.subSteps),
         expandedRowRender: (record: RouteSchedulingHistoryNodeInList) => (
@@ -71,6 +77,7 @@ const BAIRouteSchedulingHistoryTable = ({
             resizable
             subStepsFrgmt={record.subSteps}
             pagination={false}
+            errorsOnly={mode === 'errors-only'}
           />
         ),
       }}

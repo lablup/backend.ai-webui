@@ -211,6 +211,7 @@ const BAIRouteSchedulingHistoryNodeTable = ({
       columns={allColumns}
       scroll={{ x: 'max-content' }}
       neoHeader={false}
+      bordered
       onChangeOrder={(order) => {
         onChangeOrder?.(
           (order as (typeof availableRouteHistorySorterValues)[number]) || null,

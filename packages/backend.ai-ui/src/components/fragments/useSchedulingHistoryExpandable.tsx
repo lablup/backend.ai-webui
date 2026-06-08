@@ -1,9 +1,14 @@
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIFlex from '../BAIFlex';
 import { SchedulingResult } from '../BAISchedulingResultBadge';
-import { Dropdown } from 'antd';
+import { Dropdown, theme, type TableProps } from 'antd';
 import * as _ from 'lodash-es';
-import { SquareMinusIcon, SquarePlusIcon, SquareSlashIcon } from 'lucide-react';
+import {
+  type LucideIcon,
+  SquareMinusIcon,
+  SquarePlusIcon,
+  SquareSlashIcon,
+} from 'lucide-react';
 import * as React from 'react';
 import { useEffect, useEffectEvent, useState } from 'react';
 
@@ -30,6 +35,17 @@ export type SchedulingHistoryExpandMode =
 export const DEFAULT_SCHEDULING_HISTORY_EXPAND_MODE: SchedulingHistoryExpandMode =
   'errors-only';
 
+/**
+ * The square icon used for each mode. The same lucide square family is reused
+ * for the per-row expand/collapse icons (see `getExpandIcon`) so the header
+ * control and the table body share one visual language.
+ */
+const MODE_ICON: Record<SchedulingHistoryExpandMode, LucideIcon> = {
+  'expand-all': SquarePlusIcon,
+  'collapse-all': SquareMinusIcon,
+  'errors-only': SquareSlashIcon,
+};
+
 const isRowExpandable = (record: SchedulingHistoryExpandableRow) =>
   !_.isEmpty(record.subSteps);
 
@@ -48,7 +64,18 @@ const computeExpandedRowKeysForMode = (
       ? []
       : dataSource.filter(shouldExpandByDefault).map((record) => record.id);
 
+/** The shape Ant Design expects for a table's `expandable.expandIcon`. */
+type ExpandIconRenderer<R> = NonNullable<
+  NonNullable<TableProps<R>['expandable']>['expandIcon']
+>;
+
 export interface UseSchedulingHistoryExpandableResult {
+  /**
+   * The effective master mode (the controlled `mode`, or the default
+   * "errors-only" when uncontrolled). Callers use this to filter the nested
+   * sub-step table to non-success rows when the mode is `errors-only`.
+   */
+  mode: SchedulingHistoryExpandMode;
   expandedRowKeys: React.Key[];
   onExpandedRowsChange: (expandedKeys: readonly React.Key[]) => void;
   /**
@@ -57,6 +84,13 @@ export interface UseSchedulingHistoryExpandableResult {
    * no row in the current data set is expandable.
    */
   expandColumnTitle: React.ReactNode;
+  /**
+   * Per-row expand/collapse icon renderer for the table's `expandable.expandIcon`.
+   * Renders the same lucide square icons as the header control so both share one
+   * visual language. Generic over the table's record type; call it as
+   * `getExpandIcon<MyRecord>()` at the `expandable` call site.
+   */
+  getExpandIcon: <R>() => ExpandIconRenderer<R>;
 }
 
 /**
@@ -84,6 +118,7 @@ export const useSchedulingHistoryExpandable = <
 ): UseSchedulingHistoryExpandableResult => {
   'use memo';
   const { t } = useBAIi18n();
+  const { token } = theme.useToken();
 
   const mode = options?.mode ?? DEFAULT_SCHEDULING_HISTORY_EXPAND_MODE;
 
@@ -128,23 +163,18 @@ export const useSchedulingHistoryExpandable = <
     setExpandedRowKeys([...expandedKeys]);
   };
 
-  const menuItems = [
-    {
-      key: 'expand-all',
-      icon: <SquarePlusIcon size={14} />,
-      label: t('comp:BAITable.ExpandAll'),
-    },
-    {
-      key: 'collapse-all',
-      icon: <SquareMinusIcon size={14} />,
-      label: t('comp:BAITable.CollapseAll'),
-    },
-    {
-      key: 'errors-only',
-      icon: <SquareSlashIcon size={14} />,
-      label: t('comp:BAITable.ExpandErrorsOnly'),
-    },
-  ];
+  const modeLabel: Record<SchedulingHistoryExpandMode, string> = {
+    'expand-all': t('comp:BAITable.ExpandAll'),
+    'collapse-all': t('comp:BAITable.CollapseAll'),
+    'errors-only': t('comp:BAITable.ExpandErrorsOnly'),
+  };
+
+  const menuItems = (
+    ['expand-all', 'collapse-all', 'errors-only'] as const
+  ).map((m) => {
+    const Icon = MODE_ICON[m];
+    return { key: m, icon: <Icon size={14} />, label: modeLabel[m] };
+  });
 
   const onMenuClick = ({ key }: { key: string }) => {
     const next = key as SchedulingHistoryExpandMode;
@@ -152,14 +182,51 @@ export const useSchedulingHistoryExpandable = <
     options?.onModeChange?.(next);
   };
 
-  const currentModeIcon =
-    mode === 'expand-all' ? (
-      <SquarePlusIcon size={14} />
-    ) : mode === 'collapse-all' ? (
-      <SquareMinusIcon size={14} />
-    ) : (
-      <SquareSlashIcon size={14} />
-    );
+  const CurrentModeIcon = MODE_ICON[mode];
+
+  // Per-row expand/collapse icon: reuses the same square-plus / square-minus
+  // glyphs as the header control (a collapsed row offers "expand" → plus; an
+  // expanded row offers "collapse" → minus). Colours come from theme tokens so
+  // both light and dark mode render correctly.
+  const getExpandIcon = <R,>(): ExpandIconRenderer<R> =>
+    function SchedulingHistoryExpandIcon({
+      expanded,
+      onExpand,
+      record,
+      expandable,
+    }) {
+      if (!expandable) {
+        return null;
+      }
+      // In errors-only mode an expanded row shows a *filtered* (errors-only)
+      // nested table, so its icon is square-slash — matching the header's
+      // errors-only glyph — instead of the plain collapse (minus) icon.
+      const Icon = expanded
+        ? mode === 'errors-only'
+          ? SquareSlashIcon
+          : SquareMinusIcon
+        : SquarePlusIcon;
+      return (
+        <button
+          type="button"
+          aria-label={
+            expanded ? t('comp:button.Collapse') : t('comp:button.Expand')
+          }
+          onClick={(e) => onExpand(record, e)}
+          style={{
+            cursor: 'pointer',
+            border: 'none',
+            background: 'transparent',
+            padding: 0,
+            display: 'inline-flex',
+            alignItems: 'center',
+            color: token.colorTextSecondary,
+          }}
+        >
+          <Icon size={14} />
+        </button>
+      );
+    };
 
   const expandColumnTitle =
     expandableRowKeys.length > 0 ? (
@@ -176,22 +243,29 @@ export const useSchedulingHistoryExpandable = <
         >
           <button
             type="button"
-            aria-label={t('comp:BAITable.ExpandAll')}
+            aria-label={modeLabel[mode]}
             style={{
               cursor: 'pointer',
               border: 'none',
               background: 'transparent',
               padding: 0,
               display: 'inline-flex',
+              color: token.colorTextSecondary,
             }}
           >
-            {currentModeIcon}
+            <CurrentModeIcon size={14} />
           </button>
         </Dropdown>
       </BAIFlex>
     ) : null;
 
-  return { expandedRowKeys, onExpandedRowsChange, expandColumnTitle };
+  return {
+    mode,
+    expandedRowKeys,
+    onExpandedRowsChange,
+    expandColumnTitle,
+    getExpandIcon,
+  };
 };
 
 export default useSchedulingHistoryExpandable;

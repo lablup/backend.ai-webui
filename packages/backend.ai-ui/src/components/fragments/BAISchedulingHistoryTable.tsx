@@ -51,11 +51,16 @@ const BAISchedulingHistoryTable = ({
   );
 
   const dataSource = filterOutNullAndUndefined(histories);
-  const { expandedRowKeys, onExpandedRowsChange, expandColumnTitle } =
-    useSchedulingHistoryExpandable(dataSource, {
-      mode: expandMode,
-      onModeChange: onExpandModeChange,
-    });
+  const {
+    mode,
+    expandedRowKeys,
+    onExpandedRowsChange,
+    expandColumnTitle,
+    getExpandIcon,
+  } = useSchedulingHistoryExpandable(dataSource, {
+    mode: expandMode,
+    onModeChange: onExpandModeChange,
+  });
 
   return (
     <BAISchedulingHistoryNodes
@@ -64,6 +69,7 @@ const BAISchedulingHistoryTable = ({
         columnTitle: expandColumnTitle,
         expandedRowKeys,
         onExpandedRowsChange,
+        expandIcon: getExpandIcon<SchedulingHistoryNodeInList>(),
         rowExpandable: (record: SchedulingHistoryNodeInList) =>
           !_.isEmpty(record.subSteps),
         expandedRowRender: (record: SchedulingHistoryNodeInList) => (
@@ -71,6 +77,7 @@ const BAISchedulingHistoryTable = ({
             resizable
             subStepsFrgmt={record.subSteps}
             pagination={false}
+            errorsOnly={mode === 'errors-only'}
           />
         ),
       }}

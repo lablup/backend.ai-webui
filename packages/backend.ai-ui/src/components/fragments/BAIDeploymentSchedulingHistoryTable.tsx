@@ -51,11 +51,16 @@ const BAIDeploymentSchedulingHistoryTable = ({
   );
 
   const dataSource = filterOutNullAndUndefined(histories);
-  const { expandedRowKeys, onExpandedRowsChange, expandColumnTitle } =
-    useSchedulingHistoryExpandable(dataSource, {
-      mode: expandMode,
-      onModeChange: onExpandModeChange,
-    });
+  const {
+    mode,
+    expandedRowKeys,
+    onExpandedRowsChange,
+    expandColumnTitle,
+    getExpandIcon,
+  } = useSchedulingHistoryExpandable(dataSource, {
+    mode: expandMode,
+    onModeChange: onExpandModeChange,
+  });
 
   return (
     <BAIDeploymentSchedulingHistoryNodes
@@ -64,6 +69,7 @@ const BAIDeploymentSchedulingHistoryTable = ({
         columnTitle: expandColumnTitle,
         expandedRowKeys,
         onExpandedRowsChange,
+        expandIcon: getExpandIcon<DeploymentSchedulingHistoryNodeInList>(),
         rowExpandable: (record: DeploymentSchedulingHistoryNodeInList) =>
           !_.isEmpty(record.subSteps),
         expandedRowRender: (record: DeploymentSchedulingHistoryNodeInList) => (
@@ -71,6 +77,7 @@ const BAIDeploymentSchedulingHistoryTable = ({
             resizable
             subStepsFrgmt={record.subSteps}
             pagination={false}
+            errorsOnly={mode === 'errors-only'}
           />
         ),
       }}

@@ -191,6 +191,7 @@ const BAISchedulingHistoryNodes = ({
       columns={allColumns}
       scroll={{ x: 'max-content' }}
       neoHeader={false}
+      bordered
       onChangeOrder={(order) => {
         onChangeOrder?.(
           (order as (typeof availableHistorySorterValues)[number]) || null,

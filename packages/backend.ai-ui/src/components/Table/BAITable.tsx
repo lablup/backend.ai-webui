@@ -463,7 +463,7 @@ const BAITable = <RecordType extends AnyObject = AnyObject>({
           className={classNames(
             resizable && styles.resizableTable,
             styles.expandedRowBackground,
-            neoHeader && styles.neoHeaderTitle,
+            neoHeader ? styles.neoHeaderTitle : styles.defaultHeaderTitle,
             tableProps.rowSelection?.columnWidth === 0 &&
               styles.zeroWithSelectionColumn,
           )}
@@ -677,10 +677,21 @@ const useStyles = createStyles(({ token, css }) => ({
       color: ${token.colorTextTertiary};
     }
   `,
+  // Ant Design's default table-header look (bold title on a filled bar). Used
+  // by tables that opt out of the muted neo header via \`neoHeader={false}\`.
+  // The background comes from a theme token so the header bar renders in both
+  // light and dark mode (the app theme only defines Table.headerBg for light).
+  defaultHeaderTitle: css`
+    thead.ant-table-thead > tr > th.ant-table-cell {
+      font-weight: ${token.fontWeightStrong};
+      color: ${token.colorText};
+      background: ${token.colorFillSecondary};
+    }
+  `,
   expandedRowBackground: css`
-    body:not(.dark-theme) & .ant-table-expanded-row > .ant-table-cell,
-    body:not(.dark-theme) & .ant-table-expanded-row:hover > .ant-table-cell {
-      background: #e3e3e3;
+    & .ant-table-expanded-row > .ant-table-cell,
+    & .ant-table-expanded-row:hover > .ant-table-cell {
+      background: ${token.colorFillSecondary};
     }
   `,
   zeroWithSelectionColumn: css`
