@@ -55,7 +55,7 @@ catalog:
   react-dom: ^19.2.6
   react-i18next: ^16.6.6
   react-relay: ^20.1.1
-  react-router-dom: ^6.30.3
+  react-router-dom: ^6.30.4
   relay-compiler: ^20.1.1
   relay-runtime: ^20.1.1
   relay-test-utils: ^20.1.1
