@@ -7,6 +7,8 @@ import ActiveAgents from '../components/ActiveAgents';
 import AgentStats from '../components/AgentStats';
 import BAIBoard, { BAIBoardItem } from '../components/BAIBoard';
 import DashboardEditToggleButton from '../components/DashboardEditToggleButton';
+import { useCustomPanels } from '../components/DashboardPanels';
+import DashboardEditSider from '../components/DashboardPanels/DashboardEditSider';
 import MyResource from '../components/MyResource';
 import MyResourceWithinResourceGroup from '../components/MyResourceWithinResourceGroup';
 import QuotaPerStorageVolumeDashboardItem from '../components/QuotaPerStorageVolumeDashboardItem';
@@ -28,6 +30,7 @@ import {
 import { Skeleton, theme } from 'antd';
 import {
   BAIBoardItemErrorBoundary,
+  BAIFlex,
   filterOutEmpty,
   INITIAL_FETCH_KEY,
   useFetchKey,
@@ -68,6 +71,19 @@ const DashboardPage: React.FC = () => {
     setBreadcrumbExtra(<DashboardEditToggleButton />);
     return () => setBreadcrumbExtra(null);
   }, [setBreadcrumbExtra]);
+
+  // Decoupled "query-as-config" custom panels, rendered as additional items in
+  // the SAME single board (a second Cloudscape <Board> would corrupt the shared
+  // module-level DnD controller). The hook owns custom content + identity; the
+  // unified `dashboard_board_items` list owns order/layout for built-in and custom
+  // alike, so both are dragged/resized and persisted identically.
+  const {
+    panels,
+    customDefaultLayout,
+    customContentById,
+    addPanel,
+    removePanel,
+  } = useCustomPanels();
 
   const isAvailableTotalResourcePanel =
     useIsAvailableTotalResourceWithinResourceGroup();
@@ -339,19 +355,23 @@ const DashboardPage: React.FC = () => {
   // the board snaps back ("revert"). So ORDER and LAYOUT live in ONE persisted
   // list (`dashboard_board_items`); content is resolved by id every render.
 
-  // Content-by-id for the whole board.
+  // Content-by-id for the whole board (built-in + custom).
   const contentById = new Map<string, BAIBoardItem['data']>();
   _.forEach(initialBoardItems, (item) => {
     contentById.set(item.id, item.data);
   });
+  customContentById.forEach((content, id) => {
+    contentById.set(id, { content });
+  });
 
   // Default layout (id + spans + offset, no content) for every renderable id, in
-  // seed order. Used only to seed ids that have no entry in the persisted unified
-  // list yet (e.g. a new webui version added a built-in item).
-  const defaultLayout: Array<Omit<BAIBoardItem, 'data'>> = _.map(
-    initialBoardItems,
-    (item) => _.omit(item, 'data'),
-  );
+  // seed order: built-in items first, then the custom panels. Used only to seed
+  // ids that have no entry in the persisted unified list yet (a new webui version
+  // added a built-in item, or the user just added a custom panel).
+  const defaultLayout: Array<Omit<BAIBoardItem, 'data'>> = [
+    ..._.map(initialBoardItems, (item) => _.omit(item, 'data')),
+    ...customDefaultLayout,
+  ];
 
   // The set of ids that are renderable right now (have content). A persisted
   // entry for an id that no longer exists (e.g. a removed custom panel, or an
@@ -375,21 +395,35 @@ const DashboardPage: React.FC = () => {
   );
 
   return (
-    <BAIBoard
-      movable={editMode}
-      resizable={editMode}
-      bordered
-      items={boardItems}
-      onItemsChange={(event) => {
-        // event.detail.items is the COMPLETE board in its new order, with updated
-        // spans + columnOffset (Cloudscape's transformItems). Persist it verbatim
-        // (minus runtime `data`) as the unified layout. Because the next render
-        // rebuilds `items` in exactly this order, the controlled board never reverts.
-        setLocalStorageBoardItems(
-          _.map(event.detail.items, (item) => _.omit(item, 'data')),
-        );
-      }}
-    />
+    // Row layout so the edit sider PUSHES the board (board reflows into the
+    // remaining width) instead of an overlay covering the right panels.
+    <BAIFlex direction="row" align="stretch" gap="lg" style={{ width: '100%' }}>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <BAIBoard
+          movable={editMode}
+          resizable={editMode}
+          bordered
+          items={boardItems}
+          onItemsChange={(event) => {
+            // event.detail.items is the COMPLETE board in its new order, with
+            // updated spans + columnOffset (Cloudscape's transformItems). Persist
+            // it verbatim (minus runtime `data`) as the unified layout for every id
+            // — built-in and custom alike. Because the next render rebuilds `items`
+            // in exactly this order, the controlled board never reverts.
+            setLocalStorageBoardItems(
+              _.map(event.detail.items, (item) => _.omit(item, 'data')),
+            );
+          }}
+        />
+      </div>
+      {editMode ? (
+        <DashboardEditSider
+          panels={panels}
+          onAdd={addPanel}
+          onRemove={removePanel}
+        />
+      ) : null}
+    </BAIFlex>
   );
 };
 
