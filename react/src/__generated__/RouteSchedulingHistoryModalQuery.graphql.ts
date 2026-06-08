@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<70ce48230752a4345464300e2ecbe825>>
+ * @generated SignedSource<<6145c00a0cf25be3e8fe9145d7655ba3>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -290,20 +290,6 @@ return {
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
-                    "name": "routeId",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "deploymentId",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
                     "name": "category",
                     "storageKey": null
                   },
@@ -363,12 +349,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "28dbf75a8fde71f821c94dd51b0176b2",
+    "cacheID": "cc015be6545ab617c3b19d2aa20ec00e",
     "id": null,
     "metadata": {},
     "name": "RouteSchedulingHistoryModalQuery",
     "operationKind": "query",
-    "text": "query RouteSchedulingHistoryModalQuery(\n  $scope: RouteScope!\n  $filter: RouteHistoryFilter\n  $orderBy: [RouteHistoryOrderBy!]\n) {\n  routeScopedSchedulingHistories(scope: $scope, filter: $filter, orderBy: $orderBy) {\n    edges {\n      node {\n        ...BAIRouteSchedulingHistoryTableFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAIRouteSchedulingHistoryNodeTableFragment on RouteHistory {\n  id\n  routeId\n  deploymentId\n  category\n  phase\n  fromStatus\n  toStatus\n  result\n  errorCode\n  message\n  subSteps {\n    ...BAISubStepNodesFragment\n    step\n    result\n    errorCode\n    message\n  }\n  attempts\n  createdAt\n  updatedAt\n}\n\nfragment BAIRouteSchedulingHistoryTableFragment on RouteHistory {\n  id\n  result\n  subSteps {\n    __typename\n  }\n  ...BAIRouteSchedulingHistoryNodeTableFragment\n}\n\nfragment BAISubStepNodesFragment on SubStepResultGQL {\n  step\n  result\n  errorCode\n  message\n  startedAt\n  endedAt\n}\n"
+    "text": "query RouteSchedulingHistoryModalQuery(\n  $scope: RouteScope!\n  $filter: RouteHistoryFilter\n  $orderBy: [RouteHistoryOrderBy!]\n) {\n  routeScopedSchedulingHistories(scope: $scope, filter: $filter, orderBy: $orderBy) {\n    edges {\n      node {\n        ...BAIRouteSchedulingHistoryTableFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAIRouteSchedulingHistoryNodeTableFragment on RouteHistory {\n  id\n  category\n  phase\n  fromStatus\n  toStatus\n  result\n  errorCode\n  message\n  subSteps {\n    ...BAISubStepNodesFragment\n    step\n    result\n    errorCode\n    message\n  }\n  attempts\n  createdAt\n  updatedAt\n}\n\nfragment BAIRouteSchedulingHistoryTableFragment on RouteHistory {\n  id\n  result\n  subSteps {\n    __typename\n  }\n  ...BAIRouteSchedulingHistoryNodeTableFragment\n}\n\nfragment BAISubStepNodesFragment on SubStepResultGQL {\n  step\n  result\n  errorCode\n  message\n  startedAt\n  endedAt\n}\n"
   }
 };
 })();

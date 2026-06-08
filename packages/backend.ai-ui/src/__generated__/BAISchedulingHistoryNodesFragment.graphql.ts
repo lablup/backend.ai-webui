@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<65325bef206033878abbeaadf3d19b70>>
+ * @generated SignedSource<<a0f1cc240d45989a183f60009df09663>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -19,7 +19,6 @@ export type BAISchedulingHistoryNodesFragment$data = ReadonlyArray<{
   readonly message: string | null | undefined;
   readonly phase: string;
   readonly result: SchedulingResult;
-  readonly sessionId: string;
   readonly subSteps: ReadonlyArray<{
     readonly errorCode: string | null | undefined;
     readonly message: string | null | undefined;
@@ -64,13 +63,6 @@ return {
       "args": null,
       "kind": "ScalarField",
       "name": "id",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "sessionId",
       "storageKey": null
     },
     {
@@ -155,6 +147,6 @@ return {
 };
 })();
 
-(node as any).hash = "e15e0fd6aa96ce517a043363f60fe2db";
+(node as any).hash = "9d5ee56dba146dbb8458478a7a309c7f";
 
 export default node;

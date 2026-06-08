@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<2801a61dc812d11763342c8561273e70>>
+ * @generated SignedSource<<ebfa5d126e3ee309ce1ea571424d61b3>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -15,14 +15,12 @@ export type BAIRouteSchedulingHistoryNodeTableFragment$data = ReadonlyArray<{
   readonly attempts: number;
   readonly category: string;
   readonly createdAt: string;
-  readonly deploymentId: string;
   readonly errorCode: string | null | undefined;
   readonly fromStatus: string | null | undefined;
   readonly id: string;
   readonly message: string | null | undefined;
   readonly phase: string;
   readonly result: SchedulingResult;
-  readonly routeId: string;
   readonly subSteps: ReadonlyArray<{
     readonly errorCode: string | null | undefined;
     readonly message: string | null | undefined;
@@ -74,20 +72,6 @@ return {
       "args": null,
       "kind": "ScalarField",
       "name": "id",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "routeId",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "deploymentId",
       "storageKey": null
     },
     {
@@ -174,6 +158,6 @@ return {
 };
 })();
 
-(node as any).hash = "fe88c47424e5d1e63b942ef7ac6f9a86";
+(node as any).hash = "db586dadc76ba701f8163d3bfe300b94";
 
 export default node;

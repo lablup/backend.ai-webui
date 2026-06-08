@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<867aa4ccb91b348b7963f2ae50c0baeb>>
+ * @generated SignedSource<<da524a07c90bf7fe75d2a299a4320a1e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -288,13 +288,6 @@ return {
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
-                    "name": "sessionId",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
                     "name": "attempts",
                     "storageKey": null
                   },
@@ -346,12 +339,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "7b0a5d549365320b0a1742fa0b186264",
+    "cacheID": "cf33d726c3daab066b090d8155be8b13",
     "id": null,
     "metadata": {},
     "name": "SessionSchedulingHistoryModalQuery",
     "operationKind": "query",
-    "text": "query SessionSchedulingHistoryModalQuery(\n  $scope: SessionScope!\n  $filter: SessionSchedulingHistoryFilter\n  $orderBy: [SessionSchedulingHistoryOrderBy!]\n) {\n  sessionScopedSchedulingHistories(scope: $scope, filter: $filter, orderBy: $orderBy) {\n    edges {\n      node {\n        ...BAISchedulingHistoryTableFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAISchedulingHistoryNodesFragment on SessionSchedulingHistory {\n  id\n  sessionId\n  attempts\n  createdAt\n  updatedAt\n  fromStatus\n  toStatus\n  message\n  phase\n  result\n  subSteps {\n    ...BAISubStepNodesFragment\n    step\n    result\n    errorCode\n    message\n  }\n}\n\nfragment BAISchedulingHistoryTableFragment on SessionSchedulingHistory {\n  id\n  result\n  subSteps {\n    __typename\n  }\n  ...BAISchedulingHistoryNodesFragment\n}\n\nfragment BAISubStepNodesFragment on SubStepResultGQL {\n  step\n  result\n  errorCode\n  message\n  startedAt\n  endedAt\n}\n"
+    "text": "query SessionSchedulingHistoryModalQuery(\n  $scope: SessionScope!\n  $filter: SessionSchedulingHistoryFilter\n  $orderBy: [SessionSchedulingHistoryOrderBy!]\n) {\n  sessionScopedSchedulingHistories(scope: $scope, filter: $filter, orderBy: $orderBy) {\n    edges {\n      node {\n        ...BAISchedulingHistoryTableFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAISchedulingHistoryNodesFragment on SessionSchedulingHistory {\n  id\n  attempts\n  createdAt\n  updatedAt\n  fromStatus\n  toStatus\n  message\n  phase\n  result\n  subSteps {\n    ...BAISubStepNodesFragment\n    step\n    result\n    errorCode\n    message\n  }\n}\n\nfragment BAISchedulingHistoryTableFragment on SessionSchedulingHistory {\n  id\n  result\n  subSteps {\n    __typename\n  }\n  ...BAISchedulingHistoryNodesFragment\n}\n\nfragment BAISubStepNodesFragment on SubStepResultGQL {\n  step\n  result\n  errorCode\n  message\n  startedAt\n  endedAt\n}\n"
   }
 };
 })();

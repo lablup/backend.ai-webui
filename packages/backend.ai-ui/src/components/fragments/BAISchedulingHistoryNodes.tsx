@@ -66,7 +66,6 @@ const BAISchedulingHistoryNodes = ({
       fragment BAISchedulingHistoryNodesFragment on SessionSchedulingHistory
       @relay(plural: true) {
         id
-        sessionId
         attempts
         createdAt
         updatedAt

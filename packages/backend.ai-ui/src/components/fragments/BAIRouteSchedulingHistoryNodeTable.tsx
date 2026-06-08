@@ -66,8 +66,6 @@ const BAIRouteSchedulingHistoryNodeTable = ({
       fragment BAIRouteSchedulingHistoryNodeTableFragment on RouteHistory
       @relay(plural: true) {
         id
-        routeId
-        deploymentId
         category
         phase
         fromStatus
