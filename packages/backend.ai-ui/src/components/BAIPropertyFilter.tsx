@@ -104,23 +104,62 @@ export function mergeFilterValues(
 }
 
 /**
+ * Splits a string on whitespace while preserving whitespace inside
+ * double-quoted segments. Implemented as a single linear scan to avoid the
+ * polynomial-backtracking lookahead regex previously used here, which was
+ * flagged by CodeQL (js/polynomial-redos) as vulnerable to ReDoS on inputs
+ * with many repeated whitespace characters.
+ * @param input - The string to tokenize.
+ * @returns The whitespace-separated tokens (quoted segments kept intact).
+ */
+function tokenizeRespectingQuotes(input: string): string[] {
+  const tokens: string[] = [];
+  let current = '';
+  let inQuotes = false;
+  for (let i = 0; i < input.length; i++) {
+    const char = input[i];
+    if (char === '"') {
+      inQuotes = !inQuotes;
+      current += char;
+    } else if (
+      !inQuotes &&
+      (char === ' ' ||
+        char === '\t' ||
+        char === '\n' ||
+        char === '\r' ||
+        char === '\f' ||
+        char === '\v')
+    ) {
+      if (current !== '') {
+        tokens.push(current);
+        current = '';
+      }
+    } else {
+      current += char;
+    }
+  }
+  if (current !== '') {
+    tokens.push(current);
+  }
+  return tokens;
+}
+
+/**
  * Parses the filter value and returns an object containing the property, operator, and value.
  * @param filter - The filter string to parse.
  * @returns An object containing the parsed property, operator, and value.
  */
 export function parseFilterValue(filter: string) {
-  // Split the filter string into an array of strings using a regular expression.
-  // The regular expression splits the string at whitespace characters, but ignores whitespace within double quotes.
-  const [property, ...rest] = filter.split(/\s+(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+  // Tokenize on whitespace, ignoring whitespace within double quotes.
+  // The first token is the property, the second is the operator, and the
+  // remainder (rejoined with single spaces) is the value.
+  const tokens = tokenizeRespectingQuotes(filter);
+  const property = tokens[0] ?? '';
+  const operator = tokens[1] ?? '';
 
-  // Join the remaining strings in the array and split them again using the same regular expression.
-  // This extracts the operator and the value from the filter string.
-  const [operator, ...valueParts] = rest
-    .join(' ')
-    .split(/\s+(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-
-  // Join the value parts into a single string and remove any leading or trailing double quotes.
-  const value = valueParts.join(' ').replace(/^"|"$/g, '');
+  // Join the value tokens into a single string and remove any leading or
+  // trailing double quotes.
+  const value = tokens.slice(2).join(' ').replace(/^"|"$/g, '');
 
   // Return an object containing the parsed property, operator, and value.
   return { property, operator, value };

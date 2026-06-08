@@ -1,9 +1,33 @@
 import BAIGraphQLPropertyFilter, {
+  buildNestedFilter,
   type FilterProperty,
   type GraphQLFilter,
 } from './BAIGraphQLPropertyFilter';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { useState } from 'react';
+
+describe('buildNestedFilter', () => {
+  it('builds a single-level filter', () => {
+    expect(buildNestedFilter('name', { eq: 'test' })).toEqual({
+      name: { eq: 'test' },
+    });
+  });
+
+  it('builds a nested filter from a dot-notation path', () => {
+    expect(buildNestedFilter('project.name', { eq: 'test' })).toEqual({
+      project: { name: { eq: 'test' } },
+    });
+  });
+
+  it.each(['__proto__', 'constructor', 'prototype'])(
+    'rejects prototype-polluting key "%s"',
+    (key) => {
+      expect(() => buildNestedFilter(`${key}.polluted`, { eq: 'x' })).toThrow();
+      // Object.prototype must remain untouched.
+      expect(({} as Record<string, unknown>).polluted).toBeUndefined();
+    },
+  );
+});
 
 const filterProperties: Array<FilterProperty> = [
   {

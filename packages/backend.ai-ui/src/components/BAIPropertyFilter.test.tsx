@@ -56,6 +56,37 @@ describe('parseFilterValue', () => {
       value: '%@example.com',
     });
   });
+
+  it('should treat tabs and mixed whitespace as separators', () => {
+    expect(parseFilterValue('name\t==\t"value"')).toEqual({
+      property: 'name',
+      operator: '==',
+      value: 'value',
+    });
+  });
+
+  it('should preserve whitespace inside quoted values', () => {
+    expect(parseFilterValue('name contains "foo bar baz"')).toEqual({
+      property: 'name',
+      operator: 'contains',
+      value: 'foo bar baz',
+    });
+  });
+
+  it('should not backtrack catastrophically on long whitespace input (ReDoS guard)', () => {
+    // Previously a polynomial-backtracking regex was used here; a long run of
+    // tab characters would take seconds. The linear tokenizer must finish fast.
+    const filter = 'name ==' + '\t'.repeat(50000) + '"value"';
+    const start = performance.now();
+    const result = parseFilterValue(filter);
+    const elapsed = performance.now() - start;
+    expect(result).toEqual({
+      property: 'name',
+      operator: '==',
+      value: 'value',
+    });
+    expect(elapsed).toBeLessThan(1000);
+  });
 });
 
 describe('mergeFilterValues', () => {

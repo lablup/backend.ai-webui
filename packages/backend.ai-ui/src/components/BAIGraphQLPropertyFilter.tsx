@@ -255,17 +255,30 @@ function generateId(): string {
   return `filter-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
 }
 
+// Object keys that would mutate the prototype chain if used as nested filter
+// keys. Guarding against them prevents prototype-pollution
+// (CodeQL js/prototype-polluting-assignment, js/prototype-pollution-utility).
+const PROTOTYPE_POLLUTING_KEYS = new Set([
+  '__proto__',
+  'constructor',
+  'prototype',
+]);
+
 /**
  * Builds a nested object from a dot-notation path.
  * e.g., "project.name" with value { eq: "test" } -> { project: { name: { eq: "test" } } }
+ * @throws if any path segment is a prototype-polluting key.
  */
-function buildNestedFilter(path: string, value: any): GraphQLFilter {
+export function buildNestedFilter(path: string, value: any): GraphQLFilter {
   const keys = path.split('.');
+  if (keys.some((key) => PROTOTYPE_POLLUTING_KEYS.has(key))) {
+    throw new Error(`Invalid filter property path: "${path}"`);
+  }
   if (keys.length === 1) {
     return { [path]: value };
   }
 
-  let result: any = {};
+  const result: any = {};
   let current = result;
   for (let i = 0; i < keys.length - 1; i++) {
     current[keys[i]] = {};
