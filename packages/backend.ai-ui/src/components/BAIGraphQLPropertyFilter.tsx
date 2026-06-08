@@ -267,11 +267,12 @@ const PROTOTYPE_POLLUTING_KEYS = new Set([
 /**
  * Builds a nested object from a dot-notation path.
  * e.g., "project.name" with value { eq: "test" } -> { project: { name: { eq: "test" } } }
- * @throws if any path segment is a prototype-polluting key.
+ * @throws if any path segment is empty (e.g. "a..b", ".a", "a.") or a
+ *   prototype-polluting key.
  */
 export function buildNestedFilter(path: string, value: any): GraphQLFilter {
   const keys = path.split('.');
-  if (keys.some((key) => PROTOTYPE_POLLUTING_KEYS.has(key))) {
+  if (keys.some((key) => key === '' || PROTOTYPE_POLLUTING_KEYS.has(key))) {
     throw new Error(`Invalid filter property path: "${path}"`);
   }
   if (keys.length === 1) {

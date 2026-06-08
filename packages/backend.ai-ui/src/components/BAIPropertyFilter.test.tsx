@@ -73,6 +73,16 @@ describe('parseFilterValue', () => {
     });
   });
 
+  it('should treat Unicode whitespace (e.g. non-breaking space) as a separator', () => {
+    // \u00A0 is matched by \s but not by a fixed ASCII whitespace list.
+    const NBSP = '\u00A0';
+    expect(parseFilterValue(`name${NBSP}==${NBSP}"value"`)).toEqual({
+      property: 'name',
+      operator: '==',
+      value: 'value',
+    });
+  });
+
   it('should not backtrack catastrophically on long whitespace input (ReDoS guard)', () => {
     // Previously a polynomial-backtracking regex was used here; a long run of
     // tab characters would take seconds. The linear tokenizer must finish fast.

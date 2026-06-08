@@ -103,6 +103,12 @@ export function mergeFilterValues(
   return mergedFilter ? mergedFilter : undefined;
 }
 
+// Matches a single whitespace character. Applied per-character (never against
+// the full input), so it is constant-time and cannot backtrack — it preserves
+// the full `\s` semantics of the original split (including Unicode whitespace
+// such as a non-breaking space) without the ReDoS risk of a quantified regex.
+const WHITESPACE_CHAR = /\s/;
+
 /**
  * Splits a string on whitespace while preserving whitespace inside
  * double-quoted segments. Implemented as a single linear scan to avoid the
@@ -121,15 +127,7 @@ function tokenizeRespectingQuotes(input: string): string[] {
     if (char === '"') {
       inQuotes = !inQuotes;
       current += char;
-    } else if (
-      !inQuotes &&
-      (char === ' ' ||
-        char === '\t' ||
-        char === '\n' ||
-        char === '\r' ||
-        char === '\f' ||
-        char === '\v')
-    ) {
+    } else if (!inQuotes && WHITESPACE_CHAR.test(char)) {
       if (current !== '') {
         tokens.push(current);
         current = '';

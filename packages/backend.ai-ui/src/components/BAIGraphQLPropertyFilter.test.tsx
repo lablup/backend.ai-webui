@@ -27,6 +27,13 @@ describe('buildNestedFilter', () => {
       expect(({} as Record<string, unknown>).polluted).toBeUndefined();
     },
   );
+
+  it.each(['a..b', '.a', 'a.', '.', ''])(
+    'rejects empty path segment in "%s"',
+    (path) => {
+      expect(() => buildNestedFilter(path, { eq: 'x' })).toThrow();
+    },
+  );
 });
 
 const filterProperties: Array<FilterProperty> = [
