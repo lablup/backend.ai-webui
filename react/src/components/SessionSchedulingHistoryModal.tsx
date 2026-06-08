@@ -4,6 +4,7 @@ import {
   SessionSchedulingHistoryOrderBy,
 } from '../__generated__/SessionSchedulingHistoryModalQuery.graphql';
 import { convertToOrderBy } from '../helper';
+import { useBAISettingUserState } from '../hooks/useBAISetting';
 import {
   BAIButton,
   BAIFetchKeyButton,
@@ -37,6 +38,12 @@ const SessionSchedulingHistoryModal = ({
   const [fetchKey, updateFetchKey] = useFetchKey();
   const [filter, setFilter] = useState<SessionSchedulingHistoryFilter>();
   const [order, setOrder] = useState<string | null>('-updatedAt');
+  const [expandMode, setExpandMode] = useBAISettingUserState(
+    'schedulingHistoryExpandMode',
+  );
+  const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
+    'table_column_overrides.SessionSchedulingHistory',
+  );
 
   const deferredOpenValue = useDeferredValue(open);
   const deferredFetchKey = useDeferredValue(fetchKey);
@@ -193,6 +200,12 @@ const SessionSchedulingHistoryModal = ({
           }
           order={order}
           onChangeOrder={setOrder}
+          expandMode={expandMode ?? undefined}
+          onExpandModeChange={setExpandMode}
+          tableSettings={{
+            columnOverrides,
+            onColumnOverridesChange: setColumnOverrides,
+          }}
           schedulingHistoryFrgmt={_.map(
             queryRef.sessionScopedSchedulingHistories?.edges,
             'node',

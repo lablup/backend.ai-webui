@@ -360,6 +360,7 @@
   "comp:BAITable": {
     "CollapseAll": "Runtuhkan semua",
     "ExpandAll": "Kembangkan semua",
+    "ExpandErrorsOnly": "Expand errors only",
     "Export": "Eksport",
     "ExportCSV": "Eksport CSV",
     "GoToFirstPage": "Pergi ke halaman pertama",

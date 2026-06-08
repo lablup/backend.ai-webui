@@ -211,6 +211,7 @@ const BAIDeploymentSchedulingHistoryNodes = ({
       dataSource={dataSource}
       columns={allColumns}
       scroll={{ x: 'max-content' }}
+      neoHeader={false}
       onChangeOrder={(order) => {
         onChangeOrder?.(
           (order as (typeof availableDeploymentHistorySorterValues)[number]) ||

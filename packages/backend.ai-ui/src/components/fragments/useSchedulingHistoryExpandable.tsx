@@ -1,8 +1,9 @@
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIFlex from '../BAIFlex';
 import { SchedulingResult } from '../BAISchedulingResultBadge';
-import { Tooltip } from 'antd';
+import { Dropdown } from 'antd';
 import * as _ from 'lodash-es';
+import { SquareMinusIcon, SquarePlusIcon, SquareSlashIcon } from 'lucide-react';
 import * as React from 'react';
 import { useEffect, useEffectEvent, useState } from 'react';
 
@@ -17,6 +18,18 @@ export interface SchedulingHistoryExpandableRow {
   readonly subSteps?: ReadonlyArray<unknown> | null;
 }
 
+/**
+ * The three master modes for the expand-icon column. The mode is controlled by
+ * the caller (so it can be persisted across reloads / navigations).
+ */
+export type SchedulingHistoryExpandMode =
+  | 'expand-all'
+  | 'collapse-all'
+  | 'errors-only';
+
+export const DEFAULT_SCHEDULING_HISTORY_EXPAND_MODE: SchedulingHistoryExpandMode =
+  'errors-only';
+
 const isRowExpandable = (record: SchedulingHistoryExpandableRow) =>
   !_.isEmpty(record.subSteps);
 
@@ -25,17 +38,23 @@ const isRowExpandable = (record: SchedulingHistoryExpandableRow) =>
 const shouldExpandByDefault = (record: SchedulingHistoryExpandableRow) =>
   isRowExpandable(record) && record.result !== 'SUCCESS';
 
-const computeDefaultExpandedRowKeys = (
+const computeExpandedRowKeysForMode = (
   dataSource: ReadonlyArray<SchedulingHistoryExpandableRow>,
+  mode: SchedulingHistoryExpandMode,
 ): React.Key[] =>
-  dataSource.filter(shouldExpandByDefault).map((record) => record.id);
+  mode === 'expand-all'
+    ? dataSource.filter(isRowExpandable).map((record) => record.id)
+    : mode === 'collapse-all'
+      ? []
+      : dataSource.filter(shouldExpandByDefault).map((record) => record.id);
 
 export interface UseSchedulingHistoryExpandableResult {
   expandedRowKeys: React.Key[];
   onExpandedRowsChange: (expandedKeys: readonly React.Key[]) => void;
   /**
-   * Header content for the expand-icon column: an expand-all / collapse-all
-   * master toggle. `null` when no row in the current data set is expandable.
+   * Header content for the expand-icon column: a hover dropdown offering the
+   * three master modes (expand-all / collapse-all / errors-only). `null` when
+   * no row in the current data set is expandable.
    */
   expandColumnTitle: React.ReactNode;
 }
@@ -43,25 +62,33 @@ export interface UseSchedulingHistoryExpandableResult {
 /**
  * Controls expand/collapse state for a scheduling-history table.
  *
- * - Initial state ("collapse success only"): rows with sub-steps whose result
- *   is not `SUCCESS` are expanded; success rows stay collapsed.
- * - `expandColumnTitle` renders a master toggle in the expand-column header
- *   that switches between expand-all and collapse-all (binary).
+ * - Initial state derives from `mode` (default "errors-only"): rows with
+ *   sub-steps whose result is not `SUCCESS` are expanded; success rows stay
+ *   collapsed.
+ * - `expandColumnTitle` renders a hover dropdown in the expand-column header
+ *   that switches between the three modes (expand-all / collapse-all /
+ *   errors-only).
  * - Individual rows remain manually expandable via `onExpandedRowsChange`.
  * - When the underlying data meaningfully changes (e.g. a refetch), the
- *   default ("collapse success only") is re-applied — so a refresh always
- *   returns to the smart default even after the user toggled everything open.
+ *   current mode is re-applied — so a refresh always returns to the selected
+ *   mode even after the user toggled individual rows.
  */
 export const useSchedulingHistoryExpandable = <
   T extends SchedulingHistoryExpandableRow,
 >(
   dataSource: ReadonlyArray<T>,
+  options?: {
+    mode?: SchedulingHistoryExpandMode;
+    onModeChange?: (mode: SchedulingHistoryExpandMode) => void;
+  },
 ): UseSchedulingHistoryExpandableResult => {
   'use memo';
   const { t } = useBAIi18n();
 
+  const mode = options?.mode ?? DEFAULT_SCHEDULING_HISTORY_EXPAND_MODE;
+
   const [expandedRowKeys, setExpandedRowKeys] = useState<React.Key[]>(() =>
-    computeDefaultExpandedRowKeys(dataSource),
+    computeExpandedRowKeysForMode(dataSource, mode),
   );
 
   // The signature changes only on real data changes — not on the new array
@@ -75,52 +102,92 @@ export const useSchedulingHistoryExpandable = <
     .join('|');
 
   const resetToDefault = useEffectEvent(() => {
-    setExpandedRowKeys(computeDefaultExpandedRowKeys(dataSource));
+    setExpandedRowKeys(computeExpandedRowKeysForMode(dataSource, mode));
   });
 
   useEffect(() => {
     resetToDefault();
   }, [dataSignature]);
 
+  // Re-apply the master mode whenever the controlled mode prop changes so
+  // selecting a menu item immediately re-expands / collapses. `dataSource` is
+  // read fresh via the effect event without being a reactive dependency.
+  const applyMode = useEffectEvent(() => {
+    setExpandedRowKeys(computeExpandedRowKeysForMode(dataSource, mode));
+  });
+
+  useEffect(() => {
+    applyMode();
+  }, [mode]);
+
   const expandableRowKeys = dataSource
     .filter(isRowExpandable)
     .map((record) => record.id);
-  const allExpanded =
-    expandableRowKeys.length > 0 &&
-    expandableRowKeys.every((key) => expandedRowKeys.includes(key));
 
   const onExpandedRowsChange = (expandedKeys: readonly React.Key[]) => {
     setExpandedRowKeys([...expandedKeys]);
   };
 
-  const toggleAll = () => {
-    setExpandedRowKeys(allExpanded ? [] : expandableRowKeys);
+  const menuItems = [
+    {
+      key: 'expand-all',
+      icon: <SquarePlusIcon size={14} />,
+      label: t('comp:BAITable.ExpandAll'),
+    },
+    {
+      key: 'collapse-all',
+      icon: <SquareMinusIcon size={14} />,
+      label: t('comp:BAITable.CollapseAll'),
+    },
+    {
+      key: 'errors-only',
+      icon: <SquareSlashIcon size={14} />,
+      label: t('comp:BAITable.ExpandErrorsOnly'),
+    },
+  ];
+
+  const onMenuClick = ({ key }: { key: string }) => {
+    const next = key as SchedulingHistoryExpandMode;
+    setExpandedRowKeys(computeExpandedRowKeysForMode(dataSource, next));
+    options?.onModeChange?.(next);
   };
 
-  const toggleLabel = allExpanded
-    ? t('comp:BAITable.CollapseAll')
-    : t('comp:BAITable.ExpandAll');
+  const currentModeIcon =
+    mode === 'expand-all' ? (
+      <SquarePlusIcon size={14} />
+    ) : mode === 'collapse-all' ? (
+      <SquareMinusIcon size={14} />
+    ) : (
+      <SquareSlashIcon size={14} />
+    );
 
-  // Reuse Ant Design's native row-expand-icon classes so the master toggle is
-  // visually identical to the per-row +/- expand icons in the nested table.
-  // The +/- glyph is drawn by antd's CSS pseudo-elements on these classes.
   const expandColumnTitle =
     expandableRowKeys.length > 0 ? (
-      // Center the toggle in the header cell so it lines up with the
+      // Center the trigger in the header cell so it lines up with the
       // per-row expand icons, which Ant Design centers in their column.
       <BAIFlex justify="center">
-        <Tooltip title={toggleLabel}>
+        <Dropdown
+          trigger={['hover']}
+          menu={{
+            items: menuItems,
+            onClick: onMenuClick,
+            selectedKeys: [mode],
+          }}
+        >
           <button
             type="button"
-            aria-label={toggleLabel}
-            onClick={toggleAll}
-            className={`ant-table-row-expand-icon ${
-              allExpanded
-                ? 'ant-table-row-expand-icon-expanded'
-                : 'ant-table-row-expand-icon-collapsed'
-            }`}
-          />
-        </Tooltip>
+            aria-label={t('comp:BAITable.ExpandAll')}
+            style={{
+              cursor: 'pointer',
+              border: 'none',
+              background: 'transparent',
+              padding: 0,
+              display: 'inline-flex',
+            }}
+          >
+            {currentModeIcon}
+          </button>
+        </Dropdown>
       </BAIFlex>
     ) : null;
 

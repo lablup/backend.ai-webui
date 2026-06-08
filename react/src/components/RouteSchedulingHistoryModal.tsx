@@ -4,6 +4,7 @@ import {
   RouteSchedulingHistoryModalQuery,
 } from '../__generated__/RouteSchedulingHistoryModalQuery.graphql';
 import { convertToOrderBy } from '../helper';
+import { useBAISettingUserState } from '../hooks/useBAISetting';
 import {
   BAIFetchKeyButton,
   BAIFlex,
@@ -74,6 +75,12 @@ const RouteSchedulingHistoryModal = ({
   const [fetchKey, updateFetchKey] = useFetchKey();
   const [filter, setFilter] = useState<RouteHistoryFilter>();
   const [order, setOrder] = useState<string | null>('-updatedAt');
+  const [expandMode, setExpandMode] = useBAISettingUserState(
+    'schedulingHistoryExpandMode',
+  );
+  const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
+    'table_column_overrides.RouteSchedulingHistory',
+  );
 
   // Re-fetches happen from event handlers (filter / order / refresh), never from
   // render or an effect. We carry the existing variables forward via
@@ -202,6 +209,12 @@ const RouteSchedulingHistoryModal = ({
         <BAIRouteSchedulingHistoryTable
           resizable
           loading={isRefetchingInTransition}
+          expandMode={expandMode ?? undefined}
+          onExpandModeChange={setExpandMode}
+          tableSettings={{
+            columnOverrides,
+            onColumnOverridesChange: setColumnOverrides,
+          }}
           order={order}
           onChangeOrder={(nextOrder) => {
             setOrder(nextOrder);

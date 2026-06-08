@@ -360,6 +360,7 @@
   "comp:BAITable": {
     "CollapseAll": "Tümünü daralt",
     "ExpandAll": "Tümünü genişlet",
+    "ExpandErrorsOnly": "Expand errors only",
     "Export": "Dışa aktar",
     "ExportCSV": "CSV Dışa Aktar",
     "GoToFirstPage": "İlk sayfaya git",

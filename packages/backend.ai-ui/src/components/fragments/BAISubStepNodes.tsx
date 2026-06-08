@@ -122,6 +122,18 @@ const BAISubStepNodes = ({
         sorter: isEnableSorter('result'),
       },
       {
+        key: 'errorCode',
+        title: t('comp:BAISubStepNodes.ErrorCode'),
+        dataIndex: 'errorCode',
+        render: (__, record) =>
+          record.errorCode ? (
+            <BAIText monospace>{record.errorCode}</BAIText>
+          ) : (
+            '-'
+          ),
+        sorter: isEnableSorter('errorCode'),
+      },
+      {
         key: 'message',
         title: t('comp:BAISubStepNodes.Message'),
         dataIndex: 'message',
@@ -135,18 +147,6 @@ const BAISubStepNodes = ({
             '-'
           ),
         sorter: isEnableSorter('message'),
-      },
-      {
-        key: 'errorCode',
-        title: t('comp:BAISubStepNodes.ErrorCode'),
-        dataIndex: 'errorCode',
-        render: (__, record) =>
-          record.errorCode ? (
-            <BAIText monospace>{record.errorCode}</BAIText>
-          ) : (
-            '-'
-          ),
-        sorter: isEnableSorter('errorCode'),
       },
       {
         key: 'startedAt',

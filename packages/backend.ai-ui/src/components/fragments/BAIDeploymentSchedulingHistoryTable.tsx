@@ -5,7 +5,10 @@ import BAIDeploymentSchedulingHistoryNodes, {
   DeploymentSchedulingHistoryNodeInList,
 } from './BAIDeploymentSchedulingHistoryNodes';
 import BAISubStepNodes from './BAISubStepNodes';
-import { useSchedulingHistoryExpandable } from './useSchedulingHistoryExpandable';
+import {
+  type SchedulingHistoryExpandMode,
+  useSchedulingHistoryExpandable,
+} from './useSchedulingHistoryExpandable';
 import * as _ from 'lodash-es';
 import { graphql, useFragment } from 'react-relay';
 
@@ -14,6 +17,8 @@ export interface BAIDeploymentSchedulingHistoryTableProps extends Omit<
   'schedulingHistoryFrgmt' | 'expandable'
 > {
   schedulingHistoryFrgmt: BAIDeploymentSchedulingHistoryTableFragment$key;
+  expandMode?: SchedulingHistoryExpandMode;
+  onExpandModeChange?: (mode: SchedulingHistoryExpandMode) => void;
 }
 
 /**
@@ -25,6 +30,8 @@ export interface BAIDeploymentSchedulingHistoryTableProps extends Omit<
  */
 const BAIDeploymentSchedulingHistoryTable = ({
   schedulingHistoryFrgmt,
+  expandMode,
+  onExpandModeChange,
   ...rest
 }: BAIDeploymentSchedulingHistoryTableProps) => {
   'use memo';
@@ -45,7 +52,10 @@ const BAIDeploymentSchedulingHistoryTable = ({
 
   const dataSource = filterOutNullAndUndefined(histories);
   const { expandedRowKeys, onExpandedRowsChange, expandColumnTitle } =
-    useSchedulingHistoryExpandable(dataSource);
+    useSchedulingHistoryExpandable(dataSource, {
+      mode: expandMode,
+      onModeChange: onExpandModeChange,
+    });
 
   return (
     <BAIDeploymentSchedulingHistoryNodes

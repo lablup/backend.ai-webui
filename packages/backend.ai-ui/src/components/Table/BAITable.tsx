@@ -210,6 +210,8 @@ export interface BAITableProps<
   pagination?: false | BAITablePaginationConfig;
   /** Whether columns should be resizable */
   resizable?: boolean;
+  /** When false, the column-title (thead) uses Ant Design's default header style instead of BAITable's muted neo header. Default true. */
+  neoHeader?: boolean;
   /** Current sort order string (e.g., 'name' or '-name' for descending) */
   order?: string | null;
   /** Callback function called when sort order changes */
@@ -255,6 +257,7 @@ export interface BAITableProps<
  */
 const BAITable = <RecordType extends AnyObject = AnyObject>({
   resizable = true,
+  neoHeader = true,
   columns,
   components,
   loading,
@@ -459,7 +462,8 @@ const BAITable = <RecordType extends AnyObject = AnyObject>({
           showSorterTooltip={false}
           className={classNames(
             resizable && styles.resizableTable,
-            styles.neoHeader,
+            styles.expandedRowBackground,
+            neoHeader && styles.neoHeaderTitle,
             tableProps.rowSelection?.columnWidth === 0 &&
               styles.zeroWithSelectionColumn,
           )}
@@ -667,11 +671,13 @@ const useStyles = createStyles(({ token, css }) => ({
       word-wrap: 'break-word';
     }
   `,
-  neoHeader: css`
+  neoHeaderTitle: css`
     thead.ant-table-thead > tr > th.ant-table-cell {
       font-weight: 500;
       color: ${token.colorTextTertiary};
     }
+  `,
+  expandedRowBackground: css`
     body:not(.dark-theme) & .ant-table-expanded-row > .ant-table-cell,
     body:not(.dark-theme) & .ant-table-expanded-row:hover > .ant-table-cell {
       background: #e3e3e3;

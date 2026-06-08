@@ -360,6 +360,7 @@
   "comp:BAITable": {
     "CollapseAll": "收起全部",
     "ExpandAll": "展开全部",
+    "ExpandErrorsOnly": "仅展开错误",
     "Export": "导出",
     "ExportCSV": "导出 CSV",
     "GoToFirstPage": "转到第一页",

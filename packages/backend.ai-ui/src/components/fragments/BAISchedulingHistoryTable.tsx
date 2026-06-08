@@ -5,7 +5,10 @@ import BAISchedulingHistoryNodes, {
   SchedulingHistoryNodeInList,
 } from './BAISchedulingHistoryNodes';
 import BAISubStepNodes from './BAISubStepNodes';
-import { useSchedulingHistoryExpandable } from './useSchedulingHistoryExpandable';
+import {
+  SchedulingHistoryExpandMode,
+  useSchedulingHistoryExpandable,
+} from './useSchedulingHistoryExpandable';
 import * as _ from 'lodash-es';
 import { graphql, useFragment } from 'react-relay';
 
@@ -14,6 +17,8 @@ export interface BAISchedulingHistoryTableProps extends Omit<
   'schedulingHistoryFrgmt' | 'expandable'
 > {
   schedulingHistoryFrgmt: BAISchedulingHistoryTableFragment$key;
+  expandMode?: SchedulingHistoryExpandMode;
+  onExpandModeChange?: (mode: SchedulingHistoryExpandMode) => void;
 }
 
 /**
@@ -25,6 +30,8 @@ export interface BAISchedulingHistoryTableProps extends Omit<
  */
 const BAISchedulingHistoryTable = ({
   schedulingHistoryFrgmt,
+  expandMode,
+  onExpandModeChange,
   ...rest
 }: BAISchedulingHistoryTableProps) => {
   'use memo';
@@ -45,7 +52,10 @@ const BAISchedulingHistoryTable = ({
 
   const dataSource = filterOutNullAndUndefined(histories);
   const { expandedRowKeys, onExpandedRowsChange, expandColumnTitle } =
-    useSchedulingHistoryExpandable(dataSource);
+    useSchedulingHistoryExpandable(dataSource, {
+      mode: expandMode,
+      onModeChange: onExpandModeChange,
+    });
 
   return (
     <BAISchedulingHistoryNodes

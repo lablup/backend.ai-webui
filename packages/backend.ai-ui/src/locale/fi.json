@@ -360,6 +360,7 @@
   "comp:BAITable": {
     "CollapseAll": "Tiivistä kaikki",
     "ExpandAll": "Laajenna kaikki",
+    "ExpandErrorsOnly": "Expand errors only",
     "Export": "Vie",
     "ExportCSV": "Vie CSV",
     "GoToFirstPage": "Siirry ensimmäiselle sivulle",
