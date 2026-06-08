@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<3339e29f88c8feb262a4647f069349b0>>
+ * @generated SignedSource<<5167fb0c976036ba2e6069b5630c48c1>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -14,9 +14,9 @@ import { FragmentRefs } from "relay-runtime";
 export type BAISchedulingHistoryNodesFragment$data = ReadonlyArray<{
   readonly attempts: number;
   readonly createdAt: string;
+  readonly errorCode: string | null | undefined;
   readonly fromStatus: string | null | undefined;
   readonly id: string;
-  readonly message: string | null | undefined;
   readonly phase: string;
   readonly result: SchedulingResult;
   readonly subSteps: ReadonlyArray<{
@@ -85,7 +85,7 @@ const node: ReaderFragment = {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
-      "name": "message",
+      "name": "errorCode",
       "storageKey": null
     },
     {
@@ -123,6 +123,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "4f305cdb3248d370347f5f5ce482009b";
+(node as any).hash = "c7940cc5ae473c5017d5f08dcdc815ef";
 
 export default node;

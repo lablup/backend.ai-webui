@@ -2,11 +2,7 @@ import {
   BAISchedulingHistoryNodesFragment$data,
   BAISchedulingHistoryNodesFragment$key,
 } from '../../__generated__/BAISchedulingHistoryNodesFragment.graphql';
-import {
-  filterOutEmpty,
-  filterOutNullAndUndefined,
-  newLineToBrElement,
-} from '../../helper';
+import { filterOutEmpty, filterOutNullAndUndefined } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAISchedulingResultBadge, {
   SchedulingResult,
@@ -72,7 +68,7 @@ const BAISchedulingHistoryNodes = ({
         updatedAt
         fromStatus
         toStatus
-        message
+        errorCode
         phase
         result
         subSteps {
@@ -146,19 +142,16 @@ const BAISchedulingHistoryNodes = ({
         sorter: isEnableSorter('attempts'),
       },
       {
-        key: 'message',
-        title: t('comp:BAISchedulingHistoryNodes.Message'),
-        dataIndex: 'message',
-        onCell: () => ({ style: { maxWidth: 500 } }),
+        key: 'errorCode',
+        title: t('comp:BAISchedulingHistoryNodes.ErrorCode'),
+        dataIndex: 'errorCode',
         render: (__, record) =>
-          record.message ? (
-            <BAIText title={record.message} style={{ width: '100%' }}>
-              {newLineToBrElement(record.message)}
-            </BAIText>
+          record.errorCode ? (
+            <BAIText monospace>{record.errorCode}</BAIText>
           ) : (
             '-'
           ),
-        sorter: isEnableSorter('message'),
+        sorter: isEnableSorter('errorCode'),
       },
     ]),
     (column) => {
