@@ -65,13 +65,23 @@ describe('parseFilterValue', () => {
     });
   });
 
-  it('keeps quoted spans intact for list values', () => {
-    expect(
-      parseFilterValue('permission in ["READ_ONLY", "READ_WRITE"]'),
-    ).toEqual({
-      property: 'permission',
+  it('keeps inner whitespace of quoted list elements intact', () => {
+    // Exercises the tokenizer edge case where list elements themselves contain
+    // whitespace inside double quotes (must not be split on).
+    expect(parseFilterValue('name in ["READ ONLY", "READ WRITE"]')).toEqual({
+      property: 'name',
       operator: 'in',
-      value: '["READ_ONLY", "READ_WRITE"]',
+      value: '["READ ONLY", "READ WRITE"]',
+    });
+  });
+
+  it('treats Unicode whitespace (e.g. non-breaking space) as a separator', () => {
+    // \u00A0 (a non-breaking space) is matched by \s but not by a fixed ASCII list.
+    const NBSP = '\u00A0';
+    expect(parseFilterValue(`name${NBSP}==${NBSP}"value"`)).toEqual({
+      property: 'name',
+      operator: '==',
+      value: 'value',
     });
   });
 

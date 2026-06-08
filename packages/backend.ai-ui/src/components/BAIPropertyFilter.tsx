@@ -122,11 +122,18 @@ export function parseFilterValue(filter: string) {
   return { property, operator, value };
 }
 
+// Matches a single whitespace character. Applied per-character (never against
+// the full input), so it is constant-time and cannot backtrack — it preserves
+// the full `\s` semantics of the original split (including Unicode whitespace
+// such as a non-breaking space) without the ReDoS risk of a quantified regex.
+const WHITESPACE_CHAR = /\s/;
+
 /**
  * Splits a string on runs of whitespace, but treats whitespace inside
  * double-quoted spans as literal. Consecutive whitespace is collapsed (empty
- * tokens are dropped), matching the previous regex-split behavior. Runs in
- * linear time with no backtracking.
+ * tokens are dropped), matching the previous regex-split behavior. Whitespace
+ * is matched with the full `\s` class (including Unicode whitespace), applied
+ * one character at a time so it runs in linear time with no backtracking.
  */
 function splitOutsideDoubleQuotes(input: string): string[] {
   const tokens: string[] = [];
@@ -139,15 +146,7 @@ function splitOutsideDoubleQuotes(input: string): string[] {
       inQuotes = !inQuotes;
       current += ch;
       hasToken = true;
-    } else if (
-      !inQuotes &&
-      (ch === ' ' ||
-        ch === '\t' ||
-        ch === '\n' ||
-        ch === '\r' ||
-        ch === '\f' ||
-        ch === '\v')
-    ) {
+    } else if (!inQuotes && WHITESPACE_CHAR.test(ch)) {
       if (hasToken) {
         tokens.push(current);
         current = '';
