@@ -10,7 +10,7 @@ import {
   BAIGraphQLPropertyFilter,
   BAIModal,
   BAIModalProps,
-  BAIRouteSchedulingHistoryNodeTable,
+  BAIRouteSchedulingHistoryTable,
   useFetchKey,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -39,7 +39,7 @@ export const RouteSchedulingHistoryQuery = graphql`
     ) {
       edges {
         node {
-          ...BAIRouteSchedulingHistoryNodeTableFragment
+          ...BAIRouteSchedulingHistoryTableFragment
         }
       }
     }
@@ -199,7 +199,7 @@ const RouteSchedulingHistoryModal = ({
             />
           </BAIFlex>
         </BAIFlex>
-        <BAIRouteSchedulingHistoryNodeTable
+        <BAIRouteSchedulingHistoryTable
           resizable
           loading={isRefetchingInTransition}
           order={order}

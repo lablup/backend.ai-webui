@@ -18,8 +18,6 @@ import {
   BAITableProps,
 } from '../Table';
 import { BAIColumnGroupType } from '../Table/BAITable';
-import BAISubStepNodes from './BAISubStepNodes';
-import { useSchedulingHistoryExpandable } from './useSchedulingHistoryExpandable';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { graphql, useFragment } from 'react-relay';
@@ -203,14 +201,12 @@ const BAIRouteSchedulingHistoryNodeTable = ({
     : baseColumns;
 
   const dataSource = filterOutNullAndUndefined(histories);
-  const { expandedRowKeys, onExpandedRowsChange, expandColumnTitle } =
-    useSchedulingHistoryExpandable(dataSource);
 
   return (
     <BAITable
-      // Spread caller props first so the component's controlled expansion
-      // state (`expandable`, `rowKey`) below stays authoritative and cannot
-      // be silently overridden by a passed-through prop.
+      // Spread caller props first so the component's fixed props (`rowKey`,
+      // `dataSource`, `columns`, …) below stay authoritative. Optional features
+      // such as `expandable` are supplied by callers and flow through here.
       {...tableProps}
       rowKey={'id'}
       dataSource={dataSource}
@@ -220,21 +216,6 @@ const BAIRouteSchedulingHistoryNodeTable = ({
         onChangeOrder?.(
           (order as (typeof availableRouteHistorySorterValues)[number]) || null,
         );
-      }}
-      expandable={{
-        columnTitle: expandColumnTitle,
-        expandedRowKeys,
-        onExpandedRowsChange,
-        rowExpandable: (record) => !_.isEmpty(record.subSteps),
-        expandedRowRender: (record) => {
-          return (
-            <BAISubStepNodes
-              resizable
-              subStepsFrgmt={record.subSteps}
-              pagination={false}
-            />
-          );
-        },
       }}
     />
   );

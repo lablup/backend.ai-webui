@@ -11,7 +11,7 @@ import {
   BAIGraphQLPropertyFilter,
   BAIModal,
   BAIModalProps,
-  BAISchedulingHistoryNodes,
+  BAISchedulingHistoryTable,
   useFetchKey,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -56,7 +56,7 @@ const SessionSchedulingHistoryModal = ({
         ) {
           edges {
             node {
-              ...BAISchedulingHistoryNodesFragment
+              ...BAISchedulingHistoryTableFragment
             }
           }
         }
@@ -184,7 +184,7 @@ const SessionSchedulingHistoryModal = ({
             />
           </BAIFlex>
         </BAIFlex>
-        <BAISchedulingHistoryNodes
+        <BAISchedulingHistoryTable
           resizable
           loading={
             deferredFetchKey !== fetchKey ||

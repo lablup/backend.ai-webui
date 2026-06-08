@@ -5,7 +5,7 @@ import {
 } from '../__generated__/DeploymentSchedulingHistoryModalQuery.graphql';
 import { convertToOrderBy } from '../helper';
 import {
-  BAIDeploymentSchedulingHistoryNodes,
+  BAIDeploymentSchedulingHistoryTable,
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
@@ -39,7 +39,7 @@ export const DeploymentSchedulingHistoryQuery = graphql`
     ) {
       edges {
         node {
-          ...BAIDeploymentSchedulingHistoryNodesFragment
+          ...BAIDeploymentSchedulingHistoryTableFragment
         }
       }
     }
@@ -199,7 +199,7 @@ const DeploymentSchedulingHistoryModal = ({
             />
           </BAIFlex>
         </BAIFlex>
-        <BAIDeploymentSchedulingHistoryNodes
+        <BAIDeploymentSchedulingHistoryTable
           resizable
           loading={isRefetchingInTransition}
           order={order}
