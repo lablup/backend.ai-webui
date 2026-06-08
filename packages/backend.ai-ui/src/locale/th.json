@@ -361,6 +361,7 @@
     "CollapseAll": "ยุบทั้งหมด",
     "ExpandAll": "ขยายทั้งหมด",
     "ExpandErrorsOnly": "Expand errors only",
+    "ExpandOptions": "Expand options",
     "Export": "ส่งออก",
     "ExportCSV": "ส่งออก CSV",
     "GoToFirstPage": "ไปยังหน้าแรก",

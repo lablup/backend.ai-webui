@@ -1,14 +1,9 @@
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIFlex from '../BAIFlex';
 import { SchedulingResult } from '../BAISchedulingResultBadge';
-import { Dropdown, theme, type TableProps } from 'antd';
+import { Dropdown, theme } from 'antd';
 import * as _ from 'lodash-es';
-import {
-  type LucideIcon,
-  SquareMinusIcon,
-  SquarePlusIcon,
-  SquareSlashIcon,
-} from 'lucide-react';
+import { EllipsisVerticalIcon } from 'lucide-react';
 import * as React from 'react';
 import { useEffect, useEffectEvent, useState } from 'react';
 
@@ -35,17 +30,6 @@ export type SchedulingHistoryExpandMode =
 export const DEFAULT_SCHEDULING_HISTORY_EXPAND_MODE: SchedulingHistoryExpandMode =
   'errors-only';
 
-/**
- * The square icon used for each mode. The same lucide square family is reused
- * for the per-row expand/collapse icons (see `getExpandIcon`) so the header
- * control and the table body share one visual language.
- */
-const MODE_ICON: Record<SchedulingHistoryExpandMode, LucideIcon> = {
-  'expand-all': SquarePlusIcon,
-  'collapse-all': SquareMinusIcon,
-  'errors-only': SquareSlashIcon,
-};
-
 const isRowExpandable = (record: SchedulingHistoryExpandableRow) =>
   !_.isEmpty(record.subSteps);
 
@@ -64,11 +48,6 @@ const computeExpandedRowKeysForMode = (
       ? []
       : dataSource.filter(shouldExpandByDefault).map((record) => record.id);
 
-/** The shape Ant Design expects for a table's `expandable.expandIcon`. */
-type ExpandIconRenderer<R> = NonNullable<
-  NonNullable<TableProps<R>['expandable']>['expandIcon']
->;
-
 export interface UseSchedulingHistoryExpandableResult {
   /**
    * The effective master mode (the controlled `mode`, or the default
@@ -79,18 +58,13 @@ export interface UseSchedulingHistoryExpandableResult {
   expandedRowKeys: React.Key[];
   onExpandedRowsChange: (expandedKeys: readonly React.Key[]) => void;
   /**
-   * Header content for the expand-icon column: a hover dropdown offering the
-   * three master modes (expand-all / collapse-all / errors-only). `null` when
-   * no row in the current data set is expandable.
+   * Header content for the expand-icon column: a kebab (vertical ellipsis)
+   * hover menu offering the three view actions (expand all / collapse all /
+   * expand errors only). It reads as an action menu, not a stateful toggle, so
+   * there is no "active" indication. `null` when no row in the current data set
+   * is expandable. Per-row rows keep Ant Design's default +/- expand icon.
    */
   expandColumnTitle: React.ReactNode;
-  /**
-   * Per-row expand/collapse icon renderer for the table's `expandable.expandIcon`.
-   * Renders the same lucide square icons as the header control so both share one
-   * visual language. Generic over the table's record type; call it as
-   * `getExpandIcon<MyRecord>()` at the `expandable` call site.
-   */
-  getExpandIcon: <R>() => ExpandIconRenderer<R>;
 }
 
 /**
@@ -171,62 +145,13 @@ export const useSchedulingHistoryExpandable = <
 
   const menuItems = (
     ['expand-all', 'collapse-all', 'errors-only'] as const
-  ).map((m) => {
-    const Icon = MODE_ICON[m];
-    return { key: m, icon: <Icon size={14} />, label: modeLabel[m] };
-  });
+  ).map((m) => ({ key: m, label: modeLabel[m] }));
 
   const onMenuClick = ({ key }: { key: string }) => {
     const next = key as SchedulingHistoryExpandMode;
     setExpandedRowKeys(computeExpandedRowKeysForMode(dataSource, next));
     options?.onModeChange?.(next);
   };
-
-  const CurrentModeIcon = MODE_ICON[mode];
-
-  // Per-row expand/collapse icon: reuses the same square-plus / square-minus
-  // glyphs as the header control (a collapsed row offers "expand" → plus; an
-  // expanded row offers "collapse" → minus). Colours come from theme tokens so
-  // both light and dark mode render correctly.
-  const getExpandIcon = <R,>(): ExpandIconRenderer<R> =>
-    function SchedulingHistoryExpandIcon({
-      expanded,
-      onExpand,
-      record,
-      expandable,
-    }) {
-      if (!expandable) {
-        return null;
-      }
-      // In errors-only mode an expanded row shows a *filtered* (errors-only)
-      // nested table, so its icon is square-slash — matching the header's
-      // errors-only glyph — instead of the plain collapse (minus) icon.
-      const Icon = expanded
-        ? mode === 'errors-only'
-          ? SquareSlashIcon
-          : SquareMinusIcon
-        : SquarePlusIcon;
-      return (
-        <button
-          type="button"
-          aria-label={
-            expanded ? t('comp:button.Collapse') : t('comp:button.Expand')
-          }
-          onClick={(e) => onExpand(record, e)}
-          style={{
-            cursor: 'pointer',
-            border: 'none',
-            background: 'transparent',
-            padding: 0,
-            display: 'inline-flex',
-            alignItems: 'center',
-            color: token.colorTextSecondary,
-          }}
-        >
-          <Icon size={14} />
-        </button>
-      );
-    };
 
   const expandColumnTitle =
     expandableRowKeys.length > 0 ? (
@@ -235,15 +160,17 @@ export const useSchedulingHistoryExpandable = <
       <BAIFlex justify="center">
         <Dropdown
           trigger={['hover']}
+          // A kebab (vertical ellipsis) action menu — no `selectedKeys`, so no
+          // item is shown as "active". The three modes read as actions you
+          // trigger, not a stateful toggle.
           menu={{
             items: menuItems,
             onClick: onMenuClick,
-            selectedKeys: [mode],
           }}
         >
           <button
             type="button"
-            aria-label={modeLabel[mode]}
+            aria-label={t('comp:BAITable.ExpandOptions')}
             style={{
               cursor: 'pointer',
               border: 'none',
@@ -253,7 +180,7 @@ export const useSchedulingHistoryExpandable = <
               color: token.colorTextSecondary,
             }}
           >
-            <CurrentModeIcon size={14} />
+            <EllipsisVerticalIcon size={16} />
           </button>
         </Dropdown>
       </BAIFlex>
@@ -264,7 +191,6 @@ export const useSchedulingHistoryExpandable = <
     expandedRowKeys,
     onExpandedRowsChange,
     expandColumnTitle,
-    getExpandIcon,
   };
 };
 

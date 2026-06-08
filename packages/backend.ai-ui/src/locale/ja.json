@@ -361,6 +361,7 @@
     "CollapseAll": "すべて折りたたむ",
     "ExpandAll": "すべて展開",
     "ExpandErrorsOnly": "エラーのみ展開",
+    "ExpandOptions": "展開オプション",
     "Export": "エクスポート",
     "ExportCSV": "CSV をエクスポート",
     "GoToFirstPage": "最初のページへ",

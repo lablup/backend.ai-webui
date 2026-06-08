@@ -361,6 +361,7 @@
     "CollapseAll": "Collapse all",
     "ExpandAll": "Expand all",
     "ExpandErrorsOnly": "Expand errors only",
+    "ExpandOptions": "Expand options",
     "Export": "Export",
     "ExportCSV": "Export CSV",
     "GoToFirstPage": "Go to first page",

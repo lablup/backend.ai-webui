@@ -361,6 +361,7 @@
     "CollapseAll": "Свернуть все",
     "ExpandAll": "Развернуть все",
     "ExpandErrorsOnly": "Expand errors only",
+    "ExpandOptions": "Expand options",
     "Export": "Экспорт",
     "ExportCSV": "Экспорт в CSV",
     "GoToFirstPage": "Перейти на первую страницу",

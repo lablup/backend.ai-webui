@@ -53,8 +53,8 @@ export interface BAISubStepNodesProps extends Omit<
   disableSorter?: boolean;
   /**
    * When true, only non-success sub-steps are shown (mirrors the parent table's
-   * "errors-only" expand mode), so an expanded row surfaces just the failing /
-   * retried steps.
+   * "errors-only" mode), so an expanded row surfaces just the failing / retried
+   * steps.
    */
   errorsOnly?: boolean;
 }
