@@ -117,13 +117,27 @@ test.describe.serial(
       // Verify the subfolder appears in the file table (this implicitly waits for folder creation)
       await modal.verifyFileVisible(subfolderName);
 
-      // 5. Navigate into the newly created folder (click folder name)
-      await page.getByRole('cell', { name: subfolderName }).first().click();
+      // 5. Navigate into the newly created folder by clicking the folder name link
+      // inside the Name cell. Clicking the cell itself only triggers row selection
+      // (onRow handler); the actual navigation is on the Typography.Text element
+      // wrapping the folder icon + name (BAIFileExplorer's onClick handler).
+      const folderNameCell = page
+        .getByRole('dialog')
+        .first()
+        .getByRole('cell')
+        .filter({ hasText: subfolderName })
+        .first();
+      await expect(folderNameCell).toBeVisible({ timeout: 10000 });
+      await folderNameCell.getByText(subfolderName).click();
 
       // 6. Verify breadcrumb shows the subdirectory path (waits for navigation)
       await expect(
-        page.locator('.ant-breadcrumb').getByText(subfolderName),
-      ).toBeVisible();
+        page
+          .getByRole('dialog')
+          .first()
+          .locator('.ant-breadcrumb')
+          .getByText(subfolderName),
+      ).toBeVisible({ timeout: 10000 });
 
       // 7. Upload a file via Upload button
       const uploadButton = await modal.getUploadButton();
@@ -141,8 +155,12 @@ test.describe.serial(
       await modal.verifyFileVisible(fileName);
 
       // 9. Navigate back to root (click home in breadcrumb)
-      // The breadcrumb has a home icon at the beginning
-      const breadcrumb = page.locator('.ant-breadcrumb');
+      // The breadcrumb has a home icon at the beginning; scope to the dialog
+      // to avoid matching the page-level breadcrumb.
+      const breadcrumb = page
+        .getByRole('dialog')
+        .first()
+        .locator('.ant-breadcrumb');
       await breadcrumb.locator('a').first().click();
 
       // 10. Verify navigation back to root by checking subfolder is visible again

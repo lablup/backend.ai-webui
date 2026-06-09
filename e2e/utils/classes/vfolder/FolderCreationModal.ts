@@ -156,7 +156,31 @@ export class FolderCreationModal {
     });
   }
 
+  /**
+   * Close any persistent antd notifications that may overlap the modal footer
+   * buttons (e.g. the "Click to check pending invitation(s)" notification that
+   * is rendered with duration=0 and never auto-dismisses). Without dismissing
+   * these, Playwright cannot click the Create button because the notification
+   * subtree intercepts pointer events.
+   */
+  async dismissOverlappingNotifications(): Promise<void> {
+    const notifications = this.page.locator('.ant-notification-notice');
+    // Closing a notification removes it from the DOM and shifts the remaining
+    // notices up, so iterating by a snapshotted index skips entries. Always
+    // close the first remaining notice and wait for it to detach.
+    for (let safety = 0; safety < 20; safety++) {
+      const first = notifications.first();
+      const closeBtn = first.locator('.ant-notification-notice-close');
+      const isVisible = await closeBtn.isVisible().catch(() => false);
+      if (!isVisible) return;
+      await closeBtn.click().catch(() => {});
+      await first.waitFor({ state: 'detached', timeout: 2000 }).catch(() => {});
+    }
+  }
+
   async getCreateButton(): Promise<Locator> {
+    // Dismiss any persistent notifications that could block the footer buttons
+    await this.dismissOverlappingNotifications();
     const createButton = this.modal.getByTestId('create-folder-button');
     await expect(createButton).toBeVisible();
     return createButton;

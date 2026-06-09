@@ -504,7 +504,22 @@ export async function moveToTrashAndVerify(
     .locator('.ant-modal-confirm')
     .getByRole('button', { name: 'Confirm' });
   await expect(confirmButton).toBeVisible();
+  // Wait for the DELETE /folders API response before navigating away.
+  // Without this, page.goto() in verifyVFolder would cancel the in-flight
+  // request and the folder would never move to Trash.
+  const deletionResponsePromise = page.waitForResponse(
+    (response) =>
+      response.url().includes('/folders') &&
+      response.request().method() === 'DELETE',
+    { timeout: 30000 },
+  );
   await confirmButton.click();
+  const deletionResponse = await deletionResponsePromise;
+  if (!deletionResponse.ok()) {
+    throw new Error(
+      `DELETE /folders returned ${deletionResponse.status()}: ${await deletionResponse.text()}`,
+    );
+  }
   await removeSearchButton(page, folderName);
   await verifyVFolder(page, folderName, 'Trash', dataPath);
 }
@@ -547,6 +562,17 @@ export async function deleteForeverAndVerifyFromTrash(
   await confirmInput.fill(folderName);
   await page.getByRole('button', { name: 'Delete forever' }).click();
 
+  // Wait for the deletion success notification to appear.
+  // This confirms the backend accepted the delete request.
+  // i18n key: data.folders.FolderDeletedForever → "Permanently deleted the ... folder."
+  // antd 6 message.success() renders a plain <div> (no ARIA role="alert"),
+  // so we use a text-based locator scoped to the antd message container.
+  const deletionNotification = page
+    .locator('.ant-message-notice')
+    .filter({ hasText: /permanently deleted/i });
+  await expect(deletionNotification).toBeVisible({ timeout: 15000 });
+  await expect(deletionNotification).toBeHidden({ timeout: 15000 });
+
   // After the "Delete forever" button is clicked, wait for the folder to
   // disappear from the Trash tab. The success toast is too transient to assert
   // reliably; the row-gone check is the authoritative signal that the deletion
@@ -584,7 +610,24 @@ export async function shareVFolderAndVerify(
   const shareModal = page.locator('.ant-modal');
   await expect(shareModal).toBeVisible();
   await shareModal.getByRole('textbox').fill(invitedUser);
+
+  // Set up the response promise before clicking Add to avoid a race condition
+  // where the response fires before we start listening.
+  // URL pattern: POST /folders/{id}/invite → 200 or 201
+  const inviteResponsePromise = page.waitForResponse(
+    (response) =>
+      response.url().includes('/invite') &&
+      response.request().method() === 'POST',
+    { timeout: 15000 },
+  );
   await shareModal.getByRole('button', { name: 'Add' }).click();
+  const inviteResponse = await inviteResponsePromise;
+  if (!inviteResponse.ok()) {
+    throw new Error(
+      `POST /folders/.../invite returned ${inviteResponse.status()}: ${await inviteResponse.text()}`,
+    );
+  }
+
   await shareModal.getByRole('button', { name: 'close' }).click();
 
   await removeSearchButton(page, folderName);
@@ -666,28 +709,61 @@ export async function acceptAllInvitationAndVerifySpecificFolder(
     const visible = await acceptButton
       .isVisible({ timeout: 1000 })
       .catch(() => false);
-    if (!visible) break;
-    await acceptButton.click({ force: true }).catch(() => {});
-    await page.waitForTimeout(800);
+
+    if (!isItemVisible) {
+      // Invitation not yet in the list; retry immediately. The
+      // `waitFor({ timeout: 8000 })` above already covers propagation delay.
+      continue;
+    }
+
+    // Click the Accept button inside this specific invitation item.
+    // Scoping to the item avoids accidentally accepting a stale invitation
+    // for a different folder (e.g., leftovers from previous failed test runs).
+    const acceptBtn = invitationItem.getByRole('button', { name: /^Accept$/i });
+    await expect(acceptBtn).toBeVisible({ timeout: 5000 });
+
+    const acceptResponsePromise = page.waitForResponse(
+      (response) =>
+        response.url().includes('/invitations/accept') &&
+        response.request().method() === 'POST',
+      { timeout: 10000 },
+    );
+    await acceptBtn.click();
+    const acceptResponse = await acceptResponsePromise.catch(() => null);
+    if (acceptResponse && !acceptResponse.ok()) {
+      const body = await acceptResponse.text().catch(() => '<unreadable>');
+      throw new Error(
+        `POST /invitations/accept returned HTTP ${acceptResponse.status()} — ` +
+          `folder "${folderName}" invitation acceptance failed.\nResponse body: ${body}`,
+      );
+    }
+
+    // Wait for the invitation item to be removed from the modal list (success).
+    // If it stays visible (error case), we'll still proceed and verify.
+    await invitationItem
+      .waitFor({ state: 'detached', timeout: 8000 })
+      .catch(() => {});
+
+    folderInvitationAccepted = true;
+    break;
   }
 
-  // Close the modal if still open
+  if (!folderInvitationAccepted) {
+    throw new Error(
+      `Invitation for folder "${folderName}" not found in modal after 5 attempts.`,
+    );
+  }
+
+  // Close the modal if still open.
   await page
     .locator('.ant-modal')
-    .getByRole('button', { name: /close|Cancel/i })
+    .getByRole('button', { name: /close/i })
     .first()
-    .click({ timeout: 2000 })
+    .click()
     .catch(() => {});
 
-  // Verify the shared folder appears in the user's data page
-  await navigateTo(page, 'data');
-  await page.getByRole('tab', { name: 'Active' }).click();
-  await selectPropertyFilter(page, 'Name', folderName);
-  // Shared folders appear as a row in the table - look for the folder name in any table cell
-  await expect(
-    page.locator('tbody tr').filter({ hasText: folderName }),
-  ).toBeVisible({ timeout: 15000 });
-  await removeSearchButton(page, folderName);
+  // Verify the shared folder now appears in the user's Active data page.
+  await verifyVFolder(page, folderName, 'Active');
 }
 
 export async function restoreVFolderAndVerify(page: Page, folderName: string) {
