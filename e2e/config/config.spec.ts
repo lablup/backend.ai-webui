@@ -15,17 +15,22 @@ test.describe.parallel(
       'block list',
       { tag: ['@session', '@summary', '@serving'] },
       async ({ page, request }) => {
-        // modify config.toml to blocklist some menu items
+        // modify config.toml to blocklist some menu items. FR-2664 renamed
+        // the /serving route to /deployments; the menu blocklist key
+        // followed the route name, so use 'deployments' here.
         const requestConfig = {
           menu: {
-            blocklist: 'start,serving,session',
+            blocklist: 'start,deployments,session',
           },
         };
 
         await modifyConfigToml(page, request, requestConfig);
         await loginAsAdmin(page, request);
 
-        // check if the menu items are hidden
+        // check if the menu items are hidden. The 'Serving' route was
+        // renamed to 'Deployments' (FR-2664), and the blocklist key was
+        // renamed in lockstep — `deployments` is now the key that hides
+        // the menu entry (used in the requestConfig above).
         await expect(
           page.getByTestId('webui-breadcrumb').getByText('Start'),
         ).toBeHidden();
@@ -33,7 +38,7 @@ test.describe.parallel(
           page.getByRole('menuitem', { name: 'Sessions' }),
         ).toBeHidden();
         await expect(
-          page.getByRole('menuitem', { name: 'Serving' }),
+          page.getByRole('menuitem', { name: 'Deployments' }),
         ).toBeHidden();
 
         // check if the pages show 404 content when accessed directly
@@ -56,7 +61,7 @@ test.describe.parallel(
           page.getByRole('menuitem', { name: 'Sessions' }),
         ).toBeVisible();
         await expect(
-          page.getByRole('menuitem', { name: 'Serving' }),
+          page.getByRole('menuitem', { name: 'Deployments' }),
         ).toBeVisible();
       },
     );

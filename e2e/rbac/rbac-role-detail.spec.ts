@@ -1,7 +1,11 @@
 // spec: e2e/.agent-output/test-plan-rbac-management.md
 // Scenarios: 3.1 – 3.4, 4.1 – 4.4, 5.1 – 5.4, 6.2 – 6.3
 // (Role detail drawer, permissions management, user assignments, edge cases)
-import { loginAsAdmin, navigateTo, userInfo } from '../utils/test-util';
+import {
+  KeyPairModal,
+  UserSettingModal,
+} from '../utils/classes/user/UserSettingModal';
+import { loginAsAdmin, navigateTo } from '../utils/test-util';
 import test, { expect, Page } from '@playwright/test';
 
 const TEST_RUN_ID = Date.now().toString(36);
@@ -645,15 +649,66 @@ test.describe.serial(
   },
 );
 
+// Disposable fixture user for the Role Assignments block. These tests
+// assign / revoke a user to/from a custom role and then purge that role
+// during cleanup. To keep tests fully isolated from the shared
+// `user@lablup.com` (whose state must remain stable for all other suites),
+// we create a fresh user via admin in beforeAll. There is no afterAll cleanup
+// — the fixture user uses a unique `<RUN_ID>` suffix so leftovers don't
+// collide between runs, and a periodic reaper sweeps stale fixture accounts.
+const ASSIGN_FIXTURE_RUN_ID =
+  Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+const ASSIGN_FIXTURE_EMAIL = `e2e-rbac-assign-${ASSIGN_FIXTURE_RUN_ID}@lablup.com`;
+const ASSIGN_FIXTURE_USERNAME = `e2e-rbac-assign-${ASSIGN_FIXTURE_RUN_ID}`;
+const ASSIGN_FIXTURE_PASSWORD = 'testing@123';
+
 test.describe.serial(
   'RBAC Role Assignments Management',
   { tag: ['@rbac', '@critical', '@functional'] },
   () => {
+    test.beforeAll(async ({ browser }) => {
+      // Admin creates the disposable user via the Credential page UI.
+      const adminContext = await browser.newContext();
+      const adminPage = await adminContext.newPage();
+      const adminRequest = adminContext.request;
+      try {
+        await loginAsAdmin(adminPage, adminRequest);
+        await navigateTo(adminPage, 'credential');
+        await expect(
+          adminPage.getByRole('tab', { name: 'Users' }),
+        ).toBeVisible();
+        await adminPage.getByRole('button', { name: 'Create User' }).click();
+        const userSettingModal = new UserSettingModal(adminPage);
+        await userSettingModal.createUser(
+          ASSIGN_FIXTURE_EMAIL,
+          ASSIGN_FIXTURE_USERNAME,
+          ASSIGN_FIXTURE_PASSWORD,
+        );
+        // The Create User flow shows the new user's keypair in a follow-up
+        // modal — close it; we don't need to keep the keypair info.
+        const keyPairModal = new KeyPairModal(adminPage);
+        await keyPairModal.waitForVisible();
+        await keyPairModal.close();
+        await userSettingModal.waitForHidden();
+        await expect(
+          adminPage.getByRole('cell', { name: ASSIGN_FIXTURE_EMAIL }),
+        ).toBeVisible({ timeout: 10000 });
+      } finally {
+        await adminContext.close();
+      }
+    });
+
+    // No afterAll cleanup: each test run uses a unique fixture user
+    // (`e2e-rbac-assign-<RUN_ID>@lablup.com`) that does not collide with any
+    // other run, so leftover users are harmless. A separate periodic reaper
+    // should sweep stale `e2e-rbac-assign-*` accounts. Mirrors the pattern
+    // already established in e2e/credential/my-keypair-management.spec.ts.
+
     test('Superadmin can assign a user to a role', async ({
       page,
       request,
     }) => {
-      const TEST_USER_EMAIL = userInfo.user.email;
+      const TEST_USER_EMAIL = ASSIGN_FIXTURE_EMAIL;
 
       // 1. Login as admin
       await loginAsAdmin(page, request);
@@ -739,7 +794,7 @@ test.describe.serial(
       page,
       request,
     }) => {
-      const TEST_USER_EMAIL = userInfo.user.email;
+      const TEST_USER_EMAIL = ASSIGN_FIXTURE_EMAIL;
 
       // 1. Login as admin
       await loginAsAdmin(page, request);
