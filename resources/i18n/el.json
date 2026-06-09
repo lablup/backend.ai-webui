@@ -295,7 +295,7 @@
     "SettingsOverrides": "Παρακάμψεις ρυθμίσεων",
     "SystemPrompt": "System Prompt",
     "SystemPromptRequired": "System prompt is required",
-    "SystemPromptTooltip": "(requires Greek translation)",
+    "SystemPromptTooltip": "The system prompt defines the behavior and capabilities of the agent",
     "Tags": "Tags",
     "Temperature": "Temperature",
     "Title": "Title",

@@ -295,7 +295,7 @@
     "SettingsOverrides": "設定覆蓋",
     "SystemPrompt": "System Prompt",
     "SystemPromptRequired": "System prompt is required",
-    "SystemPromptTooltip": "系統提示定義了智能體的行為和功能。",
+    "SystemPromptTooltip": "The system prompt defines the behavior and capabilities of the agent",
     "Tags": "Tags",
     "Temperature": "Temperature",
     "Title": "Title",

@@ -295,7 +295,7 @@
     "SettingsOverrides": "Переопределения настроек",
     "SystemPrompt": "System Prompt",
     "SystemPromptRequired": "System prompt is required",
-    "SystemPromptTooltip": "Системный запрос определяет поведение и возможности агента.",
+    "SystemPromptTooltip": "The system prompt defines the behavior and capabilities of the agent",
     "Tags": "Tags",
     "Temperature": "Temperature",
     "Title": "Title",
