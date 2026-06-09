@@ -29,7 +29,14 @@ async function cleanupBulkCreatedUsers(
       .catch(() => false);
 
     if (isActive) {
-      await userRow.getByRole('button', { name: 'Deactivate' }).click();
+      // The Deactivate action uses an icon-only button (BanIcon) with no accessible
+      // name, so we target it by position (3rd button, index 2) in the actions area.
+      // Hover first so that hover-only action cells reveal their buttons.
+      await userRow.hover();
+      await userRow
+        .locator('.bai-name-action-cell-actions button')
+        .nth(2)
+        .click();
       const popconfirm = page.locator('.ant-popconfirm');
       await popconfirm.getByRole('button', { name: 'Deactivate' }).click();
       await expect(userRow).toBeHidden({ timeout: 10000 });
@@ -59,7 +66,9 @@ async function cleanupBulkCreatedUsers(
   }
 
   if (hasInactiveUsers) {
-    await page.getByRole('button', { name: 'trash bin' }).click();
+    // The purge button uses <DeleteFilled /> icon whose aria-label is "delete".
+    // Use .first() to target the header bulk-delete button, not row-level purge buttons.
+    await page.getByRole('button', { name: 'delete' }).first().click();
     const purgeModal = new PurgeUsersModal(page);
     await purgeModal.waitForVisible();
     await purgeModal.confirmDeletion();
@@ -203,7 +212,14 @@ test.describe(
           // 15. Deactivate each created user
           for (const email of createdEmails) {
             const userRow = page.getByRole('row').filter({ hasText: email });
-            await userRow.getByRole('button', { name: 'Deactivate' }).click();
+            // The Deactivate action uses an icon-only button (BanIcon) with no
+            // accessible name, so we target it by position (3rd button, index 2).
+            // Hover first so that hover-only action cells reveal their buttons.
+            await userRow.hover();
+            await userRow
+              .locator('.bai-name-action-cell-actions button')
+              .nth(2)
+              .click();
             const popconfirm = page.locator('.ant-popconfirm');
             await popconfirm
               .getByRole('button', { name: 'Deactivate' })
@@ -227,8 +243,10 @@ test.describe(
             await inactiveRow.getByRole('checkbox').click();
           }
 
-          // 18. Click the purge (trash bin) button
-          await page.getByRole('button', { name: 'trash bin' }).click();
+          // 18. Click the purge (trash bin) button.
+          // The purge button uses <DeleteFilled /> icon whose aria-label is "delete".
+          // Use .first() to target the header bulk-delete button, not row-level purge buttons.
+          await page.getByRole('button', { name: 'delete' }).first().click();
 
           // 19. Confirm permanent deletion in the purge modal
           const purgeModal = new PurgeUsersModal(page);
@@ -355,7 +373,14 @@ test.describe(
           const userRow = page
             .getByRole('row')
             .filter({ hasText: createdEmail });
-          await userRow.getByRole('button', { name: 'Deactivate' }).click();
+          // The Deactivate action uses an icon-only button (BanIcon) with no
+          // accessible name, so we target it by position (3rd button, index 2).
+          // Hover first so that hover-only action cells reveal their buttons.
+          await userRow.hover();
+          await userRow
+            .locator('.bai-name-action-cell-actions button')
+            .nth(2)
+            .click();
           const popconfirm = page.locator('.ant-popconfirm');
           await popconfirm.getByRole('button', { name: 'Deactivate' }).click();
           await expect(userRow).toBeHidden({ timeout: 10000 });
@@ -372,8 +397,10 @@ test.describe(
             .filter({ hasText: createdEmail });
           await inactiveRow.getByRole('checkbox').click();
 
-          // 17. Click the purge (trash bin) button
-          await page.getByRole('button', { name: 'trash bin' }).click();
+          // 17. Click the purge (trash bin) button.
+          // The purge button uses <DeleteFilled /> icon whose aria-label is "delete".
+          // Use .first() to target the header bulk-delete button, not row-level purge buttons.
+          await page.getByRole('button', { name: 'delete' }).first().click();
 
           // 18. Confirm permanent deletion in the purge modal
           const purgeModal = new PurgeUsersModal(page);

@@ -186,21 +186,34 @@ test.describe.serial(
       page,
       request,
     }) => {
-      test.setTimeout(60000);
+      test.setTimeout(90000);
       // 1. Login as admin
       await loginAsAdmin(page, request);
 
-      // 2. Navigate to credential page
+      // 2. Navigate directly to the Active users view and filter by this user's email
+      // to reliably find the user regardless of table pagination.
       await navigateTo(page, 'credential');
       await expect(page.getByRole('tab', { name: 'Users' })).toBeVisible();
+      await page.getByText('Active', { exact: true }).click();
 
-      // 3. Edit user to clear IP restrictions first (to avoid issues with deactivation)
+      // Use the filter to search for this specific user's email.
+      // BAIPropertyFilter renders Input.Search inside AutoComplete; in antd v6
+      // the aria-label on Input.Search is dropped from the underlying input,
+      // so target the input directly via the .ant-input-search wrapper.
+      const filterValueInput = page
+        .locator('.ant-input-search input[type="search"]')
+        .first();
+      await filterValueInput.fill(EMAIL);
+      await page.getByRole('button', { name: 'search' }).click();
+
+      // 3. Check if the user is in the Active list
       const userRow = page.getByRole('row').filter({ hasText: EMAIL });
       const isActive = await userRow
-        .isVisible({ timeout: 2000 })
+        .isVisible({ timeout: 5000 })
         .catch(() => false);
 
       if (isActive) {
+        // 3a. Edit user to clear IP restrictions first (to avoid issues with deactivation)
         await clickRowAction(page, userRow, 'Edit');
         const editModal = UserSettingModal.forEdit(page);
         await editModal.waitForVisible();
@@ -210,29 +223,52 @@ test.describe.serial(
         await editModal.clickOk();
         await editModal.waitForHidden();
 
-        // 4. Deactivate the user (no popconfirm — mutation fires directly)
+        // 3b. Deactivate the user — confirm the Popconfirm that appears
         await expect(userRow).toBeVisible();
         await clickRowAction(page, userRow, 'Deactivate');
+        const deactivatePopconfirm = page.locator('.ant-popconfirm');
+        await expect(deactivatePopconfirm).toBeVisible({ timeout: 5000 });
+        await deactivatePopconfirm
+          .getByRole('button', { name: 'Deactivate' })
+          .click();
         await expect(userRow).toBeHidden({ timeout: 10000 });
       }
 
-      // 5. Switch to Inactive and purge the user
-      // Re-navigate to credential page to clear any stale state
-      await navigateTo(page, 'credential');
-      await expect(page.getByRole('tab', { name: 'Users' })).toBeVisible();
+      // 4. Switch to Inactive and purge the user.
+      // Click the Inactive radio (URL param is `activeType`, not `status`,
+      // so a query-string navigate won't toggle the view).
       await page.getByText('Inactive', { exact: true }).click();
-      const inactiveUserRow = page.getByRole('row').filter({ hasText: EMAIL });
-      await expect(inactiveUserRow).toBeVisible({ timeout: 10000 });
+      await expect(page.getByRole('tab', { name: 'Users' })).toBeVisible();
 
-      // Use dispatchEvent to bypass DOM detachment during table re-renders
-      await inactiveUserRow.getByRole('checkbox').dispatchEvent('click');
-      await page.getByRole('button', { name: 'trash bin' }).click();
+      // Apply the same email filter on the Inactive tab
+      const inactiveFilterInput = page
+        .locator('.ant-input-search input[type="search"]')
+        .first();
+      await inactiveFilterInput.fill(EMAIL);
+      await page.getByRole('button', { name: 'search' }).click();
+
+      // Wait for the filtered Inactive table to load and show this specific user
+      await expect(page.getByRole('cell', { name: EMAIL })).toBeVisible({
+        timeout: 15000,
+      });
+
+      const inactiveUserRow = page.getByRole('row').filter({ hasText: EMAIL });
+      await inactiveUserRow.getByRole('checkbox').click();
+      // Wait for the selection action bar to appear, then click the purge button.
+      // The purge button uses DeleteFilled icon (accessible name "delete").
+      // Scope to the first "delete" button (the header purge button); the row-level
+      // per-row delete action also uses "delete" aria-label and would cause strict
+      // mode violation if unscoped.
+      await expect(page.getByText(/\d+ selected/)).toBeVisible({
+        timeout: 5000,
+      });
+      await page.getByRole('button', { name: 'delete' }).first().click();
 
       const purgeModal = new PurgeUsersModal(page);
       await purgeModal.waitForVisible();
       await purgeModal.confirmDeletion();
 
-      // 6. Verify user is deleted
+      // 5. Verify user is deleted
       await expect(inactiveUserRow).toBeHidden({ timeout: 10000 });
     });
   },

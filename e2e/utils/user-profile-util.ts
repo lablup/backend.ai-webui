@@ -90,14 +90,28 @@ export async function addIpTags(container: Locator, ips: string[]) {
 
 /**
  * Removes all IP tags from the Allowed Client IP select field within a container.
+ * Uses keyboard Backspace on the combobox input to remove tags one by one,
+ * which is robust against Ant Design version changes in tag close button selectors.
  */
 export async function removeAllIpTags(container: Locator) {
   const formItem = getAllowedClientIpFormItem(container);
-  const removeButtons = formItem.locator('.ant-tag .anticon-close');
-  const count = await removeButtons.count();
-  for (let i = count - 1; i >= 0; i--) {
-    await removeButtons.nth(i).click();
+  const selectInput = formItem.getByRole('combobox');
+  await selectInput.click();
+  // Backspace removes the last selected tag in an antd Select. Keep pressing
+  // until none remain, with a safety cap so a stuck DOM can't cause an infinite
+  // loop. The cap is generous enough for any realistic Allowed Client IP list.
+  const tags = formItem.locator('.ant-select-selection-item');
+  for (let safety = 0; safety < 100; safety++) {
+    const remaining = await tags.count();
+    if (remaining === 0) break;
+    await selectInput.press('Backspace');
+    await tags
+      .nth(remaining - 1)
+      .waitFor({ state: 'detached', timeout: 1000 })
+      .catch(() => {});
   }
+  // Press Tab to blur the combobox without closing the modal (Escape would close it)
+  await selectInput.press('Tab');
 }
 
 /**
