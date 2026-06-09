@@ -3,6 +3,7 @@ import {
   loginAsAdmin,
   loginAsUser,
   modifyConfigToml,
+  navigateTo,
 } from '../utils/test-util';
 import { test, expect } from '@playwright/test';
 import fs from 'fs';
@@ -104,8 +105,12 @@ test.describe.parallel(
         // 3. Login as admin after setting up routes
         await loginAsAdmin(page, request);
 
-        // 4. Click "Admin Settings" menu item in sidebar
-        await page.getByRole('menuitem', { name: 'Admin Settings' }).click();
+        // 4. Navigate to a stable admin page to enter admin mode.
+        //    The admin-test-plugin itself immediately calls window.history.back()
+        //    when its component mounts, so clicking "Admin Settings" (which points
+        //    to the plugin URL) would navigate away before the admin sidebar renders.
+        //    Using /credential as a stable admin page triggers the admin sidebar view.
+        await navigateTo(page, 'credential');
 
         // 5. Verify Admin Settings panel has "Admin Tool" menuitem
         await expect(
