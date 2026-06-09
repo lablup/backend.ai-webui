@@ -339,7 +339,7 @@
     "MetricSourceTooltip": "Indica de onde o valor da métrica é coletado. O Kernel utiliza o uso de recursos no nível do contêiner, e o Prometheus executa uma consulta na instância Prometheus configurada.",
     "MinMaxReplicasTooltip": "Os limites inferior e superior aplicados por esta regra. O autoescalonamento não reduzirá as réplicas abaixo do Min nem as aumentará além do Max.",
     "MinMustBeLessThanMax": "O limite mínimo deve ser menor que o limite máximo.",
-    "MinReplicas": "Min Replicas",
+    "MinReplicas": "Réplicas mínimas",
     "MinReplicasTooltip": "O número mínimo de réplicas que o autoescalonamento mantém.",
     "MinReplicasValue": "Mín: {{value}}",
     "MinThreshold": "Limite mínimo",

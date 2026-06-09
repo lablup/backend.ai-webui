@@ -323,7 +323,7 @@
     "LastTriggeredTooltip": "このルールが最後に発動してレプリカ数を調整した時刻。一度もトリガーされていない場合は空です。",
     "Lower": "下限",
     "MIN/MAXReplicas": "min / maxレプリカ",
-    "MaxReplicas": "マックスレプリカ",
+    "MaxReplicas": "最大レプリカ",
     "MaxReplicasTooltip": "自動スケーリングが許可するレプリカの最大数。",
     "MaxReplicasValue": "最大: {{value}}",
     "MaxThreshold": "最大しきい値",

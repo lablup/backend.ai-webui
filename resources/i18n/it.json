@@ -1076,7 +1076,7 @@
     "TagsTooltip": "Etichette opzionali per organizzare e filtrare le distribuzioni. Premi Invio o virgola per aggiungere.",
     "ToStatus": "Vai allo stato",
     "TrafficRatio": "Rapporto traffico",
-    "TrafficStatus": "Stato traffico",
+    "TrafficStatus": "Stato del traffico",
     "TrafficStatusTooltip": "Indica se la replica è attualmente inclusa nel pool attivo e sta elaborando richieste tramite App Proxy.",
     "UpdateDeployment": "Aggiorna distribuzione",
     "UpdatedAt": "Aggiornato il",
