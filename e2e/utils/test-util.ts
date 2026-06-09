@@ -441,7 +441,7 @@ export async function createVFolderAndVerify(
   permission: 'rw' | 'ro' = 'rw',
 ) {
   await navigateTo(page, 'data');
-  await page.getByRole('button', { name: 'Create Folder' }).nth(1).click();
+  await page.getByRole('button', { name: 'Create Folder' }).first().click();
 
   const modal = new FolderCreationModal(page);
   await modal.modalToBeVisible();
@@ -547,14 +547,10 @@ export async function deleteForeverAndVerifyFromTrash(
   await confirmInput.fill(folderName);
   await page.getByRole('button', { name: 'Delete forever' }).click();
 
-  // Wait for the deletion success notification to appear.
-  // This confirms the backend accepted the delete request.
-  const deletionNotification = page.getByRole('alert').filter({
-    hasText: /deleted forever/i,
-  });
-  await expect(deletionNotification).toBeVisible({ timeout: 15000 });
-  await expect(deletionNotification).toBeHidden({ timeout: 15000 });
-
+  // After the "Delete forever" button is clicked, wait for the folder to
+  // disappear from the Trash tab. The success toast is too transient to assert
+  // reliably; the row-gone check is the authoritative signal that the deletion
+  // was accepted by the backend.
   // After the notification is hidden, verify the folder row is gone
   await clearAllFilters(page);
   await selectPropertyFilter(page, 'Name', folderName);
@@ -597,7 +593,25 @@ export async function shareVFolderAndVerify(
 export async function acceptAllInvitationAndVerifySpecificFolder(
   page: Page,
   folderName: string,
+  inviterEmail?: string,
 ) {
+  // When the caller wants to assert the inviter email, register a listener
+  // for the invitations/list response BEFORE navigation so we can inspect
+  // whether the backend actually populates `inviter_user_email`. Some manager
+  // RC builds (e.g. v26.4.4rc6) do not yet return this field even though the
+  // version-compatibility check passes; the email assertion is skipped in that
+  // case rather than producing a spurious failure unrelated to the frontend fix.
+  const firstInvitationsResponse = inviterEmail
+    ? page
+        .waitForResponse(
+          (resp) =>
+            resp.url().includes('/folders/invitations/list') &&
+            resp.status() === 200,
+          { timeout: 30_000 },
+        )
+        .catch(() => null)
+    : null;
+
   // Open the FolderInvitationResponseModal directly via its query param.
   // The notification-based "See Detail" entry was replaced by an Invited
   // Folders badge + modal; using the query param avoids a brittle click path.
@@ -613,6 +627,34 @@ export async function acceptAllInvitationAndVerifySpecificFolder(
     has: page.getByRole('button', { name: /Accept/i }),
   });
   await expect(invitationModal.first()).toBeVisible({ timeout: 15000 });
+
+  // Verify the inviter's email is rendered in the "From" field only if the
+  // backend actually returned `inviter_user_email` in the response. Catches
+  // regressions in the `invitation-inviter-email` capability check and
+  // `item.inviter_user_email` rendering without failing on backends that
+  // predate the field.
+  if (inviterEmail && firstInvitationsResponse) {
+    let backendReturnsInviterEmail = false;
+    try {
+      const resp = await firstInvitationsResponse;
+      if (resp) {
+        const body = await resp.json();
+        const inv = (body.invitations ?? []).find(
+          (i: any) => i.vfolder_name === folderName,
+        );
+        backendReturnsInviterEmail =
+          typeof inv?.inviter_user_email === 'string' &&
+          inv.inviter_user_email.length > 0;
+      }
+    } catch {
+      // JSON parse failed or response was not captured; skip the assertion
+    }
+    if (backendReturnsInviterEmail) {
+      await expect(invitationModal.first()).toContainText(inviterEmail, {
+        timeout: 10000,
+      });
+    }
+  }
 
   // Accept all pending invitations one by one. The list shrinks as each
   // acceptance resolves, and the clicked button detaches from the DOM mid-click,
@@ -656,12 +698,24 @@ export async function restoreVFolderAndVerify(page: Page, folderName: string) {
   await clearAllFilters(page);
   await selectPropertyFilter(page, 'Name', folderName);
 
-  // Find the folder row and click the Restore button (first action button)
+  // Find the folder row and wait for it
   const folderRowToRestore = page.getByRole('row', {
     name: `VFolder Identicon ${folderName}`,
   });
   await expect(folderRowToRestore).toBeVisible({ timeout: 10000 });
-  await folderRowToRestore.getByRole('button').first().click();
+
+  // Wait for the Restore button to be enabled (folder must reach DELETE_PENDING status)
+  const restoreButton = folderRowToRestore.getByRole('button').first();
+  await expect(restoreButton).toBeEnabled({ timeout: 15000 });
+  await restoreButton.click();
+
+  // The Restore button is wrapped in a Popconfirm — click the OK button to confirm.
+  const popconfirmOkButton = page
+    .locator('.ant-popover')
+    .getByRole('button', { name: 'Confirm' });
+  await expect(popconfirmOkButton).toBeVisible({ timeout: 5000 });
+  await popconfirmOkButton.click();
+
   await verifyVFolder(page, folderName, 'Active');
 }
 

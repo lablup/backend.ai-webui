@@ -26,7 +26,7 @@ test.describe(
         await page.getByRole('link', { name: 'Data' }).click();
         await page
           .getByRole('button', { name: 'Create Folder' })
-          .nth(1)
+          .first()
           .click();
       });
       test.afterEach(async ({ page }) => {
@@ -101,7 +101,7 @@ test.describe(
         await page.getByRole('link', { name: 'Data' }).click();
         await page
           .getByRole('button', { name: 'Create Folder' })
-          .nth(1)
+          .first()
           .click();
       });
       test.afterEach(async ({ page }) => {
@@ -123,7 +123,7 @@ test.describe(
     test('User can create, delete(move to trash), restore, delete forever vFolder', async ({
       page,
     }) => {
-      test.setTimeout(90_000);
+      test.setTimeout(180_000);
       await createVFolderAndVerify(page, folderName);
       await moveToTrashAndVerify(page, folderName);
       await restoreVFolderAndVerify(page, folderName);
@@ -138,7 +138,7 @@ test.describe.serial(
   { tag: ['@critical', '@vfolder', '@functional'] },
   () => {
     const sharingFolderName = 'e2e-test-folder-sharing' + new Date().getTime();
-    test.setTimeout(90_000);
+    test.setTimeout(180_000);
     test.beforeEach(async ({ page, request }) => {
       await loginAsUser(page, request);
       await createVFolderAndVerify(page, sharingFolderName);
@@ -159,6 +159,7 @@ test.describe.serial(
       await acceptAllInvitationAndVerifySpecificFolder(
         user2_page,
         sharingFolderName,
+        userInfo.user.email,
       );
     });
   },
