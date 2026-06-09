@@ -333,6 +333,18 @@ test.describe(
       page,
       request,
     }) => {
+      // Step 6 below calls createServiceViaUI which uses navigateTo(page, 'service/start').
+      // The /service/start route was removed in FR-2675/FR-2822 in favour of the
+      // in-page DeploymentCreateModal opened from /deployments. The new modal uses a
+      // two-step flow (create deployment shell → add revision with image/vfolder) that
+      // differs fundamentally from the old ServiceLauncher page, so createServiceViaUI
+      // cannot be trivially migrated here. The test logic itself is correct; the
+      // prerequisite setup helper needs a full rewrite against the new deployment API.
+      test.fixme(
+        true,
+        'createServiceViaUI uses removed /service/start route (FR-2675/FR-2822); service creation now uses DeploymentCreateModal at /deployments with a separate revision-add step',
+      );
+
       test.setTimeout(300_000);
 
       // Step 1: Login
@@ -465,6 +477,14 @@ test.describe(
       page,
       request,
     }) => {
+      // This test depends on the model service created in 9.1 (serial mode).
+      // Since 9.1 is marked fixme due to createServiceViaUI using the removed
+      // /service/start route (FR-2675/FR-2822), this test cannot proceed either.
+      test.fixme(
+        true,
+        'Depends on model service created in test 9.1, which is fixme because createServiceViaUI uses removed /service/start route (FR-2675/FR-2822)',
+      );
+
       test.setTimeout(300_000);
 
       // Login (reuses existing service from 9.1 in serial mode)
