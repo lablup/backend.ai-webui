@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f6667dc28c07ec1d1ed37e30477d844b>>
+ * @generated SignedSource<<5f6fa8d74653c21606a6ab72256ea52d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -232,7 +232,17 @@ v14 = {
   "kind": "ScalarField",
   "name": "mountDestination",
   "storageKey": null
-};
+},
+v15 = [
+  (v7/*: any*/),
+  {
+    "alias": null,
+    "args": null,
+    "kind": "ScalarField",
+    "name": "value",
+    "storageKey": null
+  }
+];
 return {
   "fragment": {
     "argumentDefinitions": [
@@ -625,6 +635,38 @@ return {
                       {
                         "alias": null,
                         "args": null,
+                        "concreteType": "ResourceConfig",
+                        "kind": "LinkedField",
+                        "name": "resourceConfig",
+                        "plural": false,
+                        "selections": [
+                          {
+                            "alias": null,
+                            "args": null,
+                            "concreteType": "ResourceOpts",
+                            "kind": "LinkedField",
+                            "name": "resourceOpts",
+                            "plural": false,
+                            "selections": [
+                              {
+                                "alias": null,
+                                "args": null,
+                                "concreteType": "ResourceOptsEntry",
+                                "kind": "LinkedField",
+                                "name": "entries",
+                                "plural": true,
+                                "selections": (v15/*: any*/),
+                                "storageKey": null
+                              }
+                            ],
+                            "storageKey": null
+                          }
+                        ],
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
                         "concreteType": "ModelRuntimeConfig",
                         "kind": "LinkedField",
                         "name": "modelRuntimeConfig",
@@ -646,6 +688,13 @@ return {
                           {
                             "alias": null,
                             "args": null,
+                            "kind": "ScalarField",
+                            "name": "inferenceRuntimeConfig",
+                            "storageKey": null
+                          },
+                          {
+                            "alias": null,
+                            "args": null,
                             "concreteType": "EnvironmentVariables",
                             "kind": "LinkedField",
                             "name": "environ",
@@ -658,16 +707,7 @@ return {
                                 "kind": "LinkedField",
                                 "name": "entries",
                                 "plural": true,
-                                "selections": [
-                                  (v7/*: any*/),
-                                  {
-                                    "alias": null,
-                                    "args": null,
-                                    "kind": "ScalarField",
-                                    "name": "value",
-                                    "storageKey": null
-                                  }
-                                ],
+                                "selections": (v15/*: any*/),
                                 "storageKey": null
                               }
                             ],
@@ -777,7 +817,39 @@ return {
                                     "alias": null,
                                     "args": null,
                                     "kind": "ScalarField",
+                                    "name": "shell",
+                                    "storageKey": null
+                                  },
+                                  {
+                                    "alias": null,
+                                    "args": null,
+                                    "kind": "ScalarField",
                                     "name": "port",
+                                    "storageKey": null
+                                  },
+                                  {
+                                    "alias": null,
+                                    "args": null,
+                                    "concreteType": "PreStartAction",
+                                    "kind": "LinkedField",
+                                    "name": "preStartActions",
+                                    "plural": true,
+                                    "selections": [
+                                      {
+                                        "alias": null,
+                                        "args": null,
+                                        "kind": "ScalarField",
+                                        "name": "action",
+                                        "storageKey": null
+                                      },
+                                      {
+                                        "alias": null,
+                                        "args": null,
+                                        "kind": "ScalarField",
+                                        "name": "args",
+                                        "storageKey": null
+                                      }
+                                    ],
                                     "storageKey": null
                                   },
                                   {
@@ -821,6 +893,13 @@ return {
                                         "args": null,
                                         "kind": "ScalarField",
                                         "name": "maxWaitTime",
+                                        "storageKey": null
+                                      },
+                                      {
+                                        "alias": null,
+                                        "args": null,
+                                        "kind": "ScalarField",
+                                        "name": "expectedStatusCode",
                                         "storageKey": null
                                       }
                                     ],
@@ -894,12 +973,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "b525e0732eeaa10c174d390a56593373",
+    "cacheID": "b19937971336e14bb65dea4749999f89",
     "id": null,
     "metadata": {},
     "name": "DeploymentListPageQuery",
     "operationKind": "query",
-    "text": "query DeploymentListPageQuery(\n  $filter: DeploymentFilter\n  $orderBy: [DeploymentOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  myDeployments(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        ...BAIModelDeploymentNodesFragment\n        ...DeploymentSettingModal_deployment\n        metadata {\n          name\n          status\n        }\n        currentRevision @since(version: \"26.4.3\") {\n          id\n          revisionNumber\n          ...DeploymentRevisionDetail_revision\n        }\n      }\n    }\n  }\n}\n\nfragment BAIDeploymentOwnerInfo_deployment on ModelDeployment {\n  id\n  creator @since(version: \"26.4.3\") {\n    id\n    basicInfo {\n      email\n      username\n      fullName\n    }\n  }\n}\n\nfragment BAIDeploymentTagChips_metadata on ModelDeploymentMetadata {\n  tags\n}\n\nfragment BAIModelDeploymentNodesFragment on ModelDeployment {\n  id\n  currentRevisionId\n  metadata {\n    projectId\n    domainName\n    name\n    status\n    tags\n    createdAt\n    updatedAt\n    resourceGroupName\n    projectV2 @since(version: \"26.4.3\") {\n      basicInfo {\n        name\n      }\n      id\n    }\n    ...BAIDeploymentTagChips_metadata\n  }\n  networkAccess {\n    endpointUrl\n    preferredDomainName\n    openToPublic\n  }\n  defaultDeploymentStrategy {\n    type\n  }\n  replicaState {\n    desiredReplicaCount\n  }\n  totalReplicas: replicas {\n    count\n  }\n  runningReplicas: replicas(filter: {status: {equals: RUNNING}}) {\n    count\n  }\n  currentRevision @since(version: \"26.4.3\") {\n    id\n    revisionNumber\n    modelMountConfig {\n      vfolder {\n        id\n        name\n      }\n    }\n  }\n  ...BAIDeploymentOwnerInfo_deployment\n}\n\nfragment DeploymentRevisionDetail_revision on ModelRevision {\n  id\n  revisionNumber\n  createdAt\n  clusterConfig {\n    mode\n    size\n  }\n  resourceSlots @since(version: \"26.4.2\") {\n    slotName\n    quantity\n  }\n  modelRuntimeConfig {\n    runtimeVariant {\n      name\n      id\n    }\n    environ {\n      entries {\n        name\n        value\n      }\n    }\n  }\n  modelMountConfig {\n    vfolderId\n    mountDestination\n    definitionPath\n    vfolder {\n      id\n      name\n      ...FolderLink_vfolderNode\n    }\n  }\n  extraMounts {\n    vfolderId\n    mountDestination\n    mountPerm\n    vfolder {\n      id\n      name\n      ...FolderLink_vfolderNode\n    }\n  }\n  imageV2 @since(version: \"26.4.3\") {\n    id\n    identity {\n      canonicalName\n      architecture\n    }\n  }\n  modelDefinition {\n    models {\n      name\n      modelPath\n      service {\n        startCommand\n        port\n        healthCheck {\n          path\n          initialDelay\n          maxRetries\n          interval\n          maxWaitTime\n        }\n      }\n    }\n  }\n}\n\nfragment DeploymentSettingModal_deployment on ModelDeployment {\n  id\n  metadata {\n    name\n    tags\n    resourceGroupName\n  }\n  networkAccess {\n    openToPublic\n  }\n  replicaState {\n    desiredReplicaCount\n  }\n}\n\nfragment FolderLink_vfolderNode on VirtualFolderNode {\n  row_id\n  name\n  ...VFolderNodeIdenticonFragment\n}\n\nfragment VFolderNodeIdenticonFragment on VirtualFolderNode {\n  id\n}\n"
+    "text": "query DeploymentListPageQuery(\n  $filter: DeploymentFilter\n  $orderBy: [DeploymentOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  myDeployments(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        ...BAIModelDeploymentNodesFragment\n        ...DeploymentSettingModal_deployment\n        metadata {\n          name\n          status\n        }\n        currentRevision @since(version: \"26.4.3\") {\n          id\n          revisionNumber\n          ...DeploymentRevisionDetail_revision\n        }\n      }\n    }\n  }\n}\n\nfragment BAIDeploymentOwnerInfo_deployment on ModelDeployment {\n  id\n  creator @since(version: \"26.4.3\") {\n    id\n    basicInfo {\n      email\n      username\n      fullName\n    }\n  }\n}\n\nfragment BAIDeploymentTagChips_metadata on ModelDeploymentMetadata {\n  tags\n}\n\nfragment BAIModelDeploymentNodesFragment on ModelDeployment {\n  id\n  currentRevisionId\n  metadata {\n    projectId\n    domainName\n    name\n    status\n    tags\n    createdAt\n    updatedAt\n    resourceGroupName\n    projectV2 @since(version: \"26.4.3\") {\n      basicInfo {\n        name\n      }\n      id\n    }\n    ...BAIDeploymentTagChips_metadata\n  }\n  networkAccess {\n    endpointUrl\n    preferredDomainName\n    openToPublic\n  }\n  defaultDeploymentStrategy {\n    type\n  }\n  replicaState {\n    desiredReplicaCount\n  }\n  totalReplicas: replicas {\n    count\n  }\n  runningReplicas: replicas(filter: {status: {equals: RUNNING}}) {\n    count\n  }\n  currentRevision @since(version: \"26.4.3\") {\n    id\n    revisionNumber\n    modelMountConfig {\n      vfolder {\n        id\n        name\n      }\n    }\n  }\n  ...BAIDeploymentOwnerInfo_deployment\n}\n\nfragment DeploymentRevisionDetail_revision on ModelRevision {\n  id\n  revisionNumber\n  createdAt\n  clusterConfig {\n    mode\n    size\n  }\n  resourceSlots @since(version: \"26.4.2\") {\n    slotName\n    quantity\n  }\n  resourceConfig {\n    resourceOpts {\n      entries {\n        name\n        value\n      }\n    }\n  }\n  modelRuntimeConfig {\n    runtimeVariant {\n      name\n      id\n    }\n    inferenceRuntimeConfig\n    environ {\n      entries {\n        name\n        value\n      }\n    }\n  }\n  modelMountConfig {\n    vfolderId\n    mountDestination\n    definitionPath\n    vfolder {\n      id\n      name\n      ...FolderLink_vfolderNode\n    }\n  }\n  extraMounts {\n    vfolderId\n    mountDestination\n    mountPerm\n    vfolder {\n      id\n      name\n      ...FolderLink_vfolderNode\n    }\n  }\n  imageV2 @since(version: \"26.4.3\") {\n    id\n    identity {\n      canonicalName\n      architecture\n    }\n  }\n  modelDefinition {\n    models {\n      name\n      modelPath\n      service {\n        startCommand\n        shell\n        port\n        preStartActions {\n          action\n          args\n        }\n        healthCheck {\n          path\n          initialDelay\n          maxRetries\n          interval\n          maxWaitTime\n          expectedStatusCode\n        }\n      }\n    }\n  }\n}\n\nfragment DeploymentSettingModal_deployment on ModelDeployment {\n  id\n  metadata {\n    name\n    tags\n    resourceGroupName\n  }\n  networkAccess {\n    openToPublic\n  }\n  replicaState {\n    desiredReplicaCount\n  }\n}\n\nfragment FolderLink_vfolderNode on VirtualFolderNode {\n  row_id\n  name\n  ...VFolderNodeIdenticonFragment\n}\n\nfragment VFolderNodeIdenticonFragment on VirtualFolderNode {\n  id\n}\n"
   }
 };
 })();

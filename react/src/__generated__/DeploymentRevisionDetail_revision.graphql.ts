@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<94d2dceb36c41beaf8317c23c6ac8b52>>
+ * @generated SignedSource<<f32f32fdb29659c09ff5a63f8e3194b8>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -42,6 +42,7 @@ export type DeploymentRevisionDetail_revision$data = {
       readonly name: string;
       readonly service: {
         readonly healthCheck: {
+          readonly expectedStatusCode: number;
           readonly initialDelay: number;
           readonly interval: number;
           readonly maxRetries: number;
@@ -49,6 +50,11 @@ export type DeploymentRevisionDetail_revision$data = {
           readonly path: string;
         } | null | undefined;
         readonly port: number;
+        readonly preStartActions: ReadonlyArray<{
+          readonly action: string;
+          readonly args: any;
+        }>;
+        readonly shell: string;
         readonly startCommand: ReadonlyArray<string> | null | undefined;
       } | null | undefined;
     }>;
@@ -70,8 +76,17 @@ export type DeploymentRevisionDetail_revision$data = {
         readonly value: string;
       }>;
     } | null | undefined;
+    readonly inferenceRuntimeConfig: any | null | undefined;
     readonly runtimeVariant: {
       readonly name: string;
+    } | null | undefined;
+  };
+  readonly resourceConfig: {
+    readonly resourceOpts: {
+      readonly entries: ReadonlyArray<{
+        readonly name: string;
+        readonly value: string;
+      }>;
     } | null | undefined;
   };
   readonly resourceSlots: ReadonlyArray<{
@@ -101,21 +116,31 @@ v1 = {
   "name": "name",
   "storageKey": null
 },
-v2 = {
+v2 = [
+  (v1/*: any*/),
+  {
+    "alias": null,
+    "args": null,
+    "kind": "ScalarField",
+    "name": "value",
+    "storageKey": null
+  }
+],
+v3 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "vfolderId",
   "storageKey": null
 },
-v3 = {
+v4 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "mountDestination",
   "storageKey": null
 },
-v4 = {
+v5 = {
   "alias": null,
   "args": null,
   "concreteType": "VirtualFolderNode",
@@ -207,6 +232,38 @@ return {
     {
       "alias": null,
       "args": null,
+      "concreteType": "ResourceConfig",
+      "kind": "LinkedField",
+      "name": "resourceConfig",
+      "plural": false,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "ResourceOpts",
+          "kind": "LinkedField",
+          "name": "resourceOpts",
+          "plural": false,
+          "selections": [
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "ResourceOptsEntry",
+              "kind": "LinkedField",
+              "name": "entries",
+              "plural": true,
+              "selections": (v2/*: any*/),
+              "storageKey": null
+            }
+          ],
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
       "concreteType": "ModelRuntimeConfig",
       "kind": "LinkedField",
       "name": "modelRuntimeConfig",
@@ -227,6 +284,13 @@ return {
         {
           "alias": null,
           "args": null,
+          "kind": "ScalarField",
+          "name": "inferenceRuntimeConfig",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
           "concreteType": "EnvironmentVariables",
           "kind": "LinkedField",
           "name": "environ",
@@ -239,16 +303,7 @@ return {
               "kind": "LinkedField",
               "name": "entries",
               "plural": true,
-              "selections": [
-                (v1/*: any*/),
-                {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
-                  "name": "value",
-                  "storageKey": null
-                }
-              ],
+              "selections": (v2/*: any*/),
               "storageKey": null
             }
           ],
@@ -265,8 +320,8 @@ return {
       "name": "modelMountConfig",
       "plural": false,
       "selections": [
-        (v2/*: any*/),
         (v3/*: any*/),
+        (v4/*: any*/),
         {
           "alias": null,
           "args": null,
@@ -274,7 +329,7 @@ return {
           "name": "definitionPath",
           "storageKey": null
         },
-        (v4/*: any*/)
+        (v5/*: any*/)
       ],
       "storageKey": null
     },
@@ -286,8 +341,8 @@ return {
       "name": "extraMounts",
       "plural": true,
       "selections": [
-        (v2/*: any*/),
         (v3/*: any*/),
+        (v4/*: any*/),
         {
           "alias": null,
           "args": null,
@@ -295,7 +350,7 @@ return {
           "name": "mountPerm",
           "storageKey": null
         },
-        (v4/*: any*/)
+        (v5/*: any*/)
       ],
       "storageKey": null
     },
@@ -379,7 +434,39 @@ return {
                   "alias": null,
                   "args": null,
                   "kind": "ScalarField",
+                  "name": "shell",
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
                   "name": "port",
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "concreteType": "PreStartAction",
+                  "kind": "LinkedField",
+                  "name": "preStartActions",
+                  "plural": true,
+                  "selections": [
+                    {
+                      "alias": null,
+                      "args": null,
+                      "kind": "ScalarField",
+                      "name": "action",
+                      "storageKey": null
+                    },
+                    {
+                      "alias": null,
+                      "args": null,
+                      "kind": "ScalarField",
+                      "name": "args",
+                      "storageKey": null
+                    }
+                  ],
                   "storageKey": null
                 },
                 {
@@ -424,6 +511,13 @@ return {
                       "kind": "ScalarField",
                       "name": "maxWaitTime",
                       "storageKey": null
+                    },
+                    {
+                      "alias": null,
+                      "args": null,
+                      "kind": "ScalarField",
+                      "name": "expectedStatusCode",
+                      "storageKey": null
                     }
                   ],
                   "storageKey": null
@@ -443,6 +537,6 @@ return {
 };
 })();
 
-(node as any).hash = "ae680a805d602934145a2fd53023ac6c";
+(node as any).hash = "bc669fc911f7565b73ca025a9cbedf70";
 
 export default node;

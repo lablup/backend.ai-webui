@@ -76,10 +76,19 @@ const DeploymentRevisionDetail: React.FC<{
           slotName
           quantity
         }
+        resourceConfig {
+          resourceOpts {
+            entries {
+              name
+              value
+            }
+          }
+        }
         modelRuntimeConfig {
           runtimeVariant {
             name
           }
+          inferenceRuntimeConfig
           environ {
             entries {
               name
@@ -120,13 +129,19 @@ const DeploymentRevisionDetail: React.FC<{
             modelPath
             service {
               startCommand
+              shell
               port
+              preStartActions {
+                action
+                args
+              }
               healthCheck {
                 path
                 initialDelay
                 maxRetries
                 interval
                 maxWaitTime
+                expectedStatusCode
               }
             }
           }
@@ -147,6 +162,20 @@ const DeploymentRevisionDetail: React.FC<{
     (entry): entry is typeof entry & { name: string } => !!entry.name,
   );
   const resourceSlots = revision.resourceSlots ?? [];
+  // Shared memory lives in resourceConfig.resourceOpts as a `{ name, value }`
+  // entry keyed `shmem` (e.g. "64m"); surface just that entry per FR-3005.
+  const shmemValue = (
+    revision.resourceConfig?.resourceOpts?.entries ?? []
+  ).find((entry) => entry.name === 'shmem')?.value;
+  // Runtime-specific (vLLM/SGLang/…) config is a free-form JSON blob. Treat an
+  // empty object as "nothing to show".
+  const inferenceRuntimeConfig = runtimeConfig?.inferenceRuntimeConfig;
+  const hasInferenceRuntimeConfig =
+    inferenceRuntimeConfig != null &&
+    !(
+      typeof inferenceRuntimeConfig === 'object' &&
+      Object.keys(inferenceRuntimeConfig).length === 0
+    );
   const imageCanonicalName = revision.imageV2?.identity?.canonicalName;
   const imageArchitecture = revision.imageV2?.identity?.architecture;
   const imageFullName =
@@ -241,26 +270,36 @@ const DeploymentRevisionDetail: React.FC<{
       label: t('session.launcher.ResourceAllocation'),
       children:
         resourceSlots.length > 0 ? (
-          <BAIFlex gap="sm" wrap="wrap">
-            {resourceSlots
-              .filter(
-                (slot): slot is typeof slot & { slotName: string } =>
-                  !!slot.slotName,
-              )
-              .map((slot) => {
-                const rawValue = String(slot.quantity);
-                const value =
-                  slot.slotName === 'mem'
-                    ? String(convertToBinaryUnit(rawValue, '')?.number ?? 0)
-                    : String(parseFloat(rawValue));
-                return (
-                  <BAIResourceNumberWithIcon
-                    key={slot.slotName}
-                    type={slot.slotName}
-                    value={value}
-                  />
-                );
-              })}
+          <BAIFlex direction="column" align="start" gap="xxs">
+            <BAIFlex gap="sm" wrap="wrap">
+              {resourceSlots
+                .filter(
+                  (slot): slot is typeof slot & { slotName: string } =>
+                    !!slot.slotName,
+                )
+                .map((slot) => {
+                  const rawValue = String(slot.quantity);
+                  const value =
+                    slot.slotName === 'mem'
+                      ? String(convertToBinaryUnit(rawValue, '')?.number ?? 0)
+                      : String(parseFloat(rawValue));
+                  return (
+                    <BAIResourceNumberWithIcon
+                      key={slot.slotName}
+                      type={slot.slotName}
+                      value={value}
+                    />
+                  );
+                })}
+            </BAIFlex>
+            {shmemValue && (
+              // Shared memory is part of the resource allocation, not a
+              // standalone setting — show it as secondary text beneath the
+              // resource chips (FR-3005).
+              <Typography.Text type="secondary">
+                {`(${t('resourcePreset.SharedMemory')} ${shmemValue})`}
+              </Typography.Text>
+            )}
           </BAIFlex>
         ) : (
           renderFallback()
@@ -310,11 +349,14 @@ const DeploymentRevisionDetail: React.FC<{
                     {mount.vfolderId}
                   </Typography.Text>
                 )}
-                {mount.mountDestination && (
-                  <Typography.Text type="secondary">
-                    {mount.mountDestination}
-                  </Typography.Text>
-                )}
+                <BAIFlex gap="xs" align="center" wrap="wrap">
+                  {mount.mountDestination && (
+                    <Typography.Text type="secondary">
+                      {mount.mountDestination}
+                    </Typography.Text>
+                  )}
+                  {mount.mountPerm && <BAITag>{mount.mountPerm}</BAITag>}
+                </BAIFlex>
               </BAIFlex>
             ))}
           </BAIFlex>
@@ -327,6 +369,18 @@ const DeploymentRevisionDetail: React.FC<{
       key: 'runtime-variant',
       label: t('deployment.RuntimeVariant'),
       children: runtimeConfig?.runtimeVariant?.name || renderFallback(),
+    },
+    {
+      key: 'inference-runtime-config',
+      label: t('modelService.RuntimeConfiguration'),
+      children: hasInferenceRuntimeConfig ? (
+        <SourceCodeView language="json">
+          {JSON.stringify(inferenceRuntimeConfig, null, 2)}
+        </SourceCodeView>
+      ) : (
+        renderFallback()
+      ),
+      span: 2,
     },
     {
       key: 'image',
@@ -424,6 +478,34 @@ const DeploymentRevisionDetail: React.FC<{
               label: `${prefix}${t('modelService.Port')}`,
               children: model.service.port ?? renderFallback(),
             },
+            {
+              key: `model-shell-${idx}`,
+              label: `${prefix}${t('modelService.Shell')}`,
+              children: model.service.shell || renderFallback(),
+            },
+            {
+              key: `model-pre-start-actions-${idx}`,
+              label: `${prefix}${t('modelService.PreStartActions')}`,
+              children:
+                (model.service.preStartActions?.length ?? 0) > 0 ? (
+                  <SourceCodeView language="shell">
+                    {model.service.preStartActions
+                      .map((pre) => {
+                        // `args` is a free-form JSON value; serialize compactly
+                        // so it renders as a single readable line per action.
+                        const args =
+                          pre.args == null
+                            ? ''
+                            : ` ${JSON.stringify(pre.args)}`;
+                        return `${pre.action}${args}`;
+                      })
+                      .join('\n')}
+                  </SourceCodeView>
+                ) : (
+                  renderFallback()
+                ),
+              span: 2,
+            },
             ...(model.service.healthCheck
               ? ([
                   {
@@ -456,6 +538,13 @@ const DeploymentRevisionDetail: React.FC<{
                     label: `${prefix}${t('modelService.MaxWaitTime')}`,
                     children:
                       model.service.healthCheck.maxWaitTime ?? renderFallback(),
+                  },
+                  {
+                    key: `model-expected-status-code-${idx}`,
+                    label: `${prefix}${t('modelService.ExpectedStatusCode')}`,
+                    children:
+                      model.service.healthCheck.expectedStatusCode ??
+                      renderFallback(),
                   },
                 ] as DescriptionsItemType[])
               : []),

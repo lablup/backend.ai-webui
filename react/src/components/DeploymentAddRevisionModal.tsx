@@ -2,7 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { DeploymentAddRevisionModalAddMutation } from '../__generated__/DeploymentAddRevisionModalAddMutation.graphql';
+import type {
+  DeploymentAddRevisionModalAddMutation,
+  DeploymentAddRevisionModalAddMutation$data,
+} from '../__generated__/DeploymentAddRevisionModalAddMutation.graphql';
 import { DeploymentAddRevisionModalImageNameQuery } from '../__generated__/DeploymentAddRevisionModalImageNameQuery.graphql';
 import type { DeploymentAddRevisionModalPresetCountQuery } from '../__generated__/DeploymentAddRevisionModalPresetCountQuery.graphql';
 import type { DeploymentAddRevisionModalPresetDetailQuery } from '../__generated__/DeploymentAddRevisionModalPresetDetailQuery.graphql';
@@ -78,6 +81,7 @@ import {
   BAIModal,
   BAIModalProps,
   BAIRuntimeVariantSelect,
+  BAISelect,
   BAIVFolderSelect,
   BAIVFolderSelectRef,
   convertToUUID,
@@ -130,8 +134,25 @@ export type PresetFormValues = {
   modelFolderId: string;
 };
 
+// Fragment ref of the revision returned by `addModelRevision`. Derived from
+// the mutation response — which already spreads `DeploymentRevisionDetail_revision`
+// — instead of importing the fragment's generated `$key` directly. The ref type
+// travels with the mutation, so consumers don't need to reach into the
+// fragment's generated file (which also keeps this working when the fragment
+// component lives in `backend.ai-ui`, where the `$key` isn't re-exported).
+export type DeploymentAddRevisionModalCreatedRevision = NonNullable<
+  DeploymentAddRevisionModalAddMutation$data['addModelRevision']
+>['revision'];
+
 interface DeploymentAddRevisionModalProps extends BAIModalProps {
-  onRequestClose: (success?: boolean) => void;
+  // `createdRevision` is the fragment ref of the revision just added (taken
+  // straight from the `addModelRevision` mutation response). The caller uses
+  // it to open the revision detail drawer right after a successful create
+  // (FR-3005). It is undefined on cancel/close and on the create failure path.
+  onRequestClose: (
+    success?: boolean,
+    createdRevision?: DeploymentAddRevisionModalCreatedRevision | null,
+  ) => void;
   deploymentFrgmt: DeploymentAddRevisionModal_deployment$key;
   // Optional source revision. When provided (e.g. "Add new revision from
   // this" / "Duplicate as new revision" in the revision detail drawer), the
@@ -1138,7 +1159,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           options: { autoActivate },
         },
       },
-      onCompleted: (_, errors) => {
+      onCompleted: (response, errors) => {
         if (errors && errors.length > 0) {
           const err = errors[0];
           const isInProgress = err?.message?.includes(
@@ -1153,7 +1174,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
         }
         customForm.resetFields();
         message.success(t('deployment.RevisionAdded'));
-        onRequestClose(true);
+        onRequestClose(true, response.addModelRevision?.revision);
       },
       onError: (err) => {
         const isInProgress = err.message?.includes(
@@ -1186,7 +1207,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           options: { autoActivate },
         },
       },
-      onCompleted: (_, errors) => {
+      onCompleted: (response, errors) => {
         if (errors && errors.length > 0) {
           const err = errors[0];
           const isInProgress = err?.message?.includes(
@@ -1205,7 +1226,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
         }
         presetForm.resetFields();
         message.success(t('deployment.RevisionAdded'));
-        onRequestClose(true);
+        onRequestClose(true, response.addModelRevision?.revision);
       },
       onError: (error) => {
         const isInProgress = error.message?.includes(
@@ -1364,13 +1385,15 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
               required
             >
               <BAIFlex direction="row" gap="xs">
-                <Form.Item
-                  name="revisionPresetId"
-                  noStyle
-                  rules={[{ required: true }]}
-                >
-                  <BAIAvailablePresetSelect style={{ flex: 1 }} />
-                </Form.Item>
+                <Suspense fallback={<BAISelect loading style={{ flex: 1 }} />}>
+                  <Form.Item
+                    name="revisionPresetId"
+                    noStyle
+                    rules={[{ required: true }]}
+                  >
+                    <BAIAvailablePresetSelect style={{ flex: 1 }} />
+                  </Form.Item>
+                </Suspense>
                 <Form.Item dependencies={['revisionPresetId']} noStyle>
                   {({ getFieldValue }: FormInstance<PresetFormValues>) => {
                     const selectedId = getFieldValue('revisionPresetId');
@@ -1401,20 +1424,22 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
               required
             >
               <BAIFlex direction="row" gap="xs">
-                <Form.Item
-                  name="modelFolderId"
-                  noStyle
-                  rules={[{ required: true }]}
-                >
-                  <BAIVFolderSelect
-                    ref={presetVFolderSelectRef}
-                    currentProjectId={currentProjectId ?? undefined}
-                    disabled={!currentProjectId}
-                    excludeDeleted
-                    filter='usage_mode == "model"'
-                    style={{ flex: 1 }}
-                  />
-                </Form.Item>
+                <Suspense fallback={<BAISelect loading style={{ flex: 1 }} />}>
+                  <Form.Item
+                    name="modelFolderId"
+                    noStyle
+                    rules={[{ required: true }]}
+                  >
+                    <BAIVFolderSelect
+                      ref={presetVFolderSelectRef}
+                      currentProjectId={currentProjectId ?? undefined}
+                      disabled={!currentProjectId}
+                      excludeDeleted
+                      filter='usage_mode == "model"'
+                      style={{ flex: 1 }}
+                    />
+                  </Form.Item>
+                </Suspense>
                 <Form.Item dependencies={['modelFolderId']} noStyle>
                   {({ getFieldValue }: FormInstance<PresetFormValues>) => {
                     const modelFolderId = getFieldValue('modelFolderId');
@@ -1472,7 +1497,10 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
             commandPort: 8000,
             commandHealthCheck: '/health',
             commandModelMount: '/models',
-            commandInitialDelay: 60,
+            // 60s was too short for large models to finish loading before the
+            // first health check. Default to 1800s as a short-term fix until a
+            // shared backend/frontend default (feature flag) lands. See FR-3005.
+            commandInitialDelay: 1800,
             commandMaxRetries: 10,
             commandInterval: 10,
             commandMaxWaitTime: 15,
@@ -1486,20 +1514,22 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
             required
           >
             <BAIFlex direction="row" gap="xs">
-              <Form.Item
-                name="modelFolderId"
-                noStyle
-                rules={[{ required: true }]}
-              >
-                <BAIVFolderSelect
-                  ref={customVFolderSelectRef}
-                  currentProjectId={currentProjectId ?? undefined}
-                  disabled={!currentProjectId}
-                  excludeDeleted
-                  filter='usage_mode == "model"'
-                  style={{ flex: 1 }}
-                />
-              </Form.Item>
+              <Suspense fallback={<BAISelect loading style={{ flex: 1 }} />}>
+                <Form.Item
+                  name="modelFolderId"
+                  noStyle
+                  rules={[{ required: true }]}
+                >
+                  <BAIVFolderSelect
+                    ref={customVFolderSelectRef}
+                    currentProjectId={currentProjectId ?? undefined}
+                    disabled={!currentProjectId}
+                    excludeDeleted
+                    filter='usage_mode == "model"'
+                    style={{ flex: 1 }}
+                  />
+                </Form.Item>
+              </Suspense>
               <Form.Item dependencies={['modelFolderId']} noStyle>
                 {({ getFieldValue }: FormInstance<FormValues>) => {
                   const modelFolderId = getFieldValue('modelFolderId');
@@ -1538,32 +1568,36 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
               </Form.Item>
             </BAIFlex>
           </Form.Item>
-          <Form.Item
-            name="runtimeVariantId"
-            label={t('deployment.RuntimeVariant')}
-            tooltip={t('deployment.RuntimeVariantTooltip')}
-            rules={[
-              { required: true },
-              {
-                warningOnly: true,
-                validator: async (_rule, value: string) => {
-                  const variantName = runtimeVariantNameMap[value];
-                  if (variantName && variantName !== 'custom') {
-                    return Promise.reject(
-                      t('modelService.RuntimeVariantDefaultCommandAppliedNote'),
-                    );
-                  }
-                  return Promise.resolve();
+          <Suspense fallback={<BAISelect loading style={{ width: '100%' }} />}>
+            <Form.Item
+              name="runtimeVariantId"
+              label={t('deployment.RuntimeVariant')}
+              tooltip={t('deployment.RuntimeVariantTooltip')}
+              rules={[
+                { required: true },
+                {
+                  warningOnly: true,
+                  validator: async (_rule, value: string) => {
+                    const variantName = runtimeVariantNameMap[value];
+                    if (variantName && variantName !== 'custom') {
+                      return Promise.reject(
+                        t(
+                          'modelService.RuntimeVariantDefaultCommandAppliedNote',
+                        ),
+                      );
+                    }
+                    return Promise.resolve();
+                  },
                 },
-              },
-            ]}
-          >
-            <BAIRuntimeVariantSelect
-              onResolvedNamesChange={(map) =>
-                setRuntimeVariantNameMap((prev) => ({ ...prev, ...map }))
-              }
-            />
-          </Form.Item>
+              ]}
+            >
+              <BAIRuntimeVariantSelect
+                onResolvedNamesChange={(map) =>
+                  setRuntimeVariantNameMap((prev) => ({ ...prev, ...map }))
+                }
+              />
+            </Form.Item>
+          </Suspense>
 
           <Form.Item dependencies={['runtimeVariantId']} noStyle>
             {({ getFieldValue }: FormInstance<FormValues>) => {

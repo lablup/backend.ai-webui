@@ -7,10 +7,13 @@ import BAIErrorBoundary, {
   ErrorWithGraphQL,
 } from '../components/BAIErrorBoundary';
 import DeploymentAccessTokensTab from '../components/DeploymentAccessTokensTab';
-import DeploymentAddRevisionModal from '../components/DeploymentAddRevisionModal';
+import DeploymentAddRevisionModal, {
+  type DeploymentAddRevisionModalCreatedRevision,
+} from '../components/DeploymentAddRevisionModal';
 import DeploymentAutoScalingTab from '../components/DeploymentAutoScalingTab';
 import DeploymentConfigurationSection from '../components/DeploymentConfigurationSection';
 import DeploymentReplicasTab from '../components/DeploymentReplicasTab';
+import DeploymentRevisionDetailDrawer from '../components/DeploymentRevisionDetailDrawer';
 import SwitchToProjectButton from '../components/SwitchToProjectButton';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
@@ -44,7 +47,7 @@ import {
 } from 'backend.ai-ui';
 import type { GraphQLFormattedError } from 'graphql';
 import { BotMessageSquareIcon, PlusIcon } from 'lucide-react';
-import React, { Suspense, useRef, useTransition } from 'react';
+import React, { Suspense, useRef, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useParams } from 'react-router-dom';
@@ -83,6 +86,12 @@ const DeploymentDetailPage: React.FC = () => {
 
   const revisionsSectionRef = useRef<HTMLDivElement>(null);
   const accessTokensSectionRef = useRef<HTMLDivElement>(null);
+  // Fragment ref of the revision just created via the Add Revision modal.
+  // When set, its detail drawer opens automatically so the user can confirm
+  // the configuration that was actually persisted (FR-3005) — notably fields
+  // like "Initial Delay" that the form prefills but does not echo back.
+  const [createdRevisionFrgmt, setCreatedRevisionFrgmt] =
+    useState<DeploymentAddRevisionModalCreatedRevision | null>(null);
 
   const { deployment: deploymentResult } =
     useLazyLoadQuery<DeploymentDetailPageQuery>(
@@ -210,9 +219,19 @@ const DeploymentDetailPage: React.FC = () => {
     startRefetchTransition(() => updateFetchKey());
   };
 
-  const handleAddRevisionRequestClose = (success?: boolean) => {
+  const handleAddRevisionRequestClose = (
+    success?: boolean,
+    createdRevision?: DeploymentAddRevisionModalCreatedRevision | null,
+  ) => {
     closeAddRevision();
     if (success) {
+      // Open the detail drawer for the revision that was just created so the
+      // user immediately sees the persisted configuration (FR-3005). The
+      // mutation response carries the full revision fragment, so the drawer
+      // can render from the Relay store without waiting on the refetch.
+      if (createdRevision) {
+        setCreatedRevisionFrgmt(createdRevision);
+      }
       startRefetchTransition(() => {
         updateFetchKey();
         updateRevisionFetchKey();
@@ -380,11 +399,27 @@ const DeploymentDetailPage: React.FC = () => {
           }
         }}
       />
+      {/* No page-level Suspense boundary needed: the modal renders its chrome
+          from a non-suspending `useFragment` and each lazy `*Select` (model
+          folder / preset / runtime variant) catches its own suspense at the
+          `Form.Item` level with a skeleton, so opening the modal never blanks
+          this region. */}
       <BAIUnmountAfterClose>
         <DeploymentAddRevisionModal
           open={addRevisionOpen}
           onRequestClose={handleAddRevisionRequestClose}
           deploymentFrgmt={deployment}
+        />
+      </BAIUnmountAfterClose>
+      {/* Detail drawer auto-opened right after a revision is created. It
+          renders from the mutation response fragment held in
+          `createdRevisionFrgmt`, independent of the configuration section's
+          own drawer. */}
+      <BAIUnmountAfterClose>
+        <DeploymentRevisionDetailDrawer
+          revisionFrgmt={createdRevisionFrgmt}
+          open={!!createdRevisionFrgmt}
+          onClose={() => setCreatedRevisionFrgmt(null)}
         />
       </BAIUnmountAfterClose>
     </BAIFlex>
