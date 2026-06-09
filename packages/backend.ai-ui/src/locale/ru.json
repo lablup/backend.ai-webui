@@ -360,8 +360,8 @@
   "comp:BAITable": {
     "CollapseAll": "Свернуть все",
     "ExpandAll": "Развернуть все",
-    "ExpandErrorsOnly": "Expand errors only",
-    "ExpandOptions": "Expand options",
+    "ExpandErrorsOnly": "Развернуть только ошибки",
+    "ExpandOptions": "Параметры разворачивания",
     "Export": "Экспорт",
     "ExportCSV": "Экспорт в CSV",
     "GoToFirstPage": "Перейти на первую страницу",

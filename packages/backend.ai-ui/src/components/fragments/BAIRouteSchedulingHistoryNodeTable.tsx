@@ -76,10 +76,6 @@ const BAIRouteSchedulingHistoryNodeTable = ({
         message
         subSteps {
           ...BAISubStepNodesFragment
-          step
-          result
-          errorCode
-          message
         }
         attempts
         createdAt

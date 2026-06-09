@@ -33,6 +33,7 @@ const SessionSchedulingHistoryModal = ({
   onCancel,
   ...modalProps
 }: SessionSchedulingHistoryModalProps) => {
+  'use memo';
   const { t } = useTranslation();
   const [fetchKey, updateFetchKey] = useFetchKey();
   const [filter, setFilter] = useState<SessionSchedulingHistoryFilter>();

@@ -360,8 +360,8 @@
   "comp:BAITable": {
     "CollapseAll": "Contraer todo",
     "ExpandAll": "Expandir todo",
-    "ExpandErrorsOnly": "Expand errors only",
-    "ExpandOptions": "Expand options",
+    "ExpandErrorsOnly": "Expandir solo errores",
+    "ExpandOptions": "Opciones de expansión",
     "Export": "Exportar",
     "ExportCSV": "Exportar CSV",
     "GoToFirstPage": "Ir a la primera página",

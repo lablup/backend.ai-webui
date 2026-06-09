@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<2f0067b37d493e297c3ad59fa5b538d6>>
+ * @generated SignedSource<<99de343c87eba570df6b2b85270538f5>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -22,10 +22,6 @@ export type BAIDeploymentSchedulingHistoryNodesFragment$data = ReadonlyArray<{
   readonly phase: string;
   readonly result: SchedulingResult;
   readonly subSteps: ReadonlyArray<{
-    readonly errorCode: string | null | undefined;
-    readonly message: string | null | undefined;
-    readonly result: SchedulingResult;
-    readonly step: string;
     readonly " $fragmentSpreads": FragmentRefs<"BAISubStepNodesFragment">;
   }>;
   readonly toStatus: string | null | undefined;
@@ -37,29 +33,7 @@ export type BAIDeploymentSchedulingHistoryNodesFragment$key = ReadonlyArray<{
   readonly " $fragmentSpreads": FragmentRefs<"BAIDeploymentSchedulingHistoryNodesFragment">;
 }>;
 
-const node: ReaderFragment = (function(){
-var v0 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "result",
-  "storageKey": null
-},
-v1 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "errorCode",
-  "storageKey": null
-},
-v2 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "message",
-  "storageKey": null
-};
-return {
+const node: ReaderFragment = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": {
@@ -102,9 +76,27 @@ return {
       "name": "toStatus",
       "storageKey": null
     },
-    (v0/*: any*/),
-    (v1/*: any*/),
-    (v2/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "result",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "errorCode",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "message",
+      "storageKey": null
+    },
     {
       "alias": null,
       "args": null,
@@ -117,17 +109,7 @@ return {
           "args": null,
           "kind": "FragmentSpread",
           "name": "BAISubStepNodesFragment"
-        },
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "step",
-          "storageKey": null
-        },
-        (v0/*: any*/),
-        (v1/*: any*/),
-        (v2/*: any*/)
+        }
       ],
       "storageKey": null
     },
@@ -156,8 +138,7 @@ return {
   "type": "DeploymentHistory",
   "abstractKey": null
 };
-})();
 
-(node as any).hash = "78a4480fc507820c6588b54bf9b17ab5";
+(node as any).hash = "993394664d6af0ea9ee225d992cff972";
 
 export default node;

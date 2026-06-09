@@ -360,8 +360,8 @@
   "comp:BAITable": {
     "CollapseAll": "Σύμπτυξη όλων",
     "ExpandAll": "Ανάπτυξη όλων",
-    "ExpandErrorsOnly": "Expand errors only",
-    "ExpandOptions": "Expand options",
+    "ExpandErrorsOnly": "Ανάπτυξη μόνο σφαλμάτων",
+    "ExpandOptions": "Επιλογές ανάπτυξης",
     "Export": "Εξαγωγή",
     "ExportCSV": "Εξαγωγή CSV",
     "GoToFirstPage": "Μετάβαση στην πρώτη σελίδα",

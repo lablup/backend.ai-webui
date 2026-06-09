@@ -77,10 +77,6 @@ const BAISchedulingHistoryNodes = ({
         result
         subSteps {
           ...BAISubStepNodesFragment
-          step
-          result
-          errorCode
-          message
         }
       }
     `,

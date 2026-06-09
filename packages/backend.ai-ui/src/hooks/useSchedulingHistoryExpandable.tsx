@@ -149,6 +149,9 @@ export const useSchedulingHistoryExpandable = <
 
   const onMenuClick = ({ key }: { key: string }) => {
     const next = key as SchedulingHistoryExpandMode;
+    // Apply eagerly so the uncontrolled case (no onModeChange) still reacts. In
+    // the controlled case onModeChange updates `mode`, and the `[mode]` effect
+    // re-applies the same (idempotent) keys — a harmless redundant set.
     setExpandedRowKeys(computeExpandedRowKeysForMode(dataSource, next));
     options?.onModeChange?.(next);
   };
@@ -159,7 +162,9 @@ export const useSchedulingHistoryExpandable = <
       // per-row expand icons, which Ant Design centers in their column.
       <BAIFlex justify="center">
         <Dropdown
-          trigger={['hover']}
+          // Click (not hover) so the menu is operable by keyboard (Enter/Space
+          // on the focused trigger) and by touch, not mouse-only.
+          trigger={['click']}
           // A kebab (vertical ellipsis) action menu — no `selectedKeys`, so no
           // item is shown as "active". The three modes read as actions you
           // trigger, not a stateful toggle.

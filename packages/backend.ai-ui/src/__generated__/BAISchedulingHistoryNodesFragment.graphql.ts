@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a0f1cc240d45989a183f60009df09663>>
+ * @generated SignedSource<<3339e29f88c8feb262a4647f069349b0>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -20,10 +20,6 @@ export type BAISchedulingHistoryNodesFragment$data = ReadonlyArray<{
   readonly phase: string;
   readonly result: SchedulingResult;
   readonly subSteps: ReadonlyArray<{
-    readonly errorCode: string | null | undefined;
-    readonly message: string | null | undefined;
-    readonly result: SchedulingResult;
-    readonly step: string;
     readonly " $fragmentSpreads": FragmentRefs<"BAISubStepNodesFragment">;
   }>;
   readonly toStatus: string | null | undefined;
@@ -35,22 +31,7 @@ export type BAISchedulingHistoryNodesFragment$key = ReadonlyArray<{
   readonly " $fragmentSpreads": FragmentRefs<"BAISchedulingHistoryNodesFragment">;
 }>;
 
-const node: ReaderFragment = (function(){
-var v0 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "message",
-  "storageKey": null
-},
-v1 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "result",
-  "storageKey": null
-};
-return {
+const node: ReaderFragment = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": {
@@ -100,7 +81,13 @@ return {
       "name": "toStatus",
       "storageKey": null
     },
-    (v0/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "message",
+      "storageKey": null
+    },
     {
       "alias": null,
       "args": null,
@@ -108,7 +95,13 @@ return {
       "name": "phase",
       "storageKey": null
     },
-    (v1/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "result",
+      "storageKey": null
+    },
     {
       "alias": null,
       "args": null,
@@ -121,23 +114,7 @@ return {
           "args": null,
           "kind": "FragmentSpread",
           "name": "BAISubStepNodesFragment"
-        },
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "step",
-          "storageKey": null
-        },
-        (v1/*: any*/),
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "errorCode",
-          "storageKey": null
-        },
-        (v0/*: any*/)
+        }
       ],
       "storageKey": null
     }
@@ -145,8 +122,7 @@ return {
   "type": "SessionSchedulingHistory",
   "abstractKey": null
 };
-})();
 
-(node as any).hash = "9d5ee56dba146dbb8458478a7a309c7f";
+(node as any).hash = "4f305cdb3248d370347f5f5ce482009b";
 
 export default node;

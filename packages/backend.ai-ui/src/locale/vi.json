@@ -360,8 +360,8 @@
   "comp:BAITable": {
     "CollapseAll": "Thu gọn tất cả",
     "ExpandAll": "Mở rộng tất cả",
-    "ExpandErrorsOnly": "Expand errors only",
-    "ExpandOptions": "Expand options",
+    "ExpandErrorsOnly": "Chỉ mở rộng lỗi",
+    "ExpandOptions": "Tùy chọn mở rộng",
     "Export": "Xuất",
     "ExportCSV": "Xuất CSV",
     "GoToFirstPage": "Đến trang đầu",

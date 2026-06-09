@@ -184,41 +184,11 @@ test.describe(
       await expect(
         modal.getByRole('columnheader', { name: 'To' }),
       ).toBeVisible();
-
-      // 8. Verify the Close button is visible in the modal footer
-      const closeButtonFooter = modal
-        .getByRole('button', { name: 'Close' })
-        .filter({ hasText: 'Close' });
-      await expect(closeButtonFooter).toBeVisible();
     });
 
     // ─────────────────────────────────────────────────────────────────────────
     // 3. Modal Dismissal
     // ─────────────────────────────────────────────────────────────────────────
-
-    test('Admin can close the Session Scheduling History modal using the footer Close button', async ({
-      page,
-    }) => {
-      // 1. Open the Session Detail drawer and history modal
-      await openSessionDetailDrawer(page);
-      const modal = await openSchedulingHistoryModal(page);
-
-      // 2. Verify the modal is visible
-      await expect(modal).toBeVisible();
-
-      // 3. Click the footer "Close" button
-      await modal
-        .getByRole('button', { name: 'Close' })
-        .filter({ hasText: 'Close' })
-        .click();
-
-      // 4. Verify the modal is no longer visible
-      await expect(modal).not.toBeVisible();
-
-      // 5. Verify the Session Detail drawer is still open
-      const drawer = page.getByRole('dialog', { name: 'Session Info' });
-      await expect(drawer).toBeVisible();
-    });
 
     test('Admin can close the Session Scheduling History modal using the X button in the header', async ({
       page,
@@ -231,9 +201,8 @@ test.describe(
       await expect(modal).toBeVisible();
 
       // 3. Click the X (close) button in the modal header.
-      // The Ant Design modal header X button has aria-label="Close" and appears first in DOM order.
-      // The footer "Close" button has visible text "Close" (use hasText to distinguish them).
-      // The header X button is the first button named "Close" in the modal.
+      // The Ant Design modal header X button has aria-label="Close"; the modal
+      // is footerless, so it is the only "Close" button in the modal.
       const headerCloseButton = modal
         .getByRole('button', { name: 'Close' })
         .first();
@@ -956,11 +925,8 @@ test.describe(
         modal.getByRole('columnheader', { name: 'Phase' }),
       ).toBeVisible();
 
-      // 10. Click the footer "Close" button to close the modal
-      await modal
-        .getByRole('button', { name: 'Close' })
-        .filter({ hasText: 'Close' })
-        .click();
+      // 10. Click the header X (close) button to close the modal
+      await modal.getByRole('button', { name: 'Close' }).first().click();
 
       // 11. Verify the modal is closed
       await expect(modal).not.toBeVisible();

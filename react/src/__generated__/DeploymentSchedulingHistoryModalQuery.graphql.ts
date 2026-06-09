@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<7e65a0c5d163569ae7bab3245cc9003a>>
+ * @generated SignedSource<<fcbbba8f3fed7d5b6d8db3843db1ca33>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -348,12 +348,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "d7c6398cfe00b68a4b789fd884c732c9",
+    "cacheID": "e374305fd9c4d9603c08f04583606aa1",
     "id": null,
     "metadata": {},
     "name": "DeploymentSchedulingHistoryModalQuery",
     "operationKind": "query",
-    "text": "query DeploymentSchedulingHistoryModalQuery(\n  $scope: DeploymentScope!\n  $filter: DeploymentHistoryFilter\n  $orderBy: [DeploymentHistoryOrderBy!]\n) {\n  deploymentScopedSchedulingHistories(scope: $scope, filter: $filter, orderBy: $orderBy) {\n    edges {\n      node {\n        ...BAIDeploymentSchedulingHistoryTableFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAIDeploymentSchedulingHistoryNodesFragment on DeploymentHistory {\n  id\n  category\n  phase\n  fromStatus\n  toStatus\n  result\n  errorCode\n  message\n  subSteps {\n    ...BAISubStepNodesFragment\n    step\n    result\n    errorCode\n    message\n  }\n  attempts\n  createdAt\n  updatedAt\n}\n\nfragment BAIDeploymentSchedulingHistoryTableFragment on DeploymentHistory {\n  id\n  result\n  subSteps {\n    __typename\n  }\n  ...BAIDeploymentSchedulingHistoryNodesFragment\n}\n\nfragment BAISubStepNodesFragment on SubStepResultGQL {\n  step\n  result\n  errorCode\n  message\n  startedAt\n  endedAt\n}\n"
+    "text": "query DeploymentSchedulingHistoryModalQuery(\n  $scope: DeploymentScope!\n  $filter: DeploymentHistoryFilter\n  $orderBy: [DeploymentHistoryOrderBy!]\n) {\n  deploymentScopedSchedulingHistories(scope: $scope, filter: $filter, orderBy: $orderBy) {\n    edges {\n      node {\n        ...BAIDeploymentSchedulingHistoryTableFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAIDeploymentSchedulingHistoryNodesFragment on DeploymentHistory {\n  id\n  category\n  phase\n  fromStatus\n  toStatus\n  result\n  errorCode\n  message\n  subSteps {\n    ...BAISubStepNodesFragment\n  }\n  attempts\n  createdAt\n  updatedAt\n}\n\nfragment BAIDeploymentSchedulingHistoryTableFragment on DeploymentHistory {\n  id\n  result\n  subSteps {\n    __typename\n  }\n  ...BAIDeploymentSchedulingHistoryNodesFragment\n}\n\nfragment BAISubStepNodesFragment on SubStepResultGQL {\n  step\n  result\n  errorCode\n  message\n  startedAt\n  endedAt\n}\n"
   }
 };
 })();
