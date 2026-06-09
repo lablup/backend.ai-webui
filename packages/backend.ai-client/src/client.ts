@@ -1652,14 +1652,13 @@ export class Client {
     sessionId: string,
     service_name: string,
   ): Promise<any> {
-    let params = {
-      service_name: service_name,
-    };
-    const q = new URLSearchParams(params).toString();
+    // `service_name` goes in the request body: migrated backends read it from
+    // BodyParam[ShutdownServiceRequest] (a required field) and reject a null
+    // body; legacy backends read the body too when present. See FR-3070.
     let rqst = this.newSignedRequest(
       'POST',
-      `${this.kernelPrefix}/${sessionId}/shutdown-service?${q}`,
-      null,
+      `${this.kernelPrefix}/${sessionId}/shutdown-service`,
+      { service_name },
       null,
     );
     return this._wrapWithPromise(rqst, true);
@@ -1679,18 +1678,13 @@ export class Client {
   }
 
   async download(sessionId: string, files: string[]): Promise<any> {
-    // URLSearchParams stringifies the array to a comma-joined value
-    // (e.g. `files=a,b`). Preserve that legacy encoding rather than
-    // emitting a repeated key. Cast through the URLSearchParams init
-    // type so strict TS accepts the array value.
-    const params = { files: files };
-    const q = new URLSearchParams(
-      params as unknown as Record<string, string>,
-    ).toString();
+    // `files` goes in the request body: migrated backends read it from
+    // BodyParam[DownloadFilesRequest] (a required field) and reject a null
+    // body; legacy backends read the body too when present. See FR-3070.
     let rqst = this.newSignedRequest(
       'POST',
-      `${this.kernelPrefix}/${sessionId}/download?${q}`,
-      null,
+      `${this.kernelPrefix}/${sessionId}/download`,
+      { files },
       null,
     );
     return this._wrapWithPromise(rqst, true);
