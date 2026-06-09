@@ -323,7 +323,7 @@
     "LastTriggeredTooltip": "Najnowszy czas, w którym ta reguła została wyzwolona i dostosowała liczbę replik. Puste, jeśli reguła nigdy nie została wyzwolona.",
     "Lower": "Dolny",
     "MIN/MAXReplicas": "Repliki min / max",
-    "MaxReplicas": "Max Replicas",
+    "MaxReplicas": "Repliki maks",
     "MaxReplicasTooltip": "Maksymalna liczba replik dozwolona przez automatyczne skalowanie.",
     "MaxReplicasValue": "Maks: {{value}}",
     "MaxThreshold": "Maksymalny próg",

@@ -295,7 +295,7 @@
     "SettingsOverrides": "Anulaciones de configuración",
     "SystemPrompt": "System Prompt",
     "SystemPromptRequired": "System prompt is required",
-    "SystemPromptTooltip": "The system prompt defines the behavior and capabilities of the agent",
+    "SystemPromptTooltip": "El prompt del sistema define el comportamiento y las capacidades del agente.",
     "Tags": "Tags",
     "Temperature": "Temperature",
     "Title": "Title",

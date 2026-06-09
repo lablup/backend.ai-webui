@@ -295,7 +295,7 @@
     "SettingsOverrides": "Substituições de configurações",
     "SystemPrompt": "System Prompt",
     "SystemPromptRequired": "System prompt is required",
-    "SystemPromptTooltip": "The system prompt defines the behavior and capabilities of the agent",
+    "SystemPromptTooltip": "O prompt do sistema define o comportamento e as capacidades do agente.",
     "Tags": "Tags",
     "Temperature": "Temperature",
     "Title": "Title",
@@ -2067,7 +2067,7 @@
     "VllmPpSize": "Tamanho do paralelismo de pipeline (por exemplo: 2, 4)",
     "VllmQuantization": "por exemplo: awq, gptq, fp8",
     "VllmTpSize": "Tamanho do paralelismo tensorial (ex.: 2, 4, 8)",
-    "WaitingForServiceReady": "Waiting for service to be ready...",
+    "WaitingForServiceReady": "Aguardando o serviço ficar pronto...",
     "YamlUploadFailed": "Falha ao enviar model-definition.yaml."
   },
   "modelStore": {

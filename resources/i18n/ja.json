@@ -295,7 +295,7 @@
     "SettingsOverrides": "設定オーバーライド",
     "SystemPrompt": "System Prompt",
     "SystemPromptRequired": "System prompt is required",
-    "SystemPromptTooltip": "The system prompt defines the behavior and capabilities of the agent",
+    "SystemPromptTooltip": "システムプロンプトはエージェントの動作と機能を定義します。",
     "Tags": "Tags",
     "Temperature": "Temperature",
     "Title": "Title",
