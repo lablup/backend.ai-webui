@@ -154,6 +154,9 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
       <BAIModal
         open={isOpen}
         closable={false}
+        // The login screen backdrop (weave + version/copyright metadata) is the
+        // persisted splash element behind this modal (z-index 10000). The modal
+        // mask dims that backdrop, so the metadata reads softly behind the mask.
         mask={!needToResetPassword}
         keyboard={false}
         maskClosable={false}
@@ -228,6 +231,10 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                   aria-label={t('login.E-mailOrUsername', { postProcess: [] })}
                   maxLength={64}
                   autoComplete="username"
+                  // Focus the first field when the login form opens. When OTP is
+                  // later required, the OTP input mounts with its own autoFocus
+                  // and takes over.
+                  autoFocus={!otpRequired}
                   disabled={isLoading}
                 />
               </Form.Item>
@@ -267,6 +274,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                   prefix={<LockOutlined />}
                   placeholder={t('login.APIKey', { postProcess: [] })}
                   maxLength={20}
+                  autoFocus
                   disabled={isLoading}
                 />
               </Form.Item>

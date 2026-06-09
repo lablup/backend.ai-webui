@@ -10,7 +10,7 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { Button, Card, Descriptions } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
-import { Suspense } from 'react';
+import { Suspense, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import { StringParam, useQueryParam } from 'use-query-params';
@@ -28,6 +28,7 @@ const InteractiveLoginPage = () => {
 };
 
 const Children = () => {
+  'use memo';
   useSuspendedBackendaiClient();
   const [userInfo] = useCurrentUserInfo();
   const { pathname, search } = useLocation();
@@ -35,12 +36,24 @@ const Children = () => {
   const [name] = useQueryParam('name', StringParam);
   const { t } = useTranslation();
 
+  // This route has no MainLayout, so the interactive-login card is its "main
+  // UI". Put the splash into login-backdrop mode (keeps the Diagonal Weave +
+  // version/copyright as the background, hides the loader) — the same backdrop
+  // the login screen uses — and render the card above it. Without this the
+  // splash (z-index 10000) is never dismissed and covers the card, leaving the
+  // screen stuck on the loading curtain.
+  useEffect(() => {
+    (
+      globalThis as typeof globalThis & { __enterLoginBackdrop?: () => void }
+    ).__enterLoginBackdrop?.();
+  }, []);
+
   return (
     <BAIFlex
       direction="column"
       align="center"
       justify="center"
-      style={{ height: '100vh' }}
+      style={{ position: 'fixed', inset: 0, zIndex: 10001 }}
     >
       <Card title={t('interactiveLogin.InteractiveLoginWithBackendAI')}>
         <BAIFlex direction="column" gap={'sm'} align="stretch">
