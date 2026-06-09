@@ -821,7 +821,12 @@ export async function leaveSharedFolderAndVerify(
     page.getByText('Successfully left the shared folder'),
   ).toBeVisible({ timeout: 15000 });
 
-  await removeSearchButton(page, folderName);
+  // Re-navigate for a fresh server-side fetch: leaving does not refetch the
+  // in-place vfolder list, so the row can linger in the cached Active view.
+  // This mirrors how the other *AndVerify helpers force a clean reload before
+  // asserting a row's disappearance.
+  await navigateTo(page, 'data');
+  await page.getByRole('tab', { name: 'Active' }).click();
   await clearAllFilters(page);
   await selectPropertyFilter(page, 'Name', folderName);
   await expect(

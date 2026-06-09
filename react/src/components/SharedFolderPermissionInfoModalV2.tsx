@@ -193,6 +193,7 @@ const SharedFolderPermissionInfoModalV2: React.FC<
                             size="small"
                             type="text"
                             icon={<LogOut />}
+                            aria-label={t('data.invitation.LeaveSharedFolder')}
                             style={{
                               color: token.colorError,
                               background: token.colorErrorBg,
