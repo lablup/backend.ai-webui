@@ -11,21 +11,66 @@ test.describe.serial(
   'Project CRUD',
   { tag: ['@critical', '@project', '@functional'] },
   () => {
-    // Cleanup function to delete the test project if it exists
+    // Cleanup function to delete the test project if it exists.
+    // The project lifecycle is: Active → Deactivated (trash) → Purged (hard delete).
+    // This helper handles all lifecycle states: if the project is active it
+    // deactivates it first, then switches to the Inactive tab and purges it.
     async function cleanupTestProject(page: any) {
-      const projectRow = page
+      // Check Active tab first
+      const activeProjectRow = page
         .getByRole('row')
         .filter({ hasText: PROJECT_NAME });
-      const isVisible = await projectRow
+      const isActiveVisible = await activeProjectRow
         .isVisible({ timeout: 2000 })
         .catch(() => false);
 
-      if (isVisible) {
-        await projectRow.getByRole('button', { name: 'delete' }).click();
-        const purgeDialog = page.getByRole('dialog', { name: 'Purge Project' });
-        await purgeDialog.getByRole('button', { name: 'Purge' }).click();
-        await expect(projectRow).toBeHidden({ timeout: 10000 });
+      if (isActiveVisible) {
+        // Deactivate first (Popconfirm flow)
+        await activeProjectRow.hover();
+        await activeProjectRow
+          .locator('.bai-name-action-cell-actions button')
+          .nth(1)
+          .click();
+        const deactivatePopconfirm = page.locator('.ant-popconfirm');
+        await expect(deactivatePopconfirm).toBeVisible({ timeout: 5000 });
+        await deactivatePopconfirm
+          .getByRole('button', { name: 'Deactivate' })
+          .click();
+        await expect(activeProjectRow).toBeHidden({ timeout: 10000 });
       }
+
+      // Switch to Inactive tab and purge
+      // Use the label wrapper (not the hidden radio input) to click the radio button
+      await page
+        .locator('label')
+        .filter({ hasText: /^Inactive$/ })
+        .click();
+      const inactiveProjectRow = page
+        .getByRole('row')
+        .filter({ hasText: PROJECT_NAME });
+      const isInactiveVisible = await inactiveProjectRow
+        .isVisible({ timeout: 5000 })
+        .catch(() => false);
+
+      if (isInactiveVisible) {
+        await inactiveProjectRow.hover();
+        // In Inactive tab: buttons are [setting(0), activate(1), purge(2)]
+        await inactiveProjectRow
+          .locator('.bai-name-action-cell-actions button')
+          .nth(2)
+          .click();
+        const purgeDialog = page.getByRole('dialog', { name: 'Purge Project' });
+        await expect(purgeDialog).toBeVisible({ timeout: 5000 });
+        await purgeDialog.locator('#confirmText').fill(PROJECT_NAME);
+        await purgeDialog.getByRole('button', { name: 'Purge' }).click();
+        await expect(inactiveProjectRow).toBeHidden({ timeout: 10000 });
+      }
+
+      // Return to Active tab for subsequent tests
+      await page
+        .locator('label')
+        .filter({ hasText: /^Active$/ })
+        .click();
     }
 
     test('Admin can see project list with expected columns', async ({
@@ -46,13 +91,10 @@ test.describe.serial(
         page.getByRole('columnheader', { name: 'Name' }),
       ).toBeVisible();
       await expect(
-        page.getByRole('columnheader', { name: 'Controls' }),
-      ).toBeVisible();
-      await expect(
         page.getByRole('columnheader', { name: 'Domain' }),
       ).toBeVisible();
       await expect(
-        page.getByRole('columnheader', { name: 'Active' }),
+        page.getByRole('columnheader', { name: 'Description' }),
       ).toBeVisible();
       await expect(
         page.getByRole('columnheader', { name: 'Type' }),
@@ -65,9 +107,12 @@ test.describe.serial(
         .first();
       await expect(defaultRow).toBeVisible();
 
-      // 5. Verify default row has Active = true and Type = GENERAL
+      // 5. Verify the Active radio button is selected and the default row has Type = GENERAL
+      // (Active is a filter tab, not a table column; the default project is active by default)
       await expect(
-        defaultRow.getByRole('cell', { name: 'true' }),
+        page.locator('.ant-radio-button-wrapper-checked', {
+          hasText: 'Active',
+        }),
       ).toBeVisible();
       await expect(
         defaultRow.getByRole('cell', { name: 'GENERAL' }),
@@ -112,9 +157,12 @@ test.describe.serial(
       // 7. Verify modal closes
       await expect(modal).toBeHidden({ timeout: 10000 });
 
-      // 8. Verify the new project appears in the table
+      // 8. Verify the new project appears in the table.
+      // The name column now renders via BAINameActionCell so the cell's
+      // accessible name also includes hover-only action labels; match by
+      // filter({ hasText }) instead of exact name.
       await expect(
-        page.getByRole('cell', { name: PROJECT_NAME, exact: true }),
+        page.getByRole('row').filter({ hasText: PROJECT_NAME }),
       ).toBeVisible({ timeout: 10000 });
     });
 
@@ -123,11 +171,13 @@ test.describe.serial(
       await loginAsAdmin(page, request);
       await navigateTo(page, 'project');
 
-      // 2. Find the test project row and click the setting button
+      // 2. Find the test project row, hover to reveal BAINameActionCell
+      // action buttons, then click the setting (edit) button.
       const projectRow = page
         .getByRole('row')
         .filter({ hasText: PROJECT_NAME });
       await expect(projectRow).toBeVisible();
+      await projectRow.hover();
       await projectRow.getByRole('button', { name: 'setting' }).click();
 
       // 3. Verify Update Project dialog appears
@@ -171,9 +221,11 @@ test.describe.serial(
       // 3. Click the search button
       await page.getByRole('button', { name: 'search' }).click();
 
-      // 4. Verify table shows only the matching project
+      // 4. Verify table shows only the matching project. The Name cell
+      // renders BAINameActionCell, so its accessible name also includes
+      // hover-only action labels; match the row by hasText instead.
       await expect(
-        page.getByRole('cell', { name: PROJECT_NAME, exact: true }),
+        page.getByRole('row').filter({ hasText: PROJECT_NAME }),
       ).toBeVisible({ timeout: 10000 });
 
       // 5. Verify only one data row is visible (excluding header rows)
@@ -197,29 +249,64 @@ test.describe.serial(
       await loginAsAdmin(page, request);
       await navigateTo(page, 'project');
 
-      // 2. Find the test project row
+      // 2. Find the test project row (Active tab is the default view)
       const projectRow = page
         .getByRole('row')
         .filter({ hasText: PROJECT_NAME });
       await expect(projectRow).toBeVisible();
 
-      // 3. Click the delete button
-      await projectRow.getByRole('button', { name: 'delete' }).click();
+      // 3. The project lifecycle is Active → Deactivated → Purged.
+      //    Step 1: Deactivate — hover the row to reveal the BAINameActionCell
+      //    action buttons, then click the deactivate button (index 1 in the
+      //    Active tab; index 0 is the setting/edit button).
+      await projectRow.hover();
+      await projectRow
+        .locator('.bai-name-action-cell-actions button')
+        .nth(1)
+        .click();
 
-      // 4. Verify Purge Project confirmation dialog appears
+      // 4. Confirm the antd Popconfirm for deactivation
+      const deactivatePopconfirm = page.locator('.ant-popconfirm');
+      await expect(deactivatePopconfirm).toBeVisible({ timeout: 5000 });
+      await deactivatePopconfirm
+        .getByRole('button', { name: 'Deactivate' })
+        .click();
+
+      // 5. Verify the project disappears from the Active list
+      await expect(projectRow).toBeHidden({ timeout: 10000 });
+
+      // 6. Switch to the Inactive tab to find the deactivated project
+      await page
+        .locator('label')
+        .filter({ hasText: /^Inactive$/ })
+        .click();
+
+      // 7. Find the deactivated project row in the Inactive tab
+      const inactiveProjectRow = page
+        .getByRole('row')
+        .filter({ hasText: PROJECT_NAME });
+      await expect(inactiveProjectRow).toBeVisible({ timeout: 10000 });
+
+      // 8. Hover the row and click the Purge button (index 2 in the
+      //    Inactive tab: setting(0), activate(1), purge(2))
+      await inactiveProjectRow.hover();
+      await inactiveProjectRow
+        .locator('.bai-name-action-cell-actions button')
+        .nth(2)
+        .click();
+
+      // 9. Verify the Purge Project confirmation dialog appears
       const purgeDialog = page.getByRole('dialog', { name: 'Purge Project' });
-      await expect(purgeDialog).toBeVisible();
-      await expect(
-        purgeDialog.getByText('Are you sure to purge'),
-      ).toBeVisible();
+      await expect(purgeDialog).toBeVisible({ timeout: 5000 });
 
-      // 5. Confirm deletion by clicking Purge
+      // 10. Type the project name into the confirmation input to enable the Purge button
+      await purgeDialog.locator('#confirmText').fill(PROJECT_NAME);
+
+      // 11. Click the Purge button to permanently delete the project
       await purgeDialog.getByRole('button', { name: 'Purge' }).click();
 
-      // 6. Verify the test project is removed from the table
-      await expect(
-        page.getByRole('row').filter({ hasText: PROJECT_NAME }),
-      ).toBeHidden({ timeout: 10000 });
+      // 12. Verify the project is removed from the Inactive table
+      await expect(inactiveProjectRow).toBeHidden({ timeout: 10000 });
     });
   },
 );
