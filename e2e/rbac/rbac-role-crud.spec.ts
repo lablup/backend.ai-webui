@@ -30,8 +30,13 @@ test.describe.serial(
     }
 
     async function clearRoleSearch(page: Page) {
-      // Remove any active filter chip
-      const filterChip = page.locator('.ant-tag-close-icon').first();
+      // Remove any active filter chip — scope to the filter-chip area so we
+      // don't accidentally click tag close icons in the table itself.
+      const filterChip = page
+        .locator('.ant-space-compact')
+        .first()
+        .locator('.ant-tag-close-icon')
+        .first();
       if (await filterChip.isVisible({ timeout: 1000 }).catch(() => false)) {
         await filterChip.click();
         await expect(filterChip).toBeHidden({ timeout: 5000 });
@@ -48,10 +53,16 @@ test.describe.serial(
         .catch(() => false);
 
       if (isActiveVisible) {
-        // Deactivate button is the first (and only) action button in Active view
+        // Deactivate button is the first (and only) action button in Active view.
+        // It is wrapped in a Popconfirm that requires a second "Deactivate" click.
         await activeRow
           .locator('.bai-name-action-cell-actions button')
           .first()
+          .click();
+        // Confirm the Popconfirm
+        await page
+          .locator('.ant-popconfirm')
+          .getByRole('button', { name: 'Deactivate' })
           .click();
         await expect(activeRow).toBeHidden({ timeout: 10000 });
       }
@@ -70,10 +81,14 @@ test.describe.serial(
           .locator('.bai-name-action-cell-actions button')
           .last()
           .click();
-        await page
+        // BAIDeleteConfirmModal requires typing the role name into its dedicated
+        // #confirmText textbox before the Delete button is enabled.
+        const purgeModal = page
           .locator('.ant-modal')
-          .getByRole('button', { name: 'Delete' })
-          .click();
+          .filter({ hasText: 'Purge Role' });
+        await expect(purgeModal).toBeVisible({ timeout: 5000 });
+        await purgeModal.locator('#confirmText').fill(roleName);
+        await purgeModal.getByRole('button', { name: 'Delete' }).click();
         await expect(inactiveRow).toBeHidden({ timeout: 10000 });
       }
 
@@ -109,13 +124,19 @@ test.describe.serial(
       await expect(modal.getByLabel('Role Name')).toBeVisible();
       await expect(modal.getByLabel('Description')).toBeVisible();
 
-      // 7. Click OK without filling in the name field to trigger validation
-      await modal.getByRole('button', { name: 'OK' }).click();
+      // 7. Click OK without filling in the name field to trigger validation.
+      // Use dispatchEvent to ensure the click reaches React's event handler
+      // even though the modal renders as a portal outside the React root.
+      const okButton = modal.getByRole('button', { name: 'OK' });
+      await okButton.dispatchEvent('click');
 
-      // 8. Verify a validation error appears for the Role Name field
-      await expect(page.getByText(/Please enter Role Name/i)).toBeVisible({
-        timeout: 10000,
-      });
+      // 8. Verify a validation error appears for the Role Name field.
+      // Scope to the modal's form error area for reliability.
+      await expect(
+        modal.locator('.ant-form-item-explain-error').filter({
+          hasText: /Please enter Role Name/i,
+        }),
+      ).toBeVisible({ timeout: 10000 });
 
       // 9. Fill in the Role Name field with a unique test name
       await modal.getByLabel('Role Name').fill(ROLE_NAME);
@@ -277,13 +298,21 @@ test.describe.serial(
       // 2. Navigate to RBAC page
       await navigateTo(page, 'rbac');
 
-      // 3. Locate a row with a "System" source, excluding "monitor" role (known bug)
-      // First, check if system roles are visible; if not, navigate to the last page
-      let systemRoleRows = page
-        .getByRole('row')
-        .filter({ hasText: 'System' })
-        .filter({ hasNotText: /monitor/i });
-      let systemRoleRow = systemRoleRows.first();
+      // 3. Find the Source column index. Columns: Role Name(1) Description(2) Scope Type(3)
+      //    Scope ID(4) Source(5) Created At(6) Updated At(7).
+      // Locate system roles using a column-header-based approach to find
+      // a row where the Source cell value is exactly "System", excluding "monitor" (known bug).
+      // If no system row is visible on page 1, navigate to the last page where they accumulate.
+      const systemRoleRowLocator = () =>
+        page
+          .locator('tr.ant-table-row')
+          .filter({
+            has: page.locator('td:nth-child(5)', { hasText: /^System$/ }),
+          })
+          .filter({ hasNotText: /monitor/i })
+          .first();
+
+      let systemRoleRow = systemRoleRowLocator();
       const isSystemVisible = await systemRoleRow
         .isVisible({ timeout: 3000 })
         .catch(() => false);
@@ -294,33 +323,31 @@ test.describe.serial(
         await expect(page.locator('.ant-table-row').first()).toBeVisible({
           timeout: 10000,
         });
+        systemRoleRow = systemRoleRowLocator();
       }
-      systemRoleRow = page
-        .getByRole('row')
-        .filter({ hasText: 'System' })
-        .filter({ hasNotText: /monitor/i })
-        .first();
       await expect(systemRoleRow).toBeVisible({ timeout: 10000 });
 
-      // 4. Click the role name to open the detail drawer
-      const systemRoleName = await systemRoleRow
-        .getByRole('cell')
-        .first()
-        .textContent();
-      await systemRoleRow
+      // 4. Click the role name to open the detail drawer.
+      const titleElement = systemRoleRow
         .getByRole('cell')
         .first()
         .locator('.ant-typography')
-        .first()
-        .click();
+        .first();
+      // Extract name for later verification (must be done before click to avoid stale ref)
+      const systemRoleName = (await titleElement.textContent())?.trim() ?? null;
+      await titleElement.click();
 
       // 5. Verify the drawer title "RBAC Role Info" appears
       const drawer = page.locator('.ant-drawer');
       await expect(drawer.getByText('RBAC Role Info')).toBeVisible();
 
-      // 6. Verify the role name heading is visible
+      // 6. Verify the drawer heading matches the role name we clicked
       if (systemRoleName) {
-        await expect(drawer.getByText(systemRoleName.trim())).toBeVisible();
+        await expect(
+          drawer.locator('h3').filter({ hasText: systemRoleName }),
+        ).toBeVisible({
+          timeout: 5000,
+        });
       }
 
       // 7. Verify the Edit button is NOT present for system roles
@@ -352,9 +379,14 @@ test.describe.serial(
         .first();
 
       // 5. Click the "Deactivate" action button on the role row (first button in action cell)
+      // The deactivate action is gated by a Popconfirm — click the button then confirm.
       await roleRow
         .locator('.bai-name-action-cell-actions button')
         .first()
+        .click();
+      await page
+        .locator('.ant-popconfirm')
+        .getByRole('button', { name: 'Deactivate' })
         .click();
 
       // 6. Verify the role disappears from the "Active" roles list
@@ -397,10 +429,15 @@ test.describe.serial(
         inactiveRoleRow.locator('.bai-name-action-cell-actions button').first(),
       ).toBeVisible();
 
-      // 6. Click the "Activate" button (first action button in Inactive view)
+      // 6. Click the "Activate" button (first action button in Inactive view).
+      // The activate action is gated by a Popconfirm — click the button then confirm.
       await inactiveRoleRow
         .locator('.bai-name-action-cell-actions button')
         .first()
+        .click();
+      await page
+        .locator('.ant-popconfirm')
+        .getByRole('button', { name: 'Activate' })
         .click();
 
       // 7. Verify a success notification "Role activated successfully." appears
@@ -435,11 +472,16 @@ test.describe.serial(
         .getByRole('row')
         .filter({ hasText: ROLE_NAME_EDITED })
         .first();
-      // Hover to reveal action buttons, then click deactivate (first action button in Active view)
+      // Hover to reveal action buttons, then click deactivate (first action button in Active view).
+      // The deactivate action is gated by a Popconfirm — click the button then confirm.
       await activeRoleRow.hover();
       await activeRoleRow
         .locator('.bai-name-action-cell-actions button')
         .first()
+        .click();
+      await page
+        .locator('.ant-popconfirm')
+        .getByRole('button', { name: 'Deactivate' })
         .click();
       await expect(activeRoleRow).toBeHidden({ timeout: 10000 });
 
@@ -473,6 +515,11 @@ test.describe.serial(
 
       // 9. Verify the modal contains the role name
       await expect(purgeModal.getByText(ROLE_NAME_EDITED)).toBeVisible();
+
+      // 9a. Type the role name in the confirmation input to enable the Delete button.
+      // BAIDeleteConfirmModal with requireConfirmInput=true requires typing the confirmText
+      // before the Delete button becomes enabled.
+      await purgeModal.locator('input').fill(ROLE_NAME_EDITED);
 
       // 10. Click the Delete button in the modal to confirm purge
       await purgeModal.getByRole('button', { name: 'Delete' }).click();

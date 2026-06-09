@@ -85,8 +85,13 @@ async function createTestRole(page: Page) {
 }
 
 async function clearRoleSearch(page: Page) {
-  // Remove any active filter chip
-  const filterChip = page.locator('.ant-tag-close-icon').first();
+  // Remove any active filter chip — scope to the filter-chip area so we
+  // don't accidentally click tag close icons in the table itself.
+  const filterChip = page
+    .locator('.ant-space-compact')
+    .first()
+    .locator('.ant-tag-close-icon')
+    .first();
   if (await filterChip.isVisible({ timeout: 1000 }).catch(() => false)) {
     await filterChip.click();
     await expect(filterChip).toBeHidden({ timeout: 5000 });
@@ -128,6 +133,7 @@ async function cleanupTestRole(page: Page) {
     // Retry deactivation until the row is removed from the Active list.
     // A stale "Role deactivated" notice from a parallel test can make a single
     // notification check unreliable, so drive the loop off of row visibility instead.
+    // The deactivate action is gated by a Popconfirm — click it then confirm.
     await expect(async () => {
       await activeRow.hover();
       const deactivateBtn = activeRow
@@ -135,6 +141,11 @@ async function cleanupTestRole(page: Page) {
         .first();
       await expect(deactivateBtn).toBeVisible();
       await deactivateBtn.click();
+      // Confirm the Popconfirm that appears after clicking the deactivate button
+      await page
+        .locator('.ant-popconfirm')
+        .getByRole('button', { name: 'Deactivate' })
+        .click({ timeout: 5000 });
       await expect(activeRow).toBeHidden({ timeout: 5000 });
     }).toPass({ timeout: 20000 });
   }
@@ -174,6 +185,9 @@ async function cleanupTestRole(page: Page) {
         .locator('.ant-modal')
         .filter({ hasText: 'Purge Role' });
       await expect(purgeModal).toBeVisible({ timeout: 5000 });
+      // BAIDeleteConfirmModal requires typing the role name into its dedicated
+      // #confirmText textbox before the Delete button is enabled.
+      await purgeModal.locator('#confirmText').fill(ROLE_NAME);
       await purgeModal.getByRole('button', { name: 'Delete' }).click();
       await expect(inactiveRow).toBeHidden({ timeout: 5000 });
     }).toPass({ timeout: 20000 });
@@ -531,7 +545,11 @@ test.describe.serial(
       );
       await expect(operationOpts.first()).toBeVisible({ timeout: 5000 });
       await operationOpts.first().click();
-      await addModal.getByRole('button', { name: 'Add' }).click();
+      // Use dispatchEvent to ensure the click reaches React's event handler
+      // for modal buttons rendered as portals outside the React root.
+      await addModal
+        .getByRole('button', { name: 'Add' })
+        .dispatchEvent('click');
       await expect(addModal).toBeHidden({ timeout: 10000 });
       await expect(
         page
@@ -547,29 +565,33 @@ test.describe.serial(
       await expect(permissionRow).toBeVisible({ timeout: 10000 });
       await permissionRow.hover();
 
-      // 5. Click the "Delete Permission" (trash bin icon) action button - second action button in the row
+      // 5. Click the "Remove Permission" (trash bin icon) action button - last action button in the row
       await permissionRow
         .locator('.bai-name-action-cell-actions button')
         .last()
         .click();
 
-      // 6. Verify a confirmation modal titled "Delete Permission" appears
+      // 6. Verify a confirmation modal titled "Remove Permission" appears
+      // (the modal title uses t('rbac.RemovePermission') = "Remove Permission")
       const deleteModal = page
         .locator('.ant-modal')
-        .filter({ hasText: 'Delete Permission' });
+        .filter({ hasText: 'Remove Permission' });
       await expect(deleteModal).toBeVisible();
 
-      // 7. Click Delete to confirm
-      await deleteModal.getByRole('button', { name: 'Delete' }).click();
+      // 7. Click "Remove Permission" to confirm
+      // (the modal okText is t('rbac.RemovePermission') = "Remove Permission")
+      await deleteModal
+        .getByRole('button', { name: 'Remove Permission' })
+        .click();
 
       // 8. Verify the permission row disappears from the table
       await expect(permissionRow).toBeHidden({ timeout: 10000 });
 
-      // 9. Verify a success notification "Permission deleted successfully." appears
+      // 9. Verify a success notification "Permission removed from role successfully." appears
       await expect(
         page
           .locator('.ant-message-notice-wrapper')
-          .filter({ hasText: /Permission deleted successfully/i }),
+          .filter({ hasText: /Permission removed from role successfully/i }),
       ).toBeVisible({ timeout: 10000 });
     });
 
@@ -776,16 +798,16 @@ test.describe.serial(
       // 5. Hover over the User ID cell to reveal action buttons
       await userRow.hover();
 
-      // 6. Click the "Delete User" (trash bin icon) action button - first (only) action button in the row
+      // 6. Click the "Revoke User" (trash bin icon) action button - first (only) action button in the row
       await userRow
         .locator('.bai-name-action-cell-actions button')
         .first()
         .click();
 
-      // 7. Verify a confirmation modal titled "Delete User" appears
+      // 7. Verify a confirmation modal titled "Revoke User" appears
       const deleteModal = page
         .locator('.ant-modal')
-        .filter({ hasText: 'Delete User' });
+        .filter({ hasText: 'Revoke User' });
       await expect(deleteModal).toBeVisible();
 
       // 8. Verify the description mentions revoking user(s)
@@ -793,8 +815,8 @@ test.describe.serial(
         deleteModal.getByText(/revoke the following user/i),
       ).toBeVisible();
 
-      // 9. Click Delete to confirm
-      await deleteModal.getByRole('button', { name: 'Delete' }).click();
+      // 9. Click "Revoke User" to confirm (the modal okText is t('rbac.RevokeUser'))
+      await deleteModal.getByRole('button', { name: 'Revoke User' }).click();
 
       // 10. Verify the user row disappears from the assignments table
       await expect(userRow).toBeHidden({ timeout: 10000 });
