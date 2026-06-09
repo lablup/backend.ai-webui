@@ -21,11 +21,20 @@ import { MOCK_ENDPOINT_UUID } from './endpoint-detail-mock';
 // Model card IDs
 // ─────────────────────────────────────────────────────────────────────────────
 
-export const MOCK_MODEL_CARD_WITH_PRESETS_ID = btoa('ModelCardV2:uuid-001');
-export const MOCK_MODEL_CARD_NO_PRESETS_ID = btoa('ModelCardV2:uuid-002');
-export const MOCK_MODEL_CARD_SINGLE_PRESET_ID = btoa('ModelCardV2:uuid-003');
+// Use proper UUIDs so that safeDecodeUuid (called by ModelStoreListPageV2 to
+// derive localSelectedModelCardId) returns a valid UUID, which in turn lets
+// ModelCardDrawer set fetchPolicy='store-and-network' and fire the lazy query.
+export const MOCK_MODEL_CARD_WITH_PRESETS_ID = btoa(
+  'ModelCardV2:00000000-0000-0000-0000-000000000001',
+);
+export const MOCK_MODEL_CARD_NO_PRESETS_ID = btoa(
+  'ModelCardV2:00000000-0000-0000-0000-000000000002',
+);
+export const MOCK_MODEL_CARD_SINGLE_PRESET_ID = btoa(
+  'ModelCardV2:00000000-0000-0000-0000-000000000003',
+);
 
-const MOCK_VFOLDER_ID = btoa('VFolder:vfolder-uuid-001');
+const MOCK_VFOLDER_ID = btoa('VFolder:00000000-0000-0000-0000-000000000010');
 
 export const MOCK_DEPLOYMENT_ID = 'deploy-uuid-001';
 
@@ -247,6 +256,157 @@ export function modelCardDeployModalMutationMock() {
     deployModelCardV2: {
       deploymentId: MOCK_DEPLOYMENT_ID,
       deploymentName: 'mock-llm-model-deploy-001',
+    },
+  });
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ModelCardDrawerQuery mock factory functions
+//
+// The ModelCardDrawer component fetches card details (including the
+// ModelCardDeployModalFragment preset list) via a dedicated
+// ModelCardDrawerQuery that is separate from the list-page query. Without
+// mocking this query, the drawer opens with empty data (null modelCard) and
+// the Deploy button remains disabled.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Minimal preset node satisfying DeploymentPresetDetailModalFragment */
+function buildPresetNode(
+  presetLocalId: string,
+  presetName: string,
+  runtimeVariantLocalId: string,
+  runtimeVariantName: string,
+) {
+  return {
+    __typename: 'DeploymentRevisionPreset',
+    id: btoa(`DeploymentRevisionPreset:${presetLocalId}`),
+    name: presetName,
+    runtimeVariantId: runtimeVariantLocalId,
+    description: null,
+    runtimeVariant: {
+      __typename: 'RuntimeVariant',
+      id: btoa(`RuntimeVariant:${runtimeVariantLocalId}`),
+      name: runtimeVariantName,
+    },
+    cluster: { clusterMode: 'SINGLE_NODE', clusterSize: 1 },
+    execution: {
+      imageId: null,
+      startupCommand: null,
+      bootstrapScript: null,
+      environ: [],
+    },
+    resource: { resourceOpts: [] },
+    resourceSlots: [],
+    deploymentDefaults: {
+      openToPublic: false,
+      replicaCount: 1,
+      revisionHistoryLimit: 5,
+      deploymentStrategy: 'ROLLING',
+    },
+    presetValues: [],
+  };
+}
+
+/**
+ * Returns a ModelCardDrawerQuery mock for the multi-preset model card.
+ * Used for Groups A and C (drawer open, deploy modal).
+ */
+export function modelCardDrawerQueryWithMultiPresetsMock() {
+  return (_vars: Record<string, any>) => ({
+    modelCardV2: {
+      __typename: 'ModelCardV2',
+      id: MOCK_MODEL_CARD_WITH_PRESETS_ID,
+      name: 'mock-llm-model',
+      metadata: BASE_METADATA,
+      minResource: BASE_MIN_RESOURCE,
+      readme: '# Mock LLM Model\n\nA mock model for E2E testing.',
+      createdAt: '2026-01-01T00:00:00+00:00',
+      updatedAt: null,
+      vfolder: {
+        ...BASE_VFOLDER,
+        // VFolderNodeIdenticonV2Fragment only needs id
+      },
+      availablePresets: {
+        edges: [
+          {
+            node: buildPresetNode(
+              'preset-uuid-011',
+              'gpu-small',
+              RUNTIME_VARIANT_VLLM_LOCAL_ID,
+              'vllm',
+            ),
+          },
+          {
+            node: buildPresetNode(
+              'preset-uuid-012',
+              'gpu-small',
+              RUNTIME_VARIANT_TGI_LOCAL_ID,
+              'huggingface-tgi',
+            ),
+          },
+        ],
+      },
+    },
+  });
+}
+
+/**
+ * Returns a ModelCardDrawerQuery mock for the no-preset model card.
+ * Used for Group B (no presets scenario).
+ */
+export function modelCardDrawerQueryWithNoPresetsMock() {
+  return (_vars: Record<string, any>) => ({
+    modelCardV2: {
+      __typename: 'ModelCardV2',
+      id: MOCK_MODEL_CARD_NO_PRESETS_ID,
+      name: 'mock-no-preset-model',
+      metadata: {
+        ...BASE_METADATA,
+        title: 'Mock No-Preset Model',
+      },
+      minResource: BASE_MIN_RESOURCE,
+      readme: null,
+      createdAt: '2026-01-01T00:00:00+00:00',
+      updatedAt: null,
+      vfolder: BASE_VFOLDER,
+      availablePresets: {
+        edges: [],
+      },
+    },
+  });
+}
+
+/**
+ * Returns a ModelCardDrawerQuery mock for the single-preset model card.
+ * Used for Group D (auto-deploy scenario).
+ */
+export function modelCardDrawerQueryWithSinglePresetMock() {
+  return (_vars: Record<string, any>) => ({
+    modelCardV2: {
+      __typename: 'ModelCardV2',
+      id: MOCK_MODEL_CARD_SINGLE_PRESET_ID,
+      name: 'mock-single-preset-model',
+      metadata: {
+        ...BASE_METADATA,
+        title: 'Mock Single-Preset Model',
+      },
+      minResource: BASE_MIN_RESOURCE,
+      readme: null,
+      createdAt: '2026-01-01T00:00:00+00:00',
+      updatedAt: null,
+      vfolder: BASE_VFOLDER,
+      availablePresets: {
+        edges: [
+          {
+            node: buildPresetNode(
+              'preset-uuid-021',
+              'gpu-small',
+              RUNTIME_VARIANT_VLLM_LOCAL_ID,
+              'vllm',
+            ),
+          },
+        ],
+      },
     },
   });
 }

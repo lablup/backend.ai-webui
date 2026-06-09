@@ -1,7 +1,12 @@
 // spec: e2e/.agent-output/test-plan-admin-model-card.md
 // section: 10. URL State Persistence
 import { AdminModelCardPage } from '../utils/classes/AdminModelCardPage';
-import { loginAsAdmin, webuiEndpoint } from '../utils/test-util';
+import {
+  deleteForeverAndVerifyFromTrash,
+  loginAsAdmin,
+  moveToTrashAndVerify,
+  webuiEndpoint,
+} from '../utils/test-util';
 import { test, expect } from '@playwright/test';
 
 test.describe(
@@ -9,9 +14,12 @@ test.describe(
   { tag: ['@admin-model-card', '@admin', '@functional'] },
   () => {
     let testCardName: string;
+    let testFolderName: string;
 
     test.beforeEach(async ({ page, request }, testInfo) => {
-      testCardName = `e2e-test-url-${testInfo.workerIndex}-${Date.now()}`;
+      const timestamp = Date.now();
+      testCardName = `e2e-test-url-${testInfo.workerIndex}-${timestamp}`;
+      testFolderName = `e2e-test-url-folder-${testInfo.workerIndex}-${timestamp}`;
       await loginAsAdmin(page, request);
 
       // Create a test model card so the table is guaranteed to have data
@@ -20,7 +28,10 @@ test.describe(
       );
       const adminModelCardPage = new AdminModelCardPage(page);
       await adminModelCardPage.waitForTableLoad();
-      await adminModelCardPage.createModelCard({ name: testCardName });
+      await adminModelCardPage.createModelCard({
+        name: testCardName,
+        createNewFolderName: testFolderName,
+      });
     });
 
     test.afterEach(async ({ page }) => {
@@ -37,6 +48,20 @@ test.describe(
         }
       } catch {
         // Ignore cleanup errors
+      }
+      try {
+        await moveToTrashAndVerify(page, testFolderName, 'admin-data');
+      } catch {
+        // Folder may already be in Trash or may not exist
+      }
+      try {
+        await deleteForeverAndVerifyFromTrash(
+          page,
+          testFolderName,
+          'admin-data',
+        );
+      } catch {
+        // Folder may not be in Trash (already purged or never created)
       }
     });
 

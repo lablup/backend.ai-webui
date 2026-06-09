@@ -812,11 +812,13 @@ test.describe(
       });
 
       // Locate and click the "Compare" button (ArrowRightLeftIcon or tooltip "Create Compare Chat")
+      // Button layout in .ant-card-head nth(1) for single pane:
+      //   nth(0)=detail-page (EndpointSelect compact btn), nth(1)=control, nth(2)=compare, nth(3)=more
       const compareButton = page
         .locator('.ant-card-head')
         .nth(1)
         .getByRole('button')
-        .nth(1);
+        .nth(2);
       await compareButton.first().click();
 
       // A second ChatCard should now be visible
@@ -824,12 +826,13 @@ test.describe(
       await expect(chatInputs).toHaveCount(2, { timeout: 10000 });
 
       // The sync toggle should be visible in both panes (only shown when closable/multi-pane)
-      // Sync toggle is the first button in each ChatCard header (ant-card-head nth(1) and nth(2))
+      // Button layout in .ant-card-head nth(1) for multi-pane:
+      //   nth(0)=detail-page, nth(1)=sync, nth(2)=control, nth(3)=compare, nth(4)=more
       const syncTogglePane1 = page
         .locator('.ant-card-head')
         .nth(1)
         .getByRole('button')
-        .nth(0);
+        .nth(1);
       await expect(syncTogglePane1).toBeVisible({ timeout: 10000 });
     });
 
@@ -847,11 +850,12 @@ test.describe(
       });
 
       // Clone a second pane
+      // Button layout for single pane: nth(0)=detail-page, nth(1)=control, nth(2)=compare, nth(3)=more
       const compareButton = page
         .locator('.ant-card-head')
         .nth(1)
         .getByRole('button')
-        .nth(1);
+        .nth(2);
       await compareButton.first().click();
 
       // Verify two panes are visible
@@ -883,11 +887,12 @@ test.describe(
       });
 
       // The sync toggle is no longer visible (single pane has no sync toggle)
-      // In single pane mode, the ChatCard header has control(0) + compare(1) + more(2) = 3 buttons (no sync)
-      // Check by ensuring the card head only has 3 buttons (no sync button at position 0)
+      // In single pane mode, the ChatCard header has:
+      //   detail-page(0) + control(1) + compare(2) + more(3) = 4 buttons (no sync)
+      // Check by ensuring the card head only has 4 buttons (no sync button)
       await expect(
         page.locator('.ant-card-head').nth(1).getByRole('button'),
-      ).toHaveCount(3, { timeout: 5000 });
+      ).toHaveCount(4, { timeout: 5000 });
     });
 
     test('User cannot add more than 10 chat panes', async ({
@@ -905,10 +910,11 @@ test.describe(
 
       // Click the "Compare" button 10 times to bring the total to 11 panes.
       // isClonable(chatLength) = chatLength <= 10, so cloneable becomes false at 11 panes.
-      // In single pane: compare is at nth(1); in multi-pane (closable=true): sync+control+compare+more, compare at nth(2)
+      // Button layout (single pane): nth(0)=detail-page, nth(1)=control, nth(2)=compare, nth(3)=more
+      // Button layout (multi-pane):  nth(0)=detail-page, nth(1)=sync, nth(2)=control, nth(3)=compare, nth(4)=more
       for (let i = 0; i < 10; i++) {
-        // First iteration: single pane, compare is nth(1); subsequent: multi-pane, compare is nth(2)
-        const compareButtonIndex = i === 0 ? 1 : 2;
+        // First iteration: single pane, compare is nth(2); subsequent: multi-pane, compare is nth(3)
+        const compareButtonIndex = i === 0 ? 2 : 3;
         const compareButton = page
           .locator('.ant-card-head')
           .nth(1)
@@ -929,11 +935,11 @@ test.describe(
       });
 
       // The "Compare" button should no longer be visible (cloneable = false when count > 10)
-      // With 11 panes, the card head has sync+control+more buttons but no compare button
-      // Compare button was at nth(2), now there should only be 3 buttons: sync(0)+control(1)+more(2)
+      // With 11 panes, the card head has:
+      //   detail-page(0) + sync(1) + control(2) + more(3) = 4 buttons (no compare)
       await expect(
         page.locator('.ant-card-head').nth(1).getByRole('button'),
-      ).toHaveCount(3, { timeout: 5000 });
+      ).toHaveCount(4, { timeout: 5000 });
     });
 
     test('User can select different endpoints in each chat pane', async ({
@@ -950,11 +956,12 @@ test.describe(
       });
 
       // Clone a second pane
+      // Button layout for single pane: nth(0)=detail-page, nth(1)=control, nth(2)=compare, nth(3)=more
       const compareButton = page
         .locator('.ant-card-head')
         .nth(1)
         .getByRole('button')
-        .nth(1);
+        .nth(2);
       await compareButton.first().click();
 
       // Verify two panes are visible
@@ -987,15 +994,16 @@ test.describe(
         .click();
 
       // The second pane's endpoint selector shows the second endpoint
+      // Use [title] to target the visible select display value (avoids hidden aria-live elements)
       await expect(
-        page.locator('.ant-card').nth(2).getByText('mock-endpoint-b'),
+        page.locator('.ant-card').nth(2).locator('[title="mock-endpoint-b"]'),
       ).toBeVisible({
         timeout: 10000,
       });
 
       // The first pane's endpoint selector still shows the original endpoint
       await expect(
-        page.locator('.ant-card').nth(1).getByText('mock-endpoint'),
+        page.locator('.ant-card').nth(1).locator('[title="mock-endpoint"]'),
       ).toBeVisible({
         timeout: 5000,
       });

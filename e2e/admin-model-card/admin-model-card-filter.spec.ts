@@ -1,15 +1,72 @@
 // spec: e2e/.agent-output/test-plan-admin-model-card.md
 // section: 2. Filtering
 import { AdminModelCardPage } from '../utils/classes/AdminModelCardPage';
-import { loginAsAdmin, webuiEndpoint } from '../utils/test-util';
+import {
+  deleteForeverAndVerifyFromTrash,
+  loginAsAdmin,
+  moveToTrashAndVerify,
+  webuiEndpoint,
+} from '../utils/test-util';
 import { test, expect } from '@playwright/test';
 
 test.describe(
   'Admin Model Card Management - Filtering',
   { tag: ['@admin-model-card', '@admin', '@functional'] },
   () => {
-    test.beforeEach(async ({ page, request }) => {
+    // A card is created per-test so the table is guaranteed to have at least one row.
+    // Tests 2.1 and 2.2 read the first row name for filtering — without a guaranteed
+    // row the tests would fail on an empty table.
+    let filterCardName: string;
+    let filterFolderName: string;
+
+    test.beforeEach(async ({ page, request }, testInfo) => {
       await loginAsAdmin(page, request);
+      const timestamp = Date.now();
+      filterCardName = `e2e-test-filter-seed-${testInfo.workerIndex}-${timestamp}`;
+      filterFolderName = `e2e-test-filter-folder-${testInfo.workerIndex}-${timestamp}`;
+
+      // Create a seed card so the table has at least one row for filter tests
+      await page.goto(
+        `${webuiEndpoint}/admin-deployments?tab=model-store-management`,
+      );
+      const adminModelCardPage = new AdminModelCardPage(page);
+      await adminModelCardPage.waitForTableLoad();
+      await adminModelCardPage.createModelCard({
+        name: filterCardName,
+        createNewFolderName: filterFolderName,
+      });
+    });
+
+    test.afterEach(async ({ page }) => {
+      // Cleanup: delete the seed card and purge its folder
+      try {
+        await page.goto(
+          `${webuiEndpoint}/admin-deployments?tab=model-store-management`,
+        );
+        const adminModelCardPage = new AdminModelCardPage(page);
+        await adminModelCardPage.waitForTableLoad();
+        await adminModelCardPage.applyNameFilter(filterCardName);
+        const row = adminModelCardPage.getRowByName(filterCardName);
+        if ((await row.count()) > 0) {
+          await adminModelCardPage.deleteModelCardByName(filterCardName);
+        }
+      } catch {
+        // Ignore cleanup errors
+      }
+      try {
+        await moveToTrashAndVerify(page, filterFolderName, 'admin-data');
+      } catch {
+        // Folder may already be in Trash or may not exist
+      }
+      try {
+        await deleteForeverAndVerifyFromTrash(
+          page,
+          filterFolderName,
+          'admin-data',
+        );
+      } catch {
+        // Folder may not be in Trash (already purged or never created)
+      }
     });
 
     // 2.1 Superadmin can filter model cards by name
@@ -82,12 +139,9 @@ test.describe(
         .innerText();
       const filterName = firstRowName.trim().split('\n')[0];
 
-      // Apply a filter and capture the filtered total
+      // Apply a filter and confirm the table updates to a filtered view
       await adminModelCardPage.applyNameFilter(filterName);
       await expect(paginationInfo).toContainText('items');
-      const filteredTotal = parseTotal(
-        (await paginationInfo.textContent()) ?? '',
-      );
 
       // Clear the filter by clicking the close icon on the active filter chip
       await adminModelCardPage.clearFilter();
@@ -95,14 +149,16 @@ test.describe(
       // Verify the URL no longer contains a filter param
       await expect(page).not.toHaveURL(/filter=/);
 
-      // Verify the unfiltered list is restored: total must be >= the filtered
-      // total (other workers may have added/removed cards in parallel, so the
-      // count is not guaranteed to match initialTotal exactly).
+      // Verify the unfiltered list is restored: total must be >= 1 (at minimum
+      // the seed card created in beforeEach still exists). We cannot assert >=
+      // filteredTotal because parallel workers may delete cards between the
+      // filter step and the clear step, producing a cleared count lower than
+      // the filtered count.
       await expect
         .poll(async () =>
           parseTotal((await paginationInfo.textContent()) ?? ''),
         )
-        .toBeGreaterThanOrEqual(filteredTotal);
+        .toBeGreaterThanOrEqual(1);
     });
 
     // 2.3 Superadmin sees empty table state when no model cards match the filter

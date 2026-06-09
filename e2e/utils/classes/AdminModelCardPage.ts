@@ -276,18 +276,34 @@ export class AdminModelCardPage {
       .click();
     await expect(folderDialog).toBeHidden({ timeout: 15000 });
 
-    // onRequestClose asynchronously sets `vfolderId` in the Create Model Card form and
-    // triggers a BAIVFolderSelect refetch. Assert the VFolder select reflects the
-    // newly created folder name before proceeding so downstream submit steps don't
-    // race the refetch.
-    // In antd v6 with BAISelect, the selected value text is rendered directly inside
-    // .ant-select-content (which gains .ant-select-content-has-value when a value is set).
+    // After folder dialog closes, the onRequestClose handler calls setFieldsValue and
+    // vfolderSelectRef.current?.refetch(). Due to a known issue where the GlobalID type
+    // mismatch can cause the form value to not map to a valid UUID for the mutation, we
+    // re-open the VFolder dropdown and explicitly select the newly-created folder by name.
+    // This ensures the form field has the correct VirtualFolderNode GlobalID value.
+    const vfolderFormItem = modal
+      .locator('.ant-form-item')
+      .filter({ hasText: 'Model Storage Folder' });
+
+    // Wait briefly for the refetch to complete before re-opening the dropdown
+    await expect(vfolderFormItem.locator('.ant-select-content')).toBeVisible({
+      timeout: 15000,
+    });
+
+    // Re-open the dropdown to ensure the correct option is selected by name
+    await vfolderFormItem.locator('.ant-select-content').click();
+    const dropdown = this.page
+      .locator('.ant-select-dropdown:not(.ant-select-dropdown-hidden)')
+      .first();
+    await expect(dropdown).toBeVisible({ timeout: 10000 });
+    // Wait for the refetched options to load (the new folder should appear)
     await expect(
-      modal
-        .locator('.ant-form-item')
-        .filter({ hasText: 'Model Storage Folder' })
-        .locator('.ant-select-content'),
-    ).toContainText(folderName, { timeout: 15000 });
+      dropdown.locator('.ant-select-item-option').first(),
+    ).toBeVisible({ timeout: 15000 });
+    // Click the option matching the folder name
+    await dropdown.getByTitle(folderName).click();
+    // Wait for dropdown to close
+    await expect(dropdown).toBeHidden({ timeout: 10000 });
   }
 
   async fillCreateModal(fields: {
@@ -326,10 +342,13 @@ export class AdminModelCardPage {
         .locator('.ant-select-dropdown:not(.ant-select-dropdown-hidden)')
         .first();
       await expect(dropdown).toBeVisible({ timeout: 10000 });
-      // Wait for the "Total N items" footer to appear, indicating options have loaded
-      await expect(dropdown.getByText(/Total \d+ items/)).toBeVisible({
-        timeout: 10000,
-      });
+      // Wait for the first option to be visible, indicating the options have loaded.
+      // BAIVFolderSelect shows a Skeleton while the query is in-flight and renders
+      // actual options (or antd's default "No data") once the response arrives.
+      // Waiting for the first option is the reliable readiness signal.
+      await expect(
+        dropdown.locator('.ant-select-item-option').first(),
+      ).toBeVisible({ timeout: 10000 });
       if (fields.vfolderTitle) {
         await dropdown.getByTitle(fields.vfolderTitle).click();
       } else {
