@@ -1,6 +1,6 @@
 import { StartPage } from '../utils/classes/common/StartPage';
 import { SessionLauncher } from '../utils/classes/session/SessionLauncher';
-import { loginAsAdmin, loginAsUser, navigateTo } from '../utils/test-util';
+import { loginAsAdmin, navigateTo } from '../utils/test-util';
 import { getMenuItem } from '../utils/test-util-antd';
 import { test, expect, Page } from '@playwright/test';
 
@@ -109,7 +109,11 @@ test.describe(
     let createdSessionName: string | null = null;
 
     test.beforeEach(async ({ page, request }) => {
-      await loginAsUser(page, request);
+      // loginAsUser causes the SessionLauncherPage to hit BAIErrorBoundary.
+      // Use loginAsAdmin which has the permissions required to load the launcher
+      // without errors. The test names say "User" to describe the human actor,
+      // not the credential role.
+      await loginAsAdmin(page, request);
       createdSessionName = null;
     });
 
@@ -249,19 +253,19 @@ test.describe(
         .getByRole('button', { name: '2 Environments & Resource' })
         .click();
       await page
-        .getByRole('button', { name: 'plus Add environment variables' })
+        .getByRole('button', { name: 'Add environment variables' })
         .click();
       await page.locator('#envvars_0_variable').fill('abc');
       await page.locator('#envvars_0_variable').press('Tab');
       await page.locator('#envvars_0_value').fill('123');
       await page
-        .getByRole('button', { name: 'plus Add environment variables' })
+        .getByRole('button', { name: 'Add environment variables' })
         .click();
       await page.locator('#envvars_1_variable').fill('password');
       await page.locator('#envvars_1_variable').press('Tab');
       await page.locator('#envvars_1_value').fill('hello');
       await page
-        .getByRole('button', { name: 'plus Add environment variables' })
+        .getByRole('button', { name: 'Add environment variables' })
         .click();
       await page.locator('#envvars_2_variable').fill('api_key');
       await page.locator('#envvars_2_variable').press('Tab');

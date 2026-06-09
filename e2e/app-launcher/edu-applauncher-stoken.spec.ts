@@ -36,7 +36,46 @@ const MOCK_SERVER_VERSION = {
   'backend.ai': '25.0.0',
 };
 
+/**
+ * Minimal config.toml that provides an API endpoint so that
+ * `useResolvedApiEndpoint` can resolve to a non-empty string and the
+ * `STokenLoginBoundary` can proceed past the Suspense phase.
+ *
+ * The nightly webui is deployed with `apiEndpoint = ""` (users enter their
+ * own endpoint at login time). Without a non-empty endpoint the hook never
+ * caches a result, causing the `STokenLoginBoundaryInner` to suspend in an
+ * infinite loop and the error card to never render.
+ */
+const MOCK_CONFIG_TOML = `[general]
+apiEndpoint = "https://mock-backend.e2e.test"
+connectionMode = "SESSION"
+`;
+
+/**
+ * Mock `config.toml` so that `useResolvedApiEndpoint` resolves to a stable
+ * non-empty value. Must be registered before `page.goto()`.
+ */
+async function installConfigMock(page: Page): Promise<void> {
+  await page.route('**/config.toml**', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'text/plain',
+      body: MOCK_CONFIG_TOML,
+    });
+  });
+}
+
+/**
+ * Install the config.toml mock, ping probe, and existing-session probe so
+ * the boundary reaches `token_login`. Individual tests register
+ * `**\/server/token-login` on top of this to drive the flow they care about.
+ *
+ * Also installs a `config.toml` mock so that `useResolvedApiEndpoint`
+ * resolves to a stable non-empty endpoint on deployments (like the nightly)
+ * that ship with an empty `apiEndpoint`.
+ */
 async function installBoundaryProbeMocks(page: Page): Promise<void> {
+  await installConfigMock(page);
   await page.route('**/func/', async (route) => {
     if (route.request().method() !== 'GET') {
       await route.continue();
@@ -57,6 +96,15 @@ async function installBoundaryProbeMocks(page: Page): Promise<void> {
   });
 }
 
+const AUTH_FAILED_INERT_RESPONSE = {
+  authenticated: false,
+  data: {
+    type: 'https://api.backend.ai/probs/auth-failed',
+    title: 'stub',
+    details: 'stub',
+  },
+};
+
 test.describe(
   'EduAppLauncher sToken boundary',
   { tag: ['@regression', '@app-launcher', '@functional'] },
@@ -64,6 +112,15 @@ test.describe(
     test('invalid sToken on `/edu-applauncher` surfaces the boundary error card', async ({
       page,
     }) => {
+      await installBoundaryProbeMocks(page);
+      await page.route('**/server/token-login', async (route) => {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify(AUTH_FAILED_INERT_RESPONSE),
+        });
+      });
+
       await page.goto(
         `${webuiEndpoint}/edu-applauncher?sToken=invalid-token-for-e2e&app=jupyter&session_id=test-session`,
       );
@@ -75,6 +132,15 @@ test.describe(
     test('invalid sToken on `/applauncher` (legacy alias) surfaces the same error card', async ({
       page,
     }) => {
+      await installBoundaryProbeMocks(page);
+      await page.route('**/server/token-login', async (route) => {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify(AUTH_FAILED_INERT_RESPONSE),
+        });
+      });
+
       await page.goto(
         `${webuiEndpoint}/applauncher?sToken=invalid-token-for-e2e`,
       );
@@ -86,6 +152,15 @@ test.describe(
     test('error state keeps non-sToken URL params intact (app, session_id)', async ({
       page,
     }) => {
+      await installBoundaryProbeMocks(page);
+      await page.route('**/server/token-login', async (route) => {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify(AUTH_FAILED_INERT_RESPONSE),
+        });
+      });
+
       await page.goto(
         `${webuiEndpoint}/edu-applauncher?sToken=invalid-token-for-e2e&app=jupyter&session_id=test-session`,
       );

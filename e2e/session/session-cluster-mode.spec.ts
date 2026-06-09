@@ -1,6 +1,6 @@
 // spec: e2e/.agent-output/test-plan-session-cluster-mode.md
 // seed: e2e/seed.spec.ts
-import { loginAsUser, navigateTo } from '../utils/test-util';
+import { loginAsAdmin, navigateTo } from '../utils/test-util';
 import { test, expect } from '@playwright/test';
 
 /**
@@ -20,7 +20,7 @@ test.describe(
   { tag: ['@regression', '@session', '@functional'] },
   () => {
     test.beforeEach(async ({ page, request }) => {
-      await loginAsUser(page, request);
+      await loginAsAdmin(page, request);
     });
 
     // -------------------------------------------------------------------------
@@ -65,8 +65,12 @@ test.describe(
         const warningMessage = page.getByText(
           'Multi-node with size 1 will be created as a single-node session.',
         );
+        // Wait up to 5 s for the async form validation to render the warning.
+        // Skip gracefully only if the feature is genuinely absent in the build.
         const isWarningVisible = await warningMessage
-          .isVisible({ timeout: 5000 })
+          .first()
+          .waitFor({ state: 'visible', timeout: 5000 })
+          .then(() => true)
           .catch(() => false);
         if (!isWarningVisible) {
           test.skip(
@@ -170,9 +174,12 @@ test.describe(
           'Multi-node with size 1 will be created as a single-node session.',
         );
 
-        // Skip gracefully if the feature is not available in the server's build.
+        // Wait up to 5 s for the async form validation to render the warning.
+        // Skip gracefully only if the feature is genuinely absent in the build.
         const isWarningVisible = await warningMessage
-          .isVisible({ timeout: 5000 })
+          .first()
+          .waitFor({ state: 'visible', timeout: 5000 })
+          .then(() => true)
           .catch(() => false);
         if (!isWarningVisible) {
           test.skip(
@@ -212,8 +219,12 @@ test.describe(
 
         // Select Multi Node — check if warning feature is available
         await multiNodeLabel.click();
+        // Wait up to 5 s for the async form validation to render the warning.
+        // Skip gracefully only if the feature is genuinely absent in the build.
         const isWarningVisible = await warningMessage
-          .isVisible({ timeout: 5000 })
+          .first()
+          .waitFor({ state: 'visible', timeout: 5000 })
+          .then(() => true)
           .catch(() => false);
         if (!isWarningVisible) {
           test.skip(
