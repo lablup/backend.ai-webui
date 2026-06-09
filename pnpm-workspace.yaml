@@ -48,6 +48,10 @@ catalog:
   lodash-es: ^4.18.1
   lucide-react: ^0.552.0
   marked: ^16.4.2
+  # FR-3071: Rust-based linter, introduced additively alongside ESLint (opt-in).
+  # Caret range + `resolutionMode: time-based` keeps pnpm on the newest version that
+  # has aged past the `minimumReleaseAge` quarantine (currently oxlint 1.68).
+  oxlint: ^1.68.0
   prettier: ^3.8.2
   prettier-plugin-sort-json: ^4.2.0
   react: ^19.2.6

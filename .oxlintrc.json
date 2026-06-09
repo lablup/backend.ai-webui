@@ -1,0 +1,30 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "react", "import"],
+  "categories": {
+    "correctness": "warn"
+  },
+  "rules": {
+    "no-console": "warn",
+    "no-unused-expressions": "off",
+    "no-constant-condition": "off",
+    "no-empty": "off",
+    "no-useless-catch": "off",
+    "typescript/prefer-namespace-keyword": "off"
+  },
+  "overrides": [
+    {
+      "files": ["**/*.test.*", "**/*.stories.*", "**/__tests__/**", "**/__test__/**"],
+      "rules": {
+        "no-console": "off"
+      }
+    }
+  ],
+  "ignorePatterns": [
+    "**/__generated__/**",
+    "**/*.tsx_",
+    "**/*.ts_",
+    "build/**",
+    "dist/**"
+  ]
+}
