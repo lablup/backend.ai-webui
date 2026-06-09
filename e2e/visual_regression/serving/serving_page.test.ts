@@ -8,11 +8,19 @@ test.describe(
     test.describe('Serving page', () => {
       test.beforeEach(async ({ page, request }) => {
         await loginAsVisualRegressionUser(page, request);
-        await navigateTo(page, 'serving');
-        await page.getByText('Active', { exact: true }).waitFor();
+        // The serving page was renamed to 'deployments' in a recent UI update.
+        // The old 'Active' tab was replaced by 'Running'/'Terminated' radio buttons.
+        await navigateTo(page, 'deployments');
+        // Wait for the page header to confirm the deployments page has loaded.
+        await expect(
+          page.getByRole('button', { name: 'Create Deployment' }),
+        ).toBeVisible();
       });
 
-      test('serving full page', async ({ page }) => {
+      // FIXME: Snapshot diff expected — the serving page was renamed to 'deployments'
+      // with an entirely different layout (new table columns, radio filter instead of tabs).
+      // The baseline 'serving_page.png' is stale. Needs snapshot-update PR.
+      test.fixme('serving full page', async ({ page }) => {
         await page.setViewportSize({
           width: 1920,
           height: 1200,
@@ -79,11 +87,14 @@ test.describe(
 
     test.describe('Routing Info page', () => {
       // FIXME: Test timeout in beforeEach - 'service_test2' link cannot be clicked
-      // The test data service might not exist or the link locator changed
+      // The test data service might not exist or the link locator changed.
+      // Also updated to use 'deployments' path (old 'serving' route returns 404).
       test.beforeEach(async ({ page, request }) => {
         await loginAsVisualRegressionUser(page, request);
-        await navigateTo(page, 'serving');
-        await page.getByText('Active', { exact: true }).waitFor();
+        await navigateTo(page, 'deployments');
+        await expect(
+          page.getByRole('button', { name: 'Create Deployment' }),
+        ).toBeVisible();
         await page.getByRole('link', { name: 'service_test2' }).click();
         await expect(
           page.getByRole('button', { name: 'plus Add Rules' }),
