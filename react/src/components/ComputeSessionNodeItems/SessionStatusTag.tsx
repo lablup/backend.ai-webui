@@ -84,19 +84,64 @@ const SessionStatusTag: React.FC<SessionStatusTagProps> = ({
   return session ? (
     baiClient.supports('session-scheduling-history') ? (
       <BAIFlex gap="xs">
-        <BAITag
-          style={{
-            margin: 0,
-            zIndex: 1,
-            paddingLeft: token.paddingSM,
-          }}
-          icon={isTransitional(session) ? <LoadingOutlined spin /> : undefined}
-          color={
-            session.status ? _.get(statusTagColor, session.status) : undefined
-          }
-        >
-          {session.status}
-        </BAITag>
+        {schedulingErrorCode ? (
+          <BAIFlex>
+            <Tag
+              style={{
+                margin: 0,
+                zIndex: 1,
+                paddingLeft: token.paddingSM,
+                borderTopLeftRadius: 11,
+                borderBottomLeftRadius: 11,
+              }}
+              icon={
+                isTransitional(session) ? <LoadingOutlined spin /> : undefined
+              }
+              color={
+                session.status
+                  ? _.get(statusTagColor, session.status)
+                  : undefined
+              }
+            >
+              {session.status}
+            </Tag>
+            <Tag
+              style={{
+                margin: 0,
+                marginLeft: -1,
+                borderStyle: 'dashed',
+                paddingRight: token.paddingSM,
+                borderTopRightRadius: 11,
+                borderBottomRightRadius: 11,
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                width: 80,
+                fontFamily: 'monospace',
+                color: token.colorTextSecondary,
+              }}
+              title={schedulingErrorCode}
+            >
+              {schedulingErrorCode}
+            </Tag>
+          </BAIFlex>
+        ) : (
+          <BAITag
+            style={{
+              margin: 0,
+              zIndex: 1,
+              paddingLeft: token.paddingSM,
+            }}
+            icon={
+              isTransitional(session) ? <LoadingOutlined spin /> : undefined
+            }
+            color={
+              session.status ? _.get(statusTagColor, session.status) : undefined
+            }
+          >
+            {session.status}
+          </BAITag>
+        )}
         {displayQuePosition ? (
           <Tooltip title={t('session.PendingPosition')}>
             <BAITag
