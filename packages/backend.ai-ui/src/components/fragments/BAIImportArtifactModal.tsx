@@ -10,6 +10,7 @@ import {
   filterOutNullAndUndefined,
   toLocalId,
 } from '../../helper';
+import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIFlex from '../BAIFlex';
 import BAIText from '../BAIText';
 import BAIUnmountAfterClose from '../BAIUnmountAfterClose';
@@ -18,7 +19,6 @@ import BAIArtifactDescriptions from './BAIArtifactDescriptions';
 import { QuestionCircleFilled } from '@ant-design/icons';
 import { Alert, App, Modal, theme, Tooltip, type ModalProps } from 'antd';
 import * as _ from 'lodash-es';
-import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
 type ArtifactRevision =
@@ -58,7 +58,7 @@ const BAIImportArtifactModal = ({
   connectionIds,
   ...modalProps
 }: BAIImportArtifactModalProps) => {
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   const { message } = App.useApp();
   const { token } = theme.useToken();
   const selectedArtifact =
@@ -160,14 +160,21 @@ const BAIImportArtifactModal = ({
                 );
                 return;
               }
+              const importArtifacts = res.importArtifacts;
+              if (!importArtifacts) {
+                message.error(
+                  t('comp:BAIImportArtifactModal.FailedToPullVersions'),
+                );
+                return;
+              }
               message.success(
                 t('comp:BAIImportArtifactModal.SuccessFullyPulled', {
-                  count: res.importArtifacts.artifactRevisions.edges.length,
+                  count: importArtifacts.artifactRevisions.edges.length,
                 }),
               );
               onOk(
                 e,
-                res.importArtifacts.tasks
+                importArtifacts.tasks
                   .filter((task) => task.taskId != null)
                   .map((task) => ({
                     taskId: task.taskId!,

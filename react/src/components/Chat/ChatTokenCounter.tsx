@@ -3,10 +3,9 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useTokenCount } from '../../hooks/useTokenizer';
-import QuestionIconWithTooltip from '../QuestionIconWithTooltip';
 import { UIMessage } from 'ai';
 import { Typography, Tag, Divider } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIQuestionIconWithTooltip, BAIFlex } from 'backend.ai-ui';
 import { t } from 'i18next';
 import { map, last } from 'lodash-es';
 import React from 'react';
@@ -65,7 +64,7 @@ const ChatTokenCounter: React.FC<ChatTokenCounterProps> = ({
           <Typography.Text>{totalTokenCount}</Typography.Text>{' '}
           <Typography.Text type="secondary"> tokens</Typography.Text>
         </span>
-        <QuestionIconWithTooltip title={t('chatui.TokenCounterTooltip')} />
+        <BAIQuestionIconWithTooltip title={t('chatui.TokenCounterTooltip')} />
       </Tag>
     </BAIFlex>
   );

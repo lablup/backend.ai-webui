@@ -63,6 +63,7 @@ protocol.registerSchemesAsPrivileged([
       secure: true,
       bypassCSP: true,
       supportFetchAPI: true,
+      corsEnabled: true,
     },
   },
 ]);
@@ -565,7 +566,10 @@ app.on('ready', () => {
       const mimeType = mime.lookup(filePath) || 'application/octet-stream';
 
       return new Response(data, {
-        headers: { 'content-type': mimeType },
+        headers: {
+          'content-type': mimeType,
+          'access-control-allow-origin': '*',
+        },
       });
     } catch (err) {
       console.error('Error reading file:', err);

@@ -8,6 +8,7 @@ import {
   filterOutNullAndUndefined,
   toLocalId,
 } from '../../helper';
+import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIFlex from '../BAIFlex';
 import BAILink from '../BAILink';
 import BAIText from '../BAIText';
@@ -21,7 +22,6 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import * as _ from 'lodash-es';
 import { Package, Container, Brain, BanIcon, UndoIcon } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
 dayjs.extend(relativeTime);
@@ -91,7 +91,7 @@ const BAIArtifactTable = ({
   ...tableProps
 }: BAIArtifactTableProps) => {
   const { token } = theme.useToken();
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
 
   const artifact = useFragment<BAIArtifactTableArtifactFragment$key>(
     graphql`

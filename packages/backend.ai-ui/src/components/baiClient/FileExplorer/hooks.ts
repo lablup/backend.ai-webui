@@ -1,3 +1,4 @@
+import { useBAIi18n } from '../../../hooks/useBAIi18n';
 import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import { VFolderFile } from '../../provider/BAIClientProvider/types';
 import { FolderInfoContext } from './BAIFileExplorer';
@@ -6,7 +7,6 @@ import { App } from 'antd';
 import { RcFile } from 'antd/es/upload';
 import * as _ from 'lodash-es';
 import { use, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 
 export const useSearchVFolderFiles = (vfolder: string, fetchKey?: string) => {
   const baiClient = useConnectedBAIClient();
@@ -67,7 +67,7 @@ export const useSearchVFolderFiles = (vfolder: string, fetchKey?: string) => {
 };
 
 export const useUploadVFolderFiles = () => {
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   const { modal } = App.useApp();
   const { targetVFolderId, currentPath } = use(FolderInfoContext);
   const baiClient = useConnectedBAIClient();

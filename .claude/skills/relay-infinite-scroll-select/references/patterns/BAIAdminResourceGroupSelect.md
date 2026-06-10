@@ -32,7 +32,7 @@ import { Skeleton } from 'antd';
 import { GetRef } from 'antd/lib';
 import * as _ from 'lodash-es';
 import { useOptimistic, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { usePaginationFragment } from 'react-relay';
 import { graphql } from 'relay-runtime';
 
@@ -46,7 +46,7 @@ const BAIAdminResourceGroupSelect = ({
   loading,
   ...selectPropsWithoutLoading
 }: BAIAdminResourceGroupSelectProps) => {
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   const selectRef = useRef<GetRef<typeof BAISelect>>(null);
   const [searchStr, setSearchStr] = useState<string>();
   const [optimisticSearchStr, setOptimisticSearchStr] =

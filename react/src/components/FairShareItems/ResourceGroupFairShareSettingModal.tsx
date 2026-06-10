@@ -7,10 +7,10 @@ import {
   ResourceGroupFairShareSettingModalMutation,
   ResourceGroupFairShareSettingModalMutation$variables,
 } from '../../__generated__/ResourceGroupFairShareSettingModalMutation.graphql';
-import QuestionIconWithTooltip from '../QuestionIconWithTooltip';
 import { App, Col, Form, Input, InputNumber, Row, theme } from 'antd';
 import { FormInstance } from 'antd/lib';
 import {
+  BAIQuestionIconWithTooltip,
   BAIAlert,
   BAICard,
   BAIFlex,
@@ -181,7 +181,7 @@ const ResourceGroupFairShareSettingModal: React.FC<
             label={
               <BAIFlex gap="xxs">
                 {t('fairShare.DecayUnitDays')}
-                <QuestionIconWithTooltip
+                <BAIQuestionIconWithTooltip
                   title={t('fairShare.DecayUnitDaysDescription')}
                 />
               </BAIFlex>
@@ -200,7 +200,7 @@ const ResourceGroupFairShareSettingModal: React.FC<
               label={
                 <BAIFlex gap="xxs">
                   {t('fairShare.HalfLifeDays')}
-                  <QuestionIconWithTooltip
+                  <BAIQuestionIconWithTooltip
                     title={t('fairShare.HalfLifeDaysDescription')}
                   />
                 </BAIFlex>
@@ -238,7 +238,7 @@ const ResourceGroupFairShareSettingModal: React.FC<
               label={
                 <BAIFlex gap="xxs">
                   {t('fairShare.LookbackDays')}
-                  <QuestionIconWithTooltip
+                  <BAIQuestionIconWithTooltip
                     title={t('fairShare.LookbackDaysDescription')}
                   />
                 </BAIFlex>
@@ -276,7 +276,7 @@ const ResourceGroupFairShareSettingModal: React.FC<
               label={
                 <BAIFlex gap="xxs">
                   {t('fairShare.DefaultWeight')}
-                  <QuestionIconWithTooltip
+                  <BAIQuestionIconWithTooltip
                     title={t('fairShare.DefaultWeightDescription')}
                   />
                 </BAIFlex>
@@ -300,7 +300,7 @@ const ResourceGroupFairShareSettingModal: React.FC<
           label={
             <BAIFlex gap="xxs">
               {t('fairShare.ResourceWeights')}
-              <QuestionIconWithTooltip
+              <BAIQuestionIconWithTooltip
                 title={t('fairShare.ResourceWeightsDescription')}
               />
             </BAIFlex>

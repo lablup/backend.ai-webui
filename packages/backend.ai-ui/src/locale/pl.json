@@ -27,6 +27,9 @@
     "FailedToActivateArtifacts": "Nie udało się aktywować artefaktów.",
     "SuccessfullyActivated": "Pomyślnie aktywowane artefakty."
   },
+  "comp:BAIAdminKeypairResourcePolicySelect": {
+    "SelectKeypairResourcePolicy": "Wybierz politykę zasobów keypair"
+  },
   "comp:BAIAdminModelServiceSelect": {
     "SelectModelService": "Wybierz usługę modelu"
   },
@@ -443,9 +446,12 @@
   },
   "comp:UserNodes": {
     "AllowedClientIps": "Dozwolone IP klientów",
-    "ContainerGIDs": "GID kontenerów",
-    "ContainerMainGID": "Główny GID kontenera",
+    "ContainerGIDs": "Dodatkowe GID",
+    "ContainerGIDsTooltip": "Dodatkowe numeryczne identyfikatory grup przypisane procesom kontenera",
+    "ContainerMainGID": "GID kontenera",
+    "ContainerMainGIDTooltip": "Domyślny numeryczny identyfikator grupy przypisywany procesom wewnątrz kontenera",
     "ContainerUID": "UID kontenera",
+    "ContainerUIDTooltip": "Liczbowy identyfikator użytkownika przypisany procesom w kontenerze",
     "CreatedAt": "Utworzono",
     "Description": "Opis",
     "Disabled": "Wyłączone",
@@ -454,6 +460,7 @@
     "Enabled": "Włączone",
     "FullName": "Pełna nazwa",
     "IntegrationName": "Nazwa integracji",
+    "MainAccessKey": "Główny klucz dostępu",
     "ModifiedAt": "Zmodyfikowano",
     "NeedPasswordChange": "Wymagana zmiana hasła",
     "Project": "Projekt",
@@ -463,6 +470,7 @@
     "StatusInfo": "Informacje o statusie",
     "SudoSessionEnabled": "Sesja Sudo włączona",
     "TwoFA": "Uwierzytelnianie dwuskładnikowe",
+    "TwoFAActivatedAt": "Uwierzytelnianie dwuskładnikowe aktywowano",
     "UserID": "ID użytkownika",
     "Username": "Nazwa użytkownika"
   },

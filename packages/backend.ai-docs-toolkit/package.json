@@ -44,7 +44,7 @@
   },
   "dependencies": {
     "@pdf-lib/fontkit": "^1.1.1",
-    "handlebars": "^4.7.8",
+    "handlebars": "^4.7.9",
     "marked": "^12.0.2",
     "pdf-lib": "^1.17.1",
     "shiki": "1.29.2",

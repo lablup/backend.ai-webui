@@ -318,8 +318,19 @@ const LoginView: React.FC<{
     }
     setIsLoginPanelOpen(true);
     setIsBlockPanelOpen(false);
-    // Dismiss splash when login form becomes visible (logged-out state)
-    (globalThis as any).__dismissSplash?.();
+    // Logged-out: turn the splash into the login backdrop (keep the weave +
+    // version/copyright metadata, hide the loader). The login modal renders
+    // above it. Fall back to full dismissal on older index.html shells that
+    // don't expose __enterLoginBackdrop.
+    const splashApi = globalThis as unknown as {
+      __enterLoginBackdrop?: () => void;
+      __dismissSplash?: () => void;
+    };
+    if (typeof splashApi.__enterLoginBackdrop === 'function') {
+      splashApi.__enterLoginBackdrop();
+    } else {
+      splashApi.__dismissSplash?.();
+    }
 
     const urlParams = new URLSearchParams(window.location.search);
     const tokenParam = urlParams.get('token');
@@ -971,7 +982,6 @@ const LoginView: React.FC<{
     onLogoutSession: logoutSession,
     apiEndpoint,
     connectionMode,
-    enforcedEndpoint: devApiEndpointOverride,
   });
 
   const handleConnectionModeChange = useCallback(
@@ -1083,6 +1093,10 @@ const LoginView: React.FC<{
       }}
     >
       <App>
+        {/* The login screen background (Diagonal Weave + version/copyright
+            metadata) is the persisted splash element from index.html, switched
+            to backdrop mode via __enterLoginBackdrop(). It sits at z-index
+            10000, below the login panel wrapper (10001). */}
         <div
           style={{
             position: 'fixed',

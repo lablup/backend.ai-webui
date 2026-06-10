@@ -22,6 +22,7 @@ import IdleCheckDescriptionModal from './IdleCheckDescriptionModal';
 import ImageNodeSimpleTag from './ImageNodeSimpleTag';
 import { UNSAFELazySessionImageTag } from './ImageTags';
 import MountedVFolderLinks from './MountedVFolderLinks';
+import { getUnifiedSlotNameFromTag } from './SessionFormItems/ResourceAllocationFormItems';
 import SessionSchedulingHistoryModal from './SessionSchedulingHistoryModal';
 import SessionUsageMonitor from './SessionUsageMonitor';
 import {
@@ -61,6 +62,22 @@ import { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 import { useLocation } from 'react-router-dom';
+
+// When a session is tagged as using a unified-memory accelerator slot, its
+// quantity is auto-allocated and not meaningfully stored in `requested_slots`.
+// Surface that slot as the accelerator type so `ResourceNumbersOfSession`
+// renders it as the device description, and drop it from the numeric slot map
+// to avoid showing it twice.
+const buildResourceWithUnifiedSlot = (
+  requestedSlots?: string | null,
+  tag?: string | null,
+) => {
+  const slots = JSON.parse(requestedSlots || '{}');
+  const unifiedSlotName = getUnifiedSlotNameFromTag(tag);
+  return unifiedSlotName
+    ? { ..._.omit(slots, unifiedSlotName), acceleratorType: unifiedSlotName }
+    : slots;
+};
 
 const SessionDetailContent: React.FC<{
   id: string;
@@ -149,6 +166,7 @@ const SessionDetailContent: React.FC<{
         scaling_group
         agent_ids
         requested_slots
+        tag
         idle_checks @since(version: "24.12.0")
         type
         startup_command
@@ -359,7 +377,10 @@ const SessionDetailContent: React.FC<{
                 <Tag>{session.scaling_group}</Tag>
               </Tooltip>
               <ResourceNumbersOfSession
-                resource={JSON.parse(session.requested_slots || '{}')}
+                resource={buildResourceWithUnifiedSlot(
+                  session.requested_slots,
+                  session.tag,
+                )}
               />
             </BAIFlex>
           </Descriptions.Item>

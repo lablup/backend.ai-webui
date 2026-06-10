@@ -13,6 +13,7 @@ import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import { ReloadOutlined } from '@ant-design/icons';
 import { Button, Select, type SelectProps, Space, Tooltip } from 'antd';
 import {
+  BAIButton,
   useUpdatableState,
   BAIFlex,
   toGlobalId,
@@ -286,7 +287,7 @@ const VFolderSelect: React.FC<VFolderSelectProps> = ({
         ) : null}
         {showCreateButton ? (
           <Tooltip title={t('data.CreateANewStorageFolder')}>
-            <Button
+            <BAIButton
               icon={<PlusIcon />}
               variant="text"
               onClick={() => {

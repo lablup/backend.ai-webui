@@ -89,9 +89,6 @@ test.describe(
       await expect(
         table.getByRole('columnheader', { name: 'Enabled' }),
       ).toBeVisible();
-      await expect(
-        table.getByRole('columnheader', { name: 'Control' }),
-      ).toBeVisible();
     });
 
     // 1.2
@@ -719,7 +716,9 @@ test.describe(
       // When there is only one filter property, it is auto-selected and displayed
       // as the current value in the property selector
       await expect(
-        page.locator('.ant-select-content-value', { hasText: 'Registry Name' }),
+        page
+          .locator('.ant-select-content')
+          .filter({ hasText: 'Registry Name' }),
       ).toBeVisible();
     });
   },

@@ -149,7 +149,10 @@ export type BackendAIClient = {
       user: string;
       vfolder: string;
     }): Promise<any>;
-    leave_invited(name: string | null): Promise<any>;
+    leave_invited(
+      name: string | null,
+      sharedUserUuid?: string | null,
+    ): Promise<any>;
     info: (name: string) => Promise<any>;
     mkdir: (
       path: string,

@@ -19,6 +19,15 @@ test.describe(
   () => {
     test.describe.configure({ mode: 'serial' });
 
+    // FR-2664 renamed the serving/deployments system. The list page now uses
+    // DeploymentListPageQuery instead of ServingPageQuery, and the detail page
+    // uses DeploymentDetailPageQuery instead of EndpointDetailPageQuery. The
+    // setupAndNavigateToDetail helper mocks both old query names and navigates
+    // to serving/:id — but the new DeploymentDetailPage removed the "Routes
+    // Info" card and all route-related UI. Every test in this file would fail
+    // with the same root cause, so all are marked fixme at the describe level.
+    test.fixme(true);
+
     /**
      * Helper: sets up authentication, feature flag, GraphQL mocks, and navigates
      * to the endpoint detail page. Returns after the "Routes Info" card is visible.
@@ -114,6 +123,14 @@ test.describe(
       page,
       request,
     }) => {
+      // FR-2664 replaced EndpointDetailPage with DeploymentDetailPage. The
+      // new DeploymentDetailPage does not render a "Routes Info" card or the
+      // BAIRouteNodes table — route management was removed from the UI. The
+      // EndpointDetailPageQuery mock this test relies on no longer exists
+      // (renamed to DeploymentDetailPageQuery), and navigating to /serving/:id
+      // now redirects to /deployments/:id which renders the new page without
+      // any route-related UI.
+      test.fixme(true);
       await setupAndNavigateToDetail(
         page,
         request,
@@ -158,6 +175,13 @@ test.describe(
       page,
       request,
     }) => {
+      // Same root cause as test 1.1: FR-2664 renamed the serving system to
+      // deployments. The list page now uses DeploymentListPageQuery instead
+      // of ServingPageQuery, so setupAndNavigateToDetail (which mocks
+      // ServingPageQuery) cannot navigate to the endpoint detail page.
+      // The Routes Info card and legacy route table tested here no longer
+      // exist in the new DeploymentDetailPage.
+      test.fixme(true);
       await setupAndNavigateToDetail(
         page,
         request,

@@ -14,6 +14,7 @@ import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import compression from 'compression';
 import { defineConfig, loadEnv, type Plugin } from 'vite';
+import checker from 'vite-plugin-checker';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import { VitePWA } from 'vite-plugin-pwa';
 import svgr from 'vite-plugin-svgr';
@@ -463,17 +464,19 @@ export default defineConfig(({ command, mode }) => {
     resolve: {
       // Force a single instance of shared singletons across the monorepo.
       //
-      // BUI intentionally maintains its OWN i18n instance (see the note in
-      // packages/backend.ai-ui/vite.config.ts). Do NOT add `i18next` or
-      // `react-i18next` here — the design relies on each side having its
-      // own default singleton. React, Relay, Jotai must still be deduped
-      // so hooks/state sharing works across the monorepo.
+      // Under Option C, BUI still has its own i18n instance, but accesses
+      // it via explicit binding (useBAIi18n → useTranslation({ i18n })) so
+      // dedup'ing react-i18next to one physical copy is now safe: there is
+      // no React-Context-based discovery path that could leak between BUI
+      // and host.
       dedupe: [
         'react',
         'react-dom',
         'react-relay',
         'relay-runtime',
         'jotai',
+        'i18next',
+        'react-i18next',
       ],
       // Array form lets us mix regex aliases (for `src/` baseUrl imports) with
       // the workspace-package aliases. `find` is matched against the import
@@ -587,24 +590,12 @@ export default defineConfig(({ command, mode }) => {
         // packages/backend.ai-client/src trigger HMR instead of requiring
         // a tsup rebuild + full reload.
         'backend.ai-client',
-        // BUI is designed to have its OWN i18n singleton separate from the
-        // host app (see packages/backend.ai-ui/src/locale/index.ts +
-        // BAIConfigProvider wraps children with <I18nextProvider i18n={buiI18n}>).
-        //
-        // Under CRA this worked because pnpm's per-package i18next/react-i18next
-        // copies (split by typescript peer version) meant both `react-i18next`
-        // copies had DIFFERENT React Context objects. BUI's Provider published
-        // to its own Context; host's useTranslation read host's Context.
-        //
-        // Under Vite's dep optimizer the two copies collapse into one bundled
-        // module = one Context object. BAIConfigProvider's Provider then
-        // leaks into host components and they resolve host keys against BUI's
-        // resource set (which only has BUI keys) → raw keys render.
-        //
-        // Excluding from optimization preserves natural pnpm-per-package
-        // resolution and keeps the two Context objects distinct.
-        'i18next',
-        'react-i18next',
+        // i18next / react-i18next are NOT excluded here under Option C.
+        // BUI keeps its own i18n instance but accesses it via explicit
+        // `useTranslation(undefined, { i18n: buiI18n })` binding (the
+        // `useBAIi18n` hook). That bypasses React Context entirely, so
+        // pnpm/Vite deduping react-i18next to a single module is fine —
+        // there is no Context-leakage path between BUI and the host.
       ],
     },
 
@@ -765,6 +756,19 @@ export default defineConfig(({ command, mode }) => {
       // by craco's workbox-webpack-plugin GenerateSW call in
       // craco.config.cjs:390-400.
       //
+      // Run `tsc --noEmit` in a worker so type errors surface in the dev
+      // terminal and as a browser overlay during `vite dev`. Vite itself
+      // only strips types via esbuild, so without this plugin type
+      // errors are visible only in the IDE or via `scripts/verify.sh`.
+      // `tsconfigPath` pins the checker to the consumer's tsconfig
+      // (which has the `paths` workaround for pnpm-global-virtual-store
+      // type resolution — see FR-2925).
+      checker({
+        typescript: {
+          tsconfigPath: resolve(__dirname, 'tsconfig.json'),
+        },
+      }),
+
       // Strategy `generateSW` produces a standalone SW file that precaches
       // the build manifest. We opt out of `registerType: 'autoUpdate'` to
       // preserve the legacy behaviour where index.html's inline script

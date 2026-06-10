@@ -48,9 +48,6 @@ const AdminDashboardPage = React.lazy(
 );
 const EnvironmentPage = React.lazy(() => import('./pages/EnvironmentPage'));
 const MyEnvironmentPage = React.lazy(() => import('./pages/MyEnvironmentPage'));
-const StorageHostSettingPage = React.lazy(
-  () => import('./pages/StorageHostSettingPage'),
-);
 const UserSettingsPage = React.lazy(() => import('./pages/UserSettingsPage'));
 const SessionLauncherPage = React.lazy(
   () => import('./pages/SessionLauncherPage'),
@@ -68,13 +65,6 @@ const FolderInvitationResponseModalOpener = React.lazy(
 const FileUploadManager = React.lazy(
   () => import('./components/FileUploadManager'),
 );
-// FR-2675 / FR-2822 — The legacy `ServiceLauncherCreatePage` /
-// `ServiceLauncherUpdatePage` routes have been removed in favor of the
-// in-page `DeploymentCreateModal` opened from `/deployments`. The
-// underlying `ServiceLauncherPageContent` component is still imported
-// transitively (by `useModelServiceLauncher`, `LegacyModelTryContentButton`,
-// etc.) and is scheduled for removal in a follow-up cleanup once those
-// call sites migrate to the new modal-based create flow.
 
 const DeploymentListPage = React.lazy(
   () => import('./pages/DeploymentListPage'),
@@ -88,9 +78,7 @@ const AdminDeploymentListPage = React.lazy(
 const InteractiveLoginPage = React.lazy(
   () => import('./pages/InteractiveLoginPage'),
 );
-const UserCredentialsPage = React.lazy(
-  () => import('./pages/UserCredentialsPage'),
-);
+const AdminUsersPage = React.lazy(() => import('./pages/AdminUsersPage'));
 
 const AgentSummaryPage = React.lazy(() => import('./pages/AgentSummaryPage'));
 const MaintenancePage = React.lazy(() => import('./pages/MaintenancePage'));
@@ -763,12 +751,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
   },
   {
     path: '/storage-settings/:hostname',
-    handle: { labelKey: 'storageHost.StorageSetting' },
-    element: (
-      <Suspense fallback={<Skeleton active />}>
-        <StorageHostSettingPage />
-      </Suspense>
-    ),
+    element: <WebUINavigate to="/agent?tab=storages" replace />,
   },
   {
     path: '/information',
@@ -806,7 +789,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
     handle: { labelKey: 'webui.menu.UserCredentials&Policies' },
     element: (
       <Suspense fallback={<Skeleton active />}>
-        <UserCredentialsPage />
+        <AdminUsersPage />
       </Suspense>
     ),
   },

@@ -2,7 +2,6 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import type { DeploymentRevisionDetail_revision$key } from '../__generated__/DeploymentRevisionDetail_revision.graphql';
 import { DeploymentRevisionHistoryTabActivateMutation } from '../__generated__/DeploymentRevisionHistoryTabActivateMutation.graphql';
 import {
   DeploymentRevisionHistoryTabListQuery,
@@ -11,16 +10,23 @@ import {
 import type { DeploymentRevisionHistoryTab_deployment$key } from '../__generated__/DeploymentRevisionHistoryTab_deployment.graphql';
 import { convertToOrderBy } from '../helper';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
+import DeploymentAddRevisionModal from './DeploymentAddRevisionModal';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
-import QuestionIconWithTooltip from './QuestionIconWithTooltip';
-import { LoadingOutlined, PlayCircleOutlined } from '@ant-design/icons';
-import { App, Button, Popconfirm, theme, Typography } from 'antd';
+import FolderLink from './FolderLink';
+import {
+  LoadingOutlined,
+  MoreOutlined,
+  PlayCircleOutlined,
+} from '@ant-design/icons';
+import { App, Dropdown, Popconfirm, Space, theme, Typography } from 'antd';
 import {
   type BAIColumnType,
+  BAIButton,
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAINameActionCell,
+  BAIQuestionIconWithTooltip,
   BAITable,
   BAITag,
   BAIUnmountAfterClose,
@@ -28,6 +34,7 @@ import {
   INITIAL_FETCH_KEY,
   type GraphQLFilter,
   filterOutNullAndUndefined,
+  isDeploymentInStoppedCategory,
   isValidUUID,
   toLocalId,
   useBAILogger,
@@ -36,13 +43,14 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
+import { CopyPlusIcon } from 'lucide-react';
 import {
   parseAsInteger,
   parseAsString,
   parseAsStringLiteral,
   useQueryStates,
 } from 'nuqs';
-import React, { useState, useTransition } from 'react';
+import React, { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   graphql,
@@ -75,7 +83,6 @@ const availableRevisionSorterValues = [
 export interface DeploymentRevisionHistoryTabProps {
   deploymentFrgmt: DeploymentRevisionHistoryTab_deployment$key;
   deploymentId: string;
-  isDeploymentDestroying?: boolean;
   fetchKey?: string;
 }
 
@@ -91,12 +98,7 @@ export interface DeploymentRevisionHistoryTabProps {
  */
 const DeploymentRevisionHistoryTab: React.FC<
   DeploymentRevisionHistoryTabProps
-> = ({
-  deploymentFrgmt,
-  deploymentId,
-  isDeploymentDestroying = false,
-  fetchKey,
-}) => {
+> = ({ deploymentFrgmt, deploymentId, fetchKey }) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -107,9 +109,18 @@ const DeploymentRevisionHistoryTab: React.FC<
     string | null
   >(null);
   const [drawerRevision, setDrawerRevision] = useState<{
-    frgmt: RevisionNode & DeploymentRevisionDetail_revision$key;
+    frgmt: RevisionNode;
     status: 'current' | 'deploying' | 'none';
   } | null>(null);
+  // Source revision for the AddRevision modal — both entry points in this
+  // tab (row overflow menu / drawer Apply+More) hand a revision node
+  // straight to the modal. A non-null node opens the modal and drives the
+  // prefill; null closes it. No `fetchQuery` warm-up is needed: the source
+  // revision data already comes off this tab's list query, which spreads
+  // `DeploymentAddRevisionModal_revisionSource` on the node so it satisfies
+  // the modal's fragment ref.
+  const [sourceRevisionFrgmt, setSourceRevisionFrgmt] =
+    useState<RevisionNode | null>(null);
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
     'table_column_overrides.DeploymentRevisionHistoryTab',
@@ -141,10 +152,18 @@ const DeploymentRevisionHistoryTab: React.FC<
     graphql`
       fragment DeploymentRevisionHistoryTab_deployment on ModelDeployment {
         id
+        metadata {
+          status
+        }
+        ...DeploymentAddRevisionModal_deployment
       }
     `,
     deploymentFrgmt,
   );
+
+  // Derive the stopped-category guard from this component's own fragment
+  // status rather than receiving it as a prop from the parent.
+  const deploymentStatus = deployment?.metadata?.status;
 
   const parseRevisionFilter = (filter: string | null) => {
     if (!filter) return null;
@@ -232,6 +251,7 @@ const DeploymentRevisionHistoryTab: React.FC<
                     id
                     identity {
                       canonicalName
+                      architecture
                     }
                   }
                   modelMountConfig {
@@ -239,9 +259,11 @@ const DeploymentRevisionHistoryTab: React.FC<
                     vfolder {
                       id
                       name
+                      ...FolderLink_vfolderNode
                     }
                   }
                   ...DeploymentRevisionDetail_revision
+                  ...DeploymentAddRevisionModal_revisionSource
                 }
               }
             }
@@ -344,7 +366,7 @@ const DeploymentRevisionHistoryTab: React.FC<
       title: (
         <BAIFlex gap="xxs" align="center">
           {t('deployment.RevisionNumberWithID')}
-          <QuestionIconWithTooltip
+          <BAIQuestionIconWithTooltip
             title={t('deployment.RevisionNumberTooltip')}
           />
         </BAIFlex>
@@ -366,17 +388,16 @@ const DeploymentRevisionHistoryTab: React.FC<
         const isDeployDisabled =
           isCurrent ||
           isDeploying ||
-          isDeploymentDestroying ||
+          isDeploymentInStoppedCategory(deploymentStatus) ||
           rollingBackRevisionId === record.id;
         return (
           <BAINameActionCell
             title={
-              <BAIFlex gap="xs" align="center">
+              <BAIFlex gap="xs" align="center" wrap="nowrap">
                 <Typography.Link
                   onClick={() =>
                     setDrawerRevision({
-                      frgmt: record as RevisionNode &
-                        DeploymentRevisionDetail_revision$key,
+                      frgmt: record,
                       status: isCurrent
                         ? 'current'
                         : isDeploying
@@ -410,6 +431,11 @@ const DeploymentRevisionHistoryTab: React.FC<
               </BAIFlex>
             }
             showActions="always"
+            // TODO: "AddNewRevisionFromThis" is currently the only menu item.
+            // The entire More button is disabled when stopped rather than
+            // per-item. When more menu items are added, switch to per-item
+            // disabled and remove moreMenuDisabled.
+            moreMenuDisabled={isDeploymentInStoppedCategory(deploymentStatus)}
             actions={[
               {
                 key: 'deploy',
@@ -418,8 +444,10 @@ const DeploymentRevisionHistoryTab: React.FC<
                 disabled: isDeployDisabled,
                 disabledReason: deployDisabledReason,
                 popConfirm: {
-                  title: t('deployment.Apply'),
-                  description: `#${record.revisionNumber}`,
+                  title: t('deployment.ApplyRevision'),
+                  description: t('deployment.ApplyConfirm', {
+                    revisionNumber: record.revisionNumber,
+                  }),
                   okText: t('deployment.Apply'),
                   cancelText: t('button.Cancel'),
                   okButtonProps: {
@@ -428,6 +456,16 @@ const DeploymentRevisionHistoryTab: React.FC<
                   onConfirm: () => {
                     void handleRollback(record);
                   },
+                },
+              },
+              {
+                key: 'duplicate',
+                title: t('deployment.AddNewRevisionFromThis'),
+                icon: <CopyPlusIcon size={token.fontSize} />,
+                showInMenu: 'always',
+                disabled: isDeploymentInStoppedCategory(deploymentStatus),
+                onClick: () => {
+                  setSourceRevisionFrgmt(record);
                 },
               },
             ]}
@@ -477,27 +515,20 @@ const DeploymentRevisionHistoryTab: React.FC<
       defaultHidden: true,
       render: (_value, record) => {
         const canonicalName = record.imageV2?.identity?.canonicalName;
-        const imageGlobalId = record.imageV2?.id;
-        if (!canonicalName && !imageGlobalId) return '-';
+        const architecture = record.imageV2?.identity?.architecture;
+        const fullName =
+          canonicalName && architecture
+            ? `${canonicalName}@${architecture}`
+            : canonicalName;
+        if (!fullName) return '-';
         return (
-          <BAIFlex gap="xs" align="center" wrap="wrap">
-            {canonicalName ? (
-              <BAIText
-                copyable
-                ellipsis={{ tooltip: canonicalName }}
-                style={{ maxWidth: 180 }}
-              >
-                {canonicalName}
-              </BAIText>
-            ) : null}
-            {imageGlobalId ? (
-              <BAIFlex gap={0} align="center">
-                {'('}
-                <BAIId globalId={imageGlobalId} />
-                {')'}
-              </BAIFlex>
-            ) : null}
-          </BAIFlex>
+          <BAIText
+            copyable={{ text: fullName }}
+            ellipsis={{ tooltip: fullName }}
+            style={{ maxWidth: 180 }}
+          >
+            {fullName}
+          </BAIText>
         );
       },
     },
@@ -508,30 +539,20 @@ const DeploymentRevisionHistoryTab: React.FC<
       render: (_value, record) => {
         const vfolder = record.modelMountConfig?.vfolder;
         const vfolderId = record.modelMountConfig?.vfolderId;
-        if (!vfolder?.name && !vfolderId) return '-';
-        return (
-          <BAIFlex gap="xs" align="center" wrap="wrap">
-            {vfolder?.name ? (
-              <Typography.Text>{vfolder.name}</Typography.Text>
-            ) : null}
-            {vfolder?.id ? (
-              <BAIFlex gap={0} align="center">
-                {'('}
-                <BAIId globalId={vfolder.id} />
-                {')'}
-              </BAIFlex>
-            ) : vfolderId ? (
-              <Typography.Text type="secondary">{vfolderId}</Typography.Text>
-            ) : null}
-          </BAIFlex>
-        );
+        if (!vfolder && !vfolderId) return '-';
+        if (vfolder) {
+          return <FolderLink vfolderNodeFragment={vfolder} />;
+        }
+        return <Typography.Text type="secondary">{vfolderId}</Typography.Text>;
       },
     },
     {
       title: (
         <BAIFlex gap="xxs" align="center">
           {t('deployment.ClusterMode')}
-          <QuestionIconWithTooltip title={t('deployment.ClusterModeTooltip')} />
+          <BAIQuestionIconWithTooltip
+            title={t('deployment.ClusterModeTooltip')}
+          />
         </BAIFlex>
       ),
       key: 'clusterMode',
@@ -601,30 +622,65 @@ const DeploymentRevisionHistoryTab: React.FC<
           onClose={() => setDrawerRevision(null)}
           extra={
             drawerRevision ? (
-              <Popconfirm
-                title={t('deployment.Apply')}
-                description={`#${drawerRevision.frgmt.revisionNumber}`}
-                okText={t('deployment.Apply')}
-                cancelText={t('button.Cancel')}
-                okButtonProps={{ danger: true }}
-                onConfirm={async () => {
-                  const success = await handleRollback(drawerRevision.frgmt);
-                  if (success) setDrawerRevision(null);
-                }}
-              >
-                <Button
-                  type="primary"
-                  icon={<PlayCircleOutlined />}
-                  disabled={
-                    drawerRevision.status === 'current' ||
-                    drawerRevision.status === 'deploying' ||
-                    isDeploymentDestroying ||
-                    !!rollingBackRevisionId
-                  }
+              <Space.Compact>
+                <Popconfirm
+                  title={t('deployment.ApplyRevision')}
+                  description={t('deployment.ApplyConfirm', {
+                    revisionNumber: drawerRevision.frgmt.revisionNumber,
+                  })}
+                  okText={t('deployment.Apply')}
+                  cancelText={t('button.Cancel')}
+                  okButtonProps={{ danger: true }}
+                  onConfirm={async () => {
+                    const success = await handleRollback(drawerRevision.frgmt);
+                    if (success) setDrawerRevision(null);
+                  }}
                 >
-                  {t('deployment.Apply')}
-                </Button>
-              </Popconfirm>
+                  <BAIButton
+                    type="primary"
+                    icon={<PlayCircleOutlined />}
+                    disabled={
+                      drawerRevision.status === 'current' ||
+                      drawerRevision.status === 'deploying' ||
+                      isDeploymentInStoppedCategory(deploymentStatus) ||
+                      !!rollingBackRevisionId
+                    }
+                  >
+                    {t('deployment.Apply')}
+                  </BAIButton>
+                </Popconfirm>
+                <Dropdown
+                  trigger={['click']}
+                  menu={{
+                    items: [
+                      {
+                        key: 'duplicate',
+                        label: t('deployment.AddNewRevisionFromThis'),
+                        icon: <CopyPlusIcon size={token.fontSize} />,
+                        disabled:
+                          isDeploymentInStoppedCategory(deploymentStatus),
+                        onClick: () => {
+                          // Capture the fragment ref before closing the
+                          // drawer so the source survives the drawer unmount.
+                          const source = drawerRevision.frgmt;
+                          setDrawerRevision(null);
+                          setSourceRevisionFrgmt(source);
+                        },
+                      },
+                    ],
+                  }}
+                >
+                  {/* TODO: "AddNewRevisionFromThis" is the only menu item.
+                      Disable the entire button when stopped. When more items
+                      are added, disable per-item instead. */}
+                  <BAIButton
+                    type="primary"
+                    icon={<MoreOutlined />}
+                    aria-label={t('button.More')}
+                    disabled={isDeploymentInStoppedCategory(deploymentStatus)}
+                  />
+                </Dropdown>
+              </Space.Compact>
             ) : undefined
           }
         />
@@ -686,6 +742,25 @@ const DeploymentRevisionHistoryTab: React.FC<
           },
         }}
       />
+      {/* Local Suspense around the lazily-mounted modal so its lazy form
+          selects (preset / vfolder / runtime variant `useLazyLoadQuery`)
+          don't bubble their suspend up to the page-level boundary and blank
+          the page. `fallback={null}` so the modal simply appears once ready,
+          instead of a loading-modal shell that then swaps for the real modal.
+          Mirrors `DeploymentDetailPage` / `VFolderNodesV2`. */}
+      <Suspense fallback={null}>
+        <BAIUnmountAfterClose>
+          <DeploymentAddRevisionModal
+            open={!!sourceRevisionFrgmt}
+            deploymentFrgmt={deployment}
+            sourceRevisionFrgmt={sourceRevisionFrgmt}
+            onRequestClose={(success) => {
+              setSourceRevisionFrgmt(null);
+              if (success) handleRefresh();
+            }}
+          />
+        </BAIUnmountAfterClose>
+      </Suspense>
     </>
   );
 };

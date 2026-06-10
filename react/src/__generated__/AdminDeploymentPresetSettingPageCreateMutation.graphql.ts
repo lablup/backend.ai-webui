@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<2244d018fc3ff2500d12cfc18865d200>>
+ * @generated SignedSource<<18b8683048a850070bfaccb92d109b5d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -140,7 +140,7 @@ v1 = [
         "variableName": "input"
       }
     ],
-    "concreteType": "CreateDeploymentRevisionPresetPayloadGQL",
+    "concreteType": "CreateDeploymentRevisionPresetPayload",
     "kind": "LinkedField",
     "name": "adminCreateDeploymentRevisionPreset",
     "plural": false,

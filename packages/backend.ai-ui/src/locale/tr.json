@@ -27,6 +27,9 @@
     "FailedToActivateArtifacts": "Eserleri etkinleştiremedi.",
     "SuccessfullyActivated": "Başarıyla etkinleştirilmiş eserler."
   },
+  "comp:BAIAdminKeypairResourcePolicySelect": {
+    "SelectKeypairResourcePolicy": "Keypair kaynak politikası seçin"
+  },
   "comp:BAIAdminModelServiceSelect": {
     "SelectModelService": "Model hizmeti seçin"
   },
@@ -443,9 +446,12 @@
   },
   "comp:UserNodes": {
     "AllowedClientIps": "İzin Verilen İstemci IP'leri",
-    "ContainerGIDs": "Konteyner GID'leri",
-    "ContainerMainGID": "Konteyner Ana GID",
+    "ContainerGIDs": "Ek GID'ler",
+    "ContainerGIDsTooltip": "Konteyner işlemlerine atanan ek sayısal grup kimlikleri",
+    "ContainerMainGID": "Konteyner GID",
+    "ContainerMainGIDTooltip": "Konteyner içindeki işlemlere atanan varsayılan sayısal grup kimliği",
     "ContainerUID": "Konteyner UID",
+    "ContainerUIDTooltip": "Konteyner içindeki işlemlere atanan sayısal kullanıcı kimliği",
     "CreatedAt": "Oluşturulma",
     "Description": "Açıklama",
     "Disabled": "Devre Dışı",
@@ -454,6 +460,7 @@
     "Enabled": "Etkin",
     "FullName": "Tam Ad",
     "IntegrationName": "Entegrasyon adı",
+    "MainAccessKey": "Ana Erişim Anahtarı",
     "ModifiedAt": "Değiştirilme",
     "NeedPasswordChange": "Şifre Değişikliği Gerekli",
     "Project": "Proje",
@@ -463,6 +470,7 @@
     "StatusInfo": "Durum Bilgisi",
     "SudoSessionEnabled": "Sudo Oturumu Etkin",
     "TwoFA": "İki Faktörlü Kimlik Doğrulama",
+    "TwoFAActivatedAt": "2FA Etkinleştirme Tarihi",
     "UserID": "Kullanıcı Kimliği",
     "Username": "Kullanıcı Adı"
   },

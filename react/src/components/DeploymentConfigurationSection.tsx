@@ -25,7 +25,6 @@ import {
   HistoryOutlined,
   LoadingOutlined,
   MoreOutlined,
-  PlusOutlined,
 } from '@ant-design/icons';
 import {
   Alert,
@@ -38,6 +37,7 @@ import {
   Skeleton,
   Space,
   Typography,
+  theme,
 } from 'antd';
 import {
   BAIButton,
@@ -51,6 +51,7 @@ import {
   BAIUnmountAfterClose,
   BooleanTag,
   filterOutEmpty,
+  isDeploymentInStoppedCategory,
   safeDecodeUuid,
   toLocalId,
   useBAILogger,
@@ -58,6 +59,7 @@ import {
   useInterval,
 } from 'backend.ai-ui';
 import type { BAIDeploymentStatus } from 'backend.ai-ui';
+import { PlusIcon } from 'lucide-react';
 import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -66,11 +68,11 @@ import { useLocation } from 'react-router-dom';
 
 interface DeploymentConfigurationSectionProps {
   deploymentFrgmt: DeploymentConfigurationSection_deployment$key | null;
-  isDeploymentDestroying?: boolean;
   revisionFetchKey: string;
   isPendingRefetch: boolean;
   onRefetch: () => void;
   onAddRevision: () => void;
+  revisionCardRef?: React.RefObject<HTMLDivElement | null>;
 }
 
 type DeploymentSectionData =
@@ -231,15 +233,16 @@ const DeploymentConfigurationSection: React.FC<
   DeploymentConfigurationSectionProps
 > = ({
   deploymentFrgmt,
-  isDeploymentDestroying = false,
   revisionFetchKey,
   isPendingRefetch,
   onRefetch,
   onAddRevision,
+  revisionCardRef,
 }) => {
   'use memo';
 
   const { t } = useTranslation();
+  const { token } = theme.useToken();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const webuiNavigate = useWebUINavigate();
@@ -327,6 +330,10 @@ const DeploymentConfigurationSection: React.FC<
     `);
 
   const deploymentName = deployment?.metadata.name ?? '';
+  // Derive the stopped-category guard locally from this component's own
+  // fragment status (rather than threading a boolean prop down from the page),
+  // consistent with the project-mismatch guard resolved below.
+  const deploymentStatus = deployment?.metadata.status;
   const listPath = location.pathname.startsWith('/admin-deployments')
     ? '/admin-deployments'
     : location.pathname.startsWith('/project-admin-deployments')
@@ -399,7 +406,7 @@ const DeploymentConfigurationSection: React.FC<
             <Space.Compact>
               <BAIButton
                 icon={<EditOutlined />}
-                disabled={isDeploymentDestroying}
+                disabled={isDeploymentInStoppedCategory(deploymentStatus)}
                 action={async () => {
                   setSettingModalOpen(true);
                 }}
@@ -416,7 +423,8 @@ const DeploymentConfigurationSection: React.FC<
                       icon: <DeleteFilled />,
                       danger: true,
                       disabled:
-                        isDeploymentDestroying || isInFlightDeleteMutation,
+                        isDeploymentInStoppedCategory(deploymentStatus) ||
+                        isInFlightDeleteMutation,
                       onClick: () => setIsDeleteModalOpen(true),
                     },
                   ],
@@ -454,33 +462,8 @@ const DeploymentConfigurationSection: React.FC<
           }
         />
       </BAICard>
-      {isDeployingDifferentRevision && (
-        <Alert
-          type="info"
-          icon={<LoadingOutlined spin />}
-          showIcon
-          title={t('deployment.ApplyingRevision', {
-            revisionNumber:
-              deployingRevision.revisionNumber != null
-                ? `#${deployingRevision.revisionNumber}`
-                : (toLocalId(deployingRevision.id) ?? ''),
-          })}
-          action={
-            <Button
-              onClick={() =>
-                handleShowRevisionDrawer(
-                  deployingRevision,
-                  'deploying',
-                  t('deployment.ApplyingRevisionDetail'),
-                )
-              }
-            >
-              {t('deployment.ViewRevision')}
-            </Button>
-          }
-        />
-      )}
       <BAICard
+        ref={revisionCardRef}
         activeTabKey={activeRevisionTab}
         onTabChange={(key) => {
           if (key === 'currentRevision' || key === 'revisionHistory') {
@@ -501,13 +484,15 @@ const DeploymentConfigurationSection: React.FC<
           <BAIFlex gap="xs" align="center">
             <BAIButton
               type="primary"
-              icon={<PlusOutlined />}
-              disabled={isDeploymentDestroying || isProjectMismatch}
-              // `action` (not `onClick`) wraps the state update that mounts
-              // `<DeploymentAddRevisionModal>` (which suspends on its Relay
-              // queries) in `startTransition`, so the page stays interactive
-              // instead of falling into its Suspense fallback. The button
-              // itself shows a loading spinner until the modal renders.
+              icon={<PlusIcon />}
+              disabled={
+                isDeploymentInStoppedCategory(deploymentStatus) ||
+                isProjectMismatch
+              }
+              // `action` (not `onClick`) wraps the open state update in
+              // `startTransition` so the page stays interactive while
+              // the modal mounts. The button shows a loading spinner
+              // until the transition completes.
               action={async () => {
                 onAddRevision();
               }}
@@ -519,17 +504,44 @@ const DeploymentConfigurationSection: React.FC<
       >
         {activeRevisionTab === 'currentRevision' && (
           <>
+            {isDeployingDifferentRevision && (
+              <Alert
+                type="info"
+                icon={<LoadingOutlined spin />}
+                showIcon
+                style={{ marginBottom: token.marginMD }}
+                title={t('deployment.ApplyingRevision', {
+                  revisionNumber:
+                    deployingRevision.revisionNumber != null
+                      ? `#${deployingRevision.revisionNumber}`
+                      : (toLocalId(deployingRevision.id) ?? ''),
+                })}
+                action={
+                  <Button
+                    onClick={() =>
+                      handleShowRevisionDrawer(
+                        deployingRevision,
+                        'deploying',
+                        t('deployment.ApplyingRevisionDetail'),
+                      )
+                    }
+                  >
+                    {t('deployment.ViewRevision')}
+                  </Button>
+                }
+              />
+            )}
             {currentRevision ? (
               <DeploymentRevisionDetail
                 revisionFrgmt={currentRevision}
                 status="current"
               />
-            ) : isDeployingDifferentRevision ? null : (
+            ) : !isDeployingDifferentRevision ? (
               <Empty
                 image={Empty.PRESENTED_IMAGE_SIMPLE}
                 description={t('deployment.NoCurrentRevisionDeployed')}
               />
-            )}
+            ) : null}
           </>
         )}
         {activeRevisionTab === 'revisionHistory' && deployment && (
@@ -538,7 +550,6 @@ const DeploymentConfigurationSection: React.FC<
               <DeploymentRevisionHistoryTab
                 deploymentFrgmt={deployment}
                 deploymentId={deployment.id}
-                isDeploymentDestroying={isDeploymentDestroying}
                 fetchKey={revisionFetchKey}
               />
             </Suspense>

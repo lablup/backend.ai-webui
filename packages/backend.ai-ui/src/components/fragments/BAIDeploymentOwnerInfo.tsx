@@ -1,7 +1,7 @@
 import { BAIDeploymentOwnerInfo_deployment$key } from '../../__generated__/BAIDeploymentOwnerInfo_deployment.graphql';
+import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { Tooltip, Typography } from 'antd';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
 export interface BAIDeploymentOwnerInfoProps {
@@ -16,7 +16,7 @@ const BAIDeploymentOwnerInfo: React.FC<BAIDeploymentOwnerInfoProps> = ({
   deploymentFrgmt,
 }) => {
   'use memo';
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
 
   const deployment = useFragment(
     graphql`

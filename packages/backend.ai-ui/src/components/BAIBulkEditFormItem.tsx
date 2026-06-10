@@ -1,3 +1,4 @@
+import { useBAIi18n } from '../hooks/useBAIi18n';
 import BAIFlex from './BAIFlex';
 import { DownOutlined } from '@ant-design/icons';
 import { useControllableValue } from 'ahooks';
@@ -11,7 +12,6 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { useTranslation } from 'react-i18next';
 
 /**
  * Represents the different edit modes for bulk editing.
@@ -91,7 +91,7 @@ const BAIBulkEditFormItem: React.FC<BAIBulkEditFormItemProps> = ({
 }) => {
   'use memo';
 
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   const form = Form.useFormInstance();
   const [mode, setMode] = useState<BulkEditMode>('keep');
 

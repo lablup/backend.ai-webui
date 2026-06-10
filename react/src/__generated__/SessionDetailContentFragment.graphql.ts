@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f85b02e5f629f0c4ffa7cc7881101285>>
+ * @generated SignedSource<<d7dc4959ca564d39da90385683fa5452>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -59,6 +59,7 @@ export type SessionDetailContentFragment$data = {
   readonly startup_command: string | null | undefined;
   readonly status: string | null | undefined;
   readonly status_data: string | null | undefined;
+  readonly tag: string | null | undefined;
   readonly terminated_at: string | null | undefined;
   readonly type: string | null | undefined;
   readonly user_id: string | null | undefined;
@@ -289,6 +290,13 @@ return {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
+      "name": "tag",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "idle_checks",
       "storageKey": null
     },
@@ -456,6 +464,6 @@ return {
 };
 })();
 
-(node as any).hash = "64e3de1fe50da213171b0e8dce27b6f7";
+(node as any).hash = "1ed31bf868878d31349d76cff968e0c3";
 
 export default node;

@@ -3,6 +3,7 @@ import { BAIAvailablePresetSelectValueQuery } from '../../__generated__/BAIAvail
 import { convertToUUID, toLocalId } from '../../helper';
 import useDebouncedDeferredValue from '../../helper/useDebouncedDeferredValue';
 import { useFetchKey } from '../../hooks';
+import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { useLazyPaginatedQuery } from '../../hooks/usePaginatedQuery';
 import BAIFlex from '../BAIFlex';
 import BAISelect, { BAISelectProps } from '../BAISelect';
@@ -19,7 +20,6 @@ import {
   useState,
   useTransition,
 } from 'react';
-import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 export type DeploymentRevisionPresetNode = NonNullable<
@@ -49,7 +49,7 @@ const BAIAvailablePresetSelect: React.FC<BAIAvailablePresetSelectProps> = ({
   ...selectProps
 }) => {
   'use memo';
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   const { token } = theme.useToken();
   const selectRef = useRef<GetRef<typeof BAISelect>>(null);
   const [controllableValue, setControllableValue] = useControllableValue<

@@ -153,7 +153,8 @@ Production build (`pnpm run build`) runs these steps sequentially:
 ### Internationalization
 
 - JSON translation files in `resources/i18n/` (22 languages supported)
-- React components use `useTranslation()` hook from `react-i18next`
+- **Host** components (`react/src/**`) use `useTranslation()` / `<Trans>` from `react-i18next`
+- **BUI** components (`packages/backend.ai-ui/src/**`) use `useBAIi18n()` / `<BAITrans>` — they bind explicitly to BUI's own i18next instance, bypassing React Context lookup. Direct imports of `useTranslation` / `Trans` / `withTranslation` / `Translation` / `I18nextProvider` from `react-i18next` inside BUI are blocked by ESLint (FR-2986).
 - Backend.AI UI package has own locale files in `packages/backend.ai-ui/src/locale/`
 - Run `make i18n` to extract translation strings
 
@@ -184,16 +185,16 @@ Production build (`pnpm run build`) runs these steps sequentially:
 
 ### On-Demand Skills (loaded only when needed)
 
-- **Storybook**: `storybook-guide` skill (CSF 3, meta config, story patterns, checklists)
-- **i18n**: `i18n-guide` skill (translation keys, casing rules, language-specific guidelines)
-- **Documentation**: `docs-guide` skill (user manual structure, terminology, multilingual rules)
+- **Storybook**: `storybook-patterns` skill (fw plugin; CSF 3, meta config, story patterns, checklists)
+- **i18n**: `i18n-patterns` skill (fw plugin; translation keys, casing rules, language-specific guidelines)
+- **Documentation**: `docs-writing-guide` skill (fw plugin; user manual structure, terminology, multilingual rules)
 - **Relay**: `relay-patterns` skill (fragment architecture, naming conventions, query optimization)
 
 ### Auto-Applied Instructions (loaded when editing matching files)
 
 - `react.instructions.md` → `react/**/*.tsx,react/**/*.ts`
 - `storybook.instructions.md` → `packages/backend.ai-ui/**/*.stories.tsx,packages/backend.ai-ui/**/*.stories.ts`
-- `i18n.instructions.md` → `resources/i18n/**/*.json,packages/backend.ai-ui/src/locale/**/*.json` (use `i18n-guide` skill for tsx/ts context)
+- `i18n.instructions.md` → `resources/i18n/**/*.json,packages/backend.ai-ui/src/locale/**/*.json` (use `i18n-patterns` skill for tsx/ts context)
 - `e2e.instructions.md` → `e2e/**/*.ts`
 - `docs.instructions.md` → `packages/backend.ai-webui-docs/**/*.md`
 

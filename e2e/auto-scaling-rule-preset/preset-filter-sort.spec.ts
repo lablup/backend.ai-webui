@@ -70,8 +70,14 @@ async function applyNameFilter(page: Page, searchValue: string): Promise<void> {
   await autoCompleteInput.pressSequentially(searchValue);
   // Click the search button to submit the filter condition
   await page.getByRole('button', { name: 'search' }).click();
-  // Wait for the filter tag to appear, confirming the condition was added to local state
-  await expect(page.locator('.ant-tag')).toBeVisible({ timeout: 5000 });
+  // Wait for the filter tag to appear, confirming the condition was added to local state.
+  // BAIGraphQLPropertyFilter renders condition tags with a `title` attribute (e.g.
+  // title="Name contains …"). Other .ant-tag elements on the page (e.g. GroupLabels
+  // chips like "namespace", "pod") do not have a title, so [title] is used to
+  // distinguish the filter condition tag from unrelated tag elements.
+  await expect(page.locator('.ant-tag[title]').first()).toBeVisible({
+    timeout: 5000,
+  });
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -167,17 +173,12 @@ test.describe(
     test('Superadmin can clear an active filter to restore the full list', async ({
       page,
     }) => {
-      // Navigate and note the initial row count
+      // Navigate to the tab
       await page.goto(`${webuiEndpoint}/admin-serving?tab=prometheus-preset`);
       await page.waitForLoadState('domcontentloaded');
       await expect(
         page.getByRole('button', { name: /Add Preset/i }),
       ).toBeVisible({ timeout: 60000 });
-      const paginationInfo = page
-        .getByRole('listitem')
-        .filter({ hasText: /items/ });
-      await expect(paginationInfo).toBeVisible({ timeout: 10000 });
-      const initialCountText = await paginationInfo.textContent();
 
       // Apply a non-matching filter so the table shows 0 results
       const filterValue = `e2e-nonexistent-clear-test-${Date.now()}`;
@@ -203,10 +204,18 @@ test.describe(
       // Verify filter tag is gone
       await expect(filterTag).toBeHidden({ timeout: 10000 });
 
-      // Verify pagination total returns to the original count
-      await expect(paginationInfo).toHaveText(initialCountText!, {
+      // Verify the full list is restored: empty state is gone and at least one
+      // data row is visible. Avoid comparing to a stored exact count because
+      // parallel tests may create/delete presets concurrently, making an exact
+      // count assertion flaky. Scope to real tbody data rows so AntD's hidden
+      // measure row and placeholder row can't satisfy the assertion.
+      await expect(page.locator('.ant-table-placeholder')).toBeHidden({
         timeout: 15000,
       });
+      const firstDataRow = page
+        .locator('.ant-table-tbody > tr.ant-table-row')
+        .first();
+      await expect(firstDataRow).toBeVisible({ timeout: 15000 });
     });
   },
 );

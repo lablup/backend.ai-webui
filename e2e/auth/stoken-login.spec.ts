@@ -78,11 +78,45 @@ const FIXTURE_STOKEN =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3Nfa2V5IjoiQUtJQUlPU0ZPRE5ON0VYQU1QTEUiLCJzZWNyZXRfa2V5Ijoid0phbHJYVXRuRkVNSS9LN01ERU5HL2JQeFJmaUNZRVhBTVBMRUtFWSJ9.BC4eXVHEG0_HhYknddlUo8NlUnr0aY99qpXAO5FfN5g';
 
 /**
+ * Minimal config.toml that provides an API endpoint so that
+ * `useResolvedApiEndpoint` can resolve to a non-empty string and the
+ * `STokenLoginBoundary` can proceed past the Suspense phase.
+ *
+ * The nightly webui is deployed with `apiEndpoint = ""` (users enter their
+ * own endpoint at login time). Without a non-empty endpoint the hook never
+ * caches a result, causing the `STokenLoginBoundaryInner` to suspend in an
+ * infinite loop and the error card to never render.
+ */
+const MOCK_CONFIG_TOML = `[general]
+apiEndpoint = "https://mock-backend.e2e.test"
+connectionMode = "SESSION"
+`;
+
+/**
+ * Mock `config.toml` so that `useResolvedApiEndpoint` resolves to a stable
+ * non-empty value. Must be registered before `page.goto()`.
+ */
+async function installConfigMock(page: Page): Promise<void> {
+  await page.route('**/config.toml**', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'text/plain',
+      body: MOCK_CONFIG_TOML,
+    });
+  });
+}
+
+/**
  * Install the ping + existing-session probes once so the boundary reaches
  * `token_login`. Individual tests register `**\/server/token-login` on
  * top of this to drive the flow they care about.
+ *
+ * Also installs a `config.toml` mock so that `useResolvedApiEndpoint`
+ * resolves to a stable non-empty endpoint on deployments (like the nightly)
+ * that ship with an empty `apiEndpoint`.
  */
 async function installBoundaryProbeMocks(page: Page): Promise<void> {
+  await installConfigMock(page);
   await page.route('**/func/', async (route) => {
     if (route.request().method() !== 'GET') {
       await route.continue();
@@ -120,13 +154,23 @@ test.describe(
     test('invalid sToken on `/` surfaces the boundary error card with a Retry button', async ({
       page,
     }) => {
+      // Mock config.toml + backend probes so the boundary can resolve the
+      // endpoint and reach `token_login` deterministically. Without a
+      // non-empty `apiEndpoint` the nightly webui leaves `useResolvedApiEndpoint`
+      // in an infinite Suspense loop and the error card never renders.
+      await installBoundaryProbeMocks(page);
+      await page.route('**/server/token-login', async (route) => {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify(AUTH_FAILED_INERT_RESPONSE),
+        });
+      });
+
       await page.goto(`${webuiEndpoint}/?sToken=invalid-token-for-e2e`);
 
-      // The boundary renders one of the `STokenLoginError.kind`-specific
-      // cards. Depending on reachability the kind will be either
-      // `token-invalid` (server rejected the token) or `server-unreachable`
-      // (no cluster), and in edge cases `endpoint-unresolved`. Match the
-      // Retry button that is present in every kind's default card.
+      // The boundary classifies the AUTH_FAILED_INERT_RESPONSE as
+      // `token-invalid` and renders the default error card with Retry.
       await expect(page.getByRole('button', { name: /retry/i })).toBeVisible({
         timeout: 15_000,
       });
@@ -138,6 +182,15 @@ test.describe(
     test('invalid sToken on `/` does not strip the token from the URL', async ({
       page,
     }) => {
+      await installBoundaryProbeMocks(page);
+      await page.route('**/server/token-login', async (route) => {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify(AUTH_FAILED_INERT_RESPONSE),
+        });
+      });
+
       await page.goto(`${webuiEndpoint}/?sToken=invalid-token-for-e2e`);
       await expect(page.getByRole('button', { name: /retry/i })).toBeVisible({
         timeout: 15_000,
@@ -151,6 +204,15 @@ test.describe(
     test('invalid sToken on `/interactive-login` surfaces the same error card', async ({
       page,
     }) => {
+      await installBoundaryProbeMocks(page);
+      await page.route('**/server/token-login', async (route) => {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify(AUTH_FAILED_INERT_RESPONSE),
+        });
+      });
+
       await page.goto(
         `${webuiEndpoint}/interactive-login?sToken=invalid-token-for-e2e`,
       );

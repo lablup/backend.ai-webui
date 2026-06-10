@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<607b1df7379c784ecf0520b25dabf569>>
+ * @generated SignedSource<<a2ef7c9cafe03d1d7238771d49cb6bf6>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,10 +12,10 @@ import { ConcreteRequest } from 'relay-runtime';
 export type ArtifactStatus = "AVAILABLE" | "FAILED" | "NEEDS_APPROVAL" | "PULLED" | "PULLING" | "REJECTED" | "SCANNED" | "VERIFYING" | "%future added value";
 export type ImportArtifactsInput = {
   artifactRevisionIds: ReadonlyArray<string>;
-  options?: ImportArtifactsOptionsGQL | null | undefined;
+  options?: ImportArtifactsOptions | null | undefined;
   vfolderId?: string | null | undefined;
 };
-export type ImportArtifactsOptionsGQL = {
+export type ImportArtifactsOptions = {
   force?: boolean;
 };
 export type BAIImportArtifactModalImportArtifactsMutation$variables = {

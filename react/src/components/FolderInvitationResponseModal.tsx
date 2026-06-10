@@ -2,7 +2,6 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import {
   InvitationItem,
@@ -34,8 +33,6 @@ const FolderInvitationResponseModal: React.FC<
     invitations,
     { acceptInvitation, rejectInvitation, updateInvitations },
   ] = useVFolderInvitations();
-  const baiClient = useSuspendedBackendaiClient();
-  const hasInviterEmail = baiClient.supports('invitation-inviter-email');
   const { getErrorMessage } = useErrorMessageResolver();
   const { upsertNotification } = useSetBAINotification();
 
@@ -127,9 +124,7 @@ const FolderInvitationResponseModal: React.FC<
               {
                 key: 'from',
                 label: t('data.From'),
-                children: hasInviterEmail
-                  ? item.inviter_user_email
-                  : item.inviter,
+                children: item.inviter_user_email || item.inviter || '-',
               },
               {
                 key: 'permission',

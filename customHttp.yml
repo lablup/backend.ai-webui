@@ -84,6 +84,15 @@ applications:
             value: "camera=(), microphone=(), geolocation=(), interest-cohort=()"
 
   # Storybook (backend.ai-ui) — App root: packages/backend.ai-ui
+  #
+  # NOTE: Storybook's manager shell renders every component preview by
+  # embedding `iframe.html` in a same-origin <iframe>. The baseline
+  # `X-Frame-Options: DENY` + `frame-ancestors 'none'` used by the other
+  # apps blocks ALL framing — including same-origin — so the preview pane
+  # comes up blank for every story/doc. This app therefore relaxes the
+  # framing headers to SAMEORIGIN / `frame-ancestors 'self'`, which still
+  # blocks cross-origin clickjacking but lets the manager → preview iframe
+  # load. The remaining baseline headers are unchanged.
   - appRoot: packages/backend.ai-ui
     customHeaders:
       - pattern: "**"
@@ -91,9 +100,9 @@ applications:
           - key: "Strict-Transport-Security"
             value: "max-age=31536000; includeSubDomains"
           - key: "X-Frame-Options"
-            value: "DENY"
+            value: "SAMEORIGIN"
           - key: "Content-Security-Policy"
-            value: "frame-ancestors 'none'"
+            value: "frame-ancestors 'self'"
           - key: "X-Content-Type-Options"
             value: "nosniff"
           - key: "Referrer-Policy"

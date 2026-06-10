@@ -37,6 +37,7 @@ export { default as ResourceStatistics } from './ResourceStatistics';
 export { processMemoryValue, convertToNumber } from './ResourceStatistics';
 export { default as BAIUnmountAfterClose } from './BAIUnmountAfterClose';
 export { default as BAIAlertIconWithTooltip } from './BAIAlertIconWithTooltip';
+export { default as BAIQuestionIconWithTooltip } from './BAIQuestionIconWithTooltip';
 export { default as BAILink } from './BAILink';
 export type { BAILinkProps } from './BAILink';
 export { default as BAIBackButton } from './BAIBackButton';
@@ -88,10 +89,10 @@ export {
 } from './BAIUserNodes';
 export type { UserNodeInList } from './BAIUserNodes';
 export {
-  default as BAIUserV2Nodes,
+  default as BAIAdminUserV2Table,
   availableUserV2SorterValues,
-} from './BAIUserV2Nodes';
-export type { UserV2InList } from './BAIUserV2Nodes';
+} from './BAIAdminUserV2Table';
+export type { UserV2InList } from './BAIAdminUserV2Table';
 export {
   default as BAISessionNodesV2,
   availableSessionV2SorterValues,
@@ -102,7 +103,11 @@ export { default as BAIUncontrolledInput } from './BAIUncontrolledInput';
 export { default as BAITag } from './BAITag';
 export { default as BAITagList } from './BAITagList';
 export type { BAITagListProps } from './BAITagList';
-export { default as BAIDeploymentStatusTag } from './BAIDeploymentStatusTag';
+export {
+  default as BAIDeploymentStatusTag,
+  isDeploymentInStoppedCategory,
+  DEPLOYMENT_STOPPED_CATEGORY_STATUSES,
+} from './BAIDeploymentStatusTag';
 export type {
   BAIDeploymentStatusTagProps,
   BAIDeploymentStatus,

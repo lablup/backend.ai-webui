@@ -2,6 +2,7 @@ import { BAIKeypairSelectPaginatedQuery } from '../../__generated__/BAIKeypairSe
 import { BAIKeypairSelectValueQuery } from '../../__generated__/BAIKeypairSelectValueQuery.graphql';
 import useDebouncedDeferredValue from '../../helper/useDebouncedDeferredValue';
 import { useFetchKey } from '../../hooks';
+import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { useLazyPaginatedQuery } from '../../hooks/usePaginatedQuery';
 import { mergeFilterValues } from '../BAIPropertyFilter';
 import BAISelect, { BAISelectProps } from '../BAISelect';
@@ -18,7 +19,6 @@ import {
   useState,
   useTransition,
 } from 'react';
-import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 export type KeypairNode = NonNullable<
@@ -47,7 +47,7 @@ const BAIKeypairSelect: React.FC<BAIKeypairSelectProps> = ({
   ...selectProps
 }) => {
   'use memo';
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   const selectRef = useRef<GetRef<typeof BAISelect>>(null);
   const [controllableValue, setControllableValue] = useControllableValue<
     string | string[] | undefined

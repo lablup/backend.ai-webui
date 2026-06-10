@@ -1,4 +1,5 @@
 // @ts-ignore
+import { useBAIi18n } from '../hooks/useBAIi18n';
 import BAIFlex from './BAIFlex';
 import {
   BlockOutlined,
@@ -18,7 +19,6 @@ import Draggable, {
   type DraggableData,
   type DraggableEvent,
 } from 'react-draggable';
-import { useTranslation } from 'react-i18next';
 
 export const DEFAULT_BAI_MODAL_Z_INDEX = 1001;
 
@@ -295,7 +295,7 @@ const BAIModal: React.FC<BAIModalProps> = ({
   ...modalProps
 }) => {
   'use memo';
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   const { token } = theme.useToken();
   const [windowState, setWindowState] = useState<WindowState>('default');
 

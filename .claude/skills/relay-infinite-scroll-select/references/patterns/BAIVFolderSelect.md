@@ -47,7 +47,7 @@ import {
   useState,
   useTransition,
 } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 export type VFolderNode = NonNullable<
@@ -85,7 +85,7 @@ const BAIVFolderSelect: React.FC<BAIVFolderSelectProps> = ({
   ...selectProps
 }) => {
   'use memo';
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   const selectRef = useRef<GetRef<typeof BAISelect>>(null);
   const [controllableValue, setControllableValue] = useControllableValue<
     string | string[] | undefined

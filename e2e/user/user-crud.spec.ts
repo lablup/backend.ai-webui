@@ -37,8 +37,15 @@ test.describe.serial(
         .catch(() => false);
 
       if (isVisible) {
-        // Deactivate the user
-        await userRow.getByRole('button', { name: 'Deactivate' }).click();
+        // Deactivate the user.
+        // The Deactivate action uses a lucide BanIcon which has no accessible name,
+        // so we target it by its position (3rd button) in the actions area.
+        // Hover first so that hover-only action cells reveal their buttons.
+        await userRow.hover();
+        await userRow
+          .locator('.bai-name-action-cell-actions button')
+          .nth(2)
+          .click();
         const popconfirm = page.locator('.ant-popconfirm');
         await popconfirm.getByRole('button', { name: 'Deactivate' }).click();
         // Wait for user to disappear from the Active list
@@ -55,7 +62,9 @@ test.describe.serial(
       if (isInactiveVisible) {
         // Permanently delete the user
         await inactiveUserRow.getByRole('checkbox').click();
-        await page.getByRole('button', { name: 'trash bin' }).click();
+        // The purge button uses <DeleteFilled /> icon whose aria-label is "delete".
+        // Use .first() to target the selection-area bulk delete button.
+        await page.getByRole('button', { name: 'delete' }).first().click();
 
         const purgeModal = new PurgeUsersModal(page);
         await purgeModal.waitForVisible();
@@ -120,31 +129,46 @@ test.describe.serial(
       // 2. Navigate to credential page
       await navigateTo(page, 'credential');
 
-      // 3. Locate the user in the table
+      // 3. Wait for the Users tab to confirm the page has fully loaded
+      await expect(page.getByRole('tab', { name: 'Users' })).toBeVisible();
+
+      // 4. Locate the user in the table
       const userRow = page.getByRole('row').filter({ hasText: EMAIL });
       await expect(userRow).toBeVisible();
 
-      // 4. Click the Edit button to open the modify modal
-      await userRow.getByRole('button', { name: 'Edit' }).click();
+      // 5. Click the Edit button to open the modify modal.
+      // The edit action is the 2nd button (index 1) in the action cell.
+      // Hover first so that hover-only action cells reveal their buttons.
+      await userRow.hover();
+      await userRow
+        .locator('.bai-name-action-cell-actions button')
+        .nth(1)
+        .click();
 
-      // 5. Update user name and password using the modal class
+      // 6. Update user name and password using the modal class
       const editModal = UserSettingModal.forEdit(page);
       await editModal.waitForVisible();
       await editModal.fillUserName(MODIFIED_USERNAME);
       await editModal.fillNewPasswords(NEW_PASSWORD);
       await editModal.clickOk();
 
-      // 6. Wait for modal to close
+      // 7. Wait for modal to close
       await editModal.waitForHidden();
 
-      // 7. Verify success by checking user info
-      await userRow.getByRole('button', { name: 'info-circle' }).click();
+      // 8. Verify success by checking user info.
+      // The info button is the 1st button (index 0) in the action cell.
+      // Hover first so that hover-only action cells reveal their buttons.
+      await userRow.hover();
+      await userRow
+        .locator('.bai-name-action-cell-actions button')
+        .nth(0)
+        .click();
       const userInfoModal = new UserInfoModal(page);
       await userInfoModal.waitForVisible();
       await userInfoModal.verifyUserName(MODIFIED_USERNAME);
       await userInfoModal.close();
 
-      // 8. Verify the new password works by logging in
+      // 9. Verify the new password works by logging in
       await logout(page);
       await loginAsCreatedAccount(page, request, EMAIL, NEW_PASSWORD);
       await expect(page.getByTestId('user-dropdown-button')).toBeVisible();
@@ -166,8 +190,15 @@ test.describe.serial(
       const userRow = page.getByRole('row').filter({ hasText: EMAIL });
       await expect(userRow).toBeVisible();
 
-      // 5. Click the "Deactivate" button (Ban icon) in the Control column
-      await userRow.getByRole('button', { name: 'Deactivate' }).click();
+      // 5. Click the "Deactivate" button (Ban icon) in the Control column.
+      // The Deactivate action uses a lucide BanIcon which has no accessible name,
+      // so we target it by its position (3rd button) in the actions area.
+      // Hover first so that hover-only action cells reveal their buttons.
+      await userRow.hover();
+      await userRow
+        .locator('.bai-name-action-cell-actions button')
+        .nth(2)
+        .click();
 
       // 6. Verify popconfirm dialog appears
       const popconfirm = page.locator('.ant-popconfirm');
@@ -204,8 +235,15 @@ test.describe.serial(
       const userRow = page.getByRole('row').filter({ hasText: EMAIL });
       await expect(userRow).toBeVisible();
 
-      // 5. Click the "Activate" button (Undo icon) in the Control column
-      await userRow.getByRole('button', { name: 'Activate' }).click();
+      // 5. Click the "Activate" button (Undo icon) in the Control column.
+      // The Activate action uses a lucide UndoIcon which has no accessible name,
+      // so we target it by its position (3rd button) in the actions area.
+      // Hover first so that hover-only action cells reveal their buttons.
+      await userRow.hover();
+      await userRow
+        .locator('.bai-name-action-cell-actions button')
+        .nth(2)
+        .click();
 
       // 6. Verify popconfirm dialog appears
       const popconfirm = page.locator('.ant-popconfirm');
@@ -243,10 +281,17 @@ test.describe.serial(
       // 2. Navigate to credential page
       await navigateTo(page, 'credential');
 
-      // 3. Deactivate the user first (required before purging)
+      // 3. Deactivate the user first (required before purging).
+      // The Deactivate action uses a lucide BanIcon which has no accessible name,
+      // so we target it by its position (3rd button) in the actions area.
+      // Hover first so that hover-only action cells reveal their buttons.
       const userRow = page.getByRole('row').filter({ hasText: EMAIL });
       await expect(userRow).toBeVisible();
-      await userRow.getByRole('button', { name: 'Deactivate' }).click();
+      await userRow.hover();
+      await userRow
+        .locator('.bai-name-action-cell-actions button')
+        .nth(2)
+        .click();
       const popconfirm = page.locator('.ant-popconfirm');
       await popconfirm.getByRole('button', { name: 'Deactivate' }).click();
       // Wait for user to disappear from Active list before switching filters
@@ -267,17 +312,18 @@ test.describe.serial(
       // 7. Verify selection count appears
       await expect(page.getByText('1 selected')).toBeVisible();
 
-      // 8. Click the trash bin button to open purge modal
-      await page.getByRole('button', { name: 'trash bin' }).click();
+      // 8. Click the bulk-delete (purge selected) button to open purge modal.
+      // The purge button uses <DeleteFilled /> icon whose aria-label is "delete".
+      // Use .first() to target the selection-area bulk delete button, not row-level purge buttons.
+      await page.getByRole('button', { name: 'delete' }).first().click();
 
       // 9. Use PurgeUsersModal class to handle the deletion
       const purgeModal = new PurgeUsersModal(page);
       await purgeModal.waitForVisible();
 
-      // 10. Verify modal shows the user email
-      await purgeModal.verifyUserEmailDisplayed(EMAIL);
-
-      // 11. Confirm the deletion
+      // 10. Confirm the deletion
+      // Note: BAIDeleteConfirmModal only shows the item list when deleting >1 items,
+      // so we cannot verify the email directly in the modal for a single-user deletion.
       await purgeModal.confirmDeletion();
 
       // 12. Verify success message appears

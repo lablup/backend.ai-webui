@@ -27,6 +27,9 @@
     "FailedToActivateArtifacts": "Failed to activate artifacts.",
     "SuccessfullyActivated": "Successfully activated artifacts."
   },
+  "comp:BAIAdminKeypairResourcePolicySelect": {
+    "SelectKeypairResourcePolicy": "Select Keypair Resource Policy"
+  },
   "comp:BAIAdminModelServiceSelect": {
     "SelectModelService": "Select Model Service"
   },
@@ -443,9 +446,12 @@
   },
   "comp:UserNodes": {
     "AllowedClientIps": "Allowed Client IPs",
-    "ContainerGIDs": "Container GIDs",
-    "ContainerMainGID": "Container Main GID",
+    "ContainerGIDs": "Supplementary GID",
+    "ContainerGIDsTooltip": "Additional numeric group IDs assigned to container processes",
+    "ContainerMainGID": "Container GID",
+    "ContainerMainGIDTooltip": "Default numeric group ID assigned to processes inside the container",
     "ContainerUID": "Container UID",
+    "ContainerUIDTooltip": "Numeric User ID assigned to processes inside the container",
     "CreatedAt": "Created At",
     "Description": "Description",
     "Disabled": "Disabled",
@@ -454,6 +460,7 @@
     "Enabled": "Enabled",
     "FullName": "Full Name",
     "IntegrationName": "Integration Name",
+    "MainAccessKey": "Main Access Key",
     "ModifiedAt": "Modified At",
     "NeedPasswordChange": "Need Password Change",
     "Project": "Project",
@@ -463,6 +470,7 @@
     "StatusInfo": "Status Info",
     "SudoSessionEnabled": "Sudo Session Enabled",
     "TwoFA": "2FA",
+    "TwoFAActivatedAt": "2FA Activated At",
     "UserID": "User ID",
     "Username": "Username"
   },

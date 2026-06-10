@@ -4,19 +4,27 @@ import userEvent from '@testing-library/user-event';
 import { Form, FormInstance, Select } from 'antd';
 import React, { useEffect } from 'react';
 
-// Mock react-i18next
-vi.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => {
-      const translations: Record<string, string> = {
-        'comp:BAIBulkEditFormItem.KeepAsIs': 'Keep as is',
-        'comp:BAIBulkEditFormItem.Clear': 'Clear',
-        'comp:BAIBulkEditFormItem.UndoChanges': 'Undo changes',
-      };
-      return translations[key] || key;
-    },
-  }),
-}));
+// Partial mock: preserve every real export from `react-i18next` (notably
+// `initReactI18next`, which BUI's `locale/index.ts` consumes at import
+// time) and only override `useTranslation` for predictable label strings.
+// See useErrorMessageResolver.test.tsx for the rationale (FR-2986).
+vi.mock('react-i18next', async () => {
+  const actual =
+    await vi.importActual<typeof import('react-i18next')>('react-i18next');
+  return {
+    ...actual,
+    useTranslation: () => ({
+      t: (key: string) => {
+        const translations: Record<string, string> = {
+          'comp:BAIBulkEditFormItem.KeepAsIs': 'Keep as is',
+          'comp:BAIBulkEditFormItem.Clear': 'Clear',
+          'comp:BAIBulkEditFormItem.UndoChanges': 'Undo changes',
+        };
+        return translations[key] || key;
+      },
+    }),
+  };
+});
 
 // Helper component wrapper with Form context
 const FormWrapper: React.FC<{

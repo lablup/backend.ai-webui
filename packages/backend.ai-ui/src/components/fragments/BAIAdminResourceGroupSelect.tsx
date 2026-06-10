@@ -1,12 +1,12 @@
 import { BAIAdminResourceGroupSelectPaginationQuery } from '../../__generated__/BAIAdminResourceGroupSelectPaginationQuery.graphql';
 import { BAIAdminResourceGroupSelect_resourceGroupsFragment$key } from '../../__generated__/BAIAdminResourceGroupSelect_resourceGroupsFragment.graphql';
+import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAISelect, { BAISelectProps } from '../BAISelect';
 import TotalFooter from '../TotalFooter';
 import { Skeleton } from 'antd';
 import { GetRef } from 'antd/lib';
 import * as _ from 'lodash-es';
 import { useRef } from 'react';
-import { useTranslation } from 'react-i18next';
 import { usePaginationFragment } from 'react-relay';
 import { graphql } from 'relay-runtime';
 
@@ -22,7 +22,7 @@ const BAIAdminResourceGroupSelect = ({
   loading,
   ...selectPropsWithoutLoading
 }: BAIAdminResourceGroupSelectProps) => {
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   const selectRef = useRef<GetRef<typeof BAISelect>>(null);
 
   const { data, loadNext, isLoadingNext, refetch, hasNext } =

@@ -1,8 +1,8 @@
+import { useBAIi18n } from '../hooks/useBAIi18n';
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 
 const BAITestButton = () => {
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
 
   const [count, setCount] = useState(0);
   return (

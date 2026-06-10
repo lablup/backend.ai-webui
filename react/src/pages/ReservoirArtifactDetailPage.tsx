@@ -52,8 +52,8 @@ dayjs.extend(relativeTime);
 const { Title, Text, Paragraph } = Typography;
 
 type RevisionNode = NonNullable<
-  ReservoirArtifactDetailPageQuery$data['artifact']
->['revisions']['edges'][number]['node'];
+  NonNullable<ReservoirArtifactDetailPageQuery$data['artifact']>['revisions']
+>['edges'][number]['node'];
 
 const ReservoirArtifactDetailPage = () => {
   const { token } = theme.useToken();
@@ -215,9 +215,9 @@ const ReservoirArtifactDetailPage = () => {
       },
     );
 
-  const latestArtifact = artifact?.latestVersion.edges[0]?.node;
+  const latestArtifact = artifact?.latestVersion?.edges[0]?.node;
   const pullingArtifacts = filterOutNullAndUndefined(
-    artifact?.pullingArtifactRevisions.edges.map((e) => e?.node),
+    artifact?.pullingArtifactRevisions?.edges.map((e) => e?.node),
   );
 
   // Custom column for artifact revision table
@@ -517,7 +517,7 @@ const ReservoirArtifactDetailPage = () => {
             artifactRevisionFrgmt={filterOutNullAndUndefined(
               artifact?.revisions?.edges?.map((e) => e.node),
             )}
-            latestRevisionFrgmt={artifact?.latestVersion.edges[0].node}
+            latestRevisionFrgmt={artifact?.latestVersion?.edges[0]?.node}
             loading={deferredQueryVariables !== queryVariables}
             pagination={{
               current: tablePaginationOption.current,
@@ -542,7 +542,7 @@ const ReservoirArtifactDetailPage = () => {
                 }
                 if (!artifact) return;
 
-                const selectedNode = artifact.revisions.edges.find(
+                const selectedNode = artifact.revisions?.edges.find(
                   (e) => e.node.id === record.id,
                 )?.node;
 
@@ -561,7 +561,7 @@ const ReservoirArtifactDetailPage = () => {
             rowSelection={{
               type: 'checkbox',
               onChange: (keys) => {
-                if (!artifact) return;
+                if (!artifact?.revisions) return;
 
                 const revisions = artifact.revisions;
                 const revisionsIds = revisions.edges.map((e) => e.node.id);
@@ -619,7 +619,9 @@ const ReservoirArtifactDetailPage = () => {
         selectedArtifactRevisionFrgmt={selectedRevisions}
         open={!!artifact && !_.isEmpty(selectedRevisions)}
         connectionIds={
-          artifact ? [artifact.pullingArtifactRevisions.__id] : undefined
+          artifact?.pullingArtifactRevisions
+            ? [artifact.pullingArtifactRevisions.__id]
+            : undefined
         }
         onOk={(_e, tasks) => {
           setSelectedRevisions([]);

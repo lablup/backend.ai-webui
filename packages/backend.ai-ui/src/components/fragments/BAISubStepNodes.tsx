@@ -7,6 +7,7 @@ import {
   filterOutNullAndUndefined,
   newLineToBrElement,
 } from '../../helper';
+import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAISchedulingResultBadge, {
   SchedulingResult,
 } from '../BAISchedulingResultBadge';
@@ -21,7 +22,6 @@ import { theme } from 'antd';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import * as _ from 'lodash-es';
-import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
 dayjs.extend(duration);
@@ -60,7 +60,7 @@ const BAISubStepNodes = ({
   ...tableProps
 }: BAISubStepNodesProps) => {
   'use memo';
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   const { token } = theme.useToken();
 
   const subSteps = useFragment<BAISubStepNodesFragment$key>(

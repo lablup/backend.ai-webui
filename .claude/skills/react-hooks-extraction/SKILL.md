@@ -30,7 +30,7 @@ custom hooks, and `use-effect-event.md` rule.
 - **Hooks returning JSX are still named `use*`**, not `render*`. If a hook would return a full `<Component/>`, reconsider — it probably wants to be a component.
 - **`useEffectEvent` is effect-internal** — calling it outside `useEffect` / `useLayoutEffect` / `useInsertionEffect` has undefined behavior (React docs). Don't pass to JSX `onClick`.
 - **`useSuspendedBackendaiClient()` suspends the caller.** Wrap the caller in `<Suspense>` or accept that the first render shows fallback.
-- **i18n inside the hook** — call `useTranslation()` internally. Don't make callers pass `t` (project convention from lead coding style).
+- **i18n inside the hook** — call `useTranslation()` internally (or `useBAIi18n()` if the hook lives in `packages/backend.ai-ui/src/**` — see FR-2986 / `.github/instructions/i18n.instructions.md`). Don't make callers pass `t` (project convention from lead coding style).
 - **Parametrize per-call inputs on the returned function**, not on the hook argument. `const { startSession } = useStartSession(); startSession(values)` — not `useStartSession(values)`.
 - **New `useMemoizedFn` usage from ahooks is forbidden** (`.claude/rules/use-effect-event.md`). Remove existing occurrences when you touch nearby code.
 
@@ -46,8 +46,9 @@ custom hooks, and `use-effect-event.md` rule.
 
 - No React hooks involved (pure transformation)
 - I18n: prefer the function NOT taking `t` as an argument — instead make it a
-  hook so it can call `useTranslation()` internally (a consistent repo
-  convention, stated in the lead coding style)
+  hook so it can call `useTranslation()` (or `useBAIi18n()` in BUI source —
+  see FR-2986) internally (a consistent repo convention, stated in the lead
+  coding style)
 
 ### 1.3 Don't extract (yet) when
 
@@ -251,7 +252,7 @@ to be a component, not a hook.
 - [ ] Hook uses at least one React hook internally (else it's a helper function).
 - [ ] Named `use*` matching what it returns/does.
 - [ ] `'use memo'` at the start of the hook body when it contains non-trivial work.
-- [ ] Collects its own context (`useTranslation`, clients, atoms) — caller doesn't have to pass `t`.
+- [ ] Collects its own context (`useTranslation` in host / `useBAIi18n` in BUI, clients, atoms) — caller doesn't have to pass `t`.
 - [ ] Returns a named object (not a tuple, unless mimicking `useState`).
 - [ ] Effect dependencies are only values the effect truly syncs on; callbacks closed over via `useEffectEvent`.
 - [ ] No `// eslint-disable-next-line react-hooks/exhaustive-deps`.

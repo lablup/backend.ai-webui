@@ -3,6 +3,7 @@ import { BAIAdminProjectSelectValueQuery } from '../../__generated__/BAIAdminPro
 import { toLocalId } from '../../helper';
 import useDebouncedDeferredValue from '../../helper/useDebouncedDeferredValue';
 import { useFetchKey } from '../../hooks';
+import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { useLazyPaginatedQuery } from '../../hooks/usePaginatedQuery';
 import BAISelect, { BAISelectProps } from '../BAISelect';
 import TotalFooter from '../TotalFooter';
@@ -17,7 +18,6 @@ import {
   useState,
   useTransition,
 } from 'react';
-import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 export type AdminProjectNode = NonNullable<
@@ -47,7 +47,7 @@ const BAIAdminProjectSelect: React.FC<BAIAdminProjectSelectProps> = ({
   ...selectProps
 }) => {
   'use memo';
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   const selectRef = useRef<GetRef<typeof BAISelect>>(null);
   const [controllableValue, setControllableValue] = useControllableValue<
     string | string[] | undefined
@@ -72,37 +72,51 @@ const BAIAdminProjectSelect: React.FC<BAIAdminProjectSelectProps> = ({
   // Defer query refetch to prevent flickering during selection
   const deferredControllableValue = useDeferredValue(controllableValue);
 
-  // Use single-node query to resolve selected value's label
-  const { projectV2: selectedProject } =
+  // Resolve labels for ALL selected values (single or multi). The previous
+  // implementation queried `projectV2(projectId: UUID!)` for one id at a
+  // time — fine for single-mode, but in `mode="multiple"` only the first
+  // selected id would have its name resolved, so only one chip rendered
+  // and the rest of the multi-selection silently vanished from the
+  // controlled value display.
+  const selectedIds = _.castArray(deferredControllableValue ?? []).filter(
+    (v): v is string => !!v,
+  );
+  const { adminProjectsV2: selectedProjects } =
     useLazyLoadQuery<BAIAdminProjectSelectValueQuery>(
       graphql`
         query BAIAdminProjectSelectValueQuery(
-          $projectId: UUID!
+          $projectIds: [UUID!]!
           $skipSelected: Boolean!
         ) {
-          projectV2(projectId: $projectId) @skip(if: $skipSelected) {
-            id
-            basicInfo {
-              name
+          adminProjectsV2(filter: { id: { in: $projectIds } }, limit: 100)
+            @skip(if: $skipSelected) {
+            edges {
+              node {
+                id
+                basicInfo {
+                  name
+                }
+              }
             }
           }
         }
       `,
       {
-        projectId: !_.isEmpty(deferredControllableValue)
-          ? _.isArray(deferredControllableValue)
-            ? (deferredControllableValue[0] ?? '')
-            : (deferredControllableValue ?? '')
-          : '',
-        skipSelected: _.isEmpty(deferredControllableValue),
+        projectIds: selectedIds,
+        skipSelected: selectedIds.length === 0,
       },
       {
-        fetchPolicy: !_.isEmpty(deferredControllableValue)
-          ? 'store-or-network'
-          : 'store-only',
+        fetchPolicy: selectedIds.length > 0 ? 'store-or-network' : 'store-only',
         fetchKey: deferredFetchKey,
       },
     );
+  const selectedNameByLocalId = new Map<string, string>();
+  _.forEach(selectedProjects?.edges, (edge) => {
+    const node = edge?.node;
+    if (node?.id && node.basicInfo?.name) {
+      selectedNameByLocalId.set(toLocalId(node.id), node.basicInfo.name);
+    }
+  });
 
   const { paginationData, result, loadNext, isLoadingNext } =
     useLazyPaginatedQuery<
@@ -173,19 +187,17 @@ const BAIAdminProjectSelect: React.FC<BAIAdminProjectSelectProps> = ({
     value: item?.id ? toLocalId(item.id) : item?.id,
   }));
 
-  const controllableValueWithLabel = selectedProject
-    ? [
-        {
-          label: selectedProject.basicInfo?.name,
-          value: toLocalId(selectedProject.id),
-        },
-      ]
-    : !_.isEmpty(deferredControllableValue)
-      ? _.castArray(deferredControllableValue).map((value) => ({
-          label: value,
-          value: value,
-        }))
-      : undefined;
+  // Map every selected id to a label — prefer the resolved name from
+  // `selectedProjects`, fall back to the raw value (UUID) so the chip is at
+  // least visible even before the name lookup settles. Always returns one
+  // entry per selected id, which is what multi-mode needs to render all
+  // chips.
+  const controllableValueWithLabel = !_.isEmpty(deferredControllableValue)
+    ? _.castArray(deferredControllableValue).map((value) => ({
+        label: selectedNameByLocalId.get(value) ?? value,
+        value: value,
+      }))
+    : undefined;
 
   const [optimisticValueWithLabel, setOptimisticValueWithLabel] = useState(
     controllableValueWithLabel,

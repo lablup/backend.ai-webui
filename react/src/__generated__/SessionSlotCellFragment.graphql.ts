@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<2879309badd6005b2467f73e15c77bf9>>
+ * @generated SignedSource<<a4b01db56ff709531a24c0776e91cda4>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -15,6 +15,7 @@ export type SessionSlotCellFragment$data = {
   readonly occupied_slots: string | null | undefined;
   readonly requested_slots: string | null | undefined;
   readonly status: string | null | undefined;
+  readonly tag: string | null | undefined;
   readonly " $fragmentSpreads": FragmentRefs<"useSessionNodeLiveStatSessionFragment">;
   readonly " $fragmentType": "SessionSlotCellFragment";
 };
@@ -58,6 +59,13 @@ const node: ReaderFragment = {
       "storageKey": null
     },
     {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "tag",
+      "storageKey": null
+    },
+    {
       "args": null,
       "kind": "FragmentSpread",
       "name": "useSessionNodeLiveStatSessionFragment"
@@ -67,6 +75,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "0d982d326a8ac102c3407bb942a4f442";
+(node as any).hash = "02d149e3b45c67f7738ddf713f4ce27a";
 
 export default node;

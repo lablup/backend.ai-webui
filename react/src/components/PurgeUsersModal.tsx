@@ -3,7 +3,6 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { PurgeUsersModalBulkMutation } from '../__generated__/PurgeUsersModalBulkMutation.graphql';
-import { PurgeUsersModalFragment$key } from '../__generated__/PurgeUsersModalFragment.graphql';
 import { PurgeUsersModalMutation } from '../__generated__/PurgeUsersModalMutation.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { App, Checkbox, Form, theme } from 'antd';
@@ -19,14 +18,22 @@ import {
 import * as _ from 'lodash-es';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useFragment, useMutation } from 'react-relay';
+import { graphql, useMutation } from 'react-relay';
 import { PayloadError } from 'relay-runtime';
+
+// TODO(FR-3019): AdminUserManagement now uses the v2 (adminUsersV2) query, so
+// this modal should later be updated to receive data via a v2 UserV2 fragment
+// instead of a plain { id, email } list.
+export interface PurgeUsersModalUser {
+  id: string;
+  email: string;
+}
 
 export interface PurgeUsersModalProps extends Omit<
   BAIDeleteConfirmModalProps,
   'items' | 'title' | 'okText' | 'okButtonProps' | 'confirmText'
 > {
-  usersFrgmt: PurgeUsersModalFragment$key;
+  users: ReadonlyArray<PurgeUsersModalUser>;
 }
 
 interface PurgeUsersFormValues {
@@ -35,7 +42,7 @@ interface PurgeUsersFormValues {
 }
 
 const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
-  usersFrgmt,
+  users,
   ...baiModalProps
 }) => {
   'use memo';
@@ -49,18 +56,6 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
   const { getErrorMessage } = useErrorMessageResolver();
   const baiClient = useSuspendedBackendaiClient();
   const supportsBulkPurge = baiClient.supports('bulk-purge-users');
-
-  const users = useFragment<PurgeUsersModalFragment$key>(
-    graphql`
-      fragment PurgeUsersModalFragment on UserNode @relay(plural: true) {
-        id
-        email
-        username
-        full_name
-      }
-    `,
-    usersFrgmt,
-  );
 
   // >= 26.3.0: adminBulkPurgeUsersV2
   const [commitBulkPurge, isInFlightBulkPurge] =
@@ -114,8 +109,19 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
                 },
               },
             },
-            onCompleted: (res) => {
-              const { purgedCount, failed } = res.adminBulkPurgeUsersV2;
+            onCompleted: (res, errors) => {
+              if (errors && errors.length > 0) {
+                message.error(errors.map((e) => e.message).join(', '));
+                setIsPending(false);
+                return;
+              }
+              const adminBulkPurgeUsersV2 = res.adminBulkPurgeUsersV2;
+              if (!adminBulkPurgeUsersV2) {
+                message.error(t('error.UnknownError'));
+                setIsPending(false);
+                return;
+              }
+              const { purgedCount, failed } = adminBulkPurgeUsersV2;
 
               if (failed.length > 0) {
                 const failedMessages = failed.map((f) => f.message).join(', ');

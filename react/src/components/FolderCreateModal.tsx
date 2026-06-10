@@ -8,7 +8,6 @@ import { useCurrentUserRole } from '../hooks/backendai';
 import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import QuestionIconWithTooltip from './QuestionIconWithTooltip';
 import StorageSelect from './StorageSelect';
 import {
   App,
@@ -24,6 +23,7 @@ import {
 import { createStyles } from 'antd-style';
 import { FormInstance } from 'antd/lib';
 import {
+  BAIQuestionIconWithTooltip,
   BAIButton,
   BAIFlex,
   BAIModal,
@@ -300,7 +300,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
               <Radio value={'automount'} data-testid="automount-usage-mode">
                 <BAIFlex gap="xxs">
                   {t('data.AutoMount')}
-                  <QuestionIconWithTooltip
+                  <BAIQuestionIconWithTooltip
                     title={t('data.AutomountFolderCreationDesc')}
                   />
                 </BAIFlex>

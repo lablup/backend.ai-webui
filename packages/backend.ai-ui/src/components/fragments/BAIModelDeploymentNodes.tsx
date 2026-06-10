@@ -3,6 +3,7 @@ import {
   BAIModelDeploymentNodesFragment$key,
 } from '../../__generated__/BAIModelDeploymentNodesFragment.graphql';
 import { filterOutEmpty, filterOutNullAndUndefined } from '../../helper';
+import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIDeploymentStatusTag, {
   BAIDeploymentStatus,
 } from '../BAIDeploymentStatusTag';
@@ -24,7 +25,6 @@ import { theme, Tooltip, Typography } from 'antd';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
 export type ModelDeploymentNodeInList = NonNullable<
@@ -95,7 +95,7 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
   ...tableProps
 }) => {
   'use memo';
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   const { token } = theme.useToken();
 
   const deployments = useFragment<BAIModelDeploymentNodesFragment$key>(

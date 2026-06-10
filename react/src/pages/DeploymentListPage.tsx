@@ -36,6 +36,7 @@ import {
   INITIAL_FETCH_KEY,
   availableDeploymentSorterValues,
   filterOutNullAndUndefined,
+  isDeploymentInStoppedCategory,
   parseDeploymentOrder,
   toLocalId,
   useBAILogger,
@@ -222,11 +223,6 @@ const DeploymentListPageContent: React.FC = () => {
     },
   ];
 
-  const isDestroying = (status: string | null | undefined): boolean => {
-    if (!status || status === '%future added value') return false;
-    return ['STOPPING', 'STOPPED', 'TERMINATED'].includes(status);
-  };
-
   return (
     <>
       <BAIFlex direction="column" align="stretch" gap="sm">
@@ -322,7 +318,9 @@ const DeploymentListPageContent: React.FC = () => {
                   next = {
                     ...col,
                     render: (_value, record) => {
-                      const destroying = isDestroying(record.metadata?.status);
+                      const destroying = isDeploymentInStoppedCategory(
+                        record.metadata?.status,
+                      );
                       return (
                         <BAINameActionCell
                           title={record.metadata?.name ?? '-'}

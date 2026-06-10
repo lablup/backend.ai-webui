@@ -8,6 +8,7 @@ import { RoleAssignmentTabFragment$key } from '../__generated__/RoleAssignmentTa
 import { RoleAssignmentOrderBy } from '../__generated__/RoleAssignmentTabRefetchQuery.graphql';
 import { RoleAssignmentTab_roleScopeFragment$key } from '../__generated__/RoleAssignmentTab_roleScopeFragment.graphql';
 import { convertToOrderBy } from '../helper';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import AssignRoleModal from './AssignRoleModal';
 import { DeleteFilled } from '@ant-design/icons';
@@ -67,6 +68,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
+  const baiClient = useSuspendedBackendaiClient();
   const { token } = theme.useToken();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
@@ -209,7 +211,11 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
       refetch(
         {
           filter: {
-            roleId: { equals: roleId },
+            // <= 26.4.3 takes the bare UUID; >= 26.4.4rc4 takes the wrapper.
+            // FR-3031.
+            roleId: (baiClient.supports('rbac-filter-wrapper')
+              ? { equals: roleId }
+              : roleId) as { equals: string },
             ...(overrides?.filter !== undefined
               ? overrides.filter
               : queryParams.filter),
@@ -256,11 +262,13 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
           message.warning(
             t('rbac.BulkAssignPartialFailure', { count: failed.length }),
           );
-          _.forEach(failed, (arr) =>
+          _.forEach(failed, (item) =>
             upsertNotification({
+              key: `rbac-bulk-assign-failed-${item.userId}`,
               open: true,
               duration: 0,
-              title: arr.message,
+              type: 'error',
+              message: item.message,
             }),
           );
         } else {
@@ -457,6 +465,15 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
               if (failed.length > 0) {
                 message.warning(
                   t('rbac.BulkRevokePartialFailure', { count: failed.length }),
+                );
+                _.forEach(failed, (item) =>
+                  upsertNotification({
+                    key: `rbac-bulk-revoke-failed-${item.userId}`,
+                    open: true,
+                    duration: 0,
+                    type: 'error',
+                    message: item.message,
+                  }),
                 );
               } else {
                 message.success(t('rbac.UserRevoked'));

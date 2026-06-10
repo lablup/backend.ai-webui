@@ -15,6 +15,7 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
+    "types": ["node"],
     "paths": {
       "backend.ai-ui": ["../packages/backend.ai-ui/src/index.ts"],
       "backend.ai-ui/*": ["../packages/backend.ai-ui/src/*"],

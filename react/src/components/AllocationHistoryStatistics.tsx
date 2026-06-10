@@ -11,10 +11,9 @@ import {
 import { useThemeMode } from '../hooks/useThemeMode';
 import useUserUsageStats from '../hooks/useUserUsageStats';
 import { Period } from './AllocationHistory';
-import QuestionIconWithTooltip from './QuestionIconWithTooltip';
 import { Card, theme } from 'antd';
 import { createStyles } from 'antd-style';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIQuestionIconWithTooltip, BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import {
@@ -72,7 +71,9 @@ export const GraphCard = ({ title, tooltipText, children }: GraphCardProps) => (
     title={
       <BAIFlex gap={'xxs'}>
         {title}
-        {tooltipText ? <QuestionIconWithTooltip title={tooltipText} /> : null}
+        {tooltipText ? (
+          <BAIQuestionIconWithTooltip title={tooltipText} />
+        ) : null}
       </BAIFlex>
     }
     style={{ width: '100%' }}

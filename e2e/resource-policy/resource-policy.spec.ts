@@ -11,6 +11,10 @@ async function cleanupPolicy(page: Page, policyName: string) {
     // Hover over the name cell to reveal BAINameActionCell actions
     await row.getByRole('cell').first().hover();
     await row.getByRole('button', { name: 'delete' }).click();
+    // BAIDeleteConfirmModal with requireConfirmInput: type the policy name to enable Delete
+    const confirmInput = page.locator('#confirmText');
+    await expect(confirmInput).toBeVisible();
+    await confirmInput.fill(policyName);
     await page.getByRole('button', { name: 'Delete', exact: true }).click();
     await expect(row).toBeHidden({ timeout: 10000 });
   }
@@ -135,6 +139,11 @@ test.describe(
         await policyRow.getByRole('cell').first().hover();
         await policyRow.getByRole('button', { name: 'delete' }).click();
 
+        // BAIDeleteConfirmModal with requireConfirmInput: type the policy name to enable Delete
+        const confirmInput = page.locator('#confirmText');
+        await expect(confirmInput).toBeVisible();
+        await confirmInput.fill(KEYPAIR_POLICY_NAME);
+
         // Confirm deletion in modal
         await page.getByRole('button', { name: 'Delete', exact: true }).click();
 
@@ -232,6 +241,11 @@ test.describe(
         await policyRow.getByRole('cell').first().hover();
         await policyRow.getByRole('button', { name: 'delete' }).click();
 
+        // BAIDeleteConfirmModal with requireConfirmInput: type the policy name to enable Delete
+        const confirmInput = page.locator('#confirmText');
+        await expect(confirmInput).toBeVisible();
+        await confirmInput.fill(USER_POLICY_NAME);
+
         // Confirm deletion in modal
         await page.getByRole('button', { name: 'Delete', exact: true }).click();
 
@@ -316,6 +330,11 @@ test.describe(
         await expect(policyRow).toBeVisible();
         await policyRow.getByRole('cell').first().hover();
         await policyRow.getByRole('button', { name: 'delete' }).click();
+
+        // BAIDeleteConfirmModal with requireConfirmInput: type the policy name to enable Delete
+        const confirmInput = page.locator('#confirmText');
+        await expect(confirmInput).toBeVisible();
+        await confirmInput.fill(PROJECT_POLICY_NAME);
 
         // Confirm deletion in modal
         await page.getByRole('button', { name: 'Delete', exact: true }).click();

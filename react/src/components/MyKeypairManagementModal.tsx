@@ -248,6 +248,10 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
         result: MyKeypairManagementModalIssueMyKeypairMutation['response'],
       ) => {
         const payload = result.issueMyKeypair;
+        if (!payload) {
+          message.error(t('error.UnknownError'));
+          return;
+        }
         setCredentialResult({
           accessKey: payload.keypair.accessKey,
           secretKey: payload.secretKey,
@@ -415,13 +419,6 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
               />
             </BAIFlex>
             <BAIFlex gap="xs">
-              <BAIButton
-                type="primary"
-                icon={<PlusIcon />}
-                onClick={handleIssueKeypair}
-              >
-                {t('credential.IssueNewKeypair')}
-              </BAIButton>
               <BAIFetchKeyButton
                 loading={
                   deferredQueryVariables !== queryVariables ||
@@ -432,6 +429,13 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
                   updateFetchKey(newFetchKey);
                 }}
               />
+              <BAIButton
+                type="primary"
+                icon={<PlusIcon />}
+                onClick={handleIssueKeypair}
+              >
+                {t('credential.IssueNewKeypair')}
+              </BAIButton>
             </BAIFlex>
           </BAIFlex>
           <BAITable<KeypairNode>

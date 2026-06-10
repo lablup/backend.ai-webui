@@ -100,7 +100,7 @@ const ScanArtifactModelsFromHuggingFaceModal = ({
                     return;
                   }
                   const artifactEdges =
-                    res.scanArtifactModels.artifactRevision?.edges ?? [];
+                    res.scanArtifactModels?.artifactRevision?.edges ?? [];
                   const artifactId =
                     artifactEdges[0]?.node?.artifact?.id ?? null;
                   if (!artifactId) {

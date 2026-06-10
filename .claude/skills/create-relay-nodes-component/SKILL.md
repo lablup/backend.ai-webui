@@ -176,12 +176,31 @@ Create complete TypeScript file with this structure:
 
 5. **Use `'use memo'` directive** at the top of the component body for React Compiler optimization.
 
+> **Pick the i18n hook path that matches the destination.** BUI source
+> MUST use `useBAIi18n` (direct `react-i18next` i18n imports are blocked
+> by ESLint inside BUI — FR-2986). The relative path differs by depth:
+>
+> | Destination | i18n import line |
+> |---|---|
+> | `packages/backend.ai-ui/src/components/` (the `*Nodes` default) | `import { useBAIi18n } from '../hooks/useBAIi18n';` |
+> | `packages/backend.ai-ui/src/components/fragments/` (the other-type default; matches the rest of the template paths below) | `import { useBAIi18n } from '../../hooks/useBAIi18n';` |
+> | `react/src/**` (host app) | `import { useTranslation } from 'react-i18next';` |
+>
+> When generating, also adjust the other relative imports in the
+> template (`../../__generated__/…`, `../../helper`, `../Table`, …) to
+> match the chosen depth — the template shape below is sized for the
+> `fragments/` destination.
+
 ```typescript
 import {
   {ComponentName}Fragment$data,
   {ComponentName}Fragment$key,
 } from '../../__generated__/{ComponentName}Fragment.graphql';
 import { filterOutEmpty, filterOutNullAndUndefined } from '../../helper';
+// BUI fragments/ destination (depth 2). For BUI components/ (the *Nodes
+// default — depth 1) drop one `../`: `'../hooks/useBAIi18n'`. For host
+// destination, swap to: `import { useTranslation } from 'react-i18next';`
+import { useBAIi18n } from '../../hooks/useBAIi18n';
 import {
   BAIColumnsType,
   BAIColumnType,
@@ -189,7 +208,6 @@ import {
   BAITableProps,
 } from '../Table';
 import * as _ from 'lodash-es';
-import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
 // =============================================================================
@@ -245,7 +263,8 @@ const {ComponentName} = ({
   ...tableProps
 }: {ComponentName}Props) => {
   'use memo';
-  const { t } = useTranslation();
+  const { t } = useBAIi18n(); // BUI destination
+  // Host destination: const { t } = useTranslation();
 
   // TODO: Customize fragment fields based on your GraphQL schema
   const data = useFragment<{ComponentName}Fragment$key>(

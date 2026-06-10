@@ -27,6 +27,9 @@
     "FailedToActivateArtifacts": "Không thể kích hoạt hiện vật.",
     "SuccessfullyActivated": "Cổ vật được kích hoạt thành công."
   },
+  "comp:BAIAdminKeypairResourcePolicySelect": {
+    "SelectKeypairResourcePolicy": "Chọn chính sách tài nguyên Keypair"
+  },
   "comp:BAIAdminModelServiceSelect": {
     "SelectModelService": "Chọn dịch vụ mô hình"
   },
@@ -443,9 +446,12 @@
   },
   "comp:UserNodes": {
     "AllowedClientIps": "IP khách hàng được phép",
-    "ContainerGIDs": "GID của container",
-    "ContainerMainGID": "GID chính của container",
-    "ContainerUID": "UID của container",
+    "ContainerGIDs": "GID bổ sung",
+    "ContainerGIDsTooltip": "Các ID nhóm số bổ sung được gán cho các tiến trình của container",
+    "ContainerMainGID": "GID container",
+    "ContainerMainGIDTooltip": "ID nhóm số mặc định được gán cho các tiến trình trong container",
+    "ContainerUID": "UID container",
+    "ContainerUIDTooltip": "ID người dùng số được gán cho các tiến trình trong container",
     "CreatedAt": "Tạo lúc",
     "Description": "Mô tả",
     "Disabled": "Đã tắt",
@@ -454,6 +460,7 @@
     "Enabled": "Đã bật",
     "FullName": "Họ và tên",
     "IntegrationName": "Tên tích hợp",
+    "MainAccessKey": "Khóa truy cập chính",
     "ModifiedAt": "Sửa lúc",
     "NeedPasswordChange": "Cần đổi mật khẩu",
     "Project": "Dự án",
@@ -463,6 +470,7 @@
     "StatusInfo": "Thông tin trạng thái",
     "SudoSessionEnabled": "Phiên Sudo đã bật",
     "TwoFA": "Xác thực hai yếu tố",
+    "TwoFAActivatedAt": "2FA được kích hoạt lúc",
     "UserID": "ID người dùng",
     "Username": "Tên người dùng"
   },

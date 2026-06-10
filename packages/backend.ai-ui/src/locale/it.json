@@ -27,6 +27,9 @@
     "FailedToActivateArtifacts": "Non è riuscito ad attivare artefatti.",
     "SuccessfullyActivated": "Artefatti attivati con successo."
   },
+  "comp:BAIAdminKeypairResourcePolicySelect": {
+    "SelectKeypairResourcePolicy": "Seleziona politica delle risorse keypair"
+  },
   "comp:BAIAdminModelServiceSelect": {
     "SelectModelService": "Seleziona servizio modello"
   },
@@ -443,9 +446,12 @@
   },
   "comp:UserNodes": {
     "AllowedClientIps": "IP client consentiti",
-    "ContainerGIDs": "GID del container",
-    "ContainerMainGID": "GID principale del container",
-    "ContainerUID": "UID del container",
+    "ContainerGIDs": "GID supplementari",
+    "ContainerGIDsTooltip": "ID di gruppo numerici aggiuntivi assegnati ai processi del container",
+    "ContainerMainGID": "GID contenitore",
+    "ContainerMainGIDTooltip": "ID numerico di gruppo predefinito assegnato ai processi all'interno del container",
+    "ContainerUID": "UID contenitore",
+    "ContainerUIDTooltip": "ID utente numerico assegnato ai processi all'interno del container",
     "CreatedAt": "Creato il",
     "Description": "Descrizione",
     "Disabled": "Disabilitato",
@@ -454,6 +460,7 @@
     "Enabled": "Abilitato",
     "FullName": "Nome completo",
     "IntegrationName": "Nome integrazione",
+    "MainAccessKey": "Chiave di accesso principale",
     "ModifiedAt": "Modificato il",
     "NeedPasswordChange": "Richiede cambio password",
     "Project": "Progetto",
@@ -463,6 +470,7 @@
     "StatusInfo": "Informazioni sullo stato",
     "SudoSessionEnabled": "Sessione Sudo abilitata",
     "TwoFA": "Autenticazione a due fattori",
+    "TwoFAActivatedAt": "Autenticazione a due fattori attivata il",
     "UserID": "ID utente",
     "Username": "Nome utente"
   },

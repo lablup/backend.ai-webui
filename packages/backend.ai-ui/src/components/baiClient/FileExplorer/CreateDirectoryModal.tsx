@@ -1,3 +1,4 @@
+import { useBAIi18n } from '../../../hooks/useBAIi18n';
 import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import { FolderInfoContext } from './BAIFileExplorer';
 import { useMutation } from '@tanstack/react-query';
@@ -10,7 +11,6 @@ import {
   type ModalProps,
 } from 'antd';
 import React, { use, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
 
 // FIXME: After migrate BAIModal into backend.ai-ui, should be use BAIModal instead of Antd's Modal
 interface CreateDirectoryModalProps extends ModalProps {
@@ -21,7 +21,7 @@ const CreateDirectoryModal: React.FC<CreateDirectoryModalProps> = ({
   onRequestClose,
   ...modalProps
 }) => {
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   const { message } = App.useApp();
   const { targetVFolderId, currentPath } = use(FolderInfoContext);
   const baiClient = useConnectedBAIClient();

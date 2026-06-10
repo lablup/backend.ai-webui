@@ -1,7 +1,12 @@
 // spec: e2e/.agent-output/test-plan-admin-model-card.md
 // section: 1. Page Load and Table Display
 import { AdminModelCardPage } from '../utils/classes/AdminModelCardPage';
-import { loginAsAdmin, webuiEndpoint } from '../utils/test-util';
+import {
+  deleteForeverAndVerifyFromTrash,
+  loginAsAdmin,
+  moveToTrashAndVerify,
+  webuiEndpoint,
+} from '../utils/test-util';
 import { test, expect } from '@playwright/test';
 
 test.describe(
@@ -67,14 +72,19 @@ test.describe(
       page,
     }, testInfo) => {
       const adminModelCardPage = new AdminModelCardPage(page);
-      const cardName = `e2e-test-pageload-${testInfo.workerIndex}-${Date.now()}`;
+      const timestamp = Date.now();
+      const cardName = `e2e-test-pageload-${testInfo.workerIndex}-${timestamp}`;
+      const folderName = `e2e-test-pageload-folder-${testInfo.workerIndex}-${timestamp}`;
 
       // Create a dedicated model card so the table is guaranteed to have data
       await page.goto(
         `${webuiEndpoint}/admin-deployments?tab=model-store-management`,
       );
       await adminModelCardPage.waitForTableLoad();
-      await adminModelCardPage.createModelCard({ name: cardName });
+      await adminModelCardPage.createModelCard({
+        name: cardName,
+        createNewFolderName: folderName,
+      });
 
       // Navigate back and filter to the created card
       await page.goto(
@@ -106,8 +116,18 @@ test.describe(
       const createdAtCell = firstRow.locator('td').last();
       await expect(createdAtCell).toHaveText(/\d{4}-\d{2}-\d{2} \d{2}:\d{2}/);
 
-      // Cleanup: delete the created model card
+      // Cleanup: delete the created model card, then purge the folder
       await adminModelCardPage.deleteModelCardByName(cardName);
+      try {
+        await moveToTrashAndVerify(page, folderName, 'admin-data');
+      } catch {
+        // Folder may already be in Trash or may not exist
+      }
+      try {
+        await deleteForeverAndVerifyFromTrash(page, folderName, 'admin-data');
+      } catch {
+        // Folder may not be in Trash (already purged or never created)
+      }
     });
 
     // 1.3 Superadmin can see pagination controls

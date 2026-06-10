@@ -1,19 +1,19 @@
 import { BAIDomainSelectQuery } from '../../__generated__/BAIDomainSelectQuery.graphql';
+import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { useControllableValue } from 'ahooks';
 import { Select, type SelectProps } from 'antd';
 import * as _ from 'lodash-es';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-interface Props extends SelectProps {
+interface Props extends Omit<SelectProps, 'role'> {
   activeOnly?: boolean;
 }
 const BAIDomainSelect: React.FC<Props> = ({
   activeOnly = true,
   ...selectProps
 }) => {
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   const [value, setValue] = useControllableValue(selectProps);
 
   const { domains } = useLazyLoadQuery<BAIDomainSelectQuery>(

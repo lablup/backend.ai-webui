@@ -7,6 +7,7 @@ import { RolePermissionTabDeleteMutation } from '../__generated__/RolePermission
 import { RolePermissionTabFragment$key } from '../__generated__/RolePermissionTabFragment.graphql';
 import { PermissionOrderBy } from '../__generated__/RolePermissionTabRefetchQuery.graphql';
 import { convertToOrderBy } from '../helper';
+import { useSuspendedBackendaiClient } from '../hooks';
 import CreatePermissionModal from './CreatePermissionModal';
 import { DeleteFilled } from '@ant-design/icons';
 import { App, Tag } from 'antd';
@@ -113,6 +114,8 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
+  const baiClient = useSuspendedBackendaiClient();
+  const supportsRbacFilterWrapper = baiClient.supports('rbac-filter-wrapper');
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -240,7 +243,11 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
       refetch(
         {
           filter: {
-            roleId: { equals: roleId },
+            // <= 26.4.3 takes the bare UUID; >= 26.4.4rc4 takes the wrapper.
+            // FR-3031.
+            roleId: (supportsRbacFilterWrapper
+              ? { equals: roleId }
+              : roleId) as { equals: string },
             ...(overrides?.filter !== undefined
               ? overrides.filter
               : queryParams.filter),
@@ -316,6 +323,9 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
               key: 'scopeType',
               propertyLabel: t('rbac.ScopeType'),
               type: 'enum',
+              // <= 26.4.3 takes a bare RBACElementType enum here, not the
+              // { equals } wrapper. FR-3031.
+              valueMode: supportsRbacFilterWrapper ? 'operator' : 'scalar',
               options: [
                 'DOMAIN',
                 'PROJECT',
@@ -335,6 +345,9 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
               key: 'entityType',
               propertyLabel: t('rbac.EntityType'),
               type: 'enum',
+              // <= 26.4.3 takes a bare RBACElementType enum here, not the
+              // { equals } wrapper. FR-3031.
+              valueMode: supportsRbacFilterWrapper ? 'operator' : 'scalar',
               options: [
                 'DOMAIN',
                 'PROJECT',

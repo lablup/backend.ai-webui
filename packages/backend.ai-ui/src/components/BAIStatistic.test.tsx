@@ -1,17 +1,25 @@
 import BAIStatistic from './BAIStatistic';
 import { render, screen, fireEvent } from '@testing-library/react';
 
-// Mock useTranslation
-vi.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => {
-      const translations: { [key: string]: string } = {
-        'comp:BAIStatistic.Unlimited': 'Unlimited',
-      };
-      return translations[key] || key;
-    },
-  }),
-}));
+// Partial mock: preserve every real export from `react-i18next` (notably
+// `initReactI18next`, which BUI's `locale/index.ts` consumes at import
+// time) and only override `useTranslation`. See
+// useErrorMessageResolver.test.tsx for the rationale (FR-2986).
+vi.mock('react-i18next', async () => {
+  const actual =
+    await vi.importActual<typeof import('react-i18next')>('react-i18next');
+  return {
+    ...actual,
+    useTranslation: () => ({
+      t: (key: string) => {
+        const translations: { [key: string]: string } = {
+          'comp:BAIStatistic.Unlimited': 'Unlimited',
+        };
+        return translations[key] || key;
+      },
+    }),
+  };
+});
 
 describe('BAIStatistic', () => {
   describe('Basic Rendering', () => {

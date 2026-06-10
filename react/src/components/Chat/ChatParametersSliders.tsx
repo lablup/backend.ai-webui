@@ -3,10 +3,9 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import InputNumberWithSlider from '../InputNumberWithSlider';
-import QuestionIconWithTooltip from '../QuestionIconWithTooltip';
 import { DEFAULT_CHAT_PARAMETERS, type ChatParameters } from './ChatModel';
 import { ConfigProvider, Divider, Form, Switch, theme, Typography } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIQuestionIconWithTooltip, BAIFlex } from 'backend.ai-ui';
 import { t } from 'i18next';
 import { useRef } from 'react';
 
@@ -53,7 +52,7 @@ export const ChatParameterSliderFormItem = ({
               {label}
             </Typography.Text>
             {description && (
-              <QuestionIconWithTooltip title={description} trigger="hover" />
+              <BAIQuestionIconWithTooltip title={description} trigger="hover" />
             )}
           </BAIFlex>
         </BAIFlex>

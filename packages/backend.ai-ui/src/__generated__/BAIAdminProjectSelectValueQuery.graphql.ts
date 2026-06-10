@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a5c6c6c75b672ff84abca1c864b3c673>>
+ * @generated SignedSource<<81386f97802a3f1cb6108124b1ae2429>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,15 +10,19 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 export type BAIAdminProjectSelectValueQuery$variables = {
-  projectId: string;
+  projectIds: ReadonlyArray<string>;
   skipSelected: boolean;
 };
 export type BAIAdminProjectSelectValueQuery$data = {
-  readonly projectV2?: {
-    readonly basicInfo: {
-      readonly name: string;
-    };
-    readonly id: string;
+  readonly adminProjectsV2?: {
+    readonly edges: ReadonlyArray<{
+      readonly node: {
+        readonly basicInfo: {
+          readonly name: string;
+        };
+        readonly id: string;
+      };
+    }>;
   } | null | undefined;
 };
 export type BAIAdminProjectSelectValueQuery = {
@@ -31,7 +35,7 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "projectId"
+    "name": "projectIds"
   },
   {
     "defaultValue": null,
@@ -49,36 +53,75 @@ v1 = [
         "alias": null,
         "args": [
           {
-            "kind": "Variable",
-            "name": "projectId",
-            "variableName": "projectId"
+            "fields": [
+              {
+                "fields": [
+                  {
+                    "kind": "Variable",
+                    "name": "in",
+                    "variableName": "projectIds"
+                  }
+                ],
+                "kind": "ObjectValue",
+                "name": "id"
+              }
+            ],
+            "kind": "ObjectValue",
+            "name": "filter"
+          },
+          {
+            "kind": "Literal",
+            "name": "limit",
+            "value": 100
           }
         ],
-        "concreteType": "ProjectV2",
+        "concreteType": "ProjectV2Connection",
         "kind": "LinkedField",
-        "name": "projectV2",
+        "name": "adminProjectsV2",
         "plural": false,
         "selections": [
           {
             "alias": null,
             "args": null,
-            "kind": "ScalarField",
-            "name": "id",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "ProjectBasicInfo",
+            "concreteType": "ProjectV2Edge",
             "kind": "LinkedField",
-            "name": "basicInfo",
-            "plural": false,
+            "name": "edges",
+            "plural": true,
             "selections": [
               {
                 "alias": null,
                 "args": null,
-                "kind": "ScalarField",
-                "name": "name",
+                "concreteType": "ProjectV2",
+                "kind": "LinkedField",
+                "name": "node",
+                "plural": false,
+                "selections": [
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "id",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "ProjectBasicInfo",
+                    "kind": "LinkedField",
+                    "name": "basicInfo",
+                    "plural": false,
+                    "selections": [
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "name",
+                        "storageKey": null
+                      }
+                    ],
+                    "storageKey": null
+                  }
+                ],
                 "storageKey": null
               }
             ],
@@ -108,16 +151,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "0b8cd06d8550facbf0c9ba606f2a61c4",
+    "cacheID": "d2b330b0d496dd64dae231903e958ecc",
     "id": null,
     "metadata": {},
     "name": "BAIAdminProjectSelectValueQuery",
     "operationKind": "query",
-    "text": "query BAIAdminProjectSelectValueQuery(\n  $projectId: UUID!\n  $skipSelected: Boolean!\n) {\n  projectV2(projectId: $projectId) @skip(if: $skipSelected) {\n    id\n    basicInfo {\n      name\n    }\n  }\n}\n"
+    "text": "query BAIAdminProjectSelectValueQuery(\n  $projectIds: [UUID!]!\n  $skipSelected: Boolean!\n) {\n  adminProjectsV2(filter: {id: {in: $projectIds}}, limit: 100) @skip(if: $skipSelected) {\n    edges {\n      node {\n        id\n        basicInfo {\n          name\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "0c0fd21d0dc714d6d9d2db8f73705f97";
+(node as any).hash = "e5f9c84b6b623ad5313a7f5d93bc3c7d";
 
 export default node;

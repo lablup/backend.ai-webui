@@ -109,7 +109,7 @@ dep_electron: dep_web
 			mkdir -p build/electron-app; \
 			cp -r electron-app/* build/electron-app/; \
 			cp electron-app/.npmrc build/electron-app/; \
-			pnpm i --prefix ./build/electron-app --ignore-workspace; \
+			(cd ./build/electron-app && pnpm i --ignore-workspace --config.node-linker=hoisted --config.enable-global-virtual-store=false); \
 		fi && \
 		rm -rf build/electron-app/app build/electron-app/resources build/electron-app/manifest && \
 		cp -Rp build/web build/electron-app/app && \

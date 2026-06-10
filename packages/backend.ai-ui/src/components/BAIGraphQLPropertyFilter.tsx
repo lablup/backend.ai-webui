@@ -1,3 +1,4 @@
+import { useBAIi18n } from '../hooks/useBAIi18n';
 import BAIFlex from './BAIFlex';
 import BAISelect from './BAISelect';
 import { CloseCircleOutlined } from '@ant-design/icons';
@@ -23,7 +24,6 @@ import React, {
   useState,
 } from 'react';
 import type { ComponentProps } from 'react';
-import { useTranslation } from 'react-i18next';
 
 // GraphQL Filter Types (matching schema.graphql)
 export type StringFilter = {
@@ -259,8 +259,25 @@ function generateId(): string {
  * Builds a nested object from a dot-notation path.
  * e.g., "project.name" with value { eq: "test" } -> { project: { name: { eq: "test" } } }
  */
-function buildNestedFilter(path: string, value: any): GraphQLFilter {
+export function buildNestedFilter(path: string, value: any): GraphQLFilter {
   const keys = path.split('.');
+  // Guard against prototype pollution and malformed paths. Property paths come
+  // from a developer-defined filter schema and never use these reserved keys or
+  // empty segments, but a path segment of `__proto__` / `constructor` /
+  // `prototype` would otherwise let the assignments below walk into the object
+  // prototype chain, and an empty segment (e.g. `a..b`, `.a`, `a.`) would
+  // create a malformed `''` key.
+  if (
+    keys.some(
+      (key) =>
+        key === '' ||
+        key === '__proto__' ||
+        key === 'constructor' ||
+        key === 'prototype',
+    )
+  ) {
+    return {};
+  }
   if (keys.length === 1) {
     return { [path]: value };
   }
@@ -456,7 +473,7 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
   'use memo';
 
   const { token } = theme.useToken();
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
 
   t('comp:BAIGraphQLPropertyFilter.operator.IContains');
 

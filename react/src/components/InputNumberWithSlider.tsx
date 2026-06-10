@@ -23,6 +23,20 @@ interface InputNumberWithSliderProps {
   max?: number;
   step?: number | null;
   disabled?: boolean;
+  /**
+   * Controls how the control looks while non-interactive.
+   * - `'normal'` (default): standard antd `disabled` styling; the current
+   *   value and slider handle remain visible.
+   * - `'empty'`: render the control as disabled AND visually empty — the
+   *   number input shows no value, the slider hides its handle and filled
+   *   track (only the muted rail remains), and no marks are shown. Use this
+   *   for derived / auto-allocated fields that have no user-settable value
+   *   (e.g. unified-memory accelerators).
+   *
+   * Note: `'empty'` only affects presentation. Clear the bound form value
+   * separately if it must also be excluded from submission.
+   */
+  disableMode?: 'normal' | 'empty';
   value?: number;
   allowNegative?: boolean;
   onChange?: (value: number) => void;
@@ -38,6 +52,7 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
   max,
   step,
   disabled,
+  disableMode = 'normal',
   inputNumberProps,
   sliderProps,
   allowNegative,
@@ -47,8 +62,14 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
 }) => {
   const [value, setValue] = useControllableState_deprecated(otherProps);
   const inputRef = React.useRef<GetRef<typeof InputNumber>>(null);
+
+  // `'empty'` renders the control as disabled with no value, handle, or marks.
+  const isEmptyMode = disableMode === 'empty';
+  const isDisabled = disabled || isEmptyMode;
+  const displayValue = isEmptyMode ? undefined : value;
+
   useEffect(() => {
-    if (!allowNegative) {
+    if (!allowNegative && _.isNumber(value)) {
       // when step is 1, make sure the value is integer
       if (step === 1 && value % 1 !== 0) {
         setValue(_.max([Math.round(value), min]));
@@ -61,9 +82,10 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
   const [key, updateKey] = useUpdatableState('first');
   useEffect(() => {
     if (!allowNegative) {
-      setTimeout(() => {
+      const timeoutId = setTimeout(() => {
         updateKey(value);
       }, 0);
+      return () => clearTimeout(timeoutId);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -83,8 +105,8 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
             max={max}
             min={min}
             step={step ?? undefined}
-            disabled={disabled}
-            value={value}
+            disabled={isDisabled}
+            value={displayValue}
             onChange={setValue}
             onBlur={() => {
               if (_.isNumber(step) && step > 0) {
@@ -123,8 +145,8 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
           max={max}
           min={min}
           step={step}
-          disabled={disabled}
-          value={value}
+          disabled={isDisabled}
+          value={displayValue}
           onChange={(value: any) => {
             if (min !== undefined && value < min) {
               return;
@@ -133,10 +155,22 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
             }
           }}
           {...sliderProps}
-          // remove marks that are greater than max
-          marks={_.omitBy(sliderProps?.marks, (_option, key) => {
-            return _.isNumber(max) ? _.parseInt(key) > max : false;
-          })}
+          // In empty mode, hide the handle and filled track (only the muted
+          // rail remains) so the slider implies no value.
+          styles={{
+            ...sliderProps?.styles,
+            ...(isEmptyMode
+              ? { handle: { display: 'none' }, track: { display: 'none' } }
+              : {}),
+          }}
+          // remove marks that are greater than max; empty mode shows none
+          marks={
+            isEmptyMode
+              ? {}
+              : _.omitBy(sliderProps?.marks, (_option, key) => {
+                  return _.isNumber(max) ? _.parseInt(key) > max : false;
+                })
+          }
         />
       </BAIFlex>
     </BAIFlex>

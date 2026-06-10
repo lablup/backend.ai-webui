@@ -16,10 +16,6 @@ import {
   useBAINotificationState,
 } from '../hooks/useBAINotification';
 import { useCurrentResourceGroupValue } from '../hooks/useCurrentProject';
-import {
-  ServiceCreateType,
-  ServiceLauncherFormValue,
-} from './ServiceLauncherPageContent';
 import { PlayCircleOutlined } from '@ant-design/icons';
 import { App, Button, Tooltip } from 'antd';
 import {
@@ -56,10 +52,45 @@ interface ServiceResult {
   endpoint_id?: string;
 }
 
-type ModelTryFormValue = Omit<
-  ServiceLauncherFormValue,
-  'environments' | 'resource'
->;
+// Minimal local form-value shape used only by this legacy "Try" flow.
+// Replaces the wider ServiceLauncherFormValue type that lived in the
+// (now-removed) ServiceLauncherPageContent component.
+interface ModelTryFormValue {
+  serviceName: string;
+  replicas: number;
+  runtimeVariant: string;
+  cluster_size: number;
+  cluster_mode: 'single-node' | 'multi-node';
+  openToPublic: boolean;
+  resourceGroup: string;
+  vFolderID: string;
+  modelMountDestination: string;
+  modelDefinitionPath: string;
+  mount_id_map: Record<string, string>;
+  envvars: Array<{ variable: string; value: string }>;
+  enabledAutomaticShmem: boolean;
+}
+
+// Minimal `/services` POST body shape used by this legacy "Try" flow.
+// Replaces the wider ServiceCreateType that lived in ServiceLauncherPageContent.
+interface ServiceCreateType {
+  name: string;
+  desired_session_count?: number;
+  runtime_variant: string;
+  group: string;
+  domain: string;
+  cluster_size: number;
+  cluster_mode: 'single-node' | 'multi-node';
+  open_to_public: boolean;
+  config: {
+    model: string;
+    model_version?: number;
+    model_mount_destination?: string;
+    environ: Record<string, string>;
+    scaling_group: string;
+    resources: Record<string, unknown>;
+  };
+}
 
 const MAX_RETRIES = 12; // 12 retries * 5 seconds = 1 minute max
 const RETRY_INTERVAL_MS = 5000;

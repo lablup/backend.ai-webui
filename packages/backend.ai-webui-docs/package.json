@@ -32,7 +32,9 @@
     "serve:web:ja": "pnpm run build:toolkit && portless run --name docs-web --force -- sh -c 'docs-toolkit serve:web --lang ja --port $PORT'",
     "serve:web:th": "pnpm run build:toolkit && portless run --name docs-web --force -- sh -c 'docs-toolkit serve:web --lang th --port $PORT'",
     "agents": "docs-toolkit agents",
-    "agents:force": "docs-toolkit agents --force"
+    "agents:force": "docs-toolkit agents --force",
+    "build:terminology": "node scripts/generate-terminology.mjs",
+    "check:terminology-md": "node scripts/generate-terminology.mjs --check"
   },
   "devDependencies": {
     "backend.ai-docs-toolkit": "workspace:*",

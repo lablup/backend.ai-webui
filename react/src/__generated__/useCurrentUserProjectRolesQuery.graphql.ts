@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<4e34d61e74c99b32c6d9f84106a1ce0f>>
+ * @generated SignedSource<<2898388137f2190ad11ea796b5aa88a1>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,8 +10,54 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 import { Result } from "relay-runtime";
+export type OperationType = "CREATE" | "GRANT_ALL" | "GRANT_HARD_DELETE" | "GRANT_READ" | "GRANT_SOFT_DELETE" | "GRANT_UPDATE" | "HARD_DELETE" | "READ" | "SOFT_DELETE" | "UPDATE" | "%future added value";
 export type RBACElementType = "AGENT" | "APP_CONFIG" | "ARTIFACT" | "ARTIFACT_REGISTRY" | "ARTIFACT_REVISION" | "AUDIT_LOG" | "CONTAINER_REGISTRY" | "DEPLOYMENT_POLICY" | "DEPLOYMENT_REVISION" | "DEPLOYMENT_TOKEN" | "DOMAIN" | "DOMAIN_ADMIN_PAGE" | "EVENT_LOG" | "IMAGE" | "IMAGE_ALIAS" | "KERNEL" | "KEYPAIR" | "KEYPAIR_RESOURCE_POLICY" | "MODEL_CARD" | "MODEL_DEPLOYMENT" | "NETWORK" | "NOTIFICATION_CHANNEL" | "NOTIFICATION_RULE" | "PROJECT" | "PROJECT_ADMIN_PAGE" | "PROJECT_RESOURCE_POLICY" | "RESOURCE_GROUP" | "RESOURCE_PRESET" | "ROLE" | "ROLE_ASSIGNMENT" | "ROUTING" | "SESSION" | "SESSION_APP_SERVICE" | "SESSION_TEMPLATE" | "STORAGE_HOST" | "USER" | "USER_EMAIL" | "USER_RESOURCE_POLICY" | "VFOLDER" | "VFOLDER_DATA" | "%future added value";
-export type useCurrentUserProjectRolesQuery$variables = Record<PropertyKey, never>;
+export type PermissionNestedFilter = {
+  AND?: ReadonlyArray<PermissionNestedFilter> | null | undefined;
+  NOT?: ReadonlyArray<PermissionNestedFilter> | null | undefined;
+  OR?: ReadonlyArray<PermissionNestedFilter> | null | undefined;
+  entityType?: RBACElementTypeFilter | null | undefined;
+  operation?: OperationTypeFilter | null | undefined;
+  scopeId?: StringFilter | null | undefined;
+  scopeType?: RBACElementTypeFilter | null | undefined;
+};
+export type StringFilter = {
+  contains?: string | null | undefined;
+  endsWith?: string | null | undefined;
+  equals?: string | null | undefined;
+  iContains?: string | null | undefined;
+  iEndsWith?: string | null | undefined;
+  iEquals?: string | null | undefined;
+  iIn?: ReadonlyArray<string> | null | undefined;
+  iNotContains?: string | null | undefined;
+  iNotEndsWith?: string | null | undefined;
+  iNotEquals?: string | null | undefined;
+  iNotIn?: ReadonlyArray<string> | null | undefined;
+  iNotStartsWith?: string | null | undefined;
+  iStartsWith?: string | null | undefined;
+  in?: ReadonlyArray<string> | null | undefined;
+  notContains?: string | null | undefined;
+  notEndsWith?: string | null | undefined;
+  notEquals?: string | null | undefined;
+  notIn?: ReadonlyArray<string> | null | undefined;
+  notStartsWith?: string | null | undefined;
+  startsWith?: string | null | undefined;
+};
+export type RBACElementTypeFilter = {
+  equals?: RBACElementType | null | undefined;
+  in?: ReadonlyArray<RBACElementType> | null | undefined;
+  notEquals?: RBACElementType | null | undefined;
+  notIn?: ReadonlyArray<RBACElementType> | null | undefined;
+};
+export type OperationTypeFilter = {
+  equals?: OperationType | null | undefined;
+  in?: ReadonlyArray<OperationType> | null | undefined;
+  notEquals?: OperationType | null | undefined;
+  notIn?: ReadonlyArray<OperationType> | null | undefined;
+};
+export type useCurrentUserProjectRolesQuery$variables = {
+  permissionFilter?: PermissionNestedFilter | null | undefined;
+};
 export type useCurrentUserProjectRolesQuery$data = {
   readonly myRolesResult: Result<{
     readonly edges: ReadonlyArray<{
@@ -40,15 +86,22 @@ export type useCurrentUserProjectRolesQuery = {
 const node: ConcreteRequest = (function(){
 var v0 = [
   {
-    "kind": "Literal",
-    "name": "filter",
-    "value": {
-      "permission": {
-        "entityType": {
-          "equals": "PROJECT_ADMIN_PAGE"
-        }
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "permissionFilter"
+  }
+],
+v1 = [
+  {
+    "fields": [
+      {
+        "kind": "Variable",
+        "name": "permission",
+        "variableName": "permissionFilter"
       }
-    }
+    ],
+    "kind": "ObjectValue",
+    "name": "filter"
   },
   {
     "kind": "Literal",
@@ -56,28 +109,28 @@ var v0 = [
     "value": 100
   }
 ],
-v1 = {
+v2 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v2 = [
+v3 = [
   {
     "kind": "Literal",
     "name": "first",
     "value": 1
   }
 ],
-v3 = {
+v4 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "scopeId",
   "storageKey": null
 },
-v4 = {
+v5 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -86,7 +139,7 @@ v4 = {
 };
 return {
   "fragment": {
-    "argumentDefinitions": [],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "useCurrentUserProjectRolesQuery",
@@ -95,7 +148,7 @@ return {
         "kind": "CatchField",
         "field": {
           "alias": "myRolesResult",
-          "args": (v0/*: any*/),
+          "args": (v1/*: any*/),
           "concreteType": "RoleAssignmentConnection",
           "kind": "LinkedField",
           "name": "myRoles",
@@ -117,7 +170,7 @@ return {
                   "name": "node",
                   "plural": false,
                   "selections": [
-                    (v1/*: any*/),
+                    (v2/*: any*/),
                     {
                       "alias": null,
                       "args": null,
@@ -126,10 +179,10 @@ return {
                       "name": "role",
                       "plural": false,
                       "selections": [
-                        (v1/*: any*/),
+                        (v2/*: any*/),
                         {
                           "alias": null,
-                          "args": (v2/*: any*/),
+                          "args": (v3/*: any*/),
                           "concreteType": "EntityConnection",
                           "kind": "LinkedField",
                           "name": "scopes",
@@ -151,8 +204,8 @@ return {
                                   "name": "node",
                                   "plural": false,
                                   "selections": [
-                                    (v3/*: any*/),
-                                    (v4/*: any*/)
+                                    (v4/*: any*/),
+                                    (v5/*: any*/)
                                   ],
                                   "storageKey": null
                                 }
@@ -172,7 +225,7 @@ return {
               "storageKey": null
             }
           ],
-          "storageKey": "myRoles(filter:{\"permission\":{\"entityType\":{\"equals\":\"PROJECT_ADMIN_PAGE\"}}},first:100)"
+          "storageKey": null
         },
         "to": "RESULT"
       }
@@ -182,13 +235,13 @@ return {
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": [],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "useCurrentUserProjectRolesQuery",
     "selections": [
       {
         "alias": "myRolesResult",
-        "args": (v0/*: any*/),
+        "args": (v1/*: any*/),
         "concreteType": "RoleAssignmentConnection",
         "kind": "LinkedField",
         "name": "myRoles",
@@ -210,7 +263,7 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v1/*: any*/),
+                  (v2/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -219,10 +272,10 @@ return {
                     "name": "role",
                     "plural": false,
                     "selections": [
-                      (v1/*: any*/),
+                      (v2/*: any*/),
                       {
                         "alias": null,
-                        "args": (v2/*: any*/),
+                        "args": (v3/*: any*/),
                         "concreteType": "EntityConnection",
                         "kind": "LinkedField",
                         "name": "scopes",
@@ -244,9 +297,9 @@ return {
                                 "name": "node",
                                 "plural": false,
                                 "selections": [
-                                  (v3/*: any*/),
                                   (v4/*: any*/),
-                                  (v1/*: any*/)
+                                  (v5/*: any*/),
+                                  (v2/*: any*/)
                                 ],
                                 "storageKey": null
                               }
@@ -266,21 +319,21 @@ return {
             "storageKey": null
           }
         ],
-        "storageKey": "myRoles(filter:{\"permission\":{\"entityType\":{\"equals\":\"PROJECT_ADMIN_PAGE\"}}},first:100)"
+        "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "1c6d5d57296f1b9ee02eaffed0ac43ae",
+    "cacheID": "5eded640065127c5714bd52980e64c02",
     "id": null,
     "metadata": {},
     "name": "useCurrentUserProjectRolesQuery",
     "operationKind": "query",
-    "text": "query useCurrentUserProjectRolesQuery {\n  myRolesResult: myRoles(first: 100, filter: {permission: {entityType: {equals: PROJECT_ADMIN_PAGE}}}) {\n    edges {\n      node {\n        id\n        role {\n          id\n          scopes(first: 1) {\n            edges {\n              node {\n                scopeId\n                scopeType\n                id\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query useCurrentUserProjectRolesQuery(\n  $permissionFilter: PermissionNestedFilter\n) {\n  myRolesResult: myRoles(first: 100, filter: {permission: $permissionFilter}) {\n    edges {\n      node {\n        id\n        role {\n          id\n          scopes(first: 1) {\n            edges {\n              node {\n                scopeId\n                scopeType\n                id\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "b6f263cd20582aadd47c4699ff83adf7";
+(node as any).hash = "ac9b1935fcf340c2333c3e50f9623092";
 
 export default node;

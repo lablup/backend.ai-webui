@@ -99,15 +99,13 @@ Check for consistency across the documentation:
 - [ ] Active voice preferred
 
 #### Terminology Consistency
-Verify all terminology against `packages/backend.ai-webui-docs/TERMINOLOGY.md`. Key checks:
-- "compute session" (not "session instance" or "container")
-- "storage folder" or "vfolder" (not "volume" or "directory" or "data folder")
-- "resource group" (not "scaling group" or "resource pool")
-- "keypair" (not "key pair" or "key-pair")
-- "domain" (not "organization")
-- "project" (not "group")
-- "model serving" / "endpoint" (not "inference service")
-- "agent" / "agent node" (not "compute node" or "worker node" outside serving context)
+Verify all terminology against the single source of truth, `packages/backend.ai-webui-docs/terminology.json`. Do **not** maintain a hardcoded avoid-pair list here — load the `avoid[]` array (each entry is `{ avoid, useInstead, reason, lang, context, conceptId }`) and flag any use of an `avoid` term where the corresponding `useInstead` (or the linked `concepts[].preferred[lang]`) is expected:
+
+```bash
+node -e 'const t=require("./packages/backend.ai-webui-docs/terminology.json"); for (const a of t.avoid) console.log([a.lang, a.avoid, "→", a.useInstead, a.context ? "("+a.context+")" : ""].join(" "));'
+```
+
+Honor each entry's `context` qualifier when deciding whether a match is a true violation — e.g. `group` (`context: "for project"`) is only wrong when it stands in for "project"; `worker node` (`conceptId: agent`) is allowed in the model-serving context; `WSProxy` (`context: "as a UI label"`) is wrong as a user-facing label but the lowercase `wsproxy` internal identifier is fine. For non-English files, additionally check the term against `concepts[].preferred[lang]` (`ko` / `ja` / `th`) as best-effort.
 
 #### Format Consistency
 - Check that similar features are documented in similar ways

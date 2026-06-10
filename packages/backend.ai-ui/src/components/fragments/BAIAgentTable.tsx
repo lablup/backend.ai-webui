@@ -9,6 +9,7 @@ import {
   toFixedFloorWithoutTrailingZeros,
 } from '../../helper';
 import { useBAILogger, useResourceSlotsDetails } from '../../hooks';
+import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIAlertIconWithTooltip from '../BAIAlertIconWithTooltip';
 import BAIDoubleTag from '../BAIDoubleTag';
 import BAIFlex from '../BAIFlex';
@@ -30,7 +31,6 @@ import {
   ErrorBoundary,
   type ErrorBoundaryPropsWithRender,
 } from 'react-error-boundary';
-import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
 export type AgentNodeInList = NonNullable<
@@ -57,11 +57,11 @@ const CellErrorBoundary: React.FC<
   Omit<ErrorBoundaryPropsWithRender, 'fallbackRender'>
 > = ({ children, ...errorBoundaryProps }) => {
   'use memo';
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   const { logger } = useBAILogger();
   return (
     <ErrorBoundary
-      onError={(error: Error, info: ErrorInfo) =>
+      onError={(error: unknown, info: ErrorInfo) =>
         logger.error(
           '[BAIAgentTable] Cell render failed:',
           error,
@@ -239,7 +239,7 @@ const UtilizationCell: React.FC<{
   record: AgentNodeInList;
 }> = ({ value, record }) => {
   'use memo';
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   const { mergedResourceSlots } = useResourceSlotsDetails();
   const parsedValue = JSON.parse(value || '{}');
   const available_slots = JSON.parse(record?.available_slots || '{}');
@@ -599,7 +599,7 @@ const BAIAgentTable: React.FC<BAIAgentTableProps> = ({
   customizeColumns,
   ...tableProps
 }) => {
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   const { token } = theme.useToken();
   const baiClient = useConnectedBAIClient();
 

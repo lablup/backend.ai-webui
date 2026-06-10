@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-05-05
+> **Last Updated:** 2026-05-27
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -334,7 +334,7 @@
 | Create auto-mount folder | ✅ | `User can create Auto Mount vFolder` |
 | Delete / trash / restore / purge | ✅ | `User can create, delete(move to trash), restore, delete forever` |
 | Consecutive deletion | ✅ | `User can create and permanently delete multiple VFolders` |
-| Share folder → InviteFolderSettingModal | ✅ | `User can share vFolder` |
+| Share folder → InviteFolderSettingModal | ✅ | `User can share vFolder` (also asserts inviter email shown in invitation modal — FR-2982) |
 | File upload (button) | ✅ | `User can upload a single/multiple files via Upload button` |
 | File upload (drag & drop) | ✅ | `User can upload a file via drag and drop` |
 | File upload (duplicate handling) | ✅ | `User sees duplicate confirmation` / `User can cancel duplicate` |

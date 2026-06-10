@@ -3,6 +3,7 @@ import {
   BAIProjectTableFragment$key,
 } from '../../__generated__/BAIProjectTableFragment.graphql';
 import { toLocalId } from '../../helper';
+import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIResourceNumberWithIcon from '../BAIResourceNumberWithIcon';
 import BAIText from '../BAIText';
 import { BAIColumnsType, BAITable, BAITableProps } from '../Table';
@@ -10,7 +11,6 @@ import AllowedVfolderHostsWithPermission from './BAIAllowedVfolderHostsWithPermi
 import { Tag } from 'antd';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
 export const availableProjectSorterKeys = [
@@ -63,7 +63,7 @@ const BAIProjectTable = ({
   ...tableProps
 }: BAIProjectTableProps) => {
   'use memo';
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
 
   const projects = useFragment<BAIProjectTableFragment$key>(
     graphql`

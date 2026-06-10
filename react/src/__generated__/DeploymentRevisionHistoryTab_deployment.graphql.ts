@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<171468a5cb8e67f95a3d33272b54cbdf>>
+ * @generated SignedSource<<070209edea69829fc5a199ff491eead2>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,9 +9,14 @@
 // @ts-nocheck
 
 import { ReaderFragment } from 'relay-runtime';
+export type DeploymentStatus = "DEPLOYING" | "PENDING" | "READY" | "SCALING" | "STOPPED" | "STOPPING" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
 export type DeploymentRevisionHistoryTab_deployment$data = {
   readonly id: string;
+  readonly metadata: {
+    readonly status: DeploymentStatus;
+  };
+  readonly " $fragmentSpreads": FragmentRefs<"DeploymentAddRevisionModal_deployment">;
   readonly " $fragmentType": "DeploymentRevisionHistoryTab_deployment";
 };
 export type DeploymentRevisionHistoryTab_deployment$key = {
@@ -31,12 +36,35 @@ const node: ReaderFragment = {
       "kind": "ScalarField",
       "name": "id",
       "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "ModelDeploymentMetadata",
+      "kind": "LinkedField",
+      "name": "metadata",
+      "plural": false,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "status",
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    },
+    {
+      "args": null,
+      "kind": "FragmentSpread",
+      "name": "DeploymentAddRevisionModal_deployment"
     }
   ],
   "type": "ModelDeployment",
   "abstractKey": null
 };
 
-(node as any).hash = "d24c62ecda7ccb05acbbc317a5e86bb3";
+(node as any).hash = "6d00d8056ec0eba0eea404e554242adf";
 
 export default node;

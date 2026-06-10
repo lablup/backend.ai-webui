@@ -40,7 +40,7 @@ BAITableSettingModal is a modal component for configuring table column settings.
 
 ### Drag and Drop Reordering
 - Reorder columns by dragging rows
-- Can be disabled with \`disableSorter\` prop
+- Can be disabled with \`disableReorder\` prop
 - Drag handle with visual feedback
 
 ### Form Integration
@@ -60,7 +60,7 @@ BAITableSettingModal is a modal component for configuring table column settings.
       control: { type: 'boolean' },
       description: 'Whether the modal is open',
     },
-    disableSorter: {
+    disableReorder: {
       control: { type: 'boolean' },
       description: 'Disable column reordering functionality',
     },
@@ -222,7 +222,7 @@ export const WithDisabledSorter: Story = {
           onRequestClose={() => setIsOpen(false)}
           columns={sampleColumns}
           columnOverrides={{}}
-          disableSorter={true}
+          disableReorder={true}
         />
       </div>
     );

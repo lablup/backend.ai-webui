@@ -15,6 +15,7 @@ import { BAIProjectSettingModalModifyMutation } from '../../__generated__/BAIPro
 import { BAIProjectSettingModalQuery } from '../../__generated__/BAIProjectSettingModalQuery.graphql';
 import { convertToBinaryUnit } from '../../helper';
 import { useErrorMessageResolver, useResourceSlotsDetails } from '../../hooks';
+import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIModal, { BAIModalProps } from '../BAIModal';
 import {
   App,
@@ -27,7 +28,6 @@ import {
 } from 'antd';
 import * as _ from 'lodash-es';
 import { useDeferredValue, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   graphql,
   useFragment,
@@ -67,7 +67,7 @@ const BAIProjectSettingModal = ({
   ...modalProps
 }: BAIProjectSettingModalProps) => {
   const { token } = theme.useToken();
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   const deferredOpen = useDeferredValue(modalProps.open);
   const { resourceSlotsInRG, deviceMetaData } = useResourceSlotsDetails();
   const form = useRef<FormInstance<FormValues>>(null);

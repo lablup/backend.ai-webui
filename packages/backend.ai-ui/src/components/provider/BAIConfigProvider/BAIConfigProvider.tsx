@@ -31,7 +31,6 @@ import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
 import weekday from 'dayjs/plugin/weekday';
 import { useEffect } from 'react';
-import { I18nextProvider } from 'react-i18next';
 
 dayjs.extend(weekday);
 dayjs.extend(localeData);
@@ -41,8 +40,10 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(duration);
 
-export interface BAIConfigProviderBaseProps
-  extends Omit<ConfigProviderProps, 'locale'> {
+export interface BAIConfigProviderBaseProps extends Omit<
+  ConfigProviderProps,
+  'locale'
+> {
   locale?: BAILocale;
 }
 
@@ -74,6 +75,13 @@ const BAIConfigProvider = ({
   anonymousClientFactory,
   ...props
 }: BAIConfigProviderProps) => {
+  // Sync BUI's i18n + dayjs locale to the prop. BUI components access
+  // `buiI18n` *explicitly* via `useBAIi18n()` (which calls
+  // `useTranslation(undefined, { i18n: buiI18n })`), so we do NOT wrap
+  // children with `<I18nextProvider i18n={buiI18n}>` — that would shadow
+  // the host's i18n React Context and break host components' translations
+  // (FR-2987). Explicit instance binding is enough to keep BUI translations
+  // working without leaking into the host's Context.
   useEffect(() => {
     if (locale?.lang) {
       i18n.changeLanguage(locale.lang);
@@ -82,22 +90,20 @@ const BAIConfigProvider = ({
   }, [locale?.lang]);
 
   return (
-    <I18nextProvider i18n={i18n}>
-      <QueryClientProvider client={queryClient}>
-        <ConfigProvider locale={locale?.antdLocale} {...props}>
-          {clientPromise && anonymousClientFactory ? (
-            <BAIClientProvider
-              clientPromise={clientPromise}
-              anonymousClientFactory={anonymousClientFactory}
-            >
-              {children}
-            </BAIClientProvider>
-          ) : (
-            children
-          )}
-        </ConfigProvider>
-      </QueryClientProvider>
-    </I18nextProvider>
+    <QueryClientProvider client={queryClient}>
+      <ConfigProvider locale={locale?.antdLocale} {...props}>
+        {clientPromise && anonymousClientFactory ? (
+          <BAIClientProvider
+            clientPromise={clientPromise}
+            anonymousClientFactory={anonymousClientFactory}
+          >
+            {children}
+          </BAIClientProvider>
+        ) : (
+          children
+        )}
+      </ConfigProvider>
+    </QueryClientProvider>
   );
 };
 

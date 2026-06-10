@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { RoleDetailDrawerQuery } from '../__generated__/RoleDetailDrawerQuery.graphql';
+import { useSuspendedBackendaiClient } from '../hooks';
 import RoleDetailDrawerContent from './RoleDetailDrawerContent';
 import RoleFormModal from './RoleFormModal';
 import { Alert, Drawer, Skeleton, Tooltip, Typography, theme } from 'antd';
@@ -74,7 +75,15 @@ const RoleDetailDrawerInner: React.FC<RoleDetailDrawerInnerProps> = ({
   const { token } = theme.useToken();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
+  const baiClient = useSuspendedBackendaiClient();
   const localRoleId = toLocalId(roleId);
+  // <= 26.4.3 takes the bare UUID; >= 26.4.4rc4 takes the UUIDFilter wrapper.
+  // FR-3031.
+  const roleIdFilter = (
+    baiClient.supports('rbac-filter-wrapper')
+      ? { equals: localRoleId }
+      : localRoleId
+  ) as { equals: string };
 
   const data = useLazyLoadQuery<RoleDetailDrawerQuery>(
     graphql`
@@ -121,8 +130,8 @@ const RoleDetailDrawerInner: React.FC<RoleDetailDrawerInnerProps> = ({
     `,
     {
       id: localRoleId,
-      assignmentFilter: { roleId: { equals: localRoleId } },
-      permissionFilter: { roleId: { equals: localRoleId } },
+      assignmentFilter: { roleId: roleIdFilter },
+      permissionFilter: { roleId: roleIdFilter },
       scopeFilter: null,
       scopeOrderBy: null,
       assignmentLimit: 10,

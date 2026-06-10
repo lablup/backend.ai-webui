@@ -1,5 +1,5 @@
+import { useBAIi18n } from './useBAIi18n';
 import * as _ from 'lodash-es';
-import { useTranslation } from 'react-i18next';
 
 export type GraphQLErrorEntry = {
   message?: string | null;
@@ -43,7 +43,7 @@ export type ESMClientErrorResponse = {
 };
 
 const useErrorMessageResolver = () => {
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
 
   const isErrorLike = (
     error: unknown,

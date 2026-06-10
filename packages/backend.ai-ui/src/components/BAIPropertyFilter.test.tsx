@@ -56,6 +56,44 @@ describe('parseFilterValue', () => {
       value: '%@example.com',
     });
   });
+
+  it('preserves whitespace inside a double-quoted value', () => {
+    expect(parseFilterValue('name ilike "%hello world%"')).toEqual({
+      property: 'name',
+      operator: 'ilike',
+      value: '%hello world%',
+    });
+  });
+
+  it('keeps inner whitespace of quoted list elements intact', () => {
+    // Exercises the tokenizer edge case where list elements themselves contain
+    // whitespace inside double quotes (must not be split on).
+    expect(parseFilterValue('name in ["READ ONLY", "READ WRITE"]')).toEqual({
+      property: 'name',
+      operator: 'in',
+      value: '["READ ONLY", "READ WRITE"]',
+    });
+  });
+
+  it('treats Unicode whitespace (e.g. non-breaking space) as a separator', () => {
+    // \u00A0 (a non-breaking space) is matched by \s but not by a fixed ASCII list.
+    const NBSP = '\u00A0';
+    expect(parseFilterValue(`name${NBSP}==${NBSP}"value"`)).toEqual({
+      property: 'name',
+      operator: '==',
+      value: 'value',
+    });
+  });
+
+  it('parses adversarial input in linear time (ReDoS guard)', () => {
+    // The previous lookahead regex exhibited catastrophic backtracking on
+    // inputs with many unbalanced quotes/spaces. The linear scan must stay
+    // fast regardless of input shape.
+    const adversarial = 'a ' + '"'.repeat(50000) + ' '.repeat(50000);
+    const start = performance.now();
+    parseFilterValue(adversarial);
+    expect(performance.now() - start).toBeLessThan(1000);
+  });
 });
 
 describe('mergeFilterValues', () => {

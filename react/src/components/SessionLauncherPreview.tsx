@@ -539,7 +539,7 @@ const SessionLauncherPreview: React.FC<{
             type="inner"
             title={t('session.launcher.TotalAllocation')}
           >
-            <BAIFlex direction="row" gap="xxs">
+            <BAIFlex direction="row" gap="xxs" wrap="wrap">
               <ResourceNumbersOfSession
                 resource={form.getFieldValue('resource')}
                 containerCount={

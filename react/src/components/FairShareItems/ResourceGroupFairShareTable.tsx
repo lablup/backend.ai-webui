@@ -6,12 +6,12 @@ import {
   ResourceGroupFairShareTableFragment$data,
   ResourceGroupFairShareTableFragment$key,
 } from '../../__generated__/ResourceGroupFairShareTableFragment.graphql';
-import QuestionIconWithTooltip from '../QuestionIconWithTooltip';
 import ResourceGroupFairShareSettingModal from './ResourceGroupFairShareSettingModal';
 import { SettingOutlined } from '@ant-design/icons';
 import { Divider, theme, Typography } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import {
+  BAIQuestionIconWithTooltip,
   BAIFlex,
   BAINameActionCell,
   BAITable,
@@ -170,7 +170,7 @@ const ResourceGroupFairShareTable: React.FC<
                       </Typography.Text>
                     </BAIFlex>
                   </BAIFlex>
-                  {index !== capacityEntries.length - 1 && (
+                  {index !== (capacityEntries?.length ?? 0) - 1 && (
                     <Divider orientation="vertical" />
                   )}
                 </React.Fragment>
@@ -184,7 +184,7 @@ const ResourceGroupFairShareTable: React.FC<
       title: (
         <BAIFlex gap="xxs">
           {t('fairShare.ResourceWeights')}
-          <QuestionIconWithTooltip
+          <BAIQuestionIconWithTooltip
             title={t('fairShare.ResourceWeightsDescription')}
           />
         </BAIFlex>
@@ -237,7 +237,7 @@ const ResourceGroupFairShareTable: React.FC<
       title: (
         <BAIFlex gap="xxs">
           {t('fairShare.DefaultWeight')}
-          <QuestionIconWithTooltip
+          <BAIQuestionIconWithTooltip
             title={t('fairShare.DefaultWeightDescription')}
           />
         </BAIFlex>
@@ -250,7 +250,7 @@ const ResourceGroupFairShareTable: React.FC<
       title: (
         <BAIFlex gap="xxs">
           {t('fairShare.DecayUnitDays')}
-          <QuestionIconWithTooltip
+          <BAIQuestionIconWithTooltip
             title={t('fairShare.DecayUnitDaysDescription')}
           />
         </BAIFlex>
@@ -264,7 +264,7 @@ const ResourceGroupFairShareTable: React.FC<
       title: (
         <BAIFlex gap="xxs">
           {t('fairShare.HalfLifeDays')}
-          <QuestionIconWithTooltip
+          <BAIQuestionIconWithTooltip
             title={t('fairShare.HalfLifeDaysDescription')}
           />
         </BAIFlex>
@@ -277,7 +277,7 @@ const ResourceGroupFairShareTable: React.FC<
       title: (
         <BAIFlex gap="xxs">
           {t('fairShare.LookbackDays')}
-          <QuestionIconWithTooltip
+          <BAIQuestionIconWithTooltip
             title={t('fairShare.LookbackDaysDescription')}
           />
         </BAIFlex>

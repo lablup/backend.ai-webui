@@ -4,15 +4,38 @@ import {
   loginAsAdmin,
   loginAsUser,
   moveToTrashAndVerify,
+  navigateTo,
 } from '../utils/test-util';
 import { test, expect, Page } from '@playwright/test';
 
 /**
- * Navigate to the Data page and open the Create Folder modal.
+ * Navigate to the regular Data page and open the Create Folder modal.
+ * Used by user-role tests where only the User-type radio should be visible.
  */
 async function openCreateFolderModal(page: Page): Promise<FolderCreationModal> {
   await page.getByRole('link', { name: 'Data' }).click();
-  await page.getByRole('button', { name: 'Create Folder' }).nth(1).click();
+  await page.getByRole('button', { name: 'Create Folder' }).first().click();
+  const modal = new FolderCreationModal(page);
+  await modal.modalToBeVisible();
+  return modal;
+}
+
+/**
+ * Navigate to the Project Admin Data page (/project-data) and open the Create
+ * Folder modal. This page uses folderType="project" which renders both the User
+ * and Project type radios, making it the correct page for admin Project-type
+ * vfolder tests.
+ *
+ * Note: On the /data page (VFolderNodeListPage), allowCreateProjectFolder is
+ * false (default), so the Project radio never renders — even for admin users.
+ * The /project-data page (ProjectAdminDataPage) uses folderType="project" which
+ * satisfies the rendering condition in FolderCreateModalV2.
+ */
+async function openCreateFolderModalAsAdmin(
+  page: Page,
+): Promise<FolderCreationModal> {
+  await navigateTo(page, 'project-data');
+  await page.getByRole('button', { name: 'Create Folder' }).first().click();
   const modal = new FolderCreationModal(page);
   await modal.modalToBeVisible();
   return modal;
@@ -60,15 +83,20 @@ test.describe(
 
       test.afterEach(async ({ page }) => {
         try {
-          await moveToTrashAndVerify(page, folderName);
-          await deleteForeverAndVerifyFromTrash(page, folderName);
+          // Project-type folders are only visible on /project-data, not on /data.
+          await moveToTrashAndVerify(page, folderName, 'project-data');
+          await deleteForeverAndVerifyFromTrash(
+            page,
+            folderName,
+            'project-data',
+          );
         } catch {
           // Folder may not exist if test was skipped or creation failed
         }
       });
 
       test('Admin can create a Project-type vfolder', async ({ page }) => {
-        const modal = await openCreateFolderModal(page);
+        const modal = await openCreateFolderModalAsAdmin(page);
         await modal.fillFolderName(folderName);
 
         // Project-type radio should be visible for admin
@@ -95,7 +123,7 @@ test.describe(
       test.beforeEach(async ({ page, request }, testInfo) => {
         folderName = `e2e-test-disabled-project-type-${Date.now()}-${testInfo.workerIndex}`;
         await loginAsAdmin(page, request);
-        await openCreateFolderModal(page);
+        await openCreateFolderModalAsAdmin(page);
       });
 
       test.afterEach(async ({ page }) => {
@@ -157,6 +185,19 @@ test.describe(
       test('Project radio is disabled when usage mode is automount', async ({
         page,
       }) => {
+        // The Project-type radio is only exposed via the /project-data page
+        // (ProjectAdminDataPage with folderType="project"). On that page the
+        // Auto Mount usage-mode radio is itself disabled (folderType="project"
+        // disables it in FolderCreateModalV2), so we cannot drive the UI into
+        // the automount state to verify this interaction. There is no other
+        // page in the current app where both the Project radio is visible and
+        // the automount radio is selectable.
+        test.fixme(
+          true,
+          'Automount radio is disabled on /project-data (folderType="project"), ' +
+            'preventing selection needed to assert project-radio disabled state.',
+        );
+
         const modal = new FolderCreationModal(page);
         await modal.modalToBeVisible();
         await modal.fillFolderName(folderName);
@@ -225,7 +266,7 @@ test.describe(
         request,
       }) => {
         await loginAsAdmin(page, request);
-        const modal = await openCreateFolderModal(page);
+        const modal = await openCreateFolderModalAsAdmin(page);
 
         // Both type radios should be visible for admin
         const userTypeRadio = await modal.getUserTypeRadio();

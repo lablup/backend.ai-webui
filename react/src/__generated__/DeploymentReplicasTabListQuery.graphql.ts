@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<611a399bbe27e2e5876bef657ee91330>>
+ * @generated SignedSource<<517375325eba4bfce46e65e96c12c50e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -228,18 +228,48 @@ v17 = {
   ],
   "storageKey": null
 },
-v18 = {
+v18 = [
+  (v16/*: any*/),
+  {
+    "alias": null,
+    "args": null,
+    "kind": "ScalarField",
+    "name": "value",
+    "storageKey": null
+  }
+],
+v19 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "vfolderId",
   "storageKey": null
 },
-v19 = {
+v20 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "mountDestination",
+  "storageKey": null
+},
+v21 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "VirtualFolderNode",
+  "kind": "LinkedField",
+  "name": "vfolder",
+  "plural": false,
+  "selections": [
+    (v8/*: any*/),
+    (v16/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "row_id",
+      "storageKey": null
+    }
+  ],
   "storageKey": null
 };
 return {
@@ -446,6 +476,38 @@ return {
                           {
                             "alias": null,
                             "args": null,
+                            "concreteType": "ResourceConfig",
+                            "kind": "LinkedField",
+                            "name": "resourceConfig",
+                            "plural": false,
+                            "selections": [
+                              {
+                                "alias": null,
+                                "args": null,
+                                "concreteType": "ResourceOpts",
+                                "kind": "LinkedField",
+                                "name": "resourceOpts",
+                                "plural": false,
+                                "selections": [
+                                  {
+                                    "alias": null,
+                                    "args": null,
+                                    "concreteType": "ResourceOptsEntry",
+                                    "kind": "LinkedField",
+                                    "name": "entries",
+                                    "plural": true,
+                                    "selections": (v18/*: any*/),
+                                    "storageKey": null
+                                  }
+                                ],
+                                "storageKey": null
+                              }
+                            ],
+                            "storageKey": null
+                          },
+                          {
+                            "alias": null,
+                            "args": null,
                             "concreteType": "ModelRuntimeConfig",
                             "kind": "LinkedField",
                             "name": "modelRuntimeConfig",
@@ -467,6 +529,13 @@ return {
                               {
                                 "alias": null,
                                 "args": null,
+                                "kind": "ScalarField",
+                                "name": "inferenceRuntimeConfig",
+                                "storageKey": null
+                              },
+                              {
+                                "alias": null,
+                                "args": null,
                                 "concreteType": "EnvironmentVariables",
                                 "kind": "LinkedField",
                                 "name": "environ",
@@ -479,16 +548,7 @@ return {
                                     "kind": "LinkedField",
                                     "name": "entries",
                                     "plural": true,
-                                    "selections": [
-                                      (v16/*: any*/),
-                                      {
-                                        "alias": null,
-                                        "args": null,
-                                        "kind": "ScalarField",
-                                        "name": "value",
-                                        "storageKey": null
-                                      }
-                                    ],
+                                    "selections": (v18/*: any*/),
                                     "storageKey": null
                                   }
                                 ],
@@ -505,8 +565,8 @@ return {
                             "name": "modelMountConfig",
                             "plural": false,
                             "selections": [
-                              (v18/*: any*/),
                               (v19/*: any*/),
+                              (v20/*: any*/),
                               {
                                 "alias": null,
                                 "args": null,
@@ -514,32 +574,20 @@ return {
                                 "name": "definitionPath",
                                 "storageKey": null
                               },
-                              {
-                                "alias": null,
-                                "args": null,
-                                "concreteType": "VirtualFolderNode",
-                                "kind": "LinkedField",
-                                "name": "vfolder",
-                                "plural": false,
-                                "selections": [
-                                  (v8/*: any*/),
-                                  (v16/*: any*/)
-                                ],
-                                "storageKey": null
-                              }
+                              (v21/*: any*/)
                             ],
                             "storageKey": null
                           },
                           {
                             "alias": null,
                             "args": null,
-                            "concreteType": "ExtraVFolderMountInfoGQL",
+                            "concreteType": "ExtraVFolderMountInfo",
                             "kind": "LinkedField",
                             "name": "extraMounts",
                             "plural": true,
                             "selections": [
-                              (v18/*: any*/),
                               (v19/*: any*/),
+                              (v20/*: any*/),
                               {
                                 "alias": null,
                                 "args": null,
@@ -547,26 +595,7 @@ return {
                                 "name": "mountPerm",
                                 "storageKey": null
                               },
-                              {
-                                "alias": null,
-                                "args": null,
-                                "concreteType": "VirtualFolderNode",
-                                "kind": "LinkedField",
-                                "name": "vfolder",
-                                "plural": false,
-                                "selections": [
-                                  (v8/*: any*/),
-                                  (v16/*: any*/),
-                                  {
-                                    "alias": null,
-                                    "args": null,
-                                    "kind": "ScalarField",
-                                    "name": "row_id",
-                                    "storageKey": null
-                                  }
-                                ],
-                                "storageKey": null
-                              }
+                              (v21/*: any*/)
                             ],
                             "storageKey": null
                           },
@@ -592,6 +621,13 @@ return {
                                     "args": null,
                                     "kind": "ScalarField",
                                     "name": "canonicalName",
+                                    "storageKey": null
+                                  },
+                                  {
+                                    "alias": null,
+                                    "args": null,
+                                    "kind": "ScalarField",
+                                    "name": "architecture",
                                     "storageKey": null
                                   }
                                 ],
@@ -643,7 +679,39 @@ return {
                                         "alias": null,
                                         "args": null,
                                         "kind": "ScalarField",
+                                        "name": "shell",
+                                        "storageKey": null
+                                      },
+                                      {
+                                        "alias": null,
+                                        "args": null,
+                                        "kind": "ScalarField",
                                         "name": "port",
+                                        "storageKey": null
+                                      },
+                                      {
+                                        "alias": null,
+                                        "args": null,
+                                        "concreteType": "PreStartAction",
+                                        "kind": "LinkedField",
+                                        "name": "preStartActions",
+                                        "plural": true,
+                                        "selections": [
+                                          {
+                                            "alias": null,
+                                            "args": null,
+                                            "kind": "ScalarField",
+                                            "name": "action",
+                                            "storageKey": null
+                                          },
+                                          {
+                                            "alias": null,
+                                            "args": null,
+                                            "kind": "ScalarField",
+                                            "name": "args",
+                                            "storageKey": null
+                                          }
+                                        ],
                                         "storageKey": null
                                       },
                                       {
@@ -688,6 +756,13 @@ return {
                                             "kind": "ScalarField",
                                             "name": "maxWaitTime",
                                             "storageKey": null
+                                          },
+                                          {
+                                            "alias": null,
+                                            "args": null,
+                                            "kind": "ScalarField",
+                                            "name": "expectedStatusCode",
+                                            "storageKey": null
                                           }
                                         ],
                                         "storageKey": null
@@ -721,12 +796,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "acc919974a8cb5cb0d212d2a1fb6ac0d",
+    "cacheID": "8241c83606821a73c83cc9a9d8814b88",
     "id": null,
     "metadata": {},
     "name": "DeploymentReplicasTabListQuery",
     "operationKind": "query",
-    "text": "query DeploymentReplicasTabListQuery(\n  $deploymentId: ID!\n  $filter: ReplicaFilter\n  $orderBy: [ReplicaOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  deployment(id: $deploymentId) {\n    replicas(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n      count\n      edges {\n        node {\n          id\n          sessionId\n          revisionId\n          status\n          trafficStatus\n          healthStatus\n          createdAt\n          revision {\n            id\n            revisionNumber\n            ...DeploymentRevisionDetail_revision\n          }\n          sessionV2 @since(version: \"26.4.3\") {\n            id\n            metadata {\n              name\n            }\n          }\n        }\n      }\n    }\n    id\n  }\n}\n\nfragment DeploymentRevisionDetail_revision on ModelRevision {\n  id\n  revisionNumber\n  createdAt\n  clusterConfig {\n    mode\n    size\n  }\n  resourceSlots @since(version: \"26.4.2\") {\n    slotName\n    quantity\n  }\n  modelRuntimeConfig {\n    runtimeVariant {\n      name\n      id\n    }\n    environ {\n      entries {\n        name\n        value\n      }\n    }\n  }\n  modelMountConfig {\n    vfolderId\n    mountDestination\n    definitionPath\n    vfolder {\n      id\n      name\n    }\n  }\n  extraMounts {\n    vfolderId\n    mountDestination\n    mountPerm\n    vfolder {\n      id\n      name\n      ...FolderLink_vfolderNode\n    }\n  }\n  imageV2 @since(version: \"26.4.3\") {\n    id\n    identity {\n      canonicalName\n    }\n  }\n  modelDefinition {\n    models {\n      name\n      modelPath\n      service {\n        startCommand\n        port\n        healthCheck {\n          path\n          initialDelay\n          maxRetries\n          interval\n          maxWaitTime\n        }\n      }\n    }\n  }\n}\n\nfragment FolderLink_vfolderNode on VirtualFolderNode {\n  row_id\n  name\n}\n"
+    "text": "query DeploymentReplicasTabListQuery(\n  $deploymentId: ID!\n  $filter: ReplicaFilter\n  $orderBy: [ReplicaOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  deployment(id: $deploymentId) {\n    replicas(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n      count\n      edges {\n        node {\n          id\n          sessionId\n          revisionId\n          status\n          trafficStatus\n          healthStatus\n          createdAt\n          revision {\n            id\n            revisionNumber\n            ...DeploymentRevisionDetail_revision\n          }\n          sessionV2 @since(version: \"26.4.3\") {\n            id\n            metadata {\n              name\n            }\n          }\n        }\n      }\n    }\n    id\n  }\n}\n\nfragment DeploymentRevisionDetail_revision on ModelRevision {\n  id\n  revisionNumber\n  createdAt\n  clusterConfig {\n    mode\n    size\n  }\n  resourceSlots @since(version: \"26.4.2\") {\n    slotName\n    quantity\n  }\n  resourceConfig {\n    resourceOpts {\n      entries {\n        name\n        value\n      }\n    }\n  }\n  modelRuntimeConfig {\n    runtimeVariant {\n      name\n      id\n    }\n    inferenceRuntimeConfig\n    environ {\n      entries {\n        name\n        value\n      }\n    }\n  }\n  modelMountConfig {\n    vfolderId\n    mountDestination\n    definitionPath\n    vfolder {\n      id\n      name\n      ...FolderLink_vfolderNode\n    }\n  }\n  extraMounts {\n    vfolderId\n    mountDestination\n    mountPerm\n    vfolder {\n      id\n      name\n      ...FolderLink_vfolderNode\n    }\n  }\n  imageV2 @since(version: \"26.4.3\") {\n    id\n    identity {\n      canonicalName\n      architecture\n    }\n  }\n  modelDefinition {\n    models {\n      name\n      modelPath\n      service {\n        startCommand\n        shell\n        port\n        preStartActions {\n          action\n          args\n        }\n        healthCheck {\n          path\n          initialDelay\n          maxRetries\n          interval\n          maxWaitTime\n          expectedStatusCode\n        }\n      }\n    }\n  }\n}\n\nfragment FolderLink_vfolderNode on VirtualFolderNode {\n  row_id\n  name\n  ...VFolderNodeIdenticonFragment\n}\n\nfragment VFolderNodeIdenticonFragment on VirtualFolderNode {\n  id\n}\n"
   }
 };
 })();

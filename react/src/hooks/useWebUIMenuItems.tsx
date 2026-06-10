@@ -776,13 +776,12 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
     return null;
   })();
 
-  const isSelectedAdminCategoryMenu =
-    _.some(adminMenu, (item) => {
-      if (item && 'key' in item) {
-        return item.key === location.pathname.split('/')[1];
-      }
-      return false;
-    }) || 'storage-settings' === location.pathname.split('/')[1];
+  const isSelectedAdminCategoryMenu = _.some(adminMenu, (item) => {
+    if (item && 'key' in item) {
+      return item.key === location.pathname.split('/')[1];
+    }
+    return false;
+  });
 
   // Role-independent variant: true when the current path is *any* admin
   // category page, regardless of whether the current user's effective role
@@ -795,8 +794,7 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
   const currentPathFirstSegment = location.pathname.split('/')[1] || '';
   const isCurrentPathAdminCategory =
     ALL_ADMIN_PAGE_KEYS.has(currentPathFirstSegment) ||
-    PROJECT_ADMIN_PAGE_KEY_SET.has(currentPathFirstSegment) ||
-    currentPathFirstSegment === 'storage-settings';
+    PROJECT_ADMIN_PAGE_KEY_SET.has(currentPathFirstSegment);
 
   // Get the first available menu item from groupedGeneralMenu
   // (after blocklist filtering, excluding disabled/inactive items)

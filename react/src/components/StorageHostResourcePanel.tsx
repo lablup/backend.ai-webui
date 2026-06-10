@@ -39,8 +39,8 @@ const StorageHostResourcePanel: React.FC<{
   };
 
   return (
-    <Descriptions size="small" bordered column={3}>
-      <Descriptions.Item label={t('storageHost.Usage')} span={3}>
+    <Descriptions size="small" bordered column={2}>
+      <Descriptions.Item label={t('storageHost.Usage')} span={2}>
         {storageUsage?.percent < 100 ? (
           <Progress
             size={[200, 15]}
@@ -66,9 +66,6 @@ const StorageHostResourcePanel: React.FC<{
           convertToDecimalUnit(storageUsage?.capacity_bytes, 'auto')
             ?.displayValue
         }
-      </Descriptions.Item>
-      <Descriptions.Item label={t('agent.Endpoint')}>
-        {resource?.path}
       </Descriptions.Item>
       <Descriptions.Item label={t('agent.BackendType')}>
         {resource?.backend}

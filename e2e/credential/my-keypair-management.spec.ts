@@ -1,5 +1,13 @@
 // spec: e2e/.agent-output/test-plan-my-keypair-management.md
-import { loginAsUser, navigateTo } from '../utils/test-util';
+import {
+  KeyPairModal,
+  UserSettingModal,
+} from '../utils/classes/user/UserSettingModal';
+import {
+  loginAsAdmin,
+  loginAsCreatedAccount,
+  navigateTo,
+} from '../utils/test-util';
 import test, { expect } from '@playwright/test';
 
 // Helper to open the My Keypair Management modal
@@ -14,10 +22,13 @@ async function openKeypairModal(page: import('@playwright/test').Page) {
   ).toBeVisible();
 }
 
-// Helper to get the keypair table rows (excluding measure rows)
+// Helper to get the keypair table rows (excluding the antd measure row and
+// the empty-state placeholder "No data" row, which is also a <tr> in tbody).
 function getKeypairTableRows(page: import('@playwright/test').Page) {
   const modal = page.getByRole('dialog', { name: 'My Keypair Management' });
-  return modal.locator('tbody tr:not(.ant-table-measure-row)');
+  return modal.locator(
+    'tbody tr:not(.ant-table-measure-row):not(.ant-table-placeholder)',
+  );
 }
 
 // Helper to issue a new keypair and close the credential dialog
@@ -87,15 +98,74 @@ async function deleteInactiveKeypair(
   await expect(page.getByText('Keypair deleted.')).toBeVisible();
 }
 
+// Disposable fixture user: every test in this file logs in as a fresh user
+// created by admin in beforeAll. We never touch the shared `user@lablup.com`
+// account because these tests issue/deactivate/delete keypairs and another
+// spec file (e.g. rbac/*) running in parallel against the shared user can
+// corrupt its keypair/project state. Using a disposable user gives each test
+// run a clean slate and lets the file run safely in parallel with others.
+const TEST_RUN_ID =
+  Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+const FIXTURE_EMAIL = `e2e-mykeypair-${TEST_RUN_ID}@lablup.com`;
+const FIXTURE_USERNAME = `e2e-mykeypair-${TEST_RUN_ID}`;
+const FIXTURE_PASSWORD = 'testing@123';
+
 test.describe(
   'My Keypair Management',
   { tag: ['@critical', '@credential', '@functional'] },
   () => {
     test.describe.configure({ mode: 'serial' });
 
+    test.beforeAll(async ({ browser }) => {
+      // Admin creates the disposable user via the Credential page UI.
+      // The default user creation flow assigns the user to a project and
+      // issues an active keypair automatically (shown in the KeyPairModal
+      // that appears right after creation). Use the admin context's own
+      // request so it carries fresh auth state.
+      const adminContext = await browser.newContext();
+      const adminPage = await adminContext.newPage();
+      const adminRequest = adminContext.request;
+      try {
+        await loginAsAdmin(adminPage, adminRequest);
+        await navigateTo(adminPage, 'credential');
+        await expect(
+          adminPage.getByRole('tab', { name: 'Users' }),
+        ).toBeVisible();
+        await adminPage.getByRole('button', { name: 'Create User' }).click();
+        const userSettingModal = new UserSettingModal(adminPage);
+        await userSettingModal.createUser(
+          FIXTURE_EMAIL,
+          FIXTURE_USERNAME,
+          FIXTURE_PASSWORD,
+        );
+        const keyPairModal = new KeyPairModal(adminPage);
+        await keyPairModal.waitForVisible();
+        await keyPairModal.close();
+        await userSettingModal.waitForHidden();
+        // Sanity check: the new user appears in the Active list.
+        await expect(
+          adminPage.getByRole('cell', { name: FIXTURE_EMAIL }),
+        ).toBeVisible({ timeout: 10000 });
+      } finally {
+        await adminContext.close();
+      }
+    });
+
+    // No afterAll cleanup: each test run uses a unique fixture user
+    // (`e2e-mykeypair-<TEST_RUN_ID>@lablup.com`) that does not collide with
+    // any other run, so leftover users are harmless. A separate periodic
+    // job (or a follow-up cleanup test) should reap the `e2e-mykeypair-*`
+    // accounts. Avoiding cleanup here keeps the file's tear-down fast and
+    // prevents flake from the cleanup itself.
+
     test.beforeEach(async ({ page, request }) => {
-      // Login as user
-      await loginAsUser(page, request);
+      // Login as the disposable fixture user (NOT the shared user@lablup.com).
+      await loginAsCreatedAccount(
+        page,
+        request,
+        FIXTURE_EMAIL,
+        FIXTURE_PASSWORD,
+      );
     });
 
     // ── 1. Modal Opening and Initial Display ───────────────────────────────────
@@ -538,31 +608,45 @@ test.describe(
       await openKeypairModal(page);
 
       const modal = page.getByRole('dialog', { name: 'My Keypair Management' });
+      let issuedAccessKey = '';
 
-      // Find a non-main keypair row (has dangerous/deactivate button)
-      const nonMainRow = modal
-        .locator('tbody tr:not(.ant-table-measure-row)')
-        .filter({
-          has: page.locator('td button.ant-btn-dangerous'),
-        })
-        .first();
-      await expect(nonMainRow).toBeVisible({ timeout: 10000 });
+      try {
+        // Issue a new (non-main) keypair so we have one with a Deactivate
+        // button to exercise. The fixture user starts with only its main
+        // keypair, which has the Deactivate button disabled.
+        issuedAccessKey = await issueNewKeypair(page);
 
-      // Click Deactivate button in the Controls cell
-      await nonMainRow
-        .locator('td')
-        .nth(1)
-        .locator('button.ant-btn-dangerous')
-        .click();
-      await expect(
-        page.getByText('Are you sure you want to deactivate this keypair?'),
-      ).toBeVisible();
+        const nonMainRow = modal
+          .locator('tbody tr:not(.ant-table-measure-row)')
+          .filter({ hasText: issuedAccessKey });
+        await expect(nonMainRow).toBeVisible({ timeout: 10000 });
 
-      // Click Cancel
-      await page.getByRole('button', { name: 'Cancel' }).click();
+        // Click Deactivate button in the Controls cell
+        await nonMainRow
+          .locator('td')
+          .nth(1)
+          .locator('button.ant-btn-dangerous')
+          .click();
+        await expect(
+          page.getByText('Are you sure you want to deactivate this keypair?'),
+        ).toBeVisible();
 
-      // Verify keypair still visible in Active table
-      await expect(nonMainRow).toBeVisible({ timeout: 5000 });
+        // Click Cancel
+        await page.getByRole('button', { name: 'Cancel' }).click();
+
+        // Verify keypair still visible in Active table
+        await expect(nonMainRow).toBeVisible({ timeout: 5000 });
+      } finally {
+        // Cleanup: deactivate and delete the issued keypair so the test
+        // doesn't leak active rows to subsequent tests. Let failures
+        // surface — this file runs serially against the same fixture user
+        // and a swallowed cleanup error would pollute later tests while
+        // still reporting this one as passed.
+        if (issuedAccessKey) {
+          await deactivateKeypair(page, issuedAccessKey);
+          await deleteInactiveKeypair(page, issuedAccessKey);
+        }
+      }
     });
 
     test('User cannot deactivate the main keypair (button is disabled)', async ({
@@ -801,8 +885,9 @@ test.describe(
       const deleteDialog = page.getByRole('dialog', { name: /Delete Keypair/ });
       await expect(deleteDialog).toBeVisible();
       await expect(deleteDialog).toContainText(
-        `This will permanently delete the keypair (${deleteTargetKey}). This action cannot be undone.`,
+        'Are you sure you want to permanently delete Keypair?',
       );
+      await expect(deleteDialog).toContainText('This action cannot be undone.');
       await expect(
         deleteDialog.getByRole('button', { name: 'Delete' }),
       ).toBeDisabled();

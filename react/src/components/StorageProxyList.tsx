@@ -8,26 +8,26 @@ import {
   convertUnitValue,
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
-import { useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
-import { InfoCircleOutlined, SettingOutlined } from '@ant-design/icons';
+import StorageHostDetailDrawer from './StorageHostDetailDrawer';
 import { type TableColumnsType, Tag, theme, Typography } from 'antd';
 import {
   filterOutNullAndUndefined,
   BAICephIcon,
   BAIFlex,
-  BAINameActionCell,
+  BAILink,
   BAIPureStorageIcon,
   BAITable,
   BAIFetchKeyButton,
   BAIProgressWithLabel,
   BAIDoubleTag,
+  BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
   useFetchKey,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { Server } from 'lucide-react';
-import { useDeferredValue, useEffect, useMemo } from 'react';
+import { useDeferredValue, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
@@ -79,7 +79,9 @@ type StorageVolume = NonNullable<
 const StorageProxyList = () => {
   const { token } = theme.useToken();
   const { t } = useTranslation();
-  const webuiNavigate = useWebUINavigate();
+  const [drawerStorageHostId, setDrawerStorageHostId] = useState<string | null>(
+    null,
+  );
   const {
     baiPaginationOption,
     tablePaginationOption,
@@ -108,8 +110,8 @@ const StorageProxyList = () => {
             capabilities
             path
             fsprefix
-            performance_metric
             usage
+            ...StorageHostDetailDrawerFragment @alias(as: "storageVolumeFrgmt")
           }
           total_count
         }
@@ -132,52 +134,17 @@ const StorageProxyList = () => {
       dataIndex: 'id',
       fixed: 'left',
       render: (value, record) => {
-        let perfMetricDisabled;
-        try {
-          const performanceMetric = JSON.parse(
-            record.performance_metric || '{}',
-          );
-          perfMetricDisabled = _.isEmpty(performanceMetric);
-        } catch {
-          perfMetricDisabled = true;
-        }
         return (
-          <BAINameActionCell
-            title={
-              <BAIFlex direction="column" align="start">
-                <Typography.Text>{value}</Typography.Text>
-                <Typography.Text type="secondary">
-                  {record.path}
-                </Typography.Text>
-              </BAIFlex>
-            }
-            showActions="always"
-            actions={[
-              {
-                key: 'info',
-                title: t('button.Info'),
-                icon: <InfoCircleOutlined />,
-                disabled: perfMetricDisabled,
-                onClick: () => {
-                  const event = new CustomEvent(
-                    'backend-ai-selected-storage-proxy',
-                    {
-                      detail: record.id,
-                    },
-                  );
-                  document.dispatchEvent(event);
-                },
-              },
-              {
-                key: 'settings',
-                title: t('button.Settings'),
-                icon: <SettingOutlined />,
-                onClick: () => {
-                  webuiNavigate(`/storage-settings/${record.id}`);
-                },
-              },
-            ]}
-          />
+          <BAIFlex direction="column" align="start">
+            <BAILink
+              onClick={() => {
+                setDrawerStorageHostId(record.id ?? null);
+              }}
+            >
+              {value}
+            </BAILink>
+            <Typography.Text type="secondary">{record.path}</Typography.Text>
+          </BAIFlex>
         );
       },
     },
@@ -326,6 +293,21 @@ const StorageProxyList = () => {
           },
         }}
       />
+      <BAIUnmountAfterClose>
+        <StorageHostDetailDrawer
+          open={!!drawerStorageHostId}
+          storageVolumeFrgmt={
+            _.find(
+              storage_volume_list?.items,
+              (v) => v?.id === drawerStorageHostId,
+            )?.storageVolumeFrgmt ?? null
+          }
+          onRefetchParentList={() => {
+            updateFetchKey();
+          }}
+          onRequestClose={() => setDrawerStorageHostId(null)}
+        />
+      </BAIUnmountAfterClose>
     </BAIFlex>
   );
 };

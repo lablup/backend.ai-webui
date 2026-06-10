@@ -1,12 +1,23 @@
 import useErrorMessageResolver from './useErrorMessageResolver';
 import { renderHook } from '@testing-library/react';
 
-// Mock useTranslation so the default fallback is a stable, recognizable string.
-vi.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => key,
-  }),
-}));
+// Partial mock: keep every real export from `react-i18next` (notably
+// `initReactI18next`, which BUI's `locale/index.ts` consumes at import
+// time) and only override `useTranslation` so the default fallback is a
+// stable, recognizable string. A wholesale `vi.mock` factory would erase
+// the other exports and break any module that transitively pulls them in
+// (FR-2986: `useBAIi18n` imports `locale` which calls
+// `i18n.use(initReactI18next)`).
+vi.mock('react-i18next', async () => {
+  const actual =
+    await vi.importActual<typeof import('react-i18next')>('react-i18next');
+  return {
+    ...actual,
+    useTranslation: () => ({
+      t: (key: string) => key,
+    }),
+  };
+});
 
 const useGetErrorMessage = () => {
   const { getErrorMessage } = useErrorMessageResolver();

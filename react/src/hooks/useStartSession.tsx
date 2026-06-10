@@ -5,7 +5,11 @@
 import { useSuspendedBackendaiClient } from '.';
 import { useStartSessionCreationQuery } from '../__generated__/useStartSessionCreationQuery.graphql';
 import { transformPortValuesToNumbers } from '../components/PortSelectFormItem';
-import { RESOURCE_ALLOCATION_INITIAL_FORM_VALUES } from '../components/SessionFormItems/ResourceAllocationFormItems';
+import {
+  RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
+  UNIFIED_SLOT_TAG_PREFIX,
+  isUnifiedAcceleratorSlot,
+} from '../components/SessionFormItems/ResourceAllocationFormItems';
 import {
   SessionLauncherFormValue,
   SessionResources,
@@ -230,16 +234,29 @@ export const useStartSession = () => {
           ? { dependencies: values.dependencies }
           : {}),
 
+        // Temporary marker for unified-memory sessions. There is currently no
+        // dedicated field to tell from session info alone whether a session
+        // uses a unified-memory accelerator, so tag it as
+        // `unified-slot:<accelerator slot name>` (e.g. `unified-slot:cuda.unified`).
+        ...(isUnifiedAcceleratorSlot(values.resource?.acceleratorType)
+          ? {
+              tag: `${UNIFIED_SLOT_TAG_PREFIX}${values.resource?.acceleratorType}`,
+            }
+          : {}),
+
         config: {
           // Resource allocation
           ...(values?.resource && {
             resources: {
               cpu: values?.resource?.cpu,
               mem: values?.resource?.mem,
-              // Add accelerator only if specified
+              // Add accelerator only if specified. Unified-memory slots
+              // auto-allocate from the shared host pool, so never send an
+              // accelerator quantity for them.
               ...(values.resource?.acceleratorType &&
               values.resource?.accelerator &&
-              values.resource?.accelerator > 0
+              values.resource?.accelerator > 0 &&
+              !isUnifiedAcceleratorSlot(values.resource.acceleratorType)
                 ? {
                     [values.resource.acceleratorType]:
                       values.resource.accelerator,

@@ -18,11 +18,15 @@ async function addComparePane(
   page: Page,
   expectedCount: number,
 ): Promise<void> {
+  // Button layout in .ant-card-head nth(1):
+  //   Single pane: nth(0)=detail-page, nth(1)=control, nth(2)=compare, nth(3)=more
+  //   Multi-pane:  nth(0)=detail-page, nth(1)=sync, nth(2)=control, nth(3)=compare, nth(4)=more
+  // addComparePane is always called from single-pane state, so compare is at nth(2)
   const compareButton = page
     .locator('.ant-card-head')
     .nth(1)
     .getByRole('button')
-    .nth(1);
+    .nth(2);
   await compareButton.click();
   await expect(page.getByPlaceholder('Type your message here...')).toHaveCount(
     expectedCount,
@@ -44,12 +48,13 @@ function getChatInput(page: Page, index: number) {
  */
 function getSyncToggle(page: Page, cardIndex: number) {
   // ant-card-head nth(0) is the page-level Chat card, nth(1+) are ChatCards
-  // The sync button is always the first button in the ChatCard header (when closable=true)
+  // Button layout in .ant-card-head nth(cardIndex+1) when closable=true (multi-pane):
+  //   nth(0)=detail-page (EndpointSelect compact btn), nth(1)=sync, nth(2)=control, nth(3)=compare, nth(4)=more
   return page
     .locator('.ant-card-head')
     .nth(cardIndex + 1)
     .getByRole('button')
-    .nth(0);
+    .nth(1);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

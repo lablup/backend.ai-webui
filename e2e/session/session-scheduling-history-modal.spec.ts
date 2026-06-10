@@ -39,13 +39,16 @@ test.describe(
       // This must be set AFTER navigation so backendaiclient is fully initialized.
       // The component reads baiClient.supports() on each render, so setting the flag
       // here ensures it is active when the Session Detail drawer is opened.
-      await page.waitForFunction(() => {
-        return (
-          typeof (globalThis as any).backendaiclient !== 'undefined' &&
-          (globalThis as any).backendaiclient !== null &&
-          (globalThis as any).backendaiclient.ready === true
-        );
-      }, { timeout: 10000 });
+      await page.waitForFunction(
+        () => {
+          return (
+            typeof (globalThis as any).backendaiclient !== 'undefined' &&
+            (globalThis as any).backendaiclient !== null &&
+            (globalThis as any).backendaiclient.ready === true
+          );
+        },
+        { timeout: 10000 },
+      );
       await page.evaluate(() => {
         (globalThis as any).backendaiclient._features[
           'session-scheduling-history'
@@ -441,7 +444,11 @@ test.describe(
       const modal = await openSchedulingHistoryModal(page);
 
       // 2. Select "Created At" from the property selector dropdown
-      const isAvailable = await selectDatetimeProperty(page, modal, 'Created At');
+      const isAvailable = await selectDatetimeProperty(
+        page,
+        modal,
+        'Created At',
+      );
       if (!isAvailable) return;
 
       // 3. Verify the DatePicker input is visible for datetime type
@@ -465,7 +472,11 @@ test.describe(
       const modal = await openSchedulingHistoryModal(page);
 
       // 2. Select "Updated At" from the property selector dropdown (skip if not available)
-      const isAvailable = await selectDatetimeProperty(page, modal, 'Updated At');
+      const isAvailable = await selectDatetimeProperty(
+        page,
+        modal,
+        'Updated At',
+      );
       if (!isAvailable) return;
 
       // 3. Verify the DatePicker input is visible for datetime type
@@ -489,7 +500,11 @@ test.describe(
       const modal = await openSchedulingHistoryModal(page);
 
       // 2. Select "Created At" from the property selector dropdown (skip if not available)
-      const isAvailable = await selectDatetimeProperty(page, modal, 'Created At');
+      const isAvailable = await selectDatetimeProperty(
+        page,
+        modal,
+        'Created At',
+      );
       if (!isAvailable) return;
 
       // 3. Click the operator selector (second BAISelect in the compact group).
@@ -519,7 +534,11 @@ test.describe(
       const modal = await openSchedulingHistoryModal(page);
 
       // 2. Select "Created At" from the property selector dropdown (skip if not available)
-      const isAvailable = await selectDatetimeProperty(page, modal, 'Created At');
+      const isAvailable = await selectDatetimeProperty(
+        page,
+        modal,
+        'Created At',
+      );
       if (!isAvailable) return;
 
       // 3. Click the DatePicker to open the calendar
@@ -553,7 +572,11 @@ test.describe(
       const modal = await openSchedulingHistoryModal(page);
 
       // 2. Select "Updated At" from the property selector dropdown (skip if not available)
-      const isAvailable = await selectDatetimeProperty(page, modal, 'Updated At');
+      const isAvailable = await selectDatetimeProperty(
+        page,
+        modal,
+        'Updated At',
+      );
       if (!isAvailable) return;
 
       // 3. Click the DatePicker to open the calendar
@@ -586,7 +609,11 @@ test.describe(
       const modal = await openSchedulingHistoryModal(page);
 
       // 2. Apply a Created At datetime filter (skip if not available)
-      const isAvailable = await selectDatetimeProperty(page, modal, 'Created At');
+      const isAvailable = await selectDatetimeProperty(
+        page,
+        modal,
+        'Created At',
+      );
       if (!isAvailable) return;
       const datePicker = modal
         .locator('.ant-space-compact .ant-picker')
@@ -705,10 +732,15 @@ test.describe(
       await openSessionDetailDrawer(page);
       const modal = await openSchedulingHistoryModal(page);
 
-      // 2. Identify a row with an expand icon (the schedule-sessions row has sub-steps)
-      const expandableRow = modal.getByRole('row', {
-        name: /Expand row schedule-sessions/,
-      });
+      // 2. Identify a row with an expand icon (the schedule-sessions row has sub-steps).
+      // NOTE: antd renders a "spaced" (invisible) expand button on ALL rows, even non-expandable
+      // ones. Playwright's accessible-name computation for <tr> uses text content only (not
+      // nested button aria-labels), so the pattern /Expand row schedule-sessions/ does not match
+      // because "Expand row" is not in the row's text content — it is only the button's aria-label.
+      // Use a filter-based approach: find the row whose text content includes "schedule-sessions".
+      const expandableRow = modal
+        .getByRole('row')
+        .filter({ hasText: 'schedule-sessions' });
       await expect(expandableRow).toBeVisible();
 
       // 3. Click the expand icon/arrow on that row
@@ -722,7 +754,7 @@ test.describe(
         modal.getByRole('columnheader', { name: 'Result' }).nth(1),
       ).toBeVisible();
       await expect(
-        modal.getByRole('columnheader', { name: 'Message' }),
+        modal.getByRole('columnheader', { name: 'Message' }).first(),
       ).toBeVisible();
       await expect(
         modal.getByRole('columnheader', { name: 'Error Code' }),
@@ -751,10 +783,15 @@ test.describe(
       await openSessionDetailDrawer(page);
       const modal = await openSchedulingHistoryModal(page);
 
-      // 2. Expand the schedule-sessions row
-      const expandableRow = modal.getByRole('row', {
-        name: /Expand row schedule-sessions/,
-      });
+      // 2. Expand the schedule-sessions row.
+      // Use filter by text content — see test #8 comment for why the name pattern
+      // /Expand row schedule-sessions/ does not work with Playwright's row accname.
+      // Narrow to the first match to avoid strict-mode violations if multiple
+      // schedule-sessions rows appear (e.g. during a previous run's residue).
+      const expandableRow = modal
+        .getByRole('row')
+        .filter({ hasText: 'schedule-sessions' })
+        .first();
       await expandableRow.getByLabel('Expand row').click();
 
       // 3. Verify sub-steps table is visible
@@ -767,10 +804,15 @@ test.describe(
         .first();
       await expect(firstSubStep).toBeVisible();
 
-      // 4. Click the Collapse row button to collapse the expanded row
-      const collapseRow = modal.getByRole('row', {
-        name: /Collapse row schedule-sessions/,
-      });
+      // 4. Click the Collapse row button to collapse the expanded row.
+      // After expansion, the same row (identified by text "schedule-sessions") now
+      // shows a "Collapse row" button. The row text content doesn't change on expand.
+      // Narrow to the first match to keep parity with the expand step above and
+      // avoid strict-mode violations if more than one row matches.
+      const collapseRow = modal
+        .getByRole('row')
+        .filter({ hasText: 'schedule-sessions' })
+        .first();
       await collapseRow.getByLabel('Collapse row').click();
 
       // 5. Verify the sub-step row is no longer visible
@@ -845,17 +887,19 @@ test.describe(
       await openSessionDetailDrawer(page);
       const modal = await openSchedulingHistoryModal(page);
 
-      // 2. Verify the CreatedAt column shows the ascending sort indicator by default
+      // 2. Verify the CreatedAt column header is visible
       const createdAtHeader = modal.getByRole('columnheader', {
         name: 'Created At',
       });
       await expect(createdAtHeader).toBeVisible();
 
-      // The default sort is ascending by createdAt — the sort icon should reflect this
-      // Without multiple records with different timestamps, we can only verify the header is sortable
-      await expect(
-        createdAtHeader.locator('[role="img"]').first(),
-      ).toBeVisible();
+      // The table has no interactive sort controls (availableHistorySorterKeys is empty),
+      // so there is no aria-sort attribute or sort icon to check. Instead, verify the
+      // default order by asserting the first data row is "enqueue" (earliest createdAt)
+      // and the last data row is "start" (latest createdAt), confirming ascending order.
+      const dataRows = modal.getByRole('row').filter({ hasText: /SUCCESS/ });
+      await expect(dataRows.first()).toContainText('enqueue');
+      await expect(dataRows.last()).toContainText('start');
     });
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -874,10 +918,12 @@ test.describe(
       // 3. Verify the modal title is "Session Scheduling History"
       await expect(modal.getByText('Session Scheduling History')).toBeVisible();
 
-      // 4. Verify the history table is visible and contains records
-      const scheduleRow = modal.getByRole('row', {
-        name: /Expand row schedule-sessions/,
-      });
+      // 4. Verify the history table is visible and contains records.
+      // Use filter by text content — see test #8 comment for why the name pattern
+      // /Expand row schedule-sessions/ does not work with Playwright's row accname.
+      const scheduleRow = modal
+        .getByRole('row')
+        .filter({ hasText: 'schedule-sessions' });
       await expect(scheduleRow).toBeVisible();
 
       // 5. Expand the schedule-sessions row to view sub-step details

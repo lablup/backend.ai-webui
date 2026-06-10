@@ -12,10 +12,11 @@ import { AutoScalingRuleListQuery } from '../__generated__/AutoScalingRuleListQu
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import AutoScalingRuleEditorModal from './AutoScalingRuleEditorModal';
-import QuestionIconWithTooltip from './QuestionIconWithTooltip';
-import { DeleteFilled, PlusOutlined, SettingOutlined } from '@ant-design/icons';
-import { App, Button, Tag, Tooltip, Typography } from 'antd';
+import { DeleteFilled, SettingOutlined } from '@ant-design/icons';
+import { App, Tag, Tooltip, Typography } from 'antd';
 import {
+  BAIButton,
+  BAIQuestionIconWithTooltip,
   BAIDeleteConfirmModal,
   BAIFetchKeyButton,
   BAIFlex,
@@ -31,13 +32,9 @@ import {
 import type { BAITableProps, GraphQLFilter } from 'backend.ai-ui';
 import { default as dayjs } from 'dayjs';
 import * as _ from 'lodash-es';
+import { PlusIcon } from 'lucide-react';
 import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
-import React, {
-  useDeferredValue,
-  useImperativeHandle,
-  useState,
-  useTransition,
-} from 'react';
+import React, { useDeferredValue, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 
@@ -194,7 +191,7 @@ const AutoScalingRuleListNodes: React.FC<AutoScalingRuleListNodesProps> = ({
           title: (
             <BAIFlex gap="xxs" align="center">
               {t('autoScalingRule.MetricSource')}
-              <QuestionIconWithTooltip
+              <BAIQuestionIconWithTooltip
                 title={t('autoScalingRule.MetricSourceTooltip')}
               />
             </BAIFlex>
@@ -207,7 +204,7 @@ const AutoScalingRuleListNodes: React.FC<AutoScalingRuleListNodesProps> = ({
           title: (
             <BAIFlex gap="xxs" align="center">
               {t('autoScalingRule.Condition')}
-              <QuestionIconWithTooltip
+              <BAIQuestionIconWithTooltip
                 title={t('autoScalingRule.ConditionTooltip')}
               />
             </BAIFlex>
@@ -245,7 +242,7 @@ const AutoScalingRuleListNodes: React.FC<AutoScalingRuleListNodesProps> = ({
           title: (
             <BAIFlex gap="xxs" align="center">
               {t('autoScalingRule.CoolDownSeconds')}
-              <QuestionIconWithTooltip
+              <BAIQuestionIconWithTooltip
                 title={t('autoScalingRule.CoolDownTooltip')}
               />
             </BAIFlex>
@@ -261,7 +258,7 @@ const AutoScalingRuleListNodes: React.FC<AutoScalingRuleListNodesProps> = ({
           title: (
             <BAIFlex gap="xxs" align="center">
               {t('autoScalingRule.StepSize')}
-              <QuestionIconWithTooltip
+              <BAIQuestionIconWithTooltip
                 title={t('autoScalingRule.StepSizeTooltip')}
               />
             </BAIFlex>
@@ -286,7 +283,7 @@ const AutoScalingRuleListNodes: React.FC<AutoScalingRuleListNodesProps> = ({
           title: (
             <BAIFlex gap="xxs" align="center">
               {t('autoScalingRule.MIN/MAXReplicas')}
-              <QuestionIconWithTooltip
+              <BAIQuestionIconWithTooltip
                 title={t('autoScalingRule.MinMaxReplicasTooltip')}
               />
             </BAIFlex>
@@ -343,7 +340,7 @@ const AutoScalingRuleListNodes: React.FC<AutoScalingRuleListNodesProps> = ({
           title: (
             <BAIFlex gap="xxs" align="center">
               {t('autoScalingRule.LastTriggered')}
-              <QuestionIconWithTooltip
+              <BAIQuestionIconWithTooltip
                 title={t('autoScalingRule.LastTriggeredTooltip')}
               />
             </BAIFlex>
@@ -366,39 +363,16 @@ const AutoScalingRuleListNodes: React.FC<AutoScalingRuleListNodesProps> = ({
 
 // --- List orchestrator component ---
 
-export interface AutoScalingRuleListRef {
-  openAddModal: () => void;
-}
-
 interface AutoScalingRuleListProps {
   deploymentId: string; // Relay global ID (e.g., toGlobalId('ModelDeployment', uuid))
   isEndpointDestroying: boolean;
   isOwnedByCurrentUser: boolean;
-  fetchKey?: string;
-  /**
-   * When true, the inline "Add rules" primary button is hidden so the parent
-   * can render its own trigger (typically in a `BAICard.extra` slot). The
-   * editor modal is still managed internally; callers should use
-   * `ref.current.openAddModal()` to open it.
-   */
-  hideInlineAddButton?: boolean;
-  /**
-   * When true, the inline refresh button (`BAIFetchKeyButton`) is hidden so
-   * the parent can render refresh in a `BAICard.extra` slot. Drive the
-   * refetch externally by bumping `fetchKey`.
-   */
-  hideInlineRefreshButton?: boolean;
-  ref?: React.Ref<AutoScalingRuleListRef>;
 }
 
 const AutoScalingRuleList: React.FC<AutoScalingRuleListProps> = ({
   deploymentId,
   isEndpointDestroying,
   isOwnedByCurrentUser,
-  fetchKey: parentFetchKey,
-  hideInlineAddButton = false,
-  hideInlineRefreshButton = false,
-  ref,
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -412,17 +386,6 @@ const AutoScalingRuleList: React.FC<AutoScalingRuleListProps> = ({
     id: string;
     metricName: string;
   } | null>(null);
-
-  useImperativeHandle(
-    ref,
-    () => ({
-      openAddModal: () => {
-        setEditingRuleId(null);
-        setIsOpenEditorModal(true);
-      },
-    }),
-    [],
-  );
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
     'table_column_overrides.AutoScalingRuleList',
@@ -501,7 +464,7 @@ const AutoScalingRuleList: React.FC<AutoScalingRuleListProps> = ({
     deferredQueryVariables,
     {
       fetchPolicy: 'store-and-network',
-      fetchKey: parentFetchKey ? `${parentFetchKey}_${fetchKey}` : fetchKey,
+      fetchKey,
     },
   );
 
@@ -591,28 +554,24 @@ const AutoScalingRuleList: React.FC<AutoScalingRuleListProps> = ({
               });
             }}
           />
-          {!hideInlineRefreshButton && (
-            <BAIFetchKeyButton
-              loading={isPendingRefetch}
-              value=""
-              onChange={() => {
-                startRefetchTransition(() => updateFetchKey());
-              }}
-            />
-          )}
-          {!hideInlineAddButton && (
-            <Button
-              type="primary"
-              icon={<PlusOutlined />}
-              disabled={isEndpointDestroying || !isOwnedByCurrentUser}
-              onClick={() => {
-                setEditingRuleId(null);
-                setIsOpenEditorModal(true);
-              }}
-            >
-              {t('modelService.AddRules')}
-            </Button>
-          )}
+          <BAIFetchKeyButton
+            loading={isPendingRefetch}
+            value=""
+            onChange={() => {
+              startRefetchTransition(() => updateFetchKey());
+            }}
+          />
+          <BAIButton
+            type="primary"
+            icon={<PlusIcon />}
+            disabled={isEndpointDestroying || !isOwnedByCurrentUser}
+            onClick={() => {
+              setEditingRuleId(null);
+              setIsOpenEditorModal(true);
+            }}
+          >
+            {t('modelService.AddRules')}
+          </BAIButton>
         </BAIFlex>
         <AutoScalingRuleListNodes
           autoScalingRulesFrgmt={autoScalingRuleNodes}

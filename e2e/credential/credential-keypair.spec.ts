@@ -27,7 +27,7 @@ test.describe(
         page.getByRole('columnheader', { name: 'User ID' }),
       ).toBeVisible();
       await expect(
-        page.getByRole('columnheader', { name: 'Control' }),
+        page.getByRole('columnheader', { name: 'Allocation' }),
       ).toBeVisible();
       await expect(
         page.getByRole('columnheader', { name: 'Permission' }),

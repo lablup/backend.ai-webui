@@ -15,7 +15,6 @@ import { useTanQuery } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useEffectiveAdminRole } from '../hooks/useCurrentUserProjectRoles';
-import QuestionIconWithTooltip from './QuestionIconWithTooltip';
 import StorageSelect from './StorageSelect';
 import {
   Divider,
@@ -30,6 +29,7 @@ import {
 import { createStyles } from 'antd-style';
 import { FormInstance } from 'antd/lib';
 import {
+  BAIQuestionIconWithTooltip,
   BAIAlert,
   BAIButton,
   BAIFlex,
@@ -448,7 +448,7 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
               >
                 <BAIFlex gap="xxs">
                   {t('data.AutoMount')}
-                  <QuestionIconWithTooltip
+                  <BAIQuestionIconWithTooltip
                     title={t('data.AutomountFolderCreationDesc')}
                   />
                 </BAIFlex>

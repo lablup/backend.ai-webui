@@ -1,3 +1,4 @@
+import { useBAIi18n } from '../../hooks/useBAIi18n';
 import {
   BAIColumnsType,
   isColumnVisible,
@@ -32,10 +33,10 @@ import React, {
   useState,
   useCallback,
   useEffect,
+  useEffectEvent,
   useContext,
   useMemo,
 } from 'react';
-import { useTranslation } from 'react-i18next';
 
 /**
  * Form values interface for the table setting modal
@@ -84,8 +85,8 @@ interface TableSettingProps extends ModalProps {
   columns: BAIColumnsType<any>;
   /** Current column override settings */
   columnOverrides: Record<string, BAITableColumnOverrideItem>;
-  /** Whether to disable the column sorting functionality */
-  disableSorter?: boolean;
+  /** Whether to hide the drag-handle column and disable drag-to-reorder. */
+  disableReorder?: boolean;
   /** Initial order of columns */
   initialColumnOrder?: string[];
 }
@@ -191,7 +192,7 @@ const Row: React.FC<RowProps> = (props) => {
  *   onRequestClose={handleClose}
  *   columns={tableColumns}
  *   columnOverrides={currentOverrides}
- *   disableSorter={false}
+ *   disableReorder={false}
  * />
  * ```
  */
@@ -200,13 +201,13 @@ const BAITableSettingModal: React.FC<TableSettingProps> = ({
   columns,
   columnOverrides,
   initialColumnOrder,
-  disableSorter,
+  disableReorder,
   ...modalProps
 }) => {
   'use memo';
 
   const formRef = useRef<FormInstance>(null);
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   const { token } = theme.useToken();
 
   const onChangeTitleToString: any = (element: any) => {
@@ -262,7 +263,25 @@ const BAITableSettingModal: React.FC<TableSettingProps> = ({
 
   const [searchKeyword, setSearchKeyword] = useState<string>('');
 
-  useEffect(() => {
+  // Re-sync `dataSource` only when the *value* of the column set / order
+  // changes — not on every parent re-render. BAITable rebuilds its `columns`
+  // (and thus passes a new `initialColumnOrder` array) on each render, so
+  // depending on their identity here would reset the table and wipe the user's
+  // in-progress drag reorder or visibility edits whenever the parent re-renders
+  // (e.g. a list auto-refresh while the modal is open). The signature captures
+  // the column keys, their persisted visibility, and the persisted order. This
+  // matters especially now that reorder is on by default for every table that
+  // passes `tableSettings` (opt-out via `disableColumnReorder`).
+  const syncSignature = JSON.stringify({
+    columns: columnOptions.map((option) => ({
+      key: option.key,
+      visible: option.visible,
+      required: option.required,
+    })),
+    order: initialColumnOrder ?? null,
+  });
+
+  const resyncDataSource = useEffectEvent(() => {
     if (initialColumnOrder) {
       const orderedOptions = [...columnOptions];
       orderedOptions.sort((a, b) => {
@@ -273,12 +292,15 @@ const BAITableSettingModal: React.FC<TableSettingProps> = ({
         if (indexB === -1) return -1;
         return indexA - indexB;
       });
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setDataSource(orderedOptions);
     } else {
       setDataSource(columnOptions);
     }
-  }, [columnOptions, initialColumnOrder]);
+  });
+
+  useEffect(() => {
+    resyncDataSource();
+  }, [syncSignature]);
 
   const handleDragEnd = useCallback((event: DragEndEvent) => {
     const { active, over } = event;
@@ -335,7 +357,7 @@ const BAITableSettingModal: React.FC<TableSettingProps> = ({
       key: 'sort',
       align: 'left',
       width: 30,
-      hidden: disableSorter,
+      hidden: disableReorder,
       render: () => <DragHandle disabled={!!searchKeyword} />,
     },
     {

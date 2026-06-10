@@ -1,0 +1,560 @@
+{
+  "version": 1,
+  "languages": ["en", "ko", "ja", "th"],
+  "concepts": [
+    {
+      "id": "compute-session",
+      "category": "Core Concepts",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "compute session",
+        "ko": "연산 세션",
+        "ja": "コンピュートセッション",
+        "th": "เซสชันการคำนวณ"
+      },
+      "description": "The isolated compute environment where users run code, notebooks, or applications. Use \"session\" as shorthand after first full mention."
+    },
+    {
+      "id": "session-type-interactive",
+      "category": "Core Concepts",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "interactive session",
+        "ko": "대화형 세션",
+        "ja": "インタラクティブセッション"
+      },
+      "description": "Compute session type: User interacts after creation."
+    },
+    {
+      "id": "session-type-batch",
+      "category": "Core Concepts",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "batch session",
+        "ko": "배치 세션",
+        "ja": "バッチセッション"
+      },
+      "description": "Compute session type: Pre-defined script execution."
+    },
+    {
+      "id": "session-type-inference",
+      "category": "Core Concepts",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "inference session",
+        "ko": "추론 세션",
+        "ja": "推論セッション"
+      },
+      "description": "Compute session type: Model serving sessions."
+    },
+    {
+      "id": "storage-folder",
+      "category": "Core Concepts",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "storage folder",
+        "ko": "스토리지 폴더",
+        "ja": "ストレージフォルダ",
+        "th": "โฟลเดอร์จัดเก็บ"
+      },
+      "description": "Persistent storage that survives session termination. Use \"storage folder\" in procedural text, \"virtual folder\" or \"vfolder\" in introductions."
+    },
+    {
+      "id": "storage-folder-technical",
+      "category": "Core Concepts",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "vfolder",
+        "ko": "가상 폴더",
+        "ja": "バーチャルフォルダ",
+        "th": "โฟลเดอร์เสมือน"
+      },
+      "context": "Technical term for storage folder",
+      "description": "Technical-context term for the storage folder (virtual folder). Referred to as \"vfolder\" in technical contexts."
+    },
+    {
+      "id": "folder-type-user",
+      "category": "Core Concepts",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "User folder"
+      },
+      "context": "Storage folder type",
+      "description": "Created by individual users for personal use."
+    },
+    {
+      "id": "folder-type-project",
+      "category": "Core Concepts",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "Project folder"
+      },
+      "context": "Storage folder type",
+      "description": "Created by administrators, shared across project members."
+    },
+    {
+      "id": "domain",
+      "category": "Core Concepts",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "domain",
+        "ko": "도메인",
+        "ja": "ドメイン",
+        "th": "โดเมน"
+      },
+      "description": "The top-level organizational unit for authority and resource control. Do NOT use \"organization\" or \"affiliate\" as substitutes."
+    },
+    {
+      "id": "project",
+      "category": "Core Concepts",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "project",
+        "ko": "프로젝트",
+        "ja": "プロジェクト",
+        "th": "โปรเจกต์"
+      },
+      "description": "The work unit within a domain. Users can belong to multiple projects. Do NOT use \"group\" as a substitute for project."
+    },
+    {
+      "id": "resource-group",
+      "category": "Core Concepts",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "resource group",
+        "ko": "자원 그룹",
+        "ja": "リソースグループ",
+        "th": "กลุ่มทรัพยากร"
+      },
+      "description": "A grouping of agents (compute nodes) with similar hardware specifications. Do NOT use \"scaling group\" (deprecated internal term)."
+    },
+    {
+      "id": "keypair",
+      "category": "Core Concepts",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "keypair",
+        "ko": "키페어",
+        "ja": "キーペア",
+        "th": "คีย์แพร์"
+      },
+      "description": "Authentication credentials for API access. Always \"keypair\" (one word, no hyphen). Never \"key pair\" or \"key-pair\"."
+    },
+    {
+      "id": "agent",
+      "category": "Core Concepts",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "agent, agent node",
+        "ko": "에이전트, 에이전트 노드",
+        "ja": "エージェント, エージェントノード",
+        "th": "เอเจนต์, โหนดเอเจนต์"
+      },
+      "description": "The compute node that runs containers (sessions). \"Agent\" for general reference, \"agent node\" when emphasizing the hardware aspect. Use \"worker node\" only in model serving context."
+    },
+    {
+      "id": "fractional-gpu",
+      "category": "Core Concepts",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "fGPU",
+        "ko": "fGPU",
+        "ja": "fGPU",
+        "th": "fGPU"
+      },
+      "context": "Numeric form",
+      "description": "Backend.AI's GPU virtualization technology that allows sharing a single physical GPU across multiple sessions. Numeric (abbreviated) form. Write \"fractional GPU (fGPU)\" on first mention, then \"fGPU\" thereafter."
+    },
+    {
+      "id": "fractional-gpu-descriptive",
+      "category": "Core Concepts",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "fractional GPU",
+        "ko": "분할 GPU",
+        "ja": "フラクショナルGPU",
+        "th": "GPU แบบเศษส่วน"
+      },
+      "context": "Descriptive form",
+      "description": "Descriptive form of fGPU (Backend.AI's GPU virtualization technology)."
+    },
+    {
+      "id": "model-serving",
+      "category": "Feature-Specific Terms",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "Model Service / Model Serving"
+      },
+      "description": "The feature name (page title, menu item)."
+    },
+    {
+      "id": "endpoint",
+      "category": "Feature-Specific Terms",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "Endpoint"
+      },
+      "description": "The access point created for a served model."
+    },
+    {
+      "id": "inference",
+      "category": "Feature-Specific Terms",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "Inference"
+      },
+      "description": "The operation of running predictions through a served model."
+    },
+    {
+      "id": "app-proxy",
+      "category": "Feature-Specific Terms",
+      "status": "approved",
+      "decidingFR": "FR-2841",
+      "preferred": {
+        "en": "App Proxy",
+        "ko": "App Proxy",
+        "ja": "App Proxy",
+        "th": "App Proxy"
+      },
+      "description": "The standalone, per-resource-group proxy service that relays in-container application traffic directly between the user's browser and the compute session's Agent. Renamed from WSProxy to App Proxy in the UI in FR-2841. Use \"App Proxy\" only; do not reference the old \"WSProxy\" name in user-facing documentation. UI label stays in English across all locales."
+    },
+    {
+      "id": "app-proxy-server-address",
+      "category": "Feature-Specific Terms",
+      "status": "approved",
+      "decidingFR": "FR-2841",
+      "preferred": {
+        "en": "App Proxy Server Address",
+        "ko": "App Proxy 서버 주소",
+        "ja": "App Proxy サーバアドレス",
+        "th": "ที่อยู่เซิร์ฟเวอร์ App Proxy"
+      },
+      "context": "Field label (Resource Group settings)",
+      "description": "Resource Group settings field label for the App Proxy server address."
+    },
+    {
+      "id": "app-proxy-api-token",
+      "category": "Feature-Specific Terms",
+      "status": "approved",
+      "decidingFR": "FR-2841",
+      "preferred": {
+        "en": "App Proxy API Token",
+        "ko": "App Proxy API 토큰",
+        "ja": "App Proxy APIトークン",
+        "th": "โทเค็น API ของ App Proxy"
+      },
+      "context": "Field label (Resource Group settings)",
+      "description": "Resource Group settings field label for the App Proxy API token."
+    },
+    {
+      "id": "container",
+      "category": "Feature-Specific Terms",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "Container"
+      },
+      "description": "The runtime environment of a compute session. Do NOT use \"container\" and \"kernel\" interchangeably."
+    },
+    {
+      "id": "kernel-image",
+      "category": "Feature-Specific Terms",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "Kernel image / Container image"
+      },
+      "description": "The base image (snapshot) from which containers are created. Do NOT use \"container\" and \"kernel\" interchangeably."
+    },
+    {
+      "id": "rbac",
+      "category": "Feature-Specific Terms",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "RBAC",
+        "ko": "RBAC",
+        "ja": "RBAC",
+        "th": "RBAC"
+      },
+      "description": "Role-Based Access Control. Keep as abbreviation across all languages."
+    },
+    {
+      "id": "rbac-role",
+      "category": "Feature-Specific Terms",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "role",
+        "ko": "권한",
+        "ja": "ロール",
+        "th": "บทบาท"
+      },
+      "description": "A named set of permissions assignable to users. The Korean i18n uses \"권한\" for both \"Role\" and \"Permission\" in different contexts."
+    },
+    {
+      "id": "rbac-permission",
+      "category": "Feature-Specific Terms",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "permission",
+        "ko": "세부 권한",
+        "ja": "権限",
+        "th": "สิทธิ์"
+      },
+      "description": "A fine-grained access rule within a role. \"세부 권한\" is used specifically for fine-grained permissions within a role."
+    },
+    {
+      "id": "rbac-role-assignment",
+      "category": "Feature-Specific Terms",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "role assignment",
+        "ko": "권한 할당",
+        "ja": "ロール割り当て",
+        "th": "การมอบหมายบทบาท"
+      },
+      "description": "The association of a user to a role."
+    },
+    {
+      "id": "rbac-scope-type",
+      "category": "Feature-Specific Terms",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "scope type",
+        "ko": "적용 범위 타입",
+        "ja": "スコープタイプ",
+        "th": "ประเภทขอบเขต"
+      },
+      "description": "The level at which a permission applies."
+    },
+    {
+      "id": "rbac-permission-type",
+      "category": "Feature-Specific Terms",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "permission type",
+        "ko": "권한 타입",
+        "ja": "権限タイプ",
+        "th": "ประเภทสิทธิ์"
+      },
+      "description": "The category of resource a permission controls."
+    },
+    {
+      "id": "role-user",
+      "category": "User Roles",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "user",
+        "ko": "사용자",
+        "ja": "ユーザー"
+      },
+      "description": "Standard access."
+    },
+    {
+      "id": "role-domain-admin",
+      "category": "User Roles",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "domain admin",
+        "ko": "도메인 관리자",
+        "ja": "ドメイン管理者"
+      },
+      "description": "Manages users and resources within a domain."
+    },
+    {
+      "id": "role-superadmin",
+      "category": "User Roles",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "superadmin",
+        "ko": "슈퍼관리자",
+        "ja": "スーパー管理者"
+      },
+      "description": "Full system access across all domains."
+    },
+    {
+      "id": "nav-summary",
+      "category": "UI Navigation Terms",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "Summary",
+        "ko": "요약",
+        "ja": "サマリー"
+      },
+      "description": "Sidebar menu item. Documentation section: summary/summary.md"
+    },
+    {
+      "id": "nav-sessions",
+      "category": "UI Navigation Terms",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "Sessions",
+        "ko": "세션",
+        "ja": "セッション"
+      },
+      "description": "Sidebar menu item. Documentation section: session_page/session_page.md"
+    },
+    {
+      "id": "nav-data",
+      "category": "UI Navigation Terms",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "Data",
+        "ko": "데이터",
+        "ja": "データ"
+      },
+      "description": "Sidebar menu item. Documentation section: vfolder/vfolder.md"
+    },
+    {
+      "id": "nav-deployment",
+      "category": "UI Navigation Terms",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "Deployment",
+        "ko": "배포",
+        "ja": "モデルサービス"
+      },
+      "description": "Sidebar menu item. Documentation section: deployment/deployment.md"
+    },
+    {
+      "id": "nav-statistics",
+      "category": "UI Navigation Terms",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "Statistics",
+        "ko": "통계",
+        "ja": "統計"
+      },
+      "description": "Sidebar menu item. Documentation section: statistics/statistics.md"
+    },
+    {
+      "id": "nav-user-settings",
+      "category": "UI Navigation Terms",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "User Settings",
+        "ko": "사용자 설정",
+        "ja": "ユーザー設定"
+      },
+      "description": "Sidebar menu item. Documentation section: user_settings/user_settings.md"
+    },
+    {
+      "id": "nav-rbac-management",
+      "category": "UI Navigation Terms",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "RBAC Management",
+        "ko": "RBAC 관리",
+        "ja": "RBAC管理"
+      },
+      "description": "Sidebar menu item. Documentation section: rbac_management/rbac_management.md"
+    }
+  ],
+  "avoid": [
+    {
+      "avoid": "scaling group",
+      "useInstead": "resource group",
+      "reason": "Deprecated term",
+      "lang": "en",
+      "context": null,
+      "conceptId": "resource-group"
+    },
+    {
+      "avoid": "key pair",
+      "useInstead": "keypair",
+      "reason": "Incorrect spelling",
+      "lang": "en",
+      "context": null,
+      "conceptId": "keypair"
+    },
+    {
+      "avoid": "key-pair",
+      "useInstead": "keypair",
+      "reason": "Incorrect spelling",
+      "lang": "en",
+      "context": null,
+      "conceptId": "keypair"
+    },
+    {
+      "avoid": "group",
+      "useInstead": "project",
+      "reason": "Ambiguous",
+      "lang": "en",
+      "context": "for project",
+      "conceptId": "project"
+    },
+    {
+      "avoid": "organization",
+      "useInstead": "domain",
+      "reason": "Not used in Backend.AI",
+      "lang": "en",
+      "context": null,
+      "conceptId": "domain"
+    },
+    {
+      "avoid": "data folder",
+      "useInstead": "storage folder / vfolder",
+      "reason": "Non-standard",
+      "lang": "en",
+      "context": null,
+      "conceptId": "storage-folder"
+    },
+    {
+      "avoid": "worker node",
+      "useInstead": "agent node",
+      "reason": "Reserve \"worker node\" for model serving context only",
+      "lang": "en",
+      "context": null,
+      "conceptId": "agent"
+    },
+    {
+      "avoid": "compute node",
+      "useInstead": "agent node",
+      "reason": "Non-standard in docs",
+      "lang": "en",
+      "context": null,
+      "conceptId": "agent"
+    },
+    {
+      "avoid": "WSProxy",
+      "useInstead": "App Proxy",
+      "reason": "Renamed in FR-2841; `wsproxy` (code style) survives only as internal identifiers (DB columns, API route, constants), not a daemon",
+      "lang": "en",
+      "context": "as a UI label",
+      "conceptId": "app-proxy"
+    }
+  ]
+}

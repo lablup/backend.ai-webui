@@ -13,7 +13,6 @@ import { convertToOrderBy } from '../helper';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import BAIRadioGroup from './BAIRadioGroup';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
-import QuestionIconWithTooltip from './QuestionIconWithTooltip';
 import ReplicaStatusTag, { ReplicaStatus } from './ReplicaStatusTag';
 import RouteSchedulingHistoryModal, {
   RouteSchedulingHistoryQuery,
@@ -28,6 +27,7 @@ import {
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAIId,
+  BAIQuestionIconWithTooltip,
   BAITable,
   BAITag,
   BAIUnmountAfterClose,
@@ -36,6 +36,7 @@ import {
   toLocalId,
   type GraphQLFilter,
   useConnectedBAIClient,
+  BAILink,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -88,11 +89,16 @@ const toReplicaTagStatus = (value?: string | null): ReplicaStatus =>
 interface DeploymentReplicasTabProps {
   deploymentFrgmt: DeploymentReplicasTab_deployment$key;
   deploymentId: string;
+  // External fetch key (e.g. bumped by the page when a new revision is added
+  // and replicas are spawned) — combined with the local manual-refresh key so
+  // either event re-issues the list query.
+  replicaFetchKey?: string;
 }
 
 const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
   deploymentFrgmt,
   deploymentId,
+  replicaFetchKey,
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -229,7 +235,10 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
         }
       `,
       { deploymentId, ...queryVars },
-      { fetchKey, fetchPolicy: 'network-only' },
+      {
+        fetchKey: `${fetchKey}-${replicaFetchKey ?? ''}`,
+        fetchPolicy: 'network-only',
+      },
     );
 
   const replicas =
@@ -289,7 +298,7 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
       title: (
         <BAIFlex gap="xxs" align="center">
           {t('general.Status')}
-          <QuestionIconWithTooltip
+          <BAIQuestionIconWithTooltip
             title={t('deployment.ReplicaLifecycleStatusTooltip')}
           />
         </BAIFlex>
@@ -330,7 +339,7 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
       title: (
         <BAIFlex gap="xxs" align="center">
           {t('deployment.HealthStatus')}
-          <QuestionIconWithTooltip
+          <BAIQuestionIconWithTooltip
             title={t('deployment.HealthStatusTooltip')}
           />
         </BAIFlex>
@@ -348,7 +357,7 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
       title: (
         <BAIFlex gap="xxs" align="center">
           {t('deployment.TrafficStatus')}
-          <QuestionIconWithTooltip
+          <BAIQuestionIconWithTooltip
             title={t('deployment.TrafficStatusTooltip')}
           />
         </BAIFlex>
@@ -380,13 +389,13 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
         }
         return (
           <>
-            <Typography.Link
-              ellipsis={{ tooltip: name }}
+            <BAILink
+              ellipsis
               onClick={() => setSelectedSessionId(toLocalId(session.id))}
               style={{ maxWidth: 160 }}
             >
               {name}
-            </Typography.Link>
+            </BAILink>
             &nbsp;
             <Typography.Text type="secondary">
               (<BAIId globalId={session.id} type="secondary" />)
@@ -400,7 +409,7 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
       title: (
         <BAIFlex gap="xxs" align="center">
           {t('deployment.RevisionNumberWithID')}
-          <QuestionIconWithTooltip
+          <BAIQuestionIconWithTooltip
             title={t('deployment.RevisionNumberTooltip')}
           />
         </BAIFlex>

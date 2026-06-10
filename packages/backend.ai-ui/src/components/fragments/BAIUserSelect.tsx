@@ -3,6 +3,7 @@ import { BAIUserSelectValueQuery } from '../../__generated__/BAIUserSelectValueQ
 import { toLocalId } from '../../helper';
 import useDebouncedDeferredValue from '../../helper/useDebouncedDeferredValue';
 import { useFetchKey } from '../../hooks';
+import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { useLazyPaginatedQuery } from '../../hooks/usePaginatedQuery';
 import { mergeFilterValues } from '../BAIPropertyFilter';
 import BAISelect, { BAISelectProps } from '../BAISelect';
@@ -18,7 +19,6 @@ import {
   useState,
   useTransition,
 } from 'react';
-import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 export type UserNode = NonNullable<
@@ -42,8 +42,11 @@ export interface BAIUserSelectProps extends Omit<
   ref?: React.Ref<BAIUserSelectRef>;
 }
 
-// Default filter for active users only
-const defaultActiveUserFilter = 'is_active == true';
+// Default filter for active users only. `user_nodes` filters on the `status`
+// enum (e.g. UserManagement uses `status == "active"`); there is no `is_active`
+// attribute on the backend's UserRow, so the legacy `is_active == true` form
+// fails filter parsing.
+const defaultActiveUserFilter = 'status == "active"';
 
 const BAIUserSelect: React.FC<BAIUserSelectProps> = ({
   loading,
@@ -54,7 +57,7 @@ const BAIUserSelect: React.FC<BAIUserSelectProps> = ({
   ...selectProps
 }) => {
   'use memo';
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   const selectRef = useRef<GetRef<typeof BAISelect>>(null);
   const [controllableValue, setControllableValue] = useControllableValue<
     string | string[] | undefined

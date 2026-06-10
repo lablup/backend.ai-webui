@@ -503,6 +503,13 @@ test.describe(
       page,
       request,
     }) => {
+      // FR-2675/FR-2822 removed the ServiceLauncherCreatePage and the
+      // /service/start route. The new deployment creation flow uses a modal
+      // opened from /deployments (DeploymentSettingModal), not a separate
+      // page. The createServiceViaUI helper navigates to 'service/start'
+      // which no longer exists as a standalone page — there is no redirect
+      // for this path, so the helper cannot complete.
+      test.fixme(true);
       await loginAsAdmin(page, request);
 
       await createServiceViaUI(page, SERVICE_NAME, VFOLDER_NAME);
@@ -519,6 +526,11 @@ test.describe(
       page,
       request,
     }) => {
+      // Depends on "Admin can deploy a model service via ServiceLauncher UI"
+      // (the previous test in this serial group) which is marked fixme because
+      // FR-2675/FR-2822 removed the /service/start route. Since the service
+      // is never created, this test cannot find a service to wait on.
+      test.fixme(true);
       await loginAsAdmin(page, request);
 
       await waitForServiceReady(page, SERVICE_NAME);
@@ -536,6 +548,9 @@ test.describe(
       page,
       request,
     }) => {
+      // Depends on the service being created by the fixme-marked deployment
+      // test. Since no service was deployed, there is nothing to terminate.
+      test.fixme(true);
       await loginAsAdmin(page, request);
 
       await terminateService(page, SERVICE_NAME);

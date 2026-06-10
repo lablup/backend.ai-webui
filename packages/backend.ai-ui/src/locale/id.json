@@ -27,6 +27,9 @@
     "FailedToActivateArtifacts": "Gagal mengaktifkan artefak.",
     "SuccessfullyActivated": "Artefak yang berhasil diaktifkan."
   },
+  "comp:BAIAdminKeypairResourcePolicySelect": {
+    "SelectKeypairResourcePolicy": "Pilih Kebijakan Sumber Daya Keypair"
+  },
   "comp:BAIAdminModelServiceSelect": {
     "SelectModelService": "Pilih Layanan Model"
   },
@@ -443,9 +446,12 @@
   },
   "comp:UserNodes": {
     "AllowedClientIps": "IP Klien yang Diizinkan",
-    "ContainerGIDs": "GID Container",
-    "ContainerMainGID": "GID Utama Container",
-    "ContainerUID": "UID Container",
+    "ContainerGIDs": "GID tambahan",
+    "ContainerGIDsTooltip": "ID grup numerik tambahan yang ditetapkan pada proses kontainer",
+    "ContainerMainGID": "GID kontainer",
+    "ContainerMainGIDTooltip": "ID grup numerik default yang ditetapkan untuk proses di dalam kontainer",
+    "ContainerUID": "UID kontainer",
+    "ContainerUIDTooltip": "ID pengguna numerik yang ditetapkan untuk proses di dalam kontainer",
     "CreatedAt": "Dibuat pada",
     "Description": "Deskripsi",
     "Disabled": "Nonaktif",
@@ -454,6 +460,7 @@
     "Enabled": "Aktif",
     "FullName": "Nama Lengkap",
     "IntegrationName": "Nama integrasi",
+    "MainAccessKey": "Kunci Akses Utama",
     "ModifiedAt": "Dimodifikasi pada",
     "NeedPasswordChange": "Perlu Ganti Kata Sandi",
     "Project": "Proyek",
@@ -463,6 +470,7 @@
     "StatusInfo": "Info Status",
     "SudoSessionEnabled": "Sesi Sudo Diaktifkan",
     "TwoFA": "Autentikasi Dua Faktor",
+    "TwoFAActivatedAt": "2FA Diaktifkan Pada",
     "UserID": "ID Pengguna",
     "Username": "Nama Pengguna"
   },

@@ -40,8 +40,10 @@ const BAIBucketSelect = ({
   } = useLazyPaginatedQuery<
     BAIBucketSelectQuery,
     NonNullable<
-      BAIBucketSelectQuery['response']['objectStorage']
-    >['namespaces']['edges'][number]
+      NonNullable<
+        BAIBucketSelectQuery['response']['objectStorage']
+      >['namespaces']
+    >['edges'][number]
   >(
     graphql`
       query BAIBucketSelectQuery(
@@ -88,8 +90,8 @@ const BAIBucketSelect = ({
       fetchPolicy: deferredOpen ? 'network-only' : 'store-only',
     },
     {
-      getTotal: (result) => result.objectStorage?.namespaces.count,
-      getItem: (result) => result.objectStorage?.namespaces.edges,
+      getTotal: (result) => result.objectStorage?.namespaces?.count,
+      getItem: (result) => result.objectStorage?.namespaces?.edges,
       getId: (item) => item?.node.id,
     },
   );
@@ -130,11 +132,11 @@ const BAIBucketSelect = ({
         ) : undefined
       }
       footer={
-        _.isNumber(objectStorage?.namespaces.count) &&
-        objectStorage?.namespaces.count > 0 ? (
+        _.isNumber(objectStorage?.namespaces?.count) &&
+        objectStorage?.namespaces?.count > 0 ? (
           <TotalFooter
             loading={isLoadingNext}
-            total={objectStorage?.namespaces.count}
+            total={objectStorage?.namespaces?.count}
           />
         ) : undefined
       }

@@ -1,7 +1,12 @@
 // spec: e2e/.agent-output/test-plan-admin-model-card.md
 // section: 3. Create Model Card
 import { AdminModelCardPage } from '../utils/classes/AdminModelCardPage';
-import { loginAsAdmin, webuiEndpoint } from '../utils/test-util';
+import {
+  deleteForeverAndVerifyFromTrash,
+  loginAsAdmin,
+  moveToTrashAndVerify,
+  webuiEndpoint,
+} from '../utils/test-util';
 import { test, expect } from '@playwright/test';
 
 test.describe(
@@ -115,7 +120,9 @@ test.describe(
     }) => {
       test.setTimeout(90000);
       const adminModelCardPage = new AdminModelCardPage(page);
-      const cardName = `e2e-test-required-only-${Date.now()}`;
+      const timestamp = Date.now();
+      const cardName = `e2e-test-required-only-${timestamp}`;
+      const folderName = `e2e-test-required-only-folder-${timestamp}`;
 
       await page.goto(
         `${webuiEndpoint}/admin-deployments?tab=model-store-management`,
@@ -130,21 +137,9 @@ test.describe(
       // Fill in the Name field
       await modal.getByRole('textbox', { name: 'Name' }).fill(cardName);
 
-      // Select an available VFolder.
-      // In antd v6 with BAISelect, click .ant-select-content to open the dropdown.
-      await modal
-        .locator('.ant-form-item')
-        .filter({ hasText: 'Model Storage Folder' })
-        .locator('.ant-select-content')
-        .click();
-      const vfolderDropdown = page
-        .locator('.ant-select-dropdown:not(.ant-select-dropdown-hidden)')
-        .first();
-      await expect(vfolderDropdown).toBeVisible({ timeout: 10000 });
-      await expect(vfolderDropdown.getByText(/Total \d+ items/)).toBeVisible({
-        timeout: 10000,
-      });
-      await vfolderDropdown.locator('.ant-select-item-option').first().click();
+      // Create a new VFolder via the "+" button — self-provisions so no pre-existing
+      // group-owned VFolder is required on the test backend.
+      await adminModelCardPage.createNewFolderViaPlus(folderName);
 
       // Select Access Level (required). Access level options are "Private" (INTERNAL) and "Public".
       await modal
@@ -177,8 +172,18 @@ test.describe(
         timeout: 10000,
       });
 
-      // Cleanup: delete the created model card
+      // Cleanup: delete the created model card, then purge the folder
       await adminModelCardPage.deleteModelCardByName(cardName);
+      try {
+        await moveToTrashAndVerify(page, folderName, 'admin-data');
+      } catch {
+        // Folder may already be in Trash or may not exist
+      }
+      try {
+        await deleteForeverAndVerifyFromTrash(page, folderName, 'admin-data');
+      } catch {
+        // Folder may not be in Trash (already purged or never created)
+      }
     });
 
     // 3.3 Superadmin can create a model card with all fields populated
@@ -187,7 +192,9 @@ test.describe(
     }) => {
       test.setTimeout(90000);
       const adminModelCardPage = new AdminModelCardPage(page);
-      const cardName = `e2e-test-full-card-${Date.now()}`;
+      const timestamp = Date.now();
+      const cardName = `e2e-test-full-card-${timestamp}`;
+      const folderName = `e2e-test-full-card-folder-${timestamp}`;
 
       await page.goto(
         `${webuiEndpoint}/admin-deployments?tab=model-store-management`,
@@ -202,20 +209,9 @@ test.describe(
       // Fill Name
       await modal.getByRole('textbox', { name: 'Name' }).fill(cardName);
 
-      // Select VFolder. In antd v6 with BAISelect, click .ant-select-content to open the dropdown.
-      await modal
-        .locator('.ant-form-item')
-        .filter({ hasText: 'Model Storage Folder' })
-        .locator('.ant-select-content')
-        .click();
-      const vfolderDropdown = page
-        .locator('.ant-select-dropdown:not(.ant-select-dropdown-hidden)')
-        .first();
-      await expect(vfolderDropdown).toBeVisible({ timeout: 10000 });
-      await expect(vfolderDropdown.getByText(/Total \d+ items/)).toBeVisible({
-        timeout: 10000,
-      });
-      await vfolderDropdown.locator('.ant-select-item-option').first().click();
+      // Create a new VFolder via the "+" button — self-provisions so no pre-existing
+      // group-owned VFolder is required on the test backend.
+      await adminModelCardPage.createNewFolderViaPlus(folderName);
 
       // Fill optional fields. In antd v6, tooltip icons alter the accessible name so
       // we locate textboxes via their parent form item label.
@@ -287,12 +283,12 @@ test.describe(
       await adminModelCardPage.getCreateModalSubmitButton().click();
 
       // Verify success message
-      await expect(
-        page.getByText('Model card has been created.'),
-      ).toBeVisible();
+      await expect(page.getByText('Model card has been created.')).toBeVisible({
+        timeout: 15000,
+      });
 
       // Verify the modal closes
-      await expect(modal).toBeHidden();
+      await expect(modal).toBeHidden({ timeout: 15000 });
 
       // Verify the new row in the table reflects the correct data
       const newRow = adminModelCardPage.getRowByName(cardName);
@@ -306,15 +302,27 @@ test.describe(
       ).toBeVisible();
       await expect(newRow.getByRole('cell', { name: 'Public' })).toBeVisible();
 
-      // Cleanup: delete the created model card
+      // Cleanup: delete the created model card, then purge the folder
       await adminModelCardPage.deleteModelCardByName(cardName);
+      try {
+        await moveToTrashAndVerify(page, folderName, 'admin-data');
+      } catch {
+        // Folder may already be in Trash or may not exist
+      }
+      try {
+        await deleteForeverAndVerifyFromTrash(page, folderName, 'admin-data');
+      } catch {
+        // Folder may not be in Trash (already purged or never created)
+      }
     });
 
     // 3.4 Superadmin cannot create a model card without a Name
     test('Superadmin cannot create a model card without a Name', async ({
       page,
     }) => {
+      test.setTimeout(90000);
       const adminModelCardPage = new AdminModelCardPage(page);
+      const folderName = `e2e-test-no-name-folder-${Date.now()}`;
 
       await page.goto(
         `${webuiEndpoint}/admin-deployments?tab=model-store-management`,
@@ -326,23 +334,11 @@ test.describe(
       const modal = adminModelCardPage.getCreateModal();
       await expect(modal).toBeVisible();
 
-      // Select a VFolder but leave Name empty.
-      // In antd v6 with BAISelect, click .ant-select-content to open the dropdown.
-      await modal
-        .locator('.ant-form-item')
-        .filter({ hasText: 'Model Storage Folder' })
-        .locator('.ant-select-content')
-        .click();
-      const vfolderDropdown = page
-        .locator('.ant-select-dropdown:not(.ant-select-dropdown-hidden)')
-        .first();
-      await expect(vfolderDropdown).toBeVisible({ timeout: 10000 });
-      await expect(vfolderDropdown.getByText(/Total \d+ items/)).toBeVisible({
-        timeout: 10000,
-      });
-      await vfolderDropdown.locator('.ant-select-item-option').first().click();
+      // Create a new VFolder via the "+" button (leave Name empty) — self-provisions
+      // so no pre-existing group-owned VFolder is required on the test backend.
+      await adminModelCardPage.createNewFolderViaPlus(folderName);
 
-      // Click Create
+      // Click Create (Name is empty — validation should fire)
       await adminModelCardPage.getCreateModalSubmitButton().click();
 
       // Verify validation error "Name is required."
@@ -350,6 +346,20 @@ test.describe(
 
       // Verify the modal remains open
       await expect(modal).toBeVisible();
+
+      // Close the modal and clean up the folder created via "+"
+      await adminModelCardPage.getCreateModalCancelButton().click();
+      await expect(modal).toBeHidden();
+      try {
+        await moveToTrashAndVerify(page, folderName, 'admin-data');
+      } catch {
+        // Folder may already be in Trash or may not exist
+      }
+      try {
+        await deleteForeverAndVerifyFromTrash(page, folderName, 'admin-data');
+      } catch {
+        // Folder may not be in Trash (already purged or never created)
+      }
     });
 
     // 3.5 Superadmin cannot create a model card without a Model Storage Folder

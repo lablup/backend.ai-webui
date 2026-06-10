@@ -12,13 +12,13 @@ import { FairShareWeightSettingModal_ModifyUserWeightMutation } from '../../__ge
 import { FairShareWeightSettingModal_ProjectFragment$key } from '../../__generated__/FairShareWeightSettingModal_ProjectFragment.graphql';
 import { FairShareWeightSettingModal_ResourceGroupFragment$key } from '../../__generated__/FairShareWeightSettingModal_ResourceGroupFragment.graphql';
 import { FairShareWeightSettingModal_UserFragment$key } from '../../__generated__/FairShareWeightSettingModal_UserFragment.graphql';
-import QuestionIconWithTooltip from '../QuestionIconWithTooltip';
 import DomainResourceGroupAlert from './DomainResourceGroupAlert';
 import ProjectResourceGroupAlert from './ProjectResourceGroupAlert';
 import UserResourceGroupAlert from './UserResourceGroupAlert';
 import { Alert, App, Form, Input, InputNumber, Skeleton, theme } from 'antd';
 import { FormInstance } from 'antd/lib';
 import {
+  BAIQuestionIconWithTooltip,
   BAIBulkEditFormItem,
   BAIFlex,
   BAIModal,
@@ -633,9 +633,9 @@ const FairShareWeightSettingModal: React.FC<
               label={
                 <BAIFlex gap="xxs">
                   {t('fairShare.Weight')}
-                  <QuestionIconWithTooltip
+                  <BAIQuestionIconWithTooltip
                     title={t('fairShare.WeightDescription')}
-                  ></QuestionIconWithTooltip>
+                  ></BAIQuestionIconWithTooltip>
                 </BAIFlex>
               }
               name="weight"
@@ -647,9 +647,9 @@ const FairShareWeightSettingModal: React.FC<
               label={
                 <BAIFlex gap="xxs">
                   {t('fairShare.Weight')}
-                  <QuestionIconWithTooltip
+                  <BAIQuestionIconWithTooltip
                     title={t('fairShare.WeightDescription')}
-                  ></QuestionIconWithTooltip>
+                  ></BAIQuestionIconWithTooltip>
                 </BAIFlex>
               }
               name="weight"

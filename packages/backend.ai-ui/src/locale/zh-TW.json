@@ -27,6 +27,9 @@
     "FailedToActivateArtifacts": "未能激活偽影。",
     "SuccessfullyActivated": "成功激活的工件。"
   },
+  "comp:BAIAdminKeypairResourcePolicySelect": {
+    "SelectKeypairResourcePolicy": "選擇金鑰對資源政策"
+  },
   "comp:BAIAdminModelServiceSelect": {
     "SelectModelService": "選擇模型服務"
   },
@@ -443,9 +446,12 @@
   },
   "comp:UserNodes": {
     "AllowedClientIps": "允許的用戶端IP",
-    "ContainerGIDs": "容器GID",
-    "ContainerMainGID": "容器主GID",
+    "ContainerGIDs": "附加GID",
+    "ContainerGIDsTooltip": "分配給容器進程的額外數字群組 ID",
+    "ContainerMainGID": "容器GID",
+    "ContainerMainGIDTooltip": "預設分配給容器內進程的數值群組 ID",
     "ContainerUID": "容器UID",
+    "ContainerUIDTooltip": "分配給容器內進程的數值使用者 ID",
     "CreatedAt": "建立時間",
     "Description": "描述",
     "Disabled": "已停用",
@@ -454,6 +460,7 @@
     "Enabled": "已啟用",
     "FullName": "全名",
     "IntegrationName": "整合名稱",
+    "MainAccessKey": "主要存取金鑰",
     "ModifiedAt": "修改時間",
     "NeedPasswordChange": "需要變更密碼",
     "Project": "專案",
@@ -463,6 +470,7 @@
     "StatusInfo": "狀態資訊",
     "SudoSessionEnabled": "Sudo工作階段已啟用",
     "TwoFA": "雙重驗證",
+    "TwoFAActivatedAt": "雙重驗證啟用時間",
     "UserID": "使用者 ID",
     "Username": "使用者名稱"
   },

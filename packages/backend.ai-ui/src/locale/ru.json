@@ -27,6 +27,9 @@
     "FailedToActivateArtifacts": "Не удалось активировать артефакты.",
     "SuccessfullyActivated": "Успешно активированные артефакты."
   },
+  "comp:BAIAdminKeypairResourcePolicySelect": {
+    "SelectKeypairResourcePolicy": "Выберите политику ресурсов ключевой пары"
+  },
   "comp:BAIAdminModelServiceSelect": {
     "SelectModelService": "Выберите сервис модели"
   },
@@ -443,9 +446,12 @@
   },
   "comp:UserNodes": {
     "AllowedClientIps": "Разрешенные IP клиентов",
-    "ContainerGIDs": "GID контейнера",
-    "ContainerMainGID": "Основной GID контейнера",
+    "ContainerGIDs": "Дополнительные GID",
+    "ContainerGIDsTooltip": "Дополнительные числовые GID, назначаемые процессам контейнера",
+    "ContainerMainGID": "GID контейнера",
+    "ContainerMainGIDTooltip": "Идентификатор группы (GID) по умолчанию, присваиваемый процессам внутри контейнера",
     "ContainerUID": "UID контейнера",
+    "ContainerUIDTooltip": "Числовой идентификатор пользователя (UID), назначаемый процессам внутри контейнера",
     "CreatedAt": "Создано",
     "Description": "Описание",
     "Disabled": "Отключено",
@@ -454,6 +460,7 @@
     "Enabled": "Включено",
     "FullName": "Полное имя",
     "IntegrationName": "Имя интеграции",
+    "MainAccessKey": "Основной ключ доступа",
     "ModifiedAt": "Изменено",
     "NeedPasswordChange": "Требуется смена пароля",
     "Project": "Проект",
@@ -463,6 +470,7 @@
     "StatusInfo": "Информация о статусе",
     "SudoSessionEnabled": "Сеанс Sudo включен",
     "TwoFA": "Двухфакторная аутентификация",
+    "TwoFAActivatedAt": "Двухфакторная аутентификация активирована",
     "UserID": "ID пользователя",
     "Username": "Имя пользователя"
   },

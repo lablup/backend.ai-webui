@@ -27,6 +27,9 @@
     "FailedToActivateArtifacts": "Олдворуудыг идэвхжүүлж чадсангүй.",
     "SuccessfullyActivated": "Амжилттай идэвхжүүлсэн олдворууд."
   },
+  "comp:BAIAdminKeypairResourcePolicySelect": {
+    "SelectKeypairResourcePolicy": "Keypair нөөцийн бодлого сонгох"
+  },
   "comp:BAIAdminModelServiceSelect": {
     "SelectModelService": "Моделийн үйлчилгээ сонгох"
   },
@@ -443,9 +446,12 @@
   },
   "comp:UserNodes": {
     "AllowedClientIps": "Зөвшөөрөгдсөн үйлчлүүлэгч IP",
-    "ContainerGIDs": "Контейнерийн GID",
-    "ContainerMainGID": "Контейнерийн үндсэн GID",
+    "ContainerGIDs": "Нэмэлт GID-үүд",
+    "ContainerGIDsTooltip": "Контейнерийн процессуудад хуваарилагдсан нэмэлт тоон группийн ID-үүд",
+    "ContainerMainGID": "Контейнерийн GID",
+    "ContainerMainGIDTooltip": "Контейнер доторх процессуудад оноогдох анхдагч тоон бүлгийн ID",
     "ContainerUID": "Контейнерийн UID",
+    "ContainerUIDTooltip": "Контейнер доторх процессуудад олгогдсон тоон хэрэглэгчийн ID",
     "CreatedAt": "Үүсгэсэн",
     "Description": "Тайлбар",
     "Disabled": "Идэвхгүй",
@@ -454,6 +460,7 @@
     "Enabled": "Идэвхтэй",
     "FullName": "Бүтэн нэр",
     "IntegrationName": "Нэгтгэлийн нэр",
+    "MainAccessKey": "Үндсэн хандалтын түлхүүр",
     "ModifiedAt": "Өөрчилсөн",
     "NeedPasswordChange": "Нууц үг солих шаардлагатай",
     "Project": "Төсөл",
@@ -463,6 +470,7 @@
     "StatusInfo": "Төлөвийн мэдээлэл",
     "SudoSessionEnabled": "Sudo горим идэвхтэй",
     "TwoFA": "Хоёр үе шаттай баталгаажуулалт",
+    "TwoFAActivatedAt": "Хоёр үе шаттай баталгаажуулалт идэвхжсэн",
     "UserID": "Хэрэглэгчийн ID",
     "Username": "Хэрэглэгчийн нэр"
   },

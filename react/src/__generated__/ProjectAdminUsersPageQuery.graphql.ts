@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<84d34c384c3916c8881e17489dfaaeb7>>
+ * @generated SignedSource<<b3b6ab96d5621ca2d4ebdd4b7ab00ee2>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -18,14 +18,24 @@ export type UserV2Filter = {
   AND?: ReadonlyArray<UserV2Filter> | null | undefined;
   NOT?: ReadonlyArray<UserV2Filter> | null | undefined;
   OR?: ReadonlyArray<UserV2Filter> | null | undefined;
+  containerGids?: IntArrayFilter | null | undefined;
+  containerMainGid?: IntFilter | null | undefined;
+  containerUid?: IntFilter | null | undefined;
   createdAt?: DateTimeFilter | null | undefined;
+  description?: StringFilter | null | undefined;
   domain?: UserDomainNestedFilter | null | undefined;
   domainName?: StringFilter | null | undefined;
   email?: StringFilter | null | undefined;
+  fullName?: StringFilter | null | undefined;
   integrationName?: StringFilter | null | undefined;
+  needPasswordChange?: boolean | null | undefined;
   project?: UserProjectNestedFilter | null | undefined;
+  resourcePolicy?: StringFilter | null | undefined;
   role?: UserRoleV2EnumFilter | null | undefined;
   status?: UserStatusV2EnumFilter | null | undefined;
+  statusInfo?: StringFilter | null | undefined;
+  sudoSessionEnabled?: boolean | null | undefined;
+  totpActivated?: boolean | null | undefined;
   username?: StringFilter | null | undefined;
   uuid?: UUIDFilter | null | undefined;
 };
@@ -69,6 +79,19 @@ export type UserRoleV2EnumFilter = {
   notEquals?: UserRoleV2 | null | undefined;
   notIn?: ReadonlyArray<UserRoleV2> | null | undefined;
 };
+export type IntFilter = {
+  equals?: number | null | undefined;
+  greaterThan?: number | null | undefined;
+  greaterThanOrEqual?: number | null | undefined;
+  lessThan?: number | null | undefined;
+  lessThanOrEqual?: number | null | undefined;
+  notEquals?: number | null | undefined;
+};
+export type IntArrayFilter = {
+  contains?: number | null | undefined;
+  containsAll?: ReadonlyArray<number> | null | undefined;
+  containsAny?: ReadonlyArray<number> | null | undefined;
+};
 export type DateTimeFilter = {
   after?: string | null | undefined;
   before?: string | null | undefined;
@@ -100,7 +123,7 @@ export type ProjectAdminUsersPageQuery$data = {
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly id: string;
-        readonly " $fragmentSpreads": FragmentRefs<"BAIUserV2NodesFragment">;
+        readonly " $fragmentSpreads": FragmentRefs<"BAIAdminUserV2TableFragment">;
       };
     }>;
   } | null | undefined;
@@ -225,7 +248,7 @@ return {
                   {
                     "args": null,
                     "kind": "FragmentSpread",
-                    "name": "BAIUserV2NodesFragment"
+                    "name": "BAIAdminUserV2TableFragment"
                   }
                 ],
                 "storageKey": null
@@ -352,6 +375,13 @@ return {
                         "kind": "ScalarField",
                         "name": "resourcePolicy",
                         "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "mainAccessKey",
+                        "storageKey": null
                       }
                     ],
                     "storageKey": null
@@ -375,7 +405,21 @@ return {
                         "alias": null,
                         "args": null,
                         "kind": "ScalarField",
+                        "name": "totpActivatedAt",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
                         "name": "sudoSessionEnabled",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "allowedClientIp",
                         "storageKey": null
                       }
                     ],
@@ -401,6 +445,45 @@ return {
                         "args": null,
                         "kind": "ScalarField",
                         "name": "statusInfo",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "needPasswordChange",
+                        "storageKey": null
+                      }
+                    ],
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "UserV2ContainerSettings",
+                    "kind": "LinkedField",
+                    "name": "container",
+                    "plural": false,
+                    "selections": [
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "containerUid",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "containerMainGid",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "containerGids",
                         "storageKey": null
                       }
                     ],
@@ -443,16 +526,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "afa4f1c86840fb28921913123674e8a3",
+    "cacheID": "cf26e0cd045a5f1e6eca79d40c52c4c6",
     "id": null,
     "metadata": {},
     "name": "ProjectAdminUsersPageQuery",
     "operationKind": "query",
-    "text": "query ProjectAdminUsersPageQuery(\n  $projectId: UUID!\n  $filter: UserV2Filter\n  $orderBy: [UserV2OrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  projectUsersV2(scope: {projectId: $projectId}, filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        ...BAIUserV2NodesFragment\n      }\n    }\n  }\n}\n\nfragment BAIUserV2NodesFragment on UserV2 {\n  id\n  basicInfo {\n    email\n    fullName\n    username\n    description\n    integrationName\n  }\n  organization {\n    domainName\n    role\n    resourcePolicy\n  }\n  security {\n    totpActivated\n    sudoSessionEnabled\n  }\n  status {\n    status\n    statusInfo\n  }\n  timestamps {\n    createdAt\n    modifiedAt\n  }\n}\n"
+    "text": "query ProjectAdminUsersPageQuery(\n  $projectId: UUID!\n  $filter: UserV2Filter\n  $orderBy: [UserV2OrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  projectUsersV2(scope: {projectId: $projectId}, filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        ...BAIAdminUserV2TableFragment\n      }\n    }\n  }\n}\n\nfragment BAIAdminUserV2TableFragment on UserV2 {\n  id\n  basicInfo {\n    email\n    fullName\n    username\n    description\n    integrationName\n  }\n  organization {\n    domainName\n    role\n    resourcePolicy\n    mainAccessKey\n  }\n  security {\n    totpActivated\n    totpActivatedAt\n    sudoSessionEnabled\n    allowedClientIp\n  }\n  status {\n    status\n    statusInfo\n    needPasswordChange\n  }\n  container {\n    containerUid\n    containerMainGid\n    containerGids\n  }\n  timestamps {\n    createdAt\n    modifiedAt\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "db56adccda9e9c9dd91293056ea44439";
+(node as any).hash = "fb1bd2c3763d73ccf663029cf48fa196";
 
 export default node;

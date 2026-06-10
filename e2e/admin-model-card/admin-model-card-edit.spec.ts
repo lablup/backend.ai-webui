@@ -1,7 +1,12 @@
 // spec: e2e/.agent-output/test-plan-admin-model-card.md
 // section: 4. Edit Model Card
 import { AdminModelCardPage } from '../utils/classes/AdminModelCardPage';
-import { loginAsAdmin, webuiEndpoint } from '../utils/test-util';
+import {
+  deleteForeverAndVerifyFromTrash,
+  loginAsAdmin,
+  moveToTrashAndVerify,
+  webuiEndpoint,
+} from '../utils/test-util';
 import { test, expect } from '@playwright/test';
 
 test.describe(
@@ -10,13 +15,16 @@ test.describe(
   () => {
     test.setTimeout(60000);
     let testCardName: string;
+    let testFolderName: string;
 
     test.beforeEach(async ({ page, request }, testInfo) => {
-      // Generate unique name per test to avoid parallel worker conflicts
-      testCardName = `e2e-test-edit-${testInfo.workerIndex}-${Date.now()}`;
+      // Generate unique names per test to avoid parallel worker conflicts
+      const timestamp = Date.now();
+      testCardName = `e2e-test-edit-${testInfo.workerIndex}-${timestamp}`;
+      testFolderName = `e2e-test-edit-folder-${testInfo.workerIndex}-${timestamp}`;
       await loginAsAdmin(page, request);
 
-      // Create a test model card to edit
+      // Create a test model card to edit, self-provisioning its VFolder via "+"
       await page.goto(
         `${webuiEndpoint}/admin-deployments?tab=model-store-management`,
       );
@@ -28,21 +36,10 @@ test.describe(
       await expect(modal).toBeVisible();
 
       await modal.getByRole('textbox', { name: 'Name' }).fill(testCardName);
-      // In antd v6 with BAISelect, click .ant-select-content to open the dropdown reliably.
-      await modal
-        .locator('.ant-form-item')
-        .filter({ hasText: 'Model Storage Folder' })
-        .locator('.ant-select-content')
-        .click();
-      const vfolderDropdown = page
-        .locator('.ant-select-dropdown:not(.ant-select-dropdown-hidden)')
-        .first();
-      await expect(vfolderDropdown).toBeVisible({ timeout: 10000 });
-      await expect(vfolderDropdown.getByText(/Total \d+ items/)).toBeVisible({
-        timeout: 10000,
-      });
-      await vfolderDropdown.locator('.ant-select-item-option').first().click();
-      await expect(vfolderDropdown).toBeHidden();
+
+      // Create a new VFolder via the "+" button — self-provisions so no pre-existing
+      // group-owned VFolder is required on the test backend.
+      await adminModelCardPage.createNewFolderViaPlus(testFolderName);
 
       // Select Access Level (required field). Access level options are "Private" (INTERNAL) and "Public".
       await modal
@@ -89,6 +86,22 @@ test.describe(
         }
       } catch {
         // Ignore cleanup errors
+      }
+
+      // Cleanup: purge the VFolder created in beforeEach
+      try {
+        await moveToTrashAndVerify(page, testFolderName, 'admin-data');
+      } catch {
+        // Folder may already be in Trash or may not exist
+      }
+      try {
+        await deleteForeverAndVerifyFromTrash(
+          page,
+          testFolderName,
+          'admin-data',
+        );
+      } catch {
+        // Folder may not be in Trash (already purged or never created)
       }
     });
 

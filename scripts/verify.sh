@@ -72,11 +72,32 @@ check_relay_drift() {
   return 0
 }
 
+check_terminology_drift() {
+  # Deterministic i18n terminology checker (read-only). Scans i18n VALUES against
+  # packages/backend.ai-webui-docs/terminology.json `avoid[]` (CHECK 1). See
+  # scripts/check-terminology-i18n.mjs. (CHECK 2, key->two-values divergence, is
+  # OFF by default — too noisy today; opt in with `pnpm run lint:terminology -- --check2`.)
+  #
+  # NON-BLOCKING by design: this runs in --warn mode and is invoked OUTSIDE
+  # run_check, so it never sets FAIL and never flips `=== ALL PASS ===`.
+  # Run `pnpm run lint:terminology` for the standalone report. Flipping this to
+  # blocking (via `node scripts/check-terminology-i18n.mjs --strict`) is a
+  # separate future task once the warn-mode findings have been triaged.
+  node scripts/check-terminology-i18n.mjs --warn
+}
+
 run_check "Relay" check_relay_drift
-run_check "Lint" pnpm run lint
+run_check "Lint" pnpm -r --stream lint
 run_check "Format" pnpm run format
 run_check "TypeScript" pnpm --prefix ./react exec tsc --noEmit
 run_check "Vite warmup paths" check_warmup_paths
+
+# Warn-only terminology report. Guarded with `|| true` so `set -e` + the
+# checker's exit code can never abort verify.sh or mark the build failed.
+echo "=== Terminology (warn-only) ==="
+check_terminology_drift || true
+echo "--- Terminology: WARN-ONLY (does not affect build status) ---"
+echo ""
 
 if [ $FAIL -eq 0 ]; then
   echo "=== ALL PASS ==="

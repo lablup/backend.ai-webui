@@ -7,6 +7,7 @@ import {
   filterOutNullAndUndefined,
   newLineToBrElement,
 } from '../../helper';
+import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAISchedulingResultBadge, {
   SchedulingResult,
 } from '../BAISchedulingResultBadge';
@@ -21,7 +22,6 @@ import { BAIColumnGroupType } from '../Table/BAITable';
 import BAISubStepNodes from './BAISubStepNodes';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
 export type SchedulingHistoryNodeInList = NonNullable<
@@ -61,7 +61,7 @@ const BAISchedulingHistoryNodes = ({
   ...tableProps
 }: BAISchedulingHistoryNodesProps) => {
   'use memo';
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
 
   const histories = useFragment<BAISchedulingHistoryNodesFragment$key>(
     graphql`
