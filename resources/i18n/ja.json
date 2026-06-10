@@ -306,6 +306,12 @@
     "ToolPermissionOverrides": "ツール権限オーバーライド",
     "TopP": "Top P"
   },
+  "auditLog": {
+    "Operation": "操作",
+    "Status": "状態",
+    "Time": "時間",
+    "TriggeredBy": "実行者"
+  },
   "autoScalingRule": {
     "AddAutoScalingRule": "自動スケーリングルールを追加します",
     "Comparator": "コンパレータ",

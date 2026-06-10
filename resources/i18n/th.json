@@ -306,6 +306,12 @@
     "ToolPermissionOverrides": "การแทนที่สิทธิ์เครื่องมือ",
     "TopP": "Top P"
   },
+  "auditLog": {
+    "Operation": "การดำเนินการ",
+    "Status": "สถานะ",
+    "Time": "เวลา",
+    "TriggeredBy": "เรียกใช้โดย"
+  },
   "autoScalingRule": {
     "AddAutoScalingRule": "เพิ่มกฎการปรับขนาดอัตโนมัติ",
     "Comparator": "เครื่องเปรียบเทียบ",

@@ -306,6 +306,12 @@
     "ToolPermissionOverrides": "工具權限覆蓋",
     "TopP": "Top P"
   },
+  "auditLog": {
+    "Operation": "操作",
+    "Status": "狀態",
+    "Time": "時間",
+    "TriggeredBy": "觸發者"
+  },
   "autoScalingRule": {
     "AddAutoScalingRule": "添加自動縮放規則",
     "Comparator": "比較器",

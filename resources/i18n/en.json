@@ -293,6 +293,12 @@
     "ToolConfig": "Tool Configuration",
     "ToolPermissionOverrides": "Tool Permission Overrides"
   },
+  "auditLog": {
+    "Operation": "Operation",
+    "Status": "Status",
+    "Time": "Time",
+    "TriggeredBy": "Triggered By"
+  },
   "autoScalingRule": {
     "AddAutoScalingRule": "Add Auto Scaling Rule",
     "Comparator": "Comparator",

@@ -306,6 +306,12 @@
     "ToolPermissionOverrides": "Хэрэгслийн зөвшөөрлийн дарааллууд",
     "TopP": "Top P"
   },
+  "auditLog": {
+    "Operation": "Үйлдэл",
+    "Status": "Статус",
+    "Time": "Цаг",
+    "TriggeredBy": "Гүйцэтгэсэн"
+  },
   "autoScalingRule": {
     "AddAutoScalingRule": "Автомат масштабыг нэмэх",
     "Comparator": "Автоматлагч",

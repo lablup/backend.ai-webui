@@ -306,6 +306,12 @@
     "ToolPermissionOverrides": "Παρακάμψεις δικαιωμάτων εργαλείων",
     "TopP": "Top P"
   },
+  "auditLog": {
+    "Operation": "Λειτουργία",
+    "Status": "Κατάσταση",
+    "Time": "Ώρα",
+    "TriggeredBy": "Ενεργοποιήθηκε από"
+  },
   "autoScalingRule": {
     "AddAutoScalingRule": "Προσθέστε κανόνα αυτόματης κλιμάκωσης",
     "Comparator": "Συγκριτής",

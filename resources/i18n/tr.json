@@ -306,6 +306,12 @@
     "ToolPermissionOverrides": "Araç izni geçersiz kılmaları",
     "TopP": "Top P"
   },
+  "auditLog": {
+    "Operation": "İşlem",
+    "Status": "Durum",
+    "Time": "Zaman",
+    "TriggeredBy": "Tetikleyen"
+  },
   "autoScalingRule": {
     "AddAutoScalingRule": "Otomatik ölçeklendirme kuralı ekleyin",
     "Comparator": "Karşılaştırıcı",

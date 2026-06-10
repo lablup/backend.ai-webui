@@ -306,6 +306,12 @@
     "ToolPermissionOverrides": "Penggantian izin alat",
     "TopP": "Top P"
   },
+  "auditLog": {
+    "Operation": "Operasi",
+    "Status": "Status",
+    "Time": "Waktu",
+    "TriggeredBy": "Dipicu oleh"
+  },
   "autoScalingRule": {
     "AddAutoScalingRule": "Tambahkan aturan penskalaan otomatis",
     "Comparator": "Pembanding",

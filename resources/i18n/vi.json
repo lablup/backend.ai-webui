@@ -306,6 +306,12 @@
     "ToolPermissionOverrides": "Ghi đè quyền công cụ",
     "TopP": "Top P"
   },
+  "auditLog": {
+    "Operation": "Thao tác",
+    "Status": "Trạng thái",
+    "Time": "Thời gian",
+    "TriggeredBy": "Thực hiện bởi"
+  },
   "autoScalingRule": {
     "AddAutoScalingRule": "Thêm quy tắc tỷ lệ tự động",
     "Comparator": "Người so sánh",

@@ -306,6 +306,12 @@
     "ToolPermissionOverrides": "Työkalun oikeusohitukset",
     "TopP": "Top P"
   },
+  "auditLog": {
+    "Operation": "Toiminto",
+    "Status": "Tila",
+    "Time": "Aika",
+    "TriggeredBy": "Käynnistänyt"
+  },
   "autoScalingRule": {
     "AddAutoScalingRule": "Lisää automaattinen skaalaussääntö",
     "Comparator": "Vertailu",

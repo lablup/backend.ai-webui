@@ -306,6 +306,12 @@
     "ToolPermissionOverrides": "도구 권한 재정의",
     "TopP": "Top P"
   },
+  "auditLog": {
+    "Operation": "작업",
+    "Status": "상태",
+    "Time": "시간",
+    "TriggeredBy": "실행자"
+  },
   "autoScalingRule": {
     "AddAutoScalingRule": "오토스케일링 규칙 추가",
     "Comparator": "연산자",

@@ -306,6 +306,12 @@
     "ToolPermissionOverrides": "Sostituzioni autorizzazioni strumenti",
     "TopP": "Top P"
   },
+  "auditLog": {
+    "Operation": "Operazione",
+    "Status": "Stato",
+    "Time": "Ora",
+    "TriggeredBy": "Attivato da"
+  },
   "autoScalingRule": {
     "AddAutoScalingRule": "Aggiungi regola di ridimensionamento automatico",
     "Comparator": "Comparatore",

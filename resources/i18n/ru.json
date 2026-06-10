@@ -306,6 +306,12 @@
     "ToolPermissionOverrides": "Переопределения разрешений инструментов",
     "TopP": "Top P"
   },
+  "auditLog": {
+    "Operation": "Операция",
+    "Status": "Статус",
+    "Time": "Время",
+    "TriggeredBy": "Инициировано"
+  },
   "autoScalingRule": {
     "AddAutoScalingRule": "Добавить правило масштабирования автоматического масштабирования",
     "Comparator": "Компаратор",
