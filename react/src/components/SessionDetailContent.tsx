@@ -4,6 +4,7 @@
  */
 import { SessionDetailContentFragment$key } from '../__generated__/SessionDetailContentFragment.graphql';
 import { SessionDetailContentQuery } from '../__generated__/SessionDetailContentQuery.graphql';
+import { SessionDetailContentSchedulingErrorCodeQuery } from '../__generated__/SessionDetailContentSchedulingErrorCodeQuery.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
@@ -77,6 +78,44 @@ const buildResourceWithUnifiedSlot = (
   return unifiedSlotName
     ? { ..._.omit(slots, unifiedSlotName), acceleratorType: unifiedSlotName }
     : slots;
+};
+
+const SessionStatusTagWithSchedulingErrorCode: React.FC<{
+  sessionId: string;
+  sessionFrgmt: React.ComponentProps<typeof SessionStatusTag>['sessionFrgmt'];
+  showInfo?: boolean;
+}> = ({ sessionId, sessionFrgmt, showInfo }) => {
+  'use memo';
+  const result = useLazyLoadQuery<SessionDetailContentSchedulingErrorCodeQuery>(
+    graphql`
+      query SessionDetailContentSchedulingErrorCodeQuery($sessionId: UUID!) {
+        sessionScopedSchedulingHistories(
+          scope: { sessionId: $sessionId }
+          orderBy: [{ field: UPDATED_AT, direction: DESC }]
+          first: 1
+        ) {
+          edges {
+            node {
+              errorCode
+            }
+          }
+        }
+      }
+    `,
+    { sessionId },
+    { fetchPolicy: 'store-and-network' },
+  );
+
+  const latestErrorCode =
+    result.sessionScopedSchedulingHistories?.edges[0]?.node?.errorCode ?? null;
+
+  return (
+    <SessionStatusTag
+      sessionFrgmt={sessionFrgmt}
+      showInfo={showInfo}
+      schedulingErrorCode={latestErrorCode}
+    />
+  );
 };
 
 const SessionDetailContent: React.FC<{
@@ -315,10 +354,24 @@ const SessionDetailContent: React.FC<{
           )}
           <Descriptions.Item label={t('session.Status')}>
             <BAIFlex>
-              <SessionStatusTag
-                sessionFrgmt={session}
-                showInfo={!supportsSessionSchedulingHistory}
-              />
+              {supportsSessionSchedulingHistory && session.row_id ? (
+                <Suspense
+                  fallback={
+                    <SessionStatusTag sessionFrgmt={session} showInfo={false} />
+                  }
+                >
+                  <SessionStatusTagWithSchedulingErrorCode
+                    sessionId={session.row_id}
+                    sessionFrgmt={session}
+                    showInfo={false}
+                  />
+                </Suspense>
+              ) : (
+                <SessionStatusTag
+                  sessionFrgmt={session}
+                  showInfo={!supportsSessionSchedulingHistory}
+                />
+              )}
               {!supportsSessionSchedulingHistory &&
               session?.status_data &&
               session?.status_data !== '{}' ? (

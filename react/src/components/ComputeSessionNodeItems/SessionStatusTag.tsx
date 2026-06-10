@@ -22,6 +22,7 @@ interface SessionStatusTagProps {
   showInfo?: boolean;
   showQueuePosition?: boolean;
   showTooltip?: boolean;
+  schedulingErrorCode?: string | null;
 }
 export const statusTagColor = {
   //prepare
@@ -57,6 +58,7 @@ const SessionStatusTag: React.FC<SessionStatusTagProps> = ({
   showInfo,
   showQueuePosition = true,
   showTooltip = true,
+  schedulingErrorCode,
 }) => {
   const { token } = theme.useToken();
   const { t } = useTranslation();
@@ -105,9 +107,16 @@ const SessionStatusTag: React.FC<SessionStatusTagProps> = ({
           </Tooltip>
         ) : null}
       </BAIFlex>
-    ) : _.isEmpty(session.status_info) || !showInfo ? (
+    ) : (_.isEmpty(session.status_info) && !schedulingErrorCode) ||
+      !showInfo ? (
       <BAIFlex wrap="nowrap" gap="xs">
-        <Tooltip title={showTooltip ? session.status_info : undefined}>
+        <Tooltip
+          title={
+            showTooltip
+              ? (schedulingErrorCode ?? session.status_info)
+              : undefined
+          }
+        >
           <Tag
             color={
               session.status ? _.get(statusTagColor, session.status) : undefined
@@ -123,7 +132,8 @@ const SessionStatusTag: React.FC<SessionStatusTagProps> = ({
             }}
           >
             {session.status || ' '}
-            {session.status_info && isTransitional(session) ? (
+            {(schedulingErrorCode || session.status_info) &&
+            isTransitional(session) ? (
               <CircleAlertIcon
                 style={{
                   marginLeft: token.marginXXS,
@@ -175,20 +185,22 @@ const SessionStatusTag: React.FC<SessionStatusTagProps> = ({
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               width: 80,
+              fontFamily: schedulingErrorCode ? 'monospace' : undefined,
               color:
+                !schedulingErrorCode &&
                 session.status_info &&
                 _.get(statusInfoTagColor, session.status_info)
                   ? undefined
                   : token.colorTextSecondary,
             }}
             color={
-              session.status_info
+              !schedulingErrorCode && session.status_info
                 ? _.get(statusInfoTagColor, session.status_info)
                 : undefined
             }
-            title={session.status_info || undefined}
+            title={(schedulingErrorCode ?? session.status_info) || undefined}
           >
-            {session.status_info}
+            {schedulingErrorCode ?? session.status_info}
           </Tag>
         </BAIFlex>
         {displayQuePosition ? (
