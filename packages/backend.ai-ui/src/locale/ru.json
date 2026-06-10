@@ -67,6 +67,19 @@
     "Updated": "Обновлено",
     "Version": "Версия"
   },
+  "comp:BAIAuditLogNodes": {
+    "ActionId": "ID действия",
+    "Actor": "Исполнитель",
+    "Description": "Описание",
+    "Duration": "Длительность",
+    "EntityId": "ID объекта",
+    "EntityType": "Тип объекта",
+    "Operation": "Операция",
+    "RequestId": "ID запроса",
+    "Status": "Статус",
+    "Time": "Время",
+    "TriggeredBy": "Инициатор"
+  },
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "Выберите пресет"
   },

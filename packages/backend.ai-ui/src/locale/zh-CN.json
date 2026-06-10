@@ -67,6 +67,19 @@
     "Updated": "更新",
     "Version": "版本"
   },
+  "comp:BAIAuditLogNodes": {
+    "ActionId": "操作 ID",
+    "Actor": "执行者",
+    "Description": "描述",
+    "Duration": "持续时间",
+    "EntityId": "实体 ID",
+    "EntityType": "实体类型",
+    "Operation": "操作",
+    "RequestId": "请求 ID",
+    "Status": "状态",
+    "Time": "时间",
+    "TriggeredBy": "触发者"
+  },
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "选择预设"
   },

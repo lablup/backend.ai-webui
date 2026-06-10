@@ -67,6 +67,19 @@
     "Updated": "업데이트",
     "Version": "버전"
   },
+  "comp:BAIAuditLogNodes": {
+    "ActionId": "액션 ID",
+    "Actor": "수행자",
+    "Description": "설명",
+    "Duration": "소요 시간",
+    "EntityId": "엔티티 ID",
+    "EntityType": "엔티티 유형",
+    "Operation": "작업",
+    "RequestId": "요청 ID",
+    "Status": "상태",
+    "Time": "시간",
+    "TriggeredBy": "실행자"
+  },
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "프리셋을 선택해주세요"
   },

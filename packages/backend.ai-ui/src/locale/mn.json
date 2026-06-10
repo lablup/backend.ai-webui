@@ -67,6 +67,19 @@
     "Updated": "Шинэчилсэн цаг нь",
     "Version": "Таамаглал"
   },
+  "comp:BAIAuditLogNodes": {
+    "ActionId": "Үйлийн ID",
+    "Actor": "Гүйцэтгэгч",
+    "Description": "Тайлбар",
+    "Duration": "Үргэлжлэх хугацаа",
+    "EntityId": "Объектын ID",
+    "EntityType": "Объектын төрөл",
+    "Operation": "Үйлдэл",
+    "RequestId": "Хүсэлтийн ID",
+    "Status": "Төлөв",
+    "Time": "Цаг",
+    "TriggeredBy": "Өдөөгч"
+  },
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "Урьдчилан тохиргоо сонгох"
   },

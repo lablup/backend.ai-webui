@@ -169,6 +169,11 @@ export type {
   BAISchedulingHistoryNodesProps,
   SchedulingHistoryNodeInList,
 } from './BAISchedulingHistoryNodes';
+export { default as BAIAuditLogNodes } from './BAIAuditLogNodes';
+export type {
+  BAIAuditLogNodesProps,
+  AuditLogNodeInList,
+} from './BAIAuditLogNodes';
 export { default as BAIDeploymentSchedulingHistoryNodes } from './BAIDeploymentSchedulingHistoryNodes';
 export type {
   BAIDeploymentSchedulingHistoryNodesProps,

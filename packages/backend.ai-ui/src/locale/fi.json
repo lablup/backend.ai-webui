@@ -67,6 +67,19 @@
     "Updated": "Päivitetty",
     "Version": "Versio"
   },
+  "comp:BAIAuditLogNodes": {
+    "ActionId": "Toiminnon ID",
+    "Actor": "Suorittaja",
+    "Description": "Kuvaus",
+    "Duration": "Kesto",
+    "EntityId": "Entiteetin ID",
+    "EntityType": "Entiteettityyppi",
+    "Operation": "Toiminto",
+    "RequestId": "Pyynnön ID",
+    "Status": "Tila",
+    "Time": "Aika",
+    "TriggeredBy": "Laukaisija"
+  },
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "Valitse esiasetus"
   },
