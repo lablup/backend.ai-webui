@@ -2,12 +2,12 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { ConnectedKernelListRefetchQuery } from '../../__generated__/ConnectedKernelListRefetchQuery.graphql';
 import {
-  ConnectedKernelListFragment$data,
-  ConnectedKernelListFragment$key,
-} from '../../__generated__/ConnectedKernelListFragment.graphql';
+  ConnectedKernelListSessionFragment$data,
+  ConnectedKernelListSessionFragment$key,
+} from '../../__generated__/ConnectedKernelListSessionFragment.graphql';
 import { ContainerLogModalFragment$key } from '../../__generated__/ContainerLogModalFragment.graphql';
-// import BAIPropertyFilter from '../BAIPropertyFilter';
 import ContainerLogModal from './ContainerLogModal';
 import { Button, Tag, theme, Tooltip, Typography } from 'antd';
 import type { ColumnType } from 'antd/lib/table';
@@ -20,18 +20,21 @@ import {
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { ScrollTextIcon } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useFragment } from 'react-relay';
+import { graphql, useRefetchableFragment } from 'react-relay';
 
-type Kernel = NonNullable<ConnectedKernelListFragment$data[number]>;
+type Kernel = NonNullable<
+  NonNullable<
+    NonNullable<
+      ConnectedKernelListSessionFragment$data['kernel_nodes']
+    >['edges'][number]
+  >['node']
+>;
 
 interface ConnectedKernelListProps {
-  kernelsFrgmt: ConnectedKernelListFragment$key;
+  sessionFrgmt: ConnectedKernelListSessionFragment$key;
   sessionFrgmtForLogModal: ContainerLogModalFragment$key;
-  // fetchKey?: string;
-  // get the project id of the session for <= v24.12.0.
-  // projectId?: string | null;
 }
 
 const kernelStatusTagColor = {
@@ -57,34 +60,53 @@ const kernelStatusTagColor = {
 };
 
 const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
-  kernelsFrgmt,
+  sessionFrgmt,
   sessionFrgmtForLogModal,
 }) => {
+  'use memo';
   const { t } = useTranslation();
   const [kernelIdForLogModal, setKernelIdForLogModal] = useState<string>();
   const { token } = theme.useToken();
+  const [isPendingRefetch, startRefetchTransition] = useTransition();
+  const [order, setOrder] = useState<string>();
 
-  const kernelNodes = useFragment(
+  const [session, refetch] = useRefetchableFragment<
+    ConnectedKernelListRefetchQuery,
+    ConnectedKernelListSessionFragment$key
+  >(
     graphql`
-      fragment ConnectedKernelListFragment on KernelNode @relay(plural: true) {
-        id
-        row_id
-        cluster_hostname
-        cluster_idx
-        cluster_role
-        status
-        status_info
-        agent_id
-        container_id
+      fragment ConnectedKernelListSessionFragment on ComputeSessionNode
+      @argumentDefinitions(order: { type: "String", defaultValue: null })
+      @refetchable(queryName: "ConnectedKernelListRefetchQuery") {
+        kernel_nodes(order: $order) {
+          edges {
+            node {
+              id
+              row_id
+              cluster_hostname
+              cluster_idx
+              cluster_role
+              status
+              status_info
+              agent_id
+              container_id
+            }
+          }
+        }
       }
     `,
-    kernelsFrgmt,
+    sessionFrgmt,
+  );
+
+  const kernelNodes = filterOutNullAndUndefined(
+    session.kernel_nodes?.edges.map((e) => e?.node),
   );
 
   const columns = filterOutEmpty<ColumnType<Kernel>>([
     {
       title: t('kernel.Hostname'),
       dataIndex: 'cluster_hostname',
+      sorter: true,
       render: (hostname, record) => {
         return (
           <>
@@ -111,6 +133,7 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
     {
       title: t('kernel.Status'),
       dataIndex: 'status',
+      sorter: true,
       render: (status, record) => {
         return (
           <>
@@ -137,6 +160,7 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
     {
       title: t('kernel.AgentId'),
       dataIndex: 'agent_id',
+      sorter: true,
       render: (id) =>
         _.isEmpty(id) ? '-' : <Typography.Text copyable>{id}</Typography.Text>,
     },
@@ -169,12 +193,6 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
     },
   ]);
 
-  const sortedKernels = useMemo(() => {
-    return _.orderBy(filterOutNullAndUndefined(kernelNodes), [
-      'cluster_role',
-      'cluster_idx',
-    ] as Array<keyof Kernel>);
-  }, [kernelNodes]);
   return (
     <>
       {/* TODO: implement filter when compute_session_node query supports filter */}
@@ -195,17 +213,24 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
       /> */}
       <BAITable
         bordered
-        // loading={isPendingFilter}
+        loading={isPendingRefetch}
         rowKey="id"
         scroll={{ x: 'max-content' }}
         columns={columns}
-        dataSource={sortedKernels} // TODO: implement pagination when compute_session_node query supports pagination
+        dataSource={kernelNodes}
+        order={order}
+        onChangeOrder={(nextOrder) => {
+          setOrder(nextOrder);
+          startRefetchTransition(() => {
+            refetch({ order: nextOrder ?? null });
+          });
+        }}
       />
 
       <BAIUnmountAfterClose>
         <ContainerLogModal
           open={!!kernelIdForLogModal}
-          sessionFrgmt={sessionFrgmtForLogModal || null}
+          sessionFrgmt={sessionFrgmtForLogModal}
           defaultKernelId={kernelIdForLogModal}
           onCancel={() => {
             setKernelIdForLogModal(undefined);
