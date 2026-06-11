@@ -231,7 +231,7 @@
     "Project": "Проект",
     "ProjectID": "ID проекта",
     "ReplicaSummary": "Реплики",
-    "ReplicaSummaryTooltip": "Запущенные реплики относительно желаемого (или общего) количества реплик.",
+    "ReplicaSummaryTooltip": "Запущенные реплики относительно желаемого количества реплик.",
     "Replicas": "Реплики",
     "ResourceGroup": "Группа ресурсов",
     "RevisionNumber": "Ревизия",

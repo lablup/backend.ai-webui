@@ -231,7 +231,7 @@
     "Project": "プロジェクト",
     "ProjectID": "プロジェクトID",
     "ReplicaSummary": "レプリカ",
-    "ReplicaSummaryTooltip": "希望する（または合計の）レプリカ数に対して実行中のレプリカ数。",
+    "ReplicaSummaryTooltip": "希望するレプリカ数に対して実行中のレプリカ数。",
     "Replicas": "レプリカ",
     "ResourceGroup": "リソースグループ",
     "RevisionNumber": "リビジョン",

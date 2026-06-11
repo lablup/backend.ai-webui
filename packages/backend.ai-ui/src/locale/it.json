@@ -231,7 +231,7 @@
     "Project": "Progetto",
     "ProjectID": "ID progetto",
     "ReplicaSummary": "Repliche",
-    "ReplicaSummaryTooltip": "Repliche in esecuzione rispetto al numero desiderato (o totale) di repliche.",
+    "ReplicaSummaryTooltip": "Repliche in esecuzione rispetto al numero desiderato di repliche.",
     "Replicas": "Repliche",
     "ResourceGroup": "Gruppo di Risorse",
     "RevisionNumber": "Revisione",

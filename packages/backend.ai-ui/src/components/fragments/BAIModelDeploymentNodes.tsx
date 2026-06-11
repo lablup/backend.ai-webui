@@ -132,9 +132,6 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
         replicaState {
           desiredReplicaCount
         }
-        totalReplicas: replicas {
-          count
-        }
         runningReplicas: replicas(filter: { status: { equals: RUNNING } }) {
           count
         }
@@ -231,13 +228,11 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
         render: (__, record) => {
           const running = record.runningReplicas?.count ?? 0;
           const desired = record.replicaState?.desiredReplicaCount ?? 0;
-          const total = record.totalReplicas?.count ?? desired;
-          const denominator = desired > 0 ? desired : total;
           return (
             <Typography.Text>
               {t('comp:BAIModelDeploymentNodes.HealthySummary', {
                 healthy: running,
-                total: denominator,
+                total: desired,
               })}
             </Typography.Text>
           );

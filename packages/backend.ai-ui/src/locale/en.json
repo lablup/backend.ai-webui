@@ -231,7 +231,7 @@
     "Project": "Project",
     "ProjectID": "Project ID",
     "ReplicaSummary": "Replicas",
-    "ReplicaSummaryTooltip": "Running replicas over the desired (or total) replica count.",
+    "ReplicaSummaryTooltip": "Running replicas over the desired replica count.",
     "Replicas": "Replicas",
     "ResourceGroup": "Resource Group",
     "RevisionNumber": "Revision",

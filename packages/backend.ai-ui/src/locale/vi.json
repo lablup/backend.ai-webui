@@ -231,7 +231,7 @@
     "Project": "Dự án",
     "ProjectID": "ID dự án",
     "ReplicaSummary": "Số bản sao",
-    "ReplicaSummaryTooltip": "Số bản sao đang chạy so với số bản sao mong muốn (hoặc tổng số).",
+    "ReplicaSummaryTooltip": "Số bản sao đang chạy so với số bản sao mong muốn.",
     "Replicas": "Số bản sao",
     "ResourceGroup": "Nhóm tài nguyên",
     "RevisionNumber": "Phiên bản",

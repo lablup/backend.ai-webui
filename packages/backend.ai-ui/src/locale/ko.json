@@ -231,7 +231,7 @@
     "Project": "프로젝트",
     "ProjectID": "프로젝트 ID",
     "ReplicaSummary": "복제본 수",
-    "ReplicaSummaryTooltip": "원하는 (또는 전체) 복제본 수 대비 실행 중인 복제본 수입니다.",
+    "ReplicaSummaryTooltip": "원하는 복제본 수 대비 실행 중인 복제본 수입니다.",
     "Replicas": "복제본 수",
     "ResourceGroup": "리소스 그룹",
     "RevisionNumber": "리비전",
