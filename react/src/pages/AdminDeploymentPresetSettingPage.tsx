@@ -50,7 +50,7 @@ const buildModelDefinitionInput = (
               })),
               healthCheck: (() => {
                 const hc = m.service?.healthCheck;
-                const enabled = !!(m.service?.enableHealthCheck && hc?.path);
+                const checked = !!m.service?.enableHealthCheck;
                 const configuredFields = {
                   path: hc?.path,
                   interval: hc?.interval,
@@ -60,12 +60,11 @@ const buildModelDefinitionInput = (
                   initialDelay: hc?.initialDelay,
                 };
                 if (!supportsHealthCheckEnable) {
-                  // Legacy managers (<= 26.4.3): null disables the health check.
-                  return enabled ? configuredFields : null;
+                  // Legacy managers (<= 26.4.3): null disables; path is required.
+                  return checked && hc?.path ? configuredFields : null;
                 }
-                // 26.4.4+: always send the object so the server can seed
-                // defaults; leave the other fields unset when disabled.
-                return enabled
+                // 26.4.4+: path is optional; checkbox solely controls enable.
+                return checked
                   ? { enable: true, ...configuredFields }
                   : { enable: false };
               })(),
