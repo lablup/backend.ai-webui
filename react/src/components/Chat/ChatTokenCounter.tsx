@@ -29,7 +29,7 @@ const ChatTokenCounter: React.FC<ChatTokenCounterProps> = ({
   const inputTokenCount = useTokenCount(input);
   const allChatMessageString = map(messages, (message) =>
     message?.parts
-      ?.filter((part) => part.type === 'text')
+      ?.filter((part) => part.type === 'text' || part.type === 'reasoning')
       .map((part) => part.text)
       .join(''),
   ).join('');
@@ -39,7 +39,7 @@ const ChatTokenCounter: React.FC<ChatTokenCounterProps> = ({
   const lastAssistantMessageString =
     lastAssistantMessage?.role === 'assistant'
       ? lastAssistantMessage?.parts
-          ?.filter((part) => part.type === 'text')
+          ?.filter((part) => part.type === 'text' || part.type === 'reasoning')
           .map((part) => part.text)
           .join('') || ''
       : '';

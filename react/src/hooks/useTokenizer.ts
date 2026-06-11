@@ -11,16 +11,21 @@ export const encodeAsync = async (str: string) => {
 };
 
 export const useTokenCount = (input: string = '') => {
+  'use memo';
   const [value, setNum] = useState(0);
 
   useEffect(() => {
-    startTransition(() => {
-      encodeAsync(input)
-        .then(setNum)
-        .catch(() => {
-          setNum(input.length);
-        });
-    });
+    let cancelled = false;
+    encodeAsync(input)
+      .then((count) => {
+        if (!cancelled) startTransition(() => setNum(count));
+      })
+      .catch(() => {
+        if (!cancelled) startTransition(() => setNum(input.length));
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [input]);
 
   return value;
