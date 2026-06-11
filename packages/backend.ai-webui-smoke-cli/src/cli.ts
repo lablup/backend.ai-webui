@@ -75,9 +75,11 @@ program
       .env('BAI_SMOKE_ENDPOINT')
       .makeOptionMandatory(true),
   )
-  .option(
-    '--webserver <url>',
-    'Backend.AI webserver endpoint URL. Defaults to --endpoint when omitted.',
+  .addOption(
+    new Option(
+      '--webserver <url>',
+      'Backend.AI webserver endpoint URL. Defaults to --endpoint when omitted.',
+    ).env('BAI_SMOKE_WEBSERVER'),
   )
   .addOption(
     new Option('--email <email>', 'Login email or username.')
@@ -94,32 +96,58 @@ program
   .addOption(
     new Option('--role <role>', 'Role selection: auto, admin, or user.')
       .choices(['auto', 'admin', 'user'])
+      .env('BAI_SMOKE_ROLE')
       .default('auto'),
   )
-  .option(
-    '--also-include <tags>',
-    'Additional tag pattern(s) to OR onto the smoke selection (e.g. "@critical"). ' +
-      'To NARROW the smoke set, use --pages instead.',
+  .addOption(
+    new Option(
+      '--also-include <tags>',
+      'Comma-separated literal tags to ADD onto the smoke selection (e.g. "@critical"). ' +
+        'Not regex. To NARROW the smoke set, use --pages instead. ' +
+        'Tests tagged with the opposite role remain excluded.',
+    ).env('BAI_SMOKE_ALSO_INCLUDE'),
   )
   // Backwards-compat alias for the original `--include` name. Deprecated —
   // will be removed in a future release. Kept hidden from the main help.
   .addOption(
     new Option('--include <tags>', '(deprecated) alias for --also-include.').hideHelp(),
   )
-  .option('--exclude <tags>', 'Comma-separated tags to exclude.')
-  .option(
-    '--pages <names>',
-    'Comma-separated page directory names (e.g. "session,vfolder").',
+  .addOption(
+    new Option('--exclude <tags>', 'Comma-separated tags to exclude.').env(
+      'BAI_SMOKE_EXCLUDE',
+    ),
   )
-  .option('--workers <n>', 'Playwright worker count.', (v) => Number.parseInt(v, 10))
-  .option(
-    '--timeout <duration>',
-    'Per-test timeout. Accepts "180s", "3m", or raw ms.',
-    '180s',
+  .addOption(
+    new Option(
+      '--pages <names>',
+      'Comma-separated page directory names (e.g. "session,vfolder").',
+    ).env('BAI_SMOKE_PAGES'),
   )
-  .option('--output <dir>', 'Output directory for the smoke report.')
-  .option('--headed', 'Run the browser in headed mode (debugging only).', false)
-  .option('--insecure-tls', 'Accept self-signed TLS certificates.', false)
+  .addOption(
+    new Option('--workers <n>', 'Playwright worker count.')
+      .env('BAI_SMOKE_WORKERS')
+      .argParser((v) => Number.parseInt(v, 10)),
+  )
+  .addOption(
+    new Option(
+      '--timeout <duration>',
+      'Per-test timeout. Accepts "180s", "3m", or raw ms.',
+    )
+      .env('BAI_SMOKE_TIMEOUT')
+      .default('180s'),
+  )
+  .addOption(
+    new Option('--output <dir>', 'Output directory for the smoke report.').env(
+      'BAI_SMOKE_OUTPUT',
+    ),
+  )
+  // The two boolean flags deliberately do NOT use commander's .env():
+  // commander treats ANY defined env value as flag-on, so
+  // `BAI_SMOKE_INSECURE_TLS=false` would silently ENABLE insecure TLS —
+  // the opposite of operator intent, and security-relevant. We parse the
+  // env values ourselves with a truthy whitelist (see envBool below).
+  .option('--headed', 'Run the browser in headed mode (debugging only). Env: BAI_SMOKE_HEADED=1', false)
+  .option('--insecure-tls', 'Accept self-signed TLS certificates. Env: BAI_SMOKE_INSECURE_TLS=1', false)
   .action(async (raw: Record<string, unknown>) => {
     const password = await resolvePassword(raw);
     if (!password) {
@@ -159,6 +187,18 @@ program
 
     const outputDir = path.resolve(String(raw.output ?? defaultOutputDir()));
 
+    // Reject invalid --workers / BAI_SMOKE_WORKERS instead of silently
+    // ignoring (consistent with the parseDuration handling above).
+    if (raw.workers !== undefined) {
+      const w = raw.workers as number;
+      if (!Number.isInteger(w) || w <= 0) {
+        process.stderr.write(
+          'bai-smoke run: --workers must be a positive integer.\n',
+        );
+        process.exit(2);
+      }
+    }
+
     const opts: SmokeRunOptions = {
       endpoint,
       webserver,
@@ -171,9 +211,17 @@ program
       workers: typeof raw.workers === 'number' && raw.workers > 0 ? raw.workers : undefined,
       timeoutMs,
       outputDir,
-      headed: raw.headed === true,
-      insecureTls: raw.insecureTls === true,
+      headed: raw.headed === true || envBool('BAI_SMOKE_HEADED'),
+      insecureTls: raw.insecureTls === true || envBool('BAI_SMOKE_INSECURE_TLS'),
     };
+
+    if (opts.include && opts.include.length > 0) {
+      const opposite = opts.role === 'user' ? 'admin' : 'user';
+      process.stderr.write(
+        `[bai-smoke] note: tests tagged @smoke-${opposite} stay excluded from this run, ` +
+          'including any matched by --also-include (only one role\'s credentials are injected).\n',
+      );
+    }
 
     const { exitCode, reportPath, summary } = await runSmoke(opts);
 
@@ -201,6 +249,17 @@ program.parseAsync(process.argv).catch((err: unknown) => {
   console.error(err);
   process.exit(1);
 });
+
+/**
+ * Truthy-whitelist boolean env parsing. Unlike commander's Option.env()
+ * (which treats ANY defined value as flag-on, so `VAR=false` enables the
+ * flag), only '1' / 'true' / 'yes' count as on.
+ */
+function envBool(name: string): boolean {
+  return ['1', 'true', 'yes'].includes(
+    (process.env[name] ?? '').toLowerCase(),
+  );
+}
 
 function defaultOutputDir(): string {
   const iso = new Date().toISOString().replace(/[:.]/g, '-');

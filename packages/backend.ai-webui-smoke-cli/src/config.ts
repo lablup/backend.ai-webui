@@ -51,41 +51,67 @@ export interface SmokeRunOptions {
  *   - bare `@smoke` (with no role suffix), OR
  *   - `@smoke-<effectiveRole>`
  *
- * so a `user` run picks up `@smoke` and `@smoke-user` — but NOT
- * `@smoke-admin`.
+ * AND we always exclude the OPPOSITE role's tag via grepInvert. The
+ * exclusion is what actually partitions the run by role: smoke specs are
+ * conventionally double-tagged (`@smoke` + `@smoke-<role>`), so the bare
+ * `@smoke` alternative alone would select both roles' specs. Running a
+ * `@smoke-user` spec under an admin run would make `loginAsUser` fall
+ * back to dev-default credentials and fail on customer clusters.
+ *
+ * Word-boundary gotcha: a naive `@smoke\b` regex matches INSIDE
+ * `@smoke-user` (the `e`→`-` transition is a word boundary), so we use a
+ * negative lookahead `(?![\w-])` to match the bare tag only.
  *
  * (`@smoke-any` was dropped from the taxonomy in FR-2875 / FR-2876
  * because every e2e helper hard-codes a role via `loginAsAdmin` /
- * `loginAsUser`, so no describe is genuinely role-agnostic at the
- * helper level.)
+ * `loginAsUser`, so no logged-in describe is genuinely role-agnostic at
+ * the helper level. Bare `@smoke` is reserved for no-login specs.)
  *
- * Additional `--also-include` tags are OR-ed in. `--exclude` tags become
- * `grepInvert`.
+ * Additional `--also-include` tags are OR-ed in. `--exclude` tags are
+ * OR-ed into `grepInvert` alongside the opposite-role exclusion.
  */
 export function buildGrepExpression(
   opts: SmokeRunOptions,
   effectiveRole: EffectiveRole,
 ): { grep?: string; grepInvert?: string } {
-  // `@smoke\b` matches the bare base tag; we match `@smoke-<role>`
-  // explicitly so we don't accidentally pick up future tags like
-  // `@smoke-extended`.
-  const roleAlt = `@smoke-${effectiveRole}\\b`;
-  const baseAlt = `@smoke\\b`;
+  // `(?![\w-])` — negative lookahead so the bare tag does not match the
+  // `@smoke` prefix of `@smoke-user` / `@smoke-admin` / future suffixes.
+  const baseAlt = `@smoke(?![\\w-])`;
+  const roleAlt = `@smoke-${effectiveRole}(?![\\w-])`;
   const includeAlt = (opts.include ?? [])
-    .map((t) => escapeRegex(t.trim()))
+    .map((t) => escapeTagLiteral(t.trim()))
     .filter(Boolean)
     .join('|');
 
   const alternatives = [baseAlt, roleAlt, includeAlt].filter(Boolean).join('|');
   const grep = `(${alternatives})`;
 
-  const exclude = (opts.exclude ?? [])
-    .map((t) => escapeRegex(t.trim()))
-    .filter(Boolean)
-    .join('|');
-  const grepInvert = exclude ? `(${exclude})` : undefined;
+  const oppositeRole: EffectiveRole =
+    effectiveRole === 'admin' ? 'user' : 'admin';
+  const invertAlternatives = [
+    `@smoke-${oppositeRole}(?![\\w-])`,
+    ...(opts.exclude ?? [])
+      .map((t) => escapeTagLiteral(t.trim()))
+      .filter(Boolean),
+  ].join('|');
+  const grepInvert = `(${invertAlternatives})`;
 
   return { grep, grepInvert };
+}
+
+/**
+ * Escape a user-supplied tag for literal use inside the grep alternation,
+ * and word-bound it the same way as the built-in alternatives so
+ * `--also-include @auth` does not substring-match a future `@auth-x` tag
+ * (and `--exclude @smoke` does not invert-match every role-suffixed tag).
+ * Tags are comma-separated literals, not regex patterns.
+ */
+function escapeTagLiteral(tag: string): string {
+  if (!tag) return '';
+  const escaped = escapeRegex(tag);
+  // Only append the boundary lookahead when the tag ends in a word char;
+  // arbitrary literals ending in punctuation stay as-is.
+  return /\w$/.test(tag) ? `${escaped}(?![\\w-])` : escaped;
 }
 
 /**
@@ -113,6 +139,13 @@ export function buildPlaywrightEnv(
     env.E2E_USER_EMAIL = opts.email;
     env.E2E_USER_PASSWORD = opts.password;
   }
+
+  // The session-lifecycle smoke test guards itself with
+  // `test.fixme(process.env.BACKEND_AI_AGENTS_AVAILABLE !== 'true')` so it
+  // doesn't burn CI time where no agent exists. Under smoke we force-enable
+  // it: a freshly installed cluster that cannot schedule a session is a
+  // FAILED install and must show up RED in the report — not as a skip.
+  env.BACKEND_AI_AGENTS_AVAILABLE = 'true';
 
   // BAI_SMOKE_* — picked up by playwright.smoke.config.ts.
   env.BAI_SMOKE_REPORT_DIR = opts.outputDir;

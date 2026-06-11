@@ -19,10 +19,20 @@ import { fileURLToPath } from 'node:url';
  *   BAI_SMOKE_REPORT_DIR    — output directory for html / json reports
  *   BAI_SMOKE_WORKERS       — playwright worker count (optional)
  *   BAI_SMOKE_TIMEOUT_MS    — per-test timeout in ms (default 180000)
- *   BAI_SMOKE_GREP          — grep regex source (no slashes), e.g. `@smoke\b|@smoke-admin\b`
- *   BAI_SMOKE_GREP_INVERT   — grepInvert regex source (optional)
+ *   BAI_SMOKE_GREP          — grep regex source (no slashes), e.g.
+ *                             `(@smoke(?![\w-])|@smoke-admin(?![\w-]))`
+ *                             (negative lookahead — a naive `@smoke\b`
+ *                             matches inside `@smoke-user`)
+ *   BAI_SMOKE_GREP_INVERT   — grepInvert regex source (always set; carries
+ *                             the opposite-role exclusion + --exclude tags)
  *   BAI_SMOKE_PAGES         — comma-separated page directory names (optional)
  *   BAI_SMOKE_HEADED        — '1' to launch a headed browser
+ *   BAI_SMOKE_INSECURE_TLS  — '1' to set `ignoreHTTPSErrors: true`
+ *
+ * Note: WORKERS / PAGES / HEADED / INSECURE_TLS double as operator-facing
+ * CLI env inputs; `buildPlaywrightEnv` re-normalizes them onto the child
+ * env so both layers always agree. This file only ever reads the values
+ * the runner set.
  *
  * Test credentials (E2E_*) are set by the runner as well — see
  * `src/config.ts#buildPlaywrightEnv`.
@@ -35,8 +45,8 @@ const __dirname = path.dirname(__filename);
 const E2E_DIR = path.resolve(__dirname, '..', '..', 'e2e');
 
 // FR-2877 MVP limitation: the smoke runner discovers specs from the
-// monorepo's e2e/ tree. A bundled tarball / standalone binary distribution
-// is tracked in FR-2881. Fail loudly when the directory is missing so the
+// monorepo's e2e/ tree. The packaged distribution that bundles the e2e
+// tree ships with FR-2881/FR-2882. Fail loudly when the directory is missing so the
 // user gets a clear message instead of a cryptic Playwright "no tests
 // found" output.
 if (!existsSync(E2E_DIR)) {
