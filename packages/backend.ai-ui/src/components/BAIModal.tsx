@@ -562,7 +562,7 @@ const BAIModal: React.FC<BAIModalProps> = ({
         },
         header: {
           marginBottom: 0,
-          borderBottom: `1px solid var(--token-colorBorder, ${token.colorBorder})`,
+          borderBottom: `1px solid ${token.colorBorder}`,
           borderWidth: '100%',
           justifyContent: 'space-between',
           display: 'flex',

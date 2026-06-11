@@ -4,11 +4,9 @@
  */
 import { useWebUINavigate } from '../../hooks';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
-import { useCustomThemeConfig } from '../../hooks/useCustomThemeConfig';
 import useKeyboardShortcut from '../../hooks/useKeyboardShortcut';
 import { useLogoutEventListeners } from '../../hooks/useLogout';
 import usePrimaryColors from '../../hooks/usePrimaryColors';
-import { useThemeMode } from '../../hooks/useThemeMode';
 import { useWebUIMenuItems } from '../../hooks/useWebUIMenuItems';
 import { useSetupWebUIPluginEffect } from '../../hooks/useWebUIPluginState';
 import Page401 from '../../pages/Page401';
@@ -392,46 +390,26 @@ export const NotificationForAnonymous = () => {
 
 type ThemeToken = ReturnType<typeof theme.useToken>['token'];
 
-// `:root { --token-*: ... }` bridge so plain CSS / inline styles can read antd
-// tokens via `var(--token-...)`. Built from antd's `theme.useToken()` (the clean
-// token set) passed in as a prop, rather than antd-style's theme — whose extra
-// non-token keys (appearance, isDarkMode, setters, ...) would otherwise leak
-// into the output. createGlobalStyle injects it as a nonce'd <style>.
+// Minimal `:root` bridge exposing only the antd tokens that OUT-OF-TREE global
+// CSS still needs: `resources/webui.css` styles `body` (outside the React /
+// antd cssVar scope), so it reads these via `var(--token-...)`. In-tree styles
+// reference the antd token directly (createStyles / createGlobalStyle) and no
+// longer depend on this bridge. createGlobalStyle injects it as a nonce'd
+// <style>; `token` changes on theme switch, so the values stay in sync.
 const TokenCssVariables = createGlobalStyle((props) => {
-  const { token, logoUrl } = props as unknown as {
-    token: ThemeToken;
-    logoUrl: string;
-  };
+  const { token } = props as unknown as { token: ThemeToken };
   return `:root {
-${Object.entries(token)
-  .map(([key, value]) => {
-    // Skip Component specific tokens
-    if (key.charAt(0) === key.charAt(0).toUpperCase()) {
-      return '';
-    }
-    return typeof value === 'number'
-      ? `--token-${key}: ${value}px;`
-      : `--token-${key}: ${value?.toString() ?? ''};`;
-  })
-  .join('\n')}
-
-  --theme-logo-url: url("${logoUrl}");
+  --token-colorPrimary: ${token.colorPrimary};
+  --token-colorBgBase: ${token.colorBgBase};
+  --token-colorBgContainer: ${token.colorBgContainer};
+  --token-colorBorder: ${token.colorBorder};
 }`;
-}) as unknown as React.FC<{ token: ThemeToken; logoUrl: string }>;
+}) as unknown as React.FC<{ token: ThemeToken }>;
 
 export const CSSTokenVariables = () => {
   const { token } = theme.useToken();
-  const { isDarkMode } = useThemeMode(); // This is to make sure the theme mode is updated
-  const themeConfig = useCustomThemeConfig();
 
-  return (
-    <TokenCssVariables
-      token={token}
-      logoUrl={
-        (isDarkMode ? themeConfig?.logo.srcDark : themeConfig?.logo.src) ?? ''
-      }
-    />
-  );
+  return <TokenCssVariables token={token} />;
 };
 
 /**
