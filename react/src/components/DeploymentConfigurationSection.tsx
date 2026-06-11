@@ -9,8 +9,11 @@ import type {
 } from '../__generated__/DeploymentConfigurationSection_deployment.graphql';
 import type { DeploymentRevisionDetail_revision$key } from '../__generated__/DeploymentRevisionDetail_revision.graphql';
 import { DeploymentSchedulingHistoryModalQuery } from '../__generated__/DeploymentSchedulingHistoryModalQuery.graphql';
+import type { ScopedAuditLogQuery as ScopedAuditLogQueryType } from '../__generated__/ScopedAuditLogQuery.graphql';
 import { useWebUINavigate } from '../hooks';
+import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import BAIErrorBoundary from './BAIErrorBoundary';
 import DeploymentRevisionDetail from './DeploymentRevisionDetail';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
 import DeploymentRevisionHistoryTab from './DeploymentRevisionHistoryTab';
@@ -19,6 +22,7 @@ import DeploymentSchedulingHistoryModal, {
 } from './DeploymentSchedulingHistoryModal';
 import DeploymentSettingModal from './DeploymentSettingModal';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
+import ScopedAuditLog, { ScopedAuditLogQuery } from './ScopedAuditLog';
 import {
   DeleteFilled,
   EditOutlined,
@@ -61,7 +65,7 @@ import {
 import type { BAIDeploymentStatus } from 'backend.ai-ui';
 import { PlusIcon } from 'lucide-react';
 import { parseAsStringLiteral, useQueryState } from 'nuqs';
-import React, { Suspense, useState } from 'react';
+import React, { Suspense, useEffect, useEffectEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation, useQueryLoader } from 'react-relay';
 import { useLocation } from 'react-router-dom';
@@ -302,6 +306,7 @@ const DeploymentConfigurationSection: React.FC<
       ...parseAsStringLiteral([
         'currentRevision',
         'revisionHistory',
+        'auditLog',
       ] as const).withDefault('currentRevision'),
       history: 'replace' as const,
       scroll: false,
@@ -314,6 +319,55 @@ const DeploymentConfigurationSection: React.FC<
     useQueryLoader<DeploymentSchedulingHistoryModalQuery>(
       DeploymentSchedulingHistoryQuery,
     );
+  const [auditLogQueryRef, loadAuditLogQuery] =
+    useQueryLoader<ScopedAuditLogQueryType>(ScopedAuditLogQuery);
+
+  const { baiPaginationOption, setTablePaginationOption } =
+    useBAIPaginationOptionState({ current: 1, pageSize: 10 });
+  const reloadAuditLogQuery: React.ComponentProps<
+    typeof ScopedAuditLog
+  >['onReload'] = (variables, options) => {
+    const limit = variables.limit ?? 10;
+    setTablePaginationOption({
+      pageSize: limit,
+      current: variables.offset ? Math.floor(variables.offset / limit) + 1 : 1,
+    });
+    loadAuditLogQuery(variables, options);
+  };
+
+  const loadAuditLog = () => {
+    if (!deployment?.id) {
+      return;
+    }
+    const rawId = deployment.id;
+    loadAuditLogQuery(
+      {
+        scope: {
+          entity: [
+            {
+              entityType: 'MODEL_DEPLOYMENT',
+              entityId: safeDecodeUuid(rawId) ?? rawId,
+            },
+          ],
+        },
+        orderBy: [{ field: 'CREATED_AT', direction: 'DESC' }],
+        limit: baiPaginationOption.limit,
+        offset: baiPaginationOption.offset,
+      },
+      { fetchPolicy: 'store-and-network' },
+    );
+  };
+
+  const loadAuditLogIfTabActiveOnMount = useEffectEvent(() => {
+    if (activeRevisionTab === 'auditLog' && auditLogQueryRef == null) {
+      loadAuditLog();
+    }
+  });
+
+  useEffect(function loadAuditLogOnMountIfTabActive() {
+    loadAuditLogIfTabActiveOnMount();
+  }, []);
+
   const baiClient = useConnectedBAIClient();
   const supportsDeploymentSchedulingHistory =
     baiClient?.supports('deployment-scheduling-history') ?? false;
@@ -466,7 +520,14 @@ const DeploymentConfigurationSection: React.FC<
         ref={revisionCardRef}
         activeTabKey={activeRevisionTab}
         onTabChange={(key) => {
-          if (key === 'currentRevision' || key === 'revisionHistory') {
+          if (
+            key === 'currentRevision' ||
+            key === 'revisionHistory' ||
+            key === 'auditLog'
+          ) {
+            if (key === 'auditLog' && auditLogQueryRef == null) {
+              loadAuditLog();
+            }
             void setActiveRevisionTab(key);
           }
         }}
@@ -478,6 +539,10 @@ const DeploymentConfigurationSection: React.FC<
           {
             key: 'revisionHistory',
             label: t('deployment.RevisionHistory'),
+          },
+          {
+            key: 'auditLog',
+            label: t('auditLog.AuditLog'),
           },
         ]}
         tabBarExtraContent={
@@ -554,6 +619,21 @@ const DeploymentConfigurationSection: React.FC<
               />
             </Suspense>
           </ErrorBoundaryWithNullFallback>
+        )}
+        {activeRevisionTab === 'auditLog' && deployment && (
+          <BAIErrorBoundary>
+            {auditLogQueryRef ? (
+              <Suspense fallback={<Skeleton active paragraph={{ rows: 4 }} />}>
+                <ScopedAuditLog
+                  queryRef={auditLogQueryRef}
+                  onReload={reloadAuditLogQuery}
+                  tableSettings={{}}
+                />
+              </Suspense>
+            ) : (
+              <Skeleton active paragraph={{ rows: 4 }} />
+            )}
+          </BAIErrorBoundary>
         )}
       </BAICard>
       <DeploymentSettingModal
