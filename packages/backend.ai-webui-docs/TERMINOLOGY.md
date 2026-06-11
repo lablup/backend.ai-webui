@@ -48,6 +48,7 @@ The tables below list the approved term for each concept, per language, grouped 
 | rbac-role | role | 권한 | ロール | บทบาท | — | — | A named set of permissions assignable to users. The Korean i18n uses "권한" for both "Role" and "Permission" in different contexts. |
 | rbac-role-assignment | role assignment | 권한 할당 | ロール割り当て | การมอบหมายบทบาท | — | — | The association of a user to a role. |
 | rbac-scope-type | scope type | 적용 범위 타입 | スコープタイプ | ประเภทขอบเขต | — | — | The level at which a permission applies. |
+| replica | replica | 복제본 | レプリカ | เรพลิกา | — | — | An individual running instance of a deployed model service. The desired/active count of these is managed by the deployment and auto-scaling rules. Documentation section: deployment/deployment.md |
 
 ### User Roles
 
@@ -173,5 +174,6 @@ Each row lists one forbidden term, its canonical replacement, and the reason. Pa
 | organization | domain | Not used in Backend.AI |
 | scaling group | resource group | Deprecated term |
 | worker node | agent node | Reserve "worker node" for model serving context only |
+| 레플리카 | 복제본 | Use the Korean translation, not the transliteration, for consistency |
 
 <!-- terminology:auto:avoid END -->

@@ -1,6 +1,11 @@
 {
   "version": 1,
-  "languages": ["en", "ko", "ja", "th"],
+  "languages": [
+    "en",
+    "ko",
+    "ja",
+    "th"
+  ],
   "concepts": [
     {
       "id": "compute-session",
@@ -202,6 +207,19 @@
         "en": "Model Service / Model Serving"
       },
       "description": "The feature name (page title, menu item)."
+    },
+    {
+      "id": "replica",
+      "category": "Feature-Specific Terms",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "replica",
+        "ko": "복제본",
+        "ja": "レプリカ",
+        "th": "เรพลิกา"
+      },
+      "description": "An individual running instance of a deployed model service. The desired/active count of these is managed by the deployment and auto-scaling rules. Documentation section: deployment/deployment.md"
     },
     {
       "id": "endpoint",
@@ -555,6 +573,14 @@
       "lang": "en",
       "context": "as a UI label",
       "conceptId": "app-proxy"
+    },
+    {
+      "avoid": "레플리카",
+      "useInstead": "복제본",
+      "reason": "Use the Korean translation, not the transliteration, for consistency",
+      "lang": "ko",
+      "context": null,
+      "conceptId": "replica"
     }
   ]
 }
