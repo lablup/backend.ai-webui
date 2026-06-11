@@ -2,10 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import {
-  CSSTokenVariables,
-  NotificationForAnonymous,
-} from '../components/MainLayout/MainLayout';
+import { CSSTokenVariables } from '../components/MainLayout/MainLayout';
 import { useApiEndpoint } from '../hooks/useApiEndpoint';
 import React, { Suspense } from 'react';
 
@@ -22,7 +19,6 @@ const ChangePasswordPage: React.FC = () => {
   return (
     <>
       <CSSTokenVariables />
-      <NotificationForAnonymous />
       <Suspense fallback={null}>
         <ChangePasswordPageContent />
       </Suspense>

@@ -211,7 +211,7 @@ describe('EduAppLauncher – _dispatchNotification helper', () => {
 
 // ---------------------------------------------------------------------------
 // Tests verifying that direct CustomEvent dispatch via document matches the
-// contract consumed by BAINotificationButton.
+// contract consumed by NotificationHost.
 // ---------------------------------------------------------------------------
 
 describe('add-bai-notification event contract', () => {

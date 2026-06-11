@@ -2,10 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import {
-  CSSTokenVariables,
-  NotificationForAnonymous,
-} from '../components/MainLayout/MainLayout';
+import { CSSTokenVariables } from '../components/MainLayout/MainLayout';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { Button, Card, Descriptions } from 'antd';
@@ -19,7 +16,6 @@ const InteractiveLoginPage = () => {
   return (
     <>
       <CSSTokenVariables />
-      <NotificationForAnonymous />
       <Suspense>
         <Children />
       </Suspense>

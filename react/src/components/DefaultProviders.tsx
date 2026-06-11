@@ -13,6 +13,7 @@ import {
 import { useDeviceMetaData } from '../hooks/backendai';
 import { useCustomThemeConfig } from '../hooks/useCustomThemeConfig';
 import { useThemeMode } from '../hooks/useThemeMode';
+import NotificationHost from './NotificationHost';
 import '../index.css';
 import createCache from '@emotion/cache';
 import { CacheProvider } from '@emotion/react';
@@ -347,6 +348,12 @@ export const DefaultProvidersForReactRoot: React.FC<{
               <BAIMetaDataWrapper>
                 <QueryParamProvider adapter={ReactRouter6Adapter}>
                   <App {...commonAppProps}>
+                    {/* Single app-wide notification renderer. Lives outside
+                        the Suspense below so toasts work on every route and
+                        in both anonymous and authenticated states. Renders
+                        null, so its position relative to the emotion caches
+                        below is irrelevant. */}
+                    <NotificationHost />
                     {/*
                      * Two separate emotion caches are needed for CSP nonce
                      * coverage:

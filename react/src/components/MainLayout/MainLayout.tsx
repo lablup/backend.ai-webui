@@ -25,7 +25,7 @@ import { DRAWER_WIDTH } from '../WEBUINotificationDrawer';
 import WebUIBreadcrumb from '../WebUIBreadcrumb';
 import WebUIHeader from './WebUIHeader';
 import WebUISider from './WebUISider';
-import { App, ConfigProvider, Layout, type LayoutProps, theme } from 'antd';
+import { ConfigProvider, Layout, type LayoutProps, theme } from 'antd';
 import { createGlobalStyle, createStyles } from 'antd-style';
 import { BAIFlex } from 'backend.ai-ui';
 import { atom, useSetAtom } from 'jotai';
@@ -156,7 +156,6 @@ function MainLayout() {
     <LayoutWithPageTestId>
       <CSSTokenVariables />
       <ScrollbarGlobalStyle />
-      <NotificationForAnonymous />
       <Suspense fallback={null}>
         <DismissSplashOnMount />
         <WebUISider
@@ -368,24 +367,6 @@ const LayoutWithPageTestId: React.FC<LayoutProps> = (props) => {
     // react-doctor-disable-next-line react-doctor/no-mutable-in-deps
   }, [location.pathname]);
   return <Layout {...props} data-testid={pageTest} />;
-};
-
-export const NotificationForAnonymous = () => {
-  const app = App.useApp();
-  useEffect(() => {
-    const handler = (e: any) => {
-      app.notification.open({
-        ...e.detail,
-        closeIcon: false,
-        placement: 'bottomRight',
-      });
-    };
-    document.addEventListener('add-bai-notification', handler);
-    return () => {
-      document.removeEventListener('add-bai-notification', handler);
-    };
-  }, [app.notification]);
-  return null;
 };
 
 type ThemeToken = ReturnType<typeof theme.useToken>['token'];

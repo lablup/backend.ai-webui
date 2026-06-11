@@ -949,11 +949,10 @@ export const useBackendAIAppLauncher = (
     launchAppWithNotification,
     /**
      * Lower-level launch API that returns the resolved work info via promise
-     * without going through the notification lifecycle. Use this from contexts
-     * where the BAI notification drawer is not mounted (e.g. anonymous pages
-     * outside `MainLayout`), since `launchAppWithNotification`'s `onPrepared`
-     * callback only fires when `useBAINotificationEffect` is subscribed to the
-     * background task promise.
+     * without going through the notification lifecycle. Use this where a
+     * progress toast would be redundant — e.g. the EduAppLauncher page, whose
+     * card UI already shows per-step progress, so driving a toast through the
+     * app-wide `NotificationHost` would only duplicate that display.
      *
      * Throws `AppLaunchError` for known failure stages (e.g. service port
      * missing → stage `'configuring'`).
