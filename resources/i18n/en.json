@@ -294,6 +294,7 @@
     "ToolPermissionOverrides": "Tool Permission Overrides"
   },
   "auditLog": {
+    "AuditLog": "Audit Log",
     "Operation": "Operation",
     "Status": "Status",
     "Time": "Time",

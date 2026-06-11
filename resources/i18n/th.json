@@ -307,6 +307,7 @@
     "TopP": "Top P"
   },
   "auditLog": {
+    "AuditLog": "บันทึกการตรวจสอบ",
     "Operation": "การดำเนินการ",
     "Status": "สถานะ",
     "Time": "เวลา",

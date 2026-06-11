@@ -307,6 +307,7 @@
     "TopP": "Top P"
   },
   "auditLog": {
+    "AuditLog": "Denetim Günlüğü",
     "Operation": "İşlem",
     "Status": "Durum",
     "Time": "Zaman",

@@ -307,6 +307,7 @@
     "TopP": "Top P"
   },
   "auditLog": {
+    "AuditLog": "稽核記錄",
     "Operation": "操作",
     "Status": "狀態",
     "Time": "時間",

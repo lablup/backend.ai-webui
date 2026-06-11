@@ -307,6 +307,7 @@
     "TopP": "Top P"
   },
   "auditLog": {
+    "AuditLog": "Journal d'audit",
     "Operation": "Opération",
     "Status": "Statut",
     "Time": "Heure",

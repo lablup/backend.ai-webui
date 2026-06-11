@@ -307,6 +307,7 @@
     "TopP": "Top P"
   },
   "auditLog": {
+    "AuditLog": "Аудит лог",
     "Operation": "Үйлдэл",
     "Status": "Статус",
     "Time": "Цаг",

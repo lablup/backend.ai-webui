@@ -307,6 +307,7 @@
     "TopP": "Top P"
   },
   "auditLog": {
+    "AuditLog": "Nhật ký kiểm tra",
     "Operation": "Thao tác",
     "Status": "Trạng thái",
     "Time": "Thời gian",
