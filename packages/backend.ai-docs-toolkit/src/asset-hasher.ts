@@ -45,7 +45,12 @@ export function writeHashedAsset(
   const hash = contentHash(bytes);
   const hashedName = hashedFilename(logicalName, hash);
   fs.mkdirSync(assetsDir, { recursive: true });
-  fs.writeFileSync(path.join(assetsDir, hashedName), bytes);
+  const targetPath = path.resolve(assetsDir, hashedName);
+  const resolvedAssetsDir = path.resolve(assetsDir);
+  if (!targetPath.startsWith(resolvedAssetsDir + path.sep)) {
+    throw new Error('Invalid asset path: path traversal detected');
+  }
+  fs.writeFileSync(targetPath, bytes);
   manifest[logicalName] = hashedName;
   return hashedName;
 }
