@@ -179,3 +179,8 @@ e2e/recordings/
 
 # ignore stale branch-suffixed pnpm lockfiles (see PR #7340)
 pnpm-lock.*-*.yaml
+
+# bai-smoke CLI artifacts: playwright test-results land next to the smoke
+# config (package dir), and default report dirs are timestamped in cwd
+packages/backend.ai-webui-smoke-cli/test-results/
+smoke-report-*/
