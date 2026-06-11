@@ -296,9 +296,9 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                       shell: m.service.shell ?? undefined,
                       startCommand:
                         m.service.startCommand?.join(' ') ?? undefined,
-                      // On 26.4.4+ the health check object is always present and
-                      // `enable` is authoritative; on <=26.4.3 `enable` is stripped
-                      // (undefined), so fall back to presence of the object.
+                      // On 26.4.4rc7+ `enable` is authoritative; on older
+                      // managers `enable` is stripped (undefined), so fall
+                      // back to presence of the object.
                       enableHealthCheck:
                         m.service.healthCheck?.enable ??
                         !!m.service.healthCheck,

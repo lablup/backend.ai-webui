@@ -21,8 +21,8 @@ import { useParams } from 'react-router-dom';
 
 const buildModelDefinitionInput = (
   value: ModelDefinitionFormValue | undefined,
-  // 26.4.4+ managers accept the `enable` flag on ModelHealthCheckInput; older
-  // managers (<= 26.4.3) reject it, so we keep the legacy null-when-disabled shape.
+  // 26.4.4rc7+ managers accept the `enable` flag on ModelHealthCheckInput;
+  // older managers reject it, so we keep the legacy null-when-disabled shape.
   supportsHealthCheckEnable: boolean,
 ) => {
   if (!value?.models?.length) return null;
@@ -60,7 +60,7 @@ const buildModelDefinitionInput = (
                   initialDelay: hc?.initialDelay,
                 };
                 if (!supportsHealthCheckEnable) {
-                  // Legacy managers (<= 26.4.3): null disables; path is required.
+                  // Managers < 26.4.4rc7: null disables; path is required.
                   return checked && hc?.path ? configuredFields : null;
                 }
                 // 26.4.4+: path is optional; checkbox solely controls enable.

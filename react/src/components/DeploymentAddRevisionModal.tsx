@@ -334,8 +334,8 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   const { logger } = useBAILogger();
   const { open: openFolderExplorer } = useFolderExplorerOpener();
   const baiClient = useSuspendedBackendaiClient();
-  // 26.4.4+ managers accept the `enable` flag on ModelHealthCheckInput; older
-  // managers (<= 26.4.3) reject it, so we keep the legacy null-when-disabled shape.
+  // 26.4.4rc7+ managers accept the `enable` flag on ModelHealthCheckInput;
+  // older managers reject it, so we keep the legacy null-when-disabled shape.
   const supportsHealthCheckEnable = baiClient.supports(
     'model-health-check-enable',
   );
@@ -765,10 +765,9 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     }
     const service = rev.modelDefinition?.models?.[0]?.service;
     const customModelPath = rev.modelDefinition?.models?.[0]?.modelPath;
-    // On 26.4.4+ a disabled source revision keeps default health-check field
-    // values alongside `enable: false`; treat that as "no health check" for
-    // prefill so the form fields stay empty. On <=26.4.3 `enable` is stripped
-    // (undefined), so the presence of the object alone drives prefill.
+    // On 26.4.4rc7+ a disabled source revision carries `enable: false`; treat
+    // that as "no health check" for prefill so form fields stay empty. On older
+    // managers `enable` is stripped (undefined), fall back to object presence.
     const healthCheck =
       service?.healthCheck && service.healthCheck.enable !== false
         ? service.healthCheck
@@ -1144,7 +1143,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                       initialDelay: values.commandInitialDelay,
                     };
                     if (!supportsHealthCheckEnable) {
-                      // Legacy managers (<= 26.4.3): null disables the health check.
+                      // Managers < 26.4.4rc7: null disables the health check.
                       return enabled ? configuredFields : null;
                     }
                     // 26.4.4+: always send the object so the server can seed

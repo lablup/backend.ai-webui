@@ -36,9 +36,9 @@ const ModelConfigItem: React.FC<{
   const form = Form.useFormInstance<AdminDeploymentPresetFormValue>();
   const baiClient = useSuspendedBackendaiClient();
 
-  // On <= 26.4.3 the legacy backend requires the health-check fields; on
-  // 26.4.4+ they are optional and the server seeds defaults (FR-3056), so the
-  // fields are only enforced as required on legacy managers.
+  // Before 26.4.4rc7 the backend requires the health-check fields; on
+  // 26.4.4rc7+ they are optional and the server seeds defaults (FR-3056),
+  // so the fields are only enforced as required on older managers.
   const isHealthCheckFieldRequired = !baiClient.supports(
     'model-health-check-enable',
   );
