@@ -441,6 +441,9 @@ export async function createVFolderAndVerify(
   permission: 'rw' | 'ro' = 'rw',
 ) {
   await navigateTo(page, 'data');
+  // VFolderNodeListPage's BAICard extra renders a single "Create Folder" button.
+  // The previous `.nth(1)` assumed an older layout with a second header CTA and
+  // breaks against the current React build, so use the first match.
   await page.getByRole('button', { name: 'Create Folder' }).first().click();
 
   const modal = new FolderCreationModal(page);
@@ -699,26 +702,29 @@ export async function acceptAllInvitationAndVerifySpecificFolder(
     }
   }
 
-  // Accept all pending invitations one by one. The list shrinks as each
-  // acceptance resolves, and the clicked button detaches from the DOM mid-click,
-  // so re-query each iteration and tolerate detach races.
+  // Accept the pending invitation for this specific folder. The modal renders
+  // one List.Item per invitation; scope to the item whose text contains the
+  // folder name so a stale invitation left over from a prior failed run is never
+  // accepted by mistake. The list shrinks as each acceptance resolves and the
+  // clicked button detaches mid-click, so re-query each iteration and tolerate
+  // detach races.
+  let folderInvitationAccepted = false;
   for (let i = 0; i < 20; i++) {
-    const acceptButton = invitationModal
-      .getByRole('button', { name: /Accept/i })
+    const invitationItem = invitationModal
+      .locator('.ant-list-item')
+      .filter({ hasText: folderName })
       .first();
-    const visible = await acceptButton
+    const isItemVisible = await invitationItem
       .isVisible({ timeout: 1000 })
       .catch(() => false);
 
     if (!isItemVisible) {
-      // Invitation not yet in the list; retry immediately. The
-      // `waitFor({ timeout: 8000 })` above already covers propagation delay.
+      // Invitation not yet propagated into the list; wait briefly and retry.
+      await page.waitForTimeout(500);
       continue;
     }
 
     // Click the Accept button inside this specific invitation item.
-    // Scoping to the item avoids accidentally accepting a stale invitation
-    // for a different folder (e.g., leftovers from previous failed test runs).
     const acceptBtn = invitationItem.getByRole('button', { name: /^Accept$/i });
     await expect(acceptBtn).toBeVisible({ timeout: 5000 });
 
@@ -750,7 +756,7 @@ export async function acceptAllInvitationAndVerifySpecificFolder(
 
   if (!folderInvitationAccepted) {
     throw new Error(
-      `Invitation for folder "${folderName}" not found in modal after 5 attempts.`,
+      `Invitation for folder "${folderName}" not found in modal after 20 attempts.`,
     );
   }
 
@@ -764,6 +770,72 @@ export async function acceptAllInvitationAndVerifySpecificFolder(
 
   // Verify the shared folder now appears in the user's Active data page.
   await verifyVFolder(page, folderName, 'Active');
+}
+
+/**
+ * Leave a shared (invited) vfolder via SharedFolderPermissionInfoModal.
+ *
+ * Regression guard for FR-2978: VFolder.leave_invited used to send `null`
+ * as the request body, which the manager's BodyParam[LeaveVFolderReq] rejected
+ * with a 400. Driving the full UI flow here ensures the client sends a valid
+ * JSON body end-to-end.
+ *
+ * Caller must already be logged in as the invitee and have accepted the
+ * invitation (see acceptAllInvitationAndVerifySpecificFolder).
+ */
+export async function leaveSharedFolderAndVerify(
+  page: Page,
+  folderName: string,
+) {
+  await navigateTo(page, 'data');
+  await page.getByRole('tab', { name: 'Active' }).click();
+  await clearAllFilters(page);
+  await selectPropertyFilter(page, 'Name', folderName);
+
+  // For folders the user does not own, the "share" action button opens the
+  // SharedFolderPermissionInfoModal instead of the invite modal (see
+  // VFolderNodes.tsx onShare). The button's aria-label is still "share".
+  const folderRow = page.getByRole('row', {
+    name: `VFolder Identicon ${folderName}`,
+  });
+  await expect(folderRow).toBeVisible({ timeout: 10000 });
+  await folderRow.getByRole('button', { name: 'share' }).first().click();
+
+  // The modal renders a Tooltip-wrapped Leave button whose accessible name is
+  // the tooltip's title ('Leave the shared folder').
+  const sharedFolderModal = page.locator('.ant-modal').filter({
+    hasText: folderName,
+  });
+  await expect(sharedFolderModal.first()).toBeVisible({ timeout: 10000 });
+  await sharedFolderModal
+    .getByRole('button', { name: 'Leave the shared folder' })
+    .first()
+    .click();
+
+  // Popconfirm OK button — confirm leaving.
+  await page
+    .locator('.ant-popover')
+    .getByRole('button', { name: /^OK$/i })
+    .click();
+
+  // Success toast should appear (no 400) and the folder should disappear from
+  // the user's Active list.
+  await expect(
+    page.getByText('Successfully left the shared folder'),
+  ).toBeVisible({ timeout: 15000 });
+
+  // Re-navigate for a fresh server-side fetch: leaving does not refetch the
+  // in-place vfolder list, so the row can linger in the cached Active view.
+  // This mirrors how the other *AndVerify helpers force a clean reload before
+  // asserting a row's disappearance.
+  await navigateTo(page, 'data');
+  await page.getByRole('tab', { name: 'Active' }).click();
+  await clearAllFilters(page);
+  await selectPropertyFilter(page, 'Name', folderName);
+  await expect(
+    page.locator('tbody tr').filter({ hasText: folderName }),
+  ).toHaveCount(0, { timeout: 10000 });
+  await removeSearchButton(page, folderName);
 }
 
 export async function restoreVFolderAndVerify(page: Page, folderName: string) {
