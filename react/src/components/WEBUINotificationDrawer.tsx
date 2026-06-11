@@ -7,6 +7,7 @@ import { useBAINotificationState } from '../hooks/useBAINotification';
 import BAIGeneralNotificationItem from './BAIGeneralNotificationItem';
 import BAIMultiStepNotificationItem from './BAIMultiStepNotificationItem';
 import BAINodeNotificationItem from './BAINodeNotificationItem';
+import './WEBUINotificationDrawer.css';
 import { MoreOutlined } from '@ant-design/icons';
 import {
   Drawer,
@@ -92,14 +93,6 @@ const WEBUINotificationDrawer: React.FC<Props> = ({ ...drawerProps }) => {
       }
       {...drawerProps}
     >
-      <style>
-        {`
-          .ant-drawer-header-title .ant-drawer-close,
-          .ant-drawer-header .ant-drawer-extra{
-            -webkit-app-region: no-drag;
-          }
-        `}
-      </style>
       <List
         itemLayout="vertical"
         dataSource={

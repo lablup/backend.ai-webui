@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import './BAISider.css';
 import { ConfigProvider, Grid, type SiderProps, theme } from 'antd';
 import Sider from 'antd/es/layout/Sider';
 import { BAIFlex } from 'backend.ai-ui';
@@ -26,32 +27,6 @@ const BAISider = forwardRef<HTMLDivElement, BAISiderProps>(
 
     return (
       <>
-        <style>
-          {`
-          .bai-sider .ant-layout-sider-children {
-            display: flex;
-            flex-direction: column;
-          }
-
-          .bai-sider::-webkit-scrollbar {
-            width: 0px;
-          }
-          
-          .bai-sider::-webkit-scrollbar-track {
-            background: transparent; 
-          }
-          
-          .bai-sider::-webkit-scrollbar-thumb {
-            background: transparent;
-          }
-          .bai-sider .draggable {
-            -webkit-app-region: drag;
-          }
-          .bai-sider .non-draggable {
-            -webkit-app-region: no-drag;
-          }
-        `}
-        </style>
         <Sider
           ref={ref}
           width={SIDER_WIDTH}

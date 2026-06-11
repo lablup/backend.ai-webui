@@ -13,11 +13,11 @@ import {
 import { useDeviceMetaData } from '../hooks/backendai';
 import { useCustomThemeConfig } from '../hooks/useCustomThemeConfig';
 import { useThemeMode } from '../hooks/useThemeMode';
-// @ts-ignore
-import indexCss from '../index.css?raw';
+import '../index.css';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useUpdateEffect } from 'ahooks';
 import { App, type AppProps, theme } from 'antd';
+import { StyleProvider } from 'antd-style';
 import { BAIConfigProvider, BAIText, BAIMetaDataProvider } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import 'dayjs/locale/de';
@@ -270,7 +270,6 @@ export const DefaultProvidersForReactRoot: React.FC<{
 
   return (
     <>
-      <style>{indexCss}</style>
       {RelayEnvironment && (
         <RelayEnvironmentProvider environment={RelayEnvironment}>
           <QueryClientProvider client={queryClient}>
@@ -284,7 +283,6 @@ export const DefaultProvidersForReactRoot: React.FC<{
                   ? theme.darkAlgorithm
                   : theme.defaultAlgorithm,
               }}
-              // @ts-ignore
               csp={{ nonce: globalThis.baiNonce }}
               clientPromise={backendaiClientPromise}
               anonymousClientFactory={createAnonymousBackendaiClient}
@@ -337,14 +335,23 @@ export const DefaultProvidersForReactRoot: React.FC<{
               <BAIMetaDataWrapper>
                 <QueryParamProvider adapter={ReactRouter6Adapter}>
                   <App {...commonAppProps}>
-                    {/* <StyleProvider container={shadowRoot} cache={cache}> */}
-                    <Suspense>
-                      {/* <BrowserRouter> */}
-                      {/* <RoutingEventHandler /> */}
-                      {children}
-                      {/* </BrowserRouter> */}
-                    </Suspense>
-                    {/* </StyleProvider> */}
+                    {/*
+                     * antd-style (createStyles / createGlobalStyle) injects its
+                     * emotion <style> nodes into this StyleProvider's cache.
+                     * The nonce is required so those runtime styles survive a
+                     * strict CSP `style-src 'nonce-...'` policy — without it the
+                     * emotion sheets carry no nonce and the browser drops them.
+                     * antd's own cssinjs styles get the nonce separately via the
+                     * BAIConfigProvider `csp` prop above.
+                     */}
+                    <StyleProvider nonce={globalThis.baiNonce}>
+                      <Suspense>
+                        {/* <BrowserRouter> */}
+                        {/* <RoutingEventHandler /> */}
+                        {children}
+                        {/* </BrowserRouter> */}
+                      </Suspense>
+                    </StyleProvider>
                   </App>
                 </QueryParamProvider>
               </BAIMetaDataWrapper>
