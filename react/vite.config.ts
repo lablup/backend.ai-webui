@@ -1,6 +1,8 @@
 import react from '@vitejs/plugin-react';
+import compression from 'compression';
 import { execSync } from 'node:child_process';
 import { createReadStream, existsSync, readFileSync, statSync } from 'node:fs';
+import { createRequire } from 'node:module';
 import {
   basename,
   dirname,
@@ -10,9 +12,7 @@ import {
   relative,
   resolve,
 } from 'node:path';
-import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
-import compression from 'compression';
 import { defineConfig, loadEnv, type Plugin } from 'vite';
 import checker from 'vite-plugin-checker';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
@@ -49,7 +49,12 @@ function resolvePnpmStorePath(): string | undefined {
       stdio: ['ignore', 'pipe', 'ignore'],
       shell: process.platform === 'win32',
     }).trim();
-    if (!raw || !isAbsolute(raw) || !existsSync(raw) || !statSync(raw).isDirectory()) {
+    if (
+      !raw ||
+      !isAbsolute(raw) ||
+      !existsSync(raw) ||
+      !statSync(raw).isDirectory()
+    ) {
       return undefined;
     }
     return raw;
@@ -91,17 +96,90 @@ const reactArtifactDir = resolve(reactSrc, '__generated__');
  * NOT include `/react/` or `/src/` — those paths must fall through to Vite's
  * own handling so the React bundle and source modules are served correctly.
  */
-const STATIC_PREFIXES_FROM_ROOT = [
-  '/resources/',
-  '/manifest/',
-  '/dist/',
-];
+const STATIC_PREFIXES_FROM_ROOT = ['/resources/', '/manifest/', '/dist/'];
 const STATIC_FILES_FROM_ROOT = new Set([
   '/config.toml',
   '/version.json',
   '/manifest.json',
   '/favicon.ico',
 ]);
+
+/**
+ * Content-Security-Policy for the **dev server** — ON by default (`enforce`),
+ * opt out with `VITE_DEV_CSP=off`.
+ *
+ * The production strict per-request nonce policy cannot be enforced on the Vite
+ * dev server: dev strips `{{nonce}}` (see `transformIndexHtml` below) and Vite's
+ * HMR injects un-nonced inline `<style>` nodes + a dev client, so a strict
+ * `style-src 'nonce-...'` / no-`unsafe-inline` policy breaks HMR and styling.
+ * Validate the real strict policy with a production build instead (`pnpm run
+ * build` + `serve` with a CSP header + a fixed nonce).
+ *
+ * Controlled by the `VITE_DEV_CSP` env var:
+ *   - unset / 'enforce' → DEFAULT. A relaxed, dev-safe *enforcing* policy:
+ *       `'unsafe-inline'`/`'unsafe-eval'` for script/style (so HMR + the
+ *       nonce-stripped inline scripts work) and permissive resource directives
+ *       (`connect`/`img`/`font`/`media`/`frame` allow the dynamic backend +
+ *       HMR socket), but hardened `object-src 'none'` / `base-uri 'self'`
+ *       (`script-src` still blocks external `<script src>`). Designed never to
+ *       break the dev server while catching egregious injections.
+ *   - 'report' → strict, production-like policy as `Content-Security-Policy-
+ *       Report-Only`. Logs every violation to the console (audit); nothing is
+ *       blocked. Vite's own injected inline styles/scripts are reported too —
+ *       expected noise. `connect-src` allows `ws:`/`wss:` so the HMR socket is
+ *       not flagged.
+ *   - 'off' / 'none' / 'false' / '0' → no CSP header (opt out).
+ */
+function buildDevCspHeaders(): Record<string, string> {
+  const mode = (process.env.VITE_DEV_CSP ?? 'enforce').toLowerCase();
+  if (['off', 'none', 'false', '0', 'disable', 'disabled'].includes(mode)) {
+    return {};
+  }
+
+  if (mode === 'report') {
+    const strict = [
+      `default-src 'self'`,
+      `script-src 'self' 'wasm-unsafe-eval'`,
+      `style-src 'self'`,
+      `style-src-attr 'unsafe-inline'`,
+      `img-src 'self' data: blob:`,
+      `font-src 'self' data:`,
+      `worker-src 'self' blob:`,
+      // ws:/wss: keeps Vite's HMR socket out of the report; backend API
+      // connects still report — showing what prod connect-src must allow.
+      `connect-src 'self' ws: wss:`,
+      `frame-src 'self'`,
+      `object-src 'none'`,
+      `base-uri 'self'`,
+    ].join('; ');
+    return { 'Content-Security-Policy-Report-Only': strict };
+  }
+
+  // 'enforce' (default): relaxed enough to never break the dev server, while
+  // still enforcing the directives that cannot legitimately fire in dev.
+  const relaxed = [
+    `default-src 'self'`,
+    `script-src 'self' 'unsafe-inline' 'unsafe-eval'`,
+    // style-src stays 'self'-only for *elements* (external stylesheets are an
+    // air-gap violation — this app must run offline; the only external one is
+    // the dev-only `react-grab` Geist <link>, which is fine to block). Inline
+    // <style>/style="" are allowed via 'unsafe-inline' (dev strips the nonce).
+    `style-src 'self' 'unsafe-inline'`,
+    // Resource directives stay permissive: in dev these legitimately target an
+    // arbitrary backend (entered at login) and/or the HMR socket, so locking
+    // them down would break image / font / connect / frame loads.
+    `img-src 'self' data: blob: http: https:`,
+    `font-src 'self' data: http: https:`,
+    `media-src 'self' data: blob: http: https:`,
+    `worker-src 'self' blob:`,
+    `connect-src 'self' ws: wss: http: https:`,
+    `frame-src 'self' http: https:`,
+    // Hardened — these never load legitimately in dev.
+    `object-src 'none'`,
+    `base-uri 'self'`,
+  ].join('; ');
+  return { 'Content-Security-Policy': relaxed };
+}
 
 const MIME: Record<string, string> = {
   '.js': 'application/javascript',
@@ -193,10 +271,10 @@ function devAssetsReloadPlugin(): Plugin {
       const scheduleI18nUpdate = (lng: string) => {
         clearTimeout(i18nTimer);
         i18nTimer = setTimeout(() => {
-          server.config.logger.info(
-            `[bai] host i18n hot-reload: ${lng}`,
-            { clear: false, timestamp: true },
-          );
+          server.config.logger.info(`[bai] host i18n hot-reload: ${lng}`, {
+            clear: false,
+            timestamp: true,
+          });
           server.ws.send({
             type: 'custom',
             event: 'bai:host-i18n-changed',
@@ -240,7 +318,9 @@ function devAssetsReloadPlugin(): Plugin {
   };
 }
 
-function projectRootStaticPlugin(): Plugin {
+function projectRootStaticPlugin(
+  devCspHeaders: Record<string, string>,
+): Plugin {
   const rootIndexHtml = resolve(projectRoot, 'index.html');
 
   return {
@@ -253,13 +333,26 @@ function projectRootStaticPlugin(): Plugin {
         if (!req.url) return next();
         const url = req.url.split('?')[0];
 
+        // This middleware runs before Vite's internal middlewares (so it can
+        // intercept `/`), which means Vite's `server.headers` never reach the
+        // index.html document or legacy static assets served here. Re-apply the
+        // opt-in dev CSP headers ourselves so the document — where the browser
+        // actually reads the policy — carries them. No-op when CSP is disabled.
+        for (const [key, value] of Object.entries(devCspHeaders)) {
+          res.setHeader(key, value);
+        }
+
         // 1. Serve the project-root index.html at `/` and `/index.html`,
         //    running the full Vite transform chain (which includes our
         //    `transformIndexHtml` hook below + Vite's React Refresh and
         //    client script injection).
         if (url === '/' || url === '/index.html') {
           let html = readFileSync(rootIndexHtml, 'utf-8');
-          html = await server.transformIndexHtml(req.url, html, req.originalUrl);
+          html = await server.transformIndexHtml(
+            req.url,
+            html,
+            req.originalUrl,
+          );
           res.setHeader('Content-Type', 'text/html; charset=utf-8');
           res.end(html);
           return;
@@ -276,7 +369,8 @@ function projectRootStaticPlugin(): Plugin {
           if (!filePath.startsWith(projectRoot)) return next();
           if (existsSync(filePath) && statSync(filePath).isFile()) {
             const mime =
-              MIME[extname(filePath).toLowerCase()] ?? 'application/octet-stream';
+              MIME[extname(filePath).toLowerCase()] ??
+              'application/octet-stream';
             res.setHeader('Content-Type', mime);
             createReadStream(filePath).pipe(res);
             return;
@@ -427,6 +521,11 @@ export default defineConfig(({ command, mode }) => {
   const env = loadEnv(mode, projectRoot, '');
   Object.assign(process.env, env);
 
+  // Resolve the dev CSP headers AFTER loadEnv() + Object.assign above, so a
+  // `VITE_DEV_CSP` set in a `.env*` file is honoured (not only a shell var).
+  // On by default (relaxed `enforce`); `{}` only when explicitly opted out.
+  const devCspHeaders = buildDevCspHeaders();
+
   // Only resolve the pnpm store when actually serving — `vite build` does not
   // use `server.fs.allow`, so the subprocess is wasted there. See the
   // `resolvePnpmStorePath` definition above for the full rationale.
@@ -496,7 +595,10 @@ export default defineConfig(({ command, mode }) => {
         // tracks the SDK without rebuilding tsup output.
         {
           find: /^backend\.ai-client$/,
-          replacement: resolve(projectRoot, 'packages/backend.ai-client/src/index.ts'),
+          replacement: resolve(
+            projectRoot,
+            'packages/backend.ai-client/src/index.ts',
+          ),
         },
 
         // ESM shims for CJS-only transitive deps of `react-i18next`.
@@ -538,10 +640,7 @@ export default defineConfig(({ command, mode }) => {
       // Without this, Vite crawls from `root` following all imports, which
       // pulled in stale legacy Lit plugins under scripts/temp-releases/ on
       // the first run.
-      entries: [
-        'src/index.tsx',
-        'src/**/*.{ts,tsx}',
-      ],
+      entries: ['src/index.tsx', 'src/**/*.{ts,tsx}'],
       // Pre-declare the heavy dependencies that are imported on the first-paint
       // path. Without this list, Vite still finds them via the `entries` scan,
       // but only AFTER scanning the source tree — and the scan + optimize are
@@ -600,6 +699,10 @@ export default defineConfig(({ command, mode }) => {
     },
 
     server: {
+      // Dev CSP header — on by default (relaxed enforce; VITE_DEV_CSP=off to
+      // disable). Covers responses Vite serves; the project-root middleware
+      // below applies the same headers to the index.html document it serves.
+      headers: devCspHeaders,
       host: process.env.HOST || '0.0.0.0',
       port: Number(process.env.PORT) || 9081,
       strictPort: false,
@@ -694,7 +797,7 @@ export default defineConfig(({ command, mode }) => {
       // every downstream middleware's writes (see comment on the plugin).
       devCompressionPlugin(),
       monacoStaticPlugin(),
-      projectRootStaticPlugin(),
+      projectRootStaticPlugin(devCspHeaders),
       devAssetsReloadPlugin(),
 
       react({
