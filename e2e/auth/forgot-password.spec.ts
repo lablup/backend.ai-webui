@@ -88,7 +88,7 @@ test.describe('Forgot password email modal', () => {
 
   test(
     'User can open the forgot password modal from login page',
-    { tag: ['@regression', '@auth', '@functional', '@smoke'] },
+    { tag: ['@regression', '@auth', '@functional'] },
     async ({ page }) => {
       // 1. Verify "Forgot password?" text is visible on the login page
       await expect(page.getByText('Forgot password?')).toBeVisible({
@@ -264,7 +264,7 @@ test.describe('Change password page', () => {
 
   test(
     'User sees the password change form with a valid token',
-    { tag: ['@regression', '@auth', '@functional', '@smoke'] },
+    { tag: ['@regression', '@auth', '@functional'] },
     async ({ page }) => {
       // 1. Navigate directly to the change-password page with a token in the URL
       await page.goto(changePasswordUrl);
