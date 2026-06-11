@@ -133,13 +133,41 @@ export async function login(
     })
     .catch(() => {});
   await page.getByLabel('Email or Username').fill(username);
-  await page.getByLabel('Password').fill(password);
-  // Expand the endpoint section if it's not already visible
-  const endpointInput = page.getByLabel('Endpoint');
-  if (!(await endpointInput.isVisible({ timeout: 500 }).catch(() => false))) {
-    await page.getByText('Advanced').click();
+  // exact: true — on 2FA-enabled servers the login form also renders a
+  // 'One-time password' input, which a substring getByLabel('Password')
+  // strict-mode-collides with.
+  await page.getByLabel('Password', { exact: true }).fill(password);
+  // Fill the endpoint input if the login form exposes one.
+  //
+  // Gotchas learned from real deployments (see FR-2871 smoke CLI work):
+  // - The login dialog renders an 'Endpoint' input per login-mode panel, so
+  //   even `exact: true` matches 2 elements (one hidden). A bare
+  //   `isVisible()` on that locator throws a strict-mode violation, which a
+  //   `.catch(() => false)` silently misreads as "not visible" — filter to
+  //   the visible one instead.
+  // - The input appears asynchronously after the config.toml fetch; poll
+  //   briefly rather than checking once.
+  // - Servers whose config.toml pre-configures `apiEndpoint` (typical
+  //   customer install) never show the input at all — in that case there is
+  //   nothing to fill and login proceeds directly.
+  const endpointInput = page
+    .getByLabel('Endpoint', { exact: true })
+    .filter({ visible: true });
+  const endpointVisible = await endpointInput
+    .waitFor({ state: 'visible', timeout: 8000 })
+    .then(() => true)
+    .catch(() => false);
+  if (endpointVisible) {
+    await endpointInput.fill(endpoint);
+  } else {
+    // Older login UIs hide the endpoint input behind an 'Advanced' toggle.
+    const advanced = page.getByText('Advanced');
+    if (await advanced.isVisible().catch(() => false)) {
+      await advanced.click();
+      await endpointInput.fill(endpoint);
+    }
+    // Otherwise: endpoint is server-preconfigured — proceed to login.
   }
-  await endpointInput.fill(endpoint);
   await page.getByLabel('Login', { exact: true }).click();
   await page.waitForSelector('[data-testid="user-dropdown-button"]');
 }

@@ -411,9 +411,13 @@ that may be air-gapped.
 
 | Tag | Meaning |
 |-----|---------|
-| `@smoke` | Base smoke set. Included in every run. |
-| `@smoke-admin` | Requires admin role. Skipped when running as a regular user. |
-| `@smoke-user` | Requires user-level access only. Admin accounts can run these too. |
+| `@smoke` | Base smoke marker. A spec carrying ONLY `@smoke` (no role tag) must perform **no login at all** — it is included in every run regardless of role. |
+| `@smoke` + `@smoke-admin` | Requires admin credentials (`loginAsAdmin`). Excluded from user-role runs. |
+| `@smoke` + `@smoke-user` | Requires user credentials (`loginAsUser`). Excluded from admin-role runs — the runner injects only ONE role's credentials, so `loginAsUser` under an admin run would fall back to dev-default credentials and fail on customer clusters. |
+
+Role selection is **exclusive**: the role tag must match the login helper the
+spec actually calls. The smoke runner selects `@smoke` (bare) + `@smoke-<role>`
+and explicitly excludes the opposite role's tag via `grepInvert`.
 
 > `@smoke-any` and `@smoke-extended` are intentionally **not** part of the
 > MVP taxonomy. The first turned out unworkable in practice (every e2e
@@ -451,6 +455,24 @@ following:
    the describe level — split the describe so each one uses a single
    account, then tag only the role-uniform half. This keeps rule 1
    ("single account") consistent with the role tags.
+7. **OTP-robust selectors.** Many customer clusters enable 2FA, which adds a
+   `One-time password` input to the login form. Selectors that touch login
+   fields must use exact matching (`getByLabel('Password', { exact: true })`)
+   so they don't strict-mode-collide with the OTP field. The shared `login()`
+   helper in `e2e/utils/test-util.ts` already does this; spec-local selectors
+   must follow suit.
+8. **No environment-conditional skips in smoke.** Tags like
+   `test.skip(featureNotAvailable)` that silently skip on certain server
+   versions give a false-green smoke report. Two sanctioned exceptions
+   exist today:
+   - The session-lifecycle agent guard — the smoke runner force-enables it
+     via `BACKEND_AI_AGENTS_AVAILABLE=true` so a session-incapable cluster
+     shows up RED, not skipped.
+   - The dashboard Agent Stats widget tests skip when the server is older
+     than the widget's minimum version (the skip reason names the version).
+     These appear as *skipped* in the report rather than silently passing.
+   New smoke specs must not add further version-gated skips; prefer
+   asserting on UI that exists across all supported server versions.
 
 ### How to apply
 
@@ -477,19 +499,40 @@ test.describe(
 
 A spec without a `tag:` option needs one added — never strip existing tags.
 
+**Test-level tags** are the sanctioned alternative to splitting when only a
+single test inside a heavier describe qualifies for smoke (see rule 6):
+
+```typescript
+test(
+  'Create, monitor, and terminate interactive session',
+  { tag: ['@smoke', '@smoke-admin'] }, // only this test joins the smoke set
+  async ({ page }) => { /* ... */ },
+);
+```
+
+Current test-level smoke tags: the session-lifecycle core test, the
+cluster-mode single-node sanity test, and the bulk-user-creation modal test.
+
 ### Coverage targets (MVP)
 
 The initial smoke set covers the highest-signal flows:
 
-- Login / authentication → `@smoke-admin` (`loginAsAdmin`)
-- Dashboard render (admin describe only; user-role checks live in a sibling describe without `@smoke*`) → `@smoke-admin`
-- VFolder basic CRUD → `@smoke-user`
-- Agent list (admin signal) → `@smoke-admin`
+- Login form render (no login) → bare `@smoke`
+- Login / authentication → `@smoke` + `@smoke-admin` (`loginAsAdmin`)
+- Dashboard render (admin describe only; user-role checks live in a sibling describe without `@smoke*`) → `@smoke` + `@smoke-admin`
+- VFolder file creation (folder explorer) → `@smoke` + `@smoke-user`
+- Agent list (admin signal) → `@smoke` + `@smoke-admin`
+- Session lifecycle (create → RUNNING → terminate) → test-level `@smoke` + `@smoke-admin` on the single core test in `session-lifecycle.spec.ts`; the heavier sibling scenarios (240s timeouts) stay out
+- Session launcher cluster-mode sanity (single deterministic test) → test-level `@smoke` + `@smoke-user`
+- Bulk-user-creation modal open/cancel → test-level `@smoke` + `@smoke-admin`
 
-Session lifecycle is intentionally **not** in the MVP smoke set: its
-scenarios use 240s timeouts and `test.fixme(no agents)` skips, which
-violates the bounded-runtime rule. A trimmed-down session smoke
-scenario is tracked as a follow-up.
+Legacy bare-`@smoke` tags that predate this convention were removed from
+specs that don't qualify: `chat.spec.ts` (fully mocked backend — zero
+install signal), two `session-cluster-mode.spec.ts` tests (version-dependent
+`test.skip` guards), and `forgot-password.spec.ts` (forces
+`allowAnonymousChangePassword` via config interception and mocks the
+password-email APIs — a feature toggle plus mocked backend gives zero
+install signal, same class as `chat.spec.ts`).
 
 Pick **quality over quantity**: do not tag every spec in a folder. The smoke
 suite's value is its short runtime and high signal-to-noise ratio.

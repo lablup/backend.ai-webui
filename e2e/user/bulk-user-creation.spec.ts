@@ -75,7 +75,7 @@ test.describe(
 
     test(
       'Admin can open bulk create modal from dropdown',
-      { tag: ['@smoke'] },
+      { tag: ['@smoke', '@smoke-admin'] },
       async ({ page, request }) => {
         // 1. Login as admin
         await loginAsAdmin(page, request);
