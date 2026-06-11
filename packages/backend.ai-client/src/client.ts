@@ -926,10 +926,11 @@ export class Client {
     }
     // ModelHealthCheck gained an `enable` flag in 26.4.4 (BA-6242): health
     // checks are opt-in via `enable: true/false` instead of nulling the whole
-    // object, so the server can seed defaults when disabled. Gated to 26.4.4 to
-    // match the `enable @since(version: "26.4.4")` fragment selections; older
-    // managers reject the unknown input field. (FR-3056)
-    if (this.isManagerVersionCompatibleWith('26.4.4')) {
+    // object, so the server can seed defaults when disabled. Pinned to rc7 tag
+    // so the flag activates on staging managers; the @since directives in
+    // Relay fragments use the same version string. (FR-3056)
+    // TODO(FR-3056): simplify to '26.4.4' once the final release ships.
+    if (this.isManagerVersionCompatibleWith('26.4.4rc7')) {
       this._features['model-health-check-enable'] = true;
     }
   }

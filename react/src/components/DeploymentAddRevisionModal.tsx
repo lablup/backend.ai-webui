@@ -297,7 +297,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
             startCommand
             port
             healthCheck {
-              enable @since(version: "26.4.4")
+              enable @since(version: "26.4.4rc7")
               path
               maxRetries
               initialDelay
@@ -571,7 +571,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           revision {
             id
             ...DeploymentRevisionDetail_revision
-            deployment @since(version: "26.4.4") {
+            deployment @since(version: "26.4.4rc7") {
               id
               currentRevisionId
               deployingRevisionId

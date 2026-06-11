@@ -178,7 +178,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
               shell
               port
               healthCheck {
-                enable @since(version: "26.4.4")
+                enable @since(version: "26.4.4rc7")
                 interval
                 path
                 maxRetries
