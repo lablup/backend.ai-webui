@@ -1,0 +1,12 @@
+{
+  "epic": "FR-2920",
+  "spec_task": "FR-2949",
+  "source_issues": ["FR-2920"],
+  "slug": "audit-log-table",
+  "phase": "Phase 2 (user-facing scopedAuditLogsV2)",
+  "language": "ko",
+  "backend_dependencies": [
+    "RBAC relaxation for non-admin scopedAuditLogsV2 callers",
+    "AuditLogFilter.entityId filter on user-facing v2 API"
+  ]
+}

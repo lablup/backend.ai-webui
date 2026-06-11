@@ -306,6 +306,14 @@
     "ToolPermissionOverrides": "工具权限覆盖",
     "TopP": "Top P"
   },
+  "auditLog": {
+    "AuditLog": "审计日志",
+    "Operation": "操作",
+    "Status": "状态",
+    "Time": "时间",
+    "TriggeredBy": "触发者",
+    "TriggeredByFilterPlaceholder": "按 ID 搜索"
+  },
   "autoScalingRule": {
     "AddAutoScalingRule": "添加自动缩放规则",
     "Comparator": "比较器",
@@ -1447,6 +1455,7 @@
     "Filename": "文件名",
     "FolderNotFoundOrNoAccess": "未找到或拒绝访问的文件夹",
     "InputTooShort": "输入太短",
+    "Metadata": "元数据",
     "NoExplorerSupportForUnmanagedFolder": "未管理的文件夹不支持文件资源管理器。",
     "NoPermissions": "无权访问此文件夹",
     "ProcessingUpload": "您的文件正在上传。\n请稍等。",

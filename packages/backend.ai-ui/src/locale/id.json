@@ -67,6 +67,19 @@
     "Updated": "Diperbarui",
     "Version": "Versi"
   },
+  "comp:BAIAuditLogNodes": {
+    "ActionId": "ID Tindakan",
+    "Actor": "Pelaku",
+    "Description": "Deskripsi",
+    "Duration": "Durasi",
+    "EntityId": "ID Entitas",
+    "EntityType": "Jenis Entitas",
+    "Operation": "Operasi",
+    "RequestId": "ID Permintaan",
+    "Status": "Status",
+    "Time": "Waktu",
+    "TriggeredBy": "Dipicu oleh"
+  },
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "Pilih Preset"
   },

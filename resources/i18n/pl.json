@@ -306,6 +306,14 @@
     "ToolPermissionOverrides": "Zastąpienia uprawnień narzędzi",
     "TopP": "Top P"
   },
+  "auditLog": {
+    "AuditLog": "Dziennik audytu",
+    "Operation": "Operacja",
+    "Status": "Status",
+    "Time": "Czas",
+    "TriggeredBy": "Wywołane przez",
+    "TriggeredByFilterPlaceholder": "Szukaj po ID"
+  },
   "autoScalingRule": {
     "AddAutoScalingRule": "Dodaj regułę automatycznego skalowania",
     "Comparator": "Komparator",
@@ -1448,6 +1456,7 @@
     "Filename": "Nazwa pliku",
     "FolderNotFoundOrNoAccess": "Folder nie został znaleziony ani nie ma dostępu",
     "InputTooShort": "Wejście zbyt krótkie",
+    "Metadata": "Metadane",
     "NoExplorerSupportForUnmanagedFolder": "Foldery niezarządzane nie obsługują eksploratora plików.",
     "NoPermissions": "Brak uprawnień do dostępu do tego folderu",
     "ProcessingUpload": "Twój plik jest przesyłany. \nProszę poczekaj.",

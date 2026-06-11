@@ -67,6 +67,19 @@
     "Updated": "Ενημερωμένος",
     "Version": "Εκδοχή"
   },
+  "comp:BAIAuditLogNodes": {
+    "ActionId": "ID ενέργειας",
+    "Actor": "Εκτελεστής",
+    "Description": "Περιγραφή",
+    "Duration": "Διάρκεια",
+    "EntityId": "ID οντότητας",
+    "EntityType": "Τύπος οντότητας",
+    "Operation": "Λειτουργία",
+    "RequestId": "ID αιτήματος",
+    "Status": "Κατάσταση",
+    "Time": "Ώρα",
+    "TriggeredBy": "Ενεργοποιήθηκε από"
+  },
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "Επιλέξτε προεπιλογή"
   },

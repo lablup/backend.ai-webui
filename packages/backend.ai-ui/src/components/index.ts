@@ -122,6 +122,11 @@ export type {
   BAISchedulingResultBadgeProps,
   SchedulingResult,
 } from './BAISchedulingResultBadge';
+export { default as BAIAuditLogStatusTag } from './BAIAuditLogStatusTag';
+export type {
+  BAIAuditLogStatusTagProps,
+  AuditLogStatus,
+} from './BAIAuditLogStatusTag';
 export { default as StorageUsageBadge } from './StorageUsageBadge';
 export type { StorageUsageBadgeProps } from './StorageUsageBadge';
 export { default as BAIBoardItemErrorBoundary } from './BAIBoardItemErrorBoundary';

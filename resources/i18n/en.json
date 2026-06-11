@@ -293,6 +293,14 @@
     "ToolConfig": "Tool Configuration",
     "ToolPermissionOverrides": "Tool Permission Overrides"
   },
+  "auditLog": {
+    "AuditLog": "Audit Log",
+    "Operation": "Operation",
+    "Status": "Status",
+    "Time": "Time",
+    "TriggeredBy": "Triggered By",
+    "TriggeredByFilterPlaceholder": "Search by ID"
+  },
   "autoScalingRule": {
     "AddAutoScalingRule": "Add Auto Scaling Rule",
     "Comparator": "Comparator",
@@ -1434,6 +1442,7 @@
     "Filename": "File Name",
     "FolderNotFoundOrNoAccess": "Folder not found or access denied",
     "InputTooShort": "InputTooShort",
+    "Metadata": "Metadata",
     "NoExplorerSupportForUnmanagedFolder": "Unmanaged folders do not support the file explorer.",
     "NoPermissions": "No permissions to access this folder",
     "ProcessingUpload": "Your file is being uploaded. Please wait.",

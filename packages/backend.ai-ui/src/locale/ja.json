@@ -67,6 +67,19 @@
     "Updated": "更新",
     "Version": "バージョン"
   },
+  "comp:BAIAuditLogNodes": {
+    "ActionId": "アクション ID",
+    "Actor": "実行者",
+    "Description": "説明",
+    "Duration": "所要時間",
+    "EntityId": "エンティティ ID",
+    "EntityType": "エンティティタイプ",
+    "Operation": "操作",
+    "RequestId": "リクエスト ID",
+    "Status": "ステータス",
+    "Time": "時刻",
+    "TriggeredBy": "起動者"
+  },
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "プリセットを選択"
   },

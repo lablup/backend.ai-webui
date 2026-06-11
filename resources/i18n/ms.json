@@ -306,6 +306,14 @@
     "ToolPermissionOverrides": "Penggantian kebenaran alat",
     "TopP": "Top P"
   },
+  "auditLog": {
+    "AuditLog": "Log Audit",
+    "Operation": "Operasi",
+    "Status": "Status",
+    "Time": "Masa",
+    "TriggeredBy": "Dicetuskan oleh",
+    "TriggeredByFilterPlaceholder": "Cari mengikut ID"
+  },
   "autoScalingRule": {
     "AddAutoScalingRule": "Tambahkan peraturan penskalaan automatik",
     "Comparator": "Komparator",
@@ -1447,6 +1455,7 @@
     "Filename": "Nama fail",
     "FolderNotFoundOrNoAccess": "Folder tidak dijumpai atau akses ditolak",
     "InputTooShort": "InputTooShort",
+    "Metadata": "Metadata",
     "NoExplorerSupportForUnmanagedFolder": "Folder yang tidak dikendalikan tidak menyokong penjelajah fail.",
     "NoPermissions": "Tiada kebenaran untuk mengakses folder ini",
     "ProcessingUpload": "Fail anda sedang dimuat naik. \nTolong tunggu.",

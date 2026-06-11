@@ -306,6 +306,14 @@
     "ToolPermissionOverrides": "Substituições de permissões de ferramentas",
     "TopP": "Top P"
   },
+  "auditLog": {
+    "AuditLog": "Log de auditoria",
+    "Operation": "Operação",
+    "Status": "Status",
+    "Time": "Hora",
+    "TriggeredBy": "Acionado por",
+    "TriggeredByFilterPlaceholder": "Pesquisar por ID"
+  },
   "autoScalingRule": {
     "AddAutoScalingRule": "Adicionar regra de escala automática",
     "Comparator": "Comparador",
@@ -1447,6 +1455,7 @@
     "Filename": "Nome do arquivo",
     "FolderNotFoundOrNoAccess": "Pasta não encontrada ou acesso negado",
     "InputTooShort": "InputTooShort",
+    "Metadata": "Metadados",
     "NoExplorerSupportForUnmanagedFolder": "Pastas não gerenciadas não suportam o File Explorer.",
     "NoPermissions": "Sem permissões para acessar esta pasta",
     "ProcessingUpload": "Seu arquivo está sendo carregado. \nPor favor, aguarde.",

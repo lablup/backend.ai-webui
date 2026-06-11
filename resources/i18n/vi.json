@@ -306,6 +306,14 @@
     "ToolPermissionOverrides": "Ghi đè quyền công cụ",
     "TopP": "Top P"
   },
+  "auditLog": {
+    "AuditLog": "Nhật ký kiểm tra",
+    "Operation": "Thao tác",
+    "Status": "Trạng thái",
+    "Time": "Thời gian",
+    "TriggeredBy": "Thực hiện bởi",
+    "TriggeredByFilterPlaceholder": "Tìm theo ID"
+  },
   "autoScalingRule": {
     "AddAutoScalingRule": "Thêm quy tắc tỷ lệ tự động",
     "Comparator": "Người so sánh",
@@ -1447,6 +1455,7 @@
     "Filename": "Tên tệp",
     "FolderNotFoundOrNoAccess": "Thư mục không tìm thấy hoặc truy cập bị từ chối",
     "InputTooShort": "InputTooShort",
+    "Metadata": "Siêu dữ liệu",
     "NoExplorerSupportForUnmanagedFolder": "Các thư mục không được quản lý không hỗ trợ trình thám hiểm tệp.",
     "NoPermissions": "Không có quyền truy cập thư mục này",
     "ProcessingUpload": "Tệp của bạn đang được tải lên. \nVui lòng chờ.",

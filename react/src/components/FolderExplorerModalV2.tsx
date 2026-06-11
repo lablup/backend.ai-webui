@@ -3,17 +3,21 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { FolderExplorerModalV2Query } from '../__generated__/FolderExplorerModalV2Query.graphql';
+import type { ScopedAuditLogQuery as ScopedAuditLogQueryType } from '../__generated__/ScopedAuditLogQuery.graphql';
 import { formatToUUID } from '../helper';
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
+import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useMergedAllowedStorageHostPermission } from '../hooks/useMergedAllowedStorageHostPermission';
+import BAIErrorBoundary from './BAIErrorBoundary';
 import { useFileUploadManager } from './FileUploadManager';
 import FolderExplorerHeaderV2 from './FolderExplorerHeaderV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
+import ScopedAuditLog, { ScopedAuditLogQuery } from './ScopedAuditLog';
 import VFolderNodeDescriptionV2 from './VFolderNodeDescriptionV2';
 import VFolderTextFileEditorModal from './VFolderTextFileEditorModal';
-import { Alert, Divider, Grid, Skeleton, Splitter, theme } from 'antd';
+import { Alert, Grid, Skeleton, Splitter, Tabs, theme } from 'antd';
 import { createStyles } from 'antd-style';
 import { RcFile } from 'antd/es/upload';
 import {
@@ -29,9 +33,16 @@ import {
   VFolderFile,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { Suspense, useDeferredValue, useEffect, useRef, useState } from 'react';
+import {
+  type ComponentProps,
+  Suspense,
+  useDeferredValue,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery } from 'react-relay';
+import { graphql, useLazyLoadQuery, useQueryLoader } from 'react-relay';
 
 const useStyles = createStyles(({ css }) => ({
   baiModalHeader: css`
@@ -137,6 +148,43 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
     file: VFolderFile;
     currentPath: string;
   } | null>(null);
+
+  const [activeTab, setActiveTab] = useState<'metadata' | 'auditLog'>(
+    'metadata',
+  );
+  const [auditLogQueryRef, loadAuditLogQuery] =
+    useQueryLoader<ScopedAuditLogQueryType>(ScopedAuditLogQuery);
+
+  const { baiPaginationOption, setTablePaginationOption } =
+    useBAIPaginationOptionState({ current: 1, pageSize: 10 });
+  const reloadAuditLogQuery: ComponentProps<
+    typeof ScopedAuditLog
+  >['onReload'] = (variables, options) => {
+    const limit = variables.limit ?? 10;
+    setTablePaginationOption({
+      pageSize: limit,
+      current: variables.offset ? Math.floor(variables.offset / limit) + 1 : 1,
+    });
+    loadAuditLogQuery(variables, options);
+  };
+
+  const loadAuditLog = () => {
+    if (!vfolderNode?.id) {
+      return;
+    }
+    loadAuditLogQuery(
+      {
+        scope: {
+          entity: [{ entityType: 'VFOLDER', entityId: vfolderUuid }],
+        },
+        orderBy: [{ field: 'CREATED_AT', direction: 'DESC' }],
+        limit: baiPaginationOption.limit,
+        offset: baiPaginationOption.offset,
+      },
+      { fetchPolicy: 'store-and-network' },
+    );
+  };
+
   const { uploadStatus, uploadFiles } = useFileUploadManager(
     vfolderNode?.id,
     vfolderNode?.metadata?.name || undefined,
@@ -257,8 +305,50 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
     />
   ) : null;
 
-  const vFolderDescriptionElement = vfolderNode ? (
-    <VFolderNodeDescriptionV2 vfolderNodeFrgmt={vfolderNode} />
+  const vFolderInfoPanelElement = vfolderNode ? (
+    <Tabs
+      type={xl ? 'card' : 'line'}
+      activeKey={activeTab}
+      onChange={(key) => {
+        if (key === 'auditLog' && auditLogQueryRef == null) {
+          loadAuditLog();
+        }
+        setActiveTab(key as typeof activeTab);
+      }}
+      styles={{
+        content: {
+          paddingBottom: token.paddingContentVertical,
+        },
+      }}
+      items={[
+        {
+          key: 'metadata',
+          label: t('explorer.Metadata'),
+          children: <VFolderNodeDescriptionV2 vfolderNodeFrgmt={vfolderNode} />,
+        },
+        {
+          key: 'auditLog',
+          label: t('auditLog.AuditLog'),
+          children: (
+            <BAIErrorBoundary>
+              {auditLogQueryRef ? (
+                <Suspense
+                  fallback={<Skeleton active paragraph={{ rows: 4 }} />}
+                >
+                  <ScopedAuditLog
+                    queryRef={auditLogQueryRef}
+                    onReload={reloadAuditLogQuery}
+                    tableSettings={{}}
+                  />
+                </Suspense>
+              ) : (
+                <Skeleton active paragraph={{ rows: 4 }} />
+              )}
+            </BAIErrorBoundary>
+          ),
+        },
+      ]}
+    />
   ) : null;
 
   return (
@@ -268,7 +358,7 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
       keyboard
       destroyOnHidden
       footer={null}
-      style={{ maxWidth: '1600px' }}
+      style={{ maxWidth: '1900px' }}
       styles={{
         body: {
           height: '100vh',
@@ -297,7 +387,12 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
         {deferredOpen !== modalProps.open || vfolderNode === undefined ? (
           <Skeleton active />
         ) : (
-          <BAIFlex direction="column" gap={'lg'} align="stretch">
+          <BAIFlex
+            direction="column"
+            gap={'lg'}
+            align="stretch"
+            style={{ minHeight: '100%' }}
+          >
             {vfolderNode === null ? (
               <Alert
                 title={t('explorer.FolderNotFoundOrNoAccess')}
@@ -326,31 +421,29 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
               />
             ) : null}
 
-            {xl ? (
-              <Splitter
-                style={{
-                  gap: token.size,
-                }}
-                orientation={'horizontal'}
-              >
-                <Splitter.Panel resizable={false}>
-                  {fileExplorerElement}
-                </Splitter.Panel>
-                <Splitter.Panel defaultSize={500}>
-                  {vFolderDescriptionElement}
-                </Splitter.Panel>
-              </Splitter>
-            ) : (
-              <BAIFlex direction="column" align="stretch">
-                {fileExplorerElement}
-                <Divider
+            {vfolderNode && !hasNoPermissions ? (
+              xl ? (
+                <Splitter
                   style={{
-                    borderColor: token.colorBorderSecondary,
+                    flex: 1,
+                    gap: token.size,
                   }}
-                />
-                {vFolderDescriptionElement}
-              </BAIFlex>
-            )}
+                  orientation={'horizontal'}
+                >
+                  <Splitter.Panel resizable={true}>
+                    {fileExplorerElement}
+                  </Splitter.Panel>
+                  <Splitter.Panel defaultSize={'45%'} min={550}>
+                    {vFolderInfoPanelElement}
+                  </Splitter.Panel>
+                </Splitter>
+              ) : (
+                <BAIFlex direction="column" align="stretch" gap={'lg'}>
+                  {fileExplorerElement}
+                  {vFolderInfoPanelElement}
+                </BAIFlex>
+              )
+            ) : null}
           </BAIFlex>
         )}
       </Suspense>

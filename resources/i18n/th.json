@@ -306,6 +306,14 @@
     "ToolPermissionOverrides": "การแทนที่สิทธิ์เครื่องมือ",
     "TopP": "Top P"
   },
+  "auditLog": {
+    "AuditLog": "บันทึกการตรวจสอบ",
+    "Operation": "การดำเนินการ",
+    "Status": "สถานะ",
+    "Time": "เวลา",
+    "TriggeredBy": "เรียกใช้โดย",
+    "TriggeredByFilterPlaceholder": "ค้นหาโดย ID"
+  },
   "autoScalingRule": {
     "AddAutoScalingRule": "เพิ่มกฎการปรับขนาดอัตโนมัติ",
     "Comparator": "เครื่องเปรียบเทียบ",
@@ -1447,6 +1455,7 @@
     "Filename": "ชื่อไฟล์",
     "FolderNotFoundOrNoAccess": "ไม่พบโฟลเดอร์หรือถูกปฏิเสธการเข้าถึง",
     "InputTooShort": "ข้อมูลที่ป้อนสั้นเกินไป",
+    "Metadata": "ข้อมูลเมตา",
     "NoExplorerSupportForUnmanagedFolder": "โฟลเดอร์ที่ไม่มีการจัดการไม่รองรับ File Explorer",
     "NoPermissions": "ไม่มีสิทธิ์ในการเข้าถึงโฟลเดอร์นี้",
     "ProcessingUpload": "ไฟล์ของคุณกำลังถูกอัปโหลด \nโปรดรอ.",

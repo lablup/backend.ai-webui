@@ -306,6 +306,14 @@
     "ToolPermissionOverrides": "Παρακάμψεις δικαιωμάτων εργαλείων",
     "TopP": "Top P"
   },
+  "auditLog": {
+    "AuditLog": "Αρχείο ελέγχου",
+    "Operation": "Λειτουργία",
+    "Status": "Κατάσταση",
+    "Time": "Ώρα",
+    "TriggeredBy": "Ενεργοποιήθηκε από",
+    "TriggeredByFilterPlaceholder": "Αναζήτηση κατά ID"
+  },
   "autoScalingRule": {
     "AddAutoScalingRule": "Προσθέστε κανόνα αυτόματης κλιμάκωσης",
     "Comparator": "Συγκριτής",
@@ -1447,6 +1455,7 @@
     "Filename": "Όνομα αρχείου",
     "FolderNotFoundOrNoAccess": "Ο φάκελος δεν βρέθηκε ή απορρίφθηκε η πρόσβαση",
     "InputTooShort": "InputTooShort",
+    "Metadata": "Μεταδεδομένα",
     "NoExplorerSupportForUnmanagedFolder": "Οι μη διαχειριζόμενοι φάκελοι δεν υποστηρίζουν τον εξερευνητή αρχείων.",
     "NoPermissions": "Δεν υπάρχουν δικαιώματα πρόσβασης σε αυτόν τον φάκελο",
     "ProcessingUpload": "Το αρχείο σας μεταφορτώνεται. \nΠεριμένετε.",

@@ -2,12 +2,15 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import type { ScopedAuditLogQuery as ScopedAuditLogQueryType } from '../__generated__/ScopedAuditLogQuery.graphql';
 import { SessionDetailContentFragment$key } from '../__generated__/SessionDetailContentFragment.graphql';
 import { SessionDetailContentQuery } from '../__generated__/SessionDetailContentQuery.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
+import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { ResourceNumbersOfSession } from '../pages/SessionLauncherPage';
+import BAIErrorBoundary from './BAIErrorBoundary';
 import CodeHighlighterModal from './CodeHighlighterModal';
 import ConnectedKernelList from './ComputeSessionNodeItems/ConnectedKernelList';
 import EditableSessionName from './ComputeSessionNodeItems/EditableSessionName';
@@ -22,6 +25,7 @@ import IdleCheckDescriptionModal from './IdleCheckDescriptionModal';
 import ImageNodeSimpleTag from './ImageNodeSimpleTag';
 import { UNSAFELazySessionImageTag } from './ImageTags';
 import MountedVFolderLinks from './MountedVFolderLinks';
+import ScopedAuditLog, { ScopedAuditLogQuery } from './ScopedAuditLog';
 import { getUnifiedSlotNameFromTag } from './SessionFormItems/ResourceAllocationFormItems';
 import SessionSchedulingHistoryModal from './SessionSchedulingHistoryModal';
 import SessionUsageMonitor from './SessionUsageMonitor';
@@ -38,6 +42,7 @@ import {
   Grid,
   Select,
   Skeleton,
+  Tabs,
   Tag,
   theme,
   Tooltip,
@@ -60,7 +65,12 @@ import {
 import * as _ from 'lodash-es';
 import { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
+import {
+  graphql,
+  useFragment,
+  useLazyLoadQuery,
+  useQueryLoader,
+} from 'react-relay';
 import { useLocation } from 'react-router-dom';
 
 // When a session is tagged as using a unified-memory accelerator slot, its
@@ -113,6 +123,21 @@ const SessionDetailContent: React.FC<{
     openSessionSchedulingHistoryModal,
     { toggle: toggleOpenSessionSchedulingHistoryModal },
   ] = useToggle(false);
+  const [auditLogQueryRef, loadAuditLogQuery] =
+    useQueryLoader<ScopedAuditLogQueryType>(ScopedAuditLogQuery);
+
+  const { baiPaginationOption, setTablePaginationOption } =
+    useBAIPaginationOptionState({ current: 1, pageSize: 10 });
+  const reloadAuditLogQuery: React.ComponentProps<
+    typeof ScopedAuditLog
+  >['onReload'] = (variables, options) => {
+    const limit = variables.limit ?? 10;
+    setTablePaginationOption({
+      pageSize: limit,
+      current: variables.offset ? Math.floor(variables.offset / limit) + 1 : 1,
+    });
+    loadAuditLogQuery(variables, options);
+  };
 
   // TODO: Remove useLazyLoadQuery and use useRefetchableFragment instead of useFragment to fetch session data when deprecatedProjectId is removed.
   const { internalLoadedSession } = useLazyLoadQuery<SessionDetailContentQuery>(
@@ -521,19 +546,63 @@ const SessionDetailContent: React.FC<{
           )}
         </Descriptions>
       </BAIFlex>
-      <Suspense fallback={<Skeleton active />}>
-        <BAIFlex direction="column" gap={'sm'} align="stretch">
-          <Typography.Title level={4} style={{ margin: 0 }}>
-            {t('kernel.Kernels')}
-          </Typography.Title>
-          <ConnectedKernelList
-            kernelsFrgmt={filterOutNullAndUndefined(
-              session.kernel_nodes?.edges.map((e) => e?.node),
-            )}
-            sessionFrgmtForLogModal={session}
-          />
-        </BAIFlex>
-      </Suspense>
+      <Tabs
+        defaultActiveKey="kernels"
+        onChange={(key) => {
+          if (key === 'auditLog' && session.row_id && !auditLogQueryRef) {
+            loadAuditLogQuery(
+              {
+                scope: {
+                  entity: [{ entityType: 'SESSION', entityId: session.row_id }],
+                },
+                orderBy: [{ field: 'CREATED_AT', direction: 'DESC' }],
+                limit: baiPaginationOption.limit,
+                offset: baiPaginationOption.offset,
+              },
+              { fetchPolicy: 'store-and-network' },
+            );
+          }
+        }}
+        items={[
+          {
+            key: 'kernels',
+            label: t('kernel.Kernels'),
+            children: (
+              <Suspense fallback={<Skeleton active />}>
+                <ConnectedKernelList
+                  kernelsFrgmt={filterOutNullAndUndefined(
+                    session.kernel_nodes?.edges.map((e) => e?.node),
+                  )}
+                  sessionFrgmtForLogModal={session}
+                />
+              </Suspense>
+            ),
+          },
+          ...(session.row_id
+            ? [
+                {
+                  key: 'auditLog',
+                  label: t('auditLog.AuditLog'),
+                  children: (
+                    <BAIErrorBoundary>
+                      {auditLogQueryRef ? (
+                        <Suspense fallback={<Skeleton active />}>
+                          <ScopedAuditLog
+                            queryRef={auditLogQueryRef}
+                            onReload={reloadAuditLogQuery}
+                            tableSettings={{}}
+                          />
+                        </Suspense>
+                      ) : (
+                        <Skeleton active />
+                      )}
+                    </BAIErrorBoundary>
+                  ),
+                },
+              ]
+            : []),
+        ]}
+      />
       <IdleCheckDescriptionModal
         open={openIdleCheckDescriptionModal}
         onCancel={() => setOpenIdleCheckDescriptionModal(false)}

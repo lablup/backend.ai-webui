@@ -306,6 +306,14 @@
     "ToolPermissionOverrides": "Sostituzioni autorizzazioni strumenti",
     "TopP": "Top P"
   },
+  "auditLog": {
+    "AuditLog": "Log di audit",
+    "Operation": "Operazione",
+    "Status": "Stato",
+    "Time": "Ora",
+    "TriggeredBy": "Attivato da",
+    "TriggeredByFilterPlaceholder": "Cerca per ID"
+  },
   "autoScalingRule": {
     "AddAutoScalingRule": "Aggiungi regola di ridimensionamento automatico",
     "Comparator": "Comparatore",
@@ -1447,6 +1455,7 @@
     "Filename": "Nome del file",
     "FolderNotFoundOrNoAccess": "Cartella non trovata o accesso negata",
     "InputTooShort": "Inputtroppo corto",
+    "Metadata": "Metadati",
     "NoExplorerSupportForUnmanagedFolder": "Le cartelle non gestite non supportano l'esploratore dei file.",
     "NoPermissions": "Nessuna autorizzazione per accedere a questa cartella",
     "ProcessingUpload": "Il tuo file viene caricato. \nAttendere prego.",

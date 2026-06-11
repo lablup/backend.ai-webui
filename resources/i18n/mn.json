@@ -306,6 +306,14 @@
     "ToolPermissionOverrides": "Хэрэгслийн зөвшөөрлийн дарааллууд",
     "TopP": "Top P"
   },
+  "auditLog": {
+    "AuditLog": "Аудит лог",
+    "Operation": "Үйлдэл",
+    "Status": "Статус",
+    "Time": "Цаг",
+    "TriggeredBy": "Гүйцэтгэсэн",
+    "TriggeredByFilterPlaceholder": "ID-ээр хайх"
+  },
   "autoScalingRule": {
     "AddAutoScalingRule": "Автомат масштабыг нэмэх",
     "Comparator": "Автоматлагч",
@@ -1447,6 +1455,7 @@
     "Filename": "Хөдөлгөөний нэр",
     "FolderNotFoundOrNoAccess": "Фолдер олдсонгүй эсвэл хандалтыг үгүйсгэв",
     "InputTooShort": "Хэт богино байна",
+    "Metadata": "Мета өгөгдөл",
     "NoExplorerSupportForUnmanagedFolder": "НҮБ-нээгүй хавтас нь файлын Explorer-ийг дэмждэггүй.",
     "NoPermissions": "Энэ хавтсанд нэвтрэх зөвшөөрөл байхгүй байна",
     "ProcessingUpload": "Таны файлыг байршуулж байна. \nТүр хүлээнэ үү",

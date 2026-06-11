@@ -67,6 +67,19 @@
     "Updated": "Güncellenmiş",
     "Version": "Versiyon"
   },
+  "comp:BAIAuditLogNodes": {
+    "ActionId": "Eylem ID",
+    "Actor": "Aktör",
+    "Description": "Açıklama",
+    "Duration": "Süre",
+    "EntityId": "Varlık ID",
+    "EntityType": "Varlık Tipi",
+    "Operation": "İşlem",
+    "RequestId": "İstek ID",
+    "Status": "Durum",
+    "Time": "Zaman",
+    "TriggeredBy": "Tetikleyen"
+  },
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "Ön ayar seçin"
   },

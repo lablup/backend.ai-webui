@@ -306,6 +306,14 @@
     "ToolPermissionOverrides": "工具權限覆蓋",
     "TopP": "Top P"
   },
+  "auditLog": {
+    "AuditLog": "稽核記錄",
+    "Operation": "操作",
+    "Status": "狀態",
+    "Time": "時間",
+    "TriggeredBy": "觸發者",
+    "TriggeredByFilterPlaceholder": "以 ID 搜尋"
+  },
   "autoScalingRule": {
     "AddAutoScalingRule": "添加自動縮放規則",
     "Comparator": "比較器",
@@ -1448,6 +1456,7 @@
     "Filename": "文件名",
     "FolderNotFoundOrNoAccess": "未找到或拒絕訪問的文件夾",
     "InputTooShort": "輸入太短",
+    "Metadata": "元數據",
     "NoExplorerSupportForUnmanagedFolder": "未管理的文件夾不支持文件資源管理器。",
     "NoPermissions": "無權存取此資料夾",
     "ProcessingUpload": "您的文件正在上傳。請稍等。",

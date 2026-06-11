@@ -130,6 +130,11 @@ export type FilterOperator =
 type BaseFilterProperty = {
   key: string;
   propertyLabel: string;
+  // Placeholder for this property's value input (AutoComplete / DatePicker)
+  // shown when the property is selected. Falls back to the component's generic
+  // default (`comp:BAIPropertyFilter.PlaceHolder`, or the datetime-specific
+  // default for `type: 'datetime'`) when omitted.
+  placeholder?: string;
   type: FilterPropertyType;
   operators?: FilterOperator[];
   options?: AutoCompleteProps['options'];
@@ -735,7 +740,10 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
             showTime
             style={{ minWidth: 200 }}
             onChange={(date) => setSelectedDate(date)}
-            placeholder={t('comp:BAIGraphQLPropertyFilter.SelectDateTime')}
+            placeholder={
+              selectedProperty?.placeholder ??
+              t('comp:BAIGraphQLPropertyFilter.SelectDateTime')
+            }
           />
         ) : (
           <Tooltip
@@ -757,7 +765,10 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
               options={effectiveOptions?.filter((option) =>
                 !search ? true : option.label?.toString().includes(search),
               )}
-              placeholder={t('comp:BAIPropertyFilter.PlaceHolder')}
+              placeholder={
+                selectedProperty?.placeholder ??
+                t('comp:BAIPropertyFilter.PlaceHolder')
+              }
               onBlur={() => setIsFocused(false)}
               onFocus={() => setIsFocused(true)}
             >

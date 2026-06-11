@@ -306,6 +306,14 @@
     "ToolPermissionOverrides": "도구 권한 재정의",
     "TopP": "Top P"
   },
+  "auditLog": {
+    "AuditLog": "감사 로그",
+    "Operation": "작업",
+    "Status": "상태",
+    "Time": "시간",
+    "TriggeredBy": "실행자",
+    "TriggeredByFilterPlaceholder": "ID로 검색"
+  },
   "autoScalingRule": {
     "AddAutoScalingRule": "오토스케일링 규칙 추가",
     "Comparator": "연산자",
@@ -1447,6 +1455,7 @@
     "Filename": "파일 이름",
     "FolderNotFoundOrNoAccess": "존재하지 않거나 접근할 수 없는 폴더입니다.",
     "InputTooShort": "입력값이 너무 짧습니다.",
+    "Metadata": "메타데이터",
     "NoExplorerSupportForUnmanagedFolder": "Unmanaged 폴더는 파일 탐색기를 지원하지 않습니다.",
     "NoPermissions": "이 폴더에 접근할 권한이 없습니다",
     "ProcessingUpload": "파일을 업로드하는 중입니다. 잠시만 기다려주세요.",

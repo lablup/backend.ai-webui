@@ -67,6 +67,19 @@
     "Updated": "Mis à jour",
     "Version": "Version"
   },
+  "comp:BAIAuditLogNodes": {
+    "ActionId": "ID d'action",
+    "Actor": "Acteur",
+    "Description": "Description",
+    "Duration": "Durée",
+    "EntityId": "ID d'entité",
+    "EntityType": "Type d'entité",
+    "Operation": "Opération",
+    "RequestId": "ID de requête",
+    "Status": "Statut",
+    "Time": "Heure",
+    "TriggeredBy": "Déclenché par"
+  },
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "Sélectionner un preset"
   },

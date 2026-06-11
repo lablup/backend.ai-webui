@@ -306,6 +306,14 @@
     "ToolPermissionOverrides": "Penggantian izin alat",
     "TopP": "Top P"
   },
+  "auditLog": {
+    "AuditLog": "Log Audit",
+    "Operation": "Operasi",
+    "Status": "Status",
+    "Time": "Waktu",
+    "TriggeredBy": "Dipicu oleh",
+    "TriggeredByFilterPlaceholder": "Cari berdasarkan ID"
+  },
   "autoScalingRule": {
     "AddAutoScalingRule": "Tambahkan aturan penskalaan otomatis",
     "Comparator": "Pembanding",
@@ -1448,6 +1456,7 @@
     "Filename": "Nama File",
     "FolderNotFoundOrNoAccess": "Folder tidak ditemukan atau akses ditolak",
     "InputTooShort": "MasukanTerlaluPendek",
+    "Metadata": "Metadata",
     "NoExplorerSupportForUnmanagedFolder": "Folder yang tidak dikelola tidak mendukung file explorer.",
     "NoPermissions": "Tidak ada izin untuk mengakses folder ini",
     "ProcessingUpload": "File Anda sedang diunggah. \nHarap tunggu.",

@@ -306,6 +306,14 @@
     "ToolPermissionOverrides": "ツール権限オーバーライド",
     "TopP": "Top P"
   },
+  "auditLog": {
+    "AuditLog": "監査ログ",
+    "Operation": "操作",
+    "Status": "状態",
+    "Time": "時間",
+    "TriggeredBy": "実行者",
+    "TriggeredByFilterPlaceholder": "IDで検索"
+  },
   "autoScalingRule": {
     "AddAutoScalingRule": "自動スケーリングルールを追加します",
     "Comparator": "コンパレータ",
@@ -1447,6 +1455,7 @@
     "Filename": "ファイル名",
     "FolderNotFoundOrNoAccess": "フォルダーが見つかりませんまたはアクセスが拒否されません",
     "InputTooShort": "InputTooShort",
+    "Metadata": "メタデータ",
     "NoExplorerSupportForUnmanagedFolder": "管理されていないフォルダーは、ファイルエクスプローラーをサポートしていません。",
     "NoPermissions": "このフォルダーにアクセスする権限はありません",
     "ProcessingUpload": "ファイルがアップロードされています。\nお待ちください。",

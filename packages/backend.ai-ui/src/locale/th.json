@@ -67,6 +67,19 @@
     "Updated": "อัปเดต",
     "Version": "รุ่น"
   },
+  "comp:BAIAuditLogNodes": {
+    "ActionId": "รหัสการดำเนินการ",
+    "Actor": "ผู้ดำเนินการ",
+    "Description": "คำอธิบาย",
+    "Duration": "ระยะเวลา",
+    "EntityId": "รหัสเอนทิตี",
+    "EntityType": "ประเภทเอนทิตี",
+    "Operation": "การดำเนินการ",
+    "RequestId": "รหัสคำขอ",
+    "Status": "สถานะ",
+    "Time": "เวลา",
+    "TriggeredBy": "ผู้กระตุ้น"
+  },
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "เลือกการตั้งค่าล่วงหน้า"
   },

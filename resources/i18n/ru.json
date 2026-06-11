@@ -306,6 +306,14 @@
     "ToolPermissionOverrides": "Переопределения разрешений инструментов",
     "TopP": "Top P"
   },
+  "auditLog": {
+    "AuditLog": "Журнал аудита",
+    "Operation": "Операция",
+    "Status": "Статус",
+    "Time": "Время",
+    "TriggeredBy": "Инициировано",
+    "TriggeredByFilterPlaceholder": "Поиск по ID"
+  },
   "autoScalingRule": {
     "AddAutoScalingRule": "Добавить правило масштабирования автоматического масштабирования",
     "Comparator": "Компаратор",
@@ -1447,6 +1455,7 @@
     "Filename": "Имя файла",
     "FolderNotFoundOrNoAccess": "Папка не найдена или доступа отказана",
     "InputTooShort": "ВводОченьКороток",
+    "Metadata": "Метаданные",
     "NoExplorerSupportForUnmanagedFolder": "Неуправляемые папки не поддерживают исследователь файлов.",
     "NoPermissions": "Нет прав доступа к этой папке",
     "ProcessingUpload": "Ваш файл загружается. \nПожалуйста, подождите.",
