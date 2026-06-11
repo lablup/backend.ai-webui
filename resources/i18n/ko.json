@@ -311,7 +311,8 @@
     "Operation": "작업",
     "Status": "상태",
     "Time": "시간",
-    "TriggeredBy": "실행자"
+    "TriggeredBy": "실행자",
+    "TriggeredByFilterPlaceholder": "ID로 검색"
   },
   "autoScalingRule": {
     "AddAutoScalingRule": "오토스케일링 규칙 추가",
@@ -1452,7 +1453,6 @@
     "FileUploadCancelled": "사용자 요청에 따라 파일 업로드가 취소되었습니다.",
     "FileUploadFailed": "'{{folderName}}' 폴더에서 일부 파일 업로드에 실패했습니다. ",
     "Filename": "파일 이름",
-    "Files": "파일",
     "FolderNotFoundOrNoAccess": "존재하지 않거나 접근할 수 없는 폴더입니다.",
     "InputTooShort": "입력값이 너무 짧습니다.",
     "Metadata": "메타데이터",

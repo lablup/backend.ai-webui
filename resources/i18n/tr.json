@@ -311,7 +311,8 @@
     "Operation": "İşlem",
     "Status": "Durum",
     "Time": "Zaman",
-    "TriggeredBy": "Tetikleyen"
+    "TriggeredBy": "Tetikleyen",
+    "TriggeredByFilterPlaceholder": "ID ile ara"
   },
   "autoScalingRule": {
     "AddAutoScalingRule": "Otomatik ölçeklendirme kuralı ekleyin",
@@ -1452,7 +1453,6 @@
     "FileUploadCancelled": "Dosya yükleme kullanıcı isteği ile iptal edildi.",
     "FileUploadFailed": "Bazı dosyaları '{{{folderName}}' klasörüne yükleyemedi.",
     "Filename": "Dosya adı",
-    "Files": "Dosyalar",
     "FolderNotFoundOrNoAccess": "Klasör bulunamadı veya erişim reddedildi",
     "InputTooShort": "GirişÇok Kısa",
     "Metadata": "Meta veriler",

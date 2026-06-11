@@ -311,7 +311,8 @@
     "Operation": "Toiminto",
     "Status": "Tila",
     "Time": "Aika",
-    "TriggeredBy": "Käynnistänyt"
+    "TriggeredBy": "Käynnistänyt",
+    "TriggeredByFilterPlaceholder": "Hae ID:llä"
   },
   "autoScalingRule": {
     "AddAutoScalingRule": "Lisää automaattinen skaalaussääntö",
@@ -1452,7 +1453,6 @@
     "FileUploadCancelled": "Tiedoston lataus peruutettiin käyttäjäpyynnöllä.",
     "FileUploadFailed": "Joidenkin tiedostojen lähettäminen kansioon '{{folderName}}'.",
     "Filename": "Tiedoston nimi",
-    "Files": "Tiedostot",
     "FolderNotFoundOrNoAccess": "Kansiota ei löydy tai pääsy kielletty",
     "InputTooShort": "InputTooShort",
     "Metadata": "Metatiedot",

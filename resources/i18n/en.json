@@ -298,7 +298,8 @@
     "Operation": "Operation",
     "Status": "Status",
     "Time": "Time",
-    "TriggeredBy": "Triggered By"
+    "TriggeredBy": "Triggered By",
+    "TriggeredByFilterPlaceholder": "Search by ID"
   },
   "autoScalingRule": {
     "AddAutoScalingRule": "Add Auto Scaling Rule",
@@ -1439,7 +1440,6 @@
     "FileUploadCancelled": "The file upload was canceled by user request.",
     "FileUploadFailed": "Failed to upload some files in folder '{{folderName}}'.",
     "Filename": "File Name",
-    "Files": "Files",
     "FolderNotFoundOrNoAccess": "Folder not found or access denied",
     "InputTooShort": "InputTooShort",
     "Metadata": "Metadata",

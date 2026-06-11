@@ -311,7 +311,8 @@
     "Operation": "Операция",
     "Status": "Статус",
     "Time": "Время",
-    "TriggeredBy": "Инициировано"
+    "TriggeredBy": "Инициировано",
+    "TriggeredByFilterPlaceholder": "Поиск по ID"
   },
   "autoScalingRule": {
     "AddAutoScalingRule": "Добавить правило масштабирования автоматического масштабирования",
@@ -1452,7 +1453,6 @@
     "FileUploadCancelled": "Загрузка файла была отменена пользовательским запросом.",
     "FileUploadFailed": "Не удалось загрузить некоторые файлы в папке '{{folderName}}'.",
     "Filename": "Имя файла",
-    "Files": "Файлы",
     "FolderNotFoundOrNoAccess": "Папка не найдена или доступа отказана",
     "InputTooShort": "ВводОченьКороток",
     "Metadata": "Метаданные",

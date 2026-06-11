@@ -311,7 +311,8 @@
     "Operation": "การดำเนินการ",
     "Status": "สถานะ",
     "Time": "เวลา",
-    "TriggeredBy": "เรียกใช้โดย"
+    "TriggeredBy": "เรียกใช้โดย",
+    "TriggeredByFilterPlaceholder": "ค้นหาโดย ID"
   },
   "autoScalingRule": {
     "AddAutoScalingRule": "เพิ่มกฎการปรับขนาดอัตโนมัติ",
@@ -1452,7 +1453,6 @@
     "FileUploadCancelled": "การอัปโหลดไฟล์ถูกยกเลิกโดยคำขอผู้ใช้",
     "FileUploadFailed": "ไม่สามารถอัปโหลดไฟล์บางไฟล์ในโฟลเดอร์ '{{folderName}}'",
     "Filename": "ชื่อไฟล์",
-    "Files": "ไฟล์",
     "FolderNotFoundOrNoAccess": "ไม่พบโฟลเดอร์หรือถูกปฏิเสธการเข้าถึง",
     "InputTooShort": "ข้อมูลที่ป้อนสั้นเกินไป",
     "Metadata": "ข้อมูลเมตา",

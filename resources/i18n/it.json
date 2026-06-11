@@ -311,7 +311,8 @@
     "Operation": "Operazione",
     "Status": "Stato",
     "Time": "Ora",
-    "TriggeredBy": "Attivato da"
+    "TriggeredBy": "Attivato da",
+    "TriggeredByFilterPlaceholder": "Cerca per ID"
   },
   "autoScalingRule": {
     "AddAutoScalingRule": "Aggiungi regola di ridimensionamento automatico",
@@ -1452,7 +1453,6 @@
     "FileUploadCancelled": "Il caricamento del file è stato cancellato dalla richiesta dell'utente.",
     "FileUploadFailed": "Impossibile caricare alcuni file nella cartella '{{folderName}}'.",
     "Filename": "Nome del file",
-    "Files": "File",
     "FolderNotFoundOrNoAccess": "Cartella non trovata o accesso negata",
     "InputTooShort": "Inputtroppo corto",
     "Metadata": "Metadati",

@@ -137,6 +137,7 @@ const ScopedAuditLog = ({
               propertyLabel: t('auditLog.TriggeredBy'),
               type: 'string',
               fixedOperator: 'contains',
+              placeholder: t('auditLog.TriggeredByFilterPlaceholder'),
             },
             {
               key: 'createdAt',

@@ -311,7 +311,8 @@
     "Operation": "Operacja",
     "Status": "Status",
     "Time": "Czas",
-    "TriggeredBy": "Wywołane przez"
+    "TriggeredBy": "Wywołane przez",
+    "TriggeredByFilterPlaceholder": "Szukaj po ID"
   },
   "autoScalingRule": {
     "AddAutoScalingRule": "Dodaj regułę automatycznego skalowania",
@@ -1453,7 +1454,6 @@
     "FileUploadCancelled": "Przesłanie pliku zostało anulowane na żądanie użytkownika.",
     "FileUploadFailed": "Nie udało się przesłać niektórych plików w folderze „{{folderName}}”.",
     "Filename": "Nazwa pliku",
-    "Files": "Pliki",
     "FolderNotFoundOrNoAccess": "Folder nie został znaleziony ani nie ma dostępu",
     "InputTooShort": "Wejście zbyt krótkie",
     "Metadata": "Metadane",

@@ -311,7 +311,8 @@
     "Operation": "Vorgang",
     "Status": "Status",
     "Time": "Zeit",
-    "TriggeredBy": "Ausgelöst von"
+    "TriggeredBy": "Ausgelöst von",
+    "TriggeredByFilterPlaceholder": "Nach ID suchen"
   },
   "autoScalingRule": {
     "AddAutoScalingRule": "Automatische Skalierungsregel hinzufügen",
@@ -1452,7 +1453,6 @@
     "FileUploadCancelled": "Das Datei -Upload wurde durch Benutzeranforderung storniert.",
     "FileUploadFailed": "Es wurden einige Dateien nicht in Ordner '{{folderName}}' hochgeladen.",
     "Filename": "Dateiname",
-    "Files": "Dateien",
     "FolderNotFoundOrNoAccess": "Ordner, der nicht gefunden oder zugänglich ist verweigert",
     "InputTooShort": "EingabeTooShort",
     "Metadata": "Metadaten",

@@ -17,7 +17,7 @@ import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import ScopedAuditLog, { ScopedAuditLogQuery } from './ScopedAuditLog';
 import VFolderNodeDescriptionV2 from './VFolderNodeDescriptionV2';
 import VFolderTextFileEditorModal from './VFolderTextFileEditorModal';
-import { Alert, Grid, Skeleton, Tabs, theme } from 'antd';
+import { Alert, Grid, Skeleton, Splitter, Tabs, theme } from 'antd';
 import { createStyles } from 'antd-style';
 import { RcFile } from 'antd/es/upload';
 import {
@@ -149,8 +149,8 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
     currentPath: string;
   } | null>(null);
 
-  const [activeTab, setActiveTab] = useState<'files' | 'metadata' | 'auditLog'>(
-    'files',
+  const [activeTab, setActiveTab] = useState<'metadata' | 'auditLog'>(
+    'metadata',
   );
   const [auditLogQueryRef, loadAuditLogQuery] =
     useQueryLoader<ScopedAuditLogQueryType>(ScopedAuditLogQuery);
@@ -305,8 +305,50 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
     />
   ) : null;
 
-  const vFolderDescriptionElement = vfolderNode ? (
-    <VFolderNodeDescriptionV2 vfolderNodeFrgmt={vfolderNode} />
+  const vFolderInfoPanelElement = vfolderNode ? (
+    <Tabs
+      type={xl ? 'card' : 'line'}
+      activeKey={activeTab}
+      onChange={(key) => {
+        if (key === 'auditLog' && auditLogQueryRef == null) {
+          loadAuditLog();
+        }
+        setActiveTab(key as typeof activeTab);
+      }}
+      styles={{
+        content: {
+          paddingBottom: token.paddingContentVertical,
+        },
+      }}
+      items={[
+        {
+          key: 'metadata',
+          label: t('explorer.Metadata'),
+          children: <VFolderNodeDescriptionV2 vfolderNodeFrgmt={vfolderNode} />,
+        },
+        {
+          key: 'auditLog',
+          label: t('auditLog.AuditLog'),
+          children: (
+            <BAIErrorBoundary>
+              {auditLogQueryRef ? (
+                <Suspense
+                  fallback={<Skeleton active paragraph={{ rows: 4 }} />}
+                >
+                  <ScopedAuditLog
+                    queryRef={auditLogQueryRef}
+                    onReload={reloadAuditLogQuery}
+                    tableSettings={{}}
+                  />
+                </Suspense>
+              ) : (
+                <Skeleton active paragraph={{ rows: 4 }} />
+              )}
+            </BAIErrorBoundary>
+          ),
+        },
+      ]}
+    />
   ) : null;
 
   return (
@@ -316,7 +358,7 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
       keyboard
       destroyOnHidden
       footer={null}
-      style={{ maxWidth: '1600px' }}
+      style={{ maxWidth: '1900px' }}
       styles={{
         body: {
           height: '100vh',
@@ -345,7 +387,12 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
         {deferredOpen !== modalProps.open || vfolderNode === undefined ? (
           <Skeleton active />
         ) : (
-          <BAIFlex direction="column" gap={'lg'} align="stretch">
+          <BAIFlex
+            direction="column"
+            gap={'lg'}
+            align="stretch"
+            style={{ minHeight: '100%' }}
+          >
             {vfolderNode === null ? (
               <Alert
                 title={t('explorer.FolderNotFoundOrNoAccess')}
@@ -375,50 +422,27 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
             ) : null}
 
             {vfolderNode && !hasNoPermissions ? (
-              <Tabs
-                activeKey={activeTab}
-                onChange={(key) => {
-                  if (key === 'auditLog' && auditLogQueryRef == null) {
-                    loadAuditLog();
-                  }
-                  setActiveTab(key as typeof activeTab);
-                }}
-                items={[
-                  {
-                    key: 'files',
-                    label: t('explorer.Files'),
-                    children: fileExplorerElement,
-                  },
-                  {
-                    key: 'metadata',
-                    label: t('explorer.Metadata'),
-                    children: vFolderDescriptionElement,
-                  },
-                  {
-                    key: 'auditLog',
-                    label: t('auditLog.AuditLog'),
-                    children: (
-                      <BAIErrorBoundary>
-                        {auditLogQueryRef ? (
-                          <Suspense
-                            fallback={
-                              <Skeleton active paragraph={{ rows: 4 }} />
-                            }
-                          >
-                            <ScopedAuditLog
-                              queryRef={auditLogQueryRef}
-                              onReload={reloadAuditLogQuery}
-                              tableSettings={{}}
-                            />
-                          </Suspense>
-                        ) : (
-                          <Skeleton active paragraph={{ rows: 4 }} />
-                        )}
-                      </BAIErrorBoundary>
-                    ),
-                  },
-                ]}
-              />
+              xl ? (
+                <Splitter
+                  style={{
+                    flex: 1,
+                    gap: token.size,
+                  }}
+                  orientation={'horizontal'}
+                >
+                  <Splitter.Panel resizable={true}>
+                    {fileExplorerElement}
+                  </Splitter.Panel>
+                  <Splitter.Panel defaultSize={'45%'} min={550}>
+                    {vFolderInfoPanelElement}
+                  </Splitter.Panel>
+                </Splitter>
+              ) : (
+                <BAIFlex direction="column" align="stretch" gap={'lg'}>
+                  {fileExplorerElement}
+                  {vFolderInfoPanelElement}
+                </BAIFlex>
+              )
             ) : null}
           </BAIFlex>
         )}

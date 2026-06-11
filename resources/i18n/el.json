@@ -311,7 +311,8 @@
     "Operation": "Λειτουργία",
     "Status": "Κατάσταση",
     "Time": "Ώρα",
-    "TriggeredBy": "Ενεργοποιήθηκε από"
+    "TriggeredBy": "Ενεργοποιήθηκε από",
+    "TriggeredByFilterPlaceholder": "Αναζήτηση κατά ID"
   },
   "autoScalingRule": {
     "AddAutoScalingRule": "Προσθέστε κανόνα αυτόματης κλιμάκωσης",
@@ -1452,7 +1453,6 @@
     "FileUploadCancelled": "Η μεταφόρτωση αρχείων ακυρώθηκε με αίτημα χρήστη.",
     "FileUploadFailed": "Απέτυχε να ανεβάσει κάποια αρχεία στο φάκελο '{{folderName}}'.",
     "Filename": "Όνομα αρχείου",
-    "Files": "Αρχεία",
     "FolderNotFoundOrNoAccess": "Ο φάκελος δεν βρέθηκε ή απορρίφθηκε η πρόσβαση",
     "InputTooShort": "InputTooShort",
     "Metadata": "Μεταδεδομένα",

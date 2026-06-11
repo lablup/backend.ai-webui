@@ -116,11 +116,6 @@ const BAIAuditLogNodes = ({
         render: (__, record) => record.operation || '-',
       },
       {
-        key: 'actor',
-        title: t('comp:BAIAuditLogNodes.Actor'),
-        render: (__, record) => record.user?.basicInfo?.email || '-',
-      },
-      {
         key: 'status',
         title: t('comp:BAIAuditLogNodes.Status'),
         dataIndex: 'status',
@@ -152,8 +147,27 @@ const BAIAuditLogNodes = ({
       {
         key: 'triggeredBy',
         title: t('comp:BAIAuditLogNodes.TriggeredBy'),
-        render: (__, record) =>
-          record.triggeredBy ? <BAIId uuid={record.triggeredBy} /> : '-',
+        render: (__, record) => {
+          const fallback = record.triggeredBy ? (
+            <BAIId uuid={record.triggeredBy} />
+          ) : (
+            '-'
+          );
+          if (!record.user) {
+            return fallback;
+          }
+          // Show "email (id)" when the email is available; otherwise fall back
+          // to the user id alone so we never render an empty label before the
+          // parentheses when basicInfo.email is missing/null.
+          const email = record.user.basicInfo?.email;
+          return email ? (
+            <>
+              {email} &nbsp; (<BAIId globalId={record.user.id} />)
+            </>
+          ) : (
+            <BAIId globalId={record.user.id} />
+          );
+        },
       },
       {
         key: 'entityType',

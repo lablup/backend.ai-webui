@@ -311,7 +311,8 @@
     "Operation": "Үйлдэл",
     "Status": "Статус",
     "Time": "Цаг",
-    "TriggeredBy": "Гүйцэтгэсэн"
+    "TriggeredBy": "Гүйцэтгэсэн",
+    "TriggeredByFilterPlaceholder": "ID-ээр хайх"
   },
   "autoScalingRule": {
     "AddAutoScalingRule": "Автомат масштабыг нэмэх",
@@ -1452,7 +1453,6 @@
     "FileUploadCancelled": "Файлын байршуулалтыг хэрэглэгчийн хүсэлтээр цуцлагдсан.",
     "FileUploadFailed": "'{{folderName}}' Файлд файл байршуулж чадсангүй.",
     "Filename": "Хөдөлгөөний нэр",
-    "Files": "Файлууд",
     "FolderNotFoundOrNoAccess": "Фолдер олдсонгүй эсвэл хандалтыг үгүйсгэв",
     "InputTooShort": "Хэт богино байна",
     "Metadata": "Мета өгөгдөл",

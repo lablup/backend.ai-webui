@@ -311,7 +311,8 @@
     "Operation": "操作",
     "Status": "状态",
     "Time": "时间",
-    "TriggeredBy": "触发者"
+    "TriggeredBy": "触发者",
+    "TriggeredByFilterPlaceholder": "按 ID 搜索"
   },
   "autoScalingRule": {
     "AddAutoScalingRule": "添加自动缩放规则",
@@ -1452,7 +1453,6 @@
     "FileUploadCancelled": "文件上传已通过用户请求取消。",
     "FileUploadFailed": "无法将某些文件上传到文件夹'{{folderName}}'中。",
     "Filename": "文件名",
-    "Files": "文件",
     "FolderNotFoundOrNoAccess": "未找到或拒绝访问的文件夹",
     "InputTooShort": "输入太短",
     "Metadata": "元数据",

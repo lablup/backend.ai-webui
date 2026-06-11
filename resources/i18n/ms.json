@@ -311,7 +311,8 @@
     "Operation": "Operasi",
     "Status": "Status",
     "Time": "Masa",
-    "TriggeredBy": "Dicetuskan oleh"
+    "TriggeredBy": "Dicetuskan oleh",
+    "TriggeredByFilterPlaceholder": "Cari mengikut ID"
   },
   "autoScalingRule": {
     "AddAutoScalingRule": "Tambahkan peraturan penskalaan automatik",
@@ -1452,7 +1453,6 @@
     "FileUploadCancelled": "Muat naik fail dibatalkan oleh permintaan pengguna.",
     "FileUploadFailed": "Gagal memuat naik beberapa fail dalam folder '{{folderName}}'.",
     "Filename": "Nama fail",
-    "Files": "Fail",
     "FolderNotFoundOrNoAccess": "Folder tidak dijumpai atau akses ditolak",
     "InputTooShort": "InputTooShort",
     "Metadata": "Metadata",

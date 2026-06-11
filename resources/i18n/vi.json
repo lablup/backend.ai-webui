@@ -311,7 +311,8 @@
     "Operation": "Thao tác",
     "Status": "Trạng thái",
     "Time": "Thời gian",
-    "TriggeredBy": "Thực hiện bởi"
+    "TriggeredBy": "Thực hiện bởi",
+    "TriggeredByFilterPlaceholder": "Tìm theo ID"
   },
   "autoScalingRule": {
     "AddAutoScalingRule": "Thêm quy tắc tỷ lệ tự động",
@@ -1452,7 +1453,6 @@
     "FileUploadCancelled": "Tải lên tệp đã bị hủy bởi yêu cầu người dùng.",
     "FileUploadFailed": "Không thể tải lên một số tệp trong thư mục '{{folderName}}'.",
     "Filename": "Tên tệp",
-    "Files": "Tệp",
     "FolderNotFoundOrNoAccess": "Thư mục không tìm thấy hoặc truy cập bị từ chối",
     "InputTooShort": "InputTooShort",
     "Metadata": "Siêu dữ liệu",
