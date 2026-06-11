@@ -117,7 +117,6 @@ const ModelConfigItem: React.FC<{
             name={[listItemName, 'name']}
             label={t('adminDeploymentPreset.modelDef.ModelName')}
             style={{ flex: 1, minWidth: 160 }}
-            rules={[{ required: true, message: '' }]}
           >
             <Input
               placeholder={t(
@@ -130,7 +129,6 @@ const ModelConfigItem: React.FC<{
             name={[listItemName, 'modelPath']}
             label={t('adminDeploymentPreset.modelDef.ModelPath')}
             style={{ flex: 2, minWidth: 200 }}
-            rules={[{ required: true, message: '' }]}
           >
             <Input
               placeholder={t(
@@ -157,7 +155,6 @@ const ModelConfigItem: React.FC<{
                       name={[listItemName, 'service', 'port']}
                       label={t('adminDeploymentPreset.modelDef.Port')}
                       style={{ flex: 1, minWidth: 100 }}
-                      rules={[{ required: true, message: '' }]}
                     >
                       <InputNumber
                         min={1}
