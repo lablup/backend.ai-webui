@@ -36,10 +36,9 @@ const ModelConfigItem: React.FC<{
   const form = Form.useFormInstance<AdminDeploymentPresetFormValue>();
   const baiClient = useSuspendedBackendaiClient();
 
-  // Before 26.4.4rc7 the backend requires the health-check fields; on
-  // 26.4.4rc7+ they are optional and the server seeds defaults (FR-3056),
-  // so the fields are only enforced as required on older managers.
-  const isHealthCheckFieldRequired = !baiClient.supports(
+  // 26.4.4rc7+: server seeds health-check defaults, so the detail fields are
+  // unnecessary (FR-3056). Only legacy managers require them.
+  const supportsHealthCheckEnable = baiClient.supports(
     'model-health-check-enable',
   );
 
@@ -283,7 +282,7 @@ const ModelConfigItem: React.FC<{
                     </Checkbox>
                   </Form.Item>
 
-                  {enableHealthCheck && (
+                  {enableHealthCheck && !supportsHealthCheckEnable && (
                     <BAIFlex direction="column" align="stretch" gap="xs">
                       <Form.Item
                         {...restField}
@@ -291,9 +290,7 @@ const ModelConfigItem: React.FC<{
                         label={t(
                           'adminDeploymentPreset.modelDef.HealthCheckPath',
                         )}
-                        rules={[
-                          { required: isHealthCheckFieldRequired, message: '' },
-                        ]}
+                        rules={[{ required: true, message: '' }]}
                       >
                         <Input placeholder="/health" />
                       </Form.Item>
@@ -309,7 +306,7 @@ const ModelConfigItem: React.FC<{
                           label={t(
                             'adminDeploymentPreset.modelDef.HealthCheckInterval',
                           )}
-                          rules={[{ required: isHealthCheckFieldRequired }]}
+                          rules={[{ required: true }]}
                           style={{ flex: 1, minWidth: 160 }}
                         >
                           <InputNumber
@@ -329,7 +326,7 @@ const ModelConfigItem: React.FC<{
                           label={t(
                             'adminDeploymentPreset.modelDef.HealthCheckMaxRetries',
                           )}
-                          rules={[{ required: isHealthCheckFieldRequired }]}
+                          rules={[{ required: true }]}
                           style={{ flex: 1, minWidth: 160 }}
                         >
                           <InputNumber
@@ -349,7 +346,7 @@ const ModelConfigItem: React.FC<{
                           label={t(
                             'adminDeploymentPreset.modelDef.HealthCheckMaxWaitTime',
                           )}
-                          rules={[{ required: isHealthCheckFieldRequired }]}
+                          rules={[{ required: true }]}
                           style={{ flex: 1, minWidth: 160 }}
                         >
                           <InputNumber
@@ -371,7 +368,7 @@ const ModelConfigItem: React.FC<{
                           label={t(
                             'adminDeploymentPreset.modelDef.HealthCheckExpectedStatus',
                           )}
-                          rules={[{ required: isHealthCheckFieldRequired }]}
+                          rules={[{ required: true }]}
                           style={{ flex: 1, minWidth: 160 }}
                         >
                           <InputNumber
@@ -392,7 +389,7 @@ const ModelConfigItem: React.FC<{
                           label={t(
                             'adminDeploymentPreset.modelDef.HealthCheckInitialDelay',
                           )}
-                          rules={[{ required: isHealthCheckFieldRequired }]}
+                          rules={[{ required: true }]}
                           style={{ flex: 1, minWidth: 160 }}
                         >
                           <InputNumber
