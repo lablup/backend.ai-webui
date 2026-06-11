@@ -751,6 +751,12 @@ importers:
       '@dicebear/shapes':
         specifier: ^9.4.2
         version: 9.4.2(@dicebear/core@9.4.2)
+      '@emotion/cache':
+        specifier: ^11.11.0
+        version: 11.14.0
+      '@emotion/react':
+        specifier: ^11.11.4
+        version: 11.14.0(@types/react@19.2.14)(react@19.2.6)
       '@lobehub/fluent-emoji':
         specifier: ^2.0.0
         version: 2.0.0(patch_hash=e3910174b171372f01ee0d0f41033c3aed501f7eba649e863c48e7a370886a88)(@babel/core@7.29.0)(@types/mdast@4.0.4)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(antd@6.3.7(date-fns@2.30.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(framer-motion@12.23.24(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(micromark-util-types@2.0.2)(micromark@4.0.2)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
@@ -24009,6 +24015,8 @@ snapshots:
 
 time:
   '@cloudscape-design/board-components@3.0.176': '2026-05-04T10:46:18.491Z'
+  '@emotion/cache@11.14.0': '2024-12-09T08:43:28.087Z'
+  '@emotion/react@11.14.0': '2024-12-09T08:43:27.996Z'
   '@eslint/js@9.39.4': '2026-03-06T21:21:15.041Z'
   '@lobehub/fluent-emoji@2.0.0': '2025-04-28T05:40:46.019Z'
   ansi_up@6.0.6: '2025-05-16T20:58:13.495Z'

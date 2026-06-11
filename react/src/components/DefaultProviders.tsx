@@ -14,6 +14,8 @@ import { useDeviceMetaData } from '../hooks/backendai';
 import { useCustomThemeConfig } from '../hooks/useCustomThemeConfig';
 import { useThemeMode } from '../hooks/useThemeMode';
 import '../index.css';
+import createCache from '@emotion/cache';
+import { CacheProvider } from '@emotion/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useUpdateEffect } from 'ahooks';
 import { App, type AppProps, theme } from 'antd';
@@ -72,6 +74,16 @@ dayjs.extend(relativeTime);
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(duration);
+
+// @emotion/react's Global (used by createGlobalStyle) reads the nonce from
+// @emotion/react's own CacheContext, not from antd-style's StyleProvider.
+// Creating this cache at module load time is safe because globalThis.baiNonce
+// is set by the inline <script nonce="{{nonce}}"> in index.html, which
+// executes before any ES module bundle.
+const emotionGlobalCache = createCache({
+  key: 'css',
+  nonce: globalThis.baiNonce,
+});
 
 // Create a client
 const queryClient = new QueryClient({
@@ -336,22 +348,31 @@ export const DefaultProvidersForReactRoot: React.FC<{
                 <QueryParamProvider adapter={ReactRouter6Adapter}>
                   <App {...commonAppProps}>
                     {/*
-                     * antd-style (createStyles / createGlobalStyle) injects its
-                     * emotion <style> nodes into this StyleProvider's cache.
-                     * The nonce is required so those runtime styles survive a
-                     * strict CSP `style-src 'nonce-...'` policy — without it the
-                     * emotion sheets carry no nonce and the browser drops them.
-                     * antd's own cssinjs styles get the nonce separately via the
-                     * BAIConfigProvider `csp` prop above.
+                     * Two separate emotion caches are needed for CSP nonce
+                     * coverage:
+                     *
+                     * 1. StyleProvider (antd-style's custom EmotionContext):
+                     *    covers createStyles() and the antd-style css() helper.
+                     *    The nonce is passed directly as a prop.
+                     *
+                     * 2. CacheProvider (@emotion/react's CacheContext):
+                     *    covers createGlobalStyle(), which uses @emotion/react's
+                     *    Global component internally. Global reads the nonce from
+                     *    cache.sheet.nonce — it does NOT read antd-style's custom
+                     *    EmotionContext. Without this wrapper, style tags emitted
+                     *    by createGlobalStyle (e.g. ScrollbarGlobalStyle) carry no
+                     *    nonce and are blocked by `style-src 'nonce-...'` CSP.
                      */}
-                    <StyleProvider nonce={globalThis.baiNonce}>
-                      <Suspense>
-                        {/* <BrowserRouter> */}
-                        {/* <RoutingEventHandler /> */}
-                        {children}
-                        {/* </BrowserRouter> */}
-                      </Suspense>
-                    </StyleProvider>
+                    <CacheProvider value={emotionGlobalCache}>
+                      <StyleProvider nonce={globalThis.baiNonce}>
+                        <Suspense>
+                          {/* <BrowserRouter> */}
+                          {/* <RoutingEventHandler /> */}
+                          {children}
+                          {/* </BrowserRouter> */}
+                        </Suspense>
+                      </StyleProvider>
+                    </CacheProvider>
                   </App>
                 </QueryParamProvider>
               </BAIMetaDataWrapper>
