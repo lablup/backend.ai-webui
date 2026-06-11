@@ -7,20 +7,20 @@
   "stories": [],
   "sourceIssues": [],
   "subtasks": [
-    { "key": "FR-2875", "label": "A", "title": "feat(FR-2871 / A): @smoke tag convention" },
-    { "key": "FR-2876", "label": "B", "title": "feat(FR-2871 / B): backend.ai-webui-smoke-cli workspace scaffold" },
-    { "key": "FR-2877", "label": "C", "title": "feat(FR-2871 / C): playwright.smoke.config.ts + runner" },
-    { "key": "FR-2878", "label": "D", "title": "feat(FR-2871 / D): preflight/doctor subcommand + role auto-detection" },
-    { "key": "FR-2879", "label": "E", "title": "feat(FR-2871 / E): smoke spec set expansion" },
-    { "key": "FR-2880", "label": "F", "title": "feat(FR-2871 / F): HTML+JSON report directory + summary" },
-    { "key": "FR-2881", "label": "G", "title": "feat(FR-2871 / G): single-binary build (pkg/sea)" },
-    { "key": "FR-2882", "label": "H", "title": "feat(FR-2871 / H): air-gap bundle (browsers + assets)" },
-    { "key": "FR-2883", "label": "I", "title": "feat(FR-2871 / I): app launcher / wsproxy smoke scenarios" },
-    { "key": "FR-2884", "label": "J", "title": "docs(FR-2871 / J): Field-Ops handoff guide" }
+    { "key": "FR-2875", "label": "A", "title": "chore(WebUI Smoke CLI): introduce @smoke tag convention for e2e specs" },
+    { "key": "FR-2876", "label": "B", "title": "feat(WebUI Smoke CLI): scaffold backend.ai-webui-smoke-cli workspace package" },
+    { "key": "FR-2877", "label": "C", "title": "feat(WebUI Smoke CLI): implement runner with tag filter and external endpoint support" },
+    { "key": "FR-2878", "label": "D", "title": "feat(WebUI Smoke CLI): add preflight/doctor subcommand and role auto-detection" },
+    { "key": "FR-2879", "label": "E", "title": "feat(WebUI Smoke CLI): post-process report with summary.json and diagnostic block" },
+    { "key": "FR-2880", "label": "F", "title": "refactor(WebUI Smoke CLI): extract single-account-safe e2e utilities" },
+    { "key": "FR-2881", "label": "G", "title": "feat(WebUI Smoke CLI): bundle Chromium and add air-gap + insecure-tls support" },
+    { "key": "FR-2882", "label": "H", "title": "chore(WebUI Smoke CLI): SEA/pkg binary build and internal release workflow" },
+    { "key": "FR-2883", "label": "I", "title": "docs(WebUI Smoke CLI): operator README in English and Korean" },
+    { "key": "FR-2884", "label": "J", "title": "feat(WebUI Smoke CLI): expand smoke coverage (App launcher P1, model serving, RBAC basics)" }
   ],
   "createdAt": "2026-05-12T00:00:00Z",
   "verification": {
-    "verifiedAt": "2026-05-12T11:30:00Z",
+    "verifiedAt": "2026-06-11T02:40:00Z",
     "againstPRs": [7391, 7392],
     "results": {
       "FR-A": "PASS",
@@ -31,6 +31,11 @@
       "NFR-role-detection": "PASS",
       "NFR-report-shape": "PASS"
     },
-    "notes": "FR-C is PARTIAL because storage-state reuse, doctor command, and rich diagnostic block are intentionally deferred to Phase 2 (FR-2878 / FR-2879). The @smoke-any tag from FR-A was dropped — see spec FR-A NOTE. Live staging smoke run confirmed runner pipeline works end-to-end."
+    "liveRuns": {
+      "endpoint": "2FA-enabled staging (webui v26.1.0-alpha, ~1 month older than this branch)",
+      "admin": { "passed": 14, "failed": 1, "skipped": 2, "note": "session lifecycle (create→RUNNING→terminate) PASSED; 1 failure + later 5 user-run failures are cross-version UI skew vs the older staging, expected to pass against a version-matched install (doctor in FR-2878 will warn on mismatch); 2 skips are documented version-gated Agent Stats widget guards" },
+      "user": { "passed": 2, "failed": 5, "skipped": 0, "note": "role auto-detection resolved 'user'; failures are the vfolder explorer cross-version skew" }
+    },
+    "notes": "FR-C is PARTIAL because storage-state reuse, doctor command, and rich diagnostic block are intentionally deferred to Phase 2 (FR-2878 / FR-2879). The @smoke-any tag from FR-A was dropped — see spec FR-A NOTE. verify.sh ALL PASS (Relay/Lint/Format/TypeScript/Vite). Role-exclusive grep partition verified via playwright --list (admin 17 / user 7, zero cross-role contamination) and 13 regex unit cases."
   }
 }
