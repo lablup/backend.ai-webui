@@ -330,7 +330,7 @@
     "LastTriggered": "Lần cuối cùng được kích hoạt",
     "LastTriggeredTooltip": "Thời điểm gần đây nhất quy tắc này kích hoạt và điều chỉnh số lượng bản sao. Trống nếu quy tắc chưa bao giờ kích hoạt.",
     "Lower": "Dưới",
-    "MIN/MAXReplicas": "Bản sao tối thiểu / Max",
+    "MIN/MAXReplicas": "Bản sao tối thiểu / tối đa",
     "MaxReplicas": "Tối đa bản sao",
     "MaxReplicasTooltip": "Số lượng bản sao tối đa mà tự động thay đổi tỷ lệ cho phép.",
     "MaxReplicasValue": "Tối đa: {{value}}",
@@ -2585,7 +2585,7 @@
     "Message": "Tin nhắn",
     "Phase": "Giai đoạn",
     "Result": "Kết quả",
-    "RouteSchedulingHistory": "Lịch sử lập lịch replica",
+    "RouteSchedulingHistory": "Lịch sử lập lịch bản sao",
     "ToStatus": "Đến trạng thái",
     "UpdatedAt": "Cập nhật lúc"
   },

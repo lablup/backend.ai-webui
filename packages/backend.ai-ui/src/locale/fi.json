@@ -464,7 +464,7 @@
     "ContainerMainGID": "Säiliön GID",
     "ContainerMainGIDTooltip": "Kontin sisällä prosesseille asetettu oletusarvoinen numeerinen ryhmä-ID",
     "ContainerUID": "Säiliön UID",
-    "ContainerUIDTooltip": "Säiliön sisäisille prosesseille määritetty numeerinen käyttäjätunnus.",
+    "ContainerUIDTooltip": "Säiliön sisäisille prosesseille määritetty numeerinen käyttäjätunnus",
     "CreatedAt": "Luotu",
     "Description": "Kuvaus",
     "Disabled": "Poistettu käytöstä",
