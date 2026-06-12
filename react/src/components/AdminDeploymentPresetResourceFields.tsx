@@ -135,7 +135,10 @@ export const FixedResourceSlotField: React.FC<{
           required={required}
           rules={[{ required, message: '' }]}
         >
-          <BAIDynamicUnitInputNumber style={{ width: '100%' }} />
+          <BAIDynamicUnitInputNumber
+            style={{ width: '100%' }}
+            defaultUnit="g"
+          />
         </Form.Item>
       ) : (
         <Form.Item

@@ -610,19 +610,27 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                 {(fields, { add, remove }) => (
                   <BAIFlex direction="column" gap="xs" align="stretch">
                     {fields.map(({ key, name, ...rest }) => (
-                      <BAIFlex
+                      // Grid with `minmax(0, 1fr)` tracks so a long custom key
+                      // can't expand its input and squash the value field — the
+                      // tracks stay 50/50 and long content scrolls within each.
+                      <div
                         key={key}
-                        direction="row"
-                        align="baseline"
-                        gap="xs"
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns:
+                            'minmax(0, 1fr) minmax(0, 1fr) auto',
+                          alignItems: 'baseline',
+                          gap: token.marginXS,
+                        }}
                       >
                         <Form.Item
                           {...rest}
                           name={[name, 'name']}
-                          style={{ marginBottom: 0, flex: 1 }}
+                          style={{ marginBottom: 0 }}
                           rules={[{ required: true, message: '' }]}
                         >
                           <AutoComplete
+                            style={{ width: '100%' }}
                             options={[{ value: 'shmem' }]}
                             filterOption={(input, option) =>
                               String(option?.value ?? '')
@@ -635,13 +643,13 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                         <Form.Item
                           {...rest}
                           name={[name, 'value']}
-                          style={{ marginBottom: 0, flex: 1 }}
+                          style={{ marginBottom: 0 }}
                           rules={[{ required: true, message: '' }]}
                         >
                           <Input placeholder="64m" />
                         </Form.Item>
                         <MinusCircleOutlined onClick={() => remove(name)} />
-                      </BAIFlex>
+                      </div>
                     ))}
                     <Form.Item noStyle>
                       <BAIButton

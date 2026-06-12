@@ -5,6 +5,7 @@
 import { useAdminImageCanonicalName } from '../hooks/hooksUsingRelay';
 import { ResourceNumbersOfSession } from '../pages/SessionLauncherPage';
 import type { AdminDeploymentPresetFormValue } from './AdminDeploymentPresetFormTypes';
+import type { ResourceAllocationFormValue } from './SessionFormItems/ResourceAllocationFormItems';
 import SourceCodeView from './SourceCodeView';
 import { Button, Descriptions, Space, Tag, Typography, theme } from 'antd';
 import type { FormInstance } from 'antd';
@@ -64,6 +65,17 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
   const runtimeName =
     runtimeVariants.find((r) => toLocalId(r.id) === values.runtimeVariantId)
       ?.name ?? values.runtimeVariantId;
+
+  // Drop empty/partial slot rows (added but not filled in) so the review
+  // doesn't render an "undefined NaN" chip for a slot with no type/quantity.
+  const filledResourceSlots = (values.resourceSlots ?? []).filter(
+    (s) => s.resourceType && s.quantity,
+  );
+  const hasResources = !!(
+    values.cpu ||
+    values.mem ||
+    filledResourceSlots.length
+  );
 
   const editLink = (stepIndex: number, cardId: string) => (
     <Button
@@ -136,30 +148,44 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
       >
         <Descriptions column={1} size="small">
           <Descriptions.Item label={t('adminDeploymentPreset.ResourceSlots')}>
-            <BAIFlex direction="row" align="start" gap="sm" wrap="wrap">
-              <ResourceNumbersOfSession
-                resource={
-                  {
-                    ...(values.cpu ? { cpu: Number(values.cpu) } : {}),
-                    ...(values.mem ? { mem: values.mem } : {}),
-                    ...Object.fromEntries(
-                      (values.resourceSlots ?? []).map((s) => [
-                        s.resourceType,
-                        s.quantity,
-                      ]),
-                    ),
-                  } as any
-                }
-              />
-            </BAIFlex>
+            {hasResources ? (
+              <BAIFlex direction="row" align="start" gap="sm" wrap="wrap">
+                <ResourceNumbersOfSession
+                  resource={
+                    {
+                      ...(values.cpu ? { cpu: Number(values.cpu) } : {}),
+                      ...(values.mem ? { mem: values.mem } : {}),
+                      ...Object.fromEntries(
+                        filledResourceSlots.map((s) => [
+                          s.resourceType,
+                          s.quantity,
+                        ]),
+                      ),
+                    } as ResourceAllocationFormValue['resource']
+                  }
+                />
+              </BAIFlex>
+            ) : (
+              '-'
+            )}
           </Descriptions.Item>
           <Descriptions.Item label={t('adminDeploymentPreset.ResourceOpts')}>
             {values.resourceOpts?.some((o) => o.name?.trim()) ? (
-              <BAIFlex direction="row" align="start" gap="sm" wrap="wrap">
+              <BAIFlex
+                direction="row"
+                align="start"
+                gap="xs"
+                wrap="wrap"
+                style={{ maxWidth: '100%' }}
+              >
                 {values.resourceOpts
                   .filter((o) => o.name?.trim())
                   .map((o, i) => (
-                    <Typography.Text key={`${o.name?.trim()}-${i}`} code>
+                    <Typography.Text
+                      key={`${o.name?.trim()}-${i}`}
+                      code
+                      style={{ wordBreak: 'break-all', minWidth: 0 }}
+                    >
                       {o.name?.trim()}: {o.value?.trim() || '-'}
                     </Typography.Text>
                   ))}
