@@ -914,10 +914,7 @@ export class Client {
       // adminKeypairResourcePoliciesV2 gained `keypair.userId` filter +
       // `keypairs` connection. FR-3020.
       this._features['keypair-resource-policy-user-filter'] = true;
-    }
-    // TODO(FR-3087): simplify to '26.4.4' once rc builds are out of use.
-    // BA-6326 / backend PR #12000 — RuntimeVariantPreset.required: Boolean!
-    if (this.isManagerVersionCompatibleWith('26.4.4rc7')) {
+      // BA-6326 / backend PR #12000 — RuntimeVariantPreset.required: Boolean!
       this._features['runtime-variant-preset-required'] = true;
     }
   }
