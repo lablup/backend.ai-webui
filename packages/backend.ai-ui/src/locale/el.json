@@ -231,7 +231,7 @@
     "Project": "Έργο",
     "ProjectID": "ID Έργου",
     "ReplicaSummary": "Αντίγραφα",
-    "ReplicaSummaryTooltip": "Εκτελούμενα αντίγραφα σε σχέση με τον επιθυμητό (ή συνολικό) αριθμό αντιγράφων.",
+    "ReplicaSummaryTooltip": "Εκτελούμενα αντίγραφα σε σχέση με τον επιθυμητό αριθμό αντιγράφων.",
     "Replicas": "Αντίγραφα",
     "ResourceGroup": "Ομάδα Πόρων",
     "RevisionNumber": "Αναθεώρηση",

@@ -42,7 +42,7 @@ const MODEL_STORE_PROJECT_NAME = 'model-store';
 const FOLDER_NAME_MAX_LENGTH = 64;
 const MODAL_WIDTH = 650;
 
-const useStyles = createStyles(({ css }) => ({
+const useStyles = createStyles(({ css, token }) => ({
   modal: css`
     .ant-modal-body {
       padding-top: 24px !important;
@@ -53,10 +53,10 @@ const useStyles = createStyles(({ css }) => ({
     .ant-form-item-label {
       display: flex;
       align-items: start;
-      padding-left: var(--token-paddingSM);
+      padding-left: ${token.paddingSM}px;
     }
     .ant-form-item-control {
-      padding-right: var(--token-paddingSM);
+      padding-right: ${token.paddingSM}px;
     }
     .ant-form-item-label > label::after {
       display: none !important;

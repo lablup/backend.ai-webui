@@ -231,7 +231,7 @@
     "Project": "Төсөл",
     "ProjectID": "Төслийн ID",
     "ReplicaSummary": "Хуулбар",
-    "ReplicaSummaryTooltip": "Гүйцэтгэж байгаа хуулбарын тоо хүссэн (эсвэл нийт) хуулбарын тоотой харьцуулсан.",
+    "ReplicaSummaryTooltip": "Гүйцэтгэж байгаа хуулбарын тоо хүссэн хуулбарын тоотой харьцуулсан.",
     "Replicas": "Хуулбар",
     "ResourceGroup": "Нөөцийн бүлэг",
     "RevisionNumber": "Засвар",

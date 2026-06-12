@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<660395b15bde0b90d7faccf5f04d0b1e>>
+ * @generated SignedSource<<ee4281a0299b41f8945f58027fe32f8c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -56,9 +56,6 @@ export type BAIModelDeploymentNodesFragment$data = ReadonlyArray<{
   readonly runningReplicas: {
     readonly count: number;
   } | null | undefined;
-  readonly totalReplicas: {
-    readonly count: number;
-  } | null | undefined;
   readonly " $fragmentSpreads": FragmentRefs<"BAIDeploymentOwnerInfo_deployment">;
   readonly " $fragmentType": "BAIModelDeploymentNodesFragment";
 }>;
@@ -81,16 +78,7 @@ v1 = {
   "kind": "ScalarField",
   "name": "name",
   "storageKey": null
-},
-v2 = [
-  {
-    "alias": null,
-    "args": null,
-    "kind": "ScalarField",
-    "name": "count",
-    "storageKey": null
-  }
-];
+};
 return {
   "argumentDefinitions": [],
   "kind": "Fragment",
@@ -266,16 +254,6 @@ return {
       "storageKey": null
     },
     {
-      "alias": "totalReplicas",
-      "args": null,
-      "concreteType": "ModelReplicaConnection",
-      "kind": "LinkedField",
-      "name": "replicas",
-      "plural": false,
-      "selections": (v2/*: any*/),
-      "storageKey": null
-    },
-    {
       "alias": "runningReplicas",
       "args": [
         {
@@ -292,7 +270,15 @@ return {
       "kind": "LinkedField",
       "name": "replicas",
       "plural": false,
-      "selections": (v2/*: any*/),
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "count",
+          "storageKey": null
+        }
+      ],
       "storageKey": "replicas(filter:{\"status\":{\"equals\":\"RUNNING\"}})"
     },
     {
@@ -349,6 +335,6 @@ return {
 };
 })();
 
-(node as any).hash = "d7e2e42d651a342fde7c1a32802c0ff1";
+(node as any).hash = "195dfd4bb69f0f91b45177cea1c58c4e";
 
 export default node;

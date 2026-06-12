@@ -10,6 +10,8 @@
     "@ant-design/cssinjs": "^2.1.2",
     "@ant-design/icons": "catalog:",
     "@ant-design/x": "^2.5.0",
+    "@emotion/cache": "^11.11.0",
+    "@emotion/react": "^11.11.4",
     "@cloudscape-design/board-components": "3.0.176",
     "@cloudscape-design/components": "^3.0.1280",
     "@dicebear/collection": "^9.4.2",

@@ -231,7 +231,7 @@
     "Project": "Projekt",
     "ProjectID": "Projekt-ID",
     "ReplicaSummary": "Replikate",
-    "ReplicaSummaryTooltip": "Laufende Replikate im Verhältnis zur gewünschten (oder Gesamt-)Anzahl.",
+    "ReplicaSummaryTooltip": "Laufende Replikate im Verhältnis zur gewünschten Anzahl.",
     "Replicas": "Replikate",
     "ResourceGroup": "Ressourcengruppe",
     "RevisionNumber": "Revision",

@@ -2,10 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import {
-  useBAINotificationEffect,
-  useBAINotificationState,
-} from '../hooks/useBAINotification';
+import { useBAINotificationState } from '../hooks/useBAINotification';
 import useKeyboardShortcut from '../hooks/useKeyboardShortcut';
 import ReverseThemeProvider from './ReverseThemeProvider';
 import WEBUINotificationDrawer from './WEBUINotificationDrawer';
@@ -15,39 +12,17 @@ import { BAIText } from 'backend.ai-ui';
 import { t } from 'i18next';
 import { atom, useAtom } from 'jotai';
 import * as _ from 'lodash-es';
-import React, { useEffect } from 'react';
+import React from 'react';
 
 export const isOpenDrawerState = atom(false);
 
+// Pure UI: badge + drawer toggle. Notification event handling and toast
+// rendering live in the app-wide <NotificationHost /> (DefaultProviders),
+// which stays mounted regardless of authentication state.
 const BAINotificationButton: React.FC<ButtonProps> = ({ ...props }) => {
-  const [notifications, { upsertNotification, clearNotification }] =
-    useBAINotificationState();
-  useBAINotificationEffect();
+  const [notifications] = useBAINotificationState();
 
   const [isOpenDrawer, setIsOpenDrawer] = useAtom(isOpenDrawerState);
-  useEffect(() => {
-    const addNotificationHandler = (e: any) => {
-      upsertNotification(e.detail);
-    };
-    const clearNotificationHandler = (e: any) => {
-      clearNotification(e.detail.key);
-    };
-    document.addEventListener('add-bai-notification', addNotificationHandler);
-    document.addEventListener(
-      'clear-bai-notification',
-      clearNotificationHandler,
-    );
-    return () => {
-      document.removeEventListener(
-        'add-bai-notification',
-        addNotificationHandler,
-      );
-      document.removeEventListener(
-        'clear-bai-notification',
-        clearNotificationHandler,
-      );
-    };
-  }, [upsertNotification, clearNotification]);
 
   useKeyboardShortcut(
     (event) => {

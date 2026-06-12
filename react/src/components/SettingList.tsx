@@ -24,7 +24,7 @@ import { useTranslation } from 'react-i18next';
 const useStyles = createStyles(({ css }) => ({
   TabStyles: css`
     .ant-tabs-tab-active {
-      font-weight: var(--token-fontWeightSuperStrong, 700);
+      font-weight: 700;
     }
     .ant-typography-secondary {
       font-weight: normal !important;

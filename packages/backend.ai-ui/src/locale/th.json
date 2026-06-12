@@ -231,7 +231,7 @@
     "Project": "โปรเจกต์",
     "ProjectID": "รหัสโปรเจกต์",
     "ReplicaSummary": "จำนวนสำเนา",
-    "ReplicaSummaryTooltip": "จำนวนสำเนาที่กำลังทำงานเทียบกับจำนวนสำเนาที่ต้องการ (หรือทั้งหมด)",
+    "ReplicaSummaryTooltip": "จำนวนสำเนาที่กำลังทำงานเทียบกับจำนวนสำเนาที่ต้องการ",
     "Replicas": "จำนวนสำเนา",
     "ResourceGroup": "กลุ่มทรัพยากร",
     "RevisionNumber": "ฉบับแก้ไข",

@@ -231,7 +231,7 @@
     "Project": "Proyek",
     "ProjectID": "ID Proyek",
     "ReplicaSummary": "Replika",
-    "ReplicaSummaryTooltip": "Replika yang berjalan dari jumlah replika yang diinginkan (atau total).",
+    "ReplicaSummaryTooltip": "Replika yang berjalan dari jumlah replika yang diinginkan.",
     "Replicas": "Replika",
     "ResourceGroup": "Grup Sumber Daya",
     "RevisionNumber": "Revisi",

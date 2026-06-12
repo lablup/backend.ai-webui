@@ -40,8 +40,7 @@ import { useCurrentUserRole } from '../hooks/backendai';
 import { useCurrentResourceGroupState } from '../hooks/useCurrentProject';
 import { useRecentSessionHistory } from '../hooks/useRecentSessionHistory';
 import { useStartSession } from '../hooks/useStartSession';
-// @ts-ignore
-import customCSS from './SessionLauncherPage.css?raw';
+import './SessionLauncherPage.css';
 import {
   DoubleRightOutlined,
   EllipsisOutlined,
@@ -507,7 +506,6 @@ const SessionLauncherPage = () => {
       }}
       gap={'md'}
     >
-      <style>{customCSS}</style>
       <BAIFlex direction="row" gap="md" align="start">
         <BAIFlex
           direction="column"

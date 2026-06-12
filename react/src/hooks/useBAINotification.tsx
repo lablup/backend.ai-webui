@@ -320,7 +320,13 @@ export const useBAINotificationEffect = () => {
           listeningTaskIdsRef.current,
           notification.backgroundTask?.taskId,
         ) &&
-        notification.backgroundTask.status === 'pending'
+        notification.backgroundTask.status === 'pending' &&
+        // The host is always mounted (even before login / during logout).
+        // listenToBackgroundTask needs an initialized client to build the SSE
+        // request, so skip attaching until one exists; the effect re-runs on
+        // the next notification change and attaches then.
+        typeof globalThis.backendaiclient !== 'undefined' &&
+        globalThis.backendaiclient !== null
       ) {
         listeningTaskIdsRef.current.push(notification.backgroundTask?.taskId);
         const SSEEventHandler: SSEEventHandlerTypes<BackgroundTaskEvent> = {

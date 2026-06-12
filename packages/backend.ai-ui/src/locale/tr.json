@@ -231,7 +231,7 @@
     "Project": "Proje",
     "ProjectID": "Proje Kimliği",
     "ReplicaSummary": "Kopyalar",
-    "ReplicaSummaryTooltip": "İstenen (veya toplam) kopya sayısına karşılık çalışan kopyalar.",
+    "ReplicaSummaryTooltip": "İstenen kopya sayısına karşılık çalışan kopyalar.",
     "Replicas": "Kopyalar",
     "ResourceGroup": "Kaynak Grubu",
     "RevisionNumber": "Revizyon",

@@ -11,13 +11,13 @@ const useStyles = createStyles(({ css, token }) => {
   return {
     board: css`
       .bai_board_placeholder {
-        border-radius: var(--token-borderRadius) !important;
+        border-radius: ${token.borderRadius}px !important;
       }
       .bai_board_placeholder--active {
-        background-color: var(--token-colorSplit) !important ;
+        background-color: ${token.colorSplit} !important ;
       }
       .bai_board_placeholder--hover {
-        background-color: var(--token-colorPrimaryHover) !important ;
+        background-color: ${token.colorPrimaryHover} !important ;
         // FIXME: global token doesn't exist, so opacity fits color
         opacity: 0.3;
       }
@@ -69,8 +69,8 @@ const useStyles = createStyles(({ css, token }) => {
     `,
     boardItems: css`
       & > div:first-child {
-        border-radius: var(--token-borderRadius) !important;
-        background-color: var(--token-colorBgContainer) !important;
+        border-radius: ${token.borderRadius}px !important;
+        background-color: ${token.colorBgContainer} !important;
         border: 1px solid ${token.colorBorderSecondary} !important;
       }
 
@@ -83,8 +83,8 @@ const useStyles = createStyles(({ css, token }) => {
       }
 
       & > div:first-child > div:first-child > div:first-child {
-        margin-bottom: var(--token-margin);
-        background-color: var(--token-colorBgContainer) !important;
+        margin-bottom: ${token.margin}px;
+        background-color: ${token.colorBgContainer} !important;
         position: absolute;
         z-index: 1;
       }

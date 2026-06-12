@@ -3,6 +3,7 @@ import {
   acceptAllInvitationAndVerifySpecificFolder,
   createVFolderAndVerify,
   deleteForeverAndVerifyFromTrash,
+  leaveSharedFolderAndVerify,
   loginAsUser,
   loginAsUser2,
   moveToTrashAndVerify,
@@ -161,6 +162,28 @@ test.describe.serial(
         sharingFolderName,
         userInfo.user.email,
       );
+    });
+
+    // Regression guard for FR-2978: previously the leave_invited client
+    // sent `null` as the request body, which the manager's
+    // BodyParam[LeaveVFolderReq] rejected with HTTP 400.
+    test('Invitee can leave a shared vFolder', async ({
+      page,
+      browser,
+      request,
+    }) => {
+      await shareVFolderAndVerify(
+        page,
+        sharingFolderName,
+        userInfo.user2.email,
+      );
+      const user2_page = await browser.newPage();
+      await loginAsUser2(user2_page, request);
+      await acceptAllInvitationAndVerifySpecificFolder(
+        user2_page,
+        sharingFolderName,
+      );
+      await leaveSharedFolderAndVerify(user2_page, sharingFolderName);
     });
   },
 );

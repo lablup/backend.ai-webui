@@ -14,6 +14,7 @@ import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginati
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCSVExport } from '../hooks/useCSVExport';
 import BAIRadioGroup from './BAIRadioGroup';
+import BulkCreateUserFromCSVModal from './BulkCreateUserFromCSVModal';
 import PurgeUsersModal from './PurgeUsersModal';
 import UpdateUsersModal from './UpdateUsersModal';
 import UserInfoModal from './UserInfoModal';
@@ -94,6 +95,8 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
   >(null);
   const [openCreateModal, setOpenCreateModal] = useState<boolean>(false);
   const [openBulkCreateModal, setOpenBulkCreateModal] =
+    useState<boolean>(false);
+  const [openBulkCreateCSVModal, setOpenBulkCreateCSVModal] =
     useState<boolean>(false);
   const [selectedUserList, setSelectedUserList] = useState<UserNode[]>([]);
   const [openPurgeUsersModal, { toggle: togglePurgeUsersModal }] =
@@ -504,6 +507,13 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
                         setOpenBulkCreateModal(true);
                       },
                     },
+                    {
+                      key: 'bulk-create-csv',
+                      label: t('credential.BulkCreateUserFromCSV'),
+                      onClick: () => {
+                        setOpenBulkCreateCSVModal(true);
+                      },
+                    },
                   ],
                 }}
                 placement="bottomRight"
@@ -611,6 +621,17 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
           }
         }}
       />
+      <BAIUnmountAfterClose>
+        <BulkCreateUserFromCSVModal
+          open={openBulkCreateCSVModal}
+          onRequestClose={(success) => {
+            setOpenBulkCreateCSVModal(false);
+            if (success) {
+              updateFetchKey();
+            }
+          }}
+        />
+      </BAIUnmountAfterClose>
       <BAIUnmountAfterClose>
         <PurgeUsersModal
           open={openPurgeUsersModal}

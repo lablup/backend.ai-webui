@@ -1052,11 +1052,9 @@ const EduAppSessionRelayLoader: React.FC<{
  * can be called unconditionally per the Rules of Hooks.
  *
  * Calls `launchApp` directly (not `launchAppWithNotification`) because
- * the EduAppLauncher page renders outside `MainLayout` and therefore
- * has no `useBAINotificationEffect` subscriber attached to drive the
- * notification's `backgroundTask.promise` lifecycle. The card UI
- * already shows per-step progress, so the notification surface is not
- * needed here. The promise resolves with the work info containing the
+ * the card UI already shows per-step progress, so a toast driven by the
+ * app-wide `NotificationHost` would only duplicate that progress
+ * display. The promise resolves with the work info containing the
  * `appConnectUrl`, which is forwarded to `onLaunched`. `AppLaunchError`
  * (e.g. service port missing → stage `'configuring'`) is forwarded to
  * `onError`.

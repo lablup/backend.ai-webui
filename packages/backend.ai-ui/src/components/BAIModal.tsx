@@ -318,6 +318,9 @@ const BAIModal: React.FC<BAIModalProps> = ({
       if (!style) {
         style = document.createElement('style');
         style.id = styleId;
+        // Carry the per-request CSP nonce so this injected <style> survives a
+        // strict `style-src 'nonce-...'` policy (empty in dev / Storybook).
+        style.nonce = (globalThis as { baiNonce?: string }).baiNonce ?? '';
         document.head.appendChild(style);
       }
       style.textContent = 'html body { overflow-y: auto !important; }';
@@ -562,7 +565,7 @@ const BAIModal: React.FC<BAIModalProps> = ({
         },
         header: {
           marginBottom: 0,
-          borderBottom: `1px solid var(--token-colorBorder, ${token.colorBorder})`,
+          borderBottom: `1px solid ${token.colorBorder}`,
           borderWidth: '100%',
           justifyContent: 'space-between',
           display: 'flex',

@@ -231,7 +231,7 @@
     "Project": "Projek",
     "ProjectID": "ID Projek",
     "ReplicaSummary": "Replika",
-    "ReplicaSummaryTooltip": "Bilangan replika yang berjalan berbanding bilangan replika yang dikehendaki (atau jumlah).",
+    "ReplicaSummaryTooltip": "Bilangan replika yang berjalan berbanding bilangan replika yang dikehendaki.",
     "Replicas": "Replika",
     "ResourceGroup": "Kumpulan Sumber",
     "RevisionNumber": "Semakan",

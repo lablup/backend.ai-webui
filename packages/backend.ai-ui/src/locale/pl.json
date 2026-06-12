@@ -231,7 +231,7 @@
     "Project": "Projekt",
     "ProjectID": "ID projektu",
     "ReplicaSummary": "Repliki",
-    "ReplicaSummaryTooltip": "Liczba uruchomionych replik w stosunku do żądanej (lub całkowitej) liczby replik.",
+    "ReplicaSummaryTooltip": "Liczba uruchomionych replik w stosunku do żądanej liczby replik.",
     "Replicas": "Repliki",
     "ResourceGroup": "Grupa zasobów",
     "RevisionNumber": "Rewizja",

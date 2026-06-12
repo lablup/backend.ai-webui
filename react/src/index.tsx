@@ -11,6 +11,7 @@ import './global-stores';
 import { loadCustomThemeConfig } from './helper/customThemeConfig';
 import { applyDevServerTitle } from './helper/devServerTitle';
 import { ThemeModeProvider } from './hooks/useThemeMode';
+import { ConfigProvider } from 'antd';
 import { Provider as JotaiProvider } from 'jotai';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
@@ -55,6 +56,20 @@ if (process.env.NODE_ENV === 'development') {
 
 // Load custom theme config once in react/index.tsx
 loadCustomThemeConfig();
+
+// Static antd methods (message.* / notification.* / Modal.*) render in a
+// detached holder built from globalConfig(), OUTSIDE the app's ConfigProvider,
+// so their cssinjs styles never receive the CSP nonce. Wrap that holder via
+// `holderRender` in a ConfigProvider carrying the per-request nonce so the
+// injected <style> nodes survive a strict `style-src 'nonce-...'` policy.
+// (globalThis.baiNonce is empty in dev, like the inline scripts in index.html.)
+ConfigProvider.config({
+  holderRender: (children) => (
+    <ConfigProvider csp={{ nonce: globalThis.baiNonce }}>
+      {children}
+    </ConfigProvider>
+  ),
+});
 
 // In dev, distinguish multiple dev-server tabs by prefixing the tab title with
 // the Portless app name injected via VITE_DEV_SERVER_NAME (no-op in production).

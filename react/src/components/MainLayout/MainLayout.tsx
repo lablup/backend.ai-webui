@@ -4,11 +4,9 @@
  */
 import { useWebUINavigate } from '../../hooks';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
-import { useCustomThemeConfig } from '../../hooks/useCustomThemeConfig';
 import useKeyboardShortcut from '../../hooks/useKeyboardShortcut';
 import { useLogoutEventListeners } from '../../hooks/useLogout';
 import usePrimaryColors from '../../hooks/usePrimaryColors';
-import { useThemeMode } from '../../hooks/useThemeMode';
 import { useWebUIMenuItems } from '../../hooks/useWebUIMenuItems';
 import { useSetupWebUIPluginEffect } from '../../hooks/useWebUIPluginState';
 import Page401 from '../../pages/Page401';
@@ -27,8 +25,8 @@ import { DRAWER_WIDTH } from '../WEBUINotificationDrawer';
 import WebUIBreadcrumb from '../WebUIBreadcrumb';
 import WebUIHeader from './WebUIHeader';
 import WebUISider from './WebUISider';
-import { App, ConfigProvider, Layout, type LayoutProps, theme } from 'antd';
-import { createStyles } from 'antd-style';
+import { ConfigProvider, Layout, type LayoutProps, theme } from 'antd';
+import { createGlobalStyle, createStyles } from 'antd-style';
 import { BAIFlex } from 'backend.ai-ui';
 import { atom, useSetAtom } from 'jotai';
 import * as _ from 'lodash-es';
@@ -52,6 +50,33 @@ export const mainContentDivRefState = atom<React.RefObject<HTMLElement | null>>(
     current: null,
   },
 );
+
+// Global scrollbar styling. antd-style's createGlobalStyle injects a nonce'd
+// emotion <style> (via the <StyleProvider nonce> in DefaultProviders), so it
+// survives a strict CSP style-src policy — unlike a raw <style> element.
+const ScrollbarGlobalStyle = createGlobalStyle`
+  /* Scrollbar stylings */
+  /* Works on Firefox */
+  * {
+    scrollbar-width: 2px;
+    scrollbar-color: ${({ theme }) => theme.colorBorderSecondary}
+      ${({ theme }) => theme.colorBgElevated};
+  }
+
+  /* Works on Chrome, Edge, and Safari */
+  *::-webkit-scrollbar {
+    max-width: 2px;
+    background-color: ${({ theme }) => theme.colorBgElevated};
+  }
+
+  *::-webkit-scrollbar-track {
+    background: ${({ theme }) => theme.colorBgElevated};
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background-color: ${({ theme }) => theme.colorBorderSecondary};
+  }
+`;
 
 const useStyle = createStyles(({ css, token }) => ({
   alertWrapper: css`
@@ -130,32 +155,7 @@ function MainLayout() {
   return (
     <LayoutWithPageTestId>
       <CSSTokenVariables />
-      <style>
-        {`
-          /* Scrollbar stylings */
-          /* Works on Firefox */
-          * {
-            scrollbar-width: 2px;
-            scrollbar-color: var(--token-colorBorderSecondary, ${token.colorBorderSecondary},  #464646)
-              var(--token-colorBgElevated, transparent);
-          }
-
-          /* Works on Chrome, Edge, and Safari */
-          *::-webkit-scrollbar {
-            max-width: 2px;
-            background-color: var(--token-colorBgElevated, ${token.colorBgElevated}, transparent);
-          }
-
-          *::-webkit-scrollbar-track {
-            background: var(--token-colorBgElevated, ${token.colorBgElevated}, transparent);
-          }
-
-          *::-webkit-scrollbar-thumb {
-            background-color: var(--token-colorBorderSecondary, ${token.colorBorderSecondary}, #464646);
-          }
-        `}
-      </style>
-      <NotificationForAnonymous />
+      <ScrollbarGlobalStyle />
       <Suspense fallback={null}>
         <DismissSplashOnMount />
         <WebUISider
@@ -369,52 +369,28 @@ const LayoutWithPageTestId: React.FC<LayoutProps> = (props) => {
   return <Layout {...props} data-testid={pageTest} />;
 };
 
-export const NotificationForAnonymous = () => {
-  const app = App.useApp();
-  useEffect(() => {
-    const handler = (e: any) => {
-      app.notification.open({
-        ...e.detail,
-        closeIcon: false,
-        placement: 'bottomRight',
-      });
-    };
-    document.addEventListener('add-bai-notification', handler);
-    return () => {
-      document.removeEventListener('add-bai-notification', handler);
-    };
-  }, [app.notification]);
-  return null;
-};
+type ThemeToken = ReturnType<typeof theme.useToken>['token'];
+
+// Minimal `:root` bridge exposing only the antd tokens that OUT-OF-TREE global
+// CSS still needs: `resources/webui.css` styles `body` (outside the React /
+// antd cssVar scope), so it reads these via `var(--token-...)`. In-tree styles
+// reference the antd token directly (createStyles / createGlobalStyle) and no
+// longer depend on this bridge. createGlobalStyle injects it as a nonce'd
+// <style>; `token` changes on theme switch, so the values stay in sync.
+const TokenCssVariables = createGlobalStyle((props) => {
+  const { token } = props as unknown as { token: ThemeToken };
+  return `:root {
+  --token-colorPrimary: ${token.colorPrimary};
+  --token-colorBgBase: ${token.colorBgBase};
+  --token-colorBgContainer: ${token.colorBgContainer};
+  --token-colorBorder: ${token.colorBorder};
+}`;
+}) as unknown as React.FC<{ token: ThemeToken }>;
 
 export const CSSTokenVariables = () => {
   const { token } = theme.useToken();
-  const { isDarkMode } = useThemeMode(); // This is to make sure the theme mode is updated
 
-  const themeConfig = useCustomThemeConfig();
-  return (
-    <style>
-      {`
-:root {
-${Object.entries(token)
-  .map(([key, value]) => {
-    // Skip Component specific tokens
-    if (key.charAt(0) === key.charAt(0).toUpperCase()) {
-      return '';
-    } else {
-      return typeof value === 'number'
-        ? `--token-${key}: ${value}px;`
-        : `--token-${key}: ${value?.toString() ?? ''};`;
-    }
-  })
-  .join('\n')}
-
-  --theme-logo-url: url("${
-    isDarkMode ? themeConfig?.logo.srcDark : themeConfig?.logo.src
-  }");
-      `}
-    </style>
-  );
+  return <TokenCssVariables token={token} />;
 };
 
 /**

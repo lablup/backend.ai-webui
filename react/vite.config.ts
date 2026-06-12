@@ -396,7 +396,7 @@ function projectRootStaticPlugin(
         // rewrites the src to the hashed chunk URL.
         let out = realHtml.replace(
           '<!-- REACT_BUNDLE_INJECTING FOR DEV-->',
-          '<script type="module" src="/src/index.tsx"></script>',
+          '<script type="module" nonce="{{nonce}}" src="/src/index.tsx"></script>',
         );
 
         if (isServe) {
@@ -420,6 +420,43 @@ function projectRootStaticPlugin(
         }
 
         return out;
+      },
+    },
+  };
+}
+
+/**
+ * Re-stamp the per-request CSP nonce placeholder onto the Vite-emitted bundle
+ * entry `<script type="module">`.
+ *
+ * The `projectRootStaticPlugin` pre-transform injects the entry tag with
+ * `nonce="{{nonce}}"`, but Vite DROPS custom attributes (including `nonce`)
+ * when its core HTML build rewrites that tag's `src` to the hashed chunk URL.
+ * This post-order transform runs AFTER that rewrite and re-adds the nonce so a
+ * strict `script-src 'nonce-…' 'strict-dynamic'` policy accepts the entry
+ * bundle. The negative lookahead prevents double-stamping if the attribute
+ * ever survives.
+ *
+ * Runtime-injected `<link rel="modulepreload">` tags (created by Vite's
+ * `__vitePreload` helper for lazy chunks) are handled separately by the
+ * `<meta property="csp-nonce">` in `index.html`, which that helper reads — so
+ * only the static entry tag Vite writes into the HTML needs fixing here.
+ *
+ * Build only: the dev server has no server-side CSP and the pre-transform
+ * strips `{{nonce}}` from the served document, so stamping in dev would leak a
+ * literal `{{nonce}}` into the page.
+ */
+function cspBundleNoncePlugin(): Plugin {
+  return {
+    name: 'bai-csp-bundle-nonce',
+    apply: 'build',
+    transformIndexHtml: {
+      order: 'post',
+      handler(html) {
+        return html.replace(
+          /<script type="module"(?![^>]*\bnonce=)/g,
+          '<script type="module" nonce="{{nonce}}"',
+        );
       },
     },
   };
@@ -798,6 +835,7 @@ export default defineConfig(({ command, mode }) => {
       devCompressionPlugin(),
       monacoStaticPlugin(),
       projectRootStaticPlugin(devCspHeaders),
+      cspBundleNoncePlugin(),
       devAssetsReloadPlugin(),
 
       react({

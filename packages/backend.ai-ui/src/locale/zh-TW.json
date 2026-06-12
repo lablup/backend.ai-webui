@@ -231,7 +231,7 @@
     "Project": "專案",
     "ProjectID": "專案ID",
     "ReplicaSummary": "副本數",
-    "ReplicaSummaryTooltip": "正在執行的副本數與所需（或總）副本數之比。",
+    "ReplicaSummaryTooltip": "正在執行的副本數與所需副本數之比。",
     "Replicas": "副本數",
     "ResourceGroup": "資源群組",
     "RevisionNumber": "修訂版本",
