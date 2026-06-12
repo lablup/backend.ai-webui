@@ -40,7 +40,6 @@ export interface CurrentUserProjectRolesResult {
 export const useCurrentUserProjectRoles = (): CurrentUserProjectRolesResult => {
   const baiClient = useSuspendedBackendaiClient();
 
-  // <= 26.4.3 takes the bare enum; >= 26.4.4 takes the wrapper. FR-3017.
   const PROJECT_ADMIN_PAGE = 'PROJECT_ADMIN_PAGE' satisfies RBACElementType;
   const permissionFilter: PermissionNestedFilter = {
     // Cast confined to the one field the generated type can't model.

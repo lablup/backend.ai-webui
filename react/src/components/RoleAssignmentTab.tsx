@@ -211,8 +211,6 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
       refetch(
         {
           filter: {
-            // <= 26.4.3 takes the bare UUID; >= 26.4.4 takes the wrapper.
-            // FR-3031.
             roleId: (baiClient.supports('rbac-filter-wrapper')
               ? { equals: roleId }
               : roleId) as { equals: string },

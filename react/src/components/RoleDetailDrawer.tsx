@@ -77,8 +77,6 @@ const RoleDetailDrawerInner: React.FC<RoleDetailDrawerInnerProps> = ({
 
   const baiClient = useSuspendedBackendaiClient();
   const localRoleId = toLocalId(roleId);
-  // <= 26.4.3 takes the bare UUID; >= 26.4.4 takes the UUIDFilter wrapper.
-  // FR-3031.
   const roleIdFilter = (
     baiClient.supports('rbac-filter-wrapper')
       ? { equals: localRoleId }
