@@ -303,6 +303,15 @@ const PureChatCard: React.FC<ChatCardProps> = ({
             }
 
             return result.toUIMessageStreamResponse({
+              // Surface the model-reported output token count on the final
+              // message so ChatTokenCounter can use the exact usage value for
+              // TPS instead of the gpt-tokenizer estimate. Only emitted on the
+              // 'finish' event (usage is not known mid-stream).
+              messageMetadata: ({ part }) => {
+                if (part.type === 'finish') {
+                  return { outputTokens: part.totalUsage.outputTokens };
+                }
+              },
               onError: (error) => {
                 return getAIErrorMessage(error);
               },
