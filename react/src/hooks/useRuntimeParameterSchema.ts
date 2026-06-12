@@ -134,7 +134,7 @@ export function useRuntimeParameterSchema(
               # Version-gated: stripped from the request on managers older than
               # the capability cutoff (runtime-variant-preset-required in
               # client.ts) so the presets query stays valid on legacy backends.
-              required @since(version: "26.4.4rc7")
+              required @since(version: "26.4.4")
               targetSpec {
                 presetTarget
                 valueType

@@ -904,38 +904,19 @@ export class Client {
     if (this.isManagerVersionCompatibleWith('26.4.3')) {
       this._features['model-deployment-extended-filter'] = true;
     }
-    // RBAC list filters became their *Filter wrapper shapes in 26.4.4rc4
-    // (#11442): scope/entity type enums -> RBACElementTypeFilter, roleId UUID
-    // -> UUIDFilter, etc. Older cores take the bare scalar/enum. One flag for
-    // the whole migration. FR-3017 (entityType enum), FR-3031 (roleId UUID).
-    // TODO(FR-3017): pinned to the rc tag since 26.4.4rcN < 26.4.4 in PEP440;
-    // simplify to '26.4.4' once rc builds are out of use.
-    if (this.isManagerVersionCompatibleWith('26.4.4rc4')) {
+    if (this.isManagerVersionCompatibleWith('26.4.4')) {
+      // RBAC list filters became their *Filter wrapper shapes (#11442):
+      // scope/entity type enums -> RBACElementTypeFilter, roleId UUID ->
+      // UUIDFilter, etc. FR-3017 (entityType enum), FR-3031 (roleId UUID).
       this._features['rbac-filter-wrapper'] = true;
-    }
-    // BA-6247 / BA-6249 user filters merged after 26.4.4rc6, so they ship in
-    // 26.4.4 (final). Pinned to the rc6 tag so the flag also activates against
-    // the rc6 staging manager (a post-rc6 snapshot reporting the rc6 version).
-    // TODO(FR-3024): simplify to '26.4.4' once rc builds are out of use.
-    if (this.isManagerVersionCompatibleWith('26.4.4rc6')) {
+      // BA-6247 / BA-6249 user extended filters. FR-3024.
       this._features['user-v2-extended-filter'] = true;
-      // adminKeypairResourcePoliciesV2 gained the `keypair.userId` nested filter
-      // + the `keypairs` connection in 26.4.4 (FR-3020). Pinned to the rc6 tag
-      // for the same staging-manager reason as above.
+      // adminKeypairResourcePoliciesV2 gained `keypair.userId` filter +
+      // `keypairs` connection. FR-3020.
       this._features['keypair-resource-policy-user-filter'] = true;
-    }
-    // Pinned to rc7 so the flags below also activate against the rc7 staging
-    // manager (26.4.4rcN < 26.4.4 in PEP440), same reason as
-    // `rbac-filter-wrapper` above.
-    // TODO(FR-3087): simplify to '26.4.4' once rc builds are out of use.
-    if (this.isManagerVersionCompatibleWith('26.4.4rc7')) {
       // BA-6326 / backend PR #12000 — RuntimeVariantPreset.required: Boolean!
       this._features['runtime-variant-preset-required'] = true;
-      // Role auto-assign (BA-6183 / BA-6184 / BA-6187) ships in 26.4.4, first
-      // available on the 26.4.4rc7 pre-release. The `autoAssign` field does not
-      // exist on older managers, so gate the RBAC role form field, the
-      // detail-drawer row, and the create/update mutation input behind this
-      // flag. TODO(FR-3029): simplify to '26.4.4' once rc builds are out of use.
+      // Role auto-assign (BA-6183 / BA-6184 / BA-6187). FR-3029.
       this._features['role-auto-assign'] = true;
     }
   }

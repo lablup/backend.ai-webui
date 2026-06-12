@@ -57,9 +57,6 @@ const DeploymentAutoScalingTab: React.FC<DeploymentAutoScalingTabProps> = ({
   const status = deployment.metadata?.status;
 
   const creatorEmail = deployment.creator?.basicInfo?.email ?? null;
-  // When the creator is unknown (e.g. on manager versions < 26.4.3 where the
-  // `creator` field is not yet resolvable), fall back to "owned" so the UI
-  // does not over-restrict.
   const isOwnedByCurrentUser =
     !creatorEmail || creatorEmail === currentUser.email;
 

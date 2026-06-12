@@ -353,7 +353,7 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
         id
         name
         description
-        autoAssign @since(version: "26.4.4rc7")
+        autoAssign @since(version: "26.4.4")
       }
     `,
     editingRoleFrgmt ?? null,
@@ -370,7 +370,7 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
           description
           source
           status
-          autoAssign @since(version: "26.4.4rc7")
+          autoAssign @since(version: "26.4.4")
           createdAt
           updatedAt
         }
@@ -384,7 +384,7 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
           id
           name
           description
-          autoAssign @since(version: "26.4.4rc7")
+          autoAssign @since(version: "26.4.4")
           updatedAt
         }
       }

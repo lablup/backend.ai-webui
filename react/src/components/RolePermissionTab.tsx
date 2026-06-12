@@ -243,8 +243,6 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
       refetch(
         {
           filter: {
-            // <= 26.4.3 takes the bare UUID; >= 26.4.4rc4 takes the wrapper.
-            // FR-3031.
             roleId: (supportsRbacFilterWrapper
               ? { equals: roleId }
               : roleId) as { equals: string },
@@ -323,8 +321,6 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
               key: 'scopeType',
               propertyLabel: t('rbac.ScopeType'),
               type: 'enum',
-              // <= 26.4.3 takes a bare RBACElementType enum here, not the
-              // { equals } wrapper. FR-3031.
               valueMode: supportsRbacFilterWrapper ? 'operator' : 'scalar',
               options: [
                 'DOMAIN',
@@ -345,8 +341,6 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
               key: 'entityType',
               propertyLabel: t('rbac.EntityType'),
               type: 'enum',
-              // <= 26.4.3 takes a bare RBACElementType enum here, not the
-              // { equals } wrapper. FR-3031.
               valueMode: supportsRbacFilterWrapper ? 'operator' : 'scalar',
               options: [
                 'DOMAIN',

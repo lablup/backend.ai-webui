@@ -372,9 +372,9 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
       ),
     },
     {
-      // Session column resolves through `sessionV2` (Added in 26.4.3) so we
-      // get the real compute session — `ModelReplica.sessionId` returns the
-      // replica's own route_id (BA-5838) and is unusable as a session ref.
+      // Session column resolves through `sessionV2` so we get the real compute
+      // session — `ModelReplica.sessionId` returns the replica's own route_id
+      // (BA-5838) and is unusable as a session ref.
       key: 'session',
       title: t('general.Session'),
       onCell: () => ({ style: { maxWidth: 240 } }),

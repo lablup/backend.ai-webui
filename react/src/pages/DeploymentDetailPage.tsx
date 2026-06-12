@@ -209,9 +209,6 @@ const DeploymentDetailPage: React.FC = () => {
     !hasAccessTokens;
 
   const creatorEmail = deployment.creator?.basicInfo?.email ?? null;
-  // When the creator email is unresolvable (e.g. manager versions < 26.4.3),
-  // assume the current user owns the deployment so the UI does not
-  // over-restrict editing capabilities.
   const isOwnedByCurrentUser =
     !creatorEmail || creatorEmail === currentUser.email;
 

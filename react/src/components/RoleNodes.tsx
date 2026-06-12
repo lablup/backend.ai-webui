@@ -74,7 +74,7 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
         description
         source
         status
-        autoAssign @since(version: "26.4.4rc7")
+        autoAssign @since(version: "26.4.4")
         createdAt
         updatedAt
         scopes(first: 3) {

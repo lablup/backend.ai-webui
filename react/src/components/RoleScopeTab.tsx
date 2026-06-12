@@ -192,8 +192,6 @@ const RoleScopeTab: React.FC<RoleScopeTabProps> = ({ queryRef }) => {
               key: 'entityType',
               propertyLabel: t('rbac.ScopeType'),
               type: 'enum',
-              // <= 26.4.3 takes a bare RBACElementType enum here, not the
-              // { equals } wrapper. FR-3031.
               valueMode: baiClient.supports('rbac-filter-wrapper')
                 ? 'operator'
                 : 'scalar',
