@@ -904,18 +904,15 @@ export class Client {
     if (this.isManagerVersionCompatibleWith('26.4.3')) {
       this._features['model-deployment-extended-filter'] = true;
     }
-    // RBAC list filters became their *Filter wrapper shapes in 26.4.4
-    // (#11442): scope/entity type enums -> RBACElementTypeFilter, roleId UUID
-    // -> UUIDFilter, etc. Older cores take the bare scalar/enum. One flag for
-    // the whole migration. FR-3017 (entityType enum), FR-3031 (roleId UUID).
     if (this.isManagerVersionCompatibleWith('26.4.4')) {
+      // RBAC list filters became their *Filter wrapper shapes (#11442):
+      // scope/entity type enums -> RBACElementTypeFilter, roleId UUID ->
+      // UUIDFilter, etc. FR-3017 (entityType enum), FR-3031 (roleId UUID).
       this._features['rbac-filter-wrapper'] = true;
-    }
-    // BA-6247 / BA-6249 user filters shipped in 26.4.4 (final). FR-3024.
-    if (this.isManagerVersionCompatibleWith('26.4.4')) {
+      // BA-6247 / BA-6249 user extended filters. FR-3024.
       this._features['user-v2-extended-filter'] = true;
-      // adminKeypairResourcePoliciesV2 gained the `keypair.userId` nested filter
-      // + the `keypairs` connection in 26.4.4 (FR-3020).
+      // adminKeypairResourcePoliciesV2 gained `keypair.userId` filter +
+      // `keypairs` connection. FR-3020.
       this._features['keypair-resource-policy-user-filter'] = true;
     }
     // TODO(FR-3087): simplify to '26.4.4' once rc builds are out of use.
