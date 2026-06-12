@@ -64,6 +64,12 @@ export const JSONToCSVBody = <T>(
 
 /**
  * Download a file from the given blob.
+ *
+ * The anchor is appended to the document before clicking and the object URL
+ * revocation is delayed, so the download also works on Safari and older
+ * engines that ignore clicks on detached anchors or cancel downloads whose
+ * URL is revoked synchronously.
+ *
  * @param {Blob} blob - The file content.
  * @param {string} filename - The name of the file.
  */
@@ -73,8 +79,39 @@ export const downloadBlob = (blob: Blob, filename: string) => {
   const a = document.createElement('a');
   a.href = url;
   a.download = filename;
+  document.body.appendChild(a);
   a.click();
-  URL.revokeObjectURL(url);
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 100);
+};
+
+export const UTF8_BOM = '\uFEFF';
+
+/**
+ * Download a CSV string as a file with a UTF-8 BOM prepended.
+ *
+ * The BOM makes Excel decode the file as UTF-8 instead of the system ANSI
+ * codepage (e.g. CP949 on Korean Windows), which would otherwise garble
+ * multibyte characters in localized content.
+ *
+ * This helper is for CSV content that must be assembled client-side because
+ * the backend's server-side CSV export (`POST /export/{nodeKey}/csv`) does not
+ * cover the data yet. Once server-side export supports the data you are
+ * exporting, use the `useCSVExport` hook instead of building CSV in the
+ * client.
+ *
+ * @param csvContent - The CSV content. A pre-existing BOM is not duplicated.
+ * @param filename - The download filename. `.csv` is appended if missing.
+ */
+export const downloadCSV = (csvContent: string, filename: string) => {
+  const content = csvContent.startsWith(UTF8_BOM)
+    ? csvContent
+    : UTF8_BOM + csvContent;
+  const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
+  downloadBlob(
+    blob,
+    filename.toLowerCase().endsWith('.csv') ? filename : `${filename}.csv`,
+  );
 };
 
 export const exportCSVWithFormattingRules = <T>(
@@ -85,8 +122,7 @@ export const exportCSVWithFormattingRules = <T>(
   },
 ) => {
   const bodyStr = JSONToCSVBody(data, format_rules);
-  const blob = new Blob([bodyStr], { type: 'text/csv' });
-  downloadBlob(blob, `${filename}.csv`);
+  downloadCSV(bodyStr, filename);
 };
 
 /**
