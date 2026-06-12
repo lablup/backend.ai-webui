@@ -9,8 +9,9 @@ import { RoleFormModalFragment$key } from '../__generated__/RoleFormModalFragmen
 import { RoleFormModalPermissionMatrixQuery } from '../__generated__/RoleFormModalPermissionMatrixQuery.graphql';
 import { RoleFormModalResourceGroupQuery } from '../__generated__/RoleFormModalResourceGroupQuery.graphql';
 import { RoleFormModalUpdateMutation } from '../__generated__/RoleFormModalUpdateMutation.graphql';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { DeleteOutlined } from '@ant-design/icons';
-import { App, Button, Form, Input, type SelectProps } from 'antd';
+import { App, Button, Checkbox, Form, Input, type SelectProps } from 'antd';
 import {
   BAIAdminContainerRegistrySelect,
   BAIAdminModelServiceSelect,
@@ -314,6 +315,10 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const [form] = Form.useForm();
+  const baiClient = useSuspendedBackendaiClient();
+  // Auto-assign is only supported on managers >= 26.4.4. Gate the form field
+  // and the mutation input so older managers never receive the unknown field.
+  const supportsAutoAssign = baiClient.supports('role-auto-assign');
 
   const { rbacPermissionMatrix } =
     useLazyLoadQuery<RoleFormModalPermissionMatrixQuery>(
@@ -348,6 +353,7 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
         id
         name
         description
+        autoAssign @since(version: "26.4.4rc7")
       }
     `,
     editingRoleFrgmt ?? null,
@@ -364,6 +370,7 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
           description
           source
           status
+          autoAssign @since(version: "26.4.4rc7")
           createdAt
           updatedAt
         }
@@ -377,6 +384,7 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
           id
           name
           description
+          autoAssign @since(version: "26.4.4rc7")
           updatedAt
         }
       }
@@ -398,6 +406,7 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
           const changedFields: {
             name?: string;
             description?: string | null;
+            autoAssign?: boolean;
           } = {};
           if (values.name !== editingRole.name) {
             changedFields.name = values.name;
@@ -406,6 +415,12 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
             (values.description || null) !== (editingRole.description || null)
           ) {
             changedFields.description = values.description || null;
+          }
+          if (
+            supportsAutoAssign &&
+            values.autoAssign !== editingRole.autoAssign
+          ) {
+            changedFields.autoAssign = values.autoAssign;
           }
 
           if (Object.keys(changedFields).length === 0) {
@@ -457,6 +472,9 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
               input: {
                 name: values.name,
                 description: values.description || null,
+                ...(supportsAutoAssign
+                  ? { autoAssign: values.autoAssign }
+                  : {}),
                 scopes: (
                   values.scopes as Array<{
                     scopeType: RBACElementType;
@@ -522,6 +540,7 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
         initialValues={{
           name: editingRole?.name ?? '',
           description: editingRole?.description ?? '',
+          autoAssign: editingRole?.autoAssign ?? false,
           scopes: [{}],
         }}
       >
@@ -542,6 +561,16 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
         <Form.Item name="description" label={t('rbac.RoleDescription')}>
           <Input.TextArea rows={1} />
         </Form.Item>
+        {supportsAutoAssign && (
+          <Form.Item
+            name="autoAssign"
+            label={t('rbac.AutoAssign')}
+            valuePropName="checked"
+            tooltip={t('rbac.AutoAssignDescription')}
+          >
+            <Checkbox>{t('general.Enable')}</Checkbox>
+          </Form.Item>
+        )}
         {!isEditMode && (
           <Form.Item label={t('rbac.ScopeTypeAndId')} required>
             <Form.List

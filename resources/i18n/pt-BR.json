@@ -2270,6 +2270,8 @@
     "AssignUser": "Adicionar usuário",
     "Assignments": "Atribuições",
     "AtLeastOneScopeRequired": "Pelo menos um escopo é obrigatório.",
+    "AutoAssign": "Atribuição automática",
+    "AutoAssignDescription": "Quando ativado, esta função é concedida automaticamente a um usuário quando o usuário é adicionado a um escopo no qual esta função está registrada.",
     "BulkAssignPartialFailure": "{{count}} usuário(s) não pôde(puderam) ser atribuído(s).",
     "BulkRevokePartialFailure": "Falha ao revogar {{count}} usuário(s).",
     "ConfirmDeletePermissionWithDetail": "Remover a seguinte permissão deste papel?",

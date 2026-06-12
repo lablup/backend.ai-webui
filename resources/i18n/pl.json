@@ -2272,6 +2272,8 @@
     "AssignUser": "Dodaj użytkownika",
     "Assignments": "Przypisania",
     "AtLeastOneScopeRequired": "Wymagany jest co najmniej jeden zakres.",
+    "AutoAssign": "Automatyczne przypisywanie",
+    "AutoAssignDescription": "Po włączeniu ta rola jest automatycznie przyznawana użytkownikowi, gdy zostanie on dodany do zakresu, w którym ta rola jest zarejestrowana.",
     "BulkAssignPartialFailure": "Nie udało się przypisać {{count}} użytkownika(-ów).",
     "BulkRevokePartialFailure": "Nie udało się odwołać {{count}} użytkownika(-ów).",
     "ConfirmDeletePermissionWithDetail": "Usunąć następujące uprawnienie z tej roli?",

@@ -2272,6 +2272,8 @@
     "AssignUser": "사용자 추가",
     "Assignments": "할당",
     "AtLeastOneScopeRequired": "하나 이상의 적용 범위가 필요합니다.",
+    "AutoAssign": "자동 할당",
+    "AutoAssignDescription": "자동 할당 기능을 활성화하면 역할의 적용 범위에 사용자가 추가되는 경우, 역할이 사용자에게 자동으로 할당됩니다.",
     "BulkAssignPartialFailure": "{{count}}명의 사용자 할당에 실패했습니다.",
     "BulkRevokePartialFailure": "{{count}}명의 사용자 역할 해제에 실패했습니다.",
     "ConfirmDeletePermissionWithDetail": "다음 권한을 이 역할에서 제거하시겠습니까?",

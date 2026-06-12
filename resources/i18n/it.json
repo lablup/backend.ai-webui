@@ -2270,6 +2270,8 @@
     "AssignUser": "Aggiungi utente",
     "Assignments": "Assegnazioni",
     "AtLeastOneScopeRequired": "È richiesto almeno un ambito.",
+    "AutoAssign": "Assegnazione automatica",
+    "AutoAssignDescription": "Se abilitato, questo ruolo viene assegnato automaticamente a un utente quando l'utente viene aggiunto a un ambito in cui questo ruolo è registrato.",
     "BulkAssignPartialFailure": "{{count}} utente/i non è/sono stato/i assegnato/i.",
     "BulkRevokePartialFailure": "{{count}} utente/i non revocato/i.",
     "ConfirmDeletePermissionWithDetail": "Rimuovere il seguente permesso da questo ruolo?",

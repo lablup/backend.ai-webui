@@ -2270,6 +2270,8 @@
     "AssignUser": "Kullanıcı Ekle",
     "Assignments": "Atamalar",
     "AtLeastOneScopeRequired": "En az bir kapsam gereklidir.",
+    "AutoAssign": "Otomatik Atama",
+    "AutoAssignDescription": "Etkinleştirildiğinde, kullanıcı bu rolün kayıtlı olduğu bir kapsama eklendiğinde bu rol otomatik olarak kullanıcıya verilir.",
     "BulkAssignPartialFailure": "{{count}} kullanıcı atanamadı.",
     "BulkRevokePartialFailure": "{{count}} kullanıcı iptal edilemedi.",
     "ConfirmDeletePermissionWithDetail": "Aşağıdaki izni bu rolden kaldırmak istiyor musunuz?",

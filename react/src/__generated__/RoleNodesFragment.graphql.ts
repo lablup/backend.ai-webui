@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<33439542b3f958db04cc7c7198328e2d>>
+ * @generated SignedSource<<2879e50a1bf66ca12210b491e9f494a7>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -14,6 +14,7 @@ export type RoleSource = "CUSTOM" | "SYSTEM" | "%future added value";
 export type RoleStatus = "ACTIVE" | "DELETED" | "INACTIVE" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
 export type RoleNodesFragment$data = ReadonlyArray<{
+  readonly autoAssign: boolean;
   readonly createdAt: string;
   readonly description: string | null | undefined;
   readonly id: string;
@@ -93,6 +94,13 @@ const node: ReaderFragment = {
       "args": null,
       "kind": "ScalarField",
       "name": "status",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "autoAssign",
       "storageKey": null
     },
     {
@@ -260,6 +268,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "c99caf4a15ec248407d2ef0503e22834";
+(node as any).hash = "48c8fdfc8ee4ad775e313a70f412e37a";
 
 export default node;
