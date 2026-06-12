@@ -234,12 +234,15 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
             clusterSize: values.clusterSize ?? null,
             startupCommand: values.startupCommand ?? null,
             bootstrapScript: values.bootstrapScript ?? null,
-            environ: values.environ?.length
-              ? values.environ.map((e) => ({
-                  key: e.variable,
-                  value: e.value,
-                }))
-              : null,
+            // Send an explicit (possibly empty) array so that clearing all
+            // env vars actually replaces them server-side. `environ` defaults
+            // to null in UpdateDeploymentRevisionPresetInput, which means
+            // "leave unchanged" — collapsing an empty list to null would
+            // silently drop the user's deletion. (FR-3127)
+            environ: (values.environ ?? []).map((e) => ({
+              key: e.variable,
+              value: e.value,
+            })),
             resourceSlots: [
               ...(values.cpu
                 ? [{ resourceType: 'cpu', quantity: values.cpu }]
@@ -249,9 +252,10 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
                 : []),
               ...(values.resourceSlots ?? []),
             ],
-            resourceOpts: values.resourceOpts?.length
-              ? values.resourceOpts
-              : null,
+            // Same "Omit to leave unchanged" semantics as `environ`: send an
+            // explicit (possibly empty) array so clearing all resource opts is
+            // honored instead of being treated as no change. (FR-3127)
+            resourceOpts: values.resourceOpts ?? [],
             modelDefinition: buildModelDefinitionInput(values.modelDefinition),
             openToPublic: values.openToPublic ?? null,
             replicaCount: values.replicaCount ?? null,
