@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ef887233f31a4b824af5a87f0f88a4c4>>
+ * @generated SignedSource<<1e86816b3320f3a6fd3dfbc3ec5dfc2c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -62,6 +62,7 @@ export type useRuntimeParameterSchemaPresetsQuery$data = {
         readonly displayName: string | null | undefined;
         readonly name: string;
         readonly rank: number;
+        readonly required: boolean;
         readonly targetSpec: {
           readonly defaultValue: string | null | undefined;
           readonly key: string;
@@ -166,6 +167,13 @@ v6 = {
 v7 = {
   "alias": null,
   "args": null,
+  "kind": "ScalarField",
+  "name": "required",
+  "storageKey": null
+},
+v8 = {
+  "alias": null,
+  "args": null,
   "concreteType": "PresetTargetSpec",
   "kind": "LinkedField",
   "name": "targetSpec",
@@ -202,21 +210,21 @@ v7 = {
   ],
   "storageKey": null
 },
-v8 = {
+v9 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "min",
   "storageKey": null
 },
-v9 = {
+v10 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "max",
   "storageKey": null
 },
-v10 = {
+v11 = {
   "alias": null,
   "args": null,
   "concreteType": "UIOption",
@@ -239,8 +247,8 @@ v10 = {
       "name": "slider",
       "plural": false,
       "selections": [
-        (v8/*: any*/),
         (v9/*: any*/),
+        (v10/*: any*/),
         {
           "alias": null,
           "args": null,
@@ -259,8 +267,8 @@ v10 = {
       "name": "number",
       "plural": false,
       "selections": [
-        (v8/*: any*/),
-        (v9/*: any*/)
+        (v9/*: any*/),
+        (v10/*: any*/)
       ],
       "storageKey": null
     },
@@ -360,7 +368,8 @@ return {
                     (v5/*: any*/),
                     (v6/*: any*/),
                     (v7/*: any*/),
-                    (v10/*: any*/)
+                    (v8/*: any*/),
+                    (v11/*: any*/)
                   ],
                   "storageKey": null
                 }
@@ -412,7 +421,8 @@ return {
                   (v5/*: any*/),
                   (v6/*: any*/),
                   (v7/*: any*/),
-                  (v10/*: any*/),
+                  (v8/*: any*/),
+                  (v11/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -432,16 +442,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "9ec67e7389f1f7cec0f197e6ff23ec91",
+    "cacheID": "3b1462d68628516e8328b7a3def4c27f",
     "id": null,
     "metadata": {},
     "name": "useRuntimeParameterSchemaPresetsQuery",
     "operationKind": "query",
-    "text": "query useRuntimeParameterSchemaPresetsQuery(\n  $filter: RuntimeVariantPresetFilter\n  $orderBy: [RuntimeVariantPresetOrderBy!]\n) {\n  runtimeVariantPresetsResult: runtimeVariantPresets(filter: $filter, orderBy: $orderBy, first: 100) {\n    edges {\n      node {\n        name\n        description\n        rank\n        category\n        displayName\n        targetSpec {\n          presetTarget\n          valueType\n          defaultValue\n          key\n        }\n        uiOption {\n          uiType\n          slider {\n            min\n            max\n            step\n          }\n          number {\n            min\n            max\n          }\n          choices {\n            items {\n              value\n              label\n            }\n          }\n          text {\n            placeholder\n          }\n        }\n        id\n      }\n    }\n  }\n}\n"
+    "text": "query useRuntimeParameterSchemaPresetsQuery(\n  $filter: RuntimeVariantPresetFilter\n  $orderBy: [RuntimeVariantPresetOrderBy!]\n) {\n  runtimeVariantPresetsResult: runtimeVariantPresets(filter: $filter, orderBy: $orderBy, first: 100) {\n    edges {\n      node {\n        name\n        description\n        rank\n        category\n        displayName\n        required @since(version: \"26.4.4rc7\")\n        targetSpec {\n          presetTarget\n          valueType\n          defaultValue\n          key\n        }\n        uiOption {\n          uiType\n          slider {\n            min\n            max\n            step\n          }\n          number {\n            min\n            max\n          }\n          choices {\n            items {\n              value\n              label\n            }\n          }\n          text {\n            placeholder\n          }\n        }\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "ca5ee1b8f0a7378db0a58b62f8709a68";
+(node as any).hash = "b6be7e3447225bf2a010b745ba3b4af2";
 
 export default node;

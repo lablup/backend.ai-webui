@@ -924,6 +924,11 @@ export class Client {
       // for the same staging-manager reason as above.
       this._features['keypair-resource-policy-user-filter'] = true;
     }
+    // TODO(FR-3087): simplify to '26.4.4' once rc builds are out of use.
+    // BA-6326 / backend PR #12000 — RuntimeVariantPreset.required: Boolean!
+    if (this.isManagerVersionCompatibleWith('26.4.4rc7')) {
+      this._features['runtime-variant-preset-required'] = true;
+    }
   }
 
   /**
