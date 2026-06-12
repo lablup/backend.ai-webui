@@ -153,6 +153,21 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
               />
             </BAIFlex>
           </Descriptions.Item>
+          <Descriptions.Item label={t('adminDeploymentPreset.ResourceOpts')}>
+            {values.resourceOpts?.some((o) => o.name?.trim()) ? (
+              <BAIFlex direction="row" align="start" gap="sm" wrap="wrap">
+                {values.resourceOpts
+                  .filter((o) => o.name?.trim())
+                  .map((o, i) => (
+                    <Typography.Text key={`${o.name}-${i}`} code>
+                      {o.name}: {o.value || '-'}
+                    </Typography.Text>
+                  ))}
+              </BAIFlex>
+            ) : (
+              '-'
+            )}
+          </Descriptions.Item>
           <Descriptions.Item label={t('adminDeploymentPreset.ClusterMode')}>
             {values.clusterMode === 'SINGLE_NODE'
               ? t('adminDeploymentPreset.SingleNode')
