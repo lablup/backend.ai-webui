@@ -18,7 +18,7 @@ import SessionNodes, {
 import { handleRowSelectionChange } from '../helper';
 import { ExtractResultValue } from '../helper/resultTypes';
 import { useWebUINavigate } from '../hooks';
-import { useCurrentUserRole } from '../hooks/backendai';
+import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCSVExport } from '../hooks/useCSVExport';
@@ -44,7 +44,6 @@ import {
   BAIPropertyFilter,
   BAISelectionLabel,
   BAISessionsIcon,
-  filterOutEmpty,
   filterOutNullAndUndefined,
   INITIAL_FETCH_KEY,
   mergeFilterValues,
@@ -78,11 +77,15 @@ type SessionNode = NonNullableNodeOnEdges<ComputeSessionNodesData>;
 
 const CARD_MIN_HEIGHT = 200;
 
+const NOT_FINISHED_STATUS_FILTER =
+  'status != "TERMINATED" & status != "CANCELLED"';
+
 const ComputeSessionListPage = () => {
   'use memo';
   const currentProject = useCurrentProjectValue();
 
   const userRole = useCurrentUserRole();
+  const [currentUser] = useCurrentUserInfo();
 
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -146,7 +149,7 @@ const ComputeSessionListPage = () => {
   const statusFilter =
     queryParams.statusCategory === 'running' ||
     queryParams.statusCategory === undefined
-      ? 'status != "TERMINATED" & status != "CANCELLED"'
+      ? NOT_FINISHED_STATUS_FILTER
       : 'status == "TERMINATED" | status == "CANCELLED"';
 
   const isNotRunningCategory = (status?: string | null) => {
@@ -155,12 +158,45 @@ const ComputeSessionListPage = () => {
 
   const [fetchKey, updateFetchKey] = useFetchKey();
 
+  // This page is strictly personal: even admins/monitors (who hold read
+  // permission on all project sessions) should only see their own sessions.
+  const currentUserFilter = `user_id == "${currentUser.uuid}"`;
+
   const queryVariables: ComputeSessionListPageQuery$variables = {
     scopeId: `project:${currentProject.id}`,
     offset: baiPaginationOption.offset,
     first: baiPaginationOption.first,
-    filter: mergeFilterValues([statusFilter, queryParams.filter, typeFilter]),
+    filter: mergeFilterValues([
+      statusFilter,
+      queryParams.filter,
+      typeFilter,
+      currentUserFilter,
+    ]),
     order: queryParams.order || '-created_at',
+    allFilter: mergeFilterValues([
+      NOT_FINISHED_STATUS_FILTER,
+      currentUserFilter,
+    ]),
+    interactiveFilter: mergeFilterValues([
+      NOT_FINISHED_STATUS_FILTER,
+      'type == "interactive"',
+      currentUserFilter,
+    ]),
+    inferenceFilter: mergeFilterValues([
+      NOT_FINISHED_STATUS_FILTER,
+      'type == "inference"',
+      currentUserFilter,
+    ]),
+    batchFilter: mergeFilterValues([
+      NOT_FINISHED_STATUS_FILTER,
+      'type == "batch"',
+      currentUserFilter,
+    ]),
+    systemFilter: mergeFilterValues([
+      NOT_FINISHED_STATUS_FILTER,
+      'type == "system"',
+      currentUserFilter,
+    ]),
   };
 
   const deferredQueryVariables = useDeferredValue(queryVariables);
@@ -168,72 +204,77 @@ const ComputeSessionListPage = () => {
 
   const queryRef = useLazyLoadQuery<ComputeSessionListPageQuery>(
     graphql`
-        query ComputeSessionListPageQuery(
-          $scopeId: ScopeField
-          $first: Int = 20
-          $offset: Int = 0
-          $filter: String
-          $order: String
-        ) {
-          computeSessionNodeResult: compute_session_nodes(
-            scope_id: $scopeId
-            first: $first
-            offset: $offset
-            filter: $filter
-            order: $order
-          ) @catch(to: RESULT) {
-            edges @required(action: THROW) {
-              node @required(action: THROW) {
-                id @required(action: THROW)
-                name @required(action: THROW)
-                ...SessionNodesFragment
-                ...TerminateSessionModalFragment
-              }
+      query ComputeSessionListPageQuery(
+        $scopeId: ScopeField
+        $first: Int = 20
+        $offset: Int = 0
+        $filter: String
+        $order: String
+        $allFilter: String
+        $interactiveFilter: String
+        $inferenceFilter: String
+        $batchFilter: String
+        $systemFilter: String
+      ) {
+        computeSessionNodeResult: compute_session_nodes(
+          scope_id: $scopeId
+          first: $first
+          offset: $offset
+          filter: $filter
+          order: $order
+        ) @catch(to: RESULT) {
+          edges @required(action: THROW) {
+            node @required(action: THROW) {
+              id @required(action: THROW)
+              name @required(action: THROW)
+              ...SessionNodesFragment
+              ...TerminateSessionModalFragment
             }
-            count
           }
-          all: compute_session_nodes(
-            scope_id: $scopeId
-            first: 0
-            offset: 0
-            filter: "status != \"TERMINATED\" & status != \"CANCELLED\""
-          ) {
-            count
-          }
-          interactive: compute_session_nodes(
-            scope_id: $scopeId
-            first: 0
-            offset: 0
-            filter: "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"interactive\""
-          ) {
-            count
-          }
-          inference: compute_session_nodes(
-            scope_id: $scopeId
-            first: 0
-            offset: 0
-            filter: "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"inference\""
-          ) {
-            count
-          }
-          batch: compute_session_nodes(
-            scope_id: $scopeId
-            first: 0
-            offset: 0
-            filter: "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"batch\""
-          ) {
-            count
-          }
-          system: compute_session_nodes(
-            scope_id: $scopeId
-            first: 0
-            offset: 0
-            filter: "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"system\""
-          ) {
-            count
-          }
+          count
         }
-      `,
+        all: compute_session_nodes(
+          scope_id: $scopeId
+          first: 0
+          offset: 0
+          filter: $allFilter
+        ) {
+          count
+        }
+        interactive: compute_session_nodes(
+          scope_id: $scopeId
+          first: 0
+          offset: 0
+          filter: $interactiveFilter
+        ) {
+          count
+        }
+        inference: compute_session_nodes(
+          scope_id: $scopeId
+          first: 0
+          offset: 0
+          filter: $inferenceFilter
+        ) {
+          count
+        }
+        batch: compute_session_nodes(
+          scope_id: $scopeId
+          first: 0
+          offset: 0
+          filter: $batchFilter
+        ) {
+          count
+        }
+        system: compute_session_nodes(
+          scope_id: $scopeId
+          first: 0
+          offset: 0
+          filter: $systemFilter
+        ) {
+          count
+        }
+      }
+    `,
     deferredQueryVariables,
     {
       fetchPolicy:
@@ -428,7 +469,7 @@ const ComputeSessionListPage = () => {
                 ]}
               />
               <BAIPropertyFilter
-                filterProperties={filterOutEmpty([
+                filterProperties={[
                   {
                     key: 'name',
                     propertyLabel: t('session.SessionName'),
@@ -444,14 +485,7 @@ const ComputeSessionListPage = () => {
                     propertyLabel: t('session.Agent'),
                     type: 'string',
                   },
-                  (userRole === 'superadmin' ||
-                    userRole === 'admin' ||
-                    userRole === 'monitor') && {
-                    key: 'user_email',
-                    propertyLabel: t('session.launcher.OwnerEmail'),
-                    type: 'string',
-                  },
-                ])}
+                ]}
                 value={queryParams.filter || undefined}
                 onChange={(value) => {
                   setQueryParams({ filter: value || '' });
