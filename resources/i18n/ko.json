@@ -995,7 +995,7 @@
     "ApplyRevision": "리비전 적용",
     "ApplySuccess": "리비전 #{{revisionNumber}} 적용이 요청되었습니다.",
     "Applying": "적용 중",
-    "ApplyingRevision": "리비전 #{{revisionNumber}}을(를) 적용 중입니다.",
+    "ApplyingRevision": "리비전 {{revisionNumber}}을(를) 적용 중입니다.",
     "ApplyingRevisionDetail": "적용 중인 리비전 상세",
     "AutoApply": "추가 후 바로 적용",
     "AutoScaling": "오토스케일링",
