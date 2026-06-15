@@ -4,6 +4,7 @@
  */
 import { ProjectFolderPermissionPanelQuery } from '../__generated__/ProjectFolderPermissionPanelQuery.graphql';
 import { ProjectFolderPermissionPanel_storageVolumeFrgmt$key } from '../__generated__/ProjectFolderPermissionPanel_storageVolumeFrgmt.graphql';
+import { useCurrentDomainValue } from '../hooks';
 import DomainStoragePermissionTable from './DomainStoragePermissionTable';
 import ProjectStoragePermissionTable from './ProjectStoragePermissionTable';
 import { CheckCircleOutlined } from '@ant-design/icons';
@@ -51,9 +52,12 @@ const ProjectFolderPermissionPanel: React.FC<
     storageVolumeFrgmt,
   );
 
+  // Default to the current domain so the tab shows its folder permissions on
+  // open; the user can still switch to or clear the selection.
+  const currentDomain = useCurrentDomainValue();
   const [selectedDomainName, setSelectedDomainName] = useState<
     string | undefined
-  >(undefined);
+  >(currentDomain);
 
   // Bump after a domain permission save so the domain row AND the project
   // union both refetch from the single panel-level query.
