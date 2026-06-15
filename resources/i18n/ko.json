@@ -1933,6 +1933,7 @@
     "Destroyed": "종료됨",
     "EditModelService": "모델 서비스 수정",
     "EditNotAvailableWhileDeploying": "서비스가 배포 중에는 수정할 수 없습니다. 잠시 후 다시 시도해 주세요.",
+    "EnableHealthCheck": "헬스 체크 활성화",
     "EndpointId": "엔드포인트 ID",
     "EndpointName": "엔드포인트 이름",
     "EndpointURL": "엔드포인트 URL",

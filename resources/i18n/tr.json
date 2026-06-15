@@ -1928,6 +1928,7 @@
     "Destroyed": "Yok edilmiş",
     "EditModelService": "Model Hizmetini Düzenle",
     "EditNotAvailableWhileDeploying": "Hizmet dağıtılırken düzenleme yapılamaz. Lütfen daha sonra tekrar deneyin.",
+    "EnableHealthCheck": "Sağlık Denetimini Etkinleştir",
     "EndpointId": "Uç Nokta Kimliği",
     "EndpointName": "Uç Nokta Adı",
     "EndpointURL": "Uç Nokta URL",

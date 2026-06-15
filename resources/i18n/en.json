@@ -1918,6 +1918,7 @@
     "Destroyed": "Destroyed",
     "EditModelService": "Edit Model Service",
     "EditNotAvailableWhileDeploying": "Editing is not available while the service is being deployed. Please try again later.",
+    "EnableHealthCheck": "Enable Health Check",
     "EndpointId": "Endpoint ID",
     "EndpointName": "Endpoint Name",
     "EndpointURL": "Endpoint URL",

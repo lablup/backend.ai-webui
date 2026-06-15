@@ -1930,6 +1930,7 @@
     "Destroyed": "Zerstört",
     "EditModelService": "Modelldienst bearbeiten",
     "EditNotAvailableWhileDeploying": "Die Bearbeitung ist während der Bereitstellung des Dienstes nicht verfügbar. Bitte versuchen Sie es später erneut.",
+    "EnableHealthCheck": "Health-Check aktivieren",
     "EndpointId": "Endpunkt-ID",
     "EndpointName": "Endpunkt Name",
     "EndpointURL": "Endpunkt URL",

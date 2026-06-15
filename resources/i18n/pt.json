@@ -1930,6 +1930,7 @@
     "Destroyed": "Destruído",
     "EditModelService": "Editar modelo de serviço",
     "EditNotAvailableWhileDeploying": "A edição não está disponível enquanto o serviço está a ser implementado. Por favor, tente novamente mais tarde.",
+    "EnableHealthCheck": "Ativar verificação de integridade",
     "EndpointId": "ID do ponto final",
     "EndpointName": "Nome do ponto final",
     "EndpointURL": "URL do ponto final",

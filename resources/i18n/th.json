@@ -1930,6 +1930,7 @@
     "Destroyed": "ถูกทำลาย",
     "EditModelService": "แก้ไขบริการโมเดล",
     "EditNotAvailableWhileDeploying": "ไม่สามารถแก้ไขได้ขณะที่บริการกำลังถูกปรับใช้ กรุณาลองใหม่อีกครั้งในภายหลัง",
+    "EnableHealthCheck": "เปิดใช้การตรวจสอบสุขภาพ",
     "EndpointId": "รหัสจุดสิ้นสุด",
     "EndpointName": "ชื่อจุดสิ้นสุด",
     "EndpointURL": "URL จุดสิ้นสุด",

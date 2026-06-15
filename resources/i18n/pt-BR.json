@@ -1928,6 +1928,7 @@
     "Destroyed": "Destruído",
     "EditModelService": "Editar modelo de serviço",
     "EditNotAvailableWhileDeploying": "A edição não está disponível enquanto o serviço está sendo implantado. Por favor, tente novamente mais tarde.",
+    "EnableHealthCheck": "Habilitar verificação de integridade",
     "EndpointId": "ID do ponto final",
     "EndpointName": "Nome do ponto final",
     "EndpointURL": "URL do ponto final",

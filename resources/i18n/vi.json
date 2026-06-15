@@ -1930,6 +1930,7 @@
     "Destroyed": "Bị phá hủy",
     "EditModelService": "Chỉnh sửa dịch vụ mẫu",
     "EditNotAvailableWhileDeploying": "Không thể chỉnh sửa trong khi dịch vụ đang được triển khai. Vui lòng thử lại sau.",
+    "EnableHealthCheck": "Bật kiểm tra sức khỏe",
     "EndpointId": "ID điểm cuối",
     "EndpointName": "Tên điểm cuối",
     "EndpointURL": "URL điểm cuối",

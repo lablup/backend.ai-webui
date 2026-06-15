@@ -1931,6 +1931,7 @@
     "Destroyed": "Hancur",
     "EditModelService": "Layanan Edit Model",
     "EditNotAvailableWhileDeploying": "Pengeditan tidak tersedia saat layanan sedang diterapkan. Silakan coba lagi nanti.",
+    "EnableHealthCheck": "Aktifkan Pemeriksaan Kesehatan",
     "EndpointId": "ID titik akhir",
     "EndpointName": "Nama Titik Akhir",
     "EndpointURL": "URL Titik Akhir",

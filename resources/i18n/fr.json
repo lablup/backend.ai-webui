@@ -1929,6 +1929,7 @@
     "Destroyed": "Détruit",
     "EditModelService": "Modifier le modèle de service",
     "EditNotAvailableWhileDeploying": "La modification n'est pas disponible pendant le déploiement du service. Veuillez réessayer ultérieurement.",
+    "EnableHealthCheck": "Activer le contrôle de santé",
     "EndpointId": "ID du point final",
     "EndpointName": "Nom du point final",
     "EndpointURL": "URL du point final",

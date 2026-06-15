@@ -1928,6 +1928,7 @@
     "Destroyed": "Tuhottu",
     "EditModelService": "Muokkaa mallipalvelua",
     "EditNotAvailableWhileDeploying": "Muokkaaminen ei ole käytettävissä palvelun käyttöönoton aikana. Yritä myöhemmin uudelleen.",
+    "EnableHealthCheck": "Ota käyttöön terveystarkistus",
     "EndpointId": "Päätepisteen tunnus",
     "EndpointName": "Päätepisteen nimi",
     "EndpointURL": "Päätepisteen URL",

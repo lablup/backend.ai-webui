@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<06b4065ceb0c7db77295f7181115fee8>>
+ * @generated SignedSource<<29f6883de8f8e0fc2eb06cb0a948eb3b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -33,6 +33,7 @@ export type DeploymentAddRevisionModal_revisionSource$data = {
       readonly service: {
         readonly healthCheck: {
           readonly enable: boolean;
+          readonly expectedStatusCode: number;
           readonly initialDelay: number;
           readonly interval: number;
           readonly maxRetries: number;
@@ -379,6 +380,13 @@ return {
                       "kind": "ScalarField",
                       "name": "maxWaitTime",
                       "storageKey": null
+                    },
+                    {
+                      "alias": null,
+                      "args": null,
+                      "kind": "ScalarField",
+                      "name": "expectedStatusCode",
+                      "storageKey": null
                     }
                   ],
                   "storageKey": null
@@ -434,6 +442,6 @@ return {
 };
 })();
 
-(node as any).hash = "42fac4b7c775a026295308cd67789a79";
+(node as any).hash = "cdab9b06df5358ab32b14a8f19fb8336";
 
 export default node;

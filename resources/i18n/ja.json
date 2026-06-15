@@ -1930,6 +1930,7 @@
     "Destroyed": "破壊された",
     "EditModelService": "モデルサービスの修正",
     "EditNotAvailableWhileDeploying": "サービスのデプロイ中は編集できません。しばらくしてから再度お試しください。",
+    "EnableHealthCheck": "ヘルスチェックを有効化",
     "EndpointId": "エンドポイントID",
     "EndpointName": "エンドポイント名",
     "EndpointURL": "エンドポイントURL",

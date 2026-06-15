@@ -1932,6 +1932,7 @@
     "Destroyed": "被摧毀",
     "EditModelService": "编辑模型服务",
     "EditNotAvailableWhileDeploying": "服務部署期間無法進行編輯，請稍後再試。",
+    "EnableHealthCheck": "啟用健康檢查",
     "EndpointId": "端点 ID",
     "EndpointName": "端点名称",
     "EndpointURL": "端點URL",

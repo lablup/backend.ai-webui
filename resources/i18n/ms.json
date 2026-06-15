@@ -1928,6 +1928,7 @@
     "Destroyed": "Dimusnahkan",
     "EditModelService": "Edit Perkhidmatan Model",
     "EditNotAvailableWhileDeploying": "Pengeditan tidak tersedia semasa perkhidmatan sedang digunakan. Sila cuba lagi kemudian.",
+    "EnableHealthCheck": "Aktifkan Semakan Kesihatan",
     "EndpointId": "ID titik akhir",
     "EndpointName": "Nama Titik Akhir",
     "EndpointURL": "URL Titik Akhir",

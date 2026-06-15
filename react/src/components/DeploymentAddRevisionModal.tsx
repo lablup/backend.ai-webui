@@ -121,12 +121,14 @@ export type FormValues = ImageEnvironmentFormInput &
     customDefinitionMode?: 'command' | 'file';
     startCommand?: string;
     commandPort?: number;
+    commandEnableHealthCheck?: boolean;
     commandHealthCheck?: string;
     commandModelMount?: string;
     commandInitialDelay?: number;
     commandMaxRetries?: number;
     commandInterval?: number;
     commandMaxWaitTime?: number;
+    commandExpectedStatusCode?: number;
     environ: EnvVarFormListValue[];
     /** Runtime-variant preset values, registered by RuntimeParameterFormSection. */
     runtimeParams?: RuntimeParameterValues;
@@ -299,12 +301,13 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
             startCommand
             port
             healthCheck {
-              enable @since(version: "26.4.4rc7")
+              enable @since(version: "26.4.4")
               path
               maxRetries
               initialDelay
               interval
               maxWaitTime
+              expectedStatusCode
             }
           }
         }
@@ -336,7 +339,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   const { logger } = useBAILogger();
   const { open: openFolderExplorer } = useFolderExplorerOpener();
   const baiClient = useSuspendedBackendaiClient();
-  // 26.4.4rc7+ managers accept the `enable` flag on ModelHealthCheckInput;
+  // 26.4.4+ managers accept the `enable` flag on ModelHealthCheckInput;
   // older managers reject it, so we keep the legacy null-when-disabled shape.
   const supportsHealthCheckEnable = baiClient.supports(
     'model-health-check-enable',
@@ -575,7 +578,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           revision {
             id
             ...DeploymentRevisionDetail_revision
-            deployment @since(version: "26.4.4rc7") {
+            deployment @since(version: "26.4.4") {
               id
               currentRevisionId
               deployingRevisionId
@@ -769,7 +772,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     }
     const service = rev.modelDefinition?.models?.[0]?.service;
     const customModelPath = rev.modelDefinition?.models?.[0]?.modelPath;
-    // On 26.4.4rc7+ a disabled source revision carries `enable: false`; treat
+    // On 26.4.4+ a disabled source revision carries `enable: false`; treat
     // that as "no health check" for prefill so form fields stay empty. On older
     // managers `enable` is stripped (undefined), fall back to object presence.
     const healthCheck =
@@ -882,17 +885,22 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
         variable: e.name,
         value: e.value,
       })),
+      // Health check prefill applies to every runtime variant and mode
+      // (FR-3068): the checkbox + fields reflect the source revision's
+      // health-check override regardless of how the definition is provided.
+      commandEnableHealthCheck: !!healthCheck,
+      commandHealthCheck: healthCheck?.path ?? undefined,
+      commandInitialDelay: healthCheck?.initialDelay ?? undefined,
+      commandMaxRetries: healthCheck?.maxRetries ?? undefined,
+      commandInterval: healthCheck?.interval ?? undefined,
+      commandMaxWaitTime: healthCheck?.maxWaitTime ?? undefined,
+      commandExpectedStatusCode: healthCheck?.expectedStatusCode ?? undefined,
       ...(hasCustomCommand && service
         ? {
             customDefinitionMode: 'command' as const,
             startCommand: formatShellCommand(service.startCommand ?? []),
             commandPort: service.port,
-            commandHealthCheck: healthCheck?.path ?? undefined,
             commandModelMount: customModelPath ?? '/models',
-            commandInitialDelay: healthCheck?.initialDelay ?? undefined,
-            commandMaxRetries: healthCheck?.maxRetries ?? undefined,
-            commandInterval: healthCheck?.interval ?? undefined,
-            commandMaxWaitTime: healthCheck?.maxWaitTime ?? undefined,
           }
         : isCustom
           ? { customDefinitionMode: 'file' as const }
@@ -1128,6 +1136,31 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       ([name, value]) => ({ name, value }),
     );
 
+    // Health check is opt-in via the explicit checkbox (FR-3068), shown for
+    // every runtime variant and definition mode. When on, all health-check
+    // fields are required in the UI (mirrors the preset form). For non-command
+    // modes (non-custom runtimes and custom+file) we send a minimal
+    // modelDefinition override containing only the health check when enabled.
+    const healthCheckEnabled = !!values.commandEnableHealthCheck;
+    const healthCheck = (() => {
+      const configuredFields = {
+        path: values.commandHealthCheck,
+        interval: values.commandInterval,
+        maxRetries: values.commandMaxRetries,
+        maxWaitTime: values.commandMaxWaitTime,
+        initialDelay: values.commandInitialDelay,
+        expectedStatusCode: values.commandExpectedStatusCode,
+      };
+      if (!supportsHealthCheckEnable) {
+        // Managers < 26.4.4: null disables the health check.
+        return healthCheckEnabled ? configuredFields : null;
+      }
+      // 26.4.4+: always send the object so the server can seed defaults.
+      return healthCheckEnabled
+        ? { enable: true, ...configuredFields }
+        : { enable: false };
+    })();
+
     const modelDefinition =
       isCustom && isCommandMode && values.startCommand
         ? {
@@ -1139,38 +1172,14 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                   preStartActions: [],
                   startCommand: tokenizeShellCommand(values.startCommand),
                   port: values.commandPort ?? 8000,
-                  healthCheck: (() => {
-                    // Health check is "on" when any of its fields is filled
-                    // (FR-3056); when on without an explicit path the server
-                    // falls back to its default health-check path.
-                    const enabled =
-                      !!values.commandHealthCheck ||
-                      values.commandInitialDelay != null ||
-                      values.commandMaxRetries != null ||
-                      values.commandInterval != null ||
-                      values.commandMaxWaitTime != null;
-                    const configuredFields = {
-                      path: values.commandHealthCheck,
-                      interval: values.commandInterval ?? 10,
-                      maxRetries: values.commandMaxRetries ?? 10,
-                      maxWaitTime: values.commandMaxWaitTime ?? 15,
-                      initialDelay: values.commandInitialDelay,
-                    };
-                    if (!supportsHealthCheckEnable) {
-                      // Managers < 26.4.4rc7: null disables the health check.
-                      return enabled ? configuredFields : null;
-                    }
-                    // 26.4.4+: always send the object so the server can seed
-                    // defaults; leave the other fields unset when disabled.
-                    return enabled
-                      ? { enable: true, ...configuredFields }
-                      : { enable: false };
-                  })(),
+                  healthCheck,
                 },
               },
             ],
           }
-        : null;
+        : healthCheckEnabled
+          ? { models: [{ service: { healthCheck } }] }
+          : null;
 
     const mountDestination =
       isCustom && isCommandMode
@@ -1474,6 +1483,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                 <Suspense fallback={<BAISelect loading style={{ flex: 1 }} />}>
                   <Form.Item
                     name="modelFolderId"
+                    label={t('deployment.ModelFolder')}
                     noStyle
                     rules={[{ required: true }]}
                   >
@@ -1539,18 +1549,8 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           onFinishFailed={handleFinishFailed}
           initialValues={_.merge({}, RESOURCE_ALLOCATION_INITIAL_FORM_VALUES, {
             resourceGroup: deployment?.metadata?.resourceGroupName,
-            mountDestination: '/models',
             customDefinitionMode: 'command',
-            commandPort: 8000,
-            commandHealthCheck: '/health',
-            commandModelMount: '/models',
-            // 60s was too short for large models to finish loading before the
-            // first health check. Default to 1800s as a short-term fix until a
-            // shared backend/frontend default (feature flag) lands. See FR-3005.
-            commandInitialDelay: 1800,
-            commandMaxRetries: 10,
-            commandInterval: 10,
-            commandMaxWaitTime: 15,
+            commandEnableHealthCheck: false,
             environ: [],
           })}
         >
@@ -1564,6 +1564,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
               <Suspense fallback={<BAISelect loading style={{ flex: 1 }} />}>
                 <Form.Item
                   name="modelFolderId"
+                  label={t('deployment.ModelFolder')}
                   noStyle
                   rules={[{ required: true }]}
                 >
@@ -1719,79 +1720,18 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                           >
                             <Input placeholder="/models" allowClear />
                           </Form.Item>
-                          <BAIFlex gap="sm">
-                            <Form.Item
-                              name="commandPort"
-                              label={t('modelService.Port')}
-                              tooltip={t('modelService.PortTooltip')}
-                              style={{ flex: 1 }}
-                            >
-                              <InputNumber
-                                // Lenient draft resolves into strict
-                                // `ModelServiceConfig.port` (`gt=1`, exclusive),
-                                // so the lowest accepted port is 2.
-                                min={2}
-                                max={65535}
-                                style={{ width: '100%' }}
-                              />
-                            </Form.Item>
-                            <Form.Item
-                              name="commandHealthCheck"
-                              label={t('modelService.HealthCheck')}
-                              tooltip={t('modelService.HealthCheckTooltip')}
-                              style={{ flex: 1 }}
-                            >
-                              <Input placeholder="/health" allowClear />
-                            </Form.Item>
-                          </BAIFlex>
-                          <BAIFlex gap="sm">
-                            <Form.Item
-                              name="commandInitialDelay"
-                              label={t('modelService.InitialDelay')}
-                              tooltip={t('modelService.InitialDelayTooltip')}
-                              style={{ flex: 1 }}
-                            >
-                              <InputNumber
-                                min={0}
-                                step={0.5}
-                                style={{ width: '100%' }}
-                              />
-                            </Form.Item>
-                            <Form.Item
-                              name="commandMaxRetries"
-                              label={t('modelService.MaxRetries')}
-                              tooltip={t('modelService.MaxRetriesTooltip')}
-                              style={{ flex: 1 }}
-                            >
-                              <InputNumber min={0} style={{ width: '100%' }} />
-                            </Form.Item>
-                          </BAIFlex>
-                          <BAIFlex gap="sm">
-                            <Form.Item
-                              name="commandInterval"
-                              label={t('modelService.Interval')}
-                              tooltip={t('modelService.IntervalTooltip')}
-                              style={{ flex: 1 }}
-                            >
-                              <InputNumber
-                                min={1}
-                                step={0.5}
-                                style={{ width: '100%' }}
-                              />
-                            </Form.Item>
-                            <Form.Item
-                              name="commandMaxWaitTime"
-                              label={t('modelService.MaxWaitTime')}
-                              tooltip={t('modelService.MaxWaitTimeTooltip')}
-                              style={{ flex: 1 }}
-                            >
-                              <InputNumber
-                                min={1}
-                                step={0.5}
-                                style={{ width: '100%' }}
-                              />
-                            </Form.Item>
-                          </BAIFlex>
+                          <Form.Item
+                            name="commandPort"
+                            label={t('modelService.Port')}
+                            tooltip={t('modelService.PortTooltip')}
+                          >
+                            <InputNumber
+                              min={2}
+                              max={65535}
+                              placeholder="8000"
+                              style={{ width: '100%' }}
+                            />
+                          </Form.Item>
                         </>
                       ) : (
                         <BAIFlex gap="sm">
@@ -1824,6 +1764,131 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                 </>
               );
             }}
+          </Form.Item>
+
+          {/* Health check is shown for every runtime variant and definition
+              mode (FR-3068); enabling it submits a health-check override. */}
+          <Form.Item
+            name="commandEnableHealthCheck"
+            valuePropName="checked"
+            style={{ marginBottom: token.marginXS }}
+          >
+            <Checkbox>{t('modelService.EnableHealthCheck')}</Checkbox>
+          </Form.Item>
+          <Form.Item dependencies={['commandEnableHealthCheck']} noStyle>
+            {({ getFieldValue: getHc }: FormInstance<FormValues>) =>
+              getHc('commandEnableHealthCheck') ? (
+                <BAIFlex direction="column" align="stretch" gap="xs">
+                  <Form.Item
+                    name="commandHealthCheck"
+                    label={t('adminDeploymentPreset.modelDef.HealthCheckPath')}
+                    tooltip={t('modelService.HealthCheckTooltip')}
+                    rules={[{ required: true }]}
+                  >
+                    <Input
+                      placeholder={t('general.Example', {
+                        value: '/health',
+                      })}
+                      allowClear
+                    />
+                  </Form.Item>
+                  <BAIFlex gap="md" wrap="wrap" align="end">
+                    <Form.Item
+                      name="commandInterval"
+                      label={t(
+                        'adminDeploymentPreset.modelDef.HealthCheckInterval',
+                      )}
+                      tooltip={t('modelService.IntervalTooltip')}
+                      rules={[{ required: true }]}
+                      style={{ flex: 1, minWidth: 160 }}
+                    >
+                      <InputNumber
+                        min={1}
+                        placeholder={t('general.Example', {
+                          value: '10',
+                        })}
+                        suffix={t('time.Sec')}
+                        style={{ width: '100%' }}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      name="commandMaxRetries"
+                      label={t(
+                        'adminDeploymentPreset.modelDef.HealthCheckMaxRetries',
+                      )}
+                      tooltip={t('modelService.MaxRetriesTooltip')}
+                      rules={[{ required: true }]}
+                      style={{ flex: 1, minWidth: 160 }}
+                    >
+                      <InputNumber
+                        min={1}
+                        placeholder={t('general.Example', {
+                          value: '10',
+                        })}
+                        style={{ width: '100%' }}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      name="commandMaxWaitTime"
+                      label={t(
+                        'adminDeploymentPreset.modelDef.HealthCheckMaxWaitTime',
+                      )}
+                      tooltip={t('modelService.MaxWaitTimeTooltip')}
+                      rules={[{ required: true }]}
+                      style={{ flex: 1, minWidth: 160 }}
+                    >
+                      <InputNumber
+                        min={1}
+                        placeholder={t('general.Example', {
+                          value: '15',
+                        })}
+                        suffix={t('time.Sec')}
+                        style={{ width: '100%' }}
+                      />
+                    </Form.Item>
+                  </BAIFlex>
+                  <BAIFlex gap="md" wrap="wrap" align="end">
+                    <Form.Item
+                      name="commandExpectedStatusCode"
+                      label={t(
+                        'adminDeploymentPreset.modelDef.HealthCheckExpectedStatus',
+                      )}
+                      tooltip={t('modelService.ExpectedStatusTooltip')}
+                      rules={[{ required: true }]}
+                      style={{ flex: 1, minWidth: 160 }}
+                    >
+                      <InputNumber
+                        min={101}
+                        max={599}
+                        placeholder={t('general.Example', {
+                          value: '200',
+                        })}
+                        style={{ width: '100%' }}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      name="commandInitialDelay"
+                      label={t(
+                        'adminDeploymentPreset.modelDef.HealthCheckInitialDelay',
+                      )}
+                      tooltip={t('modelService.InitialDelayTooltip')}
+                      rules={[{ required: true }]}
+                      style={{ flex: 1, minWidth: 160 }}
+                    >
+                      <InputNumber
+                        min={0}
+                        placeholder={t('general.Example', {
+                          value: '60',
+                        })}
+                        suffix={t('time.Sec')}
+                        style={{ width: '100%' }}
+                      />
+                    </Form.Item>
+                    <div style={{ flex: 1, minWidth: 160 }} />
+                  </BAIFlex>
+                </BAIFlex>
+              ) : null
+            }
           </Form.Item>
 
           <SectionHeader>{t('session.launcher.Environments')}</SectionHeader>

@@ -1929,6 +1929,7 @@
     "Destroyed": "Сүйрсэн",
     "EditModelService": "Загварын үйлчилгээг засах",
     "EditNotAvailableWhileDeploying": "Үйлчилгээ байршуулж байх үед засах боломжгүй. Дараа дахин оролдоно уу.",
+    "EnableHealthCheck": "Эрүүл мэндийн шалгалт идэвхжүүлэх",
     "EndpointId": "Төгсгөлийн цэгийн ID",
     "EndpointName": "Төгсгөлийн цэгийн нэр",
     "EndpointURL": "Төгсгөлийн цэгийн URL",
