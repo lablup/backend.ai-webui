@@ -11,7 +11,7 @@ import AdminDeploymentPresetSettingPageContent, {
   type AdminDeploymentPresetFormValue,
   type ModelDefinitionFormValue,
 } from '../components/AdminDeploymentPresetSettingPageContent';
-import { useWebUINavigate } from '../hooks';
+import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { App, Form, Typography, theme } from 'antd';
 import { BAIFlex, useBAILogger, useMutationWithPromise } from 'backend.ai-ui';
 import React, { useState } from 'react';
@@ -21,64 +21,78 @@ import { useParams } from 'react-router-dom';
 
 const buildModelDefinitionInput = (
   value: ModelDefinitionFormValue | undefined,
+  // 26.4.4rc7+ managers accept the `enable` flag on ModelHealthCheckInput;
+  // older managers reject it, so we keep the legacy null-when-disabled shape.
+  supportsHealthCheckEnable: boolean,
 ) => {
-  if (!value?.models?.length) return null;
+  // The model definition is optional: the card's switch (`enabled`) gates it,
+  // so when off we omit it entirely (`modelDefinition: null`).
+  if (!value?.enabled || !value.models?.length) return null;
   return {
     models: value.models.map((m) => ({
       name: m.name,
       modelPath: m.modelPath,
-      service:
-        m.enableService && m.service?.port != null
-          ? {
-              port: m.service.port,
-              shell: m.service.shell || '/bin/bash',
-              startCommand: m.service.startCommand?.trim()
-                ? m.service.startCommand.trim().split(/\s+/)
-                : null,
-              preStartActions: (m.service.preStartActions ?? []).map((a) => ({
-                action: a.action,
-                args: (() => {
-                  try {
-                    return JSON.parse(a.args || '{}');
-                  } catch {
-                    return {};
-                  }
-                })(),
-              })),
-              healthCheck:
-                m.service.enableHealthCheck && m.service.healthCheck?.path
-                  ? {
-                      path: m.service.healthCheck.path,
-                      interval: m.service.healthCheck.interval,
-                      maxRetries: m.service.healthCheck.maxRetries,
-                      maxWaitTime: m.service.healthCheck.maxWaitTime,
-                      expectedStatusCode:
-                        m.service.healthCheck.expectedStatusCode,
-                      initialDelay: m.service.healthCheck.initialDelay,
-                    }
-                  : null,
-            }
+      // `port` is required by the preset's strict ModelDefinition validation
+      // (no backend default), so the form guarantees it is present here.
+      service: {
+        port: m.service?.port ?? null,
+        shell: m.service?.shell,
+        startCommand: m.service?.startCommand?.trim()
+          ? m.service.startCommand.trim().split(/\s+/)
           : null,
-      metadata:
-        m.enableMetadata && m.metadata
-          ? {
-              author: m.metadata.author || null,
-              title: m.metadata.title || null,
-              version: m.metadata.version || null,
-              created: null,
-              lastModified: null,
-              description: m.metadata.description || null,
-              task: m.metadata.task || null,
-              category: m.metadata.category || null,
-              architecture: m.metadata.architecture || null,
-              framework: m.metadata.framework?.length
-                ? m.metadata.framework
-                : null,
-              label: m.metadata.label?.length ? m.metadata.label : null,
-              license: m.metadata.license || null,
-              minResource: null,
+        preStartActions: (m.service?.preStartActions ?? []).map((a) => ({
+          action: a.action,
+          args: (() => {
+            try {
+              return JSON.parse(a.args || '{}');
+            } catch {
+              return {};
             }
-          : null,
+          })(),
+        })),
+        healthCheck: (() => {
+          const hc = m.service?.healthCheck;
+          const checked = !!m.service?.enableHealthCheck;
+          // Disabled → send health_check: null. The preset's strict validation
+          // checks every inner field whenever the object is present, and GraphQL
+          // injects null for omitted fields (which pydantic rejects), so
+          // `{ enable: false }` alone still fails — null is the only way to disable.
+          if (!checked) return null;
+          // Enabled → the form requires all HC fields, so they are present here.
+          const fields = {
+            path: hc?.path,
+            interval: hc?.interval,
+            maxRetries: hc?.maxRetries,
+            maxWaitTime: hc?.maxWaitTime,
+            expectedStatusCode: hc?.expectedStatusCode,
+            initialDelay: hc?.initialDelay,
+          };
+          // Managers < 26.4.4rc7 strip the `enable` flag; on 26.4.4rc7+ it is
+          // sent explicitly to mark the check enabled.
+          return supportsHealthCheckEnable
+            ? { enable: true, ...fields }
+            : fields;
+        })(),
+      },
+      metadata: m.metadata
+        ? {
+            author: m.metadata.author || null,
+            title: m.metadata.title || null,
+            version: m.metadata.version || null,
+            created: null,
+            lastModified: null,
+            description: m.metadata.description || null,
+            task: m.metadata.task || null,
+            category: m.metadata.category || null,
+            architecture: m.metadata.architecture || null,
+            framework: m.metadata.framework?.length
+              ? m.metadata.framework
+              : null,
+            label: m.metadata.label?.length ? m.metadata.label : null,
+            license: m.metadata.license || null,
+            minResource: null,
+          }
+        : null,
     })),
   };
 };
@@ -94,6 +108,10 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
   const webuiNavigate = useWebUINavigate();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
+  const baiClient = useSuspendedBackendaiClient();
+  const supportsHealthCheckEnable = baiClient.supports(
+    'model-health-check-enable',
+  );
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -214,9 +232,8 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
 
   const handleSubmit = async () => {
     // validateFields() triggers field-level validation (shows error messages).
-    // We discard its return value because setFieldValue-set fields (enableService,
-    // enableMetadata) are not registered Form.Items and therefore omitted from
-    // the validated result. Instead we read the full store via getFieldsValue(true).
+    // We read the full store via getFieldsValue(true) so untouched fields and
+    // the modelDefinition.models array are included regardless of validation.
     const valid = await form.validateFields().catch(() => null);
     if (!valid) return;
     const values: AdminDeploymentPresetFormValue = form.getFieldsValue(true);
@@ -227,6 +244,7 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
         await commitUpdate({
           input: {
             id: presetId,
+            runtimeVariantId: values.runtimeVariantId ?? null,
             name: values.name,
             description: values.description ?? null,
             imageId: values.imageId ?? null,
@@ -256,7 +274,10 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
             // explicit (possibly empty) array so clearing all resource opts is
             // honored instead of being treated as no change. (FR-3127)
             resourceOpts: values.resourceOpts ?? [],
-            modelDefinition: buildModelDefinitionInput(values.modelDefinition),
+            modelDefinition: buildModelDefinitionInput(
+              values.modelDefinition,
+              supportsHealthCheckEnable,
+            ),
             openToPublic: values.openToPublic ?? null,
             replicaCount: values.replicaCount ?? null,
             revisionHistoryLimit: values.revisionHistoryLimit ?? null,
@@ -295,7 +316,10 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
             resourceOpts: values.resourceOpts?.length
               ? values.resourceOpts
               : null,
-            modelDefinition: buildModelDefinitionInput(values.modelDefinition),
+            modelDefinition: buildModelDefinitionInput(
+              values.modelDefinition,
+              supportsHealthCheckEnable,
+            ),
             openToPublic: values.openToPublic ?? null,
             replicaCount: values.replicaCount!,
             revisionHistoryLimit: values.revisionHistoryLimit ?? null,

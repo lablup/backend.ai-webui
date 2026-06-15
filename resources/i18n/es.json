@@ -87,11 +87,11 @@
       "EnableService": "Configurar servicio",
       "Framework": "Framework",
       "FrameworkPlaceholder": "p. ej., PyTorch, TensorFlow",
-      "HealthCheckExpectedStatus": "Estado esperado",
-      "HealthCheckInitialDelay": "Retraso inicial (s)",
-      "HealthCheckInterval": "Intervalo (s)",
+      "HealthCheckExpectedStatus": "Código de estado",
+      "HealthCheckInitialDelay": "Retraso inicial",
+      "HealthCheckInterval": "Intervalo",
       "HealthCheckMaxRetries": "Máx. reintentos",
-      "HealthCheckMaxWaitTime": "Tiempo máx. de espera (s)",
+      "HealthCheckMaxWaitTime": "Tiempo máx. de espera",
       "HealthCheckPath": "Ruta",
       "Label": "Etiqueta",
       "LabelPlaceholder": "p. ej., nlp, vision",
@@ -307,12 +307,10 @@
     "TopP": "Top P"
   },
   "auditLog": {
-    "AuditLog": "Registro de auditoría",
     "Operation": "Operación",
     "Status": "Estado",
     "Time": "Hora",
-    "TriggeredBy": "Iniciado por",
-    "TriggeredByFilterPlaceholder": "Buscar por ID"
+    "TriggeredBy": "Iniciado por"
   },
   "autoScalingRule": {
     "AddAutoScalingRule": "Agregar regla de escala automática",
@@ -1495,7 +1493,6 @@
     "Filename": "Nombre del archivo",
     "FolderNotFoundOrNoAccess": "Carpeta no encontrada ni de acceso denegada",
     "InputTooShort": "InputTooShort",
-    "Metadata": "Metadatos",
     "NoExplorerSupportForUnmanagedFolder": "Las carpetas no administradas no admiten el explorador de archivos.",
     "NoPermissions": "No hay permisos para acceder a esta carpeta",
     "ProcessingUpload": "Se está cargando su archivo. \nEspere por favor.",
@@ -1597,6 +1594,7 @@
     "Enable": "Activar",
     "Enabled": "Activado",
     "ErrorOccurred": "Algo salió mal. \nVuelva a intentarlo más tarde.",
+    "Example": "ej. {{value}}",
     "ExtendLoginSession": "Prolongar una sesión de inicio de sesión",
     "FailedToExportCSV": "Error al exportar CSV",
     "File": "Archivo",
@@ -1936,6 +1934,7 @@
     "EnterCommand": "Ingresar comando",
     "Error": "Error",
     "ExpectedStatusCode": "Código de estado esperado",
+    "ExpectedStatusTooltip": "Código de estado HTTP que se considera una respuesta saludable.",
     "ExpiredDate": "Fecha de expiración",
     "ExtraMountsWarning": "Al editar el servicio, el nombre (alias) de carpetas montadas adicionales puede no ser retenido. \nPor favor, verifique los nombres de las carpetas antes de guardar.",
     "FailedToStartService": "No se ha podido crear el servicio.",

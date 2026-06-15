@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d4400d9d552003dda5d1964c585c8e35>>
+ * @generated SignedSource<<e0384631d771109f633f31fee3ae325d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -86,6 +86,7 @@ export type PreStartActionInput = {
   args: any;
 };
 export type ModelHealthCheckInput = {
+  enable?: boolean;
   expectedStatusCode?: number | null | undefined;
   initialDelay?: number | null | undefined;
   interval?: number | null | undefined;
@@ -766,16 +767,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "2a37634f4db82b455442aaadbeddbf94",
+    "cacheID": "36733739263a8ea7ef748630f5a1beaa",
     "id": null,
     "metadata": {},
     "name": "DeploymentAddRevisionModalAddMutation",
     "operationKind": "mutation",
-    "text": "mutation DeploymentAddRevisionModalAddMutation(\n  $input: AddRevisionInput!\n) {\n  addModelRevision(input: $input) {\n    revision {\n      id\n      ...DeploymentRevisionDetail_revision\n      deployment @since(version: \"26.4.4\") {\n        id\n        currentRevisionId\n        deployingRevisionId\n        currentRevision @since(version: \"26.4.3\") {\n          id\n          ...DeploymentRevisionDetail_revision\n        }\n        deployingRevision @since(version: \"26.4.3\") {\n          id\n          ...DeploymentRevisionDetail_revision\n        }\n      }\n    }\n  }\n}\n\nfragment DeploymentRevisionDetail_revision on ModelRevision {\n  id\n  revisionNumber\n  createdAt\n  clusterConfig {\n    mode\n    size\n  }\n  resourceSlots @since(version: \"26.4.2\") {\n    slotName\n    quantity\n  }\n  resourceConfig {\n    resourceOpts {\n      entries {\n        name\n        value\n      }\n    }\n  }\n  modelRuntimeConfig {\n    runtimeVariant {\n      name\n      id\n    }\n    inferenceRuntimeConfig\n    environ {\n      entries {\n        name\n        value\n      }\n    }\n  }\n  modelMountConfig {\n    vfolderId\n    mountDestination\n    definitionPath\n    vfolder {\n      id\n      name\n      ...FolderLink_vfolderNode\n    }\n  }\n  extraMounts {\n    vfolderId\n    mountDestination\n    mountPerm\n    vfolder {\n      id\n      name\n      ...FolderLink_vfolderNode\n    }\n  }\n  imageV2 @since(version: \"26.4.3\") {\n    id\n    identity {\n      canonicalName\n      architecture\n    }\n  }\n  modelDefinition {\n    models {\n      name\n      modelPath\n      service {\n        startCommand\n        shell\n        port\n        preStartActions {\n          action\n          args\n        }\n        healthCheck {\n          path\n          initialDelay\n          maxRetries\n          interval\n          maxWaitTime\n          expectedStatusCode\n        }\n      }\n    }\n  }\n}\n\nfragment FolderLink_vfolderNode on VirtualFolderNode {\n  row_id\n  name\n  ...VFolderNodeIdenticonFragment\n}\n\nfragment VFolderNodeIdenticonFragment on VirtualFolderNode {\n  id\n}\n"
+    "text": "mutation DeploymentAddRevisionModalAddMutation(\n  $input: AddRevisionInput!\n) {\n  addModelRevision(input: $input) {\n    revision {\n      id\n      ...DeploymentRevisionDetail_revision\n      deployment @since(version: \"26.4.4rc7\") {\n        id\n        currentRevisionId\n        deployingRevisionId\n        currentRevision @since(version: \"26.4.3\") {\n          id\n          ...DeploymentRevisionDetail_revision\n        }\n        deployingRevision @since(version: \"26.4.3\") {\n          id\n          ...DeploymentRevisionDetail_revision\n        }\n      }\n    }\n  }\n}\n\nfragment DeploymentRevisionDetail_revision on ModelRevision {\n  id\n  revisionNumber\n  createdAt\n  clusterConfig {\n    mode\n    size\n  }\n  resourceSlots @since(version: \"26.4.2\") {\n    slotName\n    quantity\n  }\n  resourceConfig {\n    resourceOpts {\n      entries {\n        name\n        value\n      }\n    }\n  }\n  modelRuntimeConfig {\n    runtimeVariant {\n      name\n      id\n    }\n    inferenceRuntimeConfig\n    environ {\n      entries {\n        name\n        value\n      }\n    }\n  }\n  modelMountConfig {\n    vfolderId\n    mountDestination\n    definitionPath\n    vfolder {\n      id\n      name\n      ...FolderLink_vfolderNode\n    }\n  }\n  extraMounts {\n    vfolderId\n    mountDestination\n    mountPerm\n    vfolder {\n      id\n      name\n      ...FolderLink_vfolderNode\n    }\n  }\n  imageV2 @since(version: \"26.4.3\") {\n    id\n    identity {\n      canonicalName\n      architecture\n    }\n  }\n  modelDefinition {\n    models {\n      name\n      modelPath\n      service {\n        startCommand\n        shell\n        port\n        preStartActions {\n          action\n          args\n        }\n        healthCheck {\n          path\n          initialDelay\n          maxRetries\n          interval\n          maxWaitTime\n          expectedStatusCode\n        }\n      }\n    }\n  }\n}\n\nfragment FolderLink_vfolderNode on VirtualFolderNode {\n  row_id\n  name\n  ...VFolderNodeIdenticonFragment\n}\n\nfragment VFolderNodeIdenticonFragment on VirtualFolderNode {\n  id\n}\n"
   }
 };
 })();
 
-(node as any).hash = "889773e313c63748043b8294cd2bb0b0";
+(node as any).hash = "e6af71dcfa4c8d3d58a5a72736b86120";
 
 export default node;

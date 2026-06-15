@@ -87,11 +87,11 @@
       "EnableService": "Configurer le service",
       "Framework": "Framework",
       "FrameworkPlaceholder": "ex. : PyTorch, TensorFlow",
-      "HealthCheckExpectedStatus": "Statut attendu",
-      "HealthCheckInitialDelay": "Délai initial (s)",
-      "HealthCheckInterval": "Intervalle (s)",
+      "HealthCheckExpectedStatus": "Code de statut",
+      "HealthCheckInitialDelay": "Délai initial",
+      "HealthCheckInterval": "Intervalle",
       "HealthCheckMaxRetries": "Nb. max de tentatives",
-      "HealthCheckMaxWaitTime": "Temps d'attente max (s)",
+      "HealthCheckMaxWaitTime": "Temps d'attente max",
       "HealthCheckPath": "Chemin",
       "Label": "Étiquette",
       "LabelPlaceholder": "ex. : nlp, vision",
@@ -307,12 +307,10 @@
     "TopP": "Top P"
   },
   "auditLog": {
-    "AuditLog": "Journal d'audit",
     "Operation": "Opération",
     "Status": "Statut",
     "Time": "Heure",
-    "TriggeredBy": "Déclenché par",
-    "TriggeredByFilterPlaceholder": "Rechercher par ID"
+    "TriggeredBy": "Déclenché par"
   },
   "autoScalingRule": {
     "AddAutoScalingRule": "Ajouter la règle de mise à l'échelle automatique",
@@ -1496,7 +1494,6 @@
     "Filename": "Nom de fichier",
     "FolderNotFoundOrNoAccess": "Dossier non trouvé ou accès refusé",
     "InputTooShort": "Entrée Trop Courte",
-    "Metadata": "Métadonnées",
     "NoExplorerSupportForUnmanagedFolder": "Les dossiers non gérés ne prennent pas en charge l'explorateur de fichiers.",
     "NoPermissions": "Aucune autorisation pour accéder à ce dossier",
     "ProcessingUpload": "Votre fichier est téléchargé. \nS'il vous plaît, attendez.",
@@ -1598,6 +1595,7 @@
     "Enable": "Activer",
     "Enabled": "Activée",
     "ErrorOccurred": "Quelque chose s'est mal passé. \nVeuillez réessayer plus tard.",
+    "Example": "ex. {{value}}",
     "ExtendLoginSession": "Prolonger une session de connexion",
     "FailedToExportCSV": "Échec de l'exportation CSV",
     "File": "Fichier",
@@ -1937,6 +1935,7 @@
     "EnterCommand": "Saisir une commande",
     "Error": "Erreur",
     "ExpectedStatusCode": "Code de statut attendu",
+    "ExpectedStatusTooltip": "Code de statut HTTP considéré comme une réponse saine.",
     "ExpiredDate": "Date d'expiration",
     "ExtraMountsWarning": "Lors de la modification du service, le nom (alias) des dossiers supplémentaires peut ne pas être conservé. \nVeuillez revérifier les noms de dossiers avant d'enregistrer.",
     "FailedToStartService": "Échec de la création du service.",

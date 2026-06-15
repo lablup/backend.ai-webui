@@ -87,11 +87,11 @@
       "EnableService": "Configurar serviço",
       "Framework": "Framework",
       "FrameworkPlaceholder": "ex.: PyTorch, TensorFlow",
-      "HealthCheckExpectedStatus": "Status esperado",
-      "HealthCheckInitialDelay": "Atraso inicial (s)",
-      "HealthCheckInterval": "Intervalo (s)",
+      "HealthCheckExpectedStatus": "Código de status",
+      "HealthCheckInitialDelay": "Atraso inicial",
+      "HealthCheckInterval": "Intervalo",
       "HealthCheckMaxRetries": "Máx. tentativas",
-      "HealthCheckMaxWaitTime": "Tempo máx. de espera (s)",
+      "HealthCheckMaxWaitTime": "Tempo máx. de espera",
       "HealthCheckPath": "Caminho",
       "Label": "Rótulo",
       "LabelPlaceholder": "ex.: nlp, vision",
@@ -307,12 +307,10 @@
     "TopP": "Top P"
   },
   "auditLog": {
-    "AuditLog": "Log de auditoria",
     "Operation": "Operação",
     "Status": "Status",
     "Time": "Hora",
-    "TriggeredBy": "Acionado por",
-    "TriggeredByFilterPlaceholder": "Pesquisar por ID"
+    "TriggeredBy": "Acionado por"
   },
   "autoScalingRule": {
     "AddAutoScalingRule": "Adicionar regra de escala automática",
@@ -347,7 +345,7 @@
     "MetricSourceTooltip": "Indica de onde o valor da métrica é coletado. O Kernel utiliza o uso de recursos no nível do contêiner, e o Prometheus executa uma consulta na instância Prometheus configurada.",
     "MinMaxReplicasTooltip": "Os limites inferior e superior aplicados por esta regra. O autoescalonamento não reduzirá as réplicas abaixo do Min nem as aumentará além do Max.",
     "MinMustBeLessThanMax": "O limite mínimo deve ser menor que o limite máximo.",
-    "MinReplicas": "Réplicas mínimas",
+    "MinReplicas": "Min Replicas",
     "MinReplicasTooltip": "O número mínimo de réplicas que o autoescalonamento mantém.",
     "MinReplicasValue": "Mín: {{value}}",
     "MinThreshold": "Limite mínimo",
@@ -1495,7 +1493,6 @@
     "Filename": "Nome do arquivo",
     "FolderNotFoundOrNoAccess": "Pasta não encontrada ou acesso negado",
     "InputTooShort": "InputTooShort",
-    "Metadata": "Metadados",
     "NoExplorerSupportForUnmanagedFolder": "Pastas não gerenciadas não suportam o File Explorer.",
     "NoPermissions": "Sem permissões para acessar esta pasta",
     "ProcessingUpload": "Seu arquivo está sendo carregado. \nPor favor, aguarde.",
@@ -1597,6 +1594,7 @@
     "Enable": "Ativar",
     "Enabled": "Habilitado",
     "ErrorOccurred": "Algo deu errado. \nPor favor, tente novamente mais tarde.",
+    "Example": "ex. {{value}}",
     "ExtendLoginSession": "Prolongar uma sessão de início de sessão",
     "FailedToExportCSV": "Falha ao exportar CSV",
     "File": "Arquivo",
@@ -1936,6 +1934,7 @@
     "EnterCommand": "Inserir comando",
     "Error": "Erro",
     "ExpectedStatusCode": "Código de status esperado",
+    "ExpectedStatusTooltip": "Código de status HTTP tratado como uma resposta saudável.",
     "ExpiredDate": "Data de Expiração",
     "ExtraMountsWarning": "Ao editar o serviço, o nome (alias) de pastas montadas adicionais não pode ser retido. \nPor favor, verifique os nomes das pastas duas vezes antes de salvar.",
     "FailedToStartService": "Falha ao criar o serviço.",
@@ -2116,7 +2115,7 @@
     "VllmPpSize": "Tamanho do paralelismo de pipeline (por exemplo: 2, 4)",
     "VllmQuantization": "por exemplo: awq, gptq, fp8",
     "VllmTpSize": "Tamanho do paralelismo tensorial (ex.: 2, 4, 8)",
-    "WaitingForServiceReady": "Aguardando o serviço ficar pronto...",
+    "WaitingForServiceReady": "Waiting for service to be ready...",
     "YamlUploadFailed": "Falha ao enviar model-definition.yaml."
   },
   "modelStore": {

@@ -919,6 +919,13 @@ export class Client {
       // Role auto-assign (BA-6183 / BA-6184 / BA-6187). FR-3029.
       this._features['role-auto-assign'] = true;
     }
+    // ModelHealthCheck gained an `enable` flag in 26.4.4 (BA-6242): health
+    // checks are opt-in via `enable: true/false` instead of nulling the whole
+    // object. Pinned to the rc7 tag for the same staging-manager reason as above.
+    // TODO(FR-3056): simplify to '26.4.4' once the final release ships.
+    if (this.isManagerVersionCompatibleWith('26.4.4rc7')) {
+      this._features['model-health-check-enable'] = true;
+    }
   }
 
   /**

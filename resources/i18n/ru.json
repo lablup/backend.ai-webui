@@ -87,11 +87,11 @@
       "EnableService": "Настроить сервис",
       "Framework": "Framework",
       "FrameworkPlaceholder": "напр., PyTorch, TensorFlow",
-      "HealthCheckExpectedStatus": "Ожидаемый статус",
-      "HealthCheckInitialDelay": "Начальная задержка (с)",
-      "HealthCheckInterval": "Интервал (с)",
+      "HealthCheckExpectedStatus": "Код статуса",
+      "HealthCheckInitialDelay": "Начальная задержка",
+      "HealthCheckInterval": "Интервал",
       "HealthCheckMaxRetries": "Макс. повторных попыток",
-      "HealthCheckMaxWaitTime": "Макс. время ожидания (с)",
+      "HealthCheckMaxWaitTime": "Макс. время ожидания",
       "HealthCheckPath": "Путь",
       "Label": "Метка",
       "LabelPlaceholder": "напр., nlp, vision",
@@ -307,12 +307,10 @@
     "TopP": "Top P"
   },
   "auditLog": {
-    "AuditLog": "Журнал аудита",
     "Operation": "Операция",
     "Status": "Статус",
     "Time": "Время",
-    "TriggeredBy": "Инициировано",
-    "TriggeredByFilterPlaceholder": "Поиск по ID"
+    "TriggeredBy": "Инициировано"
   },
   "autoScalingRule": {
     "AddAutoScalingRule": "Добавить правило масштабирования автоматического масштабирования",
@@ -1495,7 +1493,6 @@
     "Filename": "Имя файла",
     "FolderNotFoundOrNoAccess": "Папка не найдена или доступа отказана",
     "InputTooShort": "ВводОченьКороток",
-    "Metadata": "Метаданные",
     "NoExplorerSupportForUnmanagedFolder": "Неуправляемые папки не поддерживают исследователь файлов.",
     "NoPermissions": "Нет прав доступа к этой папке",
     "ProcessingUpload": "Ваш файл загружается. \nПожалуйста, подождите.",
@@ -1597,6 +1594,7 @@
     "Enable": "Включить",
     "Enabled": "Включено",
     "ErrorOccurred": "Что -то пошло не так. \nПожалуйста, попробуйте еще раз позже.",
+    "Example": "напр. {{value}}",
     "ExtendLoginSession": "Продление сеанса входа в систему",
     "FailedToExportCSV": "Не удалось экспортировать CSV",
     "File": "Файл",
@@ -1936,6 +1934,7 @@
     "EnterCommand": "Введите команду",
     "Error": "Ошибка",
     "ExpectedStatusCode": "Ожидаемый код состояния",
+    "ExpectedStatusTooltip": "Код состояния HTTP, считающийся здоровым ответом.",
     "ExpiredDate": "Дата Истечения",
     "ExtraMountsWarning": "При редактировании службы имя (псевдоним) дополнительных монтированных папок не может быть сохранено. \nПожалуйста, проверьте имена папок перед сохранением.",
     "FailedToStartService": "Не удалось создать службу.",

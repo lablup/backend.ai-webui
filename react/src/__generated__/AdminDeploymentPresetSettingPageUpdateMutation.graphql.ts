@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<8a20160ea2c39134c8238e718e034628>>
+ * @generated SignedSource<<5de3db48c36d907ee2047cbb09e05d75>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -29,6 +29,7 @@ export type UpdateDeploymentRevisionPresetInput = {
   resourceOpts?: ReadonlyArray<ResourceOptsEntryInput> | null | undefined;
   resourceSlots?: ReadonlyArray<ResourceSlotEntryInput> | null | undefined;
   revisionHistoryLimit?: number | null | undefined;
+  runtimeVariantId?: string | null | undefined;
   startupCommand?: string | null | undefined;
 };
 export type PresetDeploymentStrategyInput = {
@@ -69,6 +70,7 @@ export type PreStartActionInput = {
   args: any;
 };
 export type ModelHealthCheckInput = {
+  enable?: boolean;
   expectedStatusCode?: number | null | undefined;
   initialDelay?: number | null | undefined;
   interval?: number | null | undefined;

@@ -35,7 +35,7 @@ import {
   Select,
   Skeleton,
   Steps,
-  Typography,
+  Switch,
   theme,
 } from 'antd';
 import type { FormInstance, StepsProps } from 'antd';
@@ -178,6 +178,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
               shell
               port
               healthCheck {
+                enable @since(version: "26.4.4rc7")
                 interval
                 path
                 maxRetries
@@ -224,6 +225,13 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
     value: toLocalId(rt.id),
     label: rt.name,
   }));
+
+  // Model definition is gated by a switch; when off the card shows only its
+  // header (no divider, no body).
+  const modelDefinitionEnabled = Form.useWatch(
+    ['modelDefinition', 'enabled'],
+    form,
+  );
 
   const initialValues: Partial<AdminDeploymentPresetFormValue> = useMemo(() => {
     if (mode === 'edit' && preset) {
@@ -285,17 +293,21 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
           preset.deploymentDefaults?.revisionHistoryLimit ?? undefined,
         modelDefinition: preset.modelDefinition?.models?.length
           ? {
+              enabled: true,
               models: preset.modelDefinition.models.map((m) => ({
                 name: m.name,
                 modelPath: m.modelPath,
-                enableService: !!m.service,
                 service: m.service
                   ? {
                       port: m.service.port,
                       shell: m.service.shell ?? undefined,
                       startCommand:
                         m.service.startCommand?.join(' ') ?? undefined,
-                      enableHealthCheck: !!m.service.healthCheck,
+                      // 26.4.4rc7+: `enable` is authoritative; older managers
+                      // omit it, so fall back to the object's presence.
+                      enableHealthCheck:
+                        m.service.healthCheck?.enable ??
+                        !!m.service.healthCheck,
                       healthCheck: m.service.healthCheck
                         ? {
                             path: m.service.healthCheck.path,
@@ -314,7 +326,6 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                         })) ?? [],
                     }
                   : undefined,
-                enableMetadata: !!m.metadata,
                 metadata: m.metadata
                   ? {
                       author: m.metadata.author ?? undefined,
@@ -338,12 +349,23 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                   : undefined,
               })),
             }
-          : undefined,
+          : // No model on the preset → switch off, but seed one empty model so
+            // it is ready when the switch is turned on.
+            {
+              enabled: false,
+              models: [{ name: '', modelPath: '' }],
+            },
       };
     }
     return {
       clusterMode: 'MULTI_NODE' as const,
       clusterSize: 1,
+      // Model definition is off by default (optional). Seed one empty model so
+      // it renders once the switch is turned on.
+      modelDefinition: {
+        enabled: false,
+        models: [{ name: '', modelPath: '' }],
+      },
     };
   }, [mode, preset]);
 
@@ -509,35 +531,27 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                 placeholder={t('adminDeploymentPreset.DescriptionPlaceholder')}
               />
             </Form.Item>
-            {mode === 'edit' ? (
-              <Form.Item label={t('adminDeploymentPreset.Runtime')}>
-                <Typography.Text>
-                  {preset?.runtimeVariant?.name ?? preset?.runtimeVariantId}
-                </Typography.Text>
-              </Form.Item>
-            ) : (
-              <Form.Item
-                name="runtimeVariantId"
-                label={t('adminDeploymentPreset.Runtime')}
-                rules={[
-                  {
-                    required: true,
-                    message: t('adminDeploymentPreset.RuntimeRequired'),
-                  },
-                ]}
-              >
-                <Select
-                  options={runtimeVariantOptions}
-                  placeholder={t('adminDeploymentPreset.SelectRuntimeVariant')}
-                  showSearch={{
-                    filterOption: (input, option) =>
-                      String(option?.label ?? '')
-                        .toLowerCase()
-                        .includes(input.toLowerCase()),
-                  }}
-                />
-              </Form.Item>
-            )}
+            <Form.Item
+              name="runtimeVariantId"
+              label={t('adminDeploymentPreset.Runtime')}
+              rules={[
+                {
+                  required: true,
+                  message: t('adminDeploymentPreset.RuntimeRequired'),
+                },
+              ]}
+            >
+              <Select
+                options={runtimeVariantOptions}
+                placeholder={t('adminDeploymentPreset.SelectRuntimeVariant')}
+                showSearch={{
+                  filterOption: (input, option) =>
+                    String(option?.label ?? '')
+                      .toLowerCase()
+                      .includes(input.toLowerCase()),
+                }}
+              />
+            </Form.Item>
             <Form.Item
               name="imageId"
               label={t('adminDeploymentPreset.Image')}
@@ -629,7 +643,9 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                                 .toLowerCase()
                                 .includes(input.toLowerCase())
                             }
-                            placeholder="shmem"
+                            placeholder={t('general.Example', {
+                              value: 'shmem',
+                            })}
                           />
                         </Form.Item>
                         <Form.Item
@@ -638,7 +654,9 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                           style={{ marginBottom: 0, flex: 1 }}
                           rules={[{ required: true, message: '' }]}
                         >
-                          <Input placeholder="64m" />
+                          <Input
+                            placeholder={t('general.Example', { value: '64m' })}
+                          />
                         </Form.Item>
                         <MinusCircleOutlined onClick={() => remove(name)} />
                       </BAIFlex>
@@ -750,33 +768,55 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
             >
               <EnvVarFormList name="environ" />
             </Form.Item>
-            <Form.Item
-              label={t('adminDeploymentPreset.ModelDefinition')}
-              style={{ marginTop: token.marginMD, marginBottom: 0 }}
-            >
+          </BAICard>
+
+          {/* ----------------------------------------------------------------
+              Step 2 (cont.) — Model Definition (its own card; single model)
+          ---------------------------------------------------------------- */}
+          <BAICard
+            id="preset-form-card-model-definition"
+            title={t('adminDeploymentPreset.ModelDefinition')}
+            style={{
+              display: currentStepKey === 'model' ? 'block' : 'none',
+              marginTop: token.marginMD,
+              // `.ant-card` clips with overflow:hidden, which cuts the header
+              // switch's focus glow. Allow it to render fully.
+              overflow: 'visible',
+            }}
+            extra={
+              <Form.Item
+                name={['modelDefinition', 'enabled']}
+                valuePropName="checked"
+                noStyle
+              >
+                <Switch />
+              </Form.Item>
+            }
+            // When off, show only the header: hide the divider and zero-pad the
+            // (still-mounted) body to avoid a toggle flicker. `title` overflow
+            // stays visible so the switch's focus glow isn't clipped.
+            showDivider={!!modelDefinitionEnabled}
+            styles={{
+              title: { overflow: 'visible' },
+              ...(modelDefinitionEnabled ? {} : { body: { padding: 0 } }),
+            }}
+          >
+            {modelDefinitionEnabled ? (
               <Form.List name={['modelDefinition', 'models']}>
-                {(fields, { add, remove }) => (
-                  <BAIFlex direction="column" align="stretch" gap="sm">
-                    {fields.map(({ key, name, ...rest }) => (
-                      <ModelConfigItem
-                        key={key}
-                        listItemName={name}
-                        restField={rest}
-                        onRemove={() => remove(name)}
-                      />
-                    ))}
-                    <BAIButton
-                      type="dashed"
-                      onClick={() => add({ name: '', modelPath: '' })}
-                      icon={<PlusIcon />}
-                      block
-                    >
-                      {t('adminDeploymentPreset.modelDef.AddModel')}
-                    </BAIButton>
-                  </BAIFlex>
-                )}
+                {(fields) => {
+                  const firstField = fields[0];
+                  if (!firstField) return null;
+                  const { key, name, ...rest } = firstField;
+                  return (
+                    <ModelConfigItem
+                      key={key}
+                      listItemName={name}
+                      restField={rest}
+                    />
+                  );
+                }}
               </Form.List>
-            </Form.Item>
+            ) : null}
           </BAICard>
 
           {/* ----------------------------------------------------------------

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a4553a6d37bbf02df033ce7ab1ee2e53>>
+ * @generated SignedSource<<70b9698989049f09676e195b56664734>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -404,6 +404,13 @@ return {
                                 "alias": null,
                                 "args": null,
                                 "kind": "ScalarField",
+                                "name": "enable",
+                                "storageKey": null
+                              },
+                              {
+                                "alias": null,
+                                "args": null,
+                                "kind": "ScalarField",
                                 "name": "interval",
                                 "storageKey": null
                               },
@@ -558,12 +565,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "804166ba7afe427d401752139688018b",
+    "cacheID": "b08401bb560e47edfe6eb76f1bd727d7",
     "id": null,
     "metadata": {},
     "name": "AdminDeploymentPresetSettingPagePresetQuery",
     "operationKind": "query",
-    "text": "query AdminDeploymentPresetSettingPagePresetQuery(\n  $id: UUID!\n  $skip: Boolean!\n) {\n  deploymentRevisionPreset(id: $id) @skip(if: $skip) {\n    id\n    ...AdminDeploymentPresetSettingPageContent_preset\n  }\n}\n\nfragment AdminDeploymentPresetSettingPageContent_preset on DeploymentRevisionPreset {\n  id\n  name\n  description\n  runtimeVariantId\n  runtimeVariant {\n    name\n    id\n  }\n  cluster {\n    clusterMode\n    clusterSize\n  }\n  execution {\n    imageId\n    startupCommand\n    bootstrapScript\n    environ {\n      key\n      value\n    }\n  }\n  resource {\n    resourceOpts {\n      name\n      value\n    }\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  deploymentDefaults {\n    openToPublic\n    replicaCount\n    revisionHistoryLimit\n    deploymentStrategy\n  }\n  modelDefinition {\n    models {\n      name\n      modelPath\n      service {\n        preStartActions {\n          action\n          args\n        }\n        startCommand\n        shell\n        port\n        healthCheck {\n          interval\n          path\n          maxRetries\n          maxWaitTime\n          expectedStatusCode\n          initialDelay\n        }\n      }\n      metadata {\n        author\n        title\n        version\n        created\n        lastModified\n        description\n        task\n        category\n        architecture\n        framework\n        label\n        license\n        minResource\n      }\n    }\n  }\n}\n"
+    "text": "query AdminDeploymentPresetSettingPagePresetQuery(\n  $id: UUID!\n  $skip: Boolean!\n) {\n  deploymentRevisionPreset(id: $id) @skip(if: $skip) {\n    id\n    ...AdminDeploymentPresetSettingPageContent_preset\n  }\n}\n\nfragment AdminDeploymentPresetSettingPageContent_preset on DeploymentRevisionPreset {\n  id\n  name\n  description\n  runtimeVariantId\n  runtimeVariant {\n    name\n    id\n  }\n  cluster {\n    clusterMode\n    clusterSize\n  }\n  execution {\n    imageId\n    startupCommand\n    bootstrapScript\n    environ {\n      key\n      value\n    }\n  }\n  resource {\n    resourceOpts {\n      name\n      value\n    }\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  deploymentDefaults {\n    openToPublic\n    replicaCount\n    revisionHistoryLimit\n    deploymentStrategy\n  }\n  modelDefinition {\n    models {\n      name\n      modelPath\n      service {\n        preStartActions {\n          action\n          args\n        }\n        startCommand\n        shell\n        port\n        healthCheck {\n          enable @since(version: \"26.4.4rc7\")\n          interval\n          path\n          maxRetries\n          maxWaitTime\n          expectedStatusCode\n          initialDelay\n        }\n      }\n      metadata {\n        author\n        title\n        version\n        created\n        lastModified\n        description\n        task\n        category\n        architecture\n        framework\n        label\n        license\n        minResource\n      }\n    }\n  }\n}\n"
   }
 };
 })();

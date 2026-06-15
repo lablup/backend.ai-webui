@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<94e7b17c104a7b8b476a6330761041eb>>
+ * @generated SignedSource<<4cd0217ea08b2928d9e105d884b9a2e4>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -54,6 +54,7 @@ export type AdminDeploymentPresetSettingPageContent_preset$data = {
       readonly name: string;
       readonly service: {
         readonly healthCheck: {
+          readonly enable: boolean;
           readonly expectedStatusCode: number;
           readonly initialDelay: number;
           readonly interval: number;
@@ -403,6 +404,13 @@ return {
                       "alias": null,
                       "args": null,
                       "kind": "ScalarField",
+                      "name": "enable",
+                      "storageKey": null
+                    },
+                    {
+                      "alias": null,
+                      "args": null,
+                      "kind": "ScalarField",
                       "name": "interval",
                       "storageKey": null
                     },
@@ -555,6 +563,6 @@ return {
 };
 })();
 
-(node as any).hash = "1b81d107592e15d8c1eb20a76757596e";
+(node as any).hash = "695ddaf780e16e2224f6dcf69bc10587";
 
 export default node;

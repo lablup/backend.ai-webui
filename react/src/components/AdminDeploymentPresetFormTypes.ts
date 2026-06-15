@@ -45,20 +45,24 @@ export type ModelMetadataFormValue = {
 export type ModelConfigFormValue = {
   name: string;
   modelPath: string;
-  enableService?: boolean;
   service?: ModelServiceFormValue;
-  enableMetadata?: boolean;
   metadata?: ModelMetadataFormValue;
 };
 
 export type ModelDefinitionFormValue = {
+  /**
+   * UI switch: whether this preset defines a model. The model definition is
+   * optional (nullable) — when off, the submit sends `modelDefinition: null`;
+   * when on, the single model's sub-fields are required.
+   */
+  enabled?: boolean;
   models?: ModelConfigFormValue[];
 };
 
 export type AdminDeploymentPresetFormValue = {
   name: string;
   description?: string;
-  /** UUID of the selected runtime variant (create mode only — read-only in edit). */
+  /** UUID of the selected runtime variant (editable in both create and edit). */
   runtimeVariantId: string;
   /** UUID of the selected image. */
   imageId: string;

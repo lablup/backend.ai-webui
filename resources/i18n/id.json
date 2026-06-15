@@ -87,11 +87,11 @@
       "EnableService": "Konfigurasi Layanan",
       "Framework": "Framework",
       "FrameworkPlaceholder": "mis., PyTorch, TensorFlow",
-      "HealthCheckExpectedStatus": "Status yang Diharapkan",
-      "HealthCheckInitialDelay": "Penundaan Awal (s)",
-      "HealthCheckInterval": "Interval (s)",
+      "HealthCheckExpectedStatus": "Kode Status",
+      "HealthCheckInitialDelay": "Penundaan Awal",
+      "HealthCheckInterval": "Interval",
       "HealthCheckMaxRetries": "Maks. Percobaan Ulang",
-      "HealthCheckMaxWaitTime": "Waktu Tunggu Maks. (s)",
+      "HealthCheckMaxWaitTime": "Waktu Tunggu Maks.",
       "HealthCheckPath": "Jalur",
       "Label": "Label",
       "LabelPlaceholder": "mis., nlp, vision",
@@ -307,12 +307,10 @@
     "TopP": "Top P"
   },
   "auditLog": {
-    "AuditLog": "Log Audit",
     "Operation": "Operasi",
     "Status": "Status",
     "Time": "Waktu",
-    "TriggeredBy": "Dipicu oleh",
-    "TriggeredByFilterPlaceholder": "Cari berdasarkan ID"
+    "TriggeredBy": "Dipicu oleh"
   },
   "autoScalingRule": {
     "AddAutoScalingRule": "Tambahkan aturan penskalaan otomatis",
@@ -1496,7 +1494,6 @@
     "Filename": "Nama File",
     "FolderNotFoundOrNoAccess": "Folder tidak ditemukan atau akses ditolak",
     "InputTooShort": "MasukanTerlaluPendek",
-    "Metadata": "Metadata",
     "NoExplorerSupportForUnmanagedFolder": "Folder yang tidak dikelola tidak mendukung file explorer.",
     "NoPermissions": "Tidak ada izin untuk mengakses folder ini",
     "ProcessingUpload": "File Anda sedang diunggah. \nHarap tunggu.",
@@ -1600,6 +1597,7 @@
     "Enable": "Aktifkan",
     "Enabled": "Diaktifkan",
     "ErrorOccurred": "Ada yang salah. \nSilakan coba lagi nanti.",
+    "Example": "mis. {{value}}",
     "ExtendLoginSession": "Memperpanjang sesi masuk",
     "FailedToExportCSV": "Gagal mengekspor CSV",
     "File": "Berkas",
@@ -1939,6 +1937,7 @@
     "EnterCommand": "Masukkan Perintah",
     "Error": "Kesalahan",
     "ExpectedStatusCode": "Kode Status yang Diharapkan",
+    "ExpectedStatusTooltip": "Kode status HTTP yang dianggap sebagai respons sehat.",
     "ExpiredDate": "Tanggal Kedaluwarsa",
     "ExtraMountsWarning": "Saat mengedit layanan, nama (alias) dari folder yang dipasang tambahan mungkin tidak dipertahankan. \nHarap periksa ulang nama folder sebelum disimpan.",
     "FailedToStartService": "Gagal membuat layanan.",
@@ -2628,7 +2627,7 @@
     "Message": "Pesan",
     "Phase": "Tahap",
     "Result": "Hasil",
-    "RouteSchedulingHistory": "Riwayat Penjadwalan Replika",
+    "RouteSchedulingHistory": "Riwayat Penjadwalan Replica",
     "ToStatus": "Ke status",
     "UpdatedAt": "Diperbarui pada"
   },

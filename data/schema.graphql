@@ -5568,6 +5568,11 @@ type DeploymentRevisionPreset implements Node
   """Added in 26.4.3. The runtime variant this preset is designed for."""
   runtimeVariant: RuntimeVariant
 
+  """
+  Added in UNRELEASED. The container image used to run the inference server. None when the preset does not specify an image.
+  """
+  image: ImageV2
+
   """Added in 26.4.2. Resource slot allocations for this preset."""
   resourceSlots(filter: AllocatedResourceSlotFilter = null, orderBy: [AllocatedResourceSlotOrderBy!] = null): [AllocatedResourceSlot!]
 }
@@ -9586,7 +9591,7 @@ type ModelDeployment implements Node
   options: DeploymentOptionsInfo!
 
   """
-  Added in UNRELEASED. Replica scaling axis, orthogonal to ``metadata.status`` (lifecycle). ``SCALING`` while the replica reconciler is adjusting replica count; ``STABLE`` once holding at the desired count.
+  Added in UNRELEASED. Endpoint-level replica scaling axis. Scaling is now reconciled per replica group, so this stays ``STABLE``; inspect each replica group's scaling status instead. Deprecated since UNRELEASED. Use per-replica-group scaling status.
   """
   scalingState: ScalingState!
 
@@ -9714,6 +9719,11 @@ input ModelDeploymentNetworkAccessInput
 type ModelHealthCheck
   @join__type(graph: STRAWBERRY)
 {
+  """
+  Whether the route is health-checked. When false the route activates immediately.
+  """
+  enable: Boolean!
+
   """Interval in seconds between health checks."""
   interval: Float!
 
@@ -9737,6 +9747,11 @@ type ModelHealthCheck
 input ModelHealthCheckInput
   @join__type(graph: STRAWBERRY)
 {
+  """
+  Whether the route should be health-checked. When false the route activates immediately and the remaining fields are ignored.
+  """
+  enable: Boolean! = false
+
   """Interval in seconds between health checks."""
   interval: Float = null
 
@@ -9890,6 +9905,11 @@ type ModelReplica implements Node
   sessionId: ID
   revisionId: ID!
 
+  """
+  Added in UNRELEASED. ID of the model deployment this replica belongs to.
+  """
+  deploymentId: ID!
+
   """Whether the replica has been checked and its health state."""
   readinessStatus: ReadinessStatus!
 
@@ -9925,6 +9945,9 @@ type ModelReplica implements Node
 
   """The revision of this entity."""
   revision: ModelRevision
+
+  """Added in UNRELEASED. The model deployment this replica belongs to."""
+  deployment: ModelDeployment
 }
 
 """
@@ -17033,6 +17056,11 @@ type RuntimeVariantPreset implements Node
   """
   targetSpec: PresetTargetSpec!
 
+  """
+  Added in UNRELEASED. Whether this preset parameter must be supplied when building a deployment revision.
+  """
+  required: Boolean!
+
   """UI category group for organizing parameters."""
   category: String
 
@@ -17047,9 +17075,6 @@ type RuntimeVariantPreset implements Node
 
   """Timestamp of the last modification to this preset."""
   updatedAt: DateTime
-
-  """Whether this preset option must be filled in before submitting a deployment."""
-  required: Boolean!
 }
 
 """Added in 26.4.2. Paginated list of runtime variant presets."""
@@ -17880,6 +17905,11 @@ type SessionV2 implements Node
   userId: ID!
   projectId: ID!
 
+  """
+  Added in UNRELEASED. UUID of the model deployment replica served by this session.
+  """
+  replicaId: ID
+
   """Metadata including domain, project, and user information."""
   metadata: SessionV2MetadataInfo!
 
@@ -17914,6 +17944,11 @@ type SessionV2 implements Node
 
   """Added in 26.3.0. The kernels belonging to this session."""
   kernels: KernelV2Connection
+
+  """
+  Added in UNRELEASED. The model deployment replica served by this session: a single replica instance of a model deployment that runs in this compute session and serves inference requests. Null for non-inference sessions.
+  """
+  replica: ModelReplica
 }
 
 """Added in 26.3.0. Connection type for paginated session results."""
@@ -18791,6 +18826,9 @@ input UpdateDeploymentRevisionPresetInput
 {
   """Preset ID."""
   id: UUID!
+
+  """New runtime variant ID."""
+  runtimeVariantId: UUID = null
 
   """New name."""
   name: String = null
