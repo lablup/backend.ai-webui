@@ -95,6 +95,16 @@ allowBuilds:
 
 overrides:
   tar-fs@2: 2.1.4
+  # Build-tooling override. `@electron/packager` and `electron`'s own
+  # install.js both extract their downloaded ZIPs via `extract-zip` → `yauzl`.
+  # yauzl 2.10.0 extracts only the first entry and then lets the process exit
+  # 0 with no error on Node >= 24.16.0 / >= 26.1.0, so desktop packaging
+  # produces no app bundle and the Makefile fails later at the misleading
+  # `mv`/`zip` step (build_mac + build_desktop, since CI's `.nvmrc: 24` floated
+  # 24.15.0 -> 24.16.0). yauzl >= 3.3.1 fixes the silent extraction failure.
+  # See electron/electron#51619 (#51623). Remove once extract-zip ranges to
+  # yauzl >= 3.3.1 on its own.
+  yauzl: ^3.3.1
   # Runtime security overrides — FR-3014. Pin transitive deps that end up in
   # the production bundle to the first Dependabot-recommended patched
   # version. Remove an entry when every upstream consumer ranges to the
