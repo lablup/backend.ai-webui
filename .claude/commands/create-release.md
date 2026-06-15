@@ -127,6 +127,12 @@ Determine the base tag for auto-generated release notes:
 
    For prerelease versions (alpha/beta/rc), add `--prerelease` flag.
 
+4. **Immediately report the release link.** As soon as the `gh release create`
+   command returns the release URL, surface it to the user right away in a
+   short, standalone message (e.g. `✅ Release created: <url>`) — do not wait
+   until the final Output Summary. Then proceed to the next step without
+   pausing for confirmation.
+
 ### 9. Improve Release Notes
 
 After the GitHub release is created, invoke the `/fw:release-note` skill to improve and format the release notes:
