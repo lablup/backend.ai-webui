@@ -27,6 +27,7 @@ import {
   tokenLogin,
 } from '../helper/loginSessionAuth';
 import * as endpointModule from '../hooks/useResolvedApiEndpoint';
+import { initializeConfigOnce } from '../hooks/useWebUIConfig';
 import {
   STokenLoginBoundary,
   type STokenLoginError,
@@ -47,10 +48,16 @@ vi.mock('./DefaultProviders', () => ({
   jotaiStore: { get: () => null, set: () => {} },
 }));
 
-vi.mock('../hooks/useWebUIConfig', () => ({
-  __esModule: true,
-  loginConfigState: { toString: () => 'loginConfigState' },
-}));
+vi.mock('../hooks/useWebUIConfig', async () => {
+  // A real (empty) atom: the component reads it through the provider store
+  // (`store.get(loginConfigState)`), so the mock must be a genuine Jotai atom.
+  const { atom } = await vi.importActual<typeof import('jotai')>('jotai');
+  return {
+    __esModule: true,
+    loginConfigState: atom(null),
+    initializeConfigOnce: vi.fn().mockResolvedValue(undefined),
+  };
+});
 
 vi.mock('../hooks/useResolvedApiEndpoint', () => {
   const state: { endpoint: string } = { endpoint: 'https://api.example.com' };
@@ -279,6 +286,26 @@ describe('STokenLoginBoundary', () => {
     expect(mockedConnectViaGQL).toHaveBeenCalledTimes(1);
     expect(connectedEventCount).toBe(1);
     expect(onSuccess).toHaveBeenCalledTimes(1);
+  });
+
+  test('awaits the config.toml bootstrap before authenticating (FR-3128)', async () => {
+    renderBoundary({});
+
+    await waitFor(() => {
+      expect(screen.getByText('children-rendered')).toBeInTheDocument();
+    });
+
+    const mockedInitializeConfigOnce = initializeConfigOnce as MockedFunction<
+      typeof initializeConfigOnce
+    >;
+    // The bootstrap config load must run, and must run BEFORE the token
+    // exchange — otherwise `applyConfigToClient` inside `tokenLogin` writes
+    // `getDefaultLoginConfig()` values (e.g. `allowNonAuthTCP: false`) into
+    // `backendaiclient._config`, hiding the SSH/SFTP app after SSO login.
+    expect(mockedInitializeConfigOnce).toHaveBeenCalledTimes(1);
+    expect(mockedInitializeConfigOnce.mock.invocationCallOrder[0]).toBeLessThan(
+      mockedTokenLogin.mock.invocationCallOrder[0],
+    );
   });
 
   test('errorFallback replaces the built-in card for every kind', async () => {

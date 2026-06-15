@@ -127,6 +127,8 @@ export type FormValues = ImageEnvironmentFormInput &
     commandInterval?: number;
     commandMaxWaitTime?: number;
     environ: EnvVarFormListValue[];
+    /** Runtime-variant preset values, registered by RuntimeParameterFormSection. */
+    runtimeParams?: RuntimeParameterValues;
   };
 
 export type PresetFormValues = {
@@ -395,9 +397,11 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     Record<string, string>
   >({});
 
-  // Runtime parameter refs — kept outside form state so slider/input changes
-  // don't re-render the modal. Read at submit time via serializeRuntimeParamsToEnviron.
-  const runtimeParamValuesRef = useRef<RuntimeParameterValues>({});
+  // Runtime parameter values live in `customForm` under the `runtimeParams`
+  // namespace (registered by RuntimeParameterFormSection), so required presets
+  // participate in normal form validation. Touched keys and groups are kept in
+  // refs since changing them must not re-render the modal — both are only read
+  // at submit time via serializeRuntimeParamsToEnviron.
   const runtimeParamTouchedKeysRef = useRef<Set<string>>(new Set());
   const runtimeParamGroupsRef = useRef<RuntimeParameterGroup[] | null>(null);
 
@@ -951,14 +955,16 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     setMode('custom');
   };
 
-  // Serialize runtime parameter UI values (from RuntimeParameterFormSection)
-  // into an environ map — mirrors ServiceLauncherPageContent logic.
+  // Serialize runtime parameter form values (registered by
+  // RuntimeParameterFormSection under `runtimeParams`) into an environ map —
+  // mirrors ServiceLauncherPageContent logic.
   const serializeRuntimeParamsToEnviron = (
     environ: Record<string, string>,
     runtimeVariant: string,
+    runtimeParams: RuntimeParameterValues | undefined,
   ) => {
     const groups = runtimeParamGroupsRef.current;
-    if (!groups || Object.keys(runtimeParamValuesRef.current).length === 0)
+    if (!groups || !runtimeParams || Object.keys(runtimeParams).length === 0)
       return;
 
     const extraArgsEnvVar = getExtraArgsEnvVarName(runtimeVariant);
@@ -966,9 +972,13 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       if (envName !== extraArgsEnvVar) delete environ[envName];
     }
 
+    // Form values are native-typed (number/boolean/string); downstream
+    // merge/compare logic works on the API's string encoding.
     const touchedValues: Record<string, string> = {};
-    for (const [key, val] of Object.entries(runtimeParamValuesRef.current)) {
-      if (runtimeParamTouchedKeysRef.current.has(key)) touchedValues[key] = val;
+    for (const [key, val] of Object.entries(runtimeParams)) {
+      if (!runtimeParamTouchedKeysRef.current.has(key)) continue;
+      if (val === undefined || val === null || val === '') continue;
+      touchedValues[key] = String(val);
     }
 
     const presets = flattenPresets(groups);
@@ -1093,7 +1103,11 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       if (variable) environRecord[variable] = value;
     }
     if (!isCustom) {
-      serializeRuntimeParamsToEnviron(environRecord, variantName);
+      serializeRuntimeParamsToEnviron(
+        environRecord,
+        variantName,
+        values.runtimeParams,
+      );
     }
     const environEntries = Object.entries(environRecord).map(
       ([name, value]) => ({ name, value }),
@@ -1609,12 +1623,6 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                   <Suspense fallback={null}>
                     <RuntimeParameterFormSection
                       runtimeVariant={variantName}
-                      onChange={(values) => {
-                        runtimeParamValuesRef.current = {
-                          ...runtimeParamValuesRef.current,
-                          ...values,
-                        };
-                      }}
                       onTouchedKeysChange={(keys) => {
                         runtimeParamTouchedKeysRef.current = keys;
                       }}

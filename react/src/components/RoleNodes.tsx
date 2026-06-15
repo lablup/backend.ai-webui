@@ -6,7 +6,12 @@ import {
   RoleNodesFragment$data,
   RoleNodesFragment$key,
 } from '../__generated__/RoleNodesFragment.graphql';
-import { Tag, Tooltip, Typography } from 'antd';
+import { useSuspendedBackendaiClient } from '../hooks';
+import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
+import TableColumnsSettingModal from './TableColumnsSettingModal';
+import { SettingOutlined } from '@ant-design/icons';
+import { useToggle } from 'ahooks';
+import { Button, Tag, Tooltip, Typography } from 'antd';
 import {
   BAIColumnType,
   BAIDoubleTag,
@@ -18,6 +23,7 @@ import {
   filterOutEmpty,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
+import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -52,6 +58,13 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
+  const baiClient = useSuspendedBackendaiClient();
+  // Auto-assign is only supported on managers >= 26.4.4.
+  const supportsAutoAssign = baiClient.supports('role-auto-assign');
+  const [hiddenColumnKeys, setHiddenColumnKeys] =
+    useHiddenColumnKeysSetting('RoleList');
+  const [visibleColumnSettingModal, { toggle: toggleColumnSettingModal }] =
+    useToggle();
 
   const roles = useFragment(
     graphql`
@@ -61,6 +74,7 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
         description
         source
         status
+        autoAssign @since(version: "26.4.4")
         createdAt
         updatedAt
         scopes(first: 3) {
@@ -172,6 +186,16 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
         );
       },
     },
+    supportsAutoAssign && {
+      key: 'autoAssign',
+      title: t('rbac.AutoAssign'),
+      dataIndex: 'autoAssign',
+      render: (autoAssign: boolean) => (
+        <BAITag color={autoAssign ? 'green' : 'default'}>
+          {autoAssign ? t('general.Active') : t('general.Inactive')}
+        </BAITag>
+      ),
+    },
     {
       key: 'createdAt',
       title: t('general.CreatedAt'),
@@ -191,20 +215,57 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
   ]);
 
   const allColumns = customizeColumns ? customizeColumns(columns) : columns;
+  const displayedColumns = _.filter(
+    allColumns,
+    (column) => !_.includes(hiddenColumnKeys, _.toString(column?.key)),
+  );
+
+  const { pagination, ...restTableProps } = tableProps;
 
   return (
-    <BAITable<RoleNodeInList>
-      rowKey="id"
-      dataSource={roles as RoleNodeInList[]}
-      columns={allColumns}
-      scroll={{ x: 'max-content' }}
-      {...tableProps}
-      onChangeOrder={(order) => {
-        onChangeOrder?.(
-          (order as (typeof availableRoleSorterValues)[number]) || null,
-        );
-      }}
-    />
+    <>
+      <BAITable<RoleNodeInList>
+        rowKey="id"
+        dataSource={roles as RoleNodeInList[]}
+        columns={displayedColumns}
+        scroll={{ x: 'max-content' }}
+        {...restTableProps}
+        pagination={
+          pagination
+            ? {
+                ...pagination,
+                extraContent: (
+                  <Button
+                    type="text"
+                    icon={<SettingOutlined />}
+                    onClick={() => toggleColumnSettingModal()}
+                  />
+                ),
+              }
+            : pagination
+        }
+        onChangeOrder={(order) => {
+          onChangeOrder?.(
+            (order as (typeof availableRoleSorterValues)[number]) || null,
+          );
+        }}
+      />
+      <TableColumnsSettingModal
+        open={visibleColumnSettingModal}
+        onRequestClose={(values) => {
+          values?.selectedColumnKeys &&
+            setHiddenColumnKeys(
+              _.difference(
+                allColumns.map((column) => _.toString(column.key)),
+                values?.selectedColumnKeys,
+              ),
+            );
+          toggleColumnSettingModal();
+        }}
+        columns={allColumns}
+        hiddenColumnKeys={hiddenColumnKeys}
+      />
+    </>
   );
 };
 

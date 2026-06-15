@@ -18,11 +18,13 @@ import {
   tokenLogin,
 } from '../helper/loginSessionAuth';
 import { useResolvedApiEndpoint } from '../hooks/useResolvedApiEndpoint';
-import { loginConfigState } from '../hooks/useWebUIConfig';
-import { jotaiStore } from './DefaultProviders';
+import {
+  initializeConfigOnce,
+  loginConfigState,
+} from '../hooks/useWebUIConfig';
 import { App, Form, Input, Spin, Typography } from 'antd';
 import { BAIButton, BAICard, BAIFlex, useBAILogger } from 'backend.ai-ui';
-import { useAtomValue } from 'jotai';
+import { useAtomValue, useStore } from 'jotai';
 import {
   Suspense,
   useEffect,
@@ -222,6 +224,15 @@ type PendingStep = 'connecting' | 'authenticating';
  * the caller-supplied `sToken`, dispatches `backend-ai-connected` exactly
  * once on success, and only then renders `children`. See spec section
  * "컴포넌트 설계" and "내부 동작 시퀀스" for the full contract.
+ *
+ * Config semantics: the boundary awaits the same-origin `config.toml`
+ * bootstrap (`initializeConfigOnce`) before authenticating, so webserver
+ * flags like `[resources].allowNonAuthTCP` reach
+ * `backendaiclient._config` even though `LoginView` has not mounted yet
+ * (FR-3128). The cross-origin webserver config merge
+ * (`loadConfigFromWebServer`) remains excluded per spec Q2 — callers that
+ * target an API endpoint on a different origin may invoke it from
+ * `onSuccess`.
  */
 export const STokenLoginBoundary: React.FC<STokenLoginBoundaryProps> = (
   props,
@@ -246,6 +257,12 @@ const STokenLoginBoundaryInner: React.FC<STokenLoginBoundaryProps> = ({
   'use memo';
   const { logger } = useBAILogger();
   const apiEndpoint = useResolvedApiEndpoint();
+  // The active Jotai store (the app-level `jotaiStore` in production —
+  // `index.tsx` passes it to the root `JotaiProvider`). Used for the
+  // synchronous post-bootstrap read inside `runLoginSequence` so the
+  // component honors a custom `<Provider store={...}>` (tests, Storybook)
+  // instead of hard-binding to the module-level store.
+  const store = useStore();
   const loginConfig = useAtomValue(loginConfigState);
 
   const [phase, setPhase] = useState<Phase>({ name: 'pending' });
@@ -329,14 +346,30 @@ const STokenLoginBoundaryInner: React.FC<STokenLoginBoundaryProps> = ({
       return;
     }
 
+    // Ensure the app-level config.toml bootstrap has completed before
+    // deriving the login config. On sToken entry paths `LoginView` — the
+    // usual `useInitializeConfig` caller — only mounts after this boundary
+    // succeeds, so without this await the login would always run against
+    // `getDefaultLoginConfig()` and silently drop webserver-configured
+    // flags such as `[resources].allowNonAuthTCP`, hiding the SSH/SFTP app
+    // after SSO login (FR-3128). This is the same-origin bootstrap load,
+    // not the cross-origin `loadConfigFromWebServer` merge — the latter is
+    // still intentionally NOT invoked here (spec Q2); callers may invoke it
+    // from `onSuccess` when the API endpoint lives on another origin.
+    try {
+      await initializeConfigOnce(store, logger);
+    } catch (cause) {
+      logger.warn(
+        '[STokenLoginBoundary] config.toml bootstrap failed — continuing with defaults',
+        cause,
+      );
+    }
+
     // Prefer the live atom state; fall back to the documented defaults so
     // `applyConfigToClient(cfg)` downstream of `connectViaGQL` does not write
-    // `undefined` into `backendaiclient._config`. `loadConfigFromWebServer`
-    // is intentionally NOT invoked here — see spec Q2.
+    // `undefined` into `backendaiclient._config`.
     const cfg =
-      loginConfig ??
-      jotaiStore.get(loginConfigState) ??
-      getDefaultLoginConfig();
+      store.get(loginConfigState) ?? loginConfig ?? getDefaultLoginConfig();
     const endpoints =
       ((
         globalThis as { backendaioptions?: { get: (k: string) => unknown } }

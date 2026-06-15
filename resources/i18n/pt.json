@@ -2272,6 +2272,8 @@
     "AssignUser": "Adicionar utilizador",
     "Assignments": "Atribuições",
     "AtLeastOneScopeRequired": "É necessário pelo menos um âmbito.",
+    "AutoAssign": "Atribuição automática",
+    "AutoAssignDescription": "Quando ativado, esta função é concedida automaticamente a um utilizador quando o utilizador é adicionado a um âmbito no qual esta função está registada.",
     "BulkAssignPartialFailure": "{{count}} utilizador(es) não pôde(puderam) ser atribuído(s).",
     "BulkRevokePartialFailure": "Falha ao revogar {{count}} usuário(s).",
     "ConfirmDeletePermissionWithDetail": "Remover a seguinte permissão desta função?",

@@ -3,13 +3,14 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { reverseMapExtraArgs } from '../helper/runtimeExtraArgsParser';
+import { useSuspendedBackendaiClient } from '../hooks';
 import {
   RuntimeVariantPresetDef,
   RuntimeParameterGroup,
   useRuntimeParameterSchema,
-  buildDefaultsMap,
   buildArgsSchemaKeySet,
   buildEnvPresetKeySet,
+  flattenPresets,
 } from '../hooks/useRuntimeParameterSchema';
 import InputNumberWithSlider from './InputNumberWithSlider';
 import { UndoOutlined } from '@ant-design/icons';
@@ -26,7 +27,7 @@ import {
   Tabs,
 } from 'antd';
 import { BAIButton, BAIFlex } from 'backend.ai-ui';
-import React, { useCallback, useEffect, useEffectEvent, useState } from 'react';
+import React, { useEffect, useEffectEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 /** Convert category slug to a display-friendly label. */
@@ -38,13 +39,47 @@ function formatCategoryLabel(category: string): string {
     .join(' ');
 }
 
+/** Native value type stored in antd form state for a runtime parameter. */
+export type RuntimeParameterFormValue = string | number | boolean | undefined;
+
+/**
+ * Runtime parameter values keyed by the preset key (e.g. '--dtype', 'HF_TOKEN').
+ * Lives in the enclosing antd form under the `runtimeParams` namespace.
+ */
 export interface RuntimeParameterValues {
-  [key: string]: string;
+  [key: string]: RuntimeParameterFormValue;
+}
+
+/** antd form name path for the runtime parameter namespace. */
+export const RUNTIME_PARAMS_NAMESPACE = 'runtimeParams';
+
+/**
+ * Convert the API's string-encoded value into the native type stored in
+ * form state (numbers for INT/FLOAT, booleans for BOOL/FLAG).
+ */
+function toNativeValue(
+  param: RuntimeVariantPresetDef,
+  raw: string,
+): RuntimeParameterFormValue {
+  switch (param.valueType) {
+    case 'INT': {
+      const n = parseInt(raw, 10);
+      return Number.isNaN(n) ? undefined : n;
+    }
+    case 'FLOAT': {
+      const n = parseFloat(raw);
+      return Number.isNaN(n) ? undefined : n;
+    }
+    case 'BOOL':
+    case 'FLAG':
+      return raw === 'true';
+    default:
+      return raw;
+  }
 }
 
 interface RuntimeParameterFormSectionProps {
   runtimeVariant: string;
-  onChange?: (values: RuntimeParameterValues) => void;
   /** Called when the set of touched parameter keys changes */
   onTouchedKeysChange?: (touchedKeys: Set<string>) => void;
   /** Called when preset groups are loaded from the API */
@@ -57,13 +92,15 @@ interface RuntimeParameterFormSectionProps {
 
 /**
  * Dynamic form section for runtime parameters.
- * Renders slider/input/select/checkbox controls based on API-provided preset schema.
+ * Renders slider/input/select/checkbox controls based on API-provided preset
+ * schema. Values are registered as fields of the **enclosing antd form** under
+ * the `runtimeParams` namespace, so required presets participate in normal
+ * form validation (`validateFields` / `onFinish`).
  */
 const RuntimeParameterFormSection: React.FC<
   RuntimeParameterFormSectionProps
 > = ({
   runtimeVariant,
-  onChange,
   onTouchedKeysChange,
   onGroupsLoaded,
   initialExtraArgs,
@@ -72,6 +109,11 @@ const RuntimeParameterFormSection: React.FC<
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
+  const form = Form.useFormInstance();
+  const baiClient = useSuspendedBackendaiClient();
+  const supportsRequiredField = baiClient.supports(
+    'runtime-variant-preset-required',
+  );
   const groups = useRuntimeParameterSchema(runtimeVariant);
 
   // Notify parent when groups change (for serialization at submit time)
@@ -90,30 +132,20 @@ const RuntimeParameterFormSection: React.FC<
     };
   }, [groups]);
 
-  const [internalValues, setInternalValues] = useState<RuntimeParameterValues>(
-    {},
-  );
-  const values = internalValues;
-
   // Track which parameter keys the user has explicitly interacted with.
   // In edit mode, keys already present in the endpoint's env vars are pre-marked.
   const [touchedKeys, setTouchedKeys] = useState<Set<string>>(new Set());
 
   const [activeTab, setActiveTab] = useState<string>('');
 
-  const setValues = useCallback(
-    (newValues: RuntimeParameterValues) => {
-      setInternalValues(newValues);
-      onChange?.(newValues);
-    },
-    [onChange],
-  );
-
-  // Initialize from defaults or reverse-map from existing extra args / env vars
+  // Initialize form values. Defaults are deliberately NOT seeded — they are
+  // surfaced as control placeholders instead, so untouched fields stay empty
+  // (the runtime applies its own defaults) and required presets fail
+  // validation until the user supplies an explicit value. In edit mode,
+  // values reverse-mapped from the existing extra args / env vars are seeded.
   const initializeValues = useEffectEvent(() => {
     if (!groups) return;
 
-    const defaults = buildDefaultsMap(groups);
     const hasInitialData = !!initialExtraArgs || !!initialEnvVars;
 
     if (hasInitialData) {
@@ -140,14 +172,25 @@ const RuntimeParameterFormSection: React.FC<
         }
       }
 
-      const allMapped = { ...mappedFromArgs, ...mappedFromEnv };
-      setValues({ ...defaults, ...allMapped });
+      const presetMap = new Map(flattenPresets(groups).map((p) => [p.key, p]));
+      const nativeMapped: RuntimeParameterValues = {};
+      for (const [key, raw] of Object.entries({
+        ...mappedFromArgs,
+        ...mappedFromEnv,
+      })) {
+        const preset = presetMap.get(key);
+        if (preset) nativeMapped[key] = toNativeValue(preset, raw);
+      }
+
+      // Replace the whole namespace so values from a previously selected
+      // variant don't leak into this one.
+      form.setFieldValue(RUNTIME_PARAMS_NAMESPACE, nativeMapped);
       // Pre-mark keys from existing env vars as touched
-      const initialTouched = new Set(Object.keys(allMapped));
+      const initialTouched = new Set(Object.keys(nativeMapped));
       setTouchedKeys(initialTouched);
       onTouchedKeysChange?.(initialTouched);
     } else {
-      setValues(defaults);
+      form.setFieldValue(RUNTIME_PARAMS_NAMESPACE, {});
       setTouchedKeys(new Set());
       onTouchedKeysChange?.(new Set());
     }
@@ -160,33 +203,25 @@ const RuntimeParameterFormSection: React.FC<
     initializeValues();
   }, [runtimeVariant, groups]);
 
-  const handleParamChange = useCallback(
-    (key: string, newValue: string) => {
-      setInternalValues((prev) => {
-        const updated = { ...prev, [key]: newValue };
-        // Notify parent outside updater to keep it pure
-        queueMicrotask(() => onChange?.(updated));
-        return updated;
-      });
-      setTouchedKeys((prev) => {
-        if (prev.has(key)) return prev;
-        const next = new Set(prev);
-        next.add(key);
-        // Notify parent outside updater to keep it pure
-        queueMicrotask(() => onTouchedKeysChange?.(next));
-        return next;
-      });
-    },
-    [onChange, onTouchedKeysChange],
-  );
+  const markTouched = (key: string) => {
+    setTouchedKeys((prev) => {
+      if (prev.has(key)) return prev;
+      const next = new Set(prev);
+      next.add(key);
+      // Notify parent outside updater to keep it pure
+      queueMicrotask(() => onTouchedKeysChange?.(next));
+      return next;
+    });
+  };
 
-  const handleReset = useCallback(() => {
+  const handleReset = () => {
     if (!groups) return;
-    const defaults = buildDefaultsMap(groups);
-    setValues(defaults);
+    // Empty form = every parameter falls back to the runtime's own default
+    // (untouched/empty keys are excluded from serialization).
+    form.setFieldValue(RUNTIME_PARAMS_NAMESPACE, {});
     setTouchedKeys(new Set());
     onTouchedKeysChange?.(new Set());
-  }, [groups, setValues, onTouchedKeysChange]);
+  };
 
   if (!groups) return null;
 
@@ -213,9 +248,11 @@ const RuntimeParameterFormSection: React.FC<
             <BAIFlex justify="between" align="center" style={{ flex: 1 }}>
               <span>
                 {t('modelService.RuntimeParamTitle')}{' '}
-                <span style={{ color: token.colorTextSecondary }}>
-                  ({t('general.Optional')})
-                </span>
+                {!supportsRequiredField && (
+                  <span style={{ color: token.colorTextSecondary }}>
+                    ({t('general.Optional')})
+                  </span>
+                )}
               </span>
               <Tooltip title={t('button.Reset')}>
                 <BAIButton
@@ -249,12 +286,15 @@ const RuntimeParameterFormSection: React.FC<
                   return {
                     key: tab.key,
                     label: tab.label,
+                    // Mount every pane up front so required rules of fields in
+                    // unvisited tabs are registered with the form — otherwise
+                    // `validateFields()` silently skips them.
+                    forceRender: true,
                     children: group ? (
                       <ParameterGroupContent
                         group={group}
-                        values={values}
                         touchedKeys={touchedKeys}
-                        onParamChange={handleParamChange}
+                        onParamTouch={markTouched}
                       />
                     ) : null,
                   };
@@ -270,16 +310,14 @@ const RuntimeParameterFormSection: React.FC<
 
 interface ParameterGroupContentProps {
   group: RuntimeParameterGroup;
-  values: RuntimeParameterValues;
   touchedKeys: Set<string>;
-  onParamChange: (key: string, value: string) => void;
+  onParamTouch: (key: string) => void;
 }
 
 const ParameterGroupContent: React.FC<ParameterGroupContentProps> = ({
   group,
-  values,
   touchedKeys,
-  onParamChange,
+  onParamTouch,
 }) => {
   'use memo';
   return (
@@ -288,9 +326,8 @@ const ParameterGroupContent: React.FC<ParameterGroupContentProps> = ({
         <ParameterControl
           key={param.key}
           param={param}
-          value={values[param.key] ?? param.defaultValue ?? ''}
           touched={touchedKeys.has(param.key)}
-          onChange={(val) => onParamChange(param.key, val)}
+          onTouch={() => onParamTouch(param.key)}
         />
       ))}
     </BAIFlex>
@@ -299,20 +336,22 @@ const ParameterGroupContent: React.FC<ParameterGroupContentProps> = ({
 
 interface ParameterControlProps {
   param: RuntimeVariantPresetDef;
-  value: string;
   touched: boolean;
-  onChange: (value: string) => void;
+  onTouch: () => void;
 }
 
 const ParameterControl: React.FC<ParameterControlProps> = ({
   param,
-  value,
   touched,
-  onChange,
+  onTouch,
 }) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
+  const baiClient = useSuspendedBackendaiClient();
+  const supportsRequired = baiClient.supports(
+    'runtime-variant-preset-required',
+  );
 
   const label = param.displayName ?? param.name;
   const tooltip = param.description ?? undefined;
@@ -321,6 +360,14 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
   };
   const controlOpacity = touched ? undefined : 0.45;
   const controlTransition = 'opacity 0.2s';
+
+  // Defaults are shown as placeholders (not seeded into form state), so a
+  // required preset always demands an explicit user value before submit.
+  const isRequired = supportsRequired && param.required;
+  const requiredRules = isRequired
+    ? [{ required: true, message: t('general.ValueRequired', { name: label }) }]
+    : undefined;
+  const defaultPlaceholder = param.defaultValue ?? undefined;
 
   const uiType = param.uiType;
 
@@ -331,18 +378,20 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
       const step = param.slider?.step ?? 1;
       return (
         <Form.Item
+          name={[RUNTIME_PARAMS_NAMESPACE, param.key]}
           label={label}
           tooltip={tooltip}
           style={formItemStyle}
-          required
+          required={isRequired}
+          rules={requiredRules}
         >
           <InputNumberWithSlider
             min={min}
             max={max}
             step={step}
-            value={value ? parseFloat(value) : min}
-            onChange={(v) => onChange(String(v))}
+            onChange={onTouch}
             inputContainerMinWidth={190}
+            inputNumberProps={{ placeholder: defaultPlaceholder }}
             style={{ opacity: controlOpacity, transition: controlTransition }}
             sliderProps={{
               marks: {
@@ -364,25 +413,19 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
       const isInt = param.valueType === 'INT';
       return (
         <Form.Item
+          name={[RUNTIME_PARAMS_NAMESPACE, param.key]}
           label={label}
           tooltip={tooltip}
           style={formItemStyle}
-          required
+          required={isRequired}
+          rules={requiredRules}
         >
           <InputNumber
             min={min}
             max={max}
             step={isInt ? 1 : 0.1}
-            value={
-              value
-                ? isInt
-                  ? parseInt(value, 10)
-                  : parseFloat(value)
-                : undefined
-            }
-            onChange={(v) => {
-              if (v !== null) onChange(String(v));
-            }}
+            onChange={onTouch}
+            placeholder={defaultPlaceholder}
             style={{
               width: '100%',
               opacity: controlOpacity,
@@ -396,15 +439,21 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
     case 'select':
       return (
         <Form.Item
+          name={[RUNTIME_PARAMS_NAMESPACE, param.key]}
           label={label}
           tooltip={tooltip}
           style={formItemStyle}
-          required
+          required={isRequired}
+          rules={requiredRules}
         >
           <Select
-            value={value || undefined}
             allowClear
-            onChange={(val) => onChange(val ?? '')}
+            onChange={onTouch}
+            placeholder={
+              param.choices?.items.find(
+                (opt) => opt.value === param.defaultValue,
+              )?.label ?? defaultPlaceholder
+            }
             style={{ opacity: controlOpacity, transition: controlTransition }}
             options={param.choices?.items.map((opt) => ({
               value: opt.value,
@@ -417,14 +466,16 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
     case 'checkbox':
       return (
         <Form.Item
+          name={[RUNTIME_PARAMS_NAMESPACE, param.key]}
+          valuePropName="checked"
           label={label}
           tooltip={tooltip}
           style={formItemStyle}
-          required
+          required={isRequired}
+          rules={requiredRules}
         >
           <Checkbox
-            checked={value === 'true'}
-            onChange={(e) => onChange(e.target.checked ? 'true' : 'false')}
+            onChange={onTouch}
             aria-label={label}
             style={{ opacity: controlOpacity, transition: controlTransition }}
           >
@@ -437,18 +488,17 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
     default:
       return (
         <Form.Item
+          name={[RUNTIME_PARAMS_NAMESPACE, param.key]}
           label={label}
           tooltip={tooltip}
           style={formItemStyle}
-          required
+          required={isRequired}
+          rules={requiredRules}
         >
           <Input
-            value={touched ? value : ''}
-            onChange={(e) => onChange(e.target.value)}
+            onChange={onTouch}
             placeholder={
-              !touched
-                ? value || (param.text?.placeholder ?? undefined)
-                : (param.text?.placeholder ?? undefined)
+              defaultPlaceholder ?? param.text?.placeholder ?? undefined
             }
             style={{ opacity: controlOpacity, transition: controlTransition }}
           />

@@ -25,7 +25,7 @@
     "AreYouSureYouWantToActivateOne": "{{name}}을 활성화 하시겠습니까?",
     "AreYouSureYouWantToActivateSome": "{{count}}개의 아티팩트를 활성화 하시겠습니까?",
     "FailedToActivateArtifacts": "아티팩트를 활성화하는 데 실패했습니다.",
-    "SuccessfullyActivated": "성공적으로 아티팩트를 활성화했습니다."
+    "SuccessfullyActivated": "아티팩트를 활성화했습니다."
   },
   "comp:BAIAdminKeypairResourcePolicySelect": {
     "SelectKeypairResourcePolicy": "키페어 자원 정책을 선택해주세요"
@@ -100,7 +100,7 @@
     "Deactivate": "비활성화",
     "DeactivateArtifacts": "아티팩트 비활성화",
     "FailedToDeactivateArtifacts": "아티팩트를 비활성화하는 데 실패했습니다.",
-    "SuccessfullyDeactivated": "아티팩트를 성공적으로 비활성화했습니다."
+    "SuccessfullyDeactivated": "아티팩트를 비활성화했습니다."
   },
   "comp:BAIDeleteArtifactModal": {
     "ExcludedVersions": "{{count}}개 버전은 제외됐습니다.",
@@ -108,7 +108,7 @@
     "OnlyVersionsNotInPULLINGOrSCANNED": "SCANNED 또는 PULLING이 아닌 버전만 제거 가능합니다.",
     "RemoveVersions": "목록에서 버전 제거하기",
     "Size": "크기",
-    "SuccessFullyRemoved": "{{count}}개 버전을 성공적으로 제거했습니다.",
+    "SuccessFullyRemoved": "{{count}}개 버전을 제거했습니다.",
     "Version": "버전"
   },
   "comp:BAIDeleteConfirmModal": {
@@ -185,7 +185,7 @@
     "EnterToken": "HuggingFace 토큰을 입력하세요",
     "HuggingFaceSettings": "Hugging Face 설정",
     "Token": "토큰",
-    "TokenUpdatedSuccessfully": "토큰이 성공적으로 업데이트되었습니다."
+    "TokenUpdatedSuccessfully": "토큰이 업데이트되었습니다."
   },
   "comp:BAIImageSelect": {
     "SelectImage": "이미지 선택"
@@ -197,7 +197,7 @@
     "Pull": "가져오기",
     "PullVersion": "버전 가져오기",
     "Size": "크기",
-    "SuccessFullyPulled": "{{count}}개 버전에 대한 가져오기 요청을 성공적으로 보냈습니다.",
+    "SuccessFullyPulled": "{{count}}개 버전에 대한 가져오기 요청을 보냈습니다.",
     "Version": "버전"
   },
   "comp:BAIKeypairSelect": {
@@ -300,7 +300,7 @@
     "CancelingWillRestartThePulling": "취소하면 처음부터 가져옵니다.",
     "FailedToCancelThePulling": "가져오기를 취소하는데 실패했습니다.",
     "VersionIsPullingNow": "{{version}} 버전을 지금 가져오는 중입니다.",
-    "VersionPullCanceledSuccessfully": "{{version}} 버전 가져오기를 성공적으로 취소했습니다.",
+    "VersionPullCanceledSuccessfully": "{{version}} 버전 가져오기를 취소했습니다.",
     "WARNING": "경고",
     "YouAreAboutToCancelThisVersion": "다음의 버전을 취소하려고 합니다"
   },
@@ -406,11 +406,11 @@
     "DuplicatedFiles": "덮어쓰기 확인",
     "DuplicatedFilesDesc": "업로드 하려는 파일 또는 폴더가 이미 존재합니다. 덮어쓰시겠습니까?",
     "EditFile": "파일 편집",
-    "FileCreatedSuccessfully": "파일이 성공적으로 생성되었습니다.",
+    "FileCreatedSuccessfully": "파일이 생성되었습니다.",
     "FileName": "파일 이름",
     "FileNamePlaceholder": "예: model-definition.yaml",
     "FileTooLargeToEdit": "파일 용량이 {{size}}MB를 초과하여 브라우저 편집이 제한됩니다.",
-    "FolderCreatedSuccessfully": "폴더가 성공적으로 생성되었습니다.",
+    "FolderCreatedSuccessfully": "폴더가 생성되었습니다.",
     "FolderName": "폴더 이름",
     "InvalidFileNameCharacters": "파일 이름에 경로 구분자(/ 또는 \\)를 사용할 수 없습니다.",
     "MaxFileNameLength": "파일 이름은 255자 이내여야 합니다.",
@@ -421,8 +421,8 @@
     "NoUploadPermissionForHost": "호스트에 대한 업로드 권한이 없습니다.",
     "PleaseEnterAFileName": "파일 이름을 입력해 주세요.",
     "PleaseEnterAFolderName": "폴더 이름을 입력해 주세요.",
-    "RenameSuccess": "이름이 성공적으로 변경되었습니다.",
-    "SelectedItemsDeletedSuccessfully": "선택한 파일 및 폴더가 성공적으로 삭제되었습니다.",
+    "RenameSuccess": "이름이 변경되었습니다.",
+    "SelectedItemsDeletedSuccessfully": "선택한 파일 및 폴더가 삭제되었습니다.",
     "Size": "크기",
     "TypeDeleteToConfirm": "확인을 위해 '삭제'를 입력하세요.",
     "TypeFolderNameToDelete": "삭제 확인을 위해 폴더 또는 파일 이름을 입력하세요.",

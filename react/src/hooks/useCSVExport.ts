@@ -1,4 +1,5 @@
 import { useSuspendedBackendaiClient } from '.';
+import { downloadCSV } from '../helper/csv-util';
 import { useCurrentUserRole } from './backendai';
 import { useSuspenseTanQuery } from './reactQueryAlias';
 import {
@@ -69,27 +70,13 @@ export const useCSVExport = (nodeKey: SupportedNodeKeys) => {
       },
     })
       .then((res: string) => {
-        const blob = new Blob([res], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement('a');
-        const url = URL.createObjectURL(blob);
-
         const timestamp = new Date()
           .toISOString()
           .replace(/[:.]/g, '-')
           .slice(0, -5);
         const filename = `${nodeKey}_export_${timestamp}.csv`;
 
-        link.setAttribute('href', url);
-        link.setAttribute('download', filename);
-        link.style.visibility = 'hidden';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-
-        // Revoke the object URL after a short delay to ensure the download has started
-        setTimeout(() => {
-          URL.revokeObjectURL(url);
-        }, 100);
+        downloadCSV(res, filename);
         return Promise.resolve();
       })
       .catch((err: ErrorResponse) => {

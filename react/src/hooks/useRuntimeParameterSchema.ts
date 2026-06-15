@@ -57,6 +57,8 @@ export interface RuntimeVariantPresetDef {
   choices: { items: ReadonlyArray<SelectOption> } | null;
   /** Text input placeholder. */
   text: { placeholder: string | null } | null;
+  /** Whether this parameter must be filled in before submitting a deployment. */
+  required: boolean;
 }
 
 /** Group of presets within the same category. */
@@ -129,6 +131,10 @@ export function useRuntimeParameterSchema(
               rank
               category
               displayName
+              # Version-gated: stripped from the request on managers older than
+              # the capability cutoff (runtime-variant-preset-required in
+              # client.ts) so the presets query stays valid on legacy backends.
+              required @since(version: "26.4.4")
               targetSpec {
                 presetTarget
                 valueType
@@ -191,6 +197,9 @@ export function useRuntimeParameterSchema(
         rank: node.rank,
         category: node.category ?? null,
         displayName: node.displayName ?? null,
+        // `required` is absent when the field is version-gated out (see the
+        // `@since` directive in the query) — default to false on legacy backends.
+        required: node.required ?? false,
         presetTarget: node.targetSpec.presetTarget as PresetTarget,
         valueType: node.targetSpec.valueType as PresetValueType,
         defaultValue: node.targetSpec.defaultValue ?? null,

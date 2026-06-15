@@ -57,7 +57,7 @@ safe-outputs:
 steps:
   - uses: actions/setup-node@v4
     with:
-      node-version: '20'
+      node-version-file: '.nvmrc'
   - uses: pnpm/action-setup@v5
     with:
       version: 11

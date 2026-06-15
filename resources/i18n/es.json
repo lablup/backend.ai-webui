@@ -2270,6 +2270,8 @@
     "AssignUser": "Agregar usuario",
     "Assignments": "Asignaciones",
     "AtLeastOneScopeRequired": "Se requiere al menos un ámbito.",
+    "AutoAssign": "Asignación automática",
+    "AutoAssignDescription": "Cuando está habilitado, este rol se otorga automáticamente a un usuario cuando el usuario se agrega a un ámbito en el que está registrado este rol.",
     "BulkAssignPartialFailure": "{{count}} usuario(s) no pudo(pudieron) ser asignado(s).",
     "BulkRevokePartialFailure": "No se pudo revocar a {{count}} usuario(s).",
     "ConfirmDeletePermissionWithDetail": "¿Quitar el siguiente permiso de este rol?",

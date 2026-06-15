@@ -4179,6 +4179,9 @@ input CreateRuntimeVariantPresetInput
   For 'env' target, the environment variable name; for 'args' target, the CLI flag name.
   """
   key: String!
+
+  """Whether this preset option is required when creating a deployment."""
+  required: Boolean! = false
 }
 
 """Added in 26.4.2. Create preset payload."""
@@ -17044,6 +17047,9 @@ type RuntimeVariantPreset implements Node
 
   """Timestamp of the last modification to this preset."""
   updatedAt: DateTime
+
+  """Whether this preset option must be filled in before submitting a deployment."""
+  required: Boolean!
 }
 
 """Added in 26.4.2. Paginated list of runtime variant presets."""
@@ -19445,6 +19451,9 @@ input UpdateRuntimeVariantPresetInput
 
   """New key."""
   key: String = null
+
+  """Set to true/false to update required; null means no change."""
+  required: Boolean = null
 }
 
 """Added in 26.4.2. Update preset payload."""

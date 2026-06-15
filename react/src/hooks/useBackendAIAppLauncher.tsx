@@ -816,6 +816,26 @@ export const useBackendAIAppLauncher = (
       throw response;
     }
 
+    // The App Proxy Coordinator allocates a worker for the circuit at this
+    // `/v2/proxy/auth` (`proxy`) step (`add_circuit` → `pick_worker`). When no
+    // worker slot is free — e.g. the TCP worker's port pool is exhausted — it
+    // responds with HTTP 503 `WorkerNotAvailable` ("Worker not available.").
+    // `sendRequest` returns that as a `{ status, statusText, body }` object (it
+    // only throws on network errors), and the `error_code` check above only
+    // catches HTTP-200 logical errors, so without this guard the 503 falls
+    // through to the fallback request below and the launcher ends up rendering
+    // a bogus `127.0.0.1` connection dialog instead of the error. Surface the
+    // backend message instead. (FR-3027)
+    if (isSendRequestErrorResponse(response)) {
+      throw new AppLaunchError(
+        getAppProxyErrorMessage(
+          response,
+          'Failed to allocate an app proxy worker.',
+        ),
+        'connecting',
+      );
+    }
+
     // Handle successful response with redirect_url
     if (response?.redirect_url) {
       const redirectUrl = new URL(response.redirect_url);
@@ -1013,6 +1033,58 @@ class AppLaunchError extends Error {
       Error.captureStackTrace(this, AppLaunchError);
     }
   }
+}
+
+/**
+ * Detect the error-object shape that {@link sendRequest} resolves to for non-OK
+ * HTTP responses (`{ status, statusText, body }`). It returns this object
+ * instead of throwing so retry logic can inspect the status code; call sites
+ * that are not retrying must check for it explicitly, otherwise an error
+ * response (which carries no success payload) flows downstream as a
+ * pseudo-success. (FR-3027)
+ */
+function isSendRequestErrorResponse(
+  response: unknown,
+): response is { status: number; statusText?: string; body?: unknown } {
+  return (
+    typeof response === 'object' &&
+    response !== null &&
+    typeof (response as { status?: unknown }).status === 'number' &&
+    (response as { status: number }).status >= 400
+  );
+}
+
+/**
+ * Extract a human-readable message from a {@link sendRequest} error response.
+ *
+ * App Proxy errors are Backend.AI problem+json bodies
+ * (`{ type, title, error_code, msg? }`), e.g. HTTP 503 `WorkerNotAvailable`
+ * with `title: "Worker not available."`. Prefer `msg` / `title` / `message`
+ * from the parsed body, then fall back to `statusText`, then the default.
+ */
+function getAppProxyErrorMessage(
+  response: { status: number; statusText?: string; body?: unknown },
+  fallback: string,
+): string {
+  const body = response.body;
+  if (body && typeof body === 'object') {
+    const { msg, title, message } = body as {
+      msg?: unknown;
+      title?: unknown;
+      message?: unknown;
+    };
+    const candidate = msg ?? title ?? message;
+    if (typeof candidate === 'string' && candidate.length > 0) {
+      return candidate;
+    }
+  }
+  if (typeof body === 'string' && body.length > 0) {
+    return body;
+  }
+  if (response.statusText && response.statusText.length > 0) {
+    return response.statusText;
+  }
+  return fallback;
 }
 
 /**

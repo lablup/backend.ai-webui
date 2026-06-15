@@ -12,6 +12,7 @@ import {
 import { MyKeypairManagementModalRevokeMyKeypairMutation } from '../__generated__/MyKeypairManagementModalRevokeMyKeypairMutation.graphql';
 import { MyKeypairManagementModalSwitchMainKeyMutation } from '../__generated__/MyKeypairManagementModalSwitchMainKeyMutation.graphql';
 import { convertToOrderBy } from '../helper';
+import { downloadCSV } from '../helper/csv-util';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import BAIRadioGroup from './BAIRadioGroup';
@@ -74,6 +75,8 @@ type KeypairSorterValue =
   | '-createdAt'
   | '-lastUsed';
 
+// Keypair credentials are assembled client-side; switch to the useCSVExport
+// hook once server-side CSV export supports them.
 const downloadCredentialCSV = (credential: KeypairCredential) => {
   const header = 'access_key,secret_key,ssh_public_key';
   const row = [
@@ -85,13 +88,7 @@ const downloadCredentialCSV = (credential: KeypairCredential) => {
     .join(',');
 
   const csvContent = `${header}\n${row}\n`;
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = `keypair_${credential.accessKey}.csv`;
-  link.click();
-  URL.revokeObjectURL(url);
+  downloadCSV(csvContent, `keypair_${credential.accessKey}.csv`);
 };
 
 const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({

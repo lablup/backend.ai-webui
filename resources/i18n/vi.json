@@ -2272,6 +2272,8 @@
     "AssignUser": "Thêm người dùng",
     "Assignments": "Phân công",
     "AtLeastOneScopeRequired": "Cần ít nhất một phạm vi.",
+    "AutoAssign": "Tự động gán",
+    "AutoAssignDescription": "Khi được bật, vai trò này sẽ tự động được cấp cho người dùng khi người dùng được thêm vào phạm vi mà vai trò này được đăng ký.",
     "BulkAssignPartialFailure": "{{count}} người dùng không thể được phân công.",
     "BulkRevokePartialFailure": "Không thể thu hồi {{count}} người dùng.",
     "ConfirmDeletePermissionWithDetail": "Xóa quyền sau khỏi vai trò này?",

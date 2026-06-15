@@ -10,17 +10,30 @@ export const encodeAsync = async (str: string) => {
   return encode(str).length;
 };
 
+// Indirection object so `useTokenCount`'s async call can be spied on in tests.
+// A direct module-local call to `encodeAsync` cannot be intercepted under ESM,
+// which makes the out-of-order cancellation behavior (FR-3091) untestable.
+export const tokenCounter = { encodeAsync };
+
 export const useTokenCount = (input: string = '') => {
+  'use memo';
   const [value, setNum] = useState(0);
 
   useEffect(() => {
+    let cancelled = false;
     startTransition(() => {
-      encodeAsync(input)
-        .then(setNum)
+      tokenCounter
+        .encodeAsync(input)
+        .then((count) => {
+          if (!cancelled) setNum(count);
+        })
         .catch(() => {
-          setNum(input.length);
+          if (!cancelled) setNum(input.length);
         });
     });
+    return () => {
+      cancelled = true;
+    };
   }, [input]);
 
   return value;

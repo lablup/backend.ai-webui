@@ -17,6 +17,7 @@ import {
   type BAIModalProps,
   BAIProjectResourceGroupSelect,
   toLocalId,
+  useErrorMessageResolver,
   useProjectResourceGroups,
 } from 'backend.ai-ui';
 import React, {
@@ -58,6 +59,7 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
 
   const { t } = useTranslation();
   const { message } = App.useApp();
+  const { getErrorMessage } = useErrorMessageResolver();
   const webuiNavigate = useWebUINavigate();
   const { token } = theme.useToken();
   const { id: projectId, name: projectName } = useCurrentProjectValue();
@@ -172,7 +174,18 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
             desiredReplicaCount: 1,
           },
         },
-        onCompleted: (response) => {
+        onCompleted: (response, errors) => {
+          // Backend validation failures arrive as a null payload plus
+          // top-level GraphQL errors routed here (not to `onError`, which
+          // only fires for network errors). Surface the backend message.
+          if (errors && errors.length > 0) {
+            const firstError = errors[0];
+            const errorMessage =
+              firstError?.message ?? getErrorMessage(firstError);
+            message.error(errorMessage);
+            reject(new Error(errorMessage));
+            return;
+          }
           const payload = response.deployVfolderV2;
           if (!payload) {
             const error = new Error(t('modelStore.DeployFailed'));
@@ -201,7 +214,16 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
   const onAutoDeployed = useEffectEvent(() => {
     if (didAutoDeployRef.current) return;
     didAutoDeployRef.current = true;
-    handleDeploy();
+    handleDeploy().catch(() => {
+      // On failure there is no modal chrome the user can close, so close
+      // imperatively: `onClose()` clears the parent state, flipping `open`
+      // to false, which fires the mirrored `afterClose` below and lets
+      // `BAIUnmountAfterClose` unmount us — the next Deploy click mounts a
+      // fresh instance. The ref reset is a safety net in case this
+      // instance survives.
+      didAutoDeployRef.current = false;
+      onClose();
+    });
   });
 
   useEffect(() => {

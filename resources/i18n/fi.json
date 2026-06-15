@@ -2270,6 +2270,8 @@
     "AssignUser": "Lisää käyttäjä",
     "Assignments": "Määritykset",
     "AtLeastOneScopeRequired": "Vähintään yksi laajuus on pakollinen.",
+    "AutoAssign": "Automaattinen määritys",
+    "AutoAssignDescription": "Kun käytössä, tämä rooli myönnetään käyttäjälle automaattisesti, kun käyttäjä lisätään alueeseen, johon tämä rooli on rekisteröity.",
     "BulkAssignPartialFailure": "{{count}} käyttäjän määrittäminen epäonnistui.",
     "BulkRevokePartialFailure": "{{count}} käyttäjän peruutus epäonnistui.",
     "ConfirmDeletePermissionWithDetail": "Poistetaanko seuraava käyttöoikeus tästä roolista?",

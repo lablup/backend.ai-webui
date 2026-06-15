@@ -7,7 +7,7 @@ import EndpointDiagnosticsSection from '../components/EndpointDiagnosticsSection
 import ErrorBoundaryWithNullFallback from '../components/ErrorBoundaryWithNullFallback';
 import StorageProxyDiagnosticsSection from '../components/StorageProxyDiagnosticsSection';
 import WebServerConfigDiagnosticsSection from '../components/WebServerConfigDiagnosticsSection';
-import { downloadBlob } from '../helper/csv-util';
+import { downloadCSV } from '../helper/csv-util';
 import { DiagnosticResult } from '../types/diagnostics';
 import {
   DownloadOutlined,
@@ -137,11 +137,10 @@ const DiagnosticsPage = () => {
       .map((row) => row.map(escCsv).join(','))
       .join('\n');
 
-    const blob = new Blob([csvContent], {
-      type: 'text/csv;charset=utf-8;',
-    });
     const today = new Date().toISOString().slice(0, 10);
-    downloadBlob(blob, `diagnostics-${today}.csv`);
+    // Diagnostics reports are assembled client-side; switch to the
+    // useCSVExport hook once server-side CSV export supports them.
+    downloadCSV(csvContent, `diagnostics-${today}.csv`);
   };
 
   const allItems = [

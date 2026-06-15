@@ -2271,6 +2271,8 @@
     "AssignUser": "Хэрэглэгч нэмэх",
     "Assignments": "Оноолтууд",
     "AtLeastOneScopeRequired": "Дор хаяж нэг хамрах хүрээ шаардлагатай.",
+    "AutoAssign": "Автоматаар оноох",
+    "AutoAssignDescription": "Идэвхжүүлсэн үед энэ дүр бүртгэгдсэн хүрээнд хэрэглэгч нэмэгдэхэд энэ дүрийг хэрэглэгчид автоматаар олгоно.",
     "BulkAssignPartialFailure": "{{count}} хэрэглэгч оноогдоход амжилтгүй боллоо.",
     "BulkRevokePartialFailure": "{{count}} хэрэглэгчийг цуцлахад алдаа гарлаа.",
     "ConfirmDeletePermissionWithDetail": "Дараах эрхийг энэ үүргээс хасах уу?",

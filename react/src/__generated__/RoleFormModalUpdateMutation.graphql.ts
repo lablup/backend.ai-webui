@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<7895a665f0e2282efda82d736b223d8a>>
+ * @generated SignedSource<<9df0705323b724779eb7dec2116b79eb>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -22,6 +22,7 @@ export type RoleFormModalUpdateMutation$variables = {
 };
 export type RoleFormModalUpdateMutation$data = {
   readonly adminUpdateRole: {
+    readonly autoAssign: boolean;
     readonly description: string | null | undefined;
     readonly id: string;
     readonly name: string;
@@ -81,6 +82,13 @@ v1 = [
         "alias": null,
         "args": null,
         "kind": "ScalarField",
+        "name": "autoAssign",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
         "name": "updatedAt",
         "storageKey": null
       }
@@ -106,16 +114,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "1c4592cfe16ce376e53250a1116417ed",
+    "cacheID": "a9a0b9408be361e0587ff56c689369d3",
     "id": null,
     "metadata": {},
     "name": "RoleFormModalUpdateMutation",
     "operationKind": "mutation",
-    "text": "mutation RoleFormModalUpdateMutation(\n  $input: UpdateRoleInput!\n) {\n  adminUpdateRole(input: $input) {\n    id\n    name\n    description\n    updatedAt\n  }\n}\n"
+    "text": "mutation RoleFormModalUpdateMutation(\n  $input: UpdateRoleInput!\n) {\n  adminUpdateRole(input: $input) {\n    id\n    name\n    description\n    autoAssign @since(version: \"26.4.4\")\n    updatedAt\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "00adc2df58f46a44c165659dda3ed6e2";
+(node as any).hash = "b57b757cbea8db4c33372a6ff2bd930f";
 
 export default node;

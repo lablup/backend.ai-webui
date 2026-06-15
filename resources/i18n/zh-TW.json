@@ -2274,6 +2274,8 @@
     "AssignUser": "新增使用者",
     "Assignments": "分配",
     "AtLeastOneScopeRequired": "至少需要一個範圍。",
+    "AutoAssign": "自動指派",
+    "AutoAssignDescription": "啟用後，當使用者被加入到註冊了此角色的範圍時，將自動授予該使用者此角色。",
     "BulkAssignPartialFailure": "{{count}} 名使用者分配失敗。",
     "BulkRevokePartialFailure": "{{count}} 位使用者撤銷失敗。",
     "ConfirmDeletePermissionWithDetail": "從此角色移除以下權限？",
