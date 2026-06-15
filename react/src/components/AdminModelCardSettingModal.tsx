@@ -5,6 +5,7 @@
 import type { AdminModelCardSettingModalCreateMutation } from '../__generated__/AdminModelCardSettingModalCreateMutation.graphql';
 import type { AdminModelCardSettingModalFragment$key } from '../__generated__/AdminModelCardSettingModalFragment.graphql';
 import type { AdminModelCardSettingModalUpdateMutation } from '../__generated__/AdminModelCardSettingModalUpdateMutation.graphql';
+import { useCurrentDomainValue } from '../hooks';
 import {
   useCurrentProjectValue,
   useSetCurrentProject,
@@ -83,6 +84,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
   const [isOpenCreateFolderModal, setIsOpenCreateFolderModal] = useState(false);
 
   const currentProject = useCurrentProjectValue();
+  const currentDomain = useCurrentDomainValue();
   const setCurrentProject = useSetCurrentProject();
 
   const modelCard = useFragment(
@@ -187,6 +189,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
       }
     : {
         accessLevel: 'INTERNAL',
+        domainName: currentDomain,
       };
 
   const buildMetadataInput = (values: FormInputType) => ({
@@ -462,8 +465,10 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
             label={t('adminModelCard.Framework')}
             tooltip={t('adminModelCard.FrameworkTooltip')}
           >
+            {/* FR-3121: commit a framework on comma in addition to Enter. */}
             <Select
               mode="tags"
+              tokenSeparators={[',']}
               placeholder={t('adminModelCard.AddFramework')}
               notFoundContent={null}
             />
@@ -474,8 +479,10 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
             label={t('adminModelCard.Label')}
             tooltip={t('adminModelCard.LabelTooltip')}
           >
+            {/* FR-3121: commit a label on comma in addition to Enter. */}
             <Select
               mode="tags"
+              tokenSeparators={[',']}
               placeholder={t('adminModelCard.AddLabel')}
               notFoundContent={null}
             />
