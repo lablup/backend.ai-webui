@@ -5,6 +5,7 @@
 import AdminUserCredentialList from '../components/AdminUserCredentialList';
 import AdminUserManagement from '../components/AdminUserManagement';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
+import { buildPath } from '../helper/pathBuilder';
 import { useWebUINavigate } from '../hooks';
 import { Skeleton } from 'antd';
 import { CardTabListType } from 'antd/es/card';
@@ -34,7 +35,7 @@ const AdminUsersPage: React.FC = () => {
       activeTabKey={currentTab}
       onTabChange={(key) =>
         navigate({
-          pathname: '/credential',
+          pathname: buildPath('admin', 'users'),
           search: `?tab=${key}`,
         })
       }

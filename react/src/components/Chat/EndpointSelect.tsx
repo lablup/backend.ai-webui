@@ -9,6 +9,7 @@ import {
 import { EndpointSelectValueQuery } from '../../__generated__/EndpointSelectValueQuery.graphql';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
 import { useLazyPaginatedQuery } from '../../hooks/usePaginatedQuery';
+import { useProjectPath } from '../../hooks/useRouteScope';
 import TotalFooter from '../TotalFooter';
 import { useControllableValue } from 'ahooks';
 import {
@@ -181,6 +182,7 @@ const EndpointSelect: React.FC<EndpointSelectProps> = ({
   );
 
   const webuiNavigate = useWebUINavigate();
+  const buildProjectPath = useProjectPath();
 
   const isValueMatched = searchStr === deferredSearchStr;
   useEffect(() => {
@@ -247,7 +249,9 @@ const EndpointSelect: React.FC<EndpointSelectProps> = ({
               icon={<InfoIcon />}
               disabled={!controllableValue}
               onClick={() => {
-                webuiNavigate(`/serving/${controllableValue}`);
+                webuiNavigate(
+                  buildProjectPath(`deployments/${controllableValue}`),
+                );
               }}
             />
           </Tooltip>

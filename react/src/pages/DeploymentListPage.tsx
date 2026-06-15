@@ -17,6 +17,7 @@ import { useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { useProjectPath } from '../hooks/useRouteScope';
 import { DeleteFilled, EditOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import { App, Button, Skeleton, Typography } from 'antd';
@@ -56,6 +57,7 @@ const DeploymentListPageContent: React.FC = () => {
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const webuiNavigate = useWebUINavigate();
+  const buildProjectPath = useProjectPath();
   const [isCreating, { setLeft: closeCreate, setRight: openCreate }] =
     useToggle(false);
 
@@ -381,7 +383,7 @@ const DeploymentListPageContent: React.FC = () => {
                         stopRowClick
                         onTagClick={(tag) => {
                           webuiNavigate({
-                            pathname: '/deployments',
+                            pathname: buildProjectPath('deployments'),
                             search: new URLSearchParams({
                               filter: JSON.stringify({
                                 tags: { iContains: tag },

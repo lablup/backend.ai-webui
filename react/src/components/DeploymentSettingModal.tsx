@@ -7,6 +7,7 @@ import { DeploymentSettingModalUpdateMutation } from '../__generated__/Deploymen
 import { DeploymentSettingModal_deployment$key } from '../__generated__/DeploymentSettingModal_deployment.graphql';
 import { useCurrentDomainValue, useWebUINavigate } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { useProjectPath } from '../hooks/useRouteScope';
 import {
   App,
   Button,
@@ -56,6 +57,7 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
   const { token } = theme.useToken();
   const [form] = Form.useForm<FormValues>();
   const navigate = useWebUINavigate();
+  const buildProjectPath = useProjectPath();
   const { message } = App.useApp();
   const { id: projectId, name: projectName } = useCurrentProjectValue();
   const currentDomain = useCurrentDomainValue();
@@ -180,7 +182,7 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
               }
               const newId = toLocalId(createModelDeployment.deployment.id);
               onRequestClose(true);
-              navigate(`/deployments/${newId}`);
+              navigate(buildProjectPath(`deployments/${newId}`));
             },
             onError: (err) => {
               message.error(

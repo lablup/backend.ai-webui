@@ -11,6 +11,7 @@ import AdminDeploymentPresetSettingPageContent, {
   type AdminDeploymentPresetFormValue,
   type ModelDefinitionFormValue,
 } from '../components/AdminDeploymentPresetSettingPageContent';
+import { buildPath } from '../helper/pathBuilder';
 import { useWebUINavigate } from '../hooks';
 import { App, Form, Typography, theme } from 'antd';
 import { BAIFlex, useBAILogger, useMutationWithPromise } from 'backend.ai-ui';
@@ -207,7 +208,7 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
     const params = new URLSearchParams();
     params.set('tab', 'deployment-presets');
     webuiNavigate({
-      pathname: '/admin-deployments',
+      pathname: buildPath('admin', 'deployments'),
       search: params.toString(),
     });
   };

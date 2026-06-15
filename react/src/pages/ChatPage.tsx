@@ -13,6 +13,7 @@ import {
 import { type ChatProviderData } from '../components/Chat/ChatModel';
 import WebUINavigate from '../components/WebUINavigate';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
+import { useProjectPath } from '../hooks/useRouteScope';
 import { Badge, Button, Card, Drawer, theme, Tooltip, Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import { BAIButton, BAIFlex, BAICard, BAITable } from 'backend.ai-ui';
@@ -186,6 +187,7 @@ const PureChatPage = ({ id }: { id: string }) => {
     updateHistory,
   } = useHistory(id, provider);
   const navigate = useWebUINavigate();
+  const buildProjectPath = useProjectPath();
 
   return (
     chat && (
@@ -232,7 +234,7 @@ const PureChatPage = ({ id }: { id: string }) => {
                 icon={<PlusIcon />}
                 onClick={() => {
                   setOpenHistory(false);
-                  navigate('/chat', { replace: true });
+                  navigate(buildProjectPath('chat'), { replace: true });
                 }}
               />
             </Tooltip>
@@ -303,14 +305,14 @@ const PureChatPage = ({ id }: { id: string }) => {
 
             if (remainHistories === 0) {
               setOpenHistory(false);
-              navigate('/chat', { replace: true });
+              navigate(buildProjectPath('chat'), { replace: true });
             } else if (historyId === chat.id) {
               const chat = history.filter(({ id }) => id !== historyId)[0];
-              navigate(`/chat/${chat?.id}`, { replace: true });
+              navigate(buildProjectPath(`chat/${chat?.id}`), { replace: true });
             }
           }}
           onClickHistory={(historyId) => {
-            navigate(`/chat/${historyId}`, { replace: true });
+            navigate(buildProjectPath(`chat/${historyId}`), { replace: true });
           }}
         />
       </BAICard>
@@ -327,10 +329,12 @@ function isClonable(chatLength: number) {
 }
 
 const ChatPage: React.FC = () => {
+  'use memo';
   const { id } = useParams();
+  const buildProjectPath = useProjectPath();
 
   if (id && !getChatById(id)) {
-    return <WebUINavigate to="/chat" replace />;
+    return <WebUINavigate to={buildProjectPath('chat')} replace />;
   }
 
   return <PureChatPage id={id || generateChatId()} />;

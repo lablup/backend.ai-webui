@@ -10,10 +10,12 @@ import type {
 import type { DeploymentRevisionDetail_revision$key } from '../__generated__/DeploymentRevisionDetail_revision.graphql';
 import { DeploymentSchedulingHistoryModalQuery } from '../__generated__/DeploymentSchedulingHistoryModalQuery.graphql';
 import type { ScopedAuditLogQuery as ScopedAuditLogQueryType } from '../__generated__/ScopedAuditLogQuery.graphql';
+import { buildPath } from '../helper/pathBuilder';
 import { useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import BAIErrorBoundary from './BAIErrorBoundary';
+import { useActiveProjectName, useRouteScope } from '../hooks/useRouteScope';
 import DeploymentRevisionDetail from './DeploymentRevisionDetail';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
 import DeploymentRevisionHistoryTab from './DeploymentRevisionHistoryTab';
@@ -68,7 +70,6 @@ import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import React, { Suspense, useEffect, useEffectEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation, useQueryLoader } from 'react-relay';
-import { useLocation } from 'react-router-dom';
 
 interface DeploymentConfigurationSectionProps {
   deploymentFrgmt: DeploymentConfigurationSection_deployment$key | null;
@@ -98,7 +99,8 @@ const DeploymentOverviewContent: React.FC<{
   'use memo';
   const { t } = useTranslation();
   const webuiNavigate = useWebUINavigate();
-  const location = useLocation();
+  const routeScope = useRouteScope();
+  const activeProjectName = useActiveProjectName();
 
   const projectName =
     deployment?.metadata.projectV2?.basicInfo?.name ??
@@ -200,17 +202,16 @@ const DeploymentOverviewContent: React.FC<{
           metadataFrgmt={deployment?.metadata ?? null}
           onTagClick={(tag) => {
             // Stay within the same deployment-list URL space the user came
-            // from (`/admin-deployments`, `/project-admin-deployments`, or
-            // the user-facing `/deployments`) so breadcrumb / back navigation
-            // remain coherent — see FR-2847 (admin) and FR-2930 (project
-            // admin) for the per-scope detail-route precedent.
-            const targetPathname = location.pathname.startsWith(
-              '/admin-deployments',
-            )
-              ? '/admin-deployments'
-              : location.pathname.startsWith('/project-admin-deployments')
-                ? '/project-admin-deployments'
-                : '/deployments';
+            // from (admin / project-admin / user `deployments`) so breadcrumb /
+            // back navigation remain coherent — see FR-2847 (admin) and
+            // FR-2930 (project admin) for the per-scope detail-route precedent.
+            // The current scope (from the route handle) plus the active project
+            // name yield the correct scope-aware list path via `buildPath`.
+            const targetPathname = buildPath(
+              routeScope,
+              'deployments',
+              activeProjectName,
+            );
             webuiNavigate({
               pathname: targetPathname,
               search: new URLSearchParams({
@@ -250,7 +251,8 @@ const DeploymentConfigurationSection: React.FC<
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const webuiNavigate = useWebUINavigate();
-  const location = useLocation();
+  const routeScope = useRouteScope();
+  const activeProjectName = useActiveProjectName();
   const currentProject = useCurrentProjectValue();
 
   const deployment = useFragment(
@@ -388,11 +390,10 @@ const DeploymentConfigurationSection: React.FC<
   // fragment status (rather than threading a boolean prop down from the page),
   // consistent with the project-mismatch guard resolved below.
   const deploymentStatus = deployment?.metadata.status;
-  const listPath = location.pathname.startsWith('/admin-deployments')
-    ? '/admin-deployments'
-    : location.pathname.startsWith('/project-admin-deployments')
-      ? '/project-admin-deployments'
-      : '/deployments';
+  // Scope-aware deployment-list path for back navigation. The current route
+  // scope (admin / projectAdmin / project, from the route handle) plus the
+  // active project name produce the correct list URL via `buildPath`.
+  const listPath = buildPath(routeScope, 'deployments', activeProjectName);
 
   // Resolve project mismatch directly here (rather than threading the flag
   // through props) so callers don't need to know about this guard. When the

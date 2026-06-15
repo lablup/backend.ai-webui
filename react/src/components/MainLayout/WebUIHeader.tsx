@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { buildPath, MENU_KEY_TO_SCOPE_FEATURE } from '../../helper/pathBuilder';
 import {
   useCurrentDomainValue,
   useSuspendedBackendaiClient,
@@ -15,6 +16,7 @@ import {
   useCurrentUserProjectRoles,
   useEffectiveAdminRole,
 } from '../../hooks/useCurrentUserProjectRoles';
+import { useCurrentMenuKey, useRouteScope } from '../../hooks/useRouteScope';
 import { useWebUIMenuItems } from '../../hooks/useWebUIMenuItems';
 import BAINotificationButton from '../BAINotificationButton';
 import LoginSessionExtendButton from '../LoginSessionExtendButton';
@@ -30,6 +32,7 @@ import { BAIFlex, BAIFlexProps } from 'backend.ai-ui';
 import { MenuIcon } from 'lucide-react';
 import { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router-dom';
 
 const useStyles = createStyles(({ css }) => ({
   webuiHeader: css`
@@ -56,7 +59,10 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
   const baiClient = useSuspendedBackendaiClient();
   const gridBreakpoint = Grid.useBreakpoint();
   const webuiNavigate = useWebUINavigate();
-  const { isSelectedAdminCategoryMenu, defaultMenuPath } = useWebUIMenuItems();
+  const location = useLocation();
+  const routeScope = useRouteScope();
+  const currentMenuKey = useCurrentMenuKey();
+  const { isSelectedAdminCategoryMenu } = useWebUIMenuItems();
   const effectiveAdminRole = useEffectiveAdminRole();
   const { projectAdminIds } = useCurrentUserProjectRoles();
 
@@ -88,6 +94,46 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
     projectResourcePolicy: unknown;
   }) => {
     setOptimisticProjectId(projectInfo.projectId);
+
+    // On project / project-admin scope the URL owns the current project: stay
+    // on the exact same page and swap ONLY the project name, then let
+    // `ProjectScopeLayout` converge `currentProjectAtom` to the new URL. We
+    // deliberately do NOT call `setCurrentProject` here on these scopes, to
+    // avoid the atom being set twice (once here, once by the layout sync effect).
+    if (routeScope === 'project' || routeScope === 'projectAdmin') {
+      // Replace only the `:projectName` segment, preserving everything after it
+      // (e.g. `/session/start`, a detail `:id`) and the query string, so
+      // in-progress UI state survives — matching the legacy behavior where
+      // changing the project never navigated away (the session launcher form
+      // stays mounted with its contents intact).
+      const segments = location.pathname.split('/');
+      if (segments[1] === 'project' && segments.length > 2) {
+        segments[2] = encodeURIComponent(projectInfo.projectName);
+        startProjectChangedTransition(() => {
+          webuiNavigate(segments.join('/') + location.search);
+        });
+        return;
+      }
+      // Defensive fallback: reconstruct from the current feature key when the
+      // path is not under `/project/:projectName` for some reason.
+      const scopeFeature = currentMenuKey
+        ? MENU_KEY_TO_SCOPE_FEATURE[currentMenuKey]
+        : undefined;
+      const featureKey =
+        scopeFeature && scopeFeature.scope === routeScope
+          ? scopeFeature.featureKey
+          : 'session';
+      startProjectChangedTransition(() => {
+        webuiNavigate(
+          buildPath(routeScope, featureKey, projectInfo.projectName) +
+            location.search,
+        );
+      });
+      return;
+    }
+
+    // Admin (global) scope has no project-aware layout, so preserve today's
+    // behavior: update the atom directly without navigating.
     startProjectChangedTransition(() => {
       setCurrentProject(projectInfo);
     });
@@ -178,10 +224,40 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
                   cancelText: t('button.Cancel'),
                   onOk: () => {
                     setIsConfirmingProjectSwitch(false);
-                    applyProjectChange(projectInfo);
-                    // Exit admin mode by navigating to the last-visited
-                    // general page (or the default menu path as fallback).
-                    webuiNavigate(goBackPath || defaultMenuPath);
+                    setOptimisticProjectId(projectInfo.projectId);
+                    // Leaving admin mode: switch to the target project (atom)
+                    // and navigate to the last-visited general page, but rewrite
+                    // that page's project segment to the NEW project so the
+                    // project-scope layout doesn't immediately sync the atom
+                    // back to the old project's name.
+                    startProjectChangedTransition(() => {
+                      setCurrentProject(projectInfo);
+                    });
+                    // Return to the last-visited general page, preserving its
+                    // full sub-path (e.g. /session/start) and swapping ONLY the
+                    // project segment to the NEW project, so the project-scope
+                    // layout does not sync the atom back to the old project.
+                    const fallbackFeature =
+                      currentMenuKey &&
+                      MENU_KEY_TO_SCOPE_FEATURE[currentMenuKey]?.scope ===
+                        'project'
+                        ? MENU_KEY_TO_SCOPE_FEATURE[currentMenuKey].featureKey
+                        : 'session';
+                    let target = buildPath(
+                      'project',
+                      fallbackFeature,
+                      projectInfo.projectName,
+                    );
+                    if (goBackPath) {
+                      const segments = goBackPath.split('/');
+                      if (segments[1] === 'project' && segments.length > 2) {
+                        segments[2] = encodeURIComponent(
+                          projectInfo.projectName,
+                        );
+                        target = segments.join('/');
+                      }
+                    }
+                    webuiNavigate(target);
                   },
                   onCancel: () => {
                     // Revert the optimistic selection back to the current

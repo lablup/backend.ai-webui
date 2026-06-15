@@ -7,6 +7,7 @@ import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import useKeyboardShortcut from '../../hooks/useKeyboardShortcut';
 import { useLogoutEventListeners } from '../../hooks/useLogout';
 import usePrimaryColors from '../../hooks/usePrimaryColors';
+import { useCurrentMenuKey, useRouteScope } from '../../hooks/useRouteScope';
 import { useWebUIMenuItems } from '../../hooks/useWebUIMenuItems';
 import { useSetupWebUIPluginEffect } from '../../hooks/useWebUIPluginState';
 import Page401 from '../../pages/Page401';
@@ -34,7 +35,6 @@ import React, {
   Suspense,
   useEffect,
   useLayoutEffect,
-  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -340,8 +340,14 @@ const AutoAdminPrimaryColorProvider = ({
   'use memo';
 
   const primaryColors = usePrimaryColors();
-  const { isSelectedAdminCategoryMenu } = useWebUIMenuItems();
-  if (isSelectedAdminCategoryMenu) {
+  // Apply the admin primary color on any non-project scope (global `admin` and
+  // `projectAdmin`). Derived from the matched route handle via `useRouteScope`
+  // rather than the role-filtered `isSelectedAdminCategoryMenu`, so the admin
+  // theming is driven by the URL scope itself — correct under the
+  // scope-prefixed routes and independent of which admin menu items the
+  // current user's role happens to surface.
+  const isAdminScope = useRouteScope() !== 'project';
+  if (isAdminScope) {
     return (
       <ConfigProvider
         theme={{
@@ -359,13 +365,20 @@ const AutoAdminPrimaryColorProvider = ({
 };
 
 const LayoutWithPageTestId: React.FC<LayoutProps> = (props) => {
+  'use memo';
   const location = useLocation();
-  const pageTest = useMemo(() => {
-    const cleanPath = location.pathname.replace(/^\//, '').replace(/\//g, '-');
-    return cleanPath ? `page-${cleanPath}` : 'page-root';
-    // `location` is from react-router useLocation() — pathname is reactive across navigations.
-    // react-doctor-disable-next-line react-doctor/no-mutable-in-deps
-  }, [location.pathname]);
+  // Prefer the scope-aware menu key (route handle) so the page test id stays
+  // stable across the scope-prefixed URLs (e.g. `/project/<name>/session` and
+  // `/admin/session` both yield `page-session` / `page-admin-session` rather
+  // than leaking the project name into the selector). Fall back to the cleaned
+  // pathname for routes without a feature handle (login utils, error, etc.).
+  const currentMenuKey = useCurrentMenuKey();
+  const cleanPath = location.pathname.replace(/^\//, '').replace(/\//g, '-');
+  const pageTest = currentMenuKey
+    ? `page-${currentMenuKey}`
+    : cleanPath
+      ? `page-${cleanPath}`
+      : 'page-root';
   return <Layout {...props} data-testid={pageTest} />;
 };
 
