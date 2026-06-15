@@ -410,11 +410,11 @@ const ModelStoreListPageV2: React.FC = () => {
                 propertyLabel: t('modelStore.ModelName'),
                 type: 'string',
               },
-              {
-                key: 'domainName',
-                propertyLabel: t('adminModelCard.Domain'),
-                type: 'string',
-              },
+              // NOTE(FR-3120): the domain filter is intentionally NOT exposed to
+              // end users on the Model Store list. The list is already scoped to
+              // the current domain's MODEL_STORE project via `scope.projectId`,
+              // so it only ever shows cards available in that project — a
+              // user-facing domain (or project) filter is redundant here.
               {
                 key: 'storageHost',
                 propertyLabel: t('import.StorageHost'),
