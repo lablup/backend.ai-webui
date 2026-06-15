@@ -59,6 +59,7 @@
     "SectionCluster": "Кластер",
     "SectionDeploymentDefaults": "Байршуулалтын өгөгдмөл утгууд",
     "SectionExecution": "Гүйцэтгэл",
+    "SectionHealthCheck": "Эрүүл мэндийн шалгалт",
     "SectionImage": "Дүрс",
     "SectionResources": "Нөөц",
     "SelectClusterMode": "Кластерийн горим сонгох",

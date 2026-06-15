@@ -59,6 +59,7 @@
     "SectionCluster": "Kluster",
     "SectionDeploymentDefaults": "Lalai Penggunaan",
     "SectionExecution": "Pelaksanaan",
+    "SectionHealthCheck": "Semakan Kesihatan",
     "SectionImage": "Imej",
     "SectionResources": "Sumber",
     "SelectClusterMode": "Pilih mod kluster",

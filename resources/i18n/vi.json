@@ -59,6 +59,7 @@
     "SectionCluster": "Cụm",
     "SectionDeploymentDefaults": "Mặc định triển khai",
     "SectionExecution": "Thực thi",
+    "SectionHealthCheck": "Kiểm tra sức khỏe",
     "SectionImage": "Image",
     "SectionResources": "Tài nguyên",
     "SelectClusterMode": "Chọn chế độ cụm",

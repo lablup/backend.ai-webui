@@ -59,6 +59,7 @@
     "SectionCluster": "Klaster",
     "SectionDeploymentDefaults": "Domyślne ustawienia wdrożenia",
     "SectionExecution": "Wykonanie",
+    "SectionHealthCheck": "Sprawdzanie kondycji",
     "SectionImage": "Obraz",
     "SectionResources": "Zasoby",
     "SelectClusterMode": "Wybierz tryb klastra",

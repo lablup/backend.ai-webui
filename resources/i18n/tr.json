@@ -59,6 +59,7 @@
     "SectionCluster": "Küme",
     "SectionDeploymentDefaults": "Dağıtım Varsayılanları",
     "SectionExecution": "Yürütme",
+    "SectionHealthCheck": "Sağlık Denetimi",
     "SectionImage": "İmaj",
     "SectionResources": "Kaynaklar",
     "SelectClusterMode": "Küme modunu seçin",

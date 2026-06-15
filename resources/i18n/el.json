@@ -59,6 +59,7 @@
     "SectionCluster": "Σύμπλεγμα",
     "SectionDeploymentDefaults": "Προεπιλογές Ανάπτυξης",
     "SectionExecution": "Εκτέλεση",
+    "SectionHealthCheck": "Έλεγχος υγείας",
     "SectionImage": "Εικόνα",
     "SectionResources": "Πόροι",
     "SelectClusterMode": "Επιλέξτε λειτουργία συμπλέγματος",

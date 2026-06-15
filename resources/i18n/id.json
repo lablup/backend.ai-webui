@@ -59,6 +59,7 @@
     "SectionCluster": "Kluster",
     "SectionDeploymentDefaults": "Default Deployment",
     "SectionExecution": "Eksekusi",
+    "SectionHealthCheck": "Pemeriksaan Kesehatan",
     "SectionImage": "Image",
     "SectionResources": "Sumber Daya",
     "SelectClusterMode": "Pilih mode kluster",

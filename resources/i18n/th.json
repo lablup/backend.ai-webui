@@ -59,6 +59,7 @@
     "SectionCluster": "คลัสเตอร์",
     "SectionDeploymentDefaults": "ค่าเริ่มต้นการปรับใช้",
     "SectionExecution": "การดำเนินการ",
+    "SectionHealthCheck": "การตรวจสอบสุขภาพ",
     "SectionImage": "อิมเมจ",
     "SectionResources": "ทรัพยากร",
     "SelectClusterMode": "เลือกโหมดคลัสเตอร์",

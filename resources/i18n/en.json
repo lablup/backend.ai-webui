@@ -59,6 +59,7 @@
     "SectionCluster": "Cluster",
     "SectionDeploymentDefaults": "Deployment Defaults",
     "SectionExecution": "Execution",
+    "SectionHealthCheck": "Health Check",
     "SectionImage": "Image",
     "SectionResources": "Resources",
     "SelectClusterMode": "Select cluster mode",

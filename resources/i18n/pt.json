@@ -59,6 +59,7 @@
     "SectionCluster": "Cluster",
     "SectionDeploymentDefaults": "Predefinições de Implementação",
     "SectionExecution": "Execução",
+    "SectionHealthCheck": "Verificação de integridade",
     "SectionImage": "Imagem",
     "SectionResources": "Recursos",
     "SelectClusterMode": "Selecionar modo de cluster",

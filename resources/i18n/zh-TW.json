@@ -59,6 +59,7 @@
     "SectionCluster": "叢集",
     "SectionDeploymentDefaults": "部署預設值",
     "SectionExecution": "執行",
+    "SectionHealthCheck": "健康檢查",
     "SectionImage": "映像檔",
     "SectionResources": "資源",
     "SelectClusterMode": "選擇叢集模式",

@@ -59,6 +59,7 @@
     "SectionCluster": "Кластер",
     "SectionDeploymentDefaults": "Настройки по умолчанию",
     "SectionExecution": "Выполнение",
+    "SectionHealthCheck": "Проверка работоспособности",
     "SectionImage": "Образ",
     "SectionResources": "Ресурсы",
     "SelectClusterMode": "Выбрать режим кластера",

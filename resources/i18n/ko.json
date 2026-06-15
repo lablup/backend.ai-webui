@@ -59,6 +59,7 @@
     "SectionCluster": "클러스터",
     "SectionDeploymentDefaults": "배포 기본값",
     "SectionExecution": "실행",
+    "SectionHealthCheck": "헬스 체크",
     "SectionImage": "이미지",
     "SectionResources": "리소스",
     "SelectClusterMode": "클러스터 모드 선택",

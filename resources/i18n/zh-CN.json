@@ -59,6 +59,7 @@
     "SectionCluster": "集群",
     "SectionDeploymentDefaults": "部署默认值",
     "SectionExecution": "执行",
+    "SectionHealthCheck": "健康检查",
     "SectionImage": "镜像",
     "SectionResources": "资源",
     "SelectClusterMode": "选择集群模式",

@@ -59,6 +59,7 @@
     "SectionCluster": "クラスター",
     "SectionDeploymentDefaults": "デプロイメントデフォルト",
     "SectionExecution": "実行",
+    "SectionHealthCheck": "ヘルスチェック",
     "SectionImage": "イメージ",
     "SectionResources": "リソース",
     "SelectClusterMode": "クラスターモードを選択",

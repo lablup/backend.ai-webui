@@ -59,6 +59,7 @@
     "SectionCluster": "Klusteri",
     "SectionDeploymentDefaults": "Käyttöönottooletukset",
     "SectionExecution": "Suoritus",
+    "SectionHealthCheck": "Terveystarkistus",
     "SectionImage": "Kuva",
     "SectionResources": "Resurssit",
     "SelectClusterMode": "Valitse klusteritila",

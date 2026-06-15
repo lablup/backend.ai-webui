@@ -77,6 +77,23 @@ const DeploymentPresetDetailModal: React.FC<
           presetId
           value
         }
+        modelDefinition {
+          models {
+            name
+            service {
+              healthCheck {
+                # TODO: change to "26.4.4" once the 26.4.4 release is out
+                enable @since(version: "26.4.4rc7")
+                interval
+                path
+                maxRetries
+                maxWaitTime
+                expectedStatusCode
+                initialDelay
+              }
+            }
+          }
+        }
       }
     `,
     presetFrgmt ?? null,
@@ -88,12 +105,21 @@ const DeploymentPresetDetailModal: React.FC<
     (opt) => opt.name === 'shmem',
   )?.value;
 
+  const healthCheck = preset?.modelDefinition?.models?.find(
+    (m) => m.service?.healthCheck,
+  )?.service?.healthCheck;
+  // On 26.4.4rc7+ `enable` is authoritative; on older managers `enable` is
+  // stripped (undefined), so fall back to presence of the object.
+  const isHealthCheckEnabled = healthCheck?.enable ?? !!healthCheck;
+  const hasServiceConfig = (preset?.modelDefinition?.models?.length ?? 0) > 0;
+
   return (
     <BAIModal
       centered
       title={t('modelService.DeploymentPresetDetail')}
       destroyOnHidden
       footer={null}
+      width={720}
       {...modalProps}
     >
       {!preset ? (
@@ -236,6 +262,68 @@ const DeploymentPresetDetailModal: React.FC<
               ]}
             />
           </BAICard>
+          {hasServiceConfig && (
+            <BAICard
+              size="small"
+              title={t('adminDeploymentPreset.SectionHealthCheck')}
+              styles={{ body: { paddingTop: 0 } }}
+            >
+              <Descriptions
+                size="small"
+                column={isHealthCheckEnabled ? 2 : 1}
+                items={[
+                  {
+                    label: t(
+                      'adminDeploymentPreset.modelDef.EnableHealthCheck',
+                    ),
+                    children: isHealthCheckEnabled
+                      ? t('general.Enabled')
+                      : t('general.Disabled'),
+                  },
+                  ...(isHealthCheckEnabled
+                    ? [
+                        {
+                          label: t(
+                            'adminDeploymentPreset.modelDef.HealthCheckPath',
+                          ),
+                          children: healthCheck?.path ?? '-',
+                        },
+                        {
+                          label: t(
+                            'adminDeploymentPreset.modelDef.HealthCheckInterval',
+                          ),
+                          children: healthCheck?.interval ?? '-',
+                        },
+                        {
+                          label: t(
+                            'adminDeploymentPreset.modelDef.HealthCheckMaxRetries',
+                          ),
+                          children: healthCheck?.maxRetries ?? '-',
+                        },
+                        {
+                          label: t(
+                            'adminDeploymentPreset.modelDef.HealthCheckMaxWaitTime',
+                          ),
+                          children: healthCheck?.maxWaitTime ?? '-',
+                        },
+                        {
+                          label: t(
+                            'adminDeploymentPreset.modelDef.HealthCheckExpectedStatus',
+                          ),
+                          children: healthCheck?.expectedStatusCode ?? '-',
+                        },
+                        {
+                          label: t(
+                            'adminDeploymentPreset.modelDef.HealthCheckInitialDelay',
+                          ),
+                          children: healthCheck?.initialDelay ?? '-',
+                        },
+                      ]
+                    : []),
+                ]}
+              />
+            </BAICard>
+          )}
         </BAIFlex>
       )}
     </BAIModal>
